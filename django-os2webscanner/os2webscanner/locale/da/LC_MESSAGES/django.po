@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-03 16:39+0200\n"
+"POT-Creation-Date: 2019-05-29 16:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: django-os2webscanner/os2webscanner/admin.py:84
+#: django-os2webscanner/os2webscanner/admin.py:127
 msgid "Personal info"
 msgstr ""
 
-#: django-os2webscanner/os2webscanner/admin.py:86
+#: django-os2webscanner/os2webscanner/admin.py:129
 msgid "Important dates"
 msgstr ""
 
@@ -45,23 +45,23 @@ msgstr ""
 "Listen af regler kan ikke redigeres. For at scanne med andre regler, opret "
 "da et nyt scannerjob."
 
-#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:3
+#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:5
 msgid "Alle rapporter"
 msgstr ""
 
-#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:5
+#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:9
 msgid "Webrapporter"
 msgstr ""
 
-#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:8
+#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:14
 msgid "Filrapporter"
 msgstr ""
 
-#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:11
+#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:19
 msgid "Exchangerapporter"
 msgstr ""
 
-#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:13
+#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:23
 msgid "Overblik"
 msgstr ""
 
@@ -160,11 +160,11 @@ msgstr "Email adresse"
 msgid "Reset my password"
 msgstr "Nulstil mit kodeord."
 
-#: webscanner_site/webscanner/settings.py:138
+#: conf/settings.py:90 webscanner_site/webscanner/settings.py:90
 msgid "Danish"
 msgstr ""
 
-#: webscanner_site/webscanner/settings.py:139
+#: conf/settings.py:91 webscanner_site/webscanner/settings.py:91
 msgid "English"
 msgstr ""
 

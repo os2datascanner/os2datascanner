@@ -2,7 +2,7 @@
 
 if [ $# -lt 6 ]
 then
-    printf "The script is used like this:\n\n    deploy.sh [ DOMAIN ] [ DB-NAME ] [ DB-USER ]  [ DB-PASSWD ] [ SITE-USER ] [ SITE-USER-EMAIL ] [ENABLE_FILESCAN] [ENABLE_MAILSCAN]\n\n"
+    echo "usage: deploy.sh [ DOMAIN ] [ DB-NAME ] [ DB-USER ]  [ DB-PASSWD ] [ SITE-USER ] [ SITE-USER-EMAIL ] [ENABLE_FILESCAN] [ENABLE_MAILSCAN]"
     exit
 fi
 
@@ -15,9 +15,9 @@ site_useremail=$6
 enable_filescan=$7
 enable_mailscan=$8
 
-secret_key=$(echo `openssl rand -base64 100 | head -c100 | tac`)
+secret_key=$(dd if=/dev/urandom bs=64 count=1 2> /dev/null | base64 -w 0)
 
-echo `pwd` > .pwd
+pwd > .pwd
 
 prod_dir=/var/www/os2datascanner
 repo_dir=`cat .pwd`
@@ -208,7 +208,7 @@ function filescan_setup()
     sudo mkdir /tmp/mnt
     sudo chown -R www-data:www-data /tmp/mnt
 
-    sudoers_file=/etc/sudoers.d/www-data
+    sudoers_file=/etc/sudoers.d/os2datascanner
 
     sudo echo "www-data ALL= NOPASSWD: /bin/mount" >> $sudoers_file
     sudo echo "www-data ALL= NOPASSWD: /bin/umount" >> $sudoers_file
