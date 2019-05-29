@@ -1,0 +1,47 @@
+WSGIPythonPath	/vagrant/os2datascanner/webscanner_site
+
+<VirtualHost *:80>
+	RewriteEngine		on
+	RewriteCond		%{HTTPS} off
+	RewriteRule		(.*) https://%{HTTP_HOST}%{REQUEST_URI}
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName             twodotzero.dk
+    ServerAlias            www.twodotzero.dk
+
+	SSLEngine		On
+    SSLCertificateFile	/etc/ssl/certs/ssl-cert-snakeoil.pem
+	SSLCertificateKeyFile	/etc/ssl/private/ssl-cert-snakeoil.key
+    
+    # SSLCertificateFile      INSERT_CERT_FILE
+    # SSLCertificateKeyFile   INSERT_CERT_KEY
+    # SSLCACertificateFile    INSERT_CACERT_FILE    
+    
+	WSGIDaemonProcess	datascanner
+	WSGIProcessGroup	datascanner
+
+    	# Always set these headers.
+	Header always set Access-Control-Allow-Origin "*"
+	Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+	Header always set Access-Control-Max-Age "1000"
+	Header always set Access-Control-Allow-Headers "x-requested-with, Content-Type, origin, authorization, accept, client-security-token"
+
+	ErrorLog		/var/log/twodotzero.dk/error.log
+	CustomLog		/var/log/twodotzero.dk/access.log combined
+
+	Alias			/static /vagrant/os2datascanner/webscanner_site/static
+
+	WSGIScriptAlias		/ /vagrant/os2datascanner/webscanner_site/webscanner/wsgi.py
+
+	<Directory /vagrant/os2datascanner/webscanner_site/static>
+		Require all granted
+	</Directory>
+
+	<Directory /vagrant/os2datascanner/webscanner_site/webscanner>
+		<Files wsgi.py>
+			Require all granted
+		</Files>
+	</Directory>
+
+</VirtualHost>
