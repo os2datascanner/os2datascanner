@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 if [ $# -lt 6 ]
 then
     printf "The script is used like this:\n\n    deploy.sh [ DOMAIN ] [ DB-NAME ] [ DB-USER ]  [ DB-PASSWD ] [ SITE-USER ] [ SITE-USER-EMAIL ] [ENABLE_FILESCAN] [ENABLE_MAILSCAN]\n\n"
@@ -26,7 +24,9 @@ repo_dir=`cat .pwd`
 repo_conf=$repo_dir/conf
 install_dir=$repo_dir
 settings_file=$repo_conf/settings.py
-local_settings_file=$repo_conf/local_settings.py.default
+default_local_settings=$repo_conf/local_settings.py.default
+cp $default_local_settings $repo_conf/local_settings.py
+local_settings_file=$repo_conf/local_settings.py
 vhost_file=$repo_conf/vhost
 
 
@@ -42,7 +42,6 @@ function django()
 
     cd $repo_dir
 
-    cp $local_settings_file $repo_conf/local_settings.py
     # Insert secret key and database information
     sed -i "s/INSERT_SECRET_KEY/$secret_key/g" $local_settings_file
     sed -i "s/INSERT_DB_NAME/$db_name/g" $local_settings_file
