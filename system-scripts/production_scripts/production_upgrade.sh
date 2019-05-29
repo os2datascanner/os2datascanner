@@ -45,7 +45,7 @@ function copy_to_prod_dir()
 function restart_ressources()
 {
 
-    sudo kill `pidof python`
+    sudo pkill python
     sudo pkill soffice.bin
 
     sudo service datascanner-manager reload
