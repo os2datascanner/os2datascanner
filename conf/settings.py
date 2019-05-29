@@ -17,7 +17,7 @@ PROJECT_DIR = os.path.dirname(BASE_DIR)
 VAR_DIR = os.path.join(PROJECT_DIR, 'var')
 LOGS_DIR = os.path.join(VAR_DIR, 'logs')
 
-DEBUG = False
+DEBUG = True
 
 TEMPLATES = [
     {
@@ -40,10 +40,10 @@ TEMPLATES = [
     },
 ]
 
-ALLOWED_HOSTS = ['twodotzero.dk']
+ALLOWED_HOSTS = ['INSERT_DOMAIN_NAME']
 
 # Site URL for calculating absolute URLs in emails.
-SITE_URL = 'twodotzero.dk'
+SITE_URL = 'INSERT_DOMAIN_NAME'
 
 SITE_ID = 1
 
@@ -51,19 +51,19 @@ SITE_ID = 1
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'X4vKOa0Ts74xRVY3Z7famFNIJ5O5iyRyysEh7wlXtuJ9uIqwHqpv7EugKj7EheG5xoMO9xDgUQPONBjj04ScvKr9pFhe9NfavII'
+SECRET_KEY = 'INSERT_SECRET_KEY'
 
 # Used for filescan and mounting
 PRODUCTION_MODE = False
 
 # If webscan on the current installation is needed, enable it here
-ENABLE_WEBSCAN = False
+ENABLE_WEBSCAN = True
 
 # If filescan on the current installation is needed, enable it here
-ENABLE_FILESCAN = True
+ENABLE_FILESCAN = False
 
 # If exchangescan on the current installation is needed, enable it here
-ENABLE_EXCHANGESCAN = True
+ENABLE_EXCHANGESCAN = False
 
 # Add settings here to make them accessible from templates
 SETTINGS_EXPORT = [
@@ -115,9 +115,9 @@ WSGI_APPLICATION = 'webscanner.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'os2datascanner',
-        'USER': 'os2datascanner',
-        'PASSWORD': 'os2datascanner',
+        'NAME': 'INSERT_DB_NAME',
+        'USER': 'INSERT_DB_USER',
+        'PASSWORD': 'INSERT_DB_PASSWD',
         'HOST': '127.0.0.1',
     }
 }
