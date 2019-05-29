@@ -19,7 +19,7 @@ enable_mailscan=$8
 
 secret_key=$(dd if=/dev/urandom bs=64 count=1 2> /dev/null | base64 -w 0)
 
-echo `pwd` > .pwd
+pwd > .pwd
 
 prod_dir=/var/www/os2datascanner
 repo_dir=`cat .pwd`
