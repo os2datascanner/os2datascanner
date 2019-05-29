@@ -209,7 +209,7 @@ function filescan_setup()
     sudo mkdir /tmp/mnt
     sudo chown -R www-data:www-data /tmp/mnt
 
-    sudoers_file=/etc/sudoers.d/www-data
+    sudoers_file=/etc/sudoers.d/os2datascanner
 
     sudo echo "www-data ALL= NOPASSWD: /bin/mount" >> $sudoers_file
     sudo echo "www-data ALL= NOPASSWD: /bin/umount" >> $sudoers_file
