@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -e
 
 if [ $# -lt 6 ]
 then
@@ -25,6 +26,7 @@ repo_dir=`cat .pwd`
 repo_conf=$repo_dir/conf
 install_dir=$repo_dir
 settings_file=$repo_conf/settings.py
+local_settings_file=$repo_conf/local_settings.py.default
 vhost_file=$repo_conf/vhost
 
 
@@ -35,23 +37,23 @@ vhost_file=$repo_conf/vhost
 function django()
 {
 
-# Run installation
-\. install.sh
+    # Run installation
+    ./install.sh
 
-cd $repo_dir
+    cd $repo_dir
 
-source $install_dir/python-env/bin/activate
+    cp $local_settings_file $repo_conf/local_settings.py
+    # Insert secret key and database information
+    sed -i "s/INSERT_SECRET_KEY/$secret_key/g" $local_settings_file
+    sed -i "s/INSERT_DB_NAME/$db_name/g" $local_settings_file
+    sed -i "s/INSERT_DB_USER/$db_user/g" $local_settings_file
+    sed -i "s/INSERT_DB_PASSWD/$db_pass/g" $local_settings_file
+    sed -i "s/DEBUG = True/DEBUG = False/g" $local_settings_file
+    sed -i "s/INSERT_DOMAIN_NAME/$domain/g" $local_settings_file
 
-# Insert secret key and database information
-sed -i "s/INSERT_SECRET_KEY/$secret_key/g" $settings_file
-sed -i "s/INSERT_DB_NAME/$db_name/g" $settings_file
-sed -i "s/INSERT_DB_USER/$db_user/g" $settings_file
-sed -i "s/INSERT_DB_PASSWD/$db_pass/g" $settings_file
-sed -i "s/DEBUG = True/DEBUG = False/g" $settings_file
-sed -i "s/INSERT_DOMAIN_NAME/$domain/g" $settings_file
-
-# Link settings file to webscanner settings
-ln -sf $settings_file $install_dir/webscanner_site/webscanner/settings.py
+    # Link settings file to webscanner settings
+    ln -sf $settings_file $install_dir/webscanner_site/webscanner/settings.py
+    ln -sf $local_settings_file $install_dir/webscanner_site/webscanner/local_settings.py
 
 }
 
@@ -62,33 +64,33 @@ ln -sf $settings_file $install_dir/webscanner_site/webscanner/settings.py
 function database()
 {
 
-# Login as postgres user
-db_cmd="sudo -u postgres"
+    # Login as postgres user
+    postgres_user="sudo -u postgres"
 
-# Create new database
-$db_cmd createdb $db_name
+    # Create new database
+    $postgres_user createdb $db_name
 
-# Create new user with priviligies
-$db_cmd psql -c "CREATE USER $db_user WITH PASSWORD '$db_pass';"
-$db_cmd psql -c "GRANT ALL PRIVILEGES ON DATABASE $db_name TO $db_user;"
-$db_cmd psql -c "ALTER USER $db_user WITH SUPERUSER;"
+    # Create new user with priviligies
+    $postgres_user psql -c "CREATE USER $db_user WITH PASSWORD '$db_pass';"
+    $postgres_user psql -c "GRANT ALL PRIVILEGES ON DATABASE $db_name TO $db_user;"
+    $postgres_user psql -c "ALTER USER $db_user WITH SUPERUSER;"
 
 
-# Migrate
-source $install_dir/python-env/bin/activate
+    # Migrate
+    source $install_dir/python-env/bin/activate
 
-managepy=$install_dir/webscanner_site/manage.py
+    managepy=$install_dir/webscanner_site/manage.py
 
-python $managepy collectstatic
-python $managepy makemigrations --merge
-python $managepy migrate
+    $managepy collectstatic
+    $managepy makemigrations --merge
+    $managepy migrate
 
-echo 'Type in superuser password'
-python $managepy createsuperuser --username $site_username --email $site_useremail
-python $managepy migrate --run-syncdb
+    echo 'Type in superuser password'
+    $managepy createsuperuser --username $site_username --email $site_useremail
+    $managepy migrate --run-syncdb
 
-python $managepy makemessages --ignore=scrapy-webscanner/* --ignore=python-env/*
-python $managepy compilemessages
+    $managepy makemessages --ignore=scrapy-webscanner/* --ignore=python-env/*
+    $managepy compilemessages
 
 }
 
@@ -100,15 +102,16 @@ python $managepy compilemessages
 function copy_to_prod_dir()
 {
 
-sudo mkdir $prod_dir
+    sudo mkdir $prod_dir
 
-sudo cp --recursive conf cron django-os2webscanner python-env scrapy-webscanner var webscanner_client webscanner_site xmlrpc_clients $prod_dir
-sudo cp NEWS LICENSE README VERSION $prod_dir
+    sudo cp --recursive conf cron django-os2webscanner python-env scrapy-webscanner var webscanner_client webscanner_site xmlrpc_clients $prod_dir
+    sudo cp NEWS LICENSE README VERSION $prod_dir
 
-sudo chown --recursive www-data:www-data $prod_dir
+    sudo chown --recursive www-data:www-data $prod_dir
 
-# Link settings file to webscanner settings
-sudo ln -sf /var/www/os2datascanner/conf/settings.py $prod_dir/webscanner_site/webscanner/settings.py
+    # Link settings file to webscanner settings
+    sudo ln -sf /var/www/os2datascanner/conf/settings.py $prod_dir/webscanner_site/webscanner/settings.py
+    sudo ln -sf /var/www/os2datascanner/conf/local_settings.py $prod_dir/webscanner_site/webscanner/local_settings.py
 
 }
 
@@ -119,25 +122,25 @@ sudo ln -sf /var/www/os2datascanner/conf/settings.py $prod_dir/webscanner_site/w
 function apache()
 {
 
-vhost=$prod_dir/conf/vhost
+    vhost=$prod_dir/conf/vhost
 
-# Copy the vhost
-sudo ln -sv $vhost /etc/apache2/sites-available/$domain.conf
+    # Copy the vhost
+    sudo ln -sv $vhost /etc/apache2/sites-available/$domain.conf
 
-# Add install path and domainname in vhost
-sed -i "s|INSERT_INSTALL_PATH|$prod_dir|g" $vhost
-sed -i "s|INSERT_DOMAIN|$domain|g" $vhost
+    # Add install path and domainname in vhost
+    sed -i "s|INSERT_INSTALL_PATH|$prod_dir|g" $vhost
+    sed -i "s|INSERT_DOMAIN|$domain|g" $vhost
 
-# Create log dir
-sudo mkdir -p /var/log/$domain
+    # Create log dir
+    sudo mkdir -p /var/log/$domain
 
-# Disable old site, disable wsgi and enable new vhos
-sudo a2dissite 000-default
-sudo a2dismod index
-sudo a2enmod rewrite wsgi headers ssl
-sudo a2ensite $domain
+    # Disable old site, disable wsgi and enable new vhos
+    sudo a2dissite 000-default
+    sudo a2dismod index
+    sudo a2enmod rewrite wsgi headers ssl
+    sudo a2ensite $domain
 
-sudo service apache2 reload
+    sudo service apache2 reload
 }
 
 
@@ -148,26 +151,26 @@ sudo service apache2 reload
 function scannermanager_setup()
 {
 
-DATASCANNER_SERVICE="/etc/systemd/system/datascanner-manager.service"
+    DATASCANNER_SERVICE="/etc/systemd/system/datascanner-manager.service"
 
-cat <<EOT >> "$DATASCANNER_SERVICE"
-    [Unit]
-    Description=Datascanner-manager service
-    After=network.target
+    cat <<EOT >> "$DATASCANNER_SERVICE"
+        [Unit]
+        Description=Datascanner-manager service
+        After=network.target
 
-    [Service]
-    Type=simple
-    User=www-data
-    WorkingDirectory=$prod_dir
-    ExecStart=$prod_dir/python-env/bin/python  $prod_dir/scrapy-webscanner/scanner_manager.py
-    Restart=on-failure
+        [Service]
+        Type=simple
+        User=www-data
+        WorkingDirectory=$prod_dir
+        ExecStart=$prod_dir/python-env/bin/python  $prod_dir/scrapy-webscanner/scanner_manager.py
+        Restart=on-failure
 
-    [Install]
-    WantedBy=multi-user.target
+        [Install]
+        WantedBy=multi-user.target
 EOT
 
-sudo systemctl enable datascanner-manager
-sudo systemctl start datascanner-manager
+    sudo systemctl enable datascanner-manager
+    sudo systemctl start datascanner-manager
 }
 
 #
@@ -177,24 +180,23 @@ sudo systemctl start datascanner-manager
 function setup_supervisor()
 {
 
-sudo apt install -y supervisor
+    sudo apt install -y supervisor
 
-SUPERVISOR_CONF="/etc/supervisor/conf.d/start_process_manager.conf"
+    SUPERVISOR_CONF="/etc/supervisor/conf.d/start_process_manager.conf"
 
-cat <<EOT >> "$SUPERVISOR_CONF"
-[program:process_manager]
-command=./var/www/os2datascanner/scrapy-webscanner/start_process_manager.sh
-user=www-data
-autostart=true
-autorestart=true
-stderr_logfile=/var/log/process.err.log
-stdout_logfile=/var/log/process.out.log
-exitcode=0
+    cat <<EOT >> "$SUPERVISOR_CONF"
+        [program:process_manager]
+        command=./var/www/os2datascanner/scrapy-webscanner/start_process_manager.sh
+        user=www-data
+        autostart=true
+        autorestart=true
+        stderr_logfile=/var/log/process.err.log
+        stdout_logfile=/var/log/process.out.log
+        exitcode=0
 
 EOT
 
-sudo service supervisor reload
-
+    sudo service supervisor reload
 }
 
 #
@@ -204,14 +206,17 @@ sudo service supervisor reload
 function filescan_setup()
 {
 
-sudo mkdir /tmp/mnt
-sudo chown -R www-data:www-data /tmp/mnt
+    sudo mkdir /tmp/mnt
+    sudo chown -R www-data:www-data /tmp/mnt
 
-sudo echo "www-data ALL= NOPASSWD: /bin/mount" >> /etc/sudoers
-sudo echo "www-data ALL= NOPASSWD: /bin/umount" >> /etc/sudoers
+    sudoers_file=/etc/sudoers.d/www-data
 
-sed -i "s/ENABLE_FILESCAN = False/ENABLE_FILESCAN = True/g" $settings_file
-sed -i "s/ENABLE_WEBSCAN = True/ENABLE_WEBSCAN = False/g" $settings_file
+    sudo echo "www-data ALL= NOPASSWD: /bin/mount" >> $sudoers_file
+    sudo echo "www-data ALL= NOPASSWD: /bin/umount" >> $sudoers_file
+
+    sed -i "s/PRODUCTION_MODE = False/PRODUCTION_MODE = True/g" $local_settings_file
+    sed -i "s/ENABLE_FILESCAN = False/ENABLE_FILESCAN = True/g" $local_settings_file
+    sed -i "s/ENABLE_WEBSCAN = True/ENABLE_WEBSCAN = False/g" $local_settings_file
 
 }
 
@@ -222,9 +227,9 @@ sed -i "s/ENABLE_WEBSCAN = True/ENABLE_WEBSCAN = False/g" $settings_file
 function mailscan_setup()
 {
 
-sed -i "s/ENABLE_EXCHANGESCAN = False/ENABLE_EXCHANGESCAN = True/g" $settings_file
-sed -i "s/ENABLE_FILESCAN = False/ENABLE_FILESCAN = True/g" $settings_file
-sed -i "s/ENABLE_WEBSCAN = True/ENABLE_WEBSCAN = False/g" $settings_file
+    sed -i "s/ENABLE_EXCHANGESCAN = False/ENABLE_EXCHANGESCAN = True/g" $local_settings_file
+    sed -i "s/ENABLE_FILESCAN = False/ENABLE_FILESCAN = True/g" $local_settings_file
+    sed -i "s/ENABLE_WEBSCAN = True/ENABLE_WEBSCAN = False/g" $local_settings_file
 
 }
 
@@ -234,12 +239,12 @@ sed -i "s/ENABLE_WEBSCAN = True/ENABLE_WEBSCAN = False/g" $settings_file
 
 function cron_setup()
 {
-if [ "$enable_mailscan" == "true" ]; then
-    echo '* 17 * * fri /var/www/os2datascanner/cron/exchange_cron.sh' >> $prod_dir/conf/www-data
-fi
-sudo cp $prod_dir/conf/www-data /var/spool/cron/crontabs/
-sudo chown www-data:crontab /var/spool/cron/crontabs/www-data
-sudo -u www-data crontab -l
+    if [ "$enable_mailscan" == "true" ]; then
+        echo '* 17 * * fri /var/www/os2datascanner/cron/exchange_cron.sh' >> $prod_dir/conf/www-data
+    fi
+    sudo cp $prod_dir/conf/www-data /var/spool/cron/crontabs/
+    sudo chown www-data:crontab /var/spool/cron/crontabs/www-data
+    sudo -u www-data crontab -l
 
 }
 
