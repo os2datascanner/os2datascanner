@@ -20,7 +20,7 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 #
 # m h  dom mon dow   command
-MAILTO=danni@magenta.dk
+MAILTO=os2webscanner@magenta.dk
 */15 * * * *    %OS2Datascanner_BASE_DIR%/cron/run_cron_script.sh
 40 * * * *    %OS2Datascanner_BASE_DIR%/cron/monitor_pm.sh
 0    7 * * *    %OS2Datascanner_BASE_DIR%/cron/dispatch_summaries.sh
