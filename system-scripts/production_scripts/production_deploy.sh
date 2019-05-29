@@ -102,7 +102,7 @@ function copy_to_prod_dir()
 
 sudo mkdir $prod_dir
 
-sudo cp --recursive conf cron django-os2webscanner python-env scrapy-webscanner webscanner_client webscanner_site xmlrpc_clients $prod_dir
+sudo cp --recursive conf cron django-os2webscanner python-env scrapy-webscanner var webscanner_client webscanner_site xmlrpc_clients $prod_dir
 sudo cp NEWS LICENSE README VERSION $prod_dir
 
 sudo chown --recursive www-data:www-data $prod_dir
