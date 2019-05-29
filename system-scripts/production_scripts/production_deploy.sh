@@ -87,6 +87,9 @@ echo 'Type in superuser password'
 python $managepy createsuperuser --username $site_username --email $site_useremail
 python $managepy migrate --run-syncdb
 
+python $managepy makemessages --ignore=scrapy-webscanner/* --ignore=python-env/*
+python $managepy compilemessages
+
 }
 
 
