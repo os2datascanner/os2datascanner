@@ -4,7 +4,7 @@ set -e
 
 if [ $# -lt 6 ]
 then
-    printf "The script is used like this:\n\n    deploy.sh [ DOMAIN ] [ DB-NAME ] [ DB-USER ]  [ DB-PASSWD ] [ SITE-USER ] [ SITE-USER-EMAIL ] [ENABLE_FILESCAN] [ENABLE_MAILSCAN]\n\n"
+    echo "usage: deploy.sh [ DOMAIN ] [ DB-NAME ] [ DB-USER ]  [ DB-PASSWD ] [ SITE-USER ] [ SITE-USER-EMAIL ] [ENABLE_FILESCAN] [ENABLE_MAILSCAN]"
     exit
 fi
 
