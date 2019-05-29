@@ -3,7 +3,7 @@
 if [ $# -lt 6 ]
 then
     echo "usage: deploy.sh [ DOMAIN ] [ DB-NAME ] [ DB-USER ]  [ DB-PASSWD ] [ SITE-USER ] [ SITE-USER-EMAIL ] [ENABLE_FILESCAN] [ENABLE_MAILSCAN]"
-    exit
+    exit 1
 fi
 
 domain=$1
