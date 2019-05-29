@@ -40,38 +40,7 @@ TEMPLATES = [
     },
 ]
 
-ALLOWED_HOSTS = ['INSERT_DOMAIN_NAME']
-
-# Site URL for calculating absolute URLs in emails.
-SITE_URL = 'INSERT_DOMAIN_NAME'
-
 SITE_ID = 1
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'INSERT_SECRET_KEY'
-
-# Used for filescan and mounting
-PRODUCTION_MODE = False
-
-# If webscan on the current installation is needed, enable it here
-ENABLE_WEBSCAN = True
-
-# If filescan on the current installation is needed, enable it here
-ENABLE_FILESCAN = False
-
-# If exchangescan on the current installation is needed, enable it here
-ENABLE_EXCHANGESCAN = False
-
-# Add settings here to make them accessible from templates
-SETTINGS_EXPORT = [
-    'DEBUG',
-    'ENABLE_FILESCAN',
-    'ENABLE_EXCHANGESCAN',
-    'ENABLE_WEBSCAN',
-]
 
 # Application definition
 
@@ -107,26 +76,6 @@ MIDDLEWARE = (
 ROOT_URLCONF = 'webscanner.urls'
 
 WSGI_APPLICATION = 'webscanner.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'INSERT_DB_NAME',
-        'USER': 'INSERT_DB_USER',
-        'PASSWORD': 'INSERT_DB_PASSWD',
-        'HOST': '127.0.0.1',
-    }
-}
-
-DATABASE_POOL_ARGS = {
-    'max_overflow': 10,
-    'pool_size': 5,
-    'recycle': 300
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
