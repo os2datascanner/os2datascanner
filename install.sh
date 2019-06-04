@@ -3,6 +3,9 @@
 DIR=$(dirname ${BASH_SOURCE[0]})
 VIRTUALENV=./python-env
 
+# Update package registry before installing system dependencies
+sudo apt-get update
+
 # System dependencies. These are the packages we need that are not present on a
 # fresh Ubuntu install.
 
