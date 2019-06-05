@@ -64,15 +64,15 @@ function database()
 {
 
     # Login as postgres user
-    postgres_user="sudo -u postgres"
+    as_postgres="sudo -u postgres"
 
     # Create new database
-    $postgres_user createdb $db_name
+    $as_postgres createdb $db_name
 
     # Create new user with priviligies
-    $postgres_user psql -c "CREATE USER $db_user WITH PASSWORD '$db_pass';"
-    $postgres_user psql -c "GRANT ALL PRIVILEGES ON DATABASE $db_name TO $db_user;"
-    $postgres_user psql -c "ALTER USER $db_user WITH SUPERUSER;"
+    $as_postgres psql -c "CREATE USER $db_user WITH PASSWORD '$db_pass';"
+    $as_postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $db_name TO $db_user;"
+    $as_postgres psql -c "ALTER USER $db_user WITH SUPERUSER;"
 
 
     # Migrate
@@ -238,11 +238,12 @@ function mailscan_setup()
 
 function cron_setup()
 {
-    if [ "$enable_mailscan" == "true" ]; then
-        echo '* 17 * * fri /var/www/os2datascanner/cron/exchange_cron.sh' >> $prod_dir/conf/www-data
-    fi
     sudo cp $prod_dir/conf/www-data /var/spool/cron/crontabs/
+    if [ "$enable_mailscan" == "true" ]; then
+        echo '* 17 * * fri /var/www/os2datascanner/cron/exchange_cron.sh' >> /var/spool/cron/crontabs/www-data
+    fi
     sudo chown www-data:crontab /var/spool/cron/crontabs/www-data
+
     sudo -u www-data crontab -l
 
 }
