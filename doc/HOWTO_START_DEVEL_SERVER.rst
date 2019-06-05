@@ -86,7 +86,7 @@ scans done::
 
   cd /home/os2/os2webscanner
   source python-env/bin/activate  # If not active already
-  python scrapy-webscanner/process_manager.py &
+  scrapy-webscanner/start_process_manager.sh &
 
 
 That's it!
