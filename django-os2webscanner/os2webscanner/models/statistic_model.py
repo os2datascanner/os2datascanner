@@ -49,4 +49,4 @@ class TypeStatistics(models.Model):
 
     type_name = models.CharField(max_length=256)
     count = models.IntegerField(default=0)
-    size = models.IntegerField(default=0)
+    size = models.BigIntegerField(default=0)
