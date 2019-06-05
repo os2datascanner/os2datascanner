@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-03 16:39+0200\n"
+"POT-Creation-Date: 2019-05-29 16:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: django-os2webscanner/os2webscanner/admin.py:84
+#: django-os2webscanner/os2webscanner/admin.py:127
 msgid "Personal info"
 msgstr ""
 
-#: django-os2webscanner/os2webscanner/admin.py:86
+#: django-os2webscanner/os2webscanner/admin.py:129
 msgid "Important dates"
 msgstr ""
 
@@ -46,23 +46,23 @@ msgstr ""
 "The list of rules cannot be edited. To scan with other rules, create a new "
 "scanner job."
 
-#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:3
+#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:5
 msgid "Alle rapporter"
 msgstr "All reports"
 
-#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:5
+#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:9
 msgid "Webrapporter"
 msgstr "Web reports"
 
-#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:8
+#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:14
 msgid "Filrapporter"
 msgstr "File reports"
 
-#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:11
+#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:19
 msgid "Exchangerapporter"
 msgstr "Exchange reports"
 
-#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:13
+#: django-os2webscanner/os2webscanner/templates/os2webscanner/summaries_above_content.html:23
 msgid "Overblik"
 msgstr "Summary"
 
@@ -157,10 +157,10 @@ msgstr ""
 msgid "Reset my password"
 msgstr ""
 
-#: webscanner_site/webscanner/settings.py:138
+#: conf/settings.py:90 webscanner_site/webscanner/settings.py:90
 msgid "Danish"
 msgstr ""
 
-#: webscanner_site/webscanner/settings.py:139
+#: conf/settings.py:91 webscanner_site/webscanner/settings.py:91
 msgid "English"
 msgstr ""

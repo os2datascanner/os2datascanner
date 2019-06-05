@@ -1,3 +1,10 @@
+* Version 2.2.2, May 29. 2019
+
+New in this version:
+   - Statistics model fields for storing byte sizes are now BigIntegerFields instead of IntegerFields.
+   - Production deploy and production upgrade scripts has been added to ease production deployment.
+   - Maintaining UrlLastModified links is optimized.
+
 * Version 2.2.1.2, May 10. 2019
 
 Hotfix:

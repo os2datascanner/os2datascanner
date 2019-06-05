@@ -21,7 +21,7 @@
 #
 # m h  dom mon dow   command
 MAILTO=os2webscanner@magenta.dk
-*/15 * * * *    %OS2Datascanner_BASE_DIR%/cron/run_cron_script.sh
-40 * * * *    %OS2Datascanner_BASE_DIR%/cron/monitor_pm.sh
-0    7 * * *    %OS2Datascanner_BASE_DIR%/cron/dispatch_summaries.sh
-* 17 * * fri %OS2Datascanner_BASE_DIR%/cron/exchange_cron.sh
+*/15 * * * *    /var/www/os2datascanner/cron/run_cron_script.sh
+40 * * * *    /var/www/os2datascanner/cron/monitor_pm.sh
+0    7 * * *    /var/www/os2datascanner/cron/dispatch_summaries.sh
+#30  15 * * *    /var/www/os2datascanner/cron/cleanup_libreoffice_processes.sh
