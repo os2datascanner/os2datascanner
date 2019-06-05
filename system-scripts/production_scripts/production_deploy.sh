@@ -240,7 +240,7 @@ function cron_setup()
 {
     sudo cp $prod_dir/conf/www-data /var/spool/cron/crontabs/
     if [ "$enable_mailscan" == "true" ]; then
-        echo '* 17 * * fri /var/www/os2datascanner/cron/exchange_cron.sh' >> /var/spool/cron/crontabs/www-data
+        echo '* 17 * * fri /var/www/os2datascanner/cron/run_exchange_cron_script.sh' >> /var/spool/cron/crontabs/www-data
     fi
     sudo chown www-data:crontab /var/spool/cron/crontabs/www-data
 
