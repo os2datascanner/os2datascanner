@@ -86,7 +86,10 @@ scans done::
 
   cd /home/os2/os2webscanner
   source python-env/bin/activate  # If not active already
-  scrapy-webscanner/start_process_manager.sh &
+  cd webscanner_site  # To migrate Django database
+  ./manage.py migrate 
+  cd ..
+  ./scrapy-webscanner/start_process_manager.sh &
 
 
 That's it!
