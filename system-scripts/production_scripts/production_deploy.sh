@@ -84,7 +84,7 @@ function database()
     $managepy makemigrations --merge
     $managepy migrate
 
-    echo 'Create new password for superuser ($site_username)'
+    echo "Create new password for superuser ($site_username)"
     $managepy createsuperuser --username $site_username --email $site_useremail
     $managepy migrate --run-syncdb
 
