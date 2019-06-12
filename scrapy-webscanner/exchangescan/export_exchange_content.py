@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import pika
@@ -27,14 +28,19 @@ try:
 except SystemError:
     from stats import Stats
 
+try:
+    from settings import EXCHANGE_EXPORT_DIR_PREFIX, EXCHANGE_LOGGER_DIR
+except ImportError:
+    from .settings import EXCHANGE_EXPORT_DIR_PREFIX, EXCHANGE_LOGGER_DIR
+
 exchangelogger = logging.getLogger('exchangelib')
 exchangelogger.setLevel(logging.ERROR)
 
-logger = logging.Logger('Mailscan_exchange')
-fh = logging.FileHandler('logfile.log')
+logger = logging.Logger('MailExporter')
+fh = logging.FileHandler(filename=os.path.join(EXCHANGE_LOGGER_DIR, 'stats.log'))
 fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
-logger.error('Program start')
+logger.error('Mail exporter started...')
 
 
 class ExportError(Exception):
