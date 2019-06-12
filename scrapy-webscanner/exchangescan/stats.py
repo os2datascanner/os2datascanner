@@ -14,7 +14,6 @@ except ImportError:
 
 try:
     from PyExpLabSys.common.database_saver import DataSetSaver, CustomColumn
-    from PyExpLabSys.common.supported_versions import python3_only
     import credentials
 except ImportError:
     pass
@@ -209,7 +208,6 @@ class Stats(multiprocessing.Process):
             msg = 'Exported users: {}/{}  '.format(users[0], users[1])
             self.screen.addstr(3, 3, msg)
 
-           
             total_export_size = self.amount_of_exported_data()
             msg = 'Total export: {:.3f}MB   '.format(total_export_size)
             self.screen.addstr(4, 3, msg)
@@ -225,7 +223,7 @@ class Stats(multiprocessing.Process):
             msg = 'amqp update time: {:.1f}ms  '
             update_time = self.amqp_messages['global']['amqp_time'] * 1000
             self.screen.addstr(7, 3, msg.format(update_time))
-                                                    
+
             cpu_usage = psutil.cpu_percent(percpu=True)
             msg = 'CPU{} usage: {}%  '
             for i in range(0, len(cpu_usage)):
@@ -244,7 +242,6 @@ class Stats(multiprocessing.Process):
                 label = 'Total memory'
                 self.data_set_saver.save_point(label,
                                                (dt, sum(mem_info.values())))
-
 
             i = i + 2
             msg = 'Total threads: {}.  '
@@ -283,7 +280,8 @@ class Stats(multiprocessing.Process):
                                                              run_time))
                     self.screen.clrtoeol()
                     i = i + 1
-                    msg = 'Exported users: {}. Exported mails: {} Total mails: {}. Memory consumption: {:.1f}MB   '
+                    msg = 'Exported users: {}. Exported mails: {} ' \
+                          'Total mails: {}. Memory consumption: {:.1f}MB   '
                     if self.log_data:
                         label = '{} exported users'.format(key)
                         dt = (time.time() - self.start_time)
@@ -313,7 +311,6 @@ class Stats(multiprocessing.Process):
                 self.data_set_saver.save_point(label,
                                                (dt, exported_grand_total))
 
-            
             key = self.screen.getch()
             if key == ord('q'):
                 # Quit program
