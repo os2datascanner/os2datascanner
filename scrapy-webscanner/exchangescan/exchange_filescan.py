@@ -1,3 +1,4 @@
+# flake8: noqa
 """
 VIGTIGT!!!!
 Denne fil bruges ikke mere nogen steder og skal heller ikke bruges fremadrettet.
