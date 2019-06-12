@@ -1,3 +1,4 @@
+import os
 import time
 import pika
 import pickle
@@ -7,9 +8,9 @@ import subprocess
 import multiprocessing
 import psutil
 try:
-    from settings import export_path
+    from settings import EXCHANGE_EXPORT_DIR_PREFIX, EXCHANGE_LOGGER_DIR
 except ImportError:
-    from .settings import export_path
+    from .settings import EXCHANGE_EXPORT_DIR_PREFIX, EXCHANGE_LOGGER_DIR
 
 try:
     from PyExpLabSys.common.database_saver import DataSetSaver, CustomColumn
@@ -18,8 +19,8 @@ try:
 except ImportError:
     pass
 
-logger = logging.getLogger('Mailscan_exchange')
-fh = logging.FileHandler('logfile.log')
+logger = logging.getLogger('MailStats')
+fh = logging.FileHandler(filename=os.path.join(EXCHANGE_LOGGER_DIR, 'stats.log'))
 fh.setLevel(logging.INFO)
 logger.addHandler(fh)
 logger.error('Stat start')
@@ -87,7 +88,7 @@ class Stats(multiprocessing.Process):
         while error:
             try:
                 du_output = subprocess.check_output(['du', '-s',
-                                                     export_path],
+                                                     EXCHANGE_EXPORT_DIR_PREFIX],
                                                     stderr=subprocess.DEVNULL)
                 error = False
             except subprocess.CalledProcessError:

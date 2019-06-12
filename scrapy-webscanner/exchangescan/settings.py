@@ -14,6 +14,15 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 """Settings file for the Exchange export module"""
+import os
+BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+PROJECT_DIR = os.path.dirname(BASE_DIR)
+VAR_DIR = os.path.join(PROJECT_DIR, 'var')
+LOGS_DIR = os.path.join(VAR_DIR, 'logs')
+
+EXCHANGE_LOGGER_DIR = LOGS_DIR + '/exchange'
+if not os.path.exists(EXCHANGE_LOGGER_DIR):
+    os.mkdir(EXCHANGE_LOGGER_DIR)
 
 # Path to exchange export dir
 EXCHANGE_EXPORT_DIR_PREFIX = '/tmp/os2webscanner/exchangescan/'
@@ -25,4 +34,5 @@ NUMBER_OF_EMAIL_THREADS = 4
 
 MAX_WAIT_TIME = 1000
 
-export_path = ''
+
+EXCHANGE_EXPORT_DIR_PREFIX = ''
