@@ -29,18 +29,18 @@ except SystemError:
     from stats import Stats
 
 try:
-    from settings import EXCHANGE_LOGGER_DIR
+    from settings import LOGS_DIR
 except ImportError:
-    from .settings import EXCHANGE_LOGGER_DIR
+    from .settings import LOGS_DIR
 
 exchangelogger = logging.getLogger('exchangelib')
 exchangelogger.setLevel(logging.ERROR)
 
 logger = logging.Logger('MailExporter')
-fh = logging.FileHandler(filename=os.path.join(EXCHANGE_LOGGER_DIR, 'stats.log'))
-fh.setLevel(logging.DEBUG)
+fh = logging.FileHandler(filename=os.path.join(LOGS_DIR, 'exchange_export.log'))
+fh.setLevel(logging.INFO)
 logger.addHandler(fh)
-logger.error('Mail exporter started...')
+logger.info('Mail exporter started...')
 
 
 class ExportError(Exception):
