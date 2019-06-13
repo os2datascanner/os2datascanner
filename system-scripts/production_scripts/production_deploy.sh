@@ -15,7 +15,7 @@ site_useremail=$6
 enable_filescan=$7
 enable_mailscan=$8
 
-secret_key=$(echo `openssl rand -hex 100 | head -c100 | tac`)
+secret_key=$(echo `xxd -c 64 -l 64 -p /dev/random`)
 
 pwd > .pwd
 
