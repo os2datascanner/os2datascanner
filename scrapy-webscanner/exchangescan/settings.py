@@ -20,10 +20,6 @@ PROJECT_DIR = os.path.dirname(BASE_DIR)
 VAR_DIR = os.path.join(PROJECT_DIR, 'var')
 LOGS_DIR = os.path.join(VAR_DIR, 'logs')
 
-EXCHANGE_LOGGER_DIR = LOGS_DIR + '/exchange'
-if not os.path.exists(EXCHANGE_LOGGER_DIR):
-    os.mkdir(EXCHANGE_LOGGER_DIR)
-
 # Path to exchange export dir
 EXCHANGE_EXPORT_DIR_PREFIX = '/tmp/os2webscanner/exchangescan/'
 

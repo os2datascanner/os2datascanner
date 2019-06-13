@@ -8,7 +8,7 @@ import subprocess
 import multiprocessing
 import psutil
 try:
-    from settings import EXCHANGE_EXPORT_DIR_PREFIX, EXCHANGE_LOGGER_DIR
+    from settings import EXCHANGE_EXPORT_DIR_PREFIX, LOGS_DIR
 except ImportError:
     from .settings import EXCHANGE_EXPORT_DIR_PREFIX, EXCHANGE_LOGGER_DIR
 
@@ -19,10 +19,10 @@ except ImportError:
     pass
 
 logger = logging.getLogger('MailStats')
-fh = logging.FileHandler(filename=os.path.join(EXCHANGE_LOGGER_DIR, 'stats.log'))
+fh = logging.FileHandler(filename=os.path.join(LOGS_DIR, 'stats.log'))
 fh.setLevel(logging.INFO)
 logger.addHandler(fh)
-logger.error('Stat start')
+logger.info('Stat start')
 
 
 class Stats(multiprocessing.Process):
