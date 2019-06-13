@@ -38,7 +38,7 @@ function django()
     # Run installation
     ./install.sh
     
-    secret_key=$(echo `xxd -c 64 -l 64 -p /dev/urandom`)
+    secret_key=$(xxd -c 64 -l 64 -p /dev/urandom)
 
     cd $repo_dir
 
