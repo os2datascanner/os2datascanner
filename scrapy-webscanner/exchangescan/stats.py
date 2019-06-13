@@ -19,7 +19,7 @@ except ImportError:
     pass
 
 logger = logging.getLogger('MailStats')
-fh = logging.FileHandler(filename=os.path.join(LOGS_DIR, 'stats.log'))
+fh = logging.FileHandler(filename=os.path.join(LOGS_DIR, 'mailstats.log'))
 fh.setLevel(logging.INFO)
 logger.addHandler(fh)
 logger.info('Stat start')
