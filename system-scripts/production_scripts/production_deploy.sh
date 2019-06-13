@@ -15,8 +15,6 @@ site_useremail=$6
 enable_filescan=$7
 enable_mailscan=$8
 
-secret_key=$(echo `xxd -c 64 -l 64 -p /dev/random`)
-
 pwd > .pwd
 
 prod_dir=/var/www/os2datascanner
@@ -39,6 +37,8 @@ function django()
 
     # Run installation
     ./install.sh
+    
+    secret_key=$(echo `xxd -c 64 -l 64 -p /dev/urandom`)
 
     cd $repo_dir
 
