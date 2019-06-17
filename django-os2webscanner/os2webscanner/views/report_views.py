@@ -255,14 +255,15 @@ class CSVReportDetails(ReportDetails):
 
         if all_matches:
             # Print match header
-            writer.writerow(['URL', 'Regel', 'Match', 'Følsomhed'])
+            writer.writerow(['URL', 'Regel', 'Match', 'Følsomhed', 'Kontekst'])
 
             for match in all_matches:
                 writer.writerow([
                     match.url.url,
                     match.get_matched_rule_display(),
                     match.matched_data.replace('\n', '').replace('\r', ' '),
-                    match.get_sensitivity_display()
+                    match.get_sensitivity_display(),
+                    match.match_context
                 ])
 
         broken_urls = context['broken_urls']
