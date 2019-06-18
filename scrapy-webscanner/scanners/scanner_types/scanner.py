@@ -109,7 +109,8 @@ scan ID."""
                     sensitivity=rule.sensitivity,
                     cpr_enabled=rule.cpr_enabled,
                     ignore_irrelevant=rule.ignore_irrelevant,
-                    do_modulus11=rule.do_modulus11
+                    do_modulus11=rule.do_modulus11,
+                    cpr_whitelist=self.scan_object.whitelisted_cprs
                 )
             )
         return rules

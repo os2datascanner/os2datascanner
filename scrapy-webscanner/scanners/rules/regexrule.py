@@ -29,7 +29,7 @@ class RegexRule(Rule):
     """Represents a rule which matches using a regular expression."""
 
     def __init__(self, name, pattern_strings, sensitivity, cpr_enabled=False, ignore_irrelevant=False,
-                 do_modulus11=False, *args, **kwargs):
+                 do_modulus11=False, cpr_whitelist=None, *args, **kwargs):
         """Initialize the rule.
         The sensitivity is used to assign a sensitivity value to matches.
         """
@@ -43,6 +43,7 @@ class RegexRule(Rule):
         self.ignore_irrelevant = ignore_irrelevant
         self.do_modulus11 = do_modulus11
         self.regex_str = ''
+        self.cpr_whitelist = cpr_whitelist
 
         if not self._is_cpr_only():
             logging.info('------- Regex patters ---------')
@@ -96,13 +97,13 @@ class RegexRule(Rule):
         matches = set()
 
         if self._is_cpr_only():
-            cpr_rule = CPRRule(self.do_modulus11, self.ignore_irrelevant, whitelist=None)
+            cpr_rule = CPRRule(self.do_modulus11, self.ignore_irrelevant, whitelist=self.cpr_whitelist)
             temp_matches = cpr_rule.execute(text)
             matches.update(temp_matches)
         else:
             re_matches = self.regex.finditer(text)
             if self.cpr_enabled:
-                cpr_rule = CPRRule(self.do_modulus11, self.ignore_irrelevant, whitelist=None)
+                cpr_rule = CPRRule(self.do_modulus11, self.ignore_irrelevant, whitelist=self.cpr_whitelist)
                 matches.update(cpr_rule.execute(text))
 
             for match in re_matches:
