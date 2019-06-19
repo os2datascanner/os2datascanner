@@ -15,8 +15,6 @@ site_useremail=$6
 enable_filescan=$7
 enable_mailscan=$8
 
-secret_key=$(dd if=/dev/urandom bs=64 count=1 2> /dev/null | base64 -w 0)
-
 pwd > .pwd
 
 prod_dir=/var/www/os2datascanner
@@ -39,6 +37,8 @@ function django()
 
     # Run installation
     ./install.sh
+    
+    secret_key=$(xxd -c 64 -l 64 -p /dev/urandom)
 
     cd $repo_dir
 
@@ -240,7 +240,7 @@ function cron_setup()
 {
     sudo cp $prod_dir/conf/www-data /var/spool/cron/crontabs/
     if [ "$enable_mailscan" == "true" ]; then
-        echo '* 17 * * fri /var/www/os2datascanner/cron/exchange_cron.sh' >> /var/spool/cron/crontabs/www-data
+        echo '* 17 * * fri /var/www/os2datascanner/cron/run_exchange_cron_script.sh' >> /var/spool/cron/crontabs/www-data
     fi
     sudo chown www-data:crontab /var/spool/cron/crontabs/www-data
 

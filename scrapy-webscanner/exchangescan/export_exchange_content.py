@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import pika
@@ -27,14 +28,19 @@ try:
 except SystemError:
     from stats import Stats
 
+try:
+    from settings import LOGS_DIR
+except ImportError:
+    from .settings import LOGS_DIR
+
 exchangelogger = logging.getLogger('exchangelib')
 exchangelogger.setLevel(logging.ERROR)
 
-logger = logging.Logger('Mailscan_exchange')
-fh = logging.FileHandler('logfile.log')
-fh.setLevel(logging.DEBUG)
+logger = logging.Logger('MailExporter')
+fh = logging.FileHandler(filename=os.path.join(LOGS_DIR, 'exchange_export.log'))
+fh.setLevel(logging.INFO)
 logger.addHandler(fh)
-logger.error('Program start')
+logger.info('Mail exporter started...')
 
 
 class ExportError(Exception):
@@ -109,7 +115,7 @@ class ExchangeMailboxScan(object):
             ending = '.html'
         else:
             ending = '.txt'
-            
+
         name = ('body_' + str(item.datetime_created) + '_' +
                 str(random.random()) + '_' +
                 subject.replace('/', '_').replace('?', '_')[-60:] + ending)
@@ -158,7 +164,8 @@ class ExchangeMailboxScan(object):
                     with path.open('wb') as f:
                         f.write(attachment.content)
                 except TypeError:
-                    logger.error('Type Error: {}'.format(self.current_path))  # Happens for empty attachments
+                    logger.error('Type Error: {}'.format(
+                        self.current_path))  # Happens for empty attachments
                 except ErrorCannotOpenFileAttachment:
                     # Not sure when this happens
                     msg = 'ErrorCannotOpenFileAttachment {}'
@@ -197,8 +204,8 @@ class ExchangeMailboxScan(object):
                 if ((folder.total_count > 0) and
                     (folder not in search_folders) and
                     (not isinstance(folder, AllItems)) and
-                    (not isinstance(folder, FreebusyData))
-                ):
+                    (not isinstance(folder, FreebusyData)
+                     )):
                     folder_list.append(folder)
         return folder_list
 
@@ -225,14 +232,15 @@ class ExchangeMailboxScan(object):
             for chunk in chunkify(items, 10):
                 for item in chunk:
                     self.actual_exported_mails += 1
-                    logger.error(str(item.datetime_created) + ':' + str(item.subject))
+                    logger.error(str(item.datetime_created) +
+                                 ':' + str(item.subject))
                     skip_list = self.export_item_body(item)
                     attachments += self.export_attachments(item, skip_list)
             self.update_amqp(only_mails=True)
         except ErrorMimeContentConversionFailed:
             msg = '{}: ErrorMimeContentConversionFailed, giving up sub-folder'
             msg += ' Attachment value: {}'
-            logger.warning(msg.format(self.export_path, attachments))                    
+            logger.warning(msg.format(self.export_path, attachments))
         except ErrorInternalServerError:
             # Possibly happens on p7m files?
             msg = '{}: ErrorInternalServerError, giving up sub-folder'
@@ -382,8 +390,8 @@ class ExchangeServerExport(multiprocessing.Process):
         self.export_path = export_path
         self.amqp = amqp
         self.amqp_channel = None
-        self.exported_users = 0 # Number of exported users in this process
-        self.exported_mails = 0 # Number of exported mails in this process
+        self.exported_users = 0  # Number of exported users in this process
+        self.exported_mails = 0  # Number of exported mails in this process
 
     def start_amqp(self):
         if self.amqp:
