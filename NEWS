@@ -1,3 +1,12 @@
+* Version 2.2.3.1, June 19. 2019
+
+Hotfix:
+   - Whitelisted CPR numbers were wrongly reported as matches. This is not the case anymore.
+   - Broken links found in the sitemap are now shown in the report with their URL.
+   - OS2datascanner now supports Ubuntu 18.04 (python==3.6, psycopg2==2.8.2).
+   - Match context is now part of CSV download report.
+   - Automated deployment improved.
+
 * Version 2.2.3, June 5. 2019
 
 New in this version:
