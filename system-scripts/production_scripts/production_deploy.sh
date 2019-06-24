@@ -185,13 +185,13 @@ function setup_supervisor()
 
     cat <<EOT >> "$SUPERVISOR_CONF"
 [program:process_manager]
-    command=./var/www/os2datascanner/scrapy-webscanner/start_process_manager.sh
-    user=www-data
-    autostart=true
-    autorestart=true
-    stderr_logfile=/var/log/process.err.log
-    stdout_logfile=/var/log/process.out.log
-    exitcode=0
+command=./var/www/os2datascanner/scrapy-webscanner/start_process_manager.sh
+user=www-data
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/process.err.log
+stdout_logfile=/var/log/process.out.log
+exitcode=0
 
 EOT
 
