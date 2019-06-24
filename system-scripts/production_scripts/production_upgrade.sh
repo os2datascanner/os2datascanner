@@ -15,7 +15,7 @@ function prepare_ressources()
 
     managepy=$install_dir/webscanner_site/manage.py
 
-    $managepy collectstatic
+    $managepy collectstatic --noinput
     $managepy makemigrations --merge
     $managepy migrate
 
@@ -48,7 +48,7 @@ function restart_ressources()
     sudo pkill python
     sudo pkill soffice.bin
 
-    sudo service datascanner-manager reload
+    sudo service datascanner-manager restart
     sudo service supervisor reload
     sudo service apache2 reload
     echo 'Services restarted.'
