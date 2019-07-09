@@ -64,3 +64,18 @@ After that run
 
 Be advised that You have to restart it whenever You make code changes to any of the modules it uses
 
+**Q: I have started a filescan but nothing is being scanned on Ubuntu18.04 installation**
+
+Starting a filescan causes the web server to mount the remote drive under the `/tmp/mnt/os2datascanner` folder. On Ubuntu 18.04, the `PrivateTmp` feature of systemd gives the web server its own `/tmp` folder that is not visible to the rest of the system, so the scan processes can't see the mount point.
+
+As a temporary fix, `PrivateTmp` can be set to `false` so that the web server and the scan processes both share a common view of the `/tmp` folder.
+
+Do the following:
+
+.. code:: console
+
+    cp /lib/systemd/system/apache2.service /etc/systemd/system/
+    sed -i "s/PrivateTmp=true/PrivateTmp=false/g" /etc/systemd/system/apache2.service
+    systemctl daemon-reload
+    systemctl restart apache2.service
+
