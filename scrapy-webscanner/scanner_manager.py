@@ -6,7 +6,7 @@ import time
 import pika
 
 from run_webscan import StartWebScan
-from run_filescan import StartFileScan
+from run_filescan import StartFileScan, StartExchangeScan
 
 
 QUEUE_NAME = 'datascanner'
@@ -21,8 +21,11 @@ def callback(ch, method, properties, body):
     # Collect scan object and map properties
     if body['type'] == 'WebScanner':
         scan_job_list.append(StartWebScan(body))
-    else:
+    elif body['type'] == 'FileScanner':
         scan_job_list.append(StartFileScan(body))
+    elif body['type'] == 'ExchangeScanner':
+        scan_job_list.append(StartExchangeScan(body))
+
     scan_job_list[-1].start()
 
 
