@@ -10,7 +10,7 @@ import psutil
 try:
     from settings import EXCHANGE_EXPORT_DIR_PREFIX, LOGS_DIR
 except ImportError:
-    from .settings import EXCHANGE_EXPORT_DIR_PREFIX, EXCHANGE_LOGGER_DIR
+    from .settings import EXCHANGE_EXPORT_DIR_PREFIX, LOGS_DIR
 
 try:
     from PyExpLabSys.common.database_saver import DataSetSaver, CustomColumn
