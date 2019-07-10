@@ -33,6 +33,7 @@ from .models.regexpattern_model import RegexPattern
 from .models.regexrule_model import RegexRule
 from .models.scans.scan_model import Scan
 from .models.scannerjobs.scanner_model import Scanner
+from .models.scannerjobs.exchangescanner_model import ExchangeScanner
 from .models.statistic_model import Statistic, TypeStatistics
 from .models.url_model import Url
 from .models.urllastmodified_model import UrlLastModified
@@ -84,7 +85,7 @@ class UrlAdmin(admin.ModelAdmin):
     list_filter = ('scan',)
     list_display = ('url', 'scan')
 
-for _cls in [Organization, WebDomain, FileDomain, ExchangeDomain, Scanner,
+for _cls in [Organization, WebDomain, FileDomain, ExchangeDomain, ExchangeScanner, Scanner,
              ConversionQueueItem, ReferrerUrl, UrlLastModified, Group]:
     admin.site.register(_cls)
 
