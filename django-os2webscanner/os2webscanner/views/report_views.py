@@ -158,26 +158,25 @@ class ReportDetails(UpdateView, LoginRequiredMixin):
             # TODO: as is, this code is rather hard to understand; we
             # should probably refactor it to use urllib and/or pathlib
             # instead.
-            for k in ['matches', 'all_matches']:
-                for m in context[k]:
-                    path = unquote(m.url.url)
-                    # While we're at it, if we have an alias for whichever
-                    # domain this path came from, then convert the path into a
-                    # Windows-style path
-                    for domain in this_scan.domains.exclude(
-                            filedomain__alias__isnull=True).exclude(
-                            filedomain__alias__exact=''):
-                        url_with_schema = "file://" + domain.url
-                        if path.startswith(url_with_schema):
-                            everything_else = \
-                                path[len(url_with_schema):].strip('/')
-                            # Windows appears, in my limited testing, to
-                            # support forward slashes in paths nowadays
-                            m.url.url = "file://{0}:/{1}".format(
-                                    domain.filedomain.alias, everything_else)
-                            break
-                    else:
-                        m.url.url = path
+            for m in context['matches']:
+                path = unquote(m.url.url)
+                # While we're at it, if we have an alias for whichever domain
+                # this path came from, then convert the path into a
+                # Windows-style path
+                for domain in this_scan.domains.exclude(
+                        filedomain__alias__isnull=True).exclude(
+                        filedomain__alias__exact=''):
+                    url_with_schema = "file://" + domain.url
+                    if path.startswith(url_with_schema):
+                        everything_else = \
+                            path[len(url_with_schema):].strip('/')
+                        # Windows appears, in my limited testing, to support
+                        # forward slashes in paths nowadays
+                        m.url.url = "file://{0}:/{1}".format(
+                                domain.filedomain.alias, everything_else)
+                        break
+                else:
+                    m.url.url = path
 
         return context
 
