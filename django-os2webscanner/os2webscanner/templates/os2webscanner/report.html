@@ -379,7 +379,11 @@ Rapport
                 <tr class="danger">
                     <td>
                         <p>
-                            {{ broken }}
+                            {% if "file://" in broken.url %}
+                            {{ broken.url|slice:"7:" }}
+                            {% else %}
+                            {{ broken.url }}
+                            {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

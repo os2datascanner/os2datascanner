@@ -155,7 +155,8 @@ class FileSpider(ScannerSpider):
             elif isinstance(failure.value, IOError):
                 status_message = str(failure.value.errno)
 
-        self.broken_url_save(status_code, status_message, self.repair_url(url))
+        self.broken_url_save(status_code, status_message,
+                self.repair_url(self.add_correct_file_path_prefix(url)))
 
     def scan(self, response):
         """Scan a response, returning any matches."""
