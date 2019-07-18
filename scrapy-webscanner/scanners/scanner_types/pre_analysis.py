@@ -310,6 +310,8 @@ class PreDataScanner(object):
         status_string = 'Generated metadata for {} files. Total run-time: {:.2f}s'
         logging.info(status_string.format(self.stats['number_of_files'],
                                           self.stats['time_number_of_files']))
+        logging.info('Sleeping for 30 seconds (delete some files!)...')
+        time.sleep(30)
 
     def read_dirtree(self, path):
         logging.info('Reading directories...')
