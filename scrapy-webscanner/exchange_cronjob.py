@@ -49,7 +49,7 @@ def start_exchange_export():
         # Make export dir export ready
         if os.path.isdir(export_dir):
             shutil.rmtree(export_dir)
-        os.mkdir(export_dir)
+        os.makedirs(export_dir)
 
         exchange_scanner.is_exporting = True
         exchange_scanner.is_ready_to_scan = False
