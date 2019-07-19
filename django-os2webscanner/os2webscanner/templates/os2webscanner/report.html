@@ -262,8 +262,9 @@ Rapport
       </div>
       {% endif %}
 
-      {% if broken_urls %}
-        <h2>Broken Links</h2>
+    {% if broken_urls %}
+    {% if referrer_urls %}
+    <h2>Broken Links</h2>
     <div class="table-responsive">
         <table class="table">
             <tbody>
@@ -344,7 +345,52 @@ Rapport
 
                 </tr>
             {% endfor %}
+            </tbody>
+        </table>
     </div>
+    {% else %}
+    <h2>Fjernede filer</h2>
+    <i>Filer der blev fjernet i tidsrummet mellem drevanalyse og scan</i>
+    <div class="table-responsive">
+        <table class="table">
+            <tbody>
+            <tr>
+                <td>Totalt antal fjernede filer:</td>
+                <td>{{ no_of_broken_links }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td>
+                    <strong>
+                        <small>
+                            Sti
+                        </small>
+                    </strong>
+                </td>
+            </tr>
+            </thead>
+            <tbody>
+                {% for broken in broken_urls %}
+                <tr class="danger">
+                    <td>
+                        <p>
+                            {% if "file://" in broken.url %}
+                            {{ broken.url|slice:"7:" }}
+                            {% else %}
+                            {{ broken.url }}
+                            {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
     {% endif %}
       
     {% if failed_conversions or scan.status == "FAILED" %}

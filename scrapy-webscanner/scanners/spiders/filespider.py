@@ -114,6 +114,20 @@ class FileSpider(ScannerSpider):
         logging.info('Folder analysis completed...')
         return filemap
 
+    def repair_url(self, url):
+        domain = self.scanner.valid_domains.first()
+        old = ''
+        new = ''
+        if 'type' in self.scanner.configuration:
+            scanner_type = self.scanner.configuration["type"]
+            if scanner_type == 'FileScanner':
+                old = domain.filedomain.mountpath
+                new = domain.filedomain.url
+            elif scanner_type == 'ExchangeScanner':
+                old = as_file_uri(domain.exchangedomain.dir_to_scan)
+                new = domain.exchangedomain.url
+        return url.replace(old, new)
+
     def handle_error(self, failure):
         """Handle an error due to a non-success status code or other reason.
 
@@ -141,7 +155,8 @@ class FileSpider(ScannerSpider):
             elif isinstance(failure.value, IOError):
                 status_message = str(failure.value.errno)
 
-        self.broken_url_save(status_code, status_message, url)
+        self.broken_url_save(status_code, status_message,
+                self.repair_url(self.add_correct_file_path_prefix(url)))
 
     def scan(self, response):
         """Scan a response, returning any matches."""
@@ -154,23 +169,7 @@ class FileSpider(ScannerSpider):
             # Ignore this URL
             return
 
-        domain = self.scanner.valid_domains.first()
-        old = ''
-        new = ''
-        if 'type' in self.scanner.configuration:
-            scanner_type = self.scanner.configuration["type"]
-            if scanner_type == 'FileScanner':
-                old = domain.filedomain.mountpath
-                new = domain.filedomain.url
-            elif scanner_type == 'ExchangeScanner':
-                old = as_file_uri(domain.exchangedomain.dir_to_scan)
-                new = domain.exchangedomain.url
-
-        url_object = self.url_save(mime_type,
-                                   response.request.url.replace(
-                                       old, new)
-                                   )
-
+        url_object = self.url_save(
+                mime_type, self.repair_url(response.request.url))
         data = response.body
-
         self.scanner.scan(data, url_object)
