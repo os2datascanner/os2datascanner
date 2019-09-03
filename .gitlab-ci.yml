@@ -1,0 +1,3 @@
+test:
+  # we have no tests for version 2.0
+  script: 'true'
