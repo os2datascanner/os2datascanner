@@ -6,7 +6,7 @@ from twisted.internet import reactor, defer
 from run import StartScan
 
 from scanners.spiders.filespider import FileSpider
-from scanners.scanner_types.filescanner import FileScanner
+from scanners.scanner_types.filescanner import FileScanner, ExchangeScanner
 
 
 class StartFileScan(StartScan, multiprocessing.Process):
@@ -53,3 +53,18 @@ class StartFileScan(StartScan, multiprocessing.Process):
     def filescan_cleanup(self):
         for domain in self.scanner.valid_domains:
             domain.filedomain.smb_umount()
+
+
+class StartExchangeScan(StartFileScan):
+
+    def run(self):
+        """Updates the scan status and sets the pid.
+        Run the scanner, blocking until finished."""
+        super().run()
+        self.scanner = ExchangeScanner(self.configuration)
+        self.scanner.ensure_started()
+        self.start_filescan_crawlers()
+        self.scanner.done()
+
+    def filescan_cleanup(self):
+        pass

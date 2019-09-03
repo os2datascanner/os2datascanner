@@ -16,7 +16,7 @@ django-recurrence==1.5.0
 django-xmlrpc==0.1.8
 django-settings-export==1.2.1
 enum34==1.1.6
-exchangelib==1.11.4
+exchangelib==1.12.5
 ipython==6.4.0
 lxml==4.1.0
 pika==0.12.0

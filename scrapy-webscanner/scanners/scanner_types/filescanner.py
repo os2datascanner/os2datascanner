@@ -43,3 +43,24 @@ class FileScanner(Scanner):
         type_stats.count = count
         type_stats.size = size
         type_stats.save()
+
+
+class ExchangeScanner(FileScanner):
+
+    def get_domain_urls(self):
+        """Return a list of valid domain urls."""
+        domains = []
+        for d in self.valid_domains:
+            domains.append(d.exchangedomain.dir_to_scan)
+        return domains
+
+    def get_domain_objects(self):
+        """
+        Returns a list of valid domain objects
+        :return: domain list
+        """
+        domains = []
+        for domain in self.valid_domains:
+            domains.append(domain.exchangedomain.dir_to_scan)
+        return domains
+
