@@ -231,7 +231,9 @@ class ScanReportLog(ReportDetails):
             'Content-Disposition'
         ] = 'attachment; filename={0}'.format(log_file)
 
-        with open(scan.scan_log_file, "r") as f:
+        # Encoding needs to be explicitly defined,
+        # due to encoding error seen when running under mod_wsgi
+        with open(scan.scan_log_file, "rt", encoding="utf-8") as f:
             response.write(f.read())
         return response
 
