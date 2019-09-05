@@ -79,3 +79,11 @@ Do the following:
     systemctl daemon-reload
     systemctl restart apache2.service
 
+**Q: Unicodedecode error is thrown when I try to download Logfile from a report**
+
+The reason behind this is apache2 envvars setup file, which as default has LANG=C set for the different mods enabled.
+This setting tells apache2 to use ascii encoding for the diffent mods instead of utf-8.
+
+.. code:: console
+    sed -i "s/LANG=C/LANG=C.UTF-8/g" /etc/apache2/envvars
+    systemctl restart apache2.service
