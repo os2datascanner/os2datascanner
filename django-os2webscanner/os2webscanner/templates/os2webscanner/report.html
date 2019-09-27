@@ -241,7 +241,17 @@ Rapport
                       <span>{{ match.get_matched_rule_display }}</span>
                   </td>
                   <td class="match-data">
-                      <span>{{ match.matched_data }}</span>
+                      <span>
+                          {% for data in match.get_limited_matched_data %}
+                              {% if  forloop.counter0 == 9 %}
+                                {{ data }}</br>...
+                              {% elif forloop.last%}
+                                    {{ data }}
+                              {% else %}
+                                {{ data }},
+                              {% endif %}
+                          {% endfor %}
+                      </span>
                   </td>
                   <td class="match-sensitivity">
                       <span>{{ match.get_sensitivity_display }}</span>
