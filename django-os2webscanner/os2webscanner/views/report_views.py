@@ -270,7 +270,7 @@ def render_csv_report(scan, context):
                     match.url.url.replace('file://', ''), match.get_matched_rule_display(),
                     match.matched_data.replace('\n', '').replace('\r', ' '),
                     match.get_sensitivity_display(),
-                    match.match_context])
+                    match.match_context.replace('\n', '').replace('\r', ' ')])
 
     broken_urls = context['broken_urls']
     if broken_urls:
