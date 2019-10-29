@@ -53,5 +53,6 @@ def check_url(url, method="HEAD"):
 
         if code:
             reason = "%d %s" % (code, reason)
-
+        # Remove any new lines
+        reason = reason.replace('\n', ' ')
         return {"status_code": code, "status_message": reason}
