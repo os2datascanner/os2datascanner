@@ -1,3 +1,11 @@
+* Version 2.2.5, October 30, 2019
+
+New in this version:
+   - Better support for csv report export import in MS excel
+   - Aliases for file source is now shown in csv export.
+   - Only the first 10 matches are shown for each file in the scanner report.
+   - Link inspection in the scanner reports broke if http status message contained new lines. This is now supported.
+
 * Version 2.2.4, July 10, 2019
 
 New in this version:
