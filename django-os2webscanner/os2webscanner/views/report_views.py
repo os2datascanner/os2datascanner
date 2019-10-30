@@ -88,10 +88,6 @@ def _set_match_url(m, url):
 def _set_broken_url(m, url):
     m.url = url
 
-report_field_fixups = (
-    ('matches', _get_match_url, _set_match_url),
-    ('broken_urls', _get_broken_url, _set_broken_url),
-)
 
 # Reports stuff
 class ReportDetails(UpdateView, LoginRequiredMixin):
@@ -162,6 +158,15 @@ class ReportDetails(UpdateView, LoginRequiredMixin):
         except ObjectDoesNotExist:
             pass
 
+        report_field_fixups = (
+            ('matches', _get_match_url, _set_match_url),
+            ('broken_urls', _get_broken_url, _set_broken_url),
+        )
+        self.fixup_paths(context, this_scan, report_field_fixups)
+
+        return context
+
+    def fixup_paths(self, context, this_scan, report_field_fixups):
         if hasattr(this_scan.scanner, 'filescanner'):
             # Patch all of the context's match model objects to have paths and
             # not encoded URLs. (This should be fine, since we don't save
@@ -174,13 +179,13 @@ class ReportDetails(UpdateView, LoginRequiredMixin):
             # instead.
             for field, getter, setter in report_field_fixups:
                 for m in context[field]:
-                    path = getter(m)
+                    path = unquote(getter(m))
                     # While we're at it, if we have an alias for whichever
                     # domain this path came from, then convert the path into a
                     # Windows-style path
                     for domain in this_scan.domains.exclude(
                             filedomain__alias__isnull=True).exclude(
-                            filedomain__alias__exact=''):
+                        filedomain__alias__exact=''):
                         url_with_schema = "file://" + domain.url
                         if path.startswith(url_with_schema):
                             everything_else = \
@@ -188,12 +193,10 @@ class ReportDetails(UpdateView, LoginRequiredMixin):
                             # Windows appears, in my limited testing, to
                             # support forward slashes in paths nowadays
                             setter(m, "file://{0}:/{1}".format(
-                                    domain.filedomain.alias, everything_else))
+                                domain.filedomain.alias, everything_else))
                             break
                     else:
                         setter(m, path)
-
-        return context
 
 
 class ReportDelete(DeleteView, LoginRequiredMixin):
@@ -231,7 +234,9 @@ class ScanReportLog(ReportDetails):
             'Content-Disposition'
         ] = 'attachment; filename={0}'.format(log_file)
 
-        with open(scan.scan_log_file, "r") as f:
+        # Encoding needs to be explicitly defined,
+        # due to encoding error seen when running under mod_wsgi
+        with open(scan.scan_log_file, "rt", encoding="utf-8") as f:
             response.write(f.read())
         return response
 
@@ -262,10 +267,10 @@ def render_csv_report(scan, context):
 
         for match in all_matches:
             yield writer.writerow([
-                    match.url.url, match.get_matched_rule_display(),
+                    match.url.url.replace('file://', ''), match.get_matched_rule_display(),
                     match.matched_data.replace('\n', '').replace('\r', ' '),
                     match.get_sensitivity_display(),
-                    match.match_context])
+                    match.match_context.replace('\n', '').replace('\r', ' ')])
 
     broken_urls = context['broken_urls']
     if broken_urls:
@@ -282,6 +287,11 @@ class CSVReportDetails(ReportDetails):
     def render_to_response(self, context, **response_kwargs):
         """Generate a CSV file and return it as the http response."""
         scan = self.get_object()
+        report_field_fixups = (
+            ('all_matches', _get_match_url, _set_match_url),
+            ('broken_urls', _get_broken_url, _set_broken_url),
+        )
+        self.fixup_paths(context, scan, report_field_fixups)
         response = StreamingHttpResponse(
                 render_csv_report(scan, context), content_type='text/csv')
         report_file = '{0}{1}.csv'.format(

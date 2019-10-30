@@ -47,6 +47,15 @@ class Match(models.Model):
     match_context = models.CharField(max_length=1152, verbose_name='Kontekst')
     page_no = models.IntegerField(null=True, verbose_name='Side')
 
+    def get_limited_matched_data(self):
+        """Returns the matched_data corresponding to the limit if possible."""
+        limit = 10
+        _temp = self.matched_data.split(',')
+        if len(_temp) <= limit:
+            return _temp
+        else:
+            return _temp[:limit]
+
     def get_matched_rule_display(self):
         """Return a display name for the rule."""
         return Match.get_matched_rule_display_name(self.matched_rule)
