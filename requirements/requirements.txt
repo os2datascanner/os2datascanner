@@ -11,7 +11,7 @@ psutil==5.6.3
 pycrypto==2.6.1
 python-dateutil==2.8.0
 python-magic==0.4.15
-Twisted==19.2.1
+Twisted==19.7.0
 arrow==0.14.4
 regex==2019.06.08
 unicodecsv==0.14.1
