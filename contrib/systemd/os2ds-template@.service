@@ -1,0 +1,13 @@
+[Unit]
+Description=OS2datascanner pipeline: SERVICE_NAME %i
+After=rabbitmq-server.service
+Requires=rabbitmq-server.service
+
+[Service]
+ProtectSystem=strict
+PrivateTmp=true
+DynamicUser=true
+StandardOutput=journal
+SyslogIdentifier=OS2ds-SERVICE_SHORTNAME%i
+ExecStart=PRODUCTION_PATH/pex python -m os2datascanner.engine2.pipeline.SERVICE_NAME
+Restart=on-failure
