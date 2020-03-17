@@ -22,12 +22,28 @@ class MatchesMessage(NamedTuple):
             return None
         else:
 
-            def _cms(match):
-                if "sensitivity" in match["rule"]:
-                    return match["rule"]["sensitivity"] or 0
+            def _cms(rule_result):
+                """Computes the sensitivity of a set of results returned by a
+                rule, returning (in order of preference) the highest
+                sensitivity associated with a match, the sensitivity of the
+                rule, or 0."""
+                print(rule_result)
+                max_sub = None
+                if rule_result["matches"] is not None:
+                    max_sub = None
+                    for match in rule_result["matches"]:
+                        if "sensitivity" in match:
+                            sub = match["sensitivity"]
+                            if max_sub is None or sub > max_sub:
+                                max_sub = sub
+                if max_sub is not None:
+                    return max_sub
+                elif "sensitivity" in rule_result["rule"]:
+                    return rule_result["rule"]["sensitivity"] or 0
                 else:
                     return 0
-            return Sensitivity(max([_cms(match) for match in self.matches]))
+            return Sensitivity(
+                    max([_cms(rule_result) for rule_result in self.matches]))
 
 
 class DocumentReport(models.Model):
