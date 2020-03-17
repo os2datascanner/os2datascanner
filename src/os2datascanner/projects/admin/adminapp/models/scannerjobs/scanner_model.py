@@ -187,6 +187,10 @@ class Scanner(models.Model):
         "Scanneren kunne ikke startes," +
         " fordi der er en exchange export igang."
     )
+    HAS_NO_RULES = (
+        "Scanneren kunne ikke startes," +
+        " fordi den ingen tilknyttede regler har."
+    )
 
     process_urls = JSONField(null=True, blank=True)
 
