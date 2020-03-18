@@ -70,3 +70,29 @@ class Engine2PipelineTests(unittest.TestCase):
                 message.sensitivity,
                 Sensitivity.PROBLEM,
                 "match sensitivity failed")
+
+    def test_anomalous_sensitivity(self):
+        message = MatchesMessage(
+            scan_spec={}, # unused (at present)
+            handle=None, # unused (at present)
+            matched=True,
+            matches=[
+                {
+                    "rule": {
+                        "type": "fictional",
+                        "sensitivity": 250
+                    },
+                    "matches": [
+                        {
+                            "match": True,
+                            "sensitivity": 1000
+                        }
+                    ]
+                }
+            ]
+        )
+
+        self.assertEqual(
+                message.sensitivity,
+                Sensitivity.NOTICE,
+                "sensitivity too high")
