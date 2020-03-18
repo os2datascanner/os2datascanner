@@ -24,7 +24,6 @@ class MatchesMessage(NamedTuple):
                 rule, returning (in order of preference) the highest
                 sensitivity associated with a match, the sensitivity of the
                 rule, or 0."""
-                print(rule_result)
                 max_sub = None
                 if rule_result["matches"] is not None:
                     max_sub = None
