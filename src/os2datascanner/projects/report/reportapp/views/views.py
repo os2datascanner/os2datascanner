@@ -67,7 +67,6 @@ class MainPageView(TemplateView, LoginRequiredMixin):
         sensitivities = {}
         for dr in self.data_results:
             if dr.matches:
-                print(dr.matches)
                 sensitivity = dr.matches.sensitivity
                 if not sensitivity in sensitivities:
                     sensitivities[sensitivity] = 0
