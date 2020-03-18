@@ -56,7 +56,7 @@ class LibreOfficeObjectHandle(Handle):
 
     @property
     def presentation(self):
-        return "{0} (in {1})".format(self.relative_path, self.source.handle)
+        return self.source.handle.presentation
 
     def censor(self):
         return LibreOfficeObjectHandle(

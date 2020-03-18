@@ -1,4 +1,5 @@
 from io import BytesIO
+import os.path
 from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
@@ -78,7 +79,11 @@ class MailPartHandle(Handle):
 
     @property
     def presentation(self):
-        return "{0} (in {1})".format(self.name, self.source.handle)
+        basename = os.path.basename(self.relative_path)
+        if not basename:
+            return self.source.handle.presentation
+        else:
+            return "{0} (in {1})".format(basename, self.source.handle)
 
     def censor(self):
         return MailPartHandle(
