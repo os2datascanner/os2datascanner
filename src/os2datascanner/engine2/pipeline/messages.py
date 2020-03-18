@@ -22,10 +22,15 @@ class MatchesMessage(NamedTuple):
             def _cms(rule_result):
                 """Computes the sensitivity of a set of results returned by a
                 rule, returning (in order of preference) the highest
-                sensitivity associated with a match, the sensitivity of the
-                rule, or 0."""
+                sensitivity (lower than that of the rule) associated with a
+                match, the sensitivity of the rule, or 0."""
+                rule_sensitivity = None
+                if "sensitivity" in rule_result["rule"]:
+                    rule_sensitivity = rule_result["rule"]["sensitivity"]
+
                 max_sub = None
-                if rule_result["matches"] is not None:
+                if (rule_sensitivity is not None
+                        and rule_result["matches"] is not None):
                     max_sub = None
                     for match in rule_result["matches"]:
                         if "sensitivity" in match:
@@ -33,9 +38,11 @@ class MatchesMessage(NamedTuple):
                             if max_sub is None or sub > max_sub:
                                 max_sub = sub
                 if max_sub is not None:
-                    return max_sub
-                elif "sensitivity" in rule_result["rule"]:
-                    return rule_result["rule"]["sensitivity"] or 0
+                    # Matches can only have a lower sensitivity than their
+                    # rule, never a higher one
+                    return min(rule_sensitivity or 0, max_sub)
+                elif rule_sensitivity is not None:
+                    return rule_sensitivity
                 else:
                     return 0
             return Sensitivity(
