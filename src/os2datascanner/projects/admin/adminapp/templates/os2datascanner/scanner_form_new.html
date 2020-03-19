@@ -559,7 +559,7 @@
 
   <fieldset class="form__fieldset">
     <legend>Tilføj regler</legend>
-    <div class="form__group">
+    <div class="form__group{% if form.rules.errors %} has-error{% endif %}">
       <div class="select-rules">
 
         <ul id="available_rules" class="select-rules__available">
@@ -574,6 +574,7 @@
           <div id="rules_list"></div>
         </div>
 
+        {% if form.rules.errors %}{{ form.rules.errors }}{% endif %}
       </div>
     </div>
   </fieldset>
