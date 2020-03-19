@@ -44,6 +44,8 @@ class Engine2ConversionTest(unittest.TestCase):
             convert(self._ir, OutputType.Dummy)
 
     def test_html(self):
-        self.assertIn(
-                "This is only a test.",
+        self.assertEquals(
+                "This is only a test. "
+                "There's one paragraph, "
+                "and then there's the other paragraph.",
                 convert(self._hr, OutputType.Text).value)
