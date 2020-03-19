@@ -44,6 +44,6 @@ class Engine2ConversionTest(unittest.TestCase):
             convert(self._ir, OutputType.Dummy)
 
     def test_html(self):
-        self.assertIn(
+        self.assertEquals(
                 "This is only a test.",
                 convert(self._hr, OutputType.Text).value)
