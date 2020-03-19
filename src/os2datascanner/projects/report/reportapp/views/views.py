@@ -24,9 +24,14 @@ from django.views.generic import View, TemplateView
 from ..models.documentreport_model import DocumentReport
 from ..models.roles.defaultrole_model import DefaultRole
 
+from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.rules.regex import RegexRule
 
 logger = structlog.get_logger()
+
+
+RENDERABLE_RULES = (CPRRule.type_label, RegexRule.type_label,)
 
 
 class LoginRequiredMixin(View):
@@ -60,7 +65,17 @@ class MainPageView(TemplateView, LoginRequiredMixin):
         results = DocumentReport.objects.none()
         for role in roles:
             results |= role.filter(DocumentReport.objects.all())
-        self.data_results = results
+
+        # Filter out anything we don't know how to show in the UI
+        self.data_results = []
+        for result in results:
+            if "matches" in result.data and result.data["matches"]:
+                mm = result.data["matches"]
+                renderable_matches = [cm for cm in mm["matches"]
+                        if cm["rule"]["type"] in RENDERABLE_RULES]
+                if renderable_matches:
+                    mm["matches"] = renderable_matches
+                    self.data_results.append(result)
 
         # Results are grouped by the rule they where found with,
         # together with the count.
