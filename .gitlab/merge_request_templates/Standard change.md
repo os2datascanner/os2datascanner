@@ -15,13 +15,13 @@ Checkboxes can be pre-filled before submitting the MR by replacing
 -->
 - [ ] The code has been rebased/squashed into a minimal amount of atomic commits that reference the ticket ID (eg. `[#12345] Implement featureX in Y`)
 - [ ] The title of this MR contains the relevant ticket no., formatted like `[#12345]` or `#12345`
-- [ ] The corresponding Redmine ticket has been set to `Needs review` or `Release Management: QA (Int)` (whichever is applicable)
-- [ ] The feature/bugfix has been approved by KU or tested manually
+- [ ] The corresponding Redmine ticket has been set to `Needs review`
+- [ ] The feature/bugfix has been tested manually
 - [ ] I have added unit tests or made a conscious decision not to
 - [ ] The MR does not introduce indentation or charset issues
-- [ ] The code contains inline and/or POD documentation where relevant
+- [ ] The code contains documentation where relevant
 - [ ] The feature/bugfix has no dependencies (eg. database/config changes), or: I have noted the dependencies on the corresponding Redmine ticket
-- [ ] The feature/bugfix does not depend on changes in `obvius`, or: I have referenced the relevant MR in the description
+- [ ] I have referenced the relevant MR in the description
 
 ## Review checklist
 
