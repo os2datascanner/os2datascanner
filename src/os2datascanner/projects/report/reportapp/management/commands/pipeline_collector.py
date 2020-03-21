@@ -35,47 +35,43 @@ def consume_results(channel, method, properties, body):
 
 
 def _restructure_and_save_result(result):
-    """Method for structuring and storing result body.
+    """Method for restructuring and storing result body.
 
     The agreed structure is as follows:
     {'scan_tag', '2019-11-28T14:56:58', 'matches': null, 'metadata': null,
     'problem': []}
     """
+    updated_fields = _format_results(json_utf8_decode(result))
+    if updated_fields:
+        handle = result.get('handle')
 
-    result = json_utf8_decode(result)
+        DocumentReport.objects.update_or_create(
+            path=hash_handle(handle), data=updated_fields)
+
+
+def _format_results(result):
+    """Method for restructuring result body"""
+
+    updated_fields = {}
+    origin = result.get('origin')
+
     # TODO: Problem messages do not have a well enough
     # defined structure to be used in the system yet.
     # Therefore they are just logged for now.
-    origin = result.get('origin')
     if origin == 'os2ds_problems':
         logger.info('Problem message recieved: {}'.format(result))
-        return
-
-    handle = result.get('handle')
-
-    report, created = DocumentReport.objects.get_or_create(
-        path=hash_handle(handle))
-
-    if created:
-        report.data = {}
-        report.data['scan_tag'] = ''
-        report.data['matches'] = None
-        report.data['metadata'] = None
-        report.data['problems'] = []
-
-    if origin == 'os2ds_metadata':
-        report.data['scan_tag'] = result.get('scan_tag')
-        report.data['metadata'] = result
+    elif origin == 'os2ds_metadata':
+        updated_fields['scan_tag'] = result.get('scan_tag')
+        updated_fields['metadata'] = result
     elif origin == 'os2ds_matches':
         if result.get('matched'):
-            report.data['scan_tag'] = result.get('scan_spec').get('scan_tag')
-            report.data['matches'] = result
+            updated_fields['scan_tag'] = result.get('scan_spec').get('scan_tag')
+            updated_fields['matches'] = result
         else:
             logger.info('Object processed with no matches: {}'.format(result))
-    # elif origin == 'os2ds_problems':
-    #     report.data['problems'].append(result)
 
-    report.save()
+    return updated_fields
+
 
 
 class Command(BaseCommand):
