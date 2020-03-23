@@ -21,7 +21,7 @@ Checkboxes can be pre-filled before submitting the MR by replacing
 - [ ] The MR does not introduce indentation or charset issues
 - [ ] The code contains documentation where relevant
 - [ ] The feature/bugfix has no dependencies (eg. database/config changes), or: I have noted the dependencies on the corresponding Redmine ticket
-- [ ] I have referenced the relevant MR in the description
+- [ ] The MR does not depend on changes outside of the relevant development branch other than those referenced in the description
 
 ## Review checklist
 
