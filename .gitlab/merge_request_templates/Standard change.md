@@ -15,7 +15,7 @@ Checkboxes can be pre-filled before submitting the MR by replacing
 -->
 - [ ] The code has been rebased/squashed into a minimal amount of atomic commits that reference the ticket ID (eg. `[#12345] Implement featureX in Y`)
 - [ ] The title of this MR contains the relevant ticket no., formatted like `[#12345]` or `#12345`
-- [ ] The corresponding Redmine ticket has been set to `Needs review`
+- [ ] The corresponding Redmine ticket has been set to `Needs review` and assigned to the principal reviewer
 - [ ] The feature/bugfix has been tested manually
 - [ ] I have added unit tests or made a conscious decision not to
 - [ ] The MR does not introduce indentation or charset issues
