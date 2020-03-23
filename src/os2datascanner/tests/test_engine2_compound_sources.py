@@ -64,3 +64,10 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                         os.path.join(
                                 test_data_path,
                                 "pdf/embedded-cpr.pdf")))
+
+    def test_doc(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "msoffice/embedded-cpr.doc")))
