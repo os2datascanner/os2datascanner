@@ -17,7 +17,7 @@ libreoffice
 imagemagick
 unoconv
 mailutils
-libssl-dev
+libssl1.0-dev
 cifs-utils
 rabbitmq-server
 libkrb5-dev
@@ -29,6 +29,9 @@ moreutils
 linux-image-generic
 rsync
 libsystemd-dev
-npm
 openssl
 libxmlsec1-dev
+pkg-config
+xmlsec1
+pwgen
+npm

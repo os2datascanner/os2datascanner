@@ -83,6 +83,16 @@ function collectstatic_and_makemessages()
     "$repo_dir/bin/manage-$module" compilemessages
 }
 
+function npm_install_and_build()
+{
+    module=$1
+    repo_dir=$2
+    echo "Installing npm packages"
+    cd $repo_dir/src/os2datascanner/$module/"$module"app/
+    npm install .
+    npm run build
+}
+
 #
 # DATABASE SETUP
 #
@@ -113,25 +123,29 @@ function apache_setup()
 {
     prod_dir=$1
     domain=$2
+    module=$3
     vhost=$prod_dir/contrib/config/vhost
 
-    # Copy the vhost
-    sudo ln -sv $vhost /etc/apache2/sites-available/$domain.conf
-
+    module_vhost=$prod_dir/contrib/config/$module-module/$module-vhost.conf
+    cp $prod_dir/contrib/config/vhost $module_vhost
     # Add install path and domainname in vhost
-    sed -i "s|INSERT_INSTALL_PATH|$prod_dir|g" $vhost
-    sed -i "s|INSERT_DOMAIN|$domain|g" $vhost
+    sed -i "s|INSERT_INSTALL_PATH|$prod_dir|g" $module_vhost
+    sed -i "s|INSERT_DOMAIN|$domain|g" $module_vhost
+    sed -i "s|INSERT_CERT_FILE|/etc/apache2/certs/datascanner|g" $module_vhost
+    sed -i "s|INSERT_CERT_KEY|/etc/apache2/certs/datascanner|g" $module_vhost
+    sed -i "s|INSERT_CACERT_FILE|/etc/apache2/certs/datascanner|g" $module_vhost
+    sed -i "s|INSERT_MODULE|$module|g" $module_vhost
+
+    # Create os2datascanner ssl certs dir
+    sudo mkdir -p /etc/apache2/certs/datascanner
 
     # Create log dir
     sudo mkdir -p /var/log/$domain
 
-    # Disable old site, disable wsgi and enable new vhos
-    sudo a2dissite 000-default
-    sudo a2dismod index
-    sudo a2enmod rewrite wsgi headers ssl
-    sudo a2ensite $domain
+    # Copy the vhost
+    sudo ln -sv $module_vhost /etc/apache2/sites-available/$domain.conf
 
-    sudo service apache2 reload
+    # Until ssl-certificates are on the server we cannot reload the apache2 service.
 }
 
 #
@@ -146,8 +160,9 @@ function copy_to_prod_dir()
     sudo -H rsync \
         --progress --recursive --delete  \
         --links --safe-links \
+        --exclude ".*/" \
+        --exclude ".*" \
         --exclude ".git/" \
-        --exclude "var/" \
         --exclude "python-env/" \
         --exclude '*.pyc' \
         "$repo_dir"/ "$prod_dir"
