@@ -18,5 +18,8 @@ def _unwrap_node(n, top=False):
 def html_processor(r, **kwargs):
     with r.make_stream() as fp:
         soup = BeautifulSoup(fp, "lxml")
-        _unwrap_node(soup.body, top=True)
-        return " ".join(soup.body.get_text().split())
+        if soup.body:
+            _unwrap_node(soup.body, top=True)
+            return " ".join(soup.body.get_text().split())
+        else:
+            return None
