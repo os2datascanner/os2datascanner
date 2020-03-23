@@ -15,8 +15,8 @@ WSGIPythonPath  INSERT_INSTALL_PATH
     SSLCertificateKeyFile   INSERT_CERT_KEY
     SSLCACertificateFile    INSERT_CACERT_FILE
 
-    WSGIDaemonProcess       datascanner-MODULE
-    WSGIProcessGroup        datascanner-MODULE
+    WSGIDaemonProcess       datascanner-INSERT_MODULE
+    WSGIProcessGroup        datascanner-INSERT_MODULE
 
     # Always set these headers.
     Header always set Access-Control-Allow-Origin "*"
