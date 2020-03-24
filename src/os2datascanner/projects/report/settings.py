@@ -26,8 +26,9 @@ LOGS_DIR = os.path.join(VAR_DIR, 'logs')
 
 DEBUG = False
 
-# Application definition
+SECRET_KEY = 'ld0_g)jhp3v27&od88-_v83ldb!0i^bac=jh+je!!=jbvra7@j'
 
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
