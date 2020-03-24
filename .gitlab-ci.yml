@@ -31,7 +31,7 @@ notice:
     - apt-get install -qq $(cat requirements/test_dependencies.txt)
     - pip install -e . -r requirements/requirements-dev.txt
 
-    - django-admin makemigrations --check --dry-run
+    - python -m os2datascanner.projects.admin.manage makemigrations --check --dry-run
 
     - python -m unittest discover -s src/ -p notice*.py
 
@@ -58,7 +58,7 @@ tests:
     - apt-get install -qq $(cat requirements/test_dependencies.txt)
     - pip install -e . -r requirements/requirements-dev.txt
 
-    - django-admin makemigrations --check --dry-run
+    - python -m os2datascanner.projects.admin.manage makemigrations --check --dry-run
 
     - coverage erase
     - coverage run -m django test os2datascanner.tests
