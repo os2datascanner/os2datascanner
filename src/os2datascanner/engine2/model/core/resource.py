@@ -59,6 +59,12 @@ class TimestampedResource(Resource):
 class FileResource(TimestampedResource):
     """A FileResource is a TimestampedResource that can be viewed as a file: a
     sequence of bytes with a size."""
+
+    GENERIC_TYPES = ("application/zip", "application/CDFV2",)
+    """The computed types that should be discarded in favour of the guessed
+    type, which is likely to be more specific. (Not used if the guessed type is
+    the completely generic value "application/octet-stream")."""
+
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
         self._lm_timestamp = None
@@ -87,8 +93,22 @@ class FileResource(TimestampedResource):
         """Guesses the type of this file, possibly examining its content in the
         process. By default, this is computed by giving libmagic the first 512
         bytes of the file."""
+        guessed = self.handle.guess_type()
         with self.make_stream() as s:
-            return magic.from_buffer(s.read(512), True)
+            computed = magic.from_buffer(s.read(512), True)
+        if guessed == computed:
+            # If the guess and the computed values agree, then this isn't a
+            # hard problem
+            return computed
+        elif (computed in self.GENERIC_TYPES
+                and guessed != "application/octet-stream"):
+            # If the first 512 bytes of the file look like a generic format and
+            # the guessed type doesn't look completely contentless, then prefer
+            # the guess
+            return guessed
+        else:
+            # Otherwise, we prefer the computed type
+            return computed
 
 
 MAIL_MIME = "message/rfc822"
