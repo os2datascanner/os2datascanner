@@ -1,11 +1,17 @@
 # OS2datascanner - Admin module
 
-To run webpack for frontend asset bundeling, run:
+## To install everything for frontend assets building:
 
-`npm install`
-`npm run build`
+`$ npm install`
+
+## To run webpack for frontend asset bundling and watching on development:
+
+`$ npm run dev`
 
 This will bundle JS files in the `static/src/js/` folder to `static/dist/bundle.js` and CSS/CSSS/SASS (please use only SCSS) files from the `static/src/css/` folder to `static/dist/bundle.css`
 
-## Icons
-When editing icons in the icon pack, load the `static/src/svg/selection.json` file into [icomoon.io app](https://icomoon.io/app/) or log in and select the **Datascanner Admin**  project
+## To run webpack for frontend asset bundling on production:
+
+`$ npm run prod`
+
+This will bundle JS files in the `static/src/js/` folder to `static/dist/bundle.min.js` and CSS/CSSS/SASS (please use only SCSS) files from the `static/src/css/` folder to `static/dist/bundle.min.css`
