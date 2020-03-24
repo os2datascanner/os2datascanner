@@ -19,9 +19,9 @@ notice:
     - postgres:alpine
     - rabbitmq:alpine
   variables:
-    POSTGRES_DB: os2datascanner
-    POSTGRES_USER: os2datascanner
-    POSTGRES_PASSWORD: os2datascanner
+    POSTGRES_DB: os2datascanner_admin
+    POSTGRES_USER: os2datascanner_admin
+    POSTGRES_PASSWORD: os2datascanner_admin
     POSTGRES_HOST: postgres
     AMQP_HOST: rabbitmq
     DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
@@ -44,9 +44,9 @@ tests:
     - rabbitmq:alpine
   image: python:3.6
   variables:
-    POSTGRES_DB: os2datascanner
-    POSTGRES_USER: os2datascanner
-    POSTGRES_PASSWORD: os2datascanner
+    POSTGRES_DB: os2datascanner_admin
+    POSTGRES_USER: os2datascanner_admin
+    POSTGRES_PASSWORD: os2datascanner_admin
     POSTGRES_HOST: postgres
     AMQP_HOST: rabbitmq
     DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
