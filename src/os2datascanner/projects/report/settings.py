@@ -74,9 +74,9 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'os2datascanner-report',
-        'USER': 'os2datascanner',
-        'PASSWORD': 'os2datascanner',
+        'NAME': 'os2datascanner_report',
+        'USER': 'os2datascanner_report',
+        'PASSWORD': 'os2datascanner_report',
         'HOST': os.getenv('POSTGRES_HOST', '127.0.0.1'),
     }
 }
