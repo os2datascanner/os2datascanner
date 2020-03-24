@@ -26,7 +26,6 @@ echo -e '\n************* Copy *************\n'
 copy_to_prod_dir $prod_dir
 
 echo -e '\n************* Installation *************\n'
-
 # Install system dependencies and python-env
 source $prod_dir/install.sh
 
@@ -37,6 +36,10 @@ source $prod_dir/contrib/system-scripts/production-scripts/admin_deploy.sh $doma
 echo -e '\n************* Report module *************\n'
 # Setup report module
 source $prod_dir/contrib/system-scripts/production-scripts/report_deploy.sh $domain-report.dk $saml2_auth $prod_dir
+
+echo -e '\n************* Engine2 setup *************\n'
+# Setup engine2 services
+source $prod_dir/contrib/system-scripts/production-scripts/engine_deploy.sh $prod_dir
 
 echo -e '\n************* Success *************\n'
 
