@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [ $# -lt 4 ]
 then
     echo "usage: admin_deploy.sh [DOMAIN] [ENABLE_WEBSCAN] [ENABLE_FILESCAN] [ENABLE_MAILSCAN] [PROD_DIR]"
