@@ -20,6 +20,8 @@ def libreoffice(*args):
 
 
 @Source.mime_handler(
+        "application/CDFV2",
+
         "application/msword",
         "application/vnd.oasis.opendocument.text",
         "application/vnd.openxmlformats-officedocument"
