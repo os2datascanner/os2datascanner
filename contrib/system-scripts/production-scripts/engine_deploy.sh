@@ -10,9 +10,7 @@ prod_path=$1
 echo "$prod_path"
 declare -a pipeline_names=("explorer" "processor" "matcher" "tagger" "exporter")
 
-pwd > .pwd
-
-repo_dir=`cat .pwd`
+repo_dir="`dirname "$BASH_SOURCE[0]"`/../../../"
 systemd_dir=$repo_dir/contrib/systemd
 systemd_template=$systemd_dir/os2ds-template@.service
 for name in ${pipeline_names[@]}; do
