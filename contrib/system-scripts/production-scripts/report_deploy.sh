@@ -42,7 +42,7 @@ new_service="$systemd_dir/$service_name"
 command="$prod_dir/bin/manage-report pipeline_collector"
 short_name="$(echo $name | cut -c1-4)"
 
-sed -i "s#PRODUCTION_PATH/pex python -m os2datascanner.engine2.pipeline.SERVICE_NAME#$command#g" "$new_service"
+sed -i "s#COMMAND_LINE#$command#g" "$new_service"
 sed -i "s/SERVICE_NAME/$name/g" "$new_service"
 sed -i "s/SERVICE_SHORTNAME/$short_name/g" "$new_service"
 
