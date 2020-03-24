@@ -19,7 +19,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'OS2datascanner'
-copyright = '2019, Magenta ApS'
+copyright = '2014-2020 Magenta ApS`
 author = 'Magenta ApS'
 
 # The short X.Y version
