@@ -14,6 +14,7 @@ function setup_local_settings()
     db_user=os2datascanner_$2
     domain=$3
     local_settings_file=$4
+    debug=$5
 
     secret_key=$(xxd -c 64 -l 64 -p /dev/urandom)
     db_pass=$(pwgen -s -1 12)
@@ -27,24 +28,12 @@ function setup_local_settings()
     sed -i "s/INSERT_DB_NAME/$db_name/g" "$local_settings_file"
     sed -i "s/INSERT_DB_USER/$db_user/g" "$local_settings_file"
     sed -i "s/INSERT_DB_PASSWD/$db_pass/g" "$local_settings_file"
-    sed -i "s/DEBUG = True/DEBUG = False/g" "$local_settings_file"
+    sed -i "s/DEBUG = False/DEBUG = $debug/g" "$local_settings_file"
     sed -i "s/INSERT_DOMAIN_NAME/$domain/g" "$local_settings_file"
 
     # Link local settings file to administration modules local settings
-    ln -sf "$local_settings_file" "$repo_dir/src/os2datascanner/projects/$2/local_settings.py"
+    ln -svfr "$local_settings_file" "$repo_dir/src/os2datascanner/projects/$2/local_settings.py"
 
-}
-
-function setup_local_settings_sources()
-{
-    enable_webscan=$1
-    enable_mailscan=$2
-    enable_filescan=$3
-    local_settings_file=$4
-
-    sed -i "s/ENABLE_WEBSCAN = False/ENABLE_WEBSCAN = $enable_webscan/g" "$local_settings_file"
-    sed -i "s/ENABLE_EXCHANGESCAN = False/ENABLE_EXCHANGESCAN = $enable_mailscan/g" "$local_settings_file"
-    sed -i "s/ENABLE_FILESCAN = False/ENABLE_FILESCAN = $enable_filescan/g" "$local_settings_file"
 }
 
 perform_django_migrations()
@@ -96,6 +85,9 @@ function npm_install_and_build()
 #
 # DATABASE SETUP
 #
+function _psql_query() {
+    [ "`sudo -Hu postgres psql --no-align --tuples-only --quiet --command "SELECT 'FOUND' FROM $1 LIMIT 1"`" = 'FOUND' ]
+}
 
 function create_database()
 {
@@ -105,14 +97,23 @@ function create_database()
     # Login as postgres user
     as_postgres="sudo -u postgres"
 
-    # Create new database
-    $as_postgres createdb "$db_name"
+    if _psql_query "pg_database WHERE datname='os2datascanner-report'";
+    then
+        echo "$0: PostgreSQL database 'os2datascanner-report' already exists"
+    else
+        # Create new database
+        $as_postgres createdb "$db_name"
+    fi
 
-    # Create new user with priviligies
-    $as_postgres psql -c "CREATE USER $db_user WITH PASSWORD '$db_pass';"
-    $as_postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $db_name TO $db_user;"
-    $as_postgres psql -c "ALTER USER $db_user WITH SUPERUSER;"
-
+    if _psql_query "pg_catalog.pg_roles WHERE rolname='$db_user'";
+    then
+        echo "$0: PostgreSQL user $db_user already exists"
+    else
+        # Create new user with priviligies
+        $as_postgres psql -c "CREATE USER $db_user WITH PASSWORD '$db_pass';"
+        $as_postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $db_name TO $db_user;"
+        $as_postgres psql -c "ALTER USER $db_user WITH SUPERUSER;"
+    fi
 }
 
 #
@@ -143,7 +144,7 @@ function apache_setup()
     sudo mkdir -p "/var/log/$domain"
 
     # Copy the vhost
-    sudo ln -sv "$module_vhost" "/etc/apache2/sites-available/$domain.conf"
+    sudo ln -srfv "$module_vhost" "/etc/apache2/sites-available/$domain.conf"
 
     # Until ssl-certificates are on the server we cannot reload the apache2 service.
 }
