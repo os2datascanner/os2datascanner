@@ -24,7 +24,14 @@ from django.views.generic import View, TemplateView
 from ..models.documentreport_model import DocumentReport
 from ..models.roles.defaultrole_model import DefaultRole
 
+from os2datascanner.engine2.rules.cpr import CPRRule
+from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.rules.regex import RegexRule
+
 logger = structlog.get_logger()
+
+
+RENDERABLE_RULES = (CPRRule.type_label, RegexRule.type_label,)
 
 
 class LoginRequiredMixin(View):
@@ -58,27 +65,42 @@ class MainPageView(TemplateView, LoginRequiredMixin):
         results = DocumentReport.objects.none()
         for role in roles:
             results |= role.filter(DocumentReport.objects.all())
-        self.data_results = results
+
+        # Filter out anything we don't know how to show in the UI
+        self.data_results = []
+        for result in results:
+            if "matches" in result.data and result.data["matches"]:
+                mm = result.data["matches"]
+                renderable_matches = [cm for cm in mm["matches"]
+                        if cm["rule"]["type"] in RENDERABLE_RULES]
+                if renderable_matches:
+                    mm["matches"] = renderable_matches
+                    self.data_results.append(result)
 
         # Results are grouped by the rule they where found with,
         # together with the count.
-        context['dashboard_results'] = self.data_results.values(
-            'data__matches__scan_spec__rule').annotate(
-            type_count=Count('data__matches__scan_spec__rule'))
+        sensitivities = {}
+        for dr in self.data_results:
+            if dr.matches:
+                sensitivity = dr.matches.sensitivity
+                if not sensitivity in sensitivities:
+                    sensitivities[sensitivity] = 0
+                sensitivities[sensitivity] += 1
+        context['dashboard_results'] = sensitivities
 
         return context
 
 
-class RulePageView(MainPageView):
-    template_name = 'rule.html'
+class SensitivityPageView(MainPageView):
+    template_name = 'sensitivity.html'
 
     def get_context_data(self, **kwargs):
-        type = self.request.GET.get('type')
+        sensitivity = Sensitivity(int(self.request.GET.get('value')) or 0)
 
         context = super().get_context_data(**kwargs)
-        context['matches_by_type'] = self.data_results.filter(
-            data__matches__scan_spec__rule__type=type)
-        context['type'] = type
+        context['matches'] = [r for r in self.data_results
+                if r.matches and r.matches.sensitivity == sensitivity]
+        context['sensitivity'] = sensitivity
 
         return context
 

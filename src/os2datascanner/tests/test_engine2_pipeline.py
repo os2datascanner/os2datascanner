@@ -1,32 +1,98 @@
-from json import loads, dumps
 import unittest
-from contextlib import closing
-from collections import namedtuple
 
-import os2datascanner.engine2.model.data as e2m_data
-import os2datascanner.engine2.rules.regex as e2r_regex
-import os2datascanner.engine2.pipeline.explorer as e2p_explorer
+from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.pipeline.messages import MatchesMessage
 
 
-class DummyChannel:
-    def __init__(self):
-        self._messages = []
+class Engine2PipelineTests(unittest.TestCase):
+    def test_rule_sensitivity(self):
+        message = MatchesMessage(
+            scan_spec={}, # unused (at present)
+            handle=None, # unused (at present)
+            matched=True,
+            matches=[
+                {
+                    "rule": {
+                        "type": "fictional",
+                        "sensitivity": 1000
+                    },
+                    "matches": [
+                        {
+                            "match": True
+                        },
+                        {
+                            "match": True
+                        },
+                        {
+                            "match": True,
+                            "sensitivity": None
+                        }
+                    ]
+                }
+            ]
+        )
 
-    def basic_ack(self, delivery_tag):
-        pass
+        self.assertEqual(
+                message.sensitivity,
+                Sensitivity.CRITICAL,
+                "rule sensitivity failed")
 
-    def basic_publish(self, exchange, routing_key, body):
-        self._messages.append((routing_key, body))
+    def test_match_sensitivity(self):
+        message = MatchesMessage(
+            scan_spec={}, # unused (at present)
+            handle=None, # unused (at present)
+            matched=True,
+            matches=[
+                {
+                    "rule": {
+                        "type": "fictional",
+                        "sensitivity": 1000
+                    },
+                    "matches": [
+                        {
+                            "match": True,
+                            "sensitivity": 250
+                        },
+                        {
+                            "match": True,
+                            "sensitivity": 750
+                        },
+                        {
+                            "match": True,
+                            "sensitivity": 500
+                        }
+                    ]
+                }
+            ]
+        )
 
-    def _consume_message(self):
-        (queue, body), self._messages = self._messages[0], self._messages[1:]
-        return (queue, loads(body.decode("utf-8")))
+        self.assertEqual(
+                message.sensitivity,
+                Sensitivity.PROBLEM,
+                "match sensitivity failed")
 
+    def test_anomalous_sensitivity(self):
+        message = MatchesMessage(
+            scan_spec={}, # unused (at present)
+            handle=None, # unused (at present)
+            matched=True,
+            matches=[
+                {
+                    "rule": {
+                        "type": "fictional",
+                        "sensitivity": 250
+                    },
+                    "matches": [
+                        {
+                            "match": True,
+                            "sensitivity": 1000
+                        }
+                    ]
+                }
+            ]
+        )
 
-class DummyMethod:
-    delivery_tag = 12345
-
-
-DummyArgs = namedtuple("DummyArgs", [
-        "sources", "conversions", "representations", "matches", "handles",
-        "metadata", "problems"])
+        self.assertEqual(
+                message.sensitivity,
+                Sensitivity.NOTICE,
+                "sensitivity too high")
