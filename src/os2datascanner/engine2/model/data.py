@@ -1,6 +1,7 @@
 from io import BytesIO
 from os import fsync
 from base64 import b64decode, b64encode
+from urllib.parse import unquote
 from tempfile import NamedTemporaryFile
 from contextlib import contextmanager
 
@@ -36,9 +37,16 @@ class DataSource(Source):
     @Source.url_handler("data")
     def from_url(url):
         _, rest = url.split(':', maxsplit=1)
-        mime, rest = rest.split(';', maxsplit=1)
-        _, content = rest.split(',', maxsplit=1)
-        return DataSource(b64decode(content), mime)
+        lead, content = rest.split(",", maxsplit=1)
+        base64 = False
+        mime = "text/plain"
+        if lead:
+            if lead.endswith(";base64"):
+                base64 = True
+                lead = lead[:-7]
+            mime = lead
+        content = unquote(content)
+        return DataSource(b64decode(content) if base64 else content.encode(), mime)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
