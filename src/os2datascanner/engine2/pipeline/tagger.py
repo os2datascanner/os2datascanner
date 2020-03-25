@@ -3,8 +3,8 @@ from os import getpid
 from ...utils.metadata import guess_responsible_party
 from ...utils.prometheus import prometheus_session
 from ..model.core import Handle, SourceManager, ResourceUnavailableError
-from .utilities import (notify_ready, pika_session, notify_stopping,
-        prometheus_summary, json_event_processor, make_common_argument_parser,
+from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
+        prometheus_summary, make_common_argument_parser,
         make_sourcemanager_configuration_block)
 
 
@@ -45,32 +45,31 @@ def main():
 
     args = parser.parse_args()
 
-    with pika_session(args.handles, args.metadata,
-            host=args.host, heartbeat=6000) as channel:
+    class TaggerRunner(PikaPipelineRunner):
+        @prometheus_summary(
+                "os2datascanner_pipeline_tagger", "Metadata extractions")
+        def handle_message(self, body, *, channel=None):
+            if args.debug:
+                print(channel, body)
+            return message_received_raw(
+                    body, channel, source_manager, args.metadata)
+
+    with prometheus_session(
+            str(getpid()),
+            args.prometheus_dir,
+            stage_type="tagger"):
         with SourceManager(width=args.width) as source_manager:
-
-            @prometheus_summary(
-                    "os2datascanner_pipeline_tagger", "Metadata extractions")
-            @json_event_processor
-            def message_received(body, channel):
-                if args.debug:
-                    print(channel, body)
-                return message_received_raw(
-                        body, channel, source_manager, args.metadata)
-            channel.basic_consume(args.handles, message_received)
-
-            with prometheus_session(
-                    str(getpid()),
-                    args.prometheus_dir,
-                    stage_type="tagger"):
+            with ProcessorRunner(
+                    read=[args.handles],
+                    write=[args.metadata],
+                    heartbeat=6000) as runner:
                 try:
                     print("Start")
                     notify_ready()
-                    channel.start_consuming()
+                    runner.run_consumer()
                 finally:
                     print("Stop")
                     notify_stopping()
-                    channel.stop_consuming()
 
 
 if __name__ == "__main__":
