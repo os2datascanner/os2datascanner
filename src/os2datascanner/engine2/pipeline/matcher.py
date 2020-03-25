@@ -3,8 +3,8 @@ from os import getpid
 from ...utils.prometheus import prometheus_session
 from ..rules.rule import Rule
 from ..conversions.types import decode_dict
-from .utilities import (notify_ready, pika_session, notify_stopping,
-        prometheus_summary, json_event_processor, make_common_argument_parser)
+from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
+        prometheus_summary, make_common_argument_parser)
 
 
 def message_received_raw(body, channel, matches_q, handles_q, conversions_q):
@@ -97,31 +97,30 @@ def main():
 
     args = parser.parse_args()
 
-    with pika_session(args.handles, args.matches, args.conversions,
-            args.representations, host=args.host, heartbeat=6000) as channel:
-
+    class MatcherRunner(PikaPipelineRunner):
         @prometheus_summary(
                 "os2datascanner_pipeline_matcher", "Representations examined")
-        @json_event_processor
-        def message_received(body, channel):
+        def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
             return message_received_raw(body, channel,
                     args.matches, args.handles, args.conversions)
-        channel.basic_consume(args.representations, message_received)
 
-        with prometheus_session(
-                str(getpid()),
-                args.prometheus_dir,
-                stage_type="matcher"):
+    with prometheus_session(
+            str(getpid()),
+            args.prometheus_dir,
+            stage_type="matcher"):
+        with ExporterRunner(
+                read=[args.representations],
+                write=[args.handles, args.matches, args.conversions],
+                heartbeat=6000) as runner:
             try:
                 print("Start")
                 notify_ready()
-                channel.start_consuming()
+                runner.run_consumer()
             finally:
                 print("Stop")
                 notify_stopping()
-                channel.stop_consuming()
 
 
 if __name__ == "__main__":
