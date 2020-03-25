@@ -52,8 +52,9 @@ class Engine2PipelineTests(unittest.TestCase):
 
         messages = {}
 
-        def result_received(a, b, c, d):
-            body = loads(d.decode("utf-8"))
+        def result_received(channel, method, properties, body):
+            channel.basic_ack(method.delivery_tag)
+            body = loads(body.decode("utf-8"))
             messages[body["origin"]] = body
             if len(messages) == 2:
                 raise StopHandling()
