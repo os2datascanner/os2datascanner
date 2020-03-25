@@ -3,7 +3,6 @@ from sys import stderr
 import json
 import pika
 import argparse
-from contextlib import contextmanager
 import systemd.daemon
 if systemd.daemon.booted():
     from systemd.daemon import notify as sd_notify
@@ -80,39 +79,6 @@ def prometheus_summary(*args):
     def _prometheus_summary(func):
         return s.time()(func)
     return _prometheus_summary
-
-
-def json_event_processor(listener):
-    """Decorator. Automatically decodes JSON bodies for the wrapped Pika
-    message callback, and automatically produces new messages for every (queue
-    name, serialisable object) pair yielded by that callback."""
-
-    def _wrapper(channel, method, properties, body):
-        channel.basic_ack(method.delivery_tag)
-        decoded_body = json_utf8_decode(body)
-        if decoded_body:
-            for routing_key, message in listener(
-                    decoded_body, channel=method.routing_key):
-                channel.basic_publish(exchange='',
-                        routing_key=routing_key,
-                        body=json.dumps(message).encode())
-    return _wrapper
-
-
-@contextmanager
-def pika_session(*queues, **kwargs):
-    parameters = pika.ConnectionParameters(**kwargs)
-    connection = pika.BlockingConnection(parameters)
-    channel = connection.channel()
-
-    for q in queues:
-        channel.queue_declare(q, passive=False,
-                durable=True, exclusive=False, auto_delete=False)
-
-    try:
-        yield channel
-    finally:
-        connection.close()
 
 
 class PikaConnectionHolder(ABC):
