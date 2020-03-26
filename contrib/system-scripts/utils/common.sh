@@ -170,6 +170,28 @@ function copy_to_prod_dir()
     echo 'Done Copying.'
 }
 
+function update_prod_dir()
+{
+    prod_dir=$1
+    echo "Copying to production dir $prod_dir..."
+    sudo -H mkdir -p "$prod_dir"
+    sudo -H rsync \
+        --progress --recursive --delete  \
+        --links --safe-links --perms \
+        --exclude ".*/" \
+        --exclude ".*" \
+        --exclude ".git/" \
+        --exclude "python-env/" \
+        --exclude '*.pyc' \
+        --exclude '.secret' \
+        --exclude 'pika_settings.py' \
+        --exclude 'contrib/' \
+        --exclude 'local_settings.py' \
+        --exclude 'var/' \
+        "$repo_dir"/ "$prod_dir"
+    echo 'Done Copying.'
+}
+
 install_python_environment()
 {
     virtualenv=$1

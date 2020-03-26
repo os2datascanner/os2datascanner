@@ -2,93 +2,96 @@
 
 set -e
 
-# Generel settings
-prod_dir=%PRODUCTION_DIR%
-domain=%DOMAIN%
-
-# Admin defaults
-webscan=False
-filescan=True
-exchangescan=True
-
-# Report defaults
-saml2_auth=False
-
 repo_dir="`dirname "$BASH_SOURCE[0]"`/../../../"
 
 echo "$repo_dir"
+# Load .env file
+source "$repo_dir/contrib/system-scripts/production/.env"
+
 # Load common lib
 source "$repo_dir/contrib/system-scripts/utils/common.sh"
 
 echo -e '\n************* Copy *************\n'
 # Copy to prod dir
-copy_to_prod_dir "$prod_dir"
+copy_to_prod_dir "$PRODUCTION_DIR"
 
 echo -e '\n************* Installation *************\n'
 # Install system dependencies and python-env
-source "$prod_dir/install.sh"
+source "$PRODUCTION_DIR/install.sh"
 
-echo -e '\n************* Admin module *************\n'
-# Setup administrations module
-source "$prod_dir/contrib/system-scripts/utils/admin_setup.sh" "$domain" "$webscan" "$filescan" "$exchangescan" "$prod_dir" False
+if [ "$INSTALL_WEB_PROJECTS" = True ]
+then
+    echo -e '\n************* Admin module *************\n'
+    # Setup administrations module
+    source "$PRODUCTION_DIR/contrib/system-scripts/utils/admin_setup.sh" "$ADMIN_DOMAIN" "$ENABLE_WEBSCAN" "$ENABLE_FILESCAN" "$ENABLE_EXCHANGESCAN" "$PRODUCTION_DIR" False
 
-collectstatic_and_makemessages 'admin' $prod_dir
+    collectstatic_and_makemessages 'admin' "$PRODUCTION_DIR"
 
-# Configure apache for the administrations module
-apache_setup $prod_dir $domain 'admin'
+    # Configure apache for the administrations module
+    apache_setup "$PRODUCTION_DIR" "$DOMAIN" 'admin'
 
-echo -e '\n************* Report module *************\n'
-# Setup report module
-source "$prod_dir/contrib/system-scripts/utils/report_setup.sh" "$domain-report.dk" "$saml2_auth" "$prod_dir" False
+    echo -e '\n************* Report module *************\n'
+    # Setup report module
+    source "$PRODUCTION_DIR/contrib/system-scripts/utils/report_setup.sh" "$REPORT_DOMAIN" "$ENABLE_SAML2" "$PRODUCTION_DIR" False
 
-collectstatic_and_makemessages 'report' "$prod_dir"
+    collectstatic_and_makemessages 'report' "$PRODUCTION_DIR"
 
-# Configure apache for the administrations module
-apache_setup "$prod_dir" "$domain-report.dk" 'report'
+    # Configure apache for the administrations module
+    apache_setup "$PRODUCTION_DIR" "$DOMAIN-report.dk" 'report'
 
-# deploy pipeline_collector
-systemd_dir="$prod_dir/contrib/systemd"
-systemd_template="$systemd_dir/os2ds-template@.service"
+    # deploy pipeline_collector
+    systemd_dir="$PRODUCTION_DIR/contrib/systemd"
+    systemd_template="$systemd_dir/os2ds-template@.service"
 
-name='pipeline_collector'
+    name='pipeline_collector'
 
-service_name="os2ds-$name@.service"
-cp "$systemd_template" "$systemd_dir/$service_name"
-new_service="$systemd_dir/$service_name"
+    service_name="os2ds-$name@.service"
+    cp "$systemd_template" "$systemd_dir/$service_name"
+    new_service="$systemd_dir/$service_name"
 
-command="$prod_dir/bin/manage-report pipeline_collector"
-short_name="$(echo $name | cut -c1-4)"
+    command="$PRODUCTION_DIR/bin/manage-report pipeline_collector"
+    short_name="$(echo $name | cut -c1-4)"
 
-sed -i "s#COMMAND_LINE#$command#g" "$new_service"
-sed -i "s/SERVICE_NAME/$name/g" "$new_service"
-sed -i "s/SERVICE_SHORTNAME/$short_name/g" "$new_service"
+    sed -i "s#COMMAND_LINE#$command#g" "$new_service"
+    sed -i "s/SERVICE_NAME/$name/g" "$new_service"
+    sed -i "s/SERVICE_SHORTNAME/$short_name/g" "$new_service"
 
-ln -sf "$new_service" "/etc/systemd/system/"
+    ln -sf "$new_service" "/etc/systemd/system/"
 
-systemctl daemon-reload
+     systemctl daemon-reload
+fi
 
-echo -e '\n************* Engine2 setup *************\n'
-# Setup engine2 services
-source "$prod_dir/contrib/system-scripts/production/engine_deploy.sh" "$prod_dir"
+if [ "$INSTALL_ENGINE_PIPELINE" = True ]
+then
+    echo -e '\n************* Engine2 setup *************\n'
+    # Setup engine2 services
+    source "$PRODUCTION_DIR/contrib/system-scripts/production/engine_deploy.sh" "$PRODUCTION_DIR"
+fi
 
 echo -e '\n************* Success *************\n'
 
 echo -e '\n************* Simple Verification *************\n'
 
-echo -e "$prod_dir"
-ls -l "$prod_dir"
+echo -e "$PRODUCTION_DIR"
+ls -l "$PRODUCTION_DIR"
 
-echo -e "\n"$prod_dir"/contrib/systemd/"
-ls -l "$prod_dir/contrib/systemd/"
+if [ "$INSTALL_WEB_PROJECTS" = True ]
+then
+    echo -e "\n$PRODUCTION_DIR/src/os2datascanner/projects/admin/"
+    ls -l "$PRODUCTION_DIR/src/os2datascanner/projects/admin/"
 
-echo -e "\n$prod_dir/src/os2datascanner/projects/admin/"
-ls -l "$prod_dir/src/os2datascanner/projects/admin/"
+    echo -e "\n$PRODUCTION_DIR/src/os2datascanner/projects/report/"
+    ls -l "$PRODUCTION_DIR/src/os2datascanner/projects/report/"
 
-echo -e "\n$prod_dir/src/os2datascanner/projects/report/"
-ls -l "$prod_dir/src/os2datascanner/projects/report/"
+    echo -e "\n/etc/apache2/certs/datascanner"
+    ls -l /etc/apache2/certs/datascanner
+fi
 
-echo -e "\n/etc/systemd/system/os2ds-*"
-ls -l /etc/systemd/system/os2ds-*
+if [ "$INSTALL_ENGINE_PIPELINE" = True ]
+then
+    echo -e "\n$PRODUCTION_DIR/contrib/systemd/"
+    ls -l "$PRODUCTION_DIR/contrib/systemd/"
 
-echo -e "\n/etc/apache2/certs/datascanner"
-ls -l /etc/apache2/certs/datascanner
+    echo -e "\n/etc/systemd/system/os2ds-*"
+    ls -l /etc/systemd/system/os2ds-*
+fi
