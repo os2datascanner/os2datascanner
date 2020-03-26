@@ -12,7 +12,8 @@ image_handle = FilesystemHandle.make_handle(
         os.path.join(here_path, "data/ocr/cpr.png"))
 html_handle = FilesystemHandle.make_handle(
         os.path.join(here_path, "data/html/simple.html"))
-
+empty_handle = FilesystemHandle.make_handle(
+        os.path.join(here_path, "data/empty_file"))
 
 
 class Engine2ConversionTest(unittest.TestCase):
@@ -21,6 +22,7 @@ class Engine2ConversionTest(unittest.TestCase):
 
         self._ir = image_handle.follow(self._sm)
         self._hr = html_handle.follow(self._sm)
+        self._er = empty_handle.follow(self._sm)
 
     def tearDown(self):
         self._sm.clear()
@@ -44,6 +46,14 @@ class Engine2ConversionTest(unittest.TestCase):
             convert(self._ir, OutputType.Dummy)
 
     def test_html(self):
-        self.assertIn(
-                "This is only a test.",
+        self.assertEqual(
+                "This is only a test. "
+                "There's one paragraph, "
+                "and then there's the other paragraph.",
                 convert(self._hr, OutputType.Text).value)
+
+    def test_empty_html(self):
+        self.assertEqual(
+                convert(self._er, OutputType.Text, mime_override="text/html"),
+                None,
+                "empty HTML document did not produce empty conversion")

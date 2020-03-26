@@ -23,6 +23,15 @@ from ..sensitivity_level import Sensitivity
 
 
 from os2datascanner.engine2.rules.rule import Rule as Twule
+from os2datascanner.engine2.rules.rule import Sensitivity as Twensitivity
+
+
+_sensitivity_mapping = {
+    Sensitivity.OK: Twensitivity.INFORMATION,
+    Sensitivity.LOW: Twensitivity.WARNING,
+    Sensitivity.HIGH: Twensitivity.PROBLEM,
+    Sensitivity.CRITICAL: Twensitivity.CRITICAL
+}
 
 
 class Rule(models.Model):
@@ -60,3 +69,6 @@ class Rule(models.Model):
         # (this can't use the @abstractmethod decorator because of metaclass
         # conflicts with Django, but subclasses should override this method!)
         raise NotImplementedError("Rule.make_engine2_rule")
+
+    def make_engine2_sensitivity(self) -> Twensitivity:
+        return _sensitivity_mapping[self.sensitivity]

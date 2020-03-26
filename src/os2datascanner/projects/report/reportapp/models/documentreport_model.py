@@ -3,14 +3,7 @@ from typing import NamedTuple
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 
-from os2datascanner.engine2.model.core import Handle
-
-
-class MatchesMessage(NamedTuple):
-    scan_spec: dict
-    handle: Handle
-    matched: bool
-    matches: list
+from os2datascanner.engine2.pipeline.messages import MatchesMessage
 
 
 class DocumentReport(models.Model):
@@ -24,11 +17,7 @@ class DocumentReport(models.Model):
     @property
     def matches(self):
         matches = self.data.get("matches")
-        return MatchesMessage(
-                scan_spec=matches["scan_spec"],
-                handle=Handle.from_json_object(matches["handle"]),
-                matched=matches["matched"],
-                matches=matches["matches"]) if matches else None
+        return MatchesMessage.from_json_object(matches) if matches else None
 
     class Meta:
         verbose_name_plural = "Document reports"

@@ -27,7 +27,9 @@ class RegexRule(Rule):
     def make_engine2_rule(self) -> RegexTwule:
         # Use the original engine's RegexRule abstraction to make the required
         # compound expression
-        return RegexTwule(compund_rules(self))
+        return RegexTwule(
+                compund_rules(self),
+                sensitivity=self.make_engine2_sensitivity())
 
 
 class RegexPattern(models.Model):
