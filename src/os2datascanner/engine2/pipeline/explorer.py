@@ -3,8 +3,8 @@ from os import getpid
 from ...utils.prometheus import prometheus_session
 from ..model.core import (Source, SourceManager, UnknownSchemeError,
         DeserialisationError, ResourceUnavailableError)
-from .utilities import (notify_ready, pika_session, notify_stopping,
-        prometheus_summary, json_event_processor, make_common_argument_parser,
+from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
+        prometheus_summary, make_common_argument_parser,
         make_sourcemanager_configuration_block)
 
 
@@ -102,32 +102,32 @@ def main():
 
     args = parser.parse_args()
 
-    with pika_session(args.sources, args.conversions, args.problems,
-            host=args.host, heartbeat=6000) as channel:
+    class ExplorerRunner(PikaPipelineRunner):
+        @prometheus_summary(
+                "os2datascanner_pipeline_explorer", "Sources explored")
+        def handle_message(self, body, *, channel=None):
+            if args.debug:
+                print(channel, body)
+            return message_received_raw(body, channel,
+                    self._source_manager, args.conversions, args.problems)
+
+    with prometheus_session(
+            str(getpid()),
+            args.prometheus_dir,
+            stage_type="explorer"):
         with SourceManager(width=args.width) as source_manager:
-
-            @prometheus_summary(
-                    "os2datascanner_pipeline_explorer", "Sources explored")
-            @json_event_processor
-            def message_received(body, channel):
-                if args.debug:
-                    print(channel, body)
-                return message_received_raw(body, channel,
-                        source_manager, args.conversions, args.problems)
-            channel.basic_consume(args.sources, message_received)
-
-            with prometheus_session(
-                    str(getpid()),
-                    args.prometheus_dir,
-                    stage_type="explorer"):
+            with ExplorerRunner(
+                    read=[args.sources],
+                    write=[args.conversions, args.problems],
+                    source_manager=source_manager,
+                    heartbeat=6000) as runner:
                 try:
                     print("Start")
                     notify_ready()
-                    channel.start_consuming()
+                    runner.run_consumer()
                 finally:
                     print("Stop")
                     notify_stopping()
-                    channel.stop_consuming()
 
 
 if __name__ == "__main__":

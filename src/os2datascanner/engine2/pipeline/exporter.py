@@ -5,8 +5,8 @@ import argparse
 from ...utils.prometheus import prometheus_session
 from ..model.core import (Handle,
         Source, UnknownSchemeError, DeserialisationError)
-from .utilities import (notify_ready, pika_session, notify_stopping,
-        prometheus_summary, json_event_processor, make_common_argument_parser)
+from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
+        prometheus_summary, make_common_argument_parser)
 
 
 def message_received_raw(body, channel, dump, results_q):
@@ -93,32 +93,29 @@ def main():
 
     args = parser.parse_args()
 
-    with pika_session(args.matches, args.problems, args.metadata, args.results,
-            host=args.host, heartbeat=6000) as channel:
-
+    class ExporterRunner(PikaPipelineRunner):
         @prometheus_summary(
                 "os2datascanner_pipeline_exporter", "Messages exported")
-        @json_event_processor
-        def message_received(body, channel):
+        def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
             return message_received_raw(body, channel, args.dump, args.results)
-        channel.basic_consume(args.matches, message_received)
-        channel.basic_consume(args.problems, message_received)
-        channel.basic_consume(args.metadata, message_received)
 
-        with prometheus_session(
-                str(getpid()),
-                args.prometheus_dir,
-                stage_type="exporter"):
+    with prometheus_session(
+            str(getpid()),
+            args.prometheus_dir,
+            stage_type="exporter"):
+        with ExporterRunner(
+                read=[args.matches, args.metadata, args.problems],
+                write=[args.results],
+                heartbeat=6000) as runner:
             try:
                 print("Start")
                 notify_ready()
-                channel.start_consuming()
+                runner.run_consumer()
             finally:
                 print("Stop")
                 notify_stopping()
-                channel.stop_consuming()
 
 
 if __name__ == "__main__":

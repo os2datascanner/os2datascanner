@@ -7,8 +7,8 @@ from ..model.core import (Source,
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
 from ..conversions.utilities.results import SingleResult
-from .utilities import (notify_ready, pika_session, notify_stopping,
-        prometheus_summary, json_event_processor, make_common_argument_parser,
+from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
+        prometheus_summary, make_common_argument_parser,
         make_sourcemanager_configuration_block)
 
 
@@ -113,33 +113,31 @@ def main():
 
     args = parser.parse_args()
 
-    with pika_session(args.sources, args.conversions, args.representations,
-            host=args.host, heartbeat=6000) as channel:
+    class ProcessorRunner(PikaPipelineRunner):
+        @prometheus_summary("os2datascanner_pipeline_processor",
+                "Representations generated")
+        def handle_message(self, body, *, channel=None):
+            if args.debug:
+                print(channel, body)
+            return message_received_raw(body, channel,
+                    source_manager, args.representations, args.sources)
+
+    with prometheus_session(
+            str(getpid()),
+            args.prometheus_dir,
+            stage_type="processor"):
         with SourceManager(width=args.width) as source_manager:
-
-            @prometheus_summary("os2datascanner_pipeline_processor",
-                    "Representations generated")
-            @json_event_processor
-            def message_received(body, channel):
-                if args.debug:
-                    print(channel, body)
-                return message_received_raw(body, channel,
-                        source_manager, args.representations, args.sources)
-            channel.basic_consume(args.conversions, message_received)
-
-            with prometheus_session(
-                    str(getpid()),
-                    args.prometheus_dir,
-                    stage_type="processor"):
+            with ProcessorRunner(
+                    read=[args.representations],
+                    write=[args.sources, args.conversions],
+                    heartbeat=6000) as runner:
                 try:
                     print("Start")
                     notify_ready()
-                    channel.start_consuming()
+                    runner.run_consumer()
                 finally:
                     print("Stop")
                     notify_stopping()
-                    channel.stop_consuming()
-
 
 if __name__ == "__main__":
     main()
