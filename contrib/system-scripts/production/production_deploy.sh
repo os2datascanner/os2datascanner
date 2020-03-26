@@ -37,7 +37,7 @@ then
     collectstatic_and_makemessages 'report' "$PRODUCTION_DIR"
 
     # Configure apache for the administrations module
-    apache_setup "$PRODUCTION_DIR" "$DOMAIN-report.dk" 'report'
+    apache_setup "$PRODUCTION_DIR" "$REPORT_DOMAIN" 'report'
 
     # deploy pipeline_collector
     systemd_dir="$PRODUCTION_DIR/contrib/systemd"
