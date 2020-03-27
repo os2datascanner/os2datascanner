@@ -57,19 +57,19 @@ class TestCprTest(unittest.TestCase):
         valid_check = self.cpr_calc.cpr_check(valid_cpr)
         invalid_check = self.cpr_calc.cpr_check(invalid_cpr)
         self.assertTrue(valid_check > 0.6)
-        self.assertTrue(invalid_check == 0.0)
+        self.assertIsInstance(invalid_check, str)
 
     def test_wrong_form(self):
         short_cpr = '111111111'
         long_cpr = '11111111111'
 
         short_check = self.cpr_calc.cpr_check(short_cpr)
-        self.assertTrue(self.cpr_calc.latest_error.find('short') > 0)
-        self.assertTrue(short_check == 0.0)
+        self.assertIsInstance(short_check, str)
+        self.assertTrue(short_check.find('short') > 0)
 
         long_check = self.cpr_calc.cpr_check(long_cpr)
-        self.assertTrue(self.cpr_calc.latest_error.find('long') > 0)
-        self.assertTrue(long_check == 0.0)
+        self.assertIsInstance(long_check, str)
+        self.assertTrue(long_check.find('long') > 0)
 
     def test_magic_dates(self):
         """
@@ -85,11 +85,8 @@ class TestCprTest(unittest.TestCase):
         tests = 10000
         for i in range(0, tests):
             random_cpr = random.randrange(0, 9999999999)
-            self.cpr_calc.cpr_check(str(random_cpr).zfill(10))
-            if self.cpr_calc.latest_error:
-                key = self.cpr_calc.latest_error
-            else:
-                key = 'ok'
+            check = self.cpr_calc.cpr_check(str(random_cpr).zfill(10))
+            key = check if isinstance(check, str) else 'ok'
             if key in distribution:
                 distribution[key] += 1.0 / tests
             else:
@@ -115,10 +112,7 @@ class TestCprTest(unittest.TestCase):
         for i in range(0, tests):
             random_cpr = _cpr()
             value = self.cpr_calc.cpr_check(random_cpr)
-            if self.cpr_calc.latest_error:
-                key = self.cpr_calc.latest_error
-            else:
-                key = str(value)
+            key = str(value)
             if key in distribution:
                 distribution[key] += 1.0 / tests
             else:

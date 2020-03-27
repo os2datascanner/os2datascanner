@@ -1,4 +1,5 @@
 # import time
+from typing import Union
 from datetime import date
 
 from ..cpr import cpr_exception_dates, modulus11_check_raw
@@ -21,8 +22,6 @@ class CprLikelyhoodCalculator(object):
     def __init__(self):
         # Cache of dates where the possible CPRs has already been calculated.
         self.cached_cprs = {}
-
-        self.latest_error = ''
 
     def _form_validator(self, cpr: str) -> str:
         """
@@ -126,40 +125,36 @@ class CprLikelyhoodCalculator(object):
         self.cached_cprs[cache_key] = legal_cprs
         return legal_cprs
 
-    def cpr_check(self, cpr: str) -> float:
+    def cpr_check(self, cpr: str) -> Union[str, float]:
         """
         Check a CPR number to attempt to evaluate whether it is likely
-        to be a valid, used CPR number. A value of 0 means that it cannot
-        be a CPR number, in that case self.lates_error is updated with a
-        statement telling why it is not legal.
+        to be a valid, used CPR number. If it cannot be a CPR number, a
+        string explanation is returned instead.
         If the number is syntactically correct, it is estimated whether it
         is likely to be a used number. A value of 1 does not guarantee that
         is in use, but is just used to indicate that it has the highest
         probability that can be establihed from this estimation method.
         :param cpr: The CPR number to check.
         :return: A value between 0 and 1 indicating the probability that it
-        a real CPR number.
+        is a real CPR number, or an error string if it cannot be.
         """
         error = self._form_validator(cpr)
         if error:
-            self.latest_error = error
-            return 0.0
+            return error
 
         birth_date = self._calculate_date(cpr)
         if birth_date > date.today():
-            self.latest_error = 'CPR newer than today'
+            return 'CPR newer than today'
             return 0.0
 
         if not modulus11_check_raw(cpr):
             if birth_date not in cpr_exception_dates:
-                self.latest_error = 'Modulus 11 does not match'
-                return 0.0
+                return 'Modulus 11 does not match'
             else:
                 return 0.5
 
         legal_cprs = self._calc_all_cprs(birth_date)
         index_number = legal_cprs.index(cpr)
-        self.latest_error = ''
 
         if index_number <= 100:
             return 1.0
@@ -176,4 +171,3 @@ class CprLikelyhoodCalculator(object):
 if __name__ == '__main__':
     cpr_calc = CprLikelyhoodCalculator()
     print(cpr_calc.cpr_check('1111111118'))
-    print(cpr_calc.latest_error)
