@@ -1,6 +1,8 @@
 # import time
 from datetime import date
 
+from ..cpr import cpr_exception_dates
+
 
 class CprLikelyhoodCalculator(object):
     """
@@ -21,11 +23,6 @@ class CprLikelyhoodCalculator(object):
         self.cached_cprs = {}
 
         self.latest_error = ''
-        self.magic_dates = []
-        # Currently all dates with non-mod11 cpr's are January 1.
-        for year in [1960, 1964, 1965, 1966, 1969, 1970, 1974, 1980, 1982, 1984,
-                     1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992]:
-            self.magic_dates.append(date(year, 1, 1))
 
     def _check_mod11(self, cpr: str) -> bool:
         """
@@ -167,7 +164,7 @@ class CprLikelyhoodCalculator(object):
             return 0.0
 
         if not self._check_mod11(cpr):
-            if birth_date not in self.magic_dates:
+            if birth_date not in cpr_exception_dates:
                 self.latest_error = 'Modulus 11 does not match'
                 return 0.0
             else:
