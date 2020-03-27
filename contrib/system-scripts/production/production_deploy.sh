@@ -7,7 +7,21 @@ repo_dir="`dirname "$BASH_SOURCE[0]"`/../../../"
 echo "$repo_dir"
 # Load .env file
 source "$repo_dir/contrib/system-scripts/production/.env"
-
+if [ "$PRODUCTION_DIR" = "%INSERT_PRODUCTION_DIR%" ]
+then
+    echo "Production directory has not been changed and is still the deafult string $PRODUCTION_DIR. Please go to the .env file and add a new path."
+    exit -1
+fi
+if [ "$ADMIN_DOMAIN" = "%INSERT_ADMIN_DOMAIN%" ]
+then
+    echo "The domain for the Admin module has not been changed and is still the deafault string $ADMIN_DOMAIN. Please go to the .enb file and add a new domain."
+    exit -1
+fi
+if [ "$REPORT_DOMAIN" = "%INSERT_REPORT_DOMAIN%" ]
+then
+    echo "The domain for the Report module has not been changed and is still the deafault string $REPORT_DOMAIN. Please go to the .enb file and add a new domain."
+    exit -1
+fi
 # Load common lib
 source "$repo_dir/contrib/system-scripts/utils/common.sh"
 

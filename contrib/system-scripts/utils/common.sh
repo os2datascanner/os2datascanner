@@ -77,6 +77,8 @@ function npm_install_and_build()
     module=$1
     repo_dir=$2
     echo "Installing npm packages"
+    sudo apt install npm
+
     cd "$repo_dir/src/os2datascanner/$module/"$module"app/"
     npm install .
     npm run build
