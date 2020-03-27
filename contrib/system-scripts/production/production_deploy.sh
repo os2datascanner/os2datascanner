@@ -79,7 +79,7 @@ if [ "$INSTALL_ENGINE_PIPELINE" = True ]
 then
     echo -e '\n************* Engine2 setup *************\n'
     # Setup engine2 services
-    source "$PRODUCTION_DIR/contrib/system-scripts/production/engine_deploy.sh" "$PRODUCTION_DIR"
+    source "$PRODUCTION_DIR/contrib/system-scripts/utils/engine_setup.sh" "$PRODUCTION_DIR"
 fi
 
 echo -e '\n************* Success *************\n'
