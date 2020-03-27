@@ -162,23 +162,16 @@ def _get_birth_date(cpr, ignore_irrelevant=True):
     return date(day=day, month=month, year=year)
 
 
-def _is_modulus11(cpr):
+_mod_11_table = [4, 3, 2, 7, 6, 5, 4, 3, 2, 1]
+
+
+def modulus11_check_raw(cpr):
     """Perform a modulus-11 check on the CPR number.
 
     This should not be called directly as it does not make any exceptions
     for numbers for which the modulus-11 check should not be performed.
     """
-    checksum = int(cpr[0]) * 4 + \
-        int(cpr[1]) * 3 + \
-        int(cpr[2]) * 2 + \
-        int(cpr[3]) * 7 + \
-        int(cpr[4]) * 6 + \
-        int(cpr[5]) * 5 + \
-        int(cpr[6]) * 4 + \
-        int(cpr[7]) * 3 + \
-        int(cpr[8]) * 2 + \
-        int(cpr[9]) * 1
-    return checksum % 11 == 0
+    return sum([int(c) * v for c, v in zip(cpr, _mod_11_table)]) % 11 == 0
 
 
 def modulus11_check(cpr):
@@ -199,4 +192,4 @@ def modulus11_check(cpr):
         return True
     else:
         # Otherwise, perform the modulus-11 check
-        return _is_modulus11(cpr)
+        return modulus11_check_raw(cpr)

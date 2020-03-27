@@ -1,7 +1,7 @@
 # import time
 from datetime import date
 
-from ..cpr import cpr_exception_dates
+from ..cpr import cpr_exception_dates, modulus11_check_raw
 
 
 class CprLikelyhoodCalculator(object):
@@ -23,19 +23,6 @@ class CprLikelyhoodCalculator(object):
         self.cached_cprs = {}
 
         self.latest_error = ''
-
-    def _check_mod11(self, cpr: str) -> bool:
-        """
-        Checks if a given CPR obeys mod11.
-        :param cpr: The CPR to check.
-        :return: Boolean indicating if mod11 is obeyed.
-        """
-        mod_11_table = [4, 3, 2, 7, 6, 5, 4, 3, 2]
-        mod_11_sum = 0
-        for i in range(0, 9):
-            mod_11_sum += int(cpr[i]) * mod_11_table[i]
-        remainder = (mod_11_sum + int(cpr[9])) % 11
-        return remainder == 0
 
     def _form_validator(self, cpr: str) -> str:
         """
@@ -132,7 +119,7 @@ class CprLikelyhoodCalculator(object):
                         str(index_7) +
                         str(i).zfill(3)
                     )
-                    valid = self._check_mod11(cpr_candidate)
+                    valid = modulus11_check_raw(cpr_candidate)
                     if valid:
                         legal_cprs.append(cpr_candidate)
 
@@ -163,7 +150,7 @@ class CprLikelyhoodCalculator(object):
             self.latest_error = 'CPR newer than today'
             return 0.0
 
-        if not self._check_mod11(cpr):
+        if not modulus11_check_raw(cpr):
             if birth_date not in cpr_exception_dates:
                 self.latest_error = 'Modulus 11 does not match'
                 return 0.0
