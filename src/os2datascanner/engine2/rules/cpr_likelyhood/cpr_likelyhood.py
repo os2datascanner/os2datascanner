@@ -67,20 +67,17 @@ class CprLikelyhoodCalculator(object):
         :param year: The year to check.
         :return: A list of legal digit 7 values.
         """
-        if year < 1858:
-            raise Exception('Too early for CPR')
+        legal_7s = []
         if 1858 <= year <= 1899:
             legal_7s = [5, 6, 7, 8]
-        if 1900 <= year <= 1936:
+        elif 1900 <= year <= 1936:
             legal_7s = [0, 1, 2, 3]
-        if 1937 <= year <= 1999:
+        elif 1937 <= year <= 1999:
             legal_7s = [0, 1, 2, 3, 4, 9]
-        if 2000 <= year <= 2036:
+        elif 2000 <= year <= 2036:
             legal_7s = [4, 5, 6, 7, 8, 9]
-        if 2037 <= year <= 2057:
+        elif 2037 <= year <= 2057:
             legal_7s = [5, 6, 7, 8]
-        if year > 2057:
-            raise Exception('Too late for CPR')
         return legal_7s
 
     def _calculate_date(self, cpr: str) -> date:
@@ -182,15 +179,14 @@ class CprLikelyhoodCalculator(object):
 
         if index_number <= 100:
             return 1.0
-        if 100 < index_number <= 200:
+        elif 100 < index_number <= 200:
             return 0.8
-        if 200 < index_number <= 250:
+        elif 200 < index_number <= 250:
             return 0.6
-        if 250 < index_number <= 350:
+        elif 250 < index_number <= 350:
             return 0.25
-        if index_number > 350:
+        else:
             return 0.1
-        raise Exception('We should not end here, index is {}'.format(index_number))
 
 
 if __name__ == '__main__':
