@@ -42,7 +42,7 @@ then
     collectstatic_and_makemessages 'admin' "$PRODUCTION_DIR"
 
     # Configure apache for the administrations module
-    apache_setup "$PRODUCTION_DIR" "$DOMAIN" 'admin'
+    apache_setup "$PRODUCTION_DIR" "$ADMIN_DOMAIN" 'admin'
 
     echo -e '\n************* Report module *************\n'
     # Setup report module
