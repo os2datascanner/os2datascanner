@@ -14,7 +14,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
-import structlog
 from django.core.management.base import BaseCommand
 
 from os2datascanner.utils.system_utilities import json_utf8_decode
@@ -23,8 +22,6 @@ from os2datascanner.utils.amqp_connection_manager import start_amqp, \
 
 from ...utils import hash_handle
 from ...models.documentreport_model import DocumentReport
-
-logger = structlog.get_logger()
 
 
 def consume_results(channel, method, properties, body):
@@ -41,25 +38,38 @@ def _restructure_and_save_result(result):
     {'scan_tag', '2019-11-28T14:56:58', 'matches': null, 'metadata': null,
     'problem': []}
     """
-    updated_fields = _format_results(json_utf8_decode(result))
+    result = json_utf8_decode(result)
+    updated_fields = _format_results(result)
     if updated_fields:
         handle = result.get('handle')
 
-        DocumentReport.objects.update_or_create(
-            path=hash_handle(handle), data=updated_fields)
+        report_obj, is_created = DocumentReport.objects.get_or_create(
+            path=hash_handle(handle))
 
+        if is_created:
+            # if created updatde_fields are stored.
+            report_obj.data = updated_fields
+        else:
+            # else merge the new message with the existing report_obj.data
+            report_obj.data['scan_tag'] = updated_fields['scan_tag']
+            if updated_fields.get('matches'):
+                report_obj.data['matches'] = updated_fields.get('matches')
+            elif updated_fields.get('metadata'):
+                report_obj.data['metadata'] = updated_fields.get('metadata')
+
+        report_obj.save()
 
 def _format_results(result):
     """Method for restructuring result body"""
-
     updated_fields = {}
+
     origin = result.get('origin')
 
     # TODO: Problem messages do not have a well enough
     # defined structure to be used in the system yet.
     # Therefore they are just logged for now.
     if origin == 'os2ds_problems':
-        logger.info('Problem message recieved: {}'.format(result))
+        print('Problem message recieved: {}'.format(result))
     elif origin == 'os2ds_metadata':
         updated_fields['scan_tag'] = result.get('scan_tag')
         updated_fields['metadata'] = result
@@ -68,7 +78,7 @@ def _format_results(result):
             updated_fields['scan_tag'] = result.get('scan_spec').get('scan_tag')
             updated_fields['matches'] = result
         else:
-            logger.info('Object processed with no matches: {}'.format(result))
+            print('Object processed with no matches: {}'.format(result))
 
     return updated_fields
 
