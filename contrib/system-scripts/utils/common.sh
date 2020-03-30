@@ -149,6 +149,7 @@ function apache_setup()
     sudo ln -srfv "$module_vhost" "/etc/apache2/sites-available/$domain.conf"
 
     # Until ssl-certificates are on the server we cannot reload the apache2 service.
+    sudo a2enmod rewrite ssl
 }
 
 #
@@ -169,6 +170,7 @@ function copy_to_prod_dir()
         --exclude "python-env/" \
         --exclude '*.pyc' \
         "$repo_dir"/ "$prod_dir"
+
     echo 'Done Copying.'
 }
 
@@ -191,6 +193,7 @@ function update_prod_dir()
         --exclude 'local_settings.py' \
         --exclude 'var/' \
         "$repo_dir"/ "$prod_dir"
+
     echo 'Done Copying.'
 }
 

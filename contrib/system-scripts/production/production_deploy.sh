@@ -82,6 +82,8 @@ then
     source "$PRODUCTION_DIR/contrib/system-scripts/utils/engine_setup.sh" "$PRODUCTION_DIR"
 fi
 
+sudo chown --recursive www-data:www-data "$PRODUCTION_DIR"
+
 echo -e '\n************* Success *************\n'
 
 echo -e '\n************* Simple Verification *************\n'

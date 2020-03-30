@@ -45,6 +45,8 @@ then
     # TODO: Npm build
 fi
 
+sudo chown --recursive www-data:www-data "$PRODUCTION_DIR"
+
 echo -e '\n************* Reloading os2ds-services *************\n'
 # Restart os2ds-*
 systemctl reload os2ds-*
