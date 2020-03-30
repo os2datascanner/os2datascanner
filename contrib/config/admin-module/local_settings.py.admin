@@ -22,14 +22,6 @@ ENABLE_FILESCAN = False
 # If exchangescan on the current installation is needed, enable it here
 ENABLE_EXCHANGESCAN = False
 
-# Add settings here to make them accessible from templates
-SETTINGS_EXPORT = [
-    'DEBUG',
-    'ENABLE_FILESCAN',
-    'ENABLE_EXCHANGESCAN',
-    'ENABLE_WEBSCAN',
-]
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',

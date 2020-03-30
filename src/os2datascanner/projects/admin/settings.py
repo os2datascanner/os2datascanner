@@ -24,6 +24,14 @@ DEBUG = False
 
 SECRET_KEY = 'ld0_g)jhp3v27&od88-_v83ldb!0i^bac=jh+je!!=jbvra7@j'
 
+# Add settings here to make them accessible from templates
+SETTINGS_EXPORT = [
+    'DEBUG',
+    'ENABLE_FILESCAN',
+    'ENABLE_EXCHANGESCAN',
+    'ENABLE_WEBSCAN',
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
