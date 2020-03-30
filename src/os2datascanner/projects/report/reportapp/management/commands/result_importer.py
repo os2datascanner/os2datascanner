@@ -18,8 +18,6 @@
 import  argparse
 from    django.core.management.base import BaseCommand
 
-from    ...utils import hash_handle
-from    ...models.documentreport_model import DocumentReport
 from    .pipeline_collector import _restructure_and_save_result
 
 
