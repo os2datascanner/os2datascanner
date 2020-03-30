@@ -18,7 +18,7 @@ for name in ${pipeline_names[@]}; do
     service_name="os2ds-$name@.service"
     cp "$systemd_template" "$systemd_dir/$service_name"
     new_service="$systemd_dir/$service_name"
-    command="$setup_dir/pex python -m os2datascanner.engine2.pipeline.$name"
+    command="$setup_dir/bin/pex python -m os2datascanner.engine2.pipeline.$name"
     sed -i "s/SERVICE_NAME/$name/g" "$new_service"
     sed -i "s/SERVICE_SHORTNAME/$short_name/g" "$new_service"
     sed -i "s#COMMAND_LINE#$command#g" "$new_service"
