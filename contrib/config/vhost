@@ -1,14 +1,14 @@
-WSGIPythonPath  INSERT_INSTALL_PATH
+WSGIPythonHome  INSERT_INSTALL_PATH
 
 <VirtualHost *:80>
-        RewriteEngine           on
-        RewriteCond             %{HTTPS} off
-        RewriteRule             (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+    ServerName             INSERT_DOMAIN
+    RewriteEngine           on
+    RewriteCond             %{HTTPS} off
+    RewriteRule             (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 </VirtualHost>
 
 <VirtualHost *:443>
     ServerName             INSERT_DOMAIN
-    ServerAlias            www.INSERT_DOMAIN
 
     SSLEngine               On
     SSLCertificateFile      INSERT_CERT_FILE
@@ -31,7 +31,7 @@ WSGIPythonPath  INSERT_INSTALL_PATH
 
     WSGIScriptAlias         / INSERT_INSTALL_PATH/wsgi.py
 
-    <Directory INSERT_INSTALL_PATH/webscanner_site/static>
+    <Directory INSERT_INSTALL_PATH/static>
             Require all granted
     </Directory>
 
