@@ -1,6 +1,6 @@
 import email
 import email.policy
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, quote
 import chardet
 from exchangelib import (Account,
         Credentials, IMPERSONATION, Configuration, FaultTolerance)
@@ -16,6 +16,15 @@ BaseProtocol.SESSION_POOLSIZE = 1
 
 
 OFFICE_365_ENDPOINT = "https://outlook.office365.com/EWS/Exchange.asmx"
+# XXX: actually use Microsoft Graph to do this properly (deeplink URLs are
+# available through an email's "webLink" property)
+_OFFICE_365_DEEPLINK = (
+        "https://outlook.office365.com/owa/?ItemID={0}"
+        "&exvsurl=1&viewmodel=ReadMessageItem")
+
+
+def _make_o365_deeplink(outlook_message_id):
+    return _OFFICE_365_DEEPLINK.format(quote(outlook_message_id, safe=''))
 
 
 def _dictify_headers(headers):
@@ -200,6 +209,17 @@ class EWSMailHandle(Handle):
         return "\"{0}\" (in folder {1} of account {2})".format(
                 self._mail_subject,
                 self._folder_name or "(unknown folder)", self.source.address)
+
+    @property
+    def presentation_url(self):
+        # There appears to be no way to extract a webmail URL from an arbitrary
+        # EWS server (and why should there be?), so at present we only support
+        # links to Office 365 mails
+        if self.source._server == OFFICE_365_ENDPOINT:
+            message_id = self.relative_path.split(".", maxsplit=1)[1]
+            return _make_o365_deeplink(message_id)
+        else:
+            return None
 
     def censor(self):
         return EWSMailHandle(
