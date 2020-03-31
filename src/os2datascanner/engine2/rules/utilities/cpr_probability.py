@@ -2,7 +2,83 @@
 from typing import Union
 from datetime import date
 
-from ..cpr import cpr_exception_dates, modulus11_check_raw
+# Updated list of dates with CPR numbers violating the Modulo-11 check. (Last
+# synchronised with the CPR Office's list on March 31, 2020.)
+# Source: https://cpr.dk/cpr-systemet/personnumre-uden-kontrolciffer-modulus-11-kontrol/
+cpr_exception_dates = {
+    date(1960, 1, 1),
+    date(1964, 1, 1),
+    date(1965, 1, 1),
+    date(1966, 1, 1),
+    date(1969, 1, 1),
+    date(1970, 1, 1),
+    date(1974, 1, 1),
+    date(1980, 1, 1),
+    date(1982, 1, 1),
+    date(1984, 1, 1),
+    date(1985, 1, 1),
+    date(1986, 1, 1),
+    date(1987, 1, 1),
+    date(1988, 1, 1),
+    date(1989, 1, 1),
+    date(1990, 1, 1),
+    date(1991, 1, 1),
+    date(1992, 1, 1),
+}
+
+THIS_YEAR = date.today().year
+
+
+def get_birth_date(cpr, ignore_irrelevant=True):
+    """Get the birth date as a datetime from the CPR number.
+
+    If the CPR has an invalid birthday, raises ValueError.
+
+    If ignore_irrelevant is True, then CPRs with a
+    7th digit of 5, 6, 7, or 8 AND year > 37 will be considered invalid.
+    """
+    day = int(cpr[0:2])
+    month = int(cpr[2:4])
+    year = int(cpr[4:6])
+
+    year_check = int(cpr[6])
+
+    # Convert 2-digit year to 4-digit:
+    if year_check >= 0 and year_check <= 3:
+        year += 1900
+    elif year_check == 4:
+        if year > 36:
+            year += 1900
+        else:
+            year += 2000
+    elif year_check >= 5 and year_check <= 8:
+        if year > 57:
+            year += 1800
+        else:
+            year += 2000
+    elif year_check == 9:
+        if year > 37:
+            year += 1900
+        else:
+            year += 2000
+
+    if ignore_irrelevant:
+        if year > THIS_YEAR + 2 or year < 1900:
+            raise ValueError(cpr)
+
+    return date(day=day, month=month, year=year)
+
+
+_mod_11_table = [4, 3, 2, 7, 6, 5, 4, 3, 2, 1]
+
+
+def modulus11_check_raw(cpr):
+    """Perform a modulus-11 check on the CPR number.
+
+    This should not be called directly as it does not make any exceptions
+    for numbers for which the modulus-11 check should not be performed.
+    """
+    return sum([int(c) * v for c, v in zip(cpr, _mod_11_table)]) % 11 == 0
 
 
 class CprProbabilityCalculator(object):
