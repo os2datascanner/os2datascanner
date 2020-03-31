@@ -30,7 +30,7 @@
     }
 
     &--item {
-      // 
+      word-break: break-all;
     }
 
     &--match {
@@ -133,6 +133,7 @@
 .scan {
   &__item-title {
     display: block;
+    word-break: break-all;
   }
 
   &__item-count {
