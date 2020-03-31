@@ -29,13 +29,10 @@ cpr_exception_dates = {
 THIS_YEAR = date.today().year
 
 
-def get_birth_date(cpr, ignore_irrelevant=True):
+def get_birth_date(cpr):
     """Get the birth date as a datetime from the CPR number.
 
     If the CPR has an invalid birthday, raises ValueError.
-
-    If ignore_irrelevant is True, then CPRs with a
-    7th digit of 5, 6, 7, or 8 AND year > 37 will be considered invalid.
     """
     day = int(cpr[0:2])
     month = int(cpr[2:4])
@@ -61,10 +58,6 @@ def get_birth_date(cpr, ignore_irrelevant=True):
             year += 1900
         else:
             year += 2000
-
-    if ignore_irrelevant:
-        if year > THIS_YEAR + 2 or year < 1900:
-            raise ValueError(cpr)
 
     return date(day=day, month=month, year=year)
 
@@ -115,7 +108,7 @@ class CprProbabilityCalculator(object):
             return 'CPR can only contain digits'
 
         try:
-            self._calculate_date(cpr)
+            get_birth_date(cpr)
         except ValueError:
             return 'Illegal date'
         return ''
@@ -218,7 +211,7 @@ class CprProbabilityCalculator(object):
         if error:
             return error
 
-        birth_date = self._calculate_date(cpr)
+        birth_date = get_birth_date(cpr)
         if birth_date > date.today():
             return 'CPR newer than today'
             return 0.0

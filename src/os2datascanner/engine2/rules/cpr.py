@@ -100,7 +100,7 @@ def modulus11_check(cpr):
     modulus-11 check should not be applied.
     """
     try:
-        birth_date = _get_birth_date(cpr, ignore_irrelevant=False)
+        birth_date = get_birth_date(cpr)
     except ValueError:
         return False
 
