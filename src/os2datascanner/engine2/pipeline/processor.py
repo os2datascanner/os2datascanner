@@ -6,7 +6,6 @@ from ..model.core import (Source,
         Handle, SourceManager, ResourceUnavailableError)
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
-from ..conversions.utilities.results import SingleResult
 from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
         prometheus_summary, make_common_argument_parser,
         make_sourcemanager_configuration_block)
