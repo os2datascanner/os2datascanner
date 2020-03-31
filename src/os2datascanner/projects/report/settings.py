@@ -24,20 +24,11 @@ BUILD_DIR = os.path.join(PROJECT_DIR, 'build')
 VAR_DIR = os.path.join(PROJECT_DIR, 'var')
 LOGS_DIR = os.path.join(VAR_DIR, 'logs')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'rtt$!(67bg1np)@b5mt6f=j(k#0nzek)r1k(^swyp9g^zs#^=#'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# Delegate the login process to an external SAML2 identity provider?
-SAML2_ENABLED = True
+SECRET_KEY = 'ld0_g)jhp3v27&od88-_v83ldb!0i^bac=jh+je!!=jbvra7@j'
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -80,14 +71,12 @@ TEMPLATES = [
     },
 ]
 
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'os2datascanner-report',
-        'USER': 'os2datascanner',
-        'PASSWORD': 'os2datascanner',
+        'NAME': 'os2datascanner_report',
+        'USER': 'os2datascanner_report',
+        'PASSWORD': 'os2datascanner_report',
         'HOST': os.getenv('POSTGRES_HOST', '127.0.0.1'),
     }
 }
@@ -97,9 +86,6 @@ DATABASE_POOL_ARGS = {
     'pool_size': 5,
     'recycle': 300
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -129,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 LANGUAGE_CODE = 'da-dk'
 
@@ -153,20 +138,12 @@ USE_TZ = True
 USE_THOUSAND_SEPARATOR = True
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 AUTH_PROFILE_MODULE = 'os2datascanner.projects.report.reportapp.UserProfile'
 
 LOGIN_REDIRECT_URL = '/'
-
-# Email settings
-
-DEFAULT_FROM_EMAIL = 'os2datascanner@magenta.dk'
-ADMIN_EMAIL = 'os2datascanner@magenta.dk'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 25
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 GRAYLOG_HOST = os.getenv('DJANGO_GRAYLOG_HOST')
 

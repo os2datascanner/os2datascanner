@@ -44,24 +44,40 @@ This is partly a principled decision to keep the scanner engine loosely coupled
 to the rest of the system, and partly a practical move to make development
 easier, as most new development takes place in these packages.)
 
-Preparing the Python environment
---------------------------------
+Preparing the Development environment
+-------------------------------------
 
-From the installation folder, run the ``install.sh`` script as root; this will
-install all of the necessary system dependencies and set up a Python virtual
-environment in the ``python-env/`` folder.
+From the installation folder, run the
+``contrib/system-scripts/development/development_setup.sh`` script as root;
+this will install all of the necessary system dependencies, set up a Python virtual
+environment in the ``python-env/`` folder and perform django migrations for
+both the *administration interface* and the *report interface*.
+You will be asked to enter a password for the default superadmin user named os2,
+for both interfaces.
 
-Preparing the Django environments
+Preparing the Production environment
 ---------------------------------
 
-From the installation folder, run the ``setup/admin_module.setup.sh`` script as
-root to set up the database for the administration interface. Then run
-``setup/report_module.setup.sh`` to do the same for the report interface.
+From the installation folder, run the
+``contrib/system-scripts/production/production_deploy.sh`` script as root;
+This will install and setup all the necessary components.
+Before the installation can begin you will have to provide the
+``contrib/system-scripts/production/production_deploy.sh`` script with the
+path to the production directory and with domain names to the two *interfaces*.
+The *report interface* should always have the postfix *-report* to the domain name.
 
-If the local PostgreSQL server doesn't already have a user called
-``os2datascanner``, then these scripts will create one and will prompt for its
-password. Both the administration and the report interface assume by default
-that this password is ``os2datascanner``.
+After the installation you will have to provide the system with valid ssl certificates.
+The installation expects the certificates to be located in the folder
+``/etc/apache2/certs/datascanner``.
+Edit the two apache2 configuration files which can be found
+``contrib/config/admin-module/admin-vhost.conf`` and
+``contrib/config/report-module/report-vhost.conf``.
+
+If the *report interface* shall have SAML2 authentication enabled you will have to
+provide the ``contrib/config/report-module/local_settings.py`` file with the
+necessary information manually.
+
+For how to start the different services go to :ref:`With ``systemd```
 
 Preparing Prometheus (optional)
 -------------------------------
@@ -125,9 +141,7 @@ pipeline stages. These templates also include some isolation settings which run
 the pipeline stages as unprivileged users and prevent them from modifying the
 local filesystem.
 
-Copy these files into the ``/etc/systemd/system/`` directory, run ``systemd
-daemon-reload`` to inform ``systemd`` about them, and then start the stages
-with the following command:
+Start the stages with the following command:
 
   ``systemctl start os2ds-explorer@0.service os2ds-processor@0.service
   os2ds-matcher@0.service os2ds-tagger@0.service os2ds-exporter@0.service``

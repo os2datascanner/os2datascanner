@@ -18,14 +18,14 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'OS2 Datascanner'
-copyright = '2019, Magenta ApS'
+project = 'OS2datascanner'
+copyright = '2014-2020 Magenta ApS'
 author = 'Magenta ApS'
 
 # The short X.Y version
-version = '2.1'
+version = '3.2'
 # The full version, including alpha/beta/rc tags
-release = '2.1.0'
+release = '3.2.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -100,7 +100,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'OS2Datascannerdoc'
+htmlhelp_basename = 'OS2datascannerdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -127,7 +127,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'OS2Datascanner.tex', 'OS2 Datascanner Documentation',
+    (master_doc, 'OS2datascanner.tex', 'OS2datascanner Documentation',
      'Magenta ApS', 'manual'),
 ]
 
@@ -137,7 +137,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'os2datascanner', 'OS2 Datascanner Documentation',
+    (master_doc, 'os2datascanner', 'OS2datascanner Documentation',
      [author], 1)
 ]
 
@@ -148,8 +148,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'OS2Datascanner', 'OS2 Datascanner Documentation',
-     author, 'OS2Datascanner', 'One line description of project.',
+    (master_doc, 'OS2datascanner', 'OS2datascanner Documentation',
+     author, 'OS2datascanner', 'One line description of project.',
      'Miscellaneous'),
 ]
 

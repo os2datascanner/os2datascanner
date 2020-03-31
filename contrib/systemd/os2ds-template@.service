@@ -1,5 +1,5 @@
 [Unit]
-Description=OS2datascanner pipeline: explorer %i
+Description=OS2datascanner pipeline: SERVICE_NAME %i
 After=rabbitmq-server.service
 Requires=rabbitmq-server.service
 
@@ -8,6 +8,6 @@ ProtectSystem=strict
 PrivateTmp=true
 DynamicUser=true
 StandardOutput=journal
-SyslogIdentifier=OS2ds-expl%i
-ExecStart=/vagrant/bin/pex python -m os2datascanner.engine2.pipeline.explorer
+SyslogIdentifier=OS2ds-SERVICE_SHORTNAME%i
+ExecStart=COMMAND_LINE
 Restart=on-failure
