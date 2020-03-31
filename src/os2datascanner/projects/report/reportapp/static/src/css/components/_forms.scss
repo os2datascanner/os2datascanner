@@ -64,16 +64,3 @@
   margin-top: 1rem;
   padding: 0.5rem;
 }
-
-.button {
-  border: 2px solid rgba(0, 0, 0, 0.2);
-  font-size: 1rem;
-  outline: none;
-  padding: 0.5rem 1rem;
-  transition: var(--transition-default);
-}
-
-.button:focus,
-.button:hover {
-  border-color: var(--color-main);
-}

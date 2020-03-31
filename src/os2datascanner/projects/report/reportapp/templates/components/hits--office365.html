@@ -22,7 +22,7 @@
 
     {% if match.matches.handle|present_url %}
     <div class="hit-link">
-      <a href="{{ match.matches.handle|present_url }}" class="hit-link__file">Åben email</a>
+      <a href="{{ match.matches.handle|present_url }}" class="button button--small button--cta" target="_blank" rel="noopener">Åben email</a>
     </div>
     {% endif %}
   </td>
