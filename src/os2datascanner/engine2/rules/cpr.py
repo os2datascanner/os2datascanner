@@ -1,9 +1,10 @@
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .utilities.cpr_probability import (get_birth_date, cpr_exception_dates,
-        modulus11_check_raw)
+        modulus11_check_raw, CprProbabilityCalculator)
 
 cpr_regex = r"\b(\d{2}[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\b"
+calculator = CprProbabilityCalculator()
 
 
 class CPRRule(RegexRule):
@@ -36,14 +37,21 @@ class CPRRule(RegexRule):
 
         for m in self._compiled_expression.finditer(content):
             cpr = m.group(1).replace(" ", "") + m.group(2)
-            valid_date = date_check(cpr, self._ignore_irrelevant)
             if self._modulus_11:
                 try:
-                    valid_modulus11 = modulus11_check(cpr)
+                    if not modulus11_check(cpr):
+                        # This can't be a CPR number
+                        continue
                 except ValueError:
-                    valid_modulus11 = True
-            else:
-                valid_modulus11 = True
+                    pass
+
+            probability = 1.0
+            if self._ignore_irrelevant:
+                probability = calculator.cpr_check(cpr)
+                if isinstance(probability, str):
+                    # Error text -- this can't be a CPR number
+                    continue
+
             cpr = cpr[0:4] + "XXXXXX"
             # Calculate context.
             low, high = m.span()
@@ -54,12 +62,17 @@ class CPRRule(RegexRule):
             match_context = self._compiled_expression.sub(
                     "XXXXXX-XXXX", match_context)
 
-            if valid_date and valid_modulus11:
+            sensitivity = self.sensitivity
+            if sensitivity:
+                sensitivity = sensitivity.scale(probability)
+
+            if probability:
                 yield {
                     "offset": m.start(),
                     "match": cpr,
                     "context": match_context,
-                    "context_offset": m.start() - (low - 50)
+                    "context_offset": m.start() - (low - 50),
+                    "sensitivity": sensitivity
                 }
 
     def to_json_object(self):
@@ -78,21 +91,6 @@ class CPRRule(RegexRule):
                 sensitivity=Sensitivity.make_from_dict(obj),
                 name=obj["name"] if "name" in obj else None)
 
-
-def date_check(cpr, ignore_irrelevant=True):
-    """Check a CPR number for a valid date.
-
-    The CPR number is passed as a string of sequential digits with no spaces
-    or dashes.
-    If ignore_irrelevant is True, then CPRs with a
-    7th digit of 5, 6, 7, or 8 AND year > 37 will be considered invalid.
-    """
-    try:
-        _get_birth_date(cpr, ignore_irrelevant=ignore_irrelevant)
-        return True
-    except ValueError:
-        # Invalid date
-        return False
 
 def modulus11_check(cpr):
     """Perform a modulo-11 check on a CPR number with exceptions.
