@@ -1,6 +1,7 @@
 import random
 import unittest
-from ..cpr_likelyhood import CprLikelyhoodCalculator
+from os2datascanner.engine2.rules.utilities.cpr_probability import (
+        CprProbabilityCalculator)
 
 
 def _cpr(time_from=None):
@@ -48,7 +49,7 @@ class TestCprTest(unittest.TestCase):
         pass
 
     def setUp(self):
-        self.cpr_calc = CprLikelyhoodCalculator()
+        self.cpr_calc = CprProbabilityCalculator()
 
     def test_known_values(self):
         valid_cpr = '1111111118'

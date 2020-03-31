@@ -5,14 +5,14 @@ from datetime import date
 from ..cpr import cpr_exception_dates, modulus11_check_raw
 
 
-class CprLikelyhoodCalculator(object):
+class CprProbabilityCalculator(object):
     """
     Implemented logic:
     * CPRs that does not contain 10 digits are considred non-cprs
     * CPRs that belong to the future are considred non-cprs
     * CPRs that does not obey mod11 is considred non-cprs, unless they correspond
       to a magic date.
-    * The likelyhood of a CPR to be actually in use is calculated from its position
+    * The probability of a CPR to be actually in use is calculated from its position
       in the daily list of legal CPRs, the later in the list, the less likely it
       is to be a used number.
     * Currently, if a cpr-number matches a magic date, the returned values is
@@ -169,5 +169,5 @@ class CprLikelyhoodCalculator(object):
 
 
 if __name__ == '__main__':
-    cpr_calc = CprLikelyhoodCalculator()
+    cpr_calc = CprProbabilityCalculator()
     print(cpr_calc.cpr_check('1111111118'))
