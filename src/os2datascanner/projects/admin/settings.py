@@ -118,7 +118,7 @@ DATABASE_POOL_ARGS = {
 LANGUAGE_CODE = 'da-dk'
 
 LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'adminapp', 'locale'),
+    os.path.join(PROJECT_DIR, 'locale', 'admin'),
 )
 
 LANGUAGES = (
@@ -140,7 +140,8 @@ USE_THOUSAND_SEPARATOR = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR,
+        'os2datascanner', 'projects', 'static', 'admin')
 AUTH_PROFILE_MODULE = 'os2datascanner.projects.admin.adminapp.UserProfile'
 ICON_SPRITE_URL = '/static/src/svg/symbol-defs.svg'
 

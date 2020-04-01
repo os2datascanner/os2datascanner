@@ -119,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'da-dk'
 
 LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'reportapp', 'locale'),
+    os.path.join(PROJECT_DIR, 'locale', 'report'),
 )
 
 LANGUAGES = (
@@ -140,7 +140,8 @@ USE_THOUSAND_SEPARATOR = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR,
+        'os2datascanner', 'projects', 'static', 'report')
 AUTH_PROFILE_MODULE = 'os2datascanner.projects.report.reportapp.UserProfile'
 
 LOGIN_REDIRECT_URL = '/'
