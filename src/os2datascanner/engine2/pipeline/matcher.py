@@ -110,7 +110,7 @@ def main():
             str(getpid()),
             args.prometheus_dir,
             stage_type="matcher"):
-        with ExporterRunner(
+        with MatcherRunner(
                 read=[args.representations],
                 write=[args.handles, args.matches, args.conversions],
                 heartbeat=6000) as runner:

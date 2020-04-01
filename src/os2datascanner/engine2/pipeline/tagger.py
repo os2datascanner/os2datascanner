@@ -59,7 +59,7 @@ def main():
             args.prometheus_dir,
             stage_type="tagger"):
         with SourceManager(width=args.width) as source_manager:
-            with ProcessorRunner(
+            with TaggerRunner(
                     read=[args.handles],
                     write=[args.metadata],
                     heartbeat=6000) as runner:
