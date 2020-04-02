@@ -109,7 +109,7 @@ def main():
             if args.debug:
                 print(channel, body)
             return message_received_raw(body, channel,
-                    self._source_manager, args.conversions, args.problems)
+                    self.source_manager, args.conversions, args.problems)
 
     with prometheus_session(
             str(getpid()),
@@ -120,7 +120,7 @@ def main():
                     read=[args.sources],
                     write=[args.conversions, args.problems],
                     source_manager=source_manager,
-                    heartbeat=6000) as runner:
+                    host=args.host, heartbeat=6000) as runner:
                 try:
                     print("Start")
                     notify_ready()

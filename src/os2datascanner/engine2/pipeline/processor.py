@@ -127,9 +127,9 @@ def main():
             stage_type="processor"):
         with SourceManager(width=args.width) as source_manager:
             with ProcessorRunner(
-                    read=[args.representations],
-                    write=[args.sources, args.conversions],
-                    heartbeat=6000) as runner:
+                    read=[args.conversions],
+                    write=[args.sources, args.representations],
+                    host=args.host, heartbeat=6000) as runner:
                 try:
                     print("Start")
                     notify_ready()
