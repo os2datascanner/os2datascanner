@@ -62,7 +62,7 @@ def main():
             with TaggerRunner(
                     read=[args.handles],
                     write=[args.metadata],
-                    heartbeat=6000) as runner:
+                    host=args.host, heartbeat=6000) as runner:
                 try:
                     print("Start")
                     notify_ready()

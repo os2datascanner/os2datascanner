@@ -113,7 +113,7 @@ def main():
         with MatcherRunner(
                 read=[args.representations],
                 write=[args.handles, args.matches, args.conversions],
-                heartbeat=6000) as runner:
+                host=args.host, heartbeat=6000) as runner:
             try:
                 print("Start")
                 notify_ready()
