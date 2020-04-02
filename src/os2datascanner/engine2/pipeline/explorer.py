@@ -109,7 +109,7 @@ def main():
             if args.debug:
                 print(channel, body)
             return message_received_raw(body, channel,
-                    self._source_manager, args.conversions, args.problems)
+                    self.source_manager, args.conversions, args.problems)
 
     with prometheus_session(
             str(getpid()),
