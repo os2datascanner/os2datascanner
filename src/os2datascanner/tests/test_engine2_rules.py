@@ -13,24 +13,28 @@ class RuleTests(unittest.TestCase):
     def test_simplerule_matches(self):
         candidates = [
             (
-                CPRRule(ignore_irrelevant=False),
+                CPRRule(modulus_11=False, ignore_irrelevant=False),
                 """
 2205995008: forbryder,
 230500 0003: forbryder,
-240501-0006: forbryder""",
+240501-0006: forbryder,
+250501-1987: forbryder""",
                 [
                     "2205XXXXXX",
                     "2305XXXXXX",
-                    "2405XXXXXX"
+                    "2405XXXXXX",
+                    "2505XXXXXX"
                 ]
             ),
             (
-                CPRRule(ignore_irrelevant=True),
+                CPRRule(modulus_11=True, ignore_irrelevant=True),
                 """
 2205995008: forbryder,
 230500 0003: forbryder,
-240501-0006: forbryder""",
+240501-0006: forbryder,
+250501-1987: forbryder""",
                 [
+                    "2205XXXXXX",
                     "2305XXXXXX",
                     "2405XXXXXX"
                 ]

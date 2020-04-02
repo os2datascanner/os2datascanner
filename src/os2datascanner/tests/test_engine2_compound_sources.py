@@ -39,7 +39,8 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                         "offset": 0,
                         "match": "1310XXXXXX",
                         "context": "XXXXXX-XXXX",
-                        "context_offset": 0
+                        "context_offset": 0,
+                        "sensitivity": None
                     }
                 ])
 
