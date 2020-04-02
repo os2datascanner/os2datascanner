@@ -9,7 +9,7 @@
   <tbody>
   {% for sensitivity, count in dashboard_results.items %}
     <tr>
-      <td class="datatable__column--label"><a href="/sensitivity?value={{ sensitivity.value }}">{{ sensitivity.name }}</a></td>
+      <td class="datatable__column--label"><a href="/sensitivity?value={{ sensitivity.value }}">{{ sensitivity.presentation }}</a></td>
       <td class="datatable__column--count"><a href="/sensitivity?value={{ sensitivity.value }}">{{ count }}</a></td>
     </tr>
   {% empty %}
