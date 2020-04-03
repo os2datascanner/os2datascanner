@@ -1,16 +1,10 @@
 {% extends 'os2datascanner/base.html' %}
 {% load staticfiles %}
 
-  {% block styling %}
-  <link rel="stylesheet" href="{% static "dist/bundle.css" %}">
-  {% endblock %}
-
   {% block body %}
-
   <div class="wrapper">
     {% include "components/dashboard-widgets.html" %}
   </div>
-
   {% endblock %}
 
 {% block index_active %}active{% endblock %}
