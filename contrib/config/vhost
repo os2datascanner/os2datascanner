@@ -27,11 +27,11 @@ WSGIPythonHome  INSERT_INSTALL_PATH
     ErrorLog                /var/log/INSERT_DOMAIN/error.log
     CustomLog               /var/log/INSERT_DOMAIN/access.log combined
 
-    Alias                   /static INSERT_INSTALL_PATH/static
+    Alias                   /static INSERT_INSTALL_PATH/src/os2datascanner/projects/static/INSERT_MODULE
 
     WSGIScriptAlias         / INSERT_INSTALL_PATH/wsgi.py
 
-    <Directory INSERT_INSTALL_PATH/static>
+    <Directory INSERT_INSTALL_PATH/src/os2datascanner/projects/static/INSERT_MODULE>
             Require all granted
     </Directory>
 

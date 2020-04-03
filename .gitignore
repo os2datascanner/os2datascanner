@@ -4,8 +4,6 @@ password.py
 /python-env*
 /.test-results.xml
 *.komodoproject
-webscanner_site/static
-webscanner_site/uploads
 django-os2webscanner/build
 django-os2webscanner/django.os2webscanner.egg-info
 *.egg-info
@@ -20,3 +18,5 @@ local_settings.py
 db.sqlite3
 **/node_modules/**/*
 **/dist/**/*
+src/os2datascanner/projects/static/
+src/os2datascanner/projects/uploads/
