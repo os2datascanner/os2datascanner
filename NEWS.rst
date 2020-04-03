@@ -1,6 +1,50 @@
 OS2datascanner
 ==============
 
+Version 3.2.1, 3rd April 2020
+-----------------------------
+
+"Direct Hit"
+
+New in this version:
+
+- The report module now provides a direct link to matches in Office 365 email
+  messages.
+
+General improvements:
+
+- The installation process now supports more kinds of deployment.
+
+- The scanner engine is now more resilient against internal communication
+  problems.
+
+- The process of extracting plain text from documents with structure or
+  formatting now produces more natural results.
+
+- Individual matches can now also carry sensitivity values for higher
+  precision.
+
+Bugfixes:
+
+- Scanner jobs with no associated rules can no longer be created or started.
+
+- Empty matches are no longer stored in the report module's database.
+
+- Objects with long names no longer cause presentational anomalies in the
+  report module.
+
+- Internal names of extracted resources are no longer shown in the report
+  module.
+
+- Apparently contentless matches corresponding to internal tasks are no longer
+  shown in the report module.
+
+- Sensitivity values set in the administration system are now correctly
+  displayed in the report module.
+
+- Office Open XML documents and traditional Microsoft Office OLE documents are
+  now detected and handled more reliably.
+
 Version 3.2.0, 16th March 2020
 ------------------------------
 
