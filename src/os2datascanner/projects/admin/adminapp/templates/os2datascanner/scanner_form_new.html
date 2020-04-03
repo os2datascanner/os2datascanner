@@ -5,14 +5,6 @@
 {% block topnav %}{% endblock %}
 {% block rendertype %}iframe-modal{% endblock %}
 
-{% block styling %}
-  {% if not settings.DEBUG %}
-    <link href="{% static "dist/bundle.min.css" %}" rel="stylesheet" />
-  {% else %}
-    <link href="{% static "dist/bundle.css" %}" rel="stylesheet" />
-  {% endif %}
-{% endblock %}
-
 {% block extra_head_html %}
 <link href="{% static 'recurrence/css/recurrence.css' %}" rel="stylesheet" />
 <script type="text/javascript" src="/jsi18n/"></script>

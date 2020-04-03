@@ -3,14 +3,6 @@
 {% block topnav %}{% endblock %}
 {% block rendertype %}iframe-modal{% endblock %}
 
-{% block styling %}
-  {% if not settings.DEBUG %}
-    <link href="{% static "dist/bundle.min.css" %}" rel="stylesheet" />
-  {% else %}
-    <link href="{% static "dist/bundle.css" %}" rel="stylesheet" />
-  {% endif %}
-{% endblock %}
-
 {% block body %}
 
 {% if form.non_field_errors %}

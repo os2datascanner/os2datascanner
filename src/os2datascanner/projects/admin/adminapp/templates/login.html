@@ -3,14 +3,6 @@
 
 {%  block title %}Login{% endblock %}
 
-{% block styling %}
-  {% if not settings.DEBUG %}
-    <link href="{% static "dist/bundle.min.css" %}" rel="stylesheet" />
-  {% else %}
-    <link href="{% static "dist/bundle.css" %}" rel="stylesheet" />
-  {% endif %}
-{% endblock %}
-
 {% block body %}
 
 <div class="container">
