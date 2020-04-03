@@ -15,7 +15,6 @@ pdftohtml
 unzip
 libreoffice
 imagemagick
-unoconv
 mailutils
 libssl-dev
 cifs-utils
@@ -29,6 +28,8 @@ moreutils
 linux-image-generic
 rsync
 libsystemd-dev
-npm
 openssl
 libxmlsec1-dev
+pkg-config
+xmlsec1
+pwgen

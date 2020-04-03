@@ -13,9 +13,9 @@
 
   {% block styling %}
     {% if not settings.DEBUG %}
-    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" />
+    <link href="{% static "dist/bundle.min.css" %}" rel="stylesheet" />
     {% else %}
-    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet" />
+    <link href="{% static "dist/bundle.css" %}" rel="stylesheet" />
     {% endif %}
     <link href="{% static "css/webscanner.css" %}" rel="stylesheet" />
   {% endblock %}

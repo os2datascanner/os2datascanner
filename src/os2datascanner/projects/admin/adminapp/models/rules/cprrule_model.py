@@ -32,7 +32,8 @@ class CPRRule(Rule):
     def make_engine2_rule(self):
         return CPRTwule(
                 modulus_11=self.do_modulus11,
-                ignore_irrelevant=self.ignore_irrelevant)
+                ignore_irrelevant=self.ignore_irrelevant,
+                sensitivity=self.make_engine2_sensitivity())
 
     whitelist = models.TextField(blank=True,
                                  default="",

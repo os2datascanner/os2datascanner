@@ -1,13 +1,13 @@
 {% extends 'os2datascanner/base.html' %}
 {% load staticfiles %}
 
-{% block styling %}
-<link rel="stylesheet" href="{% static "dist/bundle.css" %}">
-{% endblock %}
-
 {% block scripts %}
 <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
-<script src="{% static "dist/bundle.js" %}"></script>
+  {% if not settings.DEBUG %}
+    <script src="{% static "dist/bundle.min.js" %}"></script>
+  {% else %}
+    <script src="{% static "dist/bundle.js" %}"></script>
+  {% endif %}
 {% endblock %}
 
 {% block body %}
@@ -53,13 +53,7 @@
           {% endif %}
         </td>
         <td>
-          {% if rule.get_sensitivity_display == sensitivity.choices.0.1 %}
-          <span class="level-label level-label--3">{{ rule.get_sensitivity_display }}</span>
-          {% elif rule.get_sensitivity_display == sensitivity.choices.1.1 %}
-          <span class="level-label level-label--2">{{ rule.get_sensitivity_display }}</span>
-          {% else %}
-          <span class="level-label level-label--1">{{ rule.get_sensitivity_display }}</span>
-          {% endif %}
+          <span class="level-label level-label--{{ rule.sensitivity }}">{{ rule.get_sensitivity_display }}</span>
         </td>
         <td>
           <a 

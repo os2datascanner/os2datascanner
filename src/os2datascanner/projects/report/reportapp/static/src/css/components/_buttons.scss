@@ -1,7 +1,19 @@
 .button {
   background-color: #fff;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  color: inherit;
+  display: inline-block;
+  font-size: 1rem;
   line-height: 1;
+  outline: none;
+  padding: 0.5rem 1rem;
   text-decoration: none;
+  transition: var(--transition-default);
+
+  &:focus,
+  &:hover {
+    border-color: var(--color-main);
+  }
 }
 
 .button--file {

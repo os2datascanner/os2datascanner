@@ -1,17 +1,11 @@
 """
-Django settings for webscanner project.
+Django settings file for OS2datascanner administration project.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/1.11/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import pathlib
 import os
-
+import pathlib
 import structlog
 
 from django.utils.translation import gettext_lazy as _
@@ -28,6 +22,17 @@ os.makedirs(BUILD_DIR, exist_ok=True)
 # Local settings file shall be used for debugging.
 DEBUG = False
 
+SECRET_KEY = 'ld0_g)jhp3v27&od88-_v83ldb!0i^bac=jh+je!!=jbvra7@j'
+
+# Add settings here to make them accessible from templates
+SETTINGS_EXPORT = [
+    'DEBUG',
+    'ENABLE_FILESCAN',
+    'ENABLE_EXCHANGESCAN',
+    'ENABLE_WEBSCAN',
+    'ICON_SPRITE_URL'
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -42,44 +47,6 @@ TEMPLATES = [
             ],
         },
     },
-]
-
-# Site URL for calculating absolute URLs in emails.
-SITE_URL = 'http://webscanner.magenta-aps.dk'
-
-SITE_ID = 1
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ld0_g)jhp3v27&od88-_v83ldb!0i^bac=jh+je!!=jbvra7@j'
-
-# Used for filescan and mounting
-PRODUCTION_MODE = False
-
-# If webscan on the current installation is needed, enable it here
-ENABLE_WEBSCAN = True
-
-# If filescan on the current installation is needed, enable it here
-ENABLE_FILESCAN = True
-
-# If exchangescan on the current installation is needed, enable it here
-ENABLE_EXCHANGESCAN = True
-
-# Check for dead scanner processes at this interval, in seconds
-CHECK_SCAN_INTERVAL = 300
-
-# Purge scanner queue items at this interval, in seconds
-CLEANUP_SCAN_INTERVAL = 300
-
-# Add settings here to make them accessible from templates
-SETTINGS_EXPORT = [
-    'DEBUG',
-    'ENABLE_FILESCAN',
-    'ENABLE_EXCHANGESCAN',
-    'ENABLE_WEBSCAN',
-    'ICON_SPRITE_URL'
 ]
 
 TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
@@ -116,12 +83,6 @@ try:
 except ImportError:
     pass
 
-XMLRPC_METHODS = (
-    ('os2datascanner.projects.admin.adminapp.rpc.scan_urls', 'scan_urls'),
-    ('os2datascanner.projects.admin.adminapp.rpc.scan_documents', 'scan_documents'),
-    ('os2datascanner.projects.admin.adminapp.rpc.get_status', 'get_status'),
-    ('os2datascanner.projects.admin.adminapp.rpc.get_report', 'get_report'),
-)
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -137,16 +98,12 @@ ROOT_URLCONF = 'os2datascanner.projects.admin.urls'
 
 WSGI_APPLICATION = 'os2datascanner.projects.admin.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'os2datascanner',
-        'USER': 'os2datascanner',
-        'PASSWORD': 'os2datascanner',
+        'NAME': 'os2datascanner_admin',
+        'USER': 'os2datascanner_admin',
+        'PASSWORD': 'os2datascanner_admin',
         'HOST': os.getenv('POSTGRES_HOST', '127.0.0.1'),
     }
 }
@@ -158,12 +115,11 @@ DATABASE_POOL_ARGS = {
 }
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 LANGUAGE_CODE = 'da-dk'
 
 LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'adminapp', 'locale'),
+    os.path.join(PROJECT_DIR, 'locale', 'admin'),
 )
 
 LANGUAGES = (
@@ -183,58 +139,50 @@ USE_THOUSAND_SEPARATOR = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR,
+        'os2datascanner', 'projects', 'static', 'admin')
 AUTH_PROFILE_MODULE = 'os2datascanner.projects.admin.adminapp.UserProfile'
 ICON_SPRITE_URL = '/static/src/svg/symbol-defs.svg'
 
 LOGIN_REDIRECT_URL = '/'
 
-# Email settings
-
-DEFAULT_FROM_EMAIL = 'os2webscanner@magenta.dk'
-ADMIN_EMAIL = 'os2webscanner@magenta.dk'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 25
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
 # Enable groups - or not
 
 DO_USE_GROUPS = False
 
-# Use MD5 sums.
-# This should practically always be true, but we might want to disable it for
-# debugging uses. At some point, this could also become a parameter on the
-# scanner.
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': (
+            'django.contrib.auth.password_validation'
+            '.UserAttributeSimilarityValidator'
+        ),
+    },
+    {
+        'NAME': (
+            'django.contrib.auth.password_validation'
+            '.MinimumLengthValidator'
+        ),
+    },
+    {
+        'NAME': (
+            'django.contrib.auth.password_validation'
+            '.CommonPasswordValidator'
+        ),
+    },
+    {
+        'NAME': (
+            'django.contrib.auth.password_validation'
+            '.NumericPasswordValidator'
+        ),
+    },
+]
 
-DO_USE_MD5 = True
-
-# The threshold for number of OCR conversion queue items per scan above which
-# non-OCR conversion will be paused. The reason to have this feature is that
-# for large scans with OCR enabled, so many OCR items are extracted from
-# PDFs or Office documents that it exhausts the number of available inodes
-# on the filesystem. Pausing non-OCR conversions allows the OCR processors a
-# chance to process their queue items to below a reasonable level.
-PAUSE_NON_OCR_ITEMS_THRESHOLD = 2000
-
-# The threshold for number of OCR conversion queue items per scan below which
-# non-OCR conversion will be resumed. This must be a lower number than
-# PAUSE_NON_OCR_ITEMS_THRESHOLD.
-RESUME_NON_OCR_ITEMS_THRESHOLD = PAUSE_NON_OCR_ITEMS_THRESHOLD - 1000
-
-# Directory to store files transmitted by RPC
-RPC_TMP_PREFIX = '/tmp/os2webscanner'
-
-# Directory to mount network drives
-NETWORKDRIVE_TMP_PREFIX = '/tmp/mnt/os2webscanner/'
-
-# Always store temp files on disk
-FILE_UPLOAD_MAX_MEMORY_SIZE = 0
 
 # Hostname to use for logging to Graylog; its absence supresses such
 # logging
+
 GRAYLOG_HOST = os.getenv('DJANGO_GRAYLOG_HOST')
 
 structlog.configure(
@@ -246,7 +194,6 @@ structlog.configure(
         structlog.processors.StackInfoRenderer(),
         structlog.processors.format_exc_info,
         structlog.processors.UnicodeDecoder(),
-        # structlog.processors.ExceptionPrettyPrinter(),
         structlog.stdlib.PositionalArgumentsFormatter(),
         structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
     ],
@@ -258,6 +205,7 @@ structlog.configure(
 
 
 # Logging
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,

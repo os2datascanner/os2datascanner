@@ -19,9 +19,9 @@ notice:
     - postgres:alpine
     - rabbitmq:alpine
   variables:
-    POSTGRES_DB: os2datascanner
-    POSTGRES_USER: os2datascanner
-    POSTGRES_PASSWORD: os2datascanner
+    POSTGRES_DB: os2datascanner_admin
+    POSTGRES_USER: os2datascanner_admin
+    POSTGRES_PASSWORD: os2datascanner_admin
     POSTGRES_HOST: postgres
     AMQP_HOST: rabbitmq
     DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
@@ -31,7 +31,7 @@ notice:
     - apt-get install -qq $(cat requirements/test_dependencies.txt)
     - pip install -e . -r requirements/requirements-dev.txt
 
-    - django-admin makemigrations --check --dry-run
+    - python -m os2datascanner.projects.admin.manage makemigrations --check --dry-run
 
     - python -m unittest discover -s src/ -p notice*.py
 
@@ -44,9 +44,9 @@ tests:
     - rabbitmq:alpine
   image: python:3.6
   variables:
-    POSTGRES_DB: os2datascanner
-    POSTGRES_USER: os2datascanner
-    POSTGRES_PASSWORD: os2datascanner
+    POSTGRES_DB: os2datascanner_admin
+    POSTGRES_USER: os2datascanner_admin
+    POSTGRES_PASSWORD: os2datascanner_admin
     POSTGRES_HOST: postgres
     AMQP_HOST: rabbitmq
     DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
@@ -58,7 +58,7 @@ tests:
     - apt-get install -qq $(cat requirements/test_dependencies.txt)
     - pip install -e . -r requirements/requirements-dev.txt
 
-    - django-admin makemigrations --check --dry-run
+    - python -m os2datascanner.projects.admin.manage makemigrations --check --dry-run
 
     - coverage erase
     - coverage run -m django test os2datascanner.tests

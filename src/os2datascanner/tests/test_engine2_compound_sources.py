@@ -30,32 +30,44 @@ class Engine2CompoundSourceTest(unittest.TestCase):
     def setUp(self):
         self.rule = CPRRule(modulus_11=False, ignore_irrelevant=False)
 
-    def run_rule(self, source):
+    def run_rule(self, source, sm):
+        results = list(try_apply(sm, source, self.rule))
+        self.assertEqual(
+                results,
+                [
+                    {
+                        "offset": 0,
+                        "match": "1310XXXXXX",
+                        "context": "XXXXXX-XXXX",
+                        "context_offset": 0
+                    }
+                ])
+
+    def run_rule_on_handle(self, handle):
         with SourceManager() as sm:
-            results = list(try_apply(sm, source, self.rule))
-            self.assertEqual(
-                    results,
-                    [
-                        {
-                            "offset": 0,
-                            "match": "1310XXXXXX",
-                            "context": "XXXXXX-XXXX",
-                            "context_offset": 0
-                        }
-                    ])
+            source = Source.from_handle(handle, sm)
+            self.assertIsNotNone(
+                    source,
+                    "{0} couldn't be made into a Source".format(handle))
+            self.run_rule(source, sm)
 
-    def test_libreoffice_source(self):
-        self.run_rule(
-                LibreOfficeSource(
-                        FilesystemHandle.make_handle(
-                                os.path.join(
-                                        test_data_path,
-                                        "libreoffice/embedded-cpr.odt"))))
+    def test_odt(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "libreoffice/embedded-cpr.odt")))
 
-    def test_pdf_source(self):
-        self.run_rule(
-                PDFSource(
-                        FilesystemHandle.make_handle(
-                                os.path.join(
-                                        test_data_path,
-                                        "pdf/embedded-cpr.pdf"))))
+    def test_pdf(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "pdf/embedded-cpr.pdf")))
+
+    def test_doc(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "msoffice/embedded-cpr.doc")))

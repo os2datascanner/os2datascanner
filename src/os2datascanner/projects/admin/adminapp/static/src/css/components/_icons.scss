@@ -27,16 +27,20 @@ Single-colored icons can be modified like so:
   text-transform: uppercase;
 }
 
-.level-label--1 {
-  border-left-color: var(--color-error);
+.level-label--0 {
+  border-left-color: var(--color-ok);
 }
 
-.level-label--2 {
+.level-label--1 {
   border-left-color: var(--color-warning);
 }
 
+.level-label--2 {
+  border-left-color: var(--color-error);
+}
+
 .level-label--3 {
-  border-left-color: var(--color-ok);
+  border-left-color: var(--color-critical);
 }
 /* datatable severity icons, stop */
 

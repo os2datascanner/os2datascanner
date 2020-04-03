@@ -22,12 +22,14 @@ class Sensitivity:
     def __init__(self):
         pass
 
+    CRITICAL = 3
     HIGH = 2
     LOW = 1
     OK = 0
 
     choices = (
-        (OK, u'Grøn'),
-        (LOW, u'Gul'),
-        (HIGH, u'Rød'),
+        (OK, 'Grøn'),
+        (LOW, 'Gul'),
+        (HIGH, 'Rød'),
+        (CRITICAL, 'Sort')
     )

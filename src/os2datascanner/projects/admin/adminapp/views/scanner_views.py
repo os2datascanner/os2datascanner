@@ -1,8 +1,10 @@
 from django.db.models import Q
+from django.forms import ModelMultipleChoiceField
 
 from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
 from ..models.authentication_model import Authentication
+from ..models.rules.rule_model import Rule
 from ..models.scans.scan_model import Scan
 from ..models.scannerjobs.scanner_model import Scanner
 from ..models.userprofile_model import UserProfile
@@ -66,6 +68,10 @@ class ScannerCreate(ScannerBase, RestrictedCreateView):
 
         if not self.request.user.is_superuser:
             self.filter_queryset(form, groups, organization)
+
+        form.fields["rules"] = ModelMultipleChoiceField(
+                Rule.objects.all(),
+                validators=ModelMultipleChoiceField.default_validators)
 
         return form
 
@@ -196,6 +202,9 @@ class ScannerAskRun(RestrictedDetailView):
         if self.object.is_running:
             ok = False
             error_message = Scanner.ALREADY_RUNNING
+        elif not self.object.rules.all():
+            ok = False
+            error_message = Scanner.HAS_NO_RULES
         else:
             ok = True
 

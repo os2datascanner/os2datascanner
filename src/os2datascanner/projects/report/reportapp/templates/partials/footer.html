@@ -10,7 +10,11 @@
 
   {% block scripts %}
   <script src="{% static "3rdparty/clipboard.min.js" %} "></script>
+  {% if not settings.DEBUG %}
+  <script src="{% static "dist/bundle.min.js" %} "></script>
+  {% else %}
   <script src="{% static "dist/bundle.js" %} "></script>
+  {% endif %}
   {% endblock %}
 
 </body>

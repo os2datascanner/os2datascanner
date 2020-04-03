@@ -1,7 +1,6 @@
-import pika
 import traceback
 
-from .utilities import make_common_argument_parser
+from .utilities import make_common_argument_parser, PikaConnectionHolder
 
 
 def main():
@@ -22,20 +21,16 @@ def main():
 
     args = parser.parse_args()
 
-    parameters = pika.ConnectionParameters(host=args.host, heartbeat=6000)
-    connection = pika.BlockingConnection(parameters)
-
-    channel = connection.channel()
-
-    for q in args.queue:
-        try:
-            channel.queue_declare(q, passive=True)
-            channel.queue_purge(q)
-        except Exception:
-            traceback.print_exc()
-            print("continuing anyway!")
-
-    connection.close()
+    with PikaConnectionHolder(host=args.host, heartbeat=6000) as ch:
+        for q in args.queue:
+            try:
+                print("Purging queue {0}".format(q))
+                ch.channel.queue_declare(q, passive=True)
+                ch.channel.queue_purge(q)
+            except Exception:
+                traceback.print_exc()
+                ch.clear()
+                print("continuing anyway!")
 
 
 if __name__ == "__main__":
