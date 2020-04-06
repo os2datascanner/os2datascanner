@@ -120,13 +120,7 @@
         <td>{{ rule.description }}</td>
         <td></td>
         <td>
-          {% if rule.get_sensitivity_display == sensitivity.choices.0.1 %}
-          <span class="level-label level-label--3">{{ rule.get_sensitivity_display }}</span>
-          {% elif rule.get_sensitivity_display == sensitivity.choices.1.1 %}
-          <span class="level-label level-label--2">{{ rule.get_sensitivity_display }}</span>
-          {% else %}
-          <span class="level-label level-label--1">{{ rule.get_sensitivity_display }}</span>
-          {% endif %}
+          <span class="level-label level-label--{{ rule.sensitivity }}">{{ rule.get_sensitivity_display }}</span>
         </td>
       </tr>
       {% endfor %}
