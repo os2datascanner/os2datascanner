@@ -20,3 +20,4 @@ db.sqlite3
 **/dist/**/*
 src/os2datascanner/projects/static/
 src/os2datascanner/projects/uploads/
+.vscode
