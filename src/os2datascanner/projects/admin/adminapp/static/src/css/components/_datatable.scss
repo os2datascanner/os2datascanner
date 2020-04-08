@@ -15,33 +15,26 @@
   }
 
   &__column {
-    &--label {
-      width: auto;
+    &--name {
+      width: 15rem;
     }
 
-    &--count {
-      text-align: right;
-      width: 9rem;
-    }
-
-    &--status {
-      text-align: right;
+    &--expression {
       width: 8rem;
     }
 
-    &--filetype-icon {
-      width: 5rem;
-    }
-
-    &--item {
-      // 
-    }
-
-    &--match {
+    &--probability {
       width: 10rem;
     }
 
-    &--context {}
+    &--sensitivity {
+      width: 9rem;
+    }
+
+    &--actions {
+      width: 10rem;
+    }
+
   }
 }
 
@@ -139,4 +132,8 @@
       opacity: 0.75;
     }
   }
+}
+
+.datatable + h2 {
+  margin-top: 2em;
 }
