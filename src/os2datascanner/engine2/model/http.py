@@ -61,11 +61,7 @@ class WebSource(Source):
                     ct = response.headers['Content-Type']
                     if simplify_mime_type(ct) == 'text/html':
                         response = session.get(here)
-                        doc = document_fromstring(response.content)
-                        doc.make_links_absolute(here, resolve_base_href=True)
-                        for el, _, li, _ in doc.iterlinks():
-                            if el.tag != 'a':
-                                continue
+                        for li in make_outlinks(response.content, here):
                             new_url = urljoin(here, li)
                             new_scheme, new_netloc, new_path, new_query, _ = urlsplit(new_url)
                             if new_scheme == scheme and new_netloc == netloc:
@@ -201,3 +197,11 @@ class WebHandle(Handle):
 
     def censor(self):
         return WebHandle(self.source.censor(), self.relative_path)
+
+
+def make_outlinks(content, where):
+    doc = document_fromstring(content)
+    doc.make_links_absolute(where, resolve_base_href=True)
+    for el, _, li, _ in doc.iterlinks():
+        if el.tag == 'a':
+            yield li
