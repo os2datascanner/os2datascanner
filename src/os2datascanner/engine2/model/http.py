@@ -11,6 +11,7 @@ from ..conversions.types import OutputType
 from ..conversions.utilities.results import MultipleResults
 from .core import Source, Handle, FileResource, ResourceUnavailableError
 from .utilities import NamedTemporaryResource
+from .utilities.sitemap import process_sitemap_url
 
 
 MAX_REQUESTS_PER_SECOND = 10
@@ -25,9 +26,10 @@ def simplify_mime_type(mime):
 class WebSource(Source):
     type_label = "web"
 
-    def __init__(self, url):
+    def __init__(self, url, sitemap=None):
         assert url.startswith("http:") or url.startswith("https:")
         self._url = url
+        self._sitemap = sitemap
 
     def _generate_state(self, sm):
         with Session() as session:
@@ -42,6 +44,11 @@ class WebSource(Source):
         try:
             session = sm.open(self)
             to_visit = [self._url]
+            if self._sitemap:
+                to_visit.extend(
+                        [address
+                                for address, last_modified
+                                in process_sitemap_url(self._sitemap)])
             visited = set()
             referrer_map = {}
 
@@ -85,13 +92,16 @@ class WebSource(Source):
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
-            "url": self._url
+            "url": self._url,
+            "sitemap": self._sitemap
         })
 
     @staticmethod
     @Source.json_handler(type_label)
     def from_json_object(obj):
-        return WebSource(url=obj["url"])
+        return WebSource(
+                url=obj["url"],
+                sitemap=obj.get("sitemap"))
 
 
 SecureWebSource = WebSource
