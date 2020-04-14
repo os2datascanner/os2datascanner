@@ -8,7 +8,7 @@ from requests.exceptions import ConnectionError
 from contextlib import contextmanager
 
 from ..conversions.types import OutputType
-from ..conversions.utilities.results import MultipleResults
+from ..conversions.utilities.results import SingleResult, MultipleResults
 from .core import Source, Handle, FileResource, ResourceUnavailableError
 from .utilities import NamedTemporaryResource
 from .utilities.sitemap import process_sitemap_url
@@ -140,8 +140,12 @@ class WebResource(FileResource):
         return self.unpack_header(check=True).get("content-length", 0).map(int)
 
     def get_last_modified(self):
-        return self.unpack_header(check=True).setdefault(
-                OutputType.LastModified, super().get_last_modified())
+        lm_hint = self.handle.get_last_modified_hint()
+        if not lm_hint:
+            return self.unpack_header(check=True).setdefault(
+                    OutputType.LastModified, super().get_last_modified())
+        else:
+            return SingleResult(None, OutputType.LastModified, lm_hint)
 
     def compute_type(self):
         # At least for now, strip off any extra parameters the media type might
