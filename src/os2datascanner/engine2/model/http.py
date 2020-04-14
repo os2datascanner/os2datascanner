@@ -43,47 +43,49 @@ class WebSource(Source):
     def handles(self, sm):
         try:
             session = sm.open(self)
-            to_visit = [self._url]
-            if self._sitemap:
-                to_visit.extend(
-                        [address
-                                for address, last_modified
-                                in process_sitemap_url(self._sitemap)])
+            to_visit = [WebHandle(self, "")]
             known_addresses = set(to_visit)
             referrer_map = {}
 
             scheme, netloc, path, query, fragment = urlsplit(self._url)
 
-            def handle_url(here, new_url):
+            def handle_url(here, new_url, lm_hint=None):
                 new_url = urljoin(here, new_url)
                 n_scheme, n_netloc, n_path, n_query, _ = urlsplit(new_url)
                 if n_scheme == scheme and n_netloc == netloc:
                     new_url = urlunsplit(
                             (n_scheme, n_netloc, n_path, n_query, None))
                     referrer_map.setdefault(new_url, set()).add(here)
-                    if new_url not in known_addresses:
-                        known_addresses.add(new_url)
-                        to_visit.append(new_url)
+                    new_handle = WebHandle(self, new_url[len(self._url):])
+                    if new_handle not in known_addresses:
+                        new_handle.set_last_modified_hint(lm_hint)
+                        new_handle.set_referrer_urls(
+                                referrer_map.get(here, set()))
+                        known_addresses.add(new_handle)
+                        to_visit.append(new_handle)
+
+            if self._sitemap:
+                for address, last_modified in process_sitemap_url(
+                        self._sitemap):
+                    handle_url(None, address, last_modified)
 
             while to_visit:
                 here, to_visit = to_visit[0], to_visit[1:]
 
-                response = session.head(here)
+                response = session.head(here.presentation_url)
                 if response.status_code == 200:
                     ct = response.headers['Content-Type']
                     if simplify_mime_type(ct) == 'text/html':
-                        response = session.get(here)
+                        response = session.get(here.presentation_url)
                         sleep(SLEEP_TIME)
-                        for li in make_outlinks(response.content, here):
-                            handle_url(here, li)
+                        for li in make_outlinks(response.content, here.presentation_url):
+                            handle_url(here.presentation_url, li)
                 elif response.is_redirect and response.next:
-                    handle_url(here, response.next.url)
+                    handle_url(here.presentation_url, response.next.url)
                     # Don't yield WebHandles for redirects
                     continue
 
-                wh = WebHandle(self, here[len(self._url):])
-                wh.set_referrer_urls(referrer_map.get(here, set()))
-                yield wh
+                yield here
         except ConnectionError as e:
             raise ResourceUnavailableError(self, *e.args)
 
