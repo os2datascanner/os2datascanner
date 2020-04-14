@@ -177,12 +177,19 @@ class WebHandle(Handle):
     def __init__(self, source, path):
         super().__init__(source, path)
         self._referrer_urls = set()
+        self._lm_hint = None
 
     def set_referrer_urls(self, referrer_urls):
         self._referrer_urls = referrer_urls
 
     def get_referrer_urls(self):
         return self._referrer_urls
+
+    def set_last_modified_hint(self, lm_hint):
+        self._lm_hint = lm_hint
+
+    def get_last_modified_hint(self):
+        return self._lm_hint
 
     @property
     def presentation(self):
