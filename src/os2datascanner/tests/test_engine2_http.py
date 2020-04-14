@@ -10,6 +10,8 @@ from os2datascanner.engine2.conversions.utilities.results import SingleResult
 
 
 magenta = WebSource("https://www.magenta.dk")
+magenta_mapped = WebSource("https://www.magenta.dk",
+        sitemap="https://www.magenta.dk/sitemap.xml")
 
 
 class Engine2HTTPTest(unittest.TestCase):
@@ -17,6 +19,19 @@ class Engine2HTTPTest(unittest.TestCase):
         count = 0
         with SourceManager() as sm:
             for h in magenta.handles(sm):
+                if count == 5:
+                    break
+                else:
+                    count += 1
+        self.assertEqual(
+                count,
+                5,
+                "magenta.dk should have more than 5 pages")
+
+    def test_exploration_sitemap(self):
+        count = 0
+        with SourceManager() as sm:
+            for h in magenta_mapped.handles(sm):
                 if count == 5:
                     break
                 else:
