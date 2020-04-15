@@ -97,6 +97,20 @@ class Engine2HTTPTest(unittest.TestCase):
                 5,
                 "embedded site with sitemap index should have 5 handles")
 
+    def test_sitemap_lm(self):
+        count = 0
+        with SourceManager() as sm:
+            for h in indexed_mapped_site.handles(sm):
+                if h.relative_path == "hemmeligheder2.html":
+                    lm = h.follow(sm).get_last_modified().value
+                    self.assertEqual(
+                            (lm.year, lm.month, lm.day),
+                            (2011, 12, 1),
+                            "secret file's modification date is too late")
+                    break
+            else:
+                self.fail("secret file missing")
+
     def test_resource(self):
         with SourceManager() as sm:
             first_thing = None
