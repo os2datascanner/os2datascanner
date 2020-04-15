@@ -1,6 +1,10 @@
+import os
+import os.path
+import http.server
 from datetime import datetime
 import unittest
 import contextlib
+from multiprocessing import Manager, Process
 
 from os2datascanner.engine2.model.core import (
         Source, SourceManager, UnknownSchemeError, ResourceUnavailableError)
@@ -9,42 +13,82 @@ from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
 
 
-magenta = WebSource("https://www.magenta.dk")
-magenta_mapped = WebSource("https://www.magenta.dk",
-        sitemap="https://www.magenta.dk/sitemap.xml")
+here_path = os.path.dirname(__file__)
+test_data_path = os.path.join(here_path, "data", "www")
+
+
+def run_web_server(started):
+    cwd = os.getcwd()
+    try:
+        os.chdir(test_data_path)
+        server = http.server.HTTPServer(
+                ('', 64346),
+                http.server.SimpleHTTPRequestHandler)
+
+        # The web server is started and listening; let the test runner know
+        started.acquire()
+        try:
+            started.notify()
+        finally:
+            started.release()
+
+        while True:
+            server.handle_request()
+    finally:
+        os.chdir(cwd)
+
+
+site = WebSource("http://localhost:64346/")
+mapped_site = WebSource("http://localhost:64346/",
+        sitemap="http://localhost:64346/sitemap.xml")
 
 
 class Engine2HTTPTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        with Manager() as manager:
+            started = manager.Condition()
+            started.acquire()
+            try:
+                cls._ws = Process(target=run_web_server, args=(started,))
+                cls._ws.start()
+
+                # Wait for the web server to check in and notify us that it's
+                # ready to be used
+                started.wait()
+            finally:
+                started.release()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._ws.terminate()
+        cls._ws.join()
+        cls._ws = None
+
     def test_exploration(self):
         count = 0
         with SourceManager() as sm:
-            for h in magenta.handles(sm):
-                if count == 5:
-                    break
-                else:
-                    count += 1
+            for h in site.handles(sm):
+                count += 1
         self.assertEqual(
                 count,
-                5,
-                "magenta.dk should have more than 5 pages")
+                2,
+                "embedded site should have 2 handles")
 
     def test_exploration_sitemap(self):
         count = 0
         with SourceManager() as sm:
-            for h in magenta_mapped.handles(sm):
-                if count == 5:
-                    break
-                else:
-                    count += 1
+            for h in mapped_site.handles(sm):
+                count += 1
         self.assertEqual(
                 count,
-                5,
-                "magenta.dk should have more than 5 pages")
+                4,
+                "embedded site with sitemap should have 4 handles")
 
     def test_resource(self):
         with SourceManager() as sm:
             first_thing = None
-            with contextlib.closing(magenta.handles(sm)) as handles:
+            with contextlib.closing(site.handles(sm)) as handles:
                 first_thing = next(handles)
             r = first_thing.follow(sm)
             self.assertIsInstance(
@@ -68,7 +112,7 @@ class Engine2HTTPTest(unittest.TestCase):
     def test_referrer_urls(self):
         with SourceManager() as sm:
             second_thing = None
-            with contextlib.closing(magenta.handles(sm)) as handles:
+            with contextlib.closing(site.handles(sm)) as handles:
                 # We know nothing about the first page (maybe it has a link to
                 # itself, maybe it doesn't), but the second page is necessarily
                 # something we got to by following a link
@@ -80,7 +124,7 @@ class Engine2HTTPTest(unittest.TestCase):
                             second_thing))
 
     def test_error(self):
-        no_such_file = WebHandle(magenta, "/404.404")
+        no_such_file = WebHandle(site, "404.404")
         with SourceManager() as sm:
             r = no_such_file.follow(sm)
             self.assertEqual(
@@ -100,7 +144,7 @@ class Engine2HTTPTest(unittest.TestCase):
     def test_missing_headers(self):
         with SourceManager() as sm:
             first_thing = None
-            with contextlib.closing(magenta.handles(sm)) as handles:
+            with contextlib.closing(site.handles(sm)) as handles:
                 first_thing = next(handles)
             r = first_thing.follow(sm)
 
