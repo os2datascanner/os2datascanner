@@ -43,6 +43,10 @@ mapped_site = WebSource("http://localhost:64346/",
         sitemap="http://localhost:64346/sitemap.xml")
 indexed_mapped_site = WebSource("http://localhost:64346/",
         sitemap="http://localhost:64346/sitemap_index.xml")
+embedded_mapped_site = WebSource("http://localhost:64346/",
+        sitemap="data:text/xml,<urlset xmlns=\"http://www.sitemaps.org/schemas"
+                "/sitemap/0.9\"><url><loc>http://localhost:64346/hemmeligheder"
+                "2.html</loc></url></urlset>")
 
 
 class Engine2HTTPTest(unittest.TestCase):
@@ -86,6 +90,16 @@ class Engine2HTTPTest(unittest.TestCase):
                 count,
                 5,
                 "embedded site with sitemap should have 5 handles")
+
+    def test_exploration_data_sitemap(self):
+        count = 0
+        with SourceManager() as sm:
+            for h in embedded_mapped_site.handles(sm):
+                count += 1
+        self.assertEqual(
+                count,
+                4,
+                "embedded site with data: sitemap should have 4 handles")
 
     def test_exploration_index(self):
         count = 0
