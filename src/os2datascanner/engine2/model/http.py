@@ -225,5 +225,5 @@ def make_outlinks(content, where):
     doc = document_fromstring(content)
     doc.make_links_absolute(where, resolve_base_href=True)
     for el, _, li, _ in doc.iterlinks():
-        if el.tag == 'a':
+        if el.tag in ("a", "img",):
             yield li

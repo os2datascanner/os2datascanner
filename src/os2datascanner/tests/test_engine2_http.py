@@ -74,8 +74,8 @@ class Engine2HTTPTest(unittest.TestCase):
                 count += 1
         self.assertEqual(
                 count,
-                2,
-                "embedded site should have 2 handles")
+                3,
+                "embedded site should have 3 handles")
 
     def test_exploration_sitemap(self):
         count = 0
@@ -84,8 +84,8 @@ class Engine2HTTPTest(unittest.TestCase):
                 count += 1
         self.assertEqual(
                 count,
-                4,
-                "embedded site with sitemap should have 4 handles")
+                5,
+                "embedded site with sitemap should have 5 handles")
 
     def test_exploration_index(self):
         count = 0
@@ -94,8 +94,8 @@ class Engine2HTTPTest(unittest.TestCase):
                 count += 1
         self.assertEqual(
                 count,
-                5,
-                "embedded site with sitemap index should have 5 handles")
+                6,
+                "embedded site with sitemap index should have 6 handles")
 
     def test_sitemap_lm(self):
         count = 0
