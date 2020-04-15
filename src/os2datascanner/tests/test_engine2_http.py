@@ -41,6 +41,8 @@ def run_web_server(started):
 site = WebSource("http://localhost:64346/")
 mapped_site = WebSource("http://localhost:64346/",
         sitemap="http://localhost:64346/sitemap.xml")
+indexed_mapped_site = WebSource("http://localhost:64346/",
+        sitemap="http://localhost:64346/sitemap_index.xml")
 
 
 class Engine2HTTPTest(unittest.TestCase):
@@ -84,6 +86,16 @@ class Engine2HTTPTest(unittest.TestCase):
                 count,
                 4,
                 "embedded site with sitemap should have 4 handles")
+
+    def test_exploration_index(self):
+        count = 0
+        with SourceManager() as sm:
+            for h in indexed_mapped_site.handles(sm):
+                count += 1
+        self.assertEqual(
+                count,
+                5,
+                "embedded site with sitemap index should have 5 handles")
 
     def test_resource(self):
         with SourceManager() as sm:
