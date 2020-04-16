@@ -6,9 +6,10 @@ import unittest
 import contextlib
 from multiprocessing import Manager, Process
 
-from os2datascanner.engine2.model.core import (
+from os2datascanner.engine2.model.core import (Handle,
         Source, SourceManager, UnknownSchemeError, ResourceUnavailableError)
 from os2datascanner.engine2.model.http import WebSource, WebHandle
+from os2datascanner.engine2.model.utilities.datetime import parse_datetime
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
 
@@ -205,3 +206,17 @@ class Engine2HTTPTest(unittest.TestCase):
                     r.get_last_modified().value,
                     now,
                     "{0}: Last-Modified not fresh".format(first_thing))
+
+    def test_lm_hint_json(self):
+        h = WebHandle(
+                WebSource("http://localhost:64346/"),
+                "hemmeligheder2.html")
+        h.set_last_modified_hint(parse_datetime("2011-12-01"))
+
+        h2 = Handle.from_json_object(h.to_json_object())
+        # WebHandle equality doesn't include the referrer map or the
+        # Last-Modified hint, so explicitly check that here
+        self.assertEqual(
+                h.get_last_modified_hint(),
+                h2.get_last_modified_hint(),
+                "Last-Modified hint didn't survive serialisation")

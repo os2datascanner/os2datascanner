@@ -182,7 +182,6 @@ class WebResource(FileResource):
                 yield s
 
 
-@Handle.stock_json_handler("web")
 class WebHandle(Handle):
     type_label = "web"
     resource_type = WebResource
@@ -219,6 +218,22 @@ class WebHandle(Handle):
 
     def censor(self):
         return WebHandle(self.source.censor(), self.relative_path)
+
+    def to_json_object(self):
+        return dict(**super().to_json_object(), **{
+            "last_modified": OutputType.LastModified.encode_json_object(
+                    self._lm_hint)
+        })
+
+    @staticmethod
+    @Handle.json_handler(type_label)
+    def from_json_object(obj):
+        handle = WebHandle(Source.from_json_object(obj["source"]), obj["path"])
+        lm_hint = obj["last_modified"]
+        if lm_hint:
+            handle.set_last_modified_hint(
+                    OutputType.LastModified.decode_json_object(lm_hint))
+        return handle
 
 
 def make_outlinks(content, where):
