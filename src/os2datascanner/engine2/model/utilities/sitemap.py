@@ -2,10 +2,10 @@ from io import BytesIO
 from lxml import etree
 from typing import Tuple, Iterable
 from datetime import datetime
-from dateutil.parser import parse as parse_date
 import requests
 
 from os2datascanner.engine2.model.data import unpack_data_url
+from .datetime import parse_datetime
 
 
 def _xp(e, path):
@@ -40,7 +40,7 @@ def process_sitemap_url(url: str, *, context=requests,
                 loc = _xp(url, "sitemap:loc/text()")[0].strip()
                 lm = None
                 for lastmod in _xp(url, "sitemap:lastmod/text()"):
-                    lm = parse_date(lastmod.strip())
+                    lm = parse_datetime(lastmod.strip())
                 yield (loc, lm)
         elif _xp(root, "/sitemap:sitemapindex") and allow_sitemap:
             # This appears to be a sitemap index: iterate over all of the valid

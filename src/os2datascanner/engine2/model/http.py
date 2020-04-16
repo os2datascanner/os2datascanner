@@ -2,7 +2,6 @@ from io import BytesIO
 from time import sleep
 from lxml.html import document_fromstring
 from urllib.parse import urljoin, urlsplit, urlunsplit
-from dateutil.parser import parse as parse_date
 from requests.sessions import Session
 from requests.exceptions import ConnectionError
 from contextlib import contextmanager
@@ -12,6 +11,7 @@ from ..conversions.utilities.results import SingleResult, MultipleResults
 from .core import Source, Handle, FileResource, ResourceUnavailableError
 from .utilities import NamedTemporaryResource
 from .utilities.sitemap import process_sitemap_url
+from .utilities.datetime import parse_datetime
 
 
 MAX_REQUESTS_PER_SECOND = 10
@@ -138,7 +138,7 @@ class WebResource(FileResource):
             self._mr = MultipleResults(
                     {k.lower(): v for k, v in header.items()})
             try:
-                self._mr[OutputType.LastModified] = parse_date(
+                self._mr[OutputType.LastModified] = parse_datetime(
                         self._mr["last-modified"].value)
             except (KeyError, ValueError):
                 pass
