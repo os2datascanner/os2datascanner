@@ -3,12 +3,14 @@
 import os
 from codecs import lookup as lookup_codec
 from PyPDF2 import PdfFileReader
+from urllib.parse import urlsplit
 import olefile
 from zipfile import ZipFile, BadZipFile
 from defusedxml.ElementTree import parse
 
 from os2datascanner.engine2.model.core import FileResource
 from os2datascanner.engine2.model.ews import EWSMailResource
+from os2datascanner.engine2.model.http import WebResource
 
 def _codepage_to_codec(cp):
     """Retrieves the Python text codec corresponding to the given Windows
@@ -139,6 +141,13 @@ def guess_responsible_party(handle, sm):
         guesses = {}
         resource = handle.follow(sm)
         is_derived = bool(handle.source.handle)
+
+        if isinstance(resource, WebResource):
+            _, netloc, _, _, _ = urlsplit(handle.source.to_url())
+            guesses["web-domain"] = netloc
+        elif isinstance(resource, EWSMailResource):
+            guesses["email-account"] = handle.source.address
+
         if isinstance(resource, FileResource):
             media_type = handle.guess_type()
             if not is_derived:
@@ -203,8 +212,6 @@ def guess_responsible_party(handle, sm):
                     doc_info = _get_pdf_document_info(fp)
                 if _check_dictionary_field(doc_info, "/Author"):
                     guesses["pdf-author"] = doc_info["/Author"]
-        elif isinstance(resource, EWSMailResource):
-            guesses["email-account"] = handle.source.address
         return guesses
 
     guesses = _extract_guesses(handle, sm)
