@@ -29,7 +29,7 @@ WSGIPythonHome  INSERT_INSTALL_PATH
 
     Alias                   /static INSERT_INSTALL_PATH/src/os2datascanner/projects/static/INSERT_MODULE
 
-    WSGIScriptAlias         / INSERT_INSTALL_PATH/wsgi.py
+    WSGIScriptAlias         / INSERT_INSTALL_PATH/src/os2datascanner/projects/INSERT_MODULE/wsgi.py
 
     <Directory INSERT_INSTALL_PATH/src/os2datascanner/projects/static/INSERT_MODULE>
             Require all granted
