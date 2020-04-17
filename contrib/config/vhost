@@ -1,4 +1,4 @@
-WSGIPythonHome  INSERT_INSTALL_PATH
+WSGIPythonHome  INSERT_INSTALL_PATH/python-env
 
 <VirtualHost *:80>
     ServerName             INSERT_DOMAIN
