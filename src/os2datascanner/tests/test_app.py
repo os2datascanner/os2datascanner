@@ -23,7 +23,9 @@ import pycodestyle
 from django.test import TestCase
 
 from os2datascanner.projects.admin.adminapp.models.organization_model import Organization
+from os2datascanner.projects.admin.adminapp.models.authentication_model import Authentication
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import WebScanner
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.filescanner_model import FileScanner
 from os2datascanner.projects.admin.adminapp.models.scans.scan_model import Scan
 from os2datascanner.projects.admin.adminapp.validate import validate_domain
 
@@ -83,6 +85,19 @@ class ScannerTest(TestCase):
         # we have no scanner manager
         self.assertEqual(scan.status, scan.NEW)
         self.assertFalse(scanner.is_running)
+
+    def test_engine2_filescanner(self):
+        authentication = Authentication(username="jens")
+        authentication.set_password("rigtig heste batteri haefteklamme")
+        scanner = FileScanner(
+                url="//ORG/SIKKERSRV",
+                organization=self.magenta,
+                authentication=authentication,
+                alias="K")
+
+        engine2_source = scanner.make_engine2_source()
+
+        self.assertEqual(engine2_source.driveletter, "K")
 
 
 # TODO: Make it pep8 version 1.7 compatible
