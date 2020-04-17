@@ -76,12 +76,13 @@ function npm_install_and_build()
 {
     module=$1
     repo_dir=$2
+    target=$3
     echo "Installing npm packages"
-    sudo apt install npm
+    sudo -H apt-get -y install npm || return 1
 
-    cd "$repo_dir/src/os2datascanner/$module/"$module"app/"
+    cd "$repo_dir/src/os2datascanner/projects/$module/"$module"app/"
     npm install .
-    npm run build
+    npm run "$3"
 }
 
 #
