@@ -65,7 +65,7 @@ function collectstatic_and_makemessages()
     module=$1
     repo_dir=$2
     echo "Collecting static files"
-    "$repo_dir/bin/manage-$module" collectstatic
+    "$repo_dir/bin/manage-$module" collectstatic --noinput
 
     echo "Making and compiling messages."
     "$repo_dir/bin/manage-$module" makemessages --ignore=python-env/*
