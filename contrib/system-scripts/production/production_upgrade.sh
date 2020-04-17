@@ -30,6 +30,7 @@ then
     perform_django_migrations 'admin' "$PRODUCTION_DIR"
 
     # Collect static & Make messages
+    npm_install_and_build 'admin' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'admin' "$PRODUCTION_DIR"
 
     # TODO: Npm build
@@ -39,6 +40,7 @@ then
     perform_django_migrations 'report' "$PRODUCTION_DIR"
 
     # Collect static & Make messages
+    npm_install_and_build 'report' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'report' "$PRODUCTION_DIR"
 
 
