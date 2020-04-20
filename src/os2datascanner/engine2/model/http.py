@@ -10,7 +10,7 @@ from ..conversions.types import OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
 from .core import Source, Handle, FileResource, ResourceUnavailableError
 from .utilities import NamedTemporaryResource
-from .utilities.sitemap import process_sitemap_url
+from .utilities.sitemap import SitemapError, process_sitemap_url
 from .utilities.datetime import parse_datetime
 
 
@@ -65,9 +65,12 @@ class WebSource(Source):
                         to_visit.append(new_handle)
 
             if self._sitemap:
-                for address, last_modified in process_sitemap_url(
-                        self._sitemap):
-                    handle_url(None, address, last_modified)
+                try:
+                    for address, last_modified in process_sitemap_url(
+                            self._sitemap):
+                        handle_url(None, address, last_modified)
+                except SitemapError as e:
+                    raise ResourceUnavailableError(self, *e.args)
 
             while to_visit:
                 here, to_visit = to_visit[0], to_visit[1:]
