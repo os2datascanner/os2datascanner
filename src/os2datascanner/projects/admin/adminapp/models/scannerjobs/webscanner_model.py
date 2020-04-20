@@ -121,4 +121,4 @@ class WebScanner(Scanner):
         return '/webscanners/'
 
     def make_engine2_source(self):
-        return WebSource(self.root_url)
+        return WebSource(self.root_url, self.get_sitemap_url())

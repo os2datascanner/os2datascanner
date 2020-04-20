@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 62.341797 12.000301"
+   height="12.000301mm"
+   width="62.341797mm">
+  <defs
+     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-42.806999,-33.267737)"
+     id="layer1">
+    <text
+       id="text12"
+       y="38.537975"
+       x="69.342575"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.69642878px;line-height:1;font-family:Montserrat;-inkscape-font-specification:Montserrat;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.25111607"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:1;font-family:Montserrat;-inkscape-font-specification:Montserrat;text-align:start;text-anchor:start;stroke-width:0.25111607"
+         y="38.537975"
+         x="69.342575"
+         id="tspan10">Vejstrand</tspan><tspan
+         id="tspan14"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1;font-family:Montserrat;-inkscape-font-specification:Montserrat;text-align:start;text-anchor:start;stroke-width:0.25111607"
+         y="45.234406"
+         x="69.342575">Kommune</tspan></text>
+    <g
+       id="g52">
+      <rect
+         style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect20"
+         width="1"
+         height="12"
+         x="51.806999"
+         y="33.267738" />
+      <rect
+         style="opacity:1;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.28284273;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect68"
+         width="2"
+         height="12"
+         x="64.807083"
+         y="33.267887" />
+      <rect
+         y="33.267887"
+         x="63.807079"
+         height="12"
+         width="1"
+         id="rect72"
+         style="opacity:1;fill:#00ffff;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         style="opacity:1;fill:#999999;fill-opacity:1;stroke:none;stroke-width:0.20674029;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         d="m 48.806994,33.267737 v 12.000301 h 7.000089 V 33.267737 Z m 2.999817,1.000456 h 0.99994 v 1.999877 h -0.99994 z m 0,3.999756 h 0.99994 v 1.999877 h -0.99994 z m 0,4.000272 h 0.99994 v 1.999877 h -0.99994 z"
+         id="rect43" />
+      <rect
+         y="33.267887"
+         x="56.807079"
+         height="12"
+         width="7"
+         id="rect70"
+         style="opacity:1;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.52915031;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         style="opacity:1;fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect74"
+         width="1"
+         height="12"
+         x="55.807079"
+         y="33.267887" />
+      <rect
+         y="33.267738"
+         x="47.806988"
+         height="12"
+         width="1"
+         id="rect84"
+         style="opacity:1;fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         style="opacity:1;fill:#800000;fill-opacity:1;stroke:none;stroke-width:0.28284273;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect86"
+         width="2"
+         height="12"
+         x="45.806999"
+         y="33.267738" />
+      <rect
+         style="opacity:1;fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect88"
+         width="1"
+         height="12"
+         x="44.806999"
+         y="33.267738" />
+      <rect
+         y="33.267738"
+         x="42.806999"
+         height="12"
+         width="2"
+         id="rect90"
+         style="opacity:1;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.28284273;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         y="33.267887"
+         x="65.806671"
+         height="12"
+         width="2"
+         id="rect110"
+         style="opacity:1;fill:#000080;fill-opacity:1;stroke:none;stroke-width:0.28284273;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>

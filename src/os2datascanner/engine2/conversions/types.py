@@ -1,6 +1,5 @@
 from enum import Enum
-from datetime import datetime, timezone
-from dateutil import tz
+from datetime import datetime
 
 
 class OutputType(Enum):

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>
+            http://localhost:64346/
+        </loc>
+    </url>
+    <url>
+        <loc>
+            http://localhost:64346/kontakt.html
+        </loc>
+    </url>
+    <url>
+        <loc>
+            http://localhost:64346/hemmeligheder.html
+        </loc>
+    </url>
+</urlset>
