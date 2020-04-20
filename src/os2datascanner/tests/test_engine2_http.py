@@ -182,6 +182,21 @@ class Engine2HTTPTest(unittest.TestCase):
                 with r.make_stream() as s:
                     pass
 
+    def test_sitemap_error(self):
+        # Extant file, valid XML, not a sitemap
+        s1 = WebSource("http://localhost:64346/",
+                sitemap="http://localhost:64346/not_a_sitemap.xml")
+        # Extant file, invalid XML
+        s2 = WebSource("http://localhost:64346/",
+                sitemap="http://localhost:64346/broken_sitemap.xml")
+        # Missing file
+        s3 = WebSource("http://localhost:64346/",
+                sitemap="http://localhost:64346/missing_sitemap.xml")
+        with SourceManager() as sm:
+            for source in (s1, s2, s3,):
+                with self.assertRaises(ResourceUnavailableError):
+                    list(source.handles(sm))
+
     def test_missing_headers(self):
         with SourceManager() as sm:
             first_thing = None
