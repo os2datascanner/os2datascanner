@@ -13,7 +13,7 @@ body {
 .wrapper {
   margin: 0 auto 0 calc(var(--size-logo-width));
   max-width: 90%;
-  min-height: calc(100vh - 9rem - var(--size-ds-unit) * 2);
+  min-height: calc(100vh - 9rem - var(--size-ds-unit) * 3);
   /* 
     Banner = 4rem
     Footer = 5rem
