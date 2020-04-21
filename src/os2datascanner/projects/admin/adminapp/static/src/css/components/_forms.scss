@@ -67,6 +67,10 @@
     }
   }
 
+  textarea.form-control {
+    height: auto;
+  }
+
   &__help-text {
     display: block;
     font-size: 0.75em;
