@@ -39,6 +39,7 @@ then
     # Setup administrations module
     source "$PRODUCTION_DIR/contrib/system-scripts/utils/admin_setup.sh" "$ADMIN_DOMAIN" "$ENABLE_WEBSCAN" "$ENABLE_FILESCAN" "$ENABLE_EXCHANGESCAN" "$PRODUCTION_DIR" False
 
+    npm_install_and_build 'admin' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'admin' "$PRODUCTION_DIR"
 
     # Configure apache for the administrations module
@@ -48,6 +49,7 @@ then
     # Setup report module
     source "$PRODUCTION_DIR/contrib/system-scripts/utils/report_setup.sh" "$REPORT_DOMAIN" "$ENABLE_SAML2" "$PRODUCTION_DIR" False
 
+    npm_install_and_build 'report' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'report' "$PRODUCTION_DIR"
 
     # Configure apache for the administrations module
