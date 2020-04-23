@@ -28,8 +28,8 @@ class Sensitivity:
     OK = 0
 
     choices = (
-        (OK, 'Grøn'),
-        (LOW, 'Gul'),
-        (HIGH, 'Rød'),
-        (CRITICAL, 'Sort')
+        (OK, 'Notifikation'),
+        (LOW, 'Advarsel'),
+        (HIGH, 'Problem'),
+        (CRITICAL, 'Kritisk')
     )
