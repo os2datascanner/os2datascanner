@@ -232,7 +232,7 @@ class WebHandle(Handle):
     @Handle.json_handler(type_label)
     def from_json_object(obj):
         handle = WebHandle(Source.from_json_object(obj["source"]), obj["path"])
-        lm_hint = obj["last_modified"]
+        lm_hint = obj.get("last_modified")
         if lm_hint:
             handle.set_last_modified_hint(
                     OutputType.LastModified.decode_json_object(lm_hint))
