@@ -67,15 +67,19 @@
             </svg>
           </a>
 
-          <a 
-            href="#delete-rule-modal"
-            data-modal="modal:open"
-            class="button button--small button--rounded"
-            title="Slet">
-            <svg class="icon">
-              <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
-            </svg>
-          </a>
+          <form action="/{{ view.type }}rules/regex/{{rule.pk}}/delete/" method="post" style="display: inline-block;">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button 
+              type="submit"
+              class="button button--small button--rounded"
+              onclick="return confirm('Ønsker du virkelig at slette denne regel?\n{{ rule.name }}\n\nHandlingen kan ikke fortrydes.')">
+              <svg class="icon">
+                <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
+              </svg>
+            </button>
+          </form>
+
         </td>
       </tr>
       <tr class="expandable-row" id="show-patterns-{{ forloop.counter }}" hidden>
