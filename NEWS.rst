@@ -1,6 +1,52 @@
 OS2datascanner
 ==============
 
+Version 3.3.0, 24rd April 2020
+------------------------------
+
+"No Missing Screws"
+
+New in this version:
+
+- Support for scanning websites:
+
+  - Results from website scans are displayed properly in the report module.
+
+  - Report module users can be given responsibility for matches from individual
+    web domains.
+
+  - The scanner engine understands and follows links from sitemap and sitemap
+    index files.
+
+- The report module's overview now includes a key that lists the various
+  sensitivity levels.
+
+General improvements:
+
+- The alignment of the user interface has been improved throughout the
+  administration system.
+
+Bugfixes:
+
+- The installation process now correctly builds CSS and JavaScript resources.
+
+- Files uploaded to the administration system are preserved when upgrading
+  production installations.
+
+- The Apache configuration files built by the installation process no longer
+  contain erroneous paths to installed files.
+
+- Drive letters associated with network drives are now correctly sent from the
+  administration system to the scanner engine.
+
+- The administration system now correctly displays sensitivity values for CPR
+  rules.
+
+- Attempting to delete a scanner job in the administration system no longer
+  produces a broken modal dialog.
+
+- The report module no longer displays an unnecessary vertical scrollbar.
+
 Version 3.2.1, 3rd April 2020
 -----------------------------
 

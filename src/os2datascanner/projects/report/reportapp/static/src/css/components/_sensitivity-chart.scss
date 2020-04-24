@@ -1,0 +1,20 @@
+.sensitivity-chart {
+  background-color: #fff;
+  box-shadow: var(--box-shadow-large);
+  margin: 1rem 0;
+  max-width: 80rem;
+  padding: 2rem;
+  width: calc(100% - 2rem);
+
+  summary {
+    cursor: pointer;
+  }
+
+  summary + div {
+    margin-top: 2rem;
+  }
+
+  ol {
+    margin-left: 2rem;
+  }
+}

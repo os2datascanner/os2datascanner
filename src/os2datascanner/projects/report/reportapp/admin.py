@@ -4,6 +4,7 @@ from .models.roles.remediator_model import Remediator
 from .models.roles.defaultrole_model import DefaultRole
 from .models.aliases.adsidalias_model import ADSIDAlias
 from .models.aliases.emailalias_model import EmailAlias
+from .models.aliases.webdomainalias_model import WebDomainAlias
 from .models.documentreport_model import DocumentReport
 
 # Register your models here.
@@ -17,6 +18,10 @@ class ADSIDAliasAdmin(admin.ModelAdmin):
 @admin.register(EmailAlias)
 class EmailAliasAdmin(admin.ModelAdmin):
     list_display = ('address', 'user', )
+
+@admin.register(WebDomainAlias)
+class WebDomainAliasAdmin(admin.ModelAdmin):
+    list_display = ('domain', 'user', )
 
 @admin.register(DefaultRole)
 class DefaultRoleAdmin(admin.ModelAdmin):

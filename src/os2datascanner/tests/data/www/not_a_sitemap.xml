@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<dog xmlns="https://en.wikipedia.org/wiki/Man%27s_best_friend"
+        style="foreground-color: #000; background-color: #fff; pattern: spots"
+        id="Fido">
+    <head>
+        <nose style="color: rgb(0%, 0%, 0%); wetness: 100%" />
+        <mouth state="panting" style="expression: adorable" />
+    </head>
+    <leg>
+        <paw state="outstretched" shakeable="yes" />
+    </leg>
+    <leg>
+        <paw />
+    </leg>
+    <leg state="sitting">
+        <paw />
+    </leg>
+    <leg state="sitting">
+        <paw />
+    </leg>
+    <tail state="wagging" />
+</dog>

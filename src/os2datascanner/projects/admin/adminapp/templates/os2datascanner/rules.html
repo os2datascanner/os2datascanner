@@ -27,35 +27,35 @@
   <table class="datatable">
     <thead>
       <tr>
-        <th>Navn</th>
+        <th class="datatable__column--name">Navn</th>
         {% if user.is_superuser %}
-        <th>Organisation</th>
+        <th class="datatable__column--org">Organisation</th>
         {% endif %}
-        <th>Beskrivelse</th>
-        <th>Udtryk</th>
-        <th>Følsomhed</th>
-        <th>Handling</th>
+        <th class="datatable__column--description">Beskrivelse</th>
+        <th class="datatable__column--expression">Udtryk</th>
+        <th class="datatable__column--sensitivity">Følsomhed</th>
+        <th class="datatable__column--actions">Handling</th>
       </tr>
     </thead>
     <tbody>
       {% for rule in regexrule_list %}
       <tr tabindex="0">
-        <td>{{ rule.name }}</td>
+        <td class="datatable__column--name">{{ rule.name }}</td>
         {% if user.is_superuser %}
-        <td>{{ rule.organization }}</td>
+        <td class="datatable__column--org">{{ rule.organization }}</td>
         {% endif %}
-        <td>{{ rule.description }}</td>
+        <td class="datatable__column--description">{{ rule.description }}</td>
 
-        <td>
+        <td class="datatable__column--expression">
           {% if rule.regexrule.patterns.all|length > 0 %}
           <button type="button" class="button button--ghost button--small button--rounded" data-toggle="#show-patterns-{{ forloop.counter }}">Vis udtryk</button>
           </div>
           {% endif %}
         </td>
-        <td>
+        <td class="datatable__column--sensitivity">
           <span class="level-label level-label--{{ rule.sensitivity }}">{{ rule.get_sensitivity_display }}</span>
         </td>
-        <td>
+        <td class="datatable__column--actions">
           <a 
             href="#edit-rule-modal" 
             data-modal="modal:open" 
@@ -67,15 +67,19 @@
             </svg>
           </a>
 
-          <a 
-            href="#delete-rule-modal"
-            data-modal="modal:open"
-            class="button button--small button--rounded"
-            title="Slet">
-            <svg class="icon">
-              <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
-            </svg>
-          </a>
+          <form action="/{{ view.type }}rules/regex/{{rule.pk}}/delete/" method="post" style="display: inline-block;">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button 
+              type="submit"
+              class="button button--small button--rounded"
+              onclick="return confirm('Ønsker du virkelig at slette denne regel?\n{{ rule.name }}\n\nHandlingen kan ikke fortrydes.')">
+              <svg class="icon">
+                <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
+              </svg>
+            </button>
+          </form>
+
         </td>
       </tr>
       <tr class="expandable-row" id="show-patterns-{{ forloop.counter }}" hidden>
@@ -100,34 +104,29 @@
   <table class="datatable">
     <thead>
       <tr>
-        <th>Navn</th>
+        <th class="datatable__column--name">Navn</th>
         {% if user.is_superuser %}
-        <th>Organisation</th>
+        <th class="datatable__column--org">Organisation</th>
         {% endif %}
-        <th>Beskrivelse</th>
-        <th>Sandsynlighed</th>
-        <th>Følsomhed</th>
+        <th class="datatable__column--description">Beskrivelse</th>
+        <th class="datatable__column--expression"></th>
+        <th class="datatable__column--sensitivity">Følsomhed</th>
+        <th class="datatable__column--probability">p(A)</th>
       </tr>
     </thead>
 
     <tbody>
       {% for rule in cprrule_list %}
       <tr tabindex="0">
-        <td>{{ rule.name }}</td>
+        <td class="datatable__column--name">{{ rule.name }}</td>
         {% if user.is_superuser %}
-        <td>{{ rule.organization }}</td>
+        <td class="datatable__column--org">{{ rule.organization }}</td>
         {% endif %}
-        <td>{{ rule.description }}</td>
-        <td></td>
-        <td>
-          {% if rule.get_sensitivity_display == sensitivity.choices.0.1 %}
-          <span class="level-label level-label--3">{{ rule.get_sensitivity_display }}</span>
-          {% elif rule.get_sensitivity_display == sensitivity.choices.1.1 %}
-          <span class="level-label level-label--2">{{ rule.get_sensitivity_display }}</span>
-          {% else %}
-          <span class="level-label level-label--1">{{ rule.get_sensitivity_display }}</span>
-          {% endif %}
+        <td class="datatable__column--description" colspan="2">{{ rule.description }}</td>
+        <td class="datatable__column--sensitivity">
+          <span class="level-label level-label--{{ rule.sensitivity }}">{{ rule.get_sensitivity_display }}</span>
         </td>
+        <td class="datatable__column--probability">&nbsp;</td>
       </tr>
       {% endfor %}
     </tbody>

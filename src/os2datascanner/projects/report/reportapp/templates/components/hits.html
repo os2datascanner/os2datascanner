@@ -19,6 +19,8 @@
         {% include "components/hits--smbc.html" %}
       {% elif match.matches.handle|find_parent:"ews" %}
         {% include "components/hits--office365.html" %}
+      {% elif match.matches.handle|find_parent:"web" %}
+        {% include "components/hits--webpage.html" %}
       {% endif %}
     {% endfor %}
   </tbody>

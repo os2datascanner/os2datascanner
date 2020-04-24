@@ -1,11 +1,16 @@
 <h1 class="page-title">Matches:</h1>
+
+{% include "./sensitivity-chart.html" %}
+
 <table class="datatable datatable--click-rows">
-    <thead>
+
+  <thead>
     <tr>
       <th class="datatable__column--label">Følsomhed:</th>
       <th class="datatable__column--count">Antal filer:</th>
     </tr>
   </thead>
+
   <tbody>
   {% for sensitivity, count in dashboard_results.items %}
     <tr>
@@ -19,4 +24,5 @@
     </tr>
   {% endfor %}
   </tbody>
+
 </table>

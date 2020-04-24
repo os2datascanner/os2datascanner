@@ -14,22 +14,18 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 
+from django.db import models
 
-class Sensitivity:
+from .alias_model import Alias
 
-    """Name space for sensitivity values."""
 
-    def __init__(self):
-        pass
+class WebDomainAlias(Alias):
 
-    CRITICAL = 3
-    HIGH = 2
-    LOW = 1
-    OK = 0
+    domain = models.TextField(verbose_name="Web-domænenavn")
 
-    choices = (
-        (OK, 'Notifikation'),
-        (LOW, 'Advarsel'),
-        (HIGH, 'Problem'),
-        (CRITICAL, 'Kritisk')
-    )
+    key = "web-domain"
+    def __str__(self):
+        return self.domain
+
+    class Meta:
+        verbose_name_plural = "Web domain aliases"

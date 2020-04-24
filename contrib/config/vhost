@@ -1,4 +1,4 @@
-WSGIPythonHome  INSERT_INSTALL_PATH
+WSGIPythonHome  INSERT_INSTALL_PATH/python-env
 
 <VirtualHost *:80>
     ServerName             INSERT_DOMAIN
@@ -29,13 +29,13 @@ WSGIPythonHome  INSERT_INSTALL_PATH
 
     Alias                   /static INSERT_INSTALL_PATH/src/os2datascanner/projects/static/INSERT_MODULE
 
-    WSGIScriptAlias         / INSERT_INSTALL_PATH/wsgi.py
+    WSGIScriptAlias         / INSERT_INSTALL_PATH/src/os2datascanner/projects/INSERT_MODULE/wsgi.py
 
     <Directory INSERT_INSTALL_PATH/src/os2datascanner/projects/static/INSERT_MODULE>
             Require all granted
     </Directory>
 
-    <Directory INSERT_INSTALL_PATH>
+    <Directory INSERT_INSTALL_PATH/src/os2datascanner/projects/INSERT_MODULE>
             <Files wsgi.py>
                     Require all granted
             </Files>

@@ -70,4 +70,5 @@ class FileScanner(Scanner):
                 self.url,
                 user=self.authentication.username,
                 password=self.authentication.get_password(),
-                domain=self.authentication.domain)
+                domain=self.authentication.domain,
+                driveletter=self.alias)

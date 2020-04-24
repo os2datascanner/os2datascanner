@@ -36,35 +36,8 @@ class DataSource(Source):
     @staticmethod
     @Source.url_handler("data")
     def from_url(url):
-        # data: URLs are of the form
-        #
-        #     data:[mimetype][;base64],content
-        #
-        # If "mimetype" is absent, then it should be assumed to be "text/plain"
-        # (well, actually "text/plain;charset=US-ASCII", but we don't really
-        # support MIME type parameters).
-        _, rest = url.split(':', maxsplit=1)
-        # The actual content is always after the first comma
-        lead, content = rest.split(",", maxsplit=1)
-        base64 = False
-        mime = "text/plain"
-        # The lead-in sequence is optional as a whole, and both of its parts
-        # are also optional
-        if lead:
-            if lead.endswith(";base64"):
-                base64 = True
-                lead = lead[:-7]
-            # Both Firefox and Chromium think that "data:;base64,VGVzdGluZwo="
-            # is a valid data: URL for a text/plain file, so make sure we don't
-            # overwrite our default MIME type with emptiness
-            if lead:
-                mime = lead
-        content = unquote(content)
-        # Our input was a normal Python string, and we expect our content to be
-        # raw bytes. b64decode produces those already, but a plain string must
-        # be explicitly converted
-        return DataSource(
-                b64decode(content) if base64 else content.encode(), mime)
+        mime, content = unpack_data_url(url)
+        return DataSource(content, mime)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
@@ -119,3 +92,34 @@ class DataHandle(Handle):
 
     def guess_type(self):
         return self.source.mime
+
+
+def unpack_data_url(url) -> (str, bytes):
+    # data: URLs are of the form
+    #
+    #     data:[mimetype][;base64],content
+    #
+    # If "mimetype" is absent, then it should be assumed to be "text/plain"
+    # (well, actually "text/plain;charset=US-ASCII", but we don't really
+    # support MIME type parameters).
+    _, rest = url.split(':', maxsplit=1)
+    # The actual content is always after the first comma
+    lead, content = rest.split(",", maxsplit=1)
+    base64 = False
+    mime = "text/plain"
+    # The lead-in sequence is optional as a whole, and both of its parts are
+    # also optional
+    if lead:
+        if lead.endswith(";base64"):
+            base64 = True
+            lead = lead[:-7]
+        # Both Firefox and Chromium think that "data:;base64,VGVzdGluZwo=" is a
+        # valid data: URL for a text/plain file, so make sure we don't
+        # overwrite our default MIME type with emptiness
+        if lead:
+            mime = lead
+    content = unquote(content)
+    # Our input was a normal Python string, and we expect our content to be raw
+    # bytes. b64decode produces those already, but a plain string must be
+    # explicitly converted
+    return (mime, b64decode(content) if base64 else content.encode())

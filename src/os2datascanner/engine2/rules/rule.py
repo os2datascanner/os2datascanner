@@ -38,10 +38,10 @@ class Sensitivity(Enum):
 sensitivity_labels = {
     "da": {
         Sensitivity.INFORMATION: "Information",
-        Sensitivity.NOTICE: "Grøn",
-        Sensitivity.WARNING: "Gul",
-        Sensitivity.PROBLEM: "Rød",
-        Sensitivity.CRITICAL: "Sort"
+        Sensitivity.NOTICE: "Notifikation",
+        Sensitivity.WARNING: "Advarsel",
+        Sensitivity.PROBLEM: "Problem",
+        Sensitivity.CRITICAL: "Kritisk"
     }
 }
 
