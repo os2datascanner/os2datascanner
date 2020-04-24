@@ -193,6 +193,7 @@ function update_prod_dir()
         --exclude 'contrib/' \
         --exclude 'local_settings.py' \
         --exclude 'var/' \
+        --exclude 'uploads/' \
         "$repo_dir"/ "$prod_dir"
 
     echo 'Done Copying.'
