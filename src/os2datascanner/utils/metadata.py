@@ -39,22 +39,28 @@ def _get_ole_metadata(fp):
     try:
         raw = olefile.OleFileIO(fp).get_metadata()
 
-        tidied = {}
-        # The value we get here is a signed 16-bit quantity, even though
-        # the file format specifies values up to 65001
-        tidied["codepage"] = raw.codepage
-        if tidied["codepage"] < 0:
-            tidied["codepage"] += 65536
-        codec = _codepage_to_codec(tidied["codepage"])
-        if codec:
-            for name in olefile.OleMetadata.SUMMARY_ATTRIBS:
-                if name in tidied:
-                    continue
-                value = getattr(raw, name)
-                if isinstance(value, bytes):
-                    value, _ = codec.decode(value)
-                tidied[name] = value
-        return tidied
+        # Check that the codepage attribute has been set. If it hasn't, then
+        # the document didn't define a SummaryInformation stream and so doesn't
+        # have the metadata we want
+        if raw.codepage is not None:
+            tidied = {}
+            # The value we get here is a signed 16-bit quantity, even though
+            # the file format specifies values up to 65001
+            tidied["codepage"] = raw.codepage
+            if tidied["codepage"] < 0:
+                tidied["codepage"] += 65536
+            codec = _codepage_to_codec(tidied["codepage"])
+            if codec:
+                for name in olefile.OleMetadata.SUMMARY_ATTRIBS:
+                    if name in tidied:
+                        continue
+                    value = getattr(raw, name)
+                    if isinstance(value, bytes):
+                        value, _ = codec.decode(value)
+                    tidied[name] = value
+            return tidied
+        else:
+            return None
     except FileNotFoundError:
         return None
 
