@@ -61,7 +61,8 @@ def _get_ole_metadata(fp):
             return tidied
         else:
             return None
-    except FileNotFoundError:
+    # CodecInfo.decode raises a ValueError (or a subclass) on failure
+    except (FileNotFoundError, ValueError):
         return None
 
 def _process_zip_resource(fp, member, func):
