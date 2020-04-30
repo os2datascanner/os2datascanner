@@ -26,7 +26,6 @@ from os2datascanner.projects.admin.adminapp.models.organization_model import Org
 from os2datascanner.projects.admin.adminapp.models.authentication_model import Authentication
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import WebScanner
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.filescanner_model import FileScanner
-from os2datascanner.projects.admin.adminapp.models.scans.scan_model import Scan
 from os2datascanner.projects.admin.adminapp.validate import validate_domain
 
 
@@ -68,23 +67,6 @@ class ScannerTest(TestCase):
                             pk=2)
             domain.save()
             self.assertFalse(validate_domain(domain))
-
-    @unittest.skip("engine2 doesn't support scans with no rules")
-    def test_run_scan(self):
-        """Test running a scan."""
-        scanner = WebScanner(url="http://www.magenta.dk/",
-                            organization=self.magenta,
-                            validation_method=WebScanner.ROBOTSTXT,
-                            validation_status=1, schedule="")
-        scanner.save()
-
-        scan = scanner.run('kaflaflibob')
-
-        self.assertIsInstance(scan, Scan)
-
-        # we have no scanner manager
-        self.assertEqual(scan.status, scan.NEW)
-        self.assertFalse(scanner.is_running)
 
     def test_engine2_filescanner(self):
         authentication = Authentication(username="jens")

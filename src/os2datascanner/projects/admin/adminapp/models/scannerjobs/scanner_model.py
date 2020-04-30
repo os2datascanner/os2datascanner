@@ -164,13 +164,6 @@ class Scanner(models.Model):
         return rules
 
     @property
-    def is_running(self) -> bool:
-        '''Are any scans currently running against this scanner?'''
-        # using a string for the status is kind of ugly, but necessary
-        # to avoid circular imports
-        return self.webscans.filter(status="STARTED").exists()
-
-    @property
     def schedule_description(self):
         """A lambda for creating schedule description strings."""
         if any(self.schedule.occurrences()):
@@ -179,14 +172,6 @@ class Scanner(models.Model):
             return u"Nej"
 
     # Run error messages
-    ALREADY_RUNNING = (
-        "Scanneren kunne ikke startes," +
-        " fordi der allerede er en scanning i gang for den."
-    )
-    EXCHANGE_EXPORT_IS_RUNNING = (
-        "Scanneren kunne ikke startes," +
-        " fordi der er en exchange export igang."
-    )
     HAS_NO_RULES = (
         "Scanneren kunne ikke startes," +
         " fordi den ingen tilknyttede regler har."
@@ -302,15 +287,6 @@ class Scanner(models.Model):
         amqp_connection_manager.close_connection()
 
         return scan
-
-    def create_scan(self):
-        """
-        Creates a file scan.
-        :return: A file scan object
-        """
-        from ..scans.scan_model import Scan
-        scan = Scan()
-        return scan.create(self)
 
     def path_for(self, uri):
         return uri

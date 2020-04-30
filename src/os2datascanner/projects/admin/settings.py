@@ -70,7 +70,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'os2datascanner.projects.admin.adminapp.apps.AdminappConfig',
     'recurrence',
-    'django_xmlrpc',
 )
 
 try:
