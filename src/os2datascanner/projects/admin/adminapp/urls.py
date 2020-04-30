@@ -20,7 +20,6 @@ from django.conf import settings
 from django.conf.urls import url
 from django.views.i18n import JavaScriptCatalog
 
-from .models.scans.scan_model import Scan
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.webscanner_model import WebScanner
@@ -34,9 +33,7 @@ from .views.rule_views import RuleList, \
 from .views.views import GroupList, GroupCreate, GroupUpdate, GroupDelete
 from .views.views import MainPageView
 from .views.views import OrganizationList
-from .views.views import SummaryList, SummaryCreate, SummaryUpdate, SummaryDelete
-from .views.views import SummaryReport, DialogSuccess, SystemStatusView
-from .views.views import file_upload, referrer_content
+from .views.views import DialogSuccess
 from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
                                      WebScannerDelete, WebScannerRun,
                                      WebScannerAskRun, WebScannerList,
@@ -161,14 +158,8 @@ urlpatterns = [
         packages=('os2datascanner.projects.admin.adminapp', 'recurrence'),
     )),
     # System functions
-    url(r'^system/status/?$', SystemStatusView.as_view()),
     url(r'^system/orgs_and_domains/$', OrganizationList.as_view(),
         name='orgs_and_domains'),
-    url(r'system/upload_file', file_upload, name='file_upload'),
-
-    # Referrer DOM content
-    url(r'referrer/(?P<pk>[0-9]+)/$',
-        referrer_content, name='referrer_content'),
 
     url(r'^designguide',
         DesignGuide.as_view(
