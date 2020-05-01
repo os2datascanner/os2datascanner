@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<style>
+td {
+  text-align: right;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+td.sensitivity0 {
+  color: #0036b2;
+}
+td.sensitivity1 {
+  color: #eabb00;
+}
+td.sensitivity2 {
+  color: #f55c25;
+}
+td.sensitivity3 {
+  color: #b20021;
+  font-weight: 900;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+{% if image_name %}
+<p>
+  <img src="cid:{{ image_name }}">
+{% endif %}
+<p>
+  Hej {{ full_name }},
+<p>
+  Der ligger i øjeblikket <strong>{{ match_count }}</strong> matches i
+  OS2datascanner-systemet, der kræver handling fra din side:
+<table>
+  {% for caption, count in matches %}
+  <tr>
+    <td class="sensitivity{{ forloop.counter0 }}">
+      {{ caption }}
+    </td>
+    <td>
+      {{ count }}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<p>
+  <a href="{{ report_login_url }}">Log på OS2datascanner med din
+  organisationskonto</a> for at se flere detaljer.
+<p>
+  Med venlig hilsen<br>
+  OS2datascanner-systemet (på vegne af {{ institution }})
+</body>
+</html>
