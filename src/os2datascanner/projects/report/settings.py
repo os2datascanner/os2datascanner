@@ -258,6 +258,15 @@ LOGGING = {
     }
 }
 
+# The email address to send notifications from
+NOTIFICATION_FROM = None
+
+# The URL to the report module, to be included in notifications
+NOTIFICATION_LOGIN_URL = None
+
+# The name of the institution, to be included in the notification signoff
+NOTIFICATION_INSTITUTION = None
+
 local_settings_file = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     'local_settings.py'
