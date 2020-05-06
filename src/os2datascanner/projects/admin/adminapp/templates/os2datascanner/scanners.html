@@ -29,9 +29,7 @@
 
   <a 
     class="button button--add button--cta button--small button--round"
-    data-modal="modal:open"
-    data-src="/{{ view.type }}scanners/add/"
-    href="#create-scanner-modal"
+    href="/{{ view.type }}scanners/add/"
     title="Tilføj ny">
     <svg class="icon">
       <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
@@ -105,9 +103,7 @@
           </a>
 
           <a 
-            href="#edit-scanner-modal" 
-            data-modal="modal:open" 
-            data-src="/{{ view.type }}scanners/{{scanner.pk}}"
+            href="/{{ view.type }}scanners/{{scanner.pk}}"
             class="button button--small button--rounded"
             title="Redigér">
             <svg class="icon">
