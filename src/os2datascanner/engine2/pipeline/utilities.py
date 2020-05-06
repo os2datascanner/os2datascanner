@@ -207,9 +207,11 @@ class PikaPipelineRunner(PikaConnectionHolder):
                             failed = True
 
         while True:
+            consumer_tags = []
             try:
-                for q in self._read:
-                    self.channel.basic_consume(q, _queue_callback)
+                for queue in self._read:
+                    consumer_tags.append(
+                            self.channel.basic_consume(queue, _queue_callback))
                 self.dispatch_pending(expected=0)
                 self.channel.start_consuming()
             except (pika.exceptions.StreamLostError,
@@ -219,5 +221,7 @@ class PikaPipelineRunner(PikaConnectionHolder):
                 self._connection = None
                 pass
             except:
+                for tag in consumer_tags:
+                    self.channel.basic_cancel(tag)
                 self.channel.stop_consuming()
                 raise
