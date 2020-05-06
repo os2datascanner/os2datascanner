@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import os
+from sys import stderr
 from codecs import lookup as lookup_codec
 from PyPDF2 import PdfFileReader
 from urllib.parse import urlsplit
 import olefile
 from zipfile import ZipFile, BadZipFile
+from traceback import print_exc
 from defusedxml.ElementTree import parse
 
 from os2datascanner.engine2.model.core import FileResource
@@ -39,23 +41,30 @@ def _get_ole_metadata(fp):
     try:
         raw = olefile.OleFileIO(fp).get_metadata()
 
-        tidied = {}
-        # The value we get here is a signed 16-bit quantity, even though
-        # the file format specifies values up to 65001
-        tidied["codepage"] = raw.codepage
-        if tidied["codepage"] < 0:
-            tidied["codepage"] += 65536
-        codec = _codepage_to_codec(tidied["codepage"])
-        if codec:
-            for name in olefile.OleMetadata.SUMMARY_ATTRIBS:
-                if name in tidied:
-                    continue
-                value = getattr(raw, name)
-                if isinstance(value, bytes):
-                    value, _ = codec.decode(value)
-                tidied[name] = value
-        return tidied
-    except FileNotFoundError:
+        # Check that the codepage attribute has been set. If it hasn't, then
+        # the document didn't define a SummaryInformation stream and so doesn't
+        # have the metadata we want
+        if raw.codepage is not None:
+            tidied = {}
+            # The value we get here is a signed 16-bit quantity, even though
+            # the file format specifies values up to 65001
+            tidied["codepage"] = raw.codepage
+            if tidied["codepage"] < 0:
+                tidied["codepage"] += 65536
+            codec = _codepage_to_codec(tidied["codepage"])
+            if codec:
+                for name in olefile.OleMetadata.SUMMARY_ATTRIBS:
+                    if name in tidied:
+                        continue
+                    value = getattr(raw, name)
+                    if isinstance(value, bytes):
+                        value, _ = codec.decode(value)
+                    tidied[name] = value
+            return tidied
+        else:
+            return None
+    # CodecInfo.decode raises a ValueError (or a subclass) on failure
+    except (FileNotFoundError, ValueError):
         return None
 
 def _process_zip_resource(fp, member, func):
@@ -138,15 +147,14 @@ def guess_responsible_party(handle, sm):
     * "filesystem-owner-uid", the UID of the owner of a Unix filesystem object"""
 
     def _extract_guesses(handle, sm):
-        guesses = {}
         resource = handle.follow(sm)
         is_derived = bool(handle.source.handle)
 
         if isinstance(resource, WebResource):
             _, netloc, _, _, _ = urlsplit(handle.source.to_url())
-            guesses["web-domain"] = netloc
+            yield "web-domain", netloc
         elif isinstance(resource, EWSMailResource):
-            guesses["email-account"] = handle.source.address
+            yield "email-account", handle.source.address
 
         if isinstance(resource, FileResource):
             media_type = handle.guess_type()
@@ -155,11 +163,10 @@ def guess_responsible_party(handle, sm):
                 # (XXX: being this explicit about function names seems
                 # inelegant)
                 if hasattr(resource, "get_owner_sid"):
-                    guesses["filesystem-owner-sid"] = (
-                            resource.get_owner_sid())
+                    yield "filesystem-owner-sid", resource.get_owner_sid()
                 if hasattr(resource, "unpack_stat"):
-                    guesses["filesystem-owner-uid"] = (
-                            resource.unpack_stat()["st_uid"].value)
+                    uid = resource.unpack_stat()["st_uid"].value
+                    yield "filesystem-owner-uid", uid
 
             # Extract content metadata
             if type_is_opendocument(media_type):
@@ -175,12 +182,12 @@ def guess_responsible_party(handle, sm):
                         lm = content.find(
                                 "{http://purl.org/dc/elements/1.1/}creator")
                         if lm is not None and lm.text:
-                            guesses["od-modifier"] = lm.text.strip()
+                            yield "od-modifier", lm.text.strip()
                         c = content.find(
                                 "{urn:oasis:names:tc:opendocument:"
                                 "xmlns:meta:1.0}initial-creator")
                         if c is not None and c.text:
-                            guesses["od-creator"] = c.text.strip()
+                            yield "od-creator", c.text.strip()
             elif type_is_ooxml(media_type):
                 # Extract Office Open XML metadata
                 f = None
@@ -191,10 +198,10 @@ def guess_responsible_party(handle, sm):
                             "{http://schemas.openxmlformats.org/package/"
                             "2006/metadata/core-properties}lastModifiedBy")
                     if lm is not None and lm.text:
-                        guesses["ooxml-modifier"] = lm.text.strip()
+                        yield "ooxml-modifier", lm.text.strip()
                     c = f.find("{http://purl.org/dc/elements/1.1/}creator")
                     if c is not None and c.text:
-                        guesses["ooxml-creator"] = c.text.strip()
+                        yield "ooxml-creator", c.text.strip()
             elif type_is_ole(media_type):
                 # Extract old Microsoft office document metadata
                 m = None
@@ -202,19 +209,30 @@ def guess_responsible_party(handle, sm):
                     m = _get_ole_metadata(fp)
                 if m:
                     if "last_saved_by" in m:
-                        guesses["ole-modifier"] = m["last_saved_by"]
+                        yield "ole-modifier", m["last_saved_by"]
                     if "author" in m:
-                        guesses["ole-creator"] = m["author"]
+                        yield "ole-creator", m["author"]
             elif type_is_pdf(media_type):
                 # Extract PDF metadata
                 doc_info = None
                 with resource.make_stream() as fp:
                     doc_info = _get_pdf_document_info(fp)
                 if _check_dictionary_field(doc_info, "/Author"):
-                    guesses["pdf-author"] = doc_info["/Author"]
-        return guesses
+                    yield "pdf-author", doc_info["/Author"]
 
-    guesses = _extract_guesses(handle, sm)
+    guesses = {}
+    # Files in the real world can be malformed in a wide array of exciting
+    # ways. To make sure we collect as much metadata as possible, even if one
+    # of the later extraction stages does go wrong, store metadata values as
+    # soon as they're produced by our helper function
+    try:
+        for k, v in _extract_guesses(handle, sm):
+            guesses[k] = v
+    except Exception:
+        print("warning: guess_responsible_party:"
+                " continuing after unexpected exception", file=stderr)
+        print_exc(file=stderr)
+
     if handle.source.handle:
         guesses.update(guess_responsible_party(handle.source.handle, sm))
     return guesses
