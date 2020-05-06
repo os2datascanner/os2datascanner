@@ -98,7 +98,7 @@ class Command(BaseCommand):
                             if k != Sensitivity.INFORMATION])
 
             msg = EmailMultiAlternatives(
-                    "Der ligger uhåndteret matches i OS2datascanner",
+                    "Der ligger uhåndterede matches i OS2datascanner",
                     txt_mail_template.render(context),
                     settings.NOTIFICATION_FROM,
                     [user.email])
