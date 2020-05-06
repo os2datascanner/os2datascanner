@@ -15,9 +15,7 @@
   <h2 style="display: inline-block;">Regler</h2>
   <a 
     class="button button--add button--cta button--small button--round"
-    data-modal="modal:open"
-    data-src="/rules/regex/add/"
-    href="#create-rule-modal"
+    href="/rules/regex/add/"
     title="Tilføj ny">
     <svg class="icon">
       <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
@@ -57,9 +55,7 @@
         </td>
         <td class="datatable__column--actions">
           <a 
-            href="#edit-rule-modal" 
-            data-modal="modal:open" 
-            data-src="/rules/regex/{{rule.pk}}"
+            href="/rules/regex/{{rule.pk}}"
             class="button button--small button--rounded"
             title="Redigér">
             <svg class="icon">
@@ -111,7 +107,6 @@
         <th class="datatable__column--description">Beskrivelse</th>
         <th class="datatable__column--expression"></th>
         <th class="datatable__column--sensitivity">Følsomhed</th>
-        <th class="datatable__column--probability">p(A)</th>
       </tr>
     </thead>
 
@@ -126,7 +121,6 @@
         <td class="datatable__column--sensitivity">
           <span class="level-label level-label--{{ rule.sensitivity }}">{{ rule.get_sensitivity_display }}</span>
         </td>
-        <td class="datatable__column--probability">&nbsp;</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -135,16 +129,6 @@
 {% endblock %}
 
 {% block modal %}
-<div class="modal" id="create-rule-modal" tabindex="-1" role="dialog" aria-labelledby="create-rule-modal-title" aria-hidden="true">
-  <h4 class="modal__heading" id="create-rule-modal-title">Opret regel</h4>
-  <iframe src="about:blank" frameborder="0"></iframe>
-</div>
-
-<div class="modal" id="edit-rule-modal" tabindex="-1" role="dialog" aria-labelledby="edit-rule-modal-title" aria-hidden="true" hidden>
-  <h4 class="modal__heading" id="edit-rule-modal-title">Redigér regel</h4>
-  <iframe src="about:blank" frameborder="0"></iframe>
-</div>
-
 <div class="modal modal--small" id="delete-rule-modal" tabindex="-1" role="dialog" aria-labelledby="delete-rule-modal-title" aria-hidden="true" hidden>
   <h4 class="modal__heading" id="delete-rule-modal-title">Slet regel</h4>
   <iframe src="about:blank" frameborder="0"></iframe>
