@@ -210,6 +210,10 @@
     }
   }
 
+  input[type=checkbox]:focus + label::before {
+    box-shadow: 0 0 0 2px var(--color-main);
+  }
+
   &:hover {
     input[type="checkbox"] + label {
       &::before {
