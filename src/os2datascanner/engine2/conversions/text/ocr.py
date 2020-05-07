@@ -30,6 +30,8 @@ def image_processor(r, **kwargs):
 def intermediate_image_processor(r, **kwargs):
     with r.make_path() as p:
         with NamedTemporaryFile("rb", suffix=".png") as ntf:
-            run(["convert", p, "png:{0}".format(ntf.name)],
-                    check=True, **kwargs)
-            return tesseract(ntf.name)
+            result = run(["convert", p, "png:{0}".format(ntf.name)], **kwargs)
+            if result.returncode == 0:
+                return tesseract(ntf.name)
+            else:
+                return None
