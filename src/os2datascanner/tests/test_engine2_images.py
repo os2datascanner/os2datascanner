@@ -14,7 +14,7 @@ expected_result = "131016-9996"
 
 class TestEngine2Images(unittest.TestCase):
     def test_ocr_conversions(self):
-        fs = FilesystemSource(test_data_path)
+        fs = FilesystemSource(os.path.join(test_data_path, "good"))
         with SourceManager() as sm:
             for h in fs.handles(sm):
                 resource = h.follow(sm)
