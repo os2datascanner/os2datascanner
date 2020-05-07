@@ -1,4 +1,4 @@
-from typing import NamedTuple
+import enum
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -20,14 +20,32 @@ class DocumentReport(models.Model):
         matches = self.data.get("matches")
         return MatchesMessage.from_json_object(matches) if matches else None
 
-    resolution_choices = (
-        (0, "Andet"),
-        (1, "Redigeret"),
-        (2, "Flyttet"),
-        (3, "Slettet"),
-    )
+    @enum.unique
+    class ResolutionChoices(enum.Enum):
+        # Future simplification note: the behaviour of the enumeration values
+        # of this class is modelled on Django 3's model.Choices
+        OTHER = 0, "Andet"
+        EDITED = 1, "Redigeret"
+        MOVED = 2, "Flyttet"
+        REMOVED = 3, "Slettet"
 
-    resolution_status = models.IntegerField(choices=resolution_choices,
+        def __new__(cls, *args):
+            obj = object.__new__(cls)
+            # models.Choices compatibility: the last element of the enum value
+            # tuple, if there is one, is a human-readable label
+            obj._value_ = args[0] if len(args) < 3 else args[:-1]
+            return obj
+
+        def __init__(self, *args):
+            self.label = args[-1] if len(args) > 1 else self.name
+
+        # This is a class *property* in model.Choices, but that would require
+        # sinister metaclass sorcery
+        @classmethod
+        def choices(cls):
+            return [(k.value, k.label) for k in cls]
+
+    resolution_status = models.IntegerField(choices=ResolutionChoices.choices(),
                                             null=True, blank=True,
                                             verbose_name="Håndteringsstatus")
     custom_resolution_status = models.CharField(max_length=1024, blank=True,
