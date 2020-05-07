@@ -52,21 +52,17 @@ class DocumentReport(models.Model):
                                                 verbose_name="Begrundelse")
 
     def clean(self):
-        if self.resolution_status == 0:
-            if not self.custom_resolution_status:
+        self.clean_custom_resolution_status()
+
+    def clean_custom_resolution_status(self):
+        self.custom_resolution_status = self.custom_resolution_status.strip()
+        if self.resolution_status == 0 and not self.custom_resolution_status:
                 raise ValidationError(
                         {
-                            "resolution_status":
+                            "custom_resolution_status":
                                     "Resolution status 0 requires an"
                                     " explanation"
                         })
-        elif self.custom_resolution_status:
-            raise ValidationError(
-                    {
-                        "custom_resolution_status":
-                                "Explanations can only be associated with"
-                                " resolution status 0"
-                    })
 
     class Meta:
         verbose_name_plural = "Document reports"
