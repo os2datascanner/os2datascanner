@@ -23,6 +23,16 @@ class TestEngine2Images(unittest.TestCase):
                         expected_result,
                         "{0}: content failed".format(h))
 
+    def test_corrupted_ocr(self):
+        fs = FilesystemSource(os.path.join(test_data_path, "corrupted"))
+        with SourceManager() as sm:
+            for h in fs.handles(sm):
+                resource = h.follow(sm)
+                self.assertEqual(
+                        convert(resource, OutputType.Text),
+                        None,
+                        "{0}: error handling failed".format(h))
+
     def test_size_computation(self):
         fs = FilesystemSource(test_data_path)
         with SourceManager() as sm:
