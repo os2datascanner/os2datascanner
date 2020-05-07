@@ -6,10 +6,15 @@ from ..registry import conversion
 
 
 def tesseract(path, **kwargs):
-    return run(["tesseract", path, "stdout"],
+    result = run(
+            ["tesseract", path, "stdout"],
             universal_newlines=True,
             stdout=PIPE,
-            stderr=DEVNULL, **kwargs).stdout.strip()
+            stderr=DEVNULL, **kwargs)
+    if result.returncode == 0:
+        return result.stdout.strip()
+    else:
+        return None
 
 
 @conversion(OutputType.Text, "image/png", "image/jpeg")
