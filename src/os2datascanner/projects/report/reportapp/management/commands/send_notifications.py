@@ -72,7 +72,7 @@ class Command(BaseCommand):
                 results |= role.filter(DocumentReport.objects.all())
 
             if not results:
-                print("Nothing for user {0}".format(user.name))
+                print("Nothing for user {0}".format(user.username))
                 continue
 
             # Filter out anything we don't know how to show in the UI
