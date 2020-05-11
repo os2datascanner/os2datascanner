@@ -17,7 +17,6 @@
 
 from os.path import basename
 from email.mime.image import MIMEImage
-import argparse
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -27,6 +26,7 @@ from django.template import loader
 
 from ...views.views import RENDERABLE_RULES
 from ...models.documentreport_model import DocumentReport
+from ...models.roles.defaultrole_model import DefaultRole
 from os2datascanner.engine2.rules.rule import Sensitivity
 
 
