@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
         shared_context = {
             "image_name": image_name,
-            "report_login_url": settings.NOTIFICATION_LOGIN_URL,
+            "report_login_url": settings.SITE_URL,
             "institution": settings.NOTIFICATION_INSTITUTION
         }
         for user in User.objects.all():
@@ -100,7 +100,7 @@ class Command(BaseCommand):
             msg = EmailMultiAlternatives(
                     "Der ligger uhåndterede matches i OS2datascanner",
                     txt_mail_template.render(context),
-                    settings.NOTIFICATION_FROM,
+                    settings.DEFAULT_FROM_EMAIL,
                     [user.email])
             msg.attach_alternative(
                     html_mail_template.render(context), "text/html")
