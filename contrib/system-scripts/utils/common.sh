@@ -15,6 +15,9 @@ function setup_local_settings()
     domain=$3
     local_settings_file=$4
     debug=$5
+    from_email=$6
+    admin_email=$7
+    institution=$8
 
     secret_key=$(xxd -c 64 -l 64 -p /dev/urandom)
     db_pass=$(pwgen -s -1 12)
@@ -30,6 +33,9 @@ function setup_local_settings()
     sed -i "s/INSERT_DB_PASSWD/$db_pass/g" "$local_settings_file"
     sed -i "s/DEBUG = False/DEBUG = $debug/g" "$local_settings_file"
     sed -i "s/INSERT_DOMAIN_NAME/$domain/g" "$local_settings_file"
+    sed -i "s/INSERT_DEFAULT_FROM_EMAIL/$from_email/g" "$local_settings_file"
+    sed -i "s/INSERT_ADMIN_EMAIL/$admin_email/g" "$local_settings_file"
+    sed -i "s/INSERT_INSTITUTION/$institution/g" "$local_settings_file"
 
     # Link local settings file to administration modules local settings
     ln -svfr "$local_settings_file" "$repo_dir/src/os2datascanner/projects/$2/local_settings.py"
