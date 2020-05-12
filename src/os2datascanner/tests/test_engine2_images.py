@@ -14,7 +14,7 @@ expected_result = "131016-9996"
 
 class TestEngine2Images(unittest.TestCase):
     def test_ocr_conversions(self):
-        fs = FilesystemSource(test_data_path)
+        fs = FilesystemSource(os.path.join(test_data_path, "good"))
         with SourceManager() as sm:
             for h in fs.handles(sm):
                 resource = h.follow(sm)
@@ -22,6 +22,16 @@ class TestEngine2Images(unittest.TestCase):
                         convert(resource, OutputType.Text).value,
                         expected_result,
                         "{0}: content failed".format(h))
+
+    def test_corrupted_ocr(self):
+        fs = FilesystemSource(os.path.join(test_data_path, "corrupted"))
+        with SourceManager() as sm:
+            for h in fs.handles(sm):
+                resource = h.follow(sm)
+                self.assertEqual(
+                        convert(resource, OutputType.Text),
+                        None,
+                        "{0}: error handling failed".format(h))
 
     def test_size_computation(self):
         fs = FilesystemSource(test_data_path)

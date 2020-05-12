@@ -40,6 +40,6 @@ def convert(resource, input_type, mime_override=None) -> SingleResult:
             # Raise the original, more specific, exception
             raise e
     value = converter(resource)
-    if value and not isinstance(value, SingleResult):
+    if value is not None and not isinstance(value, SingleResult):
         value = SingleResult(None, input_type, value)
     return value

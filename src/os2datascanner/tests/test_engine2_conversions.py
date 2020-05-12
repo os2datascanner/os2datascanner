@@ -9,7 +9,7 @@ from os2datascanner.engine2.conversions.registry import convert
 
 here_path = os.path.dirname(__file__)
 image_handle = FilesystemHandle.make_handle(
-        os.path.join(here_path, "data/ocr/cpr.png"))
+        os.path.join(here_path, "data/ocr/good/cpr.png"))
 html_handle = FilesystemHandle.make_handle(
         os.path.join(here_path, "data/html/simple.html"))
 empty_handle = FilesystemHandle.make_handle(

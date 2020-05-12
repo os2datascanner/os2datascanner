@@ -6,10 +6,15 @@ from ..registry import conversion
 
 
 def tesseract(path, **kwargs):
-    return run(["tesseract", path, "stdout"],
+    result = run(
+            ["tesseract", path, "stdout"],
             universal_newlines=True,
             stdout=PIPE,
-            stderr=DEVNULL, **kwargs).stdout.strip()
+            stderr=DEVNULL, **kwargs)
+    if result.returncode == 0:
+        return result.stdout.strip()
+    else:
+        return None
 
 
 @conversion(OutputType.Text, "image/png", "image/jpeg")
@@ -25,6 +30,8 @@ def image_processor(r, **kwargs):
 def intermediate_image_processor(r, **kwargs):
     with r.make_path() as p:
         with NamedTemporaryFile("rb", suffix=".png") as ntf:
-            run(["convert", p, "png:{0}".format(ntf.name)],
-                    check=True, **kwargs)
-            return tesseract(ntf.name)
+            result = run(["convert", p, "png:{0}".format(ntf.name)], **kwargs)
+            if result.returncode == 0:
+                return tesseract(ntf.name)
+            else:
+                return None
