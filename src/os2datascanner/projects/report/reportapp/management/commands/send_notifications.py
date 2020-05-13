@@ -114,4 +114,7 @@ class Command(BaseCommand):
                 print(msg.message().as_string())
                 print("--")
             else:
-                msg.send()
+                try:
+                    msg.send()
+                except Exception as ex:
+                    print("Exception occured while trying to send an email: {0}".format(ex))
