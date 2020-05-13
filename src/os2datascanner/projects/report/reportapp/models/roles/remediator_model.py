@@ -22,8 +22,9 @@ from .role_model import Role
 
 
 class Remediator(Role):
-    """The Remediator role's filter accepts all matches whose metadata cannot
-    be mapped to an existing system user."""
+    """The Remediator role's filter accepts all matches that have not already
+    been resolved and whose metadata cannot be mapped to an existing system
+    user."""
 
     def filter(self, document_reports):
         # XXX: this logic only makes sense if all system users belong to the
@@ -37,4 +38,4 @@ class Remediator(Role):
                 data__metadata__metadata__contains={
                     str(alias.key): str(alias)
                 })
-        return document_reports
+        return document_reports.exclude(resolution_status__isnull=False)

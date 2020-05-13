@@ -4,11 +4,13 @@ from django.conf.urls import url
 from django.urls import include
 from django.conf import settings
 
+from .views.api import JSONAPIView
 from .views.views import (MainPageView, SensitivityPageView, ApprovalPageView,
                           StatsPageView, SettingsPageView, AboutPageView)
 
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),
+    url('api$',     JSONAPIView.as_view(),     name="json-api"),
     url('sensitivity/$',     SensitivityPageView.as_view(),     name="sensitivity"),
     url('approval', ApprovalPageView.as_view(), name="about"),
     url('stats',    StatsPageView.as_view(),    name="about"),

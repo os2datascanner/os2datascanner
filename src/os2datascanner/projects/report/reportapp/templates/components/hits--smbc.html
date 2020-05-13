@@ -21,7 +21,10 @@
     </div>
 
     <div class="hit-link">
-      <button class="button button--small button--cta" data-clipboard-text="{{ match.matches.handle|find_parent:"smbc"|present }}">Copy location</button>
+      <div class="button-group">
+        <button class="button button--small button--cta" data-clipboard-text="{{ match.matches.handle|find_parent:"smbc"|present }}">Copy location</button>
+        {% include "components/handle-match.html" %}
+      </div>
     </div>
   </td>
 
