@@ -146,6 +146,18 @@ AUTH_PROFILE_MODULE = 'os2datascanner.projects.report.reportapp.UserProfile'
 
 LOGIN_REDIRECT_URL = '/'
 
+# Email  settings
+
+DEFAULT_FROM_EMAIL = '(Magenta Bibos Info) info@magenta.dk'
+ADMIN_EMAIL = '(Magenta Bibos Admin) info@magenta.dk'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+NOTIFICATION_INSTITUTION = None
+
+# Log settings.
+
 GRAYLOG_HOST = os.getenv('DJANGO_GRAYLOG_HOST')
 
 structlog.configure(
