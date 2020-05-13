@@ -24,6 +24,15 @@ DATABASE_POOL_ARGS = {
     'recycle': 300
 }
 
+DEFAULT_FROM_EMAIL = 'INSERT_DEFAULT_FROM_EMAIL'
+ADMIN_EMAIL = 'INSERT_ADMIN_EMAIL'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# The name of the institution, to be included in the notification signoff
+NOTIFICATION_INSTITUTION = 'INSERT_INSTITUTION'
+
 SAML2_ENABLED = False
 
 # The full documentation can be found here: https://github.com/fangli/django-saml2-auth

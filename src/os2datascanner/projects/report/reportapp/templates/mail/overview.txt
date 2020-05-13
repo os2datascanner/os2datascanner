@@ -1,0 +1,13 @@
+Hej {{ full_name }},
+
+Der ligger i øjeblikket {{ match_count }} matches i OS2datascanner-systemet,
+der kræver handling fra din side:
+{% for caption, count in matches %}
+  {{ caption|rjust:14 }} | {{ count }}{% endfor %}
+
+Log på OS2datascanner med din organisationskonto for at se flere detaljer:
+  
+    {{ report_login_url }}
+
+Med venlig hilsen
+OS2datascanner-systemet (på vegne af {{ institution }})

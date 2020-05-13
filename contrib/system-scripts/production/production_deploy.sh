@@ -9,19 +9,35 @@ echo "$repo_dir"
 source "$repo_dir/contrib/system-scripts/production/.env"
 if [ "$PRODUCTION_DIR" = "%INSERT_PRODUCTION_DIR%" ]
 then
-    echo "Production directory has not been changed and is still the deafult string $PRODUCTION_DIR. Please go to the .env file and add a new path."
+    echo "Production directory has not been changed and is still the default string $PRODUCTION_DIR. Please go to the .env file and add a new path."
     exit -1
 fi
 if [ "$ADMIN_DOMAIN" = "%INSERT_ADMIN_DOMAIN%" ]
 then
-    echo "The domain for the Admin module has not been changed and is still the deafault string $ADMIN_DOMAIN. Please go to the .enb file and add a new domain."
+    echo "The domain for the Admin module has not been changed and is still the default string $ADMIN_DOMAIN. Please go to the .env file and add a new domain."
     exit -1
 fi
 if [ "$REPORT_DOMAIN" = "%INSERT_REPORT_DOMAIN%" ]
 then
-    echo "The domain for the Report module has not been changed and is still the deafault string $REPORT_DOMAIN. Please go to the .enb file and add a new domain."
+    echo "The domain for the Report module has not been changed and is still the default string $REPORT_DOMAIN. Please go to the .env file and add a new domain."
     exit -1
 fi
+if [ "$DEFAULT_FROM_EMAIL" = "%INSERT_DEFAULT_FROM_EMAIL%" ]
+then
+    echo "The default from email for the Admin and Report module has not been changed and is still the default string $DEFAULT_FROM_EMAIL. Please go to the .env file and add a new email."
+    exit -1
+fi
+if [ "$ADMIN_EMAIL" = "%INSERT_ADMIN_EMAIL%" ]
+then
+    echo "The admin email for the Admin and Report module has not been changed and is still the default string $ADMIN_EMAIL. Please go to the .env file and add a new email."
+    exit -1
+fi
+if [ "$NOTIFICATION_INSTITUTION" = "%INSERT_INSTITUTION%" ]
+then
+    echo "The notification institution for the Admin and Report module has not been changed and is still the default string $NOTIFICATION_INSTITUTION. Please go to the .env file and add a new institution."
+    exit -1
+fi
+
 # Load common lib
 source "$repo_dir/contrib/system-scripts/utils/common.sh"
 
@@ -37,7 +53,7 @@ if [ "$INSTALL_WEB_PROJECTS" = True ]
 then
     echo -e '\n************* Admin module *************\n'
     # Setup administrations module
-    source "$PRODUCTION_DIR/contrib/system-scripts/utils/admin_setup.sh" "$ADMIN_DOMAIN" "$ENABLE_WEBSCAN" "$ENABLE_FILESCAN" "$ENABLE_EXCHANGESCAN" "$PRODUCTION_DIR" False
+    source "$PRODUCTION_DIR/contrib/system-scripts/utils/admin_setup.sh" "$ADMIN_DOMAIN" "$ENABLE_WEBSCAN" "$ENABLE_FILESCAN" "$ENABLE_EXCHANGESCAN" "$PRODUCTION_DIR" False "$DEFAULT_FROM_EMAIL" "$ADMIN_EMAIL" "$NOTIFICATION_INSTITUTION"
 
     npm_install_and_build 'admin' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'admin' "$PRODUCTION_DIR"
@@ -47,7 +63,7 @@ then
 
     echo -e '\n************* Report module *************\n'
     # Setup report module
-    source "$PRODUCTION_DIR/contrib/system-scripts/utils/report_setup.sh" "$REPORT_DOMAIN" "$ENABLE_SAML2" "$PRODUCTION_DIR" False
+    source "$PRODUCTION_DIR/contrib/system-scripts/utils/report_setup.sh" "$REPORT_DOMAIN" "$ENABLE_SAML2" "$PRODUCTION_DIR" False "$DEFAULT_FROM_EMAIL" "$ADMIN_EMAIL" "$NOTIFICATION_INSTITUTION"
 
     npm_install_and_build 'report' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'report' "$PRODUCTION_DIR"
