@@ -21,8 +21,9 @@ from .role_model import Role
 
 
 class DefaultRole(Role):
-    """The DefaultRole role's filter accepts all matches whose metadata can be
-    associated with one of the user's aliases.
+    """The DefaultRole role's filter accepts all matches that have not already
+    been resolved and whose metadata can be associated with one of the user's
+    aliases.
 
     (This role *can*, and should, be explicitly associated with users, but the
     system will also use its behaviour as a fallback if users don't have any
@@ -32,11 +33,10 @@ class DefaultRole(Role):
         aliases = self.user.aliases.select_subclasses()
         results = DocumentReport.objects.none()
         for alias in aliases:
-            # TODO: Filter only where matched are True (waiting on test data)
             result = document_reports.filter(
                 data__metadata__metadata__contains={
                     str(alias.key): str(alias)
-                })
+                }).filter(resolution_status__isnull=True)
             # Merges django querysets together
             results = results | result
         return results

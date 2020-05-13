@@ -28,6 +28,7 @@ class DocumentReport(models.Model):
         EDITED = 1, "Redigeret"
         MOVED = 2, "Flyttet"
         REMOVED = 3, "Slettet"
+        NO_ACTION = 4, "Intet foretaget"
 
         def __new__(cls, *args):
             obj = object.__new__(cls)

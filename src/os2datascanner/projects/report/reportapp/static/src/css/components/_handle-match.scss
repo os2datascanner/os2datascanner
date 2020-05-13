@@ -1,0 +1,74 @@
+.handle-match-wrapper {}
+
+.button-group .handle-match-wrapper {
+  float: left;
+}
+
+.handle-match {
+  background-color: #fff;
+  box-shadow: var(--box-shadow-large);
+  display: none;
+  position: absolute;
+  top: 100%;
+  width: 320px;
+  z-index: 10;
+
+  &::before {
+    --size: 0.5rem;
+    --color: #fff;
+
+    background-color: transparent;
+    border-left: var(--size) solid transparent;
+    border-right: var(--size) solid transparent;
+    border-bottom: var(--size) solid var(--color);
+    content: "";
+    display: inline-block;
+    height: 0;
+    left: calc(50% - var(--size));
+    position: absolute;
+    top: calc(var(--size) * -1);
+    width: 0;
+  }
+
+  &__action,
+  &__input {
+    background-color: #fff;
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    display: block;
+    font-size: 0.75rem;
+    padding: 1rem;
+    text-align: left;
+    transition: background-color 0.2s ease-in-out;
+    width: 100%;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    &:active {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &__input {
+    &:focus {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &__label {
+    display: none;
+  }
+
+  &.show {
+    display: block;
+  }
+
+  h5 {
+    margin: 0;
+    padding: 1rem;
+    word-break: initial;
+  }
+}

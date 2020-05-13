@@ -20,11 +20,15 @@
       <span class="">{{ match.matches.handle|find_parent:"ews"|present }}</span>
     </div>
 
-    {% if match.matches.handle|present_url %}
     <div class="hit-link">
-      <a href="{{ match.matches.handle|present_url }}" class="button button--small button--cta" target="_blank" rel="noopener">Åben email</a>
+      <div class="button-group">
+        {% if match.matches.handle|present_url %}
+        <a href="{{ match.matches.handle|present_url }}" class="button button--small button--cta" target="_blank" rel="noopener">Åben email</a>
+        {% endif %}
+
+        {% include "components/handle-match.html" %}
+      </div>
     </div>
-    {% endif %}
   </td>
 
   <td class="datatable__column--match datatable__column--context" colspan="2">
