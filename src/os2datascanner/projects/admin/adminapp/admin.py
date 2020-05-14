@@ -22,35 +22,21 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from .models.authentication_model import Authentication
-from .models.conversionqueueitem_model import ConversionQueueItem
 from .models.group_model import Group
-from .models.match_model import Match
 from .models.organization_model import Organization
-from .models.referrerurl_model import ReferrerUrl
 from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
 from .models.rules.addressrule_model import AddressRule
-from .models.scans.scan_model import Scan
-from .models.scans.webscan_model import WebScan
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
-from .models.statistic_model import Statistic, TypeStatistics
-from .models.webversion_model import WebVersion
-from .models.urllastmodified_model import UrlLastModified
 from .models.userprofile_model import UserProfile
 
 
 @admin.register(Authentication)
 class AuthenticationAdmin(admin.ModelAdmin):
     list_display = ('username', 'domain')
-
-
-@admin.register(Match)
-class MatchAdmin(admin.ModelAdmin):
-    list_display = ('scan', 'sensitivity', 'url',)
-    list_filter = ('sensitivity',)
 
 
 @admin.register(CPRRule)
@@ -66,56 +52,6 @@ class RuleAdmin(admin.ModelAdmin):
 class RegexPatternAdmin(admin.ModelAdmin):
     list_display = ('pattern_string', 'regex')
 
-
-@admin.register(WebScan)
-class WebScanAdmin(admin.ModelAdmin):
-    date_hierarchy = 'creation_time'
-    list_display = ('scanner', 'status', 'creation_time',
-                    'start_time', 'end_time', 'is_visible')
-    list_filter = ('status', 'is_visible', 'scanner')
-
-
-@admin.register(Scan)
-class ScanAdmin(WebScanAdmin):
-    '''
-    Exclude web reports so they aren't shown in two places
-    '''
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        return qs.filter(webscan__isnull=True)
-
-
-class TypeStatisticsInline(admin.TabularInline):
-    model = TypeStatistics
-
-
-@admin.register(Statistic)
-class StatisticAdmin(admin.ModelAdmin):
-    inlines = (TypeStatisticsInline,)
-    list_display = ('scan', 'files_scraped_count')
-
-
-@admin.register(WebVersion)
-class WebVersionAdmin(admin.ModelAdmin):
-    list_filter = ('scan',)
-    list_display = ('location', 'scan')
-
-@admin.register(UrlLastModified)
-class UrlModifiedAdmin(admin.ModelAdmin):
-    date_hierarchy = 'last_modified'
-    list_filter = ('scanner',)
-    list_display = ('url', 'scanner', 'last_modified')
-
-@admin.register(ConversionQueueItem)
-class ConversionQueueItemAdmin(admin.ModelAdmin):
-    date_hierarchy = 'process_start_time'
-    list_filter = ('status',)
-    list_display = ('file', 'type', 'page_no', 'status',
-                    'process_start_time')
-
-@admin.register(ReferrerUrl)
-class ReferrerUrlAdmin(admin.ModelAdmin):
-    list_display = ('location', 'scan')
 
 @admin.register(FileScanner)
 @admin.register(ExchangeScanner)

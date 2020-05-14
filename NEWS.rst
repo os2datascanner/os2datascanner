@@ -1,6 +1,58 @@
 OS2datascanner
 ==============
 
+Version 3.3.1, 14th May 2020
+----------------------------
+
+"You've Got Mail"
+
+Neither the user interface of version 3 of OS2datascanner nor its underlying
+scanner engine would have become as advanced as they are without the efforts of
+Steffen Jørgensen and of Dan V. P. Christiansen. The OS2datascanner development
+team thanks them for their many contributions.
+
+New in this version:
+
+- Support for handling matches:
+
+  - The report module now has a button for setting the resolution status of a
+    match.
+
+  - Resolved matches are hidden from the user interface, but are preserved in
+    the database for later reference.
+
+- Support for email notifications:
+
+  - The report module now has a command that sends email notifications of
+    unhandled matches to all users.
+
+General improvements:
+
+- All of the unused code in the administration system that was once responsible
+  for interacting with the old scanner engine has been removed.
+
+- The appearance of the administration system's user interface elements is now
+  changed when they receive focus.
+
+- Many modal dialog boxes have been removed from the administration system,
+  giving a more contemporary feel.
+
+Bugfixes:
+
+- The components of the scanner engine's pipeline no longer opportunistically
+  prefetch messages, improving error resilience and scalability.
+
+- Scanning Exchange Web Services accounts should no longer produce occasional
+  character decoding errors.
+
+- Errors in the metadata extraction process no longer cause all of the relevant
+  file's metadata to be discarded.
+
+- Errors in external tools are now handled uniformly.
+
+- Encrypted files in Zip archives are now ignored instead of being
+  unsuccessfully processed.
+
 Version 3.3.0, 24rd April 2020
 ------------------------------
 

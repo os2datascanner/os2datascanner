@@ -70,7 +70,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'os2datascanner.projects.admin.adminapp.apps.AdminappConfig',
     'recurrence',
-    'django_xmlrpc',
 )
 
 try:
@@ -147,6 +146,16 @@ AUTH_PROFILE_MODULE = 'os2datascanner.projects.admin.adminapp.UserProfile'
 ICON_SPRITE_URL = '/static/src/svg/symbol-defs.svg'
 
 LOGIN_REDIRECT_URL = '/'
+
+# Email  settings
+# Email  settings
+DEFAULT_FROM_EMAIL = '(Magenta Bibos Info) info@magenta.dk'
+ADMIN_EMAIL = '(Magenta Bibos Admin) info@magenta.dk'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+NOTIFICATION_INSTITUTION = None
 
 # Enable groups - or not
 

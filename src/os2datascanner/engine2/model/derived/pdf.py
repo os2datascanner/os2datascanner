@@ -3,7 +3,8 @@ import pdfrw
 from tempfile import TemporaryDirectory
 from subprocess import run
 
-from ..core import Handle, Source, Resource, SourceManager
+from ..core import (Handle,
+        Source, Resource, SourceManager, ResourceUnavailableError)
 from ..file import FilesystemResource
 from .derived import DerivedSource
 
@@ -58,15 +59,20 @@ class PDFPageSource(DerivedSource):
         # interpret relative paths
         page = self.handle.relative_path
         path = sm.open(self.handle.source)
-        with TemporaryDirectory() as tmpdir:
-            run(["pdftohtml",
+        with TemporaryDirectory() as outputdir:
+            result = run(["pdftohtml",
                     "-q", "-nodrm", "-noframes",
                     "-f", page, "-l", page,
                     path,
                     # Trick pdftohtml into writing to our temporary directory
                     # (groan...)
-                    "{0}/out".format(tmpdir)])
-            yield tmpdir
+                    "{0}/out".format(outputdir)])
+            if result.returncode == 0:
+                yield outputdir
+            else:
+                raise ResourceUnavailableError(self.handle,
+                        "pdftohtml exited abnormally",
+                        result.returncode)
 
     def handles(self, sm):
         for p in listdir(sm.open(self)):

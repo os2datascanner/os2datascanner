@@ -15,9 +15,17 @@ class ZipSource(DerivedSource):
 
     def handles(self, sm):
         zipfile = sm.open(self)
-        for f in zipfile.namelist():
-            if not f[-1] == "/":
-                yield ZipHandle(self, f)
+        for i in zipfile.infolist():
+            if i.flag_bits & 0x1:
+                # This file is encrypted, so all of ZipResource's operations
+                # will fail. Skip over it
+                # (XXX: is this preferable to a ResourceUnavailableError? For
+                # now, we claim it is: an encrypted file we can't decrypt
+                # necessarily isn't a sensitive data problem...)
+                continue
+            name = i.filename
+            if not name[-1] == "/":
+                yield ZipHandle(self, name)
 
     def _generate_state(self, sm):
         with self.handle.follow(sm).make_path() as r:

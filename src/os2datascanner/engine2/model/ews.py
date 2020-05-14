@@ -1,7 +1,6 @@
 import email
 import email.policy
 from urllib.parse import urlsplit, quote
-import chardet
 from exchangelib import (Account,
         Credentials, IMPERSONATION, Configuration, FaultTolerance)
 from exchangelib.errors import ErrorServerBusy, ErrorNonExistentMailbox
@@ -176,16 +175,7 @@ class EWSMailResource(MailResource):
         return self._message
 
     def get_email_message(self):
-        msg = self.get_message_object().mime_content
-        if isinstance(msg, bytes):
-            # exchangelib seems not to (be able to?) give us any clues about
-            # message encoding, so try using chardet to work out what this is
-            detected = chardet.detect(msg)
-            try:
-                msg = msg.decode(detected["encoding"])
-            except UnicodeDecodeError as ex:
-                raise ResourceUnavailableError(self.handle, ex.args)
-        return email.message_from_string(msg, policy=email.policy.default)
+        return email.message_from_bytes(self.get_message_object().mime_content)
 
     def compute_type(self):
         return MAIL_MIME

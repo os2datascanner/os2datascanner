@@ -4,7 +4,7 @@ set -e
 
 if [ $# -lt 4 ]
 then
-    echo "usage: admin_deploy.sh [DOMAIN] [ENABLE_WEBSCAN] [ENABLE_FILESCAN] [ENABLE_MAILSCAN] [SETUP_DIR] [DEBUG]"
+    echo "usage: admin_deploy.sh [DOMAIN] [ENABLE_WEBSCAN] [ENABLE_FILESCAN] [ENABLE_MAILSCAN] [SETUP_DIR] [DEBUG] [DEFAULT_FROM_EMAIL] [ADMIN_EMAIL] [NOTIFICATION_INSTITUTION]"
     exit 1
 fi
 
@@ -16,6 +16,9 @@ site_username=os2
 site_useremail=os2@$1
 setup_dir=$5
 debug=$6
+from_email=$7
+admin_email=$8
+institution=$9
 
 repo_conf="$setup_dir/contrib/config/admin-module"
 admin_local_settings="$repo_conf/local_settings.py.admin"
@@ -24,7 +27,7 @@ local_settings_file="$repo_conf/local_settings.py"
 
 source "$setup_dir/contrib/system-scripts/utils/common.sh"
 
-setup_local_settings "$setup_dir" 'admin' "$domain" "$local_settings_file" "$debug"
+setup_local_settings "$setup_dir" 'admin' "$domain" "$local_settings_file" "$debug" "$from_email" "$admin_email" "$institution"
 sed -i "s/ENABLE_WEBSCAN = False/ENABLE_WEBSCAN = $enable_webscan/g" "$local_settings_file"
 sed -i "s/ENABLE_EXCHANGESCAN = False/ENABLE_EXCHANGESCAN = $enable_mailscan/g" "$local_settings_file"
 sed -i "s/ENABLE_FILESCAN = False/ENABLE_FILESCAN = $enable_filescan/g" "$local_settings_file"

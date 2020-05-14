@@ -2,6 +2,7 @@
   background-color: #fff;
   border: 2px solid rgba(0, 0, 0, 0.2);
   color: inherit;
+  cursor: pointer;
   display: inline-block;
   font-size: 1rem;
   line-height: 1;
@@ -9,17 +10,34 @@
   padding: 0.5rem 1rem;
   text-decoration: none;
   transition: var(--transition-default);
+  white-space: nowrap;
 
   &:focus,
-  &:hover {
+  &:active,
+  &:hover,
+  &.is-active {
     border-color: var(--color-main);
+    z-index: 1;
   }
 }
 
-.button--file {
-  /*  */
-}
+.button-group {
+  float: left;
+  width: 100%;
+  // overflow: hidden;
 
-.button--folder {
-  /*  */
+  .button {
+    float: left;
+  }
+
+  >*:not(:first-child) {
+    margin-left: -2px;
+
+    &:first-child {
+    }
+
+    &:last-child {
+      border-right-width: 2px;
+    }
+  }
 }

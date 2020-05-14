@@ -5,7 +5,6 @@ from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
 from ..models.authentication_model import Authentication
 from ..models.rules.rule_model import Rule
-from ..models.scans.scan_model import Scan
 from ..models.scannerjobs.scanner_model import Scanner
 from ..models.userprofile_model import UserProfile
 
@@ -25,7 +24,7 @@ class ScannerList(RestrictedListView):
 
 
 class ScannerBase():
-    template_name = 'os2datascanner/scanner_form_new.html'
+    template_name = 'os2datascanner/scanner_form.html'
 
     def get_form(self, form_class=None):
 
@@ -196,10 +195,7 @@ class ScannerAskRun(RestrictedDetailView):
         """Check that user is allowed to run this scanner."""
         context = super().get_context_data(**kwargs)
 
-        if self.object.is_running:
-            ok = False
-            error_message = Scanner.ALREADY_RUNNING
-        elif not self.object.rules.all():
+        if not self.object.rules.all():
             ok = False
             error_message = Scanner.HAS_NO_RULES
         else:
@@ -229,7 +225,8 @@ class ScannerRun(RestrictedDetailView):
                                  user=request.user)
 
         context = self.get_context_data(object=self.object)
-        context['success'] = isinstance(result, Scan)
+        # XXX: engine2 error/success needs to be clearer
+        context['success'] = False # isinstance(result, Scan)
 
         if not context['success']:
             context['error_message'] = result

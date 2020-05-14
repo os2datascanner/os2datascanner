@@ -20,7 +20,6 @@ from django.db import models
 
 from os2datascanner.engine2.model.http import WebSource
 
-from ..scans.webscan_model import WebScan
 from .scanner_model import Scanner
 
 
@@ -109,9 +108,6 @@ class WebScanner(Scanner):
         else:
             sitemap_url = self.sitemap_url or self.default_sitemap_path
             return urllib.parse.urljoin(self.root_url, sitemap_url)
-
-    def create_scan(self):
-        return WebScan().create(self)
 
     def get_type(self):
         return 'web'
