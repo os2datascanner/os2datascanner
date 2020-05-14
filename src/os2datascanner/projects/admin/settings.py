@@ -24,7 +24,7 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, 'uploads', 'admin')
 # Local settings file shall be used for debugging.
 DEBUG = False
 
-SECRET_KEY = 'ld0_g)jhp3v27&od88-_v83ldb!0i^bac=jh+je!!=jbvra7@j'
+SECRET_KEY = ''
 
 # The GUID of the registered Azure application corresponding to this
 # OS2datascanner installation, used when requesting Microsoft Graph access
