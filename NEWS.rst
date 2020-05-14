@@ -1,6 +1,14 @@
 OS2datascanner
 ==============
 
+Version 3.3.1.1, 14th May 2020
+------------------------------
+
+This hotfix release removes some old debugging code from the component that
+sends instructions from the administration system to the scanner engine. (This
+code predated the completion of the scanner pipeline and no longer serves any
+useful function.)
+
 Version 3.3.1, 14th May 2020
 ----------------------------
 
