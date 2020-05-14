@@ -281,7 +281,6 @@ class Scanner(models.Model):
 
         scan = now.isoformat()
 
-        print(queue_name, json.dumps(message))
         amqp_connection_manager.start_amqp(queue_name)
         amqp_connection_manager.send_message(queue_name, json.dumps(message))
         amqp_connection_manager.close_connection()
