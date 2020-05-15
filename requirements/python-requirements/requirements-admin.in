@@ -1,0 +1,20 @@
+-r requirements-django.in
+-c requirements-engine.txt
+
+django-recurrence
+pycrypto
+python-dateutil
+
+# Hard dependencies through engine2 imports:
+dropbox
+exchangelib
+olefile
+pdfrw
+PyPDF2
+pysmbc
+python-magic
+regex
+
+# Needed to avoid model loading issue:
+beautifulsoup4
+Pillow

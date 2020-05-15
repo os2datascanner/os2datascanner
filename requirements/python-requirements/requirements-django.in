@@ -1,0 +1,11 @@
+-r requirements-common.in
+
+ipython
+Django==2.2.10
+django-model-utils
+django-settings-export
+django-structlog
+psycopg2-binary
+
+# At the moment only used during development:
+django_extensions
