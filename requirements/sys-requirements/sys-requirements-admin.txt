@@ -1,0 +1,9 @@
+#######################################################################
+#                                                                     #
+#    All system requirements specific to the administration module    #
+#                                                                     #
+#######################################################################
+
+# Hard dependencies from engine2 imports:
+
+libsmbclient-dev
