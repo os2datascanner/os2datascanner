@@ -1,4 +1,7 @@
+from urllib.parse import urlsplit
+
 from django import template
+from django.conf import settings
 
 from os2datascanner.engine2.model.core import Handle
 
@@ -17,12 +20,23 @@ def present(handle):
 
 @register.filter
 def present_url(handle):
-    """Returns the presentation URL of the given Handle (or, if it doesn't
-    define one, of its first parent that does)."""
+    """Returns the renderable presentation URL of the given Handle (or, if it
+    doesn't define one, of its first parent that does).
+
+    A "renderable presentation URL" is a presentation URL that isn't None and
+    whose scheme is present in the PERMITTED_URL_SCHEMES setting."""
+
+    def _test_handle(handle):
+        url = handle.presentation_url
+        if url:
+            scheme = urlsplit(url)[0]
+            if scheme in settings.PERMITTED_URL_SCHEMES:
+                return url
+        return None
     if isinstance(handle, Handle):
-        while not handle.presentation_url and handle.source.handle:
+        while not _test_handle(handle) and handle.source.handle:
             handle = handle.source.handle
-        return handle.presentation_url
+        return _test_handle(handle)
     else:
         return None
 

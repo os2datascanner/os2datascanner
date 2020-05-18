@@ -156,6 +156,12 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 NOTIFICATION_INSTITUTION = None
 
+# URL rendering settings
+
+# Which URL schemes can be used in links to matched objects? (The possible
+# entries are "http", "https" and "file".)
+PERMITTED_URL_SCHEMES = ['http', 'https']
+
 # Log settings.
 
 GRAYLOG_HOST = os.getenv('DJANGO_GRAYLOG_HOST')
