@@ -107,7 +107,7 @@ class EWSAccountSource(Source):
         account = sm.open(self)
 
         def relevant_folders():
-            for container in account.root.walk():
+            for container in account.msg_folder_root.walk():
                 if (container.folder_class != "IPF.Note"
                         or container.total_count == 0):
                     continue
