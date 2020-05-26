@@ -69,6 +69,6 @@ class ScannerTest(django.test.TestCase):
         self.magenta_scanner.rules.add(self.tr_set1)
         self.magenta_scanner.save()
 
-        self.magenta_scanner.run("test", blocking=True)
+        self.magenta_scanner.run()
 
         # TODO: Now what?
