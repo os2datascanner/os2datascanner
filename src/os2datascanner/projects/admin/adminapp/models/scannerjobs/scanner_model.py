@@ -221,7 +221,7 @@ class Scanner(models.Model):
         """Return the name of the scanner."""
         return self.name
 
-    def run(self, type, blocking=False, user=None):
+    def run(self, user=None):
         """Run a scan with the Scanner.
 
         Return the Scan object if we started the scanner.

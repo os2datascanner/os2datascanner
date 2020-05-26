@@ -221,8 +221,7 @@ class ScannerRun(RestrictedDetailView):
     def get(self, request, *args, **kwargs):
         """Handle a get request to the view."""
         self.object = self.get_object()
-        result = self.object.run(type(self.object).__name__,
-                                 user=request.user)
+        result = self.object.run(user=request.user)
 
         context = self.get_context_data(object=self.object)
         # XXX: engine2 error/success needs to be clearer
