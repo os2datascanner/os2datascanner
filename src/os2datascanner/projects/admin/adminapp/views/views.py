@@ -41,7 +41,7 @@ from ..models.rules.cprrule_model import CPRRule
 from ..models.rules.regexrule_model import RegexRule
 from ..models.userprofile_model import UserProfile
 from ..models.scannerjobs.webscanner_model import WebScanner
-from ..utils import do_scan, as_file_uri
+from ..utils import as_file_uri
 
 
 class LoginRequiredMixin(View):
