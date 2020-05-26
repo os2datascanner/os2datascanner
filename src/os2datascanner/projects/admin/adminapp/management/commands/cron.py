@@ -79,4 +79,4 @@ class Command(BaseCommand):
                 continue
 
             print("Running scanner %s" % scanner)
-            scanner.run(type(scanner).__name__)
+            scanner.run()
