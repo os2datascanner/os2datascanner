@@ -38,6 +38,9 @@ class PDFPageHandle(Handle):
     type_label = "pdf-page"
     resource_type = PDFPageResource
 
+    # A PDFPageHandle is an internal reference to a fragment of a document
+    is_synthetic = True
+
     @property
     def presentation(self):
         return "page {0} of {1}".format(self.relative_path, self.source.handle)
@@ -83,6 +86,12 @@ class PDFPageSource(DerivedSource):
 class PDFObjectHandle(Handle):
     type_label = "pdf-object"
     resource_type = FilesystemResource
+
+    # All PDFObjectHandles point at generated temporary files
+    # (XXX: we don't care about this metadata at the moment, so this isn't an
+    # issue, but what if an extracted file is nevertheless a real file and
+    # carries useful metadata, like a JPEG image with XMP properties?)
+    is_synthetic = True
 
     @property
     def presentation(self):

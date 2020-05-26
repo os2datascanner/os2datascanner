@@ -147,6 +147,11 @@ def guess_responsible_party(handle, sm):
     * "filesystem-owner-uid", the UID of the owner of a Unix filesystem object"""
 
     def _extract_guesses(handle, sm):
+        if handle.is_synthetic:
+            # Don't waste time extracting metadata from synthetic objects -- if
+            # there is any metadata here, it'll be higher up the tree
+            return
+
         resource = handle.follow(sm)
         is_derived = bool(handle.source.handle)
 
