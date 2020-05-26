@@ -248,14 +248,8 @@ class Scanner(models.Model):
 
         prerules = []
         if self.do_last_modified_check:
-            # Make sure that the timestamp we give to LastModifiedRule is
-            # timezone-aware; engine2's serialisation code requires this
-            # for all datetime.datetimes, so LastModifiedRule will raise a
-            # ValueError if we try to give it a naive one
             last = self.e2_last_run_at
             if last:
-                if not last.tzinfo or last.tzinfo.utcoffset(last) is None:
-                    last = last.replace(tzinfo=local_tz)
                 prerules.append(LastModifiedRule(last))
         if self.do_ocr:
             cr = make_if(
