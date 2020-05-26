@@ -256,7 +256,9 @@ class SMBCHandle(Handle):
         # Note that this implementation returns a Windows-friendly URL to the
         # underlying file -- i.e., one that uses the file: scheme and not smb:
         url = "file:"
-        if self.source.driveletter:
+        # XXX: our testing seems to indicate that drive letter URLs don't work
+        # properly; we'll leave the disabled logic here for now...
+        if False and self.source.driveletter:
             # Wikipedia indicates that local filesystem paths are represented
             # with an empty hostname followed by an absolute path...
             url += "///{0}:".format(self.source.driveletter)
