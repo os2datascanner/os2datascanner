@@ -3,16 +3,25 @@
 {% block topnav %}{% endblock %}
 {% block body %}
 
-{% if success %}
+{% if scan_tag %}
 <p class="lead">
-    Scanneren blev startet! 
+  Scan-detaljer er blevet sendt til scannermotoren, og scan bliver udført
+  snarest muligt.
 </p>
+<hr>
 <p>
-    <a href="/report/{{scan.pk}}/" target="_top">Se rapport</a>
+  Tekniske detaljer:
 </p>
-{% else %}
-<p>
-{{ error_message }}
-</p>
+<pre>
+{{ scan_tag }}
+</pre>
+{% elif engine2_error %}
+<div class="alert alert--danger">
+  <p>Kunne ikke åbne datakilden: {{ engine2_error }}</p>
+</div>
+{% elif pika_error %}
+<div class="alert alert--danger">
+  <p>Kunne ikke kommunikere med scannermotoren: {{ pika_error }}</p>
+</div>
 {% endif %}
 {% endblock %}

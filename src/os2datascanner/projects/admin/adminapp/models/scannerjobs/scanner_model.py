@@ -221,24 +221,21 @@ class Scanner(models.Model):
         """Return the name of the scanner."""
         return self.name
 
-    def run(self, type, blocking=False, user=None):
-        """Run a scan with the Scanner.
+    def run(self, user=None):
+        """Schedules a scan to be run by the pipeline. Returns the scan tag of
+        the resulting scan on success.
 
-        Return the Scan object if we started the scanner.
-        Return None if there is already a scanner running,
-        or if there was a problem running the scanner.
-        """
+        An os2datascanner.engine2.model.core.ResourceUnavailableError will be
+        raised if the underlying source is not available, and a
+        pika.exceptions.AMQPError (or a subclass) will be raised if it was not
+        possible to communicate with the pipeline."""
         local_tz = tz.gettz()
         now = datetime.datetime.now().replace(microsecond=0)
 
-        # Check that this source is accessible, and return the resulting error
-        # if it isn't
+        # Check that this source is accessible, raising an error if it isn't
         source = self.make_engine2_source()
         with SourceManager() as sm, closing(source.handles(sm)) as handles:
-            try:
-                print(next(handles, True))
-            except ResourceUnavailableError as ex:
-                return ", ".join([str(a) for a in ex.args[1:]])
+            next(handles, True)
 
         # Create a new engine2 scan specification and submit it to the
         # pipeline
