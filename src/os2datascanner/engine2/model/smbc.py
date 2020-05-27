@@ -251,5 +251,25 @@ class SMBCHandle(Handle):
             p += "/"
         return (p + self.relative_path).replace("/", "\\")
 
+    @property
+    def presentation_url(self):
+        # Note that this implementation returns a Windows-friendly URL to the
+        # underlying file -- i.e., one that uses the file: scheme and not smb:
+        url = "file:"
+        # XXX: our testing seems to indicate that drive letter URLs don't work
+        # properly; we'll leave the disabled logic here for now...
+        if False and self.source.driveletter:
+            # Wikipedia indicates that local filesystem paths are represented
+            # with an empty hostname followed by an absolute path...
+            url += "///{0}:".format(self.source.driveletter)
+        else:
+            # ... and that remote ones are indicated with a hostname in the
+            # usual place. Luckily the UNC already starts with two forward
+            # slashes, so we can just paste it in here
+            url += self.source.unc
+        if url[-1] != "/":
+            url += "/"
+        return url + quote(self.relative_path)
+
     def censor(self):
         return SMBCHandle(self.source.censor(), self.relative_path)
