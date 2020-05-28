@@ -1,5 +1,6 @@
 from io import BytesIO
 import os.path
+import email
 from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
@@ -13,7 +14,8 @@ class MailSource(DerivedSource):
     type_label = "mail"
 
     def _generate_state(self, sm):
-        yield self.handle.follow(sm).get_email_message()
+        with self.handle.follow(sm).make_stream() as fp:
+            yield email.message_from_bytes(fp.read())
 
     def handles(self, sm):
         def _process_message(path, part):

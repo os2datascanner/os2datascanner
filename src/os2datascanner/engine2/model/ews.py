@@ -1,3 +1,4 @@
+from io import BytesIO
 import email
 from email.utils import parsedate_to_datetime
 import email.policy
@@ -178,9 +179,6 @@ class EWSMailResource(FileResource):
                     _retrieve_message, ErrorServerBusy, base=4, fuzz=0.25)
         return self._message
 
-    def get_email_message(self):
-        return email.message_from_bytes(self.get_message_object().mime_content)
-
     @contextmanager
     def make_path(self):
         with NamedTemporaryResource(self.handle.name) as ntr:
@@ -194,27 +192,17 @@ class EWSMailResource(FileResource):
         with BytesIO(self.get_message_object().mime_content) as fp:
             yield fp
 
+    # XXX: actually pack these SingleResult objects into a MultipleResults
+
     def get_size(self):
         return SingleResult(None, "size", self.get_message_object().size)
 
-    def unpack_headers(self):
-        if not self._mr:
-            self._mr = MultipleResults()
-            m = self.get_email_message()
-            for k in m.keys():
-                v = m.get_all(k)
-                if v and len(v) == 1:
-                    v = v[0]
-                self._mr[k.lower()] = v
-            date = self._mr.get("date")
-            if date and date.value:
-                self._mr[OutputType.LastModified] = parsedate_to_datetime(
-                        date.value)
-        return self._mr
-
     def get_last_modified(self):
-        return self.unpack_headers().get(OutputType.LastModified,
-                super().get_last_modified())
+        o = self.get_message_object()
+        oldest_stamp = max(filter(
+                lambda ts: ts is not None,
+                [o.datetime_created, o.datetime_received, o.datetime_sent]))
+        return SingleResult(None, OutputType.LastModified, oldest_stamp)
 
     def compute_type(self):
         return "message/rfc822"
