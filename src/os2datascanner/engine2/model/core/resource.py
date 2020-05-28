@@ -110,11 +110,3 @@ class FileResource(TimestampedResource):
         else:
             # Otherwise, we prefer the computed type
             return computed
-
-
-MAIL_MIME = "message/rfc822"
-"""A special MIME type for explorable emails. Resources (and their associated
-Handles) that represent an email message, and that have a get_email_message
-function that returns the content of that message as a Python email.message.
-EmailMessage, should report this type in order to be automatically
-explorable."""

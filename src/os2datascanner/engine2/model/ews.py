@@ -9,7 +9,6 @@ from exchangelib.protocol import BaseProtocol
 from ..utilities.backoff import run_with_backoff
 from ..conversions.utilities.results import MultipleResults
 from .core import Source, Handle, TimestampedResource, ResourceUnavailableError
-from .core.resource import MAIL_MIME
 
 
 BaseProtocol.SESSION_POOLSIZE = 1
@@ -198,7 +197,7 @@ class EWSMailResource(TimestampedResource):
                 super().get_last_modified())
 
     def compute_type(self):
-        return MAIL_MIME
+        return "message/rfc822"
 
 
 class EWSMailHandle(Handle):
@@ -237,7 +236,7 @@ class EWSMailHandle(Handle):
                 self._mail_subject, self._folder_name)
 
     def guess_type(self):
-        return MAIL_MIME
+        return "message/rfc822"
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{

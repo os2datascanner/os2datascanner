@@ -4,12 +4,11 @@ from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
 from ..core import Source, Handle, FileResource, SourceManager
-from ..core.resource import MAIL_MIME
 from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
 
-@Source.mime_handler(MAIL_MIME)
+@Source.mime_handler("message/rfc822")
 class MailSource(DerivedSource):
     type_label = "mail"
 
