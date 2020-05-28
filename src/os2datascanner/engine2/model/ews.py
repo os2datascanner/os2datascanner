@@ -2,14 +2,16 @@ import email
 from email.utils import parsedate_to_datetime
 import email.policy
 from urllib.parse import urlsplit, quote
+from contextlib import contextmanager
 from exchangelib import (Account,
         Credentials, IMPERSONATION, Configuration, FaultTolerance)
 from exchangelib.errors import ErrorServerBusy, ErrorNonExistentMailbox
 from exchangelib.protocol import BaseProtocol
 
 from ..utilities.backoff import run_with_backoff
-from ..conversions.utilities.results import MultipleResults
-from .core import Source, Handle, TimestampedResource, ResourceUnavailableError
+from ..conversions.types import OutputType
+from ..conversions.utilities.results import SingleResult, MultipleResults
+from .core import Source, Handle, FileResource, ResourceUnavailableError
 
 
 BaseProtocol.SESSION_POOLSIZE = 1
@@ -155,7 +157,7 @@ class EWSAccountSource(Source):
                 obj["admin_password"], obj["user"])
 
 
-class EWSMailResource(TimestampedResource):
+class EWSMailResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
         self._mr = None
@@ -178,6 +180,22 @@ class EWSMailResource(TimestampedResource):
 
     def get_email_message(self):
         return email.message_from_bytes(self.get_message_object().mime_content)
+
+    @contextmanager
+    def make_path(self):
+        with NamedTemporaryResource(self.handle.name) as ntr:
+            with ntr.open("wb") as res:
+                with self.make_stream() as s:
+                    res.write(s.read())
+            yield ntr.get_path()
+
+    @contextmanager
+    def make_stream(self):
+        with BytesIO(self.get_message_object().mime_content) as fp:
+            yield fp
+
+    def get_size(self):
+        return SingleResult(None, "size", self.get_message_object().size)
 
     def unpack_headers(self):
         if not self._mr:

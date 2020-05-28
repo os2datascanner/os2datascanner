@@ -7,7 +7,7 @@ from .utilities import SourceManager
 __all__ = [
         "Source",
         "Handle",
-        "Resource", "FileResource", "TimestampedResource",
+        "Resource", "FileResource",
         "SourceManager",
         "UnknownSchemeError", "DeserialisationError",
         "ResourceUnavailableError"
