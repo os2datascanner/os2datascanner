@@ -1,4 +1,5 @@
 import email
+from email.utils import parsedate_to_datetime
 import email.policy
 from urllib.parse import urlsplit, quote
 from exchangelib import (Account,
@@ -188,8 +189,9 @@ class EWSMailResource(TimestampedResource):
                     v = v[0]
                 self._mr[k.lower()] = v
             date = self._mr.get("date")
-            if date and date.value.datetime:
-                self._mr[OutputType.LastModified] = date.value.datetime
+            if date and date.value:
+                self._mr[OutputType.LastModified] = parsedate_to_datetime(
+                        date.value)
         return self._mr
 
     def get_last_modified(self):
