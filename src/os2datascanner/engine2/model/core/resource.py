@@ -60,7 +60,8 @@ class FileResource(TimestampedResource):
     """A FileResource is a TimestampedResource that can be viewed as a file: a
     sequence of bytes with a size."""
 
-    GENERIC_TYPES = ("application/zip", "application/CDFV2",)
+    GENERIC_TYPES = ("application/zip", "application/CDFV2",
+            "text/plain", "text/html",)
     """The computed types that should be discarded in favour of the guessed
     type, which is likely to be more specific. (Not used if the guessed type is
     the completely generic value "application/octet-stream")."""
