@@ -1,3 +1,6 @@
+from json import dumps
+from pika.exceptions import AMQPError
+
 from django.db.models import Q
 from django.forms import ModelMultipleChoiceField
 
@@ -7,6 +10,8 @@ from ..models.authentication_model import Authentication
 from ..models.rules.rule_model import Rule
 from ..models.scannerjobs.scanner_model import Scanner
 from ..models.userprofile_model import UserProfile
+
+from os2datascanner.engine2.model.core import ResourceUnavailableError
 
 
 class ScannerList(RestrictedListView):
@@ -221,19 +226,15 @@ class ScannerRun(RestrictedDetailView):
     def get(self, request, *args, **kwargs):
         """Handle a get request to the view."""
         self.object = self.get_object()
-        result = self.object.run(type(self.object).__name__,
-                                 user=request.user)
-
         context = self.get_context_data(object=self.object)
-        # XXX: engine2 error/success needs to be clearer
-        context['success'] = False # isinstance(result, Scan)
 
-        if not context['success']:
-            context['error_message'] = result
-        else:
-            context['scan'] = result
+        try:
+            context['scan_tag'] = dumps(self.object.run(user=request.user))
+        except ResourceUnavailableError as ex:
+            source = ex.args[0]
+            details = ex.args[1:]
+            context['engine2_error'] = ", ".join([str(d) for d in details])
+        except AMQPError as ex:
+            context['pika_error'] = type(ex).__name__
 
         return self.render_to_response(context)
-
-
-

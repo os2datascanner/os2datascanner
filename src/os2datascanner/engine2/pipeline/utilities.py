@@ -130,6 +130,14 @@ class PikaConnectionHolder(ABC):
         self.clear()
 
 
+RECOVERABLE_PIKA_ERRORS = (
+        pika.exceptions.StreamLostError,
+        pika.exceptions.ChannelWrongStateError,
+        pika.exceptions.ConnectionWrongStateError)
+"""The exceptions that PikaPipelineRunner should treat as transient faults and
+silently consume."""
+
+
 class PikaPipelineRunner(PikaConnectionHolder):
     def __init__(self, *,
             read=set(), write=set(), source_manager=None, **kwargs):
@@ -168,29 +176,28 @@ class PikaPipelineRunner(PikaConnectionHolder):
                     " dispatching").format(outstanding), file=stderr)
         while self._pending:
             routing_key, message = self._pending[0]
-            try:
-                self.channel.basic_publish(
-                        exchange='',
-                        routing_key=routing_key,
-                        body=json.dumps(message).encode())
-            except pika.exceptions.StreamLostError:
-                # (just to make it explicit that this might happen)
-                raise
+            self.channel.basic_publish(
+                    exchange='',
+                    routing_key=routing_key,
+                    body=json.dumps(message).encode())
+            # If we got here, then basic_publish succeeded and we can safely
+            # remove the message from the head of the pending queue
             self._pending = self._pending[1:]
 
     def run_consumer(self):
-        """Runs the Pika channel consumer loop in another loop. Connection
-        failures in the Pika loop are silently handled without dropping any
+        """Runs the Pika channel consumer loop in another loop. Transient
+        faults in the Pika loop are silently handled without dropping any
         messages."""
 
         def _queue_callback(channel, method, properties, body):
             """Handles an AMQP message by calling the handle_message function
             and sending everything that it yields as a new message.
 
-            If handle_message takes too long and the underlying Pika connection
-            is closed, then this function will continue to collect yielded
-            messages and will schedule them to be sent when the connection is
-            reopened."""
+            If a transient fault is produced when sending a message (for
+            example, if handle_message takes too long and the underlying Pika
+            connection is closed), then this function will continue to collect
+            yielded messages and will schedule them to be sent when the
+            connection is reopened."""
             channel.basic_ack(method.delivery_tag)
             self.dispatch_pending(expected=0)
             decoded_body = json_utf8_decode(body)
@@ -204,7 +211,7 @@ class PikaPipelineRunner(PikaConnectionHolder):
                     if not failed:
                         try:
                             self.dispatch_pending(expected=1)
-                        except pika.exceptions.StreamLostError:
+                        except RECOVERABLE_PIKA_ERRORS:
                             failed = True
 
         while True:
@@ -215,8 +222,7 @@ class PikaPipelineRunner(PikaConnectionHolder):
                             self.channel.basic_consume(queue, _queue_callback))
                 self.dispatch_pending(expected=0)
                 self.channel.start_consuming()
-            except (pika.exceptions.StreamLostError,
-                    pika.exceptions.ConnectionWrongStateError):
+            except RECOVERABLE_PIKA_ERRORS:
                 # Flush the channel and connection and continue the loop
                 self._channel = None
                 self._connection = None

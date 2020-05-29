@@ -56,6 +56,9 @@ class LibreOfficeObjectHandle(Handle):
     type_label = "lo-object"
     resource_type = FilesystemResource
 
+    # All LibreOfficeObjectHandles point at generated temporary files
+    is_synthetic = True
+
     @property
     def presentation(self):
         return self.source.handle.presentation
