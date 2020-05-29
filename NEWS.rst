@@ -1,6 +1,44 @@
 OS2datascanner
 ==============
 
+Version 3.3.2, 2nd June 2020
+----------------------------
+
+"Position of Privilege"
+
+New in this version:
+
+- Support for special URLs:
+
+  - Administrators can now give OS2datascanner permission to use privileged URL
+    schemes.
+
+  - The report module can now give direct links to files in shared network
+    folders, when the administrator has configured the network to allow this.
+
+- `.eml` files, containing exported emails, can now be scanned.
+
+General improvements:
+
+- The administration system now presents the result of attempting to start a
+  scan more clearly.
+
+- The scanner engine now extracts metadata from files much more efficiently.
+
+- The scanner engine now automatically recovers from more transient
+  communication errors.
+
+Bugfixes:
+
+- Special folders, such as saved searches, are now excluded from scans of
+  Exchange Web Services accounts.
+
+- The scanner engine will no longer restart components when attempting to send
+  timestamps with no time zone from one component to another.
+
+- Communication problems between the administration system and the scanner
+  engine no longer produce generic error messages.
+
 Version 3.3.1.1, 14th May 2020
 ------------------------------
 
