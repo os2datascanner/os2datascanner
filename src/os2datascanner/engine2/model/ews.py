@@ -172,11 +172,8 @@ class EWSMailResource(FileResource):
 
             def _retrieve_message():
                 return account.root.get_folder(folder_id).get(id=mail_id)
-            # Setting base=4 means that we'll *always* wait for ~8s before we
-            # retrieve anything; this should stop us from being penalised for
-            # hitting too hard
             self._message, _ = run_with_backoff(
-                    _retrieve_message, ErrorServerBusy, base=4, fuzz=0.25)
+                    _retrieve_message, ErrorServerBusy, fuzz=0.25)
         return self._message
 
     @contextmanager
