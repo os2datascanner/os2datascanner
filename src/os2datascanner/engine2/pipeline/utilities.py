@@ -176,14 +176,12 @@ class PikaPipelineRunner(PikaConnectionHolder):
                     " dispatching").format(outstanding), file=stderr)
         while self._pending:
             routing_key, message = self._pending[0]
-            try:
-                self.channel.basic_publish(
-                        exchange='',
-                        routing_key=routing_key,
-                        body=json.dumps(message).encode())
-            except RECOVERABLE_PIKA_ERRORS:
-                # (just to make it explicit that this might happen)
-                raise
+            self.channel.basic_publish(
+                    exchange='',
+                    routing_key=routing_key,
+                    body=json.dumps(message).encode())
+            # If we got here, then basic_publish succeeded and we can safely
+            # remove the message from the head of the pending queue
             self._pending = self._pending[1:]
 
     def run_consumer(self):
