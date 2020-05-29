@@ -1,20 +1,21 @@
 from io import BytesIO
 import os.path
+import email
 from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
 from ..core import Source, Handle, FileResource, SourceManager
-from ..core.resource import MAIL_MIME
 from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
 
-@Source.mime_handler(MAIL_MIME)
+@Source.mime_handler("message/rfc822")
 class MailSource(DerivedSource):
     type_label = "mail"
 
     def _generate_state(self, sm):
-        yield self.handle.follow(sm).get_email_message()
+        with self.handle.follow(sm).make_stream() as fp:
+            yield email.message_from_bytes(fp.read())
 
     def handles(self, sm):
         def _process_message(path, part):

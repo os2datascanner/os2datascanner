@@ -1,14 +1,18 @@
+from io import BytesIO
 import email
+from email.utils import parsedate_to_datetime
 import email.policy
 from urllib.parse import urlsplit, quote
+from contextlib import contextmanager
 from exchangelib import (Account,
         Credentials, IMPERSONATION, Configuration, FaultTolerance)
 from exchangelib.errors import ErrorServerBusy, ErrorNonExistentMailbox
 from exchangelib.protocol import BaseProtocol
 
 from ..utilities.backoff import run_with_backoff
-from .core import Source, Handle, MailResource, ResourceUnavailableError
-from .core.resource import MAIL_MIME
+from ..conversions.types import OutputType
+from ..conversions.utilities.results import SingleResult, MultipleResults
+from .core import Source, Handle, FileResource, ResourceUnavailableError
 
 
 BaseProtocol.SESSION_POOLSIZE = 1
@@ -154,9 +158,10 @@ class EWSAccountSource(Source):
                 obj["admin_password"], obj["user"])
 
 
-class EWSMailResource(MailResource):
+class EWSMailResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
+        self._mr = None
         self._ids = self.handle.relative_path.split(".", maxsplit=1)
         self._message = None
 
@@ -167,18 +172,37 @@ class EWSMailResource(MailResource):
 
             def _retrieve_message():
                 return account.root.get_folder(folder_id).get(id=mail_id)
-            # Setting base=4 means that we'll *always* wait for ~8s before we
-            # retrieve anything; this should stop us from being penalised for
-            # hitting too hard
             self._message, _ = run_with_backoff(
-                    _retrieve_message, ErrorServerBusy, base=4, fuzz=0.25)
+                    _retrieve_message, ErrorServerBusy, fuzz=0.25)
         return self._message
 
-    def get_email_message(self):
-        return email.message_from_bytes(self.get_message_object().mime_content)
+    @contextmanager
+    def make_path(self):
+        with NamedTemporaryResource(self.handle.name) as ntr:
+            with ntr.open("wb") as res:
+                with self.make_stream() as s:
+                    res.write(s.read())
+            yield ntr.get_path()
+
+    @contextmanager
+    def make_stream(self):
+        with BytesIO(self.get_message_object().mime_content) as fp:
+            yield fp
+
+    # XXX: actually pack these SingleResult objects into a MultipleResults
+
+    def get_size(self):
+        return SingleResult(None, "size", self.get_message_object().size)
+
+    def get_last_modified(self):
+        o = self.get_message_object()
+        oldest_stamp = max(filter(
+                lambda ts: ts is not None,
+                [o.datetime_created, o.datetime_received, o.datetime_sent]))
+        return SingleResult(None, OutputType.LastModified, oldest_stamp)
 
     def compute_type(self):
-        return MAIL_MIME
+        return "message/rfc822"
 
 
 class EWSMailHandle(Handle):
@@ -217,7 +241,7 @@ class EWSMailHandle(Handle):
                 self._mail_subject, self._folder_name)
 
     def guess_type(self):
-        return MAIL_MIME
+        return "message/rfc822"
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
