@@ -262,7 +262,10 @@ class Scanner(models.Model):
         scan_tag = {
             'time': now.isoformat(),
             'user': user.username if user else None,
-            'name': self.name,
+            'scanner': {
+                'pk': self.pk,
+                'name': self.name
+            },
             # Names have a uniqueness constraint, so we can /sort of/ use
             # them as a human-readable primary key for organisations in the
             # report module
