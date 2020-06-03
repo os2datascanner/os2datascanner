@@ -31,6 +31,19 @@ class ScannerList(RestrictedListView):
 class ScannerBase():
     template_name = 'os2datascanner/scanner_form.html'
 
+    def get_form_fields(self):
+        """Get the list of form fields.
+
+        The 'validation_status' field will be added to the form if the
+        user is a superuser.
+        """
+        fields = super().get_form_fields()
+        if self.request.user.is_superuser:
+            fields.append('validation_status')
+
+        self.fields = fields
+        return fields
+
     def get_form(self, form_class=None):
 
         if form_class is None:
@@ -50,6 +63,32 @@ class ScannerBase():
 
     def get_scanner_object(self):
         return self.get_object()
+
+    def form_valid(self, form):
+        if not self.request.user.is_superuser:
+            user_profile = self.request.user.profile
+            self.object = form.save(commit=False)
+            self.object.organization = user_profile.organization
+
+        """Makes sure authentication info gets stored in db."""
+        domain = form.save(commit=False)
+        if domain.authentication:
+            authentication = domain.authentication
+        else:
+            authentication = Authentication()
+
+        if 'username' in form.cleaned_data:
+            authentication.username = form.cleaned_data['username']
+        if 'password' in form.cleaned_data:
+            authentication.set_password(str(form.cleaned_data['password']))
+        if 'domain' in form.cleaned_data:
+            authentication.domain = form.cleaned_data['domain']
+
+        authentication.save()
+        domain.authentication = authentication
+        domain.save()
+
+        return super().form_valid(form)
 
 
 class ScannerCreate(ScannerBase, RestrictedCreateView):
@@ -79,19 +118,6 @@ class ScannerCreate(ScannerBase, RestrictedCreateView):
 
         return form
 
-    def get_form_fields(self):
-        """Get the list of form fields.
-
-        The 'validation_status' field will be added to the form if the
-        user is a superuser.
-        """
-        fields = super().get_form_fields()
-        if self.request.user.is_superuser:
-            fields.append('validation_status')
-
-        self.fields = fields
-        return fields
-
     def filter_queryset(self, form, groups, organization):
         for field_name in ['rules', 'recipients']:
             queryset = form.fields[field_name].queryset
@@ -106,42 +132,11 @@ class ScannerCreate(ScannerBase, RestrictedCreateView):
                 )
             form.fields[field_name].queryset = queryset
 
-    def form_valid(self, form):
-        if not self.request.user.is_superuser:
-            user_profile = self.request.user.profile
-            self.object = form.save(commit=False)
-            self.object.organization = user_profile.organization
-
-        """Makes sure authentication info gets stored in db."""
-        filedomain = form.save(commit=False)
-        authentication = Authentication()
-        if 'username' in form.cleaned_data and \
-                form.cleaned_data['username']:
-            username = str(form.cleaned_data['username'])
-            authentication.username = username
-        if 'password' in form.cleaned_data and \
-                form.cleaned_data['password']:
-            authentication.set_password(str(form.cleaned_data['password']))
-        if 'domain' in form.cleaned_data and \
-                form.cleaned_data['domain']:
-            domain = str(form.cleaned_data['domain'])
-            authentication.domain = domain
-        authentication.save()
-        filedomain.authentication = authentication
-        filedomain.save()
-        return super().form_valid(form)
-
 
 class ScannerUpdate(ScannerBase, RestrictedUpdateView):
     """View for editing an existing scannerjob."""
     edit = True
-
-    editable_fields = (
-        'name',
-        'organisation',
-        'recipients',
-        'schedule',
-    )
+    old_url = ''
 
     def get_form(self, form_class=None):
         """Get the form for the view.
@@ -150,17 +145,23 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         will be limited by the user's organization unless the user is a
         superuser.
         """
+        self.old_url = self.get_object().url
         form = super().get_form(form_class)
-
-        for field_name, field in form.fields.items():
-            if field_name not in self.editable_fields:
-                form.fields[field_name].disabled = True
-
-        scanner = self.get_scanner_object()
-
-        self.filter_queryset(form, scanner)
-
+        self.filter_queryset(form, self.get_scanner_object())
         return form
+
+    def get_form_fields(self):
+        """Get the list of form fields.
+
+        The 'validation_status' field will be added to the form if the
+        user is a superuser.
+        """
+        fields = super().get_form_fields()
+        if self.request.user.is_superuser:
+            fields.append('validation_status')
+
+        self.fields = fields
+        return fields
 
     def filter_queryset(self, form, scanner):
         for field_name in ['rules', 'recipients']:
@@ -181,15 +182,21 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
                     )
             form.fields[field_name].queryset = queryset
 
+    def form_valid(self, form):
+        """Validate the submitted form."""
+        if self.old_url != self.object.url:
+            self.object.validation_status = Scanner.INVALID
+
+        return super().form_valid(form)
+
 
 class ScannerDelete(RestrictedDeleteView):
     def get_form(self, form_class=None):
         """Adds special field password and decrypts password."""
         if form_class is None:
             form_class = self.get_form_class()
-        form = super().get_form(form_class)
 
-        return form
+        return super().get_form(form_class)
 
 
 class ScannerAskRun(RestrictedDetailView):
