@@ -31,6 +31,33 @@ class ScannerList(RestrictedListView):
 class ScannerBase():
     template_name = 'os2datascanner/scanner_form.html'
 
+    def get_form(self, form_class=None):
+        """Get the form for the view.
+
+        Querysets used for choices in the 'domains' and 'rules' fields
+        will be limited by the user's organization unless the user is a
+        superuser.
+        """
+        try:
+            organization = self.request.user.profile.organization
+            groups = self.request.user.profile.groups.all()
+        except UserProfile.DoesNotExist:
+            organization = None
+            groups = None
+
+        form = super().get_form(form_class)
+
+        if not self.request.user.is_superuser:
+            self.filter_queryset(form, groups, organization)
+
+        form.fields['schedule'].required = False
+
+        form.fields["rules"] = ModelMultipleChoiceField(
+            Rule.objects.all(),
+            validators=ModelMultipleChoiceField.default_validators)
+
+        return form
+
     def get_form_fields(self):
         """Get the list of form fields.
 
@@ -44,22 +71,20 @@ class ScannerBase():
         self.fields = fields
         return fields
 
-    def get_form(self, form_class=None):
+    def filter_queryset(self, form, groups, organization):
+        for field_name in ['rules']:
+            queryset = form.fields[field_name].queryset
+            queryset = queryset.filter(organization=organization)
 
-        if form_class is None:
-            form_class = self.get_form_class()
+            if self.request.user.profile.is_group_admin:
+                # Already filtered by organization, nothing more to do.
+                pass
+            else:
+                queryset = queryset.filter(
+                    Q(group__in=groups) | Q(group__isnull=True)
+                )
+            form.fields[field_name].queryset = queryset
 
-        form = super().get_form(form_class)
-        form.fields['schedule'].required = False
-
-        # Exclude recipients with no email address
-        form.fields[
-            'recipients'
-        ].queryset = form.fields[
-            'recipients'
-        ].queryset.exclude(user__email="")
-
-        return form
 
     def get_scanner_object(self):
         return self.get_object()
@@ -94,44 +119,6 @@ class ScannerBase():
 class ScannerCreate(ScannerBase, RestrictedCreateView):
     """View for creating a new scannerjob."""
 
-    def get_form(self, form_class=None):
-        """Get the form for the view.
-
-        Querysets used for choices in the 'domains' and 'rules' fields
-        will be limited by the user's organization unless the user is a
-        superuser.
-        """
-        form = super().get_form(form_class)
-        try:
-            organization = self.request.user.profile.organization
-            groups = self.request.user.profile.groups.all()
-        except UserProfile.DoesNotExist:
-            organization = None
-            groups = None
-
-        if not self.request.user.is_superuser:
-            self.filter_queryset(form, groups, organization)
-
-        form.fields["rules"] = ModelMultipleChoiceField(
-                Rule.objects.all(),
-                validators=ModelMultipleChoiceField.default_validators)
-
-        return form
-
-    def filter_queryset(self, form, groups, organization):
-        for field_name in ['rules', 'recipients']:
-            queryset = form.fields[field_name].queryset
-            queryset = queryset.filter(organization=organization)
-            if (self.request.user.profile.is_group_admin or
-                            field_name == 'recipients'):
-                # Already filtered by organization, nothing more to do.
-                pass
-            else:
-                queryset = queryset.filter(
-                    Q(group__in=groups) | Q(group__isnull=True)
-                )
-            form.fields[field_name].queryset = queryset
-
 
 class ScannerUpdate(ScannerBase, RestrictedUpdateView):
     """View for editing an existing scannerjob."""
@@ -146,9 +133,7 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         superuser.
         """
         self.old_url = self.get_object().url
-        form = super().get_form(form_class)
-        self.filter_queryset(form, self.get_scanner_object())
-        return form
+        return super().get_form(form_class)
 
     def get_form_fields(self):
         """Get the list of form fields.
@@ -162,25 +147,6 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
 
         self.fields = fields
         return fields
-
-    def filter_queryset(self, form, scanner):
-        for field_name in ['rules', 'recipients']:
-            queryset = form.fields[field_name].queryset
-            queryset = queryset.filter(organization=scanner.organization)
-
-            if scanner.organization.do_use_groups:
-                # TODO: This is not very elegant!
-                if field_name == 'recipients':
-                    if scanner.group:
-                        queryset = queryset.filter(
-                            Q(groups__in=scanner.group) |
-                            Q(groups__isnull=True)
-                        )
-                else:
-                    queryset = queryset.filter(
-                        Q(group=scanner.group) | Q(group__isnull=True)
-                    )
-            form.fields[field_name].queryset = queryset
 
     def form_valid(self, form):
         """Validate the submitted form."""
