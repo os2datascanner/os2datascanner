@@ -564,10 +564,10 @@
           </div>
         </div>
 
-        {% if object.pk %}
-        <p>Scanneren vil starte på følgende tidspunkt på de valgte dage:<br /> {{ object.get_start_time }}</p>
-        {% endif %}
       </div>
+        {% if object.pk %}
+            <p>Scanneren vil starte på følgende tidspunkt på de valgte dage:<br /> {{ object.get_start_time }}</p>
+        {% endif %}
     </fieldset>
 
     <div class="form__group">
