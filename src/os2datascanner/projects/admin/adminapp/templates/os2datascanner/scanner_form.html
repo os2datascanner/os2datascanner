@@ -45,16 +45,6 @@
       $("#available_rules li[data-rule-id=\"{{ val }}\"").trigger("click");
       {% endfor %}
 
-      // If user is in the edit view the user shall not be able to edit:
-      //  * Rules
-      //  * Settings
-      // But the user shall still be able to view them and edit interval and Recepients
-      {% if form.rules.field.disabled %}
-      $("#selected_rules .remove-rule-button").addClass('disabled')
-      $("#selected_rules span").addClass('disabled')
-      $("#available_rules .rule").attr('data-disabled', '')
-      {% endif %}
-
       $("#id_{{ form.download_sitemap.name }}").change(function() {
         if( $(this).is(':checked')) {
           $("#{{ form.sitemap_url.auto_id }}_container").show();
@@ -98,12 +88,6 @@
       <li>{{ error }}</li>
       {% endfor %}
     </ul>
-  </div>
-  {% endif %}
-
-  {% if not view.edit %}
-  <div class="alert" role="alert">
-    <p id="is_edit_view">{% trans "Domæner og regler kan ikke ændres efter scannerjobbet er oprettet." %}</p>
   </div>
   {% endif %}
 
@@ -425,12 +409,6 @@
       <div class="form__group">
         <div id="select_scan_rules_container" class="">
           <h5>Regler</h5>
-
-          {% if view.edit %}
-          <div class="alert alert--warning" role="alert">
-            <p>{% trans "Listen af regler kan ikke redigeres. For at scanne med andre regler, opret da et nyt scannerjob." %}</p>
-          </div>
-          {% endif %}
 
           <div class="checkbox-group">
             <div class="ds-checkbox ds-checkbox--inline">
