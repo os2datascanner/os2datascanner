@@ -1,0 +1,29 @@
+To: OS2datascanner test user <test@os2datascanner.invalid>
+From: OS2datascanner test user <test@os2datascanner.invalid>
+Subject: This is a test
+Message-ID: <368e42b5-b042-480d-a2e2-fe1d15093a67@os2datascanner.invalid>
+Date: Thu, 28 May 2020 11:38:03 +0200
+MIME-Version: 1.0
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Content-Type: multipart/alternative; boundary=cuthere
+
+--cuthere 
+Content-Type: text/plain; charset=us-ascii 
+
+Hej Jens!
+
+Det var dejligt at se dig.
+
+--cuthere 
+Content-Type: text/html 
+
+<html>
+  <body>
+    <p>
+      Hej Jens!
+    <p>
+      Det var <i>dejligt</i> at se dig.
+  </body>
+</html>
+--cuthere--
