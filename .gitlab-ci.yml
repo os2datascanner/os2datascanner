@@ -42,8 +42,12 @@ tests:
   services:
     - postgres:alpine
     - rabbitmq:alpine
+    - name: dperson/samba:amd64
+      alias: samba
   image: python:3.6
   variables:
+    USER: os2;12345_rosebud_password_admin
+    SHARE: general;${CI_PROJECT_DIR}/src/os2datascanner/tests/data/engine2;no;yes
     POSTGRES_DB: os2datascanner_admin
     POSTGRES_USER: os2datascanner_admin
     POSTGRES_PASSWORD: os2datascanner_admin
