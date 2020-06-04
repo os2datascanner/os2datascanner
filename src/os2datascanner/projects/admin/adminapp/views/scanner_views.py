@@ -202,7 +202,8 @@ class ScannerRun(RestrictedDetailView):
         context = self.get_context_data(object=self.object)
 
         try:
-            context['scan_tag'] = dumps(self.object.run(user=request.user))
+            context['scan_tag'] = dumps(
+                    self.object.run(user=request.user), indent=2)
         except ResourceUnavailableError as ex:
             source = ex.args[0]
             details = ex.args[1:]

@@ -229,8 +229,7 @@ class Scanner(models.Model):
         raised if the underlying source is not available, and a
         pika.exceptions.AMQPError (or a subclass) will be raised if it was not
         possible to communicate with the pipeline."""
-        local_tz = tz.gettz()
-        now = datetime.datetime.now().replace(microsecond=0)
+        now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
 
         # Check that this source is accessible, raising an error if it isn't
         source = self.make_engine2_source()
@@ -260,8 +259,22 @@ class Scanner(models.Model):
 
         rule = AndRule.make(*prerules, rule)
 
+        scan_tag = {
+            'time': now.isoformat(),
+            'user': user.username if user else None,
+            'scanner': {
+                'pk': self.pk,
+                'name': self.name
+            },
+            # Names have a uniqueness constraint, so we can /sort of/ use
+            # them as a human-readable primary key for organisations in the
+            # report module
+            'organisation': self.organization.name,
+            'destination': 'pipeline_collector'
+        }
+
         message = {
-            'scan_tag': now.isoformat(),
+            'scan_tag': scan_tag,
             'source': source.to_json_object(),
             'rule': rule.to_json_object()
         }
@@ -270,13 +283,11 @@ class Scanner(models.Model):
         self.e2_last_run_at = now
         self.save()
 
-        scan = now.isoformat()
-
         amqp_connection_manager.start_amqp(queue_name)
         amqp_connection_manager.send_message(queue_name, json.dumps(message))
         amqp_connection_manager.close_connection()
 
-        return scan
+        return scan_tag
 
     def path_for(self, uri):
         return uri
