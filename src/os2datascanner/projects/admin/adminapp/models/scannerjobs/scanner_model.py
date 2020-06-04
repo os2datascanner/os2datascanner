@@ -242,12 +242,17 @@ class Scanner(models.Model):
                 *[r.make_engine2_rule()
                         for r in self.rules.all().select_subclasses()])
 
+        configuration = {}
+
         prerules = []
         if self.do_last_modified_check:
             last = self.e2_last_run_at
             if last:
                 prerules.append(LastModifiedRule(last))
+
         if self.do_ocr:
+            # If we are doing OCR, then filter out any images smaller than
+            # 128x32 (or 32x128)...
             cr = make_if(
                     HasConversionRule(OutputType.ImageDimensions),
                     DimensionsRule(
@@ -256,6 +261,9 @@ class Scanner(models.Model):
                             min_dim=128),
                     True)
             prerules.append(cr)
+        else:
+            # ... and, if we're not, then skip all of the image files
+            configuration["skip_mime_types"] = ["image/*"]
 
         rule = AndRule.make(*prerules, rule)
 
@@ -276,7 +284,8 @@ class Scanner(models.Model):
         message = {
             'scan_tag': scan_tag,
             'source': source.to_json_object(),
-            'rule': rule.to_json_object()
+            'rule': rule.to_json_object(),
+            'configuration': configuration
         }
         queue_name = settings.AMQP_PIPELINE_TARGET
 
