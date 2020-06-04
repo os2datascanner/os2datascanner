@@ -27,3 +27,13 @@ class Engine2MailTest(TestCase):
                     self.assertIsInstance(
                             h,
                             MailPartHandle)
+
+    def test_alternative_trimming(self):
+        alternative_source = MailSource(
+                FilesystemHandle.make_handle(
+                        os.path.join(test_data_path, "alternative.eml")))
+        with SourceManager() as sm:
+            self.assertEqual(
+                    len(list(alternative_source.handles(sm))),
+                    1,
+                    "text/plain trimming failed")
