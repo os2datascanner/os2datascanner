@@ -3,14 +3,15 @@ from os import getpid
 from ...utils.prometheus import prometheus_session
 from ..rules.rule import Rule
 from ..conversions.types import decode_dict
+from . import messages
 from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
         prometheus_summary, make_common_argument_parser)
 
 
 def message_received_raw(body, channel, matches_q, handles_q, conversions_q):
-    progress = body["progress"]
-    representations = decode_dict(body["representations"])
-    rule = Rule.from_json_object(progress["rule"])
+    message = messages.RepresentationMessage.from_json_object(body)
+    representations = decode_dict(message.representations)
+    rule = message.progress.rule
 
     new_matches = []
 
@@ -27,39 +28,35 @@ def message_received_raw(body, channel, matches_q, handles_q, conversions_q):
         representation = representations[type_value]
 
         matches = list(head.match(representation))
-        new_matches.append({
-            "rule": head.to_json_object(),
-            "matches": matches if matches else None
-        })
+        new_matches.append(
+                messages.MatchFragment(head, matches or None))
         if matches:
             rule = pve
         else:
             rule = nve
 
+    final_matches = message.progress.matches + new_matches
+
     if isinstance(rule, bool):
         # We've come to a conclusion!
-        yield (matches_q, {
-            "scan_spec": body["scan_spec"],
-            "handle": body["handle"],
-            "matched": rule,
-            "matches": progress["matches"] + new_matches
-        })
+        yield (matches_q,
+                messages.MatchesMessage(
+                        message.scan_spec, message.handle,
+                        rule, final_matches).to_json_object())
         # Only trigger metadata scanning if the match succeeded
         if rule:
-            yield (handles_q, {
-                "scan_tag": body["scan_spec"]["scan_tag"],
-                "handle": body["handle"]
-            })
+            yield (handles_q,
+                    messages.HandleMessage(
+                            message.scan_spec.scan_tag,
+                            message.handle).to_json_object())
     else:
         # We need a new representation to continue
-        yield (conversions_q, {
-            "scan_spec": body["scan_spec"],
-            "handle": body["handle"],
-            "progress": {
-                "rule": rule.to_json_object(),
-                "matches": progress["matches"] + new_matches
-            }
-        })
+        yield (conversions_q,
+                messages.ConversionMessage(
+                        message.scan_spec, message.handle,
+                        message.progress._replace(
+                                rule=rule,
+                                matches=final_matches)).to_json_object())
 
 
 def main():

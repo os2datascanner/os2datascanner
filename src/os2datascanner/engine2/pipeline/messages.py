@@ -173,7 +173,7 @@ class MatchesMessage(NamedTuple):
                 rule, returning (in order of preference) the highest
                 sensitivity (lower than that of the rule) associated with a
                 match, the sensitivity of the rule, or 0."""
-                rule_sensitivity = fragment.rule.sensitivity
+                rule_sensitivity = fragment.rule.sensitivity.value
 
                 max_sub = None
                 if (rule_sensitivity is not None
