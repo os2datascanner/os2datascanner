@@ -8,6 +8,19 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres-initdb.d/20-create-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-db-and-user.sh
 
+  queue:
+    # Normally, we expect the `rabbitmq` image. The -management images come
+    # with a set of management plugins installed and enabled by default. They
+    # can be accessed through the web interface on port 15672. The credentials
+    # are given in the specified `rabbitmq.env` file.
+    image: rabbitmq:3-management-alpine
+    hostname: os2datascanner_msg_broker
+    env_file:
+      - dev-environment/rabbitmq.env
+    ports:
+      - "5672:5672"
+      - "8080:15672"
+
   admin-frontend:
     build:
       context: .
