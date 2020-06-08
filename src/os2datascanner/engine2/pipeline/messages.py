@@ -8,6 +8,12 @@ class MatchFragment(NamedTuple):
     rule: SimpleRule
     matches: Sequence[dict]
 
+    def to_json_object(self):
+        return {
+            "rule": self.rule.to_json_object(),
+            "matches": list(self.matches) if self.matches else None
+        }
+
     @classmethod
     def from_json_object(cls, obj):
         return MatchFragment(
@@ -18,6 +24,12 @@ class MatchFragment(NamedTuple):
 class ProgressFragment(NamedTuple):
     rule: Rule
     matches: Sequence[MatchFragment]
+
+    def to_json_object(self):
+        return {
+            "rule": self.rule.to_json_object(),
+            "matches": list([m.to_json_object() for m in self.matches])
+        }
 
     @classmethod
     def from_json_object(cls, obj):
@@ -33,6 +45,16 @@ class ScanSpecMessage(NamedTuple):
     rule: Rule
     configuration: dict
     progress: ProgressFragment
+
+    def to_json_object(self):
+        return {
+            "scan_tag": self.scan_tag,
+            "source": self.source.to_json_object(),
+            "rule": self.rule.to_json_object(),
+            "configuration": self.configuration,
+            "progress": (
+                    self.progress.to_json_object() if self.progress else None)
+        }
 
     @classmethod
     def from_json_object(cls, obj):
@@ -51,6 +73,13 @@ class ConversionMessage(NamedTuple):
     handle: Handle
     progress: ProgressFragment
 
+    def to_json_object(self):
+        return {
+            "scan_spec": self.scan_spec.to_json_object(),
+            "handle": self.handle.to_json_object(),
+            "progress": self.progress.to_json_object()
+        }
+
     @classmethod
     def from_json_object(cls, obj):
         return ConversionMessage(
@@ -65,6 +94,14 @@ class RepresentationMessage(NamedTuple):
     progress: ProgressFragment
     representations: dict
 
+    def to_json_object(self):
+        return {
+            "scan_spec": self.scan_spec.to_json_object(),
+            "handle": self.handle.to_json_object(),
+            "progress": self.progress.to_json_object(),
+            "representations": self.representations
+        }
+
     @classmethod
     def from_json_object(cls, obj):
         return RepresentationMessage(
@@ -78,6 +115,12 @@ class HandleMessage(NamedTuple):
     scan_tag: object
     handle: Handle
 
+    def to_json_object(self):
+        return {
+            "scan_tag": self.scan_tag,
+            "handle": self.handle.to_json_object()
+        }
+
     @classmethod
     def from_json_object(cls, obj):
         return HandleMessage(
@@ -89,6 +132,13 @@ class MetadataMessage(NamedTuple):
     scan_tag: object
     handle: Handle
     metadata: dict
+
+    def to_json_object(self):
+        return {
+            "scan_tag": self.scan_tag,
+            "handle": self.handle.to_json_object(),
+            "metadata": self.metadata
+        }
 
     @classmethod
     def from_json_object(cls, obj):
@@ -138,6 +188,14 @@ class MatchesMessage(NamedTuple):
                 else:
                     return 0
             return Sensitivity(max([_cms(frag) for frag in self.matches]))
+
+    def to_json_object(self):
+        return {
+            "scan_spec": self.scan_spec.to_json_object(),
+            "handle": self.handle.to_json_object(),
+            "matched": self.matched,
+            "matches": list([mf.to_json_object() for mf in self.matches])
+        }
 
     @staticmethod
     def from_json_object(obj):
