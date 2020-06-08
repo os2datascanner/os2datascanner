@@ -44,23 +44,6 @@ sensitivity_labels = {
     }
 }
 
-    def scale(self, factor: float):
-        """Scales this sensitivity value down by the given factor (which must
-        lie in the range [0.0, 1.0]) and maps the result to a new Sensitivity.
-
-        Scaled sensitivity values between 0 and 125 are mapped to INFORMATION;
-        between 125 and 375, to NOTICE; between 375 and 625, to WARNING;
-        between 625 and 875, to PROBLEM; and between 875 and 1000 to
-        CRITICAL."""
-        new_value = int(self.value * max(min(factor, 1.0), 0.0))
-        for r, s in [
-                (range(max(s.value - 125, 0), min(s.value + 125, 1000)), s)
-                for s in Sensitivity]:
-            if new_value in r:
-                return s
-        else:
-            return self
-
 
 class Rule(TypePropertyEquality, JSONSerialisable):
     """A Rule represents a test to be applied to a representation of an
