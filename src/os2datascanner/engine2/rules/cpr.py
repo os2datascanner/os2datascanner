@@ -62,17 +62,14 @@ class CPRRule(RegexRule):
             match_context = self._compiled_expression.sub(
                     "XXXXXX-XXXX", match_context)
 
-            sensitivity = self.sensitivity
-            if sensitivity:
-                sensitivity = sensitivity.scale(probability)
-
             if probability:
                 yield {
                     "offset": m.start(),
                     "match": cpr,
                     "context": match_context,
                     "context_offset": m.start() - (low - 50),
-                    "sensitivity": sensitivity
+                    "sensitivity": self.sensitivity.value,
+                    "probability": probability
                 }
 
     def to_json_object(self):
