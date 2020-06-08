@@ -51,19 +51,24 @@ class ScanSpecMessage(NamedTuple):
             "scan_tag": self.scan_tag,
             "source": self.source.to_json_object(),
             "rule": self.rule.to_json_object(),
-            "configuration": self.configuration,
+            "configuration": self.configuration or {},
             "progress": (
                     self.progress.to_json_object() if self.progress else None)
         }
 
     @classmethod
     def from_json_object(cls, obj):
+        # The progress fragment is only present when a scan spec is based on a
+        # derived source and so already contains scan progress information
         progress_fragment = obj.get("progress")
         return ScanSpecMessage(
                 scan_tag=obj["scan_tag"],
                 source=Source.from_json_object(obj["source"]),
                 rule=Rule.from_json_object(obj["rule"]),
-                configuration=obj.get("configuration"),
+                # The configuration dictionary was added fairly late to scan
+                # specs, so not all clients will send it. Add an empty one if
+                # necessary
+                configuration=obj.get("configuration", {}),
                 progress=ProgressFragment.from_json_object(progress_fragment)
                         if progress_fragment else None)
 
