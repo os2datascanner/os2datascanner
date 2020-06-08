@@ -3,20 +3,22 @@ from os import getpid
 from ...utils.metadata import guess_responsible_party
 from ...utils.prometheus import prometheus_session
 from ..model.core import Handle, SourceManager, ResourceUnavailableError
+from . import messages
 from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
         prometheus_summary, make_common_argument_parser,
         make_sourcemanager_configuration_block)
 
 
 def message_received_raw(body, channel, source_manager, metadata_q):
-    handle = Handle.from_json_object(body["handle"])
+    message = messages.HandleMessage.from_json_object(body)
 
     try:
-        yield (metadata_q, {
-            "scan_tag": body["scan_tag"],
-            "handle": body["handle"],
-            "metadata": guess_responsible_party(handle, source_manager)
-        })
+        yield (metadata_q,
+                messages.MetadataMessage(
+                        message.scan_tag, message.handle,
+                        guess_responsible_party(
+                                message.handle,
+                                source_manager)).to_json_object())
     except ResourceUnavailableError as ex:
         pass
 
