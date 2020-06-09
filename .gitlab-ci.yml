@@ -25,11 +25,12 @@ notice:
     POSTGRES_HOST: postgres
     AMQP_HOST: rabbitmq
     DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
+    SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
 
   script:
     - apt-get update -qq
-    - apt-get install -qq $(cat requirements/test_dependencies.txt)
-    - pip install -e . -r requirements/requirements-dev.txt
+    - "apt-get install -qq $(cut -d \\# -f 1 requirements/sys-requirements/sys-requirements-admin.txt requirements/sys-requirements/sys-requirements-common.txt requirements/sys-requirements/sys-requirements-django.txt requirements/sys-requirements/sys-requirements-engine.txt)"
+    - pip install -e . -r requirements/python-requirements/requirements-test.txt
 
     - python -m os2datascanner.projects.admin.manage makemigrations --check --dry-run
 
@@ -55,13 +56,14 @@ tests:
     POSTGRES_HOST: postgres
     AMQP_HOST: rabbitmq
     DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
+    SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
 
   coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
 
   script:
     - apt-get update -qq
-    - apt-get install -qq $(cat requirements/test_dependencies.txt)
-    - pip install -e . -r requirements/requirements-dev.txt
+    - "apt-get install -qq $(cut -d \\# -f 1 requirements/sys-requirements/sys-requirements-admin.txt requirements/sys-requirements/sys-requirements-common.txt requirements/sys-requirements/sys-requirements-django.txt requirements/sys-requirements/sys-requirements-engine.txt)"
+    - pip install -e . -r requirements/python-requirements/requirements-test.txt
 
     - python -m os2datascanner.projects.admin.manage makemigrations --check --dry-run
 
