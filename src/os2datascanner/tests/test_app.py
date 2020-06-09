@@ -19,7 +19,6 @@ These will pass when you run "manage.py test os2webscanner".
 """
 
 import unittest
-import pycodestyle
 from django.test import TestCase
 
 from os2datascanner.projects.admin.adminapp.models.organization_model import Organization
@@ -81,26 +80,4 @@ class ScannerTest(TestCase):
         engine2_source = next(source_generator)
 
         self.assertEqual(engine2_source.driveletter, "K")
-
-
-# TODO: Make it pep8 version 1.7 compatible
-def pep8_test(filepath):
-    """Run a pep8 test on the filepath."""
-    def do_test(self):
-        # print "PATH:", filepath
-        # arglist = ['--exclude=lib,migrations', filepath]
-        pep8styleguide = pycodestyle.StyleGuide(
-            exclude=['lib', 'migrations'],
-            filename=['*.py'],
-            filepath=filepath,
-            show_pep8=False,
-            show_source=False,
-        )
-        pep8styleguide.input_dir(filepath)
-        basereport = pycodestyle.BaseReport(benchmark_keys={})
-        output = basereport.get_statistics(prefix='')
-        # print "PEP8 OUTPUT: " + str(output)
-        self.assertEqual(len(output), 0)
-
-    return do_test
 
