@@ -68,7 +68,8 @@ class CPRRule(RegexRule):
                     "match": cpr,
                     "context": match_context,
                     "context_offset": m.start() - (low - 50),
-                    "sensitivity": self.sensitivity.value,
+                    "sensitivity": (self.sensitivity.value
+                                    if self.sensitivity else self.sensitivity),
                     "probability": probability
                 }
 
