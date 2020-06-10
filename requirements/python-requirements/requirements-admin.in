@@ -1,0 +1,6 @@
+-r requirements-django.in
+-c requirements-engine.txt
+
+django-recurrence
+pycrypto
+python-dateutil

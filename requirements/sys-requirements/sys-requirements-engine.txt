@@ -1,0 +1,16 @@
+###############################################################
+#                                                             #
+#    All system requirements specific to the engine module    #
+#                                                             #
+###############################################################
+
+tesseract-ocr
+tesseract-ocr-dan
+pdftohtml
+libreoffice
+imagemagick
+cifs-utils
+libsmbclient-dev
+libsystemd-dev
+
+

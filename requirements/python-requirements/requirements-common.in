@@ -1,0 +1,5 @@
+# Python packages needed for all parts of OS2datascanner
+
+colorama
+pika
+structlog

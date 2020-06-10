@@ -24,7 +24,8 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, 'uploads', 'admin')
 # Local settings file shall be used for debugging.
 DEBUG = False
 
-SECRET_KEY = ''
+# (Allow SECRET_KEY to be overridden by a CI environment variable)
+SECRET_KEY = os.getenv("SECRET_KEY", "")
 
 # The GUID of the registered Azure application corresponding to this
 # OS2datascanner installation, used when requesting Microsoft Graph access

@@ -1,0 +1,6 @@
+-c requirements-admin.txt
+-c requirements-engine.txt
+-c requirements-report.txt
+-c requirements-test.txt
+
+pycodestyle
