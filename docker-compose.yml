@@ -49,6 +49,61 @@ services:
       - db
       - admin-frontend
 
+  engine_explorer:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    environment:
+      - AMQP_HOST=queue
+    command: explorer
+    depends_on:
+      - queue
+
+  engine_processor:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    environment:
+      - AMQP_HOST=queue
+    command: processor
+    depends_on:
+      - queue
+
+  engine_matcher:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    environment:
+      - AMQP_HOST=queue
+    command: matcher
+    depends_on:
+      - queue
+
+  engine_tagger:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    environment:
+      - AMQP_HOST=queue
+    command: tagger
+    depends_on:
+      - queue
+
+  engine_exporter:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    environment:
+      - AMQP_HOST=queue
+    command: exporter
+    depends_on:
+      - queue
+
 volumes:
   frontend-bundles:
   postgres-data:
