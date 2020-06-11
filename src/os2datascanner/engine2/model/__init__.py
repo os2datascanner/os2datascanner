@@ -27,5 +27,6 @@ from . import smb # noqa
 from . import smbc # noqa
 from . import data # noqa
 from . import http # noqa
+from . import dropbox # noqa
 from . import derived # noqa
 from . import special # noqa
