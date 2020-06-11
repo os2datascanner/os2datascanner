@@ -9,6 +9,7 @@ from exchangelib import (Account,
 from exchangelib.errors import ErrorServerBusy, ErrorNonExistentMailbox
 from exchangelib.protocol import BaseProtocol
 
+from .utilities import NamedTemporaryResource
 from ..utilities.backoff import run_with_backoff
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
