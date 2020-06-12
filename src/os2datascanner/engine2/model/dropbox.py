@@ -33,7 +33,9 @@ class DropboxSource(Source):
         yield dbx
 
     def censor(self):
-        return DropboxSource(self.token)
+        dbs = DropboxSource(self.token)
+        dbs._user_account = self.user_account
+        return dbs
 
     def handles(self, sm):
         dbx = sm.open(self)
@@ -54,10 +56,11 @@ class DropboxSource(Source):
             cursor = result.cursor
             for entry in result.entries:
                 if isinstance(entry, dropbox.files.FileMetadata):
-                    yield DropboxHandle(self, entry.path_lower)
+                    yield DropboxHandle(self.user_account.email,
+                                        self, entry.path_lower)
 
     @staticmethod
-    @Source.url_handler("dropbox")
+    @Source.url_handler(type_label)
     def from_url(url):
         scheme, token, _, _, _ = urlsplit(url)
         return DropboxSource(token=token)
@@ -66,6 +69,11 @@ class DropboxSource(Source):
         return dict(**super().to_json_object(), **{
             "token": self._token
         })
+
+    @staticmethod
+    @Source.json_handler(type_label)
+    def from_json_object(obj):
+        return DropboxSource(obj["token"])
 
 
 class DropboxResource(FileResource):
@@ -117,10 +125,14 @@ class DropboxHandle(Handle):
     resource_type = DropboxResource
     type_label = "dropbox"
 
+    def __init__(self, email, source, relpath):
+        super().__init__(source, relpath)
+        self.email = email
+
     @property
     def presentation(self):
         return "\"{0}\" (of account {1})".format(
-            self.relative_path, self.source.user_account.email)
+            self.relative_path, self.email)
 
     @property
     def presentation_url(self):
@@ -129,4 +141,15 @@ class DropboxHandle(Handle):
             '/'.join(path[:-1]), path[-1])
 
     def censor(self):
-        return DropboxHandle(self.source.censor(), self.relative_path)
+        return DropboxHandle(self.email, self.source.censor(),
+                             self.relative_path)
+
+    def to_json_object(self):
+        return dict(**super().to_json_object(), **{
+            "email": self.email
+        })
+
+    @staticmethod
+    @Handle.json_handler(type_label)
+    def from_json_object(obj):
+        return DropboxHandle(obj["email"], Source.from_json_object(obj["source"]), obj["path"])
