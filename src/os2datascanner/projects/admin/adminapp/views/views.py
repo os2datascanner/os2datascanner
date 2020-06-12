@@ -32,6 +32,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
 from shutil import copyfile
 
+from ..models.scannerjobs.dropboxscanner_model import DropboxScanner
 from ..forms import FileUploadForm
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ..models.scannerjobs.filescanner_model import FileScanner
@@ -398,6 +399,7 @@ class DialogSuccess(TemplateView):
         'webscanners': WebScanner,
         'filescanners': FileScanner,
         'exchangescanners': ExchangeScanner,
+        'dropboxscanners': DropboxScanner,
         'rules/cpr': CPRRule,
         'rules/regex': RegexRule,
         'groups': Group

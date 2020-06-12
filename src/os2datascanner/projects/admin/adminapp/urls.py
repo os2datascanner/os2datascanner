@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.views.i18n import JavaScriptCatalog
 
+from .models.scannerjobs.dropboxscanner_model import DropboxScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.webscanner_model import WebScanner
@@ -27,6 +28,8 @@ from .views.exchangescanner_views import ExchangeScannerList, ExchangeScannerCre
     ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun
 from .views.filescanner_views import FileScannerCreate, FileScannerRun, FileScannerAskRun, FileScannerUpdate, \
     FileScannerDelete, FileScannerList
+from .views.dropboxscanner_views import DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun, DropboxScannerUpdate, \
+    DropboxScannerDelete, DropboxScannerList
 from .views.rule_views import RuleList, \
     CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
     RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
@@ -43,6 +46,8 @@ from .views.views import DesignGuide
 urlpatterns = [
     # App URLs
     url(r'^$', WebScannerList.as_view(), name='index'),
+
+    #Exchangescanner URL's
     url(r'^exchangescanners/$', ExchangeScannerList.as_view(), name='exchangescanners'),
     url(r'^exchangescanners/add/$', ExchangeScannerCreate.as_view(), name='exchangescanner_add'),
     url(r'^exchangescanners/(?P<pk>\d+)/delete/$', ExchangeScannerDelete.as_view(),
@@ -56,10 +61,12 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=ExchangeScanner),
         name='scanner_askrun'),
+
+    # Webscanner URL's
     url(r'^webscanners/$', WebScannerList.as_view(), name='webscanners'),
     url(r'^webscanners/add/$', WebScannerCreate.as_view(), name='webscanner_add'),
     url(r'^webscanners/(?P<pk>\d+)/delete/$', WebScannerDelete.as_view(),
-        name='scanner_delete'),
+        name='webscanner_delete'),
     url(r'^webscanners/(?P<pk>\d+)/validate/$', WebScannerValidate.as_view(),
         name='web_scanner_validate'),
     url(r'^webscanners/(?P<pk>\d+)/run/$', WebScannerRun.as_view(),
@@ -68,15 +75,17 @@ urlpatterns = [
         WebScannerAskRun.as_view(
             template_name='os2datascanner/scanner_askrun.html',
             model=WebScanner),
-        name='scanner_askrun'),
+        name='webscanner_askrun'),
     url(r'^webscanners/(?P<pk>\d+)/$', WebScannerUpdate.as_view(),
-        name='scanner_update'),
+        name='webscanner_update'),
+
+    # Filescanner URL's
     url(r'^filescanners/$', FileScannerList.as_view(), name='filescanners'),
     url(r'^filescanners/add/$', FileScannerCreate.as_view(), name='filescanner_add'),
     url(r'^filescanners/(?P<pk>\d+)/$', FileScannerUpdate.as_view(),
-        name='scanner_update'),
+        name='filescanner_update'),
     url(r'^filescanners/(?P<pk>\d+)/delete/$', FileScannerDelete.as_view(),
-        name='scanner_delete'),
+        name='filescanner_delete'),
     url(r'^filescanners/(?P<pk>\d+)/run/$', FileScannerRun.as_view(),
         name='filescanner_run'),
     url(r'^filescanners/(?P<pk>\d+)/askrun/$',
@@ -84,6 +93,22 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=FileScanner),
         name='filescanner_askrun'),
+
+    # Dropbox scanner URL's
+    url(r'^dropboxscanners/$', DropboxScannerList.as_view(), name='dropboxscanners'),
+    url(r'^dropboxscanners/add/$', DropboxScannerCreate.as_view(), name='dropboxscanner_add'),
+    url(r'^dropboxscanners/(?P<pk>\d+)/$', DropboxScannerUpdate.as_view(),
+        name='dropboxscanner_update'),
+    url(r'^dropboxscanners/(?P<pk>\d+)/delete/$', DropboxScannerDelete.as_view(),
+        name='dropboxscanner_delete'),
+    url(r'^dropboxscanners/(?P<pk>\d+)/run/$', DropboxScannerRun.as_view(),
+        name='dropboxscanner_run'),
+    url(r'^dropboxscanners/(?P<pk>\d+)/askrun/$',
+        DropboxScannerAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=DropboxScanner),
+        name='dropboxscanner_askrun'),
+
     url(r'^rules/$', RuleList.as_view(), name='rules'),
     url(r'^rules/cpr/add/$', CPRRuleCreate.as_view(), name='cprrule_add'),
     url(r'^rules/cpr/(?P<pk>\d+)/$', CPRRuleUpdate.as_view(),
@@ -145,9 +170,9 @@ urlpatterns = [
         ),
 
     # General success handler
-    url(r'^(webscanners|filescanners|exchangescanners)/(\d+)/(created)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners)/(\d+)/(created)/$',
         DialogSuccess.as_view()),
-    url(r'^(webscanners|filescanners|exchangescanners)/(\d+)/(saved)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners)/(\d+)/(saved)/$',
         DialogSuccess.as_view()),
     url(r'^(rules/regex|rules/cpr|groups)/(\d+)/(created)/$',
         DialogSuccess.as_view()),

@@ -23,6 +23,9 @@
     {% if settings.ENABLE_EXCHANGESCAN %}
     <a id="exchange" class="tabs__control" href="/exchangescanners/">Exchangescannere</a>
     {% endif %}
+      {% if settings.ENABLE_DROPBOXSCAN %}
+    <a id="dropbox" class="tabs__control" href="/dropboxscanners/">Dropboxscannere</a>
+    {% endif %}
   </div>
 
   <h2 style="display:inline-block;">Scannerjob</h2>

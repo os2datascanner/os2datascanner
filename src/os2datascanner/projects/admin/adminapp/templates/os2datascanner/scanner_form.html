@@ -117,6 +117,7 @@
         {% endif %}
       </div>
 
+        {% if form.url %}
       <div id="{{ form.url.auto_id }}_container" class="form__group{% if form.url.errors %} has-error{% endif %}">
         <label for="id_{{ form.url.name }}">{{ form.url.label }}</label>
         <input 
@@ -133,6 +134,7 @@
         {{ form.url.errors }}
         {% endif %}
       </div>
+        {% endif %}
 
       {% if form.alias %}
       <div id="{{ form.alias.auto_id }}_container" class="form__group{% if form.alias.errors %} has-error{% endif %}">
@@ -232,6 +234,26 @@
         {% if form.domain.errors %}{{ form.domain.errors }}{% endif %}
       </div>
       {% endif %}
+
+        {% if form.token %}
+            <div id="{{ form.token.auto_id }}_container" class="form__group{% if form.token.errors %} has-error{% endif %}">
+                <label class="control-label" for="id_{{ form.token.name }}">Token</label>
+                <input
+                        type="password"
+                        class="form-control"
+                        name="{{ form.token.name }}"
+                        id="id_{{ form.token.name }}"
+                        {% if form.token.value %}
+                        value="{{ form.token.value }}"
+                        {% endif %}>
+
+                {% if form.token.help_text %}
+                    <span class="form__help-text">{{ form.token.help_text }}</span>
+                {% endif %}
+
+                {% if form.token.errors %}{{ form.token.errors }}{% endif %}
+            </div>
+        {% endif %}
 
       {% if form.username %}
       <div id="{{ form.username.auto_id }}_container" class="form__group{% if form.username.errors %} has-error{% endif %}">
