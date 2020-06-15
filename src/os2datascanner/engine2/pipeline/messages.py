@@ -1,4 +1,4 @@
-from typing import Sequence, NamedTuple
+from typing import Optional, Sequence, NamedTuple
 
 from ..model.core import Handle, Source
 from ..rules.rule import Rule, SimpleRule, Sensitivity
@@ -210,3 +210,28 @@ class MatchesMessage(NamedTuple):
                 matched=obj["matched"],
                 matches=[MatchFragment.from_json_object(mf)
                         for mf in obj["matches"]])
+
+
+class ProblemMessage(NamedTuple):
+    scan_tag: object
+    source: Optional[Source]
+    handle: Optional[Handle]
+    message: str
+
+    def to_json_object(self):
+        return {
+            "scan_tag": self.scan_tag,
+            "source": self.source.to_json_object() if self.source else None,
+            "handle": self.handle.to_json_object() if self.handle else None,
+            "message": self.message
+        }
+
+    @staticmethod
+    def from_json_object(obj):
+        source = obj.get("source")
+        handle = obj.get("handle")
+        return ProblemMessage(
+                scan_tag=obj["scan_tag"],
+                source=Source.from_json_object(source) if source else None,
+                handle=Handle.from_json_object(handle) if handle else None,
+                message=obj["message"])
