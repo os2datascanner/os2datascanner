@@ -11,8 +11,6 @@ from ..models.rules.rule_model import Rule
 from ..models.scannerjobs.scanner_model import Scanner
 from ..models.userprofile_model import UserProfile
 
-from os2datascanner.engine2.model.core import ResourceUnavailableError
-
 
 class ScannerList(RestrictedListView):
     """Displays list of scanners."""
@@ -204,11 +202,9 @@ class ScannerRun(RestrictedDetailView):
         try:
             context['scan_tag'] = dumps(
                     self.object.run(user=request.user), indent=2)
-        except ResourceUnavailableError as ex:
-            source = ex.args[0]
-            details = ex.args[1:]
-            context['engine2_error'] = ", ".join([str(d) for d in details])
         except AMQPError as ex:
             context['pika_error'] = type(ex).__name__
+        except Exception as ex:
+            context['engine2_error'] = ", ".join([str(e) for e in ex.args])
 
         return self.render_to_response(context)

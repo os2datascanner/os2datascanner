@@ -1,4 +1,4 @@
-from .errors import UnknownSchemeError, DeserialisationError, ResourceUnavailableError
+from .errors import UnknownSchemeError, DeserialisationError
 from .source import Source
 from .handle import Handle
 from .resource import Resource, FileResource, TimestampedResource
@@ -9,6 +9,5 @@ __all__ = [
         "Handle",
         "Resource", "FileResource",
         "SourceManager",
-        "UnknownSchemeError", "DeserialisationError",
-        "ResourceUnavailableError"
+        "UnknownSchemeError", "DeserialisationError"
 ]

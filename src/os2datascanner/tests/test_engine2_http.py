@@ -7,7 +7,7 @@ import contextlib
 from multiprocessing import Manager, Process
 
 from os2datascanner.engine2.model.core import (Handle,
-        Source, SourceManager, UnknownSchemeError, ResourceUnavailableError)
+        Source, SourceManager, UnknownSchemeError)
 from os2datascanner.engine2.model.http import WebSource, WebHandle
 from os2datascanner.engine2.model.utilities.datetime import parse_datetime
 from os2datascanner.engine2.conversions.types import OutputType
@@ -173,12 +173,12 @@ class Engine2HTTPTest(unittest.TestCase):
                     404,
                     "{0}: broken link doesn't have status 404".format(
                             no_such_file))
-            with self.assertRaises(ResourceUnavailableError):
+            with self.assertRaises(Exception):
                 r.get_size()
-            with self.assertRaises(ResourceUnavailableError):
+            with self.assertRaises(Exception):
                 with r.make_path() as p:
                     pass
-            with self.assertRaises(ResourceUnavailableError):
+            with self.assertRaises(Exception):
                 with r.make_stream() as s:
                     pass
 
@@ -194,7 +194,7 @@ class Engine2HTTPTest(unittest.TestCase):
                 sitemap="http://localhost:64346/missing_sitemap.xml")
         with SourceManager() as sm:
             for source in (s1, s2, s3,):
-                with self.assertRaises(ResourceUnavailableError):
+                with self.assertRaises(Exception):
                     list(source.handles(sm))
 
     def test_missing_headers(self):

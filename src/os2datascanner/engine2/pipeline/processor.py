@@ -2,8 +2,7 @@ from os import getpid
 
 from ...utils.prometheus import prometheus_session
 from ..rules.rule import Rule
-from ..model.core import (Source,
-        Handle, SourceManager, ResourceUnavailableError)
+from ..model.core import Source, Handle, SourceManager
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
 from . import messages
@@ -72,7 +71,8 @@ def message_received_raw(
                             conversion.progress, {
                                 required.value: None
                             }).to_json_object())
-    except ResourceUnavailableError:
+    except Exception:
+        # XXX: problem
         pass
 
 

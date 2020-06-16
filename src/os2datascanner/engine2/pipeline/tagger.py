@@ -2,7 +2,7 @@ from os import getpid
 
 from ...utils.metadata import guess_responsible_party
 from ...utils.prometheus import prometheus_session
-from ..model.core import Handle, SourceManager, ResourceUnavailableError
+from ..model.core import Handle, SourceManager
 from . import messages
 from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
         prometheus_summary, make_common_argument_parser,
@@ -19,7 +19,8 @@ def message_received_raw(body, channel, source_manager, metadata_q):
                         guess_responsible_party(
                                 message.handle,
                                 source_manager)).to_json_object())
-    except ResourceUnavailableError as ex:
+    except Exception:
+        # XXX: problem
         pass
 
 

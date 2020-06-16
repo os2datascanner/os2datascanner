@@ -2,7 +2,7 @@ from os import getpid
 
 from ...utils.prometheus import prometheus_session
 from ..model.core import (Source, SourceManager, UnknownSchemeError,
-        DeserialisationError, ResourceUnavailableError)
+        DeserialisationError)
 from . import messages
 from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
         prometheus_summary, make_common_argument_parser,
@@ -51,12 +51,14 @@ def message_received_raw(
             yield (conversions_q,
                     messages.ConversionMessage(
                             scan_spec, handle, progress).to_json_object())
-    except ResourceUnavailableError as ex:
-        yield (problems_q, {
-            "where": scan_spec.source.to_json_object(),
-            "problem": "unavailable",
-            "extra": [str(arg) for arg in ex.args]
-        })
+    except Exception as e:
+        # XXX: problem
+        exception_message = ", ".join([str(a) for a in e.args])
+        yield (problems_q, messages.ProblemMessage(
+                scan_tag=scan_tag, source=scan_spec.source, handle=None,
+                message="Resource unavailable: {0}".format(
+                        exception_message).to_json_object()))
+        return
     # Note that exceptions not caught and wrapped by engine2 will cause this
     # (and every other!) pipeline stage to abort unexpectedly. To trigger an
     # automatic restart in this case, use a service manager like systemd

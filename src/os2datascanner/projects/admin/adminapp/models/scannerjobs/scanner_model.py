@@ -33,8 +33,7 @@ from django.contrib.postgres.fields import JSONField
 from model_utils.managers import InheritanceManager
 from recurrence.fields import RecurrenceField
 
-from os2datascanner.engine2.model.core import (
-        Source, SourceManager, ResourceUnavailableError)
+from os2datascanner.engine2.model.core import Source, SourceManager
 from os2datascanner.engine2.rules.meta import HasConversionRule
 from os2datascanner.engine2.rules.logical import OrRule, AndRule, make_if
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
@@ -225,10 +224,9 @@ class Scanner(models.Model):
         """Schedules a scan to be run by the pipeline. Returns the scan tag of
         the resulting scan on success.
 
-        An os2datascanner.engine2.model.core.ResourceUnavailableError will be
-        raised if the underlying source is not available, and a
-        pika.exceptions.AMQPError (or a subclass) will be raised if it was not
-        possible to communicate with the pipeline."""
+        An exception will be raised if the underlying source is not available,
+        and a pika.exceptions.AMQPError (or a subclass) will be raised if it
+        was not possible to communicate with the pipeline."""
         now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
 
         # Check that this source is accessible, raising an error if it isn't
