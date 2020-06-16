@@ -14,7 +14,6 @@ def message_received_raw(body, channel, dump, results_q):
     body["origin"] = channel
 
     message = None
-    result_body = None # XXX
     if "metadata" in body:
         message = messages.MetadataMessage.from_json_object(body)
         # MetadataMessages carry a scan tag rather than a complete scan spec,
@@ -28,30 +27,15 @@ def message_received_raw(body, channel, dump, results_q):
         message = message._replace(
                 handle=message.handle.censor(),
                 scan_spec=censored_scan_spec)
-    elif "where" in body:
-        # Problem messages are a bit tricky to censor: we get a "where"
-        # value that refers to the source of the problem, and we first need to
-        # work out what it is
-        where = body["where"]
-        if "type" in where:
-            # This is probably a Handle or a Source. Handles require more
-            # structure, so try them first and then use Source as a fallback
-            model_object = None
-            try:
-                model_object = Handle.from_json_object(where)
-            except (DeserialisationError, UnknownSchemeError):
-                try:
-                    model_object = Source.from_json_object(where)
-                except (DeserialisationError, UnknownSchemeError):
-                    pass
-            if model_object:
-                where = model_object.censor().to_json_object()
-        body["where"] = where
-        result_body = body
+    elif "message" in body:
+        message = messages.ProblemMessage.from_json_object(body)
+        message = message._replace(
+                handle=message.handle.censor() if message.handle else None,
+                source=message.source.censor() if message.source else None)
+    # Old-style problem messages are now ignored
 
-    if message or result_body:
-        if not result_body:
-            result_body = message.to_json_object()
+    if message:
+        result_body = message.to_json_object()
         result_body["origin"] = channel
 
         # For debugging purposes

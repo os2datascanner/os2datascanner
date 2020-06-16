@@ -30,7 +30,7 @@ def message_received_raw(
     except UnknownSchemeError as ex:
         yield (problems_q, messages.ProblemMessage(
                 scan_tag=scan_tag, source=None, handle=None,
-                message=("Unknown URL scheme '{0}'".format(
+                message=("Unknown scheme '{0}'".format(
                         ex.args[0]))).to_json_object())
         return
     except (KeyError, DeserialisationError) as ex:
