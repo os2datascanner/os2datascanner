@@ -11,9 +11,13 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-set -ex
+set -e
 
-sleep 5 # Allow queue container to start TODO: write function to ping queue
+if [ $# -eq 0 ]; then
+  echo "No service argument provided!"
+  echo "Cannot start unknown service; exiting."
+  exit 1
+fi
 
 STAGE=$1
 
@@ -22,5 +26,7 @@ if [[ ${AMQP_HOST} ]]; then
 else
   OPTIONAL_HOST=""
 fi
+
+sleep 5 # Allow queue container to start TODO: write function to ping queue
 
 exec python -m "os2datascanner.engine2.pipeline.${STAGE}" ${OPTIONAL_HOST}

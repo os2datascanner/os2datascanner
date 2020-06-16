@@ -58,10 +58,7 @@ RUN pip install \
     -r requirements-test.txt \
     -r requirements-lint.txt
 
-WORKDIR /code/docker/
-COPY docker/engine/docker-entrypoint.sh ./docker-entrypoint.sh
-
-# Copy backend code
+# Copy code
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/engine2 ./engine2/
 COPY src/os2datascanner/tests ./tests
@@ -72,7 +69,11 @@ COPY LICENSE .
 COPY README .
 COPY NEWS.rst .
 
-# Set up to run given command through the entrypoint as the new user
-WORKDIR /code/src/os2datascanner/
-# USER os2ds_engine:os2ds_engine
-ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
+WORKDIR /code/docker/
+COPY docker/engine/start_service.sh ./start_service.sh
+
+# Set up to run given command as the new user
+USER os2ds_engine:os2ds_engine
+# Note: Needs to be overwritten. The default command lacks a service argument,
+# and will exit. This behaviour is intentional.
+CMD ["./start_service.sh"]
