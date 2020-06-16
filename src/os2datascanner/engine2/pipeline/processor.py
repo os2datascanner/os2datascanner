@@ -11,8 +11,8 @@ from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
         make_sourcemanager_configuration_block)
 
 
-def message_received_raw(
-        body, channel, source_manager, representations_q, sources_q):
+def message_received_raw(body,
+        channel, source_manager, representations_q, sources_q, problems_q):
     conversion = messages.ConversionMessage.from_json_object(body)
     configuration = conversion.scan_spec.configuration
     head, _, _ = conversion.progress.rule.split()
@@ -104,6 +104,12 @@ def main():
             help="the name of the AMQP queue to which scan specifications"
                     + " should be written",
             default="os2ds_scan_specs")
+    outputs.add_argument(
+            "--problems",
+            metavar="NAME",
+            help="the name of the AMQP queue to which problems should be"
+                    + " written",
+            default="os2ds_problems")
 
     args = parser.parse_args()
 
@@ -113,8 +119,8 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(body, channel,
-                    source_manager, args.representations, args.sources)
+            return message_received_raw(body, channel, source_manager,
+                    args.representations, args.sources, args.problems)
 
     with prometheus_session(
             str(getpid()),
@@ -123,7 +129,7 @@ def main():
         with SourceManager(width=args.width) as source_manager:
             with ProcessorRunner(
                     read=[args.conversions],
-                    write=[args.sources, args.representations],
+                    write=[args.sources, args.representations, args.problems],
                     host=args.host, heartbeat=6000) as runner:
                 try:
                     print("Start")

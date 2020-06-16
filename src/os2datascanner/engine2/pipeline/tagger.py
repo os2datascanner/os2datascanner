@@ -9,7 +9,8 @@ from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
         make_sourcemanager_configuration_block)
 
 
-def message_received_raw(body, channel, source_manager, metadata_q):
+def message_received_raw(body,
+        channel, source_manager, metadata_q, problems_q):
     message = messages.HandleMessage.from_json_object(body)
 
     try:
@@ -45,6 +46,12 @@ def main():
             help="the name of the AMQP queue to which metadata should be"
                     + " written",
             default="os2ds_metadata")
+    outputs.add_argument(
+            "--problems",
+            metavar="NAME",
+            help="the name of the AMQP queue to which problems should be"
+                    + " written",
+            default="os2ds_problems")
 
     args = parser.parse_args()
 
@@ -54,8 +61,8 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(
-                    body, channel, source_manager, args.metadata)
+            return message_received_raw(body,
+                    channel, source_manager, args.metadata, args.problems)
 
     with prometheus_session(
             str(getpid()),
@@ -64,7 +71,7 @@ def main():
         with SourceManager(width=args.width) as source_manager:
             with TaggerRunner(
                     read=[args.handles],
-                    write=[args.metadata],
+                    write=[args.metadata, args.problems],
                     host=args.host, heartbeat=6000) as runner:
                 try:
                     print("Start")
