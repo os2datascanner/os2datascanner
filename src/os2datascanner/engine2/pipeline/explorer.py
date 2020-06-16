@@ -12,6 +12,13 @@ from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
 def message_received_raw(
         body, channel, source_manager, conversions_q, problems_q):
     try:
+        scan_tag = body["scan_tag"]
+    except KeyError:
+        # Scan specifications with no scan tag are simply invalid and should be
+        # dropped
+        return
+
+    try:
         scan_spec = messages.ScanSpecMessage.from_json_object(body)
 
         if scan_spec.progress:
@@ -21,25 +28,15 @@ def message_received_raw(
             progress = messages.ProgressFragment(
                     rule=scan_spec.rule, matches=[])
     except UnknownSchemeError as ex:
-        yield (problems_q, {
-            "where": body,
-            "problem": "unsupported",
-            "extra": [str(arg) for arg in ex.args]
-        })
+        yield (problems_q, messages.ProblemMessage(
+                scan_tag=scan_tag, source=None, handle=None,
+                message=("Unknown URL scheme '{0}'".format(
+                        ex.args[0]))).to_json_object())
         return
-    except DeserialisationError as ex:
-        yield (problems_q, {
-            "where": body,
-            "problem": "malformed",
-            "extra": [str(arg) for arg in ex.args]
-        })
-        return
-    except KeyError as ex:
-        yield (problems_q, {
-            "where": body,
-            "problem": "malformed",
-            "extra": [str(arg) for arg in ex.args]
-        })
+    except (KeyError, DeserialisationError) as ex:
+        yield (problems_q, messages.ProblemMessage(
+                scan_tag=scan_tag, source=None, handle=None,
+                message="Malformed input").to_json_object())
         return
 
     try:
