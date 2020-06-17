@@ -31,7 +31,7 @@ WORKDIR /code/requirements/sys-requirements
 COPY requirements/sys-requirements/sys-requirements-common.txt \
      requirements/sys-requirements/sys-requirements-engine.txt \
      ./
-RUN cat sys-requirements-*.txt > sys-requirements.txt
+# hadolint ignore=DL3008
 RUN set -ex \
   # Add an image specific group and user.
   # Note: this is a system user/group, but have
@@ -43,7 +43,7 @@ RUN set -ex \
   && useradd -u 73030 --no-log-init -r -g os2ds_engine os2ds_engine \
   # Install system dependencies from file.
   && apt-get -y update \
-  && apt-get -y install --no-install-recommends $(grep -o '^[^#][[:alnum:].-]*' sys-requirements.txt) \
+  && apt-get -y install --no-install-recommends "$(grep -oh '^[^#][[:alnum:].-]*' sys-requirements*.txt)" \
   # clean up after apt-get and man-pages
   && apt-get clean && rm -rf "/var/lib/apt/lists/*" "/tmp/*" "/var/tmp/*" "/usr/share/man/??" "/usr/share/man/??_*"
 
@@ -53,10 +53,8 @@ COPY requirements/python-requirements/requirements-engine.txt \
      requirements/python-requirements/requirements-test.txt \
      requirements/python-requirements/requirements-lint.txt \
      ./
-RUN pip install \
-    -r requirements-engine.txt \
-    -r requirements-test.txt \
-    -r requirements-lint.txt
+# hadolint ignore=DL4006
+RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
 
 # Copy code
 WORKDIR /code/src/os2datascanner
