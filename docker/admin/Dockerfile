@@ -39,10 +39,10 @@ FROM python:3.6 AS application
 
 LABEL org.opencontainers.image.title="OS2datascanner - Administration" \
       org.opencontainers.image.vendor="Magenta ApS" \
-      org.opencontainers.image.licenses="MPL-2.0"
-      #org.opencontainers.image.url="" \
-      #org.opencontainers.image.documentation="" \
-      #org.opencontainers.image.source=""
+      org.opencontainers.image.licenses="MPL-2.0" \
+      org.opencontainers.image.url="https://os2datascanner.magenta.dk/" \
+      org.opencontainers.image.documentation="https://os2datascanner.readthedocs.io/en/latest/" \
+      org.opencontainers.image.source="https://github.com/os2datascanner/os2datascanner"
 
 # Force the stdout and stderr streams from python to be unbuffered. See
 # https://docs.python.org/3/using/cmdline.html#cmdoption-u
@@ -50,7 +50,6 @@ ENV PYTHONUNBUFFERED=1 \
   DSC_ADMIN_SYSTEM_CONFIG_PATH=/code/docker/docker-settings.toml \
   DSC_ADMIN_USER_CONFIG_PATH=/user-settings.toml \
   PYTHONPATH=/code/src/:$PYTHONPATH
-# Should we add this?  IPYTHONDIR=/tmp/.ipython
 
 # Ensure system user and install system depedencies
 WORKDIR /code/requirements/sys-requirements
@@ -60,7 +59,8 @@ COPY requirements/sys-requirements/sys-requirements-common.txt \
      ./
 RUN cat sys-requirements-*.txt > sys-requirements.txt
 RUN set -ex \
-  # Add an os2ds_admin group and user. Note: this is a system user/group, but have
+  # Add an application specific group and user.
+  # Note: this is a system user/group, but have
   # UID/GID above the normal SYS_UID_MAX/SYS_GID_MAX of 999, but also above the
   # automatic ranges of UID_MAX/GID_MAX used by useradd/groupadd.
   # Hopefully there will be no conflicts with users of the
@@ -87,8 +87,6 @@ RUN pip install \
     -r requirements-admin.txt \
     -r requirements-test.txt \
     -r requirements-lint.txt
-
-# SHOULD WE INCLUDE CI SETTINGS?
 
 WORKDIR /code/docker/
 COPY docker/admin .
