@@ -178,7 +178,6 @@ class MatchesMessage(NamedTuple):
                 max_sub = None
                 if (rule_sensitivity is not None
                         and fragment.matches is not None):
-                    max_sub = None
                     for match_dict in fragment.matches:
                         if "sensitivity" in match_dict:
                             sub = match_dict["sensitivity"]
@@ -211,23 +210,22 @@ class MatchesMessage(NamedTuple):
             return None
         else:
 
-            def _cmp(rule_result):
+            def _cmp(fragment):
                 """Computes the probability of a set of results returned by a
                 rule, returning the highest probability associated with a
                 match."""
                 max_sub = None
-                if rule_result["matches"] is not None:
-                    max_sub = None
-                    for match in rule_result["matches"]:
-                        if "probability" in match:
-                            sub = match["probability"]
+                if fragment.matches is not None:
+                    for match_dict in fragment.matches:
+                        if "probability" in match_dict:
+                            sub = match_dict["probability"]
                             if max_sub is None or sub > max_sub:
                                 max_sub = sub
                 if max_sub is not None:
                     return max_sub
                 else:
                     return 0
-        return max([_cmp(rule_result) for rule_result in self.matches])
+        return max([_cmp(frag) for frag in self.matches])
 
     @staticmethod
     def from_json_object(obj):
