@@ -8,6 +8,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres-initdb.d/10-test-for-valid-env-variables.sh:/docker-entrypoint-initdb.d/10-test-for-valid-env-variables.sh
       - ./docker/postgres-initdb.d/20-create-admin-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-admin-db-and-user.sh
+      - ./docker/postgres-initdb.d/40-create-report-db-and-user.sh:/docker-entrypoint-initdb.d/40-create-report-db-and-user.sh
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come
@@ -28,7 +29,7 @@ services:
       dockerfile: docker/admin/Dockerfile
       target: frontend
     volumes:
-      - frontend-bundles:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
+      - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
       - /code/frontend/mode_modules
 
   admin-application:
@@ -40,7 +41,7 @@ services:
       - dev-environment/admin/django.env
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - frontend-bundles:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
+      - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./dev-environment/admin/dev-settings.py:/code/src/os2datascanner/projects/admin/local_settings.py
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -106,6 +107,6 @@ services:
       - queue
 
 volumes:
-  frontend-bundles:
+  frontend-bundles-admin:
   postgres-data:
   postgres-initdb.d:
