@@ -32,7 +32,6 @@ class Sensitivity(Enum):
          # XXX: interim hack
         return sensitivity_labels["da"].get(self, self.name)
 
-
 # XXX: this is a hack that should be replaced by real translation support once
 # we get that sorted out
 sensitivity_labels = {

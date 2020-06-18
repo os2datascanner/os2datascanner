@@ -16,7 +16,6 @@
 # source municipalities ( https://os2.eu/ )
 import structlog
 
-from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View, TemplateView
@@ -103,8 +102,13 @@ class SensitivityPageView(MainPageView):
         sensitivity = Sensitivity(int(self.request.GET.get('value')) or 0)
 
         context = super().get_context_data(**kwargs)
+        # Exclude matches with None or other sensitivity value.
         context['matches'] = [r for r in self.data_results
                 if r.matches and r.matches.sensitivity == sensitivity]
+        # Sort matches after probability value if any.
+        # If probability value is None the result will be shown last in the list.
+        context['matches'].sort(key=lambda result: result.matches.probability,
+                                reverse=True)
         context['sensitivity'] = sensitivity
 
         return context

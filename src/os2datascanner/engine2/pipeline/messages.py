@@ -202,6 +202,33 @@ class MatchesMessage(NamedTuple):
             "matches": list([mf.to_json_object() for mf in self.matches])
         }
 
+    @property
+    def probability(self):
+        """Computes the overall probability of the matches contained in this
+        message (i.e., the highest probability of any submatch), or None if
+        there are no matches."""
+        if not self.matches:
+            return None
+        else:
+
+            def _cmp(rule_result):
+                """Computes the probability of a set of results returned by a
+                rule, returning the highest probability associated with a
+                match."""
+                max_sub = None
+                if rule_result["matches"] is not None:
+                    max_sub = None
+                    for match in rule_result["matches"]:
+                        if "probability" in match:
+                            sub = match["probability"]
+                            if max_sub is None or sub > max_sub:
+                                max_sub = sub
+                if max_sub is not None:
+                    return max_sub
+                else:
+                    return 0
+        return max([_cmp(rule_result) for rule_result in self.matches])
+
     @staticmethod
     def from_json_object(obj):
         return MatchesMessage(
