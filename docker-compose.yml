@@ -3,10 +3,11 @@ services:
   db:
     image: postgres:12
     env_file:
-      - dev-environment/admin/db.env
+      - dev-environment/db.env
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./docker/postgres-initdb.d/20-create-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-db-and-user.sh
+      - ./docker/postgres-initdb.d/10-test-for-valid-env-variables.sh:/docker-entrypoint-initdb.d/10-test-for-valid-env-variables.sh
+      - ./docker/postgres-initdb.d/20-create-admin-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-admin-db-and-user.sh
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come

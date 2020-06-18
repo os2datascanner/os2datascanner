@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2019 Magenta ApS, http://magenta.dk.
+# Copyright (C) 2020 Magenta ApS, http://magenta.dk.
 # Contact: info@magenta.dk.
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
@@ -11,19 +11,23 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-# This file creates a database user. It can be mounted into the official
+# This file creates a database user for the admin module.
+# It can be mounted into the official
 # postgres docker image (https://hub.docker.com/_/postgres) at
-# `/docker-entrypoint-initdb.d/20-create-db-and-user.sh`. This is preferable to
+# `/docker-entrypoint-initdb.d/20-create-admin-db-and-user.sh`. This is preferable to
 # using the POSTGRES_* env variables as this user is not a SUPERUSER. A
 # SUPERUSER can be used as privilege escalation to the postgres service system
 # user in the event of SQL injection.
 
-true "${DATABASE_USER:?DATABASE_USER is unset. Error.}"
-true "${DATABASE_PASSWORD:?DATABASE_PASSWORD is unset. Error.}"
-true "${DATABASE_NAME:?DATABASE_NAME is unset. Error.}"
+if [ -n "$ADMIN_DATABASE_USER" ];
+then
+  true "${ADMIN_DATABASE_PASSWORD:?ERROR! ADMIN_DATABASE_PASSWORD is unset.}"
+  true "${ADMIN_DATABASE_NAME:?ERROR! ADMIN_DATABASE_NAME is unset.}"
 
+# Intentionally not indented due to the way psql parses the statements.
 psql -v ON_ERROR_STOP=1 <<ENDSQL
-CREATE DATABASE ${DATABASE_NAME};
-CREATE USER ${DATABASE_USER} WITH ENCRYPTED PASSWORD '${DATABASE_PASSWORD}';
-GRANT ALL PRIVILEGES ON DATABASE ${DATABASE_NAME} TO ${DATABASE_USER};
+CREATE DATABASE ${ADMIN_DATABASE_NAME};
+CREATE USER ${ADMIN_DATABASE_USER} WITH ENCRYPTED PASSWORD '${ADMIN_DATABASE_PASSWORD}';
+GRANT ALL PRIVILEGES ON DATABASE ${ADMIN_DATABASE_NAME} TO ${ADMIN_DATABASE_USER};
 ENDSQL
+fi
