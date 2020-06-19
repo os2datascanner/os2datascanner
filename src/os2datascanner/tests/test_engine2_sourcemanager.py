@@ -30,6 +30,12 @@ class Dependent:
             self.count -= 1
 
 
+class BrokenSource:
+    def _generate_state(self, sm):
+        raise ValueError("Operation failed: eth0 carrier on fire?")
+        yield from []
+
+
 class Engine2SourceManagerTest(unittest.TestCase):
     def test_basic(self):
         tracker = Tracker()
@@ -124,3 +130,20 @@ class Engine2SourceManagerTest(unittest.TestCase):
             self.assertEqual(
                     tracker2.count,
                     0)
+
+    def test_generator_exception(self):
+        source = BrokenSource()
+        with SourceManager() as sm:
+            with self.assertRaises(ValueError):
+                sm.open(source)
+            self.assertFalse(
+                    source in sm,
+                    "_generate_state failed, but Source still open")
+
+    def test_generator_exception2(self):
+        source = BrokenSource()
+        with SourceManager() as sm:
+            with self.assertRaises(ValueError):
+                sm.open(source)
+            with self.assertRaises(ValueError):
+                sm.open(source)
