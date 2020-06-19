@@ -79,6 +79,25 @@ services:
       - db
       - report-frontend
 
+  report-collector:
+    build:
+      context: .
+      dockerfile: docker/report/Dockerfile
+      target: application
+    environment:
+      - OS2DS_MIGRATE_MANUALLY=1
+    env_file:
+      - dev-environment/report/django.env
+    # TODO: fix command below when we have a script to wait for queue
+    command: >
+      sh -c "sleep 10 && python manage.py pipeline_collector"
+    volumes:
+      - ./dev-environment/report/dev-settings.toml:/user-settings.toml
+      - ./dev-environment/report/dev-settings.py:/code/src/os2datascanner/projects/report/local_settings.py
+    depends_on:
+      - db
+      - report-application
+
   engine_explorer:
     build:
       context: .
