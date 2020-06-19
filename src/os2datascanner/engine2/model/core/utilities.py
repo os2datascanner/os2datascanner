@@ -7,7 +7,7 @@ class _SourceDescriptor:
         self.source = source
         self.parent = parent
         self.generator = None
-        self.state = None
+        self.cookie = None
         self.children = []
 
 
