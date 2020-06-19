@@ -4,6 +4,4 @@
 #                                                                     #
 #######################################################################
 
-# Hard dependencies from engine2 imports:
-
-libsmbclient-dev
+# Intentionally left empty

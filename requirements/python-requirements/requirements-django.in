@@ -9,3 +9,17 @@ psycopg2-binary
 
 # At the moment only used during development:
 django_extensions
+
+# Hard dependencies through engine2 imports:
+dropbox
+exchangelib
+olefile
+PyPDF2
+pdfrw
+pysmbc
+python-magic
+regex
+
+# Needed to avoid model loading issue:
+beautifulsoup4
+Pillow

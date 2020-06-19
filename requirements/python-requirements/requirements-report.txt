@@ -5,13 +5,15 @@
 #    pip-compile requirements-report.in
 #
 backcall==0.1.0           # via ipython
+beautifulsoup4==4.9.0     # via -c requirements-engine.txt, -r requirements-django.in
+cached-property==1.5.1    # via -c requirements-engine.txt, exchangelib
 certifi==2020.4.5.1       # via -c requirements-engine.txt, requests
 cffi==1.14.0              # via -c requirements-engine.txt, cryptography
 chardet==3.0.4            # via -c requirements-engine.txt, requests
 colorama==0.4.3           # via -c requirements-engine.txt, -r requirements-common.in
-cryptography==2.9.2       # via -c requirements-engine.txt, pyopenssl, pysaml2
+cryptography==2.9.2       # via -c requirements-engine.txt, pyopenssl, pysaml2, requests-ntlm
 decorator==4.4.2          # via ipython, traitlets
-defusedxml==0.6.0         # via -c requirements-engine.txt, pysaml2, python3-saml
+defusedxml==0.6.0         # via -c requirements-engine.txt, exchangelib, pysaml2, python3-saml
 django-extensions==2.2.9  # via -r requirements-django.in
 django-ipware==2.1.0      # via django-structlog
 django-model-utils==4.0.0  # via -r requirements-django.in
@@ -22,33 +24,49 @@ django-structlog==1.5.2   # via -r requirements-django.in
 django==2.2.10            # via -r requirements-django.in, django-model-utils, django-rest-auth, django-settings-export, django-structlog, djangorestframework
 djangorestframework-jwt==1.11.0  # via django-saml2-auth
 djangorestframework==3.11.0  # via django-rest-auth
+dnspython==1.16.0         # via -c requirements-engine.txt, exchangelib
+dropbox==10.3.0           # via -c requirements-engine.txt, -r requirements-django.in
+exchangelib==3.1.1        # via -c requirements-engine.txt, -r requirements-django.in
 idna==2.9                 # via -c requirements-engine.txt, requests
 ipython-genutils==0.2.0   # via traitlets
 ipython==7.14.0           # via -r requirements-django.in
-isodate==0.6.0            # via -c requirements-engine.txt, python3-saml
+isodate==0.6.0            # via -c requirements-engine.txt, exchangelib, python3-saml
 jedi==0.17.0              # via ipython
-lxml==4.5.0               # via -c requirements-engine.txt, xmlsec
+lxml==4.5.0               # via -c requirements-engine.txt, exchangelib, xmlsec
+ntlm-auth==1.4.0          # via -c requirements-engine.txt, requests-ntlm
+oauthlib==3.1.0           # via -c requirements-engine.txt, exchangelib, requests-oauthlib
+olefile==0.46             # via -c requirements-engine.txt, -r requirements-django.in
 parso==0.7.0              # via jedi
+pdfrw==0.4                # via -c requirements-engine.txt, -r requirements-django.in
 pexpect==4.8.0            # via ipython
 pickleshare==0.7.5        # via ipython
 pika==1.1.0               # via -c requirements-engine.txt, -r requirements-common.in
+pillow==7.1.1             # via -c requirements-engine.txt, -r requirements-django.in
 pkgconfig==1.5.1          # via xmlsec
 prompt-toolkit==3.0.5     # via ipython
 psycopg2-binary==2.8.5    # via -r requirements-django.in
 ptyprocess==0.6.0         # via pexpect
 pycparser==2.20           # via -c requirements-engine.txt, cffi
-pygments==2.6.1           # via -c requirements-engine.txt, ipython
+pygments==2.6.1           # via -c requirements-engine.txt, exchangelib, ipython
 pyjwt==1.7.1              # via djangorestframework-jwt
 pyopenssl==19.1.0         # via pysaml2
+pypdf2==1.26.0            # via -c requirements-engine.txt, -r requirements-django.in
 pysaml2==5.4.0            # via -r requirements-report.in, django-saml2-auth
-python-dateutil==2.8.1    # via -c requirements-engine.txt, pysaml2
+pysmbc==1.0.21            # via -c requirements-engine.txt, -r requirements-django.in
+python-dateutil==2.8.1    # via -c requirements-engine.txt, exchangelib, pysaml2
+python-magic==0.4.18      # via -c requirements-engine.txt, -r requirements-django.in
 python3-saml==1.9.0       # via -r requirements-report.in
-pytz==2019.3              # via -c requirements-engine.txt, django, pysaml2
-requests==2.23.0          # via -c requirements-engine.txt, pysaml2
-six==1.14.0               # via -c requirements-engine.txt, cryptography, django-extensions, django-rest-auth, isodate, pyopenssl, pysaml2, python-dateutil, structlog, traitlets
+pytz==2019.3              # via -c requirements-engine.txt, django, exchangelib, pysaml2, tzlocal
+regex==2020.4.4           # via -c requirements-engine.txt, -r requirements-django.in
+requests-ntlm==1.1.0      # via -c requirements-engine.txt, exchangelib
+requests-oauthlib==1.3.0  # via -c requirements-engine.txt, exchangelib
+requests==2.23.0          # via -c requirements-engine.txt, dropbox, exchangelib, pysaml2, requests-ntlm, requests-oauthlib
+six==1.14.0               # via -c requirements-engine.txt, cryptography, django-extensions, django-rest-auth, dropbox, isodate, pyopenssl, pysaml2, python-dateutil, structlog, traitlets
+soupsieve==2.0            # via -c requirements-engine.txt, beautifulsoup4
 sqlparse==0.3.1           # via django
 structlog==20.1.0         # via -c requirements-engine.txt, -r requirements-common.in, django-structlog
 traitlets==4.3.3          # via ipython
+tzlocal==2.0.0            # via -c requirements-engine.txt, exchangelib
 urllib3==1.25.9           # via -c requirements-engine.txt, requests
 wcwidth==0.1.9            # via prompt-toolkit
 xmlsec==1.3.3             # via python3-saml

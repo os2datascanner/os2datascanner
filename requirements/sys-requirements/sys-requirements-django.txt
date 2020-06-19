@@ -7,4 +7,5 @@
 libpq-dev
 gettext
 
-
+# Hard dependencies through engine2 imports:
+libsmbclient-dev

@@ -5,7 +5,7 @@
 #    pip-compile requirements-admin.in
 #
 backcall==0.1.0           # via ipython
-beautifulsoup4==4.9.0     # via -c requirements-engine.txt, -r requirements-admin.in
+beautifulsoup4==4.9.0     # via -c requirements-engine.txt, -r requirements-django.in
 cached-property==1.5.1    # via -c requirements-engine.txt, exchangelib
 certifi==2020.4.5.1       # via -c requirements-engine.txt, requests
 cffi==1.14.0              # via -c requirements-engine.txt, cryptography
@@ -22,8 +22,8 @@ django-settings-export==1.2.1  # via -r requirements-django.in
 django-structlog==1.5.2   # via -r requirements-django.in
 django==2.2.10            # via -r requirements-django.in, django-model-utils, django-recurrence, django-settings-export, django-structlog
 dnspython==1.16.0         # via -c requirements-engine.txt, exchangelib
-dropbox==10.3.0           # via -c requirements-engine.txt, -r requirements-admin.in
-exchangelib==3.1.1        # via -c requirements-engine.txt, -r requirements-admin.in
+dropbox==10.3.0           # via -c requirements-engine.txt, -r requirements-django.in
+exchangelib==3.1.1        # via -c requirements-engine.txt, -r requirements-django.in
 idna==2.9                 # via -c requirements-engine.txt, requests
 ipython-genutils==0.2.0   # via traitlets
 ipython==7.14.0           # via -r requirements-django.in
@@ -32,25 +32,25 @@ jedi==0.17.0              # via ipython
 lxml==4.5.0               # via -c requirements-engine.txt, exchangelib
 ntlm-auth==1.4.0          # via -c requirements-engine.txt, requests-ntlm
 oauthlib==3.1.0           # via -c requirements-engine.txt, exchangelib, requests-oauthlib
-olefile==0.46             # via -c requirements-engine.txt, -r requirements-admin.in
+olefile==0.46             # via -c requirements-engine.txt, -r requirements-django.in
 parso==0.7.0              # via jedi
-pdfrw==0.4                # via -c requirements-engine.txt, -r requirements-admin.in
+pdfrw==0.4                # via -c requirements-engine.txt, -r requirements-django.in
 pexpect==4.8.0            # via ipython
 pickleshare==0.7.5        # via ipython
 pika==1.1.0               # via -c requirements-engine.txt, -r requirements-common.in
-pillow==7.1.1             # via -c requirements-engine.txt, -r requirements-admin.in
+pillow==7.1.1             # via -c requirements-engine.txt, -r requirements-django.in
 prompt-toolkit==3.0.5     # via ipython
 psycopg2-binary==2.8.5    # via -r requirements-django.in
 ptyprocess==0.6.0         # via pexpect
 pycparser==2.20           # via -c requirements-engine.txt, cffi
 pycrypto==2.6.1           # via -r requirements-admin.in
 pygments==2.6.1           # via -c requirements-engine.txt, exchangelib, ipython
-pypdf2==1.26.0            # via -c requirements-engine.txt, -r requirements-admin.in
-pysmbc==1.0.21            # via -c requirements-engine.txt, -r requirements-admin.in
+pypdf2==1.26.0            # via -c requirements-engine.txt, -r requirements-django.in
+pysmbc==1.0.21            # via -c requirements-engine.txt, -r requirements-django.in
 python-dateutil==2.8.1    # via -c requirements-engine.txt, -r requirements-admin.in, django-recurrence, exchangelib
-python-magic==0.4.18      # via -c requirements-engine.txt, -r requirements-admin.in
+python-magic==0.4.18      # via -c requirements-engine.txt, -r requirements-django.in
 pytz==2019.3              # via -c requirements-engine.txt, django, django-recurrence, exchangelib, tzlocal
-regex==2020.4.4           # via -c requirements-engine.txt, -r requirements-admin.in
+regex==2020.4.4           # via -c requirements-engine.txt, -r requirements-django.in
 requests-ntlm==1.1.0      # via -c requirements-engine.txt, exchangelib
 requests-oauthlib==1.3.0  # via -c requirements-engine.txt, exchangelib
 requests==2.23.0          # via -c requirements-engine.txt, dropbox, exchangelib, requests-ntlm, requests-oauthlib
