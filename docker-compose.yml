@@ -21,7 +21,7 @@ services:
       - dev-environment/rabbitmq.env
     ports:
       - "5672:5672"
-      - "8080:15672"
+      - "8030:15672"
 
   admin-frontend:
     build:
@@ -31,6 +31,15 @@ services:
     volumes:
       - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
       - /code/frontend/mode_modules
+
+  report-frontend:
+     build:
+       context: .
+       dockerfile: docker/report/Dockerfile
+       target: frontend
+     volumes:
+       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
+       - /code/frontend/mode_modules
 
   admin-application:
     build:
@@ -46,10 +55,29 @@ services:
       - ./dev-environment/admin/dev-settings.py:/code/src/os2datascanner/projects/admin/local_settings.py
       - ./src/os2datascanner:/code/src/os2datascanner
     ports:
-      - "8000:8000"
+      - "8020:8000"
     depends_on:
       - db
       - admin-frontend
+
+  report-application:
+    build:
+      context: .
+      dockerfile: docker/report/Dockerfile
+      target: application
+    env_file:
+      - dev-environment/report/django.env
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
+      - ./dev-environment/report/dev-settings.toml:/user-settings.toml
+      - ./dev-environment/report/dev-settings.py:/code/src/os2datascanner/projects/report/local_settings.py
+      - ./src/os2datascanner:/code/src/os2datascanner
+    ports:
+      - "8040:8000"
+    depends_on:
+      - db
+      - report-frontend
 
   engine_explorer:
     build:
@@ -108,5 +136,6 @@ services:
 
 volumes:
   frontend-bundles-admin:
+  frontend-bundles-report:
   postgres-data:
   postgres-initdb.d:
