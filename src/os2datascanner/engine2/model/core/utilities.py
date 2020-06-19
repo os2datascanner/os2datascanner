@@ -132,6 +132,9 @@ class SourceManager:
     def __exit__(self, exc_type, exc_value, backtrace):
         self.clear()
 
+    def __contains__(self, item):
+        return item in self._opened
+
     def clear(self):
         """Closes all of the cookies returned by Sources that were opened in
         this SourceManager."""
