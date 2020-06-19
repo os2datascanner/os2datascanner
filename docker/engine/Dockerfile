@@ -31,7 +31,7 @@ WORKDIR /code/requirements/sys-requirements
 COPY requirements/sys-requirements/sys-requirements-common.txt \
      requirements/sys-requirements/sys-requirements-engine.txt \
      ./
-# hadolint ignore=DL3008
+# hadolint ignore=DL3008,SC2046
 RUN set -ex \
   # Add an image specific group and user.
   # Note: this is a system user/group, but have
@@ -43,7 +43,7 @@ RUN set -ex \
   && useradd -u 73030 --no-log-init -r -g os2ds_engine os2ds_engine \
   # Install system dependencies from file.
   && apt-get -y update \
-  && apt-get -y install --no-install-recommends "$(grep -oh '^[^#][[:alnum:].-]*' sys-requirements*.txt)" \
+  && apt-get -y install --no-install-recommends $(grep -oh '^[^#][[:alnum:].-]*' sys-requirements*.txt) \
   # clean up after apt-get and man-pages
   && apt-get clean && rm -rf "/var/lib/apt/lists/*" "/tmp/*" "/var/tmp/*" "/usr/share/man/??" "/usr/share/man/??_*"
 

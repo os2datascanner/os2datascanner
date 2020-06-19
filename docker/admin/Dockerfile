@@ -57,7 +57,7 @@ COPY requirements/sys-requirements/sys-requirements-common.txt \
      requirements/sys-requirements/sys-requirements-django.txt \
      requirements/sys-requirements/sys-requirements-admin.txt \
      ./
-# hadolint ignore=DL3008
+# hadolint ignore=DL3008,SC2046
 RUN set -ex \
   # Add an application specific group and user.
   # Note: this is a system user/group, but have
@@ -69,7 +69,7 @@ RUN set -ex \
   && useradd -u 73020 --no-log-init -r -g os2ds_admin os2ds_admin \
   # Install system dependencies from file.
   && apt-get -y update \
-  && apt-get -y install --no-install-recommends "$(grep -oh '^[^#][[:alnum:].-]*' sys-requirements*.txt)" \
+  && apt-get -y install --no-install-recommends $(grep -oh '^[^#][[:alnum:].-]*' sys-requirements*.txt) \
   # clean up after apt-get and man-pages
   && apt-get clean && rm -rf "/var/lib/apt/lists/*" "/tmp/*" "/var/tmp/*" "/usr/share/man/??" "/usr/share/man/??_*" \
   # create folders for output from django
