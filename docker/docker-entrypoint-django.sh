@@ -11,13 +11,18 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-set -ex
+set -e
 
 # TODO: Uncomment when the management command has been added
 # ./manage.py ensure_db_connection --wait 30
 
-# Run Migrate
-./manage.py migrate
+if [ -z "${OS2DS_MIGRATE_MANUALLY}" ]; then
+  # Run Migrate
+  python manage.py migrate
+else
+  echo "OS2DS_MIGRATE_MANUALLY set: ${OS2DS_MIGRATE_MANUALLY}"
+  echo "Skipping automatic migrations"
+fi
 
 # Generate static content
 # TODO: determine if we need this
