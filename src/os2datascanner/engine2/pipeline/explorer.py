@@ -2,7 +2,8 @@ from os import getpid
 
 from ...utils.prometheus import prometheus_session
 from ..model.core import (Source, SourceManager, UnknownSchemeError,
-        DeserialisationError, ResourceUnavailableError)
+        DeserialisationError)
+from . import messages
 from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
         prometheus_summary, make_common_argument_parser,
         make_sourcemanager_configuration_block)
@@ -11,44 +12,35 @@ from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
 def message_received_raw(
         body, channel, source_manager, conversions_q, problems_q):
     try:
-        source = Source.from_json_object(body["source"])
-
-        # The configuration dictionary was added fairly late to scan specs, so
-        # not all clients will send it. Add an empty one if necessary
-        body.setdefault("configuration", {})
-
-        if "progress" in body:
-            # If this scan spec is based on a derived source and so contains
-            # scan progress information, then take it out; the rest of the
-            # pipeline won't look for it here
-            progress = body["progress"]
-            del body["progress"]
-        else:
-            progress = dict(rule=body["rule"], matches=[])
-    except UnknownSchemeError as ex:
-        yield (problems_q, {
-            "where": body["source"],
-            "problem": "unsupported",
-            "extra": [str(arg) for arg in ex.args]
-        })
-        return
-    except DeserialisationError as ex:
-        yield (problems_q, {
-            "where": body["source"],
-            "problem": "malformed",
-            "extra": [str(arg) for arg in ex.args]
-        })
-        return
-    except KeyError as ex:
-        yield (problems_q, {
-            "where": body,
-            "problem": "malformed",
-            "extra": [str(arg) for arg in ex.args]
-        })
+        scan_tag = body["scan_tag"]
+    except KeyError:
+        # Scan specifications with no scan tag are simply invalid and should be
+        # dropped
         return
 
     try:
-        for handle in source.handles(source_manager):
+        scan_spec = messages.ScanSpecMessage.from_json_object(body)
+
+        if scan_spec.progress:
+            progress = scan_spec.progress
+            scan_spec = scan_spec._replace(progress=None)
+        else:
+            progress = messages.ProgressFragment(
+                    rule=scan_spec.rule, matches=[])
+    except UnknownSchemeError as ex:
+        yield (problems_q, messages.ProblemMessage(
+                scan_tag=scan_tag, source=None, handle=None,
+                message=("Unknown scheme '{0}'".format(
+                        ex.args[0]))).to_json_object())
+        return
+    except (KeyError, DeserialisationError) as ex:
+        yield (problems_q, messages.ProblemMessage(
+                scan_tag=scan_tag, source=None, handle=None,
+                message="Malformed input").to_json_object())
+        return
+
+    try:
+        for handle in scan_spec.source.handles(source_manager):
             try:
                 print(handle.censor())
             except NotImplementedError:
@@ -56,17 +48,17 @@ def message_received_raw(
                 # that it doesn't know enough about its internal state to
                 # censor itself -- just print its type
                 print("(unprintable {0})".format(type(handle).__name__))
-            yield (conversions_q, {
-                "scan_spec": body,
-                "handle": handle.to_json_object(),
-                "progress": progress
-            })
-    except ResourceUnavailableError as ex:
-        yield (problems_q, {
-            "where": body["source"],
-            "problem": "unavailable",
-            "extra": [str(arg) for arg in ex.args]
-        })
+            yield (conversions_q,
+                    messages.ConversionMessage(
+                            scan_spec, handle, progress).to_json_object())
+    except Exception as e:
+        # XXX: problem
+        exception_message = ", ".join([str(a) for a in e.args])
+        yield (problems_q, messages.ProblemMessage(
+                scan_tag=scan_tag, source=scan_spec.source, handle=None,
+                message="Resource unavailable: {0}".format(
+                        exception_message).to_json_object()))
+        return
     # Note that exceptions not caught and wrapped by engine2 will cause this
     # (and every other!) pipeline stage to abort unexpectedly. To trigger an
     # automatic restart in this case, use a service manager like systemd

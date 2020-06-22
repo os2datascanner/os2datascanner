@@ -2,25 +2,24 @@ from os import getpid
 
 from ...utils.prometheus import prometheus_session
 from ..rules.rule import Rule
-from ..model.core import (Source,
-        Handle, SourceManager, ResourceUnavailableError)
+from ..model.core import Source, Handle, SourceManager
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
+from . import messages
 from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
         prometheus_summary, make_common_argument_parser,
         make_sourcemanager_configuration_block)
 
 
-def message_received_raw(
-        body, channel, source_manager, representations_q, sources_q):
-    handle = Handle.from_json_object(body["handle"])
-    configuration = body["scan_spec"]["configuration"]
-    rule = Rule.from_json_object(body["progress"]["rule"])
-    head, _, _ = rule.split()
+def message_received_raw(body,
+        channel, source_manager, representations_q, sources_q, problems_q):
+    conversion = messages.ConversionMessage.from_json_object(body)
+    configuration = conversion.scan_spec.configuration
+    head, _, _ = conversion.progress.rule.split()
     required = head.operates_on
 
     try:
-        resource = handle.follow(source_manager)
+        resource = conversion.handle.follow(source_manager)
 
         representation = None
         if (required == OutputType.Text
@@ -47,37 +46,33 @@ def message_received_raw(
             dv = {required.value: representation.value
                     if representation else None}
 
-        yield (representations_q, {
-            "scan_spec": body["scan_spec"],
-            "handle": body["handle"],
-            "progress": body["progress"],
-            "representations": encode_dict(dv)
-        })
+        yield (representations_q,
+                messages.RepresentationMessage(
+                        conversion.scan_spec, conversion.handle,
+                        conversion.progress, encode_dict(dv)).to_json_object())
     except KeyError:
         # If we have a conversion we don't support, then check if the current
         # handle can be reinterpreted as a Source; if it can, then try again
         # with that
-        derived_source = Source.from_handle(handle, source_manager)
+        derived_source = Source.from_handle(conversion.handle, source_manager)
         if derived_source:
             # Copy almost all of the existing scan spec, but note the progress
             # of rule execution and replace the source
-            scan_spec = body["scan_spec"].copy()
-            scan_spec["source"] = derived_source.to_json_object()
-            scan_spec["progress"] = body["progress"]
-            yield (sources_q, scan_spec)
+            new_scan_spec = conversion.scan_spec._replace(
+                    source=derived_source, progress=conversion.progress)
+            yield (sources_q, new_scan_spec.to_json_object())
         else:
             # If we can't recurse any deeper, then produce an empty conversion
             # so that the matcher stage has something to work with
             # (XXX: is this always the right approach?)
-            yield (representations_q, {
-                "scan_spec": body["scan_spec"],
-                "handle": body["handle"],
-                "progress": body["progress"],
-                "representations": {
-                    required.value: None
-                }
-            })
-    except ResourceUnavailableError:
+            yield (representations_q,
+                    messages.RepresentationMessage(
+                            conversion.scan_spec, conversion.handle,
+                            conversion.progress, {
+                                required.value: None
+                            }).to_json_object())
+    except Exception:
+        # XXX: problem
         pass
 
 
@@ -109,6 +104,12 @@ def main():
             help="the name of the AMQP queue to which scan specifications"
                     + " should be written",
             default="os2ds_scan_specs")
+    outputs.add_argument(
+            "--problems",
+            metavar="NAME",
+            help="the name of the AMQP queue to which problems should be"
+                    + " written",
+            default="os2ds_problems")
 
     args = parser.parse_args()
 
@@ -118,8 +119,8 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(body, channel,
-                    source_manager, args.representations, args.sources)
+            return message_received_raw(body, channel, source_manager,
+                    args.representations, args.sources, args.problems)
 
     with prometheus_session(
             str(getpid()),
@@ -128,7 +129,7 @@ def main():
         with SourceManager(width=args.width) as source_manager:
             with ProcessorRunner(
                     read=[args.conversions],
-                    write=[args.sources, args.representations],
+                    write=[args.sources, args.representations, args.problems],
                     host=args.host, heartbeat=6000) as runner:
                 try:
                     print("Start")

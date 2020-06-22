@@ -2,8 +2,7 @@ from os import listdir
 from tempfile import TemporaryDirectory
 from subprocess import run, PIPE
 
-from ..core import (Handle,
-        Source, Resource, SourceManager, ResourceUnavailableError)
+from ..core import Handle, Source, Resource, SourceManager
 from ..file import FilesystemResource
 from .derived import DerivedSource
 
@@ -16,7 +15,7 @@ def libreoffice(*args):
         return run(
                 ["libreoffice",
                         "-env:UserInstallation=file://{0}".format(settings),
-                        *args], stdout=PIPE, stderr=PIPE)
+                        *args], stdout=PIPE, stderr=PIPE, check=True)
 
 
 @Source.mime_handler(
@@ -39,12 +38,7 @@ class LibreOfficeSource(DerivedSource):
                 result = libreoffice(
                         "--convert-to", "html",
                         "--outdir", outputdir, p)
-                if result.returncode == 0:
-                    yield outputdir
-                else:
-                    raise ResourceUnavailableError(self.handle,
-                            "LibreOffice exited abnormally",
-                            result.returncode)
+                yield outputdir
 
     def handles(self, sm):
         for name in listdir(sm.open(self)):

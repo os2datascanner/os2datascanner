@@ -5,6 +5,7 @@ import argparse
 from ...utils.prometheus import prometheus_session
 from ..model.core import (Handle,
         Source, UnknownSchemeError, DeserialisationError)
+from . import messages
 from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
         prometheus_summary, make_common_argument_parser)
 
@@ -12,43 +13,38 @@ from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
 def message_received_raw(body, channel, dump, results_q):
     body["origin"] = channel
 
-    if "handle" in body:
-        handle = Handle.from_json_object(body["handle"])
-        handle = handle.censor()
-        body["handle"] = handle.to_json_object()
-    elif "where" in body:
-        # Problem messages are a bit tricky to censor: we get a "where"
-        # value that refers to the source of the problem, and we first need to
-        # work out what it is
-        where = body["where"]
-        if "type" in where:
-            # This is probably a Handle or a Source. Handles require more
-            # structure, so try them first and then use Source as a fallback
-            model_object = None
-            try:
-                model_object = Handle.from_json_object(where)
-            except (DeserialisationError, UnknownSchemeError):
-                try:
-                    model_object = Source.from_json_object(where)
-                except (DeserialisationError, UnknownSchemeError):
-                    pass
-            if model_object:
-                where = model_object.censor().to_json_object()
-        body["where"] = where
+    message = None
+    if "metadata" in body:
+        message = messages.MetadataMessage.from_json_object(body)
+        # MetadataMessages carry a scan tag rather than a complete scan spec,
+        # so all we need to censor is the handle
+        message = message._replace(handle=message.handle.censor())
+    elif "matched" in body:
+        message = messages.MatchesMessage.from_json_object(body)
+        # Censor both the scan spec and the object handle
+        censored_scan_spec = message.scan_spec._replace(
+                source=message.scan_spec.source.censor())
+        message = message._replace(
+                handle=message.handle.censor(),
+                scan_spec=censored_scan_spec)
+    elif "message" in body:
+        message = messages.ProblemMessage.from_json_object(body)
+        message = message._replace(
+                handle=message.handle.censor() if message.handle else None,
+                source=message.source.censor() if message.source else None)
+    # Old-style problem messages are now ignored
 
-    if "scan_spec" in body:
-        source = Source.from_json_object(body["scan_spec"]["source"])
-        source = source.censor()
-        body["scan_spec"]["source"] = source.to_json_object()
+    if message:
+        result_body = message.to_json_object()
+        result_body["origin"] = channel
 
-    # For debugging purposes
-    if dump:
-        print(json.dumps(body, indent=True))
-        dump.write(json.dumps(body) + "\n")
-        dump.flush()
-        return
+        # For debugging purposes
+        if dump:
+            print(json.dumps(result_body, indent=True))
+            dump.write(json.dumps(result_body) + "\n")
+            dump.flush()
 
-    yield (results_q, body)
+        yield (results_q, result_body)
 
 
 def main():
