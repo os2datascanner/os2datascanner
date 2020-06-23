@@ -5,16 +5,19 @@
   max-width: 80rem;
   padding: 2rem;
   width: calc(100% - 2rem);
-
-  summary {
-    cursor: pointer;
-  }
-
-  summary + div {
-    margin-top: 2rem;
-  }
-
+  cursor: pointer;
+  
   ol {
     margin-left: 2rem;
   }
+
+  .icon {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+  }
+}
+
+.sensitivity-chart:hover {
+  background-color: var(--color-body-bg);
 }
