@@ -52,16 +52,12 @@ def message_received_raw(
                     messages.ConversionMessage(
                             scan_spec, handle, progress).to_json_object())
     except Exception as e:
-        # XXX: problem
         exception_message = ", ".join([str(a) for a in e.args])
         yield (problems_q, messages.ProblemMessage(
                 scan_tag=scan_tag, source=scan_spec.source, handle=None,
                 message="Resource unavailable: {0}".format(
-                        exception_message).to_json_object()))
+                        exception_message)).to_json_object())
         return
-    # Note that exceptions not caught and wrapped by engine2 will cause this
-    # (and every other!) pipeline stage to abort unexpectedly. To trigger an
-    # automatic restart in this case, use a service manager like systemd
 
 
 def main():
