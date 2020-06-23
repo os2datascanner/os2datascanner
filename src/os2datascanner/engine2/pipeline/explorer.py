@@ -55,9 +55,8 @@ def message_received_raw(
         exception_message = ", ".join([str(a) for a in e.args])
         yield (problems_q, messages.ProblemMessage(
                 scan_tag=scan_tag, source=scan_spec.source, handle=None,
-                message="Resource unavailable: {0}".format(
+                message="Exploration error: {0}".format(
                         exception_message)).to_json_object())
-        return
 
 
 def main():

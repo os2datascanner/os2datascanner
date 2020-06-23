@@ -20,9 +20,13 @@ def message_received_raw(body,
                         guess_responsible_party(
                                 message.handle,
                                 source_manager)).to_json_object())
-    except Exception:
-        # XXX: problem
-        pass
+    except Exception as e:
+        exception_message = ", ".join([str(a) for a in e.args])
+        yield (problems_q, messages.ProblemMessage(
+                scan_tag=message.scan_tag,
+                source=None, handle=message.handle,
+                message="Metadata extraction error: {0}".format(
+                        exception_message)).to_json_object())
 
 
 def main():
