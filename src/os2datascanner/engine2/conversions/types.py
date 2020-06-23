@@ -12,8 +12,8 @@ class OutputType(Enum):
     LastModified = "last-modified" # datetime.datetime
     ImageDimensions = "image-dimensions" # (int, int)
 
-    Fallback = "fallback" # True
-    Dummy = "dummy"
+    AlwaysTrue = "fallback" # True
+    NoConversions = "dummy"
 
     def encode_json_object(self, v):
         """Converts an object (of the appropriate type for this OutputType) to

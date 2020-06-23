@@ -1,7 +1,7 @@
 import unittest
 
 from os2datascanner.engine2.rules.rule import Sensitivity
-from os2datascanner.engine2.rules.dummy import FallbackRule
+from os2datascanner.engine2.rules.dummy import AlwaysMatchesRule
 from os2datascanner.engine2.pipeline import messages
 
 
@@ -13,7 +13,7 @@ class Engine2PipelineTests(unittest.TestCase):
             matched=True,
             matches=[
                 messages.MatchFragment(
-                    rule=FallbackRule(sensitivity=Sensitivity.CRITICAL),
+                    rule=AlwaysMatchesRule(sensitivity=Sensitivity.CRITICAL),
                     matches=[
                         {
                             "match": True
@@ -42,7 +42,7 @@ class Engine2PipelineTests(unittest.TestCase):
             matched=True,
             matches=[
                 messages.MatchFragment(
-                    rule=FallbackRule(sensitivity=Sensitivity.CRITICAL),
+                    rule=AlwaysMatchesRule(sensitivity=Sensitivity.CRITICAL),
                     matches=[
                         {
                             "match": True,
@@ -73,7 +73,7 @@ class Engine2PipelineTests(unittest.TestCase):
             matched=True,
             matches=[
                 messages.MatchFragment(
-                    rule=FallbackRule(sensitivity=Sensitivity.NOTICE),
+                    rule=AlwaysMatchesRule(sensitivity=Sensitivity.NOTICE),
                     matches=[
                         {
                             "match": True,
