@@ -162,3 +162,25 @@ class Engine2PipelineTests(unittest.TestCase):
                         "OCR match found with OCR disabled")
             else:
                 self.fail("unexpected message in queue {0}".format(queue))
+
+    def test_corrupted_container(self):
+        obj = {
+            "scan_tag": "integration_test",
+            "source": FilesystemSource(os.path.join(
+                    test_data_path, "pdf", "corrupted")).to_json_object(),
+            "rule": CPRRule(modulus_11=False,
+                    ignore_irrelevant=False).to_json_object(),
+            "configuration": {}
+        }
+
+        self.messages.append((obj, "os2ds_scan_specs",))
+        self.run_pipeline()
+
+        print(self.unhandled)
+
+        self.assertEqual(
+                len(self.unhandled),
+                1)
+        self.assertEqual(
+                self.unhandled[0][0]["origin"],
+                "os2ds_problems")

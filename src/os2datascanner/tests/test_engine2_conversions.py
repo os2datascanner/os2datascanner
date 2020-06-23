@@ -38,12 +38,12 @@ class Engine2ConversionTest(unittest.TestCase):
 
     def test_fallback(self):
         self.assertEqual(
-                convert(self._ir, OutputType.Fallback).value,
+                convert(self._ir, OutputType.AlwaysTrue).value,
                 True)
 
     def test_dummy(self):
         with self.assertRaises(KeyError):
-            convert(self._ir, OutputType.Dummy)
+            convert(self._ir, OutputType.NoConversions)
 
     def test_html(self):
         self.assertEqual(
