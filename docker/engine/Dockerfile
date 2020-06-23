@@ -69,11 +69,12 @@ COPY LICENSE .
 COPY README .
 COPY NEWS.rst .
 
-WORKDIR /code/docker/
-COPY docker/engine/start_service.sh ./start_service.sh
+COPY docker/engine/docker-entrypoint.sh /code/docker/docker-entrypoint.sh
 
 # Set up to run given command as the new user
 USER os2ds_engine:os2ds_engine
-# Note: Needs to be overwritten. The default command lacks a service argument,
-# and will exit. This behaviour is intentional.
-CMD ["./start_service.sh"]
+
+ENV AVAILABLE_STAGES="explorer,processor,matcher,tagger,exporter"
+
+ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
+CMD ["explorer", "-h"]

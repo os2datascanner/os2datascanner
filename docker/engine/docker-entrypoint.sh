@@ -19,14 +19,24 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-STAGE=$1
+AVAILABLE_STAGES=$(echo $AVAILABLE_STAGES | tr "," "\n")
 
-if [[ ${AMQP_HOST} ]]; then
-  OPTIONAL_HOST="--host ${AMQP_HOST}"
+# Check if first argument is a stage
+if [[ " ${AVAILABLE_STAGES[@]} " =~ "$1" ]]; then
+
+  # Allow queue container to start TODO: write function to ping queue
+  sleep 5
+
+  STAGE=$1
+
+  if [[ ${AMQP_HOST} ]]; then
+    OPTIONAL_HOST="--host ${AMQP_HOST}"
+  else
+    OPTIONAL_HOST=""
+  fi
+
+  # ${@:2} adds all arguments except the first one (which is the stage)
+  exec python -m "os2datascanner.engine2.pipeline.${STAGE}" ${OPTIONAL_HOST} "${@:2}"
 else
-  OPTIONAL_HOST=""
+  exec "$@"
 fi
-
-sleep 5 # Allow queue container to start TODO: write function to ping queue
-
-exec python -m "os2datascanner.engine2.pipeline.${STAGE}" ${OPTIONAL_HOST}
