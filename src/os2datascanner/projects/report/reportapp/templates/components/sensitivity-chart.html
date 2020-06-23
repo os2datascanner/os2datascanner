@@ -1,5 +1,8 @@
 <div onclick="showChart()" class="sensitivity-chart">
-  <span>Følsomhedsoversigt:</span>
+  <div class="icon">
+    <i id="icon-more" class="material-icons">chevron_right</i>
+    <span>Følsomhedsoversigt:</span>
+  </div>
   <div style="display: none;" id="sensitivity-chart">
     <ol>
       <li>Notifikation</li>
@@ -14,10 +17,13 @@
   // Hide/show sensitivity chart
   function showChart() {
     var x = document.getElementById("sensitivity-chart");
+    var iconMore = document.getElementById("icon-more");
     if (x.style.display === "none") {
       x.style.display = "block";
+      iconMore.innerText = "expand_more";
     } else {
       x.style.display = "none";
+      iconMore.innerText = "chevron_right";
     }
   }
 </script>
