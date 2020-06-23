@@ -260,7 +260,7 @@ class SMBCHandle(Handle):
             url += self.source.unc
         if url[-1] != "/":
             url += "/"
-        return url + quote(self.relative_path)
+        return url + self.relative_path
 
     def censor(self):
         return SMBCHandle(self.source.censor(), self.relative_path)
