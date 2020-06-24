@@ -8,7 +8,7 @@ from contextlib import contextmanager
 
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
-from .core import Source, Handle, FileResource, ResourceUnavailableError
+from .core import Source, Handle, FileResource
 from .utilities import NamedTemporaryResource
 from .utilities.sitemap import SitemapError, process_sitemap_url
 from .utilities.datetime import parse_datetime
@@ -41,56 +41,51 @@ class WebSource(Source):
         return self
 
     def handles(self, sm):
-        try:
-            session = sm.open(self)
-            to_visit = [WebHandle(self, "")]
-            known_addresses = set(to_visit)
-            referrer_map = {}
+        session = sm.open(self)
+        to_visit = [WebHandle(self, "")]
+        known_addresses = set(to_visit)
+        referrer_map = {}
 
-            scheme, netloc, path, query, fragment = urlsplit(self._url)
+        scheme, netloc, path, query, fragment = urlsplit(self._url)
 
-            def handle_url(here, new_url, lm_hint=None):
-                new_url = urljoin(here, new_url)
-                n_scheme, n_netloc, n_path, n_query, _ = urlsplit(new_url)
-                if n_scheme == scheme and n_netloc == netloc:
-                    new_url = urlunsplit(
-                            (n_scheme, n_netloc, n_path, n_query, None))
-                    referrer_map.setdefault(new_url, set()).add(here)
-                    new_handle = WebHandle(self, new_url[len(self._url):])
-                    if new_handle not in known_addresses:
-                        new_handle.set_last_modified_hint(lm_hint)
-                        new_handle.set_referrer_urls(
-                                referrer_map.get(here, set()))
-                        known_addresses.add(new_handle)
-                        to_visit.append(new_handle)
+        def handle_url(here, new_url, lm_hint=None):
+            new_url = urljoin(here, new_url)
+            n_scheme, n_netloc, n_path, n_query, _ = urlsplit(new_url)
+            if n_scheme == scheme and n_netloc == netloc:
+                new_url = urlunsplit(
+                        (n_scheme, n_netloc, n_path, n_query, None))
+                referrer_map.setdefault(new_url, set()).add(here)
+                new_handle = WebHandle(self, new_url[len(self._url):])
+                if new_handle not in known_addresses:
+                    new_handle.set_last_modified_hint(lm_hint)
+                    new_handle.set_referrer_urls(
+                            referrer_map.get(here, set()))
+                    known_addresses.add(new_handle)
+                    to_visit.append(new_handle)
 
-            if self._sitemap:
-                try:
-                    for address, last_modified in process_sitemap_url(
-                            self._sitemap):
-                        handle_url(None, address, last_modified)
-                except SitemapError as e:
-                    raise ResourceUnavailableError(self, *e.args)
+        if self._sitemap:
+            for address, last_modified in process_sitemap_url(
+                    self._sitemap):
+                handle_url(None, address, last_modified)
 
-            while to_visit:
-                here, to_visit = to_visit[0], to_visit[1:]
+        while to_visit:
+            here, to_visit = to_visit[0], to_visit[1:]
 
-                response = session.head(here.presentation_url)
-                if response.status_code == 200:
-                    ct = response.headers['Content-Type']
-                    if simplify_mime_type(ct) == 'text/html':
-                        response = session.get(here.presentation_url)
-                        sleep(SLEEP_TIME)
-                        for li in make_outlinks(response.content, here.presentation_url):
-                            handle_url(here.presentation_url, li)
-                elif response.is_redirect and response.next:
-                    handle_url(here.presentation_url, response.next.url)
-                    # Don't yield WebHandles for redirects
-                    continue
+            response = session.head(here.presentation_url)
+            if response.status_code == 200:
+                ct = response.headers['Content-Type']
+                if simplify_mime_type(ct) == 'text/html':
+                    response = session.get(here.presentation_url)
+                    sleep(SLEEP_TIME)
+                    for li in make_outlinks(
+                            response.content, here.presentation_url):
+                        handle_url(here.presentation_url, li)
+            elif response.is_redirect and response.next:
+                handle_url(here.presentation_url, response.next.url)
+                # Don't yield WebHandles for redirects
+                continue
 
-                yield here
-        except ConnectionError as e:
-            raise ResourceUnavailableError(self, *e.args)
+            yield here
 
     def to_url(self):
         return self._url
@@ -120,7 +115,7 @@ SecureWebSource = WebSource
 class WebResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
-        self._status = None
+        self._response = None
         self._mr = None
 
     def _make_url(self):
@@ -130,13 +125,12 @@ class WebResource(FileResource):
 
     def get_status(self):
         self.unpack_header()
-        return self._status
+        return self._response.status_code
 
     def unpack_header(self, check=False):
-        if not self._status:
-            response = self._get_cookie().head(self._make_url())
-            self._status = response.status_code
-            header = response.headers
+        if not self._response:
+            self._response = self._get_cookie().head(self._make_url())
+            header = self._response.headers
 
             self._mr = MultipleResults(
                     {k.lower(): v for k, v in header.items()})
@@ -146,8 +140,7 @@ class WebResource(FileResource):
             except (KeyError, ValueError):
                 pass
         if check:
-            if self._status != 200:
-                raise ResourceUnavailableError(self.handle, self._status)
+            self._response.raise_for_status()
         return self._mr
 
     def get_size(self):
@@ -178,11 +171,9 @@ class WebResource(FileResource):
     @contextmanager
     def make_stream(self):
         response = self._get_cookie().get(self._make_url())
-        if response.status_code != 200:
-            raise ResourceUnavailableError(self.handle, response.status_code)
-        else:
-            with BytesIO(response.content) as s:
-                yield s
+        response.raise_for_status()
+        with BytesIO(response.content) as s:
+            yield s
 
 
 class WebHandle(Handle):

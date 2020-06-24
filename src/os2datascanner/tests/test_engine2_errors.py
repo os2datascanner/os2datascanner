@@ -2,7 +2,7 @@ import unittest
 import contextlib
 
 from os2datascanner.engine2.model.core import (
-        Source, SourceManager, UnknownSchemeError, ResourceUnavailableError)
+        Source, SourceManager, UnknownSchemeError)
 from os2datascanner.engine2.model.file import (
         FilesystemSource, FilesystemHandle)
 
@@ -33,7 +33,7 @@ class Engine2TestErrors(unittest.TestCase):
                 pass
 
     def test_handles_failure(self):
-        with self.assertRaises(ResourceUnavailableError):
+        with self.assertRaises(Exception):
             with SourceManager() as sm:
                 source = Source.from_url("http://example.invalid./")
                 with contextlib.closing(source.handles(sm)) as handles:

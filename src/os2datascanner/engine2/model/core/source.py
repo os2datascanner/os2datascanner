@@ -52,8 +52,6 @@ class Source(TypePropertyEquality, JSONSerialisable):
         identifiable *but non-existent* leaf nodes. These might correspond to,
         for example, a broken link on a web page, or to an object that was
         yielded by this method but was deleted before it could be examined.
-        These Handles can be detected by catching the ResourceUnavailableError
-        exception.
 
         It is not necessarily the case that the value of the source property on
         a Handle yielded by this method will be this Source."""

@@ -1,14 +1,7 @@
 #!/usr/bin/env python3
 
-import pathlib
-
 import setuptools
 
 setuptools.setup(
-    install_requires=(
-        pathlib.Path(__file__)
-        .parent.joinpath("requirements", "requirements.txt")
-        .read_text()
-        .splitlines()
-    )
+    # For some reason setuptools.setup has to be executed. When docker arrives this can be removed.
 )

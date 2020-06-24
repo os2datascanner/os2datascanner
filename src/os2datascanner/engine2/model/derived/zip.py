@@ -19,9 +19,9 @@ class ZipSource(DerivedSource):
             if i.flag_bits & 0x1:
                 # This file is encrypted, so all of ZipResource's operations
                 # will fail. Skip over it
-                # (XXX: is this preferable to a ResourceUnavailableError? For
-                # now, we claim it is: an encrypted file we can't decrypt
-                # necessarily isn't a sensitive data problem...)
+                # (XXX: is this preferable to raising an exception? For now, we
+                # claim it is: an encrypted file we can't decrypt necessarily
+                # isn't a sensitive data problem...)
                 continue
             name = i.filename
             if not name[-1] == "/":

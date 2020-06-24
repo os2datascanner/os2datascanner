@@ -5,7 +5,7 @@ import argparse
 
 from ..model.core import Source, SourceManager
 from ..model.core import FileResource
-from ..model.core import UnknownSchemeError, ResourceUnavailableError
+from ..model.core import UnknownSchemeError
 
 def format_d(depth, fmt, *args, **kwargs):
     return "{0}{1}".format("  " * depth, fmt.format(*args, **kwargs))
@@ -24,8 +24,8 @@ def print_source(manager, source, depth=0, *,
                     print(format_d(depth + 1, "size {0} bytes", size))
                     print(format_d(depth + 1, "type {0}", mime))
                     print(format_d(depth + 1, "lmod {0}", lm))
-            except ResourceUnavailableError as ex:
-                print(format_d(depth + 1, "not available: {0}", ex.args[1:]))
+            except Exception:
+                print(format_d(depth + 1, "not available"))
         if max_depth is None or depth < max_depth:
             derived_source = Source.from_handle(
                     handle, manager if not guess else None)

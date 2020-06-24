@@ -9,7 +9,7 @@ from ..utilities.backoff import run_with_backoff
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import MultipleResults
 from .smb import make_smb_url, SMBSource
-from .core import Source, Handle, FileResource, ResourceUnavailableError
+from .core import Source, Handle, FileResource
 from .file import stat_attributes
 from .utilities import NamedTemporaryResource
 
@@ -60,12 +60,9 @@ class SMBCSource(Source):
             elif entity.smbc_type == smbc.FILE:
                 yield SMBCHandle(self, path)
 
-        try:
-            obj = context.opendir(url)
-            for dent in obj.getdents():
-                yield from handle_dirent([], dent)
-        except Exception as exc:
-            raise ResourceUnavailableError(self, *exc.args)
+        obj = context.opendir(url)
+        for dent in obj.getdents():
+            yield from handle_dirent([], dent)
 
     def to_url(self):
         return make_smb_url(
@@ -171,26 +168,20 @@ class SMBCResource(FileResource):
         return url + "/" + quote(self.handle.relative_path)
 
     def open_file(self):
-        try:
-            def _open_file():
-                _, context = self._get_cookie()
-                return context.open(self._make_url(), O_RDONLY)
-            return run_with_backoff(_open_file, smbc.TimedOutError)[0]
-        except (smbc.NoEntryError, smbc.PermissionError) as ex:
-            raise ResourceUnavailableError(self.handle, ex)
+        def _open_file():
+            _, context = self._get_cookie()
+            return context.open(self._make_url(), O_RDONLY)
+        return run_with_backoff(_open_file, smbc.TimedOutError)[0]
 
     def get_xattr(self, attr):
         """Retrieves a SMB extended attribute for this file. (See the
         documentation for smbc.Context.getxattr for *most* of the supported
         attribute names.)"""
-        try:
-            def _get_xattr():
-                _, context = self._get_cookie()
-                # Don't attempt to catch the ValueError if attr isn't valid
-                return context.getxattr(self._make_url(), attr)
-            return run_with_backoff(_get_xattr, smbc.TimedOutError)[0]
-        except (smbc.NoEntryError, smbc.PermissionError) as ex:
-            raise ResourceUnavailableError(self.handle, ex)
+        def _get_xattr():
+            _, context = self._get_cookie()
+            # Don't attempt to catch the ValueError if attr isn't valid
+            return context.getxattr(self._make_url(), attr)
+        return run_with_backoff(_get_xattr, smbc.TimedOutError)[0]
 
     def unpack_stat(self):
         if not self._mr:
@@ -269,7 +260,7 @@ class SMBCHandle(Handle):
             url += self.source.unc
         if url[-1] != "/":
             url += "/"
-        return url + quote(self.relative_path)
+        return url + self.relative_path
 
     def censor(self):
         return SMBCHandle(self.source.censor(), self.relative_path)

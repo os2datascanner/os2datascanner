@@ -9,8 +9,7 @@ from contextlib import contextmanager
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
-from ..core import (Source,
-        Handle, FileResource, SourceManager, ResourceUnavailableError)
+from ..core import Source, Handle, FileResource, SourceManager
 from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
@@ -68,11 +67,8 @@ class FilteredResource(FileResource):
     def _poke_stream(self, s):
         """Peeks at a single byte from the compressed stream, in the process
         both checking that it's valid and populating header values."""
-        try:
-            s.peek(1)
-            return s
-        except (OSError, EOFError) as ex:
-            raise ResourceUnavailableError(self.handle, *ex.args)
+        s.peek(1)
+        return s
 
     def unpack_stream(self):
         if not self._mr:
@@ -104,13 +100,8 @@ class FilteredResource(FileResource):
     @contextmanager
     def make_stream(self):
         with self._get_cookie().make_stream() as s_:
-            try:
-                with self.handle.source._decompress(s_) as s:
-                    # Poke the stream to make sure that it's valid
-                    s.peek(1)
-                    yield s
-            except OSError as ex:
-                raise ResourceUnavailableError(self.handle, *ex.args)
+            with self.handle.source._decompress(s_) as s:
+                yield self._poke_stream(s)
 
 
 @Handle.stock_json_handler("filtered")

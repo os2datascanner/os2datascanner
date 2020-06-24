@@ -7,7 +7,7 @@ class _SourceDescriptor:
         self.source = source
         self.parent = parent
         self.generator = None
-        self.state = None
+        self.cookie = None
         self.children = []
 
 
@@ -89,11 +89,16 @@ class SourceManager:
         self._opening.append(source)
         self._register_path(self._opening)
         try:
+            # Calling _make_descriptor will add this source to the open list if
+            # it's not already there
             desc = self._make_descriptor(source)
-            if not desc.generator:
+            if not desc.cookie:
                 desc.generator = source._generate_state(self)
-                desc.cookie = next(desc.generator)
-                self._opened[source] = desc
+                try:
+                    desc.cookie = next(desc.generator)
+                except Exception:
+                    self.close(source)
+                    raise
             return desc.cookie
         finally:
             self._opening = self._opening[:-1]
@@ -110,14 +115,16 @@ class SourceManager:
                     self.close(child.source)
                 desc.children.clear()
 
-            if desc.generator:
-                # Clear up the state and the generator
+            # Clear up the state and the generator
+            if desc.cookie:
                 desc.cookie = None
+            if desc.generator:
                 try:
-                    desc.generator.close()  # not allowed to fail
+                    desc.generator.close()
                 except Exception:
                     stn = type(source).__name__
-                    print("*** BUG: {0}._generate_state raised an exception!"
+                    print("*** BUG: closing {0}._generate_state raised an"
+                            " exception!"
                             " Continuing anyway...".format(stn), file=stderr)
                     print_exc(file=stderr)
 
@@ -131,6 +138,9 @@ class SourceManager:
 
     def __exit__(self, exc_type, exc_value, backtrace):
         self.clear()
+
+    def __contains__(self, item):
+        return item in self._opened
 
     def clear(self):
         """Closes all of the cookies returned by Sources that were opened in

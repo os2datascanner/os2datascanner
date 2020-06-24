@@ -49,13 +49,13 @@ fi
 
 sudo chown --recursive www-data:www-data "$PRODUCTION_DIR"
 
-echo -e '\n************* Reloading os2ds-services *************\n'
+echo -e '\n************* Restarting os2ds-services *************\n'
 # Restart os2ds-*
-systemctl reload os2ds-*
+systemctl restart os2ds-*
 
-echo -e '\n************* Reloading apache2 *************\n'
+echo -e '\n************* Restarting apache2 *************\n'
 # Restart apache
-systemctl reload apache2.service
+systemctl restart apache2.service
 
 echo -e '\n************* Success *************\n'
 

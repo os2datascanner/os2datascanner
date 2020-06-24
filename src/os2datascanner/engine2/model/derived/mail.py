@@ -9,6 +9,12 @@ from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
 
+def _parts_are_text_body(parts):
+    return (len(parts) == 2
+            and parts[0].get_content_type() == "text/plain"
+            and parts[1].get_content_type() == "text/html")
+
+
 @Source.mime_handler("message/rfc822")
 class MailSource(DerivedSource):
     type_label = "mail"
@@ -19,10 +25,17 @@ class MailSource(DerivedSource):
 
     def handles(self, sm):
         def _process_message(path, part):
-            ct = part.get_content_maintype()
+            ct, st = part.get_content_maintype(), part.get_content_subtype()
             if ct == "multipart":
-                for idx, fragment in enumerate(part.get_payload()):
-                    yield from _process_message(path + [str(idx)], fragment)
+                parts = part.get_payload()
+                # XXX: this is a slightly hacky implementation of multipart/
+                # alternative, but we don't know what task we're being asked to
+                # perform and so we can't do any better
+                if st == "alternative" and _parts_are_text_body(parts):
+                    yield from _process_message(path + ["1"], parts[1])
+                else:
+                    for idx, part in enumerate(parts):
+                        yield from _process_message(path + [str(idx)], part)
             else:
                 filename = part.get_filename()
                 full_path = "/".join(path + [filename or ''])

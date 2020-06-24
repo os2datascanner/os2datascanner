@@ -1,12 +1,20 @@
+import os.path
 import base64
 import unittest
 
 from os2datascanner.engine2.model.core import Source, SourceManager
+from os2datascanner.engine2.model.file import (
+        FilesystemSource, FilesystemHandle)
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.logical import OrRule
 from os2datascanner.engine2.pipeline import (
         explorer, processor, matcher, tagger, exporter)
+
+
+here_path = os.path.dirname(__file__)
+test_data_path = os.path.join(here_path, "..", "data")
 
 
 data = """Hwæt! wē Gār-Dena in gēar-dagum
@@ -61,14 +69,15 @@ def handle_message(body, channel):
     elif channel == "os2ds_conversions":
         with SourceManager() as sm:
             yield from processor.message_received_raw(body, channel, sm,
-                    "os2ds_representations", "os2ds_scan_specs")
+                    "os2ds_representations", "os2ds_scan_specs",
+                    "os2ds_problems")
     elif channel == "os2ds_representations":
         yield from matcher.message_received_raw(body, channel,
                 "os2ds_matches", "os2ds_handles", "os2ds_conversions")
     elif channel == "os2ds_handles":
         with SourceManager() as sm:
             yield from tagger.message_received_raw(body, channel, sm,
-                    "os2ds_metadata")
+                    "os2ds_metadata", "os2ds_problems")
     elif channel in ("os2ds_matches", "os2ds_metadata", "os2ds_problems",):
         yield from exporter.message_received_raw(body, channel,
                 False, "os2ds_results")
@@ -129,5 +138,49 @@ class Engine2PipelineTests(unittest.TestCase):
                 len(self.unhandled),
                 1)
         self.assertEqual(
-                self.unhandled[0][0]["problem"],
-                "unsupported")
+                self.unhandled[0][0]["origin"],
+                "os2ds_problems")
+
+    def test_ocr_skip(self):
+        obj = {
+            "scan_tag": "integration_test",
+            "source": FilesystemSource(os.path.join(
+                    test_data_path, "ocr", "good")).to_json_object(),
+            "rule": CPRRule(modulus_11=False,
+                    ignore_irrelevant=False).to_json_object(),
+            "configuration": {
+                "skip_mime_types": ["image/*"]
+            }
+        }
+
+        self.messages.append((obj, "os2ds_scan_specs",))
+        self.run_pipeline()
+
+        for message, queue in self.unhandled:
+            if queue == "os2ds_results":
+                self.assertFalse(message["matched"],
+                        "OCR match found with OCR disabled")
+            else:
+                self.fail("unexpected message in queue {0}".format(queue))
+
+    def test_corrupted_container(self):
+        obj = {
+            "scan_tag": "integration_test",
+            "source": FilesystemSource(os.path.join(
+                    test_data_path, "pdf", "corrupted")).to_json_object(),
+            "rule": CPRRule(modulus_11=False,
+                    ignore_irrelevant=False).to_json_object(),
+            "configuration": {}
+        }
+
+        self.messages.append((obj, "os2ds_scan_specs",))
+        self.run_pipeline()
+
+        print(self.unhandled)
+
+        self.assertEqual(
+                len(self.unhandled),
+                1)
+        self.assertEqual(
+                self.unhandled[0][0]["origin"],
+                "os2ds_problems")

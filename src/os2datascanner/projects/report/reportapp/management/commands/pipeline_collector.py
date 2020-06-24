@@ -41,10 +41,10 @@ def _restructure_and_save_result(result):
     result = json_utf8_decode(result)
     updated_fields = _format_results(result)
     if updated_fields:
-        handle = result.get('handle')
+        reference = result.get('handle') or result.get('source')
 
         report_obj, is_created = DocumentReport.objects.get_or_create(
-            path=hash_handle(handle))
+            path=hash_handle(reference))
 
         if is_created:
             # if created updatde_fields are stored.
@@ -65,11 +65,9 @@ def _format_results(result):
 
     origin = result.get('origin')
 
-    # TODO: Problem messages do not have a well enough
-    # defined structure to be used in the system yet.
-    # Therefore they are just logged for now.
     if origin == 'os2ds_problems':
-        print('Problem message recieved: {}'.format(result))
+        updated_fields['scan_tag'] = result.get('scan_tag')
+        updated_fields['problem'] = result
     elif origin == 'os2ds_metadata':
         updated_fields['scan_tag'] = result.get('scan_tag')
         updated_fields['metadata'] = result

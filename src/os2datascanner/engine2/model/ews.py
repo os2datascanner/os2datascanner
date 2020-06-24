@@ -12,7 +12,7 @@ from exchangelib.protocol import BaseProtocol
 from ..utilities.backoff import run_with_backoff
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
-from .core import Source, Handle, FileResource, ResourceUnavailableError
+from .core import Source, Handle, FileResource
 
 
 BaseProtocol.SESSION_POOLSIZE = 1
@@ -85,15 +85,12 @@ class EWSAccountSource(Source):
                 service_endpoint=self._server,
                 credentials=service_account if self._server else None)
 
-        try:
-            account = Account(
-                    primary_smtp_address=self.address,
-                    credentials=service_account,
-                    config=config,
-                    autodiscover=not bool(self._server),
-                    access_type=IMPERSONATION)
-        except ErrorNonExistentMailbox as e:
-            raise ResourceUnavailableError(self, e.args)
+        account = Account(
+                primary_smtp_address=self.address,
+                credentials=service_account,
+                config=config,
+                autodiscover=not bool(self._server),
+                access_type=IMPERSONATION)
 
         try:
             yield account

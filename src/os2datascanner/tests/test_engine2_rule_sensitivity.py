@@ -4,7 +4,7 @@ import unittest
 from os2datascanner.engine2.rules.rule import Rule, Sensitivity
 
 from os2datascanner.engine2.rules.cpr import CPRRule
-from os2datascanner.engine2.rules.dummy import FallbackRule
+from os2datascanner.engine2.rules.dummy import AlwaysMatchesRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.logical import OrRule, AndRule
 
@@ -35,7 +35,7 @@ class RuleSensitivityTests(unittest.TestCase):
                         RegexRule("very bad", sensitivity=Sensitivity.CRITICAL),
                         RegexRule("moderately bad", sensitivity=Sensitivity.PROBLEM),
                         RegexRule("slightly bad", sensitivity=Sensitivity.WARNING),
-                        FallbackRule(sensitivity=Sensitivity.INFORMATION)
+                        AlwaysMatchesRule(sensitivity=Sensitivity.INFORMATION)
                     ))
 
         expected = [
