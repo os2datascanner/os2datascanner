@@ -16,8 +16,7 @@ PROJECT_DIR = os.path.dirname(BASE_DIR)
 BUILD_DIR = os.path.join(PROJECT_DIR, 'build')
 VAR_DIR = os.path.join(PROJECT_DIR, 'var')
 LOGS_DIR = os.path.join(VAR_DIR, 'logs')
-
-os.makedirs(BUILD_DIR, exist_ok=True)
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'uploads', 'admin')
 
 # Local settings file shall be used for debugging.
 DEBUG = False
@@ -313,3 +312,6 @@ local_settings_file = os.path.join(
 )
 if os.path.exists(local_settings_file):
     from .local_settings import *  # noqa
+
+os.makedirs(BUILD_DIR, exist_ok=True)
+os.makedirs(MEDIA_ROOT, exist_ok=True)
