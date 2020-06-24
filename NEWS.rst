@@ -1,6 +1,48 @@
 OS2datascanner
 ==============
 
+Version 3.3.3, 24th June 2020
+-----------------------------
+
+"Fit and Finish"
+
+New in this version:
+
+- Scanner jobs, and their authentication information, can now be edited.
+
+- The report module now sorts CPR matches according to how likely they are to
+  correspond to real CPR numbers.
+
+- The report module's SAML authentication code now supports assertion
+  encryption.
+
+General improvements:
+
+- The administration system now sends more detailed information about scans
+  to the report module.
+
+- The structure of the scanner engine's internal messages is now defined more
+  explicitly, allowing the test suite to notice discrepancies earlier.
+
+- The report module's sensitivity key can now be folded and unfolded.
+
+- The report module now also collects any error messages the scanner engine
+  might produce during a scan.
+
+Bugfixes:
+
+- System services are now correctly restarted when upgrading a production
+  installation.
+
+- Disabling OCR image conversion now works correctly.
+
+- Matches in HTML email bodies are no longer reported twice.
+
+- Errors when opening data sources are now correctly handled.
+
+- Direct links to files in shared network folders should now also work for
+  filenames containing non-ASCII characters.
+
 Version 3.3.2, 2nd June 2020
 ----------------------------
 
