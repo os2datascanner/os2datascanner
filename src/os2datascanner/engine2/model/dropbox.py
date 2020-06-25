@@ -65,6 +65,9 @@ class DropboxSource(Source):
         scheme, token, _, _, _ = urlsplit(url)
         return DropboxSource(token=token)
 
+    def to_url(self):
+        return "dropbox://{0}".format(self._token)
+
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
             "token": self._token
