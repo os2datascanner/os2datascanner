@@ -19,6 +19,7 @@
 """Contains Django model for the scanner types."""
 
 import os
+from typing import Iterator
 import datetime
 from dateutil import tz
 from contextlib import closing
@@ -229,13 +230,7 @@ class Scanner(models.Model):
         was not possible to communicate with the pipeline."""
         now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
 
-        # Check that this source is accessible, raising an error if it isn't
-        source = self.make_engine2_source()
-        with SourceManager() as sm, closing(source.handles(sm)) as handles:
-            next(handles, True)
-
-        # Create a new engine2 scan specification and submit it to the
-        # pipeline
+        # Create a new engine2 scan specification
         rule = OrRule.make(
                 *[r.make_engine2_rule()
                         for r in self.rules.all().select_subclasses()])
@@ -279,19 +274,29 @@ class Scanner(models.Model):
             'destination': 'pipeline_collector'
         }
 
-        message = {
+        # Check that each Source is runnable
+        message_template = {
             'scan_tag': scan_tag,
-            'source': source.to_json_object(),
             'rule': rule.to_json_object(),
             'configuration': configuration
         }
-        queue_name = settings.AMQP_PIPELINE_TARGET
+        messages = []
+        for source in self.generate_sources():
+            with SourceManager() as sm, closing(source.handles(sm)) as handles:
+                next(handles, True)
+            messages.append(dict(
+                    **message_template,
+                    source=source.to_json_object()))
 
         self.e2_last_run_at = now
         self.save()
 
+        # Dispatch the scan specifications to the pipeline
+        queue_name = settings.AMQP_PIPELINE_TARGET
         amqp_connection_manager.start_amqp(queue_name)
-        amqp_connection_manager.send_message(queue_name, json.dumps(message))
+        for message in messages:
+            amqp_connection_manager.send_message(
+                    queue_name, json.dumps(message))
         amqp_connection_manager.close_connection()
 
         return scan_tag
@@ -299,12 +304,13 @@ class Scanner(models.Model):
     def path_for(self, uri):
         return uri
 
-    def make_engine2_source(self) -> Source:
-        """Construct an engine2 Source corresponding to the target of this
-        Scanner."""
+    def generate_sources(self) -> Iterator[Source]:
+        """Yields one or more engine2 Sources corresponding to the target of
+        this Scanner."""
         # (this can't use the @abstractmethod decorator because of metaclass
         # conflicts with Django, but subclasses should override this method!)
-        raise NotImplementedError("Scanner.make_engine2_source")
+        raise NotImplementedError("Scanner.generate_sources")
+        yield from []
 
     class Meta:
         abstract = False
