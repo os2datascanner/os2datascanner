@@ -60,7 +60,7 @@ class DropboxSource(Source):
                                         self, entry.path_lower)
 
     @staticmethod
-    @Source.url_handler(type_label)
+    @Source.url_handler("dropbox")
     def from_url(url):
         scheme, token, _, _, _ = urlsplit(url)
         return DropboxSource(token=token)
