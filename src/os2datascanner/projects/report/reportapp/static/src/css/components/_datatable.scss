@@ -43,6 +43,12 @@
   }
 }
 
+.flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
 .datatable tr:hover {
   td {
     background-color: rgba(0, 0, 0, 0.05);
