@@ -53,12 +53,18 @@ class CPRRule(RegexRule):
                     continue
 
             cpr = cpr[0:4] + "XXXXXX"
-            # Calculate context.
             low, high = m.span()
-            if low < 50:
-                # Sanity
-                low = 50
-            match_context = content[low - 50:high + 50]
+
+            # Filter out the most incredibly obvious P-numbers
+            pre = content[max(low - 15, 0):low]
+            if pre.strip().lower().endswith(
+                    ("p-nr.", "p.nr.",
+                     "p-nr.:", "p.nr.:",
+                     "p-nummer:", "pnr", "pnr:")):
+                probability = 0.0
+
+            # Calculate context.
+            match_context = content[max(low - 50, 0):high + 50]
             match_context = self._compiled_expression.sub(
                     "XXXXXX-XXXX", match_context)
 
