@@ -39,6 +39,7 @@ from os2datascanner.engine2.rules.meta import HasConversionRule
 from os2datascanner.engine2.rules.logical import OrRule, AndRule, make_if
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
+from os2datascanner.engine2.pipeline.messages import ScanSpecMessage
 from os2datascanner.engine2.conversions.types import OutputType
 
 from ..authentication_model import Authentication
@@ -274,19 +275,15 @@ class Scanner(models.Model):
             'destination': 'pipeline_collector'
         }
 
-        # Check that each Source is runnable
-        message_template = {
-            'scan_tag': scan_tag,
-            'rule': rule.to_json_object(),
-            'configuration': configuration
-        }
+        # Check that all of our Sources are runnable, and build
+        # ScanSpecMessages for them
+        message_template = ScanSpecMessage(scan_tag=scan_tag, rule=rule,
+                configuration=configuration, source=None, progress=None)
         messages = []
         for source in self.generate_sources():
             with SourceManager() as sm, closing(source.handles(sm)) as handles:
                 next(handles, True)
-            messages.append(dict(
-                    **message_template,
-                    source=source.to_json_object()))
+            messages.append(message_template._replace(source=source))
 
         self.e2_last_run_at = now
         self.save()
@@ -296,7 +293,7 @@ class Scanner(models.Model):
         amqp_connection_manager.start_amqp(queue_name)
         for message in messages:
             amqp_connection_manager.send_message(
-                    queue_name, json.dumps(message))
+                    queue_name, json.dumps(message.to_json_object()))
         amqp_connection_manager.close_connection()
 
         return scan_tag
