@@ -40,7 +40,21 @@ class RuleTests(unittest.TestCase):
                 ]
             ),
             (
-                CPRRule(modulus_11=True, ignore_irrelevant=True),
+                CPRRule(modulus_11=True, ignore_irrelevant=True,
+                        examine_context=False),
+                """
+Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nr. 2205995008
+Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nummer: 2305000003
+240501-0006""",
+                [
+                    "2205XXXXXX",
+                    "2305XXXXXX",
+                    "2405XXXXXX"
+                ]
+            ),
+            (
+                CPRRule(modulus_11=True, ignore_irrelevant=True,
+                        examine_context=True),
                 """
 Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nr. 2205995008
 Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nummer: 2305000003
