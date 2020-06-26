@@ -16,7 +16,6 @@ class DropboxSource(Source):
     eq_properties = ("_token",)
 
     def __init__(self, token):
-        # Consider using a list of tokens for access to multiple dropbox accounts.
         self._token = token
         self._user_account = None
 
@@ -79,25 +78,17 @@ class DropboxSource(Source):
 class DropboxResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
-        self._dbx = None
         self._metadata = None
 
     def open_file(self):
-        metadata, res = self.dbx.files_download(
+        metadata, res = self._get_cookie().files_download(
             self.handle.relative_path)
         return res
 
     @property
-    def dbx(self):
-        if self._dbx is None:
-            self._dbx = self._sm.open(
-                self.handle.source)
-        return self._dbx
-
-    @property
     def metadata(self):
         if self._metadata is None:
-            self._metadata = self.dbx.files_get_metadata(
+            self._metadata = self._get_cookie().files_get_metadata(
                 self.handle.relative_path)
         return self._metadata
 
@@ -122,10 +113,10 @@ class DropboxResource(FileResource):
 
 
 class DropboxHandle(Handle):
-    resource_type = DropboxResource
     type_label = "dropbox"
+    resource_type = DropboxResource
 
-    def __init__(self, email, source, relpath):
+    def __init__(self, source, relpath, email):
         super().__init__(source, relpath)
         self.email = email
 
