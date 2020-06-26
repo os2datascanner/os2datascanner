@@ -8,7 +8,7 @@ from contextlib import contextmanager
 from ..utilities.backoff import run_with_backoff
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import MultipleResults
-from .smb import make_smb_url, SMBSource
+from .smb import SMBSource, make_smb_url, compute_domain
 from .core import Source, Handle, FileResource
 from .file import stat_attributes
 from .utilities import NamedTemporaryResource
@@ -23,7 +23,7 @@ class SMBCSource(Source):
         self._unc = unc
         self._user = user
         self._password = password
-        self._domain = domain
+        self._domain = domain if domain is not None else compute_domain(unc)
         self._driveletter = driveletter
 
     @property
