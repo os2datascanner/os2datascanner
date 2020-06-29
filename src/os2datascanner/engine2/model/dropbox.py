@@ -4,6 +4,7 @@ from io import BytesIO
 from urllib.parse import urlsplit
 
 import dropbox
+from dropbox.dropbox import create_session
 from .core import Source, Handle, FileResource
 from .utilities import NamedTemporaryResource
 
@@ -17,28 +18,22 @@ class DropboxSource(Source):
 
     def __init__(self, token):
         self._token = token
-        self._user_account = None
 
     @property
     def token(self):
         return self._token
 
-    @property
-    def user_account(self):
-        return self._user_account
-
     def _generate_state(self, sm):
-        dbx = dropbox.Dropbox(self.token)
-        yield dbx
+        # Default values for create_session method. Uses requests lib session object.
+        with create_session(max_connections=8, proxies=None) as session:
+            yield dropbox.Dropbox(self.token, session=session)
 
     def censor(self):
-        dbs = DropboxSource(self.token)
-        dbs._user_account = self.user_account
-        return dbs
+        return DropboxSource(self.token)
 
     def handles(self, sm):
         dbx = sm.open(self)
-        self._user_account = dbx.users_get_current_account()
+        user_account = dbx.users_get_current_account()
 
         has_more = True
         cursor = None
@@ -55,8 +50,8 @@ class DropboxSource(Source):
             cursor = result.cursor
             for entry in result.entries:
                 if isinstance(entry, dropbox.files.FileMetadata):
-                    yield DropboxHandle(self.user_account.email,
-                                        self, entry.path_lower)
+                    yield DropboxHandle(self, entry.path_lower,
+                                        user_account.email)
 
     @staticmethod
     @Source.url_handler("dropbox")
@@ -135,8 +130,8 @@ class DropboxHandle(Handle):
             '/'.join(path[:-1]), path[-1])
 
     def censor(self):
-        return DropboxHandle(self.email, self.source.censor(),
-                             self.relative_path)
+        return DropboxHandle(self.source.censor(),
+                             self.relative_path, self.email)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
@@ -146,4 +141,5 @@ class DropboxHandle(Handle):
     @staticmethod
     @Handle.json_handler(type_label)
     def from_json_object(obj):
-        return DropboxHandle(obj["email"], Source.from_json_object(obj["source"]), obj["path"])
+        return DropboxHandle(Source.from_json_object(obj["source"]),
+                             obj["path"], obj["email"])
