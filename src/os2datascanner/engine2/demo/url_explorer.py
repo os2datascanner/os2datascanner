@@ -18,9 +18,9 @@ def print_source(manager, source, depth=0, *,
             resource = handle.follow(manager)
             try:
                 if isinstance(resource, FileResource):
-                    size = resource.get_size().value
+                    size = resource.get_size()
                     mime = resource.compute_type()
-                    lm = resource.get_last_modified().value
+                    lm = resource.get_last_modified()
                     print(format_d(depth + 1, "size {0} bytes", size))
                     print(format_d(depth + 1, "type {0}", mime))
                     print(format_d(depth + 1, "lmod {0}", lm))
