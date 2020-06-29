@@ -14,6 +14,8 @@
           <a href="/filescanners/">Scannerjob</a>
         {% elif settings.ENABLE_EXCHANGESCAN %}
           <a href="/exchangescanners/">Scannerjob</a>
+        {% elif settings.ENABLE_DROPBOXSCAN %}
+          <a href="/dropboxscanners/">Scannerjob</a>
         {% endif %}
         {% if user.profile.is_groups_enabled %}
           {% if user.is_superuser or user.profile.is_group_admin %}
