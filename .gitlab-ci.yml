@@ -44,6 +44,7 @@ tests:
     - rabbitmq:alpine
     - name: dperson/samba:amd64
       alias: samba
+      # XXX: this should be replaced with a fork under our control (see #37182)
   image: python:3.6
   variables:
     USER: os2;12345_rosebud_password_admin
