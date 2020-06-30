@@ -114,4 +114,5 @@ WORKDIR /code/src/os2datascanner/projects/admin
 USER os2ds_admin:os2ds_admin
 EXPOSE 8000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
-CMD ["django-admin", "shell"]
+# TODO: add production CMD once the set-up is completed
+# CMD []
