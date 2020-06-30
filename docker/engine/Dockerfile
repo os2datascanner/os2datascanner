@@ -67,6 +67,7 @@ COPY LICENSE .
 COPY README .
 COPY NEWS.rst .
 
+COPY docker/engine/docker-settings.toml /code/docker/docker-settings.toml
 COPY docker/engine/docker-entrypoint.sh /code/docker/docker-entrypoint.sh
 
 # Set up to run given command as the new user
