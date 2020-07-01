@@ -12,9 +12,10 @@ services:
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come
-    # with a set of management plugins installed and enabled by default. They
-    # can be accessed through the web interface on port 15672. The credentials
-    # are given in the specified `rabbitmq.env` file.
+    # with a set of management plugins installed and enabled by default.
+    # They can be accessed through the web interface on port 15672 (or the port
+    # it has been remapped to).
+    # The credentials are given in the specified `rabbitmq.env` file.
     image: rabbitmq:3-management-alpine
     hostname: os2datascanner_msg_broker
     env_file:
