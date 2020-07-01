@@ -5,6 +5,8 @@ from urllib.parse import urlsplit
 
 import dropbox
 from dropbox.dropbox import create_session
+from ..conversions.utilities.results import SingleResult
+from ..conversions.types import OutputType
 from .core import Source, Handle, FileResource
 from .utilities import NamedTemporaryResource
 
@@ -107,7 +109,12 @@ class DropboxResource(FileResource):
             yield BytesIO(res.content)
 
     def get_last_modified(self):
-        return self.metadata.server_modified
+        return SingleResult(None,
+                            OutputType.LastModified, self.metadata.server_modified)
+
+
+    def get_size(self):
+        return SingleResult(None, 'size', self.metadata.size)
 
 
 class DropboxHandle(Handle):
