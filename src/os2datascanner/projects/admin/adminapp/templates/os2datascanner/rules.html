@@ -107,6 +107,7 @@
         <th class="datatable__column--description">Beskrivelse</th>
         <th class="datatable__column--expression"></th>
         <th class="datatable__column--sensitivity">Følsomhed</th>
+        <th class="datatable__column--actions"></th>
       </tr>
     </thead>
 
@@ -117,10 +118,12 @@
         {% if user.is_superuser %}
         <td class="datatable__column--org">{{ rule.organization }}</td>
         {% endif %}
-        <td class="datatable__column--description" colspan="2">{{ rule.description }}</td>
+        <td class="datatable__column--description">{{ rule.description }}</td>
+        <td class="datatable__column--expression"></td>
         <td class="datatable__column--sensitivity">
           <span class="level-label level-label--{{ rule.sensitivity }}">{{ rule.get_sensitivity_display }}</span>
         </td>
+        <td class="datatable__column--actions"></td>
       </tr>
       {% endfor %}
     </tbody>
