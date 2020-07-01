@@ -8,7 +8,7 @@ ALLOWED_HOSTS = []
 SITE_URL = 'INSERT_DOMAIN_NAME'
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ld0_g)jhp3v27&od88-_v83ldb!0i^bac=jh+je!!=jbvra7@j'
+SECRET_KEY = 'DUMMYKEY(for development)DUMMYKEY(for development)'
 
 # Used for filescan and mounting
 PRODUCTION_MODE = False

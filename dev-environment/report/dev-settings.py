@@ -5,7 +5,7 @@ ALLOWED_HOSTS = []
 SITE_URL = 'localhost:8040'
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'gdf_g)jKJhgf7&IL78yrfiuuhGH0i^bac=jh+je!!=jlsejbj9'
+SECRET_KEY = 'DUMMYKEY(for development)DUMMYKEY(for development)'
 
 DATABASES = {
     'default': {
