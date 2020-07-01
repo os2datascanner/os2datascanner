@@ -12,6 +12,7 @@ else:
 from prometheus_client import Summary
 
 from ...utils.system_utilities import json_utf8_decode
+from os2datascanner.utils import pika_settings
 
 
 def make_common_argument_parser():
@@ -86,7 +87,10 @@ class PikaConnectionHolder(ABC):
     server. (Like Pika itself, it is not thread safe.)"""
 
     def __init__(self, **kwargs):
-        self._parameters = pika.ConnectionParameters(**kwargs)
+        credentials = pika.PlainCredentials(pika_settings.AMQP_USER,
+                                            pika_settings.AMQP_PWD)
+        self._parameters = pika.ConnectionParameters(credentials=credentials,
+                                                     **kwargs)
         self._connection = None
         self._channel = None
 
