@@ -43,6 +43,8 @@ from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
                                      WebScannerValidate)
 from .views.views import DesignGuide
 
+from .views.msgraph_views import MSGraphMailCreate
+
 urlpatterns = [
     # App URLs
     url(r'^$', WebScannerList.as_view(), name='index'),
@@ -109,6 +111,12 @@ urlpatterns = [
             model=DropboxScanner),
         name='dropboxscanner_askrun'),
 
+    # OAuth-based data sources
+    url(r'^msgraph-mailscanners/add/$',
+            MSGraphMailCreate.as_view(),
+            name='msgraphmailscanner_add'),
+
+    # Rules
     url(r'^rules/$', RuleList.as_view(), name='rules'),
     url(r'^rules/cpr/add/$', CPRRuleCreate.as_view(), name='cprrule_add'),
     url(r'^rules/cpr/(?P<pk>\d+)/$', CPRRuleUpdate.as_view(),
@@ -191,8 +199,6 @@ urlpatterns = [
             template_name='designguide.html',
         ),
         name='designguide'),
-
-
 ]
 
 if settings.DO_USE_GROUPS:
