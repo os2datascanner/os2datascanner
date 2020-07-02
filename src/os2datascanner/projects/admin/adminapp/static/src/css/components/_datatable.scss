@@ -52,6 +52,24 @@
   }
 }
 
+.flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-top: .5rem;
+
+  &--width {
+    margin-right: .5rem;
+    height: 1.2rem;
+    width: auto;
+  }
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
+}
+
 @supports(display: grid) {
   // We use CSS Grid to detect IE11, as "tr:focus" breaks the whole selector in IE11
   .datatable tr:focus, 
