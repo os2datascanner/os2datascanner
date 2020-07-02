@@ -89,9 +89,8 @@ services:
       - OS2DS_MIGRATE_MANUALLY=1
     env_file:
       - dev-environment/report/django.env
-    # TODO: fix command below when we have a script to wait for queue
-    command: >
-      sh -c "sleep 10 && python manage.py pipeline_collector"
+    command: python manage.py pipeline_collector
+    restart: unless-stopped
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./dev-environment/report/dev-settings.py:/code/src/os2datascanner/projects/report/local_settings.py
@@ -107,6 +106,7 @@ services:
     environment:
       - AMQP_HOST=queue
     command: explorer
+    restart: unless-stopped
     depends_on:
       - queue
 
@@ -118,6 +118,7 @@ services:
     environment:
       - AMQP_HOST=queue
     command: processor
+    restart: unless-stopped
     depends_on:
       - queue
 
@@ -129,6 +130,7 @@ services:
     environment:
       - AMQP_HOST=queue
     command: matcher
+    restart: unless-stopped
     depends_on:
       - queue
 
@@ -140,6 +142,7 @@ services:
     environment:
       - AMQP_HOST=queue
     command: tagger
+    restart: unless-stopped
     depends_on:
       - queue
 
@@ -151,6 +154,7 @@ services:
     environment:
       - AMQP_HOST=queue
     command: exporter
+    restart: unless-stopped
     depends_on:
       - queue
 

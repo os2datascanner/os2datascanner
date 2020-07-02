@@ -24,9 +24,6 @@ AVAILABLE_STAGES=$(echo $AVAILABLE_STAGES | tr "," "\n")
 # Check if first argument is a stage
 if [[ " ${AVAILABLE_STAGES[@]} " =~ "$1" ]]; then
 
-  # Allow queue container to start TODO: write function to ping queue
-  sleep 5
-
   STAGE=$1
 
   if [[ ${AMQP_HOST} ]]; then
