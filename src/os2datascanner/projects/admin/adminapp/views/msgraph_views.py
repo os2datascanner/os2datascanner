@@ -6,10 +6,18 @@ from urllib.parse import urlencode
 
 from ..models.scannerjobs.msgraph_models import MSGraphMailScanner
 from .views import LoginRequiredMixin
-from .scanner_views import ScannerCreate
+from .scanner_views import (ScannerRun, ScannerList,
+        ScannerAskRun, ScannerCreate, ScannerDelete, ScannerUpdate)
 
 
 auth_endpoint = "https://login.microsoftonline.com/common/adminconsent?client_id={client_id}&scope=https://graph.microsoft.com/.default&response_type=code"
+
+
+class MSGraphMailList(ScannerList):
+    """Displays the list of configured Microsoft Graph mail scanners."""
+
+    model = MSGraphMailScanner
+    type = 'msgraph-mail'
 
 
 class MSGraphMailCreate(View):
@@ -48,3 +56,38 @@ class _MSGraphMailCreate(ScannerCreate):
         return dict(**super().get_context_data(**kwargs), **{
             "tenant_id": self.request.GET['tenant']
         })
+
+    def get_success_url(self):
+        """The URL to redirect to after successful creation."""
+        return '/msgraph-mailscanners/%s/created/' % self.object.pk
+
+class MSGraphMailUpdate(ScannerUpdate):
+    """Update a scanner view."""
+
+    model = MSGraphMailScanner
+    type = 'msgraph-mailscanners'
+    fields = ['name', 'schedule', 'tenant_id', 'do_ocr',
+              'do_last_modified_check', 'rules', 'recipients']
+
+    def get_success_url(self):
+        return '/msgraph-mailscanners/%s/saved/' % self.object.pk
+
+
+class MSGraphMailDelete(ScannerDelete):
+    """Delete a scanner view."""
+    model = MSGraphMailScanner
+    fields = []
+    success_url = '/msgraph-mailscanners/'
+
+
+class MSGraphMailAskRun(ScannerAskRun):
+    """Prompt for starting web scan, validate first."""
+
+    model = MSGraphMailScanner
+
+
+class MSGraphMailRun(ScannerRun):
+
+    """View that handles starting of a web scanner run."""
+
+    model = MSGraphMailScanner
