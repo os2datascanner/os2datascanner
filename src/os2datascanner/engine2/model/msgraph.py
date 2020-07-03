@@ -34,19 +34,31 @@ class MSGraphSource(Source):
         response.raise_for_status()
         token = response.json()["access_token"]
 
-        def _graph_get(tail, *, json=True):
+        yield MSGraphSource.GraphCaller(token)
+
+    def _list_users(self, sm):
+        return sm.open(self).get("users")
+
+    class GraphCaller:
+        def __init__(self, token):
+            self._token = token
+
+        def get(self, tail, *, json=True):
             response = requests.get(
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
-                    headers={"authorization": "Bearer {0}".format(token)})
+                    headers={"authorization": "Bearer {0}".format(self._token)})
             response.raise_for_status()
             if json:
                 return response.json()
             else:
                 return response.content
-        yield _graph_get
 
-    def _list_users(self, sm):
-        return sm.open(self)("users")
+        def head(self, tail):
+            response = requests.head(
+                    "https://graph.microsoft.com/v1.0/{0}".format(tail),
+                    headers={"authorization": "Bearer {0}".format(self._token)})
+            response.raise_for_status()
+            return response
 
 
 class MSGraphMailSource(MSGraphSource):
@@ -56,7 +68,7 @@ class MSGraphMailSource(MSGraphSource):
         for user in self._list_users(sm)["value"]:
             pn = user["userPrincipalName"]
             try:
-                any_mails = sm.open(self)(
+                any_mails = sm.open(self).get(
                         "users/{0}/messages?$select=id&$top=1".format(pn))
                 if not any_mails["value"]:
                     # This user has a mail account that contains no mails
@@ -120,7 +132,7 @@ class MSGraphMailAccountSource(DerivedSource):
 
     def handles(self, sm):
         pn = self.handle.relative_path
-        for message in sm.open(self)(
+        for message in sm.open(self).get(
                 "users/{0}/messages?$select=id,subject,webLink".format(
                         pn))["value"]:
             yield MSGraphMailMessageHandle(self,
@@ -132,11 +144,15 @@ class MSGraphMailMessageResource(FileResource):
         super().__init__(handle, sm)
         self._message = None
 
-    def get_message_object(self):
+    def make_object_path(self):
+        return "users/{0}/messages/{1}".format(
+                self.handle.source.handle.relative_path,
+                self.handle.relative_path)
+
+    def get_message_metadata(self):
         if not self._message:
-            self._message = self._get_cookie()("users/{0}/messages/{1}/".format(
-                    self.handle.source.handle.relative_path,
-                    self.handle.relative_path))
+            self._message = self._get_cookie().get(
+                    self.make_object_path() + "?$select=lastModifiedDateTime")
         return self._message
 
     @contextmanager
@@ -149,9 +165,8 @@ class MSGraphMailMessageResource(FileResource):
 
     @contextmanager
     def make_stream(self):
-        response = self._get_cookie()("users/{0}/messages/{1}/$value".format(
-                self.handle.source.handle.relative_path,
-                self.handle.relative_path), json=False)
+        response = self._get_cookie().get(
+                self.make_object_path() + "/$value", json=False)
         with BytesIO(response) as fp:
             yield fp
 
