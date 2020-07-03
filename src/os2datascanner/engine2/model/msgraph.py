@@ -55,12 +55,20 @@ class MSGraphMailSource(MSGraphSource):
     def handles(self, sm):
         for user in self._list_users(sm)["value"]:
             pn = user["userPrincipalName"]
-            any_mails = sm.open(self)(
-                    "users/{0}/messages?$select=id&$top=1".format(pn))
-            if not any_mails["value"]:
-                continue
-            else:
-                yield MSGraphMailAccountHandle(self, pn)
+            try:
+                any_mails = sm.open(self)(
+                        "users/{0}/messages?$select=id&$top=1".format(pn))
+                if not any_mails["value"]:
+                    # This user has a mail account that contains no mails
+                    continue
+                else:
+                    yield MSGraphMailAccountHandle(self, pn)
+            except requests.exceptions.HTTPError as ex:
+                if ex.response.status_code == 404:
+                    # This user doesn't have a mail account
+                    continue
+                else:
+                    raise
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
