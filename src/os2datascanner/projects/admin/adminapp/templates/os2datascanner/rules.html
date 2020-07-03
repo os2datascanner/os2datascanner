@@ -51,7 +51,12 @@
           {% endif %}
         </td>
         <td class="datatable__column--sensitivity">
-          <span class="level-label level-label--{{ rule.sensitivity }}">{{ rule.get_sensitivity_display }}</span>
+          <span class="flex">
+            <span class="flex--width">
+              {% include "components/sensitivity-icon.html" %}
+            </span>
+            <span>{{ rule.get_sensitivity_display }}</span>
+          </span>
         </td>
         <td class="datatable__column--actions">
           <a 
@@ -121,7 +126,12 @@
         <td class="datatable__column--description">{{ rule.description }}</td>
         <td class="datatable__column--expression"></td>
         <td class="datatable__column--sensitivity">
-          <span class="level-label level-label--{{ rule.sensitivity }}">{{ rule.get_sensitivity_display }}</span>
+          <span class="flex">
+            <span class="flex--width">
+              {% include "components/sensitivity-icon.html" %}
+            </span>
+            <span>{{ rule.get_sensitivity_display }}</span>
+          </span>
         </td>
         <td class="datatable__column--actions"></td>
       </tr>

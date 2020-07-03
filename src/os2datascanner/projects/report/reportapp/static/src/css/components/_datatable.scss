@@ -43,6 +43,24 @@
   }
 }
 
+.flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-top: .5rem;
+
+  &--width {
+    margin-right: .5rem;
+    height: 1.2rem;
+    width: auto;
+  }
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
+}
+
 .datatable tr:hover {
   td {
     background-color: rgba(0, 0, 0, 0.05);
