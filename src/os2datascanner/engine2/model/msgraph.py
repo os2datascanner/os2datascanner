@@ -1,7 +1,6 @@
 from io import BytesIO
 import requests
 from contextlib import contextmanager
-from simplejson.decoder import JSONDecodeError
 
 from ..conversions.utilities.results import SingleResult
 from .core import Handle, Source, Resource, FileResource
@@ -35,14 +34,14 @@ class MSGraphSource(Source):
         response.raise_for_status()
         token = response.json()["access_token"]
 
-        def _graph_get(tail):
+        def _graph_get(tail, *, json=True):
             response = requests.get(
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
                     headers={"authorization": "Bearer {0}".format(token)})
             response.raise_for_status()
-            try:
+            if json:
                 return response.json()
-            except JSONDecodeError:
+            else:
                 return response.content
         yield _graph_get
 
@@ -144,7 +143,7 @@ class MSGraphMailMessageResource(FileResource):
     def make_stream(self):
         response = self._get_cookie()("users/{0}/messages/{1}/$value".format(
                 self.handle.source.handle.relative_path,
-                self.handle.relative_path))
+                self.handle.relative_path), json=False)
         with BytesIO(response) as fp:
             yield fp
 
