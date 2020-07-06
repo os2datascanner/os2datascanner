@@ -92,9 +92,6 @@ class DropboxResource(FileResource):
                 self.handle.relative_path)
         return self._metadata
 
-    def get_size(self):
-        return self.metadata.size
-
     @contextmanager
     def make_path(self):
         with NamedTemporaryResource(self.handle.name) as ntr:
@@ -111,7 +108,6 @@ class DropboxResource(FileResource):
     def get_last_modified(self):
         return SingleResult(None,
                             OutputType.LastModified, self.metadata.server_modified)
-
 
     def get_size(self):
         return SingleResult(None, 'size', self.metadata.size)
