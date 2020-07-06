@@ -3,8 +3,7 @@ from datetime import datetime
 import unittest
 import contextlib
 
-from os2datascanner.engine2.model.core import (
-        Source, SourceManager, ResourceUnavailableError)
+from os2datascanner.engine2.model.core import (Source, SourceManager)
 from os2datascanner.engine2.model.file import (
         FilesystemSource, FilesystemHandle)
 from os2datascanner.engine2.model.data import DataSource
@@ -100,13 +99,12 @@ class Engine2ContainerTest(unittest.TestCase):
 
     def test_smbc_url(self):
         with SourceManager() as sm:
+            source = Source.from_url(
+                    "smbc://os2:12345_rosebud_password_admin@samba/general")
             try:
-                source = Source.from_url(
-                        "smbc://os2:12345_rosebud_password_admin"
-                        "@samba/general")
                 with contextlib.closing(source.handles(sm)) as c:
                     next(c)
-            except ResourceUnavailableError:
+            except Exception:
                 self.skipTest("test Samba server not up (not running in CI?)")
             self.process(source, sm)
 
