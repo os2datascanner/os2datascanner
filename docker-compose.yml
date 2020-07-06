@@ -176,7 +176,16 @@ services:
     volumes:
       - "./dev-environment/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
     ports:
-      - 9090:9090
+      - "8050:9090"
+
+  # default user is admin/admin
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - "./dev-environment/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro"
+      - "./dev-environment/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro"
+    ports:
+      - "8060:3000"
 
 
 volumes:
