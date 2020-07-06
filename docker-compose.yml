@@ -1,0 +1,165 @@
+version: '3.4'
+services:
+  db:
+    image: postgres:12
+    env_file:
+      - dev-environment/db.env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres-initdb.d/10-test-for-valid-env-variables.sh:/docker-entrypoint-initdb.d/10-test-for-valid-env-variables.sh
+      - ./docker/postgres-initdb.d/20-create-admin-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-admin-db-and-user.sh
+      - ./docker/postgres-initdb.d/40-create-report-db-and-user.sh:/docker-entrypoint-initdb.d/40-create-report-db-and-user.sh
+
+  queue:
+    # Normally, we expect the `rabbitmq` image. The -management images come
+    # with a set of management plugins installed and enabled by default.
+    # They can be accessed through the web interface on port 15672 (or the port
+    # it has been remapped to).
+    # The credentials are given in the specified `rabbitmq.env` file.
+    image: rabbitmq:3-management-alpine
+    hostname: os2datascanner_msg_broker
+    env_file:
+      - dev-environment/rabbitmq.env
+    ports:
+      - "5672:5672"
+      - "8030:15672"
+
+  admin-frontend:
+    build:
+      context: .
+      dockerfile: docker/admin/Dockerfile
+      target: frontend
+    volumes:
+      - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
+      - /code/frontend/mode_modules
+
+  report-frontend:
+     build:
+       context: .
+       dockerfile: docker/report/Dockerfile
+       target: frontend
+     volumes:
+       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
+       - /code/frontend/mode_modules
+
+  admin-application:
+    build:
+      context: .
+      dockerfile: docker/admin/Dockerfile
+      target: application
+    env_file:
+      - dev-environment/admin/django.env
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
+      - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
+      - ./dev-environment/admin/dev-settings.py:/code/src/os2datascanner/projects/admin/local_settings.py
+      - ./src/os2datascanner:/code/src/os2datascanner
+    ports:
+      - "8020:8000"
+    depends_on:
+      - db
+      - admin-frontend
+
+  report-application:
+    build:
+      context: .
+      dockerfile: docker/report/Dockerfile
+      target: application
+    env_file:
+      - dev-environment/report/django.env
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
+      - ./dev-environment/report/dev-settings.toml:/user-settings.toml
+      - ./dev-environment/report/dev-settings.py:/code/src/os2datascanner/projects/report/local_settings.py
+      - ./src/os2datascanner:/code/src/os2datascanner
+    ports:
+      - "8040:8000"
+    depends_on:
+      - db
+      - report-frontend
+
+  report-collector:
+    build:
+      context: .
+      dockerfile: docker/report/Dockerfile
+      target: application
+    environment:
+      - OS2DS_MIGRATE_MANUALLY=1
+    env_file:
+      - dev-environment/report/django.env
+    command: python manage.py pipeline_collector
+    restart: unless-stopped
+    volumes:
+      - ./dev-environment/report/dev-settings.toml:/user-settings.toml
+      - ./dev-environment/report/dev-settings.py:/code/src/os2datascanner/projects/report/local_settings.py
+    depends_on:
+      - db
+      - report-application
+
+  engine_explorer:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    environment:
+      - AMQP_HOST=queue
+    command: explorer
+    restart: unless-stopped
+    depends_on:
+      - queue
+
+  engine_processor:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    environment:
+      - AMQP_HOST=queue
+    command: processor
+    restart: unless-stopped
+    depends_on:
+      - queue
+
+  engine_matcher:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    environment:
+      - AMQP_HOST=queue
+    command: matcher
+    restart: unless-stopped
+    depends_on:
+      - queue
+
+  engine_tagger:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    environment:
+      - AMQP_HOST=queue
+    command: tagger
+    restart: unless-stopped
+    depends_on:
+      - queue
+
+  engine_exporter:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    environment:
+      - AMQP_HOST=queue
+    command: exporter
+    restart: unless-stopped
+    depends_on:
+      - queue
+
+volumes:
+  frontend-bundles-admin:
+  frontend-bundles-report:
+  postgres-data:
+  postgres-initdb.d:

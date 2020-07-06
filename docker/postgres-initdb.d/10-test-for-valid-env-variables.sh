@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright (C) 2020 Magenta ApS, http://magenta.dk.
 # Contact: info@magenta.dk.
 #
@@ -11,29 +11,9 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-set -e
+# This file checks that a user is set for at least one of the modules.
+# Checks for necessary variable for each of the modules are delegated to
+# their respective scripts.
 
-if [ $# -eq 0 ]; then
-  echo "No service argument provided!"
-  echo "Cannot start unknown service; exiting."
-  exit 1
-fi
-
-AVAILABLE_STAGES=$(echo $AVAILABLE_STAGES | tr "," "\n")
-
-# Check if first argument is a stage
-if [[ " ${AVAILABLE_STAGES[@]} " =~ "$1" ]]; then
-
-  STAGE=$1
-
-  if [[ ${AMQP_HOST} ]]; then
-    OPTIONAL_HOST="--host ${AMQP_HOST}"
-  else
-    OPTIONAL_HOST=""
-  fi
-
-  # ${@:2} adds all arguments except the first one (which is the stage)
-  exec python -m "os2datascanner.engine2.pipeline.${STAGE}" ${OPTIONAL_HOST} "${@:2}"
-else
-  exec "$@"
-fi
+EITHER_EXISTS="${ADMIN_DATABASE_USER:-$REPORT_DATABASE_USER}"
+true "${EITHER_EXISTS:?ERROR! At least one of ADMIN_DATABASE_USER and REPORT_DATABASE_USER must be provided.}"
