@@ -1,7 +1,8 @@
 from os import getpid
 
+from prometheus_client import start_http_server
+
 from ...utils.metadata import guess_responsible_party
-from ...utils.prometheus import prometheus_session
 from ..model.core import Handle, SourceManager
 from . import messages
 from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
@@ -59,6 +60,10 @@ def main():
 
     args = parser.parse_args()
 
+    if args.enable_metrics:
+        start_http_server(args.prometheus_port)
+
+
     class TaggerRunner(PikaPipelineRunner):
         @prometheus_summary(
                 "os2datascanner_pipeline_tagger", "Metadata extractions")
@@ -68,22 +73,18 @@ def main():
             return message_received_raw(body,
                     channel, source_manager, args.metadata, args.problems)
 
-    with prometheus_session(
-            str(getpid()),
-            args.prometheus_dir,
-            stage_type="tagger"):
-        with SourceManager(width=args.width) as source_manager:
-            with TaggerRunner(
-                    read=[args.handles],
-                    write=[args.metadata, args.problems],
-                    host=args.host, heartbeat=6000) as runner:
-                try:
-                    print("Start")
-                    notify_ready()
-                    runner.run_consumer()
-                finally:
-                    print("Stop")
-                    notify_stopping()
+    with SourceManager(width=args.width) as source_manager:
+        with TaggerRunner(
+                read=[args.handles],
+                write=[args.metadata, args.problems],
+                host=args.host, heartbeat=6000) as runner:
+            try:
+                print("Start")
+                notify_ready()
+                runner.run_consumer()
+            finally:
+                print("Stop")
+                notify_stopping()
 
 
 if __name__ == "__main__":

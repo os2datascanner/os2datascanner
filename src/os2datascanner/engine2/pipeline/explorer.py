@@ -1,6 +1,7 @@
 from os import getpid
 
-from ...utils.prometheus import prometheus_session
+from prometheus_client import start_http_server
+
 from ..model.core import (Source, SourceManager, UnknownSchemeError,
         DeserialisationError)
 from . import messages
@@ -89,6 +90,10 @@ def main():
 
     args = parser.parse_args()
 
+    if args.enable_metrics:
+        start_http_server(args.prometheus_port)
+
+
     class ExplorerRunner(PikaPipelineRunner):
         @prometheus_summary(
                 "os2datascanner_pipeline_explorer", "Sources explored")
@@ -98,23 +103,19 @@ def main():
             return message_received_raw(body, channel,
                     self.source_manager, args.conversions, args.problems)
 
-    with prometheus_session(
-            str(getpid()),
-            args.prometheus_dir,
-            stage_type="explorer"):
-        with SourceManager(width=args.width) as source_manager:
-            with ExplorerRunner(
-                    read=[args.sources],
-                    write=[args.conversions, args.problems],
-                    source_manager=source_manager,
-                    host=args.host, heartbeat=6000) as runner:
-                try:
-                    print("Start")
-                    notify_ready()
-                    runner.run_consumer()
-                finally:
-                    print("Stop")
-                    notify_stopping()
+    with SourceManager(width=args.width) as source_manager:
+        with ExplorerRunner(
+                read=[args.sources],
+                write=[args.conversions, args.problems],
+                source_manager=source_manager,
+                host=args.host, heartbeat=6000) as runner:
+            try:
+                print("Start")
+                notify_ready()
+                runner.run_consumer()
+            finally:
+                print("Stop")
+                notify_stopping()
 
 
 if __name__ == "__main__":
