@@ -80,7 +80,7 @@ class Source(TypePropertyEquality, JSONSerialisable):
         """Parses the given URL to produce a new Source."""
         try:
             scheme, _ = url.split(':', maxsplit=1)
-            if not scheme in Source.__url_handlers:
+            if scheme not in Source.__url_handlers:
                 raise UnknownSchemeError(scheme)
             return Source.__url_handlers[scheme](url)
         except ValueError:

@@ -29,6 +29,7 @@ SETTINGS_EXPORT = [
     'ENABLE_FILESCAN',
     'ENABLE_EXCHANGESCAN',
     'ENABLE_WEBSCAN',
+    'ENABLE_DROPBOXSCAN',
     'ICON_SPRITE_URL'
 ]
 
@@ -148,8 +149,8 @@ LOGIN_REDIRECT_URL = '/'
 
 # Email  settings
 # Email  settings
-DEFAULT_FROM_EMAIL = '(Magenta Bibos Info) info@magenta.dk'
-ADMIN_EMAIL = '(Magenta Bibos Admin) info@magenta.dk'
+DEFAULT_FROM_EMAIL = '(Magenta Info) info@magenta.dk'
+ADMIN_EMAIL = '(Magenta Admin) info@magenta.dk'
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

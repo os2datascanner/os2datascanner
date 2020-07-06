@@ -21,6 +21,8 @@
         {% include "components/hits--office365.html" %}
       {% elif match.matches.handle|find_parent:"web" %}
         {% include "components/hits--webpage.html" %}
+      {% elif match.matches.handle|find_parent:"dropbox" %}
+        {% include "components/hits--dropbox.html" %}
       {% endif %}
     {% endfor %}
   </tbody>
