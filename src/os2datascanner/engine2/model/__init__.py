@@ -28,4 +28,6 @@ from . import smbc # noqa
 from . import data # noqa
 from . import http # noqa
 from . import dropbox # noqa
+from . import msgraph # noqa
+
 from . import derived # noqa
