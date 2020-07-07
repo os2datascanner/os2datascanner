@@ -24,6 +24,7 @@ from .models.scannerjobs.dropboxscanner_model import DropboxScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.webscanner_model import WebScanner
+from .models.scannerjobs.msgraph_models import MSGraphMailScanner
 from .views.exchangescanner_views import ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate, \
     ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun
 from .views.filescanner_views import FileScannerCreate, FileScannerRun, FileScannerAskRun, FileScannerUpdate, \
@@ -42,6 +43,9 @@ from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
                                      WebScannerAskRun, WebScannerList,
                                      WebScannerValidate)
 from .views.views import DesignGuide
+from .views.msgraph_views import (
+        MSGraphMailList, MSGraphMailDelete, MSGraphMailCreate,
+        MSGraphMailUpdate, MSGraphMailRun, MSGraphMailAskRun)
 
 urlpatterns = [
     # App URLs
@@ -109,6 +113,31 @@ urlpatterns = [
             model=DropboxScanner),
         name='dropboxscanner_askrun'),
 
+    # OAuth-based data sources
+    url(r'^msgraph-mailscanners/$',
+            MSGraphMailList.as_view(),
+            name='msgraphmailscanner_list'),
+    url(r'^msgraph-mailscanners/add/$',
+            MSGraphMailCreate.as_view(),
+            name='msgraphmailscanner_add'),
+    url(r'^msgraph-mailscanners/(?P<pk>\d+)/$',
+            MSGraphMailUpdate.as_view(),
+            name='msgraphmailscanner_update'),
+    url(r'^msgraph-mailscanners/(?P<pk>\d+)/delete/$',
+            MSGraphMailDelete.as_view(),
+            name='msgraphmailscanner_delete'),
+    url(r'^msgraph-mailscanners/(?P<pk>\d+)/run/$',
+            MSGraphMailRun.as_view(),
+            name='msgraphmailscanner_run'),
+    url(r'^msgraph-mailscanners/(?P<pk>\d+)/askrun/$',
+            MSGraphMailAskRun.as_view(
+                    template_name='os2datascanner/scanner_askrun.html',
+                    model=MSGraphMailScanner),
+            name='msgraphmailscanner_askrun'),
+    url(r'^(msgraph-mailscanners)/(\d+)/(created|saved)/$',
+            DialogSuccess.as_view()),
+
+    # Rules
     url(r'^rules/$', RuleList.as_view(), name='rules'),
     url(r'^rules/cpr/add/$', CPRRuleCreate.as_view(), name='cprrule_add'),
     url(r'^rules/cpr/(?P<pk>\d+)/$', CPRRuleUpdate.as_view(),
@@ -191,8 +220,6 @@ urlpatterns = [
             template_name='designguide.html',
         ),
         name='designguide'),
-
-
 ]
 
 if settings.DO_USE_GROUPS:

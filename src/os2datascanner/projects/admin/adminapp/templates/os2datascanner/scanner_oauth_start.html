@@ -1,0 +1,24 @@
+{% extends 'os2datascanner/base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block body %}
+<div class="wrapper">
+  <h1 class="page-title" style="display:inline-block;">Opret nyt scannerjob</h1>
+
+  <p>
+    Dette scannerjobs datakilde ligger i skyen, og en eksterne tjeneste skal
+    tillade OS2datascanner adgang til dens indhold.
+  {% if auth_endpoint %}
+    Klik på knappen nedenfor for at blive videresendt til denne tjeneste.
+  <p>
+    <a href="{{ auth_endpoint }}" id="button-authenticate" type="button" class="button button--cta button--small btn btn-default">Fortsæt til {{ service_name }}</a>
+  <p>
+    Du bliver videresendt til oprettelsesformularen, efter tjenesten har
+    udstedt de nødvendige rettigheder.
+  {% else %}
+  <p>
+    De informationer, der peger OS2datascanner-systemet på denne tjeneste, mangler.
+  {% endif %}
+</div>
+{% endblock %}

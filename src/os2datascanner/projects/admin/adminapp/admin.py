@@ -28,6 +28,7 @@ from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
 from .models.rules.addressrule_model import AddressRule
+from .models.scannerjobs.msgraph_models import MSGraphMailScanner
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
@@ -54,10 +55,11 @@ class RegexPatternAdmin(admin.ModelAdmin):
     list_display = ('pattern_string', 'regex')
 
 
-@admin.register(FileScanner)
-@admin.register(ExchangeScanner)
-@admin.register(DropboxScanner)
 @admin.register(WebScanner)
+@admin.register(FileScanner)
+@admin.register(DropboxScanner)
+@admin.register(ExchangeScanner)
+@admin.register(MSGraphMailScanner)
 class ScannerAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'validation_status')
 

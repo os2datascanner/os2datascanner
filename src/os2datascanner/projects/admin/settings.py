@@ -10,6 +10,9 @@ import structlog
 
 from django.utils.translation import gettext_lazy as _
 
+# The URL of this site, used in links in emails and in the redirect URL for
+# OAuth 2.0 services
+SITE_URL = '*'
 
 BASE_DIR = str(pathlib.Path(__file__).resolve().parent.parent.parent.parent.absolute())
 PROJECT_DIR = os.path.dirname(BASE_DIR)
@@ -23,6 +26,15 @@ DEBUG = False
 
 SECRET_KEY = 'ld0_g)jhp3v27&od88-_v83ldb!0i^bac=jh+je!!=jbvra7@j'
 
+# The GUID of the registered Azure application corresponding to this
+# OS2datascanner installation, used when requesting Microsoft Graph access
+MSGRAPH_APP_ID = None
+
+# The client secret used to demonstrate to Microsoft Graph that this
+# OS2datascanner installation corresponds to a registered Azure application
+# (client private keys are not yet supported)
+MSGRAPH_CLIENT_SECRET = None
+
 # Add settings here to make them accessible from templates
 SETTINGS_EXPORT = [
     'DEBUG',
@@ -30,6 +42,7 @@ SETTINGS_EXPORT = [
     'ENABLE_EXCHANGESCAN',
     'ENABLE_WEBSCAN',
     'ENABLE_DROPBOXSCAN',
+    'ENABLE_MSGRAPH_MAILSCAN',
     'ICON_SPRITE_URL'
 ]
 
@@ -306,6 +319,12 @@ LOGGING = {
         },
     }
 }
+
+# Enable Dropbox scans for this installation?
+ENABLE_DROPBOXSCAN = False
+
+# Enable Microsoft Graph mail scans for this installation?
+ENABLE_MSGRAPH_MAILSCAN = False
 
 local_settings_file = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
