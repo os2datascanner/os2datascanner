@@ -42,6 +42,7 @@ SETTINGS_EXPORT = [
     'ENABLE_EXCHANGESCAN',
     'ENABLE_WEBSCAN',
     'ENABLE_DROPBOXSCAN',
+    'ENABLE_MSGRAPH_MAILSCAN',
     'ICON_SPRITE_URL'
 ]
 
@@ -318,6 +319,12 @@ LOGGING = {
         },
     }
 }
+
+# Enable Dropbox scans for this installation?
+ENABLE_DROPBOXSCAN = False
+
+# Enable Microsoft Graph mail scans for this installation?
+ENABLE_MSGRAPH_MAILSCAN = False
 
 local_settings_file = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
