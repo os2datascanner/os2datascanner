@@ -24,6 +24,8 @@ notice:
     POSTGRES_PASSWORD: os2datascanner_admin
     POSTGRES_HOST: postgres
     AMQP_HOST: rabbitmq
+    AMQP_USER: guest
+    AMQP_PWD: guest
     DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
     SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
 
@@ -55,6 +57,8 @@ tests:
     POSTGRES_PASSWORD: os2datascanner_admin
     POSTGRES_HOST: postgres
     AMQP_HOST: rabbitmq
+    AMQP_USER: guest
+    AMQP_PWD: guest
     DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
     SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
 

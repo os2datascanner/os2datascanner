@@ -49,6 +49,7 @@ services:
       target: application
     env_file:
       - dev-environment/admin/django.env
+      - dev-environment/pika.env
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
@@ -68,6 +69,7 @@ services:
       target: application
     env_file:
       - dev-environment/report/django.env
+      - dev-environment/pika.env
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
@@ -89,6 +91,7 @@ services:
       - OS2DS_MIGRATE_MANUALLY=1
     env_file:
       - dev-environment/report/django.env
+      - dev-environment/pika.env
     command: python manage.py pipeline_collector
     restart: unless-stopped
     volumes:
@@ -103,8 +106,8 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    environment:
-      - AMQP_HOST=queue
+    env_file:
+      - dev-environment/pika.env
     command: explorer
     restart: unless-stopped
     depends_on:
@@ -115,8 +118,8 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    environment:
-      - AMQP_HOST=queue
+    env_file:
+      - dev-environment/pika.env
     command: processor
     restart: unless-stopped
     depends_on:
@@ -127,8 +130,8 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    environment:
-      - AMQP_HOST=queue
+    env_file:
+      - dev-environment/pika.env
     command: matcher
     restart: unless-stopped
     depends_on:
@@ -139,8 +142,8 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    environment:
-      - AMQP_HOST=queue
+    env_file:
+      - dev-environment/pika.env
     command: tagger
     restart: unless-stopped
     depends_on:
@@ -151,8 +154,8 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    environment:
-      - AMQP_HOST=queue
+    env_file:
+      - dev-environment/pika.env
     command: exporter
     restart: unless-stopped
     depends_on:
