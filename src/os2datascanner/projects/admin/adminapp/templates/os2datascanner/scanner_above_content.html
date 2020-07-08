@@ -1,11 +1,54 @@
-<div class="tab">
+<div class="tabs">
     {% if settings.ENABLE_WEBSCAN %}
-    <button id="web" onclick="window.location.href='/webscanners/'">Webscannere</button>
+    <a id="web" class="tabs__control" href='/webscanners/'">Webscannere</a>
     {% endif %}
     {% if settings.ENABLE_FILESCAN %}
-    <button id="file" onclick="window.location.href='/filescanners/'">Filscannere</button>
+    <a id="file" class="tabs__control" href='/filescanners/'">Filscannere</a>
     {% endif %}
     {% if settings.ENABLE_EXCHANGESCAN %}
-    <button id="exchange" onclick="window.location.href='/exchangescanners/'">Exchangescannere</button>
+    <a id="exchange" class="tabs__control" href='/exchangescanners/'">Exchangescannere</a>
+    {% endif %}
+    {% if settings.ENABLE_DROPBOXSCAN %}
+    <a id="dropbox" title="Læg mærke til at Dropboxscan stadig er i test." class="tabs__control" href="/dropboxscanners/">Dropboxscannere (beta)</a>
+    {% endif %}
+    {% if settings.ENABLE_MSGRAPH_MAILSCAN %}
+    <a id="msgraph-mail" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-mailscanners/">Microsoft Graph-mailscannere (beta)</a>
     {% endif %}
 </div>
+
+<script>
+    // Menu tabs
+    var web = document.getElementById("web")
+    var file = document.getElementById("file")
+    var exchange = document.getElementById("exchange")
+
+    if (location.pathname === '/') {
+        if (web) {
+            window.location.href = "/webscanners/"
+            web.classList.add('active')
+        } else if (file) {
+            window.location.href = "/filescanners/"
+            file.classList.add('active')
+        } else if (exchange) {
+            window.location.href = "/exchangescanners/"
+            exchange.classList.add('active')
+        }
+        else if (dropbox) {
+            window.location.href = "/dropboxscanners/"
+            dropbox.classList.add('active')
+        }
+        else if (msgraph-mail) {
+            window.location.href = "/msgraph-mailscanners/"
+            msgraph-mail.classList.add('active')
+        }
+    }
+    if (location.pathname === '/webscanners/') {
+        web.classList.add('active')
+    }
+    if (location.pathname === '/filescanners/') {
+        file.classList.add("active")
+    }
+    if (location.pathname === '/exchangescanners/') {
+        exchange.classList.add("active")
+    }
+</script>

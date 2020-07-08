@@ -8,14 +8,16 @@
   <li class="active">
     {% if user.is_authenticated %}
       {% if not user.profile.is_upload_only %}
-        {% if settings.ENABLE_WEBSCAN %}
-          <a href="/webscanners/">Scannerjob</a>
+        {% if settings.ENABLE_WEBSCAN  %}
+          <a href="/">Scannerjob</a>
         {% elif settings.ENABLE_FILESCAN %}
-          <a href="/filescanners/">Scannerjob</a>
+          <a href="/">Scannerjob</a>
         {% elif settings.ENABLE_EXCHANGESCAN %}
-          <a href="/exchangescanners/">Scannerjob</a>
+          <a href="/">Scannerjob</a>
         {% elif settings.ENABLE_DROPBOXSCAN %}
-          <a href="/dropboxscanners/">Scannerjob</a>
+          <a href="/">Scannerjob</a>
+        {% elif settings.ENABLE_MSGRAPH_MAILSCAN %}
+          <a href="/">Scannerjob</a>
         {% endif %}
         {% if user.profile.is_groups_enabled %}
           {% if user.is_superuser or user.profile.is_group_admin %}
