@@ -12,7 +12,7 @@
     <a id="dropbox" title="Læg mærke til at Dropboxscan stadig er i test." class="tabs__control" href="/dropboxscanners/">Dropboxscannere (beta)</a>
     {% endif %}
     {% if settings.ENABLE_MSGRAPH_MAILSCAN %}
-    <a id="msgraph-mail" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-mailscanners/">Microsoft Graph-mailscannere (beta)</a>
+    <a id="msgraph" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-mailscanners/">Microsoft Graph-mailscannere (beta)</a>
     {% endif %}
 </div>
 
@@ -21,6 +21,8 @@
     var web = document.getElementById("web")
     var file = document.getElementById("file")
     var exchange = document.getElementById("exchange")
+    var dropbox = document.getElementById("dropbox")
+    var msgraph = document.getElementById("msgraph-mail")
 
     if (location.pathname === '/') {
         if (web) {
@@ -32,14 +34,12 @@
         } else if (exchange) {
             window.location.href = "/exchangescanners/"
             exchange.classList.add('active')
-        }
-        else if (dropbox) {
+        } else if (dropbox) {
             window.location.href = "/dropboxscanners/"
             dropbox.classList.add('active')
-        }
-        else if (msgraph-mail) {
+        } else if (msgraph) {
             window.location.href = "/msgraph-mailscanners/"
-            msgraph-mail.classList.add('active')
+            msgraph.classList.add('active')
         }
     }
     if (location.pathname === '/webscanners/') {
@@ -50,5 +50,11 @@
     }
     if (location.pathname === '/exchangescanners/') {
         exchange.classList.add("active")
+    }
+    if (location.pathname === '/dropboxscanners/') {
+        dropbox.classList.add("active")
+    }
+    if (location.pathname === '/msgraph-mailscanners/') {
+        msgraph.classList.add("active")
     }
 </script>
