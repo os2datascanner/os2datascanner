@@ -58,6 +58,7 @@ services:
     volumes:
       - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
+      - ./dev-environment/admin/.secret:/code/.secret
       - ./dev-environment/admin/dev-settings.py:/code/src/os2datascanner/projects/admin/local_settings.py
       - ./src/os2datascanner:/code/src/os2datascanner
     ports:
