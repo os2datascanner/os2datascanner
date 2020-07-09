@@ -51,6 +51,13 @@ To get a development environment to run, follow these steps:
     #. Return to the main page, go to ``Regler`` (Rules) and add one.
     #. Go to ``Scannerjob`` and add a webscan using the organization and rule
        just created for a website - e.g. ``https://www.magenta.dk``
+
+       **NB!** Please note that OS2datascanner has been built to scan an
+       organization's *own* data sources, and to do so as efficiently as
+       possible. Thus, OS2datascanner does not check for or adhere to e.g.
+       ``robots.txt`` files, and may as a consequence overload a system or
+       trigger automated safety measures; **always ensure that the site
+       administrator is okay with scanning the site!**
     #. Start the scan by clicking the play button and confirming your choice.
 
 #. Follow the engine activity in RabbitMQ (optional):
