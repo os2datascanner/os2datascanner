@@ -63,7 +63,7 @@ SAML2_AUTH = {
     },
     'ASSERTION_URL': 'https:INSERT_DOMAIN_NAME', # Custom URL to validate incoming SAML requests against
     'ENTITY_ID': 'https://INSERT_DOMAIN_NAME/saml2_auth/acs/', # Populates the Issuer element in authn request
-    'NAME_ID_FORMAT': 'FormatString', # Sets the Format property of authn NameIDPolicy element
+    'NAME_ID_FORMAT': 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified', # Sets the Format property of authn NameIDPolicy element
     'USE_JWT': False, # Set this to True if you are running a Single Page Application (SPA) with Django Rest Framework (DRF), and are using JWT authentication to authorize client users
     'FRONTEND_URL': 'https://INSERT_DOMAIN_NAME' + '#/', # Redirect URL for the client if you are using JWT auth with DRF. See explanation below
     'CERT_FILE': '',  # Public part of the service private/public key pair. Must be a PEM formatted certificate chain file.
