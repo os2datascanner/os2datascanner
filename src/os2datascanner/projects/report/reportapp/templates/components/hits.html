@@ -24,6 +24,8 @@
         {% include "components/hits--webpage.html" %}
       {% elif match.matches.handle|find_parent:"dropbox" %}
         {% include "components/hits--dropbox.html" %}
+      {% elif match.matches.handle|find_parent:"msgraph-mail-message" %}
+        {% include "components/hits--msgraph-mail.html" %}
       {% endif %}
     {% endfor %}
   </tbody>
