@@ -18,6 +18,7 @@ import os
 from django.db import models
 from django.conf import settings
 
+from os2datascanner.engine2.model.msgraph import MSGraphMailSource
 from .scanner_model import Scanner
 
 
@@ -38,4 +39,8 @@ class MSGraphMailScanner(MSGraphScanner):
         return '/msgraph-mailscanners/'
 
     def generate_sources(self):
-        yield from []
+        yield MSGraphMailSource(
+                client_id=settings.MSGRAPH_APP_ID,
+                tenant_id=self.tenant_id,
+                client_secret=settings.MSGRAPH_CLIENT_SECRET
+        )
