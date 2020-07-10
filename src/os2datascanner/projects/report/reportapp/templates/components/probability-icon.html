@@ -1,0 +1,18 @@
+{% load handle_extras %}
+
+{% if match.probability < 0.5 %}
+  <span class="flex-probability">
+    <i id="icon-donut" class="green material-icons">donut_large</i>
+    <span class="probability-text">{% widthratio match.probability 1.0 100 %}%</span>
+  </span>
+  {% elif match.probability > 0.49 and match.probability <= 0.74 %}
+  <span class="flex-probability">
+    <i id="icon-donut" class="yellow material-icons">donut_large</i>
+    <span class="probability-text">{% widthratio match.probability 1.0 100 %}%</span>
+  </span>
+  {% elif match.probability > 0.74 %}
+  <span class="flex-probability">
+    <i id="icon-donut" class="red material-icons">donut_large</i>
+    <span class="probability-text">{% widthratio match.probability 1.0 100 %}%</span>
+  </span>
+{% endif %}
