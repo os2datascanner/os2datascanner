@@ -9,6 +9,10 @@ services:
       - ./docker/postgres-initdb.d/10-test-for-valid-env-variables.sh:/docker-entrypoint-initdb.d/10-test-for-valid-env-variables.sh
       - ./docker/postgres-initdb.d/20-create-admin-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-admin-db-and-user.sh
       - ./docker/postgres-initdb.d/40-create-report-db-and-user.sh:/docker-entrypoint-initdb.d/40-create-report-db-and-user.sh
+      # The following file adds the CREATEDB privilege to the db users to enable it
+      # to run the django tests.
+      # THIS SHOULD NOT BE USED IN PRODUCTION!!!
+      - ./dev-environment/postgres-initdb.d/50-add-createdb-permissions.sh:/docker-entrypoint-initdb.d/50-add-createdb-permissions.sh
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come
