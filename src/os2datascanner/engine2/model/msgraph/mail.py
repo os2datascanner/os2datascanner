@@ -2,9 +2,9 @@ from io import BytesIO
 import requests
 from contextlib import contextmanager
 
-from ..conversions.utilities.results import SingleResult
-from .core import Handle, Source, Resource, FileResource
-from .derived.derived import DerivedSource
+from ...conversions.utilities.results import SingleResult
+from ..core import Handle, Source, Resource, FileResource
+from ..derived.derived import DerivedSource
 
 
 def _make_token_endpoint(tenant_id):
