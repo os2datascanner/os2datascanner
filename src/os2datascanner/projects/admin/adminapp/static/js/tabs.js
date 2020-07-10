@@ -19,21 +19,3 @@ function openTab(evt, typeName) {
   document.getElementById(typeName).style.display = "block";
   evt.currentTarget.className += " active";
 }
-
-// Menu tabs
-var web = document.getElementById('web')
-var file = document.getElementById('file')
-var exchange = document.getElementById('exchange')
-
-if (location.pathname === '/') {
-  web.classList.add('active')
-}
-if (location.pathname === '/webscanners/') {
-  web.classList.add('active')
-}
-if (location.pathname === '/filescanners/') {
-  file.classList.add('active')
-}
-if (location.pathname === '/exchangescanners/') {
-  exchange.classList.add('active')
-}
