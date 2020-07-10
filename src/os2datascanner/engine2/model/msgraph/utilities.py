@@ -1,4 +1,5 @@
 import requests
+from contextlib import contextmanager
 
 from ..core import Source
 
@@ -62,3 +63,14 @@ class MSGraphSource(Source):
             "tenant_id": self._tenant_id,
             "client_secret": self._client_secret
         })
+
+
+@contextmanager
+def ignore_responses(*status_codes):
+    try:
+        yield
+    except requests.exceptions.HTTPError as ex:
+        if ex.response.status_code in status_codes:
+            pass
+        else:
+            raise

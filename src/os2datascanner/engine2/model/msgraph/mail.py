@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from ...conversions.utilities.results import SingleResult
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
-from .utilities import MSGraphSource
+from .utilities import MSGraphSource, ignore_responses
 
 
 class MSGraphMailSource(MSGraphSource):
@@ -13,7 +13,7 @@ class MSGraphMailSource(MSGraphSource):
     def handles(self, sm):
         for user in self._list_users(sm)["value"]:
             pn = user["userPrincipalName"]
-            try:
+            with ignore_responses(404):
                 any_mails = sm.open(self).get(
                         "users/{0}/messages?$select=id&$top=1".format(pn))
                 if not any_mails["value"]:
@@ -21,12 +21,6 @@ class MSGraphMailSource(MSGraphSource):
                     continue
                 else:
                     yield MSGraphMailAccountHandle(self, pn)
-            except requests.exceptions.HTTPError as ex:
-                if ex.response.status_code == 404:
-                    # This user doesn't have a mail account
-                    continue
-                else:
-                    raise
 
     @staticmethod
     @Source.json_handler(type_label)
