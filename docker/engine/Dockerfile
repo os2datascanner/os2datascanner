@@ -64,7 +64,7 @@ COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
 COPY VERSION .
 COPY LICENSE .
-COPY README .
+COPY README.rst .
 COPY NEWS.rst .
 
 COPY docker/engine/docker-settings.toml /code/docker/docker-settings.toml

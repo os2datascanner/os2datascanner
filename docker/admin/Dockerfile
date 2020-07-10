@@ -99,7 +99,7 @@ COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
 COPY VERSION .
 COPY LICENSE .
-COPY README .
+COPY README.rst .
 COPY NEWS.rst .
 # Copy necessary files from engine module TODO: minimize this
 COPY src/os2datascanner/engine2 ./engine2
