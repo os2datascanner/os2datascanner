@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from ...conversions.utilities.results import SingleResult
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
+from ..utilities import NamedTemporaryResource
 from .utilities import MSGraphSource, ignore_responses
 
 
@@ -48,6 +49,9 @@ class MSGraphFilesSource(MSGraphSource):
     @Source.json_handler(type_label)
     def from_json_object(obj):
         return MSGraphFilesSource(
+                client_id=obj["client_id"],
+                tenant_id=obj["tenant_id"],
+                client_secret=obj["client_secret"],
                 site_drives=obj["site_drives"],
                 user_drives=obj["user_drives"])
 
@@ -97,3 +101,81 @@ class MSGraphDriveHandle(Handle):
         return MSGraphDriveHandle(
                 Source.from_json_object(obj["source"]), obj["path"],
                 obj["folder_name"], obj["owner_name"])
+
+
+class MSGraphDriveSource(DerivedSource):
+    type_label = "msgraph-drive"
+
+    def _generate_state(self, sm):
+        yield sm.open(self.handle.source)
+
+    def handles(self, sm):
+
+        def _explore_folder(components, folder):
+            for obj in folder:
+                name = obj["name"]
+                if "file" in obj:
+                    yield MSGraphFileHandle(
+                            self, "/".join([] + components + [name]))
+                elif "folder" in obj:
+                    subfolder = sm.open(self).get(
+                            "/drives/{0}/items/{1}/children".format(
+                                    self.handle.relative_path,
+                                    obj["id"]))
+                    yield from _explore_folder(
+                            components + [name], subfolder["value"])
+        root = sm.open(self).get(
+                "drives/{0}/root/children".format(
+                        self.handle.relative_path))["value"]
+        yield from _explore_folder([], root)
+
+
+class MSGraphFileResource(FileResource):
+    def __init__(self, sm, handle):
+        super().__init__(sm, handle)
+        self._metadata = None
+
+    def make_object_path(self):
+        return "drives/{0}/root:/{1}".format(
+                self.handle.source.handle.relative_path,
+                self.handle.relative_path)
+
+    def get_file_metadata(self):
+        if not self._metadata:
+            self._metadata = self._get_cookie().get(self.make_object_path())
+        return self._metadata
+
+    def get_last_modified(self):
+        return super().get_last_modified()
+
+    def get_size(self):
+        return SingleResult(None, 'size', 1024)
+
+    @contextmanager
+    def make_path(self):
+        with NamedTemporaryResource(self.handle.name) as ntr:
+            with ntr.open("wb") as res:
+                with self.make_stream() as s:
+                    res.write(s.read())
+            yield ntr.get_path()
+
+    @contextmanager
+    def make_stream(self):
+        response = self._get_cookie().get(
+                self.make_object_path() + ":/content", json=False)
+        with BytesIO(response) as fp:
+            yield fp
+
+
+@Handle.stock_json_handler("msgraph-drive-file")
+class MSGraphFileHandle(Handle):
+    type_label = "msgraph-drive-file"
+    resource_type = MSGraphFileResource
+
+    @property
+    def presentation(self):
+        return "{0} (in {1})".format(
+                self.relative_path, self.source.handle.presentation)
+
+    def censor(self):
+        return MSGraphFileHandle(self.source.censor(), self.relative_path)
