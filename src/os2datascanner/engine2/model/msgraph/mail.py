@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from ...conversions.utilities.results import SingleResult
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
+from ..utilities import NamedTemporaryResource
 from .utilities import MSGraphSource, ignore_responses
 
 
