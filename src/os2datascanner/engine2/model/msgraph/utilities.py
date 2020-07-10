@@ -55,3 +55,10 @@ class MSGraphSource(Source):
                     headers={"authorization": "Bearer {0}".format(self._token)})
             response.raise_for_status()
             return response
+
+    def to_json_object(self):
+        return dict(**super().to_json_object(), **{
+            "client_id": self._client_id,
+            "tenant_id": self._tenant_id,
+            "client_secret": self._client_secret
+        })
