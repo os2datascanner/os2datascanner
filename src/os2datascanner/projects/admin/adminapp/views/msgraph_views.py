@@ -48,6 +48,8 @@ class _MSGraphMailPermissionRequest(TemplateView, LoginRequiredMixin):
         return dict(**super().get_context_data(**kwargs), **{
             "service_name": "Microsoft Online",
             "auth_endpoint": _MSGraphMailPermissionRequest.make_endpoint_url(),
+            "error": self.request.GET.get("error"),
+            "error_description": self.request.GET.get("error_description")
         })
 
 
