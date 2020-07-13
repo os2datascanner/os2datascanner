@@ -1,9 +1,17 @@
 stages:
   - lint
+  - build
   - notices
   - test
   - check
   - build
+
+
+variables:
+  REPORT_IMAGE: ${CI_REGISTRY_IMAGE}/report:${CI_COMMIT_SHA}
+  ADMIN_IMAGE: ${CI_REGISTRY_IMAGE}/admin:${CI_COMMIT_SHA}
+  ENGINE_IMAGE: ${CI_REGISTRY_IMAGE}/engine:${CI_COMMIT_SHA}
+
 
 # Lint stage
 #############
@@ -51,13 +59,66 @@ Lint shell scripts:
     - git ls-files --exclude='*.sh' --ignored | xargs shellcheck
 
 
+# Build stage
+#############
+
+.build-default: &build-default
+  stage: build
+  needs: []
+  services: []
+  image:
+    # We use kaniko v0.16.0 as both v0.17.0, v0.17.1, v0.18.0 and v0.19.0
+    # contains fatal bugs.
+    name: gcr.io/kaniko-project/executor:debug-v0.16.0
+    entrypoint: [""]
+  tags:
+    - docker
+  allow_failure: false
+
+Build Report Application:
+  <<: *build-default
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --cache
+      --context=$CI_PROJECT_DIR
+      --dockerfile=$CI_PROJECT_DIR/docker/report/Dockerfile
+      --destination=${REPORT_IMAGE}
+
+Build Admin Application:
+  <<: *build-default
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --cache
+      --context=$CI_PROJECT_DIR
+      --dockerfile=$CI_PROJECT_DIR/docker/admin/Dockerfile
+      --destination=${ADMIN_IMAGE}
+
+Build Engine:
+  <<: *build-default
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --cache
+      --context=$CI_PROJECT_DIR
+      --dockerfile=$CI_PROJECT_DIR/docker/engine/Dockerfile
+      --destination=${ENGINE_IMAGE}
+
+Build documentation:
+  <<: *build-default
+  image: keimlink/sphinx-doc:latex
+  script:
+    - make -C doc PAPER=a4 html latexpdf
+    - mv doc/_build .
+  artifacts:
+    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
+    paths:
+      - _build
 
 
 # OLD CI
 #########
-
-variables:
-  XDG_CACHE_HOME: "$CI_PROJECT_DIR/.cache"
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
@@ -139,15 +200,3 @@ tests:
       - build/coverage.xml
     reports:
       junit: build/test-results.xml
-
-docs:
-  stage: build
-  image: keimlink/sphinx-doc:latex
-  script:
-    - make -C doc PAPER=a4 html latexpdf
-    - mv doc/_build .
-
-  artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-    paths:
-      - _build
