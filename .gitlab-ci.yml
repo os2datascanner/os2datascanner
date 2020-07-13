@@ -1,8 +1,60 @@
 stages:
+  - lint
   - notices
   - test
   - check
   - build
+
+# Lint stage
+#############
+
+.lint-default: &lint-default
+  stage: lint
+  needs: []
+  services: []
+  tags:
+    - docker
+  allow_failure: false
+
+Lint Python:
+  <<: *lint-default
+  image: python:3.6
+  before_script:
+    - pip install flake8 flake8-gl-codeclimate black
+  script:
+    - black --check src
+    - flake8 --version
+    - flake8 --format gl-codeclimate --tee --output-file build/code-quality.json src/
+  artifacts:
+    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
+    paths:
+      - build/code-quality.json
+    reports:
+      codequality: build/code-quality.json
+
+Lint Dockerfiles:
+  <<: *lint-default
+  image: hadolint/hadolint:latest-debian
+  before_script:
+    - apt-get -y update
+    - apt-get -y install --no-install-recommends git
+  script:
+    - git ls-files --exclude='Dockerfile*' --ignored | xargs --max-lines=1 hadolint
+
+Lint shell scripts:
+  <<: *lint-default
+  image: koalaman/shellcheck-alpine:latest
+  before_script:
+    - apk update
+    - apk add git
+  script:
+    - git ls-files --exclude='*.sh' --ignored | xargs shellcheck
+
+
+
+
+# OLD CI
+#########
 
 variables:
   XDG_CACHE_HOME: "$CI_PROJECT_DIR/.cache"
@@ -87,28 +139,6 @@ tests:
       - build/coverage.xml
     reports:
       junit: build/test-results.xml
-
-flake8:
-  stage: check
-  image: python:latest
-  allow_failure: true
-  script:
-    - pip install flake8 flake8-gl-codeclimate
-    - flake8 --exit-zero --format gl-codeclimate --tee --output-file build/code-quality.json src/
-  artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-    paths:
-      - build/code-quality.json
-    reports:
-      codequality: build/code-quality.json
-
-black:
-  stage: check
-  image: python:latest
-  allow_failure: true
-  script:
-    - pip install black
-    - black --check src
 
 docs:
   stage: build
