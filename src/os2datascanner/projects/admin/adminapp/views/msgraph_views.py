@@ -10,7 +10,18 @@ from .scanner_views import (ScannerRun, ScannerList,
         ScannerAskRun, ScannerCreate, ScannerDelete, ScannerUpdate)
 
 
-auth_endpoint = "https://login.microsoftonline.com/common/adminconsent"
+def make_consent_url(label):
+    if settings.MSGRAPH_APP_ID is not None:
+        redirect_uri = settings.SITE_URL + "msgraph-{0}/add/".format(label)
+        return ("https://login.microsoftonline.com/common/adminconsent?"
+                + urlencode({
+                    "client_id": settings.MSGRAPH_APP_ID,
+                    "scope": "https://graph.microsoft.com/.default",
+                    "response_type": "code",
+                    "redirect_uri": redirect_uri
+                }))
+    else:
+        return None
 
 
 class MSGraphMailList(ScannerList):
@@ -32,22 +43,10 @@ class MSGraphMailCreate(View):
 class _MSGraphMailPermissionRequest(TemplateView, LoginRequiredMixin):
     template_name = "os2datascanner/scanner_oauth_start.html"
 
-    @staticmethod
-    def make_endpoint_url():
-        if settings.MSGRAPH_APP_ID is not None:
-            return auth_endpoint + "?" + urlencode({
-                    "client_id": settings.MSGRAPH_APP_ID,
-                    "scope": "https://graph.microsoft.com/.default",
-                    "response_type": "code",
-                    "redirect_uri": settings.SITE_URL +
-                            "msgraph-mailscanners/add/"})
-        else:
-            return None
-
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
             "service_name": "Microsoft Online",
-            "auth_endpoint": _MSGraphMailPermissionRequest.make_endpoint_url(),
+            "auth_endpoint": make_consent_url("mailscanners"),
             "error": self.request.GET.get("error"),
             "error_description": self.request.GET.get("error_description")
         })
