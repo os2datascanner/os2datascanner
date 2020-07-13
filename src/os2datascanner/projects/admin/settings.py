@@ -11,7 +11,7 @@ import structlog
 from django.utils.translation import gettext_lazy as _
 
 # The URL of this site, used in links in emails and in the redirect URL for
-# OAuth 2.0 services
+# OAuth 2.0 services. (This value should end with a forward slash.)
 SITE_URL = '*'
 
 BASE_DIR = str(pathlib.Path(__file__).resolve().parent.parent.parent.parent.absolute())

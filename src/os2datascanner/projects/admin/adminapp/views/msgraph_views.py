@@ -10,7 +10,7 @@ from .scanner_views import (ScannerRun, ScannerList,
         ScannerAskRun, ScannerCreate, ScannerDelete, ScannerUpdate)
 
 
-auth_endpoint = "https://login.microsoftonline.com/common/adminconsent?client_id={client_id}&scope=https://graph.microsoft.com/.default&response_type=code"
+auth_endpoint = "https://login.microsoftonline.com/common/adminconsent"
 
 
 class MSGraphMailList(ScannerList):
@@ -35,7 +35,12 @@ class _MSGraphMailPermissionRequest(TemplateView, LoginRequiredMixin):
     @staticmethod
     def make_endpoint_url():
         if settings.MSGRAPH_APP_ID is not None:
-            return auth_endpoint.format(client_id=settings.MSGRAPH_APP_ID)
+            return auth_endpoint + "?" + urlencode({
+                    "client_id": settings.MSGRAPH_APP_ID,
+                    "scope": "https://graph.microsoft.com/.default",
+                    "response_type": "code",
+                    "redirect_uri": settings.SITE_URL +
+                            "msgraph-mailscanners/add/"})
         else:
             return None
 
