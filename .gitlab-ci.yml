@@ -1,10 +1,28 @@
+################################################################################
+# Changes to this file requires approval from Labs. Please add a person from   #
+# Labs as required approval to your MR if you have any changes.                #
+################################################################################
+
+# For the release steps to work, the following envionment variables have to set
+# in the Gitlab UI:
+# RELEASE_REGISTRY_USER
+# RELEASE_REGISTRY_PASSWORD
+
+
 stages:
   - lint
   - build
   - test
+  - release
 
 
 variables:
+  # Project variables
+  RELEASE_REGISTRY: docker.io
+  RELEASE_REPORT_IMAGE: index.docker.io/magentaaps/os2datascanner-report
+  RELEASE_ADMIN_IMAGE: index.docker.io/magentaaps/os2datascanner-admin
+  RELEASE_ENGINE_IMAGE: index.docker.io/magentaaps/os2datascanner-engine
+
   REPORT_IMAGE: ${CI_REGISTRY_IMAGE}/report:${CI_COMMIT_SHA}
   ADMIN_IMAGE: ${CI_REGISTRY_IMAGE}/admin:${CI_COMMIT_SHA}
   ENGINE_IMAGE: ${CI_REGISTRY_IMAGE}/engine:${CI_COMMIT_SHA}
@@ -164,3 +182,92 @@ Run notice scripts:
   script:
     - python -m unittest discover -s src/ -p notice*.py
   allow_failure: true
+
+
+# Release stage
+###############
+
+.release-default: &release-default
+  stage: release
+  needs:
+    - Lint Dockerfiles
+    - Lint Python
+    - Build Admin Application
+    - Build Report Application
+    - Build Engine
+    - Build documentation
+    - Unit-test
+  image: alpine
+  variables:
+    GIT_STRATEGY: none # We do not need the source code
+  tags:
+    - docker
+  before_script:
+    - apk add skopeo
+
+# Rolling rc release:
+.release-rc: &release-rc
+  <<: *release-default
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "development"
+  script:
+    - skopeo copy
+      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
+      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
+      "docker://${IMAGE_FROM}"
+      "docker://${IMAGE_TO}:dev"
+
+Release Report Application Candidate:
+  <<: *release-rc
+  variables:
+    IMAGE_FROM: ${REPORT_IMAGE}
+    IMAGE_TO: ${RELEASE_REPORT_IMAGE}
+
+Release Admin Application Candidate:
+  <<: *release-rc
+  variables:
+    IMAGE_FROM: ${ADMIN_IMAGE}
+    IMAGE_TO: ${RELEASE_ADMIN_IMAGE}
+
+Release Engine Candidate:
+  <<: *release-rc
+  variables:
+    IMAGE_FROM: ${ENGINE_IMAGE}
+    IMAGE_TO: ${RELEASE_ENGINE_IMAGE}
+
+
+# Versioned release:
+.release: &release
+  <<: *release-default
+  rules:
+      # Matches <version core> from SemVer 2.0.0 BNF grammar. Ex. 2.3.4, but not 2.3.4-rc
+      - if: $CI_COMMIT_TAG =~ /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/
+  script:
+    - skopeo copy
+      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
+      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
+      "docker://${IMAGE_FROM}"
+      "docker://${IMAGE_TO}:${CI_COMMIT_TAG}"
+    - skopeo copy
+      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
+      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
+      "docker://${IMAGE_FROM}"
+      "docker://${IMAGE_TO}:latest"
+
+Release Report Application:
+  <<: *release
+  variables:
+    IMAGE_FROM: ${REPORT_IMAGE}
+    IMAGE_TO: ${RELEASE_REPORT_IMAGE}
+
+Release Admin Application:
+  <<: *release
+  variables:
+    IMAGE_FROM: ${ADMIN_IMAGE}
+    IMAGE_TO: ${RELEASE_ADMIN_IMAGE}
+
+Release Engine:
+  <<: *release
+  variables:
+    IMAGE_FROM: ${ENGINE_IMAGE}
+    IMAGE_TO: ${RELEASE_ENGINE_IMAGE}
