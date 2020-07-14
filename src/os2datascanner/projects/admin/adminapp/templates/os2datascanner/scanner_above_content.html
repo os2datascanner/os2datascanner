@@ -12,7 +12,10 @@
     <a id="dropbox" title="Læg mærke til at Dropboxscan stadig er i test." class="tabs__control" href="/dropboxscanners/">Dropboxscannere (beta)</a>
     {% endif %}
     {% if settings.ENABLE_MSGRAPH_MAILSCAN %}
-    <a id="msgraph" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-mailscanners/">Microsoft Graph-mailscannere (beta)</a>
+    <a id="msgraph-mail" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-mailscanners/">Microsoft Graph-mailscannere (beta)</a>
+    {% endif %}
+    {% if settings.ENABLE_MSGRAPH_FILESCAN %}
+    <a id="msgraph-file" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-filescanners/">Microsoft Graph-filscannere (beta)</a>
     {% endif %}
 </div>
 
@@ -22,7 +25,8 @@
     var file = document.getElementById("file")
     var exchange = document.getElementById("exchange")
     var dropbox = document.getElementById("dropbox")
-    var msgraph = document.getElementById("msgraph")
+    var msgraph_mail = document.getElementById("msgraph-mail")
+    var msgraph_file = document.getElementById("msgraph-file")
 
     if (location.pathname === '/') {
         if (web) {
@@ -37,9 +41,12 @@
         } else if (dropbox) {
             window.location.href = "/dropboxscanners/"
             dropbox.classList.add('active')
-        } else if (msgraph) {
+        } else if (msgraph_mail) {
             window.location.href = "/msgraph-mailscanners/"
-            msgraph.classList.add('active')
+            msgraph_mail.classList.add('active')
+        } else if (msgraph_file) {
+            window.location.href = "/msgraph-filescanners/"
+            msgraph_file.classList.add('active')
         }
     }
     if (location.pathname === '/webscanners/') {
@@ -55,6 +62,9 @@
         dropbox.classList.add("active")
     }
     if (location.pathname === '/msgraph-mailscanners/') {
-        msgraph.classList.add("active")
+        msgraph_mail.classList.add("active")
+    }
+    if (location.pathname === '/msgraph-filescanners/') {
+        msgraph_file.classList.add("active")
     }
 </script>

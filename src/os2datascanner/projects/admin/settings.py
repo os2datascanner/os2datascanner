@@ -43,6 +43,7 @@ SETTINGS_EXPORT = [
     'ENABLE_WEBSCAN',
     'ENABLE_DROPBOXSCAN',
     'ENABLE_MSGRAPH_MAILSCAN',
+    'ENABLE_MSGRAPH_FILESCAN',
     'ICON_SPRITE_URL'
 ]
 
@@ -325,6 +326,9 @@ ENABLE_DROPBOXSCAN = False
 
 # Enable Microsoft Graph mail scans for this installation?
 ENABLE_MSGRAPH_MAILSCAN = False
+
+# Enable Microsoft Graph file scans for this installation?
+ENABLE_MSGRAPH_FILESCAN = False
 
 local_settings_file = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
