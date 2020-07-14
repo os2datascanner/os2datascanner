@@ -1,10 +1,7 @@
 stages:
   - lint
   - build
-  - notices
   - test
-  - check
-  - build
 
 
 variables:
@@ -60,7 +57,7 @@ Lint shell scripts:
 
 
 # Build stage
-#############
+##############
 
 .build-default: &build-default
   stage: build
@@ -117,51 +114,22 @@ Build documentation:
       - _build
 
 
-# OLD CI
-#########
+# Test stage
+#############
 
-cache:
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - .cache/
-
-notice:
-  stage: notices
-  image: python:3.6
-  services:
-    - postgres:alpine
-    - rabbitmq:alpine
-  variables:
-    POSTGRES_DB: os2datascanner_admin
-    POSTGRES_USER: os2datascanner_admin
-    POSTGRES_PASSWORD: os2datascanner_admin
-    POSTGRES_HOST: postgres
-    AMQP_HOST: rabbitmq
-    AMQP_USER: guest
-    AMQP_PWD: guest
-    DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
-    SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
-
-  script:
-    - apt-get update -qq
-    - "apt-get install -qq $(cut -d \\# -f 1 requirements/sys-requirements/sys-requirements-admin.txt requirements/sys-requirements/sys-requirements-common.txt requirements/sys-requirements/sys-requirements-django.txt requirements/sys-requirements/sys-requirements-engine.txt)"
-    - pip install -e . -r requirements/python-requirements/requirements-test.txt
-
-    - python -m os2datascanner.projects.admin.manage makemigrations --check --dry-run
-
-    - python -m unittest discover -s src/ -p notice*.py
-
-  allow_failure: true
-
-tests:
+.test-default: &test-default
   stage: test
+  tags:
+    - docker
+    - network-per-build
   services:
-    - postgres:alpine
-    - rabbitmq:alpine
+    - postgres:12
+    - rabbitmq:3-alpine
     - name: dperson/samba:amd64
       alias: samba
       # XXX: this should be replaced with a fork under our control (see #37182)
-  image: python:3.6
+  image:
+    name: ${ADMIN_IMAGE}
   variables:
     USER: os2;12345_rosebud_password_admin
     SHARE: general;${CI_PROJECT_DIR}/src/os2datascanner/tests/data/engine2;no;yes
@@ -174,29 +142,31 @@ tests:
     AMQP_PWD: guest
     DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
     SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
+    COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
+  allow_failure: false
 
-  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
-
+Unit-test:
+  <<: *test-default
+  needs:
+    - Build Admin Application
   script:
-    - apt-get update -qq
-    - "apt-get install -qq $(cut -d \\# -f 1 requirements/sys-requirements/sys-requirements-admin.txt requirements/sys-requirements/sys-requirements-common.txt requirements/sys-requirements/sys-requirements-django.txt requirements/sys-requirements/sys-requirements-engine.txt)"
-    - pip install -e . -r requirements/python-requirements/requirements-test.txt
-
-    - python -m os2datascanner.projects.admin.manage makemigrations --check --dry-run
-
-    - coverage erase
-    - coverage run -m django test os2datascanner.tests
-
+    - coverage run --source=os2datascanner.engine2,os2datascanner.projects,os2datascanner.utils,os2datascanner.tests -m django test os2datascanner.tests
   after_script:
-    - coverage html
-    - coverage xml
+    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
+    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
     - coverage report
-
+  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
   artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
+    when: always
     paths:
-      - htmlcov
-      - build/test-results.xml
-      - build/coverage.xml
+      - $CI_PROJECT_DIR/coverage-html
     reports:
-      junit: build/test-results.xml
+      junit: $CI_PROJECT_DIR/junit.xml
+
+Run notice scripts:
+  <<: *test-default
+  needs:
+    - Build Engine
+  script:
+    - python -m unittest discover -s src/ -p notice*.py
+  allow_failure: true
