@@ -25,9 +25,8 @@ Lint Python:
   <<: *lint-default
   image: python:3.6
   before_script:
-    - pip install flake8 flake8-gl-codeclimate black
+    - pip install flake8 flake8-gl-codeclimate
   script:
-    - black --check src
     - flake8 --version
     - flake8 --format gl-codeclimate --tee --output-file build/code-quality.json src/
   artifacts:
