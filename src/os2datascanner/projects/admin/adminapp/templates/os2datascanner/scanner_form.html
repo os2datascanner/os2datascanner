@@ -381,6 +381,52 @@
       </div>
       {% endif %}
 
+      {% if form.scan_site_drives %}
+      <div id="{{ form.scan_site_drives.auto_id }}_container" class="form__group{% if form.scan_site_drives.errors %} has-error{% endif %}">
+        <div class="ds-checkbox">
+          <input
+            type="checkbox"
+            class="checkbox"
+            id="id_{{ form.scan_site_drives.name }}"
+            name="{{ form.scan_site_drives.name }}"
+            value="{{ form.scan_site_drives.name }}"
+            {% if form.scan_site_drives.value %}
+            checked="checked"
+            {% endif %} />
+          <label class="control-label" for="id_{{ form.scan_site_drives.name }}" tabindex="0">{{ form.scan_site_drives.label }}</label>
+        </div>
+
+        {% if form.scan_site_drives.help_text %}
+        <span class="form__help-text">{{ form.scan_site_drives.help_text }}</span>
+        {% endif %}
+
+        {% if form.scan_site_drives.errors %}{{ form.scan_site_drives.errors }}{% endif %}
+      </div>
+      {% endif %}
+
+      {% if form.scan_user_drives %}
+      <div id="{{ form.scan_user_drives.auto_id }}_container" class="form__group{% if form.scan_user_drives.errors %} has-error{% endif %}">
+        <div class="ds-checkbox">
+          <input
+            type="checkbox"
+            class="checkbox"
+            id="id_{{ form.scan_user_drives.name }}"
+            name="{{ form.scan_user_drives.name }}"
+            value="{{ form.scan_user_drives.name }}"
+            {% if form.scan_user_drives.value %}
+            checked="checked"
+            {% endif %} />
+          <label class="control-label" for="id_{{ form.scan_user_drives.name }}" tabindex="0">{{ form.scan_user_drives.label }}</label>
+        </div>
+
+        {% if form.scan_user_drives.help_text %}
+        <span class="form__help-text">{{ form.scan_user_drives.help_text }}</span>
+        {% endif %}
+
+        {% if form.scan_user_drives.errors %}{{ form.scan_user_drives.errors }}{% endif %}
+      </div>
+      {% endif %}
+
       {% if form.download_sitemap %}
       <div id="{{ form.download_sitemap.auto_id }}_container" class="form__group{% if form.download_sitemap.errors %} has-error{% endif %}">
         <div class="ds-checkbox">
