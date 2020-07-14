@@ -136,36 +136,6 @@
       </div>
       {% endif %}
 
-      {% if form.tenant_id %}
-      <div id="{{ form.tenant_id.auto_id }}_container" class="form__group{% if form.tenant_id.errors %} has-error{% endif %}">
-        <label for="id_tenant_presentation">{{ form.tenant_id.label }}</label>
-        <span class="form-control" id="id_tenant_presentation"><strong>
-          {% if form.tenant_id.value %}
-          {{ form.tenant_id.value }}
-          {% else %}
-          {{ tenant_id }}
-          {% endif %}
-        </strong></span>
-        <input
-            type="hidden"
-            class="form-control"
-            name="{{ form.tenant_id.name }}"
-            id="id_{{ form.tenant_id.name }}"
-            {% if form.tenant_id.value %}
-            value="{{ form.tenant_id.value }}"
-            {% else %}
-            value="{{ tenant_id }}"
-            {% endif %}>
-        {% if form.tenant_id.help_text %}
-        <span class="form__help-text">{{ form.tenant_id.help_text }}</span>
-        {% endif %}
-
-        {% if form.tenant_id.errors %}
-        {{ form.tenant_id.errors }}
-        {% endif %}
-      </div>
-      {% endif %}
-
       {% if form.alias %}
       <div id="{{ form.alias.auto_id }}_container" class="form__group{% if form.alias.errors %} has-error{% endif %}">
         <label class="control-label" for="id_{{ form.alias.name }}">Drevbogstav</label>
@@ -284,6 +254,36 @@
                 {% if form.token.errors %}{{ form.token.errors }}{% endif %}
             </div>
         {% endif %}
+
+      {% if form.tenant_id %}
+      <div id="{{ form.tenant_id.auto_id }}_container" class="form__group{% if form.tenant_id.errors %} has-error{% endif %}">
+        <label for="id_tenant_presentation">{{ form.tenant_id.label }}</label>
+        <span class="form-control" id="id_tenant_presentation"><strong>
+          {% if form.tenant_id.value %}
+          {{ form.tenant_id.value }}
+          {% else %}
+          {{ tenant_id }}
+          {% endif %}
+        </strong></span>
+        <input
+            type="hidden"
+            class="form-control"
+            name="{{ form.tenant_id.name }}"
+            id="id_{{ form.tenant_id.name }}"
+            {% if form.tenant_id.value %}
+            value="{{ form.tenant_id.value }}"
+            {% else %}
+            value="{{ tenant_id }}"
+            {% endif %}>
+        {% if form.tenant_id.help_text %}
+        <span class="form__help-text">{{ form.tenant_id.help_text }}</span>
+        {% endif %}
+
+        {% if form.tenant_id.errors %}
+        {{ form.tenant_id.errors }}
+        {% endif %}
+      </div>
+      {% endif %}
 
       {% if form.username %}
       <div id="{{ form.username.auto_id }}_container" class="form__group{% if form.username.errors %} has-error{% endif %}">
