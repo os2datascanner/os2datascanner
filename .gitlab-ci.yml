@@ -47,6 +47,7 @@ Lint shell scripts:
     - apk add git
   script:
     - git ls-files --exclude='*.sh' --ignored | xargs shellcheck
+  allow_failure: true
 
 
 # Build stage
