@@ -276,6 +276,8 @@ LOGGING = {
     }
 }
 
+SAML2_ENABLED = False
+
 local_settings_file = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     'local_settings.py'
