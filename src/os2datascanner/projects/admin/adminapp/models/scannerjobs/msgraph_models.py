@@ -18,7 +18,8 @@ import os
 from django.db import models
 from django.conf import settings
 
-from os2datascanner.engine2.model.msgraph import MSGraphMailSource
+from os2datascanner.engine2.model.msgraph.mail import MSGraphMailSource
+from os2datascanner.engine2.model.msgraph.files import MSGraphFilesSource
 from .scanner_model import Scanner
 
 
@@ -43,4 +44,27 @@ class MSGraphMailScanner(MSGraphScanner):
                 client_id=settings.MSGRAPH_APP_ID,
                 tenant_id=self.tenant_id,
                 client_secret=settings.MSGRAPH_CLIENT_SECRET
+        )
+
+
+class MSGraphFileScanner(MSGraphScanner):
+    scan_site_drives = models.BooleanField(
+            default=True, verbose_name='Scan alle SharePoint-mapper')
+    scan_user_drives = models.BooleanField(
+            default=True, verbose_name='Scan alle OneDrive-drev')
+
+    def get_type(self):
+        return 'msgraph-file'
+
+    def get_absolute_url(self):
+        """Get the absolute URL for scanners."""
+        return '/msgraph-filescanners/'
+
+    def generate_sources(self):
+        yield MSGraphFilesSource(
+                client_id=settings.MSGRAPH_APP_ID,
+                tenant_id=self.tenant_id,
+                client_secret=settings.MSGRAPH_CLIENT_SECRET,
+                site_drives=self.scan_site_drives,
+                user_drives=self.scan_user_drives
         )

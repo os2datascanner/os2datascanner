@@ -1,64 +1,11 @@
 from io import BytesIO
-import requests
 from contextlib import contextmanager
 
-from ..conversions.utilities.results import SingleResult
-from .core import Handle, Source, Resource, FileResource
-from .derived.derived import DerivedSource
-
-
-def _make_token_endpoint(tenant_id):
-    return "https://login.microsoftonline.com/{0}/oauth2/v2.0/token".format(
-            tenant_id)
-
-
-class MSGraphSource(Source):
-    def __init__(self, client_id, tenant_id, client_secret):
-        super().__init__()
-        self._client_id = client_id
-        self._tenant_id = tenant_id
-        self._client_secret = client_secret
-
-    def censor(self):
-        return type(self)(self._client_id, self._tenant_id, None)
-
-    def _generate_state(self, sm):
-        response = requests.post(
-                _make_token_endpoint(self._tenant_id),
-                {
-                    "client_id": self._client_id,
-                    "scope": "https://graph.microsoft.com/.default",
-                    "client_secret": self._client_secret,
-                    "grant_type": "client_credentials"
-                })
-        response.raise_for_status()
-        token = response.json()["access_token"]
-
-        yield MSGraphSource.GraphCaller(token)
-
-    def _list_users(self, sm):
-        return sm.open(self).get("users")
-
-    class GraphCaller:
-        def __init__(self, token):
-            self._token = token
-
-        def get(self, tail, *, json=True):
-            response = requests.get(
-                    "https://graph.microsoft.com/v1.0/{0}".format(tail),
-                    headers={"authorization": "Bearer {0}".format(self._token)})
-            response.raise_for_status()
-            if json:
-                return response.json()
-            else:
-                return response.content
-
-        def head(self, tail):
-            response = requests.head(
-                    "https://graph.microsoft.com/v1.0/{0}".format(tail),
-                    headers={"authorization": "Bearer {0}".format(self._token)})
-            response.raise_for_status()
-            return response
+from ...conversions.utilities.results import SingleResult
+from ..core import Handle, Source, Resource, FileResource
+from ..derived.derived import DerivedSource
+from ..utilities import NamedTemporaryResource
+from .utilities import MSGraphSource, ignore_responses
 
 
 class MSGraphMailSource(MSGraphSource):
@@ -67,7 +14,7 @@ class MSGraphMailSource(MSGraphSource):
     def handles(self, sm):
         for user in self._list_users(sm)["value"]:
             pn = user["userPrincipalName"]
-            try:
+            with ignore_responses(404):
                 any_mails = sm.open(self).get(
                         "users/{0}/messages?$select=id&$top=1".format(pn))
                 if not any_mails["value"]:
@@ -75,19 +22,6 @@ class MSGraphMailSource(MSGraphSource):
                     continue
                 else:
                     yield MSGraphMailAccountHandle(self, pn)
-            except requests.exceptions.HTTPError as ex:
-                if ex.response.status_code == 404:
-                    # This user doesn't have a mail account
-                    continue
-                else:
-                    raise
-
-    def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "client_id": self._client_id,
-            "tenant_id": self._tenant_id,
-            "client_secret": self._client_secret
-        })
 
     @staticmethod
     @Source.json_handler(type_label)

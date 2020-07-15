@@ -10,12 +10,24 @@
     Dette scannerjobs datakilde ligger i skyen, og en eksterne tjeneste skal
     tillade OS2datascanner adgang til dens indhold.
   {% if auth_endpoint %}
-    Klik på knappen nedenfor for at blive videresendt til denne tjeneste.
+  {% if error %}
   <p>
-    <a href="{{ auth_endpoint }}" id="button-authenticate" type="button" class="button button--cta button--small btn btn-default">Fortsæt til {{ service_name }}</a>
+    Tjenesten nægtede at give OS2datascanner de nødvendige rettigheder:
+  <pre class="alert alert--danger">{{ error_description }}</pre>
+  <p>
+    Klik på knappen nedenfor for at prøve igen.
+  {% else %}
+    Klik på knappen nedenfor for at blive videresendt til denne tjeneste.
+  {% endif %}
+  <p>
+    <a href="{{ auth_endpoint }}"
+        id="button-authenticate"
+        type="button"
+        class="button button--cta button--small btn btn-default">Fortsæt til {{ service_name }}</a>
   <p>
     Du bliver videresendt til oprettelsesformularen, efter tjenesten har
     udstedt de nødvendige rettigheder.
+
   {% else %}
   <p>
     De informationer, der peger OS2datascanner-systemet på denne tjeneste, mangler.

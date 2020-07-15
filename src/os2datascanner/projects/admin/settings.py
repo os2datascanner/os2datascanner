@@ -11,7 +11,7 @@ import structlog
 from django.utils.translation import gettext_lazy as _
 
 # The URL of this site, used in links in emails and in the redirect URL for
-# OAuth 2.0 services
+# OAuth 2.0 services. (This value should end with a forward slash.)
 SITE_URL = '*'
 
 BASE_DIR = str(pathlib.Path(__file__).resolve().parent.parent.parent.parent.absolute())
@@ -43,6 +43,7 @@ SETTINGS_EXPORT = [
     'ENABLE_WEBSCAN',
     'ENABLE_DROPBOXSCAN',
     'ENABLE_MSGRAPH_MAILSCAN',
+    'ENABLE_MSGRAPH_FILESCAN',
     'ICON_SPRITE_URL'
 ]
 
@@ -325,6 +326,9 @@ ENABLE_DROPBOXSCAN = False
 
 # Enable Microsoft Graph mail scans for this installation?
 ENABLE_MSGRAPH_MAILSCAN = False
+
+# Enable Microsoft Graph file scans for this installation?
+ENABLE_MSGRAPH_FILESCAN = False
 
 local_settings_file = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
