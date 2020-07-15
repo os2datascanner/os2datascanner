@@ -177,6 +177,26 @@ Test Admin Application:
     reports:
       junit: $CI_PROJECT_DIR/junit.xml
 
+Test Engine:
+  extends: .test-default
+  image:
+    name: ${ENGINE_IMAGE}
+  needs:
+    - Build Engine
+  script:
+    - coverage run --source=os2datascanner.engine2,os2datascanner.utils, -m unittest discover -s /code/src/os2datascanner/engine2/tests
+  after_script:
+    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
+    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
+    - coverage report
+  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
+  artifacts:
+    when: always
+    paths:
+      - $CI_PROJECT_DIR/coverage-html
+    reports:
+      junit: $CI_PROJECT_DIR/junit.xml
+
 Run notice scripts:
   <<: *test-default
   needs:
@@ -199,6 +219,7 @@ Run notice scripts:
     - Build Engine
     - Build documentation
     - Test Admin Application
+    - Test Engine
   image: alpine
   variables:
     GIT_STRATEGY: none # We do not need the source code
