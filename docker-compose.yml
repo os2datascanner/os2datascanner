@@ -68,6 +68,7 @@ services:
     depends_on:
       - db
       - admin-frontend
+      - queue
 
   report-application:
     build:
@@ -88,6 +89,7 @@ services:
     depends_on:
       - db
       - report-frontend
+      - queue
 
   report-collector:
     build:
@@ -107,6 +109,7 @@ services:
     depends_on:
       - db
       - report-application
+      - queue
 
   engine_explorer:
     build:
