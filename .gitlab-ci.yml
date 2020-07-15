@@ -197,6 +197,30 @@ Test Engine:
     reports:
       junit: $CI_PROJECT_DIR/junit.xml
 
+Test Report Application:
+  extends: .test-default
+  image:
+    name: ${REPORT_IMAGE}
+  variables:
+    POSTGRES_DB: os2datascanner_report
+    POSTGRES_USER: os2datascanner_report
+    POSTGRES_PASSWORD: os2datascanner_report
+  needs:
+    - Build Report Application
+  script:
+    - coverage run --source=os2datascanner.projects.report,os2datascanner.utils, -m django test os2datascanner.projects.report.tests
+  after_script:
+    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
+    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
+    - coverage report
+  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
+  artifacts:
+    when: always
+    paths:
+      - $CI_PROJECT_DIR/coverage-html
+    reports:
+      junit: $CI_PROJECT_DIR/junit.xml
+
 Run notice scripts:
   <<: *test-default
   needs:
@@ -220,6 +244,7 @@ Run notice scripts:
     - Build documentation
     - Test Admin Application
     - Test Engine
+    - Test Report Application
   image: alpine
   variables:
     GIT_STRATEGY: none # We do not need the source code
