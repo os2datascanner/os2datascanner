@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import unittest
-from ...utils.amqp_connection_manager import start_amqp, send_message, \
+from os2datascanner.utils.amqp_connection_manager import start_amqp, send_message, \
     set_callback, ack_message, purge_queue, start_consuming, close_connection
 
 
