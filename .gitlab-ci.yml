@@ -141,29 +141,29 @@ Build documentation:
     - name: dperson/samba:amd64
       alias: samba
       # XXX: this should be replaced with a fork under our control (see #37182)
-  image:
-    name: ${ADMIN_IMAGE}
   variables:
     USER: os2;12345_rosebud_password_admin
     SHARE: general;${CI_PROJECT_DIR}/src/os2datascanner/tests/data/engine2;no;yes
-    POSTGRES_DB: os2datascanner_admin
-    POSTGRES_USER: os2datascanner_admin
-    POSTGRES_PASSWORD: os2datascanner_admin
     POSTGRES_HOST: postgres
     AMQP_HOST: rabbitmq
     AMQP_USER: guest
     AMQP_PWD: guest
-    DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
     SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
     COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
   allow_failure: false
 
-Unit-test:
-  <<: *test-default
+Test Admin Application:
+  extends: .test-default
+  image:
+    name: ${ADMIN_IMAGE}
+  variables:
+    POSTGRES_DB: os2datascanner_admin
+    POSTGRES_USER: os2datascanner_admin
+    POSTGRES_PASSWORD: os2datascanner_admin
   needs:
     - Build Admin Application
   script:
-    - coverage run --source=os2datascanner.engine2,os2datascanner.projects,os2datascanner.utils,os2datascanner.tests -m django test os2datascanner.tests
+    - coverage run --source=os2datascanner.projects.admin,os2datascanner.utils, -m django test os2datascanner.projects.admin.tests
   after_script:
     - coverage html -d ${CI_PROJECT_DIR}/coverage-html
     - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
@@ -197,7 +197,7 @@ Run notice scripts:
     - Build Report Application
     - Build Engine
     - Build documentation
-    - Unit-test
+    - Test Admin Application
   image: alpine
   variables:
     GIT_STRATEGY: none # We do not need the source code
