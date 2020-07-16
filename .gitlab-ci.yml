@@ -160,6 +160,7 @@ Test Admin Application:
     POSTGRES_DB: os2datascanner_admin
     POSTGRES_USER: os2datascanner_admin
     POSTGRES_PASSWORD: os2datascanner_admin
+    DECRYPTION_FILE_PATH: ${CI_PROJECT_DIR}/dev-environment/admin
   needs:
     - Build Admin Application
   script:
