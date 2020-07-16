@@ -20,6 +20,7 @@ BUILD_DIR = os.path.join(PROJECT_DIR, 'build')
 VAR_DIR = os.path.join(PROJECT_DIR, 'var')
 LOGS_DIR = os.path.join(VAR_DIR, 'logs')
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'uploads', 'admin')
+DECRYPTION_FILE_PATH = os.getenv('DECRYPTION_FILE_PATH', PROJECT_DIR)
 
 # Local settings file shall be used for debugging.
 DEBUG = False
