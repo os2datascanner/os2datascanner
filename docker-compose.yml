@@ -34,6 +34,7 @@ services:
       dockerfile: docker/admin/Dockerfile
       target: frontend
     volumes:
+      - ./src/os2datascanner/projects/admin/adminapp/static/src:/code/src/os2datascanner/projects/admin/adminapp/static/src
       - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
       - /code/frontend/mode_modules
 
@@ -43,6 +44,7 @@ services:
        dockerfile: docker/report/Dockerfile
        target: frontend
      volumes:
+       - ./src/os2datascanner/projects/report/reportapp/static/src:/code/src/os2datascanner/projects/report/reportapp/static/src
        - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
        - /code/frontend/mode_modules
 
