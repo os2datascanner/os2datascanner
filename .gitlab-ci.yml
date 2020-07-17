@@ -1,54 +1,148 @@
+################################################################################
+# Changes to this file requires approval from Labs. Please add a person from   #
+# Labs as required approval to your MR if you have any changes.                #
+################################################################################
+
+# For the release steps to work, the following envionment variables have to set
+# in the Gitlab UI:
+# RELEASE_REGISTRY_USER
+# RELEASE_REGISTRY_PASSWORD
+
+
 stages:
-  - notices
-  - test
-  - check
+  - lint
   - build
+  - test
+  - release
+
 
 variables:
-  XDG_CACHE_HOME: "$CI_PROJECT_DIR/.cache"
+  # Project variables
+  RELEASE_REGISTRY: docker.io
+  RELEASE_REPORT_IMAGE: index.docker.io/magentaaps/os2datascanner-report
+  RELEASE_ADMIN_IMAGE: index.docker.io/magentaaps/os2datascanner-admin
+  RELEASE_ENGINE_IMAGE: index.docker.io/magentaaps/os2datascanner-engine
 
-cache:
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - .cache/
+  REPORT_IMAGE: ${CI_REGISTRY_IMAGE}/report:${CI_COMMIT_SHA}
+  ADMIN_IMAGE: ${CI_REGISTRY_IMAGE}/admin:${CI_COMMIT_SHA}
+  ENGINE_IMAGE: ${CI_REGISTRY_IMAGE}/engine:${CI_COMMIT_SHA}
 
-notice:
-  stage: notices
+
+# Lint stage
+#############
+
+.lint-default: &lint-default
+  stage: lint
+  needs: []
+  services: []
+  tags:
+    - docker
+  allow_failure: false
+
+Lint Python:
+  <<: *lint-default
   image: python:3.6
-  services:
-    - postgres:alpine
-    - rabbitmq:alpine
-  variables:
-    POSTGRES_DB: os2datascanner_admin
-    POSTGRES_USER: os2datascanner_admin
-    POSTGRES_PASSWORD: os2datascanner_admin
-    POSTGRES_HOST: postgres
-    AMQP_HOST: rabbitmq
-    AMQP_USER: guest
-    AMQP_PWD: guest
-    DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
-    SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
-
+  before_script:
+    - pip install flake8
   script:
-    - apt-get update -qq
-    - "apt-get install -qq $(cut -d \\# -f 1 requirements/sys-requirements/sys-requirements-admin.txt requirements/sys-requirements/sys-requirements-common.txt requirements/sys-requirements/sys-requirements-django.txt requirements/sys-requirements/sys-requirements-engine.txt)"
-    - pip install -e . -r requirements/python-requirements/requirements-test.txt
-
-    - python -m os2datascanner.projects.admin.manage makemigrations --check --dry-run
-
-    - python -m unittest discover -s src/ -p notice*.py
-
+    - flake8 --version
+    - flake8 src/
   allow_failure: true
 
-tests:
+Lint Dockerfiles:
+  <<: *lint-default
+  image: hadolint/hadolint:latest-debian
+  before_script:
+    - apt-get -y update
+    - apt-get -y install --no-install-recommends git
+  script:
+    - git ls-files --exclude='Dockerfile*' --ignored | xargs --max-lines=1 hadolint
+
+Lint shell scripts:
+  <<: *lint-default
+  image: koalaman/shellcheck-alpine:latest
+  before_script:
+    - apk update
+    - apk add git
+  script:
+    - git ls-files --exclude='*.sh' --ignored | xargs shellcheck
+  allow_failure: true
+
+
+# Build stage
+##############
+
+.build-default: &build-default
+  stage: build
+  needs: []
+  services: []
+  image:
+    # We use kaniko v0.16.0 as both v0.17.0, v0.17.1, v0.18.0 and v0.19.0
+    # contains fatal bugs.
+    name: gcr.io/kaniko-project/executor:debug-v0.16.0
+    entrypoint: [""]
+  tags:
+    - docker
+  allow_failure: false
+
+Build Report Application:
+  <<: *build-default
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --cache
+      --context=$CI_PROJECT_DIR
+      --dockerfile=$CI_PROJECT_DIR/docker/report/Dockerfile
+      --destination=${REPORT_IMAGE}
+
+Build Admin Application:
+  <<: *build-default
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --cache
+      --context=$CI_PROJECT_DIR
+      --dockerfile=$CI_PROJECT_DIR/docker/admin/Dockerfile
+      --destination=${ADMIN_IMAGE}
+
+Build Engine:
+  <<: *build-default
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --cache
+      --context=$CI_PROJECT_DIR
+      --dockerfile=$CI_PROJECT_DIR/docker/engine/Dockerfile
+      --destination=${ENGINE_IMAGE}
+
+Build documentation:
+  <<: *build-default
+  image: keimlink/sphinx-doc:latex
+  script:
+    - make -C doc PAPER=a4 html latexpdf
+    - mv doc/_build .
+  artifacts:
+    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
+    paths:
+      - _build
+
+
+# Test stage
+#############
+
+.test-default: &test-default
   stage: test
+  tags:
+    - docker
+    - network-per-build
   services:
-    - postgres:alpine
-    - rabbitmq:alpine
+    - postgres:12
+    - rabbitmq:3-alpine
     - name: dperson/samba:amd64
       alias: samba
       # XXX: this should be replaced with a fork under our control (see #37182)
-  image: python:3.6
+  image:
+    name: ${ADMIN_IMAGE}
   variables:
     USER: os2;12345_rosebud_password_admin
     SHARE: general;${CI_PROJECT_DIR}/src/os2datascanner/tests/data/engine2;no;yes
@@ -61,63 +155,120 @@ tests:
     AMQP_PWD: guest
     DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
     SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
+    COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
+  allow_failure: false
 
-  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
-
+Unit-test:
+  <<: *test-default
+  needs:
+    - Build Admin Application
   script:
-    - apt-get update -qq
-    - "apt-get install -qq $(cut -d \\# -f 1 requirements/sys-requirements/sys-requirements-admin.txt requirements/sys-requirements/sys-requirements-common.txt requirements/sys-requirements/sys-requirements-django.txt requirements/sys-requirements/sys-requirements-engine.txt)"
-    - pip install -e . -r requirements/python-requirements/requirements-test.txt
-
-    - python -m os2datascanner.projects.admin.manage makemigrations --check --dry-run
-
-    - coverage erase
-    - coverage run -m django test os2datascanner.tests
-
+    - coverage run --source=os2datascanner.engine2,os2datascanner.projects,os2datascanner.utils,os2datascanner.tests -m django test os2datascanner.tests
   after_script:
-    - coverage html
-    - coverage xml
+    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
+    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
     - coverage report
-
+  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
   artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
+    when: always
     paths:
-      - htmlcov
-      - build/test-results.xml
-      - build/coverage.xml
+      - $CI_PROJECT_DIR/coverage-html
     reports:
-      junit: build/test-results.xml
+      junit: $CI_PROJECT_DIR/junit.xml
 
-flake8:
-  stage: check
-  image: python:latest
+Run notice scripts:
+  <<: *test-default
+  needs:
+    - Build Engine
+  script:
+    - python -m unittest discover -s src/ -p notice*.py
   allow_failure: true
-  script:
-    - pip install flake8 flake8-gl-codeclimate
-    - flake8 --exit-zero --format gl-codeclimate --tee --output-file build/code-quality.json src/
-  artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-    paths:
-      - build/code-quality.json
-    reports:
-      codequality: build/code-quality.json
 
-black:
-  stage: check
-  image: python:latest
-  allow_failure: true
-  script:
-    - pip install black
-    - black --check src
 
-docs:
-  stage: build
-  image: keimlink/sphinx-doc:latex
-  script:
-    - make -C doc PAPER=a4 html latexpdf
-    - mv doc/_build .
+# Release stage
+###############
 
-  artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-    paths:
-      - _build
+.release-default: &release-default
+  stage: release
+  needs:
+    - Lint Dockerfiles
+    - Lint Python
+    - Build Admin Application
+    - Build Report Application
+    - Build Engine
+    - Build documentation
+    - Unit-test
+  image: alpine
+  variables:
+    GIT_STRATEGY: none # We do not need the source code
+  tags:
+    - docker
+  before_script:
+    - apk add skopeo
+
+# Rolling rc release:
+.release-rc: &release-rc
+  <<: *release-default
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "development"
+  script:
+    - skopeo copy
+      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
+      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
+      "docker://${IMAGE_FROM}"
+      "docker://${IMAGE_TO}:dev"
+
+Release Report Application Candidate:
+  <<: *release-rc
+  variables:
+    IMAGE_FROM: ${REPORT_IMAGE}
+    IMAGE_TO: ${RELEASE_REPORT_IMAGE}
+
+Release Admin Application Candidate:
+  <<: *release-rc
+  variables:
+    IMAGE_FROM: ${ADMIN_IMAGE}
+    IMAGE_TO: ${RELEASE_ADMIN_IMAGE}
+
+Release Engine Candidate:
+  <<: *release-rc
+  variables:
+    IMAGE_FROM: ${ENGINE_IMAGE}
+    IMAGE_TO: ${RELEASE_ENGINE_IMAGE}
+
+
+# Versioned release:
+.release: &release
+  <<: *release-default
+  rules:
+      # Matches <version core> from SemVer 2.0.0 BNF grammar. Ex. 2.3.4, but not 2.3.4-rc
+      - if: $CI_COMMIT_TAG =~ /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/
+  script:
+    - skopeo copy
+      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
+      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
+      "docker://${IMAGE_FROM}"
+      "docker://${IMAGE_TO}:${CI_COMMIT_TAG}"
+    - skopeo copy
+      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
+      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
+      "docker://${IMAGE_FROM}"
+      "docker://${IMAGE_TO}:latest"
+
+Release Report Application:
+  <<: *release
+  variables:
+    IMAGE_FROM: ${REPORT_IMAGE}
+    IMAGE_TO: ${RELEASE_REPORT_IMAGE}
+
+Release Admin Application:
+  <<: *release
+  variables:
+    IMAGE_FROM: ${ADMIN_IMAGE}
+    IMAGE_TO: ${RELEASE_ADMIN_IMAGE}
+
+Release Engine:
+  <<: *release
+  variables:
+    IMAGE_FROM: ${ENGINE_IMAGE}
+    IMAGE_TO: ${RELEASE_ENGINE_IMAGE}
