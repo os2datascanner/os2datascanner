@@ -279,13 +279,36 @@ separate folder it lives in) to the global list for git to ignore (usually
 ``~/.config/git/ignore``, of which you may have to create the ``git`` folder
 and the ``ignore`` file yourself).
 
-Tests and shell access
-======================
+Tests
+=====
+
+Each module has its own test-suite. These are run automatically as part of the
+CI pipeline, which also produces a code coverage report for each test-suite.
+
+During development, the test can be run using the relevant Docker image for
+each module. As some of the tests are integration tests that require auxiliary
+services - such as access to a database and/or message queue - we recommend
+using the development docker-compose set-up to run the tests, as this takes care
+of the required settings and bindings.
+
+To run the test-suites using docker-compose:
+
+.. code-block:: bash
+
+    docker-compose run admin-application python -m django test os2datascanner.projects.admin.tests
+    docker-compose run engine_explorer python -m unittest discover -s /code/src/os2datascanner/engine2/tests
+    docker-compose run report-application python -m django test os2datascanner.projects.report.tests
+
+Please note that the engine tests can be run using any of the five pipeline
+services as the basis, but a specific one is provided above for easy reference.
 
 .. TODO: Add section on running the test suite when scripts for the
     proper permissions in postgres has been added. Possibly add a script for
     running the tests, compiling the report, and exposing/binding it to the
     host.
+
+Shell access
+============
 
 To access a shell on any container based on the OS2datascanner module images,
 run
@@ -293,11 +316,6 @@ run
 .. code-block:: bash
 
     docker-compose {exec|run} <container name> bash
-
-.. TODO: Add this section when section on running tests has been sorted
-
-    Code coverage
-    =============
 
 Documentation
 =============
