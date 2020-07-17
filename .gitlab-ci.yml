@@ -47,6 +47,7 @@ Lint Python:
   script:
     - flake8 --version
     - flake8 src/
+  allow_failure: true
 
 Lint Dockerfiles:
   <<: *lint-default
