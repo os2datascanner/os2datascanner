@@ -84,7 +84,11 @@ function npm_install_and_build()
     repo_dir=$2
     target=$3
     echo "Installing npm packages"
+
+    # Use the packaged npm to get the latest version, required by some of our
+    # dependencies
     sudo -H apt-get -y install npm || return 1
+    sudo -H npm -g install npm@latest
 
     cd "$repo_dir/src/os2datascanner/projects/$module/"$module"app/"
     npm install .
