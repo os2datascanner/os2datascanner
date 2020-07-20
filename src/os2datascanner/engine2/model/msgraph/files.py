@@ -103,6 +103,7 @@ class MSGraphDriveHandle(Handle):
                 obj["folder_name"], obj["owner_name"])
 
 
+@Source.mime_handler(DUMMY_MIME)
 class MSGraphDriveSource(DerivedSource):
     type_label = "msgraph-drive"
 
