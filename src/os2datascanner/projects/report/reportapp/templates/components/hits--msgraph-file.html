@@ -31,13 +31,16 @@
     </div>
   </td>
 
-  <td class="datatable__column--match datatable__column--context" colspan="2">
+  <td class="datatable__column--match datatable__column--context" colspan="3">
 
     <table class="datatable datatable--nested">
       <tbody>
         {% for match in rule.matches|slice:":3" %}
         <tr>
           <td class="datatable__column--match">{{ match.match }}</td>
+          <td class="datatable__column--probability">
+            {% include "components/probability-icon.html" %}
+          </td>
           <td class="datatable__column--context">{{ match.context }}</td>
         </tr>
         {% endfor %}
