@@ -56,6 +56,33 @@ class URLTests(unittest.TestCase):
                 ),
                 "smbc://SYSGRP;FaithfullA@INT-SRV-01/Q%24",
             ),
+            (
+                SMBCSource(
+                    "//INT-SRV-01.intern.vstkom.dk/Q$",
+                    "FaithfullA",
+                    "secretpassword",
+                    None,
+                ),
+                "smbc://intern.vstkom.dk;FaithfullA:secretpassword@INT-SRV-01.intern.vstkom.dk/Q%24",
+            ),
+            (
+                SMBCSource(
+                    "//INT-SRV-01.intern.vstkom.dk/Q$",
+                    "FaithfullA",
+                    "secretpassword",
+                    "SYSGRP",
+                ),
+                "smbc://SYSGRP;FaithfullA:secretpassword@INT-SRV-01.intern.vstkom.dk/Q%24",
+            ),
+            (
+                SMBCSource(
+                    "//INT-SRV-01.intern.vstkom.dk/Q$",
+                    "FaithfullA",
+                    None,
+                    "",
+                ),
+                "smbc://FaithfullA@INT-SRV-01.intern.vstkom.dk/Q%24",
+            ),
             (WebSource("http://www.example.com"), "http://www.example.com"),
             (
                 SecureWebSource("https://www.example.com"),

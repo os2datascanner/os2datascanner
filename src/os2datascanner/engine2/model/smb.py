@@ -9,6 +9,31 @@ from tempfile import mkdtemp
 from subprocess import run
 
 
+def inlang(lang, s):
+    """Indicates whether or not every character in a given string @s can be
+    found in the string @lang."""
+    return all([c in lang for c in s])
+
+
+def compute_domain(unc):
+    """Attempts to extract a domain name from a UNC path. Returns None when the
+    server name is a simple, unqualified name or an IP address."""
+    server, path = unc.replace("\\", "/").lstrip('/').split('/', maxsplit=1)
+    dot_count = server.count(".")
+    # Check if we can extract an authentication domain from a fully-qualified
+    # server name
+    if (server.startswith('[') # IPv6 address
+            or dot_count == 0 # NetBIOS name
+            or (inlang("0123456789.", server)
+                    and dot_count == 3)): # IPv4 address
+        return None
+    else:
+        # The machine name is the first component, and the rest is the domain
+        # name
+        _, remainder = server.split(".", maxsplit=1)
+        return remainder
+
+
 class SMBSource(Source):
     type_label = "smb"
     eq_properties = ("_unc", "_user", "_password", "_domain",)
@@ -18,7 +43,7 @@ class SMBSource(Source):
         self._unc = unc
         self._user = user
         self._password = password
-        self._domain = domain
+        self._domain = domain if domain is not None else compute_domain(unc)
         self._driveletter = driveletter
 
     @property

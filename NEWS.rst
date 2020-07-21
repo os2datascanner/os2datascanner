@@ -1,6 +1,58 @@
 OS2datascanner
 ==============
 
+Version 3.4.0, 21st July 2020
+-----------------------------
+
+"New Worlds"
+
+New in this version:
+
+- Initial support for scanning Microsoft cloud services through the Graph API:
+
+  - Initial support for scanning Office 365 organisational email accounts.
+
+  - Initial support for scanning OneDrive and SharePoint cloud file shares.
+
+- Initial support for scanning Dropbox accounts.
+
+(OS2datascanner is neither affiliated with nor endorsed by Microsoft
+Corporation, Dropbox, Inc., or their partners or subsidiaries.)
+
+- Support for context-sensitive result filtering:
+
+  - The CPR rule now supports filtering out matches that are likely to be
+    Danish workplace identification numbers.
+
+General improvements:
+
+- The administration system can now request permissions from external systems
+  when creating scanner jobs.
+
+- The scanner job lists now highlight the type of scanner job being displayed.
+
+- The report module can now display the estimated probability that a match is a
+  true positive (when this information is available).
+
+- Shared network drives are now also included in the test suite.
+
+- A common design language has been introduced for rule sensitivity levels.
+
+- Windows domains can now be inferred from fully-qualified DNS names when
+  scanning shared network drives.
+
+Bugfixes:
+
+- Uploading user lists to the administration system now works correctly again.
+
+- The administration system's rule description column is now correctly aligned.
+
+- The report module's support for SAML assertion encryption now works correctly
+  with newer versions of the ``pysaml2`` library.
+
+- Building the user interface components no longer produces package management
+  errors.
+
 Version 3.3.3, 24th June 2020
 -----------------------------
 
@@ -58,7 +110,7 @@ New in this version:
   - The report module can now give direct links to files in shared network
     folders, when the administrator has configured the network to allow this.
 
-- `.eml` files, containing exported emails, can now be scanned.
+- ``.eml`` files, containing exported emails, can now be scanned.
 
 General improvements:
 

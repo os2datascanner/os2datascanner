@@ -13,17 +13,7 @@
 {% block body %}
 <div class="wrapper">
 
-  <div class="tabs">
-    {% if settings.ENABLE_WEBSCAN %}
-    <a id="web" class="tabs__control" href="/webscanners/">Webscannere</a>
-    {% endif %}
-    {% if settings.ENABLE_FILESCAN %}
-    <a id="file" class="tabs__control" href="/filescanners/">Filscannere</a>
-    {% endif %}
-    {% if settings.ENABLE_EXCHANGESCAN %}
-    <a id="exchange" class="tabs__control" href="/exchangescanners/">Exchangescannere</a>
-    {% endif %}
-  </div>
+  {% include "os2datascanner/scanner_above_content.html" %}
 
   <h2 style="display:inline-block;">Scannerjob</h2>
 

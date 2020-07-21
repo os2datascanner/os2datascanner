@@ -37,9 +37,66 @@
       width: 10rem;
     }
 
+    &--probability {
+      width: 12rem;
+    }
+
     &--context {
       word-break: break-all;
     }
+  }
+}
+
+.flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-top: .5rem;
+
+  &--width {
+    margin-right: .5rem;
+    height: 1.2rem;
+    width: auto;
+  }
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
+
+}
+
+.flex-probability {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-top: -2rem;
+  margin-bottom: 2rem;
+
+  .material-icons {
+    font-size: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center
+  }
+  .green.material-icons {
+    color: var(--color-ok-dark);
+  }
+  .yellow.material-icons {
+    color: var(--color-warning-dark);
+  }
+  .red.material-icons {
+    color: var(--color-error-dark);
+  }
+
+  .probability-text {
+    font-size: 85%;
+    font-weight: bold;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 22%;
+    transform: translate(-50%, -50%)
   }
 }
 

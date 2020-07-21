@@ -77,7 +77,8 @@ class ScannerTest(TestCase):
                 authentication=authentication,
                 alias="K")
 
-        engine2_source = scanner.make_engine2_source()
+        source_generator = scanner.generate_sources()
+        engine2_source = next(source_generator)
 
         self.assertEqual(engine2_source.driveletter, "K")
 

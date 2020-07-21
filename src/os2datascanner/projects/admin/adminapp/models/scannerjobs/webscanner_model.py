@@ -116,5 +116,5 @@ class WebScanner(Scanner):
         """Get the absolute URL for scanners."""
         return '/webscanners/'
 
-    def make_engine2_source(self):
-        return WebSource(self.root_url, self.get_sitemap_url())
+    def generate_sources(self):
+        yield WebSource(self.root_url, self.get_sitemap_url())

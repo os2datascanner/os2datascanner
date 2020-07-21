@@ -32,6 +32,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
 from shutil import copyfile
 
+from ..models.scannerjobs.dropboxscanner_model import DropboxScanner
 from ..forms import FileUploadForm
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ..models.scannerjobs.filescanner_model import FileScanner
@@ -40,6 +41,8 @@ from ..models.organization_model import Organization
 from ..models.rules.cprrule_model import CPRRule
 from ..models.rules.regexrule_model import RegexRule
 from ..models.userprofile_model import UserProfile
+from ..models.scannerjobs.msgraph_models import (
+        MSGraphFileScanner, MSGraphMailScanner)
 from ..models.scannerjobs.webscanner_model import WebScanner
 from ..utils import as_file_uri
 
@@ -398,6 +401,9 @@ class DialogSuccess(TemplateView):
         'webscanners': WebScanner,
         'filescanners': FileScanner,
         'exchangescanners': ExchangeScanner,
+        'dropboxscanners': DropboxScanner,
+        'msgraph-filescanners': MSGraphFileScanner,
+        'msgraph-mailscanners': MSGraphMailScanner,
         'rules/cpr': CPRRule,
         'rules/regex': RegexRule,
         'groups': Group

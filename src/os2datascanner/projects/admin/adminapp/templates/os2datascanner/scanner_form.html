@@ -117,6 +117,7 @@
         {% endif %}
       </div>
 
+      {% if form.url %}
       <div id="{{ form.url.auto_id }}_container" class="form__group{% if form.url.errors %} has-error{% endif %}">
         <label for="id_{{ form.url.name }}">{{ form.url.label }}</label>
         <input 
@@ -133,6 +134,7 @@
         {{ form.url.errors }}
         {% endif %}
       </div>
+      {% endif %}
 
       {% if form.alias %}
       <div id="{{ form.alias.auto_id }}_container" class="form__group{% if form.alias.errors %} has-error{% endif %}">
@@ -233,6 +235,56 @@
       </div>
       {% endif %}
 
+        {% if form.token %}
+            <div id="{{ form.token.auto_id }}_container" class="form__group{% if form.token.errors %} has-error{% endif %}">
+                <label class="control-label" for="id_{{ form.token.name }}">Token</label>
+                <input
+                        type="password"
+                        class="form-control"
+                        name="{{ form.token.name }}"
+                        id="id_{{ form.token.name }}"
+                        {% if form.token.value %}
+                        value="{{ form.token.value }}"
+                        {% endif %}>
+
+                {% if form.token.help_text %}
+                    <span class="form__help-text">{{ form.token.help_text }}</span>
+                {% endif %}
+
+                {% if form.token.errors %}{{ form.token.errors }}{% endif %}
+            </div>
+        {% endif %}
+
+      {% if form.tenant_id %}
+      <div id="{{ form.tenant_id.auto_id }}_container" class="form__group{% if form.tenant_id.errors %} has-error{% endif %}">
+        <label for="id_tenant_presentation">{{ form.tenant_id.label }}</label>
+        <span class="form-control" id="id_tenant_presentation"><strong>
+          {% if form.tenant_id.value %}
+          {{ form.tenant_id.value }}
+          {% else %}
+          {{ tenant_id }}
+          {% endif %}
+        </strong></span>
+        <input
+            type="hidden"
+            class="form-control"
+            name="{{ form.tenant_id.name }}"
+            id="id_{{ form.tenant_id.name }}"
+            {% if form.tenant_id.value %}
+            value="{{ form.tenant_id.value }}"
+            {% else %}
+            value="{{ tenant_id }}"
+            {% endif %}>
+        {% if form.tenant_id.help_text %}
+        <span class="form__help-text">{{ form.tenant_id.help_text }}</span>
+        {% endif %}
+
+        {% if form.tenant_id.errors %}
+        {{ form.tenant_id.errors }}
+        {% endif %}
+      </div>
+      {% endif %}
+
       {% if form.username %}
       <div id="{{ form.username.auto_id }}_container" class="form__group{% if form.username.errors %} has-error{% endif %}">
         <label class="control-label" for="id_{{ form.username.name }}">{{ form.username.label }}</label>
@@ -326,6 +378,52 @@
         {% endif %}
 
         {% if form.userlist.errors %}{{ form.userlist.errors }}{% endif %}
+      </div>
+      {% endif %}
+
+      {% if form.scan_site_drives %}
+      <div id="{{ form.scan_site_drives.auto_id }}_container" class="form__group{% if form.scan_site_drives.errors %} has-error{% endif %}">
+        <div class="ds-checkbox">
+          <input
+            type="checkbox"
+            class="checkbox"
+            id="id_{{ form.scan_site_drives.name }}"
+            name="{{ form.scan_site_drives.name }}"
+            value="{{ form.scan_site_drives.name }}"
+            {% if form.scan_site_drives.value %}
+            checked="checked"
+            {% endif %} />
+          <label class="control-label" for="id_{{ form.scan_site_drives.name }}" tabindex="0">{{ form.scan_site_drives.label }}</label>
+        </div>
+
+        {% if form.scan_site_drives.help_text %}
+        <span class="form__help-text">{{ form.scan_site_drives.help_text }}</span>
+        {% endif %}
+
+        {% if form.scan_site_drives.errors %}{{ form.scan_site_drives.errors }}{% endif %}
+      </div>
+      {% endif %}
+
+      {% if form.scan_user_drives %}
+      <div id="{{ form.scan_user_drives.auto_id }}_container" class="form__group{% if form.scan_user_drives.errors %} has-error{% endif %}">
+        <div class="ds-checkbox">
+          <input
+            type="checkbox"
+            class="checkbox"
+            id="id_{{ form.scan_user_drives.name }}"
+            name="{{ form.scan_user_drives.name }}"
+            value="{{ form.scan_user_drives.name }}"
+            {% if form.scan_user_drives.value %}
+            checked="checked"
+            {% endif %} />
+          <label class="control-label" for="id_{{ form.scan_user_drives.name }}" tabindex="0">{{ form.scan_user_drives.label }}</label>
+        </div>
+
+        {% if form.scan_user_drives.help_text %}
+        <span class="form__help-text">{{ form.scan_user_drives.help_text }}</span>
+        {% endif %}
+
+        {% if form.scan_user_drives.errors %}{{ form.scan_user_drives.errors }}{% endif %}
       </div>
       {% endif %}
 

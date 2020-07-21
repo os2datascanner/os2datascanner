@@ -65,8 +65,8 @@ class FileScanner(Scanner):
         """Get the absolute URL for scanners."""
         return '/filescanners/'
 
-    def make_engine2_source(self):
-        return SMBCSource(
+    def generate_sources(self):
+        yield SMBCSource(
                 self.url,
                 user=self.authentication.username,
                 password=self.authentication.get_password(),

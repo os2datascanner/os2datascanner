@@ -28,11 +28,14 @@ class CPRRule(Rule):
             default=False, verbose_name='Tjek modulus-11')
     ignore_irrelevant = models.BooleanField(
             default=False, verbose_name='Ignorer ugyldige fødselsdatoer')
+    examine_context = models.BooleanField(
+            default=False, verbose_name='Tjek kontekst omkring match')
 
     def make_engine2_rule(self):
         return CPRTwule(
                 modulus_11=self.do_modulus11,
                 ignore_irrelevant=self.ignore_irrelevant,
+                examine_context=self.examine_context,
                 sensitivity=self.make_engine2_sensitivity())
 
     whitelist = models.TextField(blank=True,

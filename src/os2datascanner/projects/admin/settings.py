@@ -10,19 +10,30 @@ import structlog
 
 from django.utils.translation import gettext_lazy as _
 
+# The URL of this site, used in links in emails and in the redirect URL for
+# OAuth 2.0 services. (This value should end with a forward slash.)
+SITE_URL = '*'
 
 BASE_DIR = str(pathlib.Path(__file__).resolve().parent.parent.parent.parent.absolute())
 PROJECT_DIR = os.path.dirname(BASE_DIR)
 BUILD_DIR = os.path.join(PROJECT_DIR, 'build')
 VAR_DIR = os.path.join(PROJECT_DIR, 'var')
 LOGS_DIR = os.path.join(VAR_DIR, 'logs')
-
-os.makedirs(BUILD_DIR, exist_ok=True)
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'uploads', 'admin')
 
 # Local settings file shall be used for debugging.
 DEBUG = False
 
 SECRET_KEY = 'ld0_g)jhp3v27&od88-_v83ldb!0i^bac=jh+je!!=jbvra7@j'
+
+# The GUID of the registered Azure application corresponding to this
+# OS2datascanner installation, used when requesting Microsoft Graph access
+MSGRAPH_APP_ID = None
+
+# The client secret used to demonstrate to Microsoft Graph that this
+# OS2datascanner installation corresponds to a registered Azure application
+# (client private keys are not yet supported)
+MSGRAPH_CLIENT_SECRET = None
 
 # Add settings here to make them accessible from templates
 SETTINGS_EXPORT = [
@@ -30,6 +41,9 @@ SETTINGS_EXPORT = [
     'ENABLE_FILESCAN',
     'ENABLE_EXCHANGESCAN',
     'ENABLE_WEBSCAN',
+    'ENABLE_DROPBOXSCAN',
+    'ENABLE_MSGRAPH_MAILSCAN',
+    'ENABLE_MSGRAPH_FILESCAN',
     'ICON_SPRITE_URL'
 ]
 
@@ -149,8 +163,8 @@ LOGIN_REDIRECT_URL = '/'
 
 # Email  settings
 # Email  settings
-DEFAULT_FROM_EMAIL = '(Magenta Bibos Info) info@magenta.dk'
-ADMIN_EMAIL = '(Magenta Bibos Admin) info@magenta.dk'
+DEFAULT_FROM_EMAIL = '(Magenta Info) info@magenta.dk'
+ADMIN_EMAIL = '(Magenta Admin) info@magenta.dk'
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -307,9 +321,21 @@ LOGGING = {
     }
 }
 
+# Enable Dropbox scans for this installation?
+ENABLE_DROPBOXSCAN = False
+
+# Enable Microsoft Graph mail scans for this installation?
+ENABLE_MSGRAPH_MAILSCAN = False
+
+# Enable Microsoft Graph file scans for this installation?
+ENABLE_MSGRAPH_FILESCAN = False
+
 local_settings_file = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     'local_settings.py'
 )
 if os.path.exists(local_settings_file):
     from .local_settings import *  # noqa
+
+os.makedirs(BUILD_DIR, exist_ok=True)
+os.makedirs(MEDIA_ROOT, exist_ok=True)

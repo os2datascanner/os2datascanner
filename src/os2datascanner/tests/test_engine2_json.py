@@ -10,6 +10,11 @@ from os2datascanner.engine2.model.file import (
 from os2datascanner.engine2.model.http import WebSource, WebHandle
 from os2datascanner.engine2.model.smb import SMBSource, SMBHandle
 from os2datascanner.engine2.model.smbc import SMBCSource, SMBCHandle
+from os2datascanner.engine2.model.msgraph.mail import (MSGraphMailSource,
+        MSGraphMailAccountHandle, MSGraphMailAccountSource,
+        MSGraphMailMessageHandle)
+from os2datascanner.engine2.model.msgraph.files import (MSGraphFilesSource,
+        MSGraphDriveHandle, MSGraphDriveSource, MSGraphFileHandle)
 
 from os2datascanner.engine2.model.derived.filtered import (
         GzipSource, FilteredHandle)
@@ -96,7 +101,28 @@ class JSONTests(unittest.TestCase):
                                     FilesystemSource(
                                             "/media/user/USB STICK"),
                                     "What I Did On My Holidays.doc")),
-                    "What I Did On My Holidays.html")
+                    "What I Did On My Holidays.html"),
+            MSGraphMailMessageHandle(
+                    MSGraphMailAccountSource(
+                            MSGraphMailAccountHandle(
+                                    MSGraphMailSource(
+                                            "Not a real client ID value",
+                                            "Not a real tenant ID value",
+                                            "Not a very secret client secret"),
+                                    "testuser@example.invalid")),
+                    "bWVzc2FnZQo=",
+                    "Re: Re: Re: Copy of FINAL (2) (EDITED).doc.docx"),
+            MSGraphFileHandle(
+                    MSGraphDriveSource(
+                            MSGraphDriveHandle(
+                                    MSGraphFilesSource(
+                                            "Not a real client ID value",
+                                            "Not a real tenant ID value",
+                                            "Not a very secret client secret"),
+                                    "1NOTAREALDR1VE1DENT1F1ER",
+                                    "Shared Documents and Conspiracies",
+                                    "Guy Fawkes")),
+                    "PLOTS/1605-11/GUNPWDER.WP"),
         ]
 
         for handle in example_handles:
