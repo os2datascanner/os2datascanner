@@ -1,4 +1,4 @@
-Django==2.2.10
+Django==2.2.13
 django-model-utils==4.0.0
 django-recurrence==1.10.1
 django-settings-export==1.2.1
