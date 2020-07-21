@@ -59,7 +59,6 @@ RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
 # Copy code
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/engine2 ./engine2/
-COPY src/os2datascanner/tests ./tests
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
 COPY VERSION .

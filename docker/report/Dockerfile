@@ -49,7 +49,8 @@ LABEL org.opencontainers.image.title="OS2datascanner - Report" \
 ENV PYTHONUNBUFFERED=1 \
   DSC_REPORT_SYSTEM_CONFIG_PATH=/code/docker/docker-settings.toml \
   DSC_REPORT_USER_CONFIG_PATH=/user-settings.toml \
-  PYTHONPATH=/code/src/:$PYTHONPATH
+  PYTHONPATH=/code/src/:$PYTHONPATH\
+  DJANGO_SETTINGS_MODULE=os2datascanner.projects.report.settings
 
 # Ensure system user and install system depedencies
 WORKDIR /code/requirements/sys-requirements
@@ -93,7 +94,6 @@ COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/projects/report ./projects/report
 COPY src/os2datascanner/projects/__init__.py ./projects/
-COPY src/os2datascanner/tests ./tests
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
 COPY VERSION .

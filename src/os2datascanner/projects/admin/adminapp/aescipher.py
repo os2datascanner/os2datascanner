@@ -56,7 +56,7 @@ def decrypt(iv, ciphertext):
 
 def generate_key():
     key = None
-    file_name = settings.PROJECT_DIR + '/' + key_file_name
+    file_name = settings.DECRYPTION_FILE_PATH + '/' + key_file_name
     if os.path.isfile(file_name):
         key = key_file_handling(None, 'rb', file_name, False)
     else:

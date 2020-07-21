@@ -33,8 +33,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # The name of the institution, to be included in the notification signoff
 NOTIFICATION_INSTITUTION = 'MAGENTA APS'
 
-SAML2_ENABLED = False
-
 # The full documentation can be found here: https://github.com/fangli/django-saml2-auth
 SAML2_AUTH = {
     # Metadata is required, choose either remote url or local file path

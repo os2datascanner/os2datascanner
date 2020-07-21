@@ -10,7 +10,7 @@ from os2datascanner.engine2.model.file import (
 class Engine2TestErrors(unittest.TestCase):
     def test_relative_filesystemsource(self):
         with self.assertRaises(ValueError):
-            FilesystemSource("data/")
+            FilesystemSource("../../projects/admin/tests/data/")
 
     def test_invalid_scheme(self):
         with self.assertRaises(UnknownSchemeError):
