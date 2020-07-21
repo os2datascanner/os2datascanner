@@ -164,7 +164,7 @@ Test Admin Application:
   needs:
     - Build Admin Application
   script:
-    - coverage run --source=os2datascanner.projects.admin,os2datascanner.utils, -m django test os2datascanner.projects.admin.tests
+    - coverage run --source=os2datascanner.projects.admin, -m django test os2datascanner.projects.admin.tests
   after_script:
     - coverage html -d ${CI_PROJECT_DIR}/coverage-html
     - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
@@ -184,7 +184,7 @@ Test Engine:
   needs:
     - Build Engine
   script:
-    - coverage run --source=os2datascanner.engine2,os2datascanner.utils, -m unittest discover -s /code/src/os2datascanner/engine2/tests
+    - coverage run --source=os2datascanner.engine2, -m unittest discover -s /code/src/os2datascanner/engine2/tests
   after_script:
     - coverage html -d ${CI_PROJECT_DIR}/coverage-html
     - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
@@ -208,7 +208,7 @@ Test Report Application:
   needs:
     - Build Report Application
   script:
-    - coverage run --source=os2datascanner.projects.report,os2datascanner.utils, -m django test os2datascanner.projects.report.tests
+    - coverage run --source=os2datascanner.projects.report, -m django test os2datascanner.projects.report.tests
   after_script:
     - coverage html -d ${CI_PROJECT_DIR}/coverage-html
     - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
