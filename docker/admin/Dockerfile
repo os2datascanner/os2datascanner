@@ -15,8 +15,8 @@ FROM node:14 AS frontend
 WORKDIR /code/src/os2datascanner/projects/admin/adminapp
 
 COPY src/os2datascanner/projects/admin/adminapp/package.json .
-# TODO: use a lock-file and change to using npm ci (https://docs.npmjs.com/cli/ci#description)
-RUN npm install
+COPY src/os2datascanner/projects/admin/adminapp/package-lock.json .
+RUN npm ci
 
 COPY src/os2datascanner/projects/admin/adminapp/postcss.config.js .
 COPY src/os2datascanner/projects/admin/adminapp/webpack.dev.js .

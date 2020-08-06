@@ -1,6 +1,7 @@
 from os import getpid
 
-from ...utils.prometheus import prometheus_session
+from prometheus_client import start_http_server
+
 from ..rules.rule import Rule
 from ..conversions.types import decode_dict
 from . import messages
@@ -94,6 +95,10 @@ def main():
 
     args = parser.parse_args()
 
+    if args.enable_metrics:
+        start_http_server(args.prometheus_port)
+
+
     class MatcherRunner(PikaPipelineRunner):
         @prometheus_summary(
                 "os2datascanner_pipeline_matcher", "Representations examined")
@@ -103,21 +108,17 @@ def main():
             return message_received_raw(body, channel,
                     args.matches, args.handles, args.conversions)
 
-    with prometheus_session(
-            str(getpid()),
-            args.prometheus_dir,
-            stage_type="matcher"):
-        with MatcherRunner(
-                read=[args.representations],
-                write=[args.handles, args.matches, args.conversions],
-                host=args.host, heartbeat=6000) as runner:
-            try:
-                print("Start")
-                notify_ready()
-                runner.run_consumer()
-            finally:
-                print("Stop")
-                notify_stopping()
+    with MatcherRunner(
+            read=[args.representations],
+            write=[args.handles, args.matches, args.conversions],
+            host=args.host, heartbeat=6000) as runner:
+        try:
+            print("Start")
+            notify_ready()
+            runner.run_consumer()
+        finally:
+            print("Stop")
+            notify_stopping()
 
 
 if __name__ == "__main__":

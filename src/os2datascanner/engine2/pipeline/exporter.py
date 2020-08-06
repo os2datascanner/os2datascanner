@@ -2,7 +2,8 @@ from os import getpid
 import json
 import argparse
 
-from ...utils.prometheus import prometheus_session
+from prometheus_client import start_http_server
+
 from ..model.core import (Handle,
         Source, UnknownSchemeError, DeserialisationError)
 from . import messages
@@ -89,6 +90,10 @@ def main():
 
     args = parser.parse_args()
 
+    if args.enable_metrics:
+        start_http_server(args.prometheus_port)
+
+
     class ExporterRunner(PikaPipelineRunner):
         @prometheus_summary(
                 "os2datascanner_pipeline_exporter", "Messages exported")
@@ -97,21 +102,17 @@ def main():
                 print(channel, body)
             return message_received_raw(body, channel, args.dump, args.results)
 
-    with prometheus_session(
-            str(getpid()),
-            args.prometheus_dir,
-            stage_type="exporter"):
-        with ExporterRunner(
-                read=[args.matches, args.metadata, args.problems],
-                write=[args.results],
-                host=args.host, heartbeat=6000) as runner:
-            try:
-                print("Start")
-                notify_ready()
-                runner.run_consumer()
-            finally:
-                print("Stop")
-                notify_stopping()
+    with ExporterRunner(
+            read=[args.matches, args.metadata, args.problems],
+            write=[args.results],
+            host=args.host, heartbeat=6000) as runner:
+        try:
+            print("Start")
+            notify_ready()
+            runner.run_consumer()
+        finally:
+            print("Stop")
+            notify_stopping()
 
 
 if __name__ == "__main__":

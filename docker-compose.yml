@@ -118,7 +118,7 @@ services:
       target: engine
     env_file:
       - dev-environment/pika.env
-    command: explorer
+    command: explorer --enable-metrics
     restart: unless-stopped
     depends_on:
       - queue
@@ -130,7 +130,7 @@ services:
       target: engine
     env_file:
       - dev-environment/pika.env
-    command: processor
+    command: processor --enable-metrics
     restart: unless-stopped
     depends_on:
       - queue
@@ -142,7 +142,7 @@ services:
       target: engine
     env_file:
       - dev-environment/pika.env
-    command: matcher
+    command: matcher --enable-metrics
     restart: unless-stopped
     depends_on:
       - queue
@@ -154,7 +154,7 @@ services:
       target: engine
     env_file:
       - dev-environment/pika.env
-    command: tagger
+    command: tagger --enable-metrics
     restart: unless-stopped
     depends_on:
       - queue
@@ -166,10 +166,27 @@ services:
       target: engine
     env_file:
       - dev-environment/pika.env
-    command: exporter
+    command: exporter --enable-metrics
     restart: unless-stopped
     depends_on:
       - queue
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - "./dev-environment/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+    ports:
+      - "8050:9090"
+
+  # default user is admin/admin
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - "./dev-environment/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro"
+      - "./dev-environment/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro"
+    ports:
+      - "8060:3000"
+
 
 volumes:
   frontend-bundles-admin:

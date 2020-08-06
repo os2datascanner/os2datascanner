@@ -30,11 +30,14 @@ def make_common_argument_parser():
 
     monitoring = parser.add_argument_group("monitoring")
     monitoring.add_argument(
-            "--prometheus-dir",
-            metavar="DIR",
-            help="the directory in which to drop a Prometheus description"
-                    " of this pipeline stage",
-            default=None)
+            "--enable-metrics",
+            action="store_true",
+            help="enable exporting of metrics")
+    monitoring.add_argument(
+            "--prometheus-port",
+            metavar="PORT",
+            help="the port to serve OpenMetrics data.",
+            default=9091)
 
     return parser
 
