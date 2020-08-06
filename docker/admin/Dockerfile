@@ -15,6 +15,7 @@ FROM node:14 AS frontend
 WORKDIR /code/src/os2datascanner/projects/admin/adminapp
 
 COPY src/os2datascanner/projects/admin/adminapp/package.json .
+COPY src/os2datascanner/projects/admin/adminapp/package-lock.json .
 # TODO: use a lock-file and change to using npm ci (https://docs.npmjs.com/cli/ci#description)
 RUN npm install
 
