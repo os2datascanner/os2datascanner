@@ -9,7 +9,7 @@ then
 fi
 
 setup_dir=$1
-declare -a pipeline_names=("explorer" "processor" "matcher" "tagger" "exporter")
+declare -a pipeline_names=("explorer" "processor" "matcher" "tagger" "exporter" "worker")
 
 systemd_dir="$setup_dir/contrib/systemd"
 systemd_template="$systemd_dir/os2ds-template@.service"
