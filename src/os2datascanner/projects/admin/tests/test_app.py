@@ -57,14 +57,13 @@ class ScannerTest(TestCase):
             url="http://www.example.com/",
             name='invalid webscanner',
             validation_status=Scanner.INVALID,
-            organization=self.magenta,
-            pk=4)
+            organization=self.magenta)
 
     def test_unvalidated_scannerjob_cannot_be_started(self):
         """This test method is sufficient for all types of scanners."""
 
         self.client.login(username='testuser', password='hemmeligt')
-        response = self.client.get('/webscanners/4/askrun/')
+        response = self.client.get('/webscanners/' + str(self.invalid_webscanner.pk) + '/askrun/')
         self.assertEqual(response.context['ok'], False)
         self.assertEqual(response.context['error_message'], Scanner.NOT_VALIDATED)
 

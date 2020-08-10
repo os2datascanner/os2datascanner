@@ -174,7 +174,7 @@ class Scanner(models.Model):
 
     # Run error messages
     HAS_NO_RULES = (
-        "Scanneren kunne ikke startes," +
+        "Scannerjobbet kunne ikke startes," +
         " fordi den ingen tilknyttede regler har."
     )
     NOT_VALIDATED = (
