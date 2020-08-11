@@ -323,6 +323,15 @@ LOGGING = {
     }
 }
 
+# Enable File scans for this installation?
+ENABLE_FILESCAN = False
+
+# Enable Web scans for this installation?
+ENABLE_WEBSCAN = False
+
+# Enable Exchange scans for this installation?
+ENABLE_EXCHANGESCAN = False
+
 # Enable Dropbox scans for this installation?
 ENABLE_DROPBOXSCAN = False
 

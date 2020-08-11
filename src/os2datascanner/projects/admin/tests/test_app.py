@@ -18,11 +18,13 @@
 These will pass when you run "manage.py test os2webscanner".
 """
 
-import unittest
 from django.test import TestCase
+from django.contrib.auth.models import User
 
 from os2datascanner.projects.admin.adminapp.models.organization_model import Organization
+from os2datascanner.projects.admin.adminapp.models.userprofile_model import UserProfile
 from os2datascanner.projects.admin.adminapp.models.authentication_model import Authentication
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import Scanner
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import WebScanner
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.filescanner_model import FileScanner
 from os2datascanner.projects.admin.adminapp.validate import validate_domain
@@ -38,26 +40,37 @@ class ScannerTest(TestCase):
         """Setup some data to test with."""
         # Don't change the order of these, because Magenta needs
         # pk = 2 to pass the validation test
+
         self.magenta = Organization(name="Magenta", pk=1)
         self.magenta.save()
         self.example = Organization(name="IANA (example.com)", pk=2)
         self.example.save()
+
+        self.test_user = User.objects.create_user(username='testuser',
+                                                  password='hemmeligt')
+
+        self.user_profile = UserProfile.objects.create(user=self.test_user,
+                                                       organization=self.magenta)
+
+        self.invalid_webscanner = WebScanner.objects.create(
+            url="http://www.example.com/",
+            name='invalid webscanner',
+            validation_status=Scanner.INVALID,
+            organization=self.magenta)
+
+    def test_unvalidated_scannerjob_cannot_be_started(self):
+        """This test method is sufficient for all types of scanners."""
+
+        self.client.login(username='testuser', password='hemmeligt')
+        response = self.client.get('/webscanners/' + str(self.invalid_webscanner.pk) + '/askrun/')
+        self.assertEqual(response.context['ok'], False)
+        self.assertEqual(response.context['error_message'], Scanner.NOT_VALIDATED)
 
     def test_validate_domain(self):
         """Test validating domains."""
         # Make sure example.com does not validate in any of the possible
         # methods
         all_methods = [WebScanner.WEBSCANFILE, WebScanner.METAFIELD]
-        # Make sure Magenta's website validates using all possible methods
-        # Magenta's website is under re-construction.
-        """for validation_method in [WebDomain.WEBSCANFILE, WebDomain.METAFIELD]:
-            domain = WebDomain(url="http://www.magenta.dk/",
-                            validation_method=validation_method,
-                            organization=self.magenta,
-                            pk=1)
-            domain.save()
-            print("VALIDATING", validation_method)
-            self.assertTrue(validate_domain(domain))"""
 
         for validation_method in all_methods:
             domain = WebScanner(url="http://www.example.com/",
