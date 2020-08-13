@@ -19,20 +19,23 @@ def libreoffice(*args):
                         *args], stdout=PIPE, stderr=PIPE, check=True)
 
 
+# These filter names come from /usr/lib/libreoffice/share/registry/PROG.xcd
 _actually_supported_types = {
-    "application/msword",
-    "application/vnd.oasis.opendocument.text",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/msword": "MS Word 97",
+    "application/vnd.oasis.opendocument.text": "writer8",
+    "application/vnd.openxmlformats-officedocument"
+            ".wordprocessingml.document": "Office Open XML Text",
 
-    "application/vnd.ms-excel",
-    "application/vnd.oasis.opendocument.spreadsheet",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    "application/vnd.ms-excel": "MS Excel 97",
+    "application/vnd.oasis.opendocument.spreadsheet": "calc8",
+    "application/vnd.openxmlformats-officedocument"
+            ".spreadsheetml.sheet": "Calc Office Open XML"
 }
 
 
 @Source.mime_handler(
         "application/CDFV2",
-        *_actually_supported_types)
+        *_actually_supported_types.keys())
 class LibreOfficeSource(DerivedSource):
     type_label = "lo"
 
@@ -40,11 +43,15 @@ class LibreOfficeSource(DerivedSource):
         with self.handle.follow(sm).make_path() as p:
             # To filter out application/CDFV2 files that we don't actually
             # support, we compute the type of the whole file by calling
-            # libmagic directly on the local filesystem path
+            # libmagic directly on the local filesystem path...
             best_mime_guess = magic.from_file(p, mime=True)
-            if best_mime_guess in _actually_supported_types:
+            # ... and, just to be extra safe, we tell LibreOffice what sort of
+            # file we're passing it so it can do its own sanity checks
+            filter_name = _actually_supported_types.get(best_mime_guess)
+            if filter_name is not None:
                 with TemporaryDirectory() as outputdir:
                     result = libreoffice(
+                            "--infilter={0}".format(filter_name),
                             "--convert-to", "html",
                             "--outdir", outputdir, p)
                     yield outputdir
