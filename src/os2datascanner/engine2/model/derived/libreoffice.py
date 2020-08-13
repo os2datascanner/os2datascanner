@@ -1,4 +1,5 @@
 from os import listdir
+import magic
 from tempfile import TemporaryDirectory
 from subprocess import run, PIPE
 
@@ -18,27 +19,35 @@ def libreoffice(*args):
                         *args], stdout=PIPE, stderr=PIPE, check=True)
 
 
+_actually_supported_types = {
+    "application/msword",
+    "application/vnd.oasis.opendocument.text",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+
+    "application/vnd.ms-excel",
+    "application/vnd.oasis.opendocument.spreadsheet",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+}
+
+
 @Source.mime_handler(
         "application/CDFV2",
-
-        "application/msword",
-        "application/vnd.oasis.opendocument.text",
-        "application/vnd.openxmlformats-officedocument"
-                ".wordprocessingml.document",
-
-        "application/vnd.ms-excel",
-        "application/vnd.oasis.opendocument.spreadsheet",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        *_actually_supported_types)
 class LibreOfficeSource(DerivedSource):
     type_label = "lo"
 
     def _generate_state(self, sm):
         with self.handle.follow(sm).make_path() as p:
-            with TemporaryDirectory() as outputdir:
-                result = libreoffice(
-                        "--convert-to", "html",
-                        "--outdir", outputdir, p)
-                yield outputdir
+            # To filter out application/CDFV2 files that we don't actually
+            # support, we compute the type of the whole file by calling
+            # libmagic directly on the local filesystem path
+            best_mime_guess = magic.from_file(p, mime=True)
+            if best_mime_guess in _actually_supported_types:
+                with TemporaryDirectory() as outputdir:
+                    result = libreoffice(
+                            "--convert-to", "html",
+                            "--outdir", outputdir, p)
+                    yield outputdir
 
     def handles(self, sm):
         for name in listdir(sm.open(self)):
