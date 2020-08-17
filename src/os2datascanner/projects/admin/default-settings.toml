@@ -1,0 +1,100 @@
+# SPDX-FileCopyrightText: 2020 Magenta ApS
+# SPDX-License-Identifier: MPL-2.0
+
+# THIS FILE CONTAINS DEFAULT CONFIGURATION SETTINGS. DO NOT CHANGE!!!
+# To change the configuration of a specific instance, go the user configuration
+# file. For development, the user configuration file is found here:
+# /dev-environment/dev-settings.toml
+
+[mode]
+debug = false
+production = false
+
+[site]
+url = "*"
+id = 1
+allowed_hosts = []
+
+[dirs]
+# These are the settings for various directories.
+# TODO: decide on a solution for "stacked" relative paths
+# The variable "base_dir" will be set by the Django application,
+# all others define a parent (optionally empty) and
+project_dir = ["*"]
+build_dir = ["*", "build"]
+var_dir = ["*", "var"]
+logs_dir = ["*", "var", "logs"]
+media_root = ["*", "uploads", "admin"]
+decryption_file_path = ["*"]
+
+[msgraph]
+# The GUID of the registered Azure application corresponding to this
+# OS2datascanner installation, used when requesting Microsoft Graph access:
+app_id = ""
+# The client secret used to demonstrate to Microsoft Graph that this
+# OS2datascanner installation corresponds to a registered Azure application
+# (client private keys are not yet supported):
+client_secret = ""
+
+[test]
+runner = "xmlrunner.extra.djangotestrunner.XMLTestRunner"
+output_file_name = ["*", "test-results.xml"]
+output_descruptions = true
+output_verbose = true
+
+[amqp]
+host = "localhost"
+pipeline_target = "os2ds_scan_specs"
+
+[installation]
+additional_apps = []
+auth_profile_module = "os2datascanner.projects.admin.adminapp.UserProfile"
+wsgi_application = "os2datascanner.projects.admin.wsgi.application"
+root_url = "os2datascanner.projects.admin.urls"
+static_url = "/static/"
+icon_sprite_url = "/static/src/svg/symbol-defs.svg"
+login_redirect_url = "/"
+
+[databases]
+
+    [databases.default]
+    engine = "django.db.backends.postgresql_psycopg2"
+    name = "os2datascanner_admin"
+    user = "os2datascanner_admin"
+    password = ""
+    host = "'127.0.0.1'"
+
+[database_pool_args]
+max_overflow = 10
+pool_size = 5
+recycle = 300
+
+[internationalization]
+language_code = "da-dk"
+locale_paths = [
+    ["*", "locale", "admin"],
+]
+languages = [
+    ["da", "Danish"],
+    ["en", "English"],
+]
+timezone = "Europe/Copenhagen"
+use_i18n = true
+use_l10m = true
+use_tz = true
+use_thousand_seperator = true
+
+[email]
+default_from_email = "(Magenta Info) info@magenta.dk"
+admin_email = "(Magenta Admin) info@magenta.dk"
+host = "localhost"
+port = 25
+backend = "django.core.mail.backends.smtp.EmailBackend"
+
+[scans]
+enable_filescan = false
+enable_webscan = false
+enable_exchangescan = false
+enable_dropboxscan = false
+enable_msgraph_mailscan = false
+enable_msgraph_filescan = false
