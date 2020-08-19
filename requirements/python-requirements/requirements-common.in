@@ -3,3 +3,4 @@
 colorama
 pika
 structlog
+toml

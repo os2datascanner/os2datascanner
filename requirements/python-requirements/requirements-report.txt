@@ -65,6 +65,7 @@ six==1.14.0               # via -c requirements-engine.txt, cryptography, django
 soupsieve==2.0            # via -c requirements-engine.txt, beautifulsoup4
 sqlparse==0.3.1           # via django
 structlog==20.1.0         # via -c requirements-engine.txt, -r requirements-common.in, django-structlog
+toml==0.10.1              # via -r requirements-common.in
 traitlets==4.3.3          # via ipython
 tzlocal==2.0.0            # via -c requirements-engine.txt, exchangelib
 urllib3==1.25.9           # via -c requirements-engine.txt, requests
