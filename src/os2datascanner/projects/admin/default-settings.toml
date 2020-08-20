@@ -6,95 +6,127 @@
 # file. For development, the user configuration file is found here:
 # /dev-environment/dev-settings.toml
 
-[mode]
-debug = false
-production = false
+SECRET_KEY = ""
 
-[site]
-url = "*"
-id = 1
-allowed_hosts = []
+# [mode]
+DEBUG = false
+PRODUCTION = false
 
-[dirs]
-# These are the settings for various directories.
-# TODO: decide on a solution for "stacked" relative paths
-# The variable "base_dir" will be set by the Django application,
-# all others define a parent (optionally empty) and
-project_dir = ["*"]
-build_dir = ["*", "build"]
-var_dir = ["*", "var"]
-logs_dir = ["*", "var", "logs"]
-media_root = ["*", "uploads", "admin"]
-decryption_file_path = ["*"]
+# [site]
+# The URL of this site, used in links in emails and in the redirect URL for
+# OAuth 2.0 services. (This value should end with a forward slash.)
+SITE_URL = "*"
+SITE_ID = 1
+ALLOWED_HOSTS = []
 
-[msgraph]
+# [msgraph]
 # The GUID of the registered Azure application corresponding to this
 # OS2datascanner installation, used when requesting Microsoft Graph access:
-app_id = ""
+MSGRAPH_APP_ID = ""
 # The client secret used to demonstrate to Microsoft Graph that this
 # OS2datascanner installation corresponds to a registered Azure application
 # (client private keys are not yet supported):
-client_secret = ""
+MSGRAPH_CLIENT_SECRET = ""
 
-[test]
-runner = "xmlrunner.extra.djangotestrunner.XMLTestRunner"
-output_file_name = ["*", "test-results.xml"]
-output_descruptions = true
-output_verbose = true
+# [test]
+TEST_RUNNER = "xmlrunner.extra.djangotestrunner.XMLTestRunner"
+TEST_OUTPUT_DESCRIPTIONS = true
+TEST_OUTPUT_VERBOSE = true
+# TEST_OUTPUT_FILE_NAME is set under dirs
 
-[amqp]
-host = "localhost"
-pipeline_target = "os2ds_scan_specs"
+# [amqp]
+AMQP_HOST = "localhost"
+AMQP_USER = ""
+AMQP_PWD = ""
+AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
 
-[installation]
-additional_apps = []
-auth_profile_module = "os2datascanner.projects.admin.adminapp.UserProfile"
-wsgi_application = "os2datascanner.projects.admin.wsgi.application"
-root_url = "os2datascanner.projects.admin.urls"
-static_url = "/static/"
-icon_sprite_url = "/static/src/svg/symbol-defs.svg"
-login_redirect_url = "/"
+# [installation]
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'os2datascanner.projects.admin.adminapp.apps.AdminappConfig',
+    'recurrence',
+]
+OPTIONAL_APPS = []
+AUTH_PROFILE_MODULE = "os2datascanner.projects.admin.adminapp.UserProfile"
+WSGI_APPLICATION = "os2datascanner.projects.admin.wsgi.application"
+ROOT_URLCONF = "os2datascanner.projects.admin.urls"
+STATIC_URL = "/static/"
+ICON_SPRITE_URL = "/static/src/svg/symbol-defs.svg"
+LOGIN_REDIRECT_URL = "/"
+NOTIFICATION_INSTITUTION = ""
+DO_USE_GROUPS = false
 
-[databases]
+MIDDLEWARE = [
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_structlog.middlewares.RequestMiddleware",
+]
 
-    [databases.default]
-    engine = "django.db.backends.postgresql_psycopg2"
-    name = "os2datascanner_admin"
-    user = "os2datascanner_admin"
-    password = ""
-    host = "'127.0.0.1'"
+# [internationalization]
+LANGUAGE_CODE = "da-dk"
+_LOCALE_PATHS = [
+    ["*", "locale", "admin"],
+]
+_LANGUAGES = [
+    ["da", "Danish"],
+    ["en", "English"],
+]
+TIMEZONE = "Europe/Copenhagen"
+USE_I18N = true
+USE_L10N = true
+USE_TZ = true
+USE_THOUSAND_SEPARATOR = true
 
-[database_pool_args]
+# [email]
+DEFAULT_FROM_EMAIL = "(Magenta Info) info@magenta.dk"
+ADMIN_EMAIL = "(Magenta Admin) info@magenta.dk"
+EMAIL_HOST = "localhost"
+EMAIL_PORT = 25
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+# [scans]
+ENABLE_FILESCAN = false
+ENABLE_WEBSCAN = false
+ENABLE_EXCHANGESCAN = false
+ENABLE_DROPBOXSCAN = false
+ENABLE_MSGRAPH_mailSCAN = false
+ENABLE_MSGRAPH_fileSCAN = false
+
+# [logging]
+GREYLOG_HOST = ""
+DJANGO_LOG_LEVEL = "INFO"
+
+[DATABASES]
+
+    [DATABASES.default]
+    ENGINE = "django.db.backends.postgresql_psycopg2"
+    NAME = "os2datascanner_admin"
+    USER = "os2datascanner_admin"
+    PASSWORD = ""
+    HOST = "127.0.0.1"
+
+[DATABASE_POOL_ARGS]
 max_overflow = 10
 pool_size = 5
 recycle = 300
 
-[internationalization]
-language_code = "da-dk"
-locale_paths = [
-    ["*", "locale", "admin"],
-]
-languages = [
-    ["da", "Danish"],
-    ["en", "English"],
-]
-timezone = "Europe/Copenhagen"
-use_i18n = true
-use_l10m = true
-use_tz = true
-use_thousand_seperator = true
-
-[email]
-default_from_email = "(Magenta Info) info@magenta.dk"
-admin_email = "(Magenta Admin) info@magenta.dk"
-host = "localhost"
-port = 25
-backend = "django.core.mail.backends.smtp.EmailBackend"
-
-[scans]
-enable_filescan = false
-enable_webscan = false
-enable_exchangescan = false
-enable_dropboxscan = false
-enable_msgraph_mailscan = false
-enable_msgraph_filescan = false
+[dirs]
+# These are the settings for various directories.
+# Paths relative to the project directory should start with "*" while
+# absolute paths should start with "/"
+BUILD_DIR = ["*", "build"]
+VAR_DIR = ["*", "var"]
+LOGS_DIR = ["*", "var", "logs"]
+MEDIA_ROOT = ["*", "uploads", "admin"]
+TEST_OUTPUT_FILE_NAME = ["*", "test-results.xml"]
+DECRYPTION_FILE_PATH = ["*"]

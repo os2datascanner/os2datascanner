@@ -1,41 +1,40 @@
-[mode]
-debug = true
+SECRET_KEY = "DUMMYKEY(for development)DUMMYKEY(for development)"
+
+# [mode]
+DEBUG = true
 # Used for filescan and mounting
-production = false
+PRODUCTION = false
 
-[site]
-id = 1
-# Site URL for calculating absolute URLs in emails.
-url = "DEV_SITE"
-allowed_hosts = []
+# [site]
+# The URL of this site, used in links in emails and in the redirect URL for
+# OAuth 2.0 services. (This value should end with a forward slash.)
+SITE_URL = "localhost:8020/"
+ALLOWED_HOSTS = []
 
-secret_key = "DUMMYKEY(for development)DUMMYKEY(for development)"
+# [installation]
+OPTIONAL_APPS = ["django_extensions"]
 
-[installation]
-additional_apps = ["django_extextions"]
+# [amqp]
+AMQP_HOST = "queue"
+AMQP_USER = "guest"
+AMQP_PWD = "guest"
 
-[scans]
-enable_filescan = true
-enable_webscan = true
-enable_exchangescan = true
+# [scans]
+ENABLE_FILESCAN = true
+ENABLE_WEBSCAN = true
+ENABLE_EXCHANGESCAN = true
 
-[databases]
+# [email]
+DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"
+ADMIN_EMAIL = "os2datascanner@magenta.dk"
+EMAIL_HOST = "localhost"
+EMAIL_PORT = 25
 
-    [databases.default]
-    engine = "django.db.backends.postgresql_psycopg2"
-    name = "os2datascanner_admin"
-    user = "os2datascanner_admin_dev"
-    password = "os2datascanner_admin_dev"
-    host = "db"
+[DATABASES]
 
-[database_pool_args]
-max_overflow = 10
-pool_size = 5
-recycle = 300
-
-[email]
-default_from_email = "os2datascanner@magenta.dk"
-admin_email = "os2datascanner@magenta.dk"
-host = "localhost"
-port = 25
-backend = "django.core.mail.backends.smtp.EmailBackend"
+    [DATABASES.default]
+    ENGINE = "django.db.backends.postgresql_psycopg2"
+    NAME = "os2datascanner_admin"
+    USER = "os2datascanner_admin_dev"
+    PASSWORD = "os2datascanner_admin_dev"
+    HOST = "db"
