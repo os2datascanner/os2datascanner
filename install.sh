@@ -16,13 +16,8 @@ install_system_dependencies() {
     # on a fresh Ubuntu install.
     echo "$0: installing system dependencies"
 
-    SYSTEM_PACKAGES=$(cat "$DIR/requirements/system_dependencies.txt")
-
     sudo -H apt-get update
-    for package in ${SYSTEM_PACKAGES[@]}
-    do
-        sudo -H apt-get -y install "$package" || return 1
-    done
+    sudo -H apt-get -y install --no-install-recommends $(grep -oh '^[^#][[:alnum:].-]*' "$DIR"/requirements/sys-requirements/sys-requirements*.txt)
 }
 
 install_python_environment() {
@@ -37,7 +32,7 @@ install_python_environment() {
     fi &&
 
     "$VIRTUALENV/bin/pip" install -U setuptools wheel pip &&
-    "$VIRTUALENV/bin/pip" install -r "$DIR/requirements/requirements.txt"
+    find "$DIR/requirements" -name requirements*.txt -print0 | xargs -0 -n1 "$VIRTUALENV/bin/pip" install -r
 }
 
 configure_development_environment() {
@@ -53,4 +48,4 @@ configure_development_environment() {
 
 install_system_dependencies
 install_python_environment
-configure_development_environment
+# configure_development_environment
