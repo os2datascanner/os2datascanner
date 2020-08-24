@@ -144,11 +144,9 @@ Build documentation:
   variables:
     USER: os2;12345_rosebud_password_admin
     SHARE: general;${CI_PROJECT_DIR}/src/os2datascanner/tests/data/engine2;no;yes
-    POSTGRES_HOST: postgres
     AMQP_HOST: rabbitmq
     AMQP_USER: guest
     AMQP_PWD: guest
-    SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
     COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
   allow_failure: false
 
@@ -157,9 +155,8 @@ Test Admin Application:
   image:
     name: ${ADMIN_IMAGE}
   variables:
-    POSTGRES_DB: os2datascanner_admin
-    POSTGRES_USER: os2datascanner_admin
-    POSTGRES_PASSWORD: os2datascanner_admin
+    DSC_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
+    DSC_ADMIN_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/admin/docker-settings.toml
     DECRYPTION_FILE_PATH: ${CI_PROJECT_DIR}/dev-environment/admin
   needs:
     - Build Admin Application
@@ -202,9 +199,8 @@ Test Report Application:
   image:
     name: ${REPORT_IMAGE}
   variables:
-    POSTGRES_DB: os2datascanner_report
-    POSTGRES_USER: os2datascanner_report
-    POSTGRES_PASSWORD: os2datascanner_report
+    DSC_REPORT_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/report/test-settings.toml
+    DSC_REPORT_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/report/docker-settings.toml
   needs:
     - Build Report Application
   script:
