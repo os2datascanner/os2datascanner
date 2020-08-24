@@ -72,6 +72,18 @@ MIDDLEWARE = [
     "django_structlog.middlewares.RequestMiddleware",
 ]
 
+# Add settings here to make them accessible from templates
+SETTINGS_EXPORT = [
+    'DEBUG',
+    'ENABLE_FILESCAN',
+    'ENABLE_EXCHANGESCAN',
+    'ENABLE_WEBSCAN',
+    'ENABLE_DROPBOXSCAN',
+    'ENABLE_MSGRAPH_MAILSCAN',
+    'ENABLE_MSGRAPH_FILESCAN',
+    'ICON_SPRITE_URL'
+]
+
 # [internationalization]
 LANGUAGE_CODE = "da-dk"
 _LOCALE_PATHS = [

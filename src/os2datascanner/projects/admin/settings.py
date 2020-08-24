@@ -16,18 +16,6 @@ PROJECT_DIR = os.path.dirname(BASE_DIR)
 
 process_toml_conf_for_django(PROJECT_DIR, sys.modules[__name__], _)
 
-# Add settings here to make them accessible from templates
-SETTINGS_EXPORT = [
-    'DEBUG',
-    'ENABLE_FILESCAN',
-    'ENABLE_EXCHANGESCAN',
-    'ENABLE_WEBSCAN',
-    'ENABLE_DROPBOXSCAN',
-    'ENABLE_MSGRAPH_MAILSCAN',
-    'ENABLE_MSGRAPH_FILESCAN',
-    'ICON_SPRITE_URL'
-]
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -44,16 +32,6 @@ TEMPLATES = [
     },
 ]
 
-"""
-LOCALE_PATHS = (
-    os.path.join(PROJECT_DIR, 'locale', 'admin'),
-)
-
-LANGUAGES = (
-    ('da', _('Danish')),
-    ('en', _('English')),
-)
-"""
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': (
