@@ -86,6 +86,8 @@ SETTINGS_EXPORT = [
 
 # [internationalization]
 LANGUAGE_CODE = "da-dk"
+# Paths relative to the project directory should start with "*" while
+# absolute paths should start with "/"
 _LOCALE_PATHS = [
     ["*", "locale", "admin"],
 ]

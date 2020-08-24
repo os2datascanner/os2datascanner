@@ -1,0 +1,136 @@
+# SPDX-FileCopyrightText: 2020 Magenta ApS
+# SPDX-License-Identifier: MPL-2.0
+
+# THIS FILE CONTAINS DEFAULT CONFIGURATION SETTINGS. DO NOT CHANGE!!!
+# To change the configuration of a specific instance, go the user configuration
+# file. For development, the user configuration file is found here:
+# /dev-environment/dev-settings.toml
+
+SECRET_KEY = ""
+SAML2_ENABLED = false
+
+# [mode]
+DEBUG = false
+
+# [site]
+# The URL of this site, used in links in emails and in the redirect URL for
+# OAuth 2.0 services. (This value should end with a forward slash.)
+SITE_URL = "*"
+ALLOWED_HOSTS = []
+
+# [installation]
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'os2datascanner.projects.report.reportapp.apps.ReportappConfig',
+]
+OPTIONAL_APPS = []
+AUTH_PROFILE_MODULE = 'os2datascanner.projects.report.reportapp.UserProfile'
+WSGI_APPLICATION = 'os2datascanner.projects.report.wsgi.application'
+ROOT_URLCONF = 'os2datascanner.projects.report.urls'
+STATIC_URL = '/static/'
+LOGIN_REDIRECT_URL = '/'
+NOTIFICATION_INSTITUTION = ""
+# Which URL schemes can be used in links to matched objects? (The possible
+# entries are "http", "https" and "file".)
+PERMITTED_URL_SCHEMES = ['http', 'https']
+
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_structlog.middlewares.RequestMiddleware',
+]
+
+# [internationalization]
+LANGUAGE_CODE = "da-dk"
+# Paths relative to the project directory should start with "*" while
+# absolute paths should start with "/"
+_LOCALE_PATHS = [
+    ["*", "locale", "admin"],
+]
+_LANGUAGES = [
+    ["da", "Danish"],
+    ["en", "English"],
+]
+TIMEZONE = "Europe/Copenhagen"
+USE_I18N = true
+USE_L10N = true
+USE_TZ = true
+USE_THOUSAND_SEPARATOR = true
+
+# [enail]
+DEFAULT_FROM_EMAIL = '(Magenta Bibos Info) info@magenta.dk'
+ADMIN_EMAIL = '(Magenta Bibos Admin) info@magenta.dk'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# [logging]
+GREYLOG_HOST = ""
+DJANGO_LOG_LEVEL = "INFO"
+
+[DATABASES]
+
+    [DATABASES.default]
+    ENGINE = "django.db.backends.postgresql_psycopg2"
+    NAME = "os2datascanner_report"
+    USER = "os2datascanner_report"
+    PASSWORD = ""
+    HOST = "127.0.0.1"
+
+[DATABASE_POOL_ARGS]
+max_overflow = 10
+pool_size = 5
+recycle = 300
+
+# The full documentation can be found here: https://github.com/fangli/django-saml2-auth
+[SAML2_AUTH]
+
+# Metadata is required, choose either remote url or local file path
+METADATA_AUTO_CONF_URL = '[The auto(dynamic) metadata configuration URL of SAML2]'
+METADATA_LOCAL_FILE_PATH = '[The metadata configuration file path]'
+
+# Optional settings below
+DEFAULT_NEXT_URL = '/admin'  # Custom target redirect URL after the user get logged in. Default to /admin if not set. This setting will be overwritten if you have parameter ?next= specificed in the login URL.
+CREATE_USER = 'TRUE' # Create a new Django user when a new user logs in. Defaults to True.
+ASSERTION_URL = 'https://mysite.com' # Custom URL to validate incoming SAML requests against
+ENTITY_ID = 'https://mysite.com/saml2_auth/acs/' # Populates the Issuer element in authn request
+NAME_ID_FORMAT = 'FormatString' # Sets the Format property of authn NameIDPolicy element
+USE_JWT = false # Set this to True if you are running a Single Page Application (SPA) with Django Rest Framework (DRF), and are using JWT authentication to authorize client users
+FRONTEND_URL = 'https://myfrontendclient.com' # Redirect URL for the client if you are using JWT auth with DRF. See explanation below
+
+    [SAML2_AUTH.NEW_USER_PROFILE]
+    USER_GROUPS = []  # The default group name when a new user logs in
+    ACTIVE_STATUS = true  # The default active status for new users
+    STAFF_STATUS = true  # The staff status for new users
+    SUPERUSER_STATUS = false  # The superuser status for new users
+
+    [SAML2_AUTH.ATTRIBUTES_MAP]
+    # Change Email/UserName/FirstName/LastName to corresponding SAML2 userprofile attributes.
+    email = 'Email'
+    username = 'UserName'
+    first_name = 'FirstName'
+    last_name = 'LastName'
+
+    [SAML2_AUTH.TRIGGER]
+    CREATE_USER = 'path.to.your.new.user.hook.method'
+    BEFORE_LOGIN = 'path.to.your.login.hook.method'
+
+[dirs]
+# These are the settings for various directories.
+# Paths relative to the project directory should start with "*" while
+# absolute paths should start with "/"
+BUILD_DIR = ["*", "build"]
+VAR_DIR = ["*", "var"]
+LOGS_DIR = ["*", "var", "logs"]
+STATIC_ROOT = ["*", 'src', 'os2datascanner', 'projects', 'static', 'report']

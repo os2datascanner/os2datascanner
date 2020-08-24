@@ -74,13 +74,11 @@ services:
       dockerfile: docker/report/Dockerfile
       target: application
     env_file:
-      - dev-environment/report/django.env
       - dev-environment/pika.env
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
-      - ./dev-environment/report/dev-settings.py:/code/src/os2datascanner/projects/report/local_settings.py
       - ./src/os2datascanner:/code/src/os2datascanner
     ports:
       - "8040:8000"
@@ -97,13 +95,11 @@ services:
     environment:
       - OS2DS_MIGRATE_MANUALLY=1
     env_file:
-      - dev-environment/report/django.env
       - dev-environment/pika.env
     command: python manage.py pipeline_collector
     restart: unless-stopped
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
-      - ./dev-environment/report/dev-settings.py:/code/src/os2datascanner/projects/report/local_settings.py
     depends_on:
       - db
       - report-application
