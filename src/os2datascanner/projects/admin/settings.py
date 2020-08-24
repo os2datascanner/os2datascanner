@@ -63,8 +63,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Hostname to use for logging to Graylog; its absence supresses such
 # logging
 
-GRAYLOG_HOST = os.getenv('DJANGO_GRAYLOG_HOST')
-
 structlog.configure(
     processors=[
         structlog.stdlib.filter_by_level,
@@ -129,7 +127,7 @@ LOGGING = {
         },
         "requires_graylog_host": {
             "()": "django.utils.log.CallbackFilter",
-            "callback": lambda record: bool(GRAYLOG_HOST),
+            "callback": lambda record: bool(globals()['GRAYLOG_HOST']),
         },
     },
     'handlers': {
@@ -154,7 +152,7 @@ LOGGING = {
         "graylog": {
             "level": "DEBUG",
             "class": "os2datascanner.utils.gelf.GraylogDatagramHandler",
-            "host": GRAYLOG_HOST,
+            "host": globals()['GRAYLOG_HOST'],
             "filters": ["requires_graylog_host"],
             "formatter": "gelf",
         },
@@ -167,12 +165,12 @@ LOGGING = {
         },
         'django_structlog': {
             'handlers': ['console', 'debug_log', 'graylog'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': globals()['DJANGO_LOG_LEVEL'],
             'propagate': True,
         },
         'os2datascanner': {
             'handlers': ['console', 'debug_log', 'graylog'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': globals()['DJANGO_LOG_LEVEL'],
             'propagate': True,
         },
     }

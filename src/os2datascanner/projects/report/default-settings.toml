@@ -76,7 +76,7 @@ EMAIL_PORT = 25
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # [logging]
-GREYLOG_HOST = ""
+GRAYLOG_HOST = ""
 DJANGO_LOG_LEVEL = "INFO"
 
 [DATABASES]
