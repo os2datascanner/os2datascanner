@@ -6,6 +6,7 @@ django-model-utils
 django-settings-export
 django-structlog
 psycopg2-binary
+toml
 
 # At the moment only used during development:
 django_extensions

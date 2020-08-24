@@ -40,7 +40,6 @@ six==1.14.0               # via cryptography, dropbox, isodate, python-dateutil,
 soupsieve==2.0            # via beautifulsoup4
 structlog==20.1.0         # via -r requirements-common.in
 systemd-python==234       # via -r requirements-engine.in
-toml==0.10.1              # via -r requirements-common.in
 tzlocal==2.0.0            # via exchangelib
 urllib3==1.25.9           # via requests
 xattr==0.9.7              # via -r requirements-engine.in
