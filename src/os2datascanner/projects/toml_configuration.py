@@ -7,6 +7,8 @@ import os
 import sys
 import toml
 
+from django.utils.translation import gettext_lazy as _
+
 logger = logging.getLogger("configuration")
 
 def read_config(config_path):
@@ -72,7 +74,7 @@ def _process_directory_configuration(configuration, placeholder, directory):
                 placeholder, directory, value
             )
 
-def _process_locales(configuration, placeholder, directory, translation_func):
+def _process_locales(configuration, placeholder, directory):
     # Set locale paths
     path_list = configuration.get('_LOCALE_PATHS')
     if path_list:
@@ -80,19 +82,18 @@ def _process_locales(configuration, placeholder, directory, translation_func):
             _process_relative_path(placeholder, directory, path) for path in path_list
         ]
     # Set languages and their localized names
-    _ = translation_func
     language_list = configuration.get('_LANGUAGES')
     if language_list:
         configuration['LANGUAGES'] = [
             (language[0], _(language[1])) for language in language_list
         ]
 
-def process_toml_conf_for_django(project_directory, module, translation_func):
+def process_toml_conf_for_django(parent_path, module, sys_var, user_var):
     # Specify file paths
     settings_dir = os.path.abspath(os.path.dirname(module.__file__))
     default_settings = os.path.join(settings_dir, 'default-settings.toml')
-    system_settings = os.getenv('DSC_ADMIN_SYSTEM_CONFIG_PATH', None)
-    user_settings = os.getenv('DSC_ADMIN_USER_CONFIG_PATH', None)
+    system_settings = os.getenv(sys_var, None)
+    user_settings = os.getenv(user_var, None)
 
     # Load default configuration
     if not os.path.isfile(default_settings):
@@ -110,8 +111,8 @@ def process_toml_conf_for_django(project_directory, module, translation_func):
         logger.info("Reading user settings from %s", user_settings)
         update_config(config, read_config(user_settings))
 
-    _process_directory_configuration(config, "*", project_directory)
-    _process_locales(config, "*", project_directory, translation_func)
+    _process_directory_configuration(config, "*", parent_path)
+    _process_locales(config, "*", parent_path)
     _set_constants(module, config)
 
     if globals().get('OPTIONAL_APPS'):

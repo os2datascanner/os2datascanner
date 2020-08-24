@@ -9,12 +9,17 @@ import sys
 
 from django.utils.translation import gettext_lazy as _
 
-from os2datascanner.utils.toml_configuration import process_toml_conf_for_django
+from os2datascanner.projects.toml_configuration import process_toml_conf_for_django
 
 BASE_DIR = str(pathlib.Path(__file__).resolve().parent.parent.parent.parent.absolute())
 PROJECT_DIR = os.path.dirname(BASE_DIR)
 
-process_toml_conf_for_django(PROJECT_DIR, sys.modules[__name__], _)
+process_toml_conf_for_django(
+    parent_path=PROJECT_DIR,
+    module=sys.modules[__name__],
+    sys_var='DSC_ADMIN_SYSTEM_CONFIG_PATH',
+    user_var='DSC_ADMIN_USER_CONFIG_PATH',
+)
 
 TEMPLATES = [
     {

@@ -94,6 +94,7 @@ COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/projects/report ./projects/report
 COPY src/os2datascanner/projects/__init__.py ./projects/
+COPY src/os2datascanner/projects/toml_configuration.py ./projects/
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
 COPY VERSION .

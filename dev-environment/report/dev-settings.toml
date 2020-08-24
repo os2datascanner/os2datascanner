@@ -1,4 +1,4 @@
-SECRET_KEY = 'DUMMYKEY(for development)DUMMYKEY(for development)'
+SECRET_KEY = "DUMMYKEY(for development)DUMMYKEY(for development)"
 
 # [mode]
 DEBUG = true
