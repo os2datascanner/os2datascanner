@@ -4,3 +4,4 @@
 django-recurrence
 pycrypto
 python-dateutil
+pydrive

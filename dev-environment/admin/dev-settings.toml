@@ -19,6 +19,7 @@ OPTIONAL_APPS = ["django_extensions"]
 ENABLE_FILESCAN = true
 ENABLE_WEBSCAN = true
 ENABLE_EXCHANGESCAN = true
+ENABLE_GOOGLEDRIVESCAN = true
 
 # [email]
 DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"

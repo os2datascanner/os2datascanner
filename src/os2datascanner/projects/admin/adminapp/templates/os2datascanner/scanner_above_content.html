@@ -17,6 +17,10 @@
     {% if settings.ENABLE_MSGRAPH_FILESCAN %}
     <a id="msgraph-file" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-filescanners/">Office 365 OneDrive filscanner</a>
     {% endif %}
+    {% if settings.ENABLE_GOOGLEDRIVESCAN  %}
+    <a id="googledrive" title="Google Drive scanner i test" class="tabs__control" href="/googledrivescanners/">Google Drive Scanner (beta)</a>
+    {% endif %}
+
 </div>
 
 <script>
@@ -27,6 +31,7 @@
     var dropbox = document.getElementById("dropbox")
     var msgraph_mail = document.getElementById("msgraph-mail")
     var msgraph_file = document.getElementById("msgraph-file")
+    var googledrive = document.getElementById("googledrive")
 
     if (location.pathname === '/') {
         if (web) {
@@ -47,6 +52,9 @@
         } else if (msgraph_file) {
             window.location.href = "/msgraph-filescanners/"
             msgraph_file.classList.add('active')
+        } else if (googledrive) {
+            window.location.href = "/googledrivescanners/"
+            googledrive.classList.add('active')
         }
     }
     if (location.pathname === '/webscanners/') {
@@ -66,5 +74,8 @@
     }
     if (location.pathname === '/msgraph-filescanners/') {
         msgraph_file.classList.add("active")
+    }
+    if (location.pathname === '/googledrivescanners/') {
+        googledrive.classList.add("active")
     }
 </script>
