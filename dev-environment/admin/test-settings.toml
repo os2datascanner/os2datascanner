@@ -8,3 +8,14 @@ SECRET_KEY = "DUMMYKEY(for testing)DUMMYKEY(for testing)"
     USER = "os2datascanner_admin_test"
     PASSWORD = "os2datascanner_admin_test"
     HOST = "postgres"
+
+[dirs]
+# These are the settings for various directories.
+# Paths relative to the project directory should start with "*" while
+# absolute paths should start with "/"
+BUILD_DIR = ["*", "build"]
+VAR_DIR = ["*", "var"]
+LOGS_DIR = ["*", "var", "logs"]
+MEDIA_ROOT = ["*", "uploads", "admin"]
+TEST_OUTPUT_FILE_NAME = ["*", "build", "test-results.xml"]
+DECRYPTION_FILE_PATH = ["/", "builds", "os2datascanner", "os2datascanner", "dev-environment", "admin"]

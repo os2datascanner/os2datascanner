@@ -113,8 +113,8 @@ ENABLE_FILESCAN = false
 ENABLE_WEBSCAN = false
 ENABLE_EXCHANGESCAN = false
 ENABLE_DROPBOXSCAN = false
-ENABLE_MSGRAPH_mailSCAN = false
-ENABLE_MSGRAPH_fileSCAN = false
+ENABLE_MSGRAPH_MAILSCAN = false
+ENABLE_MSGRAPH_FILESCAN = false
 
 # [logging]
 GRAYLOG_HOST = ""
@@ -142,5 +142,5 @@ BUILD_DIR = ["*", "build"]
 VAR_DIR = ["*", "var"]
 LOGS_DIR = ["*", "var", "logs"]
 MEDIA_ROOT = ["*", "uploads", "admin"]
-TEST_OUTPUT_FILE_NAME = ["*", "test-results.xml"]
+TEST_OUTPUT_FILE_NAME = ["*", "build", "test-results.xml"]
 DECRYPTION_FILE_PATH = ["*"]
