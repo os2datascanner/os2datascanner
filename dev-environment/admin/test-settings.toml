@@ -4,9 +4,9 @@ SECRET_KEY = "DUMMYKEY(for testing)DUMMYKEY(for testing)"
 
     [DATABASES.default]
     ENGINE = "django.db.backends.postgresql_psycopg2"
-    NAME = "os2datascanner_admin"
-    USER = "os2datascanner_admin_test"
-    PASSWORD = "os2datascanner_admin_test"
+    NAME = "os2datascanner"
+    USER = "os2datascanner"
+    PASSWORD = "os2datascanner"
     HOST = "postgres"
 
 [dirs]

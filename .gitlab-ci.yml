@@ -144,6 +144,9 @@ Build documentation:
   variables:
     USER: os2;12345_rosebud_password_admin
     SHARE: general;${CI_PROJECT_DIR}/src/os2datascanner/tests/data/engine2;no;yes
+    POSTGRES_DB: os2datascanner
+    POSTGRES_USER: os2datascanner
+    POSTGRES_PASSWORD: os2datascanner
     AMQP_HOST: rabbitmq
     AMQP_USER: guest
     AMQP_PWD: guest
