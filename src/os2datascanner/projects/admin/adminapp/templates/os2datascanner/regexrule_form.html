@@ -242,8 +242,9 @@
             <select name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" class="form-control"
               {% if form.sensitivity.field.required %}required{% endif %}>
 
+              <option value="" selected>---------</option>
               {% for value, tag in form.sensitivity.field.choices %}
-              <option value="{{ value }}" {% if form.sensitivity.value|add:"0" == value|add:"0" %} selected="selected" {% endif %}>
+              <option value="{{ value }}">
                 {{ tag }}
               </option>
               {% endfor %}
