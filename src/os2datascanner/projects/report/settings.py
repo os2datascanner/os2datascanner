@@ -17,7 +17,7 @@ import structlog
 
 from django.utils.translation import gettext_lazy as _
 
-from os2datascanner.projects.toml_configuration import process_toml_conf_for_django
+from os2datascanner.projects.django_toml_configuration import process_toml_conf_for_django
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = str(pathlib.Path(

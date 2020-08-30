@@ -34,12 +34,6 @@ TEST_OUTPUT_DESCRIPTIONS = true
 TEST_OUTPUT_VERBOSE = true
 # TEST_OUTPUT_FILE_NAME is set under dirs
 
-# [amqp]
-AMQP_HOST = "localhost"
-AMQP_USER = ""
-AMQP_PWD = ""
-AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
-
 # [installation]
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -119,6 +113,15 @@ ENABLE_MSGRAPH_FILESCAN = false
 # [logging]
 GRAYLOG_HOST = ""
 DJANGO_LOG_LEVEL = "INFO"
+
+# This setting is Django specifik, and must be top level to get picked up
+AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
+
+[amqp]
+# Nested amqp settings are picked up by the common amqp utility module
+AMQP_HOST = "localhost"
+AMQP_USER = ""
+AMQP_PWD = ""
 
 [DATABASES]
 

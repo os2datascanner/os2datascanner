@@ -53,8 +53,6 @@ services:
       context: .
       dockerfile: docker/admin/Dockerfile
       target: application
-    env_file:
-      - dev-environment/pika.env
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
@@ -73,8 +71,6 @@ services:
       context: .
       dockerfile: docker/report/Dockerfile
       target: application
-    env_file:
-      - dev-environment/pika.env
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
@@ -94,12 +90,11 @@ services:
       target: application
     environment:
       - OS2DS_MIGRATE_MANUALLY=1
-    env_file:
-      - dev-environment/pika.env
     command: python manage.py pipeline_collector
     restart: unless-stopped
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
       - report-application
@@ -110,10 +105,11 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    env_file:
-      - dev-environment/pika.env
     command: explorer --enable-metrics
     restart: unless-stopped
+    volumes:
+      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - queue
 
@@ -122,10 +118,11 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    env_file:
-      - dev-environment/pika.env
     command: processor --enable-metrics
     restart: unless-stopped
+    volumes:
+      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - queue
 
@@ -134,10 +131,11 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    env_file:
-      - dev-environment/pika.env
     command: matcher --enable-metrics
     restart: unless-stopped
+    volumes:
+      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - queue
 
@@ -146,10 +144,11 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    env_file:
-      - dev-environment/pika.env
     command: tagger --enable-metrics
     restart: unless-stopped
+    volumes:
+      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - queue
 
@@ -158,10 +157,11 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    env_file:
-      - dev-environment/pika.env
     command: exporter --enable-metrics
     restart: unless-stopped
+    volumes:
+      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - queue
 

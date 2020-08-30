@@ -126,6 +126,12 @@ FRONTEND_URL = 'https://myfrontendclient.com' # Redirect URL for the client if y
     CREATE_USER = 'path.to.your.new.user.hook.method'
     BEFORE_LOGIN = 'path.to.your.login.hook.method'
 
+[amqp]
+# Nested amqp settings are picked up by the common amqp utility module
+AMQP_HOST = "queue"
+AMQP_USER = "guest"
+AMQP_PWD = "guest"
+
 [dirs]
 # These are the settings for various directories.
 # Paths relative to the project directory should start with "*" while

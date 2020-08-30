@@ -14,11 +14,6 @@ ALLOWED_HOSTS = []
 # [installation]
 OPTIONAL_APPS = ["django_extensions"]
 
-# [amqp]
-AMQP_HOST = "queue"
-AMQP_USER = "guest"
-AMQP_PWD = "guest"
-
 # [scans]
 ENABLE_FILESCAN = true
 ENABLE_WEBSCAN = true
@@ -29,6 +24,12 @@ DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"
 ADMIN_EMAIL = "os2datascanner@magenta.dk"
 EMAIL_HOST = "localhost"
 EMAIL_PORT = 25
+
+[amqp]
+# Nested amqp settings are picked up by the common amqp utility module
+AMQP_HOST = "queue"
+AMQP_USER = "os2ds"
+AMQP_PWD = "os2ds"
 
 [DATABASES]
 

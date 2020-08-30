@@ -9,7 +9,7 @@ import sys
 
 from django.utils.translation import gettext_lazy as _
 
-from os2datascanner.projects.toml_configuration import process_toml_conf_for_django
+from os2datascanner.projects.django_toml_configuration import process_toml_conf_for_django
 
 BASE_DIR = str(pathlib.Path(__file__).resolve().parent.parent.parent.parent.absolute())
 PROJECT_DIR = os.path.dirname(BASE_DIR)

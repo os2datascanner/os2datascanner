@@ -60,3 +60,9 @@ FRONTEND_URL = 'https://myfrontendclient.com' # Redirect URL for the client if y
     [SAML2_AUTH.TRIGGER]
     CREATE_USER = 'path.to.your.new.user.hook.method'
     BEFORE_LOGIN = 'path.to.your.login.hook.method'
+
+[amqp]
+# Nested amqp settings are picked up by the common amqp utility module
+AMQP_HOST = "queue"
+AMQP_USER = "os2ds"
+AMQP_PWD = "os2ds"

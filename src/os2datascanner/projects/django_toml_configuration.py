@@ -1,42 +1,17 @@
 """
-Utility functions to support configuration through toml-files.
+Utility functions to support configuration through toml-files for Django.
 """
 
 import logging
 import os
 import sys
-import toml
 
 from django.utils.translation import gettext_lazy as _
 
-logger = logging.getLogger("configuration")
+from os2datascanner.utils.toml_configuration import get_3_layer_config
 
-def read_config(config_path):
-    try:
-        with open(config_path) as f:
-            content = f.read()
-    except FileNotFoundError as err:
-        logger.critical("%s: %r", err.strerror, err.filename)
-        sys.exit(5)
-    try:
-        return toml.loads(content)
-    except toml.TomlDecodeError:
-        logger.critical("Failed to parse TOML")
-        sys.exit(4)
+logger = logging.getLogger(__file__)
 
-
-def update_config(configuration, new_settings):
-    # we cannot just do dict.update, because we do not want to "pollute" the
-    # namespace with anything in *new_settings*, just the variables defined in
-    # **configuration**.
-    for key in new_settings:
-        if key in configuration:
-            if isinstance(configuration[key], dict):
-                update_config(configuration[key], new_settings[key])
-            else:
-                configuration[key] = new_settings[key]
-        else:
-            logger.warning("Invalid key in config: %s", key)
 
 def _process_relative_path(placeholder, replacement_value, path_list):
     if path_list and path_list[0] == placeholder:
@@ -56,6 +31,7 @@ def _set_constants(module, configuration):
             logger.info("Adding setting: %s", key)
             setattr(module, key, value)
 
+
 def _process_directory_configuration(configuration, placeholder, directory):
     directories = configuration.get('dirs')
     if not directories:
@@ -74,6 +50,7 @@ def _process_directory_configuration(configuration, placeholder, directory):
                 placeholder, directory, value
             )
 
+
 def _process_locales(configuration, placeholder, directory):
     # Set locale paths
     path_list = configuration.get('_LOCALE_PATHS')
@@ -88,28 +65,13 @@ def _process_locales(configuration, placeholder, directory):
             (language[0], _(language[1])) for language in language_list
         ]
 
+
 def process_toml_conf_for_django(parent_path, module, sys_var, user_var):
     # Specify file paths
     settings_dir = os.path.abspath(os.path.dirname(module.__file__))
     default_settings = os.path.join(settings_dir, 'default-settings.toml')
-    system_settings = os.getenv(sys_var, None)
-    user_settings = os.getenv(user_var, None)
 
-    # Load default configuration
-    if not os.path.isfile(default_settings):
-        logger.error("Invalid file path for default settings: %s",
-                     default_settings)
-        sys.exit(1)
-
-    config = read_config(default_settings)
-    # Load system configuration
-    if system_settings:
-        logger.info("Reading system config from %s", system_settings)
-        update_config(config, read_config(system_settings))
-    # Load user configuration
-    if user_settings:
-        logger.info("Reading user settings from %s", user_settings)
-        update_config(config, read_config(user_settings))
+    config = get_3_layer_config(default_settings, sys_var, user_var)
 
     _process_directory_configuration(config, "*", parent_path)
     _process_locales(config, "*", parent_path)
