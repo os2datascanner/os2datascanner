@@ -135,7 +135,7 @@ def main():
         with ProcessorRunner(
                 read=[args.conversions],
                 write=[args.sources, args.representations, args.problems],
-                host=args.host, heartbeat=6000) as runner:
+                heartbeat=6000) as runner:
             try:
                 print("Start")
                 notify_ready()

@@ -77,7 +77,7 @@ def main():
         with TaggerRunner(
                 read=[args.handles],
                 write=[args.metadata, args.problems],
-                host=args.host, heartbeat=6000) as runner:
+                heartbeat=6000) as runner:
             try:
                 print("Start")
                 notify_ready()

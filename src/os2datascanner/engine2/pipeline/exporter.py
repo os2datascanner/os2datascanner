@@ -105,7 +105,7 @@ def main():
     with ExporterRunner(
             read=[args.matches, args.metadata, args.problems],
             write=[args.results],
-            host=args.host, heartbeat=6000) as runner:
+            heartbeat=6000) as runner:
         try:
             print("Start")
             notify_ready()
