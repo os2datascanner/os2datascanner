@@ -76,6 +76,15 @@
 
 {% block body %}
 <div class="wrapper">
+
+  {% if view.edit %}
+  <h1 class="page-title" style="display:inline-block;">Rediger regel</h1>
+  {% endif %}
+
+  {% if not view.edit %}
+  <h1 class="page-title" style="display:inline-block;">Opret ny regel</h1>
+  {% endif %}
+
   {% if form.non_field_errors %}
   <div class="alert" role="alert">
     <ul>
