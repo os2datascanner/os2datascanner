@@ -147,9 +147,6 @@ Build documentation:
     POSTGRES_DB: os2datascanner
     POSTGRES_USER: os2datascanner
     POSTGRES_PASSWORD: os2datascanner
-    AMQP_HOST: rabbitmq
-    AMQP_USER: guest
-    AMQP_PWD: guest
     COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
   allow_failure: false
 
@@ -181,6 +178,9 @@ Test Engine:
   extends: .test-default
   image:
     name: ${ENGINE_IMAGE}
+  variables:
+    DSC_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
+    DSC_ENGINE_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/engine/docker-settings.toml
   needs:
     - Build Engine
   script:

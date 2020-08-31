@@ -19,3 +19,9 @@ LOGS_DIR = ["*", "var", "logs"]
 MEDIA_ROOT = ["*", "uploads", "admin"]
 TEST_OUTPUT_FILE_NAME = ["*", "build", "test-results.xml"]
 DECRYPTION_FILE_PATH = ["/", "builds", "os2datascanner", "os2datascanner", "dev-environment", "admin"]
+
+[amqp]
+# Nested amqp settings are picked up by the common amqp utility module
+AMQP_HOST = "rabbitmq"
+AMQP_USER = "guest"
+AMQP_PWD = "guest"
