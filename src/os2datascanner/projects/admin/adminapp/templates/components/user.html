@@ -1,5 +1,6 @@
 {% load staticfiles %}
 
+{% if request.user.is_authenticated %}
 <div class="user">
   <span class="user__name">{{ request.user }}</span>
   <div class="tooltip">
@@ -9,3 +10,4 @@
     <span class="tooltiptext">Log ud</span>
   </div>
 </div>
+{% endif %}
