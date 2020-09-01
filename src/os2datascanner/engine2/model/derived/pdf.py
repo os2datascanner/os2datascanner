@@ -62,13 +62,19 @@ class PDFPageSource(DerivedSource):
         page = self.handle.relative_path
         path = sm.open(self.handle.source)
         with TemporaryDirectory() as outputdir:
-            result = run(["pdftohtml",
-                    "-q", "-nodrm", "-noframes",
+            # Run pdftotext and pdfimages separately instead of running
+            # pdftohtml. Not having to parse HTML is a big performance win by
+            # itself, but what's even better is that pdfimages doesn't produce
+            # uncountably many texture images for embedded vector graphics
+            run(["pdftotext",
+                    "-q", "-nopgbrk",
+                    "-eol", "unix",
                     "-f", page, "-l", page,
-                    path,
-                    # Trick pdftohtml into writing to our temporary directory
-                    # (groan...)
-                    "{0}/out".format(outputdir)], check=True)
+                    path, "{0}/page.txt".format(outputdir)], check=True)
+            run(["pdfimages",
+                    "-q", "-all",
+                    "-f", page, "-l", page,
+                    path, "{0}/image".format(outputdir)], check=True)
             yield outputdir
 
     def handles(self, sm):
