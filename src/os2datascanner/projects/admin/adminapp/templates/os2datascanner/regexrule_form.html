@@ -16,7 +16,7 @@
       var labelClone = containerClone.find("label").first();
 
       labelClone.attr("for", "id_" + newInputName);
-      labelClone.text("{{ form.pattern_0.label }}" + " " + (numInput + 1)); // plus one because the numInput is 0-indexed, and label should be 1-indexed
+      labelClone.text("Regulært udtryk" + " " + (numInput + 1)); // plus one because the numInput is 0-indexed, and label should be 1-indexed
       inputClone.attr("name", newInputName).attr("id", "id_" + newInputName).val("").attr("value", "");
       if (!containerClone.find(".button-remove-expression").length) { // if we haven't already cloned a button for removal...
         inputClone.after($("<span/>", { // ... add the button to remove expression
@@ -189,7 +189,7 @@
 
         {% for pattern_name, pattern_value in view.get_pattern_fields %}
         <div class="form__group form-group">
-          <label class="control-label col-sm-2" for="id_{{ pattern_name }}">{{ form.pattern_0.label }} {{ forloop.counter }}</label>
+          <label class="control-label col-sm-2" for="id_{{ pattern_name }}">Regulært udtryk {{ forloop.counter }}</label>
           <div class="col-sm-10">
             {% if forloop.counter > 1 %}
             <div class="input-group">
