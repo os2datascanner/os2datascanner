@@ -91,7 +91,6 @@ services:
     environment:
       - OS2DS_MIGRATE_MANUALLY=1
     command: python manage.py pipeline_collector
-    restart: unless-stopped
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -106,7 +105,6 @@ services:
       dockerfile: docker/engine/Dockerfile
       target: engine
     command: explorer --enable-metrics
-    restart: unless-stopped
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -119,7 +117,6 @@ services:
       dockerfile: docker/engine/Dockerfile
       target: engine
     command: processor --enable-metrics
-    restart: unless-stopped
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -145,7 +142,6 @@ services:
       dockerfile: docker/engine/Dockerfile
       target: engine
     command: tagger --enable-metrics
-    restart: unless-stopped
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -158,7 +154,6 @@ services:
       dockerfile: docker/engine/Dockerfile
       target: engine
     command: exporter --enable-metrics
-    restart: unless-stopped
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner

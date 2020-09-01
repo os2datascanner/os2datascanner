@@ -131,6 +131,11 @@ FRONTEND_URL = 'https://myfrontendclient.com' # Redirect URL for the client if y
 AMQP_HOST = "queue"
 AMQP_USER = "guest"
 AMQP_PWD = "guest"
+    [amqp.AMQP_BACKOFF_PARAMS]
+    max_tries = 10
+    ceiling = 7
+    warn_after = 6
+    fuzz = 0
 
 [dirs]
 # These are the settings for various directories.
