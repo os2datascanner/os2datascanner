@@ -14,18 +14,21 @@
 <div class="wrapper">
 
   {% include "os2datascanner/scanner_above_content.html" %}
-
+    
+<div class="add-new">
   <h2 style="display:inline-block;">Scannerjob</h2>
-
-  <a 
-    class="button button--add button--cta button--small button--round"
+    
+    <a 
+    class="button button--add button--cta button--small add-new-btn" 
     href="/{{ view.type }}scanners/add/"
-    title="Tilføj ny">
+    title="Tilføj nyt scannerjob">
     <svg class="icon">
       <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
     </svg>
+    <div class="add-new-text">Tilføj nyt</div>
   </a>
-
+</div>
+    
   <table class="datatable">
     <thead>
       <tr>
