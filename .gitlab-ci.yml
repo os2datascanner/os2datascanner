@@ -266,21 +266,21 @@ Run notice scripts:
 
 Release Report Application Candidate:
   <<: *release-rc
-  variables:
-    IMAGE_FROM: ${REPORT_IMAGE}
-    IMAGE_TO: ${RELEASE_REPORT_IMAGE}
+  before_script:
+    - export IMAGE_FROM="${REPORT_IMAGE}"
+    - export IMAGE_TO="${RELEASE_REPORT_IMAGE}"
 
 Release Admin Application Candidate:
   <<: *release-rc
-  variables:
-    IMAGE_FROM: ${ADMIN_IMAGE}
-    IMAGE_TO: ${RELEASE_ADMIN_IMAGE}
+  before_script:
+    - export IMAGE_FROM="${ADMIN_IMAGE}"
+    - export IMAGE_TO="${RELEASE_ADMIN_IMAGE}"
 
 Release Engine Candidate:
   <<: *release-rc
-  variables:
-    IMAGE_FROM: ${ENGINE_IMAGE}
-    IMAGE_TO: ${RELEASE_ENGINE_IMAGE}
+  before_script:
+    - export IMAGE_FROM="${ENGINE_IMAGE}"
+    - export IMAGE_TO="${RELEASE_ENGINE_IMAGE}"
 
 
 # Versioned release:
@@ -303,18 +303,18 @@ Release Engine Candidate:
 
 Release Report Application:
   <<: *release
-  variables:
-    IMAGE_FROM: ${REPORT_IMAGE}
-    IMAGE_TO: ${RELEASE_REPORT_IMAGE}
+  before_script:
+    - export IMAGE_FROM="${REPORT_IMAGE}"
+    - export IMAGE_TO="${RELEASE_REPORT_IMAGE}"
 
 Release Admin Application:
   <<: *release
-  variables:
-    IMAGE_FROM: ${ADMIN_IMAGE}
-    IMAGE_TO: ${RELEASE_ADMIN_IMAGE}
+  before_script:
+    - export IMAGE_FROM="${ADMIN_IMAGE}"
+    - export IMAGE_TO="${RELEASE_ADMIN_IMAGE}"
 
 Release Engine:
   <<: *release
-  variables:
-    IMAGE_FROM: ${ENGINE_IMAGE}
-    IMAGE_TO: ${RELEASE_ENGINE_IMAGE}
+  before_script:
+    - export IMAGE_FROM="${ENGINE_IMAGE}"
+    - export IMAGE_TO="${RELEASE_ENGINE_IMAGE}"
