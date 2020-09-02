@@ -1,0 +1,5 @@
+[amqp]
+# Nested amqp settings are picked up by the common amqp utility module
+AMQP_HOST = "rabbitmq"
+AMQP_USER = "guest"
+AMQP_PWD = "guest"

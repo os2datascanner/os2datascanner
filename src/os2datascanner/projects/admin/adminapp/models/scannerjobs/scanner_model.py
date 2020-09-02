@@ -174,8 +174,12 @@ class Scanner(models.Model):
 
     # Run error messages
     HAS_NO_RULES = (
-        "Scanneren kunne ikke startes," +
+        "Scannerjobbet kunne ikke startes," +
         " fordi den ingen tilknyttede regler har."
+    )
+    NOT_VALIDATED = (
+        "Scannerjobbet kunne ikke startes," +
+        " fordi det ikke er blevet valideret."
     )
 
     process_urls = JSONField(null=True, blank=True)

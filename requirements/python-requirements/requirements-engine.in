@@ -1,0 +1,20 @@
+-r requirements-common.in
+
+beautifulsoup4
+chardet
+defusedxml
+dropbox
+exchangelib
+lxml
+olefile
+pdfrw
+Pillow
+prometheus_client
+PyPDF2
+pysmbc
+python-dateutil
+python-magic
+regex
+requests
+systemd-python
+xattr
