@@ -67,7 +67,25 @@
   {% endif %}
 
   {% if not view.edit %}
-  <h1 class="page-title" style="display:inline-block;">Opret nyt scannerjob</h1>
+  <h1 class="page-title" style="display:inline-block;">Opret nyt scannerjob
+    {% if form.sitemap %}
+    <span class="flex">
+    <span class="page-title__sub">Webscan</span>
+    </span>
+    {% endif %}
+        
+    {% if form.domain %}
+    <span class="flex">
+    <span class="page-title__sub">Filscan</span>
+    </span>
+    {% endif %}
+        
+    {% if form.userlist %}
+    <span class="flex">
+    <span class="page-title__sub">Exchangescan</span>
+    </span>
+    {% endif %}  
+  </h1>
   {% endif %}
 
   {% if form.non_field_errors %}
