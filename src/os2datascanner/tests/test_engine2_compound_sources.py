@@ -70,3 +70,42 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                         os.path.join(
                                 test_data_path,
                                 "msoffice/embedded-cpr.doc")))
+
+    def test_docx(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "msoffice/embedded-cpr.docx")))
+
+    def test_ods(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "libreoffice/test.ods")))
+
+    def test_xls(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "msoffice/test.xls")))
+
+    def test_xlsx(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "msoffice/test.xlsx")))
+
+    def test_corrupted_doc(self):
+        corrupted_doc_handle = FilesystemHandle.make_handle(
+                os.path.join(
+                        test_data_path, "msoffice/corrupted/test.trunc.doc"))
+        corrupted_doc = Source.from_handle(corrupted_doc_handle)
+        with SourceManager() as sm:
+            self.assertEqual(
+                    list(corrupted_doc.handles(sm)),
+                    [],
+                    "unrecognised CDFV2 document should be empty and wasn't")
