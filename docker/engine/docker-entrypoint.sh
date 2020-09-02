@@ -26,14 +26,8 @@ if [[ " ${AVAILABLE_STAGES[@]} " =~ "$1" ]]; then
 
   STAGE=$1
 
-  if [[ ${AMQP_HOST} ]]; then
-    OPTIONAL_HOST="--host ${AMQP_HOST}"
-  else
-    OPTIONAL_HOST=""
-  fi
-
   # ${@:2} adds all arguments except the first one (which is the stage)
-  exec python -m "os2datascanner.engine2.pipeline.${STAGE}" ${OPTIONAL_HOST} "${@:2}"
+  exec python -m "os2datascanner.engine2.pipeline.${STAGE}" "${@:2}"
 else
   exec "$@"
 fi

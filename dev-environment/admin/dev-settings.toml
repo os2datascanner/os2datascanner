@@ -1,0 +1,41 @@
+SECRET_KEY = "DUMMYKEY(for development)DUMMYKEY(for development)"
+
+# [mode]
+DEBUG = true
+# Used for filescan and mounting
+PRODUCTION = false
+
+# [site]
+# The URL of this site, used in links in emails and in the redirect URL for
+# OAuth 2.0 services. (This value should end with a forward slash.)
+SITE_URL = "localhost:8020/"
+ALLOWED_HOSTS = []
+
+# [installation]
+OPTIONAL_APPS = ["django_extensions"]
+
+# [scans]
+ENABLE_FILESCAN = true
+ENABLE_WEBSCAN = true
+ENABLE_EXCHANGESCAN = true
+
+# [email]
+DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"
+ADMIN_EMAIL = "os2datascanner@magenta.dk"
+EMAIL_HOST = "localhost"
+EMAIL_PORT = 25
+
+[amqp]
+# Nested amqp settings are picked up by the common amqp utility module
+AMQP_HOST = "queue"
+AMQP_USER = "os2ds"
+AMQP_PWD = "os2ds"
+
+[DATABASES]
+
+    [DATABASES.default]
+    ENGINE = "django.db.backends.postgresql_psycopg2"
+    NAME = "os2datascanner_admin"
+    USER = "os2datascanner_admin_dev"
+    PASSWORD = "os2datascanner_admin_dev"
+    HOST = "db"

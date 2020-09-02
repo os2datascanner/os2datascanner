@@ -37,34 +37,26 @@ class SubprocessPipelineTestRunner(PikaPipelineRunner):
 
 class Engine2SubprocessPipelineTests(unittest.TestCase):
     def setUp(self):
-        amqp_host = getenv("AMQP_HOST", "localhost")
 
         self.runner = SubprocessPipelineTestRunner(
                 read=["os2ds_results"],
                 write=["os2ds_scan_specs"],
-                host=amqp_host,
                 heartbeat=6000)
 
         python("-m", "os2datascanner.engine2.pipeline._consume_queue",
-                "--host", amqp_host,
                 "os2ds_scan_specs", "os2ds_conversions",
                 "os2ds_representations", "os2ds_matches", "os2ds_handles",
                 "os2ds_metadata", "os2ds_problems", "os2ds_results").wait()
         self.explorer = python(
-                "-m", "os2datascanner.engine2.pipeline.explorer",
-                "--host", amqp_host)
+                "-m", "os2datascanner.engine2.pipeline.explorer")
         self.processor = python(
-                "-m", "os2datascanner.engine2.pipeline.processor",
-                "--host", amqp_host)
+                "-m", "os2datascanner.engine2.pipeline.processor")
         self.matcher = python(
-                "-m", "os2datascanner.engine2.pipeline.matcher",
-                "--host", amqp_host)
+                "-m", "os2datascanner.engine2.pipeline.matcher")
         self.tagger = python(
-                "-m", "os2datascanner.engine2.pipeline.tagger",
-                "--host", amqp_host)
+                "-m", "os2datascanner.engine2.pipeline.tagger")
         self.exporter = python(
-                "-m", "os2datascanner.engine2.pipeline.exporter",
-                "--host", amqp_host)
+                "-m", "os2datascanner.engine2.pipeline.exporter")
 
     def tearDown(self):
         self.runner.clear()

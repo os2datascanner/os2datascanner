@@ -19,11 +19,6 @@ def make_common_argument_parser():
     parser = argparse.ArgumentParser(
             formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
-            "--host",
-            metavar="HOST",
-            help="the AMQP host to connect to",
-            default="localhost")
-    parser.add_argument(
             "--debug",
             action="store_true",
             help="print all incoming messages to the console")
@@ -93,6 +88,7 @@ class PikaConnectionHolder(ABC):
         credentials = pika.PlainCredentials(pika_settings.AMQP_USER,
                                             pika_settings.AMQP_PWD)
         self._parameters = pika.ConnectionParameters(credentials=credentials,
+                                                     host=pika_settings.AMQP_HOST,
                                                      **kwargs)
         self._connection = None
         self._channel = None

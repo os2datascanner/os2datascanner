@@ -108,7 +108,7 @@ def main():
                 read=[args.sources],
                 write=[args.conversions, args.problems],
                 source_manager=source_manager,
-                host=args.host, heartbeat=6000) as runner:
+                heartbeat=6000) as runner:
             try:
                 print("Start")
                 notify_ready()

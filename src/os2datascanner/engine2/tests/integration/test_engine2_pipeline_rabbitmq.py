@@ -29,7 +29,6 @@ class Engine2PipelineTests(unittest.TestCase):
                         "os2ds_handles", "os2ds_metadata",
                         "os2ds_problems"],
                 write=["os2ds_results"],
-                host=getenv("AMQP_HOST", "localhost"),
                 heartbeat=6000)
 
     def tearDown(self):
