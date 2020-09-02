@@ -213,7 +213,18 @@
     </fieldset>
 
     <fieldset class="form__fieldset">
-      <legend>Scannerindstillinger</legend>
+
+    {% if form.sitemap %}
+    <legend>Sitemap</legend>
+    {% endif %}
+        
+    {% if form.domain %}
+    <legend>Brugeroplysninger</legend>
+    {% endif %}
+        
+    {% if form.userlist %}
+    <legend>Brugeroplysninger</legend>
+    {% endif %}
 
       {% if form.domain %}
       <div id="{{ form.domain.auto_id }}_container" class="form__group{% if form.domain.errors %} has-error{% endif %}">
@@ -503,10 +514,13 @@
         {% if form.sitemap.errors %}{{ form.sitemap.errors }}{% endif %}
       </div>
       {% endif %}
-
+      </fieldset>
+      
+    <fieldset class="form__fieldset">
+      <legend>Tilføj scannerindstillinger</legend>
+    
       <div class="form__group">
         <div id="select_scan_rules_container" class="">
-          <h5>Regler</h5>
 
           <div class="checkbox-group">
             <div class="ds-checkbox ds-checkbox--inline">
