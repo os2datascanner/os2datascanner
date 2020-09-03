@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import pika
 
-from .pika_settings import AMQP_HOST, AMQP_USER, AMQP_PWD
+from ..engine2.utilities.backoff import run_with_backoff
+from .pika_settings import AMQP_HOST, AMQP_USER, AMQP_PWD, AMQP_BACKOFF_PARAMS
 
 _amqp_obj = {
     "amqp_channels": None,
@@ -14,7 +15,11 @@ def start_amqp(queue_name):
     Starts an amqp connection and queue if it is not already started
     :param queue_name: Name of the queue
     """
-    _create_connection()
+    _, _ = run_with_backoff(
+        _create_connection,
+        pika.exceptions.AMQPConnectionError,
+        **AMQP_BACKOFF_PARAMS,
+    )
     _create_channel(queue_name)
 
 

@@ -59,3 +59,4 @@ _config = _get_config('amqp')
 AMQP_HOST = _config['AMQP_HOST']
 AMQP_USER = _config['AMQP_USER']
 AMQP_PWD = _config['AMQP_PWD']
+AMQP_BACKOFF_PARAMS = _config.get('AMQP_BACKOFF_PARAMS', {})
