@@ -2,6 +2,7 @@
 
 from sys import stderr
 import argparse
+import traceback
 
 from ..model.core import Source, SourceManager
 from ..model.core import FileResource
@@ -25,6 +26,7 @@ def print_source(manager, source, depth=0, *,
                     print(format_d(depth + 1, "type {0}", mime))
                     print(format_d(depth + 1, "lmod {0}", lm))
             except Exception:
+                traceback.print_exc()
                 print(format_d(depth + 1, "not available"))
         if max_depth is None or depth < max_depth:
             derived_source = Source.from_handle(

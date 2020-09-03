@@ -41,7 +41,6 @@ class TimestampedResource(Resource):
         super().__init__(handle, sm)
         self._lm_timestamp = None
 
-    @abstractmethod
     def get_last_modified(self):
         """Returns the last modification date of this TimestampedResource as a
         wrapped Python datetime.datetime; this may be used to decide whether or

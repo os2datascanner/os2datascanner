@@ -24,6 +24,7 @@ from .models.scannerjobs.dropboxscanner_model import DropboxScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.webscanner_model import WebScanner
+from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 from .models.scannerjobs.msgraph_models import (
         MSGraphMailScanner, MSGraphFileScanner)
 from .views.exchangescanner_views import ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate, \
@@ -32,6 +33,9 @@ from .views.filescanner_views import FileScannerCreate, FileScannerRun, FileScan
     FileScannerDelete, FileScannerList
 from .views.dropboxscanner_views import DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun, DropboxScannerUpdate, \
     DropboxScannerDelete, DropboxScannerList
+from .views.googledrivescanner_views import GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun, \
+    GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete
+
 from .views.rule_views import RuleList, \
     CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
     RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
@@ -115,6 +119,21 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=DropboxScanner),
         name='dropboxscanner_askrun'),
+
+    # Google Drive scanner URL's
+    url(r'^googledrivescanners/$', GoogleDriveScannerList.as_view(), name='googledrivescanners'),
+    url(r'^googledrivescanners/add/$', GoogleDriveScannerCreate.as_view(), name='googledrivescanner_add'),
+    url(r'^googledrivescanners/(?P<pk>\d+)/$', GoogleDriveScannerUpdate.as_view(),
+        name='googledrivescanner_update'),
+    url(r'^googledrivescanners/(?P<pk>\d+)/delete/$', GoogleDriveScannerDelete.as_view(),
+        name='googledrivescanner_delete'),
+    url(r'^googledrivescanners/(?P<pk>\d+)/run/$', GoogleDriveScannerRun.as_view(),
+        name='googledrivescanner_run'),
+    url(r'^googledrivescanners/(?P<pk>\d+)/askrun/$',
+        GoogleDriveScannerAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=GoogleDriveScanner),
+        name='googledrivescanner_askrun'),
 
     # OAuth-based data sources
     url(r'^msgraph-filescanners/$',
@@ -222,9 +241,9 @@ urlpatterns = [
         ),
 
     # General success handler
-    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners)/(\d+)/(created)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners)/(\d+)/(created)/$',
         DialogSuccess.as_view()),
-    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners)/(\d+)/(saved)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners)/(\d+)/(saved)/$',
         DialogSuccess.as_view()),
     url(r'^(rules/regex|rules/cpr|groups)/(\d+)/(created)/$',
         DialogSuccess.as_view()),

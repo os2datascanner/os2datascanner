@@ -284,6 +284,28 @@
             </div>
         {% endif %}
 
+      {% if form.access_code %}
+            <div id="{{ form.access_code.auto_id }}_container" class="form__group{% if form.access_code.errors %} has-error{% endif %}">
+                <label class="control-label" for="id_{{ form.access_code.name }}">Access Code</label>
+                <input
+                        type="text"
+                        class="form-control"
+                        name="{{ form.access_code.name }}"
+                        id="id_{{ form.access_code.name }}"
+                        {% if form.access_code.value %}
+                        value="{{ form.access_code.value }}"
+                        {% else %}
+                        {{ code }}
+                        {% endif %}
+
+                {% if form.token.help_text %}
+                    <span class="form__help-text">{{ form.access_code.help_text }}</span>
+                {% endif %}
+
+                {% if form.access_code.errors %}{{ form.access_code.errors }}{% endif %}
+            </div>
+        {% endif %}
+
       {% if form.tenant_id %}
       <div id="{{ form.tenant_id.auto_id }}_container" class="form__group{% if form.tenant_id.errors %} has-error{% endif %}">
         <label for="id_tenant_presentation">{{ form.tenant_id.label }}</label>
