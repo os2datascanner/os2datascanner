@@ -147,7 +147,7 @@ Build documentation:
     POSTGRES_DB: os2datascanner
     POSTGRES_USER: os2datascanner
     POSTGRES_PASSWORD: os2datascanner
-    COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
+    COVERAGE_FILE: /tmp/.coverage
   allow_failure: false
 
 Test Admin Application:
