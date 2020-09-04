@@ -158,9 +158,11 @@ Test Admin Application:
     DSC_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
     DSC_ADMIN_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/admin/docker-settings.toml
     DECRYPTION_FILE_PATH: ${CI_PROJECT_DIR}/dev-environment/admin
+    COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
   needs:
     - Build Admin Application
   script:
+    - echo $COVERAGE_FILE
     - coverage run --source=os2datascanner.projects.admin, -m django test os2datascanner.projects.admin.tests
   after_script:
     - coverage html -d ${CI_PROJECT_DIR}/coverage-html
