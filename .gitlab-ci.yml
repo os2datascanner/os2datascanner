@@ -147,7 +147,7 @@ Build documentation:
     POSTGRES_DB: os2datascanner
     POSTGRES_USER: os2datascanner
     POSTGRES_PASSWORD: os2datascanner
-    COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
+    COVERAGE_FILE: /tmp/.coverage
   allow_failure: false
 
 Test Admin Application:
@@ -158,7 +158,6 @@ Test Admin Application:
     DSC_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
     DSC_ADMIN_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/admin/docker-settings.toml
     DECRYPTION_FILE_PATH: ${CI_PROJECT_DIR}/dev-environment/admin
-    COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
   needs:
     - Build Admin Application
   script:
@@ -183,7 +182,6 @@ Test Engine:
   variables:
     DSC_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
     DSC_ENGINE_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/engine/docker-settings.toml
-    COVERAGE_FILE: /tmp/.coverage
   needs:
     - Build Engine
   script:
@@ -207,7 +205,6 @@ Test Report Application:
   variables:
     DSC_REPORT_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/report/test-settings.toml
     DSC_REPORT_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/report/docker-settings.toml
-    COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
   needs:
     - Build Report Application
   script:
