@@ -4,8 +4,8 @@ from email.utils import parsedate_to_datetime
 import email.policy
 from urllib.parse import urlsplit, quote
 from contextlib import contextmanager
-from exchangelib import (Account,
-        Credentials, IMPERSONATION, Configuration, FaultTolerance)
+from exchangelib import (Account, Message, Credentials,
+        IMPERSONATION, Configuration, FaultTolerance, ExtendedProperty)
 from exchangelib.errors import ErrorServerBusy, ErrorNonExistentMailbox
 from exchangelib.protocol import BaseProtocol
 
@@ -17,6 +17,17 @@ from .core import Source, Handle, FileResource
 
 
 BaseProtocol.SESSION_POOLSIZE = 1
+
+# An "entry ID" is the special identifier used to open something in the Outlook
+# rich client (after converting it to a hexadecimal string). This property can
+# be retrieved over the EWS protocol, but exchangelib doesn't do so by default;
+# make sure that it does by explicitly registering the property details
+
+class EntryID(ExtendedProperty):
+    property_tag = 4095
+    property_type = 'Binary'
+
+Message.register("entry_id", EntryID)
 
 
 OFFICE_365_ENDPOINT = "https://outlook.office365.com/EWS/Exchange.asmx"
