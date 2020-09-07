@@ -3,6 +3,7 @@
   box-shadow: var(--box-shadow);
   max-width: 80rem;
   overflow: hidden;
+  width: calc(100% - 2rem);
 
   &__control {
     background-color: inherit;

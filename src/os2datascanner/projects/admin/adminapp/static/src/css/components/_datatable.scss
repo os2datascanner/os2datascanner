@@ -70,6 +70,21 @@
   }
 }
 
+.add-new {
+    max-width: 80rem; 
+    width: calc(100% - 2rem);   
+}
+
+.add-new-btn {
+    margin: 24px 0; 
+    float: right;
+}
+
+.add-new-text {
+    display: inline-block; 
+    padding: 0 4px;
+}
+
 @supports(display: grid) {
   // We use CSS Grid to detect IE11, as "tr:focus" breaks the whole selector in IE11
   .datatable tr:focus, 

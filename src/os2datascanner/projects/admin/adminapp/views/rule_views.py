@@ -117,6 +117,7 @@ class RuleUpdate(RestrictedUpdateView):
     """Update a rule view."""
 
     model = Rule
+    edit = True
     fields = ['name', 'description', 'sensitivity']
 
     def form_valid(self, form):
