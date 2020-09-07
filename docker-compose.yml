@@ -111,6 +111,47 @@ services:
     depends_on:
       - queue
 
+  engine_worker:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    command: worker --enable-metrics
+    volumes:
+      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      - queue
+
+  engine_exporter:
+    build:
+      context: .
+      dockerfile: docker/engine/Dockerfile
+      target: engine
+    command: exporter --enable-metrics
+    volumes:
+      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      - queue
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - "./dev-environment/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+    ports:
+      - "8050:9090"
+
+  # default user is admin/admin
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - "./dev-environment/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro"
+      - "./dev-environment/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro"
+    ports:
+      - "8060:3000"
+
+x-disabled:
   engine_processor:
     build:
       context: .
@@ -147,35 +188,6 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - queue
-
-  engine_exporter:
-    build:
-      context: .
-      dockerfile: docker/engine/Dockerfile
-      target: engine
-    command: exporter --enable-metrics
-    volumes:
-      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
-      - ./src/os2datascanner:/code/src/os2datascanner
-    depends_on:
-      - queue
-
-  prometheus:
-    image: prom/prometheus
-    volumes:
-      - "./dev-environment/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
-    ports:
-      - "8050:9090"
-
-  # default user is admin/admin
-  grafana:
-    image: grafana/grafana
-    volumes:
-      - "./dev-environment/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro"
-      - "./dev-environment/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro"
-    ports:
-      - "8060:3000"
-
 
 volumes:
   frontend-bundles-admin:
