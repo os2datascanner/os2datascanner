@@ -4,8 +4,8 @@ from email.utils import parsedate_to_datetime
 import email.policy
 from urllib.parse import urlsplit, quote
 from contextlib import contextmanager
-from exchangelib import (Account,
-        Credentials, IMPERSONATION, Configuration, FaultTolerance)
+from exchangelib import (Account, Message, Credentials,
+        IMPERSONATION, Configuration, FaultTolerance, ExtendedProperty)
 from exchangelib.errors import ErrorServerBusy, ErrorNonExistentMailbox
 from exchangelib.protocol import BaseProtocol
 
@@ -17,6 +17,17 @@ from .core import Source, Handle, FileResource
 
 
 BaseProtocol.SESSION_POOLSIZE = 1
+
+# An "entry ID" is the special identifier used to open something in the Outlook
+# rich client (after converting it to a hexadecimal string). This property can
+# be retrieved over the EWS protocol, but exchangelib doesn't do so by default;
+# make sure that it does by explicitly registering the property details
+
+class EntryID(ExtendedProperty):
+    property_tag = 4095
+    property_type = 'Binary'
+
+Message.register("entry_id", EntryID)
 
 
 OFFICE_365_ENDPOINT = "https://outlook.office365.com/EWS/Exchange.asmx"
@@ -117,12 +128,14 @@ class EWSAccountSource(Source):
 
         def relevant_mails(relevant_folders):
             for folder in relevant_folders:
-                for mail in folder.all().only("id", "headers"):
+                for mail in folder.all().only("id", "headers", "entry_id"):
                     headers = _dictify_headers(mail.headers)
                     if headers:
                         yield EWSMailHandle(self,
                                 "{0}.{1}".format(folder.id, mail.id),
-                                headers.get("subject", "(no subject)"), folder.name)
+                                headers.get("subject", "(no subject)"),
+                                folder.name,
+                                mail.entry_id.hex())
 
         yield from relevant_mails(relevant_folders())
 
@@ -211,10 +224,12 @@ class EWSMailHandle(Handle):
     # but not important when computing equality
     eq_properties = Handle.BASE_PROPERTIES
 
-    def __init__(self, source, path, mail_subject, folder_name=None):
+    def __init__(self, source,
+            path, mail_subject, folder_name=None, entry_id=None):
         super().__init__(source, path)
         self._mail_subject = mail_subject
         self._folder_name = folder_name
+        self._entry_id = entry_id
 
     @property
     def presentation(self):
@@ -226,10 +241,14 @@ class EWSMailHandle(Handle):
     def presentation_url(self):
         # There appears to be no way to extract a webmail URL from an arbitrary
         # EWS server (and why should there be?), so at present we only support
-        # links to Office 365 mails
+        # web links to Office 365 mails
         if self.source._server == OFFICE_365_ENDPOINT:
             message_id = self.relative_path.split(".", maxsplit=1)[1]
             return _make_o365_deeplink(message_id)
+        elif self._entry_id:
+            # ... although, if we have an entry ID, then we can at least try to
+            # point Outlook at the relevant mail
+            return "outlook:{0}".format(self._entry_id)
         else:
             return None
 
@@ -244,11 +263,13 @@ class EWSMailHandle(Handle):
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
             "mail_subject": self._mail_subject,
-            "folder_name": self._folder_name
+            "folder_name": self._folder_name,
+            "entry_id": self._entry_id
         })
 
     @staticmethod
     @Handle.json_handler(type_label)
     def from_json_object(obj):
         return EWSMailHandle(Source.from_json_object(obj["source"]),
-                obj["path"], obj["mail_subject"], obj.get("folder_name"))
+                obj["path"], obj["mail_subject"],
+                obj.get("folder_name"), obj.get("entry_id"))

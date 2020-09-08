@@ -35,8 +35,9 @@ ROOT_URLCONF = 'os2datascanner.projects.report.urls'
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/'
 NOTIFICATION_INSTITUTION = ""
+
 # Which URL schemes can be used in links to matched objects? (The possible
-# entries are "http", "https" and "file".)
+# entries are "http", "https", "file" and "outlook".)
 PERMITTED_URL_SCHEMES = ['http', 'https']
 
 
