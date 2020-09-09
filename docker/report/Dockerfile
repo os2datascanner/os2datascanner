@@ -47,8 +47,8 @@ LABEL org.opencontainers.image.title="OS2datascanner - Report" \
 # Force the stdout and stderr streams from python to be unbuffered. See
 # https://docs.python.org/3/using/cmdline.html#cmdoption-u
 ENV PYTHONUNBUFFERED=1 \
-  DSC_REPORT_SYSTEM_CONFIG_PATH=/code/docker/docker-settings.toml \
-  DSC_REPORT_USER_CONFIG_PATH=/user-settings.toml \
+  OS2DS_REPORT_SYSTEM_CONFIG_PATH=/code/docker/docker-settings.toml \
+  OS2DS_REPORT_USER_CONFIG_PATH=/user-settings.toml \
   PYTHONPATH=/code/src/:$PYTHONPATH\
   DJANGO_SETTINGS_MODULE=os2datascanner.projects.report.settings
 
