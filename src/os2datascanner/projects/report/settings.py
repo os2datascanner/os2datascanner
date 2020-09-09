@@ -27,8 +27,8 @@ PROJECT_DIR = os.path.dirname(BASE_DIR)
 process_toml_conf_for_django(
     parent_path=PROJECT_DIR,
     module=sys.modules[__name__],
-    sys_var='DSC_REPORT_SYSTEM_CONFIG_PATH',
-    user_var='DSC_REPORT_USER_CONFIG_PATH',
+    sys_var='OS2DS_REPORT_SYSTEM_CONFIG_PATH',
+    user_var='OS2DS_REPORT_USER_CONFIG_PATH',
 )
 
 TEMPLATES = [
@@ -185,3 +185,4 @@ LOGGING = {
     }
 }
 
+os.makedirs(globals()['BUILD_DIR'], exist_ok=True)
