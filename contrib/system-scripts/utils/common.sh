@@ -36,10 +36,6 @@ function setup_local_settings()
     sed -i "s/INSERT_DEFAULT_FROM_EMAIL/$from_email/g" "$local_settings_file"
     sed -i "s/INSERT_ADMIN_EMAIL/$admin_email/g" "$local_settings_file"
     sed -i "s/INSERT_INSTITUTION/$institution/g" "$local_settings_file"
-
-    # Link local settings file to administration modules local settings
-    ln -svfr "$local_settings_file" "$repo_dir/src/os2datascanner/projects/$2/local_settings.py"
-
 }
 
 perform_django_migrations()

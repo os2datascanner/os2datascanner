@@ -49,11 +49,11 @@ echo -e '\n************* Installation *************\n'
 # Install system dependencies and python-env
 source "$PRODUCTION_DIR/install.sh"
 
-if [ "$INSTALL_WEB_PROJECTS" = True ]
+if [ "$INSTALL_WEB_PROJECTS" = true ]
 then
     echo -e '\n************* Admin module *************\n'
     # Setup administrations module
-    source "$PRODUCTION_DIR/contrib/system-scripts/utils/admin_setup.sh" "$ADMIN_DOMAIN" "$ENABLE_WEBSCAN" "$ENABLE_FILESCAN" "$ENABLE_EXCHANGESCAN" "$PRODUCTION_DIR" False "$DEFAULT_FROM_EMAIL" "$ADMIN_EMAIL" "$NOTIFICATION_INSTITUTION"
+    source "$PRODUCTION_DIR/contrib/system-scripts/utils/admin_setup.sh" "$ADMIN_DOMAIN" "$ENABLE_WEBSCAN" "$ENABLE_FILESCAN" "$ENABLE_EXCHANGESCAN" "$PRODUCTION_DIR" false "$DEFAULT_FROM_EMAIL" "$ADMIN_EMAIL" "$NOTIFICATION_INSTITUTION"
 
     npm_install_and_build 'admin' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'admin' "$PRODUCTION_DIR"
@@ -93,7 +93,7 @@ then
      systemctl daemon-reload
 fi
 
-if [ "$INSTALL_ENGINE_PIPELINE" = True ]
+if [ "$INSTALL_ENGINE_PIPELINE" = true ]
 then
     echo -e '\n************* Engine2 setup *************\n'
     # Setup engine2 services
@@ -109,7 +109,7 @@ echo -e '\n************* Simple Verification *************\n'
 echo -e "$PRODUCTION_DIR"
 ls -l "$PRODUCTION_DIR"
 
-if [ "$INSTALL_WEB_PROJECTS" = True ]
+if [ "$INSTALL_WEB_PROJECTS" = true ]
 then
     echo -e "\n$PRODUCTION_DIR/src/os2datascanner/projects/admin/"
     ls -l "$PRODUCTION_DIR/src/os2datascanner/projects/admin/"
@@ -121,7 +121,7 @@ then
     ls -l /etc/apache2/certs/datascanner
 fi
 
-if [ "$INSTALL_ENGINE_PIPELINE" = True ]
+if [ "$INSTALL_ENGINE_PIPELINE" = true ]
 then
     echo -e "\n$PRODUCTION_DIR/contrib/systemd/"
     ls -l "$PRODUCTION_DIR/contrib/systemd/"

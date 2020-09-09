@@ -23,7 +23,7 @@ echo -e '\n************* Installation *************\n'
 # Install system dependencies and python-env
 source ""$PRODUCTION_DIR"/install.sh"
 
-if [ "$INSTALL_WEB_PROJECTS" = True ]
+if [ "$INSTALL_WEB_PROJECTS" = true ]
 then
     echo -e '\n************* Admin module *************\n'
     # Make migrations
@@ -33,8 +33,6 @@ then
     npm_install_and_build 'admin' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'admin' "$PRODUCTION_DIR"
 
-    # TODO: Npm build
-
     echo -e '\n************* Report module *************\n'
     # Make migrations
     perform_django_migrations 'report' "$PRODUCTION_DIR"
@@ -42,9 +40,6 @@ then
     # Collect static & Make messages
     npm_install_and_build 'report' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'report' "$PRODUCTION_DIR"
-
-
-    # TODO: Npm build
 fi
 
 sudo chown --recursive www-data:www-data "$PRODUCTION_DIR"

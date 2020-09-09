@@ -19,11 +19,14 @@ admin_email=$6
 institution=$7
 
 repo_conf="$setup_dir/contrib/config/report-module"
-report_local_settings="$repo_conf/local_settings.py.report"
-cp "$report_local_settings" "$repo_conf/local_settings.py"
-local_settings_file="$repo_conf/local_settings.py"
+report_local_settings="$repo_conf/user-settings.toml.report"
+cp "$report_local_settings" "$repo_conf/user-settings.toml"
+local_settings_file="$repo_conf/user-settings.toml"
 
 source "$setup_dir/contrib/system-scripts/utils/common.sh"
+
+export OS2DS_REPORT_USER_CONFIG_PATH="$local_settings_file"
+export OS2DS_REPORT_SYSTEM_CONFIG_PATH=""
 
 setup_local_settings "$setup_dir" 'report' "$domain" "$local_settings_file" "$debug" "$from_email" "$admin_email" "$institution"
 perform_django_migrations 'report' "$setup_dir"
