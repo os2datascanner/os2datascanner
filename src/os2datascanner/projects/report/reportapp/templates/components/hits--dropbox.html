@@ -23,7 +23,7 @@
             <div class="hit-link">
                 <div class="button-group">
                     {% if match.matches.handle|present_url %}
-                        <a href="{{ match.matches.handle|present_url }}" class="button button--small button--cta" target="_blank" rel="noopener">Åben fil</a>
+                        <a href="{{ match.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">Åben fil</a>
                     {% endif %}
 
                     {% include "components/handle-match.html" %}

@@ -1,5 +1,8 @@
 <header class="banner" role="banner">
   {% include "components/logo.html" %}
+  {% if request.user.is_authenticated %}
   {% include "components/navigation.html" %}
   {% include "components/user.html" %}
+  {% endif %}
 </header>
+
