@@ -8,7 +8,8 @@ from multiprocessing import Manager, Process
 
 from os2datascanner.engine2.model.core import (Handle,
         Source, SourceManager, UnknownSchemeError)
-from os2datascanner.engine2.model.http import WebSource, WebHandle
+from os2datascanner.engine2.model.http import (
+        WebSource, WebHandle, make_outlinks)
 from os2datascanner.engine2.model.utilities.datetime import parse_datetime
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
@@ -235,3 +236,9 @@ class Engine2HTTPTest(unittest.TestCase):
                 h.get_last_modified_hint(),
                 h2.get_last_modified_hint(),
                 "Last-Modified hint didn't survive serialisation")
+
+    def test_empty_page_handling(self):
+        self.assertEqual(
+                list(make_outlinks("", "http://localhost:64346/empty.html")),
+                [],
+                "empty page with non-empty list of outgoing links")
