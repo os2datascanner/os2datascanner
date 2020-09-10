@@ -1,9 +1,5 @@
-<div onclick="showChart()" class="sensitivity-chart">
-  <div class="icons">
-    <i id="icon-more" class="material-icons">chevron_right</i>
-    <span>Følsomhedsoversigt:</span>
-  </div>
-  <div style="display: none;" id="sensitivity-chart">
+<div class="sensitivity-chart">
+    <legend>Følsomhedsoversigt</legend>
     <ul>
       <li>
         <span class="sensitivity-chart--width">{% include "components/svg-icons/critical.svg" %}</span>
@@ -23,19 +19,3 @@
       </li>  
     </ul>
   </div>
-</div>
-
-<script>
-  // Hide/show sensitivity chart
-  function showChart() {
-    var x = document.getElementById("sensitivity-chart");
-    var iconMore = document.getElementById("icon-more");
-    if (x.style.display === "none") {
-      x.style.display = "block";
-      iconMore.innerText = "expand_more";
-    } else {
-      x.style.display = "none";
-      iconMore.innerText = "chevron_right";
-    }
-  }
-</script>
