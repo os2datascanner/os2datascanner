@@ -1,6 +1,7 @@
 from io import BytesIO
 from time import sleep
 from lxml.html import document_fromstring
+from lxml.etree import ParserError
 from urllib.parse import urljoin, urlsplit, urlunsplit
 from requests.sessions import Session
 from requests.exceptions import ConnectionError
@@ -231,8 +232,11 @@ class WebHandle(Handle):
 
 
 def make_outlinks(content, where):
-    doc = document_fromstring(content)
-    doc.make_links_absolute(where, resolve_base_href=True)
-    for el, _, li, _ in doc.iterlinks():
-        if el.tag in ("a", "img",):
-            yield li
+    try:
+        doc = document_fromstring(content)
+        doc.make_links_absolute(where, resolve_base_href=True)
+        for el, _, li, _ in doc.iterlinks():
+            if el.tag in ("a", "img",):
+                yield li
+    except ParserError:
+        pass
