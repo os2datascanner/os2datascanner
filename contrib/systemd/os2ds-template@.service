@@ -4,6 +4,8 @@ After=rabbitmq-server.service
 Requires=rabbitmq-server.service
 
 [Service]
+Environment="OS2DS_ENGINE_USER_CONFIG_PATH=USER_SETTINGS_PATH"
+Environment="OS2DS_ENGINE_USER_SYSTEM_PATH=SYSTEM_SETTINGS_PATH"
 ProtectSystem=strict
 PrivateTmp=true
 DynamicUser=true

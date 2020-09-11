@@ -21,6 +21,8 @@ for name in ${pipeline_names[@]}; do
     command="$setup_dir/bin/pex python -m os2datascanner.engine2.pipeline.$name"
     sed -i "s/SERVICE_NAME/$name/g" "$new_service"
     sed -i "s/SERVICE_SHORTNAME/$short_name/g" "$new_service"
+    sed -i "s#USER_SETTINGS_PATH#$setup_dir/contrib/config/engine/user-settings.toml#g" "$new_service"
+    sed -i "s#USER_SETTINGS_PATH#$setup_dir/contrib/config/engine/system-settings.toml#g" "$new_service"
     sed -i "s#COMMAND_LINE#$command#g" "$new_service"
 
     sudo ln -svrf "$new_service" "/etc/systemd/system/$service_name"
