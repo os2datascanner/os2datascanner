@@ -110,7 +110,7 @@
     {% csrf_token %}
 
     <fieldset class="form__fieldset">
-      <legend>Metadata:</legend>
+      <legend>Metadata</legend>
 
       <div class="form__group">
         <label for="id_{{ form.name.name }}">{{ form.name.label }}</label>
@@ -183,7 +183,7 @@
     {% endif %}
 
     <fieldset class="form__fieldset">
-      <legend>Regel:</legend>
+      <legend>Regel</legend>
 
       <div id="{{ form.pattern_0.auto_id }}_container" class="form__group col-sm-12{% if form.pattern_0.errors %} has-error{% endif %}">
 
