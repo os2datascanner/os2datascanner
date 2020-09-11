@@ -122,6 +122,11 @@ AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
 AMQP_HOST = "localhost"
 AMQP_USER = ""
 AMQP_PWD = ""
+    [amqp.AMQP_BACKOFF_PARAMS]
+    max_tries = 10
+    ceiling = 7
+    warn_after = 6
+    fuzz = 0
 
 [DATABASES]
 
@@ -144,7 +149,7 @@ recycle = 300
 BUILD_DIR = ["*", "build"]
 VAR_DIR = ["*", "var"]
 LOGS_DIR = ["*", "var", "logs"]
-STATIC_ROOT = ["*", 'src', 'os2datascanner', 'projects', 'static', 'report']
+STATIC_ROOT = ["*", 'src', 'os2datascanner', 'projects', 'static', 'admin']
 MEDIA_ROOT = ["*", "uploads", "admin"]
 TEST_OUTPUT_FILE_NAME = ["*", "build", "test-results.xml"]
 DECRYPTION_FILE_PATH = ["*"]
