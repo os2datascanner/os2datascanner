@@ -143,6 +143,11 @@
   }
 }
 
+.required-form:after{
+    content: " *"; 
+    color: var(--color-main-text);
+}
+
 .checkbox-group {
   background-color: rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.1);
