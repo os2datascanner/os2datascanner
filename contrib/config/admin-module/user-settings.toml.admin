@@ -32,6 +32,11 @@ NOTIFICATION_INSTITUTION = 'INSERT_INSTITUTION'
 AMQP_HOST = "queue"
 AMQP_USER = "os2ds"
 AMQP_PWD = "os2ds"
+    [amqp.AMQP_BACKOFF_PARAMS]
+    max_tries = 10
+    ceiling = 7
+    warn_after = 6
+    fuzz = 0
 
 [DATABASES]
 

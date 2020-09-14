@@ -195,11 +195,12 @@ function update_prod_dir()
         --exclude "python-env/" \
         --exclude '*.pyc' \
         --exclude '.secret' \
-        --exclude 'pika_settings.py' \
         --exclude 'contrib/' \
         --exclude 'local_settings.py' \
         --exclude 'var/' \
         --exclude 'uploads/' \
+        --exclude 'user-settings.toml' \
+        --exclude 'system-settings.toml' \
         "$repo_dir"/ "$prod_dir"
 
     echo 'Done Copying.'

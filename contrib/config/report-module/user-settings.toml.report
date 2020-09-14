@@ -3,6 +3,8 @@ SECRET_KEY = "INSERT_SECRET_KEY"
 # [mode]
 DEBUG = false
 
+SAML2_ENABLED = false
+
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
 # OAuth 2.0 services. (This value should end with a forward slash.)
@@ -31,8 +33,6 @@ EMAIL_PORT = 25
 # The full documentation can be found here: https://github.com/fangli/django-saml2-auth
 # *Note: The package used is https://github.com/magenta-aps/django-saml2-auth as it supports Signed AUTHN_REQUESTS.
 [SAML2_AUTH]
-
-SAML2_ENABLED = false
 
 # Metadata is required, choose either remote url or local file path
 METADATA_AUTO_CONF_URL = '[The auto(dynamic) metadata configuration URL of SAML2]'
@@ -75,3 +75,8 @@ FRONTEND_URL = 'https://INSERT_DOMAIN_NAME/'# Redirect URL for the client if you
 AMQP_HOST = "queue"
 AMQP_USER = "os2ds"
 AMQP_PWD = "os2ds"
+    [amqp.AMQP_BACKOFF_PARAMS]
+    max_tries = 10
+    ceiling = 7
+    warn_after = 6
+    fuzz = 0
