@@ -23,9 +23,11 @@ echo -e '\n************* Installation *************\n'
 # Install system dependencies and python-env
 source ""$PRODUCTION_DIR"/install.sh"
 
-if [ "$INSTALL_WEB_PROJECTS" = True ]
+if [ "$INSTALL_WEB_PROJECTS" = true ]
 then
     echo -e '\n************* Admin module *************\n'
+    export OS2DS_ADMIN_USER_CONFIG_PATH="$PRODUCTION_DIR/contrib/config/admin-module/user-settings.toml"
+    export OS2DS_ADMIN_SYSTEM_CONFIG_PATH=""
     # Make migrations
     perform_django_migrations 'admin' "$PRODUCTION_DIR"
 
@@ -33,18 +35,15 @@ then
     npm_install_and_build 'admin' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'admin' "$PRODUCTION_DIR"
 
-    # TODO: Npm build
-
     echo -e '\n************* Report module *************\n'
+    export OS2DS_REPORT_USER_CONFIG_PATH="$PRODUCTION_DIR/contrib/config/report-module/user-settings.toml"
+    export OS2DS_REPORT_SYSTEM_CONFIG_PATH=""
     # Make migrations
     perform_django_migrations 'report' "$PRODUCTION_DIR"
 
     # Collect static & Make messages
     npm_install_and_build 'report' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'report' "$PRODUCTION_DIR"
-
-
-    # TODO: Npm build
 fi
 
 sudo chown --recursive www-data:www-data "$PRODUCTION_DIR"

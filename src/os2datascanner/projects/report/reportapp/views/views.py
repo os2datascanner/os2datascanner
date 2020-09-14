@@ -71,11 +71,21 @@ class MainPageView(TemplateView, LoginRequiredMixin):
             if (result.data
                     and "matches" in result.data
                     and result.data["matches"]):
-                mm = result.data["matches"]
-                renderable_matches = [cm for cm in mm["matches"]
-                        if cm["rule"]["type"] in RENDERABLE_RULES]
-                if renderable_matches:
-                    mm["matches"] = renderable_matches
+                match_message_raw = result.data["matches"]
+                renderable_fragments = [
+                        frag for frag in match_message_raw["matches"]
+                        if frag["rule"]["type"] in RENDERABLE_RULES
+                                and frag["matches"]]
+                if renderable_fragments:
+                    match_message_raw["matches"] = renderable_fragments
+                    # Rules are under no obligation to produce matches in any
+                    # particular order, but we want to display them in
+                    # descending order of probability
+                    for match_fragment in renderable_fragments:
+                        match_fragment["matches"].sort(
+                                key=lambda match_dict: match_dict.get(
+                                        "probability", 0.0),
+                                reverse=True)
                     self.data_results.append(result)
 
         self.data_results.sort(key=

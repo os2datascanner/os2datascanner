@@ -21,18 +21,22 @@ admin_email=$8
 institution=$9
 
 repo_conf="$setup_dir/contrib/config/admin-module"
-admin_local_settings="$repo_conf/local_settings.py.admin"
-cp "$admin_local_settings" "$repo_conf/local_settings.py"
-local_settings_file="$repo_conf/local_settings.py"
+template_user_settings_file="$repo_conf/user-settings.toml.admin"
+cp "$template_user_settings_file" "$repo_conf/user-settings.toml"
+user_settings_file="$repo_conf/user-settings.toml"
 
 source "$setup_dir/contrib/system-scripts/utils/common.sh"
 
-setup_local_settings "$setup_dir" 'admin' "$domain" "$local_settings_file" "$debug" "$from_email" "$admin_email" "$institution"
-sed -i "s/ENABLE_WEBSCAN = False/ENABLE_WEBSCAN = $enable_webscan/g" "$local_settings_file"
-sed -i "s/ENABLE_EXCHANGESCAN = False/ENABLE_EXCHANGESCAN = $enable_mailscan/g" "$local_settings_file"
-sed -i "s/ENABLE_FILESCAN = False/ENABLE_FILESCAN = $enable_filescan/g" "$local_settings_file"
+setup_local_settings "$setup_dir" 'admin' "$domain" "$user_settings_file" "$debug" "$from_email" "$admin_email" "$institution"
+sed -i "s/ENABLE_WEBSCAN = false/ENABLE_WEBSCAN = $enable_webscan/g" "$user_settings_file"
+sed -i "s/ENABLE_EXCHANGESCAN = false/ENABLE_EXCHANGESCAN = $enable_mailscan/g" "$user_settings_file"
+sed -i "s/ENABLE_FILESCAN = false/ENABLE_FILESCAN = $enable_filescan/g" "$user_settings_file"
+
+export OS2DS_ADMIN_USER_CONFIG_PATH="$user_settings_file"
+export OS2DS_ADMIN_SYSTEM_CONFIG_PATH=""
+
+echo "export OS2DS_ADMIN_USER_CONFIG_PATH=$user_settings_file" >> /etc/apache/envvars
+echo 'export OS2DS_ADMIN_SYSTEM_CONFIG_PATH=""' >> /etc/apache/envvars
+
 perform_django_migrations 'admin' "$setup_dir"
 create_superuser 'admin' "$setup_dir" "$site_username" "$site_useremail"
-
-# TODO: Remember npm - npm install . && npm run build. Is waiting on [#34571]
-

@@ -1,6 +1,54 @@
 OS2datascanner
 ==============
 
+Version 3.5.0, 14th September 2020
+----------------------------------
+
+"Racing Green Shipping Container"
+
+New in this version:
+
+- Initial support for Docker:
+
+  - The code has been refactored to better support containerised deployments.
+
+  - Installation-specific settings are now managed in a cleaner and more
+    modular way.
+
+  - Support for Docker-driven development environments, including Prometheus-
+    and Grafana-driven performance statistics.
+
+- Changes to the organisation of the scanner engine's pipeline:
+
+  - The three main components of the pipeline can now (optionally) run in a
+    single process, improving cache efficiency and performance.
+
+- The report module can now give direct links to emails in the Microsoft
+  Outlook desktop application, when the administrator has configured the
+  network to allow this.
+
+General improvements:
+
+- PDF file processing is now up to five orders of magnitude faster.
+
+- The terminology used in the administration system has been improved.
+
+- The report module now also sorts individual matches by probability.
+
+Bugfixes:
+
+- Microsoft CDFv2 files that are not Office OLE documents are no longer
+  processed as though they were.
+
+- The report module no longer presents an empty row when an alternative
+  rule did not match.
+
+- Match handling for matches with large database identifiers is no longer
+  unreliable.
+
+- The pipeline's components can now detect and recover from RabbitMQ connection
+  problems during startup.
+
 Version 3.4.0, 21st July 2020
 -----------------------------
 

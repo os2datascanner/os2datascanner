@@ -1,0 +1,16 @@
+SECRET_KEY = "DUMMYKEY(for testing)DUMMYKEY(for testing)"
+
+[DATABASES]
+
+    [DATABASES.default]
+    ENGINE = "django.db.backends.postgresql_psycopg2"
+    NAME = "os2datascanner"
+    USER = "os2datascanner"
+    PASSWORD = "os2datascanner"
+    HOST = "postgres"
+
+[amqp]
+# Nested amqp settings are picked up by the common amqp utility module
+AMQP_HOST = "rabbitmq"
+AMQP_USER = "guest"
+AMQP_PWD = "guest"

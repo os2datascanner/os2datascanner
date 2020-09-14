@@ -1,0 +1,10 @@
+[amqp]
+# Nested amqp settings are picked up by the common amqp utility module
+AMQP_HOST = "localhost"
+AMQP_USER = ""
+AMQP_PWD = ""
+    [amqp.AMQP_BACKOFF_PARAMS]
+    max_tries = 10
+    ceiling = 7
+    warn_after = 6
+    fuzz = 0

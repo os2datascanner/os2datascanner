@@ -1,21 +1,21 @@
 <div class="tabs">
     {% if settings.ENABLE_WEBSCAN %}
-    <a id="web" class="tabs__control" href='/webscanners/'">Webscannere</a>
+    <a id="web" class="tabs__control" href='/webscanners/'">Webscanner</a>
     {% endif %}
     {% if settings.ENABLE_FILESCAN %}
-    <a id="file" class="tabs__control" href='/filescanners/'">Filscannere</a>
+    <a id="file" class="tabs__control" href='/filescanners/'">Filscanner</a>
     {% endif %}
     {% if settings.ENABLE_EXCHANGESCAN %}
-    <a id="exchange" class="tabs__control" href='/exchangescanners/'">Exchangescannere</a>
+    <a id="exchange" class="tabs__control" href='/exchangescanners/'">Exchangescanner</a>
     {% endif %}
     {% if settings.ENABLE_DROPBOXSCAN %}
-    <a id="dropbox" title="Læg mærke til at Dropboxscan stadig er i test." class="tabs__control" href="/dropboxscanners/">Dropboxscannere (beta)</a>
+    <a id="dropbox" title="Læg mærke til at Dropboxscan stadig er i test." class="tabs__control" href="/dropboxscanners/">Dropboxscanner (beta)</a>
     {% endif %}
     {% if settings.ENABLE_MSGRAPH_MAILSCAN %}
-    <a id="msgraph-mail" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-mailscanners/">Microsoft Graph-mailscannere (beta)</a>
+    <a id="msgraph-mail" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-mailscanners/">Office 365 mailscanner (beta)</a>
     {% endif %}
     {% if settings.ENABLE_MSGRAPH_FILESCAN %}
-    <a id="msgraph-file" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-filescanners/">Microsoft Graph-filscannere (beta)</a>
+    <a id="msgraph-file" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-filescanners/">Office 365 OneDrive filscanner (beta)</a>
     {% endif %}
 </div>
 

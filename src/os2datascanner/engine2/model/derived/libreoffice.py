@@ -1,4 +1,5 @@
 from os import listdir
+import magic
 from tempfile import TemporaryDirectory
 from subprocess import run, PIPE
 
@@ -18,27 +19,54 @@ def libreoffice(*args):
                         *args], stdout=PIPE, stderr=PIPE, check=True)
 
 
+# These filter names come from /usr/lib/libreoffice/share/registry/PROG.xcd
+_actually_supported_types = {
+    "application/msword": "MS Word 97",
+    "application/vnd.oasis.opendocument.text": "writer8",
+    "application/vnd.ms-excel": "MS Excel 97",
+    "application/vnd.oasis.opendocument.spreadsheet": "calc8",
+
+    # XXX: libmagic usually can't detect OOXML files -- see the special
+    # handling of these types in in LibreOfficeSource._generate_state
+    "application/vnd.openxmlformats-officedocument"
+            ".wordprocessingml.document": "Office Open XML Text",
+    "application/vnd.openxmlformats-officedocument"
+            ".spreadsheetml.sheet": "Calc Office Open XML"
+}
+
+
 @Source.mime_handler(
         "application/CDFV2",
-
-        "application/msword",
-        "application/vnd.oasis.opendocument.text",
-        "application/vnd.openxmlformats-officedocument"
-                ".wordprocessingml.document",
-
-        "application/vnd.ms-excel",
-        "application/vnd.oasis.opendocument.spreadsheet",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        *_actually_supported_types.keys())
 class LibreOfficeSource(DerivedSource):
     type_label = "lo"
 
     def _generate_state(self, sm):
         with self.handle.follow(sm).make_path() as p:
-            with TemporaryDirectory() as outputdir:
-                result = libreoffice(
-                        "--convert-to", "html",
-                        "--outdir", outputdir, p)
-                yield outputdir
+            # To filter out application/CDFV2 files that we don't actually
+            # support, we compute the type of the whole file by calling
+            # libmagic directly on the local filesystem path...
+            best_mime_guess = magic.from_file(p, mime=True)
+            # ... and, just to be extra safe, we tell LibreOffice what sort of
+            # file we're passing it so it can do its own sanity checks
+            filter_name = _actually_supported_types.get(best_mime_guess)
+
+            # (... with special handling for OOXML files, since libmagic has
+            # problems detecting them)
+            if (not filter_name and best_mime_guess in
+                    ("application/octet-stream", "application/zip")):
+                mime_guess = self.handle.guess_type()
+                if mime_guess.startswith(
+                        "application/vnd.openxmlformats-officedocument."):
+                    filter_name = _actually_supported_types.get(mime_guess)
+
+            if filter_name is not None:
+                with TemporaryDirectory() as outputdir:
+                    result = libreoffice(
+                            "--infilter={0}".format(filter_name),
+                            "--convert-to", "html",
+                            "--outdir", outputdir, p)
+                    yield outputdir
 
     def handles(self, sm):
         for name in listdir(sm.open(self)):

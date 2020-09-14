@@ -11,17 +11,14 @@ else:
         return False
 from prometheus_client import Summary
 
+from ..utilities.backoff import run_with_backoff
 from ...utils.system_utilities import json_utf8_decode
+from os2datascanner.utils import pika_settings
 
 
 def make_common_argument_parser():
     parser = argparse.ArgumentParser(
             formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument(
-            "--host",
-            metavar="HOST",
-            help="the AMQP host to connect to",
-            default="localhost")
     parser.add_argument(
             "--debug",
             action="store_true",
@@ -29,11 +26,14 @@ def make_common_argument_parser():
 
     monitoring = parser.add_argument_group("monitoring")
     monitoring.add_argument(
-            "--prometheus-dir",
-            metavar="DIR",
-            help="the directory in which to drop a Prometheus description"
-                    " of this pipeline stage",
-            default=None)
+            "--enable-metrics",
+            action="store_true",
+            help="enable exporting of metrics")
+    monitoring.add_argument(
+            "--prometheus-port",
+            metavar="PORT",
+            help="the port to serve OpenMetrics data.",
+            default=9091)
 
     return parser
 
@@ -86,7 +86,11 @@ class PikaConnectionHolder(ABC):
     server. (Like Pika itself, it is not thread safe.)"""
 
     def __init__(self, **kwargs):
-        self._parameters = pika.ConnectionParameters(**kwargs)
+        credentials = pika.PlainCredentials(pika_settings.AMQP_USER,
+                                            pika_settings.AMQP_PWD)
+        self._parameters = pika.ConnectionParameters(credentials=credentials,
+                                                     host=pika_settings.AMQP_HOST,
+                                                     **kwargs)
         self._connection = None
         self._channel = None
 
@@ -98,7 +102,11 @@ class PikaConnectionHolder(ABC):
     def connection(self):
         """Returns the managed Pika connection, creating one if necessary."""
         if not self._connection:
-            self._connection = self.make_connection()
+            self._connection, _ = run_with_backoff(
+                self.make_connection,
+                pika.exceptions.AMQPConnectionError,
+                **pika_settings.AMQP_BACKOFF_PARAMS,
+            )
         return self._connection
 
     def make_channel(self):

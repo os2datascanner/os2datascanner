@@ -1,0 +1,155 @@
+# SPDX-FileCopyrightText: 2020 Magenta ApS
+# SPDX-License-Identifier: MPL-2.0
+
+# THIS FILE CONTAINS DEFAULT CONFIGURATION SETTINGS. DO NOT CHANGE!!!
+# To change the configuration of a specific instance, go the user configuration
+# file. For development, the user configuration file is found here:
+# /dev-environment/dev-settings.toml
+
+SECRET_KEY = ""
+
+# [mode]
+DEBUG = false
+PRODUCTION = false
+
+# [site]
+# The URL of this site, used in links in emails and in the redirect URL for
+# OAuth 2.0 services. (This value should end with a forward slash.)
+SITE_URL = "*"
+SITE_ID = 1
+ALLOWED_HOSTS = []
+
+# [msgraph]
+# The GUID of the registered Azure application corresponding to this
+# OS2datascanner installation, used when requesting Microsoft Graph access:
+MSGRAPH_APP_ID = ""
+# The client secret used to demonstrate to Microsoft Graph that this
+# OS2datascanner installation corresponds to a registered Azure application
+# (client private keys are not yet supported):
+MSGRAPH_CLIENT_SECRET = ""
+
+# [test]
+TEST_RUNNER = "xmlrunner.extra.djangotestrunner.XMLTestRunner"
+TEST_OUTPUT_DESCRIPTIONS = true
+TEST_OUTPUT_VERBOSE = true
+# TEST_OUTPUT_FILE_NAME is set under dirs
+
+# [installation]
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'os2datascanner.projects.admin.adminapp.apps.AdminappConfig',
+    'recurrence',
+]
+OPTIONAL_APPS = []
+AUTH_PROFILE_MODULE = "os2datascanner.projects.admin.adminapp.UserProfile"
+WSGI_APPLICATION = "os2datascanner.projects.admin.wsgi.application"
+ROOT_URLCONF = "os2datascanner.projects.admin.urls"
+STATIC_URL = "/static/"
+ICON_SPRITE_URL = "/static/src/svg/symbol-defs.svg"
+LOGIN_REDIRECT_URL = "/"
+NOTIFICATION_INSTITUTION = ""
+DO_USE_GROUPS = false
+
+MIDDLEWARE = [
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_structlog.middlewares.RequestMiddleware",
+]
+
+# Add settings here to make them accessible from templates
+SETTINGS_EXPORT = [
+    'DEBUG',
+    'ENABLE_FILESCAN',
+    'ENABLE_EXCHANGESCAN',
+    'ENABLE_WEBSCAN',
+    'ENABLE_DROPBOXSCAN',
+    'ENABLE_MSGRAPH_MAILSCAN',
+    'ENABLE_MSGRAPH_FILESCAN',
+    'ICON_SPRITE_URL'
+]
+
+# [internationalization]
+LANGUAGE_CODE = "da-dk"
+# Paths relative to the project directory should start with "*" while
+# absolute paths should start with "/"
+_LOCALE_PATHS = [
+    ["*", "locale", "admin"],
+]
+_LANGUAGES = [
+    ["da", "Danish"],
+    ["en", "English"],
+]
+TIMEZONE = "Europe/Copenhagen"
+USE_I18N = true
+USE_L10N = true
+USE_TZ = true
+USE_THOUSAND_SEPARATOR = true
+
+# [email]
+DEFAULT_FROM_EMAIL = "(Magenta Info) info@magenta.dk"
+ADMIN_EMAIL = "(Magenta Admin) info@magenta.dk"
+EMAIL_HOST = "localhost"
+EMAIL_PORT = 25
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+# [scans]
+ENABLE_FILESCAN = false
+ENABLE_WEBSCAN = false
+ENABLE_EXCHANGESCAN = false
+ENABLE_DROPBOXSCAN = false
+ENABLE_MSGRAPH_MAILSCAN = false
+ENABLE_MSGRAPH_FILESCAN = false
+
+# [logging]
+GRAYLOG_HOST = ""
+DJANGO_LOG_LEVEL = "INFO"
+
+# This setting is Django specifik, and must be top level to get picked up
+AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
+
+[amqp]
+# Nested amqp settings are picked up by the common amqp utility module
+AMQP_HOST = "localhost"
+AMQP_USER = ""
+AMQP_PWD = ""
+    [amqp.AMQP_BACKOFF_PARAMS]
+    max_tries = 10
+    ceiling = 7
+    warn_after = 6
+    fuzz = 0
+
+[DATABASES]
+
+    [DATABASES.default]
+    ENGINE = "django.db.backends.postgresql_psycopg2"
+    NAME = "os2datascanner_admin"
+    USER = "os2datascanner_admin"
+    PASSWORD = ""
+    HOST = "127.0.0.1"
+
+[DATABASE_POOL_ARGS]
+max_overflow = 10
+pool_size = 5
+recycle = 300
+
+[dirs]
+# These are the settings for various directories.
+# Paths relative to the project directory should start with "*" while
+# absolute paths should start with "/"
+BUILD_DIR = ["*", "build"]
+VAR_DIR = ["*", "var"]
+LOGS_DIR = ["*", "var", "logs"]
+STATIC_ROOT = ["*", 'src', 'os2datascanner', 'projects', 'static', 'admin']
+MEDIA_ROOT = ["*", "uploads", "admin"]
+TEST_OUTPUT_FILE_NAME = ["*", "build", "test-results.xml"]
+DECRYPTION_FILE_PATH = ["*"]

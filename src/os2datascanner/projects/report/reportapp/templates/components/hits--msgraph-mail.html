@@ -1,6 +1,6 @@
 {% load handle_extras %}
 
-{% for rule in match.matches.matches %}
+{% for rule in match.matches.matches %} {% if rule.matches %}
 <tr tabindex="0" data-type="office365">
 
   <td class="datatable__column--filetype-icon">
@@ -49,4 +49,4 @@
   </td>
 
 </tr>
-{% endfor %}
+{% endif %} {% endfor %}
