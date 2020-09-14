@@ -7,7 +7,6 @@
 # /dev-environment/dev-settings.toml
 
 SECRET_KEY = ""
-SAML2_ENABLED = false
 
 # [mode]
 DEBUG = false
