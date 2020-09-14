@@ -26,6 +26,8 @@ source ""$PRODUCTION_DIR"/install.sh"
 if [ "$INSTALL_WEB_PROJECTS" = true ]
 then
     echo -e '\n************* Admin module *************\n'
+    export OS2DS_ADMIN_USER_CONFIG_PATH="$PRODUCTION_DIR/contrib/config/admin-module/user-settings.toml"
+    export OS2DS_ADMIN_SYSTEM_CONFIG_PATH=""
     # Make migrations
     perform_django_migrations 'admin' "$PRODUCTION_DIR"
 
@@ -34,6 +36,8 @@ then
     collectstatic_and_makemessages 'admin' "$PRODUCTION_DIR"
 
     echo -e '\n************* Report module *************\n'
+    export OS2DS_REPORT_USER_CONFIG_PATH="$PRODUCTION_DIR/contrib/config/report-module/user-settings.toml"
+    export OS2DS_REPORT_SYSTEM_CONFIG_PATH=""
     # Make migrations
     perform_django_migrations 'report' "$PRODUCTION_DIR"
 
