@@ -27,6 +27,7 @@ djangorestframework==3.11.0  # via django-rest-auth
 dnspython==1.16.0         # via -c requirements-engine.txt, exchangelib
 dropbox==10.3.0           # via -c requirements-engine.txt, -r requirements-django.in
 exchangelib==3.1.1        # via -c requirements-engine.txt, -r requirements-django.in
+gunicorn==20.0.4          # via -r requirements-django.in
 idna==2.9                 # via -c requirements-engine.txt, requests
 ipython-genutils==0.2.0   # via traitlets
 ipython==7.14.0           # via -r requirements-django.in
