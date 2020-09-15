@@ -71,13 +71,13 @@ services:
       context: .
       dockerfile: docker/report/Dockerfile
       target: application
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn -b 0.0.0.0:5000 --reload --access-logfile - wsgi
     volumes:
       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
     ports:
-      - "8040:8000"
+      - "8040:5000"
     depends_on:
       - db
       - report-frontend

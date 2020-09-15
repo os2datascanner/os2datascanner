@@ -89,6 +89,7 @@ RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
 WORKDIR /code/docker/
 COPY docker/report/docker-settings.toml ./docker-settings.toml
 COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
+COPY docker/gunicorn-settings.py ./gunicorn-settings.py
 
 # Copy backend code
 WORKDIR /code/src/os2datascanner
@@ -112,7 +113,8 @@ COPY --from=frontend /code/src/os2datascanner/projects/report/reportapp/static/d
 # Run the server as the os2ds_report user on port 8000
 WORKDIR /code/src/os2datascanner/projects/report
 USER os2ds_report:os2ds_report
-EXPOSE 8000
+EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
-# TODO: add production CMD once the set-up is completed
-# CMD []
+CMD ["gunicorn", \
+     "--config", "code/docker/gunicorn-settings.py", \
+     "wsgi"]
