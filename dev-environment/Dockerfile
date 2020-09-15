@@ -2,6 +2,7 @@ FROM python:3.6
 
 WORKDIR /requirements/sys-requirements
 COPY requirements/sys-requirements .
+RUN rm sys-requirements-for-bash-install.txt
 # Combine all system dependencies
 RUN cat sys-requirements-*.txt > sys-requirements.txt
 RUN cat sys-requirements.txt
