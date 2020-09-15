@@ -16,11 +16,11 @@ set -e
 # TODO: Uncomment when the management command has been added
 # ./manage.py ensure_db_connection --wait 30
 
-if [ -z "${OS2DS_MIGRATE_MANUALLY}" ]; then
+if [ -z "${OS2DS_SKIP_DJANGO_MIGRATIONS}" ]; then
   # Run Migrate
   python manage.py migrate
 else
-  echo "OS2DS_MIGRATE_MANUALLY set: ${OS2DS_MIGRATE_MANUALLY}"
+  echo "OS2DS_SKIP_DJANGO_MIGRATIONS set: ${OS2DS_SKIP_DJANGO_MIGRATIONS}"
   echo "Skipping automatic migrations"
 fi
 
