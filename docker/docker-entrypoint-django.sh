@@ -25,7 +25,6 @@ else
 fi
 
 # Generate static content
-# TODO: determine if we need this
-# ./manage.py collectstatic --no-input --clear
+./manage.py collectstatic --no-input --clear
 
 exec "$@"

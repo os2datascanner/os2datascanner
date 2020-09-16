@@ -75,6 +75,7 @@ RUN set -ex \
   && apt-get clean && rm -rf "/var/lib/apt/lists/*" "/tmp/*" "/var/tmp/*" "/usr/share/man/??" "/usr/share/man/??_*" \
   # create folders for output from django
   && install -o os2ds_report -g os2ds_report -d /code/build \
+  && install -o os2ds_report -g os2ds_report -d /code/static \
   && install -o os2ds_report -g os2ds_report -d /code/var
 
 # Install python requirements
