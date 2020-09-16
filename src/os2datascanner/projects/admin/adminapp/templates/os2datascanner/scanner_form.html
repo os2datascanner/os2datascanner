@@ -284,28 +284,6 @@
             </div>
         {% endif %}
 
-      {% if form.access_code %}
-            <div id="{{ form.access_code.auto_id }}_container" class="form__group{% if form.access_code.errors %} has-error{% endif %}">
-                <label class="control-label" for="id_{{ form.access_code.name }}">Access Code</label>
-                <input
-                        type="text"
-                        class="form-control"
-                        name="{{ form.access_code.name }}"
-                        id="id_{{ form.access_code.name }}"
-                        {% if form.access_code.value %}
-                        value="{{ form.access_code.value }}"
-                        {% else %}
-                        {{ code }}
-                        {% endif %}
-
-                {% if form.token.help_text %}
-                    <span class="form__help-text">{{ form.access_code.help_text }}</span>
-                {% endif %}
-
-                {% if form.access_code.errors %}{{ form.access_code.errors }}{% endif %}
-            </div>
-        {% endif %}
-
       {% if form.tenant_id %}
       <div id="{{ form.tenant_id.auto_id }}_container" class="form__group{% if form.tenant_id.errors %} has-error{% endif %}">
         <label for="id_tenant_presentation">{{ form.tenant_id.label }}</label>
@@ -558,7 +536,58 @@
       
     <fieldset class="form__fieldset">
       <legend>Tilføj scannerindstillinger</legend>
-    
+      {% if form.service_account_file %}
+      <div class="form__group">
+        <label class="control-label" for="id_{{ form.service_account_file.name }}">Upload Service Account (.json)</label>
+        <input
+          class="form-control"
+          id="id_{{ form.service_account_file.name }}"
+          name="{{ form.service_account_file.name }}"
+          type="file"
+          data-filename-placement="inside"
+          title="Klik her for at uploade service account credentials (JSON FORMAT)" />
+
+        {% if form.service_account_file.help_text %}
+        <span class="form__help-text">{{ form.service_account_file.help_text }}</span>
+        {% endif %}
+
+        {% if form.service_account_file.errors %}{{ form.service_account_file.errors }}{% endif %}
+      </div>
+      {% endif %}
+
+      {% if form.service_account_file.value %}
+      <div id="{{ form.service_account_file.auto_id }}_container" class="form__group{% if form.service_account_file.errors %} has-error{% endif %}">
+        <label class="control-label" for="id_{{ form.service_account_file.name }}">Service account</label>
+        Nuværende fil: <code>{{ form.service_account_file.value }}</code>
+      </div>
+      {% endif %}
+
+      {% if form.user_emails %}
+      <div class="form__group">
+        <label class="control-label" for="id_{{ form.user_emails.name }}">Upload liste af konti (.csv)</label>
+        <input
+          class="form-control"
+          id="id_{{ form.user_emails.name }}"
+          name="{{ form.user_emails.name }}"
+          type="file"
+          data-filename-placement="inside"
+          title="Klik her for at uploade liste af konti (CSV FORMAT)" />
+
+        {% if form.user_emails.help_text %}
+        <span class="form__help-text">{{ form.user_emails.help_text }}</span>
+        {% endif %}
+
+        {% if form.service_account_file.errors %}{{ form.user_emails.errors }}{% endif %}
+      </div>
+      {% endif %}
+
+       {% if form.user_emails.value %}
+      <div id="{{ form.user_emails.auto_id }}_container" class="form__group{% if form.user_emails.errors %} has-error{% endif %}">
+        <label class="control-label" for="id_{{ form.user_emails.name }}">Liste af konti</label>
+        Nuværende fil: <code>{{ form.user_emails.value }}</code>
+      </div>
+      {% endif %}
+
       <div class="form__group">
         <div id="select_scan_rules_container" class="">
 
@@ -602,8 +631,8 @@
             </div>
             {% if view.type == 'web' %}
             <div class="ds-checkbox ds-checkbox--inline">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 id="id_{{ form.do_last_modified_check_head_request.name }}"
                 name="{{ form.do_last_modified_check_head_request.name }}"
                 value="{{ form.do_last_modified_check_head_request.name }}"
