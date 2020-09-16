@@ -157,7 +157,6 @@ Test Admin Application:
   variables:
     OS2DS_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
     OS2DS_ADMIN_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/admin/docker-settings.toml
-    DECRYPTION_FILE_PATH: ${CI_PROJECT_DIR}/dev-environment/admin
   needs:
     - Build Admin Application
   script:
