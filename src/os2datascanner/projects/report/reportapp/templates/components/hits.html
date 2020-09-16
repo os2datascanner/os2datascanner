@@ -28,6 +28,8 @@
         {% include "components/hits--msgraph-mail.html" %}
       {% elif match.matches.handle|find_parent:"msgraph-drive-file" %}
         {% include "components/hits--msgraph-file.html" %}
+      {% elif match.matches.handle|find_parent:"googledrive" %}
+        {% include "components/hits--googledrive.html" %}
       {% endif %}
     {% endfor %}
   </tbody>
