@@ -7,6 +7,7 @@ django-settings-export
 django-structlog
 gunicorn
 psycopg2-binary
+whitenoise
 
 # At the moment only used during development:
 django_extensions

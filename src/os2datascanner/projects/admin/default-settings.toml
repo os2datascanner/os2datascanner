@@ -57,6 +57,7 @@ NOTIFICATION_INSTITUTION = ""
 DO_USE_GROUPS = false
 
 MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
