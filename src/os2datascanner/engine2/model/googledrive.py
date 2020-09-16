@@ -1,37 +1,39 @@
+import json
 from contextlib import contextmanager
 from io import BytesIO
 from urllib.parse import urlsplit
-import oauth2client
-import httplib2
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
-
-
-
 from .core import Source, Handle, FileResource
 from .utilities import NamedTemporaryResource
 from ..conversions.utilities.results import SingleResult
-from ...projects.admin import settings
 
 
 class GoogleDriveSource(Source):
+    """Implements Google Drive API using a service account.
+    The organization must create a project, a service account, enable G Suite Domain-wide Delegation
+     for the service account, download the credentials in .json format
+     and enable the Google Drive API for the account to use this feature.
+
+     Guidance to complete the above can be found at: https://support.google.com/a/answer/7378726?hl=en
+     List of users in organization downloadable by admin from: https://admin.google.com/ac/users
+    """
+
     type_label = "googledrive"
 
-    def __init__(self, access_code):
-        self._access_code = access_code
+    def __init__(self, service_account_file, user_email):
+        self._service_account_file = service_account_file
+        self._user_email = user_email
 
     def _generate_state(self, source_manager):
-        credentials = oauth2client.client.OAuth2Credentials(access_token=self._access_token,
-                                                            client_id=settings.GOOGLEDRIVE_CLIENT_ID,
-                                                            client_secret=settings.GOOGLEDRIVE_CLIENT_SECRET,
-                                                            refresh_token=settings.GOOGLEDRIVE_REFRESH_TOKEN,
-                                                            token_expiry=settings.GOOGLEDRIVE_TOKEN_EXPIRY,
-                                                            token_uri=settings.GOOGLEDRIVE_TOKEN_URI,
-                                                            user_agent=settings.GOOGLEDRIVE_USER_AGENT)
-        #credentials = oauth2client.client.AccessTokenCredentials(self._access_token, 'user')
-        http = httplib2.Http()
-        http = credentials.authorize(http)
-        service = build(serviceName='drive', version='v3', http=http)
+        SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+        service_account_info = json.loads(self._service_account_file)
+        credentials = service_account.Credentials.from_service_account_info(service_account_info,
+                                                                            scopes=SCOPES).with_subject(
+            self._user_email)
+
+        service = build(serviceName='drive', version='v3', credentials=credentials)
         yield service
 
     def handles(self, sm):
@@ -42,32 +44,34 @@ class GoogleDriveSource(Source):
                                          fields='nextPageToken, files(id, name, mimeType)',
                                          pageToken=page_token).execute()
             for file in files.get('files', []):
-                yield GoogleDriveHandle(self, file.get('id'), file.get('name'))
+                yield GoogleDriveHandle(self, file.get('id'), name=file.get('name'))
             page_token = files.get('nextPageToken', None)
             if page_token is None:
                 break
 
+    # Censoring service account file info and user email.
     def censor(self):
-        return GoogleDriveSource(access_code=None)
+        return GoogleDriveSource(None, None)
 
     @staticmethod
     @Source.url_handler("googledrive")
     def from_url(url):
-        scheme, token, _, _, _ = urlsplit(url)
-        return GoogleDriveSource(access_code=token)
+        scheme, service_account_file, user_email, _, _, _ = urlsplit(url)
+        return GoogleDriveSource(service_account_file, user_email)
 
     def to_url(self):
-        return "googledrive://{0}".format(self._access_code)
+        return "googledrive://{0}{1}".format(self._service_account_file, self._user_email)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
-            "access_code": self._access_code
+            "service_account_file": self._service_account_file,
+            "user_email": self._user_email
         })
 
     @staticmethod
     @Source.json_handler(type_label)
     def from_json_object(obj):
-        return GoogleDriveSource(obj["access_code"])
+        return GoogleDriveSource(obj["service_account_file"], obj["user_email"])
 
 
 class GoogleDriveResource(FileResource):
@@ -82,6 +86,7 @@ class GoogleDriveResource(FileResource):
 
         if 'vnd.google-apps' in metadata.get('mimeType'):
             request = service.files().export_media(fileId=self.handle.relative_path,
+                                                   fields='files(id, name)',
                                                    mimeType='application/pdf')
             fh = BytesIO()
             downloader = MediaIoBaseDownload(fh, request)
@@ -91,7 +96,8 @@ class GoogleDriveResource(FileResource):
                 print("Export and Download %d%%." % int(status.progress() * 100))
 
         else:
-            request = service.files().get_media(fileId=self.handle.relative_path)
+            request = service.files().get_media(fileId=self.handle.relative_path,
+                                                fields='files(id, name)')
             fh = BytesIO()
             downloader = MediaIoBaseDownload(fh, request)
             done = False
@@ -120,7 +126,7 @@ class GoogleDriveResource(FileResource):
     def metadata(self):
         self._metadata = self._get_cookie().files().get(
             fileId=self.handle.relative_path,
-            fields='size, quotaBytesUsed').execute()
+            fields='name, size, quotaBytesUsed').execute()
 
         return self._metadata
 
@@ -134,7 +140,14 @@ class GoogleDriveHandle(Handle):
 
     def __init__(self, source, relpath, name=None):
         super().__init__(source, relpath)
-        self._name = name or ''
+        self._name = name
+
+    @property
+    def presentation(self):
+        return self._name or "File name can't be fetched"
+
+    def censor(self):
+        return GoogleDriveHandle(self.source.censor(), relpath=self.relative_path, name=self._name)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
@@ -145,11 +158,4 @@ class GoogleDriveHandle(Handle):
     @Handle.json_handler(type_label)
     def from_json_object(obj):
         return GoogleDriveHandle(Source.from_json_object(obj["source"]),
-                             obj["path"], obj['name'])
-
-    def censor(self):
-        return GoogleDriveHandle(self.source.censor(), relpath=self.relative_path)
-
-    @property
-    def presentation(self):
-        return self._name
+                                 obj["path"], obj.get('name'))

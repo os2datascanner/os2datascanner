@@ -27,7 +27,7 @@ dropbox==10.3.0           # via -c requirements-engine.txt, -r requirements-djan
 exchangelib==3.1.1        # via -c requirements-engine.txt, -r requirements-django.in
 gunicorn==20.0.4          # via -r requirements-django.in
 google-api-core==1.22.1   # via -c requirements-engine.txt, google-api-python-client
-google-api-python-client==1.11.0  # via -c requirements-engine.txt, pydrive
+google-api-python-client==1.11.0  # via -c requirements-engine.txt, -r requirements-admin.in
 google-auth-httplib2==0.0.4  # via -c requirements-engine.txt, google-api-python-client
 google-auth==1.21.0       # via -c requirements-engine.txt, google-api-core, google-api-python-client, google-auth-httplib2
 googleapis-common-protos==1.52.0  # via -c requirements-engine.txt, google-api-core
@@ -39,7 +39,7 @@ isodate==0.6.0            # via -c requirements-engine.txt, exchangelib
 jedi==0.17.0              # via ipython
 lxml==4.5.0               # via -c requirements-engine.txt, exchangelib
 ntlm-auth==1.4.0          # via -c requirements-engine.txt, requests-ntlm
-oauth2client==4.1.3       # via -c requirements-engine.txt, -r requirements-admin.in, pydrive
+oauth2client==4.1.3       # via -c requirements-engine.txt, -r requirements-admin.in
 oauthlib==3.1.0           # via -c requirements-engine.txt, exchangelib, requests-oauthlib
 olefile==0.46             # via -c requirements-engine.txt, -r requirements-django.in
 parso==0.7.0              # via jedi
@@ -56,14 +56,12 @@ pyasn1-modules==0.2.8     # via -c requirements-engine.txt, google-auth, oauth2c
 pyasn1==0.4.8             # via -c requirements-engine.txt, oauth2client, pyasn1-modules, rsa
 pycparser==2.20           # via -c requirements-engine.txt, cffi
 pycrypto==2.6.1           # via -r requirements-admin.in
-pydrive==1.3.1            # via -c requirements-engine.txt, -r requirements-admin.in
 pygments==2.6.1           # via -c requirements-engine.txt, exchangelib, ipython
 pypdf2==1.26.0            # via -c requirements-engine.txt, -r requirements-django.in
 pysmbc==1.0.21            # via -c requirements-engine.txt, -r requirements-django.in
 python-dateutil==2.8.1    # via -c requirements-engine.txt, -r requirements-admin.in, django-recurrence, exchangelib
 python-magic==0.4.18      # via -c requirements-engine.txt, -r requirements-django.in
 pytz==2019.3              # via -c requirements-engine.txt, django, django-recurrence, exchangelib, google-api-core, tzlocal
-pyyaml==5.3.1             # via -c requirements-engine.txt, pydrive
 regex==2020.4.4           # via -c requirements-engine.txt, -r requirements-django.in
 requests-ntlm==1.1.0      # via -c requirements-engine.txt, exchangelib
 requests-oauthlib==1.3.0  # via -c requirements-engine.txt, exchangelib
