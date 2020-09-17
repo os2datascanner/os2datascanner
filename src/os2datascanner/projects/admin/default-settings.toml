@@ -7,6 +7,7 @@
 # /dev-environment/dev-settings.toml
 
 SECRET_KEY = ""
+DECRYPTION_HEX = ""
 
 # [mode]
 DEBUG = false
@@ -152,4 +153,3 @@ LOGS_DIR = ["*", "var", "logs"]
 STATIC_ROOT = ["*", 'src', 'os2datascanner', 'projects', 'static', 'admin']
 MEDIA_ROOT = ["*", "uploads", "admin"]
 TEST_OUTPUT_FILE_NAME = ["*", "build", "test-results.xml"]
-DECRYPTION_FILE_PATH = ["*"]

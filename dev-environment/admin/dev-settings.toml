@@ -1,4 +1,5 @@
 SECRET_KEY = "DUMMYKEY(for development)DUMMYKEY(for development)"
+DECRYPTION_HEX = "4b8930847cba7196a46ede3456fe33df564427a30910dd1ef9bc805f26559aeb"
 
 # [mode]
 DEBUG = true
