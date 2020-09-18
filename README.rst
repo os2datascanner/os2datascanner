@@ -7,7 +7,7 @@ To get a development environment to run, follow these steps:
 #. Clone the repo and start the containers:
     .. code-block:: bash
 
-        git clone git@git.magenta.dk:os2datascanner/os2datascanner.git
+        git clone https://github.com/os2datascanner/os2datascanner.git
         cd os2datascanner
         docker-compose up -d
 
