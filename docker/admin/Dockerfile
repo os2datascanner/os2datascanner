@@ -118,5 +118,5 @@ USER os2ds_admin:os2ds_admin
 EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
 CMD ["gunicorn", \
-     "--config", "code/docker/gunicorn-settings.py", \
+     "--config", "/code/docker/gunicorn-settings.py", \
      "wsgi"]
