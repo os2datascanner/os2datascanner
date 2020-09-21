@@ -127,7 +127,9 @@ class GoogleDriveHandle(Handle):
 
     @property
     def presentation(self):
-        return self._name or "File name can't be fetched"
+        return "{0} (in account {1})".format(
+                self._name or "file",
+                self.source._user_email)
 
     def censor(self):
         return GoogleDriveHandle(self.source.censor(), relpath=self.relative_path, name=self._name)
