@@ -5,7 +5,9 @@ Django==2.2.10
 django-model-utils
 django-settings-export
 django-structlog
+gunicorn
 psycopg2-binary
+whitenoise
 
 # At the moment only used during development:
 django_extensions

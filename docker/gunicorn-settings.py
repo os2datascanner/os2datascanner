@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright (C) 2020 Magenta ApS, http://magenta.dk.
 # Contact: info@magenta.dk.
 #
@@ -11,20 +10,12 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-set -e
 
-# TODO: Uncomment when the management command has been added
-# ./manage.py ensure_db_connection --wait 30
+# Settings for gunicorn in docker.
+import multiprocessing
 
-if [ -z "${OS2DS_SKIP_DJANGO_MIGRATIONS}" ]; then
-  # Run Migrate
-  python manage.py migrate
-else
-  echo "OS2DS_SKIP_DJANGO_MIGRATIONS set: ${OS2DS_SKIP_DJANGO_MIGRATIONS}"
-  echo "Skipping automatic migrations"
-fi
 
-# Generate static content
-./manage.py collectstatic --no-input --clear
-
-exec "$@"
+bind = "0.0.0.0:5000"
+workers = multiprocessing.cpu_count() * 2 + 1
+accesslog =  "/log/access.log"
+worker_tmp_dir = "/dev/shm"

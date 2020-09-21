@@ -15,8 +15,8 @@ FROM node:14 AS frontend
 WORKDIR /code/src/os2datascanner/projects/report/reportapp
 
 COPY src/os2datascanner/projects/report/reportapp/package.json .
-# TODO: use a lock-file and change to using npm ci (https://docs.npmjs.com/cli/ci#description)
-RUN npm install
+COPY src/os2datascanner/projects/report/reportapp/package-lock.json .
+RUN npm ci
 
 COPY src/os2datascanner/projects/report/reportapp/postcss.config.js .
 COPY src/os2datascanner/projects/report/reportapp/webpack.dev.js .
@@ -75,6 +75,7 @@ RUN set -ex \
   && apt-get clean && rm -rf "/var/lib/apt/lists/*" "/tmp/*" "/var/tmp/*" "/usr/share/man/??" "/usr/share/man/??_*" \
   # create folders for output from django
   && install -o os2ds_report -g os2ds_report -d /code/build \
+  && install -o os2ds_report -g os2ds_report -d /code/static \
   && install -o os2ds_report -g os2ds_report -d /code/var
 
 # Install python requirements
@@ -89,6 +90,7 @@ RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
 WORKDIR /code/docker/
 COPY docker/report/docker-settings.toml ./docker-settings.toml
 COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
+COPY docker/gunicorn-settings.py ./gunicorn-settings.py
 
 # Copy backend code
 WORKDIR /code/src/os2datascanner
@@ -112,7 +114,8 @@ COPY --from=frontend /code/src/os2datascanner/projects/report/reportapp/static/d
 # Run the server as the os2ds_report user on port 8000
 WORKDIR /code/src/os2datascanner/projects/report
 USER os2ds_report:os2ds_report
-EXPOSE 8000
+EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
-# TODO: add production CMD once the set-up is completed
-# CMD []
+CMD ["gunicorn", \
+     "--config", "code/docker/gunicorn-settings.py", \
+     "wsgi"]
