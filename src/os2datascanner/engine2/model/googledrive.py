@@ -51,16 +51,7 @@ class GoogleDriveSource(Source):
 
     # Censoring service account file info and user email.
     def censor(self):
-        return GoogleDriveSource(None, None)
-
-    @staticmethod
-    @Source.url_handler("googledrive")
-    def from_url(url):
-        scheme, service_account_file, user_email, _, _, _ = urlsplit(url)
-        return GoogleDriveSource(service_account_file, user_email)
-
-    def to_url(self):
-        return "googledrive://{0}{1}".format(self._service_account_file, self._user_email)
+        return GoogleDriveSource(None, self._user_email)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
@@ -83,27 +74,19 @@ class GoogleDriveResource(FileResource):
     def open_file(self):
         service = self._get_cookie()
         metadata = service.files().get(fileId=self.handle.relative_path).execute()
-
+        # Export and download Google-type files to pdf
         if 'vnd.google-apps' in metadata.get('mimeType'):
-            request = service.files().export_media(fileId=self.handle.relative_path,
-                                                   fields='files(id, name)',
+            request = service.files().export_media(fileId=self.handle.relative_path, fields='files(id, name)',
                                                    mimeType='application/pdf')
-            fh = BytesIO()
-            downloader = MediaIoBaseDownload(fh, request)
-            done = False
-            while done is False:
-                status, done = downloader.next_chunk()
-                print("Export and Download %d%%." % int(status.progress() * 100))
-
+        # Download files where no export needed
         else:
-            request = service.files().get_media(fileId=self.handle.relative_path,
-                                                fields='files(id, name)')
-            fh = BytesIO()
-            downloader = MediaIoBaseDownload(fh, request)
-            done = False
-            while done is False:
-                status, done = downloader.next_chunk()
-                print("Download %d%%." % int(status.progress() * 100))
+            request = service.files().get_media(fileId=self.handle.relative_path, fields='files(id, name)')
+
+        fh = BytesIO()
+        downloader = MediaIoBaseDownload(fh, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
 
         # Seek(0) points back to the beginning of the file as it appears to not do this by it self.
         fh.seek(0)

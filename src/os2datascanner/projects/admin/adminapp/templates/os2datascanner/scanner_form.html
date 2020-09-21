@@ -410,6 +410,29 @@
       </div>
       {% endif %}
 
+      {% if form.userlist %}
+      <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
+        <label class="control-label" for="id_{{ form.userlist.name }}">Liste af mail brugere</label>
+        <input
+          type="file"
+          class="form-control"
+          name="{{ form.userlist.name }}"
+          id="id_{{ form.userlist.name }}"
+          {% if form.userlist.value %}
+          value="{{ form.userlist.value }}"
+          {% endif %}>
+        <p>
+          <small>Eksisterende fil: {{ form.userlist.value }}</small>
+        </p>
+
+        {% if form.userlist.help_text %}
+        <span class="form__help-text">{{ form.userlist.help_text }}</span>
+        {% endif %}
+
+        {% if form.userlist.errors %}{{ form.userlist.errors }}{% endif %}
+      </div>
+      {% endif %}
+
       {% if form.scan_site_drives %}
       <div id="{{ form.scan_site_drives.auto_id }}_container" class="form__group{% if form.scan_site_drives.errors %} has-error{% endif %}">
         <div class="ds-checkbox">
