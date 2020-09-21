@@ -128,7 +128,9 @@ class EWSAccountSource(Source):
 
         def relevant_mails(relevant_folders):
             for folder in relevant_folders:
-                for mail in folder.all().only("id", "headers", "entry_id"):
+                for mail in (m
+                        for m in folder.all().only("id", "headers", "entry_id")
+                        if isinstance(m, Message) and hasattr(m, "entry_id")):
                     headers = _dictify_headers(mail.headers)
                     if headers:
                         yield EWSMailHandle(self,
