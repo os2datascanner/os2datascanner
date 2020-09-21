@@ -36,6 +36,7 @@ from ..models.scannerjobs.dropboxscanner_model import DropboxScanner
 from ..forms import FileUploadForm
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ..models.scannerjobs.filescanner_model import FileScanner
+from ..models.scannerjobs.gmail_model import GmailScanner
 from ..models.group_model import Group
 from ..models.organization_model import Organization
 from ..models.rules.cprrule_model import CPRRule
@@ -406,6 +407,7 @@ class DialogSuccess(TemplateView):
         'msgraph-filescanners': MSGraphFileScanner,
         'msgraph-mailscanners': MSGraphMailScanner,
         'googledrivescanners' : GoogleDriveScanner,
+        'gmailscanners': GmailScanner,
         'rules/cpr': CPRRule,
         'rules/regex': RegexRule,
         'groups': Group
