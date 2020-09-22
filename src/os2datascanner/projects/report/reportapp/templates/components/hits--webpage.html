@@ -43,7 +43,12 @@
           <td class="datatable__column--probability">
             {% include "components/probability-icon.html" %}
           </td>
-          <td class="datatable__column--context">{{ match.context }}</td>
+          <td class="datatable__column--context">
+            {% if match.context %}
+              [...]{{ match.context }}[...]
+            {% endif %}
+          </span>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
