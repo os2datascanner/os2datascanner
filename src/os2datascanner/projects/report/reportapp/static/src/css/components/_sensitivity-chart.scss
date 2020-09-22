@@ -1,17 +1,17 @@
 .sensitivity-chart {
   background-color: #fff;
   box-shadow: var(--box-shadow-large);
-  margin: 1rem 0;
+  margin: 2rem 0;
   max-width: 80rem;
   padding: 2rem;
   width: calc(100% - 2rem);
   cursor: pointer;
   
   ul {
-    margin-left: 1.5rem;
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
+    margin: 1rem 0 0 0;
   }
 
   li {
@@ -38,8 +38,12 @@
     flex-flow: row nowrap;
     align-items: center;
   }
+
+  legend {
+    text-align: left;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
 }
 
-.sensitivity-chart:hover {
-  background-color: var(--color-body-bg);
-}

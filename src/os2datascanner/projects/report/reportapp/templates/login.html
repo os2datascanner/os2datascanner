@@ -1,29 +1,29 @@
-{% include "partials/header.html" with body_class="login" %}
+{% include "partials/header.html" %}
 
 <section class="login-form">
   <form method="post" action="{% url 'login' %}" class="form">
       {% csrf_token %}
-    <legend class="form__legend">Login:</legend>
+    <h2>Log ind:</h2>
 
     <fieldset>
 
       <div class="form__group">
-        <label for="username">Username:</label>
-        <input type="text" name="{{ form.username.name }}" id="id_{{ form.username.name }}" placeholder="handle@example.com" autofocus>
+        <label for="username">Brugernavn</label>
+        <input type="text" name="{{ form.username.name }}" id="id_{{ form.username.name }}" autofocus>
       </div>
 
       <div class="form__group">
-        <label for="password">Password:</label>
-        <input type="password" name="{{ form.password.name }}"  id="id_{{ form.password.name }}" placeholder="[a-z][0-9]">
+        <label for="password">Adgangskode</label>
+        <input type="password" name="{{ form.password.name }}"  id="id_{{ form.password.name }}">
       </div>
 
       <div class="form__group">
         <input type="checkbox" name="remember-me" id="remember-me">
-        <label for="remember-me">Remember me</label>
+        <label for="remember-me">Husk mig</label>
       </div>
 
       <div class="form__group">
-        <button type="submit" class="button">Login</button>
+        <button type="submit" class="button button--cta">Log ind</button>
           {% if form.password.errors %}
             <div class="form__error">Fejl i brugernavn eller password</div>
           {% endif %}
@@ -32,5 +32,3 @@
     </fieldset>
   </form>
 </section>
-
-{% include "partials/footer.html" %}
