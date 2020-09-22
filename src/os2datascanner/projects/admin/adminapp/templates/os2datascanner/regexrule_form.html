@@ -113,7 +113,7 @@
       <legend>Metadata</legend>
 
       <div class="form__group">
-        <label for="id_{{ form.name.name }}">{{ form.name.label }}</label>
+        <label class="required-form" for="id_{{ form.name.name }}">{{ form.name.label }}</label>
         <input 
           autofocus="autofocus"
           type="text" 
@@ -132,7 +132,7 @@
       <div 
         id="{{ form.organization.auto_id }}_container" 
         class="form__group{% if form.organization.errors %} has-error{% endif %}">
-        <label for="id_{{ form.organization.name }}">{{ form.organization.label }}</label>
+        <label class="required-form" for="id_{{ form.organization.name }}">{{ form.organization.label }}</label>
         <select 
           name="{{ form.organization.name }}" 
           id="id_{{ form.organization.name }}" 
@@ -189,7 +189,7 @@
 
         {% for pattern_name, pattern_value in view.get_pattern_fields %}
         <div class="form__group form-group">
-          <label class="control-label col-sm-2" for="id_{{ pattern_name }}">Regulært udtryk {{ forloop.counter }}</label>
+          <label class="control-label col-sm-2 required-form" for="id_{{ pattern_name }}">Regulært udtryk {{ forloop.counter }}</label>
           <div class="col-sm-10">
             {% if forloop.counter > 1 %}
             <div class="input-group">
@@ -230,7 +230,7 @@
 
       <div id="{{ form.description.auto_id }}_container" class="form__group col-sm-12{% if form.description.errors %} has-error{% endif %}">
         <div class="form-group">
-          <label class="control-label col-sm-2" for="id_{{ form.description.name }}">{{ form.description.label }}</label>
+          <label class="control-label col-sm-2 required-form" for="id_{{ form.description.name }}">{{ form.description.label }}</label>
           <div class="col-sm-10">
             <textarea class="form-control" name="{{ form.description.name }}" id="id_{{ form.description.name }}" rows="3"
               {% if form.description.field.required %}required{% endif %}>{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
@@ -246,7 +246,7 @@
 
       <div id="{{ form.sensitivity.auto_id }}_container" class="form__group col-sm-12{% if form.sensitivity.errors %} has-error{% endif %}">
         <div class="form-group">
-          <label class="control-label col-sm-2" for="id_{{ form.sensitivity.name }}">{{ form.sensitivity.label }}</label>
+          <label class="control-label col-sm-2 required-form" for="id_{{ form.sensitivity.name }}">{{ form.sensitivity.label }}</label>
           <div class="col-sm-10">
             <select name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" class="form-control"
               {% if form.sensitivity.field.required %}required{% endif %}>

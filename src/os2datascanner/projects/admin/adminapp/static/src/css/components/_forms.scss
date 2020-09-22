@@ -143,6 +143,11 @@
   }
 }
 
+.required-form:after{
+    content: " *"; 
+    color: var(--color-main-text);
+}
+
 .checkbox-group {
   background-color: rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -211,8 +216,8 @@
   }
 
   input[type=checkbox]:focus + label::before {
-    box-shadow: 0 0 0 2px var(--color-main);
-  }
+    border-color: var(--color-main);
+  } 
 
   &:hover {
     input[type="checkbox"] + label {
