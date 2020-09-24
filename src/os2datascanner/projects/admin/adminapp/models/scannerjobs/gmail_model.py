@@ -1,6 +1,12 @@
+import os
+import json
+from csv import DictReader
+
 from django.db import models
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from .scanner_model import Scanner
+from os2datascanner.engine2.model.gmail import GmailSource
 
 
 class GmailScanner(Scanner):
@@ -40,4 +46,11 @@ class GmailScanner(Scanner):
         return '/gmailscanners'
 
     def generate_sources(self):
-        pass
+        with open(os.path.join(settings.MEDIA_ROOT, self.service_account_file_gmail.name)) as saf:
+            temp = json.load(saf)
+        with open(os.path.join(settings.MEDIA_ROOT, self.user_emails_gmail.name), 'r') as usrem:
+            csv_dict_reader = DictReader(usrem)
+            for row in csv_dict_reader:
+                user_email = row['Email Address [Required]']
+                yield GmailSource(service_account_file_gmail=json.dumps(temp),
+                                  user_email_gmail=user_email)

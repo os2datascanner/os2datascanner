@@ -34,6 +34,7 @@ from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
 from .models.scannerjobs.dropboxscanner_model import DropboxScanner
 from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
+from .models.scannerjobs.gmail_model import GmailScanner
 from .models.userprofile_model import UserProfile
 
 
@@ -62,6 +63,7 @@ class RegexPatternAdmin(admin.ModelAdmin):
 @admin.register(ExchangeScanner)
 @admin.register(MSGraphMailScanner)
 @admin.register(GoogleDriveScanner)
+@admin.register(GmailScanner)
 class ScannerAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'validation_status')
 
