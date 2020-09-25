@@ -21,6 +21,13 @@ $(button).click(function() {
   $(this).siblings(tooltip).toggleClass("show");
 })
 
+$(document).click(function(event) {
+  // if you click on anything except the modal itself or the button link, close the modal
+  if (!$(event.target).closest('.handle-match, .handle-match-button').length) {
+    $('.handle-match').removeClass("show");
+  }
+});
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -70,11 +77,4 @@ $(actions).click(function() {
   }
 })
 
-function openMatchHandler() {
-  $(tooltip).addClass("show");
-}
-
-function closeMatchHandler() {
-  $(tooltip).removeClass("show");
-}
 // Handle matches, stop
