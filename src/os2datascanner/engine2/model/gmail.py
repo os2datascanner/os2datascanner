@@ -41,19 +41,17 @@ class GmailSource(Source):
 
     def handles(self, sm):
         service = sm.open(self)
-        while True:
-            # Call the Gmail API to fetch INBOX
-            results = service.users().messages().list(userId=self._user_email_gmail, labelIds=['INBOX']).execute()
-            messages = results.get('messages', [])
-            for message in messages:
-                # Fetch info on specific email
-                email = service.users().messages().get(userId=self._user_email_gmail,
-                                                       id=message.get("id")).execute()
-                headers = email["payload"]["headers"]
-                subject = [i['value'] for i in headers if i["name"] == "Subject"]
-                # Id of given email is set to be path.
-                yield GmailHandle(self, message.get('id'), mail_subject=subject)
-            break
+        # Call the Gmail API to fetch INBOX
+        results = service.users().messages().list(userId=self._user_email_gmail, labelIds=['INBOX']).execute()
+        messages = results.get('messages', [])
+        for message in messages:
+            # Fetch info on specific email
+            email = service.users().messages().get(userId=self._user_email_gmail,
+                                                   id=message.get("id")).execute()
+            headers = email["payload"]["headers"]
+            subject = [i['value'] for i in headers if i["name"] == "Subject"]
+            # Id of given email is set to be path.
+            yield GmailHandle(self, message.get('id'), mail_subject=subject)
 
     # Censoring service account details
     def censor(self):

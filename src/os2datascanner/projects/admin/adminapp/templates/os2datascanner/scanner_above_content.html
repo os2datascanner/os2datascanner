@@ -20,8 +20,8 @@
     {% if settings.ENABLE_GOOGLEDRIVESCAN %}
     <a id="googledrive" title="Læg mærke til at Google Drive-scannere stadig er i test." class="tabs__control" href="/googledrivescanners/">Google Drive scanner</a>
     {% endif %}
-    {% if settings.ENABLE_GMAILSCAN %}
-    <a id="gmail" title="Læg mærke til at Gmail-scannere stadig er i test." class="tabs__control" href="/gmailscanners/">Gmailscanner (beta)</a>
+    {%  if settings.ENABLE_GMAILSCAN %}
+     <a id="gmail" title="Læg mærke til at Gmail-scannere stadig er i test." class="tabs__control" href="/gmailscanners/">Gmailscanner</a>
     {% endif %}
 </div>
 
@@ -62,29 +62,29 @@
             window.location.href = "/gmailscanners/"
             gmail.classList.add('active')
         }
-        if (location.pathname === '/webscanners/') {
-            web.classList.add('active')
-        }
-        if (location.pathname === '/filescanners/') {
-            file.classList.add("active")
-        }
-        if (location.pathname === '/exchangescanners/') {
-            exchange.classList.add("active")
-        }
-        if (location.pathname === '/dropboxscanners/') {
-            dropbox.classList.add("active")
-        }
-        if (location.pathname === '/msgraph-mailscanners/') {
-            msgraph_mail.classList.add("active")
-        }
-        if (location.pathname === '/msgraph-filescanners/') {
-            msgraph_file.classList.add("active")
-        }
-        if (location.pathname === '/gmailscanners/') {
-            gmail.classList.add("active")
-        }
-        if (location.pathname === '/googledrivescanners/') {
-            googledrive.classList.add("active")
-        }
+    }
+    if (location.pathname === '/webscanners/') {
+        web.classList.add('active')
+    }
+    if (location.pathname === '/filescanners/') {
+        file.classList.add("active")
+    }
+    if (location.pathname === '/exchangescanners/') {
+        exchange.classList.add("active")
+    }
+    if (location.pathname === '/dropboxscanners/') {
+        dropbox.classList.add("active")
+    }
+    if (location.pathname === '/msgraph-mailscanners/') {
+        msgraph_mail.classList.add("active")
+    }
+    if (location.pathname === '/msgraph-filescanners/') {
+        msgraph_file.classList.add("active")
+    }
+    if (location.pathname === '/gmailscanners/') {
+        gmail.classList.add("active")
+    }
+    if (location.pathname === '/googledrivescanners/') {
+        googledrive.classList.add("active")
     }
 </script>
