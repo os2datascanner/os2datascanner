@@ -329,16 +329,15 @@ Deploy dev:
   stage: deploy
   image: magentalabs/pepper:latest
   services: []
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "development"
   dependencies: []
   tags:
     - deploy
   needs:
-    - Release Report Application
-    - Release Admin Application
-    - Release Engine
-  only:
-    refs:
-      - development
+    - Release Report Application Candidate
+    - Release Admin Application Candidate
+    - Release Engine Candidate
   variables:
     SALTAPI_URL: https://ctrldev1.magenta-aps.dk/api/
     SALTAPI_EAUTH: file
