@@ -121,7 +121,7 @@ class GmailHandle(Handle):
 
     @property
     def presentation(self):
-        return "Subject: {0} (in account {1})".format(
+        return "\"{0}\" (in account {1})".format(
             self._mail_subject or "mail",
             self.source._user_email_gmail)
 
