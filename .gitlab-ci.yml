@@ -14,6 +14,7 @@ stages:
   - build
   - test
   - release
+  - deploy
 
 
 variables:
@@ -317,3 +318,33 @@ Release Engine:
   before_script:
     - export IMAGE_FROM="${ENGINE_IMAGE}"
     - export IMAGE_TO="${RELEASE_ENGINE_IMAGE}"
+
+
+# Deploy stage
+##############
+
+Deploy dev:
+  # Automatic deployment of development branch to
+  # https://admin.dev.os2ds.magenta.dk and https://report.dev.os2ds.magenta.dk
+  stage: deploy
+  image: magentalabs/pepper:latest
+  services: []
+  dependencies: []
+  tags:
+    - deploy
+  needs:
+    - Release Report Application
+    - Release Admin Application
+    - Release Engine
+  only:
+    refs:
+      - development
+  variables:
+    SALTAPI_URL: https://ctrldev1.magenta-aps.dk/api/
+    SALTAPI_EAUTH: file
+    GIT_STRATEGY: none
+  script:
+    - pepper --client runner --fail-any state.orchestrate os2ds.magenta.dev
+  environment:
+    name: dev
+    url: https://adminos2ds.magenta.dk/
