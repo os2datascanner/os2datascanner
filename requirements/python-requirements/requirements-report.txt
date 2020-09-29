@@ -24,7 +24,7 @@ django-settings-export==1.2.1  # via -r requirements-django.in
 django-structlog==1.5.2   # via -r requirements-django.in
 django==2.2.10            # via -r requirements-django.in, django-model-utils, django-rest-auth, django-settings-export, django-structlog, djangorestframework
 djangorestframework-jwt==1.11.0  # via django-saml2-auth
-djangorestframework==3.11.0  # via django-rest-auth
+djangorestframework==3.12.1  # via django-rest-auth
 dnspython==1.16.0         # via -c requirements-engine.txt, exchangelib
 dropbox==10.3.0           # via -c requirements-engine.txt, -r requirements-django.in
 exchangelib==3.1.1        # via -c requirements-engine.txt, -r requirements-django.in
