@@ -1,8 +1,8 @@
 -r requirements-django.in
 -c requirements-engine.txt
 
-git+https://github.com/magenta-aps/django-saml2-auth.git#egg=django-saml2-auth-2.2.1
-oauth2client
+git+https://github.com/magenta-aps/django-saml2-auth.git@2.2.2
 google-api-python-client
+oauth2client
 pysaml2>=5.3.0,<6.0.0
 python3-saml

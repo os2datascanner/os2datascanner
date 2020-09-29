@@ -15,7 +15,7 @@ RUN set -ex \
   && apt-get clean && rm -rf "/var/lib/apt/lists/*" "/tmp/*" "/var/tmp/*" "/usr/share/man/??" "/usr/share/man/??_*"
 
 WORKDIR /requirements/python-requirements
-RUN pip install pip-tools==5.2.1
+RUN pip install pip-tools
 COPY requirements/python-requirements .
 
 # ADD COMMAND FOR COMPILING ALL requirement-*.txt FILES!
