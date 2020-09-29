@@ -92,8 +92,8 @@ class SensitivityPageView(ListView, LoginRequiredMixin):
 
         for role in roles:
             results |= role.filter(DocumentReport.objects.all())
-            # Calls func to do initial filtering
-            filter_matches(results)
+        # Calls func to do initial filtering
+        filter_matches(results)
 
             sensitivity = Sensitivity(int(self.request.GET.get('value')) or 0)
             # Exclude matches with None or other sensitivity value.
