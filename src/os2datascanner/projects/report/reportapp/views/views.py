@@ -92,17 +92,16 @@ class SensitivityPageView(ListView, LoginRequiredMixin):
 
         for role in roles:
             results |= role.filter(DocumentReport.objects.all())
-        # Calls func to do initial filtering
-        filter_matches(results)
+            # Calls func to do initial filtering
+            filter_matches(results)
 
             sensitivity = Sensitivity(int(self.request.GET.get('value')) or 0)
             # Exclude matches with None or other sensitivity value.
-            self.kwargs['matches'] = [r for r in results
-                                      if r.matches and r.matches.sensitivity == sensitivity]
             # Sort matches after probability value if any.
             # If probability value is None the result will be shown last in the list.
-            self.kwargs['matches'].sort(key=lambda result: result.matches.probability,
-                                        reverse=True)
+            self.kwargs['matches'] = sorted(
+                (r for r in results if r.matches and r.matches.sensitivity == sensitivity),
+                key=lambda result: result.matches.probability, reverse=True)
             self.kwargs['sensitivity'] = sensitivity
 
         return self.kwargs['matches']
