@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <!doctype html>
 <html>
 <head>
@@ -49,12 +51,19 @@
 {% if image_name %}
 <p>
   <img src="{{ image_name }}">
+</p>
 {% endif %}
 <p>
-  Hej {{ full_name }},
+{% blocktrans %}
+Dear {{ full_name }},
+{% endblocktrans %}
+</p>
 <p>
-  Der ligger i øjeblikket <strong>{{ match_count }}</strong> matches i
-  OS2datascanner-systemet, der kræver handling fra din side:
+{% blocktrans %}
+Currently, <strong>{{ match_count }}</strong> matches in
+the OS2datascanner system require your attention:
+{% endblocktrans %}
+</p>
 <table>
   {% for caption, count in matches %}
   <tr>
@@ -71,10 +80,21 @@
   {% endfor %}
 </table>
 <p>
-  <a href="{{ report_login_url }}">Log på OS2datascanner med din
-  organisationskonto</a> for at se flere detaljer.
+{% blocktrans %}
+<a href="{{ report_login_url }}">Log into OS2datascanner with your
+organisation account</a> for further details.
+{% endblocktrans %}
+</p>
 <p>
-  Med venlig hilsen<br>
-  OS2datascanner-systemet {% if institution %}(på vegne af {{ institution }}){% endif %}
+{% blocktrans %}
+Kind regards,<br>
+the OS2datascanner system
+{% endblocktrans %}
+{% if institution %}
+{% blocktrans %}
+(on behalf of {{ institution }})
+{% endblocktrans %}
+{% endif %}
+</p>
 </body>
 </html>

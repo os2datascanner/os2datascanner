@@ -1,4 +1,5 @@
 {% load handle_extras %}
+{%  load i18n %}
 
 {% with type=match.matches.handle|find_type_label %}
 {% for frag in match.matches.matches %}
@@ -25,10 +26,14 @@
     <div class="hit-link">
       <div class="button-group">
         {% if match.matches.handle|present_url %}
-          <a href="{{ match.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">Åben</a>
+          <a href="{{ match.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">
+            {% trans "Open" %}
+          </a>
         {% endif %}
         {% if type != 'ews' %}
-          <button class="button" data-clipboard-text="{{ match.matches.handle|find_parent:type|present }}">Kopiér</button>
+          <button class="button" data-clipboard-text="{{ match.matches.handle|find_parent:type|present }}">
+            {% trans "Copy" %}
+          </button>
         {% endif %}
       </div>
     </div>

@@ -124,6 +124,9 @@ COPY --from=frontend /code/src/os2datascanner/projects/report/reportapp/static/d
 
 # Run the server as the os2ds_report user on port 8000
 WORKDIR /code/src/os2datascanner/projects/report
+# Change permissions of translation folders
+# hadolint ignore=DL4006
+RUN find . -name 'LC_MESSAGES' -print0 | xargs -0 chown -R os2ds_report:os2ds_report
 USER os2ds_report:os2ds_report
 EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
