@@ -27,7 +27,7 @@ from os2datascanner.engine2.rules.rule import Sensitivity as Twensitivity
 
 
 _sensitivity_mapping = {
-    Sensitivity.OK: Twensitivity.INFORMATION,
+    Sensitivity.OK: Twensitivity.NOTICE,
     Sensitivity.LOW: Twensitivity.WARNING,
     Sensitivity.HIGH: Twensitivity.PROBLEM,
     Sensitivity.CRITICAL: Twensitivity.CRITICAL
