@@ -1,16 +1,18 @@
 from tempfile import NamedTemporaryFile
 from subprocess import run, PIPE, DEVNULL
 
+from ... import settings as engine2_settings
 from ..types import OutputType
 from ..registry import conversion
 
 
-def tesseract(path, **kwargs):
+def tesseract(path):
     result = run(
             ["tesseract", path, "stdout"],
             universal_newlines=True,
             stdout=PIPE,
-            stderr=DEVNULL, **kwargs)
+            stderr=DEVNULL,
+            timeout=engine2_settings.subprocess["timeout"])
     if result.returncode == 0:
         return result.stdout.strip()
     else:
@@ -18,7 +20,7 @@ def tesseract(path, **kwargs):
 
 
 @conversion(OutputType.Text, "image/png", "image/jpeg")
-def image_processor(r, **kwargs):
+def image_processor(r):
     with r.make_path() as p:
         return tesseract(p)
 
@@ -27,10 +29,10 @@ def image_processor(r, **kwargs):
 # turn them into PNGs with ImageMagick's convert(1) command to make them more
 # palatable
 @conversion(OutputType.Text, "image/gif", "image/x-ms-bmp")
-def intermediate_image_processor(r, **kwargs):
+def intermediate_image_processor(r):
     with r.make_path() as p:
         with NamedTemporaryFile("rb", suffix=".png") as ntf:
-            result = run(["convert", p, "png:{0}".format(ntf.name)], **kwargs)
+            result = run(["convert", p, "png:{0}".format(ntf.name)])
             if result.returncode == 0:
                 return tesseract(ntf.name)
             else:
