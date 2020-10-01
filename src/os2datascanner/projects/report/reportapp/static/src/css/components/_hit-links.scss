@@ -8,3 +8,12 @@
 .phantom {
   display: none;
 }
+
+.morecontent span {
+  display: none;
+}
+.morelink {
+  display: block;
+  color: var(--color-text-main);
+  font-weight: bold;
+}
