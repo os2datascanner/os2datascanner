@@ -38,6 +38,20 @@ def update_config(configuration, new_settings):
             logger.warning("Invalid key in config: %s", key)
 
 
+def update_from_env(configuration, traversed_path = []):
+    # Update config from (possible nested) environment variables
+    # Only existing config vars will be overridden
+    # Environment var "var=newval" will override {'var': 'oldval'}
+    # Nested environment variable "my__var__path=newval" will override {'my':{'var': 'path': 'oldval'}}
+    for key in configuration:
+        if isinstance(configuration[key], dict):
+            update_from_env(configuration[key], traversed_path + [key])
+        else:
+            env_var = "__".join(traversed_path + [key])
+            if os.environ.get(env_var) is not None:
+                configuration[key] = os.environ.get(env_var)
+
+
 def get_3_layer_config(default_settings, sys_var, user_var):
     # Specify file paths
     system_settings = os.getenv(sys_var, None)
@@ -58,5 +72,8 @@ def get_3_layer_config(default_settings, sys_var, user_var):
     if user_settings:
         logger.info("Reading user settings from %s", user_settings)
         update_config(config, read_config(user_settings))
+
+    # Load environment configuration
+    update_from_env(config)
 
     return config

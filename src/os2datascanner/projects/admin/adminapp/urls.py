@@ -18,6 +18,7 @@
 import django.contrib.auth.views
 from django.conf import settings
 from django.conf.urls import url
+from django.http import HttpResponse
 from django.views.i18n import JavaScriptCatalog
 
 from .models.scannerjobs.dropboxscanner_model import DropboxScanner
@@ -279,6 +280,8 @@ urlpatterns = [
             template_name='designguide.html',
         ),
         name='designguide'),
+
+    url(r'^health/', lambda r: HttpResponse()),
 ]
 
 if settings.DO_USE_GROUPS:

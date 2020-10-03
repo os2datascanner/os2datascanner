@@ -23,7 +23,15 @@ class PikaConnectionHolder(ABC):
 
     def make_connection(self):
         """Constructs a new Pika connection."""
-        return pika.BlockingConnection(self._parameters)
+        conn_string_tpl = '{0}://{1}:{2}@{3}:{4}/{5}?heartbeat=6000'
+        conn_string = conn_string_tpl.format(pika_settings.AMQP_SCHEME, 
+                                             pika_settings.AMQP_USER, 
+                                             pika_settings.AMQP_PWD, 
+                                             pika_settings.AMQP_HOST,
+                                             pika_settings.AMQP_PORT,
+                                             pika_settings.AMQP_VHOST.lstrip('/'))
+        params = pika.URLParameters(conn_string)
+        return pika.BlockingConnection(params)
 
     @property
     def connection(self):
