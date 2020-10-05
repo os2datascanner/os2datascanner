@@ -2,7 +2,6 @@
 
 from sys import stderr
 import argparse
-import traceback
 
 from ..model.core import Source, SourceManager
 from ..model.core import FileResource
