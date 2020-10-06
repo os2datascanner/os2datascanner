@@ -3,6 +3,7 @@ from time import sleep
 from lxml.html import document_fromstring
 from lxml.etree import ParserError
 from urllib.parse import urljoin, urlsplit, urlunsplit
+import logging
 from requests.sessions import Session
 from requests.exceptions import ConnectionError
 from contextlib import contextmanager
@@ -239,4 +240,6 @@ def make_outlinks(content, where):
             if el.tag in ("a", "img",):
                 yield li
     except ParserError:
-        pass
+        # Silently drop ParserErrors, but only for empty documents
+        if content and not content.isspace():
+            logging.exception("{0}: unexpected ParserError".format(where))
