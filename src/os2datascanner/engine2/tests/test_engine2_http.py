@@ -242,3 +242,17 @@ class Engine2HTTPTest(unittest.TestCase):
                 list(make_outlinks("", "http://localhost:64346/empty.html")),
                 [],
                 "empty page with non-empty list of outgoing links")
+
+    def test_broken_page_handling(self):
+        h = WebHandle(
+                WebSource("http://localhost:64346/"),
+                "broken.html")
+        with SourceManager() as sm:
+            with h.follow(sm).make_stream() as fp:
+                content = fp.read().decode()
+
+        self.assertEqual(
+                list(make_outlinks(
+                        content, "http://localhost:64346/broken.html")),
+                ["http://localhost:64346/kontakt.html"],
+                "expected one link to be found in broken document")
