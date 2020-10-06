@@ -7,3 +7,12 @@ import './show-more.js';
 
 // Copy Path function
 new ClipboardJS(document.querySelectorAll('[data-clipboard-text]'));
+
+//Change background color after scroll
+$(window).on("scroll", function() {
+  if($(window).scrollTop() > 340) {
+      $(".datatable th").addClass("scrollActive");
+  } else {
+     $(".datatable th").removeClass("scrollActive");
+  }
+});
