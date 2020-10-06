@@ -3,6 +3,7 @@ import magic
 from tempfile import TemporaryDirectory
 from subprocess import run, PIPE
 
+from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, SourceManager
 from ..file import FilesystemResource
 from .derived import DerivedSource
@@ -16,7 +17,9 @@ def libreoffice(*args):
         return run(
                 ["libreoffice",
                         "-env:UserInstallation=file://{0}".format(settings),
-                        *args], stdout=PIPE, stderr=PIPE, check=True)
+                        *args], stdout=PIPE, stderr=PIPE,
+                        timeout=engine2_settings.subprocess["timeout"],
+                        check=True)
 
 
 # These filter names come from /usr/lib/libreoffice/share/registry/PROG.xcd

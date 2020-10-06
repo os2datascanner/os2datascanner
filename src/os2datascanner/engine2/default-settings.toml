@@ -8,3 +8,6 @@ AMQP_PWD = ""
     ceiling = 7
     warn_after = 6
     fuzz = 0
+
+[subprocess]
+timeout = 45 # Maximum runtime allowed for an external tool (in seconds)

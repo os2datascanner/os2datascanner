@@ -3,6 +3,7 @@ import pdfrw
 from tempfile import TemporaryDirectory
 from subprocess import run
 
+from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, SourceManager
 from ..file import FilesystemResource
 from .derived import DerivedSource
@@ -70,11 +71,15 @@ class PDFPageSource(DerivedSource):
                     "-q", "-nopgbrk",
                     "-eol", "unix",
                     "-f", page, "-l", page,
-                    path, "{0}/page.txt".format(outputdir)], check=True)
+                    path, "{0}/page.txt".format(outputdir)],
+                    timeout=engine2_settings.subprocess["timeout"],
+                    check=True)
             run(["pdfimages",
                     "-q", "-all",
                     "-f", page, "-l", page,
-                    path, "{0}/image".format(outputdir)], check=True)
+                    path, "{0}/image".format(outputdir)],
+                    timeout=engine2_settings.subprocess["timeout"],
+                    check=True)
             yield outputdir
 
     def handles(self, sm):
