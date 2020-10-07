@@ -109,3 +109,17 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                     list(corrupted_doc.handles(sm)),
                     [],
                     "unrecognised CDFV2 document should be empty and wasn't")
+
+    def test_libreoffice_size(self):
+        large_doc_handle = FilesystemHandle.make_handle(
+                os.path.join(
+                        test_data_path, "libreoffice/html-explosion.ods"))
+        large_doc = Source.from_handle(large_doc_handle)
+        with SourceManager() as sm:
+            for h in large_doc.handles(sm):
+                if h.name.endswith(".html"):
+                    r = h.follow(sm)
+                    self.assertLess(
+                            r.get_size().value,
+                            1048576,
+                            "LibreOffice HTML output was too big")
