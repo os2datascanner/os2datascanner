@@ -44,6 +44,7 @@ from ..models.userprofile_model import UserProfile
 from ..models.scannerjobs.msgraph_models import (
         MSGraphFileScanner, MSGraphMailScanner)
 from ..models.scannerjobs.webscanner_model import WebScanner
+from ..models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 from ..utils import as_file_uri
 
 
@@ -404,6 +405,7 @@ class DialogSuccess(TemplateView):
         'dropboxscanners': DropboxScanner,
         'msgraph-filescanners': MSGraphFileScanner,
         'msgraph-mailscanners': MSGraphMailScanner,
+        'googledrivescanners' : GoogleDriveScanner,
         'rules/cpr': CPRRule,
         'rules/regex': RegexRule,
         'groups': Group

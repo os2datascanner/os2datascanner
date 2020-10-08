@@ -7,8 +7,6 @@ import pathlib
 import structlog
 import sys
 
-from django.utils.translation import gettext_lazy as _
-
 from os2datascanner.projects.django_toml_configuration import process_toml_conf_for_django
 
 BASE_DIR = str(pathlib.Path(__file__).resolve().parent.parent.parent.parent.absolute())
@@ -180,6 +178,3 @@ LOGGING = {
         },
     }
 }
-
-os.makedirs(globals()['BUILD_DIR'], exist_ok=True)
-os.makedirs(globals()['MEDIA_ROOT'], exist_ok=True)
