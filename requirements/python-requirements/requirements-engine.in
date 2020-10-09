@@ -20,4 +20,3 @@ regex
 requests
 systemd-python
 xattr
-pydrive
