@@ -30,6 +30,8 @@
         {% include "components/hits--msgraph-file.html" %}
       {% elif match.matches.handle|find_parent:"googledrive" %}
         {% include "components/hits--googledrive.html" %}
+      {% elif match.matches.handle|find_parent:"gmail" %}
+        {% include "components/hits--gmail.html" %}
       {% endif %}
     {% endfor %}
   </tbody>

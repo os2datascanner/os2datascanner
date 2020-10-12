@@ -25,12 +25,12 @@ django==2.2.10            # via -r requirements-django.in, django-model-utils, d
 dnspython==1.16.0         # via -c requirements-engine.txt, exchangelib
 dropbox==10.3.0           # via -c requirements-engine.txt, -r requirements-django.in
 exchangelib==3.1.1        # via -c requirements-engine.txt, -r requirements-django.in
-gunicorn==20.0.4          # via -r requirements-django.in
-google-api-core==1.22.1   # via -c requirements-engine.txt, google-api-python-client
-google-api-python-client==1.11.0  # via -c requirements-engine.txt, -r requirements-admin.in
+google-api-core==1.22.2   # via -c requirements-engine.txt, google-api-python-client
+google-api-python-client==1.12.1  # via -c requirements-engine.txt, -r requirements-admin.in
 google-auth-httplib2==0.0.4  # via -c requirements-engine.txt, google-api-python-client
-google-auth==1.21.0       # via -c requirements-engine.txt, google-api-core, google-api-python-client, google-auth-httplib2
+google-auth==1.21.2       # via -c requirements-engine.txt, google-api-core, google-api-python-client, google-auth-httplib2
 googleapis-common-protos==1.52.0  # via -c requirements-engine.txt, google-api-core
+gunicorn==20.0.4          # via -r requirements-django.in
 httplib2==0.18.1          # via -c requirements-engine.txt, google-api-python-client, google-auth-httplib2, oauth2client
 idna==2.9                 # via -c requirements-engine.txt, requests
 ipython-genutils==0.2.0   # via traitlets

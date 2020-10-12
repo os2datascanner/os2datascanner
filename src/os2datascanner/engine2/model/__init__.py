@@ -30,5 +30,5 @@ from . import http # noqa
 from . import dropbox # noqa
 from . import msgraph # noqa
 from . import googledrive # noqa
-
+from . import gmail # noqa
 from . import derived # noqa

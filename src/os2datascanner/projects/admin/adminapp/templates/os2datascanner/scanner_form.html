@@ -480,6 +480,59 @@
         {% if form.download_sitemap.errors %}{{ form.download_sitemap.errors }}{% endif %}
       </div>
       {% endif %}
+      
+      {% if form.service_account_file_gmail %}
+      <div class="form__group">
+        <label class="control-label" for="id_{{ form.service_account_file_gmail.name }}">Upload Service Account (.json)</label>
+        <input
+          class="form-control"
+          id="id_{{ form.service_account_file_gmail.name }}"
+          name="{{ form.service_account_file_gmail.name }}"
+          type="file"
+          data-filename-placement="inside"
+          title="Klik her for at uploade service account credentials (JSON FORMAT)" />
+
+        {% if form.service_account_file_gmail.help_text %}
+        <span class="form__help-text">{{ form.service_account_file_gmail.help_text }}</span>
+        {% endif %}
+
+        {% if form.service_account_file_gmail.errors %}{{ form.service_account_file_gmail.errors }}{% endif %}
+      </div>
+      {% endif %}
+
+      {% if form.service_account_file_gmail.value %}
+      <div id="{{ form.service_account_file_gmail.auto_id }}_container" class="form__group{% if form.service_account_file_gmail.errors %} has-error{% endif %}">
+        <label class="control-label" for="id_{{ form.service_account_file_gmail.name }}">Service account</label>
+        Nuværende fil: <code>{{ form.service_account_file_gmail.value }}</code>
+      </div>
+      {% endif %}
+
+      {% if form.user_emails_gmail %}
+      <div class="form__group">
+        <label class="control-label" for="id_{{ form.user_emails_gmail.name }}">Upload liste af konti (.csv)</label>
+        <input
+          class="form-control"
+          id="id_{{ form.user_emails_gmail.name }}"
+          name="{{ form.user_emails_gmail.name }}"
+          type="file"
+          data-filename-placement="inside"
+          title="Klik her for at uploade liste af konti (CSV FORMAT)" />
+
+        {% if form.user_emails_gmail.help_text %}
+        <span class="form__help-text">{{ form.user_emails_gmail.help_text }}</span>
+        {% endif %}
+
+        {% if form.service_account_file_gmail.errors %}{{ form.user_emails_gmail.errors }}{% endif %}
+      </div>
+      {% endif %}
+
+       {% if form.user_emails_gmail.value %}
+      <div id="{{ form.user_emails_gmail.auto_id }}_container" class="form__group{% if form.user_emails_gmail.errors %} has-error{% endif %}">
+        <label class="control-label" for="id_{{ form.user_emails_gmail.name }}">Liste af konti</label>
+        Nuværende fil: <code>{{ form.user_emails_gmail.value }}</code>
+      </div>
+      {% endif %}
+
 
       {% if form.sitemap_url %}
       <div id="{{ form.sitemap_url.auto_id }}_container" class="form__group{% if form.sitemap_url.errors %} has-error{% endif %}">

@@ -27,6 +27,7 @@ from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 from .models.scannerjobs.msgraph_models import (
         MSGraphMailScanner, MSGraphFileScanner)
+from .models.scannerjobs.gmail_model import GmailScanner
 from .views.exchangescanner_views import ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate, \
     ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun
 from .views.filescanner_views import FileScannerCreate, FileScannerRun, FileScannerAskRun, FileScannerUpdate, \
@@ -35,7 +36,8 @@ from .views.dropboxscanner_views import DropboxScannerCreate, DropboxScannerRun,
     DropboxScannerDelete, DropboxScannerList
 from .views.googledrivescanner_views import GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun, \
     GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete
-
+from .views.gmailscanner_views import GmailScannerCreate, GmailScannerRun, GmailScannerAskRun, GmailScannerUpdate, \
+    GmailScannerDelete, GmailScannerList
 from .views.rule_views import RuleList, \
     CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
     RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
@@ -134,6 +136,21 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=GoogleDriveScanner),
         name='googledrivescanner_askrun'),
+
+    # Gmail scanner URL's
+    url(r'^gmailscanners/$', GmailScannerList.as_view(), name='gmailscanners'),
+    url(r'^gmailscanners/add/$', GmailScannerCreate.as_view(), name='gmailscanner_add'),
+    url(r'^gmailscanners/(?P<pk>\d+)/$', GmailScannerUpdate.as_view(),
+        name='gmailscanner_update'),
+    url(r'^gmailscanners/(?P<pk>\d+)/delete/$', GmailScannerDelete.as_view(),
+        name='gmailscanner_delete'),
+    url(r'^gmailscanners/(?P<pk>\d+)/run/$', GmailScannerRun.as_view(),
+        name='gmailscanner_run'),
+    url(r'^gmailscanners/(?P<pk>\d+)/askrun/$',
+        GmailScannerAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=GmailScanner),
+        name='gmailscanner_askrun'),
 
     # OAuth-based data sources
     url(r'^msgraph-filescanners/$',
@@ -241,9 +258,9 @@ urlpatterns = [
         ),
 
     # General success handler
-    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners)/(\d+)/(created)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners)/(\d+)/(created)/$',
         DialogSuccess.as_view()),
-    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners)/(\d+)/(saved)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners)/(\d+)/(saved)/$',
         DialogSuccess.as_view()),
     url(r'^(rules/regex|rules/cpr|groups)/(\d+)/(created)/$',
         DialogSuccess.as_view()),
