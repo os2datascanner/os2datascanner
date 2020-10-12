@@ -14,6 +14,7 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+import collections
 import structlog
 
 from django.utils.decorators import method_decorator
@@ -77,6 +78,9 @@ class MainPageView(TemplateView, LoginRequiredMixin):
                 sensitivities[sensitivity] += 1
         context['dashboard_results'] = sensitivities
 
+        # Perform sorting based on highest sensitivity first.
+        context['dashboard_results'] = collections.OrderedDict(
+            sorted(context['dashboard_results'].items(), key=lambda x: x[0].value, reverse=True))
         return context
 
 
@@ -100,9 +104,9 @@ class SensitivityPageView(ListView, LoginRequiredMixin):
         # Sort matches after probability value if any.
         # If probability value is None the result will be shown last in the list.
         self.kwargs['matches'] = sorted(
-                (r for r in results if r.matches
-                        and r.matches.sensitivity == sensitivity),
-                key=lambda result: result.matches.probability, reverse=True)
+            (r for r in results if r.matches
+             and r.matches.sensitivity == sensitivity),
+            key=lambda result: result.matches.probability, reverse=True)
         self.kwargs['sensitivity'] = sensitivity
 
         return self.kwargs['matches']
