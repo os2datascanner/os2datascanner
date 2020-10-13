@@ -6,23 +6,15 @@ body {
   padding: 0;
 }
 
-.page {
-  padding: 5rem var(--size-ds-unit) var(--size-ds-unit) var(--size-ds-unit);
+.wrapper {
+  width: 100%;
+  display: flex;
 }
 
-.wrapper {
-  margin: 0 auto 0 calc(var(--size-logo-width));
+.content {
   max-width: 90%;
   min-height: calc(100vh - 9rem - var(--size-ds-unit) * 3);
-  /* 
-    Banner = 4rem
-    Footer = 5rem
-    -------------
-      Total: 9rem
-    -------------
-    -------------
-  */
-  padding: 2rem 0;
+  padding: 8rem 8rem;
 }
 
 .wrapper > *:first-child {

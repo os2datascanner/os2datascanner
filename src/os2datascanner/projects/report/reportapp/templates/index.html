@@ -1,5 +1,9 @@
-{% include "partials/header.html" with active_tab="home" %}
+{% include "partials/header.html" %}
 
-{% include "components/dashboard.html" %}
+<div class="wrapper">
+  {% include "partials/sidemenu.html" with active_tab="home" %}
+
+  {% include "components/dashboard.html" %}
+</div>
 
 {% include "partials/footer.html" %}

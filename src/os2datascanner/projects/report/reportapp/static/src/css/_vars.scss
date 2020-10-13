@@ -22,10 +22,10 @@
   --size-logo-width: calc(var(--size-ds-unit) * 30);
   --size-base-font-size: calc(var(--size-ds-unit) * 2);
 
-  --color-main: #42b983;
-  --color-main-dark: #398a65;
+  --color-main: #3a69b4;
+  --color-main-dark: #1c417d;
   --color-text-main: #222;
-  --color-body-bg: #eee;
+  --color-body-bg: #fcfcfc;
 
   --color-ok: var(--color-main);
   --color-ok-dark: #32845e;
@@ -38,12 +38,13 @@
 
   --color-office365: #d83b01;
 
-  --color-header-bg: rgba(255, 255, 255, 0.95);
+  --color-header-bg: #fff;
   --color-logo-mark: var(--color-main);
   --color-logo-text: var(--color-text-main);
 
   --border-radius: 0.5rem;
   --border-radius-small: 0.125rem;
-  --box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+  --box-shadow: 10px 10px 30px #0000001A;
   --box-shadow-large: 0 0 2rem rgba(0, 0, 0, 0.2);
+  --box-shadow-svg: 0px 0px 40px #22222229;
 }
