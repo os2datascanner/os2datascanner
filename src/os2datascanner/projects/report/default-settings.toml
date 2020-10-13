@@ -54,6 +54,10 @@ MIDDLEWARE = [
     'django_structlog.middlewares.RequestMiddleware',
 ]
 
+SETTINGS_EXPORT = [
+    'DEBUG',
+]
+
 # [internationalization]
 LANGUAGE_CODE = "da-dk"
 # Paths relative to the project directory should start with "*" while
