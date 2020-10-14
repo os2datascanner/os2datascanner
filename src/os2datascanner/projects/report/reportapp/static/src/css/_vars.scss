@@ -22,24 +22,32 @@
   --size-logo-width: calc(var(--size-ds-unit) * 30);
   --size-base-font-size: calc(var(--size-ds-unit) * 2);
 
-  --color-main: #3a69b4;
-  --color-main-dark: #1c417d;
-  --color-text-main: #222;
+  //primary colors
   --color-body-bg: #fcfcfc;
+  --color-part-bg: #fff;
+  --color-main: #3a69b4; // change!!
+  --color-icon-primary: #21759c;
+  --color-primary-light: #5ca4cd;
+  --color-primary-dark: #00496e;
+  
+  //text colors
+  --color-text-main: #222;
+  --color-text-secondary: #777777;
+  --color-text-white: #fff;
 
-  --color-ok: var(--color-main);
-  --color-ok-dark: #32845e;
+  //sensitivity colors
+  --color-ok: var(--color-main); //change!!
+  --color-ok-dark: #32845e;   //change!!
 
-  --color-warning: #f7e70d;
-  --color-warning-dark: #f1c40f;
+  --color-error: #e24e4e;
 
-  --color-error: #e74c3c;
-  --color-error-dark: #e74c3c;
+  --color-problem: #ffab00;
 
-  --color-office365: #d83b01;
+  --color-warning: #fed149;
 
-  --color-header-bg: #fff;
-  --color-logo-mark: var(--color-main);
+  --color-office365: #d83b01; //change!!
+
+  --color-logo-mark: var(--color-main); //change!!
   --color-logo-text: var(--color-text-main);
 
   --border-radius: 0.5rem;

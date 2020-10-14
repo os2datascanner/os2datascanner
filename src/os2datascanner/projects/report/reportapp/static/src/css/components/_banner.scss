@@ -1,7 +1,7 @@
 .banner {
   align-items: center;
   height: 6.6rem;
-  background-color: var(--color-header-bg);
+  background-color: var(--color-part-bg);
   box-shadow: var(--box-shadow);
   display: grid;
   grid-template-columns: var(--size-logo-width) 1fr 1fr;
@@ -9,10 +9,6 @@
   line-height: 1;
   transition: background-color 0.2s ease-in-out;
   z-index: 99;
-
-  &:hover {
-    background-color: #fff;
-  }
 }
 
 .banner .logo {

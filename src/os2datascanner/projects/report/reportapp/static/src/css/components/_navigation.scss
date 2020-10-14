@@ -1,7 +1,7 @@
 .sidemenu {
   max-width: 18.75rem;
   min-height: 60.8rem;
-  background: transparent linear-gradient(180deg, #5CA4CD 0%, #21759C 100%) 0% 0% no-repeat padding-box;
+  background: transparent linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-icon-primary) 100%) 0% 0% no-repeat padding-box;
 }
 
 .navigation {
@@ -26,11 +26,11 @@
   align-items: center;
   display: flex;
   justify-content: flex-start;
-  color: #fff;
+  color: var(--color-text-white);
   text-decoration: none;
 
   svg {
-    fill: #fff;
+    fill: var(--color-part-bg);
     height: 50%;
     width: auto;
   }
@@ -41,27 +41,23 @@
 }
 
 .navigation a:hover {
-  color: #00496E;
+  color: var(--color-primary-dark);
   font-weight: bold;
   background-color: var(--color-body-bg);
   border-radius: 10px 0px 0px 10px;
 
   svg {
-    fill: #00496E;
+    fill: var(--color-primary-dark);
   }
 }
 
 .navigation a.active {
-  color: #00496E;
+  color: var(--color-primary-dark);
   font-weight: bold;
   background-color: var(--color-body-bg);
   border-radius: 10px 0px 0px 10px;
 
   svg {
-    fill: #00496E;
+    fill: var(--color-primary-dark);
   }
-}
-
-.navigation a.router-link-exact-active {
-  color: var(--color-main);
 }

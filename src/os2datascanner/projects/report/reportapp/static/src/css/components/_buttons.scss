@@ -33,7 +33,7 @@
 
     &:focus,
     &:hover {
-      background-color: var(--color-main-dark);
+      background-color: var(--color-primary-dark);
       color: #fff;
     }
   }
@@ -45,7 +45,7 @@
 
     &:focus,
     &:hover {
-      background-color: var(--color-error-dark);
+      background-color: var(--color-error);
       color: #fff;
     }
   }
