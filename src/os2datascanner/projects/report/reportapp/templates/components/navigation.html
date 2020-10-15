@@ -7,15 +7,24 @@
       </a>
     </li>
     <li>
-      <a href="/">
+      <a href="/statistics" class="{% if active_tab == 'statistics' %}active{% endif %}">
         {% include "components/svg-icons/bar_chart.svg" %}
         <span class="width">Afdelingsstatistik</span>
       </a>
     </li>
     <li>
-      <a href="/">
+      <a href="/statistics">
         {% include "components/svg-icons/bar_chart.svg" %}
         <span class="width">DPO overblik</span>
+      </a>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <a href="/accounts/logout">
+        {% include "components/svg-icons/logout.svg" %}
+        <span class="width">Log ud</span>
       </a>
     </li>
   </ul>

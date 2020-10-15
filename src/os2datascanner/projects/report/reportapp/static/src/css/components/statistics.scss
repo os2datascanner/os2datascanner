@@ -1,0 +1,35 @@
+.statistics {
+  display: flex;
+  max-width: 80rem;
+}
+
+.statistic {
+  background-color: var(--color-widget-bg);
+  box-shadow: var(--box-shadow-widget);
+  border-radius: var(--border-radius-widget);
+  padding: 2rem;
+
+  &--one {
+    width: 43rem;
+    min-height: 28rem;
+  }
+  
+  &--two {
+    margin-left: 3.5rem;
+    width: 33rem;
+    min-height: 28rem;
+  }
+  
+  &--three {
+    margin-top: 3.5rem;
+    width: 33rem;
+    min-height: 28rem;
+  }
+  
+  &--four {
+    margin-top: 3.5rem;
+    margin-left: 3.5rem;
+    width: 43rem;
+    min-height: 28rem;
+  }
+}

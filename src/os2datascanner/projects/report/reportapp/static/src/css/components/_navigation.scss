@@ -30,7 +30,7 @@
   text-decoration: none;
 
   svg {
-    fill: var(--color-part-bg);
+    fill: var(--color-widget-bg);
     height: 50%;
     width: auto;
   }
@@ -60,4 +60,29 @@
   svg {
     fill: var(--color-primary-dark);
   }
+}
+
+.navigation li a.active::before,
+.navigation li a:hover::before {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(closest-side, transparent calc(100% - 0.5px), var(--color-body-bg) 100%);
+  position: absolute;
+  top: -20px;
+  right: 0;
+  clip: rect(10px, 20px, 20px, 10px);
+}
+.navigation li a.active::after,
+.navigation li a:hover::after {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(closest-side, transparent calc(100% - 0.5px), var(--color-body-bg) 100%);
+  position: absolute;
+  bottom: -20px;
+  right: 0;
+  clip: rect(0, 20px, 10px, 10px);
 }

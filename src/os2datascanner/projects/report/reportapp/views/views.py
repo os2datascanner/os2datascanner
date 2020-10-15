@@ -111,6 +111,8 @@ class SensitivityPageView(ListView, LoginRequiredMixin):
 
         return self.kwargs['matches']
 
+class StatisticsPageView(TemplateView):
+    template_name = 'statistics.html'
 
 class ApprovalPageView(TemplateView):
     template_name = 'approval.html'
