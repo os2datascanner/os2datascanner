@@ -29,6 +29,14 @@ MSGRAPH_APP_ID = ""
 # (client private keys are not yet supported):
 MSGRAPH_CLIENT_SECRET = ""
 
+# [sbsys]
+# Using oauth with grant type client_credentials.
+# These settings must be provided to later retrieve a token
+# to then make API calls.
+SBSYS_CLIENT_ID = ""
+SBSYS_CLIENT_SECRET = ""
+
+
 # [test]
 TEST_RUNNER = "xmlrunner.extra.djangotestrunner.XMLTestRunner"
 TEST_OUTPUT_DESCRIPTIONS = true
@@ -79,6 +87,7 @@ SETTINGS_EXPORT = [
     'ENABLE_MSGRAPH_FILESCAN',
     'ENABLE_GOOGLEDRIVESCAN',
     'ENABLE_GMAILSCAN',
+    'ENABLE_SBSYSSCAN',
     'ICON_SPRITE_URL'
 ]
 
@@ -115,6 +124,7 @@ ENABLE_MSGRAPH_MAILSCAN = false
 ENABLE_MSGRAPH_FILESCAN = false
 ENABLE_GOOGLEDRIVESCAN = false
 ENABLE_GMAILSCAN = false
+ENABLE_SBSYSSCAN = false
 
 # [logging]
 GRAYLOG_HOST = ""
