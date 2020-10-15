@@ -20,7 +20,7 @@ from os2datascanner.utils.system_utilities import json_utf8_decode
 from os2datascanner.utils.amqp_connection_manager import start_amqp, \
     set_callback, start_consuming, ack_message
 
-from ...utils import hash_handle
+from ...utils import hash_handle, parse_isoformat_timestamp
 from ...models.documentreport_model import DocumentReport
 
 
@@ -57,6 +57,8 @@ def _restructure_and_save_result(result):
             elif updated_fields.get('metadata'):
                 report_obj.data['metadata'] = updated_fields.get('metadata')
 
+        scan_tag = report_obj.data["scan_tag"]
+        report_obj.scan_time = parse_isoformat_timestamp(scan_tag["time"])
         report_obj.save()
 
 def _format_results(result):
