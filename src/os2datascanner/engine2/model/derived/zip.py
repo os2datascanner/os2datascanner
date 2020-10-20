@@ -38,6 +38,9 @@ class ZipResource(FileResource):
         super().__init__(handle, sm)
         self._mr = None
 
+    def check(self):
+        self.unpack_info()
+
     def unpack_info(self):
         if not self._mr:
             self._mr = MultipleResults.make_from_attrs(

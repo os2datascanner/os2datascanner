@@ -29,6 +29,9 @@ class PDFSource(DerivedSource):
 
 
 class PDFPageResource(Resource):
+    def check(self):
+        pass
+
     def compute_type(self):
         return PAGE_TYPE
 

@@ -120,6 +120,9 @@ class WebResource(FileResource):
         self._response = None
         self._mr = None
 
+    def check(self):
+        self.unpack_header(check=True)
+
     def _make_url(self):
         handle = self.handle
         base = handle.source.to_url()
