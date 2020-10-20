@@ -29,7 +29,7 @@ class SbsysScannerCreate(View):
 
 class _SbsysNoPermission(TemplateView, LoginRequiredMixin):
     # TODO make a more fitting template or adjust that one
-    template_name = "os2datascanner/scanner_oauth_start.html"
+    template_name = "os2datascanner/scanner_no_client_credentials.html"
 
 
 class _SbsysScannerCreate(ScannerCreate):
