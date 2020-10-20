@@ -20,7 +20,7 @@ class SbsysScannerCreate(View):
 
     def dispatch(self, request, *args, **kwargs):
         if settings.SBSYS_TOKEN_URL and settings.SBSYS_CLIENT_ID \
-                and settings.SBSYS_CLIENT_SECRET:
+                and settings.SBSYS_CLIENT_SECRET and settings.SBSYS_API_URL:
             handler = _SbsysScannerCreate.as_view()
         else:
             handler = _SbsysNoPermission.as_view()

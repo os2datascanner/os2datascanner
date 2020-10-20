@@ -36,7 +36,8 @@ MSGRAPH_CLIENT_SECRET = ""
 SBSYS_CLIENT_ID = ""
 SBSYS_CLIENT_SECRET = ""
 SBSYS_TOKEN_URL = ""
-
+# API url should be pasted ending with "api/"
+SBSYS_API_URL = ""
 
 # [test]
 TEST_RUNNER = "xmlrunner.extra.djangotestrunner.XMLTestRunner"
