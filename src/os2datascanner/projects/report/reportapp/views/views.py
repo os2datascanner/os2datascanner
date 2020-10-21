@@ -76,25 +76,42 @@ class MainPageView(TemplateView, LoginRequiredMixin):
                 if not sensitivity in sensitivities:
                     sensitivities[sensitivity] = 0
                 sensitivities[sensitivity] += 1
+        context['dashboard_results'] = sensitivities
 
         context['dashboard_results'] = {}
         context['dashboard_results']['critical'] = Sensitivity.CRITICAL
         context['dashboard_results']['problem'] = Sensitivity.PROBLEM
         context['dashboard_results']['warning'] = Sensitivity.WARNING
         context['dashboard_results']['notification'] = Sensitivity.NOTICE
-        for sensitivity, count in sensitivities.items():            
-            temp = {}
-            temp['sensitivity'] = sensitivity
-            temp['count'] = count
-            temp['label'] = str(sensitivity).split('.')[1].lower()
-            if sensitivity == Sensitivity.CRITICAL:                
-                context['dashboard_results']['critical'] =  temp
-            elif sensitivity == Sensitivity.PROBLEM: 
-                context['dashboard_results']['problem'] =  temp
-            elif sensitivity == Sensitivity.WARNING: 
-                context['dashboard_results']['warning'] =  temp
-            elif sensitivity == Sensitivity.NOTICE: 
-                context['dashboard_results']['notification'] =  temp
+
+        sensitivity_list = [e.value for e in Sensitivity] # Makes a list of possible sensitivity values
+        sensitivity_list.remove(0)  # Removes "information" 0 value, not possible to use or show currently
+
+        # Checks which sensitivities have matches and removes those from list.
+        for sensitivity, count in sensitivities.items():
+            if sensitivity.value in sensitivity_list:
+                sensitivity_list.remove(sensitivity.value)
+
+            # Displays the matches with sensitivities
+            for s, c in sensitivities.items():
+                # Notification uses both NOTICE here and notification elsewhere.
+                # Should consider making it consistent to avoid this extra if statement
+                if s.value == 250:
+                    temp = {'sensitivity': Sensitivity(s), 'count': c, 'label': "notification"}
+                    context['dashboard_results']['notification'] = temp
+                else:
+                    temp = {'sensitivity': Sensitivity(s), 'count': c, 'label': Sensitivity(s).name}
+                    context['dashboard_results'][s.name.lower()] = temp
+
+        # Displays sensitivity categories with no matches.
+        for se in sensitivity_list:
+            # Same notification "issue" as above
+            if se == 250:
+                temp = {'sensitivity': Sensitivity(se), 'count': 0, 'label': "notification"}
+                context['dashboard_results']['notification'] = temp
+            else:
+                temp = {'sensitivity': Sensitivity(se), 'count': 0, 'label': Sensitivity(se).name}
+                context['dashboard_results'][Sensitivity(se).name.lower()] = temp
 
         # Perform sorting based on highest sensitivity first.
         context['dashboard_results'] = collections.OrderedDict(
@@ -129,8 +146,10 @@ class SensitivityPageView(ListView, LoginRequiredMixin):
 
         return self.kwargs['matches']
 
+
 class StatisticsPageView(TemplateView):
     template_name = 'statistics.html'
+
 
 class ApprovalPageView(TemplateView):
     template_name = 'approval.html'
