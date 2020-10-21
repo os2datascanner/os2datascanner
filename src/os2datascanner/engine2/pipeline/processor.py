@@ -21,6 +21,7 @@ def message_received_raw(body,
 
     try:
         resource = conversion.handle.follow(source_manager)
+        resource.check()
 
         representation = None
         if (required == OutputType.Text
