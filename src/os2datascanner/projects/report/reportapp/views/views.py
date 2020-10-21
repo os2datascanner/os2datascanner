@@ -76,7 +76,25 @@ class MainPageView(TemplateView, LoginRequiredMixin):
                 if not sensitivity in sensitivities:
                     sensitivities[sensitivity] = 0
                 sensitivities[sensitivity] += 1
-        context['dashboard_results'] = sensitivities
+
+        context['dashboard_results'] = {}
+        context['dashboard_results']['critical'] = Sensitivity.CRITICAL
+        context['dashboard_results']['problem'] = Sensitivity.PROBLEM
+        context['dashboard_results']['warning'] = Sensitivity.WARNING
+        context['dashboard_results']['notification'] = Sensitivity.NOTICE
+        for sensitivity, count in sensitivities.items():            
+            temp = {}
+            temp['sensitivity'] = sensitivity
+            temp['count'] = count
+            temp['label'] = str(sensitivity).split('.')[1].lower()
+            if sensitivity == Sensitivity.CRITICAL:                
+                context['dashboard_results']['critical'] =  temp
+            elif sensitivity == Sensitivity.PROBLEM: 
+                context['dashboard_results']['problem'] =  temp
+            elif sensitivity == Sensitivity.WARNING: 
+                context['dashboard_results']['warning'] =  temp
+            elif sensitivity == Sensitivity.NOTICE: 
+                context['dashboard_results']['notification'] =  temp
 
         # Perform sorting based on highest sensitivity first.
         context['dashboard_results'] = collections.OrderedDict(

@@ -2,10 +2,70 @@
   --datatable-cell-padding: 2rem;
 }
 
+.dashboard_wrapper {
+  display: flex;
+  max-width: 80rem;
+
+  a {
+    display: block;
+    color: var(--color-text-main);
+    text-decoration: none;
+  }
+}
+
+.dashboard {
+  display: flex;
+  justify-content: flex-start;
+  background-color: var(--color-widget-bg);
+  box-shadow: var(--box-shadow-widget);
+  border-radius: var(--border-radius-widget);
+  margin-bottom: 3.5rem;
+  margin-right: 3.5rem;
+  max-width: 38rem;
+  min-height: 9.5rem;
+
+  .sensitivity {
+    width: 1rem;
+    min-height: 9.5rem;
+    border-radius: var(--border-radius-sensitivity);
+
+      &--critical {
+        background-color: var(--color-error);
+      }
+      
+      &--problem {
+        background-color: var(--color-problem);
+      }
+
+      &--warning {
+        background-color: var(--color-warning);
+      }
+
+      &--notification {
+        background-color: var(--color-notification);
+      }
+  }
+
+  .text-content {
+    width: 32rem;
+    padding: 2rem;
+  }
+
+  .material-icons {
+    color: #9e9e9e59;
+    font-size: 5rem;
+    display: flex;
+    align-items: center;
+  }
+}
+
+
+
 .datatable {
-  background-color: #fff;
+  background-color: var(--color-widget-bg);
   border-collapse: collapse;
-  box-shadow: var(--box-shadow-large);
+  box-shadow: var(--box-shadow-widget);
+  border-radius: var(--border-radius-widget);
   max-width: 80rem;
   table-layout: fixed;
   width: calc(100% - 2rem);
@@ -41,70 +101,52 @@
       width: 12rem;
     }
 
+    &--handle {
+      width: auto;
+    }
+
     &--context {
       word-break: break-all;
     }
   }
 }
 
-.flex {
+.matches {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  margin-top: .5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--color-primary-dark);
 
   &--width {
-    margin-right: .5rem;
-    height: 1.2rem;
-    width: auto;
+    color: var(--color-text-secondary);
+    margin-left: .5rem;
   }
-
-  svg {
-    height: 100%;
-    width: auto;
-  }
-
 }
 
-.flex-probability {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  margin-top: -2rem;
-  margin-bottom: 2rem;
+.probability {
+  margin-left: 5rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: var(--border-radius-button);
+  color: var(--color-text-white);
+  text-align: center;
+  max-width: 3.5rem;
+  padding: 0.5rem;
 
-  .material-icons {
-    font-size: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center
+  &--red {
+    background-color: var(--color-error);
   }
-  .green.material-icons {
-    color: var(--color-ok-dark);
+  &--orange {
+    background-color: var(--color-problem);
   }
-  .yellow.material-icons {
-    color: var(--color-warning);
-  }
-  .red.material-icons {
-    color: var(--color-error);
-  }
-
-  .probability-text {
-    font-size: 85%;
-    font-weight: bold;
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 22%;
-    transform: translate(-50%, -50%)
+  &--green {
+    background-color: var(--color-ok-dark);
   }
 }
 
 .datatable tr:hover {
-  td {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-    
   .hit-link {
     opacity: 1;
   }
@@ -116,7 +158,7 @@
   .datatable tr:focus-within, 
   .datatable tr:hover {
     td {
-      background-color: rgba(0, 0, 0, 0.05);
+      background-color: var(--color-hover);
     }
       
     .hit-link {
@@ -141,7 +183,7 @@
 }
 
 .datatable th {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: bold;
 }
 

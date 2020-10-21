@@ -20,14 +20,3 @@ body {
 .wrapper > *:first-child {
   margin-top: 0;
 }
-
-.login {
-  background-color: var(--color-main);
-
-  .wrapper {
-    margin: 0;
-    max-width: initial;
-    min-height: initial;
-    padding: 0;
-  }
-}

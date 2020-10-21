@@ -57,6 +57,9 @@
   .link {
     color: var(--color-primary-dark);
   }
+  .link:hover {
+    color: var(--color-text-main);
+  }
 
   .logo {
     margin-top: 3.5rem;

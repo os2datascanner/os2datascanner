@@ -48,15 +48,19 @@
 
   --color-warning: #fed149;
 
+  --color-notification: #21759c;
+
   --color-office365: #d83b01; //change!!
 
   --color-logo-mark: var(--color-main); //change!!
   --color-logo-text: var(--color-text-main);
 
   //border-radius
+  --border-radius-button: 0.2rem;
   --border-radius: 0.5rem;
   --border-radius-small: 0.125rem;
   --border-radius-widget: 1.25rem;
+  --border-radius-sensitivity: 20px 0px 0px 20px;
 
   //box-shadow
   --box-shadow: 10px 10px 30px #0000001A;

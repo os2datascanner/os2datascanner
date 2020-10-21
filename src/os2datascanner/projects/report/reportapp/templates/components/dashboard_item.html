@@ -1,0 +1,13 @@
+<a href="/sensitivity?value={{ dashboard_item_data.sensitivity.value|stringformat:"i" }}">
+  <div class="dashboard">
+    <div class="sensitivity sensitivity--{{ dashboard_item_data.label }}"></div>
+    <div class="text-content">
+      <h1 class="page-title__sub text">{{ dashboard_item_data.sensitivity.presentation }}</h1>
+      <span>
+        Matches:
+        {{ dashboard_item_data.count|default:0 }}
+      </span>
+    </div>
+    <i id="chevron_right" class="material-icons">chevron_right</i>
+  </div>
+</a>  

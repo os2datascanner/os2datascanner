@@ -26,30 +26,33 @@
         <a href="{{ match.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">Åben link</a>
         {% endif %}
         <button class="button" data-clipboard-text="{{ match.matches.handle|find_parent:"web"|present }}">Kopiér link</button>
-        {% include "components/handle-match.html" %}
       </div>
     </div>
   </td>
 
-  <td class="datatable__column--match datatable__column--context" colspan="3">
+  <td class="datatable__column--match datatable__column--context" colspan="4">
 
     <table class="datatable datatable--nested">
       <tbody>
         {% for match in rule.matches|slice:":3" %}
-        <tr>
-          <td class="datatable__column--match">
-            <span class="more">{{ match.match }}</span>
-          </td>
-          <td class="datatable__column--probability">
-            {% include "components/probability-icon.html" %}
-          </td>
-          <td class="datatable__column--context">
-            {% if match.context %}
-              [...]{{ match.context }}[...]
-            {% endif %}
-          </span>
-          </td>
-        </tr>
+          <tr>
+            <td class="datatable__column--match">
+                <span class="more">
+                    {{ match.match }}
+                </span>
+            </td>
+            <td class="datatable__column--context">
+                {% if match.context %}
+                    [...]{{ match.context }}[...]
+                {% endif %}
+            </td>
+            <td class="datatable__column--probability">
+                {% include "components/probability.html" %}
+            </td>
+            <td class="datatable__column--handle">
+                {% include "components/handle-match.html" %}
+            </td>
+          </tr>
         {% endfor %}
       </tbody>
     </table>
