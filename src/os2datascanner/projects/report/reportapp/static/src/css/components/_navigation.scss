@@ -20,12 +20,12 @@
 }
 
 .navigation a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   width: 16.5rem;
   height: 3.9rem;
   padding-left: 1.5rem;
-  align-items: center;
-  display: flex;
-  justify-content: flex-start;
   color: var(--color-text-white);
   text-decoration: none;
 
