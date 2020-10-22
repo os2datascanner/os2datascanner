@@ -20,10 +20,11 @@
   width: 2.5rem;
   box-shadow: var(--box-shadow-widget);
 
-  > svg {
+  .material-icons {
     fill: #fff;
     height: 100%;
     width: 100%;
+    font-size: 2.5rem;
   }
 }
 

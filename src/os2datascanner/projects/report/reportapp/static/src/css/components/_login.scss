@@ -8,7 +8,7 @@
   background-color: var(--color-widget-bg);
   margin-left: auto;
   margin-right: auto;
-  margin-top: 10rem;
+  margin-top: 7rem;
   padding: 6rem;
   box-shadow: var(--box-shadow-login);
   border-radius: var(--border-radius-widget);
@@ -32,7 +32,7 @@
   .login-btn {
     width: 100%;
     height: 4rem;
-    margin-top: 4rem;
+    margin-top: 2rem;
     background-color: var(--color-primary-dark);
     color: var(--color-text-white);
     font-size: 1.2rem;
@@ -63,6 +63,6 @@
 
   .logo {
     margin-top: 3.5rem;
-    margin-right: 1.4rem;
+    margin-right: .5rem;
   }
 }

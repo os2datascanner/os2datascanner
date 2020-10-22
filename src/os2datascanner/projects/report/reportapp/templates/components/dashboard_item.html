@@ -1,5 +1,7 @@
-<a href="/sensitivity?value={{ dashboard_item_data.sensitivity.value|stringformat:"i" }}">
-  <div class="dashboard">
+{% if dashboard_item_data.count != 0 %}
+  <a style="margin-right: 3.5rem;" href="/sensitivity?value={{ dashboard_item_data.sensitivity.value|stringformat:"i" }}">
+{% endif %}
+<div class="dashboard">
     <div class="sensitivity sensitivity--{{ dashboard_item_data.label }}"></div>
     <div class="text-content">
       <h1 class="page-title__sub text">{{ dashboard_item_data.sensitivity.presentation }}</h1>
@@ -8,6 +10,10 @@
         {{ dashboard_item_data.count|default:0 }}
       </span>
     </div>
+    {% if dashboard_item_data.count != 0 %}
     <i id="chevron_right" class="material-icons">chevron_right</i>
-  </div>
+    {% else %}
+    <i id="chevron_right" class="material-icons material-icons--hidden">chevron_right</i>
+    {% endif %}
+</div>
 </a>  
