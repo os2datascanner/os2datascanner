@@ -28,8 +28,8 @@ source "$setup_dir/contrib/system-scripts/utils/common.sh"
 export OS2DS_REPORT_USER_CONFIG_PATH="$user_settings_file"
 export OS2DS_REPORT_SYSTEM_CONFIG_PATH=""
 
-echo "export OS2DS_REPORT_USER_CONFIG_PATH=$user_settings_file" >> /etc/apache/envvars
-echo 'export OS2DS_REPORT_SYSTEM_CONFIG_PATH=""' >> /etc/apache/envvars
+echo "export OS2DS_REPORT_USER_CONFIG_PATH=$user_settings_file" >> /etc/apache2/envvars
+echo 'export OS2DS_REPORT_SYSTEM_CONFIG_PATH=""' >> /etc/apache2/envvars
 
 setup_local_settings "$setup_dir" 'report' "$domain" "$user_settings_file" "$debug" "$from_email" "$admin_email" "$institution"
 perform_django_migrations 'report' "$setup_dir"

@@ -31,7 +31,7 @@ function setup_local_settings()
     sed -i "s/INSERT_DB_NAME/$db_name/g" "$local_settings_file"
     sed -i "s/INSERT_DB_USER/$db_user/g" "$local_settings_file"
     sed -i "s/INSERT_DB_PASSWD/$db_pass/g" "$local_settings_file"
-    sed -i "s/DEBUG = False/DEBUG = $debug/g" "$local_settings_file"
+    sed -i "s/DEBUG = false/DEBUG = $debug/g" "$local_settings_file"
     sed -i "s/INSERT_DOMAIN_NAME/$domain/g" "$local_settings_file"
     sed -i "s/INSERT_DEFAULT_FROM_EMAIL/$from_email/g" "$local_settings_file"
     sed -i "s/INSERT_ADMIN_EMAIL/$admin_email/g" "$local_settings_file"
