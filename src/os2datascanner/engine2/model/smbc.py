@@ -163,6 +163,9 @@ class SMBCResource(FileResource):
         super().__init__(handle, sm)
         self._mr = None
 
+    def check(self):
+        self.unpack_stat()
+
     def _make_url(self):
         url, _ = self._get_cookie()
         return url + "/" + quote(self.handle.relative_path)

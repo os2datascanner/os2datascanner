@@ -80,6 +80,9 @@ class DropboxResource(FileResource):
         super().__init__(handle, sm)
         self._metadata = None
 
+    def check(self):
+        self.metadata
+
     def open_file(self):
         metadata, res = self._get_cookie().files_download(
             self.handle.relative_path)

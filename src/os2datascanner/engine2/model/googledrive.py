@@ -70,6 +70,9 @@ class GoogleDriveResource(FileResource):
         super().__init__(handle, sm)
         self._metadata = None
 
+    def check(self):
+        self.metadata
+
     @contextmanager
     def open_file(self):
         service = self._get_cookie()
@@ -107,9 +110,10 @@ class GoogleDriveResource(FileResource):
 
     @property
     def metadata(self):
-        self._metadata = self._get_cookie().files().get(
-            fileId=self.handle.relative_path,
-            fields='name, size, quotaBytesUsed').execute()
+        if not self._metadata:
+            self._metadata = self._get_cookie().files().get(
+                    fileId=self.handle.relative_path,
+                    fields='name, size, quotaBytesUsed').execute()
 
         return self._metadata
 

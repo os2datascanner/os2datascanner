@@ -74,11 +74,15 @@ class GmailResource(FileResource):
         super().__init__(handle, sm)
         self._metadata = None
 
+    def check(self):
+        self.metadata
+
     @property
     def metadata(self):
-        self._metadata = self._get_cookie().users().messages().get(userId=self.handle.source._user_email_gmail,
-                                                                   id=self.handle.path,
-                                                                   format="metadata").execute()
+        if not self._metadata:
+            self._metadata = self._get_cookie().users().messages().get(
+                    userId=self.handle.source._user_email_gmail,
+                    id=self.handle.path, format="metadata").execute()
         return self.metadata
 
     @contextmanager

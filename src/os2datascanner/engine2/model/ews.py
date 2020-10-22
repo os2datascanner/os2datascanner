@@ -178,6 +178,15 @@ class EWSMailResource(FileResource):
         self._ids = self.handle.relative_path.split(".", maxsplit=1)
         self._message = None
 
+    def check(self):
+        folder_id, mail_id = self._ids
+        account = self._get_cookie()
+
+        def _retrieve_message():
+            return account.root.get_folder(
+                    folder_id).only("id").get(id=mail_id)
+        run_with_backoff(_retrieve_message, ErrorServerBusy, fuzz=0.25)
+
     def get_message_object(self):
         if not self._message:
             folder_id, mail_id = self._ids

@@ -48,6 +48,9 @@ class MailPartResource(FileResource):
         super().__init__(handle, sm)
         self._fragment = None
 
+    def check(self):
+        self._get_fragment()
+
     def _get_fragment(self):
         if not self._fragment:
             where = self._get_cookie()

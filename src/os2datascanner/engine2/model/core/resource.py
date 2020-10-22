@@ -29,6 +29,18 @@ class Resource(ABC):
         """Returns this Resource's Handle."""
         return self._handle
 
+    @abstractmethod
+    def check(self):
+        """Checks that this Resource is available by interacting with it in an
+        unspecified, lightweight way. Returns nothing on success, or raises an
+        exception on failure.
+
+        This method will only fail if the Resource cannot be accessed and is
+        not expected to be accessible in future. In particular, transient
+        issues like locked files will not cause it to fail."""
+        # Implementation note: a sensible thing for this function to do is to
+        # attempt to populate an internal metadata cache
+
     def _get_cookie(self):
         """Returns the magic cookie produced when the Source behind this
         Resource's Handle is opened in the associated StateManager. (Note that

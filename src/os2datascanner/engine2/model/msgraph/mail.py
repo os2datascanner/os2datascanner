@@ -36,6 +36,11 @@ DUMMY_MIME = "application/vnd.os2.datascanner.graphmailaccount"
 
 
 class MSGraphMailAccountResource(Resource):
+    def check(self):
+        self._get_cookie().get(
+                "users/{0}/messages?$select=id&$top=1".format(
+                        self.handle.relative_path), json=False)
+
     def compute_type(self):
         return DUMMY_MIME
 
@@ -77,6 +82,9 @@ class MSGraphMailMessageResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
         self._message = None
+
+    def check(self):
+        self.get_message_metadata()
 
     def make_object_path(self):
         return "users/{0}/messages/{1}".format(
