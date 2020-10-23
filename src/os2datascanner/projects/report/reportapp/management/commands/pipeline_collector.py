@@ -14,11 +14,14 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+
 from django.core.management.base import BaseCommand
 
 from os2datascanner.utils.system_utilities import json_utf8_decode
 from os2datascanner.utils.amqp_connection_manager import start_amqp, \
     set_callback, start_consuming, ack_message
+from os2datascanner.engine2.rules.last_modified import LastModifiedRule
+from os2datascanner.engine2.pipeline import messages
 
 from ...utils import hash_handle, parse_isoformat_timestamp
 from ...models.documentreport_model import DocumentReport
@@ -39,48 +42,93 @@ def _restructure_and_save_result(result):
     'problem': []}
     """
     result = json_utf8_decode(result)
-    updated_fields = _format_results(result)
-    if updated_fields:
-        reference = result.get('handle') or result.get('source')
+    reference = result.get("handle") or result.get("source")
+    tag, queue = _identify_message(result)
+    if not reference or not tag or not queue:
+        return
+    scanner = tag["scanner"]
+    time_raw = tag["time"]
+    time = parse_isoformat_timestamp(time_raw)
 
-        report_obj, is_created = DocumentReport.objects.get_or_create(
-            path=hash_handle(reference))
+    path = hash_handle(reference)
+    prev_entry = DocumentReport.objects.filter(path=path,
+            data__scan_tag__scanner=scanner).order_by("-scan_time").first()
+    # get_or_create unconditionally writes freshly-created objects to the
+    # database (in the version of Django we're using at the moment, at least),
+    # so we have to implement similar logic ourselves
+    try:
+        new_entry = DocumentReport.objects.filter(
+                path=path, scan_time=time).get()
+    except DocumentReport.DoesNotExist:
+        new_entry = DocumentReport(path=path, scan_time=time,
+                data={"scan_tag": tag})
 
-        if is_created:
-            # if created updatde_fields are stored.
-            report_obj.data = updated_fields
+    if queue == "matches":
+        matches = messages.MatchesMessage.from_json_object(result)
+        prev_matches = prev_entry.matches if prev_entry else None
+
+        if prev_entry and prev_entry.resolution_status is None:
+            # There are existing unresolved results; resolve them based on the
+            # new message
+            if prev_matches:
+                if not matches.matched:
+                    # No new matches. Be cautiously optimistic, but check what
+                    # actually happened
+                    if (len(matches.matches) == 1
+                            and isinstance(matches.matches[0].rule,
+                                    LastModifiedRule)):
+                        print(reference, "pm !mm lm OT")
+                        # The file hasn't been changed, so the matches weren't
+                        # actually changed. Instead of making a new entry,
+                        # just update the timestamp on the old one
+                        prev_entry.scan_time = time
+                        prev_entry.save()
+                    elif False:
+                        print(reference, "pm !mm RM")
+                        # The file has been removed (XXX, not implemented)
+                        prev_entry.resolution_status = (
+                                DocumentReport.ResolutionChoices.REMOVED.value)
+                        prev_entry.save()
+                    else:
+                        print(reference, "pm !mm ED")
+                        # The file has been edited and the matches are no
+                        # longer present
+                        prev_entry.resolution_status = (
+                                DocumentReport.ResolutionChoices.EDITED.value)
+                        prev_entry.save()
+                else:
+                    print(reference, "pm mm ED")
+                    # The file has been edited, but matches are still present
+                    prev_entry.resolution_status = (
+                            DocumentReport.ResolutionChoices.EDITED.value)
+                    prev_entry.save()
+            else:
+                print("!pm")
         else:
-            # else merge the new message with the existing report_obj.data
-            report_obj.data['scan_tag'] = updated_fields['scan_tag']
-            if updated_fields.get('matches'):
-                report_obj.data['matches'] = updated_fields.get('matches')
-            elif updated_fields.get('metadata'):
-                report_obj.data['metadata'] = updated_fields.get('metadata')
+            print("!pe.")
 
-        scan_tag = report_obj.data["scan_tag"]
-        report_obj.scan_time = parse_isoformat_timestamp(scan_tag["time"])
-        report_obj.save()
+        if matches.matched:
+            new_entry.data["matches"] = result
+            new_entry.save()
+    elif queue == "problem":
+        new_entry.data["problem"] = result
+        new_entry.save()
+    elif queue == "metadata":
+        new_entry.data["metadata"] = result
+        new_entry.save()
 
-def _format_results(result):
-    """Method for restructuring result body"""
-    updated_fields = {}
 
+def _identify_message(result):
     origin = result.get('origin')
 
     if origin == 'os2ds_problems':
-        updated_fields['scan_tag'] = result.get('scan_tag')
-        updated_fields['problem'] = result
+        return (result.get("scan_tag"), "problem")
     elif origin == 'os2ds_metadata':
-        updated_fields['scan_tag'] = result.get('scan_tag')
-        updated_fields['metadata'] = result
-    elif origin == 'os2ds_matches':
-        if result.get('matched'):
-            updated_fields['scan_tag'] = result.get('scan_spec').get('scan_tag')
-            updated_fields['matches'] = result
-        else:
-            print('Object processed with no matches: {}'.format(result))
-
-    return updated_fields
+        return (result.get("scan_tag"), "metadata")
+    elif origin == "os2ds_matches":
+        return (result["scan_spec"].get("scan_tag"), "matches")
+    else:
+        return None, None
 
 
 
