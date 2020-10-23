@@ -84,7 +84,7 @@ class MainPageView(TemplateView, LoginRequiredMixin):
         context['dashboard_results']['warning'] = Sensitivity.WARNING
         context['dashboard_results']['notification'] = Sensitivity.NOTICE
 
-        sensitivity_list = [e.value for e in Sensitivity] # Makes a list of possible sensitivity values
+        sensitivity_list = [e.value for e in Sensitivity]  # Makes a list of possible sensitivity values
         sensitivity_list.remove(0)  # Removes "information" 0 value, not possible to use or show currently
 
         # Checks which sensitivities have matches and removes those from list.
@@ -143,8 +143,15 @@ class SensitivityPageView(ListView, LoginRequiredMixin):
              and r.matches.sensitivity == sensitivity),
             key=lambda result: result.matches.probability, reverse=True)
         self.kwargs['sensitivity'] = sensitivity
-
         return self.kwargs['matches']
+
+    # Pass on sensitivity, to use it's presentation method in sensitivity.html.
+    def get_context_data(self, **kwargs):
+        sensitivity = Sensitivity(int(self.request.GET.get('value')) or 0)
+        context = super().get_context_data(**kwargs)
+        context['sensitivity'] = sensitivity
+        return context
+
 
 
 class StatisticsPageView(TemplateView):
