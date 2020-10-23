@@ -1,5 +1,5 @@
 {% if dashboard_item_data.count != 0 %}
-  <a style="margin-right: 3.5rem;" href="/sensitivity?value={{ dashboard_item_data.sensitivity.value|stringformat:"i" }}">
+  <a href="/sensitivity?value={{ dashboard_item_data.sensitivity.value|stringformat:"i" }}">
 {% endif %}
 <div class="dashboard">
     <div class="sensitivity sensitivity--{{ dashboard_item_data.label }}"></div>
