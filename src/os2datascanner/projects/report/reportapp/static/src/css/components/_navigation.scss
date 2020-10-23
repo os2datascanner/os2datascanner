@@ -67,24 +67,25 @@
 .navigation li a:hover::before {
   content: "";
   display: block;
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(closest-side, transparent calc(100% - 0.5px), var(--color-body-bg) 100%);
+  width: 10px;
+  height: 10px;
+  background-size: 100% 100%;
+  background-image: url("../images/navigation_corner.svg");
+  transform: rotate(90deg);
   position: absolute;
-  top: -20px;
+  top: -10px;
   right: 0;
-  clip: rect(10px, 20px, 20px, 10px);
 }
 .navigation li a.active::after,
 .navigation li a:hover::after {
   content: "";
   display: block;
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(closest-side, transparent calc(100% - 0.5px), var(--color-body-bg) 100%);
+  width: 10px;
+  height: 10px;
+  background-size: 100% 100%;
+  background-image: url("../images/navigation_corner.svg");
   position: absolute;
-  bottom: -20px;
+  bottom: -10px;
   right: 0;
-  clip: rect(0, 20px, 10px, 10px);
 }
 }
