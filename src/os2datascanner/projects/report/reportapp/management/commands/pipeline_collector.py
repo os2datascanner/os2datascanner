@@ -83,12 +83,6 @@ def _restructure_and_save_result(result):
                         # just update the timestamp on the old one
                         prev_entry.scan_time = time
                         prev_entry.save()
-                    elif False:
-                        print(reference, "pm !mm RM")
-                        # The file has been removed (XXX, not implemented)
-                        prev_entry.resolution_status = (
-                                DocumentReport.ResolutionChoices.REMOVED.value)
-                        prev_entry.save()
                     else:
                         print(reference, "pm !mm ED")
                         # The file has been edited and the matches are no
@@ -111,8 +105,18 @@ def _restructure_and_save_result(result):
             new_entry.data["matches"] = result
             new_entry.save()
     elif queue == "problem":
-        new_entry.data["problem"] = result
-        new_entry.save()
+        problem = messages.ProblemMessage.from_json_object(result)
+        if (prev_entry and prev_entry.resolution_status is None
+                and problem.missing):
+            # The file previously had matches, but has been removed. Resolve
+            # them
+            print("pr pe RM")
+            prev_entry.resolution_status = (
+                    DocumentReport.ResolutionChoices.REMOVED.value)
+            prev_entry.save()
+        else:
+            new_entry.data["problem"] = result
+            new_entry.save()
     elif queue == "metadata":
         new_entry.data["metadata"] = result
         new_entry.save()
