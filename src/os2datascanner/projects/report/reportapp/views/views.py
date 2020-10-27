@@ -112,10 +112,7 @@ class MainPageView(TemplateView, LoginRequiredMixin):
             else:
                 temp = {'sensitivity': Sensitivity(se), 'count': 0, 'label': Sensitivity(se).name}
                 context['dashboard_results'][Sensitivity(se).name.lower()] = temp
-
-        # Perform sorting based on highest sensitivity first.
-        context['dashboard_results'] = collections.OrderedDict(
-            sorted(context['dashboard_results'].items(), key=lambda x: x[0].value, reverse=True))
+                
         return context
 
 
