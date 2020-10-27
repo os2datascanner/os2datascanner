@@ -4,6 +4,27 @@ from ..model.core import Handle, Source
 from ..rules.rule import Rule, SimpleRule, Sensitivity
 
 
+def _deep_replace(self, **kwargs):
+    """As NamedTuple._replace, but supports deeply nested field replacement
+    using Django-like syntax ("tuple1__subtuple__field")."""
+    p = self
+    for name, value in kwargs.items():
+        name = name.split("__")
+        if len(name) > 1:
+            head, tail = name[0], name[1:]
+            fragment = getattr(p, head)
+            p = p._replace(**{
+                head: fragment._deep_replace(**{
+                    "__".join(tail): value
+                })
+            })
+        else:
+            p = p._replace(**{name[0]: value})
+    return p
+
+    _deep_replace = _deep_replace
+
+
 class MatchFragment(NamedTuple):
     rule: SimpleRule
     matches: Sequence[dict]
@@ -19,6 +40,8 @@ class MatchFragment(NamedTuple):
         return MatchFragment(
                 rule=Rule.from_json_object(obj["rule"]),
                 matches=obj["matches"])
+
+    _deep_replace = _deep_replace
 
 
 class ProgressFragment(NamedTuple):
@@ -37,6 +60,8 @@ class ProgressFragment(NamedTuple):
                 rule=Rule.from_json_object(obj["rule"]),
                 matches=[MatchFragment.from_json_object(mf)
                         for mf in obj["matches"]])
+
+    _deep_replace = _deep_replace
 
 
 class ScanSpecMessage(NamedTuple):
@@ -72,6 +97,8 @@ class ScanSpecMessage(NamedTuple):
                 progress=ProgressFragment.from_json_object(progress_fragment)
                         if progress_fragment else None)
 
+    _deep_replace = _deep_replace
+
 
 class ConversionMessage(NamedTuple):
     scan_spec: ScanSpecMessage
@@ -91,6 +118,8 @@ class ConversionMessage(NamedTuple):
                 scan_spec=ScanSpecMessage.from_json_object(obj["scan_spec"]),
                 handle=Handle.from_json_object(obj["handle"]),
                 progress=ProgressFragment.from_json_object(obj["progress"]))
+
+    _deep_replace = _deep_replace
 
 
 class RepresentationMessage(NamedTuple):
@@ -115,6 +144,8 @@ class RepresentationMessage(NamedTuple):
                 progress=ProgressFragment.from_json_object(obj["progress"]),
                 representations=obj["representations"])
 
+    _deep_replace = _deep_replace
+
 
 class HandleMessage(NamedTuple):
     scan_tag: object
@@ -131,6 +162,8 @@ class HandleMessage(NamedTuple):
         return HandleMessage(
                 scan_tag=obj["scan_tag"],
                 handle=Handle.from_json_object(obj["handle"]))
+
+    _deep_replace = _deep_replace
 
 
 class MetadataMessage(NamedTuple):
@@ -151,6 +184,8 @@ class MetadataMessage(NamedTuple):
                 scan_tag=obj["scan_tag"],
                 handle=Handle.from_json_object(obj["handle"]),
                 metadata=obj["metadata"])
+
+    _deep_replace = _deep_replace
 
 
 class MatchesMessage(NamedTuple):
@@ -236,6 +271,8 @@ class MatchesMessage(NamedTuple):
                 matches=[MatchFragment.from_json_object(mf)
                         for mf in obj["matches"]])
 
+    _deep_replace = _deep_replace
+
 
 class ProblemMessage(NamedTuple):
     scan_tag: object
@@ -260,3 +297,5 @@ class ProblemMessage(NamedTuple):
                 source=Source.from_json_object(source) if source else None,
                 handle=Handle.from_json_object(handle) if handle else None,
                 message=obj["message"])
+
+    _deep_replace = _deep_replace
