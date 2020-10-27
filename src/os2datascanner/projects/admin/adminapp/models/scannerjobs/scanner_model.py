@@ -39,7 +39,7 @@ from os2datascanner.engine2.rules.meta import HasConversionRule
 from os2datascanner.engine2.rules.logical import OrRule, AndRule, make_if
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
-from os2datascanner.engine2.pipeline.messages import ScanSpecMessage
+import os2datascanner.engine2.pipeline.messages as messages
 from os2datascanner.engine2.conversions.types import OutputType
 
 from ..authentication_model import Authentication
@@ -281,13 +281,33 @@ class Scanner(models.Model):
 
         # Check that all of our Sources are runnable, and build
         # ScanSpecMessages for them
-        message_template = ScanSpecMessage(scan_tag=scan_tag, rule=rule,
-                configuration=configuration, source=None, progress=None)
-        messages = []
+        message_template = messages.ScanSpecMessage(scan_tag=scan_tag,
+                rule=rule, configuration=configuration, source=None,
+                progress=None)
+        outbox = []
         for source in self.generate_sources():
             with SourceManager() as sm, closing(source.handles(sm)) as handles:
                 next(handles, True)
-            messages.append(message_template._replace(source=source))
+            outbox.append((settings.AMQP_PIPELINE_TARGET,
+                    message_template._replace(source=source)))
+
+        # Also build ConversionMessages for the objects that we should try to
+        # scan again
+        message_template = messages.ConversionMessage(
+                scan_spec=message_template,
+                handle=None, progress=messages.ProgressFragment(
+                        rule=None,
+                        matches=[]))
+        for reminder in self.checkups.all():
+            ib = reminder.interested_before
+            rule_here = AndRule.make(
+                    LastModifiedRule(ib) if ib else True,
+                    rule)
+            outbox.append((settings.AMQP_CONVERSION_TARGET,
+                    message_template._deep_replace(
+                            scan_spec__source=reminder.handle.source,
+                            progress__rule=rule_here)))
+        self.checkups.all().delete()
 
         self.e2_last_run_at = now
         self.save()
@@ -295,9 +315,9 @@ class Scanner(models.Model):
         # Dispatch the scan specifications to the pipeline
         queue_name = settings.AMQP_PIPELINE_TARGET
         amqp_connection_manager.start_amqp(queue_name)
-        for message in messages:
+        for queue, message in outbox:
             amqp_connection_manager.send_message(
-                    queue_name, json.dumps(message.to_json_object()))
+                    queue, json.dumps(message.to_json_object()))
         amqp_connection_manager.close_connection()
 
         return scan_tag
@@ -316,3 +336,26 @@ class Scanner(models.Model):
     class Meta:
         abstract = False
         ordering = ['name']
+
+
+class ScheduledCheckup(models.Model):
+    """A ScheduledCheckup is a single-use reminder to the administration system
+    to test the availability of a specific Handle in the next scan.
+
+    These reminders serve two functions: to make sure that objects that were
+    transiently unavailable will eventually be included in a scan, and to make
+    sure that the report module has a chance to resolve matches associated with
+    objects that are later removed."""
+
+    handle_representation = JSONField(verbose_name="Reference")
+    """The handle to test again."""
+    interested_before = models.DateTimeField(null=True)
+    """The Last-Modified cutoff date to attach to the test."""
+    scanner = models.ForeignKey(Scanner, related_name="checkups",
+                                verbose_name="Tilknyttet scannerjob",
+                                on_delete=models.CASCADE)
+    """The scanner job that produced this handle."""
+
+    @property
+    def handle(self):
+        return Handle.from_json_object(self.handle_representation)
