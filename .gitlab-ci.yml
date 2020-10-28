@@ -151,10 +151,11 @@ Build documentation:
   services:
     - postgres:12
     - rabbitmq:3-alpine
-    - name: magentalabs/samba-test:1.0
+    - name: magentalabs/samba-test:1.1
       alias: samba
   variables:
-    USER: os2;12345_rosebud_password_admin
+    SMB_USER: os2
+    SMB_PASSWD: 12345_rosebud_password_admin
     SMB_SHARE_NAME: general
     SMB_SHARE_PATH: ${CI_PROJECT_DIR}/src/os2datascanner/tests/data/engine2
     SMB_SHARE_BROWSABLE: "no"
