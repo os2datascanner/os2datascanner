@@ -46,80 +46,86 @@ def _restructure_and_save_result(result):
     tag, queue = _identify_message(result)
     if not reference or not tag or not queue:
         return
-    scanner = tag["scanner"]
-    time_raw = tag["time"]
+
+    previous_report, new_report = get_reports_for(reference, tag)
+    if queue == "matches":
+        handle_match_message(previous_report, new_report, result)
+    elif queue == "problem":
+        handle_problem_message(previous_report, new_report, result)
+    elif queue == "metadata":
+        new_report.data["metadata"] = result
+        new_report.save()
+
+
+def get_reports_for(reference, scan_tag):
+    scanner = scan_tag["scanner"]
+    time_raw = scan_tag["time"]
     time = parse_isoformat_timestamp(time_raw)
 
     path = hash_handle(reference)
-    prev_entry = DocumentReport.objects.filter(path=path,
+    previous_report = DocumentReport.objects.filter(path=path,
             data__scan_tag__scanner=scanner).order_by("-scan_time").first()
     # get_or_create unconditionally writes freshly-created objects to the
     # database (in the version of Django we're using at the moment, at least),
     # so we have to implement similar logic ourselves
     try:
-        new_entry = DocumentReport.objects.filter(
+        new_report = DocumentReport.objects.filter(
                 path=path, scan_time=time).get()
     except DocumentReport.DoesNotExist:
-        new_entry = DocumentReport(path=path, scan_time=time,
-                data={"scan_tag": tag})
+        new_report = DocumentReport(path=path, scan_time=time,
+                data={"scan_tag": scan_tag})
 
-    if queue == "matches":
-        matches = messages.MatchesMessage.from_json_object(result)
-        prev_matches = prev_entry.matches if prev_entry else None
+    return previous_report, new_report
 
-        if prev_entry and prev_entry.resolution_status is None:
-            # There are existing unresolved results; resolve them based on the
-            # new message
-            if prev_matches:
-                if not matches.matched:
-                    # No new matches. Be cautiously optimistic, but check what
-                    # actually happened
-                    if (len(matches.matches) == 1
-                            and isinstance(matches.matches[0].rule,
-                                    LastModifiedRule)):
-                        print(reference, "pm !mm lm OT")
-                        # The file hasn't been changed, so the matches weren't
-                        # actually changed. Instead of making a new entry,
-                        # just update the timestamp on the old one
-                        prev_entry.scan_time = time
-                        prev_entry.save()
-                    else:
-                        print(reference, "pm !mm ED")
-                        # The file has been edited and the matches are no
-                        # longer present
-                        prev_entry.resolution_status = (
-                                DocumentReport.ResolutionChoices.EDITED.value)
-                        prev_entry.save()
+def handle_match_message(previous_report, new_report, body):
+    new_matches = messages.MatchesMessage.from_json_object(body)
+    previous_matches = previous_report.matches if previous_report else None
+
+    if previous_report and previous_report.resolution_status is None:
+        # There are existing unresolved results; resolve them based on the new
+        # message
+        if previous_matches:
+            if not new_matches.matched:
+                # No new matches. Be cautiously optimistic, but check what
+                # actually happened
+                if (len(new_matches.matches) == 1
+                        and isinstance(new_matches.matches[0].rule,
+                                LastModifiedRule)):
+                    # The file hasn't been changed, so the matches are the same
+                    # as they were last time. Instead of making a new entry,
+                    # just update the timestamp on the old one
+                    previous_report.scan_time = parse_isoformat_timestamp(
+                            new_matches.scan_spec.scan_tag["time"])
+                    previous_report.save()
                 else:
-                    print(reference, "pm mm ED")
-                    # The file has been edited, but matches are still present
-                    prev_entry.resolution_status = (
+                    # The file has been edited and the matches are no longer
+                    # present
+                    previous_report.resolution_status = (
                             DocumentReport.ResolutionChoices.EDITED.value)
-                    prev_entry.save()
+                    previous_report.save()
             else:
-                print("!pm")
-        else:
-            print("!pe.")
+                # The file has been edited, but matches are still present.
+                # Resolve the previous ones
+                previous_report.resolution_status = (
+                        DocumentReport.ResolutionChoices.EDITED.value)
+                previous_report.save()
 
-        if matches.matched:
-            new_entry.data["matches"] = result
-            new_entry.save()
-    elif queue == "problem":
-        problem = messages.ProblemMessage.from_json_object(result)
-        if (prev_entry and prev_entry.resolution_status is None
-                and problem.missing):
-            # The file previously had matches, but has been removed. Resolve
-            # them
-            print("pr pe RM")
-            prev_entry.resolution_status = (
-                    DocumentReport.ResolutionChoices.REMOVED.value)
-            prev_entry.save()
-        else:
-            new_entry.data["problem"] = result
-            new_entry.save()
-    elif queue == "metadata":
-        new_entry.data["metadata"] = result
-        new_entry.save()
+    if new_matches.matched:
+        new_report.data["matches"] = body
+        new_report.save()
+
+
+def handle_problem_message(previous_report, new_report, body):
+    problem = messages.ProblemMessage.from_json_object(body)
+    if (previous_report and previous_report.resolution_status is None
+            and problem.missing):
+        # The file previously had matches, but has been removed. Resolve them
+        previous_report.resolution_status = (
+                DocumentReport.ResolutionChoices.REMOVED.value)
+        previous_report.save()
+    else:
+        new_report.data["problem"] = body
+        new_report.save()
 
 
 def _identify_message(result):
