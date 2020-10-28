@@ -120,8 +120,9 @@ ENABLE_GMAILSCAN = false
 GRAYLOG_HOST = ""
 DJANGO_LOG_LEVEL = "INFO"
 
-# This setting is Django specifik, and must be top level to get picked up
+# These settings are Django-specific, and must be top level to get picked up
 AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
+AMQP_CONVERSION_TARGET = "os2ds_conversions"
 
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module
