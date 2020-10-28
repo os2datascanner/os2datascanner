@@ -7,14 +7,21 @@ from os2datascanner.projects.report.reportapp.utils import (
 
 
 def extract_timestamps(apps, schema_editor):
+    """Updating data in a large DocumentReport table is necessary to do in batches.
+    If Out of memory still occurs try reducing batch size."""
+
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
-    for dr in DocumentReport.objects.filter(data__scan_tag__isnull=False):
-        scan_tag = dr.data["scan_tag"]
-        if isinstance(scan_tag, dict) and "time" in scan_tag:
-            dt = parse_isoformat_timestamp(scan_tag["time"])
-            if dt:
-                dr.scan_time = dt
-                dr.save()
+    document_reports = DocumentReport.objects.filter(data__scan_tag__isnull=False)
+    batchsize = 10000
+    for i in range(0, len(document_reports), batchsize):
+        batch = document_reports[i:i + batchsize]
+        for dr in batch:
+            scan_tag = dr.data["scan_tag"]
+            if isinstance(scan_tag, dict) and "time" in scan_tag:
+                dt = parse_isoformat_timestamp(scan_tag["time"])
+                if dt:
+                    dr.scan_time = dt
+        DocumentReport.objects.bulk_update(batch, ['scan_time'])
 
 
 class Migration(migrations.Migration):
