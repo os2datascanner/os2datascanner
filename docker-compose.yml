@@ -28,7 +28,7 @@ services:
       - "5672:5672"
       - "8030:15672"
 
-  admin-frontend:
+  admin_frontend:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
@@ -38,7 +38,7 @@ services:
       - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
       - /code/frontend/mode_modules
 
-  report-frontend:
+  report_frontend:
      build:
        context: .
        dockerfile: docker/report/Dockerfile
@@ -48,7 +48,7 @@ services:
        - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
        - /code/frontend/mode_modules
 
-  admin-application:
+  admin_application:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
@@ -63,10 +63,10 @@ services:
       - "8020:5000"
     depends_on:
       - db
-      - admin-frontend
+      - admin_frontend
       - queue
 
-  report-application:
+  report_application:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
@@ -80,10 +80,10 @@ services:
       - "8040:5000"
     depends_on:
       - db
-      - report-frontend
+      - report_frontend
       - queue
 
-  report-collector:
+  report_collector:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
@@ -96,7 +96,7 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - report-application
+      - report_application
       - queue
 
   engine_explorer:
