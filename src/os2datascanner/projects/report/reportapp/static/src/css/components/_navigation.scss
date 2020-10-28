@@ -1,6 +1,6 @@
 .sidemenu {
   max-width: 18.75rem;
-  min-height: 54rem;
+  min-height: calc(94vh - 2rem);
   background: transparent linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-icon-primary) 100%) 0% 0% no-repeat padding-box;
 }
 
@@ -20,7 +20,7 @@
 }
 
 .navigation .logout {
-  top: 10rem;
+  top: 14rem;
 }
 
 .navigation a {

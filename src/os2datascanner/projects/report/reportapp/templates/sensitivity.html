@@ -1,17 +1,22 @@
 {% include "partials/header.html" %}
 {% include "components/banner.html" %}
 
-<main class="wrapper">
-  
-  {% include "partials/sidemenu.html" with active_tab="home" %}
-  <div class="content">
-    <span class="matches">
-      <span>Matches</span>
-      <i class="matches--width material-icons">chevron_right</i>
-      <span class="matches--width">Følsomhed: {{ sensitivity.presentation }}</span>
-    </span>
+    <main class="wrapper">
+      {% include "partials/sidemenu.html" with active_tab="home" %}
+      <div class="content">
+        <span class="matches">
+          <span>Matches</span>
+          <i class="matches--width material-icons">chevron_right</i>
+          <span class="matches--width">Følsomhed: {{ sensitivity.presentation }}</span>
+        </span>
 
-    <h1 class="page-title">Følsomhed: {{ sensitivity.presentation }}</h1>
-    
-    {% include "components/hits.html" %}
-  </div>
+        <h1 class="page-title">Følsomhed: {{ sensitivity.presentation }}</h1>
+        
+        {% include "components/hits.html" %}
+      </div>
+
+      {% include "partials/scripts.html" %}
+    </main>
+
+  </body>
+</html>

@@ -7,10 +7,10 @@
   max-width: 80rem;
   margin-bottom: 3.5rem;
 
-  a {
+  .link {
+    height: 0;
     color: var(--color-text-main);
     text-decoration: none;
-    margin-right: 3.5rem;
   }
 }
 
