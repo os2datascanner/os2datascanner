@@ -151,7 +151,7 @@ Build documentation:
   services:
     - postgres:12
     - rabbitmq:3-alpine
-    - name: magentalabs/samba:1.0
+    - name: magentalabs/samba-test:1.0
       alias: samba
   variables:
     USER: os2;12345_rosebud_password_admin
