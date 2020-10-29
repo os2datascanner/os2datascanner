@@ -106,10 +106,9 @@ COPY NEWS.rst .
 # Copy necessary files from engine modul TODO: minimize this
 COPY src/os2datascanner/engine2 ./engine2
 
-# Copy frontend code
-WORKDIR /code/src/os2datascanner/projects/report/reportapp/static/dist
-COPY --from=frontend /code/src/os2datascanner/projects/report/reportapp/static/dist/bundle.min.js .
-COPY --from=frontend /code/src/os2datascanner/projects/report/reportapp/static/dist/bundle.min.css .
+# Copy frontend dist folder to static
+WORKDIR /code/src/os2datascanner/projects/report/reportapp/static
+COPY --from=frontend /code/src/os2datascanner/projects/report/reportapp/static/dist ./dist
 
 # Run the server as the os2ds_report user on port 8000
 WORKDIR /code/src/os2datascanner/projects/report
