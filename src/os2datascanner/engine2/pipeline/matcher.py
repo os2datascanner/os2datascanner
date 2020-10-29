@@ -5,13 +5,13 @@ from prometheus_client import start_http_server
 from ..rules.rule import Rule
 from ..conversions.types import decode_dict
 from . import messages
-from .utilities.args import make_common_argument_parser
+from .utilities.args import AppendReplaceAction, make_common_argument_parser
 from .utilities.pika import PikaPipelineRunner
 from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
-def message_received_raw(body, channel, matches_q, handles_q, conversions_q):
+def message_received_raw(body, channel, matches_qs, handles_q, conversions_q):
     message = messages.RepresentationMessage.from_json_object(body)
     representations = decode_dict(message.representations)
     rule = message.progress.rule
@@ -42,10 +42,11 @@ def message_received_raw(body, channel, matches_q, handles_q, conversions_q):
 
     if isinstance(rule, bool):
         # We've come to a conclusion!
-        yield (matches_q,
-                messages.MatchesMessage(
-                        message.scan_spec, message.handle,
-                        rule, final_matches).to_json_object())
+        for matches_q in matches_qs:
+            yield (matches_q,
+                    messages.MatchesMessage(
+                            message.scan_spec, message.handle,
+                            rule, final_matches).to_json_object())
         # Only trigger metadata scanning if the match succeeded
         if rule:
             yield (handles_q,
@@ -78,8 +79,9 @@ def main():
     outputs = parser.add_argument_group("outputs")
     outputs.add_argument(
             "--matches",
+            action=AppendReplaceAction,
             metavar="NAME",
-            help="the name of the AMQP queue to which matches should be"
+            help="the names of the AMQP queues to which matches should be"
                     + " written",
             default="os2ds_matches")
     outputs.add_argument(
@@ -112,7 +114,7 @@ def main():
 
     with MatcherRunner(
             read=[args.representations],
-            write=[args.handles, args.matches, args.conversions],
+            write=[args.handles, *args.matches, args.conversions],
             heartbeat=6000) as runner:
         try:
             print("Start")

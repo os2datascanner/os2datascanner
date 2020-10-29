@@ -70,10 +70,10 @@ def handle_message(body, channel):
         with SourceManager() as sm:
             yield from processor.message_received_raw(body, channel, sm,
                     "os2ds_representations", "os2ds_scan_specs",
-                    "os2ds_problems")
+                    ["os2ds_problems"])
     elif channel == "os2ds_representations":
         yield from matcher.message_received_raw(body, channel,
-                "os2ds_matches", "os2ds_handles", "os2ds_conversions")
+                ["os2ds_matches"], "os2ds_handles", "os2ds_conversions")
     elif channel == "os2ds_handles":
         with SourceManager() as sm:
             yield from tagger.message_received_raw(body, channel, sm,
