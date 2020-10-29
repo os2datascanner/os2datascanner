@@ -42,16 +42,27 @@ class GmailSource(Source):
     def handles(self, sm):
         service = sm.open(self)
         # Call the Gmail API to fetch INBOX
-        results = service.users().messages().list(userId=self._user_email_gmail, labelIds=['INBOX']).execute()
-        messages = results.get('messages', [])
-        for message in messages:
-            # Fetch info on specific email
-            email = service.users().messages().get(userId=self._user_email_gmail,
-                                                   id=message.get("id")).execute()
-            headers = email["payload"]["headers"]
-            subject = [i['value'] for i in headers if i["name"] == "Subject"]
-            # Id of given email is set to be path.
-            yield GmailHandle(self, message.get('id'), mail_subject=subject)
+        results = service.users().messages().list(userId=self._user_email_gmail,
+                                                      labelIds=['INBOX'], maxResults=500).execute()
+        messages = []
+        if 'messages' in results:
+            messages.extend(results['messages'])
+            while 'nextPageToken' in results:
+                page_token = results['nextPageToken']
+                results = service.users().messages().list(userId=self._user_email_gmail,
+                                                          labelIds=['INBOX'], maxResults=500,
+                                                          pageToken=page_token).execute()
+                messages.extend(results['messages'])
+
+            for message in messages:
+                # Fetch info on specific email
+                msgId = message.get("id")
+                email = service.users().messages().get(userId=self._user_email_gmail,
+                                                       id=msgId).execute()
+                headers = email["payload"]["headers"]
+                subject = [i['value'] for i in headers if i["name"] == "Subject"]
+                # Id of given email is set to be path.
+                yield GmailHandle(self, msgId, mail_subject=subject)
 
     # Censoring service account details
     def censor(self):
@@ -79,11 +90,11 @@ class GmailResource(FileResource):
 
     @property
     def metadata(self):
-        if not self._metadata:
+        if self._metadata is None:
             self._metadata = self._get_cookie().users().messages().get(
-                    userId=self.handle.source._user_email_gmail,
-                    id=self.handle.path, format="metadata").execute()
-        return self.metadata
+                userId=self.handle.source._user_email_gmail,
+                id=self.handle.relative_path, format="metadata").execute()
+        return self._metadata
 
     @contextmanager
     def make_path(self):
@@ -119,8 +130,8 @@ class GmailHandle(Handle):
     resource_type = GmailResource
     eq_properties = Handle.BASE_PROPERTIES
 
-    def __init__(self, source, path, mail_subject):
-        super().__init__(source, path)
+    def __init__(self, source, relpath, mail_subject):
+        super().__init__(source, relpath)
         self._mail_subject = mail_subject
 
     @property
