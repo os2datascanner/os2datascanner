@@ -94,7 +94,7 @@ class GmailResource(FileResource):
             self._metadata = self._get_cookie().users().messages().get(
                 userId=self.handle.source._user_email_gmail,
                 id=self.handle.relative_path, format="metadata").execute()
-            return self.metadata
+        return self._metadata
 
     @contextmanager
     def make_path(self):
