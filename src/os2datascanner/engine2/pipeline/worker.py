@@ -3,9 +3,11 @@ from os import getpid
 from prometheus_client import start_http_server
 
 from ..model.core import SourceManager
-from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
-        prometheus_summary, make_common_argument_parser,
+from .utilities.args import (make_common_argument_parser,
         make_sourcemanager_configuration_block)
+from .utilities.pika import PikaPipelineRunner
+from .utilities.systemd import notify_ready, notify_stopping
+from .utilities.prometheus import prometheus_summary
 from .explorer import message_received_raw as explorer_handler
 from .processor import message_received_raw as processor_handler
 from .matcher import message_received_raw as matcher_handler

@@ -7,8 +7,10 @@ from prometheus_client import start_http_server
 from ..model.core import (Handle,
         Source, UnknownSchemeError, DeserialisationError)
 from . import messages
-from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
-        prometheus_summary, make_common_argument_parser)
+from .utilities.args import make_common_argument_parser
+from .utilities.pika import PikaPipelineRunner
+from .utilities.systemd import notify_ready, notify_stopping
+from .utilities.prometheus import prometheus_summary
 
 
 def message_received_raw(body, channel, dump, results_q):

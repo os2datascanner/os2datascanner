@@ -6,7 +6,7 @@ import subprocess
 
 
 from os2datascanner.engine2.model.core import Source
-from os2datascanner.engine2.pipeline.utilities import PikaPipelineRunner
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
 
 
 from .test_engine2_pipeline import (
