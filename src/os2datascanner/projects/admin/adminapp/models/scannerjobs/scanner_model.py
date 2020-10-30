@@ -34,7 +34,7 @@ from django.contrib.postgres.fields import JSONField
 from model_utils.managers import InheritanceManager
 from recurrence.fields import RecurrenceField
 
-from os2datascanner.engine2.model.core import Source, SourceManager
+from os2datascanner.engine2.model.core import Handle, Source, SourceManager
 from os2datascanner.engine2.rules.meta import HasConversionRule
 from os2datascanner.engine2.rules.logical import OrRule, AndRule, make_if
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
@@ -306,6 +306,7 @@ class Scanner(models.Model):
             outbox.append((settings.AMQP_CONVERSION_TARGET,
                     message_template._deep_replace(
                             scan_spec__source=reminder.handle.source,
+                            handle=reminder.handle,
                             progress__rule=rule_here)))
         self.checkups.all().delete()
 
