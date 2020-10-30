@@ -17,13 +17,43 @@
 
 from django.core.management.base import BaseCommand
 
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
+from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
-from ...models.scannerjobs.scanner_model import ScheduledCheckup
+from ...models.scannerjobs.scanner_model import Scanner, ScheduledCheckup
+
+
+def message_received_raw(body):
+    handle = None
+    scan_tag = None
+    if "problem" in body:
+        problem = messages.ProblemMessage.from_json_object(body)
+        handle = problem.handle
+        scan_tag = problem.scan_tag
+        # XXX: ideally we'd detect if a LastModifiedRule fails so that we can
+        # preserve the date to scan the file properly next time, but we don't
+        # (yet) get enough information out of the pipeline for that
+    elif "matches" in body:
+        matches = messages.MatchesMessage.from_json_object(body)
+        # We're only interested in messages that reflect a match
+        if matches.matched:
+            handle = matches.handle
+            scan_tag = matches.scan_spec.scan_tag
+
+    if not scan_tag or not handle:
+        return
+
+    ScheduledCheckup.objects.create(
+            handle_representation=handle.to_json_object(),
+            scanner=Scanner.objects.get(pk=scan_tag["scanner"]["pk"]),
+            interested_before=parse_isoformat_timestamp(scan_tag["time"]))
+
+    yield from []
 
 
 class AdminCollector(PikaPipelineRunner):
     def handle_message(self, message_body, *, channel=None):
-        pass
+        return message_received_raw(message_body)
 
 
 class Command(BaseCommand):

@@ -131,7 +131,7 @@ def main():
             metavar="NAME",
             help="the names of the AMQP queues to which problems should be"
                     + " written",
-            default="os2ds_problems")
+            default=["os2ds_problems", "os2ds_checkups"])
 
     args = parser.parse_args()
 

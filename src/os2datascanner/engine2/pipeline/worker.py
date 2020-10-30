@@ -83,14 +83,14 @@ def main():
             metavar="NAME",
             help="the names of the AMQP queues to which matches should be"
                     " written",
-            default="os2ds_matches")
+            default=["os2ds_matches", "os2ds_checkups"])
     outputs.add_argument(
             "--problems",
             action=AppendReplaceAction,
             metavar="NAME",
             help="the names of the AMQP queues to which problems should be"
                     " written",
-            default="os2ds_problems")
+            default=["os2ds_problems", "os2ds_checkups"])
     outputs.add_argument(
             "--metadata",
             metavar="NAME",
