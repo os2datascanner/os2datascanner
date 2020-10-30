@@ -24,10 +24,10 @@ $(document).click(function(event) {
 });
 
 $(actions).click(function() {
-  const button = $(this)
+  const btn_action = $(this)
 
-  const report_id = parseInt(button.attr("data-report-pk"))
-  const new_status = parseInt(button.attr("data-status"))
+  const report_id = parseInt(btn_action.attr("data-report-pk"))
+  const new_status = parseInt(btn_action.attr("data-status"))
 
   if (!isNaN(report_id) && !isNaN(new_status)) {
     $.ajax({
@@ -46,7 +46,7 @@ $(actions).click(function() {
       }
     }).done(function(body) {
       if (body["status"] == "ok") {
-        button.closest("tr").remove()
+        btn_action.closest("tr").remove()
       } else if (body["status"] == "fail") {
         console.log(
             "Attempt to call set-status-1 failed: "

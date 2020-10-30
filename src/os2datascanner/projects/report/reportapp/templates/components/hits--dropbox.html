@@ -33,26 +33,26 @@
 
             <table class="datatable datatable--nested">
                 <tbody>
-                {% for match in rule.matches|slice:":3" %}
                     <tr>
-                        <td class="datatable__column--match">
-                            <span class="more">
-                                {{ match.match }}
-                            </span>
-                        </td>
-                        <td class="datatable__column--context">
-                            {% if match.context %}
-                                [...]{{ match.context }}[...]
-                            {% endif %}
-                        </td>
-                        <td class="datatable__column--probability">
-                            {% include "components/probability.html" %}
-                        </td>
-                        <td class="datatable__column--handle">
-                            {% include "components/handle-match.html" %}
-                        </td>
+                        {% for match in rule.matches|slice:":3" %}
+                          <td class="datatable__column--match">
+                              <span class="more">
+                                  {{ match.match }}
+                              </span>
+                          </td>
+                          <td class="datatable__column--context">
+                              {% if match.context %}
+                                  [...]{{ match.context }}[...]
+                              {% endif %}
+                          </td>
+                          <td class="datatable__column--probability">
+                              {% include "components/probability.html" %}
+                          </td>
+                        {% endfor %}
+                          <td class="datatable__column--handle">
+                              {% include "components/handle-match.html" %}
+                          </td>
                     </tr>
-                {% endfor %}
                 </tbody>
             </table>
         </td>
