@@ -17,13 +17,14 @@
 
 from django.core.management.base import BaseCommand
 
-from os2datascanner.utils.system_utilities import json_utf8_decode
+from os2datascanner.utils.system_utilities import (json_utf8_decode,
+        parse_isoformat_timestamp)
 from os2datascanner.utils.amqp_connection_manager import start_amqp, \
     set_callback, start_consuming, ack_message
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
+from os2datascanner.projects.report.reportapp.utils import hash_handle
 
-from ...utils import hash_handle, parse_isoformat_timestamp
 from ...models.documentreport_model import DocumentReport
 
 

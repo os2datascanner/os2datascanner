@@ -2,8 +2,7 @@
 
 from django.db import migrations, models
 
-from os2datascanner.projects.report.reportapp.utils import (
-        parse_isoformat_timestamp)
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 
 
 def extract_timestamps(apps, schema_editor):
