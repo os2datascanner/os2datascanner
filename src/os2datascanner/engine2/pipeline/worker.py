@@ -3,13 +3,16 @@ from os import getpid
 from prometheus_client import start_http_server
 
 from ..model.core import SourceManager
-from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
-        prometheus_summary, make_common_argument_parser,
+from .utilities.args import (AppendReplaceAction, make_common_argument_parser,
         make_sourcemanager_configuration_block)
+from .utilities.pika import PikaPipelineRunner
+from .utilities.systemd import notify_ready, notify_stopping
+from .utilities.prometheus import prometheus_summary
 from .explorer import message_received_raw as explorer_handler
 from .processor import message_received_raw as processor_handler
 from .matcher import message_received_raw as matcher_handler
 from .tagger import message_received_raw as tagger_handler
+
 
 def explore(sm, msg):
     for channel, message in explorer_handler(msg, "ss", sm, "co", "pr"):
@@ -20,7 +23,8 @@ def explore(sm, msg):
 
 
 def process(sm, msg):
-    for channel, message in processor_handler(msg, "co", sm, "re", "ss", "pr"):
+    for channel, message in processor_handler(msg,
+            "co", sm, "re", "ss", ["pr"]):
         if channel == "re":
             yield from match(sm, message)
         elif channel == "ss":
@@ -30,7 +34,7 @@ def process(sm, msg):
 
 
 def match(sm, msg):
-    for channel, message in matcher_handler(msg, "re", "ma", "me", "co"):
+    for channel, message in matcher_handler(msg, "re", ["ma"], "me", "co"):
         if channel == "me":
             yield from tag(sm, message)
         elif channel == "co":
@@ -44,14 +48,16 @@ def tag(sm, msg):
 
 
 def message_received_raw(body,
-        channel, source_manager, matches_q, metadata_q, problems_q):
+        channel, source_manager, matches_qs, metadata_q, problems_qs):
     for channel, message in process(source_manager, body):
         if channel == "ma":
-            yield (matches_q, message)
+            for matches_q in matches_qs:
+                yield (matches_q, message)
         elif channel == "me":
             yield (metadata_q, message)
         elif channel == "pr":
-            yield (problems_q, message)
+            for problems_q in problems_qs:
+                yield (problems_q, message)
 
 
 def main():
@@ -73,16 +79,18 @@ def main():
     outputs = parser.add_argument_group("outputs")
     outputs.add_argument(
             "--matches",
+            action=AppendReplaceAction,
             metavar="NAME",
-            help="the name of the AMQP queue to which matches should be"
+            help="the names of the AMQP queues to which matches should be"
                     " written",
-            default="os2ds_matches")
+            default=["os2ds_matches", "os2ds_checkups"])
     outputs.add_argument(
             "--problems",
+            action=AppendReplaceAction,
             metavar="NAME",
-            help="the name of the AMQP queue to which problems should be"
+            help="the names of the AMQP queues to which problems should be"
                     " written",
-            default="os2ds_problems")
+            default=["os2ds_problems", "os2ds_checkups"])
     outputs.add_argument(
             "--metadata",
             metavar="NAME",
@@ -107,7 +115,7 @@ def main():
     with SourceManager(width=args.width) as source_manager:
         with ProcessorRunner(
                 read=[args.conversions],
-                write=[args.matches, args.problems, args.metadata],
+                write=[*args.matches, *args.problems, args.metadata],
                 heartbeat=6000) as runner:
             try:
                 print("Start")

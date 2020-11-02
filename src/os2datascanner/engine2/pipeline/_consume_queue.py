@@ -1,6 +1,7 @@
 import traceback
 
-from .utilities import make_common_argument_parser, PikaConnectionHolder
+from .utilities.args import make_common_argument_parser
+from .utilities.pika import PikaConnectionHolder
 
 
 def main():

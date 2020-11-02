@@ -2,8 +2,7 @@ import unittest
 from datetime import datetime, timezone, timedelta
 
 
-from os2datascanner.projects.report.reportapp.utils import (
-        parse_isoformat_timestamp)
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 
 
 def seconds_to_tz(sec):

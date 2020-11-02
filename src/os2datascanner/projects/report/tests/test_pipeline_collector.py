@@ -1,6 +1,7 @@
 from django.test import TestCase
 import unittest
 
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
 from os2datascanner.engine2.rules.regex import RegexRule
@@ -8,7 +9,6 @@ from os2datascanner.engine2.rules.logical import AndRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.conversions.types import OutputType
-from ..reportapp.utils import parse_isoformat_timestamp
 from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.management.commands import pipeline_collector
 

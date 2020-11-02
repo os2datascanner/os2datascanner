@@ -1,11 +1,10 @@
 from os import getenv
 from json import dumps, loads
-import pika
 import unittest
 
 
-from os2datascanner.engine2.pipeline.utilities import PikaPipelineRunner
 from os2datascanner.engine2.model.core import Source
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
 
 
 from .test_engine2_pipeline import (
@@ -37,7 +36,13 @@ class Engine2PipelineTests(unittest.TestCase):
     def test_simple_regex_match(self):
         print(Source.from_url(data_url).to_json_object())
         obj = {
-            "scan_tag": "integration_test",
+            "scan_tag": {
+                "scanner": {
+                    "name": "integration_test",
+                    "pk": 0
+                },
+                "time": "2020-01-01T00:00:00+00:00"
+            },
             "source": Source.from_url(data_url).to_json_object(),
             "rule": rule.to_json_object()
         }
