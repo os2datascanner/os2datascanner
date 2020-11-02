@@ -279,13 +279,15 @@ class ProblemMessage(NamedTuple):
     source: Optional[Source]
     handle: Optional[Handle]
     message: str
+    missing: bool = False
 
     def to_json_object(self):
         return {
             "scan_tag": self.scan_tag,
             "source": self.source.to_json_object() if self.source else None,
             "handle": self.handle.to_json_object() if self.handle else None,
-            "message": self.message
+            "message": self.message,
+            "missing": self.missing
         }
 
     @staticmethod
@@ -296,6 +298,7 @@ class ProblemMessage(NamedTuple):
                 scan_tag=obj["scan_tag"],
                 source=Source.from_json_object(source) if source else None,
                 handle=Handle.from_json_object(handle) if handle else None,
-                message=obj["message"])
+                message=obj["message"],
+                missing=obj.get("missing", False))
 
     _deep_replace = _deep_replace

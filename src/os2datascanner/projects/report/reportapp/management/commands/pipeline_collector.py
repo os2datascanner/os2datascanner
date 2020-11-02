@@ -14,11 +14,14 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+
 from django.core.management.base import BaseCommand
 
 from os2datascanner.utils.system_utilities import json_utf8_decode
 from os2datascanner.utils.amqp_connection_manager import start_amqp, \
     set_callback, start_consuming, ack_message
+from os2datascanner.engine2.rules.last_modified import LastModifiedRule
+from os2datascanner.engine2.pipeline import messages
 
 from ...utils import hash_handle, parse_isoformat_timestamp
 from ...models.documentreport_model import DocumentReport
@@ -39,48 +42,103 @@ def _restructure_and_save_result(result):
     'problem': []}
     """
     result = json_utf8_decode(result)
-    updated_fields = _format_results(result)
-    if updated_fields:
-        reference = result.get('handle') or result.get('source')
+    reference = result.get("handle") or result.get("source")
+    tag, queue = _identify_message(result)
+    if not reference or not tag or not queue:
+        return
 
-        report_obj, is_created = DocumentReport.objects.get_or_create(
-            path=hash_handle(reference))
+    previous_report, new_report = get_reports_for(reference, tag)
+    if queue == "matches":
+        handle_match_message(previous_report, new_report, result)
+    elif queue == "problem":
+        handle_problem_message(previous_report, new_report, result)
+    elif queue == "metadata":
+        new_report.data["metadata"] = result
+        new_report.save()
 
-        if is_created:
-            # if created updatde_fields are stored.
-            report_obj.data = updated_fields
-        else:
-            # else merge the new message with the existing report_obj.data
-            report_obj.data['scan_tag'] = updated_fields['scan_tag']
-            if updated_fields.get('matches'):
-                report_obj.data['matches'] = updated_fields.get('matches')
-            elif updated_fields.get('metadata'):
-                report_obj.data['metadata'] = updated_fields.get('metadata')
 
-        scan_tag = report_obj.data["scan_tag"]
-        report_obj.scan_time = parse_isoformat_timestamp(scan_tag["time"])
-        report_obj.save()
+def get_reports_for(reference, scan_tag):
+    scanner = scan_tag["scanner"]
+    time_raw = scan_tag["time"]
+    time = parse_isoformat_timestamp(time_raw)
 
-def _format_results(result):
-    """Method for restructuring result body"""
-    updated_fields = {}
+    path = hash_handle(reference)
+    previous_report = DocumentReport.objects.filter(path=path,
+            data__scan_tag__scanner=scanner).order_by("-scan_time").first()
+    # get_or_create unconditionally writes freshly-created objects to the
+    # database (in the version of Django we're using at the moment, at least),
+    # so we have to implement similar logic ourselves
+    try:
+        new_report = DocumentReport.objects.filter(
+                path=path, scan_time=time).get()
+    except DocumentReport.DoesNotExist:
+        new_report = DocumentReport(path=path, scan_time=time,
+                data={"scan_tag": scan_tag})
 
+    return previous_report, new_report
+
+def handle_match_message(previous_report, new_report, body):
+    new_matches = messages.MatchesMessage.from_json_object(body)
+    previous_matches = previous_report.matches if previous_report else None
+
+    if previous_report and previous_report.resolution_status is None:
+        # There are existing unresolved results; resolve them based on the new
+        # message
+        if previous_matches:
+            if not new_matches.matched:
+                # No new matches. Be cautiously optimistic, but check what
+                # actually happened
+                if (len(new_matches.matches) == 1
+                        and isinstance(new_matches.matches[0].rule,
+                                LastModifiedRule)):
+                    # The file hasn't been changed, so the matches are the same
+                    # as they were last time. Instead of making a new entry,
+                    # just update the timestamp on the old one
+                    previous_report.scan_time = parse_isoformat_timestamp(
+                            new_matches.scan_spec.scan_tag["time"])
+                    previous_report.save()
+                else:
+                    # The file has been edited and the matches are no longer
+                    # present
+                    previous_report.resolution_status = (
+                            DocumentReport.ResolutionChoices.EDITED.value)
+                    previous_report.save()
+            else:
+                # The file has been edited, but matches are still present.
+                # Resolve the previous ones
+                previous_report.resolution_status = (
+                        DocumentReport.ResolutionChoices.EDITED.value)
+                previous_report.save()
+
+    if new_matches.matched:
+        new_report.data["matches"] = body
+        new_report.save()
+
+
+def handle_problem_message(previous_report, new_report, body):
+    problem = messages.ProblemMessage.from_json_object(body)
+    if (previous_report and previous_report.resolution_status is None
+            and problem.missing):
+        # The file previously had matches, but has been removed. Resolve them
+        previous_report.resolution_status = (
+                DocumentReport.ResolutionChoices.REMOVED.value)
+        previous_report.save()
+    else:
+        new_report.data["problem"] = body
+        new_report.save()
+
+
+def _identify_message(result):
     origin = result.get('origin')
 
     if origin == 'os2ds_problems':
-        updated_fields['scan_tag'] = result.get('scan_tag')
-        updated_fields['problem'] = result
+        return (result.get("scan_tag"), "problem")
     elif origin == 'os2ds_metadata':
-        updated_fields['scan_tag'] = result.get('scan_tag')
-        updated_fields['metadata'] = result
-    elif origin == 'os2ds_matches':
-        if result.get('matched'):
-            updated_fields['scan_tag'] = result.get('scan_spec').get('scan_tag')
-            updated_fields['matches'] = result
-        else:
-            print('Object processed with no matches: {}'.format(result))
-
-    return updated_fields
+        return (result.get("scan_tag"), "metadata")
+    elif origin == "os2ds_matches":
+        return (result["scan_spec"].get("scan_tag"), "matches")
+    else:
+        return None, None
 
 
 
