@@ -29,12 +29,11 @@
     </div>
   </td>
 
-  <td class="datatable__column--match datatable__column--context" colspan="4">
-
+  <td class="datatable__column--match datatable__column--context" colspan="3">
     <table class="datatable datatable--nested">
       <tbody>
-        <tr>
-          {% for match in rule.matches|slice:":3" %}
+        {% for match in rule.matches|slice:":3" %}
+          <tr>
             <td class="datatable__column--match">
                 <span class="more">
                     {{ match.match }}
@@ -48,14 +47,18 @@
             <td class="datatable__column--probability">
                 {% include "components/probability.html" %}
             </td>
-          {% endfor %}
-            <td class="datatable__column--handle">
-                {% include "components/handle-match.html" %}
-            </td>
-        </tr>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
   </td>
 
+  <td class="datatable__column--item">
+    <div class="hit-link">
+      <div class="button-group">
+        {% include "components/handle-match.html" %}
+      </div>
+    </div>
+  </td>
 </tr>
 {% endif %} {% endfor %}

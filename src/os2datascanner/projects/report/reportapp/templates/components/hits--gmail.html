@@ -29,33 +29,36 @@
 	            </div>
 	        </td>
 
-	        <td class="datatable__column--match datatable__column--context" colspan="4">
-
+	        <td class="datatable__column--match datatable__column--context" colspan="3">
 	            <table class="datatable datatable--nested">
-	                <tbody>
+	              <tbody>
+									{% for match in rule.matches|slice:":3" %}
 										<tr>
-											{% for match in rule.matches|slice:":3" %}
-												<td class="datatable__column--match">
-														<span class="more">
-																{{ match.match }}
-														</span>
-												</td>
-												<td class="datatable__column--context">
-														{% if match.context %}
-																[...]{{ match.context }}[...]
-														{% endif %}
-												</td>
-												<td class="datatable__column--probability">
-														{% include "components/probability.html" %}
-												</td>
-											{% endfor %}
-												<td class="datatable__column--handle">
-														{% include "components/handle-match.html" %}
-												</td>
+											<td class="datatable__column--match">
+													<span class="more">
+															{{ match.match }}
+													</span>
+											</td>
+											<td class="datatable__column--context">
+													{% if match.context %}
+															[...]{{ match.context }}[...]
+													{% endif %}
+											</td>
+											<td class="datatable__column--probability">
+													{% include "components/probability.html" %}
+											</td>
 										</tr>
-	                </tbody>
+									{% endfor %}
+								</tbody>
 	            </table>
-	        </td>
+					</td>
 
+					<td class="datatable__column--item">
+            <div class="hit-link">
+              <div class="button-group">
+                {% include "components/handle-match.html" %}
+              </div>
+            </div>
+        	</td>
 	    </tr>
 	{% endif %} {% endfor %}
