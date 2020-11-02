@@ -11,10 +11,13 @@ def extract_timestamps(apps, schema_editor):
     If Out of memory still occurs try reducing batch size."""
 
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
-    document_reports = DocumentReport.objects.filter(data__scan_tag__isnull=False)
+    document_reports_count = DocumentReport.objects.filter(data__scan_tag__isnull=False).count()
     batchsize = 10000
-    for i in range(0, len(document_reports), batchsize):
-        batch = document_reports[i:i + batchsize]
+    i = 0
+    while i < document_reports_count:
+        print('i: {}'.format(str(i)))
+        batch = DocumentReport.objects.filter(data__scan_tag__isnull=False)[i:batchsize+i]
+        i += batchsize
         for dr in batch:
             scan_tag = dr.data["scan_tag"]
             if isinstance(scan_tag, dict) and "time" in scan_tag:
