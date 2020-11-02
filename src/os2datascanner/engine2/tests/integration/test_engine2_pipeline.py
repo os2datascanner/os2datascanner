@@ -100,7 +100,13 @@ class Engine2PipelineTests(unittest.TestCase):
     def test_simple_regex_match(self):
         print(Source.from_url(data_url).to_json_object())
         obj = {
-            "scan_tag": "integration_test",
+            "scan_tag": {
+                "scanner": {
+                    "name": "integration_test",
+                    "pk": 0
+                },
+                "time": "2020-01-01T00:00:00+00:00"
+            },
             "source": Source.from_url(data_url).to_json_object(),
             "rule": rule.to_json_object()
         }
@@ -123,7 +129,13 @@ class Engine2PipelineTests(unittest.TestCase):
 
     def test_unsupported_sources(self):
         obj = {
-            "scan_tag": "integration_test",
+            "scan_tag": {
+                "scanner": {
+                    "name": "integration_test",
+                    "pk": 0
+                },
+                "time": "2020-01-01T00:00:00+00:00"
+            },
             "source": {
                 "type": "forbidden-knowledge",
                 "of": ["good", "evil"]
@@ -143,7 +155,13 @@ class Engine2PipelineTests(unittest.TestCase):
 
     def test_ocr_skip(self):
         obj = {
-            "scan_tag": "integration_test",
+            "scan_tag": {
+                "scanner": {
+                    "name": "integration_test",
+                    "pk": 0
+                },
+                "time": "2020-01-01T00:00:00+00:00"
+            },
             "source": FilesystemSource(os.path.join(
                     test_data_path, "ocr", "good")).to_json_object(),
             "rule": CPRRule(modulus_11=False,
