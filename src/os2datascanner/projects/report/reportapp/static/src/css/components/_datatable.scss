@@ -28,23 +28,28 @@
     border-radius: var(--border-radius-sensitivity);
 
       &--critical {
+        display: block;
         background-color: var(--color-error);
       }
       
       &--problem {
+        display: block;
         background-color: var(--color-problem);
       }
 
       &--warning {
+        display: block;
         background-color: var(--color-warning);
       }
 
       &--notification {
+        display: block;
         background-color: var(--color-notification);
       }
   }
 
   .text-content {
+    display: block;
     grid-area: text-content;
     padding: 2rem;
   }
