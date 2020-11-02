@@ -18,6 +18,7 @@
 from django.core.management.base import BaseCommand
 
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
+from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
 from ...models.scannerjobs.scanner_model import Scanner, ScheduledCheckup
@@ -26,27 +27,72 @@ from ...models.scannerjobs.scanner_model import Scanner, ScheduledCheckup
 def message_received_raw(body):
     handle = None
     scan_tag = None
-    if "problem" in body:
+    matches = None
+    problem = None
+    if "message" in body:  # Problem message
         problem = messages.ProblemMessage.from_json_object(body)
         handle = problem.handle
         scan_tag = problem.scan_tag
-        # XXX: ideally we'd detect if a LastModifiedRule fails so that we can
-        # preserve the date to scan the file properly next time, but we don't
-        # (yet) get enough information out of the pipeline for that
-    elif "matches" in body:
+    elif "matches" in body:  # Matches message
         matches = messages.MatchesMessage.from_json_object(body)
-        # We're only interested in messages that reflect a match
-        if matches.matched:
-            handle = matches.handle
-            scan_tag = matches.scan_spec.scan_tag
+        handle = matches.handle
+        scan_tag = matches.scan_spec.scan_tag
 
     if not scan_tag or not handle:
         return
+    scanner = Scanner.objects.get(pk=scan_tag["scanner"]["pk"])
+    scan_time = parse_isoformat_timestamp(scan_tag["time"])
 
-    ScheduledCheckup.objects.create(
-            handle_representation=handle.to_json_object(),
-            scanner=Scanner.objects.get(pk=scan_tag["scanner"]["pk"]),
-            interested_before=parse_isoformat_timestamp(scan_tag["time"]))
+    try:
+        checkup = ScheduledCheckup.objects.get(
+                handle_representation=handle.to_json_object(),
+                scanner=scanner)
+
+        # If we get here, then there was already a checkup object in the
+        # database. Let's take a look at it
+
+        if matches:
+            if not matches.matched:
+                if (len(matches.matches) == 1
+                        and isinstance(matches.matches[0].rule,
+                                LastModifiedRule)):
+                    # This object hasn't changed since the last scan. Update
+                    # the checkup timestamp so we remember to check it again
+                    # next time
+                    checkup.interested_before = scan_time
+                    checkup.save()
+                else:
+                    # This object has been changed and no longer has any
+                    # matches. Hooray! Forget about it
+                    checkup.delete()
+            else:
+                # This object has changed, but still has matches. Update the
+                # checkup timestamp
+                checkup.interested_before = scan_time
+                checkup.save()
+        elif problem:
+            if problem.missing:
+                # Permanent error, so this object has been deleted. Forget
+                # about it
+                checkup.delete()
+            else:
+                # Transient error -- do nothing. In particular, don't update
+                # the checkup timestamp; we don't want to forget about changes
+                # between the last match and this error
+                pass
+    except ScheduledCheckup.DoesNotExist:
+        if ((matches and matches.matched)
+                or (problem and not problem.missing)):
+            # An object with a transient problem or with real matches is an
+            # object we'll want to check up on again later
+            ScheduledCheckup.objects.create(
+                    handle_representation=handle.to_json_object(),
+                    scanner=scanner,
+                    # XXX: ideally we'd detect if a LastModifiedRule is the
+                    # victim of a transient failure so that we can preserve the
+                    # date to scan the object properly next time, but we don't
+                    # (yet) get enough information out of the pipeline for that
+                    interested_before=scan_time)
 
     yield from []
 

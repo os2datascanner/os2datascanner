@@ -292,7 +292,8 @@ class Scanner(models.Model):
                     message_template._replace(source=source)))
 
         # Also build ConversionMessages for the objects that we should try to
-        # scan again
+        # scan again (our pipeline_collector is responsible for eventually
+        # deleting these reminders)
         message_template = messages.ConversionMessage(
                 scan_spec=message_template,
                 handle=None, progress=messages.ProgressFragment(
@@ -308,7 +309,6 @@ class Scanner(models.Model):
                             scan_spec__source=reminder.handle.source,
                             handle=reminder.handle,
                             progress__rule=rule_here)))
-        self.checkups.all().delete()
 
         self.e2_last_run_at = now
         self.save()
@@ -340,8 +340,8 @@ class Scanner(models.Model):
 
 
 class ScheduledCheckup(models.Model):
-    """A ScheduledCheckup is a single-use reminder to the administration system
-    to test the availability of a specific Handle in the next scan.
+    """A ScheduledCheckup is a reminder to the administration system to test
+    the availability of a specific Handle in the next scan.
 
     These reminders serve two functions: to make sure that objects that were
     transiently unavailable will eventually be included in a scan, and to make
