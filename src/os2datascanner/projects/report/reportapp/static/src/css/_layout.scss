@@ -8,13 +8,14 @@ body {
 
 .wrapper {
   display: flex;
-  width: 100%;
+  max-width: 100%;
+  min-height: 91%;
 }
 
 .content {
-  max-width: 90%;
-  min-height: calc(100vh - 9rem - var(--size-ds-unit) * 3);
-  padding: 8rem 8rem;
+  max-width: 100%;
+  padding-top: 8rem;
+  padding-left: 8rem;
 }
 
 .wrapper > *:first-child {
