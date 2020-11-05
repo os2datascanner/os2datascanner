@@ -6,3 +6,4 @@
 
 openssl
 libxmlsec1-dev
+xmlsec1
