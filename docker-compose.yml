@@ -167,6 +167,17 @@ services:
     ports:
       - "8060:3000"
 
+  idp:
+    image: magentalabs/simplesamlphp:2.0.0
+    environment:
+      - SIMPLESAMLPHP_BASEURLPATH=http://localhost:8080/simplesaml/
+      - SIMPLESAMLPHP_SP_ENTITY_ID=http://localhost:8040/saml2_auth/acs/
+      - SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE=http://localhost:8040/saml2_auth/acs/
+    volumes:
+      - ./dev-environment/authsources.php:/var/www/simplesamlphp/config/authsources.php
+    ports:
+      - "8080:8080"
+
 x-disabled:
   engine_processor:
     build:
@@ -204,6 +215,7 @@ x-disabled:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - queue
+
 
 volumes:
   frontend-bundles-admin:
