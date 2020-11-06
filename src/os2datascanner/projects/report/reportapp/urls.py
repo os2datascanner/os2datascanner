@@ -29,7 +29,7 @@ else:
         name='login'))
     urlpatterns.append(url(r'^accounts/logout/',
         django.contrib.auth.views.LogoutView.as_view(
-            template_name='login.html',
+            template_name='logout.html',
         ),
         name='logout'))
 
