@@ -3,7 +3,7 @@ SECRET_KEY = "DUMMYKEY(for development)DUMMYKEY(for development)"
 # [mode]
 DEBUG = true
 
-SAML2_ENABLED = false
+SAML2_ENABLED = true
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
