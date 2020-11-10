@@ -29,8 +29,11 @@ class PDFSource(DerivedSource):
 
 
 class PDFPageResource(Resource):
-    def check(self):
-        pass
+    def check(self) -> bool:
+        page = int(self.handle.relative_path)
+        with self.handle.source.handle.follow(self._sm).make_stream() as fp:
+            reader = pdfrw.PdfReader(fp)
+            return page in range(1, len(reader.pages) + 1)
 
     def compute_type(self):
         return PAGE_TYPE

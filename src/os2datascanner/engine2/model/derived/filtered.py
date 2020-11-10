@@ -64,8 +64,8 @@ class FilteredResource(FileResource):
         super().__init__(handle, sm)
         self._mr = None
 
-    def check(self):
-        self.unpack_stream()
+    def check(self) -> bool:
+        return self._get_cookie().check()
 
     def _poke_stream(self, s):
         """Peeks at a single byte from the compressed stream, in the process

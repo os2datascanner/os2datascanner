@@ -3,6 +3,7 @@ from io import BytesIO
 
 from .core import Source, Handle, FileResource
 from google.oauth2 import service_account
+from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 
 from .utilities import NamedTemporaryResource
@@ -85,8 +86,14 @@ class GmailResource(FileResource):
         super().__init__(handle, sm)
         self._metadata = None
 
-    def check(self):
-        self.metadata
+    def check(self) -> bool:
+        try:
+            self.metadata
+            return True
+        except HttpError as e:
+            if e.resp.status in (404, 410,):
+                return False
+            raise
 
     @property
     def metadata(self):

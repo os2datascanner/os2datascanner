@@ -120,8 +120,12 @@ class WebResource(FileResource):
         self._response = None
         self._mr = None
 
-    def check(self):
-        self.unpack_header(check=True)
+    def _get_head_raw(self):
+        return self._get_cookie().head(self._make_url())
+
+    def check(self) -> bool:
+        response = self._get_head_raw()
+        return response.status_code not in (404, 410,)
 
     def _make_url(self):
         handle = self.handle
@@ -134,7 +138,7 @@ class WebResource(FileResource):
 
     def unpack_header(self, check=False):
         if not self._response:
-            self._response = self._get_cookie().head(self._make_url())
+            self._response = self._get_head_raw()
             header = self._response.headers
 
             self._mr = MultipleResults(

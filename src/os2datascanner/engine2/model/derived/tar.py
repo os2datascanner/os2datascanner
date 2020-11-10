@@ -30,13 +30,20 @@ class TarResource(FileResource):
         super().__init__(handle, sm)
         self._mr = None
 
-    def check(self):
-        self.unpack_info()
+    def _get_raw_info(self):
+        return self._get_cookie().getmember(self.handle.relative_path)
+
+    def check(self) -> bool:
+        try:
+            self._get_raw_info()
+            return True
+        except KeyError:
+            return False
 
     def unpack_info(self):
         if not self._mr:
             self._mr = MultipleResults.make_from_attrs(
-                    self._get_cookie().getmember(self.handle.relative_path),
+                    self._get_raw_info(),
                     "chksum", "devmajor", "devminor", "gid", "gname",
                     "linkname", "linkpath", "mode", "mtime", "name", "offset",
                     "offset_data", "path", "pax_headers", "size", "sparse",
