@@ -3,6 +3,9 @@
 AMQP_HOST = "localhost"
 AMQP_USER = ""
 AMQP_PWD = ""
+AMQP_SCHEME = "amqp"
+AMQP_PORT = 5672
+AMQP_VHOST = "/"
     [amqp.AMQP_BACKOFF_PARAMS]
     max_tries = 10
     ceiling = 7

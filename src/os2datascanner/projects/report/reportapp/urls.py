@@ -1,6 +1,7 @@
 import django_saml2_auth.views
 import django.contrib.auth.views
 from django.conf.urls import url
+from django.http import HttpResponse
 from django.urls import include
 from django.conf import settings
 
@@ -16,6 +17,7 @@ urlpatterns = [
     url('stats',    StatsPageView.as_view(),    name="about"),
     url('settings', SettingsPageView.as_view(), name="settings"),
     url('about',    AboutPageView.as_view(),    name="about"),
+    url(r'^health/', lambda r: HttpResponse()),
 ]
 if settings.SAML2_ENABLED:
     urlpatterns.append(url(r"^saml2_auth/", include("django_saml2_auth.urls")))

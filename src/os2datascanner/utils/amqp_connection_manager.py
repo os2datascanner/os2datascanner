@@ -2,7 +2,7 @@
 import pika
 
 from ..engine2.utilities.backoff import run_with_backoff
-from .pika_settings import AMQP_HOST, AMQP_USER, AMQP_PWD, AMQP_BACKOFF_PARAMS
+from .pika_settings import AMQP_SCHEME, AMQP_HOST, AMQP_PORT, AMQP_VHOST, AMQP_USER, AMQP_PWD, AMQP_BACKOFF_PARAMS
 
 _amqp_obj = {
     "amqp_channels": None,
@@ -40,11 +40,15 @@ def _create_connection():
     Creates a amqp connection
     """
     if not _amqp_obj['connection']:
-        credentials = pika.PlainCredentials(AMQP_USER, AMQP_PWD)
-        conn_params = pika.ConnectionParameters(host=AMQP_HOST,
-                                                credentials=credentials,
-                                                heartbeat=6000)
-        _amqp_obj['connection'] = pika.BlockingConnection(conn_params)
+        conn_string_tpl = '{0}://{1}:{2}@{3}:{4}/{5}?heartbeat=6000'
+        conn_string = conn_string_tpl.format(AMQP_SCHEME, 
+                                             AMQP_USER, 
+                                             AMQP_PWD, 
+                                             AMQP_HOST,
+                                             AMQP_PORT,
+                                             AMQP_VHOST.lstrip('/'))
+        params = pika.URLParameters(conn_string)
+        _amqp_obj['connection'] = pika.BlockingConnection(params)
 
 
 def send_message(routing_key, body):

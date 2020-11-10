@@ -144,6 +144,9 @@ FRONTEND_URL = 'https://myfrontendclient.com' # Redirect URL for the client if y
 AMQP_HOST = "queue"
 AMQP_USER = "guest"
 AMQP_PWD = "guest"
+AMQP_SCHEME = "amqp"
+AMQP_PORT = 5672
+AMQP_VHOST = "/"
     [amqp.AMQP_BACKOFF_PARAMS]
     max_tries = 10
     ceiling = 7
