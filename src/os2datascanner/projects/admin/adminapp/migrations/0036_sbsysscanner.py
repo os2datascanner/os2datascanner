@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner', '0034_gmailscanner'),
+        ('os2datascanner', '0035_scheduledcheckup'),
     ]
 
     operations = [
