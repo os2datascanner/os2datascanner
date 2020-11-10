@@ -21,6 +21,7 @@ ENABLE_WEBSCAN = true
 ENABLE_EXCHANGESCAN = true
 ENABLE_GOOGLEDRIVESCAN = true
 ENABLE_GMAILSCAN = true
+ENABLE_SBSYSSCAN = true
 
 # [email]
 DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"

@@ -29,6 +29,7 @@ from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 from .models.scannerjobs.msgraph_models import (
         MSGraphMailScanner, MSGraphFileScanner)
 from .models.scannerjobs.gmail_model import GmailScanner
+from .models.scannerjobs.sbsysscanner_model import SbsysScanner
 from .views.exchangescanner_views import ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate, \
     ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun
 from .views.filescanner_views import FileScannerCreate, FileScannerRun, FileScannerAskRun, FileScannerUpdate, \
@@ -39,6 +40,8 @@ from .views.googledrivescanner_views import GoogleDriveScannerCreate, GoogleDriv
     GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete
 from .views.gmailscanner_views import GmailScannerCreate, GmailScannerRun, GmailScannerAskRun, GmailScannerUpdate, \
     GmailScannerDelete, GmailScannerList
+from .views.sbsysscanner_views import SbsysScannerCreate, SbsysScannerList, SbsysScannerAskRun, SbsysScannerDelete, \
+    SbsysScannerRun, SbsysScannerUpdate
 from .views.rule_views import RuleList, \
     CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
     RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
@@ -153,6 +156,21 @@ urlpatterns = [
             model=GmailScanner),
         name='gmailscanner_askrun'),
 
+    # Sbsys scanner URL's
+    url(r'^sbsysscanners/$', SbsysScannerList.as_view(), name='sbsysscanners'),
+    url(r'^sbsysscanners/add/$', SbsysScannerCreate.as_view(), name='sbsysscanner_add'),
+    url(r'^sbsysscanners/(?P<pk>\d+)/$', SbsysScannerUpdate.as_view(),
+        name='sbsysscanner_update'),
+    url(r'^sbsysscanners/(?P<pk>\d+)/delete/$', SbsysScannerDelete.as_view(),
+        name='sbsysscanner_delete'),
+    url(r'^sbsysscanners/(?P<pk>\d+)/run/$', SbsysScannerRun.as_view(),
+        name='sbsysscanner_run'),
+    url(r'^sbsysscanners/(?P<pk>\d+)/askrun/$',
+        SbsysScannerAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=SbsysScanner),
+        name='sbsysscanner_askrun'),
+
     # OAuth-based data sources
     url(r'^msgraph-filescanners/$',
             MSGraphFileList.as_view(),
@@ -259,9 +277,9 @@ urlpatterns = [
         ),
 
     # General success handler
-    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners)/(\d+)/(created)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(created)/$',
         DialogSuccess.as_view()),
-    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners)/(\d+)/(saved)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(saved)/$',
         DialogSuccess.as_view()),
     url(r'^(rules/regex|rules/cpr|groups)/(\d+)/(created)/$',
         DialogSuccess.as_view()),

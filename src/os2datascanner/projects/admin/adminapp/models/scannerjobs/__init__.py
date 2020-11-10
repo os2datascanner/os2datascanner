@@ -5,3 +5,4 @@ from . import webscanner_model  # noqa
 from . import msgraph_models  # noqa
 from . import googledrivescanner_model # noqa
 from . import gmail_model # noqa
+from . import sbsysscanner_model # noqa

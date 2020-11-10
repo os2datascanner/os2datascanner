@@ -32,6 +32,8 @@
         {% include "components/hits--googledrive.html" %}
       {% elif match.matches.handle|find_parent:"gmail" %}
         {% include "components/hits--gmail.html" %}
+      {% elif match.matches.handle|find_parent:"sbsys" %}
+        {% include "components/hits--sbsys.html" %}
       {% endif %}
     {% endfor %}
   </tbody>

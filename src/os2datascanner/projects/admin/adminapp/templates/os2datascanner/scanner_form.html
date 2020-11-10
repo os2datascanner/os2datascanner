@@ -230,6 +230,7 @@
       {% endif %}
     </fieldset>
 
+    {% if not view.type == 'sbsys' %}
     <fieldset class="form__fieldset">
     {% if form.sitemap %}
     <legend>Sitemap</legend>
@@ -480,7 +481,7 @@
         {% if form.download_sitemap.errors %}{{ form.download_sitemap.errors }}{% endif %}
       </div>
       {% endif %}
-      
+
       {% if form.service_account_file_gmail %}
       <div class="form__group">
         <label class="control-label" for="id_{{ form.service_account_file_gmail.name }}">Upload Service Account (.json)</label>
@@ -640,6 +641,7 @@
       </div>
       {% endif %}
       </fieldset>
+    {% endif %}
       
     <fieldset class="form__fieldset">
       <legend>Tilføj scannerindstillinger</legend>
