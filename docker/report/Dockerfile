@@ -99,12 +99,15 @@ COPY src/os2datascanner/projects/__init__.py ./projects/
 COPY src/os2datascanner/projects/django_toml_configuration.py ./projects/
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
-COPY VERSION .
-COPY LICENSE .
-COPY README.rst .
-COPY NEWS.rst .
 # Copy necessary files from engine modul TODO: minimize this
 COPY src/os2datascanner/engine2 ./engine2
+
+# Copy VERSION, LICENCE, README, NEWS to PROJECT_DIR
+WORKDIR /code
+COPY VERSION ./
+COPY LICENSE ./
+COPY README.rst ./
+COPY NEWS.rst ./
 
 # Copy frontend dist folder to static
 WORKDIR /code/src/os2datascanner/projects/report/reportapp/static

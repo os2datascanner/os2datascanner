@@ -61,13 +61,16 @@ WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/engine2 ./engine2/
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
-COPY VERSION .
-COPY LICENSE .
-COPY README.rst .
-COPY NEWS.rst .
 
 COPY docker/engine/docker-settings.toml /code/docker/docker-settings.toml
 COPY docker/engine/docker-entrypoint.sh /code/docker/docker-entrypoint.sh
+
+# Copy VERSION, LICENCE, README, NEWS to /code
+WORKDIR /code
+COPY VERSION ./
+COPY LICENSE ./
+COPY README.rst ./
+COPY NEWS.rst ./
 
 # Set up to run given command as the new user
 USER os2ds_engine:os2ds_engine
