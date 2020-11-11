@@ -30,16 +30,15 @@ class Resource(ABC):
         return self._handle
 
     @abstractmethod
-    def check(self):
+    def check(self) -> bool:
         """Checks that this Resource is available by interacting with it in an
-        unspecified, lightweight way. Returns nothing on success, or raises an
-        exception on failure.
+        unspecified, lightweight way. Returns True if the resource exists, and
+        False if it doesn't.
 
-        This method will only fail if the Resource cannot be accessed and is
-        not expected to be accessible in future. In particular, transient
-        issues like locked files will not cause it to fail."""
-        # Implementation note: a sensible thing for this function to do is to
-        # attempt to populate an internal metadata cache
+        This method will only return False if the Resource cannot be accessed
+        and is not expected to be accessible in future. In particular,
+        transient issues like locked files or connectivity problems will not
+        cause False to be returned."""
 
     def _get_cookie(self):
         """Returns the magic cookie produced when the Source behind this

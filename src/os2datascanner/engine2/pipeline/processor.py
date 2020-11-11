@@ -23,18 +23,14 @@ def message_received_raw(body,
 
     try:
         resource = conversion.handle.follow(source_manager)
-        try:
-            resource.check()
-        except Exception as e:
-            # If this happens, then the resource is missing. Generate a special
-            # problem message and stop the generator immediately
-            exception_message = ", ".join([str(a) for a in e.args])
+        if not resource.check():
+            # The resource is missing. Generate a special problem message and
+            # stop the generator immediately
             for problems_q in problems_qs:
                 yield (problems_q, messages.ProblemMessage(
                         scan_tag=conversion.scan_spec.scan_tag,
                         source=None, handle=conversion.handle, missing=True,
-                        message="Resource missing: {0}".format(
-                            exception_message)).to_json_object())
+                        message="Resource check failed").to_json_object())
             return
 
         representation = None

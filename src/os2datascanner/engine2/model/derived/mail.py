@@ -48,8 +48,10 @@ class MailPartResource(FileResource):
         super().__init__(handle, sm)
         self._fragment = None
 
-    def check(self):
-        self._get_fragment()
+    def check(self) -> bool:
+        # XXX: this implementation probably never returns True (_get_fragment
+        # is likely to raise an exception before it returns None)
+        return self._get_fragment() is not None
 
     def _get_fragment(self):
         if not self._fragment:

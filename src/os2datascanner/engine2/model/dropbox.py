@@ -4,7 +4,9 @@ from io import BytesIO
 from urllib.parse import urlsplit
 
 import dropbox
+from dropbox.files import GetMetadataError
 from dropbox.dropbox import create_session
+from dropbox.exceptions import ApiError
 from ..conversions.utilities.results import SingleResult
 from ..conversions.types import OutputType
 from .core import Source, Handle, FileResource
@@ -80,8 +82,18 @@ class DropboxResource(FileResource):
         super().__init__(handle, sm)
         self._metadata = None
 
-    def check(self):
-        self.metadata
+    def check(self) -> bool:
+        try:
+            self.metadata
+            return True
+        except ApiError as e:
+            if (isinstance(e.error, GetMetadataError)
+                    and e.error.is_path()
+                    and e.error.get_path().is_not_found()):
+                return False
+            # If we weren't able to conclude that the file is missing, then
+            # reraise this exception
+            raise
 
     def open_file(self):
         metadata, res = self._get_cookie().files_download(

@@ -40,6 +40,10 @@ class Engine2ContainerTest(unittest.TestCase):
             elif handle.name == "test-vector" or isinstance(
                     source, DataSource):
                 r = handle.follow(sm)
+
+                self.assertTrue(
+                        r.check(),
+                        "check() method failed")
                 reported_size = r.get_size()
                 last_modified = r.get_last_modified()
 

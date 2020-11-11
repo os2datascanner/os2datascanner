@@ -60,9 +60,10 @@ DUMMY_MIME = "application/vnd.os2.datascanner.graphdrive"
 
 
 class MSGraphDriveResource(Resource):
-    def check(self):
-        self._get_cookie().get("drives/{0}?$select=id".format(
-                self.handle.relative_path), json=False)
+    def check(self) -> bool:
+        response = self._get_cookie().get_raw(
+                "drives/{0}?$select=id".format(self.handle.relative_path))
+        return response.status_code not in (404, 410,)
 
     def compute_type(self):
         return DUMMY_MIME
@@ -140,8 +141,11 @@ class MSGraphFileResource(FileResource):
         super().__init__(sm, handle)
         self._metadata = None
 
-    def check(self):
-        self.get_file_metadata()
+    def check(self) -> bool:
+        response = self._get_cookie().get_raw("drives/{0}/root:/{1}".format(
+                self.handle.source.handle.relative_path,
+                self.handle.relative_path))
+        return response.status_code not in (404, 410,)
 
     def make_object_path(self):
         return "drives/{0}/root:/{1}".format(

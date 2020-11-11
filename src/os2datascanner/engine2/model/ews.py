@@ -6,7 +6,8 @@ from urllib.parse import urlsplit, quote
 from contextlib import contextmanager
 from exchangelib import (Account, Message, Credentials,
         IMPERSONATION, Configuration, FaultTolerance, ExtendedProperty)
-from exchangelib.errors import ErrorServerBusy, ErrorNonExistentMailbox
+from exchangelib.errors import (ErrorServerBusy,
+        ErrorItemNotFound, ErrorNonExistentMailbox)
 from exchangelib.protocol import BaseProtocol
 
 from .utilities import NamedTemporaryResource
@@ -178,14 +179,16 @@ class EWSMailResource(FileResource):
         self._ids = self.handle.relative_path.split(".", maxsplit=1)
         self._message = None
 
-    def check(self):
+    def check(self) -> bool:
         folder_id, mail_id = self._ids
         account = self._get_cookie()
 
         def _retrieve_message():
             return account.root.get_folder(
-                    folder_id).only("id").get(id=mail_id)
-        run_with_backoff(_retrieve_message, ErrorServerBusy, fuzz=0.25)
+                    folder_id).all().only("message_id").get(id=mail_id)
+        m, _ = run_with_backoff(_retrieve_message, ErrorServerBusy, fuzz=0.25)
+
+        return not isinstance(m, ErrorItemNotFound)
 
     def get_message_object(self):
         if not self._message:

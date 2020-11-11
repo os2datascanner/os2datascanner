@@ -5,6 +5,7 @@ from urllib.parse import urlsplit
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
+from googleapiclient.errors import HttpError
 from .core import Source, Handle, FileResource
 from .utilities import NamedTemporaryResource
 from ..conversions.utilities.results import SingleResult
@@ -70,8 +71,14 @@ class GoogleDriveResource(FileResource):
         super().__init__(handle, sm)
         self._metadata = None
 
-    def check(self):
-        self.metadata
+    def check(self) -> bool:
+        try:
+            self.metadata
+            return True
+        except HttpError as e:
+            if e.resp.status in (404, 410,):
+                return False
+            raise
 
     @contextmanager
     def open_file(self):
