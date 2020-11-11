@@ -12,7 +12,7 @@ from .scanner_views import (ScannerRun, ScannerList,
 
 
 def make_consent_url(label):
-    if settings.MSGRAPH_APP_ID is not None:
+    if settings.MSGRAPH_APP_ID:
         redirect_uri = settings.SITE_URL + "msgraph-{0}/add/".format(label)
         return ("https://login.microsoftonline.com/common/adminconsent?"
                 + urlencode({
