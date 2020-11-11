@@ -1,12 +1,20 @@
 <div class="content">
   <h1 class="page-title">Matches</h1>
 
-  <div class="dashboard_wrapper">    
-    {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.critical %} 
-    {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.problem %}      
+  <div class="dashboard_wrapper">
+    <span style="margin-right: 3.5rem;">
+      {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.critical %} 
+    </span>
+    <span>
+      {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.problem %}      
+    </span>
   </div>
-  <div class="dashboard_wrapper">    
-    {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.warning %} 
-    {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.notification %}     
+  <div class="dashboard_wrapper">
+    <span style="margin-right: 3.5rem;">
+      {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.warning %} 
+    </span>
+    <span>
+      {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.notification %}     
+    </span>
   </div>
 </div>

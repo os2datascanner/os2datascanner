@@ -7,6 +7,9 @@
 .navigation {
   margin-left: 2.25rem;
   font-size: 1rem;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 70;
 }
 
 .navigation ul {
@@ -45,11 +48,13 @@
 }
 
 .navigation a:hover {
-  color: var(--color-text-white);
+  color: var(--color-primary-dark);
   font-weight: bold;
+  background-color: var(--color-body-bg);
+  border-radius: 10px 0px 0px 10px;
 
   svg {
-    fill: var(--color-text-white);
+    fill: var(--color-primary-dark);
   }
 }
 
@@ -65,7 +70,8 @@
 }
 
 @media screen {
-  .navigation li a.active::before {
+  .navigation li a.active::before,
+  .navigation li a:hover::before {
     content: "";
     display: block;
     width: 10px;
@@ -77,7 +83,8 @@
     top: -10px;
     right: 0;
   }
-  .navigation li a.active::after {
+  .navigation li a.active::after,
+  .navigation li a:hover::after {
     content: "";
     display: block;
     width: 10px;

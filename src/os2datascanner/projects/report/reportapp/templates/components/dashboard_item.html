@@ -1,7 +1,7 @@
 {% if dashboard_item_data.count != 0 %}
   <a class="link" href="/sensitivity?value={{ dashboard_item_data.sensitivity.value|stringformat:"i" }}">
 {% endif %}
-  <span style="margin-right: 3.5rem;" class="dashboard">
+  <span class="dashboard">
       <span class="sensitivity sensitivity--{{ dashboard_item_data.label }}"></span>
       <span class="text-content">
         <h1 class="page-title__sub text">{{ dashboard_item_data.sensitivity.presentation }}</h1>
