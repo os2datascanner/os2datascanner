@@ -9,7 +9,7 @@ PRODUCTION = false
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
 # OAuth 2.0 services. (This value should end with a forward slash.)
-SITE_URL = "localhost:8020/"
+SITE_URL = "http://localhost:8020/"
 ALLOWED_HOSTS = []
 
 # [installation]
