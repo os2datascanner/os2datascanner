@@ -78,9 +78,41 @@ class MainPageView(TemplateView, LoginRequiredMixin):
                 sensitivities[sensitivity] += 1
         context['dashboard_results'] = sensitivities
 
-        # Perform sorting based on highest sensitivity first.
-        context['dashboard_results'] = collections.OrderedDict(
-            sorted(context['dashboard_results'].items(), key=lambda x: x[0].value, reverse=True))
+        context['dashboard_results'] = {}
+        context['dashboard_results']['critical'] = Sensitivity.CRITICAL
+        context['dashboard_results']['problem'] = Sensitivity.PROBLEM
+        context['dashboard_results']['warning'] = Sensitivity.WARNING
+        context['dashboard_results']['notification'] = Sensitivity.NOTICE
+
+        sensitivity_list = [e.value for e in Sensitivity]  # Makes a list of possible sensitivity values
+        sensitivity_list.remove(0)  # Removes "information" 0 value, not possible to use or show currently
+
+        # Checks which sensitivities have matches and removes those from list.
+        for sensitivity, count in sensitivities.items():
+            if sensitivity.value in sensitivity_list:
+                sensitivity_list.remove(sensitivity.value)
+
+            # Displays the matches with sensitivities
+            for s, c in sensitivities.items():
+                # Notification uses both NOTICE here and notification elsewhere.
+                # Should consider making it consistent to avoid this extra if statement
+                if s.value == 250:
+                    temp = {'sensitivity': Sensitivity(s), 'count': c, 'label': "notification"}
+                    context['dashboard_results']['notification'] = temp
+                else:
+                    temp = {'sensitivity': Sensitivity(s), 'count': c, 'label': Sensitivity(s).name}
+                    context['dashboard_results'][s.name.lower()] = temp
+
+        # Displays sensitivity categories with no matches.
+        for se in sensitivity_list:
+            # Same notification "issue" as above
+            if se == 250:
+                temp = {'sensitivity': Sensitivity(se), 'count': 0, 'label': "notification"}
+                context['dashboard_results']['notification'] = temp
+            else:
+                temp = {'sensitivity': Sensitivity(se), 'count': 0, 'label': Sensitivity(se).name}
+                context['dashboard_results'][Sensitivity(se).name.lower()] = temp
+                
         return context
 
 
@@ -108,8 +140,19 @@ class SensitivityPageView(ListView, LoginRequiredMixin):
              and r.matches.sensitivity == sensitivity),
             key=lambda result: result.matches.probability, reverse=True)
         self.kwargs['sensitivity'] = sensitivity
-
         return self.kwargs['matches']
+
+    # Pass on sensitivity, to use it's presentation method in sensitivity.html.
+    def get_context_data(self, **kwargs):
+        sensitivity = Sensitivity(int(self.request.GET.get('value')) or 0)
+        context = super().get_context_data(**kwargs)
+        context['sensitivity'] = sensitivity
+        return context
+
+
+
+class StatisticsPageView(TemplateView):
+    template_name = 'statistics.html'
 
 
 class ApprovalPageView(TemplateView):

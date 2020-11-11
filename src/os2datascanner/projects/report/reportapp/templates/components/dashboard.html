@@ -1,36 +1,20 @@
-<main class="wrapper">
-<h1 class="page-title">Matches</h1>
+<div class="content">
+  <h1 class="page-title">Matches</h1>
 
-{% include "./sensitivity-chart.html" %}
-
-<table class="datatable datatable--click-rows">
-
-  <thead>
-    <tr>
-      <th class="datatable__column--label">Følsomhed</th>
-      <th class="datatable__column--count">Antal matches</th>
-    </tr>
-  </thead>
-
-  <tbody>
-  {% for sensitivity, count in dashboard_results.items %}
-    <tr>
-      <td class="datatable__column--label">
-        <a href="/sensitivity?value={{ sensitivity.value|stringformat:"i" }}">
-          <span class="flex">
-            <span class="flex--width">{% include "components/sensitivity-icon.html" %}</span>
-            <span>{{ sensitivity.presentation }}</span>
-          </span>
-        </a>
-      </td>
-      <td class="datatable__column--count"><a href="/sensitivity?value={{ sensitivity.value|stringformat:"i" }}">{{ count }}</a></td>
-    </tr>
-  {% empty %}
-    <tr>
-      <td class="datatable__column--label"><a>Ingen tilgængelig data</a></td>
-      <td></td>
-    </tr>
-  {% endfor %}
-  </tbody>
-
-</table>
+  <div class="dashboard_wrapper">
+    <span style="margin-right: 3.5rem;">
+      {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.critical %} 
+    </span>
+    <span>
+      {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.problem %}      
+    </span>
+  </div>
+  <div class="dashboard_wrapper">
+    <span style="margin-right: 3.5rem;">
+      {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.warning %} 
+    </span>
+    <span>
+      {% include "components/dashboard_item.html" with dashboard_item_data=dashboard_results.notification %}     
+    </span>
+  </div>
+</div>

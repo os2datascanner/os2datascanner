@@ -10,6 +10,7 @@
   padding: 0.5em;
   text-decoration: none;
   transition: var(--transition-default);
+  border-radius: var(--border-radius-button);
 
   &:focus,
   &:hover {
@@ -33,7 +34,7 @@
 
     &:focus,
     &:hover {
-      background-color: var(--color-main-dark);
+      background-color: var(--color-primary-dark);
       color: #fff;
     }
   }
@@ -45,7 +46,7 @@
 
     &:focus,
     &:hover {
-      background-color: var(--color-error-dark);
+      background-color: var(--color-error);
       color: #fff;
     }
   }
@@ -68,6 +69,17 @@
   &--modal-close {
     background-color: rgba(0, 0, 0, 0.8);
     border-radius: 50%;
+  }
+
+  &--handle-match {
+    margin-left: 1.5rem;
+    background-color: var(--color-icon-primary);
+    color: var(--color-text-white);
+
+    &:focus,
+    &:hover {
+      color: var(--color-text-main);
+    }
   }
 }
 

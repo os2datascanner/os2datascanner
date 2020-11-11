@@ -25,28 +25,40 @@
                     {% if match.matches.handle|present_url %}
                         <a href="{{ match.matches.handle|present_url }}" class="button button--small button--cta" target="_blank" rel="noopener">Åben fil</a>
                     {% endif %}
-
-                    {% include "components/handle-match.html" %}
                 </div>
             </div>
         </td>
 
         <td class="datatable__column--match datatable__column--context" colspan="3">
-
             <table class="datatable datatable--nested">
                 <tbody>
-                {% for match in rule.matches|slice:":3" %}
-                    <tr>
-                        <td class="datatable__column--match">{{ match.match }}</td>
-                        <td class="datatable__column--probability">
-                            {% include "components/probability-icon.html" %}
+                    {% for match in rule.matches|slice:":3" %}
+                      <tr>
+                        <td class="datatable__column--match">
+                            <span class="more">
+                                {{ match.match }}
+                            </span>
                         </td>
-                        <td class="datatable__column--context">{{ match.context }}</td>
-                    </tr>
-                {% endfor %}
+                        <td class="datatable__column--context">
+                            {% if match.context %}
+                                [...]{{ match.context }}[...]
+                            {% endif %}
+                        </td>
+                        <td class="datatable__column--probability">
+                            {% include "components/probability.html" %}
+                        </td>
+                      </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </td>
 
+        <td class="datatable__column--item">
+            <div class="hit-link">
+              <div class="button-group">
+                {% include "components/handle-match.html" %}
+              </div>
+            </div>
+        </td>
     </tr>
 {% endif %} {% endfor %}

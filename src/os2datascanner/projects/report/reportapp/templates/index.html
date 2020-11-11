@@ -1,5 +1,11 @@
-{% include "partials/header.html" with active_tab="home" %}
+{% include "partials/header.html" %}
+{% include "components/banner.html" %}
 
-{% include "components/dashboard.html" %}
+    <main class="wrapper">
+      {% include "partials/sidemenu.html" with active_tab="home" %}
 
-{% include "partials/footer.html" %}
+      {% include "components/dashboard.html" %}
+    </main>
+
+  </body>
+</html>

@@ -1,35 +1,98 @@
+.sidemenu {
+  max-width: 18.75rem;
+  min-height: 100%;
+  background: transparent linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-icon-primary) 100%) 0% 0% no-repeat padding-box;
+}
+
 .navigation {
-  margin-left: 1rem;
+  margin-left: 2.25rem;
+  font-size: 1rem;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 70;
+}
+
+.navigation ul {
+  padding-top: 14rem;
+  list-style-type: none;
+}
+
+.navigation li {
+  margin-top: 1.8rem;
+  text-decoration: none;
+}
+
+.navigation .logout {
+  margin-top: 5rem;
 }
 
 .navigation a {
-  color: inherit;
-  display: block;
-  float: left;
-  margin-right: 1rem;
-  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 16.5rem;
+  height: 3.9rem;
+  padding-left: 1.5rem;
+  color: var(--color-text-white);
   text-decoration: none;
-  transition: var(--transition-default);
+
+  svg {
+    fill: var(--color-widget-bg);
+    width: 2rem;
+    height: auto;
+  }
+
+  .width {
+    margin-left: 1.5rem;
+  }
 }
 
-.navigation a::after {
-  background-color: var(--color-main);
-  bottom: 0;
-  content: "";
-  display: block;
-  height: 2px;
-  left: 0;
-  position: absolute;
-  transform: scale(0);
-  width: 100%;
-  transition: transform 0.2s cubic-bezier(0.86, 0, 0.07, 1);
+.navigation a:hover {
+  color: var(--color-primary-dark);
+  font-weight: bold;
+  background-color: var(--color-body-bg);
+  border-radius: 10px 0px 0px 10px;
+
+  svg {
+    fill: var(--color-primary-dark);
+  }
 }
 
-.navigation a.active::after,
-.navigation a:hover::after {
-  transform: scale(1);
+.navigation a.active {
+  color: var(--color-primary-dark);
+  font-weight: bold;
+  background-color: var(--color-body-bg);
+  border-radius: 10px 0px 0px 10px;
+
+  svg {
+    fill: var(--color-primary-dark);
+  }
 }
 
-.navigation a.router-link-exact-active {
-  color: var(--color-main);
+@media screen {
+  .navigation li a.active::before,
+  .navigation li a:hover::before {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-size: 100% 100%;
+    background-image: url("../images/navigation_corner.svg");
+    transform: rotate(90deg);
+    position: absolute;
+    top: -10px;
+    right: 0;
+  }
+  .navigation li a.active::after,
+  .navigation li a:hover::after {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-size: 100% 100%;
+    background-image: url("../images/navigation_corner.svg");
+    position: absolute;
+    bottom: -10px;
+    right: 0;
+  }
 }

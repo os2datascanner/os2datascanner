@@ -1,3 +1,31 @@
 <nav class="navigation">
-  <a href="/" class="{% if active_tab == 'home' %}active{% endif %}">Forside</a>
+  <ul>
+    <li>
+      <a href="/" class="{% if active_tab == 'home' %}active{% endif %}">
+        {% include "components/svg-icons/home.svg" %}
+        <span class="width">Forside</span>
+      </a>
+    </li>
+    <!-- <li>
+      <a href="/statistics" class="{% if active_tab == 'statistics' %}active{% endif %}">
+        {% include "components/svg-icons/bar_chart.svg" %}
+        <span class="width">Afdelingsstatistik</span>
+      </a>
+    </li>
+    <li>
+      <a href="/statistics">
+        {% include "components/svg-icons/bar_chart.svg" %}
+        <span class="width">DPO overblik</span>
+      </a>
+    </li> -->
+  </ul>
+
+  <ul class="logout">
+    <li>
+      <a href="/accounts/logout">
+        {% include "components/svg-icons/logout.svg" %}
+        <span class="width">Log ud</span>
+      </a>
+    </li>
+  </ul>
 </nav>

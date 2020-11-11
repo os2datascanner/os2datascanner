@@ -1,12 +1,11 @@
-.logo {}
-
-.logo a {
-  display: block;
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .logo svg {
   height: 2rem;
-  vertical-align: middle;
 }
 
 .logo .cls-1 {
@@ -15,8 +14,4 @@
 
 .logo .cls-2 {
   fill: var(--color-logo-text);
-}
-
-.os2o {
-  display: inline-block;
 }
