@@ -215,11 +215,21 @@
 .datatable th {
   font-size: 1rem;
   font-weight: bold;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #fff;
 }
 
 .datatable td {
   border-top: 1px solid rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s ease-in-out;
+}
+
+.datatable th.scrollActive {
+  color: var(--color-text-white);
+  background: transparent linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-icon-primary) 100%) 0% 0% no-repeat padding-box;
 }
 
 /* .datatable--click-rows, start */
