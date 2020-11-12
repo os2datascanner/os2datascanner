@@ -109,9 +109,6 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
-        "gelf": {
-            "()": "os2datascanner.utils.gelf.GELFFormatter",
-        },
         "json": {
             "()": "structlog.stdlib.ProcessorFormatter",
             "processor": structlog.processors.JSONRenderer(),
@@ -146,10 +143,6 @@ LOGGING = {
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
         },
-        "requires_graylog_host": {
-            "()": "django.utils.log.CallbackFilter",
-            "callback": lambda record: bool(globals()['GRAYLOG_HOST']),
-        },
     },
     'handlers': {
         'mail_admins': {
@@ -160,7 +153,6 @@ LOGGING = {
         "console": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
-            'filters': ['require_debug_true'],
             "formatter": "console",
         },
         "debug_log": {
@@ -170,13 +162,11 @@ LOGGING = {
             'filters': ['require_debug_true'],
             "formatter": "key_value",
         },
-        "graylog": {
-            "level": "DEBUG",
-            "class": "os2datascanner.utils.gelf.GraylogDatagramHandler",
-            "host": globals()['GRAYLOG_HOST'],
-            "filters": ["requires_graylog_host"],
-            "formatter": "gelf",
-        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': globals()['DJANGO_LOG_LEVEL'],
+        'propagate': True,
     },
     'loggers': {
         'django.request': {
@@ -185,12 +175,12 @@ LOGGING = {
             'propagate': True,
         },
         'django_structlog': {
-            'handlers': ['console', 'debug_log', 'graylog'],
+            'handlers': ['debug_log'],
             'level': globals()['DJANGO_LOG_LEVEL'],
             'propagate': True,
         },
         'os2datascanner': {
-            'handlers': ['console', 'debug_log', 'graylog'],
+            'handlers': ['debug_log'],
             'level': globals()['DJANGO_LOG_LEVEL'],
             'propagate': True,
         },
