@@ -50,8 +50,20 @@
   }
 
   .text-content {
+    display: flex;
+    align-items: flex-start;
+    flex-flow: column;
     grid-area: text-content;
     padding: 2rem;
+
+    h1 {
+      height: 0.6rem;
+    }
+
+    .matches {
+      color: var(--color-text-main);
+      font-weight: normal;
+    }
   }
 
   .material-icons {
