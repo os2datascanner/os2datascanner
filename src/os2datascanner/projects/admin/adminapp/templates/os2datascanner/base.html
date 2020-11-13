@@ -41,6 +41,9 @@
     document.createElement('footer');
   </script>
 
+  <!-- Support IE for svgxuse -->
+  <script src="{% static "src/js/svgxuse.js" %}" defer></script>
+
 </head>
 <body class="{{ body_class|default:'page' }}">
 
