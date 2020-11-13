@@ -4,12 +4,14 @@ html {
 
 body {
   padding: 0;
+  height: 100%;
 }
 
 .wrapper {
   display: flex;
   max-width: 100%;
-  min-height: 91%;
+  min-height: 100%;
+  align-items: stretch;
 }
 
 .content {
