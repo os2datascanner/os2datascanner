@@ -59,30 +59,38 @@ def message_received_raw(body):
                     # This object hasn't changed since the last scan. Update
                     # the checkup timestamp so we remember to check it again
                     # next time
+                    print(handle.presentation,
+                            "LM/no change, updating timestamp")
                     checkup.interested_before = scan_time
                     checkup.save()
                 else:
                     # This object has been changed and no longer has any
                     # matches. Hooray! Forget about it
+                    print(handle.presentation,
+                            "Changed, no matches, deleting")
                     checkup.delete()
             else:
                 # This object has changed, but still has matches. Update the
                 # checkup timestamp
+                print(handle.presentation,
+                        "Changed, new matches, updating timestamp")
                 checkup.interested_before = scan_time
                 checkup.save()
         elif problem:
             if problem.missing:
                 # Permanent error, so this object has been deleted. Forget
                 # about it
+                print(handle.presentation, "Problem, deleted, deleting")
                 checkup.delete()
             else:
                 # Transient error -- do nothing. In particular, don't update
                 # the checkup timestamp; we don't want to forget about changes
                 # between the last match and this error
-                pass
+                print(handle.presentation, "Problem, transient, doing nothing")
     except ScheduledCheckup.DoesNotExist:
         if ((matches and matches.matched)
                 or (problem and not problem.missing)):
+            print(handle.presentation, "Interesting, creating")
             # An object with a transient problem or with real matches is an
             # object we'll want to check up on again later
             ScheduledCheckup.objects.create(
@@ -93,6 +101,8 @@ def message_received_raw(body):
                     # date to scan the object properly next time, but we don't
                     # (yet) get enough information out of the pipeline for that
                     interested_before=scan_time)
+        else:
+            print(handle.presentation, "Not interesting, doing nothing")
 
     yield from []
 

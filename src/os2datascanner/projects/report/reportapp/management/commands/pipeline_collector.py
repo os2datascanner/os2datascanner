@@ -29,9 +29,7 @@ from ...models.documentreport_model import DocumentReport
 
 
 def consume_results(channel, method, properties, body):
-    print('Message recieved {} :'.format(body))
     ack_message(method)
-
     _restructure_and_save_result(body)
 
 
@@ -39,8 +37,7 @@ def _restructure_and_save_result(result):
     """Method for restructuring and storing result body.
 
     The agreed structure is as follows:
-    {'scan_tag', '2019-11-28T14:56:58', 'matches': null, 'metadata': null,
-    'problem': []}
+    {'scan_tag': {...}, 'matches': null, 'metadata': null, 'problem': null}
     """
     result = json_utf8_decode(result)
     reference = result.get("handle") or result.get("source")
@@ -95,23 +92,30 @@ def handle_match_message(previous_report, new_report, body):
                     # The file hasn't been changed, so the matches are the same
                     # as they were last time. Instead of making a new entry,
                     # just update the timestamp on the old one
+                    print(new_matches.handle.presentation,
+                            "LM/no change, updating timestamp")
                     previous_report.scan_time = parse_isoformat_timestamp(
                             new_matches.scan_spec.scan_tag["time"])
                     previous_report.save()
                 else:
                     # The file has been edited and the matches are no longer
                     # present
+                    print(new_matches.handle.presentation,
+                            "Changed, no matches, old status is now EDITED")
                     previous_report.resolution_status = (
                             DocumentReport.ResolutionChoices.EDITED.value)
                     previous_report.save()
             else:
                 # The file has been edited, but matches are still present.
                 # Resolve the previous ones
+                print(new_matches.handle.presentation,
+                        "Changed, new matches, old status is now EDITED")
                 previous_report.resolution_status = (
                         DocumentReport.ResolutionChoices.EDITED.value)
                 previous_report.save()
 
     if new_matches.matched:
+        print(new_matches.handle.presentation, "New matches, creating")
         new_report.data["matches"] = body
         new_report.save()
 
@@ -121,10 +125,14 @@ def handle_problem_message(previous_report, new_report, body):
     if (previous_report and previous_report.resolution_status is None
             and problem.missing):
         # The file previously had matches, but has been removed. Resolve them
+        print(problem.handle.presentation if problem.handle else "(source)",
+                "Problem, deleted, old status is now REMOVED")
         previous_report.resolution_status = (
                 DocumentReport.ResolutionChoices.REMOVED.value)
         previous_report.save()
     else:
+        print(problem.handle.presentation if problem.handle else "(source)",
+                "Problem, transient, creating")
         new_report.data["problem"] = body
         new_report.save()
 
