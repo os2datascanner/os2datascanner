@@ -1,19 +1,20 @@
 .sidemenu {
-  max-width: 18.75rem;
+  position: fixed;
+  z-index: 1;
+  top: 72;
+  left: 0;
+  max-width: 14rem;
   min-height: 100%;
   background: transparent linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-icon-primary) 100%) 0% 0% no-repeat padding-box;
 }
 
 .navigation {
-  margin-left: 2.25rem;
+  margin-left: 1.5rem;
   font-size: 1rem;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
 }
 
 .navigation ul {
-  padding-top: 14rem;
+  padding-top: 11rem;
   list-style-type: none;
 }
 
@@ -23,7 +24,7 @@
 }
 
 .navigation .logout {
-  margin-top: 5rem;
+  bottom: 0;
   margin-bottom: 5rem;
 }
 
@@ -31,9 +32,9 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 16.5rem;
+  width: 12rem;
   height: 3.9rem;
-  padding-left: 1.5rem;
+  padding-left: 1rem;
   color: var(--color-text-white);
   text-decoration: none;
 
@@ -44,7 +45,7 @@
   }
 
   .width {
-    margin-left: 1.5rem;
+    margin-left: 1rem;
   }
 }
 

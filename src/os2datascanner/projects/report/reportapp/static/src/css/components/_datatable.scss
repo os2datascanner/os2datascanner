@@ -111,17 +111,19 @@
     }
 
     &--item {
+      width: 25%;
       word-break: break-all;
       text-overflow: ellipsis;
       overflow: hidden;
     }
 
     &--match {
-      width: 10rem;
+      max-width: 12.5%;
     }
 
     &--probability {
-      width: 12rem;
+      max-width: 12.5%;
+      word-wrap: break-word;
     }
 
     &--handle {
@@ -129,6 +131,7 @@
     }
 
     &--context {
+      max-width: 25%;
       word-break: break-all;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -231,9 +234,17 @@
   font-weight: bold;
   position: -webkit-sticky;
   position: sticky;
-  top: 0;
+  top: 72;
   z-index: 2;
-  background-color: #fff;
+  background-color: #e5e5e5;
+
+  &:first-child {
+    border-radius: 1.25rem 0 0 0;
+  }
+
+  &:last-child {
+    border-radius: 0 1.25rem 0 0;
+  }
 }
 
 .datatable td {
@@ -242,8 +253,8 @@
 }
 
 .datatable th.scrollActive {
-  color: var(--color-text-white);
-  background: transparent linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-icon-primary) 100%) 0% 0% no-repeat padding-box;
+  border-radius: 0;
+  background-color: #e5e5e5;
 }
 
 /* .datatable--click-rows, start */
