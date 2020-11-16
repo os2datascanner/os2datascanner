@@ -53,7 +53,13 @@ services:
       context: .
       dockerfile: docker/admin/Dockerfile
       target: application
-    command: gunicorn -b 0.0.0.0:5000 --reload --access-logfile - wsgi
+    command: [
+      "gunicorn",
+      "--config", "/code/docker/gunicorn-settings.py",
+      "--workers", "2", # only two workers in local dev - to save some resources
+      "--reload", # restart workers when code changes
+      "wsgi"
+    ]
     volumes:
       - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
@@ -87,7 +93,13 @@ services:
       context: .
       dockerfile: docker/report/Dockerfile
       target: application
-    command: gunicorn -b 0.0.0.0:5000 --reload --access-logfile - wsgi
+    command: [
+      "gunicorn",
+      "--config", "/code/docker/gunicorn-settings.py",
+      "--workers", "2", # only two workers in local dev - to save some resources
+      "--reload", # restart workers when code changes
+      "wsgi"
+    ]
     volumes:
       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
