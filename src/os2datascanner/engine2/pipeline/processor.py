@@ -14,6 +14,14 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
+def check(source_manager, handle):
+    """Runs Resource.check() on the ultimate top-level Handle behind a given
+    Handle."""
+    while handle.source.handle:
+        handle = handle.source.handle
+    return handle.follow(source_manager).check()
+
+
 def message_received_raw(body,
         channel, source_manager, representations_q, sources_q, problems_qs):
     conversion = messages.ConversionMessage.from_json_object(body)
@@ -22,8 +30,7 @@ def message_received_raw(body,
     required = head.operates_on
 
     try:
-        resource = conversion.handle.follow(source_manager)
-        if not resource.check():
+        if not check(source_manager, conversion.handle):
             # The resource is missing. Generate a special problem message and
             # stop the generator immediately
             for problems_q in problems_qs:
@@ -33,6 +40,7 @@ def message_received_raw(body,
                         message="Resource check failed").to_json_object())
             return
 
+        resource = conversion.handle.follow(source_manager)
         representation = None
         if (required == OutputType.Text
                 and "skip_mime_types" in configuration):
