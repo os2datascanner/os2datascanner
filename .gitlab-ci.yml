@@ -343,7 +343,7 @@ Deploy dev:
     SALTAPI_EAUTH: file
     GIT_STRATEGY: none
   script:
-    - pepper --client runner --fail-any state.orchestrate os2ds.magenta.dev
+    - pepper --client runner --fail-any state.orchestrate os2ds.service-dev
   environment:
     name: dev
     url: https://adminos2ds.magenta.dk/
