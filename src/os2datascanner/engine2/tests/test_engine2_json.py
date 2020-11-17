@@ -78,7 +78,8 @@ example_handles = [
                                     admin_password="littlefluffy",
                                     user="claude"),
                             "SW5ib3hJRA==.TWVzc2dJRA==",
-                            "Re: Castles in the sky")),
+                            "Re: Castles in the sky",
+                            "Inbox", "0000012345")),
             "1/pictograph.jpeg",
             "image/jpeg"),
     PDFObjectHandle(
@@ -108,7 +109,8 @@ example_handles = [
                                     "Not a very secret client secret"),
                             "testuser@example.invalid")),
             "bWVzc2FnZQo=",
-            "Re: Re: Re: Copy of FINAL (2) (EDITED).doc.docx"),
+            "Re: Re: Re: Copy of FINAL (2) (EDITED).doc.docx",
+            "https://example.invalid/view/bWVzc2FnZQo="),
     MSGraphFileHandle(
             MSGraphDriveSource(
                     MSGraphDriveHandle(
