@@ -269,7 +269,8 @@ class EWSMailHandle(Handle):
     def censor(self):
         return EWSMailHandle(
                 self.source.censor(), self.relative_path,
-                self._mail_subject, self._folder_name)
+                self._mail_subject, self._folder_name,
+                self._entry_id)
 
     def guess_type(self):
         return "message/rfc822"
