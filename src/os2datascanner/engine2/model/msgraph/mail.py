@@ -134,7 +134,7 @@ class MSGraphMailMessageHandle(Handle):
     resource_type = MSGraphMailMessageResource
     eq_properties = Handle.BASE_PROPERTIES
 
-    def __init__(self, source, path, mail_subject, weblink=None):
+    def __init__(self, source, path, mail_subject, weblink):
         super().__init__(source, path)
         self._mail_subject = mail_subject
         self._weblink = weblink
