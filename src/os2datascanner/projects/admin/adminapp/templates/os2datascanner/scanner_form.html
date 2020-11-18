@@ -123,17 +123,6 @@
   </div>
   {% endif %}
 
-  {% if form.errors %}
-  <div class="alert alert--danger" role="alert">
-    <p>Følgende felter er ikke udfyldt korrekt:</p>
-    <ul>
-      {% for error in form.errors %}
-      <li>{{ error }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-
   <form class="form" role="form" method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
