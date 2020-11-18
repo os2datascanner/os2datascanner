@@ -132,7 +132,7 @@ class GoogleDriveHandle(Handle):
     type_label = "googledrive"
     resource_type = GoogleDriveResource
 
-    def __init__(self, source, relpath, name=None):
+    def __init__(self, source, relpath, name):
         super().__init__(source, relpath)
         self._name = name
 

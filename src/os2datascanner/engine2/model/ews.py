@@ -239,7 +239,7 @@ class EWSMailHandle(Handle):
     eq_properties = Handle.BASE_PROPERTIES
 
     def __init__(self, source,
-            path, mail_subject, folder_name=None, entry_id=None):
+            path, mail_subject, folder_name, entry_id):
         super().__init__(source, path)
         self._mail_subject = mail_subject
         self._folder_name = folder_name
@@ -269,7 +269,8 @@ class EWSMailHandle(Handle):
     def censor(self):
         return EWSMailHandle(
                 self.source.censor(), self.relative_path,
-                self._mail_subject, self._folder_name)
+                self._mail_subject, self._folder_name,
+                self._entry_id)
 
     def guess_type(self):
         return "message/rfc822"
