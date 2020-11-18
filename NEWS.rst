@@ -1,6 +1,81 @@
 OS2datascanner
 ==============
 
+Version 3.6.0, 17th November 2020
+---------------------------------
+
+"Robotic Cloud Janitor"
+
+New in this version:
+
+- Initial support for scanning Google Workspace organisations:
+
+  - Initial support for scanning Gmail accounts.
+
+  - Initial support for scanning Google Drive accounts.
+
+(OS2datascanner is neither affiliated with nor endorsed by Google Inc. or its
+partners or subsidiaries.)
+
+- A refreshed user interface in the report module.
+
+  - Matches are now paginated to improve browser performance.
+
+- Support for automatically handling matches:
+
+  - The report module will now automatically mark matches as "Edited" or
+    "Removed" when objects have been changed or removed.
+
+  - If a transient problem arises when scanning an object, it will be added to
+    the next scan and scanned again.
+
+General improvements:
+
+- The scanner engine can now tell when objects have been deleted.
+
+- External processing tools can now be stopped automatically after a
+  configurable timeout.
+
+- CSS updates are now correctly propagated to the report module in developer
+  mode.
+
+- Required fields in the administration system's forms are now more clearly
+  marked.
+
+- The report module's "Done nothing" resolution status has been replaced by
+  "False positive".
+
+- The Docker development environment now also includes an (optional) simple
+  SAML server for testing SSO support.
+
+- The Docker configuration has been tweaked and adjusted to better support
+  cloud deployments.
+
+- Improved support for Internet Explorer 11.
+
+Bugfixes:
+
+- Attempting to extract links from empty HTML pages no longer causes a web scan
+  to stop.
+
+- Attempting to create a new Microsoft Graph scanner without a valid Microsoft
+  application registration in place will no longer forward the user to a
+  Microsoft error page.
+
+- Office documents whose HTML representation is above a configurable threshold
+  are now automatically simplified before being processed.
+
+- Unsupported Exchange Web Services object types are now correctly ignored.
+
+- The report module no longer misrenders the name of the "Notification" 
+  sensitivity level.
+
+- Opening mails directly in the Microsoft Output desktop application should now
+  be more reliable.
+
+- Forms in the administration system no longer display untranslated summaries
+  of errors.
+
 Version 3.5.0, 14th September 2020
 ----------------------------------
 
