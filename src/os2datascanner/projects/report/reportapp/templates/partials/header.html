@@ -42,10 +42,3 @@
   <noscript>
     <strong>We're sorry but <em>OS2Datascanner</em> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
   </noscript>
-
-  {% if request.user.is_authenticated %}
-    {% include "components/banner.html" %}
-  {% else %}
-  {% endif %}
-
-  <main class="wrapper">

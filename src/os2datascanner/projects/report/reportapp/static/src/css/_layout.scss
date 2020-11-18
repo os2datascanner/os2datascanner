@@ -4,38 +4,22 @@ html {
 
 body {
   padding: 0;
-}
-
-.page {
-  padding: 5rem var(--size-ds-unit) var(--size-ds-unit) var(--size-ds-unit);
+  height: 100%;
 }
 
 .wrapper {
-  margin: 0 auto 0 calc(var(--size-logo-width));
-  max-width: 90%;
-  min-height: calc(100vh - 9rem - var(--size-ds-unit) * 3);
-  /* 
-    Banner = 4rem
-    Footer = 5rem
-    -------------
-      Total: 9rem
-    -------------
-    -------------
-  */
-  padding: 2rem 0;
+  display: flex;
+  max-width: 100%;
+  min-height: 100%;
+  align-items: stretch;
+}
+
+.content {
+  max-width: 100%;
+  padding-top: 10rem;
+  padding-left: 20rem;
 }
 
 .wrapper > *:first-child {
   margin-top: 0;
-}
-
-.login {
-  background-color: var(--color-main);
-
-  .wrapper {
-    margin: 0;
-    max-width: initial;
-    min-height: initial;
-    padding: 0;
-  }
 }

@@ -8,6 +8,8 @@ from os2datascanner.engine2.pipeline.messages import MatchesMessage
 
 
 class DocumentReport(models.Model):
+    scan_time = models.DateTimeField(null=True)
+
     path = models.CharField(max_length=2000, verbose_name="Path")
     # It could be that the meta data should not be part of the jsonfield...
     data = JSONField(null=True)

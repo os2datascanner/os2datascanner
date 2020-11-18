@@ -31,6 +31,38 @@ class CensorTests(unittest.TestCase):
                 self.assertIsNone(handle.source._password)
                 self.assertIsNone(handle.source._user)
 
+    def test_ews_censoring(self):
+        example_handles = [
+            EWSMailHandle(
+                    EWSAccountSource(
+                            "internet.invalid",
+                            "mail.internet.invalid",
+                            "administrator", "h4ckme",
+                            "secretary"),
+                    "notavalidfolderid.notavalidmailid",
+                    "Re: Re: Re: You may already have won! (was Fwd: Spam)",
+                    "Inbox", "notavalidentryid")
+        ]
+
+        for handle in example_handles:
+            with self.subTest(handle):
+                censored_handle = handle.censor()
+
+                self.assertIsNone(censored_handle.source._admin_user)
+                self.assertIsNone(censored_handle.source._admin_password)
+                self.assertEqual(
+                        handle._mail_subject,
+                        censored_handle._mail_subject,
+                        "subject not preserved")
+                self.assertEqual(
+                        handle._folder_name,
+                        censored_handle._folder_name,
+                        "folder name not preserved")
+                self.assertEqual(
+                        handle._entry_id,
+                        censored_handle._entry_id,
+                        "entry_id not preserved")
+
     def test_nested_censoring(self):
         example_handles = [
             ZipHandle(

@@ -6,7 +6,8 @@ from urllib.parse import urlsplit, quote
 from contextlib import contextmanager
 from exchangelib import (Account, Message, Credentials,
         IMPERSONATION, Configuration, FaultTolerance, ExtendedProperty)
-from exchangelib.errors import ErrorServerBusy, ErrorNonExistentMailbox
+from exchangelib.errors import (ErrorServerBusy,
+        ErrorItemNotFound, ErrorNonExistentMailbox)
 from exchangelib.protocol import BaseProtocol
 
 from .utilities import NamedTemporaryResource
@@ -128,7 +129,9 @@ class EWSAccountSource(Source):
 
         def relevant_mails(relevant_folders):
             for folder in relevant_folders:
-                for mail in folder.all().only("id", "headers", "entry_id"):
+                for mail in (m
+                        for m in folder.all().only("id", "headers", "entry_id")
+                        if isinstance(m, Message) and hasattr(m, "entry_id")):
                     headers = _dictify_headers(mail.headers)
                     if headers:
                         yield EWSMailHandle(self,
@@ -175,6 +178,17 @@ class EWSMailResource(FileResource):
         self._mr = None
         self._ids = self.handle.relative_path.split(".", maxsplit=1)
         self._message = None
+
+    def check(self) -> bool:
+        folder_id, mail_id = self._ids
+        account = self._get_cookie()
+
+        def _retrieve_message():
+            return account.root.get_folder(
+                    folder_id).all().only("message_id").get(id=mail_id)
+        m, _ = run_with_backoff(_retrieve_message, ErrorServerBusy, fuzz=0.25)
+
+        return not isinstance(m, ErrorItemNotFound)
 
     def get_message_object(self):
         if not self._message:
@@ -225,7 +239,7 @@ class EWSMailHandle(Handle):
     eq_properties = Handle.BASE_PROPERTIES
 
     def __init__(self, source,
-            path, mail_subject, folder_name=None, entry_id=None):
+            path, mail_subject, folder_name, entry_id):
         super().__init__(source, path)
         self._mail_subject = mail_subject
         self._folder_name = folder_name
@@ -255,7 +269,8 @@ class EWSMailHandle(Handle):
     def censor(self):
         return EWSMailHandle(
                 self.source.censor(), self.relative_path,
-                self._mail_subject, self._folder_name)
+                self._mail_subject, self._folder_name,
+                self._entry_id)
 
     def guess_type(self):
         return "message/rfc822"

@@ -1,6 +1,7 @@
 import traceback
 
-from .utilities import make_common_argument_parser, PikaConnectionHolder
+from .utilities.args import make_common_argument_parser
+from .utilities.pika import PikaConnectionHolder
 
 
 def main():
@@ -21,7 +22,7 @@ def main():
 
     args = parser.parse_args()
 
-    with PikaConnectionHolder(host=args.host, heartbeat=6000) as ch:
+    with PikaConnectionHolder(heartbeat=6000) as ch:
         for q in args.queue:
             try:
                 print("Purging queue {0}".format(q))

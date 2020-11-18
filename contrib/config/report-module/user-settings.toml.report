@@ -72,9 +72,9 @@ FRONTEND_URL = 'https://INSERT_DOMAIN_NAME/'# Redirect URL for the client if you
 
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module
-AMQP_HOST = "queue"
-AMQP_USER = "os2ds"
-AMQP_PWD = "os2ds"
+AMQP_HOST = "localhost"
+AMQP_USER = "guest"
+AMQP_PWD = "guest"
     [amqp.AMQP_BACKOFF_PARAMS]
     max_tries = 10
     ceiling = 7

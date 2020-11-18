@@ -31,18 +31,30 @@ process_toml_conf_for_django(
     user_var='OS2DS_REPORT_USER_CONFIG_PATH',
 )
 
+
+# Our (third-party) SAML module expects only file or url to be configured. In
+# our current setting implementation we only allow changing already set values
+# to catch typos early and to not have deprecated settings in layer 2 and 3. To
+# circumvent these two incompatibilities, we set file or url as usual and the
+# other to empty string. This will unset the empty string:
+if not SAML2_AUTH['METADATA_AUTO_CONF_URL']:
+    del SAML2_AUTH['METADATA_AUTO_CONF_URL']
+if not SAML2_AUTH['METADATA_LOCAL_FILE_PATH']:
+    del SAML2_AUTH['METADATA_LOCAL_FILE_PATH']
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'debug': globals()['DEBUG'],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_settings_export.settings_export',
             ],
         },
     },
@@ -97,9 +109,6 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
-        "gelf": {
-            "()": "os2datascanner.utils.gelf.GELFFormatter",
-        },
         "json": {
             "()": "structlog.stdlib.ProcessorFormatter",
             "processor": structlog.processors.JSONRenderer(),
@@ -134,10 +143,6 @@ LOGGING = {
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
         },
-        "requires_graylog_host": {
-            "()": "django.utils.log.CallbackFilter",
-            "callback": lambda record: bool(globals()['GRAYLOG_HOST']),
-        },
     },
     'handlers': {
         'mail_admins': {
@@ -148,7 +153,6 @@ LOGGING = {
         "console": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
-            'filters': ['require_debug_true'],
             "formatter": "console",
         },
         "debug_log": {
@@ -158,13 +162,11 @@ LOGGING = {
             'filters': ['require_debug_true'],
             "formatter": "key_value",
         },
-        "graylog": {
-            "level": "DEBUG",
-            "class": "os2datascanner.utils.gelf.GraylogDatagramHandler",
-            "host": globals()['GRAYLOG_HOST'],
-            "filters": ["requires_graylog_host"],
-            "formatter": "gelf",
-        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': globals()['DJANGO_LOG_LEVEL'],
+        'propagate': True,
     },
     'loggers': {
         'django.request': {
@@ -173,12 +175,12 @@ LOGGING = {
             'propagate': True,
         },
         'django_structlog': {
-            'handlers': ['console', 'debug_log', 'graylog'],
+            'handlers': ['debug_log'],
             'level': globals()['DJANGO_LOG_LEVEL'],
             'propagate': True,
         },
         'os2datascanner': {
-            'handlers': ['console', 'debug_log', 'graylog'],
+            'handlers': ['debug_log'],
             'level': globals()['DJANGO_LOG_LEVEL'],
             'propagate': True,
         },

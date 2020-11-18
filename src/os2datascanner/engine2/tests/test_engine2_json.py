@@ -1,7 +1,7 @@
 import unittest
 
-from os2datascanner.engine2.model.core import (
-        Source, Handle, UnknownSchemeError, DeserialisationError)
+from os2datascanner.engine2.model.core import (Source,
+        Handle, SourceManager, UnknownSchemeError, DeserialisationError)
 from os2datascanner.engine2.model.data import DataSource, DataHandle
 from os2datascanner.engine2.model.ews import (
         EWSMailHandle, EWSAccountSource, OFFICE_365_ENDPOINT as CLOUD)
@@ -27,104 +27,105 @@ from os2datascanner.engine2.model.derived.pdf import (
 from os2datascanner.engine2.model.derived.tar import TarSource, TarHandle
 from os2datascanner.engine2.model.derived.zip import ZipSource, ZipHandle
 
+example_handles = [
+    FilesystemHandle(
+            FilesystemSource("/usr/share/common-licenses"),
+            "GPL-3"),
+    DataHandle(
+            DataSource(b"Test", "text/plain"),
+            "file"),
+    FilteredHandle(
+            GzipSource(
+                    FilesystemHandle(
+                            FilesystemSource("/usr/share/doc/coreutils"),
+                            "changelog.Debian.gz")),
+            "changelog.Debian"),
+    SMBHandle(
+            SMBSource(
+                    "//SERVER/Resource", "username"),
+            "~ocument.docx"),
+    SMBCHandle(
+            SMBCSource(
+                    "//SERVER/Resource",
+                    "username", "topsecret", "WORKGROUP8"),
+            "~ocument.docx"),
+    ZipHandle(
+            ZipSource(
+                    SMBCHandle(
+                            SMBCSource(
+                                    "//SERVER/Resource",
+                                    "username", driveletter="W"),
+                            "Confidential Documents.zip")),
+            "doc/Personal Information.docx"),
+    WebHandle(
+            WebSource(
+                    "https://secret.data.invalid/"),
+            "lottery-numbers-for-next-week.txt"),
+    TarHandle(
+            TarSource(
+                    FilesystemHandle(
+                            FilesystemSource(
+                                    "/home/user"),
+                            "Downloads/data.tar.gz")),
+            "data0.txt"),
+    MailPartHandle(
+            MailSource(
+                    EWSMailHandle(
+                            EWSAccountSource(
+                                    domain="cloudy.example",
+                                    server=CLOUD,
+                                    admin_user="cloudministrator",
+                                    admin_password="littlefluffy",
+                                    user="claude"),
+                            "SW5ib3hJRA==.TWVzc2dJRA==",
+                            "Re: Castles in the sky",
+                            "Inbox", "0000012345")),
+            "1/pictograph.jpeg",
+            "image/jpeg"),
+    PDFObjectHandle(
+            PDFPageSource(
+                    PDFPageHandle(
+                            PDFSource(
+                                    FilesystemHandle(
+                                            FilesystemSource(
+                                                    "/home/kiddw/Documents"),
+                                            "1699 Gardiners trip/"
+                                            "treasure_map.pdf")),
+                    "10")),
+            "X-marks-the-spot_000-0.png"),
+    LibreOfficeObjectHandle(
+            LibreOfficeSource(
+                    FilesystemHandle(
+                            FilesystemSource(
+                                    "/media/user/USB STICK"),
+                            "What I Did On My Holidays.doc")),
+            "What I Did On My Holidays.html"),
+    MSGraphMailMessageHandle(
+            MSGraphMailAccountSource(
+                    MSGraphMailAccountHandle(
+                            MSGraphMailSource(
+                                    "Not a real client ID value",
+                                    "Not a real tenant ID value",
+                                    "Not a very secret client secret"),
+                            "testuser@example.invalid")),
+            "bWVzc2FnZQo=",
+            "Re: Re: Re: Copy of FINAL (2) (EDITED).doc.docx",
+            "https://example.invalid/view/bWVzc2FnZQo="),
+    MSGraphFileHandle(
+            MSGraphDriveSource(
+                    MSGraphDriveHandle(
+                            MSGraphFilesSource(
+                                    "Not a real client ID value",
+                                    "Not a real tenant ID value",
+                                    "Not a very secret client secret"),
+                            "1NOTAREALDR1VE1DENT1F1ER",
+                            "Shared Documents and Conspiracies",
+                            "Guy Fawkes")),
+            "PLOTS/1605-11/GUNPWDER.WP"),
+]
+
 class JSONTests(unittest.TestCase):
     def test_json_round_trip(self):
-        example_handles = [
-            FilesystemHandle(
-                    FilesystemSource("/usr/share/common-licenses"),
-                    "GPL-3"),
-            DataHandle(
-                    DataSource(b"Test", "text/plain"),
-                    "file"),
-            FilteredHandle(
-                    GzipSource(
-                            FilesystemHandle(
-                                    FilesystemSource("/usr/share/doc/coreutils"),
-                                    "changelog.Debian.gz")),
-                    "changelog.Debian"),
-            SMBHandle(
-                    SMBSource(
-                            "//SERVER/Resource", "username"),
-                    "~ocument.docx"),
-            SMBCHandle(
-                    SMBCSource(
-                            "//SERVER/Resource",
-                            "username", "topsecret", "WORKGROUP8"),
-                    "~ocument.docx"),
-            ZipHandle(
-                    ZipSource(
-                            SMBCHandle(
-                                    SMBCSource(
-                                            "//SERVER/Resource",
-                                            "username", driveletter="W"),
-                                    "Confidential Documents.zip")),
-                    "doc/Personal Information.docx"),
-            WebHandle(
-                    WebSource(
-                            "https://secret.data.invalid/"),
-                    "lottery-numbers-for-next-week.txt"),
-            TarHandle(
-                    TarSource(
-                            FilesystemHandle(
-                                    FilesystemSource(
-                                            "/home/user"),
-                                    "Downloads/data.tar.gz")),
-                    "data0.txt"),
-            MailPartHandle(
-                    MailSource(
-                            EWSMailHandle(
-                                    EWSAccountSource(
-                                            domain="cloudy.example",
-                                            server=CLOUD,
-                                            admin_user="cloudministrator",
-                                            admin_password="littlefluffy",
-                                            user="claude"),
-                                    "SW5ib3hJRA==.TWVzc2dJRA==",
-                                    "Re: Castles in the sky")),
-                    "1/pictograph.jpeg",
-                    "image/jpeg"),
-            PDFObjectHandle(
-                    PDFPageSource(
-                            PDFPageHandle(
-                                    PDFSource(
-                                            FilesystemHandle(
-                                                    FilesystemSource(
-                                                            "/home/kiddw"
-                                                            "/Documents"),
-                                                    "1699 Gardiners trip/"
-                                                    "treasure_map.pdf")),
-                            "10")),
-                    "X-marks-the-spot_000-0.png"),
-            LibreOfficeObjectHandle(
-                    LibreOfficeSource(
-                            FilesystemHandle(
-                                    FilesystemSource(
-                                            "/media/user/USB STICK"),
-                                    "What I Did On My Holidays.doc")),
-                    "What I Did On My Holidays.html"),
-            MSGraphMailMessageHandle(
-                    MSGraphMailAccountSource(
-                            MSGraphMailAccountHandle(
-                                    MSGraphMailSource(
-                                            "Not a real client ID value",
-                                            "Not a real tenant ID value",
-                                            "Not a very secret client secret"),
-                                    "testuser@example.invalid")),
-                    "bWVzc2FnZQo=",
-                    "Re: Re: Re: Copy of FINAL (2) (EDITED).doc.docx"),
-            MSGraphFileHandle(
-                    MSGraphDriveSource(
-                            MSGraphDriveHandle(
-                                    MSGraphFilesSource(
-                                            "Not a real client ID value",
-                                            "Not a real tenant ID value",
-                                            "Not a very secret client secret"),
-                                    "1NOTAREALDR1VE1DENT1F1ER",
-                                    "Shared Documents and Conspiracies",
-                                    "Guy Fawkes")),
-                    "PLOTS/1605-11/GUNPWDER.WP"),
-        ]
-
         for handle in example_handles:
             with self.subTest(handle):
                 json = handle.to_json_object()
@@ -132,6 +133,17 @@ class JSONTests(unittest.TestCase):
                 print(json)
                 self.assertEqual(handle, handle.from_json_object(json))
                 print("--")
+
+    def test_followable(self):
+        with SourceManager() as sm:
+            for handle in example_handles:
+                with self.subTest(handle):
+                    try:
+                        handle.follow(sm)
+                    except TypeError:
+                        raise
+                    except Exception:
+                        pass
 
     def test_invalid_json(self):
         with self.assertRaises(UnknownSchemeError):

@@ -1,0 +1,72 @@
+from django.conf import settings
+from django.views import View
+from django.views.generic.base import TemplateView
+
+from .views import LoginRequiredMixin
+from .scanner_views import (ScannerRun, ScannerList,
+                            ScannerAskRun, ScannerCreate, ScannerDelete, ScannerUpdate)
+from ..models.scannerjobs.sbsysscanner_model import SbsysScanner
+
+
+class SbsysScannerList(ScannerList):
+    model = SbsysScanner
+    type = 'sbsys'
+
+
+class SbsysScannerCreate(View):
+    """Delegates to two views. One to the regular scannerjob creation
+    and one that states Sbsys has not been configured,
+    which means no token_url or no client_id or client_secret"""
+
+    def dispatch(self, request, *args, **kwargs):
+        if settings.SBSYS_TOKEN_URL and settings.SBSYS_CLIENT_ID \
+                and settings.SBSYS_CLIENT_SECRET and settings.SBSYS_API_URL:
+            handler = _SbsysScannerCreate.as_view()
+        else:
+            handler = _SbsysNoPermission.as_view()
+        return handler(request, *args, **kwargs)
+
+
+class _SbsysNoPermission(TemplateView, LoginRequiredMixin):
+    # TODO make a more fitting template or adjust that one
+    template_name = "os2datascanner/scanner_no_client_credentials.html"
+
+
+class _SbsysScannerCreate(ScannerCreate):
+    """Creates a Sbsys scannerjob"""
+    model = SbsysScanner
+    type = "sbsys"
+    fields = ['name', 'schedule', 'do_ocr',
+              'do_last_modified_check', 'rules', 'recipients']
+
+    def get_success_url(self):
+        return '/sbsysscanners/%s/saved/' % self.object.pk
+
+
+class SbsysScannerUpdate(ScannerUpdate):
+    """Displays parameters of existing Sbsys scannerjob for modification"""
+    model = SbsysScanner
+    type = "sbsys"
+    fields = ['name', 'schedule', 'do_ocr',
+              'do_last_modified_check', 'rules', 'recipients']
+
+    def get_success_url(self):
+        return '/sbsysscanners/%s/saved/' % self.object.pk
+
+
+class SbsysScannerDelete(ScannerDelete):
+    """ Deletes a Sbsys scannerjob"""
+    model = SbsysScanner
+    type = "sbsys"
+    fields = []
+    success_url = '/sbsysscanners/'
+
+
+class SbsysScannerAskRun(ScannerAskRun):
+    """Prompts for confirmation before running scannerjob"""
+    model = SbsysScanner
+
+
+class SbsysScannerRun(ScannerRun):
+    """ Runs the Sbsys scannerjob."""
+    model = SbsysScanner

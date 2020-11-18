@@ -29,6 +29,17 @@ class Resource(ABC):
         """Returns this Resource's Handle."""
         return self._handle
 
+    @abstractmethod
+    def check(self) -> bool:
+        """Checks that this Resource is available by interacting with it in an
+        unspecified, lightweight way. Returns True if the resource exists, and
+        False if it doesn't.
+
+        This method will only return False if the Resource cannot be accessed
+        and is not expected to be accessible in future. In particular,
+        transient issues like locked files or connectivity problems will not
+        cause False to be returned."""
+
     def _get_cookie(self):
         """Returns the magic cookie produced when the Source behind this
         Resource's Handle is opened in the associated StateManager. (Note that
@@ -41,7 +52,6 @@ class TimestampedResource(Resource):
         super().__init__(handle, sm)
         self._lm_timestamp = None
 
-    @abstractmethod
     def get_last_modified(self):
         """Returns the last modification date of this TimestampedResource as a
         wrapped Python datetime.datetime; this may be used to decide whether or

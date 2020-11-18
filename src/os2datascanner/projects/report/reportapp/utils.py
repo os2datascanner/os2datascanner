@@ -8,7 +8,9 @@ from django.contrib.auth.models import User
 from .models.aliases.emailalias_model import EmailAlias
 from .models.aliases.adsidalias_model import ADSIDAlias
 
+
 logger = structlog.get_logger()
+
 
 def hash_handle(handle):
     """

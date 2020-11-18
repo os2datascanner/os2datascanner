@@ -38,10 +38,20 @@ class ZipResource(FileResource):
         super().__init__(handle, sm)
         self._mr = None
 
+    def _get_raw_info(self):
+        return self._get_cookie().getinfo(str(self.handle.relative_path))
+
+    def check(self) -> bool:
+        try:
+            self._get_raw_info()
+            return True
+        except KeyError:
+            return False
+
     def unpack_info(self):
         if not self._mr:
             self._mr = MultipleResults.make_from_attrs(
-                    self._get_cookie().getinfo(str(self.handle.relative_path)),
+                    self._get_raw_info(),
                     "CRC", "comment", "compress_size", "compress_type",
                     "create_system", "create_version", "date_time",
                     "external_attr", "extra", "extract_version", "file_size",

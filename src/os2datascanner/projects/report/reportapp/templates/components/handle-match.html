@@ -2,7 +2,7 @@
 
 <div class="handle-match-wrapper">
 
-  <button class="handle-match-button button button--small button--cta" type="button">Håndtér match</button>
+  <button class="handle-match-button button button--handle-match" type="button">Håndtér match</button>
 
   <div class="handle-match" role="tooltip">
     <h5>Har håndteret dette match på følgende måde:</h5>
@@ -10,7 +10,7 @@
       <button type="button" class="handle-match__action" data-report-pk="{{ match.pk|unlocalize }}" data-status="2">Har flyttet filen</button>
       <button type="button" class="handle-match__action" data-report-pk="{{ match.pk|unlocalize }}" data-status="3">Har slettet filen</button>
       <button type="button" class="handle-match__action" data-report-pk="{{ match.pk|unlocalize }}" data-status="1">Har redigeret filen</button>
-      <button type="button" class="handle-match__action" data-report-pk="{{ match.pk|unlocalize }}" data-status="4">Har intet foretaget mig</button>
+      <button type="button" class="handle-match__action" data-report-pk="{{ match.pk|unlocalize }}" data-status="4">Falsk positiv</button>
     </div>
   </div>
 

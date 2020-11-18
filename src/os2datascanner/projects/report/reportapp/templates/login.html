@@ -1,36 +1,47 @@
-{% include "partials/header.html" with body_class="login" %}
+<html class="login-bg">
+  {% include "partials/header.html" %}
 
-<section class="login-form">
-  <form method="post" action="{% url 'login' %}" class="form">
-      {% csrf_token %}
-    <legend class="form__legend">Login:</legend>
+    <section class="login-form">
+      <form method="post" action="{% url 'login' %}" class="form">
+          {% csrf_token %}
+        <h2>Log ind</h2>
+    
+        <fieldset>
+          <div class="form__group">
+            <label for="username">Brugernavn</label>
+            <input type="text" name="{{ form.username.name }}" id="id_{{ form.username.name }}" autofocus>
+          </div>
+    
+          <div class="form__group">
+            <label for="password">Adgangskode</label>
+            <input type="password" name="{{ form.password.name }}"  id="id_{{ form.password.name }}">
+    
+            {% if form.password.errors %}
+              <div class="form__error">Fejl i brugernavn eller password</div>
+            {% endif %}
+          </div>
+    
+          <div class="form__group flex">
+            <input type="checkbox" name="remember-me" id="remember-me">
+            <label class="width" for="remember-me">Husk mig</label>
+          </div>
+    
+          <div class="form__group">
+            <button type="submit" class="login-btn">Log ind</button>
+          </div>
+    
+          <div class="form__group">
+            <label class="info">Har du glemt din adgangskode?
+              <a class="link" href="#">Klik her</a>
+            </label>
+          </div>
+    
+          <div class="form__group logo">
+            {% include "components/logo-o.html" %}
+          </div>
+        </fieldset>
+      </form>
+    </section>
 
-    <fieldset>
-
-      <div class="form__group">
-        <label for="username">Username:</label>
-        <input type="text" name="{{ form.username.name }}" id="id_{{ form.username.name }}" placeholder="handle@example.com" autofocus>
-      </div>
-
-      <div class="form__group">
-        <label for="password">Password:</label>
-        <input type="password" name="{{ form.password.name }}"  id="id_{{ form.password.name }}" placeholder="[a-z][0-9]">
-      </div>
-
-      <div class="form__group">
-        <input type="checkbox" name="remember-me" id="remember-me">
-        <label for="remember-me">Remember me</label>
-      </div>
-
-      <div class="form__group">
-        <button type="submit" class="button">Login</button>
-          {% if form.password.errors %}
-            <div class="form__error">Fejl i brugernavn eller password</div>
-          {% endif %}
-      </div>
-
-    </fieldset>
-  </form>
-</section>
-
-{% include "partials/footer.html" %}
+  </body>
+</html>

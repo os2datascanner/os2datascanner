@@ -18,20 +18,30 @@
 import django.contrib.auth.views
 from django.conf import settings
 from django.conf.urls import url
+from django.http import HttpResponse
 from django.views.i18n import JavaScriptCatalog
 
 from .models.scannerjobs.dropboxscanner_model import DropboxScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.webscanner_model import WebScanner
+from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 from .models.scannerjobs.msgraph_models import (
         MSGraphMailScanner, MSGraphFileScanner)
+from .models.scannerjobs.gmail_model import GmailScanner
+from .models.scannerjobs.sbsysscanner_model import SbsysScanner
 from .views.exchangescanner_views import ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate, \
     ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun
 from .views.filescanner_views import FileScannerCreate, FileScannerRun, FileScannerAskRun, FileScannerUpdate, \
     FileScannerDelete, FileScannerList
 from .views.dropboxscanner_views import DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun, DropboxScannerUpdate, \
     DropboxScannerDelete, DropboxScannerList
+from .views.googledrivescanner_views import GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun, \
+    GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete
+from .views.gmailscanner_views import GmailScannerCreate, GmailScannerRun, GmailScannerAskRun, GmailScannerUpdate, \
+    GmailScannerDelete, GmailScannerList
+from .views.sbsysscanner_views import SbsysScannerCreate, SbsysScannerList, SbsysScannerAskRun, SbsysScannerDelete, \
+    SbsysScannerRun, SbsysScannerUpdate
 from .views.rule_views import RuleList, \
     CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
     RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
@@ -115,6 +125,51 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=DropboxScanner),
         name='dropboxscanner_askrun'),
+
+    # Google Drive scanner URL's
+    url(r'^googledrivescanners/$', GoogleDriveScannerList.as_view(), name='googledrivescanners'),
+    url(r'^googledrivescanners/add/$', GoogleDriveScannerCreate.as_view(), name='googledrivescanner_add'),
+    url(r'^googledrivescanners/(?P<pk>\d+)/$', GoogleDriveScannerUpdate.as_view(),
+        name='googledrivescanner_update'),
+    url(r'^googledrivescanners/(?P<pk>\d+)/delete/$', GoogleDriveScannerDelete.as_view(),
+        name='googledrivescanner_delete'),
+    url(r'^googledrivescanners/(?P<pk>\d+)/run/$', GoogleDriveScannerRun.as_view(),
+        name='googledrivescanner_run'),
+    url(r'^googledrivescanners/(?P<pk>\d+)/askrun/$',
+        GoogleDriveScannerAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=GoogleDriveScanner),
+        name='googledrivescanner_askrun'),
+
+    # Gmail scanner URL's
+    url(r'^gmailscanners/$', GmailScannerList.as_view(), name='gmailscanners'),
+    url(r'^gmailscanners/add/$', GmailScannerCreate.as_view(), name='gmailscanner_add'),
+    url(r'^gmailscanners/(?P<pk>\d+)/$', GmailScannerUpdate.as_view(),
+        name='gmailscanner_update'),
+    url(r'^gmailscanners/(?P<pk>\d+)/delete/$', GmailScannerDelete.as_view(),
+        name='gmailscanner_delete'),
+    url(r'^gmailscanners/(?P<pk>\d+)/run/$', GmailScannerRun.as_view(),
+        name='gmailscanner_run'),
+    url(r'^gmailscanners/(?P<pk>\d+)/askrun/$',
+        GmailScannerAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=GmailScanner),
+        name='gmailscanner_askrun'),
+
+    # Sbsys scanner URL's
+    url(r'^sbsysscanners/$', SbsysScannerList.as_view(), name='sbsysscanners'),
+    url(r'^sbsysscanners/add/$', SbsysScannerCreate.as_view(), name='sbsysscanner_add'),
+    url(r'^sbsysscanners/(?P<pk>\d+)/$', SbsysScannerUpdate.as_view(),
+        name='sbsysscanner_update'),
+    url(r'^sbsysscanners/(?P<pk>\d+)/delete/$', SbsysScannerDelete.as_view(),
+        name='sbsysscanner_delete'),
+    url(r'^sbsysscanners/(?P<pk>\d+)/run/$', SbsysScannerRun.as_view(),
+        name='sbsysscanner_run'),
+    url(r'^sbsysscanners/(?P<pk>\d+)/askrun/$',
+        SbsysScannerAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=SbsysScanner),
+        name='sbsysscanner_askrun'),
 
     # OAuth-based data sources
     url(r'^msgraph-filescanners/$',
@@ -222,9 +277,9 @@ urlpatterns = [
         ),
 
     # General success handler
-    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners)/(\d+)/(created)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(created)/$',
         DialogSuccess.as_view()),
-    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners)/(\d+)/(saved)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(saved)/$',
         DialogSuccess.as_view()),
     url(r'^(rules/regex|rules/cpr|groups)/(\d+)/(created)/$',
         DialogSuccess.as_view()),
@@ -243,6 +298,8 @@ urlpatterns = [
             template_name='designguide.html',
         ),
         name='designguide'),
+
+    url(r'^health/', lambda r: HttpResponse()),
 ]
 
 if settings.DO_USE_GROUPS:

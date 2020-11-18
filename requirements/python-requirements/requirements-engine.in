@@ -5,6 +5,8 @@ chardet
 defusedxml
 dropbox
 exchangelib
+google-api-python-client
+oauth2client
 lxml
 olefile
 pdfrw

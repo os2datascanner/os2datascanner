@@ -1,4 +1,5 @@
 SECRET_KEY = "DUMMYKEY(for development)DUMMYKEY(for development)"
+DECRYPTION_HEX = "4b8930847cba7196a46ede3456fe33df564427a30910dd1ef9bc805f26559aeb"
 
 # [mode]
 DEBUG = true
@@ -8,7 +9,7 @@ PRODUCTION = false
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
 # OAuth 2.0 services. (This value should end with a forward slash.)
-SITE_URL = "localhost:8020/"
+SITE_URL = "http://localhost:8020/"
 ALLOWED_HOSTS = []
 
 # [installation]
@@ -18,6 +19,11 @@ OPTIONAL_APPS = ["django_extensions"]
 ENABLE_FILESCAN = true
 ENABLE_WEBSCAN = true
 ENABLE_EXCHANGESCAN = true
+ENABLE_GOOGLEDRIVESCAN = true
+ENABLE_GMAILSCAN = true
+ENABLE_MSGRAPH_MAILSCAN = true
+ENABLE_MSGRAPH_FILESCAN = true
+ENABLE_SBSYSSCAN = true
 
 # [email]
 DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"

@@ -63,7 +63,7 @@ then
 
     echo -e '\n************* Report module *************\n'
     # Setup report module
-    source "$PRODUCTION_DIR/contrib/system-scripts/utils/report_setup.sh" "$REPORT_DOMAIN" "$ENABLE_SAML2" "$PRODUCTION_DIR" False "$DEFAULT_FROM_EMAIL" "$ADMIN_EMAIL" "$NOTIFICATION_INSTITUTION"
+    source "$PRODUCTION_DIR/contrib/system-scripts/utils/report_setup.sh" "$REPORT_DOMAIN" "$ENABLE_SAML2" "$PRODUCTION_DIR" false "$DEFAULT_FROM_EMAIL" "$ADMIN_EMAIL" "$NOTIFICATION_INSTITUTION"
 
     npm_install_and_build 'report' "$PRODUCTION_DIR" 'prod'
     collectstatic_and_makemessages 'report' "$PRODUCTION_DIR"

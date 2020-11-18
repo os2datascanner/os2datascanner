@@ -75,6 +75,9 @@ class FilesystemResource(FileResource):
                 self._get_cookie(), self.handle.relative_path)
         self._mr = None
 
+    def check(self) -> bool:
+        return os.path.exists(self._full_path)
+
     def unpack_stat(self):
         if not self._mr:
             self._mr = MultipleResults.make_from_attrs(

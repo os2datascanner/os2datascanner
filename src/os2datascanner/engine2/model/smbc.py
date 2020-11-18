@@ -163,6 +163,14 @@ class SMBCResource(FileResource):
         super().__init__(handle, sm)
         self._mr = None
 
+    def check(self) -> bool:
+        try:
+            _, context = self._get_cookie()
+            context.stat(self._make_url())
+            return True
+        except smbc.NoEntryError:
+            return False
+
     def _make_url(self):
         url, _ = self._get_cookie()
         return url + "/" + quote(self.handle.relative_path)

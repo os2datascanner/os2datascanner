@@ -95,33 +95,21 @@
   </div>
   {% endif %}
 
-  {% if form.errors %}
-  <div class="alert alert--danger" role="alert">
-    <p>Følgende felter er ikke udfyldt korrekt:</p>
-    <ul>
-      {% for error in form.errors %}
-      <li>{{ error }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-
   <form class="form" role="form" method="post">
     {% csrf_token %}
 
     <fieldset class="form__fieldset">
-      <legend>Metadata:</legend>
+      <legend>Metadata</legend>
 
-      <div class="form__group">
-        <label for="id_{{ form.name.name }}">{{ form.name.label }}</label>
+      <div class="form__group{% if form.name.errors %} has-error{% endif %}">
+        <label class="required-form" for="id_{{ form.name.name }}">{{ form.name.label }}</label>
         <input 
           autofocus="autofocus"
           type="text" 
           class="form-control" 
           name="{{ form.name.name }}" 
           id="id_{{ form.name.name }}"
-          {% if form.name.value %}value="{{ form.name.value }}" {% endif %}
-          {% if form.name.field.required %}required{% endif %}>
+          {% if form.name.value %}value="{{ form.name.value }}" {% endif %}>
         {% if form.name.help_text %}
         <span class="form__help-text">{{ form.name.help_text }}</span>
         {% endif %}
@@ -132,12 +120,11 @@
       <div 
         id="{{ form.organization.auto_id }}_container" 
         class="form__group{% if form.organization.errors %} has-error{% endif %}">
-        <label for="id_{{ form.organization.name }}">{{ form.organization.label }}</label>
+        <label class="required-form" for="id_{{ form.organization.name }}">{{ form.organization.label }}</label>
         <select 
           name="{{ form.organization.name }}" 
           id="id_{{ form.organization.name }}" 
-          class="form-control"
-          {% if form.organization.field.required %}required{% endif %}>
+          class="form-control">
 
           {% for value, tag in form.organization.field.choices %}
           <option value="{{ value }}" {% if form.organization.value|add:"0" == value|add:"0" %} selected{% endif %}>
@@ -165,8 +152,7 @@
         <select 
           name="{{ form.group.name }}" 
           id="id_{{ form.group.name }}" 
-          class="form-control"
-          {% if form.group.field.required %}required{% endif %}>
+          class="form-control">
 
           {% for value, tag in form.group.field.choices %}
           <option value="{{ value }}" {% if form.group.value|add:"0" == value|add:"0" %} selected{% endif %}>{{ tag }}</option>{# silly type conversion #}
@@ -183,13 +169,13 @@
     {% endif %}
 
     <fieldset class="form__fieldset">
-      <legend>Regel:</legend>
+      <legend>Regel</legend>
 
       <div id="{{ form.pattern_0.auto_id }}_container" class="form__group col-sm-12{% if form.pattern_0.errors %} has-error{% endif %}">
 
         {% for pattern_name, pattern_value in view.get_pattern_fields %}
         <div class="form__group form-group">
-          <label class="control-label col-sm-2" for="id_{{ pattern_name }}">Regulært udtryk {{ forloop.counter }}</label>
+          <label class="control-label col-sm-2 required-form" for="id_{{ pattern_name }}">Regulært udtryk {{ forloop.counter }}</label>
           <div class="col-sm-10">
             {% if forloop.counter > 1 %}
             <div class="input-group">
@@ -199,8 +185,7 @@
                 class="form-control" 
                 name="{{ pattern_name }}" 
                 id="id_{{ pattern_name }}"
-                {% if pattern_value %}value="{{ pattern_value }}" {% endif %}
-                {% if forloop.counter == 1 and form.pattern_0.field.required %}required{% endif %}>
+                {% if pattern_value %}value="{{ pattern_value }}" {% endif %}>
               {# required state of pattern_0 is variable #}
 
               {% if forloop.counter > 1 %}
@@ -230,10 +215,9 @@
 
       <div id="{{ form.description.auto_id }}_container" class="form__group col-sm-12{% if form.description.errors %} has-error{% endif %}">
         <div class="form-group">
-          <label class="control-label col-sm-2" for="id_{{ form.description.name }}">{{ form.description.label }}</label>
+          <label class="control-label col-sm-2 required-form" for="id_{{ form.description.name }}">{{ form.description.label }}</label>
           <div class="col-sm-10">
-            <textarea class="form-control" name="{{ form.description.name }}" id="id_{{ form.description.name }}" rows="3"
-              {% if form.description.field.required %}required{% endif %}>{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
+            <textarea class="form-control" name="{{ form.description.name }}" id="id_{{ form.description.name }}" rows="3">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
             {% if form.description.help_text %}
             <p>
               <small>{{ form.description.help_text }}</small>
@@ -246,10 +230,9 @@
 
       <div id="{{ form.sensitivity.auto_id }}_container" class="form__group col-sm-12{% if form.sensitivity.errors %} has-error{% endif %}">
         <div class="form-group">
-          <label class="control-label col-sm-2" for="id_{{ form.sensitivity.name }}">{{ form.sensitivity.label }}</label>
+          <label class="control-label col-sm-2 required-form" for="id_{{ form.sensitivity.name }}">{{ form.sensitivity.label }}</label>
           <div class="col-sm-10">
-            <select name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" class="form-control"
-              {% if form.sensitivity.field.required %}required{% endif %}>
+            <select name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" class="form-control">
 
               <option value="" selected>---------</option>
               {% for value, tag in form.sensitivity.field.choices %}

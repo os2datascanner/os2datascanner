@@ -7,21 +7,40 @@ from ..model.core import Source, Handle, SourceManager
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
 from . import messages
-from .utilities import (notify_ready, PikaPipelineRunner, notify_stopping,
-        prometheus_summary, make_common_argument_parser,
+from .utilities.args import (AppendReplaceAction, make_common_argument_parser,
         make_sourcemanager_configuration_block)
+from .utilities.pika import PikaPipelineRunner
+from .utilities.systemd import notify_ready, notify_stopping
+from .utilities.prometheus import prometheus_summary
+
+
+def check(source_manager, handle):
+    """Runs Resource.check() on the ultimate top-level Handle behind a given
+    Handle."""
+    while handle.source.handle:
+        handle = handle.source.handle
+    return handle.follow(source_manager).check()
 
 
 def message_received_raw(body,
-        channel, source_manager, representations_q, sources_q, problems_q):
+        channel, source_manager, representations_q, sources_q, problems_qs):
     conversion = messages.ConversionMessage.from_json_object(body)
     configuration = conversion.scan_spec.configuration
     head, _, _ = conversion.progress.rule.split()
     required = head.operates_on
 
     try:
-        resource = conversion.handle.follow(source_manager)
+        if not check(source_manager, conversion.handle):
+            # The resource is missing. Generate a special problem message and
+            # stop the generator immediately
+            for problems_q in problems_qs:
+                yield (problems_q, messages.ProblemMessage(
+                        scan_tag=conversion.scan_spec.scan_tag,
+                        source=None, handle=conversion.handle, missing=True,
+                        message="Resource check failed").to_json_object())
+            return
 
+        resource = conversion.handle.follow(source_manager)
         representation = None
         if (required == OutputType.Text
                 and "skip_mime_types" in configuration):
@@ -74,11 +93,12 @@ def message_received_raw(body,
                             }).to_json_object())
     except Exception as e:
         exception_message = ", ".join([str(a) for a in e.args])
-        yield (problems_q, messages.ProblemMessage(
-                scan_tag=conversion.scan_spec.scan_tag,
-                source=None, handle=conversion.handle,
-                message="Processing error: {0}".format(
-                        exception_message)).to_json_object())
+        for problems_q in problems_qs:
+            yield (problems_q, messages.ProblemMessage(
+                    scan_tag=conversion.scan_spec.scan_tag,
+                    source=None, handle=conversion.handle,
+                    message="Processing error: {0}".format(
+                            exception_message)).to_json_object())
 
 
 def main():
@@ -111,10 +131,11 @@ def main():
             default="os2ds_scan_specs")
     outputs.add_argument(
             "--problems",
+            action=AppendReplaceAction,
             metavar="NAME",
-            help="the name of the AMQP queue to which problems should be"
+            help="the names of the AMQP queues to which problems should be"
                     + " written",
-            default="os2ds_problems")
+            default=["os2ds_problems", "os2ds_checkups"])
 
     args = parser.parse_args()
 
@@ -134,7 +155,7 @@ def main():
     with SourceManager(width=args.width) as source_manager:
         with ProcessorRunner(
                 read=[args.conversions],
-                write=[args.sources, args.representations, args.problems],
+                write=[args.sources, args.representations, *args.problems],
                 heartbeat=6000) as runner:
             try:
                 print("Start")

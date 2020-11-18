@@ -2,83 +2,10 @@ from abc import ABC, abstractmethod
 from sys import stderr
 import json
 import pika
-import argparse
-import systemd.daemon
-if systemd.daemon.booted():
-    from systemd.daemon import notify as sd_notify
-else:
-    def sd_notify(status):
-        return False
-from prometheus_client import Summary
 
-from ..utilities.backoff import run_with_backoff
-from ...utils.system_utilities import json_utf8_decode
+from ...utilities.backoff import run_with_backoff
+from ....utils.system_utilities import json_utf8_decode
 from os2datascanner.utils import pika_settings
-
-
-def make_common_argument_parser():
-    parser = argparse.ArgumentParser(
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument(
-            "--debug",
-            action="store_true",
-            help="print all incoming messages to the console")
-
-    monitoring = parser.add_argument_group("monitoring")
-    monitoring.add_argument(
-            "--enable-metrics",
-            action="store_true",
-            help="enable exporting of metrics")
-    monitoring.add_argument(
-            "--prometheus-port",
-            metavar="PORT",
-            help="the port to serve OpenMetrics data.",
-            default=9091)
-
-    return parser
-
-
-def make_sourcemanager_configuration_block(parser):
-    configuration = parser.add_argument_group("configuration")
-    configuration.add_argument(
-            "--width",
-            type=int,
-            metavar="SIZE",
-            help="allow each source to have at most %(metavar) "
-                    "simultaneous open sub-sources",
-            default=3)
-
-    return configuration
-
-
-def notify_ready():
-    sd_notify("READY=1")
-
-
-def notify_reloading():
-    sd_notify("RELOADING=1")
-
-
-def notify_stopping():
-    sd_notify("STOPPING=1")
-
-
-def notify_status(msg):
-    sd_notify("STATUS={0}".format(msg))
-
-
-def notify_watchdog():
-    sd_notify("WATCHDOG=1")
-
-
-def prometheus_summary(*args):
-    """Decorator. Records a Prometheus summary observation for every call to
-    the decorated function."""
-    s = Summary(*args)
-
-    def _prometheus_summary(func):
-        return s.time()(func)
-    return _prometheus_summary
 
 
 class PikaConnectionHolder(ABC):
@@ -96,7 +23,15 @@ class PikaConnectionHolder(ABC):
 
     def make_connection(self):
         """Constructs a new Pika connection."""
-        return pika.BlockingConnection(self._parameters)
+        conn_string_tpl = '{0}://{1}:{2}@{3}:{4}/{5}?heartbeat=6000'
+        conn_string = conn_string_tpl.format(pika_settings.AMQP_SCHEME, 
+                                             pika_settings.AMQP_USER, 
+                                             pika_settings.AMQP_PWD, 
+                                             pika_settings.AMQP_HOST,
+                                             pika_settings.AMQP_PORT,
+                                             pika_settings.AMQP_VHOST.lstrip('/'))
+        params = pika.URLParameters(conn_string)
+        return pika.BlockingConnection(params)
 
     @property
     def connection(self):

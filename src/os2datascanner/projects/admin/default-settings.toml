@@ -7,6 +7,7 @@
 # /dev-environment/dev-settings.toml
 
 SECRET_KEY = ""
+DECRYPTION_HEX = ""
 
 # [mode]
 DEBUG = false
@@ -27,6 +28,16 @@ MSGRAPH_APP_ID = ""
 # OS2datascanner installation corresponds to a registered Azure application
 # (client private keys are not yet supported):
 MSGRAPH_CLIENT_SECRET = ""
+
+# [sbsys]
+# Using oauth with grant type client_credentials.
+# These settings must be provided to later retrieve a token
+# to then make API calls.
+SBSYS_CLIENT_ID = ""
+SBSYS_CLIENT_SECRET = ""
+SBSYS_TOKEN_URL = ""
+# API url should be pasted ending with "api/"
+SBSYS_API_URL = ""
 
 # [test]
 TEST_RUNNER = "xmlrunner.extra.djangotestrunner.XMLTestRunner"
@@ -56,6 +67,7 @@ NOTIFICATION_INSTITUTION = ""
 DO_USE_GROUPS = false
 
 MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -75,6 +87,9 @@ SETTINGS_EXPORT = [
     'ENABLE_DROPBOXSCAN',
     'ENABLE_MSGRAPH_MAILSCAN',
     'ENABLE_MSGRAPH_FILESCAN',
+    'ENABLE_GOOGLEDRIVESCAN',
+    'ENABLE_GMAILSCAN',
+    'ENABLE_SBSYSSCAN',
     'ICON_SPRITE_URL'
 ]
 
@@ -109,19 +124,26 @@ ENABLE_EXCHANGESCAN = false
 ENABLE_DROPBOXSCAN = false
 ENABLE_MSGRAPH_MAILSCAN = false
 ENABLE_MSGRAPH_FILESCAN = false
+ENABLE_GOOGLEDRIVESCAN = false
+ENABLE_GMAILSCAN = false
+ENABLE_SBSYSSCAN = false
 
 # [logging]
 GRAYLOG_HOST = ""
 DJANGO_LOG_LEVEL = "INFO"
 
-# This setting is Django specifik, and must be top level to get picked up
+# These settings are Django-specific, and must be top level to get picked up
 AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
+AMQP_CONVERSION_TARGET = "os2ds_conversions"
 
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module
 AMQP_HOST = "localhost"
 AMQP_USER = ""
 AMQP_PWD = ""
+AMQP_SCHEME = "amqp"
+AMQP_PORT = 5672
+AMQP_VHOST = "/"
     [amqp.AMQP_BACKOFF_PARAMS]
     max_tries = 10
     ceiling = 7
@@ -152,4 +174,3 @@ LOGS_DIR = ["*", "var", "logs"]
 STATIC_ROOT = ["*", 'src', 'os2datascanner', 'projects', 'static', 'admin']
 MEDIA_ROOT = ["*", "uploads", "admin"]
 TEST_OUTPUT_FILE_NAME = ["*", "build", "test-results.xml"]
-DECRYPTION_FILE_PATH = ["*"]

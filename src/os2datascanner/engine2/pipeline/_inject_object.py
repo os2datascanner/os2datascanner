@@ -3,7 +3,7 @@ from json import dumps, loads
 
 from ..model.core import Source
 from ..rules.cpr import CPRRule
-from .utilities import make_common_argument_parser
+from .utilities.args import make_common_argument_parser
 
 
 def main():

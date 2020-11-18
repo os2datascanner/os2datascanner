@@ -52,6 +52,9 @@ class DataSource(Source):
 
 
 class DataResource(FileResource):
+    def check(self) -> bool:
+        return True
+
     def get_size(self):
         return SingleResult(None, "size", len(self.handle.source._content))
 

@@ -35,8 +35,8 @@ sed -i "s/ENABLE_FILESCAN = false/ENABLE_FILESCAN = $enable_filescan/g" "$user_s
 export OS2DS_ADMIN_USER_CONFIG_PATH="$user_settings_file"
 export OS2DS_ADMIN_SYSTEM_CONFIG_PATH=""
 
-echo "export OS2DS_ADMIN_USER_CONFIG_PATH=$user_settings_file" >> /etc/apache/envvars
-echo 'export OS2DS_ADMIN_SYSTEM_CONFIG_PATH=""' >> /etc/apache/envvars
+echo "export OS2DS_ADMIN_USER_CONFIG_PATH=$user_settings_file" >> /etc/apache2/envvars
+echo 'export OS2DS_ADMIN_SYSTEM_CONFIG_PATH=""' >> /etc/apache2/envvars
 
 perform_django_migrations 'admin' "$setup_dir"
 create_superuser 'admin' "$setup_dir" "$site_username" "$site_useremail"

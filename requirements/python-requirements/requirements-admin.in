@@ -2,5 +2,7 @@
 -c requirements-engine.txt
 
 django-recurrence
+google-api-python-client
+oauth2client
 pycrypto
 python-dateutil

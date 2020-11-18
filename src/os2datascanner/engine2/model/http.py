@@ -1,7 +1,9 @@
 from io import BytesIO
 from time import sleep
 from lxml.html import document_fromstring
+from lxml.etree import ParserError
 from urllib.parse import urljoin, urlsplit, urlunsplit
+import logging
 from requests.sessions import Session
 from requests.exceptions import ConnectionError
 from contextlib import contextmanager
@@ -118,6 +120,13 @@ class WebResource(FileResource):
         self._response = None
         self._mr = None
 
+    def _get_head_raw(self):
+        return self._get_cookie().head(self._make_url())
+
+    def check(self) -> bool:
+        response = self._get_head_raw()
+        return response.status_code not in (404, 410,)
+
     def _make_url(self):
         handle = self.handle
         base = handle.source.to_url()
@@ -129,7 +138,7 @@ class WebResource(FileResource):
 
     def unpack_header(self, check=False):
         if not self._response:
-            self._response = self._get_cookie().head(self._make_url())
+            self._response = self._get_head_raw()
             header = self._response.headers
 
             self._mr = MultipleResults(
@@ -231,8 +240,13 @@ class WebHandle(Handle):
 
 
 def make_outlinks(content, where):
-    doc = document_fromstring(content)
-    doc.make_links_absolute(where, resolve_base_href=True)
-    for el, _, li, _ in doc.iterlinks():
-        if el.tag in ("a", "img",):
-            yield li
+    try:
+        doc = document_fromstring(content)
+        doc.make_links_absolute(where, resolve_base_href=True)
+        for el, _, li, _ in doc.iterlinks():
+            if el.tag in ("a", "img",):
+                yield li
+    except ParserError:
+        # Silently drop ParserErrors, but only for empty documents
+        if content and not content.isspace():
+            logging.exception("{0}: unexpected ParserError".format(where))

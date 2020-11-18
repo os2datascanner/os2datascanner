@@ -61,7 +61,7 @@
   &--width {
     margin-right: .5rem;
     height: 1.2rem;
-    width: auto;
+    max-width: 1.5rem;
   }
 
   svg {
@@ -76,7 +76,7 @@
 }
 
 .add-new-btn {
-    margin: 24px 0; 
+    margin: 28px 0; 
     float: right;
 }
 

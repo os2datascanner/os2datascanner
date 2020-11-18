@@ -36,6 +36,12 @@ DUMMY_MIME = "application/vnd.os2.datascanner.graphmailaccount"
 
 
 class MSGraphMailAccountResource(Resource):
+    def check(self) -> bool:
+        response = self._get_cookie().get_raw(
+                "users/{0}/messages?$select=id&$top=1".format(
+                        self.handle.relative_path))
+        return response.status_code not in (404, 410,)
+
     def compute_type(self):
         return DUMMY_MIME
 
@@ -77,6 +83,11 @@ class MSGraphMailMessageResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
         self._message = None
+
+    def check(self) -> bool:
+        response = self._get_cookie().get_raw(
+                self.make_object_path() + "?$select=id")
+        return response.status_code not in (404, 410,)
 
     def make_object_path(self):
         return "users/{0}/messages/{1}".format(
@@ -123,7 +134,7 @@ class MSGraphMailMessageHandle(Handle):
     resource_type = MSGraphMailMessageResource
     eq_properties = Handle.BASE_PROPERTIES
 
-    def __init__(self, source, path, mail_subject, weblink=None):
+    def __init__(self, source, path, mail_subject, weblink):
         super().__init__(source, path)
         self._mail_subject = mail_subject
         self._weblink = weblink

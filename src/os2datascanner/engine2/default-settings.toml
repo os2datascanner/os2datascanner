@@ -3,8 +3,20 @@
 AMQP_HOST = "localhost"
 AMQP_USER = ""
 AMQP_PWD = ""
+AMQP_SCHEME = "amqp"
+AMQP_PORT = 5672
+AMQP_VHOST = "/"
     [amqp.AMQP_BACKOFF_PARAMS]
     max_tries = 10
     ceiling = 7
     warn_after = 6
     fuzz = 0
+
+[subprocess]
+# The maximum runtime allowed for an external tool (in seconds)
+timeout = 45
+
+[model.libreoffice]
+# The size at which LibreOffice-generated HTML should be thrown away and
+# replaced by a new plaintext conversion (in bytes)
+size_threshold = 1048576

@@ -1,4 +1,5 @@
 SECRET_KEY = "DUMMYKEY(for testing)DUMMYKEY(for testing)"
+DECRYPTION_HEX = "09b40bd0633d09e77da00a2397869da69e53850abf72c29aaa11c622c2525729"
 
 [DATABASES]
 
@@ -18,7 +19,6 @@ VAR_DIR = ["*", "var"]
 LOGS_DIR = ["*", "var", "logs"]
 MEDIA_ROOT = ["*", "uploads", "admin"]
 TEST_OUTPUT_FILE_NAME = ["*", "build", "test-results.xml"]
-DECRYPTION_FILE_PATH = ["/", "builds", "os2datascanner", "os2datascanner", "dev-environment", "admin"]
 
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module

@@ -40,20 +40,26 @@ class MSGraphSource(Source):
         def __init__(self, token):
             self._token = token
 
-        def get(self, tail, *, json=True):
-            response = requests.get(
+        def get_raw(self, tail):
+            return requests.get(
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
                     headers={"authorization": "Bearer {0}".format(self._token)})
+
+        def get(self, tail, *, json=True):
+            response = self.get_raw(tail)
             response.raise_for_status()
             if json:
                 return response.json()
             else:
                 return response.content
 
-        def head(self, tail):
-            response = requests.head(
+        def head_raw(self, tail):
+            return requests.head(
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
                     headers={"authorization": "Bearer {0}".format(self._token)})
+
+        def head(self, tail):
+            response = self.head_raw(tail)
             response.raise_for_status()
             return response
 

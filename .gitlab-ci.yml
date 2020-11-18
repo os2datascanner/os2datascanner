@@ -14,6 +14,7 @@ stages:
   - build
   - test
   - release
+  - deploy
 
 
 variables:
@@ -157,7 +158,6 @@ Test Admin Application:
   variables:
     OS2DS_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
     OS2DS_ADMIN_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/admin/docker-settings.toml
-    DECRYPTION_FILE_PATH: ${CI_PROJECT_DIR}/dev-environment/admin
   needs:
     - Build Admin Application
   script:
@@ -318,3 +318,32 @@ Release Engine:
   before_script:
     - export IMAGE_FROM="${ENGINE_IMAGE}"
     - export IMAGE_TO="${RELEASE_ENGINE_IMAGE}"
+
+
+# Deploy stage
+##############
+
+Deploy dev:
+  # Automatic deployment of development branch to
+  # https://admin.dev.os2ds.magenta.dk and https://report.dev.os2ds.magenta.dk
+  stage: deploy
+  image: magentalabs/pepper:latest
+  services: []
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "development"
+  dependencies: []
+  tags:
+    - deploy
+  needs:
+    - Release Report Application Candidate
+    - Release Admin Application Candidate
+    - Release Engine Candidate
+  variables:
+    SALTAPI_URL: https://ctrldev1.magenta-aps.dk/api/
+    SALTAPI_EAUTH: file
+    GIT_STRATEGY: none
+  script:
+    - pepper --client runner --fail-any state.orchestrate os2ds.service-dev
+  environment:
+    name: dev
+    url: https://adminos2ds.magenta.dk/

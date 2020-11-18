@@ -18,6 +18,8 @@
           <a href="/">Scannerjob</a>
         {% elif settings.ENABLE_MSGRAPH_MAILSCAN %}
           <a href="/">Scannerjob</a>
+        {% elif settings.ENABLE_GOOGLEDRIVESCAN %}
+          <a href="/">Scannerjob</a>
         {% endif %}
         {% if user.profile.is_groups_enabled %}
           {% if user.is_superuser or user.profile.is_group_admin %}

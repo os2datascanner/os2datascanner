@@ -9,13 +9,22 @@
     <a id="exchange" class="tabs__control" href='/exchangescanners/'">Exchangescanner</a>
     {% endif %}
     {% if settings.ENABLE_DROPBOXSCAN %}
-    <a id="dropbox" title="Læg mærke til at Dropboxscan stadig er i test." class="tabs__control" href="/dropboxscanners/">Dropboxscanner (beta)</a>
+    <a id="dropbox" title="Læg mærke til at Dropboxscan stadig er i test." class="tabs__control" href="/dropboxscanners/">Dropboxscanner</a>
     {% endif %}
     {% if settings.ENABLE_MSGRAPH_MAILSCAN %}
-    <a id="msgraph-mail" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-mailscanners/">Office 365 mailscanner (beta)</a>
+    <a id="msgraph-mail" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-mailscanners/">Office 365 mailscanner</a>
     {% endif %}
     {% if settings.ENABLE_MSGRAPH_FILESCAN %}
-    <a id="msgraph-file" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-filescanners/">Office 365 OneDrive filscanner (beta)</a>
+    <a id="msgraph-file" title="Læg mærke til at Microsoft Graph-scannere stadig er i test." class="tabs__control" href="/msgraph-filescanners/">Office 365 OneDrive filscanner</a>
+    {% endif %}
+    {% if settings.ENABLE_GOOGLEDRIVESCAN %}
+    <a id="googledrive" title="Læg mærke til at Google Drive-scannere stadig er i test." class="tabs__control" href="/googledrivescanners/">Google Drive scanner</a>
+    {% endif %}
+    {%  if settings.ENABLE_GMAILSCAN %}
+     <a id="gmail" title="Læg mærke til at Gmail-scannere stadig er i test." class="tabs__control" href="/gmailscanners/">Gmailscanner</a>
+    {% endif %}
+    {%  if settings.ENABLE_SBSYSSCAN %}
+     <a id="sbsys" title="Læg mærke til at Sbsys-scannere stadig er i test." class="tabs__control" href="/sbsysscanners/">Sbsysscanner</a>
     {% endif %}
 </div>
 
@@ -27,6 +36,9 @@
     var dropbox = document.getElementById("dropbox")
     var msgraph_mail = document.getElementById("msgraph-mail")
     var msgraph_file = document.getElementById("msgraph-file")
+    var googledrive = document.getElementById("googledrive")
+    var gmail = document.getElementById("gmail")
+    var sbsys = document.getElementById("sbsys")
 
     if (location.pathname === '/') {
         if (web) {
@@ -47,6 +59,15 @@
         } else if (msgraph_file) {
             window.location.href = "/msgraph-filescanners/"
             msgraph_file.classList.add('active')
+        } else if (googledrive) {
+            window.location.href = "/googledrivescanners/"
+            googledrive.classList.add('active')
+        } else if (gmail) {
+            window.location.href = "/gmailscanners/"
+            gmail.classList.add('active')
+        } else if (sbsys) {
+            window.location.href = "/sbsysscanners/"
+            sbsys.classList.add('active')
         }
     }
     if (location.pathname === '/webscanners/') {
@@ -66,5 +87,14 @@
     }
     if (location.pathname === '/msgraph-filescanners/') {
         msgraph_file.classList.add("active")
+    }
+    if (location.pathname === '/gmailscanners/') {
+        gmail.classList.add("active")
+    }
+    if (location.pathname === '/googledrivescanners/') {
+        googledrive.classList.add("active")
+    }
+    if (location.pathname === '/sbsysscanners/') {
+        sbsys.classList.add("active")
     }
 </script>
