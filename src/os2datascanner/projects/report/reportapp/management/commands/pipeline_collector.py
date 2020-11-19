@@ -17,42 +17,36 @@
 
 from django.core.management.base import BaseCommand
 
-from os2datascanner.utils.system_utilities import (json_utf8_decode,
-        parse_isoformat_timestamp)
-from os2datascanner.utils.amqp_connection_manager import start_amqp, \
-    set_callback, start_consuming, ack_message
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
 from os2datascanner.projects.report.reportapp.utils import hash_handle
 
 from ...models.documentreport_model import DocumentReport
 
 
-def consume_results(channel, method, properties, body):
-    ack_message(method)
-    _restructure_and_save_result(body)
-
-
-def _restructure_and_save_result(result):
+def message_received_raw(queue, body):
     """Method for restructuring and storing result body.
 
     The agreed structure is as follows:
     {'scan_tag': {...}, 'matches': null, 'metadata': null, 'problem': null}
     """
-    result = json_utf8_decode(result)
-    reference = result.get("handle") or result.get("source")
-    tag, queue = _identify_message(result)
+    reference = body.get("handle") or body.get("source")
+    tag, queue = _identify_message(body)
     if not reference or not tag or not queue:
         return
 
     previous_report, new_report = get_reports_for(reference, tag)
     if queue == "matches":
-        handle_match_message(previous_report, new_report, result)
+        handle_match_message(previous_report, new_report, body)
     elif queue == "problem":
-        handle_problem_message(previous_report, new_report, result)
+        handle_problem_message(previous_report, new_report, body)
     elif queue == "metadata":
-        new_report.data["metadata"] = result
+        new_report.data["metadata"] = body
         new_report.save()
+
+    yield from []
 
 
 def get_reports_for(reference, scan_tag):
@@ -74,6 +68,7 @@ def get_reports_for(reference, scan_tag):
                 data={"scan_tag": scan_tag})
 
     return previous_report, new_report
+
 
 def handle_match_message(previous_report, new_report, body):
     new_matches = messages.MatchesMessage.from_json_object(body)
@@ -150,6 +145,10 @@ def _identify_message(result):
         return None, None
 
 
+class ReportCollector(PikaPipelineRunner):
+    def handle_message(self, message_body, *, channel=None):
+        return message_received_raw(channel, message_body)
+
 
 class Command(BaseCommand):
     """Command for starting a pipeline collector process."""
@@ -164,8 +163,9 @@ class Command(BaseCommand):
             default="os2ds_results")
 
     def handle(self, results, *args, **options):
-
-        # Start listning on matches queue
-        start_amqp(results)
-        set_callback(consume_results, results)
-        start_consuming()
+        with ReportCollector(read=[results], heartbeat=6000) as runner:
+            try:
+                print("Start")
+                runner.run_consumer()
+            finally:
+                print("Stop")
