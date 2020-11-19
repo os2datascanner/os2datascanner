@@ -1,15 +1,16 @@
 import json
 import hashlib
+import unicodedata
 import structlog
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from mozilla_django_oidc import auth
 
 from os2datascanner.engine2.pipeline import messages
 
 from .models.aliases.emailalias_model import EmailAlias
 from .models.aliases.adsidalias_model import ADSIDAlias
-
 
 logger = structlog.get_logger()
 
@@ -27,18 +28,39 @@ def hash_handle(handle):
 def get_or_create_user_aliases(user_data):  # noqa: D401
     """Hook called after user is created, during SAML login, in DB and before login.
     This method creates or updates the users aliases depending on if new user_data
-    has arrived or the old the user_data has been updated.
+    has arrived or the old the user_data has been updated."""
 
-    The django-saml plugin takes care of the basic user_data such as email, username etc.
-    So we do not need to worry about creating or updating the django user."""
 
-    saml_attr = settings.SAML2_AUTH.get('ATTRIBUTES_MAP')
-    username = get_user_data(saml_attr.get('username'), user_data)
-    email = get_user_data(saml_attr.get('email'), user_data)
-    sid = get_user_data(saml_attr.get('sid'), user_data)
-    user = User.objects.get(username=username)
+class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
+    def create_user(self, claims):
+        user = super(OIDCAuthenticationBackend, self).create_user(claims)
+        get_claim_user_info(claims, user)
+        user.save()
+        get_or_create_user_aliases(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
+
+        # self.update_groups(user, claims)
+
+        return user
+
+    def update_user(self, user, claims):
+        get_claim_user_info(claims, user)
+        user.save()
+        get_or_create_user_aliases(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
+        # self.update_groups(user, claims)
+
+        return user
+
+
+def get_claim_user_info(claims, user):
+    user.username = claims.get('preferred_username', '')
+    user.first_name = claims.get('given_name', '')
+    user.last_name = claims.get('family_name', '')
+
+
+def get_or_create_user_aliases(user, email, sid):  # noqa: D401
+    """ This method creates or updates the users aliases  """
     if email:
-        EmailAlias.objects.get_or_create(user= user, address=email)
+        EmailAlias.objects.get_or_create(user=user, address=email)
     if sid:
         ADSIDAlias.objects.get_or_create(user=user, sid=sid)
 

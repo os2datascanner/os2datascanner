@@ -152,6 +152,8 @@ lxml==4.5.0
     #   -c requirements-engine.txt
     #   exchangelib
     #   xmlsec
+mozilla-django-oidc==1.2.4
+    # via -r requirements-report.in
 ntlm-auth==1.4.0
     # via
     #   -c requirements-engine.txt

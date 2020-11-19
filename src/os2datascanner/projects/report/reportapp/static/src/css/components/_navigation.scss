@@ -98,3 +98,13 @@
     right: 0;
   }
 }
+.buttoninvisible {
+    background:transparent;
+    border:none;
+    outline:none;
+    display:block;
+    height:65px;
+    width:192px;
+    cursor:pointer;
+
+}

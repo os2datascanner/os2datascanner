@@ -23,11 +23,16 @@
   </ul>
 
   <ul class="logout">
-    <li>
-      <a href="/accounts/logout">
-        {% include "components/svg-icons/logout.svg" %}
-        <span class="width">{% trans "Log out" %}</span>
-      </a>
-    </li>
+      <li>
+          <form method="post"  action="{% url 'oidc_logout' %}">{% csrf_token %}
+               <button type="submit" class="buttoninvisible" >
+
+              <a>
+                {% include "components/svg-icons/logout.svg" %}
+                <span class="navigation width">Log ud</span>
+              </a>
+            </button>
+          </form>
+      </li>
   </ul>
 </nav>
