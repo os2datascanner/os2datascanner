@@ -40,6 +40,7 @@ from os2datascanner.engine2.rules.logical import OrRule, AndRule, make_if
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
 from os2datascanner.engine2.conversions.types import OutputType
 
 from ..authentication_model import Authentication
@@ -47,7 +48,6 @@ from ..organization_model import Organization
 from ..group_model import Group
 from ..rules.rule_model import Rule
 from ..userprofile_model import UserProfile
-from os2datascanner.utils import amqp_connection_manager
 
 
 base_dir = os.path.dirname(
@@ -314,12 +314,9 @@ class Scanner(models.Model):
         self.save()
 
         # Dispatch the scan specifications to the pipeline
-        queue_name = settings.AMQP_PIPELINE_TARGET
-        amqp_connection_manager.start_amqp(queue_name)
-        for queue, message in outbox:
-            amqp_connection_manager.send_message(
-                    queue, json.dumps(message.to_json_object()))
-        amqp_connection_manager.close_connection()
+        with PikaPipelineSender(write={queue for queue, _ in outbox}) as pps:
+            for queue, message in outbox:
+                pps.publish_message(queue, message.to_json_object())
 
         return scan_tag
 
