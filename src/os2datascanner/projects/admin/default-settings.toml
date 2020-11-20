@@ -137,6 +137,7 @@ DJANGO_LOG_LEVEL = "INFO"
 # These settings are Django-specific, and must be top level to get picked up
 AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
 AMQP_CONVERSION_TARGET = "os2ds_conversions"
+AMQP_EVENTS_TARGET = "os2ds_events"
 
 # [storage]
 # File storage class - default is regular file system storage
