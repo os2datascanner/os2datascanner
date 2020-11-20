@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-
+from uuid import uuid4
 
 class Organization(models.Model):
 
@@ -15,6 +15,7 @@ class Organization(models.Model):
     do_use_groups = models.BooleanField(default=False,
                                         editable=settings.DO_USE_GROUPS)
     do_notify_all_scans = models.BooleanField(default=True)
+    uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
 
     def __str__(self):
         """Return the name of the organization."""

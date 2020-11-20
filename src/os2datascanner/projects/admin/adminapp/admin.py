@@ -57,6 +57,9 @@ class RuleAdmin(admin.ModelAdmin):
 class RegexPatternAdmin(admin.ModelAdmin):
     list_display = ('pattern_string', 'regex')
 
+@admin.register(Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'uuid')
 
 @admin.register(WebScanner)
 @admin.register(FileScanner)
@@ -68,7 +71,7 @@ class RegexPatternAdmin(admin.ModelAdmin):
 class ScannerAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'validation_status')
 
-for _cls in [Group, Organization, ScheduledCheckup]:
+for _cls in [Group, ScheduledCheckup]:
     admin.site.register(_cls)
 
 
