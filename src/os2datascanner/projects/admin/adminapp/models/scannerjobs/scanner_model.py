@@ -48,6 +48,7 @@ from ..organization_model import Organization
 from ..group_model import Group
 from ..rules.rule_model import Rule
 from ..userprofile_model import UserProfile
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 
 
 base_dir = os.path.dirname(
@@ -357,3 +358,65 @@ class ScheduledCheckup(models.Model):
     @property
     def handle(self):
         return Handle.from_json_object(self.handle_representation)
+
+
+class ScanStatus(models.Model):
+    """A ScanStatus object collects the status messages received from the
+    pipeline for a given scan."""
+
+    scan_tag = JSONField(verbose_name="Scan tag", unique=True)
+
+    scanner = models.ForeignKey(Scanner, related_name="statuses",
+                                verbose_name="Tilknyttet scannerjob",
+                                on_delete=models.CASCADE)
+
+    total_sources = models.IntegerField(verbose_name="Antal kilder",
+                                       null=True)
+    explored_sources = models.IntegerField(verbose_name="Udforskede kilder",
+                                         null=True)
+
+    total_objects = models.IntegerField(verbose_name="Antal objekter",
+                                        null=True)
+    scanned_objects = models.IntegerField(verbose_name="Scannede objekter",
+                                          null=True)
+    scanned_size = models.BigIntegerField(
+            verbose_name="Størrelse af scannede objekter",
+            null=True)
+
+    @property
+    def fraction_explored(self) -> float:
+        """Returns the fraction of the sources in this scan that has been
+        explored, or None if this is not yet computable."""
+        if self.total_sources is not None:
+            return (self.explored_sources or 0) / self.total_sources
+        else:
+            return None
+
+    @property
+    def fraction_scanned(self) -> float:
+        """Returns the fraction of this scan that has been scanned, or None if
+        this is not yet computable."""
+        if (self.total_sources is not None
+                and self.explored_sources == self.total_sources
+                and self.total_objects is not None):
+            return (self.scanned_objects or 0) / self.total_objects
+        else:
+            return None
+
+    @property
+    def estimated_completion_time(self) -> datetime.datetime:
+        """Returns the linearly interpolated completion time of this scan
+        based on the return value of ScannerStatus.fraction_scanned (or None,
+        if that function returns None)."""
+        fraction_scanned = self.fraction_scanned
+        if fraction_scanned is not None:
+            now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
+            start = parse_isoformat_timestamp(self.scan_tag["time"])
+            so_far = now - start
+            total_duration = so_far / fraction_scanned
+            return start + total_duration
+        else:
+            return None
+
+    class Meta:
+        verbose_name_plural = "scan statuses"
