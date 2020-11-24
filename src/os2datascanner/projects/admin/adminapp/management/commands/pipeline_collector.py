@@ -21,11 +21,26 @@ from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
-from ...models.scannerjobs.scanner_model import Scanner, ScheduledCheckup
+from ...models.scannerjobs.scanner_model import (Scanner, ScanStatus,
+        ScheduledCheckup)
 
 
 def status_message_received_raw(body):
-    print(body)
+    message = messages.StatusMessage.from_json_object(body)
+
+    status = ScanStatus.objects.filter(scan_tag=body["scan_tag"]).first()
+    if not status:
+        return
+
+    if message.total_objects is not None:
+        status.total_objects = (status.total_objects or 0) + message.total_objects
+        status.explored_sources = (status.explored_sources or 0) + 1
+    elif message.object_size is not None and message.object_type is not None:
+        status.scanned_size = (status.scanned_size or 0) + message.object_size
+        status.scanned_objects = (status.scanned_objects or 0) + 1
+
+    status.save()
+
     yield from []
 
 
