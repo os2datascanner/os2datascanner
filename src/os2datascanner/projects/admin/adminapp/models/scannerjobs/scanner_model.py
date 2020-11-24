@@ -176,11 +176,15 @@ class Scanner(models.Model):
     # Run error messages
     HAS_NO_RULES = (
         "Scannerjobbet kunne ikke startes," +
-        " fordi den ingen tilknyttede regler har."
+        " fordi det ingen tilknyttede regler har."
     )
     NOT_VALIDATED = (
         "Scannerjobbet kunne ikke startes," +
         " fordi det ikke er blevet valideret."
+    )
+    ALREADY_RUNNING = (
+        "Scannerjobbet kunne ikke startes," +
+        "da det allerede kører et scan."
     )
 
     process_urls = JSONField(null=True, blank=True)
@@ -382,6 +386,13 @@ class ScanStatus(models.Model):
     scanned_size = models.BigIntegerField(
             verbose_name="Størrelse af scannede objekter",
             null=True)
+
+    @property
+    def finished(self) -> bool:
+        return (self.total_sources is not None
+                and self.total_sources == self.explored_sources
+                and self.total_objects is not None
+                and self.total_objects == self.scanned_objects)
 
     @property
     def fraction_explored(self) -> float:
