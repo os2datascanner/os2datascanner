@@ -22,8 +22,6 @@ def _deep_replace(self, **kwargs):
             p = p._replace(**{name[0]: value})
     return p
 
-    _deep_replace = _deep_replace
-
 
 class MatchFragment(NamedTuple):
     rule: SimpleRule
