@@ -15,7 +15,7 @@ from .tagger import message_received_raw as tagger_handler
 
 
 def explore(sm, msg):
-    for channel, message in explorer_handler(msg, "ss", sm, "co", "pr"):
+    for channel, message in explorer_handler(msg, "ss", sm, "co", "pr", None):
         if channel == "co":
             yield from process(sm, message)
         elif channel in ('pr',):
