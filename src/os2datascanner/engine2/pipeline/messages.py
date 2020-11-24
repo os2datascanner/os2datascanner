@@ -305,18 +305,29 @@ class ProblemMessage(NamedTuple):
 class StatusMessage(NamedTuple):
     scan_tag: object
 
+    # Emitted by (top-level) explorers
     total_objects: int = None
+
+    # Emitted by workers
+    object_size: int = None
+    object_type: str = None
 
     def to_json_object(self):
         return {
             "scan_tag": self.scan_tag,
-            "total_objects": self.total_objects
+
+            "total_objects": self.total_objects,
+
+            "object_size": self.object_size,
+            "object_type": self.object_type
         }
 
     @staticmethod
     def from_json_object(obj):
         return StatusMessage(
                 scan_tag=obj["scan_tag"],
-                total_objects=obj.get("total_objects"))
+                total_objects=obj.get("total_objects"),
+                object_size=obj.get("object_size"),
+                object_type=obj.get("object_type"))
 
     _deep_replace = _deep_replace
