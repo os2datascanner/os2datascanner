@@ -302,3 +302,23 @@ class ProblemMessage(NamedTuple):
                 missing=obj.get("missing", False))
 
     _deep_replace = _deep_replace
+
+
+class StatusMessage(NamedTuple):
+    scan_tag: object
+
+    total_objects: int = None
+
+    def to_json_object(self):
+        return {
+            "scan_tag": self.scan_tag,
+            "total_objects": self.total_objects
+        }
+
+    @staticmethod
+    def from_json_object(obj):
+        return StatusMessage(
+                scan_tag=obj["scan_tag"],
+                total_objects=obj.get("total_objects"))
+
+    _deep_replace = _deep_replace
