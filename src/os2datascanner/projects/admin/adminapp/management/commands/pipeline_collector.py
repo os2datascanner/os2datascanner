@@ -24,7 +24,12 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
 from ...models.scannerjobs.scanner_model import Scanner, ScheduledCheckup
 
 
-def message_received_raw(body):
+def status_message_received_raw(body):
+    print(body)
+    yield from []
+
+
+def checkup_message_received_raw(body):
     handle = None
     scan_tag = None
     matches = None
@@ -108,8 +113,16 @@ def message_received_raw(body):
 
 
 class AdminCollector(PikaPipelineRunner):
+    def __init__(self, *, status, checkups, **kwargs):
+        super().__init__(**kwargs)
+        self._status = status
+        self._checkups = checkups
+
     def handle_message(self, message_body, *, channel=None):
-        return message_received_raw(message_body)
+        if channel == self._status:
+            return status_message_received_raw(message_body)
+        elif channel == self._checkups:
+            return checkup_message_received_raw(message_body)
 
 
 class Command(BaseCommand):
@@ -118,14 +131,23 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--checkups",
-            type=str,
-            help="the name of the AMQP queue from which checkup requests"
-                 + " should be read",
-            default="os2ds_checkups")
+                "--status",
+                type=str,
+                help="the name of the AMQP queue from which status messages"
+                     + " should be read",
+                default=None)
+        parser.add_argument(
+                "--checkups",
+                type=str,
+                help="the name of the AMQP queue from which checkup requests"
+                     + " should be read",
+                default="os2ds_checkups")
 
-    def handle(self, checkups, *args, **options):
-        with AdminCollector(read=[checkups], heartbeat=6000) as runner:
+    def handle(self, status, checkups, *args, **options):
+        with AdminCollector(
+                status=status, checkups=checkups,
+                read=[checkups, *([status] if status else [])],
+                heartbeat=6000) as runner:
             try:
                 print("Start")
                 runner.run_consumer()
