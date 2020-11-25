@@ -79,7 +79,7 @@ services:
       target: application
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
-    command: python manage.py pipeline_collector
+    command: python manage.py pipeline_collector --status os2ds_status
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -132,7 +132,7 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    command: explorer --enable-metrics
+    command: explorer --enable-metrics --status os2ds_status
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -144,7 +144,7 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    command: worker --enable-metrics
+    command: worker --enable-metrics --status os2ds_status
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
