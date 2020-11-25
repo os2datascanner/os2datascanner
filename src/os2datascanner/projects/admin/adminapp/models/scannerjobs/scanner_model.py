@@ -184,7 +184,7 @@ class Scanner(models.Model):
     )
     ALREADY_RUNNING = (
         "Scannerjobbet kunne ikke startes," +
-        "da det allerede kører et scan."
+        " fordi det allerede kører et scan."
     )
 
     process_urls = JSONField(null=True, blank=True)
@@ -290,11 +290,13 @@ class Scanner(models.Model):
                 rule=rule, configuration=configuration, source=None,
                 progress=None)
         outbox = []
+        source_count = 0
         for source in self.generate_sources():
             with SourceManager() as sm, closing(source.handles(sm)) as handles:
                 next(handles, True)
             outbox.append((settings.AMQP_PIPELINE_TARGET,
                     message_template._replace(source=source)))
+            source_count += 1
 
         # Also build ConversionMessages for the objects that we should try to
         # scan again (our pipeline_collector is responsible for eventually
@@ -318,7 +320,13 @@ class Scanner(models.Model):
         self.e2_last_run_at = now
         self.save()
 
-        # Dispatch the scan specifications to the pipeline
+        # OK, we're committed now! Create a model object to track the status of
+        # this scan...
+        ScanStatus.objects.create(
+                scanner=self, scan_tag=scan_tag, total_sources=source_count,
+                total_objects=self.checkups.count())
+
+        # ... and dispatch the scan specifications to the pipeline
         with PikaPipelineSender(write={queue for queue, _ in outbox}) as pps:
             for queue, message in outbox:
                 pps.publish_message(queue, message.to_json_object())
