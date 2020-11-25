@@ -3,10 +3,11 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.forms.models import model_to_dict
 from inspect import ismethod
-from os2datascanner.utils import amqp_connection_manager
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
 import json
 import logging
 import sys
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -18,10 +19,12 @@ class ModelChangeEvent():
         self.model_class = model_class
         self.instance = instance
         self.meta = meta
+        self.time = datetime.datetime.now().isoformat()
 
 
     def to_json_object(self):
         return {
+            "time": self.time,
             # Event type (one of object_create, object_update, object_delete)
             "type": self.event_type,
             # Publisher ID the service 
@@ -32,7 +35,8 @@ class ModelChangeEvent():
             "instance": self.instance.to_json_object() 
                             if hasattr(self.instance, "to_json_object") and 
                                ismethod(getattr(self.instance, "to_json_object"))
-                            else {"error": "missing to_json_object() method"}
+                            else {"error": "missing to_json_object() method"},
+            "meta": self.meta
         }
 
 
@@ -40,13 +44,11 @@ def publish_events(events):
     """Publishes events using the configured queue (AMQP_EVENTS_TARGET)"""
     try:
         queue = settings.AMQP_EVENTS_TARGET
-        amqp_connection_manager.start_amqp(queue)
-        for event in events:
-            json_event = event.to_json_object()
-            logger.info("Published to {0}: {1}".format(queue, json_event))
-            amqp_connection_manager.send_message(
-                queue, json.dumps(json_event))
-        amqp_connection_manager.close_connection()
+        with PikaPipelineSender(write=[queue]) as pps:
+            for event in events:
+                json_event = event.to_json_object()
+                logger.info("Published to {0}: {1}".format(queue, json_event))
+                pps.publish_message(queue, json_event)
     except Exception as e: 
         # log the error
         logger.error("Could not publish event. Error: "+format(e))
