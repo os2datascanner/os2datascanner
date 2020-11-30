@@ -60,6 +60,9 @@ class RegexPatternAdmin(admin.ModelAdmin):
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('name', 'uuid')
+    readonly_fields = ('uuid',)
+    fields = ('uuid', 'name', 'contact_email', 'contact_phone',
+              'do_notify_all_scans')
 
 @admin.register(WebScanner)
 @admin.register(FileScanner)
