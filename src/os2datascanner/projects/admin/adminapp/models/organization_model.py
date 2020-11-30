@@ -15,7 +15,8 @@ class Organization(models.Model):
     do_use_groups = models.BooleanField(default=False,
                                         editable=settings.DO_USE_GROUPS)
     do_notify_all_scans = models.BooleanField(default=True)
-    uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
+    uuid = models.UUIDField(default=uuid4, editable=False, unique=True,
+                            verbose_name="UUID")
 
     def __str__(self):
         """Return the name of the organization."""
