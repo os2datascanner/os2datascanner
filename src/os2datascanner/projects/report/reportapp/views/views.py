@@ -46,109 +46,28 @@ class LoginPageView(View):
     template_name = 'login.html'
 
 
-class MainPageView(TemplateView, LoginRequiredMixin):
+class MainPageView(ListView, LoginRequiredMixin):
     template_name = 'index.html'
-    data_results = None
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        # First attempt to make some usefull logging.
-        # The report module task is to log every action the user makes
-        # for the security of the user.
-        # If the system can document the users actions the user can defend
-        # them self against any allegations of wrong doing.
-        logger.info('{} is watching {}.'.format(user, self.template_name))
-
-        roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
-        results = DocumentReport.objects.none()
-        for role in roles:
-            results |= role.filter(DocumentReport.objects.all())
-
-        # Calls func to do initial filtering
-        filter_matches(results)
-        # Results are grouped by the rule they where found with,
-        # together with the count.
-        sensitivities = {}
-        for dr in results:
-            if dr.matches:
-                sensitivity = dr.matches.sensitivity
-                if not sensitivity in sensitivities:
-                    sensitivities[sensitivity] = 0
-                sensitivities[sensitivity] += 1
-        context['dashboard_results'] = sensitivities
-
-        context['dashboard_results'] = {}
-        context['dashboard_results']['critical'] = Sensitivity.CRITICAL
-        context['dashboard_results']['problem'] = Sensitivity.PROBLEM
-        context['dashboard_results']['warning'] = Sensitivity.WARNING
-        context['dashboard_results']['notification'] = Sensitivity.NOTICE
-
-        sensitivity_list = [e.value for e in Sensitivity]  # Makes a list of possible sensitivity values
-        sensitivity_list.remove(0)  # Removes "information" 0 value, not possible to use or show currently
-
-        # Checks which sensitivities have matches and removes those from list.
-        for sensitivity, count in sensitivities.items():
-            if sensitivity.value in sensitivity_list:
-                sensitivity_list.remove(sensitivity.value)
-
-            # Displays the matches with sensitivities
-            for s, c in sensitivities.items():
-                # Notification uses both NOTICE here and notification elsewhere.
-                # Should consider making it consistent to avoid this extra if statement
-                if s.value == 250:
-                    temp = {'sensitivity': Sensitivity(s), 'count': c, 'label': "notification"}
-                    context['dashboard_results']['notification'] = temp
-                else:
-                    temp = {'sensitivity': Sensitivity(s), 'count': c, 'label': Sensitivity(s).name}
-                    context['dashboard_results'][s.name.lower()] = temp
-
-        # Displays sensitivity categories with no matches.
-        for se in sensitivity_list:
-            # Same notification "issue" as above
-            if se == 250:
-                temp = {'sensitivity': Sensitivity(se), 'count': 0, 'label': "notification"}
-                context['dashboard_results']['notification'] = temp
-            else:
-                temp = {'sensitivity': Sensitivity(se), 'count': 0, 'label': Sensitivity(se).name}
-                context['dashboard_results'][Sensitivity(se).name.lower()] = temp
-                
-        return context
-
-
-class SensitivityPageView(ListView, LoginRequiredMixin):
-    template_name = 'sensitivity.html'
-    paginate_by = 25  # Determines how many objects pr. page.
+    paginate_by = 10  # Determines how many objects pr. page.
     context_object_name = "matches"  # object_list renamed to something more relevant
+    model = DocumentReport
 
     def get_queryset(self):
         user = self.request.user
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
-        results = DocumentReport.objects.none()
 
-        sensitivity = Sensitivity(int(self.request.GET.get('value')) or 0)
+        matches = DocumentReport.objects.filter(
+            data__matches__icontains='matches').filter(
+            resolution_status__isnull=True)
 
         for role in roles:
-            batch = role.filter(DocumentReport.objects.all())
-            results |= filter_matches(batch)
+            matches = role.filter(matches)
 
-        # Exclude matches with None or other sensitivity value.
-        # Sort matches after probability value if any.
-        # If probability value is None the result will be shown last in the list.
-        self.kwargs['matches'] = sorted(
-            (r for r in results if r.matches
-             and r.matches.sensitivity == sensitivity),
-            key=lambda result: result.matches.probability, reverse=True)
-        self.kwargs['sensitivity'] = sensitivity
-        return self.kwargs['matches']
-
-    # Pass on sensitivity, to use it's presentation method in sensitivity.html.
-    def get_context_data(self, **kwargs):
-        sensitivity = Sensitivity(int(self.request.GET.get('value')) or 0)
-        context = super().get_context_data(**kwargs)
-        context['sensitivity'] = sensitivity
-        return context
-
+        matches = filter_matches(matches)
+        print(len(matches))
+        return sorted((r for r in matches if r.matches),
+                      key=lambda result: result.matches.probability,
+                      reverse=True)
 
 
 class StatisticsPageView(TemplateView):
