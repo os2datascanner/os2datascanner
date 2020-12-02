@@ -37,6 +37,9 @@ CMD ["npm", "run", "dev"]
 
 FROM python:3.6 AS application
 
+ARG SUPERCRONIC_VERSION=v0.1.12
+ARG SUPERCRONIC_SHA1SUM=048b95b48b708983effb2e5c935a1ef8483d9e3e
+
 LABEL org.opencontainers.image.title="OS2datascanner - Report" \
       org.opencontainers.image.vendor="Magenta ApS" \
       org.opencontainers.image.licenses="MPL-2.0" \
@@ -58,7 +61,7 @@ COPY requirements/sys-requirements/sys-requirements-common.txt \
      requirements/sys-requirements/sys-requirements-django.txt \
      requirements/sys-requirements/sys-requirements-report.txt \
      ./
-# hadolint ignore=DL3008,SC2046
+# hadolint ignore=DL3008,SC2046,DL4006
 RUN set -ex \
   # Add an application specific group and user.
   # Note: this is a system user/group, but have
@@ -73,6 +76,11 @@ RUN set -ex \
   && apt-get -y install --no-install-recommends $(grep -oh '^[^#][[:alnum:].-]*' sys-requirements*.txt) \
   # clean up after apt-get and man-pages
   && apt-get clean && rm -rf "/var/lib/apt/lists/*" "/tmp/*" "/var/tmp/*" "/usr/share/man/??" "/usr/share/man/??_*" \
+  # install supercronic
+  && curl -fsSL "https://github.com/aptible/supercronic/releases/download/${SUPERCRONIC_VERSION}/supercronic-linux-amd64" \
+     -o /usr/local/bin/supercronic \
+  && echo "${SUPERCRONIC_SHA1SUM}  /usr/local/bin/supercronic" | sha1sum -c - \
+  && chmod +x /usr/local/bin/supercronic \
   # create folders for output from django
   && install -o os2ds_report -g os2ds_report -d /code/build \
   && install -o os2ds_report -g os2ds_report -d /code/static \
