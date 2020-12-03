@@ -96,6 +96,7 @@ COPY requirements/python-requirements/requirements-report.txt \
 RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
 
 WORKDIR /code/docker/
+COPY docker/report/crontab ./crontab
 COPY docker/report/docker-settings.toml ./docker-settings.toml
 COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
 COPY docker/gunicorn-settings.py ./gunicorn-settings.py
