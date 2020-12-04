@@ -171,12 +171,16 @@ class ScannerAskRun(RestrictedDetailView):
         """Check that user is allowed to run this scanner."""
         context = super().get_context_data(**kwargs)
 
+        last_status = self.object.statuses.last()
         if self.object.validation_status is Scanner.INVALID:
             ok = False
             error_message = Scanner.NOT_VALIDATED
         elif not self.object.rules.all():
             ok = False
             error_message = Scanner.HAS_NO_RULES
+        elif last_status and not last_status.finished:
+            ok = False
+            error_message = Scanner.ALREADY_RUNNING
         else:
             ok = True
 

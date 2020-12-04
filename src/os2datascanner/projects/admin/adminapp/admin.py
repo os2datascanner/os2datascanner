@@ -28,7 +28,7 @@ from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
 from .models.rules.addressrule_model import AddressRule
-from .models.scannerjobs.scanner_model import ScheduledCheckup
+from .models.scannerjobs.scanner_model import ScanStatus, ScheduledCheckup
 from .models.scannerjobs.msgraph_models import MSGraphMailScanner
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.filescanner_model import FileScanner
@@ -70,6 +70,17 @@ class ScannerAdmin(admin.ModelAdmin):
 
 for _cls in [Group, Organization, ScheduledCheckup]:
     admin.site.register(_cls)
+
+
+@admin.register(ScanStatus)
+class ScanStatusAdmin(admin.ModelAdmin):
+    model = ScanStatus
+    readonly_fields = ('fraction_explored', 'fraction_scanned',
+            'estimated_completion_time',)
+    fields = ('scan_tag', 'scanner', 'total_sources', 'explored_sources',
+            'fraction_explored', 'total_objects', 'scanned_objects',
+            'fraction_scanned', 'scanned_size', 'estimated_completion_time',)
+
 
 class ProfileInline(admin.TabularInline):
 

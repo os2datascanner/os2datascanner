@@ -21,10 +21,30 @@ from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
-from ...models.scannerjobs.scanner_model import Scanner, ScheduledCheckup
+from ...models.scannerjobs.scanner_model import (Scanner, ScanStatus,
+        ScheduledCheckup)
 
 
-def message_received_raw(body):
+def status_message_received_raw(body):
+    message = messages.StatusMessage.from_json_object(body)
+
+    status = ScanStatus.objects.filter(scan_tag=body["scan_tag"]).first()
+    if not status:
+        return
+
+    if message.total_objects is not None:
+        status.total_objects = (status.total_objects or 0) + message.total_objects
+        status.explored_sources = (status.explored_sources or 0) + 1
+    elif message.object_size is not None and message.object_type is not None:
+        status.scanned_size = (status.scanned_size or 0) + message.object_size
+        status.scanned_objects = (status.scanned_objects or 0) + 1
+
+    status.save()
+
+    yield from []
+
+
+def checkup_message_received_raw(body):
     handle = None
     scan_tag = None
     matches = None
@@ -108,8 +128,16 @@ def message_received_raw(body):
 
 
 class AdminCollector(PikaPipelineRunner):
+    def __init__(self, *, status, checkups, **kwargs):
+        super().__init__(**kwargs)
+        self._status = status
+        self._checkups = checkups
+
     def handle_message(self, message_body, *, channel=None):
-        return message_received_raw(message_body)
+        if channel == self._status:
+            return status_message_received_raw(message_body)
+        elif channel == self._checkups:
+            return checkup_message_received_raw(message_body)
 
 
 class Command(BaseCommand):
@@ -118,14 +146,23 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--checkups",
-            type=str,
-            help="the name of the AMQP queue from which checkup requests"
-                 + " should be read",
-            default="os2ds_checkups")
+                "--status",
+                type=str,
+                help="the name of the AMQP queue from which status messages"
+                     + " should be read",
+                default=None)
+        parser.add_argument(
+                "--checkups",
+                type=str,
+                help="the name of the AMQP queue from which checkup requests"
+                     + " should be read",
+                default="os2ds_checkups")
 
-    def handle(self, checkups, *args, **options):
-        with AdminCollector(read=[checkups], heartbeat=6000) as runner:
+    def handle(self, status, checkups, *args, **options):
+        with AdminCollector(
+                status=status, checkups=checkups,
+                read=[checkups, *([status] if status else [])],
+                heartbeat=6000) as runner:
             try:
                 print("Start")
                 runner.run_consumer()

@@ -13,7 +13,7 @@ from .utilities.prometheus import prometheus_summary
 
 
 def message_received_raw(
-        body, channel, source_manager, conversions_q, problems_q):
+        body, channel, source_manager, conversions_q, problems_q, status_q):
     try:
         scan_tag = body["scan_tag"]
     except KeyError:
@@ -42,6 +42,7 @@ def message_received_raw(
                 message="Malformed input").to_json_object())
         return
 
+    count = 0
     try:
         for handle in scan_spec.source.handles(source_manager):
             try:
@@ -51,6 +52,7 @@ def message_received_raw(
                 # that it doesn't know enough about its internal state to
                 # censor itself -- just print its type
                 print("(unprintable {0})".format(type(handle).__name__))
+            count += 1
             yield (conversions_q,
                     messages.ConversionMessage(
                             scan_spec, handle, progress).to_json_object())
@@ -60,6 +62,10 @@ def message_received_raw(
                 scan_tag=scan_tag, source=scan_spec.source, handle=None,
                 message="Exploration error: {0}".format(
                         exception_message)).to_json_object())
+    finally:
+        if status_q:
+            yield (status_q, messages.StatusMessage(
+                    scan_tag=scan_tag, total_objects=count).to_json_object())
 
 
 def main():
@@ -89,6 +95,12 @@ def main():
             help="the name of the AMQP queue to which problems should be"
                     + " written",
             default="os2ds_problems")
+    outputs.add_argument(
+            "--status",
+            metavar="NAME",
+            help="the name of the AMQP queue to which status messages should"
+                    +" be written",
+            default=None)
 
     args = parser.parse_args()
 
@@ -103,12 +115,14 @@ def main():
             if args.debug:
                 print(channel, body)
             return message_received_raw(body, channel,
-                    self.source_manager, args.conversions, args.problems)
+                    self.source_manager, args.conversions, args.problems,
+                    args.status)
 
     with SourceManager(width=args.width) as source_manager:
         with ExplorerRunner(
                 read=[args.sources],
-                write=[args.conversions, args.problems],
+                write=[args.conversions, args.problems,
+                        *([args.status] if args.status else [])],
                 source_manager=source_manager,
                 heartbeat=6000) as runner:
             try:

@@ -48,6 +48,7 @@ from ..organization_model import Organization
 from ..group_model import Group
 from ..rules.rule_model import Rule
 from ..userprofile_model import UserProfile
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 
 
 base_dir = os.path.dirname(
@@ -175,11 +176,15 @@ class Scanner(models.Model):
     # Run error messages
     HAS_NO_RULES = (
         "Scannerjobbet kunne ikke startes," +
-        " fordi den ingen tilknyttede regler har."
+        " fordi det ingen tilknyttede regler har."
     )
     NOT_VALIDATED = (
         "Scannerjobbet kunne ikke startes," +
         " fordi det ikke er blevet valideret."
+    )
+    ALREADY_RUNNING = (
+        "Scannerjobbet kunne ikke startes," +
+        " da dette scan er igang."
     )
 
     process_urls = JSONField(null=True, blank=True)
@@ -285,11 +290,13 @@ class Scanner(models.Model):
                 rule=rule, configuration=configuration, source=None,
                 progress=None)
         outbox = []
+        source_count = 0
         for source in self.generate_sources():
             with SourceManager() as sm, closing(source.handles(sm)) as handles:
                 next(handles, True)
             outbox.append((settings.AMQP_PIPELINE_TARGET,
                     message_template._replace(source=source)))
+            source_count += 1
 
         # Also build ConversionMessages for the objects that we should try to
         # scan again (our pipeline_collector is responsible for eventually
@@ -313,7 +320,13 @@ class Scanner(models.Model):
         self.e2_last_run_at = now
         self.save()
 
-        # Dispatch the scan specifications to the pipeline
+        # OK, we're committed now! Create a model object to track the status of
+        # this scan...
+        ScanStatus.objects.create(
+                scanner=self, scan_tag=scan_tag, total_sources=source_count,
+                total_objects=self.checkups.count())
+
+        # ... and dispatch the scan specifications to the pipeline
         with PikaPipelineSender(write={queue for queue, _ in outbox}) as pps:
             for queue, message in outbox:
                 pps.publish_message(queue, message.to_json_object())
@@ -357,3 +370,72 @@ class ScheduledCheckup(models.Model):
     @property
     def handle(self):
         return Handle.from_json_object(self.handle_representation)
+
+
+class ScanStatus(models.Model):
+    """A ScanStatus object collects the status messages received from the
+    pipeline for a given scan."""
+
+    scan_tag = JSONField(verbose_name="Scan tag", unique=True)
+
+    scanner = models.ForeignKey(Scanner, related_name="statuses",
+                                verbose_name="Tilknyttet scannerjob",
+                                on_delete=models.CASCADE)
+
+    total_sources = models.IntegerField(verbose_name="Antal kilder",
+                                       null=True)
+    explored_sources = models.IntegerField(verbose_name="Udforskede kilder",
+                                         null=True)
+
+    total_objects = models.IntegerField(verbose_name="Antal objekter",
+                                        null=True)
+    scanned_objects = models.IntegerField(verbose_name="Scannede objekter",
+                                          null=True)
+    scanned_size = models.BigIntegerField(
+            verbose_name="Størrelse af scannede objekter",
+            null=True)
+
+    @property
+    def finished(self) -> bool:
+        return (self.total_sources is not None
+                and self.total_sources == self.explored_sources
+                and self.total_objects is not None
+                and self.total_objects == self.scanned_objects)
+
+    @property
+    def fraction_explored(self) -> float:
+        """Returns the fraction of the sources in this scan that has been
+        explored, or None if this is not yet computable."""
+        if self.total_sources is not None:
+            return (self.explored_sources or 0) / self.total_sources
+        else:
+            return None
+
+    @property
+    def fraction_scanned(self) -> float:
+        """Returns the fraction of this scan that has been scanned, or None if
+        this is not yet computable."""
+        if (self.total_sources is not None
+                and self.explored_sources == self.total_sources
+                and self.total_objects is not None):
+            return (self.scanned_objects or 0) / self.total_objects
+        else:
+            return None
+
+    @property
+    def estimated_completion_time(self) -> datetime.datetime:
+        """Returns the linearly interpolated completion time of this scan
+        based on the return value of ScannerStatus.fraction_scanned (or None,
+        if that function returns None)."""
+        fraction_scanned = self.fraction_scanned
+        if fraction_scanned is not None:
+            now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
+            start = parse_isoformat_timestamp(self.scan_tag["time"])
+            so_far = now - start
+            total_duration = so_far / fraction_scanned
+            return start + total_duration
+        else:
+            return None
+
+    class Meta:
+        verbose_name_plural = "scan statuses"
