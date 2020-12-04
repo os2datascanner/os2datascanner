@@ -184,7 +184,7 @@ class Scanner(models.Model):
     )
     ALREADY_RUNNING = (
         "Scannerjobbet kunne ikke startes," +
-        " fordi det allerede kører et scan."
+        " da dette scan er igang."
     )
 
     process_urls = JSONField(null=True, blank=True)
