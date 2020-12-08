@@ -25,7 +25,6 @@ from ..models.documentreport_model import DocumentReport
 from ..models.roles.defaultrole_model import DefaultRole
 
 from os2datascanner.engine2.rules.cpr import CPRRule
-from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.rules.regex import RegexRule
 
 logger = structlog.get_logger()
@@ -63,8 +62,6 @@ class MainPageView(ListView, LoginRequiredMixin):
         for role in roles:
             matches = role.filter(matches)
 
-        matches = filter_matches(matches)
-        print(len(matches))
         return sorted((r for r in matches if r.matches),
                       key=lambda result: result.matches.probability,
                       reverse=True)

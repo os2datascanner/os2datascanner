@@ -1,14 +1,15 @@
+import json
+
 from django.test import TestCase
-import unittest
 
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
 from os2datascanner.engine2.rules.regex import RegexRule
+from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.logical import AndRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
-from os2datascanner.engine2.conversions.types import OutputType
 from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.management.commands import pipeline_collector
 
@@ -34,6 +35,8 @@ common_handle = FilesystemHandle(
         FilesystemSource("/mnt/fs01.magenta.dk/brugere/af"),
         "OS2datascanner/Dokumenter/Verdensherredømme - plan.txt")
 common_rule = RegexRule("Vores hemmelige adgangskode er")
+dimension_rule = DimensionsRule()
+
 common_scan_spec = messages.ScanSpecMessage(
         scan_tag=None, # placeholder
         source=common_handle.source,
@@ -47,14 +50,30 @@ positive_match = messages.MatchesMessage(
         matched=True,
         matches=[messages.MatchFragment(
                 rule=common_rule,
-                matches={"dummy": "match object"})])
+                matches=[{"dummy": "match object"}])
+        ])
+
+positive_match_with_dimension_rule = messages.MatchesMessage(
+        scan_spec=common_scan_spec._replace(scan_tag=scan_tag0),
+        handle=common_handle,
+        matched=True,
+        matches=[messages.MatchFragment(
+                rule=common_rule,
+                matches=[{"dummy": "match object"}]),
+            messages.MatchFragment(
+                rule=dimension_rule,
+                matches=[{"match": [2496, 3508]}])
+        ])
+
 negative_match = messages.MatchesMessage(
         scan_spec=common_scan_spec._replace(scan_tag=scan_tag1),
         handle=common_handle,
         matched=False,
         matches=[messages.MatchFragment(
                 rule=common_rule,
-                matches=[])])
+                matches=[])
+        ])
+
 deletion = messages.ProblemMessage(
         scan_tag=scan_tag1,
         source=None,
@@ -159,3 +178,12 @@ class PipelineCollectorTests(TestCase):
                 saved_match.scan_time,
                 parse_isoformat_timestamp(time2),
                 "match timestamp not correctly updated")
+
+    def test_filter_internal_rules_matches(self):
+        text_to_match = "[{'rule': {'type': 'regex', 'sensitivity': None, " \
+                        "'name': None, 'expression': 'Vores hemmelige adgangskode er'}," \
+                        " 'matches': [{'dummy': 'match object'}]}]"
+
+        friendly_match = pipeline_collector.filter_internal_rules_matches(
+            positive_match_with_dimension_rule.to_json_object())
+        self.assertEqual(str(friendly_match["matches"]), text_to_match)
