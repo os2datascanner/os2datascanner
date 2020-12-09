@@ -4,6 +4,7 @@ ipython
 Django==2.2.10
 django-model-utils
 django-settings-export
+django-storages[google]
 django-structlog
 gunicorn
 psycopg2-binary

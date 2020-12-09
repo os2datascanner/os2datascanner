@@ -19,6 +19,7 @@ from django.db import models
 from django.conf import settings
 
 from .scanner_model import Scanner
+from ...utils import upload_path_exchange_users
 
 from os2datascanner.engine2.model.ews import EWSAccountSource
 
@@ -26,7 +27,7 @@ from os2datascanner.engine2.model.ews import EWSAccountSource
 class ExchangeScanner(Scanner):
     """Scanner for Exchange Web Services accounts"""
 
-    userlist = models.FileField(upload_to='mailscan/users/')
+    userlist = models.FileField(upload_to=upload_path_exchange_users)
 
     service_endpoint = models.URLField(max_length=256,
                                        verbose_name='Service endpoint',

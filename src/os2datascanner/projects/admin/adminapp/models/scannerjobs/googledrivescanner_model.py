@@ -6,6 +6,7 @@ from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from .scanner_model import Scanner
+from ...utils import upload_path_gdrive_users, upload_path_gdrive_service_account
 from os2datascanner.engine2.model.googledrive import GoogleDriveSource
 
 
@@ -26,11 +27,11 @@ class GoogleDriveScanner(Scanner):
                 'csv fil hentes af admin fra: https://admin.google.com/ac/users'
             )
 
-    service_account_file = models.FileField(upload_to='googledrive/serviceaccount/',
+    service_account_file = models.FileField(upload_to=upload_path_gdrive_service_account,
                                             null=False,
                                             validators=[validate_filetype_json])
 
-    user_emails = models.FileField(upload_to='googledrive/users/',
+    user_emails = models.FileField(upload_to=upload_path_gdrive_users,
                                    null=False,
                                    validators=[validate_filetype_csv])
 

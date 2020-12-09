@@ -75,7 +75,7 @@ USE_L10N = true
 USE_TZ = true
 USE_THOUSAND_SEPARATOR = true
 
-# [enail]
+# [email]
 DEFAULT_FROM_EMAIL = '(Magenta Bibos Info) info@magenta.dk'
 ADMIN_EMAIL = '(Magenta Bibos Admin) info@magenta.dk'
 EMAIL_HOST = 'localhost'
@@ -86,7 +86,6 @@ EMAIL_PORT = 25
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # [logging]
-GRAYLOG_HOST = ""
 DJANGO_LOG_LEVEL = "INFO"
 
 [DATABASES]
