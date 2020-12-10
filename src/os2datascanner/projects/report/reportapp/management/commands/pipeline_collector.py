@@ -43,10 +43,14 @@ def message_received_raw(queue, body):
     elif queue == "problem":
         handle_problem_message(previous_report, new_report, body)
     elif queue == "metadata":
-        new_report.data["metadata"] = body
-        new_report.save()
+        handle_metadata_message(new_report, body)
 
     yield from []
+
+
+def handle_metadata_message(new_report, result):
+    new_report.data["metadata"] = result
+    new_report.save()
 
 
 def get_reports_for(reference, scan_tag):

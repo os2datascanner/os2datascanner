@@ -6,13 +6,12 @@ from django.urls import include
 from django.conf import settings
 
 from .views.api import JSONAPIView
-from .views.views import (MainPageView, SensitivityPageView, StatisticsPageView, ApprovalPageView,
+from .views.views import (MainPageView, StatisticsPageView, ApprovalPageView,
                           StatsPageView, SettingsPageView, AboutPageView)
 
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),
     url('api$',     JSONAPIView.as_view(),     name="json-api"),
-    url('sensitivity/$',     SensitivityPageView.as_view(),     name="sensitivity"),
     url('statistics', StatisticsPageView.as_view(), name="statistics"),
     url('approval', ApprovalPageView.as_view(), name="about"),
     url('stats',    StatsPageView.as_view(),    name="about"),

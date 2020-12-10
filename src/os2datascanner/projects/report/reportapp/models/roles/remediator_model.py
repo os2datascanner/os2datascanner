@@ -38,4 +38,4 @@ class Remediator(Role):
                 data__metadata__metadata__contains={
                     str(alias.key): str(alias)
                 })
-        return document_reports.exclude(resolution_status__isnull=False)
+        return document_reports

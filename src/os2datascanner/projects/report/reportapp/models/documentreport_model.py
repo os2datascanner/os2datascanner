@@ -49,8 +49,9 @@ class DocumentReport(models.Model):
             return [(k.value, k.label) for k in cls]
 
     resolution_status = models.IntegerField(choices=ResolutionChoices.choices(),
-                                            null=True, blank=True,
+                                            null=True, blank=True, db_index=True,
                                             verbose_name="Håndteringsstatus")
+
     custom_resolution_status = models.CharField(max_length=1024, blank=True,
                                                 verbose_name="Begrundelse")
 

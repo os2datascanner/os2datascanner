@@ -36,7 +36,7 @@ class DefaultRole(Role):
             result = document_reports.filter(
                 data__metadata__metadata__contains={
                     str(alias.key): str(alias)
-                }).filter(resolution_status__isnull=True)
+                })
             # Merges django querysets together
             results = results | result
         return results

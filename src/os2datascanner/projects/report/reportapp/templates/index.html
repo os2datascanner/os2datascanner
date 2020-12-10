@@ -3,9 +3,21 @@
 
     <main class="wrapper">
       {% include "partials/sidemenu.html" with active_tab="home" %}
+      <div class="content">
+        <span class="matches">
+          <span>Matches</span>
+          <i class="matches--width material-icons">chevron_right</i>
+          <span class="matches--width">Samlede antal: {{ page_obj.paginator.count }}</span>
+        </span>
 
-      {% include "components/dashboard.html" %}
+        <h1 class="page-title">Matches: {{ sensitivity.presentation }}</h1>
+
+        {% include "components/hits.html" %}
+      </div>
+
     </main>
 
-  </body>
+    {% include "partials/scripts.html" %}
+
+</body>
 </html>
