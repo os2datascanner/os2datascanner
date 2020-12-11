@@ -14,7 +14,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
-import collections
 import structlog
 
 from django.utils.decorators import method_decorator
@@ -25,7 +24,6 @@ from ..models.documentreport_model import DocumentReport
 from ..models.roles.defaultrole_model import DefaultRole
 
 from os2datascanner.engine2.rules.cpr import CPRRule
-from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.rules.regex import RegexRule
 
 logger = structlog.get_logger()
@@ -57,17 +55,20 @@ class MainPageView(ListView, LoginRequiredMixin):
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
 
         matches = DocumentReport.objects.filter(
-            data__matches__icontains='matches').filter(
+            data__matches__matched=True).filter(
             resolution_status__isnull=True)
 
         for role in roles:
             matches = role.filter(matches)
 
-        matches = filter_matches(matches)
-        print(len(matches))
         return sorted((r for r in matches if r.matches),
                       key=lambda result: result.matches.probability,
                       reverse=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["renderable_rules"] = RENDERABLE_RULES
+        return context
 
 
 class StatisticsPageView(TemplateView):
@@ -88,32 +89,3 @@ class SettingsPageView(TemplateView):
 
 class AboutPageView(TemplateView):
     template_name = 'about.html'
-
-
-# Function to do initial filtering in matches. Used at both index and sensitivity page.
-def filter_matches(results):
-    # Filter out anything we don't know how to show in the UI
-    data_results = []
-    for result in results:
-        if (result.data
-                and "matches" in result.data
-                and result.data["matches"]):
-            match_message_raw = result.data["matches"]
-            renderable_fragments = [
-                frag for frag in match_message_raw["matches"]
-                if frag["rule"]["type"] in RENDERABLE_RULES
-                   and frag["matches"]]
-            if renderable_fragments:
-                match_message_raw["matches"] = renderable_fragments
-                # Rules are under no obligation to produce matches in any
-                # particular order, but we want to display them in
-                # descending order of probability
-                for match_fragment in renderable_fragments:
-                    match_fragment["matches"].sort(
-                        key=lambda match_dict: match_dict.get(
-                            "probability", 0.0),
-                        reverse=True)
-                data_results.append(result)
-    data_results.sort(key=
-                      lambda result: (result.matches.sensitivity.value, result.pk))
-    return data_results

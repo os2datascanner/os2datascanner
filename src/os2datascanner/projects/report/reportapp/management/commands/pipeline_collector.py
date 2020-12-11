@@ -115,8 +115,28 @@ def handle_match_message(previous_report, new_report, body):
 
     if new_matches.matched:
         print(new_matches.handle.presentation, "New matches, creating")
-        new_report.data["matches"] = body
+        # Remove anything we don't know how to show in the UI
+        new_report.data["matches"] = sort_matches_by_probability(body)
         new_report.save()
+
+
+def sort_matches_by_probability(body):
+    """The scanner engine have some internal rules
+    and the matches they produce are also a part of the message.
+    These matches are not necessary in the report module.
+    An example of an internal rule is, images below a certain size are
+    ignored."""
+
+    # Rules are under no obligation to produce matches in any
+    # particular order, but we want to display them in
+    # descending order of probability
+    for match_fragment in body["matches"]:
+        if match_fragment["matches"]:
+            match_fragment["matches"].sort(
+                key=lambda match_dict: match_dict.get(
+                    "probability", 0.0),
+                reverse=True)
+    return body
 
 
 def handle_problem_message(previous_report, new_report, body):
