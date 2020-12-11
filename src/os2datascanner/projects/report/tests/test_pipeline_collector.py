@@ -48,18 +48,22 @@ positive_match = messages.MatchesMessage(
         scan_spec=common_scan_spec._replace(scan_tag=scan_tag0),
         handle=common_handle,
         matched=True,
-        matches=[messages.MatchFragment(
+        matches=[
+            messages.MatchFragment(
                 rule=common_rule,
                 matches=[{"dummy": "match object"}])
         ])
 
-positive_match_with_dimension_rule = messages.MatchesMessage(
+positive_match_with_dimension_rule_and_probability = messages.MatchesMessage(
         scan_spec=common_scan_spec._replace(scan_tag=scan_tag0),
         handle=common_handle,
         matched=True,
-        matches=[messages.MatchFragment(
+        matches=[
+            messages.MatchFragment(
                 rule=common_rule,
-                matches=[{"dummy": "match object"}]),
+                matches=[{"dummy": "match object",  "probability": 0.6},
+                         {"dummy1": "match object",  "probability": 0.0},
+                         {"dummy2": "match object",  "probability": 1.0}]),
             messages.MatchFragment(
                 rule=dimension_rule,
                 matches=[{"match": [2496, 3508]}])
@@ -180,10 +184,21 @@ class PipelineCollectorTests(TestCase):
                 "match timestamp not correctly updated")
 
     def test_filter_internal_rules_matches(self):
-        text_to_match = "[{'rule': {'type': 'regex', 'sensitivity': None, " \
-                        "'name': None, 'expression': 'Vores hemmelige adgangskode er'}," \
-                        " 'matches': [{'dummy': 'match object'}]}]"
+        match_to_match = messages.MatchesMessage(
+            scan_spec=common_scan_spec._replace(scan_tag=scan_tag0),
+            handle=common_handle,
+            matched=True,
+            matches=[
+                messages.MatchFragment(
+                    rule=common_rule,
+                    matches=[{"dummy2": "match object",  "probability": 1.0},
+                             {"dummy": "match object", "probability": 0.6},
+                             {"dummy1": "match object",  "probability": 0.0}]),
+                messages.MatchFragment(
+                    rule=dimension_rule,
+                    matches=[{"match": [2496, 3508]}])
+            ])
 
-        friendly_match = pipeline_collector.filter_internal_rules_matches(
-            positive_match_with_dimension_rule.to_json_object())
-        self.assertEqual(str(friendly_match["matches"]), text_to_match)
+        self.assertEqual(pipeline_collector.sort_matches_by_probability(
+            positive_match_with_dimension_rule_and_probability.to_json_object()
+        )["matches"], match_to_match.to_json_object()["matches"])

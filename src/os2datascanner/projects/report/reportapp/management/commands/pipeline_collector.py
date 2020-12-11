@@ -21,8 +21,6 @@ from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
-from os2datascanner.engine2.rules.cpr import CPRRule
-from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.projects.report.reportapp.utils import hash_handle
 
 from ...models.documentreport_model import DocumentReport
@@ -118,29 +116,22 @@ def handle_match_message(previous_report, new_report, body):
     if new_matches.matched:
         print(new_matches.handle.presentation, "New matches, creating")
         # Remove anything we don't know how to show in the UI
-        new_report.data["matches"] = filter_internal_rules_matches(body)
+        new_report.data["matches"] = sort_matches_by_probability(body)
         new_report.save()
 
 
-RENDERABLE_RULES = (CPRRule.type_label, RegexRule.type_label,)
-
-
-def filter_internal_rules_matches(body):
+def sort_matches_by_probability(body):
     """The scanner engine have some internal rules
     and the matches they produce are also a part of the message.
     These matches are not necessary in the report module.
     An example of an internal rule is, images below a certain size are
     ignored."""
-    renderable_fragments = [
-        frag for frag in body["matches"]
-        if frag["rule"]["type"] in RENDERABLE_RULES
-           and frag["matches"]]
-    if renderable_fragments:
-        body["matches"] = renderable_fragments
-        # Rules are under no obligation to produce matches in any
-        # particular order, but we want to display them in
-        # descending order of probability
-        for match_fragment in renderable_fragments:
+
+    # Rules are under no obligation to produce matches in any
+    # particular order, but we want to display them in
+    # descending order of probability
+    for match_fragment in body["matches"]:
+        if match_fragment["matches"]:
             match_fragment["matches"].sort(
                 key=lambda match_dict: match_dict.get(
                     "probability", 0.0),

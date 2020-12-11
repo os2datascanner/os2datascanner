@@ -3,20 +3,20 @@
 from django.db import migrations
 
 from ..management.commands.pipeline_collector\
-    import filter_internal_rules_matches
+    import sort_matches_by_probability
 
 
 def bulk_filter_internal_rules_matches(apps, schema_editor):
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
     document_reports_count = DocumentReport.objects.filter(
-        data__matches__icontains='matches').filter(
+        data__matches__matched=True).filter(
         resolution_status__isnull=True).count()
     batchsize = 10000
     i = 0
     while i < document_reports_count:
         print('i: {}'.format(str(i)))
         batch = DocumentReport.objects.filter(
-            data__matches__icontains='matches').filter(
+            data__matches__matched=True).filter(
             resolution_status__isnull=True)[i:batchsize+i]
         i += batchsize
         data_results = []
@@ -24,7 +24,7 @@ def bulk_filter_internal_rules_matches(apps, schema_editor):
             if (dr.data
                     and "matches" in dr.data
                     and dr.data["matches"]):
-                dr.data["matches"] = filter_internal_rules_matches(
+                dr.data["matches"] = sort_matches_by_probability(
                     dr.data["matches"])
             data_results.append(dr)
         DocumentReport.objects.bulk_update(batch, ['data'])
@@ -37,5 +37,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(bulk_filter_internal_rules_matches),
+        migrations.RunPython(bulk_filter_internal_rules_matches,
+                             reverse_code=migrations.RunPython.noop),
     ]
