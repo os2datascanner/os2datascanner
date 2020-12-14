@@ -1,10 +1,12 @@
 {% load handle_extras %}
 
-{% for rule in match.matches.matches %} {% if rule.matches %}
-<tr tabindex="0" data-type="smbc">
+{% with type=match.matches.handle|find_type_label %}
+{% for frag in match.matches.matches %}
+  {% if frag.rule.type_label in renderable_rules and frag.matches %}
+<tr tabindex="0" data-type="{{ type }}">
 
   <td class="datatable__column--filetype-icon">
-    <span class="icon-filetype icon-filetype--smbc">
+    <span class="icon-filetype icon-filetype--{{ type }}">
       {% include "components/svg-icons/icon-office365.svg" %}
     </span>
   </td>
@@ -14,18 +16,20 @@
       <strong>{{ match.matches.handle|present }}</strong>
     </span>
 
-    <span class="scan__item-count">Matches: <em>{{ rule.matches|length }}</em></span>
+    <span class="scan__item-count">Matches: <em>{{ frag.matches|length }}</em></span>
 
     <div class="scan__item-meta">
-      <span class="">{{ match.matches.handle|find_parent:"smbc"|present }}</span>
+      <span class="">{{ match.matches.handle|find_parent:type|present }}</span>
     </div>
 
     <div class="hit-link">
       <div class="button-group">
         {% if match.matches.handle|present_url %}
-        <a href="{{ match.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">Åben fil</a>
+          <a href="{{ match.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">Åben</a>
         {% endif %}
-        <button class="button" data-clipboard-text="{{ match.matches.handle|find_parent:"smbc"|present }}">Kopiér filsti</button>
+        {% if type != 'ews' %}
+          <button class="button" data-clipboard-text="{{ match.matches.handle|find_parent:type|present }}">Kopiér</button>
+        {% endif %}
       </div>
     </div>
   </td>
@@ -33,7 +37,7 @@
   <td class="datatable__column--match datatable__column--context" colspan="3">
     <table class="datatable datatable--nested">
       <tbody>
-        {% for match in rule.matches|slice:":3" %}
+        {% for match in frag.matches|slice:":3" %}
           <tr>
             <td class="datatable__column--match">
                 <span class="more">
@@ -62,4 +66,6 @@
     </div>
   </td>
 </tr>
-{% endif %} {% endfor %}
+{% endif %}
+{% endfor %}
+{% endwith %}
