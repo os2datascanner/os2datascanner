@@ -281,6 +281,39 @@ Release Engine Candidate:
     - export IMAGE_FROM="${ENGINE_IMAGE}"
     - export IMAGE_TO="${RELEASE_ENGINE_IMAGE}"
 
+# Release pinned pre-release:
+# Separate from "Versioned release" (.release) because we don't want to push to :latest tags
+.release-pinned-rc: &release-pinned-rc
+  <<: *release-default
+  only:
+    variables:
+      # Matches SemVer 2.0.0 with pre-release group. Ex. 2.3.4-rc, 2.3.4-rc2 or 2.3.4-prerelease1, but not 2.3.4
+      - $CI_COMMIT_TAG =~ /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)){1}(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+  script:
+    - apk add skopeo
+    - skopeo copy
+      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
+      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
+      "docker://${IMAGE_FROM}"
+      "docker://${IMAGE_TO}:${CI_COMMIT_TAG}"
+
+Release Report Application pinned Candidate:
+  <<: *release-pinned-rc
+  before_script:
+    - export IMAGE_FROM="${REPORT_IMAGE}"
+    - export IMAGE_TO="${RELEASE_REPORT_IMAGE}"
+
+Release Admin Application pinned Candidate:
+  <<: *release-pinned-rc
+  before_script:
+    - export IMAGE_FROM="${ADMIN_IMAGE}"
+    - export IMAGE_TO="${RELEASE_ADMIN_IMAGE}"
+
+Release Engine pinned Candidate:
+  <<: *release-pinned-rc
+  before_script:
+    - export IMAGE_FROM="${ENGINE_IMAGE}"
+    - export IMAGE_TO="${RELEASE_ENGINE_IMAGE}"
 
 # Versioned release:
 .release: &release
