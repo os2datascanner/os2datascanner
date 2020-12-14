@@ -21,6 +21,7 @@ from django.db import models
 from os2datascanner.engine2.model.http import WebSource
 
 from .scanner_model import Scanner
+from ...utils import upload_path_webscan_sitemap
 
 
 class WebScanner(Scanner):
@@ -58,7 +59,7 @@ class WebScanner(Scanner):
                                             default=ROBOTSTXT,
                                             verbose_name='Valideringsmetode')
 
-    sitemap = models.FileField(upload_to='sitemaps',
+    sitemap = models.FileField(upload_to=upload_path_webscan_sitemap,
                                blank=True,
                                verbose_name='Sitemap Fil')
 

@@ -9,7 +9,7 @@ beautifulsoup4==4.9.0     # via -c requirements-engine.txt, -r requirements-djan
 cached-property==1.5.1    # via -c requirements-engine.txt, exchangelib
 cachetools==4.1.1         # via -c requirements-engine.txt, google-auth
 certifi==2020.4.5.1       # via -c requirements-engine.txt, requests
-cffi==1.14.0              # via -c requirements-engine.txt, cryptography
+cffi==1.14.0              # via -c requirements-engine.txt, cryptography, google-crc32c
 chardet==3.0.4            # via -c requirements-engine.txt, requests
 colorama==0.4.3           # via -c requirements-engine.txt, -r requirements-common.in
 cryptography==2.9.2       # via -c requirements-engine.txt, requests-ntlm
@@ -20,15 +20,20 @@ django-ipware==2.1.0      # via django-structlog
 django-model-utils==4.0.0  # via -r requirements-django.in
 django-recurrence==1.10.2  # via -r requirements-admin.in
 django-settings-export==1.2.1  # via -r requirements-django.in
+django-storages[google]==1.10.1  # via -r requirements-django.in
 django-structlog==1.5.2   # via -r requirements-django.in
-django==2.2.10            # via -r requirements-django.in, django-model-utils, django-recurrence, django-settings-export, django-structlog
+django==2.2.10            # via -r requirements-django.in, django-model-utils, django-recurrence, django-settings-export, django-storages, django-structlog
 dnspython==1.16.0         # via -c requirements-engine.txt, exchangelib
 dropbox==10.3.0           # via -c requirements-engine.txt, -r requirements-django.in
 exchangelib==3.1.1        # via -c requirements-engine.txt, -r requirements-django.in
-google-api-core==1.22.2   # via -c requirements-engine.txt, google-api-python-client
+google-api-core==1.22.2   # via -c requirements-engine.txt, google-api-python-client, google-cloud-core
 google-api-python-client==1.12.1  # via -c requirements-engine.txt, -r requirements-admin.in
 google-auth-httplib2==0.0.4  # via -c requirements-engine.txt, google-api-python-client
-google-auth==1.21.2       # via -c requirements-engine.txt, google-api-core, google-api-python-client, google-auth-httplib2
+google-auth==1.21.2       # via -c requirements-engine.txt, google-api-core, google-api-python-client, google-auth-httplib2, google-cloud-storage
+google-cloud-core==1.4.4  # via google-cloud-storage
+google-cloud-storage==1.33.0  # via django-storages
+google-crc32c==1.0.0      # via google-resumable-media
+google-resumable-media==1.1.0  # via google-cloud-storage
 googleapis-common-protos==1.52.0  # via -c requirements-engine.txt, google-api-core
 gunicorn==20.0.4          # via -r requirements-django.in
 httplib2==0.18.1          # via -c requirements-engine.txt, google-api-python-client, google-auth-httplib2, oauth2client
@@ -65,9 +70,9 @@ pytz==2019.3              # via -c requirements-engine.txt, django, django-recur
 regex==2020.4.4           # via -c requirements-engine.txt, -r requirements-django.in
 requests-ntlm==1.1.0      # via -c requirements-engine.txt, exchangelib
 requests-oauthlib==1.3.0  # via -c requirements-engine.txt, exchangelib
-requests==2.23.0          # via -c requirements-engine.txt, dropbox, exchangelib, google-api-core, requests-ntlm, requests-oauthlib
+requests==2.23.0          # via -c requirements-engine.txt, dropbox, exchangelib, google-api-core, google-cloud-storage, requests-ntlm, requests-oauthlib
 rsa==4.6                  # via -c requirements-engine.txt, google-auth, oauth2client
-six==1.14.0               # via -c requirements-engine.txt, cryptography, django-extensions, dropbox, google-api-core, google-api-python-client, google-auth, google-auth-httplib2, isodate, oauth2client, protobuf, python-dateutil, structlog, traitlets
+six==1.14.0               # via -c requirements-engine.txt, cryptography, django-extensions, dropbox, google-api-core, google-api-python-client, google-auth, google-auth-httplib2, google-cloud-core, google-resumable-media, isodate, oauth2client, protobuf, python-dateutil, structlog, traitlets
 soupsieve==2.0            # via -c requirements-engine.txt, beautifulsoup4
 sqlparse==0.3.1           # via django
 structlog==20.1.0         # via -c requirements-engine.txt, -r requirements-common.in, django-structlog
