@@ -10,6 +10,8 @@ from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.logical import AndRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.rules.rule import Sensitivity
+
 from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.management.commands import pipeline_collector
 
@@ -30,12 +32,13 @@ scan_tag2 = {
     "time": time2
 }
 
-
 common_handle = FilesystemHandle(
         FilesystemSource("/mnt/fs01.magenta.dk/brugere/af"),
         "OS2datascanner/Dokumenter/Verdensherredømme - plan.txt")
-common_rule = RegexRule("Vores hemmelige adgangskode er")
+common_rule = RegexRule("Vores hemmelige adgangskode er",
+                        sensitivity=Sensitivity.WARNING)
 dimension_rule = DimensionsRule()
+
 
 common_scan_spec = messages.ScanSpecMessage(
         scan_tag=None, # placeholder
@@ -54,23 +57,27 @@ positive_match = messages.MatchesMessage(
                 matches=[{"dummy": "match object"}])
         ])
 
-positive_match_with_dimension_rule_and_probability = messages.MatchesMessage(
+positive_match_with_dimension_rule_probability_and_sensitivity = messages.MatchesMessage(
         scan_spec=common_scan_spec._replace(scan_tag=scan_tag0),
         handle=common_handle,
         matched=True,
         matches=[
             messages.MatchFragment(
                 rule=common_rule,
-                matches=[{"dummy": "match object",  "probability": 0.6},
-                         {"dummy1": "match object",  "probability": 0.0},
-                         {"dummy2": "match object",  "probability": 1.0}]),
+                matches=[{"dummy": "match object",
+                          "probability": 0.6, "sensitivity": 750},
+                         {"dummy1": "match object",
+                          "probability": 0.0, "sensitivity": 1000},
+                         {"dummy2": "match object",
+                          "probability": 1.0, "sensitivity": 500}]),
             messages.MatchFragment(
                 rule=dimension_rule,
                 matches=[{"match": [2496, 3508]}])
         ])
 
 negative_match = messages.MatchesMessage(
-        scan_spec=common_scan_spec._replace(scan_tag=scan_tag1),
+        scan_spec=common_scan_spec._replace(
+            scan_tag=scan_tag1),
         handle=common_handle,
         matched=False,
         matches=[messages.MatchFragment(
@@ -191,14 +198,17 @@ class PipelineCollectorTests(TestCase):
             matches=[
                 messages.MatchFragment(
                     rule=common_rule,
-                    matches=[{"dummy2": "match object",  "probability": 1.0},
-                             {"dummy": "match object", "probability": 0.6},
-                             {"dummy1": "match object",  "probability": 0.0}]),
+                    matches=[{"dummy2": "match object",
+                              "probability": 1.0, "sensitivity": 500},
+                             {"dummy": "match object",
+                              "probability": 0.6, "sensitivity": 750},
+                             {"dummy1": "match object",
+                              "probability": 0.0, "sensitivity": 1000}]),
                 messages.MatchFragment(
                     rule=dimension_rule,
                     matches=[{"match": [2496, 3508]}])
             ])
 
         self.assertEqual(pipeline_collector.sort_matches_by_probability(
-            positive_match_with_dimension_rule_and_probability.to_json_object()
+            positive_match_with_dimension_rule_probability_and_sensitivity.to_json_object()
         )["matches"], match_to_match.to_json_object()["matches"])
