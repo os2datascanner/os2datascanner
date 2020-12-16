@@ -80,3 +80,5 @@ class DocumentReport(models.Model):
 
     class Meta:
         verbose_name_plural = "Document reports"
+        ordering = ['-sensitivity', '-probability']
+

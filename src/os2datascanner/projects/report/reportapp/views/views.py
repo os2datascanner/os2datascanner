@@ -16,6 +16,7 @@
 # source municipalities ( https://os2.eu/ )
 import structlog
 
+from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View, TemplateView, ListView
@@ -61,9 +62,8 @@ class MainPageView(ListView, LoginRequiredMixin):
         for role in roles:
             matches = role.filter(matches)
 
-        return sorted((r for r in matches if r.matches),
-                      key=lambda result: result.matches.probability,
-                      reverse=True)
+        # matches are always ordered by sensitivity desc. and probability desc.
+        return matches
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
