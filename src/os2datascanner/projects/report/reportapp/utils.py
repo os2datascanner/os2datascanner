@@ -21,6 +21,7 @@ def hash_handle(handle):
     """
     return hashlib.sha512(json.dumps(handle).encode()).hexdigest()
 
+
 def get_or_create_user_aliases(user_data):  # noqa: D401
     """Hook called after user is created, during SAML login, in DB and before login.
     This method creates or updates the users aliases depending on if new user_data
@@ -39,6 +40,7 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
     if sid:
         ADSIDAlias.objects.get_or_create(user=user, sid=sid)
 
+
 def get_user_data(key, user_data):
     """Helper method for retrieving data for a given key."""
     data = None
@@ -50,3 +52,26 @@ def get_user_data(key, user_data):
     return data
 
 
+def iterate_queryset_in_batches(batch_size, queryset):
+    i = 0
+    count = queryset.count()
+    while i < count:
+        print('i: {}'.format(str(i)))
+        batch = queryset[i: batch_size + i]
+        yield batch
+        i += batch_size
+
+
+def get_max_sens_prop_value(doc_report_obj, key):
+    if (doc_report_obj.data
+            and "matches" in doc_report_obj.data
+            and doc_report_obj.data["matches"]):
+        max_value = 0
+        for match_fragment in doc_report_obj.data["matches"]["matches"]:
+            if match_fragment["matches"]:
+                temp = max(match_fragment["matches"],
+                           key=lambda match_dict: match_dict.get(key))
+                if temp.get(key) and \
+                        temp.get(key) > max_value:
+                    max_value = temp.get(key)
+    return max_value

@@ -20,6 +20,10 @@ class DocumentReport(models.Model):
     # It could be that the meta data should not be part of the jsonfield...
     data = JSONField(null=True)
 
+    sensitivity = models.IntegerField(null=True, verbose_name="Sensitivity")
+
+    probability = models.FloatField(null=True, verbose_name="Probability")
+
     def _str_(self):
         return self.path
 
