@@ -50,24 +50,47 @@ class MainPageView(ListView, LoginRequiredMixin):
     paginate_by = 10  # Determines how many objects pr. page.
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
+    matches = DocumentReport.objects.filter(
+        data__matches__matched=True).filter(
+        resolution_status__isnull=True)
 
     def get_queryset(self):
         user = self.request.user
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
 
-        matches = DocumentReport.objects.filter(
-            data__matches__matched=True).filter(
-            resolution_status__isnull=True)
-
         for role in roles:
-            matches = role.filter(matches)
+            # Filter macthes by role.
+            self.matches = role.filter(self.matches)
+
+        if self.request.GET.get('scannerjob') \
+                and self.request.GET.get('scannerjob') != 'all':
+            # Filter by scannerjob
+            return self.matches.filter(
+                data__scan_tag__scanner__pk=int(
+                    self.request.GET.get('scannerjob'))
+            )
 
         # matches are always ordered by sensitivity desc. and probability desc.
-        return matches
+        return self.matches
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["renderable_rules"] = RENDERABLE_RULES
+
+        # Create select options
+        scannerjob_filters = self.matches.order_by(
+            'data__scan_tag__scanner__pk').values(
+            'data__scan_tag__scanner__pk').annotate(
+            total=Count('data__scan_tag__scanner__pk')
+        ).values(
+            'data__scan_tag__scanner__name',
+            'total',
+            'data__scan_tag__scanner__pk'
+        )
+
+        context['scannerjobs'] = (scannerjob_filters,
+                                  self.request.GET.get('scannerjob', 'all'))
+
         return context
 
 
