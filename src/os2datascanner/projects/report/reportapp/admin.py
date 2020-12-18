@@ -37,6 +37,8 @@ class RemediatorAdmin(admin.ModelAdmin):
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'uuid',)
+    readonly_fields = ('name', 'uuid',)
 
     # This object is owned by another system (admin)
     # We can't change instances directly - only view

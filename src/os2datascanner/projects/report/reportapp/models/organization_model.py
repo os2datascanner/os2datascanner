@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 import uuid
 
+
 class Organization(models.Model):
 
     """Represents the organization for each user and scanner, etc.
@@ -18,3 +19,10 @@ class Organization(models.Model):
     def __str__(self):
         """Return the name of the organization."""
         return self.name
+
+    @classmethod
+    def from_json_object(cls, obj):
+        return Organization(
+            name=obj["name"],
+            uuid=obj["uuid"]
+        )
