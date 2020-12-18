@@ -7,13 +7,13 @@ from uuid import uuid4
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner', '0038_populate_uuid_values'),
+        ('os2datascanner', '0039_populate_uuid_values'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='organization',
             name='uuid',
-            field=models.UUIDField(default=uuid4, editable=False, unique=True),
+            field=models.UUIDField(default=uuid4, editable=False, unique=True, verbose_name='UUID'),
         ),
     ]

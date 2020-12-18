@@ -7,7 +7,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner_report', '0011_documentreport_scan_time'),
+        ('os2datascanner_report', '0013_filter_internal_rules_matches'),
     ]
 
     operations = [

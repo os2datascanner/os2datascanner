@@ -14,7 +14,7 @@ def gen_uuid(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner', '0037_organization_uuid'),
+        ('os2datascanner', '0038_organization_uuid'),
     ]
 
     operations = [

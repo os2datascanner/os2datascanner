@@ -7,7 +7,7 @@ from uuid import uuid4
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner', '0036_sbsysscanner'),
+        ('os2datascanner', '0037_scanstatus'),
     ]
 
     operations = [

@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('os2datascanner_report', '0012_organization'),
+        ('os2datascanner_report', '0014_organization'),
     ]
 
     operations = [
