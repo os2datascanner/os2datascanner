@@ -277,10 +277,10 @@ class Scanner(models.Model):
                 'pk': self.pk,
                 'name': self.name
             },
-            # Names have a uniqueness constraint, so we can /sort of/ use
-            # them as a human-readable primary key for organisations in the
-            # report module
-            'organisation': self.organization.name,
+            'organisation': {
+                'name': self.organization.name,
+                'uuid': str(self.organization.uuid)
+            },
             'destination': 'pipeline_collector'
         }
 

@@ -21,3 +21,6 @@ class AdminappConfig(AppConfig):
     name = "os2datascanner.projects.admin.adminapp"
     label = 'os2datascanner'
     verbose_name = "OS2datascanner"
+
+    def ready(self):
+        from .signals import ModelChangeEvent

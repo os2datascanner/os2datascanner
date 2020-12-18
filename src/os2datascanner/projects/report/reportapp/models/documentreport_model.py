@@ -3,12 +3,18 @@ import enum
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.fields import JSONField
+from .organization_model import Organization
 
 from os2datascanner.engine2.pipeline.messages import MatchesMessage
 
 
 class DocumentReport(models.Model):
     scan_time = models.DateTimeField(null=True)
+
+    organization = models.ForeignKey(Organization,
+                                     null=True, blank=True,
+                                     verbose_name='Organisation',
+                                     on_delete=models.PROTECT)
 
     path = models.CharField(max_length=2000, verbose_name="Path")
     # It could be that the meta data should not be part of the jsonfield...

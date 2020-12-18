@@ -16,6 +16,8 @@
 # source municipalities ( https://os2.eu/ )
 
 from django.core.management.base import BaseCommand
+from django.core.exceptions import FieldError
+from django.db.models.deletion import ProtectedError
 
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
@@ -24,9 +26,10 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
 from os2datascanner.projects.report.reportapp.utils import hash_handle
 
 from ...models.documentreport_model import DocumentReport
+from ...models.organization_model import Organization
 
 
-def message_received_raw(queue, body):
+def result_message_received_raw(body):
     """Method for restructuring and storing result body.
 
     The agreed structure is as follows:
@@ -44,6 +47,23 @@ def message_received_raw(queue, body):
         handle_problem_message(previous_report, new_report, body)
     elif queue == "metadata":
         handle_metadata_message(new_report, body)
+
+    yield from []
+
+
+def event_message_received_raw(body):
+    event_type = body.get("type")
+    model_class = body.get("model_class")
+    instance = body.get("instance")
+
+    if not event_type or not model_class or not instance:
+        return
+
+    if model_class == "Organization":
+        handle_event(event_type, instance, Organization)
+    else:
+        print("Unknown model_class %s in event" % model_class)
+        return
 
     yield from []
 
@@ -169,9 +189,52 @@ def _identify_message(result):
         return None, None
 
 
+def handle_event(event_type, instance, cls):
+
+    event_obj = cls.from_json_object(instance)
+
+    try:
+        existing = cls.objects.get(uuid=event_obj.uuid)
+
+        # If we get this far, the object existed
+        # go ahead and update or delete
+        if event_type == "object_delete":
+            existing.delete()
+            print("handle_event: Deleted %s with uuid: %s" % (cls, existing.uuid))
+        elif event_type == "object_update":
+            event_obj_dict = {k: v for k, v in event_obj.__dict__.items() if v is not None}
+            existing.__dict__.update(event_obj_dict)
+            existing.save()
+            print("handle_event: Updated %s with uuid: %s" % (cls, existing.uuid))
+        else:
+            print("handle_event: Unexpected event_type %s from %s with uuid: %s" % (event_type, cls, event_obj.uuid))
+
+    except cls.DoesNotExist:
+        # The object didn't exist - save it
+        # Notice that we might end up here event with an update event, if the initial
+        # create event wasn't created, collected or didn't succeed
+        event_obj.save()
+        print("handle_event: Created %s with uuid: %s" % (cls, event_obj.uuid))
+    except FieldError as e:
+        print("handle_event: FieldError when handling %s from event: %s" % (cls, e))
+    except AttributeError as e:
+        print("handle_event: AttributeError when handling %s from event: %s" % (cls, e))
+    except ProtectedError as e:
+        print("handle_event: Couldn't delete %s uuid %s from event: %s" % (cls, event_obj.uuid, e))
+
+
 class ReportCollector(PikaPipelineRunner):
+    def __init__(self, *, results, events, **kwargs):
+        super().__init__(**kwargs)
+        self._results = results
+        self._events = events
+
     def handle_message(self, message_body, *, channel=None):
-        return message_received_raw(channel, message_body)
+        if channel == self._results:
+            return result_message_received_raw(message_body)
+        elif channel == self._events:
+            return event_message_received_raw(message_body)
+
 
 
 class Command(BaseCommand):
@@ -185,9 +248,17 @@ class Command(BaseCommand):
             help="the name of the AMQP queue from which filtered result objects"
                  + " should be read",
             default="os2ds_results")
+        parser.add_argument(
+            "--events",
+            type=str,
+            help="the name of the AMQP queue from which event objects"
+                 + " should be read",
+            default="os2ds_events")
 
-    def handle(self, results, *args, **options):
-        with ReportCollector(read=[results], heartbeat=6000) as runner:
+    def handle(self, results, events, *args, **options):
+        with ReportCollector(
+                results=results, events=events,
+                read=[results, events], heartbeat=6000) as runner:
             try:
                 print("Start")
                 runner.run_consumer()
