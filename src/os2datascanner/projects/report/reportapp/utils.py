@@ -5,6 +5,8 @@ import structlog
 from django.conf import settings
 from django.contrib.auth.models import User
 
+from os2datascanner.engine2.pipeline import messages
+
 from .models.aliases.emailalias_model import EmailAlias
 from .models.aliases.adsidalias_model import ADSIDAlias
 
@@ -63,15 +65,11 @@ def iterate_queryset_in_batches(batch_size, queryset):
 
 
 def get_max_sens_prop_value(doc_report_obj, key):
+    """Helper method for migration 0014_documentreport_added_sensitivity_and_probability.
+    This method returns either a Sensitivity object or probability maximum value.
+    The method is located in utils as could become handy else where."""
     if (doc_report_obj.data
             and "matches" in doc_report_obj.data
             and doc_report_obj.data["matches"]):
-        max_value = 0
-        for match_fragment in doc_report_obj.data["matches"]["matches"]:
-            if match_fragment["matches"]:
-                temp = max(match_fragment["matches"],
-                           key=lambda match_dict: match_dict.get(key))
-                if temp.get(key) and \
-                        temp.get(key) > max_value:
-                    max_value = temp.get(key)
-    return max_value
+        return getattr(messages.MatchesMessage.from_json_object(
+            doc_report_obj.data["matches"]), key)

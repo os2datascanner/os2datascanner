@@ -5,17 +5,26 @@ from django.db import migrations, models
 from ..utils import iterate_queryset_in_batches, get_max_sens_prop_value
 
 
-def bulk_extract_sensitivy_value(apps, schema_editor):
-    """See 0011_documentreport_scan_time migration for more bulk update information."""
+def bulk_update_sensitivity_and_probability_value(apps, schema_editor):
+    """See 0011_documentreport_scan_time migration for
+    more bulk update information."""
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
     queryset = DocumentReport.objects.filter(
         data__matches__matched=True).filter(
         resolution_status__isnull=True)
-    key = 'sensitivity'
+
+    bulk_update_by_key(DocumentReport, 'probability', queryset)
+    bulk_update_by_key(DocumentReport, 'sensitivity', queryset)
+
+
+def bulk_update_by_key(DocumentReport, key, queryset):
     for batch in iterate_queryset_in_batches(10000, queryset):
         for dr in batch:
-            max_sensitivity = get_max_sens_prop_value(dr, key)
-            dr.sensitivity = max_sensitivity
+            max_value = get_max_sens_prop_value(dr, key)
+            if key == 'probability':
+                dr.probability = max_value
+            else:
+                dr.sensitivity = max_value.value
         DocumentReport.objects.bulk_update(batch, [key])
 
 
@@ -31,6 +40,11 @@ class Migration(migrations.Migration):
             name='sensitivity',
             field=models.IntegerField(null=True, verbose_name='Sensitivity'),
         ),
-        migrations.RunPython(bulk_extract_sensitivy_value,
+        migrations.AddField(
+            model_name='documentreport',
+            name='probability',
+            field=models.FloatField(null=True, verbose_name='Probability'),
+        ),
+        migrations.RunPython(bulk_update_sensitivity_and_probability_value,
                              reverse_code=migrations.RunPython.noop),
     ]

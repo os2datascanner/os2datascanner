@@ -135,10 +135,11 @@ def handle_match_message(previous_report, new_report, body):
 
     if new_matches.matched:
         print(new_matches.handle.presentation, "New matches, creating")
-        # Remove anything we don't know how to show in the UI
-        # TODO: Ask Alexander if new_matches.sensitivity can be NoneType
+        # Collect and store highest sensitivity value (should never be NoneType).
         new_report.sensitivity = new_matches.sensitivity.value
+        # Collect and store highest propability value (should never be NoneType).
         new_report.probability = new_matches.probability
+        # Sort matches by prop. desc.
         new_report.data["matches"] = sort_matches_by_probability(body)
         new_report.save()
 
