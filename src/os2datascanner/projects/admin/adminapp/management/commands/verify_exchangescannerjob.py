@@ -1,12 +1,13 @@
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 
-# from exchangelib.errors import ErrorNonExistentMailbox
+from exchangelib.errors import ErrorNonExistentMailbox
 
 from os2datascanner.engine2.model.ews import *
 from os2datascanner.engine2.model.core import SourceManager
 
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.exchangescanner_model import ExchangeScanner
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.\
+    exchangescanner_model import ExchangeScanner
 
 
 class Command(BaseCommand):
@@ -15,7 +16,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--id",
+            "id",
             type=int,
             help="The id of the exchange scannerjob.",
             default=None)
@@ -30,15 +31,20 @@ class Command(BaseCommand):
         user_list = [u.decode("utf-8").strip()
                      for u in exchange_scanner.userlist if u.strip()]
         for user_name in user_list:
-            account = EWSAccountSource(domain=exchange_scanner.url.lstrip('@'),
-                                       server=exchange_scanner.service_endpoint,
-                                       admin_user=exchange_scanner.authentication.username,
-                                       admin_password=exchange_scanner.authentication.get_password(),
-                                       user=user_name)
+            account = EWSAccountSource(
+                domain=exchange_scanner.url.lstrip('@'),
+                server=exchange_scanner.service_endpoint,
+                admin_user=exchange_scanner.authentication.username,
+                admin_password=exchange_scanner.authentication.get_password(),
+                user=user_name
+            )
+
             with SourceManager() as sm:
                 try:
                     exchangelib_object = sm.open(account)
                     if exchangelib_object.msg_folder_root:
-                        print("OS2datascanner has access to mailboks {0}".format(user_name))
+                        print("OS2datascanner has access to mailbox {0}".format(
+                            account.address)
+                        )
                 except ErrorNonExistentMailbox:
-                    print("Mailbox {0} does not exists".format(user_name))
+                    print("Mailbox {0} does not exits".format(account.address))
