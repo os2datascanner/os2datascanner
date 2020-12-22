@@ -56,22 +56,12 @@ function clear_filter(elementid){
                           Vælg følsomhed
                         </option>
                           {% for sensitivity in sensitivities|first %}
-                              <option value="{{ sensitivity.sensitivity|stringformat:"i" }}"
-                                    {% if sensitivities|last == sensitivity.sensitivity|stringformat:"i" %}
+                              <option value="{{ sensitivity.0.value|stringformat:"i" }}"
+                                    {% if sensitivities|last == sensitivity.0.value|stringformat:"i" %}
                                         selected="selected"
-                                      {% endif %}>
-                                   {%if sensitivity.sensitivity == 0 %}
-                                        Information
-                                    {% elif sensitivity.sensitivity == 250 %}
-                                        Notifikation
-                                    {% elif sensitivity.sensitivity == 500 %}
-                                        Advarsel
-                                    {% elif sensitivity.sensitivity == 750 %}
-                                        Problem
-                                    {% elif sensitivity.sensitivity == 1000 %}
-                                        Kritisk
-                                    {% endif %}
-                                    ({{ sensitivity.total }})
+                                    {% endif %} >
+                                    {{ sensitivity.0.presentation }}
+                                    ({{ sensitivity.1 }})
                               </option>
                            {% endfor %}
                       </select>

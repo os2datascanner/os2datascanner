@@ -26,6 +26,7 @@ from ..models.roles.defaultrole_model import DefaultRole
 
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
+from os2datascanner.engine2.rules.rule import Sensitivity
 
 logger = structlog.get_logger()
 
@@ -107,7 +108,9 @@ class MainPageView(ListView, LoginRequiredMixin):
         ).values(
             'sensitivity', 'total'
         )
-        context['sensitivities'] = (sensitivities,
+
+        context['sensitivities'] = (((Sensitivity(s["sensitivity"]),
+                                      s["total"]) for s in sensitivities),
                                     self.request.GET.get('sensitivities', 'all'))
 
         return context
