@@ -316,3 +316,43 @@
     }
   }
 }
+
+.match_filtering_wrapper {
+  float:left;
+}
+
+.match_filtering_clear_button {
+  cursor:pointer;
+  float:right;
+  margin-right: 25px;
+  margin-top: 4px;
+  border:none;
+  background: none;
+  color: #00496e;
+  font-size: small;
+}
+
+.match_filtering_label {
+  display: block;
+  font-weight: bold;
+  float:left;
+}
+
+.match_filtering {
+  border-radius: 10px;
+  border:1px solid #cccccc;
+  margin-bottom: 30px;
+  margin-top: 8px;
+  margin-right: 20px;
+  display:inline-block;
+  overflow:hidden;
+  float:left;
+}
+
+.match_filtering select {
+  height: 35px;
+  width: 200px;
+  background: white;
+  border:0px;
+  outline:none;
+}

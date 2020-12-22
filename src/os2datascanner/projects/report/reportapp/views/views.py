@@ -53,6 +53,7 @@ class MainPageView(ListView, LoginRequiredMixin):
     matches = DocumentReport.objects.filter(
         data__matches__matched=True).filter(
         resolution_status__isnull=True)
+    scannerjob_filters = None
 
     def get_queryset(self):
         user = self.request.user
@@ -65,9 +66,16 @@ class MainPageView(ListView, LoginRequiredMixin):
         if self.request.GET.get('scannerjob') \
                 and self.request.GET.get('scannerjob') != 'all':
             # Filter by scannerjob
-            return self.matches.filter(
+            self.matches = self.matches.filter(
                 data__scan_tag__scanner__pk=int(
                     self.request.GET.get('scannerjob'))
+            )
+        if self.request.GET.get('sensitivities') \
+                and self.request.GET.get('sensitivities') != 'all':
+            # Filter by sensitivities
+            self.matches = self.matches.filter(
+                sensitivity=int(
+                    self.request.GET.get('sensitivities'))
             )
 
         # matches are always ordered by sensitivity desc. and probability desc.
@@ -77,19 +85,30 @@ class MainPageView(ListView, LoginRequiredMixin):
         context = super().get_context_data(**kwargs)
         context["renderable_rules"] = RENDERABLE_RULES
 
-        # Create select options
-        scannerjob_filters = self.matches.order_by(
-            'data__scan_tag__scanner__pk').values(
-            'data__scan_tag__scanner__pk').annotate(
-            total=Count('data__scan_tag__scanner__pk')
-        ).values(
-            'data__scan_tag__scanner__name',
-            'total',
-            'data__scan_tag__scanner__pk'
-        )
+        if self.scannerjob_filters is None:
+            # Create select options
+            self.scannerjob_filters = self.matches.order_by(
+                'data__scan_tag__scanner__pk').values(
+                'data__scan_tag__scanner__pk').annotate(
+                total=Count('data__scan_tag__scanner__pk')
+            ).values(
+                'data__scan_tag__scanner__name',
+                'total',
+                'data__scan_tag__scanner__pk'
+            )
 
-        context['scannerjobs'] = (scannerjob_filters,
+        context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
+
+        sensitivities = self.matches.order_by(
+            'sensitivity').values(
+            'sensitivity').annotate(
+            total=Count('sensitivity')
+        ).values(
+            'sensitivity', 'total'
+        )
+        context['sensitivities'] = (sensitivities,
+                                    self.request.GET.get('sensitivities', 'all'))
 
         return context
 
