@@ -14,10 +14,9 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 
-from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
-from ..documentreport_model import DocumentReport
 from .role_model import Role
 
 
@@ -39,3 +38,7 @@ class Remediator(Role):
                     str(alias.key): str(alias)
                 })
         return document_reports
+
+    class Meta:
+        verbose_name = _("Oprydder")
+        verbose_name_plural = _("Opryddere")
