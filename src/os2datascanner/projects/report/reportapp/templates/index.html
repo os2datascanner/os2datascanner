@@ -18,7 +18,6 @@ function clear_filter(elementid){
 
         <h1 class="page-title">Matches </h1>
           <form method="GET" action="{% url 'index' %}" id="filter_form">
-              {% csrf_token %}
               <div class="match_filtering_wrapper">
                   <div>
                       <button type="button" onclick="clear_filter('scannerjobs')" class="match_filtering_clear_button">Ryd</button>
