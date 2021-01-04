@@ -17,17 +17,28 @@ time0 = "2020-11-11T11:11:59+02:00"
 time1 = "2020-10-28T14:21:27+01:00"
 
 scan_tag0 = {
-    "scanner": "Dummy test scanner",
-    "time": time0
+    "time": time0,
+    "scanner": {
+        "pk": 14,
+        "name": "Dummy test scanner"
+    },
 }
 scan_tag1 = {
-    "scanner": "Dummy test scanner",
+    "scanner": {
+        "pk": 11,
+        "name": "Dummy test scanner2"
+    },
     "time": time1
 }
 
 common_rule = RegexRule(
     expression="Vores hemmelige adgangskode er",
     sensitivity=Sensitivity.PROBLEM
+)
+
+common_rule_2 = RegexRule(
+    expression="Vores hemmelige adgangskode er",
+    sensitivity=Sensitivity.CRITICAL
 )
 
 
@@ -70,7 +81,7 @@ egon_positive_match = messages.MatchesMessage(
         handle=egon_email_handle,
         matched=True,
         matches=[messages.MatchFragment(
-                rule=common_rule,
+                rule=common_rule_2,
                 matches=[{"dummy": "match object"}])]
 )
 
@@ -79,7 +90,7 @@ egon_positive_match_1 = messages.MatchesMessage(
         handle=egon_email_handle_1,
         matched=True,
         matches=[messages.MatchFragment(
-                rule=common_rule,
+                rule=common_rule_2,
                 matches=[{"dummy": "match object"}])]
 )
 
@@ -204,8 +215,36 @@ class MainPageViewTest(TestCase):
         emailalias.delete()
         emailalias1.delete()
 
-    def mainpage_get_queryset(self):
-        request = self.factory.get('/')
+    def test_mainpage_view_filter_by_scannerjob(self):
+        params = '?scannerjob=14&sensitivities=all'
+        remediator = Remediator.objects.create(user=self.user)
+        qs = self.mainpage_get_queryset(params)
+        self.assertEqual(len(qs), 2)
+        remediator.delete()
+
+    def test_mainpage_view_filter_by_sensitivities(self):
+        params = '?scannerjob=all&sensitivities=1000'
+        remediator = Remediator.objects.create(user=self.user)
+        qs = self.mainpage_get_queryset(params)
+        self.assertEqual(len(qs), 2)
+        remediator.delete()
+
+    def test_mainpage_view_filter_by_all(self):
+        params = '?scannerjob=all&sensitivities=all'
+        remediator = Remediator.objects.create(user=self.user)
+        qs = self.mainpage_get_queryset(params)
+        self.assertEqual(len(qs), 3)
+        remediator.delete()
+
+    def test_mainpage_view_filter_by_scannerjob_and_sensitivities(self):
+        params = '?scannerjob=14&sensitivities=1000'
+        remediator = Remediator.objects.create(user=self.user)
+        qs = self.mainpage_get_queryset(params)
+        self.assertEqual(len(qs), 1)
+        remediator.delete()
+
+    def mainpage_get_queryset(self, params=''):
+        request = self.factory.get('/' + params)
         request.user = self.user
         view = MainPageView()
         view.setup(request)
