@@ -20,9 +20,12 @@ from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View, TemplateView, ListView
+from django.db.models import Q
 
 from ..models.documentreport_model import DocumentReport
 from ..models.roles.defaultrole_model import DefaultRole
+from ..models.userprofile_model import UserProfile
+from ..models.organization_model import Organization
 
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
@@ -60,8 +63,20 @@ class MainPageView(ListView, LoginRequiredMixin):
         user = self.request.user
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
 
+        # Filter by organization
+        try:
+            user_organization = user.profile.organization
+            # Include matches without organization (backwards compatibility)
+            self.matches = self.matches.filter(Q(organization=None) | Q(organization=user_organization))
+        except UserProfile.DoesNotExist:
+            # No UserProfile has been set on the request user
+            # Default action depends on how many organization objects we have
+            # If more than one exist, limit matches to ones without an organization (safety measure)
+            if Organization.objects.count() > 1:
+                self.matches = self.matches.filter(organization=None)
+
         for role in roles:
-            # Filter macthes by role.
+            # Filter matches by role.
             self.matches = role.filter(self.matches)
 
         if self.request.GET.get('scannerjob') \
