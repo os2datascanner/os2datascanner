@@ -40,5 +40,5 @@ class Remediator(Role):
         return document_reports
 
     class Meta:
-        verbose_name = _("Oprydder")
-        verbose_name_plural = _("Opryddere")
+        verbose_name = _("oprydder")
+        verbose_name_plural = _("opryddere")
