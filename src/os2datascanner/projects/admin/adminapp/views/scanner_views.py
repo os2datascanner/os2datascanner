@@ -8,8 +8,16 @@ from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
 from ..models.authentication_model import Authentication
 from ..models.rules.rule_model import Rule
-from ..models.scannerjobs.scanner_model import Scanner
+from ..models.scannerjobs.scanner_model import Scanner, ScanStatus
 from ..models.userprofile_model import UserProfile
+
+
+class StatusOverview(RestrictedListView):
+    template_name = "os2datascanner/scan_status.html"
+    model = ScanStatus
+
+    def get_queryset(self):
+        return super().get_queryset().order_by("-pk")[:10]
 
 
 class ScannerList(RestrictedListView):

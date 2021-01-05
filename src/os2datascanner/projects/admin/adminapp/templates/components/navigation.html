@@ -21,6 +21,7 @@
         {% elif settings.ENABLE_GOOGLEDRIVESCAN %}
           <a href="/">Scannerjob</a>
         {% endif %}
+        <a href="/status/">Status</a>
         {% if user.profile.is_groups_enabled %}
           {% if user.is_superuser or user.profile.is_group_admin %}
             <a href="/groups/">Grupper</a>
