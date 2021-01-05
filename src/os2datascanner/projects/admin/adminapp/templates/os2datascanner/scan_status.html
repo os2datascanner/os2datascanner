@@ -1,0 +1,69 @@
+{% extends 'os2datascanner/base.html' %}
+{% load l10n %}
+{% load staticfiles %}
+
+{% block body %}
+<div class="wrapper">
+    <h1>Seneste scans</h1>
+    <table class="datatable">
+        <thead>
+            <tr>
+                <th>
+                    Scanner
+                </th>
+                <th>
+                    Starttid
+                </th>
+                <th colspan="3">
+                    Status
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+{% for status in object_list %}
+            <tr>
+                <td>
+                    {{ status.scanner.name }}
+                </td>
+                <td>
+                    {{ status.scan_tag.time}}
+                </td>
+                <td colspan="3">
+                    <div>
+{% if status.fraction_scanned is not None %}
+{% widthratio status.fraction_scanned 1.0 100 as percentage %}
+                        <progress max="100" value="{{ percentage }}">{{ percentage }}%</progress>
+                    </div>
+                    <div>
+                        <small>{{ percentage }}%
+{% else %}
+                    <div>
+                        <progress></progress>
+                    </div>
+                    <div>
+                        <small>Estimerer...
+{% endif %}
+                         ({{ status.total_objects }} objekter udforsket,
+                         {{ status.scanned_objects }}
+                         ({{ status.scanned_size }} byte) scannet)</small>
+                    </div>
+
+{% if percentage != "100" %}
+                    <div>
+                        <small>Forventet færdiggørelse:
+{% if status.estimated_completion_time %}
+                        <strong>{{ status.estimated_completion_time }}</strong>
+{% else %}
+                        <em>Estimerer...</em>
+{% endif %}
+                        </small>
+                    </div>
+{% endif %}
+
+                </td>
+            </tr>
+{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
