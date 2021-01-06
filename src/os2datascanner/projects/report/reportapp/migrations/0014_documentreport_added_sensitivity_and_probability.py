@@ -10,8 +10,7 @@ def bulk_update_sensitivity_and_probability_value(apps, schema_editor):
     more bulk update information."""
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
     queryset = DocumentReport.objects.filter(
-        data__matches__matched=True).filter(
-        resolution_status__isnull=True)
+        data__matches__matched=True)
 
     bulk_update_by_key(DocumentReport, 'probability', queryset)
     bulk_update_by_key(DocumentReport, 'sensitivity', queryset)
