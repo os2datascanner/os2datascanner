@@ -64,7 +64,6 @@ def find_type_label(handle):
                 handle = handle.source.handle
             else:
                 break
-        print(handle.type_label)
         return handle.type_label
     else:
         return None
