@@ -30,7 +30,7 @@ def bulk_update_by_key(DocumentReport, key, queryset):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner_report', '0013_filter_internal_rules_matches'),
+        ('os2datascanner_report', '0016_documentreport_organization'),
     ]
 
     operations = [
