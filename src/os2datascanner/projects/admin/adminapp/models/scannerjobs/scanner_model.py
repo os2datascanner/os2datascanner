@@ -430,7 +430,8 @@ class ScanStatus(models.Model):
         fraction_scanned = self.fraction_scanned
         if fraction_scanned is not None:
             now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
-            so_far = now - self.start_time
+            start = self.start_time
+            so_far = now - start
             total_duration = so_far / fraction_scanned
             return start + total_duration
         else:
