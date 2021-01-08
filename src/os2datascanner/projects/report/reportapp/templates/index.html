@@ -1,5 +1,11 @@
 {% include "partials/header.html" %}
 {% include "components/banner.html" %}
+<script>
+function clear_filter(elementid){
+    document.querySelector('#' + elementid + ' [value="all"]').selected = true;
+    document.getElementById("filter_form").submit();
+};
+</script>
 
     <main class="wrapper">
       {% include "partials/sidemenu.html" with active_tab="home" %}
@@ -10,7 +16,58 @@
           <span class="matches--width">Samlede antal: {{ page_obj.paginator.count }}</span>
         </span>
 
-        <h1 class="page-title">Matches: {{ sensitivity.presentation }}</h1>
+        <h1 class="page-title">Matches </h1>
+          <form method="GET" action="{% url 'index' %}" id="filter_form">
+              <div class="match_filtering_wrapper">
+                  <div>
+                      <button type="button" onclick="clear_filter('scannerjobs')" class="match_filtering_clear_button">Ryd</button>
+                      <label for="scannerjobs" class="match_filtering_label">Scan</label>
+                  </div>
+                  <div class="match_filtering" >
+                      <select name="scannerjob" id="scannerjobs" onchange="this.form.submit()" >
+                        <option value="all"
+                                {% if scannerjobs|last == "all" %}
+                                    selected="selected"
+                                {% endif %} >
+                                Vælg scannerjob
+                        </option>
+                          {% for scan in scannerjobs|first %}
+                              <option value="{{ scan.data__scan_tag__scanner__pk }}"
+                                      {% if scannerjobs|last == scan.data__scan_tag__scanner__pk|stringformat:"i" %}
+                                        selected="selected"
+                                      {% endif %} >
+                                  {{ scan.data__scan_tag__scanner__name }} ({{ scan.total }})
+                              </option>
+                           {% endfor %}
+                      </select>
+                  </div>
+              </div>
+              <div style="float:left;">
+                  <div>
+                      <button type="button" onclick="clear_filter('sensitivities')" class="match_filtering_clear_button">Ryd</button>
+                      <label for="sensitivities" class="match_filtering_label">Følsomhed</label>
+                  </div>
+                  <div class="match_filtering">
+                      <select name="sensitivities" id="sensitivities" onchange="this.form.submit()" >
+                        <option value="all"
+                                {% if sensitivities|last == "all" %}
+                                    selected="selected"
+                                {% endif %} >
+                          Vælg følsomhed
+                        </option>
+                          {% for sensitivity in sensitivities|first %}
+                              <option value="{{ sensitivity.0.value|stringformat:"i" }}"
+                                    {% if sensitivities|last == sensitivity.0.value|stringformat:"i" %}
+                                        selected="selected"
+                                    {% endif %} >
+                                    {{ sensitivity.0.presentation }}
+                                    ({{ sensitivity.1 }})
+                              </option>
+                           {% endfor %}
+                      </select>
+                  </div>
+              </div>
+         </form>
 
         {% include "components/hits.html" %}
       </div>

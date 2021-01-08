@@ -26,6 +26,7 @@ from ..models.roles.defaultrole_model import DefaultRole
 
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
+from os2datascanner.engine2.rules.rule import Sensitivity
 
 logger = structlog.get_logger()
 
@@ -50,24 +51,68 @@ class MainPageView(ListView, LoginRequiredMixin):
     paginate_by = 10  # Determines how many objects pr. page.
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
+    matches = DocumentReport.objects.filter(
+        data__matches__matched=True).filter(
+        resolution_status__isnull=True)
+    scannerjob_filters = None
 
     def get_queryset(self):
         user = self.request.user
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
 
-        matches = DocumentReport.objects.filter(
-            data__matches__matched=True).filter(
-            resolution_status__isnull=True)
-
         for role in roles:
-            matches = role.filter(matches)
+            # Filter macthes by role.
+            self.matches = role.filter(self.matches)
+
+        if self.request.GET.get('scannerjob') \
+                and self.request.GET.get('scannerjob') != 'all':
+            # Filter by scannerjob
+            self.matches = self.matches.filter(
+                data__scan_tag__scanner__pk=int(
+                    self.request.GET.get('scannerjob'))
+            )
+        if self.request.GET.get('sensitivities') \
+                and self.request.GET.get('sensitivities') != 'all':
+            # Filter by sensitivities
+            self.matches = self.matches.filter(
+                sensitivity=int(
+                    self.request.GET.get('sensitivities'))
+            )
 
         # matches are always ordered by sensitivity desc. and probability desc.
-        return matches
+        return self.matches
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["renderable_rules"] = RENDERABLE_RULES
+
+        if self.scannerjob_filters is None:
+            # Create select options
+            self.scannerjob_filters = self.matches.order_by(
+                'data__scan_tag__scanner__pk').values(
+                'data__scan_tag__scanner__pk').annotate(
+                total=Count('data__scan_tag__scanner__pk')
+            ).values(
+                'data__scan_tag__scanner__name',
+                'total',
+                'data__scan_tag__scanner__pk'
+            )
+
+        context['scannerjobs'] = (self.scannerjob_filters,
+                                  self.request.GET.get('scannerjob', 'all'))
+
+        sensitivities = self.matches.order_by(
+            'sensitivity').values(
+            'sensitivity').annotate(
+            total=Count('sensitivity')
+        ).values(
+            'sensitivity', 'total'
+        )
+
+        context['sensitivities'] = (((Sensitivity(s["sensitivity"]),
+                                      s["total"]) for s in sensitivities),
+                                    self.request.GET.get('sensitivities', 'all'))
+
         return context
 
 
