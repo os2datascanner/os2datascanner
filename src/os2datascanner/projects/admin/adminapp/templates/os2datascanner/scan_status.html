@@ -4,66 +4,52 @@
 
 {% block body %}
 <div class="wrapper">
-    <h1>Seneste scans</h1>
-    <table class="datatable">
-        <thead>
-            <tr>
-                <th>
-                    Scanner
-                </th>
-                <th>
-                    Starttid
-                </th>
-                <th colspan="3">
-                    Status
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-{% for status in object_list %}
-            <tr>
-                <td>
-                    {{ status.scanner.name }}
-                </td>
-                <td>
-                    {{ status.start_time }}
-                </td>
-                <td colspan="3">
-                    <div>
-{% if status.fraction_scanned is not None %}
-{% widthratio status.fraction_scanned 1.0 100 as percentage %}
-                        <progress max="100" value="{{ percentage }}">{{ percentage }}%</progress>
-                    </div>
-                    <div>
-                        <small>{{ percentage }}%
-{% else %}
-                    <div>
-                        <progress></progress>
-                    </div>
-                    <div>
-                        <small>Estimerer...
-{% endif %}
-                         ({{ status.total_objects }} objekter udforsket,
-                         {{ status.scanned_objects }}
-                         ({{ status.scanned_size }} byte) scannet)</small>
-                    </div>
+    <h1 class="page-title">Scanner status</h1>
+    {% for status in object_list %}
+    <div class="scanner-status">
+        <h2 class="page-title__sub">
+            {{ status.scanner.name }}
+        </h2>
 
-{% if percentage != "100" %}
-                    <div>
-                        <small>Forventet færdiggørelse:
-{% if status.estimated_completion_time %}
-                        <strong>{{ status.estimated_completion_time }}</strong>
-{% else %}
-                        <em>Estimerer...</em>
-{% endif %}
-                        </small>
-                    </div>
-{% endif %}
+        <div class="scan-time">
+        {% if status.fraction_scanned is not None %}
+            {% widthratio status.fraction_scanned 1.0 100 as percentage %}
+            {% if percentage != "100" %}
+            <span>{{ percentage }}%</span>
+        {% else %}
+            <span>
+                <span>{{ percentage }}%</span>
+                <span class="scan-time--bullet">&#8226;</span>
+                <span class="scan-time--blue">{{ status.total_objects }}</span>
+                objekter udforsket
+                <span class="scan-time--icon"><i class="material-icons" style="font-size: 3rem;">check</i></span>
+            </span>
+            {% endif %}
+        {% endif %}
+        </div>
 
-                </td>
-            </tr>
-{% endfor %}
-        </tbody>
-    </table>
+        
+        {% if status.fraction_scanned is not None %}
+            {% if percentage != "100" %}
+                <div>
+                {% widthratio status.fraction_scanned 1.0 100 as percentage %}
+                    <progress max="100" value="{{ percentage }}"></progress>
+                </div>
+            {% endif %}
+            {% else %}
+                <div>
+                    <progress></progress>
+                </div>
+                <div>
+                    <small>Estimerer...
+                        ({{ status.total_objects }} objekter udforsket,
+                        {{ status.scanned_objects }}
+                        ({{ status.scanned_size }} byte) scannet)
+                    </small>
+                </div>
+        {% endif %}
+            
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}
