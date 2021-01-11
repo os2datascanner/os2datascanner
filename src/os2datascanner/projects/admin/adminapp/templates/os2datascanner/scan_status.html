@@ -1,6 +1,7 @@
 {% extends 'os2datascanner/base.html' %}
 {% load l10n %}
 {% load staticfiles %}
+{% load tz %}
 
 {% block body %}
 <div class="wrapper">
@@ -16,6 +17,12 @@
             {% widthratio status.fraction_scanned 1.0 100 as percentage %}
             {% if percentage != "100" %}
             <span>{{ percentage }}%</span>
+            <span class="scan-time--bullet">&#8226;</span>
+            <span class="scan-time--width">
+                {% timezone "Europe/Copenhagen" %}
+                    {{ status.estimated_completion_time|timeuntil:status.start_time }} tilbage
+                {% endtimezone %}
+            </span>
         {% else %}
             <span>
                 <span>{{ percentage }}%</span>
