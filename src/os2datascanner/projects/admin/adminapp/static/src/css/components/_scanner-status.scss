@@ -1,0 +1,59 @@
+.scanner-status {
+  background-color: var(--color-widget-bg);
+  box-shadow: var(--box-shadow-widget);
+  // border-radius: var(--border-radius-widget);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  max-width: 80rem;
+  width: calc(100% - 2rem);
+}
+
+.scan-time {
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  margin-bottom: .5rem;
+
+  &--bullet {
+    margin-left: .5rem;
+  }
+
+  &--blue {
+    color: var(--color-main-dark);
+    font-weight: bold;
+    margin-left: .5rem;
+  }
+
+  &--width {
+    margin-left: .5rem;
+  }
+
+  &--icon {
+    display: flex;
+    justify-content: flex-end;
+    color: var(--color-ok);
+    margin-top: -1.5rem;
+  }
+}
+
+progress {
+  width: 100%;
+  height: 2.5rem;
+  border-radius: 20px;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #eee;
+  border-radius: 20px;
+}
+
+progress::-webkit-progress-value {
+  background-image:
+  -webkit-linear-gradient(-25deg, 
+                          transparent 0%, rgba(0, 0, 0, .1) 0%, 
+                          rgba(0,0, 0, .1) 5%, transparent 100%),
+  -webkit-linear-gradient(top, 
+                          rgba(255, 255, 255, .25), 
+                          rgba(0, 0, 0, .25)),
+  -webkit-linear-gradient(left, #3a69b4, #3a69b4);
+  border-radius: 20px 0px 0px 20px;
+}
