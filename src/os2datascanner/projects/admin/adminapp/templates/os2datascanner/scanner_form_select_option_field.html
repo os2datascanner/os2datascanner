@@ -1,0 +1,31 @@
+  <div id="{{ field.auto_id }}_container" class="form__group{% if field.errors %} has-error{% endif %}">
+    <label {% if required %}
+            class="control-label required-form"
+           {% else %}
+           class="control-label"
+           {% endif %}
+           for="id_{{ field.name }}">{{ field.label }}</label>
+    <select
+      name="{{ field.name }}"
+      id="id_{{ field.name }}"
+      class="form-control">
+
+      {% for value, tag in field.field.choices %}
+      <option
+        value="{{ value }}"
+        {% if field.value|add:"0" == value|add:"0" %}
+        selected="selected"
+        {% endif %}>
+        {{ tag }}
+      </option> {# silly type conversion #}
+      {% endfor %}
+    </select>
+
+    {% if field.help_text %}
+    <span class="form__help-text">{{ field.help_text }}</span>
+    {% endif %}
+
+    {% if field.errors %}
+    {{ field.errors }}
+    {% endif %}
+  </div>
