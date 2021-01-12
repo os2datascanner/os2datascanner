@@ -18,13 +18,12 @@
 
 """Contains Django model for the scanner types."""
 
-import os
-from typing import Iterator
 import datetime
-from dateutil import tz
-from contextlib import closing
-import json
+import os
 import re
+
+from typing import Iterator
+from dateutil import tz
 
 from django.conf import settings
 from django.core.validators import validate_comma_separated_integer_list
@@ -34,7 +33,7 @@ from django.contrib.postgres.fields import JSONField
 from model_utils.managers import InheritanceManager
 from recurrence.fields import RecurrenceField
 
-from os2datascanner.engine2.model.core import Handle, Source, SourceManager
+from os2datascanner.engine2.model.core import Handle, Source
 from os2datascanner.engine2.rules.meta import HasConversionRule
 from os2datascanner.engine2.rules.logical import OrRule, AndRule, make_if
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
@@ -48,8 +47,6 @@ from ..organization_model import Organization
 from ..group_model import Group
 from ..rules.rule_model import Rule
 from ..userprofile_model import UserProfile
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
-
 
 base_dir = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -151,6 +148,10 @@ class Scanner(models.Model):
                                        verbose_name='Ekskluderingsregler')
 
     e2_last_run_at = models.DateTimeField(null=True)
+
+    def verify(self) -> bool:
+        """Method documentation"""
+        raise NotImplementedError("Scanner.verify")
 
     def exclusion_rule_list(self):
         """Return the exclusion rules as a list of strings or regexes."""
@@ -284,16 +285,13 @@ class Scanner(models.Model):
             'destination': 'pipeline_collector'
         }
 
-        # Check that all of our Sources are runnable, and build
-        # ScanSpecMessages for them
+        # Build ScanSpecMessages for all Sources
         message_template = messages.ScanSpecMessage(scan_tag=scan_tag,
                 rule=rule, configuration=configuration, source=None,
                 progress=None)
         outbox = []
         source_count = 0
         for source in self.generate_sources():
-            with SourceManager() as sm, closing(source.handles(sm)) as handles:
-                next(handles, True)
             outbox.append((settings.AMQP_PIPELINE_TARGET,
                     message_template._replace(source=source)))
             source_count += 1

@@ -18,10 +18,13 @@ import os
 from django.db import models
 from django.conf import settings
 
-from .scanner_model import Scanner
-from ...utils import upload_path_exchange_users
+from exchangelib.errors import ErrorNonExistentMailbox
 
 from os2datascanner.engine2.model.ews import EWSAccountSource
+from os2datascanner.engine2.model.core import SourceManager
+
+from .scanner_model import Scanner
+from ...utils import upload_path_exchange_users
 
 
 class ExchangeScanner(Scanner):
@@ -53,3 +56,17 @@ class ExchangeScanner(Scanner):
                     admin_user=self.authentication.username,
                     admin_password=self.authentication.get_password(),
                     user=u)
+
+    def verify(self) -> bool:
+        for account in self.generate_sources():
+            with SourceManager() as sm:
+                try:
+                    exchangelib_object = sm.open(account)
+                    if exchangelib_object.msg_folder_root:
+                        print("OS2datascanner has access to mailbox {0}".format(
+                            account.address)
+                        )
+                except ErrorNonExistentMailbox:
+                    print("Mailbox {0} does not exits".format(account.address))
+                    return False
+        return True
