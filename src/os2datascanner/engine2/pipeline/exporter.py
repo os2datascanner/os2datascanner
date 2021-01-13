@@ -13,7 +13,7 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
-def message_received_raw(body, channel, dump, results_q):
+def message_received_raw(body, channel, results_q):
     body["origin"] = channel
 
     message = None
@@ -40,12 +40,6 @@ def message_received_raw(body, channel, dump, results_q):
     if message:
         result_body = message.to_json_object()
         result_body["origin"] = channel
-
-        # For debugging purposes
-        if dump:
-            print(json.dumps(result_body, indent=True))
-            dump.write(json.dumps(result_body) + "\n")
-            dump.flush()
 
         yield (results_q, result_body)
 
@@ -102,7 +96,14 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(body, channel, args.dump, args.results)
+            it = message_received_raw(body, channel, args.results)
+            if not args.dump:
+                return it
+            else:
+                for queue, message in it:
+                    args.dump.write(json.dumps(message) + "\n")
+                    args.dump.flush()
+                    yield (queue, message)
 
     with ExporterRunner(
             read=[args.matches, args.metadata, args.problems],
