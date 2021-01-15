@@ -1,5 +1,6 @@
 .match_filtering_wrapper {
   float:left;
+  max-width: 100%;
 }
 
 .match_filtering_clear_button {
@@ -20,8 +21,7 @@
 }
 
 .match_filtering {
-  position: relative;
-  width: 200px;
+  width: 12.5rem;
   margin-right: 2rem;
   margin-top: 2rem;
   font-size: .9rem;
@@ -31,12 +31,21 @@
   display: none;
 }
 
+/* style the selected item */
 .select-selected {
   background-color: var(--color-widget-bg);
   border-radius: var(--border-radius-filter);
   box-shadow: var(--box-shadow-filter);
   margin-bottom: 3rem;
   z-index: 10;
+  color: var(--color-text-main);
+  padding: 8px 16px;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 
 /* style the arrow inside the select element */
@@ -57,7 +66,7 @@
   top: 7px;
 }
 
-/* style the items (options), including the selected item */
+/* style the items (options) */
 .select-items div {
   color: var(--color-text-main);
   padding: 8px 16px;
@@ -75,18 +84,10 @@
   margin-bottom: .7rem;
 }
 
-.select-selected {
-  color: var(--color-text-main);
-  padding: 8px 16px;
-  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
-  cursor: pointer;
-  user-select: none;
-}
-
 /* style items (options) */
 .select-items {
   position: absolute;
-  min-width: 200px;
+  max-width: 21rem;
   background-color: var(--color-widget-bg);
   border-radius: var(--border-radius-filter);
   box-shadow: var(--box-shadow-filter);
@@ -104,8 +105,4 @@
 
 .select-items div:hover, .same-as-selected {
   background-color: rgba(0, 0, 0, 0.1);
-}
-
-.same-as-selected {
-  color: crimson;
 }
