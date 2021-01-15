@@ -11,7 +11,8 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
-def message_received_raw(body, channel):
+def message_received_raw(body, channel, source_manager):
+    source_manager = None
     message = messages.RepresentationMessage.from_json_object(body)
     representations = decode_dict(message.representations)
     rule = message.progress.rule
@@ -80,7 +81,7 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(body, channel)
+            return message_received_raw(body, channel, None)
 
     with MatcherRunner(
             read=["os2ds_representations"],

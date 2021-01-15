@@ -34,7 +34,7 @@ def process(sm, msg):
 
 
 def match(sm, msg):
-    for channel, message in matcher_handler(msg, "os2ds_representations"):
+    for channel, message in matcher_handler(msg, "os2ds_representations", sm):
         if channel == "os2ds_handles":
             yield from tag(sm, message)
         elif channel == "os2ds_conversions":

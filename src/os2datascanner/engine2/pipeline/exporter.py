@@ -13,7 +13,8 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
-def message_received_raw(body, channel):
+def message_received_raw(body, channel, source_manager):
+    source_manager = None
     body["origin"] = channel
 
     message = None
@@ -70,7 +71,7 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            it = message_received_raw(body, channel)
+            it = message_received_raw(body, channel, None)
             if not args.dump:
                 return it
             else:
