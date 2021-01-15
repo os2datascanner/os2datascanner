@@ -33,11 +33,7 @@ class FileScannerCreate(ScannerCreate):
             form_class = self.get_form_class()
 
         form = super().get_form(form_class)
-        form.fields['username'] = forms.CharField(max_length=1024, required=False)
-        form.fields['password'] = forms.CharField(max_length=50, required=False)
-        form.fields['domain'] = forms.CharField(max_length=2024, required=False)
-        form.fields['alias'] = forms.CharField(max_length=64, required=False)
-        return form
+        return initialize_form(form)
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -66,12 +62,11 @@ class FileScannerUpdate(ScannerUpdate):
             form_class = self.get_form_class()
 
         form = super().get_form(form_class)
+        form = initialize_form(form)
+
         filedomain = self.get_object()
         authentication = filedomain.authentication
-        form.fields['username'] = forms.CharField(max_length=1024, required=False)
-        form.fields['password'] = forms.CharField(max_length=50, required=False)
-        form.fields['domain'] = forms.CharField(max_length=2024, required=False)
-        form.fields['alias'] = forms.CharField(max_length=64, required=False)
+
         if authentication.username:
             form.fields['username'].initial = authentication.username
         if authentication.ciphertext:
@@ -80,6 +75,7 @@ class FileScannerUpdate(ScannerUpdate):
             form.fields['password'].initial = password
         if authentication.domain:
             form.fields['domain'].initial = authentication.domain
+
         return form
 
     def get_success_url(self):
@@ -111,3 +107,15 @@ class FileScannerRun(ScannerRun):
     """View that handles starting of a file scanner run."""
 
     model = FileScanner
+
+
+def initialize_form(form):
+    """Initializes the form fields for username and password
+    as they are not part of the file scanner model."""
+
+    form.fields['username'] = forms.CharField(max_length=1024, required=False, label='Brugernavn')
+    form.fields['password'] = forms.CharField(max_length=50, required=False)
+    form.fields['domain'] = forms.CharField(max_length=2024, required=False, label='Brugerdomæne')
+    form.fields['alias'] = forms.CharField(max_length=64, required=False, label='Drevbogstav')
+
+    return form

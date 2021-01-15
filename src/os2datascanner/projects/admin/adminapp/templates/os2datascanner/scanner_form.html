@@ -128,119 +128,26 @@
 
     <fieldset class="form__fieldset">
       <legend>Generelt</legend>
-      <div id="{{ form.name.auto_id }}_container" class="form__group{% if form.name.errors %} has-error{% endif %}">
-        <label class="required-form" for="id_{{ form.name.name }}">{{ form.name.label }}</label>
-        <input 
-          type="text" 
-          class="form-control" 
-          name="{{ form.name.name }}" 
-          id="id_{{ form.name.name }}"
-          {% if form.name.value %}
-          value="{{ form.name.value }}"
-          {% endif %}
-          autofocus>
-
-        {% if form.name.help_text %}
-        <span class="form__help-text">{{ form.name.help_text }}</span>
-        {% endif %}
-
-        {% if form.name.errors %}
-        {{ form.name.errors }}
-        {% endif %}
-      </div>
+      {% include "os2datascanner/scanner_form_input_field.html" with field=form.name required="True" autofocus="True" %}
 
       {% if form.url %}
-      <div id="{{ form.url.auto_id }}_container" class="form__group{% if form.url.errors %} has-error{% endif %}">
-        <label class="required-form" for="id_{{ form.url.name }}">{{ form.url.label }}</label>
-        <input 
-          type="text" 
-          class="form-control" 
-          name="{{ form.url.name }}" 
-          id="id_{{ form.url.name }}" 
-          {% if form.url.value %}value="{{ form.url.value }}"{% endif %}>
-        {% if form.url.help_text %}
-        <span class="form__help-text">{{ form.url.help_text }}</span>
-        {% endif %}
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.url required="True" %}
+      {% endif %}
 
-        {% if form.url.errors %}
-        {{ form.url.errors }}
-        {% endif %}
-      </div>
+      {% if form.service_endpoint %}
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.service_endpoint %}
       {% endif %}
 
       {% if form.alias %}
-      <div id="{{ form.alias.auto_id }}_container" class="form__group{% if form.alias.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.alias.name }}">Drevbogstav</label>
-        <input 
-          type="text" 
-          class="form-control" 
-          name="{{ form.alias.name }}" 
-          id="id_{{ form.alias.name }}"
-          {% if form.alias.value %}
-          value="{{ form.alias.value }}"
-          {% endif %}>
-
-        {% if form.alias.help_text %}
-        <span class="form__help-text">{{ form.alias.help_text }}</span>
-        {% endif %}
-
-        {% if form.alias.errors %}{{ form.alias.errors }}{% endif %}
-      </div>
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.alias %}
       {% endif %}
 
       {% if form.organization %}
-      <div id="{{ form.organization.auto_id }}_container" class="form__group{% if form.organization.errors %} has-error{% endif %}">
-        <label class="control-label required-form" for="id_{{ form.organization.name }}">{{ form.organization.label }}</label>
-        <select 
-          name="{{ form.organization.name }}" 
-          id="id_{{ form.organization.name }}" 
-          class="form-control">
-
-          {% for value, tag in form.organization.field.choices %}
-          <option 
-            value="{{ value }}" 
-            {% if form.organization.value|add:"0" == value|add:"0" %} 
-            selected="selected"
-            {% endif %}>
-            {{ tag }}
-          </option> {# silly type conversion #}
-          {% endfor %}
-        </select>
-
-        {% if form.organization.help_text %}
-        <span class="form__help-text">{{ form.organization.help_text }}</span>
-        {% endif %}
-
-        {% if form.organization.errors %}
-        {{ form.organization.errors }}
-        {% endif %}
-      </div>
+        {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.organization required="True" %}
       {% endif %}
 
       {% if form.validation_status %}
-      <div id="{{ form.validation_status.auto_id }}_container" class="form__group{% if form.validation_status.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.validation_status.name }}">{{ form.validation_status.label }}</label>
-        <select 
-          name="{{ form.validation_status.name }}" 
-          id="id_{{ form.validation_status.name }}" 
-          class="form-control">
-
-          {% for value, tag in form.validation_status.field.choices %}
-          <option 
-            value="{{ value }}" 
-            {% if form.validation_status.value|add:"0" == value|add:"0" %} 
-            selected="selected"
-            {% endif %}>
-            {{ tag }}
-          </option> {# silly type conversion #}
-          {% endfor %}
-        </select>
-
-        {% if form.validation_status.help_text %}
-        <span class="form__help-text">{{ form.validation_status.help_text }}</span>
-        {% endif %}
-        {% if form.validation_status.errors %}{{ form.validation_status.errors }}{% endif %}
-      </div>
+        {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.validation_status %}
       {% endif %}
     </fieldset>
 
@@ -263,44 +170,12 @@
     {% endif %}
 
       {% if form.domain %}
-      <div id="{{ form.domain.auto_id }}_container" class="form__group{% if form.domain.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.domain.name }}">Brugerdomæne</label>
-        <input
-          type="text"
-          class="form-control"
-          name="{{ form.domain.name }}"
-          id="id_{{ form.domain.name }}"
-          {% if form.domain.value %}
-          value="{{ form.domain.value }}"
-          {% endif %}>
-
-        {% if form.domain.help_text %}
-        <span class="form__help-text">{{ form.domain.help_text }}</span>
-        {% endif %}
-
-        {% if form.domain.errors %}{{ form.domain.errors }}{% endif %}
-      </div>
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.domain %}
       {% endif %}
 
-        {% if form.token %}
-            <div id="{{ form.token.auto_id }}_container" class="form__group{% if form.token.errors %} has-error{% endif %}">
-                <label class="control-label" for="id_{{ form.token.name }}">Token</label>
-                <input
-                        type="password"
-                        class="form-control"
-                        name="{{ form.token.name }}"
-                        id="id_{{ form.token.name }}"
-                        {% if form.token.value %}
-                        value="{{ form.token.value }}"
-                        {% endif %}>
-
-                {% if form.token.help_text %}
-                    <span class="form__help-text">{{ form.token.help_text }}</span>
-                {% endif %}
-
-                {% if form.token.errors %}{{ form.token.errors }}{% endif %}
-            </div>
-        {% endif %}
+      {% if form.token %}
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.token password="True" %}
+      {% endif %}
 
       {% if form.tenant_id %}
       <div id="{{ form.tenant_id.auto_id }}_container" class="form__group{% if form.tenant_id.errors %} has-error{% endif %}">
@@ -333,76 +208,15 @@
       {% endif %}
 
       {% if form.username %}
-      <div id="{{ form.username.auto_id }}_container" class="form__group{% if form.username.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.username.name }}">Brugernavn</label>
-        <input
-          type="text"
-          class="form-control"
-          name="{{ form.username.name }}"
-          id="id_{{ form.username.name }}"
-          {% if form.username.value %}
-          value="{{ form.username.value }}"
-          {% endif %}>
-
-        {% if form.username.help_text %}
-        <span class="form__help-text">{{ form.username.help_text }}</span>
-        {% endif %}
-
-        {% if form.username.errors %}
-        {{ form.username.errors }}
-        {% endif %}
-      </div>
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.username %}
       {% endif %}
 
       {% if form.password %}
-      <div id="{{ form.password.auto_id }}_container" class="form__group{% if form.password.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.password.name }}">Adgangskode</label>
-        <input
-          type="password"
-          class="form-control"
-          name="{{ form.password.name }}"
-          id="id_{{ form.password.name }}"
-          {% if form.password.value %}
-          value="{{ form.password.value }}"
-          {% endif %}>
-
-        {% if form.password.help_text %}
-        <span class="form__help-text">{{ form.password.help_text }}</span>
-        {% endif %}
-
-        {% if form.password.errors %}
-        {{ form.password.errors }}
-        {% endif %}
-      </div>
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.password password="True" %}
       {% endif %}
 
       {% if form.group %}
-      <div id="{{ form.group.auto_id }}_container" class="form__group{% if form.group.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.group.name }}">{{ form.group.label }}</label>
-        <select
-          name="{{ form.group.name }}"
-          id="id_{{ form.group.name }}"
-          class="form-control">
-
-          {% for value, tag in form.group.field.choices %}
-          <option
-            value="{{ value }}"
-            {% if form.group.value|add:"0" == value|add:"0" %}
-            selected="selected"
-            {% endif %}>
-            {{ tag }}
-          </option> # silly type conversion
-          {% endfor %}
-        </select>
-
-        {% if form.group.help_text %}
-        <span class="form__help-text">{{ form.group.help_text }}</span>
-        {% endif %}
-
-        {% if form.group.errors %}
-        {{ form.group.errors }}
-        {% endif %}
-      </div>
+        {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.group %}
       {% endif %}
 
       {% if form.userlist %}
