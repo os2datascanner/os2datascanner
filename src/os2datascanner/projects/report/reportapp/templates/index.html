@@ -23,8 +23,8 @@ function clear_filter(elementid){
                       <button type="button" onclick="clear_filter('scannerjobs')" class="match_filtering_clear_button">Ryd</button>
                       <label for="scannerjobs" class="match_filtering_label">Scan</label>
                   </div>
-                  <div class="match_filtering" >
-                      <select name="scannerjob" id="scannerjobs" onchange="this.form.submit()" >
+                  <div class="match_filtering">
+                      <select name="scannerjob" id="scannerjobs">
                         <option value="all"
                                 {% if scannerjobs|last == "all" %}
                                     selected="selected"
@@ -42,13 +42,13 @@ function clear_filter(elementid){
                       </select>
                   </div>
               </div>
-              <div style="float:left;">
+              <div class="match_filtering_wrapper">
                   <div>
                       <button type="button" onclick="clear_filter('sensitivities')" class="match_filtering_clear_button">Ryd</button>
                       <label for="sensitivities" class="match_filtering_label">Følsomhed</label>
                   </div>
                   <div class="match_filtering">
-                      <select name="sensitivities" id="sensitivities" onchange="this.form.submit()" >
+                      <select name="sensitivities" id="sensitivities" >
                         <option value="all"
                                 {% if sensitivities|last == "all" %}
                                     selected="selected"
