@@ -78,7 +78,7 @@ services:
       dockerfile: docker/admin/Dockerfile
       target: application
     entrypoint: []
-    command: python manage.py pipeline_collector --status os2ds_status
+    command: python manage.py pipeline_collector
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -130,7 +130,7 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    command: explorer --enable-metrics --status os2ds_status
+    command: explorer --enable-metrics
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -142,7 +142,7 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    command: worker --enable-metrics --status os2ds_status
+    command: worker --enable-metrics
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner

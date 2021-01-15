@@ -49,33 +49,7 @@ def main():
     parser.description = ("Consume problems, metadata and matches, and convert"
                           + " them into forms suitable for the outside world.")
 
-    inputs = parser.add_argument_group("inputs")
-    inputs.add_argument(
-            "--matches",
-            metavar="NAME",
-            help="the name of the AMQP queue from which matches should be"
-                    " read",
-            default="os2ds_matches")
-    inputs.add_argument(
-            "--problems",
-            metavar="NAME",
-            help="the name of the AMQP queue from which problems should be"
-                    " read",
-            default="os2ds_problems")
-    inputs.add_argument(
-            "--metadata",
-            metavar="NAME",
-            help="the name of the AMQP queue from which metadata should be"
-                    " read",
-            default="os2ds_metadata")
-
     outputs = parser.add_argument_group("outputs")
-    outputs.add_argument(
-            "--results",
-            metavar="NAME",
-            help="the name of the AMQP queue to which filtered result objects"
-                    " should be written",
-            default="os2ds_results")
     outputs.add_argument(
             "--dump",
             metavar="PATH",
@@ -96,7 +70,7 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            it = message_received_raw(body, channel, args.results)
+            it = message_received_raw(body, channel, "os2ds_results")
             if not args.dump:
                 return it
             else:
@@ -106,8 +80,8 @@ def main():
                     yield (queue, message)
 
     with ExporterRunner(
-            read=[args.matches, args.metadata, args.problems],
-            write=[args.results],
+            read=["os2ds_matches", "os2ds_metadata", "os2ds_problems"],
+            write=["os2ds_results"],
             heartbeat=6000) as runner:
         try:
             print("Start")

@@ -150,12 +150,14 @@ def main():
             if args.debug:
                 print(channel, body)
             return message_received_raw(body, channel, source_manager,
-                    args.representations, args.sources, args.problems)
+                    "os2ds_representations", "os2ds_scan_specs",
+                    ["os2ds_problems", "os2ds_checkups"])
 
     with SourceManager(width=args.width) as source_manager:
         with ProcessorRunner(
-                read=[args.conversions],
-                write=[args.sources, args.representations, *args.problems],
+                read=["os2ds_conversions"],
+                write=["os2ds_scan_specs", "os2ds_representations",
+                        "os2ds_problems", "os2ds_checkups"],
                 heartbeat=6000) as runner:
             try:
                 print("Start")

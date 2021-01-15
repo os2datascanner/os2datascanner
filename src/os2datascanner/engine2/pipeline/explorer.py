@@ -72,35 +72,7 @@ def main():
     parser = make_common_argument_parser()
     parser.description = "Consume sources and generate conversions."
 
-    inputs = parser.add_argument_group("inputs")
-    inputs.add_argument(
-            "--sources",
-            metavar="NAME",
-            help="the name of the AMQP queue from which scan specifications"
-                    + " should be read",
-            default="os2ds_scan_specs")
-
     make_sourcemanager_configuration_block(parser)
-
-    outputs = parser.add_argument_group("outputs")
-    outputs.add_argument(
-            "--conversions",
-            metavar="NAME",
-            help="the name of the AMQP queue to which conversions should be"
-                    + " written",
-            default="os2ds_conversions")
-    outputs.add_argument(
-            "--problems",
-            metavar="NAME",
-            help="the name of the AMQP queue to which problems should be"
-                    + " written",
-            default="os2ds_problems")
-    outputs.add_argument(
-            "--status",
-            metavar="NAME",
-            help="the name of the AMQP queue to which status messages should"
-                    +" be written",
-            default=None)
 
     args = parser.parse_args()
 
@@ -115,14 +87,13 @@ def main():
             if args.debug:
                 print(channel, body)
             return message_received_raw(body, channel,
-                    self.source_manager, args.conversions, args.problems,
-                    args.status)
+                    self.source_manager, "os2ds_conversions", "os2ds_problems",
+                    "os2ds_status")
 
     with SourceManager(width=args.width) as source_manager:
         with ExplorerRunner(
-                read=[args.sources],
-                write=[args.conversions, args.problems,
-                        *([args.status] if args.status else [])],
+                read=["os2ds_scan_specs"],
+                write=["os2ds_conversions", "os2ds_problems", "os2ds_status"],
                 source_manager=source_manager,
                 heartbeat=6000) as runner:
             try:

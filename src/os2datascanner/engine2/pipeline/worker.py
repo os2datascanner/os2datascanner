@@ -83,43 +83,7 @@ def main():
             "Consume and fully execute conversions, and generate matches and"
             " metadata messages.")
 
-    inputs = parser.add_argument_group("inputs")
-    inputs.add_argument(
-            "--conversions",
-            metavar="NAME",
-            help="the name of the AMQP queue from which conversions"
-                    + " should be read",
-            default="os2ds_conversions")
-
     make_sourcemanager_configuration_block(parser)
-
-    outputs = parser.add_argument_group("outputs")
-    outputs.add_argument(
-            "--matches",
-            action=AppendReplaceAction,
-            metavar="NAME",
-            help="the names of the AMQP queues to which matches should be"
-                    " written",
-            default=["os2ds_matches", "os2ds_checkups"])
-    outputs.add_argument(
-            "--problems",
-            action=AppendReplaceAction,
-            metavar="NAME",
-            help="the names of the AMQP queues to which problems should be"
-                    " written",
-            default=["os2ds_problems", "os2ds_checkups"])
-    outputs.add_argument(
-            "--metadata",
-            metavar="NAME",
-            help="the name of the AMQP queue to which metadata should be"
-                    " written",
-            default="os2ds_metadata")
-    outputs.add_argument(
-            "--status",
-            metavar="NAME",
-            help="the name of the AMQP queue to which status messages should"
-                    +" be written",
-            default=None)
 
     args = parser.parse_args()
 
@@ -133,13 +97,14 @@ def main():
             if args.debug:
                 print(channel, body)
             return message_received_raw(body, channel, source_manager,
-                    args.matches, args.metadata, args.problems, args.status)
+                    ["os2ds_matches", "os2ds_checkups"], "os2ds_metadata",
+                    ["os2ds_problems", "os2ds_checkups"], "os2ds_status")
 
     with SourceManager(width=args.width) as source_manager:
         with ProcessorRunner(
-                read=[args.conversions],
-                write=[*args.matches, *args.problems, args.metadata,
-                        *([args.status] if args.status else [])],
+                read=["os2ds_conversions"],
+                write=["os2ds_matches", "os2ds_checkups", "os2ds_problems",
+                        "os2ds_metadata", "os2ds_status"],
                 heartbeat=6000) as runner:
             try:
                 print("Start")

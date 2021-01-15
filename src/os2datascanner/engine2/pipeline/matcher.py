@@ -68,35 +68,6 @@ def main():
     parser.description = ("Consume representations and generate matches"
             + " and fresh conversions.")
 
-    inputs = parser.add_argument_group("inputs")
-    inputs.add_argument(
-            "--representations",
-            metavar="NAME",
-            help="the name of the AMQP queue from which representations"
-                    + " should be read",
-            default="os2ds_representations")
-
-    outputs = parser.add_argument_group("outputs")
-    outputs.add_argument(
-            "--matches",
-            action=AppendReplaceAction,
-            metavar="NAME",
-            help="the names of the AMQP queues to which matches should be"
-                    + " written",
-            default=["os2ds_matches", "os2ds_checkups"])
-    outputs.add_argument(
-            "--conversions",
-            metavar="NAME",
-            help="the name of the AMQP queue to which conversions should be"
-                    + " written",
-            default="os2ds_conversions")
-    outputs.add_argument(
-            "--handles",
-            metavar="NAME",
-            help="the name of the AMQP queue to which handles (for metadata"
-                    + " extraction) should be written",
-            default="os2ds_handles")
-
     args = parser.parse_args()
 
     if args.enable_metrics:
@@ -110,11 +81,13 @@ def main():
             if args.debug:
                 print(channel, body)
             return message_received_raw(body, channel,
-                    args.matches, args.handles, args.conversions)
+                    ["os2ds_matches", "os2ds_checkups"],
+                    "os2ds_handles", "os2ds_conversions")
 
     with MatcherRunner(
-            read=[args.representations],
-            write=[args.handles, *args.matches, args.conversions],
+            read=["os2ds_representations"],
+            write=["os2ds_handles",
+                    "os2ds_matches", "os2ds_checkups", "os2ds_conversions"],
             heartbeat=6000) as runner:
         try:
             print("Start")

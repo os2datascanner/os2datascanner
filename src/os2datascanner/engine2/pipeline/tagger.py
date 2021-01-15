@@ -36,29 +36,8 @@ def main():
     parser = make_common_argument_parser()
     parser.description = "Consume handles and generate metadata."
 
-    inputs = parser.add_argument_group("inputs")
-    inputs.add_argument(
-            "--handles",
-            metavar="NAME",
-            help="the name of the AMQP queue from which handles"
-                    + " should be read",
-            default="os2ds_handles")
-
     make_sourcemanager_configuration_block(parser)
 
-    outputs = parser.add_argument_group("outputs")
-    outputs.add_argument(
-            "--metadata",
-            metavar="NAME",
-            help="the name of the AMQP queue to which metadata should be"
-                    + " written",
-            default="os2ds_metadata")
-    outputs.add_argument(
-            "--problems",
-            metavar="NAME",
-            help="the name of the AMQP queue to which problems should be"
-                    + " written",
-            default="os2ds_problems")
 
     args = parser.parse_args()
 
@@ -72,13 +51,13 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(body,
-                    channel, source_manager, args.metadata, args.problems)
+            return message_received_raw(body, channel,
+                    source_manager, "os2ds_metadata", "os2ds_problems")
 
     with SourceManager(width=args.width) as source_manager:
         with TaggerRunner(
-                read=[args.handles],
-                write=[args.metadata, args.problems],
+                read=["os2ds_handles"],
+                write=["os2ds_metadata", "os2ds_problems"],
                 heartbeat=6000) as runner:
             try:
                 print("Start")
