@@ -12,12 +12,11 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
-def message_received_raw(body,
-        channel, source_manager, metadata_q, problems_q):
+def message_received_raw(body, channel, source_manager):
     message = messages.HandleMessage.from_json_object(body)
 
     try:
-        yield (metadata_q,
+        yield ("os2ds_metadata",
                 messages.MetadataMessage(
                         message.scan_tag, message.handle,
                         guess_responsible_party(
@@ -25,7 +24,7 @@ def message_received_raw(body,
                                 source_manager)).to_json_object())
     except Exception as e:
         exception_message = ", ".join([str(a) for a in e.args])
-        yield (problems_q, messages.ProblemMessage(
+        yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=message.scan_tag,
                 source=None, handle=message.handle,
                 message="Metadata extraction error: {0}".format(
@@ -51,8 +50,7 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(body, channel,
-                    source_manager, "os2ds_metadata", "os2ds_problems")
+            return message_received_raw(body, channel, source_manager)
 
     with SourceManager(width=args.width) as source_manager:
         with TaggerRunner(

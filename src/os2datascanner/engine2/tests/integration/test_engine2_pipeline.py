@@ -64,23 +64,18 @@ class StopHandling(Exception):
 def handle_message(body, channel):
     if channel == "os2ds_scan_specs":
         with SourceManager() as sm:
-            yield from explorer.message_received_raw(body, channel, sm,
-                    "os2ds_conversions", "os2ds_problems", None)
+            yield from explorer.message_received_raw(body, channel, sm)
     elif channel == "os2ds_conversions":
         with SourceManager() as sm:
-            yield from processor.message_received_raw(body, channel, sm,
-                    "os2ds_representations", "os2ds_scan_specs",
-                    ["os2ds_problems"])
+            yield from processor.message_received_raw(body, channel, sm)
     elif channel == "os2ds_representations":
-        yield from matcher.message_received_raw(body, channel,
-                ["os2ds_matches"], "os2ds_handles", "os2ds_conversions")
+        yield from matcher.message_received_raw(body, channel)
     elif channel == "os2ds_handles":
         with SourceManager() as sm:
-            yield from tagger.message_received_raw(body, channel, sm,
-                    "os2ds_metadata", "os2ds_problems")
-    elif channel in ("os2ds_matches", "os2ds_metadata", "os2ds_problems",):
-        yield from exporter.message_received_raw(body, channel,
-                False, "os2ds_results")
+            yield from tagger.message_received_raw(body, channel, sm)
+    elif channel in ("os2ds_matches", "os2ds_metadata", "os2ds_problems"):
+        yield from exporter.message_received_raw(body, channel)
+    # "os2ds_status" messages get dropped on the floor
 
 
 class Engine2PipelineTests(unittest.TestCase):

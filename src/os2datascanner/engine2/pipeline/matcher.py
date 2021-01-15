@@ -11,7 +11,7 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
-def message_received_raw(body, channel, matches_qs, handles_q, conversions_q):
+def message_received_raw(body, channel):
     message = messages.RepresentationMessage.from_json_object(body)
     representations = decode_dict(message.representations)
     rule = message.progress.rule
@@ -42,20 +42,20 @@ def message_received_raw(body, channel, matches_qs, handles_q, conversions_q):
 
     if isinstance(rule, bool):
         # We've come to a conclusion!
-        for matches_q in matches_qs:
+        for matches_q in ("os2ds_matches", "os2ds_checkups",):
             yield (matches_q,
                     messages.MatchesMessage(
                             message.scan_spec, message.handle,
                             rule, final_matches).to_json_object())
         # Only trigger metadata scanning if the match succeeded
         if rule:
-            yield (handles_q,
+            yield ("os2ds_handles",
                     messages.HandleMessage(
                             message.scan_spec.scan_tag,
                             message.handle).to_json_object())
     else:
         # We need a new representation to continue
-        yield (conversions_q,
+        yield ("os2ds_conversions",
                 messages.ConversionMessage(
                         message.scan_spec, message.handle,
                         message.progress._replace(
@@ -80,9 +80,7 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(body, channel,
-                    ["os2ds_matches", "os2ds_checkups"],
-                    "os2ds_handles", "os2ds_conversions")
+            return message_received_raw(body, channel)
 
     with MatcherRunner(
             read=["os2ds_representations"],

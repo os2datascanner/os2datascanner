@@ -16,65 +16,62 @@ from . import messages
 
 
 def explore(sm, msg):
-    for channel, message in explorer_handler(msg, "ss", sm, "co", "pr", None):
-        if channel == "co":
+    for channel, message in explorer_handler(msg, "os2ds_scan_specs", sm):
+        if channel == "os2ds_conversions":
             yield from process(sm, message)
-        elif channel in ('pr',):
+        elif channel in ("os2ds_problems",):
             yield channel, message
 
 
 def process(sm, msg):
-    for channel, message in processor_handler(msg,
-            "co", sm, "re", "ss", ["pr"]):
-        if channel == "re":
+    for channel, message in processor_handler(msg, "os2ds_conversions", sm):
+        if channel == "os2ds_representations":
             yield from match(sm, message)
-        elif channel == "ss":
+        elif channel == "os2ds_scan_specs":
             yield from explore(sm, message)
-        elif channel in ('pr',):
+        elif channel in ("os2ds_problems",):
             yield channel, message
 
 
 def match(sm, msg):
-    for channel, message in matcher_handler(msg, "re", ["ma"], "me", "co"):
-        if channel == "me":
+    for channel, message in matcher_handler(msg, "os2ds_representations"):
+        if channel == "os2ds_handles":
             yield from tag(sm, message)
-        elif channel == "co":
+        elif channel == "os2ds_conversions":
             yield from process(sm, message)
-        elif channel in ('ma',):
+        elif channel in ("os2ds_matches",):
             yield channel, message
 
 
 def tag(sm, msg):
-    yield from tagger_handler(msg, "ha", sm, "me", "pr")
+    yield from tagger_handler(msg, "os2ds_handles", sm)
 
 
-def message_received_raw(body, channel,
-        source_manager, matches_qs, metadata_q, problems_qs, status_q):
+def message_received_raw(body, channel, source_manager):
     try:
         for channel, message in process(source_manager, body):
-            if channel == "ma":
-                for matches_q in matches_qs:
+            if channel == "os2ds_matches":
+                for matches_q in ("os2ds_matches", "os2ds_checkups",):
                     yield (matches_q, message)
-            elif channel == "me":
-                yield (metadata_q, message)
-            elif channel == "pr":
-                for problems_q in problems_qs:
+            elif channel == "os2ds_metadata":
+                yield ("os2ds_metadata", message)
+            elif channel == "os2ds_problems":
+                for problems_q in ("os2ds_problems", "os2ds_checkups",):
                     yield (problems_q, message)
     finally:
-        if status_q:
-            message = messages.ConversionMessage.from_json_object(body)
-            object_size = 0
-            object_type = "application/octet-stream"
-            try:
-                resource = message.handle.follow(source_manager)
-                object_size = resource.get_size().value
-                object_type = resource.compute_type()
-            except Exception:
-                pass
-            yield (status_q, messages.StatusMessage(
-                    scan_tag=message.scan_spec.scan_tag,
-                    object_size=object_size,
-                    object_type=object_type).to_json_object())
+        message = messages.ConversionMessage.from_json_object(body)
+        object_size = 0
+        object_type = "application/octet-stream"
+        try:
+            resource = message.handle.follow(source_manager)
+            object_size = resource.get_size().value
+            object_type = resource.compute_type()
+        except Exception:
+            pass
+        yield ("os2ds_status", messages.StatusMessage(
+                scan_tag=message.scan_spec.scan_tag,
+                object_size=object_size,
+                object_type=object_type).to_json_object())
 
 
 def main():
@@ -96,9 +93,7 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(body, channel, source_manager,
-                    ["os2ds_matches", "os2ds_checkups"], "os2ds_metadata",
-                    ["os2ds_problems", "os2ds_checkups"], "os2ds_status")
+            return message_received_raw(body, channel, source_manager)
 
     with SourceManager(width=args.width) as source_manager:
         with ProcessorRunner(

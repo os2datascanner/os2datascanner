@@ -22,8 +22,7 @@ def check(source_manager, handle):
     return handle.follow(source_manager).check()
 
 
-def message_received_raw(body,
-        channel, source_manager, representations_q, sources_q, problems_qs):
+def message_received_raw(body, channel, source_manager):
     conversion = messages.ConversionMessage.from_json_object(body)
     configuration = conversion.scan_spec.configuration
     head, _, _ = conversion.progress.rule.split()
@@ -33,7 +32,7 @@ def message_received_raw(body,
         if not check(source_manager, conversion.handle):
             # The resource is missing. Generate a special problem message and
             # stop the generator immediately
-            for problems_q in problems_qs:
+            for problems_q in ("os2ds_problems", "os2ds_checkups",):
                 yield (problems_q, messages.ProblemMessage(
                         scan_tag=conversion.scan_spec.scan_tag,
                         source=None, handle=conversion.handle, missing=True,
@@ -66,7 +65,7 @@ def message_received_raw(body,
             dv = {required.value: representation.value
                     if representation else None}
 
-        yield (representations_q,
+        yield ("os2ds_representations",
                 messages.RepresentationMessage(
                         conversion.scan_spec, conversion.handle,
                         conversion.progress, encode_dict(dv)).to_json_object())
@@ -80,12 +79,12 @@ def message_received_raw(body,
             # of rule execution and replace the source
             new_scan_spec = conversion.scan_spec._replace(
                     source=derived_source, progress=conversion.progress)
-            yield (sources_q, new_scan_spec.to_json_object())
+            yield ("os2ds_scan_specs", new_scan_spec.to_json_object())
         else:
             # If we can't recurse any deeper, then produce an empty conversion
             # so that the matcher stage has something to work with
             # (XXX: is this always the right approach?)
-            yield (representations_q,
+            yield ("os2ds_representations",
                     messages.RepresentationMessage(
                             conversion.scan_spec, conversion.handle,
                             conversion.progress, {
@@ -93,7 +92,7 @@ def message_received_raw(body,
                             }).to_json_object())
     except Exception as e:
         exception_message = ", ".join([str(a) for a in e.args])
-        for problems_q in problems_qs:
+        for problems_q in ("os2ds_problems", "os2ds_checkups",):
             yield (problems_q, messages.ProblemMessage(
                     scan_tag=conversion.scan_spec.scan_tag,
                     source=None, handle=conversion.handle,
@@ -149,9 +148,7 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(body, channel, source_manager,
-                    "os2ds_representations", "os2ds_scan_specs",
-                    ["os2ds_problems", "os2ds_checkups"])
+            return message_received_raw(body, channel, source_manager)
 
     with SourceManager(width=args.width) as source_manager:
         with ProcessorRunner(

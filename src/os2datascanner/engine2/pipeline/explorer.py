@@ -12,8 +12,7 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
-def message_received_raw(
-        body, channel, source_manager, conversions_q, problems_q, status_q):
+def message_received_raw(body, channel, source_manager):
     try:
         scan_tag = body["scan_tag"]
     except KeyError:
@@ -31,13 +30,13 @@ def message_received_raw(
             progress = messages.ProgressFragment(
                     rule=scan_spec.rule, matches=[])
     except UnknownSchemeError as ex:
-        yield (problems_q, messages.ProblemMessage(
+        yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=scan_tag, source=None, handle=None,
                 message=("Unknown scheme '{0}'".format(
                         ex.args[0]))).to_json_object())
         return
     except (KeyError, DeserialisationError) as ex:
-        yield (problems_q, messages.ProblemMessage(
+        yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=scan_tag, source=None, handle=None,
                 message="Malformed input").to_json_object())
         return
@@ -53,18 +52,18 @@ def message_received_raw(
                 # censor itself -- just print its type
                 print("(unprintable {0})".format(type(handle).__name__))
             count += 1
-            yield (conversions_q,
+            yield ("os2ds_conversions",
                     messages.ConversionMessage(
                             scan_spec, handle, progress).to_json_object())
     except Exception as e:
         exception_message = ", ".join([str(a) for a in e.args])
-        yield (problems_q, messages.ProblemMessage(
+        yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=scan_tag, source=scan_spec.source, handle=None,
                 message="Exploration error: {0}".format(
                         exception_message)).to_json_object())
     finally:
-        if status_q:
-            yield (status_q, messages.StatusMessage(
+        if "os2ds_status":
+            yield ("os2ds_status", messages.StatusMessage(
                     scan_tag=scan_tag, total_objects=count).to_json_object())
 
 
@@ -86,9 +85,7 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            return message_received_raw(body, channel,
-                    self.source_manager, "os2ds_conversions", "os2ds_problems",
-                    "os2ds_status")
+            return message_received_raw(body, channel, self.source_manager)
 
     with SourceManager(width=args.width) as source_manager:
         with ExplorerRunner(

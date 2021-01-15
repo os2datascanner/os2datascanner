@@ -13,7 +13,7 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
-def message_received_raw(body, channel, results_q):
+def message_received_raw(body, channel):
     body["origin"] = channel
 
     message = None
@@ -41,7 +41,7 @@ def message_received_raw(body, channel, results_q):
         result_body = message.to_json_object()
         result_body["origin"] = channel
 
-        yield (results_q, result_body)
+        yield ("os2ds_results", result_body)
 
 
 def main():
@@ -70,7 +70,7 @@ def main():
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
-            it = message_received_raw(body, channel, "os2ds_results")
+            it = message_received_raw(body, channel)
             if not args.dump:
                 return it
             else:
