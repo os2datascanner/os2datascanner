@@ -23,11 +23,7 @@ AVAILABLE_STAGES=$(echo $AVAILABLE_STAGES | tr "," "\n")
 
 # Check if first argument is a stage
 if [[ " ${AVAILABLE_STAGES[@]} " =~ "$1" ]]; then
-
-  STAGE=$1
-
-  # ${@:2} adds all arguments except the first one (which is the stage)
-  exec python -m "os2datascanner.engine2.pipeline.${STAGE}" "${@:2}"
+  exec python -m "os2datascanner.engine2.pipeline.run_stage" "$@"
 else
   exec "$@"
 fi
