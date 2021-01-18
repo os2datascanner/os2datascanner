@@ -13,6 +13,10 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
+__reads_queues__ = ("os2ds_matches", "os2ds_metadata", "os2ds_problems",)
+__writes_queues__ = ("os2ds_results",)
+
+
 def message_received_raw(body, channel, source_manager):
     source_manager = None
     body["origin"] = channel

@@ -11,6 +11,11 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
+__reads_queues__ = ("os2ds_representations",)
+__writes_queues__ = ("os2ds_handles",
+        "os2ds_matches", "os2ds_checkups", "os2ds_conversions",)
+
+
 def message_received_raw(body, channel, source_manager):
     source_manager = None
     message = messages.RepresentationMessage.from_json_object(body)

@@ -14,6 +14,11 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
+__reads_queues__ = ("os2ds_conversions",)
+__writes_queues__ = ("os2ds_scan_specs", "os2ds_representations",
+        "os2ds_problems", "os2ds_checkups",)
+
+
 def check(source_manager, handle):
     """Runs Resource.check() on the ultimate top-level Handle behind a given
     Handle."""

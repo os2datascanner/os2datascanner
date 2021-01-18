@@ -12,6 +12,10 @@ from .utilities.systemd import notify_ready, notify_stopping
 from .utilities.prometheus import prometheus_summary
 
 
+__reads_queues__ = ("os2ds_scan_specs",)
+__writes_queues__ = ("os2ds_conversions", "os2ds_problems", "os2ds_status",)
+
+
 def message_received_raw(body, channel, source_manager):
     try:
         scan_tag = body["scan_tag"]
