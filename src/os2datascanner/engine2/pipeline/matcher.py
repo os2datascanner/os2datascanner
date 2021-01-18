@@ -1,14 +1,6 @@
-from os import getpid
-
-from prometheus_client import start_http_server
-
 from ..rules.rule import Rule
 from ..conversions.types import decode_dict
 from . import messages
-from .utilities.args import AppendReplaceAction, make_common_argument_parser
-from .utilities.pika import PikaPipelineRunner
-from .utilities.systemd import notify_ready, notify_stopping
-from .utilities.prometheus import prometheus_summary
 
 
 __reads_queues__ = ("os2ds_representations",)
@@ -69,38 +61,6 @@ def message_received_raw(body, channel, source_manager):
                                 matches=final_matches)).to_json_object())
 
 
-def main():
-    parser = make_common_argument_parser()
-    parser.description = ("Consume representations and generate matches"
-            + " and fresh conversions.")
-
-    args = parser.parse_args()
-
-    if args.enable_metrics:
-        start_http_server(args.prometheus_port)
-
-
-    class MatcherRunner(PikaPipelineRunner):
-        @prometheus_summary(
-                "os2datascanner_pipeline_matcher", "Representations examined")
-        def handle_message(self, body, *, channel=None):
-            if args.debug:
-                print(channel, body)
-            return message_received_raw(body, channel, None)
-
-    with MatcherRunner(
-            read=["os2ds_representations"],
-            write=["os2ds_handles",
-                    "os2ds_matches", "os2ds_checkups", "os2ds_conversions"],
-            heartbeat=6000) as runner:
-        try:
-            print("Start")
-            notify_ready()
-            runner.run_consumer()
-        finally:
-            print("Stop")
-            notify_stopping()
-
-
 if __name__ == "__main__":
-    main()
+    from .run_stage import _compatibility_main  # noqa
+    _compatibility_main("matcher")

@@ -1,3 +1,4 @@
+import sys
 from prometheus_client import start_http_server
 
 from ..model.core import SourceManager
@@ -16,6 +17,13 @@ __module_mapping = {
     "exporter": exporter,
     "worker": worker
 }
+
+
+def _compatibility_main(stage):
+    print("{0}: warning: this command is deprecated,"
+            " use run_stage.py instead".format(sys.argv[0]))
+    sys.argv = [sys.argv[0], stage]
+    main()
 
 
 def main():

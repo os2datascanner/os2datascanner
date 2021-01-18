@@ -1,17 +1,8 @@
-from os import getpid
-
-from prometheus_client import start_http_server
-
 from ..rules.rule import Rule
 from ..model.core import Source, Handle, SourceManager
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
 from . import messages
-from .utilities.args import (AppendReplaceAction, make_common_argument_parser,
-        make_sourcemanager_configuration_block)
-from .utilities.pika import PikaPipelineRunner
-from .utilities.systemd import notify_ready, notify_stopping
-from .utilities.prometheus import prometheus_summary
 
 
 __reads_queues__ = ("os2ds_conversions",)
@@ -105,69 +96,6 @@ def message_received_raw(body, channel, source_manager):
                             exception_message)).to_json_object())
 
 
-def main():
-    parser = make_common_argument_parser()
-    parser.description = ("Consume conversions and generate " +
-            "representations and fresh sources.")
-
-    inputs = parser.add_argument_group("inputs")
-    inputs.add_argument(
-            "--conversions",
-            metavar="NAME",
-            help="the name of the AMQP queue from which conversions"
-                    + " should be read",
-            default="os2ds_conversions")
-
-    make_sourcemanager_configuration_block(parser)
-
-    outputs = parser.add_argument_group("outputs")
-    outputs.add_argument(
-            "--representations",
-            metavar="NAME",
-            help="the name of the AMQP queue to which representations"
-                    + " should be written",
-            default="os2ds_representations")
-    outputs.add_argument(
-            "--sources",
-            metavar="NAME",
-            help="the name of the AMQP queue to which scan specifications"
-                    + " should be written",
-            default="os2ds_scan_specs")
-    outputs.add_argument(
-            "--problems",
-            action=AppendReplaceAction,
-            metavar="NAME",
-            help="the names of the AMQP queues to which problems should be"
-                    + " written",
-            default=["os2ds_problems", "os2ds_checkups"])
-
-    args = parser.parse_args()
-
-    if args.enable_metrics:
-        start_http_server(args.prometheus_port)
-
-
-    class ProcessorRunner(PikaPipelineRunner):
-        @prometheus_summary("os2datascanner_pipeline_processor",
-                "Representations generated")
-        def handle_message(self, body, *, channel=None):
-            if args.debug:
-                print(channel, body)
-            return message_received_raw(body, channel, source_manager)
-
-    with SourceManager(width=args.width) as source_manager:
-        with ProcessorRunner(
-                read=["os2ds_conversions"],
-                write=["os2ds_scan_specs", "os2ds_representations",
-                        "os2ds_problems", "os2ds_checkups"],
-                heartbeat=6000) as runner:
-            try:
-                print("Start")
-                notify_ready()
-                runner.run_consumer()
-            finally:
-                print("Stop")
-                notify_stopping()
-
 if __name__ == "__main__":
-    main()
+    from .run_stage import _compatibility_main  # noqa
+    _compatibility_main("processor")
