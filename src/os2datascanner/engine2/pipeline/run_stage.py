@@ -1,9 +1,8 @@
 import sys
+import argparse
 from prometheus_client import start_http_server
 
 from ..model.core import SourceManager
-from .utilities.args import (make_common_argument_parser,
-        make_sourcemanager_configuration_block)
 from .utilities.pika import PikaPipelineRunner
 from .utilities.systemd import notify_ready, notify_stopping
 from . import explorer, processor, matcher, tagger, exporter, worker
@@ -27,15 +26,38 @@ def _compatibility_main(stage):
 
 
 def main():
-    parser = make_common_argument_parser()
-    parser.description = ("Runs an OS2datascanner pipeline stage.")
+    parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+            description="Runs an OS2datascanner pipeline stage.")
+    parser.add_argument(
+            "--debug",
+            action="store_true",
+            help="print all incoming messages to the console")
+
+    monitoring = parser.add_argument_group("monitoring")
+    monitoring.add_argument(
+            "--enable-metrics",
+            action="store_true",
+            help="enable exporting of metrics")
+    monitoring.add_argument(
+            "--prometheus-port",
+            metavar="PORT",
+            help="the port to serve OpenMetrics data.",
+            default=9091)
 
     parser.add_argument(
             "stage",
             choices=("explorer", "processor", "matcher",
                     "tagger", "exporter", "worker",))
 
-    make_sourcemanager_configuration_block(parser)
+    configuration = parser.add_argument_group("configuration")
+    configuration.add_argument(
+            "--width",
+            type=int,
+            metavar="SIZE",
+            help="allow each source to have at most %(metavar) "
+                    "simultaneous open sub-sources",
+            default=3)
 
     args = parser.parse_args()
     module = __module_mapping[args.stage]
