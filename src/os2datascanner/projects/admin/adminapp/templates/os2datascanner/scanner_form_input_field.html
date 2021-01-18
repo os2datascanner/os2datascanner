@@ -13,7 +13,7 @@
       {% else %}
         type="text"
       {% endif %}
-        class="form-control" name="{{ field.name }}" id="id_{{ field.name }}"
+        class="form-control" name="{{ field.name }}" id="id_{{ field.name }}" placeholder="{{ field.placeholder }}"
       {% if field.value %}
         value="{{ field.value }}"
       {% endif %}

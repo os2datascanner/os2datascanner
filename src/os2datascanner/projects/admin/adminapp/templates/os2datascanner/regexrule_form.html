@@ -109,6 +109,7 @@
           class="form-control" 
           name="{{ form.name.name }}" 
           id="id_{{ form.name.name }}"
+          placeholder="Navn på regel"
           {% if form.name.value %}value="{{ form.name.value }}" {% endif %}>
         {% if form.name.help_text %}
         <span class="form__help-text">{{ form.name.help_text }}</span>
@@ -185,6 +186,7 @@
                 class="form-control" 
                 name="{{ pattern_name }}" 
                 id="id_{{ pattern_name }}"
+                placeholder="f.eks. organisation"
                 {% if pattern_value %}value="{{ pattern_value }}" {% endif %}>
               {# required state of pattern_0 is variable #}
 
@@ -217,7 +219,7 @@
         <div class="form-group">
           <label class="control-label col-sm-2 required-form" for="id_{{ form.description.name }}">{{ form.description.label }}</label>
           <div class="col-sm-10">
-            <textarea class="form-control" name="{{ form.description.name }}" id="id_{{ form.description.name }}" rows="3">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
+            <textarea class="form-control" name="{{ form.description.name }}" id="id_{{ form.description.name }}" placeholder="Beskrivelse af regel" rows="3">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
             {% if form.description.help_text %}
             <p>
               <small>{{ form.description.help_text }}</small>
