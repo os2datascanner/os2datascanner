@@ -41,6 +41,7 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
 from os2datascanner.engine2.conversions.types import OutputType
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 
 from ..authentication_model import Authentication
 from ..organization_model import Organization
