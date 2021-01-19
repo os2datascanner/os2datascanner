@@ -98,6 +98,27 @@ api_endpoints = {
 
 
 def application(env, start_response):
+    server_token = settings.server["token"]
+    if server_token:
+        if not "HTTP_AUTHORIZATION" in env:
+            start_response("401 Unauthorized", [
+                    ("WWW-Authentication", "Bearer realm=\"api\"")])
+            return
+        else:
+            authentication = env["HTTP_AUTHORIZATION"].split()
+            if not authentication[0] == "Bearer" or len(authentication) != 2:
+                start_response("400 Bad Request", [
+                        ("WWW-Authentication",
+                                "Bearer realm=\"api\""
+                                " error=\"invalid_request\"")])
+                return
+            elif authentication[1] != server_token:
+                start_response("401 Unauthorized", [
+                        ("WWW-Authentication",
+                                "Bearer realm=\"api\""
+                                " error=\"invalid_token\"")])
+                return
+
     try:
         body = json.loads(env["wsgi.input"].read().decode("ascii"))
         it = api_endpoints.get(body.get("action"), error_1)(body)
