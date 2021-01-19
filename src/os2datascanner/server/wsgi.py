@@ -25,7 +25,7 @@ def error_1(body):
     yield "400 Bad Request"
     yield {
         "status": "fail",
-        "message": "action was missing or did not identify an endpoint"
+        "message": "\"action\" was missing or did not identify an endpoint"
     }
 
 
