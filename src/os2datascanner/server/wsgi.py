@@ -46,6 +46,15 @@ def scan_1(body):
             "message": "\"source\" could not be understood as a Source"
         }
         return
+    elif (settings.server["permitted_sources"]
+            and source.type_label not in settings.server["permitted_sources"]):
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "cannot scan Sources "
+                    "of type \"{0}\"".format(source.type_label)
+        }
+        return
 
     rule = Rule.from_json_object(body["rule"])
     if not rule:

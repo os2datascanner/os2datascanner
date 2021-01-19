@@ -1,1 +1,4 @@
 [server]
+# An optional list of the Source type labels that the API host may scan. If
+# this list is non-empty, other types of Source will be rejected
+permitted_sources = []
