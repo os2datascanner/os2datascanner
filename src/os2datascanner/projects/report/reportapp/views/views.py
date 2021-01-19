@@ -117,7 +117,7 @@ class MainPageView(ListView, LoginRequiredMixin):
                                   self.request.GET.get('scannerjob', 'all'))
 
         sensitivities = self.matches.order_by(
-            'sensitivity').values(
+            '-sensitivity').values(
             'sensitivity').annotate(
             total=Count('sensitivity')
         ).values(
