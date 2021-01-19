@@ -1,5 +1,16 @@
 import json
+import time
+from uuid import uuid4
 
+from os2datascanner.engine2.model.core import Source, SourceManager
+from os2datascanner.engine2.rules.rule import Rule
+from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.pipeline.explorer import (
+        message_received_raw as explorer_mrr)
+from os2datascanner.engine2.pipeline.worker import (
+        message_received_raw as worker_mrr)
+from os2datascanner.engine2.pipeline.exporter import (
+        message_received_raw as exporter_mrr)
 from . import settings
 
 
@@ -18,6 +29,51 @@ def error_1(body):
     }
 
 
+def scan_1(body):
+    if "source" not in body or "rule" not in body:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "either \"source\" or \"rule\" was missing"
+        }
+        return
+
+    source = Source.from_json_object(body["source"])
+    if not source:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "\"source\" could not be understood as a Source"
+        }
+        return
+
+    rule = Rule.from_json_object(body["rule"])
+    if not rule:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "\"rule\" could not be understood as a Rule"
+        }
+        return
+
+    yield "200 OK"
+
+    message = messages.ScanSpecMessage(
+            scan_tag=str(uuid4()),
+            source=source,
+            rule=rule,
+            configuration={},
+            progress=None).to_json_object()
+
+    with SourceManager() as sm:
+        for c1, m1 in explorer_mrr(message, "os2ds_scan_specs", sm):
+            if c1 in ("os2ds_conversions",):
+                for c2, m2 in worker_mrr(m1, c1, sm):
+                    if c2 in ("os2ds_matches", "os2ds_metadata",):
+                        for c3, m3 in exporter_mrr(m2, c2, sm):
+                            yield m3
+
+
 def catastrophe_1(body):
     yield "400 Really Very Bad Request Indeed"
     yield {
@@ -27,7 +83,8 @@ def catastrophe_1(body):
 
 
 api_endpoints = {
-    "dummy-1": dummy_1
+    "dummy-1": dummy_1,
+    "scan-1": scan_1
 }
 
 
