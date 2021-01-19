@@ -40,6 +40,6 @@ def application(env, start_response):
 
     status = next(it)
     start_response(status, [
-            ("Content-Type", "application/json")])
+            ("Content-Type", "application/jsonl")])
     for obj in it:
-        yield json.dumps(obj).encode("ascii")
+        yield json.dumps(obj).encode("ascii") + b"\n"
