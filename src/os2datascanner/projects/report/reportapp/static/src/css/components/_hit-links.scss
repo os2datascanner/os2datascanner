@@ -1,8 +1,11 @@
 .hit-link {
   display: block;
   margin-top: 1rem;
-  // opacity: 0;
   transition: opacity 0.1s ease-in-out 0.1s;
+
+  &__handle {
+    margin-top: .5rem;
+  }
 }
 
 .phantom {
