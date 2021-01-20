@@ -20,7 +20,7 @@
             <span class="scan-time--bullet">&#8226;</span>
             <span class="scan-time--width">
                 {% timezone "Europe/Copenhagen" %}
-                    {{ status.estimated_completion_time|timeuntil:status.start_time }} tilbage
+                    ca. {{ status.estimated_completion_time|timeuntil:status.start_time }} tilbage
                 {% endtimezone %}
             </span>
         {% else %}
