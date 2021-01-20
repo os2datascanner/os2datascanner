@@ -90,7 +90,8 @@ SETTINGS_EXPORT = [
     'ENABLE_GOOGLEDRIVESCAN',
     'ENABLE_GMAILSCAN',
     'ENABLE_SBSYSSCAN',
-    'ICON_SPRITE_URL'
+    'ICON_SPRITE_URL',
+    'ESTIMATE_AFTER'
 ]
 
 # [internationalization]
@@ -146,6 +147,11 @@ DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 # to be set to 'storages.backends.gcloud.GoogleCloudStorage'
 # See https://django-storages.readthedocs.io/en/latest/backends/gcloud.html
 GS_BUCKET_NAME = ""
+
+# Don't estimate the duration of a scan until at least this fraction of it is
+# complete; 0.0 means that estimates will immediately be given, and 1.0 means
+# that they never will (early estimates are always less accurate)
+ESTIMATE_AFTER = 0.05
 
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module

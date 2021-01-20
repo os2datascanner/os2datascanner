@@ -427,7 +427,8 @@ class ScanStatus(models.Model):
         based on the return value of ScannerStatus.fraction_scanned (or None,
         if that function returns None)."""
         fraction_scanned = self.fraction_scanned
-        if fraction_scanned is not None:
+        if (fraction_scanned is not None
+                and fraction_scanned >= settings.ESTIMATE_AFTER):
             now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
             start = self.start_time
             so_far = now - start
