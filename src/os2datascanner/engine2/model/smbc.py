@@ -34,8 +34,14 @@ class SMBCSource(Source):
     def driveletter(self):
         return self._driveletter
 
+    def __auth_handler(self, server, share, workgroup, username, password):
+        """Returns the (workgroup, username, password) tuple expected of
+        pysmbc authentication functions."""
+        return (self._domain or "WORKGROUP",
+                self._user or "GUEST", self._password or "")
+
     def _generate_state(self, sm):
-        c = smbc.Context()
+        c = smbc.Context(auth_fn=self.__auth_handler)
         # Session cleanup for pysmbc is handled by the Python garbage
         # collector (groan...), so it's *critical* that no objects have a live
         # reference to this smbc.Context when this function completes
@@ -69,10 +75,10 @@ class SMBCSource(Source):
                 "smbc", self._unc, self._user, self._domain, self._password)
 
     # For our own purposes, we need to be able to make a "smb://" URL to give
-    # to smbc
+    # to pysmbc. That URL doesn't need to contain authentication details,
+    # though, as our __auth_handler function takes care of that
     def _to_url(self):
-        return make_smb_url(
-                "smb", self._unc, self._user, self._domain, self._password)
+        return make_smb_url("smb", self._unc, None, None, None)
 
     @staticmethod
     @Source.url_handler("smbc")
