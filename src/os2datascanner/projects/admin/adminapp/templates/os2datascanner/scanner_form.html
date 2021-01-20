@@ -128,18 +128,18 @@
 
     <fieldset class="form__fieldset">
       <legend>Generelt</legend>
-      {% include "os2datascanner/scanner_form_input_field.html" with field=form.name required="True" autofocus="True" %}
+      {% include "os2datascanner/scanner_form_input_field.html" with field=form.name required="True" autofocus="True" placeholder="Navn på scannerjob" %}
 
       {% if form.url %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.url required="True" %}
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.url required="True" placeholder=form.url.field.widget.attrs.placeholder %}
       {% endif %}
 
       {% if form.service_endpoint %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.service_endpoint %}
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.service_endpoint placeholder="f.eks. https://example.com/EWS/Exchange.asmx" %}
       {% endif %}
 
       {% if form.alias %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.alias %}
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.alias placeholder="f.eks. P" %}
       {% endif %}
 
       {% if form.organization %}
@@ -168,9 +168,9 @@
     {% if form.service_account_file %}
     <legend>Brugeroplysninger</legend>
     {% endif %}
-
+      <!-- This is a user domain, used on Windows computers. -->
       {% if form.domain %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.domain %}
+        {% include "os2datascanner/scanner_form_input_field.html" with field=form.domain placeholder="f.eks. WORKGROUP" %}
       {% endif %}
 
       {% if form.token %}
@@ -383,7 +383,7 @@
           class="form-control"
           name="{{ form.sitemap_url.name }}"
           id="id_{{ form.sitemap_url.name }}"
-          placeholder="/sitemap.xml"
+          placeholder="f.eks. /sitemap.xml"
           {% if form.sitemap_url.value %}
           value="{{ form.sitemap_url.value }}"
           {% endif %}>
