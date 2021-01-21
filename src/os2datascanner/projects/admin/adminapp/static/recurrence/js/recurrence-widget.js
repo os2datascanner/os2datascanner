@@ -1882,7 +1882,7 @@ recurrence.display.labels = {
     'repeat_until': gettext('Repeat until'),
     'exclude_occurrences': gettext('Exclude these occurences'),
     'exclude_date': gettext('Exclude this date'),
-    'add_rule': gettext('Add rule'),
+    'add_rule': gettext('Add interval'),
     'add_date': gettext('Add date'),
     'remove': gettext('Remove'),
     'calendar': gettext('Calendar')

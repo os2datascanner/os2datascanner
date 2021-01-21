@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from .scanner_model import Scanner
 from os2datascanner.engine2.model.gmail import GmailSource
+from ...utils import upload_path_gmail_users, upload_path_gmail_service_account
 
 
 class GmailScanner(Scanner):
@@ -26,11 +27,11 @@ class GmailScanner(Scanner):
                 'csv fil hentes af admin fra: https://admin.google.com/ac/users'
             )
 
-    service_account_file_gmail = models.FileField(upload_to='gmail/serviceaccount/',
+    service_account_file_gmail = models.FileField(upload_to=upload_path_gmail_service_account,
                                                   null=False,
                                                   validators=[validate_filetype_json])
 
-    user_emails_gmail = models.FileField(upload_to='gmail/users/',
+    user_emails_gmail = models.FileField(upload_to=upload_path_gmail_users,
                                          null=False,
                                          validators=[validate_filetype_csv])
 

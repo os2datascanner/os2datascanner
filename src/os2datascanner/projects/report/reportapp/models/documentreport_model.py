@@ -3,6 +3,7 @@ import enum
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.fields import JSONField
+from .organization_model import Organization
 
 from os2datascanner.engine2.pipeline.messages import MatchesMessage
 
@@ -10,9 +11,18 @@ from os2datascanner.engine2.pipeline.messages import MatchesMessage
 class DocumentReport(models.Model):
     scan_time = models.DateTimeField(null=True)
 
+    organization = models.ForeignKey(Organization,
+                                     null=True, blank=True,
+                                     verbose_name='Organisation',
+                                     on_delete=models.PROTECT)
+
     path = models.CharField(max_length=2000, verbose_name="Path")
     # It could be that the meta data should not be part of the jsonfield...
     data = JSONField(null=True)
+
+    sensitivity = models.IntegerField(null=True, verbose_name="Sensitivity")
+
+    probability = models.FloatField(null=True, verbose_name="Probability")
 
     def _str_(self):
         return self.path
@@ -49,8 +59,9 @@ class DocumentReport(models.Model):
             return [(k.value, k.label) for k in cls]
 
     resolution_status = models.IntegerField(choices=ResolutionChoices.choices(),
-                                            null=True, blank=True,
+                                            null=True, blank=True, db_index=True,
                                             verbose_name="Håndteringsstatus")
+
     custom_resolution_status = models.CharField(max_length=1024, blank=True,
                                                 verbose_name="Begrundelse")
 
@@ -69,3 +80,5 @@ class DocumentReport(models.Model):
 
     class Meta:
         verbose_name_plural = "Document reports"
+        ordering = ['-sensitivity', '-probability']
+

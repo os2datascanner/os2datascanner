@@ -52,3 +52,18 @@ def find_parent(handle, type_label):
         return handle
     else:
         return None
+
+
+@register.filter
+def find_type_label(handle):
+    """Finds the top level handles type_label and then returns it;
+    (or None if there wasn't one)."""
+    if isinstance(handle, Handle):
+        while handle and handle.type_label:
+            if handle.source.handle:
+                handle = handle.source.handle
+            else:
+                break
+        return handle.type_label
+    else:
+        return None

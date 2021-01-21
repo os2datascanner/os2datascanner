@@ -25,6 +25,16 @@ class WebScannerCreate(ScannerCreate):
               'do_last_modified_check', 'do_last_modified_check_head_request',
               'rules', 'recipients']
 
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        form = super().get_form(form_class)
+
+        form.fields['url'].widget.attrs['placeholder'] = 'f.eks. https://www.example.com'
+
+        return form
+
     def form_valid(self, form):
         if url_contains_spaces(form):
             form.add_error('url', u'Mellemrum er ikke tilladt i web-domænenavnet.')

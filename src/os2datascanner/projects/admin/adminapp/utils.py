@@ -31,8 +31,6 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template import loader
 
-from .models.scannerjobs.webscanner_model import WebScanner
-
 
 def capitalize_first(s):
     """Capitalize the first letter of a string, leaving the others alone."""
@@ -108,3 +106,28 @@ def as_file_uri(path: typing.Union[str, pathlib.Path]) -> str:
         path = pathlib.Path(path)
 
     return path.as_uri()
+
+
+def upload_path_webscan_sitemap(instance, filename):
+    return "organisation/%d" % instance.organization.id + "/sitemaps/%s" % filename
+
+
+def upload_path_gmail_service_account(instance, filename):
+    return "organisation/%d" % instance.organization.id + "/gmail/serviceaccount/%s" % filename
+
+
+def upload_path_gmail_users(instance, filename):
+    return "organisation/%d" % instance.organization.id + "/gmail/users/%s" % filename
+
+
+def upload_path_exchange_users(instance, filename):
+    return "organisation/%d" % instance.organization.id + "/mailscan/users/%s" % filename
+
+
+def upload_path_gdrive_service_account(instance, filename):
+    return "organisation/%d" % instance.organization.id + "/googledrive/serviceaccount/%s" % filename
+
+
+def upload_path_gdrive_users(instance, filename):
+    return "organisation/%d" % instance.organization.id + "/googledrive/users/%s" % filename
+

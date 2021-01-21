@@ -3,7 +3,7 @@ import json
 from django.test import TestCase
 
 from .utils import hash_handle
-from .management.commands.pipeline_collector import _restructure_and_save_result
+
 
 class PipelineCollectorTest(TestCase):
 

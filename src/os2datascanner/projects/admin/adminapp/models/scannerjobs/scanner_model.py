@@ -18,13 +18,12 @@
 
 """Contains Django model for the scanner types."""
 
-import os
-from typing import Iterator
 import datetime
-from dateutil import tz
-from contextlib import closing
-import json
+import os
 import re
+
+from typing import Iterator
+from dateutil import tz
 
 from django.conf import settings
 from django.core.validators import validate_comma_separated_integer_list
@@ -34,21 +33,21 @@ from django.contrib.postgres.fields import JSONField
 from model_utils.managers import InheritanceManager
 from recurrence.fields import RecurrenceField
 
-from os2datascanner.engine2.model.core import Handle, Source, SourceManager
+from os2datascanner.engine2.model.core import Handle, Source
 from os2datascanner.engine2.rules.meta import HasConversionRule
 from os2datascanner.engine2.rules.logical import OrRule, AndRule, make_if
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
 from os2datascanner.engine2.conversions.types import OutputType
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 
 from ..authentication_model import Authentication
 from ..organization_model import Organization
 from ..group_model import Group
 from ..rules.rule_model import Rule
 from ..userprofile_model import UserProfile
-from os2datascanner.utils import amqp_connection_manager
-
 
 base_dir = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -151,6 +150,10 @@ class Scanner(models.Model):
 
     e2_last_run_at = models.DateTimeField(null=True)
 
+    def verify(self) -> bool:
+        """Method documentation"""
+        raise NotImplementedError("Scanner.verify")
+
     def exclusion_rule_list(self):
         """Return the exclusion rules as a list of strings or regexes."""
         REGEX_PREFIX = "regex:"
@@ -175,11 +178,15 @@ class Scanner(models.Model):
     # Run error messages
     HAS_NO_RULES = (
         "Scannerjobbet kunne ikke startes," +
-        " fordi den ingen tilknyttede regler har."
+        " fordi det ingen tilknyttede regler har."
     )
     NOT_VALIDATED = (
         "Scannerjobbet kunne ikke startes," +
         " fordi det ikke er blevet valideret."
+    )
+    ALREADY_RUNNING = (
+        "Scannerjobbet kunne ikke startes," +
+        " da dette scan er igang."
     )
 
     process_urls = JSONField(null=True, blank=True)
@@ -272,24 +279,23 @@ class Scanner(models.Model):
                 'pk': self.pk,
                 'name': self.name
             },
-            # Names have a uniqueness constraint, so we can /sort of/ use
-            # them as a human-readable primary key for organisations in the
-            # report module
-            'organisation': self.organization.name,
+            'organisation': {
+                'name': self.organization.name,
+                'uuid': str(self.organization.uuid)
+            },
             'destination': 'pipeline_collector'
         }
 
-        # Check that all of our Sources are runnable, and build
-        # ScanSpecMessages for them
+        # Build ScanSpecMessages for all Sources
         message_template = messages.ScanSpecMessage(scan_tag=scan_tag,
                 rule=rule, configuration=configuration, source=None,
                 progress=None)
         outbox = []
+        source_count = 0
         for source in self.generate_sources():
-            with SourceManager() as sm, closing(source.handles(sm)) as handles:
-                next(handles, True)
             outbox.append((settings.AMQP_PIPELINE_TARGET,
                     message_template._replace(source=source)))
+            source_count += 1
 
         # Also build ConversionMessages for the objects that we should try to
         # scan again (our pipeline_collector is responsible for eventually
@@ -313,13 +319,16 @@ class Scanner(models.Model):
         self.e2_last_run_at = now
         self.save()
 
-        # Dispatch the scan specifications to the pipeline
-        queue_name = settings.AMQP_PIPELINE_TARGET
-        amqp_connection_manager.start_amqp(queue_name)
-        for queue, message in outbox:
-            amqp_connection_manager.send_message(
-                    queue, json.dumps(message.to_json_object()))
-        amqp_connection_manager.close_connection()
+        # OK, we're committed now! Create a model object to track the status of
+        # this scan...
+        ScanStatus.objects.create(
+                scanner=self, scan_tag=scan_tag, total_sources=source_count,
+                total_objects=self.checkups.count())
+
+        # ... and dispatch the scan specifications to the pipeline
+        with PikaPipelineSender(write={queue for queue, _ in outbox}) as pps:
+            for queue, message in outbox:
+                pps.publish_message(queue, message.to_json_object())
 
         return scan_tag
 
@@ -360,3 +369,77 @@ class ScheduledCheckup(models.Model):
     @property
     def handle(self):
         return Handle.from_json_object(self.handle_representation)
+
+
+class ScanStatus(models.Model):
+    """A ScanStatus object collects the status messages received from the
+    pipeline for a given scan."""
+
+    scan_tag = JSONField(verbose_name="Scan tag", unique=True)
+
+    scanner = models.ForeignKey(Scanner, related_name="statuses",
+                                verbose_name="Tilknyttet scannerjob",
+                                on_delete=models.CASCADE)
+
+    total_sources = models.IntegerField(verbose_name="Antal kilder",
+                                       null=True)
+    explored_sources = models.IntegerField(verbose_name="Udforskede kilder",
+                                         null=True)
+
+    total_objects = models.IntegerField(verbose_name="Antal objekter",
+                                        null=True)
+    scanned_objects = models.IntegerField(verbose_name="Scannede objekter",
+                                          null=True)
+    scanned_size = models.BigIntegerField(
+            verbose_name="Størrelse af scannede objekter",
+            null=True)
+
+    @property
+    def finished(self) -> bool:
+        return (self.total_sources is not None
+                and self.total_sources == self.explored_sources
+                and self.total_objects is not None
+                and self.total_objects == self.scanned_objects)
+
+    @property
+    def fraction_explored(self) -> float:
+        """Returns the fraction of the sources in this scan that has been
+        explored, or None if this is not yet computable."""
+        if self.total_sources is not None:
+            return (self.explored_sources or 0) / self.total_sources
+        else:
+            return None
+
+    @property
+    def fraction_scanned(self) -> float:
+        """Returns the fraction of this scan that has been scanned, or None if
+        this is not yet computable."""
+        if (self.total_sources is not None
+                and self.explored_sources == self.total_sources
+                and self.total_objects is not None):
+            return (self.scanned_objects or 0) / self.total_objects
+        else:
+            return None
+
+    @property
+    def estimated_completion_time(self) -> datetime.datetime:
+        """Returns the linearly interpolated completion time of this scan
+        based on the return value of ScannerStatus.fraction_scanned (or None,
+        if that function returns None)."""
+        fraction_scanned = self.fraction_scanned
+        if (fraction_scanned is not None
+                and fraction_scanned >= settings.ESTIMATE_AFTER):
+            now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
+            start = self.start_time
+            so_far = now - start
+            total_duration = so_far / fraction_scanned
+            return start + total_duration
+        else:
+            return None
+
+    @property
+    def start_time(self) -> datetime.datetime:
+        return parse_isoformat_timestamp(self.scan_tag["time"])
+
+    class Meta:
+        verbose_name_plural = "scan statuses"

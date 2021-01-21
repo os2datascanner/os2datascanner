@@ -8,8 +8,16 @@ from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
 from ..models.authentication_model import Authentication
 from ..models.rules.rule_model import Rule
-from ..models.scannerjobs.scanner_model import Scanner
+from ..models.scannerjobs.scanner_model import Scanner, ScanStatus
 from ..models.userprofile_model import UserProfile
+
+
+class StatusOverview(RestrictedListView):
+    template_name = "os2datascanner/scan_status.html"
+    model = ScanStatus
+
+    def get_queryset(self):
+        return super().get_queryset().order_by("-pk")[:10]
 
 
 class ScannerList(RestrictedListView):
@@ -171,12 +179,16 @@ class ScannerAskRun(RestrictedDetailView):
         """Check that user is allowed to run this scanner."""
         context = super().get_context_data(**kwargs)
 
+        last_status = self.object.statuses.last()
         if self.object.validation_status is Scanner.INVALID:
             ok = False
             error_message = Scanner.NOT_VALIDATED
         elif not self.object.rules.all():
             ok = False
             error_message = Scanner.HAS_NO_RULES
+        elif last_status and not last_status.finished:
+            ok = False
+            error_message = Scanner.ALREADY_RUNNING
         else:
             ok = True
 

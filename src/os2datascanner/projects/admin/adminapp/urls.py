@@ -49,6 +49,7 @@ from .views.views import GroupList, GroupCreate, GroupUpdate, GroupDelete
 from .views.views import MainPageView
 from .views.views import OrganizationList
 from .views.views import DialogSuccess
+from .views.scanner_views import StatusOverview
 from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
                                      WebScannerDelete, WebScannerRun,
                                      WebScannerAskRun, WebScannerList,
@@ -63,6 +64,9 @@ from .views.msgraph_views import (
 urlpatterns = [
     # App URLs
     url(r'^$', WebScannerList.as_view(), name='index'),
+
+    # App URLs
+    url(r'^status/$', StatusOverview.as_view(), name='status'),
 
     #Exchangescanner URL's
     url(r'^exchangescanners/$', ExchangeScannerList.as_view(), name='exchangescanners'),

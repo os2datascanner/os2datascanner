@@ -118,14 +118,16 @@ class PikaPipelineRunner(PikaConnectionHolder):
                     " unexpectedly long queue length {0},"
                     " dispatching").format(outstanding), file=stderr)
         while self._pending:
-            routing_key, message = self._pending[0]
-            self.channel.basic_publish(
-                    exchange='',
-                    routing_key=routing_key,
-                    body=json.dumps(message).encode())
+            self.publish_message(*self._pending[0])
             # If we got here, then basic_publish succeeded and we can safely
             # remove the message from the head of the pending queue
             self._pending = self._pending[1:]
+
+    def publish_message(self, routing_key, message):
+        self.channel.basic_publish(
+                exchange='',
+                routing_key=routing_key,
+                body=json.dumps(message).encode())
 
     def run_consumer(self):
         """Runs the Pika channel consumer loop in another loop. Transient
@@ -175,3 +177,8 @@ class PikaPipelineRunner(PikaConnectionHolder):
                     self.channel.basic_cancel(tag)
                 self.channel.stop_consuming()
                 raise
+
+
+class PikaPipelineSender(PikaPipelineRunner):
+    def handle_message(self, message_body, *, channel=None):
+        yield from []

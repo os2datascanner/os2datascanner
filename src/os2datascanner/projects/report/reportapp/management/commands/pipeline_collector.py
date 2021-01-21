@@ -16,43 +16,61 @@
 # source municipalities ( https://os2.eu/ )
 
 from django.core.management.base import BaseCommand
+from django.core.exceptions import FieldError
+from django.db.models.deletion import ProtectedError
 
-from os2datascanner.utils.system_utilities import (json_utf8_decode,
-        parse_isoformat_timestamp)
-from os2datascanner.utils.amqp_connection_manager import start_amqp, \
-    set_callback, start_consuming, ack_message
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
 from os2datascanner.projects.report.reportapp.utils import hash_handle
 
 from ...models.documentreport_model import DocumentReport
+from ...models.organization_model import Organization
 
 
-def consume_results(channel, method, properties, body):
-    ack_message(method)
-    _restructure_and_save_result(body)
-
-
-def _restructure_and_save_result(result):
+def result_message_received_raw(body):
     """Method for restructuring and storing result body.
 
     The agreed structure is as follows:
     {'scan_tag': {...}, 'matches': null, 'metadata': null, 'problem': null}
     """
-    result = json_utf8_decode(result)
-    reference = result.get("handle") or result.get("source")
-    tag, queue = _identify_message(result)
+    reference = body.get("handle") or body.get("source")
+    tag, queue = _identify_message(body)
     if not reference or not tag or not queue:
         return
 
     previous_report, new_report = get_reports_for(reference, tag)
     if queue == "matches":
-        handle_match_message(previous_report, new_report, result)
+        handle_match_message(previous_report, new_report, body)
     elif queue == "problem":
-        handle_problem_message(previous_report, new_report, result)
+        handle_problem_message(previous_report, new_report, body)
     elif queue == "metadata":
-        new_report.data["metadata"] = result
-        new_report.save()
+        handle_metadata_message(new_report, body)
+
+    yield from []
+
+
+def event_message_received_raw(body):
+    event_type = body.get("type")
+    model_class = body.get("model_class")
+    instance = body.get("instance")
+
+    if not event_type or not model_class or not instance:
+        return
+
+    if model_class == "Organization":
+        handle_event(event_type, instance, Organization)
+    else:
+        print("Unknown model_class %s in event" % model_class)
+        return
+
+    yield from []
+
+
+def handle_metadata_message(new_report, result):
+    new_report.data["metadata"] = result
+    new_report.save()
 
 
 def get_reports_for(reference, scan_tag):
@@ -74,6 +92,7 @@ def get_reports_for(reference, scan_tag):
                 data={"scan_tag": scan_tag})
 
     return previous_report, new_report
+
 
 def handle_match_message(previous_report, new_report, body):
     new_matches = messages.MatchesMessage.from_json_object(body)
@@ -116,8 +135,32 @@ def handle_match_message(previous_report, new_report, body):
 
     if new_matches.matched:
         print(new_matches.handle.presentation, "New matches, creating")
-        new_report.data["matches"] = body
+        # Collect and store highest sensitivity value (should never be NoneType).
+        new_report.sensitivity = new_matches.sensitivity.value
+        # Collect and store highest propability value (should never be NoneType).
+        new_report.probability = new_matches.probability
+        # Sort matches by prop. desc.
+        new_report.data["matches"] = sort_matches_by_probability(body)
         new_report.save()
+
+
+def sort_matches_by_probability(body):
+    """The scanner engine have some internal rules
+    and the matches they produce are also a part of the message.
+    These matches are not necessary in the report module.
+    An example of an internal rule is, images below a certain size are
+    ignored."""
+
+    # Rules are under no obligation to produce matches in any
+    # particular order, but we want to display them in
+    # descending order of probability
+    for match_fragment in body["matches"]:
+        if match_fragment["matches"]:
+            match_fragment["matches"].sort(
+                key=lambda match_dict: match_dict.get(
+                    "probability", 0.0),
+                reverse=True)
+    return body
 
 
 def handle_problem_message(previous_report, new_report, body):
@@ -150,6 +193,53 @@ def _identify_message(result):
         return None, None
 
 
+def handle_event(event_type, instance, cls):
+
+    event_obj = cls.from_json_object(instance)
+
+    try:
+        existing = cls.objects.get(uuid=event_obj.uuid)
+
+        # If we get this far, the object existed
+        # go ahead and update or delete
+        if event_type == "object_delete":
+            existing.delete()
+            print("handle_event: Deleted %s with uuid: %s" % (cls, existing.uuid))
+        elif event_type == "object_update":
+            event_obj_dict = {k: v for k, v in event_obj.__dict__.items() if v is not None}
+            existing.__dict__.update(event_obj_dict)
+            existing.save()
+            print("handle_event: Updated %s with uuid: %s" % (cls, existing.uuid))
+        else:
+            print("handle_event: Unexpected event_type %s from %s with uuid: %s" % (event_type, cls, event_obj.uuid))
+
+    except cls.DoesNotExist:
+        # The object didn't exist - save it
+        # Notice that we might end up here event with an update event, if the initial
+        # create event wasn't created, collected or didn't succeed
+        event_obj.save()
+        print("handle_event: Created %s with uuid: %s" % (cls, event_obj.uuid))
+    except FieldError as e:
+        print("handle_event: FieldError when handling %s from event: %s" % (cls, e))
+    except AttributeError as e:
+        print("handle_event: AttributeError when handling %s from event: %s" % (cls, e))
+    except ProtectedError as e:
+        print("handle_event: Couldn't delete %s uuid %s from event: %s" % (cls, event_obj.uuid, e))
+
+
+class ReportCollector(PikaPipelineRunner):
+    def __init__(self, *, results, events, **kwargs):
+        super().__init__(**kwargs)
+        self._results = results
+        self._events = events
+
+    def handle_message(self, message_body, *, channel=None):
+        if channel == self._results:
+            return result_message_received_raw(message_body)
+        elif channel == self._events:
+            return event_message_received_raw(message_body)
+
+
 
 class Command(BaseCommand):
     """Command for starting a pipeline collector process."""
@@ -162,10 +252,19 @@ class Command(BaseCommand):
             help="the name of the AMQP queue from which filtered result objects"
                  + " should be read",
             default="os2ds_results")
+        parser.add_argument(
+            "--events",
+            type=str,
+            help="the name of the AMQP queue from which event objects"
+                 + " should be read",
+            default="os2ds_events")
 
-    def handle(self, results, *args, **options):
-
-        # Start listning on matches queue
-        start_amqp(results)
-        set_callback(consume_results, results)
-        start_consuming()
+    def handle(self, results, events, *args, **options):
+        with ReportCollector(
+                results=results, events=events,
+                read=[results, events], heartbeat=6000) as runner:
+            try:
+                print("Start")
+                runner.run_consumer()
+            finally:
+                print("Stop")

@@ -28,7 +28,7 @@ from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
 from .models.rules.addressrule_model import AddressRule
-from .models.scannerjobs.scanner_model import ScheduledCheckup
+from .models.scannerjobs.scanner_model import ScanStatus, ScheduledCheckup
 from .models.scannerjobs.msgraph_models import MSGraphMailScanner
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.filescanner_model import FileScanner
@@ -57,6 +57,11 @@ class RuleAdmin(admin.ModelAdmin):
 class RegexPatternAdmin(admin.ModelAdmin):
     list_display = ('pattern_string', 'regex')
 
+@admin.register(Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'uuid')
+    readonly_fields = ('uuid',)
+    fields = ('name', 'contact_email', 'contact_phone', 'do_notify_all_scans')
 
 @admin.register(WebScanner)
 @admin.register(FileScanner)
@@ -68,8 +73,19 @@ class RegexPatternAdmin(admin.ModelAdmin):
 class ScannerAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'validation_status')
 
-for _cls in [Group, Organization, ScheduledCheckup]:
+for _cls in [Group, ScheduledCheckup]:
     admin.site.register(_cls)
+
+
+@admin.register(ScanStatus)
+class ScanStatusAdmin(admin.ModelAdmin):
+    model = ScanStatus
+    readonly_fields = ('fraction_explored', 'fraction_scanned',
+            'estimated_completion_time',)
+    fields = ('scan_tag', 'scanner', 'total_sources', 'explored_sources',
+            'fraction_explored', 'total_objects', 'scanned_objects',
+            'fraction_scanned', 'scanned_size', 'estimated_completion_time',)
+
 
 class ProfileInline(admin.TabularInline):
 

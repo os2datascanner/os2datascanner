@@ -77,9 +77,8 @@ services:
       context: .
       dockerfile: docker/admin/Dockerfile
       target: application
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
-    command: python manage.py pipeline_collector
+    entrypoint: []
+    command: python manage.py pipeline_collector --status os2ds_status
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -116,8 +115,7 @@ services:
       context: .
       dockerfile: docker/report/Dockerfile
       target: application
-    environment:
-      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
+    entrypoint: []
     command: python manage.py pipeline_collector
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
@@ -132,7 +130,7 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    command: explorer --enable-metrics
+    command: explorer --enable-metrics --status os2ds_status
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -144,7 +142,7 @@ services:
       context: .
       dockerfile: docker/engine/Dockerfile
       target: engine
-    command: worker --enable-metrics
+    command: worker --enable-metrics --status os2ds_status
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -191,6 +189,36 @@ services:
       - "8080:8080"
 
 x-disabled:
+  admin_cron:
+    build:
+      context: .
+      dockerfile: docker/admin/Dockerfile
+      target: application
+    entrypoint: []
+    command: supercronic /code/docker/crontab
+    volumes:
+      - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      - db
+      - admin_application
+      - queue
+
+  report_cron:
+    build:
+      context: .
+      dockerfile: docker/report/Dockerfile
+      target: application
+    entrypoint: [ ]
+    command: supercronic /code/docker/crontab
+    volumes:
+      - ./dev-environment/report/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      - db
+      - report_application
+      - queue
+
   engine_processor:
     build:
       context: .

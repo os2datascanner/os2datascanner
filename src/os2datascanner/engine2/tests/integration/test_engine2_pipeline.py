@@ -65,7 +65,7 @@ def handle_message(body, channel):
     if channel == "os2ds_scan_specs":
         with SourceManager() as sm:
             yield from explorer.message_received_raw(body, channel, sm,
-                    "os2ds_conversions", "os2ds_problems")
+                    "os2ds_conversions", "os2ds_problems", None)
     elif channel == "os2ds_conversions":
         with SourceManager() as sm:
             yield from processor.message_received_raw(body, channel, sm,

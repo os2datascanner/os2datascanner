@@ -90,7 +90,8 @@ SETTINGS_EXPORT = [
     'ENABLE_GOOGLEDRIVESCAN',
     'ENABLE_GMAILSCAN',
     'ENABLE_SBSYSSCAN',
-    'ICON_SPRITE_URL'
+    'ICON_SPRITE_URL',
+    'ESTIMATE_AFTER'
 ]
 
 # [internationalization]
@@ -114,6 +115,9 @@ USE_THOUSAND_SEPARATOR = true
 DEFAULT_FROM_EMAIL = "(Magenta Info) info@magenta.dk"
 ADMIN_EMAIL = "(Magenta Admin) info@magenta.dk"
 EMAIL_HOST = "localhost"
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_USE_TLS = false
 EMAIL_PORT = 25
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
@@ -129,12 +133,25 @@ ENABLE_GMAILSCAN = false
 ENABLE_SBSYSSCAN = false
 
 # [logging]
-GRAYLOG_HOST = ""
 DJANGO_LOG_LEVEL = "INFO"
 
 # These settings are Django-specific, and must be top level to get picked up
 AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
 AMQP_CONVERSION_TARGET = "os2ds_conversions"
+AMQP_EVENTS_TARGET = "os2ds_events"
+
+# [storage]
+# File storage class - default is regular file system storage
+DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+# Google Cloud Storage bucket name (for django-storages[google]), requires the above
+# to be set to 'storages.backends.gcloud.GoogleCloudStorage'
+# See https://django-storages.readthedocs.io/en/latest/backends/gcloud.html
+GS_BUCKET_NAME = ""
+
+# Don't estimate the duration of a scan until at least this fraction of it is
+# complete; 0.0 means that estimates will immediately be given, and 1.0 means
+# that they never will (early estimates are always less accurate)
+ESTIMATE_AFTER = 0.05
 
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module
