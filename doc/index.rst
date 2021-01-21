@@ -7,17 +7,13 @@ Welcome to OS2 Datascanner's documentation!
 ===========================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
-   :glob:
 
-   *
-   pages/*
+   pages/overview.rst
+   pages/setup.rst
+   pages/config.rst
+   pages/user-guide.rst
+   news.rst
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

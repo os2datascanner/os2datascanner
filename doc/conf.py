@@ -38,6 +38,7 @@ release = '3.2.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autosectionlabel'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -108,7 +109,7 @@ htmlhelp_basename = 'OS2datascannerdoc'
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
-    # 'papersize': 'letterpaper',
+    'papersize': 'a4paper',
 
     # The font size ('10pt', '11pt' or '12pt').
     #
@@ -116,11 +117,18 @@ latex_elements = {
 
     # Additional stuff for the LaTeX preamble.
     #
-    # 'preamble': '',
+    'preamble': r'''
+    \setcounter{secnumdepth}{0}
+    \usepackage{sectsty}
+    \chapterfont{\centering}
+    ''',
 
     # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
+
+    # extras
+    'extraclassoptions': 'openany,oneside'
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
@@ -130,7 +138,6 @@ latex_documents = [
     (master_doc, 'OS2datascanner.tex', 'OS2datascanner Documentation',
      'Magenta ApS', 'manual'),
 ]
-
 
 # -- Options for manual page output ------------------------------------------
 
