@@ -1,6 +1,69 @@
 OS2datascanner
 ==============
 
+Version 3.7.0, 21st January 2021
+--------------------------------
+
+"Pure Filtered Progress"
+
+New in this version:
+
+- Support for checking the progress of a scan:
+
+  - The administration system now shows how many objects a scan has processed,
+    along with an estimated completion time.
+
+  - The administration system prohibits a scan from being run more than once at
+    the same time.
+
+- Support for filtering matches in the report module:
+
+  - Matches can now be filtered according to their organisation, sensitivity,
+    and scanner.
+
+  - Many properties of matches have been moved out of unstructured storage and
+    into the report module's database, drastically improving performance.
+
+General improvements:
+
+- Several captions and labels in the administration system and report module
+  have been made clearer.
+
+- Fields in scanner creation forms now include explanatory examples.
+
+- The administration system and report module now share and synchronise
+  information about organisations.
+
+- Responsibility for checking the validity of a scan has been moved from the
+  administration system to the scanner engine, improving scan startup time.
+
+- The report module now uses a single template to render all types of match,
+  ensuring consistent display and functionality.
+
+- Fresh installations of the administration system now start with a default
+  organisation and CPR number recognition rule.
+
+- Exchange Web Services API endpoints can now be explicitly specified when
+  creating or modifying an Exchange scanner, adding support for servers that
+  do not use EWS autodiscovery.
+
+Bugfixes:
+
+- Sending email notifications and executing scheduled scans from Docker
+  deployments is now more reliable.
+
+- User list files uploaded to a Docker installation of the administration
+  system are no longer deleted at container shutdown.
+
+- The report module no longer speculatively collects result messages, improving
+  performance and reliability.
+
+- The administration system is now rendered correctly for users with reduced
+  privileges.
+
+- All characters can now be used in shared network drive passwords, not just
+  URL-safe ones.
+
 Version 3.6.0, 17th November 2020
 ---------------------------------
 
