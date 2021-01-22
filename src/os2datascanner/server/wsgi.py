@@ -78,9 +78,11 @@ def scan_1(body):
         for c1, m1 in explorer_mrr(message, "os2ds_scan_specs", sm):
             if c1 in ("os2ds_conversions",):
                 for c2, m2 in worker_mrr(m1, c1, sm):
-                    if c2 in ("os2ds_matches", "os2ds_metadata",):
-                        for c3, m3 in exporter_mrr(m2, c2, sm):
-                            yield m3
+                    if c2 in ("os2ds_matches",
+                            "os2ds_metadata", "os2ds_problems",):
+                        yield from (m3 for _, m3 in exporter_mrr(m2, c2, sm))
+            elif c1 in ("os2ds_problems",):
+                yield from (m2 for _, m2 in exporter_mrr(m1, c1, sm))
 
 
 def catastrophe_1(body):
