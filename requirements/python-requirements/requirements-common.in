@@ -1,6 +1,9 @@
 # Python packages needed for all parts of OS2datascanner
 
 colorama
+google-api-python-client
+oauth2client
 pika
 structlog
 toml
+
