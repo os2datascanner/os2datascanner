@@ -45,6 +45,7 @@ from .views.sbsysscanner_views import SbsysScannerCreate, SbsysScannerList, Sbsy
 from .views.rule_views import RuleList, \
     CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
     RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
+from .views.api import JSONAPIView
 from .views.views import GroupList, GroupCreate, GroupUpdate, GroupDelete
 from .views.views import MainPageView
 from .views.views import OrganizationList
@@ -64,6 +65,7 @@ from .views.msgraph_views import (
 urlpatterns = [
     # App URLs
     url(r'^$', WebScannerList.as_view(), name='index'),
+    url(r'^api/(?P<path>.*)$', JSONAPIView.as_view(), name="json-api"),
 
     # App URLs
     url(r'^status/$', StatusOverview.as_view(), name='status'),
