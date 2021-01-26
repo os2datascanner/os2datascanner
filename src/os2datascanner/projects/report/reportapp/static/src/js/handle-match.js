@@ -1,6 +1,3 @@
-// Handle matches
-const actions = $('.handle-match__action')
-
 // Listen for click on toggle checkbox
 $('#select-all').click(function() {   
   if(this.checked) {
@@ -43,6 +40,9 @@ function getCookie(name) {
   return cookieValue;
 }
 
+// Handle matches
+const actions = $('.handle-match__action')
+
 $(actions).click(function() {
   const btn_action = $(this)
 
@@ -77,7 +77,7 @@ $(actions).click(function() {
 })
 
 
-// handle match options
+// Handle match options
 
 var x, i, j, l, ll, selElmnt, a, b, c;
 
