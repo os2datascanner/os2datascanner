@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 from .models.roles.remediator_model import Remediator
 from .models.roles.leader_model import Leader
+from .models.roles.DPO_model import DataProtectionOfficer
 from .models.roles.defaultrole_model import DefaultRole
 from .models.aliases.adsidalias_model import ADSIDAlias
 from .models.aliases.emailalias_model import EmailAlias
@@ -16,29 +17,41 @@ from .models.userprofile_model import UserProfile
 
 admin.site.register(DocumentReport)
 
+
 @admin.register(ADSIDAlias)
 class ADSIDAliasAdmin(admin.ModelAdmin):
     list_display = ('sid', 'user', )
+
 
 @admin.register(EmailAlias)
 class EmailAliasAdmin(admin.ModelAdmin):
     list_display = ('address', 'user', )
 
+
 @admin.register(WebDomainAlias)
 class WebDomainAliasAdmin(admin.ModelAdmin):
     list_display = ('domain', 'user', )
+
 
 @admin.register(DefaultRole)
 class DefaultRoleAdmin(admin.ModelAdmin):
     list_display = ('user', )
 
+
 @admin.register(Remediator)
 class RemediatorAdmin(admin.ModelAdmin):
     list_display = ('user', )
 
+
 @admin.register(Leader)
 class LeaderAdmin(admin.ModelAdmin):
     list_display = ('user', )
+
+
+@admin.register(DataProtectionOfficer)
+class DataProtectionOfficerAdmin(admin.ModelAdmin):
+    list_display = ('user', )
+
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
@@ -56,6 +69,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
 
 class ProfileInline(admin.TabularInline):
 
