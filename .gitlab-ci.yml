@@ -232,14 +232,19 @@ Test Report Application:
     reports:
       junit: $CI_PROJECT_DIR/junit.xml
 
-Run notice scripts:
+Run Engine notice scripts:
   <<: *test-default
+  image:
+    name: ${ENGINE_IMAGE}
   needs:
     - Build Engine
+  # If the notice scripts need services at some point, just remove the following line
+  services: []
+  variables:
+    OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
+    OS2DS_ENGINE_SYSTEM_CONFIG_PATH: ${CI_PROJECT_DIR}/docker/engine/docker-settings.toml
   script:
-    - python -m unittest discover -s src/ -p notice*.py
-  allow_failure: true
-
+    - python -m unittest discover -s src/os2datascanner/engine2/tests/ --pattern "notice*.py"
 
 # Release stage
 ###############

@@ -3,7 +3,7 @@ from typing import Union
 from datetime import date
 
 # Updated list of dates with CPR numbers violating the Modulo-11 check. (Last
-# synchronised with the CPR Office's list on March 31, 2020.)
+# synchronised with the CPR Office's list on January 28, 2021.)
 # Source: https://cpr.dk/cpr-systemet/personnumre-uden-kontrolciffer-modulus-11-kontrol/
 cpr_exception_dates = {
     date(1960, 1, 1),
@@ -24,6 +24,7 @@ cpr_exception_dates = {
     date(1990, 1, 1),
     date(1991, 1, 1),
     date(1992, 1, 1),
+    date(1995, 1, 1),
 }
 
 THIS_YEAR = date.today().year
