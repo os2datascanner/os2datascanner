@@ -25,11 +25,18 @@ def error_1(body):
     yield "400 Bad Request"
     yield {
         "status": "fail",
-        "message": "\"action\" was missing or did not identify an endpoint"
+        "message": "path was missing or did not identify an endpoint"
     }
 
 
 def scan_1(body):
+    if not body:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "parameters missing"
+        }
+
     if "source" not in body or "rule" not in body:
         yield "400 Bad Request"
         yield {
@@ -94,8 +101,8 @@ def catastrophe_1(body):
 
 
 api_endpoints = {
-    "dummy-1": dummy_1,
-    "scan-1": scan_1
+    "/dummy/1": dummy_1,
+    "/scan/1": scan_1
 }
 
 
@@ -122,13 +129,17 @@ def application(env, start_response):
                 return
 
     try:
-        body = json.loads(env["wsgi.input"].read().decode("ascii"))
-        it = api_endpoints.get(body.get("action"), error_1)(body)
+        body = None
+        parameters = env["wsgi.input"].read().decode("ascii")
+        if parameters:
+            body = json.loads(parameters)
+        it = api_endpoints.get(env.get("PATH_INFO"), error_1)(body)
     except json.JSONDecodeError:
         it = catastrophe_1(None)
 
     status = next(it)
     start_response(status, [
-            ("Content-Type", "application/jsonl")])
+            ("Content-Type", "application/jsonl"),
+            ("Content-Disposition", "inline")])
     for obj in it:
         yield json.dumps(obj).encode("ascii") + b"\n"
