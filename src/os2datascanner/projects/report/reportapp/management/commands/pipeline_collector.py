@@ -265,6 +265,6 @@ class Command(BaseCommand):
                 read=[results, events], heartbeat=6000) as runner:
             try:
                 print("Start")
-                runner.run_consumer()
+                runner.run_consumer(exclusive=True)
             finally:
                 print("Stop")
