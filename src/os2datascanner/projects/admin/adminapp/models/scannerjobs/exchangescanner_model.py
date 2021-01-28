@@ -34,7 +34,7 @@ class ExchangeScanner(Scanner):
 
     service_endpoint = models.URLField(max_length=256,
                                        verbose_name='Service endpoint',
-                                       null=True)
+                                       blank=True, default='')
 
     def get_userlist_file_path(self):
         return os.path.join(settings.MEDIA_ROOT, self.userlist.name)
