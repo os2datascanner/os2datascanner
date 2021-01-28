@@ -161,6 +161,33 @@ services:
     depends_on:
       - queue
 
+  api_server:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+      target: application
+    command: [
+        "gunicorn",
+        "--config", "/code/docker/gunicorn-settings.py",
+        "--workers", "2", # only two workers in local dev - to save some resources
+        "--reload", # restart workers when code changes
+        "os2datascanner.server.wsgi"
+    ]
+    ports:
+      - "8070:5000"
+    volumes:
+      - ./dev-environment/api/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+
+  swagger_ui:
+    image: swaggerapi/swagger-ui:v3.41.1
+    environment:
+      - SWAGGER_JSON=/swagger.yml
+    ports:
+      - "8075:8080"
+    volumes:
+      - "./dev-environment/api/swagger.yml:/swagger.yml:ro"
+
   prometheus:
     image: prom/prometheus
     volumes:

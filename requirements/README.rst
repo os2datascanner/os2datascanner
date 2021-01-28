@@ -3,8 +3,9 @@ requirements and python requirements have been split into several files
 according to the "inheritance" tree below:
 
 ::
-
-              ------------------------- engine
+                                                  ------- api
+                                                /
+              ------------------------- engine -
             /
     common -                    ------- admin
             \                 /

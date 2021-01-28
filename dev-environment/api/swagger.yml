@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: OS2datascanner scan API
+  description: >
+    An interface to the OS2datascanner scan pipeline.
+  contact:
+    name: Magenta ApS
+    url: https://www.magenta.dk/
+    email: info@magenta.dk
+  license:
+    name: Mozilla Public License, v. 2.0
+    url: https://mozilla.org/MPL/2.0/
+  version: 1.0.0
+servers:
+  -   url: http://127.0.0.1:8000
+components:
+  securitySchemes:
+    bpsk:
+      type: http
+      scheme: bearer
+      bearerFormat: pre-shared key
+paths:
+  /dummy/1:
+    post:
+      operationId: dummy-1
+      summary: Does nothing
+      description: >
+        This operation returns a positive response (for example,
+        for testing that the API server has been started
+        successfully and that authentication has succeeded).
+      responses:
+        "200":
+          description: a dummy success object
+          content:
+            application/jsonl:
+              example: >
+                {"status": "ok"}
+  /run-scan/1:
+    post:
+      operationId: run-scan-1
+      summary: Runs a scan and yields the results
+      description: >
+        d
+      requestBody:
+        description: dummy
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test:
+                  type: string
+              example:
+                test: test
+      responses:
+        "200":
+          description: a number of pipeline output messages
+          content:
+            application/jsonl:
+              example: >
+                {}
+                {}
+security:
+  -
+    bpsk: []
