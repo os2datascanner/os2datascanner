@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from .models.roles.remediator_model import Remediator
 from .models.roles.leader_model import Leader
-from .models.roles.DPO_model import DataProtectionOfficer
+from .models.roles.dpo_model import DataProtectionOfficer
 from .models.roles.defaultrole_model import DefaultRole
 from .models.aliases.adsidalias_model import ADSIDAlias
 from .models.aliases.emailalias_model import EmailAlias
