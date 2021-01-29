@@ -52,7 +52,7 @@ class ExchangeScanner(Scanner):
         for u in user_list:
             yield EWSAccountSource(
                     domain=self.url.lstrip('@'),
-                    server=self.service_endpoint,
+                    server=self.service_endpoint or None,
                     admin_user=self.authentication.username,
                     admin_password=self.authentication.get_password(),
                     user=u)
