@@ -1,4 +1,4 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
 {% load staticfiles %}
 
 {% block scripts %}
@@ -11,21 +11,24 @@
 {% endblock %}
 
 {% block body %}
-<div class="wrapper">
+<main class="wrapper">
+  {% include "partials/main.html" with active_tab="rules" %}
+
+  <div class="content">
     
-<div class="add-new">
-  <h2 class="page-title" style="display: inline-block;">Regler</h2>
-    
-     <a 
-    class="button button--add button--cta button--small add-new-btn"
-    href="/rules/regex/add/"
-    title="Tilføj ny regel">
-    <svg class="icon">
-      <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
-    </svg>
-    <div class="add-new-text">Tilføj ny</div>
-  </a> 
-</div>        
+  <div class="add-new">
+    <h2 class="page-title" style="display: inline-block;">Regler</h2>
+      
+    <a 
+      class="button button--add button--cta button--small add-new-btn"
+      href="/rules/regex/add/"
+      title="Tilføj ny regel">
+      <svg class="icon">
+        <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
+      </svg>
+      <div class="add-new-text">Tilføj ny</div>
+    </a> 
+  </div>        
 
   <table class="datatable">
     <thead>
@@ -144,7 +147,8 @@
       {% endfor %}
     </tbody>
   </table>
-</div>
+  </div>
+</main>
 {% endblock %}
 
 {% block modal %}

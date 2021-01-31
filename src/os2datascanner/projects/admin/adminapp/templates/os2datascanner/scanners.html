@@ -1,4 +1,4 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
 {% load staticfiles %}
 
 {% block scripts %}
@@ -11,23 +11,26 @@
 {% endblock %}
 
 {% block body %}
-<div class="wrapper">
+<main class="wrapper">
+  {% include "partials/main.html" with active_tab="home" %}
 
-  {% include "os2datascanner/scanner_above_content.html" %}
+  <div class="content">
+
+    {% include "os2datascanner/scanner_above_content.html" %}
     
-<div class="add-new">
-  <h1 class="page-title" style="display:inline-block;">Scannerjob</h1>
-    
-    <a 
-    class="button button--add button--cta button--small add-new-btn" 
-    href="/{{ view.type }}scanners/add/"
-    title="Tilføj nyt scannerjob">
-    <svg class="icon">
-      <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
-    </svg>
-    <div class="add-new-text">Tilføj nyt</div>
-  </a>
-</div>
+    <div class="add-new">
+      <h1 class="page-title" style="display:inline-block;">Scannerjob</h1>
+      
+      <a 
+      class="button button--add button--cta button--small add-new-btn" 
+      href="/{{ view.type }}scanners/add/"
+      title="Tilføj nyt scannerjob">
+      <svg class="icon">
+        <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
+      </svg>
+      <div class="add-new-text">Tilføj nyt</div>
+    </a>
+  </div>
     
   <table class="datatable">
     <thead>
@@ -44,11 +47,11 @@
         <th class="datatable__column--actions">Handling</th>
       </tr>
     </thead>
-
+    
     <tbody>
       {% for scanner in scanner_list %}
       <tr tabindex="0">
-
+        
         <td class="domain-url">
           <div>{{scanner.name}}</div>
           <div style="margin-top: 0.5rem;"><small>{{scanner.url}}</small></div>
@@ -56,7 +59,7 @@
         {% if user.is_superuser %}
         <td class="scanner-organization datatable__column--org">{{scanner.organization}}</td>
         {% endif %}
-
+        
         {% if view.type == 'file' %}
         <td class="domain-letter">
           {% if scanner.alias %}
@@ -64,7 +67,7 @@
           {% endif %}
         </td>
         {% endif %}
-
+        
         <td class="domain-validation datatable__column--validated">
           {% if scanner.validation_status %}
           <svg class="icon" title="Er valideret">
@@ -78,53 +81,54 @@
           <span class="">Nej</span>
           {% endif %}
         </td>
-
+        
         <td class="scanner-runtime datatable__column--automatic">
           {{ scanner.schedule_description|truncatechars:20 }}
         </td>
-
+        
         <td class="scanner-actions datatable__column--actions">
           <a 
-            href="#run-scanner-modal" 
-            data-modal="modal:open" 
-            data-src="/{{ view.type }}scanners/{{scanner.pk}}/askrun/"
-            class="button button--small button--rounded"
-            title="Kør">
-            <svg class="icon">
-              <use xlink:href="/static/src/svg/symbol-defs.svg#icon-play"></use>
-            </svg>
-          </a>
-
-          <a 
-            href="/{{ view.type }}scanners/{{scanner.pk}}"
-            class="button button--small button--rounded"
-            title="Redigér">
-            <svg class="icon">
-              <use xlink:href="/static/src/svg/symbol-defs.svg#icon-pencil"></use>
-            </svg>
-          </a>
-
-          {% if not scanner.scans %}
-          <form action="/{{ view.type }}scanners/{{scanner.pk}}/delete/" method="post" style="display: inline-block;">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button 
-              type="submit"
-              class="button button--small button--rounded"
-              onclick="return confirm('Ønsker du virkelig at slette denne scanner?\n{{scanner.name}}\n\nHandlingen kan ikke fortrydes.')"
-                title="Slet">
-              <svg class="icon">
-                <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
-              </svg>
-            </button>
-          </form>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
+          href="#run-scanner-modal" 
+          data-modal="modal:open" 
+          data-src="/{{ view.type }}scanners/{{scanner.pk}}/askrun/"
+          class="button button--small button--rounded"
+          title="Kør">
+          <svg class="icon">
+            <use xlink:href="/static/src/svg/symbol-defs.svg#icon-play"></use>
+          </svg>
+        </a>
+        
+        <a 
+        href="/{{ view.type }}scanners/{{scanner.pk}}"
+        class="button button--small button--rounded"
+        title="Redigér">
+        <svg class="icon">
+          <use xlink:href="/static/src/svg/symbol-defs.svg#icon-pencil"></use>
+        </svg>
+      </a>
+      
+      {% if not scanner.scans %}
+      <form action="/{{ view.type }}scanners/{{scanner.pk}}/delete/" method="post" style="display: inline-block;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button 
+        type="submit"
+        class="button button--small button--rounded"
+        onclick="return confirm('Ønsker du virkelig at slette denne scanner?\n{{scanner.name}}\n\nHandlingen kan ikke fortrydes.')"
+        title="Slet">
+        <svg class="icon">
+          <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
+        </svg>
+      </button>
+    </form>
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
     </tbody>
   </table>
-</div>
+  </div>
+</main>
 {% endblock %}
 
 {% block modal %}

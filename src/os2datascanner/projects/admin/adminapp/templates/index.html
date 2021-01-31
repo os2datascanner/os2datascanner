@@ -1,10 +1,13 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
 {% load staticfiles %}
 
   {% block body %}
-  <div class="wrapper">
-    {% include "components/dashboard-widgets.html" %}
-  </div>
+  <main class="wrapper">
+    {% include "partials/sidemenu.html" %}
+    <div class="content">
+      {% include "components/dashboard-widgets.html" %}
+    </div>
+  </main>
   {% endblock %}
 
 {% block index_active %}active{% endblock %}

@@ -1,62 +1,66 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
 {% load l10n %}
 {% load staticfiles %}
 {% load tz %}
 
 {% block body %}
-<div class="wrapper">
-    <h1 class="page-title">Scanner status</h1>
-    {% for status in object_list %}
-    <div class="scanner-status">
-        <h2 class="page-title__sub">
-            {{ status.scanner.name }}
-        </h2>
+<main class="wrapper">
+    {% include "partials/main.html" with active_tab="status" %}
 
-        <div class="scan-time">
-        {% if status.fraction_scanned is not None %}
-            {% widthratio status.fraction_scanned 1.0 100 as percentage %}
-            {% if percentage != "100" %}
-            <span>{{ percentage }}%</span>
-            <span class="scan-time--bullet">&#8226;</span>
-            <span class="scan-time--width">
-                {% timezone "Europe/Copenhagen" %}
-                    ca. {{ status.estimated_completion_time|timeuntil:status.start_time }} tilbage
-                {% endtimezone %}
-            </span>
-        {% else %}
-            <span>
+    <div class="content">
+
+        <h1 class="page-title">Scanner status</h1>
+        {% for status in object_list %}
+        <div class="scanner-status">
+            <h2 class="page-title__sub">
+                {{ status.scanner.name }}
+            </h2>
+
+            <div class="scan-time">
+            {% if status.fraction_scanned is not None %}
+                {% widthratio status.fraction_scanned 1.0 100 as percentage %}
+                {% if percentage != "100" %}
                 <span>{{ percentage }}%</span>
                 <span class="scan-time--bullet">&#8226;</span>
-                <span class="scan-time--blue">{{ status.total_objects }}</span>
-                objekter udforsket
-                <span class="scan-time--icon"><i class="material-icons" style="font-size: 3rem;">check</i></span>
-            </span>
-            {% endif %}
-        {% endif %}
-        </div>
-
-        
-        {% if status.fraction_scanned is not None %}
-            {% if percentage != "100" %}
-                <div>
-                {% widthratio status.fraction_scanned 1.0 100 as percentage %}
-                    <progress max="100" value="{{ percentage }}"></progress>
-                </div>
-            {% endif %}
+                <span class="scan-time--width">
+                    {% timezone "Europe/Copenhagen" %}
+                        ca. {{ status.estimated_completion_time|timeuntil:status.start_time }} tilbage
+                    {% endtimezone %}
+                </span>
             {% else %}
-                <div>
-                    <progress></progress>
-                </div>
-                <div>
-                    <small>Estimerer...
-                        ({{ status.total_objects }} objekter udforsket,
-                        {{ status.scanned_objects }}
-                        ({{ status.scanned_size }} byte) scannet)
-                    </small>
-                </div>
-        {% endif %}
+                <span>
+                    <span>{{ percentage }}%</span>
+                    <span class="scan-time--bullet">&#8226;</span>
+                    <span class="scan-time--blue">{{ status.total_objects }}</span>
+                    objekter udforsket
+                    <span class="scan-time--icon"><i class="material-icons" style="font-size: 3rem;">check</i></span>
+                </span>
+                {% endif %}
+            {% endif %}
+            </div>
+
             
+            {% if status.fraction_scanned is not None %}
+                {% if percentage != "100" %}
+                    <div>
+                    {% widthratio status.fraction_scanned 1.0 100 as percentage %}
+                        <progress max="100" value="{{ percentage }}"></progress>
+                    </div>
+                {% endif %}
+                {% else %}
+                    <div>
+                        <progress></progress>
+                    </div>
+                    <div>
+                        <small>Estimerer...
+                            ({{ status.total_objects }} objekter udforsket,
+                            {{ status.scanned_objects }}
+                            ({{ status.scanned_size }} byte) scannet)
+                        </small>
+                    </div>
+            {% endif %}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
+</main>
 {% endblock %}

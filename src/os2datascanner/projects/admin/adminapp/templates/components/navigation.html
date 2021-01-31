@@ -1,10 +1,44 @@
 {% load staticfiles %}
 
-{% block scripts %}
+<!-- {% block scripts %}
 <script src="{% static "js/activeMenu.js" %} "></script>
-{% endblock %}
+{% endblock %} -->
 
-<nav id="navigation">
+<nav class="navigation">
+  <ul>
+  {% if user.is_authenticated %}
+    {% if not user.profile.is_upload_only %}
+      <li>
+        <a href="/status" class="{% if active_tab == 'status' %}active{% endif %}">
+          {% include "components/svg-icons/check_circle.svg" %}
+          <span class="width">Scanner status</span>
+        </a>
+      </li>
+      <li>
+        <a href="/" class="{% if active_tab == 'home' %}active{% endif %}">
+          {% include "components/svg-icons/work.svg" %}
+          <span class="width">Scannerjob</span>
+        </a>
+      </li>
+      <li>
+        <a href="/rules" class="{% if active_tab == 'rules' %}active{% endif %}">
+          {% include "components/svg-icons/rule.svg" %}
+          <span class="width">Regler</span>
+        </a>
+      </li>
+      {% if user.is_superuser or user.is_staff %}
+      <li>
+        <a href="/admin/" target="_NEW">
+          {% include "components/svg-icons/admin_panel.svg" %}
+          <span class="width">Administration</span>
+        </a>
+      </li>
+      {% endif %}
+    {% endif %}
+  {% endif %}  
+  </ul>
+</nav>
+<!-- <nav id="navigation">
   <li class="active">
     {% if user.is_authenticated %}
       {% if not user.profile.is_upload_only %}
@@ -37,4 +71,4 @@
       {% endif %}
     {% endif %}
   </li>
-</nav>
+</nav> -->

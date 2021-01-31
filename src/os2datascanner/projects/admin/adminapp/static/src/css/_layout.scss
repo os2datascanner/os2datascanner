@@ -8,27 +8,38 @@ body {
 }
 
 .page {
-  padding: var(--size-ds-unit);
-  padding: 5rem var(--size-ds-unit) var(--size-ds-unit) var(--size-ds-unit);
 
   .iframe-modal & {
     padding: calc(var(--size-ds-unit) * 2);
   }
 }
 
+// .wrapper {
+//   margin: 0 auto 0 calc(15rem);
+//   max-width: 90%;
+//   min-height: calc(100vh - 9rem - var(--size-ds-unit) * 2);
+//   /* 
+//     Banner = 4rem
+//     Footer = 5rem
+//     -------------
+//       Total: 9rem
+//     -------------
+//     -------------
+//   */
+//   padding: 2rem 0;
+// }
+
 .wrapper {
-  margin: 0 auto 0 calc(15rem);
-  max-width: 90%;
+  display: flex;
+  max-width: 100%;
   min-height: calc(100vh - 9rem - var(--size-ds-unit) * 2);
-  /* 
-    Banner = 4rem
-    Footer = 5rem
-    -------------
-      Total: 9rem
-    -------------
-    -------------
-  */
-  padding: 2rem 0;
+  align-items: stretch;
+}
+
+.content {
+  width: 100%;
+  padding-top: 8rem;
+  padding-left: 20rem;
 }
 
 .wrapper > *:first-child {
