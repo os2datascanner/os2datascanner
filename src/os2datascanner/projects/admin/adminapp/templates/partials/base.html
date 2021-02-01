@@ -48,6 +48,9 @@
 </head>
 <body class="{{ body_class|default:'page' }}">
 
+  {% block additional_styles %}
+  {% endblock %}
+
   {% block body %}
   {% endblock %}
 

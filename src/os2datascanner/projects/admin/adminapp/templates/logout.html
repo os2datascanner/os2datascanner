@@ -1,18 +1,26 @@
 {% extends 'partials/base.html' %}
 {% load staticfiles %}
 
+{% block additional_styles %}
+<style>
+  html {
+    background: transparent linear-gradient(180deg, #5CA4CD 0%, #21759C 100%) 0% 0% no-repeat padding-box;
+  }
+</style>
+{% endblock %}
+
 {%  block title %}
 Logout
 {% endblock %}
 
 {% block body %}
 
-<div class="container">
+<section class="logout-content">
     <p>
       Tak, fordi du brugte OS2datascanner.
     </p>
     <a href="/accounts/login/">Log ind</a> igen
-</div>
+</section>
 
 {% endblock %}
 

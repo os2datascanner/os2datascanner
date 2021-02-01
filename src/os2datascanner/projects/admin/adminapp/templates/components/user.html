@@ -1,13 +1,15 @@
 {% load staticfiles %}
 
 {% if request.user.is_authenticated %}
-<div class="user">
-  <span class="user__name">{{ request.user }}</span>
-  <div class="tooltip">
-    <a href="/accounts/logout" class="user__avatar">
-      {% include "components/logo-o.html" %}
-    </a>
-    <span class="tooltiptext">Log ud</span>
+  <div class="user">
+    <span class="user__avatar">
+      <a href="/accounts/logout" class="user__avatar">
+        <i id="account_circle" class="material-icons">account_circle</i>
+      </a>
+    </span>
+    <span class="user__name">{{ request.user }}</span>
+    <span class="arrow">
+      <i id="account_circle" class="material-icons">arrow_drop_down</i>
+    </span>
   </div>
-</div>
 {% endif %}

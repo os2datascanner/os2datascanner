@@ -1,55 +1,62 @@
 {% extends 'partials/base.html' %}
 {% load staticfiles %}
 
+{% block additional_styles %}
+<style>
+  html {
+    background: transparent linear-gradient(180deg, #5CA4CD 0%, #21759C 100%) 0% 0% no-repeat padding-box;
+  }
+</style>
+{% endblock %}
+
 {%  block title %}Login{% endblock %}
 
 {% block body %}
 
-<div class="container">
-{% if form.non_field_errors %}
-<div class="alert alert--danger" role="alert">
-  <p>
-    {% for error in form.non_field_errors %}
-      {{ error }}
-    {% endfor %}
-  </p>
-Har du glemt dit password? <a href="{% url 'password_reset' %}">Klik her</a>.
-</div>
+  <section class="login-form">
+    <form class="form" method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}" />
+      <h2>Log ind</h2>
 
-{% endif %}
-{% if form.errors  %}
-{% if not '__all__' in form.errors %}
-  <div class="alert" role="alert">
-    <p>Følgende felter er ikke udfyldt korrekt:</p>
-    <ul>
-      {% for error in form.errors %}
-      <li>{{ error }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-{% endif %}
-{% endif %}
-<div class="login-form">
-  <h2>Log ind:</h2>
-    <form class="form" role="form-horizontal" method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ next }}" />
-        <div class="form__group{% if form.username.errors %} has-error{% endif %}">
-          <label for="id_{{ form.username.name }}">{{ form.username.label }}</label>
-          <input class="form-control" type="text" name="{{ form.username.name }}" id="id_{{ form.username.name }}" {% if form.username.value %}value="{{ form.username.value }}"{% endif %}>
-          <label style="padding: .2rem;">{% if form.username.errors %}{{ form.username.errors }}{% endif %}</label>
-        </div>
-        <div class="form__group{% if form.password.errors %} has-error{% endif %}">
-          <label for="id_{{ form.password.name }}">{{ form.password.label }}</label>
-          <input class="form-control" type="password" name="{{ form.password.name }}" id="id_{{ form.password.name }}" {% if form.password.value %}value="{{ form.password.value }}"{% endif %}>
-          <label style="padding: .2rem;">{% if form.password.errors %}{{ form.password.errors }}{% endif %}</label>
-        </div>
-        <div class="form__group">
-          <button class="button button--cta" type="submit">Log ind</button>
-        </div>
-    </form>
-</div>
-</div>
+          <fieldset>
+            <div class="form__group{% if form.username.errors %} has-error{% endif %}">
+              <label for="id_{{ form.username.name }}">{{ form.username.label }}</label>
+              <input type="text" name="{{ form.username.name }}" id="id_{{ form.username.name }}" autofocus {% if form.username.value %}value="{{ form.username.value }}"{% endif %}>
+              <label>{% if form.username.errors %}{{ form.username.errors }}{% endif %}</label>
+            </div>
+
+            <div class="form__group{% if form.password.errors %} has-error{% endif %}">
+              <label for="id_{{ form.password.name }}">{{ form.password.label }}</label>
+              <input type="password" name="{{ form.password.name }}" id="id_{{ form.password.name }}" {% if form.password.value %}value="{{ form.password.value }}"{% endif %}>
+              <label>{% if form.password.errors %}{{ form.password.errors }}{% endif %}</label>
+
+              {% for error in form.non_field_errors %}
+                <div class="form__error">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form__group flex">
+              <input type="checkbox" name="remember-me" id="remember-me">
+              <label class="width" for="remember-me">Husk mig</label>
+            </div>
+
+            <div class="form__group">
+              <button class="login-btn" type="submit">Log ind</button>
+            </div>
+
+            <div class="form__group">
+              <label class="info">Har du glemt din adgangskode?
+                <a class="link" href="{% url 'password_reset' %}">Klik her</a>
+              </label>
+            </div>
+
+            <div class="form__group logo">
+              {% include "components/logo-o.html" %}
+            </div>
+          </fieldset>
+      </form>
+  </section>
 {% endblock %}
 
 {% block heading %} 
