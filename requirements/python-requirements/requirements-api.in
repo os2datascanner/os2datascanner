@@ -3,3 +3,4 @@
 -c requirements-engine.txt
 
 gunicorn
+gunicorn[gevent]

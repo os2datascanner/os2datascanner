@@ -16,6 +16,7 @@ import multiprocessing
 
 
 bind = "0.0.0.0:5000"
+worker_class = "gevent"
 workers = multiprocessing.cpu_count() * 2 + 1
 # default directory for heartbeat file is in /tmp, which in some Linux distros is 
 # stored in memory via tmpfs filesystem. Docker containers, however, do not have 

@@ -59,7 +59,7 @@ RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
 
 WORKDIR /code/docker/
 COPY docker/api/docker-settings.toml ./docker-settings.toml
-COPY docker/gunicorn-settings.py ./gunicorn-settings.py
+COPY docker/api/gunicorn-settings.py ./gunicorn-settings.py
 
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/server ./server/
