@@ -129,7 +129,7 @@ class PikaPipelineRunner(PikaConnectionHolder):
                 routing_key=routing_key,
                 body=json.dumps(message).encode())
 
-    def run_consumer(self):
+    def run_consumer(self, *, exclusive=False):
         """Runs the Pika channel consumer loop in another loop. Transient
         faults in the Pika loop are silently handled without dropping any
         messages."""
@@ -163,8 +163,8 @@ class PikaPipelineRunner(PikaConnectionHolder):
             consumer_tags = []
             try:
                 for queue in self._read:
-                    consumer_tags.append(
-                            self.channel.basic_consume(queue, _queue_callback))
+                    consumer_tags.append(self.channel.basic_consume(
+                            queue, _queue_callback, exclusive=exclusive))
                 self.dispatch_pending(expected=0)
                 self.channel.start_consuming()
             except RECOVERABLE_PIKA_ERRORS:

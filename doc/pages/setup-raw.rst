@@ -1,28 +1,7 @@
-Getting started with OS2datascanner
-***********************************
+.. _`raw-install`:
 
-An overview of the system
-=========================
-
-An OS2datascanner installation consists of three components: the
-*administration interface* (a Django app), the *scanner engine* (a set of
-system services), and the *report interface* (another Django app).
-
-The administration interface is used to build up scanner jobs: sources of
-scannable things and rules to search for in them. The details of these jobs are
-stored in a PostgreSQL database. It's intended for use by an organisation's
-administrators or data protection officers.
-
-The scanner engine, also known as the *pipeline*, consists of five *stages*
-built around RabbitMQ message queues. Each of these stages is a program that
-reads a message, carries out a small, simple job, and then sends one or more
-messages to another stage. At a high level, the scanner engine receives scan
-requests from the administration interface and produces scan results.
-
-The report interface displays the results of the scanner engine. It shows
-matched objects and details of why they were matched, and allows users to flag
-certain results as irrelevant. It's intended for use by all of an
-organisation's employees.
+"Raw" install
++++++++++++++
 
 Installing the system
 =====================
@@ -56,7 +35,7 @@ You will be asked to enter a password for the default superadmin user named os2,
 for both interfaces.
 
 Preparing the Production environment
----------------------------------
+------------------------------------
 
 From the installation folder, run the
 ``contrib/system-scripts/production/production_deploy.sh`` script as root;
@@ -107,7 +86,7 @@ Starting development Django web servers
 Django's ``manage.py`` script has a ``runserver`` subcommand for running
 development web servers. Run ``bin/manage-admin runserver 0:8000`` to start the
 administration interface on port 8000, and ``bin/manage-report runserver
-0:8001`` to start the report interface on port 8001. 
+0:8001`` to start the report interface on port 8001.
 
 Starting the pipeline
 ---------------------
@@ -169,35 +148,3 @@ script:
 
 Run this command (which, again, will remain in the foreground) to make pipeline
 results available to the report interface.
-
-Using the system
-==================
-
-Creating a Django user
-----------------------
-
-The Django apps use Django's normal access control mechanisms. To create a user
-with full privileges, use the ``createsuperuser`` command for each app:
-
-  - ``bin/manage-admin createsuperuser``
-  - ``bin/manage-report createsuperuser``
-
-The ``createsuperuser`` command will prompt for a username, an email address,
-and a password for the new accounts.
-
-(Once a superuser account has been created, it can be used in the Django
-administration interface to create accounts with more granular permissions.)
-
-Logging in to the administration interface
-------------------------------------------
-
-The administration interface can be found at ``http://localhost:8000``.
-
-Creating an organisation
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-This interface has been designed to support several customers at once, so many
-types of object must have an *organisation* associated with them. There is no
-default organisation, so create one by logging in to the Django administration
-site at ``http://localhost:8000/admin/`` with the new superuser account and
-then selecting the *Add* option under *OS2datascanner → Organizations*.
