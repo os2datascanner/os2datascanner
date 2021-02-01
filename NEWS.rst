@@ -1,6 +1,30 @@
 OS2datascanner
 ==============
 
+Version 3.7.1, 1st February 2021
+--------------------------------
+
+"Matchmaker"
+
+General improvements:
+
+- Documentation has been restructured and improved.
+
+- Common requirements are now shared.
+
+Bugfixes:
+
+- Matches and metadata were not always paired correctly:
+
+  - Due to a race condition caused by running multiple `pipeline_collector`
+    processes, only one is now allowed to run at a time.
+
+  - Lonely matches and lonely metadata objects created in error by previous
+    releases will be paired up when deploying this release.
+
+- The service endpoint field is now optional when creating a Microsoft Exchange
+  scanner. (If it is not specified, autoconfiguration will be used.)
+
 Version 3.7.0, 21st January 2021
 --------------------------------
 
