@@ -14,6 +14,19 @@ from os2datascanner.engine2.pipeline.exporter import (
 from . import settings
 
 
+def api_endpoint(func):
+    def runner(body, start_response):
+        it = func(body)
+        status = next(it)
+        start_response(status, [
+                ("Content-Type", "text/plain; charset=ascii"),
+                ("Content-Disposition", "inline")])
+        for obj in it:
+            yield json.dumps(obj).encode("ascii") + b"\n"
+    return runner
+
+
+@api_endpoint
 def dummy_1(body):
     yield "200 OK"
     yield {
@@ -21,6 +34,7 @@ def dummy_1(body):
     }
 
 
+@api_endpoint
 def error_1(body):
     yield "400 Bad Request"
     yield {
@@ -29,6 +43,7 @@ def error_1(body):
     }
 
 
+@api_endpoint
 def scan_1(body):
     if not body:
         yield "400 Bad Request"
@@ -92,6 +107,7 @@ def scan_1(body):
                 yield from (m2 for _, m2 in exporter_mrr(m1, c1, sm))
 
 
+@api_endpoint
 def catastrophe_1(body):
     yield "400 Really Very Bad Request Indeed"
     yield {
@@ -100,7 +116,7 @@ def catastrophe_1(body):
     }
 
 
-api_endpoints = {
+endpoints = {
     "/dummy/1": dummy_1,
     "/scan/1": scan_1
 }
@@ -133,13 +149,8 @@ def application(env, start_response):
         parameters = env["wsgi.input"].read().decode("ascii")
         if parameters:
             body = json.loads(parameters)
-        it = api_endpoints.get(env.get("PATH_INFO"), error_1)(body)
+        runner = endpoints.get(env.get("PATH_INFO"), error_1)
     except json.JSONDecodeError:
-        it = catastrophe_1(None)
+        runner = catastrophe_1
 
-    status = next(it)
-    start_response(status, [
-            ("Content-Type", "application/jsonl"),
-            ("Content-Disposition", "inline")])
-    for obj in it:
-        yield json.dumps(obj).encode("ascii") + b"\n"
+    yield from runner(body, start_response)
