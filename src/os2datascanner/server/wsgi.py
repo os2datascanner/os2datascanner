@@ -1,6 +1,7 @@
 import json
 import time
 from uuid import uuid4
+from pathlib import Path
 
 from os2datascanner.engine2.model.core import Source, SourceManager
 from os2datascanner.engine2.rules.rule import Rule
@@ -23,6 +24,16 @@ def api_endpoint(func):
                 ("Content-Disposition", "inline")])
         for obj in it:
             yield json.dumps(obj).encode("ascii") + b"\n"
+    return runner
+
+
+def resource_endpoint(path):
+    def runner(body, start_response):
+        with Path(__file__).parent.joinpath(path).open("rb") as fp:
+            content = fp.read()
+        start_response("200 OK", [
+                ("Content-Length", str(len(content)))])
+        yield content
     return runner
 
 
@@ -117,6 +128,7 @@ def catastrophe_1(body):
 
 
 endpoints = {
+    "/openapi.yaml": resource_endpoint("openapi.yaml"),
     "/dummy/1": dummy_1,
     "/scan/1": scan_1
 }
