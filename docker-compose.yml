@@ -182,11 +182,11 @@ services:
   swagger_ui:
     image: swaggerapi/swagger-ui:v3.41.1
     environment:
-      - SWAGGER_JSON=/swagger.yml
+      - SWAGGER_JSON=/openapi.yaml
     ports:
       - "8075:8080"
     volumes:
-      - "./dev-environment/api/swagger.yml:/swagger.yml:ro"
+      - "./src/os2datascanner/server/openapi.yaml:/openapi.yaml:ro"
 
   prometheus:
     image: prom/prometheus
