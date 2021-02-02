@@ -7,9 +7,7 @@
 backcall==0.1.0
     # via ipython
 beautifulsoup4==4.9.0
-    # via
-    #   -c requirements-engine.txt
-    #   -r requirements-django.in
+    # via -r requirements-django.in
 cached-property==1.5.1
     # via
     #   -c requirements-engine.txt
@@ -156,6 +154,10 @@ olefile==0.46
     # via
     #   -c requirements-engine.txt
     #   -r requirements-django.in
+parameterized==0.8.1
+    # via
+    #   -c requirements-engine.txt
+    #   -r requirements-common.in
 parso==0.7.0
     # via jedi
 pexpect==4.8.0
@@ -274,9 +276,7 @@ six==1.14.0
     #   structlog
     #   traitlets
 soupsieve==2.0
-    # via
-    #   -c requirements-engine.txt
-    #   beautifulsoup4
+    # via beautifulsoup4
 sqlparse==0.3.1
     # via django
 structlog==20.1.0

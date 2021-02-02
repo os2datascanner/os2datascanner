@@ -3,6 +3,7 @@
 colorama
 google-api-python-client
 oauth2client
+parameterized
 pika
 structlog
 toml

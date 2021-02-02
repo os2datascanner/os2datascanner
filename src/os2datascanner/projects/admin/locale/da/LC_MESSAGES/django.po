@@ -1,13 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Danish translation of the Admin module of OS2datascanner.
+# Copyright (C) 2021 - Magenta ApS
+# This file is distributed under the same license as the Admin module of
+# OS2datascanner.
+# IBP <ibp@magenta.dk>, 2021.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-17 08:21-0500\n"
+"POT-Creation-Date: 2021-03-23 09:15-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,49 +17,49 @@ msgstr ""
 
 #: adminapp/admin.py:125
 msgid "Personal info"
-msgstr ""
+msgstr "Personlig information"
 
 #: adminapp/admin.py:127
 msgid "Important dates"
-msgstr ""
+msgstr "Vigtige datoer"
 
 #: adminapp/models/organization_model.py:60
 msgid "API key"
 msgstr "API-nøgle"
 
-#: adminapp/models/scannerjobs/scanner_model.py:379
+#: adminapp/models/scannerjobs/scanner_model.py:376
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:382
+#: adminapp/models/scannerjobs/scanner_model.py:379
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:385
+#: adminapp/models/scannerjobs/scanner_model.py:382
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:387
+#: adminapp/models/scannerjobs/scanner_model.py:384
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:390
+#: adminapp/models/scannerjobs/scanner_model.py:387
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:392
+#: adminapp/models/scannerjobs/scanner_model.py:389
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:395
+#: adminapp/models/scannerjobs/scanner_model.py:392
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:452
+#: adminapp/models/scannerjobs/scanner_model.py:445
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:453
+#: adminapp/models/scannerjobs/scanner_model.py:446
 msgid "scan statuses"
 msgstr "scanstatusser"
 
@@ -852,6 +853,129 @@ msgstr "Brugerdomæne"
 #: adminapp/views/filescanner_views.py:120
 msgid "Drive letter"
 msgstr "Drevbogstav"
+
+#: core/admin.py:29
+msgid "Users who are already Administrators are not shown."
+msgstr "Viser ikke brugere, der allerede er administratorer."
+
+#: core/admin.py:32
+msgid "-- No valid users available --"
+msgstr "-- Der findes ingen gyldige brugere --"
+
+#: core/apps.py:8
+msgctxt "Verbose name for core app"
+msgid "Management"
+msgstr "Administration"
+
+#: core/forms.py:30 core/models/client.py:131
+msgid "enabled features"
+msgstr "aktiverede features"
+
+#: core/forms.py:31
+msgid "Select a feature to enable it for this client."
+msgstr "Vælg en feature for at aktivere den for denne kunde."
+
+#: core/forms.py:38 core/models/client.py:137
+msgid "activated scan types"
+msgstr "tilgængelige scannertyper"
+
+#: core/forms.py:39
+msgid "Select a scan type to activate it for this client."
+msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
+
+#: core/models/administrator.py:31
+msgid "user"
+msgstr "bruger"
+
+#: core/models/administrator.py:37 core/models/client.py:157
+msgid "client"
+msgstr "kunde"
+
+#: core/models/administrator.py:42
+msgid "administrator"
+msgstr "administrator"
+
+#: core/models/administrator.py:43
+msgid "administrators"
+msgstr "administratorer"
+
+#: core/models/administrator.py:46
+#, python-brace-format
+msgid "Administrator: {user} (for {client})"
+msgstr "Administrator: {user} (for {client})"
+
+#: core/models/administrator.py:52
+#, python-brace-format
+msgid "<Administrator: {uid} (User) for {cid} (Client)>"
+msgstr "<Administrator: {uid} (User) for {cid} (Client)>"
+
+#: core/models/client.py:47
+#, python-brace-format
+msgid "{value} is not a valid {class_name}"
+msgstr "{value} er ikke en gyldig værdi for {class_name}"
+
+#: core/models/client.py:79
+msgid "web scan"
+msgstr "webscan"
+
+#: core/models/client.py:80
+msgid "file scan"
+msgstr "filscan"
+
+#: core/models/client.py:81
+msgid "Exchange scan"
+msgstr "Exchange-scan"
+
+#: core/models/client.py:82
+msgid "SBSYS scan"
+msgstr "SBSYS-scan"
+
+#: core/models/client.py:83
+msgid "Dropbox scan"
+msgstr "Dropbox-scan"
+
+#: core/models/client.py:84
+msgid "Microsoft Graph - mail scan"
+msgstr "Microsoft Graph - mailscan"
+
+#: core/models/client.py:85
+msgid "Microsoft Graph - file scan"
+msgstr "Microsoft Graph - filscan"
+
+#: core/models/client.py:86
+msgid "Google - drive scan"
+msgstr "Google - drevscan"
+
+#: core/models/client.py:87
+msgid "Google - mail scan"
+msgstr "Google - mailscan"
+
+#: core/models/client.py:94
+msgid "administration API"
+msgstr "administrations-API"
+
+#: core/models/client.py:112
+msgid "client ID"
+msgstr "kunde-ID"
+
+#: core/models/client.py:117
+msgid "name"
+msgstr "navn"
+
+#: core/models/client.py:121
+msgid "e-mail"
+msgstr "e-mail"
+
+#: core/models/client.py:125
+msgid "phone number"
+msgstr "telefonnummer"
+
+#: core/models/client.py:158
+msgid "clients"
+msgstr "kunder"
+
+#~ msgid "core"
+#~ msgstr "kerne"
 
 #~ msgid "Are you sure you want to delete this rule?"
 #~ msgstr "Ønsker du virkelig at slette denne regel?"

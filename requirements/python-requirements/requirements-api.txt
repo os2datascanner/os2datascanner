@@ -4,10 +4,6 @@
 #
 #    pip-compile requirements-api.in
 #
-beautifulsoup4==4.9.0
-    # via
-    #   -c requirements-engine.txt
-    #   -r requirements-engine.in
 cached-property==1.5.1
     # via
     #   -c requirements-engine.txt
@@ -119,6 +115,10 @@ olefile==0.46
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
+parameterized==0.8.1
+    # via
+    #   -c requirements-engine.txt
+    #   -r requirements-common.in
 pika==1.1.0
     # via
     #   -c requirements-engine.txt
@@ -218,10 +218,6 @@ six==1.14.0
     #   protobuf
     #   python-dateutil
     #   structlog
-soupsieve==2.0
-    # via
-    #   -c requirements-engine.txt
-    #   beautifulsoup4
 structlog==20.1.0
     # via
     #   -c requirements-engine.txt
