@@ -3,6 +3,6 @@
 # this list is non-empty, other types of Source will be rejected
 permitted_sources = []
 # The RFC 6750-style bearer token that must be included (in the "Authorization"
-# header) in all requests to the API host. If this value is empty, then no
-# token is required
+# header) in all requests to the API host. If this value is empty, the API host
+# will reject all incoming requests
 token = ""

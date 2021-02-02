@@ -136,25 +136,29 @@ endpoints = {
 
 def application(env, start_response):
     server_token = settings.server["token"]
-    if server_token:
-        if not "HTTP_AUTHORIZATION" in env:
-            start_response("401 Unauthorized", [
-                    ("WWW-Authentication", "Bearer realm=\"api\"")])
+    if not server_token:
+        start_response("500 Internal Server Error", [])
+        yield b"""\
+<html><body><h1>500 Internal Server Error</h1>\
+<p>No API token configured.</body></html>"""
+        return
+
+    if not "HTTP_AUTHORIZATION" in env:
+        start_response("401 Unauthorized", [
+                ("WWW-Authentication", "Bearer realm=\"api\"")])
+        return
+    else:
+        authentication = env["HTTP_AUTHORIZATION"].split()
+        if not authentication[0] == "Bearer" or len(authentication) != 2:
+            start_response("400 Bad Request", [
+                    ("WWW-Authentication",
+                            "Bearer realm=\"api\" error=\"invalid_request\"")])
             return
-        else:
-            authentication = env["HTTP_AUTHORIZATION"].split()
-            if not authentication[0] == "Bearer" or len(authentication) != 2:
-                start_response("400 Bad Request", [
-                        ("WWW-Authentication",
-                                "Bearer realm=\"api\""
-                                " error=\"invalid_request\"")])
-                return
-            elif authentication[1] != server_token:
-                start_response("401 Unauthorized", [
-                        ("WWW-Authentication",
-                                "Bearer realm=\"api\""
-                                " error=\"invalid_token\"")])
-                return
+        elif authentication[1] != server_token:
+            start_response("401 Unauthorized", [
+                    ("WWW-Authentication",
+                            "Bearer realm=\"api\" error=\"invalid_token\"")])
+            return
 
     try:
         body = None
