@@ -15,8 +15,41 @@ from os2datascanner.engine2.pipeline.exporter import (
 from . import settings
 
 
+def requires_token(func):
+    def runner(env, start_response, body):
+        server_token = settings.server["token"]
+        if not server_token:
+            start_response("500 Internal Server Error", [])
+            yield b"""\
+<html><body><h1>500 Internal Server Error</h1>\
+<p>No API token configured.</body></html>"""
+            return
+
+        if not "HTTP_AUTHORIZATION" in env:
+            start_response("401 Unauthorized", [
+                    ("WWW-Authentication", "Bearer realm=\"api\"")])
+            return
+        else:
+            authentication = env["HTTP_AUTHORIZATION"].split()
+            if not authentication[0] == "Bearer" or len(authentication) != 2:
+                start_response("400 Bad Request", [
+                        ("WWW-Authentication",
+                                "Bearer realm=\"api\""
+                                " error=\"invalid_request\"")])
+                return
+            elif authentication[1] != server_token:
+                start_response("401 Unauthorized", [
+                        ("WWW-Authentication",
+                                "Bearer realm=\"api\""
+                                " error=\"invalid_token\"")])
+                return
+        yield from func(env, start_response, body)
+    return runner
+
+
 def api_endpoint(func):
-    def runner(body, start_response):
+    @requires_token
+    def runner(env, start_response, body):
         it = func(body)
         status = next(it)
         start_response(status, [
@@ -28,7 +61,7 @@ def api_endpoint(func):
 
 
 def resource_endpoint(path):
-    def runner(body, start_response):
+    def runner(env, start_response, body):
         with Path(__file__).parent.joinpath(path).open("rb") as fp:
             content = fp.read()
         start_response("200 OK", [
@@ -135,31 +168,6 @@ endpoints = {
 
 
 def application(env, start_response):
-    server_token = settings.server["token"]
-    if not server_token:
-        start_response("500 Internal Server Error", [])
-        yield b"""\
-<html><body><h1>500 Internal Server Error</h1>\
-<p>No API token configured.</body></html>"""
-        return
-
-    if not "HTTP_AUTHORIZATION" in env:
-        start_response("401 Unauthorized", [
-                ("WWW-Authentication", "Bearer realm=\"api\"")])
-        return
-    else:
-        authentication = env["HTTP_AUTHORIZATION"].split()
-        if not authentication[0] == "Bearer" or len(authentication) != 2:
-            start_response("400 Bad Request", [
-                    ("WWW-Authentication",
-                            "Bearer realm=\"api\" error=\"invalid_request\"")])
-            return
-        elif authentication[1] != server_token:
-            start_response("401 Unauthorized", [
-                    ("WWW-Authentication",
-                            "Bearer realm=\"api\" error=\"invalid_token\"")])
-            return
-
     try:
         body = None
         parameters = env["wsgi.input"].read().decode("ascii")
@@ -169,4 +177,4 @@ def application(env, start_response):
     except json.JSONDecodeError:
         runner = catastrophe_1
 
-    yield from runner(body, start_response)
+    yield from runner(env, start_response, body)
