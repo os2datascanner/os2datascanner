@@ -152,13 +152,12 @@ class MainPageView(ListView, LoginRequiredMixin):
 
 class StatisticsPageView(ListView):
     template_name = 'statistics.html'
-    paginate_by = 10  # Determines how many objects pr. page.
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
     matches = DocumentReport.objects.filter(
-        data__matches__matched=True).filter(
-        resolution_status__isnull=True)
-    scannerjob_filters = None
+        data__matches__matched=True)
+    handled_matches = matches.filter(
+        resolution_status__isnull=False)
     roles = None
 
     def get_context_data(self, **kwargs):
@@ -206,7 +205,6 @@ class StatisticsPageView(ListView):
 
         context['handled_matches'] = [(hm[0].presentation,
                                       hm[1]) for hm in handled_matches_gen]
-
         context['data_sources'] = [(ds['data__matches__handle__type'],
                                     ds['total']) for ds in data_sources]
 
