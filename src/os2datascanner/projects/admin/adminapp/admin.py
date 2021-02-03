@@ -23,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from .models.authentication_model import Authentication
 from .models.group_model import Group
-from .models.organization_model import Organization
+from .models.organization_model import Organization, APIKey
 from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
@@ -73,7 +73,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 class ScannerAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'validation_status')
 
-for _cls in [Group, ScheduledCheckup]:
+for _cls in [Group, APIKey, ScheduledCheckup]:
     admin.site.register(_cls)
 
 
