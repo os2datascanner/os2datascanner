@@ -166,9 +166,11 @@ the location ``<path>`` points to).
 
 The above is necessary whenever a process needs write permissions, but should
 always be done for the following locations:
+
 * ``code/src/os2datascanner/projects/<module>/locale/``
 * ``code/src/os2datascanner/projects/<module>/<module>app/migrations/``
 
+``<module>`` being either ``admin`` or ``report``.
 
 **NB!** Git will only save executable permissions, which means that granting
 other users write permissions on your local setup, will not compromise
