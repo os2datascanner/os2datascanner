@@ -1,15 +1,17 @@
 import json
-from django.http import JsonResponse
+from django.core.exceptions import ValidationError
+from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
 from os2datascanner.engine2.rules.logical import OrRule
 from ..models.rules.rule_model import Rule
+from ..models.organization_model import APIKey
 from ..models.scannerjobs.scanner_model import Scanner
 
 
-def get_rule_1(body):
+def get_rule_1(key, body):
     """Returns the name and JSON representation of a rule."""
 
     pk = body.get("rule_id") if body else None
@@ -20,7 +22,8 @@ def get_rule_1(body):
         }
 
     try:
-        rule = Rule.objects.select_subclasses().get(pk=pk)
+        rule = Rule.objects.select_subclasses().get(
+                pk=pk, organization=key.organization)
     except Rule.DoesNotExist:
         return {
             "status": "fail",
@@ -30,11 +33,11 @@ def get_rule_1(body):
     return {
         "status": "ok",
         "name": rule.name,
-        "rule": rule.make_engine2_rule()
+        "rule": rule.make_engine2_rule().to_json_object()
     }
 
 
-def get_scanner_1(body):
+def get_scanner_1(key, body):
     """Returns a summary of a scanner job: its name, the (censored) Sources
     that it will scan, and the rule that will be executed."""
 
@@ -46,7 +49,8 @@ def get_scanner_1(body):
         }
 
     try:
-        scanner = Scanner.objects.select_subclasses().get(pk=pk)
+        scanner = Scanner.objects.select_subclasses().get(
+                pk=pk, organization=key.organization)
     except Scanner.DoesNotExist:
         return {
             "status": "fail",
@@ -64,14 +68,14 @@ def get_scanner_1(body):
     }
 
 
-def error_1(body):
+def error_1(key, body):
     return {
         "status": "fail",
         "message": "path was missing or did not identify an endpoint"
     }
 
 
-def catastrophe_1(body):
+def catastrophe_1(key, body):
     return {
         "status": "fail",
         "message": "payload was not a valid JSON object"
@@ -87,7 +91,19 @@ api_endpoints = {
 @method_decorator(csrf_exempt, name="dispatch")
 class JSONAPIView(View):
     def post(self, request, *, path):
-        return JsonResponse(self.get_data(request, path=path))
+        key, error = self.test_key(request, path)
+        if error:
+            return error
+
+        try:
+            body = None
+            if request.body:
+                body = json.loads(request.body.decode("utf-8"))
+            handler = api_endpoints.get(path, error_1)
+        except json.JSONDecodeError:
+            handler = catastrophe_1
+
+        return JsonResponse(handler(key, body))
 
     def http_method_not_allowed(self, request, *, path):
         r = JsonResponse({
@@ -97,13 +113,33 @@ class JSONAPIView(View):
         r.status_code = 405
         return r
 
-    def get_data(self, request, *, path):
-        try:
-            body = None
-            if request.body:
-                body = json.loads(request.body.decode("utf-8"))
-            handler = api_endpoints.get(path, error_1)
-        except json.JSONDecodeError:
-            handler = catastrophe_1
-
-        return handler(body)
+    def test_key(self, request, path):
+        auth = request.headers.get("authorization")
+        if not auth:
+            r = HttpResponse(status=401)
+            r["WWW-Authentication"] = "Bearer realm=\"admin-api\""
+            return (None, r)
+        else:
+            auth = auth.split()
+            if not auth[0] == "Bearer" or len(auth) != 2:
+                r = HttpResponse(status=400)
+                r["WWW-Authentication"] = (
+                        "Bearer realm=\"admin-api\" error=\"invalid_request\"")
+                return (None, r)
+            else:
+                try:
+                    key = APIKey.objects.get(uuid=auth[1])
+                except (APIKey.DoesNotExist, ValidationError):
+                    r = HttpResponse(status=401)
+                    r["WWW-Authentication"] = (
+                            "Bearer realm=\"admin-api\""
+                            " error=\"invalid_token\"")
+                    return (None, r)
+                if not path in key:
+                    r = HttpResponse(status=403)
+                    r["WWW-Authentication"] = (
+                            "Bearer realm=\"admin-api\""
+                            " error=\"insufficient_scope\"")
+                    return (None, r)
+                else:
+                    return (key, None)
