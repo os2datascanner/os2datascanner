@@ -1,5 +1,5 @@
 <div class="content">
-  <h1 class="page-title">Afdelingsstatistik</h1>
+  <h1 class="page-title">Lederstatistik</h1>
 
   <div class="statistic_wrapper">
     <div class="statistic statistic--one">
@@ -8,12 +8,60 @@
   
     <div class="statistic statistic--two">
       <h1 class="page-title__sub">Fordeling af matches</h1>
+
+      <p>Følsomhed</p>
+      <table class="datatable">
+        <tr>
+          {% for key, value in sensitivities %}
+            <th>{{ key }}</th>
+          {% endfor %}
+        </tr> 
+        <tr>
+          {% for key, value in sensitivities %}
+          <td>{{ value }}</td>
+          {% endfor %}
+        </tr>
+      </table>
+
+      <p>Kilde</p>
+      <table class="datatable">
+        <tr>
+          {% for key, value in data_sources %}
+            <th>{{ key }}</th>
+          {% endfor %}
+        </tr>
+        <tr>
+          {% for key, value in data_sources %}
+            <td>{{ value }}</td>
+          {% endfor %}
+        </tr>
+      </table>
     </div>
   </div>
 
   <div class="statistic_wrapper">
     <div class="statistic statistic--three">
       <h1 class="page-title__sub">Håndterede matches</h1>
+      <table class="datatable">
+        <tr>
+            <th>Total procent</th>
+        </tr>
+        <tr>
+            <td><div id="total_handled_percentage"></div></td>
+        </tr>
+      </table>
+
+
+      <p>Fordelt i følsomhed procent</p>
+      <table class="datatable">
+        <tr>
+          {% for key, value in sensitivities %}
+            <th>{{ key }}</th>
+          {% endfor %}
+        </tr>
+        <tr id="handled_sensitivity_percentage">
+        </tr>
+      </table>
     </div>
   
     <div class="statistic statistic--four">
@@ -21,3 +69,61 @@
     </div>
   </div>
 </div>
+{{ sensitivities|json_script:"sensitivities" }}
+{{ data_sources|json_script:"data_sources" }}
+{{ handled_matches|json_script:"handled_matches" }}
+<script>
+  // json_script solution - Safe from in-page script execution
+  const sensitivities = JSON.parse(document.getElementById('sensitivities').textContent);
+  const dataSources = JSON.parse(document.getElementById('data_sources').textContent);
+  const handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
+
+  // Finds the total number matches in the array
+  totalArrayValue = (array) => {
+    let number = 0;
+    for (let i = 0; i < array.length; i++) {
+      number += array[i][1];
+    }
+    return number;
+  };
+
+  // Calculates the percentage for 'Håndterede matches -> Alle matches' 
+  const totalMatches = totalArrayValue(sensitivities)
+  const totalHandledMatches = totalArrayValue(handledMatches)
+  const handledPercentage = totalHandledMatches / totalMatches  * 100;
+  // To fixed decimal point
+  handledPercentageFixed = handledPercentage.toFixed(1)
+
+  // Might not be needed for the graphs
+  // Calculates the four percentages in 'Håndterede matches -> Følsomhed'
+  percentageArrayCalc = (fullArray, handledArray, decimals) => {
+    let percentages = [];
+    let percentage = 0;
+    for (let i = 0; i < fullArray.length; i++) {
+      // Handles one array being shorter then the other
+      if (fullArray[i] != undefined && handledArray[i] != undefined) {
+        percentage = handledArray[i][1] / fullArray[i][1] * 100;
+        percentages[i] = percentage.toFixed(decimals);
+      } else {
+        percentages[i] = 0;
+      }
+    }
+    // Returns an array
+    return percentages;
+  };
+
+  // TODO: Remove when done "prototyping"
+  // Inserts 'Håndteret matches'-data
+  htmlTableHandledMatches = () => {
+    let tableRow = ""
+    const sensitivitiesPercentage = percentageArrayCalc(sensitivities, handledMatches, 1);
+    document.getElementById('total_handled_percentage').innerHTML = handledPercentageFixed + '%';
+    for (let i = 0; i < sensitivitiesPercentage.length; i++) {
+      tableRow += `<td>${sensitivitiesPercentage[i]}%</td>`;
+    }
+    document.getElementById('handled_sensitivity_percentage').innerHTML = tableRow;
+  };
+
+  htmlTableHandledMatches();
+
+</script>

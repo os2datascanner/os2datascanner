@@ -145,8 +145,70 @@ class MainPageView(ListView, LoginRequiredMixin):
         return context
 
 
-class StatisticsPageView(TemplateView):
+class StatisticsPageView(ListView):
     template_name = 'statistics.html'
+    model = UserProfile
+    context_object_name = 'user_role' # Default: object_list
+    matches = DocumentReport.objects.filter(
+        data__matches__matched=True)
+    handled_matches = matches.filter(
+        resolution_status__isnull=False)
+
+    # Not used at the moment
+    def get_queryset(self):
+        user = self.request.user
+        roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
+
+        return roles
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Counts the distribution of matches by sensitivity
+        sensitivities = self.matches.order_by(
+            '-sensitivity').values(
+            'sensitivity').annotate(
+            total=Count('sensitivity')
+        ).values(
+            'sensitivity', 'total'
+        )
+
+        # Counts the distribution of handled matches by sensitivity
+        handled_matches = self.handled_matches.order_by(
+            '-sensitivity').values(
+            'sensitivity').annotate(
+            total=Count('sensitivity')
+        ).values(
+            'sensitivity', 'total',
+        )
+
+        # Counts the distribution of data sources by type
+        data_sources = self.matches.order_by(
+            'data__matches__handle__type').values(
+            'data__matches__handle__type').annotate(
+            total=Count('data__matches__handle__type')
+        ).values(
+            'data__matches__handle__type', 'total',
+        )
+
+        # Generators had to be done separate from context because of the json_script parser
+        sensitivities_gen = (((Sensitivity(s["sensitivity"]),
+                                            s["total"]) for s in sensitivities))
+
+        handled_matches_gen = (((Sensitivity(hm["sensitivity"]),
+                                            hm["total"]) for hm in handled_matches))
+
+        # Context done as list of tuples
+        context['sensitivities'] = [(s[0].presentation,
+                                    s[1]) for s in sensitivities_gen]
+
+        context['handled_matches'] = [(hm[0].presentation,
+                                      hm[1]) for hm in handled_matches_gen]
+
+        context['data_sources'] = [(ds['data__matches__handle__type'],
+                                    ds['total']) for ds in data_sources]
+
+        return context
 
 
 class ApprovalPageView(TemplateView):
