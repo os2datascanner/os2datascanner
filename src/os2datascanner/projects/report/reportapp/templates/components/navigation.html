@@ -24,15 +24,13 @@
 
   <ul class="logout">
       <li>
-          <form method="post"  action="{% url 'oidc_logout' %}">{% csrf_token %}
-               <button type="submit" class="buttoninvisible" >
-
-              <a>
+        <form id="logout" method="POST" action="{% url 'oidc_logout' %}">
+            {% csrf_token %}
+            <a href="javascript:void()" onclick="document.getElementById('logout').submit();">
                 {% include "components/svg-icons/logout.svg" %}
                 <span class="navigation width">Log ud</span>
-              </a>
-            </button>
-          </form>
-      </li>
+            </a>
+        </form>
+        </li>
   </ul>
 </nav>
