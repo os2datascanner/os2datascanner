@@ -148,20 +148,31 @@ have the right permissions. It is recommended to only use
 `bind <https://docs.docker.com/storage/bind-mounts/>`_ if you overwrite the
 user and set the same user as owner of the directory you bind.
 
-If some process inside the container needs to write files to locations other
-than ``/static`` or ``/log``, you need to mount a volume with the right
-permissions. An example is ``./manage.py makemigrations`` trying to write to
-``code/src/os2datascanner/projects/<module>/<module>app/migrations/`` for the
-``admin`` or ``report`` module.
-If you bind ``/code`` to your host system, make sure that the user with relevant
-UID have write permissions to the ``/migrations/`` folder.
-This can be done with ``chmod o+w migrations`` on your host where you grant all
-users permission to write.
 
-It is the same problem for ``./manage.py makemessages``. The solution is the same
-as mentioned above. Grant all users permission to write to
-``code/src/os2datascanner/projects/<module>/<module>app/locale/da/LC_MESSAGES/django.po``
-with ``chmod o+w django.po``.
+Missing permissions in development environment
+**********************************************
+
+During development, we mount our local editable files into the docker containers
+which means they are owned by the local user, and **not** the user running
+inside the container. Thus any processes running inside the container,
+like management commands, will not be allowed to create or update files in the
+mounted locations.
+
+In order to fix this, we need to allow "others" to write to the relevant
+locations. This can be done with ``chmod -R o+w <path>``
+(``o`` is for "other users", ``+w`` is to add write-permissions and ``-R`` is
+used to add the permissions recursively down through the file structure from
+the location ``<path>`` points to).
+
+The above is necessary whenever a process needs write permissions, but should
+always be done for the following locations:
+* ``code/src/os2datascanner/projects/<module>/locale/``
+* ``code/src/os2datascanner/projects/<module>/<module>app/migrations/``
+
+
+**NB!** Git will only save executable permissions, which means that granting
+other users write permissions on your local setup, will not compromise
+production security.
 
 Administration module: .secret file
 ***********************************
