@@ -9,18 +9,34 @@
         <span class="width">{% trans "Front page" %}</span>
       </a>
     </li>
-    <!-- <li>
-      <a href="/statistics" class="{% if active_tab == 'statistics' %}active{% endif %}">
-        {% include "components/svg-icons/bar_chart.svg" %}
-        <span class="width">Afdelingsstatistik</span>
-      </a>
-    </li>
-    <li>
-      <a href="/statistics">
-        {% include "components/svg-icons/bar_chart.svg" %}
-        <span class="width">DPO overblik</span>
-      </a>
-    </li> -->
+
+    <!-- Made 3 different if-statements, so you're able to see all 3 buttons, if you have all 3 roles (probably rewrite) -->
+    {% for r in role %}
+      {% if r == 'dpo' %}
+      <li>
+        <a href="/statistics">
+          {% include "components/svg-icons/bar_chart.svg" %}
+          <span class="width">DPO overblik</span>
+        </a>
+      </li>
+      {% endif %}
+      {% if r == 'leader' %}
+      <li>
+        <a href="/statistics">
+          {% include "components/svg-icons/bar_chart.svg" %}
+          <span class="width">Leder overblik</span>
+        </a>
+      </li>
+      {% endif %}
+      {% if r == 'remediator' %}
+      <li>
+        <a href="/statistics" class="{% if active_tab == 'statistics' %}active{% endif %}">
+          {% include "components/svg-icons/bar_chart.svg" %}
+          <span class="width">Afdelingsstatistik</span>
+        </a>
+      </li>
+      {% endif %}
+    {% endfor %}
   </ul>
 
 {% settings_value "KEYCLOAK_ENABLED" as keycloak_enabled %}

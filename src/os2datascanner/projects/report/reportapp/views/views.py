@@ -30,6 +30,9 @@ from ..models.documentreport_model import DocumentReport
 from ..models.roles.defaultrole_model import DefaultRole
 from ..models.userprofile_model import UserProfile
 from ..models.organization_model import Organization
+from ..models.roles.remediator_model import Remediator
+from ..models.roles.dpo_model import DataProtectionOfficer
+from ..models.roles.leader_model import Leader
 
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
@@ -66,6 +69,7 @@ class MainPageView(ListView, LoginRequiredMixin):
         data__matches__matched=True).filter(
         resolution_status__isnull=True)
     scannerjob_filters = None
+    roles = None
 
     def get_queryset(self):
         user = self.request.user
@@ -112,6 +116,7 @@ class MainPageView(ListView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["renderable_rules"] = RENDERABLE_RULES
+        context["role"] = self.roles
 
         if self.scannerjob_filters is None:
             # Create select options
@@ -147,22 +152,19 @@ class MainPageView(ListView, LoginRequiredMixin):
 
 class StatisticsPageView(ListView):
     template_name = 'statistics.html'
-    model = UserProfile
-    context_object_name = 'user_role' # Default: object_list
+    paginate_by = 10  # Determines how many objects pr. page.
+    context_object_name = "matches"  # object_list renamed to something more relevant
+    model = DocumentReport
     matches = DocumentReport.objects.filter(
-        data__matches__matched=True)
-    handled_matches = matches.filter(
-        resolution_status__isnull=False)
-
-    # Not used at the moment
-    def get_queryset(self):
-        user = self.request.user
-        roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
-
-        return roles
+        data__matches__matched=True).filter(
+        resolution_status__isnull=True)
+    scannerjob_filters = None
+    roles = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["renderable_rules"] = RENDERABLE_RULES
+        context["role"] = self.roles
 
         # Counts the distribution of matches by sensitivity
         sensitivities = self.matches.order_by(
