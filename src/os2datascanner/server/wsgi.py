@@ -160,10 +160,24 @@ def catastrophe_1(body):
     }
 
 
+def unsupported_1(env, start_response, body):
+    start_response("405 Method Not Supported", [])
+    yield json.dumps({
+        "status": "fail",
+        "message": "method not supported"
+    }).encode("ascii")
+
+
 endpoints = {
-    "/openapi.yaml": resource_endpoint("openapi.yaml"),
-    "/dummy/1": dummy_1,
-    "/scan/1": scan_1
+    "/openapi.yaml": {
+        "GET": resource_endpoint("openapi.yaml")
+    },
+    "/dummy/1": {
+        "POST": dummy_1
+    },
+    "/scan/1": {
+        "POST": scan_1
+    }
 }
 
 
@@ -173,7 +187,11 @@ def application(env, start_response):
         parameters = env["wsgi.input"].read().decode("ascii")
         if parameters:
             body = json.loads(parameters)
-        runner = endpoints.get(env.get("PATH_INFO"), error_1)
+        endpoint = endpoints.get(env.get("PATH_INFO"))
+        if endpoint:
+            runner = endpoint.get(env.get("REQUEST_METHOD"), unsupported_1)
+        else:
+            runner = error_1
     except json.JSONDecodeError:
         runner = catastrophe_1
 
