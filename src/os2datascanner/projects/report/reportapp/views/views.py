@@ -111,7 +111,8 @@ class MainPageView(ListView, LoginRequiredMixin):
             )
 
         # matches are always ordered by sensitivity desc. and probability desc.
-        return self.matches
+        return self.matches, self.roles
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
