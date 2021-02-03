@@ -168,15 +168,28 @@ def unsupported_1(env, start_response, body):
     }).encode("ascii")
 
 
+def option_endpoint(path):
+    def runner(env, start_response, body):
+        methods = endpoints.get(path).keys()
+        start_response("204 No Content", [
+                ("Access-Control-Allow-Methods", ", ".join(methods)),
+                ("Access-Control-Allow-Headers", "authorization, content-type")
+        ])
+        yield from []
+    return runner
+
+
 endpoints = {
     "/openapi.yaml": {
         "GET": resource_endpoint("openapi.yaml")
     },
     "/dummy/1": {
-        "POST": dummy_1
+        "POST": dummy_1,
+        "OPTIONS": option_endpoint("/dummy/1")
     },
     "/scan/1": {
-        "POST": scan_1
+        "POST": scan_1,
+        "OPTIONS": option_endpoint("/scan/1")
     }
 }
 
@@ -195,4 +208,7 @@ def application(env, start_response):
     except json.JSONDecodeError:
         runner = catastrophe_1
 
-    yield from runner(env, start_response, body)
+    def _response_wrapper(status, headers):
+        return start_response(status, headers + [
+                        ("Access-Control-Allow-Origin", "*")])
+    yield from runner(env, _response_wrapper, body)
