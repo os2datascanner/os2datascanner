@@ -157,6 +157,7 @@ class PikaPipelineRunner(PikaConnectionHolder):
         self.channel.basic_publish(
                 exchange='',
                 routing_key=routing_key,
+                properties=pika.BasicProperties(delivery_mode=2),
                 body=json.dumps(message).encode())
 
     def _basic_consume(self, *, exclusive=False):
