@@ -27,13 +27,13 @@ To get a development environment to run, follow these steps:
 
     .. code-block:: bash
 
-        docker-compose exec admin-application python manage.py createsuperuser
+        docker-compose exec admin_application python manage.py createsuperuser
 
     and
 
     .. code-block:: bash
 
-        docker-compose exec report-application python manage.py createsuperuser
+        docker-compose exec report_application python manage.py createsuperuser
 
     You can pass username and email as arguments to the command by adding
     ``--username <your username>`` and/or  ``--email <your email>`` at the
@@ -194,12 +194,12 @@ Services
 
 The main services for OS2datascanner are:
 
-- ``admin-frontend``:
+- ``admin_frontend``:
     Only needed in development.
 
     Watches the frontend files and provides support for rebuilding the frontend
     easily during the development process.
-- ``admin-application``:
+- ``admin_application``:
     Reachable on: http://localhost:8020
 
     Runs the django application that provides the administration interface for
@@ -214,17 +214,17 @@ The main services for OS2datascanner are:
     Runs the **tagger** stage of the engine.
 - ``engine_exporter``:
     Runs the **exporter** stage of the engine.
-- ``report-frontend``:
+- ``report_frontend``:
     Only needed in development.
 
     Watches the frontend files and provides support for rebuilding the frontend
     easily during the development process.
-- ``report-application``:
+- ``report_application``:
     Reachable on: http://localhost:8040
 
     Runs the django application that provides the interface for accessing and
     handling reported matches.
-- ``report-collector``:
+- ``report_collector``:
     Runs the **collector** service that saves match results to the database of
     the report module.
 
@@ -274,10 +274,10 @@ to write a small script to aid with this, e.g.:
     cd <path to repository root>
     # create admin user:
     echo "Creating superuser for admin module..."
-    docker-compose <command> admin-application python manage.py createsuperuser --username <your username> --email <your email>
+    docker-compose <command> admin_application python manage.py createsuperuser --username <your username> --email <your email>
     # create report user:
     echo "Creating superuser for report module..."
-    docker-compose <command> report-application python manage.py createsuperuser --username <your username> --email <your email>
+    docker-compose <command> report_application python manage.py createsuperuser --username <your username> --email <your email>
 
 **NB!** Make sure your script is **not** added to the repo: add the file (or a
 separate folder it lives in) to the global list for git to ignore (usually
@@ -300,9 +300,9 @@ To run the test-suites using docker-compose:
 
 .. code-block:: bash
 
-    docker-compose run admin-application python -m django test os2datascanner.projects.admin.tests
+    docker-compose run admin_application python -m django test os2datascanner.projects.admin.tests
     docker-compose run engine_explorer python -m unittest discover -s /code/src/os2datascanner/engine2/tests
-    docker-compose run report-application python -m django test os2datascanner.projects.report.tests
+    docker-compose run report_application python -m django test os2datascanner.projects.report.tests
 
 Please note that the engine tests can be run using any of the five pipeline
 services as the basis, but a specific one is provided above for easy reference.
