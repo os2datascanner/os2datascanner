@@ -11,6 +11,10 @@
 
 .user__name {
   color: inherit;
+
+  &--bold {
+    font-weight: bold;
+  }
 }
 
 .user__avatar {
@@ -76,8 +80,8 @@
     right: 20%;
     background-color: var(--color-widget-bg);
     min-width: 15rem;
-    box-shadow: var(--box-shadow-filter);
-    border-radius: var(--border-radius-filter);
+    box-shadow: var(--box-shadow-default);
+    border-radius: var(--border-radius-default);
     z-index: 10;
   }
 

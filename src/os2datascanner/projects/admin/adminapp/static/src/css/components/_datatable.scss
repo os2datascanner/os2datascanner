@@ -5,7 +5,8 @@
 .datatable {
   background-color: #fff;
   border-collapse: collapse;
-  box-shadow: var(--box-shadow-large);
+  box-shadow: var(--box-shadow-widget);
+  border-radius: var(--border-radius-widget);
   max-width: 80rem;
   table-layout: fixed;
   width: calc(100% - 2rem);
@@ -50,6 +51,7 @@
   .hit-link {
     opacity: 1;
   }
+
 }
 
 .flex {
@@ -68,21 +70,6 @@
     height: 100%;
     width: auto;
   }
-}
-
-.add-new {
-    max-width: 80rem; 
-    width: calc(100% - 2rem);   
-}
-
-.add-new-btn {
-    margin: 28px 0; 
-    float: right;
-}
-
-.add-new-text {
-    display: inline-block; 
-    padding: 0 4px;
 }
 
 @supports(display: grid) {

@@ -7,7 +7,7 @@
   display: inline-block;
   font-size: 1rem;
   line-height: 1;
-  padding: 0.5em;
+  padding: 1rem;
   text-decoration: none;
   transition: var(--transition-default);
 
@@ -17,36 +17,28 @@
     text-decoration: none;
   }
 
-  &--round {
-    border-radius: 50%;
-  }
-
-  &--rounded {
-    border-radius: 3px;
-  }
-
   &--cta {
-    background-color: var(--color-main);
-    color: #fff;
-    font-weight: bold;
-    padding: 1em;
+    background-color: var(--color-icon-primary);
+    color: var(--color-text-white);
+    border-radius: var(--border-radius-default);
+    padding: 0.75rem;
 
     &:focus,
     &:hover {
-      background-color: var(--color-main-dark);
-      color: #fff;
+      background-color: var(--color-primary-dark);
+      color: var(--color-text-white);
     }
   }
 
   &--danger {
     background-color: var(--color-error);
-    color: #fff;
+    color: var(--color-text-white);
     font-weight: bold;
 
     &:focus,
     &:hover {
       background-color: var(--color-error-dark);
-      color: #fff;
+      color: var(--color-text-white);
     }
   }
 
@@ -62,7 +54,7 @@
   }
 
   &--small {
-    padding: 0.5em;
+    padding: 0.5rem;
   }
 
   &--modal-close {
@@ -78,5 +70,23 @@
 
 .button svg + span, 
 .button span + svg {
-    margin-left: 0.5em;
+    margin-left: 0.5rem;
 }
+
+// add scannerjob, start
+// .add-new {
+//   max-width: 80rem; 
+//   width: calc(100% - 2rem);   
+// }
+
+// .add-new-btn {
+//   float: right;
+//   margin: 28px 0;
+//   background-color: var(--color-icon-primary);
+// }
+
+// .add-new-text {
+//   display: inline-block; 
+//   padding: 0 4px;
+// }
+// add scannerjob, end
