@@ -176,19 +176,6 @@ always be done for the following locations:
 other users write permissions on your local setup, will not compromise
 production security.
 
-Administration module: .secret file
-***********************************
-
-As a result of the user permissions in place, the user for the Administration
-module does not have the privilege to write a ``.secret`` file if one does not
-exist. Rather than giving the user elevated permissions in production, one
-should generate such a file by running the proper command **once** as root, and
-then change the owner of the generated file to match the user running the
-administration module.
-
-In this way, the decryption functionality remains in place, while we still keep
-the user privileges to a minimum.
-
 ..
     Test
     ^^^^
