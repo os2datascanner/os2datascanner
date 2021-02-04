@@ -88,7 +88,7 @@ class RestrictedListView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         """Restrict to the organization of the logged-in user."""
         user = self.request.user
-        if user.is_superuser:
+        if user.is_superuser or user.is_staff:
             return self.model.objects.all()
         else:
             try:
@@ -180,8 +180,7 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
         """Get the list of fields to use in the form for the view."""
         fields = [f for f in self.fields]
         user = self.request.user
-
-        if user.is_superuser:
+        if user.is_superuser or user.is_staff:
             fields.append('organization')
         elif user.profile.organization.do_use_groups:
             if (
@@ -197,7 +196,6 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
         fields = self.get_form_fields()
         form_class = modelform_factory(self.model, fields=fields)
         kwargs = self.get_form_kwargs()
-
         form = form_class(**kwargs)
         user = self.request.user
 
@@ -215,7 +213,7 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
 
     def form_valid(self, form):
         """Validate the form."""
-        if not self.request.user.is_superuser:
+        if not self.request.user.is_superuser or not self.request.user.is_staff:
             try:
                 user_profile = self.request.user.profile
             except UserProfile.DoesNotExist:
@@ -243,12 +241,13 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
         user = self.request.user
         organization = self.object.organization
         do_add_group = False
-        if user.is_superuser:
+        if user.is_superuser or user.is_staff:
             fields.append('organization')
         if organization.do_use_groups:
             if (
                     user.is_superuser or
                     user.profile.is_group_admin or
+                    user.is_staff or
                     len(user.profile.groups.all()) > 1
             ):
                 do_add_group = True
@@ -266,7 +265,7 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
         user = self.request.user
 
         if 'group' in fields:
-            if user.is_superuser or user.profile.is_group_admin:
+            if user.is_superuser or user.profile.is_group_admin or user.is_staff:
                 form.fields['group'].queryset = (
                     self.object.organization.groups.all()
                 )
@@ -279,7 +278,7 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
     def get_queryset(self):
         """Get queryset filtered by user's organization."""
         queryset = super().get_queryset()
-        if not self.request.user.is_superuser:
+        if not self.request.user.is_superuser or not self.request.user.is_staff:
             organization = None
 
             try:
