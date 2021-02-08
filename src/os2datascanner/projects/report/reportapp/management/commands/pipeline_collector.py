@@ -228,41 +228,20 @@ def handle_event(event_type, instance, cls):
 
 
 class ReportCollector(PikaPipelineRunner):
-    def __init__(self, *, results, events, **kwargs):
-        super().__init__(**kwargs)
-        self._results = results
-        self._events = events
-
     def handle_message(self, message_body, *, channel=None):
-        if channel == self._results:
+        if channel == "os2ds_results":
             return result_message_received_raw(message_body)
-        elif channel == self._events:
+        elif channel == "os2ds_events":
             return event_message_received_raw(message_body)
-
 
 
 class Command(BaseCommand):
     """Command for starting a pipeline collector process."""
     help = __doc__
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "--results",
-            type=str,
-            help="the name of the AMQP queue from which filtered result objects"
-                 + " should be read",
-            default="os2ds_results")
-        parser.add_argument(
-            "--events",
-            type=str,
-            help="the name of the AMQP queue from which event objects"
-                 + " should be read",
-            default="os2ds_events")
-
-    def handle(self, results, events, *args, **options):
+    def handle(self, *args, **options):
         with ReportCollector(
-                results=results, events=events,
-                read=[results, events], heartbeat=6000) as runner:
+                read=["os2ds_results", "os2ds_events"], heartbeat=6000) as runner:
             try:
                 print("Start")
                 runner.run_consumer(exclusive=True)

@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright (C) 2020 Magenta ApS, http://magenta.dk.
 # Contact: info@magenta.dk.
 #
@@ -11,19 +10,17 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-set -e
 
-if [ $# -eq 0 ]; then
-  echo "No service argument provided!"
-  echo "Cannot start unknown service; exiting."
-  exit 1
-fi
+# Settings for gunicorn in docker.
+import multiprocessing
 
-AVAILABLE_STAGES=$(echo $AVAILABLE_STAGES | tr "," "\n")
 
-# Check if first argument is a stage
-if [[ " ${AVAILABLE_STAGES[@]} " =~ "$1" ]]; then
-  exec python -m "os2datascanner.engine2.pipeline.run_stage" "$@"
-else
-  exec "$@"
-fi
+bind = "0.0.0.0:5000"
+worker_class = "gevent"
+workers = multiprocessing.cpu_count() * 2 + 1
+# default directory for heartbeat file is in /tmp, which in some Linux distros is 
+# stored in memory via tmpfs filesystem. Docker containers, however, do not have 
+# /tmp on tmpfs by default - so we use /dev/shm
+# https://pythonspeed.com/articles/gunicorn-in-docker/
+worker_tmp_dir = "/dev/shm" 
+accesslog =  "-"

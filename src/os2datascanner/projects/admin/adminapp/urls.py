@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.http import HttpResponse
 from django.views.i18n import JavaScriptCatalog
+from django.views.generic.base import TemplateView
 
 from .models.scannerjobs.dropboxscanner_model import DropboxScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
@@ -45,6 +46,7 @@ from .views.sbsysscanner_views import SbsysScannerCreate, SbsysScannerList, Sbsy
 from .views.rule_views import RuleList, \
     CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
     RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
+from .views.api import JSONAPIView
 from .views.views import GroupList, GroupCreate, GroupUpdate, GroupDelete
 from .views.views import MainPageView
 from .views.views import OrganizationList
@@ -64,6 +66,10 @@ from .views.msgraph_views import (
 urlpatterns = [
     # App URLs
     url(r'^$', WebScannerList.as_view(), name='index'),
+    url(r'^api/openapi.yaml$', TemplateView.as_view(
+            template_name="openapi.yaml", content_type="application/yaml"),
+            name="json-api"),
+    url(r'^api/(?P<path>.*)$', JSONAPIView.as_view(), name="json-api"),
 
     # App URLs
     url(r'^status/$', StatusOverview.as_view(), name='status'),
