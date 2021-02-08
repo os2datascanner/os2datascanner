@@ -1,6 +1,31 @@
 OS2datascanner
 ==============
 
+Version 3.8.0, 8th February 2021
+--------------------------------
+
+"Just Ask Nicely"
+
+New in this version:
+
+- Support for calling OS2datascanner services from external systems:
+
+  - Added an API server that performs scans on demand.
+
+  - Added an API to the administration system that gives access to the defined
+    rules and scanners.
+
+  - The Docker development environment now includes Swagger UI, which can be
+    used to explore and experiment with the new APIs.
+
+General improvements:
+
+- Initial support for translating the report module into other languages.
+
+Bugfixes:
+
+- Improved the algorithm used to pair unpaired matches and metadata.
+
 Version 3.7.1, 1st February 2021
 --------------------------------
 
@@ -157,8 +182,8 @@ Bugfixes:
 - The report module no longer misrenders the name of the "Notification" 
   sensitivity level.
 
-- Opening mails directly in the Microsoft Output desktop application should now
-  be more reliable.
+- Opening mails directly in the Microsoft Outlook desktop application should
+  now be more reliable.
 
 - Forms in the administration system no longer display untranslated summaries
   of errors.
