@@ -32,7 +32,7 @@ def pairing_matches_and_metadata(apps, schema_editor):
         for match in batch:
             try:
                 # find their missing partner and chain them together
-                m_data = metadata.get(path=match.path)
+                m_data = metadata.filter(scan_time=match.scan_time).get(path=match.path)
                 match.data['metadata'] = m_data.data["metadata"]
             except ObjectDoesNotExist:
                 print('No metadata for match with pk {0} exists'.format(
