@@ -116,7 +116,7 @@ class MainPageView(ListView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["renderable_rules"] = RENDERABLE_RULES
-        context["role"] = self.roles
+        context["roles"] = [role.__class__.__name__ for role in self.roles]
 
         if self.scannerjob_filters is None:
             # Create select options
@@ -150,7 +150,7 @@ class MainPageView(ListView, LoginRequiredMixin):
         return context
 
 
-class StatisticsPageView(ListView):
+class StatisticsPageView(TemplateView, LoginRequiredMixin):
     template_name = 'statistics.html'
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
@@ -158,12 +158,13 @@ class StatisticsPageView(ListView):
         data__matches__matched=True)
     handled_matches = matches.filter(
         resolution_status__isnull=False)
-    roles = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
+        roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
+        context["roles"] = [role.__class__.__name__ for role in roles]
         context["renderable_rules"] = RENDERABLE_RULES
-        context["role"] = self.roles
 
         # Counts the distribution of matches by sensitivity
         sensitivities = self.matches.order_by(

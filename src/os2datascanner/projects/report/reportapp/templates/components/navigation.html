@@ -10,29 +10,18 @@
       </a>
     </li>
 
-    <!-- Made 3 different if-statements, so you're able to see all 3 buttons, if you have all 3 roles (probably rewrite) -->
-    {% for r in role %}
-      {% if r == 'dpo' %}
+    {% for r in roles %}
+      {% if r == "DataProtectionOfficer" or r == 'Leader' %}
       <li>
         <a href="/statistics">
           {% include "components/svg-icons/bar_chart.svg" %}
-          <span class="width">DPO overblik</span>
-        </a>
-      </li>
-      {% endif %}
-      {% if r == 'leader' %}
-      <li>
-        <a href="/statistics">
-          {% include "components/svg-icons/bar_chart.svg" %}
-          <span class="width">Leder overblik</span>
-        </a>
-      </li>
-      {% endif %}
-      {% if r == 'remediator' %}
-      <li>
-        <a href="/statistics" class="{% if active_tab == 'statistics' %}active{% endif %}">
-          {% include "components/svg-icons/bar_chart.svg" %}
-          <span class="width">Afdelingsstatistik</span>
+          <span class="width">
+            {% if r == "DataProtectionOfficer" %}
+              DPO overblik
+            {% else %}
+              Leder overblik
+            {% endif %}
+          </span>
         </a>
       </li>
       {% endif %}
