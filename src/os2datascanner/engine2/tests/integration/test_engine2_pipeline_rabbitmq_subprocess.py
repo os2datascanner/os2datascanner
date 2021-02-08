@@ -6,7 +6,7 @@ import subprocess
 
 
 from os2datascanner.engine2.model.core import Source
-from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
+from os2datascanner.engine2.pipeline.utilities import pika
 
 
 from .test_engine2_pipeline import (
@@ -23,7 +23,7 @@ class StopHandling(Exception):
     pass
 
 
-class SubprocessPipelineTestRunner(PikaPipelineRunner):
+class SubprocessPipelineTestRunner(pika.PikaPipelineRunner):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.messages = {}
@@ -43,10 +43,12 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
                 write=["os2ds_scan_specs"],
                 heartbeat=6000)
 
-        python("-m", "os2datascanner.engine2.pipeline._consume_queue",
-                "os2ds_scan_specs", "os2ds_conversions",
-                "os2ds_representations", "os2ds_matches", "os2ds_handles",
-                "os2ds_metadata", "os2ds_problems", "os2ds_results").wait()
+        with pika.PikaConnectionHolder() as clearer:
+            for channel_name in ("os2ds_scan_specs", "os2ds_conversions",
+                    "os2ds_representations", "os2ds_matches", "os2ds_handles",
+                    "os2ds_metadata", "os2ds_problems", "os2ds_results",):
+                clearer.channel.queue_purge(channel_name)
+
         self.explorer = python(
                 "-m", "os2datascanner.engine2.pipeline.explorer")
         self.processor = python(

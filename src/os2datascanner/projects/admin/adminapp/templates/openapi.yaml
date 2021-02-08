@@ -1,0 +1,129 @@
+openapi: 3.0.0
+info:
+    title: OS2datascanner administration system API
+    description: >
+        An interface to the OS2datascanner administration system.
+    contact:
+        name: Magenta ApS
+        url: https://www.magenta.dk/
+        email: info@magenta.dk
+    license:
+        name: Mozilla Public License, v. 2.0
+        url: https://mozilla.org/MPL/2.0/
+    version: 1.0.0
+components:
+    securitySchemes:
+        apikey:
+            type: http
+            scheme: bearer
+            bearerFormat: API key UUID
+            description: >
+                The UUID of a Django APIKey object.
+
+                <p>Note that APIKey objects only give access to certain
+                functions and to certain resources.
+    schemas:
+        rule:
+            description:
+                A Rule describes a search criterion.
+
+                <p>See the OS2datascanner scan API, or the OS2datascanner
+                source code, for more details.
+            example:
+                type: cpr
+                modulus_11: true
+                ignore_irrelevant: true
+                examine_context: false
+        source:
+            description: >
+                A Source is a data source that OS2datascanner can explore in
+                order to find matches. Sources are roughly equivalent to URLs.
+
+                <p>See the OS2datascanner scan API, or the OS2datascanner
+                source code, for more details.
+            example:
+                type: data
+                content: VGhpcyBpcyBvbmx5IGEgdGVzdA==
+                mime: text/plain
+paths:
+    /get-scanner/1:
+        post:
+            operationId: get-scanner-1
+            summary: Returns a registered Scanner
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: ["scanner_id"]
+                            properties:
+                                rule_id:
+                                    type: integer
+                                    description:
+                                        The primary key of the Scanner to
+                                        retrieve.
+            responses:
+                "200":
+                    description: a Scanner
+                    content:
+                        application/jsonl:
+                            schema:
+                                type: object
+                                required: ["status", "name", "rule", "sources"]
+                                properties:
+                                    status:
+                                        type: string
+                                        enum: ["ok"]
+                                    name:
+                                        type: string
+                                        example: Scan for CPR numbers
+                                    rule:
+                                        $ref: "#/components/schemas/rule"
+                                    sources:
+                                        type: array
+                                        items:
+                                            $ref: "#/components/schemas/source"
+                "403":
+                    description: >
+                        The given API key does not grant access to the
+                        "get-scanner/1" function.
+    /get-rule/1:
+        post:
+            operationId: get-rule-1
+            summary: Returns a registered Rule
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: ["rule_id"]
+                            properties:
+                                rule_id:
+                                    type: integer
+                                    description:
+                                        The primary key of the Rule to
+                                        retrieve.
+            responses:
+                "200":
+                    description: a Rule, suitable for use in the scan API
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                required: ["status", "name", "rule"]
+                                properties:
+                                    status:
+                                        type: string
+                                        enum: ["ok"]
+                                    name:
+                                        type: string
+                                        example: Scan for CPR numbers
+                                    rule:
+                                        $ref: "#/components/schemas/rule"
+                "403":
+                    description: >
+                        The given API key does not grant access to the
+                        "get-rule/1" function.
+security:
+    -
+        apikey: []

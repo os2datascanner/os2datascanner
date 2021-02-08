@@ -128,15 +128,10 @@ def checkup_message_received_raw(body):
 
 
 class AdminCollector(PikaPipelineRunner):
-    def __init__(self, *, status, checkups, **kwargs):
-        super().__init__(**kwargs)
-        self._status = status
-        self._checkups = checkups
-
     def handle_message(self, message_body, *, channel=None):
-        if channel == self._status:
+        if channel == "os2ds_status":
             return status_message_received_raw(message_body)
-        elif channel == self._checkups:
+        elif channel == "os2ds_checkups":
             return checkup_message_received_raw(message_body)
 
 
@@ -144,24 +139,9 @@ class Command(BaseCommand):
     """Command for starting a pipeline collector process."""
     help = __doc__
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-                "--status",
-                type=str,
-                help="the name of the AMQP queue from which status messages"
-                     + " should be read",
-                default=None)
-        parser.add_argument(
-                "--checkups",
-                type=str,
-                help="the name of the AMQP queue from which checkup requests"
-                     + " should be read",
-                default="os2ds_checkups")
-
-    def handle(self, status, checkups, *args, **options):
+    def handle(self, *args, **options):
         with AdminCollector(
-                status=status, checkups=checkups,
-                read=[checkups, *([status] if status else [])],
+                read=["os2ds_status", "os2ds_checkups"],
                 heartbeat=6000) as runner:
             try:
                 print("Start")

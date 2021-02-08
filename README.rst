@@ -158,6 +158,11 @@ UID have write permissions to the ``/migrations/`` folder.
 This can be done with ``chmod o+w migrations`` on your host where you grant all
 users permission to write.
 
+It is the same problem for ``./manage.py makemessages``. The solution is the same
+as mentioned above. Grant all users permission to write to
+``code/src/os2datascanner/projects/<module>/<module>app/locale/da/LC_MESSAGES/django.po``
+with ``chmod o+w django.po``.
+
 Administration module: .secret file
 ***********************************
 

@@ -1,17 +1,15 @@
-from os import getpid
-
-from prometheus_client import start_http_server
-
 from ..rules.rule import Rule
 from ..conversions.types import decode_dict
 from . import messages
-from .utilities.args import AppendReplaceAction, make_common_argument_parser
-from .utilities.pika import PikaPipelineRunner
-from .utilities.systemd import notify_ready, notify_stopping
-from .utilities.prometheus import prometheus_summary
 
 
-def message_received_raw(body, channel, matches_qs, handles_q, conversions_q):
+__reads_queues__ = ("os2ds_representations",)
+__writes_queues__ = ("os2ds_handles",
+        "os2ds_matches", "os2ds_checkups", "os2ds_conversions",)
+
+
+def message_received_raw(body, channel, source_manager):
+    source_manager = None
     message = messages.RepresentationMessage.from_json_object(body)
     representations = decode_dict(message.representations)
     rule = message.progress.rule
@@ -42,20 +40,20 @@ def message_received_raw(body, channel, matches_qs, handles_q, conversions_q):
 
     if isinstance(rule, bool):
         # We've come to a conclusion!
-        for matches_q in matches_qs:
+        for matches_q in ("os2ds_matches", "os2ds_checkups",):
             yield (matches_q,
                     messages.MatchesMessage(
                             message.scan_spec, message.handle,
                             rule, final_matches).to_json_object())
         # Only trigger metadata scanning if the match succeeded
         if rule:
-            yield (handles_q,
+            yield ("os2ds_handles",
                     messages.HandleMessage(
                             message.scan_spec.scan_tag,
                             message.handle).to_json_object())
     else:
         # We need a new representation to continue
-        yield (conversions_q,
+        yield ("os2ds_conversions",
                 messages.ConversionMessage(
                         message.scan_spec, message.handle,
                         message.progress._replace(
@@ -63,67 +61,6 @@ def message_received_raw(body, channel, matches_qs, handles_q, conversions_q):
                                 matches=final_matches)).to_json_object())
 
 
-def main():
-    parser = make_common_argument_parser()
-    parser.description = ("Consume representations and generate matches"
-            + " and fresh conversions.")
-
-    inputs = parser.add_argument_group("inputs")
-    inputs.add_argument(
-            "--representations",
-            metavar="NAME",
-            help="the name of the AMQP queue from which representations"
-                    + " should be read",
-            default="os2ds_representations")
-
-    outputs = parser.add_argument_group("outputs")
-    outputs.add_argument(
-            "--matches",
-            action=AppendReplaceAction,
-            metavar="NAME",
-            help="the names of the AMQP queues to which matches should be"
-                    + " written",
-            default=["os2ds_matches", "os2ds_checkups"])
-    outputs.add_argument(
-            "--conversions",
-            metavar="NAME",
-            help="the name of the AMQP queue to which conversions should be"
-                    + " written",
-            default="os2ds_conversions")
-    outputs.add_argument(
-            "--handles",
-            metavar="NAME",
-            help="the name of the AMQP queue to which handles (for metadata"
-                    + " extraction) should be written",
-            default="os2ds_handles")
-
-    args = parser.parse_args()
-
-    if args.enable_metrics:
-        start_http_server(args.prometheus_port)
-
-
-    class MatcherRunner(PikaPipelineRunner):
-        @prometheus_summary(
-                "os2datascanner_pipeline_matcher", "Representations examined")
-        def handle_message(self, body, *, channel=None):
-            if args.debug:
-                print(channel, body)
-            return message_received_raw(body, channel,
-                    args.matches, args.handles, args.conversions)
-
-    with MatcherRunner(
-            read=[args.representations],
-            write=[args.handles, *args.matches, args.conversions],
-            heartbeat=6000) as runner:
-        try:
-            print("Start")
-            notify_ready()
-            runner.run_consumer()
-        finally:
-            print("Stop")
-            notify_stopping()
-
-
 if __name__ == "__main__":
-    main()
+    from .run_stage import _compatibility_main  # noqa
+    _compatibility_main("matcher")

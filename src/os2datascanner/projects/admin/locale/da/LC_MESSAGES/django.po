@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-02-01 12:06-0600\n"
+"Language: Danish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: adminapp/admin.py:125
+msgid "Personal info"
+msgstr ""
+
+#: adminapp/admin.py:127
+msgid "Important dates"
+msgstr ""
+
+#: adminapp/templates/password_change_done.html:5
+#: adminapp/templates/password_change_done.html:6
+msgid "Password change successful"
+msgstr ""
+
+#: adminapp/templates/password_change_done.html:9
+msgid "Your password was changed."
+msgstr ""
+
+#: adminapp/templates/password_reset_complete.html:10
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+
+#: adminapp/templates/password_reset_complete.html:12
+msgid "Log in"
+msgstr ""
+
+#: adminapp/templates/password_reset_confirm.html:10
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: adminapp/templates/password_reset_confirm.html:14
+msgid "New password:"
+msgstr ""
+
+#: adminapp/templates/password_reset_confirm.html:18
+msgid "Confirm password:"
+msgstr ""
+
+#: adminapp/templates/password_reset_confirm.html:20
+msgid "Change my password"
+msgstr ""
+
+#: adminapp/templates/password_reset_confirm.html:25
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: adminapp/templates/password_reset_done.html:8
+msgid ""
+"We've emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+
+#: adminapp/templates/password_reset_done.html:10
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+
+#: adminapp/templates/password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: adminapp/templates/password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: adminapp/templates/password_reset_email.html:8
+msgid "Your username, in case you've forgotten:"
+msgstr ""
+
+#: adminapp/templates/password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: adminapp/templates/password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: adminapp/templates/password_reset_form.html:8
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll email "
+"instructions for setting a new one."
+msgstr ""
+
+#: adminapp/templates/password_reset_form.html:12
+msgid "Email address:"
+msgstr ""
+
+#: adminapp/templates/password_reset_form.html:12
+msgid "Reset my password"
+msgstr ""

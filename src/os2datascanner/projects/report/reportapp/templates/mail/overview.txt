@@ -1,13 +1,28 @@
-Hej {{ full_name }},
+{% load i18n %}
 
-Der ligger i øjeblikket {{ match_count }} matches i OS2datascanner-systemet,
-der kræver handling fra din side:
+{% blocktrans %}
+Dear {{ full_name }},
+{% endblocktrans %}
+
+{% blocktrans %}
+Currently, {{ match_count }} matches in
+the OS2datascanner system require your attention:
+{% endblocktrans %}
 {% for caption, count in matches %}
   {{ caption|rjust:14 }} | {{ count }}{% endfor %}
 
-Log på OS2datascanner med din organisationskonto for at se flere detaljer:
-  
+{% blocktrans %}
+Log into OS2datascanner with your organisation account for further details.
+{% endblocktrans %}
+
     {{ report_login_url }}
 
-Med venlig hilsen
-OS2datascanner-systemet (på vegne af {{ institution }})
+{% blocktrans %}
+Kind regards,
+the OS2datascanner system
+{% endblocktrans %}
+{% if institution %}
+{% blocktrans %}
+(on behalf of {{ institution }})
+{% endblocktrans %}
+{% endif %}

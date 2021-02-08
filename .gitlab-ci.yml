@@ -23,10 +23,12 @@ variables:
   RELEASE_REPORT_IMAGE: index.docker.io/magentaaps/os2datascanner-report
   RELEASE_ADMIN_IMAGE: index.docker.io/magentaaps/os2datascanner-admin
   RELEASE_ENGINE_IMAGE: index.docker.io/magentaaps/os2datascanner-engine
+  RELEASE_API_IMAGE: index.docker.io/magentaaps/os2datascanner-api
 
   REPORT_IMAGE: ${CI_REGISTRY_IMAGE}/report:${CI_COMMIT_SHA}
   ADMIN_IMAGE: ${CI_REGISTRY_IMAGE}/admin:${CI_COMMIT_SHA}
   ENGINE_IMAGE: ${CI_REGISTRY_IMAGE}/engine:${CI_COMMIT_SHA}
+  API_IMAGE: ${CI_REGISTRY_IMAGE}/api:${CI_COMMIT_SHA}
 
 
 # Lint stage
@@ -115,6 +117,16 @@ Build Engine:
       --context=$CI_PROJECT_DIR
       --dockerfile=$CI_PROJECT_DIR/docker/engine/Dockerfile
       --destination=${ENGINE_IMAGE}
+
+Build API:
+  <<: *build-default
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --cache
+      --context=$CI_PROJECT_DIR
+      --dockerfile=$CI_PROJECT_DIR/docker/api/Dockerfile
+      --destination=${API_IMAGE}
 
 Build documentation:
   <<: *build-default
@@ -281,6 +293,12 @@ Release Engine Candidate:
     - export IMAGE_FROM="${ENGINE_IMAGE}"
     - export IMAGE_TO="${RELEASE_ENGINE_IMAGE}"
 
+Release API Candidate:
+  <<: *release-rc
+  before_script:
+    - export IMAGE_FROM="${API_IMAGE}"
+    - export IMAGE_TO="${RELEASE_API_IMAGE}"
+
 # Release pinned pre-release:
 # Separate from "Versioned release" (.release) because we don't want to push to :latest tags
 .release-pinned-rc: &release-pinned-rc
@@ -314,6 +332,12 @@ Release Engine pinned Candidate:
   before_script:
     - export IMAGE_FROM="${ENGINE_IMAGE}"
     - export IMAGE_TO="${RELEASE_ENGINE_IMAGE}"
+
+Release API pinned Candidate:
+  <<: *release-pinned-rc
+  before_script:
+    - export IMAGE_FROM="${API_IMAGE}"
+    - export IMAGE_TO="${RELEASE_API_IMAGE}"
 
 # Versioned release:
 .release: &release
@@ -352,6 +376,11 @@ Release Engine:
     - export IMAGE_FROM="${ENGINE_IMAGE}"
     - export IMAGE_TO="${RELEASE_ENGINE_IMAGE}"
 
+Release API:
+  <<: *release
+  before_script:
+    - export IMAGE_FROM="${API_IMAGE}"
+    - export IMAGE_TO="${RELEASE_API_IMAGE}"
 
 # Deploy stage
 ##############

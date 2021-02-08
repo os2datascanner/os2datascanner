@@ -1,9 +1,11 @@
+{%  load i18n %}
+
 <nav class="navigation">
   <ul>
     <li>
       <a href="/" class="{% if active_tab == 'home' %}active{% endif %}">
         {% include "components/svg-icons/home.svg" %}
-        <span class="width">Forside</span>
+        <span class="width">{% trans "Front page" %}</span>
       </a>
     </li>
     <!-- <li>
@@ -24,7 +26,7 @@
     <li>
       <a href="/accounts/logout">
         {% include "components/svg-icons/logout.svg" %}
-        <span class="width">Log ud</span>
+        <span class="width">{% trans "Log out" %}</span>
       </a>
     </li>
   </ul>

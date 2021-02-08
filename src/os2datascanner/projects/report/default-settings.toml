@@ -63,11 +63,10 @@ LANGUAGE_CODE = "da-dk"
 # Paths relative to the project directory should start with "*" while
 # absolute paths should start with "/"
 _LOCALE_PATHS = [
-    ["*", "locale", "admin"],
+    ["*", "src", "os2datascanner", "projects", "report", "locale"],
 ]
 _LANGUAGES = [
     ["da", "Danish"],
-    ["en", "English"],
 ]
 TIMEZONE = "Europe/Copenhagen"
 USE_I18N = true

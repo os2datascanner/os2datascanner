@@ -1,0 +1,234 @@
+openapi: 3.0.0
+info:
+    title: OS2datascanner scan API
+    description: >
+        An interface to the OS2datascanner scan pipeline.
+    contact:
+        name: Magenta ApS
+        url: https://www.magenta.dk/
+        email: info@magenta.dk
+    license:
+        name: Mozilla Public License, v. 2.0
+        url: https://mozilla.org/MPL/2.0/
+    version: 1.0.0
+components:
+    securitySchemes:
+        bpsk:
+            type: http
+            scheme: bearer
+            bearerFormat: pre-shared key
+    schemas:
+        and-rule:
+            type: object
+            description: >
+                Searches according to a number of other Rules, only producing a
+                match if all of them do.
+
+                <p>Note that this Rule implements short-circuiting: as soon as
+                it is possible to conclude that no match will be returned,
+                execution will stop.
+            required: ["components"]
+            properties:
+                components:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/rule"
+        or-rule:
+            type: object
+            description: >
+                Searches according to a number of other Rules, only producing a
+                match if one of them does.
+
+                <p>Note that this Rule implements short-circuiting: as soon as
+                it is possible to conclude that a match will be returned,
+                execution will stop.
+            required: ["components"]
+            properties:
+                components:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/rule"
+        not-rule:
+            type: object
+            description: >
+                Inverts the behaviour of a Rule, producing a match if and only
+                if it does not.
+            required: ["rule"]
+            properties:
+                rule:
+                    $ref: "#/components/schemas/rule"
+        regex-rule:
+            type: object
+            description: >
+                Searches according to a regular expression.
+            required: ["type", "expression"]
+            properties:
+                type:
+                    type: string
+                    enum: ["regex"]
+                expression:
+                    type: string
+                    description: >
+                        The regular expression to search for.
+                    example: "[Tt]est"
+        cpr-rule:
+            type: object
+            description: >
+                Searches for a Danish civil registration number (a "CPR
+                number").
+
+                <p>CPR numbers are unique personal identifiers and are often
+                found adjacent to other personal information.
+            required: ["type"]
+            properties:
+                type:
+                    type: string
+                    enum: ["cpr"]
+                modulus_11:
+                    type: boolean
+                    description: >
+                        Whether or not to filter out CPR number candidates that
+                        have an invalid check digit.
+
+                        <p>(Note that this flag takes into account the dates
+                        for which the check digit is not necessarily valid.)
+                    default: True
+                ignore_irrelevant:
+                    type: boolean
+                    description: >
+                        Whether or not to filter out CPR number candidates
+                        based on structural and statistical tests.
+                    default: True
+                examine_context:
+                    type: boolean
+                    description:
+                        Whether or not to examine the context around CPR number
+                        candidates to filter out false positives.
+                    default: True
+        rule:
+            description:
+                A Rule describes a search criterion.
+
+                <p>Certain special Rules can be used to combine other Rules
+                together into arbitrary boolean expressions.
+
+                <p>This document describes only a limited subset of
+                OS2datascanner's Rules. See the OS2datascanner code for more
+                information.
+            oneOf:
+                - $ref: "#/components/schemas/regex-rule"
+                - $ref: "#/components/schemas/cpr-rule"
+
+                - $ref: "#/components/schemas/and-rule"
+                - $ref: "#/components/schemas/or-rule"
+                - $ref: "#/components/schemas/not-rule"
+        data-source:
+            type: object
+            description: >
+                A "data" Source is a direct representation of a single file to
+                scan.
+
+                <p>This Source corresponds roughly to a data URL. See RFC 2397
+                for more information.
+            required: ["type", "content", "mime"]
+            properties:
+                type:
+                    type: string
+                    enum: ["data"]
+                content:
+                    type: string
+                    description: >
+                        The base64-encoded content of this file.
+                    pattern: "^[A-Za-z0-9+/=]+$"
+                    example: "VGhpcyBpcyBvbmx5IGEgdGVzdA=="
+                mime:
+                    type: string
+                    description: >
+                        The MIME type of this file.
+                    example: "text/plain"
+        web-source:
+            type: object
+            description: >
+                A "web" Source represents a website and all of the pages,
+                objects and images reachable from it.
+
+                <p>This Source corresponds to a HTTP or HTTPS URL.
+            required: ["type", "url"]
+            properties:
+                type:
+                    type: string
+                    enum: ["web"]
+                url:
+                    type: string
+                    description: >
+                        The URL of the website. (Supported URL schemes include
+                        "http" and "https".)
+                    example: "https://www.example.com/"
+                sitemap:
+                    type: string
+                    description:
+                        The URL of the sitemap file for the website, if one
+                        should be used. (Supported URL schemes include "http",
+                        "https" and "file".)
+                    default: null
+        source:
+            description: >
+                A Source is a data source that OS2datascanner can explore in
+                order to find matches. Sources are roughly equivalent to URLs.
+
+                <p>Your system administrator may have restricted the set of
+                Sources available to the API host. Contact your system
+                administrator for more information.
+
+                <p>This document describes only a limited subset of
+                OS2datascanner's Sources. See the OS2datascanner code for more
+                information.
+            oneOf:
+                - $ref: "#/components/schemas/data-source"
+                - $ref: "#/components/schemas/web-source"
+paths:
+    /dummy/1:
+        post:
+            operationId: dummy-1
+            summary: Does nothing
+            description: >
+                This operation returns a positive response. This may be useful,
+                for example, for testing that the API server has been started
+                successfully and that authentication has succeeded.
+            responses:
+                "200":
+                    description: a dummy success object
+                    content:
+                        application/jsonl:
+                            example: >
+                                {"status": "ok"}
+    /scan/1:
+        post:
+            operationId: scan-1
+            summary: Runs a scan and yields the results
+            description: >
+                This operation causes the OS2datascanner scan pipeline to
+                search a given Source according to a given Rule.
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: ["source", "rule"]
+                            properties:
+                                rule:
+                                    $ref: "#/components/schemas/rule"
+                                source:
+                                    $ref: "#/components/schemas/source"
+            responses:
+                "200":
+                    description: a number of pipeline output messages
+                    content:
+                        application/jsonl:
+                            example: >
+                                {"scan_spec": {"scan_tag": "395c1473-0868-443b-bff4-ff058a52a81e", "source": {"type": "data", "content": "VGhpcyBpcyBvbmx5IGEgdGVzdA==", "mime": "text/plain"}, "rule": {"type": "regex", "sensitivity": null, "name": null, "expression": "[Tt]est"}, "configuration": {}, "progress": null}, "handle": {"type": "data", "source": {"type": "data", "content": "VGhpcyBpcyBvbmx5IGEgdGVzdA==", "mime": "text/plain"}, "path": "file"}, "matched": true, "matches": [{"rule": {"type": "regex", "sensitivity": null, "name": null, "expression": "[Tt]est"}, "matches": [{"offset": 15, "match": "test"}]}], "origin": "os2ds_matches"}
+                                {"scan_tag": "395c1473-0868-443b-bff4-ff058a52a81e", "handle": {"type": "data", "source": {"type": "data", "content": "VGhpcyBpcyBvbmx5IGEgdGVzdA==", "mime": "text/plain"}, "path": "file"}, "metadata": {}, "origin": "os2ds_metadata"}
+
+security:
+    -
+        bpsk: []

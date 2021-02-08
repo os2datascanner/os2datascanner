@@ -4,8 +4,9 @@ The ``.in``-files used by ``pip-tools`` are organized according to the "inherita
 tree below, and each ``.in``-file includes all packages from its "parent file":
 
 ::
-
-              ------------------------- engine
+                                                  ------- api
+                                                /
+              ------------------------- engine -
             /
     common -                    ------- admin
             \                 /
