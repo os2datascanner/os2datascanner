@@ -23,7 +23,7 @@ variables:
   RELEASE_REPORT_IMAGE: index.docker.io/magentaaps/os2datascanner-report
   RELEASE_ADMIN_IMAGE: index.docker.io/magentaaps/os2datascanner-admin
   RELEASE_ENGINE_IMAGE: index.docker.io/magentaaps/os2datascanner-engine
-  RELEASE_ENGINE_IMAGE: index.docker.io/magentaaps/os2datascanner-api
+  RELEASE_API_IMAGE: index.docker.io/magentaaps/os2datascanner-api
 
   REPORT_IMAGE: ${CI_REGISTRY_IMAGE}/report:${CI_COMMIT_SHA}
   ADMIN_IMAGE: ${CI_REGISTRY_IMAGE}/admin:${CI_COMMIT_SHA}
