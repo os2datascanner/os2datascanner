@@ -7,7 +7,7 @@
   border-collapse: collapse;
   box-shadow: var(--box-shadow-widget);
   border-radius: var(--border-radius-widget);
-  max-width: 80rem;
+  max-width: 90rem;
   table-layout: fixed;
   width: calc(100% - 2rem);
 
@@ -54,24 +54,6 @@
 
 }
 
-.flex {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  margin-top: .5rem;
-
-  &--width {
-    margin-right: .5rem;
-    height: 1.2rem;
-    max-width: 1.5rem;
-  }
-
-  svg {
-    height: 100%;
-    width: auto;
-  }
-}
-
 @supports(display: grid) {
   // We use CSS Grid to detect IE11, as "tr:focus" breaks the whole selector in IE11
   .datatable tr:focus, 
@@ -108,7 +90,7 @@
 
 .datatable th {
   font-size: 1.25rem;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .datatable td {

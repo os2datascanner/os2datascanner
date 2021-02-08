@@ -32,6 +32,7 @@
   padding-left: 1rem;
   color: var(--color-text-white);
   text-decoration: none;
+  font-weight: 700;
 
   svg {
     fill: var(--color-widget-bg);
@@ -45,12 +46,16 @@
 }
 
 .navigation a:hover {
-  font-weight: bold;
+  color: var(--color-primary-dark);
+
+  svg {
+    fill: var(--color-primary-dark);
+  }
 }
 
 .navigation a.active {
   color: var(--color-primary-dark);
-  font-weight: bold;
+  font-weight: 700;
   background-color: var(--color-body-bg);
   border-radius: 10px 0px 0px 10px;
 

@@ -19,7 +19,6 @@ body {
   display: flex;
   max-width: 100%;
   min-height: calc(100vh - 9rem - var(--size-ds-unit) * 2);
-  align-items: stretch;
 }
 
 .content {
@@ -31,7 +30,7 @@ body {
 .aside {
   display: flex;
   align-items: center;
-  max-width: 80rem;
+  max-width: 90rem;
   width: calc(100% - 2rem);
   margin-bottom: 0.5rem;
   
@@ -46,4 +45,14 @@ body {
     justify-content: flex-end;
     width: 50%;
   }
+}
+
+.data-form {
+  background-color: #fff;
+  box-shadow: var(--box-shadow-widget);
+  border-radius: var(--border-radius-widget);
+  max-width: 90rem;
+  width: calc(100% - 2rem);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
 }

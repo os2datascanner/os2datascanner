@@ -2,8 +2,6 @@
        class="form__group{% if field.errors %} has-error{% endif %}">
     <label {% if required %}
             class="required-form"
-           {% else %}
-            class="control-label"
            {% endif %}
            for="id_{{ field.name }}">{{ field.label }}
     </label>

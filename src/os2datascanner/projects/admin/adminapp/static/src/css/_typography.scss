@@ -31,7 +31,7 @@ h4,
 h5,
 h6,
 strong {
-  font-weight: 900;
+  font-weight: 700;
 }
 
 h1, 
@@ -41,7 +41,7 @@ h3 {
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 1.75rem;
 }
 
 h2 {
@@ -49,7 +49,8 @@ h2 {
 }
 
 h3 {
-  font-size: 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 p,
@@ -83,21 +84,8 @@ mark {
 }
 
 a {
-  color: blue;
+  color: var(--color-icon-primary);
   text-decoration-skip-ink: auto;
-}
-
-.page-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-}
-
-.page-title__sub {
-  display: block;
-  font-size: 1rem;
-  font-weight: 600;
-  margin-top: 0.5rem;
-  max-width: 60rem;
 }
 
 .click-to-copy {

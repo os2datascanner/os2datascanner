@@ -22,12 +22,14 @@
     color: var(--color-text-white);
     border-radius: var(--border-radius-default);
     padding: 0.75rem;
+    font-weight: 600;
 
     &:focus,
     &:hover {
       background-color: var(--color-primary-dark);
       color: var(--color-text-white);
     }
+
   }
 
   &--danger {
@@ -73,20 +75,6 @@
     margin-left: 0.5rem;
 }
 
-// add scannerjob, start
-// .add-new {
-//   max-width: 80rem; 
-//   width: calc(100% - 2rem);   
-// }
-
-// .add-new-btn {
-//   float: right;
-//   margin: 28px 0;
-//   background-color: var(--color-icon-primary);
-// }
-
-// .add-new-text {
-//   display: inline-block; 
-//   padding: 0 4px;
-// }
-// add scannerjob, end
+.last-btn {
+  margin-bottom: 3rem;
+}
