@@ -25,6 +25,7 @@ from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.views.generic import View, TemplateView, ListView
 from django.db.models import Q
 
