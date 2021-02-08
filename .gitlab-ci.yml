@@ -126,7 +126,7 @@ Build API:
       --cache
       --context=$CI_PROJECT_DIR
       --dockerfile=$CI_PROJECT_DIR/docker/api/Dockerfile
-      --destination=${ENGINE_IMAGE}
+      --destination=${API_IMAGE}
 
 Build documentation:
   <<: *build-default
