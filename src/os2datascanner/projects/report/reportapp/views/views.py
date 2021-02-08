@@ -15,6 +15,7 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 import structlog
+import datetime
 
 from datetime import timedelta, datetime
 from urllib.parse import urlencode
@@ -22,8 +23,9 @@ from django.conf import settings
 
 from django.db.models import Count
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from django.views.generic import View, TemplateView, ListView, DetailView
+from django.views.generic import View, TemplateView, ListView
 from django.db.models import Q
 
 from ..models.documentreport_model import DocumentReport
@@ -155,6 +157,14 @@ class MainPageView(ListView, LoginRequiredMixin):
 class StatisticsPageView(TemplateView, LoginRequiredMixin):
     template_name = 'statistics.html'
     context_object_name = "matches"  # object_list renamed to something more relevant
+    model = DocumentReport
+    matches = DocumentReport.objects.filter(
+        data__matches__matched=True)
+    handled_matches = matches.filter(
+        resolution_status__isnull=False)
+    unhandled_matches = matches.filter(
+        resolution_status__isnull=True)
+    oldest_match = unhandled_matches.earliest('scan_time')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -193,6 +203,38 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
             'data__matches__handle__type', 'total',
         )
 
+        # TODO: Møde med Danni & Fiks så brugerne har deres egen værdi
+        # Counts the amount of unhandled matches
+        unhandled_matches_list = []
+        for org_user in self.users:
+            org_roles = org_user.roles.select_subclasses() or [DefaultRole(user=org_user)]
+            role_count = 0
+            unhandled_matches_count = 0
+            for org_role in org_roles:
+                # Filter matches by role.
+                unhandled_matches_count += org_role.filter(self.unhandled_matches).count()            
+                role_count += 1
+            tup = (org_user.first_name, unhandled_matches_count / role_count)
+            unhandled_matches_list.append(tup)
+
+        context['unhandled_matches'] = unhandled_matches_list
+        
+        # TODO: Møde med Danni & Fiks så brugerne har deres egen værdi
+        # Needs to be rewritten if a better 'time' is added(#41326)
+        # Gets the oldest date from unhandled matches
+        oldest_matches = []
+        for org_user in self.users:
+            org_roles = org_user.roles.select_subclasses() or [DefaultRole(user=org_user)]
+            earliest_date = timezone.now()
+            for match in self.unhandled_matches:
+                if match.scan_time < earliest_date:
+                    earliest_date = match.scan_time
+            days_ago = timezone.now() - earliest_date
+            tup = (org_user.first_name, days_ago.days)
+            oldest_matches.append(tup)
+                
+        context['oldest_match'] = oldest_matches
+
         # Generators had to be done separate from context because of the json_script parser
         sensitivities_gen = (((Sensitivity(s["sensitivity"]),
                                             s["total"]) for s in sensitivities))
@@ -208,6 +250,24 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
                                       hm[1]) for hm in handled_matches_gen]
         context['data_sources'] = [(ds['data__matches__handle__type'],
                                     ds['total']) for ds in data_sources]
+        
+        # TODO: Spørg Danni om det er en løsning på noget optimering
+        for role in self.roles:
+            if isinstance(role, Leader):
+                print('Leader:', self.roles)
+
+            if isinstance(role, DataProtectionOfficer):
+                print('DPO:', self.roles)
+
+            if isinstance(role, Remediator):
+                print('Remidiator:', self.roles)
+
+        # print('oldest scan_time:', self.oldest_match.scan_time)
+        # print('users:', self.users)
+        # print(self.unhandled_matches)
+        # for um in self.unhandled_matches:
+        #     print(um.scan_time)
+        print('oldest_matches:', oldest_matches)
 
         return context
 

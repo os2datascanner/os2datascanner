@@ -4,6 +4,29 @@
   <div class="statistic_wrapper">
     <div class="statistic statistic--one">
       <h1 class="page-title__sub">Medarbejderoverblik</h1>
+      <table class="datatable">
+        <tr>
+          {% for key, value in unhandled_matches %}
+            <th>{{ key }}</th>
+          {% endfor %}
+        </tr>
+        <tr>
+          {% for key, value in unhandled_matches %}
+            <td>{{ value }}</td>
+          {% endfor %}
+        </tr>
+      </table>
+      <table class="datatable">
+          {% for key, value in oldest_match %}
+            <th>{{ key }}</th>
+          {% endfor %}
+        </tr>
+        <tr>
+          {% for key, value in oldest_match %}
+            <td>{{ value }} dage</td>
+          {% endfor %}
+        </tr>
+      </table>
     </div>
   
     <div class="statistic statistic--two">
@@ -51,7 +74,6 @@
         </tr>
       </table>
 
-
       <p>Fordelt i følsomhed procent</p>
       <table class="datatable">
         <tr>
@@ -59,8 +81,8 @@
             <th>{{ key }}</th>
           {% endfor %}
         </tr>
-        <tr id="handled_sensitivity_percentage">
-        </tr>
+        <tr id="handled_sensitivity_percentage"></tr>
+        <tr id="handled_of_total"></tr>
       </table>
     </div>
   
@@ -72,11 +94,15 @@
 {{ sensitivities|json_script:"sensitivities" }}
 {{ data_sources|json_script:"data_sources" }}
 {{ handled_matches|json_script:"handled_matches" }}
+{{ unhandled_matches|json_script:"unhandled_matches" }}
+{{ oldest_match|json_script:"oldest_match" }}
 <script>
   // json_script solution - Safe from in-page script execution
   const sensitivities = JSON.parse(document.getElementById('sensitivities').textContent);
   const dataSources = JSON.parse(document.getElementById('data_sources').textContent);
   const handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
+  const unhandledMatches = JSON.parse(document.getElementById('unhandled_matches').textContent);
+  const oldestMatch = JSON.parse(document.getElementById('oldest_match').textContent);
 
   // Finds the total number matches in the array
   totalArrayValue = (array) => {
@@ -112,10 +138,26 @@
     return percentages;
   };
 
+  // Returns the values of 'Xxx of xxx' for 'Håndterede matches'
+  handledOfTotal = (fullArray, handledArray) => {
+    handledOfTotalArray = [];
+    for (let i = 0; i < fullArray.length; i++) {
+      // Handles one array being shorter then the other
+      if (fullArray[i] != undefined && handledArray[i] != undefined) {
+        handledOfTotalArray[i] = `${handledArray[i][1]} of ${fullArray[i][1]}`; 
+      } else {
+        handledOfTotalArray[i] = '0 of 0';
+      }
+    }
+      return handledOfTotalArray;
+  };
+
+  console.log(handledOfTotal(sensitivities, handledMatches));
+
   // TODO: Remove when done "prototyping"
   // Inserts 'Håndteret matches'-data
   htmlTableHandledMatches = () => {
-    let tableRow = ""
+    let tableRow = ''
     const sensitivitiesPercentage = percentageArrayCalc(sensitivities, handledMatches, 1);
     document.getElementById('total_handled_percentage').innerHTML = handledPercentageFixed + '%';
     for (let i = 0; i < sensitivitiesPercentage.length; i++) {
@@ -126,4 +168,15 @@
 
   htmlTableHandledMatches();
 
+  // TODO: Remove when done "prototyping"
+  // Inserts a table in the format 'array, dividing word, array'
+  htmlTableInserter = (fullArray, handledArray, id, divider) => {
+    let tableRow = '';
+    for (let i = 0; i < fullArray.length; i++) {
+      tableRow += `<td>${handledArray[i][1]} ${divider} ${fullArray[i][1]}</td>`;
+    }
+    document.getElementById(id).innerHTML = tableRow;
+  };
+
+  htmlTableInserter(sensitivities, handledMatches, 'handled_of_total', 'of')
 </script>
