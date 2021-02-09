@@ -27,13 +27,13 @@ To get a development environment to run, follow these steps:
 
     .. code-block:: bash
 
-        docker-compose exec admin-application python manage.py createsuperuser
+        docker-compose exec admin_application python manage.py createsuperuser
 
     and
 
     .. code-block:: bash
 
-        docker-compose exec report-application python manage.py createsuperuser
+        docker-compose exec report_application python manage.py createsuperuser
 
     You can pass username and email as arguments to the command by adding
     ``--username <your username>`` and/or  ``--email <your email>`` at the
@@ -148,33 +148,33 @@ have the right permissions. It is recommended to only use
 `bind <https://docs.docker.com/storage/bind-mounts/>`_ if you overwrite the
 user and set the same user as owner of the directory you bind.
 
-If some process inside the container needs to write files to locations other
-than ``/static`` or ``/log``, you need to mount a volume with the right
-permissions. An example is ``./manage.py makemigrations`` trying to write to
-``code/src/os2datascanner/projects/<module>/<module>app/migrations/`` for the
-``admin`` or ``report`` module.
-If you bind ``/code`` to your host system, make sure that the user with relevant
-UID have write permissions to the ``/migrations/`` folder.
-This can be done with ``chmod o+w migrations`` on your host where you grant all
-users permission to write.
 
-It is the same problem for ``./manage.py makemessages``. The solution is the same
-as mentioned above. Grant all users permission to write to
-``code/src/os2datascanner/projects/<module>/<module>app/locale/da/LC_MESSAGES/django.po``
-with ``chmod o+w django.po``.
+Missing permissions in development environment
+**********************************************
 
-Administration module: .secret file
-***********************************
+During development, we mount our local editable files into the docker containers
+which means they are owned by the local user, and **not** the user running
+inside the container. Thus any processes running inside the container,
+like management commands, will not be allowed to create or update files in the
+mounted locations.
 
-As a result of the user permissions in place, the user for the Administration
-module does not have the privilege to write a ``.secret`` file if one does not
-exist. Rather than giving the user elevated permissions in production, one
-should generate such a file by running the proper command **once** as root, and
-then change the owner of the generated file to match the user running the
-administration module.
+In order to fix this, we need to allow "others" to write to the relevant
+locations. This can be done with ``chmod -R o+w <path>``
+(``o`` is for "other users", ``+w`` is to add write-permissions and ``-R`` is
+used to add the permissions recursively down through the file structure from
+the location ``<path>`` points to).
 
-In this way, the decryption functionality remains in place, while we still keep
-the user privileges to a minimum.
+The above is necessary whenever a process needs write permissions, but should
+always be done for the following locations:
+
+* ``code/src/os2datascanner/projects/<module>/locale/``
+* ``code/src/os2datascanner/projects/<module>/<module>app/migrations/``
+
+``<module>`` being either ``admin`` or ``report``.
+
+**NB!** Git will only save executable permissions, which means that granting
+other users write permissions on your local setup, will not compromise
+production security.
 
 ..
     Test
@@ -194,12 +194,12 @@ Services
 
 The main services for OS2datascanner are:
 
-- ``admin-frontend``:
+- ``admin_frontend``:
     Only needed in development.
 
     Watches the frontend files and provides support for rebuilding the frontend
     easily during the development process.
-- ``admin-application``:
+- ``admin_application``:
     Reachable on: http://localhost:8020
 
     Runs the django application that provides the administration interface for
@@ -214,17 +214,17 @@ The main services for OS2datascanner are:
     Runs the **tagger** stage of the engine.
 - ``engine_exporter``:
     Runs the **exporter** stage of the engine.
-- ``report-frontend``:
+- ``report_frontend``:
     Only needed in development.
 
     Watches the frontend files and provides support for rebuilding the frontend
     easily during the development process.
-- ``report-application``:
+- ``report_application``:
     Reachable on: http://localhost:8040
 
     Runs the django application that provides the interface for accessing and
     handling reported matches.
-- ``report-collector``:
+- ``report_collector``:
     Runs the **collector** service that saves match results to the database of
     the report module.
 
@@ -274,10 +274,10 @@ to write a small script to aid with this, e.g.:
     cd <path to repository root>
     # create admin user:
     echo "Creating superuser for admin module..."
-    docker-compose <command> admin-application python manage.py createsuperuser --username <your username> --email <your email>
+    docker-compose <command> admin_application python manage.py createsuperuser --username <your username> --email <your email>
     # create report user:
     echo "Creating superuser for report module..."
-    docker-compose <command> report-application python manage.py createsuperuser --username <your username> --email <your email>
+    docker-compose <command> report_application python manage.py createsuperuser --username <your username> --email <your email>
 
 **NB!** Make sure your script is **not** added to the repo: add the file (or a
 separate folder it lives in) to the global list for git to ignore (usually
@@ -300,9 +300,9 @@ To run the test-suites using docker-compose:
 
 .. code-block:: bash
 
-    docker-compose run admin-application python -m django test os2datascanner.projects.admin.tests
+    docker-compose run admin_application python -m django test os2datascanner.projects.admin.tests
     docker-compose run engine_explorer python -m unittest discover -s /code/src/os2datascanner/engine2/tests
-    docker-compose run report-application python -m django test os2datascanner.projects.report.tests
+    docker-compose run report_application python -m django test os2datascanner.projects.report.tests
 
 Please note that the engine tests can be run using any of the five pipeline
 services as the basis, but a specific one is provided above for easy reference.
