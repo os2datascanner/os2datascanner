@@ -159,7 +159,11 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
     template_name = 'statistics.html'
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
+<<<<<<< HEAD
     users = UserProfile.objects.all()
+=======
+    users = User.objects.all()
+>>>>>>> [#38459] Refactored functionality out of get_context_data
     matches = DocumentReport.objects.filter(
         data__matches__matched=True)
     handled_matches = matches.filter(
@@ -181,6 +185,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         context["roles"] = [role.__class__.__name__ for role in roles]
         context["renderable_rules"] = RENDERABLE_RULES
 
+<<<<<<< HEAD
         # matches = DocumentReport.objects.filter(
         #     data__matches__matched=True)
         #
@@ -188,6 +193,8 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         #     # TODO: filter either for the role dpo or leader, depending on the stats they are viewing.
         #     matches = role.filter(matches)
 
+=======
+>>>>>>> [#38459] Refactored functionality out of get_context_data
         # Contexts are done as a lists of tuples
         context['oldest_match'] = self.get_oldest_matches()
         
@@ -254,7 +261,11 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
                 ds['total']) for ds in data_sources]
         
     def count_unhandled_matches(self):
+<<<<<<< HEAD
         # TODO: Fiks så brugerne har deres egen værdi - Bug
+=======
+        # TODO: Møde med Danni & Fiks så brugerne har deres egen værdi
+>>>>>>> [#38459] Refactored functionality out of get_context_data
         # Counts the amount of unhandled matches
         unhandled_matches_list = []
         for org_user in self.users:
@@ -270,7 +281,11 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         return unhandled_matches_list
 
     def get_oldest_matches(self):
+<<<<<<< HEAD
         # TODO: Fiks så brugerne har deres egen værdi - Bug
+=======
+        # TODO: Møde med Danni & Fiks så brugerne har deres egen værdi
+>>>>>>> [#38459] Refactored functionality out of get_context_data
         # Needs to be rewritten if a better 'time' is added(#41326)
         # Gets days since oldest unhandled matche for each user
         oldest_matches = []
@@ -283,7 +298,10 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
             days_ago = timezone.now() - earliest_date
             tup = (org_user.first_name, days_ago.days)
             oldest_matches.append(tup)
+<<<<<<< HEAD
 
+=======
+>>>>>>> [#38459] Refactored functionality out of get_context_data
         return oldest_matches
 
 
