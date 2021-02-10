@@ -40,6 +40,20 @@ class Resource(ABC):
         transient issues like locked files or connectivity problems will not
         cause False to be returned."""
 
+    def _generate_metadata(self):
+        """Yields zero or more (key, value) pairs of metadata properties. (Keys
+        must be strings, and values must be suitable for JSON
+        serialisation.)"""
+        # (This function is implemented as a generator to make error recovery
+        # easier -- an unexpected error when extracting one metadata property
+        # shouldn't result in all the others being dropped as well.)
+        yield from ()
+
+    def get_metadata(self):
+        """Returns an object suitable for JSON serialisation that represents
+        the metadata known for this object."""
+        return dict((k, v) for k, v in self._generate_metadata())
+
     def _get_cookie(self):
         """Returns the magic cookie produced when the Source behind this
         Resource's Handle is opened in the associated StateManager. (Note that
