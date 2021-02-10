@@ -5,6 +5,7 @@ from os2datascanner.utils.metadata import guess_responsible_party
 from os2datascanner.engine2.model.core import Handle, Source, SourceManager
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
+from os2datascanner.engine2.model.http import (WebHandle, WebSource)
 from os2datascanner.engine2.model.derived.libreoffice import (
         LibreOfficeObjectHandle, LibreOfficeSource)
 
@@ -47,3 +48,14 @@ class MetadataTest(unittest.TestCase):
                 self.handle_proxy.get_attr_access_count("follow"),
                 0,
                 "metadata extraction from synthetic file attempted")
+
+    def test_web_domain_extraction(self):
+        with SourceManager() as sm:
+            metadata = guess_responsible_party(
+                    WebHandle(
+                            WebSource("https://www.example.com/"),
+                            "/cgi-bin/test.pl"), sm)
+        self.assertEqual(
+                metadata.get("web-domain"),
+                "www.example.com",
+                "web domain metadata missing")
