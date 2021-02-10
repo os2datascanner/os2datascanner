@@ -40,10 +40,11 @@
           {% endfor %}
         </tr> 
         <tr>
+        <tr>
           {% for key, value in sensitivities %}
-          <td>{{ value }}</td>
+            <td>{{ value }}</th>
           {% endfor %}
-        </tr>
+        </tr> 
       </table>
 
       <p>Kilde</p>
@@ -105,17 +106,17 @@
   const oldestMatch = JSON.parse(document.getElementById('oldest_match').textContent);
 
   // Finds the total number matches in the array
-  totalArrayValue = (array) => {
+  totalArrayValue = (array, index) => {
     let number = 0;
     for (let i = 0; i < array.length; i++) {
-      number += array[i][1];
+      number += array[i][index];
     }
     return number;
   };
 
   // Calculates the percentage for 'Håndterede matches -> Alle matches' 
-  const totalMatches = totalArrayValue(sensitivities)
-  const totalHandledMatches = totalArrayValue(handledMatches)
+  const totalMatches = totalArrayValue(sensitivities, 1)
+  const totalHandledMatches = totalArrayValue(handledMatches, 1)
   const handledPercentage = totalHandledMatches / totalMatches  * 100;
   // To fixed decimal point
   handledPercentageFixed = handledPercentage.toFixed(1)
@@ -151,8 +152,6 @@
     }
       return handledOfTotalArray;
   };
-
-  console.log(handledOfTotal(sensitivities, handledMatches));
 
   // TODO: Remove when done "prototyping"
   // Inserts 'Håndteret matches'-data

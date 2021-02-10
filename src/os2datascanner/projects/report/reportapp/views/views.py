@@ -158,35 +158,51 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
     template_name = 'statistics.html'
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
+    users = UserProfile.objects.all()
     matches = DocumentReport.objects.filter(
         data__matches__matched=True)
     handled_matches = matches.filter(
         resolution_status__isnull=False)
     unhandled_matches = matches.filter(
         resolution_status__isnull=True)
-    oldest_match = unhandled_matches.earliest('scan_time')
+    sensitivity_list = [
+        [Sensitivity.CRITICAL.presentation, 0],
+        [Sensitivity.PROBLEM.presentation, 0],
+        [Sensitivity.WARNING.presentation, 0],
+        [Sensitivity.NOTICE.presentation, 0],
+    ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        matches = DocumentReport.objects.filter(
-            data__matches__matched=True)
+        user = self.request.user
+        roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
+        context["roles"] = [role.__class__.__name__ for role in roles]
+        context["renderable_rules"] = RENDERABLE_RULES
 
-        for role in self.get_user_roles():
-            # TODO: filter either for the role dpo or leader, depending on the stats they are viewing.
-            matches = role.filter(matches)
-        # Counts the distribution of matches by sensitivity
-        sensitivities = matches.order_by(
-            '-sensitivity').values(
-            'sensitivity').annotate(
-            total=Count('sensitivity')
-        ).values(
-            'sensitivity', 'total'
-        )
+        # matches = DocumentReport.objects.filter(
+        #     data__matches__matched=True)
+        #
+        # for role in self.get_user_roles():
+        #     # TODO: filter either for the role dpo or leader, depending on the stats they are viewing.
+        #     matches = role.filter(matches)
 
+        # Contexts are done as a lists of tuples
+        context['oldest_match'] = self.get_oldest_matches()
+        
+        context['data_sources'] = self.get_data_sources()
+
+        context['sensitivities'] = self.get_sensitivities()
+
+        context['handled_matches'] = self.count_handled_matches()
+
+        context['unhandled_matches'] = self.count_unhandled_matches()
+
+        return context
+
+    def count_handled_matches(self):
         # Counts the distribution of handled matches by sensitivity
-        handled_matches = matches.filter(
-            resolution_status__isnull=False).order_by(
+        handled_matches = self.handled_matches.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
             total=Count('sensitivity')
@@ -194,6 +210,36 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
             'sensitivity', 'total',
         )
 
+        handled_matches_gen = (((Sensitivity(hm["sensitivity"]),
+                        hm["total"]) for hm in handled_matches))
+        
+        return [(hm[0].presentation,
+                hm[1]) for hm in handled_matches_gen]
+
+    def get_sensitivities(self):
+        # Counts the distribution of matches by sensitivity
+        sensitivities = self.matches.order_by(
+            '-sensitivity').values(
+            'sensitivity').annotate(
+            total=Count('sensitivity')
+        ).values(
+            'sensitivity', 'total'
+        )
+        
+        # For handling having no values - List defaults to 0
+        for s in sensitivities:
+            if (s['sensitivity']) == 1000:
+                self.sensitivity_list[0][1] = s['total']
+            elif (s['sensitivity']) == 750:
+                self.sensitivity_list[1][1] = s['total']
+            elif (s['sensitivity']) == 500:
+                self.sensitivity_list[2][1] = s['total']
+            elif (s['sensitivity']) == 250:
+                self.sensitivity_list[3][1] = s['total']
+            
+        return self.sensitivity_list
+
+    def get_data_sources(self):
         # Counts the distribution of data sources by type
         data_sources = matches.order_by(
             'data__matches__handle__type').values(
@@ -203,7 +249,11 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
             'data__matches__handle__type', 'total',
         )
 
-        # TODO: Møde med Danni & Fiks så brugerne har deres egen værdi
+        return [(ds['data__matches__handle__type'],
+                ds['total']) for ds in data_sources]
+        
+    def count_unhandled_matches(self):
+        # TODO: Fiks så brugerne har deres egen værdi - Bug
         # Counts the amount of unhandled matches
         unhandled_matches_list = []
         for org_user in self.users:
@@ -216,12 +266,12 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
                 role_count += 1
             tup = (org_user.first_name, unhandled_matches_count / role_count)
             unhandled_matches_list.append(tup)
+        return unhandled_matches_list
 
-        context['unhandled_matches'] = unhandled_matches_list
-        
-        # TODO: Møde med Danni & Fiks så brugerne har deres egen værdi
+    def get_oldest_matches(self):
+        # TODO: Fiks så brugerne har deres egen værdi - Bug
         # Needs to be rewritten if a better 'time' is added(#41326)
-        # Gets the oldest date from unhandled matches
+        # Gets days since oldest unhandled matche for each user
         oldest_matches = []
         for org_user in self.users:
             org_roles = org_user.roles.select_subclasses() or [DefaultRole(user=org_user)]
@@ -232,44 +282,8 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
             days_ago = timezone.now() - earliest_date
             tup = (org_user.first_name, days_ago.days)
             oldest_matches.append(tup)
-                
-        context['oldest_match'] = oldest_matches
 
-        # Generators had to be done separate from context because of the json_script parser
-        sensitivities_gen = (((Sensitivity(s["sensitivity"]),
-                                            s["total"]) for s in sensitivities))
-
-        handled_matches_gen = (((Sensitivity(hm["sensitivity"]),
-                                            hm["total"]) for hm in handled_matches))
-
-        # Context done as list of tuples
-        context['sensitivities'] = [(s[0].presentation,
-                                    s[1]) for s in sensitivities_gen]
-
-        context['handled_matches'] = [(hm[0].presentation,
-                                      hm[1]) for hm in handled_matches_gen]
-        context['data_sources'] = [(ds['data__matches__handle__type'],
-                                    ds['total']) for ds in data_sources]
-        
-        # TODO: Spørg Danni om det er en løsning på noget optimering
-        for role in self.roles:
-            if isinstance(role, Leader):
-                print('Leader:', self.roles)
-
-            if isinstance(role, DataProtectionOfficer):
-                print('DPO:', self.roles)
-
-            if isinstance(role, Remediator):
-                print('Remidiator:', self.roles)
-
-        # print('oldest scan_time:', self.oldest_match.scan_time)
-        # print('users:', self.users)
-        # print(self.unhandled_matches)
-        # for um in self.unhandled_matches:
-        #     print(um.scan_time)
-        print('oldest_matches:', oldest_matches)
-
-        return context
+        return oldest_matches
 
 
 class ApprovalPageView(TemplateView):
