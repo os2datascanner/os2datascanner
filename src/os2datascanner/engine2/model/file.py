@@ -75,6 +75,9 @@ class FilesystemResource(FileResource):
                 self._get_cookie(), self.handle.relative_path)
         self._mr = None
 
+    def _generate_metadata(self):
+        yield "filesystem-owner-uid", self.unpack_stat()["st_uid"].value
+
     def check(self) -> bool:
         return os.path.exists(self._full_path)
 

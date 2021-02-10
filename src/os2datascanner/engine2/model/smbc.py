@@ -169,6 +169,9 @@ class SMBCResource(FileResource):
         super().__init__(handle, sm)
         self._mr = None
 
+    def _generate_metadata(self):
+        yield "filesystem-owner-sid", self.get_owner_sid()
+
     def check(self) -> bool:
         try:
             _, context = self._get_cookie()

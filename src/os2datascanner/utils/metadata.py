@@ -12,6 +12,8 @@ from defusedxml.ElementTree import parse
 from os2datascanner.engine2.model.core import FileResource
 from os2datascanner.engine2.model.ews import EWSMailResource
 from os2datascanner.engine2.model.http import WebResource
+from os2datascanner.engine2.model.file import FilesystemResource
+from os2datascanner.engine2.model.smbc import SMBCResource
 
 def _codepage_to_codec(cp):
     """Retrieves the Python text codec corresponding to the given Windows
@@ -154,22 +156,16 @@ def guess_responsible_party(handle, sm):
         resource = handle.follow(sm)
         is_derived = bool(handle.source.handle)
 
-        if isinstance(resource, (WebResource, EWSMailResource,)):
+        if (not is_derived
+                and isinstance(resource,
+                        (WebResource, EWSMailResource, FilesystemResource,
+                        SMBCResource))):
             yield from resource._generate_metadata()
 
+        # Extract content metadata
         if isinstance(resource, FileResource):
             media_type = handle.guess_type()
-            if not is_derived:
-                # Extract filesystem metadata
-                # (XXX: being this explicit about function names seems
-                # inelegant)
-                if hasattr(resource, "get_owner_sid"):
-                    yield "filesystem-owner-sid", resource.get_owner_sid()
-                if hasattr(resource, "unpack_stat"):
-                    uid = resource.unpack_stat()["st_uid"].value
-                    yield "filesystem-owner-uid", uid
 
-            # Extract content metadata
             if type_is_opendocument(media_type):
                 # Extract OpenDocument metadata
                 f = None
