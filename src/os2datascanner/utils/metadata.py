@@ -4,7 +4,6 @@ import os
 from sys import stderr
 from codecs import lookup as lookup_codec
 from PyPDF2 import PdfFileReader
-from urllib.parse import urlsplit
 import olefile
 from zipfile import ZipFile, BadZipFile
 from traceback import print_exc
@@ -155,11 +154,8 @@ def guess_responsible_party(handle, sm):
         resource = handle.follow(sm)
         is_derived = bool(handle.source.handle)
 
-        if isinstance(resource, WebResource):
-            _, netloc, _, _, _ = urlsplit(handle.source.to_url())
-            yield "web-domain", netloc
-        elif isinstance(resource, EWSMailResource):
-            yield "email-account", handle.source.address
+        if isinstance(resource, (WebResource, EWSMailResource,)):
+            yield from resource._generate_metadata()
 
         if isinstance(resource, FileResource):
             media_type = handle.guess_type()

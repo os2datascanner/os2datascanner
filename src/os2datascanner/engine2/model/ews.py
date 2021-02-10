@@ -179,6 +179,9 @@ class EWSMailResource(FileResource):
         self._ids = self.handle.relative_path.split(".", maxsplit=1)
         self._message = None
 
+    def _generate_metadata(self):
+        yield "email-account", self.handle.source.address
+
     def check(self) -> bool:
         folder_id, mail_id = self._ids
         account = self._get_cookie()
