@@ -264,6 +264,19 @@
   }
 }
 
+.has-warning {
+  color: var(--color-warning-dark);
+  border-left: 5px solid var(--color-warning-dark);
+  padding-left: 1rem;
+
+  li {
+    margin-left: 0;
+  }
+}
+#changed_rules {
+  display: none;
+}
+
 #upload-file, #upload-file-service, #upload-file-email {
   padding: 0.5rem;
   width: 50%;

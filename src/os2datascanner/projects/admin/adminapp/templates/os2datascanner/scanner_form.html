@@ -615,23 +615,27 @@
 
     <fieldset class="form__fieldset">
       <legend class="required-form">Tilføj regler</legend>
-      <div class="form__group{% if form.rules.errors %} has-error{% endif %}">
-        <div class="select-rules">
+      <div id="{% if view.edit %}messageColorId{% endif %}" class="form__group{% if form.rules.errors %} has-error{% endif %}">
+          <div class="select-rules">
 
-          <ul id="available_rules" class="select-rules__available">
-            {% for value, tag in form.rules.field.choices %}
-            <li class="rule" data-rule-id="{{ value }}">
-              <a href="javascript:void();" class="add-rule-button" title="{{ description }}" role="button">{{ tag }}</a>
-            </li>
-            {% endfor %}
-          </ul>
+            <ul id="available_rules" class="select-rules__available">
+              {% for value, tag in form.rules.field.choices %}
+              <li class="rule" data-rule-id="{{ value }}">
+                <a href="javascript:void();" class="add-rule-button" title="{{ description }}" role="button">{{ tag }}</a>
+              </li>
+              {% endfor %}
+            </ul>
 
-          <div id="selected_rules" class="select-rules__selected">
-            <div id="rules_list"></div>
+            <div id="selected_rules" class="select-rules__selected">
+              <div id="rules_list"></div>
+            </div>
+
+            {% if view.edit %}
+            <div id="changed_rules">Bemærk, at ændringer i regelsættet betyder, at alle filer skal scannes på ny.</div>
+            {% endif %}
+
+            {% if form.rules.errors %}{{ form.rules.errors }}{% endif %}
           </div>
-
-          {% if form.rules.errors %}{{ form.rules.errors }}{% endif %}
-        </div>
       </div>
     </fieldset>
 

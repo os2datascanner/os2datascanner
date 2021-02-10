@@ -4,6 +4,7 @@
   grid-template-columns: 1fr 1fr;
   grid-template-areas: "available selected";
   line-height: 1;
+  padding-bottom: 0.25rem;
 
   &__available {
     border: 1px dashed rgba(0, 0, 0, 0.1);
