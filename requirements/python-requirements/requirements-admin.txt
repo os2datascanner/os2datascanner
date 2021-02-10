@@ -158,10 +158,6 @@ olefile==0.46
     #   -r requirements-django.in
 parso==0.7.0
     # via jedi
-pdfrw==0.4
-    # via
-    #   -c requirements-engine.txt
-    #   -r requirements-django.in
 pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5

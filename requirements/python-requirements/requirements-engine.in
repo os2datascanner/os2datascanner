@@ -7,7 +7,6 @@ dropbox
 exchangelib
 lxml
 olefile
-pdfrw
 Pillow
 prometheus_client
 PyPDF2

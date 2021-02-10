@@ -18,7 +18,6 @@ dropbox
 exchangelib
 olefile
 PyPDF2
-pdfrw
 pysmbc
 python-magic
 regex

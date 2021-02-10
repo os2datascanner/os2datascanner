@@ -3,7 +3,6 @@
 import os
 from sys import stderr
 from codecs import lookup as lookup_codec
-from PyPDF2 import PdfFileReader
 import olefile
 from zipfile import ZipFile, BadZipFile
 from traceback import print_exc
@@ -14,6 +13,8 @@ from os2datascanner.engine2.model.ews import EWSMailResource
 from os2datascanner.engine2.model.http import WebResource
 from os2datascanner.engine2.model.file import FilesystemResource
 from os2datascanner.engine2.model.smbc import SMBCResource
+from os2datascanner.engine2.model.derived.pdf import PDFPageResource
+
 
 def _codepage_to_codec(cp):
     """Retrieves the Python text codec corresponding to the given Windows
@@ -76,18 +77,6 @@ def _process_zip_resource(fp, member, func):
     except (KeyError, BadZipFile, FileNotFoundError):
         return None
 
-def _get_pdf_document_info(fp):
-    try:
-        pdf = PdfFileReader(fp)
-        if pdf.getIsEncrypted():
-            # Some PDFs are "encrypted" with an empty password: give that a
-            # shot...
-            if not pdf.decrypt(""):
-                return None
-        return pdf.getDocumentInfo()
-    except FileNotFoundError:
-        return None
-
 def _check_dictionary_field(d, k, value=None):
     """Many of the metadata extraction functions in this file return dictionary
     or dictionary-like objects on success and None on failure -- and, depending
@@ -102,10 +91,6 @@ def _check_dictionary_field(d, k, value=None):
 def type_is_ole(mime):
     return mime in ("application/msword", "application/vnd.ms-excel",
             "application/vnd.ms-powerpoint")
-
-def type_is_pdf(mime):
-    return mime in ("application/pdf", "application/x-pdf",
-            "application/x-bzpdf", "application/x-gzpdf")
 
 def type_is_ooxml(mime):
     return mime.startswith("application/vnd.openxmlformats-officedocument.")
@@ -159,7 +144,7 @@ def guess_responsible_party(handle, sm):
         if (not is_derived
                 and isinstance(resource,
                         (WebResource, EWSMailResource, FilesystemResource,
-                        SMBCResource))):
+                        SMBCResource, PDFPageResource))):
             yield from resource._generate_metadata()
 
         # Extract content metadata
@@ -209,13 +194,6 @@ def guess_responsible_party(handle, sm):
                         yield "ole-modifier", m["last_saved_by"]
                     if "author" in m:
                         yield "ole-creator", m["author"]
-            elif type_is_pdf(media_type):
-                # Extract PDF metadata
-                doc_info = None
-                with resource.make_stream() as fp:
-                    doc_info = _get_pdf_document_info(fp)
-                if _check_dictionary_field(doc_info, "/Author"):
-                    yield "pdf-author", doc_info["/Author"]
 
     guesses = {}
     # Files in the real world can be malformed in a wide array of exciting
