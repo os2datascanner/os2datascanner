@@ -159,11 +159,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
     template_name = 'statistics.html'
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
-<<<<<<< HEAD
     users = UserProfile.objects.all()
-=======
-    users = User.objects.all()
->>>>>>> [#38459] Refactored functionality out of get_context_data
     matches = DocumentReport.objects.filter(
         data__matches__matched=True)
     handled_matches = matches.filter(
@@ -185,7 +181,6 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         context["roles"] = [role.__class__.__name__ for role in roles]
         context["renderable_rules"] = RENDERABLE_RULES
 
-<<<<<<< HEAD
         # matches = DocumentReport.objects.filter(
         #     data__matches__matched=True)
         #
@@ -193,8 +188,6 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         #     # TODO: filter either for the role dpo or leader, depending on the stats they are viewing.
         #     matches = role.filter(matches)
 
-=======
->>>>>>> [#38459] Refactored functionality out of get_context_data
         # Contexts are done as a lists of tuples
         context['oldest_match'] = self.get_oldest_matches()
         
@@ -261,47 +254,42 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
                 ds['total']) for ds in data_sources]
         
     def count_unhandled_matches(self):
-<<<<<<< HEAD
-        # TODO: Fiks så brugerne har deres egen værdi - Bug
-=======
-        # TODO: Møde med Danni & Fiks så brugerne har deres egen værdi
->>>>>>> [#38459] Refactored functionality out of get_context_data
         # Counts the amount of unhandled matches
         unhandled_matches_list = []
-        for org_user in self.users:
-            org_roles = org_user.roles.select_subclasses() or [DefaultRole(user=org_user)]
-            role_count = 0
-            unhandled_matches_count = 0
-            for org_role in org_roles:
-                # Filter matches by role.
-                unhandled_matches_count += org_role.filter(self.unhandled_matches).count()            
-                role_count += 1
-            tup = (org_user.first_name, unhandled_matches_count / role_count)
-            unhandled_matches_list.append(tup)
-        return unhandled_matches_list
+
+        unhandled_matches = self.unhandled_matches.order_by(
+            'data__metadata__metadata').values(
+            'data__metadata__metadata').annotate(
+            total=Count('data__metadata__metadata')
+        ).values(
+            'data__metadata__metadata', 'total',
+        )
+
+        employee_unhandled_list = []
+        for um in unhandled_matches:
+            dict_values = list(um['data__metadata__metadata'].values())
+            first_value = dict_values[0]
+            employee_unhandled_list.append((first_value, um['total']))
+
+        return employee_unhandled_list
 
     def get_oldest_matches(self):
-<<<<<<< HEAD
         # TODO: Fiks så brugerne har deres egen værdi - Bug
-=======
-        # TODO: Møde med Danni & Fiks så brugerne har deres egen værdi
->>>>>>> [#38459] Refactored functionality out of get_context_data
+
         # Needs to be rewritten if a better 'time' is added(#41326)
         # Gets days since oldest unhandled matche for each user
         oldest_matches = []
+        
         for org_user in self.users:
             org_roles = org_user.roles.select_subclasses() or [DefaultRole(user=org_user)]
             earliest_date = timezone.now()
             for match in self.unhandled_matches:
                 if match.scan_time < earliest_date:
                     earliest_date = match.scan_time
-            days_ago = timezone.now() - earliest_date
+                days_ago = timezone.now() - earliest_date
             tup = (org_user.first_name, days_ago.days)
             oldest_matches.append(tup)
-<<<<<<< HEAD
 
-=======
->>>>>>> [#38459] Refactored functionality out of get_context_data
         return oldest_matches
 
 
