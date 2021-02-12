@@ -60,10 +60,6 @@ class MetadataTest(unittest.TestCase):
                 metadata["pdf-author"],
                 "Alexander John Faithfull",
                 "metadata extraction failed")
-        self.assertEqual(
-                proxy.get_attr_access_count("follow"),
-                0,
-                "metadata extraction from synthetic file attempted")
 
     def test_web_domain_extraction(self):
         with SourceManager() as sm:

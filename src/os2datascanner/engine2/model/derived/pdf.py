@@ -110,16 +110,17 @@ class PDFPageSource(DerivedSource):
             yield PDFObjectHandle(self, p)
 
 
+class PDFObjectResource(FilesystemResource):
+    def _generate_metadata(self):
+        # Suppress the superclass implementation of this method -- generated
+        # files have no interesting metadata
+        yield from ()
+
+
 @Handle.stock_json_handler("pdf-object")
 class PDFObjectHandle(Handle):
     type_label = "pdf-object"
-    resource_type = FilesystemResource
-
-    # All PDFObjectHandles point at generated temporary files
-    # (XXX: we don't care about this metadata at the moment, so this isn't an
-    # issue, but what if an extracted file is nevertheless a real file and
-    # carries useful metadata, like a JPEG image with XMP properties?)
-    is_synthetic = True
+    resource_type = PDFObjectResource
 
     @property
     def presentation(self):

@@ -128,6 +128,8 @@ class LibreOfficeObjectResource(FilesystemResource):
             elif mime.startswith(
                     "application/vnd.oasis.opendocument."):
                 yield from office_metadata.generate_opendocument_metadata(fp)
+        # We deliberately don't yield from the superclass implementation --
+        # filesystem metadata is useless for a generated file
 
 
 @Handle.stock_json_handler("lo-object")
