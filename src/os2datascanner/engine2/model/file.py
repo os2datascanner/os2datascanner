@@ -5,6 +5,7 @@ import os.path
 from urllib.parse import quote, unquote, urlsplit, urlunsplit
 from pathlib import Path
 from datetime import datetime
+from dateutil.tz import gettz
 from contextlib import contextmanager
 
 from ..conversions.types import OutputType
@@ -87,7 +88,7 @@ class FilesystemResource(FileResource):
             self._mr = MultipleResults.make_from_attrs(
                     os.stat(self._full_path), *stat_attributes)
             self._mr[OutputType.LastModified] = datetime.fromtimestamp(
-                    self._mr["st_mtime"].value)
+                    self._mr["st_mtime"].value, gettz())
         return self._mr
 
     def get_size(self):
