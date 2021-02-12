@@ -191,13 +191,13 @@ class StatisticsPageViewTest(TestCase):
     def test_statisticspage_count_unhandled_matches_as_leader(self):
         leader = Leader.objects.create(user=self.user)
         view = self.get_statisticspage_object()
-        self.assertListEqual(view.count_unhandled_matches(), [('Kjeld', 0.0)])
+        self.assertListEqual(view.count_unhandled_matches(), [])
         leader.delete()
 
     def test_statisticspage_count_unhandled_matches_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.user)
         view = self.get_statisticspage_object()
-        self.assertListEqual(view.count_unhandled_matches(), [('Kjeld', 3.0)])
+        self.assertListEqual(view.count_unhandled_matches(), [])
         dpo.delete()
 
     def get_statisticspage_object(self):
