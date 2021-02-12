@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+from sys import stderr
 import magic
 from datetime import datetime
+from traceback import print_exc
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import SingleResult, MultipleResults
@@ -52,7 +54,26 @@ class Resource(ABC):
     def get_metadata(self):
         """Returns an object suitable for JSON serialisation that represents
         the metadata known for this object."""
-        return dict((k, v) for k, v in self._generate_metadata())
+
+        metadata = {}
+
+        # Files in the real world can be malformed in a wide array of exciting
+        # ways. To make sure we collect as much metadata as possible, even if
+        # one of the later extraction stages does go wrong, store metadata
+        # values as soon as they're produced by our helper function
+        try:
+            for k, v in self._generate_metadata():
+                metadata[k] = v
+        except Exception:
+            print("warning: Resource.get_metadata:"
+                    " continuing after unexpected exception", file=stderr)
+            print_exc(file=stderr)
+
+        if self.handle.source.handle:
+            metadata.update(
+                    self.handle.source.handle.follow(self._sm).get_metadata())
+
+        return metadata
 
     def _get_cookie(self):
         """Returns the magic cookie produced when the Source behind this
