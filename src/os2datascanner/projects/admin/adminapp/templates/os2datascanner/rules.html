@@ -16,18 +16,20 @@
 
   <div class="content">
     
-  <div class="add-new">
-    <h2 class="page-title" style="display: inline-block;">Regler</h2>
-      
-    <a 
-      class="button button--add button--cta button--small add-new-btn"
-      href="/rules/regex/add/"
-      title="Tilføj ny regel">
-      <svg class="icon">
-        <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
-      </svg>
-      <div class="add-new-text">Tilføj ny</div>
-    </a> 
+  <div class="aside">
+    <h1 class="page-title">Regler</h1>
+    
+    <div class="btn">
+      <a 
+        class="button button--cta"
+        href="/rules/regex/add/"
+        title="Tilføj regel">
+        <svg class="icon">
+          <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
+        </svg>
+        <span>Tilføj regel</span>
+      </a> 
+    </div>
   </div>        
 
   <table class="datatable">
@@ -54,7 +56,12 @@
 
         <td class="datatable__column--expression">
           {% if rule.regexrule.patterns.all|length > 0 %}
-          <button type="button" class="button button--ghost button--small button--rounded" data-toggle="#show-patterns-{{ forloop.counter }}">Vis udtryk</button>
+          <button 
+            type="button" 
+            class="button button--grey button--small" 
+            data-toggle="#show-patterns-{{ forloop.counter }}">
+            Vis udtryk
+          </button>
           </div>
           {% endif %}
         </td>
@@ -69,7 +76,7 @@
         <td class="datatable__column--actions">
           <a 
             href="/rules/regex/{{rule.pk}}"
-            class="button button--small button--rounded"
+            class="button button--small button--grey"
             title="Redigér">
             <svg class="icon">
               <use xlink:href="/static/src/svg/symbol-defs.svg#icon-pencil"></use>
@@ -81,7 +88,7 @@
             {{ form.as_p }}
             <button 
               type="submit"
-              class="button button--small button--rounded"
+              class="button button--small button--grey"
               onclick="return confirm('Ønsker du virkelig at slette denne regel?\n{{ rule.name }}\n\nHandlingen kan ikke fortrydes.')"
                     title="Slet">
               <svg class="icon">
@@ -100,7 +107,7 @@
         {% endif %}
           {% if rule.regexrule.patterns.all|length > 0 %}
           {% for pattern in rule.regexrule.patterns.all %}
-          <code>{{ pattern.pattern_string }}</code>
+          <code class="code-grey">{{ pattern.pattern_string }}</code>
           {% endfor %}
           {% endif %}
         </td>
@@ -109,7 +116,9 @@
     </tbody>
   </table>
 
-  <h2 class="page-title" style="display: inline-block;">CPR-regler</h2>
+  <div class="aside">
+    <h1 class="page-title">CPR-regler</h1>
+  </div>
 
   <table class="datatable">
     <thead>

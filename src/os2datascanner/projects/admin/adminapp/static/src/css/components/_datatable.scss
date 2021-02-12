@@ -10,6 +10,7 @@
   max-width: 90rem;
   table-layout: fixed;
   width: calc(100% - 2rem);
+  margin-bottom: 3rem;
 
   &--wide {
     max-width: none;
@@ -20,20 +21,20 @@
       width: 15rem;
     }
 
-    &--expression {
-      width: 8rem;
+    &--org {
+      max-width: 15rem;
     }
 
-    &--probability {
-      width: 10rem;
+    &--expression {
+      max-width: 11rem;
     }
 
     &--sensitivity {
-      width: 9rem;
+      width: 12rem;
     }
 
     &--actions {
-      width: 10rem;
+      width: 11rem;
     }
 
   }
@@ -119,6 +120,43 @@
 }
 /* .datatable--click-rows, stop */
 
+/* Icons and text in datatable  */
+.flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-top: .5rem;
+
+  &--icon {
+    margin-top: -.25rem;
+  }
+
+  &--width {
+    margin-right: .75rem;
+    height: 1.2rem;
+    max-width: 1.5rem;
+
+    &--icon {
+      height: auto;
+      max-width: 1.5rem;
+      color: #222222;
+    }
+  }
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
+}
+
+/* expression in datatable  */
+.code-grey {
+  background-color: #e0e0e0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-button);
+  padding: .5rem;
+}
+
 .scan {
   &__item-title {
     display: block;
@@ -134,8 +172,4 @@
       opacity: 0.75;
     }
   }
-}
-
-.datatable + h2 {
-  margin-top: 2em;
 }

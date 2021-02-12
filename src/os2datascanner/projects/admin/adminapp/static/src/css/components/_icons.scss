@@ -5,6 +5,11 @@
   stroke-width: 0;
   stroke: currentColor;
   fill: currentColor;
+
+  &--white {
+    color: #fff;
+    fill: #fff;
+  }
 }
 
 /* ==========================================

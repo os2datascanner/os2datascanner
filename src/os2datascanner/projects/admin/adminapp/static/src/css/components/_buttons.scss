@@ -1,6 +1,5 @@
 .button {
-  background-color: #fff;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: #e9e9e9;
   border: none;
   color: currentColor;
   cursor: pointer;
@@ -44,19 +43,20 @@
     }
   }
 
-  &--ghost {
-    background-color: transparent;
+  &--grey {
+    background-color: #e0e0e0;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius-button);
 
     &:focus,
     &:hover {
-      background-color: transparent;
-      border-color: rgba(0, 0, 0, 0.2);
+      background-color: rgba(0, 0, 0, 0.2);
     }
   }
 
   &--small {
-    padding: 0.5rem;
+    padding: .5rem;
+    margin-right: 0.25rem;
   }
 
   &--modal-close {

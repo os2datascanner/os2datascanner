@@ -17,14 +17,14 @@
   <div class="content">
 
     <div class="aside">
-      <h1 class="page-title">Scannerjob:</h1>
+      <h1 class="page-title">Scannerjob</h1>
       
       <div class="btn">
         <a 
         class="button button--cta" 
         href="/{{ view.type }}scanners/add/"
         title="Tilføj scannerjob">
-        <svg class="icon">
+        <svg class="icon icon--white">
           <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
         </svg>
           <span>Tilføj scannerjob</span>
@@ -70,15 +70,19 @@
           
           <td class="domain-validation datatable__column--validated">
             {% if scanner.validation_status %}
-            <svg class="icon" title="Er valideret">
-              <use xlink:href="{{ settings.ICON_SPRITE_URL }}#icon-checkmark1"></use>
-            </svg>
-            <span class="">Ja</span>
+            <span class="flex flex--icon">
+              <span class="flex--width flex--width--icon">
+                <i id="done" title="Er godkendt" class="material-icons">done</i>
+              </span>
+              <span>Ja</span>
+            </span>
             {% else %}
-            <svg class="icon" title="Er ikke valideret">
-              <use xlink:href="{{ settings.ICON_SPRITE_URL }}#icon-minus"></use>
-            </svg>
-            <span class="">Nej</span>
+            <span class="flex flex--icon">
+              <span class="flex--width flex--width--icon">
+                <i id="clear" title="Er ikke godkendt" class="material-icons">clear</i>
+              </span>
+              <span>Nej</span>
+            </span>
             {% endif %}
           </td>
           
@@ -91,7 +95,7 @@
             href="#run-scanner-modal" 
             data-modal="modal:open" 
             data-src="/{{ view.type }}scanners/{{scanner.pk}}/askrun/"
-            class="button button--small button--rounded"
+            class="button button--small button--grey"
             title="Kør">
               <svg class="icon">
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-play"></use>
@@ -100,7 +104,7 @@
           
             <a 
             href="/{{ view.type }}scanners/{{scanner.pk}}"
-            class="button button--small button--rounded"
+            class="button button--small button--grey"
             title="Redigér">
               <svg class="icon">
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-pencil"></use>
@@ -113,7 +117,7 @@
               {{ form.as_p }}
               <button 
               type="submit"
-              class="button button--small button--rounded"
+              class="button button--small button--grey"
               onclick="return confirm('Ønsker du virkelig at slette denne scanner?\n{{scanner.name}}\n\nHandlingen kan ikke fortrydes.')"
               title="Slet">
               <svg class="icon">
