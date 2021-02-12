@@ -135,6 +135,10 @@ class FileResource(TimestampedResource):
         Python stream through which the content of this FileResource can be
         accessed until the context is exited."""
 
+    def _generate_metadata(self):
+        yield "last-modified", OutputType.LastModified.encode_json_object(
+                self.get_last_modified().value)
+
     def compute_type(self):
         """Guesses the type of this file, possibly examining its content in the
         process. By default, this is computed by giving libmagic the first 512

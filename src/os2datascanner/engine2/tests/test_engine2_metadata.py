@@ -49,9 +49,9 @@ class MetadataTest(unittest.TestCase):
     def test_web_domain_extraction(self):
         with SourceManager() as sm:
             metadata = WebHandle(
-                    WebSource("https://www.example.com/"),
+                    WebSource("https://www.example.invalid./"),
                     "/cgi-bin/test.pl").follow(sm).get_metadata()
         self.assertEqual(
                 metadata.get("web-domain"),
-                "www.example.com",
+                "www.example.invalid.",
                 "web domain metadata missing")

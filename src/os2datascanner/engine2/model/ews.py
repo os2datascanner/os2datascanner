@@ -181,6 +181,7 @@ class EWSMailResource(FileResource):
 
     def _generate_metadata(self):
         yield "email-account", self.handle.source.address
+        yield from super()._generate_metadata()
 
     def check(self) -> bool:
         folder_id, mail_id = self._ids

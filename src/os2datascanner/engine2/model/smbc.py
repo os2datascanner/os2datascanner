@@ -170,6 +170,7 @@ class SMBCResource(FileResource):
         self._mr = None
 
     def _generate_metadata(self):
+        yield from super()._generate_metadata()
         yield "filesystem-owner-sid", self.get_owner_sid()
 
     def check(self) -> bool:
