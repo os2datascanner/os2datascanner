@@ -23,16 +23,13 @@ from django.conf import settings
 from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.views.generic import View, TemplateView, ListView
+from django.views.generic import View, TemplateView, ListView, DetailView
 from django.db.models import Q
 
 from ..models.documentreport_model import DocumentReport
 from ..models.roles.defaultrole_model import DefaultRole
 from ..models.userprofile_model import UserProfile
 from ..models.organization_model import Organization
-from ..models.roles.remediator_model import Remediator
-from ..models.roles.dpo_model import DataProtectionOfficer
-from ..models.roles.leader_model import Leader
 
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
@@ -45,11 +42,18 @@ RENDERABLE_RULES = (CPRRule.type_label, RegexRule.type_label,)
 
 class LoginRequiredMixin(View):
     """Include to require login."""
+    roles = None
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         """Check for login and dispatch the view."""
         return super().dispatch(*args, **kwargs)
+
+    def get_user_roles(self):
+        if self.roles is None:
+            user = self.request.user
+            self.roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
+        return self.roles
 
 
 class LoginPageView(View):
@@ -69,7 +73,6 @@ class MainPageView(ListView, LoginRequiredMixin):
         data__matches__matched=True).filter(
         resolution_status__isnull=True)
     scannerjob_filters = None
-    roles = None
 
     def get_queryset(self):
         user = self.request.user
@@ -116,7 +119,6 @@ class MainPageView(ListView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["renderable_rules"] = RENDERABLE_RULES
-        context["roles"] = [role.__class__.__name__ for role in self.roles]
 
         if self.scannerjob_filters is None:
             # Create select options
@@ -153,21 +155,18 @@ class MainPageView(ListView, LoginRequiredMixin):
 class StatisticsPageView(TemplateView, LoginRequiredMixin):
     template_name = 'statistics.html'
     context_object_name = "matches"  # object_list renamed to something more relevant
-    model = DocumentReport
-    matches = DocumentReport.objects.filter(
-        data__matches__matched=True)
-    handled_matches = matches.filter(
-        resolution_status__isnull=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
-        context["roles"] = [role.__class__.__name__ for role in roles]
-        context["renderable_rules"] = RENDERABLE_RULES
 
+        matches = DocumentReport.objects.filter(
+            data__matches__matched=True)
+
+        for role in self.get_user_roles():
+            # TODO: filter either for the role dpo or leader, depending on the stats they are viewing.
+            matches = role.filter(matches)
         # Counts the distribution of matches by sensitivity
-        sensitivities = self.matches.order_by(
+        sensitivities = matches.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
             total=Count('sensitivity')
@@ -176,7 +175,8 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         )
 
         # Counts the distribution of handled matches by sensitivity
-        handled_matches = self.handled_matches.order_by(
+        handled_matches = matches.filter(
+            resolution_status__isnull=False).order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
             total=Count('sensitivity')
@@ -185,7 +185,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         )
 
         # Counts the distribution of data sources by type
-        data_sources = self.matches.order_by(
+        data_sources = matches.order_by(
             'data__matches__handle__type').values(
             'data__matches__handle__type').annotate(
             total=Count('data__matches__handle__type')

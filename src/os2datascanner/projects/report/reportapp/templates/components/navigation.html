@@ -9,8 +9,8 @@
         <span class="width">{% trans "Front page" %}</span>
       </a>
     </li>
-    
-    {% for r in roles %}
+
+    {% for r in nav_items %}
       {% if r == "DataProtectionOfficer" or r == 'Leader' %}
       <li>
         <a href="/statistics">
