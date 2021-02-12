@@ -4,87 +4,72 @@
   <div class="statistic_wrapper">
     <div class="statistic statistic--one">
       <h1 class="page-title__sub">Medarbejderoverblik</h1>
-      <table class="datatable">
-        <tr>
-          {% for key, value in unhandled_matches %}
-            <th>{{ key }}</th>
-          {% endfor %}
-        </tr>
-        <tr>
-          {% for key, value in unhandled_matches %}
-            <td>{{ value }}</td>
-          {% endfor %}
-        </tr>
-      </table>
-      <table class="datatable">
-          {% for key, value in oldest_match %}
-            <th>{{ key }}</th>
-          {% endfor %}
-        </tr>
-        <tr>
-          {% for key, value in oldest_match %}
-            <td>{{ value }} dage</td>
-          {% endfor %}
-        </tr>
-      </table>
+      <p>Overblik over //afdelinger//medarbejdere med ældste matches</p>
+      <div id="bar_container_unhandled" style="position:relative;">
+        <canvas id="bar_chart_unhandled"></canvas>
+      </div>
     </div>
+
   
     <div class="statistic statistic--two">
       <h1 class="page-title__sub">Fordeling af matches</h1>
-
-      <p>Følsomhed</p>
-      <table class="datatable">
-        <tr>
-          {% for key, value in sensitivities %}
-            <th>{{ key }}</th>
-          {% endfor %}
-        </tr> 
-        <tr>
-        <tr>
-          {% for key, value in sensitivities %}
-            <td>{{ value }}</th>
-          {% endfor %}
-        </tr> 
-      </table>
-
-      <p>Kilde</p>
-      <table class="datatable">
-        <tr>
-          {% for key, value in data_sources %}
-            <th>{{ key }}</th>
-          {% endfor %}
-        </tr>
-        <tr>
-          {% for key, value in data_sources %}
-            <td>{{ value }}</td>
-          {% endfor %}
-        </tr>
-      </table>
+      <p>Matches fordelt på følsomheder</p>
+      <div id="pie_container_sensitivity">
+        <div>
+          <canvas id="pie_chart_sensitivity" width="100" height="100"></canvas>
+        </div>
+        <div id="pie_legend_sensitivity"></div>
+      </div>
     </div>
   </div>
 
   <div class="statistic_wrapper">
     <div class="statistic statistic--three">
       <h1 class="page-title__sub">Håndterede matches</h1>
-      <table class="datatable">
-        <tr>
-            <th>Total procent</th>
-        </tr>
-        <tr>
-            <td><div id="total_handled_percentage"></div></td>
-        </tr>
-      </table>
+      <p>Procentvis andel af håndterede matches fordelt på følsomhed</p>
 
-      <p>Fordelt i følsomhed procent</p>
-      <table class="datatable">
-        <tr>
-          {% for key, value in sensitivities %}
-            <th>{{ key }}</th>
-          {% endfor %}
-        </tr>
-        <tr id="handled_sensitivity_percentage"></tr>
-        <tr id="handled_of_total"></tr>
-      </table>
+      <div id="doughnut_charts_container">
+        <div class="doughnut_chart_container">
+          <div>
+            <canvas id="doughnut_chart_critical" width="100" height="100"></canvas>
+          </div>
+          <div class="doughtnut_info_box">
+            <h5>Kritisk</h5>
+            <p>Xxx af xxx</p>
+            <p>+-x% sidste uge</p>
+          </div>
+        </div>
+        <div class="doughnut_chart_container">
+          <div>
+            <canvas id="doughnut_chart_problem" width="100" height="100"></canvas>
+          </div>
+          <div class="doughtnut_info_box">
+            <h5>Problem</h5>
+            <p>Xxx af xxx</p>
+            <p>+-x% sidste uge</p>
+          </div>
+        </div>
+        <div class="doughnut_chart_container">
+          <div>
+            <canvas id="doughnut_chart_warning" width="100" height="100"></canvas>
+          </div>
+          <div class="doughtnut_info_box">
+            <h5>Advarsel</h5>
+            <p>Xxx af xxx</p>
+            <p>+-x% sidste uge</p>
+          </div>
+        </div>
+        <div class="doughnut_chart_container">
+          <div>
+            <canvas id="doughnut_chart_notification" width="100" height="100"></canvas>
+          </div>
+          <div class="doughtnut_info_box">
+            <h5>Notifikation</h5>
+            <p>Xxx af xxx</p>
+            <p>+-x% sidste uge</p>
+          </div>
+        </div>
+      </div>
     </div>
   
     <div class="statistic statistic--four">
@@ -104,6 +89,7 @@
   const handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
   const unhandledMatches = JSON.parse(document.getElementById('unhandled_matches').textContent);
   const oldestMatch = JSON.parse(document.getElementById('oldest_match').textContent);
+
 
   // Finds the total number matches in the array
   totalArrayValue = (array, index) => {
@@ -169,8 +155,6 @@
 
   htmlTableHandledMatches();
 
-  // TODO: Remove when done "prototyping"
-  // Inserts a table in the format 'array, dividing word, array'
   htmlTableInserter = (fullArray, handledArray, id, divider) => {
     let tableRow = '';
     for (let i = 0; i < fullArray.length; i++) {
