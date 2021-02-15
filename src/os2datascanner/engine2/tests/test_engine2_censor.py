@@ -4,6 +4,7 @@ from os2datascanner.engine2.model.ews import (
         EWSMailHandle, EWSAccountSource, OFFICE_365_ENDPOINT as CLOUD)
 from os2datascanner.engine2.model.smb import SMBSource, SMBHandle
 from os2datascanner.engine2.model.smbc import SMBCSource, SMBCHandle
+from os2datascanner.engine2.model.data import DataSource, DataHandle
 from os2datascanner.engine2.model.derived.zip import ZipSource, ZipHandle
 from os2datascanner.engine2.model.derived.filtered import (
         GzipSource, FilteredHandle)
@@ -88,3 +89,23 @@ class CensorTests(unittest.TestCase):
                 self.assertIsNotNone(handle.source.handle.source._user)
                 handle = handle.censor()
                 self.assertIsNone(handle.source.handle.source._user)
+
+    def test_data_censoring(self):
+        handle = DataHandle(
+                DataSource(
+                        b"VGhpcyBpcyBhIHRlc3Qgb2YgdGhlIEVtZXJnZW5jeSBCcm9hZGNh"
+                        b"c3QgU3lzdGVtLgo=", "text/plain", "test.txt"),
+                "test.txt")
+        censored_handle = handle.censor()
+        self.assertEqual(
+                censored_handle.source._content,
+                None,
+                "content not censored")
+        self.assertEqual(
+                handle.source.mime,
+                censored_handle.source.mime,
+                "MIME type not preserved")
+        self.assertEqual(
+                handle.source.name,
+                censored_handle.source.name,
+                "name not preserved")

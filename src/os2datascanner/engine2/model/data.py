@@ -26,13 +26,16 @@ class DataSource(Source):
         return self._name
 
     def handles(self, sm):
-        yield DataHandle(self, self.name or "file")
+        if self._content:
+            yield DataHandle(self, self.name or "file")
+        else:
+            raise ValueError("Can't explore a DataSource with no content")
 
     def _generate_state(self, sm):
         yield
 
     def censor(self):
-        return self
+        return DataSource(None, self._mime, self._name)
 
     def to_url(self):
         return "data:{0};base64,{1}".format(self.mime,
@@ -46,7 +49,8 @@ class DataSource(Source):
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
-            "content": b64encode(self._content).decode(encoding="ascii"),
+            "content": b64encode(self._content).decode(encoding="ascii")
+                    if self._content else None,
             "mime": self.mime,
             "name": self.name
         })
@@ -54,8 +58,9 @@ class DataSource(Source):
     @staticmethod
     @Source.json_handler(type_label)
     def from_json_object(obj):
-        return DataSource(
-                b64decode(obj["content"]), obj["mime"], obj.get("name"))
+        content = obj["content"]
+        return DataSource(b64decode(content) if content else None,
+                obj["mime"], obj.get("name"))
 
 
 class DataResource(FileResource):
