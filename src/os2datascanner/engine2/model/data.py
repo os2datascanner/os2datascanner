@@ -12,16 +12,21 @@ from .core import Source, Handle, FileResource
 class DataSource(Source):
     type_label = "data"
 
-    def __init__(self, content, mime="application/octet-stream"):
+    def __init__(self, content, mime="application/octet-stream", name=None):
         self._content = content
         self._mime = mime
+        self._name = name
 
     @property
     def mime(self):
         return self._mime
 
+    @property
+    def name(self):
+        return self._name
+
     def handles(self, sm):
-        yield DataHandle(self, "file")
+        yield DataHandle(self, self.name or "file")
 
     def _generate_state(self, sm):
         yield
@@ -42,13 +47,15 @@ class DataSource(Source):
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
             "content": b64encode(self._content).decode(encoding="ascii"),
-            "mime": self.mime
+            "mime": self.mime,
+            "name": self.name
         })
 
     @staticmethod
     @Source.json_handler(type_label)
     def from_json_object(obj):
-        return DataSource(b64decode(obj["content"]), obj["mime"])
+        return DataSource(
+                b64decode(obj["content"]), obj["mime"], obj.get("name"))
 
 
 class DataResource(FileResource):
@@ -87,8 +94,18 @@ class DataHandle(Handle):
     resource_type = DataResource
 
     @property
+    def name(self):
+        if self.source.name:
+            return self.source.name
+        else:
+            return super().name
+
+    @property
     def presentation(self):
-        return "(embedded file of type {0})".format(self.guess_type())
+        if self.source.name:
+            return "{0} (embedded)".format(self.source.name)
+        else:
+            return "(embedded file of type {0})".format(self.guess_type())
 
     def censor(self):
         return DataHandle(self.source.censor(), self.relative_path)

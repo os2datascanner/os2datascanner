@@ -10,7 +10,7 @@ info:
     license:
         name: Mozilla Public License, v. 2.0
         url: https://mozilla.org/MPL/2.0/
-    version: 1.0.0
+    version: 1.0.1
 components:
     securitySchemes:
         bpsk:
@@ -146,6 +146,12 @@ components:
                     description: >
                         The MIME type of this file.
                     example: "text/plain"
+                name:
+                    type: string
+                    description: >
+                        The name of this file.
+                    default: "file"
+                    example: "test.txt"
         web-source:
             type: object
             description: >
