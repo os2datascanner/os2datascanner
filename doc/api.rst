@@ -22,11 +22,10 @@ The messages expected by the API server are documented using the OpenAPI
 specification language. This includes a subset of OS2datascanner's ``Rule``\s
 (including the logical rules) and ``Source``\s.
 
-    The API server supports *all* of OS2datascanner's ``Rule``s and
-    ``Source``\s, not just those present in the OpenAPI documentation.
-    
-    You can restrict the ``Source``\s to a list of approved types in its
-    settings.
+    The API server supports *all* of OS2datascanner's ``Rule``\s and
+    ``Source``\s, not just those present in the OpenAPI documentation. By
+    default, however, only the documented ``Source``\s are enabled. (This can
+    be changed in the API server's settings.)
 
 The Docker development environment starts the API server on port 8070 along
 with a Swagger UI server on port 8075. The latter can be used to experiment
