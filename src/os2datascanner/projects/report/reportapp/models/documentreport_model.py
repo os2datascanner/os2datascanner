@@ -24,6 +24,10 @@ class DocumentReport(models.Model):
 
     probability = models.FloatField(null=True, verbose_name="Probability")
 
+    # datasource_last_modified stores when the scanned file/email/element itself, has last been updated.
+    # This timestamp is collected during scan and is from the datasource.
+    datasource_last_modified = models.DateTimeField(null=True)
+
     def _str_(self):
         return self.path
 

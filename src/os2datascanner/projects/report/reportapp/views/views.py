@@ -14,6 +14,8 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+from datetime import timedelta, datetime
+
 import structlog
 
 from django.db.models import Count
@@ -79,6 +81,25 @@ class MainPageView(ListView, LoginRequiredMixin):
             # Filter matches by role.
             self.matches = role.filter(self.matches)
 
+        # Filters by datasource_last_modified.
+        # lt mean less than.
+        # gt means greater than
+        # A check whether something is more recent than a month
+        # is done by subtracting 30 days from now and then comparing if the saved time is "bigger" than that
+        # and vice versa for older.
+        if self.request.GET.get('30-days') != 'true':
+            older_than_30_days = self.matches.filter(
+                datasource_last_modified__lt=datetime.now() + timedelta(days=30))
+            self.matches = older_than_30_days
+            print(self.matches)
+        else:
+            newer_than_30_days = self.matches.filter(
+                    datasource_last_modified__gte=datetime.now() - timedelta(days=30))
+            print(self.matches)
+            self.matches = newer_than_30_days
+
+
+
         if self.request.GET.get('scannerjob') \
                 and self.request.GET.get('scannerjob') != 'all':
             # Filter by scannerjob
@@ -116,6 +137,7 @@ class MainPageView(ListView, LoginRequiredMixin):
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
 
+        context['30-days'] = self.request.GET.get('30-days')
         sensitivities = self.matches.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(

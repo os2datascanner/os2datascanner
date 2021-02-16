@@ -1,3 +1,5 @@
+from datetime import datetime
+from dateutil import tz
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
 
@@ -15,6 +17,9 @@ from ..reportapp.views.views import MainPageView
 """Shared data"""
 time0 = "2020-11-11T11:11:59+02:00"
 time1 = "2020-10-28T14:21:27+01:00"
+# Used to always have a recent date in test.
+DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
+time_now = datetime.now().replace(tzinfo=tz.gettz()).strftime(DATE_FORMAT)
 
 scan_tag0 = {
     "time": time0,
@@ -97,13 +102,15 @@ egon_positive_match_1 = messages.MatchesMessage(
 egon_metadata = messages.MetadataMessage(
     scan_tag=scan_tag0,
     handle=egon_email_handle,
-    metadata={"email-account": "egon@olsen.com"}
+    metadata={"email-account": "egon@olsen.com",
+              }
 )
 
 egon_metadata_1 = messages.MetadataMessage(
     scan_tag=scan_tag1,
     handle=egon_email_handle_1,
-    metadata={"email-account": "egon@olsen.com"}
+    metadata={"email-account": "egon@olsen.com"
+              }
 )
 
 
@@ -140,7 +147,8 @@ kjeld_positive_match = messages.MatchesMessage(
 kjeld_metadata = messages.MetadataMessage(
     scan_tag=scan_tag0,
     handle=kjeld_email_handle,
-    metadata={"email-account": "kjeld@jensen.com"}
+    metadata={"email-account": "kjeld@jensen.com",
+              "last-modified": time_now}
 )
 
 
@@ -242,6 +250,12 @@ class MainPageViewTest(TestCase):
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 1)
         remediator.delete()
+
+    def test_mainpage_view_filter_by_datasource_age(self):
+        remediator = Remediator.objects.create(user=self.user)
+        qs = self.mainpage_get_queryset()
+        print(qs.newer_than_30_days)
+
 
     def mainpage_get_queryset(self, params=''):
         request = self.factory.get('/' + params)

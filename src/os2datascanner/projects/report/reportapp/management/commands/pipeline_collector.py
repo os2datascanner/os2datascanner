@@ -24,7 +24,7 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
 from os2datascanner.projects.report.reportapp.utils import hash_handle
-
+from os2datascanner.engine2.conversions.types import OutputType
 from ...models.documentreport_model import DocumentReport
 from ...models.organization_model import Organization
 
@@ -70,6 +70,10 @@ def event_message_received_raw(body):
 
 def handle_metadata_message(new_report, result):
     new_report.data["metadata"] = result
+    if result.get("metadata").get("last-modified"):
+        new_report.datasource_last_modified = OutputType.decode_json_object(
+            OutputType.LastModified, result.get("metadata").get("last-modified"))
+
     new_report.save()
 
 
