@@ -3,6 +3,19 @@
       document.querySelector('#' + elementid + ' [value="all"]').selected = true;
       document.getElementById("filter_form").submit();
   };
+  function checkedBox() {
+    if (document.getElementById('30-days').checked) {
+      document.getElementById('30-days').value = true;
+      history.pushState({
+        id: 'index'
+        }, 'index', '?30-days=true');
+    } else {
+      document.getElementById('30-days').value = false;
+      history.pushState({
+        id: 'index'
+        }, 'index', '/');
+    }
+  };
 </script>
 
 <form method="GET" action="{% url 'index' %}" id="filter_form">
@@ -60,7 +73,7 @@
   <div class="checkbox_wrapper">
     <div class="checkbox-group">
       <div class="ds-checkbox">
-        <input type="checkbox" id="30-days" name="30-days" value="true">
+        <input type="checkbox" id="30-days" name="30-days" value="false" onclick="checkedBox()">
         <label for="30-days">Vis matches der er under 30 dage gamle</label>
       </div>
     </div>
