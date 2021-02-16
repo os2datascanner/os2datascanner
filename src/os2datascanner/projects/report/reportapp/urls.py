@@ -12,7 +12,7 @@ from .views.views import (MainPageView, StatisticsPageView, ApprovalPageView,
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),
     url('api$',     JSONAPIView.as_view(),     name="json-api"),
-    url('statistics', StatisticsPageView.as_view(), name="statistics"),
+    url(r'^statistics/(?P<role>[A-Za-z]*)/$', StatisticsPageView.as_view(), name='statistics'),
     url('approval', ApprovalPageView.as_view(), name="about"),
     url('stats',    StatsPageView.as_view(),    name="about"),
     url('settings', SettingsPageView.as_view(), name="settings"),

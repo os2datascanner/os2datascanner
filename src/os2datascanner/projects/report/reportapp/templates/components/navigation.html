@@ -13,16 +13,21 @@
     {% for r in nav_items %}
       {% if r == "DataProtectionOfficer" or r == 'Leader' %}
       <li>
-        <a href="/statistics">
+        {% if r == "DataProtectionOfficer" %}
+        <a href="/statistics/leader">
           {% include "components/svg-icons/bar_chart.svg" %}
           <span class="width">
-            {% if r == "DataProtectionOfficer" %}
-              DPO overblik
-            {% else %}
               Leder overblik
-            {% endif %}
           </span>
         </a>
+        {% else %}
+        <a href="/statistics/dpo">
+        {% include "components/svg-icons/bar_chart.svg" %}
+          <span class="width">
+              DPO overblik
+          </span>
+        </a>
+        {% endif %}
       </li>
       {% endif %}
     {% endfor %}

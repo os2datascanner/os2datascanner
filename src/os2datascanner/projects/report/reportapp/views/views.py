@@ -178,8 +178,33 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
 
         user = self.request.user
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
-        context["roles"] = [role.__class__.__name__ for role in roles]
+        roles_name = [role.__class__.__name__ for role in roles]
         context["renderable_rules"] = RENDERABLE_RULES
+        context["roles"] = roles_name
+        url_param = kwargs.get('role')
+        context['url_param'] = url_param
+        
+        # TODO: Kunne måske være smart at flytte ud af get_context
+        is_leader = False
+        is_dpo = False
+        for role in roles_name:
+            if role == 'Leader':
+                self.is_leader = True
+            elif role == 'DataProtectionOfficer':
+                self.is_dpo = True
+
+        # TODO: Overvej brugen af databasens PK for rolle
+
+        # Checks if user has the role for the url param
+        if url_param == 'leader' and self.is_leader:
+            # Leader context
+            context['graph_data'] = ('employee name', 'employee data')
+        elif url_param == 'dpo' and self.is_dpo:
+            # DPO context
+            context['graph_data'] = ('department name', 'department data')
+        else:
+            # TODO: Wrong url or unauthorized
+            context['graph_data'] = ('404 or 401', '404 or 401')
 
         # matches = DocumentReport.objects.filter(
         #     data__matches__matched=True)

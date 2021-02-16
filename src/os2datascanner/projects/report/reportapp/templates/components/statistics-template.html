@@ -1,39 +1,26 @@
 <div class="content">
+  {% if url_param == 'leader' %}
   <h1 class="page-title">Lederstatistik</h1>
-
+  {% elif url_param == 'dpo' %}
+  <h1 class="page-title">DPO statistik</h1>
+  {% endif %}
   <div class="statistic_wrapper">
 
     <!-- Bar chart -->
     <div class="statistic statistic--one">
-      <div class="statistic_header">
-        <div class="">
-          <h1 class="page-title__sub">Medarbejderoverblik</h1>
-          <p>Overblik over afdelinger med ældste matches</p>
-        </div>
-        <div class="statistic_header_nav">
-          <div style="display:grid;"> <!-- Display grid just for moving <a> tag to the right --> 
-            <a href="">Se alle</a>
-          </div>
-          <div class="dropdown">
-            <div class="select">
-              <span class="select_span">Uhåndterede matches</span>
-              <i class="material-icons">
-                keyboard_arrow_down
-              </i>
-            </div>
-            <ul class="dropdown-menu">
-              <li>Uhåndterede matches</li>
-              <li>Ældste matches</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="bar_chart_container chart_container">
-        <canvas id="bar_chart_unhandled"></canvas>
-      </div>
-      <!-- <div class="hidden bar_chart_container chart_container" style="position:relative;">
-        <canvas id="pie_chart_sensitivity" width="100" height="100"></canvas>
-      </div> -->
+      {% if url_param == 'leader' %}
+      <h1 class="page-title__sub">Medarbejderoverblik</h1>
+      {% elif url_param == 'dpo' %}
+      <h1 class="page-title__sub">Afdelingsoverblik</h1>
+      {% endif %}
+      <table class="datatable">
+        <tr>
+          <th>{{ graph_data.0 }}</th>
+        </tr> 
+        <tr>
+          <td>{{ graph_data.1 }}</td>
+        </tr>
+      </table>
     </div>
 
     <!-- Pie chart -->
