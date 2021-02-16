@@ -83,22 +83,22 @@ class MainPageView(ListView, LoginRequiredMixin):
 
         # Filters by datasource_last_modified.
         # lt mean less than.
-        # gt means greater than
+        # gte means greater than or equal to
         # A check whether something is more recent than a month
         # is done by subtracting 30 days from now and then comparing if the saved time is "bigger" than that
-        # and vice versa for older.
-        if self.request.GET.get('30-days') != 'true':
-            older_than_30_days = self.matches.filter(
-                datasource_last_modified__lt=datetime.now() + timedelta(days=30))
-            self.matches = older_than_30_days
-            print(self.matches)
-        else:
+        # and vice versa/smaller for older than.
+        if self.request.GET.get('30-days') == "true":
+            time_threshold = datetime.now() - timedelta(days=30)
             newer_than_30_days = self.matches.filter(
-                    datasource_last_modified__gte=datetime.now() - timedelta(days=30))
-            print(self.matches)
+                datasource_last_modified__gt=time_threshold)
             self.matches = newer_than_30_days
-
-
+        else:
+            # Exactly 30 days is deemed to be "older than 30 days"
+            # and will therefore be shown.
+            time_threshold = datetime.now() - timedelta(days=30)
+            older_than_30_days = self.matches.filter(
+                datasource_last_modified__lte=time_threshold)
+            self.matches = older_than_30_days
 
         if self.request.GET.get('scannerjob') \
                 and self.request.GET.get('scannerjob') != 'all':
@@ -138,6 +138,7 @@ class MainPageView(ListView, LoginRequiredMixin):
                                   self.request.GET.get('scannerjob', 'all'))
 
         context['30-days'] = self.request.GET.get('30-days')
+
         sensitivities = self.matches.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
