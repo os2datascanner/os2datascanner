@@ -4,8 +4,6 @@
 #
 #    pip-compile requirements-engine.in
 #
-beautifulsoup4==4.9.0
-    # via -r requirements-engine.in
 cached-property==1.5.1
     # via exchangelib
 cachetools==4.1.1

@@ -1,25 +1,21 @@
-from bs4 import BeautifulSoup
-from bs4.element import Tag
+from lxml import html
 
 from ..types import OutputType
 from ..registry import conversion
 
-
-def _unwrap_node(n, top=False):
-    if isinstance(n, Tag):
-        for child in n.children:
-            _unwrap_node(child)
-        n.smooth()
-        if not top:
-            n.unwrap()
-
-
 @conversion(OutputType.Text, "text/html")
 def html_processor(r, **kwargs):
     with r.make_stream() as fp:
-        soup = BeautifulSoup(fp, "lxml")
-        if soup.body:
-            _unwrap_node(soup.body, top=True)
-            return " ".join(soup.body.get_text().split())
-        else:
+        # This tells lxml to retrieve the page, locate the <body> tag then
+        # extract and print all the text.
+        try:
+            return " ".join(html.parse(fp).xpath("//body")[0].text_content().split())
+        except AssertionError:
+            # fx. for a empty document we get
+            # AssertionError: ElementTree not initialized, missing root
+            # Another way, instead of duck-typing, would be to check
+            # xml = html.parse(fp)
+            # if xml.getroot():
+            #     return xml.xpath(...)
+            # else: return None
             return None
