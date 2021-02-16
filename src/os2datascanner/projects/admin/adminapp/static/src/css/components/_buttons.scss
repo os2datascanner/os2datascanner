@@ -34,7 +34,10 @@
   &--danger {
     background-color: var(--color-error);
     color: var(--color-text-white);
-    font-weight: bold;
+    padding: .25rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
 
     &:focus,
     &:hover {

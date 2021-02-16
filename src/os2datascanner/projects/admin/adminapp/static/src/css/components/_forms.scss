@@ -56,8 +56,20 @@
     box-shadow: inset 0 0 0 4px #5ca4cd40;
   }
 
-  textarea.form-control {
+  textarea {
+    background-color: #fff;  
+    border: none;
+    border-radius: var(--border-radius-small);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
     min-height: 10rem;
+    width: 100%;
+    padding: .75rem;
+    line-height: 1.5;
+  }
+
+  textarea:focus {
+    box-shadow: inset 0 0 0 4px #5ca4cd40;
+    outline: none;
   }
 
   &__help-text {

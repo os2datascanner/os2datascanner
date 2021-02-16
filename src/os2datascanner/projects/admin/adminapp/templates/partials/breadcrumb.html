@@ -1,29 +1,45 @@
 {% load staticfiles %}
 
 <div class="breadcrumb">
-    <a href="/" class="link-color">Scannerjob</a>
+    {% if view == 'scannerjob' %}
+        <a href="/" class="link-color">Scannerjob</a>
 
-    <i id="chevron_right" class="material-icons">chevron_right</i>
+        <i id="chevron_right" class="material-icons">chevron_right</i>
 
-    {% if form.sitemap %}
-    <a href="/webscanners/" class="link-color">Webscanner</a>
+        {% if form.sitemap %}
+        <a href="/webscanners/" class="link-color">Webscanner</a>
+        {% endif %}
+            
+        {% if form.domain %}
+        <a href="/filescanners/" class="link-color">Filscanner</a>
+        {% endif %}
+            
+        {% if form.userlist %}
+        <a href="/exchangescanners/" class="link-color">Exchangescanner</a>
+        {% endif %}
+
+        <i id="chevron_right" class="material-icons">chevron_right</i>
+
+        {% if view.edit %}
+        <span class="text-grey">Rediger scannerjob</span>
+        {% endif %}
+
+        {% if not view.edit %}
+        <span class="text-grey">Opret nyt scannerjob</span>
+        {% endif %}
     {% endif %}
-        
-    {% if form.domain %}
-    <a href="/filescanners/" class="link-color">Filscanner</a>
-    {% endif %}
-        
-    {% if form.userlist %}
-    <a href="/exchangescanners/" class="link-color">Exchangescanner</a>
-    {% endif %}
 
-    <i id="chevron_right" class="material-icons">chevron_right</i>
+    {% if view == 'rule_views' %}
+        <a href="/rules/" class="link-color">Regler</a>
 
-    {% if view.edit %}
-    <span class="text-grey">Rediger scannerjob</span>
-    {% endif %}
+        <i id="chevron_right" class="material-icons">chevron_right</i>
 
-    {% if not view.edit %}
-    <span class="text-grey">Opret nyt scannerjob</span>
+        {% if view is view.edit %}
+        <span class="text-grey">Rediger regel</span>
+        {% endif %}
+  
+        {% if view is not view.edit %}
+        <span class="text-grey">Opret ny regel</span>
+        {% endif %}
     {% endif %}
 </div>

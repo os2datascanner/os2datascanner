@@ -22,7 +22,7 @@
         inputClone.after($("<span/>", { // ... add the button to remove expression
           class: "input-group-btn",
           html: $("<button/>", {
-            class: "btn btn-default button-remove-expression",
+            class: "button-remove-expression button--danger",
             type: "button",
             text: "Fjern udtryk"
           })
@@ -71,195 +71,255 @@
       // recalcIframeHeight();
     }
   })(jQuery);
+
 </script>
+<script src="{% static 'js/options.js' %}"></script>
 {% endblock %}
 
 {% block body %}
 <div class="wrapper">
+  {% include "partials/main.html" with active_tab="rules" %}
 
-  {% if view.edit %}
-  <h1 class="page-title" style="display:inline-block;">Rediger regel</h1>
-  {% endif %}
+  <div class="content">
 
-  {% if not view.edit %}
-  <h1 class="page-title" style="display:inline-block;">Opret ny regel</h1>
-  {% endif %}
+    {% include "partials/breadcrumb.html" with view="rule_views" %}
 
-  {% if form.non_field_errors %}
-  <div class="alert" role="alert">
-    <ul>
-      {% for error in form.non_field_errors %}
-      <li>{{ error }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-
-  <form class="form" role="form" method="post">
-    {% csrf_token %}
-
-    <fieldset class="form__fieldset">
-      <legend>Metadata</legend>
-
-      <div class="form__group{% if form.name.errors %} has-error{% endif %}">
-        <label class="required-form" for="id_{{ form.name.name }}">{{ form.name.label }}</label>
-        <input 
-          autofocus="autofocus"
-          type="text" 
-          class="form-control" 
-          name="{{ form.name.name }}" 
-          id="id_{{ form.name.name }}"
-          placeholder="Navn på regel"
-          {% if form.name.value %}value="{{ form.name.value }}" {% endif %}>
-        {% if form.name.help_text %}
-        <span class="form__help-text">{{ form.name.help_text }}</span>
-        {% endif %}
-        {% if form.name.errors %}{{ form.name.errors }}{% endif %}
-      </div>
-
-      {% if form.organization %}
-      <div 
-        id="{{ form.organization.auto_id }}_container" 
-        class="form__group{% if form.organization.errors %} has-error{% endif %}">
-        <label class="required-form" for="id_{{ form.organization.name }}">{{ form.organization.label }}</label>
-        <select 
-          name="{{ form.organization.name }}" 
-          id="id_{{ form.organization.name }}" 
-          class="form-control">
-
-          {% for value, tag in form.organization.field.choices %}
-          <option value="{{ value }}" {% if form.organization.value|add:"0" == value|add:"0" %} selected{% endif %}>
-            {{ tag }}
-          </option>{# silly type conversion #}
-          {% endfor %}
-        </select>
-        {% if form.organization.help_text %}
-        <span class="form__help-text">{{ form.organization.help_text }}</span>
-        {% endif %}
-
-        {% if form.organization.errors %}{{ form.organization.errors }}{% endif %}
-      </div>
+    <div class="aside">
+      {% if view.edit %}
+      <h1 class="page-title">Rediger regel</h1>
       {% endif %}
-    </fieldset>
-
-    {% if form.group %}
-    <fieldset class="form__fieldset">
-      <div 
-        id="{{ form.group.auto_id }}_container" 
-        class="form__group form-group{% if form.group.errors %} has-error{% endif %}">
-
-        <label for="id_{{ form.group.name }}">{{ form.group.label }}</label>
-
-        <select 
-          name="{{ form.group.name }}" 
-          id="id_{{ form.group.name }}" 
-          class="form-control">
-
-          {% for value, tag in form.group.field.choices %}
-          <option value="{{ value }}" {% if form.group.value|add:"0" == value|add:"0" %} selected{% endif %}>{{ tag }}</option>{# silly type conversion #}
-          {% endfor %}
-        </select>
-
-        {% if form.group.help_text %}
-        <span>{{ form.group.help_text }}</span>
-        {% endif %}
-
-        {% if form.group.errors %}{{ form.group.errors }}{% endif %}
-      </div>
-    </fieldset>
-    {% endif %}
-
-    <fieldset class="form__fieldset">
-      <legend>Regel</legend>
-
-      <div id="{{ form.pattern_0.auto_id }}_container" class="form__group col-sm-12{% if form.pattern_0.errors %} has-error{% endif %}">
-
-        {% for pattern_name, pattern_value in view.get_pattern_fields %}
-        <div class="form__group form-group">
-          <label class="control-label col-sm-2 required-form" for="id_{{ pattern_name }}">Regulært udtryk {{ forloop.counter }}</label>
-          <div class="col-sm-10">
-            {% if forloop.counter > 1 %}
-            <div class="input-group">
-              {% endif %}
-              <input 
-                type="text" 
-                class="form-control" 
-                name="{{ pattern_name }}" 
-                id="id_{{ pattern_name }}"
-                placeholder="f.eks. organisation"
-                {% if pattern_value %}value="{{ pattern_value }}" {% endif %}>
-              {# required state of pattern_0 is variable #}
-
-              {% if forloop.counter > 1 %}
-              <span class="input-group-btn">
-                <button class="btn btn-default button-remove-expression" type="button">Fjern udtryk</button>
-              </span>
-              {% endif %}
-
-              {% if form.pattern_0.help_text %}
-              <span class="form__help-text">{{ form.pattern_0.help_text }}</span>
-              {% endif %}
-
-              {% if form.pattern_0.errors %}{{ form.pattern_0.errors }}{% endif %}
-              {% if forloop.counter > 1 %}
-            </div>
-            {% endif %}
-          </div>
-        </div>
-        {% endfor %}
-
-        <div class="row form__group">
-          <div class="col-sm-offset-2 col-sm-10">
-            <button id="button-add-expression" type="button" class="button button--cta button--small btn btn-default">Tilføj regel</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="{{ form.description.auto_id }}_container" class="form__group col-sm-12{% if form.description.errors %} has-error{% endif %}">
-        <div class="form-group">
-          <label class="control-label col-sm-2 required-form" for="id_{{ form.description.name }}">{{ form.description.label }}</label>
-          <div class="col-sm-10">
-            <textarea class="form-control" name="{{ form.description.name }}" id="id_{{ form.description.name }}" placeholder="Beskrivelse af regel" rows="3">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
-            {% if form.description.help_text %}
-            <p>
-              <small>{{ form.description.help_text }}</small>
-            </p>
-            {% endif %}
-            {% if form.description.errors %}{{ form.description.errors }}{% endif %}
-          </div>
-        </div>
-      </div>
-
-      <div id="{{ form.sensitivity.auto_id }}_container" class="form__group col-sm-12{% if form.sensitivity.errors %} has-error{% endif %}">
-        <div class="form-group">
-          <label class="control-label col-sm-2 required-form" for="id_{{ form.sensitivity.name }}">{{ form.sensitivity.label }}</label>
-          <div class="col-sm-10">
-            <select name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" class="form-control">
-
-              <option value="" selected>---------</option>
-              {% for value, tag in form.sensitivity.field.choices %}
-              <option value="{{ value }}">
-                {{ tag }}
-              </option>
-              {% endfor %}
-
-            </select>
-            {% if form.sensitivity.help_text %}
-            <span class="form__help-text">{{ form.sensitivity.help_text }}</span>
-            {% endif %}
-            {% if form.sensitivity.errors %}{{ form.sensitivity.errors }}{% endif %}
-          </div>
-        </div>
-      </div>
-    
-    </fieldset>
-
-    <div class="form__group col-sm-offset-2">
-      <button type="submit" class="btn btn-primary button button--cta button--rounded" name="save">Gem ændringer</button>
+  
+      {% if not view.edit %}
+      <h1 class="page-title">Opret ny regel</h1>
+      {% endif %}
     </div>
 
-    {#{ form.as_p }#}
-  </form>
+    {% if form.non_field_errors %}
+    <div class="alert" role="alert">
+      <ul>
+        {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
 
+    <form class="form" role="form" method="post">
+      {% csrf_token %}
+
+      <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3>Generelt</h3>
+          <p class="description">Navngiv reglen og vælg hvilken organisation reglen skal tilhører</p>
+
+          <div class="form__group{% if form.name.errors %} has-error{% endif %}">
+            <label class="required-form" for="id_{{ form.name.name }}">{{ form.name.label }}</label>
+            <input 
+              autofocus="autofocus"
+              type="text" 
+              class="form-control" 
+              name="{{ form.name.name }}" 
+              id="id_{{ form.name.name }}"
+              placeholder="Navn på regel"
+              {% if form.name.value %}value="{{ form.name.value }}" {% endif %}>
+            {% if form.name.help_text %}
+            <span class="form__help-text">{{ form.name.help_text }}</span>
+            {% endif %}
+            {% if form.name.errors %}{{ form.name.errors }}{% endif %}
+          </div>
+
+          {% if form.organization %}
+          <div 
+            id="{{ form.organization.auto_id }}_container" 
+            class="dropdown-group form__group{% if form.organization.errors %} has-error{% endif %}">
+            <label class="required-form" for="id_{{ form.organization.name }}">{{ form.organization.label }}</label>
+            <div class="dropdown">
+              <select 
+                name="{{ form.organization.name }}" 
+                id="id_{{ form.organization.name }}">
+
+                {% for value, tag in form.organization.field.choices %}
+                <option 
+                  value="{{ value }}" 
+                  {% if form.organization.value|add:"0" == value|add:"0" %} 
+                  selected="selected"
+                  {% endif %}>
+                  {{ tag }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            {% if form.organization.help_text %}
+            <span class="form__help-text">{{ form.organization.help_text }}</span>
+            {% endif %}
+
+            {% if form.organization.errors %}{{ form.organization.errors }}{% endif %}
+          </div>
+          {% endif %}
+        </fieldset>
+
+        {% if form.group %}
+        <fieldset class="form__fieldset">
+          <div 
+            id="{{ form.group.auto_id }}_container" 
+            class="dropdown-group form__group form-group{% if form.group.errors %} has-error{% endif %}">
+
+            <label for="id_{{ form.group.name }}">{{ form.group.label }}</label>
+
+            <div class="dropdown">
+              <select 
+                name="{{ form.group.name }}" 
+                id="id_{{ form.group.name }}">
+  
+                {% for value, tag in form.group.field.choices %}
+                <option 
+                  value="{{ value }}"
+                  {% if form.group.value|add:"0" == value|add:"0" %}
+                  selected="selected"
+                  {% endif %}>
+                  {{ tag }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            {% if form.group.help_text %}
+            <span>{{ form.group.help_text }}</span>
+            {% endif %}
+
+            {% if form.group.errors %}{{ form.group.errors }}{% endif %}
+          </div>
+        </fieldset>
+        {% endif %}
+      </section>
+
+      <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3>Regel</h3>
+          <p class="description">En regel består af et eller flere regulære udtryk og definerer hvilke tekststrenge der søges efter i et scannerjob</p>
+
+          <div id="{{ form.pattern_0.auto_id }}_container" class="form__group col-sm-12{% if form.pattern_0.errors %} has-error{% endif %}">
+
+            {% for pattern_name, pattern_value in view.get_pattern_fields %}
+            <div class="form__group form-group">
+              <label class="required-form" for="id_{{ pattern_name }}">Regulært udtryk {{ forloop.counter }}</label>
+              <div class="col-sm-10">
+                {% if forloop.counter > 1 %}
+                <div class="input-group">
+                  {% endif %}
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    name="{{ pattern_name }}" 
+                    id="id_{{ pattern_name }}"
+                    placeholder="f.eks. organisation"
+                    {% if pattern_value %}value="{{ pattern_value }}" {% endif %}>
+                  {# required state of pattern_0 is variable #}
+
+                  {% if forloop.counter > 1 %}
+                  <span class="input-group-btn">
+                    <button class="button-remove-expression button--danger" type="button">Fjern udtryk</button>
+                  </span>
+                  {% endif %}
+
+                  {% if form.pattern_0.help_text %}
+                  <span class="form__help-text">{{ form.pattern_0.help_text }}</span>
+                  {% endif %}
+
+                  {% if form.pattern_0.errors %}{{ form.pattern_0.errors }}{% endif %}
+                  {% if forloop.counter > 1 %}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+
+            <div class="row form__group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button id="button-add-expression" type="button" class="button button--cta button--small">Tilføj regel</button>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3 class="required-form" for="id_{{ form.sensitivity.name }}">{{ form.sensitivity.label }}</h3>
+          <p class="description">Vurder reglens følsomhed</p>
+            <div id="{{ form.sensitivity.auto_id }}_container" class="form__group col-sm-12{% if form.sensitivity.errors %} has-error{% endif %}">
+              <select name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" class="form-control">
+
+                <option value="" selected>---------</option>
+                {% for value, tag in form.sensitivity.field.choices %}
+                <option value="{{ value }}">
+                  {{ tag }}
+                </option>
+                {% endfor %}
+
+              </select>
+              {% if form.sensitivity.help_text %}
+              <span class="form__help-text">{{ form.sensitivity.help_text }}</span>
+              {% endif %}
+              {% if form.sensitivity.errors %}{{ form.sensitivity.errors }}{% endif %}
+
+              <label class="radio">
+                <span class="radio__input">
+                  <input type="radio" name="radio">
+                  <span class="radio__control"></span>
+                </span>
+                <span class="radio__label">Kritisk</span>
+              </label>
+
+              <label class="radio">
+                <span class="radio__input">
+                  <input type="radio" name="radio">
+                  <span class="radio__control"></span>
+                </span>
+                <span class="radio__label">Problem</span>
+              </label>
+
+              <label class="radio">
+                <span class="radio__input">
+                  <input type="radio" name="radio">
+                  <span class="radio__control"></span>
+                </span>
+                <span class="radio__label">Kritisk</span>
+              </label>
+
+              <label class="radio">
+                <span class="radio__input">
+                  <input type="radio" name="radio">
+                  <span class="radio__control"></span>
+                </span>
+                <span class="radio__label">Kritisk</span>
+              </label>
+
+            </div>
+        </fieldset>
+      </section>
+
+      <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3 class="required-form" for="id_{{ form.description.name }}">{{ form.description.label }}</h3>
+            <div id="{{ form.description.auto_id }}_container" class="form__group col-sm-12{% if form.description.errors %} has-error{% endif %}">
+                  <textarea name="{{ form.description.name }}" id="id_{{ form.description.name }}" placeholder="Beskrivelse af regel" rows="3">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
+                  {% if form.description.help_text %}
+                  <p>
+                    <small>{{ form.description.help_text }}</small>
+                  </p>
+                  {% endif %}
+                  {% if form.description.errors %}{{ form.description.errors }}{% endif %}
+            </div>
+        </fieldset>
+      </section>
+
+      <div class="form__group last-btn">
+        <button type="submit" class="button button--cta" name="save">Gem ændringer</button>
+      </div>
+
+      {#{ form.as_p }#}
+    </form>
+  </div>
 </div>
 {% endblock %}
