@@ -131,7 +131,7 @@ pillow==7.1.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
-prometheus_client==0.7.1
+prometheus-client==0.7.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
