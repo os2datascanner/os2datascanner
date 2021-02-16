@@ -16,7 +16,7 @@ const colorFunction = function (color) {
   var unhandled = [['David',30],['Sofie',20],['Anders',10],['Else',17]];
   
   
-  // function for rounded corners
+  // Function for creating gradient background for each bar size.
   Chart.pluginService.register({
     afterUpdate: function(chart) {
        if (chart.config.type === 'bar'){
@@ -57,6 +57,7 @@ const colorFunction = function (color) {
     }}
   });
   
+  // function for rounded corners
   Chart.elements.Rectangle.prototype.draw = function() {
       var ctx = this._chart.ctx;
       var vm = this._view;
@@ -745,4 +746,35 @@ new Chart(ctx4, {
     },
     events: [],
   } 
+});
+
+//testing select
+
+$('.dropdown').click(function () {
+  $(this).attr('tabindex', 1).focus();
+  $(this).toggleClass('active');
+  $(this).find('.dropdown-menu').slideToggle(300);
+});
+$('.dropdown').focusout(function () {
+    $(this).removeClass('active');
+  $(this).find('.dropdown-menu').slideUp(300);
+});
+$('.dropdown .dropdown-menu li').click(function () {
+  if($(this).text() != $(this).parents('.dropdown').find('.select_span').text()) {
+    $(this).parents('.dropdown').find('span')[0].firstChild.data = $(this).text();
+    // Was part of the solution - haven't found a use for it
+    // $(this).parents('.dropdown').find('input').attr('value', $(this).attr('id'));
+ 
+  }
+  
+});
+
+// Toggle the class hidden on change from the select list 
+
+$(document).ready(function(){
+
+  $(".select_span").on('DOMSubtreeModified',function(){
+    $($(this).parents('.statistic').find('.chart_container').toggleClass("hidden"));
+    
+  });
 });

@@ -2,19 +2,64 @@
   <h1 class="page-title">Lederstatistik</h1>
 
   <div class="statistic_wrapper">
+
+    <!-- Bar chart -->
     <div class="statistic statistic--one">
-      <h1 class="page-title__sub">Medarbejderoverblik</h1>
-      <p>Overblik over //afdelinger//medarbejdere med ældste matches</p>
-      <div id="bar_container_unhandled" style="position:relative;">
+      <div class="statistic_header">
+        <div class="">
+          <h1 class="page-title__sub">Medarbejderoverblik</h1>
+          <p>Overblik over afdelinger med ældste matches</p>
+        </div>
+        <div class="statistic_header_nav">
+          <div style="display:grid;"> <!-- Display grid just for moving <a> tag to the right --> 
+            <a href="">Se alle</a>
+          </div>
+          <div class="dropdown">
+            <div class="select">
+              <span class="select_span">Uhåndterede matches</span>
+              <i class="material-icons">
+                keyboard_arrow_down
+              </i>
+            </div>
+            <ul class="dropdown-menu">
+              <li>Uhåndterede matches</li>
+              <li>Ældste matches</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="bar_chart_container chart_container">
         <canvas id="bar_chart_unhandled"></canvas>
       </div>
+      <!-- <div class="hidden bar_chart_container chart_container" style="position:relative;">
+        <canvas id="pie_chart_sensitivity" width="100" height="100"></canvas>
+      </div> -->
     </div>
 
-  
+    <!-- Pie chart -->
     <div class="statistic statistic--two">
-      <h1 class="page-title__sub">Fordeling af matches</h1>
-      <p>Matches fordelt på følsomheder</p>
-      <div id="pie_container_sensitivity">
+      <div class="statistic_header">
+        <div>
+          <h1 class="page-title__sub">Fordeling af matches</h1>
+          <p>Matches fordelt på følsomheder</p>
+        </div>
+        <div class="statistic_header_nav">
+            <p></p>
+            <div class="dropdown">
+              <div class="select">
+                <span class="select_span">Følsomheder</span>
+                <i class="material-icons">
+                  keyboard_arrow_down
+                </i>
+              </div>
+              <ul class="dropdown-menu">
+                <li>Følsomheder</li>
+                <li>Datakilder</li>
+              </ul>
+            </div>
+        </div>
+      </div>
+      <div class="pie_chart_container chart_container">
         <div>
           <canvas id="pie_chart_sensitivity" width="100" height="100"></canvas>
         </div>
@@ -24,11 +69,31 @@
   </div>
 
   <div class="statistic_wrapper">
-    <div class="statistic statistic--three">
-      <h1 class="page-title__sub">Håndterede matches</h1>
-      <p>Procentvis andel af håndterede matches fordelt på følsomhed</p>
 
-      <div id="doughnut_charts_container">
+    <!-- Doughnut chart -->
+    <div class="statistic statistic--three">
+      <div class="statistic_header">
+        <div>
+          <h1 class="page-title__sub">Håndterede matches</h1>
+          <p>Procentvis andel af håndterede matches fordelt på følsomhed</p>
+        </div>
+        <div class="statistic_header_nav">
+          <p></p>
+          <div class="dropdown">
+            <div class="select">
+              <span class="select_span">Følsomhed</span>
+              <i class="material-icons">
+                keyboard_arrow_down
+              </i>
+            </div>
+            <ul class="dropdown-menu">
+              <li>Følsomhed</li>
+              <li>Alle matches</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="doughnut_charts_container chart_container">
         <div class="doughnut_chart_container">
           <div>
             <canvas id="doughnut_chart_critical" width="100" height="100"></canvas>
@@ -71,12 +136,36 @@
         </div>
       </div>
     </div>
-  
+
+    <!-- Line chart -->
     <div class="statistic statistic--four">
-      <h1 class="page-title__sub">Udviklingsoverblik</h1>
+      <div class="statistic_header">
+        <div class="">
+          <h1 class="page-title__sub">Udviklingsoverblik</h1>
+          <p>Antal nye matches pr. måned</p>
+        </div>
+        <div class="statistic_header_nav">
+          <p></p>
+          <div class="dropdown">
+            <div class="select">
+              <span>Nye matches pr. md.</span>
+              <i class="material-icons">
+                keyboard_arrow_down
+              </i>
+            </div>
+            <ul class="dropdown-menu">
+              <li>Nye matches pr. md.</li>
+              <li>Uhåndterede matches</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
     </div>
   </div>
 </div>
+
+
 {{ sensitivities|json_script:"sensitivities" }}
 {{ data_sources|json_script:"data_sources" }}
 {{ handled_matches|json_script:"handled_matches" }}
@@ -89,6 +178,7 @@
   const handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
   const unhandledMatches = JSON.parse(document.getElementById('unhandled_matches').textContent);
   const oldestMatch = JSON.parse(document.getElementById('oldest_match').textContent);
+
 
 
   // Finds the total number matches in the array
