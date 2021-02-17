@@ -81,6 +81,13 @@ class MainPageView(ListView, LoginRequiredMixin):
             # Filter matches by role.
             self.matches = role.filter(self.matches)
 
+        # If existing matches do not have a last_modified value
+        # Set it to scan_tage time, as it is the closest we can get.
+        for match in self.matches:
+            if not match.datasource_last_modified:
+                match.datasource_last_modified = match.data.get("scan_tag").get("time")
+                match.save()
+
         # Filters by datasource_last_modified.
         # lt mean less than.
         # gte means greater than or equal to
