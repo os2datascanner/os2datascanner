@@ -4,4 +4,5 @@
 #
 #    pip-compile requirements-lint.in
 #
-pycodestyle==2.5.0        # via -r requirements-lint.in
+pycodestyle==2.5.0
+    # via -r requirements-lint.in
