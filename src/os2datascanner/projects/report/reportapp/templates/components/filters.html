@@ -1,20 +1,16 @@
 <script>
   function clear_filter(elementid){
-      document.querySelector('#' + elementid + ' [value="all"]').selected = true;
-      document.getElementById("filter_form").submit();
+      var element = document.querySelector('#' + elementid + ' [value="all"]').selected = true;
+      document.getElementById("filter_form", element).submit();
   };
   function checkedBox() {
-    if (document.getElementById('30-days').checked) {
-      document.getElementById('30-days').value = true;
-      history.pushState({
-        id: 'index'
-        }, 'index', '?30-days=true');
+    var checkbox = document.getElementById('30-days');
+    if (checkbox.checked) {
+      checkbox.value = true;
     } else {
-      document.getElementById('30-days').value = false;
-      history.pushState({
-        id: 'index'
-        }, 'index', '/');
+      checkbox.value = false;
     }
+    document.getElementById("filter_form").submit();
   };
 </script>
 
@@ -73,7 +69,8 @@
   <div class="checkbox_wrapper">
     <div class="checkbox-group">
       <div class="ds-checkbox">
-        <input type="checkbox" id="30-days" name="30-days" value="false" onclick="checkedBox()">
+        <input type="checkbox" id="30-days" name="30-days" value="{{ 30_days }}" onclick="checkedBox()"
+        {% if 30_days == "true" %}checked{% endif %}>
         <label for="30-days">Vis matches der er under 30 dage gamle</label>
       </div>
     </div>

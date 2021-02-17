@@ -137,7 +137,7 @@ class MainPageView(ListView, LoginRequiredMixin):
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
 
-        context['30-days'] = self.request.GET.get('30-days')
+        context['30_days'] = self.request.GET.get('30-days', 'false')
 
         sensitivities = self.matches.order_by(
             '-sensitivity').values(
