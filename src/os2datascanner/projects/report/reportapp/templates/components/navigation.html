@@ -4,7 +4,7 @@
 <nav class="navigation">
   <ul>
     <li>
-      <a href="/" class="{% if active_tab == 'home' %}active{% endif %}">
+      <a href="/" class="{% if request.path == '/' %}active{% endif %}">
         {% include "components/svg-icons/home.svg" %}
         <span class="width">{% trans "Front page" %}</span>
       </a>
@@ -14,14 +14,14 @@
       {% if r == "DataProtectionOfficer" or r == 'Leader' %}
       <li>
         {% if r == "DataProtectionOfficer" %}
-        <a href="/statistics/leader">
+        <a href="/statistics/leader" class="{% if request.path == '/statistics/leader/' %}active{% endif %}">
           {% include "components/svg-icons/bar_chart.svg" %}
           <span class="width">
               Leder overblik
           </span>
         </a>
         {% else %}
-        <a href="/statistics/dpo">
+        <a href="/statistics/dpo" class="{% if request.path == '/statistics/dpo/' %}active{% endif %}">
         {% include "components/svg-icons/bar_chart.svg" %}
           <span class="width">
               DPO overblik
