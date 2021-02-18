@@ -171,6 +171,12 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         [Sensitivity.WARNING.presentation, 0],
         [Sensitivity.NOTICE.presentation, 0],
     ]
+    handled_list = [
+        [Sensitivity.CRITICAL.presentation, 0],
+        [Sensitivity.PROBLEM.presentation, 0],
+        [Sensitivity.WARNING.presentation, 0],
+        [Sensitivity.NOTICE.presentation, 0],
+    ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -205,11 +211,18 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
             'sensitivity', 'total',
         )
 
-        handled_matches_gen = (((Sensitivity(hm["sensitivity"]),
-                        hm["total"]) for hm in handled_matches))
-        
-        return [(hm[0].presentation,
-                hm[1]) for hm in handled_matches_gen]
+        # For handling having no values - List defaults to 0
+        for hm in handled_matches:
+            if (hm['sensitivity']) == 1000:
+                self.handled_list[0][1] = hm['total']
+            elif (hm['sensitivity']) == 750:
+                self.handled_list[1][1] = hm['total']
+            elif (hm['sensitivity']) == 500:
+                self.handled_list[2][1] = hm['total']
+            elif (hm['sensitivity']) == 250:
+                self.handled_list[3][1] = hm['total']
+            
+        return self.handled_list
 
     def get_sensitivities(self):
         # Counts the distribution of matches by sensitivity

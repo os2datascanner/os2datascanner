@@ -430,20 +430,23 @@ class StatisticsPageViewTest(TestCase):
     def test_statisticspage_count_handled_matches_no_role(self):
         view = self.get_statisticspage_object()
         self.assertListEqual(view.count_handled_matches(),
-                            [])
+                            [['Kritisk', 0], ['Problem', 0], 
+                            ['Advarsel', 0], ['Notifikation', 0]])
 
     def test_statisticspage_count_handled_matches_as_leader(self):
         leader = Leader.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         self.assertListEqual(view.count_handled_matches(),
-                            [])
+                            [['Kritisk', 0], ['Problem', 0], 
+                            ['Advarsel', 0], ['Notifikation', 0]])
         leader.delete()
 
     def test_statisticspage_count_handled_matches_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         self.assertListEqual(view.count_handled_matches(),
-                            []) 
+                            [['Kritisk', 0], ['Problem', 0], 
+                            ['Advarsel', 0], ['Notifikation', 0]])
         dpo.delete()
 
     # StatisticsPageView()
