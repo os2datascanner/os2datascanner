@@ -50,16 +50,17 @@
 
 	.statistic_header {
 		grid-gap: 1rem;
+		margin-bottom: 1rem;
 
 		> div {
 			display: grid;
-			grid-template-rows: 1fr 2fr;
+			grid-template-rows: 1fr 1fr; // 1fr 2fr
 		}
 	}
 
 	p {
 		margin: 0;
-		font-size: 1rem;
+		font-size: 16px;
 		color: var(--color-text-secondary);
 	}
 	// Overwriting predefined a-tag from "_typography.css"
@@ -97,6 +98,7 @@ li > span {
 	color: var(--color-text-secondary);
 	font-family: Arial, Helvetica, sans-serif;
 	vertical-align: middle;
+	cursor: pointer;
 }
 
 #bullet {
@@ -115,7 +117,7 @@ li > span {
 	display: grid;
 	grid-template-rows: 1fr 1fr;
 	grid-template-columns: 1fr 1fr;
-	grid-row-gap: 2rem;
+	grid-row-gap: 1rem;
 }
 
 .doughnut_chart_container {
@@ -123,7 +125,7 @@ li > span {
 	grid-template-columns: 1fr 1fr;
 	align-items: end;
 
-	.doughtnut_info_box {
+	.doughnut_info_box {
 		line-height: 1;
 		p {
 			font-size: 0.7rem;

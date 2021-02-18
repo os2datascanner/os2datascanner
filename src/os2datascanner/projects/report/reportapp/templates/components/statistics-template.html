@@ -8,19 +8,36 @@
 
     <!-- Bar chart -->
     <div class="statistic statistic--one">
-      {% if url_param == 'leader' %}
-      <h1 class="page-title__sub">Medarbejderoverblik</h1>
-      {% elif url_param == 'dpo' %}
-      <h1 class="page-title__sub">Afdelingsoverblik</h1>
-      {% endif %}
-      <table class="datatable">
-        <tr>
-          <th>{{ graph_data.0 }}</th>
-        </tr> 
-        <tr>
-          <td>{{ graph_data.1 }}</td>
-        </tr>
-      </table>
+      <div class="statistic_header">
+        <div class="">
+          <h1 class="page-title__sub">Medarbejderoverblik</h1>
+          <p class="chart_description">Overblik over afdelinger med flest uhåndterede matches</p>
+          <p class="hidden chart_description">Overblik over afdelinger med ældste matches</p>
+        </div>
+        <div class="statistic_header_nav">
+          <div style="display:grid;"> <!-- Display grid just for moving <a> tag to the right --> 
+            <a href="">Se alle</a>
+          </div>
+          <div class="dropdown">
+            <div class="select">
+              <span class="select_span">Uhåndterede matches</span>
+              <i class="material-icons">
+                keyboard_arrow_down
+              </i>
+            </div>
+            <ul class="dropdown-menu">
+              <li>Uhåndterede matches</li>
+              <li>Ældste matches</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="bar_chart_container chart_container">
+        <canvas id="bar_chart_unhandled"></canvas>
+      </div>
+      <div class="hidden bar_chart_container chart_container">
+        <canvas id="bar_chart_oldest"></canvas>
+      </div>
     </div>
 
     <!-- Pie chart -->
@@ -28,10 +45,11 @@
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">Fordeling af matches</h1>
-          <p>Matches fordelt på følsomheder</p>
+          <p class="chart_description">Matches fordelt på følsomheder</p>
+          <p class="hidden chart_description">Matches fordelt på datakilder</p>
         </div>
         <div class="statistic_header_nav">
-            <p></p>
+            <div></div>
             <div class="dropdown">
               <div class="select">
                 <span class="select_span">Følsomheder</span>
@@ -52,6 +70,12 @@
         </div>
         <div id="pie_legend_sensitivity"></div>
       </div>
+      <div class="hidden pie_chart_container chart_container">
+        <div>
+          <canvas id="pie_chart_datasources" width="100" height="100"></canvas>
+        </div>
+        <div id="pie_legend_datasources"></div>
+      </div>
     </div>
   </div>
 
@@ -62,10 +86,11 @@
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">Håndterede matches</h1>
-          <p>Procentvis andel af håndterede matches fordelt på følsomhed</p>
+          <p class="chart_description">Procentvis andel af håndterede matches fordelt på følsomhed</p>
+          <p class="hidden chart_description">Afdelingens procentvise andel af håndterede matches</p>
         </div>
         <div class="statistic_header_nav">
-          <p></p>
+          <div></div>
           <div class="dropdown">
             <div class="select">
               <span class="select_span">Følsomhed</span>
@@ -81,13 +106,14 @@
         </div>
       </div>
       <div class="doughnut_charts_container chart_container">
+        <!-- Could be rewritten as for loop instead? -->
         <div class="doughnut_chart_container">
           <div>
             <canvas id="doughnut_chart_critical" width="100" height="100"></canvas>
           </div>
-          <div class="doughtnut_info_box">
+          <div class="doughnut_info_box">
             <h5>Kritisk</h5>
-            <p>Xxx af xxx</p>
+            <p>{{handled_matches.0.1}} af {{sensitivities.0.1}}</p>
             <p>+-x% sidste uge</p>
           </div>
         </div>
@@ -95,9 +121,9 @@
           <div>
             <canvas id="doughnut_chart_problem" width="100" height="100"></canvas>
           </div>
-          <div class="doughtnut_info_box">
+          <div class="doughnut_info_box">
             <h5>Problem</h5>
-            <p>Xxx af xxx</p>
+            <p>{{handled_matches.1.1}} af {{sensitivities.1.1}}</p>
             <p>+-x% sidste uge</p>
           </div>
         </div>
@@ -105,9 +131,9 @@
           <div>
             <canvas id="doughnut_chart_warning" width="100" height="100"></canvas>
           </div>
-          <div class="doughtnut_info_box">
+          <div class="doughnut_info_box">
             <h5>Advarsel</h5>
-            <p>Xxx af xxx</p>
+            <p>{{handled_matches.2.1}} af {{sensitivities.2.1}}</p>
             <p>+-x% sidste uge</p>
           </div>
         </div>
@@ -115,12 +141,25 @@
           <div>
             <canvas id="doughnut_chart_notification" width="100" height="100"></canvas>
           </div>
-          <div class="doughtnut_info_box">
+          <div class="doughnut_info_box">
             <h5>Notifikation</h5>
-            <p>Xxx af xxx</p>
+            <p>{{handled_matches.3.1}} af {{sensitivities.3.1}}</p>
             <p>+-x% sidste uge</p>
           </div>
         </div>
+      </div>
+      <div class="hidden chart_container">
+        <div class="doughnut_chart_container">
+          <div>
+            <canvas id="doughnut_chart_total" width="100" height="100"></canvas>
+          </div>
+          <div class="doughnut_info_box">
+            <h5>Håndterede matches</h5>
+            <p>{{totalHandledMatches}} af {{totalMatches}}</p>
+            <p>+-x% sidste uge</p>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -129,13 +168,14 @@
       <div class="statistic_header">
         <div class="">
           <h1 class="page-title__sub">Udviklingsoverblik</h1>
-          <p>Antal nye matches pr. måned</p>
+          <p class="chart_description">Antal nye matches pr. måned</p>
+          <p class="hidden chart_description">Antal uhåndterede matches pr. måned</p>
         </div>
         <div class="statistic_header_nav">
-          <p></p>
+          <div></div>
           <div class="dropdown">
             <div class="select">
-              <span>Nye matches pr. md.</span>
+              <span class="select_span">Nye matches pr. md.</span>
               <i class="material-icons">
                 keyboard_arrow_down
               </i>
@@ -146,6 +186,7 @@
             </ul>
           </div>
         </div>
+        <!-- Charts here -->
       </div>
       
     </div>
@@ -160,14 +201,15 @@
 {{ oldest_match|json_script:"oldest_match" }}
 <script>
   // json_script solution - Safe from in-page script execution
-  const sensitivities = JSON.parse(document.getElementById('sensitivities').textContent);
-  const dataSources = JSON.parse(document.getElementById('data_sources').textContent);
-  const handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
   const unhandledMatches = JSON.parse(document.getElementById('unhandled_matches').textContent);
   const oldestMatch = JSON.parse(document.getElementById('oldest_match').textContent);
 
+  const sensitivities = JSON.parse(document.getElementById('sensitivities').textContent);
+  const dataSources = JSON.parse(document.getElementById('data_sources').textContent);
 
+  const handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
 
+  const test = JSON.parse(document.getElementById('handled_matches').textContent);
   // Finds the total number matches in the array
   totalArrayValue = (array, index) => {
     let number = 0;
@@ -176,13 +218,14 @@
     }
     return number;
   };
-
   // Calculates the percentage for 'Håndterede matches -> Alle matches' 
   const totalMatches = totalArrayValue(sensitivities, 1)
   const totalHandledMatches = totalArrayValue(handledMatches, 1)
   const handledPercentage = totalHandledMatches / totalMatches  * 100;
   // To fixed decimal point
-  handledPercentageFixed = handledPercentage.toFixed(1)
+  handledPercentageFixed = handledPercentage.toFixed(1);
+
+
 
   // Might not be needed for the graphs
   // Calculates the four percentages in 'Håndterede matches -> Følsomhed'
@@ -215,30 +258,4 @@
     }
       return handledOfTotalArray;
   };
-
-  console.log(handledOfTotal(sensitivities, handledMatches));
-
-  // TODO: Remove when done "prototyping"
-  // Inserts 'Håndteret matches'-data
-  htmlTableHandledMatches = () => {
-    let tableRow = ''
-    const sensitivitiesPercentage = percentageArrayCalc(sensitivities, handledMatches, 1);
-    document.getElementById('total_handled_percentage').innerHTML = handledPercentageFixed + '%';
-    for (let i = 0; i < sensitivitiesPercentage.length; i++) {
-      tableRow += `<td>${sensitivitiesPercentage[i]}%</td>`;
-    }
-    document.getElementById('handled_sensitivity_percentage').innerHTML = tableRow;
-  };
-
-  htmlTableHandledMatches();
-
-  htmlTableInserter = (fullArray, handledArray, id, divider) => {
-    let tableRow = '';
-    for (let i = 0; i < fullArray.length; i++) {
-      tableRow += `<td>${handledArray[i][1]} ${divider} ${fullArray[i][1]}</td>`;
-    }
-    document.getElementById(id).innerHTML = tableRow;
-  };
-
-  htmlTableInserter(sensitivities, handledMatches, 'handled_of_total', 'of')
 </script>
