@@ -1,14 +1,15 @@
 .tabs {
-  background-color: var(--color-header-bg);
-  box-shadow: var(--box-shadow);
-  max-width: 80rem;
+  max-width: 90rem;
   overflow: hidden;
   width: calc(100% - 2rem);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  margin-bottom: 1rem;
 
   &__control {
     background-color: inherit;
     border: none;
-    color: #3a69b4;
+    color: var(--color-text-main);
     cursor: pointer;
     float: left;
     font-size: 1rem;
@@ -16,23 +17,20 @@
     outline: none;
     padding: 1rem;
     text-decoration: none;
-    transition: 0.3s;
+    transition: 0.2s;
 
     &:focus, 
     &:hover, 
     &.active {
-      background-color: var(--color-main);
-      color: #fff;
-    }
-
-    & + & {
-      border-left: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 2px solid var(--color-primary-dark);
+      color: var(--color-primary-dark);
+      font-weight: 600;
     }
   }
 
   &__content {
     display: none;
-    max-width: 80rem;
+    max-width: 90rem;
     padding: 1rem 0;
   }
 }

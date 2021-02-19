@@ -51,15 +51,39 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: var(--border-radius-button);
 
+    &--icon {
+      border: none;
+      background-color: #e9e9e9;
+    }
+
     &:focus,
     &:hover {
       background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .items {
+      display: flex;
+    }
+
+    .material-icons {
+      color: var(--color-primary-dark);
+      font-weight: 700;
+    }
+
+    .text {
+      padding-top: .3rem;
+      padding-left: .3rem;
     }
   }
 
   &--small {
     padding: .5rem;
-    margin-right: 0.25rem;
+    margin-right: .25rem;
+  }
+
+  &--upload {
+    padding: .67rem;
+    margin-right: .25rem;
   }
 
   &--modal-close {

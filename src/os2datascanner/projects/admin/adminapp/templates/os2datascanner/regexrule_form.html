@@ -16,7 +16,7 @@
       var labelClone = containerClone.find("label").first();
 
       labelClone.attr("for", "id_" + newInputName);
-      labelClone.text("Regulært udtryk" + " " + (numInput + 1)); // plus one because the numInput is 0-indexed, and label should be 1-indexed
+      labelClone.text("Regulært Udtryk" + " " + (numInput + 1)); // plus one because the numInput is 0-indexed, and label should be 1-indexed
       inputClone.attr("name", newInputName).attr("id", "id_" + newInputName).val("").attr("value", "");
       if (!containerClone.find(".button-remove-expression").length) { // if we haven't already cloned a button for removal...
         inputClone.after($("<span/>", { // ... add the button to remove expression
@@ -66,7 +66,7 @@
         var label = $this.find("label");
         var oldInputName = input.attr("name").split(/(.+_)/);
         input.attr("name", oldInputName[1] + idx).attr("id", "id_" + oldInputName[1] + idx);
-        label.attr("for", "id_" + oldInputName[1] + idx).text("{{ form.pattern_0.label }} " + (idx + 1)); // we want 1-indexed label texts
+        label.attr("for", "id_" + oldInputName[1] + idx).text("Regulært {{ form.pattern_0.label }} " + (idx + 1)); // we want 1-indexed label texts
       });
       // recalcIframeHeight();
     }
@@ -82,7 +82,7 @@
 
   <div class="content">
 
-    {% include "partials/breadcrumb.html" with view="rule_views" %}
+    {% include "partials/breadcrumb.html" with page="rule_views" %}
 
     <div class="aside">
       {% if view.edit %}
@@ -198,12 +198,11 @@
           <h3>Regel</h3>
           <p class="description">En regel består af et eller flere regulære udtryk og definerer hvilke tekststrenge der søges efter i et scannerjob</p>
 
-          <div id="{{ form.pattern_0.auto_id }}_container" class="form__group col-sm-12{% if form.pattern_0.errors %} has-error{% endif %}">
+          <div id="{{ form.pattern_0.auto_id }}_container" class="form__group {% if form.pattern_0.errors %} has-error{% endif %}">
 
             {% for pattern_name, pattern_value in view.get_pattern_fields %}
             <div class="form__group form-group">
-              <label class="required-form" for="id_{{ pattern_name }}">Regulært udtryk {{ forloop.counter }}</label>
-              <div class="col-sm-10">
+              <label class="required-form" for="id_{{ pattern_name }}">Regulært Udtryk {{ forloop.counter }}</label>
                 {% if forloop.counter > 1 %}
                 <div class="input-group">
                   {% endif %}
@@ -230,13 +229,19 @@
                   {% if forloop.counter > 1 %}
                 </div>
                 {% endif %}
-              </div>
             </div>
             {% endfor %}
 
             <div class="row form__group">
               <div class="col-sm-offset-2 col-sm-10">
-                <button id="button-add-expression" type="button" class="button button--cta button--small">Tilføj regel</button>
+                <button id="button-add-expression" type="button" class="flex button button--grey button--grey--icon button--small">
+                  <span class="items">
+                    <span>
+                      <i id="add" title="Tilføj endnu et regulært udtryk" class="material-icons">add</i>
+                    </span>
+                    <span class="text">Tilføj endnu et regulært udtryk</span>
+                  </span>
+                </button>
               </div>
             </div>
           </div>
@@ -248,53 +253,23 @@
           <h3 class="required-form" for="id_{{ form.sensitivity.name }}">{{ form.sensitivity.label }}</h3>
           <p class="description">Vurder reglens følsomhed</p>
             <div id="{{ form.sensitivity.auto_id }}_container" class="form__group col-sm-12{% if form.sensitivity.errors %} has-error{% endif %}">
-              <select name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" class="form-control">
 
-                <option value="" selected>---------</option>
-                {% for value, tag in form.sensitivity.field.choices %}
-                <option value="{{ value }}">
-                  {{ tag }}
-                </option>
-                {% endfor %}
-
-              </select>
               {% if form.sensitivity.help_text %}
               <span class="form__help-text">{{ form.sensitivity.help_text }}</span>
               {% endif %}
               {% if form.sensitivity.errors %}{{ form.sensitivity.errors }}{% endif %}
 
-              <label class="radio">
-                <span class="radio__input">
-                  <input type="radio" name="radio">
-                  <span class="radio__control"></span>
-                </span>
-                <span class="radio__label">Kritisk</span>
-              </label>
-
-              <label class="radio">
-                <span class="radio__input">
-                  <input type="radio" name="radio">
-                  <span class="radio__control"></span>
-                </span>
-                <span class="radio__label">Problem</span>
-              </label>
-
-              <label class="radio">
-                <span class="radio__input">
-                  <input type="radio" name="radio">
-                  <span class="radio__control"></span>
-                </span>
-                <span class="radio__label">Kritisk</span>
-              </label>
-
-              <label class="radio">
-                <span class="radio__input">
-                  <input type="radio" name="radio">
-                  <span class="radio__control"></span>
-                </span>
-                <span class="radio__label">Kritisk</span>
-              </label>
-
+              <div class="radio-content">
+                {% for value, tag in form.sensitivity.field.choices %}
+                <label class="radio radio-before">
+                  <span class="radio__input">
+                    <input type="radio" name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" value="{{ value }}">
+                    <span class="radio__control"></span>
+                  </span>
+                  <span class="radio__label">{{ tag }}</span>
+                </label>
+                {% endfor %}
+              </div>
             </div>
         </fieldset>
       </section>

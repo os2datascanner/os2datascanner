@@ -16,6 +16,8 @@
 
   <div class="content">
 
+    {% include "os2datascanner/scanner_tabs.html"  %}
+
     <div class="aside">
       <h1 class="page-title">Scannerjob</h1>
       
@@ -32,6 +34,7 @@
       </div>
     </div>
     
+    {% if scanner_list %}
     <table class="datatable">
       <thead>
         <tr>
@@ -131,6 +134,10 @@
         {% endfor %}
       </tbody>
     </table>
+
+    {% else %}
+    <p>Der er ikke tilføjet nogen scannerjob</p>
+    {% endif %}
   </div>
 </main>
 {% endblock %}
