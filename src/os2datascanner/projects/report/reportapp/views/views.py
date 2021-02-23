@@ -64,29 +64,8 @@ class MainPageView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         user = self.request.user
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
-
-        # Filter by organization
-        try:
-            user_organization = user.profile.organization
-            # Include matches without organization (backwards compatibility)
-            self.matches = self.matches.filter(Q(organization=None) | Q(organization=user_organization))
-        except UserProfile.DoesNotExist:
-            # No UserProfile has been set on the request user
-            # Default action depends on how many organization objects we have
-            # If more than one exist, limit matches to ones without an organization (safety measure)
-            if Organization.objects.count() > 1:
-                self.matches = self.matches.filter(organization=None)
-
-        for role in roles:
-            # Filter matches by role.
-            self.matches = role.filter(self.matches)
-
-        # If existing matches do not have a last_modified value
-        # Set it to scan_tage time, as it is the closest we can get.
-        for match in self.matches:
-            if not match.datasource_last_modified:
-                match.datasource_last_modified = match.data.get("scan_tag").get("time")
-                match.save()
+        # Handles filtering by role + org and sets datasource_last_modified if non existing
+        self.matches = do_filter(user, self.matches, roles)
 
         # Filters by datasource_last_modified.
         # lt mean less than.
@@ -179,3 +158,32 @@ class SettingsPageView(TemplateView):
 
 class AboutPageView(TemplateView):
     template_name = 'about.html'
+
+
+# Logic separated to function to allow usability in send_notifications.py
+def do_filter(user, matches, roles):
+
+    # Filter by organization
+    try:
+        user_organization = user.profile.organization
+        # Include matches without organization (backwards compatibility)
+        matches = matches.filter(Q(organization=None) | Q(organization=user_organization))
+    except UserProfile.DoesNotExist:
+        # No UserProfile has been set on the request user
+        # Default action depends on how many organization objects we have
+        # If more than one exist, limit matches to ones without an organization (safety measure)
+        if Organization.objects.count() > 1:
+            matches = matches.filter(organization=None)
+
+    for role in roles:
+        # Filter matches by role.
+        matches = role.filter(matches)
+
+    # If existing matches do not have a last_modified value
+    # Set it to scan_tage time, as it is the closest we can get.
+    for match in matches:
+        if not match.datasource_last_modified:
+            match.datasource_last_modified = match.data.get("scan_tag").get("time")
+            match.save()
+
+    return matches
