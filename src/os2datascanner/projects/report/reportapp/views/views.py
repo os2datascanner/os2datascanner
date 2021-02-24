@@ -165,6 +165,12 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         resolution_status__isnull=False)
     unhandled_matches = matches.filter(
         resolution_status__isnull=True)
+    sensitivity_list = [
+        [Sensitivity.CRITICAL.presentation, 0],
+        [Sensitivity.PROBLEM.presentation, 0],
+        [Sensitivity.WARNING.presentation, 0],
+        [Sensitivity.NOTICE.presentation, 0],
+    ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -181,16 +187,17 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         
         context['data_sources'] = self.get_data_sources()
 
-        context['sensitivities'], context['total_matches'] = self.get_sensitivities()
+        context['sensitivities'], context['total_matches'] = self.count_all_matches_grouped_by_sensitivity()
 
-        context['handled_matches'], context['total_handled_matches'] = self.count_handled_matches()
+        context['handled_matches'], context['total_handled_matches'] = \
+            self.count_handled_matches_grouped_by_sensitivity()
 
         context['unhandled_matches'] = self.count_unhandled_matches()
 
         return context
 
-    def count_handled_matches(self):
-        # Counts the distribution of handled matches by sensitivity
+    def count_handled_matches_grouped_by_sensitivity(self):
+        """Counts the distribution of handled matches by sensitivity"""
         handled_matches = self.handled_matches.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
@@ -199,32 +206,29 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
             'sensitivity', 'total',
         )
 
-        # For handling having no values - List defaults to 0
-        handled_list = [
-            [Sensitivity.CRITICAL.presentation, 0],
-            [Sensitivity.PROBLEM.presentation, 0],
-            [Sensitivity.WARNING.presentation, 0],
-            [Sensitivity.NOTICE.presentation, 0],
-        ]
+        return self.create_sensitivity_list(handled_matches)
 
-        for hm in handled_matches:
-            if (hm['sensitivity']) == 1000:
-                handled_list[0][1] = hm['total']
-            elif (hm['sensitivity']) == 750:
-                handled_list[1][1] = hm['total']
-            elif (hm['sensitivity']) == 500:
-                handled_list[2][1] = hm['total']
-            elif (hm['sensitivity']) == 250:
-                handled_list[3][1] = hm['total']
+    def create_sensitivity_list(self, matches):
+        # For handling having no values - List defaults to 0
+        temp_list = self.sensitivity_list
+        for match in matches:
+            if (match['sensitivity']) == 1000:
+                temp_list[0][1] = match['total']
+            elif (match['sensitivity']) == 750:
+                temp_list[1][1] = match['total']
+            elif (match['sensitivity']) == 500:
+                temp_list[2][1] = match['total']
+            elif (match['sensitivity']) == 250:
+                temp_list[3][1] = match['total']
 
         total = 0
-        for hm in handled_list:
-            total += hm[1]
+        for match in temp_list:
+            total += match[1]
 
-        return handled_list, total
+        return temp_list, total
 
-    def get_sensitivities(self):
-        # Counts the distribution of matches by sensitivity
+    def count_all_matches_grouped_by_sensitivity(self):
+        """Counts the distribution of matches by sensitivity"""
         sensitivities = self.matches.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
@@ -233,29 +237,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
             'sensitivity', 'total'
         )
 
-        # For handling having no values - List defaults to 0
-        sensitivity_list = [
-            [Sensitivity.CRITICAL.presentation, 0],
-            [Sensitivity.PROBLEM.presentation, 0],
-            [Sensitivity.WARNING.presentation, 0],
-            [Sensitivity.NOTICE.presentation, 0],
-        ]
-        
-        for s in sensitivities:
-            if (s['sensitivity']) == 1000:
-                sensitivity_list[0][1] = s['total']
-            elif (s['sensitivity']) == 750:
-                sensitivity_list[1][1] = s['total']
-            elif (s['sensitivity']) == 500:
-                sensitivity_list[2][1] = s['total']
-            elif (s['sensitivity']) == 250:
-                sensitivity_list[3][1] = s['total']
-            
-        total = 0
-        for s in sensitivity_list:
-            total += s[1]
-
-        return sensitivity_list, total
+        return self.create_sensitivity_list(sensitivities)
 
     def get_data_sources(self):
         # Counts the distribution of data sources by type
