@@ -13,7 +13,7 @@
     {% for r in nav_items %}
       {% if r == "DataProtectionOfficer" or r == 'Leader' %}
       <li>
-        {% if r == "DataProtectionOfficer" %}
+        {% if r == "Leader" %}
         <a href="/statistics/leader" class="{% if request.path == '/statistics/leader/' %}active{% endif %}">
           {% include "components/svg-icons/bar_chart.svg" %}
           <span class="width">
