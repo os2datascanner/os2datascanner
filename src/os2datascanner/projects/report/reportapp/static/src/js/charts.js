@@ -39,17 +39,23 @@ Chart.pluginService.register({
             
             // and to create the gradient
             gradient = chart.ctx.createLinearGradient(0, start, 0, end);
-            
-            // The colors of the gradient that were defined in the data
-            // gradient.addColorStop(0, dataset.backgroundColor[j][0]);
-            // gradient.addColorStop(1, dataset.backgroundColor[j][1]);
 
-            //Use this instead of ^ if we need the same color every time
-            gradient.addColorStop(0, dataset.backgroundColor[0][0]);
-            gradient.addColorStop(1, dataset.backgroundColor[0][1]);
+            // Make the gradient yellow if -> Find something to check for
+            if (model.label === "www.magenta.dk") {
+              // The colors of the gradient that were defined in the data
+              gradient.addColorStop(0, dataset.backgroundColor[0][2]);
+              gradient.addColorStop(1, dataset.backgroundColor[0][3]);
+            }
+            else {
+              // The colors of the gradient that were defined in the data
+              // gradient.addColorStop(0, dataset.backgroundColor[j][0]);
+              // gradient.addColorStop(1, dataset.backgroundColor[j][1]);
 
+              //Use this instead of ^ if we need the same color every time
+              gradient.addColorStop(0, dataset.backgroundColor[0][0]);
+              gradient.addColorStop(1, dataset.backgroundColor[0][1]);
+            }
               // We set this new color to the data background
-
               model.backgroundColor = gradient;
           }
       }
@@ -372,7 +378,7 @@ new Chart(unhandledBarChartCtx, {
     datasets: [{
       data: unhandledBarChartValues,
       backgroundColor: [
-        [colorFunction('--color-primary-light'), colorFunction('--color-icon-primary')],
+        [colorFunction('--color-primary-light'), colorFunction('--color-icon-primary'), colorFunction('--color-warning'),colorFunction('--color-gradient-dark-yellow') ],
       ],
       barThickness: 55,
     }]
