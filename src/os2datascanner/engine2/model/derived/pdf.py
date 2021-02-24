@@ -1,5 +1,5 @@
 from os import listdir
-import pdfrw
+import PyPDF2
 from tempfile import TemporaryDirectory
 from subprocess import run
 
@@ -10,6 +10,18 @@ from .derived import DerivedSource
 
 
 PAGE_TYPE = "application/x.os2datascanner.pdf-page"
+
+
+def _open_pdf_wrapped(obj):
+    reader = PyPDF2.PdfFileReader(obj)
+    if reader.getIsEncrypted():
+        # Some PDFs are "encrypted" with an empty password: give that a shot...
+        try:
+            if reader.decrypt("") == 0:  # the document has a real password
+                reader = None
+        except NotImplementedError:  # unsupported encryption algorithm
+            reader = None
+    return reader
 
 
 @Source.mime_handler("application/pdf")
@@ -23,17 +35,25 @@ class PDFSource(DerivedSource):
             yield p
 
     def handles(self, sm):
-        reader = pdfrw.PdfReader(sm.open(self))
-        for i in range(1, len(reader.pages) + 1):
+        reader = _open_pdf_wrapped(sm.open(self))
+        for i in range(1, reader.getNumPages() + 1 if reader else 0):
             yield PDFPageHandle(self, str(i))
 
 
 class PDFPageResource(Resource):
+    def _generate_metadata(self):
+        with self.handle.source.handle.follow(self._sm).make_stream() as fp:
+            reader = _open_pdf_wrapped(fp)
+            info = reader.getDocumentInfo() if reader else None
+            author = info.get("/Author") if info else None
+        if author:
+            yield "pdf-author", str(author)
+
     def check(self) -> bool:
         page = int(self.handle.relative_path)
-        with self.handle.source.handle.follow(self._sm).make_stream() as fp:
-            reader = pdfrw.PdfReader(fp)
-            return page in range(1, len(reader.pages) + 1)
+        with self.handle.source._make_stream(self._sm) as fp:
+            reader = _open_pdf_wrapped(fp)
+            return page in range(1, reader.getNumPages() + 1 if reader else 0)
 
     def compute_type(self):
         return PAGE_TYPE
@@ -43,9 +63,6 @@ class PDFPageResource(Resource):
 class PDFPageHandle(Handle):
     type_label = "pdf-page"
     resource_type = PDFPageResource
-
-    # A PDFPageHandle is an internal reference to a fragment of a document
-    is_synthetic = True
 
     @property
     def presentation(self):
@@ -93,16 +110,17 @@ class PDFPageSource(DerivedSource):
             yield PDFObjectHandle(self, p)
 
 
+class PDFObjectResource(FilesystemResource):
+    def _generate_metadata(self):
+        # Suppress the superclass implementation of this method -- generated
+        # files have no interesting metadata
+        yield from ()
+
+
 @Handle.stock_json_handler("pdf-object")
 class PDFObjectHandle(Handle):
     type_label = "pdf-object"
-    resource_type = FilesystemResource
-
-    # All PDFObjectHandles point at generated temporary files
-    # (XXX: we don't care about this metadata at the moment, so this isn't an
-    # issue, but what if an extracted file is nevertheless a real file and
-    # carries useful metadata, like a JPEG image with XMP properties?)
-    is_synthetic = True
+    resource_type = PDFObjectResource
 
     @property
     def presentation(self):

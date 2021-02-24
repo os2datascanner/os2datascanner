@@ -31,19 +31,6 @@ class Handle(TypePropertyEquality, JSONSerialisable):
     def resource_type(self) -> type:
         """The subclass of Resource produced when this Handle is followed."""
 
-    @property
-    def is_synthetic(self) -> bool:
-        """Indicates whether or not this Handle is known to point to a
-        synthetic object. Synthetic objects are objects that were actually
-        created, and not just enumerated, by a Source: for example, a text file
-        that represents a single page extracted from a larger document would be
-        a synthetic object.
-
-        Synthetic objects are likely to be backed by temporary files on the
-        local filesystem, and so are likely to have no useful metadata attached
-        to them."""
-        return False
-
     def __init__(self, source, relpath):
         self._source = source
         self._relpath = relpath

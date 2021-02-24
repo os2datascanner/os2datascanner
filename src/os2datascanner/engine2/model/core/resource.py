@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+from sys import stderr
 import magic
 from datetime import datetime
+from traceback import print_exc
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import SingleResult, MultipleResults
@@ -39,6 +41,39 @@ class Resource(ABC):
         and is not expected to be accessible in future. In particular,
         transient issues like locked files or connectivity problems will not
         cause False to be returned."""
+
+    def _generate_metadata(self):
+        """Yields zero or more (key, value) pairs of metadata properties. (Keys
+        must be strings, and values must be suitable for JSON
+        serialisation.)"""
+        # (This function is implemented as a generator to make error recovery
+        # easier -- an unexpected error when extracting one metadata property
+        # shouldn't result in all the others being dropped as well.)
+        yield from ()
+
+    def get_metadata(self):
+        """Returns an object suitable for JSON serialisation that represents
+        the metadata known for this object."""
+
+        metadata = {}
+
+        # Files in the real world can be malformed in a wide array of exciting
+        # ways. To make sure we collect as much metadata as possible, even if
+        # one of the later extraction stages does go wrong, store metadata
+        # values as soon as they're produced by our helper function
+        try:
+            for k, v in self._generate_metadata():
+                metadata[k] = v
+        except Exception:
+            print("warning: Resource.get_metadata:"
+                    " continuing after unexpected exception", file=stderr)
+            print_exc(file=stderr)
+
+        if self.handle.source.handle:
+            metadata.update(
+                    self.handle.source.handle.follow(self._sm).get_metadata())
+
+        return metadata
 
     def _get_cookie(self):
         """Returns the magic cookie produced when the Source behind this
@@ -99,6 +134,10 @@ class FileResource(TimestampedResource):
         """Returns a context manager that, when entered, returns a read-only
         Python stream through which the content of this FileResource can be
         accessed until the context is exited."""
+
+    def _generate_metadata(self):
+        yield "last-modified", OutputType.LastModified.encode_json_object(
+                self.get_last_modified().value)
 
     def compute_type(self):
         """Guesses the type of this file, possibly examining its content in the

@@ -84,6 +84,10 @@ class MSGraphMailMessageResource(FileResource):
         super().__init__(handle, sm)
         self._message = None
 
+    def _generate_metadata(self):
+        yield "email-account", self.handle.source.handle.relative_path
+        yield from super()._generate_metadata()
+
     def check(self) -> bool:
         response = self._get_cookie().get_raw(
                 self.make_object_path() + "?$select=id")

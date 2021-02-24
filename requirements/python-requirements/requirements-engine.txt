@@ -70,8 +70,6 @@ oauthlib==3.1.0
     #   requests-oauthlib
 olefile==0.46
     # via -r requirements-engine.in
-pdfrw==0.4
-    # via -r requirements-engine.in
 pika==1.1.0
     # via -r requirements-common.in
 pillow==7.1.1
