@@ -1,4 +1,5 @@
 import django_saml2_auth.views
+import django.contrib.auth.views
 from django.conf.urls import url
 from django.http import HttpResponse
 from django.urls import include
@@ -17,17 +18,30 @@ urlpatterns = [
     url('settings', SettingsPageView.as_view(), name="settings"),
     url('about',    AboutPageView.as_view(),    name="about"),
     url(r'^health/', lambda r: HttpResponse()),
-    path('oidc/', include('mozilla_django_oidc.urls')),
 ]
 
 if settings.SAML2_ENABLED:
     urlpatterns.append(url(r"^saml2_auth/", include("django_saml2_auth.urls")))
     urlpatterns.append(url(r"^accounts/login/$", django_saml2_auth.views.signin))
     urlpatterns.append(url(r'^accounts/logout/$', django_saml2_auth.views.signout))
-else:
-    urlpatterns.append(url(r'^accounts/logout/',
-        LogoutPageView.as_view(
-            template_name='logout.html',
-        ),
-        name='logout'))
 
+if settings.KEYCLOAK_ENABLED:
+    settings.LOGIN_URL = "oidc_authentication_init"
+    settings.LOGOUT_REDIRECT_URL = "http://localhost:8040/accounts/logout/"
+    urlpatterns.append(path('oidc/', include('mozilla_django_oidc.urls'))),
+    urlpatterns.append(url(r'^accounts/logout/',
+                           LogoutPageView.as_view(
+                               template_name='logout.html',
+                           ),
+                           name='logout'))
+else:
+    urlpatterns.append(url(r'^accounts/login/',
+                           django.contrib.auth.views.LoginView.as_view(
+                               template_name='login.html',
+                           ),
+                           name='login'))
+    urlpatterns.append(url(r'^accounts/logout/',
+                           django.contrib.auth.views.LogoutView.as_view(
+                               template_name='logout.html',
+                           ),
+                           name='logout'))

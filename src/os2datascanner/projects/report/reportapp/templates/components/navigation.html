@@ -1,4 +1,5 @@
 {%  load i18n %}
+{% load get_settings_tag %}
 
 <nav class="navigation">
   <ul>
@@ -22,15 +23,27 @@
     </li> -->
   </ul>
 
+{% settings_value "KEYCLOAK_ENABLED" as keycloak_enabled %}
+{% if keycloak_enabled == True %}
   <ul class="logout">
       <li>
         <form id="logout" method="POST" action="{% url 'oidc_logout' %}">
             {% csrf_token %}
             <a href="javascript:void()" onclick="document.getElementById('logout').submit();">
                 {% include "components/svg-icons/logout.svg" %}
-                <span class="navigation width">Log ud</span>
+                <span class="navigation width">{% trans "Log out" %}</span>
             </a>
         </form>
         </li>
   </ul>
+{% else %}
+  <ul class="logout">
+    <li>
+      <a href="/accounts/logout">
+        {% include "components/svg-icons/logout.svg" %}
+        <span class="width">{% trans "Log out" %}</span>
+      </a>
+    </li>
+  </ul>
+{%  endif %}
 </nav>
