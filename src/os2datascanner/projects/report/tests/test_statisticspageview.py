@@ -382,16 +382,8 @@ class StatisticsPageViewTest(TestCase):
                             ('yvonne@jensen.com', 1)])
         leader.delete()
 
-    # get_sensitivities()
-    def test_statisticspage_get_sensitivities_no_role(self):
-        view = self.get_statisticspage_object()
-        sens_list, total = view.count_all_matches_grouped_by_sensitivity()
-        self.assertListEqual(sens_list, 
-                            [['Kritisk', 4], ['Problem', 2], 
-                            ['Advarsel', 1], ['Notifikation', 0]])
-        self.assertEquals(total, 7)
-
-    def test_statisticspage_get_sensitivities_as_leader(self):
+    # count_all_matches_grouped_by_sensitivity()
+    def test_statisticspage_count_all_matches_grouped_by_sensitivity_as_leader(self):
         leader = Leader.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         sens_list, total = view.count_all_matches_grouped_by_sensitivity()
@@ -401,7 +393,7 @@ class StatisticsPageViewTest(TestCase):
         self.assertEquals(total, 7)
         leader.delete()
 
-    def test_statisticspage_get_sensitivities_as_dpo(self):
+    def test_statisticspage_count_all_matches_grouped_by_sensitivity_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         sens_list, total = view.count_all_matches_grouped_by_sensitivity()
@@ -412,11 +404,6 @@ class StatisticsPageViewTest(TestCase):
         dpo.delete()
     
     # get_data_sources()
-    def test_statisticspage_get_data_sources_no_role(self):
-        view = self.get_statisticspage_object()
-        self.assertListEqual(view.get_data_sources(),
-                            [('ews', 7)])
-
     def test_statisticspage_get_data_sources_as_leader(self):
         leader = Leader.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
@@ -431,16 +418,8 @@ class StatisticsPageViewTest(TestCase):
                             [('ews', 7)])
         dpo.delete()
 
-    # count_handled_matches()
-    def test_statisticspage_count_handled_matches_no_role(self):
-        view = self.get_statisticspage_object()
-        sens_list, total = view.count_handled_matches_grouped_by_sensitivity()
-        self.assertListEqual(sens_list,
-                            [['Kritisk', 0], ['Problem', 0], 
-                            ['Advarsel', 0], ['Notifikation', 0]])
-        self.assertEquals(total, 0)
-    
-    def test_statisticspage_count_handled_matches_as_leader(self):
+    # count_handled_matches_grouped_by_sensitivity()
+    def test_statisticspage_count_handled_matches_grouped_by_sensitivity_as_leader(self):
         leader = Leader.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         sens_list, total = view.count_handled_matches_grouped_by_sensitivity()
@@ -450,7 +429,7 @@ class StatisticsPageViewTest(TestCase):
         self.assertEquals(total, 0)
         leader.delete()
 
-    def test_statisticspage_count_handled_matches_as_dpo(self):
+    def test_statisticspage_count_handled_matches_grouped_by_sensitivity_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         sens_list, total = view.count_handled_matches_grouped_by_sensitivity()

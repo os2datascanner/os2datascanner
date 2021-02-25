@@ -165,12 +165,6 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         resolution_status__isnull=False)
     unhandled_matches = matches.filter(
         resolution_status__isnull=True)
-    sensitivity_list = [
-        [Sensitivity.CRITICAL.presentation, 0],
-        [Sensitivity.PROBLEM.presentation, 0],
-        [Sensitivity.WARNING.presentation, 0],
-        [Sensitivity.NOTICE.presentation, 0],
-    ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -187,7 +181,8 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         
         context['data_sources'] = self.get_data_sources()
 
-        context['sensitivities'], context['total_matches'] = self.count_all_matches_grouped_by_sensitivity()
+        context['sensitivities'], context['total_matches'] = \
+            self.count_all_matches_grouped_by_sensitivity()
 
         context['handled_matches'], context['total_handled_matches'] = \
             self.count_handled_matches_grouped_by_sensitivity()
@@ -197,7 +192,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         return context
 
     def count_handled_matches_grouped_by_sensitivity(self):
-        """Counts the distribution of handled matches by sensitivity"""
+        """Counts the distribution of handled matches grouped by sensitivity"""
         handled_matches = self.handled_matches.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
@@ -208,27 +203,8 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
 
         return self.create_sensitivity_list(handled_matches)
 
-    def create_sensitivity_list(self, matches):
-        # For handling having no values - List defaults to 0
-        temp_list = self.sensitivity_list
-        for match in matches:
-            if (match['sensitivity']) == 1000:
-                temp_list[0][1] = match['total']
-            elif (match['sensitivity']) == 750:
-                temp_list[1][1] = match['total']
-            elif (match['sensitivity']) == 500:
-                temp_list[2][1] = match['total']
-            elif (match['sensitivity']) == 250:
-                temp_list[3][1] = match['total']
-
-        total = 0
-        for match in temp_list:
-            total += match[1]
-
-        return temp_list, total
-
     def count_all_matches_grouped_by_sensitivity(self):
-        """Counts the distribution of matches by sensitivity"""
+        """Counts the distribution of matches grouped by sensitivity"""
         sensitivities = self.matches.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
@@ -238,6 +214,33 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         )
 
         return self.create_sensitivity_list(sensitivities)
+
+    def create_sensitivity_list(self, matches):
+        """Helper method which groups the totals by sensitivites
+        and also takes the sum of the totals"""        
+        # For handling having no values - List defaults to 0
+        sensitivity_list = [
+            [Sensitivity.CRITICAL.presentation, 0],
+            [Sensitivity.PROBLEM.presentation, 0],
+            [Sensitivity.WARNING.presentation, 0],
+            [Sensitivity.NOTICE.presentation, 0],
+        ]
+        for match in matches:
+            if (match['sensitivity']) == 1000:
+                sensitivity_list[0][1] = match['total']
+            elif (match['sensitivity']) == 750:
+                sensitivity_list[1][1] = match['total']
+            elif (match['sensitivity']) == 500:
+                sensitivity_list[2][1] = match['total']
+            elif (match['sensitivity']) == 250:
+                sensitivity_list[3][1] = match['total']
+
+        # Sum of the totals
+        total = 0
+        for match in sensitivity_list:
+            total += match[1]
+
+        return sensitivity_list, total
 
     def get_data_sources(self):
         # Counts the distribution of data sources by type
