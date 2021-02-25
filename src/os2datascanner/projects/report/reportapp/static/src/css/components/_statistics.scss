@@ -133,6 +133,21 @@ li > span {
 	}
 }
 
+// LINE
+
+#line-chart-new-matches-tooltip {
+	-webkit-transition: all 0.1s ease;
+	transition: all 0.1s ease;
+	-webkit-transform: translate(-50%, 0);
+	transform: translate(-50%, 0);
+}
+
+// Hidden class
+
+.hidden {
+	display: none !important;
+}
+
 // select
 
 /*Styling Selectbox*/
@@ -190,8 +205,4 @@ li > span {
 }
 .dropdown .dropdown-menu li:hover {
 	background-color: var(--color-hover);
-}
-
-.hidden {
-	display: none !important;
 }
