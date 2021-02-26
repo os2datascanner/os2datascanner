@@ -34,37 +34,3 @@
   {% endif %}  
   </ul>
 </nav>
-<!-- <nav id="navigation">
-  <li class="active">
-    {% if user.is_authenticated %}
-      {% if not user.profile.is_upload_only %}
-        {% if settings.ENABLE_WEBSCAN  %}
-          <a href="/">Scannerjob</a>
-        {% elif settings.ENABLE_FILESCAN %}
-          <a href="/">Scannerjob</a>
-        {% elif settings.ENABLE_EXCHANGESCAN %}
-          <a href="/">Scannerjob</a>
-        {% elif settings.ENABLE_DROPBOXSCAN %}
-          <a href="/">Scannerjob</a>
-        {% elif settings.ENABLE_MSGRAPH_MAILSCAN %}
-          <a href="/">Scannerjob</a>
-        {% elif settings.ENABLE_GOOGLEDRIVESCAN %}
-          <a href="/">Scannerjob</a>
-        {% endif %}
-        <a href="/status/">Status</a>
-        {% if user.profile.is_groups_enabled %}
-          {% if user.is_superuser or user.profile.is_group_admin %}
-            <a href="/groups/">Grupper</a>
-          {% endif %}
-        {% endif %}
-        <a href="/rules/">Regler</a>
-        {% if user.is_superuser or user.is_staff %}
-          <a href="/admin/" target="_NEW">Administration</a>
-        {% endif %}
-        {% if settings.DEBUG %}
-          <a href="/designguide">Designguide</a>
-        {% endif %}
-      {% endif %}
-    {% endif %}
-  </li>
-</nav> -->

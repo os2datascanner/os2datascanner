@@ -1,7 +1,7 @@
 /**
- * Set active link in the topbar menu
+ * Set active link in the sidebar menu
  * 
- * @param {object} aObj   All a tag links in the topbar menu.
+ * @param {object} aObj   All a tag links in the sidebar menu.
  */
 function setActive() {
   aObj = document.getElementById('navigation').getElementsByTagName('a');

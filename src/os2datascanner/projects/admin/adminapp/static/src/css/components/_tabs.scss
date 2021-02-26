@@ -4,7 +4,7 @@
   width: calc(100% - 2rem);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   white-space: nowrap;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 
   &__control {
     background-color: inherit;
@@ -17,7 +17,7 @@
     outline: none;
     padding: 1rem;
     text-decoration: none;
-    transition: 0.2s;
+    transition: 0.1s;
 
     &:focus, 
     &:hover, 

@@ -9,12 +9,19 @@
 
     <div class="content">
 
-        <h1 class="page-title">Scanner status</h1>
+        {% include "os2datascanner/scanner_tabs.html" with page="scan-status"  %}
+
+        <div class="aside">
+            <h1 class="page-title">Scanner status</h1>
+        </div>
+
         {% for status in object_list %}
+        {% widthratio status.fraction_scanned 1.0 100 as percentage %}
+        {% if percentage != "100" %}
         <div class="scanner-status">
-            <h2 class="page-title__sub">
-                {{ status.scanner.name }}
-            </h2>
+                <h2>
+                    {{ status.scanner.name }}
+                </h2>
 
             <div class="scan-time">
             {% if status.fraction_scanned is not None %}
@@ -26,14 +33,6 @@
                     {% timezone "Europe/Copenhagen" %}
                         ca. {{ status.estimated_completion_time|timeuntil:status.start_time }} tilbage
                     {% endtimezone %}
-                </span>
-            {% else %}
-                <span>
-                    <span>{{ percentage }}%</span>
-                    <span class="scan-time--bullet">&#8226;</span>
-                    <span class="scan-time--blue">{{ status.total_objects }}</span>
-                    objekter udforsket
-                    <span class="scan-time--icon"><i class="material-icons" style="font-size: 3rem;">check</i></span>
                 </span>
                 {% endif %}
             {% endif %}
@@ -60,6 +59,7 @@
                     </div>
             {% endif %}
         </div>
+        {% endif %}
         {% endfor %}
     </div>
 </main>
