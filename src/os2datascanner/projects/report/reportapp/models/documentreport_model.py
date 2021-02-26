@@ -16,6 +16,10 @@ class DocumentReport(models.Model):
                                              null=True,
                                              verbose_name='Created timestamp')
 
+    created_timestamp = models.DateTimeField(auto_now_add=True,
+                                             null=True,
+                                             verbose_name='Created timestamp')
+
     organization = models.ForeignKey(Organization,
                                      null=True, blank=True,
                                      verbose_name='Organisation',
