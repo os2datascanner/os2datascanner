@@ -34,6 +34,11 @@ from ..models.roles.defaultrole_model import DefaultRole
 from ..models.userprofile_model import UserProfile
 from ..models.organization_model import Organization
 
+# For permissions
+from ..models.roles.dpo_model import DataProtectionOfficer
+from ..models.roles.leader_model import Leader
+from django.http import HttpResponseForbidden
+
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
@@ -165,7 +170,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         resolution_status__isnull=False)
     unhandled_matches = matches.filter(
         resolution_status__isnull=True)
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -296,9 +301,19 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
 class LeaderStatisticsPageView(StatisticsPageView):
     template_name = 'statistics.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not any(isinstance(role, Leader) for role in self.get_user_roles()):
+            return HttpResponseForbidden()
+        return super(LeaderStatisticsPageView, self).dispatch(request, *args, **kwargs)
+
 
 class DPOStatisticsPageView(StatisticsPageView):
     template_name = 'statistics.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not any(isinstance(role, DataProtectionOfficer) for role in self.get_user_roles()):
+            return HttpResponseForbidden()
+        return super(DPOStatisticsPageView, self).dispatch(request, *args, **kwargs)
 
 
 class ApprovalPageView(TemplateView):
