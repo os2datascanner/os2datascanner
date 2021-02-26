@@ -11,6 +11,10 @@ from os2datascanner.engine2.pipeline.messages import MatchesMessage
 class DocumentReport(models.Model):
     scan_time = models.DateTimeField(null=True, db_index=True)
 
+    created_timestamp = models.DateTimeField(auto_now_add=True,
+                                             null=True,
+                                             verbose_name='Created timestamp')
+
     organization = models.ForeignKey(Organization,
                                      null=True, blank=True,
                                      verbose_name='Organisation',

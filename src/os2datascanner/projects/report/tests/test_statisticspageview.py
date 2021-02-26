@@ -436,7 +436,15 @@ class StatisticsPageViewTest(TestCase):
         self.assertListEqual(sens_list,
                             [['Kritisk', 0], ['Problem', 0], 
                             ['Advarsel', 0], ['Notifikation', 0]])
-        self.assertEquals(total, 0)
+        dpo.delete()
+
+    # created_timestamp
+    def test_statisticspage_created_timestamp_as_dpo(self):
+        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+        view = self.get_statisticspage_object()
+        created_timestamp = [m.created_timestamp.date() for m in view.matches][:2]
+        self.assertEquals(created_timestamp,
+                          [datetime.date.today(), datetime.date.today()])
         dpo.delete()
 
     # StatisticsPageView()
