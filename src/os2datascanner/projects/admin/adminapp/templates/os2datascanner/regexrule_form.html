@@ -257,7 +257,6 @@
               {% if form.sensitivity.help_text %}
               <span class="form__help-text">{{ form.sensitivity.help_text }}</span>
               {% endif %}
-              {% if form.sensitivity.errors %}{{ form.sensitivity.errors }}{% endif %}
 
               <div class="radio-content">
                 {% for value, tag in form.sensitivity.field.choices %}
@@ -270,6 +269,8 @@
                 </label>
                 {% endfor %}
               </div>
+
+              {% if form.sensitivity.errors %}{{ form.sensitivity.errors }}{% endif %}
             </div>
         </fieldset>
       </section>

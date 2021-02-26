@@ -4,9 +4,9 @@
 	 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:none;}
-	.st1{fill:none;stroke:#000000;stroke-width:2;stroke-linejoin:round;}
-	.st2{fill:none;stroke:#000000;stroke-width:2;stroke-linejoin:round;stroke-dasharray:2.8083,1.8722;}
-	.st3{fill:none;stroke:#000000;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st1{fill:none;stroke:#fff;stroke-width:2;stroke-linejoin:round;}
+	.st2{fill:none;stroke:#fff;stroke-width:2;stroke-linejoin:round;stroke-dasharray:2.8083,1.8722;}
+	.st3{fill:none;stroke:#fff;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:10;}
 </style>
 <g>
 	<path class="st0" d="M0,0h24v24H0V0z"/>

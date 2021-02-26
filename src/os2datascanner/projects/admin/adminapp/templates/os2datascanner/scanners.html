@@ -16,7 +16,7 @@
 
   <div class="content">
 
-    {% include "os2datascanner/scanner_tabs.html"  %}
+    {% include "os2datascanner/scanner_tabs.html" with page="scannerjob"  %}
 
     <div class="aside">
       <h1 class="page-title">Scannerjob</h1>
@@ -143,18 +143,7 @@
 {% endblock %}
 
 {% block modal %}
-<div class="modal" id="create-scanner-modal" tabindex="-1" role="dialog" aria-labelledby="create-scanner-modal-title" aria-hidden="true">
-  <h4 class="modal__heading" id="create-scanner-modal-title">Opret nyt scannerjob</h4>
-  <iframe src="about:blank" frameborder="0"></iframe>
-</div>
-
 <div class="modal" id="run-scanner-modal" tabindex="-1" role="dialog" aria-labelledby="run-scanner-modal-title" aria-hidden="true" data-href="/{{ view.type }}scanners/add/">
-  <h4 class="modal__heading" id="run-scanner-modal-title">Kør scanner</h4>
-  <iframe src="about:blank" frameborder="0"></iframe>
-</div>
-
-<div class="modal" id="edit-scanner-modal" tabindex="-1" role="dialog" aria-labelledby="edit-scanner-modal-title" aria-hidden="true" data-href="/{{ view.type }}scanners/add/">
-  <h4 class="modal__heading" id="edit-scanner-modal-title">Rediger scannerjob</h4>
   <iframe src="about:blank" frameborder="0"></iframe>
 </div>
 {% endblock %}

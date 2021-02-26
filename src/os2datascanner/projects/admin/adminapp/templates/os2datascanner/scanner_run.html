@@ -1,27 +1,110 @@
 {% extends 'partials/base.html' %}
+{% load staticfiles %}
 {% block rendertype %}iframe-modal{% endblock %}
 {% block topnav %}{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/toggleDetails.js' %}"></script>
+{% endblock %}
+
 {% block body %}
 
+<div class="runner-container">
 {% if scan_tag %}
-<p class="lead">
-  Scan-detaljer er blevet sendt til scannermotoren, og scan bliver udført
-  snarest muligt.
-</p>
-<hr>
-<p>
-  Tekniske detaljer:
-</p>
-<pre>
-{{ scan_tag }}
-</pre>
-{% elif engine2_error %}
-<div class="alert alert--danger">
-  <p>Kunne ikke åbne datakilden: {{ engine2_error }}</p>
-</div>
-{% elif pika_error %}
-<div class="alert alert--danger">
-  <p>Kunne ikke kommunikere med scannermotoren: {{ pika_error }}</p>
-</div>
+  
+  <div class="runner-content">
+    <span>
+      <i id="check_circle_outline" class="material-icons">check_circle_outline</i>
+    </span>
+
+    <h1>Succes</h1>
+
+    <h3>
+      Scan-detaljer er blevet sendt til scannermotoren, og
+      <br> scan bliver udført snarest muligt.
+    </h3>
+
+  </div>
+
+  <div class="detail-content">
+    <div class="detail-toggle" onclick="toggleDetails()">
+      <div class="flex">
+        <span>
+          <i id="arrow_right" class="material-icons">arrow_right</i>
+          <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
+        </span>
+
+        <span class="text">Tekniske detaljer</span>
+      </div>
+
+      <pre id="scan-details" style="display: none;">
+        {{ scan_tag }}
+      </pre>
+    </div>
+  </div>
+
+  {% elif engine2_error %}
+  <div class="runner-content">
+    <span>
+      <i id="highlight_off" class="warning material-icons">highlight_off</i>
+    </span>
+
+    <h1>Hov, der opstod en fejl</h1>
+
+    <h3>
+      Scan-detaljer kunne ikke sendes til scannermotoren. 
+      <br>Se tekniske detaljer for mere information
+    </h3>
+
+    <div class="detail-content">
+      <div class="detail-toggle" onclick="toggleDetails()">
+        <div class="flex">
+          <span>
+            <i id="arrow_right" class="material-icons">arrow_right</i>
+            <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
+          </span>
+  
+          <span class="text">Tekniske detaljer</span>
+        </div>
+  
+        <pre id="scan-details" style="display: none;">
+          Kunne ikke åbne datakilden: {{ engine2_error }}
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  {% elif pika_error %}
+  <div class="runner-content">
+    <span>
+      <i id="highlight_off" class="warning material-icons">highlight_off</i>
+    </span>
+
+    <h1>Hov, der opstod en fejl</h1>
+
+    <h3>
+      Scan-detaljer kunne ikke sendes til scannermotoren. 
+      <br>Se tekniske detaljer for mere information
+    </h3>
+
+    <div class="detail-content">
+      <div class="detail-toggle" onclick="toggleDetails()">
+        <div class="flex">
+          <span>
+            <i id="arrow_right" class="material-icons">arrow_right</i>
+            <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
+          </span>
+  
+          <span class="text">Tekniske detaljer</span>
+        </div>
+  
+        <pre id="scan-details" style="display: none;">
+          Kunne ikke kommunikere med scannermotoren: {{ pika_error }}
+        </pre>
+      </div>
+    </div>
+  </div>
+
 {% endif %}
+</div>
 {% endblock %}

@@ -51,6 +51,11 @@
   svg {
     fill: var(--color-primary-dark);
   }
+
+  .st1,.st2,.st3 {
+    stroke: var(--color-primary-dark);
+    fill: none;
+  }
 }
 
 .navigation a.active {
@@ -61,6 +66,11 @@
 
   svg {
     fill: var(--color-primary-dark);
+  }
+
+  .st1,.st2,.st3 {
+    stroke: var(--color-primary-dark);
+    fill: none;
   }
 }
 

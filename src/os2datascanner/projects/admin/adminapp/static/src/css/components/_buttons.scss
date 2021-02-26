@@ -81,14 +81,24 @@
     margin-right: .25rem;
   }
 
+  &--large {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
   &--upload {
     padding: .67rem;
     margin-right: .25rem;
   }
 
   &--modal-close {
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 50%;
+    background-color: transparent;
+
+    &:hover {
+      background-color: transparent;
+    }
   }
 }
 

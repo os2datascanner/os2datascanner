@@ -21,6 +21,17 @@
     grid-area: selected;
     padding: 0.5rem;
   }
+
+  .select-rules-title {
+    width: 100%;
+    margin-bottom: .5rem;
+    padding: .5rem;
+    background-color: var(--color-primary-dark);
+    color: var(--color-text-white);
+    font-weight: 600;
+    font-size: .9rem;
+  }
+
 }
 
 .rule {

@@ -10,33 +10,53 @@
 
 {% block body %}
 
+<div class="runner-container">
 {% if ok %}
-<h3>Er du sikker på, at du vil starte scanneren?</h3>
-<p>
-  {% if webscanner.pk %}
-  <a href="/webscanners/{{webscanner.pk}}/run/" class="button button--cta button--rounded">Ja, kør!</a>
-  {% elif filescanner.pk %}
-  <a href="/filescanners/{{filescanner.pk}}/run/" class="button button--cta button--rounded">Ja, kør!</a>
-  {% elif exchangescanner.pk %}
-  <a href="/exchangescanners/{{exchangescanner.pk}}/run/" class="button button--cta button--rounded">Ja, kør!</a>
-  {% elif dropboxscanner.pk %}
-  <a href="/dropboxscanners/{{dropboxscanner.pk}}/run/" class="button button--cta button--rounded">Ja, kør!</a>
-  {% elif msgraphmailscanner.pk %}
-  <a href="/msgraph-mailscanners/{{msgraphmailscanner.pk}}/run/" class="button button--cta button--rounded">Ja, kør!</a>
-  {% elif msgraphfilescanner.pk %}
-  <a href="/msgraph-filescanners/{{msgraphfilescanner.pk}}/run/" class="button button--cta button--rounded">Ja, kør!</a>
-  {% elif googledrivescanner.pk %}
-  <a href="/googledrivescanners/{{googledrivescanner.pk}}/run/" class="button button--cta button--rounded">Ja, kør!</a>
-  {% elif gmailscanner.pk %}
-  <a href="/gmailscanners/{{gmailscanner.pk}}/run/" class="button button--cta button--rounded">Ja, kør!</a>
-  {% elif sbsysscanner.pk %}
-  <a href="/sbsysscanners/{{sbsysscanner.pk}}/run/" class="button button--cta button--rounded">Ja, kør!</a>
-  {% endif %}
-</p>
 
-{% else %}
-<div class="alert alert--danger">
-  <p>{{ error_message }}</p>
+  
+  <div class="runner-content">
+    <span>
+      <i id="play_circle_outline" class="material-icons">play_circle_outline</i>
+    </span>
+  
+    <h1>Kør scanner</h1>
+  
+    <h3>Er du sikker på, at du vil starte scanneren?</h3>
+  
+    <p>
+      {% if webscanner.pk %}
+      <a href="/webscanners/{{webscanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      {% elif filescanner.pk %}
+      <a href="/filescanners/{{filescanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      {% elif exchangescanner.pk %}
+      <a href="/exchangescanners/{{exchangescanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      {% elif dropboxscanner.pk %}
+      <a href="/dropboxscanners/{{dropboxscanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      {% elif msgraphmailscanner.pk %}
+      <a href="/msgraph-mailscanners/{{msgraphmailscanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      {% elif msgraphfilescanner.pk %}
+      <a href="/msgraph-filescanners/{{msgraphfilescanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      {% elif googledrivescanner.pk %}
+      <a href="/googledrivescanners/{{googledrivescanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      {% elif gmailscanner.pk %}
+      <a href="/gmailscanners/{{gmailscanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      {% elif sbsysscanner.pk %}
+      <a href="/sbsysscanners/{{sbsysscanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      {% endif %}
+    </p>
+  </div>
+  
+  {% else %}
+  <div class="runner-content">
+    <span>
+      <i id="warning" class="warning material-icons">warning</i>
+    </span>
+  
+    <h1>Kør scanner</h1>
+
+    <h3>{{ error_message }}</h3>
+  </div>
+
+  {% endif %}
 </div>
-{% endif %}
 {% endblock %}

@@ -613,16 +613,18 @@
           <h3 class="required-form">Tilføj regler</h3>
           <div id="{% if view.edit %}messageColorId{% endif %}" class="form__group{% if form.rules.errors %} has-error{% endif %}">
             <div class="select-rules">
-
+              
               <ul id="available_rules" class="select-rules__available">
+                <div class="select-rules-title">Tilgængelige regler</div>
                 {% for value, tag in form.rules.field.choices %}
                 <li class="rule" data-rule-id="{{ value }}">
                   <a href="javascript:void();" class="add-rule-button" title="{{ description }}" role="button">{{ tag }}</a>
                 </li>
                 {% endfor %}
               </ul>
-
+              
               <div id="selected_rules" class="select-rules__selected">
+                <div class="select-rules-title">Valgte regler</div>
                 <div id="rules_list"></div>
               </div>
 
