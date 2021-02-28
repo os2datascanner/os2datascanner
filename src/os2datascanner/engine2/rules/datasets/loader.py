@@ -18,7 +18,7 @@ class Loader:
         self._datasets = {}
 
         for c in categories:
-            self.load_category()
+            self.load_category(c)
 
     def categories(self):
         return self._datasets.keys()
@@ -46,8 +46,9 @@ class Loader:
         try:
             dataset_file = _HERE.joinpath(category, dataset + ".jsonl")
             entries = []
-            for line in dataset_file.open("rt"):
-                entries.append(json.loads(line))
+            with dataset_file.open("rt") as f:
+                for line in f:
+                    entries.append(json.loads(line))
             self._datasets.setdefault(category, {})[dataset] = entries
             return entries
         except FileNotFoundError:

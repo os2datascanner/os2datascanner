@@ -1,55 +1,38 @@
-# coding=utf-8
-# The contents of this file are subject to the Mozilla Public License
-# Version 2.0 (the "License"); you may not use this file except in
-# compliance with the License. You may obtain a copy of the License at
-#    http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS IS"basis,
-# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-# for the specific language governing rights and limitations under the
-# License.
-#
-# OS2Webscanner was developed by Magenta in collaboration with OS2 the
-# Danish community of open source municipalities (http://www.os2web.dk/).
-#
-# The code is currently governed by OS2 the Danish community of open
-# source municipalities ( http://www.os2web.dk/ )
-
-"""Rules for name scanning."""
-
-import os
 import regex
 
 from ..conversions.types import OutputType
 from .rule import Rule, SimpleRule, Sensitivity
 from .datasets.loader import common as common_loader
 
+# see https://regex101.com/r/7AI9vn/2 for examples of matches
+# \p{Lu} match a upper case unicode letter, see
+# https://www.regular-expressions.info/unicode.html#category
 # Match whitespace except newlines
-_whitespace = "[^\\S\\n\\r]+"
-_simple_name = "\\p{Uppercase}(\\p{L}+|\\.?)"
-_name = "{0}(-{0})?".format(_simple_name)
+_whitespace = r"[^\S\n\r]+"
+_simple_name = r"\p{Lu}(?:\p{L}+|\.?)"
+_name = r"{0}(?:-{0})?".format(_simple_name)
 full_name_regex = regex.compile(
-    "\\b(?P<first>" + _name + ")" +
-    "(?P<middle>(" + _whitespace + _name + "){0,3})" +
-    "(?P<last>" + _whitespace + _name + "){1}\\b", regex.UNICODE)
-
+    r"\b(?P<first>" + _name + r")" +
+    r"(?P<middle>(" + _whitespace + _name + r"){0,3})" +
+    r"(?P<last>" + _whitespace + _name + r")\b", regex.UNICODE)
 
 def match_full_name(text):
-    """Return possible name matches in the given text."""
+    """Return possible name matches in the given text as a `set`."""
+
+    def strip_or_empty(string):
+        return string.strip() if string else ""
+
     matches = set()
     it = full_name_regex.finditer(text, overlapped=False)
     for m in it:
-        first = m.group("first")
-        try:
-            middle = m.group("middle")
-        except IndexError:
-            middle = ''
+        first = strip_or_empty(m.group("first"))
+        middle = strip_or_empty(m.group("middle"))
         if middle:
             middle_split = tuple(
-                regex.split('\s+', middle.lstrip(), regex.UNICODE))
+                regex.split(r'\s+', middle.lstrip(), regex.UNICODE))
         else:
             middle_split = ()
-        last = m.group("last").lstrip()
+        last = strip_or_empty(m.group("last"))
         matched_text = m.group(0)
         matches.add((first, middle_split, last, matched_text))
     return matches
@@ -60,7 +43,15 @@ class NameRule(SimpleRule):
 
     The rule loads a list of names from first and last name files and matches
     names against them to determine the sensitivity level of the matches.
-    Matches against full, capitalized, names with up to 2 middle names.
+    Matches against full, capitalized, names with up to three middle names.
+    A name in this context, is a capitalized Word.
+
+    Last, the text is checked for any standalone names, ie. single capitalized
+    Words
+
+    Note that name matches internally are stored as a `set`, thus matches are
+    not returned in order.
+
     """
     operates_on = OutputType.Text
     type_label = "name"
@@ -69,16 +60,16 @@ class NameRule(SimpleRule):
     def __init__(self, whitelist=[], blacklist=[], **super_kwargs):
         super().__init__(**super_kwargs)
 
-        # Convert to sets for efficient lookup
-        m = set(
+        # Convert list of str to upper case and to sets for efficient lookup
+        m = set(map(str.upper,
                 common_loader.load_dataset(
-                        "names", "20140101_dst_fornavne-mænd"))
-        k = set(
+                        "names", "da_20140101_dst_fornavne-mænd")))
+        k = set(map(str.upper,
                 common_loader.load_dataset(
-                        "names", "20140101_dst_fornavne-kvinder"))
-        e = set(
+                        "names", "da_20140101_dst_fornavne-kvinder")))
+        e = set(map(str.upper,
                 common_loader.load_dataset(
-                        "names", "20140101_dst_efternavne"))
+                        "names", "da_20140101_dst_efternavne")))
         f = m.union(k)
 
         self.last_names = e
@@ -93,7 +84,6 @@ class NameRule(SimpleRule):
         return "personal name"
 
     def match(self, text):
-        matches = set()
         unmatched_text = text
 
         def is_name_fragment(fragment, candidates, use_blacklist=True):
@@ -162,7 +152,6 @@ class NameRule(SimpleRule):
             elif first_match or last_match or middle_match:
                 sensitivity = Sensitivity.PROBLEM
             else:
-                #sensitivity = Sensitivity.OK
                 continue
 
             # Update remaining, i.e. unmatched text
@@ -183,7 +172,6 @@ class NameRule(SimpleRule):
                     "match": matched,
                     "sensitivity": self.sensitivity
                 }
-        return matches
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{

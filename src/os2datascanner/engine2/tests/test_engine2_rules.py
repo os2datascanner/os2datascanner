@@ -1,8 +1,8 @@
-from datetime import datetime, timezone
 import unittest
+from datetime import datetime, timezone
 
+from os2datascanner.engine2.rules.address import AddressRule
 from os2datascanner.engine2.rules.cpr import CPRRule
-from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.rules.logical import (
@@ -12,6 +12,9 @@ from os2datascanner.engine2.rules.logical import (
     AllRule,
     oxford_comma,
 )
+from os2datascanner.engine2.rules.name import NameRule
+from os2datascanner.engine2.rules.regex import RegexRule
+from os2datascanner.engine2.rules.rule import Sensitivity
 
 
 class RuleTests(unittest.TestCase):
@@ -265,3 +268,83 @@ more!""",
                     }),
                     CPRRule(),
                     "deserialisation of old CPR rule failed")
+
+    def test_name_address_rule_matches(self):
+        candidates = [
+            (
+                # sensitivity is for standalone matches
+                NameRule(whitelist=["Joakim"], blacklist=["Malkeko"],
+                         sensitivity=Sensitivity.INFORMATION.value),
+                (
+"Anders\n"           # match standalone name.
+"Anders and\n"       # match standalone name
+"Anders      And\n"  # match full name. Only first name in namelist
+"Anders And\n"       # match full name
+"A. And\n"           # match regex, but not in namelist -> not returned
+"J.-V And\n"         # -"-
+"J-V. And\n"         # -"-
+"J.V. And\n"         # -"-
+"J.v. And\n"         # Does not match regex
+"Joakim And\n"       # match regex and namelist, but in whitelist
+"Andrea V. And\n"    # First name in namelist
+"Joakim Nielsen\n"   # last name in namelist and not whitelisted.
+"Anders Andersine Mickey Per Nielsen\n"
+                     # match full name
+"Nora Malkeko\n"     # In blacklist
+                ),
+                [    # expected matches
+                    ["Anders", Sensitivity.INFORMATION.value],
+                    ["Anders", Sensitivity.INFORMATION.value],
+                    ["Anders And", Sensitivity.PROBLEM.value],
+                    ["Anders      And", Sensitivity.PROBLEM.value],
+                    ["Joakim Nielsen", Sensitivity.PROBLEM.value],
+                    ["Andrea V. And", Sensitivity.PROBLEM.value],
+                    ["Anders Andersine Mickey Per Nielsen",
+                     Sensitivity.CRITICAL.value],
+                    ["Nora Malkeko", Sensitivity.CRITICAL.value],
+                ]
+            ),
+            (
+                # user supplied sensitivity is not used
+                AddressRule(whitelist=["Tagensvej"], blacklist=["PilÆstræde"]),
+                (
+"H.C. Andersens Boul 15, 2. 0006, 1553 København V, Danmark\n"
+"H.C. Andersens Boul, 1553 Kbh. V\n"
+"10. Februar Vej 75\n"                    # unusual names from the list
+"400-Rtalik\n"
+"H/F Solpl-Lærkevej\n"
+"H. H. Hansens Vej\n"
+"H H Kochs Vej\n"
+"Øer I Isefjord 15\n"                     # does unicode work?
+"Tagensvej 15\n"                          # whitelisted
+"der er en bygning på PilÆstræde, men\n"  # not in address list/blacklisted
+"Magenta APS, PilÆstræde 43,  3. sal, 1112 København\n"
+                ),
+                [
+        ["H.C. Andersens Boul 15, 2. 0006, 1553 København V",
+         Sensitivity.CRITICAL.value],
+        ["H.C. Andersens Boul, 1553 Kbh. V", Sensitivity.PROBLEM.value],
+        ["10. Februar Vej 75", Sensitivity.CRITICAL.value],
+        ["400-Rtalik", Sensitivity.PROBLEM.value],
+        ["H/F Solpl-Lærkevej", Sensitivity.PROBLEM.value],
+        ["H. H. Hansens Vej", Sensitivity.PROBLEM.value],
+        ["H H Kochs Vej", Sensitivity.PROBLEM.value],
+        ["Øer I Isefjord 15", Sensitivity.CRITICAL.value],
+        ["PilÆstræde", Sensitivity.CRITICAL.value],
+        ["PilÆstræde 43,  3. sal, 1112 København", Sensitivity.CRITICAL.value],
+                ]
+            ),
+        ]
+
+        for rule, in_value, expected in candidates:
+            with self.subTest(rule):
+                json = rule.to_json_object()
+                back_again = rule.from_json_object(json)
+                self.assertEqual(rule, back_again)
+
+            with self.subTest(rule):
+                matches = rule.match(in_value)
+                # matches ARE NOT returned in order. They are stored as a set
+                self.assertCountEqual(
+                    [[match["match"], match['sensitivity']] for match in matches],
+                    expected)
