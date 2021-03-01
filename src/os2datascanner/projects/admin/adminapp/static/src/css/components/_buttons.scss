@@ -46,6 +46,21 @@
     }
   }
 
+  &--remove {
+    background-color: var(--color-error);
+    color: var(--color-text-white);
+    padding: .5rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+
+    &:focus,
+    &:hover {
+      background-color: var(--color-error-dark);
+      color: var(--color-text-white);
+    }
+  }
+
   &--grey {
     background-color: #e0e0e0;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -77,6 +92,7 @@
   }
 
   &--small {
+    border-radius: var(--border-radius-button);
     padding: .5rem;
     margin-right: .25rem;
   }
@@ -100,6 +116,12 @@
       background-color: transparent;
     }
   }
+}
+
+.calendar-button {
+  padding: .5rem;
+  height: 100%;
+  width: 100%;
 }
 
 .button svg {

@@ -1,17 +1,19 @@
 .tabs {
   max-width: 90rem;
-  overflow: hidden;
+  overflow: auto;
   width: calc(100% - 2rem);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   white-space: nowrap;
   margin-bottom: 1.5rem;
+  position:relative;
 
   &__control {
+    display: inline-block;
+    margin-right: -.27rem;
     background-color: inherit;
     border: none;
     color: var(--color-text-main);
     cursor: pointer;
-    float: left;
     font-size: 1rem;
     line-height: 1;
     outline: none;
