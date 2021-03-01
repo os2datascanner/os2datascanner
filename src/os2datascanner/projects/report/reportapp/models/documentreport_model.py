@@ -1,4 +1,5 @@
 import enum
+import datetime
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -71,6 +72,8 @@ class DocumentReport(models.Model):
                                             null=True, blank=True, db_index=True,
                                             verbose_name="Håndteringsstatus")
 
+    resolution_time = models.DateTimeField(blank=True, null=True)
+
     custom_resolution_status = models.CharField(max_length=1024, blank=True,
                                                 verbose_name="Begrundelse")
 
@@ -86,6 +89,18 @@ class DocumentReport(models.Model):
                                     "Resolution status 0 requires an"
                                     " explanation"
                         })
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__resolution_status = self.resolution_status
+
+    def save(self, *args, **kwargs):
+        # If Resolution status goes from not handled to handled - change resolution_time to now 
+        if self.__resolution_status == None and (self.resolution_status or self.resolution_status == 0):
+            self.resolution_time = datetime.datetime.now()
+
+        super().save(*args, **kwargs)
+
 
     class Meta:
         verbose_name_plural = "Document reports"

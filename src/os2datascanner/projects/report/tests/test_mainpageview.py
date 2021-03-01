@@ -11,6 +11,7 @@ from os2datascanner.engine2.pipeline import messages
 from ..reportapp.management.commands import pipeline_collector
 from ..reportapp.models.aliases.emailalias_model import EmailAlias
 from ..reportapp.models.roles.remediator_model import Remediator
+from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.views.views import MainPageView
 
 """Shared data"""
@@ -318,3 +319,11 @@ class MainPageViewTest(TestCase):
         view.setup(request)
         qs = view.get_queryset()
         return qs
+
+    def test_mainpage_create_timestamp_when_handled_match(self):
+        report = DocumentReport.objects.get(pk=self.user.pk)
+        self.assertIsNone(report.resolution_time)
+        report.resolution_status = 3
+        report.save()
+        self.assertIsNotNone(report.resolution_time)
+
