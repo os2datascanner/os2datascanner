@@ -55,6 +55,12 @@ def get_user_data(key, user_data):
 
 
 def iterate_queryset_in_batches(batch_size, queryset):
+    """Yields everything in the given QuerySet in batches of at most
+    batch_size objects."""
+    # Make sure the QuerySet is ordered -- slicing (i.e., OFFSET/LIMIT in the
+    # underlying SQL statement) is otherwise not well-defined
+    if not queryset.ordered:
+        queryset = queryset.order_by("pk")
     i = 0
     count = queryset.count()
     while i < count:
