@@ -49,7 +49,7 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
         user = super(OIDCAuthenticationBackend, self).create_user(claims)
         get_claim_user_info(claims, user)
         user.save()
-        get_or_create_user_aliases(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
+        get_or_create_user_aliases_OIDC(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
 
         # self.update_groups(user, claims)
 
@@ -58,7 +58,7 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
     def update_user(self, user, claims):
         get_claim_user_info(claims, user)
         user.save()
-        get_or_create_user_aliases(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
+        get_or_create_user_aliases_OIDC(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
         # self.update_groups(user, claims)
 
         return user
@@ -70,7 +70,7 @@ def get_claim_user_info(claims, user):
     user.last_name = claims.get('family_name', '')
 
 
-def get_or_create_user_aliases(user, email, sid):  # noqa: D401
+def get_or_create_user_aliases_OIDC(user, email, sid):  # noqa: D401
     """ This method creates or updates the users aliases  """
     if email:
         EmailAlias.objects.get_or_create(user=user, address=email)
