@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-11 03:49-0600\n"
+"POT-Creation-Date: 2021-03-16 06:54-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -44,32 +44,36 @@ msgstr "organisation"
 msgid "path"
 msgstr "filsti"
 
-#: reportapp/models/documentreport_model.py:30
+#: reportapp/models/documentreport_model.py:31
+msgid "source type"
+msgstr "kildetype"
+
+#: reportapp/models/documentreport_model.py:33
 #, fuzzy
 #| msgid "Sensitivity"
 msgid "sensitivity"
 msgstr "Følsomhed"
 
-#: reportapp/models/documentreport_model.py:32
+#: reportapp/models/documentreport_model.py:35
 #, fuzzy
 #| msgid "Probability"
 msgid "probability"
 msgstr "Sandsynlighed"
 
-#: reportapp/models/documentreport_model.py:74
+#: reportapp/models/documentreport_model.py:77
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport_model.py:77
+#: reportapp/models/documentreport_model.py:80
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport_model.py:80
+#: reportapp/models/documentreport_model.py:83
 #, fuzzy
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport_model.py:113
+#: reportapp/models/documentreport_model.py:116
 msgid "document reports"
 msgstr "dokument rapporter"
 

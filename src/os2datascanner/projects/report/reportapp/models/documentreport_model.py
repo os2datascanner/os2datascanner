@@ -4,8 +4,8 @@ import datetime
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.fields import JSONField
-from .organization_model import Organization
 from django.utils.translation import ugettext_lazy as _
+from .organization_model import Organization
 
 from os2datascanner.engine2.pipeline.messages import MatchesMessage
 
@@ -26,6 +26,9 @@ class DocumentReport(models.Model):
                             db_index=True)
     # It could be that the meta data should not be part of the jsonfield...
     data = JSONField(null=True)
+
+    source_type = models.CharField(max_length=2000,
+                                   verbose_name=_("source type"))
 
     sensitivity = models.IntegerField(null=True, verbose_name=_("sensitivity"))
 
