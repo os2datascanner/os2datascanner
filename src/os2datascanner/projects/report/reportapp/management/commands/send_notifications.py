@@ -25,7 +25,6 @@ from django.contrib.auth.models import User
 from django.template import loader
 
 from ...views import views
-from ...views.views import RENDERABLE_RULES, MainPageView
 from ...models.documentreport_model import DocumentReport
 from ...models.roles.defaultrole_model import DefaultRole
 from os2datascanner.engine2.rules.rule import Sensitivity
@@ -77,7 +76,7 @@ class Command(BaseCommand):
                 resolution_status__isnull=True)
 
             # Handles filtering by role + org and sets datasource_last_modified if non existing
-            data_results = views.do_filter(user, matches, roles)
+            data_results = views.filter_inapplicable_matches(user, matches, roles)
 
             # Exactly 30 days is deemed to be "older than 30 days"
             # and will therefore be shown.

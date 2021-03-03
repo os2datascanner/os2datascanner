@@ -25,8 +25,15 @@ time_30_days = (datetime.now() - timedelta(days=30)).replace(tzinfo=tz.gettz()).
 # A timestamp which will always be 29 days old.
 time_29_days = (datetime.now() - timedelta(days=29)).replace(tzinfo=tz.gettz()).strftime(DATE_FORMAT)
 
+# A 400 day old time stamp. ( could be anything older than 30 days )
+# used in scan_tag0 which is used in match with no last-modified metadata
+# this assures that if a match with no last-modified metadata slips through,
+# it will get assigned the value of scan_tag[time].
+# time0 and time1 do not follow correct time format for above to occur
+time_400_days = (datetime.now() - timedelta(days=400)).replace(tzinfo=tz.gettz()).strftime(DATE_FORMAT)
+
 scan_tag0 = {
-    "time": time0,
+    "time": time_400_days,
     "scanner": {
         "pk": 14,
         "name": "Dummy test scanner"
@@ -105,8 +112,7 @@ egon_positive_match_1 = messages.MatchesMessage(
 egon_metadata = messages.MetadataMessage(
     scan_tag=scan_tag0,
     handle=egon_email_handle,
-    metadata={"email-account": "egon@olsen.com",
-              "last-modified": time_30_days
+    metadata={"email-account": "egon@olsen.com"
               }
 )
 

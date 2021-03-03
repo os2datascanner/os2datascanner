@@ -14,6 +14,8 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+from datetime import datetime
+from dateutil import tz
 
 from django.core.management.base import BaseCommand
 from django.core.exceptions import FieldError
@@ -73,7 +75,16 @@ def handle_metadata_message(new_report, result):
     if result.get("metadata").get("last-modified"):
         new_report.datasource_last_modified = OutputType.decode_json_object(
             OutputType.LastModified, result.get("metadata").get("last-modified"))
+    # If no last-modified value in metadata received, set it to time of scan.
+    else:
+        DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
+        time_now = (datetime.now()).replace(tzinfo=tz.gettz()).strftime(DATE_FORMAT)
 
+        # If no scan_tag time is found, default value to current time
+        # as this must be some-what close to actual scan_tag time.
+        # If no datasource_last_modified value is ever set, matches will not be shown.
+        new_report.datasource_last_modified = OutputType.decode_json_object(
+            OutputType.LastModified, result.get("scan_tag", time_now).get("time"))
     new_report.save()
 
 

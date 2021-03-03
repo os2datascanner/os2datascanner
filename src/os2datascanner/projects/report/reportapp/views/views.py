@@ -65,8 +65,7 @@ class MainPageView(ListView, LoginRequiredMixin):
         user = self.request.user
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
         # Handles filtering by role + org and sets datasource_last_modified if non existing
-        self.matches = do_filter(user, self.matches, roles)
-
+        self.matches = filter_inapplicable_matches(user, self.matches, roles)
         # Filters by datasource_last_modified.
         # lt mean less than.
         # gte means greater than or equal to
@@ -161,7 +160,9 @@ class AboutPageView(TemplateView):
 
 
 # Logic separated to function to allow usability in send_notifications.py
-def do_filter(user, matches, roles):
+def filter_inapplicable_matches(user, matches, roles):
+    """ Filters matches by organization
+    and role. """
 
     # Filter by organization
     try:
@@ -178,12 +179,5 @@ def do_filter(user, matches, roles):
     for role in roles:
         # Filter matches by role.
         matches = role.filter(matches)
-
-    # If existing matches do not have a last_modified value
-    # Set it to scan_tage time, as it is the closest we can get.
-    for match in matches:
-        if not match.datasource_last_modified:
-            match.datasource_last_modified = match.data.get("scan_tag").get("time")
-            match.save()
 
     return matches
