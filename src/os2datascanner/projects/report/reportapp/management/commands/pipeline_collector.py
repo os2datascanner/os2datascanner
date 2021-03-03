@@ -73,8 +73,8 @@ def event_message_received_raw(body):
 def handle_metadata_message(new_report, result):
     new_report.data["metadata"] = result
     if result.get("metadata").get("last-modified"):
-        new_report.datasource_last_modified = OutputType.decode_json_object(
-            OutputType.LastModified, result.get("metadata").get("last-modified"))
+        new_report.datasource_last_modified = OutputType.LastModified.decode_json_object(
+            result.get("metadata").get("last-modified"))
     # If no last-modified value in metadata received, set it to time of scan.
     else:
         DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
@@ -83,8 +83,8 @@ def handle_metadata_message(new_report, result):
         # If no scan_tag time is found, default value to current time
         # as this must be some-what close to actual scan_tag time.
         # If no datasource_last_modified value is ever set, matches will not be shown.
-        new_report.datasource_last_modified = OutputType.decode_json_object(
-            OutputType.LastModified, result.get("scan_tag", time_now).get("time"))
+        new_report.datasource_last_modified = OutputType.LastModified.decode_json_object(
+            result.get("scan_tag", {}).get("time", time_now))
     new_report.save()
 
 
