@@ -1,7 +1,7 @@
 {% if page == 'scannerjob' %}
     {% if user.is_authenticated %}
         {% if not user.profile.is_upload_only %}
-    <div class="tabs">
+    <div class="tabs scroll-width-none">
         {% if settings.ENABLE_WEBSCAN %}
         <a id="web" class="tabs__control" href="/webscanners/">Webscanner</a>
         {% endif %}

@@ -83,7 +83,7 @@
   // textarea
   textarea {
     background-color: #fff;  
-    border: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: var(--border-radius-small);
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
     min-height: 10rem;
@@ -107,7 +107,7 @@
   .radio {
     display: grid;
     grid-template-columns: min-content auto;
-    grid-gap: 0.5rem;
+    grid-gap: .5rem;
     font-size: .9rem;
     color: var(--color-text-main);
     margin-right: 5rem;

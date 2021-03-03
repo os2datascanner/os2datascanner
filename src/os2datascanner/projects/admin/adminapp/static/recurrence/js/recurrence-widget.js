@@ -652,7 +652,7 @@ recurrence.widget.Panel.prototype = {
             'onclick': function() {
                 panel.remove();
             }
-        }, '<svg class="icon"><use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use></svg> Fjern');
+        }, '<svg class="icon icon--white"><use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use></svg> Fjern');
         var label = recurrence.widget.e('a', {
            'class': 'recurrence-label',
            'href': 'javascript:void(0)',

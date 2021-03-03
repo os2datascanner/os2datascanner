@@ -36,3 +36,18 @@
     padding: 1rem 0;
   }
 }
+
+// scrollbar
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+}
+
+.scroll-width-none {
+  scrollbar-width: none;
+}
