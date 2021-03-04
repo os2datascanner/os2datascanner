@@ -14,6 +14,8 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+from datetime import timedelta, datetime
+
 import structlog
 
 from django.db.models import Count
@@ -62,22 +64,26 @@ class MainPageView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         user = self.request.user
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
-
-        # Filter by organization
-        try:
-            user_organization = user.profile.organization
-            # Include matches without organization (backwards compatibility)
-            self.matches = self.matches.filter(Q(organization=None) | Q(organization=user_organization))
-        except UserProfile.DoesNotExist:
-            # No UserProfile has been set on the request user
-            # Default action depends on how many organization objects we have
-            # If more than one exist, limit matches to ones without an organization (safety measure)
-            if Organization.objects.count() > 1:
-                self.matches = self.matches.filter(organization=None)
-
-        for role in roles:
-            # Filter matches by role.
-            self.matches = role.filter(self.matches)
+        # Handles filtering by role + org and sets datasource_last_modified if non existing
+        self.matches = filter_inapplicable_matches(user, self.matches, roles)
+        # Filters by datasource_last_modified.
+        # lt mean less than.
+        # gte means greater than or equal to
+        # A check whether something is more recent than a month
+        # is done by subtracting 30 days from now and then comparing if the saved time is "bigger" than that
+        # and vice versa/smaller for older than.
+        if self.request.GET.get('30-days') == "true":
+            time_threshold = datetime.now() - timedelta(days=30)
+            newer_than_30_days = self.matches.filter(
+                datasource_last_modified__gt=time_threshold)
+            self.matches = newer_than_30_days
+        else:
+            # Exactly 30 days is deemed to be "older than 30 days"
+            # and will therefore be shown.
+            time_threshold = datetime.now() - timedelta(days=30)
+            older_than_30_days = self.matches.filter(
+                datasource_last_modified__lte=time_threshold)
+            self.matches = older_than_30_days
 
         if self.request.GET.get('scannerjob') \
                 and self.request.GET.get('scannerjob') != 'all':
@@ -116,6 +122,8 @@ class MainPageView(ListView, LoginRequiredMixin):
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
 
+        context['30_days'] = self.request.GET.get('30-days', 'false')
+
         sensitivities = self.matches.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
@@ -149,3 +157,27 @@ class SettingsPageView(TemplateView):
 
 class AboutPageView(TemplateView):
     template_name = 'about.html'
+
+
+# Logic separated to function to allow usability in send_notifications.py
+def filter_inapplicable_matches(user, matches, roles):
+    """ Filters matches by organization
+    and role. """
+
+    # Filter by organization
+    try:
+        user_organization = user.profile.organization
+        # Include matches without organization (backwards compatibility)
+        matches = matches.filter(Q(organization=None) | Q(organization=user_organization))
+    except UserProfile.DoesNotExist:
+        # No UserProfile has been set on the request user
+        # Default action depends on how many organization objects we have
+        # If more than one exist, limit matches to ones without an organization (safety measure)
+        if Organization.objects.count() > 1:
+            matches = matches.filter(organization=None)
+
+    for role in roles:
+        # Filter matches by role.
+        matches = role.filter(matches)
+
+    return matches

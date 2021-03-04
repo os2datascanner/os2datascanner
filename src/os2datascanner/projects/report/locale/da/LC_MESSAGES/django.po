@@ -40,6 +40,30 @@ msgstr "opryddere"
 msgid "Handle match"
 msgstr "Håndtér match"
 
+#: reportapp/templates/components/filters.html:23 & 50
+msgid "Clear"
+msgstr "Ryd"
+
+#: reportapp/templates/components/filters.html:26
+msgid "Scan"
+msgstr "Scan"
+
+#: reportapp/templates/components/filters.html:35
+msgid "Select scannerjob"
+msgstr "Vælg scannerjob"
+
+#: reportapp/templates/components/filters.html:55
+msgid "Sensitivity"
+msgstr "Følsomhed"
+
+#: reportapp/templates/components/filters.html:64
+msgid "Select sensitivity"
+msgstr "Vælg følsomhed"
+
+#: reportapp/templates/components/filters.html:75
+msgid "Only show matches less than 30 days old"
+msgstr "Vis matches der er under 30 dage gamle"
+
 #: reportapp/templates/components/handle-match.html:12
 msgid "This match was handled in the following way:"
 msgstr "Har håndteret dette match på følgende måde:"
@@ -93,6 +117,22 @@ msgstr "Kontekst"
 #| msgid "Handle match"
 msgid "Handle"
 msgstr "Håndtér match"
+
+#: reportapp/templates/components/hits.html:45
+msgid "First"
+msgstr "Første"
+
+#: reportapp/templates/components/hits.html:49
+msgid "Back"
+msgstr "Tilbage"
+
+#: reportapp/templates/components/hits.html:59
+msgid "Next"
+msgstr "Næste"
+
+#: reportapp/templates/components/hits.html:63
+msgid "Last"
+msgstr "Sidste"
 
 #: reportapp/templates/components/navigation.html:8
 msgid "Front page"
@@ -229,9 +269,6 @@ msgstr ""
 
 #~ msgid "Matches"
 #~ msgstr "Matches"
-
-#~ msgid "Sensitivity"
-#~ msgstr "Følsomhed"
 
 #~ msgid "Number of matches"
 #~ msgstr "Antal matches"
