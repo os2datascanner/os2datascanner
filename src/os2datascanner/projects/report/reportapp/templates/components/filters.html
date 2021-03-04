@@ -1,3 +1,5 @@
+{%  load i18n %}
+
 <script>
   function clear_filter(elementid){
       var element = document.querySelector('#' + elementid + ' [value="all"]').selected = true;
@@ -17,8 +19,12 @@
 <form method="GET" action="{% url 'index' %}" id="filter_form">
   <div class="match_filtering_wrapper">
       <div>
-          <button type="button" onclick="clear_filter('scannerjobs')" class="match_filtering_clear_button">Ryd</button>
-          <label for="scannerjobs" class="match_filtering_label">Scan</label>
+          <button type="button" onclick="clear_filter('scannerjobs')" class="match_filtering_clear_button">
+            {% trans "Clear" %}
+          </button>
+          <label for="scannerjobs" class="match_filtering_label">
+            {% trans "Scan" %}
+          </label>
       </div>
       <div class="match_filtering">
           <select name="scannerjob" id="scannerjobs">
@@ -26,7 +32,7 @@
                     {% if scannerjobs|last == "all" %}
                         selected="selected"
                     {% endif %} >
-                    Vælg scannerjob
+                    {% trans "Select scannerjob" %}
             </option>
               {% for scan in scannerjobs|first %}
                   <option value="{{ scan.data__scan_tag__scanner__pk }}"
@@ -42,8 +48,12 @@
 
   <div class="match_filtering_wrapper">
       <div>
-          <button type="button" onclick="clear_filter('sensitivities')" class="match_filtering_clear_button">Ryd</button>
-          <label for="sensitivities" class="match_filtering_label">Følsomhed</label>
+          <button type="button" onclick="clear_filter('sensitivities')" class="match_filtering_clear_button">
+            {% trans "Clear" %}
+          </button>
+          <label for="sensitivities" class="match_filtering_label">
+            {% trans "Sensitivity" %}
+          </label>
       </div>
       <div class="match_filtering">
           <select name="sensitivities" id="sensitivities" >
@@ -51,7 +61,7 @@
                     {% if sensitivities|last == "all" %}
                         selected="selected"
                     {% endif %} >
-              Vælg følsomhed
+              {% trans "Select sensitivity" %}
             </option>
               {% for sensitivity in sensitivities|first %}
                   <option value="{{ sensitivity.0.value|stringformat:"i" }}"
@@ -71,7 +81,9 @@
       <div class="ds-checkbox">
         <input type="checkbox" id="30-days" name="30-days" value="{{ 30_days }}" onclick="checkedBox()"
         {% if 30_days == "true" %}checked{% endif %}>
-        <label for="30-days">Vis matches der er under 30 dage gamle</label>
+        <label for="30-days">
+          {% trans "Only show matches less than 30 days old" %}
+        </label>
       </div>
     </div>
   </div>
