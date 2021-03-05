@@ -16,8 +16,7 @@ class DocumentReport(models.Model):
                                              null=True,
                                              verbose_name='Created timestamp')
 
-    created_timestamp = models.DateTimeField(auto_now_add=True,
-                                             null=True,
+    created_timestamp = models.DateTimeField(null=True, blank=True,
                                              verbose_name='Created timestamp')
 
     organization = models.ForeignKey(Organization,
@@ -102,6 +101,10 @@ class DocumentReport(models.Model):
         # If Resolution status goes from not handled to handled - change resolution_time to now 
         if self.__resolution_status == None and (self.resolution_status or self.resolution_status == 0):
             self.resolution_time = datetime.datetime.now()
+
+        # Adds a timestamp if it's a new match:
+        if not self.pk:
+            self.created_timestamp = datetime.datetime.now()
 
         super().save(*args, **kwargs)
 
