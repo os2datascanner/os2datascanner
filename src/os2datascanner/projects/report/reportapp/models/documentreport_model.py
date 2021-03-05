@@ -93,6 +93,7 @@ class DocumentReport(models.Model):
                         })
 
     def __init__(self, *args, **kwargs):
+        # TODO: move to property/model method
         super().__init__(*args, **kwargs)
         self.__resolution_status = self.resolution_status
 
