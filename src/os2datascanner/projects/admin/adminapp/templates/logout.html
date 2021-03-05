@@ -1,5 +1,6 @@
 {% extends 'partials/base.html' %}
 {% load staticfiles %}
+{% load i18n %}
 
 {% block additional_styles %}
 <style>
@@ -10,16 +11,19 @@
 {% endblock %}
 
 {%  block title %}
-Logout
+  {% trans "Logout" %}
 {% endblock %}
 
 {% block body %}
 
 <section class="logout-content">
     <p>
-      Tak, fordi du brugte OS2datascanner.
+      {% trans "Thank you for using OS2datascanner." %}
     </p>
-    <a href="/accounts/login/">Log ind</a> igen
+    <a href="/accounts/login/">
+      {% trans "Log in" %}
+    </a>
+    <span>{% trans "again" %}</span>
 </section>
 
 {% endblock %}

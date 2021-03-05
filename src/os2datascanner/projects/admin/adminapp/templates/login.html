@@ -1,5 +1,6 @@
 {% extends 'partials/base.html' %}
 {% load staticfiles %}
+{% load i18n %}
 
 {% block additional_styles %}
 <style>
@@ -9,7 +10,9 @@
 </style>
 {% endblock %}
 
-{%  block title %}Login{% endblock %}
+{%  block title %}
+  {% trans 'Login' %}
+{% endblock %}
 
 {% block body %}
 
@@ -17,7 +20,9 @@
     <form class="form" method="post" action="{% url 'login' %}">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ next }}" />
-      <h2>Log ind</h2>
+      <h2>
+        {% trans "Login" %}
+      </h2>
 
           <fieldset>
             <div class="form__group{% if form.username.errors %} has-error{% endif %}">
@@ -39,17 +44,24 @@
             <div class="form__group">
               <div class="ds-checkbox">
                 <input type="checkbox" name="remember-me" id="remember-me">
-                <label for="remember-me">Husk mig</label>
+                <label for="remember-me">
+                  {% trans "Remember me" %}
+                </label>
               </div>
             </div>
 
             <div class="form__group">
-              <button class="login-btn" type="submit">Log ind</button>
+              <button class="login-btn" type="submit">
+                {% trans "Login" %}
+              </button>
             </div>
 
             <div class="form__group">
-              <label class="info">Har du glemt din adgangskode?
-                <a class="link" href="{% url 'password_reset' %}">Klik her</a>
+              <label class="info">
+                Har du glemt din adgangskode?
+                <a class="link" href="{% url 'password_reset' %}">
+                  Klik her
+                </a>
               </label>
             </div>
 
@@ -62,5 +74,5 @@
 {% endblock %}
 
 {% block heading %} 
-OS2datascanner Login
+  OS2datascanner Login
 {% endblock %}
