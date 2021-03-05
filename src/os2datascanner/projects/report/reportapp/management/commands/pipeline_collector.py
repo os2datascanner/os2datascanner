@@ -83,7 +83,7 @@ def handle_metadata_message(new_report, result):
         # If no scan_tag time is found, default value to current time
         # as this must be some-what close to actual scan_tag time.
         # If no datasource_last_modified value is ever set, matches will not be shown.
-        new_report.datasource_last_modified = OutputType.LastModified.decode_json_object(
+        new_report.datasource_last_modified = parse_isoformat_timestamp(
             result.get("scan_tag", {}).get("time", time_now))
     new_report.save()
 
