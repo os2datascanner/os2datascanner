@@ -9,14 +9,15 @@ from os2datascanner.engine2.pipeline.messages import MatchesMessage
 
 
 class DocumentReport(models.Model):
-    scan_time = models.DateTimeField(null=True)
+    scan_time = models.DateTimeField(null=True, db_index=True)
 
     organization = models.ForeignKey(Organization,
                                      null=True, blank=True,
                                      verbose_name='Organisation',
                                      on_delete=models.PROTECT)
 
-    path = models.CharField(max_length=2000, verbose_name="Path")
+    path = models.CharField(max_length=2000, verbose_name="Path",
+                            db_index=True)
     # It could be that the meta data should not be part of the jsonfield...
     data = JSONField(null=True)
 
@@ -85,4 +86,3 @@ class DocumentReport(models.Model):
     class Meta:
         verbose_name_plural = "Document reports"
         ordering = ['-sensitivity', '-probability']
-
