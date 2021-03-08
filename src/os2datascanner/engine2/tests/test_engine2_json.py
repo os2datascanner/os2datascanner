@@ -32,8 +32,11 @@ example_handles = [
             FilesystemSource("/usr/share/common-licenses"),
             "GPL-3"),
     DataHandle(
-            DataSource(b"Test", "text/plain"),
+            DataSource(b"This is a test", "text/plain"),
             "file"),
+    DataHandle(
+            DataSource(b"This is a test", "text/plain", "test.txt"),
+            "test.txt"),
     FilteredHandle(
             GzipSource(
                     FilesystemHandle(
