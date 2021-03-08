@@ -6,6 +6,11 @@
   margin-bottom: 2rem;
   max-width: 90rem;
   width: calc(100% - 2rem);
+
+  .title {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
 }
 
 .scan-time {
@@ -59,7 +64,7 @@ progress::-webkit-progress-value {
   -webkit-linear-gradient(top, 
                           rgba(255, 255, 255, .25), 
                           rgba(0, 0, 0, .25)),
-  -webkit-linear-gradient(left, var(--color-primary-light), var(--color-icon-primary));
+  -webkit-linear-gradient(left, var(--color-primary-light), var(--color-primary));
   border-radius: 20px 0px 0px 20px;
   background-size: 75px 40px, 100% 100%, 100% 100%;
 }
@@ -77,7 +82,7 @@ progress[value]::-moz-progress-bar {
     -moz-linear-gradient(top, 
     rgba(255, 255, 255, .25), 
     rgba(0, 0, 0, .25)),
-    -moz-linear-gradient(left, var(--color-primary-light), var(--color-icon-primary));
+    -moz-linear-gradient(left, var(--color-primary-light), var(--color-primary));
   border-radius: 20px 0px 0px 20px;
   background-size: 75px 40px, 100% 100%, 100% 100%;
 }

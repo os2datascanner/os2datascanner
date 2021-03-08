@@ -1,6 +1,7 @@
 {% if page == 'scannerjob' %}
     {% if user.is_authenticated %}
         {% if not user.profile.is_upload_only %}
+<div class="scrollbar-content">
     <div class="tabs scroll-width-none">
         {% if settings.ENABLE_WEBSCAN %}
         <a id="web" class="tabs__control" href="/webscanners/">Webscanner</a>
@@ -30,6 +31,7 @@
         <a id="sbsys" class="tabs__control" href="/sbsysscanners/">Sbsysscanner</a>
         {% endif %}
     </div>
+</div>
         {% endif %}
     {% endif %}
 {% endif %}

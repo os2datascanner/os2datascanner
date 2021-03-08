@@ -1,8 +1,8 @@
 .select-rules {
   display: grid;
   gap: 1rem;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: "available selected";
+  grid-template-columns: 1fr .03fr 1fr;
+  grid-template-areas: "available icon selected";
   line-height: 1;
   padding-bottom: 0.25rem;
 
@@ -30,6 +30,15 @@
     color: var(--color-text-white);
     font-weight: 600;
     font-size: .9rem;
+  }
+
+  .material-icons {
+    display: flex;
+    align-items: center;
+    grid-area: icon;
+    font-size: 3rem;
+    padding-right: .25rem;
+    color: #9E9E9E;
   }
 
 }

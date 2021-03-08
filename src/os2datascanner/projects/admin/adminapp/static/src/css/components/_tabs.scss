@@ -1,4 +1,6 @@
 .tabs {
+  display: flex;
+  align-items: flex-start;
   max-width: 90rem;
   overflow: auto;
   width: calc(100% - 2rem);
@@ -9,7 +11,6 @@
 
   &__control {
     display: inline-block;
-    margin-right: -.27rem;
     background-color: inherit;
     border: none;
     color: var(--color-text-main);
@@ -37,17 +38,20 @@
   }
 }
 
-// scrollbar
-::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+.scrollbar-content {
+  // scrollbar
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+  
+  ::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+  }
+  
+  .scroll-width-none {
+    scrollbar-width: none;
+  }
 }
 
-::-webkit-scrollbar-button {
-  width: 0;
-  height: 0;
-}
-
-.scroll-width-none {
-  scrollbar-width: none;
-}

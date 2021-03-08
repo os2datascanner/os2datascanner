@@ -13,8 +13,8 @@
 {% if scan_tag %}
   
   <div class="runner-content">
-    <span>
-      <i id="check_circle_outline" class="material-icons">check_circle_outline</i>
+    <span class="icon">
+      {% include "components/svg-icons/scan_succes.svg" %}
     </span>
 
     <h1>Succes</h1>
@@ -45,8 +45,8 @@
 
   {% elif engine2_error %}
   <div class="runner-content">
-    <span>
-      <i id="highlight_off" class="warning material-icons">highlight_off</i>
+    <span class="icon">
+      {% include "components/svg-icons/scan_error.svg" %}
     </span>
 
     <h1>Hov, der opstod en fejl</h1>
@@ -76,8 +76,8 @@
 
   {% elif pika_error %}
   <div class="runner-content">
-    <span>
-      <i id="highlight_off" class="warning material-icons">highlight_off</i>
+    <span class="icon">
+      {% include "components/svg-icons/scan_error.svg" %}
     </span>
 
     <h1>Hov, der opstod en fejl</h1>

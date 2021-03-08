@@ -19,9 +19,9 @@
         {% widthratio status.fraction_scanned 1.0 100 as percentage %}
         {% if percentage != "100" %}
         <div class="scanner-status">
-                <h2>
+                <h3 class="title">
                     {{ status.scanner.name }}
-                </h2>
+                </h3>
 
             <div class="scan-time">
             {% if status.fraction_scanned is not None %}
