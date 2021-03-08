@@ -14,9 +14,11 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
-from datetime import timedelta, datetime
-
 import structlog
+
+from datetime import timedelta, datetime
+from urllib.parse import urlencode
+from django.conf import settings
 
 from django.db.models import Count
 from django.utils.decorators import method_decorator
@@ -49,6 +51,10 @@ class LoginRequiredMixin(View):
 
 class LoginPageView(View):
     template_name = 'login.html'
+
+
+class LogoutPageView(TemplateView, View):
+    template_name = 'logout.html'
 
 
 class MainPageView(ListView, LoginRequiredMixin):
@@ -181,3 +187,9 @@ def filter_inapplicable_matches(user, matches, roles):
         matches = role.filter(matches)
 
     return matches
+
+
+def oidc_op_logout_url_method(request):
+    logout_url = settings.LOGOUT_URL
+    return_to_url = settings.LOGOUT_REDIRECT_URL
+    return logout_url + '?' + urlencode({'redirect_uri': return_to_url, 'client_id': settings.OIDC_RP_CLIENT_ID})

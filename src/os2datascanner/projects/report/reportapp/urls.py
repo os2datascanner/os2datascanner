@@ -4,10 +4,10 @@ from django.conf.urls import url
 from django.http import HttpResponse
 from django.urls import include
 from django.conf import settings
-
+from django.urls import path
 from .views.api import JSONAPIView
 from .views.views import (MainPageView, StatisticsPageView, ApprovalPageView,
-                          StatsPageView, SettingsPageView, AboutPageView)
+                          StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
 
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),
@@ -19,19 +19,29 @@ urlpatterns = [
     url('about',    AboutPageView.as_view(),    name="about"),
     url(r'^health/', lambda r: HttpResponse()),
 ]
+
 if settings.SAML2_ENABLED:
     urlpatterns.append(url(r"^saml2_auth/", include("django_saml2_auth.urls")))
     urlpatterns.append(url(r"^accounts/login/$", django_saml2_auth.views.signin))
     urlpatterns.append(url(r'^accounts/logout/$', django_saml2_auth.views.signout))
+
+if settings.KEYCLOAK_ENABLED:
+    settings.LOGIN_URL = "oidc_authentication_init"
+    settings.LOGOUT_REDIRECT_URL = "http://localhost:8040/accounts/logout/"
+    urlpatterns.append(path('oidc/', include('mozilla_django_oidc.urls'))),
+    urlpatterns.append(url(r'^accounts/logout/',
+                           LogoutPageView.as_view(
+                               template_name='logout.html',
+                           ),
+                           name='logout'))
 else:
     urlpatterns.append(url(r'^accounts/login/',
-        django.contrib.auth.views.LoginView.as_view(
-            template_name='login.html',
-        ),
-        name='login'))
+                           django.contrib.auth.views.LoginView.as_view(
+                               template_name='login.html',
+                           ),
+                           name='login'))
     urlpatterns.append(url(r'^accounts/logout/',
-        django.contrib.auth.views.LogoutView.as_view(
-            template_name='logout.html',
-        ),
-        name='logout'))
-
+                           django.contrib.auth.views.LogoutView.as_view(
+                               template_name='logout.html',
+                           ),
+                           name='logout'))

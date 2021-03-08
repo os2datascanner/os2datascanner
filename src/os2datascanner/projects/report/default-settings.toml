@@ -10,7 +10,7 @@ SECRET_KEY = ""
 
 # [mode]
 DEBUG = false
-
+KEYCLOAK_ENABLED = false
 SAML2_ENABLED = false
 
 # [site]
@@ -18,6 +18,23 @@ SAML2_ENABLED = false
 # OAuth 2.0 services. (This value should end with a forward slash.)
 SITE_URL = "*"
 ALLOWED_HOSTS = []
+
+# Client info from keycloak
+OIDC_RP_CLIENT_ID = ""
+OIDC_RP_CLIENT_SECRET = ""
+# endpoints
+OIDC_OP_AUTHORIZATION_ENDPOINT = ""
+OIDC_OP_TOKEN_ENDPOINT = ""
+OIDC_OP_USER_ENDPOINT = ""
+# signing algorithm and key
+OIDC_RP_SIGN_ALGO = ""
+OIDC_OP_JWKS_ENDPOINT = ""
+# redirect urls
+LOGIN_REDIRECT_URL = ""
+LOGOUT_REDIRECT_URL = ""
+# login and logout urls
+LOGOUT_URL = ""
+OIDC_OP_LOGOUT_URL_METHOD = "os2datascanner.projects.report.reportapp.views.views.oidc_op_logout_url_method"
 
 # [installation]
 INSTALLED_APPS = [
@@ -28,13 +45,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'os2datascanner.projects.report.reportapp.apps.ReportappConfig',
+    'mozilla_django_oidc',
 ]
+AUTHENTICATION_BACKENDS = [
+    'os2datascanner.projects.report.reportapp.utils.OIDCAuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 OPTIONAL_APPS = []
 AUTH_PROFILE_MODULE = 'os2datascanner.projects.report.reportapp.UserProfile'
 WSGI_APPLICATION = 'os2datascanner.projects.report.wsgi.application'
 ROOT_URLCONF = 'os2datascanner.projects.report.urls'
 STATIC_URL = '/static/'
-LOGIN_REDIRECT_URL = '/'
 NOTIFICATION_INSTITUTION = ""
 
 # Which URL schemes can be used in links to matched objects? (The possible
