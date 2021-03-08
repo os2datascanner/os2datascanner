@@ -1,6 +1,5 @@
 -r requirements-common.in
 
-beautifulsoup4
 chardet
 defusedxml
 dropbox
