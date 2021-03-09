@@ -1,5 +1,7 @@
 {% extends 'partials/base.html' %}
 {% load staticfiles %}
+{% load i18n %}
+
 {% block topnav %}{% endblock %}
 {% block rendertype %}iframe-modal{% endblock %}
 
@@ -19,29 +21,51 @@
       {% include "components/svg-icons/scan_run.svg" %}
     </span>
   
-    <h1>Kør scanner</h1>
+    <h1>
+      {% trans "Run scanner" %}
+    </h1>
   
-    <h3>Er du sikker på, at du vil starte scanneren?</h3>
+    <h3>
+      {% trans "Are you sure you want to start the scanner?" %}
+    </h3>
   
     <p>
       {% if webscanner.pk %}
-      <a href="/webscanners/{{webscanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      <a href="/webscanners/{{webscanner.pk}}/run/" class="button button--cta button--large">
+        {% trans "Let's go!" %}
+      </a>
       {% elif filescanner.pk %}
-      <a href="/filescanners/{{filescanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      <a href="/filescanners/{{filescanner.pk}}/run/" class="button button--cta button--large">
+        {% trans "Let's go!" %}
+      </a>
       {% elif exchangescanner.pk %}
-      <a href="/exchangescanners/{{exchangescanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      <a href="/exchangescanners/{{exchangescanner.pk}}/run/" class="button button--cta button--large">
+        {% trans "Let's go!" %}
+      </a>
       {% elif dropboxscanner.pk %}
-      <a href="/dropboxscanners/{{dropboxscanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      <a href="/dropboxscanners/{{dropboxscanner.pk}}/run/" class="button button--cta button--large">
+        {% trans "Let's go!" %}
+      </a>
       {% elif msgraphmailscanner.pk %}
-      <a href="/msgraph-mailscanners/{{msgraphmailscanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      <a href="/msgraph-mailscanners/{{msgraphmailscanner.pk}}/run/" class="button button--cta button--large">
+        {% trans "Let's go!" %}
+      </a>
       {% elif msgraphfilescanner.pk %}
-      <a href="/msgraph-filescanners/{{msgraphfilescanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      <a href="/msgraph-filescanners/{{msgraphfilescanner.pk}}/run/" class="button button--cta button--large">
+        {% trans "Let's go!" %}
+      </a>
       {% elif googledrivescanner.pk %}
-      <a href="/googledrivescanners/{{googledrivescanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      <a href="/googledrivescanners/{{googledrivescanner.pk}}/run/" class="button button--cta button--large">
+        {% trans "Let's go!" %}
+      </a>
       {% elif gmailscanner.pk %}
-      <a href="/gmailscanners/{{gmailscanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      <a href="/gmailscanners/{{gmailscanner.pk}}/run/" class="button button--cta button--large">
+        {% trans "Let's go!" %}
+      </a>
       {% elif sbsysscanner.pk %}
-      <a href="/sbsysscanners/{{sbsysscanner.pk}}/run/" class="button button--cta button--large">Ja, kør!</a>
+      <a href="/sbsysscanners/{{sbsysscanner.pk}}/run/" class="button button--cta button--large">
+        {% trans "Let's go!" %}
+      </a>
       {% endif %}
     </p>
   </div>
@@ -52,7 +76,9 @@
       {% include "components/svg-icons/scan_warning.svg" %}
     </span>
   
-    <h1>Kør scanner</h1>
+    <h1>
+      {% trans "Run scanner" %}
+    </h1>
 
     <h3>{{ error_message }}</h3>
   </div>

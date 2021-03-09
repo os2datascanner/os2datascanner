@@ -1,6 +1,7 @@
 {% extends 'partials/base.html' %}
 {% load l10n %}
 {% load staticfiles %}
+{% load i18n %}
 {% load tz %}
 
 {% block body %}
@@ -12,23 +13,32 @@
         {% include "os2datascanner/scanner_tabs.html" with page="scan-status"  %}
 
         <div class="aside">
-            <h1 class="page-title">Udførte scanninger</h1>
+            <h1 class="page-title">
+              {% trans "Completed scans" %}
+            </h1>
         </div>
 
         <table class="datatable">
           <thead>
             <tr>
-              <th>Scannerjob</th>
-              <th class="datatable__column--org">Startet</th>
-              <th class="datatable__column--automatic">Objekter</th>
-              <th class="datatable__column--actions">Status</th>
+              <th>
+                {% trans "Scannerjob" %}
+              </th>
+              <th class="datatable__column--org">
+                {% trans "Started" %}
+              </th>
+              <th class="datatable__column--automatic">
+                {% trans "Objects" %}
+              </th>
+              <th class="datatable__column--actions">
+                {% trans "Status" %}
+              </th>
             </tr>
           </thead>
 
           <tbody>
             {% for status in object_list %}
-              {% widthratio status.fraction_scanned 1.0 100 as percentage %}
-              {% if percentage == "100" %}
+              {% if status.finished == True %}
                 <tr tabindex="0">
                   <td>
                       {{ status.scanner.name }}
@@ -39,12 +49,14 @@
                     {% endtimezone %}
                   </td>
                   <td>
-                    {{ status.total_objects }} objekter udforsket
+                    {{ status.total_objects }} {% trans "objects explored" %}
                   </td>
                   <td>
                     <span class="completed_icon">
                       {% include "components/svg-icons/check_circle_full.svg" %}
-                      <span class="width">Udført</span>
+                      <span class="width">
+                        {% trans "Done" %}
+                      </span>
                     </span>
                   </td>
                 </tr>

@@ -25,7 +25,7 @@ class StatusCompleted(RestrictedListView):
     model = ScanStatus
 
     def get_queryset(self):
-        return super().get_queryset().order_by("-pk")[:10]
+        return super().get_queryset().order_by("-pk")
 
 
 class ScannerList(RestrictedListView):

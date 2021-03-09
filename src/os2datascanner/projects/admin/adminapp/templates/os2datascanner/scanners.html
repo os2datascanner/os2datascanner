@@ -1,5 +1,6 @@
 {% extends 'partials/base.html' %}
 {% load staticfiles %}
+{% load i18n %}
 
 {% block scripts %}
   <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
@@ -19,17 +20,21 @@
     {% include "os2datascanner/scanner_tabs.html" with page="scannerjob"  %}
 
     <div class="aside">
-      <h1 class="page-title">Scannerjob</h1>
+      <h1 class="page-title">
+        {% trans "Scannerjob" %}
+      </h1>
       
       <div class="btn">
         <a 
         class="button button--cta" 
         href="/{{ view.type }}scanners/add/"
-        title="Tilføj scannerjob">
+        title="{% trans 'Add scannerjob' %}">
         <svg class="icon icon--white">
           <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
         </svg>
-          <span>Tilføj scannerjob</span>
+          <span>
+            {% trans "Add scannerjob" %}
+          </span>
         </a>
       </div>
     </div>
@@ -38,16 +43,28 @@
     <table class="datatable">
       <thead>
         <tr>
-          <th>Navn/URL</th>
+          <th>
+            {% trans "Name/URL" %}
+          </th>
           {% if user.is_superuser %}
-          <th class="datatable__column--org">Organisation</th>
+          <th class="datatable__column--org">
+            {% trans "Organization" %}
+          </th>
           {% endif %}
           {% if view.type == 'file' %}
-          <th>Drev</th>
+          <th>
+            {% trans "Drive" %}
+          </th>
           {% endif %}
-          <th class="datatable__column--validated">Godkendt</th>
-          <th class="datatable__column--automatic">Automatisk</th>
-          <th class="datatable__column--actions">Handling</th>
+          <th class="datatable__column--validated">
+            {% trans "Approved" %}
+          </th>
+          <th class="datatable__column--automatic">
+            {% trans "Automatic" %}
+          </th>
+          <th class="datatable__column--actions">
+            {% trans "Action" %}
+          </th>
         </tr>
       </thead>
       
@@ -75,16 +92,20 @@
             {% if scanner.validation_status %}
             <span class="flex flex--icon">
               <span class="flex--width flex--width--icon">
-                <i id="done" title="Er godkendt" class="material-icons">done</i>
+                <i id="done" title="{% trans 'Is approved' %}" class="material-icons">done</i>
               </span>
-              <span>Ja</span>
+              <span>
+                {% trans "Yes" %}
+              </span>
             </span>
             {% else %}
             <span class="flex flex--icon">
               <span class="flex--width flex--width--icon">
-                <i id="clear" title="Er ikke godkendt" class="material-icons">clear</i>
+                <i id="clear" title="{% trans 'Is not approved' %}" class="material-icons">clear</i>
               </span>
-              <span>Nej</span>
+              <span>
+                {% trans "No" %}
+              </span>
             </span>
             {% endif %}
           </td>
@@ -99,7 +120,7 @@
             data-modal="modal:open" 
             data-src="/{{ view.type }}scanners/{{scanner.pk}}/askrun/"
             class="button button--small button--grey"
-            title="Kør">
+            title="{% trans 'Run' %}">
               <svg class="icon">
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-play"></use>
               </svg>
@@ -108,7 +129,7 @@
             <a 
             href="/{{ view.type }}scanners/{{scanner.pk}}"
             class="button button--small button--grey"
-            title="Redigér">
+            title="{% trans 'Edit' %}">
               <svg class="icon">
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-pencil"></use>
               </svg>
@@ -122,7 +143,7 @@
               type="submit"
               class="button button--small button--grey"
               onclick="return confirm('Ønsker du virkelig at slette denne scanner?\n{{scanner.name}}\n\nHandlingen kan ikke fortrydes.')"
-              title="Slet">
+              title="{% trans 'Delete' %}">
               <svg class="icon">
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
               </svg>
@@ -136,7 +157,9 @@
     </table>
 
     {% else %}
-    <p>Der er ikke tilføjet nogen scannerjob</p>
+    <p>
+      {% trans "No scannerjob added" %}
+    </p>
     {% endif %}
   </div>
 </main>

@@ -59,9 +59,9 @@
 
             <div class="form__group">
               <label class="info">
-                Har du glemt din adgangskode?
+                {% trans "Did you forget your password?" %}
                 <a class="link" href="{% url 'password_reset' %}">
-                  Klik her
+                  {% trans "Click here" %}
                 </a>
               </label>
             </div>
@@ -75,5 +75,5 @@
 {% endblock %}
 
 {% block heading %} 
-  OS2datascanner Login
+  OS2datascanner {% trans "Login" %}
 {% endblock %}

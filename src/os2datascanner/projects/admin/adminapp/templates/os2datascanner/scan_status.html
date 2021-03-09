@@ -1,6 +1,7 @@
 {% extends 'partials/base.html' %}
 {% load l10n %}
 {% load staticfiles %}
+{% load i18n %}
 {% load tz %}
 
 {% block body %}
@@ -12,7 +13,9 @@
         {% include "os2datascanner/scanner_tabs.html" with page="scan-status"  %}
 
         <div class="aside">
-            <h1 class="page-title">Scanner status</h1>
+            <h1 class="page-title">
+                {% trans "Scanner status" %}
+            </h1>
         </div>
 
         {% for status in object_list %}
@@ -31,7 +34,8 @@
                 <span class="scan-time--bullet">&#8226;</span>
                 <span class="scan-time--width">
                     {% timezone "Europe/Copenhagen" %}
-                        ca. {{ status.estimated_completion_time|timeuntil:status.start_time }} tilbage
+                        {% trans "about" %} {{ status.estimated_completion_time|timeuntil:status.start_time }}
+                        {% trans "left" %}
                     {% endtimezone %}
                 </span>
                 {% endif %}
@@ -51,10 +55,11 @@
                         <progress></progress>
                     </div>
                     <div>
-                        <small>Estimerer...
-                            ({{ status.total_objects }} objekter udforsket,
+                        <small>
+                            {% trans "Estimating ..." %}
+                            ({{ status.total_objects }} {% trans "objects explored" %},
                             {{ status.scanned_objects }}
-                            ({{ status.scanned_size }} byte) scannet)
+                            ({{ status.scanned_size }} byte) {% trans "scanned" %})
                         </small>
                     </div>
             {% endif %}

@@ -11,34 +11,38 @@
     {% include "partials/breadcrumb.html" with page="scannerjob"  %}
 
     <div class="aside">
-      <h1 class="page-title">Opret nyt scannerjob</h1>
+      <h1 class="page-title">
+        {% trans "Create new scannerjob" %}
+      </h1>
     </div>
 
     <p>
-      Dette scannerjobs datakilde ligger i skyen, og en eksterne tjeneste skal
-      tillade OS2datascanner adgang til dens indhold.
-    {% if auth_endpoint %}
-    {% if error %}
+      {% trans "The data source of this scannerjob is in the cloud and an external service must allow OS2datascanner to access it's content." %}
+      {% if auth_endpoint %}
+      {% if error %}
     <p>
-      Tjenesten nægtede at give OS2datascanner de nødvendige rettigheder:
+      {% trans "The service refused to grant OS2datascanner the necessary rights:" %}
     <pre class="alert alert--danger">{{ error_description }}</pre>
     <p>
-      Klik på knappen nedenfor for at prøve igen.
+      {% trans "Click the button below to try again." %}
     {% else %}
-      Klik på knappen nedenfor for at blive videresendt til denne tjeneste.
+      {% trans "Click the button below to forward to this service." %}
     {% endif %}
     <p>
       <a href="{{ auth_endpoint }}"
           id="button-authenticate"
           type="button"
-          class="button button--cta button--small btn btn-default">Fortsæt til {{ service_name }}</a>
+          class="button button--cta button--small btn btn-default">
+          {% trans "Continue to" %} {{ service_name }}
+      </a>
+    </p>
     <p>
-      Du bliver videresendt til oprettelsesformularen, efter tjenesten har
-      udstedt de nødvendige rettigheder.
-
+      {% trans "You will be forwarded to the creation form after the service has issued the necessary rights." %}
+    </p>
     {% else %}
     <p>
-      De informationer, der peger OS2datascanner-systemet på denne tjeneste, mangler.
+      {% trans "The information pointing to the OS2datascanner system for this service is missing." %}
+    </p>
     {% endif %}
   </div>
 </div>

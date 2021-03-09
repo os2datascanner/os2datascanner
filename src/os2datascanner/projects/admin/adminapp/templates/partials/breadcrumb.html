@@ -1,63 +1,64 @@
 {% load staticfiles %}
+{% load i18n %}
 
 <div class="breadcrumb">
     {% if page == 'scannerjob' %}
-        <a href="/" class="link-color">Scannerjob</a>
+        <a href="/" class="link-color">{% trans "Scannerjob" %}</a>
 
         <i id="chevron_right" class="material-icons">chevron_right</i>
 
         {% if form.sitemap %}
-        <a href="/webscanners/" class="link-color">Webscanner</a>
+        <a href="/webscanners/" class="link-color">{% trans "Webscanner" %}</a>
         {% endif %}
             
         {% if form.domain %}
-        <a href="/filescanners/" class="link-color">Filscanner</a>
+        <a href="/filescanners/" class="link-color">{% trans "Filescanner" %}</a>
         {% endif %}
             
         {% if form.userlist %}
-        <a href="/exchangescanners/" class="link-color">Exchangescanner</a>
+        <a href="/exchangescanners/" class="link-color">{% trans "Exchangescanner" %}</a>
         {% endif %}
 
         {% if request.path == '/msgraph-mailscanners/add/' %}
-        <a href="/msgraph-mailscanners/" class="link-color">Office 365 mailscanner</a>
+        <a href="/msgraph-mailscanners/" class="link-color">{% trans "Office 365 mailscanner" %}</a>
         {% endif %}
 
         {% if request.path == '/msgraph-filescanners/add/' %}
-        <a href="/msgraph-filescanners/" class="link-color">Office 365 OneDrive filscanner</a>
+        <a href="/msgraph-filescanners/" class="link-color">{% trans "Office 365 OneDrive filescanner" %}</a>
         {% endif %}
 
         {% if form.service_account_file %}
-        <a href="/googledrivescanners/" class="link-color">Google Drive scanner</a>
+        <a href="/googledrivescanners/" class="link-color">{% trans "Google Drive scanner" %}</a>
         {% endif %}
 
         {% if form.service_account_file_gmail %}
-        <a href="/gmailscanners/" class="link-color">Gmailscanner</a>
+        <a href="/gmailscanners/" class="link-color">{% trans "Gmailscanner" %}</a>
         {% endif %}
 
         {% if request.path == '/sbsysscanners/add/' %}
-        <a href="/sbsysscanners/" class="link-color">Sbsysscanner</a>
+        <a href="/sbsysscanners/" class="link-color">{% trans "Sbsysscanner" %}</a>
         {% endif %}
 
         <i id="chevron_right" class="material-icons">chevron_right</i>
 
         {% if view.edit %}
-        <span class="text-grey">Rediger scannerjob</span>
+        <span class="text-grey">{% trans "Edit scannerjob" %}</span>
         {% else %}
-        <span class="text-grey">Opret nyt scannerjob</span>
+        <span class="text-grey">{% trans "Create new scannerjob" %}</span>
         {% endif %}
     {% endif %}
 
     {% if page == 'rule_views' %}
-        <a href="/rules/" class="link-color">Regler</a>
+        <a href="/rules/" class="link-color">{% trans "Rules" %}</a>
 
         <i id="chevron_right" class="material-icons">chevron_right</i>
 
         {% if view.edit %}
-        <span class="text-grey">Rediger regel</span>
+        <span class="text-grey">{% trans "Edit rule" %}</span>
         {% endif %}
   
         {% if not view.edit %}
-        <span class="text-grey">Opret ny regel</span>
+        <span class="text-grey">{% trans "Create new rule" %}</span>
         {% endif %}
     {% endif %}
 </div>
