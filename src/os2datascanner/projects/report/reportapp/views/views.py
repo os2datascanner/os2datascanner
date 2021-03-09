@@ -33,6 +33,7 @@ from ..models.documentreport_model import DocumentReport
 from ..models.roles.defaultrole_model import DefaultRole
 from ..models.userprofile_model import UserProfile
 from ..models.organization_model import Organization
+from ..models.roles.remediator_model import Remediator 
 
 # For permissions
 from ..models.roles.dpo_model import DataProtectionOfficer
@@ -236,7 +237,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
 
     def get_data_sources(self):
         # Counts the distribution of data sources by type
-        data_sources = matches.order_by(
+        data_sources = self.matches.order_by(
             'data__matches__handle__type').values(
             'data__matches__handle__type').annotate(
             total=Count('data__matches__handle__type')
@@ -333,10 +334,12 @@ def filter_inapplicable_matches(user, matches, roles):
         # If more than one exist, limit matches to ones without an organization (safety measure)
         if Organization.objects.count() > 1:
             matches = matches.filter(organization=None)
-
-    for role in roles:
+    
+    if any(isinstance(role, Remediator) for role in roles):
         # Filter matches by role.
-        matches = role.filter(matches)
+        matches = Remediator(user=user).filter(matches)
+    else:
+        matches = DefaultRole(user=user).filter(matches)
 
     return matches
 
