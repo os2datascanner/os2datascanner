@@ -174,25 +174,12 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # matches = DocumentReport.objects.filter(
-        #     data__matches__matched=True)
-        #
-        # for role in self.get_user_roles():
-        #     # TODO: filter either for the role dpo or leader, depending on the stats they are viewing.
-        #     matches = role.filter(matches)
-
-        # Contexts are done as a lists of tuples
-        context['oldest_match'] = self.get_oldest_matches()
-        
-        context['data_sources'] = self.get_data_sources()
-
+        # Contexts are done as lists of tuples
         context['sensitivities'], context['total_matches'] = \
             self.count_all_matches_grouped_by_sensitivity()
 
         context['handled_matches'], context['total_handled_matches'] = \
             self.count_handled_matches_grouped_by_sensitivity()
-
-        context['unhandled_matches'] = self.count_unhandled_matches()
 
         return context
 
@@ -222,7 +209,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
 
     def create_sensitivity_list(self, matches):
         """Helper method which groups the totals by sensitivites
-        and also takes the sum of the totals"""        
+        and also takes the sum of the totals"""
         # For handling having no values - List defaults to 0
         sensitivity_list = [
             [Sensitivity.CRITICAL.presentation, 0],
@@ -279,10 +266,8 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         return employee_unhandled_list
 
     def get_oldest_matches(self):
-        # TODO: Fiks så brugerne har deres egen værdi - Bug
-
-        # Needs to be rewritten if a better 'time' is added(#41326)
-        # Gets days since oldest unhandled matche for each user
+        """Needs to be rewritten if a better 'time' is added(#41326)
+        # Gets days since oldest unhandled match for each user"""
         oldest_matches = []
         
         for org_user in self.users:
