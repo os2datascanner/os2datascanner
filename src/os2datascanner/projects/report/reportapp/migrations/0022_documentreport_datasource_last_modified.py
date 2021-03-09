@@ -24,7 +24,7 @@ def bulk_update_datasource_last_modified(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('os2datascanner_report', '0019_reanglicise_remediators'),
+        ('os2datascanner_report', '0021_adds_role_dataprotection_officer'),
     ]
 
     operations = [

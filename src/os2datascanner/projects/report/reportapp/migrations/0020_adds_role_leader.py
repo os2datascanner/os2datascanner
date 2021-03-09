@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner_report', '0018_pairing_matches_and_metadata'),
+        ('os2datascanner_report', '0019_reanglicise_remediators'),
     ]
 
     operations = [

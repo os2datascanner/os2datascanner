@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner_report', '0020_adds_role_dataprotection_officer'),
+        ('os2datascanner_report', '0023_documentreport_indexing_for_performance'),
     ]
 
     operations = [

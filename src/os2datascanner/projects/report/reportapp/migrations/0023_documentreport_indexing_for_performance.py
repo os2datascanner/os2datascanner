@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner_report', '0020_documentreport_datasource_last_modified'),
+        ('os2datascanner_report', '0022_documentreport_datasource_last_modified'),
     ]
 
     operations = [

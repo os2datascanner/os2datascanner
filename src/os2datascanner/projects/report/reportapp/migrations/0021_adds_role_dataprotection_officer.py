@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner_report', '0019_leader'),
+        ('os2datascanner_report', '0020_adds_role_leader'),
     ]
 
     operations = [
