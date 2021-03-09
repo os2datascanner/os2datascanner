@@ -97,18 +97,33 @@ def get_user_data(key, user_data):
 
 def iterate_queryset_in_batches(batch_size, queryset):
     """Yields everything in the given QuerySet in batches of at most
-    batch_size objects."""
+    batch_size objects.
+
+    This function behaves appropriately when the caller modifies batches in a
+    way that shrinks the size of the input QuerySet."""
     # Make sure the QuerySet is ordered -- slicing (i.e., OFFSET/LIMIT in the
     # underlying SQL statement) is otherwise not well-defined
+    # (XXX: should we just always impose this ordering in order to make the
+    # offset trickery below safer?)
     if not queryset.ordered:
         queryset = queryset.order_by("pk")
     i = 0
-    count = queryset.count()
-    while i < count:
-        print('i: {}'.format(str(i)))
+    total_count = queryset.count()
+    while i < total_count:
         batch = queryset[i: batch_size + i]
+        batch_count = batch.count()
+        print('{0}-{1}/{2}'.format(i, i + batch_count, total_count))
         yield batch
-        i += batch_size
+
+        # The operations performed by the caller might have reduced the size of
+        # the QuerySet. If that has happened, then reduce the new database
+        # offset so that we don't skip over any objects
+        new_total = queryset.count()
+        count_diff = new_total - total_count
+        i += batch_count
+        if count_diff < 0:
+            i += count_diff
+        total_count = new_total
 
 
 def get_max_sens_prop_value(doc_report_obj, key):
