@@ -347,17 +347,6 @@ for(var i = 0; i<unhandledMatches.length && i<5;i++) {
 	unhandledBarChartValues.push(unhandledMatches[i][1]);
 }
 
-// // array with testdata
-// var values = unhandled;
-
-
-// // sort array in descending order
-// values.sort(function(a, b){return b[1]-a[1]});
-
-
-// calculate the average
-// this out-commented function works for double-indexed arrays with values at index[1]
-// const unhandledMatchesAverage = unhandledMatches.reduce((sum, value) => sum + value[1], 0) / unhandledMatches.length;
 // this function works for arrays with only values
 const unhandledMatchesAverage = unhandledBarChartValues.reduce((a,b) => (a + b)) / unhandledBarChartValues.length;
 
@@ -417,85 +406,74 @@ new Chart(unhandledBarChartCtx, {
 
 // Creating data for oldest matches
 
-// var oldestBarChartCtx = document.querySelector("#bar_chart_oldest").getContext('2d');
+var oldestBarChartCtx = document.querySelector("#bar_chart_oldest").getContext('2d');
 
-// // Recieve data and create array for labels and data.
+// Recieve data and create array for labels and data.
 
-// var oldestBarChartLabels = [];
-// var oldestBarChartValues = [];
+var oldestBarChartLabels = [];
+var oldestBarChartValues = [];
 
-// for(var i = 0; i<oldestMatches.length && i<5;i++) {
-//   oldestBarChartLabels.push(oldestMatches[i][0]);
-//   oldestBarChartValues.push(oldestMatches[i][1]);
-// }
+for(var i = 0; i<oldestMatches.length && i<5;i++) {
+  oldestBarChartLabels.push(oldestMatches[i][0]);
+  oldestBarChartValues.push(oldestMatches[i][1]);
+}
 
-// // // array with testdata
-// // var values = oldest;
+// this function works for arrays with only values
+const oldestMatchesAverage = oldestBarChartValues.reduce((a,b) => (a + b)) / oldestBarChartValues.length;
 
-
-// // // sort array in descending order
-// // values.sort(function(a, b){return b[1]-a[1]});
-
-
-// // calculate the average
-// // this out-commented function works for double-indexed arrays with values at index[1]
-// // const oldestMatchesAverage = oldestMatches.reduce((sum, value) => sum + value[1], 0) / oldestMatches.length;
-// // this function works for arrays with only values
-// const oldestMatchesAverage = oldestBarChartValues.reduce((a,b) => (a + b)) / oldestBarChartValues.length;
-
-// new Chart(oldestBarChartCtx, {
-//   type: 'bar',
-//   data: {
-//     labels: oldestBarChartLabels,
-//     datasets: [{
-//       data: oldestBarChartValues,
-//       backgroundColor: [
-//         [colorFunction('--color-primary-light'), colorFunction('--color-icon-primary')],
-//       ],
-//       barPercentage: 0.8,
-//     }]
-//   },
-//   options: {
-//     cornerRadius: 5, 
-//     //Default: false; if true, this would round all corners of final box;
-//     fullCornerRadius: true,
-//     legend: {
-//       display: false
-//     },
-//     tooltips: {
-//       enabled: false
-//     },
-//     hover: {
-//       mode: null
-//     },
-//     plugins: {
-//     // chartjs-plugin-datalabels.js
-//       datalabels: {
-//         display: false
-//       }
-//     },
-//     scales: {
-//       xAxes: [{
-//         gridLines: {
-//           display: false,
-//           // drawOnChartArea:false
-//         }
-//       }],
-//       yAxes: [{
-//         gridLines: {
-//             display: false,
-//             // drawOnChartArea:false
-//         },
-//         ticks: {
-//           beginAtZero: true,
-//           stepSize: stepSizeFunction(oldestBarChartValues, 3),
-//           callback: function(label) {
-//             return label s+ ' dage';
-//           }
-//         }
-//       }]
-//     },
-//     lineAt: oldestMatchesAverage, // Average line value
-//     responsive:true
-//   }
-// });
+new Chart(oldestBarChartCtx, {
+  type: 'bar',
+  data: {
+    labels: oldestBarChartLabels,
+    datasets: [{
+      data: oldestBarChartValues,
+      backgroundColor: [
+        [colorFunction('--color-primary-light'), colorFunction('--color-icon-primary')],
+      ],
+      barPercentage: 0.8,
+    }]
+  },
+  options: {
+    cornerRadius: 5, 
+    //Default: false; if true, this would round all corners of final box;
+    fullCornerRadius: true,
+    legend: {
+      display: false
+    },
+    tooltips: {
+      enabled: false
+    },
+    hover: {
+      mode: null
+    },
+    plugins: {
+    // chartjs-plugin-datalabels.js
+      datalabels: {
+        display: false
+      }
+    },
+    scales: {
+      xAxes: [{
+        gridLines: {
+          display: false,
+          // drawOnChartArea:false
+        }
+      }],
+      yAxes: [{
+        gridLines: {
+            display: false,
+            // drawOnChartArea:false
+        },
+        ticks: {
+          beginAtZero: true,
+          stepSize: stepSizeFunction(oldestBarChartValues, 3),
+          callback: function(label) {
+            return label + ' dage';
+          }
+        }
+      }]
+    },
+    lineAt: oldestMatchesAverage, // Average line value
+    responsive:true
+  }
+});

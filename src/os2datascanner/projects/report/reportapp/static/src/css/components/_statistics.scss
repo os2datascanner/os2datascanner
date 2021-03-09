@@ -17,12 +17,12 @@
 
 	&--two {
 		margin-left: 3.5rem;
-		width: 33rem;
+		width: 38rem;
 		min-height: 28rem;
 	}
 
 	&--three {
-		width: 33rem;
+		width: 38rem;
 		min-height: 28rem;
 	}
 
@@ -83,7 +83,7 @@ canvas {
 
 .pie_chart_container {
 	display: grid;
-	grid-template-columns: 2fr 1fr;
+	grid-template-columns: 3fr 2fr;
 	align-items: end;
 }
 
@@ -117,7 +117,7 @@ li > span {
 	display: grid;
 	grid-template-rows: 1fr 1fr;
 	grid-template-columns: 1fr 1fr;
-	grid-row-gap: 1rem;
+	grid-row-gap: 3rem;
 }
 
 .doughnut_chart_container {
@@ -125,12 +125,18 @@ li > span {
 	grid-template-columns: 1fr 1fr;
 	align-items: end;
 
-	.doughnut_info_box {
-		line-height: 1;
-		p {
-			font-size: 0.7rem;
-		}
+	h4 {
+		font-weight: 600;
 	}
+
+	.doughnut_info_box {
+		font-size: 1rem;
+		line-height: 1;
+		margin-left: 1rem;
+	}
+}
+.margin-2 {
+	margin-top: 3rem;
 }
 
 // LINE
