@@ -59,7 +59,7 @@ $(actions).unbind('click').click(function() {
           url: "/api",
           method: "POST",
           data: JSON.stringify({
-            "action": "set-status-1",
+            "action": "set-status-2",
               
             "report_id": report_ids,
             "new_status": new_status

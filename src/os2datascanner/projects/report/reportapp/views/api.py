@@ -12,7 +12,50 @@ logger = structlog.get_logger()
 
 
 def set_status_1(body):
-    """ Retrieves a list of DocumentReport id's and a handling-status value
+    """ Used for handling a match by a DocumentReport ID and resolutionstatus value.
+    Supports handling one match at a time.
+    May eventually be deprecated"""
+    pk = body.get("report_id")
+    status_value = body.get("new_status")
+
+    try:
+        status = DocumentReport.ResolutionChoices(status_value).value
+    except ValueError:
+        return {
+            "status": "fail",
+            "message": "invalid status identifier {0}".format(status_value)
+        }
+
+    report = DocumentReport.objects.get(pk=pk)
+    if report is None:
+        return {
+            "status": "fail",
+            "message": "report {0} does not exist".format(pk)
+        }
+    elif report.resolution_status is not None:
+        return {
+            "status": "fail",
+            "message": "report {0} already has a status".format(pk)
+        }
+
+    report.resolution_status = status_value
+    try:
+        report.clean()
+    except ValidationError:
+        return {
+            "status": "fail",
+            "message": "validation failed"
+        }
+
+    report.save()
+    return {
+        "status": "ok"
+    }
+
+
+def set_status_2(body):
+    """ Refines set_status_1 functionality.
+    Retrieves a list of DocumentReport id's and a handling-status value
     from template.
     Converts list to queryset and bulk_updates DocumentReport model"""
 
@@ -51,7 +94,8 @@ def error_1(body):
 
 
 api_endpoints = {
-    "set-status-1": set_status_1
+    "set-status-1": set_status_1,
+    "set-status-2": set_status_2
 }
 
 
