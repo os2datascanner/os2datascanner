@@ -5,6 +5,14 @@ from .role_model import Role
 
 class DataProtectionOfficer(Role):
 
+    @property
+    def url(self):
+        return '/statistics/dpo/'
+
+    @property
+    def description(self):
+        return _("DPO overview")
+
     def filter(self, document_reports):
         return document_reports
 

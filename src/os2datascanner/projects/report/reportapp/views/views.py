@@ -21,28 +21,27 @@ from datetime import timedelta, datetime
 from urllib.parse import urlencode
 from django.conf import settings
 
-from django.db.models import Count
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Q
+from django.http import HttpResponseForbidden
 from django.utils.decorators import method_decorator
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.views.generic import View, TemplateView, ListView
-from django.db.models import Q
-
-from ..models.documentreport_model import DocumentReport
-from ..models.roles.defaultrole_model import DefaultRole
-from ..models.userprofile_model import UserProfile
-from ..models.organization_model import Organization
-from ..models.roles.remediator_model import Remediator 
-
-# For permissions
-from ..models.roles.dpo_model import DataProtectionOfficer
-from ..models.roles.leader_model import Leader
-from django.http import HttpResponseForbidden
 
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+
+from ..utils import user_is
+from ..models.documentreport_model import DocumentReport
+from ..models.roles.defaultrole_model import DefaultRole
+from ..models.userprofile_model import UserProfile
+from ..models.organization_model import Organization
+from ..models.roles.remediator_model import Remediator
+
+# For permissions
+from ..models.roles.dpo_model import DataProtectionOfficer
+from ..models.roles.leader_model import Leader
 
 logger = structlog.get_logger()
 
@@ -51,6 +50,7 @@ RENDERABLE_RULES = (CPRRule.type_label, RegexRule.type_label,)
 
 class LoginRequiredMixin(View):
     """Include to require login."""
+    # TODO: Use existing django mixin class #42012
     roles = None
 
     @method_decorator(login_required)
@@ -59,9 +59,12 @@ class LoginRequiredMixin(View):
         return super().dispatch(*args, **kwargs)
 
     def get_user_roles(self):
-        if self.roles is None:
+        if self.roles is None \
+                and self.request.user.is_authenticated:
             user = self.request.user
-            self.roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
+            self.roles = user.roles.select_subclasses() or [
+                DefaultRole(user=user)
+            ]
         return self.roles
 
 
@@ -162,6 +165,7 @@ class MainPageView(ListView, LoginRequiredMixin):
 
 
 class StatisticsPageView(TemplateView, LoginRequiredMixin):
+    template_name = 'statistics.html'
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
     users = UserProfile.objects.all()
@@ -285,7 +289,6 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
 
 
 class LeaderStatisticsPageView(StatisticsPageView):
-    template_name = 'statistics.html'
 
     def dispatch(self, request, *args, **kwargs):
         if not any(isinstance(role, Leader) for role in self.get_user_roles()):
@@ -294,12 +297,13 @@ class LeaderStatisticsPageView(StatisticsPageView):
 
 
 class DPOStatisticsPageView(StatisticsPageView):
-    template_name = 'statistics.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if not any(isinstance(role, DataProtectionOfficer) for role in self.get_user_roles()):
+        if not user_is(self.get_user_roles(),
+                       DataProtectionOfficer):
             return HttpResponseForbidden()
-        return super(DPOStatisticsPageView, self).dispatch(request, *args, **kwargs)
+        return super(DPOStatisticsPageView, self).dispatch(
+            request, *args, **kwargs)
 
 
 class ApprovalPageView(TemplateView):
@@ -335,7 +339,7 @@ def filter_inapplicable_matches(user, matches, roles):
         if Organization.objects.count() > 1:
             matches = matches.filter(organization=None)
     
-    if any(isinstance(role, Remediator) for role in roles):
+    if user_is(roles, Remediator):
         # Filter matches by role.
         matches = Remediator(user=user).filter(matches)
     else:

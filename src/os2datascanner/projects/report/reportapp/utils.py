@@ -44,6 +44,12 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
         ADSIDAlias.objects.get_or_create(user=user, sid=sid)
 
 
+def user_is(roles, role_cls):
+    """Checks whether a list of roles contains a certain role type (role_cls)"""
+    return any(isinstance(role, role_cls)
+               for role in roles)
+
+
 class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
     def create_user(self, claims):
         user = super(OIDCAuthenticationBackend, self).create_user(claims)

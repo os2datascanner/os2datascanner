@@ -10,27 +10,14 @@
       </a>
     </li>
 
-    {% for r in nav_items %}
-      {% if r == "DataProtectionOfficer" or r == 'Leader' %}
-      <li>
-        {% if r == "Leader" %}
-        <a href="/statistics/leader" class="{% if request.path == '/statistics/leader/' %}active{% endif %}">
-          {% include "components/svg-icons/bar_chart.svg" %}
-          <span class="width">
-            {% trans "Leader overview" %}
-          </span>
-        </a>
-        {% else %}
-        <a href="/statistics/dpo" class="{% if request.path == '/statistics/dpo/' %}active{% endif %}">
+  {% for role in roles %}
+    <li>
+      <a href="{{ role.url }}" class={% if request.path == role.url %}active{% endif %}>
         {% include "components/svg-icons/bar_chart.svg" %}
-          <span class="width">
-            {% trans "DPO overview" %}
-          </span>
-        </a>
-        {% endif %}
-      </li>
-      {% endif %}
-    {% endfor %}
+        <span class="width">{{ role.description }}</span>
+      </a>
+    </li>
+  {% endfor %}
   </ul>
 
 {% settings_value "KEYCLOAK_ENABLED" as keycloak_enabled %}

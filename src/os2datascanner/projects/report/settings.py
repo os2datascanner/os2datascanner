@@ -55,7 +55,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django_settings_export.settings_export',
-                'os2datascanner.projects.report.reportapp.navigation_context_processor.navigation_items'
+                'os2datascanner.projects.report.reportapp.shared_context_processor.check_dpo_and_leader_roles'
             ],
         },
     },
