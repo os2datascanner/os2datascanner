@@ -390,33 +390,6 @@ Release API:
 # Deploy stage
 ##############
 
-Deploy dev:
-  # TODO: remove this when `Deploy test` is stable
-  # Automatic deployment of development branch to
-  # https://admin.dev.os2ds.magenta.dk and https://report.dev.os2ds.magenta.dk
-  stage: deploy
-  image: magentalabs/pepper:latest
-  services: []
-  rules:
-    - if: $CI_COMMIT_REF_NAME == "development"
-  dependencies: []
-  tags:
-    - deploy
-  needs:
-    - Release Report Application Candidate
-    - Release Admin Application Candidate
-    - Release Engine Candidate
-  variables:
-    SALTAPI_URL: https://ctrldev1.magenta-aps.dk/api/
-    SALTAPI_EAUTH: file
-    GIT_STRATEGY: none
-  script:
-    - pepper --client runner --fail-any state.orchestrate os2ds.service-dev
-  environment:
-    name: dev
-    url: https://adminos2ds.magenta.dk/
-  allow_failure: true
-
 Deploy test:
   # Automatic deployment of development branch to
   # https://test.os2datascanner.dk/ and https://test-admin.os2datascanner.dk/
