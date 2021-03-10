@@ -8,8 +8,7 @@
 
   <td class="datatable__column--handle">
     <div class="datatable__column--filetype-icon">
-      <input type="checkbox" name="match-checkbox" class="datatable-checkbox">
-  
+      <input type="checkbox"  value="" id="match-checkbox" name="match-checkbox" class="datatable-checkbox" data-report-pk="{{ match.pk|unlocalize }}">
       <span class="icon-filetype icon-filetype--{{ type }}">
         {% include "components/svg-icons/icon-office365.svg" %}
       </span>
@@ -59,7 +58,7 @@
                 {% endif %}
             </td>
             <td class="datatable__column--probability">
-                {% include "components/probability.html" %}
+                {% include "components/probability.html"%}
             </td>
           </tr>
         {% endfor %}

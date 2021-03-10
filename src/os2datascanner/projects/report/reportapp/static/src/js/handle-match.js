@@ -14,7 +14,8 @@ $('#select-all').click(function() {
 
 // Show selected checkboxes
 function showChecked(){
-  var selected = document.querySelectorAll("td input:checked").length + " af 10 valgt";
+  var selected = document.querySelectorAll("td input:checked").length
+      + " af " + document.querySelectorAll("td input").length + " valgt";
   $(".selected-cb").text(selected);
 }
 // Iterate each checkbox
@@ -43,38 +44,47 @@ function getCookie(name) {
 // Handle matches
 const actions = $('.handle-match__action')
 
-$(actions).click(function() {
-  const btn_action = $(this)
+$(actions).unbind('click').click(function() {
+  const sel = document.getElementById('match-handle'); // get handle match element
+  const checkbox_nodelist = document.querySelectorAll('#match-checkbox:checked') // get list of checked checkboxes
+  const new_status = parseInt(sel.options[sel.selectedIndex].value); // get value of selected match-handling
 
-  const report_id = parseInt(btn_action.attr("data-report-pk"))
-  const new_status = parseInt(btn_action.attr("data-status"))
+  // Create a list of report_ids, populate it and POST it to api.py action
+  var report_ids = [];
+    for (i = 0; i < checkbox_nodelist.length; i++){
+        report_ids.push(parseInt(checkbox_nodelist[i].getAttribute('data-report-pk')));
+    }
+    if (report_ids.length > 0 && !isNaN(new_status)) {
+        $.ajax({
+          url: "/api",
+          method: "POST",
+          data: JSON.stringify({
+            "action": "set-status-1",
+              
+            "report_id": report_ids,
+            "new_status": new_status
+          }),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
+          }
+        }).done(function(body) {
+          if (body["status"] == "ok") {
+              // Removes the handled match row.
+              for (i = 0; i < checkbox_nodelist.length; i++) {
+                  checkbox_nodelist[i].closest('tr').remove();
+              }
+              showChecked() // Updates the x of y selected ..
 
-  if (!isNaN(report_id) && !isNaN(new_status)) {
-    $.ajax({
-      url: "/api",
-      method: "POST",
-      data: JSON.stringify({
-        "action": "set-status-1",
-
-        "report_id": report_id,
-        "new_status": new_status
-      }),
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      beforeSend: function(xhr, settings) {
-        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
-      }
-    }).done(function(body) {
-      if (body["status"] == "ok") {
-        btn_action.closest("tr").remove()
-      } else if (body["status"] == "fail") {
-        console.log(
-            "Attempt to call set-status-1 failed: "
-            + body["message"])
+          } else if (body["status"] == "fail") {
+            console.log(
+                "Attempt to call set-status-1 failed: "
+                + body["message"])
+          }
+        })
       }
     })
-  }
-})
 
 
 // Handle match options

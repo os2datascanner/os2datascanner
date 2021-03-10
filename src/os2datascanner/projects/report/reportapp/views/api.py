@@ -6,48 +6,41 @@ from django.views.generic import View
 
 from ..models.documentreport_model import DocumentReport
 from .views import LoginRequiredMixin
-
+from ..utils import iterate_queryset_in_batches
 
 logger = structlog.get_logger()
 
 
 def set_status_1(body):
-    pk = body.get("report_id")
+    """ Retrieves a list of DocumentReport id's and a handling-status value
+    from template.
+    Converts list to queryset and bulk_updates DocumentReport model"""
+
+    doc_rep_pk = body.get("report_id")
     status_value = body.get("new_status")
 
-    try:
-        status = DocumentReport.ResolutionChoices(status_value).value
-    except ValueError:
+    doc_reports = DocumentReport.objects.filter(pk__in=doc_rep_pk)
+
+    if not doc_reports:
         return {
             "status": "fail",
-            "message": "invalid status identifier {0}".format(status_value)
+            "message": "unable to populate list of doc reports"
         }
 
-    report = DocumentReport.objects.get(pk=pk)
-    if report is None:
-        return {
-            "status": "fail",
-            "message": "report {0} does not exist".format(pk)
-        }
-    elif report.resolution_status is not None:
-        return {
-            "status": "fail",
-            "message": "report {0} already has a status".format(pk)
-        }
+    for batch in iterate_queryset_in_batches(10000, doc_reports):
+        for dr in batch:
+            if dr.resolution_status is not None:
+                return {
+                    "status": "fail",
+                    "message": "report {0} already has a status".format(dr.pk)
+                }
+            else:
+                dr.resolution_status = status_value
 
-    report.resolution_status = status_value
-    try:
-        report.clean()
-    except ValidationError:
+        DocumentReport.objects.bulk_update(batch, ['resolution_status'])
         return {
-            "status": "fail",
-            "message": "validation failed"
+            "status": "ok"
         }
-
-    report.save()
-    return {
-        "status": "ok"
-    }
 
 
 def error_1(body):
