@@ -9,5 +9,5 @@ class Leader(Role):
         return document_reports
 
     class Meta:
-        verbose_name = _("leder")
-        verbose_name_plural = _("ledere")
+        verbose_name = _("leader")
+        verbose_name_plural = _("leaders")

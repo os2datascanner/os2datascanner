@@ -11,6 +11,12 @@ const stepSizeFunction = function(Array, steps) {
   return (Math.ceil(Math.max(...Array)/100)*100)/steps;
 }
 
+// isNan function
+
+const avoidZero = function(a, b) {
+  return isNaN(((a/b)*100)) ? 0 + '%' : ((a/b)*100).toFixed(0) + '%'
+}
+
 // Set default animation duration on charts - this can be changed for each chart if needed.
 Chart.defaults.global.animation.easing = 'easeOutQuad';
 Chart.defaults.global.animation.duration = 1700;

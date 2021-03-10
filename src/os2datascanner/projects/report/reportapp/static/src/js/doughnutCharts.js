@@ -153,7 +153,7 @@ new Chart(criticalHandledDoughnutChartCtx, {
 				maxFontSize: 20,
 				weight: 'bold',
 				// logic to avoid 0 divided by 0 being NaN
-				text: isNaN(((handledMatches[0][1]/sensitivities[0][1])*100)) ? 0 + '%' : ((handledMatches[0][1]/sensitivities[0][1])*100).toFixed(0) + '%',
+				text: avoidZero(handledMatches[0][1], sensitivities[0][1]),
 			}
 		},
 		plugins: {
@@ -189,7 +189,7 @@ new Chart(problemHandledDoughnutChartCtx, {
 				maxFontSize: 20,
 				weight: 'bold',
 				// logic to avoid 0 divided by 0 being NaN
-				text: isNaN(((handledMatches[1][1]/sensitivities[1][1])*100)) ? 0 + '%' : ((handledMatches[1][1]/sensitivities[1][1])*100).toFixed(0) + '%',
+				text: avoidZero(handledMatches[1][1], sensitivities[1][1]),
 			}
 		},
 		plugins: {
@@ -225,7 +225,7 @@ new Chart(warningHandledDoughnutChartCtx, {
 				maxFontSize: 20,
 				weight: 'bold',
 				// logic to avoid 0 divided by 0 being NaN
-				text: isNaN(((handledMatches[2][1]/sensitivities[2][1])*100)) ? 0 + '%' : ((handledMatches[2][1]/sensitivities[2][1])*100).toFixed(0) + '%',
+				text: avoidZero(handledMatches[2][1], sensitivities[2][1]),
 			}
 		},
 		plugins: {
@@ -260,7 +260,7 @@ new Chart(notificationHandledDoughnutChartCtx, {
 				minFontSize: 20,
 				maxFontSize: 20,
 				weight: 'bold',
-				text: isNaN((handledMatches[3][1]/sensitivities[3][1])*100) ? 0 + '%' : ((handledMatches[3][1]/sensitivities[3][1])*100).toFixed(0) + '%',
+				text: avoidZero(handledMatches[3][1], sensitivities[3][1]),
 			}
 		},
 		plugins: {

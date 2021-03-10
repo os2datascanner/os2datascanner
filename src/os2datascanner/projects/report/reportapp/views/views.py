@@ -219,13 +219,13 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
             [Sensitivity.NOTICE.presentation, 0],
         ]
         for match in matches:
-            if (match['sensitivity']) == 1000:
+            if (match['sensitivity']) == Sensitivity.CRITICAL.value:
                 sensitivity_list[0][1] = match['total']
-            elif (match['sensitivity']) == 750:
+            elif (match['sensitivity']) == Sensitivity.PROBLEM.value:
                 sensitivity_list[1][1] = match['total']
-            elif (match['sensitivity']) == 500:
+            elif (match['sensitivity']) == Sensitivity.WARNING.value:
                 sensitivity_list[2][1] = match['total']
-            elif (match['sensitivity']) == 250:
+            elif (match['sensitivity']) == Sensitivity.NOTICE.value:
                 sensitivity_list[3][1] = match['total']
 
         # Sum of the totals

@@ -1,43 +1,45 @@
+{%  load i18n %}
 <div class="content">
   {% if request.path == '/statistics/leader/' %}
-  <h1 class="page-title">Lederstatistik</h1>
+  <h1 class="page-title">{% trans "Leader statistic" %}</h1>
   {% elif request.path == '/statistics/dpo/' %}
-  <h1 class="page-title">DPO statistik</h1>
+  <h1 class="page-title">{% trans "DPO statistic" %}</h1>
   {% endif %}
   <div class="statistic_wrapper">
     <!-- Doughnut chart -->
     <div class="statistic statistic--three">
       <div class="statistic_header">
         <div>
-          <h1 class="page-title__sub">Håndterede matches</h1>
-          <p class="chart_description">Procentvis andel af håndterede matches fordelt på følsomhed</p>
-          <p class="hidden chart_description">Afdelingens procentvise andel af håndterede matches</p>
+          <h1 class="page-title__sub">{% trans "Handled matches" %}</h1>
+          <p class="chart_description">{% trans "Percentage of handled matches distributed by sensitivity" %}</p>
+          <p class="hidden chart_description">{% trans "The department's percentage of handled matches" %}</p>
         </div>
         <div class="statistic_header_nav">
           <div></div>
           <div class="dropdown">
             <div class="select">
-              <span class="select_span">Følsomhed</span>
+              <span class="select_span">{% trans "Sensitivity" %}</span>
               <i class="material-icons">
                 keyboard_arrow_down
               </i>
             </div>
             <ul class="dropdown-menu">
-              <li>Følsomhed</li>
-              <li>Alle matches</li>
+              <li>{% trans "Sensitivity" %}</li>
+              <li>{% trans "All matches" %}</li>
             </ul>
           </div>
         </div>
       </div>
       <div class="doughnut_charts_container chart_container">
         <!-- Could be rewritten as for loop instead? -->
+        <!-- TODO -->
         <div class="doughnut_chart_container">
           <div>
             <canvas id="doughnut_chart_critical" width="100" height="100"></canvas>
           </div>
           <div class="doughnut_info_box">
-            <h4>Kritisk</h4>
-            <p>{{handled_matches.0.1}} af {{sensitivities.0.1}}</p>
+            <h4>{% trans "Critical" %}</h4>
+            <p>{{handled_matches.0.1}} {% trans "of" %} {{sensitivities.0.1}}</p>
           </div>
         </div>
         <div class="doughnut_chart_container">
@@ -45,8 +47,8 @@
             <canvas id="doughnut_chart_problem" width="100" height="100"></canvas>
           </div>
           <div class="doughnut_info_box">
-            <h4>Problem</h4>
-            <p>{{handled_matches.1.1}} af {{sensitivities.1.1}}</p>
+            <h4>{% trans "Problem" %}</h4>
+            <p>{{handled_matches.1.1}} {% trans "of" %} {{sensitivities.1.1}}</p>
           </div>
         </div>
         <div class="doughnut_chart_container">
@@ -54,8 +56,8 @@
             <canvas id="doughnut_chart_warning" width="100" height="100"></canvas>
           </div>
           <div class="doughnut_info_box">
-            <h4>Advarsel</h4>
-            <p>{{handled_matches.2.1}} af {{sensitivities.2.1}}</p>
+            <h4>{% trans "Warning" %}</h4>
+            <p>{{handled_matches.2.1}} {% trans "of" %} {{sensitivities.2.1}}</p>
           </div>
         </div>
         <div class="doughnut_chart_container">
@@ -63,8 +65,8 @@
             <canvas id="doughnut_chart_notification" width="100" height="100"></canvas>
           </div>
           <div class="doughnut_info_box">
-            <h4>Notifikation</h4>
-            <p>{{handled_matches.3.1}} af {{sensitivities.3.1}}</p>
+            <h4>{% trans "Notification" %}</h4>
+            <p>{{handled_matches.3.1}} {% trans "of" %} {{sensitivities.3.1}}</p>
           </div>
         </div>
       </div>
@@ -74,8 +76,8 @@
             <canvas id="doughnut_chart_total" width="100" height="100"></canvas>
           </div>
           <div class="doughnut_info_box">
-            <h4>Håndterede matches</h4>
-            <p>{{total_handled_matches}} af {{total_matches}}</p>
+            <h4>{% trans "Handled matches" %}</h4>
+            <p>{{total_handled_matches}} {% trans "of" %} {{total_matches}}</p>
           </div>
         </div>
 
@@ -86,9 +88,9 @@
     <div class="statistic statistic--two">
       <div class="statistic_header">
         <div>
-          <h1 class="page-title__sub">Fordeling af matches</h1>
-          <p class="chart_description">Matches fordelt på følsomheder</p>
-          <p class="hidden chart_description">Matches fordelt på datakilder</p>
+          <h1 class="page-title__sub">{% trans "Distribution of matches" %}</h1>
+          <p class="chart_description">{% trans "Matches distributed by sensitivities" %}</p>
+          <p class="hidden chart_description">{% trans "Matches distributed by data sources" %}</p>
         </div>
         <div class="statistic_header_nav">
             

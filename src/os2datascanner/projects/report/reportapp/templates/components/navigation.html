@@ -17,14 +17,14 @@
         <a href="/statistics/leader" class="{% if request.path == '/statistics/leader/' %}active{% endif %}">
           {% include "components/svg-icons/bar_chart.svg" %}
           <span class="width">
-              Leder overblik
+            {% trans "Leader overview" %}
           </span>
         </a>
         {% else %}
         <a href="/statistics/dpo" class="{% if request.path == '/statistics/dpo/' %}active{% endif %}">
         {% include "components/svg-icons/bar_chart.svg" %}
           <span class="width">
-              DPO overblik
+            {% trans "DPO overview" %}
           </span>
         </a>
         {% endif %}

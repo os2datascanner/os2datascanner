@@ -30,20 +30,21 @@ Chart.pluginService.register({
 					gradient = chart.ctx.createLinearGradient(0, start, 0, end);
 
 					// Make the gradient yellow if -> Find something to check for
-					if (model.label === "www.magenta.dk") {
-						// The colors of the gradient that were defined in the data
-						gradient.addColorStop(0, dataset.backgroundColor[0][2]);
-						gradient.addColorStop(1, dataset.backgroundColor[0][3]);
-					}
-					else {
+					// TODO: 
+					// if (model.label !== !user) {
+					// 	// The colors of the gradient that were defined in the data
+					// 	gradient.addColorStop(0, dataset.backgroundColor[0][2]);
+					// 	gradient.addColorStop(1, dataset.backgroundColor[0][3]);
+					// }
+					// else {
 						// The colors of the gradient that were defined in the data
 						// gradient.addColorStop(0, dataset.backgroundColor[j][0]);
 						// gradient.addColorStop(1, dataset.backgroundColor[j][1]);
 
 						//Use this instead of ^ if we need the same color every time
-						gradient.addColorStop(0, dataset.backgroundColor[0][0]);
-						gradient.addColorStop(1, dataset.backgroundColor[0][1]);
-					}
+					gradient.addColorStop(0, dataset.backgroundColor[0][0]);
+					gradient.addColorStop(1, dataset.backgroundColor[0][1]);
+					// }
 					// We set this new color to the data background
 					model.backgroundColor = gradient;
 				}
