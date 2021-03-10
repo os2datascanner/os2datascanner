@@ -2,7 +2,7 @@ from django import forms
 from .scanner_views import *
 from ..aescipher import decrypt
 from ..models.scannerjobs.filescanner_model import FileScanner
-
+from django.utils.translation import ugettext_lazy as _
 
 class FileScannerList(ScannerList):
     """Displays list of file scanners."""
@@ -113,10 +113,10 @@ def initialize_form(form):
     """Initializes the form fields for username and password
     as they are not part of the file scanner model."""
 
-    form.fields['url'].widget.attrs['placeholder'] = 'f.eks. //network-domain/top-folder'
-    form.fields['username'] = forms.CharField(max_length=1024, required=False, label='Brugernavn')
-    form.fields['password'] = forms.CharField(max_length=50, required=False)
-    form.fields['domain'] = forms.CharField(max_length=2024, required=False, label='Brugerdomæne')
-    form.fields['alias'] = forms.CharField(max_length=64, required=False, label='Drevbogstav')
+    form.fields['url'].widget.attrs['placeholder'] = _('eg. //network-domain/top-folder')
+    form.fields['username'] = forms.CharField(max_length=1024, required=False, label=_('Username'))
+    form.fields['password'] = forms.CharField(max_length=50, required=False, label=_('Password'))
+    form.fields['domain'] = forms.CharField(max_length=2024, required=False, label=_('User domain'))
+    form.fields['alias'] = forms.CharField(max_length=64, required=False, label=_('Drive letter'))
 
     return form

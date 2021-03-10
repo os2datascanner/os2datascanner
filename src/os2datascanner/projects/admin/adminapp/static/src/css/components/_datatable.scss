@@ -5,10 +5,12 @@
 .datatable {
   background-color: #fff;
   border-collapse: collapse;
-  box-shadow: var(--box-shadow-large);
-  max-width: 80rem;
+  box-shadow: var(--box-shadow-widget);
+  border-radius: var(--border-radius-widget);
+  max-width: 90rem;
   table-layout: fixed;
   width: calc(100% - 2rem);
+  margin-bottom: 3rem;
 
   &--wide {
     max-width: none;
@@ -16,23 +18,23 @@
 
   &__column {
     &--name {
-      width: 15rem;
+      max-width: 15rem;
+    }
+
+    &--org {
+      max-width: 15rem;
     }
 
     &--expression {
-      width: 8rem;
-    }
-
-    &--probability {
-      width: 10rem;
+      max-width: 11rem;
     }
 
     &--sensitivity {
-      width: 9rem;
+      width: 12rem;
     }
 
     &--actions {
-      width: 10rem;
+      width: 11rem;
     }
 
   }
@@ -50,39 +52,7 @@
   .hit-link {
     opacity: 1;
   }
-}
 
-.flex {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  margin-top: .5rem;
-
-  &--width {
-    margin-right: .5rem;
-    height: 1.2rem;
-    max-width: 1.5rem;
-  }
-
-  svg {
-    height: 100%;
-    width: auto;
-  }
-}
-
-.add-new {
-    max-width: 80rem; 
-    width: calc(100% - 2rem);   
-}
-
-.add-new-btn {
-    margin: 28px 0; 
-    float: right;
-}
-
-.add-new-text {
-    display: inline-block; 
-    padding: 0 4px;
 }
 
 @supports(display: grid) {
@@ -119,9 +89,20 @@
   }
 }
 
+.datatable tr:last-child {
+
+  td:hover:first-child {
+    border-radius: 0 0 0 1.25rem;
+  }
+
+  td:hover:last-child  {
+    border-radius: 0 0 1.25rem 0;
+  }
+}
+
 .datatable th {
   font-size: 1.25rem;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .datatable td {
@@ -150,6 +131,43 @@
 }
 /* .datatable--click-rows, stop */
 
+/* Icons and text in datatable  */
+.flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-top: .5rem;
+
+  &--icon {
+    margin-top: -.25rem;
+  }
+
+  &--width {
+    margin-right: .75rem;
+    height: 1.2rem;
+    max-width: 1.5rem;
+
+    &--icon {
+      height: auto;
+      max-width: 1.5rem;
+      color: #222222;
+    }
+  }
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
+}
+
+/* expression in datatable  */
+.code-grey {
+  background-color: #e0e0e0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-button);
+  padding: .5rem;
+}
+
 .scan {
   &__item-title {
     display: block;
@@ -165,8 +183,4 @@
       opacity: 0.75;
     }
   }
-}
-
-.datatable + h2 {
-  margin-top: 2em;
 }

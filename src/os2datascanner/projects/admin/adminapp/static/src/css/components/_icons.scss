@@ -1,10 +1,35 @@
 .icon {
   display: inline-block;
-  width: 1em;
-  height: 1em;
+  width: 1rem;
+  height: 1rem;
   stroke-width: 0;
-  stroke: currentColor;
-  fill: currentColor;
+  stroke: #222;
+  fill: #222;
+
+  &--white {
+    color: #fff;
+    fill: #fff;
+  }
+
+  &--notify {
+    color: var(--color-notification);
+    fill: var(--color-notification);
+  }
+
+  &--warning {
+    color: var(--color-warning);
+    fill: var(--color-warning);
+  }
+
+  &--problem {
+    color: var(--color-problem);
+    fill: var(--color-problem);
+  }
+
+  &--critical {
+    color: var(--color-error);
+    fill: var(--color-error);
+  }
 }
 
 /* ==========================================
@@ -60,21 +85,5 @@ Single-colored icons can be modified like so:
     padding: var(--size-ds-unit);
     width: 100%;
   }
-}
-
-.icon-filetype--office365 {
-  background-color: var(--color-office365);
-}
-
-.icon-filetype--exchange {
-  background-color: #bada55;
-}
-
-.icon-filetype--webpage {
-  background-color: #369;
-}
-
-.icon-filetype--smbc {
-  background-color: #50bee8;
 }
 /* file type icons, stop */

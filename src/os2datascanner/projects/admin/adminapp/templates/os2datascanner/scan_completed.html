@@ -1,0 +1,69 @@
+{% extends 'partials/base.html' %}
+{% load l10n %}
+{% load staticfiles %}
+{% load i18n %}
+{% load tz %}
+
+{% block body %}
+<main class="wrapper">
+    {% include "partials/main.html" with active_tab="status" %}
+
+    <div class="content">
+
+        {% include "os2datascanner/scanner_tabs.html" with page="scan-status"  %}
+
+        <div class="aside">
+            <h1 class="page-title">
+              {% trans "Completed scans" %}
+            </h1>
+        </div>
+
+        <table class="datatable">
+          <thead>
+            <tr>
+              <th>
+                {% trans "Scannerjob" %}
+              </th>
+              <th class="datatable__column--org">
+                {% trans "Started" %}
+              </th>
+              <th class="datatable__column--automatic">
+                {% trans "Objects" %}
+              </th>
+              <th class="datatable__column--actions">
+                {% trans "Status" %}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for status in object_list %}
+              {% if status.finished == True %}
+                <tr tabindex="0">
+                  <td>
+                      {{ status.scanner.name }}
+                  </td>
+                  <td>
+                    {% timezone "Europe/Copenhagen" %}
+                    {{ status.start_time }}
+                    {% endtimezone %}
+                  </td>
+                  <td>
+                    {{ status.total_objects }} {% trans "objects explored" %}
+                  </td>
+                  <td>
+                    <span class="completed_icon">
+                      {% include "components/svg-icons/check_circle_full.svg" %}
+                      <span class="width">
+                        {% trans "Done" %}
+                      </span>
+                    </span>
+                  </td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+</main>
+{% endblock %}

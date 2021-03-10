@@ -1,18 +1,30 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
 {% load staticfiles %}
+{% load i18n %}
+
+{% block additional_styles %}
+<style>
+  html {
+    background: transparent linear-gradient(180deg, #5CA4CD 0%, #21759C 100%) 0% 0% no-repeat padding-box;
+  }
+</style>
+{% endblock %}
 
 {%  block title %}
-Logout
+  {% trans "Logout" %}
 {% endblock %}
 
 {% block body %}
 
-<div class="container">
+<section class="logout-content">
     <p>
-      Tak, fordi du brugte OS2datascanner.
+      {% trans "Thank you for using OS2datascanner." %}
     </p>
-    <a href="/accounts/login/">Log ind</a> igen
-</div>
+    <a href="/accounts/login/">
+      {% trans "Log in" %}
+    </a>
+    <span>{% trans "again" %}</span>
+</section>
 
 {% endblock %}
 

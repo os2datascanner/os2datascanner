@@ -1,0 +1,151 @@
+{% load i18n %}
+{% if page == 'scannerjob' %}
+    {% if user.is_authenticated %}
+        {% if not user.profile.is_upload_only %}
+<div class="scrollbar-content">
+    <div class="tabs scroll-width-none">
+        {% if settings.ENABLE_WEBSCAN %}
+        <a id="web" class="tabs__control" href="/webscanners/">
+            {% trans "Webscanner" %}
+        </a>
+        {% endif %}
+        {% if settings.ENABLE_FILESCAN %}
+        <a id="file" class="tabs__control" href="/filescanners/">
+            {% trans "Filescanner" %}
+        </a>
+        {% endif %}
+        {% if settings.ENABLE_EXCHANGESCAN %}
+        <a id="exchange" class="tabs__control" href="/exchangescanners/">
+            {% trans "Exchangescanner" %}
+        </a>
+        {% endif %}
+        {% if settings.ENABLE_DROPBOXSCAN %}
+        <a id="dropbox" class="tabs__control" href="/dropboxscanners/">
+            {% trans "Dropboxscanner" %}
+        </a>
+        {% endif %}
+        {% if settings.ENABLE_MSGRAPH_MAILSCAN %}
+        <a id="msgraph-mail" class="tabs__control" href="/msgraph-mailscanners/">
+            {% trans "Office 365 mailscanner" %}
+        </a>
+        {% endif %}
+        {% if settings.ENABLE_MSGRAPH_FILESCAN %}
+        <a id="msgraph-file" class="tabs__control" href="/msgraph-filescanners/">
+            {% trans "Office 365 OneDrive filscanner" %}
+        </a>
+        {% endif %}
+        {% if settings.ENABLE_GOOGLEDRIVESCAN %}
+        <a id="googledrive" class="tabs__control" href="/googledrivescanners/">
+            {% trans "Google Drive scanner" %}
+        </a>
+        {% endif %}
+        {%  if settings.ENABLE_GMAILSCAN %}
+        <a id="gmail" class="tabs__control" href="/gmailscanners/">
+            {% trans "Gmailscanner" %}
+        </a>
+        {% endif %}
+        {%  if settings.ENABLE_SBSYSSCAN %}
+        <a id="sbsys" class="tabs__control" href="/sbsysscanners/">
+            {% trans "Sbsysscanner" %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+{% if page == 'scan-status' %}
+<div class="tabs">
+    <a id="scan-status" class="tabs__control" href="/status/">
+        {% trans "Scanner status" %}
+    </a>
+    <a id="completed" class="tabs__control" href="/status-completed/">
+        {% trans "Completed scans" %}
+    </a>
+    <!-- <a id="upcoming" class="tabs__control" href="#">Kommende scanninger</a> -->
+</div>
+{% endif %}
+
+<script>
+    // Menu tabs
+    var web = document.getElementById("web")
+    var file = document.getElementById("file")
+    var exchange = document.getElementById("exchange")
+    var dropbox = document.getElementById("dropbox")
+    var msgraph_mail = document.getElementById("msgraph-mail")
+    var msgraph_file = document.getElementById("msgraph-file")
+    var googledrive = document.getElementById("googledrive")
+    var gmail = document.getElementById("gmail")
+    var sbsys = document.getElementById("sbsys")
+
+    if (location.pathname === '/') {
+        if (web) {
+            window.location.href = "/webscanners/"
+            web.classList.add('active')
+        } else if (file) {
+            window.location.href = "/filescanners/"
+            file.classList.add('active')
+        } else if (exchange) {
+            window.location.href = "/exchangescanners/"
+            exchange.classList.add('active')
+        } else if (dropbox) {
+            window.location.href = "/dropboxscanners/"
+            dropbox.classList.add('active')
+        } else if (msgraph_mail) {
+            window.location.href = "/msgraph-mailscanners/"
+            msgraph_mail.classList.add('active')
+        } else if (msgraph_file) {
+            window.location.href = "/msgraph-filescanners/"
+            msgraph_file.classList.add('active')
+        } else if (googledrive) {
+            window.location.href = "/googledrivescanners/"
+            googledrive.classList.add('active')
+        } else if (gmail) {
+            window.location.href = "/gmailscanners/"
+            gmail.classList.add('active')
+        } else if (sbsys) {
+            window.location.href = "/sbsysscanners/"
+            sbsys.classList.add('active')
+        }
+    }
+    if (location.pathname === '/webscanners/') {
+        web.classList.add('active')
+    }
+    if (location.pathname === '/filescanners/') {
+        file.classList.add("active")
+    }
+    if (location.pathname === '/exchangescanners/') {
+        exchange.classList.add("active")
+    }
+    if (location.pathname === '/dropboxscanners/') {
+        dropbox.classList.add("active")
+    }
+    if (location.pathname === '/msgraph-mailscanners/') {
+        msgraph_mail.classList.add("active")
+    }
+    if (location.pathname === '/msgraph-filescanners/') {
+        msgraph_file.classList.add("active")
+    }
+    if (location.pathname === '/gmailscanners/') {
+        gmail.classList.add("active")
+    }
+    if (location.pathname === '/googledrivescanners/') {
+        googledrive.classList.add("active")
+    }
+    if (location.pathname === '/sbsysscanners/') {
+        sbsys.classList.add("active")
+    }
+
+
+    // Status tabs
+    var scan_status = document.getElementById("scan-status")
+    var completed = document.getElementById("completed")
+
+    if (location.pathname === '/status/') {
+        scan_status.classList.add('active')
+    }
+    if (location.pathname === '/status-completed/') {
+        completed.classList.add("active")
+    }
+</script>

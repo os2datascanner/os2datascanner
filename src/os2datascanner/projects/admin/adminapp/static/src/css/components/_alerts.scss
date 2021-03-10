@@ -32,7 +32,9 @@
 }
 
 .bg--success {
-  background-color: var(--color-ok);
+  color: var(--color-text-white);
+  background-color: var(--color-primary-dark);
+  font-weight: 600;
 }
 
 .bg--warning {

@@ -1,4 +1,4 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
 {% load staticfiles %}
 {% load i18n %}
 
@@ -82,591 +82,668 @@
   {% endif %}
 </script>
 <script type="text/javascript" src="{% static 'js/ruleselector.js' %}"></script>
+<script src="{% static 'js/options.js' %}"></script>
 {% endblock %}
 
 {% block body %}
 <div class="wrapper">
+  {% include "partials/main.html" with active_tab="home" %}
 
-  {% if view.edit %}
-  <h1 class="page-title" style="display:inline-block;">Rediger scannerjob</h1>
-  {% endif %}
+  <div class="content">
 
-  {% if not view.edit %}
-  <h1 class="page-title" style="display:inline-block;">Opret nyt scannerjob
-    {% if form.sitemap %}
-    <span class="flex">
-    <span class="page-title__sub">Webscan</span>
-    </span>
+    {% include "partials/breadcrumb.html" with page="scannerjob"  %}
+
+    <div class="aside">
+      {% if view.edit %}
+      <h1 class="page-title">
+        {% trans "Edit scannerjob" %}
+      </h1>
+      {% endif %}
+
+      {% if not view.edit %}
+      <h1 class="page-title">
+        {% trans "Create new scannerjob" %}
+      </h1>
+      {% endif %}
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="alert alert--warning" role="alert">
+      <ul>
+        {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
     {% endif %}
-        
-    {% if form.domain %}
-    <span class="flex">
-    <span class="page-title__sub">Filscan</span>
-    </span>
-    {% endif %}
-        
-    {% if form.userlist %}
-    <span class="flex">
-    <span class="page-title__sub">Exchangescan</span>
-    </span>
-    {% endif %}  
-  </h1>
-  {% endif %}
-
-  {% if form.non_field_errors %}
-  <div class="alert alert--warning" role="alert">
-    <ul>
-      {% for error in form.non_field_errors %}
-      <li>{{ error }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
 
   <form class="form" role="form" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+    <section class="data-form">
+        {% csrf_token %}
 
-    <fieldset class="form__fieldset">
-      <legend>Generelt</legend>
-      {% include "os2datascanner/scanner_form_input_field.html" with field=form.name required="True" autofocus="True" placeholder="Navn på scannerjob" %}
+        <fieldset class="form__fieldset">
+          <h3>
+            {% trans "General" %}
+          </h3>
 
-      {% if form.url %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.url required="True" placeholder=form.url.field.widget.attrs.placeholder %}
-      {% endif %}
+          {% include "os2datascanner/scanner_form_input_field.html" with field=form.name required="True" autofocus="True" placeholder="Navn på scannerjob" %}
 
-      {% if form.service_endpoint %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.service_endpoint placeholder="f.eks. https://example.com/EWS/Exchange.asmx" %}
-      {% endif %}
-
-      {% if form.alias %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.alias placeholder="f.eks. P" %}
-      {% endif %}
-
-      {% if form.organization %}
-        {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.organization required="True" %}
-      {% endif %}
-
-      {% if form.validation_status %}
-        {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.validation_status %}
-      {% endif %}
-    </fieldset>
-
-    {% if not view.type == 'sbsys' %}
-    <fieldset class="form__fieldset">
-    {% if form.sitemap %}
-    <legend>Sitemap</legend>
-    {% endif %}
-
-    {% if form.domain %}
-    <legend>Brugeroplysninger</legend>
-    {% endif %}
-
-    {% if form.userlist %}
-    <legend>Brugeroplysninger</legend>
-    {% endif %}
-
-    {% if form.service_account_file %}
-    <legend>Brugeroplysninger</legend>
-    {% endif %}
-      <!-- This is a user domain, used on Windows computers. -->
-      {% if form.domain %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.domain placeholder="f.eks. WORKGROUP" %}
-      {% endif %}
-
-      {% if form.token %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.token password="True" %}
-      {% endif %}
-
-      {% if form.tenant_id %}
-      <div id="{{ form.tenant_id.auto_id }}_container" class="form__group{% if form.tenant_id.errors %} has-error{% endif %}">
-        <label for="id_tenant_presentation">{{ form.tenant_id.label }}</label>
-        <span class="form-control" id="id_tenant_presentation"><strong>
-          {% if form.tenant_id.value %}
-          {{ form.tenant_id.value }}
-          {% else %}
-          {{ tenant_id }}
+          {% if form.url %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.url required="True" placeholder=form.url.field.widget.attrs.placeholder %}
           {% endif %}
-        </strong></span>
-        <input
-            type="hidden"
-            class="form-control"
-            name="{{ form.tenant_id.name }}"
-            id="id_{{ form.tenant_id.name }}"
-            {% if form.tenant_id.value %}
-            value="{{ form.tenant_id.value }}"
-            {% else %}
-            value="{{ tenant_id }}"
-            {% endif %}>
-        {% if form.tenant_id.help_text %}
-        <span class="form__help-text">{{ form.tenant_id.help_text }}</span>
+
+          {% if form.service_endpoint %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.service_endpoint placeholder="f.eks. https://example.com/EWS/Exchange.asmx" %}
+          {% endif %}
+
+          {% if form.alias %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.alias placeholder="f.eks. P" %}
+          {% endif %}
+
+          {% if form.organization %}
+            {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.organization required="True" %}
+          {% endif %}
+
+          {% if form.validation_status %}
+            {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.validation_status %}
+          {% endif %}
+        </fieldset>
+    </section>
+
+    <section class="data-form">
+        {% if not view.type == 'sbsys' %}
+        <fieldset class="form__fieldset">
+        {% if form.sitemap %}
+        <h3>
+          {% trans "Sitemap" %}
+        </h3>
         {% endif %}
 
-        {% if form.tenant_id.errors %}
-        {{ form.tenant_id.errors }}
-        {% endif %}
-      </div>
-      {% endif %}
-
-      {% if form.username %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.username %}
-      {% endif %}
-
-      {% if form.password %}
-        {% include "os2datascanner/scanner_form_input_field.html" with field=form.password password="True" %}
-      {% endif %}
-
-      {% if form.group %}
-        {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.group %}
-      {% endif %}
-
-      {% if form.userlist %}
-      <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
-        <label class="control-label required-form" for="id_{{ form.userlist.name }}">Liste af mail brugere</label>
-        <input id="upload-file" placeholder="Vælg en fil" disabled="disabled" />
-        <div class="fileUpload button button--cta button--small button--rounded">
-          <span>Upload</span>
-          <input
-            type="file"
-            class="upload"
-            name="{{ form.userlist.name }}"
-            id="id_{{ form.userlist.name }}"
-            {% if form.userlist.value %}
-            value="{{ form.userlist.value }}"
-            {% endif %}>
-        </div>
-        <p>
-          <small>Eksisterende fil: {{ form.userlist.value }}</small>
-        </p>
-
-        {% if form.userlist.help_text %}
-        <span class="form__help-text">{{ form.userlist.help_text }}</span>
+        {% if form.domain %}
+        <h3>
+          {% trans "User information" %}
+        </h3>
         {% endif %}
 
-        {% if form.userlist.errors %}{{ form.userlist.errors }}{% endif %}
-      </div>
-      {% endif %}
-      {% if form.scan_site_drives %}
-      <div id="{{ form.scan_site_drives.auto_id }}_container" class="form__group{% if form.scan_site_drives.errors %} has-error{% endif %}">
-        <div class="ds-checkbox">
-          <input
-            type="checkbox"
-            class="checkbox"
-            id="id_{{ form.scan_site_drives.name }}"
-            name="{{ form.scan_site_drives.name }}"
-            value="{{ form.scan_site_drives.name }}"
-            {% if form.scan_site_drives.value %}
-            checked="checked"
-            {% endif %} />
-          <label class="control-label" for="id_{{ form.scan_site_drives.name }}" tabindex="0">{{ form.scan_site_drives.label }}</label>
-        </div>
-
-        {% if form.scan_site_drives.help_text %}
-        <span class="form__help-text">{{ form.scan_site_drives.help_text }}</span>
+        {% if form.userlist %}
+        <h3>
+          {% trans "User information" %}
+        </h3>
         {% endif %}
 
-        {% if form.scan_site_drives.errors %}{{ form.scan_site_drives.errors }}{% endif %}
-      </div>
-      {% endif %}
-
-      {% if form.scan_user_drives %}
-      <div id="{{ form.scan_user_drives.auto_id }}_container" class="form__group{% if form.scan_user_drives.errors %} has-error{% endif %}">
-        <div class="ds-checkbox">
-          <input
-            type="checkbox"
-            class="checkbox"
-            id="id_{{ form.scan_user_drives.name }}"
-            name="{{ form.scan_user_drives.name }}"
-            value="{{ form.scan_user_drives.name }}"
-            {% if form.scan_user_drives.value %}
-            checked="checked"
-            {% endif %} />
-          <label class="control-label" for="id_{{ form.scan_user_drives.name }}" tabindex="0">{{ form.scan_user_drives.label }}</label>
-        </div>
-
-        {% if form.scan_user_drives.help_text %}
-        <span class="form__help-text">{{ form.scan_user_drives.help_text }}</span>
+        {% if form.service_account_file %}
+        <h3>
+          {% trans "User information" %}
+        </h3>
         {% endif %}
 
-        {% if form.scan_user_drives.errors %}{{ form.scan_user_drives.errors }}{% endif %}
-      </div>
-      {% endif %}
-
-      {% if form.download_sitemap %}
-      <div id="{{ form.download_sitemap.auto_id }}_container" class="form__group{% if form.download_sitemap.errors %} has-error{% endif %}">
-        <div class="ds-checkbox">
-          <input
-            type="checkbox"
-            class="checkbox"
-            id="id_{{ form.download_sitemap.name }}"
-            name="{{ form.download_sitemap.name }}"
-            value="{{ form.download_sitemap.name }}"
-            {% if form.download_sitemap.value %}
-            checked="checked"
-            {% endif %} />
-          <label class="control-label" for="id_{{ form.download_sitemap.name }}">{{ form.download_sitemap.label }}</label>
-        </div>
-
-        {% if form.download_sitemap.help_text %}
-        <span class="form__help-text">{{ form.download_sitemap.help_text }}</span>
+        {% if form.service_account_file_gmail %}
+        <h3>
+          {% trans "User information" %}
+        </h3>
         {% endif %}
+          <!-- This is a user domain, used on Windows computers. -->
+          {% if form.domain %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.domain placeholder="f.eks. WORKGROUP" %}
+          {% endif %}
 
-        {% if form.download_sitemap.errors %}{{ form.download_sitemap.errors }}{% endif %}
-      </div>
-      {% endif %}
+          {% if form.token %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.token password="True" %}
+          {% endif %}
 
-      {% if form.service_account_file_gmail %}
-      <div class="form__group">
-        <label class="control-label" for="id_{{ form.service_account_file_gmail.name }}">Upload Service Account (.json)</label>
-        <input id="upload-file-service" placeholder="Vælg en fil" disabled="disabled" />
-        <div class="fileUpload button button--cta button--small button--rounded">
-          <span>Upload</span>
-          <input
-            class="upload"
-            id="id_{{ form.service_account_file_gmail.name }}"
-            name="{{ form.service_account_file_gmail.name }}"
-            type="file"
-            data-filename-placement="inside"
-            title="Klik her for at uploade service account credentials (JSON FORMAT)" />
-        </div>
-
-        {% if form.service_account_file_gmail.help_text %}
-        <span class="form__help-text">{{ form.service_account_file_gmail.help_text }}</span>
-        {% endif %}
-
-        {% if form.service_account_file_gmail.errors %}{{ form.service_account_file_gmail.errors }}{% endif %}
-      </div>
-      {% endif %}
-
-      {% if form.service_account_file_gmail.value %}
-      <div id="{{ form.service_account_file_gmail.auto_id }}_container" class="form__group{% if form.service_account_file_gmail.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.service_account_file_gmail.name }}">Service account</label>
-        Nuværende fil: <code>{{ form.service_account_file_gmail.value }}</code>
-      </div>
-      {% endif %}
-
-      {% if form.user_emails_gmail %}
-      <div class="form__group">
-        <label class="control-label" for="id_{{ form.user_emails_gmail.name }}">Upload liste af konti (.csv)</label>
-        <input id="upload-file-email" placeholder="Vælg en fil" disabled="disabled" />
-        <div class="fileUpload button button--cta button--small button--rounded">
-          <span>Upload</span>
-          <input
-            class="upload"
-            id="id_{{ form.user_emails_gmail.name }}"
-            name="{{ form.user_emails_gmail.name }}"
-            type="file"
-            data-filename-placement="inside"
-            title="Klik her for at uploade liste af konti (CSV FORMAT)" />
-        </div>
-
-        {% if form.user_emails_gmail.help_text %}
-        <span class="form__help-text">{{ form.user_emails_gmail.help_text }}</span>
-        {% endif %}
-
-        {% if form.service_account_file_gmail.errors %}{{ form.user_emails_gmail.errors }}{% endif %}
-      </div>
-      {% endif %}
-
-       {% if form.user_emails_gmail.value %}
-      <div id="{{ form.user_emails_gmail.auto_id }}_container" class="form__group{% if form.user_emails_gmail.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.user_emails_gmail.name }}">Liste af konti</label>
-        Nuværende fil: <code>{{ form.user_emails_gmail.value }}</code>
-      </div>
-      {% endif %}
-
-
-      {% if form.sitemap_url %}
-      <div id="{{ form.sitemap_url.auto_id }}_container" class="form__group{% if form.sitemap_url.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.sitemap_url.name }}">{{ form.sitemap_url.label }}</label>
-        <input
-          type="url"
-          class="form-control"
-          name="{{ form.sitemap_url.name }}"
-          id="id_{{ form.sitemap_url.name }}"
-          placeholder="f.eks. /sitemap.xml"
-          {% if form.sitemap_url.value %}
-          value="{{ form.sitemap_url.value }}"
-          {% endif %}>
-
-        {% if form.sitemap_url.help_text %}
-        <span class="form__help-text">{{ form.sitemap_url.help_text }}</span>
-        {% endif %}
-
-        {% if form.sitemap_url.errors %}{{ form.sitemap_url.errors }}{% endif %}
-      </div>
-      {% endif %}
-
-      {% if form.sitemap.value %}
-      <div id="{{ form.sitemap.auto_id }}_container" class="form__group{% if form.sitemap.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.sitemap.name }}">Sitemap</label>
-        Aktuelt: <code>{{ form.sitemap.value }}</code>
-        <div class="ds-checkbox">
-          <input
-            id="{{ form.sitemap.name }}-clear_id"
-            name="{{ form.sitemap.name }}-clear"
-            type="checkbox" />
-          <label for="{{ form.sitemap.name }}-clear_id">Fjern</label>
-        </div>
-      </div>
-      {% endif %}
-
-      {% if form.sitemap %}
-      <div class="form__group">
-        <label class="control-label" for="id_{{ form.sitemap.name }}">Upload Sitemap</label>
-        <input id="upload-file" placeholder="Vælg en fil" disabled="disabled" />
-        <div class="fileUpload button button--cta button--small button--rounded">
-          <span>Upload</span>
-          <input
-            class="upload"
-            id="id_{{ form.sitemap.name }}"
-            name="{{ form.sitemap.name }}"
-            type="file"
-            data-filename-placement="inside"
-            title="Klik her for at uploade sitemap.xml" />
-        </div>
-
-        {% if form.sitemap.help_text %}
-        <span class="form__help-text">{{ form.sitemap.help_text }}</span>
-        {% endif %}
-
-        {% if form.sitemap.errors %}{{ form.sitemap.errors }}{% endif %}
-      </div>
-      {% endif %}
-
-         {% if form.service_account_file %}
-      <div class="form__group">
-        <label class="control-label" for="id_{{ form.service_account_file.name }}">Upload Service Account (.json)</label>
-          <input id="upload-file-service" placeholder="Vælg en fil" disabled="disabled" />
-          <div class="fileUpload button button--cta button--small button--rounded">
-            <span>Upload</span>
+          {% if form.tenant_id %}
+          <div id="{{ form.tenant_id.auto_id }}_container" class="form__group{% if form.tenant_id.errors %} has-error{% endif %}">
+            <label for="id_tenant_presentation">{{ form.tenant_id.label }}</label>
+            <span id="id_tenant_presentation"><strong>
+              {% if form.tenant_id.value %}
+              {{ form.tenant_id.value }}
+              {% else %}
+              {{ tenant_id }}
+              {% endif %}
+            </strong></span>
             <input
-              class="upload"
-              id="id_{{ form.service_account_file.name }}"
-              name="{{ form.service_account_file.name }}"
-              type="file"
-              data-filename-placement="inside"
-              title="Klik her for at uploade service account credentials (JSON FORMAT)" />
-          </div>
-
-        {% if form.service_account_file.help_text %}
-        <span class="form__help-text">{{ form.service_account_file.help_text }}</span>
-        {% endif %}
-
-        {% if form.service_account_file.errors %}{{ form.service_account_file.errors }}{% endif %}
-      </div>
-      {% endif %}
-
-      {% if form.service_account_file.value %}
-      <div id="{{ form.service_account_file.auto_id }}_container" class="form__group{% if form.service_account_file.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.service_account_file.name }}">Service account</label>
-        Nuværende fil: <code>{{ form.service_account_file.value }}</code>
-      </div>
-      {% endif %}
-
-      {% if form.user_emails %}
-      <div class="form__group">
-        <label class="control-label" for="id_{{ form.user_emails.name }}">Upload liste af konti (.csv)</label>
-          <input id="upload-file-email" placeholder="Vælg en fil" disabled="disabled" />
-          <div class="fileUpload button button--cta button--small button--rounded">
-            <span>Upload</span>
-            <input
-              class="upload"
-              id="id_{{ form.user_emails.name }}"
-              name="{{ form.user_emails.name }}"
-              type="file"
-              data-filename-placement="inside"
-              title="Klik her for at uploade liste af konti (CSV FORMAT)" />
-          </div>
-
-        {% if form.user_emails.help_text %}
-        <span class="form__help-text">{{ form.user_emails.help_text }}</span>
-        {% endif %}
-
-        {% if form.service_account_file.errors %}{{ form.user_emails.errors }}{% endif %}
-      </div>
-      {% endif %}
-
-       {% if form.user_emails.value %}
-      <div id="{{ form.user_emails.auto_id }}_container" class="form__group{% if form.user_emails.errors %} has-error{% endif %}">
-        <label class="control-label" for="id_{{ form.user_emails.name }}">Liste af konti</label>
-        Nuværende fil: <code>{{ form.user_emails.value }}</code>
-      </div>
-      {% endif %}
-      </fieldset>
-    {% endif %}
-      
-    <fieldset class="form__fieldset">
-      <legend>Tilføj scannerindstillinger</legend>
-      <div class="form__group">
-        <div id="select_scan_rules_container" class="">
-
-          <div class="checkbox-group">
-            <div class="ds-checkbox ds-checkbox--inline">
-              <input 
-                type="checkbox" 
-                id="id_{{ form.do_ocr.name }}" 
-                name="{{ form.do_ocr.name }}"
-                value="{{ form.do_ocr.name }}" 
-                {% if form.do_ocr.field.disabled %} 
-                disabled 
-                {% endif %}
-                {% if form.do_ocr.value %} 
-                checked="checked" 
+                type="hidden"
+                name="{{ form.tenant_id.name }}"
+                id="id_{{ form.tenant_id.name }}"
+                {% if form.tenant_id.value %}
+                value="{{ form.tenant_id.value }}"
+                {% else %}
+                value="{{ tenant_id }}"
                 {% endif %}>
-              <label for="id_{{ form.do_ocr.name }}">
-                {{ form.do_ocr.label }}
-                {% if form.do_ocr.help_text %}
-                <small>{{ form.do_ocr.help_text }}</small>
-                {% endif %}
-              </label>
-            </div>
-          </div>
+            {% if form.tenant_id.help_text %}
+            <span class="form__help-text">{{ form.tenant_id.help_text }}</span>
+            {% endif %}
 
-          <div class="checkbox-group">
-            <div class="ds-checkbox ds-checkbox--inline">
-              <input 
-                type="checkbox" 
-                id="id_{{ form.do_last_modified_check.name }}"
-                name="{{ form.do_last_modified_check.name }}" 
-                value="{{ form.do_last_modified_check.name }}"
-                {% if form.do_last_modified_check.field.disabled %} disabled {% endif %}
-                {% if form.do_last_modified_check.value %} checked="checked" {% endif %}>
-              <label for="id_{{ form.do_last_modified_check.name }}">
-                {{ form.do_last_modified_check.label }}
-                {% if form.do_last_modified_check.help_text %}
-                <small>{{ form.do_last_modified_check.help_text }}</small>
-                {% endif %}
-              </label>
+            {% if form.tenant_id.errors %}
+            {{ form.tenant_id.errors }}
+            {% endif %}
+          </div>
+          {% endif %}
+
+          {% if form.username %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.username %}
+          {% endif %}
+
+          {% if form.password %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.password password="True" %}
+          {% endif %}
+
+          {% if form.group %}
+            {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.group %}
+          {% endif %}
+
+          {% if form.userlist %}
+          <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
+            <label class="control-label required-form" for="id_{{ form.userlist.name }}">
+              {% trans "List of mail users" %}
+            </label>
+            <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+            <div class="fileUpload button button--grey button--upload">
+              <span>
+                {% trans "Upload" %}
+              </span>
+              <input
+                type="file"
+                class="upload"
+                name="{{ form.userlist.name }}"
+                id="id_{{ form.userlist.name }}"
+                {% if form.userlist.value %}
+                value="{{ form.userlist.value }}"
+                {% endif %}>
             </div>
-            {% if view.type == 'web' %}
-            <div class="ds-checkbox ds-checkbox--inline">
+            <p>
+              <small>
+                {% trans "Existing file:" %} {{ form.userlist.value }}
+              </small>
+            </p>
+
+            {% if form.userlist.help_text %}
+            <span class="form__help-text">{{ form.userlist.help_text }}</span>
+            {% endif %}
+
+            {% if form.userlist.errors %}{{ form.userlist.errors }}{% endif %}
+          </div>
+          {% endif %}
+          {% if form.scan_site_drives %}
+          <div id="{{ form.scan_site_drives.auto_id }}_container" class="form__group{% if form.scan_site_drives.errors %} has-error{% endif %}">
+            <div class="ds-checkbox">
               <input
                 type="checkbox"
-                id="id_{{ form.do_last_modified_check_head_request.name }}"
-                name="{{ form.do_last_modified_check_head_request.name }}"
-                value="{{ form.do_last_modified_check_head_request.name }}"
-                {% if form.do_last_modified_check_head_request.field.disabled %} disabled {% endif %}
-                {% if form.do_last_modified_check_head_request.value %} checked="checked" {% endif %}>
-              <label for="id_{{ form.do_last_modified_check_head_request.name }}">
-                {{ form.do_last_modified_check_head_request.label }}
-                {% if form.do_last_modified_check_head_request.help_text %}
-                <small>{{ form.do_last_modified_check_head_request.help_text }}</small>
-                {% endif %}
-              </label>
+                class="checkbox"
+                id="id_{{ form.scan_site_drives.name }}"
+                name="{{ form.scan_site_drives.name }}"
+                value="{{ form.scan_site_drives.name }}"
+                {% if form.scan_site_drives.value %}
+                checked="checked"
+                {% endif %} />
+              <label for="id_{{ form.scan_site_drives.name }}" tabindex="0">{{ form.scan_site_drives.label }}</label>
             </div>
+
+            {% if form.scan_site_drives.help_text %}
+            <span class="form__help-text">{{ form.scan_site_drives.help_text }}</span>
             {% endif %}
-          </div>
 
-          {% if view.type == 'web' %}
-          <div class="checkbox-group">
-            <div class="ds-checkbox ds-checkbox--inline">
-              <input 
-                type="checkbox" 
-                id="id_{{ form.do_link_check.name }}" 
-                name="{{ form.do_link_check.name }}"
-                value="{{ form.do_link_check.name }}" 
-                {% if form.do_link_check.field.disabled %} disabled {% endif %}
-                {% if form.do_link_check.value %} checked="checked" {% endif %}>
-              <label for="id_{{ form.do_link_check.name }}">
-                {{ form.do_link_check.label }}
-                {% if form.do_link_check.help_text %}
-                <small>{{ form.do_link_check.help_text }}</small>
-                {% endif %}
-              </label>
-            </div>
-            <div class="ds-checkbox ds-checkbox--inline">
-              <input 
-                type="checkbox" 
-                id="id_{{ form.do_external_link_check.name }}"
-                name="{{ form.do_external_link_check.name }}" 
-                value="{{ form.do_external_link_check.name }}"
-                {% if form.do_external_link_check.field.disabled %} disabled {% endif %}
-                {% if form.do_external_link_check.value %} checked="checked" {% endif %}>
-              <label for="id_{{ form.do_external_link_check.name }}">
-                {{ form.do_external_link_check.label }}
-                {% if form.do_external_link_check.help_text %}
-                <small>{{ form.do_external_link_check.help_text }}</small>
-                {% endif %}
-              </label>
-            </div>
+            {% if form.scan_site_drives.errors %}{{ form.scan_site_drives.errors }}{% endif %}
           </div>
+          {% endif %}
 
-          <div class="checkbox-group">
-            <div class="ds-checkbox ds-checkbox--inline">
-              <input 
-                type="checkbox" 
-                id="id_{{ form.do_collect_cookies.name }}" 
-                name="{{ form.do_collect_cookies.name }}"
-                value="{{ form.do_collect_cookies.name }}" 
-                {% if form.do_collect_cookies.field.disabled %} disabled
-                {% endif %} {% if form.do_collect_cookies.value %} checked="checked" {% endif %}>
-              <label for="id_{{ form.do_collect_cookies.name }}">
-                {{ form.do_collect_cookies.label }}
-                {% if form.do_collect_cookies.help_text %}
-                <small>{{ form.do_collect_cookies.help_text }}</small>
-                {% endif %}
+          {% if form.scan_user_drives %}
+          <div id="{{ form.scan_user_drives.auto_id }}_container" class="form__group{% if form.scan_user_drives.errors %} has-error{% endif %}">
+            <div class="ds-checkbox">
+              <input
+                type="checkbox"
+                class="checkbox"
+                id="id_{{ form.scan_user_drives.name }}"
+                name="{{ form.scan_user_drives.name }}"
+                value="{{ form.scan_user_drives.name }}"
+                {% if form.scan_user_drives.value %}
+                checked="checked"
+                {% endif %} />
+              <label for="id_{{ form.scan_user_drives.name }}" tabindex="0">{{ form.scan_user_drives.label }}</label>
+            </div>
+
+            {% if form.scan_user_drives.help_text %}
+            <span class="form__help-text">{{ form.scan_user_drives.help_text }}</span>
+            {% endif %}
+
+            {% if form.scan_user_drives.errors %}{{ form.scan_user_drives.errors }}{% endif %}
+          </div>
+          {% endif %}
+
+          {% if form.download_sitemap %}
+          <div id="{{ form.download_sitemap.auto_id }}_container" class="form__group{% if form.download_sitemap.errors %} has-error{% endif %}">
+            <div class="ds-checkbox">
+              <input
+                type="checkbox"
+                class="checkbox"
+                id="id_{{ form.download_sitemap.name }}"
+                name="{{ form.download_sitemap.name }}"
+                value="{{ form.download_sitemap.name }}"
+                {% if form.download_sitemap.value %}
+                checked="checked"
+                {% endif %} />
+              <label for="id_{{ form.download_sitemap.name }}">{{ form.download_sitemap.label }}</label>
+            </div>
+
+            {% if form.download_sitemap.help_text %}
+            <span class="form__help-text">{{ form.download_sitemap.help_text }}</span>
+            {% endif %}
+
+            {% if form.download_sitemap.errors %}{{ form.download_sitemap.errors }}{% endif %}
+          </div>
+          {% endif %}
+
+          {% if form.service_account_file_gmail %}
+          <div class="form__group">
+            <label for="id_{{ form.service_account_file_gmail.name }}">
+              {% trans "Upload service account" %} (.json)
+            </label>
+            <input id="upload-file-service" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+            <div class="fileUpload button button--grey button--upload">
+              <span>
+                {% trans "Upload" %}
+              </span>
+              <input
+                class="upload"
+                id="id_{{ form.service_account_file_gmail.name }}"
+                name="{{ form.service_account_file_gmail.name }}"
+                type="file"
+                data-filename-placement="inside"
+                title="{% trans 'Click here to upload service account credentials (JSON FORMAT)' %}" />
+            </div>
+
+            {% if form.service_account_file_gmail.help_text %}
+            <span class="form__help-text">{{ form.service_account_file_gmail.help_text }}</span>
+            {% endif %}
+
+            {% if form.service_account_file_gmail.errors %}{{ form.service_account_file_gmail.errors }}{% endif %}
+          </div>
+          {% endif %}
+
+          {% if form.service_account_file_gmail.value %}
+          <div id="{{ form.service_account_file_gmail.auto_id }}_container" class="form__group{% if form.service_account_file_gmail.errors %} has-error{% endif %}">
+            <label for="id_{{ form.service_account_file_gmail.name }}">
+              {% trans "Service account" %}
+            </label>
+            {% trans "Current file:" %} <code>{{ form.service_account_file_gmail.value }}</code>
+          </div>
+          {% endif %}
+
+          {% if form.user_emails_gmail %}
+          <div class="form__group">
+            <label for="id_{{ form.user_emails_gmail.name }}">
+              {% trans "Upload list of accounts" %} (.csv)
+            </label>
+            <input id="upload-file-email" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+            <div class="fileUpload button button--grey button--upload">
+              <span>
+                {% trans "Upload" %}
+              </span>
+              <input
+                class="upload"
+                id="id_{{ form.user_emails_gmail.name }}"
+                name="{{ form.user_emails_gmail.name }}"
+                type="file"
+                data-filename-placement="inside"
+                title="{% trans 'Click here to upload list of accounts (CSV FORMAT)' %}" />
+            </div>
+
+            {% if form.user_emails_gmail.help_text %}
+            <span class="form__help-text">{{ form.user_emails_gmail.help_text }}</span>
+            {% endif %}
+
+            {% if form.service_account_file_gmail.errors %}{{ form.user_emails_gmail.errors }}{% endif %}
+          </div>
+          {% endif %}
+
+          {% if form.user_emails_gmail.value %}
+          <div id="{{ form.user_emails_gmail.auto_id }}_container" class="form__group{% if form.user_emails_gmail.errors %} has-error{% endif %}">
+            <label for="id_{{ form.user_emails_gmail.name }}">
+              {% trans "List of accounts" %}
+            </label>
+            {% trans "Current file:" %} <code>{{ form.user_emails_gmail.value }}</code>
+          </div>
+          {% endif %}
+
+
+          {% if form.sitemap_url %}
+          <div id="{{ form.sitemap_url.auto_id }}_container" class="form__group{% if form.sitemap_url.errors %} has-error{% endif %}">
+            <label for="id_{{ form.sitemap_url.name }}">{{ form.sitemap_url.label }}</label>
+            <input
+              type="text"
+              name="{{ form.sitemap_url.name }}"
+              id="id_{{ form.sitemap_url.name }}"
+              placeholder="{% trans 'eg. /sitemap.xml' %}"
+              {% if form.sitemap_url.value %}
+              value="{{ form.sitemap_url.value }}"
+              {% endif %}>
+
+            {% if form.sitemap_url.help_text %}
+            <span class="form__help-text">{{ form.sitemap_url.help_text }}</span>
+            {% endif %}
+
+            {% if form.sitemap_url.errors %}{{ form.sitemap_url.errors }}{% endif %}
+          </div>
+          {% endif %}
+
+          {% if form.sitemap.value %}
+          <div id="{{ form.sitemap.auto_id }}_container" class="form__group{% if form.sitemap.errors %} has-error{% endif %}">
+            <label for="id_{{ form.sitemap.name }}">
+              {% trans "Sitemap" %}
+            </label>
+            {% trans "Current:" %} <code>{{ form.sitemap.value }}</code>
+            <div class="ds-checkbox">
+              <input
+                id="{{ form.sitemap.name }}-clear_id"
+                name="{{ form.sitemap.name }}-clear"
+                type="checkbox" />
+              <label for="{{ form.sitemap.name }}-clear_id">
+                {% trans "Remove" %}
               </label>
             </div>
           </div>
           {% endif %}
-        </div>
-      </div>
-    </fieldset>
 
-    <fieldset class="form__fieldset">
-      <legend class="required-form">Tilføj regler</legend>
-      <div id="{% if view.edit %}messageColorId{% endif %}" class="form__group{% if form.rules.errors %} has-error{% endif %}">
-          <div class="select-rules">
-
-            <ul id="available_rules" class="select-rules__available">
-              {% for value, tag in form.rules.field.choices %}
-              <li class="rule" data-rule-id="{{ value }}">
-                <a href="javascript:void();" class="add-rule-button" title="{{ description }}" role="button">{{ tag }}</a>
-              </li>
-              {% endfor %}
-            </ul>
-
-            <div id="selected_rules" class="select-rules__selected">
-              <div id="rules_list"></div>
+          {% if form.sitemap %}
+          <div class="form__group">
+            <label for="id_{{ form.sitemap.name }}">
+              {% trans "Upload sitemap" %}
+            </label>
+            <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+            <div class="fileUpload button button--grey button--upload">
+              <span>
+                {% trans "Upload" %}
+              </span>
+              <input
+                class="upload"
+                id="id_{{ form.sitemap.name }}"
+                name="{{ form.sitemap.name }}"
+                type="file"
+                data-filename-placement="inside"
+                title="{% trans 'Click here to upload sitemap.xml' %}" />
             </div>
 
-            {% if view.edit %}
-            <div id="changed_rules">Bemærk, at ændringer i regelsættet betyder, at alle filer skal scannes på ny.</div>
+            {% if form.sitemap.help_text %}
+            <span class="form__help-text">{{ form.sitemap.help_text }}</span>
             {% endif %}
 
-            {% if form.rules.errors %}{{ form.rules.errors }}{% endif %}
+            {% if form.sitemap.errors %}{{ form.sitemap.errors }}{% endif %}
           </div>
-      </div>
-    </fieldset>
-
-    <fieldset class="form__fieldset">
-      <legend>Interval</legend>
-
-      <div class="form__group">
-        <div id="container">
-
-          {% if form.schedule.help_text %}
-          <span class="form__help-text">{{ form.schedule.help_text }}</span>
           {% endif %}
 
-          {{ form.schedule.label_tag }}
+            {% if form.service_account_file %}
+          <div class="form__group">
+            <label for="id_{{ form.service_account_file.name }}">
+              {% trans "Upload service account" %} (.json)
+            </label>
+              <input id="upload-file-service" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+              <div class="fileUpload button button--grey button--upload">
+                <span>
+                  {% trans "Upload" %}
+                </span>
+                <input
+                  class="upload"
+                  id="id_{{ form.service_account_file.name }}"
+                  name="{{ form.service_account_file.name }}"
+                  type="file"
+                  data-filename-placement="inside"
+                  title="{% trans 'Click here to upload service account credentials (JSON FORMAT)' %}" />
+              </div>
 
-          {{ form.schedule }}
+            {% if form.service_account_file.help_text %}
+            <span class="form__help-text">{{ form.service_account_file.help_text }}</span>
+            {% endif %}
 
-          <div id="{{ form.schedule.auto_id }}_errors">
-            {{ form.schedule.errors }}
+            {% if form.service_account_file.errors %}{{ form.service_account_file.errors }}{% endif %}
           </div>
-        </div>
+          {% endif %}
 
-      </div>
-        {% if object.pk %}
-            <p>Scanneren vil starte på følgende tidspunkt på de valgte dage:<br /> {{ object.get_start_time }}</p>
+          {% if form.service_account_file.value %}
+          <div id="{{ form.service_account_file.auto_id }}_container" class="form__group{% if form.service_account_file.errors %} has-error{% endif %}">
+            <label for="id_{{ form.service_account_file.name }}">
+              {% trans "Service account" %}
+            </label>
+            {% trans "Current file:" %} <code>{{ form.service_account_file.value }}</code>
+          </div>
+          {% endif %}
+
+          {% if form.user_emails %}
+          <div class="form__group">
+            <label for="id_{{ form.user_emails.name }}">
+              {% trans "Upload list of accounts" %} (.csv)
+            </label>
+              <input id="upload-file-email" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+              <div class="fileUpload button button--grey button--upload">
+                <span>
+                  {% trans "Upload" %}
+                </span>
+                <input
+                  class="upload"
+                  id="id_{{ form.user_emails.name }}"
+                  name="{{ form.user_emails.name }}"
+                  type="file"
+                  data-filename-placement="inside"
+                  title="{% trans 'Click here to upload list of accounts (CSV FORMAT)' %}" />
+              </div>
+
+            {% if form.user_emails.help_text %}
+            <span class="form__help-text">{{ form.user_emails.help_text }}</span>
+            {% endif %}
+
+            {% if form.service_account_file.errors %}{{ form.user_emails.errors }}{% endif %}
+          </div>
+          {% endif %}
+
+          {% if form.user_emails.value %}
+          <div id="{{ form.user_emails.auto_id }}_container" class="form__group{% if form.user_emails.errors %} has-error{% endif %}">
+            <label for="id_{{ form.user_emails.name }}">
+              {% trans "List of accounts" %}
+            </label>
+            {% trans "Current file:" %} <code>{{ form.user_emails.value }}</code>
+          </div>
+          {% endif %}
+          </fieldset>
         {% endif %}
-    </fieldset>
+    </section>
 
-    <div class="form__group">
-      <button type="submit" class="button button--cta button--rounded name="save">Gem ændringer</button>
+    <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3>
+            {% trans "Scanner settings" %}
+          </h3>
+          <div class="form__group">
+            <div id="select_scan_rules_container">
+
+              <div class="checkbox-group">
+                <div class="ds-checkbox">
+                  <input 
+                    type="checkbox" 
+                    id="id_{{ form.do_ocr.name }}" 
+                    name="{{ form.do_ocr.name }}"
+                    value="{{ form.do_ocr.name }}" 
+                    {% if form.do_ocr.field.disabled %} 
+                    disabled 
+                    {% endif %}
+                    {% if form.do_ocr.value %} 
+                    checked="checked" 
+                    {% endif %}>
+                  <label for="id_{{ form.do_ocr.name }}">
+                    {{ form.do_ocr.label }}
+                    {% if form.do_ocr.help_text %}
+                    <small>{{ form.do_ocr.help_text }}</small>
+                    {% endif %}
+                  </label>
+                </div>
+
+                <div class="ds-checkbox ds-checkbox--inline">
+                  <input 
+                    type="checkbox" 
+                    id="id_{{ form.do_last_modified_check.name }}"
+                    name="{{ form.do_last_modified_check.name }}" 
+                    value="{{ form.do_last_modified_check.name }}"
+                    {% if form.do_last_modified_check.field.disabled %} disabled {% endif %}
+                    {% if form.do_last_modified_check.value %} checked="checked" {% endif %}>
+                  <label for="id_{{ form.do_last_modified_check.name }}">
+                    {{ form.do_last_modified_check.label }}
+                    {% if form.do_last_modified_check.help_text %}
+                    <small>{{ form.do_last_modified_check.help_text }}</small>
+                    {% endif %}
+                  </label>
+                </div>
+                {% if view.type == 'web' %}
+                <div class="ds-checkbox ds-checkbox--inline">
+                  <input
+                    type="checkbox"
+                    id="id_{{ form.do_last_modified_check_head_request.name }}"
+                    name="{{ form.do_last_modified_check_head_request.name }}"
+                    value="{{ form.do_last_modified_check_head_request.name }}"
+                    {% if form.do_last_modified_check_head_request.field.disabled %} disabled {% endif %}
+                    {% if form.do_last_modified_check_head_request.value %} checked="checked" {% endif %}>
+                  <label for="id_{{ form.do_last_modified_check_head_request.name }}">
+                    {{ form.do_last_modified_check_head_request.label }}
+                    {% if form.do_last_modified_check_head_request.help_text %}
+                    <small>{{ form.do_last_modified_check_head_request.help_text }}</small>
+                    {% endif %}
+                  </label>
+                </div>
+                {% endif %}
+              </div>
+
+              {% if view.type == 'web' %}
+              <div class="checkbox-group">
+                <div class="ds-checkbox ds-checkbox--inline">
+                  <input 
+                    type="checkbox" 
+                    id="id_{{ form.do_link_check.name }}" 
+                    name="{{ form.do_link_check.name }}"
+                    value="{{ form.do_link_check.name }}" 
+                    {% if form.do_link_check.field.disabled %} disabled {% endif %}
+                    {% if form.do_link_check.value %} checked="checked" {% endif %}>
+                  <label for="id_{{ form.do_link_check.name }}">
+                    {{ form.do_link_check.label }}
+                    {% if form.do_link_check.help_text %}
+                    <small>{{ form.do_link_check.help_text }}</small>
+                    {% endif %}
+                  </label>
+                </div>
+                <div class="ds-checkbox ds-checkbox--inline">
+                  <input 
+                    type="checkbox" 
+                    id="id_{{ form.do_external_link_check.name }}"
+                    name="{{ form.do_external_link_check.name }}" 
+                    value="{{ form.do_external_link_check.name }}"
+                    {% if form.do_external_link_check.field.disabled %} disabled {% endif %}
+                    {% if form.do_external_link_check.value %} checked="checked" {% endif %}>
+                  <label for="id_{{ form.do_external_link_check.name }}">
+                    {{ form.do_external_link_check.label }}
+                    {% if form.do_external_link_check.help_text %}
+                    <small>{{ form.do_external_link_check.help_text }}</small>
+                    {% endif %}
+                  </label>
+                </div>
+
+                <div class="ds-checkbox ds-checkbox--inline">
+                  <input 
+                    type="checkbox" 
+                    id="id_{{ form.do_collect_cookies.name }}" 
+                    name="{{ form.do_collect_cookies.name }}"
+                    value="{{ form.do_collect_cookies.name }}" 
+                    {% if form.do_collect_cookies.field.disabled %} disabled
+                    {% endif %} {% if form.do_collect_cookies.value %} checked="checked" {% endif %}>
+                  <label for="id_{{ form.do_collect_cookies.name }}">
+                    {{ form.do_collect_cookies.label }}
+                    {% if form.do_collect_cookies.help_text %}
+                    <small>{{ form.do_collect_cookies.help_text }}</small>
+                    {% endif %}
+                  </label>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </fieldset>
+    </section>
+
+    <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3 class="required-form">
+            {% trans "Add rules" %}
+          </h3>
+          <div id="{% if view.edit %}messageColorId{% endif %}" class="form__group{% if form.rules.errors %} has-error{% endif %}">
+            <div class="select-rules">
+              
+              <ul id="available_rules" class="select-rules__available">
+                <div class="select-rules-title">
+                  {% trans "Available rules" %}
+                </div>
+                {% for value, tag in form.rules.field.choices %}
+                <li class="rule" data-rule-id="{{ value }}">
+                  <a href="javascript:void();" class="add-rule-button" title="{{ description }}" role="button">{{ tag }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+
+              <i id="chevron_right" class="material-icons">chevron_right</i>
+              
+              <div id="selected_rules" class="select-rules__selected">
+                <div class="select-rules-title">
+                  {% trans "Selected rules" %}
+                </div>
+                <div id="rules_list"></div>
+              </div>
+
+              {% if view.edit %}
+                <div id="changed_rules">Bemærk, at ændringer i regelsættet betyder, at alle filer skal scannes på ny.</div>
+              {% endif %}
+
+              {% if form.rules.errors %}{{ form.rules.errors }}{% endif %}
+            </div>
+          </div>
+        </fieldset>
+    </section>
+
+    <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3>
+            {% trans "Schedule scan" %}
+          </h3>
+
+          <div class="form__group">
+            <div id="container">
+
+              {% if form.schedule.help_text %}
+              <span class="form__help-text">{{ form.schedule.help_text }}</span>
+              {% endif %}
+
+              <span>
+                {% trans "Schedule your scan by creating a fixed interval or adding a date to complete the scannerjob." %}
+              </span>
+
+              {{ form.schedule }}
+
+              <div id="{{ form.schedule.auto_id }}_errors">
+                {{ form.schedule.errors }}
+              </div>
+            </div>
+
+          </div>
+        </fieldset>
+
+        <fieldset>
+          {% if object.pk %}
+              <p>
+                {% trans "The scanner will start at the following time for the selected days:" %}<br /> {{ object.get_start_time }}
+              </p>
+          {% endif %}
+        </fieldset>
+    </section>
+
+    <div class="form__group last-btn">
+      <button type="submit" class="button button--cta" name="save">
+        {% trans "Save changes" %}
+      </button>
     </div>
   </form>
+  </div>
 </div>
 {% endblock %}

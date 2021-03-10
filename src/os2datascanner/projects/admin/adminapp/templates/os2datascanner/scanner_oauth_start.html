@@ -1,36 +1,49 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
 {% load staticfiles %}
 {% load i18n %}
 
 {% block body %}
 <div class="wrapper">
-  <h1 class="page-title" style="display:inline-block;">Opret nyt scannerjob</h1>
+  {% include "partials/main.html" with active_tab="home" %}
 
-  <p>
-    Dette scannerjobs datakilde ligger i skyen, og en eksterne tjeneste skal
-    tillade OS2datascanner adgang til dens indhold.
-  {% if auth_endpoint %}
-  {% if error %}
-  <p>
-    Tjenesten nægtede at give OS2datascanner de nødvendige rettigheder:
-  <pre class="alert alert--danger">{{ error_description }}</pre>
-  <p>
-    Klik på knappen nedenfor for at prøve igen.
-  {% else %}
-    Klik på knappen nedenfor for at blive videresendt til denne tjeneste.
-  {% endif %}
-  <p>
-    <a href="{{ auth_endpoint }}"
-        id="button-authenticate"
-        type="button"
-        class="button button--cta button--small btn btn-default">Fortsæt til {{ service_name }}</a>
-  <p>
-    Du bliver videresendt til oprettelsesformularen, efter tjenesten har
-    udstedt de nødvendige rettigheder.
+  <div class="content">
 
-  {% else %}
-  <p>
-    De informationer, der peger OS2datascanner-systemet på denne tjeneste, mangler.
-  {% endif %}
+    {% include "partials/breadcrumb.html" with page="scannerjob"  %}
+
+    <div class="aside">
+      <h1 class="page-title">
+        {% trans "Create new scannerjob" %}
+      </h1>
+    </div>
+
+    <p>
+      {% trans "The data source of this scannerjob is in the cloud and an external service must allow OS2datascanner to access it's content." %}
+      {% if auth_endpoint %}
+      {% if error %}
+    <p>
+      {% trans "The service refused to grant OS2datascanner the necessary rights:" %}
+    <pre class="alert alert--danger">{{ error_description }}</pre>
+    <p>
+      {% trans "Click the button below to try again." %}
+    {% else %}
+      {% trans "Click the button below to forward to this service." %}
+    {% endif %}
+    <p>
+      <a href="{{ auth_endpoint }}"
+          id="button-authenticate"
+          type="button"
+          class="button button--cta button--small btn btn-default">
+          {% trans "Continue to" %} {{ service_name }}
+      </a>
+    </p>
+    <p>
+      {% trans "You will be forwarded to the creation form after the service has issued the necessary rights." %}
+    </p>
+    {% else %}
+    <p>
+      {% trans "The information pointing to the OS2datascanner system for this service is missing." %}
+    </p>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}

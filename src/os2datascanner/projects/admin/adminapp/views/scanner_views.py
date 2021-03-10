@@ -20,6 +20,14 @@ class StatusOverview(RestrictedListView):
         return super().get_queryset().order_by("-pk")[:10]
 
 
+class StatusCompleted(RestrictedListView):
+    template_name = "os2datascanner/scan_completed.html"
+    model = ScanStatus
+
+    def get_queryset(self):
+        return super().get_queryset().order_by("-pk")
+
+
 class ScannerList(RestrictedListView):
     """Displays list of scanners."""
 

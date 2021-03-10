@@ -1,12 +1,14 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
+{% load i18n %}
+
 {%  block title %}
-OS2Webscanner
+    OS2Webscanner
 {% endblock %}
 
 {% block body %}
 
 <div class="container">
-    Siden blev ikke fundet.
+    {% trans "Page not found" %}
 </div>
 
 {% endblock %}
