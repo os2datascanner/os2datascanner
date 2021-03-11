@@ -254,6 +254,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         
     def count_unhandled_matches(self):
         # Counts the amount of unhandled matches
+        # TODO: Optimize queries by reading from relational db
         unhandled_matches = self.unhandled_matches.order_by(
             'data__metadata__metadata').values(
             'data__metadata__metadata').annotate(
@@ -262,6 +263,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
             'data__metadata__metadata', 'total',
         )
 
+        # TODO: Optimize queries by reading from relational db
         employee_unhandled_list = []
         for um in unhandled_matches:
             dict_values = list(um['data__metadata__metadata'].values())
@@ -271,8 +273,8 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         return employee_unhandled_list
 
     def get_oldest_matches(self):
-        """Needs to be rewritten if a better 'time' is added(#41326)
-        # Gets days since oldest unhandled match for each user"""
+        # TODO: Needs to be rewritten if a better 'time' is added(#41326)
+        # Gets days since oldest unhandled match for each user
         oldest_matches = []
         
         for org_user in self.users:

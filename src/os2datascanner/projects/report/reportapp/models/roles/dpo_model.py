@@ -17,5 +17,5 @@ class DataProtectionOfficer(Role):
         return document_reports
 
     class Meta:
-        verbose_name = _("dpo")
-        verbose_name_plural = _("dpo's")
+        verbose_name = _("DPO")
+        verbose_name_plural = _("DPOs")
