@@ -2,26 +2,32 @@
 {%  load i18n %}
 
   <div class="handle-match-wrapper">
-    <span>Håndtér matches som:</span>
+    <span>
+        {% trans "Handle matches as:" %}
+    </span>
       <div class="handle-match">
           <select name="match-handle" id="match-handle">
             <option value="" selected="selected">
                 ----------
             </option>
             <option value="2">
-                Har flyttet filen
+                {% trans "Moved the file" %}
             </option>
             <option value="3">
-                Har slettet filen
+                {% trans "Deleted the file" %}
             </option>
             <option value="1">
-                Har redigeret filen
+                {% trans "Edited the file" %}
             </option>
             <option value="4">
-                Falsk positiv
+                {% trans "False positive" %}
             </option>
           </select>
       </div>
-      <button type="button" class="handle-match__action" data-status="match-handle">Udfør</button>
-      <span class="selected-cb">0 af 10 valgt</span>
+      <button type="button" class="handle-match__action" data-status="match-handle">
+          {% trans "Submit" %}
+      </button>
+      <span class="selected-cb">
+        {% trans "0 out of 10 selected" %}
+      </span>
   </div>

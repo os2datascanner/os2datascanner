@@ -1,13 +1,13 @@
 // Listen for click on toggle checkbox
-$('#select-all').click(function() {   
+$('#select-all').click(function() {
   if(this.checked) {
       // Iterate each checkbox
-      $(':checkbox').each(function() {
-          this.checked = true;    
+      $('td input:checkbox').each(function() {
+        this.checked = true;
       });
   } else {
-      $(':checkbox').each(function() {
-          this.checked = false;                       
+      $('td input:checkbox').each(function() {
+        this.checked = false;                   
       });
   }
 });
@@ -47,6 +47,7 @@ const actions = $('.handle-match__action')
 $(actions).unbind('click').click(function() {
   const sel = document.getElementById('match-handle'); // get handle match element
   const checkbox_nodelist = document.querySelectorAll('#match-checkbox:checked') // get list of checked checkboxes
+  const select_all_checkbox = document.getElementById('select-all'); // select-all checkbox
   const new_status = parseInt(sel.options[sel.selectedIndex].value); // get value of selected match-handling
 
   // Create a list of report_ids, populate it and POST it to api.py action
@@ -75,8 +76,8 @@ $(actions).unbind('click').click(function() {
               for (i = 0; i < checkbox_nodelist.length; i++) {
                   checkbox_nodelist[i].closest('tr').remove();
               }
-              showChecked() // Updates the x of y selected ..
-
+              showChecked() // Updates the x of y selected.
+              select_all_checkbox.checked = false; // reset select-all checkbox
           } else if (body["status"] == "fail") {
             console.log(
                 "Attempt to call set-status-1 failed: "
@@ -84,7 +85,7 @@ $(actions).unbind('click').click(function() {
           }
         })
       }
-    })
+})
 
 
 // Handle match options
