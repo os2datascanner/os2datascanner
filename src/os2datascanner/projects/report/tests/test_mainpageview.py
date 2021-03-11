@@ -235,31 +235,39 @@ class MainPageViewTest(TestCase):
 
     def test_mainpage_view_filter_by_scannerjob(self):
         params = '?scannerjob=14&sensitivities=all'
-        remediator = Remediator.objects.create(user=self.user)
+        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
+        emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 2)
-        remediator.delete()
+        emailalias.delete()
+        emailalias1.delete()
 
     def test_mainpage_view_filter_by_sensitivities(self):
         params = '?scannerjob=all&sensitivities=1000'
-        remediator = Remediator.objects.create(user=self.user)
+        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
+        emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 1)
-        remediator.delete()
+        emailalias.delete()
+        emailalias1.delete()
 
     def test_mainpage_view_filter_by_all(self):
         params = '?scannerjob=all&sensitivities=all'
-        remediator = Remediator.objects.create(user=self.user)
+        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
+        emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 2)
-        remediator.delete()
+        emailalias.delete()
+        emailalias1.delete()
 
     def test_mainpage_view_filter_by_scannerjob_and_sensitivities(self):
         params = '?scannerjob=14&sensitivities=1000'
-        remediator = Remediator.objects.create(user=self.user)
+        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
+        emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 1)
-        remediator.delete()
+        emailalias.delete()
+        emailalias1.delete()
 
     def test_mainpage_view_filter_by_datasource_age_true(self):
         params = '?30-days=true'

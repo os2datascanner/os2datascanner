@@ -1,29 +1,35 @@
 import enum
+import datetime
 
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.fields import JSONField
 from .organization_model import Organization
+from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.engine2.pipeline.messages import MatchesMessage
 
 
 class DocumentReport(models.Model):
-    scan_time = models.DateTimeField(null=True, db_index=True)
+    scan_time = models.DateTimeField(null=True, db_index=True,
+                                            verbose_name=_('scan time'))
+
+    created_timestamp = models.DateTimeField(null=True, blank=True,
+                                             verbose_name=_('created timestamp'))
 
     organization = models.ForeignKey(Organization,
                                      null=True, blank=True,
-                                     verbose_name='Organisation',
+                                     verbose_name=_('organization'),
                                      on_delete=models.PROTECT)
 
-    path = models.CharField(max_length=2000, verbose_name="Path",
+    path = models.CharField(max_length=2000, verbose_name=_("path"),
                             db_index=True)
     # It could be that the meta data should not be part of the jsonfield...
     data = JSONField(null=True)
 
-    sensitivity = models.IntegerField(null=True, verbose_name="Sensitivity")
+    sensitivity = models.IntegerField(null=True, verbose_name=_("sensitivity"))
 
-    probability = models.FloatField(null=True, verbose_name="Probability")
+    probability = models.FloatField(null=True, verbose_name=_("probability"))
 
     # datasource_last_modified stores when the scanned file/email/element itself, has last been updated.
     # This timestamp is collected during scan and is from the datasource.
@@ -65,10 +71,13 @@ class DocumentReport(models.Model):
 
     resolution_status = models.IntegerField(choices=ResolutionChoices.choices(),
                                             null=True, blank=True, db_index=True,
-                                            verbose_name="Håndteringsstatus")
+                                            verbose_name=_("resolution status"))
+
+    resolution_time = models.DateTimeField(blank=True, null=True,
+                                                verbose_name=_("resolution time"))
 
     custom_resolution_status = models.CharField(max_length=1024, blank=True,
-                                                verbose_name="Begrundelse")
+                                                verbose_name=_("justification"))
 
     def clean(self):
         self.clean_custom_resolution_status()
@@ -83,6 +92,23 @@ class DocumentReport(models.Model):
                                     " explanation"
                         })
 
+    def __init__(self, *args, **kwargs):
+        # TODO: move to property/model method
+        super().__init__(*args, **kwargs)
+        self.__resolution_status = self.resolution_status
+
+    def save(self, *args, **kwargs):
+        # If Resolution status goes from not handled to handled - change resolution_time to now 
+        if self.__resolution_status == None and (self.resolution_status or self.resolution_status == 0):
+            self.resolution_time = datetime.datetime.now()
+
+        # Adds a timestamp if it's a new match:
+        if not self.pk:
+            self.created_timestamp = datetime.datetime.now()
+
+        super().save(*args, **kwargs)
+
+
     class Meta:
-        verbose_name_plural = "Document reports"
+        verbose_name_plural = _("document reports")
         ordering = ['-sensitivity', '-probability']

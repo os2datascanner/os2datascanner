@@ -1,8 +1,18 @@
+{% load staticfiles %}
 {% include "partials/header.html" %}
 {% include "components/banner.html" %}
 
 <main class="wrapper">
-  {% include "partials/sidemenu.html" with active_tab="statistics" %}
+  {% include "partials/sidemenu.html" %}
 
   {% include "components/statistics-template.html" %}
 </main>
+{% block scripts %}
+<script src="{% static "3rdparty/jquery-3.5.0.min.js" %} "></script>
+<script src="{% static "3rdparty/chart-2.9.4.min.js" %}"></script>
+<script src="{% static "3rdparty/chartjs-plugin-datalabels.js" %}"></script>
+<script src="{% static "src/js/chartHelpers.js" %}"></script>
+<script src="{% static "src/js/pieCharts.js" %}"></script>
+<script src="{% static "src/js/doughnutCharts.js" %}"></script>
+
+{% endblock %}

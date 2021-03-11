@@ -8,18 +8,18 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-01 12:05-0600\n"
+"POT-Creation-Date: 2021-03-11 03:49-0600\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: reportapp/admin.py:88
+#: reportapp/admin.py:107
 msgid "Personal info"
 msgstr ""
 
-#: reportapp/admin.py:90
+#: reportapp/admin.py:109
 msgid "Important dates"
 msgstr ""
 
@@ -27,6 +27,75 @@ msgstr ""
 #, python-format
 msgid "%(value)s is not a valid SID"
 msgstr "%(value)s er ikke et gyldigt SID"
+
+#: reportapp/models/documentreport_model.py:15
+msgid "scan time"
+msgstr "scanningstid"
+
+#: reportapp/models/documentreport_model.py:18
+msgid "created timestamp"
+msgstr "oprettet tidsstempel"
+
+#: reportapp/models/documentreport_model.py:22
+msgid "organization"
+msgstr "organisation"
+
+#: reportapp/models/documentreport_model.py:25
+msgid "path"
+msgstr "filsti"
+
+#: reportapp/models/documentreport_model.py:30
+#, fuzzy
+#| msgid "Sensitivity"
+msgid "sensitivity"
+msgstr "Følsomhed"
+
+#: reportapp/models/documentreport_model.py:32
+#, fuzzy
+#| msgid "Probability"
+msgid "probability"
+msgstr "Sandsynlighed"
+
+#: reportapp/models/documentreport_model.py:74
+msgid "resolution status"
+msgstr "håndteringsstatus"
+
+#: reportapp/models/documentreport_model.py:77
+msgid "resolution time"
+msgstr "håndteringstid"
+
+#: reportapp/models/documentreport_model.py:80
+#, fuzzy
+msgid "justification"
+msgstr "begrundelse"
+
+#: reportapp/models/documentreport_model.py:113
+msgid "document reports"
+msgstr "dokument rapporter"
+
+#: reportapp/models/roles/dpo_model.py:14
+msgid "DPO overview"
+msgstr "DPO overblik"
+
+#: reportapp/models/roles/dpo_model.py:20
+msgid "DPO"
+msgstr "DPO"
+
+#: reportapp/models/roles/dpo_model.py:21
+msgid "DPOs"
+msgstr "DPO'er"
+
+#: reportapp/models/roles/leader_model.py:14
+msgid "Leader overview"
+msgstr "Leder overblik"
+
+#: reportapp/models/roles/leader_model.py:20
+msgid "leader"
+msgstr "leder"
+
+#: reportapp/models/roles/leader_model.py:21
+msgid "leaders"
+msgstr "ledere"
 
 #: reportapp/models/roles/remediator_model.py:43
 msgid "remediator"
@@ -36,11 +105,8 @@ msgstr "oprydder"
 msgid "remediators"
 msgstr "opryddere"
 
-#: reportapp/templates/components/handle-match.html:7
-msgid "Handle match"
-msgstr "Håndtér match"
-
-#: reportapp/templates/components/filters.html:23 & 50
+#: reportapp/templates/components/filters.html:23
+#: reportapp/templates/components/filters.html:52
 msgid "Clear"
 msgstr "Ryd"
 
@@ -53,6 +119,8 @@ msgid "Select scannerjob"
 msgstr "Vælg scannerjob"
 
 #: reportapp/templates/components/filters.html:55
+#: reportapp/templates/components/statistics-template.html:21
+#: reportapp/templates/components/statistics-template.html:27
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
@@ -60,9 +128,13 @@ msgstr "Følsomhed"
 msgid "Select sensitivity"
 msgstr "Vælg følsomhed"
 
-#: reportapp/templates/components/filters.html:75
+#: reportapp/templates/components/filters.html:85
 msgid "Only show matches less than 30 days old"
 msgstr "Vis matches der er under 30 dage gamle"
+
+#: reportapp/templates/components/handle-match.html:7
+msgid "Handle match"
+msgstr "Håndtér match"
 
 #: reportapp/templates/components/handle-match.html:12
 msgid "This match was handled in the following way:"
@@ -105,18 +177,16 @@ msgid "Match"
 msgstr "Match"
 
 #: reportapp/templates/components/hits.html:20
-msgid "Probability"
-msgstr "Sandsynlighed"
-
-#: reportapp/templates/components/hits.html:23
 msgid "Context"
 msgstr "Kontekst"
 
+#: reportapp/templates/components/hits.html:23
+msgid "Probability"
+msgstr "Sandsynlighed"
+
 #: reportapp/templates/components/hits.html:26
-#, fuzzy
-#| msgid "Handle match"
 msgid "Handle"
-msgstr "Håndtér match"
+msgstr "Håndtér"
 
 #: reportapp/templates/components/hits.html:45
 msgid "First"
@@ -134,11 +204,12 @@ msgstr "Næste"
 msgid "Last"
 msgstr "Sidste"
 
-#: reportapp/templates/components/navigation.html:8
+#: reportapp/templates/components/navigation.html:9
 msgid "Front page"
 msgstr "Forside"
 
-#: reportapp/templates/components/navigation.html:29
+#: reportapp/templates/components/navigation.html:31
+#: reportapp/templates/components/navigation.html:41
 msgid "Log out"
 msgstr "Log ud"
 
@@ -147,20 +218,69 @@ msgid "Sensitivity legend"
 msgstr "Følsomhedsoversigt"
 
 #: reportapp/templates/components/sensitivity-chart.html:8
+#: reportapp/templates/components/statistics-template.html:41
 msgid "Critical"
 msgstr "Kritisk"
 
 #: reportapp/templates/components/sensitivity-chart.html:12
+#: reportapp/templates/components/statistics-template.html:50
 msgid "Problem"
 msgstr "Problem"
 
 #: reportapp/templates/components/sensitivity-chart.html:16
+#: reportapp/templates/components/statistics-template.html:59
 msgid "Warning"
 msgstr "Advarsel"
 
 #: reportapp/templates/components/sensitivity-chart.html:20
+#: reportapp/templates/components/statistics-template.html:68
 msgid "Notification"
 msgstr "Notifikation"
+
+#: reportapp/templates/components/statistics-template.html:4
+msgid "Leader statistics"
+msgstr "Lederstatistik"
+
+#: reportapp/templates/components/statistics-template.html:6
+msgid "DPO statistics"
+msgstr "DPO statistik"
+
+#: reportapp/templates/components/statistics-template.html:13
+#: reportapp/templates/components/statistics-template.html:79
+msgid "Handled matches"
+msgstr "Håndterede matches"
+
+#: reportapp/templates/components/statistics-template.html:14
+msgid "Percentage of handled matches distributed by sensitivity"
+msgstr "Procentvis andel af håndterede matches fordelt på følsomhed"
+
+#: reportapp/templates/components/statistics-template.html:15
+msgid "The department's percentage of handled matches"
+msgstr "Afdelingens procentvise andel af håndterede matches"
+
+#: reportapp/templates/components/statistics-template.html:28
+msgid "All matches"
+msgstr "Alle matches"
+
+#: reportapp/templates/components/statistics-template.html:42
+#: reportapp/templates/components/statistics-template.html:51
+#: reportapp/templates/components/statistics-template.html:60
+#: reportapp/templates/components/statistics-template.html:69
+#: reportapp/templates/components/statistics-template.html:80
+msgid "of"
+msgstr "af"
+
+#: reportapp/templates/components/statistics-template.html:91
+msgid "Distribution of matches"
+msgstr "Fordeling af matches"
+
+#: reportapp/templates/components/statistics-template.html:92
+msgid "Matches distributed by sensitivities"
+msgstr "Matches fordelt på følsomheder"
+
+#: reportapp/templates/components/statistics-template.html:93
+msgid "Matches distributed by data sources"
+msgstr "Matches fordelt på datakilder"
 
 #: reportapp/templates/django_saml2_auth/denied.html:6
 msgid "Permission denied"
@@ -266,12 +386,6 @@ msgstr ""
 "\n"
 "Med venlig hilsen<br>\n"
 "OS2datascanner-systemet\n"
-
-#~ msgid "Matches"
-#~ msgstr "Matches"
-
-#~ msgid "Number of matches"
-#~ msgstr "Antal matches"
 
 #~ msgid "No available data"
 #~ msgstr "Ingen tilgængelig data"

@@ -4,23 +4,20 @@
 <nav class="navigation">
   <ul>
     <li>
-      <a href="/" class="{% if active_tab == 'home' %}active{% endif %}">
+      <a href="/" class="{% if request.path == '/' %}active{% endif %}">
         {% include "components/svg-icons/home.svg" %}
         <span class="width">{% trans "Front page" %}</span>
       </a>
     </li>
-    <!-- <li>
-      <a href="/statistics" class="{% if active_tab == 'statistics' %}active{% endif %}">
+
+  {% for role in roles %}
+    <li>
+      <a href="{{ role.url }}" class={% if request.path == role.url %}active{% endif %}>
         {% include "components/svg-icons/bar_chart.svg" %}
-        <span class="width">Afdelingsstatistik</span>
+        <span class="width">{{ role.description }}</span>
       </a>
     </li>
-    <li>
-      <a href="/statistics">
-        {% include "components/svg-icons/bar_chart.svg" %}
-        <span class="width">DPO overblik</span>
-      </a>
-    </li> -->
+  {% endfor %}
   </ul>
 
 {% settings_value "KEYCLOAK_ENABLED" as keycloak_enabled %}

@@ -32,3 +32,12 @@ class Role(models.Model):
         this Role. Each Role has different rules for what to include and what
         to exclude. (If a user has more than one Role, then the user interface
         will display all document reports accepted by at least one Role.)"""
+
+    @classmethod
+    def get_user_roles_or_default(cls, user):
+        # Avoiding circular import
+        from .defaultrole_model import DefaultRole
+        # TODO: User's should always have DefaultRole
+        return user.roles.select_subclasses() or [
+            DefaultRole(user=user)
+        ]

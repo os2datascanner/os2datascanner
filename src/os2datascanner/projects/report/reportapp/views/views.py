@@ -15,25 +15,34 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 import structlog
+import datetime
 
 from datetime import timedelta, datetime
 from urllib.parse import urlencode
 from django.conf import settings
 
-from django.db.models import Count
-from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Q
+from django.http import HttpResponseForbidden
+from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.views.generic import View, TemplateView, ListView
-from django.db.models import Q
-
-from ..models.documentreport_model import DocumentReport
-from ..models.roles.defaultrole_model import DefaultRole
-from ..models.userprofile_model import UserProfile
-from ..models.organization_model import Organization
 
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.projects.report.reportapp.models.roles.role_model import Role
+
+from ..utils import user_is
+from ..models.documentreport_model import DocumentReport
+from ..models.roles.defaultrole_model import DefaultRole
+from ..models.userprofile_model import UserProfile
+from ..models.organization_model import Organization
+from ..models.roles.remediator_model import Remediator
+
+# For permissions
+from ..models.roles.dpo_model import DataProtectionOfficer
+from ..models.roles.leader_model import Leader
 
 logger = structlog.get_logger()
 
@@ -42,6 +51,8 @@ RENDERABLE_RULES = (CPRRule.type_label, RegexRule.type_label,)
 
 class LoginRequiredMixin(View):
     """Include to require login."""
+    # TODO: Use existing django mixin class #42012
+    roles = None
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -69,7 +80,7 @@ class MainPageView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         user = self.request.user
-        roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
+        roles = Role.get_user_roles_or_default(user)
         # Handles filtering by role + org and sets datasource_last_modified if non existing
         self.matches = filter_inapplicable_matches(user, self.matches, roles)
         # Filters by datasource_last_modified.
@@ -145,8 +156,150 @@ class MainPageView(ListView, LoginRequiredMixin):
         return context
 
 
-class StatisticsPageView(TemplateView):
+class StatisticsPageView(TemplateView, LoginRequiredMixin):
     template_name = 'statistics.html'
+    context_object_name = "matches"  # object_list renamed to something more relevant
+    model = DocumentReport
+    users = UserProfile.objects.all()
+    matches = DocumentReport.objects.filter(
+        data__matches__matched=True)
+    handled_matches = matches.filter(
+        resolution_status__isnull=False)
+    unhandled_matches = matches.filter(
+        resolution_status__isnull=True)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Contexts are done as lists of tuples
+        context['sensitivities'], context['total_matches'] = \
+            self.count_all_matches_grouped_by_sensitivity()
+
+        context['handled_matches'], context['total_handled_matches'] = \
+            self.count_handled_matches_grouped_by_sensitivity()
+
+        return context
+
+    def count_handled_matches_grouped_by_sensitivity(self):
+        """Counts the distribution of handled matches grouped by sensitivity"""
+        handled_matches = self.handled_matches.order_by(
+            '-sensitivity').values(
+            'sensitivity').annotate(
+            total=Count('sensitivity')
+        ).values(
+            'sensitivity', 'total',
+        )
+
+        return self.create_sensitivity_list(handled_matches)
+
+    def count_all_matches_grouped_by_sensitivity(self):
+        """Counts the distribution of matches grouped by sensitivity"""
+        sensitivities = self.matches.order_by(
+            '-sensitivity').values(
+            'sensitivity').annotate(
+            total=Count('sensitivity')
+        ).values(
+            'sensitivity', 'total'
+        )
+
+        return self.create_sensitivity_list(sensitivities)
+
+    def create_sensitivity_list(self, matches):
+        """Helper method which groups the totals by sensitivities
+        and also takes the sum of the totals"""
+        # For handling having no values - List defaults to 0
+        sensitivity_list = [
+            [Sensitivity.CRITICAL.presentation, 0],
+            [Sensitivity.PROBLEM.presentation, 0],
+            [Sensitivity.WARNING.presentation, 0],
+            [Sensitivity.NOTICE.presentation, 0],
+        ]
+        for match in matches:
+            if (match['sensitivity']) == Sensitivity.CRITICAL.value:
+                sensitivity_list[0][1] = match['total']
+            elif (match['sensitivity']) == Sensitivity.PROBLEM.value:
+                sensitivity_list[1][1] = match['total']
+            elif (match['sensitivity']) == Sensitivity.WARNING.value:
+                sensitivity_list[2][1] = match['total']
+            elif (match['sensitivity']) == Sensitivity.NOTICE.value:
+                sensitivity_list[3][1] = match['total']
+
+        # Sum of the totals
+        total = 0
+        for match in sensitivity_list:
+            total += match[1]
+
+        return sensitivity_list, total
+
+    def get_data_sources(self):
+        # Counts the distribution of data sources by type
+        data_sources = self.matches.order_by(
+            'data__matches__handle__type').values(
+            'data__matches__handle__type').annotate(
+            total=Count('data__matches__handle__type')
+        ).values(
+            'data__matches__handle__type', 'total',
+        )
+
+        return [(ds['data__matches__handle__type'],
+                ds['total']) for ds in data_sources]
+        
+    def count_unhandled_matches(self):
+        # Counts the amount of unhandled matches
+        # TODO: Optimize queries by reading from relational db
+        unhandled_matches = self.unhandled_matches.order_by(
+            'data__metadata__metadata').values(
+            'data__metadata__metadata').annotate(
+            total=Count('data__metadata__metadata')
+        ).values(
+            'data__metadata__metadata', 'total',
+        )
+
+        # TODO: Optimize queries by reading from relational db
+        employee_unhandled_list = []
+        for um in unhandled_matches:
+            dict_values = list(um['data__metadata__metadata'].values())
+            first_value = dict_values[0]
+            employee_unhandled_list.append((first_value, um['total']))
+
+        return employee_unhandled_list
+
+    def get_oldest_matches(self):
+        # TODO: Needs to be rewritten if a better 'time' is added(#41326)
+        # Gets days since oldest unhandled match for each user
+        oldest_matches = []
+        
+        for org_user in self.users:
+            org_roles = Role.get_user_roles_or_default(org_user)
+            earliest_date = timezone.now()
+            for match in self.unhandled_matches:
+                if match.scan_time < earliest_date:
+                    earliest_date = match.scan_time
+                days_ago = timezone.now() - earliest_date
+            tup = (org_user.first_name, days_ago.days)
+            oldest_matches.append(tup)
+
+        return oldest_matches
+
+
+class LeaderStatisticsPageView(StatisticsPageView):
+
+    def dispatch(self, request, *args, **kwargs):
+        if not any(isinstance(role, Leader) for role in
+                   Role.get_user_roles_or_default(request.user)):
+            return HttpResponseForbidden()
+        return super(LeaderStatisticsPageView, self).dispatch(
+            request, *args, **kwargs)
+
+
+class DPOStatisticsPageView(StatisticsPageView):
+
+    def dispatch(self, request, *args, **kwargs):
+        if not user_is(Role.get_user_roles_or_default(request.user),
+                       DataProtectionOfficer):
+            return HttpResponseForbidden()
+        return super(DPOStatisticsPageView, self).dispatch(
+            request, *args, **kwargs)
 
 
 class ApprovalPageView(TemplateView):
@@ -181,10 +334,12 @@ def filter_inapplicable_matches(user, matches, roles):
         # If more than one exist, limit matches to ones without an organization (safety measure)
         if Organization.objects.count() > 1:
             matches = matches.filter(organization=None)
-
-    for role in roles:
+    
+    if user_is(roles, Remediator):
         # Filter matches by role.
-        matches = role.filter(matches)
+        matches = Remediator(user=user).filter(matches)
+    else:
+        matches = DefaultRole(user=user).filter(matches)
 
     return matches
 
@@ -192,4 +347,5 @@ def filter_inapplicable_matches(user, matches, roles):
 def oidc_op_logout_url_method(request):
     logout_url = settings.LOGOUT_URL
     return_to_url = settings.LOGOUT_REDIRECT_URL
-    return logout_url + '?' + urlencode({'redirect_uri': return_to_url, 'client_id': settings.OIDC_RP_CLIENT_ID})
+    return logout_url + '?' + urlencode({'redirect_uri': return_to_url,
+                                         'client_id': settings.OIDC_RP_CLIENT_ID})
