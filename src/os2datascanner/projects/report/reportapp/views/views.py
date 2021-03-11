@@ -31,6 +31,7 @@ from django.views.generic import View, TemplateView, ListView
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.projects.report.reportapp.models.roles.role_model import Role
 
 from ..utils import user_is
 from ..models.documentreport_model import DocumentReport
@@ -58,15 +59,6 @@ class LoginRequiredMixin(View):
         """Check for login and dispatch the view."""
         return super().dispatch(*args, **kwargs)
 
-    def get_user_roles(self):
-        if self.roles is None \
-                and self.request.user.is_authenticated:
-            user = self.request.user
-            self.roles = user.roles.select_subclasses() or [
-                DefaultRole(user=user)
-            ]
-        return self.roles
-
 
 class LoginPageView(View):
     template_name = 'login.html'
@@ -88,7 +80,7 @@ class MainPageView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         user = self.request.user
-        roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
+        roles = Role.get_user_roles_or_default(user)
         # Handles filtering by role + org and sets datasource_last_modified if non existing
         self.matches = filter_inapplicable_matches(user, self.matches, roles)
         # Filters by datasource_last_modified.
@@ -213,7 +205,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         return self.create_sensitivity_list(sensitivities)
 
     def create_sensitivity_list(self, matches):
-        """Helper method which groups the totals by sensitivites
+        """Helper method which groups the totals by sensitivities
         and also takes the sum of the totals"""
         # For handling having no values - List defaults to 0
         sensitivity_list = [
@@ -278,7 +270,7 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
         oldest_matches = []
         
         for org_user in self.users:
-            org_roles = org_user.roles.select_subclasses() or [DefaultRole(user=org_user)]
+            org_roles = Role.get_user_roles_or_default(org_user)
             earliest_date = timezone.now()
             for match in self.unhandled_matches:
                 if match.scan_time < earliest_date:
@@ -293,15 +285,17 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
 class LeaderStatisticsPageView(StatisticsPageView):
 
     def dispatch(self, request, *args, **kwargs):
-        if not any(isinstance(role, Leader) for role in self.get_user_roles()):
+        if not any(isinstance(role, Leader) for role in
+                   Role.get_user_roles_or_default(request.user)):
             return HttpResponseForbidden()
-        return super(LeaderStatisticsPageView, self).dispatch(request, *args, **kwargs)
+        return super(LeaderStatisticsPageView, self).dispatch(
+            request, *args, **kwargs)
 
 
 class DPOStatisticsPageView(StatisticsPageView):
 
     def dispatch(self, request, *args, **kwargs):
-        if not user_is(self.get_user_roles(),
+        if not user_is(Role.get_user_roles_or_default(request.user),
                        DataProtectionOfficer):
             return HttpResponseForbidden()
         return super(DPOStatisticsPageView, self).dispatch(
@@ -353,4 +347,5 @@ def filter_inapplicable_matches(user, matches, roles):
 def oidc_op_logout_url_method(request):
     logout_url = settings.LOGOUT_URL
     return_to_url = settings.LOGOUT_REDIRECT_URL
-    return logout_url + '?' + urlencode({'redirect_uri': return_to_url, 'client_id': settings.OIDC_RP_CLIENT_ID})
+    return logout_url + '?' + urlencode({'redirect_uri': return_to_url,
+                                         'client_id': settings.OIDC_RP_CLIENT_ID})
