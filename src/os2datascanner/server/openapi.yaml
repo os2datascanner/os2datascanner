@@ -10,7 +10,7 @@ info:
     license:
         name: Mozilla Public License, v. 2.0
         url: https://mozilla.org/MPL/2.0/
-    version: 1.0.0
+    version: 1.0.1
 components:
     securitySchemes:
         bpsk:
@@ -146,6 +146,12 @@ components:
                     description: >
                         The MIME type of this file.
                     example: "text/plain"
+                name:
+                    type: string
+                    description: >
+                        The name of this file.
+                    default: "file"
+                    example: "test.txt"
         web-source:
             type: object
             description: >
@@ -226,8 +232,8 @@ paths:
                     content:
                         application/jsonl:
                             example: >
-                                {"scan_spec": {"scan_tag": "395c1473-0868-443b-bff4-ff058a52a81e", "source": {"type": "data", "content": "VGhpcyBpcyBvbmx5IGEgdGVzdA==", "mime": "text/plain"}, "rule": {"type": "regex", "sensitivity": null, "name": null, "expression": "[Tt]est"}, "configuration": {}, "progress": null}, "handle": {"type": "data", "source": {"type": "data", "content": "VGhpcyBpcyBvbmx5IGEgdGVzdA==", "mime": "text/plain"}, "path": "file"}, "matched": true, "matches": [{"rule": {"type": "regex", "sensitivity": null, "name": null, "expression": "[Tt]est"}, "matches": [{"offset": 15, "match": "test"}]}], "origin": "os2ds_matches"}
-                                {"scan_tag": "395c1473-0868-443b-bff4-ff058a52a81e", "handle": {"type": "data", "source": {"type": "data", "content": "VGhpcyBpcyBvbmx5IGEgdGVzdA==", "mime": "text/plain"}, "path": "file"}, "metadata": {}, "origin": "os2ds_metadata"}
+                                {"scan_spec": {"scan_tag": "395c1473-0868-443b-bff4-ff058a52a81e", "source": {"type": "data", "content": "VGhpcyBpcyBvbmx5IGEgdGVzdA==", "mime": "text/plain"}, "rule": {"type": "regex", "sensitivity": null, "name": null, "expression": "[Tt]est"}, "configuration": {}, "progress": null}, "handle": {"type": "data", "source": {"type": "data", "content": None, "mime": "text/plain", "name": "test.txt"}, "path": "test.txt"}, "matched": true, "matches": [{"rule": {"type": "regex", "sensitivity": null, "name": null, "expression": "[Tt]est"}, "matches": [{"offset": 15, "match": "test"}]}], "origin": "os2ds_matches"}
+                                {"scan_tag": "395c1473-0868-443b-bff4-ff058a52a81e", "handle": {"type": "data", "source": {"type": "data", "content": None, "mime": "text/plain", "name": "test.txt"}, "path": "test.txt"}, "metadata": {}, "origin": "os2ds_metadata"}
 
 security:
     -

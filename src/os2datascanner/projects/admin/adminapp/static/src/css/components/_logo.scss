@@ -1,22 +1,16 @@
-.logo {}
-
-.logo a {
-  display: block;
+.logo {
+  padding-top: .25rem;
 }
 
 .logo svg {
+  margin-left: 0.25rem;
   height: 2rem;
-  vertical-align: middle;
 }
 
 .logo .cls-1 {
-  fill: #3a69b4;
+  fill: var(--color-logo-mark);
 }
 
 .logo .cls-2 {
-  fill: #222;
-}
-
-.os2o {
-  display: inline-block;
+  fill: var(--color-logo-text);
 }

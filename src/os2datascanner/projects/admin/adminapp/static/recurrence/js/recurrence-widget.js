@@ -611,7 +611,7 @@ recurrence.widget.AddButton.prototype = {
         var label = recurrence.widget.e(
             'span', {'class': 'recurrence-label'}, this.label);
         var root = recurrence.widget.e(
-            'a', {'class': 'btn btn-success add-button button', 'href': 'javascript:void(0)'},
+            'a', {'class': 'btn btn-success add-button button button--small', 'href': 'javascript:void(0)'},
             [label, space, plus]);
 
         root.onclick = function() {
@@ -646,13 +646,13 @@ recurrence.widget.Panel.prototype = {
         var panel = this;
 
         var remove = recurrence.widget.e('a', {
-            'class': 'remove btn btn-xs btn-danger button button--danger',
+            'class': 'remove btn btn-xs btn-danger button button--remove',
             'href': 'javascript:void(0)',
             'title': recurrence.display.labels.remove,
             'onclick': function() {
                 panel.remove();
             }
-        }, '<svg class="icon"><use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use></svg> Fjern');
+        }, '<svg class="icon icon--white"><use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use></svg> Fjern');
         var label = recurrence.widget.e('a', {
            'class': 'recurrence-label',
            'href': 'javascript:void(0)',
@@ -761,7 +761,7 @@ recurrence.widget.RuleForm.prototype = {
             recurrence.display.labels.exclude_occurrences);
         var mode_container = recurrence.widget.e(
             'div', {
-                'class': 'mode form__group'
+                'class': 'mode form__group ds-checkbox'
             },
             [
                 mode_checkbox, 
@@ -1677,7 +1677,7 @@ recurrence.widget.DateForm.prototype = {
             'label', {'class': 'recurrence-label', 'for': 'mode'},
             recurrence.display.labels.exclude_date);
         var mode_container = recurrence.widget.e(
-            'div', {'class': 'mode'}, [mode_checkbox, mode_label]);
+            'div', {'class': 'mode ds-checkbox'}, [mode_checkbox, mode_label]);
 
         // date
 

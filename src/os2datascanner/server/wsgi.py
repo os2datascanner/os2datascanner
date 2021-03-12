@@ -87,6 +87,12 @@ def error_1(body):
     }
 
 
+def _get_top(s: Source) -> Source:
+    while s.handle:
+        s = s.handle.source
+    return s
+
+
 @api_endpoint
 def scan_1(body):
     if not body:
@@ -105,6 +111,7 @@ def scan_1(body):
         return
 
     source = Source.from_json_object(body["source"])
+    top_type = _get_top(source).type_label
     if not source:
         yield "400 Bad Request"
         yield {
@@ -113,7 +120,7 @@ def scan_1(body):
         }
         return
     elif (settings.server["permitted_sources"]
-            and source.type_label not in settings.server["permitted_sources"]):
+            and top_type not in settings.server["permitted_sources"]):
         yield "400 Bad Request"
         yield {
             "status": "fail",

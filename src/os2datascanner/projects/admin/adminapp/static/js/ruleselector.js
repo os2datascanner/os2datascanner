@@ -31,9 +31,16 @@
         title: ruleAnchor.attr("title") || ruleAnchor.attr("data-original-title")
       }))
     }));
+
     $("#selected_rules [data-rule-id=\"" + ruleId + "\"] [data-toggle=\"tooltip\"]").tooltip(); // enable tooltipping on new element
     $this.attr("data-disabled", ""); // set the data-disabled attribute, so we can't add the item again.
     ruleAnchor.tooltip("destroy"); // disable tooltip
+
+    // onclick show warning message
+    $("#available_rules li[data-rule-id]:not([data-disabled])").on("click", function() {
+      $("#changed_rules").show(); // show warning
+      $("#messageColorId").addClass("has-warning");
+    })
 
     $this.closest("form").append($("<input/>", { // add a hidden input field to the form
       type: "hidden",
@@ -50,6 +57,9 @@
     var ruleAnchor = ruleLi.find("a");
     ruleLi.removeAttr("data-disabled");
     ruleAnchor.tooltip(); // re-enable tooltip
+
+    $("#changed_rules").show(); // show warning
+    $("#messageColorId").addClass("has-warning"); // add css class
 
     $(this).closest("form").find("input[type=\"hidden\"][name=\"rules\"][value=\"" + ruleId + "\"]").remove(); // remove the hidden input field corresponding to the rule we removed
     elm.remove();

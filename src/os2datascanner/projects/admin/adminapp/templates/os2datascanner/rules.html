@@ -1,5 +1,6 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
 {% load staticfiles %}
+{% load i18n %}
 
 {% block scripts %}
 <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
@@ -11,33 +12,54 @@
 {% endblock %}
 
 {% block body %}
-<div class="wrapper">
+<main class="wrapper">
+  {% include "partials/main.html" with active_tab="rules" %}
+
+  <div class="content">
     
-<div class="add-new">
-  <h2 class="page-title" style="display: inline-block;">Regler</h2>
+  <div class="aside">
+    <h1 class="page-title">
+      {% trans "Rules" %}
+    </h1>
     
-     <a 
-    class="button button--add button--cta button--small add-new-btn"
-    href="/rules/regex/add/"
-    title="Tilføj ny regel">
-    <svg class="icon">
-      <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
-    </svg>
-    <div class="add-new-text">Tilføj ny</div>
-  </a> 
-</div>        
+    <div class="btn">
+      <a 
+        class="button button--cta"
+        href="/rules/regex/add/"
+        title="{% trans 'Add rule' %}">
+        <svg class="icon icon--white">
+          <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
+        </svg>
+        <span>
+          {% trans "Add rule" %}
+        </span>
+      </a> 
+    </div>
+  </div>        
 
   <table class="datatable">
     <thead>
       <tr>
-        <th class="datatable__column--name">Navn</th>
+        <th class="datatable__column--name">
+          {% trans "Name" %}
+        </th>
         {% if user.is_superuser %}
-        <th class="datatable__column--org">Organisation</th>
+        <th class="datatable__column--org">
+          {% trans "Organization" %}
+        </th>
         {% endif %}
-        <th class="datatable__column--description">Beskrivelse</th>
-        <th class="datatable__column--expression">Udtryk</th>
-        <th class="datatable__column--sensitivity">Følsomhed</th>
-        <th class="datatable__column--actions">Handling</th>
+        <th class="datatable__column--description">
+          {% trans "Description" %}
+        </th>
+        <th class="datatable__column--expression">
+          {% trans "Expression" %}
+        </th>
+        <th class="datatable__column--sensitivity">
+          {% trans "Sensitivity" %}
+        </th>
+        <th class="datatable__column--actions">
+          {% trans "Action" %}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -51,7 +73,13 @@
 
         <td class="datatable__column--expression">
           {% if rule.regexrule.patterns.all|length > 0 %}
-          <button type="button" class="button button--ghost button--small button--rounded" data-toggle="#show-patterns-{{ forloop.counter }}">Vis udtryk</button>
+          <button 
+            type="button" 
+            class="button button--grey button--small"
+            title="{% trans 'Show expression' %}"
+            data-toggle="#show-patterns-{{ forloop.counter }}">
+            {% trans "Show expression" %}
+          </button>
           </div>
           {% endif %}
         </td>
@@ -66,8 +94,8 @@
         <td class="datatable__column--actions">
           <a 
             href="/rules/regex/{{rule.pk}}"
-            class="button button--small button--rounded"
-            title="Redigér">
+            class="button button--small button--grey"
+            title="{% trans 'Edit' %}">
             <svg class="icon">
               <use xlink:href="/static/src/svg/symbol-defs.svg#icon-pencil"></use>
             </svg>
@@ -78,9 +106,9 @@
             {{ form.as_p }}
             <button 
               type="submit"
-              class="button button--small button--rounded"
+              class="button button--small button--grey"
               onclick="return confirm('Ønsker du virkelig at slette denne regel?\n{{ rule.name }}\n\nHandlingen kan ikke fortrydes.')"
-                    title="Slet">
+                    title="{% trans 'Delete' %}">
               <svg class="icon">
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
               </svg>
@@ -97,7 +125,7 @@
         {% endif %}
           {% if rule.regexrule.patterns.all|length > 0 %}
           {% for pattern in rule.regexrule.patterns.all %}
-          <code>{{ pattern.pattern_string }}</code>
+          <code class="code-grey">{{ pattern.pattern_string }}</code>
           {% endfor %}
           {% endif %}
         </td>
@@ -106,18 +134,30 @@
     </tbody>
   </table>
 
-  <h2 class="page-title" style="display: inline-block;">CPR-regler</h2>
+  <div class="aside">
+    <h1 class="page-title">
+      {% trans "CPR rules" %}
+    </h1>
+  </div>
 
   <table class="datatable">
     <thead>
       <tr>
-        <th class="datatable__column--name">Navn</th>
+        <th class="datatable__column--name">
+          {% trans "Name" %}
+        </th>
         {% if user.is_superuser %}
-        <th class="datatable__column--org">Organisation</th>
+        <th class="datatable__column--org">
+          {% trans "Organization" %}
+        </th>
         {% endif %}
-        <th class="datatable__column--description">Beskrivelse</th>
+        <th class="datatable__column--description">
+          {% trans "Description" %}
+        </th>
         <th class="datatable__column--expression"></th>
-        <th class="datatable__column--sensitivity">Følsomhed</th>
+        <th class="datatable__column--sensitivity">
+          {% trans "Sensitivity" %}
+        </th>
         <th class="datatable__column--actions"></th>
       </tr>
     </thead>
@@ -144,29 +184,46 @@
       {% endfor %}
     </tbody>
   </table>
-</div>
+  </div>
+</main>
 {% endblock %}
 
 {% block modal %}
 <div class="modal modal--small" id="delete-rule-modal" tabindex="-1" role="dialog" aria-labelledby="delete-rule-modal-title" aria-hidden="true" hidden>
-  <h4 class="modal__heading" id="delete-rule-modal-title">Slet regel</h4>
+  <h4 class="modal__heading" id="delete-rule-modal-title">
+    {% trans "Delete rule" %}
+  </h4>
   <iframe src="about:blank" frameborder="0"></iframe>
 </div>
 
 <div class="modal modal--small" id="delete-rule-modal" tabindex="-1" role="dialog" aria-labelledby="delete-rule-modal-title" aria-hidden="true" hidden>
-  <h4 class="modal__heading" id="delete-rule-modal-title">Slet regel</h4>
+  <h4 class="modal__heading" id="delete-rule-modal-title">
+    {% trans "Delete rule" %}
+  </h4>
 
   <div class="modal__content">
     <form action="" method="post">
       {% csrf_token %}
       {{ form.as_p }}
   
-      <p>Ønsker du at slette <em>{{ object }}</em>? Handlingen kan ikke fortrydes.</p>
-      <p>Bemærk venligst at denne regel i øjeblikket indgår i <em>{{ object.scanners.all.count }}</em> scannerjob og <em>{{ object.scans.all.count }}</em> rapporter.</p>
+      <p>
+        {% trans "Do you want to delete" %} <em>{{ object }}</em>? 
+        {% trans "This action cannot be undone." %}
+      </p>
+      <p>
+        {% trans "Please note that this rule is currently included in" %} 
+        <em>{{ object.scanners.all.count }}</em> 
+        {% trans "scannerjob and" %} <em>{{ object.scans.all.count }}</em> 
+        {% trans "reports." %}
+      </p>
   
       <div class="form__group">
-        <button class="button button--cta button--small btn btn-default" type="submit">Ja</button>
-        <button class="button button--cta button--small btn btn-default" type="button" data-modal="modal:close">Nej</button>
+        <button class="button button--cta button--small btn btn-default" type="submit">
+          {% trans "Yes" %}
+        </button>
+        <button class="button button--cta button--small btn btn-default" type="button" data-modal="modal:close">
+          {% trans "No" %}
+        </button>
       </div>
     </form>
   </div>

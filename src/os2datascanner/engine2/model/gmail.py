@@ -86,6 +86,10 @@ class GmailResource(FileResource):
         super().__init__(handle, sm)
         self._metadata = None
 
+    def _generate_metadata(self):
+        yield "email-account", self.handle.source._user_email_gmail
+        yield from super()._generate_metadata()
+
     def check(self) -> bool:
         try:
             self.metadata

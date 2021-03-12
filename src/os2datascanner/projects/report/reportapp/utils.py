@@ -1,15 +1,16 @@
 import json
 import hashlib
+import unicodedata
 import structlog
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from mozilla_django_oidc import auth
 
 from os2datascanner.engine2.pipeline import messages
 
 from .models.aliases.emailalias_model import EmailAlias
 from .models.aliases.adsidalias_model import ADSIDAlias
-
 
 logger = structlog.get_logger()
 
@@ -43,6 +44,46 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
         ADSIDAlias.objects.get_or_create(user=user, sid=sid)
 
 
+def user_is(roles, role_cls):
+    """Checks whether a list of roles contains a certain role type (role_cls)"""
+    return any(isinstance(role, role_cls)
+               for role in roles)
+
+
+class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
+    def create_user(self, claims):
+        user = super(OIDCAuthenticationBackend, self).create_user(claims)
+        get_claim_user_info(claims, user)
+        user.save()
+        get_or_create_user_aliases_OIDC(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
+
+        # self.update_groups(user, claims)
+
+        return user
+
+    def update_user(self, user, claims):
+        get_claim_user_info(claims, user)
+        user.save()
+        get_or_create_user_aliases_OIDC(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
+        # self.update_groups(user, claims)
+
+        return user
+
+
+def get_claim_user_info(claims, user):
+    user.username = claims.get('preferred_username', '')
+    user.first_name = claims.get('given_name', '')
+    user.last_name = claims.get('family_name', '')
+
+
+def get_or_create_user_aliases_OIDC(user, email, sid):  # noqa: D401
+    """ This method creates or updates the users aliases  """
+    if email:
+        EmailAlias.objects.get_or_create(user=user, address=email)
+    if sid:
+        ADSIDAlias.objects.get_or_create(user=user, sid=sid)
+
+
 def get_user_data(key, user_data):
     """Helper method for retrieving data for a given key."""
     data = None
@@ -55,6 +96,12 @@ def get_user_data(key, user_data):
 
 
 def iterate_queryset_in_batches(batch_size, queryset):
+    """Yields everything in the given QuerySet in batches of at most
+    batch_size objects."""
+    # Make sure the QuerySet is ordered -- slicing (i.e., OFFSET/LIMIT in the
+    # underlying SQL statement) is otherwise not well-defined
+    if not queryset.ordered:
+        queryset = queryset.order_by("pk")
     i = 0
     count = queryset.count()
     while i < count:

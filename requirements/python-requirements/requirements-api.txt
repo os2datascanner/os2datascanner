@@ -119,10 +119,6 @@ olefile==0.46
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
-pdfrw==0.4
-    # via
-    #   -c requirements-engine.txt
-    #   -r requirements-engine.in
 pika==1.1.0
     # via
     #   -c requirements-engine.txt
@@ -131,7 +127,7 @@ pillow==7.1.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
-prometheus_client==0.7.1
+prometheus-client==0.7.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in

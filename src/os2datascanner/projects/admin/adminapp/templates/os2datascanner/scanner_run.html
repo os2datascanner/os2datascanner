@@ -1,27 +1,124 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
 {% block rendertype %}iframe-modal{% endblock %}
 {% block topnav %}{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/toggleDetails.js' %}"></script>
+{% endblock %}
+
 {% block body %}
 
+<div class="runner-container">
 {% if scan_tag %}
-<p class="lead">
-  Scan-detaljer er blevet sendt til scannermotoren, og scan bliver udført
-  snarest muligt.
-</p>
-<hr>
-<p>
-  Tekniske detaljer:
-</p>
-<pre>
-{{ scan_tag }}
-</pre>
-{% elif engine2_error %}
-<div class="alert alert--danger">
-  <p>Kunne ikke åbne datakilden: {{ engine2_error }}</p>
-</div>
-{% elif pika_error %}
-<div class="alert alert--danger">
-  <p>Kunne ikke kommunikere med scannermotoren: {{ pika_error }}</p>
-</div>
+  
+  <div class="runner-content">
+    <span class="icon">
+      {% include "components/svg-icons/scan_succes.svg" %}
+    </span>
+
+    <h1>
+      {% trans "Success" %}
+    </h1>
+
+    <h3>
+      {% trans "Scan details have been sent to the scanner engine, and" %}
+      <br> {% trans "scan will be performed as soon as possible." %}
+    </h3>
+
+  </div>
+
+  <div class="detail-content">
+    <div class="detail-toggle" onclick="toggleDetails()">
+      <div class="flex">
+        <span>
+          <i id="arrow_right" class="material-icons">arrow_right</i>
+          <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
+        </span>
+
+        <span class="text">
+          {% trans "Technical details" %}
+        </span>
+      </div>
+
+      <pre id="scan-details" style="display: none;">
+        {{ scan_tag }}
+      </pre>
+    </div>
+  </div>
+
+  {% elif engine2_error %}
+  <div class="runner-content">
+    <span class="icon">
+      {% include "components/svg-icons/scan_error.svg" %}
+    </span>
+
+    <h1>
+      {% trans "Oops, an error occurred" %}
+    </h1>
+
+    <h3>
+      {% trans "Scan details could not be sent to the scanner engine." %}
+      <br>{% trans "See technical details for more information" %}
+    </h3>
+
+    <div class="detail-content">
+      <div class="detail-toggle" onclick="toggleDetails()">
+        <div class="flex">
+          <span>
+            <i id="arrow_right" class="material-icons">arrow_right</i>
+            <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
+          </span>
+  
+          <span class="text">
+            {% trans "Technical details" %}
+          </span>
+        </div>
+  
+        <pre id="scan-details" style="display: none;">
+          {% trans "Could not open data source:" %} {{ engine2_error }}
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  {% elif pika_error %}
+  <div class="runner-content">
+    <span class="icon">
+      {% include "components/svg-icons/scan_error.svg" %}
+    </span>
+
+    <h1>
+      {% trans "Oops, an error occurred" %}
+    </h1>
+
+    <h3>
+      {% trans "Scan details could not be sent to the scanner engine." %}
+      <br>{% trans "See technical details for more information" %}
+    </h3>
+
+    <div class="detail-content">
+      <div class="detail-toggle" onclick="toggleDetails()">
+        <div class="flex">
+          <span>
+            <i id="arrow_right" class="material-icons">arrow_right</i>
+            <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
+          </span>
+  
+          <span class="text">
+            {% trans "Technical details" %}
+          </span>
+        </div>
+  
+        <pre id="scan-details" style="display: none;">
+          {% trans "Could not communicate with the scanner engine:" %} {{ pika_error }}
+        </pre>
+      </div>
+    </div>
+  </div>
+
 {% endif %}
+</div>
 {% endblock %}

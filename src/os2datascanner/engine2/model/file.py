@@ -5,6 +5,7 @@ import os.path
 from urllib.parse import quote, unquote, urlsplit, urlunsplit
 from pathlib import Path
 from datetime import datetime
+from dateutil.tz import gettz
 from contextlib import contextmanager
 
 from ..conversions.types import OutputType
@@ -75,6 +76,10 @@ class FilesystemResource(FileResource):
                 self._get_cookie(), self.handle.relative_path)
         self._mr = None
 
+    def _generate_metadata(self):
+        yield from super()._generate_metadata()
+        yield "filesystem-owner-uid", self.unpack_stat()["st_uid"].value
+
     def check(self) -> bool:
         return os.path.exists(self._full_path)
 
@@ -83,7 +88,7 @@ class FilesystemResource(FileResource):
             self._mr = MultipleResults.make_from_attrs(
                     os.stat(self._full_path), *stat_attributes)
             self._mr[OutputType.LastModified] = datetime.fromtimestamp(
-                    self._mr["st_mtime"].value)
+                    self._mr["st_mtime"].value, gettz())
         return self._mr
 
     def get_size(self):

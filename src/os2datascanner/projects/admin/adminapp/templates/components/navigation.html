@@ -1,40 +1,45 @@
 {% load staticfiles %}
+{% load i18n %}
 
-{% block scripts %}
-<script src="{% static "js/activeMenu.js" %} "></script>
-{% endblock %}
-
-<nav id="navigation">
-  <li class="active">
-    {% if user.is_authenticated %}
-      {% if not user.profile.is_upload_only %}
-        {% if settings.ENABLE_WEBSCAN  %}
-          <a href="/">Scannerjob</a>
-        {% elif settings.ENABLE_FILESCAN %}
-          <a href="/">Scannerjob</a>
-        {% elif settings.ENABLE_EXCHANGESCAN %}
-          <a href="/">Scannerjob</a>
-        {% elif settings.ENABLE_DROPBOXSCAN %}
-          <a href="/">Scannerjob</a>
-        {% elif settings.ENABLE_MSGRAPH_MAILSCAN %}
-          <a href="/">Scannerjob</a>
-        {% elif settings.ENABLE_GOOGLEDRIVESCAN %}
-          <a href="/">Scannerjob</a>
-        {% endif %}
-        <a href="/status/">Status</a>
-        {% if user.profile.is_groups_enabled %}
-          {% if user.is_superuser or user.profile.is_group_admin %}
-            <a href="/groups/">Grupper</a>
-          {% endif %}
-        {% endif %}
-        <a href="/rules/">Regler</a>
-        {% if user.is_superuser or user.is_staff %}
-          <a href="/admin/" target="_NEW">Administration</a>
-        {% endif %}
-        {% if settings.DEBUG %}
-          <a href="/designguide">Designguide</a>
-        {% endif %}
+<nav class="navigation">
+  <ul>
+  {% if user.is_authenticated %}
+    {% if not user.profile.is_upload_only %}
+      <li>
+        <a href="/status" class="{% if active_tab == 'status' %}active{% endif %}">
+          {% include "components/svg-icons/scan_status.svg" %}
+          <span class="width">
+            {% trans "Scanner status" %}
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="/" class="{% if active_tab == 'home' %}active{% endif %}">
+          {% include "components/svg-icons/work.svg" %}
+          <span class="width">
+            {% trans "Scannerjob" %}
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="/rules" class="{% if active_tab == 'rules' %}active{% endif %}">
+          {% include "components/svg-icons/rule.svg" %}
+          <span class="width">
+            {% trans "Rules" %}
+          </span>
+        </a>
+      </li>
+      {% if user.is_superuser or user.is_staff %}
+      <li>
+        <a href="/admin/" target="_NEW">
+          {% include "components/svg-icons/admin_panel.svg" %}
+          <span class="width">
+            {% trans "Administration" %}
+          </span>
+        </a>
+      </li>
       {% endif %}
     {% endif %}
-  </li>
+  {% endif %}  
+  </ul>
 </nav>

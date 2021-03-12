@@ -51,7 +51,7 @@ from .views.views import GroupList, GroupCreate, GroupUpdate, GroupDelete
 from .views.views import MainPageView
 from .views.views import OrganizationList
 from .views.views import DialogSuccess
-from .views.scanner_views import StatusOverview
+from .views.scanner_views import (StatusOverview, StatusCompleted)
 from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
                                      WebScannerDelete, WebScannerRun,
                                      WebScannerAskRun, WebScannerList,
@@ -73,6 +73,7 @@ urlpatterns = [
 
     # App URLs
     url(r'^status/$', StatusOverview.as_view(), name='status'),
+    url(r'^status-completed/$', StatusCompleted.as_view(), name='status-completed'),
 
     #Exchangescanner URL's
     url(r'^exchangescanners/$', ExchangeScannerList.as_view(), name='exchangescanners'),

@@ -232,14 +232,19 @@ Test Report Application:
     reports:
       junit: $CI_PROJECT_DIR/junit.xml
 
-Run notice scripts:
+Run Engine notice scripts:
   <<: *test-default
+  image:
+    name: ${ENGINE_IMAGE}
   needs:
     - Build Engine
+  # If the notice scripts need services at some point, just remove the following line
+  services: []
+  variables:
+    OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
+    OS2DS_ENGINE_SYSTEM_CONFIG_PATH: ${CI_PROJECT_DIR}/docker/engine/docker-settings.toml
   script:
-    - python -m unittest discover -s src/ -p notice*.py
-  allow_failure: true
-
+    - python -m unittest discover -s src/os2datascanner/engine2/tests/ --pattern "notice*.py"
 
 # Release stage
 ###############
@@ -385,9 +390,9 @@ Release API:
 # Deploy stage
 ##############
 
-Deploy dev:
+Deploy test:
   # Automatic deployment of development branch to
-  # https://admin.dev.os2ds.magenta.dk and https://report.dev.os2ds.magenta.dk
+  # https://test.os2datascanner.dk/ and https://test-admin.os2datascanner.dk/
   stage: deploy
   image: magentalabs/pepper:latest
   services: []
@@ -400,12 +405,13 @@ Deploy dev:
     - Release Report Application Candidate
     - Release Admin Application Candidate
     - Release Engine Candidate
+    - Release API Candidate
   variables:
     SALTAPI_URL: https://ctrldev1.magenta-aps.dk/api/
     SALTAPI_EAUTH: file
     GIT_STRATEGY: none
   script:
-    - pepper --client runner --fail-any state.orchestrate os2ds.service-dev
+    - pepper --client runner --fail-any state.orchestrate os2ds.service-test
   environment:
-    name: dev
-    url: https://adminos2ds.magenta.dk/
+    name: test
+    url: https://test-admin.os2datascanner.dk/

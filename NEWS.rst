@@ -1,6 +1,48 @@
 OS2datascanner
 ==============
 
+Version 3.9.0, 11th March 2021
+------------------------------
+
+"The Big Picture"
+
+New in this version:
+
+- A refreshed user interface in the administration system.
+
+- Initial support for DPO and manager overviews:
+
+  - The report module now allows users in positions of authority to see
+    selected statistical overviews of their organisation.
+
+- Experimental support for using Keycloak as a single sign-on system.
+
+- Support for assigning results in mail messages to users based on Microsoft
+  Graph and Google Workspace metadata.
+
+General improvements:
+
+- Metadata extraction is now fully integrated into the scanner engine, making
+  it simpler to add new forms of metadata.
+
+- A new optional filter, switched on by default, now excludes matches newer
+  than 30 days from being shown in the report module.
+
+- For statistical purposes, the report module now records the time when a
+  match is marked as handled.
+
+- Drastically improved the performance of HTML text extraction.
+
+- Reduced the overhead in the API server's response messages when scanning
+  embedded files.
+
+- Added indexes to certain commonly-used fields of the report module's
+  database, drastically improving performance.
+
+Bugfixes:
+
+- Batch migration of existing database objects no longer intermittently fails.
+
 Version 3.8.0, 8th February 2021
 --------------------------------
 

@@ -8,6 +8,7 @@ from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, SourceManager
 from ..file import FilesystemResource
 from .derived import DerivedSource
+from .utilities import office_metadata
 
 
 def libreoffice(*args):
@@ -110,13 +111,31 @@ class LibreOfficeSource(DerivedSource):
             yield LibreOfficeObjectHandle(self, name)
 
 
+class LibreOfficeObjectResource(FilesystemResource):
+    def _generate_metadata(self):
+        parent = self.handle.source.handle.follow(self._sm)
+        # Ideally we'd say parent.make_stream() here instead, but libmagic
+        # can't cope with Python file-like objects -- it needs either a file
+        # descriptor (which we can't guarantee) or a filesystem path
+        with parent.make_path() as fp:
+            mime = magic.from_file(fp, mime=True)
+            if mime in ("application/msword", "application/vnd.ms-excel",
+                    "application/vnd.ms-powerpoint",):
+                yield from office_metadata.generate_ole_metadata(fp)
+            elif mime.startswith(
+                    "application/vnd.openxmlformats-officedocument."):
+                yield from office_metadata.generate_ooxml_metadata(fp)
+            elif mime.startswith(
+                    "application/vnd.oasis.opendocument."):
+                yield from office_metadata.generate_opendocument_metadata(fp)
+        # We deliberately don't yield from the superclass implementation --
+        # filesystem metadata is useless for a generated file
+
+
 @Handle.stock_json_handler("lo-object")
 class LibreOfficeObjectHandle(Handle):
     type_label = "lo-object"
-    resource_type = FilesystemResource
-
-    # All LibreOfficeObjectHandles point at generated temporary files
-    is_synthetic = True
+    resource_type = LibreOfficeObjectResource
 
     @property
     def presentation(self):

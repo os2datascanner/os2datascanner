@@ -56,10 +56,11 @@ services:
     command: [
       "gunicorn",
       "--config", "/code/docker/gunicorn-settings.py",
-      "--workers", "2", # only two workers in local dev - to save some resources
       "--reload", # restart workers when code changes
       "wsgi"
     ]
+    environment:
+      - GUNICORN_WORKERS=2
     volumes:
       - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
@@ -95,10 +96,11 @@ services:
     command: [
       "gunicorn",
       "--config", "/code/docker/gunicorn-settings.py",
-      "--workers", "2", # only two workers in local dev - to save some resources
       "--reload", # restart workers when code changes
       "wsgi"
     ]
+    environment:
+      - GUNICORN_WORKERS=2
     volumes:
       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
@@ -210,10 +212,50 @@ services:
       - SIMPLESAMLPHP_BASEURLPATH=http://localhost:8080/simplesaml/
       - SIMPLESAMLPHP_SP_ENTITY_ID=http://localhost:8040/saml2_auth/acs/
       - SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE=http://localhost:8040/saml2_auth/acs/
+# Replace the three env variables above with these below, if you wish to test Keycloak.
+#      - SIMPLESAMLPHP_SP_ENTITY_ID=http://localkeycloak.os2datascanner:8090/auth/realms/magenta
+#      - SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE=http://localkeycloak.os2datascanner:8090/auth/realms/magenta/broker/saml/endpoint
+#      - SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE=http://localkeycloak.os2datascanner:8090/auth/realms/magenta/broker/saml/endpoint
     volumes:
       - ./dev-environment/authsources.php:/var/www/simplesamlphp/config/authsources.php
     ports:
       - "8080:8080"
+
+  postgres-keycloak:
+    image: postgres
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - type: volume
+        source: knr-postgres-keycloak-volume
+        target: /var/lib/postgresql/data
+
+  localkeycloak.os2datascanner:
+    image: quay.io/keycloak/keycloak:12.0.0
+    # Ignore existing will not import if a realm of this name already exists
+    # For development you may use OVERWRITE_EXISTING which will drop & create
+    command: [ "-Dkeycloak.migration.strategy=IGNORE_EXISTING",
+               "-Djboss.socket.binding.port-offset=10" ,
+             ]
+    ports:
+      - 8090:8090
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: /realm.json
+      # PROXY_ADDRESS_FORWARDING: "true"
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+      DB_ADDR: postgres-keycloak
+      DB_DATABASE: keycloak
+      DB_SCHEMA: public
+      DB_VENDOR: POSTGRES
+    volumes:
+      - ./dev-environment/realm.json:/realm.json
+    depends_on:
+      - postgres-keycloak
 
 x-disabled:
   admin_cron:
@@ -289,3 +331,4 @@ volumes:
   frontend-bundles-report:
   postgres-data:
   postgres-initdb.d:
+  knr-postgres-keycloak-volume:

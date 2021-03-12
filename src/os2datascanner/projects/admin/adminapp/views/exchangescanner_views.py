@@ -3,6 +3,7 @@ from django import forms
 from .scanner_views import *
 from ..aescipher import decrypt
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
+from django.utils.translation import ugettext_lazy as _
 
 
 class ExchangeScannerList(ScannerList):
@@ -103,8 +104,8 @@ def initialize_form(form):
     """Initializes the form fields for username and password
     as they are not part of the exchange scanner model."""
 
-    form.fields['url'].widget.attrs['placeholder'] = 'f.eks. @example.com'
-    form.fields['username'] = forms.CharField(max_length=1024, required=False, label='Brugernavn')
-    form.fields['password'] = forms.CharField(max_length=50, required=False)
+    form.fields['url'].widget.attrs['placeholder'] = _('eg. @example.com')
+    form.fields['username'] = forms.CharField(max_length=1024, required=False, label=_('Username'))
+    form.fields['password'] = forms.CharField(max_length=50, required=False, label=_('Password'))
 
     return form

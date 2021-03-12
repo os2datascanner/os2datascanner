@@ -120,6 +120,11 @@ class WebResource(FileResource):
         self._response = None
         self._mr = None
 
+    def _generate_metadata(self):
+        _, netloc, _, _, _ = urlsplit(self.handle.source.to_url())
+        yield "web-domain", netloc
+        yield from super()._generate_metadata()
+
     def _get_head_raw(self):
         return self._get_cookie().head(self._make_url())
 

@@ -1,7 +1,7 @@
 -r requirements-common.in
 
 ipython
-Django==2.2.10
+Django==2.2.18
 django-model-utils
 django-settings-export
 django-storages[google]
@@ -18,7 +18,6 @@ dropbox
 exchangelib
 olefile
 PyPDF2
-pdfrw
 pysmbc
 python-magic
 regex

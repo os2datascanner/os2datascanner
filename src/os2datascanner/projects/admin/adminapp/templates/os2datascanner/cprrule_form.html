@@ -1,5 +1,7 @@
-{% extends 'os2datascanner/base.html' %}
+{% extends 'partials/base.html' %}
 {% load staticfiles %}
+{% load i18n %}
+
 {% block topnav %}{% endblock %}
 {% block rendertype %}iframe-modal{% endblock %}
 
@@ -14,7 +16,9 @@
 {% endif %}
 {% if form.errors %}
 <div class="alert alert--danger" role="alert">
-  <p>Følgende felter er ikke udfyldt korrekt:</p>
+  <p>
+    {% trans "Please make sure all fields are filled in correctly:" %}
+  </p>
   <ul>
     {% for error in form.errors %}
     <li>{{ error }}</li>
@@ -27,7 +31,9 @@
   {% csrf_token %}
 
   <fieldset class="form__fieldset">
-    <legend>Organisation:</legend>
+    <legend>
+      {% trans "Organization:" %}
+    </legend>
 
     <div 
       id="{{ form.name.auto_id }}_container"
@@ -99,7 +105,9 @@
   </fieldset>
 
   <fieldset class="form__fieldset">
-    <legend>Regel:</legend>
+    <legend>
+      {% trans "Rule" %}
+    </legend>
 
     <div 
       id="cpr_settings_container" 
@@ -199,7 +207,9 @@
   </fieldset>
 
   <div class="form__group col-sm-offset-2">
-    <button type="submit" class="btn btn-primary button button--cta button--rounded" name="save">Gem ændringer</button>
+    <button type="submit" class="btn btn-primary button button--cta button--rounded" name="save">
+      {% trans "Save changes" %}
+    </button>
   </div>
 
   {#{ form.as_p }#}

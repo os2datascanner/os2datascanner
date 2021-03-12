@@ -20,6 +20,14 @@ class StatusOverview(RestrictedListView):
         return super().get_queryset().order_by("-pk")[:10]
 
 
+class StatusCompleted(RestrictedListView):
+    template_name = "os2datascanner/scan_completed.html"
+    model = ScanStatus
+
+    def get_queryset(self):
+        return super().get_queryset().order_by("-pk")
+
+
 class ScannerList(RestrictedListView):
     """Displays list of scanners."""
 
@@ -91,7 +99,6 @@ class ScannerBase():
                 )
             form.fields[field_name].queryset = queryset
 
-
     def get_scanner_object(self):
         return self.get_object()
 
@@ -130,6 +137,7 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
     """View for editing an existing scannerjob."""
     edit = True
     old_url = ''
+    old_rules = None
 
     def get_form(self, form_class=None):
         """Get the form for the view.
@@ -139,6 +147,8 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         superuser.
         """
         self.old_url = self.get_object().url
+        # Store the existing rules selected in the scannerjob
+        self.old_rules = self.object.rules.get_queryset()
         return super().get_form(form_class)
 
     def get_form_fields(self):
@@ -158,7 +168,10 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         """Validate the submitted form."""
         if self.old_url != self.object.url:
             self.object.validation_status = Scanner.INVALID
-
+        # Compare the previous set of rules with new selection of rules
+        if not set(self.old_rules) == set(form.cleaned_data["rules"]):
+            # Reset last scanner-run timestamp if the rule sets differ
+            self.object.e2_last_run_at = None
         return super().form_valid(form)
 
 
@@ -178,7 +191,6 @@ class ScannerAskRun(RestrictedDetailView):
     def get_context_data(self, **kwargs):
         """Check that user is allowed to run this scanner."""
         context = super().get_context_data(**kwargs)
-
         last_status = self.object.statuses.last()
         if self.object.validation_status is Scanner.INVALID:
             ok = False
@@ -200,7 +212,6 @@ class ScannerAskRun(RestrictedDetailView):
 
 
 class ScannerRun(RestrictedDetailView):
-
     """Base class for view that handles starting of a scanner run."""
 
     template_name = 'os2datascanner/scanner_run.html'

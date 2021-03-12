@@ -1,6 +1,7 @@
 html {
   background-color: var(--color-body-bg);
   scroll-behavior: smooth;
+  min-height: 100%;
 }
 
 body {
@@ -8,8 +9,6 @@ body {
 }
 
 .page {
-  padding: var(--size-ds-unit);
-  padding: 5rem var(--size-ds-unit) var(--size-ds-unit) var(--size-ds-unit);
 
   .iframe-modal & {
     padding: calc(var(--size-ds-unit) * 2);
@@ -17,31 +16,43 @@ body {
 }
 
 .wrapper {
-  margin: 0 auto 0 calc(15rem);
-  max-width: 90%;
+  display: flex;
+  max-width: 100%;
   min-height: calc(100vh - 9rem - var(--size-ds-unit) * 2);
-  /* 
-    Banner = 4rem
-    Footer = 5rem
-    -------------
-      Total: 9rem
-    -------------
-    -------------
-  */
-  padding: 2rem 0;
 }
 
-.wrapper > *:first-child {
-  margin-top: 0;
+.content {
+  width: 100%;
+  padding-top: 10rem;
+  padding-left: 20rem;
 }
 
-.login {
-  background-color: var(--color-main);
-
-  .wrapper {
-    margin: 0;
-    max-width: initial;
-    min-height: initial;
-    padding: 0;
+.aside {
+  display: flex;
+  align-items: center;
+  max-width: 90rem;
+  width: calc(100% - 2rem);
+  margin-bottom: 0.5rem;
+  
+  h1 {
+    display: flex;
+    justify-content: flex-start;
+    width: 50%;
   }
+
+  .btn {
+    display: flex;
+    justify-content: flex-end;
+    width: 50%;
+  }
+}
+
+.data-form {
+  background-color: #fff;
+  box-shadow: var(--box-shadow-widget);
+  border-radius: var(--border-radius-widget);
+  max-width: 90rem;
+  width: calc(100% - 2rem);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
 }

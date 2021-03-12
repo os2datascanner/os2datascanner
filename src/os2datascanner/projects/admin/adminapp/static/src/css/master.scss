@@ -5,6 +5,7 @@
 @import '../fonts/inter/inter.css';
 @import 'typography';
 
+@import 'ie-support';
 @import 'bugfixes';
 
 /* Areas */
@@ -12,6 +13,7 @@
 @import 'components/logo';
 @import 'components/navigation';
 @import 'components/user';
+@import 'components/breadcrumb';
 
 /* Single components */
 @import 'components/login';
@@ -22,6 +24,7 @@
 @import 'components/buttons';
 @import 'components/dashboard-widgets';
 @import 'components/modal';
+@import 'components/options';
 @import 'components/tabs';
 @import 'components/select-rules';
 @import 'components/scanner-status';

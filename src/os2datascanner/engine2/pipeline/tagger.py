@@ -1,4 +1,3 @@
-from ...utils.metadata import guess_responsible_party
 from ..model.core import Handle, SourceManager
 from . import messages
 
@@ -14,9 +13,8 @@ def message_received_raw(body, channel, source_manager):
         yield ("os2ds_metadata",
                 messages.MetadataMessage(
                         message.scan_tag, message.handle,
-                        guess_responsible_party(
-                                message.handle,
-                                source_manager)).to_json_object())
+                        message.handle.follow(source_manager).get_metadata()
+                ).to_json_object())
     except Exception as e:
         exception_message = ", ".join([str(a) for a in e.args])
         yield ("os2ds_problems", messages.ProblemMessage(

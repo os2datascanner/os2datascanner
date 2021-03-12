@@ -1,27 +1,39 @@
 {%  load i18n %}
+{% load get_settings_tag %}
 
 <nav class="navigation">
   <ul>
     <li>
-      <a href="/" class="{% if active_tab == 'home' %}active{% endif %}">
+      <a href="/" class="{% if request.path == '/' %}active{% endif %}">
         {% include "components/svg-icons/home.svg" %}
         <span class="width">{% trans "Front page" %}</span>
       </a>
     </li>
-    <!-- <li>
-      <a href="/statistics" class="{% if active_tab == 'statistics' %}active{% endif %}">
+
+  {% for role in roles %}
+    <li>
+      <a href="{{ role.url }}" class={% if request.path == role.url %}active{% endif %}>
         {% include "components/svg-icons/bar_chart.svg" %}
-        <span class="width">Afdelingsstatistik</span>
+        <span class="width">{{ role.description }}</span>
       </a>
     </li>
-    <li>
-      <a href="/statistics">
-        {% include "components/svg-icons/bar_chart.svg" %}
-        <span class="width">DPO overblik</span>
-      </a>
-    </li> -->
+  {% endfor %}
   </ul>
 
+{% settings_value "KEYCLOAK_ENABLED" as keycloak_enabled %}
+{% if keycloak_enabled == True %}
+  <ul class="logout">
+      <li>
+        <form id="logout" method="POST" action="{% url 'oidc_logout' %}">
+            {% csrf_token %}
+            <a href="javascript:void()" onclick="document.getElementById('logout').submit();">
+                {% include "components/svg-icons/logout.svg" %}
+                <span class="navigation width">{% trans "Log out" %}</span>
+            </a>
+        </form>
+        </li>
+  </ul>
+{% else %}
   <ul class="logout">
     <li>
       <a href="/accounts/logout">
@@ -30,4 +42,5 @@
       </a>
     </li>
   </ul>
+{%  endif %}
 </nav>

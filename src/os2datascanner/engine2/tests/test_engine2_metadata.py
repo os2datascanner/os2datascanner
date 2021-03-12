@@ -1,49 +1,57 @@
 import os.path
 import unittest
 
-from os2datascanner.utils.metadata import guess_responsible_party
 from os2datascanner.engine2.model.core import Handle, Source, SourceManager
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
+from os2datascanner.engine2.model.http import (WebHandle, WebSource)
+from os2datascanner.engine2.model.derived.pdf import (
+        PDFSource, PDFPageHandle, PDFPageSource, PDFObjectHandle)
 from os2datascanner.engine2.model.derived.libreoffice import (
-        LibreOfficeObjectHandle, LibreOfficeSource)
+        LibreOfficeSource, LibreOfficeObjectHandle)
 
 
 here_path = os.path.dirname(__file__)
 test_data_path = os.path.join(here_path, "data")
-test_handle = LibreOfficeObjectHandle(
+odt_test_handle = LibreOfficeObjectHandle(
         LibreOfficeSource(
                 FilesystemHandle(
                         FilesystemSource(test_data_path),
                         "libreoffice/embedded-cpr.odt")),
         "embedded-cpr.html")
-
-
-class CountingProxy:
-    def __init__(self, real_handle):
-        self.__attr_accesses = {}
-        self._real_handle = real_handle
-
-    def __getattr__(self, attr):
-        self.__attr_accesses[attr] = self.get_attr_access_count(attr) + 1
-        return getattr(self._real_handle, attr)
-
-    def get_attr_access_count(self, attr):
-        return self.__attr_accesses.get(attr, 0)
+pdf_test_handle = PDFObjectHandle(
+        PDFPageSource(
+                PDFPageHandle(
+                        PDFSource(
+                                FilesystemHandle(
+                                        FilesystemSource(test_data_path),
+                                        "pdf/embedded-cpr.pdf")), "1")),
+        "page.txt")
 
 
 class MetadataTest(unittest.TestCase):
-    def setUp(self):
-        self.handle_proxy = CountingProxy(test_handle)
-
     def test_odt_extraction(self):
         with SourceManager() as sm:
-            metadata = guess_responsible_party(self.handle_proxy, sm)
+            metadata = odt_test_handle.follow(sm).get_metadata()
         self.assertEqual(
-                metadata["od-modifier"],
+                metadata["od-creator"],
                 "Alexander John Faithfull",
                 "metadata extraction failed")
+
+    def test_pdf_extraction(self):
+        with SourceManager() as sm:
+            metadata = pdf_test_handle.follow(sm).get_metadata()
         self.assertEqual(
-                self.handle_proxy.get_attr_access_count("follow"),
-                0,
-                "metadata extraction from synthetic file attempted")
+                metadata["pdf-author"],
+                "Alexander John Faithfull",
+                "metadata extraction failed")
+
+    def test_web_domain_extraction(self):
+        with SourceManager() as sm:
+            metadata = WebHandle(
+                    WebSource("https://www.example.invalid./"),
+                    "/cgi-bin/test.pl").follow(sm).get_metadata()
+        self.assertEqual(
+                metadata.get("web-domain"),
+                "www.example.invalid.",
+                "web domain metadata missing")
