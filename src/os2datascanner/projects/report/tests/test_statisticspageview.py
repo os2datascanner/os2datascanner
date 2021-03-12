@@ -433,6 +433,29 @@ class StatisticsPageViewTest(TestCase):
                           [datetime.date.today(), datetime.date.today()])
         dpo.delete()
 
+    # count_new_matches_by_month()
+    def test_statisticspage_count_new_matches_by_month_as_dpo(self):
+        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+        view = self.get_statisticspage_object()
+        test_date = dateutil.parser.parse("2020-11-28T14:21:59+05:00")
+        self.assertListEqual(view.count_new_matches_by_month(test_date),
+                             [['Dec', 0], ['Jan', 0], ['Feb', 0],
+                              ['Mar', 0], ['Apr', 0], ['May', 0],
+                              ['Jun', 0], ['Jul', 0], ['Aug', 0],
+                              ['Sep', 1], ['Oct', 2], ['Nov', 4]])
+        dpo.delete()
+
+    def test_statisticspage_count_new_matches_by_month_old_matches_as_dpo(self):
+        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+        view = self.get_statisticspage_object()
+        test_date = dateutil.parser.parse("2021-09-28T14:21:59+05:00")
+        self.assertListEqual(view.count_new_matches_by_month(test_date),
+                             [['Oct', 2], ['Nov', 4], ['Dec', 0],
+                              ['Jan', 0], ['Feb', 0], ['Mar', 0],
+                              ['Apr', 0], ['May', 0], ['Jun', 0],
+                              ['Jul', 0], ['Aug', 0], ['Sep', 0]])
+        dpo.delete()
+
     # StatisticsPageView()
     def get_statisticspage_object(self):
         request = self.factory.get('/statistics')
