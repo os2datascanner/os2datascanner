@@ -405,7 +405,7 @@ class ScanStatus(models.Model):
     def fraction_explored(self) -> float:
         """Returns the fraction of the sources in this scan that has been
         explored, or None if this is not yet computable."""
-        if self.total_sources is not None:
+        if self.total_sources:
             return (self.explored_sources or 0) / self.total_sources
         else:
             return None
@@ -414,9 +414,7 @@ class ScanStatus(models.Model):
     def fraction_scanned(self) -> float:
         """Returns the fraction of this scan that has been scanned, or None if
         this is not yet computable."""
-        if (self.total_sources is not None
-                and self.explored_sources == self.total_sources
-                and self.total_objects is not None):
+        if self.fraction_explored == 1.0 and self.total_objects:
             return (self.scanned_objects or 0) / self.total_objects
         else:
             return None
@@ -425,7 +423,11 @@ class ScanStatus(models.Model):
     def estimated_completion_time(self) -> datetime.datetime:
         """Returns the linearly interpolated completion time of this scan
         based on the return value of ScannerStatus.fraction_scanned (or None,
-        if that function returns None)."""
+        if that function returns None).
+
+        Note that the return value of this function is only meaningful if
+        fraction_scanned is less than 1.0: at that point, it always returns the
+        current time."""
         fraction_scanned = self.fraction_scanned
         if (fraction_scanned is not None
                 and fraction_scanned >= settings.ESTIMATE_AFTER):
@@ -439,6 +441,10 @@ class ScanStatus(models.Model):
 
     @property
     def start_time(self) -> datetime.datetime:
+        """Returns the start time of this scan."""
+        # Note that, although this access is not in general safe (historic
+        # scan_tag values aren't dictionaries), it is here -- the ScanStatus
+        # class is younger than those really old scan_tags
         return parse_isoformat_timestamp(self.scan_tag["time"])
 
     class Meta:

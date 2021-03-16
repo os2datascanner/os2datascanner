@@ -33,7 +33,10 @@ def status_message_received_raw(body):
         return
 
     if message.total_objects is not None:
-        status.total_objects = (status.total_objects or 0) + message.total_objects
+        # ScanStatus uses this value as a divisor, so avoid setting it to zero
+        if message.total_objects > 0:
+            status.total_objects = (
+                    (status.total_objects or 0) + message.total_objects)
         status.explored_sources = (status.explored_sources or 0) + 1
     elif message.object_size is not None and message.object_type is not None:
         status.scanned_size = (status.scanned_size or 0) + message.object_size
