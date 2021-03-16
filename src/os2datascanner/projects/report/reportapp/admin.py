@@ -18,19 +18,58 @@ from .models.userprofile_model import UserProfile
 admin.site.register(DocumentReport)
 
 
+# Solution for avoiding m2m relations to get cleared
+# Source: https://stackoverflow.com/questions/1925383/issue-with-manytomany-relationships-not-updating-immediately-after-save/1925784#1925784
+# This takes all the DocumentReports that match the Alias and adds them on save.
 @admin.register(ADSIDAlias)
 class ADSIDAliasAdmin(admin.ModelAdmin):
     list_display = ('sid', 'user', )
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if obj.match_relation:
+            reports = DocumentReport.objects.filter(
+                data__metadata__metadata__contains = {
+                str(obj.key):str(obj)
+            })
+            form.cleaned_data['match_relation'] = reports
 
+
+
+# Solution for avoiding m2m relations to get cleared
+# Source: https://stackoverflow.com/questions/1925383/issue-with-manytomany-relationships-not-updating-immediately-after-save/1925784#1925784
+# This takes all the DocumentReports that match the Alias and adds them on save.
 @admin.register(EmailAlias)
 class EmailAliasAdmin(admin.ModelAdmin):
     list_display = ('address', 'user', )
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if obj.match_relation:
+            reports = DocumentReport.objects.filter(
+                data__metadata__metadata__contains = {
+                str(obj.key):str(obj)
+            })
+            form.cleaned_data['match_relation'] = reports
 
+
+
+# Solution for avoiding m2m relations to get cleared
+# Source: https://stackoverflow.com/questions/1925383/issue-with-manytomany-relationships-not-updating-immediately-after-save/1925784#1925784
+# This takes all the DocumentReports that match the Alias and adds them on save.
 @admin.register(WebDomainAlias)
 class WebDomainAliasAdmin(admin.ModelAdmin):
     list_display = ('domain', 'user', )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if obj.match_relation:
+            reports = DocumentReport.objects.filter(
+                data__metadata__metadata__contains = {
+                str(obj.key):str(obj)
+            })
+            form.cleaned_data['match_relation'] = reports
+
 
 
 @admin.register(DefaultRole)
