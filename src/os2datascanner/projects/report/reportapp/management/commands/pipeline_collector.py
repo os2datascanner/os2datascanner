@@ -150,6 +150,13 @@ def handle_match_message(previous_report, new_report, body):
 
     if new_matches.matched:
         print(new_matches.handle.presentation, "New matches, creating")
+
+        # Collect and store the top-level type label from the matched object
+        source = new_matches.handle.source
+        while source.handle:
+            source = source.handle.source
+        new_report.source_type = source.type_label
+
         # Collect and store highest sensitivity value (should never be NoneType).
         new_report.sensitivity = new_matches.sensitivity.value
         # Collect and store highest propability value (should never be NoneType).
@@ -191,6 +198,13 @@ def handle_problem_message(previous_report, new_report, body):
     else:
         print(problem.handle.presentation if problem.handle else "(source)",
                 "Problem, transient, creating")
+
+        # Collect and store the top-level type label from the failing object
+        source = problem.handle.source if problem.handle else problem.source
+        while source.handle:
+            source = source.handle.source
+        new_report.source_type = source.type_label
+
         new_report.data["problem"] = body
         new_report.save()
 

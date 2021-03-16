@@ -92,6 +92,18 @@ deletion = messages.ProblemMessage(
         message="There was a file here. It's gone now.",
         missing=True)
 
+transient_handle_error = messages.ProblemMessage(
+        scan_tag=scan_tag1,
+        source=None,
+        handle=common_handle,
+        message="Bad command or file name")
+
+transient_source_error = messages.ProblemMessage(
+        scan_tag=scan_tag1,
+        source=common_handle.source,
+        handle=None,
+        message="Not ready reading drive A: [A]bort, [R]etry, [F]ail?")
+
 late_rule = LastModifiedRule(parse_isoformat_timestamp(time2))
 late_negative_match = messages.MatchesMessage(
         scan_spec=common_scan_spec._replace(
@@ -138,6 +150,10 @@ class PipelineCollectorTests(TestCase):
                 new.scan_time.isoformat(),
                 positive_match.scan_spec.scan_tag["time"],
                 "match time was not taken from scan specification")
+        self.assertEqual(
+                new.source_type,
+                common_handle.source.type_label,
+                "type label was not extracted to database")
         return new
 
     def test_edit(self):
@@ -167,6 +183,32 @@ class PipelineCollectorTests(TestCase):
                 saved_match.resolution_status,
                 DocumentReport.ResolutionChoices.REMOVED.value,
                 "resolution status not correctly updated")
+
+    def test_transient_handle_errors(self):
+        """Source types should be correctly extracted from Handle errors."""
+        prev, new = pipeline_collector.get_reports_for(
+                transient_handle_error.handle.to_json_object(),
+                transient_handle_error.scan_tag)
+        pipeline_collector.handle_problem_message(
+                prev, new, transient_handle_error.to_json_object())
+
+        self.assertEqual(
+                new.source_type,
+                transient_handle_error.handle.source.type_label,
+                "type label was not extracted to database")
+
+    def test_transient_source_errors(self):
+        """Source types should be correctly extracted from Source errors."""
+        prev, new = pipeline_collector.get_reports_for(
+                transient_source_error.source.to_json_object(),
+                transient_source_error.scan_tag)
+        pipeline_collector.handle_problem_message(
+                prev, new, transient_source_error.to_json_object())
+
+        self.assertEqual(
+                new.source_type,
+                transient_source_error.source.type_label,
+                "type label was not extracted to database")
 
     def test_recycler(self):
         """Receiving a failed match message which failed because of the
