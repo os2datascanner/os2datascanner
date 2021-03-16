@@ -1,11 +1,11 @@
 import json
 import structlog
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.views.generic import View
 
 from ..models.documentreport_model import DocumentReport
-from .views import LoginRequiredMixin
 from ..utils import iterate_queryset_in_batches
 
 logger = structlog.get_logger()
@@ -97,7 +97,7 @@ api_endpoints = {
 }
 
 
-class JSONAPIView(LoginRequiredMixin):
+class JSONAPIView(LoginRequiredMixin, View):
     def post(self, request):
         return JsonResponse(self.get_data(request))
 

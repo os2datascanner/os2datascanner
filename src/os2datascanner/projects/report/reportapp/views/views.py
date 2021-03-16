@@ -21,10 +21,9 @@ from datetime import timedelta, datetime
 from urllib.parse import urlencode
 from django.conf import settings
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.http import HttpResponseForbidden
-from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views.generic import View, TemplateView, ListView
 
@@ -49,17 +48,6 @@ logger = structlog.get_logger()
 RENDERABLE_RULES = (CPRRule.type_label, RegexRule.type_label,)
 
 
-class LoginRequiredMixin(View):
-    """Include to require login."""
-    # TODO: Use existing django mixin class #42012
-    roles = None
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        """Check for login and dispatch the view."""
-        return super().dispatch(*args, **kwargs)
-
-
 class LoginPageView(View):
     template_name = 'login.html'
 
@@ -68,7 +56,7 @@ class LogoutPageView(TemplateView, View):
     template_name = 'logout.html'
 
 
-class MainPageView(ListView, LoginRequiredMixin):
+class MainPageView(LoginRequiredMixin, ListView):
     template_name = 'index.html'
     paginate_by = 10  # Determines how many objects pr. page.
     context_object_name = "matches"  # object_list renamed to something more relevant
@@ -156,7 +144,7 @@ class MainPageView(ListView, LoginRequiredMixin):
         return context
 
 
-class StatisticsPageView(TemplateView, LoginRequiredMixin):
+class StatisticsPageView(LoginRequiredMixin, TemplateView):
     template_name = 'statistics.html'
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
