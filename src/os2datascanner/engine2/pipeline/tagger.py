@@ -2,8 +2,9 @@ from ..model.core import Handle, SourceManager
 from . import messages
 
 
-__reads_queues__ = ("os2ds_handles",)
-__writes_queues__ = ("os2ds_metadata", "os2ds_problems",)
+READS_QUEUES = ("os2ds_handles",)
+WRITES_QUEUES = ("os2ds_metadata", "os2ds_problems",)
+PROMETHEUS_DESCRIPTION = "Metadata extractions"
 
 
 def message_received_raw(body, channel, source_manager):
@@ -20,8 +21,8 @@ def message_received_raw(body, channel, source_manager):
         yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=message.scan_tag,
                 source=None, handle=message.handle,
-                message="Metadata extraction error: {0}".format(
-                        exception_message)).to_json_object())
+                message=f"Metadata extraction error: {exception_message}").
+               to_json_object())
 
 
 if __name__ == "__main__":

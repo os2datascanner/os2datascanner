@@ -5,9 +5,10 @@ from ..conversions.types import OutputType, encode_dict
 from . import messages
 
 
-__reads_queues__ = ("os2ds_conversions",)
-__writes_queues__ = ("os2ds_scan_specs", "os2ds_representations",
+READS_QUEUES = ("os2ds_conversions",)
+WRITES_QUEUES = ("os2ds_scan_specs", "os2ds_representations",
         "os2ds_problems", "os2ds_checkups",)
+PROMETHEUS_DESCRIPTION = "Representations generated"
 
 
 def check(source_manager, handle):
@@ -92,8 +93,8 @@ def message_received_raw(body, channel, source_manager):
             yield (problems_q, messages.ProblemMessage(
                     scan_tag=conversion.scan_spec.scan_tag,
                     source=None, handle=conversion.handle,
-                    message="Processing error: {0}".format(
-                            exception_message)).to_json_object())
+                    message=f"Processing error: {exception_message}").
+                   to_json_object())
 
 
 if __name__ == "__main__":

@@ -76,32 +76,39 @@
           "refId": "A"
         },
         {
-          "expr": "os2datascanner_pipeline_processor_count",
+          "expr": "os2datascanner_pipeline_worker_count",
           "instant": false,
           "intervalFactor": 1,
-          "legendFormat": "Processor",
+          "legendFormat": "Worker",
           "refId": "B"
-        },
-        {
-          "expr": "os2datascanner_pipeline_matcher_count",
-          "instant": false,
-          "intervalFactor": 1,
-          "legendFormat": "Matcher",
-          "refId": "C"
-        },
-        {
-          "expr": "os2datascanner_pipeline_tagger_count",
-          "instant": false,
-          "intervalFactor": 1,
-          "legendFormat": "Tagger",
-          "refId": "D"
         },
         {
           "expr": "os2datascanner_pipeline_exporter_count",
           "instant": false,
           "intervalFactor": 1,
           "legendFormat": "Exporter",
+          "refId": "C"
+        },
+        {
+          "expr": "os2datascanner_pipeline_processor_count",
+          "instant": false,
+          "intervalFactor": 1,
+          "legendFormat": "Processor",
+          "refId": "D"
+        },
+        {
+          "expr": "os2datascanner_pipeline_matcher_count",
+          "instant": false,
+          "intervalFactor": 1,
+          "legendFormat": "Matcher",
           "refId": "E"
+        },
+        {
+          "expr": "os2datascanner_pipeline_tagger_count",
+          "instant": false,
+          "intervalFactor": 1,
+          "legendFormat": "Tagger",
+          "refId": "F"
         }
       ],
       "timeFrom": null,
@@ -170,33 +177,40 @@
           "refId": "A"
         },
         {
-          "expr": "os2datascanner_pipeline_processor_sum * 1000",
+          "expr": "os2datascanner_pipeline_worker_sum * 1000",
           "instant": false,
-          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Processor",
+          "legendFormat": "Worker",
           "refId": "B"
-        },
-        {
-          "expr": "os2datascanner_pipeline_matcher_sum * 1000",
-          "instant": false,
-          "intervalFactor": 1,
-          "legendFormat": "Matcher",
-          "refId": "C"
-        },
-        {
-          "expr": "os2datascanner_pipeline_tagger_sum * 1000",
-          "instant": false,
-          "intervalFactor": 1,
-          "legendFormat": "Tagger",
-          "refId": "D"
         },
         {
           "expr": "os2datascanner_pipeline_exporter_sum * 1000",
           "instant": false,
           "intervalFactor": 1,
           "legendFormat": "Exporter",
+          "refId": "C"
+        },
+        {
+          "expr": "os2datascanner_pipeline_processor_sum * 1000",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Processor",
+          "refId": "D"
+        },
+        {
+          "expr": "os2datascanner_pipeline_matcher_sum * 1000",
+          "instant": false,
+          "intervalFactor": 1,
+          "legendFormat": "Matcher",
           "refId": "E"
+        },
+        {
+          "expr": "os2datascanner_pipeline_tagger_sum * 1000",
+          "instant": false,
+          "intervalFactor": 1,
+          "legendFormat": "Tagger",
+          "refId": "F"
         }
       ],
       "timeFrom": null,
@@ -263,28 +277,34 @@
           "refId": "A"
         },
         {
-          "expr": "rate(os2datascanner_pipeline_processor_count[5m])",
+          "expr": "rate(os2datascanner_pipeline_worker_count[5m])",
           "intervalFactor": 2,
-          "legendFormat": "Processor",
+          "legendFormat": "Worker",
           "refId": "B"
-        },
-        {
-          "expr": "rate(os2datascanner_pipeline_matcher_count[5m])",
-          "intervalFactor": 2,
-          "legendFormat": "Matcher",
-          "refId": "C"
-        },
-        {
-          "expr": "rate(os2datascanner_pipeline_tagger_count[5m])",
-          "intervalFactor": 2,
-          "legendFormat": "Tagger",
-          "refId": "D"
         },
         {
           "expr": "rate(os2datascanner_pipeline_exporter_count[5m])",
           "intervalFactor": 2,
           "legendFormat": "Exporter",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(os2datascanner_pipeline_processor_count[5m])",
+          "intervalFactor": 2,
+          "legendFormat": "Processor",
+          "refId": "D"
+        },
+        {
+          "expr": "rate(os2datascanner_pipeline_matcher_count[5m])",
+          "intervalFactor": 2,
+          "legendFormat": "Matcher",
           "refId": "E"
+        },
+        {
+          "expr": "rate(os2datascanner_pipeline_tagger_count[5m])",
+          "intervalFactor": 2,
+          "legendFormat": "Tagger",
+          "refId": "F"
         }
       ],
       "thresholds": [],
@@ -390,32 +410,39 @@
           "refId": "A"
         },
         {
-          "expr": "(os2datascanner_pipeline_processor_sum * 1000) / os2datascanner_pipeline_processor_count",
+          "expr": "(os2datascanner_pipeline_worker_sum * 1000) / os2datascanner_pipeline_worker_count",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "Processor",
+          "legendFormat": "Worker",
           "refId": "B"
-        },
-        {
-          "expr": "(os2datascanner_pipeline_matcher_sum * 1000) / os2datascanner_pipeline_matcher_count",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Matcher",
-          "refId": "C"
-        },
-        {
-          "expr": "(os2datascanner_pipeline_tagger_sum * 1000) / os2datascanner_pipeline_tagger_count",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Tagger",
-          "refId": "D"
         },
         {
           "expr": "(os2datascanner_pipeline_exporter_sum * 1000) / os2datascanner_pipeline_exporter_count",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Exporter",
+          "refId": "C"
+        },
+        {
+          "expr": "(os2datascanner_pipeline_processor_sum * 1000) / os2datascanner_pipeline_processor_count",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Processor",
+          "refId": "D"
+        },
+        {
+          "expr": "(os2datascanner_pipeline_matcher_sum * 1000) / os2datascanner_pipeline_matcher_count",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Matcher",
           "refId": "E"
+        },
+        {
+          "expr": "(os2datascanner_pipeline_tagger_sum * 1000) / os2datascanner_pipeline_tagger_count",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Tagger",
+          "refId": "F"
         }
       ],
       "thresholds": [],

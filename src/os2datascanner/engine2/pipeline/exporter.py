@@ -6,8 +6,9 @@ from ..model.core import (Handle,
 from . import messages
 
 
-__reads_queues__ = ("os2ds_matches", "os2ds_metadata", "os2ds_problems",)
-__writes_queues__ = ("os2ds_results",)
+READS_QUEUES = ("os2ds_matches", "os2ds_metadata", "os2ds_problems",)
+WRITES_QUEUES = ("os2ds_results",)
+PROMETHEUS_DESCRIPTION = "Messages exported"
 
 
 def message_received_raw(body, channel, source_manager):
