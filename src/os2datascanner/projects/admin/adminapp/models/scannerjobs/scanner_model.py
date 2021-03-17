@@ -25,10 +25,11 @@ import re
 from typing import Iterator
 from dateutil import tz
 
+from django.db import models
 from django.conf import settings
 from django.core.validators import validate_comma_separated_integer_list
-from django.db import models
 from django.contrib.postgres.fields import JSONField
+from django.utils.translation import ugettext_lazy as _
 
 from model_utils.managers import InheritanceManager
 from recurrence.fields import RecurrenceField
@@ -375,23 +376,23 @@ class ScanStatus(models.Model):
     """A ScanStatus object collects the status messages received from the
     pipeline for a given scan."""
 
-    scan_tag = JSONField(verbose_name="Scan tag", unique=True)
+    scan_tag = JSONField(verbose_name=_("scan tag"), unique=True)
 
     scanner = models.ForeignKey(Scanner, related_name="statuses",
-                                verbose_name="Tilknyttet scannerjob",
+                                verbose_name=_("associated scanner job"),
                                 on_delete=models.CASCADE)
 
-    total_sources = models.IntegerField(verbose_name="Antal kilder",
+    total_sources = models.IntegerField(verbose_name=_("total sources"),
                                        null=True)
-    explored_sources = models.IntegerField(verbose_name="Udforskede kilder",
+    explored_sources = models.IntegerField(verbose_name=_("explored sources"),
                                          null=True)
 
-    total_objects = models.IntegerField(verbose_name="Antal objekter",
+    total_objects = models.IntegerField(verbose_name=_("total objects"),
                                         null=True)
-    scanned_objects = models.IntegerField(verbose_name="Scannede objekter",
+    scanned_objects = models.IntegerField(verbose_name=_("scanned objects"),
                                           null=True)
     scanned_size = models.BigIntegerField(
-            verbose_name="Størrelse af scannede objekter",
+            verbose_name=_("size of scanned objects"),
             null=True)
 
     @property
@@ -448,4 +449,5 @@ class ScanStatus(models.Model):
         return parse_isoformat_timestamp(self.scan_tag["time"])
 
     class Meta:
-        verbose_name_plural = "scan statuses"
+        verbose_name = _("scan status")
+        verbose_name_plural = _("scan statuses")
