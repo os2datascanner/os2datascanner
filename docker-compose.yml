@@ -257,6 +257,29 @@ services:
     depends_on:
       - postgres-keycloak
 
+  ldap_server:
+    image: osixia/openldap
+    environment:
+      LDAP_ADMIN_PASSWORD: testMAG
+      LDAP_BASE_DN: dc=magenta,dc=test
+      LDAP_ORGANISATION: Magenta
+      LDAP_DOMAIN: magenta.test
+    ports:
+      - 389:389
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+
+  ldap_server_admin:
+    image: osixia/phpldapadmin
+    ports:
+    - 8100:80
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: ldap_server
+      PHPLDAPADMIN_HTTPS: 'false'
+    depends_on:
+      - ldap_server
+
 x-disabled:
   admin_cron:
     build:
@@ -332,3 +355,5 @@ volumes:
   postgres-data:
   postgres-initdb.d:
   knr-postgres-keycloak-volume:
+  ldap_data:
+  ldap_config:
