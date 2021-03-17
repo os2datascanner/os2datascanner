@@ -1,5 +1,6 @@
 import datetime
 import dateutil.parser
+from typing import List, Tuple
 
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
@@ -13,6 +14,7 @@ from os2datascanner.engine2.pipeline import messages
 
 from ..reportapp.management.commands import pipeline_collector
 from ..reportapp.models.aliases.emailalias_model import EmailAlias
+from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.models.roles.defaultrole_model import DefaultRole
 from ..reportapp.models.roles.remediator_model import Remediator
 from ..reportapp.models.roles.leader_model import Leader
@@ -438,22 +440,36 @@ class StatisticsPageViewTest(TestCase):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         test_date = dateutil.parser.parse("2020-11-28T14:21:59+05:00")
+
+        # Overrides timestamps static dates and saves the old ones
+        original_timestamps = static_timestamps()
+
         self.assertListEqual(view.count_new_matches_by_month(test_date),
                              [['Dec', 0], ['Jan', 0], ['Feb', 0],
                               ['Mar', 0], ['Apr', 0], ['May', 0],
                               ['Jun', 0], ['Jul', 0], ['Aug', 0],
                               ['Sep', 1], ['Oct', 2], ['Nov', 4]])
+
+        # Reset to old values
+        reset_timestamps(original_timestamps)
         dpo.delete()
 
     def test_statisticspage_count_new_matches_by_month_old_matches_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         test_date = dateutil.parser.parse("2021-09-28T14:21:59+05:00")
+
+        # Overrides timestamps static dates and saves the old ones
+        original_timestamps = static_timestamps()
+
         self.assertListEqual(view.count_new_matches_by_month(test_date),
                              [['Oct', 2], ['Nov', 4], ['Dec', 0],
                               ['Jan', 0], ['Feb', 0], ['Mar', 0],
                               ['Apr', 0], ['May', 0], ['Jun', 0],
                               ['Jul', 0], ['Aug', 0], ['Sep', 0]])
+
+        # Reset to old values
+        reset_timestamps(original_timestamps)
         dpo.delete()
 
     # StatisticsPageView()
@@ -462,3 +478,23 @@ class StatisticsPageViewTest(TestCase):
         request.user = self.kjeld
         view = StatisticsPageView()
         return view
+
+
+# Helper functions
+# Overrides timestamps to have static data
+def static_timestamps() -> List[Tuple[int, datetime.datetime]]:
+    original_timestamps = []
+    for match in DocumentReport.objects.all():
+        original_timestamps.append((match.pk, match.created_timestamp))
+        match.created_timestamp = match.scan_time
+        match.save()
+    return original_timestamps
+
+
+# Reset to old values
+def reset_timestamps(arg: List[Tuple[int, datetime.datetime]]):
+    for match in DocumentReport.objects.all():
+        for a in arg:
+            if a[0] == match.pk:
+                match.created_timestamp = a[1]
+        match.save()

@@ -306,8 +306,8 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         # Truncates months with their match counts
         matches_by_month = self.matches.filter(
-            scan_time__range=(a_year_ago, current_date)).annotate(
-            month=TruncMonth('scan_time')).values(
+            created_timestamp__range=(a_year_ago, current_date)).annotate(
+            month=TruncMonth('created_timestamp')).values(
             'month').annotate(
             total=Count('data')
         ).order_by('month')

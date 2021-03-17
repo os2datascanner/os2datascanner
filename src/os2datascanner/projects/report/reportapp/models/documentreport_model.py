@@ -14,7 +14,7 @@ class DocumentReport(models.Model):
     scan_time = models.DateTimeField(null=True, db_index=True,
                                             verbose_name=_('scan time'))
 
-    created_timestamp = models.DateTimeField(null=True, blank=True,
+    created_timestamp = models.DateTimeField(null=True,
                                              verbose_name=_('created timestamp'))
 
     organization = models.ForeignKey(Organization,
