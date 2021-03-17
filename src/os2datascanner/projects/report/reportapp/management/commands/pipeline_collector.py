@@ -41,6 +41,7 @@ def result_message_received_raw(body):
     tag, queue = _identify_message(body)
     if not reference or not tag or not queue:
         return
+    tag = messages.ScanTagFragment.from_json_object(tag)
 
     previous_report, new_report = get_reports_for(reference, tag)
     if queue == "matches":
@@ -88,23 +89,21 @@ def handle_metadata_message(new_report, result):
     new_report.save()
 
 
-def get_reports_for(reference, scan_tag):
-    scanner = scan_tag["scanner"]
-    time_raw = scan_tag["time"]
-    time = parse_isoformat_timestamp(time_raw)
-
+def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
     path = hash_handle(reference)
+    scanner_json = scan_tag.scanner.to_json_object()
     previous_report = DocumentReport.objects.filter(path=path,
-            data__scan_tag__scanner=scanner).order_by("-scan_time").first()
+            data__scan_tag__scanner=scanner_json).order_by(
+            "-scan_time").first()
     # get_or_create unconditionally writes freshly-created objects to the
     # database (in the version of Django we're using at the moment, at least),
     # so we have to implement similar logic ourselves
     try:
         new_report = DocumentReport.objects.filter(
-                path=path, scan_time=time).get()
+                path=path, scan_time=scan_tag.time).get()
     except DocumentReport.DoesNotExist:
-        new_report = DocumentReport(path=path, scan_time=time,
-                data={"scan_tag": scan_tag})
+        new_report = DocumentReport(path=path, scan_time=scan_tag.time,
+                data={"scan_tag": scan_tag.to_json_object()})
 
     return previous_report, new_report
 
@@ -128,8 +127,8 @@ def handle_match_message(previous_report, new_report, body):
                     # just update the timestamp on the old one
                     print(new_matches.handle.presentation,
                             "LM/no change, updating timestamp")
-                    previous_report.scan_time = parse_isoformat_timestamp(
-                            new_matches.scan_spec.scan_tag["time"])
+                    previous_report.scan_time = (
+                            new_matches.scan_spec.scan_tag.time)
                     previous_report.save()
                 else:
                     # The file has been edited and the matches are no longer

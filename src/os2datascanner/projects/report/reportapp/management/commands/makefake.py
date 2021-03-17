@@ -94,23 +94,16 @@ class Command(BaseCommand):
 
         now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
         organization = Organization.objects.first()
-        scan_tag = {
-            'time': now.isoformat(),
-            'user': "dummy",
-            'scanner': {
-                'pk': "0",
-                'name': "Dummy scan"
-            },
-            'organisation': {
-                'name': organization.name,
-                'uuid': str(organization.uuid)
-            },
-            'destination': 'pipeline_collector'
-        }
+        scan_tag = messages.ScanTagFragment(
+                time=now,
+                user="dummy",
+                scanner=messages.ScannerFragment(pk=0, name="Dummy scan"),
+                organisation=messages.OrganisationFragment(
+                        name=organization.name, uuid=organization.uuid))
         rule = CPRRule(sensitivity=Sensitivity.CRITICAL)
         scan_specification = messages.ScanSpecMessage(
                 scan_tag=scan_tag,
-                source=None,
+                source=None,  # placeholder
                 rule=rule,
                 configuration={},
                 progress=None)

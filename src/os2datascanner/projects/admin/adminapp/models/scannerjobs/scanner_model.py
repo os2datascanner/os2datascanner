@@ -273,19 +273,15 @@ class Scanner(models.Model):
 
         rule = AndRule.make(*prerules, rule)
 
-        scan_tag = {
-            'time': now.isoformat(),
-            'user': user.username if user else None,
-            'scanner': {
-                'pk': self.pk,
-                'name': self.name
-            },
-            'organisation': {
-                'name': self.organization.name,
-                'uuid': str(self.organization.uuid)
-            },
-            'destination': 'pipeline_collector'
-        }
+        scan_tag = messages.ScanTagFragment(
+                time=now,
+                user=user.username if user else None,
+                scanner=messages.ScannerFragment(
+                        pk=self.pk,
+                        name=self.name),
+                organisation=messages.OrganisationFragment(
+                        name=self.organization.name,
+                        uuid=self.organization.uuid))
 
         # Build ScanSpecMessages for all Sources
         message_template = messages.ScanSpecMessage(scan_tag=scan_tag,
@@ -323,7 +319,8 @@ class Scanner(models.Model):
         # OK, we're committed now! Create a model object to track the status of
         # this scan...
         ScanStatus.objects.create(
-                scanner=self, scan_tag=scan_tag, total_sources=source_count,
+                scanner=self, scan_tag=scan_tag.to_json_object(),
+                total_sources=source_count,
                 total_objects=self.checkups.count())
 
         # ... and dispatch the scan specifications to the pipeline
@@ -331,7 +328,7 @@ class Scanner(models.Model):
             for queue, message in outbox:
                 pps.publish_message(queue, message.to_json_object())
 
-        return scan_tag
+        return scan_tag.to_json_object()
 
     def path_for(self, uri):
         return uri

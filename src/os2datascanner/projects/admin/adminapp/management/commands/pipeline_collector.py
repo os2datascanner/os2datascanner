@@ -63,8 +63,8 @@ def checkup_message_received_raw(body):
 
     if not scan_tag or not handle:
         return
-    scanner = Scanner.objects.get(pk=scan_tag["scanner"]["pk"])
-    scan_time = parse_isoformat_timestamp(scan_tag["time"])
+    scanner = Scanner.objects.get(pk=scan_tag.scanner.pk)
+    scan_time = scan_tag.time
 
     try:
         checkup = ScheduledCheckup.objects.get(

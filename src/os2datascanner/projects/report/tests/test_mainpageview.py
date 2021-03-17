@@ -3,6 +3,7 @@ from dateutil import tz
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
 
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.model.ews import (
     EWSMailHandle, EWSAccountSource)
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
@@ -14,38 +15,32 @@ from ..reportapp.models.roles.remediator_model import Remediator
 from ..reportapp.views.views import MainPageView
 
 """Shared data"""
-time0 = "2020-11-11T11:11:59+02:00"
-time1 = "2020-10-28T14:21:27+01:00"
+time0 = parse_isoformat_timestamp("2020-11-11T11:11:59+02:00")  # noqa
+time1 = parse_isoformat_timestamp("2020-10-28T14:21:27+01:00")
 
 # Used to always have a recent date in test.
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 # A timestamp which will always be 30 days old.
 # 30 days old is deemed to be older than 30 days.
-time_30_days = (datetime.now() - timedelta(days=30)).replace(tzinfo=tz.gettz()).strftime(DATE_FORMAT)
+time_30_days = datetime.now(tz=tz.gettz()).replace(microsecond=0) - timedelta(days=30)
 # A timestamp which will always be 29 days old.
-time_29_days = (datetime.now() - timedelta(days=29)).replace(tzinfo=tz.gettz()).strftime(DATE_FORMAT)
+time_29_days = datetime.now(tz=tz.gettz()).replace(microsecond=0) - timedelta(days=29)
 
 # A 400 day old time stamp. ( could be anything older than 30 days )
 # used in scan_tag0 which is used in match with no last-modified metadata
 # this assures that if a match with no last-modified metadata slips through,
 # it will get assigned the value of scan_tag[time].
 # time0 and time1 do not follow correct time format for above to occur
-time_400_days = (datetime.now() - timedelta(days=400)).replace(tzinfo=tz.gettz()).strftime(DATE_FORMAT)
+time_400_days = datetime.now(tz=tz.gettz()).replace(microsecond=0) - timedelta(days=400)
 
-scan_tag0 = {
-    "time": time_400_days,
-    "scanner": {
-        "pk": 14,
-        "name": "Dummy test scanner"
-    },
-}
-scan_tag1 = {
-    "scanner": {
-        "pk": 11,
-        "name": "Dummy test scanner2"
-    },
-    "time": time1
-}
+scan_tag0 = messages.ScanTagFragment(
+    time=time_400_days,
+    scanner=messages.ScannerFragment(pk=14, name="Dummy test scanner"),
+    user=None, organisation=None)
+scan_tag1 = messages.ScanTagFragment(
+    time=time1,
+    scanner=messages.ScannerFragment(pk=11, name="Dummy test scanner2"),
+    user=None, organisation=None)
 
 common_rule = RegexRule(
     expression="Vores hemmelige adgangskode er",
@@ -60,7 +55,7 @@ common_rule_2 = RegexRule(
 """EGON DATA"""
 egon_email_handle = EWSMailHandle(
     source=EWSAccountSource(
-        domain='@olsen.com',
+        domain='olsen.com',
         server=None,
         admin_user=None,
         admin_password=None,
@@ -73,7 +68,7 @@ egon_email_handle = EWSMailHandle(
 
 egon_email_handle_1 = EWSMailHandle(
     source=EWSAccountSource(
-        domain='@olsen.com',
+        domain='olsen.com',
         server=None,
         admin_user=None,
         admin_password=None,
@@ -120,14 +115,14 @@ egon_metadata_1 = messages.MetadataMessage(
     scan_tag=scan_tag1,
     handle=egon_email_handle_1,
     metadata={"email-account": "egon@olsen.com",
-              "last-modified": time_29_days
+              "last-modified": time_29_days.strftime(DATE_FORMAT)
               }
 )
 
 """KJELD DATA"""
 kjeld_email_handle = EWSMailHandle(
     source=EWSAccountSource(
-        domain='@jensen.com',
+        domain='jensen.com',
         server=None,
         admin_user=None,
         admin_password=None,
@@ -158,7 +153,7 @@ kjeld_metadata = messages.MetadataMessage(
     scan_tag=scan_tag0,
     handle=kjeld_email_handle,
     metadata={"email-account": "kjeld@jensen.com",
-              "last-modified": time_30_days}
+              "last-modified": time_30_days.strftime(DATE_FORMAT)}
 )
 
 
