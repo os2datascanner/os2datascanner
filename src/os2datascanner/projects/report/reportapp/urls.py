@@ -7,7 +7,7 @@ from django.conf import settings
 from django.urls import path
 from .views.api import JSONAPIView
 from .views.views import (MainPageView, LeaderStatisticsPageView, DPOStatisticsPageView, ApprovalPageView,
-                          StatsPageView, SettingsPageView, AboutPageView)
+                          StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
 
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),
@@ -28,7 +28,7 @@ if settings.SAML2_ENABLED:
 
 if settings.KEYCLOAK_ENABLED:
     settings.LOGIN_URL = "oidc_authentication_init"
-    settings.LOGOUT_REDIRECT_URL = "http://localhost:8040/accounts/logout/"
+    settings.LOGOUT_REDIRECT_URL = settings.SITE_URL + "accounts/logout/"
     urlpatterns.append(path('oidc/', include('mozilla_django_oidc.urls'))),
     urlpatterns.append(url(r'^accounts/logout/',
                            LogoutPageView.as_view(
