@@ -285,9 +285,10 @@ class StatisticsPageView(TemplateView, LoginRequiredMixin):
 class LeaderStatisticsPageView(StatisticsPageView):
 
     def dispatch(self, request, *args, **kwargs):
-        if not any(isinstance(role, Leader) for role in
-                   Role.get_user_roles_or_default(request.user)):
-            return HttpResponseForbidden()
+        if request.user.is_authenticated:
+            if not user_is(Role.get_user_roles_or_default(request.user),
+                           Leader):
+                return HttpResponseForbidden()
         return super(LeaderStatisticsPageView, self).dispatch(
             request, *args, **kwargs)
 
@@ -295,9 +296,10 @@ class LeaderStatisticsPageView(StatisticsPageView):
 class DPOStatisticsPageView(StatisticsPageView):
 
     def dispatch(self, request, *args, **kwargs):
-        if not user_is(Role.get_user_roles_or_default(request.user),
-                       DataProtectionOfficer):
-            return HttpResponseForbidden()
+        if request.user.is_authenticated:
+            if not user_is(Role.get_user_roles_or_default(request.user),
+                           DataProtectionOfficer):
+                return HttpResponseForbidden()
         return super(DPOStatisticsPageView, self).dispatch(
             request, *args, **kwargs)
 
