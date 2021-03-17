@@ -48,9 +48,9 @@ new Chart(newMatchesLineChartCtx, {
 			borderWidth: 4,
 			borderCapStyle: 'round',
 			tension: 0,
-			borderColor: colorFunction('--color-icon-primary'),
+			borderColor: colorFunction('--color-primary'),
 			pointHoverRadius: 10,
-			hoverBackgroundColor: colorFunction('--color-icon-primary'),
+			hoverBackgroundColor: colorFunction('--color-primary'),
 		}],
 	},
 	options: {
