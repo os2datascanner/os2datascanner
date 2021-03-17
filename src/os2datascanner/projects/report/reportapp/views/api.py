@@ -61,15 +61,13 @@ def set_status_2(body):
 
     doc_rep_pk = body.get("report_id")
     status_value = body.get("new_status")
-
     doc_reports = DocumentReport.objects.filter(pk__in=doc_rep_pk)
 
-    if not doc_reports:
+    if not doc_reports.exists():
         return {
             "status": "fail",
             "message": "unable to populate list of doc reports"
         }
-
     for batch in iterate_queryset_in_batches(10000, doc_reports):
         for dr in batch:
             if dr.resolution_status is not None:
