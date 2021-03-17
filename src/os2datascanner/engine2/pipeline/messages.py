@@ -1,5 +1,8 @@
+from uuid import UUID
 from typing import Optional, Sequence, NamedTuple
+from datetime import datetime
 
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from ..model.core import Handle, Source
 from ..rules.rule import Rule, SimpleRule, Sensitivity
 
@@ -58,6 +61,82 @@ class ProgressFragment(NamedTuple):
                 rule=Rule.from_json_object(obj["rule"]),
                 matches=[MatchFragment.from_json_object(mf)
                         for mf in obj["matches"]])
+
+    _deep_replace = _deep_replace
+
+
+class ScannerFragment(NamedTuple):
+    pk: int
+    name: str
+
+    def to_json_object(self):
+        return {
+            "pk": self.pk,
+            "name": self.name
+        }
+
+    @classmethod
+    def from_json_object(cls, obj):
+        return ScannerFragment(pk=obj["pk"], name=obj["name"])
+
+    _deep_replace = _deep_replace
+
+
+class OrganisationFragment(NamedTuple):
+    name: str
+    uuid: Optional[UUID]
+
+    def to_json_object(self):
+        return {
+            "name": self.name,
+            "uuid": str(self.uuid) if self.uuid else None
+        }
+
+    @classmethod
+    def from_json_object(cls, obj):
+        try:
+            return OrganisationFragment(
+                    name=obj["name"], uuid=UUID(obj["uuid"]))
+        except TypeError:
+            # Organisation fragments created between versions 3.3.3 and 3.6.0
+            # inclusive were just names
+            return OrganisationFragment(name=obj, uuid=None)
+
+    _deep_replace = _deep_replace
+
+
+class ScanTagFragment(NamedTuple):
+    time: datetime
+    user: Optional[str]
+    scanner: Optional[ScannerFragment]
+    organisation: Optional[OrganisationFragment]
+    destination: Optional[str] = "pipeline_collector"
+
+    def to_json_object(self):
+        return {
+            "time": self.time.isoformat(),
+            "user": self.user,
+            "scanner": self.scanner.to_json_object() if self.scanner else None,
+            "organisation": (self.organisation.to_json_object()
+                    if self.organisation else None),
+            "destination": self.destination
+        }
+
+    @classmethod
+    def from_json_object(cls, obj):
+        try:
+            return ScanTagFragment(
+                    time=parse_isoformat_timestamp(obj["time"]),
+                    user=obj["user"],  # can be None, must be present
+                    scanner=obj["scanner"],
+                    organisation=OrganisationFragment.from_json_object(
+                            obj["organisation"]))
+        except TypeError:
+            # Scan tags created between versions 3.0.0 and 3.3.2 inclusive were
+            # just simple timestamps
+            return ScanTagFragment(
+                    time=parse_isoformat_timestamp(obj),
+                    user=None, scanner=None, organisation=None)
 
     _deep_replace = _deep_replace
 
