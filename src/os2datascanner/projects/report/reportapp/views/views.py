@@ -24,6 +24,7 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.http import HttpResponseForbidden
+from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.views.generic import View, TemplateView, ListView
 
@@ -166,6 +167,8 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         context['handled_matches'], context['total_handled_matches'] = \
             self.count_handled_matches_grouped_by_sensitivity()
 
+        context['source_types'] = self.count_by_source_types()
+
         return context
 
     def count_handled_matches_grouped_by_sensitivity(self):
@@ -219,18 +222,38 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         return sensitivity_list, total
 
-    def get_data_sources(self):
-        # Counts the distribution of data sources by type
-        data_sources = self.matches.order_by(
-            'data__matches__handle__type').values(
-            'data__matches__handle__type').annotate(
-            total=Count('data__matches__handle__type')
+    def count_by_source_types(self):
+        """Counts all matches grouped by source types"""
+        matches_counted_by_sources = self.matches.order_by(
+            'source_type').values(
+            'source_type').annotate(
+            total=Count('source_type')
         ).values(
-            'data__matches__handle__type', 'total',
+            'source_type', 'total'
         )
 
-        return [(ds['data__matches__handle__type'],
-                ds['total']) for ds in data_sources]
+        source_count_gen = ((m['source_type'], m['total'])
+                            for m in matches_counted_by_sources)
+
+        formatted_counts = [
+            [_('Other'), 0],
+            [_('Webscan'), 0],
+            [_('Filescan'), 0],
+            [_('Mailscan'), 0],
+        ]
+
+        # Places source_types from generator to formatted_counts
+        for s in source_count_gen:
+            if s[0] == 'web':
+                formatted_counts[1][1] = s[1]
+            elif s[0] == 'smbc':
+                formatted_counts[2][1] = s[1]
+            elif s[0] == 'ews':
+                formatted_counts[3][1] = s[1]
+            else:
+                formatted_counts[0][1] += s[1]
+
+        return formatted_counts
         
     def count_unhandled_matches(self):
         # Counts the amount of unhandled matches
