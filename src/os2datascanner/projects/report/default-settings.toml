@@ -18,6 +18,7 @@ SAML2_ENABLED = false
 # OAuth 2.0 services. (This value should end with a forward slash.)
 SITE_URL = "*"
 ALLOWED_HOSTS = []
+SESSION_COOKIE_NAME = "sessionid"
 
 # Client info from keycloak
 OIDC_RP_CLIENT_ID = ""

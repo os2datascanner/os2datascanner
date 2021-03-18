@@ -11,6 +11,7 @@ PRODUCTION = false
 # OAuth 2.0 services. (This value should end with a forward slash.)
 SITE_URL = "http://localhost:8020/"
 ALLOWED_HOSTS = []
+SESSION_COOKIE_NAME = "admin_sessionid"
 
 # [installation]
 OPTIONAL_APPS = ["django_extensions"]
