@@ -77,7 +77,7 @@ $(actions).unbind('click').click(function() {
                   checkbox_nodelist[i].closest('tr').remove();
               }
               select_all_checkbox.checked = false; // reset select-all checkbox
-              location.reload()
+              location.reload(true)
           } else if (body["status"] == "fail") {
             console.log(
                 "Attempt to call set-status-1 failed: "
