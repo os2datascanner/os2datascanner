@@ -19,6 +19,7 @@ PRODUCTION = false
 SITE_URL = "*"
 SITE_ID = 1
 ALLOWED_HOSTS = []
+SESSION_COOKIE_NAME = "sessionid"
 
 # [msgraph]
 # The GUID of the registered Azure application corresponding to this
