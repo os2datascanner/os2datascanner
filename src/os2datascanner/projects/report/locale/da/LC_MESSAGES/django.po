@@ -109,6 +109,10 @@ msgstr "oprydder"
 msgid "remediators"
 msgstr "opryddere"
 
+#: reportapp/templates/index.html:22
+msgid "No matches were found"
+msgstr "Der er ingen matches"
+
 #: reportapp/templates/login.html:9
 msgid "Log in"
 msgstr "Log ind på"
@@ -172,33 +176,41 @@ msgstr "Vælg følsomhed"
 msgid "Only show matches less than 30 days old"
 msgstr "Vis matches der er under 30 dage gamle"
 
-#: reportapp/templates/components/handle-match.html:7
-msgid "Handle match"
-msgstr "Håndtér match"
+#: reportapp/templates/components/handle-match.html:6
+msgid "Handle matches as:"
+msgstr "Håndtér matches som:"
 
-#: reportapp/templates/components/handle-match.html:12
-msgid "This match was handled in the following way:"
-msgstr "Har håndteret dette match på følgende måde:"
-
-#: reportapp/templates/components/handle-match.html:16
+#: reportapp/templates/components/handle-match.html:14
 msgid "Moved the file"
 msgstr "Har flyttet filen"
 
-#: reportapp/templates/components/handle-match.html:19
+#: reportapp/templates/components/handle-match.html:17
 msgid "Deleted the file"
 msgstr "Har slettet filen"
 
-#: reportapp/templates/components/handle-match.html:22
+#: reportapp/templates/components/handle-match.html:20
 msgid "Edited the file"
 msgstr "Har redigeret filen"
 
-#: reportapp/templates/components/handle-match.html:25
+#: reportapp/templates/components/handle-match.html:23
 msgid "False positive"
 msgstr "Falsk positiv"
+
+#: reportapp/templates/components/handle-match.html:28
+msgid "Submit"
+msgstr "Udfør"
+
+#: reportapp/templates/components/handle-match.html:31
+msgid "0 out of 10 selected"
+msgstr "0 af 10 valgt"
 
 #: reportapp/templates/components/hit.html:30
 msgid "Open"
 msgstr "Åben"
+
+#: reportapp/templates/components/hit.html:24
+msgid "Matches:"
+msgstr "Matches:"
 
 #: reportapp/templates/components/hit.html:35
 msgid "Copy"

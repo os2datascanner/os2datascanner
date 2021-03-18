@@ -2,6 +2,7 @@
   --datatable-cell-padding: 2rem;
 }
 
+// datatable, start
 .datatable {
   background-color: var(--color-widget-bg);
   border-collapse: collapse;
@@ -27,40 +28,54 @@
       width: 8rem;
     }
 
+    &--handle {
+      width: 10rem;
+    }
+
     &--filetype-icon {
-      width: 5rem;
+      display: flex;
     }
 
     &--item {
-      width: 25%;
+      width: 40%;
       word-break: break-all;
       text-overflow: ellipsis;
       overflow: hidden;
     }
 
     &--match {
-      max-width: 12.5%;
-    }
-
-    &--probability {
-      max-width: 12.5%;
-      word-wrap: break-word;
-    }
-
-    &--handle {
-      width: auto;
+      width: 25%;
     }
 
     &--context {
-      max-width: 25%;
+      text-align: left;
+      width: 35%;
       word-break: break-all;
       text-overflow: ellipsis;
       overflow: hidden;
       border-bottom: none;
     }
+
+    &--probability {
+      text-align: right;
+      width: 20%;
+      word-wrap: normal;
+    }
+
   }
 }
 
+.datatable-none-matches {
+  float: left;
+  width: 90rem;
+}
+
+.datatable-checkbox {
+  margin-right: 5rem;
+}
+// datatable, end
+
+// matches & count, start
 .matches {
   display: flex;
   flex-flow: row nowrap;
@@ -69,15 +84,17 @@
   font-weight: 600;
   color: var(--color-text-secondary);
 }
+// matches & count, end
 
+// probability,  start
 .probability {
-  margin-left: 5rem;
+  margin-left: 4rem;
   font-size: 0.75rem;
   font-weight: bold;
   border-radius: var(--border-radius-button);
   color: var(--color-text-white);
   text-align: center;
-  max-width: 3.5rem;
+  width: 3.5rem;
   padding: 0.5rem;
 
   &--red {
@@ -90,7 +107,9 @@
     background-color: var(--color-ok-dark);
   }
 }
+// probability, end
 
+// paginaion, start
 .pagination {
   margin-bottom: 1.5rem;
 
@@ -104,7 +123,9 @@
     text-decoration: underline;
   }
 }
+// pagination, end
 
+// datatable tr hover, start
 .datatable tr:hover {
 
   td{
@@ -115,6 +136,7 @@
     opacity: 1;
   }
 }
+// datatable tr hover, end
 
 @supports(display: grid) {
   // We use CSS Grid to detect IE11, as "tr:focus" breaks the whole selector in IE11
@@ -131,6 +153,7 @@
   }
 }
 
+// datatable th & td, start
 .datatable th,
 .datatable td {
   line-height: 1;
@@ -145,36 +168,66 @@
     padding-right: var(--datatable-cell-padding);
   }
 }
+// datatable th & td, end
 
-.datatable th {
+// datatable checkbox, start
+.datatable input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 2px solid var(--color-primary-dark);
+  cursor: pointer;
+  vertical-align: middle;
+  -webkit-appearance: none;
+  -webkit-border-radius: var(--border-radius-button);
+  border-radius: var(--border-radius-button);
+}
+.datatable input[type="checkbox"]:focus {
+  outline:none;
+}
+.datatable input[type="checkbox"]:checked:before {
+  font-weight: bold;
+  color: #222;
+  content: '\2713';
+  -webkit-margin-start: 0;
+  margin-left: 1px;
+  font-size: 1rem;
+}
+// datatable checkbox, end
+
+// handle match th, start
+.datatable .handle-match th {
+  font-size: 1rem;
+  padding-top: 2rem;
+  padding-bottom: 1.5rem;
+}
+// handle match th, end
+
+// grey th, start
+.datatable .grey-bg th {
   font-size: 1rem;
   font-weight: bold;
   position: -webkit-sticky;
   position: sticky;
   top: 4.5rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
   z-index: 2;
-  background-color: #e5e5e5;
-
-  &:first-child {
-    border-radius: 1.25rem 0 0 0;
-  }
-
-  &:last-child {
-    border-radius: 0 1.25rem 0 0;
-  }
+  background-color: #f4f4f4;
 }
+
+.datatable .grey-bg th.scrollActive {
+  border-radius: 0;
+  background-color: #f4f4f4;
+}
+// grey th, end
 
 .datatable td {
   border-top: 1px solid rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s ease-in-out;
 }
 
-.datatable th.scrollActive {
-  border-radius: 0;
-  background-color: #e5e5e5;
-}
-
-/* .datatable--click-rows, start */
+// .datatable--click-rows, start
 .datatable--click-rows td {
   padding: 0;
 
@@ -193,9 +246,9 @@
   padding: 2rem;
   text-decoration: none;
 }
-/* .datatable--click-rows, stop */
+// .datatable--click-rows, end
 
-/* Nested tables, start */
+// nested tables, start
 .datatable--nested {
   border-collapse: collapse;
   box-shadow: initial;
@@ -210,8 +263,9 @@
     padding: var(--size-ds-unit) 0;
   }
 }
-/* Nested tables, stop */
+// nested tables, end
 
+// object items, start
 .scan {
   &__item-title {
     display: block;
@@ -234,3 +288,4 @@
     }
   }
 }
+// object items, end

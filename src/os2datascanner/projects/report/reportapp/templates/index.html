@@ -1,3 +1,4 @@
+{%  load i18n %}
 {% include "partials/header.html" %}
 {% include "components/banner.html" %}
 
@@ -16,7 +17,14 @@
 
         {% include "components/filters.html" %}
 
-        {% include "components/hits.html" %}
+        {% if page_obj.paginator.count == 0 %}
+          <span class="datatable-none-matches">
+            {% trans "No matches were found" %}
+          </span>
+        {% else %}
+          {% include "components/hits.html" %}
+        {% endif %}
+
       </div>
 
     </main>

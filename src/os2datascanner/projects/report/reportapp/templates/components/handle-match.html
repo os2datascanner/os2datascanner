@@ -1,30 +1,33 @@
 {% load l10n %}
 {%  load i18n %}
 
-<div class="handle-match-wrapper">
-
-  <button class="handle-match-button button" type="button">
-      {% trans "Handle match" %}
-  </button>
-
-  <div class="handle-match" role="tooltip">
-    <h5>
-        {% trans "This match was handled in the following way:" %}
-    </h5>
-    <div>
-      <button type="button" class="handle-match__action" data-report-pk="{{ match.pk|unlocalize }}" data-status="2">
-          {% trans "Moved the file" %}
+  <div class="handle-match-wrapper">
+    <span>
+        {% trans "Handle matches as:" %}
+    </span>
+      <div class="handle-match">
+          <select name="match-handle" id="match-handle">
+            <option value="" selected="selected">
+                ----------
+            </option>
+            <option value="2">
+                {% trans "Moved the file" %}
+            </option>
+            <option value="3">
+                {% trans "Deleted the file" %}
+            </option>
+            <option value="1">
+                {% trans "Edited the file" %}
+            </option>
+            <option value="4">
+                {% trans "False positive" %}
+            </option>
+          </select>
+      </div>
+      <button type="button" class="handle-match__action" data-status="match-handle">
+          {% trans "Submit" %}
       </button>
-      <button type="button" class="handle-match__action" data-report-pk="{{ match.pk|unlocalize }}" data-status="3">
-          {% trans "Deleted the file" %}
-      </button>
-      <button type="button" class="handle-match__action" data-report-pk="{{ match.pk|unlocalize }}" data-status="1">
-          {% trans "Edited the file" %}
-      </button>
-      <button type="button" class="handle-match__action" data-report-pk="{{ match.pk|unlocalize }}" data-status="4">
-          {% trans "False positive" %}
-      </button>
-    </div>
+      <span class="selected-cb">
+        {% trans "0 out of 10 selected" %}
+      </span>
   </div>
-
-</div>

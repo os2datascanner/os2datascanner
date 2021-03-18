@@ -2,13 +2,21 @@
 {%  load i18n %}
 
 <table class="datatable">
-
   <thead>
     <tr>
-      <th class="datatable__column--filetype-icon">
-        <span class="screen-reader-only">
-            {% trans "Type" %}
-        </span>
+      <th>
+        {% include "components/handle-match.html" %}
+      </th>
+    </tr>
+    <tr class="grey-bg">
+      <th class="datatable__column--handle">
+        <div class="datatable__column--filetype-icon">
+          <input id="select-all" type="checkbox" name="match-checkbox" class="datatable-checkbox">
+  
+          <span class="screen-reader-only">
+              {% trans "Type" %}
+          </span>
+        </div>
       </th>
       <th class="datatable__column--item">
           {% trans "Object" %}
@@ -21,9 +29,6 @@
       </th>
       <th class="datatable__column--probability">
           {% trans "Probability" %}
-      </th>
-      <th class="datatable__column--handle">
-          {% trans "Handle" %}
       </th>
     </tr>
   </thead>
