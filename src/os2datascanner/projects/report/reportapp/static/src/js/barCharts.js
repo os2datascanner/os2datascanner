@@ -358,7 +358,7 @@ new Chart(unhandledBarChartCtx, {
 		datasets: [{
 			data: unhandledBarChartValues,
 			backgroundColor: [
-				[colorFunction('--color-primary-light'), colorFunction('--color-icon-primary'), colorFunction('--color-warning'),colorFunction('--color-gradient-dark-yellow') ],
+				[colorFunction('--color-primary-light'), colorFunction('--color-primary'), colorFunction('--color-warning'),colorFunction('--color-gradient-dark-yellow') ],
 			],
 			barThickness: 55,
 		}]
@@ -429,7 +429,7 @@ new Chart(oldestBarChartCtx, {
     datasets: [{
       data: oldestBarChartValues,
       backgroundColor: [
-        [colorFunction('--color-primary-light'), colorFunction('--color-icon-primary')],
+        [colorFunction('--color-primary-light'), colorFunction('--color-primary')],
       ],
       barPercentage: 0.8,
     }]

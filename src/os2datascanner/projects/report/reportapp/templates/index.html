@@ -5,14 +5,14 @@
       {% include "partials/sidemenu.html" with active_tab="home" %}
 
       <div class="content">
-
-        <div class="matches">
-          <span>Matches</span>
-          <i class="matches--width material-icons">chevron_right</i>
-          <span class="matches--width">Samlede antal: {{ page_obj.paginator.count }}</span>
+        
+        <div class="aside">
+          <h1 class="page-title">Matches</h1>
         </div>
 
-        <h1 class="page-title">Matches</h1>
+        <div class="aside">
+          <span class="matches">Samlede antal: {{ page_obj.paginator.count }}</span>
+        </div>
 
         {% include "components/filters.html" %}
 

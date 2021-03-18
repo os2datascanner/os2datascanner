@@ -109,6 +109,42 @@ msgstr "oprydder"
 msgid "remediators"
 msgstr "opryddere"
 
+#: reportapp/templates/login.html:9
+msgid "Log in"
+msgstr "Log ind på"
+
+#: reportapp/templates/login.html:11
+msgid "report module"
+msgstr "rapportmodulet"
+
+#: reportapp/templates/login.html:18
+msgid "Username"
+msgstr "Brugernavn"
+
+#: reportapp/templates/login.html:25
+msgid "Password"
+msgstr "Adgangskode"
+
+#: reportapp/templates/login.html:31
+msgid "The username or password is incorrect"
+msgstr "Fejl i brugernavn eller password"
+
+#: reportapp/templates/login.html:40
+msgid "Remember me"
+msgstr "Husk mig"
+
+#: reportapp/templates/login.html:45
+msgid "Login"
+msgstr "Log ind"
+
+#: reportapp/templates/login.html:53
+msgid "Did you forget your password?"
+msgstr "Har du glemt din adgangskode?"
+
+#: reportapp/templates/login.html:55
+msgid "Click here"
+msgstr "Klik her"
+
 #: reportapp/templates/components/filters.html:23
 #: reportapp/templates/components/filters.html:52
 msgid "Clear"

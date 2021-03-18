@@ -2,91 +2,12 @@
   --datatable-cell-padding: 2rem;
 }
 
-.dashboard_wrapper {
-  display: flex;
-  max-width: 85%;
-  min-height: 9.5rem;
-  margin-bottom: 3.5rem;
-
-  .link {
-    height: 0;
-    color: var(--color-text-main);
-    text-decoration: none;
-  }
-}
-
-.dashboard {
-  display: grid;
-  grid-template-columns: 0.5fr 12fr 2fr;
-  grid-template-areas: "sensitivity text-content material-icons";
-  background-color: var(--color-widget-bg);
-  box-shadow: var(--box-shadow-widget);
-  border-radius: var(--border-radius-widget);
-
-  .sensitivity {
-    width: 1rem;
-    min-height: 9.5rem;
-    border-radius: var(--border-radius-sensitivity);
-
-      &--critical {
-        display: block;
-        background-color: var(--color-error);
-      }
-      
-      &--problem {
-        display: block;
-        background-color: var(--color-problem);
-      }
-
-      &--warning {
-        display: block;
-        background-color: var(--color-warning);
-      }
-
-      &--notification {
-        display: block;
-        background-color: var(--color-notification);
-      }
-  }
-
-  .text-content {
-    display: flex;
-    align-items: flex-start;
-    flex-flow: column;
-    grid-area: text-content;
-    padding: 2rem;
-
-    h1 {
-      height: 0.6rem;
-    }
-
-    .matches {
-      color: var(--color-text-main);
-      font-weight: normal;
-    }
-  }
-
-  .material-icons {
-    grid-area: material-icons;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    color: #9e9e9e59;
-    font-size: 5rem;
-
-    &--hidden {
-      visibility: hidden;
-    }
-  }
-
-}
-
 .datatable {
   background-color: var(--color-widget-bg);
   border-collapse: collapse;
   box-shadow: var(--box-shadow-widget);
   border-radius: var(--border-radius-widget);
-  max-width: 80rem;
+  max-width: 90rem;
   table-layout: fixed;
   width: calc(100% - 2rem);
   margin-bottom: 1.5rem;
@@ -135,6 +56,7 @@
       word-break: break-all;
       text-overflow: ellipsis;
       overflow: hidden;
+      border-bottom: none;
     }
   }
 }
@@ -144,13 +66,8 @@
   flex-flow: row nowrap;
   align-items: center;
   font-size: 1rem;
-  font-weight: bold;
-  color: var(--color-primary-dark);
-
-  &--width {
-    color: var(--color-text-secondary);
-    margin-left: .5rem;
-  }
+  font-weight: 600;
+  color: var(--color-text-secondary);
 }
 
 .probability {
@@ -234,7 +151,7 @@
   font-weight: bold;
   position: -webkit-sticky;
   position: sticky;
-  top: 72;
+  top: 4.5rem;
   z-index: 2;
   background-color: #e5e5e5;
 
@@ -284,6 +201,7 @@
   box-shadow: initial;
   table-layout: fixed;
   width: 100%;
+  border-top: none;
 
   td,
   td:first-child,
