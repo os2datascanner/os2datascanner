@@ -14,14 +14,13 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
-from datetime import datetime
-from dateutil import tz
 
 from django.core.management.base import BaseCommand
 from django.core.exceptions import FieldError
 from django.db.models.deletion import ProtectedError
 
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
+from os2datascanner.utils.system_utilities import (
+        time_now, parse_isoformat_timestamp)
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
@@ -72,20 +71,21 @@ def event_message_received_raw(body):
 
 
 def handle_metadata_message(new_report, result):
+    message = messages.MetadataMessage.from_json_object(result)
+
     new_report.data["metadata"] = result
-    if result.get("metadata").get("last-modified"):
-        new_report.datasource_last_modified = OutputType.LastModified.decode_json_object(
-            result.get("metadata").get("last-modified"))
+    if "last-modified" in message.metadata:
+        new_report.datasource_last_modified = (
+                OutputType.LastModified.decode_json_object(
+                        message.metadata["last-modified"]))
     # If no last-modified value in metadata received, set it to time of scan.
     else:
-        DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
-        time_now = (datetime.now()).replace(tzinfo=tz.gettz()).strftime(DATE_FORMAT)
-
-        # If no scan_tag time is found, default value to current time
-        # as this must be some-what close to actual scan_tag time.
-        # If no datasource_last_modified value is ever set, matches will not be shown.
-        new_report.datasource_last_modified = parse_isoformat_timestamp(
-            result.get("scan_tag", {}).get("time", time_now))
+        # If no scan_tag time is found, default value to current time as this
+        # must be some-what close to actual scan_tag time.
+        # If no datasource_last_modified value is ever set, matches will not be
+        # shown.
+        new_report.datasource_last_modified = (
+                message.scan_tag.time or time_now())
     new_report.save()
 
 

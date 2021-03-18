@@ -24,16 +24,11 @@ import datetime
 
 from django.core.management.base import BaseCommand
 
-
+from os2datascanner.utils.system_utilities import time_now
 from ...models.scannerjobs.scanner_model import Scanner
 
 
-def strip_seconds(d):
-    """Remove any seconds or microseconds from the datetime."""
-    return d.replace(second=0, microsecond=0)
-
-
-current_qhr = strip_seconds(datetime.datetime.now())
+current_qhr = time_now().replace(second=0)
 current_qhr = current_qhr.replace(
     minute=current_qhr.minute - current_qhr.minute % 15
 )

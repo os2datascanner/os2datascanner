@@ -1,6 +1,7 @@
 import re
 import json
 from datetime import datetime
+from dateutil import tz
 
 from os2datascanner.engine2.conversions.types import DATE_FORMAT
 
@@ -45,3 +46,10 @@ def parse_isoformat_timestamp(dt):
         return datetime.strptime(dt, DATE_FORMAT)
     except ValueError:
         return None
+
+
+def time_now() -> datetime:
+    """Returns the current time in the system timezone with second precision.
+    (This is the correct way to get the current time for all purposes in
+    OS2datascanner.)"""
+    return datetime.now().replace(tzinfo=tz.gettz(), microsecond=0)

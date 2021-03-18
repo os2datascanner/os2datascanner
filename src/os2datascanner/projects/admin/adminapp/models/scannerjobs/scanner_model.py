@@ -34,6 +34,7 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils.managers import InheritanceManager
 from recurrence.fields import RecurrenceField
 
+from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import Handle, Source
 from os2datascanner.engine2.rules.meta import HasConversionRule
 from os2datascanner.engine2.rules.logical import OrRule, AndRule, make_if
@@ -42,7 +43,6 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
 from os2datascanner.engine2.conversions.types import OutputType
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 
 from ..authentication_model import Authentication
 from ..organization_model import Organization
@@ -241,7 +241,7 @@ class Scanner(models.Model):
         An exception will be raised if the underlying source is not available,
         and a pika.exceptions.AMQPError (or a subclass) will be raised if it
         was not possible to communicate with the pipeline."""
-        now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
+        now = time_now()
 
         # Create a new engine2 scan specification
         rule = OrRule.make(
@@ -429,9 +429,8 @@ class ScanStatus(models.Model):
         fraction_scanned = self.fraction_scanned
         if (fraction_scanned is not None
                 and fraction_scanned >= settings.ESTIMATE_AFTER):
-            now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
             start = self.start_time
-            so_far = now - start
+            so_far = time_now() - start
             total_duration = so_far / fraction_scanned
             return start + total_duration
         else:
@@ -440,10 +439,7 @@ class ScanStatus(models.Model):
     @property
     def start_time(self) -> datetime.datetime:
         """Returns the start time of this scan."""
-        # Note that, although this access is not in general safe (historic
-        # scan_tag values aren't dictionaries), it is here -- the ScanStatus
-        # class is younger than those really old scan_tags
-        return parse_isoformat_timestamp(self.scan_tag["time"])
+        return messages.ScanTagFragment(self.scan_tag).time
 
     class Meta:
         verbose_name = _("scan status")

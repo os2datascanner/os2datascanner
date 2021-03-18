@@ -16,11 +16,11 @@
 # source municipalities ( https://os2.eu/ )
 
 from time import time
-import datetime
 from django.core.management.base import BaseCommand
 from dateutil import tz
 from contextlib import contextmanager
 
+from os2datascanner.utils.system_utils import time_now
 from os2datascanner.engine2.model import http
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.rule import Sensitivity
@@ -92,10 +92,9 @@ class Command(BaseCommand):
         clamped_frac = 1.0 - max(0.0, min(1.0, match_fraction))
         match_from = page_count * clamped_frac
 
-        now = datetime.datetime.now(tz=tz.gettz()).replace(microsecond=0)
         organization = Organization.objects.first()
         scan_tag = messages.ScanTagFragment(
-                time=now,
+                time=time_now(),
                 user="dummy",
                 scanner=messages.ScannerFragment(pk=0, name="Dummy scan"),
                 organisation=messages.OrganisationFragment(

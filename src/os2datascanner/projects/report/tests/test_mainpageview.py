@@ -3,7 +3,8 @@ from dateutil import tz
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
 
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
+from os2datascanner.utils.system_utilities import (
+        time_now, parse_isoformat_timestamp)
 from os2datascanner.engine2.model.ews import (
     EWSMailHandle, EWSAccountSource)
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
@@ -22,16 +23,16 @@ time1 = parse_isoformat_timestamp("2020-10-28T14:21:27+01:00")
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 # A timestamp which will always be 30 days old.
 # 30 days old is deemed to be older than 30 days.
-time_30_days = datetime.now(tz=tz.gettz()).replace(microsecond=0) - timedelta(days=30)
+time_30_days = time_now() - timedelta(days=30)
 # A timestamp which will always be 29 days old.
-time_29_days = datetime.now(tz=tz.gettz()).replace(microsecond=0) - timedelta(days=29)
+time_29_days = time_now() - timedelta(days=29)
 
 # A 400 day old time stamp. ( could be anything older than 30 days )
 # used in scan_tag0 which is used in match with no last-modified metadata
 # this assures that if a match with no last-modified metadata slips through,
 # it will get assigned the value of scan_tag[time].
 # time0 and time1 do not follow correct time format for above to occur
-time_400_days = datetime.now(tz=tz.gettz()).replace(microsecond=0) - timedelta(days=400)
+time_400_days = time_now() - timedelta(days=400)
 
 scan_tag0 = messages.ScanTagFragment(
     time=time_400_days,
