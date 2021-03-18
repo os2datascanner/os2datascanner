@@ -14,15 +14,15 @@ $('#select-all').click(function() {
 
 // Show selected checkboxes
 function showChecked(){
-  var selected = document.querySelectorAll("td input:checked").length
-      + " af " + document.querySelectorAll("td input").length + " valgt";
+  var selected = $("td input:checked").length
+      + " af " + $("td input").length + " valgt";
   $(".selected-cb").text(selected);
 }
 // Iterate each checkbox
-document.querySelectorAll("input[name=match-checkbox]").forEach(i=>{
-  i.onclick = function(){
-  showChecked();
-  }
+$("input[name=match-checkbox]").each(function( i ) {
+  $(this).on("click", function(){
+    i = showChecked();
+});
 });
 
 function getCookie(name) {
@@ -47,7 +47,6 @@ const actions = $('.handle-match__action')
 $(actions).unbind('click').click(function() {
   const sel = document.getElementById('match-handle'); // get handle match element
   const checkbox_nodelist = document.querySelectorAll('#match-checkbox:checked') // get list of checked checkboxes
-  const select_all_checkbox = document.getElementById('select-all'); // select-all checkbox
   const new_status = parseInt(sel.options[sel.selectedIndex].value); // get value of selected match-handling
 
   // Create a list of report_ids, populate it and POST it to api.py action
@@ -72,12 +71,11 @@ $(actions).unbind('click').click(function() {
           }
         }).done(function(body) {
           if (body["status"] == "ok") {
+            location.reload(true)
               // Removes the handled match row.
               for (i = 0; i < checkbox_nodelist.length; i++) {
                   checkbox_nodelist[i].closest('tr').remove();
               }
-              select_all_checkbox.checked = false; // reset select-all checkbox
-              location.reload(true)
           } else if (body["status"] == "fail") {
             console.log(
                 "Attempt to call set-status-1 failed: "

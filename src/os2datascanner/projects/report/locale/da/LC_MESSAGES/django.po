@@ -109,6 +109,10 @@ msgstr "oprydder"
 msgid "remediators"
 msgstr "opryddere"
 
+#: reportapp/templates/index.html:22
+msgid "No matches were found"
+msgstr "Der er ingen matches"
+
 #: reportapp/templates/login.html:9
 msgid "Log in"
 msgstr "Log ind på"
