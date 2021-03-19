@@ -402,20 +402,14 @@ class StatisticsPageViewTest(TestCase):
                             ['Advarsel', 1], ['Notifikation', 0]])
         self.assertEquals(total, 7)
         dpo.delete()
-    
-    # get_data_sources()
-    def test_statisticspage_get_data_sources_as_leader(self):
-        leader = Leader.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        self.assertListEqual(view.get_data_sources(),
-                            [('ews', 7)])
-        leader.delete()
 
-    def test_statisticspage_get_data_sources_as_dpo(self):
+    # count_by_source_types
+    def test_statisticspage_count_by_source_types_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
-        self.assertListEqual(view.get_data_sources(),
-                            [('ews', 7)])
+        self.assertListEqual(view.count_by_source_types(),
+                             [['Andet', 0], ['Webscan', 0],
+                              ['Filscan', 0], ['Mailscan', 7]])
         dpo.delete()
 
     # count_handled_matches_grouped_by_sensitivity()
