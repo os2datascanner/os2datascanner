@@ -1,4 +1,5 @@
 from typing import NamedTuple
+import datetime
 import unittest
 
 from os2datascanner.engine2.pipeline import messages
@@ -61,3 +62,32 @@ class MessageTest(unittest.TestCase):
                                 field1="Farvel",
                                 field2=117,
                                 field3="Falsk")))
+
+    def test_old_scan_tag_parsing(self):
+        with self.subTest("scan tag from versions 3.0.0-3.3.2"):
+            stf = messages.ScanTagFragment.from_json_object(
+                    "2019-12-20T09:00:00+01:00")
+            self.assertEqual(
+                    stf.time,
+                    datetime.datetime(
+                            2019, 12, 20,
+                            9, 0, 0,
+                            tzinfo=datetime.timezone(
+                                    datetime.timedelta(seconds=3600))),
+                    "could not parse simple date scan tag")
+        with self.subTest("scan tag from versions 3.3.3-3.6.0"):
+            stf = messages.ScanTagFragment.from_json_object({
+                "time": "2020-06-24T09:00:00+01:00",
+                "user": "jens",
+                "scanner": {
+                    "pk": 10,
+                    "name": "Test scanner"
+                },
+                "organisation": "Vejstrand Kommune"
+            })
+            self.assertEqual(
+                    stf.organisation,
+                    messages.OrganisationFragment(
+                            name="Vejstrand Kommune",
+                            uuid=None),
+                    "could not parse simple organisation scan tag")
