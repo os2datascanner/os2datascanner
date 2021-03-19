@@ -33,15 +33,28 @@ Chart.pluginService.register({
 	}
 });
 
-var testData = [ null, 5, 10, 18, 33, 121, 184, 179, 196, 158, 166, 66, 20, null];
-  
-var newMatchesLineChartCtx = document.querySelector("#line_chart_new_matches").getContext('2d');
+var newMatchesLineChartLabels = [];
+var newMatchesLineChartValues = [];
+
+for(var i = 0; i<newMatchesByMonth.length;i++) {
+	newMatchesLineChartLabels.push(newMatchesByMonth[i][0].toUpperCase());
+	newMatchesLineChartValues.push(newMatchesByMonth[i][1]);
+}
+
+// Adds empty values in front of both arrays (for styling purposes)
+newMatchesLineChartLabels.unshift("");
+newMatchesLineChartLabels.push("");
+newMatchesLineChartValues.unshift(null);
+newMatchesLineChartValues.push(null);
+
+
+var newMatchesLineChartCtx = document.querySelector("#line_chart_new_matches_by_month").getContext('2d');
 new Chart(newMatchesLineChartCtx, {
 	type: 'line',
 	data: {
-		labels: ["", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC", ""],
+		labels:newMatchesLineChartLabels,
 		datasets: [{
-			data: [ null, 5, 10, 18, 33, 121, 184, 179, 196, 158, 166, 66, 20, null],
+			data: newMatchesLineChartValues,
 			fill: 0,
 			pointRadius: 0,
 			pointHitRadius: 20,
@@ -166,7 +179,7 @@ new Chart(newMatchesLineChartCtx, {
 				ticks: {
 					beginAtZero: true,
 					fontSize: 14,
-					stepSize: stepSizeFunction(testData, 2),
+					stepSize: stepSizeFunction(newMatchesLineChartValues, 2),
 				}
 			}]
 		},

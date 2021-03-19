@@ -128,6 +128,34 @@
     </div>
     <!-- Line chart -->
     <div class="statistic statistic--four">
+      <div class="statistic_header">
+        <div class="">
+          <h1 class="page-title__sub">Udviklingsoverblik</h1>
+          <p class="chart_description">Antal nye matches pr. måned</p>
+          <p class="hidden chart_description">Antal uhåndterede matches pr. måned</p>
+        </div>
+        <div class="statistic_header_nav">
+          <div></div>
+          <div class="dropdown">
+            <div class="select">
+              <span class="select_span">Nye matches pr. md.</span>
+              <i class="material-icons">
+                keyboard_arrow_down
+              </i>
+            </div>
+            <ul class="dropdown-menu">
+              <li>Nye matches pr. md.</li>
+              <li>Uhåndterede matches</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="chart_container">
+        <canvas id="line_chart_new_matches_by_month"></canvas>
+      </div>
+      <div class="hidden chart_container">
+        <canvas id="line_chart_unhandled"></canvas>
+      </div>
     </div>
   </div>
 </div>
@@ -135,6 +163,7 @@
 {{ sensitivities|json_script:"sensitivities" }}
 {{ source_types|json_script:"source_types" }}
 {{ handled_matches|json_script:"handled_matches" }}
+{{ new_matches_by_month|json_script:"new_matches_by_month" }}
 <script>
   // json_script solution - Safe from in-page script execution
 
@@ -143,6 +172,8 @@
   var handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
 
   var sourceTypes = JSON.parse(document.getElementById('source_types').textContent);
+
+  var newMatchesByMonth = JSON.parse(document.getElementById('new_matches_by_month').textContent);
 
   // Finds the total number matches in the array
   totalArrayValue = function(array, index){
