@@ -349,7 +349,7 @@ for(var i = 0; i<unhandledMatches.length && i<5;i++) {
 }
 
 // this function works for arrays with only values
-const unhandledMatchesAverage = unhandledBarChartValues.reduce((a,b) => (a + b)) / unhandledBarChartValues.length;
+var unhandledMatchesAverage = unhandledBarChartValues.reduce((a,b) => (a + b)) / unhandledBarChartValues.length;
 
 new Chart(unhandledBarChartCtx, {
 	type: 'bar',
@@ -420,7 +420,7 @@ for(var i = 0; i<oldestMatches.length && i<5;i++) {
 }
 
 // this function works for arrays with only values
-const oldestMatchesAverage = oldestBarChartValues.reduce((a,b) => (a + b)) / oldestBarChartValues.length;
+var oldestMatchesAverage = oldestBarChartValues.reduce((a,b) => (a + b)) / oldestBarChartValues.length;
 
 new Chart(oldestBarChartCtx, {
   type: 'bar',

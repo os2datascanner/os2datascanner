@@ -1,19 +1,20 @@
 // Color function
 // reads colors from :root 
-const colorFunction = function (color) {
+var colorFunction = function (color) {
   return getComputedStyle(document.querySelector(':root')).getPropertyValue(color);
 }
 
 // Step size function
 // Array = values
 // steps = how many steps on y-axis ( 0 doesn't count)
-const stepSizeFunction = function(Array, steps) {
-  return (Math.ceil(Math.max(...Array)/100)*100)/steps;
-}
+// var stepSizeFunction = function(Array, steps) {
+//   console.log(Array.map());
+//   return (Math.ceil(Math.max(...Array)/100)*100)/steps;
+// }
 
 // isNan function
 
-const avoidZero = function(a, b) {
+var avoidZero = function(a, b) {
   return isNaN(((a/b)*100)) ? 0 + '%' : ((a/b)*100).toFixed(0) + '%'
 }
 

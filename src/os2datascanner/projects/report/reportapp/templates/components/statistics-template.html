@@ -138,14 +138,14 @@
 <script>
   // json_script solution - Safe from in-page script execution
 
-  const sensitivities = JSON.parse(document.getElementById('sensitivities').textContent);
+  var sensitivities = JSON.parse(document.getElementById('sensitivities').textContent);
   
-  const handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
+  var handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
 
-  const sourceTypes = JSON.parse(document.getElementById('source_types').textContent);
+  var sourceTypes = JSON.parse(document.getElementById('source_types').textContent);
 
   // Finds the total number matches in the array
-  totalArrayValue = (array, index) => {
+  totalArrayValue = function(array, index){
     let number = 0;
     for (let i = 0; i < array.length; i++) {
       number += array[i][index];
@@ -153,23 +153,10 @@
     return number;
   };
   // Calculates the percentage for 'Håndterede matches -> Alle matches' 
-  const totalMatches = totalArrayValue(sensitivities, 1)
-  const totalHandledMatches = totalArrayValue(handledMatches, 1)
-  const handledPercentage = totalHandledMatches / totalMatches  * 100;
+  var totalMatches = totalArrayValue(sensitivities, 1)
+  var totalHandledMatches = totalArrayValue(handledMatches, 1)
+  var handledPercentage = totalHandledMatches / totalMatches  * 100;
   // To fixed decimal point
   handledPercentageFixed = handledPercentage.toFixed(1);
 
-  // Returns the values of 'Xxx of xxx' for 'Håndterede matches'
-  handledOfTotal = (fullArray, handledArray) => {
-    handledOfTotalArray = [];
-    for (let i = 0; i < fullArray.length; i++) {
-      // Handles one array being shorter then the other
-      if (fullArray[i] != undefined && handledArray[i] != undefined) {
-        handledOfTotalArray[i] = `${handledArray[i][1]} of ${fullArray[i][1]}`; 
-      } else {
-        handledOfTotalArray[i] = '0 of 0';
-      }
-    }
-      return handledOfTotalArray;
-  };
 </script>
