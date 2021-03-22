@@ -14,7 +14,11 @@ def bulk_update_created_sensitivity_dates(apps, schema_editor):
     for batch in iterate_queryset_in_batches(10000, queryset):
         for report in batch:
             if report.created_timestamp is None:
-                report.created_timestamp = report.scan_time + timedelta(days=4)
+                try:
+                    report.created_timestamp = report.scan_time + timedelta(days=4)
+                except TypeError:
+                    print("TypeError: {0} doesn't have a valid scan_time".format(report))
+
         DocumentReport.objects.bulk_update(batch, ['created_timestamp'])
 
 
