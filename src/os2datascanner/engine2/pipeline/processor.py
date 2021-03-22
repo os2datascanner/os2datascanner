@@ -93,8 +93,8 @@ def message_received_raw(body, channel, source_manager):
             yield (problems_q, messages.ProblemMessage(
                     scan_tag=conversion.scan_spec.scan_tag,
                     source=None, handle=conversion.handle,
-                    message=f"Processing error: {exception_message}").
-                   to_json_object())
+                    message="Processing error: {0}".format(
+                            exception_message)).to_json_object())
 
 
 if __name__ == "__main__":

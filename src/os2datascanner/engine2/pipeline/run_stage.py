@@ -21,8 +21,8 @@ __module_mapping = {
 
 
 def _compatibility_main(stage):
-    print(f"{sys.argv[0]}: warning: this command is deprecated,"
-            " use run_stage.py instead")
+    print("{0}: warning: this command is deprecated,"
+            " use run_stage.py instead".format(sys.argv[0]))
     sys.argv = [sys.argv[0], stage]
     main()
 
@@ -69,7 +69,7 @@ def main():
 
     class GenericRunner(PikaPipelineRunner):
         @prometheus_summary(
-            f"os2datascanner_pipeline_{args.stage}",
+            "os2datascanner_pipeline_{0}".format(args.stage),
             module.PROMETHEUS_DESCRIPTION)
         def handle_message(self, body, *, channel=None):
             if args.debug:

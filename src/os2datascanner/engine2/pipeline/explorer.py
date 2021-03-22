@@ -28,7 +28,8 @@ def message_received_raw(body, channel, source_manager):
     except UnknownSchemeError as ex:
         yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=scan_tag, source=None, handle=None,
-                message=(f"Unknown scheme '{ex.args[0]}'")).to_json_object())
+                message=("Unknown scheme '{0}'".format(
+                        ex.args[0]))).to_json_object())
         return
     except (KeyError, DeserialisationError) as ex:
         yield ("os2ds_problems", messages.ProblemMessage(
@@ -45,7 +46,7 @@ def message_received_raw(body, channel, source_manager):
                 # If a Handle doesn't implement censor(), then that indicates
                 # that it doesn't know enough about its internal state to
                 # censor itself -- just print its type
-                print(f"(unprintable {type(handle).__name__})")
+                print("(unprintable {0})".format(type(handle).__name__))
             count += 1
             yield ("os2ds_conversions",
                     messages.ConversionMessage(
@@ -54,8 +55,8 @@ def message_received_raw(body, channel, source_manager):
         exception_message = ", ".join([str(a) for a in e.args])
         yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=scan_tag, source=scan_spec.source, handle=None,
-                message=f"Exploration error: {exception_message}").
-               to_json_object())
+                message="Exploration error: {0}".format(
+                        exception_message)).to_json_object())
     finally:
         if "os2ds_status":
             yield ("os2ds_status", messages.StatusMessage(

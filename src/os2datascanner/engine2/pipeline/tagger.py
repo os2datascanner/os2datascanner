@@ -21,8 +21,8 @@ def message_received_raw(body, channel, source_manager):
         yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=message.scan_tag,
                 source=None, handle=message.handle,
-                message=f"Metadata extraction error: {exception_message}").
-               to_json_object())
+                message="Metadata extraction error: {0}".format(
+                        exception_message)).to_json_object())
 
 
 if __name__ == "__main__":
