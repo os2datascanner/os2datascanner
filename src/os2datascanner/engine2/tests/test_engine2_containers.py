@@ -105,11 +105,6 @@ class Engine2ContainerTest(unittest.TestCase):
         with SourceManager() as sm:
             source = Source.from_url(
                     "smbc://os2:12345_rosebud_password_admin@samba/general")
-            try:
-                with contextlib.closing(source.handles(sm)) as c:
-                    next(c)
-            except Exception:
-                self.skipTest("test Samba server not up (not running in CI?)")
             self.process(source, sm)
 
     def test_derived_source(self):
