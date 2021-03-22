@@ -19,18 +19,20 @@ from ..reportapp.management.commands import pipeline_collector
 time0 = "2020-10-28T13:51:49+01:00"
 time1 = "2020-10-28T14:21:27+01:00"
 time2 = "2020-10-28T14:36:20+01:00"
-scan_tag0 = {
-    "scanner": "Dummy test scanner",
-    "time": time0
-}
-scan_tag1 = {
-    "scanner": "Dummy test scanner",
-    "time": time1
-}
-scan_tag2 = {
-    "scanner": "Dummy test scanner",
-    "time": time2
-}
+scan_tag0 = messages.ScanTagFragment(
+    scanner=messages.ScannerFragment(
+            pk=22, name="Dummy test scanner"),
+    time=parse_isoformat_timestamp(time0),
+    user=None, organisation=None)
+scan_tag1 = messages.ScanTagFragment(
+    scanner=messages.ScannerFragment(
+            pk=22, name="Dummy test scanner"),
+    time=parse_isoformat_timestamp(time1),
+    user=None, organisation=None)
+scan_tag2 = messages.ScanTagFragment(
+    scanner=messages.ScannerFragment(
+            pk=22, name="Dummy test scanner"),
+    time=parse_isoformat_timestamp(time2), user=None, organisation=None)
 
 common_handle = FilesystemHandle(
         FilesystemSource("/mnt/fs01.magenta.dk/brugere/af"),
@@ -147,8 +149,8 @@ class PipelineCollectorTests(TestCase):
                 None,
                 "fresh match was already resolved")
         self.assertEqual(
-                new.scan_time.isoformat(),
-                positive_match.scan_spec.scan_tag["time"],
+                new.scan_time,
+                positive_match.scan_spec.scan_tag.time,
                 "match time was not taken from scan specification")
         self.assertEqual(
                 new.source_type,

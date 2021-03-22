@@ -75,7 +75,9 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
                     "name": "integration_test",
                     "pk": 0
                 },
-                "time": "2020-01-01T00:00:00+00:00"
+                "time": "2020-01-01T00:00:00+00:00",
+                "user": None,
+                "organisation": "Vejstrand Kommune"
             },
             "source": Source.from_url(data_url).to_json_object(),
             "rule": rule.to_json_object()

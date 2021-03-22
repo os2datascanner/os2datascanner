@@ -5,6 +5,7 @@ from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.model.ews import (
         EWSMailHandle, EWSAccountSource)
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
@@ -22,31 +23,22 @@ from ..reportapp.views.views import StatisticsPageView
 """Shared data"""
 time0 = "2020-11-11T11:11:59+02:00"
 time1 = "2020-10-28T14:21:27+01:00"
-time2 = "2020-9-22T4:07:12+03:00"
+time2 = "2020-09-22T04:07:12+03:00"
 
-scan_tag0 = {
-    "time": time0,
-    "scanner": {
-        "pk": 14,
-        "name": "Dummy test scanner"
-    },
-}
+scan_tag0 = messages.ScanTagFragment(
+        time=parse_isoformat_timestamp(time0),
+        scanner=messages.ScannerFragment(pk=14, name="Dummy test scanner"),
+        user=None, organisation=None)
 
-scan_tag1 = {
-    "scanner": {
-        "pk": 11,
-        "name": "Dummy test scanner2"
-    },
-    "time": time1
-}
+scan_tag1 = messages.ScanTagFragment(
+        time=parse_isoformat_timestamp(time1),
+        scanner=messages.ScannerFragment(pk=11, name="Dummy test scanner2"),
+        user=None, organisation=None)
 
-scan_tag2 = {
-    "scanner": {
-        "pk": 17,
-        "name": "Dummy test scanner3"
-    },
-    "time": time2
-}
+scan_tag2 = messages.ScanTagFragment(
+        time=parse_isoformat_timestamp(time2),
+        scanner=messages.ScannerFragment(pk=17, name="Dummy test scanner3"),
+        user=None, organisation=None)
 
 common_rule = RegexRule(
     expression="Vores hemmelige adgangskode er",

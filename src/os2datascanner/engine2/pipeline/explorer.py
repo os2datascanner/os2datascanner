@@ -10,7 +10,7 @@ PROMETHEUS_DESCRIPTION = "Sources explored"
 
 def message_received_raw(body, channel, source_manager):
     try:
-        scan_tag = body["scan_tag"]
+        scan_tag = messages.ScanTagFragment.from_json_object(body["scan_tag"])
     except KeyError:
         # Scan specifications with no scan tag are simply invalid and should be
         # dropped

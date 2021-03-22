@@ -14,14 +14,13 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
-from datetime import datetime
-from dateutil import tz
 
 from django.core.management.base import BaseCommand
 from django.core.exceptions import FieldError
 from django.db.models.deletion import ProtectedError
 
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
+from os2datascanner.utils.system_utilities import (
+        time_now, parse_isoformat_timestamp)
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
@@ -41,6 +40,7 @@ def result_message_received_raw(body):
     tag, queue = _identify_message(body)
     if not reference or not tag or not queue:
         return
+    tag = messages.ScanTagFragment.from_json_object(tag)
 
     previous_report, new_report = get_reports_for(reference, tag)
     if queue == "matches":
@@ -71,40 +71,39 @@ def event_message_received_raw(body):
 
 
 def handle_metadata_message(new_report, result):
+    message = messages.MetadataMessage.from_json_object(result)
+
     new_report.data["metadata"] = result
-    if result.get("metadata").get("last-modified"):
-        new_report.datasource_last_modified = OutputType.LastModified.decode_json_object(
-            result.get("metadata").get("last-modified"))
+    if "last-modified" in message.metadata:
+        new_report.datasource_last_modified = (
+                OutputType.LastModified.decode_json_object(
+                        message.metadata["last-modified"]))
     # If no last-modified value in metadata received, set it to time of scan.
     else:
-        DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
-        time_now = (datetime.now()).replace(tzinfo=tz.gettz()).strftime(DATE_FORMAT)
-
-        # If no scan_tag time is found, default value to current time
-        # as this must be some-what close to actual scan_tag time.
-        # If no datasource_last_modified value is ever set, matches will not be shown.
-        new_report.datasource_last_modified = parse_isoformat_timestamp(
-            result.get("scan_tag", {}).get("time", time_now))
+        # If no scan_tag time is found, default value to current time as this
+        # must be some-what close to actual scan_tag time.
+        # If no datasource_last_modified value is ever set, matches will not be
+        # shown.
+        new_report.datasource_last_modified = (
+                message.scan_tag.time or time_now())
     new_report.save()
 
 
-def get_reports_for(reference, scan_tag):
-    scanner = scan_tag["scanner"]
-    time_raw = scan_tag["time"]
-    time = parse_isoformat_timestamp(time_raw)
-
+def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
     path = hash_handle(reference)
+    scanner_json = scan_tag.scanner.to_json_object()
     previous_report = DocumentReport.objects.filter(path=path,
-            data__scan_tag__scanner=scanner).order_by("-scan_time").first()
+            data__scan_tag__scanner=scanner_json).order_by(
+            "-scan_time").first()
     # get_or_create unconditionally writes freshly-created objects to the
     # database (in the version of Django we're using at the moment, at least),
     # so we have to implement similar logic ourselves
     try:
         new_report = DocumentReport.objects.filter(
-                path=path, scan_time=time).get()
+                path=path, scan_time=scan_tag.time).get()
     except DocumentReport.DoesNotExist:
-        new_report = DocumentReport(path=path, scan_time=time,
-                data={"scan_tag": scan_tag})
+        new_report = DocumentReport(path=path, scan_time=scan_tag.time,
+                data={"scan_tag": scan_tag.to_json_object()})
 
     return previous_report, new_report
 
@@ -128,8 +127,8 @@ def handle_match_message(previous_report, new_report, body):
                     # just update the timestamp on the old one
                     print(new_matches.handle.presentation,
                             "LM/no change, updating timestamp")
-                    previous_report.scan_time = parse_isoformat_timestamp(
-                            new_matches.scan_spec.scan_tag["time"])
+                    previous_report.scan_time = (
+                            new_matches.scan_spec.scan_tag.time)
                     previous_report.save()
                 else:
                     # The file has been edited and the matches are no longer

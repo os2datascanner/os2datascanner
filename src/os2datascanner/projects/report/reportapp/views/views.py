@@ -15,9 +15,7 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 import structlog
-import datetime
-
-from datetime import timedelta, datetime
+from datetime import timedelta
 from urllib.parse import urlencode
 from django.conf import settings
 
@@ -28,6 +26,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.views.generic import View, TemplateView, ListView
 
+from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
@@ -79,14 +78,14 @@ class MainPageView(LoginRequiredMixin, ListView):
         # is done by subtracting 30 days from now and then comparing if the saved time is "bigger" than that
         # and vice versa/smaller for older than.
         if self.request.GET.get('30-days') == "true":
-            time_threshold = datetime.now() - timedelta(days=30)
+            time_threshold = time_now() - timedelta(days=30)
             newer_than_30_days = self.matches.filter(
                 datasource_last_modified__gt=time_threshold)
             self.matches = newer_than_30_days
         else:
             # Exactly 30 days is deemed to be "older than 30 days"
             # and will therefore be shown.
-            time_threshold = datetime.now() - timedelta(days=30)
+            time_threshold = time_now() - timedelta(days=30)
             older_than_30_days = self.matches.filter(
                 datasource_last_modified__lte=time_threshold)
             self.matches = older_than_30_days
@@ -279,14 +278,15 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         # TODO: Needs to be rewritten if a better 'time' is added(#41326)
         # Gets days since oldest unhandled match for each user
         oldest_matches = []
-        
+        now = time_now
+
         for org_user in self.users:
             org_roles = Role.get_user_roles_or_default(org_user)
-            earliest_date = timezone.now()
+            earliest_date = now
             for match in self.unhandled_matches:
                 if match.scan_time < earliest_date:
                     earliest_date = match.scan_time
-                days_ago = timezone.now() - earliest_date
+                days_ago = now - earliest_date
             tup = (org_user.first_name, days_ago.days)
             oldest_matches.append(tup)
 

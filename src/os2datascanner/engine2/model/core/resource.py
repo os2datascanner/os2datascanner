@@ -4,6 +4,7 @@ import magic
 from datetime import datetime
 from traceback import print_exc
 
+from os2datascanner.utils.system_utilities import time_now
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import SingleResult, MultipleResults
 
@@ -97,7 +98,7 @@ class TimestampedResource(Resource):
         method was first called on this TimestampedResource."""
         if not self._lm_timestamp:
             self._lm_timestamp = SingleResult(
-                    None, OutputType.LastModified, datetime.now())
+                    None, OutputType.LastModified, time_now())
         return self._lm_timestamp
 
 

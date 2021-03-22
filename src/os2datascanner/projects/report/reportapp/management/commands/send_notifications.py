@@ -14,7 +14,7 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
-from datetime import datetime, timedelta
+from datetime import timedelta
 from os.path import basename
 from email.mime.image import MIMEImage
 
@@ -24,10 +24,11 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.template import loader
 
+from os2datascanner.utils.system_utilities import time_now
+from os2datascanner.engine2.rules.rule import Sensitivity
 from ...views import views
 from ...models.documentreport_model import DocumentReport
 from ...models.roles.defaultrole_model import DefaultRole
-from os2datascanner.engine2.rules.rule import Sensitivity
 
 
 class Command(BaseCommand):
@@ -80,7 +81,7 @@ class Command(BaseCommand):
 
             # Exactly 30 days is deemed to be "older than 30 days"
             # and will therefore be shown.
-            time_threshold = datetime.now() - timedelta(days=30)
+            time_threshold = time_now() - timedelta(days=30)
             older_than_30_days = data_results.filter(
                 datasource_last_modified__lte=time_threshold)
             data_results = older_than_30_days

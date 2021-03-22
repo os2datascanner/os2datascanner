@@ -1,5 +1,4 @@
 import enum
-import datetime
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -7,6 +6,7 @@ from django.contrib.postgres.fields import JSONField
 from django.utils.translation import ugettext_lazy as _
 from .organization_model import Organization
 
+from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.pipeline.messages import MatchesMessage
 
 
@@ -101,13 +101,15 @@ class DocumentReport(models.Model):
         self.__resolution_status = self.resolution_status
 
     def save(self, *args, **kwargs):
-        # If Resolution status goes from not handled to handled - change resolution_time to now 
+        now = time_now()
+
+        # If Resolution status goes from not handled to handled - change resolution_time to now
         if self.__resolution_status == None and (self.resolution_status or self.resolution_status == 0):
-            self.resolution_time = datetime.datetime.now()
+            self.resolution_time = now
 
         # Adds a timestamp if it's a new match:
         if not self.pk:
-            self.created_timestamp = datetime.datetime.now()
+            self.created_timestamp = now
 
         super().save(*args, **kwargs)
 

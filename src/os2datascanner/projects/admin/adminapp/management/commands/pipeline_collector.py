@@ -17,7 +17,6 @@
 
 from django.core.management.base import BaseCommand
 
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
@@ -63,8 +62,8 @@ def checkup_message_received_raw(body):
 
     if not scan_tag or not handle:
         return
-    scanner = Scanner.objects.get(pk=scan_tag["scanner"]["pk"])
-    scan_time = parse_isoformat_timestamp(scan_tag["time"])
+    scanner = Scanner.objects.get(pk=scan_tag.scanner.pk)
+    scan_time = scan_tag.time
 
     try:
         checkup = ScheduledCheckup.objects.get(

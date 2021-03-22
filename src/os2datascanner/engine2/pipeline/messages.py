@@ -1,5 +1,8 @@
+from uuid import UUID
 from typing import Optional, Sequence, NamedTuple
+from datetime import datetime
 
+from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from ..model.core import Handle, Source
 from ..rules.rule import Rule, SimpleRule, Sensitivity
 
@@ -62,8 +65,84 @@ class ProgressFragment(NamedTuple):
     _deep_replace = _deep_replace
 
 
+class ScannerFragment(NamedTuple):
+    pk: int
+    name: str
+
+    def to_json_object(self):
+        return {
+            "pk": self.pk,
+            "name": self.name
+        }
+
+    @classmethod
+    def from_json_object(cls, obj):
+        return ScannerFragment(pk=obj["pk"], name=obj["name"])
+
+    _deep_replace = _deep_replace
+
+
+class OrganisationFragment(NamedTuple):
+    name: str
+    uuid: Optional[UUID]
+
+    def to_json_object(self):
+        return {
+            "name": self.name,
+            "uuid": str(self.uuid) if self.uuid else None
+        }
+
+    @classmethod
+    def from_json_object(cls, obj):
+        try:
+            return OrganisationFragment(
+                    name=obj["name"], uuid=UUID(obj["uuid"]))
+        except TypeError:
+            # Organisation fragments created between versions 3.3.3 and 3.6.0
+            # inclusive were just names
+            return OrganisationFragment(name=obj, uuid=None)
+
+    _deep_replace = _deep_replace
+
+
+class ScanTagFragment(NamedTuple):
+    time: datetime
+    user: Optional[str]
+    scanner: Optional[ScannerFragment]
+    organisation: Optional[OrganisationFragment]
+    destination: Optional[str] = "pipeline_collector"
+
+    def to_json_object(self):
+        return {
+            "time": self.time.isoformat(),
+            "user": self.user,
+            "scanner": self.scanner.to_json_object() if self.scanner else None,
+            "organisation": (self.organisation.to_json_object()
+                    if self.organisation else None),
+            "destination": self.destination
+        }
+
+    @classmethod
+    def from_json_object(cls, obj):
+        try:
+            return ScanTagFragment(
+                    time=parse_isoformat_timestamp(obj["time"]),
+                    user=obj["user"],  # can be None, must be present
+                    scanner=ScannerFragment.from_json_object(obj["scanner"]),
+                    organisation=OrganisationFragment.from_json_object(
+                            obj["organisation"]))
+        except TypeError:
+            # Scan tags created between versions 3.0.0 and 3.3.2 inclusive were
+            # just simple timestamps
+            return ScanTagFragment(
+                    time=parse_isoformat_timestamp(obj),
+                    user=None, scanner=None, organisation=None)
+
+    _deep_replace = _deep_replace
+
+
 class ScanSpecMessage(NamedTuple):
-    scan_tag: object
+    scan_tag: ScanTagFragment
     source: Source
     rule: Rule
     configuration: dict
@@ -71,7 +150,7 @@ class ScanSpecMessage(NamedTuple):
 
     def to_json_object(self):
         return {
-            "scan_tag": self.scan_tag,
+            "scan_tag": self.scan_tag.to_json_object(),
             "source": self.source.to_json_object(),
             "rule": self.rule.to_json_object(),
             "configuration": self.configuration or {},
@@ -85,7 +164,7 @@ class ScanSpecMessage(NamedTuple):
         # derived source and so already contains scan progress information
         progress_fragment = obj.get("progress")
         return ScanSpecMessage(
-                scan_tag=obj["scan_tag"],
+                scan_tag=ScanTagFragment.from_json_object(obj["scan_tag"]),
                 source=Source.from_json_object(obj["source"]),
                 rule=Rule.from_json_object(obj["rule"]),
                 # The configuration dictionary was added fairly late to scan
@@ -146,32 +225,32 @@ class RepresentationMessage(NamedTuple):
 
 
 class HandleMessage(NamedTuple):
-    scan_tag: object
+    scan_tag: ScanTagFragment
     handle: Handle
 
     def to_json_object(self):
         return {
-            "scan_tag": self.scan_tag,
+            "scan_tag": self.scan_tag.to_json_object(),
             "handle": self.handle.to_json_object()
         }
 
     @classmethod
     def from_json_object(cls, obj):
         return HandleMessage(
-                scan_tag=obj["scan_tag"],
+                scan_tag=ScanTagFragment.from_json_object(obj["scan_tag"]),
                 handle=Handle.from_json_object(obj["handle"]))
 
     _deep_replace = _deep_replace
 
 
 class MetadataMessage(NamedTuple):
-    scan_tag: object
+    scan_tag: ScanTagFragment
     handle: Handle
     metadata: dict
 
     def to_json_object(self):
         return {
-            "scan_tag": self.scan_tag,
+            "scan_tag": self.scan_tag.to_json_object(),
             "handle": self.handle.to_json_object(),
             "metadata": self.metadata
         }
@@ -179,7 +258,7 @@ class MetadataMessage(NamedTuple):
     @classmethod
     def from_json_object(cls, obj):
         return MetadataMessage(
-                scan_tag=obj["scan_tag"],
+                scan_tag=ScanTagFragment.from_json_object(obj["scan_tag"]),
                 handle=Handle.from_json_object(obj["handle"]),
                 metadata=obj["metadata"])
 
@@ -273,7 +352,7 @@ class MatchesMessage(NamedTuple):
 
 
 class ProblemMessage(NamedTuple):
-    scan_tag: object
+    scan_tag: ScanTagFragment
     source: Optional[Source]
     handle: Optional[Handle]
     message: str
@@ -281,7 +360,7 @@ class ProblemMessage(NamedTuple):
 
     def to_json_object(self):
         return {
-            "scan_tag": self.scan_tag,
+            "scan_tag": self.scan_tag.to_json_object(),
             "source": self.source.to_json_object() if self.source else None,
             "handle": self.handle.to_json_object() if self.handle else None,
             "message": self.message,
@@ -293,7 +372,7 @@ class ProblemMessage(NamedTuple):
         source = obj.get("source")
         handle = obj.get("handle")
         return ProblemMessage(
-                scan_tag=obj["scan_tag"],
+                scan_tag=ScanTagFragment.from_json_object(obj["scan_tag"]),
                 source=Source.from_json_object(source) if source else None,
                 handle=Handle.from_json_object(handle) if handle else None,
                 message=obj["message"],
@@ -303,7 +382,7 @@ class ProblemMessage(NamedTuple):
 
 
 class StatusMessage(NamedTuple):
-    scan_tag: object
+    scan_tag: ScanTagFragment
 
     # Emitted by (top-level) explorers
     total_objects: int = None
@@ -314,7 +393,7 @@ class StatusMessage(NamedTuple):
 
     def to_json_object(self):
         return {
-            "scan_tag": self.scan_tag,
+            "scan_tag": self.scan_tag.to_json_object(),
 
             "total_objects": self.total_objects,
 
@@ -325,7 +404,7 @@ class StatusMessage(NamedTuple):
     @staticmethod
     def from_json_object(obj):
         return StatusMessage(
-                scan_tag=obj["scan_tag"],
+                scan_tag=ScanTagFragment.from_json_object(obj["scan_tag"]),
                 total_objects=obj.get("total_objects"),
                 object_size=obj.get("object_size"),
                 object_type=obj.get("object_type"))

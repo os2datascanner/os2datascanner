@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
+from os2datascanner.engine2.pipeline import messages
 
 
 def extract_timestamps(apps, schema_editor):
@@ -18,11 +18,9 @@ def extract_timestamps(apps, schema_editor):
         batch = DocumentReport.objects.filter(data__scan_tag__isnull=False)[i:batchsize+i]
         i += batchsize
         for dr in batch:
-            scan_tag = dr.data["scan_tag"]
-            if isinstance(scan_tag, dict) and "time" in scan_tag:
-                dt = parse_isoformat_timestamp(scan_tag["time"])
-                if dt:
-                    dr.scan_time = dt
+            scan_tag = messages.ScanSpecFragment.from_json_object(dr.data["scan_tag"])
+            if scan_tag.time:
+                dr.scan_time = scan_tag.time
         DocumentReport.objects.bulk_update(batch, ['scan_time'])
 
 

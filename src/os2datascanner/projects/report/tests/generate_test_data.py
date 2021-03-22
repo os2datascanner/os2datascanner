@@ -1,5 +1,6 @@
 import string
 import random
+from dateutil.tz import gettz
 from randomtimestamp import randomtimestamp
 
 from os2datascanner.engine2.rules.rule import Sensitivity
@@ -11,12 +12,13 @@ from os2datascanner.engine2.model.file import (
 
 
 def get_different_scan_tag():
-    return {
-        "scanner": "Dummy test scanner {0}".format(
-            str(random.randint(0, 10))
-        ),
-        "time": randomtimestamp(start_year=2020)
-    }
+    number = random.randint(0, 10)
+    return messages.ScanTagFragment(
+        scanner=messages.ScannerFragment(
+                pk=number,
+                name="Dummy test scanner {0}".format(number)),
+        time=randomtimestamp(start_year=2020, text=False).replace(tzinfo=gettz()),
+        user=None, organisation=None)
 
 
 def get_different_filesystemhandle(file_ending, folder_level):
