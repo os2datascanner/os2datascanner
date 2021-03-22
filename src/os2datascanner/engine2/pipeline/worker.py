@@ -6,9 +6,10 @@ from .tagger import message_received_raw as tagger_handler
 from . import messages
 
 
-__reads_queues__ = ("os2ds_conversions",)
-__writes_queues__ = ("os2ds_matches", "os2ds_checkups", "os2ds_problems",
+READS_QUEUES = ("os2ds_conversions",)
+WRITES_QUEUES = ("os2ds_matches", "os2ds_checkups", "os2ds_problems",
         "os2ds_metadata", "os2ds_status",)
+PROMETHEUS_DESCRIPTION = "Messages handled by worker"
 
 
 def explore(sm, msg):

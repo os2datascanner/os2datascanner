@@ -2,8 +2,9 @@ from ..model.core import Handle, SourceManager
 from . import messages
 
 
-__reads_queues__ = ("os2ds_handles",)
-__writes_queues__ = ("os2ds_metadata", "os2ds_problems",)
+READS_QUEUES = ("os2ds_handles",)
+WRITES_QUEUES = ("os2ds_metadata", "os2ds_problems",)
+PROMETHEUS_DESCRIPTION = "Metadata extractions"
 
 
 def message_received_raw(body, channel, source_manager):

@@ -1,6 +1,8 @@
 import sys
 import argparse
 from prometheus_client import start_http_server
+from .utilities.prometheus import prometheus_summary
+
 
 from ..model.core import SourceManager
 from .utilities.pika import PikaPipelineRunner
@@ -66,6 +68,9 @@ def main():
         start_http_server(args.prometheus_port)
 
     class GenericRunner(PikaPipelineRunner):
+        @prometheus_summary(
+            "os2datascanner_pipeline_{0}".format(args.stage),
+            module.PROMETHEUS_DESCRIPTION)
         def handle_message(self, body, *, channel=None):
             if args.debug:
                 print(channel, body)
@@ -73,8 +78,8 @@ def main():
 
     with SourceManager(width=args.width) as source_manager:
         with GenericRunner(
-                read=module.__reads_queues__,
-                write=module.__writes_queues__,
+                read=module.READS_QUEUES,
+                write=module.WRITES_QUEUES,
                 heartbeat=6000) as runner:
             try:
                 print("Start")

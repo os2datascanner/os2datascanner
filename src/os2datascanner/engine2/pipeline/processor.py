@@ -5,9 +5,10 @@ from ..conversions.types import OutputType, encode_dict
 from . import messages
 
 
-__reads_queues__ = ("os2ds_conversions",)
-__writes_queues__ = ("os2ds_scan_specs", "os2ds_representations",
+READS_QUEUES = ("os2ds_conversions",)
+WRITES_QUEUES = ("os2ds_scan_specs", "os2ds_representations",
         "os2ds_problems", "os2ds_checkups",)
+PROMETHEUS_DESCRIPTION = "Representations generated"
 
 
 def check(source_manager, handle):

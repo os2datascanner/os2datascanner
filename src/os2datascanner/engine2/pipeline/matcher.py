@@ -3,9 +3,10 @@ from ..conversions.types import decode_dict
 from . import messages
 
 
-__reads_queues__ = ("os2ds_representations",)
-__writes_queues__ = ("os2ds_handles",
+READS_QUEUES = ("os2ds_representations",)
+WRITES_QUEUES = ("os2ds_handles",
         "os2ds_matches", "os2ds_checkups", "os2ds_conversions",)
+PROMETHEUS_DESCRIPTION = "Representations examined"
 
 
 def message_received_raw(body, channel, source_manager):

@@ -23,3 +23,8 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets: ['engine_exporter:9091']
+
+  - job_name: 'engine_worker'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['engine_worker:9091']

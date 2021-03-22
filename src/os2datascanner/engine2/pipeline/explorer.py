@@ -3,8 +3,9 @@ from ..model.core import (Source, SourceManager, UnknownSchemeError,
 from . import messages
 
 
-__reads_queues__ = ("os2ds_scan_specs",)
-__writes_queues__ = ("os2ds_conversions", "os2ds_problems", "os2ds_status",)
+READS_QUEUES = ("os2ds_scan_specs",)
+WRITES_QUEUES = ("os2ds_conversions", "os2ds_problems", "os2ds_status",)
+PROMETHEUS_DESCRIPTION = "Sources explored"
 
 
 def message_received_raw(body, channel, source_manager):
