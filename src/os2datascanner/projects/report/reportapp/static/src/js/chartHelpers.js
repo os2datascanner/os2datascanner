@@ -1,3 +1,4 @@
+"use strict"
 // Color function
 // reads colors from :root 
 var colorFunction = function (color) {
@@ -7,10 +8,10 @@ var colorFunction = function (color) {
 // Step size function
 // Array = values
 // steps = how many steps on y-axis ( 0 doesn't count)
-// var stepSizeFunction = function(Array, steps) {
-//   console.log(Array.map());
-//   return (Math.ceil(Math.max(...Array)/100)*100)/steps;
-// }
+var stepSizeFunction = function(array, steps) {
+  console.log((Math.ceil(Math.max.apply(null, array)/100)*100)/steps);
+  return (Math.ceil(Math.max.apply(null, array)/100)*100)/steps;
+}
 
 // isNan function
 
