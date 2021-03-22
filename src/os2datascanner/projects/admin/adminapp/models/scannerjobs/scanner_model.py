@@ -25,10 +25,11 @@ import re
 from typing import Iterator
 from dateutil import tz
 
+from django.db import models
 from django.conf import settings
 from django.core.validators import validate_comma_separated_integer_list
-from django.db import models
 from django.contrib.postgres.fields import JSONField
+from django.utils.translation import ugettext_lazy as _
 
 from model_utils.managers import InheritanceManager
 from recurrence.fields import RecurrenceField
@@ -375,23 +376,23 @@ class ScanStatus(models.Model):
     """A ScanStatus object collects the status messages received from the
     pipeline for a given scan."""
 
-    scan_tag = JSONField(verbose_name="Scan tag", unique=True)
+    scan_tag = JSONField(verbose_name=_("scan tag"), unique=True)
 
     scanner = models.ForeignKey(Scanner, related_name="statuses",
-                                verbose_name="Tilknyttet scannerjob",
+                                verbose_name=_("associated scanner job"),
                                 on_delete=models.CASCADE)
 
-    total_sources = models.IntegerField(verbose_name="Antal kilder",
+    total_sources = models.IntegerField(verbose_name=_("total sources"),
                                        null=True)
-    explored_sources = models.IntegerField(verbose_name="Udforskede kilder",
+    explored_sources = models.IntegerField(verbose_name=_("explored sources"),
                                          null=True)
 
-    total_objects = models.IntegerField(verbose_name="Antal objekter",
+    total_objects = models.IntegerField(verbose_name=_("total objects"),
                                         null=True)
-    scanned_objects = models.IntegerField(verbose_name="Scannede objekter",
+    scanned_objects = models.IntegerField(verbose_name=_("scanned objects"),
                                           null=True)
     scanned_size = models.BigIntegerField(
-            verbose_name="Størrelse af scannede objekter",
+            verbose_name=_("size of scanned objects"),
             null=True)
 
     @property
@@ -405,7 +406,7 @@ class ScanStatus(models.Model):
     def fraction_explored(self) -> float:
         """Returns the fraction of the sources in this scan that has been
         explored, or None if this is not yet computable."""
-        if self.total_sources is not None:
+        if self.total_sources:
             return (self.explored_sources or 0) / self.total_sources
         else:
             return None
@@ -414,9 +415,7 @@ class ScanStatus(models.Model):
     def fraction_scanned(self) -> float:
         """Returns the fraction of this scan that has been scanned, or None if
         this is not yet computable."""
-        if (self.total_sources is not None
-                and self.explored_sources == self.total_sources
-                and self.total_objects is not None):
+        if self.fraction_explored == 1.0 and self.total_objects:
             return (self.scanned_objects or 0) / self.total_objects
         else:
             return None
@@ -425,7 +424,11 @@ class ScanStatus(models.Model):
     def estimated_completion_time(self) -> datetime.datetime:
         """Returns the linearly interpolated completion time of this scan
         based on the return value of ScannerStatus.fraction_scanned (or None,
-        if that function returns None)."""
+        if that function returns None).
+
+        Note that the return value of this function is only meaningful if
+        fraction_scanned is less than 1.0: at that point, it always returns the
+        current time."""
         fraction_scanned = self.fraction_scanned
         if (fraction_scanned is not None
                 and fraction_scanned >= settings.ESTIMATE_AFTER):
@@ -439,7 +442,12 @@ class ScanStatus(models.Model):
 
     @property
     def start_time(self) -> datetime.datetime:
+        """Returns the start time of this scan."""
+        # Note that, although this access is not in general safe (historic
+        # scan_tag values aren't dictionaries), it is here -- the ScanStatus
+        # class is younger than those really old scan_tags
         return parse_isoformat_timestamp(self.scan_tag["time"])
 
     class Meta:
-        verbose_name_plural = "scan statuses"
+        verbose_name = _("scan status")
+        verbose_name_plural = _("scan statuses")
