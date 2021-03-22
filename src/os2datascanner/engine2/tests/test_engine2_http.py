@@ -6,6 +6,7 @@ import unittest
 import contextlib
 from multiprocessing import Manager, Process
 
+from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import (Handle,
         Source, SourceManager, UnknownSchemeError)
 from os2datascanner.engine2.model.http import (
@@ -205,7 +206,7 @@ class Engine2HTTPTest(unittest.TestCase):
                 first_thing = next(handles)
             r = first_thing.follow(sm)
 
-            now = datetime.now()
+            now = time_now()
 
             # It is not documented anywhere that WebResource.get_header()
             # returns a live dictionary, so don't depend on this behaviour
