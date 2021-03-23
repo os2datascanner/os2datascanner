@@ -176,6 +176,7 @@ Test Admin Application:
   needs:
     - Build Admin Application
   script:
+    - cd /code/src/os2datascanner/projects/admin
     - coverage run --omit=*/tests/* --source=os2datascanner.projects.admin -m django test
   after_script:
     - coverage html -d ${CI_PROJECT_DIR}/coverage-html
