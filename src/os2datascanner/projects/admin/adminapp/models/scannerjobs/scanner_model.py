@@ -439,7 +439,7 @@ class ScanStatus(models.Model):
     @property
     def start_time(self) -> datetime.datetime:
         """Returns the start time of this scan."""
-        return messages.ScanTagFragment(self.scan_tag).time
+        return messages.ScanTagFragment.from_json_object(self.scan_tag).time
 
     class Meta:
         verbose_name = _("scan status")
