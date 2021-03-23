@@ -271,7 +271,7 @@ class MainPageViewTest(TestCase):
         params = '?30-days=true'
         remediator = Remediator.objects.create(user=self.user)
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 1)
+        self.assertEqual(len(qs), 3)
         remediator.delete()
 
     def test_mainpage_view_filter_by_datasource_age_false(self):
@@ -285,7 +285,7 @@ class MainPageViewTest(TestCase):
         params = '?30-days=true'
         emailalias = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 1)
+        self.assertEqual(len(qs), 2)
         emailalias.delete()
 
     def test_mainpage_view_filter_by_scannerjob_and_sensitivities_and_datasource_age(self):
@@ -299,7 +299,7 @@ class MainPageViewTest(TestCase):
         params = '?sensitivities=1000&30-days=true'
         remediator = Remediator.objects.create(user=self.user)
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 1)
+        self.assertEqual(len(qs), 2)
         remediator.delete()
 
     def test_mainpage_view_filter_by_scannerjob_and_datasource_age(self):
