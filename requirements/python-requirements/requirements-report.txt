@@ -7,9 +7,7 @@
 backcall==0.1.0
     # via ipython
 beautifulsoup4==4.9.0
-    # via
-    #   -c requirements-engine.txt
-    #   -r requirements-django.in
+    # via -r requirements-django.in
 cached-property==1.5.1
     # via
     #   -c requirements-engine.txt
@@ -38,6 +36,8 @@ colorama==0.4.3
 cryptography==2.9.2
     # via
     #   -c requirements-engine.txt
+    #   josepy
+    #   mozilla-django-oidc
     #   pyopenssl
     #   pysaml2
     #   requests-ntlm
@@ -76,6 +76,7 @@ django==2.2.18
     #   django-storages
     #   django-structlog
     #   djangorestframework
+    #   mozilla-django-oidc
 djangorestframework-jwt==1.11.0
     # via django-saml2-auth
 djangorestframework==3.12.1
@@ -147,6 +148,8 @@ isodate==0.6.0
     #   python3-saml
 jedi==0.17.0
     # via ipython
+josepy==1.8.0
+    # via mozilla-django-oidc
 lxml==4.5.0
     # via
     #   -c requirements-engine.txt
@@ -171,6 +174,10 @@ olefile==0.46
     # via
     #   -c requirements-engine.txt
     #   -r requirements-django.in
+parameterized==0.8.1
+    # via
+    #   -c requirements-engine.txt
+    #   -r requirements-common.in
 parso==0.7.0
     # via jedi
 pexpect==4.8.0
@@ -221,7 +228,9 @@ pygments==2.6.1
 pyjwt==1.7.1
     # via djangorestframework-jwt
 pyopenssl==19.1.0
-    # via pysaml2
+    # via
+    #   josepy
+    #   pysaml2
 pypdf2==1.26.0
     # via
     #   -c requirements-engine.txt
@@ -274,6 +283,7 @@ requests==2.23.0
     #   exchangelib
     #   google-api-core
     #   google-cloud-storage
+    #   mozilla-django-oidc
     #   pysaml2
     #   requests-ntlm
     #   requests-oauthlib
@@ -296,6 +306,7 @@ six==1.14.0
     #   google-cloud-core
     #   google-resumable-media
     #   isodate
+    #   mozilla-django-oidc
     #   oauth2client
     #   protobuf
     #   pyopenssl
@@ -304,9 +315,7 @@ six==1.14.0
     #   structlog
     #   traitlets
 soupsieve==2.0
-    # via
-    #   -c requirements-engine.txt
-    #   beautifulsoup4
+    # via beautifulsoup4
 sqlparse==0.3.1
     # via django
 structlog==20.1.0

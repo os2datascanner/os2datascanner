@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'os2datascanner.projects.admin.adminapp.apps.AdminappConfig',
     'recurrence',
+    'os2datascanner.projects.admin.core',
 ]
 OPTIONAL_APPS = []
 AUTH_PROFILE_MODULE = "os2datascanner.projects.admin.adminapp.UserProfile"
@@ -104,7 +105,6 @@ _LOCALE_PATHS = [
 ]
 _LANGUAGES = [
     ["da", "Danish"],
-    ["en", "English"],
 ]
 TIMEZONE = "Europe/Copenhagen"
 USE_I18N = true
