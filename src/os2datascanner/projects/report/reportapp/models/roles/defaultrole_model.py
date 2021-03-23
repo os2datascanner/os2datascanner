@@ -33,10 +33,7 @@ class DefaultRole(Role):
         aliases = self.user.aliases.select_subclasses()
         results = DocumentReport.objects.none()
         for alias in aliases:
-            result = document_reports.filter(
-                data__metadata__metadata__contains={
-                    str(alias.key): str(alias)
-                })
+            result = document_reports.filter(alias_relation=alias.pk)
             # Merges django querysets together
             results = results | result
         return results

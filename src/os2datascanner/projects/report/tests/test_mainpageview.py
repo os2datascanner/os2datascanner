@@ -213,12 +213,14 @@ class MainPageViewTest(TestCase):
 
     def test_mainpage_view_with_emailalias_egon(self):
         emailalias = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 1)
         emailalias.delete()
 
     def test_mainpage_view_with_emailalias_kjeld(self):
         emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
+        create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 1)
         emailalias.delete()
@@ -226,6 +228,8 @@ class MainPageViewTest(TestCase):
     def test_mainpage_view_with_emailaliases_egon_kjeld(self):
         emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
         emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        create_alias_and_match_relations(emailalias)
+        create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 2)
         emailalias.delete()
@@ -235,6 +239,8 @@ class MainPageViewTest(TestCase):
         params = '?scannerjob=14&sensitivities=all'
         emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
         emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        create_alias_and_match_relations(emailalias)
+        create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 2)
         emailalias.delete()
@@ -244,6 +250,8 @@ class MainPageViewTest(TestCase):
         params = '?scannerjob=all&sensitivities=1000'
         emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
         emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        create_alias_and_match_relations(emailalias)
+        create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 1)
         emailalias.delete()
@@ -253,6 +261,8 @@ class MainPageViewTest(TestCase):
         params = '?scannerjob=all&sensitivities=all'
         emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
         emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        create_alias_and_match_relations(emailalias)
+        create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 2)
         emailalias.delete()
@@ -262,6 +272,8 @@ class MainPageViewTest(TestCase):
         params = '?scannerjob=14&sensitivities=1000'
         emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
         emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        create_alias_and_match_relations(emailalias)
+        create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 1)
         emailalias.delete()
@@ -284,6 +296,7 @@ class MainPageViewTest(TestCase):
     def test_mainpage_view_filter_by_datasource_age_true_emailalias_egon(self):
         params = '?30-days=true'
         emailalias = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 2)
         emailalias.delete()
@@ -312,7 +325,8 @@ class MainPageViewTest(TestCase):
     def test_mainpage_view_with_relation_table(self):
         emailalias, created = EmailAlias.objects.get_or_create(user=self.user, address='egon@olsen.com')
         create_alias_and_match_relations(emailalias)
-        self.assertEqual(Alias.objects.get(pk=emailalias.pk).match_relation.all().count(), 2)
+        qs = self.mainpage_get_queryset()
+        self.assertEqual(len(qs), 1)
         emailalias.delete()
 
     def mainpage_get_queryset(self, params=''):
