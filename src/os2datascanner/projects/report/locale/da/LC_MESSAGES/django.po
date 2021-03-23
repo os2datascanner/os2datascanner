@@ -195,9 +195,9 @@ msgstr "Sandsynlighed"
 msgid "First"
 msgstr "Første"
 
-#: reportapp/templates/components/hits.html:54
-msgid "Back"
-msgstr "Tilbage"
+#: reportapp/templates/components/hits.html:49
+msgid "Previous"
+msgstr "Forrige"
 
 #: reportapp/templates/components/hits.html:64
 msgid "Next"

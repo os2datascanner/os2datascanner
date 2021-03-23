@@ -4,31 +4,55 @@
 {% if is_paginated %}
 <tr>
   <td>
-    <div class="pagination">
-      {% if page_obj.has_previous %}
+    {{ page_obj.number }} af {{ paginator.num_pages }}
+  </td>
+
+  <td>
+    <div class="flex">
+      <!-- {% if page_obj.has_previous %}
       <a href="?{% param_replace page=1 %}">
         {% trans "First" %}
-      </a>
-      {% if page_obj.previous_page_number != 1 %}
+      </a> -->
+      {% if page_obj.previous_page_number != 0 %}
       <a href="?{% param_replace page=page_obj.previous_page_number %}">
-        {% trans "Back" %}
+        <span class="flex">
+          <i id="chevron_left" class="material-icons">chevron_left</i>
+          {% trans "Previous" %}
+        </span>
       </a>
       {% endif %}
-      {% endif %}
-      
-      Side {{ page_obj.number }} af {{ paginator.num_pages }}
+      <!-- {% endif %} -->
+
+        {% for page in  paginator.page_range %}
+          {% if page <= page_obj.number|add:3 and page >= page_obj.number|add:-1 %}
+            {% if forloop.counter <= paginator.num_pages %}
+            <a class="page" href="?{% param_replace page=forloop.counter %}">{{forloop.counter}}</a>
+            {% endif %}
+          {% endif %}
+          <span class="page--sym">...</span>
+          
+          <!-- {% if page %}
+            <a class="page" href="?{% param_replace page=forloop.counter %}">{{forloop.counter}}</a>
+          {% endif %} -->
+          {% endfor %}
       
       {% if page_obj.has_next %}
       {% if page_obj.next_page_number != paginator.num_pages %}
       <a href="?{% param_replace page=page_obj.next_page_number %}">
-        {% trans "Next" %}
+        <span class="flex">
+          {% trans "Next" %}
+          <i id="chevron_right" class="material-icons">chevron_right</i>
+        </span>
       </a>
       {% endif %}
-      <a href="?{% param_replace page=paginator.num_pages %}">
+      <!-- <a href="?{% param_replace page=paginator.num_pages %}">
         {% trans "Last" %}
-      </a>
+      </a> -->
       {% endif %}
     </div>
   </td>
+  <td></td>
+  <td></td>
+  <td></td>
 </tr>
 {% endif %}

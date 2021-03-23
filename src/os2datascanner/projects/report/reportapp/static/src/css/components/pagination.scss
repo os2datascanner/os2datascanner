@@ -1,0 +1,39 @@
+.pagination {
+  width: 100%;
+
+  a {
+    font-weight: normal;
+    color: var(--color-primary-dark);
+    text-decoration: none;
+  }
+
+  .flex {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    font-size: 1rem;
+  }
+
+  .page {
+    padding: .25rem .75rem;
+    margin-right: 0.5rem;
+    color: var(--color-text-main);
+
+    &--sym {
+      font-weight: normal;
+      color: var(--color-text-main);
+    }
+
+    &:hover {
+      font-weight: 600;
+      color: var(--color-primary-dark);
+    }
+
+    &:focus,
+    &:active {
+      color: var(--color-text-white);
+      background-color: var(--color-primary-dark);
+      border-radius: var(--border-radius-button);
+    }
+  }
+}

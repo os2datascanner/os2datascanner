@@ -109,21 +109,6 @@
 }
 // probability, end
 
-// paginaion, start
-.pagination {
-  margin-bottom: 1.5rem;
-
-  a {
-    font-weight: bold;
-    color: var(--color-primary-dark);
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-}
-// pagination, end
 
 // datatable tr hover, start
 .datatable tr:hover {
