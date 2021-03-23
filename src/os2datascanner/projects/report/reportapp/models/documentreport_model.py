@@ -113,6 +113,23 @@ class DocumentReport(models.Model):
 
         super().save(*args, **kwargs)
 
+        # Add DocumentReport to Alias.match_relation, when it's saved to the db.
+        from .aliases.alias_model import Alias
+        try:
+            metadata = self.data['metadata']['metadata'].values()
+            value = list(metadata)[0]
+
+            aliases = Alias.objects.select_subclasses()
+            
+            for alias in aliases:
+                if str(alias) == value:
+                    try:
+                        tm = Alias.match_relation.through
+                        tm.objects.bulk_create([tm(documentreport_id=self.pk, alias_id=alias.pk)], ignore_conflicts=True)
+                    except:
+                        print("Failed to create match_relation")
+        except:
+            print(self, " has no metadata")
 
     class Meta:
         verbose_name_plural = _("document reports")

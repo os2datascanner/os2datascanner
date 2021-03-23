@@ -9,8 +9,10 @@ from mozilla_django_oidc import auth
 
 from os2datascanner.engine2.pipeline import messages
 
+from .models.aliases.alias_model import Alias
 from .models.aliases.emailalias_model import EmailAlias
 from .models.aliases.adsidalias_model import ADSIDAlias
+from .models.documentreport_model import DocumentReport
 
 logger = structlog.get_logger()
 
@@ -39,9 +41,11 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
     sid = get_user_data(saml_attr.get('sid'), user_data)
     user = User.objects.get(username=username)
     if email:
-        EmailAlias.objects.get_or_create(user= user, address=email)
+        sub_alias, is_created = EmailAlias.objects.get_or_create(user= user, address=email)
+        create_alias_and_match_relations(sub_alias)
     if sid:
-        ADSIDAlias.objects.get_or_create(user=user, sid=sid)
+        sub_alias, is_created = ADSIDAlias.objects.get_or_create(user=user, sid=sid)
+        create_alias_and_match_relations(sub_alias)
 
 
 def user_is(roles, role_cls):
@@ -135,3 +139,13 @@ def get_max_sens_prop_value(doc_report_obj, key):
             and doc_report_obj.data["matches"]):
         return getattr(messages.MatchesMessage.from_json_object(
             doc_report_obj.data["matches"]), key)
+
+
+def create_alias_and_match_relations(sub_alias):
+    """Method for creating match_relations for a given alias
+    with all the matching DocumentReports"""
+    tm = Alias.match_relation.through
+    reports = DocumentReport.objects.filter(data__metadata__metadata__contains = {
+                    str(sub_alias.key):str(sub_alias)})
+    tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk) 
+                    for r in reports], ignore_conflicts=True)
