@@ -25,7 +25,7 @@ def bulk_update_created_sensitivity_dates(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner_report', '0028_changing_documentreport_dpo_source_type'),
+        ('os2datascanner_report', '0029_alias_match_relation'),
     ]
 
     operations = [
