@@ -11,8 +11,10 @@ from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 
 from ..reportapp.management.commands import pipeline_collector
+from ..reportapp.models.aliases.alias_model import Alias
 from ..reportapp.models.aliases.emailalias_model import EmailAlias
 from ..reportapp.models.roles.remediator_model import Remediator
+from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.views import MainPageView
 
 """Shared data"""
@@ -306,6 +308,12 @@ class MainPageViewTest(TestCase):
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 1)
         remediator.delete()
+    
+    def test_mainpage_view_with_relation_table(self):
+        emailalias, created = EmailAlias.objects.get_or_create(user=self.user, address='egon@olsen.com')
+        create_alias_and_match_relations(emailalias)
+        self.assertEqual(Alias.objects.get(pk=emailalias.pk).match_relation.all().count(), 2)
+        emailalias.delete()
 
     def mainpage_get_queryset(self, params=''):
         request = self.factory.get('/' + params)
