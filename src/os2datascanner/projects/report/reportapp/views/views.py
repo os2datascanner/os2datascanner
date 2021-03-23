@@ -75,18 +75,14 @@ class MainPageView(LoginRequiredMixin, ListView):
         roles = Role.get_user_roles_or_default(user)
         # Handles filtering by role + org and sets datasource_last_modified if non existing
         self.matches = filter_inapplicable_matches(user, self.matches, roles)
+
         # Filters by datasource_last_modified.
-        # lt mean less than.
-        # gte means greater than or equal to
+        # lte mean less than or equal to.
         # A check whether something is more recent than a month
         # is done by subtracting 30 days from now and then comparing if the saved time is "bigger" than that
         # and vice versa/smaller for older than.
-        if self.request.GET.get('30-days') == "true":
-            time_threshold = time_now() - timedelta(days=30)
-            newer_than_30_days = self.matches.filter(
-                datasource_last_modified__gt=time_threshold)
-            self.matches = newer_than_30_days
-        else:
+        # By default we only show matches older than 30 days, if filter enabled we show everything.
+        if not self.request.GET.get('30-days') or self.request.GET.get('30-days') == 'false':
             # Exactly 30 days is deemed to be "older than 30 days"
             # and will therefore be shown.
             time_threshold = time_now() - timedelta(days=30)
