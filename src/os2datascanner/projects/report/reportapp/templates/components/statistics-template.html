@@ -6,30 +6,61 @@
   <h1 class="page-title">{% trans "DPO statistics" %}</h1>
   {% endif %}
   <div class="statistic_wrapper">
-    <!-- Bar chart -->
+
+    <!-- Line chart -->
     <div class="statistic statistic--one">
+      <div class="statistic_header">
+        <div class="">
+          <h1 class="page-title__sub">{% trans "Development overview" %}</h1>
+          <p class="chart_description">{% trans "New matches by month" %}</p>
+          <p class="hidden chart_description">{% trans "Unhandled matches by month" %}</p>
+        </div>
+        <div class="statistic_header_nav">
+        <div></div>
+        <!-- Commented out until the method for 'Uhåndterede matches' is ready
+        <div class="dropdown">
+          <div class="select">
+            <span class="select_span">Nye matches pr. md.</span>
+            <i class="material-icons">
+              keyboard_arrow_down
+            </i>
+          </div>
+          <ul class="dropdown-menu">
+            <li>Nye matches pr. md.</li>
+            <li>Uhåndterede matches</li>
+          </ul>
+        </div>
+        -->
+        </div>
+      </div>
+      <div class="chart_container">
+        <canvas id="line_chart_new_matches_by_month"></canvas>
+      </div>
+      <div class="hidden chart_container">
+        <canvas id="line_chart_unhandled"></canvas>
+      </div>
     </div>
-    
+
     <!-- Pie chart -->
     <div class="statistic statistic--two">
       <div class="statistic_header">
         <div>
-          <h1 class="page-title__sub">Fordeling af matches</h1>
-          <p class="chart_description">Matches fordelt på følsomheder</p>
-          <p class="hidden chart_description">Matches fordelt på datakilder</p>
+          <h1 class="page-title__sub">{% trans "Distribution of matches" %}</h1>
+          <p class="chart_description">{% trans "Matches distributed by sensitivities" %}</p>
+          <p class="hidden chart_description">{% trans "Matches distributed by data sources" %}</p>
         </div>
         <div class="statistic_header_nav">
           <div></div>
           <div class="dropdown">
             <div class="select">
-              <span class="select_span">Følsomheder</span>
+              <span class="select_span">{% trans "Sensitivities" %}</span>
               <i class="material-icons">
                 keyboard_arrow_down
               </i>
             </div>
             <ul class="dropdown-menu">
-              <li>Følsomheder</li>
-              <li>Datakilder</li>
+              <li>{% trans "Sensitivities" %}</li>
+              <li>{% trans "Data sources" %}</li>
             </ul>
           </div>
         </div>
@@ -126,37 +157,19 @@
 
       </div>
     </div>
-    <!-- Line chart -->
+    <!-- Bar chart -->
     <div class="statistic statistic--four">
       <div class="statistic_header">
-        <div class="">
-          <h1 class="page-title__sub">Udviklingsoverblik</h1>
-          <p class="chart_description">Antal nye matches pr. måned</p>
-          <p class="hidden chart_description">Antal uhåndterede matches pr. måned</p>
+        <div>
+          <h1 class="page-title__sub">{% trans "Development overview" %}</h1>
+          <p class="chart_description">{% trans "Overview for department with most unhandled matches" %}</p>
+          <p class="hidden chart_description">{% trans "Overview for departments with the oldest matches" %}</p>
         </div>
         <div class="statistic_header_nav">
-          <div></div>
-            <!-- Commented out until the method for 'Uhåndterede matches' is ready
-          <div class="dropdown">
-            <div class="select">
-              <span class="select_span">Nye matches pr. md.</span>
-              <i class="material-icons">
-                keyboard_arrow_down
-              </i>
-            </div>
-            <ul class="dropdown-menu">
-              <li>Nye matches pr. md.</li>
-              <li>Uhåndterede matches</li>
-            </ul>
-          </div>
-            -->
         </div>
       </div>
-      <div class="chart_container">
-        <canvas id="line_chart_new_matches_by_month"></canvas>
-      </div>
-      <div class="hidden chart_container">
-        <canvas id="line_chart_unhandled"></canvas>
+      <div>
+        <h1 class="page-title__sub">{% trans "Comming soon" %}</h1>
       </div>
     </div>
   </div>
