@@ -1,6 +1,29 @@
-.pagination {
-  width: 100%;
+.pagination-table {
+  background-color: var(--color-widget-bg);
+  border-collapse: collapse;
+  box-shadow: var(--box-shadow-widget);
+  border-radius: var(--border-radius-widget);
+  max-width: 90rem;
+  table-layout: fixed;
+  width: calc(100% - 2rem);
+  margin-bottom: 1.5rem;
 
+  &__column {
+    &--page {
+      width: 12rem;
+    }
+
+    &--pages {
+      width: 45rem;
+    }
+  }
+
+  td {
+    line-height: 1;
+    padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
+    vertical-align: top;
+  }
+  
   a {
     font-weight: normal;
     color: var(--color-primary-dark);
@@ -29,11 +52,15 @@
       color: var(--color-primary-dark);
     }
 
-    &:focus,
-    &:active {
+    &--active {
+      font-weight: 600;
       color: var(--color-text-white);
       background-color: var(--color-primary-dark);
       border-radius: var(--border-radius-button);
+
+      &:hover {
+        color: var(--color-text-white);
+      }
     }
   }
 }
