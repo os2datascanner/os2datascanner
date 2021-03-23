@@ -15,12 +15,16 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 import structlog
+
 from datetime import timedelta
+from calendar import month_abbr
+from collections import deque
 from urllib.parse import urlencode
 from django.conf import settings
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
+from django.db.models.functions import TruncMonth
 from django.http import HttpResponseForbidden
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -158,6 +162,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        today = timezone.now()
 
         # Contexts are done as lists of tuples
         context['sensitivities'], context['total_matches'] = \
@@ -167,6 +172,8 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             self.count_handled_matches_grouped_by_sensitivity()
 
         context['source_types'] = self.count_by_source_types()
+
+        context['new_matches_by_month'] = self.count_new_matches_by_month(today)
 
         return context
 
@@ -291,6 +298,36 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             oldest_matches.append(tup)
 
         return oldest_matches
+
+    def count_new_matches_by_month(self, current_date):
+        """Counts matches by months for the last year
+        and rotates them by the current month"""
+        a_year_ago = current_date - timedelta(days=365)
+
+        # Truncates months with their match counts
+        matches_by_month = self.matches.filter(
+            created_timestamp__range=(a_year_ago, current_date)).annotate(
+            month=TruncMonth('created_timestamp')).values(
+            'month').annotate(
+            total=Count('data')
+        ).order_by('month')
+
+        # Generator with the months as integers and the total
+        matches_by_month_gen = ((int(m['month'].strftime('%m')), m['total'])
+                                for m in matches_by_month)
+
+        # Double-ended queue with all months abbreviated and a starting value
+        deque_of_months = deque([[month_abbr[x + 1], 0] for x in range(12)])
+
+        # Places totals from Generator to the correct months
+        for m in matches_by_month_gen:
+            deque_of_months[m[0] - 1][1] = m[1]
+
+        # Rotates the current month to index 11
+        current_month = int(current_date.strftime('%m'))
+        deque_of_months.rotate(-current_month)
+
+        return list(deque_of_months)
 
 
 class LeaderStatisticsPageView(StatisticsPageView):
