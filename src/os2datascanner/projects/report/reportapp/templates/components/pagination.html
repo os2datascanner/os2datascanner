@@ -24,20 +24,30 @@
           </a>
           {% endif %}
           <!-- {% endif %} -->
-    
-            {% for page in  paginator.page_range %}
-              {% if page <= page_obj.number|add:3 and page >= page_obj.number|add:-1 %}
-                {% if forloop.counter <= paginator.num_pages %}
-                  {% ifequal page page_obj.number %}
-                    <a class="page page--active" href="?{% param_replace page=forloop.counter %}">{{forloop.counter}}</a>
-                  {% else %}
-                    <a class="page" href="?{% param_replace page=forloop.counter %}">{{forloop.counter}}</a>
-                  {% endifequal %}
-                {% endif %}
+
+                {% if paginator.num_pages > 1 %}
+                  {% for n in paginator.page_range %}
+                    {% if page_obj.number|add:'-2' == n %}<!-- If current page -2 = 1 (n)  -->
+                      {# First page #}
+                      <a class="page" href="?{% param_replace page=1 %}">1</a>
+                      {% if n != 1 %}
+                        <a>...</a>
+                      {% endif %}
+                    {% elif page_obj.number == n %}
+                      {# Current page #}
+                      <a class="page page--active" href="#">{{ n }}</a>
+                        {# Set how many pages on each side of current page #}
+                    {% elif page_obj.number|add:'-2' < n and n < page_obj.number|add:'2' %} {# Pages around current page #}
+                        <a class="page" href="?{% param_replace page=n %}">{{ n }}</a>
+                    {% elif page_obj.number|add:'2' == n %}
+                      {# Last page #}
+                      {% if page_obj.number != paginator.num_pages %}
+                        <a>...</a>
+                      {% endif %}
+                        <a class="page" href="?{% param_replace page=paginator.num_pages %}">{{ paginator.num_pages }}</a>
+                    {% endif %}
+                  {% endfor %}
               {% endif %}
-            {% endfor %}
-              <span class="page--sym">...</span>
-          
           {% if page_obj.has_next %}
           {% if page_obj.next_page_number != paginator.num_pages %}
           <a href="?{% param_replace page=page_obj.next_page_number %}">
