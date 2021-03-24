@@ -1,6 +1,63 @@
 OS2datascanner
 ==============
 
+Version 3.9.1, 24th March 2021
+------------------------------
+
+"One Click Goes A Long Way"
+
+New in this version:
+
+- Support for bulk handling of matches in the report module.
+
+- Improved the DPO and manager overviews:
+
+  - A new pie chart shows how many matches were found in each type of data
+    source.
+
+  - A new calendar view shows how many matches were found in each month.
+
+- Preparatory work for LDAP and Active Directory integration:
+
+  - New model objects in the administration system to support multi-tenant
+    installations with distinct organisational hierarchies.
+
+    Note that these new model objects, shown in Django's administration pages
+    under the "Management" (or, in Danish, "Administration") heading, should
+    not yet be used in production environments.
+
+General improvements:
+
+- The report module's age-based filter is now a true filter rather than a
+  toggle: showing newer matches no longer hides older ones.
+
+- Much of the custom login management code has now been replaced with standard
+  Django functionality.
+
+- Further unification of the user interfaces of the administration system and
+  report module.
+
+- The number of worker processes that should be run by the administration
+  system, API server and report module is now configurable.
+
+- Improved support for Internet Explorer 11.
+
+Bugfixes:
+
+- The report module no longer fails when trying to present a match produced by
+  version 3.6.0 or earlier of OS2datascanner.
+
+- The administration system's progress page no longer fails when a data source
+  under scan could not be explored.
+
+- The cookies used by the administration system and report module no longer
+  conflict with each other in development environments.
+
+- The DPO and manager overviews no longer produce error messages when a user is
+  not logged in.
+
+- Fixed some deficiencies in the experimental Keycloak support.
+
 Version 3.9.0, 11th March 2021
 ------------------------------
 
