@@ -153,7 +153,7 @@ def scan_1(body):
                             uuid=uuid4())),
             source=source,
             rule=rule,
-            configuration={},
+            configuration=body.get("configuration", {}),
             progress=None).to_json_object()
 
     with SourceManager() as sm:
