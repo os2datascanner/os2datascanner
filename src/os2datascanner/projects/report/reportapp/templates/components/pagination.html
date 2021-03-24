@@ -21,10 +21,12 @@
               </span>
             </a>
           {% else %}
-            <span class="flex link--pre disabled">
-              <i id="chevron_left" class="material-icons">chevron_left</i>
-              {% trans "Previous" %}
-            </span>
+            <a class="link--pre disabled">
+              <span class="flex">
+                <i id="chevron_left" class="material-icons">chevron_left</i>
+                {% trans "Previous" %}
+              </span>
+            </a>
           {% endif %}
 
                 {% if paginator.num_pages > 1 %}
@@ -59,14 +61,16 @@
             </span>
           </a>
           {% else %}
-          <span class="flex link--next disabled">
-            {% trans "Next" %}
-            <i id="chevron_right" class="material-icons">chevron_right</i>
-          </span>
+          <a class="link--next disabled">
+            <span class="flex">
+              {% trans "Next" %}
+              <i id="chevron_right" class="material-icons">chevron_right</i>
+            </span>
+          </a>
           {% endif %}
         </div>
       </td>
     </tr>
-
-  {% endif %}
 </tbody>
+
+{% endif %}
