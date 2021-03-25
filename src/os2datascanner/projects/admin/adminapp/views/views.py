@@ -27,6 +27,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View, ListView, TemplateView, DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
@@ -430,7 +431,7 @@ class DialogSuccess(TemplateView):
         model = self.type_map[model_type]
         item = get_object_or_404(model, pk=pk)
         context['item_description'] = item.display_name
-        context['action'] = "oprettet" if created else "gemt"
+        context['action'] = _("created") if created else _("saved")
         if model_type in self.reload_map:
             model_type = self.reload_map[model_type]
         context['reload_url'] = '/' + model_type + '/'

@@ -11,9 +11,9 @@ class Organization(models.Model):
     Users can only see material related to their own organization.
     """
 
-    name = models.CharField(max_length=256, unique=True, verbose_name='Navn')
+    name = models.CharField(max_length=256, unique=True, verbose_name=_('Name'))
     contact_email = models.CharField(max_length=256, verbose_name='Email')
-    contact_phone = models.CharField(max_length=256, verbose_name='Telefon')
+    contact_phone = models.CharField(max_length=256, verbose_name=_('Phone'))
     do_use_groups = models.BooleanField(default=False,
                                         editable=settings.DO_USE_GROUPS)
     do_notify_all_scans = models.BooleanField(default=True)

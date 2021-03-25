@@ -14,6 +14,8 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 
+from django.utils.translation import ugettext_lazy as _
+
 
 class Sensitivity:
 
@@ -28,8 +30,8 @@ class Sensitivity:
     OK = 0
 
     choices = (
-        (OK, 'Notifikation'),
-        (LOW, 'Advarsel'),
-        (HIGH, 'Problem'),
-        (CRITICAL, 'Kritisk')
+        (OK, _('Notification')),
+        (LOW, _('Warning')),
+        (HIGH, _('Problem')),
+        (CRITICAL, _('Critical'))
     )

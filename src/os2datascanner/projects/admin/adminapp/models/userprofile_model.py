@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
 from .organization_model import Organization
 
@@ -14,11 +15,11 @@ class UserProfile(models.Model):
 
     organization = models.ForeignKey(Organization,
                                      null=False,
-                                     verbose_name='Organisation',
+                                     verbose_name=_('Organization'),
                                      on_delete=models.PROTECT)
     user = models.OneToOneField(User,
                                 related_name='profile',
-                                verbose_name='Bruger',
+                                verbose_name=_('User'),
                                 on_delete=models.PROTECT)
     is_group_admin = models.BooleanField(default=False)
     is_upload_only = models.BooleanField(default=False)

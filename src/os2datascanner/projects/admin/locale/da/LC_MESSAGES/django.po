@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-23 09:15-0500\n"
+"POT-Creation-Date: 2021-03-25 07:25-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,6 +22,45 @@ msgstr "Personlig information"
 #: adminapp/admin.py:127
 msgid "Important dates"
 msgstr "Vigtige datoer"
+
+#: adminapp/models/authentication_model.py:14
+msgid "Brugernavn"
+msgstr "Username"
+
+#: adminapp/models/authentication_model.py:18
+msgid "Initialization Vector"
+msgstr "Initaliserings Vektor"
+
+#: adminapp/models/authentication_model.py:25
+#: adminapp/views/filescanner_views.py:119
+msgid "User domain"
+msgstr "Brugerdomæne"
+
+#: adminapp/models/authentication_model.py:30
+#: adminapp/models/authenticationmethods_model.py:10
+msgid "Login method"
+msgstr "Login metode"
+
+#: adminapp/models/group_model.py:10 adminapp/models/organization_model.py:14
+#: adminapp/templates/os2datascanner/rules.html:44
+#: adminapp/templates/os2datascanner/rules.html:147
+msgid "Name"
+msgstr "Navn"
+
+#: adminapp/models/group_model.py:12 adminapp/models/organization_model.py:16
+msgid "Phone"
+msgstr "Telefon"
+
+#: adminapp/models/group_model.py:14
+msgid "Users"
+msgstr "Brugere"
+
+#: adminapp/models/group_model.py:19 adminapp/models/userprofile_model.py:18
+#: adminapp/templates/os2datascanner/rules.html:48
+#: adminapp/templates/os2datascanner/rules.html:151
+#: adminapp/templates/os2datascanner/scanners.html:51
+msgid "Organization"
+msgstr "Organisation"
 
 #: adminapp/models/organization_model.py:60
 msgid "API key"
@@ -62,6 +101,26 @@ msgstr "scanstatus"
 #: adminapp/models/scannerjobs/scanner_model.py:446
 msgid "scan statuses"
 msgstr "scanstatusser"
+
+#: adminapp/models/sensitivity_level.py:33
+msgid "Notification"
+msgstr "Notifikation"
+
+#: adminapp/models/sensitivity_level.py:34
+msgid "Warning"
+msgstr "Advarsel"
+
+#: adminapp/models/sensitivity_level.py:35
+msgid "Problem"
+msgstr "Problem"
+
+#: adminapp/models/sensitivity_level.py:36
+msgid "Critical"
+msgstr "Kritisk"
+
+#: adminapp/models/userprofile_model.py:22
+msgid "User"
+msgstr "Bruger"
 
 #: adminapp/templates/403.html:11
 msgid "You need permission to perform this action"
@@ -237,7 +296,7 @@ msgid "Regular Expression"
 msgstr "Regulært Udtryk"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:229
-msgid "eg. organization"
+msgid "e.g. organization"
 msgstr "f.eks. organisation"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:236
@@ -262,23 +321,14 @@ msgstr "Beskrivelse af regel"
 msgid "Add rule"
 msgstr "Tilføj regel"
 
-#: adminapp/templates/os2datascanner/rules.html:44
-#: adminapp/templates/os2datascanner/rules.html:147
-msgid "Name"
-msgstr "Navn"
-
-#: adminapp/templates/os2datascanner/rules.html:48
-#: adminapp/templates/os2datascanner/rules.html:151
-#: adminapp/templates/os2datascanner/scanners.html:51
-msgid "Organization"
-msgstr "Organisation"
-
 #: adminapp/templates/os2datascanner/rules.html:52
 #: adminapp/templates/os2datascanner/rules.html:155
 msgid "Description"
 msgstr "Beskrivelse"
 
 #: adminapp/templates/os2datascanner/rules.html:55
+#: adminapp/views/rule_views.py:71 adminapp/views/rule_views.py:159
+#: adminapp/views/rule_views.py:166
 msgid "Expression"
 msgstr "Udtryk"
 
@@ -482,7 +532,7 @@ msgid "List of accounts"
 msgstr "Liste af konti"
 
 #: adminapp/templates/os2datascanner/scanner_form.html:416
-msgid "eg. /sitemap.xml"
+msgid "e.g. /sitemap.xml"
 msgstr "f.eks. /sitemap.xml"
 
 #: adminapp/templates/os2datascanner/scanner_form.html:434
@@ -648,8 +698,6 @@ msgid "Office 365 mailscanner"
 msgstr "Office 365 mailscanner"
 
 #: adminapp/templates/os2datascanner/scanner_tabs.html:34
-#, fuzzy
-#| msgid "Office 365 OneDrive filescanner"
 msgid "Office 365 OneDrive filscanner"
 msgstr "Office 365 OneDrive filscanner"
 
@@ -819,17 +867,15 @@ msgstr ""
 "vi dig instruktioner i at vælge en ny adgangskode."
 
 #: adminapp/templates/password_reset_form.html:33
-#, fuzzy
-#| msgid "Email address:"
 msgid "Email address"
-msgstr "Email adresse:"
+msgstr "Email adresse"
 
 #: adminapp/templates/password_reset_form.html:35
 msgid "Reset my password"
 msgstr "Nulstil min adgangskode"
 
 #: adminapp/views/exchangescanner_views.py:107
-msgid "eg. @example.com"
+msgid "e.g. @example.com"
 msgstr "f.eks. @example.com"
 
 #: adminapp/views/exchangescanner_views.py:108
@@ -843,16 +889,28 @@ msgid "Password"
 msgstr "Adgangskode"
 
 #: adminapp/views/filescanner_views.py:116
-msgid "eg. //network-domain/top-folder"
+msgid "e.g. //network-domain/top-folder"
 msgstr "f.eks. //network-domain/top-folder"
-
-#: adminapp/views/filescanner_views.py:119
-msgid "User domain"
-msgstr "Brugerdomæne"
 
 #: adminapp/views/filescanner_views.py:120
 msgid "Drive letter"
 msgstr "Drevbogstav"
+
+#: adminapp/views/views.py:434
+msgid "created"
+msgstr "oprettet"
+
+#: adminapp/views/views.py:434
+msgid "saved"
+msgstr "gemt"
+
+#: adminapp/views/webscanner_views.py:35
+msgid "e.g. https://www.example.com"
+msgstr "f.eks. https://www.example.com"
+
+#: adminapp/views/webscanner_views.py:41 adminapp/views/webscanner_views.py:63
+msgid "Space is not allowed in the web-domain name."
+msgstr "Mellemrum er ikke tilladt i web-domænenavnet."
 
 #: core/admin.py:29
 msgid "Users who are already Administrators are not shown."
@@ -973,6 +1031,9 @@ msgstr "telefonnummer"
 #: core/models/client.py:158
 msgid "clients"
 msgstr "kunder"
+
+#~ msgid "Login Method"
+#~ msgstr "Login Metode"
 
 #~ msgid "core"
 #~ msgstr "kerne"

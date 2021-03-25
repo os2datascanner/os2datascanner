@@ -1,6 +1,7 @@
 from ..validate import validate_domain, get_validation_str
 from .scanner_views import *
 from ..models.scannerjobs.webscanner_model import WebScanner
+from django.utils.translation import ugettext_lazy as _
 
 
 def url_contains_spaces(form):
@@ -31,13 +32,13 @@ class WebScannerCreate(ScannerCreate):
 
         form = super().get_form(form_class)
 
-        form.fields['url'].widget.attrs['placeholder'] = 'f.eks. https://www.example.com'
+        form.fields['url'].widget.attrs['placeholder'] = _('e.g. https://www.example.com')
 
         return form
 
     def form_valid(self, form):
         if url_contains_spaces(form):
-            form.add_error('url', u'Mellemrum er ikke tilladt i web-domænenavnet.')
+            form.add_error('url', _(u'Space is not allowed in the web-domain name.'))
             return self.form_invalid(form)
         return super().form_valid(form)
 
@@ -59,7 +60,7 @@ class WebScannerUpdate(ScannerUpdate):
 
     def form_valid(self, form):
         if url_contains_spaces(form):
-            form.add_error('url', u'Mellemrum er ikke tilladt i web-domænenavnet.')
+            form.add_error('url', _(u'Space is not allowed in the web-domain name.'))
             return self.form_invalid(form)
         return super().form_valid(form)
 
