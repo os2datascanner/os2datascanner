@@ -1,6 +1,12 @@
 OS2datascanner
 ==============
 
+Version 3.9.1.1, 25th March 2021
+--------------------------------
+
+This hotfix release fixes an error in a transitional migration that made
+unsafe assumptions about the extra scan data sent to the report module.
+
 Version 3.9.1, 24th March 2021
 ------------------------------
 
