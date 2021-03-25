@@ -1,7 +1,7 @@
 OS2datascanner
 ==============
 
-Version 3.9.1.1, 25th March 2021
+Version 3.9.2, 25th March 2021
 --------------------------------
 
 This hotfix release fixes an error in a transitional migration that made
