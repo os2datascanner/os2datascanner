@@ -109,7 +109,7 @@ recurrence.Rule.prototype = {
                 interpolate(
                     recurrence.display.tokens.every_number_freq, {
                         'number': this.interval,
-                        'freq': recurrence.display.timeintervals_plural[this.freq]
+                        'freq': recurrence.display.timeintervals[this.freq]
                     }, true));
         else
             parts.push(recurrence.display.frequencies[this.freq]);
@@ -191,7 +191,6 @@ recurrence.Rule.prototype = {
 
         // daily frequencies has no additional formatting,
         // hour/minute/second formatting not supported.
-
         if (this.count) {
             if (this.count == 1)
                 parts.push(

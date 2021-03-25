@@ -869,7 +869,7 @@ recurrence.widget.RuleForm.prototype = {
         if (this.rule.count)
             count_value = this.rule.count;
         else
-            count_value = 1;
+            count_value = 0;
         var count_radio = recurrence.widget.e(
             'input', {
                 'class': 'radio-inline', 
@@ -1087,7 +1087,7 @@ recurrence.widget.RuleForm.prototype = {
     },
 
     set_count: function(count) {
-        if (count < 2)
+        if (count == 1)
             var token = recurrence.string.capitalize(
                 recurrence.display.labels.count);
         else
