@@ -2,6 +2,7 @@
 
 from django.db import migrations, models
 
+from os2datascanner.engine2.pipeline import messages
 from ..utils import iterate_queryset_in_batches
 
 
@@ -17,7 +18,10 @@ def bulk_update_datasource_last_modified(apps, schema_editor):
     for batch in iterate_queryset_in_batches(10000, matches):
         for match in batch:
             if not match.datasource_last_modified:
-                match.datasource_last_modified = match.data["scan_tag"]["time"]
+                scan_tag = messages.ScanTagFragment.from_json_object(
+                        match.data["scan_tag"])
+                if scan_tag.time:
+                    match.datasource_last_modified = scan_tag.time
 
         DocumentReport.objects.bulk_update(batch, ['datasource_last_modified'])
 

@@ -18,7 +18,8 @@ def extract_timestamps(apps, schema_editor):
         batch = DocumentReport.objects.filter(data__scan_tag__isnull=False)[i:batchsize+i]
         i += batchsize
         for dr in batch:
-            scan_tag = messages.ScanSpecFragment.from_json_object(dr.data["scan_tag"])
+            scan_tag = messages.ScanTagFragment.from_json_object(
+                    dr.data["scan_tag"])
             if scan_tag.time:
                 dr.scan_time = scan_tag.time
         DocumentReport.objects.bulk_update(batch, ['scan_time'])
