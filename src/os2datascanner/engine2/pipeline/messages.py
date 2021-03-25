@@ -1,6 +1,7 @@
 from uuid import UUID
 from typing import Optional, Sequence, NamedTuple
 from datetime import datetime
+import warnings
 
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from ..model.core import Handle, Source
@@ -131,6 +132,19 @@ class ScanTagFragment(NamedTuple):
                     scanner=ScannerFragment.from_json_object(obj["scanner"]),
                     organisation=OrganisationFragment.from_json_object(
                             obj["organisation"]))
+        except KeyError:
+            warnings.warn("trying to decode unrecognised scan tag object")
+            time = obj.get("time")
+            user = obj.get("user")
+            scanner = obj.get("scanner")
+            organisation = obj.get("organisation")
+            return ScanTagFragment(
+                    time=parse_isoformat_timestamp(time) if time else None,
+                    user=user or None,
+                    scanner=ScannerFragment.from_json_object(
+                            scanner) if scanner else None,
+                    organisation=OrganisationFragment.from_json_object(
+                            organisation) if organisation else None)
         except TypeError:
             # Scan tags created between versions 3.0.0 and 3.3.2 inclusive were
             # just simple timestamps
