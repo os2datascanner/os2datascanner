@@ -9,7 +9,6 @@ var colorFunction = function (color) {
 // Array = values
 // steps = how many steps on y-axis ( 0 doesn't count)
 var stepSizeFunction = function(array, steps) {
-  console.log((Math.ceil(Math.max.apply(null, array)/100)*100)/steps);
   return (Math.ceil(Math.max.apply(null, array)/100)*100)/steps;
 }
 
