@@ -21,6 +21,7 @@ Starts spiders scheduled to run during the current minute.
 """
 
 import datetime
+from dateutil import tz
 
 from django.core.management.base import BaseCommand
 
@@ -39,13 +40,20 @@ next_qhr = current_qhr + datetime.timedelta(
 
 class Command(BaseCommand):
     help = __doc__
+    def add_arguments(self, parser):
+       parser.add_argument(
+             "--now",
+            metavar="now",
+            default="False",
+            help="Run the scanner now if scheduled for today")
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, now=False, **kwargs):
         # Loop through all scanners
         for scanner in Scanner.objects.exclude(schedule="").select_subclasses():
             # Skip scanners that should not start now
             start_time = scanner.get_start_time()
-            if start_time < current_qhr.time() or start_time > next_qhr.time():
+            if ((start_time < current_qhr.time() or start_time > next_qhr.time())
+                    and not now):
                 continue
 
             try:
@@ -69,7 +77,9 @@ class Command(BaseCommand):
                 current_qhr, next_qhr,
                 # Generate recurrences starting from current quarter 2014/01/01
                 dtstart=datetime.datetime(
-                    2014, 1, 1, current_qhr.hour, current_qhr.minute), inc=True
+                    2014, 1, 1, current_qhr.hour, current_qhr.minute,
+                    tzinfo=tz.gettz()),
+                inc=True
             ):
                 continue
 
