@@ -1,3 +1,9 @@
+// Changes 'x of x' on load, to avoid showing 0 of 10
+// while having less than 10 matches.
+window.addEventListener('load', function () {
+  showChecked();
+});
+
 // Listen for click on toggle checkbox
 $('#select-all').click(function() {
   if(this.checked) {
