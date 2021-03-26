@@ -1,5 +1,5 @@
-import datetime
 import dateutil.parser
+from datetime import datetime, timedelta
 from typing import List, Tuple
 
 from django.test import RequestFactory, TestCase
@@ -411,8 +411,7 @@ class StatisticsPageViewTest(TestCase):
         view = self.get_statisticspage_object()
         created_timestamp = [m.created_timestamp.date() for m in view.matches][:2]
 
-        self.assertEquals(created_timestamp,
-                          [timezone.now().date(), timezone.now().date()])
+        self.assertEquals(created_timestamp, [timezone.now().date(), timezone.now().date()])
         dpo.delete()
 
     # count_new_matches_by_month()
@@ -474,6 +473,27 @@ class StatisticsPageViewTest(TestCase):
         egon_emailalias.delete()
         benny_emailalias.delete()
 
+    def test_statisticspage_count_unhandled_matches_by_month(self):
+        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+        view = self.get_statisticspage_object()
+        test_date = dateutil.parser.parse("2021-4-28T14:21:59+05:00")
+
+        # Saves old timestamps and overrides
+        original_created_timestamps = static_timestamps('created_timestamp')
+        original_resolution_time = static_timestamps('resolution_time')
+
+        self.assertListEqual(view.count_unhandled_matches_by_month(test_date),
+                             [['May', 0], ['Jun', 0], ['Jul', 0],
+                              ['Aug', 0], ['Sep', 1], ['Oct', 3],
+                              ['Nov', 7], ['Dec', 7], ['Jan', 7],
+                              ['Feb', 7], ['Mar', 0], ['Apr', 0]])
+
+        # Resets back to old values
+        reset_timestamps(original_created_timestamps, 'created_timestamp')
+        reset_timestamps(original_resolution_time, 'resolution_time')
+
+        dpo.delete()
+
     # StatisticsPageView()
     def get_statisticspage_object(self):
         request = self.factory.get('/statistics')
@@ -492,19 +512,46 @@ class StatisticsPageViewTest(TestCase):
 
 # Helper functions
 # Overrides timestamps to have static data
-def static_timestamps() -> List[Tuple[int, datetime.datetime]]:
+def static_timestamps(time_type: str = 'created_timestamp',
+                      added_days: int = 0) -> List[Tuple[int, datetime]]:
     original_timestamps = []
-    for match in DocumentReport.objects.all():
-        original_timestamps.append((match.pk, match.created_timestamp))
-        match.created_timestamp = match.scan_time
-        match.save()
+
+    if time_type == 'created_timestamp':  # Default
+        for match in DocumentReport.objects.all():
+            original_timestamps.append((match.pk, match.created_timestamp))
+            match.created_timestamp = match.scan_time + timedelta(days=added_days)
+            match.save()
+
+    elif time_type == 'resolution_time':
+        for match in DocumentReport.objects.all():
+            original_timestamps.append((match.pk, match.resolution_time))
+            match.resolution_status = 3  # Deleted
+            match.save()
+
+    else:
+        print("Typo in argument 'time_type' in static_timestamps()")
+
     return original_timestamps
 
 
 # Reset to old values
-def reset_timestamps(arg: List[Tuple[int, datetime.datetime]]):
-    for match in DocumentReport.objects.all():
-        for a in arg:
-            if a[0] == match.pk:
-                match.created_timestamp = a[1]
-        match.save()
+def reset_timestamps(arg: List[Tuple[int, datetime]],
+                     time_type: str = 'created_timestamp'):
+
+    if time_type == 'created_timestamp':  # Default
+        for match in DocumentReport.objects.all():
+            for a in arg:
+                if a[0] == match.pk:
+                    match.created_timestamp = a[1]
+            match.save()
+
+    elif time_type == 'resolution_time':
+        for match in DocumentReport.objects.all():
+            for a in arg:
+                if a[0] == match.pk:
+                    match.resolution_status = None
+                    match.resolution_time = a[1]
+            match.save()
+
+    else:
+        print("Typo in argument 'time_type' in reset_timestamps()")

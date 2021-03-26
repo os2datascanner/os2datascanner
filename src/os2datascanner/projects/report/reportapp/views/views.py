@@ -321,7 +321,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
     def count_unhandled_matches_by_month(self, current_date):
         """Counts new matches and resolved matches by month for the last year,
         rotates the current month to the end of the list, inserts and subtracts using the counts
-        """
+        and then makes a running total"""
         a_year_ago = current_date - timedelta(days=365)
 
         new_matches_by_month = self.matches.filter(
@@ -338,6 +338,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             total=Count('data')
         ).order_by('month')
 
+        # Generators with months as integers and the counts
         new_matches_by_month_gen = ((int(m['month'].strftime('%m')), m['total'])
                                     for m in new_matches_by_month)
 
@@ -353,21 +354,16 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         for r in resolved_matches_by_month_gen:
             full_year_of_months[r[0] - 1][1] -= r[1]  # Subtracts the counted resolves
 
-        print(full_year_of_months)
-
         # Rotate the current month to index 11
         current_month = int(current_date.strftime('%m'))
         full_year_of_months.rotate(-current_month)
 
-        print(full_year_of_months)
-
+        # Running total
         for i in range(12):
             try:  # Take value from current index and add it to the next
                 full_year_of_months[i + 1][1] += full_year_of_months[i][1]
             except IndexError:
                 pass  # Last month will always throw an OutOfBounds exception
-
-        print(full_year_of_months)
 
         return list(full_year_of_months)
 
