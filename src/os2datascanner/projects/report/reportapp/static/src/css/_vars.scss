@@ -25,7 +25,7 @@
 	//primary colors
 	--color-body-bg: #f5f5f5;
 	--color-widget-bg: #fff;
-	--color-main: #3a69b4; // change!!
+	--color-main: #3a69b4;
 	--color-primary: #21759c;
 	--color-primary-light: #5ca4cd;
 	--color-primary-dark: #00496e;
@@ -39,8 +39,8 @@
 	--color-hover: #f5f5f5;
 
 	//sensitivity colors
-	--color-ok: var(--color-main); //change!!
-	--color-ok-dark: #32845e; //change!!
+	--color-ok: var(--color-main);
+	--color-ok-dark: #32845e;
 
 	--color-error: #e24e4e;
 
@@ -50,9 +50,12 @@
 
 	--color-notification: #21759c;
 
-	--color-office365: #d83b01; //change!!
+	--color-office365: #d83b01;
 
-	--color-logo-mark: var(--color-main); //change!!
+	// icon arrow color
+	--color-icon: #777777;
+
+	--color-logo-mark: var(--color-main);
 	--color-logo-text: var(--color-text-main);
 
 	//border-radius
