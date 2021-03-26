@@ -49,6 +49,21 @@ window.addEventListener('load', function () {
 	newMatchesLineChartValues.push(null);
 
 
+	var unhandledMatchesLineChartLabels = [];
+	var unhandledMatchesLineChartValues = [];
+
+	for(var i = 0; i<unhandledMatchesByMonth.length;i++) {
+		unhandledMatchesLineChartLabels.push(unhandledMatchesByMonth[i][0].toUpperCase());
+		unhandledMatchesLineChartValues.push(unhandledMatchesByMonth[i][1]);
+	}
+
+	// Adds empty values in front of both arrays (for styling purposes)
+	unhandledMatchesLineChartLabels.unshift("");
+	unhandledMatchesLineChartLabels.push("");
+	unhandledMatchesLineChartValues.unshift(null);
+	unhandledMatchesLineChartValues.push(null);
+
+
 	var newMatchesLineChartCtx = document.querySelector("#line_chart_new_matches_by_month").getContext('2d');
 	new Chart(newMatchesLineChartCtx, {
 		type: 'line',

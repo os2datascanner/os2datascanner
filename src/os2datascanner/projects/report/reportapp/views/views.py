@@ -192,7 +192,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         context['new_matches_by_month'] = self.count_new_matches_by_month(today)
 
-        print(self.count_unhandled_matches_by_month(today))
+        context['unhandled_matches_by_month'] = self.count_unhandled_matches_by_month(today)
 
         return context
 

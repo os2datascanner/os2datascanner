@@ -17,20 +17,18 @@
         </div>
         <div class="statistic_header_nav">
         <div></div>
-        <!-- Commented out until the method for 'Uhåndterede matches' is ready
         <div class="dropdown">
           <div class="select">
-            <span class="select_span">Nye matches pr. md.</span>
+            <span class="select_span">{% trans "New matches" %}</span>
             <i class="material-icons">
               keyboard_arrow_down
             </i>
           </div>
           <ul class="dropdown-menu">
-            <li>Nye matches pr. md.</li>
-            <li>Uhåndterede matches</li>
+            <li>{% trans "New matches" %}</li>
+            <li>{% trans "Unhandled matches" %}</li>
           </ul>
         </div>
-        -->
         </div>
       </div>
       <div class="chart_container">
@@ -179,6 +177,7 @@
 {{ source_types|json_script:"source_types" }}
 {{ handled_matches|json_script:"handled_matches" }}
 {{ new_matches_by_month|json_script:"new_matches_by_month" }}
+{{ unhandled_matches_by_month|json_script:"unhandled_matches_by_month" }}
 <script>
   // json_script solution - Safe from in-page script execution
 
@@ -189,6 +188,8 @@
   var sourceTypes = JSON.parse(document.getElementById('source_types').textContent);
 
   var newMatchesByMonth = JSON.parse(document.getElementById('new_matches_by_month').textContent);
+
+  var unhandledMatchesByMonth = JSON.parse(document.getElementById('unhandled_matches_by_month').textContent);
 
   // Finds the total number matches in the array
   totalArrayValue = function(array, index){

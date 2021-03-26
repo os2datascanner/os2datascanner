@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-31 07:17-0500\n"
+"POT-Creation-Date: 2021-08-06 08:43-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -72,7 +72,7 @@ msgstr "håndteringstid"
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport_model.py:135
+#: reportapp/models/documentreport_model.py:151
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -122,8 +122,8 @@ msgid "Select scannerjob"
 msgstr "Vælg scannerjob"
 
 #: reportapp/templates/components/filters.html:55
-#: reportapp/templates/components/statistics-template.html:95
-#: reportapp/templates/components/statistics-template.html:101
+#: reportapp/templates/components/statistics-template.html:93
+#: reportapp/templates/components/statistics-template.html:99
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
@@ -227,22 +227,22 @@ msgid "Sensitivity legend"
 msgstr "Følsomhedsoversigt"
 
 #: reportapp/templates/components/sensitivity-chart.html:8
-#: reportapp/templates/components/statistics-template.html:115
+#: reportapp/templates/components/statistics-template.html:113
 msgid "Critical"
 msgstr "Kritisk"
 
 #: reportapp/templates/components/sensitivity-chart.html:12
-#: reportapp/templates/components/statistics-template.html:124
+#: reportapp/templates/components/statistics-template.html:122
 msgid "Problem"
 msgstr "Problem"
 
 #: reportapp/templates/components/sensitivity-chart.html:16
-#: reportapp/templates/components/statistics-template.html:133
+#: reportapp/templates/components/statistics-template.html:131
 msgid "Warning"
 msgstr "Advarsel"
 
 #: reportapp/templates/components/sensitivity-chart.html:20
-#: reportapp/templates/components/statistics-template.html:142
+#: reportapp/templates/components/statistics-template.html:140
 msgid "Notification"
 msgstr "Notifikation"
 
@@ -255,7 +255,7 @@ msgid "DPO statistics"
 msgstr "DPO statistik"
 
 #: reportapp/templates/components/statistics-template.html:14
-#: reportapp/templates/components/statistics-template.html:164
+#: reportapp/templates/components/statistics-template.html:162
 msgid "Development overview"
 msgstr "Udviklingsoverblik"
 
@@ -267,61 +267,70 @@ msgstr "Antal nye matches per måned"
 msgid "Unhandled matches by month"
 msgstr "Antal uhåndterede matches per måned"
 
-#: reportapp/templates/components/statistics-template.html:48
+#: reportapp/templates/components/statistics-template.html:22
+#: reportapp/templates/components/statistics-template.html:28
+msgid "New matches"
+msgstr "Nye matches"
+
+#: reportapp/templates/components/statistics-template.html:29
+msgid "Unhandled matches"
+msgstr "Uhåndterede matches"
+
+#: reportapp/templates/components/statistics-template.html:46
 msgid "Distribution of matches"
 msgstr "Fordeling af matches"
 
-#: reportapp/templates/components/statistics-template.html:49
+#: reportapp/templates/components/statistics-template.html:47
 msgid "Matches distributed by sensitivities"
 msgstr "Matches fordelt på følsomheder"
 
-#: reportapp/templates/components/statistics-template.html:50
+#: reportapp/templates/components/statistics-template.html:48
 msgid "Matches distributed by data sources"
 msgstr "Matches fordelt på datakilder"
 
-#: reportapp/templates/components/statistics-template.html:56
-#: reportapp/templates/components/statistics-template.html:62
+#: reportapp/templates/components/statistics-template.html:54
+#: reportapp/templates/components/statistics-template.html:60
 msgid "Sensitivities"
 msgstr "Følsomhed"
 
-#: reportapp/templates/components/statistics-template.html:63
+#: reportapp/templates/components/statistics-template.html:61
 msgid "Data sources"
 msgstr "Datakilder"
 
-#: reportapp/templates/components/statistics-template.html:87
-#: reportapp/templates/components/statistics-template.html:153
+#: reportapp/templates/components/statistics-template.html:85
+#: reportapp/templates/components/statistics-template.html:151
 msgid "Handled matches"
 msgstr "Håndterede matches"
 
-#: reportapp/templates/components/statistics-template.html:88
+#: reportapp/templates/components/statistics-template.html:86
 msgid "Percentage of handled matches distributed by sensitivity"
 msgstr "Procentvis andel af håndterede matches fordelt på følsomhed"
 
-#: reportapp/templates/components/statistics-template.html:89
+#: reportapp/templates/components/statistics-template.html:87
 msgid "The department's percentage of handled matches"
 msgstr "Afdelingens procentvise andel af håndterede matches"
 
-#: reportapp/templates/components/statistics-template.html:102
+#: reportapp/templates/components/statistics-template.html:100
 msgid "All matches"
 msgstr "Alle matches"
 
-#: reportapp/templates/components/statistics-template.html:116
-#: reportapp/templates/components/statistics-template.html:125
-#: reportapp/templates/components/statistics-template.html:134
-#: reportapp/templates/components/statistics-template.html:143
-#: reportapp/templates/components/statistics-template.html:154
+#: reportapp/templates/components/statistics-template.html:114
+#: reportapp/templates/components/statistics-template.html:123
+#: reportapp/templates/components/statistics-template.html:132
+#: reportapp/templates/components/statistics-template.html:141
+#: reportapp/templates/components/statistics-template.html:152
 msgid "of"
 msgstr "af"
 
-#: reportapp/templates/components/statistics-template.html:165
+#: reportapp/templates/components/statistics-template.html:163
 msgid "Overview for department with most unhandled matches"
 msgstr "Overblik over afdelinger med flest uhåndterede matches"
 
-#: reportapp/templates/components/statistics-template.html:166
+#: reportapp/templates/components/statistics-template.html:164
 msgid "Overview for departments with the oldest matches"
 msgstr "Overblik over afdelinger med flest uhåndterede matches"
 
-#: reportapp/templates/components/statistics-template.html:172
+#: reportapp/templates/components/statistics-template.html:170
 msgid "Comming soon"
 msgstr "Kommer snart"
 
@@ -474,19 +483,19 @@ msgstr ""
 msgid "The page does not exist"
 msgstr ""
 
-#: reportapp/views/views.py:262
+#: reportapp/views/views.py:264
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:263
+#: reportapp/views/views.py:265
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:264
+#: reportapp/views/views.py:266
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:265
+#: reportapp/views/views.py:267
 msgid "Mailscan"
 msgstr "Mailscan"
 
