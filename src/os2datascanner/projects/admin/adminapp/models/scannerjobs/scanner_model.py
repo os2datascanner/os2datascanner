@@ -197,18 +197,20 @@ class Scanner(models.Model):
     is_visible = models.BooleanField(default=True)
 
     # First possible start time
-    FIRST_START_TIME = datetime.time(18, 0)
+    FIRST_START_TIME = datetime.time(hour=18, minute=0)
     # Amount of quarter-hours that can be added to the start time
     STARTTIME_QUARTERS = 6 * 4
 
     def get_start_time(self):
         """The time of day the Scanner should be automatically started."""
-        added_minutes = 15 * (self.pk % Scanner.STARTTIME_QUARTERS)
+        # add (minutes|hours) in intervals of 15m depending on `pk`, so each
+        # scheduled job start at different times after 18h00m
+        added_minutes = 15 * (self.pk % self.STARTTIME_QUARTERS)
         added_hours = int(added_minutes / 60)
         added_minutes -= added_hours * 60
-        return Scanner.FIRST_START_TIME.replace(
-            hour=Scanner.FIRST_START_TIME.hour + added_hours,
-            minute=Scanner.FIRST_START_TIME.minute + added_minutes
+        return self.FIRST_START_TIME.replace(
+            hour=self.FIRST_START_TIME.hour + added_hours,
+            minute=self.FIRST_START_TIME.minute + added_minutes
         )
 
     @classmethod
