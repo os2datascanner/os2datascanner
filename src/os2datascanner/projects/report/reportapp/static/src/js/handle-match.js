@@ -28,7 +28,11 @@ function showChecked(){
 $("input[name=match-checkbox]").each(function( i ) {
   $(this).on("click", function(){
     i = showChecked();
-});
+  });
+
+  window.addEventListener('load', function () {
+    i = showChecked();
+  });
 });
 
 function getCookie(name) {
