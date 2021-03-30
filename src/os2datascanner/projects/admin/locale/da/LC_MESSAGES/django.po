@@ -277,7 +277,7 @@ msgstr "Generelt"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:121
 msgid "Name the rule and choose which organization the rule should belong to"
-msgstr "Navngiv reglen og vælg hvilken organisation reglen skal tilhører"
+msgstr "Navngiv reglen og vælg hvilken organisation reglen skal tilhøre"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:132
 msgid "Name of rule"
