@@ -28,8 +28,8 @@ msgid "Brugernavn"
 msgstr "Username"
 
 #: adminapp/models/authentication_model.py:18
-msgid "Initialization Vector"
-msgstr "Initaliserings Vektor"
+msgid "Initialization vector"
+msgstr "Initaliserings vektor"
 
 #: adminapp/models/authentication_model.py:25
 #: adminapp/views/filescanner_views.py:119
