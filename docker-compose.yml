@@ -168,6 +168,20 @@ services:
     depends_on:
       - queue
 
+  a11y_scanner:
+    build:
+      context: ./services/a11y-scanner
+      dockerfile: docker/Dockerfile
+    env_file:
+      - ./dev-environment/a11y-scanner/a11y-scanner.env
+    # Set only the necessary security permissions
+    security_opt:
+      - seccomp:./services/a11y-scanner/chrome_seccomp.json
+    ports:
+      - 8888:8888
+    profiles:
+      - a11y
+
   api_server:
     build:
       context: .
