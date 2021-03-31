@@ -136,15 +136,14 @@ class DocumentReport(models.Model):
         self.__resolution_status = self.resolution_status
 
     def save(self, *args, **kwargs):
-        now = time_now()
-
         # If Resolution status goes from not handled to handled - change resolution_time to now
-        if self.__resolution_status == None and (self.resolution_status or self.resolution_status == 0):
-            self.resolution_time = now
+        if self.__resolution_status is None and (
+                self.resolution_status or self.resolution_status == 0):
+            self.resolution_time = time_now()
 
         # Adds a timestamp if it's a new match:
         if not self.pk:
-            self.created_timestamp = now
+            self.created_timestamp = time_now()
 
         super().save(*args, **kwargs)
 

@@ -19,6 +19,8 @@ from ..reportapp.models.roles.leader_model import Leader
 from ..reportapp.models.roles.dpo_model import DataProtectionOfficer
 from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.views import StatisticsPageView, LeaderStatisticsPageView
+from ..reportapp.utils import iterate_queryset_in_batches
+
 
 """Shared data"""
 time0 = "2020-11-11T11:11:59+02:00"
@@ -523,11 +525,12 @@ def static_timestamps(time_type: str = 'created_timestamp',
             match.save()
 
     elif time_type == 'resolution_time':
-        for match in DocumentReport.objects.all():
-            original_timestamps.append((match.pk, match.resolution_time))
-            match.resolution_status = 3  # Deleted
-            match.save()
-
+        for batch in iterate_queryset_in_batches(10000, DocumentReport.objects.all()):
+            for match in batch:
+                original_timestamps.append((match.pk, match.resolution_time))
+                match.resolution_status = 3
+                match.resolution_time = dateutil.parser.parse("2021-3-28T14:21:59+05:00")
+            DocumentReport.objects.bulk_update(batch, ['resolution_status', 'resolution_time'])
     else:
         print("Typo in argument 'time_type' in static_timestamps()")
 

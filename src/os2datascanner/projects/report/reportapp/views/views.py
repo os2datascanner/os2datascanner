@@ -359,11 +359,8 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         full_year_of_months.rotate(-current_month)
 
         # Running total
-        for i in range(12):
-            try:  # Take value from current index and add it to the next
-                full_year_of_months[i + 1][1] += full_year_of_months[i][1]
-            except IndexError:
-                pass  # Last month will always throw an OutOfBounds exception
+        for i in range(11):  # Take value from current index and add it to the next
+            full_year_of_months[i + 1][1] += full_year_of_months[i][1]
 
         return list(full_year_of_months)
 
