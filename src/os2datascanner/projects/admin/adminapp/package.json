@@ -6,7 +6,7 @@
   "license": "ISC",
   "main": "static/src/js/index.js",
   "dependencies": {
-    "axios": "0.19.2",
+    "axios": "0.21.1",
     "svgxuse": "^1.2.6",
     "vue": "2.6.11"
   },
