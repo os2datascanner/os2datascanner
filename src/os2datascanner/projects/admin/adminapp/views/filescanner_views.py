@@ -113,7 +113,7 @@ def initialize_form(form):
     """Initializes the form fields for username and password
     as they are not part of the file scanner model."""
 
-    form.fields['url'].widget.attrs['placeholder'] = _('eg. //network-domain/top-folder')
+    form.fields['url'].widget.attrs['placeholder'] = _('e.g. //network-domain/top-folder')
     form.fields['username'] = forms.CharField(max_length=1024, required=False, label=_('Username'))
     form.fields['password'] = forms.CharField(max_length=50, required=False, label=_('Password'))
     form.fields['domain'] = forms.CharField(max_length=2024, required=False, label=_('User domain'))

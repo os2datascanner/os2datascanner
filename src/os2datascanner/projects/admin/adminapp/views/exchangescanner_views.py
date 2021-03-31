@@ -104,7 +104,7 @@ def initialize_form(form):
     """Initializes the form fields for username and password
     as they are not part of the exchange scanner model."""
 
-    form.fields['url'].widget.attrs['placeholder'] = _('eg. @example.com')
+    form.fields['url'].widget.attrs['placeholder'] = _('e.g. @example.com')
     form.fields['username'] = forms.CharField(max_length=1024, required=False, label=_('Username'))
     form.fields['password'] = forms.CharField(max_length=50, required=False, label=_('Password'))
 

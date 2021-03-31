@@ -7,6 +7,7 @@ from ..models.rules.regexrule_model import RegexRule, RegexPattern
 
 from django import forms
 from django.db import transaction
+from django.utils.translation import ugettext_lazy as _
 
 class RuleList(RestrictedListView):
     """Displays list of scanners."""
@@ -67,7 +68,7 @@ class RegexRuleCreate(RuleCreate):
         idx = 0
         for field_name, value in self.patterns:
             form.fields[field_name] = forms.CharField(
-                    required=True, initial=value, label='Udtryk')
+                    required=True, initial=value, label=_('Expression'))
             idx += 1
 
         return form
@@ -155,14 +156,14 @@ class RegexRuleUpdate(RuleUpdate):
                 form.fields[field_name] = forms.CharField(
                         required=True,
                         initial=regex_patterns[i].pattern_string,
-                        label='Udtryk')
+                        label=_('Expression'))
         else:
             self.patterns = extract_pattern_fields(form.data)
 
             idx = 0
             for field_name, value in self.patterns:
                 form.fields[field_name] = forms.CharField(
-                        required=True, initial=value, label='Udtryk')
+                        required=True, initial=value, label=_('Expression'))
                 idx += 1
 
         # assign class attribute to all fields
