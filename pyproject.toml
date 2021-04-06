@@ -1,3 +1,4 @@
 [tool.black]
-target-version = ["py34"]
-line-length = 79
+target-version = ["py36"]
+# default black line length is 88. But we match it with .flake
+line-length = 85

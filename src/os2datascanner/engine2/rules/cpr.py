@@ -1,8 +1,10 @@
+import re
+
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .logical import oxford_comma
-from .utilities.cpr_probability import (get_birth_date, cpr_exception_dates,
-        modulus11_check_raw, CprProbabilityCalculator)
+from .utilities.cpr_probability import (get_birth_date, CPR_EXCEPTION_DATES,
+                                        modulus11_check_raw, CprProbabilityCalculator)
 
 cpr_regex = r"\b(\d{2}[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\b"
 calculator = CprProbabilityCalculator()
@@ -12,11 +14,13 @@ class CPRRule(RegexRule):
     type_label = "cpr"
 
     def __init__(self, modulus_11=True, ignore_irrelevant=True,
-            examine_context=True, **super_kwargs):
+                 examine_context=True, validate_ending_exclude_pnums=False,
+                 **super_kwargs):
         super().__init__(cpr_regex, **super_kwargs)
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
         self._examine_context = examine_context
+        self._validate_ending_exclude_pnums = validate_ending_exclude_pnums
 
     @property
     def presentation_raw(self):
@@ -27,10 +31,12 @@ class CPRRule(RegexRule):
             properties.append("relevance check")
         if self._examine_context:
             properties.append("context check")
+        if self._validate_ending_exclude_pnums:
+            properties.append('validate ending and exclude pnums')
 
         if properties:
             return "CPR number (with {0})".format(
-                    oxford_comma(properties, "and"))
+                oxford_comma(properties, "and"))
         else:
             return "CPR number"
 
@@ -55,6 +61,13 @@ class CPRRule(RegexRule):
                     # Error text -- this can't be a CPR number
                     continue
 
+            if self._validate_ending_exclude_pnums:
+                p_nums = ["p-nr.", "p.nr.",
+                          "p-nr.:", "p.nr.:",
+                          "p-nummer:", "pnr", "pnr:"]
+                if any(pnum in content.lower() for pnum in p_nums):
+                    probability = 0.0
+
             cpr = cpr[0:4] + "XXXXXX"
             low, high = m.span()
 
@@ -70,7 +83,8 @@ class CPRRule(RegexRule):
             # Calculate context.
             match_context = content[max(low - 50, 0):high + 50]
             match_context = self._compiled_expression.sub(
-                    "XXXXXX-XXXX", match_context)
+                "XXXXXX-XXXX", match_context)
+
 
             if probability:
                 yield {
@@ -95,10 +109,10 @@ class CPRRule(RegexRule):
     @Rule.json_handler(type_label)
     def from_json_object(obj):
         return CPRRule(modulus_11=obj.get("modulus_11", True),
-                ignore_irrelevant=obj.get("ignore_irrelevant", True),
-                examine_context=obj.get("examine_context", True),
-                sensitivity=Sensitivity.make_from_dict(obj),
-                name=obj["name"] if "name" in obj else None)
+                       ignore_irrelevant=obj.get("ignore_irrelevant", True),
+                       examine_context=obj.get("examine_context", True),
+                       sensitivity=Sensitivity.make_from_dict(obj),
+                       name=obj["name"] if "name" in obj else None)
 
 
 def modulus11_check(cpr):
@@ -115,7 +129,7 @@ def modulus11_check(cpr):
 
     # Return True if the birth dates are one of the exceptions to the
     # modulus 11 rule.
-    if birth_date in cpr_exception_dates:
+    if birth_date in CPR_EXCEPTION_DATES:
         return True
     else:
         # Otherwise, perform the modulus-11 check

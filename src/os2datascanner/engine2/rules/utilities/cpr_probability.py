@@ -5,7 +5,7 @@ from datetime import date
 # Updated list of dates with CPR numbers violating the Modulo-11 check. (Last
 # synchronised with the CPR Office's list on January 28, 2021.)
 # Source: https://cpr.dk/cpr-systemet/personnumre-uden-kontrolciffer-modulus-11-kontrol/
-cpr_exception_dates = {
+CPR_EXCEPTION_DATES = {
     date(1960, 1, 1),
     date(1964, 1, 1),
     date(1965, 1, 1),
@@ -30,7 +30,7 @@ cpr_exception_dates = {
 THIS_YEAR = date.today().year
 
 
-def get_birth_date(cpr):
+def get_birth_date(cpr: str) -> date:
     """Get the birth date as a datetime from the CPR number.
 
     If the CPR has an invalid birthday, raises ValueError.
@@ -42,14 +42,14 @@ def get_birth_date(cpr):
     year_check = int(cpr[6])
 
     # Convert 2-digit year to 4-digit:
-    if year_check >= 0 and year_check <= 3:
+    if year_check >= 0 and year_check <= 3:  # in (0,1,2,3)
         year += 1900
     elif year_check == 4:
         if year > 36:
             year += 1900
         else:
             year += 2000
-    elif year_check >= 5 and year_check <= 8:
+    elif year_check >= 5 and year_check <= 8:  # in (5,6,7,8)
         if year > 57:
             year += 1800
         else:
@@ -66,7 +66,7 @@ def get_birth_date(cpr):
 _mod_11_table = [4, 3, 2, 7, 6, 5, 4, 3, 2, 1]
 
 
-def modulus11_check_raw(cpr):
+def modulus11_check_raw(cpr: str) -> bool:
     """Perform a modulus-11 check on the CPR number.
 
     This should not be called directly as it does not make any exceptions
@@ -76,7 +76,8 @@ def modulus11_check_raw(cpr):
 
 
 class CprProbabilityCalculator(object):
-    """
+    """Calculate the probability that a matched str of numbers is actually a CPR
+
     Implemented logic:
     * CPRs that does not contain 10 digits are considred non-cprs
     * CPRs that belong to the future are considred non-cprs
@@ -93,30 +94,33 @@ class CprProbabilityCalculator(object):
         # Cache of dates where the possible CPRs has already been calculated.
         self.cached_cprs = {}
 
-    def _form_validator(self, cpr: str) -> str:
-        """
-        Checks a cpr number for formal validity.
+    @staticmethod
+    def _form_validator(cpr: str) -> str:
+        """Checks a CPR number for formal validity.
+
         This includes checking that the cpr number consists solely of digits and that
         the length is correct.
         :param cpr: The cpr-number to check.
         :return: A string if length 0 if correct, otherwise an error description.
+
         """
         if len(cpr) < 10:
-            return 'CPR too short'
+            return "CPR too short"
         if len(cpr) > 10:
-            return 'CPR too long'
+            return "CPR too long"
         if not cpr.isdigit():
-            return 'CPR can only contain digits'
+            return "CPR can only contain digits"
 
         try:
             get_birth_date(cpr)
         except ValueError:
-            return 'Illegal date'
-        return ''
+            return "Illegal date"
+        return ""
 
-    def _legal_7s(self, year: int) -> list:
-        """
-        Returns the possible values of CPR digit 7 for a given year.
+    @staticmethod
+    def _legal_7s(year: int) -> list:
+        """Returns the possible values of CPR digit 7 for a given year.
+
         :param year: The year to check.
         :return: A list of legal digit 7 values.
         """
@@ -133,45 +137,9 @@ class CprProbabilityCalculator(object):
             legal_7s = [5, 6, 7, 8]
         return legal_7s
 
-    def _calculate_date(self, cpr: str) -> date:
-        """
-        Calculates the date corresponding to a given CPR number.
-        :param cpr: The CPR-number to resolve.
-        :return: The actual birth date for the person, including full year.
-        """
-        day = cpr[0:2]
-        month = cpr[2:4]
-        short_year = cpr[4:6]
-
-        if cpr[6] in ('0', '1', '2', '3'):
-            full_year = '19' + short_year
-
-        if cpr[6] == '4':
-            if int(short_year) < 37:
-                full_year = '20' + short_year
-            else:
-                full_year = '19' + short_year
-
-        if cpr[6] in ('5', '6', '7', '8'):
-            if int(short_year) < 58:
-                full_year = '20' + short_year
-            else:
-                full_year = '18' + short_year
-
-        if cpr[6] == '9':
-            if int(short_year) < 37:
-                full_year = '20' + short_year
-            else:
-                full_year = '19' + short_year
-
-        birthdate = date(
-            int(full_year), int(month), int(day)
-        )
-        return birthdate
-
     def _calc_all_cprs(self, birth_date: date) -> list:
-        """
-        Calculate all legal CPRs for a given birth date.
+        """Calculate all valid CPRs for a given birth date.
+
         :param birh_date: The birh date to check.
         :return: A list of all legal CPRs for that date.
         """
@@ -183,30 +151,43 @@ class CprProbabilityCalculator(object):
         legal_cprs = []
         for index_7 in legal_7:
             for i in range(0, 1000):
-                    cpr_candidate = (
-                        birth_date.strftime('%d%m%y') +
-                        str(index_7) +
-                        str(i).zfill(3)
-                    )
-                    valid = modulus11_check_raw(cpr_candidate)
-                    if valid:
-                        legal_cprs.append(cpr_candidate)
+                cpr_candidate = (
+                    birth_date.strftime("%d%m%y")
+                    + str(index_7)
+                    + str(i).zfill(3)
+                )
+                valid = modulus11_check_raw(cpr_candidate)
+                if valid:
+                    legal_cprs.append(cpr_candidate)
 
         self.cached_cprs[cache_key] = legal_cprs
         return legal_cprs
 
     def cpr_check(self, cpr: str) -> Union[str, float]:
-        """
-        Check a CPR number to attempt to evaluate whether it is likely
-        to be a valid, used CPR number. If it cannot be a CPR number, a
-        string explanation is returned instead.
-        If the number is syntactically correct, it is estimated whether it
-        is likely to be a used number. A value of 1 does not guarantee that
-        is in use, but is just used to indicate that it has the highest
-        probability that can be establihed from this estimation method.
+        """Check if the CPR number is valid(mod11 check), and if true, estimate a
+        probality that the number is actually a CPR.
+
+        The probability is estimated by calculating all possible CPR
+        numbers's(ie. the last four digits) for the given CPR date. The CPR's of
+        a given day are given by sequence, ie. the higher the potential CPR
+        places in the sequence, the lower the probabilty.
+
+        The sequence is dvivided into five slots, where the boundary is the index
+        in the sequence
+        [ p=1 <= 100 < p=0.8 <= 200 < p=0.6 <= 250 < p=0.25 <= 350 < p=0.1 ]
+
+        A probability of 1 does not guarantee that the CPR is in use. It shows
+        that it is among the first 100 of the sequence and thus have the highest
+        probability estimated from this method.
+
+        Note that some CPRs from 1st of Januar certain years does not validate
+        the modulus 11 check. If this is the case, a probality of `p=0.5` is
+        returned
+
         :param cpr: The CPR number to check.
         :return: A value between 0 and 1 indicating the probability that it
         is a real CPR number, or an error string if it cannot be.
+
         """
         error = self._form_validator(cpr)
         if error:
@@ -214,12 +195,11 @@ class CprProbabilityCalculator(object):
 
         birth_date = get_birth_date(cpr)
         if birth_date > date.today():
-            return 'CPR newer than today'
-            return 0.0
+            return "CPR newer than today"
 
         if not modulus11_check_raw(cpr):
-            if birth_date not in cpr_exception_dates:
-                return 'Modulus 11 does not match'
+            if birth_date not in CPR_EXCEPTION_DATES:
+                return "Modulus 11 does not match"
             else:
                 return 0.5
 
@@ -238,6 +218,6 @@ class CprProbabilityCalculator(object):
             return 0.1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cpr_calc = CprProbabilityCalculator()
-    print(cpr_calc.cpr_check('1111111118'))
+    print(cpr_calc.cpr_check("1111111118"))
