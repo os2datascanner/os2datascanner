@@ -211,6 +211,19 @@ msgstr "Sidste"
 msgid "Front page"
 msgstr "Forside"
 
+#: reportapp/templates/components/navigation.html:31
+#: reportapp/templates/components/navigation.html:41
+msgid "Log out"
+msgstr "Log ud"
+
+#: reportapp/templates/components/pagination.html:74
+msgid "Go to page"
+msgstr "Gå til side"
+
+#: reportapp/templates/components/pagination.html:81
+msgid "Go"
+msgstr "Gå"
+
 #: reportapp/templates/components/sensitivity-chart.html:4
 msgid "Sensitivity legend"
 msgstr "Følsomhedsoversigt"

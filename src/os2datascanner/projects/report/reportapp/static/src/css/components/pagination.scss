@@ -88,4 +88,41 @@
       }
     }
   }
+
+  .line {
+    border-left: 1px solid rgba(0, 0, 0, 0.5);
+    height: 2.5rem;
+    margin: 0 2rem;
+  }
+
+  .text {
+    margin: 0 .5rem;
+    color: var(--color-text-secondary);
+    width: 5rem;
+    font-size: .9rem;
+  }
+
+  input[type=number] {
+    background-color: #fff;  
+    border: none;
+    border-radius: var(--border-radius-button);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+    font-size: 1rem;
+    line-height: 1;
+    text-align: center;
+    outline: none;
+    padding: .35rem;
+    width: 2.5rem;
+    -moz-appearance: textfield;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number]:focus {
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.4);
+  }
 }

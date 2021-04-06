@@ -67,10 +67,17 @@
             </span>
           </a>
           {% endif %}
-           <!-- TODO: Style, translate, ensure you cannot submit page number higher than amount of pages -->
+          <div class="line"></div>
           <form action="">
-                <input type="number"  name="page" min="1" max="{{ paginator.num_pages }}">
-                <input type="submit" id="form-button">
+            <div class="flex">
+              <span class="text">
+                {% trans "Go to page" %}
+              </span>
+              <input type="number"  name="page" min="1" max="{{ paginator.num_pages }}">
+              <button class="button button--submit" type="submit" id="form-button">
+                {% trans "Go" %}
+              </button>
+            </div>
           </form>
         </div>
       </td>
@@ -78,16 +85,3 @@
 </tbody>
 {% endif %}
 </tbody>
-<script>
-    <!-- TODO: test IE 11 compatability -->
-    document.querySelector("#form-button").addEventListener("click", function(e) {
-        e.preventDefault();
-        var page_number = document.querySelector('input[type="number"]').value;
-
-        if ('URLSearchParams' in window) {
-            var searchParams = new URLSearchParams(window.location.search);
-            searchParams.set("page", page_number);
-            window.location.search = searchParams.toString();
-}
-    });
-</script>

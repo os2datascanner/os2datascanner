@@ -5,6 +5,7 @@ import '../css/master.scss';
 import './handle-match.js';
 import './show-more.js';
 import './filter-options.js';
+import './pagination.js';
 
 // Copy Path function
 new ClipboardJS(document.querySelectorAll('[data-clipboard-text]'));
