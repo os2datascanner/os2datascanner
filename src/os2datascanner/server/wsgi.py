@@ -3,6 +3,7 @@ import time
 from uuid import uuid4
 from pathlib import Path
 
+from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import Source, SourceManager
 from os2datascanner.engine2.rules.rule import Rule
 from os2datascanner.engine2.pipeline import messages
@@ -141,7 +142,15 @@ def scan_1(body):
     yield "200 OK"
 
     message = messages.ScanSpecMessage(
-            scan_tag=str(uuid4()),
+            scan_tag=messages.ScanTagFragment(
+                    time=time_now(),
+                    user=None,
+                    scanner=messages.ScannerFragment(
+                            pk=0,
+                            name="API server demand scan"),
+                    organisation=messages.OrganisationFragment(
+                            name="API server",
+                            uuid=uuid4())),
             source=source,
             rule=rule,
             configuration={},
