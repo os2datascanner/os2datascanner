@@ -52,7 +52,7 @@ Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nummer: 2305000003
 Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nr. 2205995008
 Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nummer: 2305000003
 240501-0006""",
-                ["2405XXXXXX"],
+                [],
             ),
             (
                 RegexRule("((four|six)( [aopt]+)?|(one|seven) [aopt]+)"),
