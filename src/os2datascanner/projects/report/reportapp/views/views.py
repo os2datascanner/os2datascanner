@@ -278,26 +278,6 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         return formatted_counts
 
-    def count_unhandled_matches(self):
-        # Counts the amount of unhandled matches
-        # TODO: Optimize queries by reading from relational db
-        unhandled_matches = self.unhandled_matches.order_by(
-            'data__metadata__metadata').values(
-            'data__metadata__metadata').annotate(
-            total=Count('data__metadata__metadata')
-        ).values(
-            'data__metadata__metadata', 'total',
-        )
-
-        # TODO: Optimize queries by reading from relational db
-        employee_unhandled_list = []
-        for um in unhandled_matches:
-            dict_values = list(um['data__metadata__metadata'].values())
-            first_value = dict_values[0]
-            employee_unhandled_list.append((first_value, um['total']))
-
-        return employee_unhandled_list
-
     def get_oldest_matches(self):
         # TODO: Needs to be rewritten if a better 'time' is added(#41326)
         # Gets days since oldest unhandled match for each user
@@ -348,6 +328,29 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
 
 class LeaderStatisticsPageView(StatisticsPageView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['most_unhandled_employees'] = self.five_most_unhandled_employees()
+
+        return context
+
+    def five_most_unhandled_employees(self):
+        counted_unhandled_matches_alias = self.unhandled_matches.values(
+            'alias_relation__user__id').annotate(
+            total=Count('data')).values(
+                'alias_relation__user__first_name', 'total'
+            ).order_by('-total')
+
+        top_five = [[c['alias_relation__user__first_name'], c['total'], True]
+                    for c in counted_unhandled_matches_alias][:5]
+
+        for t in top_five:  # Finds and replaces 'None' with translated 'Not assigned'
+            if t[0] is None:
+                t[0], t[2] = _('Not assigned'), False
+
+        # Sorted by counts, then alphabetically to make tests stable
+        return sorted(top_five, key=lambda x: (-x[1], x[0]))
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
