@@ -56,7 +56,7 @@ If the *report interface* shall have SAML2 authentication enabled you will have 
 provide the ``contrib/config/report-module/local_settings.py`` file with the
 necessary information manually.
 
-For how to start the different services go to :ref:`With ``systemd```
+For how to start the different services go to :ref:`systemd`
 
 Preparing Prometheus (optional)
 -------------------------------
@@ -111,6 +111,8 @@ with the following commands:
 
 Note that these commands will remain in the foreground to print status
 information.
+
+.. _systemd:
 
 With ``systemd``
 ^^^^^^^^^^^^^^^^

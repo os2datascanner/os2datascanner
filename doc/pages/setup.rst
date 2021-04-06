@@ -1,5 +1,5 @@
-Installing the system
-*********************
+Installing OS2datascanner
+*************************
 
 .. :index:
 

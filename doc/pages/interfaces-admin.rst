@@ -1,3 +1,8 @@
+.. _`interface_admin`:
+
+Using the *administration interface*
+====================================
+
 Logging in to the administration interface
 ------------------------------------------
 
