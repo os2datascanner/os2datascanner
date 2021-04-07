@@ -13,6 +13,7 @@ ALLOWED_HOSTS = []
 SESSION_COOKIE_NAME = "report_sessionid"
 
 # [installation]
+OPTIONAL_APPS = ["django_extensions"]
 # The name of the institution, to be included in the notification signoff
 NOTIFICATION_INSTITUTION = 'MAGENTA APS'
 

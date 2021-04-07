@@ -75,8 +75,9 @@ def process_toml_conf_for_django(parent_path, module, sys_var, user_var):
 
     _process_directory_configuration(config, "*", parent_path)
     _process_locales(config, "*", parent_path)
-    _set_constants(module, config)
+    # Must come before _set_constants
+    if config.get('OPTIONAL_APPS'):
+        config['INSTALLED_APPS'] += config['OPTIONAL_APPS']
 
-    if globals().get('OPTIONAL_APPS'):
-        globals()['INSTALLED_APPS'] += globals()['OPTIONAL_APPS']
+    _set_constants(module, config)
 
