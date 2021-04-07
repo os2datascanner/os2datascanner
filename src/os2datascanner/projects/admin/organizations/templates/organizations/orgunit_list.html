@@ -1,0 +1,23 @@
+{% extends 'organizations/base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load mptt_tags %}
+
+{% block title %}{% trans "organizational hierarchy"|capfirst %}{% endblock %}
+
+
+{% block content %}
+    <h1>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h1>
+    <ul class="root">
+        {% recursetree orgunit_list %}
+            <li>
+                {{ node.name }}
+                {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endrecursetree %}
+    </ul>
+{% endblock %}

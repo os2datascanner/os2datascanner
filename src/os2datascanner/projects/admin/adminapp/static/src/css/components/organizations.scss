@@ -1,0 +1,61 @@
+.blue-box {
+  display: flex;
+  align-items: center;
+  background-color: #dbe9ef;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: var(--border-radius-default);
+  margin-right: 2rem;
+  padding-left: .75rem;
+
+  .material-icons {
+    color: #21759c;
+    font-size: 3rem;
+    
+  }
+}
+
+.flex-input {
+  flex-wrap: row;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.flex-dropdown {
+  flex-wrap: row;
+  flex-grow: 1;
+  width: 25%;
+}
+
+.response {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  font-size: .8rem;
+
+  .response-text {
+    display: flex;
+    margin-top: -.75rem;
+  }
+
+  .response-icon  {
+    display: flex;
+    margin: 0 .25rem .75rem 1rem;
+    font-size: .8rem;
+
+    &--error {
+      color: var(--color-error);
+    }
+    &--success {
+      color: var(--color-ok-dark);
+    }
+  }
+}
+
+.userObjClass {
+  margin-top: -1rem;
+
+  input[type=text] {
+    margin-top: 1rem;
+  }
+}

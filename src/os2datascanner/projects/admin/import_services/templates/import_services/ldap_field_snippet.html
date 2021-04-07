@@ -1,0 +1,24 @@
+<div class="form__group{% if field.errors %} has-error{% endif %}">
+    <div class="flex">
+        {{ field.label_tag }}
+        {% if field.help_text %}
+            <div class="help">
+                <div class="help-icon">
+                    <span class="helptext">{{ field.help_text|safe }}</span>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if field.field.widget.input_type == 'select' %}
+    <div class="dropdown">
+        {{ field }}
+    </div>
+    {% else %}
+        {{ field }}
+    {% endif %}
+
+    {% if field.errors %}
+        {{ field.errors }}
+    {% endif %}
+</div>

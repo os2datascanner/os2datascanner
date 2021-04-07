@@ -1,0 +1,97 @@
+{% extends 'organizations/base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block title %}{% trans "organizations"|capfirst %}{% endblock %}
+
+{% block content %}
+{%  regroup organization_list by client as client_list%}
+
+{%  for client in client_list %}
+    <div class="aside">
+        <h1 class="page-title">
+            {% trans 'organizations for'|capfirst %} {{ client.grouper }}
+        </h1>
+        <div class="btn">
+            <a 
+            class="button button--cta" 
+            href="{% url 'add-organization-for' client_id=client.grouper.pk %}"
+            title="{% trans 'Add new organization' %}">
+              <svg class="icon icon--white">
+                <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
+              </svg>
+              <span>
+                {% trans "Add new organization" %}
+              </span>
+            </a>
+        </div>
+    </div>
+
+    <table class="datatable">
+        <thead>
+            <tr>
+                <th class="datatable__column--name">{% trans "name"|capfirst %}</th>
+                <th class="datatable__column--info">{% trans "email"|capfirst %}</th>
+                <th class="datatable__column--info">{% trans "phone"|capfirst %}</th>
+                <th class="datatable__column--btn">{% trans "import service"|capfirst %}</th>
+            </tr>
+        </thead>
+        {% if client.list %}
+        <tbody>
+            {% for organization in client.list %}
+            <tr>
+                <td class="datatable__column--name"><a href="{% url 'edit-organization' slug=organization.slug %}">{{ organization.name }}</a></td>
+                <td class="datatable__column--info">
+                    {{ organization.contact_email|default_if_none:"-" }}
+                </td>
+                <td class="datatable__column--info">
+                    {{ organization.contact_phone|default_if_none:"-" }}
+                </td>
+                <td class="datatable__column--btn">
+                    <div class="flex flex--icon">
+                        <!-- NB: importservice is in one word because a reverse name was not specified on the ImportService model's relation to Organization and this is the default -->
+                        {% if not organization.importservice %}
+                        <a
+                            href="{% url 'add-ldap' org_id=organization.pk %}"
+                            id="button-add-configuration" 
+                            type="button" 
+                            class="button button--transparent">
+                            <i id="library_add" title="Tilføj LDAP konfiguration" class="material-icons">library_add</i>
+                        </a>
+                        {% else %}
+                        <a
+                            href="{% url 'edit-ldap' pk=organization.pk %}"
+                            id="button-add-configuration" 
+                            type="button" 
+                            class="button button--transparent">
+                            <i id="library_add_check" title="Redigér LDAP konfiguration" class="material-icons">library_add_check</i>
+                        </a>
+                        <a
+                        href="#"
+                        id="button-add-configuration" 
+                        type="button" 
+                        title="{% trans 'sync'|capfirst %}"
+                        class="button button--transparent button--transparent--text btn-text">
+                        {% trans "sync"|capfirst %}
+                        </a>
+                            <!-- TODO: re-introduce when last_sync field has been added
+                        <span class="text">
+                            {% trans "last synced"|capfirst %}:<br>
+                            {{ organization.importservice.last_sync }}
+                        </span>
+                        -->
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% endif %}
+    </table>
+    {% if not client.list %}
+        <p>
+            {% trans "no organization added"|capfirst %}
+        </p>
+    {% endif %}
+{% endfor %}
+{% endblock %}
