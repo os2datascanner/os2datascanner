@@ -1,0 +1,269 @@
+{% extends 'organizations/base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block title %}{% trans "LDAP configuration" %}{% endblock %}
+
+{% block content %}
+    {% include "partials/breadcrumb.html" with page="ldap"  %}
+
+    <div class="aside">
+        <h1>
+            {% if is_new %}
+                {% trans 'add'|capfirst %}
+            {% else %}
+                {% trans 'update'|capfirst %}
+            {% endif %}
+            {% trans 'LDAP configuration for'|capfirst %} {{ organization }}
+        </h1>
+    </div>
+
+    {% for field in form.connection_fields %}
+    {% endfor %}
+
+    <form class="form" method="post">{% csrf_token %}
+        <section class="data-form">
+            <h3>
+                {% trans "connect to LDAP"|capfirst %}
+            </h3>
+            <div class="flex">
+                {% with form.connection_protocol as field %}
+                <div class="flex-dropdown">
+                    {% include 'import_services/ldap_field_snippet.html' %}
+                </div>
+                <span class="flex--character">://</span>
+                {% endwith %}
+                {% with form.connection_url as field %}
+                <div class="flex-input">
+                    {% include 'import_services/ldap_field_snippet.html' %}
+                </div>
+                {% endwith %}
+            </div>
+            <div class="flex">
+                <a  
+                    type="button" 
+                    id="button-connection"
+                    class="flex button button--cta button--cta--connection" 
+                    name="button-connection">
+                    <i id="sync" class="material-icons">sync</i>
+                    <span class="con-text">{% trans "test connection"|capfirst %}</span>
+                </a>
+                <div class="response">
+                    <span class="response-icon response-icon--success" style="display: none;" id="responseSuccessCon"><i id="check" class="material-icons">check</i></span>
+                    <span class="response-icon response-icon--error" style="display: none;" id="responseErrorCon"><i id="error" class="material-icons">error</i></span>
+                    <span class="response-text" id="responseConnection"></span>
+                </div>
+            </div>
+            {% for field in form %}
+                {% if field.name in form.connection_fields %}
+                    {% include 'import_services/ldap_field_snippet.html' %}
+                {% endif %}
+            {% endfor %}
+            <div class="flex">
+                <a 
+                    type="button" 
+                    id="button-auth"
+                    class="flex button button--cta button--cta--connection" 
+                    name="button-auth">
+                    <i id="sync" class="material-icons">sync</i>
+                    <span class="con-text">{% trans "test authentication"|capfirst %}</span>
+                </a>
+                <div class="response">
+                    <span class="response-icon response-icon--success" style="display: none;" id="responseSuccessAuth"><i id="check" class="material-icons">check</i></span>
+                    <span class="response-icon response-icon--error" style="display: none;" id="responseErrorAuth"><i id="error" class="material-icons">error</i></span>
+                    <span class="response-text" id="responseAuth"></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="data-form">
+            <h3>
+                {% trans "General" %}
+            </h3>
+            {% for field in form %}
+                {% if field.name in form.general_fields %}
+                    {% include 'import_services/ldap_field_snippet.html' %}
+                {% endif %}
+            {% endfor %}
+        </section>
+
+        <section class="data-form">
+            <h3>
+                {% trans "search specification"|capfirst %}
+            </h3>
+            {% for field in form %}
+                {% if field.name in form.user_location_fields %}
+                    {% include 'import_services/ldap_field_snippet.html' %}
+                {% endif %}
+            {% endfor %}
+            <div class="userObjClass" id="userObjClass">
+                <input class="user-class-input" id="userClass" type="text" name="userClass" />
+            </div>
+            <button id="btnUserClass" type="button" class="flex button button--small button--grey button--grey--icon button--grey--transparent">
+                <span class="items">
+                    <span>
+                    <i id="add" title="{% trans 'user attributes'|capfirst %}" class="material-icons">add</i>
+                    </span>
+                    <span class="text">
+                    {% trans "add user attributes"|capfirst %}
+                    </span>
+                </span>
+            </button>
+        </section>
+
+        <section class="data-form">
+            <h3>
+                {% trans "user attributes"|capfirst %}
+            </h3>
+            {% for field in form %}
+                {% if field.name in form.user_attribute_fields %}
+                    {% include 'import_services/ldap_field_snippet.html' %}
+                {% endif %}
+            {% endfor %}
+        </section>
+
+        <div class="form__group last-btn">
+            <button type="submit" class="button button--cta" name="save">
+                {% trans "save LDAP configuration"|capfirst %}
+            </button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script>
+        // add input for user class object
+        var textarea = document.querySelector('#id_user_obj_classes')
+        var btnUserClass = document.querySelector('#btnUserClass')
+        var counter = 1;
+        var div = document.getElementById('userObjClass');
+        var taglist = []
+        var firstInput = document.querySelector('#userClass')
+        var inputValues = document.querySelectorAll('.user-class-input')
+
+        textarea.style.display = "none"
+        var addInput = function() {
+            counter++;
+            var input = document.createElement("input");
+            input.id = 'userClass' + counter;
+            input.type = 'text';
+            input.name = 'userClass'+ counter;
+            input.placeholder = 'LDAP User Object Classes' + counter;
+            input.className = 'user-class-input'
+            div.appendChild(input);
+            div.appendChild(removeUserClass(input, div));
+            addUserClassInput(input);
+
+        };
+        btnUserClass.addEventListener('click', function() {
+            addInput();
+        }.bind(this));
+
+        function removeUserClass(element, parent) {
+            var btnRemove = document.createElement("button");
+            btnRemove.addEventListener('click', function() {
+                parent.removeChild(element)
+                parent.removeChild(this)
+                updateTagList()
+            })
+            btnRemove.id = 'removeUserClass' + counter;
+            btnRemove.type = 'button';
+            btnRemove.name = 'removeUserClass'+ counter;
+            btnRemove.textContent = 'Fjern'
+            btnRemove.classList = 'button button--remove'
+            return btnRemove
+        }
+        
+        function addUserClassInput(element) {
+            element.addEventListener('change', updateTagList)
+        }
+
+        function updateTagList() {
+            inputValues = document.querySelectorAll('.user-class-input')
+            taglist = []
+            for (let i = 0; i < inputValues.length; i++) {  
+                taglist.push(inputValues[i].value)
+            }
+            textarea.value = taglist.join(' ')
+        }
+
+        addUserClassInput(firstInput)
+
+        // btnRemove.addEventListener('click', function() {
+        //     addInput().removeChild();
+        // })
+
+
+
+        // test connection and authentication
+        var btnConnection = document.querySelector('#button-connection')
+        var btnAuth = document.querySelector('#button-auth')
+        var textConnection = document.querySelector('#responseConnection')
+        var textAuth = document.querySelector('#responseAuth')
+        var responseSuccessCon = document.querySelector('#responseSuccessCon')
+        var responseErrorCon = document.querySelector('#responseErrorCon')
+        var responseSuccessAuth = document.querySelector('#responseSuccessAuth')
+        var responseErrorAuth = document.querySelector('#responseErrorAuth')
+        var urlConnection = "{% url 'test-ldap-connection' %}"
+        var urlAuth = "{% url 'test-ldap-authentication' %}"
+        
+        btnConnection.addEventListener('click', testConnection)
+        
+        function testConnection(e) {
+            e.preventDefault()
+            var connection_protocol = document.getElementById("id_connection_protocol").value;
+            var connection_url = document.getElementById("id_connection_url").value;
+
+            var oReq = new XMLHttpRequest();
+
+            oReq.open("GET", urlConnection + "?url=" + connection_protocol + connection_url);
+
+            oReq.onreadystatechange = function () {
+                if (oReq.readyState === 4) {
+                    if (oReq.status === 200) {
+                        responseSuccessCon.style.display = "block"
+                        responseErrorCon.style.display = "none"
+                        textConnection.innerText = 'Connection succeeded'
+                    } else {
+                        responseErrorCon.style.display = "block"
+                        responseSuccessCon.style.display = "none"
+                        textConnection.innerText = 'Connection failed'
+                    }
+                }
+            }
+            
+            oReq.send();
+        }
+
+        btnAuth.addEventListener('click', testAuth)
+        
+        function testAuth(e) {
+            e.preventDefault()
+            var connection_protocol = document.getElementById("id_connection_protocol").value;
+            var connection_url = document.getElementById("id_connection_url").value;
+            var bind_dn = document.getElementById("id_bind_dn").value;
+            var credential = document.getElementById("id_ldap_password").value;
+
+            var oReq = new XMLHttpRequest();
+
+            oReq.open("GET", urlAuth + "?url=" + connection_protocol + connection_url + "&bind_dn=" + bind_dn  + "&bind_credential=" + credential);
+
+            oReq.onreadystatechange = function () {
+                if (oReq.readyState === 4) {
+                    if (oReq.status === 200) {
+                        responseSuccessAuth.style.display = "block"
+                        responseErrorAuth.style.display = "none"
+                        textAuth.innerText = 'Connection succeeded'
+                    } else {
+                        responseErrorAuth.style.display = "block"
+                        responseSuccessAuth.style.display = "none"
+                        textAuth.innerText = 'Connection failed'
+                    }
+                }
+            }
+            
+            oReq.send();
+        }
+    </script>
+{% endblock %}
