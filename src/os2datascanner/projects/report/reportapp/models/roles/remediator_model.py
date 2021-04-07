@@ -28,16 +28,8 @@ class Remediator(Role):
     def filter(self, document_reports):
         # XXX: this logic only makes sense if all system users belong to the
         # same organisation
-        all_users = User.objects.all()
-        all_aliases = []
-        for user in all_users:
-            all_aliases.extend(user.aliases.select_subclasses())
-        for alias in all_aliases:
-            document_reports = document_reports.exclude(
-                data__metadata__metadata__contains={
-                    str(alias.key): str(alias)
-                })
-        return document_reports
+
+        return document_reports.filter(alias_relation__isnull=True)
 
     class Meta:
         verbose_name = _("remediator")
