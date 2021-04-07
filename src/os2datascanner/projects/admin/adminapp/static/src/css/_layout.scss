@@ -37,7 +37,7 @@ body {
   h1 {
     display: flex;
     justify-content: flex-start;
-    width: 50%;
+    width: 100%;
   }
 
   .btn {
@@ -55,4 +55,28 @@ body {
   width: calc(100% - 2rem);
   padding: 2rem;
   margin-bottom: 2.5rem;
+
+  &--sm {
+    width: 55rem;
+    margin-right: 5rem;
+  }
+
+}
+
+.data-org {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  box-shadow: var(--box-shadow-widget);
+  border-radius: var(--border-radius-widget);
+  width: 30rem;
+  padding: 2rem;
+}
+
+.flex-box {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: 90rem;
+  width: calc(100% - 2rem);
 }

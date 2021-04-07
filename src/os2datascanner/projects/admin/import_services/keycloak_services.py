@@ -13,7 +13,6 @@
 #
 import json
 import requests
-from uuid import uuid4
 
 from django.conf import settings
 
@@ -74,7 +73,7 @@ def request_create_component(realm, token, payload):
     return requests.post(url, data=json.dumps(payload), headers=headers)
 
 
-def check_ldap_connection(realm, token, connection_url):
+def check_ldap_connection(realm, token, connection_url, timeout=5):
     """ Given realm name, token and ldap connection url,
         returns a post request to testLDAPConnection for checking connection"""
 
@@ -89,10 +88,12 @@ def check_ldap_connection(realm, token, connection_url):
         "action": "testConnection",
         "connectionUrl": connection_url
     }
-    return requests.post(url, data=json.dumps(payload), headers=headers)
+    data = json.dumps(payload)
+    return requests.post(url, data=data, headers=headers, timeout=timeout)
 
 
-def check_ldap_connection_authentication(realm, token, connection_url, bind_dn, bind_credential):
+def check_ldap_authentication(realm, token, connection_url,
+                              bind_dn, bind_credential, timeout=5):
     """ Given realm name, token, ldap connection url, bindDn and bindCredential,
             returns a post request to testLDAPConnection for checking authentication"""
 
@@ -109,5 +110,6 @@ def check_ldap_connection_authentication(realm, token, connection_url, bind_dn, 
         "bindCredential": bind_credential,
         "bindDn": bind_dn
     }
-    return requests.post(url, data=json.dumps(payload), headers=headers)
+    data = json.dumps(payload)
+    return requests.post(url, data=data, headers=headers, timeout=timeout)
 
