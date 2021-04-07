@@ -1,6 +1,7 @@
 -r requirements-django.in
 -c requirements-engine.txt
 
+django-mptt
 django-recurrence
 pycrypto
 python-dateutil

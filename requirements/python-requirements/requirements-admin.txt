@@ -49,8 +49,12 @@ django-extensions==2.2.9
     # via -r requirements-django.in
 django-ipware==2.1.0
     # via django-structlog
+django-js-asset==1.2.2
+    # via django-mptt
 django-model-utils==4.0.0
     # via -r requirements-django.in
+django-mptt==0.11.0
+    # via -r requirements-admin.in
 django-recurrence==1.10.2
     # via -r requirements-admin.in
 django-settings-export==1.2.1
@@ -63,6 +67,7 @@ django==2.2.18
     # via
     #   -r requirements-django.in
     #   django-model-utils
+    #   django-mptt
     #   django-recurrence
     #   django-settings-export
     #   django-storages

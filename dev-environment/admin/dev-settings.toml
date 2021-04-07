@@ -16,7 +16,8 @@ SESSION_COOKIE_NAME = "admin_sessionid"
 # [installation]
 OPTIONAL_APPS = [
     'django_extensions',
-    'os2datascanner.projects.admin.core'
+    'os2datascanner.projects.admin.core',
+    'os2datascanner.projects.admin.organizations',
 ]
 
 # [scans]
