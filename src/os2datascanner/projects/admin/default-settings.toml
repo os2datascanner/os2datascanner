@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'os2datascanner.projects.admin.adminapp.apps.AdminappConfig',
     'recurrence',
-    'os2datascanner.projects.admin.core',
 ]
 OPTIONAL_APPS = []
 AUTH_PROFILE_MODULE = "os2datascanner.projects.admin.adminapp.UserProfile"

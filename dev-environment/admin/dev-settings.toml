@@ -14,7 +14,7 @@ ALLOWED_HOSTS = []
 SESSION_COOKIE_NAME = "admin_sessionid"
 
 # [installation]
-OPTIONAL_APPS = ["django_extensions"]
+OPTIONAL_APPS = ["django_extensions", 'os2datascanner.projects.admin.core']
 
 # [scans]
 ENABLE_FILESCAN = true
@@ -46,3 +46,4 @@ AMQP_PWD = "os2ds"
     USER = "os2datascanner_admin_dev"
     PASSWORD = "os2datascanner_admin_dev"
     HOST = "db"
+
