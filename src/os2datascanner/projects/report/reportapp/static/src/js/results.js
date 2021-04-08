@@ -1,8 +1,9 @@
-// Get more matches options
+import 'url-search-params-polyfill';
 
+// Get more result options
 var x, i, j, l, ll, selElmnt, a, b, c;
 
-/* look for any elements with the class "get-match" */
+/* look for any elements with the class "get-results" */
 x = document.getElementsByClassName("get-results");
 l = x.length;
 
@@ -49,9 +50,11 @@ for (i = 0; i < l; i++) {
         
         // add parameter 'paginate_by' to url
         function addParameterToURL(){
-          _url = window.location.search + window.location.hash
-          _url += (_url.split('?')[1] ? '&':'?') + "paginate_by=" + s.value;
-          document.location.search = _url
+          if ('URLSearchParams' in window) {
+            var searchParams = new URLSearchParams(window.location.search);
+            searchParams.set("paginate_by", s.value);
+            window.location.search = searchParams.toString();
+          }
         }
         addParameterToURL();
     });

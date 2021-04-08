@@ -1,11 +1,10 @@
 .get-results {
   font-size: .9rem;
   font-weight: normal;
-  max-width: 10rem;
-  margin-left: 1rem;
+  min-width: 10rem;
+  margin-left: 3rem;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: var(--border-radius-button);
-  margin-bottom: 2rem;
 }
 
 .get-results select {

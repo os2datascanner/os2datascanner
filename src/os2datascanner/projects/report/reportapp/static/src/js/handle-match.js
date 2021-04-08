@@ -21,16 +21,12 @@ $('#select-all').click(function() {
 // Show selected checkboxes
 function showChecked(){
   var selected = $("td input:checked").length
-      + " af " + $("td input").length + " valgt";
+      + " af " + $("td .datatable-checkbox").length + " valgt";
   $(".selected-cb").text(selected);
 }
 // Iterate each checkbox
 $("input[name=match-checkbox]").each(function( i ) {
   $(this).on("click", function(){
-    i = showChecked();
-  });
-
-  window.addEventListener('load', function () {
     i = showChecked();
   });
 });

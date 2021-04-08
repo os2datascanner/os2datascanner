@@ -39,48 +39,6 @@
     {% endfor %}
     
   </tbody>
+
   {% include "components/pagination.html" %}
-
-
 </table>
-
-{% if page_obj.paginator.count >= 10 %}
-<div class="get-results">
-  <select name="paginate_by" id="paginate_by">
-    <option value="10"
-    {% if paginate_by == "10" %}selected="selected"{% endif %}>
-      10 pr. side
-    </option>
-    {% if page_obj.paginator.count >= 11 %}
-    <option value="20"
-    {% if paginate_by == "20" %}selected="selected"{% endif %}>
-      20 pr. side
-    </option>
-    {% endif %}
-    {% if page_obj.paginator.count >= 50 %}
-    <option value="50" 
-    {% if paginate_by == "50" %}selected="selected"{% endif %}>
-      50 pr. side
-    </option>
-    {% endif %}
-    {% if page_obj.paginator.count >= 100 %}
-    <option value="100"
-    {% if paginate_by == "100" %}selected="selected"{% endif %}>
-      100 pr. side
-    </option>
-    {% endif %}
-    {% if page_obj.paginator.count >= 250 %}
-    <option value="250"
-    {% if paginate_by == "250" %}selected="selected"{% endif %}>
-      250 pr. side
-    </option>
-    {% endif %}
-    {% if page_obj.paginator.count >= 500 %}
-    <option value="500"
-    {% if paginate_by == "500" %}selected="selected"{% endif %}>
-      500 pr. side
-    </option>
-    {% endif %}
-  </select>
-</div>
-{% endif %}
