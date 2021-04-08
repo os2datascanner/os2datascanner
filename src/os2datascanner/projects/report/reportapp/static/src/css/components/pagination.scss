@@ -18,9 +18,10 @@
     }
   }
 
-  tr:hover {
+  tr:hover,
+  tr:focus {
     td {
-      background-color: #fff;
+      background-color: transparent;
     }
   }
 

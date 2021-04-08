@@ -1,5 +1,3 @@
-import 'url-search-params-polyfill';
-
 // Jump to specific page
 document.querySelector("#form-button").addEventListener("click", function(e) {
   e.preventDefault();

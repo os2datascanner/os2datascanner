@@ -1,3 +1,5 @@
+import "core-js"
+
 // import css
 import '../css/master.scss';
 
