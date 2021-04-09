@@ -58,13 +58,9 @@ INSTALLED_APPS = [
 ]
 OS2DATASCANNER_APPS = [
     'os2datascanner.projects.admin.adminapp',
-    
 ]
+OPTIONAL_APPS = []
 
-OPTIONAL_APPS = [
-    'os2datascanner.projects.admin.core',
-
-]
 AUTH_PROFILE_MODULE = "os2datascanner.projects.admin.adminapp.UserProfile"
 WSGI_APPLICATION = "os2datascanner.projects.admin.wsgi.application"
 ROOT_URLCONF = "os2datascanner.projects.admin.urls"

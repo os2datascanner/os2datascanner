@@ -75,9 +75,12 @@ def process_toml_conf_for_django(parent_path, module, sys_var, user_var):
 
     _process_directory_configuration(config, "*", parent_path)
     _process_locales(config, "*", parent_path)
-    # Add OS2DATASCANNER_APPS 
-    config['INSTALLED_APPS'] += config['OS2DATASCANNER_APPS']
     # Must come before _set_constants
+    # Append our apps:
+    # NB! Only needs to be conditional until report module is updated as well
+    if config.get('OS2DATASCANNER_APPS'):
+        config['INSTALLED_APPS'] += config['OS2DATASCANNER_APPS']
+    # Append optional apps - if any:
     if config.get('OPTIONAL_APPS'):
         config['INSTALLED_APPS'] += config['OPTIONAL_APPS']
 
