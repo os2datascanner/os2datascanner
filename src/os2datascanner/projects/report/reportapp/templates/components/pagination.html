@@ -70,10 +70,10 @@
           <div class="line"></div>
           <form action="">
             <div class="flex">
-              <label class="text">
+              <label for="page" class="text">
                 {% trans "Go to page" %}
               </label>
-              <input type="number"  name="page" min="1" max="{{ paginator.num_pages }}">
+              <input id="page" type="number" name="page" min="1" max="{{ paginator.num_pages }}">
               <button class="button button--submit" type="submit" id="form-button">
                 {% trans "Go" %}
               </button>
