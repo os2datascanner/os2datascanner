@@ -45,4 +45,4 @@ class CPRTest(unittest.TestCase):
             if cell.text.strip()
         }
 
-        self.assertEquals(dates, cpr.cpr_exception_dates)
+        self.assertEquals(dates, cpr.CPR_EXCEPTION_DATES)

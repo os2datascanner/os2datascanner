@@ -1,9 +1,16 @@
 from abc import abstractmethod
-
+from typing import Sequence
 from .rule import Rule, Sensitivity
 
 
-def oxford_comma(parts, conjunction, *, key=lambda c: str(c)):
+def oxford_comma(parts: Sequence, conjunction: str, *, key=lambda c: str(c)) -> str:
+    """Join a list-like using oxford comma, ie. comma before the conjuction term
+
+    Example with `and` as the conjuction
+    To my parents, Ayn Rand and God.  (withot oxford)
+    To my parents, Ayn Rand, and God. (with oxford)
+
+    """
     if len(parts) == 1:
         return key(parts[0])
     else:
@@ -49,9 +56,10 @@ class CompoundRule(Rule):
         return (head, self.make(pve, *rest), self.make(nve, *rest))
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "components": [c.to_json_object() for c in self._components]
-        })
+        return dict(
+            **super().to_json_object(),
+            **{"components": [c.to_json_object() for c in self._components]},
+        )
 
 
 class AndRule(CompoundRule):
@@ -76,9 +84,10 @@ class AndRule(CompoundRule):
     @Rule.json_handler(type_label)
     def from_json_object(obj):
         return AndRule(
-                *[Rule.from_json_object(o) for o in obj["components"]],
-                sensitivity=Sensitivity.make_from_dict(obj),
-                name=obj["name"] if "name" in obj else None)
+            *[Rule.from_json_object(o) for o in obj["components"]],
+            sensitivity=Sensitivity.make_from_dict(obj),
+            name=obj["name"] if "name" in obj else None,
+        )
 
 
 class OrRule(CompoundRule):
@@ -103,9 +112,10 @@ class OrRule(CompoundRule):
     @Rule.json_handler(type_label)
     def from_json_object(obj):
         return OrRule(
-                *[Rule.from_json_object(o) for o in obj["components"]],
-                sensitivity=Sensitivity.make_from_dict(obj),
-                name=obj["name"] if "name" in obj else None)
+            *[Rule.from_json_object(o) for o in obj["components"]],
+            sensitivity=Sensitivity.make_from_dict(obj),
+            name=obj["name"] if "name" in obj else None,
+        )
 
 
 class NotRule(Rule):
@@ -135,20 +145,22 @@ class NotRule(Rule):
         return (rule, self.make(pve), self.make(nve))
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "rule": self._rule.to_json_object()
-        })
+        return dict(
+            **super().to_json_object(), **{"rule": self._rule.to_json_object()}
+        )
 
     @staticmethod
     @Rule.json_handler(type_label)
     def from_json_object(obj):
         return NotRule(
-                Rule.from_json_object(obj["rule"]),
-                sensitivity=Sensitivity.make_from_dict(obj),
-                name=obj["name"] if "name" in obj else None)
+            Rule.from_json_object(obj["rule"]),
+            sensitivity=Sensitivity.make_from_dict(obj),
+            name=obj["name"] if "name" in obj else None,
+        )
 
 
 def make_if(predicate, then, else_):
     return OrRule.make(
-            AndRule.make(predicate, then),
-            AndRule.make(NotRule.make(predicate), else_))
+        AndRule.make(predicate, then),
+        AndRule.make(NotRule.make(predicate), else_),
+    )
