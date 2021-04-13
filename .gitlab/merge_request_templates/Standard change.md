@@ -6,10 +6,10 @@ Include any points that reviewers should pay special attention to.
 
 /assign me <!-- sets current user as assignee -->
 
-<!-- Other recommended quick actions:
-/request_review @af @danni
-/label ~bug
-/label ~enhancement
+<!-- Other recommended quick actions (remove # to apply):
+#/request_review @af @danni
+#/label ~bug
+#/label ~enhancement
 -->
 
 ## Author's checklist

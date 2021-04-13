@@ -8,10 +8,10 @@ Examples:
 
 /assign me <!-- sets current user as assignee -->
 
-<!-- Other recommended quick actions:
-/request_review @af @danni
-/label ~bug
-/label ~enhancement
+<!-- Other recommended quick actions (remove # to apply):
+#/request_review @af @danni
+#/label ~bug
+#/label ~enhancement
 -->
 
 
