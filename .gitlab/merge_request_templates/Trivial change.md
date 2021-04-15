@@ -6,7 +6,9 @@ Examples:
  Fixes js error in <some functionality>
 -->
 
-/assign me <!-- sets current user as assignee -->
+<!-- sets current user as assignee -->
+/assign me
+/label ~trivial
 
 <!-- Other recommended quick actions (remove # to apply):
 #/request_review @af @danni
