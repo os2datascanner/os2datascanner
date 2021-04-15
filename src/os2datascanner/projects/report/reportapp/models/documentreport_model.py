@@ -1,16 +1,20 @@
 import enum
 
 from django.db import models
+from django.db.models.signals import post_save, post_delete
 from django.core.exceptions import ValidationError
 from django.contrib.postgres.fields import JSONField
 from django.utils.translation import ugettext_lazy as _
 from .organization_model import Organization
 
+from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.pipeline.messages import MatchesMessage
 
 
 class DocumentReport(models.Model):
+    factory = None
+
     scan_time = models.DateTimeField(null=True, db_index=True,
                                             verbose_name=_('scan time'))
 
@@ -113,24 +117,38 @@ class DocumentReport(models.Model):
 
         super().save(*args, **kwargs)
 
+    class Meta:
+        verbose_name_plural = _("document reports")
+        ordering = ['-sensitivity', '-probability']
+
+
+DocumentReport.factory = ModelFactory(DocumentReport)
+
+
+@DocumentReport.factory.on_create
+@DocumentReport.factory.on_update
+def on_documentreport_created_or_updated(objects, fields=None):
+    for obj in objects:
         # Add DocumentReport to Alias.match_relation, when it's saved to the db.
         from .aliases.alias_model import Alias
         try:
-            metadata = self.data['metadata']['metadata'].values()
+            metadata = obj.data['metadata']['metadata'].values()
             value = list(metadata)[0]
 
             aliases = Alias.objects.select_subclasses()
-            
+
             for alias in aliases:
                 if str(alias) == value:
                     try:
                         tm = Alias.match_relation.through
-                        tm.objects.bulk_create([tm(documentreport_id=self.pk, alias_id=alias.pk)], ignore_conflicts=True)
+                        ro = tm(documentreport_id=obj.pk, alias_id=alias.pk)
+                        tm.objects.bulk_create([ro], ignore_conflicts=True)
                     except:
                         print("Failed to create match_relation")
         except:
-            print(self, " has no metadata")
+            print(obj, " has no metadata")
 
-    class Meta:
-        verbose_name_plural = _("document reports")
-        ordering = ['-sensitivity', '-probability']
+
+# TODO: #43340 (if we need to explicitly delete the instances of the implicit
+# model class used by Alias.match_relation, we should also hook DocumentReport.
+# factory.on_delete here)
