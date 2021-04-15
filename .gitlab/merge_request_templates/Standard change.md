@@ -4,7 +4,8 @@ Describe what this MR is about AND how to test it.
 Include any points that reviewers should pay special attention to.
 -->
 
-/assign me <!-- sets current user as assignee -->
+<!-- sets current user as assignee -->
+/assign me
 
 <!-- Other recommended quick actions (remove # to apply):
 #/request_review @af @danni
