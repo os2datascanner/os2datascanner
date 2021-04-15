@@ -14,6 +14,14 @@ Welcome to OS2 Datascanner's documentation!
    pages/setup.rst
    pages/config.rst
    pages/user-guide.rst
+   pages/api.rst
+   pages/engine2.rst
    news.rst
 
 
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

@@ -1,7 +1,7 @@
 .. _`system-overview`:
 
-An overview of the system
-=========================
+An overview of OS2datascanner
+=============================
 
 An OS2datascanner installation consists of three components: the
 *administration interface* (a Django app), the *scanner engine* (a set of

@@ -83,7 +83,7 @@ is configured through seven environment variables - the superuser and at least
 one set of three module-related variable are required:
 
 .. literalinclude:: ../samples/db.env
-  :language: ENV
+  :language: ini
 
 
 System configuration

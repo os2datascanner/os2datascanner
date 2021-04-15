@@ -1,5 +1,7 @@
-Using the system
-****************
+.. :index:
+
+Using OS2datascanner
+********************
 
 Creating Django superusers
 ==========================
@@ -24,8 +26,6 @@ and a password for the new accounts.
 administration interface to create accounts with more granular permissions.)
 
 
-Using the *administration interface*
-====================================
-
 .. include:: interfaces-admin.rst
-
+.. include:: interfaces-report.rst
+.. include:: rules.rst
