@@ -37,36 +37,9 @@
     {% for match in matches %}
       {% include "components/hit.html" %}
     {% endfor %}
+    
   </tbody>
+  {% include "components/pagination.html" %}
+
 
 </table>
-
-{% load pagination_tags %}
-
-{% if is_paginated %}
-  <div class="pagination">
-    {% if page_obj.has_previous %}
-    <a href="?{% param_replace page=1 %}">
-      {% trans "First" %}
-    </a>
-    {% if page_obj.previous_page_number != 1 %}
-    <a href="?{% param_replace page=page_obj.previous_page_number %}">
-      {% trans "Back" %}
-    </a>
-    {% endif %}
-    {% endif %}
-    
-    Side {{ page_obj.number }} af {{ paginator.num_pages }}
-    
-    {% if page_obj.has_next %}
-    {% if page_obj.next_page_number != paginator.num_pages %}
-    <a href="?{% param_replace page=page_obj.next_page_number %}">
-      {% trans "Next" %}
-    </a>
-    {% endif %}
-    <a href="?{% param_replace page=paginator.num_pages %}">
-      {% trans "Last" %}
-    </a>
-    {% endif %}
-  </div>
-{% endif %}
