@@ -7,6 +7,8 @@ import logging
 from requests.sessions import Session
 from requests.exceptions import ConnectionError
 from contextlib import contextmanager
+from typing import Optional, Set
+from datetime import datetime
 
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
@@ -56,12 +58,11 @@ class WebSource(Source):
             if n_scheme == scheme and n_netloc == netloc:
                 new_url = urlunsplit(
                         (n_scheme, n_netloc, n_path, n_query, None))
-                referrer_map.setdefault(new_url, set()).add(here)
-                new_handle = WebHandle(self, new_url[len(self._url):])
+                referrer_map.setdefault(new_url, set()).add(
+                    here if here is not None else self._sitemap)
+                new_handle = WebHandle(self, new_url[len(self._url):],
+                                       referrer_map[new_url], lm_hint)
                 if new_handle not in known_addresses:
-                    new_handle.set_last_modified_hint(lm_hint)
-                    new_handle.set_referrer_urls(
-                            referrer_map.get(here, set()))
                     known_addresses.add(new_handle)
                     to_visit.append(new_handle)
 
@@ -161,7 +162,7 @@ class WebResource(FileResource):
         return self.unpack_header(check=True).get("content-length", 0).map(int)
 
     def get_last_modified(self):
-        lm_hint = self.handle.get_last_modified_hint()
+        lm_hint = self.handle.last_modified_hint
         if not lm_hint:
             return self.unpack_header(check=True).setdefault(
                     OutputType.LastModified, super().get_last_modified())
@@ -196,51 +197,61 @@ class WebHandle(Handle):
 
     eq_properties = Handle.BASE_PROPERTIES
 
-    def __init__(self, source, path):
+    def __init__(self, source: WebSource, path: str,
+                 referrer_urls: Set[str]=set(),
+                 last_modified_hint: Optional[datetime]=None):
         super().__init__(source, path)
-        self._referrer_urls = set()
-        self._lm_hint = None
-
-    def set_referrer_urls(self, referrer_urls):
         self._referrer_urls = referrer_urls
-
-    def get_referrer_urls(self):
-        return self._referrer_urls
-
-    def set_last_modified_hint(self, lm_hint):
-        self._lm_hint = lm_hint
-
-    def get_last_modified_hint(self):
-        return self._lm_hint
+        self._lm_hint = last_modified_hint
 
     @property
-    def presentation(self):
+    def referrer_urls(self) -> set:
+        return self._referrer_urls
+
+    @referrer_urls.setter
+    def referrer_urls(self, referrer_urls: Set[str]):
+        self._referrer_urls = referrer_urls
+
+    @property
+    def last_modified_hint(self) -> Optional[datetime]:
+        return self._lm_hint
+
+    @last_modified_hint.setter
+    def last_modified_hint(self, lm_hint: datetime):
+        self._lm_hint = lm_hint
+
+    @property
+    def presentation(self) -> str:
         return self.presentation_url
 
     @property
-    def presentation_url(self):
+    def presentation_url(self) -> str:
         p = self.source.to_url()
         if p[-1] != "/":
             p += "/"
         return p + self.relative_path
 
     def censor(self):
-        return WebHandle(self.source.censor(), self.relative_path)
+        return WebHandle(source=self.source.censor(), path=self.relative_path,
+                         referrer_urls=self.referrer_urls,
+                         last_modified_hint=self.last_modified_hint)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
             "last_modified": OutputType.LastModified.encode_json_object(
-                    self._lm_hint)
+                    self._lm_hint),
+            "referrer": list(self._referrer_urls)
         })
 
     @staticmethod
     @Handle.json_handler(type_label)
     def from_json_object(obj):
-        handle = WebHandle(Source.from_json_object(obj["source"]), obj["path"])
-        lm_hint = obj.get("last_modified")
+        lm_hint = obj.get("last_modified", None)
         if lm_hint:
-            handle.set_last_modified_hint(
-                    OutputType.LastModified.decode_json_object(lm_hint))
+                lm_hint = OutputType.LastModified.decode_json_object(lm_hint)
+        referrer = set(obj.get("referrer", set()))
+        handle = WebHandle(Source.from_json_object(obj["source"]), obj["path"],
+                           referrer_urls=referrer, last_modified_hint=lm_hint)
         return handle
 
 

@@ -162,7 +162,7 @@ class Engine2HTTPTest(unittest.TestCase):
                 next(handles)
                 second_thing = next(handles)
             self.assertTrue(
-                    second_thing.get_referrer_urls(),
+                    second_thing.referrer_urls,
                     "{0}: followed link doesn't have a referrer".format(
                             second_thing))
 
@@ -226,16 +226,16 @@ class Engine2HTTPTest(unittest.TestCase):
 
     def test_lm_hint_json(self):
         h = WebHandle(
-                WebSource("http://localhost:64346/"),
-                "hemmeligheder2.html")
-        h.set_last_modified_hint(parse_datetime("2011-12-01"))
+            source=WebSource("http://localhost:64346/"),
+            path="hemmeligheder2.html",
+            last_modified_hint=parse_datetime("2011-12-01"))
 
         h2 = Handle.from_json_object(h.to_json_object())
         # WebHandle equality doesn't include the referrer map or the
         # Last-Modified hint, so explicitly check that here
         self.assertEqual(
-                h.get_last_modified_hint(),
-                h2.get_last_modified_hint(),
+                h.last_modified_hint,
+                h2.last_modified_hint,
                 "Last-Modified hint didn't survive serialisation")
 
     def test_empty_page_handling(self):
