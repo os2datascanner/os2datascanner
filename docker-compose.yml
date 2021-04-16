@@ -286,7 +286,6 @@ x-disabled:
       context: .
       dockerfile: docker/admin/Dockerfile
       target: application
-    entrypoint: []
     command: supercronic /code/docker/crontab
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
@@ -301,7 +300,6 @@ x-disabled:
       context: .
       dockerfile: docker/report/Dockerfile
       target: application
-    entrypoint: [ ]
     command: supercronic /code/docker/crontab
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
