@@ -5,6 +5,7 @@ COPY requirements/sys-requirements .
 RUN rm sys-requirements-for-bash-install.txt
 # Combine all system dependencies
 RUN cat sys-requirements-*.txt > sys-requirements.txt
+# hadolint ignore=DL3059
 RUN cat sys-requirements.txt
 # hadolint ignore=SC2046,DL3008
 RUN set -ex \
