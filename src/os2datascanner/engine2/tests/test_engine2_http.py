@@ -199,6 +199,21 @@ class Engine2HTTPTest(unittest.TestCase):
                 with self.assertRaises(Exception):
                     list(source.handles(sm))
 
+    def test_compressed_sitemap(self):
+        # sitemap_index.xml as gzip compressed
+        # requests.get("http://localhost:64346/compressed_sitemap.xml.gz").headers
+        # > 'Content-type': 'application/gzip', 'Content-Length': '157'
+        s = WebSource("http://localhost:64346/",
+                sitemap="http://localhost:64346/compressed_sitemap.xml.gz")
+        count = 0
+        with SourceManager() as sm:
+            for h in s.handles(sm):
+                count += 1
+        self.assertEqual(
+                count,
+                6,
+                "embedded site with compressed sitemap index should have 6 handles")
+
     def test_missing_headers(self):
         with SourceManager() as sm:
             first_thing = None
