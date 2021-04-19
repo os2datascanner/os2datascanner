@@ -1,5 +1,3 @@
-import 'url-search-params-polyfill';
-
 // Get more result options
 var x, i, j, l, ll, selElmnt, a, b, c;
 
