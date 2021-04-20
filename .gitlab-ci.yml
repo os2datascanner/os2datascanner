@@ -54,12 +54,16 @@ Lint Python:
 
 Lint Dockerfiles:
   <<: *lint-default
-  image: hadolint/hadolint:latest-debian
+  image: hadolint/hadolint:latest-alpine
   before_script:
-    - apt-get -y update
-    - apt-get -y install --no-install-recommends git
+    - apk add fd
   script:
-    - git ls-files --exclude='Dockerfile*' --ignored | xargs --max-lines=1 hadolint
+    - echo "Running Hadolint, a Dockerfile linter"
+    - echo "For more information about reported errors, visit the Hadolint wiki on https://github.com/hadolint/hadolint/wiki"
+    # Run fd without exec arg to produce a list of files to be linted
+    - fd Dockerfile
+    # Run hadolint on every Dockerfile
+    - fd Dockerfile --exec hadolint
 
 Lint shell scripts:
   <<: *lint-default
