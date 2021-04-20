@@ -12,68 +12,17 @@
 # sector open source network <https://os2.eu/>.
 #
 
-from enum import Flag
 from uuid import uuid4
 
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-
-# It's possible this could be implemented using a custom model field instead
-class ModelFlag(Flag):
-    """Base class for flags used for model fields.
-
-    Implements utility functions to ease use of flags for model field values.
-    New members are defined by a (value, label) tuple to support translation
-    of choice labels.
-    """
-
-    def __new__(cls, value, label):
-        """Takes an integer value and a label, returns new flag member."""
-        obj = object.__new__(cls)
-        obj._value_ = value
-        obj.label = label
-        return obj
-
-    @classmethod
-    def choices(cls):
-        """Return list of flags formatted as choices argument to widgets."""
-        return [(f.value, f.label.capitalize()) for f in cls]
-
-    @classmethod
-    def validator(cls, value):
-        invalid = value < 0
-        msg_text = _('{value} is not a valid {class_name}')
-        if not invalid:
-            try:
-                cls(value)
-            except ValueError:
-                invalid = True
-        if invalid:
-            raise ValidationError(
-                msg_text.format(value=value, class_name=cls.__name__)
-            )
-
-    @property
-    def selected_list(self):
-        """Return component flag values as list of strings."""
-        selected = [
-            str(f.value) for f in self.__class__ if self & f
-        ]
-        return selected
-
-    def __contains__(self, flag: 'ModelFlag') -> bool:
-        """Indicate whether this ModelFlag is a (possibly equal) superset of
-        its argument.
-
-        This implementation differs from Flag.__contains__() by allowing
-        ModelFlag(0) to be contained in any valid ModelFlag - including itself.
-        """
-        return bool(self & flag) and self & flag == flag
+from .utilities import ModelChoiceFlag
 
 
-class Scan(ModelFlag):
+
+
+class Scan(ModelChoiceFlag):
     """Enumeration of available scan types"""
     # Ints are given explicitly to allow reorganization without database issues
     WEBSCAN = (1 << 0, _('web scan'))
@@ -89,7 +38,7 @@ class Scan(ModelFlag):
     # Thus a maximum of 31 scan types in one Flag class
 
 
-class Feature(ModelFlag):
+class Feature(ModelChoiceFlag):
     """Enumeration of available features."""
     ADMIN_API = (1, _('administration API'))
 

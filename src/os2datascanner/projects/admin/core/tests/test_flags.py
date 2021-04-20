@@ -1,14 +1,15 @@
 from parameterized import parameterized
 from django.test import TestCase
 
-from ..models.client import ModelFlag
+from ..models import ModelChoiceEnum
+from ..models import ModelChoiceFlag
 from django.core.exceptions import ValidationError
 
 
-class ModelFlagTest(TestCase):
+class ModelChoiceFlagTest(TestCase):
 
     def setUp(self) -> None:
-        self.enum_class = ModelFlag(
+        self.enum_class = ModelChoiceFlag(
             'TestEnum', {
                 'FIRST': (1, 'first label'),
                 'SECOND': (2, 'second label')
@@ -64,3 +65,19 @@ class ModelFlagTest(TestCase):
     def test_feature_validator_invalid(self, _, value):
         """Validator passes as expected."""
         self.enum_class.validator(value)
+
+
+class ModelChoiceEnumTest(TestCase):
+
+    def setUp(self) -> None:
+        self.enum_class = ModelChoiceEnum(
+            'TestEnum', {
+                'FIRST': ('first', 'first label'),
+                'SECOND': ('second', 'second label')
+            }
+        )
+
+    def test_choices(self):
+        """The choices method returns expected format."""
+        expected = [('first', "First label"), ('second', "Second label")]
+        self.assertEqual(expected, self.enum_class.choices())
