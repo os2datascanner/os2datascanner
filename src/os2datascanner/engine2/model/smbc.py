@@ -61,7 +61,7 @@ class SMBCSource(Source):
                     obj = context.opendir(url + "/" + path)
                     for dent in obj.getdents():
                         yield from handle_dirent(here, dent)
-                except ValueError:
+                except (ValueError, smbc.PermissionError):
                     pass
             elif entity.smbc_type == smbc.FILE:
                 yield SMBCHandle(self, path)

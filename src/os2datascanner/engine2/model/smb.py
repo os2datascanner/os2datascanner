@@ -97,9 +97,13 @@ class SMBSource(Source):
     def handles(self, sm):
         pathlib_mntdir = Path(sm.open(self))
         for d in pathlib_mntdir.glob("**"):
-            for f in d.iterdir():
-                if f.is_file():
-                    yield SMBHandle(self, str(f.relative_to(pathlib_mntdir)))
+            try:
+                for f in d.iterdir():
+                    if f.is_file():
+                        yield SMBHandle(self,
+                                        str(f.relative_to(pathlib_mntdir)))
+            except PermissionError:
+                pass
 
     def to_url(self):
         return make_smb_url(
