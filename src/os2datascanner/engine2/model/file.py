@@ -27,10 +27,13 @@ class FilesystemSource(Source):
     def handles(self, sm):
         pathlib_path = Path(self.path)
         for d in pathlib_path.glob("**"):
-            for f in d.iterdir():
-                if f.is_file():
-                    yield FilesystemHandle(self,
-                            str(f.relative_to(pathlib_path)))
+            try:
+                for f in d.iterdir():
+                    if f.is_file():
+                        yield FilesystemHandle(self,
+                                str(f.relative_to(pathlib_path)))
+            except PermissionError:
+                continue
 
     def _generate_state(self, sm):
         """Yields a path to the directory against which relative paths should
