@@ -235,6 +235,14 @@ class MainPageViewTest(TestCase):
         emailalias.delete()
         emailalias1.delete()
 
+    def test_mainpage_view_as_remediator_with_emailalias_kjeld(self):
+        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
+        remediator = Remediator.objects.create(user=self.user)
+        qs = self.mainpage_get_queryset()
+        self.assertEqual(len(qs), 2)
+        remediator.delete()
+        emailalias.delete()
+
     def test_mainpage_view_filter_by_scannerjob(self):
         params = '?scannerjob=14&sensitivities=all'
         emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')

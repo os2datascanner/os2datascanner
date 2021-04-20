@@ -382,8 +382,9 @@ def filter_inapplicable_matches(user, matches, roles):
             matches = matches.filter(organization=None)
     
     if user_is(roles, Remediator):
-        # Filter matches by role.
-        matches = Remediator(user=user).filter(matches)
+        unassigned_matches = Remediator(user=user).filter(matches)
+        user_matches = DefaultRole(user=user).filter(matches)
+        matches = unassigned_matches | user_matches
     else:
         matches = DefaultRole(user=user).filter(matches)
 
