@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>
+            http://localhost:64346/
+        </loc>
+   </url>
+    <url>
+        <loc>
+            http://localhost:64346/does-not-exist
+        </loc>
+   </url>
+    <url>
+        <loc>
+            http://localhost:64346/external_links.html
+        </loc>
+   </url>
+    <url>
+        <loc>
+            https://google.com/not-found-from-sitemap
+        </loc>
+    </url>
+</urlset>

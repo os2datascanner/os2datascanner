@@ -5,7 +5,7 @@ from mimetypes import guess_type
 from ...utilities.json import JSONSerialisable
 from ...utilities.equality import TypePropertyEquality
 from .errors import UnknownSchemeError, DeserialisationError
-from .source import Source
+from .import source as msource
 
 
 class Handle(TypePropertyEquality, JSONSerialisable):
@@ -119,7 +119,7 @@ class Handle(TypePropertyEquality, JSONSerialisable):
             @Handle.json_handler(type_label)
             def _invoke_constructor(obj):
                 return cls(
-                        Source.from_json_object(obj["source"]),
+                        msource.Source.from_json_object(obj["source"]),
                         obj["path"])
             return cls
         return _stock_json_handler
