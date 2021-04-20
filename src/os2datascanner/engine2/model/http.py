@@ -5,7 +5,7 @@ from lxml.etree import ParserError
 from urllib.parse import urljoin, urlsplit, urlunsplit
 import logging
 from requests.sessions import Session
-from requests.exceptions import ConnectionError
+from requests.exceptions import RequestException
 from contextlib import contextmanager
 from typing import Optional, Set
 from datetime import datetime
@@ -50,21 +50,37 @@ class WebSource(Source):
         known_addresses = set(to_visit)
         referrer_map = {}
 
+        # scheme://netloc/path?query
+        # https://example.com/some/path?query=foo
         scheme, netloc, path, query, fragment = urlsplit(self._url)
 
         def handle_url(here, new_url, lm_hint=None):
+
             new_url = urljoin(here, new_url)
             n_scheme, n_netloc, n_path, n_query, _ = urlsplit(new_url)
+            new_url = urlunsplit(
+                    (n_scheme, n_netloc, n_path, n_query, None))
+
+            # ensure the new_url actually is a url and not mailto:, etc
+            if n_scheme not in("http", "https"):
+                return
+
+            referrer_map.setdefault(new_url, set()).add(
+                here if here is not None else self._sitemap)
             if n_scheme == scheme and n_netloc == netloc:
-                new_url = urlunsplit(
-                        (n_scheme, n_netloc, n_path, n_query, None))
-                referrer_map.setdefault(new_url, set()).add(
-                    here if here is not None else self._sitemap)
+                # new_url is under same hirachy as here(referrer)
                 new_handle = WebHandle(self, new_url[len(self._url):],
                                        referrer_map[new_url], lm_hint)
-                if new_handle not in known_addresses:
-                    known_addresses.add(new_handle)
-                    to_visit.append(new_handle)
+            else:
+                # new_url is external from here. Create a new handle from a new
+                # Source.
+                base_url = urlunsplit((n_scheme, n_netloc, "", None, None))
+                new_handle = WebHandle(WebSource(base_url),
+                                       new_url[len(base_url):],
+                                       referrer_map[new_url], lm_hint)
+            if new_handle not in known_addresses:
+                known_addresses.add(new_handle)
+                to_visit.append(new_handle)
 
         if self._sitemap:
             i = 0  # prevent i from being undefined if sitemap is empty
@@ -82,16 +98,16 @@ class WebSource(Source):
 
             response = session.head(here.presentation_url)
             if response.status_code == 200:
-                ct = response.headers['Content-Type']
+                ct = response.headers.get("Content-Type", "application/octet-stream")
                 if simplify_mime_type(ct) == 'text/html':
                     response = session.get(here.presentation_url)
                     sleep(SLEEP_TIME)
                     i = 0
                     for i, li in enumerate(
-                            make_outlinks(response.content,
-                                          here.presentation_url), start=1):
+                            make_outlinks(response.content, here.presentation_url),
+                            start=1):
                         handle_url(here.presentation_url, li)
-                    logger.debug("site {0} has {1} links".format(here.presentation, i))
+                    logger.info("site {0} has {1} links".format(here.presentation, i))
             elif response.is_redirect and response.next:
                 handle_url(here.presentation_url, response.next.url)
                 # Don't yield WebHandles for redirects
@@ -139,8 +155,14 @@ class WebResource(FileResource):
         return self._get_cookie().head(self._make_url())
 
     def check(self) -> bool:
-        response = self._get_head_raw()
-        return response.status_code not in (404, 410,)
+        try:
+            response = self._get_head_raw()
+            return response.status_code not in (404, 410,)
+        except RequestException as e:
+            # examples of Exceptions
+            # [Errno -2] Name or service not known' (dns)
+            # [Errno 110] Connection timed out'     (no response)
+            return False
 
     def _make_url(self):
         handle = self.handle
@@ -236,7 +258,7 @@ class WebHandle(Handle):
     @property
     def presentation_url(self) -> str:
         p = self.source.to_url()
-        if p[-1] != "/":
+        if p[-1] != "/" and not self.relative_path.startswith("/"):
             p += "/"
         return p + self.relative_path
 

@@ -16,7 +16,13 @@ def check(source_manager, handle):
     Handle."""
     while handle.source.handle:
         handle = handle.source.handle
-    return handle.follow(source_manager).check()
+    try:
+        return handle.follow(source_manager).check()
+    except Exception as e:
+        # could we log this? Examples:
+        # Failed to establish a new connection: [Errno -2] Name or service not known'
+        # Failed to establish a new connection: [Errno 110] Connection timed out'
+        return False
 
 
 def message_received_raw(body, channel, source_manager):
@@ -34,6 +40,11 @@ def message_received_raw(body, channel, source_manager):
                         scan_tag=conversion.scan_spec.scan_tag,
                         source=None, handle=conversion.handle, missing=True,
                         message="Resource check failed").to_json_object())
+            return
+
+        if conversion.handle not in conversion.scan_spec.source:
+            # handle point to a source outside the original scan_spec source, so
+            # do nothing
             return
 
         resource = conversion.handle.follow(source_manager)

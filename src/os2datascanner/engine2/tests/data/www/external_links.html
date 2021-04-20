@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Vejstrand Kommune | Dead links</title>
+        <link rel="stylesheet" href="vstkom.css" />
+    </head>
+    <body>
+        <a href="/">
+            <img src="vstkom.png"
+                    title="Vejstrand Kommune"
+                    alt="Vejstrand Kommunes logo"
+                    style="float: right">
+        </a>
+        <div style="clear: both" />
+        <div style="float: left">
+            <p>
+                Der findes ingen links, der peger på denne side.
+                Return code(dvs return headers) kan ses i terminalen med
+                <tt>http -h URL</tt>
+
+                Denne sider følger
+                <a href="https://datatracker.ietf.org/doc/html/rfc2606">rfc2606</a>
+                der beskriver reserverede "top level DNS names"
+            <p>
+                De er sandsynligvis en søgemaskine. Vi ønsker Dem fortsat god
+                arbejdslyst.
+            <p>
+                <!-- return 404 -->
+                Her er <a href="/intet">et link, der peger på en intern side der
+                ikke findes</a>.
+            <p>
+                <!-- return 200 -->
+                Her er <a href="http://example.com"> et link, der peger på en
+                ekstern side</a>
+            <p>
+                <!-- return 404 -->
+                <!-- the 404 page example.com serves looks like the 200 page, but
+                     with different return code -->
+                Her er <a href="http://example.com/nonexistent"> et link, der
+                peger på en ekstern side der ikke findes</a>
+            <p>
+                <!-- return Name or service not known -->
+                Her er <a href="http://this-side-does-not-exists.invalid"> et
+                link, der ikke har et navneopslag</a>
+            </p>
+        </div>
+        <footer>
+            <p>
+                Rådhuset<br>
+                Strandvej 1<br>
+                9999 Vejstrand
+            <p>
+                <a href="mailto:info@vstkom.dk">info@vstkom.dk</a>
+        </footer>
+    </body>
+</html>
