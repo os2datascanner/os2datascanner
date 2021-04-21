@@ -44,6 +44,7 @@ class Command(BaseCommand):
        parser.add_argument(
              "--now",
             metavar="now",
+            type=bool,
             default=False,
             help="Run the scanner now if scheduled for today")
 
