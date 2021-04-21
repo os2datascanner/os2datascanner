@@ -13,11 +13,17 @@ SITE_URL = "http://localhost:8020/"
 ALLOWED_HOSTS = []
 SESSION_COOKIE_NAME = "admin_sessionid"
 
+# [keycloak]
+KEYCLOAK_BASE_URL = "http://localkeycloak.os2datascanner:8090"
+KEYCLOAK_ADMIN_CLIENT = "admin-cli"
+KEYCLOAK_ADMIN_SECRET = "2757d2ba-d818-4b6a-b851-12d58a831f29"
+
 # [installation]
 OPTIONAL_APPS = [
     'django_extensions',
     'os2datascanner.projects.admin.core',
     'os2datascanner.projects.admin.organizations',
+    'os2datascanner.projects.admin.import_services',
 ]
 
 # [scans]

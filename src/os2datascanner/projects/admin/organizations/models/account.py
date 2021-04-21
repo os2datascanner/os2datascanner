@@ -17,10 +17,12 @@ from uuid import uuid4
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from os2datascanner.projects.admin.import_services.models import Imported
+
 from .broadcasted_mixin import Broadcasted
 
 
-class Account(Broadcasted, models.Model):
+class Account(Imported, Broadcasted, models.Model):
     """Represents a known entity in an organizational hierarchy.
 
     An Account may be related to several OrganizationalUnits within the same

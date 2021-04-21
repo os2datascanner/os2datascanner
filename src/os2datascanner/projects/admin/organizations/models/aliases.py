@@ -21,6 +21,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.projects.admin.core.models import utilities
+from os2datascanner.projects.admin.import_services.models import Imported
 
 from .broadcasted_mixin import Broadcasted
 
@@ -55,7 +56,7 @@ class AliasType(utilities.ModelChoiceEnum):
         self.validator(value)
 
 
-class Alias(Broadcasted, models.Model):
+class Alias(Imported, Broadcasted, models.Model):
     """Represent an alias of a given type for a given Account.
 
     An Alias is a connection between a labelled item of identifying information
