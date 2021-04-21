@@ -143,6 +143,11 @@ class MainPageView(LoginRequiredMixin, ListView):
 
         return context
 
+    def get_paginate_by(self, queryset):
+        # Overrides get_paginate_by to allow changing it in the template
+        # as url param paginate_by=xx
+        return self.request.GET.get('paginate_by', self.paginate_by)
+
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
     template_name = 'statistics.html'

@@ -1,6 +1,5 @@
 .pagination {
   background-color: var(--color-widget-bg);
-  border-collapse: collapse;
   border-top: 1px solid rgba(0, 0, 0, 0.2);
   max-width: 90rem;
   table-layout: fixed;
@@ -9,12 +8,12 @@
 
   &__column {
     &--page {
-      width: 11rem;
+      max-width: 11rem;
       border-radius: 0 0 0 1.25rem;
     }
 
     &--pages {
-      width: 45rem;
+      max-width: 45rem;
     }
   }
 

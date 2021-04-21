@@ -57,12 +57,12 @@
   width: 0;
   height: 0;
   border: 6px solid transparent;
-  border-color: #222 transparent transparent transparent;
+  border-color: var(--color-icon) transparent transparent transparent;
 }
 
 /* point the arrow upwards when the select box is open (active) */
 .select-selected.select-arrow-active:after {
-  border-color: transparent transparent #222 transparent;
+  border-color: transparent transparent var(--color-icon) transparent;
   top: 7px;
 }
 
