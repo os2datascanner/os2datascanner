@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-21 03:14-0500\n"
+"POT-Creation-Date: 2021-04-22 09:20-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -927,7 +927,7 @@ msgctxt "Verbose name for core app"
 msgid "Management"
 msgstr "Administration"
 
-#: core/forms.py:30 core/models/client.py:80
+#: core/forms.py:30 core/models/client.py:85
 msgid "enabled features"
 msgstr "aktiverede features"
 
@@ -935,7 +935,7 @@ msgstr "aktiverede features"
 msgid "Select a feature to enable it for this client."
 msgstr "Vælg en feature for at aktivere den for denne kunde."
 
-#: core/forms.py:38 core/models/client.py:86
+#: core/forms.py:38 core/models/client.py:91
 msgid "activated scan types"
 msgstr "tilgængelige scannertyper"
 
@@ -947,7 +947,7 @@ msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 msgid "user"
 msgstr "bruger"
 
-#: core/models/administrator.py:37 core/models/client.py:106
+#: core/models/administrator.py:37 core/models/client.py:111
 #: organizations/models/organization.py:59
 msgid "client"
 msgstr "kunde"
@@ -970,64 +970,68 @@ msgstr "Administrator: {user} (for {client})"
 msgid "<Administrator: {uid} (User) for {cid} (Client)>"
 msgstr "<Administrator: {uid} (User) for {cid} (Client)>"
 
-#: core/models/client.py:28
+#: core/models/client.py:26
 msgid "web scan"
 msgstr "webscan"
 
-#: core/models/client.py:29
+#: core/models/client.py:27
 msgid "file scan"
 msgstr "filscan"
 
-#: core/models/client.py:30
+#: core/models/client.py:28
 msgid "Exchange scan"
 msgstr "Exchange-scan"
 
-#: core/models/client.py:31
+#: core/models/client.py:29
 msgid "SBSYS scan"
 msgstr "SBSYS-scan"
 
-#: core/models/client.py:32
+#: core/models/client.py:30
 msgid "Dropbox scan"
 msgstr "Dropbox-scan"
 
-#: core/models/client.py:33
+#: core/models/client.py:31
 msgid "Microsoft Graph - mail scan"
 msgstr "Microsoft Graph - mailscan"
 
-#: core/models/client.py:34
+#: core/models/client.py:32
 msgid "Microsoft Graph - file scan"
 msgstr "Microsoft Graph - filscan"
 
-#: core/models/client.py:35
+#: core/models/client.py:33
 msgid "Google - drive scan"
 msgstr "Google - drevscan"
 
-#: core/models/client.py:36
+#: core/models/client.py:34
 msgid "Google - mail scan"
 msgstr "Google - mailscan"
 
-#: core/models/client.py:43
+#: core/models/client.py:41
 msgid "administration API"
 msgstr "administrations-API"
 
-#: core/models/client.py:61
+#: core/models/client.py:48
+msgid "structured organization support"
+msgstr "understøttelse af strukturerede organisationer"
+
+#: core/models/client.py:66
 msgid "client ID"
 msgstr "kunde-ID"
 
-#: core/models/client.py:66 organizations/models/organization.py:47
+#: core/models/client.py:71 organizations/models/organization.py:47
 #: organizations/models/organizational_unit.py:42
 msgid "name"
 msgstr "navn"
 
-#: core/models/client.py:70
+#: core/models/client.py:75
 msgid "e-mail"
 msgstr "e-mail"
 
-#: core/models/client.py:74 organizations/models/organization.py:71
+#: core/models/client.py:79 organizations/models/organization.py:71
 msgid "phone number"
 msgstr "telefonnummer"
 
-#: core/models/client.py:107
+#: core/models/client.py:112
 msgid "clients"
 msgstr "kunder"
 

@@ -20,8 +20,6 @@ from django.utils.translation import ugettext_lazy as _
 from .utilities import ModelChoiceFlag
 
 
-
-
 class Scan(ModelChoiceFlag):
     """Enumeration of available scan types"""
     # Ints are given explicitly to allow reorganization without database issues
@@ -41,6 +39,13 @@ class Scan(ModelChoiceFlag):
 class Feature(ModelChoiceFlag):
     """Enumeration of available features."""
     ADMIN_API = (1, _('administration API'))
+    # To ease the transition from the old `adminapp.Organization` to the new
+    # `organizations.Organization`, the feature flag below is provided. It
+    # allows the activation (or deactivation, depending on state) of the other
+    # models and features in the `organizations` app; existing customers may
+    # thus be migrated "silently" to the new `Organization` without being
+    # overwhelmed by additional features.
+    ORG_STRUCTURE = (1 << 1, _('structured organization support'))
 
 
 class Client(models.Model):

@@ -26,7 +26,7 @@ def _new_obj_with_value_and_label(cls, value, label):
 
 
 def _get_choices(cls):
-    return [(f.value, f.label.capitalize()) for f in cls]
+    return [(f.value, f.label[0].upper()+f.label[1:]) for f in cls]
 
 
 class ModelChoiceEnum(Enum):
