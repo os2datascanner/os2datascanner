@@ -128,9 +128,12 @@ DocumentReport.factory = ModelFactory(DocumentReport)
 @DocumentReport.factory.on_create
 @DocumentReport.factory.on_update
 def on_documentreport_created_or_updated(objects, fields=None):
+    from .aliases.alias_model import Alias
+
+    tm = Alias.match_relation.through
+    new_objects = []
     for obj in objects:
         # Add DocumentReport to Alias.match_relation, when it's saved to the db.
-        from .aliases.alias_model import Alias
         try:
             metadata = obj.data['metadata']['metadata'].values()
             value = list(metadata)[0]
@@ -139,13 +142,9 @@ def on_documentreport_created_or_updated(objects, fields=None):
 
             for alias in aliases:
                 if str(alias) == value:
-                    try:
-                        tm = Alias.match_relation.through
-                        ro = tm(documentreport_id=obj.pk, alias_id=alias.pk)
-                        tm.objects.bulk_create([ro], ignore_conflicts=True)
-                    except:
-                        print("Failed to create match_relation")
-        except:
+                    new_objects.append(
+                            tm(documentreport_id=obj.pk, alias_id=alias.pk))
+        except (KeyError, TypeError):
             print(obj, " has no metadata")
 
 
