@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.7'
 services:
   db:
     image: postgres:12
@@ -135,6 +135,7 @@ services:
       dockerfile: docker/engine/Dockerfile
       target: engine
     command: explorer --enable-metrics
+    init: true
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -147,6 +148,7 @@ services:
       dockerfile: docker/engine/Dockerfile
       target: engine
     command: worker --enable-metrics
+    init: true
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -159,6 +161,7 @@ services:
       dockerfile: docker/engine/Dockerfile
       target: engine
     command: exporter --enable-metrics
+    init: true
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -321,6 +324,7 @@ x-disabled:
       dockerfile: docker/engine/Dockerfile
       target: engine
     command: processor --enable-metrics
+    init: true
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -333,6 +337,7 @@ x-disabled:
       dockerfile: docker/engine/Dockerfile
       target: engine
     command: matcher --enable-metrics
+    init: true
     restart: unless-stopped
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
@@ -346,6 +351,7 @@ x-disabled:
       dockerfile: docker/engine/Dockerfile
       target: engine
     command: tagger --enable-metrics
+    init: true
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
