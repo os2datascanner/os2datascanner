@@ -13,13 +13,14 @@
 #
 import re
 
-from enum import Enum
 from uuid import uuid4
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
+from os2datascanner.projects.admin.core.models import utilities
 
 from .broadcasted_mixin import Broadcasted
 
@@ -38,7 +39,7 @@ def validate_generic(_):
     pass
 
 
-class AliasType(Enum):
+class AliasType(utilities.ModelChoiceEnum):
     """Enumeration of Alias types and their respective validators."""
     SID = 'SID', _('SID'), validate_sid
     EMAIL = 'email', _('email'), validate_email
@@ -46,14 +47,9 @@ class AliasType(Enum):
     GENERIC = 'generic', _('generic'), validate_generic
 
     def __new__(cls, value, label, validator):
-        obj = object.__new__(cls)
-        obj._value_ = value
-        obj.label = label
+        obj = utilities._new_obj_with_value_and_label(cls, value, label)
         obj.validator = validator
-
-    @classmethod
-    def choices(cls):
-        return [(e.value, e.label) for e in cls]
+        return obj
 
     def check(self, value):
         self.validator(value)
