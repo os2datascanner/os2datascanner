@@ -137,6 +137,7 @@ CREATE_USER = 'TRUE' # Create a new Django user when a new user logs in. Default
 ASSERTION_URL = 'https://mysite.com' # Custom URL to validate incoming SAML requests against
 ENTITY_ID = 'https://mysite.com/saml2_auth/acs/' # Populates the Issuer element in authn request
 NAME_ID_FORMAT = 'FormatString' # Sets the Format property of authn NameIDPolicy element
+ACCEPTED_TIME_DIFF = 0
 USE_JWT = false # Set this to True if you are running a Single Page Application (SPA) with Django Rest Framework (DRF), and are using JWT authentication to authorize client users
 FRONTEND_URL = 'https://myfrontendclient.com' # Redirect URL for the client if you are using JWT auth with DRF. See explanation below
 

@@ -226,7 +226,7 @@ services:
       - "8060:3000"
 
   idp:
-    image: magentalabs/simplesamlphp:2.0.0
+    image: magentalabs/simplesamlphp:2.0.1
     environment:
       - SIMPLESAMLPHP_BASEURLPATH=http://localhost:8080/simplesaml/
       - SIMPLESAMLPHP_SP_ENTITY_ID=http://localhost:8040/saml2_auth/acs/

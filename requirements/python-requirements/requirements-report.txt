@@ -59,7 +59,7 @@ django-model-utils==4.0.0
     # via -r requirements-django.in
 django-rest-auth==0.9.5
     # via django-saml2-auth
-git+https://github.com/magenta-aps/django-saml2-auth.git@2.2.2
+git+https://github.com/magenta-aps/django-saml2-auth.git@2.3.0
     # via -r requirements-report.in
 django-settings-export==1.2.1
     # via -r requirements-django.in
