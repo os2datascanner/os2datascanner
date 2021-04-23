@@ -32,7 +32,7 @@ class FilteredSource(DerivedSource):
         yield self.handle.follow(sm)
 
 
-@Source.mime_handler("application/gzip")
+@Source.mime_handler("application/gzip", "application/x-gzip")
 class GzipSource(FilteredSource):
     type_label = "filtered-gzip"
 

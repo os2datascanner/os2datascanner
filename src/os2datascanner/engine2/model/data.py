@@ -4,6 +4,7 @@ from base64 import b64decode, b64encode
 from urllib.parse import unquote
 from tempfile import NamedTemporaryFile
 from contextlib import contextmanager
+from typing import Tuple
 
 from ..conversions.utilities.results import SingleResult
 from .core import Source, Handle, FileResource
@@ -119,14 +120,17 @@ class DataHandle(Handle):
         return self.source.mime
 
 
-def unpack_data_url(url) -> (str, bytes):
-    # data: URLs are of the form
-    #
-    #     data:[mimetype][;base64],content
-    #
-    # If "mimetype" is absent, then it should be assumed to be "text/plain"
-    # (well, actually "text/plain;charset=US-ASCII", but we don't really
-    # support MIME type parameters).
+def unpack_data_url(url: str) -> Tuple[str, bytes]:
+    """Unpack data from url-string
+
+    URLs are of the form
+         data:[mimetype][;base64],content
+
+    If "mimetype" is absent, then it should be assumed to be "text/plain" (well,
+    actually "text/plain;charset=US-ASCII", but we don't really support MIME
+    type parameters).
+
+    """
     _, rest = url.split(':', maxsplit=1)
     # The actual content is always after the first comma
     lead, content = rest.split(",", maxsplit=1)

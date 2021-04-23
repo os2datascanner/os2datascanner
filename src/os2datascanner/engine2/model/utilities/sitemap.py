@@ -1,14 +1,25 @@
 from io import BytesIO
 from lxml import etree
-from typing import Tuple, Iterable
+from typing import Tuple, Iterable, Optional, List
 from datetime import datetime
 import requests
-
 from os2datascanner.engine2.model.data import unpack_data_url
+
 from .datetime import parse_datetime
+from .utilities import convert_data_to_text
 
+def _xp(e, path: str) -> List[str]:
+    """Parse an `ElementTree` using a namespace with sitemap prefix.
 
-def _xp(e, path):
+    Example
+    r = requests.get('https://www.magenta.dk/sitemap_index.xml')
+    root = etree.parse(BytesIO(r.content))
+    print(etree.tostring(root, pretty_print=True).decode("utf8"))
+    # Then use the /sitemap namespace
+    ns = {"sitemap": "http://www.sitemaps.org/schemas/sitemap/0.9}
+    root2.xpath("/sitemap:sitemapindex", namespaces=ns)
+
+    """
     return e.xpath(path,
             namespaces={
                 "sitemap": "http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -16,17 +27,22 @@ def _xp(e, path):
 
 
 def process_sitemap_url(url: str, *, context=requests,
-        allow_sitemap: bool=True) -> Iterable[Tuple[str, datetime]]:
+        allow_sitemap: bool=True) -> Iterable[Tuple[str, Optional[datetime]]]:
     """Retrieves and parses the sitemap or sitemap index at the given URL and
     yields zero or more (URL, last-modified) tuples.
 
     The given URL can use the "http", "https" or "data" schemes."""
 
-    def get_url_data(url):
+    def get_url_data(url: str) -> Optional[bytes]:
         try:
             r = context.get(url)
             if r.status_code == 200:
-                return r.content
+                content_type = r.headers["content-type"]
+                if content_type in ("text/xml", "application/xml"):
+                    return r.content
+                else:
+                    # the server served a file that needs to be unpacked
+                    return convert_data_to_text(r.content, mime=content_type)
             else:
                 return None
         except requests.exceptions.RequestException:
