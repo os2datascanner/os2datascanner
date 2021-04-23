@@ -1,12 +1,67 @@
 OS2datascanner
 ==============
 
+Version 3.9.4, 23rd April 2021
+------------------------------
+
+"Hundreds and Thousands"
+
+New in this version:
+
+- Better pagination functionality in the report module:
+
+  - The pagination controls now match the rest of the user interface.
+
+  - Support for jumping to a specific result page.
+
+  - Support for changing the number of matches shown per page.
+
+- Preparatory work for LDAP and Active Directory integration:
+
+  - New model objects for tracking organisational units, employees and roles.
+
+    (Note that preparatory LDAP objects are no longer shown in the Django
+    administration system.)
+
+- Improved translations in the administration system.
+
+General improvements:
+
+- Improved support for compressed sitemap files.
+
+- Improved support for HTTP referrer tracking.
+
+- The administration system's scanner status page now shows more historic
+  scans.
+
+- The "remediator" role no longer overrides the normal display of matches in
+  the report module.
+
+- More aggressive contextual filtering of CPR numbers.
+
+Bugfixes:
+
+- The scanner engine's invocations of external tools no longer produce
+  long-lived zombie processes in the system process table.
+
+- Encountering an unreadable directory will no longer interrupt the exploration
+  of a shared network drive.
+
+- Scheduled scanner jobs are no longer run several times at once.
+
+- The API server once again produces extra scan information in the format
+  expected by the pipeline.
+
+- Email notifications are now correctly translated.
+
 Version 3.9.3, 29th March 2021
---------------------------------
-This hotfix release fixes a missing timezone error when starting scheduled scannerjobs.
+------------------------------
+
+This hotfix release fixes a missing timezone error when starting scheduled
+scanner jobs.
 
 Version 3.9.2, 25th March 2021
---------------------------------
+------------------------------
 
 This hotfix release fixes an error in a transitional migration that made
 unsafe assumptions about the extra scan data sent to the report module.
