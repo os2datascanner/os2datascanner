@@ -1,4 +1,5 @@
 // It is handy to not have those transformations while we developing
+// TODO: Make this work in production environments
 if (process.env.NODE_ENV === 'development') {
   module.exports = {
     plugins: [

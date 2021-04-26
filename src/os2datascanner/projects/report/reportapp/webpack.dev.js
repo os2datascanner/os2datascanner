@@ -50,6 +50,7 @@ module.exports = {
           },
           {
             // Then we apply postCSS fixes like autoprefixer and minifying
+            // TODO: Is this necessary in development builds?
             loader: "postcss-loader"
           },
           {
