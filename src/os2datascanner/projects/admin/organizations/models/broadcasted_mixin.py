@@ -53,7 +53,7 @@ def post_save_broadcast(sender, instance, **kwargs):
         return
     event_type = (EventType.OBJ_CREATE if kwargs.get('created', None)
                   else EventType.OBJ_UPDATE)
-    event = ModelChangeEvent(event_type, sender, instance)
+    event = ModelChangeEvent(event_type.value, sender, instance)
     publish_events([event])
 
 
@@ -61,5 +61,5 @@ def post_save_broadcast(sender, instance, **kwargs):
 def post_delete_broadcast(sender, instance, **kwargs):
     if not isinstance(instance, Broadcasted):
         return
-    event = ModelChangeEvent(EventType.OBJ_DELETE, sender, instance)
+    event = ModelChangeEvent(EventType.OBJ_DELETE.value, sender, instance)
     publish_events([event])
