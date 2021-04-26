@@ -3,10 +3,14 @@
 WIP. A Node.js application that manages a cluster of Puppeteer instances
 and performs a11y analysis on incoming URLs.
 
+Current supports Axe and Qualweb a11y engines on `/axe` and `/qualweb`
+endpoints respectively.
+
 ## TODO
 
-- [ ] Integrate other a11y engines
-- [ ] Find a way to generate EARL reports ([perhaps not easily doable?](https://github.com/dequelabs/axe-core-npm/issues/88#issuecomment-811232521))
+- [x] Integrate other a11y engines
+- [x] Find a way to generate EARL reports (Enabled on `/qualweb` endpoint,
+[perhaps not easily doable in Axe engine](https://github.com/dequelabs/axe-core-npm/issues/88#issuecomment-811232521))
 - [ ] Integrate in OS2DS!
 - [ ] Tracing/metrics/etc.
 
@@ -16,8 +20,8 @@ Start the container with `docker-compose up -d [--build] a11y_scanner`.
 
 ## Usage
 
-Use the service by querying the `/axe` endpoint with a basic auth header
-and a POST payload structured as follows:
+Use the service by querying the `/qualweb` or `/axe` endpoint with a
+basic auth header and a POST payload structured as follows:
 
 ```json
 {
@@ -58,29 +62,7 @@ like one of the following:
 ```json
 {
   "data": {
-    "testEngine": {
-      "name": "axe-core",
-      "version": "4.1.3"
-    },
-    "testRunner": {
-      "name": "axe"
-    },
-    "testEnvironment": {
-      "userAgent": "<User agent string>",
-      "windowWidth": 800,
-      "windowHeight": 600,
-      "orientationAngle": 0,
-      "orientationType": "portrait-primary"
-    },
-    "timestamp": "2021-03-31T13:23:53.501Z",
-    "url": "<The url which was checked>",
-    "toolOptions": {
-      "reporter": "v1"
-    },
-    "violations": [],
-    "passes": [],
-    "incomplete": [],
-    "inapplicable": []
+    (...)
   }
 }
 ```
@@ -89,15 +71,7 @@ like one of the following:
 
 ### Smoke testing
 
-The following `curl` one-liner will request an a11y scan on
-https://www.magenta.dk and print the resulting Axe report to STDOUT.
-
-```bash
-curl --user 'test:testpassword' \
-    -H "Content-Type: application/json" \
-    --data-binary @tests/request_bodies/magenta.json \
-    http://localhost:8888/axe
-```
+Run the bash script located at `./tests/smoke_test.sh`.
 
 ### Load testing
 
@@ -106,7 +80,7 @@ curl --user 'test:testpassword' \
 - Run the following command:
 
 ```bash
-echo 'POST http://test:testpassword@localhost:8888/axe' |\
+echo 'POST http://test:testpassword@localhost:8888/qualweb' |\
 vegeta attack -header "Content-Type: application/json" -body tests/request_bodies/magenta.json \
 -rate=20 -timeout=100s -duration=3s | tee results.bin | vegeta report
 ```
