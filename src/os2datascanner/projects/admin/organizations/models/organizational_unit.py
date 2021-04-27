@@ -19,10 +19,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from os2datascanner.projects.admin.import_services.models import Imported
+
 from .broadcasted_mixin import Broadcasted
 
 
-class OrganizationalUnit(MPTTModel, Broadcasted):
+class OrganizationalUnit(MPTTModel, Broadcasted, Imported):
     """Represents a fragment of an organizational hierarchy.
 
     An OrganizationalUnit typically represents a department or a product team.

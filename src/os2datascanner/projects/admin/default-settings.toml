@@ -21,6 +21,11 @@ SITE_ID = 1
 ALLOWED_HOSTS = []
 SESSION_COOKIE_NAME = "sessionid"
 
+# [keycloak]
+KEYCLOAK_BASE_URL = ""
+KEYCLOAK_ADMIN_CLIENT = "os2datascanner-admin"
+KEYCLOAK_ADMIN_SECRET = ""
+
 # [msgraph]
 # The GUID of the registered Azure application corresponding to this
 # OS2datascanner installation, used when requesting Microsoft Graph access:
@@ -55,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'recurrence',
+    'mptt',
 ]
 OS2DATASCANNER_APPS = [
     'os2datascanner.projects.admin.adminapp',

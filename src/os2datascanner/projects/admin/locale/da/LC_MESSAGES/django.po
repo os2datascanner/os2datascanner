@@ -8,7 +8,8 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-22 09:20-0500\n"
+"POT-Creation-Date: 2021-04-26 11:08-0500\n"
+"PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,8 +29,6 @@ msgid "Brugernavn"
 msgstr "Username"
 
 #: adminapp/models/authentication_model.py:18
-#, fuzzy
-#| msgid "Initialization vector"
 msgid "Initialization Vector"
 msgstr "Initaliserings vektor"
 
@@ -898,7 +897,7 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
-#: adminapp/views/views.py:434
+#: adminapp/views/views.py:434 import_services/models/exported_mixin.py:31
 msgid "created"
 msgstr "oprettet"
 
@@ -1019,7 +1018,7 @@ msgid "client ID"
 msgstr "kunde-ID"
 
 #: core/models/client.py:71 organizations/models/organization.py:47
-#: organizations/models/organizational_unit.py:42
+#: organizations/models/organizational_unit.py:44
 msgid "name"
 msgstr "navn"
 
@@ -1040,78 +1039,294 @@ msgstr "kunder"
 msgid "{value} is not a valid {class_name}"
 msgstr "{value} er ikke en gyldig værdi for {class_name}"
 
+#: import_services/apps.py:8 import_services/models/import_service.py:44
+msgid "import services"
+msgstr "importservicer"
+
+#: import_services/models/exported_mixin.py:37
+msgid "last modified"
+msgstr "senest opdateret"
+
+#: import_services/models/exported_mixin.py:42
+msgid "last successful export"
+msgstr "senest exporteret med success"
+
+#: import_services/models/exported_mixin.py:47
+msgid "marked for deletion at"
+msgstr ""
+
+#: import_services/models/import_service.py:39
+msgid "organization UUID"
+msgstr "UUID for organisation"
+
+#: import_services/models/import_service.py:43
+msgid "import service"
+msgstr "importservice"
+
+#: import_services/models/import_service.py:48
+#, python-brace-format
+msgid "{cls} for {org}"
+msgstr "{cls} for {org}"
+
+#: import_services/models/imported_mixin.py:32
+msgid "has been imported"
+msgstr "er blevet importeret"
+
+#: import_services/models/imported_mixin.py:40
+msgid "imported unique ID"
+msgstr "importeret unikt ID"
+
+#: import_services/models/imported_mixin.py:46
+msgid "last time an update was requested"
+msgstr "sidste gang der blev anmodet om en opdatering"
+
+#: import_services/models/imported_mixin.py:52
+msgid "last successful import"
+msgstr "sidste succesfulde importering"
+
+#: import_services/models/keycloak.py:28 organizations/models/account.py:40
+#: organizations/models/organization.py:43
+#: organizations/models/organizational_unit.py:39
+msgid "UUID"
+msgstr "UUID"
+
+#: import_services/models/keycloak.py:31
+msgid "server URL"
+msgstr "server-URL"
+
+#: import_services/models/keycloak.py:64
+msgid "Keycloak server"
+msgstr "Keycloak-server"
+
+#: import_services/models/keycloak.py:65
+msgid "Keycloak servers"
+msgstr "Keycloak-servere"
+
+#: import_services/models/ldap_configuration.py:29
+msgid "Active Directory"
+msgstr "Active Directory"
+
+#: import_services/models/ldap_configuration.py:30
+msgid "other"
+msgstr "anden leverandør"
+
+#: import_services/models/ldap_configuration.py:32
+msgid "vendor"
+msgstr "leverandør"
+
+#: import_services/models/ldap_configuration.py:37
+msgid ""
+"Name of LDAP attribute, which is mapped as username. For many LDAP server "
+"vendors it can be 'uid'. For Active Directory it can be 'sAMAccountName' or "
+"'cn'. The attribute should be filled for all LDAP user records you want to "
+"import from LDAP."
+msgstr ""
+"Navnet på den LDAP-attribut, der anvendes som brugernavn. For mange LDAP-"
+"servere er det 'uid'. For Active Directory kan det være 'sAMAccountName' "
+"eller 'cn'. Attributten skal findes for alle de brugere, der skal importeres "
+"fra LDAP."
+
+#: import_services/models/ldap_configuration.py:43
+msgid "username LDAP attribute"
+msgstr "LDAP-attribut for brugernavn"
+
+#: import_services/models/ldap_configuration.py:48
+msgid ""
+"Name of LDAP attribute, which is used as RDN of typical user DN. Usually, "
+"but not necessarily, the same as username LDAP attribute. For example for "
+"Active Directory, it is common to use 'cn' as RDN attribute when username "
+"attribute might be 'sAMAccountName'."
+msgstr ""
+"Navnet på den LDAP-attribut der bruges som RDN (relative distinguished name) "
+"for et typisk bruger-DN (distinguished name). Ofte samme LDAP-attribut som "
+"for brugernavn, men ikke nødvendigvis. F.eks. er det for Active Directory "
+"meget almindeligt at bruge 'cn' som RDN-attribut mens brugernavns-"
+"attributten ofte er 'sAMAccountName'"
+
+#: import_services/models/ldap_configuration.py:53
+msgid "RDN LDAP attribute"
+msgstr "LDAP-attribut for RDN"
+
+#: import_services/models/ldap_configuration.py:58
+msgid ""
+"Name of LDAP attribute, which is used as unique object identifier (UUID) for "
+"objects in LDAP. For many LDAP server vendors, it is 'entryUUID'; however "
+"some are different. For example for Active Directory it should be "
+"'objectGUID'. If your LDAP server does not support the notion of UUID, you "
+"can use any other attribute that is supposed to be unique among LDAP users "
+"in the tree. For example 'uid' or 'entryDN'."
+msgstr ""
+"Navnet på den LDAP-attribut, der unikt identificerer et LDAP-objekt. For "
+"mange LDAP-servere er det 'entryUUID'; for Active Directory er det i stedet "
+"'objectGUID'. Understøtter din LDAP-server ikke UUID-værdier, kan du i "
+"stedet benytte en anden unik værdi, såsom 'uid' eller 'entryDN'."
+
+#: import_services/models/ldap_configuration.py:66
+msgid "UUID LDAP attribute"
+msgstr "LDAP-attribut for UUID"
+
+#: import_services/models/ldap_configuration.py:70
+msgid ""
+"All values of LDAP objectClass attribute for users in LDAP divided by comma. "
+"For example: 'inetOrgPerson, organizationalPerson'. User records are only "
+"imported if they have all those classes."
+msgstr ""
+"En komma-separeret liste af alle 'LDAP objectClass'-værdier for brugere i  "
+"LDAP. For eksempel: 'inetOrgPerson, organizationalPerson'. Brugere bliver "
+"kun importeret, hvis de har samtlige klasser i listen."
+
+#: import_services/models/ldap_configuration.py:75
+msgid "user object classes"
+msgstr "klasser for bruger-objekter"
+
+#: import_services/models/ldap_configuration.py:82
+msgid ""
+"Choose between an encrypted connection protocol (ldaps) or an unencrypted "
+"one (ldap). Only select the unencrypted protocol if absolutely necessary."
+msgstr ""
+"Vælg mellem en krypteret forbindelsesprotokol (ldaps) eller en ukrypteret "
+"(ldap). Det anbefales at vælge den krypterede protokol."
+
+#: import_services/models/ldap_configuration.py:86
+msgid "connection protocol"
+msgstr "forbindelsesprotokol"
+
+#: import_services/models/ldap_configuration.py:91
+msgid "Connection URL to the LDAP server. "
+msgstr "Forbindelses-URL til LDAP-serveren."
+
+#: import_services/models/ldap_configuration.py:93
+msgid "connection URL"
+msgstr "forbindelses-URL"
+
+#: import_services/models/ldap_configuration.py:97
+msgid "Distinguished name for the (top) OU in which to search for users."
+msgstr ""
+"'Distinguished name' for den (øverste) OU, hvor der skal søges efter brugere."
+
+#: import_services/models/ldap_configuration.py:99
+msgid "DN for users (OU)"
+msgstr "DN for brugere (OU)"
+
+#: import_services/models/ldap_configuration.py:103
+msgid "one level"
+msgstr "kun øverste lag"
+
+#: import_services/models/ldap_configuration.py:104
+msgid "subtree"
+msgstr "hele undertræet"
+
+#: import_services/models/ldap_configuration.py:107
+msgid ""
+"For one level, the search applies only for users in the DNs specified by "
+"User DNs. For subtree, the search applies to the whole subtree. See LDAP "
+"documentation for more details."
+msgstr ""
+"For 'kun øverste lag' gælder søgningen kun for brugere tilknyttet den OU der "
+"er angivet i 'DN for brugere'. For 'hele undertræt' gælder søgningen for den "
+"angivne OU, samt alle underliggende OU'er. Se LDAP dokumentationen for flere "
+"detaljer."
+
+#: import_services/models/ldap_configuration.py:112
+msgid "search scope"
+msgstr "omfang af søgningen"
+
+#: import_services/models/ldap_configuration.py:116
+msgid "Distinguished name for the service account allowing access to LDAP"
+msgstr "'Distinguished name' for servicekontoen, der giver adgang til LDAP"
+
+#: import_services/models/ldap_configuration.py:118
+msgid "LDAP service account user name"
+msgstr "brugernavn for servicekontoen til LDAP"
+
+#: import_services/models/ldap_configuration.py:147
+msgid "LDAP configuration"
+msgstr "LDAP-konfiguration"
+
+#: import_services/models/ldap_configuration.py:148
+msgid "LDAP configurations"
+msgstr "LDAP-konfigurationer"
+
+#: import_services/models/realm.py:24
+msgid "realm id"
+msgstr "realm id"
+
+#: import_services/models/realm.py:29 organizations/models/account.py:58
+#: organizations/models/organization.py:75
+msgid "organization"
+msgstr "organisation"
+
+#: import_services/models/realm.py:33
+msgid "Keycloak realm"
+msgstr "Keycloak realm"
+
+#: import_services/models/realm.py:34
+msgid "Keycloak realms"
+msgstr "Keycloak realms"
+
 #: organizations/apps.py:8 organizations/models/organization.py:76
 msgid "organizations"
 msgstr "organisationer"
 
-#: organizations/models/account.py:38 organizations/models/organization.py:43
-#: organizations/models/organizational_unit.py:37
-msgid "UUID"
-msgstr "UUID"
-
-#: organizations/models/account.py:42
+#: organizations/models/account.py:44
 msgid "username"
 msgstr "brugernavn"
 
-#: organizations/models/account.py:46
+#: organizations/models/account.py:48
 msgid "first name"
 msgstr "fornavn"
 
-#: organizations/models/account.py:50
+#: organizations/models/account.py:52
 msgid "last name"
 msgstr "efternavn"
 
-#: organizations/models/account.py:56 organizations/models/organization.py:75
-msgid "organization"
-msgstr "organisation"
-
-#: organizations/models/account.py:64 organizations/models/aliases.py:81
-#: organizations/models/position.py:42
+#: organizations/models/account.py:66 organizations/models/aliases.py:78
+#: organizations/models/position.py:43
 msgid "account"
 msgstr "brugerkonto"
 
-#: organizations/models/account.py:65
+#: organizations/models/account.py:67
 msgid "accounts"
 msgstr "konti"
 
-#: organizations/models/aliases.py:33
+#: organizations/models/aliases.py:35
 #, python-format
 msgid "%(value)s is not a valid SID"
 msgstr "%(value)s er ikke et gyldigt SID"
 
-#: organizations/models/aliases.py:43
+#: organizations/models/aliases.py:45
 msgid "SID"
 msgstr "SID"
 
-#: organizations/models/aliases.py:44 organizations/models/organization.py:65
+#: organizations/models/aliases.py:46 organizations/models/organization.py:65
 msgid "email"
 msgstr "e-mail"
 
-#: organizations/models/aliases.py:46
+#: organizations/models/aliases.py:48
 msgid "generic"
 msgstr "generisk"
 
-#: organizations/models/aliases.py:75
+#: organizations/models/aliases.py:72
 msgid "alias ID"
 msgstr "alias ID"
 
-#: organizations/models/aliases.py:88
+#: organizations/models/aliases.py:85
 msgid "alias type"
 msgstr "aliastype"
 
-#: organizations/models/aliases.py:92
+#: organizations/models/aliases.py:89
 msgid "value"
 msgstr "værdi"
 
-#: organizations/models/aliases.py:104
+#: organizations/models/aliases.py:101
 msgid "alias"
 msgstr "alias"
 
-#: organizations/models/aliases.py:105
+#: organizations/models/aliases.py:102
 msgid "aliases"
 msgstr "aliaser"
 
-#: organizations/models/aliases.py:108
+#: organizations/models/aliases.py:105
 #, python-brace-format
 msgid "Alias ({type}) for {account_user}: {value}"
 msgstr "Alias ({type}) for {account_user}: {value}"
@@ -1120,39 +1335,39 @@ msgstr "Alias ({type}) for {account_user}: {value}"
 msgid "slug"
 msgstr "slug"
 
-#: organizations/models/organizational_unit.py:50
+#: organizations/models/organizational_unit.py:52
 msgid "parent unit"
 msgstr "overordnet enhed"
 
-#: organizations/models/organizational_unit.py:61
+#: organizations/models/organizational_unit.py:63
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
 
-#: organizations/models/organizational_unit.py:62
+#: organizations/models/organizational_unit.py:64
 msgid "organizational units"
 msgstr "organisatoriske enheder"
 
-#: organizations/models/position.py:31
+#: organizations/models/position.py:32
 msgid "employee"
 msgstr "medarbejder"
 
-#: organizations/models/position.py:32
+#: organizations/models/position.py:33
 msgid "manager"
 msgstr "leder"
 
-#: organizations/models/position.py:33
+#: organizations/models/position.py:34
 msgid "data protection officer"
 msgstr "data protection officer"
 
-#: organizations/models/position.py:59
+#: organizations/models/position.py:60
 msgid "position"
 msgstr "tilknytning"
 
-#: organizations/models/position.py:60
+#: organizations/models/position.py:61
 msgid "positions"
 msgstr "tilknytninger"
 
-#: organizations/models/position.py:63
+#: organizations/models/position.py:64
 #, python-brace-format
 msgid "{cls}: {account} ({role}) at {unit}"
 msgstr "{cls}: {account} ({role}) ved {unit}"

@@ -18,6 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 from mptt.models import TreeForeignKey
 
 from os2datascanner.projects.admin.core.models import ModelChoiceEnum
+from os2datascanner.projects.admin.import_services.models import Imported
 
 from .broadcasted_mixin import Broadcasted
 
@@ -33,7 +34,7 @@ class Role(ModelChoiceEnum):
     DPO = ('dpo', _('data protection officer'))
 
 
-class Position(Broadcasted, models.Model):
+class Position(Imported, Broadcasted, models.Model):
     # TODO: #43095
     account = models.ForeignKey(
         'Account',

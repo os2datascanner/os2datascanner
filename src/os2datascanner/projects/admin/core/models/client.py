@@ -46,6 +46,7 @@ class Feature(ModelChoiceFlag):
     # thus be migrated "silently" to the new `Organization` without being
     # overwhelmed by additional features.
     ORG_STRUCTURE = (1 << 1, _('structured organization support'))
+    IMPORT_SERVICES = (1 << 2, _('import services'))
 
 
 class Client(models.Model):
