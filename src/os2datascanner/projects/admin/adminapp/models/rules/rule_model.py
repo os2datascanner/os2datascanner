@@ -15,6 +15,7 @@
 # source municipalities ( http://www.os2web.dk/ )
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from model_utils.managers import InheritanceManager
 
 from ..group_model import Group
@@ -42,6 +43,14 @@ class Rule(models.Model):
     organization = models.ForeignKey(Organization, null=False,
                                      verbose_name='Organisation',
                                      on_delete=models.PROTECT)
+    ldap_organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.PROTECT,
+        related_name='rule',
+        verbose_name=_('organisation'),
+        default=None,
+        null=True
+    )
     group = models.ForeignKey(Group, null=True, blank=True,
                               verbose_name='Gruppe',
                               on_delete=models.SET_NULL)
