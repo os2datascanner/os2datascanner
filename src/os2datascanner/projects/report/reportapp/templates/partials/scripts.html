@@ -1,11 +1,11 @@
 {% load staticfiles %}
 
 {% block scripts %}
-<script src="{% static "3rdparty/jquery-3.5.0.min.js" %} "></script>
-<script src="{% static "3rdparty/clipboard.min.js" %} "></script>
+<script src="{% static '3rdparty/jquery-3.5.0.min.js' %} "></script>
+<script src="{% static '3rdparty/clipboard.min.js' %} "></script>
 {% if not settings.DEBUG %}
-<script src="{% static "dist/bundle.min.js" %} "></script>
+<script src="{% static 'dist/bundle.min.js' %} "></script>
 {% else %}
-<script src="{% static "dist/bundle.js" %} "></script>
+<script src="{% static 'dist/bundle.js' %} "></script>
 {% endif %}
 {% endblock %}
