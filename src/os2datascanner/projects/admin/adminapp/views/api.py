@@ -23,7 +23,7 @@ def get_rule_1(key, body):
 
     try:
         rule = Rule.objects.select_subclasses().get(
-                pk=pk, organization=key.organization)
+                pk=pk, ldap_organization=key.ldap_organization)
     except Rule.DoesNotExist:
         return {
             "status": "fail",
@@ -50,7 +50,7 @@ def get_scanner_1(key, body):
 
     try:
         scanner = Scanner.objects.select_subclasses().get(
-                pk=pk, organization=key.organization)
+                pk=pk, ldap_organization=key.ldap_organization)
     except Scanner.DoesNotExist:
         return {
             "status": "fail",
