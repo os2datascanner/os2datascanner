@@ -20,20 +20,19 @@
   {% endblock %}
 
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="icon" type="image/png" sizes="32x32" href="{% static "src/favicons/favicon-32x32.png" %}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{% static "src/favicons/favicon-16x16.png" %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'src/favicons/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'src/favicons/favicon-16x16.png' %}">
   <meta name="theme-color" content="#4DBA87">
   <meta name="apple-mobile-web-app-capable" content="no">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="apple-touch-icon" href="{% static "src/favicons/apple-touch-icon.png" %}">
-  <link rel="mask-icon" href="{% static "src/favicons/safari-pinned-tab.svg" %}" color="#4DBA87">
-  <meta name="msapplication-TileImage" content="{% static "src/favicons/msapplication-icon-144x144.png" %}">
+  <link rel="apple-touch-icon" href="{% static 'src/favicons/apple-touch-icon.png' %}">
+  <link rel="mask-icon" href="{% static 'src/favicons/safari-pinned-tab.svg' %}" color="#4DBA87">
+  <meta name="msapplication-TileImage" content="{% static 'src/favicons/msapplication-icon-144x144.png' %}">
   <meta name="msapplication-TileColor" content="#000000">
 
   {% block extra_head_html %}{% endblock %}
 
   <!-- TODO: The following document.write action will try to write a Django template string literally on the client. This will not work in browsers. -->
-  <!-- ALSO: Is ie11CustomProperties polyfill script not imported via Babel in bundle.js ? -->
   <script>window.MSInputMethodContext && document.documentMode && document.write('<script src="{% static "3rdparty/ie11CustomProperties.js" %}"><\x2fscript>');</script>
 
   <!-- TODO: This is only necessary for IE8 and older browsers. Are we supporting IE8- ? -->
@@ -48,6 +47,7 @@
   </script>
 
   <!-- Support IE for svgxuse -->
+  <!-- TODO: Is is still needed? IE11 should have support for this: https://caniuse.com/mdn-svg_elements_use -->
   <script src="{% static 'src/js/svgxuse.js' %}" defer></script>
 
 </head>
@@ -73,15 +73,28 @@
   {% endif %}
 
   {% block scripts %}
+
+    <!-- TODO: Since the following scripts are in a 'scripts' block, are they supposed to be overwritten by templates? -->
+  
     {% if not settings.DEBUG %}
-    <script src="{% static '3rdparty/jquery.modal.min.js' %} "></script>
-    <script src="{% static '3rdparty/bootstrap.min.js' %}"></script>
+
+      <!-- TODO: Is jquery.modal not used in development? -->
+      <!-- ANSWER: Yes, sometimes in some templates (ex. os2datascanner/rules.html). This setup potentially loads jquery.modal twice, though. -->
+      <script src="{% static '3rdparty/jquery.modal.min.js' %} "></script>
+      
+      <!-- TODO: No bootstrap.css to go with this? -->
+      <script src="{% static '3rdparty/bootstrap.min.js' %}"></script>
+
     {% else %}
-    <script src="{% static '3rdparty/bootstrap.js' %}"></script>
+
+      <!-- TODO: No bootstrap.css to go with this? -->
+      <script src="{% static '3rdparty/bootstrap.js' %}"></script>
+
     {% endif %}
     <script src="{% static 'js/main.js' %}"></script>
   {% endblock %}
 
+  <!-- TODO: Do 'scripts' and 'jquery_script' need to be separate blocks? -->
   {% block jquery_script %}{% endblock %}
 
 </body>
