@@ -17,6 +17,14 @@ class UserProfile(models.Model):
                                      null=False,
                                      verbose_name=_('Organization'),
                                      on_delete=models.PROTECT)
+    ldap_organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.PROTECT,
+        related_name='profile',
+        verbose_name=_('organisation'),
+        default=None,
+        null=True
+    )
     user = models.OneToOneField(User,
                                 related_name='profile',
                                 verbose_name=_('User'),

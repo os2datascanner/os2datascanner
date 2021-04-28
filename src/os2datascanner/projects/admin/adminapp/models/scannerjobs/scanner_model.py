@@ -23,7 +23,6 @@ import os
 import re
 
 from typing import Iterator
-from dateutil import tz
 
 from django.db import models
 from django.conf import settings
@@ -68,6 +67,15 @@ class Scanner(models.Model):
     organization = models.ForeignKey(Organization, null=False,
                                      verbose_name='Organisation',
                                      on_delete=models.PROTECT)
+
+    ldap_organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.PROTECT,
+        related_name='scannerjob',
+        verbose_name=_('organisation'),
+        default=None,
+        null=True
+    )
 
     group = models.ForeignKey(Group, null=True, blank=True,
                               verbose_name='Gruppe',

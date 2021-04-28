@@ -46,7 +46,16 @@ class APIKey(models.Model):
                             unique=True, verbose_name="UUID")
     organization = models.ForeignKey(Organization, null=False,
                                      related_name="api_keys",
-                                     on_delete=models.CASCADE)
+                                     on_delete=models.PROTECT,
+                                     verbose_name=_('organization - deprecated'))
+    ldap_organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.PROTECT,
+        related_name='api_keys',
+        verbose_name=_('organization'),
+        default=None,
+        null=True,
+    )
     """A newline-separated list of API functions that can be called with this
     API key."""
     scope = models.TextField()
@@ -58,3 +67,4 @@ class APIKey(models.Model):
 
     class Meta:
         verbose_name = _("API key")
+        verbose_name_plural = _('API keys')
