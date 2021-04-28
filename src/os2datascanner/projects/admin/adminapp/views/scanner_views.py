@@ -54,15 +54,13 @@ class ScannerBase():
         """
         try:
             organization = self.request.user.profile.organization
-            groups = self.request.user.profile.groups.all()
         except UserProfile.DoesNotExist:
             organization = None
-            groups = None
 
         form = super().get_form(form_class)
 
         if not self.request.user.is_superuser:
-            self.filter_queryset(form, groups, organization)
+            self.filter_queryset(form, organization)
 
         form.fields['schedule'].required = False
 
@@ -85,18 +83,10 @@ class ScannerBase():
         self.fields = fields
         return fields
 
-    def filter_queryset(self, form, groups, organization):
+    def filter_queryset(self, form, organization):
         for field_name in ['rules']:
             queryset = form.fields[field_name].queryset
             queryset = queryset.filter(organization=organization)
-
-            if self.request.user.profile.is_group_admin:
-                # Already filtered by organization, nothing more to do.
-                pass
-            else:
-                queryset = queryset.filter(
-                    Q(group__in=groups) | Q(group__isnull=True)
-                )
             form.fields[field_name].queryset = queryset
 
     def get_scanner_object(self):

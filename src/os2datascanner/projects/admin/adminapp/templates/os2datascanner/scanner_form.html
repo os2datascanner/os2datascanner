@@ -228,10 +228,6 @@
             {% include "os2datascanner/scanner_form_input_field.html" with field=form.password password="True" %}
           {% endif %}
 
-          {% if form.group %}
-            {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.group %}
-          {% endif %}
-
           {% if form.userlist %}
           <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
             <label class="control-label required-form" for="id_{{ form.userlist.name }}">

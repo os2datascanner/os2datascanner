@@ -29,13 +29,7 @@ class UserProfile(models.Model):
                                 related_name='profile',
                                 verbose_name=_('User'),
                                 on_delete=models.PROTECT)
-    is_group_admin = models.BooleanField(default=False)
     is_upload_only = models.BooleanField(default=False)
-
-    @property
-    def is_groups_enabled(self):
-        """Whether to activate groups in GUI."""
-        return settings.DO_USE_GROUPS
 
     def __str__(self):
         """Return the user's username."""

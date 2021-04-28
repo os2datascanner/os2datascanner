@@ -45,7 +45,6 @@ from os2datascanner.engine2.conversions.types import OutputType
 
 from ..authentication_model import Authentication
 from ..organization_model import Organization
-from ..group_model import Group
 from ..rules.rule_model import Rule
 from ..userprofile_model import UserProfile
 
@@ -76,10 +75,6 @@ class Scanner(models.Model):
         default=None,
         null=True
     )
-
-    group = models.ForeignKey(Group, null=True, blank=True,
-                              verbose_name='Gruppe',
-                              on_delete=models.SET_NULL)
 
     schedule = RecurrenceField(max_length=1024,
                                verbose_name='Planlagt afvikling')

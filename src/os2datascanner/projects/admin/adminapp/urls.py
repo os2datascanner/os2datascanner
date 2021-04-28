@@ -8,15 +8,12 @@
 # for the specific language governing rights and limitations under the
 # License.
 #
-# OS2Webscanner was developed by Magenta in collaboration with OS2 the
-# Danish community of open source municipalities (http://www.os2web.dk/).
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
 #
-# The code is currently governed by OS2 the Danish community of open
-# source municipalities ( http://www.os2web.dk/ )
 """URL mappings."""
 
 import django.contrib.auth.views
-from django.conf import settings
 from django.conf.urls import url
 from django.http import HttpResponse
 from django.views.i18n import JavaScriptCatalog
@@ -47,8 +44,6 @@ from .views.rule_views import RuleList, \
     CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
     RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
 from .views.api import JSONAPIView
-from .views.views import GroupList, GroupCreate, GroupUpdate, GroupDelete
-from .views.views import MainPageView
 from .views.views import OrganizationList
 from .views.views import DialogSuccess
 from .views.scanner_views import (StatusOverview, StatusCompleted)
@@ -292,10 +287,6 @@ urlpatterns = [
         DialogSuccess.as_view()),
     url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(saved)/$',
         DialogSuccess.as_view()),
-    url(r'^(rules/regex|rules/cpr|groups)/(\d+)/(created)/$',
-        DialogSuccess.as_view()),
-    url(r'^(rules/regex|rules/cpr|groups)/(\d+)/(saved)/$',
-        DialogSuccess.as_view()),
 
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(
         packages=('os2datascanner.projects.admin.adminapp', 'recurrence'),
@@ -312,15 +303,3 @@ urlpatterns = [
 
     url(r'^health/', lambda r: HttpResponse()),
 ]
-
-if settings.DO_USE_GROUPS:
-    urlpatterns += [
-        '',
-        url(r'^groups/$', GroupList.as_view(), name='groups'),
-        url(r'^groups/add/$', GroupCreate.as_view(), name='group_add'),
-        url(r'^(groups)/(\d+)/(success)/$', DialogSuccess.as_view()),
-        url(r'^groups/(?P<pk>\d+)/$', GroupUpdate.as_view(),
-            name='group_update'),
-        url(r'^groups/(?P<pk>\d+)/delete/$', GroupDelete.as_view(),
-            name='group_delete'),
-    ]

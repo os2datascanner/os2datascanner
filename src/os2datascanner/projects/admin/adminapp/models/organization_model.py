@@ -1,7 +1,6 @@
 from uuid import uuid4
 
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -14,8 +13,6 @@ class Organization(models.Model):
     name = models.CharField(max_length=256, unique=True, verbose_name=_('Name'))
     contact_email = models.CharField(max_length=256, verbose_name='Email')
     contact_phone = models.CharField(max_length=256, verbose_name=_('Phone'))
-    do_use_groups = models.BooleanField(default=False,
-                                        editable=settings.DO_USE_GROUPS)
     do_notify_all_scans = models.BooleanField(default=True)
     uuid = models.UUIDField(default=uuid4, editable=False, unique=True,
                             verbose_name="UUID")
@@ -31,7 +28,6 @@ class Organization(models.Model):
             "uuid": str(self.uuid),
             "contact_email": self.contact_email,
             "contact_phone": self.contact_phone,
-            "do_use_groups": self.do_use_groups,
             "do_notify_all_scans": self.do_notify_all_scans,
         }
 
