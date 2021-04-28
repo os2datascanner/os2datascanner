@@ -21,9 +21,6 @@ KEYCLOAK_ADMIN_SECRET = "thisIsNotASecret"
 # [installation]
 OPTIONAL_APPS = [
     'django_extensions',
-    'os2datascanner.projects.admin.core',
-    'os2datascanner.projects.admin.organizations',
-    'os2datascanner.projects.admin.import_services',
 ]
 
 # [scans]

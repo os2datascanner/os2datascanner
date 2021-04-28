@@ -64,6 +64,9 @@ INSTALLED_APPS = [
 ]
 OS2DATASCANNER_APPS = [
     'os2datascanner.projects.admin.adminapp',
+    'os2datascanner.projects.admin.core',
+    'os2datascanner.projects.admin.organizations',
+    'os2datascanner.projects.admin.import_services',
 ]
 OPTIONAL_APPS = []
 
