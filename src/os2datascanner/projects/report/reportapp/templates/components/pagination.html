@@ -73,7 +73,7 @@
               <label for="page" class="text">
                 {% trans "Go to page" %}
               </label>
-              <input id="page" type="number" name="page" min="1" max="{{ paginator.num_pages }}">
+              <input id="page" type="number" name="page" min="1" max="{{ paginator.num_pages }}" onkeyup=imposeMinMax(this)>
               <button class="button button--submit" type="submit" id="form-button">
                 {% trans "Go" %}
               </button>
@@ -85,4 +85,16 @@
       </td>
     </tr>
 </tbody>
+    <script>
+    function imposeMinMax(el){
+  if(el.value != ""){
+    if(parseInt(el.value) < parseInt(el.min)){
+      el.value = el.min;
+    }
+    if(parseInt(el.value) > parseInt(el.max)){
+      el.value = el.max;
+    }
+  }
+}
+    </script>
 {% endif %}
