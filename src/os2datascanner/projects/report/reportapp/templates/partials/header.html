@@ -1,32 +1,42 @@
 {% load staticfiles %}
 
+<!DOCTYPE html>
 <html lang="da">
 
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+  <!-- TODO: This is only necessary for IE9 and older browsers. Are we supporting IE9- ? -->
   <!--[if IE]><link rel="icon" href="/favicon.ico"><![endif]-->
+  
   <title>OS2datascanner</title>
+  
+  <!-- TODO: Is this polyfill script not imported via Babel in bundle.js ? -->
   <!-- <script src="{% static "src/js/ie11CustomProperties.js" %}"></script> -->
 
-  <link rel="icon" type="image/png" sizes="32x32" href="{% static "src/favicons/favicon-32x32.png" %}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{% static "src/favicons/favicon-16x16.png" %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'src/favicons/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'src/favicons/favicon-16x16.png' %}">
   <meta name="theme-color" content="#4DBA87">
   <meta name="apple-mobile-web-app-capable" content="no">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="apple-touch-icon" href="{% static "src/favicons/apple-touch-icon-152x152.png" %}">
-  <link rel="mask-icon" href="{% static "src/favicons/safari-pinned-tab.svg" %}" color="#4DBA87">
-  <meta name="msapplication-TileImage" content="{% static "src/favicons/msapplication-icon-144x144.png" %}">
+  <link rel="apple-touch-icon" href="{% static 'src/favicons/apple-touch-icon-152x152.png' %}">
+  <link rel="mask-icon" href="{% static 'src/favicons/safari-pinned-tab.svg' %}" color="#4DBA87">
+  <meta name="msapplication-TileImage" content="{% static 'src/favicons/msapplication-icon-144x144.png' %}">
   <meta name="msapplication-TileColor" content="#000000">
 
   {% if not settings.DEBUG %}
-  <link href="{% static "dist/bundle.min.css" %}" rel="stylesheet" />
+  <link href="{% static 'dist/bundle.min.css' %}" rel="stylesheet">
   {% else %}
-  <link href="{% static "dist/bundle.css" %}" rel="stylesheet" />
+  <link href="{% static 'dist/bundle.css' %}" rel="stylesheet">
   {% endif %}
 
+  <!-- TODO: The following document.write action will try to write a Django template string literally on the client. This will not work in browsers. -->
+  <!-- ALSO: Is ie11CustomProperties polyfill script not imported via Babel in bundle.js ? -->
   <script>window.MSInputMethodContext && document.documentMode && document.write('<script src="{% static "3rdparty/ie11CustomProperties.js" %}"><\x2fscript>');</script>
+
+  <!-- TODO: This is only necessary for IE8 and older browsers. Are we supporting IE8- ? -->
   <script>
     document.createElement('header');
     document.createElement('section');
@@ -36,9 +46,11 @@
     document.createElement('nav');
     document.createElement('footer');
   </script>
+  
 </head>
 
 <body class="{{ body_class|default:'page' }}">
   <noscript>
+    <!-- TODO: Add Danish translation -->
     <strong>We're sorry but <em>OS2Datascanner</em> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
   </noscript>

@@ -5,17 +5,17 @@
 <html lang="da" class="{% block rendertype %}{% endblock %}">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
   <title>{% block title %}{% endblock %} | OS2datascanner</title>
 
   {% block styling %}
     {% if not settings.DEBUG %}
-    <link href="{% static "dist/bundle.min.css" %}" rel="stylesheet" />
+    <link href="{% static 'dist/bundle.min.css' %}" rel="stylesheet">
     {% else %}
-    <link href="{% static "dist/bundle.css" %}" rel="stylesheet" />
+    <link href="{% static 'dist/bundle.css' %}" rel="stylesheet">
     {% endif %}
   {% endblock %}
 
@@ -31,7 +31,12 @@
   <meta name="msapplication-TileColor" content="#000000">
 
   {% block extra_head_html %}{% endblock %}
+
+  <!-- TODO: The following document.write action will try to write a Django template string literally on the client. This will not work in browsers. -->
+  <!-- ALSO: Is ie11CustomProperties polyfill script not imported via Babel in bundle.js ? -->
   <script>window.MSInputMethodContext && document.documentMode && document.write('<script src="{% static "3rdparty/ie11CustomProperties.js" %}"><\x2fscript>');</script>
+
+  <!-- TODO: This is only necessary for IE8 and older browsers. Are we supporting IE8- ? -->
   <script>
     document.createElement('header');
     document.createElement('section');
@@ -43,7 +48,7 @@
   </script>
 
   <!-- Support IE for svgxuse -->
-  <script src="{% static "src/js/svgxuse.js" %}" defer></script>
+  <script src="{% static 'src/js/svgxuse.js' %}" defer></script>
 
 </head>
 <body class="{{ body_class|default:'page' }}">
@@ -62,19 +67,19 @@
   </div>
 
   {% if not settings.DEBUG %}
-  <script src="{% static "3rdparty/jquery-3.4.1.slim.min.js" %} "></script>
+  <script src="{% static '3rdparty/jquery-3.4.1.slim.min.js' %} "></script>
   {% else %}
-  <script src="{% static "3rdparty/jquery-3.4.1.slim.js" %} "></script>
+  <script src="{% static '3rdparty/jquery-3.4.1.slim.js' %} "></script>
   {% endif %}
 
   {% block scripts %}
     {% if not settings.DEBUG %}
-    <script src="{% static "3rdparty/jquery.modal.min.js" %} "></script>
-    <script src="{% static "3rdparty/bootstrap.min.js" %}"></script>
+    <script src="{% static '3rdparty/jquery.modal.min.js' %} "></script>
+    <script src="{% static '3rdparty/bootstrap.min.js' %}"></script>
     {% else %}
-    <script src="{% static "3rdparty/bootstrap.js" %}"></script>
+    <script src="{% static '3rdparty/bootstrap.js' %}"></script>
     {% endif %}
-    <script src="{% static "js/main.js" %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
   {% endblock %}
 
   {% block jquery_script %}{% endblock %}
