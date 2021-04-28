@@ -22,7 +22,6 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from .models.authentication_model import Authentication
-from .models.group_model import Group
 from .models.organization_model import Organization, APIKey
 from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
@@ -50,7 +49,7 @@ class AuthenticationAdmin(admin.ModelAdmin):
 @admin.register(AddressRule)
 class RuleAdmin(admin.ModelAdmin):
     list_filter = ('sensitivity',)
-    list_display = ('name', 'organization', 'group', 'sensitivity')
+    list_display = ('name', 'organization', 'sensitivity')
 
 
 @admin.register(RegexPattern)
@@ -73,7 +72,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 class ScannerAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'validation_status')
 
-for _cls in [Group, APIKey, ScheduledCheckup]:
+for _cls in [APIKey, ScheduledCheckup]:
     admin.site.register(_cls)
 
 
@@ -93,8 +92,6 @@ class ProfileInline(admin.TabularInline):
 
     model = UserProfile
     extra = 1
-    if not settings.DO_USE_GROUPS:
-        exclude = ['is_group_admin']
     can_delete = False
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

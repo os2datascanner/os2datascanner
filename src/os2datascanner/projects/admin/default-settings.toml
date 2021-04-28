@@ -77,7 +77,6 @@ STATIC_URL = "/static/"
 ICON_SPRITE_URL = "/static/src/svg/symbol-defs.svg"
 LOGIN_REDIRECT_URL = "/"
 NOTIFICATION_INSTITUTION = ""
-DO_USE_GROUPS = false
 
 MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
