@@ -30,7 +30,6 @@ from .models.scannerjobs.gmail_model import GmailScanner
 from .models.scannerjobs.sbsysscanner_model import SbsysScanner
 from .views.api import JSONAPIView
 from .views.views import DialogSuccess
-from .views.views import DesignGuide
 from .views.exchangescanner_views import (
     ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate,
     ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun)
@@ -299,12 +298,6 @@ urlpatterns = [
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(
         packages=('os2datascanner.projects.admin.adminapp', 'recurrence'),
     )),
-
-    url(r'^designguide',
-        DesignGuide.as_view(
-            template_name='designguide.html',
-        ),
-        name='designguide'),
 
     url(r'^health/', lambda r: HttpResponse()),
 ]
