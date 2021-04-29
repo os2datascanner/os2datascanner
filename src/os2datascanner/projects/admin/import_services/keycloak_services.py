@@ -72,3 +72,42 @@ def request_create_component(realm, token, payload):
         'Content-Type': 'application/json;charset=utf-8',
     }
     return requests.post(url, data=json.dumps(payload), headers=headers)
+
+
+def check_ldap_connection(realm, token, connection_url):
+    """ Given realm name, token and ldap connection url,
+        returns a post request to testLDAPConnection for checking connection"""
+
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/testLDAPConnection')
+
+    headers = {
+        'Authorization': f'bearer {token}',
+        'Content-Type': 'application/json;charset=utf-8',
+    }
+    payload = {
+        "action": "testConnection",
+        "connectionUrl": connection_url
+    }
+    return requests.post(url, data=json.dumps(payload), headers=headers)
+
+
+def check_ldap_connection_authentication(realm, token, connection_url, bind_dn, bind_credential):
+    """ Given realm name, token, ldap connection url, bindDn and bindCredential,
+            returns a post request to testLDAPConnection for checking authentication"""
+
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/testLDAPConnection')
+
+    headers = {
+        'Authorization': f'bearer {token}',
+        'Content-Type': 'application/json;charset=utf-8',
+    }
+    payload = {
+        "action": "testAuthentication",
+        "connectionUrl": connection_url,
+        "bindCredential": bind_credential,
+        "bindDn": bind_dn
+    }
+    return requests.post(url, data=json.dumps(payload), headers=headers)
+
