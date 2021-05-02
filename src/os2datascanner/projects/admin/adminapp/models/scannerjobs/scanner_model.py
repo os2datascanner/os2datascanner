@@ -46,7 +46,6 @@ from os2datascanner.engine2.conversions.types import OutputType
 from ..authentication_model import Authentication
 from ..organization_model import Organization
 from ..rules.rule_model import Rule
-from ..userprofile_model import UserProfile
 
 base_dir = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -63,17 +62,17 @@ class Scanner(models.Model):
                             db_index=True,
                             verbose_name='Navn')
 
-    organization = models.ForeignKey(Organization, null=False,
-                                     verbose_name='Organisation',
+    organization = models.ForeignKey(Organization, null=True, blank=True,
+                                     verbose_name='organization - deprecated',
                                      on_delete=models.PROTECT)
 
     ldap_organization = models.ForeignKey(
         'organizations.Organization',
         on_delete=models.PROTECT,
         related_name='scannerjob',
-        verbose_name=_('organisation'),
+        verbose_name=_('organization'),
         default=None,
-        null=True
+        null=True,
     )
 
     schedule = RecurrenceField(max_length=1024,
@@ -96,9 +95,6 @@ class Scanner(models.Model):
                                    blank=True,
                                    verbose_name='Regler',
                                    related_name='scanners')
-
-    recipients = models.ManyToManyField(UserProfile, blank=True,
-                                        verbose_name='Modtagere')
 
     # Spreadsheet annotation and replacement parameters
 

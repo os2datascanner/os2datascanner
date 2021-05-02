@@ -37,16 +37,16 @@ class Rule(models.Model):
 
     name = models.CharField(max_length=256, unique=True, null=False,
                             verbose_name='Navn')
-    organization = models.ForeignKey(Organization, null=False,
-                                     verbose_name='Organisation',
+    organization = models.ForeignKey(Organization, null=True, blank=True,
+                                     verbose_name='organization - deprecated',
                                      on_delete=models.PROTECT)
     ldap_organization = models.ForeignKey(
         'organizations.Organization',
         on_delete=models.PROTECT,
         related_name='rule',
-        verbose_name=_('organisation'),
+        verbose_name=_('organization'),
         default=None,
-        null=True
+        null=True,
     )
     description = models.TextField(verbose_name='Beskrivelse')
     sensitivity = models.IntegerField(choices=Sensitivity.choices,

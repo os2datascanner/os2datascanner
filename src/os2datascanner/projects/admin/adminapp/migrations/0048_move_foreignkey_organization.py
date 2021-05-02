@@ -48,23 +48,47 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rule',
             name='ldap_organization',
-            field=models.ForeignKey(null=True, default=None, on_delete=django.db.models.deletion.PROTECT,
-                                    related_name='rule', to='organizations.Organization',
-                                    verbose_name='organisation'),
+            field=models.ForeignKey(
+                null=True,
+                default=None,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name='rule', to='organizations.Organization',
+                verbose_name='organization'
+            ),
+        ),
+        migrations.AlterField(
+            model_name='rule',
+            name='organization',
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to='os2datascanner.Organization',
+                verbose_name='organization - deprecated'
+            ),
         ),
         migrations.AddField(
             model_name='scanner',
             name='ldap_organization',
-            field=models.ForeignKey(null=True, default=None, on_delete=django.db.models.deletion.PROTECT,
-                                    related_name='scannerjob', to='organizations.Organization',
-                                    verbose_name='organisation'),
+            field=models.ForeignKey(
+                null=True,
+                default=None,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name='scannerjob',
+                to='organizations.Organization',
+                verbose_name='organization'
+            ),
         ),
-        migrations.AddField(
-            model_name='userprofile',
-            name='ldap_organization',
-            field=models.ForeignKey(null=True, default=None, on_delete=django.db.models.deletion.PROTECT,
-                                    related_name='profile', to='organizations.Organization',
-                                    verbose_name='organisation'),
+        migrations.AlterField(
+            model_name='scanner',
+            name='organization',
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to='os2datascanner.Organization',
+                verbose_name='organization - deprecated'
+            ),
         ),
         migrations.AddField(
             model_name='apikey',

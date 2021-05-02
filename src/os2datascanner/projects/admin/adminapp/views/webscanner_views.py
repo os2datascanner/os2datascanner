@@ -1,3 +1,16 @@
+# The contents of this file are subject to the Mozilla Public License
+# Version 2.0 (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+#    http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS"basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
+#
 from ..validate import validate_domain, get_validation_str
 from .scanner_views import *
 from ..models.scannerjobs.webscanner_model import WebScanner
@@ -24,7 +37,7 @@ class WebScannerCreate(ScannerCreate):
               'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
               'do_link_check', 'do_external_link_check', 'do_collect_cookies',
               'do_last_modified_check', 'do_last_modified_check_head_request',
-              'rules', 'recipients']
+              'rules', 'ldap_organization',]
 
     def get_form(self, form_class=None):
         if form_class is None:
@@ -56,7 +69,7 @@ class WebScannerUpdate(ScannerUpdate):
               'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
               'do_link_check', 'do_external_link_check', 'do_collect_cookies',
               'do_last_modified_check', 'do_last_modified_check_head_request',
-              'rules', 'recipients']
+              'rules', 'ldap_organization',]
 
     def form_valid(self, form):
         if url_contains_spaces(form):

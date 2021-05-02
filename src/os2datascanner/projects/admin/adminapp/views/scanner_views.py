@@ -1,18 +1,47 @@
+# The contents of this file are subject to the Mozilla Public License
+# Version 2.0 (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+#    http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS"basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
+#
 from json import dumps
 from pika.exceptions import AMQPError
 
-from django.db.models import Q
 from django.forms import ModelMultipleChoiceField
+
+from os2datascanner.projects.admin.organizations.models import Organization
 
 from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
 from ..models.authentication_model import Authentication
 from ..models.rules.rule_model import Rule
 from ..models.scannerjobs.scanner_model import Scanner, ScanStatus
-from ..models.userprofile_model import UserProfile
 
 
-class StatusOverview(RestrictedListView):
+class StatusBase(RestrictedListView):
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser and user.is_active:
+            return self.model.objects.all()
+        elif user.is_staff and user.is_active:
+            return self.model.objects.filter(
+                scanner__ldap_organization__in=
+                [org.uuid for org in
+                 user.administrator_for.client.organizations.all()]
+            )
+        else:
+            return self.model.objects.none()
+
+
+class StatusOverview(StatusBase):
     template_name = "os2datascanner/scan_status.html"
     model = ScanStatus
 
@@ -20,7 +49,7 @@ class StatusOverview(RestrictedListView):
         return super().get_queryset().order_by("-pk")
 
 
-class StatusCompleted(RestrictedListView):
+class StatusCompleted(StatusBase):
     template_name = "os2datascanner/scan_completed.html"
     model = ScanStatus
 
@@ -35,14 +64,21 @@ class ScannerList(RestrictedListView):
     context_object_name = 'scanner_list'
 
     def get_queryset(self):
-        """Get queryset, don't include non-visible scanners."""
-        qs = super().get_queryset()
-        # Dismiss scans that are not visible
-        qs = qs.filter(is_visible=True)
-        return qs
+        user = self.request.user
+        if user.is_superuser and user.is_active:
+            return self.model.objects.all()
+        elif user.is_staff and user.is_active:
+            return self.model.objects.filter(
+                ldap_organization__in=[
+                    org.uuid for org in
+                    user.administrator_for.client.organizations.all()
+                ]
+            )
+        else:
+            return self.model.objects.none()
 
 
-class ScannerBase():
+class ScannerBase(object):
     template_name = 'os2datascanner/scanner_form.html'
 
     def get_form(self, form_class=None):
@@ -52,17 +88,22 @@ class ScannerBase():
         will be limited by the user's organization unless the user is a
         superuser.
         """
-        try:
-            organization = self.request.user.profile.organization
-        except UserProfile.DoesNotExist:
-            organization = None
 
         form = super().get_form(form_class)
-
-        if not self.request.user.is_superuser:
-            self.filter_queryset(form, organization)
+        user = self.request.user
+        if not user.is_superuser:
+            self.filter_queryset(form,
+                                 user.administrator_for.client.organizations.all())
 
         form.fields['schedule'].required = False
+        org_qs = Organization.objects.none()
+        if hasattr(user, 'administrator_for'):
+            org_qs = Organization.objects.filter(
+                client=user.administrator_for.client
+            )
+        elif user.is_superuser:
+            org_qs = Organization.objects.all()
+        form.fields['ldap_organization'].queryset = org_qs
 
         form.fields["rules"] = ModelMultipleChoiceField(
             Rule.objects.all(),
@@ -86,17 +127,16 @@ class ScannerBase():
     def filter_queryset(self, form, organization):
         for field_name in ['rules']:
             queryset = form.fields[field_name].queryset
-            queryset = queryset.filter(organization=organization)
+            queryset = queryset.filter(ldap_organization=organization)
             form.fields[field_name].queryset = queryset
 
     def get_scanner_object(self):
         return self.get_object()
 
     def form_valid(self, form):
-        if not self.request.user.is_superuser:
-            user_profile = self.request.user.profile
+        user = self.request.user
+        if not user.is_superuser:
             self.object = form.save(commit=False)
-            self.object.organization = user_profile.organization
 
         """Makes sure authentication info gets stored in db."""
         domain = form.save(commit=False)

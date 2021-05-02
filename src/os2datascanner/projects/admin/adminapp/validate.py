@@ -8,11 +8,9 @@
 # for the specific language governing rights and limitations under the
 # License.
 #
-# OS2Webscanner was developed by Magenta in collaboration with OS2 the
-# Danish community of open source municipalities (http://www.os2web.dk/).
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
 #
-# The code is currently governed by OS2 the Danish community of open
-# source municipalities ( http://www.os2web.dk/ )
 """Domain validation functions."""
 
 import hashlib
@@ -31,7 +29,6 @@ def _do_request(url):
         r = urlopen(request)
         # TODO: We get decoding error when using utf-8. But it should be utf-8 decoded.
         return r.read().decode('latin1')
-    # except urllib2.URLError, urllib2.HTTPError:
     except URLError:
         return None
 
@@ -41,7 +38,7 @@ def _get_validation_hash(domain):
 
     The validation hash is based on the domain's organization's primary key.
     """
-    return hashlib.md5(str(domain.organization.pk).encode('utf-8')).hexdigest()
+    return hashlib.md5(str(domain.ldap_organization.pk).encode('utf-8')).hexdigest()
 
 
 def get_validation_str(domain, method=None):
