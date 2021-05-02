@@ -137,69 +137,26 @@
             {% if form.name.errors %}{{ form.name.errors }}{% endif %}
           </div>
 
-          {% if form.organization %}
+          {% if form.ldap_organization %}
           <div 
-            id="{{ form.organization.auto_id }}_container" 
-            class="dropdown-group form__group{% if form.organization.errors %} has-error{% endif %}">
-            <label class="required-form" for="id_{{ form.organization.name }}">{{ form.organization.label }}</label>
+            id="{{ form.ldap_organization.auto_id }}_container"
+            class="dropdown-group form__group
+             {% if form.ldap_organization.errors %}
+                has-error
+             {% endif %}">
+            <label class="required-form" for="id_{{ form.ldap_organization.name }}">
+              {{ form.ldap_organization.label }}
+            </label>
             <div class="dropdown">
-              <select 
-                name="{{ form.organization.name }}" 
-                id="id_{{ form.organization.name }}">
-
-                {% for value, tag in form.organization.field.choices %}
-                <option 
-                  value="{{ value }}" 
-                  {% if form.organization.value|add:"0" == value|add:"0" %} 
-                  selected="selected"
-                  {% endif %}>
-                  {{ tag }}
-                </option>
-                {% endfor %}
-              </select>
+               {{ form.ldap_organization }}
             </div>
-            {% if form.organization.help_text %}
-            <span class="form__help-text">{{ form.organization.help_text }}</span>
+            {% if form.ldap_organization.help_text %}
+            <span class="form__help-text">{{ form.ldap_organization.help_text }}</span>
             {% endif %}
-
-            {% if form.organization.errors %}{{ form.organization.errors }}{% endif %}
+           {{ form.ldap_organization.errors }}
           </div>
           {% endif %}
         </fieldset>
-
-        {% if form.group %}
-        <fieldset class="form__fieldset">
-          <div 
-            id="{{ form.group.auto_id }}_container" 
-            class="dropdown-group form__group form-group{% if form.group.errors %} has-error{% endif %}">
-
-            <label for="id_{{ form.group.name }}">{{ form.group.label }}</label>
-
-            <div class="dropdown">
-              <select 
-                name="{{ form.group.name }}" 
-                id="id_{{ form.group.name }}">
-  
-                {% for value, tag in form.group.field.choices %}
-                <option 
-                  value="{{ value }}"
-                  {% if form.group.value|add:"0" == value|add:"0" %}
-                  selected="selected"
-                  {% endif %}>
-                  {{ tag }}
-                </option>
-                {% endfor %}
-              </select>
-            </div>
-
-            {% if form.group.help_text %}
-            <span>{{ form.group.help_text }}</span>
-            {% endif %}
-
-            {% if form.group.errors %}{{ form.group.errors }}{% endif %}
-          </div>
-        </fieldset>
-        {% endif %}
       </section>
 
       <section class="data-form">

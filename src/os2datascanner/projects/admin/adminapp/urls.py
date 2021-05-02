@@ -24,34 +24,38 @@ from .models.scannerjobs.exchangescanner_model import ExchangeScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
-from .models.scannerjobs.msgraph_models import (
-        MSGraphMailScanner, MSGraphFileScanner)
+from .models.scannerjobs.msgraph_models import (MSGraphMailScanner,
+                                                MSGraphFileScanner)
 from .models.scannerjobs.gmail_model import GmailScanner
 from .models.scannerjobs.sbsysscanner_model import SbsysScanner
-from .views.exchangescanner_views import ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate, \
-    ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun
-from .views.filescanner_views import FileScannerCreate, FileScannerRun, FileScannerAskRun, FileScannerUpdate, \
-    FileScannerDelete, FileScannerList
-from .views.dropboxscanner_views import DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun, DropboxScannerUpdate, \
-    DropboxScannerDelete, DropboxScannerList
-from .views.googledrivescanner_views import GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun, \
-    GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete
-from .views.gmailscanner_views import GmailScannerCreate, GmailScannerRun, GmailScannerAskRun, GmailScannerUpdate, \
-    GmailScannerDelete, GmailScannerList
-from .views.sbsysscanner_views import SbsysScannerCreate, SbsysScannerList, SbsysScannerAskRun, SbsysScannerDelete, \
-    SbsysScannerRun, SbsysScannerUpdate
-from .views.rule_views import RuleList, \
-    CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
-    RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
 from .views.api import JSONAPIView
-from .views.views import OrganizationList
 from .views.views import DialogSuccess
-from .views.scanner_views import (StatusOverview, StatusCompleted)
-from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
-                                     WebScannerDelete, WebScannerRun,
-                                     WebScannerAskRun, WebScannerList,
-                                     WebScannerValidate)
 from .views.views import DesignGuide
+from .views.exchangescanner_views import (
+    ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate,
+    ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun)
+from .views.filescanner_views import (
+    FileScannerCreate, FileScannerRun, FileScannerAskRun,
+    FileScannerUpdate, FileScannerDelete, FileScannerList)
+from .views.dropboxscanner_views import (
+    DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun,
+    DropboxScannerUpdate, DropboxScannerDelete, DropboxScannerList)
+from .views.googledrivescanner_views import (
+    GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun,
+    GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete)
+from .views.gmailscanner_views import (
+    GmailScannerCreate, GmailScannerRun, GmailScannerAskRun,
+    GmailScannerUpdate, GmailScannerDelete, GmailScannerList)
+from .views.sbsysscanner_views import (
+    SbsysScannerCreate, SbsysScannerList, SbsysScannerAskRun,
+    SbsysScannerDelete, SbsysScannerRun, SbsysScannerUpdate)
+from .views.rule_views import (
+    RuleList, CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, RegexRuleCreate,
+    RegexRuleUpdate, RegexRuleDelete)
+from .views.scanner_views import (StatusOverview, StatusCompleted)
+from .views.webscanner_views import (
+    WebScannerCreate, WebScannerUpdate, WebScannerDelete,
+    WebScannerRun, WebScannerAskRun, WebScannerList, WebScannerValidate)
 from .views.msgraph_views import (
         MSGraphMailList, MSGraphMailDelete, MSGraphMailCreate,
         MSGraphMailUpdate, MSGraphMailRun, MSGraphMailAskRun,
@@ -287,13 +291,14 @@ urlpatterns = [
         DialogSuccess.as_view()),
     url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(saved)/$',
         DialogSuccess.as_view()),
+    url(r'^(rules/regex|rules/cpr)/(\d+)/(created)/$',
+        DialogSuccess.as_view()),
+    url(r'^(rules/regex|rules/cpr)/(\d+)/(saved)/$',
+        DialogSuccess.as_view()),
 
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(
         packages=('os2datascanner.projects.admin.adminapp', 'recurrence'),
     )),
-    # System functions
-    url(r'^system/orgs_and_domains/$', OrganizationList.as_view(),
-        name='orgs_and_domains'),
 
     url(r'^designguide',
         DesignGuide.as_view(
