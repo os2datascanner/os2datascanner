@@ -1,4 +1,16 @@
-from json import dumps
+# The contents of this file are subject to the Mozilla Public License
+# Version 2.0 (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+#    http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS"basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
+#
 from django.conf import settings
 from django.views import View
 from django.views.generic.base import TemplateView
@@ -69,7 +81,7 @@ class _MSGraphMailCreate(ScannerCreate):
     model = MSGraphMailScanner
     type = 'msgraph-mail'
     fields = ['name', 'schedule', 'tenant_id', 'do_ocr',
-              'do_last_modified_check', 'rules', 'recipients']
+              'do_last_modified_check', 'rules']
 
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
@@ -80,13 +92,14 @@ class _MSGraphMailCreate(ScannerCreate):
         """The URL to redirect to after successful creation."""
         return '/msgraph-mailscanners/%s/created/' % self.object.pk
 
+
 class MSGraphMailUpdate(ScannerUpdate):
     """Displays the parameters of an existing Microsoft Graph mail scanner job
     for modification."""
     model = MSGraphMailScanner
     type = 'msgraph-mailscanners'
     fields = ['name', 'schedule', 'tenant_id', 'do_ocr',
-              'do_last_modified_check', 'rules', 'recipients']
+              'do_last_modified_check', 'rules', 'ldap_organization',]
 
     def get_success_url(self):
         return '/msgraph-mailscanners/%s/saved/' % self.object.pk
@@ -150,7 +163,7 @@ class _MSGraphFileCreate(ScannerCreate):
     type = 'msgraph-file'
     fields = ['name', 'schedule', 'tenant_id',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
-              'do_last_modified_check', 'rules', 'recipients']
+              'do_last_modified_check', 'rules', 'ldap_organization',]
 
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
@@ -161,6 +174,7 @@ class _MSGraphFileCreate(ScannerCreate):
         """The URL to redirect to after successful creation."""
         return '/msgraph-filescanners/%s/created/' % self.object.pk
 
+
 class MSGraphFileUpdate(ScannerUpdate):
     """Displays the parameters of an existing Microsoft Graph file scanner job
     for modification."""
@@ -168,7 +182,7 @@ class MSGraphFileUpdate(ScannerUpdate):
     type = 'msgraph-filescanners'
     fields = ['name', 'schedule', 'tenant_id',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
-              'do_last_modified_check', 'rules', 'recipients']
+              'do_last_modified_check', 'rules', 'ldap_organization',]
 
     def get_success_url(self):
         return '/msgraph-filescanners/%s/saved/' % self.object.pk

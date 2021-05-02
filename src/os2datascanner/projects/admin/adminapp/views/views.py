@@ -17,7 +17,6 @@ from django.core.exceptions import PermissionDenied
 from django.forms.models import modelform_factory
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View, ListView, TemplateView, DetailView
@@ -29,10 +28,8 @@ from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ..models.scannerjobs.filescanner_model import FileScanner
 from ..models.scannerjobs.gmail_model import GmailScanner
 from ..models.scannerjobs.sbsysscanner_model import SbsysScanner
-from ..models.organization_model import Organization
 from ..models.rules.cprrule_model import CPRRule
 from ..models.rules.regexrule_model import RegexRule
-from ..models.userprofile_model import UserProfile
 from ..models.scannerjobs.msgraph_models import (
         MSGraphFileScanner, MSGraphMailScanner)
 from ..models.scannerjobs.webscanner_model import WebScanner
@@ -40,21 +37,11 @@ from ..models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 
 
 class LoginRequiredMixin(View):
-    """Include to require login.
-
-    If user is "upload only", redirect to upload page."""
+    """Include to require login."""
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         """Check for login and dispatch the view."""
-        user = self.request.user
-        try:
-            profile = user.profile
-            if profile.is_upload_only:
-                return redirect('system/upload_file')
-        except UserProfile.DoesNotExist:
-            # User is *not* "upload only", all is good
-            pass
         return super().dispatch(*args, **kwargs)
 
 
@@ -77,17 +64,10 @@ class RestrictedListView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         """Restrict to the organization of the logged-in user."""
         user = self.request.user
-        if user.is_superuser or user.is_staff:
+        if user.is_superuser and user.is_active:
             return self.model.objects.all()
         else:
-            try:
-                profile = user.profile
-                return self.model.objects.filter(
-                    organization=profile.organization
-                )
-
-            except UserProfile.DoesNotExist:
-                return self.model.objects.filter(organization=None)
+            return self.model.objects.none()
 
 
 class MainPageView(TemplateView, LoginRequiredMixin):
@@ -98,40 +78,6 @@ class MainPageView(TemplateView, LoginRequiredMixin):
 
 class DesignGuide(TemplateView):
     template_name = 'designguide.html'
-
-
-class OrganizationList(RestrictedListView):
-    """Display a list of organizations, superusers only!"""
-
-    model = Organization
-    template_name = 'os2datascanner/organizations_and_domains.html'
-
-    def get_context_data(self, **kwargs):
-        """Setup context for the template."""
-        context = super().get_context_data(**kwargs)
-        organization_list = context['organization_list']
-        orgs_with_domains = []
-        for org in organization_list:
-            tld_list = []
-
-            def top_level(d):
-                return '.'.join(d.strip('/').split('.')[-2:])
-
-            tlds = set([top_level(d.url) for d in
-                        org.scanner_set.all()])
-
-            for tld in tlds:
-                sub_domains = [
-                    d.url for d in org.scanner_set.all() if top_level(d.url) ==
-                                                         tld
-                ]
-                tld_list.append({'tld': tld, 'domains': sub_domains})
-
-            orgs_with_domains.append({'name': org.name, 'domains': tld_list})
-
-        context['orgs_with_domains'] = orgs_with_domains
-
-        return context
 
 
 class RuleList(RestrictedListView):
@@ -166,13 +112,9 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
 
     def form_valid(self, form):
         """Validate the form."""
-        if not self.request.user.is_superuser or not self.request.user.is_staff:
-            try:
-                user_profile = self.request.user.profile
-            except UserProfile.DoesNotExist:
-                raise PermissionDenied
+        user = self.request.user
+        if not user.is_superuser or not user.is_staff:
             self.object = form.save(commit=False)
-            self.object.organization = user_profile.organization
 
         return super().form_valid(form)
 
@@ -203,15 +145,11 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
     def get_queryset(self):
         """Get queryset filtered by user's organization."""
         queryset = super().get_queryset()
-        if not self.request.user.is_superuser or not self.request.user.is_staff:
-            organization = None
-            try:
-                user_profile = self.request.user.profile
-                organization = user_profile.organization
-            except UserProfile.DoesNotExist:
-                organization = None
-
-            queryset = queryset.filter(organization=organization)
+        user = self.request.user
+        if not user.is_superuser or not user.is_staff:
+            queryset = queryset.filter(
+                ldap_organization__in=user.administrator_for.client.organizations.all()
+            )
         return queryset
 
 

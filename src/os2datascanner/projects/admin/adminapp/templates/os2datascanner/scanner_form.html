@@ -140,8 +140,8 @@
             {% include "os2datascanner/scanner_form_input_field.html" with field=form.alias placeholder="f.eks. P" %}
           {% endif %}
 
-          {% if form.organization %}
-            {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.organization required="True" %}
+          {% if form.ldap_organization %}
+            {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.ldap_organization required="True" %}
           {% endif %}
 
           {% if form.validation_status %}

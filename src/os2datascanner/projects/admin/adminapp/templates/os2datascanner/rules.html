@@ -43,11 +43,9 @@
         <th class="datatable__column--name">
           {% trans "Name" %}
         </th>
-        {% if user.is_superuser %}
         <th class="datatable__column--org">
           {% trans "Organization" %}
         </th>
-        {% endif %}
         <th class="datatable__column--description">
           {% trans "Description" %}
         </th>
@@ -66,9 +64,7 @@
       {% for rule in regexrule_list %}
       <tr tabindex="0">
         <td class="datatable__column--name">{{ rule.name }}</td>
-        {% if user.is_superuser %}
-        <td class="datatable__column--org">{{ rule.organization }}</td>
-        {% endif %}
+        <td class="datatable__column--org">{{ rule.ldap_organization }}</td>
         <td class="datatable__column--description">{{ rule.description }}</td>
 
         <td class="datatable__column--expression">
@@ -146,11 +142,9 @@
         <th class="datatable__column--name">
           {% trans "Name" %}
         </th>
-        {% if user.is_superuser %}
         <th class="datatable__column--org">
           {% trans "Organization" %}
         </th>
-        {% endif %}
         <th class="datatable__column--description">
           {% trans "Description" %}
         </th>
@@ -166,9 +160,7 @@
       {% for rule in cprrule_list %}
       <tr tabindex="0">
         <td class="datatable__column--name">{{ rule.name }}</td>
-        {% if user.is_superuser %}
-        <td class="datatable__column--org">{{ rule.organization }}</td>
-        {% endif %}
+        <td class="datatable__column--org">{{ rule.ldap_organization }}</td>
         <td class="datatable__column--description">{{ rule.description }}</td>
         <td class="datatable__column--expression"></td>
         <td class="datatable__column--sensitivity">
