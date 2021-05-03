@@ -40,6 +40,7 @@ def message_received_raw(body, channel, source_manager):
         return
 
     count = 0
+    exception_message = ""
     try:
         for handle in scan_spec.source.handles(source_manager):
             try:
@@ -54,16 +55,18 @@ def message_received_raw(body, channel, source_manager):
                     messages.ConversionMessage(
                             scan_spec, handle, progress).to_json_object())
     except Exception as e:
-        logger.error(e, exc_info=True)
-        exception_message = ", ".join([str(a) for a in e.args])
-        yield ("os2ds_problems", messages.ProblemMessage(
-                scan_tag=scan_tag, source=scan_spec.source, handle=None,
-                message="Exploration error: {0}".format(
-                        exception_message)).to_json_object())
+        exception_message = "Exploration error. {0}: ".format(type(e).__name__)
+        exception_message += ", ".join([str(a) for a in e.args])
+        logger.error(exception_message, exc_info=True)
+        problem_message = messages.ProblemMessage(
+            scan_tag=scan_tag, source=scan_spec.source, handle=None,
+            message=exception_message)
+        yield ("os2ds_problems", problem_message.to_json_object())
     finally:
-        if "os2ds_status":
-            yield ("os2ds_status", messages.StatusMessage(
-                    scan_tag=scan_tag, total_objects=count).to_json_object())
+        yield ("os2ds_status", messages.StatusMessage(
+            scan_tag=scan_tag, total_objects=count,
+            message=exception_message, status_is_error=exception_message=="").
+               to_json_object())
 
 
 if __name__ == "__main__":

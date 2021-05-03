@@ -99,13 +99,13 @@ def message_received_raw(body, channel, source_manager):
                                 required.value: None
                             }).to_json_object())
     except Exception as e:
-        exception_message = ", ".join([str(a) for a in e.args])
+        exception_message = "Processing error. {0}: ".format(type(e).__name__)
+        exception_message += ", ".join([str(a) for a in e.args])
         for problems_q in ("os2ds_problems", "os2ds_checkups",):
             yield (problems_q, messages.ProblemMessage(
                     scan_tag=conversion.scan_spec.scan_tag,
                     source=None, handle=conversion.handle,
-                    message="Processing error: {0}".format(
-                            exception_message)).to_json_object())
+                    message=exception_message).to_json_object())
 
 
 if __name__ == "__main__":

@@ -401,6 +401,8 @@ class ScanStatus(models.Model):
     scanned_size = models.BigIntegerField(
             verbose_name=_("size of scanned objects"),
             null=True)
+    message = models.CharField(max_length=2048, blank=True, verbose_name='message')
+    status_is_error = models.BooleanField(default=False)
 
     @property
     def finished(self) -> bool:
