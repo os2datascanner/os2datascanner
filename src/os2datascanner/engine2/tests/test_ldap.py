@@ -1,0 +1,182 @@
+import copy
+import unittest
+
+from os2datascanner.utils.ldap import RDN, LDAPNode
+
+
+SUMER = LDAPNode.make(
+        RDN.make_sequence("L=Sumer"),
+        LDAPNode.make(
+                RDN.make_sequence("L=Eridu"),
+                LDAPNode.make(
+                        RDN.make_sequence("CN=Enki"),
+                        distinguishedName="CN=Enki,L=Eridu,L=Sumer",
+                        title="Lord of the Earth"),
+                LDAPNode.make(
+                        RDN.make_sequence("CN=Ninhursag"),
+                        distinguishedName="CN=Ninhursag,L=Eridu,L=Sumer")),
+        LDAPNode.make(
+                RDN.make_sequence("L=Uruk"),
+                LDAPNode.make(
+                        RDN.make_sequence("CN=Gilgamesh"),
+                        distinguishedName="CN=Gilgamesh,L=Uruk,L=Sumer"),
+                LDAPNode.make(
+                        RDN.make_sequence("CN=Enkidu"),
+                        distinguishedName="CN=Enkidu,L=Uruk,L=Sumer")))
+
+SUMER_ITERATOR = [
+    {"distinguishedName": "CN=Enki,L=Eridu,L=Sumer",
+            "title": "Lord of the Earth"},
+    {"distinguishedName": "CN=Ninhursag,L=Eridu,L=Sumer"},
+    {"distinguishedName": "CN=Gilgamesh,L=Uruk,L=Sumer"},
+    {"distinguishedName": "CN=Enkidu,L=Uruk,L=Sumer"},
+]
+
+POST_FLOOD = copy.deepcopy(SUMER)
+POST_FLOOD.children.append(
+        LDAPNode.make(
+                RDN.make_sequence("L=Kish"),
+                LDAPNode.make(
+                        RDN.make_sequence("CN=Etana"),
+                        distinguishedName="CN=Etana,L=Kish,L=Sumer")))
+
+POST_EPIC = copy.deepcopy(SUMER)
+del POST_EPIC.children[1].children[1]  # The death of Enkidu
+
+
+KEYCLOAK_USER = {
+    "id": "b458a8a0-ca3a-479e-bb7a-ee9be8cdc593",
+    "createdTimestamp": 1619701032883,
+    "username": "enkidu wildman",
+    "enabled": True,
+    "totp": False,
+    "emailVerified": False,
+    "firstName": "Enkidu",
+    "lastName": "Wildman",
+    "email": "ew@uruk",
+    "federationLink": "67f8323e-3682-40f3-acb8-18f568b010cf",
+    "attributes": {
+        "LDAP_ENTRY_DN": [
+            "cn=Enkidu Wildman,ou=Employees,dc=uruk"
+        ],
+        "modifyTimestamp": [
+            "20210429124502Z"
+        ],
+        "createTimestamp": [
+            "20210429124502Z"
+        ],
+        "LDAP_ID": [
+            "461c6b17-9516-4513-ad50-f9185962cb4f"
+        ]
+    },
+    "disableableCredentialTypes": [],
+    "requiredActions": [],
+    "notBefore": 0,
+    "access": {
+        "manageGroupMembership": True,
+        "view": True,
+        "mapRoles": True,
+        "impersonate": True,
+        "manage": True
+    }
+}
+
+
+class LDAPTest(unittest.TestCase):
+    def test_iterator_construction(self):
+        """LDAPNode.from_iterator should be able to construct a hierarchy from
+        a flat list of users."""
+        self.assertEqual(
+                SUMER,
+                LDAPNode.from_iterator(SUMER_ITERATOR).collapse(),
+                "LDAP iterator construction failed")
+
+    def test_iterator_skipping(self):
+        """LDAPNode.from_iterator should skip over objects that don't have an
+        identifiable distinguished name."""
+        self.assertEqual(
+                LDAPNode.from_iterator([
+                    {"distinguishedName": "CN=Enki"},
+                    {"extinguishedName": "CN=Enkidu"},
+                    {"distinguishedName": "CN=Ninhursag"}
+                ]),
+                LDAPNode.make(
+                    (),
+                    LDAPNode.make(
+                            RDN.make_sequence("CN=Enki"),
+                            distinguishedName="CN=Enki"),
+                    LDAPNode.make(
+                            RDN.make_sequence("CN=Ninhursag"),
+                            distinguishedName="CN=Ninhursag")
+                ),
+                "missing DN should have been ignored")
+
+    def test_addition(self):
+        """LDAPNode.diff should notice when an object is added to the
+        hierarchy."""
+        self.assertEqual(
+                list(SUMER.diff(POST_FLOOD)),
+                [
+                    (
+                        RDN.make_sequence("CN=Etana", "L=Kish", "L=Sumer"),
+                        None,
+                        POST_FLOOD.children[-1].children[-1]
+                    )
+                ],
+                "additive diff failed")
+
+    def test_removal(self):
+        """LDAPNode.diff should notice when an object is removed from the
+        hierarchy."""
+        self.assertEqual(
+                list(SUMER.diff(POST_EPIC)),
+                [
+                    (
+                        RDN.make_sequence("CN=Enkidu", "L=Uruk", "L=Sumer"),
+                        SUMER.children[1].children[1],
+                        None
+                    )
+                ],
+                "negative diff failed")
+
+    def test_property_change(self):
+        """LDAPNode.diff should notice when the properties of an object
+        change."""
+        s2 = copy.deepcopy(SUMER)
+        s2.children[0].children[0].properties["title"] = "Lord of the Waters"
+        self.assertEqual(
+                list(SUMER.diff(s2)),
+                [
+                    (
+                        RDN.make_sequence("CN=Enki", "L=Eridu", "L=Sumer"),
+                        SUMER.children[0].children[0],
+                        s2.children[0].children[0]
+                    )
+                ],
+                "property diff failed")
+
+    def test_custom_import(self):
+        """LDAPNode.from_iterator should be able to select distinguished names
+        from Keycloak's JSON serialisation of users."""
+
+        def select_keycloak_dn(user_dict):
+            return user_dict.get(
+                    "attributes", {}).get("LDAP_ENTRY_DN", [None])[0]
+        node = LDAPNode.from_iterator(
+                [KEYCLOAK_USER],
+                dn_selector=select_keycloak_dn).children[0]
+
+        # For the moment, we don't care about the properties here -- just the
+        # structure
+        node.children[0].children[0].properties.clear()
+
+        self.assertEqual(
+                node,
+                LDAPNode.make(
+                        RDN.make_sequence("dc=uruk"),
+                        LDAPNode.make(
+                                RDN.make_sequence("ou=Employees"),
+                                LDAPNode.make(
+                                        RDN.make_sequence(
+                                            "cn=Enkidu Wildman")))),
+                "construction from Keycloak JSON object failed")
