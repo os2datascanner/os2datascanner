@@ -99,7 +99,7 @@ class MSGraphMailUpdate(ScannerUpdate):
     model = MSGraphMailScanner
     type = 'msgraph-mailscanners'
     fields = ['name', 'schedule', 'tenant_id', 'do_ocr',
-              'do_last_modified_check', 'rules', 'ldap_organization',]
+              'do_last_modified_check', 'rules', 'organization',]
 
     def get_success_url(self):
         return '/msgraph-mailscanners/%s/saved/' % self.object.pk
@@ -163,7 +163,7 @@ class _MSGraphFileCreate(ScannerCreate):
     type = 'msgraph-file'
     fields = ['name', 'schedule', 'tenant_id',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
-              'do_last_modified_check', 'rules', 'ldap_organization',]
+              'do_last_modified_check', 'rules', 'organization',]
 
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
@@ -182,7 +182,7 @@ class MSGraphFileUpdate(ScannerUpdate):
     type = 'msgraph-filescanners'
     fields = ['name', 'schedule', 'tenant_id',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
-              'do_last_modified_check', 'rules', 'ldap_organization',]
+              'do_last_modified_check', 'rules', 'organization',]
 
     def get_success_url(self):
         return '/msgraph-filescanners/%s/saved/' % self.object.pk

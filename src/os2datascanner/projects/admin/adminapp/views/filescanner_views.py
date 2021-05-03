@@ -38,7 +38,7 @@ class FileScannerCreate(ScannerCreate):
         'do_ocr',
         'do_last_modified_check',
         'rules',
-        'ldap_organization',
+        'organization',
         ]
 
     def get_form(self, form_class=None):
@@ -67,7 +67,7 @@ class FileScannerUpdate(ScannerUpdate):
         'do_ocr',
         'do_last_modified_check',
         'rules',
-        'ldap_organization',
+        'organization',
         ]
 
     def get_form(self, form_class=None):

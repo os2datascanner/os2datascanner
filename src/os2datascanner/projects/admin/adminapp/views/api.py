@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from os2datascanner.engine2.rules.logical import OrRule
 from ..models.rules.rule_model import Rule
-from ..models.organization_model import APIKey
+from ..models.apikey_model import APIKey
 from ..models.scannerjobs.scanner_model import Scanner
 
 
@@ -23,7 +23,7 @@ def get_rule_1(key, body):
 
     try:
         rule = Rule.objects.select_subclasses().get(
-                pk=pk, ldap_organization=key.ldap_organization)
+                pk=pk, organization=key.organization)
     except Rule.DoesNotExist:
         return {
             "status": "fail",
@@ -50,7 +50,7 @@ def get_scanner_1(key, body):
 
     try:
         scanner = Scanner.objects.select_subclasses().get(
-                pk=pk, ldap_organization=key.ldap_organization)
+                pk=pk, organization=key.organization)
     except Scanner.DoesNotExist:
         return {
             "status": "fail",

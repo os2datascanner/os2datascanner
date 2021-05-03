@@ -148,7 +148,7 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
         user = self.request.user
         if not user.is_superuser or not user.is_staff:
             queryset = queryset.filter(
-                ldap_organization__in=user.administrator_for.client.organizations.all()
+                organization__in=user.administrator_for.client.organizations.all()
             )
         return queryset
 
