@@ -102,24 +102,24 @@ def as_file_uri(path: typing.Union[str, pathlib.Path]) -> str:
 
 
 def upload_path_webscan_sitemap(instance, filename):
-    return "organisation/%s" % instance.ldap_organization.slug + "/sitemaps/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/sitemaps/%s" % filename
 
 
 def upload_path_gmail_service_account(instance, filename):
-    return "organisation/%s" % instance.ldap_organization.slug + "/gmail/serviceaccount/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/gmail/serviceaccount/%s" % filename
 
 
 def upload_path_gmail_users(instance, filename):
-    return "organisation/%s" % instance.ldap_organization.slug + "/gmail/users/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/gmail/users/%s" % filename
 
 
 def upload_path_exchange_users(instance, filename):
-    return "organisation/%s" % instance.ldap_organization.slug + "/mailscan/users/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/mailscan/users/%s" % filename
 
 
 def upload_path_gdrive_service_account(instance, filename):
-    return "organisation/%s" % instance.ldap_organization.slug + "/googledrive/serviceaccount/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/googledrive/serviceaccount/%s" % filename
 
 
 def upload_path_gdrive_users(instance, filename):
-    return "organisation/%s" % instance.ldap_organization.slug + "/googledrive/users/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/googledrive/users/%s" % filename

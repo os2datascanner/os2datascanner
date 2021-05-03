@@ -1,19 +1,31 @@
 import json
 
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.utils.text import slugify
 
+from os2datascanner.projects.admin.core.models.client import Client
+from os2datascanner.projects.admin.organizations.models.organization import Organization
 from os2datascanner.engine2.rules.rule import Rule
 from ..adminapp.models.rules.regexrule_model import RegexRule, RegexPattern
-from ..adminapp.models.organization_model import APIKey, Organization
+from ..adminapp.models.apikey_model import APIKey
 
 
 class APITest(TestCase):
     def setUp(self):
+        client1 = Client.objects.create(name="client1")
         self.org1 = Organization.objects.create(
-                name="General Services Corp.")
+                name="General Services Corp.",
+                uuid="b560361d-2b1f-4174-bb03-55e8b693ad0c",
+                slug=slugify("General Services Corp."),
+                client=client1,
+        )
+        client2 = Client.objects.create(name="client2")
         self.org2 = Organization.objects.create(
-                name="Ministry of Tasks")
+                name="Ministry of Tasks",
+                uuid="a3575dec-8d92-4266-a8d1-97b7b84817c0",
+                slug=slugify("Ministry of Tasks"),
+                client=client2,
+        )
 
         self.rule1 = RegexRule.objects.create(
                 organization=self.org1, name="Check for tax number")

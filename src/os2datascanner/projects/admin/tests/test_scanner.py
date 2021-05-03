@@ -1,13 +1,11 @@
-import os
 import django
+from django.utils.text import slugify
 
-from os2datascanner.projects.admin.adminapp.models.organization_model import Organization
+from os2datascanner.projects.admin.core.models.client import Client
+from os2datascanner.projects.admin.organizations.models.organization import Organization
 from os2datascanner.projects.admin.adminapp.models.rules.regexrule_model import RegexRule, RegexPattern
 from os2datascanner.projects.admin.adminapp.models.sensitivity_level import Sensitivity
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import WebScanner
-
-from django.conf import settings
-from subprocess import Popen
 
 
 class ScannerTest(django.test.TestCase):
@@ -17,10 +15,18 @@ class ScannerTest(django.test.TestCase):
         """
 
         # create organisations
-        self.magenta_org = Organization(name="Magenta", pk=1)
-        self.magenta_org.save()
-        self.theydontwantyouto_org = Organization(name="TheyDontWantYouTo", pk=2)
-        self.theydontwantyouto_org.save()
+        client1 = Client.objects.create(name="client1")
+        self.magenta_org = Organization.objects.create(
+            name="Magenta",
+            uuid="b560361d-2b1f-4174-bb03-55e8b693ad0c",
+            slug=slugify("Magenta"),
+            client=client1, )
+        client2 = Client.objects.create(name="client2")
+        self.theydontwantyouto_org = Organization.objects.create(
+            name="IANA (example.com)",
+            slug=slugify("IANA (example.com)"),
+            uuid="a3575dec-8d92-4266-a8d1-97b7b84817c0",
+            client=client2,)
         # create scanners
         self.magenta_scanner = WebScanner(
             name="Magenta",

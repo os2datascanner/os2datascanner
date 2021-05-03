@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 
 from .models.authentication_model import Authentication
-from .models.organization_model import Organization, APIKey
+from .models.apikey_model import APIKey
 from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
@@ -49,13 +49,6 @@ class RuleAdmin(admin.ModelAdmin):
 @admin.register(RegexPattern)
 class RegexPatternAdmin(admin.ModelAdmin):
     list_display = ('pattern_string', 'regex')
-
-
-@admin.register(Organization)
-class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'uuid')
-    readonly_fields = ('uuid',)
-    fields = ('name', 'contact_email', 'contact_phone', 'do_notify_all_scans')
 
 
 @admin.register(WebScanner)

@@ -45,7 +45,7 @@ class RuleCreate(RestrictedCreateView):
     """Create a rule view."""
 
     model = Rule
-    fields = ['name', 'description', 'sensitivity', 'ldap_organization']
+    fields = ['name', 'description', 'sensitivity', 'organization']
 
     @staticmethod
     def _save_rule_form(form):
@@ -66,7 +66,7 @@ class RuleCreate(RestrictedCreateView):
             )
         elif user.is_superuser:
             org_qs = Organization.objects.all()
-        form.fields['ldap_organization'].queryset = org_qs
+        form.fields['organization'].queryset = org_qs
 
         return form
 
@@ -154,7 +154,7 @@ class RuleUpdate(RestrictedUpdateView):
 
     model = Rule
     edit = True
-    fields = ['name', 'description', 'sensitivity', 'ldap_organization']
+    fields = ['name', 'description', 'sensitivity', 'organization']
 
     def form_valid(self, form):
         """

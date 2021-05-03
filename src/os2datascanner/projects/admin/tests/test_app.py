@@ -62,7 +62,7 @@ class ScannerTest(TestCase):
             url="http://www.example.com/",
             name="invalid webscanner",
             validation_status=Scanner.INVALID,
-            ldap_organization=self.magenta)
+            organization=self.magenta)
 
     def test_unvalidated_scannerjob_cannot_be_started(self):
         """This test method is sufficient for all types of scanners."""
@@ -82,7 +82,7 @@ class ScannerTest(TestCase):
             webscanner = WebScanner(
                 url="http://www.example.com/",
                 validation_method=validation_method,
-                ldap_organization=self.example,
+                organization=self.example,
                 pk=2
             )
             webscanner.save()
@@ -93,7 +93,7 @@ class ScannerTest(TestCase):
         authentication.set_password("rigtig heste batteri haefteklamme")
         scanner = FileScanner(
                 url="//ORG/SIKKERSRV",
-                ldap_organization=self.magenta,
+                organization=self.magenta,
                 authentication=authentication,
                 alias="K")
 

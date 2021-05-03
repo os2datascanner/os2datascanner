@@ -26,7 +26,6 @@ class ExchangeScannerList(ScannerList):
     type = 'exchange'
 
     def get_queryset(self):
-        print('hejsa...................')
         return super().get_queryset()
 
 
@@ -36,7 +35,7 @@ class ExchangeScannerCreate(ScannerCreate):
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist',
-              'service_endpoint', 'ldap_organization',]
+              'service_endpoint', 'organization',]
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -58,7 +57,7 @@ class ExchangeScannerUpdate(ScannerUpdate):
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist',
-              'service_endpoint', 'ldap_organization']
+              'service_endpoint', 'organization']
 
     def get_success_url(self):
         """The URL to redirect to after successful updating.

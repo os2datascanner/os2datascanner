@@ -50,7 +50,7 @@ class _SbsysScannerCreate(ScannerCreate):
     model = SbsysScanner
     type = "sbsys"
     fields = ['name', 'schedule', 'do_ocr',
-              'do_last_modified_check', 'rules', 'ldap_organization']
+              'do_last_modified_check', 'rules', 'organization']
 
     def get_success_url(self):
         return '/sbsysscanners/%s/saved/' % self.object.pk
@@ -61,7 +61,7 @@ class SbsysScannerUpdate(ScannerUpdate):
     model = SbsysScanner
     type = "sbsys"
     fields = ['name', 'schedule', 'do_ocr',
-              'do_last_modified_check', 'rules', 'ldap_organization']
+              'do_last_modified_check', 'rules', 'organization']
 
     def get_success_url(self):
         return '/sbsysscanners/%s/saved/' % self.object.pk

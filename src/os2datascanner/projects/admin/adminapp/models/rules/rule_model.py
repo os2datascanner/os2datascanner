@@ -16,9 +16,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from model_utils.managers import InheritanceManager
 
-from ..organization_model import Organization
 from ..sensitivity_level import Sensitivity
-
 
 from os2datascanner.engine2.rules.rule import Rule as Twule
 from os2datascanner.engine2.rules.rule import Sensitivity as Twensitivity
@@ -37,10 +35,7 @@ class Rule(models.Model):
 
     name = models.CharField(max_length=256, unique=True, null=False,
                             verbose_name='Navn')
-    organization = models.ForeignKey(Organization, null=True, blank=True,
-                                     verbose_name='organization - deprecated',
-                                     on_delete=models.PROTECT)
-    ldap_organization = models.ForeignKey(
+    organization = models.ForeignKey(
         'organizations.Organization',
         on_delete=models.PROTECT,
         related_name='rule',

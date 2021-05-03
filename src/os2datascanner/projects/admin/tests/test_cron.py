@@ -7,11 +7,14 @@ from contextlib import redirect_stdout
 import django
 import recurrence
 from django.core.management import call_command
+from django.utils.text import slugify
+
 from os2datascanner.engine2.model.http import WebSource
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
 from os2datascanner.engine2.rules.regex import RegexRule as TwegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity as Twensitivity
-from os2datascanner.projects.admin.adminapp.models.organization_model import (
+from os2datascanner.projects.admin.core.models.client import Client
+from os2datascanner.projects.admin.organizations.models.organization import (
     Organization,
 )
 from os2datascanner.projects.admin.adminapp.models.rules.regexrule_model import (
@@ -55,7 +58,6 @@ class PipelineTestRunner(PikaPipelineRunner):
 # rule and org.
 CONST_PK = 0  # const to add, in case we run this script outside testing
 SCANNER_PK = 1 + CONST_PK
-ORG_PK = 2 + CONST_PK
 PATTERN_PK = 1 + CONST_PK
 RULE_PK = 2 + CONST_PK
 
@@ -97,8 +99,13 @@ def result_received(channel, method, properties, body):
 class CronTest(django.test.TestCase):
     def setUp(self):
         # create organisations
-        self.magenta_org = Organization(name="Magenta", pk=ORG_PK)
-        self.magenta_org.save()
+        client1 = Client.objects.create(name="client1")
+        self.magenta_org = Organization.objects.create(
+            name="Magenta",
+            uuid="b560361d-2b1f-4174-bb03-55e8b693ad0c",
+            slug=slugify("Magenta"),
+            client=client1,
+        )
 
         # create scanners
         self.magenta_scanner = WebScanner(
@@ -181,6 +188,7 @@ class CronTest(django.test.TestCase):
         try:
             self.runner.run_consumer()
         except StopHandling as e:
+            print('****************************{0}'.format(messages))
             self.assertDictEqual(
                 messages[0][0],
                 messages[1][0],
