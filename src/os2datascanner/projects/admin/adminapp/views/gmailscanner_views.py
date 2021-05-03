@@ -34,7 +34,7 @@ class GmailScannerCreate(ScannerCreate):
         'do_ocr',
         'do_last_modified_check',
         'rules',
-        'ldap_organization',
+        'organization',
     ]
 
     def get_success_url(self):
@@ -55,7 +55,7 @@ class GmailScannerUpdate(ScannerUpdate):
         'do_ocr',
         'do_last_modified_check',
         'rules',
-        'ldap_organization',
+        'organization',
     ]
 
     def get_success_url(self):

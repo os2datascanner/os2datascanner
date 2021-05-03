@@ -64,7 +64,7 @@
       {% for rule in regexrule_list %}
       <tr tabindex="0">
         <td class="datatable__column--name">{{ rule.name }}</td>
-        <td class="datatable__column--org">{{ rule.ldap_organization }}</td>
+        <td class="datatable__column--org">{{ rule.organization }}</td>
         <td class="datatable__column--description">{{ rule.description }}</td>
 
         <td class="datatable__column--expression">
@@ -160,7 +160,7 @@
       {% for rule in cprrule_list %}
       <tr tabindex="0">
         <td class="datatable__column--name">{{ rule.name }}</td>
-        <td class="datatable__column--org">{{ rule.ldap_organization }}</td>
+        <td class="datatable__column--org">{{ rule.organization }}</td>
         <td class="datatable__column--description">{{ rule.description }}</td>
         <td class="datatable__column--expression"></td>
         <td class="datatable__column--sensitivity">

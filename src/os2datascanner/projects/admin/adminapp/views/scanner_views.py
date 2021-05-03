@@ -33,7 +33,7 @@ class StatusBase(RestrictedListView):
             return self.model.objects.all()
         elif user.is_staff and user.is_active:
             return self.model.objects.filter(
-                scanner__ldap_organization__in=
+                scanner__organization__in=
                 [org.uuid for org in
                  user.administrator_for.client.organizations.all()]
             )
@@ -69,7 +69,7 @@ class ScannerList(RestrictedListView):
             return self.model.objects.all()
         elif user.is_staff and user.is_active:
             return self.model.objects.filter(
-                ldap_organization__in=[
+                organization__in=[
                     org.uuid for org in
                     user.administrator_for.client.organizations.all()
                 ]
@@ -103,7 +103,7 @@ class ScannerBase(object):
             )
         elif user.is_superuser:
             org_qs = Organization.objects.all()
-        form.fields['ldap_organization'].queryset = org_qs
+        form.fields['organization'].queryset = org_qs
 
         form.fields["rules"] = ModelMultipleChoiceField(
             Rule.objects.all(),
@@ -127,7 +127,7 @@ class ScannerBase(object):
     def filter_queryset(self, form, organization):
         for field_name in ['rules']:
             queryset = form.fields[field_name].queryset
-            queryset = queryset.filter(ldap_organization=organization)
+            queryset = queryset.filter(organization=organization)
             form.fields[field_name].queryset = queryset
 
     def get_scanner_object(self):

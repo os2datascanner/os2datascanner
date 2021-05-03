@@ -77,7 +77,7 @@
             <div style="margin-top: 0.5rem;"><small>{{scanner.url}}</small></div>
           </td>
           {% if user.is_superuser %}
-          <td class="scanner-organization datatable__column--org">{{scanner.ldap_organization}}</td>
+          <td class="scanner-organization datatable__column--org">{{scanner.organization}}</td>
           {% endif %}
           
           {% if view.type == 'file' %}

@@ -44,7 +44,6 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
 from os2datascanner.engine2.conversions.types import OutputType
 
 from ..authentication_model import Authentication
-from ..organization_model import Organization
 from ..rules.rule_model import Rule
 
 base_dir = os.path.dirname(
@@ -62,11 +61,7 @@ class Scanner(models.Model):
                             db_index=True,
                             verbose_name='Navn')
 
-    organization = models.ForeignKey(Organization, null=True, blank=True,
-                                     verbose_name='organization - deprecated',
-                                     on_delete=models.PROTECT)
-
-    ldap_organization = models.ForeignKey(
+    organization = models.ForeignKey(
         'organizations.Organization',
         on_delete=models.PROTECT,
         related_name='scannerjob',

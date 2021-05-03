@@ -34,7 +34,7 @@ class GoogleDriveScannerCreate(ScannerCreate):
         'do_ocr',
         'do_last_modified_check',
         'rules',
-        'ldap_organization'
+        'organization',
     ]
 
     def get_success_url(self):
@@ -55,6 +55,7 @@ class GoogleDriveScannerUpdate(ScannerUpdate):
         'do_ocr',
         'do_last_modified_check',
         'rules',
+        'organization',
     ]
 
     def get_success_url(self):

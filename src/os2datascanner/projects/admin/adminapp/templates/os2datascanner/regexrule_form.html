@@ -137,23 +137,23 @@
             {% if form.name.errors %}{{ form.name.errors }}{% endif %}
           </div>
 
-          {% if form.ldap_organization %}
+          {% if form.organization %}
           <div 
-            id="{{ form.ldap_organization.auto_id }}_container"
+            id="{{ form.organization.auto_id }}_container"
             class="dropdown-group form__group
-             {% if form.ldap_organization.errors %}
+             {% if form.organization.errors %}
                 has-error
              {% endif %}">
-            <label class="required-form" for="id_{{ form.ldap_organization.name }}">
-              {{ form.ldap_organization.label }}
+            <label class="required-form" for="id_{{ form.organization.name }}">
+              {{ form.organization.label }}
             </label>
             <div class="dropdown">
-               {{ form.ldap_organization }}
+               {{ form.organization }}
             </div>
-            {% if form.ldap_organization.help_text %}
-            <span class="form__help-text">{{ form.ldap_organization.help_text }}</span>
+            {% if form.organization.help_text %}
+            <span class="form__help-text">{{ form.organization.help_text }}</span>
             {% endif %}
-           {{ form.ldap_organization.errors }}
+           {{ form.organization.errors }}
           </div>
           {% endif %}
         </fieldset>
