@@ -56,6 +56,18 @@ class StatusCompleted(StatusBase):
         return super().get_queryset().order_by("-pk")
 
 
+class StatusDelete(RestrictedDeleteView):
+    model = ScanStatus
+    fields = []
+    success_url = '/status/'
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        return super().get_form(form_class)
+
+
 class ScannerList(RestrictedListView):
     """Displays list of scanners."""
 

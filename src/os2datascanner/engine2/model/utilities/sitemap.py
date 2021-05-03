@@ -99,7 +99,9 @@ def process_sitemap_url(url: str, *, context=requests,
 
 
 class SitemapError(Exception):
-    pass
+    # print the Exception type and not only the Exception message.
+    def __str__(self):
+      return repr(self)
 
 
 class SitemapMissingError(SitemapError):

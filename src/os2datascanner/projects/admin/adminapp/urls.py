@@ -51,7 +51,7 @@ from .views.sbsysscanner_views import (
 from .views.rule_views import (
     RuleList, CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, RegexRuleCreate,
     RegexRuleUpdate, RegexRuleDelete)
-from .views.scanner_views import (StatusOverview, StatusCompleted)
+from .views.scanner_views import (StatusOverview, StatusCompleted, StatusDelete)
 from .views.webscanner_views import (
     WebScannerCreate, WebScannerUpdate, WebScannerDelete,
     WebScannerRun, WebScannerAskRun, WebScannerList, WebScannerValidate)
@@ -72,6 +72,7 @@ urlpatterns = [
     # App URLs
     url(r'^status/$', StatusOverview.as_view(), name='status'),
     url(r'^status-completed/$', StatusCompleted.as_view(), name='status-completed'),
+    url(r'^status/(?P<pk>\d+)/delete/$', StatusDelete.as_view(), name='status-delete'),
 
     #Exchangescanner URL's
     url(r'^exchangescanners/$', ExchangeScannerList.as_view(), name='exchangescanners'),

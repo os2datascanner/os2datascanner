@@ -17,12 +17,13 @@ def message_received_raw(body, channel, source_manager):
                         message.handle.follow(source_manager).get_metadata()
                 ).to_json_object())
     except Exception as e:
-        exception_message = ", ".join([str(a) for a in e.args])
+        exception_message = (
+            "Metadata extraction error. {0}: ".format(type(e).__name__))
+        exception_message += ", ".join([str(a) for a in e.args])
         yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=message.scan_tag,
                 source=None, handle=message.handle,
-                message="Metadata extraction error: {0}".format(
-                        exception_message)).to_json_object())
+                message=exception_message).to_json_object())
 
 
 if __name__ == "__main__":
