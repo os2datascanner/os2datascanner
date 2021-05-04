@@ -183,18 +183,21 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 first_thing = next(handles)
                 second_thing = next(handles)
 
-            self.assertFalse(
-                len(first_thing.referrer_urls),
+            self.assertTrue(
+                first_thing.referrer is None,
                 "{0}: base url without sitemap have a referrer".format(
                     first_thing))
             self.assertTrue(
-                second_thing.referrer_urls,
+                second_thing.referrer,
                 "{0}: followed link doesn't have a referrer".format(
                     second_thing))
             self.assertTrue(
-                list(second_thing.referrer_urls)[0] ==
-                first_thing.presentation_url,
+                second_thing.referrer is first_thing,
                 "{0}: followed link doesn't have base url as referrer".format(
+                    second_thing))
+            self.assertTrue(
+                second_thing.base_referrer is first_thing,
+                "{0}: followed link doesn't have base url as base_referrer".format(
                     second_thing))
 
     def test_error(self):

@@ -30,7 +30,7 @@ def simplify_mime_type(mime):
 class WebSource(Source):
     type_label = "web"
 
-    def __init__(self, url, sitemap=None):
+    def __init__(self, url, sitemap = ""):
         assert url.startswith("http:") or url.startswith("https:")
         self._url = url
         self._sitemap = sitemap
@@ -43,7 +43,7 @@ class WebSource(Source):
             )
             yield session
 
-    def censor(self):
+    def censor(self) -> "WebSource":
         # XXX: we should actually decompose the URL and remove authentication
         # details from netloc
         return self
@@ -52,7 +52,6 @@ class WebSource(Source):
         session = sm.open(self)
         to_visit = [WebHandle(self, "")]
         known_addresses = set(to_visit)
-        referrer_map = {}
 
         # initial check that url can be reached. After this point, continue
         # exploration at all cost
@@ -65,9 +64,12 @@ class WebSource(Source):
         # https://example.com/some/path?query=foo
         scheme, netloc, path, query, fragment = urlsplit(self._url)
 
-        def handle_url(here, new_url, lm_hint=None):
+        def handle_url(here: "WebHandle", new_url: str,
+                       lm_hint: datetime = None, from_sitemap: bool = False):
 
-            new_url = urljoin(here, new_url)
+            here_url = None if from_sitemap else here.presentation_url
+            referrer = WebHandle(self, self._sitemap) if from_sitemap else here
+            new_url = urljoin(here_url, new_url)
             n_scheme, n_netloc, n_path, n_query, _ = urlsplit(new_url)
             new_url = urlunsplit(
                     (n_scheme, n_netloc, n_path, n_query, None))
@@ -76,20 +78,18 @@ class WebSource(Source):
             if n_scheme not in("http", "https"):
                 return
 
-            referrer_map.setdefault(new_url, set()).add(
-                here if here is not None else self._sitemap)
             if n_netloc == netloc:
                 # we dont care about whether scheme is http or https
                 # new_url is under same hirachy as here(referrer)
-                new_handle = WebHandle(self, new_url[len(self._url):],
-                                       referrer_map[new_url], lm_hint)
+                new_handle = WebHandle(self, new_url[len(self._url):], referrer,
+                                       lm_hint)
             else:
                 # new_url is external from here. Create a new handle from a new
                 # Source.
                 base_url = urlunsplit((n_scheme, n_netloc, "", None, None))
                 new_handle = WebHandle(WebSource(base_url),
-                                       new_url[len(base_url):],
-                                       referrer_map[new_url], lm_hint)
+                                       new_url[len(base_url):], referrer,
+                                       lm_hint)
             if new_handle not in known_addresses:
                 known_addresses.add(new_handle)
                 to_visit.append(new_handle)
@@ -98,7 +98,7 @@ class WebSource(Source):
             i = 0  # prevent i from being undefined if sitemap is empty
             for i, (address, last_modified) in enumerate(
                     process_sitemap_url(self._sitemap), start=1):
-                handle_url(None, address, last_modified)
+                handle_url(to_visit[0], address, last_modified, from_sitemap=True)
             # first entry in `to_visit` is `self`(ie. mainpage). If the mainpage
             # is not listed in sitemap this result in +1 in to_visit
             logger.info("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
@@ -111,7 +111,7 @@ class WebSource(Source):
         # if the page is available.
         while to_visit:
             here, to_visit = to_visit[0], to_visit[1:]
-
+            # only search for links on `here` if it belongs to base Source
             if here in self:
                 try:
                     response = session.head(here.presentation_url)
@@ -126,10 +126,10 @@ class WebSource(Source):
                                     make_outlinks(response.content,
                                                   here.presentation_url),
                                     start=1):
-                                handle_url(here.presentation_url, li)
+                                handle_url(here, li)
                             logger.info(f"site {here.presentation} has {i} links")
                     elif response.is_redirect and response.next:
-                        handle_url(here.presentation_url, response.next.url)
+                        handle_url(here, response.next.url)
                         # Don't yield WebHandles for redirects
                         continue
 
@@ -252,19 +252,10 @@ class WebHandle(Handle):
     eq_properties = Handle.BASE_PROPERTIES
 
     def __init__(self, source: WebSource, path: str,
-                 referrer_urls: Set[str]=set(),
-                 last_modified_hint: Optional[datetime]=None):
-        super().__init__(source, path)
-        self._referrer_urls = referrer_urls
+                 referrer: Optional["WebHandle"] = None,
+                 last_modified_hint: Optional[datetime] = None):
+        super().__init__(source, path, referrer)
         self._lm_hint = last_modified_hint
-
-    @property
-    def referrer_urls(self) -> set:
-        return self._referrer_urls
-
-    @referrer_urls.setter
-    def referrer_urls(self, referrer_urls: Set[str]):
-        self._referrer_urls = referrer_urls
 
     @property
     def last_modified_hint(self) -> Optional[datetime]:
@@ -287,14 +278,13 @@ class WebHandle(Handle):
 
     def censor(self):
         return WebHandle(source=self.source.censor(), path=self.relative_path,
-                         referrer_urls=self.referrer_urls,
+                         referrer=self.referrer,
                          last_modified_hint=self.last_modified_hint)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
             "last_modified": OutputType.LastModified.encode_json_object(
-                    self._lm_hint),
-            "referrer": list(self._referrer_urls)
+                    self.last_modified_hint),
         })
 
     @staticmethod
@@ -303,9 +293,11 @@ class WebHandle(Handle):
         lm_hint = obj.get("last_modified", None)
         if lm_hint:
                 lm_hint = OutputType.LastModified.decode_json_object(lm_hint)
-        referrer = set(obj.get("referrer", set()))
+        referrer = obj.get("referrer", None)
+        if referrer:
+            referrer = WebHandle.from_json_object(referrer)
         handle = WebHandle(Source.from_json_object(obj["source"]), obj["path"],
-                           referrer_urls=referrer, last_modified_hint=lm_hint)
+                           referrer=referrer, last_modified_hint=lm_hint)
         return handle
 
 
