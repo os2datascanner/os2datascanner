@@ -23,6 +23,7 @@ from urllib.parse import urlencode
 from django.conf import settings
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Count, Q
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponseForbidden
@@ -60,8 +61,20 @@ class LogoutPageView(TemplateView, View):
     template_name = 'logout.html'
 
 
+class EmptyPagePaginator(Paginator):
+    def validate_number(self, number):
+        try:
+            return super(EmptyPagePaginator, self).validate_number(number)
+        except EmptyPage:
+            if number > 1:
+                return self.num_pages
+            else:
+                raise
+
+
 class MainPageView(LoginRequiredMixin, ListView):
     template_name = 'index.html'
+    paginator_class = EmptyPagePaginator
     paginate_by = 10  # Determines how many objects pr. page.
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
