@@ -26,7 +26,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Count, Q
 from django.db.models.functions import TruncMonth
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.views.generic import View, TemplateView, ListView
@@ -69,7 +69,7 @@ class EmptyPagePaginator(Paginator):
             if number > 1:
                 return self.num_pages
             else:
-                raise
+                raise Http404(_('The page does not exist'))
 
 
 class MainPageView(LoginRequiredMixin, ListView):

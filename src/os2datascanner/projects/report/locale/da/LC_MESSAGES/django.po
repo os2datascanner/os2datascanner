@@ -474,18 +474,31 @@ msgstr ""
 "Med venlig hilsen<br>\n"
 "OS2datascanner-systemet\n"
 
-#: reportapp/views/views.py:246
+#: reportapp/views/views.py:72
+msgid "The page does not exist"
+msgstr "Denne side eksisterer ikke"
+
+#: reportapp/views/views.py:259
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:247
+#: reportapp/views/views.py:260
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:248
+#: reportapp/views/views.py:261
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:249
+#: reportapp/views/views.py:262
 msgid "Mailscan"
 msgstr "Mailscan"
+
+#~ msgid "First"
+#~ msgstr "Første"
+
+#~ msgid "Last"
+#~ msgstr "Sidste"
+
+#~ msgid "Log out"
+#~ msgstr "Log ud"
