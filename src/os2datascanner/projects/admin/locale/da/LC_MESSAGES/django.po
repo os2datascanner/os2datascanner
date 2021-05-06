@@ -780,7 +780,7 @@ msgstr "tilføj organisation"
 
 #: adminapp/templates/partials/breadcrumb.html:81
 msgid "add LDAP configuration"
-msgstr "tilføj LDAP konfiguration"
+msgstr "tilføj LDAP-konfiguration"
 
 #: adminapp/templates/partials/breadcrumb.html:83
 msgid "update LDAP configuration"

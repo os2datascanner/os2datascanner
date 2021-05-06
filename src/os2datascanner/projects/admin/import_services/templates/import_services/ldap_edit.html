@@ -134,7 +134,7 @@
     {{ block.super }}
     <script>
         // add input for user class object
-        var textarea = document.querySelector('#id_user_obj_classes')
+        var hiddenInput = document.querySelector('#id_user_obj_classes')
         var btnUserClass = document.querySelector('#btnUserClass')
         var counter = 1;
         var div = document.getElementById('userObjClass');
@@ -142,14 +142,16 @@
         var firstInput = document.querySelector('#userClass')
         var inputValues = document.querySelectorAll('.user-class-input')
 
-        textarea.style.display = "none"
+        // dont show input in ui (this input contains all input values)
+        hiddenInput.style.display = "none"
+
+        // add new input
         var addInput = function() {
             counter++;
             var input = document.createElement("input");
             input.id = 'userClass' + counter;
             input.type = 'text';
             input.name = 'userClass'+ counter;
-            input.placeholder = 'LDAP User Object Classes' + counter;
             input.className = 'user-class-input'
             div.appendChild(input);
             div.appendChild(removeUserClass(input, div));
@@ -160,6 +162,7 @@
             addInput();
         }.bind(this));
 
+        // remove button
         function removeUserClass(element, parent) {
             var btnRemove = document.createElement("button");
             btnRemove.addEventListener('click', function() {
@@ -171,10 +174,11 @@
             btnRemove.type = 'button';
             btnRemove.name = 'removeUserClass'+ counter;
             btnRemove.textContent = 'Fjern'
-            btnRemove.classList = 'button button--remove'
+            btnRemove.classList = 'button--danger'
             return btnRemove
         }
         
+        // update tag list on change
         function addUserClassInput(element) {
             element.addEventListener('change', updateTagList)
         }
@@ -185,16 +189,10 @@
             for (let i = 0; i < inputValues.length; i++) {  
                 taglist.push(inputValues[i].value)
             }
-            textarea.value = taglist.join(' ')
+            hiddenInput.value = taglist.join(', ')
         }
 
         addUserClassInput(firstInput)
-
-        // btnRemove.addEventListener('click', function() {
-        //     addInput().removeChild();
-        // })
-
-
 
         // test connection and authentication
         var btnConnection = document.querySelector('#button-connection')

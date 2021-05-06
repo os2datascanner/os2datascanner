@@ -67,9 +67,15 @@
 
         <i id="chevron_right" class="material-icons">chevron_right</i>
   
-        {% if not view.edit %}
         <span class="text-grey">{% trans "add organization"|capfirst %}</span>
-        {% endif %}
+    {% endif %}
+
+    {% if page == 'organization_update' %}
+        <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+        <i id="chevron_right" class="material-icons">chevron_right</i>
+
+        <span class="text-grey">{% trans "update organization"|capfirst %}</span>
     {% endif %}
 
     {% if page == 'ldap' %}
