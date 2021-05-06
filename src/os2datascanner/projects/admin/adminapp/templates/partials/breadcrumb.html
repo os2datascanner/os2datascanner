@@ -61,4 +61,26 @@
         <span class="text-grey">{% trans "Create new rule" %}</span>
         {% endif %}
     {% endif %}
+
+    {% if page == 'organization' %}
+        <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+        <i id="chevron_right" class="material-icons">chevron_right</i>
+  
+        {% if not view.edit %}
+        <span class="text-grey">{% trans "add organization"|capfirst %}</span>
+        {% endif %}
+    {% endif %}
+
+    {% if page == 'ldap' %}
+        <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+        <i id="chevron_right" class="material-icons">chevron_right</i>
+
+        {% if is_new %}
+            <span class="text-grey">{% trans 'add LDAP configuration'|capfirst %}</span>
+            {% else %}
+            <span class="text-grey">{% trans 'update LDAP configuration'|capfirst %}</span>
+        {% endif %}
+    {% endif %}
 </div>

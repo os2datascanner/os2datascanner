@@ -29,6 +29,14 @@
           </span>
         </a>
       </li>
+      <li>
+        <a href="/organizations" class="{% if active_tab == 'organizations' %}active{% endif %}">
+          {% include "components/svg-icons/org.svg" %}
+          <span class="width">
+            {% trans 'organizations'|capfirst %}
+          </span>
+        </a>
+      </li>
       {% if user.is_superuser or user.is_staff %}
       <li>
         <a href="/admin/" target="_NEW">

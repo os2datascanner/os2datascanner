@@ -17,8 +17,10 @@ import os
 
 from django.db import models
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from exchangelib.errors import ErrorNonExistentMailbox
+from mptt.models import TreeForeignKey
 
 from os2datascanner.engine2.model.ews import EWSAccountSource
 from os2datascanner.engine2.model.core import SourceManager
@@ -35,6 +37,13 @@ class ExchangeScanner(Scanner):
     service_endpoint = models.URLField(max_length=256,
                                        verbose_name='Service endpoint',
                                        blank=True, default='')
+    org_unit = TreeForeignKey(
+        'organizations.OrganizationalUnit',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_('organizational unit'),
+    )
 
     def get_userlist_file_path(self):
         return os.path.join(settings.MEDIA_ROOT, self.userlist.name)
