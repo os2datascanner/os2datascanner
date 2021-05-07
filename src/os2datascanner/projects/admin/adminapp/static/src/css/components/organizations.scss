@@ -53,9 +53,8 @@
 }
 
 .userObjClass {
-  margin-top: -1rem;
 
-  input[type=text] {
+  .user-class-input + .user-class-input,  button + .user-class-input {
     margin-top: 1rem;
   }
 }

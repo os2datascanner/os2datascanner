@@ -91,12 +91,12 @@
             <h3>
                 {% trans "search specification"|capfirst %}
             </h3>
+            <div class="userObjClass" id="userObjClass">
             {% for field in form %}
                 {% if field.name in form.user_location_fields %}
                     {% include 'import_services/ldap_field_snippet.html' %}
                 {% endif %}
             {% endfor %}
-            <div class="userObjClass" id="userObjClass">
                 <input class="user-class-input" id="userClass" type="text" name="userClass" />
             </div>
             <button id="btnUserClass" type="button" class="flex button button--small button--grey button--grey--icon button--grey--transparent">
@@ -134,16 +134,13 @@
     {{ block.super }}
     <script>
         // add input for user class object
-        var hiddenInput = document.querySelector('#id_user_obj_classes')
         var btnUserClass = document.querySelector('#btnUserClass')
         var counter = 1;
         var div = document.getElementById('userObjClass');
         var taglist = []
         var firstInput = document.querySelector('#userClass')
         var inputValues = document.querySelectorAll('.user-class-input')
-
-        // dont show input in ui (this input contains all input values)
-        hiddenInput.style.display = "none"
+        var hiddenInput = document.getElementsByName('user_obj_classes')[0];
 
         // add new input
         var addInput = function() {
@@ -174,7 +171,7 @@
             btnRemove.type = 'button';
             btnRemove.name = 'removeUserClass'+ counter;
             btnRemove.textContent = 'Fjern'
-            btnRemove.classList = 'button--danger'
+            btnRemove.className += 'button--danger';
             return btnRemove
         }
         
@@ -193,6 +190,21 @@
         }
 
         addUserClassInput(firstInput)
+        saveInputs()
+
+        function saveInputs() { 
+            if (hiddenInput.value) {
+               // dont show input in ui (this input contains all input values)
+               hiddenInput.style.display = "none"
+                // firstInput.value = hiddenInput.value.split(",")[0]
+            //    for (let i = 1; i < hiddenInput.value.split(",").length; i++) {  
+                   inputValues[0].value = hiddenInput.value.split(",")
+                   // addInput(hiddenInput[i])
+                // }
+           } else {
+               hiddenInput.style.display = "none"
+           }
+        }
 
         // test connection and authentication
         var btnConnection = document.querySelector('#button-connection')
