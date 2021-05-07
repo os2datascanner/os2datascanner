@@ -5,17 +5,16 @@
 {% block title %}{% trans "organizations"|capfirst %}{% endblock %}
 
 {% block content %}
-{%  regroup organization_list by client as client_list%}
 
 {%  for client in client_list %}
     <div class="aside">
         <h1 class="page-title">
-            {% trans 'organizations for'|capfirst %} {{ client.grouper }}
+            {% trans 'organizations for'|capfirst %} {{ client }}
         </h1>
         <div class="btn">
             <a 
             class="button button--cta" 
-            href="{% url 'add-organization-for' client_id=client.grouper.pk %}"
+            href="{% url 'add-organization-for' client_id=client.pk %}"
             title="{% trans 'Add new organization' %}">
               <svg class="icon icon--white">
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
@@ -36,9 +35,9 @@
                 <th class="datatable__column--btn">{% trans "import service"|capfirst %}</th>
             </tr>
         </thead>
-        {% if client.list %}
+        {% if client.organizations.all %}
         <tbody>
-            {% for organization in client.list %}
+            {% for organization in client.organizations.all %}
             <tr>
                 <td class="datatable__column--name"><a href="{% url 'edit-organization' slug=organization.slug %}">{{ organization.name }}</a></td>
                 <td class="datatable__column--info">
@@ -88,7 +87,7 @@
         </tbody>
         {% endif %}
     </table>
-    {% if not client.list %}
+    {% if not client.organizations.all %}
         <p>
             {% trans "no organization added"|capfirst %}
         </p>

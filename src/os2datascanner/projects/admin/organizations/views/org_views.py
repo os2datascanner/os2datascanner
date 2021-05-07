@@ -12,7 +12,7 @@ from ..models import Organization
 class OrganizationListView(LoginRequiredMixin, ListView):
     model = Organization
     paginate_by = 10  # TODO: reasonable number? Possibly irrelevant?
-    context_object_name = 'organization_list'
+    context_object_name = 'client_list'
     template_name = 'organizations/org_list.html'
 
     # filter list based on user
@@ -21,10 +21,10 @@ class OrganizationListView(LoginRequiredMixin, ListView):
         queryset = Organization.objects.none()
         if hasattr(user, 'administrator_for'):
             client_id = user.administrator_for.client_id
-            queryset = Organization.objects.filter(client_id=client_id)
+            queryset = Client.objects.filter(pk=client_id)
         elif user.is_superuser:
-            queryset = Organization.objects.all()
-        return queryset.order_by('client').select_related('client')
+            queryset = Client.objects.all()
+        return queryset.prefetch_related('organizations')
 
 
 class AddOrganizationView(LoginRequiredMixin, CreateView):
