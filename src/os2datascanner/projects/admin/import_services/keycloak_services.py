@@ -17,6 +17,24 @@ import requests
 from django.conf import settings
 
 
+# TODO: consider extending this to take list of requests and list of args
+def get_token_first(request_function, realm, *args):
+    """Utility function to retrieve access token before given API call
+
+    Takes an API request function, a realm pk and the arguments for the given
+    request call. Returns the error-response if token retrieval fails. Returns
+    the response from the given request call otherwise.
+    """
+    token_response = request_access_token()
+    if token_response.status_code == 200:
+        token = token_response.json()['access_token']
+        response = request_function(realm, token, *args)
+        return response
+    else:
+        return token_response
+
+
+# TODO: delete and replace usages with equivalent calls to get_token_first
 def create_realm(realm):
     response_token = request_access_token()
     # TODO: add error-handling for unsuccessful requests (here or move all to views?)
@@ -24,7 +42,8 @@ def create_realm(realm):
     return request_create_new_realm(realm, token)
 
 
-def add_or_update_ldap_conf(realm, payload):
+# TODO: delete and replace usages with equivalent calls to get_token_first
+def add_ldap_conf(realm, payload):
     response_token = request_access_token()
     # TODO: add error-handling for unsuccessful requests (here or move all to views?)
     token = response_token.json()['access_token']
@@ -61,7 +80,6 @@ def request_access_token():
     return requests.post(url, data=payload)
 
 
-# TODO: check if update is the same url+payload
 def request_create_component(realm, token, payload):
     """TODO:"""
     url = (settings.KEYCLOAK_BASE_URL +
@@ -71,6 +89,17 @@ def request_create_component(realm, token, payload):
         'Content-Type': 'application/json;charset=utf-8',
     }
     return requests.post(url, data=json.dumps(payload), headers=headers)
+
+
+def request_update_component(realm, token, payload, config_id):
+    """TODO:"""
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/components/{config_id}')
+    headers = {
+        'Authorization': f'bearer {token}',
+        'Content-Type': 'application/json;charset=utf-8',
+    }
+    return requests.put(url, data=json.dumps(payload), headers=headers)
 
 
 def check_ldap_connection(realm, token, connection_url, timeout=5):

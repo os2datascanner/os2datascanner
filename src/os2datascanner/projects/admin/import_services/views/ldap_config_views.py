@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.views.generic.edit import CreateView, UpdateView
 
-from os2datascanner.projects.admin.import_services.keycloak_services import add_or_update_ldap_conf
+from os2datascanner.projects.admin.import_services.keycloak_services import add_ldap_conf, create_realm, request_access_token, request_update_component, get_token_first
 from os2datascanner.projects.admin.organizations.models import Organization
 
 from os2datascanner.projects.admin.import_services.models import LDAPConfig, Realm
@@ -109,20 +109,41 @@ class LDAPAddView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         # TODO: ensure all proper checks are in place either here or elsewhere
-        current_time = now()
+        form.instance.created = now()
         form.instance.last_modified = now()
         form.instance.organization = self.kwargs['organization']
         form.instance.ldap_credential = form.cleaned_data['ldap_password']
-        return super().form_valid(form)
-        organization = self.kwargs['organization']
-        # TODO: ensure Realm existence upon activating feature! And on Org creation (if feature is active)
-        realm, created = Realm.objects.get_or_create(
-            realm_id=organization.slug,
-            organization=organization,
-            defaults={'last_modified': current_time},
-        )
-        payload = form.instance.get_payload_dict()
-        add_or_update_ldap_conf(payload)  # TODO: consider moving request elsewhere, else add error-handling!
+        # NB! Must call super here to ensure instance has a pk
+        result = super().form_valid(form)
+        _keycloak_creation(form.instance)
+        return result
+
+
+# TODO: consider handling this in a queue
+# TODO: add proper error-handling
+def _keycloak_creation(config_instance):
+    organization = config_instance.organization
+    # TODO: ensure Realm existence upon activating feature! And on Org creation (if feature is active)
+    realm, created = Realm.objects.get_or_create(
+        realm_id=organization.slug,
+        organization=organization,
+        defaults={'last_modified': now()},
+    )
+    # TODO: Realm creation should be moved elsewhere, but if not, token
+    #  should only be retrieved once in a separate call, and the direct
+    #  keycloak services should be called, not the two utility functions.
+    if created:
+        create_realm(realm.pk)
+    payload = config_instance.get_payload_dict()
+    add_ldap_conf(realm.pk, payload)  # TODO: consider moving request elsewhere, else add error-handling!
+
+
+def _keycloak_update(config_instance):
+    pk = config_instance.pk
+    realm = Realm.objects.get(organization_id=pk)
+    payload = config_instance.get_payload_dict()
+    args = [payload, pk]
+    get_token_first(request_update_component, realm.pk, *args)
 
 
 class LDAPUpdateView(LoginRequiredMixin, UpdateView):
@@ -143,6 +164,5 @@ class LDAPUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.ldap_credential = form.cleaned_data['ldap_password']
-        payload = form.instance.get_payload_dict()
-        add_or_update_ldap_conf(payload)  # TODO: consider moving request elsewhere, else add error-handling!
+        _keycloak_update(form.instance)
         return super().form_valid(form)
