@@ -32,7 +32,10 @@
                 <th class="datatable__column--name">{% trans "name"|capfirst %}</th>
                 <th class="datatable__column--info">{% trans "email"|capfirst %}</th>
                 <th class="datatable__column--info">{% trans "phone"|capfirst %}</th>
-                <th class="datatable__column--btn">{% trans "import service"|capfirst %}</th>
+                <!-- TODO: add conditional columns for users and units dependent on FEATURES.ORG_STRUCTURE (see below) -->
+                {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
+                    <th class="datatable__column--btn">{% trans "import service"|capfirst %}</th>
+                {% endif %}
             </tr>
         </thead>
         {% if client.organizations.all %}
@@ -46,6 +49,8 @@
                 <td class="datatable__column--info">
                     {{ organization.contact_phone|default_if_none:"-" }}
                 </td>
+                <!-- TODO: add conditional columns for users and units dependent on FEATURES.ORG_STRUCTURE (see below) -->
+                {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
                 <td class="datatable__column--btn">
                     <div class="flex flex--icon">
                         <!-- NB: importservice is in one word because a reverse name was not specified on the ImportService model's relation to Organization and this is the default -->
@@ -82,6 +87,7 @@
                         {% endif %}
                     </div>
                 </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>

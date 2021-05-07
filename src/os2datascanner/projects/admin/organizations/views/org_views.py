@@ -4,7 +4,7 @@ from django.utils.text import slugify
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
-from os2datascanner.projects.admin.core.models import Client
+from os2datascanner.projects.admin.core.models import Client, Feature
 
 from ..models import Organization
 
@@ -25,6 +25,11 @@ class OrganizationListView(LoginRequiredMixin, ListView):
         elif user.is_superuser:
             queryset = Client.objects.all()
         return queryset.prefetch_related('organizations')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['FEATURES'] = Feature.__members__
+        return context
 
 
 class AddOrganizationView(LoginRequiredMixin, CreateView):
