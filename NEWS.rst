@@ -1,6 +1,13 @@
 OS2datascanner
 ==============
 
+Version 3.9.5, 11th May 2021
+----------------------------
+
+This hotfix release corrects a performance problem typically seen when CPR
+numbers are found in large documents and adds support for using single sign-on
+systems with slightly incorrect system clocks.
+
 Version 3.9.4, 23rd April 2021
 ------------------------------
 
