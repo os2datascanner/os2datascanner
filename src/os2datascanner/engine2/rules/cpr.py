@@ -151,7 +151,7 @@ class CPRRule(RegexRule):
         """
 
         probability = None
-        words, symbols = self.extract_surrounding_words(match, n_words=5)
+        words, symbols = self.extract_surrounding_words(match, n_words=3)
         ctype = []
 
         # test if a whitelist-word is found in the context words.
@@ -186,13 +186,13 @@ class CPRRule(RegexRule):
 
         # only do context checking on surrounding words
         for w in [words["pre"][-1], words["post"][0]]:
-            if w == "":
+            if w == "" or self._compiled_expression.match(w):
                 continue
             # this check is newer reached due to '\w' splitting
             elif w.endswith(_all_symbols) or w.startswith(_all_symbols):
                 ctype.append((Context.SYMBOL, w))
                 probability = 0.0
-            # test if surrounding word is a number
+            # test if surrounding word is a number (and not looks like a cpr)
             elif is_number(w):
                 probability = 0.0
                 ctype.append((Context.NUMBER, w))
@@ -217,13 +217,9 @@ class CPRRule(RegexRule):
         # get full content
         content = match.string
         low, high = match.span()
-        # replace what look like cpr's with something that does not interfere
-        # with the logic of examine_context
-        pre = self._compiled_expression.sub("xxxx", content[:low])
-        post = self._compiled_expression.sub("xxxx", content[high:])
         # get previous/next n words
-        pre = " ".join(pre.split()[-n_words:])
-        post = " ".join(post.split()[:n_words])
+        pre = " ".join(content[max(low-50,0):low].split()[-n_words:])
+        post = " ".join(content[high:high+50].split()[:n_words])
 
         # split in two capture groups: (word, symbol)
         # Ex: 'The brown, fox' ->
