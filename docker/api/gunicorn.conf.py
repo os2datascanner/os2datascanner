@@ -9,6 +9,7 @@
 import multiprocessing
 import os
 
+wsgi_app = "os2datascanner.server.wsgi"
 
 bind = "0.0.0.0:5000"
 worker_class = "gevent"

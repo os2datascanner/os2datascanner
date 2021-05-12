@@ -6,7 +6,7 @@ django-model-utils
 django-settings-export
 django-storages[google]
 django-structlog
-gunicorn
+gunicorn>=20.1.0
 psycopg2-binary
 whitenoise
 
