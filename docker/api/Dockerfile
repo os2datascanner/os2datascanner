@@ -77,5 +77,4 @@ WORKDIR /code/src/os2datascanner/server
 USER os2ds_api:os2ds_api
 EXPOSE 5000
 
-CMD ["gunicorn", \
-     "os2datascanner.server.wsgi"]
+CMD ["gunicorn"]

@@ -130,5 +130,4 @@ RUN find . -name 'LC_MESSAGES' -print0 | xargs -0 chown -R os2ds_report:os2ds_re
 USER os2ds_report:os2ds_report
 EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
-CMD ["gunicorn", \
-     "wsgi"]
+CMD ["gunicorn"]

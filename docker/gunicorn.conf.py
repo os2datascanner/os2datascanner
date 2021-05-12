@@ -9,6 +9,7 @@
 import multiprocessing
 import os
 
+wsgi_app = "wsgi"
 
 bind = "0.0.0.0:5000"
 workers = os.getenv("GUNICORN_WORKERS", multiprocessing.cpu_count() * 2 + 1)
