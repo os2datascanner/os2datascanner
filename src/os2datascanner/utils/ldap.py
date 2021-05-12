@@ -1,6 +1,7 @@
 from typing import (
         Tuple, Union, Callable, Iterator, Optional, Sequence, NamedTuple,
         MutableSequence)
+from itertools import zip_longest
 
 
 class RDN(NamedTuple):
@@ -13,6 +14,19 @@ class RDN(NamedTuple):
 
     def __str__(self):
         return f"{self.key}={self.value}"
+
+    @staticmethod
+    def drop_start(
+            longer: Sequence['RDN'],
+            shorter: Sequence['RDN']) -> Sequence['RDN']:
+        local_name_part = tuple(zip_longest(longer, shorter))
+        while local_name_part:
+            lp, sp = local_name_part[0]
+            if lp != sp:
+                break
+            else:
+                local_name_part = local_name_part[1:]
+        return tuple(lp for (lp, _) in local_name_part)
 
     @staticmethod
     def make_sequence(*strings: str) -> Sequence['RDN']:
@@ -41,18 +55,19 @@ class LDAPNode(NamedTuple):
         """The recommended constructor for LDAPNode objects."""
         return LDAPNode(tuple(label), list(children), properties)
 
-    def collapse(self) -> 'LDAPNode':
+    def collapse(self,
+            collapse_ok: Callable[['LDAPNode'], bool] =
+                    lambda n: True) -> 'LDAPNode':
         """Returns a new simplified LDAP hierarchy: multiple nodes at the top
-        with a single child will be reduced to a single node with a multi-part
-        label. (Nodes with single children further down the hierarchy will
-        remain unchanged.)"""
-        if len(self.children) == 1:
+        with a single child (and for which the collapse_ok function returns
+        True) will be reduced to a single node with a multi-part label.."""
+        if len(self.children) == 1 and collapse_ok(self):
             child = self.children[0]
             new_properties = self.properties
             new_properties.update(child.properties)
             return LDAPNode.make(
                     self.label + child.label,
-                    *child.children, **new_properties).collapse()
+                    *child.children, **new_properties).collapse(collapse_ok)
         else:
             return self
 
