@@ -55,7 +55,6 @@ services:
       target: application
     command: [
       "gunicorn",
-      "--config", "/code/docker/gunicorn-settings.py",
       "--reload", # restart workers when code changes
       "wsgi"
     ]
@@ -96,7 +95,6 @@ services:
       target: application
     command: [
       "gunicorn",
-      "--config", "/code/docker/gunicorn-settings.py",
       "--reload", # restart workers when code changes
       "wsgi"
     ]
@@ -190,11 +188,11 @@ services:
       target: application
     command: [
         "gunicorn",
-        "--config", "/code/docker/gunicorn-settings.py",
-        "--workers", "2", # only two workers in local dev - to save some resources
         "--reload", # restart workers when code changes
         "os2datascanner.server.wsgi"
     ]
+    environment:
+      - GUNICORN_WORKERS=2
     ports:
       - "8070:5000"
     volumes:
