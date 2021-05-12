@@ -254,17 +254,28 @@ services:
 
   localkeycloak.os2datascanner:
     image: quay.io/keycloak/keycloak:12.0.0
-    # Ignore existing will not import if a realm of this name already exists
-    # For development you may use OVERWRITE_EXISTING which will drop & create
-    command: [ "-Dkeycloak.migration.strategy=IGNORE_EXISTING",
-               "-Djboss.socket.binding.port-offset=10" ,
+
+    # Import of realm is done with migration commands below
+    # because we need to predefine the Master realm.
+    # Using the KEYCLOAK_IMPORT env variable or the -Dkeycloak.import flag will not
+    # work, as it will create a Master realm, then try but fail to create a
+    # new Master realm from our json file.
+
+    # migration.strategy=OVERWRITE_EXISTING will drop & create if changes has occurred
+    # and is set to our default setting.
+    # IGNORE_EXISTING will not import if a realm of this name already exists
+    # which could be useful if you need to test other Keycloak settings.
+    command: [ "-Djboss.socket.binding.port-offset=10",
+               "-Dkeycloak.migration.action=import",
+               "-Dkeycloak.migration.provider=singleFile",
+               "-Dkeycloak.migration.file=/realm.json",
+               "-Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
              ]
     ports:
       - 8090:8090
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
-      KEYCLOAK_IMPORT: /realm.json
       # PROXY_ADDRESS_FORWARDING: "true"
       DB_USER: keycloak
       DB_PASSWORD: keycloak
