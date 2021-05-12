@@ -4,6 +4,12 @@
 
 {% block title %}{% trans "LDAP configuration" %}{% endblock %}
 
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'js/addInput.js' %}"></script>
+    <script src="{% static 'js/ldapConfig.js' %}"></script>
+{% endblock %}
+
 {% block content %}
     {% include "partials/breadcrumb.html" with page="ldap"  %}
 
@@ -128,152 +134,4 @@
             </button>
         </div>
     </form>
-{% endblock %}
-
-{% block scripts %}
-    {{ block.super }}
-    <script>
-        // add input for user class object
-        var btnUserClass = document.querySelector('#btnUserClass')
-        var counter = 1;
-        var div = document.getElementById('userObjClass');
-        var taglist = []
-        var firstInput = document.querySelector('#userClass')
-        var inputValues = document.querySelectorAll('.user-class-input')
-        var hiddenInput = document.getElementsByName('user_obj_classes')[0];
-
-        // add new input
-        var addInput = function() {
-            counter++;
-            var input = document.createElement("input");
-            input.id = 'userClass' + counter;
-            input.type = 'text';
-            input.name = 'userClass'+ counter;
-            input.className = 'user-class-input'
-            div.appendChild(input);
-            div.appendChild(removeUserClass(input, div));
-            addUserClassInput(input);
-
-        };
-        btnUserClass.addEventListener('click', function() {
-            addInput();
-        }.bind(this));
-
-        // remove button
-        function removeUserClass(element, parent) {
-            var btnRemove = document.createElement("button");
-            btnRemove.addEventListener('click', function() {
-                parent.removeChild(element)
-                parent.removeChild(this)
-                updateTagList()
-            })
-            btnRemove.id = 'removeUserClass' + counter;
-            btnRemove.type = 'button';
-            btnRemove.name = 'removeUserClass'+ counter;
-            btnRemove.textContent = 'Fjern'
-            btnRemove.className += 'button--danger';
-            return btnRemove
-        }
-        
-        // update tag list on change
-        function addUserClassInput(element) {
-            element.addEventListener('change', updateTagList)
-        }
-
-        function updateTagList() {
-            inputValues = document.querySelectorAll('.user-class-input')
-            taglist = []
-            for (let i = 0; i < inputValues.length; i++) {  
-                taglist.push(inputValues[i].value)
-            }
-            hiddenInput.value = taglist.join(', ')
-        }
-
-        addUserClassInput(firstInput)
-        saveInputs()
-
-        function saveInputs() { 
-            if (hiddenInput.value) {
-               // dont show input in ui (this input contains all input values)
-               hiddenInput.style.display = "none"
-                // firstInput.value = hiddenInput.value.split(",")[0]
-            //    for (let i = 1; i < hiddenInput.value.split(",").length; i++) {  
-                   inputValues[0].value = hiddenInput.value.split(",")
-                   // addInput(hiddenInput[i])
-                // }
-           } else {
-               hiddenInput.style.display = "none"
-           }
-        }
-
-        // test connection and authentication
-        var btnConnection = document.querySelector('#button-connection')
-        var btnAuth = document.querySelector('#button-auth')
-        var textConnection = document.querySelector('#responseConnection')
-        var textAuth = document.querySelector('#responseAuth')
-        var responseSuccessCon = document.querySelector('#responseSuccessCon')
-        var responseErrorCon = document.querySelector('#responseErrorCon')
-        var responseSuccessAuth = document.querySelector('#responseSuccessAuth')
-        var responseErrorAuth = document.querySelector('#responseErrorAuth')
-        var urlConnection = "{% url 'test-ldap-connection' %}"
-        var urlAuth = "{% url 'test-ldap-authentication' %}"
-        
-        btnConnection.addEventListener('click', testConnection)
-        
-        function testConnection(e) {
-            e.preventDefault()
-            var connection_protocol = document.getElementById("id_connection_protocol").value;
-            var connection_url = document.getElementById("id_connection_url").value;
-
-            var oReq = new XMLHttpRequest();
-
-            oReq.open("GET", urlConnection + "?url=" + connection_protocol + connection_url);
-
-            oReq.onreadystatechange = function () {
-                if (oReq.readyState === 4) {
-                    if (oReq.status === 200) {
-                        responseSuccessCon.style.display = "block"
-                        responseErrorCon.style.display = "none"
-                        textConnection.innerText = 'Connection succeeded'
-                    } else {
-                        responseErrorCon.style.display = "block"
-                        responseSuccessCon.style.display = "none"
-                        textConnection.innerText = 'Connection failed'
-                    }
-                }
-            }
-            
-            oReq.send();
-        }
-
-        btnAuth.addEventListener('click', testAuth)
-        
-        function testAuth(e) {
-            e.preventDefault()
-            var connection_protocol = document.getElementById("id_connection_protocol").value;
-            var connection_url = document.getElementById("id_connection_url").value;
-            var bind_dn = document.getElementById("id_bind_dn").value;
-            var credential = document.getElementById("id_ldap_password").value;
-
-            var oReq = new XMLHttpRequest();
-
-            oReq.open("GET", urlAuth + "?url=" + connection_protocol + connection_url + "&bind_dn=" + bind_dn  + "&bind_credential=" + credential);
-
-            oReq.onreadystatechange = function () {
-                if (oReq.readyState === 4) {
-                    if (oReq.status === 200) {
-                        responseSuccessAuth.style.display = "block"
-                        responseErrorAuth.style.display = "none"
-                        textAuth.innerText = 'Connection succeeded'
-                    } else {
-                        responseErrorAuth.style.display = "block"
-                        responseSuccessAuth.style.display = "none"
-                        textAuth.innerText = 'Connection failed'
-                    }
-                }
-            }
-            
-            oReq.send();
-        }
-    </script>
 {% endblock %}
