@@ -6,7 +6,9 @@ from os2datascanner.utils.system_utilities import time_now
 
 from ..import_services.models.realm import Realm
 from ..import_services import keycloak_services
-from .models import (Account, Position, Organization, OrganizationalUnit)
+from .models import (Alias, Account, Position,
+        Organization, OrganizationalUnit)
+from .models.aliases import AliasType
 
 
 @transaction.atomic
@@ -132,29 +134,47 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
         # We're only interested in leaf nodes (accounts) here
         if not path or (l and l.children) or (r and r.children):
             continue
-        if not r:
-            # This is a local object with no remote counterpart; delete it
+        if l and not r:
+            # A local object with no remote counterpart. Delete it
             to_delete |= Account.objects.filter(
                     imported_id=RDN.make_string(path))
-        elif not l:
-            # This is a remote object with no local counterpart; add it
-            try:
-                account = node_to_account(org, path, r)
-            except KeyError as ex:
-                # Missing required attribute -- skip this object
-                continue
-            unit = path_to_unit(org, path[:-1])
-            to_add.append(account)
-            to_add.append(Position(account=account, unit=unit))
         else:
-            # Update a local object with changes from the remote
-            # TODO: implement this case!
+            # The remote object exists
+            if not l:
+                # ... and it has no local counterpart. Create one
+                try:
+                    account = node_to_account(org, path, r)
+                except KeyError as ex:
+                    # Missing required attribute -- skip this object
+                    continue
+                unit = path_to_unit(org, path[:-1])
+                to_add.append(account)
+                to_add.append(Position(account=account, unit=unit))
+            else:
+                # This should always work -- local_hierarchy has been built on
+                # the basis of local database objects
+                account = Account.objects.get(
+                        imported_id=RDN.make_string(path))
+
+            mail_address = r.properties.get("email")
+            if mail_address:
+                try:
+                    Alias.objects.get(
+                            account=account,
+                            _alias_type=AliasType.EMAIL.value,
+                            value=mail_address)
+                except Alias.DoesNotExist:
+                    to_add.append(Alias(account=account,
+                                        alias_type=AliasType.EMAIL,
+                                        value=mail_address))
+
+            # XXX: also update other stored properties
             pass
 
     # XXX: we should really use the bulk handling functions here, but they
     # seem not to preserve MPTT invariants(?)
     if to_add:
-        for subset in (OrganizationalUnit, Account, Position,):
+        for subset in (OrganizationalUnit, Account, Position, Alias,):
             for h in filter(lambda obj: isinstance(obj, subset), to_add):
                 h.imported = True
                 h.last_import_requested = now
