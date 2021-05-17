@@ -29,16 +29,15 @@ class StatusBase(RestrictedListView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_superuser and user.is_active:
-            return self.model.objects.all()
-        elif user.is_staff and user.is_active:
+        if not user.is_superuser and user.is_active \
+                and hasattr(user, 'administrator_for'):
             return self.model.objects.filter(
                 scanner__organization__in=
                 [org.uuid for org in
                  user.administrator_for.client.organizations.all()]
             )
         else:
-            return self.model.objects.none()
+            return super().get_queryset()
 
 
 class StatusOverview(StatusBase):
@@ -62,20 +61,6 @@ class ScannerList(RestrictedListView):
 
     template_name = 'os2datascanner/scanners.html'
     context_object_name = 'scanner_list'
-
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_superuser and user.is_active:
-            return self.model.objects.all()
-        elif user.is_staff and user.is_active:
-            return self.model.objects.filter(
-                organization__in=[
-                    org.uuid for org in
-                    user.administrator_for.client.organizations.all()
-                ]
-            )
-        else:
-            return self.model.objects.none()
 
 
 class ScannerBase(object):

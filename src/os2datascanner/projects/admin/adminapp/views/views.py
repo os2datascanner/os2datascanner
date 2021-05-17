@@ -52,20 +52,27 @@ class SuperUserRequiredMixin(LoginRequiredMixin):
     def dispatch(self, *args, **kwargs):
         """Check for login and superuser and dispatch the view."""
         user = self.request.user
-        if user.is_superuser:
+        if user.is_superuser and user.is_active:
             return super().dispatch(*args, **kwargs)
         else:
             raise PermissionDenied
 
 
 class RestrictedListView(ListView, LoginRequiredMixin):
-    """Make sure users only see data that belong to their own organization."""
 
     def get_queryset(self):
         """Restrict to the organization of the logged-in user."""
+
         user = self.request.user
         if user.is_superuser and user.is_active:
             return self.model.objects.all()
+        elif user.is_active and hasattr(user, 'administrator_for'):
+            return self.model.objects.filter(
+                organization__in=[
+                    org.uuid for org in
+                    user.administrator_for.client.organizations.all()
+                ]
+            )
         else:
             return self.model.objects.none()
 
@@ -80,25 +87,14 @@ class DesignGuide(TemplateView):
     template_name = 'designguide.html'
 
 
-class RuleList(RestrictedListView):
-    """Displays list of scanners."""
-
-    model = RegexRule
-    template_name = 'os2datascanner/rules.html'
-
-
 # Create/Update/Delete Views.
-
 class RestrictedCreateView(CreateView, LoginRequiredMixin):
     """Base class for create views that are limited by user organization."""
 
     def get_form_fields(self):
         """Get the list of fields to use in the form for the view."""
         fields = [f for f in self.fields]
-        user = self.request.user
-        if user.is_superuser or user.is_staff:
-            fields.append('organization')
-
+        fields.append('organization')
         return fields
 
     def get_form(self, form_class=None):
@@ -107,13 +103,12 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
         form_class = modelform_factory(self.model, fields=fields)
         kwargs = self.get_form_kwargs()
         form = form_class(**kwargs)
-
         return form
 
     def form_valid(self, form):
         """Validate the form."""
         user = self.request.user
-        if not user.is_superuser or not user.is_staff:
+        if not user.is_superuser:
             self.object = form.save(commit=False)
 
         return super().form_valid(form)
@@ -127,9 +122,7 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
         if not self.fields:
             return []
         fields = [f for f in self.fields]
-        user = self.request.user
-        if user.is_superuser or user.is_staff:
-            fields.append('organization')
+        fields.append('organization')
 
         return fields
 
@@ -146,7 +139,7 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
         """Get queryset filtered by user's organization."""
         queryset = super().get_queryset()
         user = self.request.user
-        if not user.is_superuser or not user.is_staff:
+        if not user.is_superuser and user.is_active:
             queryset = queryset.filter(
                 organization__in=user.administrator_for.client.organizations.all()
             )
