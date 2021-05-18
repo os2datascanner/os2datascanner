@@ -52,7 +52,7 @@
             {% endfor %}
           {% endif %}
 
-          {% if page_obj.next_page_number != paginator.num_pages %}
+          {% if page_obj.number != page_obj.paginator.num_pages %}
           <a class="link link--next" href="?{% param_replace page=page_obj.next_page_number %}">
             <span class="flex">
               {% trans "Next" %}
