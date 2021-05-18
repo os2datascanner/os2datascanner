@@ -1,5 +1,7 @@
 import sys
+import signal
 import argparse
+import traceback
 from prometheus_client import start_http_server
 from .utilities.prometheus import prometheus_summary
 
@@ -8,6 +10,11 @@ from ..model.core import SourceManager
 from .utilities.pika import PikaPipelineRunner
 from .utilities.systemd import notify_ready, notify_stopping
 from . import explorer, processor, matcher, tagger, exporter, worker
+
+
+def backtrace(signal, frame):
+    print("Got SIGUSR1, printing stacktrace:", file=sys.stderr)
+    traceback.print_stack()
 
 
 __module_mapping = {
@@ -28,6 +35,8 @@ def _compatibility_main(stage):
 
 
 def main():
+    signal.signal(signal.SIGUSR1, backtrace)
+
     parser = argparse.ArgumentParser(
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             description="Runs an OS2datascanner pipeline stage.")
