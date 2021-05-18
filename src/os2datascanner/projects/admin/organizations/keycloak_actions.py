@@ -105,7 +105,10 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
         
                 unit = OrganizationalUnit(
                         imported_id=RDN.make_string(path),
-                        name=label, parent=parent, organization=o)
+                        name=label, parent=parent, organization=o,
+                        # Clear the MPTT tree fields for now -- they get
+                        # recomputed after we do bulk_create
+                        lft=0, rght=0, tree_id=0, level=0)
                 to_add.append(unit)
             units[path] = unit
         return unit
@@ -171,19 +174,20 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
             # XXX: also update other stored properties
             pass
 
-    # XXX: we should really use the bulk handling functions here, but they
-    # seem not to preserve MPTT invariants(?)
     if to_add:
         for subset in (OrganizationalUnit, Account, Position, Alias,):
-            for h in filter(lambda obj: isinstance(obj, subset), to_add):
-                h.imported = True
-                h.last_import_requested = now
-                h.last_import = now
-                h.save()
+            manager = subset.objects
 
-    if to_delete:
-        for subset in (OrganizationalUnit, Account, Position,):
-            for h in filter(lambda obj: isinstance(obj, subset), to_delete):
-                h.delete()
+            instances = [o for o in to_add if isinstance(o, subset)]
+            for o in instances:
+                o.imported = True
+                o.last_import = now
+                o.last_import_requested = now
+
+            manager.bulk_create(instances)
+            if hasattr(manager, "rebuild"):
+                manager.rebuild()
+
+    to_delete.delete()
 
     return (len(to_add), len(to_update), len(to_delete))
