@@ -82,6 +82,7 @@ class MainPageView(LoginRequiredMixin, ListView):
         data__matches__matched=True).filter(
         resolution_status__isnull=True)
     scannerjob_filters = None
+    paginate_by_options = [10, 20, 50, 100, 250]
 
     def get_queryset(self):
         user = self.request.user
@@ -117,6 +118,9 @@ class MainPageView(LoginRequiredMixin, ListView):
                 sensitivity=int(
                     self.request.GET.get('sensitivities'))
             )
+
+        # if self.request.GET.get('paginate_by'):
+        #     self.paginate_by = int(self.request.GET.get('paginate_by'))
 
         # matches are always ordered by sensitivity desc. and probability desc.
         return self.matches
@@ -154,6 +158,9 @@ class MainPageView(LoginRequiredMixin, ListView):
                                       s["total"]) for s in sensitivities),
                                     self.request.GET.get('sensitivities', 'all'))
 
+        context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
+        context['paginate_by_options'] = self.paginate_by_options
+
         return context
 
     def get_paginate_by(self, queryset):
@@ -173,7 +180,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         resolution_status__isnull=False)
     unhandled_matches = matches.filter(
         resolution_status__isnull=True)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = timezone.now()
@@ -274,7 +281,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
                 formatted_counts[0][1] += s[1]
 
         return formatted_counts
-        
+
     def count_unhandled_matches(self):
         # Counts the amount of unhandled matches
         # TODO: Optimize queries by reading from relational db
@@ -398,7 +405,7 @@ def filter_inapplicable_matches(user, matches, roles):
         # If more than one exist, limit matches to ones without an organization (safety measure)
         if Organization.objects.count() > 1:
             matches = matches.filter(organization=None)
-    
+
     if user_is(roles, Remediator):
         unassigned_matches = Remediator(user=user).filter(matches)
         user_matches = DefaultRole(user=user).filter(matches)
