@@ -3,40 +3,19 @@
 {% if page_obj.paginator.count >= 10 %}
 <div class="get-results">
   <select name="paginate_by" id="paginate_by">
-    <option value="10"
-    {% if paginate_by == "10" %}selected="selected"{% endif %}>
-      10 {% trans "per page" %}
-    </option>
-    {% if page_obj.paginator.count > 10 %}
-    <option value="20"
-    {% if paginate_by == "20" %}selected="selected"{% endif %}>
-      20 {% trans "per page" %}
-    </option>
-    {% endif %}
-    {% if page_obj.paginator.count > 20 %}
-    <option value="50" 
-    {% if paginate_by == "50" %}selected="selected"{% endif %}>
-      50 {% trans "per page" %}
-    </option>
-    {% endif %}
-    {% if page_obj.paginator.count > 50 %}
-    <option value="100"
-    {% if paginate_by == "100" %}selected="selected"{% endif %}>
-      100 {% trans "per page" %}
-    </option>
-    {% endif %}
-    {% if page_obj.paginator.count > 100 %}
-    <option value="250"
-    {% if paginate_by == "250" %}selected="selected"{% endif %}>
-      250 {% trans "per page" %}
-    </option>
-    {% endif %}
-    {% if page_obj.paginator.count > 250 %}
-    <option value="500"
-    {% if paginate_by == "500" %}selected="selected"{% endif %}>
-      500 {% trans "per page" %}
-    </option>
-    {% endif %}
+      <option value="10"
+              {% if paginate_by_options|first == 10 %}
+              selected="selected"
+              {% endif %} >
+          {% trans "per page" %}
+      </option>
+
+        {% for option in paginate_by_options %}
+            <option value="{{ option }}"
+            {% if option == paginate_by %} selected="selected"{% endif %}>
+                {{ option }} {% trans "per page" %}
+            </option>
+        {% endfor %}
   </select>
 </div>
 {% endif %}
