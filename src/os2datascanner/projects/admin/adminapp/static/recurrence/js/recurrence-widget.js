@@ -117,7 +117,7 @@ recurrence.widget.Calendar.prototype = {
             recurrence.widget.add_class(
                 header_grid.cells[i], item.className);
             });
-        recurrence.widget.add_class(header_grid.elements.root, 'navigation');
+        recurrence.widget.add_class(header_grid.elements.root, 'navigation-calendar');
 
         // core
 

@@ -1,6 +1,6 @@
 .sidemenu {
   position: fixed;
-  z-index: 1;
+  z-index: 10;
   top: 4.5rem;
   left: 0;
   width: 15rem;
@@ -8,22 +8,22 @@
   background: transparent linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-primary) 100%) 0% 0% no-repeat padding-box;
 }
 
-.navigation {
+.navi {
   margin-left: 1rem;
   font-size: 1rem;
 }
 
-.navigation ul {
+.navi ul {
   padding-top: 5rem;
   list-style-type: none;
 }
 
-.navigation li {
+.navi li {
   margin-top: 1.8rem;
   text-decoration: none;
 }
 
-.navigation a {
+.navi a {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -45,7 +45,7 @@
   }
 }
 
-.navigation a:hover {
+.navi a:hover {
   color: var(--color-primary-dark);
 
   svg {
@@ -58,7 +58,7 @@
   }
 }
 
-.navigation a.active {
+.navi a.active {
   color: var(--color-primary-dark);
   font-weight: 700;
   background-color: var(--color-body-bg);
@@ -75,7 +75,7 @@
 }
 
 @media screen {
-  .navigation li a.active::before {
+  .navi li a.active::before {
     content: "";
     display: block;
     width: 10px;
@@ -87,7 +87,7 @@
     top: -10px;
     right: 0;
   }
-  .navigation li a.active::after {
+  .navi li a.active::after {
     content: "";
     display: block;
     width: 10px;
