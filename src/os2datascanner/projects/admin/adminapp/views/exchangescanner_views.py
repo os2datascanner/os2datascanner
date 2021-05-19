@@ -14,6 +14,8 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
+from django.http import HttpResponseRedirect
+from os2datascanner.projects.admin.core.models import Feature
 
 from .scanner_views import *
 from ..aescipher import decrypt
@@ -80,6 +82,29 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
         form = super().get_form(form_class)
 
         return initialize_form(form)
+
+
+class ExchangeScannerCopy(ScannerCopy):
+    """Create a new copy of an existing ExchangeScanner"""
+
+    model = ExchangeScanner
+    fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
+              'do_last_modified_check', 'rules', 'recipients', 'userlist',
+              'service_endpoint']
+
+    def dispatch(self, *args, **kwargs):
+        pk = super(ExchangeScannerCopy, self).dispatch()
+
+        original_scanner_obj = Scanner.objects.get(pk=pk['original_pk'])
+        copy_scanner_obj = Scanner.objects.get(pk=pk['copy_pk'])
+
+        # Copies the auth username
+        # Does not copy the password, user must reenter that.
+        copy_scanner_obj.authentication.username = original_scanner_obj.authentication.username
+
+        copy_scanner_obj.authentication.save()
+
+        return HttpResponseRedirect('/exchangescanners/%s' % pk['copy_pk'])
 
 
 class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):

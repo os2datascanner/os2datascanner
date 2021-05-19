@@ -15,6 +15,8 @@ from json import dumps
 
 from django.core.paginator import Paginator, EmptyPage
 from django.http import Http404
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from pika.exceptions import AMQPError
 import structlog
 
@@ -229,6 +231,41 @@ class ScannerDelete(RestrictedDeleteView):
             form_class = self.get_form_class()
 
         return super().get_form(form_class)
+
+
+class ScannerCopy(ScannerBase, RestrictedCreateView):
+    """Creates a copy of an existing scanner.
+
+    For scanner specific fields one must override dispatch method and
+    use the original primary key to fetch and set the scanner specific attributes."""
+
+    scanner_keys = {}
+
+    def dispatch(self, *args, **kwargs):
+        """Returns a dict of the original primary key and the new one.
+        Scanner views must override and return a dispatch URL with the new
+        object's PK."""
+
+        scanner_obj = ScannerUpdate.get_scanner_object(self)
+        self.scanner_keys["original_pk"] = scanner_obj.pk
+        scanner_obj.pk = None
+        scanner_obj.id = None
+        auth_obj = Authentication.objects.create()
+        scanner_obj.authentication = auth_obj
+
+        # Adds "Copy" to the end of the name of the copied Scanner
+        # While loop avoids issue of duplicates if job named 'Scanner Copy' already
+        # exists. A new copy would then be 'Scanner Copy Copy'
+        while True:
+            scanner_obj.name = f'{scanner_obj.name} Copy'
+            if not Scanner.objects.filter(name=scanner_obj.name).exists():
+                scanner_obj.validation_status = Scanner.INVALID  # By default a copy is not validated.
+                scanner_obj.save()
+                scanner_obj.rules.set(self.get_scanner_object().rules.all())
+                self.scanner_keys["copy_pk"] = scanner_obj.pk
+                break
+
+        return self.scanner_keys
 
 
 class ScannerAskRun(RestrictedDetailView):

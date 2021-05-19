@@ -77,6 +77,27 @@ class GoogleDriveScannerDelete(ScannerDelete):
     success_url = '/googledrivescanners/'
 
 
+class GoogleDriveScannerCopy(ScannerCopy):
+    """Create a new copy of an existing Google Drive Scanner"""
+    model = GoogleDriveScanner
+    fields = [
+        'name',
+        'schedule',
+        'service_account_file',
+        'user_emails',
+        'exclusion_rules',
+        'do_ocr',
+        'do_last_modified_check',
+        'rules',
+        'organization',
+    ]
+
+    def dispatch(self, *args, **kwargs):
+        pk = super(GoogleDriveScannerCopy, self).dispatch()
+
+        return HttpResponseRedirect('/googledrivescanners/%s' % pk['copy_pk'])
+
+
 class GoogleDriveScannerAskRun(ScannerAskRun):
     """Prompt for starting google drive scan, validate first."""
     model = GoogleDriveScanner

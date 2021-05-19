@@ -29,6 +29,21 @@ from .models.scannerjobs.msgraph_models import (MSGraphMailScanner,
                                                 MSGraphFileScanner)
 from .models.scannerjobs.gmail_model import GmailScanner
 from .models.scannerjobs.sbsysscanner_model import SbsysScanner
+from .views.exchangescanner_views import ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate, \
+    ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun, ExchangeScannerCopy
+from .views.filescanner_views import FileScannerCreate, FileScannerRun, FileScannerAskRun, FileScannerUpdate, \
+    FileScannerDelete, FileScannerList, FileScannerCopy
+from .views.dropboxscanner_views import DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun, DropboxScannerUpdate, \
+    DropboxScannerDelete, DropboxScannerList
+from .views.googledrivescanner_views import GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun, \
+    GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete, GoogleDriveScannerCopy
+from .views.gmailscanner_views import GmailScannerCreate, GmailScannerRun, GmailScannerAskRun, GmailScannerUpdate, \
+    GmailScannerDelete, GmailScannerList, GmailScannerCopy
+from .views.sbsysscanner_views import SbsysScannerCreate, SbsysScannerList, SbsysScannerAskRun, SbsysScannerDelete, \
+    SbsysScannerRun, SbsysScannerUpdate
+from .views.rule_views import RuleList, \
+    CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
+    RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
 from .views.api import JSONAPIView
 from .views.views import GuideView, DialogSuccess
 from .views.exchangescanner_views import (
@@ -53,9 +68,10 @@ from .views.rule_views import (
     RuleList, CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, RegexRuleCreate,
     RegexRuleUpdate, RegexRuleDelete)
 from .views.scanner_views import (StatusOverview, StatusCompleted, StatusDelete)
-from .views.webscanner_views import (
-    WebScannerCreate, WebScannerUpdate, WebScannerDelete,
-    WebScannerRun, WebScannerAskRun, WebScannerList, WebScannerValidate)
+from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
+                                     WebScannerDelete, WebScannerRun,
+                                     WebScannerAskRun, WebScannerList,
+                                     WebScannerValidate, WebScannerCopy)
 from .views.msgraph_views import (
         MSGraphMailList, MSGraphMailDelete, MSGraphMailCreate,
         MSGraphMailUpdate, MSGraphMailRun, MSGraphMailAskRun,
@@ -89,6 +105,7 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=ExchangeScanner),
         name='scanner_askrun'),
+    url(r'^exchangescanners/(?P<pk>\d+)/copy/$', ExchangeScannerCopy.as_view(), name='exchangescanner_copy'),
 
     # Webscanner URL's
     url(r'^webscanners/$', WebScannerList.as_view(), name='webscanners'),
@@ -106,6 +123,7 @@ urlpatterns = [
         name='webscanner_askrun'),
     url(r'^webscanners/(?P<pk>\d+)/$', WebScannerUpdate.as_view(),
         name='webscanner_update'),
+    url(r'^webscanners/(?P<pk>\d+)/copy/$', WebScannerCopy.as_view(), name='webscanner_copy'),
 
     # Filescanner URL's
     url(r'^filescanners/$', FileScannerList.as_view(), name='filescanners'),
@@ -121,6 +139,7 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=FileScanner),
         name='filescanner_askrun'),
+    url(r'^filescanners/(?P<pk>\d+)/copy/$', FileScannerCopy.as_view(), name='filescanner_copy'),
 
     # Dropbox scanner URL's
     url(r'^dropboxscanners/$', DropboxScannerList.as_view(), name='dropboxscanners'),
@@ -151,6 +170,7 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=GoogleDriveScanner),
         name='googledrivescanner_askrun'),
+    url(r'^googledrivescanners/(?P<pk>\d+)/copy/$', GoogleDriveScannerCopy.as_view(), name='googledrivescanner_copy'),
 
     # Gmail scanner URL's
     url(r'^gmailscanners/$', GmailScannerList.as_view(), name='gmailscanners'),
@@ -166,6 +186,7 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=GmailScanner),
         name='gmailscanner_askrun'),
+    url(r'^gmailscanners/(?P<pk>\d+)/copy/$', GmailScannerCopy.as_view(), name='gmailscanner_copy'),
 
     # Sbsys scanner URL's
     url(r'^sbsysscanners/$', SbsysScannerList.as_view(), name='sbsysscanners'),

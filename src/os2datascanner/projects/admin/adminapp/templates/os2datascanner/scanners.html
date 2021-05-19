@@ -134,6 +134,15 @@
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-pencil"></use>
               </svg>
             </a>
+
+           <a
+            href="/{{ view.type }}scanners/{{scanner.pk}}/copy"
+            class="button button--small button--grey"
+            title="Kopiér">
+              <svg class="icon">
+                <use xlink:href="/static/src/svg/symbol-defs.svg#icon-copy"></use>
+              </svg>
+            </a>
         
             {% if not scanner.scans %}
             <form action="/{{ view.type }}scanners/{{scanner.pk}}/delete/" method="post" style="display: inline-block;">

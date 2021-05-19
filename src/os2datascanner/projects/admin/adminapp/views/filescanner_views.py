@@ -17,7 +17,6 @@ from ..aescipher import decrypt
 from ..models.scannerjobs.filescanner_model import FileScanner
 from django.utils.translation import ugettext_lazy as _
 
-
 class FileScannerList(ScannerList):
     """Displays list of file scanners."""
 
@@ -111,6 +110,37 @@ class FileScannerDelete(ScannerDelete):
     model = FileScanner
     fields = []
     success_url = '/filescanners/'
+
+
+class FileScannerCopy(ScannerCopy):
+    """Create a new copy of an existing FileScanner"""
+    model = FileScanner
+    fields = [
+        'name',
+        'schedule',
+        'url',
+        'exclusion_rules',
+        'alias',
+        'do_ocr',
+        'do_last_modified_check',
+        'rules',
+        'recipients'
+        ]
+
+    def dispatch(self, *args, **kwargs):
+        pk = super(FileScannerCopy, self).dispatch()
+
+        original_scanner_obj = Scanner.objects.get(pk=pk['original_pk'])
+        copy_scanner_obj = Scanner.objects.get(pk=pk['copy_pk'])
+
+        # Copies the auth username and domain
+        # Does not copy the password, user must reenter that.
+        copy_scanner_obj.authentication.username = original_scanner_obj.authentication.username
+        copy_scanner_obj.authentication.domain = original_scanner_obj.authentication.domain
+
+        copy_scanner_obj.authentication.save()
+
+        return HttpResponseRedirect('/filescanners/%s' % pk['copy_pk'])
 
 
 class FileScannerAskRun(ScannerAskRun):
