@@ -79,9 +79,12 @@ class WebScannerUpdate(ScannerUpdate):
 
     def get_form_fields(self):
         fields = super().get_form_fields()
-        if not self.request.user.is_superuser and \
-                not self.object.validation_status:
-            fields.append('validation_method')
+        # A check on whether the user updating was a super user
+        # or if the scannerjob was validated used to live here.
+        # If neither, a "validation_method" field was appended.
+        # This logic was removed as it is currently not used, but
+        # it may be brought back in the future for a SaaS solution
+        # to serve as a way to prove "ownership"/rights of domain to be scanned.
         self.fields = fields
         return fields
 
