@@ -329,6 +329,30 @@ run
 
     docker-compose {exec|run} <container name> bash
 
+Debugging
+=========
+
+Stacktrace
+^^^^^^^^^^
+
+A stacktrace is printed to `stderr` if pipeline components receive `SIGUSR1`. The
+scan continues without interuption.
+
+The components must be startet using `run_stage`
+
+Running the engine locally,
+.. code-block:: bash
+    python -m os2datascanner.engine2.pipeline.run_stage worker
+    ps aux | grep os2datascanner
+    kill -USR1 <pid>
+
+Running the engine in Docker, using the namespace sharing between localhost and docker
+.. code-block:: bash
+    docker top os2datascanner_engine_worker_1  # get the <pid> of the python process
+    kill -USR1 <pid>
+    docker logs os2datascanner_engine_worker_1
+
+
 Documentation
 =============
 
