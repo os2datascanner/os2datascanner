@@ -29,8 +29,7 @@ class StatusBase(RestrictedListView):
 
     def get_queryset(self):
         user = self.request.user
-        if not user.is_superuser and user.is_active \
-                and hasattr(user, 'administrator_for'):
+        if not user.is_superuser and hasattr(user, 'administrator_for'):
             return self.model.objects.filter(
                 scanner__organization__in=
                 [org.uuid for org in
@@ -123,7 +122,7 @@ class ScannerBase(object):
         if not user.is_superuser:
             self.object = form.save(commit=False)
 
-        """Makes sure authentication info gets stored in db."""
+        # Makes sure authentication info gets stored in db.
         domain = form.save(commit=False)
         if domain.authentication:
             authentication = domain.authentication
