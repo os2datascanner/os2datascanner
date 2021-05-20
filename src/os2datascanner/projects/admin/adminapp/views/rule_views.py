@@ -61,9 +61,7 @@ class RuleCreate(RestrictedCreateView):
         user = self.request.user
         org_qs = Organization.objects.none()
         if hasattr(user, 'administrator_for'):
-            org_qs = Organization.objects.filter(
-                client=user.administrator_for.client
-            )
+            org_qs = user.administrator_for.client.organizations.all()
         elif user.is_superuser:
             org_qs = Organization.objects.all()
         form.fields['organization'].queryset = org_qs
@@ -71,7 +69,6 @@ class RuleCreate(RestrictedCreateView):
         return form
 
     def form_invalid(self, form):
-        print(form)
         super().form_invalid(form)
 
     def form_valid(self, form):

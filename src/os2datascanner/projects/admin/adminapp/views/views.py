@@ -52,7 +52,7 @@ class SuperUserRequiredMixin(LoginRequiredMixin):
     def dispatch(self, *args, **kwargs):
         """Check for login and superuser and dispatch the view."""
         user = self.request.user
-        if user.is_superuser and user.is_active:
+        if user.is_superuser:
             return super().dispatch(*args, **kwargs)
         else:
             raise PermissionDenied
@@ -64,9 +64,9 @@ class RestrictedListView(ListView, LoginRequiredMixin):
         """Restrict to the organization of the logged-in user."""
 
         user = self.request.user
-        if user.is_superuser and user.is_active:
+        if user.is_superuser:
             return self.model.objects.all()
-        elif user.is_active and hasattr(user, 'administrator_for'):
+        elif hasattr(user, 'administrator_for'):
             return self.model.objects.filter(
                 organization__in=[
                     org.uuid for org in
@@ -126,20 +126,11 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
 
         return fields
 
-    def get_form(self, form_class=None):
-        """Get the form for the view."""
-        fields = self.get_form_fields()
-        form_class = modelform_factory(self.model, fields=fields)
-        kwargs = self.get_form_kwargs()
-        form = form_class(**kwargs)
-
-        return form
-
     def get_queryset(self):
         """Get queryset filtered by user's organization."""
         queryset = super().get_queryset()
         user = self.request.user
-        if not user.is_superuser and user.is_active:
+        if not user.is_superuser and hasattr(user, 'administrator_for'):
             queryset = queryset.filter(
                 organization__in=user.administrator_for.client.organizations.all()
             )
