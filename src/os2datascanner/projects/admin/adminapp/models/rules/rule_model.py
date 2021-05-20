@@ -37,7 +37,7 @@ class Rule(models.Model):
                             verbose_name='Navn')
     organization = models.ForeignKey(
         'organizations.Organization',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='rule',
         verbose_name=_('organization'),
         default=None,
