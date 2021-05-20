@@ -11,7 +11,7 @@ class APIKey(models.Model):
                             unique=True, verbose_name="UUID")
     organization = models.ForeignKey(
         'organizations.Organization',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='api_keys',
         verbose_name=_('organization'),
         default=None,
