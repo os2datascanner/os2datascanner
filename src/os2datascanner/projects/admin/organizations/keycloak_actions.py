@@ -178,6 +178,8 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
             # XXX: also update other stored properties
             pass
 
+    to_delete.delete()
+
     if to_add:
         for subset in (OrganizationalUnit, Account, Position, Alias,):
             manager = subset.objects
@@ -191,7 +193,5 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
             manager.bulk_create(instances)
             if hasattr(manager, "rebuild"):
                 manager.rebuild()
-
-    to_delete.delete()
 
     return (len(to_add), len(to_update), len(to_delete))
