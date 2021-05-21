@@ -9,4 +9,5 @@ urlpatterns = [
     path('ldap/edit/<uuid:pk>', views.LDAPUpdateView.as_view(), name='edit-ldap'),
     path('ldap/test/connection', views.verify_connection, name='test-ldap-connection'),
     path('ldap/test/authentication', views.verify_authentication, name='test-ldap-authentication'),
+    path('ldap/import/<uuid:pk>', views.LDAPImportView.as_view(), name='import-ldap'),
 ]
