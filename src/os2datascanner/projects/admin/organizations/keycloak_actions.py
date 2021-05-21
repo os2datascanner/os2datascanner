@@ -27,6 +27,10 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
     token_message.raise_for_status()
     token = token_message.json()["access_token"]
 
+    sync_message = keycloak_services.sync_users(
+            realm.realm_id, realm.organization.pk, token)
+    sync_message.raise_for_status()
+
     user_message = keycloak_services.get_users(realm.realm_id, token)
     user_message.raise_for_status()
     remote = user_message.json()
