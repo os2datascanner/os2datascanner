@@ -71,7 +71,7 @@
                             <i id="library_add_check" title="Redigér LDAP konfiguration" class="material-icons">library_add_check</i>
                         </a>
                         <a
-                        href="#"
+                        href="{% url 'import-ldap' pk=organization.pk %}"
                         id="button-add-configuration" 
                         type="button" 
                         title="{% trans 'sync'|capfirst %}"

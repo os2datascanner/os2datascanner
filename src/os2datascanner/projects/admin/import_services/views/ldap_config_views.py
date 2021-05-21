@@ -1,11 +1,13 @@
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.detail import DetailView
 
 from os2datascanner.projects.admin.import_services.keycloak_services import add_ldap_conf, create_realm, request_access_token, request_update_component, get_token_first
+from os2datascanner.projects.admin.organizations.keycloak_actions import perform_import
 from os2datascanner.projects.admin.organizations.models import Organization
 
 from os2datascanner.projects.admin.import_services.models import LDAPConfig, Realm
@@ -166,3 +168,18 @@ class LDAPUpdateView(LoginRequiredMixin, UpdateView):
         form.instance.ldap_credential = form.cleaned_data['ldap_password']
         _keycloak_update(form.instance)
         return super().form_valid(form)
+
+
+class LDAPImportView(LoginRequiredMixin, DetailView):
+    """Base class for view that handles starting of a scanner run."""
+
+    model = LDAPConfig
+
+    def __init__(self):
+        self.object = None
+
+    def get(self, request, *args, **kwargs):
+        """Handle a get request to the view."""
+        realm = get_object_or_404(Realm, organization_id=self.get_object().pk)
+        perform_import(realm)
+        return redirect("organization-list")
