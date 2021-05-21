@@ -7,6 +7,10 @@
 {% block scripts %}
     {{ block.super }}
     <script src="{% static 'js/addInput.js' %}"></script>
+    <script>
+        var urlConnection = "{% url 'test-ldap-connection' %}"
+        var urlAuth = "{% url 'test-ldap-authentication' %}"
+    </script>
     <script src="{% static 'js/ldapConfig.js' %}"></script>
 {% endblock %}
 

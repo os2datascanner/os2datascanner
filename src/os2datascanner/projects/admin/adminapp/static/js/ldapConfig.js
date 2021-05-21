@@ -8,8 +8,6 @@ var responseSuccessCon = document.querySelector('#responseSuccessCon')
 var responseErrorCon = document.querySelector('#responseErrorCon')
 var responseSuccessAuth = document.querySelector('#responseSuccessAuth')
 var responseErrorAuth = document.querySelector('#responseErrorAuth')
-var urlConnection = "{% url 'test-ldap-connection' %}"
-var urlAuth = "{% url 'test-ldap-authentication' %}"
 
 // button - test connection
 btnConnection.addEventListener('click', testConnection)
