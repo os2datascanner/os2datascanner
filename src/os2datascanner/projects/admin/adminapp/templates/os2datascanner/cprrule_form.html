@@ -78,30 +78,7 @@
       </div>
     </div>
     {% endif %}
-
-    {% if form.group %}
-    <div 
-      id="{{ form.group.auto_id }}_container" 
-      class="form__group col-sm-12{% if form.group.errors %} has-error{% endif %}">
-      <label class="control-label col-sm-2" for="id_{{ form.group.name }}">{{ form.group.label }}</label>
-      <div class="col-sm-10">
-        <select name="{{ form.group.name }}" id="id_{{ form.group.name }}" class="form-control"
-          {% if form.group.field.required %}required{% endif %}>
-          {% for value, tag in form.group.field.choices %}
-          <option value="{{ value }}" {% if form.group.value|add:"0" == value|add:"0" %} selected{% endif %}>{{ tag }}
-          </option>{# silly type conversion #}
-          {% endfor %}
-        </select>
-
-        {% if form.group.help_text %}
-        <span class="form__help-text">{{ form.group.help_text }}</span>
-        {% endif %}
-
-        {% if form.group.errors %}{{ form.group.errors }}{% endif %}
-      </div>
-    </div>
     {% endif %}
-
   </fieldset>
 
   <fieldset class="form__fieldset">

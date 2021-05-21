@@ -8,19 +8,14 @@
 # for the specific language governing rights and limitations under the
 # License.
 #
-# OS2Webscanner was developed by Magenta in collaboration with OS2 the
-# Danish community of open source municipalities (http://www.os2web.dk/).
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
 #
-# The code is currently governed by OS2 the Danish community of open
-# source municipalities ( http://www.os2web.dk/ )
-
 """Utility methods for the OS2Webscanner project."""
 
 import os
 import shutil
 import requests
-import time
-import datetime
 import chardet
 import logging
 import pathlib
@@ -28,8 +23,6 @@ import typing
 
 from django.db import IntegrityError
 from django.conf import settings
-from django.core.mail import EmailMessage
-from django.template import loader
 
 
 def capitalize_first(s):
@@ -109,25 +102,24 @@ def as_file_uri(path: typing.Union[str, pathlib.Path]) -> str:
 
 
 def upload_path_webscan_sitemap(instance, filename):
-    return "organisation/%d" % instance.organization.id + "/sitemaps/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/sitemaps/%s" % filename
 
 
 def upload_path_gmail_service_account(instance, filename):
-    return "organisation/%d" % instance.organization.id + "/gmail/serviceaccount/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/gmail/serviceaccount/%s" % filename
 
 
 def upload_path_gmail_users(instance, filename):
-    return "organisation/%d" % instance.organization.id + "/gmail/users/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/gmail/users/%s" % filename
 
 
 def upload_path_exchange_users(instance, filename):
-    return "organisation/%d" % instance.organization.id + "/mailscan/users/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/mailscan/users/%s" % filename
 
 
 def upload_path_gdrive_service_account(instance, filename):
-    return "organisation/%d" % instance.organization.id + "/googledrive/serviceaccount/%s" % filename
+    return "organisation/%s" % instance.organization.slug + "/googledrive/serviceaccount/%s" % filename
 
 
 def upload_path_gdrive_users(instance, filename):
-    return "organisation/%d" % instance.organization.id + "/googledrive/users/%s" % filename
-
+    return "organisation/%s" % instance.organization.slug + "/googledrive/users/%s" % filename

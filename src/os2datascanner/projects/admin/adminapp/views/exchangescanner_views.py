@@ -1,4 +1,19 @@
+# The contents of this file are subject to the Mozilla Public License
+# Version 2.0 (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+#    http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS"basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
+#
 from django import forms
+
+from os2datascanner.projects.admin.core.models import Feature
 
 from .scanner_views import *
 from ..aescipher import decrypt
@@ -12,18 +27,28 @@ class ExchangeScannerList(ScannerList):
     model = ExchangeScanner
     type = 'exchange'
 
+    def get_queryset(self):
+        return super().get_queryset()
+
 
 class ExchangeScannerCreate(ScannerCreate):
     """Create a exchange scanner view."""
 
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
-              'do_last_modified_check', 'rules', 'recipients', 'userlist',
-              'service_endpoint']
+              'do_last_modified_check', 'rules', 'userlist',
+              'service_endpoint', 'organization',]
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
         return '/exchangescanners/%s/created/' % self.object.pk
+
+    def get_form_fields(self):
+        if hasattr(self.request.user, 'administrator_for'):
+            client = self.request.user.administrator_for.client
+            if Feature.ORG_STRUCTURE in client.enabled_features:
+                self.fields.append('org_unit')
+        return super().get_form_fields()
 
     def get_form(self, form_class=None):
         """Adds special field password."""
@@ -31,6 +56,16 @@ class ExchangeScannerCreate(ScannerCreate):
             form_class = self.get_form_class()
 
         form = super().get_form(form_class)
+
+        unit_field = form.fields.get('org_unit', None)
+        if unit_field:
+            # NB! the client relation is inferred by the existence of the field!
+            # If addition of the field changes, ensure proper checks here
+            client = self.request.user.administrator_for.client
+            initial_qs = unit_field.queryset
+            unit_field.queryset = initial_qs.filter(
+                organization__in=client.organizations.all()
+            )
 
         return initialize_form(form)
 
@@ -40,8 +75,8 @@ class ExchangeScannerUpdate(ScannerUpdate):
 
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
-              'do_last_modified_check', 'rules', 'recipients', 'userlist',
-              'service_endpoint']
+              'do_last_modified_check', 'rules', 'userlist',
+              'service_endpoint', 'organization']
 
     def get_success_url(self):
         """The URL to redirect to after successful updating.

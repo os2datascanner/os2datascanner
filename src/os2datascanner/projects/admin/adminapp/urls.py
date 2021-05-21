@@ -8,15 +8,12 @@
 # for the specific language governing rights and limitations under the
 # License.
 #
-# OS2Webscanner was developed by Magenta in collaboration with OS2 the
-# Danish community of open source municipalities (http://www.os2web.dk/).
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
 #
-# The code is currently governed by OS2 the Danish community of open
-# source municipalities ( http://www.os2web.dk/ )
 """URL mappings."""
 
 import django.contrib.auth.views
-from django.conf import settings
 from django.conf.urls import url
 from django.http import HttpResponse
 from django.views.i18n import JavaScriptCatalog
@@ -27,36 +24,38 @@ from .models.scannerjobs.exchangescanner_model import ExchangeScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
-from .models.scannerjobs.msgraph_models import (
-        MSGraphMailScanner, MSGraphFileScanner)
+from .models.scannerjobs.msgraph_models import (MSGraphMailScanner,
+                                                MSGraphFileScanner)
 from .models.scannerjobs.gmail_model import GmailScanner
 from .models.scannerjobs.sbsysscanner_model import SbsysScanner
-from .views.exchangescanner_views import ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate, \
-    ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun
-from .views.filescanner_views import FileScannerCreate, FileScannerRun, FileScannerAskRun, FileScannerUpdate, \
-    FileScannerDelete, FileScannerList
-from .views.dropboxscanner_views import DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun, DropboxScannerUpdate, \
-    DropboxScannerDelete, DropboxScannerList
-from .views.googledrivescanner_views import GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun, \
-    GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete
-from .views.gmailscanner_views import GmailScannerCreate, GmailScannerRun, GmailScannerAskRun, GmailScannerUpdate, \
-    GmailScannerDelete, GmailScannerList
-from .views.sbsysscanner_views import SbsysScannerCreate, SbsysScannerList, SbsysScannerAskRun, SbsysScannerDelete, \
-    SbsysScannerRun, SbsysScannerUpdate
-from .views.rule_views import RuleList, \
-    CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
-    RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
 from .views.api import JSONAPIView
-from .views.views import GroupList, GroupCreate, GroupUpdate, GroupDelete
-from .views.views import MainPageView
-from .views.views import OrganizationList
 from .views.views import DialogSuccess
-from .views.scanner_views import (StatusOverview, StatusCompleted)
-from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
-                                     WebScannerDelete, WebScannerRun,
-                                     WebScannerAskRun, WebScannerList,
-                                     WebScannerValidate)
 from .views.views import DesignGuide
+from .views.exchangescanner_views import (
+    ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate,
+    ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun)
+from .views.filescanner_views import (
+    FileScannerCreate, FileScannerRun, FileScannerAskRun,
+    FileScannerUpdate, FileScannerDelete, FileScannerList)
+from .views.dropboxscanner_views import (
+    DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun,
+    DropboxScannerUpdate, DropboxScannerDelete, DropboxScannerList)
+from .views.googledrivescanner_views import (
+    GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun,
+    GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete)
+from .views.gmailscanner_views import (
+    GmailScannerCreate, GmailScannerRun, GmailScannerAskRun,
+    GmailScannerUpdate, GmailScannerDelete, GmailScannerList)
+from .views.sbsysscanner_views import (
+    SbsysScannerCreate, SbsysScannerList, SbsysScannerAskRun,
+    SbsysScannerDelete, SbsysScannerRun, SbsysScannerUpdate)
+from .views.rule_views import (
+    RuleList, CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, RegexRuleCreate,
+    RegexRuleUpdate, RegexRuleDelete)
+from .views.scanner_views import (StatusOverview, StatusCompleted)
+from .views.webscanner_views import (
+    WebScannerCreate, WebScannerUpdate, WebScannerDelete,
+    WebScannerRun, WebScannerAskRun, WebScannerList, WebScannerValidate)
 from .views.msgraph_views import (
         MSGraphMailList, MSGraphMailDelete, MSGraphMailCreate,
         MSGraphMailUpdate, MSGraphMailRun, MSGraphMailAskRun,
@@ -292,17 +291,14 @@ urlpatterns = [
         DialogSuccess.as_view()),
     url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(saved)/$',
         DialogSuccess.as_view()),
-    url(r'^(rules/regex|rules/cpr|groups)/(\d+)/(created)/$',
+    url(r'^(rules/regex|rules/cpr)/(\d+)/(created)/$',
         DialogSuccess.as_view()),
-    url(r'^(rules/regex|rules/cpr|groups)/(\d+)/(saved)/$',
+    url(r'^(rules/regex|rules/cpr)/(\d+)/(saved)/$',
         DialogSuccess.as_view()),
 
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(
         packages=('os2datascanner.projects.admin.adminapp', 'recurrence'),
     )),
-    # System functions
-    url(r'^system/orgs_and_domains/$', OrganizationList.as_view(),
-        name='orgs_and_domains'),
 
     url(r'^designguide',
         DesignGuide.as_view(
@@ -312,15 +308,3 @@ urlpatterns = [
 
     url(r'^health/', lambda r: HttpResponse()),
 ]
-
-if settings.DO_USE_GROUPS:
-    urlpatterns += [
-        '',
-        url(r'^groups/$', GroupList.as_view(), name='groups'),
-        url(r'^groups/add/$', GroupCreate.as_view(), name='group_add'),
-        url(r'^(groups)/(\d+)/(success)/$', DialogSuccess.as_view()),
-        url(r'^groups/(?P<pk>\d+)/$', GroupUpdate.as_view(),
-            name='group_update'),
-        url(r'^groups/(?P<pk>\d+)/delete/$', GroupDelete.as_view(),
-            name='group_delete'),
-    ]

@@ -1,3 +1,16 @@
+# The contents of this file are subject to the Mozilla Public License
+# Version 2.0 (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+#    http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS"basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
+#
 from ..validate import validate_domain, get_validation_str
 from .scanner_views import *
 from ..models.scannerjobs.webscanner_model import WebScanner
@@ -24,7 +37,7 @@ class WebScannerCreate(ScannerCreate):
               'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
               'do_link_check', 'do_external_link_check', 'do_collect_cookies',
               'do_last_modified_check', 'do_last_modified_check_head_request',
-              'rules', 'recipients']
+              'rules', 'organization',]
 
     def get_form(self, form_class=None):
         if form_class is None:
@@ -56,7 +69,7 @@ class WebScannerUpdate(ScannerUpdate):
               'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
               'do_link_check', 'do_external_link_check', 'do_collect_cookies',
               'do_last_modified_check', 'do_last_modified_check_head_request',
-              'rules', 'recipients']
+              'rules', 'organization',]
 
     def form_valid(self, form):
         if url_contains_spaces(form):
@@ -66,9 +79,12 @@ class WebScannerUpdate(ScannerUpdate):
 
     def get_form_fields(self):
         fields = super().get_form_fields()
-        if not self.request.user.is_superuser and \
-                not self.object.validation_status:
-            fields.append('validation_method')
+        # A check on whether the user updating was a super user
+        # or if the scannerjob was validated used to live here.
+        # If neither, a "validation_method" field was appended.
+        # This logic was removed as it is currently not used, but
+        # it may be brought back in the future for a SaaS solution
+        # to serve as a way to prove "ownership"/rights of domain to be scanned.
         self.fields = fields
         return fields
 

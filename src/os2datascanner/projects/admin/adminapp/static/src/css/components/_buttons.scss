@@ -29,6 +29,25 @@
       color: var(--color-text-white);
     }
 
+    &--connection {
+      display: flex;
+      padding: .5rem;
+      font-weight: normal;
+      border-radius: 2rem;
+      font-size: .8rem;
+      margin-bottom: 2rem;
+      max-width: 10rem;
+      margin-top: 1rem;
+
+      .material-icons {
+        font-size: 1.25rem;
+      }
+
+      .con-text {
+        margin-left: .25rem;
+      }
+    }
+
   }
 
   &--danger {
@@ -71,6 +90,12 @@
       background-color: #e9e9e9;
     }
 
+    &--transparent {
+      background-color: transparent;
+      border: none;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    }
+
     &:focus,
     &:hover {
       background-color: rgba(0, 0, 0, 0.2);
@@ -88,6 +113,33 @@
     .text {
       padding-top: .3rem;
       padding-left: .3rem;
+    }
+  }
+
+  &--transparent {
+    background-color: transparent;
+    border: 1px solid var(--color-primary-dark);
+    border-radius: var(--border-radius-button);
+    padding: .15rem .25rem;
+    margin-right: 1rem;
+    
+    &:hover,
+    &:focus {
+      background-color: #fff;
+    }
+
+    .material-icons {
+      margin-top: 0.2rem;
+      color: var(--color-primary-dark);
+      font-weight: 600;
+
+      &:hover {
+        margin-top: 0.2rem;
+      }
+    }
+
+    &--text {
+      padding: 0.55rem;
     }
   }
 

@@ -1,3 +1,22 @@
+# The contents of this file are subject to the Mozilla Public License
+# Version 2.0 (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+#    http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS"basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
+#
+from django import forms
+from django.db import transaction
+from django.utils.translation import ugettext_lazy as _
+
+from os2datascanner.projects.admin.organizations.models import Organization
+
 from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDeleteView
 from ..models.sensitivity_level import Sensitivity
@@ -5,9 +24,6 @@ from ..models.rules.rule_model import Rule
 from ..models.rules.cprrule_model import CPRRule
 from ..models.rules.regexrule_model import RegexRule, RegexPattern
 
-from django import forms
-from django.db import transaction
-from django.utils.translation import ugettext_lazy as _
 
 class RuleList(RestrictedListView):
     """Displays list of scanners."""
@@ -29,7 +45,7 @@ class RuleCreate(RestrictedCreateView):
     """Create a rule view."""
 
     model = Rule
-    fields = ['name', 'description', 'sensitivity']
+    fields = ['name', 'description', 'sensitivity', 'organization']
 
     @staticmethod
     def _save_rule_form(form):
@@ -37,9 +53,23 @@ class RuleCreate(RestrictedCreateView):
         rule.name = form.cleaned_data['name']
         rule.sensitivity = form.cleaned_data['sensitivity']
         rule.description = form.cleaned_data['description']
-        rule.organization = form.cleaned_data['organization']
         rule.save()
         return rule
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        user = self.request.user
+        org_qs = Organization.objects.none()
+        if hasattr(user, 'administrator_for'):
+            org_qs = user.administrator_for.client.organizations.all()
+        elif user.is_superuser:
+            org_qs = Organization.objects.all()
+        form.fields['organization'].queryset = org_qs
+
+        return form
+
+    def form_invalid(self, form):
+        super().form_invalid(form)
 
     def form_valid(self, form):
         """
@@ -82,8 +112,10 @@ class RegexRuleCreate(RuleCreate):
         :param form:
         :return:
         """
-        form_patterns = [form.cleaned_data[field_name] for field_name in form.cleaned_data if
-                         field_name.startswith('pattern_') and form.cleaned_data[field_name] != '']
+        form_patterns = [form.cleaned_data[field_name]
+                         for field_name in form.cleaned_data if
+                         field_name.startswith('pattern_') and
+                         form.cleaned_data[field_name] != '']
 
         try:
             with transaction.atomic():
@@ -95,7 +127,7 @@ class RegexRuleCreate(RuleCreate):
 
                 # Skip the RuleCreate implementation of form_valid -- we've
                 # already created our (Regex)Rule object
-                return super(RuleCreate, self).form_valid(form)
+                return super().form_valid(form)
         except Exception:
             return super().form_invalid(form)
 
@@ -119,7 +151,7 @@ class RuleUpdate(RestrictedUpdateView):
 
     model = Rule
     edit = True
-    fields = ['name', 'description', 'sensitivity']
+    fields = ['name', 'description', 'sensitivity', 'organization']
 
     def form_valid(self, form):
         """
@@ -179,13 +211,14 @@ class RegexRuleUpdate(RuleUpdate):
         :param form:
         :return:
         """
-        form_patterns = [form.cleaned_data[field_name] for field_name in form.cleaned_data if
-                         field_name.startswith('pattern_') and form.cleaned_data[field_name] != '']
+        form_patterns = [form.cleaned_data[field_name]
+                         for field_name in form.cleaned_data if
+                         field_name.startswith('pattern_') and
+                         form.cleaned_data[field_name] != '']
 
         try:
             with transaction.atomic():
                 regexrule = RuleCreate._save_rule_form(form)
-
                 self.object.patterns.all().delete()
                 for pattern in form_patterns:
                     r_ = RegexPattern.objects.create(

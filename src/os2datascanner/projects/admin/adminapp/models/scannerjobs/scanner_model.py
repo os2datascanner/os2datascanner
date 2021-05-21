@@ -23,7 +23,6 @@ import os
 import re
 
 from typing import Iterator
-from dateutil import tz
 
 from django.db import models
 from django.conf import settings
@@ -45,10 +44,7 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
 from os2datascanner.engine2.conversions.types import OutputType
 
 from ..authentication_model import Authentication
-from ..organization_model import Organization
-from ..group_model import Group
 from ..rules.rule_model import Rule
-from ..userprofile_model import UserProfile
 
 base_dir = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -65,13 +61,14 @@ class Scanner(models.Model):
                             db_index=True,
                             verbose_name='Navn')
 
-    organization = models.ForeignKey(Organization, null=False,
-                                     verbose_name='Organisation',
-                                     on_delete=models.PROTECT)
-
-    group = models.ForeignKey(Group, null=True, blank=True,
-                              verbose_name='Gruppe',
-                              on_delete=models.SET_NULL)
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.CASCADE,
+        related_name='scannerjob',
+        verbose_name=_('organization'),
+        default=None,
+        null=True,
+    )
 
     schedule = RecurrenceField(max_length=1024,
                                verbose_name='Planlagt afvikling')
@@ -93,9 +90,6 @@ class Scanner(models.Model):
                                    blank=True,
                                    verbose_name='Regler',
                                    related_name='scanners')
-
-    recipients = models.ManyToManyField(UserProfile, blank=True,
-                                        verbose_name='Modtagere')
 
     # Spreadsheet annotation and replacement parameters
 

@@ -228,8 +228,8 @@
             {% include "os2datascanner/scanner_form_input_field.html" with field=form.password password="True" %}
           {% endif %}
 
-          {% if form.group %}
-            {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.group %}
+          {% if form.org_unit %}
+              {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.org_unit %}
           {% endif %}
 
           {% if form.userlist %}
