@@ -228,6 +228,7 @@ class ScannerAskRun(RestrictedDetailView):
 class ScannerRun(RestrictedDetailView):
     """Base class for view that handles starting of a scanner run."""
 
+    fields = []
     template_name = 'os2datascanner/scanner_run.html'
     model = Scanner
 
