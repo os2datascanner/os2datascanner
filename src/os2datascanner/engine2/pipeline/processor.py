@@ -1,9 +1,11 @@
+import logging
 from ..rules.rule import Rule
 from ..model.core import Source, Handle, SourceManager
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
 from . import messages
 
+logger = logging.getLogger(__name__)
 
 READS_QUEUES = ("os2ds_conversions",)
 WRITES_QUEUES = ("os2ds_scan_specs", "os2ds_representations",
@@ -19,9 +21,7 @@ def check(source_manager, handle):
     try:
         return handle.follow(source_manager).check()
     except Exception as e:
-        # could we log this? Examples:
-        # Failed to establish a new connection: [Errno -2] Name or service not known'
-        # Failed to establish a new connection: [Errno 110] Connection timed out'
+        logger.warning("check of {0} failed: {1}".format(handle.presentation, e))
         return False
 
 

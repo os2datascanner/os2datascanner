@@ -162,6 +162,7 @@ class WebResource(FileResource):
             # examples of Exceptions
             # [Errno -2] Name or service not known' (dns)
             # [Errno 110] Connection timed out'     (no response)
+            logger.warning("{0}: {1}".format(self.handle.presentation, e))
             return False
 
     def _make_url(self):
