@@ -142,3 +142,27 @@ def check_ldap_authentication(realm, token, connection_url,
     data = json.dumps(payload)
     return requests.post(url, data=data, headers=headers, timeout=timeout)
 
+
+def sync_users(realm, provider_id, token, timeout=5):
+    """Given a realm name and token, synchronises that realm's Keycloak users
+    with the realm's identity provider."""
+
+    headers = {
+        'Authorization': f'bearer {token}'
+    }
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/user-storage/{provider_id}'
+           '/sync?action=triggerFullSync')
+    return requests.post(url, headers=headers, timeout=timeout)
+
+
+def get_users(realm, token, timeout=5):
+    """Given a realm name and token, returns a list of all the users known to
+    Keycloak under that realm."""
+
+    headers = {
+        'Authorization': f'bearer {token}'
+    }
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/users')
+    return requests.get(url, headers=headers, timeout=timeout)

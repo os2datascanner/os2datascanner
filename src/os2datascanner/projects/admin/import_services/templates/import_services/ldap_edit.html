@@ -6,6 +6,8 @@
 
 {% block scripts %}
     {{ block.super }}
+    <script type="text/javascript" src="/jsi18n/"></script>
+    <script type="text/javascript" src="/admin/jsi18n/"></script>
     <script src="{% static 'js/addInput.js' %}"></script>
     <script>
         var urlConnection = "{% url 'test-ldap-connection' %}"

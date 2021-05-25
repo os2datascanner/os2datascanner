@@ -30,12 +30,12 @@ function testConnection(e) {
             if (oReq.status === 200) {
                 responseSuccessCon.style.display = "block"
                 responseErrorCon.style.display = "none"
-                textConnection.innerText = 'Connection succeeded'
+                textConnection.innerText = gettext('Connection succeeded')
             } else {
             // else connection failed
                 responseErrorCon.style.display = "block"
                 responseSuccessCon.style.display = "none"
-                textConnection.innerText = 'Connection failed'
+                textConnection.innerText = gettext('Connection failed')
             }
         }
     }
@@ -67,12 +67,12 @@ function testAuth(e) {
                 // if connection succeeded
                 responseSuccessAuth.style.display = "block"
                 responseErrorAuth.style.display = "none"
-                textAuth.innerText = 'Connection succeeded'
+                textAuth.innerText = gettext('Authentication succeeded')
             } else {
                 // else connection failed
                 responseErrorAuth.style.display = "block"
                 responseSuccessAuth.style.display = "none"
-                textAuth.innerText = 'Connection failed'
+                textAuth.innerText = gettext('Authentication failed')
             }
         }
     }

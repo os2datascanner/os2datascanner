@@ -37,7 +37,7 @@ class ExchangeScannerCreate(ScannerCreate):
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist',
-              'service_endpoint', 'organization',]
+              'service_endpoint', 'organization', 'org_unit']
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -59,13 +59,13 @@ class ExchangeScannerCreate(ScannerCreate):
 
         unit_field = form.fields.get('org_unit', None)
         if unit_field:
-            # NB! the client relation is inferred by the existence of the field!
-            # If addition of the field changes, ensure proper checks here
-            client = self.request.user.administrator_for.client
-            initial_qs = unit_field.queryset
-            unit_field.queryset = initial_qs.filter(
-                organization__in=client.organizations.all()
-            )
+            user = self.request.user
+            if hasattr(user, 'administrator_for'):
+                client = user.administrator_for.client
+                initial_qs = unit_field.queryset
+                unit_field.queryset = initial_qs.filter(
+                    organization__in=client.organizations.all()
+                )
 
         return initialize_form(form)
 
@@ -76,7 +76,7 @@ class ExchangeScannerUpdate(ScannerUpdate):
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist',
-              'service_endpoint', 'organization']
+              'service_endpoint', 'organization', 'org_unit']
 
     def get_success_url(self):
         """The URL to redirect to after successful updating.
@@ -106,6 +106,16 @@ class ExchangeScannerUpdate(ScannerUpdate):
             password = decrypt(bytes(authentication.iv),
                                bytes(authentication.ciphertext))
             form.fields['password'].initial = password
+
+        unit_field = form.fields.get('org_unit', None)
+        if unit_field:
+            user = self.request.user
+            if hasattr(user, 'administrator_for'):
+                client = user.administrator_for.client
+                initial_qs = unit_field.queryset
+                unit_field.queryset = initial_qs.filter(
+                    organization__in=client.organizations.all()
+                )
 
         return form
 
