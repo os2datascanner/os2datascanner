@@ -21,7 +21,7 @@ def backtrace(signal, frame):
     traceback.print_stack()
 
 
-__module_mapping = {
+_module_mapping = {
     "explorer": explorer,
     "processor": processor,
     "matcher": matcher,
@@ -30,7 +30,7 @@ __module_mapping = {
     "worker": worker
 }
 
-__loglevels = {
+_loglevels = {
     'critical': logging.CRITICAL,
     'error': logging.ERROR,
     'warn': logging.WARNING,
@@ -92,15 +92,15 @@ def main():
             default=3)
 
     args = parser.parse_args()
-    module = __module_mapping[args.stage]
+    module = _module_mapping[args.stage]
 
     # leave all loggers from external libraries at default(WARNING) level.
     # change formatting to include datestamp
-    fmt = "%(asctime)s;%(name)s;%(levelname)s;%(message)s"
+    fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
     # set level for root logger
     logger = logging.getLogger("os2datascanner")
-    logger.setLevel(__loglevels[args.log])
+    logger.setLevel(_loglevels[args.log])
 
     if args.enable_metrics:
         start_http_server(args.prometheus_port)
@@ -110,8 +110,6 @@ def main():
             "os2datascanner_pipeline_{0}".format(args.stage),
             module.PROMETHEUS_DESCRIPTION)
         def handle_message(self, body, *, channel=None):
-            # this is very verbose.
-            # logger.debug("{0}\t{1}".format(channel, body)
             if args.debug:
                 print(channel, body)
             return module.message_received_raw(body, channel, source_manager)
