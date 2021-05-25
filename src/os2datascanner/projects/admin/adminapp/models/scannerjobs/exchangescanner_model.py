@@ -56,8 +56,19 @@ class ExchangeScanner(Scanner):
         return '/exchangescanners/'
 
     def generate_sources(self):
-        user_list = [u.decode("utf-8").strip()
-                for u in self.userlist if u.strip()]
+        user_list = ()
+        if self.userlist:
+            user_list = (u.decode("utf-8").strip()
+                    for u in self.userlist if u.strip())
+        elif self.org_unit:
+            user_list = (
+                    address.split("@", maxsplit=1)[0] for address in
+                    (
+                            position.account.aliases.filter(
+                                    _alias_type=AliasType.EMAIL.value
+                            ).first().value
+                            for position in self.org_unit.position_set.all()
+                    ) if address.endswith(self.url))
         for u in user_list:
             yield EWSAccountSource(
                     domain=self.url.lstrip('@'),
