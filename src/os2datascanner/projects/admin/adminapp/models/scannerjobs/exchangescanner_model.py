@@ -16,6 +16,7 @@
 import os
 
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
@@ -25,14 +26,19 @@ from mptt.models import TreeForeignKey
 from os2datascanner.engine2.model.ews import EWSAccountSource
 from os2datascanner.engine2.model.core import SourceManager
 
-from .scanner_model import Scanner
+from ....organizations.models.aliases import AliasType
 from ...utils import upload_path_exchange_users
+from .scanner_model import Scanner
 
 
 class ExchangeScanner(Scanner):
     """Scanner for Exchange Web Services accounts"""
 
-    userlist = models.FileField(upload_to=upload_path_exchange_users)
+    userlist = models.FileField(
+        null=True,
+        blank=True,
+        upload_to=upload_path_exchange_users,
+    )
 
     service_endpoint = models.URLField(max_length=256,
                                        verbose_name='Service endpoint',
@@ -90,3 +96,12 @@ class ExchangeScanner(Scanner):
                     print("Mailbox {0} does not exits".format(account.address))
                     return False
         return True
+
+    def clean(self):
+        if not self.userlist and not self.org_unit:
+            error = _(
+                    "Either a user list or an organisational unit is required")
+            raise ValidationError({
+                "userlist": error,
+                "org_unit": error
+            })
