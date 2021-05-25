@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.timezone import now
@@ -182,4 +183,4 @@ class LDAPImportView(LoginRequiredMixin, DetailView):
         """Handle a get request to the view."""
         realm = get_object_or_404(Realm, organization_id=self.get_object().pk)
         perform_import(realm)
-        return redirect("organization-list")
+        return HttpResponse(status=200)
