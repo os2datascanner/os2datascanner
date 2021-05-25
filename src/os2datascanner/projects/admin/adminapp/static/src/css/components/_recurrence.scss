@@ -1,0 +1,108 @@
+.add-rule, .add-date {
+  background-color: #e9e9e9;
+  color: var(--color-text-main) !important;
+  padding: .5rem;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: var(--transition-default);
+  border-radius: var(--border-radius-button);
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}
+
+.recurrence-widget {
+  width: 100%;
+  color: var(--color-text-main);
+  border: none !important;
+
+  .remove {
+    margin-right: 1rem;
+    background-color: var(--color-error);
+    fill: #fff !important;
+    color: #fff !important;
+    z-index: 1;
+
+    &:hover {
+      background-color: var(--color-error-dark);
+    }
+  }
+
+  .panel {
+    margin-top: .5rem;
+  }
+
+  .control {
+    margin-top: 1rem;
+  }
+
+  .active {
+    font-weight: 600;
+  }
+
+  .body {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .header {
+    background-color: #e9e9e9 !important;
+  }
+
+  .recurrence-label {
+    text-decoration: none !important;
+  }
+
+  .limit, .date, .date-selector {
+    width: 100%;
+  }
+
+  .date-selector {
+    width: 100%;
+  }
+
+  .date-field {
+    width: 50%;
+  }
+
+  .radio {
+    margin-top: 1.5rem;
+    margin-bottom: .5rem;
+  }
+  
+}
+
+.recurrence-calendar {
+  border: 1px solid #ccc;
+
+  td {
+    text-align: center;
+  }
+
+  td:last-child {
+    border-right: none !important;
+  }
+
+  .day:hover {
+    background-color: #ddd;
+  }
+  
+  .year, .navigation {
+    border-right: none !important;
+  }
+
+  .footer {
+    border: none !important;
+  }
+}
+.recurrence-calendar .remove {
+  z-index: 1;
+  padding: .25rem;
+  background-color: var(--color-error);
+  fill: #fff !important;
+  color: #fff !important;
+}

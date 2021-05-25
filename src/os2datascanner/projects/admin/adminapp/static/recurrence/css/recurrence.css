@@ -204,7 +204,7 @@ table.recurrence-calendar a:visited {
 }
 
 table.recurrence-calendar .year,
-table.recurrence-calendar .navigation {
+table.recurrence-calendar .navigation-calendar {
     border-right: 1px solid #ccc;
 }
 
