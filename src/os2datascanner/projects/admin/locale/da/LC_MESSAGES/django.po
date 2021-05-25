@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-25 08:04-0500\n"
+"POT-Creation-Date: 2021-05-25 08:32-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
@@ -56,43 +56,43 @@ msgstr "Login metode"
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
 
-#: adminapp/models/scannerjobs/exchangescanner_model.py:99
+#: adminapp/models/scannerjobs/exchangescanner_model.py:103
 msgid "Either a user list or an organisational unit is required"
 msgstr "Der kræves enten en brugerlist eller en organisatorisk enhed"
 
-#: adminapp/models/scannerjobs/scanner_model.py:372
+#: adminapp/models/scannerjobs/scanner_model.py:375
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:375
+#: adminapp/models/scannerjobs/scanner_model.py:378
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:378
+#: adminapp/models/scannerjobs/scanner_model.py:381
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:380
+#: adminapp/models/scannerjobs/scanner_model.py:383
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:383
+#: adminapp/models/scannerjobs/scanner_model.py:386
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:385
+#: adminapp/models/scannerjobs/scanner_model.py:388
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:388
+#: adminapp/models/scannerjobs/scanner_model.py:391
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:441
+#: adminapp/models/scannerjobs/scanner_model.py:444
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:442
+#: adminapp/models/scannerjobs/scanner_model.py:445
 msgid "scan statuses"
 msgstr "scanstatusser"
 
@@ -1044,7 +1044,7 @@ msgstr "kunde-ID"
 
 #: core/models/client.py:72 organizations/models/organization.py:47
 #: organizations/models/organizational_unit.py:44
-#: organizations/templates/organizations/org_list.html:32
+#: organizations/templates/organizations/org_list.html:37
 msgid "name"
 msgstr "navn"
 
@@ -1082,7 +1082,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_list.html:37
+#: organizations/templates/organizations/org_list.html:42
 msgid "import service"
 msgstr "importservice"
 
@@ -1355,7 +1355,7 @@ msgid "SID"
 msgstr "SID"
 
 #: organizations/models/aliases.py:46 organizations/models/organization.py:65
-#: organizations/templates/organizations/org_list.html:33
+#: organizations/templates/organizations/org_list.html:38
 msgid "email"
 msgstr "e-mail"
 
@@ -1430,29 +1430,25 @@ msgstr "{cls}: {account} ({role}) ved {unit}"
 msgid "create new organization"
 msgstr "opret ny organisation"
 
-#: organizations/templates/organizations/org_list.html:12
+#: organizations/templates/organizations/org_list.html:17
 msgid "organizations for"
 msgstr "organisationer for"
 
-#: organizations/templates/organizations/org_list.html:18
 #: organizations/templates/organizations/org_list.html:23
+#: organizations/templates/organizations/org_list.html:28
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_list.html:34
+#: organizations/templates/organizations/org_list.html:39
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_list.html:77
-#: organizations/templates/organizations/org_list.html:79
+#: organizations/templates/organizations/org_list.html:82
+#: organizations/templates/organizations/org_list.html:84
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_list.html:83
-msgid "last synced"
-msgstr "sidst synkroniseret"
-
-#: organizations/templates/organizations/org_list.html:98
+#: organizations/templates/organizations/org_list.html:104
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
@@ -1463,6 +1459,9 @@ msgstr "organisatorisk struktur"
 #: organizations/templates/organizations/orgunit_list.html:10
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
+
+#~ msgid "last synced"
+#~ msgstr "sidst synkroniseret"
 
 #~ msgid "Personal info"
 #~ msgstr "Personlig information"

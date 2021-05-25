@@ -4,6 +4,13 @@
 
 {% block title %}{% trans "organizations"|capfirst %}{% endblock %}
 
+{% block scripts %}
+    {{ block.super }}
+    <script type="text/javascript" src="/jsi18n/"></script>
+    <script type="text/javascript" src="/admin/jsi18n/"></script>
+    <script type="text/javascript" src="{% static 'js/ldapSync.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 
 {%  for client in client_list %}
@@ -70,20 +77,21 @@
                             class="button button--transparent">
                             <i id="library_add_check" title="Redigér LDAP konfiguration" class="material-icons">library_add_check</i>
                         </a>
-                        <a
-                        href="{% url 'import-ldap' pk=organization.pk %}"
-                        id="button-add-configuration" 
-                        type="button" 
-                        title="{% trans 'sync'|capfirst %}"
-                        class="button button--transparent button--transparent--text btn-text">
-                        {% trans "sync"|capfirst %}
-                        </a>
-                            <!-- TODO: re-introduce when last_sync field has been added
-                        <span class="text">
-                            {% trans "last synced"|capfirst %}:<br>
-                            {{ organization.importservice.last_sync }}
-                        </span>
-                        -->
+                        <button
+                            value="{% url 'import-ldap' pk=organization.pk %}"
+                            id="button-sync"
+                            type="button"
+                            title="{% trans 'sync'|capfirst %}"
+                            class="button button--transparent button--transparent--text btn-text">
+                            {% trans "sync"|capfirst %}
+                        </button>
+                        <div class="flex">
+                            <div class="response">
+                                <span class="response-icon response-icon--success" style="display: none;" id="responseSuccess"><i id="check" class="material-icons">check</i></span>
+                                <span class="response-icon response-icon--error" style="display: none;" id="responseError"><i id="error" class="material-icons">error</i></span>
+                                <span class="response-text" id="response"></span>
+                            </div>
+                        </div>
                         {% endif %}
                     </div>
                 </td>
