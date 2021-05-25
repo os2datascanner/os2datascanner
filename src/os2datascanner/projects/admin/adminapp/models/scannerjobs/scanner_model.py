@@ -290,6 +290,9 @@ class Scanner(models.Model):
                     message_template._replace(source=source)))
             source_count += 1
 
+        if source_count == 0:
+            raise ValueError(f"{self} produced 0 explorable sources")
+
         # Also build ConversionMessages for the objects that we should try to
         # scan again (our pipeline_collector is responsible for eventually
         # deleting these reminders)
