@@ -1,8 +1,5 @@
 // check sync
-var btnSync = document.querySelector('#button-sync')
-var text = document.querySelector('#response')
-var responseSuccess = document.querySelector('#responseSuccess')
-var responseError = document.querySelector('#responseError')
+var btnSync = document.querySelector('button[data-sync-for]')
 
 // button - check sync
 btnSync.addEventListener('click', ldapSync)
@@ -10,8 +7,16 @@ btnSync.addEventListener('click', ldapSync)
 function ldapSync(e) {
     e.preventDefault()
 
+    button = e.target;
+    var responseSuccess = button.parentElement.querySelector(
+            ".response-icon--success[data-sync-for]");
+    var responseError = button.parentElement.querySelector(
+            ".response-icon--error[data-sync-for]");
+    var text = button.parentElement.querySelector(
+            ".response-text[data-sync-for]")
+
     // Get organization pk value
-    var syncUrl = document.getElementById("button-sync").value;
+    var syncUrl = button.value;
 
     var oReq = new XMLHttpRequest();
 

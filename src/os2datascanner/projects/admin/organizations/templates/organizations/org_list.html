@@ -79,17 +79,17 @@
                         </a>
                         <button
                             value="{% url 'import-ldap' pk=organization.pk %}"
-                            id="button-sync"
                             type="button"
                             title="{% trans 'sync'|capfirst %}"
-                            class="button button--transparent button--transparent--text btn-text">
+                            class="button button--transparent button--transparent--text btn-text"
+                            data-sync-for="{{ organization.pk }}">
                             {% trans "sync"|capfirst %}
                         </button>
                         <div class="flex">
                             <div class="response">
-                                <span class="response-icon response-icon--success" style="display: none;" id="responseSuccess"><i id="check" class="material-icons">check</i></span>
-                                <span class="response-icon response-icon--error" style="display: none;" id="responseError"><i id="error" class="material-icons">error</i></span>
-                                <span class="response-text" id="response"></span>
+                                <span class="response-icon response-icon--success" style="display: none;" data-sync-for="{{ organization.pk }}"><i id="check" class="material-icons">check</i></span>
+                                <span class="response-icon response-icon--error" style="display: none;" data-sync-for="{{ organization.pk }}"><i id="error" class="material-icons">error</i></span>
+                                <span class="response-text" data-sync-for="{{ organization.pk }}"></span>
                             </div>
                         </div>
                         {% endif %}
