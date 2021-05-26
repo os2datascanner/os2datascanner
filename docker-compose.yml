@@ -269,7 +269,7 @@ services:
                "-Dkeycloak.migration.action=import",
                "-Dkeycloak.migration.provider=singleFile",
                "-Dkeycloak.migration.file=/realm.json",
-               "-Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+               "-Dkeycloak.migration.strategy=IGNORE_EXISTING",
              ]
     ports:
       - 8090:8090
