@@ -11,6 +11,7 @@ class OutputType(Enum):
     Text = "text" # str
     LastModified = "last-modified" # datetime.datetime
     ImageDimensions = "image-dimensions" # (int, int)
+    Links = "links"  # list
 
     AlwaysTrue = "fallback" # True
     NoConversions = "dummy"
@@ -26,6 +27,8 @@ class OutputType(Enum):
             return _datetime_to_str(v)
         elif self == OutputType.ImageDimensions:
             return [int(v[0]), int(v[1])]
+        elif self == OutputType.Links:
+            return list(v)
         else:
             raise TypeError(self.value)
 
@@ -40,6 +43,8 @@ class OutputType(Enum):
             return _str_to_datetime(v)
         elif self == OutputType.ImageDimensions:
             return (int(v[0]), int(v[1]))
+        elif self == OutputType.Links:
+            return list(v)
         else:
             raise TypeError(self.value)
 

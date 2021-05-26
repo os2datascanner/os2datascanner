@@ -34,6 +34,7 @@ from django.views.generic import View, TemplateView, ListView
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
+from os2datascanner.engine2.rules.links_follow import LinksFollowRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.projects.report.reportapp.models.roles.role_model import Role
 
@@ -50,7 +51,9 @@ from ..models.roles.leader_model import Leader
 
 logger = structlog.get_logger()
 
-RENDERABLE_RULES = (CPRRule.type_label, RegexRule.type_label,)
+RENDERABLE_RULES = (
+    CPRRule.type_label, RegexRule.type_label, LinksFollowRule.type_label,
+)
 
 
 class LoginPageView(View):

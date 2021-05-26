@@ -62,6 +62,60 @@ class CompoundRule(Rule):
         )
 
 
+class AllRule(CompoundRule):
+    """An AllRule is a CompoundRule which always evaluates all of its
+    components -- that is, it has no short-circuiting. (This is useful when you
+    really do want the engine to perform multiple checks at once.)
+
+    The final positive continuation of an AllRule will be True if any of its
+    components matched, and False otherwise."""
+    type_label = "all"
+
+    def __init__(self, *components, satisfied: bool = False, **super_kwargs):
+        super().__init__(*components, **super_kwargs)
+        self._satisfied = satisfied
+
+    @property
+    def presentation_raw(self):
+        if len(self._components) == 2:
+            conjunction = "or"
+        else:
+            conjunction = "or any of"
+        return "({0})".format(oxford_comma(self._components, conjunction))
+
+    @classmethod
+    def make(cls, *components, satisfied: bool = False):
+        new_components = []
+        for k in components:
+            if k == True:
+                satisfied = True
+            elif k != False:
+                new_components.append(k)
+        return (AllRule(*new_components, satisfied=satisfied)
+                if new_components else satisfied)
+
+    def split(self):
+        fst, rest = self._components[0], self._components[1:]
+        return (fst, self.make(*rest, True), self.make(*rest, self._satisfied))
+
+    def to_json_object(self):
+        return dict(
+            **super().to_json_object(),
+            satisfied=self._satisfied
+        )
+
+    @staticmethod
+    @Rule.json_handler(type_label)
+    def from_json_object(obj):
+        return AllRule(
+            *[Rule.from_json_object(o) for o in obj["components"]],
+            sensitivity=Sensitivity.make_from_dict(obj),
+            name=obj["name"] if "name" in obj else None,
+            satisfied=obj.get("satisfied", False)
+        )
+
+
+
 class AndRule(CompoundRule):
     """An AndRule is a CompoundRule corresponding to the C "&&" operator or the
     Python "and" operator (i.e., it has short-circuiting: as soon as one
@@ -91,7 +145,7 @@ class AndRule(CompoundRule):
 
 
 class OrRule(CompoundRule):
-    """An AndRule is a CompoundRule corresponding to the C "||" operator or the
+    """An OrRule is a CompoundRule corresponding to the C "||" operator or the
     Python "or" operator (i.e., it has short-circuiting: as soon as one
     component reduces to True, no other components will be evaluated)."""
 

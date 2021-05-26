@@ -13,6 +13,7 @@
 #
 from json import dumps
 from pika.exceptions import AMQPError
+import structlog
 
 from django.forms import ModelMultipleChoiceField
 from django.forms.models import modelform_factory
@@ -25,6 +26,7 @@ from ..models.authentication_model import Authentication
 from ..models.rules.rule_model import Rule
 from ..models.scannerjobs.scanner_model import Scanner, ScanStatus
 
+logger = structlog.get_logger(__name__)
 
 class StatusBase(RestrictedListView):
 
@@ -242,9 +244,13 @@ class ScannerRun(RestrictedDetailView):
         try:
             context['scan_tag'] = dumps(
                     self.object.run(user=request.user), indent=2)
-        except AMQPError as ex:
-            context['pika_error'] = type(ex).__name__
         except Exception as ex:
-            context['engine2_error'] = ", ".join([str(e) for e in ex.args])
+            logger.error("Error while starting ScannerRun", exc_info=True)
+            error_type = type(ex).__name__
+            if isinstance(ex, AMQPError):
+                context['pika_error'] = f"pika failure [{error_type}]"
+            else:
+                context['engine2_error'] = f"Engine failure [{error_type}]."
+                context['engine2_error'] += ", ".join([str(e) for e in ex.args])
 
         return self.render_to_response(context)
