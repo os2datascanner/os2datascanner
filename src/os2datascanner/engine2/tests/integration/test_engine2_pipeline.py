@@ -50,7 +50,10 @@ expected_matches = [
         "matches": [
             {
                 "offset": 98,
-                "match": "Scyld Scēfing"
+                "match": "Scyld Scēfing",
+                # context is 50 char before and after the match(13 char)
+                "context": data[98-50:98+13+50],
+                "context_offset": 98-50,
             }
         ]
     }
