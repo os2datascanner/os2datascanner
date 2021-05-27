@@ -1,5 +1,6 @@
 {%  load i18n %}
 {% load pagination_tags %}
+{% load l10n %}
 
 {% if is_paginated %}
 <tbody class="pagination">
@@ -73,7 +74,7 @@
               <label for="page" class="text">
                 {% trans "Go to page" %}
               </label>
-              <input id="page" type="number" name="page" min="1" max="{{ paginator.num_pages }}" onkeyup=imposeMinMax(this)>
+              <input id="page" type="number" name="page" min="1" max="{{ paginator.num_pages|unlocalize }}" onkeyup=imposeMinMax(this)>
               <button class="button button--submit" type="submit" id="form-button">
                 {% trans "Go" %}
               </button>

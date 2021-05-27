@@ -119,9 +119,6 @@ class MainPageView(LoginRequiredMixin, ListView):
                     self.request.GET.get('sensitivities'))
             )
 
-        # if self.request.GET.get('paginate_by'):
-        #     self.paginate_by = int(self.request.GET.get('paginate_by'))
-
         # matches are always ordered by sensitivity desc. and probability desc.
         return self.matches
 
