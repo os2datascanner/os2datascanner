@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.9'
 services:
   db:
     image: postgres:12
@@ -168,20 +168,20 @@ services:
     depends_on:
       - queue
 
-## Disabled until everyone has updated `docker-compose` to v1.28+
-#  a11y_scanner:
-#    build:
-#      context: ./services/a11y-scanner
-#      dockerfile: docker/Dockerfile
-#    env_file:
-#      - ./dev-environment/a11y-scanner/a11y-scanner.env
-#    # Set only the necessary security permissions
-#    security_opt:
-#      - seccomp:./services/a11y-scanner/chrome_seccomp.json
-#    ports:
-#      - 8888:8888
-#    profiles:
-#      - a11y
+  # a11y is short for "accessibility". There are 11 chars between a-y
+  a11y_scanner:
+    build:
+      context: ./services/a11y-scanner
+      dockerfile: docker/Dockerfile
+    env_file:
+      - ./dev-environment/a11y-scanner/a11y-scanner.env
+    # Set only the necessary security permissions
+    security_opt:
+      - seccomp:./services/a11y-scanner/chrome_seccomp.json
+    ports:
+      - 8888:8888
+    profiles:
+      - a11y
 
   api_server:
     build:
