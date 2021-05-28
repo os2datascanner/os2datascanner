@@ -83,10 +83,6 @@ class MainPageView(TemplateView, LoginRequiredMixin):
     template_name = 'os2datascanner/scanners.html'
 
 
-class DesignGuide(TemplateView):
-    template_name = 'designguide.html'
-
-
 # Create/Update/Delete Views.
 class RestrictedCreateView(CreateView, LoginRequiredMixin):
     """Base class for create views that are limited by user organization."""
