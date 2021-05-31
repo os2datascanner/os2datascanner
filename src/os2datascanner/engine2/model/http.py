@@ -67,7 +67,8 @@ class WebSource(Source):
 
             referrer_map.setdefault(new_url, set()).add(
                 here if here is not None else self._sitemap)
-            if n_scheme == scheme and n_netloc == netloc:
+            if n_netloc == netloc:
+                # we dont care about whether scheme is http or https
                 # new_url is under same hirachy as here(referrer)
                 new_handle = WebHandle(self, new_url[len(self._url):],
                                        referrer_map[new_url], lm_hint)
@@ -155,15 +156,11 @@ class WebResource(FileResource):
         return self._get_cookie().head(self._make_url())
 
     def check(self) -> bool:
-        try:
-            response = self._get_head_raw()
-            return response.status_code not in (404, 410,)
-        except RequestException as e:
-            # examples of Exceptions
-            # [Errno -2] Name or service not known' (dns)
-            # [Errno 110] Connection timed out'     (no response)
-            logger.warning("{0}: {1}".format(self.handle.presentation, e))
-            return False
+        # This might raise an RequestsException, fx.
+        # [Errno -2] Name or service not known' (dns)
+        # [Errno 110] Connection timed out'     (no response)
+        response = self._get_head_raw()
+        return response.status_code not in (404, 410,)
 
     def _make_url(self):
         handle = self.handle

@@ -17,7 +17,7 @@
    </url>
     <url>
         <loc>
-            https://google.com/not-found-from-sitemap
+            http://example.com/not-found-from-sitemap
         </loc>
     </url>
 </urlset>

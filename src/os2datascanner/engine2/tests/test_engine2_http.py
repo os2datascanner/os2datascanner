@@ -5,6 +5,7 @@ from datetime import datetime
 import unittest
 import contextlib
 from multiprocessing import Manager, Process
+from requests import RequestException
 
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import (Handle,
@@ -53,7 +54,7 @@ embedded_mapped_site = WebSource("http://localhost:64346/",
 external_links_site = WebSource("http://localhost:64346/",
         sitemap="http://localhost:64346/external_sitemap.xml")
 
-class Engine2HTTPTest(unittest.TestCase):
+class Engine2HTTPSetup():
     @classmethod
     def setUpClass(cls):
         with Manager() as manager:
@@ -75,6 +76,8 @@ class Engine2HTTPTest(unittest.TestCase):
         cls._ws.join()
         cls._ws = None
 
+
+class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
     def test_exploration(self):
         count = 0
         with SourceManager() as sm:
@@ -114,46 +117,6 @@ class Engine2HTTPTest(unittest.TestCase):
                 count,
                 6,
                 "embedded site with sitemap index should have 6 handles")
-
-    def test_broken_links(self):
-        count = 0
-        with SourceManager() as sm:
-            for h in external_links_site.handles(sm):
-                count += 1
-        self.assertEqual(
-                count,
-                11,
-                "site with broken internal and external links should have 11 handles")
-
-    def test_broken_links_resource(self):
-        count_follow = 0
-        count_nfollow = 0
-        count_nerror = 0
-        with SourceManager() as sm:
-            for h in external_links_site.handles(sm):
-                try:
-                    if h.follow(sm).check():
-                        count_follow += 1
-                    else:
-                        count_nfollow += 1
-                except:
-                    count_nerror += 1
-        self.assertEqual(
-                count_follow,
-                6,
-                "site with broken internal and external links should have 6 "
-                "good links")
-        self.assertEqual(
-                count_nfollow,
-                5,
-                "site with broken internal and external links should have 5 "
-                "links that cannot be followed. Either by returning (404 or 410) "
-                "or domain-not-found(dns) or another Requests.RequestsException")
-        self.assertEqual(
-                count_nerror,
-                0,
-                "site with broken internal and external links should have 0 "
-                "link that produces an exception")
 
     def test_sitemap_lm(self):
         with SourceManager() as sm:
@@ -323,3 +286,56 @@ class Engine2HTTPTest(unittest.TestCase):
                         content, "http://localhost:64346/broken.html")),
                 ["http://localhost:64346/kontakt.html"],
                 "expected one link to be found in broken document")
+
+
+class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
+    def test_broken_links(self):
+        count = 0
+        with SourceManager() as sm:
+            with self.assertRaises(Exception) as e:
+                for h in external_links_site.handles(sm):
+                    print(h.presentation)
+                    count += 1
+            exception = e.exception
+        self.assertEqual(
+            count,
+            10,
+            "site with broken internal and external links should have 10 "
+            "handles that does not produce an exception"
+        )
+
+    def test_broken_links_resource(self):
+        count_follow = 0
+        count_nfollow = 0
+        count_nerror = 0
+        with SourceManager() as sm:
+            with self.assertRaises(RequestException) as e:
+                for h in external_links_site.handles(sm):
+                    # print(h.presentation)
+                    if h.follow(sm).check():
+                        count_follow += 1
+                    else:
+                        count_nfollow += 1
+            exception = e.exception
+            if exception:
+                count_nerror += 1
+
+        # In case we catch an generic Exception, we could test the type, msg, code
+        # self.assertTrue(type(exception) in (RequestException, ))
+        # self.assertEqual(exception.msg, "timeout ... ", "wrong exception msg")
+        self.assertEqual(
+            count_follow,
+            6,
+            "site with broken internal and external links should have 6 "
+            "good links")
+        self.assertEqual(
+            count_nfollow,
+            4,
+            "site with broken internal and external links should have 4 "
+            "links that cannot be followed. Either by returning (404 or 410) "
+            "or domain-not-found(dns) or another Requests.RequestsException")
+        self.assertEqual(
+            count_nerror,
+            1,
+            "site with broken internal and external links should have 1 link that "
+            "produces an exception")
