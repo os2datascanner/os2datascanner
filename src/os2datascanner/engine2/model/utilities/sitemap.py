@@ -51,12 +51,10 @@ def process_sitemap_url(url: str, *, context=requests,
         except requests.exceptions.RequestException:
             return None
 
-    logger.debug("trying to download/unpack sitemap {0}".format(url))
+    logger.info("trying to download/unpack sitemap {0}".format(url))
     if url.startswith("data:"):
-        logger.debug("trying to unpack sitemap {0}".format(url))
         _, sitemap = unpack_data_url(url)
     else:
-        logger.debug("trying to download sitemap {0}".format(url))
         sitemap = get_url_data(url)
 
     if sitemap is None:
