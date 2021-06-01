@@ -2,4 +2,5 @@
 -r requirements-engine.in
 -c requirements-engine.txt
 
-gunicorn[gevent]>=20.1.0
+gunicorn
+gunicorn[gevent]

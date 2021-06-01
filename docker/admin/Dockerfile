@@ -100,7 +100,7 @@ WORKDIR /code/docker/
 COPY docker/admin/crontab ./crontab
 COPY docker/admin/docker-settings.toml ./docker-settings.toml
 COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
-COPY docker/gunicorn.conf.py ./gunicorn.conf.py
+COPY docker/gunicorn-settings.py ./gunicorn-settings.py
 
 # Copy backend code
 WORKDIR /code/src/os2datascanner
@@ -131,4 +131,6 @@ RUN find . -name 'LC_MESSAGES' -print0 | xargs -0 chown -R os2ds_admin:os2ds_adm
 USER os2ds_admin:os2ds_admin
 EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
-CMD ["gunicorn"]
+CMD ["gunicorn", \
+     "--config", "/code/docker/gunicorn-settings.py", \
+     "wsgi"]
