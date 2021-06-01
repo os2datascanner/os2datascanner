@@ -31,9 +31,29 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
             realm.realm_id, realm.organization.pk, token)
     sync_message.raise_for_status()
 
-    user_message = keycloak_services.get_users(realm.realm_id, token)
-    user_message.raise_for_status()
-    remote = user_message.json()
+    # Retrieve a count on the amount of users in Keycloak
+    keycloak_user_count = keycloak_services.get_user_count_in_realm(realm.realm_id, token, timeout=28)
+    # Create an initially empty list to store the json response message
+    remote = []
+
+    # If there are more than X users in the Keycloak realm,
+    # then get them in chunks of X at a time to avoid a timeout.
+    # TODO: In the future this kind of logic should be reimplemented using websockets.
+    if keycloak_user_count > 500:
+        total_users = 0
+        while total_users <= keycloak_user_count:
+
+            user_message = keycloak_services.get_users(realm.realm_id, token, timeout=28, start_with_user=total_users,
+                                                       max_users=500)
+            user_message.raise_for_status()
+            # Extend the remote list with the json response.
+            remote.extend(user_message.json())
+            total_users += 500
+    else:
+        # If there are less than X users in the realm, just do them all in one go.
+        user_message = keycloak_services.get_users(realm.realm_id, token, timeout=28, max_users=500)
+        user_message.raise_for_status()
+        remote = user_message.json()
 
     # XXX: is this correct? It seems to presuppose the existence of a top unit,
     # which the database doesn't actually specify or require
