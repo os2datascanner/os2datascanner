@@ -59,7 +59,7 @@ RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
 
 WORKDIR /code/docker/
 COPY docker/api/docker-settings.toml ./docker-settings.toml
-COPY docker/api/gunicorn.conf.py ./gunicorn.conf.py
+COPY docker/api/gunicorn-settings.py ./gunicorn-settings.py
 
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/server ./server/
@@ -77,4 +77,6 @@ WORKDIR /code/src/os2datascanner/server
 USER os2ds_api:os2ds_api
 EXPOSE 5000
 
-CMD ["gunicorn"]
+CMD ["gunicorn", \
+     "--config", "/code/docker/gunicorn-settings.py", \
+     "os2datascanner.server.wsgi"]
