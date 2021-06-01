@@ -156,13 +156,29 @@ def sync_users(realm, provider_id, token, timeout=5):
     return requests.post(url, headers=headers, timeout=timeout)
 
 
-def get_users(realm, token, timeout=5):
-    """Given a realm name and token, returns a list of all the users known to
-    Keycloak under that realm."""
+def get_user_count_in_realm(realm, token, timeout=5):
+    """ Given a realm name and token and it will return
+    a count on all users in given realm"""
+    headers = {
+        'Authorization': f'bearer {token}'
+
+    }
+
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/users/count')
+
+    user_count = int(requests.get(url, headers=headers, timeout=timeout).content)
+
+    return user_count
+
+
+def get_users(realm, token, timeout=5, max_users=500, start_with_user=0):
+    """Given a realm name and token, returns a list of maximum 500 users at a time
+    known to Keycloak under that realm, starting with user 0."""
 
     headers = {
         'Authorization': f'bearer {token}'
     }
     url = (settings.KEYCLOAK_BASE_URL +
-           f'/auth/admin/realms/{realm}/users')
+           f'/auth/admin/realms/{realm}/users?first={start_with_user}&max={max_users}')
     return requests.get(url, headers=headers, timeout=timeout)
