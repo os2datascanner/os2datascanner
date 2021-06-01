@@ -17,7 +17,7 @@ from .utilities import NamedTemporaryResource
 from .utilities.sitemap import SitemapError, process_sitemap_url
 from .utilities.datetime import parse_datetime
 
-
+logger = logging.getLogger(__name__)
 MAX_REQUESTS_PER_SECOND = 10
 SLEEP_TIME = 1 / MAX_REQUESTS_PER_SECOND
 
@@ -67,9 +67,15 @@ class WebSource(Source):
                     to_visit.append(new_handle)
 
         if self._sitemap:
-            for address, last_modified in process_sitemap_url(
-                    self._sitemap):
+            i = 0  # prevent i from being undefined if sitemap is empty
+            for i, (address, last_modified) in enumerate(
+                    process_sitemap_url(self._sitemap), start=1):
                 handle_url(None, address, last_modified)
+            # first entry in `to_visit` is `self`(ie. mainpage). If the mainpage
+            # is not listed in sitemap this result in +1 in to_visit
+            logger.info("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
+                         format(self._sitemap, i, len(to_visit)))
+
 
         while to_visit:
             here, to_visit = to_visit[0], to_visit[1:]
@@ -80,9 +86,12 @@ class WebSource(Source):
                 if simplify_mime_type(ct) == 'text/html':
                     response = session.get(here.presentation_url)
                     sleep(SLEEP_TIME)
-                    for li in make_outlinks(
-                            response.content, here.presentation_url):
+                    i = 0
+                    for i, li in enumerate(
+                            make_outlinks(response.content,
+                                          here.presentation_url), start=1):
                         handle_url(here.presentation_url, li)
+                    logger.debug("site {0} has {1} links".format(here.presentation, i))
             elif response.is_redirect and response.next:
                 handle_url(here.presentation_url, response.next.url)
                 # Don't yield WebHandles for redirects
