@@ -124,7 +124,8 @@ def check_ldap_connection(realm, token, connection_url, timeout=5):
 def check_ldap_authentication(realm, token, connection_url,
                               bind_dn, bind_credential, timeout=5):
     """ Given realm name, token, ldap connection url, bindDn and bindCredential,
-            returns a post request to testLDAPConnection for checking authentication"""
+            returns a post request to testLDAPConnection for checking authentication
+            """
 
     url = (settings.KEYCLOAK_BASE_URL +
            f'/auth/admin/realms/{realm}/testLDAPConnection')
@@ -180,5 +181,6 @@ def get_users(realm, token, timeout=5, max_users=500, start_with_user=0):
         'Authorization': f'bearer {token}'
     }
     url = (settings.KEYCLOAK_BASE_URL +
-           f'/auth/admin/realms/{realm}/users?first={start_with_user}&max={max_users}')
+           f'/auth/admin/realms/{realm}/users?first={start_with_user}&max='
+           f'{max_users}')
     return requests.get(url, headers=headers, timeout=timeout)
