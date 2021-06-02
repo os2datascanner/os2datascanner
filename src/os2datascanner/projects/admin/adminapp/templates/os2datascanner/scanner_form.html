@@ -81,7 +81,9 @@
     };
   {% endif %}
 </script>
+
 <script type="text/javascript" src="{% static 'js/ruleselector.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/employeeSelector.js' %}"></script>
 <script src="{% static 'js/options.js' %}"></script>
 {% endblock %}
 
@@ -226,10 +228,6 @@
 
           {% if form.password %}
             {% include "os2datascanner/scanner_form_input_field.html" with field=form.password password="True" %}
-          {% endif %}
-
-          {% if form.org_unit %}
-              {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.org_unit %}
           {% endif %}
 
           {% if form.userlist %}
@@ -545,6 +543,80 @@
           </fieldset>
         {% endif %}
     </section>
+
+    {% if form.org_unit %}
+    <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3>
+            {% trans "add users"|capfirst %}
+          </h3>
+
+          <p class="information">{% trans "select users from"|capfirst %}</p>
+
+          <div id="radio_container" class="form__group col-sm-12">
+            <div class="radio-content">
+              <label class="radio radio-before">
+                <span class="radio__input">
+                  <input type="radio" name="org_unit_ldap" id="id_org_unit_ldap" value="">
+                    <span class="radio__control radio__control"></span>
+                </span>
+                <span class="radio__label">{% trans "organizational units"|capfirst %}</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="radio_container" class="form__group col-sm-12">
+            <div class="radio-content">
+              <label class="radio radio-before">
+                <span class="radio__input">
+                  <input type="radio" name="org_unit_ldap" id="id_group" value="">
+                    <span class="radio__control radio__control"></span>
+                </span>
+                <span class="radio__label">{% trans "groups"|capfirst %}</span>
+              </label>
+            </div>
+          </div>
+
+          {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.org_unit %}
+
+          <p class="information">Vælg kun medarbejdere, som du ønsker at tilføje til scannerjobbet.</p>
+
+          <div id="{% if view.edit %}messageColorId{% endif %}" class="form__group{% if form.rules.errors %} has-error{% endif %}">
+            <div class="select-employees">
+              
+              <ul id="available_employees" class="select-employees__available">
+                <div class="select-employees-title">
+                  {% trans "Available employees" %}
+                </div>
+
+                <input type="text" class="employee-filter" id="employee-filter" placeholder="Søg">
+
+                {% for value, tag in form.org_unit.field.choices %}
+                <li class="employee" data-employee-id="{{ value }}">
+                  <a href="javascript:void();" class="add-employee-button" title="{{ description }}" role="button">{{ tag }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+
+              <i id="chevron_right" class="material-icons">chevron_right</i>
+              
+              <div id="selected_employees" class="select-employees__selected">
+                <div class="select-employees-title">
+                  {% trans "Selected employees" %}
+                </div>
+                <div id="employees_list"></div>
+              </div>
+
+              {% if view.edit %}
+                <div id="changed_employees">Bemærk, at ændringer i medarbejdere betyder, at alle filer skal scannes på ny.</div>
+              {% endif %}
+
+              {% if form.rules.errors %}{{ form.rules.errors }}{% endif %}
+            </div>
+          </div>
+        </fieldset>
+    </section>
+    {% endif %}
 
     <section class="data-form">
         <fieldset class="form__fieldset">
