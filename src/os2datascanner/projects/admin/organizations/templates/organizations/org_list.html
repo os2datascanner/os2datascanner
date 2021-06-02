@@ -87,8 +87,9 @@
                         </button>
                         <div class="flex">
                             <div class="response">
-                                <span class="response-icon response-icon--success" style="display: none;" data-sync-for="{{ organization.pk }}"><i id="check" class="material-icons">check</i></span>
-                                <span class="response-icon response-icon--error" style="display: none;" data-sync-for="{{ organization.pk }}"><i id="error" class="material-icons">error</i></span>
+                                <span class="response-icon response-icon--success" style="display: none;" data-sync-for="{{ organization.pk }}"><i class="material-icons">check</i></span>
+                                <span class="response-icon response-icon--error" style="display: none;" data-sync-for="{{ organization.pk }}"><i class="material-icons">error</i></span>
+                                <span class="response-icon response-icon--waiting" style="display: none;" data-sync-for="{{ organization.pk }}"><i class="material-icons">hourglass_top</i></span>
                                 <span class="response-text" data-sync-for="{{ organization.pk }}"></span>
                             </div>
                         </div>
