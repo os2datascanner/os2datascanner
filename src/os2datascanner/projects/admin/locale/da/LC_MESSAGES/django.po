@@ -573,9 +573,17 @@ msgstr "Tilføj regler"
 msgid "Available rules"
 msgstr "Tilgængelige regler"
 
+#: adminapp/templates/os2datascanner/scanner_form.html:583
+msgid "Available employees"
+msgstr "Tilgængelige medarbejdere"
+
 #: adminapp/templates/os2datascanner/scanner_form.html:690
 msgid "Selected rules"
 msgstr "Valgte regler"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:596
+msgid "Selected employees"
+msgstr "Valgte medarbejdere"
 
 #: adminapp/templates/os2datascanner/scanner_form.html:708
 msgid "Schedule scan"
@@ -1417,6 +1425,22 @@ msgstr "slug"
 #: organizations/models/organizational_unit.py:52
 msgid "parent unit"
 msgstr "overordnet enhed"
+
+#: organizations/models/organizational_unit.py:64
+msgid "organizational units"
+msgstr "organisatoriske enheder"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:575
+msgid "groups"
+msgstr "grupper"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:551
+msgid "add users"
+msgstr "tilføj brugere"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:554
+msgid "select users from"
+msgstr "vælg brugere fra"
 
 #: organizations/models/position.py:32
 msgid "employee"
