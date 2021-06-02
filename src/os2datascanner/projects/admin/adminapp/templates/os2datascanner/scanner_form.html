@@ -82,9 +82,31 @@
   {% endif %}
 </script>
 
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script> -->
+<!-- <script src="{% static 'js/dropdownTree.js' %}"></script> -->
 <script type="text/javascript" src="{% static 'js/ruleselector.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/employeeSelector.js' %}"></script>
+<!-- <script type="text/javascript" src="{% static 'js/employeeSelector.js' %}"></script> -->
 <script src="{% static 'js/options.js' %}"></script>
+
+<!-- <script>
+  var mydata = [
+     {id:1, text:"USA", inc:[
+        {text:"west", inc:[
+           {id:111, text:"California", inc:[
+              {id:1111, text:"Los Angeles", inc:[
+                 {id:11111, text:"Hollywood"}
+              ]},
+              {id:1112, text:"San Diego"}
+           ]},
+           {id:112, text:"Oregon"}
+        ]}
+     ]},
+     {id:2, text:"India"},
+     {id:3, text:"China"}
+  ];
+  $("#sel_1").select2ToTree({treeData: {dataArr: mydata}, maximumSelectionLength: 3});
+</script> -->
 {% endblock %}
 
 {% block body %}
@@ -553,33 +575,13 @@
 
           <p class="information">{% trans "select users from"|capfirst %}</p>
 
-          <div id="radio_container" class="form__group col-sm-12">
-            <div class="radio-content">
-              <label class="radio radio-before">
-                <span class="radio__input">
-                  <input type="radio" name="org_unit_ldap" id="id_org_unit_ldap" value="">
-                    <span class="radio__control radio__control"></span>
-                </span>
-                <span class="radio__label">{% trans "organizational units"|capfirst %}</span>
-              </label>
-            </div>
-          </div>
-
-          <div id="radio_container" class="form__group col-sm-12">
-            <div class="radio-content">
-              <label class="radio radio-before">
-                <span class="radio__input">
-                  <input type="radio" name="org_unit_ldap" id="id_group" value="">
-                    <span class="radio__control radio__control"></span>
-                </span>
-                <span class="radio__label">{% trans "groups"|capfirst %}</span>
-              </label>
-            </div>
-          </div>
-
           {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.org_unit %}
 
-          <p class="information">Vælg kun medarbejdere, som du ønsker at tilføje til scannerjobbet.</p>
+          <!-- <select id="sel_1" style="width:16em" multiple>
+          </select> -->
+         
+           <!-- Available Employees widget -->
+          <!-- <p class="information">Vælg kun medarbejdere, som du ønsker at tilføje til scannerjobbet.</p>
 
           <div id="{% if view.edit %}messageColorId{% endif %}" class="form__group{% if form.rules.errors %} has-error{% endif %}">
             <div class="select-employees">
@@ -607,13 +609,8 @@
                 <div id="employees_list"></div>
               </div>
 
-              {% if view.edit %}
-                <div id="changed_employees">Bemærk, at ændringer i medarbejdere betyder, at alle filer skal scannes på ny.</div>
-              {% endif %}
-
-              {% if form.rules.errors %}{{ form.rules.errors }}{% endif %}
             </div>
-          </div>
+          </div> -->
         </fieldset>
     </section>
     {% endif %}

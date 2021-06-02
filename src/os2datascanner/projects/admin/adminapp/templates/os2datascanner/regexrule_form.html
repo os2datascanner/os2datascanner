@@ -242,7 +242,7 @@
                   <span class="radio__input">
                     <input type="radio" name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" value="{{ value }}">
                     {% if value == 0 %}
-                      <span class="radio__control radio__control"></span>
+                      <span class="radio__control radio__control--notify"></span>
                     {% elif value == 1 %}
                       <span class="radio__control radio__control--warning"></span>
                     {% elif value == 2 %}
