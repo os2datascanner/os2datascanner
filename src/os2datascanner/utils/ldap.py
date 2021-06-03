@@ -38,6 +38,32 @@ class RDN(NamedTuple):
         return ",".join(str(l) for l in reversed(rdns))
 
 
+def trivial_dn_selector(d):
+    """Name selector function for use with LDAPNode.from_iterator.
+
+    Selects a single name from a dictionary representing an LDAP user: its
+    distinguished name."""
+    name = d.get("distinguishedName")
+    if name:
+        yield name
+
+
+def group_dn_selector(d):
+    """Name selector function for use with LDAPNode.from_iterator.
+
+    Selects zero or more names from a dictionary representing an LDAP user,
+    one for each group it's a member of. Group membership is decided on the
+    basis of the "memberOf" attribute, which should contain a list of
+    distinguished names."""
+    name = d.get("distinguishedName")
+    groups = d.get("memberOf")
+    if name and groups:
+        dn = RDN.make_sequence(*name.strip().split(","))
+        for group_name in groups:
+            gdn = RDN.make_sequence(*group_name.strip().split(","))
+            yield RDN.make_string(gdn + (dn[-1],))
+
+
 class LDAPNode(NamedTuple):
     """A node in a X.500/LDAP-style directory. (This is not even slightly
     supposed to be a complete implementation of RFC 4512, but it's enough of
@@ -112,8 +138,8 @@ class LDAPNode(NamedTuple):
     def from_iterator(
             cls,
             iterator: Iterator[dict],
-            dn_selector: Callable[[dict], str]=
-                    lambda item: item.get("distinguishedName")):
+            name_selector: Callable[[dict], Iterator[str]]=
+                    trivial_dn_selector):
         """Builds an LDAPNode hierarchy from an iterator of dictionaries
         representing user objects and returns its root. The hierarchy will be
         constructed based on the users' distinguished names. For example, the
@@ -135,31 +161,35 @@ class LDAPNode(NamedTuple):
                     /       \              \
         CN=Ninhursag         CN=Enki        CN=Gilgamesh
 
-        The dn_selector function is used to select the field containing the
-        distinguished name; if it returns None for an item, then that item will
-        be skipped. Each input dictionary is copied as the properties of the
+        The name_selector function yields zero or more distinguished names for
+        a given dictionary; an equal (but not necessarily identical!) LDAP node
+        will appear at each named position in the hierarchy. (A dictionary for
+        which zero names are yielded will not appear at all.)
+
+        Each input dictionary is copied verbatim as the properties of the
         resulting LDAP node."""
         root = LDAPNode.make(())
 
         # It'd be nice if Python's for loops just *supported* guard syntax...
-        for item, name in (
-                (i, n) for i, n in ((ri, dn_selector(ri)) for ri in iterator)
-                if n is not None):
-            name = RDN.make_sequence(*name.strip().split(","))
+        for item, names in (
+                (entry, name_selector(entry)) for entry in iterator):
+            for name in names:
+                dn = RDN.make_sequence(*name.strip().split(","))
 
-            node = root
-            for idx in range(len(name)):
-                label = (name[idx],)
-                child = None
-                for ch in node.children:
-                    if ch.label == label:
-                        child = ch
-                        break
-                else:
-                    child = LDAPNode.make(label)
-                    node.children.append(child)
-                node = child
+                node = root
+                for idx in range(len(dn)):
+                    label = (dn[idx],)
+                    child = None
+                    for ch in node.children:
+                        if ch.label == label:
+                            child = ch
+                            break
+                    else:
+                        child = LDAPNode.make(label)
+                        node.children.append(child)
+                    node = child
 
-            node.properties.update(item)
+                node.properties.clear()
+                node.properties.update(item)
 
         return root

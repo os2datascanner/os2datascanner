@@ -160,11 +160,11 @@ class LDAPTest(unittest.TestCase):
         from Keycloak's JSON serialisation of users."""
 
         def select_keycloak_dn(user_dict):
-            return user_dict.get(
+            yield user_dict.get(
                     "attributes", {}).get("LDAP_ENTRY_DN", [None])[0]
         node = LDAPNode.from_iterator(
                 [KEYCLOAK_USER],
-                dn_selector=select_keycloak_dn).children[0]
+                name_selector=select_keycloak_dn).children[0]
 
         # For the moment, we don't care about the properties here -- just the
         # structure

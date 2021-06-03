@@ -83,7 +83,8 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
 
     remote_hierarchy = LDAPNode.from_iterator(
             remote,
-            dn_selector=lambda item: item["attributes"]["LDAP_ENTRY_DN"][0])
+            name_selector=
+                    lambda item: (item["attributes"]["LDAP_ENTRY_DN"][0],))
     # Collapse the top of the hierarchy together, but don't go further than the
     # first "ou" -- organisational units should be preserved
     remote_hierarchy = remote_hierarchy.collapse(
