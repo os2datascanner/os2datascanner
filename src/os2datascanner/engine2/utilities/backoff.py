@@ -7,10 +7,23 @@ def run_with_backoff(
         op, *exception_set,
         count=0, max_tries=10, ceiling=7, base=1, warn_after=6, fuzz=0):
     """Performs an operation until it succeeds (or until the maximum number of
-    attempts is hit), with exponential backoff after each failure. On success,
-    returns a (result, parameters) pair; expanding the parameters dictionary
-    and giving it to this function will allow the backoff behaviour to be
-    persistent."""
+    attempts is hit), with exponential backoff time after each failure.
+
+    On success, returns a (result, parameters) pair; expanding the parameters
+    dictionary and giving it to this function will allow the backoff behaviour
+    to be persistent.
+
+    Setting ceiling=1 means that we sleep for 2^0=1 second, which conveniently
+    means that the fuzz factor can be treated directly as a time adjustment
+
+    `fuzz != 0` randomly adjust the sleeping time. Setting `fuzz = 0`(default),
+    the sleep time is calculated as
+      max_delay = base * 2^(min(count, ceiling)-1)
+
+    thus setting `count=0`, `fuzz=0` and `ceiling=1`, gives a constant sleep
+    time of `base`
+
+    """
     count = max(0, int(count))
     base = max(0.01, base)
     end = count + max_tries
