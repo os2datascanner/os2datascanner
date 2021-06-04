@@ -50,6 +50,13 @@ class WebSource(Source):
         known_addresses = set(to_visit)
         referrer_map = {}
 
+        # initial check that url can be reached. After this point, continue
+        # exploration at all cost
+        try:
+            response = session.head(to_visit[0].presentation_url)
+        except RequestException as e:
+            raise RequestException("Resource is not available") from e
+
         # scheme://netloc/path?query
         # https://example.com/some/path?query=foo
         scheme, netloc, path, query, fragment = urlsplit(self._url)
@@ -93,26 +100,40 @@ class WebSource(Source):
             logger.info("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
                          format(self._sitemap, i, len(to_visit)))
 
-
+        # If the handle(here) originates from the Source, then scrape the
+        # resource for all links and submit them to `handle_url` (which appends
+        # the handles to `to_visit`)
+        # If the handle is external, then just yield and let processor check
+        # if the page is available.
         while to_visit:
             here, to_visit = to_visit[0], to_visit[1:]
 
-            response = session.head(here.presentation_url)
-            if response.status_code == 200:
-                ct = response.headers.get("Content-Type", "application/octet-stream")
-                if simplify_mime_type(ct) == 'text/html':
-                    response = session.get(here.presentation_url)
-                    sleep(SLEEP_TIME)
-                    i = 0
-                    for i, li in enumerate(
-                            make_outlinks(response.content, here.presentation_url),
-                            start=1):
-                        handle_url(here.presentation_url, li)
-                    logger.info("site {0} has {1} links".format(here.presentation, i))
-            elif response.is_redirect and response.next:
-                handle_url(here.presentation_url, response.next.url)
-                # Don't yield WebHandles for redirects
-                continue
+            if here in self:
+                try:
+                    response = session.head(here.presentation_url)
+                    if response.status_code == 200:
+                        ct = response.headers.get("Content-Type",
+                                                "application/octet-stream")
+                        if simplify_mime_type(ct) == 'text/html':
+                            response = session.get(here.presentation_url)
+                            sleep(SLEEP_TIME)
+                            i = 0
+                            for i, li in enumerate(
+                                    make_outlinks(response.content,
+                                                  here.presentation_url),
+                                    start=1):
+                                handle_url(here.presentation_url, li)
+                            logger.info(f"site {here.presentation} has {i} links")
+                    elif response.is_redirect and response.next:
+                        handle_url(here.presentation_url, response.next.url)
+                        # Don't yield WebHandles for redirects
+                        continue
+
+                # There should newer be a ConnectionError, as only handles
+                # originating from Source are requested. But just in case..
+                except RequestException as e:
+                    logger.error(f"error while getting head of {here.presentation}",
+                                 exc_info=True)
 
             yield here
 

@@ -83,13 +83,12 @@ class Engine2HTTPSetup():
                    logging.root.manager.loggerDict]
 
         # we only want the module and log message
-        fmt = "%(name)s - %(message)s"
+        fmt = "[%(name)s] - [%(message)s]"
         logging.basicConfig(format=fmt)
         logger = logging.getLogger("os2datascanner")
         logger.setLevel(logging.DEBUG)
         # we have no handler in os2ds (except the NullHandler)
         logger.addHandler(logging.StreamHandler())
-
 
 
 class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
@@ -307,15 +306,13 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
     def test_broken_links(self):
         count = 0
         with SourceManager() as sm:
-            with self.assertRaises(Exception) as e:
-                for h in external_links_site.handles(sm):
-                    print(h.presentation)
-                    count += 1
-            exception = e.exception
+            for h in external_links_site.handles(sm):
+                print(h.presentation)
+                count += 1
         self.assertEqual(
             count,
-            10,
-            "site with broken internal and external links should have 10 "
+            11,
+            "site with broken internal and external links should have 11 "
             "handles that does not produce an exception"
         )
 
@@ -324,16 +321,22 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
         count_nfollow = 0
         count_nerror = 0
         with SourceManager() as sm:
-            with self.assertRaises(RequestException) as e:
-                for h in external_links_site.handles(sm):
-                    # print(h.presentation)
+            for h in external_links_site.handles(sm):
+                try:
                     if h.follow(sm).check():
                         count_follow += 1
                     else:
                         count_nfollow += 1
-            exception = e.exception
-            if exception:
-                count_nerror += 1
+                except RequestException as e:
+                    print(
+                        f"got an expected exception for {h.presentation}:\n{e}")
+                    count_nerror += 1
+
+        # We could use unittest internal Exception handling
+        # with self.assertRaises(RequestException) as e:
+        #  ...
+        # exception = e.exception
+        # if exception:
 
         # In case we catch an generic Exception, we could test the type, msg, code
         # self.assertTrue(type(exception) in (RequestException, ))
