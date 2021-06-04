@@ -33,8 +33,11 @@ class Engine2TestErrors(unittest.TestCase):
                 pass
 
     def test_handles_failure(self):
-        with self.assertRaises(Exception):
+        with self.assertRaises(Exception) as e:
             with SourceManager() as sm:
                 source = Source.from_url("http://example.invalid./")
                 with contextlib.closing(source.handles(sm)) as handles:
                     next(handles)
+        exception = e.exception
+        if exception:
+            print(f"got expected exception for {source.to_url()}\n{exception}")

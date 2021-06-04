@@ -1,8 +1,11 @@
 from abc import abstractmethod
+from typing import Iterator
 
 from ...utilities.json import JSONSerialisable
 from ...utilities.equality import TypePropertyEquality
 from .errors import UnknownSchemeError, DeserialisationError
+from .import handle as mhandle
+from .utilities import SourceManager
 
 
 class Source(TypePropertyEquality, JSONSerialisable):
@@ -18,6 +21,18 @@ class Source(TypePropertyEquality, JSONSerialisable):
     with the same type and properties compare equal. (One useful consequence of
     this is that SourceManager will collapse several equal Sources together,
     only opening one of them.)"""
+
+
+    def __contains__(self, h: "mhandle.Handle") -> bool:
+        """Test if a handle originated from this Source"""
+        while h:
+            if h.source == self:
+                return True
+            elif h.source.handle:
+                h = h.source.handle
+            else:
+                break
+        return False
 
     @property
     @abstractmethod
@@ -44,7 +59,7 @@ class Source(TypePropertyEquality, JSONSerialisable):
         object, and so will not necessarily compare equal to this one."""
 
     @abstractmethod
-    def handles(self, sm):
+    def handles(self, sm: "SourceManager") -> Iterator["mhandle.Handle"]:
         """Yields Handles corresponding to every identifiable leaf node in this
         Source's hierarchy. These Handles are generated in an undefined order.
 

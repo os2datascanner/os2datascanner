@@ -101,6 +101,7 @@ def main():
     # set level for root logger
     logger = logging.getLogger("os2datascanner")
     logger.setLevel(_loglevels[args.log])
+    logger.info("starting pipeline {0}".format(args.stage))
 
     if args.enable_metrics:
         start_http_server(args.prometheus_port)
