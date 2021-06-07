@@ -200,6 +200,8 @@ services:
     volumes:
       - ./dev-environment/api/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
+    profiles:
+      - api
 
   swagger_ui:
     image: swaggerapi/swagger-ui:v3.41.1
@@ -209,6 +211,8 @@ services:
       - "8075:8080"
     depends_on:
       - api_server
+    profiles:
+      - api
 
   prometheus:
     image: prom/prometheus
@@ -216,6 +220,8 @@ services:
       - "./dev-environment/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
     ports:
       - "8050:9090"
+    profiles:
+      - metric
 
   # default user is admin/admin
   grafana:
@@ -225,6 +231,8 @@ services:
       - "./dev-environment/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro"
     ports:
       - "8060:3000"
+    profiles:
+      - metric
 
   idp:
     image: magentalabs/simplesamlphp:2.0.1
@@ -240,6 +248,8 @@ services:
       - ./dev-environment/authsources.php:/var/www/simplesamlphp/config/authsources.php
     ports:
       - "8080:8080"
+    profiles:
+      - ldap
 
   postgres-keycloak:
     image: postgres
@@ -251,6 +261,8 @@ services:
       - type: volume
         source: knr-postgres-keycloak-volume
         target: /var/lib/postgresql/data
+    profiles:
+      - ldap
 
   localkeycloak.os2datascanner:
     image: quay.io/keycloak/keycloak:12.0.0
@@ -287,6 +299,8 @@ services:
       - ./dev-environment/realm.json:/realm.json
     depends_on:
       - postgres-keycloak
+    profiles:
+      - ldap
 
   ldap_server:
     image: osixia/openldap
@@ -300,6 +314,8 @@ services:
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap/slapd.d
+    profiles:
+      - ldap
 
   ldap_server_admin:
     image: osixia/phpldapadmin
@@ -310,6 +326,8 @@ services:
       PHPLDAPADMIN_HTTPS: 'false'
     depends_on:
       - ldap_server
+    profiles:
+      - ldap
 
 x-disabled:
   admin_cron:
