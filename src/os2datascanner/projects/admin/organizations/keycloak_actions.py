@@ -11,8 +11,26 @@ from .models import (Alias, Account, Position,
 from .models.aliases import AliasType
 
 
+def keycloak_dn_selector(d):
+    dn = d["attributes"]["LDAP_ENTRY_DN"][0]
+    if dn:
+        yield dn
+
+
+def keycloak_group_dn_selector(d):
+    name = list(keycloak_dn_selector(dn))[0]
+    groups = d.get("memberOf")
+    if name and groups:
+        dn = RDN.make_sequence(*name.strip().split(","))
+        for group_name in groups:
+            gdn = RDN.make_sequence(*group_name.strip().split(","))
+            yield RDN.make_string(gdn + (dn[-1],))
+
+
 @transaction.atomic
-def perform_import(realm: Realm) -> Tuple[int, int, int]:
+def perform_import(
+        realm: Realm,
+        name_selector=keycloak_dn_selector) -> Tuple[int, int, int]:
     """Collects the user hierarchy from the specified realm and creates
     local OrganizationalUnits and Accounts to reflect it. Local objects
     previously imported by this function but no longer backed by an object
@@ -82,19 +100,18 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
             else LDAPNode.make(()))
 
     remote_hierarchy = LDAPNode.from_iterator(
-            remote,
-            name_selector=
-                    lambda item: (item["attributes"]["LDAP_ENTRY_DN"][0],))
+            remote, name_selector=name_selector)
     # Collapse the top of the hierarchy together, but don't go further than the
-    # first "ou" -- organisational units should be preserved
+    # first "ou" or "cn" -- groups and organisational units should be preserved
     remote_hierarchy = remote_hierarchy.collapse(
-            lambda n: n.children[0].label[0].key != "ou")
+            lambda n: n.children[0].label[0].key not in ("ou", "cn"))
 
     to_add = []
     to_delete = Account.objects.none()
     to_update = Account.objects.none()
 
     units = {}
+    accounts = {}
 
     def path_to_unit(
             o: Organization,
@@ -131,13 +148,23 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
             o: Organization,
             path: Sequence[RDN],
             node: LDAPNode) -> Account:
-        return Account(
-                imported_id=RDN.make_string(path),
-                uuid=node.properties["id"],
-                username=node.properties["username"],
-                first_name=node.properties["firstName"],
-                last_name=node.properties["lastName"],
-                organization=o)
+        uuid = node.properties["id"]
+        account = accounts.get(uuid)
+        if account == None:
+            try:
+                account = Account.objects.get(
+                        organization=o, uuid=node.properties["id"])
+            except Account.DoesNotExist:
+                account = Account(
+                    imported_id=RDN.make_string(path),
+                    uuid=node.properties["id"],
+                    username=node.properties["username"],
+                    first_name=node.properties["firstName"],
+                    last_name=node.properties["lastName"],
+                    organization=o)
+                to_add.append(account)
+            accounts[uuid] = account
+        return account
 
     # Make sure that we have an OrganizationalUnit hierarchy that reflects the
     # remote one
@@ -165,7 +192,6 @@ def perform_import(realm: Realm) -> Tuple[int, int, int]:
                     # Missing required attribute -- skip this object
                     continue
                 unit = path_to_unit(org, path[:-1])
-                to_add.append(account)
                 to_add.append(Position(account=account, unit=unit))
             else:
                 # This should always work -- local_hierarchy has been built on
