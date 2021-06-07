@@ -13,8 +13,23 @@
 
 set -e
 
-# TODO: Uncomment when the management command has been added
-# ./manage.py ensure_db_connection --wait 30
+
+# check if env var $BARE_MODE is set. If yes, don't wait for services
+if [[ -z "${BARE_MODE}" ]]; then
+  # Ensure db is up
+  echo "Waiting for db to be ready"
+  python manage.py waitdb --wait 30 || exit
+  echo "OK"
+  echo ""
+
+  # Wait for rabbitmq to start
+  echo "Waiting for rabbitmq"
+  python -m os2datascanner.utils.cli wait-for-rabbitmq --wait 30 || exit
+  echo "OK"
+  echo ""
+else
+  echo "running in BARE_MODE: ${BARE_MODE}; skipping check for DB/rabbitMQ"
+fi
 
 if [ -z "${OS2DS_SKIP_DJANGO_MIGRATIONS}" ]; then
   # Run Migrate
@@ -29,4 +44,5 @@ fi
 # Compile translations
 ./manage.py compilemessages
 
+echo "Initialization complete, starting app"
 exec "$@"

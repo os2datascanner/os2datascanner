@@ -252,6 +252,9 @@ Run Engine notice scripts:
   variables:
     OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
     OS2DS_ENGINE_SYSTEM_CONFIG_PATH: ${CI_PROJECT_DIR}/docker/engine/docker-settings.toml
+    # ensure entrypoint.sh is running without trying to connect to DB/RabbitMQ/
+    # This cannot be yes/no or something `yaml` interprets as a boolean
+    BARE_MODE: yup
   script:
     - python -m unittest discover -s src/os2datascanner/engine2/tests/ --pattern "notice*.py"
 

@@ -29,6 +29,7 @@ chardet==3.0.4
     # via
     #   -c requirements-engine.txt
     #   requests
+click==8.0.1
 colorama==0.4.3
     # via
     #   -c requirements-engine.txt

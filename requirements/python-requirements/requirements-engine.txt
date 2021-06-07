@@ -18,6 +18,7 @@ chardet==3.0.4
     # via
     #   -r requirements-engine.in
     #   requests
+click==8.0.1
 colorama==0.4.3
     # via -r requirements-common.in
 cryptography==2.9.2

@@ -19,8 +19,20 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
+# stages are defined as ENV in the Dockerfile
 AVAILABLE_STAGES=$(echo $AVAILABLE_STAGES | tr "," "\n")
 
+# check if env var $BARE_MODE is set. If yes, don't wait for rabbitMQ
+if [[ -z "${BARE_MODE}" ]]; then
+  echo "Waiting for rabbitmq"
+  python -m os2datascanner.utils.cli wait-for-rabbitmq --wait 30 || exit
+  echo "OK"
+  echo ""
+else
+  echo "running in BARE_MODE: ${BARE_MODE}; skipping check for rabbitMQ"
+fi
+
+echo "Initialization complete, starting app"
 # Check if first argument is a stage
 if [[ " ${AVAILABLE_STAGES[@]} " =~ "$1" ]]; then
   exec python -m "os2datascanner.engine2.pipeline.run_stage" "$@"
