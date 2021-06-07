@@ -57,9 +57,13 @@ class Scanner(models.Model):
 
     linkable = False
 
-    name = models.CharField(max_length=256, unique=True, null=False,
-                            db_index=True,
-                            verbose_name='Navn')
+    name = models.CharField(
+        max_length=256,
+        unique=True,
+        null=False,
+        db_index=True,
+        verbose_name='Navn'
+    )
 
     organization = models.ForeignKey(
         'organizations.Organization',
@@ -70,10 +74,17 @@ class Scanner(models.Model):
         null=True,
     )
 
-    schedule = RecurrenceField(max_length=1024,
-                               verbose_name='Planlagt afvikling')
+    schedule = RecurrenceField(
+        max_length=1024,
+        null=True,
+        blank=True,
+        verbose_name='Planlagt afvikling'
+    )
 
-    do_ocr = models.BooleanField(default=False, verbose_name='Scan billeder')
+    do_ocr = models.BooleanField(
+        default=False,
+        verbose_name='Scan billeder'
+    )
 
     do_last_modified_check = models.BooleanField(
         default=True,

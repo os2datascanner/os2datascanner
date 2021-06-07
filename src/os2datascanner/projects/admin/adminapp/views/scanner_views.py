@@ -15,6 +15,7 @@ from json import dumps
 from pika.exceptions import AMQPError
 
 from django.forms import ModelMultipleChoiceField
+from django.forms.models import modelform_factory
 
 from os2datascanner.projects.admin.organizations.models import Organization
 
@@ -163,20 +164,13 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         self.old_url = self.get_object().url
         # Store the existing rules selected in the scannerjob
         self.old_rules = self.object.rules.get_queryset()
-        return super().get_form(form_class)
 
-    def get_form_fields(self):
-        """Get the list of form fields.
+        # django magic necessary because we do not use django forms.
+        form_class = modelform_factory(self.model, fields=self.get_form_fields())
+        kwargs = self.get_form_kwargs()
+        form = form_class(**kwargs)
 
-        The 'validation_status' field will be added to the form if the
-        user is a superuser.
-        """
-        fields = super().get_form_fields()
-        if self.request.user.is_superuser:
-            fields.append('validation_status')
-
-        self.fields = fields
-        return fields
+        return form
 
     def form_valid(self, form):
         """Validate the submitted form."""

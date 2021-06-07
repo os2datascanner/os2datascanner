@@ -45,7 +45,8 @@ class WebScannerCreate(ScannerCreate):
 
         form = super().get_form(form_class)
 
-        form.fields['url'].widget.attrs['placeholder'] = _('e.g. https://www.example.com')
+        form.fields['url'].widget.attrs['placeholder'] = \
+            _('e.g. https://www.example.com')
 
         return form
 
@@ -76,17 +77,6 @@ class WebScannerUpdate(ScannerUpdate):
             form.add_error('url', _(u'Space is not allowed in the web-domain name.'))
             return self.form_invalid(form)
         return super().form_valid(form)
-
-    def get_form_fields(self):
-        fields = super().get_form_fields()
-        # A check on whether the user updating was a super user
-        # or if the scannerjob was validated used to live here.
-        # If neither, a "validation_method" field was appended.
-        # This logic was removed as it is currently not used, but
-        # it may be brought back in the future for a SaaS solution
-        # to serve as a way to prove "ownership"/rights of domain to be scanned.
-        self.fields = fields
-        return fields
 
     def get_context_data(self, **kwargs):
         """Get the context used when rendering the template."""
