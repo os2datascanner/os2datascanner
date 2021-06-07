@@ -13,6 +13,12 @@ services:
       # to run the django tests.
       # THIS SHOULD NOT BE USED IN PRODUCTION!!!
       - ./dev-environment/postgres-initdb.d/50-add-createdb-permissions.sh:/docker-entrypoint-initdb.d/50-add-createdb-permissions.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come
@@ -72,6 +78,13 @@ services:
       - db
       - admin_frontend
       - queue
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
 
   admin_collector:
     build:
@@ -112,6 +125,12 @@ services:
       - db
       - report_frontend
       - queue
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
 
   report_collector:
     build:
