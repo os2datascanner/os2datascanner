@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-25 07:41-0500\n"
+"POT-Creation-Date: 2021-06-08 01:38-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,14 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: adminapp/static/js/ldapSync.js:27
-msgid "Synchronization succeeded"
-msgstr "Synkronisering lykkedes"
-
-#: adminapp/static/js/ldapSync.js:32
-msgid "Synchronization failed"
-msgstr "Synkronisering fejlede"
 
 #: adminapp/static/js/ldapConfig.js:33
 msgid "Connection succeeded"
@@ -41,6 +33,18 @@ msgstr "Autentificeret"
 #: adminapp/static/js/ldapConfig.js:75
 msgid "Authentication failed"
 msgstr "Autentificering mislykkedes"
+
+#: adminapp/static/js/ldapSync.js:25
+msgid "Pending..."
+msgstr "Afventer..."
+
+#: adminapp/static/js/ldapSync.js:42
+msgid "Synchronization succeeded"
+msgstr "Synkronisering lykkedes"
+
+#: adminapp/static/js/ldapSync.js:47
+msgid "Synchronization failed"
+msgstr "Synkronisering fejlede"
 
 #: adminapp/static/recurrence/js/recurrence-widget.js:1869
 msgid "including"

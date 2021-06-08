@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-25 08:32-0500\n"
+"POT-Creation-Date: 2021-06-08 01:36-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
@@ -261,7 +261,7 @@ msgstr "Opret ny regel"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:118
 #: adminapp/templates/os2datascanner/scanner_form.html:126
-#: import_services/templates/import_services/ldap_edit.html:91
+#: import_services/templates/import_services/ldap_edit.html:93
 msgid "General"
 msgstr "Generelt"
 
@@ -1044,7 +1044,7 @@ msgstr "kunde-ID"
 
 #: core/models/client.py:72 organizations/models/organization.py:47
 #: organizations/models/organizational_unit.py:44
-#: organizations/templates/organizations/org_list.html:37
+#: organizations/templates/organizations/org_list.html:39
 msgid "name"
 msgstr "navn"
 
@@ -1082,7 +1082,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_list.html:42
+#: organizations/templates/organizations/org_list.html:44
 msgid "import service"
 msgstr "importservice"
 
@@ -1283,44 +1283,44 @@ msgstr "Keycloak realm"
 msgid "Keycloak realms"
 msgstr "Keycloak realms"
 
-#: import_services/templates/import_services/ldap_edit.html:23
+#: import_services/templates/import_services/ldap_edit.html:25
 msgid "add"
 msgstr "tilføj"
 
-#: import_services/templates/import_services/ldap_edit.html:25
+#: import_services/templates/import_services/ldap_edit.html:27
 msgid "update"
 msgstr "opdatér"
 
-#: import_services/templates/import_services/ldap_edit.html:27
+#: import_services/templates/import_services/ldap_edit.html:29
 msgid "LDAP configuration for"
 msgstr "LDAP-konfiguration for"
 
-#: import_services/templates/import_services/ldap_edit.html:37
+#: import_services/templates/import_services/ldap_edit.html:39
 msgid "connect to LDAP"
 msgstr "opret forbindelse til LDAP"
 
-#: import_services/templates/import_services/ldap_edit.html:59
+#: import_services/templates/import_services/ldap_edit.html:61
 msgid "test connection"
 msgstr "test forbindelse"
 
-#: import_services/templates/import_services/ldap_edit.html:79
+#: import_services/templates/import_services/ldap_edit.html:81
 msgid "test authentication"
 msgstr "test adgang"
 
-#: import_services/templates/import_services/ldap_edit.html:102
+#: import_services/templates/import_services/ldap_edit.html:104
 msgid "search specification"
 msgstr "søgespecifikation"
 
-#: import_services/templates/import_services/ldap_edit.html:115
-#: import_services/templates/import_services/ldap_edit.html:126
+#: import_services/templates/import_services/ldap_edit.html:117
+#: import_services/templates/import_services/ldap_edit.html:128
 msgid "user attributes"
 msgstr "bruger-attributter"
 
-#: import_services/templates/import_services/ldap_edit.html:118
+#: import_services/templates/import_services/ldap_edit.html:120
 msgid "add user attributes"
 msgstr "tilføj bruger-attributter"
 
-#: import_services/templates/import_services/ldap_edit.html:137
+#: import_services/templates/import_services/ldap_edit.html:139
 msgid "save LDAP configuration"
 msgstr "gem LDAP-konfiguration"
 
@@ -1355,7 +1355,7 @@ msgid "SID"
 msgstr "SID"
 
 #: organizations/models/aliases.py:46 organizations/models/organization.py:65
-#: organizations/templates/organizations/org_list.html:38
+#: organizations/templates/organizations/org_list.html:40
 msgid "email"
 msgstr "e-mail"
 
@@ -1430,25 +1430,25 @@ msgstr "{cls}: {account} ({role}) ved {unit}"
 msgid "create new organization"
 msgstr "opret ny organisation"
 
-#: organizations/templates/organizations/org_list.html:17
+#: organizations/templates/organizations/org_list.html:19
 msgid "organizations for"
 msgstr "organisationer for"
 
-#: organizations/templates/organizations/org_list.html:23
-#: organizations/templates/organizations/org_list.html:28
+#: organizations/templates/organizations/org_list.html:25
+#: organizations/templates/organizations/org_list.html:30
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_list.html:39
+#: organizations/templates/organizations/org_list.html:41
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_list.html:82
-#: organizations/templates/organizations/org_list.html:84
+#: organizations/templates/organizations/org_list.html:83
+#: organizations/templates/organizations/org_list.html:86
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_list.html:104
+#: organizations/templates/organizations/org_list.html:107
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
