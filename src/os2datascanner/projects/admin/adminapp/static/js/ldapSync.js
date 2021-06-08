@@ -22,7 +22,7 @@ function ldapSync(e) {
     responseWaiting.style.display = "block"
     responseSuccess.style.display = "none"
     responseError.style.display = "none"
-    text.innerText = "Afventer..."
+    text.innerText = gettext('Pending...')
 
     // Get organization pk value
     var syncUrl = button.value;
