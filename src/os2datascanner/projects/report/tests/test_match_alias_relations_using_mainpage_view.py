@@ -1,5 +1,4 @@
-from datetime import datetime, timedelta
-from dateutil import tz
+from datetime import timedelta
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
 
@@ -11,7 +10,9 @@ from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 
 from ..reportapp.management.commands import pipeline_collector
-from ..reportapp.models.aliases.alias_model import Alias
+from ..reportapp.management.commands.update_match_alias_relation_table import \
+    update_match_alias_relations
+
 from ..reportapp.models.aliases.emailalias_model import EmailAlias
 from ..reportapp.models.roles.remediator_model import Remediator
 from ..reportapp.utils import create_alias_and_match_relations
@@ -194,7 +195,7 @@ kjeld_metadata = messages.MetadataMessage(
 )
 
 
-class MainPageViewTest(TestCase):
+class MatchAliasRelationTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.generate_kjeld_data()
@@ -398,9 +399,24 @@ class MainPageViewTest(TestCase):
             address='egon@olsen.com'
         )
         create_alias_and_match_relations(emailalias)
-        MainPageViewTest.generate_new_egon_data()
         qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 2)
+        self.assertEqual(len(qs), 1)
+        MatchAliasRelationTest.generate_new_egon_data()
+        qs1 = self.mainpage_get_queryset()
+        self.assertEqual(len(qs1), 2)
+        emailalias.delete()
+
+    def test_update_relation_management_command(self):
+        emailalias, created = EmailAlias.objects.get_or_create(
+            user=self.user,
+            address='egon@olsen.com'
+        )
+        qs = self.mainpage_get_queryset()
+        self.assertEqual(len(qs), 0)
+        MatchAliasRelationTest.generate_new_egon_data()
+        update_match_alias_relations()
+        qs1 = self.mainpage_get_queryset()
+        self.assertEqual(len(qs1), 2)
         emailalias.delete()
 
 # Helper methods
