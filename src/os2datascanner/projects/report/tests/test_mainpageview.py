@@ -44,6 +44,10 @@ scan_tag1 = messages.ScanTagFragment(
     time=time1,
     scanner=messages.ScannerFragment(pk=11, name="Dummy test scanner2"),
     user=None, organisation=None)
+scan_tag2 = messages.ScanTagFragment(
+    time=time0,
+    scanner=messages.ScannerFragment(pk=11, name="Dummy test scanner2"),
+    user=None, organisation=None)
 
 common_rule = RegexRule(
     expression="Vores hemmelige adgangskode er",
@@ -82,6 +86,19 @@ egon_email_handle_1 = EWSMailHandle(
     entry_id=None
 )
 
+egon_email_handle_2 = EWSMailHandle(
+    source=EWSAccountSource(
+        domain='olsen.com',
+        server=None,
+        admin_user=None,
+        admin_password=None,
+        user='egon'),
+    path='DLFIGHDSLUJKGFHEWIUTGHSLJHFGBSVDKJFHG',
+    mail_subject='Må jeg da lige have lov til at være her?',
+    folder_name='Hundehoveder',
+    entry_id=None
+)
+
 egon_scan_spec = messages.ScanSpecMessage(
     scan_tag=None,  # placeholder
     source=egon_email_handle.source,
@@ -107,6 +124,16 @@ egon_positive_match_1 = messages.MatchesMessage(
         matches=[{"dummy": "match object"}])]
 )
 
+
+egon_positive_match_2 = messages.MatchesMessage(
+    scan_spec=egon_scan_spec._replace(scan_tag=scan_tag2),
+    handle=egon_email_handle_2,
+    matched=True,
+    matches=[messages.MatchFragment(
+        rule=common_rule_2,
+        matches=[{"dummy": "match object"}])]
+)
+
 egon_metadata = messages.MetadataMessage(
     scan_tag=scan_tag0,
     handle=egon_email_handle,
@@ -119,6 +146,13 @@ egon_metadata_1 = messages.MetadataMessage(
     handle=egon_email_handle_1,
     metadata={"email-account": "egon@olsen.com",
               "last-modified": time_29_days.strftime(DATE_FORMAT)
+              }
+)
+
+egon_metadata_2 = messages.MetadataMessage(
+    scan_tag=scan_tag2,
+    handle=egon_email_handle_2,
+    metadata={"email-account": "egon@olsen.com",
               }
 )
 
@@ -180,6 +214,11 @@ class MainPageViewTest(TestCase):
         cls.generate_metadata(egon_metadata_1)
 
     @classmethod
+    def generate_new_egon_data(cls):
+        cls.generate_match(egon_positive_match_2)
+        cls.generate_metadata(egon_metadata_2)
+
+    @classmethod
     def generate_match(cls, match):
         prev, new = pipeline_collector.get_reports_for(
             match.handle.to_json_object(),
@@ -201,6 +240,11 @@ class MainPageViewTest(TestCase):
         self.user = User.objects.create_user(
             username='kjeld', email='kjeld@jensen.com', password='top_secret')
 
+    def tearDown(self):
+        self.user.delete()
+        del self.user
+        del self.factory
+
     def test_mainpage_view_as_default_role_with_no_matches(self):
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 0)
@@ -212,22 +256,27 @@ class MainPageViewTest(TestCase):
         remediator.delete()
 
     def test_mainpage_view_with_emailalias_egon(self):
-        emailalias = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        emailalias = EmailAlias.objects.create(
+            user=self.user,
+            address='egon@olsen.com'
+        )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 1)
         emailalias.delete()
 
     def test_mainpage_view_with_emailalias_kjeld(self):
-        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
+        emailalias = EmailAlias.objects.create(
+            user=self.user,
+            address='kjeld@jensen.com'
+        )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 1)
         emailalias.delete()
 
     def test_mainpage_view_with_emailaliases_egon_kjeld(self):
-        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
-        emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        emailalias, emailalias1 = self.create_email_alias_kjeld_and_egon()
         create_alias_and_match_relations(emailalias)
         create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset()
@@ -236,7 +285,10 @@ class MainPageViewTest(TestCase):
         emailalias1.delete()
 
     def test_mainpage_view_as_remediator_with_emailalias_kjeld(self):
-        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
+        emailalias = EmailAlias.objects.create(
+            user=self.user,
+            address='kjeld@jensen.com'
+        )
         remediator = Remediator.objects.create(user=self.user)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 2)
@@ -245,8 +297,7 @@ class MainPageViewTest(TestCase):
 
     def test_mainpage_view_filter_by_scannerjob(self):
         params = '?scannerjob=14&sensitivities=all'
-        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
-        emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        emailalias, emailalias1 = self.create_email_alias_kjeld_and_egon()
         create_alias_and_match_relations(emailalias)
         create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset(params)
@@ -256,8 +307,7 @@ class MainPageViewTest(TestCase):
 
     def test_mainpage_view_filter_by_sensitivities(self):
         params = '?scannerjob=all&sensitivities=1000'
-        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
-        emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        emailalias, emailalias1 = self.create_email_alias_kjeld_and_egon()
         create_alias_and_match_relations(emailalias)
         create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset(params)
@@ -267,8 +317,7 @@ class MainPageViewTest(TestCase):
 
     def test_mainpage_view_filter_by_all(self):
         params = '?scannerjob=all&sensitivities=all'
-        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
-        emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        emailalias, emailalias1 = self.create_email_alias_kjeld_and_egon()
         create_alias_and_match_relations(emailalias)
         create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset(params)
@@ -278,8 +327,7 @@ class MainPageViewTest(TestCase):
 
     def test_mainpage_view_filter_by_scannerjob_and_sensitivities(self):
         params = '?scannerjob=14&sensitivities=1000'
-        emailalias = EmailAlias.objects.create(user=self.user, address='kjeld@jensen.com')
-        emailalias1 = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        emailalias, emailalias1 = self.create_email_alias_kjeld_and_egon()
         create_alias_and_match_relations(emailalias)
         create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset(params)
@@ -303,13 +351,17 @@ class MainPageViewTest(TestCase):
 
     def test_mainpage_view_filter_by_datasource_age_true_emailalias_egon(self):
         params = '?30-days=true'
-        emailalias = EmailAlias.objects.create(user=self.user, address='egon@olsen.com')
+        emailalias = EmailAlias.objects.create(
+            user=self.user,
+            address='egon@olsen.com'
+        )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 2)
         emailalias.delete()
 
-    def test_mainpage_view_filter_by_scannerjob_and_sensitivities_and_datasource_age(self):
+    def test_mainpage_view_filter_by_scannerjob_and_sensitivities_and_datasource_age(
+            self):
         params = '?scannerjob=11&sensitivities=1000&30-days=true'
         remediator = Remediator.objects.create(user=self.user)
         qs = self.mainpage_get_queryset(params)
@@ -331,11 +383,37 @@ class MainPageViewTest(TestCase):
         remediator.delete()
     
     def test_mainpage_view_with_relation_table(self):
-        emailalias, created = EmailAlias.objects.get_or_create(user=self.user, address='egon@olsen.com')
+        emailalias, created = EmailAlias.objects.get_or_create(
+            user=self.user,
+            address='egon@olsen.com'
+        )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 1)
         emailalias.delete()
+
+    def test_mainpage_view_with_relation_table_and_incoming_new_matches(self):
+        emailalias, created = EmailAlias.objects.get_or_create(
+            user=self.user,
+            address='egon@olsen.com'
+        )
+        create_alias_and_match_relations(emailalias)
+        MainPageViewTest.generate_new_egon_data()
+        qs = self.mainpage_get_queryset()
+        self.assertEqual(len(qs), 2)
+        emailalias.delete()
+
+# Helper methods
+    def create_email_alias_kjeld_and_egon(self):
+        emailalias = EmailAlias.objects.create(
+            user=self.user,
+            address='kjeld@jensen.com'
+        )
+        emailalias1 = EmailAlias.objects.create(
+            user=self.user,
+            address='egon@olsen.com'
+        )
+        return emailalias, emailalias1
 
     def mainpage_get_queryset(self, params=''):
         request = self.factory.get('/' + params)

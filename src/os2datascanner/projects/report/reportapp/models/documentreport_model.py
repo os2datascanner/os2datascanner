@@ -137,7 +137,6 @@ def on_documentreport_created_or_updated(objects, fields=None):
         try:
             metadata = obj.data['metadata']['metadata'].values()
             value = list(metadata)[0]
-
             aliases = Alias.objects.select_subclasses()
 
             for alias in aliases:
@@ -146,7 +145,13 @@ def on_documentreport_created_or_updated(objects, fields=None):
                             tm(documentreport_id=obj.pk, alias_id=alias.pk))
         except (KeyError, TypeError):
             print(obj, " has no metadata")
-
+    try:
+        # TODO: We do not bulk create DocumentReports, and therefore will we always
+        #  bulk_create 1 Alias.match_relation at the time. We do not actually
+        #  use the bulk functionality.
+        tm.objects.bulk_create(new_objects, ignore_conflicts=True)
+    except:
+        print("Failed to create match_relation")
 
 # TODO: #43340 (if we need to explicitly delete the instances of the implicit
 # model class used by Alias.match_relation, we should also hook DocumentReport.
