@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-05 08:06-0500\n"
+"POT-Creation-Date: 2021-06-09 06:04-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,11 +17,11 @@ msgstr ""
 
 #: reportapp/admin.py:124
 msgid "Personal info"
-msgstr ""
+msgstr "Personlig information"
 
 #: reportapp/admin.py:126
 msgid "Important dates"
-msgstr ""
+msgstr "Vigtige datoer"
 
 #: reportapp/models/aliases/adsidalias_model.py:31
 #, python-format
@@ -30,7 +30,7 @@ msgstr "%(value)s er ikke et gyldigt SID"
 
 #: reportapp/models/aliases/alias_model.py:35
 msgid "Match relation"
-msgstr ""
+msgstr "Match relation"
 
 #: reportapp/models/documentreport_model.py:19
 msgid "scan time"
@@ -474,31 +474,18 @@ msgstr ""
 "Med venlig hilsen<br>\n"
 "OS2datascanner-systemet\n"
 
-#: reportapp/views/views.py:72
-msgid "The page does not exist"
-msgstr "Denne side eksisterer ikke"
-
-#: reportapp/views/views.py:259
+#: reportapp/views/views.py:246
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:260
+#: reportapp/views/views.py:247
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:261
+#: reportapp/views/views.py:248
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:262
+#: reportapp/views/views.py:249
 msgid "Mailscan"
 msgstr "Mailscan"
-
-#~ msgid "First"
-#~ msgstr "Første"
-
-#~ msgid "Last"
-#~ msgstr "Sidste"
-
-#~ msgid "Log out"
-#~ msgstr "Log ud"
