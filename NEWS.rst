@@ -1,6 +1,11 @@
 OS2datascanner
 ==============
 
+Version 3.9.6, 9th June 2021
+----------------------------
+
+This hotfix release corrects new matches not getting an alias relation.
+
 Version 3.9.5, 11th May 2021
 ----------------------------
 
