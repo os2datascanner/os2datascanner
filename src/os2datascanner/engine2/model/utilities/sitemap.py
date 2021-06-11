@@ -9,6 +9,11 @@ from os2datascanner.engine2.model.data import unpack_data_url
 from .datetime import parse_datetime
 from .utilities import convert_data_to_text
 
+# disable xml vulnerabilities, as described here
+# https://github.com/tiran/defusedxml#external-entity-expansion-local-file
+# https://lxml.de/api/lxml.etree.XMLParser-class.html
+_PARSER = etree.XMLParser(resolve_entities=False)
+
 logger = logging.getLogger(__name__)
 
 def _xp(e, path: str) -> List[str]:
@@ -61,7 +66,7 @@ def process_sitemap_url(url: str, *, context=requests,
         raise SitemapMissingError(url)
 
     try:
-        root = etree.parse(BytesIO(sitemap))
+        root = etree.parse(BytesIO(sitemap), parser=_PARSER)
         if _xp(root, "/sitemap:urlset"):
             # This appears to be a normal sitemap: iterate over all of the
             # valid <url /> elements and yield their addresses and last
