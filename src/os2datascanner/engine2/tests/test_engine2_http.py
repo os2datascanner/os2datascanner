@@ -14,9 +14,9 @@ from os2datascanner.engine2.model.core import (Handle,
 from os2datascanner.engine2.model.http import (
         WebSource, WebHandle, make_outlinks)
 from os2datascanner.engine2.model.utilities.datetime import parse_datetime
+from os2datascanner.engine2.model.utilities.sitemap import process_sitemap_url
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
-
 
 here_path = os.path.dirname(__file__)
 test_data_path = os.path.join(here_path, "data", "www")
@@ -54,6 +54,9 @@ embedded_mapped_site = WebSource("http://localhost:64346/",
                 "2.html</loc></url></urlset>")
 external_links_site = WebSource("http://localhost:64346/",
         sitemap="http://localhost:64346/external_sitemap.xml")
+xxe_site = WebSource("http://localhost:64346/",
+        sitemap="http://localhost:64346/xxe_sitemap.xml")
+
 
 class Engine2HTTPSetup():
     @classmethod
@@ -357,3 +360,13 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
             1,
             "site with broken internal and external links should have 1 link that "
             "produces an exception")
+
+
+class Engine2SitemapXXE(Engine2HTTPSetup, unittest.TestCase):
+    def test_sitemap_xxe(self):
+        self.assertEqual(
+            list(process_sitemap_url(xxe_site._sitemap)),
+            [('http://localhost:64346/?', None)],
+            "sitemap xml-parser is vulnerable to XXE(XML External Entity) injection."
+            "Make sure to disable `resolve_entities` in the xml parser"
+        )
