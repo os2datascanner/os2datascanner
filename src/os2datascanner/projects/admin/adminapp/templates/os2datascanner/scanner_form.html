@@ -1,6 +1,7 @@
 {% extends 'partials/base.html' %}
 {% load staticfiles %}
 {% load i18n %}
+{% load mptt_tags %}
 
 {% block extra_head_html %}
   <link href="{% static 'recurrence/css/recurrence.css' %}" rel="stylesheet" />
@@ -82,31 +83,29 @@
   {% endif %}
 </script>
 
-<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script> -->
-<!-- <script src="{% static 'js/dropdownTree.js' %}"></script> -->
-<script type="text/javascript" src="{% static 'js/ruleselector.js' %}"></script>
+<!-- Available Employees widget -->
 <!-- <script type="text/javascript" src="{% static 'js/employeeSelector.js' %}"></script> -->
+<script type="text/javascript" src="{% static 'js/ruleselector.js' %}"></script>
 <script src="{% static 'js/options.js' %}"></script>
 
-<!-- <script>
-  var mydata = [
-     {id:1, text:"USA", inc:[
-        {text:"west", inc:[
-           {id:111, text:"California", inc:[
-              {id:1111, text:"Los Angeles", inc:[
-                 {id:11111, text:"Hollywood"}
-              ]},
-              {id:1112, text:"San Diego"}
-           ]},
-           {id:112, text:"Oregon"}
-        ]}
-     ]},
-     {id:2, text:"India"},
-     {id:3, text:"China"}
-  ];
-  $("#sel_1").select2ToTree({treeData: {dataArr: mydata}, maximumSelectionLength: 3});
-</script> -->
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<script src="{% static 'js/dropdowntree.js' %}"></script>
+
+<script>
+   document.getElementById("sel_1").onchange = function () {
+      document.getElementById("sel_1").value = this.value;
+      if (this.value) {
+        document.getElementById("id_userlist_container").style.display = "none";
+      } else {
+        document.getElementById("id_userlist_container").style.display = "block";
+      }
+   }
+
+  $("#sel_1").select2ToTree();
+</script>
+
 {% endblock %}
 
 {% block body %}
@@ -575,10 +574,31 @@
 
           <p class="information">{% trans "select users from"|capfirst %}</p>
 
-          {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.org_unit %}
+          <!-- {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.org_unit %} -->
 
-          <!-- <select id="sel_1" style="width:16em" multiple>
-          </select> -->
+          <div class="form__group">
+            <label 
+              class="treeview-label 
+              {% if required %}required-form{% endif %}"
+              for="id_{{ form.org_unit.label }}">
+              {{ form.org_unit.label }}
+            </label>
+            {% full_tree_for_model organizations.OrganizationalUnit as org_units %}
+            <select class="treeview" id="sel_1" name="classifiers" size="10">
+              <option value="" selected>---------</option>
+              {% for node,structure in org_units|tree_info:"ancestors" %}
+              {% if node.is_child_node %}
+              <option value="{{ node.uuid }}">
+                {{ structure.ancestors|tree_path }} > {{ node }}
+              </option>
+              {% else %}
+              <option value="{{ node.uuid }}">
+                {{ node }}
+              </option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
          
            <!-- Available Employees widget -->
           <!-- <p class="information">Vælg kun medarbejdere, som du ønsker at tilføje til scannerjobbet.</p>
