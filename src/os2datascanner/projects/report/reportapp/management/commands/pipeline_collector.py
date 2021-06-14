@@ -29,6 +29,8 @@ from os2datascanner.engine2.conversions.types import OutputType
 from ...models.documentreport_model import DocumentReport
 from ...models.organization_model import Organization
 
+import structlog
+logger = structlog.get_logger(__name__)
 
 def result_message_received_raw(body):
     """Method for restructuring and storing result body.
@@ -43,12 +45,29 @@ def result_message_received_raw(body):
     tag = messages.ScanTagFragment.from_json_object(tag)
 
     previous_report, new_report = get_reports_for(reference, tag)
+
+    # if presentation=="", then it is a new report still not updated with the
+    # recieved Message
+    new_presentation = new_report.presentation
+    prev_presentation = previous_report.presentation if previous_report else ""
+    logger.info(f"Message recieved from queue {queue}")
+    if prev_presentation:
+        logger.info(f"previous {previous_report} for {prev_presentation}")
+    else:
+        logger.info("No previous report")
+    if new_presentation:
+        logger.info(f"new {new_report} for {new_report.presentation}")
+    else:
+        logger.info(f"new report created but still not saved")
+
     if queue == "matches":
         handle_match_message(previous_report, new_report, body)
     elif queue == "problem":
         handle_problem_message(previous_report, new_report, body)
     elif queue == "metadata":
         handle_metadata_message(new_report, body)
+    # newline in logs, to indicate handling is done
+    print()
 
     yield from []
 
@@ -64,7 +83,7 @@ def event_message_received_raw(body):
     if model_class == "Organization":
         handle_event(event_type, instance, Organization)
     else:
-        print("Unknown model_class %s in event" % model_class)
+        logger.info("Unknown model_class %s in event" % model_class)
         return
 
     yield from []
@@ -78,7 +97,6 @@ def handle_metadata_message(new_report, result):
         new_report.datasource_last_modified = (
                 OutputType.LastModified.decode_json_object(
                         message.metadata["last-modified"]))
-    # If no last-modified value in metadata received, set it to time of scan.
     else:
         # If no scan_tag time is found, default value to current time as this
         # must be some-what close to actual scan_tag time.
@@ -86,6 +104,7 @@ def handle_metadata_message(new_report, result):
         # shown.
         new_report.datasource_last_modified = (
                 message.scan_tag.time or time_now())
+    logger.info(f"updating timestamp for {new_report.presentation}")
     new_report.save()
 
 
@@ -112,10 +131,14 @@ def handle_match_message(previous_report, new_report, body):
     new_matches = messages.MatchesMessage.from_json_object(body)
     previous_matches = previous_report.matches if previous_report else None
 
+    matches = [(match.rule.presentation, match.matches) for match in new_matches.matches]
+    logger.info(f"{new_matches.handle.presentation} has the matches: {matches}")
     if previous_report and previous_report.resolution_status is None:
         # There are existing unresolved results; resolve them based on the new
         # message
         if previous_matches:
+            logger.info("There is a previous match for the file. "
+                        f"Updating {previous_report} by doing")
             if not new_matches.matched:
                 # No new matches. Be cautiously optimistic, but check what
                 # actually happened
@@ -125,30 +148,28 @@ def handle_match_message(previous_report, new_report, body):
                     # The file hasn't been changed, so the matches are the same
                     # as they were last time. Instead of making a new entry,
                     # just update the timestamp on the old one
-                    print(new_matches.handle.presentation,
-                            "LM/no change, updating timestamp")
+                    logger.info("File not changed: updating LastModified timestamp")
                     previous_report.scan_time = (
                             new_matches.scan_spec.scan_tag.time)
                     previous_report.save()
                 else:
                     # The file has been edited and the matches are no longer
                     # present
-                    print(new_matches.handle.presentation,
-                            "Changed, no matches, old status is now EDITED")
+                    logger.info("File changed: no matches, status is now EDITED")
                     previous_report.resolution_status = (
                             DocumentReport.ResolutionChoices.EDITED.value)
                     previous_report.save()
             else:
+                # XXX How do we know its been edited? This is hit whenever there's a match
                 # The file has been edited, but matches are still present.
                 # Resolve the previous ones
-                print(new_matches.handle.presentation,
-                        "Changed, new matches, old status is now EDITED")
+                logger.info("Matches still present, status is now EDITED."
+                            "A new report will be created")
                 previous_report.resolution_status = (
                         DocumentReport.ResolutionChoices.EDITED.value)
                 previous_report.save()
 
     if new_matches.matched:
-        print(new_matches.handle.presentation, "New matches, creating")
 
         # Collect and store the top-level type label from the matched object
         source = new_matches.handle.source
@@ -163,6 +184,9 @@ def handle_match_message(previous_report, new_report, body):
         # Sort matches by prop. desc.
         new_report.data["matches"] = sort_matches_by_probability(body)
         new_report.save()
+        logger.info(f"Matches: Saving new {new_report}")
+    else:
+        logger.info(f"No new matches. {new_report} not saved")
 
 
 def sort_matches_by_probability(body):
@@ -186,17 +210,17 @@ def sort_matches_by_probability(body):
 
 def handle_problem_message(previous_report, new_report, body):
     problem = messages.ProblemMessage.from_json_object(body)
+
+    presentation = problem.handle.presentation if problem.handle else "(source)"
+    logger.info(f"ProblemMessage for {presentation}")
     if (previous_report and previous_report.resolution_status is None
             and problem.missing):
-        # The file previously had matches, but has been removed. Resolve them
-        print(problem.handle.presentation if problem.handle else "(source)",
-                "Problem, deleted, old status is now REMOVED")
+        # The file previously had matches, but is now removed.
+        logger.info(f"File deleted, previous {previous_report} set to REMOVED")
         previous_report.resolution_status = (
                 DocumentReport.ResolutionChoices.REMOVED.value)
         previous_report.save()
     else:
-        print(problem.handle.presentation if problem.handle else "(source)",
-                "Problem, transient, creating")
 
         # Collect and store the top-level type label from the failing object
         source = problem.handle.source if problem.handle else problem.source
@@ -206,7 +230,7 @@ def handle_problem_message(previous_report, new_report, body):
 
         new_report.data["problem"] = body
         new_report.save()
-
+        logger.info(f"Unresolved problem. Saving new {new_report}")
 
 def _identify_message(result):
     origin = result.get('origin')
@@ -232,27 +256,27 @@ def handle_event(event_type, instance, cls):
         # go ahead and update or delete
         if event_type == "object_delete":
             existing.delete()
-            print("handle_event: Deleted %s with uuid: %s" % (cls, existing.uuid))
+            logger.info("handle_event: Deleted %s with uuid: %s" % (cls, existing.uuid))
         elif event_type == "object_update":
             event_obj_dict = {k: v for k, v in event_obj.__dict__.items() if v is not None}
             existing.__dict__.update(event_obj_dict)
             existing.save()
-            print("handle_event: Updated %s with uuid: %s" % (cls, existing.uuid))
+            logger.info("handle_event: Updated %s with uuid: %s" % (cls, existing.uuid))
         else:
-            print("handle_event: Unexpected event_type %s from %s with uuid: %s" % (event_type, cls, event_obj.uuid))
+            logger.info("handle_event: Unexpected event_type %s from %s with uuid: %s" % (event_type, cls, event_obj.uuid))
 
     except cls.DoesNotExist:
         # The object didn't exist - save it
         # Notice that we might end up here event with an update event, if the initial
         # create event wasn't created, collected or didn't succeed
         event_obj.save()
-        print("handle_event: Created %s with uuid: %s" % (cls, event_obj.uuid))
+        logger.info("handle_event: Created %s with uuid: %s" % (cls, event_obj.uuid))
     except FieldError as e:
-        print("handle_event: FieldError when handling %s from event: %s" % (cls, e))
+        logger.info("handle_event: FieldError when handling %s from event: %s" % (cls, e))
     except AttributeError as e:
-        print("handle_event: AttributeError when handling %s from event: %s" % (cls, e))
+        logger.info("handle_event: AttributeError when handling %s from event: %s" % (cls, e))
     except ProtectedError as e:
-        print("handle_event: Couldn't delete %s uuid %s from event: %s" % (cls, event_obj.uuid, e))
+        logger.info("handle_event: Couldn't delete %s uuid %s from event: %s" % (cls, event_obj.uuid, e))
 
 
 class ReportCollector(PikaPipelineRunner):
@@ -271,7 +295,7 @@ class Command(BaseCommand):
         with ReportCollector(
                 read=["os2ds_results", "os2ds_events"], heartbeat=6000) as runner:
             try:
-                print("Start")
+                logger.info("Start")
                 runner.run_consumer(exclusive=True)
             finally:
-                print("Stop")
+                logger.info("Stop")
