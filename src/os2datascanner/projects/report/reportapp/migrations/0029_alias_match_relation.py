@@ -3,12 +3,13 @@
 from django.db import migrations, models
 from django.db.models import Q
 
-from ..utils import iterate_queryset_in_batches
-
 
 def creating_relations_between_alias_and_matches(apps, schema_editor):
     """This migration creates the relation between
     Alias and DocumentReport, for all existing Aliases
+
+    *Note - this method is from now on also a management command.
+    See management/commands/update_match_alias_relation_table.py
     """
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
     # find all matches
@@ -38,7 +39,8 @@ def creating_relations_between_alias_and_matches(apps, schema_editor):
 
         except:
             print("no subAlias")
-        
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
