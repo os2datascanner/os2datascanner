@@ -31,7 +31,8 @@ or more services in the system:
   - Service: ``engine_exporter``
 
 ``processor``, ``matcher`` and ``tagger`` can also be started as a single
-service, ``engine_worker``.
+service, ``engine_worker``. This is the default (and recommended)
+configuration, as its cache use is much more efficient.
 
 * **Report-module**: The services concerning the *report interface*
 
