@@ -88,9 +88,6 @@ class ScannerBase(object):
 
         form = super().get_form(form_class)
         user = self.request.user
-        if not user.is_superuser:
-            self.filter_queryset(form,
-                                 user.administrator_for.client.organizations.all())
 
         form.fields['schedule'].required = False
         org_qs = Organization.objects.none()

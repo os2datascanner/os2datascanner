@@ -1,5 +1,6 @@
 {% extends 'partials/base.html' %}
 {% load staticfiles %}
+{% load mptt_tags %}
 {% load i18n %}
 {% load mptt_tags %}
 
@@ -88,23 +89,11 @@
 <script type="text/javascript" src="{% static 'js/ruleselector.js' %}"></script>
 <script src="{% static 'js/options.js' %}"></script>
 
+<!-- Tree view widget -->
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 <script src="{% static 'js/dropdowntree.js' %}"></script>
-
-<script>
-   document.getElementById("sel_1").onchange = function () {
-      document.getElementById("sel_1").value = this.value;
-      if (this.value) {
-        document.getElementById("id_userlist_container").style.display = "none";
-      } else {
-        document.getElementById("id_userlist_container").style.display = "block";
-      }
-   }
-
-  $("#sel_1").select2ToTree();
-</script>
 
 {% endblock %}
 
@@ -253,11 +242,11 @@
 
           {% if form.userlist %}
           <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
-            <label class="control-label required-form" for="id_{{ form.userlist.name }}">
+            <label class="control-label" for="id_{{ form.userlist.name }}">
               {% trans "List of mail users" %}
             </label>
             <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
-            <div class="fileUpload button button--grey button--upload">
+            <div id="fileUpload" class="fileUpload button button--grey button--upload">
               <span>
                 {% trans "Upload" %}
               </span>
@@ -574,32 +563,42 @@
 
           <p class="information">{% trans "select users from"|capfirst %}</p>
 
-          <!-- {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.org_unit %} -->
-
           <div class="form__group">
             <label 
               class="treeview-label 
               {% if required %}required-form{% endif %}"
-              for="id_{{ form.org_unit.label }}">
+              for="{{ form.org_unit.name }}">
               {{ form.org_unit.label }}
             </label>
-            {% full_tree_for_model organizations.OrganizationalUnit as org_units %}
-            <select class="treeview" id="sel_1" name="classifiers" size="10">
-              <option value="" selected>---------</option>
-              {% for node,structure in org_units|tree_info:"ancestors" %}
+            <select class="treeview" id="sel_1" name="{{ form.org_unit.name }}" size="10">
+              <option value="" class="l-0" selected>---------</option>
+              {% for node,structure in org_units|tree_info %}              
               {% if node.is_child_node %}
-              <option value="{{ node.uuid }}">
-                {{ structure.ancestors|tree_path }} > {{ node }}
+              <option value="{{ node.uuid }}"
+                      data-pup="{{ node.parent.uuid }}"
+                      class="l-{{node.get_ancestors.count}}
+                      {% if node.get_descendant_count != 0 %} non-leaf {% endif %}" 
+                      {% if form.org_unit.value|add:"0" == node.uuid|add:"0" %}
+                        selected="selected"
+                      {% endif %}
+              >
+              <span class="org-icon"></span>{{ node }}
+                
               </option>
               {% else %}
-              <option value="{{ node.uuid }}">
+              <option value="{{ node.uuid }}"
+                      class="l-0 {% if node.get_descendant_count != 0 %} non-leaf {% endif %}"
+                      {% if form.org_unit.value|add:"0" == node.uuid|add:"0" %}
+                        selected="selected"
+                      {% endif %}
+              >
                 {{ node }}
               </option>
               {% endif %}
               {% endfor %}
             </select>
           </div>
-         
+
            <!-- Available Employees widget -->
           <!-- <p class="information">Vælg kun medarbejdere, som du ønsker at tilføje til scannerjobbet.</p>
 

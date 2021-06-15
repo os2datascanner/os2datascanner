@@ -22,7 +22,7 @@ Copyright (C) 2016  Joseph Safwat Khella
 			if (typeof opts._templateResult === "function") {
 				label = opts._templateResult(data, container);
 			}
-			var $iteme = $("<span class='item-label'></span>").append(label);
+			var $iteme = $("<span class='item-label'><span class='org-icon'></span></span>").append(label);
 			if (data.element) {
 				var ele = data.element;
 				container.setAttribute("data-val", ele.value);
@@ -168,3 +168,30 @@ Copyright (C) 2016  Joseph Safwat Khella
 		});
 	}
 })(jQuery);
+
+$( document ).ready(function() {
+    
+  function org_unit_select_option_value_toggle() {
+		if (document.getElementById("sel_1")) { 
+			if (document.getElementById("sel_1").value) {
+				document.getElementById("id_userlist").disabled = true;
+				document.getElementById("upload-file").style.backgroundColor = "#dddddd";
+				document.getElementById("fileUpload").style.backgroundColor = "#dddddd";
+			} else {
+				document.getElementById("id_userlist").disabled = false;
+				document.getElementById("upload-file").style.backgroundColor = "#fff";
+			}
+		}
+	}
+
+	org_unit_select_option_value_toggle()
+
+	if (document.getElementById("sel_1")) { 
+		document.getElementById("sel_1").onchange = function () {
+			org_unit_select_option_value_toggle();
+		}
+	}
+
+  $("#sel_1").select2ToTree();
+
+});
