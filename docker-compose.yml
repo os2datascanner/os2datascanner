@@ -249,7 +249,7 @@ services:
     ports:
       - "8080:8080"
     profiles:
-      - ldap
+      - sso
 
   postgres-keycloak:
     image: postgres
@@ -263,6 +263,7 @@ services:
         target: /var/lib/postgresql/data
     profiles:
       - ldap
+      - sso
 
   localkeycloak.os2datascanner:
     image: quay.io/keycloak/keycloak:12.0.0
@@ -301,6 +302,7 @@ services:
       - postgres-keycloak
     profiles:
       - ldap
+      - sso
 
   ldap_server:
     image: osixia/openldap
