@@ -4,6 +4,11 @@
 {% load i18n %}
 {% load tz %}
 
+{% block scripts %}
+    {{ block.super }}
+    <script type="text/javascript" src="/jsi18n/"></script>
+{% endblock %}
+
 {% block extra_head_html %}
 <style>
     .scanner-status {
@@ -85,10 +90,11 @@
             <form action="/status/{{status.pk}}/delete/" method="post"
                   style="display: inline-block;" class="status-delete">
                 {% csrf_token %}
+                {% trans "Do you really want to delete the status object for scanner '%(scanner_name)s'?" as r_u_sure %}
                 <button
                     type="submit"
                     class="button button--small button--grey"
-                    onclick="return confirm('Ønsker du at slette status for\n\n{{status.scanner.name}}\n')"
+                    onclick="return confirm(interpolate('{{ r_u_sure|escapejs }}', {'scanner_name': '{{ status.scanner.name|escapejs }}'}, true))"
                     title="{% trans 'Delete' %}">
                     <svg class="icon">
                         <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
