@@ -20,6 +20,7 @@ or more services in the system:
 * **Admin-module**: The application for the *administration interface*
 
   - Service: ``admin_application``
+  - Service: ``admin_collector``
 
 * **Engine-module**: The services for each of the stages that make up the *scanner engine*:
 
@@ -28,6 +29,9 @@ or more services in the system:
   - Service: ``engine_matcher``
   - Service: ``engine_tagger``
   - Service: ``engine_exporter``
+
+``processor``, ``matcher`` and ``tagger`` can also be started as a single
+service, ``engine_worker``.
 
 * **Report-module**: The services concerning the *report interface*
 
@@ -98,9 +102,8 @@ Running the system
 ------------------
 
 OS2datascanner is a multi-service system, and as such also a multi-container
-system. Thus, it may be advantageous to run it using ``docker-compose``, and
-we end this section with
-`an example of a docker-compose set-up`__.
+system. It may be advantageous to run it using ``docker-compose``, and we end
+this section with `an example of a docker-compose set-up`__.
 
 __ `docker-compose-sample`_
 
@@ -168,17 +171,28 @@ set-up is chosen for the databases and message queue.
 
 .. _`docker-compose-sample`:
 
-Sample of a docker-compose set-up
----------------------------------
+docker-compose set-up for development
+-------------------------------------
 
-Below follows a minimal sample of a docker-compose set-up. Regarding a larger
-set-up including postgres, rabbitmq, prometheus, and grafana, please refer to
-our development set-up for inspiration (found at `the official repository`__).
+The ``docker-compose.yml`` use ``--profiles`` which requires version
+``docker-compose > 1.28``.
 
-Please note that volume and port bindings should match your needs and host
-set-up.
+To start the core components(``engine``, ``report``- and ``admin`` interface,
+``db`` and ``queue``) of datascanner, use
 
-__ `official-repo`_
+.. code-block:: sh
 
-.. literalinclude:: ../samples/docker-compose.yml
-  :language: YAML
+   docker-compose up -d
+
+To start a service behind a ``profiles`` flag, use
+
+.. code-block:: sh
+
+   docker-compose --profile api up -d
+
+The following ``profiles`` are available: ``ldap``, ``sso``, ``api`` and ``metric``.
+
+See docker-compose.yml_ for more. The development config files are stored in
+``os2datascanner/dev-environment/``
+
+.. _docker-compose.yml: https://github.com/os2datascanner/os2datascanner/blob/master/docker-compose.yml
