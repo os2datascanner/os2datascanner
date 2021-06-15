@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-08 01:36-0500\n"
+"POT-Creation-Date: 2021-06-15 04:00-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: adminapp/models/apikey_model.py:16 adminapp/models/rules/rule_model.py:42
-#: adminapp/models/scannerjobs/scanner_model.py:68
+#: adminapp/models/scannerjobs/scanner_model.py:72
 #: import_services/models/realm.py:29 organizations/models/account.py:58
 #: organizations/models/organization.py:75
 msgid "organization"
@@ -60,39 +60,39 @@ msgstr "organisatorisk enhed"
 msgid "Either a user list or an organisational unit is required"
 msgstr "Der kræves enten en brugerlist eller en organisatorisk enhed"
 
-#: adminapp/models/scannerjobs/scanner_model.py:375
+#: adminapp/models/scannerjobs/scanner_model.py:386
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:378
+#: adminapp/models/scannerjobs/scanner_model.py:389
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:381
+#: adminapp/models/scannerjobs/scanner_model.py:392
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:383
+#: adminapp/models/scannerjobs/scanner_model.py:394
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:386
+#: adminapp/models/scannerjobs/scanner_model.py:397
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:388
+#: adminapp/models/scannerjobs/scanner_model.py:399
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:391
+#: adminapp/models/scannerjobs/scanner_model.py:402
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:444
+#: adminapp/models/scannerjobs/scanner_model.py:457
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:445
+#: adminapp/models/scannerjobs/scanner_model.py:458
 msgid "scan statuses"
 msgstr "scanstatusser"
 
@@ -121,7 +121,7 @@ msgid "Page not found"
 msgstr "Siden blev ikke fundet"
 
 #: adminapp/templates/components/navigation.html:12
-#: adminapp/templates/os2datascanner/scan_status.html:17
+#: adminapp/templates/os2datascanner/scan_status.html:39
 #: adminapp/templates/os2datascanner/scanner_tabs.html:61
 msgid "Scanner status"
 msgstr "Scanner status"
@@ -224,6 +224,7 @@ msgstr "Gem ændringer"
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:106
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
+#: adminapp/templates/os2datascanner/scan_status.html:98
 #: adminapp/templates/os2datascanner/scanners.html:146
 msgid "Delete"
 msgstr "Slet"
@@ -393,7 +394,7 @@ msgid "Status"
 msgstr "Status"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:52
-#: adminapp/templates/os2datascanner/scan_status.html:60
+#: adminapp/templates/os2datascanner/scan_status.html:83
 msgid "objects explored"
 msgstr "objekter udforsket"
 
@@ -407,21 +408,29 @@ msgid ""
 msgstr ""
 "Ønsker du virkelig at slette denne rapport? Handlingen kan ikke fortrydes."
 
-#: adminapp/templates/os2datascanner/scan_status.html:37
+#: adminapp/templates/os2datascanner/scan_status.html:60
 msgid "about"
 msgstr "ca."
 
-#: adminapp/templates/os2datascanner/scan_status.html:38
+#: adminapp/templates/os2datascanner/scan_status.html:61
 msgid "left"
 msgstr "tilbage"
 
-#: adminapp/templates/os2datascanner/scan_status.html:59
+#: adminapp/templates/os2datascanner/scan_status.html:82
 msgid "Estimating ..."
 msgstr "Estimerer..."
 
-#: adminapp/templates/os2datascanner/scan_status.html:62
+#: adminapp/templates/os2datascanner/scan_status.html:85
 msgid "scanned"
 msgstr "scannet"
+
+#: adminapp/templates/os2datascanner/scan_status.html:93
+#, python-format
+msgid ""
+"Do you really want to delete the status object for scanner "
+"'%%(scanner_name)s'?"
+msgstr "Er du sikker på, at du vil slette status for scanner "
+"»%%(scanner_name)s«?"
 
 #: adminapp/templates/os2datascanner/scanner_askrun.html:25
 #: adminapp/templates/os2datascanner/scanner_askrun.html:80
@@ -917,19 +926,19 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
-#: adminapp/views/views.py:187 import_services/models/exported_mixin.py:31
+#: adminapp/views/views.py:183 import_services/models/exported_mixin.py:31
 msgid "created"
 msgstr "oprettet"
 
-#: adminapp/views/views.py:187
+#: adminapp/views/views.py:183
 msgid "saved"
 msgstr "gemt"
 
-#: adminapp/views/webscanner_views.py:48
+#: adminapp/views/webscanner_views.py:49
 msgid "e.g. https://www.example.com"
 msgstr "f.eks. https://www.example.com"
 
-#: adminapp/views/webscanner_views.py:54 adminapp/views/webscanner_views.py:76
+#: adminapp/views/webscanner_views.py:55 adminapp/views/webscanner_views.py:77
 msgid "Space is not allowed in the web-domain name."
 msgstr "Mellemrum er ikke tilladt i web-domænenavnet."
 
