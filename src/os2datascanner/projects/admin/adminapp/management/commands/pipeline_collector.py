@@ -31,6 +31,8 @@ def status_message_received_raw(body):
     if not status:
         return
 
+    status.message = message.message
+    status.status_is_error = message.status_is_error
     if message.total_objects is not None:
         # ScanStatus uses this value as a divisor, so avoid setting it to zero
         if message.total_objects > 0:

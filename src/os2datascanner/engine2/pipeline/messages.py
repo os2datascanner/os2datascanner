@@ -397,17 +397,22 @@ class ProblemMessage(NamedTuple):
 
 class StatusMessage(NamedTuple):
     scan_tag: ScanTagFragment
+    message: str = ""
+    status_is_error: bool = False
 
     # Emitted by (top-level) explorers
-    total_objects: int = None
+    total_objects: Optional[int] = None
 
     # Emitted by workers
-    object_size: int = None
-    object_type: str = None
+    object_size: Optional[int] = None
+    object_type: Optional[str] = None
+
 
     def to_json_object(self):
         return {
             "scan_tag": self.scan_tag.to_json_object(),
+            "message": self.message,
+            "status_is_error": self.status_is_error,
 
             "total_objects": self.total_objects,
 
@@ -419,6 +424,8 @@ class StatusMessage(NamedTuple):
     def from_json_object(obj):
         return StatusMessage(
                 scan_tag=ScanTagFragment.from_json_object(obj["scan_tag"]),
+                message=obj.get("message"),
+                status_is_error=obj.get("status_is_error"),
                 total_objects=obj.get("total_objects"),
                 object_size=obj.get("object_size"),
                 object_type=obj.get("object_type"))
