@@ -4,32 +4,64 @@ import unittest
 from os2datascanner.utils.ldap import RDN, LDAPNode
 
 
+ENKI = LDAPNode.make(
+        RDN.make_sequence("CN=Enki"),
+        distinguishedName="CN=Enki,L=Eridu,L=Sumer",
+        memberOf=[
+                "CN=WhoDecree,CN=Gods,L=Sumer"
+        ],
+        title="Lord of the Earth")
+
+
+NINHURSAG = LDAPNode.make(
+        RDN.make_sequence("CN=Ninhursag"),
+        distinguishedName="CN=Ninhursag,L=Eridu,L=Sumer",
+        memberOf=[
+                "CN=WhoDecree,CN=Gods,L=Sumer"
+        ])
+
+
+GILGAMESH = LDAPNode.make(
+        RDN.make_sequence("CN=Gilgamesh"),
+        distinguishedName="CN=Gilgamesh,L=Uruk,L=Sumer",
+        memberOf=[
+                "CN=Demigods,CN=Gods,L=Sumer",
+                "CN=Heroes,L=Sumer"
+        ])
+
+
+ENKIDU = LDAPNode.make(
+        RDN.make_sequence("CN=Enkidu"),
+        distinguishedName="CN=Enkidu,L=Uruk,L=Sumer",
+        memberOf=[
+                "CN=Heroes,L=Sumer"
+        ])
+
+
 SUMER = LDAPNode.make(
         RDN.make_sequence("L=Sumer"),
-        LDAPNode.make(
-                RDN.make_sequence("L=Eridu"),
-                LDAPNode.make(
-                        RDN.make_sequence("CN=Enki"),
-                        distinguishedName="CN=Enki,L=Eridu,L=Sumer",
-                        title="Lord of the Earth"),
-                LDAPNode.make(
-                        RDN.make_sequence("CN=Ninhursag"),
-                        distinguishedName="CN=Ninhursag,L=Eridu,L=Sumer")),
-        LDAPNode.make(
-                RDN.make_sequence("L=Uruk"),
-                LDAPNode.make(
-                        RDN.make_sequence("CN=Gilgamesh"),
-                        distinguishedName="CN=Gilgamesh,L=Uruk,L=Sumer"),
-                LDAPNode.make(
-                        RDN.make_sequence("CN=Enkidu"),
-                        distinguishedName="CN=Enkidu,L=Uruk,L=Sumer")))
+        LDAPNode.make(RDN.make_sequence("L=Eridu"), ENKI, NINHURSAG),
+        LDAPNode.make(RDN.make_sequence("L=Uruk"), GILGAMESH, ENKIDU))
+
 
 SUMER_ITERATOR = [
-    {"distinguishedName": "CN=Enki,L=Eridu,L=Sumer",
-            "title": "Lord of the Earth"},
-    {"distinguishedName": "CN=Ninhursag,L=Eridu,L=Sumer"},
-    {"distinguishedName": "CN=Gilgamesh,L=Uruk,L=Sumer"},
-    {"distinguishedName": "CN=Enkidu,L=Uruk,L=Sumer"},
+    {
+        "distinguishedName": "CN=Enki,L=Eridu,L=Sumer",
+        "title": "Lord of the Earth",
+        "memberOf": ["CN=WhoDecree,CN=Gods,L=Sumer"]
+    },
+    {
+        "distinguishedName": "CN=Ninhursag,L=Eridu,L=Sumer",
+        "memberOf": ["CN=WhoDecree,CN=Gods,L=Sumer"]
+    },
+    {
+        "distinguishedName": "CN=Gilgamesh,L=Uruk,L=Sumer",
+        "memberOf": ["CN=Demigods,CN=Gods,L=Sumer", "CN=Heroes,L=Sumer"]
+    },
+    {
+        "distinguishedName": "CN=Enkidu,L=Uruk,L=Sumer",
+        "memberOf": ["CN=Heroes,L=Sumer"]
+    },
 ]
 
 POST_FLOOD = copy.deepcopy(SUMER)
