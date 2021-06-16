@@ -1,7 +1,7 @@
 -r requirements-common.in
 
 ipython
-Django==2.2.18
+Django==3.2.4
 django-model-utils
 django-settings-export
 django-storages[google]
