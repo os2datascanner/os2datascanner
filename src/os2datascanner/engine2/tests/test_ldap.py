@@ -1,7 +1,7 @@
 import copy
 import unittest
 
-from os2datascanner.utils.ldap import RDN, LDAPNode
+from os2datascanner.utils.ldap import RDN, LDAPNode, group_dn_selector
 
 
 ENKI = LDAPNode.make(
@@ -42,6 +42,19 @@ SUMER = LDAPNode.make(
         RDN.make_sequence("L=Sumer"),
         LDAPNode.make(RDN.make_sequence("L=Eridu"), ENKI, NINHURSAG),
         LDAPNode.make(RDN.make_sequence("L=Uruk"), GILGAMESH, ENKIDU))
+
+
+SUMER_GROUPS = LDAPNode.make(
+        RDN.make_sequence("L=Sumer"),
+        LDAPNode.make(
+                RDN.make_sequence("CN=Gods"),
+                LDAPNode.make(
+                        RDN.make_sequence("CN=WhoDecree"), ENKI, NINHURSAG),
+                LDAPNode.make(
+                        RDN.make_sequence("CN=Demigods"), GILGAMESH)),
+        LDAPNode.make(
+                RDN.make_sequence("CN=Heroes"),
+                GILGAMESH, ENKIDU))
 
 
 SUMER_ITERATOR = [
@@ -122,6 +135,15 @@ class LDAPTest(unittest.TestCase):
                 SUMER,
                 LDAPNode.from_iterator(SUMER_ITERATOR).collapse(),
                 "LDAP iterator construction failed")
+
+    def test_iterator_construction_group(self):
+        """LDAPNode.from_iterator should be able to construct a hierarchy from
+        the group information present in a flat list of users."""
+        self.assertEqual(
+                SUMER_GROUPS,
+                LDAPNode.from_iterator(SUMER_ITERATOR,
+                        name_selector=group_dn_selector).collapse(),
+                "LDAP iterator group construction failed")
 
     def test_iterator_skipping(self):
         """LDAPNode.from_iterator should skip over objects that don't have an
