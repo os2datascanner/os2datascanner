@@ -26,6 +26,7 @@ class LDAPEditForm(forms.ModelForm):
             'bind_dn',
             'ldap_password',
             'vendor',
+            'import_into',
             'username_attribute',
             'rdn_attribute',
             'uuid_attribute',
@@ -57,6 +58,7 @@ class LDAPEditForm(forms.ModelForm):
     def general_fields():
         fields = [
             'vendor',
+            'import_into',
         ]
         return fields
 

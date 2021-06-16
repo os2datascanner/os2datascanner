@@ -29,8 +29,7 @@ def keycloak_group_dn_selector(d):
 
 @transaction.atomic
 def perform_import(
-        realm: Realm,
-        name_selector=keycloak_dn_selector) -> Tuple[int, int, int]:
+        realm: Realm) -> Tuple[int, int, int]:
     """Collects the user hierarchy from the specified realm and creates
     local OrganizationalUnits and Accounts to reflect it. Local objects
     previously imported by this function but no longer backed by an object
@@ -39,7 +38,15 @@ def perform_import(
     Returns a tuple of counts of objects that were added, updated, and
     removed."""
     now = time_now()
+
     org = realm.organization
+    import_service = org.importservice
+    if not import_service or not import_service.ldapconfig:
+        return (0, 0, 0)
+
+    name_selector = keycloak_dn_selector
+    if import_service.ldapconfig.import_into == "group":
+        name_selector = keycloak_group_dn_selector
 
     token_message = keycloak_services.request_access_token()
     token_message.raise_for_status()
