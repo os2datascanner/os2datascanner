@@ -7,7 +7,7 @@ from django.utils.timezone import now
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 
-from os2datascanner.projects.admin.import_services.keycloak_services import add_ldap_conf, create_realm, request_access_token, request_update_component, get_token_first
+from os2datascanner.projects.admin.import_services.keycloak_services import add_ldap_conf, create_realm, request_access_token, request_update_component, get_token_first, create_member_of_attribute_mapper
 from os2datascanner.projects.admin.organizations.keycloak_actions import perform_import
 from os2datascanner.projects.admin.organizations.models import Organization
 
@@ -141,6 +141,8 @@ def _keycloak_creation(config_instance):
         create_realm(realm.pk)
     payload = config_instance.get_payload_dict()
     add_ldap_conf(realm.pk, payload)  # TODO: consider moving request elsewhere, else add error-handling!
+    # Create a memberOf attribute mapper on the LDAP user federation in Keycloak upon creation
+    get_token_first(create_member_of_attribute_mapper, realm.pk, payload["id"])
 
 
 def _keycloak_update(config_instance):

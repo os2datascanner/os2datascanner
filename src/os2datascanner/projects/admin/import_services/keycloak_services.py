@@ -184,3 +184,44 @@ def get_users(realm, token, timeout=5, max_users=500, start_with_user=0):
            f'/auth/admin/realms/{realm}/users?first={start_with_user}&max='
            f'{max_users}')
     return requests.get(url, headers=headers, timeout=timeout)
+
+
+def create_member_of_attribute_mapper(realm, token, provider_id):
+
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/components'
+           )
+
+    headers = {
+        'Authorization': f'bearer {token}',
+        'Content-Type': 'application/json;charset=utf-8',
+    }
+
+    payload = {
+        "config": {
+            "user.model.attribute": [
+                "memberOf"
+            ],
+            "ldap.attribute": [
+                "memberOf"
+            ],
+            "read.only": [
+                "true"
+            ],
+            "always.read.value.from.ldap": [
+                "true"
+            ],
+            "is.mandatory.in.ldap": [
+                "false"
+            ],
+            "is.binary.attribute": [
+                "false"
+            ]
+        },
+        "name": "memberOf",
+        "providerId": "user-attribute-ldap-mapper",
+        "providerType": "org.keycloak.storage.ldap.mappers.LDAPStorageMapper",
+        "parentId": f"{provider_id}"
+    }
+
+    return requests.post(url, data=json.dumps(payload), headers=headers)
