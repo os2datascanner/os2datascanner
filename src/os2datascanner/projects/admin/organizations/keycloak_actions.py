@@ -18,8 +18,8 @@ def keycloak_dn_selector(d):
 
 
 def keycloak_group_dn_selector(d):
-    name = list(keycloak_dn_selector(dn))[0]
-    groups = d.get("memberOf")
+    name = list(keycloak_dn_selector(d))[0]
+    groups = d.get("attributes").get("memberOf")
     if name and groups:
         dn = RDN.make_sequence(*name.strip().split(","))
         for group_name in groups:
