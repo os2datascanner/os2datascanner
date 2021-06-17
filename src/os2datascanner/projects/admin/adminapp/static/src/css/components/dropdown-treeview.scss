@@ -216,3 +216,26 @@
 	margin-left: .8em !important;
 	padding-left: 2em !important;
 }
+
+.select2-results__options {
+	max-width: 98% !important;
+}
+
+
+// For IE support
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+
+	.s2-to-tree li.select2-results__option.non-leaf.opened .expand-collapse:before {
+		content: "-" !important;
+		font-size: 1.5em !important;
+		top: -0.5em !important;
+		left: -0.15em !important;
+  }
+
+  .s2-to-tree li.select2-results__option.non-leaf .expand-collapse:before {
+		content: "+" !important;
+		font-size: 1.5em !important;
+    top: -0.25em !important;
+	}
+
+}

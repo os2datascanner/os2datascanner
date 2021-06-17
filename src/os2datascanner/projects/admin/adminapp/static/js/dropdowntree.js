@@ -169,6 +169,7 @@ Copyright (C) 2016  Joseph Safwat Khella
 	}
 })(jQuery);
 
+// Disable user list if tree view is selected
 $( document ).ready(function() {
     
   function org_unit_select_option_value_toggle() {

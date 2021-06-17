@@ -240,38 +240,6 @@
             {% include "os2datascanner/scanner_form_input_field.html" with field=form.password password="True" %}
           {% endif %}
 
-          {% if form.userlist %}
-          <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
-            <label class="control-label" for="id_{{ form.userlist.name }}">
-              {% trans "List of mail users" %}
-            </label>
-            <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
-            <div id="fileUpload" class="fileUpload button button--grey button--upload">
-              <span>
-                {% trans "Upload" %}
-              </span>
-              <input
-                type="file"
-                class="upload"
-                name="{{ form.userlist.name }}"
-                id="id_{{ form.userlist.name }}"
-                {% if form.userlist.value %}
-                value="{{ form.userlist.value }}"
-                {% endif %}>
-            </div>
-            <p>
-              <small>
-                {% trans "Existing file:" %} {{ form.userlist.value }}
-              </small>
-            </p>
-
-            {% if form.userlist.help_text %}
-            <span class="form__help-text">{{ form.userlist.help_text }}</span>
-            {% endif %}
-
-            {% if form.userlist.errors %}{{ form.userlist.errors }}{% endif %}
-          </div>
-          {% endif %}
           {% if form.scan_site_drives %}
           <div id="{{ form.scan_site_drives.auto_id }}_container" class="form__group{% if form.scan_site_drives.errors %} has-error{% endif %}">
             <div class="ds-checkbox">
@@ -582,7 +550,7 @@
                         selected="selected"
                       {% endif %}
               >
-              <span class="org-icon"></span>{{ node }}
+                {{ node }}
                 
               </option>
               {% else %}
@@ -598,6 +566,41 @@
               {% endfor %}
             </select>
           </div>
+
+          <p class="information">{% trans "or upload"|capfirst %}</p>
+
+          {% if form.userlist %}
+          <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
+            <label class="control-label" for="id_{{ form.userlist.name }}">
+              {% trans "List of mail users" %}
+            </label>
+            <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+            <div id="fileUpload" class="fileUpload button button--grey button--upload">
+              <span>
+                {% trans "Upload" %}
+              </span>
+              <input
+                type="file"
+                class="upload"
+                name="{{ form.userlist.name }}"
+                id="id_{{ form.userlist.name }}"
+                {% if form.userlist.value %}
+                value="{{ form.userlist.value }}"
+                {% endif %}>
+            </div>
+            <p>
+              <small>
+                {% trans "Existing file:" %} {{ form.userlist.value }}
+              </small>
+            </p>
+
+            {% if form.userlist.help_text %}
+            <span class="form__help-text">{{ form.userlist.help_text }}</span>
+            {% endif %}
+
+            {% if form.userlist.errors %}{{ form.userlist.errors }}{% endif %}
+          </div>
+          {% endif %}
 
            <!-- Available Employees widget -->
           <!-- <p class="information">Vælg kun medarbejdere, som du ønsker at tilføje til scannerjobbet.</p>
