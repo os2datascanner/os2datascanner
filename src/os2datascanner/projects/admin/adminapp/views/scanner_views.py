@@ -170,14 +170,10 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         will be limited by the user's organization unless the user is a
         superuser.
         """
+        form = super().get_form(form_class)
         self.old_url = self.get_object().url
         # Store the existing rules selected in the scannerjob
         self.old_rules = self.object.rules.get_queryset()
-
-        # django magic necessary because we do not use django forms.
-        form_class = modelform_factory(self.model, fields=self.get_form_fields())
-        kwargs = self.get_form_kwargs()
-        form = form_class(**kwargs)
 
         return form
 
