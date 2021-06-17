@@ -38,7 +38,6 @@ def perform_import(
     Returns a tuple of counts of objects that were added, updated, and
     removed."""
     now = time_now()
-
     org = realm.organization
     import_service = org.importservice
     if not import_service or not import_service.ldapconfig:
