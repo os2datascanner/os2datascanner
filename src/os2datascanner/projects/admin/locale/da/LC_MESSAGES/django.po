@@ -1442,6 +1442,10 @@ msgstr "tilføj brugere"
 msgid "select users from"
 msgstr "vælg brugere fra"
 
+#: adminapp/templates/os2datascanner/scanner_form.html:570
+msgid "or upload"
+msgstr "eller upload"
+
 #: organizations/models/position.py:32
 msgid "employee"
 msgstr "medarbejder"
