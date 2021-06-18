@@ -28,17 +28,20 @@ To get a development environment to run, follow these steps:
     .. code-block:: bash
 
         docker-compose exec admin_application python manage.py createsuperuser
-
-    and
-
-    .. code-block:: bash
-
         docker-compose exec report_application python manage.py createsuperuser
+
 
     You can pass username and email as arguments to the command by adding
     ``--username <your username>`` and/or  ``--email <your email>`` at the
     end of the snippets above, otherwise you will be prompted for them along with a
     password.
+
+    As of `Django 3.0<https://docs.djangoproject.com/en/3.2/ref/django-admin/#django-admin-createsuperuser/>`_, users can be created "script-like" as
+
+    .. code-block:: bash
+
+        docker-compose exec -e DJANGO_SUPERUSER_PASSWORD=test admin_application python manage.py createsuperuser --noinput --username test --email test@test.dk
+        docker-compose exec -e DJANGO_SUPERUSER_PASSWORD=test report_application python manage.py createsuperuser --noinput --username test --email test@test.dk
 
     Credentials for the message queue web interface can be found in here:
 
