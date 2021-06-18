@@ -1,4 +1,5 @@
-.select-rules {
+.select-rules,
+.select-employees {
   display: grid;
   gap: 1rem;
   grid-template-columns: 1fr .03fr 1fr;
@@ -22,7 +23,8 @@
     padding: 0.5rem;
   }
 
-  .select-rules-title {
+  .select-rules-title,
+  .select-employees-title {
     width: 100%;
     margin-bottom: .5rem;
     padding: .5rem;
@@ -43,7 +45,8 @@
 
 }
 
-.rule {
+.rule,
+.employee {
   background-color: #e9e9e9;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
   border: none;
@@ -73,7 +76,8 @@
   }
 }
 
-.remove-rule-button {
+.remove-rule-button,
+.remove-employee-button {
   float: right;
   background: no-repeat 50%/50% 50%;
   background-image: url("../svg/clear.svg");
@@ -86,4 +90,15 @@
     background-color: rgba(0, 0, 0, 0.2);
     cursor: not-allowed;
   }
+}
+
+//Filter
+.employee-filter {
+  padding: .5rem !important;
+  margin-bottom: 1rem;
+  background-position: 1rem .5rem;
+  background-image: url('../svg/search.svg');
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  text-indent: 2rem;
 }

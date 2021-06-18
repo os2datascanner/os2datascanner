@@ -12,13 +12,14 @@
 # sector open source network <https://os2.eu/>.
 #
 from django import forms
-
-from os2datascanner.projects.admin.core.models import Feature
+from django.utils.translation import ugettext_lazy as _
+from django.views import View
 
 from .scanner_views import *
 from ..aescipher import decrypt
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
-from django.utils.translation import ugettext_lazy as _
+from ...core.models import Feature
+from ...organizations.models import OrganizationalUnit
 
 
 class ExchangeScannerList(ScannerList):
@@ -31,7 +32,26 @@ class ExchangeScannerList(ScannerList):
         return super().get_queryset()
 
 
-class ExchangeScannerCreate(ScannerCreate):
+class ExchangeScannerBase(View):
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        org_units = OrganizationalUnit.objects.all()
+        user = self.request.user
+        if self.request.user.is_superuser:
+            context['org_units'] = org_units
+        elif hasattr(user, 'administrator_for'):
+            client = user.administrator_for.client
+            org_units = org_units.filter(
+                organization__in=client.organizations.all()
+            )
+            context['org_units'] = org_units
+        else:
+            context['org_units'] = OrganizationalUnit.objects.none()
+        return context
+
+
+class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
     """Create a exchange scanner view."""
 
     model = ExchangeScanner
@@ -57,20 +77,10 @@ class ExchangeScannerCreate(ScannerCreate):
 
         form = super().get_form(form_class)
 
-        unit_field = form.fields.get('org_unit', None)
-        if unit_field:
-            user = self.request.user
-            if hasattr(user, 'administrator_for'):
-                client = user.administrator_for.client
-                initial_qs = unit_field.queryset
-                unit_field.queryset = initial_qs.filter(
-                    organization__in=client.organizations.all()
-                )
-
         return initialize_form(form)
 
 
-class ExchangeScannerUpdate(ScannerUpdate):
+class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):
     """Update a scanner view."""
 
     model = ExchangeScanner
@@ -107,16 +117,6 @@ class ExchangeScannerUpdate(ScannerUpdate):
                                bytes(authentication.ciphertext))
             form.fields['password'].initial = password
 
-        unit_field = form.fields.get('org_unit', None)
-        if unit_field:
-            user = self.request.user
-            if hasattr(user, 'administrator_for'):
-                client = user.administrator_for.client
-                initial_qs = unit_field.queryset
-                unit_field.queryset = initial_qs.filter(
-                    organization__in=client.organizations.all()
-                )
-
         return form
 
 
@@ -150,7 +150,15 @@ def initialize_form(form):
     as they are not part of the exchange scanner model."""
 
     form.fields['url'].widget.attrs['placeholder'] = _('e.g. @example.com')
-    form.fields['username'] = forms.CharField(max_length=1024, required=False, label=_('Username'))
-    form.fields['password'] = forms.CharField(max_length=50, required=False, label=_('Password'))
+    form.fields['username'] = forms.CharField(
+        max_length=1024,
+        required=False,
+        label=_('Username')
+    )
+    form.fields['password'] = forms.CharField(
+        max_length=50,
+        required=False,
+        label=_('Password')
+    )
 
     return form

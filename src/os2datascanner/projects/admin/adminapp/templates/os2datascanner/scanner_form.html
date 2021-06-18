@@ -1,6 +1,8 @@
 {% extends 'partials/base.html' %}
 {% load staticfiles %}
+{% load mptt_tags %}
 {% load i18n %}
+{% load mptt_tags %}
 
 {% block extra_head_html %}
   <link href="{% static 'recurrence/css/recurrence.css' %}" rel="stylesheet" />
@@ -81,8 +83,18 @@
     };
   {% endif %}
 </script>
+
+<!-- Available Employees widget -->
+<!-- <script type="text/javascript" src="{% static 'js/employeeSelector.js' %}"></script> -->
 <script type="text/javascript" src="{% static 'js/ruleselector.js' %}"></script>
 <script src="{% static 'js/options.js' %}"></script>
+
+<!-- Tree view widget -->
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<script src="{% static 'js/dropdowntree.js' %}"></script>
+
 {% endblock %}
 
 {% block body %}
@@ -228,42 +240,6 @@
             {% include "os2datascanner/scanner_form_input_field.html" with field=form.password password="True" %}
           {% endif %}
 
-          {% if form.org_unit %}
-              {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.org_unit %}
-          {% endif %}
-
-          {% if form.userlist %}
-          <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
-            <label class="control-label required-form" for="id_{{ form.userlist.name }}">
-              {% trans "List of mail users" %}
-            </label>
-            <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
-            <div class="fileUpload button button--grey button--upload">
-              <span>
-                {% trans "Upload" %}
-              </span>
-              <input
-                type="file"
-                class="upload"
-                name="{{ form.userlist.name }}"
-                id="id_{{ form.userlist.name }}"
-                {% if form.userlist.value %}
-                value="{{ form.userlist.value }}"
-                {% endif %}>
-            </div>
-            <p>
-              <small>
-                {% trans "Existing file:" %} {{ form.userlist.value }}
-              </small>
-            </p>
-
-            {% if form.userlist.help_text %}
-            <span class="form__help-text">{{ form.userlist.help_text }}</span>
-            {% endif %}
-
-            {% if form.userlist.errors %}{{ form.userlist.errors }}{% endif %}
-          </div>
-          {% endif %}
           {% if form.scan_site_drives %}
           <div id="{{ form.scan_site_drives.auto_id }}_container" class="form__group{% if form.scan_site_drives.errors %} has-error{% endif %}">
             <div class="ds-checkbox">
@@ -545,6 +521,121 @@
           </fieldset>
         {% endif %}
     </section>
+
+    {% if form.org_unit %}
+    <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3>
+            {% trans "add users"|capfirst %}
+          </h3>
+
+          <p class="information">{% trans "select users from"|capfirst %}</p>
+
+          <div class="form__group">
+            <label 
+              class="treeview-label 
+              {% if required %}required-form{% endif %}"
+              for="{{ form.org_unit.name }}">
+              {{ form.org_unit.label }}
+            </label>
+            <select class="treeview" id="sel_1" name="{{ form.org_unit.name }}" size="10">
+              <option value="" class="l-0" selected>---------</option>
+              {% for node,structure in org_units|tree_info %}              
+              {% if node.is_child_node %}
+              <option value="{{ node.uuid }}"
+                      data-pup="{{ node.parent.uuid }}"
+                      class="l-{{node.get_ancestors.count}}
+                      {% if node.get_descendant_count != 0 %} non-leaf {% endif %}" 
+                      {% if form.org_unit.value|add:"0" == node.uuid|add:"0" %}
+                        selected="selected"
+                      {% endif %}
+              >
+                {{ node }}
+                
+              </option>
+              {% else %}
+              <option value="{{ node.uuid }}"
+                      class="l-0 {% if node.get_descendant_count != 0 %} non-leaf {% endif %}"
+                      {% if form.org_unit.value|add:"0" == node.uuid|add:"0" %}
+                        selected="selected"
+                      {% endif %}
+              >
+                {{ node }}
+              </option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+
+          <p class="information">{% trans "or upload"|capfirst %}</p>
+
+          {% if form.userlist %}
+          <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
+            <label class="control-label" for="id_{{ form.userlist.name }}">
+              {% trans "List of mail users" %}
+            </label>
+            <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+            <div id="fileUpload" class="fileUpload button button--grey button--upload">
+              <span>
+                {% trans "Upload" %}
+              </span>
+              <input
+                type="file"
+                class="upload"
+                name="{{ form.userlist.name }}"
+                id="id_{{ form.userlist.name }}"
+                {% if form.userlist.value %}
+                value="{{ form.userlist.value }}"
+                {% endif %}>
+            </div>
+            <p>
+              <small>
+                {% trans "Existing file:" %} {{ form.userlist.value }}
+              </small>
+            </p>
+
+            {% if form.userlist.help_text %}
+            <span class="form__help-text">{{ form.userlist.help_text }}</span>
+            {% endif %}
+
+            {% if form.userlist.errors %}{{ form.userlist.errors }}{% endif %}
+          </div>
+          {% endif %}
+
+           <!-- Available Employees widget -->
+          <!-- <p class="information">Vælg kun medarbejdere, som du ønsker at tilføje til scannerjobbet.</p>
+
+          <div id="{% if view.edit %}messageColorId{% endif %}" class="form__group{% if form.rules.errors %} has-error{% endif %}">
+            <div class="select-employees">
+              
+              <ul id="available_employees" class="select-employees__available">
+                <div class="select-employees-title">
+                  {% trans "Available employees" %}
+                </div>
+
+                <input type="text" class="employee-filter" id="employee-filter" placeholder="Søg">
+
+                {% for value, tag in form.org_unit.field.choices %}
+                <li class="employee" data-employee-id="{{ value }}">
+                  <a href="javascript:void();" class="add-employee-button" title="{{ description }}" role="button">{{ tag }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+
+              <i id="chevron_right" class="material-icons">chevron_right</i>
+              
+              <div id="selected_employees" class="select-employees__selected">
+                <div class="select-employees-title">
+                  {% trans "Selected employees" %}
+                </div>
+                <div id="employees_list"></div>
+              </div>
+
+            </div>
+          </div> -->
+        </fieldset>
+    </section>
+    {% endif %}
 
     <section class="data-form">
         <fieldset class="form__fieldset">

@@ -88,9 +88,6 @@ class ScannerBase(object):
 
         form = super().get_form(form_class)
         user = self.request.user
-        if not user.is_superuser:
-            self.filter_queryset(form,
-                                 user.administrator_for.client.organizations.all())
 
         form.fields['schedule'].required = False
         org_qs = Organization.objects.none()
@@ -173,14 +170,10 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         will be limited by the user's organization unless the user is a
         superuser.
         """
+        form = super().get_form(form_class)
         self.old_url = self.get_object().url
         # Store the existing rules selected in the scannerjob
         self.old_rules = self.object.rules.get_queryset()
-
-        # django magic necessary because we do not use django forms.
-        form_class = modelform_factory(self.model, fields=self.get_form_fields())
-        kwargs = self.get_form_kwargs()
-        form = form_class(**kwargs)
 
         return form
 

@@ -14,6 +14,7 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 import os
+import logging
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -30,6 +31,7 @@ from ....organizations.models.aliases import AliasType
 from ...utils import upload_path_exchange_users
 from .scanner_model import Scanner
 
+logger = logging.getLogger(__name__)
 
 class ExchangeScanner(Scanner):
     """Scanner for Exchange Web Services accounts"""
@@ -63,18 +65,31 @@ class ExchangeScanner(Scanner):
 
     def generate_sources(self):
         user_list = ()
-        if self.userlist:
+        # org_unit check as you cannot do both simultaneously
+        if self.userlist and not self.org_unit:
             user_list = (u.decode("utf-8").strip()
-                    for u in self.userlist if u.strip())
+                         for u in self.userlist if u.strip())
+
+        # org_unit should only exist if chosen and then be used,
+        # but a user_list is allowed to co-exist.
         elif self.org_unit:
-            user_list = (
-                    address.split("@", maxsplit=1)[0] for address in
-                    (
-                            position.account.aliases.filter(
-                                    _alias_type=AliasType.EMAIL.value
-                            ).first().value
-                            for position in self.org_unit.position_set.all()
-                    ) if address.endswith(self.url))
+            # Create a set so that emails can only occur once.
+            user_list = set()
+            for position in self.org_unit.position_set.all():
+                addresses = position.account.aliases.filter(
+                    _alias_type=AliasType.EMAIL.value)
+
+                if not addresses:
+                    # Provide a log message showing user(s) with no email alias.
+                    logger.info("Be aware that user {position.account.username} "
+                                "has no email alias connected")
+
+                else:
+                    for alias in addresses:
+                        address = alias.value
+                        if address.endswith(self.url):
+                            user_list.add(address.split("@", maxsplit=1)[0])
+
         for u in user_list:
             yield EWSAccountSource(
                     domain=self.url.lstrip('@'),

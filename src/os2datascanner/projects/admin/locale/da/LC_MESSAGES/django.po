@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-16 08:44-0500\n"
+"POT-Creation-Date: 2021-06-17 23:16-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
@@ -28,10 +28,8 @@ msgid "API key"
 msgstr "API-nøgle"
 
 #: adminapp/models/apikey_model.py:31
-#, fuzzy
-#| msgid "API key"
 msgid "API keys"
-msgstr "API-nøgle"
+msgstr "API-nøgler"
 
 #: adminapp/models/authentication_model.py:14
 msgid "Brugernavn"
@@ -51,12 +49,12 @@ msgstr "Brugerdomæne"
 msgid "Login method"
 msgstr "Login metode"
 
-#: adminapp/models/scannerjobs/exchangescanner_model.py:51
+#: adminapp/models/scannerjobs/exchangescanner_model.py:53
 #: organizations/models/organizational_unit.py:63
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
 
-#: adminapp/models/scannerjobs/exchangescanner_model.py:103
+#: adminapp/models/scannerjobs/exchangescanner_model.py:118
 msgid "Either a user list or an organisational unit is required"
 msgstr "Der kræves enten en brugerlist eller en organisatorisk enhed"
 
@@ -217,7 +215,7 @@ msgstr "Regel"
 
 #: adminapp/templates/os2datascanner/cprrule_form.html:188
 #: adminapp/templates/os2datascanner/regexrule_form.html:281
-#: adminapp/templates/os2datascanner/scanner_form.html:743
+#: adminapp/templates/os2datascanner/scanner_form.html:834
 msgid "Save changes"
 msgstr "Gem ændringer"
 
@@ -261,7 +259,7 @@ msgid "Create new rule"
 msgstr "Opret ny regel"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:118
-#: adminapp/templates/os2datascanner/scanner_form.html:126
+#: adminapp/templates/os2datascanner/scanner_form.html:138
 #: import_services/templates/import_services/ldap_edit.html:93
 msgid "General"
 msgstr "Generelt"
@@ -453,135 +451,155 @@ msgstr "Er du sikker på, at du vil starte scanneren?"
 msgid "Let's go!"
 msgstr "Ja, kør"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:99
+#: adminapp/templates/os2datascanner/scanner_form.html:111
 #: adminapp/templates/partials/breadcrumb.html:45
 msgid "Edit scannerjob"
 msgstr "Rediger scannerjob"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:105
+#: adminapp/templates/os2datascanner/scanner_form.html:117
 #: adminapp/templates/os2datascanner/scanner_no_client_credentials.html:15
 #: adminapp/templates/os2datascanner/scanner_oauth_start.html:15
 #: adminapp/templates/partials/breadcrumb.html:47
 msgid "Create new scannerjob"
 msgstr "Opret nyt scannerjob"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:158
-#: adminapp/templates/os2datascanner/scanner_form.html:432
+#: adminapp/templates/os2datascanner/scanner_form.html:170
+#: adminapp/templates/os2datascanner/scanner_form.html:408
 msgid "Sitemap"
 msgstr "Sitemap"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:164
-#: adminapp/templates/os2datascanner/scanner_form.html:170
 #: adminapp/templates/os2datascanner/scanner_form.html:176
 #: adminapp/templates/os2datascanner/scanner_form.html:182
+#: adminapp/templates/os2datascanner/scanner_form.html:188
+#: adminapp/templates/os2datascanner/scanner_form.html:194
 msgid "User information"
 msgstr "Brugeroplysninger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:238
-msgid "List of mail users"
-msgstr "Liste af mail brugere"
-
-#: adminapp/templates/os2datascanner/scanner_form.html:240
-#: adminapp/templates/os2datascanner/scanner_form.html:341
-#: adminapp/templates/os2datascanner/scanner_form.html:377
-#: adminapp/templates/os2datascanner/scanner_form.html:452
-#: adminapp/templates/os2datascanner/scanner_form.html:479
-#: adminapp/templates/os2datascanner/scanner_form.html:515
-msgid "Select a file"
-msgstr "Vælg en fil"
-
-#: adminapp/templates/os2datascanner/scanner_form.html:243
-#: adminapp/templates/os2datascanner/scanner_form.html:344
-#: adminapp/templates/os2datascanner/scanner_form.html:380
-#: adminapp/templates/os2datascanner/scanner_form.html:455
-#: adminapp/templates/os2datascanner/scanner_form.html:482
-#: adminapp/templates/os2datascanner/scanner_form.html:518
-msgid "Upload"
-msgstr "Upload"
-
-#: adminapp/templates/os2datascanner/scanner_form.html:256
-msgid "Existing file:"
-msgstr "Eksisterende fil:"
-
-#: adminapp/templates/os2datascanner/scanner_form.html:339
-#: adminapp/templates/os2datascanner/scanner_form.html:477
+#: adminapp/templates/os2datascanner/scanner_form.html:315
+#: adminapp/templates/os2datascanner/scanner_form.html:453
 msgid "Upload service account"
 msgstr "Upload servicekonto"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:352
-#: adminapp/templates/os2datascanner/scanner_form.html:490
+#: adminapp/templates/os2datascanner/scanner_form.html:317
+#: adminapp/templates/os2datascanner/scanner_form.html:353
+#: adminapp/templates/os2datascanner/scanner_form.html:428
+#: adminapp/templates/os2datascanner/scanner_form.html:455
+#: adminapp/templates/os2datascanner/scanner_form.html:491
+#: adminapp/templates/os2datascanner/scanner_form.html:577
+msgid "Select a file"
+msgstr "Vælg en fil"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:320
+#: adminapp/templates/os2datascanner/scanner_form.html:356
+#: adminapp/templates/os2datascanner/scanner_form.html:431
+#: adminapp/templates/os2datascanner/scanner_form.html:458
+#: adminapp/templates/os2datascanner/scanner_form.html:494
+#: adminapp/templates/os2datascanner/scanner_form.html:580
+msgid "Upload"
+msgstr "Upload"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:328
+#: adminapp/templates/os2datascanner/scanner_form.html:466
 msgid "Click here to upload service account credentials (JSON FORMAT)"
 msgstr ""
 "Klik her for at uploade servicekonto legitimationsoplysninger (JSON FORMAT)"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:366
-#: adminapp/templates/os2datascanner/scanner_form.html:504
+#: adminapp/templates/os2datascanner/scanner_form.html:342
+#: adminapp/templates/os2datascanner/scanner_form.html:480
 msgid "Service account"
 msgstr "Servicekonto"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:368
-#: adminapp/templates/os2datascanner/scanner_form.html:404
-#: adminapp/templates/os2datascanner/scanner_form.html:506
-#: adminapp/templates/os2datascanner/scanner_form.html:542
+#: adminapp/templates/os2datascanner/scanner_form.html:344
+#: adminapp/templates/os2datascanner/scanner_form.html:380
+#: adminapp/templates/os2datascanner/scanner_form.html:482
+#: adminapp/templates/os2datascanner/scanner_form.html:518
 msgid "Current file:"
 msgstr "Nuværende fil:"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:375
-#: adminapp/templates/os2datascanner/scanner_form.html:513
+#: adminapp/templates/os2datascanner/scanner_form.html:351
+#: adminapp/templates/os2datascanner/scanner_form.html:489
 msgid "Upload list of accounts"
 msgstr "Upload liste af konti"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:388
-#: adminapp/templates/os2datascanner/scanner_form.html:526
+#: adminapp/templates/os2datascanner/scanner_form.html:364
+#: adminapp/templates/os2datascanner/scanner_form.html:502
 msgid "Click here to upload list of accounts (CSV FORMAT)"
 msgstr "Klik her for at uploade liste af konti (CSV FORMAT)"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:402
-#: adminapp/templates/os2datascanner/scanner_form.html:540
+#: adminapp/templates/os2datascanner/scanner_form.html:378
+#: adminapp/templates/os2datascanner/scanner_form.html:516
 msgid "List of accounts"
 msgstr "Liste af konti"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:416
+#: adminapp/templates/os2datascanner/scanner_form.html:392
 msgid "e.g. /sitemap.xml"
 msgstr "f.eks. /sitemap.xml"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:434
+#: adminapp/templates/os2datascanner/scanner_form.html:410
 msgid "Current:"
 msgstr "Aktuelt:"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:441
+#: adminapp/templates/os2datascanner/scanner_form.html:417
 msgid "Remove"
 msgstr "Fjern"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:450
+#: adminapp/templates/os2datascanner/scanner_form.html:426
 msgid "Upload sitemap"
 msgstr "Upload sitemap"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:463
+#: adminapp/templates/os2datascanner/scanner_form.html:439
 msgid "Click here to upload sitemap.xml"
 msgstr "Klik her for at uploade sitemap.xml"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:552
+#: adminapp/templates/os2datascanner/scanner_form.html:529
+msgid "add users"
+msgstr "tilføj brugere"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:532
+msgid "select users from"
+msgstr "vælg brugere fra"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:570
+msgid "or upload"
+msgstr "eller upload"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:575
+msgid "List of mail users"
+msgstr "Liste af mail brugere"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:593
+msgid "Existing file:"
+msgstr "Eksisterende fil:"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:613
+msgid "Available employees"
+msgstr "Tilgængelige medarbejdere"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:629
+msgid "Selected employees"
+msgstr "Valgte medarbejdere"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:643
 msgid "Scanner settings"
 msgstr "Scannerindstillinger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:670
+#: adminapp/templates/os2datascanner/scanner_form.html:761
 msgid "Add rules"
 msgstr "Tilføj regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:677
+#: adminapp/templates/os2datascanner/scanner_form.html:768
 msgid "Available rules"
 msgstr "Tilgængelige regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:690
+#: adminapp/templates/os2datascanner/scanner_form.html:781
 msgid "Selected rules"
 msgstr "Valgte regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:708
+#: adminapp/templates/os2datascanner/scanner_form.html:799
 msgid "Schedule scan"
 msgstr "Planlæg scan"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:719
+#: adminapp/templates/os2datascanner/scanner_form.html:810
 msgid ""
 "Schedule your scan by creating a fixed interval or adding a date to complete "
 "the scannerjob."
@@ -589,7 +607,7 @@ msgstr ""
 "Planlæg dit scan ved at oprette et fast interval eller tilføj en dato for "
 "afvikling af scannerjobbet."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:735
+#: adminapp/templates/os2datascanner/scanner_form.html:826
 msgid "The scanner will start at the following time for the selected days:"
 msgstr "Scanneren vil starte på følgende tidspunkt på de valgte dage:"
 
@@ -908,12 +926,12 @@ msgstr "Nulstil min adgangskode"
 msgid "e.g. @example.com"
 msgstr "f.eks. @example.com"
 
-#: adminapp/views/exchangescanner_views.py:153
+#: adminapp/views/exchangescanner_views.py:156
 #: adminapp/views/filescanner_views.py:131
 msgid "Username"
 msgstr "Brugernavn"
 
-#: adminapp/views/exchangescanner_views.py:154
+#: adminapp/views/exchangescanner_views.py:161
 #: adminapp/views/filescanner_views.py:132
 msgid "Password"
 msgstr "Adgangskode"
