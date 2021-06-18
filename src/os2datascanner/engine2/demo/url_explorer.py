@@ -1,11 +1,27 @@
-#!/bin/sh
+#!/usr/bin/env python
 
 from sys import stderr
 import argparse
 
-from ..model.core import Source, SourceManager
-from ..model.core import FileResource
-from ..model.core import UnknownSchemeError
+from os2datascanner.engine2.model.core import Source, SourceManager
+from os2datascanner.engine2.model.core import FileResource
+from os2datascanner.engine2.model.core import UnknownSchemeError
+
+"""Explore an url and see what datascanner understands(with `--summarise`)
+
+url can be one of the scheme-types supported by datascanner. Schemes `file:` and
+`http:` are probably the easiet to use.
+The `file` url have to be absolute (i.e. no `~/`)
+
+Example:
+python -m os2datascanner.engine2.demo.url_explorer file:/home/User/Downloads
+python -m os2datascanner.engine2.demo.url_explorer https://magenta.dk
+
+Supported urls can be found by:
+
+from os2datascanner.engine2.model.core import Source
+Source._Source__url_handlers
+"""
 
 def format_d(depth, fmt, *args, **kwargs):
     return "{0}{1}".format("  " * depth, fmt.format(*args, **kwargs))
