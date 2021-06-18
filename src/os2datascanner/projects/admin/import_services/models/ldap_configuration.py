@@ -31,6 +31,15 @@ class LDAPConfig(Exported, ImportService):
         ],
         verbose_name=_('vendor'),
     )
+    import_into = models.CharField(
+        max_length=32,
+        choices=[
+            ('group', _('groups').capitalize()),
+            ('ou', _('organizational units').capitalize()),
+        ],
+        default='ou',
+        verbose_name=_("import users into"),
+    )
     username_attribute = models.CharField(
         max_length=64,
         help_text=_(
