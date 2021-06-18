@@ -56,9 +56,12 @@ class WebSource(Source):
         # initial check that url can be reached. After this point, continue
         # exploration at all cost
         try:
-            response = session.head(to_visit[0].presentation_url)
-        except RequestException as e:
-            raise RequestException("Resource is not available") from e
+            r = session.head(to_visit[0].presentation_url)
+            r.raise_for_status()
+        except RequestException as err:
+            raise RequestException(
+                f"{to_visit[0].presentation_url} is not available: "
+                f"{err}")
 
         # scheme://netloc/path?query
         # https://example.com/some/path?query=foo

@@ -57,7 +57,7 @@ def message_received_raw(body, channel, source_manager):
     except Exception as e:
         exception_message = "Exploration error. {0}: ".format(type(e).__name__)
         exception_message += ", ".join([str(a) for a in e.args])
-        logger.error(exception_message, exc_info=True)
+        logger.error(exception_message)
         problem_message = messages.ProblemMessage(
             scan_tag=scan_tag, source=scan_spec.source, handle=None,
             message=exception_message)
@@ -65,7 +65,7 @@ def message_received_raw(body, channel, source_manager):
     finally:
         yield ("os2ds_status", messages.StatusMessage(
             scan_tag=scan_tag, total_objects=count,
-            message=exception_message, status_is_error=exception_message=="").
+            message=exception_message, status_is_error=exception_message!="").
                to_json_object())
 
 
