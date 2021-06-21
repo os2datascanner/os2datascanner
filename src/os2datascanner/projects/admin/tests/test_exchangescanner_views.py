@@ -5,7 +5,7 @@ from ..adminapp.models.authentication_model import Authentication
 from ..adminapp.models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ..adminapp.views.exchangescanner_views import ExchangeScannerCreate
 from ..core.models import Administrator
-from ..core.models.client import Client
+from ..core.models.client import Client, Feature
 from ..organizations.models import OrganizationalUnit, Account, Alias
 from ..organizations.models.aliases import AliasType
 from ..organizations.models.organization import Organization
@@ -15,7 +15,9 @@ class ExchangeScannerViewsTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        client1 = Client.objects.create(name="client1")
+        client1 = Client.objects.create(
+            name="client1",
+        )
 
         magenta_org = Organization.objects.create(
             name="Magenta ApS",
@@ -129,12 +131,12 @@ class ExchangeScannerViewsTest(TestCase):
     def test_exchangesscanner_org_units_list_as_administrator(self):
         """Note that this is not a django administrator role,
         but instead an organization administrator."""
-        Administrator.objects.create(
+        admin = Administrator.objects.create(
             user=self.kjeld,
             client=Client.objects.get(name="client1"),
         )
-        context = self.get_exchangescanner_context()
-        tree_queryset = context['org_units']
+        response = self.get_exchangescanner_response()
+        tree_queryset = response.context_data['org_units']
         self.assertEqual(len(tree_queryset), 4)
         self.assertEqual(str(tree_queryset[0].uuid),
                          "c0f966ea-af0f-4e81-bd65-b0967a47c3a7")
@@ -144,11 +146,39 @@ class ExchangeScannerViewsTest(TestCase):
                          "b50e34c2-4e61-4cae-b08d-19fac55d3e35")
         self.assertEqual(str(tree_queryset[2].parent.uuid),
                          str(tree_queryset[1].uuid))
+        admin.delete()
+
+    # TODO: Figure out why client is not updated in database and make unit test pass
+    # def test_exchangesscanner_org_units_list_viewable_as_administrator(self):
+    #     """Testcase for testing if ldap feature flags are complied with."""
+    #     admin = Administrator.objects.create(
+    #         user=self.kjeld,
+    #         client=Client.objects.get(name="client1"),
+    #     )
+    #     # Check if is possible NOT to choose an org. unit.
+    #     response = self.get_exchangescanner_response()
+    #     response.render()
+    #     self.assertNotIn(str(response.content), 'sel_1')
+    #
+    #     features = 0
+    #     features += (1 << 0)
+    #     features += (1 << 1)
+    #     features += (1 << 2)
+    #     client1 = Client.objects.get(name='client1')
+    #     client1.features = features
+    #     client1.save()
+    #     # Check if is possible to choose an org. unit.
+    #     response1 = self.get_exchangescanner_response()
+    #     self.assertIn(str(response1.content), 'sel_1')
+    #
+    #     client1.features = 0
+    #     client1.save()
+    #     admin.delete()
 
     def test_exchangescanner_org_units_list_as_superuser(self):
         self.kjeld.is_superuser = True
-        context = self.get_exchangescanner_context()
-        tree_queryset = context['org_units']
+        response = self.get_exchangescanner_response()
+        tree_queryset = response.context_data['org_units']
         self.assertEqual(len(tree_queryset), 7)
         self.assertEqual(str(tree_queryset[3].uuid),
                          "466c3f4e-3f64-4c9b-b6ae-26726721a28f")
@@ -157,8 +187,8 @@ class ExchangeScannerViewsTest(TestCase):
         self.kjeld.is_superuser = False
 
     def test_exchangescanner_org_units_list_as_normal_user(self):
-        context = self.get_exchangescanner_context()
-        tree_queryset = context['org_units']
+        response = self.get_exchangescanner_response()
+        tree_queryset = response.context_data['org_units']
         self.assertEqual(len(tree_queryset), 0)
 
     def test_exchangescanner_generate_source_should_use_orgunit_when_both_userlist_and_orgunit_are_present(self):
@@ -210,8 +240,10 @@ class ExchangeScannerViewsTest(TestCase):
 
         self.assertEqual(sources_yielded, 2)
 
-    def get_exchangescanner_context(self):
+        yvonne_alias.delete()
+
+    def get_exchangescanner_response(self):
         request = self.factory.get('/exchangescanners/add/')
         request.user = self.kjeld
         response = ExchangeScannerCreate.as_view()(request)
-        return response.context_data
+        return response
