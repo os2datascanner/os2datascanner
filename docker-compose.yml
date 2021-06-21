@@ -63,7 +63,7 @@ services:
       "gunicorn",
       "--config", "/code/docker/gunicorn-settings.py",
       "--reload", # restart workers when code changes
-      "wsgi"
+      "wsgi",
     ]
     environment:
       - GUNICORN_WORKERS=2
