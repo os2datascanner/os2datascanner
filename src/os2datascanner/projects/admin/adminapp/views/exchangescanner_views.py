@@ -18,7 +18,7 @@ from django.views import View
 from .scanner_views import *
 from ..aescipher import decrypt
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
-from ...core.models import Feature
+from ...core.models import Feature, Client
 from ...organizations.models import OrganizationalUnit
 
 
@@ -37,10 +37,15 @@ class ExchangeScannerBase(View):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         org_units = OrganizationalUnit.objects.all()
+        client = Client.objects.none()
         user = self.request.user
         if self.request.user.is_superuser:
+            # if you are superuser you are allowed to view all org_units
+            # across customers. Also if org_unit featureflags are disabled.
             context['org_units'] = org_units
         elif hasattr(user, 'administrator_for'):
+            # if I am administrator for a client I can view org_units
+            # for that client.
             client = user.administrator_for.client
             org_units = org_units.filter(
                 organization__in=client.organizations.all()
@@ -48,6 +53,10 @@ class ExchangeScannerBase(View):
             context['org_units'] = org_units
         else:
             context['org_units'] = OrganizationalUnit.objects.none()
+
+        # Needed to upheld feature flags.
+        context['FEATURES'] = Feature.__members__
+        context['client'] = client
         return context
 
 
@@ -62,13 +71,6 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
         return '/exchangescanners/%s/created/' % self.object.pk
-
-    def get_form_fields(self):
-        if hasattr(self.request.user, 'administrator_for'):
-            client = self.request.user.administrator_for.client
-            if Feature.ORG_STRUCTURE in client.enabled_features:
-                self.fields.append('org_unit')
-        return super().get_form_fields()
 
     def get_form(self, form_class=None):
         """Adds special field password."""

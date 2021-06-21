@@ -522,13 +522,12 @@
         {% endif %}
     </section>
 
-    {% if form.org_unit %}
     <section class="data-form">
         <fieldset class="form__fieldset">
           <h3>
             {% trans "add users"|capfirst %}
           </h3>
-
+          {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features %}
           <p class="information">{% trans "select users from"|capfirst %}</p>
 
           <div class="form__group">
@@ -568,6 +567,7 @@
           </div>
 
           <p class="information">{% trans "or upload"|capfirst %}</p>
+          {% endif %}
 
           {% if form.userlist %}
           <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
@@ -635,7 +635,7 @@
           </div> -->
         </fieldset>
     </section>
-    {% endif %}
+
 
     <section class="data-form">
         <fieldset class="form__fieldset">
