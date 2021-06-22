@@ -26,7 +26,8 @@ def keycloak_group_dn_selector(d):
         dn = RDN.make_sequence(*name.strip().split(","))
         for group_name in groups:
             gdn = RDN.make_sequence(*group_name.strip().split(","))
-            yield RDN.make_string(gdn + (dn[-1],))
+            if gdn:  # Only yield names for valid groups
+                yield RDN.make_string(gdn + (dn[-1],))
 
 
 @transaction.atomic

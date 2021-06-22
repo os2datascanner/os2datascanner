@@ -31,7 +31,7 @@ class RDN(NamedTuple):
     @staticmethod
     def make_sequence(*strings: str) -> Sequence['RDN']:
         return tuple(RDN(k, v)
-                for k, v in (s.split("=", 1) for s in reversed(strings)))
+                for k, v in (s.split("=", 1) for s in reversed(strings) if s))
 
     @staticmethod
     def make_string(rdns: Sequence['RDN']) -> str:
@@ -61,7 +61,8 @@ def group_dn_selector(d):
         dn = RDN.make_sequence(*name.strip().split(","))
         for group_name in groups:
             gdn = RDN.make_sequence(*group_name.strip().split(","))
-            yield RDN.make_string(gdn + (dn[-1],))
+            if gdn:  # Only yield names for valid groups
+                yield RDN.make_string(gdn + (dn[-1],))
 
 
 class LDAPNode(NamedTuple):
