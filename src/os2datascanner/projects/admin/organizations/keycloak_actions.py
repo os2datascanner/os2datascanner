@@ -216,9 +216,18 @@ def perform_import(
                             _alias_type=AliasType.EMAIL.value,
                             value=mail_address)
                 except Alias.DoesNotExist:
-                    to_add.append(Alias(account=account,
-                                        alias_type=AliasType.EMAIL,
-                                        value=mail_address))
+                    # The same user (mail_address) can be a member of multiple groups
+                    # or org. units, so we need make sure we only create mail alias
+                    # once.
+                    alias_object = Alias(account=account,
+                                         alias_type=AliasType.EMAIL,
+                                         value=mail_address)
+                    if alias_object not in to_add:
+                        to_add.append(alias_object)
+                except Alias.MultipleObjectsReturned:
+                    # This state should not be possible, however if more than one
+                    # Alias exists ignore.
+                    pass
 
             # XXX: also update other stored properties
             pass
