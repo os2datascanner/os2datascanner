@@ -1,7 +1,11 @@
 from typing import (
         Tuple, Union, Callable, Iterator, Optional, Sequence, NamedTuple,
         MutableSequence)
+import logging
 from itertools import zip_longest
+
+
+logger = logging.getLogger(__name__)
 
 
 class RDN(NamedTuple):
@@ -171,26 +175,30 @@ class LDAPNode(NamedTuple):
         resulting LDAP node."""
         root = LDAPNode.make(())
 
-        # It'd be nice if Python's for loops just *supported* guard syntax...
-        for item, names in (
-                (entry, name_selector(entry)) for entry in iterator):
-            for name in names:
-                dn = RDN.make_sequence(*name.strip().split(","))
+        for item in iterator:
+            names = tuple(name_selector(item))
+            if not names:
+                logger.warning(
+                        f"{item} has no valid names and so will not appear "
+                        "in the LDAP hierarchy")
+                continue
+            else:
+                for name in names:
+                    dn = RDN.make_sequence(*name.strip().split(","))
+                    node = root
+                    for idx in range(len(dn)):
+                        label = (dn[idx],)
+                        child = None
+                        for ch in node.children:
+                            if ch.label == label:
+                                child = ch
+                                break
+                        else:
+                            child = LDAPNode.make(label)
+                            node.children.append(child)
+                        node = child
 
-                node = root
-                for idx in range(len(dn)):
-                    label = (dn[idx],)
-                    child = None
-                    for ch in node.children:
-                        if ch.label == label:
-                            child = ch
-                            break
-                    else:
-                        child = LDAPNode.make(label)
-                        node.children.append(child)
-                    node = child
-
-                node.properties.clear()
-                node.properties.update(item)
+                    node.properties.clear()
+                    node.properties.update(item)
 
         return root
