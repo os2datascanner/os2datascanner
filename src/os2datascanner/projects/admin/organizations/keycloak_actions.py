@@ -12,14 +12,16 @@ from .models.aliases import AliasType
 
 
 def keycloak_dn_selector(d):
-    dn = d["attributes"]["LDAP_ENTRY_DN"][0]
-    if dn:
-        yield dn
+    attributes = d.get("attributes", {})
+    name = attributes.get("LDAP_ENTRY_DN", [None])[0]
+    if name:
+        yield name
 
 
 def keycloak_group_dn_selector(d):
-    name = list(keycloak_dn_selector(d))[0]
-    groups = d.get("attributes").get("memberOf")
+    attributes = d.get("attributes", {})
+    name = attributes.get("LDAP_ENTRY_DN", [None])[0]
+    groups = attributes.get("memberOf", [])
     if name and groups:
         dn = RDN.make_sequence(*name.strip().split(","))
         for group_name in groups:
