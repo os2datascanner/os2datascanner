@@ -33,6 +33,18 @@
       width: 12rem;
     }
 
+    &--drive {
+      min-width: 6rem;
+    }
+
+    &--validated {
+      min-width: 10rem;
+    }
+
+    &--automatic {
+      min-width: 12rem;
+    }
+
     &--actions {
       width: 11rem;
     }
@@ -44,6 +56,11 @@
     &--btn {
       width: 28rem;
     }
+  }
+
+  .domain-url {
+    text-overflow: ellipsis;
+    word-break: break-all;
   }
 
   a {

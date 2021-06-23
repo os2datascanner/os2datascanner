@@ -18,6 +18,7 @@
             </h1>
         </div>
 
+        {% if object_list  %}
         <table class="datatable">
           <thead>
             <tr>
@@ -64,6 +65,12 @@
             {% endfor %}
           </tbody>
         </table>
+
+        {% else %}
+        <p>
+          {% trans "no scans done"|capfirst %}
+        </p>
+        {% endif %}
     </div>
 </main>
 {% endblock %}

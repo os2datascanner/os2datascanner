@@ -113,6 +113,16 @@
         </div>
         {% endif %}
         {% endfor %}
+
+        {% for status in object_list|slice:":1" %}
+            {% if percentage == "100" %}
+                <p>{% trans "no ongoing scans"|capfirst %}</p>
+            {% elif status.finished == True %}
+                <p>{% trans "no ongoing scans"|capfirst %}</p>
+            {% endif %}
+        {% empty %}
+            <p>{% trans "no ongoing scans"|capfirst %}</p>
+        {% endfor %}
     </div>
 </main>
 {% endblock %}

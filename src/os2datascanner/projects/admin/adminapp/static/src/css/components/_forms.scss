@@ -94,6 +94,7 @@
     width: 100%;
     padding: .75rem;
     line-height: 1.5;
+    resize: vertical;
   }
 
   textarea:focus {
@@ -302,6 +303,7 @@
     min-height: 1.5rem;
     padding-left: 1.5rem;
     cursor: pointer;
+    font-size: .85rem;
   }
 
   input[type="checkbox"] + label {

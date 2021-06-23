@@ -605,7 +605,7 @@ recurrence.widget.AddButton.prototype = {
         var addbutton = this;
 
         var plus = recurrence.widget.e(
-            'span', {'class': 'glyphicon glyphicon-plus-sign'}, '');
+            'span', {'class': 'add-rule-icon'}, '');
         var space = recurrence.widget.e(
             'span', {},  '&nbsp;');
         var label = recurrence.widget.e(
@@ -646,13 +646,13 @@ recurrence.widget.Panel.prototype = {
         var panel = this;
 
         var remove = recurrence.widget.e('a', {
-            'class': 'remove btn btn-xs btn-danger button button--remove',
+            'class': 'remove',
             'href': 'javascript:void(0)',
             'title': recurrence.display.labels.remove,
             'onclick': function() {
                 panel.remove();
             }
-        }, '<svg class="icon icon--white"><use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use></svg> Fjern');
+        });
         var label = recurrence.widget.e('a', {
            'class': 'recurrence-label',
            'href': 'javascript:void(0)',
@@ -812,7 +812,7 @@ recurrence.widget.RuleForm.prototype = {
                 'size': 1, 
                 'value': this.rule.interval, 
                 'id': 'interval', 
-                'class': 'form-control'
+                'class': 'form-control interval-field'
             }
         );
         var interval_label1 = recurrence.widget.e(
@@ -885,7 +885,7 @@ recurrence.widget.RuleForm.prototype = {
                 'size': 1, 
                 'value': count_value, 
                 'type': 'text', 
-                'class':'form-control'
+                'class':'form-control count-field'
             }
         );
         if (this.rule.count && this.rule.count < 2)
@@ -1677,7 +1677,7 @@ recurrence.widget.DateForm.prototype = {
             'label', {'class': 'recurrence-label', 'for': 'mode'},
             recurrence.display.labels.exclude_date);
         var mode_container = recurrence.widget.e(
-            'div', {'class': 'mode ds-checkbox'}, [mode_checkbox, mode_label]);
+            'div', {'class': 'ds-checkbox'}, [mode_checkbox, mode_label]);
 
         // date
 
