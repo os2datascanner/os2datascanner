@@ -1,7 +1,11 @@
 from typing import (
         Tuple, Union, Callable, Iterator, Optional, Sequence, NamedTuple,
         MutableSequence)
+import logging
 from itertools import zip_longest
+
+
+logger = logging.getLogger(__name__)
 
 
 class RDN(NamedTuple):
@@ -31,7 +35,7 @@ class RDN(NamedTuple):
     @staticmethod
     def make_sequence(*strings: str) -> Sequence['RDN']:
         return tuple(RDN(k, v)
-                for k, v in (s.split("=", 1) for s in reversed(strings)))
+                for k, v in (s.split("=", 1) for s in reversed(strings) if s))
 
     @staticmethod
     def make_string(rdns: Sequence['RDN']) -> str:
@@ -61,7 +65,8 @@ def group_dn_selector(d):
         dn = RDN.make_sequence(*name.strip().split(","))
         for group_name in groups:
             gdn = RDN.make_sequence(*group_name.strip().split(","))
-            yield RDN.make_string(gdn + (dn[-1],))
+            if gdn:  # Only yield names for valid groups
+                yield RDN.make_string(gdn + (dn[-1],))
 
 
 class LDAPNode(NamedTuple):
@@ -170,26 +175,30 @@ class LDAPNode(NamedTuple):
         resulting LDAP node."""
         root = LDAPNode.make(())
 
-        # It'd be nice if Python's for loops just *supported* guard syntax...
-        for item, names in (
-                (entry, name_selector(entry)) for entry in iterator):
-            for name in names:
-                dn = RDN.make_sequence(*name.strip().split(","))
+        for item in iterator:
+            names = tuple(name_selector(item))
+            if not names:
+                logger.warning(
+                        f"{item} has no valid names and so will not appear "
+                        "in the LDAP hierarchy")
+                continue
+            else:
+                for name in names:
+                    dn = RDN.make_sequence(*name.strip().split(","))
+                    node = root
+                    for idx in range(len(dn)):
+                        label = (dn[idx],)
+                        child = None
+                        for ch in node.children:
+                            if ch.label == label:
+                                child = ch
+                                break
+                        else:
+                            child = LDAPNode.make(label)
+                            node.children.append(child)
+                        node = child
 
-                node = root
-                for idx in range(len(dn)):
-                    label = (dn[idx],)
-                    child = None
-                    for ch in node.children:
-                        if ch.label == label:
-                            child = ch
-                            break
-                    else:
-                        child = LDAPNode.make(label)
-                        node.children.append(child)
-                    node = child
-
-                node.properties.clear()
-                node.properties.update(item)
+                    node.properties.clear()
+                    node.properties.update(item)
 
         return root

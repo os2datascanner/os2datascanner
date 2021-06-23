@@ -165,6 +165,33 @@ class LDAPTest(unittest.TestCase):
                 ),
                 "missing DN should have been ignored")
 
+    def test_iterator_skipping_group(self):
+        """LDAPNode.from_iterator should skip over objects that don't have at
+        least one identifiable group name."""
+        self.assertEqual(
+                LDAPNode.from_iterator([
+                    # memberOf structurally valid but with no valid groups
+                    {"distinguishedName": "CN=Enki",
+                        "memberOf": [""] },
+                    # memberOf valid
+                    {"distinguishedName": "CN=Enkidu",
+                        "memberOf": ["CN=Heroes,L=Sumer"] },
+                    # memberOf missing
+                    {"distinguishedName": "CN=Ninhursag" }
+                ], name_selector=group_dn_selector),
+                LDAPNode.make(
+                    (),
+                    LDAPNode.make(
+                            RDN.make_sequence("L=Sumer"),
+                            LDAPNode.make(
+                                    RDN.make_sequence("CN=Heroes"),
+                                    LDAPNode.make(
+                                            RDN.make_sequence("CN=Enkidu"),
+                                            distinguishedName="CN=Enkidu",
+                                            memberOf=["CN=Heroes,L=Sumer"])))
+                ),
+                "objects without groups should have been ignored")
+
     def test_addition(self):
         """LDAPNode.diff should notice when an object is added to the
         hierarchy."""
