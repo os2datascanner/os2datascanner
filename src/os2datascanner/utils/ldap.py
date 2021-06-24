@@ -176,7 +176,12 @@ class LDAPNode(NamedTuple):
         root = LDAPNode.make(())
 
         for item in iterator:
-            names = tuple(name_selector(item))
+            try:
+                names = tuple(name_selector(item))
+            except Exception:
+                logger.exception(f"unexpected error while parsing {item}")
+                raise
+
             if not names:
                 logger.warning(
                         f"{item} has no valid names and so will not appear "
