@@ -261,3 +261,77 @@ class LDAPTest(unittest.TestCase):
                                         RDN.dn_to_sequence(
                                             "cn=Enkidu Wildman")))),
                 "construction from Keycloak JSON object failed")
+
+    def test_complicated_name(self):
+        """RDN.dn_to_sequence should be able to handle Unicode characters and
+        escape sequences."""
+        dadi = (RDN("C", "DK"),
+                RDN("L", "Ærøskøbing, Ærø"),
+                RDN("ST", "Baggårde 497"),
+                RDN("O", "フィクショナル・エンタープライゼズ株式会社"),
+                RDN("OU", "🍪🎩"),
+                RDN("CN", "Daði Ólafsson, General Manager"),)
+
+        self.assertEqual(
+                RDN.dn_to_sequence(
+                        "CN=Daði Ólafsson\\, General Manager,"
+                        "OU=🍪🎩,"
+                        "O=フィクショナル・エンタープライゼズ株式会社,"
+                        "ST=Baggårde 497,"
+                        "L=Ærøskøbing\, Ærø,"
+                        "C=DK"),
+                dadi,
+                "parsing of complex RDN failed")
+
+        self.assertEqual(
+                RDN.dn_to_sequence(
+                        "CN=Da\\c3\\b0i \\c3\\93lafsson\\, General Manager,OU="
+                        "\\f0\\9f\\8d\\aa\\f0\\9f\\8e\\a9,O=\\e3\\83\\95\\e3\\"
+                        "82\\a3\\e3\\82\\af\\e3\\82\\b7\\e3\\83\\a7\\e3\\83\\8"
+                        "a\\e3\\83\\ab\\e3\\83\\bb\\e3\\82\\a8\\e3\\83\\b3\\e3"
+                        "\\82\\bf\\e3\\83\\bc\\e3\\83\\97\\e3\\83\\a9\\e3\\82"
+                        "\\a4\\e3\\82\\bc\\e3\\82\\ba\\e6\\a0\\aa\\e5\\bc\\8f"
+                        "\\e4\\bc\\9a\\e7\\a4\\be,ST=Bagg\\c3\\a5rde 497,L=\\"
+                        "c3\\86r\\c3\\b8sk\\c3\\b8bing\\, \\c3\\86r\\c3\\b8,C"
+                        "=DK"),
+                dadi,
+                "parsing of escaped complex RDN failed")
+
+    def test_round_trip(self):
+        """Converting a RDN sequence to and from a string representation should
+        produce an equivalent RDN, even when escape sequences are involved."""
+
+        with self.subTest():
+            enki = (RDN("CN", "𒀭𒂗𒆠, Enki"),
+                    RDN("L", "𒉣𒆠, Eridu"),
+                    RDN("L", "𒆠𒂗𒄀, Sumer"))
+            self.assertEqual(
+                    enki,
+                    RDN.dn_to_sequence(RDN.sequence_to_dn(enki)),
+                    "RDN round trip failed")
+
+        with self.subTest():
+            worst_case = (RDN("CN", """ "#+\,;<=>"""), RDN("L", "Test"))
+            self.assertEqual(
+                    worst_case,
+                    RDN.dn_to_sequence(RDN.sequence_to_dn(worst_case)),
+                    "RDN round trip failed")
+
+    def test_escape_exceptions(self):
+        """Converting a RDN sequence to a string representation should not
+        escape more special characters than necessary."""
+
+        self.assertEqual(
+                RDN.sequence_to_dn((RDN("#CN#", " 1 2 3 4 5 "),)),
+                "\\#CN#=\ 1 2 3 4 5\ ",
+                "overzealous escape")
+
+    def test_raw_escape(self):
+        self.assertEqual(
+                RDN.sequence_to_dn(
+                        (
+                                RDN("OU", "🍪🎩"),
+                                RDN("CN", "Daði Ólafsson, General Manager"),
+                        ), codec=None),
+                "CN=Daði Ólafsson\\, General Manager,OU=🍪🎩",
+                "Unicode characters incorrectly escaped in raw mode")
