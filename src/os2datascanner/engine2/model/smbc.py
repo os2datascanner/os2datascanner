@@ -223,7 +223,7 @@ class SMBCResource(FileResource):
     def get_owner_sid(self):
         """Returns the Windows security identifier of the owner of this file,
         which libsmbclient exposes as an extended attribute."""
-        return self.get_xattr("system.nt_sec_desc.owner")
+        return self.get_xattr(smbc.XATTR_OWNER)
 
     @contextmanager
     def make_path(self):
