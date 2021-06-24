@@ -5,7 +5,7 @@ from os2datascanner.utils.ldap import RDN, LDAPNode, group_dn_selector
 
 
 ENKI = LDAPNode.make(
-        RDN.make_sequence("CN=Enki"),
+        RDN.dn_to_sequence("CN=Enki"),
         distinguishedName="CN=Enki,L=Eridu,L=Sumer",
         memberOf=[
                 "CN=WhoDecree,CN=Gods,L=Sumer"
@@ -14,7 +14,7 @@ ENKI = LDAPNode.make(
 
 
 NINHURSAG = LDAPNode.make(
-        RDN.make_sequence("CN=Ninhursag"),
+        RDN.dn_to_sequence("CN=Ninhursag"),
         distinguishedName="CN=Ninhursag,L=Eridu,L=Sumer",
         memberOf=[
                 "CN=WhoDecree,CN=Gods,L=Sumer"
@@ -22,7 +22,7 @@ NINHURSAG = LDAPNode.make(
 
 
 GILGAMESH = LDAPNode.make(
-        RDN.make_sequence("CN=Gilgamesh"),
+        RDN.dn_to_sequence("CN=Gilgamesh"),
         distinguishedName="CN=Gilgamesh,L=Uruk,L=Sumer",
         memberOf=[
                 "CN=Demigods,CN=Gods,L=Sumer",
@@ -31,7 +31,7 @@ GILGAMESH = LDAPNode.make(
 
 
 ENKIDU = LDAPNode.make(
-        RDN.make_sequence("CN=Enkidu"),
+        RDN.dn_to_sequence("CN=Enkidu"),
         distinguishedName="CN=Enkidu,L=Uruk,L=Sumer",
         memberOf=[
                 "CN=Heroes,L=Sumer"
@@ -39,21 +39,21 @@ ENKIDU = LDAPNode.make(
 
 
 SUMER = LDAPNode.make(
-        RDN.make_sequence("L=Sumer"),
-        LDAPNode.make(RDN.make_sequence("L=Eridu"), ENKI, NINHURSAG),
-        LDAPNode.make(RDN.make_sequence("L=Uruk"), GILGAMESH, ENKIDU))
+        RDN.dn_to_sequence("L=Sumer"),
+        LDAPNode.make(RDN.dn_to_sequence("L=Eridu"), ENKI, NINHURSAG),
+        LDAPNode.make(RDN.dn_to_sequence("L=Uruk"), GILGAMESH, ENKIDU))
 
 
 SUMER_GROUPS = LDAPNode.make(
-        RDN.make_sequence("L=Sumer"),
+        RDN.dn_to_sequence("L=Sumer"),
         LDAPNode.make(
-                RDN.make_sequence("CN=Gods"),
+                RDN.dn_to_sequence("CN=Gods"),
                 LDAPNode.make(
-                        RDN.make_sequence("CN=WhoDecree"), ENKI, NINHURSAG),
+                        RDN.dn_to_sequence("CN=WhoDecree"), ENKI, NINHURSAG),
                 LDAPNode.make(
-                        RDN.make_sequence("CN=Demigods"), GILGAMESH)),
+                        RDN.dn_to_sequence("CN=Demigods"), GILGAMESH)),
         LDAPNode.make(
-                RDN.make_sequence("CN=Heroes"),
+                RDN.dn_to_sequence("CN=Heroes"),
                 GILGAMESH, ENKIDU))
 
 
@@ -80,9 +80,9 @@ SUMER_ITERATOR = [
 POST_FLOOD = copy.deepcopy(SUMER)
 POST_FLOOD.children.append(
         LDAPNode.make(
-                RDN.make_sequence("L=Kish"),
+                RDN.dn_to_sequence("L=Kish"),
                 LDAPNode.make(
-                        RDN.make_sequence("CN=Etana"),
+                        RDN.dn_to_sequence("CN=Etana"),
                         distinguishedName="CN=Etana,L=Kish,L=Sumer")))
 
 POST_EPIC = copy.deepcopy(SUMER)
@@ -157,10 +157,10 @@ class LDAPTest(unittest.TestCase):
                 LDAPNode.make(
                     (),
                     LDAPNode.make(
-                            RDN.make_sequence("CN=Enki"),
+                            RDN.dn_to_sequence("CN=Enki"),
                             distinguishedName="CN=Enki"),
                     LDAPNode.make(
-                            RDN.make_sequence("CN=Ninhursag"),
+                            RDN.dn_to_sequence("CN=Ninhursag"),
                             distinguishedName="CN=Ninhursag")
                 ),
                 "missing DN should have been ignored")
@@ -182,11 +182,11 @@ class LDAPTest(unittest.TestCase):
                 LDAPNode.make(
                     (),
                     LDAPNode.make(
-                            RDN.make_sequence("L=Sumer"),
+                            RDN.dn_to_sequence("L=Sumer"),
                             LDAPNode.make(
-                                    RDN.make_sequence("CN=Heroes"),
+                                    RDN.dn_to_sequence("CN=Heroes"),
                                     LDAPNode.make(
-                                            RDN.make_sequence("CN=Enkidu"),
+                                            RDN.dn_to_sequence("CN=Enkidu"),
                                             distinguishedName="CN=Enkidu",
                                             memberOf=["CN=Heroes,L=Sumer"])))
                 ),
@@ -199,7 +199,7 @@ class LDAPTest(unittest.TestCase):
                 list(SUMER.diff(POST_FLOOD)),
                 [
                     (
-                        RDN.make_sequence("CN=Etana", "L=Kish", "L=Sumer"),
+                        RDN.dn_to_sequence("CN=Etana,L=Kish,L=Sumer"),
                         None,
                         POST_FLOOD.children[-1].children[-1]
                     )
@@ -213,7 +213,7 @@ class LDAPTest(unittest.TestCase):
                 list(SUMER.diff(POST_EPIC)),
                 [
                     (
-                        RDN.make_sequence("CN=Enkidu", "L=Uruk", "L=Sumer"),
+                        RDN.dn_to_sequence("CN=Enkidu,L=Uruk,L=Sumer"),
                         SUMER.children[1].children[1],
                         None
                     )
@@ -229,7 +229,7 @@ class LDAPTest(unittest.TestCase):
                 list(SUMER.diff(s2)),
                 [
                     (
-                        RDN.make_sequence("CN=Enki", "L=Eridu", "L=Sumer"),
+                        RDN.dn_to_sequence("CN=Enki,L=Eridu,L=Sumer"),
                         SUMER.children[0].children[0],
                         s2.children[0].children[0]
                     )
@@ -254,10 +254,10 @@ class LDAPTest(unittest.TestCase):
         self.assertEqual(
                 node,
                 LDAPNode.make(
-                        RDN.make_sequence("dc=uruk"),
+                        RDN.dn_to_sequence("dc=uruk"),
                         LDAPNode.make(
-                                RDN.make_sequence("ou=Employees"),
+                                RDN.dn_to_sequence("ou=Employees"),
                                 LDAPNode.make(
-                                        RDN.make_sequence(
+                                        RDN.dn_to_sequence(
                                             "cn=Enkidu Wildman")))),
                 "construction from Keycloak JSON object failed")

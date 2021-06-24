@@ -23,11 +23,11 @@ def keycloak_group_dn_selector(d):
     name = attributes.get("LDAP_ENTRY_DN", [None])[0]
     groups = attributes.get("memberOf", [])
     if name and groups:
-        dn = RDN.make_sequence(*name.strip().split(","))
+        dn = RDN.dn_to_sequence(name)
         for group_name in groups:
-            gdn = RDN.make_sequence(*group_name.strip().split(","))
+            gdn = RDN.dn_to_sequence(group_name)
             if gdn:  # Only yield names for valid groups
-                yield RDN.make_string(gdn + (dn[-1],))
+                yield RDN.sequence_to_dn(gdn + (dn[-1],))
 
 
 @transaction.atomic
@@ -78,8 +78,7 @@ def perform_import(
 
     def account_to_node(
             a: Account, *, parent_path: Sequence[RDN] = ()) -> LDAPNode:
-        full_path = RDN.make_sequence(
-                *a.imported_id.split(",")) if a.imported_id else ()
+        full_path = RDN.dn_to_sequence(a.imported_id) if a.imported_id else ()
         local_path_part = RDN.drop_start(full_path, parent_path)
         return LDAPNode.make(
                 local_path_part,
@@ -90,8 +89,8 @@ def perform_import(
     def unit_to_node(
             ou: OrganizationalUnit, *,
             parent_path: Sequence[RDN] = ()) -> LDAPNode:
-        full_path = RDN.make_sequence(
-                *ou.imported_id.split(",")) if ou.imported_id else ()
+        full_path = (
+                RDN.dn_to_sequence(ou.imported_id) if ou.imported_id else ())
         local_path_part = RDN.drop_start(full_path, parent_path)
         return LDAPNode.make(
                 local_path_part,
@@ -125,7 +124,7 @@ def perform_import(
     def path_to_unit(
             o: Organization,
             path: Sequence[RDN]) -> OrganizationalUnit:
-        unit_id = RDN.make_string(path)
+        unit_id = RDN.sequence_to_dn(path)
         unit = units.get(path)
         if unit == None:
             try:
@@ -144,7 +143,7 @@ def perform_import(
                         path_fragment = path_fragment[:-1]
         
                 unit = OrganizationalUnit(
-                        imported_id=RDN.make_string(path),
+                        imported_id=RDN.sequence_to_dn(path),
                         name=label, parent=parent, organization=o,
                         # Clear the MPTT tree fields for now -- they get
                         # recomputed after we do bulk_create
@@ -165,7 +164,7 @@ def perform_import(
                         organization=o, uuid=node.properties["id"])
             except Account.DoesNotExist:
                 account = Account(
-                    imported_id=RDN.make_string(path),
+                    imported_id=RDN.sequence_to_dn(path),
                     uuid=node.properties["id"],
                     username=node.properties["username"],
                     first_name=node.properties["firstName"],
@@ -190,7 +189,7 @@ def perform_import(
         if l and not r:
             # A local object with no remote counterpart. Delete it
             to_delete |= Account.objects.filter(
-                    imported_id=RDN.make_string(path))
+                    imported_id=RDN.sequence_to_dn(path))
         else:
             # The remote object exists
             if not l:
@@ -206,7 +205,7 @@ def perform_import(
                 # This should always work -- local_hierarchy has been built on
                 # the basis of local database objects
                 account = Account.objects.get(
-                        imported_id=RDN.make_string(path))
+                        imported_id=RDN.sequence_to_dn(path))
 
             mail_address = r.properties.get("email")
             if mail_address:
