@@ -1,6 +1,8 @@
 import io
 from os import stat_result, O_RDONLY
+import enum
 import smbc
+from typing import Optional
 from urllib.parse import quote, unquote, urlsplit
 from datetime import datetime
 from contextlib import contextmanager
@@ -12,6 +14,33 @@ from .smb import SMBSource, make_smb_url, compute_domain
 from .core import Source, Handle, FileResource
 from .file import stat_attributes
 from .utilities import NamedTemporaryResource
+
+
+XATTR_DOS_ATTRIBUTES = "system.dos_attr.mode"
+"""The attribute name for a file's mode flags. (This is not documented in
+pysmbc, but it is in the underlying libsmbclient library.)"""
+
+
+class Mode(enum.IntFlag):
+    """A convenience enumeration for manipulating SMB file mode flags."""
+    READ_ONLY = 0x01
+    HIDDEN = 0x02
+    SYSTEM = 0x04
+    VOLUME_ID = 0x08
+    DIRECTORY = 0x10
+    ARCHIVE = 0x20
+
+    @staticmethod
+    def for_url(context: smbc.Context, url: str) -> Optional['Mode']:
+        """Attempts to convert the mode flags retrieved from the given smb://
+        URL to a Mode."""
+        try:
+            mode_ = context.getxattr(url, XATTR_DOS_ATTRIBUTES)
+            # This is a human-readable quantity, so presumably it's always
+            # big-endian?
+            return Mode(int.from_bytes(bytes.fromhex(mode_[2:]), "big"))
+        except ValueError:
+            return None
 
 
 class SMBCSource(Source):
