@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-28 08:42-0500\n"
+"POT-Creation-Date: 2021-06-28 08:58-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
@@ -968,11 +968,11 @@ msgstr "f.eks. https://www.example.com"
 msgid "Space is not allowed in the web-domain name."
 msgstr "Mellemrum er ikke tilladt i web-domænenavnet."
 
-#: core/admin.py:29
+#: core/admin.py:30
 msgid "Users who are already Administrators are not shown."
 msgstr "Viser ikke brugere, der allerede er administratorer."
 
-#: core/admin.py:32
+#: core/admin.py:33
 msgid "-- No valid users available --"
 msgstr "-- Der findes ingen gyldige brugere --"
 
