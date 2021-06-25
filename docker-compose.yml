@@ -131,6 +131,13 @@ services:
       timeout: 5s
       retries: 3
       start_period: 40s
+  
+  # channel layer backend
+  redis:
+    restart: unless-stopped
+    image: redis:latest
+    profiles:
+      - socket
 
   report_collector:
     build:
