@@ -24,4 +24,4 @@ workers = os.getenv("GUNICORN_WORKERS", multiprocessing.cpu_count() * 2 + 1)
 # https://pythonspeed.com/articles/gunicorn-in-docker/
 worker_tmp_dir = "/dev/shm" 
 accesslog =  "-"
-timeout = 1800
+timeout = 86400
