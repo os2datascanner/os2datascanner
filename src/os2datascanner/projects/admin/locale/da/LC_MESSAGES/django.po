@@ -997,6 +997,16 @@ msgstr "tilgængelige scannertyper"
 msgid "Select a scan type to activate it for this client."
 msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 
+#: core/management/commands/run_background_jobs.py:32
+#, python-brace-format
+msgid "{0} job(s) completed."
+msgstr "{0} færdige job(s)."
+
+#: core/management/commands/run_background_jobs.py:33
+#, python-brace-format
+msgid "{0} job(s) failed."
+msgstr "{0} fejlede job(s)."
+
 #: core/models/administrator.py:31
 msgid "user"
 msgstr "bruger"
