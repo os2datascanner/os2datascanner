@@ -1,6 +1,7 @@
 import os.path
 from abc import abstractmethod
 from mimetypes import guess_type
+from typing import Optional
 
 from ...utilities.json import JSONSerialisable
 from ...utilities.equality import TypePropertyEquality
@@ -31,9 +32,11 @@ class Handle(TypePropertyEquality, JSONSerialisable):
     def resource_type(self) -> type:
         """The subclass of Resource produced when this Handle is followed."""
 
-    def __init__(self, source, relpath):
+    def __init__(self, source: "msource.Source", relpath: str,
+                 referrer: "Handle" = None):
         self._source = source
         self._relpath = relpath
+        self._referrer = referrer
 
     @property
     def source(self):
@@ -75,6 +78,22 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         that points at that email in an appropriate webmail system.)"""
         return None
 
+    @property
+    def referrer(self) -> Optional["Handle"]:
+        """Returns this Handle's referrer or None, if there is no referrer"""
+        return self._referrer
+
+    @property
+    def base_referrer(self) -> "Handle":
+        """Returns this Handle's base referrer or self, if there is no referrer"""
+        h = self
+        while h:
+            if h.referrer:
+                h = h.referrer
+            else:
+                break
+        return h
+
     @abstractmethod
     def censor(self):
         """Returns a Handle identical to this one but whose Source does not
@@ -107,7 +126,10 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         return {
             "type": self.type_label,
             "source": self.source.to_json_object(),
-            "path": self.relative_path
+            "path": self.relative_path,
+            # only insert referrer key:val, if value is not None
+            **({"referrer": self.referrer.to_json_object()}
+               if self.referrer else {}),
         }
 
     @staticmethod

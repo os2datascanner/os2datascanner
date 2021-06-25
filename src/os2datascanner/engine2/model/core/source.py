@@ -52,7 +52,7 @@ class Source(TypePropertyEquality, JSONSerialisable):
         properties.)"""
 
     @abstractmethod
-    def censor(self):
+    def censor(self) -> "Source":
         """Returns a version of this Source that does not carry sensitive
         information like passwords and API keys. The resulting Source will not
         necessarily carry enough information to generate a meaningful state
