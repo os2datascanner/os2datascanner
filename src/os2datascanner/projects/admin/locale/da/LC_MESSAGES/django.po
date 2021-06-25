@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-17 23:16-0500\n"
+"POT-Creation-Date: 2021-06-28 08:42-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
@@ -559,15 +559,15 @@ msgstr "Upload sitemap"
 msgid "Click here to upload sitemap.xml"
 msgstr "Klik her for at uploade sitemap.xml"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:529
+#: adminapp/templates/os2datascanner/scanner_form.html:528
 msgid "add users"
 msgstr "tilføj brugere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:532
+#: adminapp/templates/os2datascanner/scanner_form.html:531
 msgid "select users from"
 msgstr "vælg brugere fra"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:570
+#: adminapp/templates/os2datascanner/scanner_form.html:569
 msgid "or upload"
 msgstr "eller upload"
 
@@ -930,16 +930,16 @@ msgstr "Email adresse"
 msgid "Reset my password"
 msgstr "Nulstil min adgangskode"
 
-#: adminapp/views/exchangescanner_views.py:152
+#: adminapp/views/exchangescanner_views.py:154
 msgid "e.g. @example.com"
 msgstr "f.eks. @example.com"
 
-#: adminapp/views/exchangescanner_views.py:156
+#: adminapp/views/exchangescanner_views.py:158
 #: adminapp/views/filescanner_views.py:131
 msgid "Username"
 msgstr "Brugernavn"
 
-#: adminapp/views/exchangescanner_views.py:161
+#: adminapp/views/exchangescanner_views.py:163
 #: adminapp/views/filescanner_views.py:132
 msgid "Password"
 msgstr "Adgangskode"
@@ -1023,6 +1023,46 @@ msgstr "Administrator: {user} (for {client})"
 #, python-brace-format
 msgid "<Administrator: {uid} (User) for {cid} (Client)>"
 msgstr "<Administrator: {uid} (User) for {cid} (Client)>"
+
+#: core/models/background_job.py:19
+msgid "waiting"
+msgstr "afventer"
+
+#: core/models/background_job.py:22
+msgid "running"
+msgstr "kører"
+
+#: core/models/background_job.py:24
+msgid "cancelling"
+msgstr "annullering i gang"
+
+#: core/models/background_job.py:28
+msgid "finished"
+msgstr "færdig"
+
+#: core/models/background_job.py:30
+msgid "cancelled"
+msgstr "annulleret"
+
+#: core/models/background_job.py:32
+msgid "failed"
+msgstr "fejlet"
+
+#: core/models/background_job.py:40
+msgid "job creation time"
+msgstr "job-oprettelsestid"
+
+#: core/models/background_job.py:43
+msgid "job update time"
+msgstr "job-opdateringstid"
+
+#: core/models/background_job.py:48
+msgid "execution state"
+msgstr "kørselsstatus"
+
+#: core/models/background_job.py:52
+msgid "last status message"
+msgstr "sidst status-besked"
 
 #: core/models/client.py:26
 msgid "web scan"
