@@ -19,21 +19,28 @@ from django.conf import settings
 from django.db import models
 
 from os2datascanner.engine2.model.http import WebSource
+from os2datascanner.engine2.rules.links_follow import LinksFollowRule
+from os2datascanner.engine2.rules.rule import Sensitivity
 
 from .scanner_model import Scanner
 from ...utils import upload_path_webscan_sitemap
 
+import structlog
+logger = structlog.get_logger(__name__)
+
 
 class WebScanner(Scanner):
-
     """Web scanner for scanning websites."""
 
     linkable = True
 
-    do_link_check = models.BooleanField(default=False,
-                                        verbose_name='Tjek links')
+    # XXX this is misleading. There is no distinction between internal and
+    # external links
+    do_link_check = models.BooleanField(
+        default=True,
+        verbose_name='Tjek links')
     do_external_link_check = models.BooleanField(
-        default=False,
+        default=True,
         verbose_name='Eksterne links'
     )
     do_last_modified_check_head_request = models.BooleanField(
@@ -72,6 +79,12 @@ class WebScanner(Scanner):
                                            verbose_name='Hent Sitemap fra '
                                                         'serveren')
 
+    def local_all_rules(self) -> list:
+        if self.do_link_check:
+            rule = LinksFollowRule(sensitivity=Sensitivity.INFORMATION)
+            return [rule,]
+        return []
+
     @property
     def display_name(self):
         """The name used when displaying the domain on the web page."""
@@ -81,9 +94,8 @@ class WebScanner(Scanner):
     def root_url(self):
         """Return the root url of the domain."""
         url = self.url.replace('*.', '')
-        if (not self.url.startswith('http://') and not
-        self.url.startswith('https://')):
-            return 'http://%s/' % url
+        if not self.url.startswith(("http://", "https://")):
+            return f"http://{url}"
         else:
             return url
 

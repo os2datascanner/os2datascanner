@@ -20,7 +20,7 @@ from .utilities.datetime import parse_datetime
 logger = logging.getLogger(__name__)
 MAX_REQUESTS_PER_SECOND = 10
 SLEEP_TIME = 1 / MAX_REQUESTS_PER_SECOND
-
+TIMEOUT = 5.0
 
 def simplify_mime_type(mime):
     r = mime.split(';', maxsplit=1)
@@ -178,7 +178,8 @@ class WebResource(FileResource):
         yield from super()._generate_metadata()
 
     def _get_head_raw(self):
-        return self._get_cookie().head(self._make_url())
+        return self._get_cookie().head(
+            self._make_url(), timeout=TIMEOUT)
 
     def check(self) -> bool:
         # This might raise an RequestsException, fx.
@@ -239,7 +240,8 @@ class WebResource(FileResource):
 
     @contextmanager
     def make_stream(self):
-        response = self._get_cookie().get(self._make_url())
+        response = self._get_cookie().get(
+            self._make_url(), timeout=TIMEOUT)
         response.raise_for_status()
         with BytesIO(response.content) as s:
             yield s
@@ -308,7 +310,8 @@ def make_outlinks(content, where):
         for el, _, li, _ in doc.iterlinks():
             if el.tag in ("a", "img",):
                 yield li
-    except ParserError:
+    except ParserError as e:
         # Silently drop ParserErrors, but only for empty documents
         if content and not content.isspace():
-            logging.exception("{0}: unexpected ParserError".format(where))
+            logger.error("{0}: unexpected ParserError".format(where),
+                         exc_info=True)

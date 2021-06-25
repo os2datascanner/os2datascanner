@@ -73,6 +73,7 @@ def message_received_raw(body, channel, source_manager):
             dv = {required.value: representation.value
                     if representation else None}
 
+        logger.info(f"Required representation for {conversion.handle} is {required}")
         yield ("os2ds_representations",
                 messages.RepresentationMessage(
                         conversion.scan_spec, conversion.handle,

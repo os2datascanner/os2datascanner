@@ -186,3 +186,8 @@ BUILD_DIR = ["*", "build"]
 VAR_DIR = ["*", "var"]
 LOGS_DIR = ["*", "var", "logs"]
 STATIC_ROOT = ["*", 'src', 'os2datascanner', 'projects', 'static', 'report']
+
+# loglevel for components from engine
+[log]
+log_path = ""
+log_level = "INFO"

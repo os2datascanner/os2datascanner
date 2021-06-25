@@ -9,7 +9,13 @@ from .organization_model import Organization
 
 from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.utils.system_utilities import time_now
-from os2datascanner.engine2.pipeline.messages import MatchesMessage
+from os2datascanner.engine2.pipeline.messages import (
+    MatchesMessage, ProblemMessage, MetadataMessage
+    )
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 
 class DocumentReport(models.Model):
@@ -49,6 +55,31 @@ class DocumentReport(models.Model):
     def matches(self):
         matches = self.data.get("matches")
         return MatchesMessage.from_json_object(matches) if matches else None
+
+    @property
+    def problem(self):
+        problem = self.data.get("problem")
+        return ProblemMessage.from_json_object(problem) if problem else None
+
+    @property
+    def metadata(self):
+        metadata = self.data.get("metadata")
+        return MetadataMessage.from_json_object(metadata) if metadata else None
+
+    @property
+    def presentation(self) -> str:
+        """Get the handle presentation"""
+        # get the Message. Only one of these will be non-None.
+        type_msg = [msg for msg in
+                    [self.matches, self.problem, self.metadata] if msg]
+        # in case the report is still not updated with the Message, return empty
+        # string
+        if type_msg == []:
+            return ""
+        type_msg = type_msg[0]
+
+        presentation = type_msg.handle.presentation if type_msg.handle else ""
+        return presentation
 
     @enum.unique
     class ResolutionChoices(enum.Enum):
@@ -144,14 +175,15 @@ def on_documentreport_created_or_updated(objects, fields=None):
                     new_objects.append(
                             tm(documentreport_id=obj.pk, alias_id=alias.pk))
         except (KeyError, TypeError):
-            print(obj, " has no metadata")
+            logger.info(f"{obj} has no metadata")
     try:
         # TODO: We do not bulk create DocumentReports, and therefore will we always
         #  bulk_create 1 Alias.match_relation at the time. We do not actually
         #  use the bulk functionality.
         tm.objects.bulk_create(new_objects, ignore_conflicts=True)
     except:
-        print("Failed to create match_relation")
+        logger.error("Failed to create match_relation", exc_info=True)
+
 
 # TODO: #43340 (if we need to explicitly delete the instances of the implicit
 # model class used by Alias.match_relation, we should also hook DocumentReport.

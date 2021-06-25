@@ -17,7 +17,7 @@ class RegexRule(SimpleRule):
 
     @property
     def presentation_raw(self) -> str:
-        return 'regular expression "{0}"'.format(self._expression)
+        return 'regular expression matching "{0}"'.format(self._expression)
 
     def match(self, content: str) -> Optional[Iterator[dict]]:
         if content is None:

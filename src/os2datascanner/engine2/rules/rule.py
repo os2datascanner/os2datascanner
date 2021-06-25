@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from enum import Enum
-from typing import Union, Optional
+from typing import Union, Optional, Tuple, Iterator
 
 from ..utilities.json import JSONSerialisable
 from ..utilities.equality import TypePropertyEquality
@@ -81,8 +81,8 @@ class Rule(TypePropertyEquality, JSONSerialisable):
         """A label that will be used to identify JSON forms of this Rule."""
 
     @abstractmethod
-    def split(self) -> ('SimpleRule',
-            Union['SimpleRule', bool], Union['SimpleRule', bool]):
+    def split(self) -> Tuple['SimpleRule',
+            Union['SimpleRule', bool], Union['SimpleRule', bool]]:
         """Splits this Rule.
 
         Splitting a Rule produces a SimpleRule, suitable for immediate
@@ -127,7 +127,7 @@ class SimpleRule(Rule):
         """The type of input expected by this SimpleRule."""
 
     @abstractmethod
-    def match(self, content):
+    def match(self, content) -> Iterator[dict]:
         """Yields zero or more dictionaries suitable for JSON serialisation,
         each of which represents one match of this SimpleRule against the
         provided content. Matched content should appear under the dictionary's

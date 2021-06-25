@@ -1,7 +1,9 @@
-from ..rules.rule import Rule
+import logging
+from ..rules.last_modified import LastModifiedRule
 from ..conversions.types import decode_dict
 from . import messages
 
+logger = logging.getLogger(__name__)
 
 READS_QUEUES = ("os2ds_representations",)
 WRITES_QUEUES = ("os2ds_handles",
@@ -14,9 +16,10 @@ def message_received_raw(body, channel, source_manager):
     message = messages.RepresentationMessage.from_json_object(body)
     representations = decode_dict(message.representations)
     rule = message.progress.rule
+    logger.info(f"{message.handle.presentation} with rules [{rule.presentation}] "
+                f"and representation [{list(representations.keys())}]")
 
     new_matches = []
-
     # Keep executing rules for as long as we can with the representations we
     # have
     while not isinstance(rule, bool):
@@ -36,16 +39,22 @@ def message_received_raw(body, channel, source_manager):
             rule = pve
         else:
             rule = nve
+        logger.info(f"rule {head.presentation} matched: {len(matches)}")
 
     final_matches = message.progress.matches + new_matches
 
     if isinstance(rule, bool):
         # We've come to a conclusion!
+
+        logger.info(
+                f"{message.handle.presentation} done."
+                f" Matched status: {rule}")
+
         for matches_q in ("os2ds_matches", "os2ds_checkups",):
             yield (matches_q,
                     messages.MatchesMessage(
                             message.scan_spec, message.handle,
-                            rule, final_matches).to_json_object())
+                            matched=rule, matches=final_matches).to_json_object())
         # Only trigger metadata scanning if the match succeeded
         if rule:
             yield ("os2ds_handles",
@@ -54,6 +63,9 @@ def message_received_raw(body, channel, source_manager):
                             message.handle).to_json_object())
     else:
         # We need a new representation to continue
+        logger.info(
+                f"{message.handle.presentation} needs"
+                f" new representation: [{type_value}].")
         yield ("os2ds_conversions",
                 messages.ConversionMessage(
                         message.scan_spec, message.handle,

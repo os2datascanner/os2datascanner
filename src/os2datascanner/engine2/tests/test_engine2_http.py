@@ -91,7 +91,7 @@ class Engine2HTTPSetup():
         logger = logging.getLogger("os2datascanner")
         logger.setLevel(logging.DEBUG)
         # we have no handler in os2ds (except the NullHandler)
-        logger.addHandler(logging.StreamHandler())
+        # logger.addHandler(logging.StreamHandler())
 
 
 class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):

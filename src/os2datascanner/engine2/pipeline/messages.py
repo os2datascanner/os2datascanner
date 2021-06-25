@@ -29,7 +29,7 @@ def _deep_replace(self, **kwargs):
 
 class MatchFragment(NamedTuple):
     rule: SimpleRule
-    matches: Sequence[dict]
+    matches: Optional[Sequence[dict]]
 
     def to_json_object(self):
         return {

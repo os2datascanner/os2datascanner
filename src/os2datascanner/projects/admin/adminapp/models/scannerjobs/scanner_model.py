@@ -21,8 +21,8 @@
 import datetime
 import os
 import re
-
 from typing import Iterator
+import structlog
 
 from django.db import models
 from django.conf import settings
@@ -36,7 +36,7 @@ from recurrence.fields import RecurrenceField
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import Handle, Source
 from os2datascanner.engine2.rules.meta import HasConversionRule
-from os2datascanner.engine2.rules.logical import OrRule, AndRule, make_if
+from os2datascanner.engine2.rules.logical import OrRule, AndRule, AllRule, make_if
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
@@ -46,6 +46,7 @@ from os2datascanner.engine2.conversions.types import OutputType
 from ..authentication_model import Authentication
 from ..rules.rule_model import Rule
 
+logger = structlog.get_logger(__name__)
 base_dir = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -241,6 +242,21 @@ class Scanner(models.Model):
         """Return the name of the scanner."""
         return self.name
 
+    def local_or_rules(self) -> list:
+        """Returns a list of OR rules specific for the scanner model
+        """
+        return []
+
+    def local_and_rules(self) -> list:
+        """Returns a list of AND rules specific for the scanner model
+        """
+        return []
+
+    def local_all_rules(self) -> list:
+        """Returns a list of ALL rules specific for the scanner model
+        """
+        return []
+
     def run(self, user=None):
         """Schedules a scan to be run by the pipeline. Returns the scan tag of
         the resulting scan on success.
@@ -278,6 +294,18 @@ class Scanner(models.Model):
             # ... and, if we're not, then skip all of the image files
             configuration["skip_mime_types"] = ["image/*"]
 
+        # append any model-specific rules. Order matters!
+        # AndRule will only evaluate next rule, if current rule have match
+        # OrRule will stop evaluating as soon as one rule have match
+        # AllRule will evaluate all rules, no matter the outcome of current rule
+        # XXX but what happens when we combine Compound rules as below.
+        # AllRule([OrRule's, OrRule's, AndRule's])
+        # Will it work as expected?
+        rule = OrRule.make(*self.local_or_rules(), rule)
+        rule = AndRule.make(*self.local_and_rules(), rule)
+        rule = AllRule.make(*self.local_all_rules(), rule)
+
+        # prerules includes: do_ocr, LastModifiedRule
         rule = AndRule.make(*prerules, rule)
 
         scan_tag = messages.ScanTagFragment(
@@ -313,6 +341,7 @@ class Scanner(models.Model):
                         rule=None,
                         matches=[]))
         for reminder in self.checkups.all():
+            # XXX: we could be adding LastModifiedRule twice
             ib = reminder.interested_before
             rule_here = AndRule.make(
                     LastModifiedRule(ib) if ib else True,
@@ -338,6 +367,7 @@ class Scanner(models.Model):
             for queue, message in outbox:
                 pps.publish_message(queue, message.to_json_object())
 
+        logger.info(f"scan submitted {self} with rules [{rule.presentation}]")
         return scan_tag.to_json_object()
 
     def path_for(self, uri):
