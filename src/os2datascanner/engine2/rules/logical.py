@@ -85,6 +85,9 @@ class AllRule(CompoundRule):
 
     @classmethod
     def make(cls, *components, satisfied: bool = False):
+        if len(components) == 1:
+            return components[0]
+
         new_components = []
         for k in components:
             if k == True:
