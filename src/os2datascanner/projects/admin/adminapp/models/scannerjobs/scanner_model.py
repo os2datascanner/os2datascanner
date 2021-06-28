@@ -295,15 +295,12 @@ class Scanner(models.Model):
             configuration["skip_mime_types"] = ["image/*"]
 
         # append any model-specific rules. Order matters!
+        # AllRule will evaluate all rules, no matter the outcome of current rule
         # AndRule will only evaluate next rule, if current rule have match
         # OrRule will stop evaluating as soon as one rule have match
-        # AllRule will evaluate all rules, no matter the outcome of current rule
-        # XXX but what happens when we combine Compound rules as below.
-        # AllRule([OrRule's, OrRule's, AndRule's])
-        # Will it work as expected?
+        rule = AllRule.make(*self.local_all_rules(), rule)
         rule = OrRule.make(*self.local_or_rules(), rule)
         rule = AndRule.make(*self.local_and_rules(), rule)
-        rule = AllRule.make(*self.local_all_rules(), rule)
 
         # prerules includes: do_ocr, LastModifiedRule
         rule = AndRule.make(*prerules, rule)
