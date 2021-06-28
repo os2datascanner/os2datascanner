@@ -3,6 +3,7 @@
 from io import StringIO
 from json import loads
 from contextlib import redirect_stdout
+from pprint import pformat
 
 import django
 import recurrence
@@ -108,6 +109,8 @@ class CronTest(django.test.TestCase):
         )
 
         # create scanners
+        # schedule is set to empty list; otherwise the field is initialized as Null
+        # and it is not possible to add recurrence later
         self.magenta_scanner = WebScanner(
             name="Magenta",
             url="https://www.magenta.dk",
@@ -117,6 +120,7 @@ class CronTest(django.test.TestCase):
             do_last_modified_check=False,
             do_last_modified_check_head_request=False,
             pk=SCANNER_PK,
+            schedule=[],
         )
         self.magenta_scanner_no_recur = WebScanner(
             name="Magenta_no_recurrence",
@@ -124,6 +128,7 @@ class CronTest(django.test.TestCase):
             organization=self.magenta_org,
             validation_status=WebScanner.VALID,
             pk=SCANNER_PK + 1,
+            schedule=[],
         )
         self.magenta_scanner_tomorrow = WebScanner(
             name="Magenta_tomorrow",
@@ -131,6 +136,7 @@ class CronTest(django.test.TestCase):
             organization=self.magenta_org,
             validation_status=WebScanner.VALID,
             pk=SCANNER_PK + 2,
+            schedule=[],
         )
         self.magenta_scanner.save()
         self.magenta_scanner_no_recur.save()
@@ -188,7 +194,10 @@ class CronTest(django.test.TestCase):
         try:
             self.runner.run_consumer()
         except StopHandling as e:
-            print('****************************{0}'.format(messages))
+            print('############################')
+            print('scan_spec recieved after starting the scan job by cron')
+            print("{0}".format(pformat(messages[1][0])))
+            print('############################')
             self.assertDictEqual(
                 messages[0][0],
                 messages[1][0],

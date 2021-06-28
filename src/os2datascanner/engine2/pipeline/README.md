@@ -92,7 +92,7 @@ is recommended, but not required. See the `contrib/systemd/` folder for more
 information.
 
 Stages are normal Python CLI programs and can be started with `python3 -m
-os2datascanner.engine2.pipeline.*stage-name*`. All of them have various
-parameters to tweak their AMQP interactions; run one with the `--help`
+os2datascanner.engine2.pipeline.run_stage *stage-name*`. All of them have
+various parameters to tweak their AMQP interactions; run one with the `--help`
 command-line option for more information.
 

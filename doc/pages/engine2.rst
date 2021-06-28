@@ -588,3 +588,14 @@ based on a ``Handle`` defined outside of the ``engine2`` core::
     True
     >>> [h.relative_path for h in zs2.handles(sm)]
     ['hello.txt']
+
+Using the ``url_explorer`` demo
+===============================
+
+This is a small demo script which explorers a source, created from a supplied
+``url``, and prints the found handles.
+
+The two most common ``url``-types would be ``file:abspath to directory`` or
+``http://example.com``.
+
+See ``src/os2datascanner/engine2/demo/url_explorer.py``
