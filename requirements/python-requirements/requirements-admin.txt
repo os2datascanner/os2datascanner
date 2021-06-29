@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements-admin.in
 #
+asgiref==3.3.4
+    # via django
 backcall==0.1.0
     # via ipython
 beautifulsoup4==4.9.0
@@ -30,6 +32,9 @@ chardet==3.0.4
     #   -c requirements-engine.txt
     #   requests
 click==8.0.1
+    # via
+    #   -c requirements-engine.txt
+    #   -r requirements-common.in
 colorama==0.4.3
     # via
     #   -c requirements-engine.txt
@@ -64,7 +69,7 @@ django-storages[google]==1.10.1
     # via -r requirements-django.in
 django-structlog==1.5.2
     # via -r requirements-django.in
-django==2.2.18
+django==3.2.4
     # via
     #   -r requirements-django.in
     #   django-model-utils
@@ -129,6 +134,10 @@ idna==2.9
     # via
     #   -c requirements-engine.txt
     #   requests
+importlib-metadata==4.5.0
+    # via
+    #   -c requirements-engine.txt
+    #   click
 ipython-genutils==0.2.0
     # via traitlets
 ipython==7.14.0
@@ -296,6 +305,11 @@ toml==0.10.1
     #   -r requirements-common.in
 traitlets==4.3.3
     # via ipython
+typing-extensions==3.10.0.0
+    # via
+    #   -c requirements-engine.txt
+    #   asgiref
+    #   importlib-metadata
 tzlocal==2.0.0
     # via
     #   -c requirements-engine.txt
@@ -312,6 +326,10 @@ wcwidth==0.1.9
     # via prompt-toolkit
 whitenoise==5.2.0
     # via -r requirements-django.in
+zipp==3.4.1
+    # via
+    #   -c requirements-engine.txt
+    #   importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

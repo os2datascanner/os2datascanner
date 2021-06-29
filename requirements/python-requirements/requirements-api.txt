@@ -26,6 +26,10 @@ chardet==3.0.4
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
     #   requests
+click==8.0.1
+    # via
+    #   -c requirements-engine.txt
+    #   -r requirements-common.in
 colorama==0.4.3
     # via
     #   -c requirements-engine.txt
@@ -89,6 +93,10 @@ idna==2.9
     # via
     #   -c requirements-engine.txt
     #   requests
+importlib-metadata==4.5.0
+    # via
+    #   -c requirements-engine.txt
+    #   click
 isodate==0.6.0
     # via
     #   -c requirements-engine.txt
@@ -230,6 +238,10 @@ toml==0.10.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
+typing-extensions==3.10.0.0
+    # via
+    #   -c requirements-engine.txt
+    #   importlib-metadata
 tzlocal==2.0.0
     # via
     #   -c requirements-engine.txt
@@ -246,6 +258,10 @@ xattr==0.9.7
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
+zipp==3.4.1
+    # via
+    #   -c requirements-engine.txt
+    #   importlib-metadata
 zope.event==4.5.0
     # via gevent
 zope.interface==5.2.0

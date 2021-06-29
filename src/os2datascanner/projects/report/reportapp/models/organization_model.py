@@ -12,7 +12,7 @@ class Organization(models.Model):
     This is a read-only model synchronized from the admin module.
     """
 
-    name = models.CharField(max_length=256, unique=True, verbose_name='Navn', 
+    name = models.CharField(max_length=256, unique=True, verbose_name='Navn',
                             editable=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
