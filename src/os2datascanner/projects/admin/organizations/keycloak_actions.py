@@ -30,7 +30,6 @@ def keycloak_group_dn_selector(d):
                 yield RDN.sequence_to_dn(gdn + (dn[-1],))
 
 
-@transaction.atomic
 def perform_import(
         realm: Realm) -> Tuple[int, int, int]:
     """Collects the user hierarchy from the specified realm and creates
@@ -231,20 +230,21 @@ def perform_import(
             # XXX: also update other stored properties
             pass
 
-    to_delete.delete()
+    with transaction.atomic():
+        to_delete.delete()
 
-    if to_add:
-        for subset in (OrganizationalUnit, Account, Position, Alias,):
-            manager = subset.objects
+        if to_add:
+            for subset in (OrganizationalUnit, Account, Position, Alias,):
+                manager = subset.objects
 
-            instances = [o for o in to_add if isinstance(o, subset)]
-            for o in instances:
-                o.imported = True
-                o.last_import = now
-                o.last_import_requested = now
+                instances = [o for o in to_add if isinstance(o, subset)]
+                for o in instances:
+                    o.imported = True
+                    o.last_import = now
+                    o.last_import_requested = now
 
-            manager.bulk_create(instances)
-            if hasattr(manager, "rebuild"):
-                manager.rebuild()
+                manager.bulk_create(instances)
+                if hasattr(manager, "rebuild"):
+                    manager.rebuild()
 
     return (len(to_add), len(to_update), len(to_delete))
