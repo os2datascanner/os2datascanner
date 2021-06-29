@@ -31,7 +31,8 @@ def keycloak_group_dn_selector(d):
 
 
 def perform_import(
-        realm: Realm) -> Tuple[int, int, int]:
+        realm: Realm,
+        progress_callback = None) -> Tuple[int, int, int]:
     """Collects the user hierarchy from the specified realm and creates
     local OrganizationalUnits and Accounts to reflect it. Local objects
     previously imported by this function but no longer backed by an object
@@ -180,10 +181,15 @@ def perform_import(
             continue
         path_to_unit(org, path)
 
+    diff = list(local_hierarchy.diff(remote_hierarchy))
+    if progress_callback:
+        progress_callback("diff_computed", len(diff))
+
     # See what's changed
-    for path, l, r in local_hierarchy.diff(remote_hierarchy):
+    for path, l, r in diff:
         # We're only interested in leaf nodes (accounts) here
         if not path or (l and l.children) or (r and r.children):
+            progress_callback("diff_ignored", path)
             continue
         if l and not r:
             # A local object with no remote counterpart. Delete it
@@ -197,6 +203,7 @@ def perform_import(
                     account = node_to_account(org, path, r)
                 except KeyError as ex:
                     # Missing required attribute -- skip this object
+                    progress_callback("diff_ignored", path)
                     continue
                 unit = path_to_unit(org, path[:-1])
                 to_add.append(Position(account=account, unit=unit))
@@ -228,7 +235,9 @@ def perform_import(
                     pass
 
             # XXX: also update other stored properties
-            pass
+
+            if progress_callback:
+                progress_callback("diff_handled", path)
 
     with transaction.atomic():
         to_delete.delete()
