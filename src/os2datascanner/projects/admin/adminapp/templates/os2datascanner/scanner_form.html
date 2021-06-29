@@ -25,22 +25,6 @@
 <script type="text/javascript">
   (function ($) {
     $(document).ready(function () {
-      // Toggle the External Links field when Do Link Check scan is checked
-      $("#id_{{ form.do_link_check.name }}").click(function () {
-        handleSubChoices($(this));
-      });
-      {% if not form.do_link_check.value %}
-      handleSubChoices($("#id_{{ form.do_link_check.name }}"));
-      {% endif %}
-
-      // Toggle the HEAD request field when Check Last-Modified is checked
-      $("#id_{{ form.do_last_modified_check.name }}").click(function () {
-        handleSubChoices($(this));
-      });
-      {% if not form.do_last_modified_check.value %}
-      handleSubChoices($("#id_{{ form.do_last_modified_check.name }}"));
-      {% endif %}
-
       // set up selected rules based on the form values
       {% for val in form.rules.value %}
       $("#available_rules li[data-rule-id=\"{{ val }}\"").trigger("click");
@@ -682,23 +666,6 @@
                     {% endif %}
                   </label>
                 </div>
-                {% if view.type == 'web' %}
-                <div class="ds-checkbox ds-checkbox--inline">
-                  <input
-                    type="checkbox"
-                    id="id_{{ form.do_last_modified_check_head_request.name }}"
-                    name="{{ form.do_last_modified_check_head_request.name }}"
-                    value="{{ form.do_last_modified_check_head_request.name }}"
-                    {% if form.do_last_modified_check_head_request.field.disabled %} disabled {% endif %}
-                    {% if form.do_last_modified_check_head_request.value %} checked="checked" {% endif %}>
-                  <label for="id_{{ form.do_last_modified_check_head_request.name }}">
-                    {{ form.do_last_modified_check_head_request.label }}
-                    {% if form.do_last_modified_check_head_request.help_text %}
-                    <small>{{ form.do_last_modified_check_head_request.help_text }}</small>
-                    {% endif %}
-                  </label>
-                </div>
-                {% endif %}
               </div>
 
               {% if view.type == 'web' %}
@@ -718,38 +685,6 @@
                     {% endif %}
                   </label>
                 </div>
-                <div class="ds-checkbox ds-checkbox--inline">
-                  <input 
-                    type="checkbox" 
-                    id="id_{{ form.do_external_link_check.name }}"
-                    name="{{ form.do_external_link_check.name }}" 
-                    value="{{ form.do_external_link_check.name }}"
-                    {% if form.do_external_link_check.field.disabled %} disabled {% endif %}
-                    {% if form.do_external_link_check.value %} checked="checked" {% endif %}>
-                  <label for="id_{{ form.do_external_link_check.name }}">
-                    {{ form.do_external_link_check.label }}
-                    {% if form.do_external_link_check.help_text %}
-                    <small>{{ form.do_external_link_check.help_text }}</small>
-                    {% endif %}
-                  </label>
-                </div>
-
-                <div class="ds-checkbox ds-checkbox--inline">
-                  <input 
-                    type="checkbox" 
-                    id="id_{{ form.do_collect_cookies.name }}" 
-                    name="{{ form.do_collect_cookies.name }}"
-                    value="{{ form.do_collect_cookies.name }}" 
-                    {% if form.do_collect_cookies.field.disabled %} disabled
-                    {% endif %} {% if form.do_collect_cookies.value %} checked="checked" {% endif %}>
-                  <label for="id_{{ form.do_collect_cookies.name }}">
-                    {{ form.do_collect_cookies.label }}
-                    {% if form.do_collect_cookies.help_text %}
-                    <small>{{ form.do_collect_cookies.help_text }}</small>
-                    {% endif %}
-                  </label>
-                </div>
-              </div>
               {% endif %}
             </div>
           </div>
