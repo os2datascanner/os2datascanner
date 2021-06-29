@@ -52,7 +52,7 @@
           </th>
           {% endif %}
           {% if view.type == 'file' %}
-          <th>
+          <th class="datatable__column--drive">
             {% trans "Drive" %}
           </th>
           {% endif %}
@@ -81,7 +81,7 @@
           {% endif %}
           
           {% if view.type == 'file' %}
-          <td class="domain-letter">
+          <td class="domain-letter datatable__column--drive">
             {% if scanner.alias %}
             {{ scanner.alias }}:
             {% endif %}

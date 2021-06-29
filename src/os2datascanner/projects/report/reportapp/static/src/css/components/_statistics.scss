@@ -3,6 +3,7 @@
 	display: -ms-flexbox;
 	display: flex;
 	max-width: 90rem;
+	width: calc(100% - 2rem);
 }
 
 .statistic {
@@ -14,24 +15,24 @@
 	margin-bottom: 3.5rem;
 
 	&--one {
-		width: 43rem;
+		width: 50rem;
 		min-height: 28rem;
 	}
 
 	&--two {
 		margin-left: 3.5rem;
-		width: 33rem;
+		width: 40rem;
 		min-height: 28rem;
 	}
 
 	&--three {
-		width: 33rem;
+		width: 40rem;
 		min-height: 28rem;
 	}
 
 	&--four {
 		margin-left: 3.5rem;
-		width: 43rem;
+		width: 50rem;
 		min-height: 28rem;
 	}
 

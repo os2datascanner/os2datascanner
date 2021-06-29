@@ -396,9 +396,17 @@ msgstr "Status"
 msgid "objects explored"
 msgstr "objekter udforsket"
 
+#: adminapp/templates/os2datascanner/scan_status.html:117
+msgid "no ongoing scans"
+msgstr "der er ingen igangværende scanninger"
+
 #: adminapp/templates/os2datascanner/scan_completed.html:58
 msgid "Done"
 msgstr "Udført"
+
+#: adminapp/templates/os2datascanner/scan_completed.html:71
+msgid "no scans done"
+msgstr "der er ingen udførte scanninger"
 
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:12
 msgid ""
