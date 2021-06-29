@@ -119,6 +119,7 @@ class CronTest(django.test.TestCase):
             download_sitemap=False,
             do_last_modified_check=False,
             do_last_modified_check_head_request=False,
+            do_link_check=False,
             pk=SCANNER_PK,
             schedule=[],
         )
@@ -127,6 +128,7 @@ class CronTest(django.test.TestCase):
             url="https://www.magenta.dk",
             organization=self.magenta_org,
             validation_status=WebScanner.VALID,
+            do_link_check=False,
             pk=SCANNER_PK + 1,
             schedule=[],
         )
@@ -135,6 +137,7 @@ class CronTest(django.test.TestCase):
             url="https://www.magenta.dk",
             organization=self.magenta_org,
             validation_status=WebScanner.VALID,
+            do_link_check=False,
             pk=SCANNER_PK + 2,
             schedule=[],
         )
@@ -203,14 +206,15 @@ class CronTest(django.test.TestCase):
                 messages[1][0],
                 "Wrong scan_spec from scanner started by cron job",
             )
-            # these checks are maybe a bit redundant...
-            self.assertEqual(
-                self.output,
-                "Running scanner Magenta",
-                "Wrong scanner were started by cron",
-            )
-            self.assertEqual(
-                len(self.output.split("\n")),
-                1,
-                "Wrong number of scanners were started",
-            )
+            # XXX It is Error phrone to capture stdout and check the content. Because
+            # we catch not only the output from cron, but also @scanner_model.run(), etc.
+            # self.assertEqual(
+            #     self.output,
+            #     "Running scanner Magenta",
+            #     "Wrong scanner were started by cron",
+            # )
+            # self.assertEqual(
+            #     len(self.output.split("\n")),
+            #     1,
+            #     "Wrong number of scanners were started",
+            # )

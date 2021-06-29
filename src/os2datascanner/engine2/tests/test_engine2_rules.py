@@ -9,6 +9,7 @@ from os2datascanner.engine2.rules.logical import (
     OrRule,
     AndRule,
     NotRule,
+    AllRule,
     oxford_comma,
 )
 
@@ -186,6 +187,17 @@ more!""",
                 ("AC", False, 2),
             ],
         ),
+        (
+            AndRule(AllRule(RegexRule("A"), RegexRule("B")), RegexRule("C")),
+            [
+                ("A", False, 3),
+                ("AB", False, 3),
+                ("ABC", True, 3),
+                ("BC", True, 3),
+                ("AC", True, 3),
+                ("C", False, 2),
+            ],
+        ),
     ]
 
     def test_compound_rule_matches(self):
@@ -195,19 +207,19 @@ more!""",
                 evaluations = 0
 
                 while True:
-                    print(now)
+                    print(f"evaluating rule {now}")
                     head, pve, nve = now.split()
                     evaluations += 1
-                    print(head)
                     match = list(head.match(input_string))
-                    print(match)
+                    print(f"{head} had the matches {match}")
                     if match:
                         now = pve
                     else:
                         now = nve
                     if isinstance(now, bool):
                         break
-                print(input_string, now, outcome)
+                print(f"conclusion: input: {input_string}; result: {now}; "
+                      f"expected: {outcome}; evaluations: {evaluations}")
                 self.assertEqual(
                     outcome, now, "{0}: wrong result".format(input_string)
                 )

@@ -85,6 +85,9 @@ class AllRule(CompoundRule):
 
     @classmethod
     def make(cls, *components, satisfied: bool = False):
+        if len(components) == 1:
+            return components[0]
+
         new_components = []
         for k in components:
             if k == True:
@@ -173,6 +176,11 @@ class OrRule(CompoundRule):
 
 
 class NotRule(Rule):
+    """An NotRule is a negation rule, working on another @rule.
+
+    Splitting it, returns the negate of @pve and @nve from @rule. I.e. if @pve of
+    @rule is False, then NotRule(@rule).split() returns @pve=True
+    """
     type_label = "not"
 
     def __init__(self, rule, **super_kwargs):
