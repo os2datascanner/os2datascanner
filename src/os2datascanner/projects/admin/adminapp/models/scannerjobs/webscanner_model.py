@@ -17,6 +17,7 @@ import urllib
 
 from django.conf import settings
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.engine2.model.http import WebSource
 from os2datascanner.engine2.rules.links_follow import LinksFollowRule
@@ -26,6 +27,7 @@ from .scanner_model import Scanner
 from ...utils import upload_path_webscan_sitemap
 
 import structlog
+
 logger = structlog.get_logger(__name__)
 
 
@@ -34,66 +36,55 @@ class WebScanner(Scanner):
 
     linkable = True
 
-    # XXX this is misleading. There is no distinction between internal and
-    # external links
-    do_link_check = models.BooleanField(
-        default=True,
-        verbose_name='Tjek links')
-    do_external_link_check = models.BooleanField(
-        default=True,
-        verbose_name='Eksterne links'
-    )
-    do_last_modified_check_head_request = models.BooleanField(
-        default=True,
-        verbose_name='Brug HTTP HEAD-forespørgsler'
-    )
-    do_collect_cookies = models.BooleanField(
-        default=False,
-        verbose_name='Saml cookies'
-    )
+    do_link_check = models.BooleanField(default=False, verbose_name=_("Check links"))
 
     ROBOTSTXT = 0
     WEBSCANFILE = 1
     METAFIELD = 2
 
     validation_method_choices = (
-        (ROBOTSTXT, 'robots.txt'),
-        (WEBSCANFILE, 'webscan.html'),
-        (METAFIELD, 'Meta-felt'),
+        (ROBOTSTXT, "robots.txt"),
+        (WEBSCANFILE, "webscan.html"),
+        (METAFIELD, "Meta-felt"),
     )
 
-    validation_method = models.IntegerField(choices=validation_method_choices,
-                                            default=ROBOTSTXT,
-                                            verbose_name='Valideringsmetode')
+    validation_method = models.IntegerField(
+        choices=validation_method_choices,
+        default=ROBOTSTXT,
+        verbose_name=_("Validation method"),
+    )
 
-    sitemap = models.FileField(upload_to=upload_path_webscan_sitemap,
-                               blank=True,
-                               verbose_name='Sitemap Fil')
+    sitemap = models.FileField(
+        upload_to=upload_path_webscan_sitemap,
+        blank=True,
+        verbose_name=_("Sitemap file"),
+    )
 
-    sitemap_url = models.CharField(max_length=2048,
-                                   blank=True,
-                                   default="",
-                                   verbose_name='Sitemap URL')
+    sitemap_url = models.CharField(
+        max_length=2048, blank=True, default="", verbose_name=_("Sitemap URL")
+    )
 
-    download_sitemap = models.BooleanField(default=True,
-                                           verbose_name='Hent Sitemap fra '
-                                                        'serveren')
+    download_sitemap = models.BooleanField(
+        default=True, verbose_name=_("Download Sitemap from server")
+    )
 
     def local_all_rules(self) -> list:
         if self.do_link_check:
             rule = LinksFollowRule(sensitivity=Sensitivity.INFORMATION)
-            return [rule,]
+            return [
+                rule,
+            ]
         return []
 
     @property
     def display_name(self):
         """The name used when displaying the domain on the web page."""
-        return "Domain '%s'" % self.root_url
+        return f"Domain {self.root_url}"
 
     @property
     def root_url(self):
         """Return the root url of the domain."""
-        url = self.url.replace('*.', '')
+        url = self.url.replace("*.", "")
         if not self.url.startswith(("http://", "https://")):
             return f"http://{url}"
         else:
@@ -102,7 +93,7 @@ class WebScanner(Scanner):
     @property
     def sitemap_full_path(self):
         """Get the absolute path to the uploaded sitemap.xml file."""
-        return "%s/%s" % (settings.MEDIA_ROOT, self.sitemap.url)
+        return f"{settings.MEDIA_ROOT}/{self.sitemap.url}"
 
     @property
     def default_sitemap_path(self):
@@ -123,11 +114,11 @@ class WebScanner(Scanner):
             return urllib.parse.urljoin(self.root_url, sitemap_url)
 
     def get_type(self):
-        return 'web'
+        return "web"
 
     def get_absolute_url(self):
         """Get the absolute URL for scanners."""
-        return '/webscanners/'
+        return "/webscanners/"
 
     def generate_sources(self):
         yield WebSource(self.root_url, self.get_sitemap_url())
