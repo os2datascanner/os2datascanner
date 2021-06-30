@@ -1,7 +1,7 @@
 {% load staticfiles %}
 {% load i18n %}
 
-<nav class="navigation">
+<nav class="navi">
   <ul>
   {% if user.is_authenticated %}
     {% if not user.profile.is_upload_only %}
@@ -26,6 +26,14 @@
           {% include "components/svg-icons/rule.svg" %}
           <span class="width">
             {% trans "Rules" %}
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="/organizations" class="{% if active_tab == 'organizations' %}active{% endif %}">
+          {% include "components/svg-icons/org.svg" %}
+          <span class="width">
+            {% trans 'organizations'|capfirst %}
           </span>
         </a>
       </li>

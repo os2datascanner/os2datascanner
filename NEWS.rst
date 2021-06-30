@@ -1,6 +1,73 @@
 OS2datascanner
 ==============
 
+Version 3.10.0, 30th June 2021
+------------------------------
+
+"Directory Enquiries"
+
+New in this version:
+
+- Initial support for LDAP and Active Directory integration:
+
+  - Support for retrieving users from LDAP through Keycloak.
+
+  - Support for reconstructing LDAP hierarchies from distinguished names and
+    from group membership.
+
+  - Support for adding and removing organisational units, employees, roles, and
+    aliases in response to organisational structure changes.
+
+  - Microsoft Exchange scanners can now optionally retrieve user information
+    from LDAP rather than requiring an uploaded list of users.
+
+- Initial support for runtime debugging:
+
+  - Pipeline components now respond to the ``SIGUSR1`` signal by printing a
+    backtrace of the task they are presently carrying out. (The task is not
+    otherwise interrupted.)
+
+  - Many components now emit progress and status messages to the system log.
+
+- Initial support for checking external links when running a web scan.
+
+General improvements:
+
+- CPR context filtering is now performed as part of the test suite to avoid
+  regressions.
+
+- Regular expression matches now also include a fragment of the surrounding
+  context.
+
+- Certain Keycloak parameters are now automatically configured when the system
+  is started.
+
+- The Docker development environment has been divided up into profiles, making
+  it possible to run a specific configuration of the system.
+
+- The administration system's scanner status page can now show error messages
+  and can delete status objects for failed scanner jobs.
+
+Bugfixes:
+
+- The scan scheduling widget is now shown correctly in all situations.
+
+- Pagination fixes in the report module:
+
+  - Pagination with custom page sizes is now more reliable.
+
+  - When using custom page sizes, pagination controls now also work on the
+    second-last page.
+
+  - Pagination now works when more than a thousand pages are present.
+
+- The Docker development environment should now also work correctly on recent
+  versions of macOS.
+
+- Changes to the validation status of scanner jobs should now work correctly.
+
+- Sitemap files are now parsed with a more conservative XML parser.
+
 Version 3.9.6, 9th June 2021
 ----------------------------
 

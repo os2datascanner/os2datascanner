@@ -105,6 +105,7 @@ COPY docker/gunicorn-settings.py ./gunicorn-settings.py
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/projects/report ./projects/report
 COPY src/os2datascanner/projects/__init__.py ./projects/
+COPY src/os2datascanner/projects/utils ./projects/utils
 COPY src/os2datascanner/projects/django_toml_configuration.py ./projects/
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
@@ -130,6 +131,7 @@ RUN find . -name 'LC_MESSAGES' -print0 | xargs -0 chown -R os2ds_report:os2ds_re
 USER os2ds_report:os2ds_report
 EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
+
 CMD ["gunicorn", \
      "--config", "/code/docker/gunicorn-settings.py", \
      "wsgi"]

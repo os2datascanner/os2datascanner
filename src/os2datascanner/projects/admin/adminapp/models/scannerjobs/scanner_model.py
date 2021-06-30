@@ -23,7 +23,6 @@ import os
 import re
 
 from typing import Iterator
-from dateutil import tz
 
 from django.db import models
 from django.conf import settings
@@ -45,10 +44,7 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
 from os2datascanner.engine2.conversions.types import OutputType
 
 from ..authentication_model import Authentication
-from ..organization_model import Organization
-from ..group_model import Group
 from ..rules.rule_model import Rule
-from ..userprofile_model import UserProfile
 
 base_dir = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -61,22 +57,34 @@ class Scanner(models.Model):
 
     linkable = False
 
-    name = models.CharField(max_length=256, unique=True, null=False,
-                            db_index=True,
-                            verbose_name='Navn')
+    name = models.CharField(
+        max_length=256,
+        unique=True,
+        null=False,
+        db_index=True,
+        verbose_name='Navn'
+    )
 
-    organization = models.ForeignKey(Organization, null=False,
-                                     verbose_name='Organisation',
-                                     on_delete=models.PROTECT)
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.CASCADE,
+        related_name='scannerjob',
+        verbose_name=_('organization'),
+        default=None,
+        null=True,
+    )
 
-    group = models.ForeignKey(Group, null=True, blank=True,
-                              verbose_name='Gruppe',
-                              on_delete=models.SET_NULL)
+    schedule = RecurrenceField(
+        max_length=1024,
+        null=True,
+        blank=True,
+        verbose_name='Planlagt afvikling'
+    )
 
-    schedule = RecurrenceField(max_length=1024,
-                               verbose_name='Planlagt afvikling')
-
-    do_ocr = models.BooleanField(default=False, verbose_name='Scan billeder')
+    do_ocr = models.BooleanField(
+        default=False,
+        verbose_name='Scan billeder'
+    )
 
     do_last_modified_check = models.BooleanField(
         default=True,
@@ -93,9 +101,6 @@ class Scanner(models.Model):
                                    blank=True,
                                    verbose_name='Regler',
                                    related_name='scanners')
-
-    recipients = models.ManyToManyField(UserProfile, blank=True,
-                                        verbose_name='Modtagere')
 
     # Spreadsheet annotation and replacement parameters
 
@@ -296,6 +301,9 @@ class Scanner(models.Model):
                     message_template._replace(source=source)))
             source_count += 1
 
+        if source_count == 0:
+            raise ValueError(f"{self} produced 0 explorable sources")
+
         # Also build ConversionMessages for the objects that we should try to
         # scan again (our pipeline_collector is responsible for eventually
         # deleting these reminders)
@@ -393,6 +401,8 @@ class ScanStatus(models.Model):
     scanned_size = models.BigIntegerField(
             verbose_name=_("size of scanned objects"),
             null=True)
+    message = models.CharField(max_length=2048, blank=True, verbose_name='message')
+    status_is_error = models.BooleanField(default=False)
 
     @property
     def finished(self) -> bool:

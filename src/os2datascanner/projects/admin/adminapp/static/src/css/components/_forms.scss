@@ -30,6 +30,10 @@
     margin-top: 0.25rem;
   }
 
+  input + label {
+    margin-top: 1rem;
+  }
+
   .form__group + .form__group {
     margin-top: 1rem;
   }
@@ -128,8 +132,10 @@
       height: 0;
   
       &:focus + .radio__control {
-        box-shadow: 0 0 0 0.05em #fff, 0 0 0.15em 0.1rem #00496e;
 
+        &--notify {
+          box-shadow: 0 0 0 0.05em #fff, 0 0 0.15em 0.1rem var(--color-notification);
+        }
         &--critical{
           box-shadow: 0 0 0 0.05em #fff, 0 0 0.15em 0.1rem var(--color-error);
         }
@@ -149,7 +155,7 @@
       place-items: center;
     }
 
-    input + .radio__control::before {
+    input + .radio__control--notify::before {
       content: "";
       width: .5rem;
       height: .5rem;
@@ -199,9 +205,11 @@
     width: 1rem;
     height: 1rem;
     border-radius: 50%;
-    border: 0.15rem solid #00496e;
     transform: translateY(-0.05em);
 
+    &--notify{
+      border: 0.15rem solid var(--color-notification);
+    }
     &--critical{
       border: 0.15rem solid var(--color-error);
     }
@@ -214,6 +222,38 @@
   }
 
   // help text
+  .help {
+    margin-left: .5rem;
+    width: 1rem;
+  }
+  .help-icon {
+    position: relative;
+    display: inline-block;
+    background-image: url("../svg/question-circle.svg");
+    width: .8rem;
+    height: .8rem;
+    background-size: 100% 100%;
+    cursor: pointer;
+  
+    .helptext {
+      visibility: hidden;
+      min-width: 20rem;
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+      border-radius: .35rem;
+      padding: .5rem .5rem;
+      position: absolute;
+      top: 1rem;
+      z-index: 1;
+    }
+
+    &:hover .helptext {
+      visibility: visible;
+    }
+  }
+
+
   &__help-text {
     display: block;
     font-size: 0.75em;

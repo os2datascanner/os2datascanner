@@ -23,9 +23,10 @@ from urllib.parse import urlencode
 from django.conf import settings
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Count, Q
 from django.db.models.functions import TruncMonth
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.views.generic import View, TemplateView, ListView
@@ -60,8 +61,20 @@ class LogoutPageView(TemplateView, View):
     template_name = 'logout.html'
 
 
+class EmptyPagePaginator(Paginator):
+    def validate_number(self, number):
+        try:
+            return super(EmptyPagePaginator, self).validate_number(number)
+        except EmptyPage:
+            if number > 1:
+                return self.num_pages
+            else:
+                raise Http404(_('The page does not exist'))
+
+
 class MainPageView(LoginRequiredMixin, ListView):
     template_name = 'index.html'
+    paginator_class = EmptyPagePaginator
     paginate_by = 10  # Determines how many objects pr. page.
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
@@ -69,6 +82,7 @@ class MainPageView(LoginRequiredMixin, ListView):
         data__matches__matched=True).filter(
         resolution_status__isnull=True)
     scannerjob_filters = None
+    paginate_by_options = [10, 20, 50, 100, 250]
 
     def get_queryset(self):
         user = self.request.user
@@ -141,6 +155,9 @@ class MainPageView(LoginRequiredMixin, ListView):
                                       s["total"]) for s in sensitivities),
                                     self.request.GET.get('sensitivities', 'all'))
 
+        context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
+        context['paginate_by_options'] = self.paginate_by_options
+
         return context
 
     def get_paginate_by(self, queryset):
@@ -160,7 +177,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         resolution_status__isnull=False)
     unhandled_matches = matches.filter(
         resolution_status__isnull=True)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = timezone.now()
@@ -261,7 +278,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
                 formatted_counts[0][1] += s[1]
 
         return formatted_counts
-        
+
     def count_unhandled_matches(self):
         # Counts the amount of unhandled matches
         # TODO: Optimize queries by reading from relational db
@@ -385,7 +402,7 @@ def filter_inapplicable_matches(user, matches, roles):
         # If more than one exist, limit matches to ones without an organization (safety measure)
         if Organization.objects.count() > 1:
             matches = matches.filter(organization=None)
-    
+
     if user_is(roles, Remediator):
         unassigned_matches = Remediator(user=user).filter(matches)
         user_matches = DefaultRole(user=user).filter(matches)

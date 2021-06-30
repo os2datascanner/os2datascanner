@@ -49,6 +49,69 @@ You can scan multiple files at once by first archiving them in a Zip file or
 tarball; OS2datascanner recognises these as explorable containers and will scan
 the files that they contain.
 
+Examples
+--------
+
+Set a bearer token in ``dev-environment/api/dev-settings.toml``.
+
+.. code-block:: conf
+
+    [server]
+    token = "os2ds"
+
+Then interact with the API endpoints {``openapi.yaml``, ``dummy/1``, ``scan/1``} or
+use the swaggerUI on http://localhost:8075
+
+For example using ``httpie``
+
+.. code-block:: sh
+
+    http localhost:8070/openapi.yaml -d
+    http POST localhost:8070/dummy/1 AUTHORIZATION:'Bearer os2ds'
+    # post a base64 encoded string and use a regex rule
+    echo '{"rule":{"type":"regex","expression":"[Tt]est"},"source":{"type":"data","content":"VGhpcyBpcyBvbmx5IGEgdGVzdA==","mime":"text/plain"}}' | \
+    http post localhost:8070/scan/1 AUTHORIZATION:'Bearer os2ds'
+    # scan a domain
+    echo '{"rule":{"type":"regex","expression":"[Mm]agenta"},"source":{"type":"web","url":"https://www.magenta.dk"}}' | \
+    http post localhost:8070/scan/1 AUTHORIZATION:'Bearer os2ds'
+
+
+The content is ``base64`` encoded
+
+.. code-block:: sh
+
+    # base64 encode
+    echo -n "This is only a test" | base64 -w 0
+    > VGhpcyBpcyBvbmx5IGEgdGVzdA==
+    # decode
+    echo "VGhpcyBpcyBvbmx5IGEgdGVzdA==" | base64 --decode
+    > This is only a test
+
+Use a more complicated regex rule
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The API expects valid JSON which is using ``"`` and not ``'``. Also backslash
+needs to be escaped, so "\\" becomes "\\\\". ``\b`` (regex word-boundary) is
+interpreted as a literal backspace and have to be escaped as well.
+
+.. code-block:: sh
+
+    echo '{"rule":{"type":"regex", "expression": "\\b(\d{2}(?:\d{2})?[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\\b"},"source":{"type":"data","content":"'$(base64 -w 0 < FILE_TO_ENCODE.txt)'","mime":"text/plain"}}' | \
+    sed 's/\\/\\\\/g' | \
+    http post localhost:8070/scan/1 AUTHORIZATION:'Bearer os2ds** | \
+    jq
+
+
+Follow the logs
+^^^^^^^^^^^^^^^
+
+.. code-block:: sh
+
+    docker-compose logs --follow api_server
+
+
+
+
 The administration system API
 =============================
 

@@ -1,18 +1,46 @@
+# The contents of this file are subject to the Mozilla Public License
+# Version 2.0 (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+#    http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS"basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
+#
 from json import dumps
 from pika.exceptions import AMQPError
 
-from django.db.models import Q
 from django.forms import ModelMultipleChoiceField
+from django.forms.models import modelform_factory
+
+from os2datascanner.projects.admin.organizations.models import Organization
 
 from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
 from ..models.authentication_model import Authentication
 from ..models.rules.rule_model import Rule
 from ..models.scannerjobs.scanner_model import Scanner, ScanStatus
-from ..models.userprofile_model import UserProfile
 
 
-class StatusOverview(RestrictedListView):
+class StatusBase(RestrictedListView):
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_superuser and hasattr(user, 'administrator_for'):
+            return self.model.objects.filter(
+                scanner__organization__in=
+                [org.uuid for org in
+                 user.administrator_for.client.organizations.all()]
+            )
+        else:
+            return super().get_queryset()
+
+
+class StatusOverview(StatusBase):
     template_name = "os2datascanner/scan_status.html"
     model = ScanStatus
 
@@ -20,12 +48,24 @@ class StatusOverview(RestrictedListView):
         return super().get_queryset().order_by("-pk")
 
 
-class StatusCompleted(RestrictedListView):
+class StatusCompleted(StatusBase):
     template_name = "os2datascanner/scan_completed.html"
     model = ScanStatus
 
     def get_queryset(self):
         return super().get_queryset().order_by("-pk")
+
+
+class StatusDelete(RestrictedDeleteView):
+    model = ScanStatus
+    fields = []
+    success_url = '/status/'
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        return super().get_form(form_class)
 
 
 class ScannerList(RestrictedListView):
@@ -34,15 +74,8 @@ class ScannerList(RestrictedListView):
     template_name = 'os2datascanner/scanners.html'
     context_object_name = 'scanner_list'
 
-    def get_queryset(self):
-        """Get queryset, don't include non-visible scanners."""
-        qs = super().get_queryset()
-        # Dismiss scans that are not visible
-        qs = qs.filter(is_visible=True)
-        return qs
 
-
-class ScannerBase():
+class ScannerBase(object):
     template_name = 'os2datascanner/scanner_form.html'
 
     def get_form(self, form_class=None):
@@ -52,19 +85,19 @@ class ScannerBase():
         will be limited by the user's organization unless the user is a
         superuser.
         """
-        try:
-            organization = self.request.user.profile.organization
-            groups = self.request.user.profile.groups.all()
-        except UserProfile.DoesNotExist:
-            organization = None
-            groups = None
 
         form = super().get_form(form_class)
-
-        if not self.request.user.is_superuser:
-            self.filter_queryset(form, groups, organization)
+        user = self.request.user
 
         form.fields['schedule'].required = False
+        org_qs = Organization.objects.none()
+        if hasattr(user, 'administrator_for'):
+            org_qs = Organization.objects.filter(
+                client=user.administrator_for.client
+            )
+        elif user.is_superuser:
+            org_qs = Organization.objects.all()
+        form.fields['organization'].queryset = org_qs
 
         form.fields["rules"] = ModelMultipleChoiceField(
             Rule.objects.all(),
@@ -85,30 +118,21 @@ class ScannerBase():
         self.fields = fields
         return fields
 
-    def filter_queryset(self, form, groups, organization):
+    def filter_queryset(self, form, organization):
         for field_name in ['rules']:
             queryset = form.fields[field_name].queryset
             queryset = queryset.filter(organization=organization)
-
-            if self.request.user.profile.is_group_admin:
-                # Already filtered by organization, nothing more to do.
-                pass
-            else:
-                queryset = queryset.filter(
-                    Q(group__in=groups) | Q(group__isnull=True)
-                )
             form.fields[field_name].queryset = queryset
 
     def get_scanner_object(self):
         return self.get_object()
 
     def form_valid(self, form):
-        if not self.request.user.is_superuser:
-            user_profile = self.request.user.profile
+        user = self.request.user
+        if not user.is_superuser:
             self.object = form.save(commit=False)
-            self.object.organization = user_profile.organization
 
-        """Makes sure authentication info gets stored in db."""
+        # Makes sure authentication info gets stored in db.
         domain = form.save(commit=False)
         if domain.authentication:
             authentication = domain.authentication
@@ -146,23 +170,12 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         will be limited by the user's organization unless the user is a
         superuser.
         """
+        form = super().get_form(form_class)
         self.old_url = self.get_object().url
         # Store the existing rules selected in the scannerjob
         self.old_rules = self.object.rules.get_queryset()
-        return super().get_form(form_class)
 
-    def get_form_fields(self):
-        """Get the list of form fields.
-
-        The 'validation_status' field will be added to the form if the
-        user is a superuser.
-        """
-        fields = super().get_form_fields()
-        if self.request.user.is_superuser:
-            fields.append('validation_status')
-
-        self.fields = fields
-        return fields
+        return form
 
     def form_valid(self, form):
         """Validate the submitted form."""
@@ -214,6 +227,7 @@ class ScannerAskRun(RestrictedDetailView):
 class ScannerRun(RestrictedDetailView):
     """Base class for view that handles starting of a scanner run."""
 
+    fields = []
     template_name = 'os2datascanner/scanner_run.html'
     model = Scanner
 

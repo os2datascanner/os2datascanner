@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from os2datascanner.engine2.rules.logical import OrRule
 from ..models.rules.rule_model import Rule
-from ..models.organization_model import APIKey
+from ..models.apikey_model import APIKey
 from ..models.scannerjobs.scanner_model import Scanner
 
 

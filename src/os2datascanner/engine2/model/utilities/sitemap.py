@@ -2,11 +2,19 @@ from io import BytesIO
 from lxml import etree
 from typing import Tuple, Iterable, Optional, List
 from datetime import datetime
+import logging
 import requests
 from os2datascanner.engine2.model.data import unpack_data_url
 
 from .datetime import parse_datetime
 from .utilities import convert_data_to_text
+
+# disable xml vulnerabilities, as described here
+# https://github.com/tiran/defusedxml#external-entity-expansion-local-file
+# https://lxml.de/api/lxml.etree.XMLParser-class.html
+_PARSER = etree.XMLParser(resolve_entities=False)
+
+logger = logging.getLogger(__name__)
 
 def _xp(e, path: str) -> List[str]:
     """Parse an `ElementTree` using a namespace with sitemap prefix.
@@ -48,6 +56,7 @@ def process_sitemap_url(url: str, *, context=requests,
         except requests.exceptions.RequestException:
             return None
 
+    logger.info("trying to download/unpack sitemap {0}".format(url))
     if url.startswith("data:"):
         _, sitemap = unpack_data_url(url)
     else:
@@ -57,17 +66,22 @@ def process_sitemap_url(url: str, *, context=requests,
         raise SitemapMissingError(url)
 
     try:
-        root = etree.parse(BytesIO(sitemap))
+        root = etree.parse(BytesIO(sitemap), parser=_PARSER)
         if _xp(root, "/sitemap:urlset"):
             # This appears to be a normal sitemap: iterate over all of the
             # valid <url /> elements and yield their addresses and last
             # modification dates
-            for url in _xp(root, "/sitemap:urlset/sitemap:url[sitemap:loc]"):
+            i = 0
+            base_url = url
+            for i, url in enumerate(
+                    _xp(root, "/sitemap:urlset/sitemap:url[sitemap:loc]"),
+                    start=1):
                 loc = _xp(url, "sitemap:loc/text()")[0].strip()
                 lm = None
                 for lastmod in _xp(url, "sitemap:lastmod/text()"):
                     lm = parse_datetime(lastmod.strip())
                 yield (loc, lm)
+            logger.info("processed {0} lines in sitemap {1}".format(i, base_url))
         elif _xp(root, "/sitemap:sitemapindex") and allow_sitemap:
             # This appears to be a sitemap index: iterate over all of the valid
             # <sitemap /> elements and recursively yield from them
@@ -85,7 +99,9 @@ def process_sitemap_url(url: str, *, context=requests,
 
 
 class SitemapError(Exception):
-    pass
+    # print the Exception type and not only the Exception message.
+    def __str__(self):
+      return repr(self)
 
 
 class SitemapMissingError(SitemapError):

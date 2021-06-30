@@ -13,11 +13,28 @@
 #
 import json
 import requests
-from uuid import uuid4
 
 from django.conf import settings
 
 
+# TODO: consider extending this to take list of requests and list of args
+def get_token_first(request_function, realm, *args):
+    """Utility function to retrieve access token before given API call
+
+    Takes an API request function, a realm pk and the arguments for the given
+    request call. Returns the error-response if token retrieval fails. Returns
+    the response from the given request call otherwise.
+    """
+    token_response = request_access_token()
+    if token_response.status_code == 200:
+        token = token_response.json()['access_token']
+        response = request_function(realm, token, *args)
+        return response
+    else:
+        return token_response
+
+
+# TODO: delete and replace usages with equivalent calls to get_token_first
 def create_realm(realm):
     response_token = request_access_token()
     # TODO: add error-handling for unsuccessful requests (here or move all to views?)
@@ -25,7 +42,8 @@ def create_realm(realm):
     return request_create_new_realm(realm, token)
 
 
-def add_or_update_ldap_conf(realm, payload):
+# TODO: delete and replace usages with equivalent calls to get_token_first
+def add_ldap_conf(realm, payload):
     response_token = request_access_token()
     # TODO: add error-handling for unsuccessful requests (here or move all to views?)
     token = response_token.json()['access_token']
@@ -62,7 +80,6 @@ def request_access_token():
     return requests.post(url, data=payload)
 
 
-# TODO: check if update is the same url+payload
 def request_create_component(realm, token, payload):
     """TODO:"""
     url = (settings.KEYCLOAK_BASE_URL +
@@ -74,7 +91,18 @@ def request_create_component(realm, token, payload):
     return requests.post(url, data=json.dumps(payload), headers=headers)
 
 
-def check_ldap_connection(realm, token, connection_url):
+def request_update_component(realm, token, payload, config_id):
+    """TODO:"""
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/components/{config_id}')
+    headers = {
+        'Authorization': f'bearer {token}',
+        'Content-Type': 'application/json;charset=utf-8',
+    }
+    return requests.put(url, data=json.dumps(payload), headers=headers)
+
+
+def check_ldap_connection(realm, token, connection_url, timeout=5):
     """ Given realm name, token and ldap connection url,
         returns a post request to testLDAPConnection for checking connection"""
 
@@ -89,12 +117,15 @@ def check_ldap_connection(realm, token, connection_url):
         "action": "testConnection",
         "connectionUrl": connection_url
     }
-    return requests.post(url, data=json.dumps(payload), headers=headers)
+    data = json.dumps(payload)
+    return requests.post(url, data=data, headers=headers, timeout=timeout)
 
 
-def check_ldap_connection_authentication(realm, token, connection_url, bind_dn, bind_credential):
+def check_ldap_authentication(realm, token, connection_url,
+                              bind_dn, bind_credential, timeout=5):
     """ Given realm name, token, ldap connection url, bindDn and bindCredential,
-            returns a post request to testLDAPConnection for checking authentication"""
+            returns a post request to testLDAPConnection for checking authentication
+            """
 
     url = (settings.KEYCLOAK_BASE_URL +
            f'/auth/admin/realms/{realm}/testLDAPConnection')
@@ -109,5 +140,88 @@ def check_ldap_connection_authentication(realm, token, connection_url, bind_dn, 
         "bindCredential": bind_credential,
         "bindDn": bind_dn
     }
-    return requests.post(url, data=json.dumps(payload), headers=headers)
+    data = json.dumps(payload)
+    return requests.post(url, data=data, headers=headers, timeout=timeout)
 
+
+def sync_users(realm, provider_id, token, timeout=5):
+    """Given a realm name and token, synchronises that realm's Keycloak users
+    with the realm's identity provider."""
+
+    headers = {
+        'Authorization': f'bearer {token}'
+    }
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/user-storage/{provider_id}'
+           '/sync?action=triggerFullSync')
+    return requests.post(url, headers=headers, timeout=timeout)
+
+
+def get_user_count_in_realm(realm, token, timeout=5):
+    """ Given a realm name and token and it will return
+    a count on all users in given realm"""
+    headers = {
+        'Authorization': f'bearer {token}'
+
+    }
+
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/users/count')
+
+    user_count = int(requests.get(url, headers=headers, timeout=timeout).content)
+
+    return user_count
+
+
+def get_users(realm, token, timeout=5, max_users=500, start_with_user=0):
+    """Given a realm name and token, returns a list of maximum 500 users at a time
+    known to Keycloak under that realm, starting with user 0."""
+
+    headers = {
+        'Authorization': f'bearer {token}'
+    }
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/users?first={start_with_user}&max='
+           f'{max_users}')
+    return requests.get(url, headers=headers, timeout=timeout)
+
+
+def create_member_of_attribute_mapper(realm, token, provider_id):
+
+    url = (settings.KEYCLOAK_BASE_URL +
+           f'/auth/admin/realms/{realm}/components'
+           )
+
+    headers = {
+        'Authorization': f'bearer {token}',
+        'Content-Type': 'application/json;charset=utf-8',
+    }
+
+    payload = {
+        "config": {
+            "user.model.attribute": [
+                "memberOf"
+            ],
+            "ldap.attribute": [
+                "memberOf"
+            ],
+            "read.only": [
+                "true"
+            ],
+            "always.read.value.from.ldap": [
+                "true"
+            ],
+            "is.mandatory.in.ldap": [
+                "false"
+            ],
+            "is.binary.attribute": [
+                "false"
+            ]
+        },
+        "name": "memberOf",
+        "providerId": "user-attribute-ldap-mapper",
+        "providerType": "org.keycloak.storage.ldap.mappers.LDAPStorageMapper",
+        "parentId": f"{provider_id}"
+    }
+
+    return requests.post(url, data=json.dumps(payload), headers=headers)

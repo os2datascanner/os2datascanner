@@ -4,6 +4,28 @@
 {% load i18n %}
 {% load tz %}
 
+{% block scripts %}
+    {{ block.super }}
+    <script type="text/javascript" src="/jsi18n/"></script>
+{% endblock %}
+
+{% block extra_head_html %}
+<style>
+    .scanner-status {
+        position: relative;
+    }
+    .status-delete {
+        /* border: 1px solid red; */
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    .status-problem p {
+        color:red;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
 <main class="wrapper">
     {% include "partials/main.html" with active_tab="status" %}
@@ -19,50 +41,75 @@
         </div>
 
         {% for status in object_list %}
+
         {% widthratio status.fraction_scanned 1.0 100 as percentage %}
         {% if percentage != "100" %}
         <div class="scanner-status">
-                <h3 class="title">
-                    {{ status.scanner.name }}
-                </h3>
+            <h3 class="title">
+                {{ status.scanner.name }}
+            </h3>
 
             <div class="scan-time">
-            {% if status.fraction_scanned is not None %}
+                {% if status.fraction_scanned is not None %}
                 {% widthratio status.fraction_scanned 1.0 100 as percentage %}
                 {% if percentage != "100" %}
                 <span>{{ percentage }}%</span>
                 <span class="scan-time--bullet">&#8226;</span>
                 <span class="scan-time--width">
                     {% timezone "Europe/Copenhagen" %}
-                        {% trans "about" %} {{ status.estimated_completion_time|timeuntil:status.start_time }}
-                        {% trans "left" %}
+                    {% trans "about" %} {{ status.estimated_completion_time|timeuntil:status.start_time }}
+                    {% trans "left" %}
                     {% endtimezone %}
                 </span>
                 {% endif %}
-            {% endif %}
+                {% endif %}
             </div>
 
             
             {% if status.fraction_scanned is not None %}
-                {% if percentage != "100" %}
-                    <div>
-                    {% widthratio status.fraction_scanned 1.0 100 as percentage %}
-                        <progress max="100" value="{{ percentage }}"></progress>
-                    </div>
-                {% endif %}
-                {% else %}
-                    <div>
-                        <progress></progress>
-                    </div>
-                    <div>
-                        <small>
-                            {% trans "Estimating ..." %}
-                            ({{ status.total_objects }} {% trans "objects explored" %},
-                            {{ status.scanned_objects }}
-                            ({{ status.scanned_size }} byte) {% trans "scanned" %})
-                        </small>
-                    </div>
+            {% if percentage != "100" %}
+            <div>
+                {% widthratio status.fraction_scanned 1.0 100 as percentage %}
+                <progress max="100" value="{{ percentage }}"></progress>
+            </div>
             {% endif %}
+            {% else %}
+            <div>
+                <progress></progress>
+            </div>
+            <div>
+                <small>
+                    {% trans "Estimating ..." %}
+                    ({{ status.total_objects }} {% trans "objects explored" %},
+                    {{ status.scanned_objects }}
+                    ({{ status.scanned_size }} byte) {% trans "scanned" %})
+                </small>
+            </div>
+            {% endif %}
+
+            <form action="/status/{{status.pk}}/delete/" method="post"
+                  style="display: inline-block;" class="status-delete">
+                {% csrf_token %}
+                {% trans "Do you really want to delete the status object for scanner '%(scanner_name)s'?" as r_u_sure %}
+                <button
+                    type="submit"
+                    class="button button--small button--grey"
+                    onclick="return confirm(interpolate('{{ r_u_sure|escapejs }}', {'scanner_name': '{{ status.scanner.name|escapejs }}'}, true))"
+                    title="{% trans 'Delete' %}">
+                    <svg class="icon">
+                        <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
+                    </svg>
+                </button>
+            </form>
+
+            {% if status.message and status.status_is_error %}
+            <div class="status-problem">
+                <p>
+                    {{ status.message }}
+                </p>
+            </div>
+            {% endif %}
+
         </div>
         {% endif %}
         {% endfor %}

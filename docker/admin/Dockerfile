@@ -106,6 +106,7 @@ COPY docker/gunicorn-settings.py ./gunicorn-settings.py
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/projects/admin ./projects/admin
 COPY src/os2datascanner/projects/__init__.py ./projects/
+COPY src/os2datascanner/projects/utils ./projects/utils
 COPY src/os2datascanner/projects/django_toml_configuration.py ./projects/
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./

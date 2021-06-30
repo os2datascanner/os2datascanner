@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.9'
 services:
   db:
     image: postgres:12
@@ -13,6 +13,12 @@ services:
       # to run the django tests.
       # THIS SHOULD NOT BE USED IN PRODUCTION!!!
       - ./dev-environment/postgres-initdb.d/50-add-createdb-permissions.sh:/docker-entrypoint-initdb.d/50-add-createdb-permissions.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come
@@ -72,6 +78,13 @@ services:
       - db
       - admin_frontend
       - queue
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
 
   admin_collector:
     build:
@@ -112,6 +125,12 @@ services:
       - db
       - report_frontend
       - queue
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
 
   report_collector:
     build:
@@ -168,20 +187,20 @@ services:
     depends_on:
       - queue
 
-## Disabled until everyone has updated `docker-compose` to v1.28+
-#  a11y_scanner:
-#    build:
-#      context: ./services/a11y-scanner
-#      dockerfile: docker/Dockerfile
-#    env_file:
-#      - ./dev-environment/a11y-scanner/a11y-scanner.env
-#    # Set only the necessary security permissions
-#    security_opt:
-#      - seccomp:./services/a11y-scanner/chrome_seccomp.json
-#    ports:
-#      - 8888:8888
-#    profiles:
-#      - a11y
+  # a11y is short for "accessibility". There are 11 chars between a-y
+  a11y_scanner:
+    build:
+      context: ./services/a11y-scanner
+      dockerfile: docker/Dockerfile
+    env_file:
+      - ./dev-environment/a11y-scanner/a11y-scanner.env
+    # Set only the necessary security permissions
+    security_opt:
+      - seccomp:./services/a11y-scanner/chrome_seccomp.json
+    ports:
+      - 8888:8888
+    profiles:
+      - a11y
 
   api_server:
     build:
@@ -200,6 +219,8 @@ services:
     volumes:
       - ./dev-environment/api/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
+    profiles:
+      - api
 
   swagger_ui:
     image: swaggerapi/swagger-ui:v3.41.1
@@ -209,6 +230,8 @@ services:
       - "8075:8080"
     depends_on:
       - api_server
+    profiles:
+      - api
 
   prometheus:
     image: prom/prometheus
@@ -216,6 +239,8 @@ services:
       - "./dev-environment/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
     ports:
       - "8050:9090"
+    profiles:
+      - metric
 
   # default user is admin/admin
   grafana:
@@ -225,6 +250,8 @@ services:
       - "./dev-environment/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro"
     ports:
       - "8060:3000"
+    profiles:
+      - metric
 
   idp:
     image: magentalabs/simplesamlphp:2.0.1
@@ -240,6 +267,8 @@ services:
       - ./dev-environment/authsources.php:/var/www/simplesamlphp/config/authsources.php
     ports:
       - "8080:8080"
+    profiles:
+      - sso
 
   postgres-keycloak:
     image: postgres
@@ -251,20 +280,34 @@ services:
       - type: volume
         source: knr-postgres-keycloak-volume
         target: /var/lib/postgresql/data
+    profiles:
+      - ldap
+      - sso
 
   localkeycloak.os2datascanner:
     image: quay.io/keycloak/keycloak:12.0.0
-    # Ignore existing will not import if a realm of this name already exists
-    # For development you may use OVERWRITE_EXISTING which will drop & create
-    command: [ "-Dkeycloak.migration.strategy=IGNORE_EXISTING",
-               "-Djboss.socket.binding.port-offset=10" ,
+
+    # Import of realm is done with migration commands below
+    # because we need to predefine the Master realm.
+    # Using the KEYCLOAK_IMPORT env variable or the -Dkeycloak.import flag will not
+    # work, as it will create a Master realm, then try but fail to create a
+    # new Master realm from our json file.
+
+    # migration.strategy=OVERWRITE_EXISTING will drop & create if changes has occurred
+    # and is set to our default setting.
+    # IGNORE_EXISTING will not import if a realm of this name already exists
+    # which could be useful if you need to test other Keycloak settings.
+    command: [ "-Djboss.socket.binding.port-offset=10",
+               "-Dkeycloak.migration.action=import",
+               "-Dkeycloak.migration.provider=singleFile",
+               "-Dkeycloak.migration.file=/realm.json",
+               "-Dkeycloak.migration.strategy=IGNORE_EXISTING",
              ]
     ports:
       - 8090:8090
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
-      KEYCLOAK_IMPORT: /realm.json
       # PROXY_ADDRESS_FORWARDING: "true"
       DB_USER: keycloak
       DB_PASSWORD: keycloak
@@ -276,6 +319,9 @@ services:
       - ./dev-environment/realm.json:/realm.json
     depends_on:
       - postgres-keycloak
+    profiles:
+      - ldap
+      - sso
 
   ldap_server:
     image: osixia/openldap
@@ -289,6 +335,8 @@ services:
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap/slapd.d
+    profiles:
+      - ldap
 
   ldap_server_admin:
     image: osixia/phpldapadmin
@@ -299,6 +347,8 @@ services:
       PHPLDAPADMIN_HTTPS: 'false'
     depends_on:
       - ldap_server
+    profiles:
+      - ldap
 
 x-disabled:
   admin_cron:

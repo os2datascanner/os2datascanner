@@ -12,7 +12,9 @@ class PikaConnectionHolder(ABC):
     """A PikaConnectionHolder manages a blocking connection to a RabbitMQ
     server. (Like Pika itself, it is not thread safe.)"""
 
-    def __init__(self, **kwargs):
+    def __init__(self,
+                 backoff=pika_settings.AMQP_BACKOFF_PARAMS,
+                 **kwargs):
         credentials = pika.PlainCredentials(pika_settings.AMQP_USER,
                                             pika_settings.AMQP_PWD)
         self._parameters = pika.ConnectionParameters(credentials=credentials,
@@ -20,6 +22,7 @@ class PikaConnectionHolder(ABC):
                                                      **kwargs)
         self._connection = None
         self._channel = None
+        self._backoff = backoff
 
     def make_connection(self):
         """Constructs a new Pika connection."""
@@ -40,7 +43,7 @@ class PikaConnectionHolder(ABC):
             self._connection, _ = run_with_backoff(
                 self.make_connection,
                 pika.exceptions.AMQPConnectionError,
-                **pika_settings.AMQP_BACKOFF_PARAMS,
+                **self._backoff,
             )
         return self._connection
 

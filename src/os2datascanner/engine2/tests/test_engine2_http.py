@@ -4,7 +4,9 @@ import http.server
 from datetime import datetime
 import unittest
 import contextlib
+import logging
 from multiprocessing import Manager, Process
+from requests import RequestException
 
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import (Handle,
@@ -12,9 +14,9 @@ from os2datascanner.engine2.model.core import (Handle,
 from os2datascanner.engine2.model.http import (
         WebSource, WebHandle, make_outlinks)
 from os2datascanner.engine2.model.utilities.datetime import parse_datetime
+from os2datascanner.engine2.model.utilities.sitemap import process_sitemap_url
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
-
 
 here_path = os.path.dirname(__file__)
 test_data_path = os.path.join(here_path, "data", "www")
@@ -50,9 +52,13 @@ embedded_mapped_site = WebSource("http://localhost:64346/",
         sitemap="data:text/xml,<urlset xmlns=\"http://www.sitemaps.org/schemas"
                 "/sitemap/0.9\"><url><loc>http://localhost:64346/hemmeligheder"
                 "2.html</loc></url></urlset>")
+external_links_site = WebSource("http://localhost:64346/",
+        sitemap="http://localhost:64346/external_sitemap.xml")
+xxe_site = WebSource("http://localhost:64346/",
+        sitemap="http://localhost:64346/xxe_sitemap.xml")
 
 
-class Engine2HTTPTest(unittest.TestCase):
+class Engine2HTTPSetup():
     @classmethod
     def setUpClass(cls):
         with Manager() as manager:
@@ -74,6 +80,21 @@ class Engine2HTTPTest(unittest.TestCase):
         cls._ws.join()
         cls._ws = None
 
+    def setUp(self):
+        # list all loggers, just example
+        loggers = [logging.getLogger(name) for name in
+                   logging.root.manager.loggerDict]
+
+        # we only want the module and log message
+        fmt = "[%(name)s] - [%(message)s]"
+        logging.basicConfig(format=fmt)
+        logger = logging.getLogger("os2datascanner")
+        logger.setLevel(logging.DEBUG)
+        # we have no handler in os2ds (except the NullHandler)
+        logger.addHandler(logging.StreamHandler())
+
+
+class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
     def test_exploration(self):
         count = 0
         with SourceManager() as sm:
@@ -115,7 +136,6 @@ class Engine2HTTPTest(unittest.TestCase):
                 "embedded site with sitemap index should have 6 handles")
 
     def test_sitemap_lm(self):
-        count = 0
         with SourceManager() as sm:
             for h in indexed_mapped_site.handles(sm):
                 if h.relative_path == "hemmeligheder2.html":
@@ -154,17 +174,28 @@ class Engine2HTTPTest(unittest.TestCase):
 
     def test_referrer_urls(self):
         with SourceManager() as sm:
+            first_thing = None
             second_thing = None
             with contextlib.closing(site.handles(sm)) as handles:
                 # We know nothing about the first page (maybe it has a link to
                 # itself, maybe it doesn't), but the second page is necessarily
                 # something we got to by following a link
-                next(handles)
+                first_thing = next(handles)
                 second_thing = next(handles)
+
+            self.assertFalse(
+                len(first_thing.referrer_urls),
+                "{0}: base url without sitemap have a referrer".format(
+                    first_thing))
             self.assertTrue(
-                    second_thing.referrer_urls,
-                    "{0}: followed link doesn't have a referrer".format(
-                            second_thing))
+                second_thing.referrer_urls,
+                "{0}: followed link doesn't have a referrer".format(
+                    second_thing))
+            self.assertTrue(
+                list(second_thing.referrer_urls)[0] ==
+                first_thing.presentation_url,
+                "{0}: followed link doesn't have base url as referrer".format(
+                    second_thing))
 
     def test_error(self):
         no_such_file = WebHandle(site, "404.404")
@@ -272,3 +303,70 @@ class Engine2HTTPTest(unittest.TestCase):
                         content, "http://localhost:64346/broken.html")),
                 ["http://localhost:64346/kontakt.html"],
                 "expected one link to be found in broken document")
+
+
+class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
+    def test_broken_links(self):
+        count = 0
+        with SourceManager() as sm:
+            for h in external_links_site.handles(sm):
+                print(h.presentation)
+                count += 1
+        self.assertEqual(
+            count,
+            11,
+            "site with broken internal and external links should have 11 "
+            "handles that does not produce an exception"
+        )
+
+    def test_broken_links_resource(self):
+        count_follow = 0
+        count_nfollow = 0
+        count_nerror = 0
+        with SourceManager() as sm:
+            for h in external_links_site.handles(sm):
+                try:
+                    if h.follow(sm).check():
+                        count_follow += 1
+                    else:
+                        count_nfollow += 1
+                except RequestException as e:
+                    print(
+                        f"got an expected exception for {h.presentation}:\n{e}")
+                    count_nerror += 1
+
+        # We could use unittest internal Exception handling
+        # with self.assertRaises(RequestException) as e:
+        #  ...
+        # exception = e.exception
+        # if exception:
+
+        # In case we catch an generic Exception, we could test the type, msg, code
+        # self.assertTrue(type(exception) in (RequestException, ))
+        # self.assertEqual(exception.msg, "timeout ... ", "wrong exception msg")
+        self.assertEqual(
+            count_follow,
+            6,
+            "site with broken internal and external links should have 6 "
+            "good links")
+        self.assertEqual(
+            count_nfollow,
+            4,
+            "site with broken internal and external links should have 4 "
+            "links that cannot be followed. Either by returning (404 or 410) "
+            "or domain-not-found(dns) or another Requests.RequestsException")
+        self.assertEqual(
+            count_nerror,
+            1,
+            "site with broken internal and external links should have 1 link that "
+            "produces an exception")
+
+
+class Engine2SitemapXXE(Engine2HTTPSetup, unittest.TestCase):
+    def test_sitemap_xxe(self):
+        self.assertEqual(
+            list(process_sitemap_url(xxe_site._sitemap)),
+            [('http://localhost:64346/?', None)],
+            "sitemap xml-parser is vulnerable to XXE(XML External Entity) injection."
+            "Make sure to disable `resolve_entities` in the xml parser"
+        )

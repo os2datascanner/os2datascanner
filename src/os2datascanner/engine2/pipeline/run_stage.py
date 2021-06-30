@@ -1,5 +1,8 @@
 import sys
+import signal
 import argparse
+import traceback
+import logging
 from prometheus_client import start_http_server
 from .utilities.prometheus import prometheus_summary
 
@@ -10,7 +13,15 @@ from .utilities.systemd import notify_ready, notify_stopping
 from . import explorer, processor, matcher, tagger, exporter, worker
 
 
-__module_mapping = {
+def backtrace(signal, frame):
+    """send `SIGURS1` to print the stacktrace,
+    kill -USR1 <pid>
+    """
+    print("Got SIGUSR1, printing stacktrace:", file=sys.stderr)
+    traceback.print_stack()
+
+
+_module_mapping = {
     "explorer": explorer,
     "processor": processor,
     "matcher": matcher,
@@ -18,6 +29,15 @@ __module_mapping = {
     "exporter": exporter,
     "worker": worker
 }
+
+_loglevels = {
+    'critical': logging.CRITICAL,
+    'error': logging.ERROR,
+    'warn': logging.WARNING,
+    'warning': logging.WARNING,
+    'info': logging.INFO,
+    'debug': logging.DEBUG
+    }
 
 
 def _compatibility_main(stage):
@@ -28,6 +48,8 @@ def _compatibility_main(stage):
 
 
 def main():
+    signal.signal(signal.SIGUSR1, backtrace)
+
     parser = argparse.ArgumentParser(
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             description="Runs an OS2datascanner pipeline stage.")
@@ -35,6 +57,14 @@ def main():
             "--debug",
             action="store_true",
             help="print all incoming messages to the console")
+    parser.add_argument(
+            "--log",
+            default="info",
+            help=(
+                "Set logging level. Example --log debug', default='info'"
+            ),
+            choices=("critical", "error", "warn", "warning", "info", "debug",)
+        )
 
     monitoring = parser.add_argument_group("monitoring")
     monitoring.add_argument(
@@ -62,7 +92,16 @@ def main():
             default=3)
 
     args = parser.parse_args()
-    module = __module_mapping[args.stage]
+    module = _module_mapping[args.stage]
+
+    # leave all loggers from external libraries at default(WARNING) level.
+    # change formatting to include datestamp
+    fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
+    # set level for root logger
+    logger = logging.getLogger("os2datascanner")
+    logger.setLevel(_loglevels[args.log])
+    logger.info("starting pipeline {0}".format(args.stage))
 
     if args.enable_metrics:
         start_http_server(args.prometheus_port)
@@ -82,11 +121,11 @@ def main():
                 write=module.WRITES_QUEUES,
                 heartbeat=6000) as runner:
             try:
-                print("Start")
+                logger.info("Start")
                 notify_ready()
                 runner.run_consumer()
             finally:
-                print("Stop")
+                logger.info("Stop")
                 notify_stopping()
 
 

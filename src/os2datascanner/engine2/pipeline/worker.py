@@ -67,6 +67,7 @@ def message_received_raw(body, channel, source_manager):
             pass
         yield ("os2ds_status", messages.StatusMessage(
                 scan_tag=message.scan_spec.scan_tag,
+                message="", status_is_error=False,
                 object_size=object_size,
                 object_type=object_type).to_json_object())
 

@@ -8,19 +8,15 @@
 # for the specific language governing rights and limitations under the
 # License.
 #
-# OS2Webscanner was developed by Magenta in collaboration with OS2 the
-# Danish community of open source municipalities (http://www.os2web.dk/).
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
 #
-# The code is currently governed by OS2 the Danish community of open
-# source municipalities ( http://www.os2web.dk/ )
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from model_utils.managers import InheritanceManager
 
-from ..group_model import Group
-from ..organization_model import Organization
 from ..sensitivity_level import Sensitivity
-
 
 from os2datascanner.engine2.rules.rule import Rule as Twule
 from os2datascanner.engine2.rules.rule import Sensitivity as Twensitivity
@@ -39,13 +35,14 @@ class Rule(models.Model):
 
     name = models.CharField(max_length=256, unique=True, null=False,
                             verbose_name='Navn')
-    organization = models.ForeignKey(Organization, null=False,
-                                     verbose_name='Organisation',
-                                     on_delete=models.PROTECT)
-    group = models.ForeignKey(Group, null=True, blank=True,
-                              verbose_name='Gruppe',
-                              on_delete=models.SET_NULL)
-
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.CASCADE,
+        related_name='rule',
+        verbose_name=_('organization'),
+        default=None,
+        null=True,
+    )
     description = models.TextField(verbose_name='Beskrivelse')
     sensitivity = models.IntegerField(choices=Sensitivity.choices,
                                       default=Sensitivity.HIGH,

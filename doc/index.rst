@@ -16,6 +16,7 @@ Welcome to OS2 Datascanner's documentation!
    pages/user-guide.rst
    pages/api.rst
    pages/engine2.rst
+   pages/notes.rst
    news.rst
 
 

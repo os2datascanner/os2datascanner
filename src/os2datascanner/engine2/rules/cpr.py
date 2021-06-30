@@ -1,7 +1,8 @@
-from typing import Iterator, List, Match, Optional, Tuple, Dict
+from typing import Iterator, List, Match, Optional, Tuple, Dict, Union
 import re
 from itertools import chain
 from enum import Enum, unique
+from collections.abc import Iterable
 
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
@@ -41,28 +42,33 @@ class Context(Enum):
 
 class CPRRule(RegexRule):
     type_label = "cpr"
-    CONTEXT_WORDS = set(["cpr"])
-    BLACKLIST_WORDS = set(
-        ["p-nr.", "p.nr.", "p-nr.:", "p.nr.:", "p-nummer:", "pnr", "pnr:"]
-    )
+    WHITELIST_WORDS = {"cpr", }
+    BLACKLIST_WORDS = {"p-nr", "p.nr", "p-nummer", "pnr", }
 
     def __init__(
         self,
         modulus_11: bool = True,
         ignore_irrelevant: bool = True,
         examine_context: bool = True,
-        context_words: Optional[List[str]] = None,
-        blacklist_words: Optional[List[str]] = None,
+        whitelist: Union[bool, List[str]] = True,
+        blacklist: Union[bool, List[str]] = True,
         **super_kwargs,
     ):
         super().__init__(cpr_regex, **super_kwargs)
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
         self._examine_context = examine_context
-        self._whitelist = context_words if context_words else self.CONTEXT_WORDS
+        # self._whitelist should be bool or set(str)
+        self._whitelist = (
+            self.WHITELIST_WORDS if whitelist is True else (
+                set(whitelist) if isinstance(whitelist, Iterable)
+                else whitelist
+            ))
         self._blacklist = (
-            blacklist_words if blacklist_words else self.BLACKLIST_WORDS
-        )
+            self.BLACKLIST_WORDS if blacklist is True else (
+                set(blacklist) if isinstance(blacklist, Iterable)
+                else blacklist
+        ))
 
     @property
     def presentation_raw(self) -> str:
@@ -85,7 +91,7 @@ class CPRRule(RegexRule):
 
         # If there's p-nr or anthore blacklist anywhere in content, assume
         # there's no valid CPR
-        if self._examine_context and any(
+        if self._examine_context and self._blacklist and any(
             w in content.lower() for w in self._blacklist
         ):
             return
@@ -157,14 +163,12 @@ class CPRRule(RegexRule):
         # test if a whitelist-word is found in the context words.
         # combine the list of 'pre' & 'post' keys in words dict.
         words_lower = [w.lower() for w in chain.from_iterable(words.values())]
-        for cw in self._whitelist:
-            res = next(
-                (True for keyword in words_lower if cw in keyword),
-                False,
-            )
-            if res:
-                ctype.append((Context.WHITELIST, cw))
-                return 1.0, ctype
+        if self._whitelist:
+            for w in self._whitelist:
+                for cw in words_lower:
+                    if w in cw:
+                        ctype.append((Context.WHITELIST, cw))
+                        return 1.0, ctype
 
         # test for balanced delimiters
         delimiters = 0
@@ -254,6 +258,14 @@ class CPRRule(RegexRule):
             **{
                 "modulus_11": self._modulus_11,
                 "ignore_irrelevant": self._ignore_irrelevant,
+                "whitelist": (
+                    list(self._whitelist) if
+                    isinstance(self._whitelist, Iterable) else self._whitelist
+                ),
+                "blacklist": (
+                    list(self._blacklist) if
+                    isinstance(self._blacklist, Iterable) else self._whitelist
+                ),
             },
         )
 
@@ -266,6 +278,8 @@ class CPRRule(RegexRule):
             examine_context=obj.get("examine_context", True),
             sensitivity=Sensitivity.make_from_dict(obj),
             name=obj["name"] if "name" in obj else None,
+            whitelist=obj.get("whitelist", True),
+            blacklist=obj.get("blacklist", True),
         )
 
 

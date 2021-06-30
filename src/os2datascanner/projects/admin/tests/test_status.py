@@ -1,14 +1,22 @@
 import django
 from datetime import datetime
 from dateutil.tz import gettz
+from django.utils.text import slugify
 
-from os2datascanner.projects.admin.adminapp.models.organization_model import Organization
+from os2datascanner.projects.admin.core.models.client import Client
+from os2datascanner.projects.admin.organizations.models.organization import Organization
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import Scanner, ScanStatus
 
 
 class StatusTest(django.test.TestCase):
     def setUp(self):
-        self.organization = Organization()
+        client1 = Client.objects.create(name="client1")
+        self.organization = Organization.objects.create(
+            name="Magenta",
+            uuid="b560361d-2b1f-4174-bb03-55e8b693ad0c",
+            slug=slugify("Magenta"),
+            client=client1,
+        )
         self.scanner = Scanner(organization=self.organization)
 
     def test_estimates(self):

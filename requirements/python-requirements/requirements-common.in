@@ -1,6 +1,7 @@
 # Python packages needed for all parts of OS2datascanner
 
 colorama
+click
 google-api-python-client
 oauth2client
 parameterized

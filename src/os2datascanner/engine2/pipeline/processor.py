@@ -1,9 +1,11 @@
+import logging
 from ..rules.rule import Rule
 from ..model.core import Source, Handle, SourceManager
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
 from . import messages
 
+logger = logging.getLogger(__name__)
 
 READS_QUEUES = ("os2ds_conversions",)
 WRITES_QUEUES = ("os2ds_scan_specs", "os2ds_representations",
@@ -16,7 +18,11 @@ def check(source_manager, handle):
     Handle."""
     while handle.source.handle:
         handle = handle.source.handle
-    return handle.follow(source_manager).check()
+    try:
+        return handle.follow(source_manager).check()
+    except Exception as e:
+        logger.warning("check of {0} failed: {1}".format(handle.presentation, e))
+        return False
 
 
 def message_received_raw(body, channel, source_manager):
@@ -34,6 +40,11 @@ def message_received_raw(body, channel, source_manager):
                         scan_tag=conversion.scan_spec.scan_tag,
                         source=None, handle=conversion.handle, missing=True,
                         message="Resource check failed").to_json_object())
+            return
+
+        if conversion.handle not in conversion.scan_spec.source:
+            # handle point to a source outside the original scan_spec source, so
+            # do nothing
             return
 
         resource = conversion.handle.follow(source_manager)
@@ -88,13 +99,13 @@ def message_received_raw(body, channel, source_manager):
                                 required.value: None
                             }).to_json_object())
     except Exception as e:
-        exception_message = ", ".join([str(a) for a in e.args])
+        exception_message = "Processing error. {0}: ".format(type(e).__name__)
+        exception_message += ", ".join([str(a) for a in e.args])
         for problems_q in ("os2ds_problems", "os2ds_checkups",):
             yield (problems_q, messages.ProblemMessage(
                     scan_tag=conversion.scan_spec.scan_tag,
                     source=None, handle=conversion.handle,
-                    message="Processing error: {0}".format(
-                            exception_message)).to_json_object())
+                    message=exception_message).to_json_object())
 
 
 if __name__ == "__main__":

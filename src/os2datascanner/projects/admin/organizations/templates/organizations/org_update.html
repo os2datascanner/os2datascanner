@@ -1,0 +1,42 @@
+{% extends 'organizations/base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block title %}{% trans "update organization"|capfirst %}{% endblock %}
+
+{% block content %}
+    {% include "partials/breadcrumb.html" with page="organization_update"  %}
+
+    <div class="aside">
+        <h1>{{ object.name }}</h1>
+    </div>
+
+        <form class="form" role="form" method="post">{% csrf_token %}
+            <section class="data-form">
+                {{ form.as_table }}
+            </section>
+            <div class="form__group last-btn">
+                <button type="submit" class="button button--cta" name="save">
+                    {% trans "update organization"|capfirst %}
+                </button>
+            </div>
+        </form>
+        <!--
+        TODO: add boxes with user and unit counts here (dependent on feature flag)
+        <div class="flex-org">
+          <section class="data-form data-org">
+            <div class="blue-box">
+              <i id="person" class="material-icons">person</i>
+            </div>
+              Org units
+          </section>
+
+          <section class="data-form data-org">
+            <div class="blue-box">
+              <i id="people" class="material-icons">people</i>
+            </div>
+              integrated users
+          </section>
+        </div>
+        -->
+{% endblock %}

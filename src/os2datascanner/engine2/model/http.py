@@ -5,7 +5,7 @@ from lxml.etree import ParserError
 from urllib.parse import urljoin, urlsplit, urlunsplit
 import logging
 from requests.sessions import Session
-from requests.exceptions import ConnectionError
+from requests.exceptions import RequestException
 from contextlib import contextmanager
 from typing import Optional, Set
 from datetime import datetime
@@ -17,7 +17,7 @@ from .utilities import NamedTemporaryResource
 from .utilities.sitemap import SitemapError, process_sitemap_url
 from .utilities.datetime import parse_datetime
 
-
+logger = logging.getLogger(__name__)
 MAX_REQUESTS_PER_SECOND = 10
 SLEEP_TIME = 1 / MAX_REQUESTS_PER_SECOND
 
@@ -50,43 +50,90 @@ class WebSource(Source):
         known_addresses = set(to_visit)
         referrer_map = {}
 
+        # initial check that url can be reached. After this point, continue
+        # exploration at all cost
+        try:
+            response = session.head(to_visit[0].presentation_url)
+        except RequestException as e:
+            raise RequestException("Resource is not available") from e
+
+        # scheme://netloc/path?query
+        # https://example.com/some/path?query=foo
         scheme, netloc, path, query, fragment = urlsplit(self._url)
 
         def handle_url(here, new_url, lm_hint=None):
+
             new_url = urljoin(here, new_url)
             n_scheme, n_netloc, n_path, n_query, _ = urlsplit(new_url)
-            if n_scheme == scheme and n_netloc == netloc:
-                new_url = urlunsplit(
-                        (n_scheme, n_netloc, n_path, n_query, None))
-                referrer_map.setdefault(new_url, set()).add(
-                    here if here is not None else self._sitemap)
+            new_url = urlunsplit(
+                    (n_scheme, n_netloc, n_path, n_query, None))
+
+            # ensure the new_url actually is a url and not mailto:, etc
+            if n_scheme not in("http", "https"):
+                return
+
+            referrer_map.setdefault(new_url, set()).add(
+                here if here is not None else self._sitemap)
+            if n_netloc == netloc:
+                # we dont care about whether scheme is http or https
+                # new_url is under same hirachy as here(referrer)
                 new_handle = WebHandle(self, new_url[len(self._url):],
                                        referrer_map[new_url], lm_hint)
-                if new_handle not in known_addresses:
-                    known_addresses.add(new_handle)
-                    to_visit.append(new_handle)
+            else:
+                # new_url is external from here. Create a new handle from a new
+                # Source.
+                base_url = urlunsplit((n_scheme, n_netloc, "", None, None))
+                new_handle = WebHandle(WebSource(base_url),
+                                       new_url[len(base_url):],
+                                       referrer_map[new_url], lm_hint)
+            if new_handle not in known_addresses:
+                known_addresses.add(new_handle)
+                to_visit.append(new_handle)
 
         if self._sitemap:
-            for address, last_modified in process_sitemap_url(
-                    self._sitemap):
+            i = 0  # prevent i from being undefined if sitemap is empty
+            for i, (address, last_modified) in enumerate(
+                    process_sitemap_url(self._sitemap), start=1):
                 handle_url(None, address, last_modified)
+            # first entry in `to_visit` is `self`(ie. mainpage). If the mainpage
+            # is not listed in sitemap this result in +1 in to_visit
+            logger.info("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
+                         format(self._sitemap, i, len(to_visit)))
 
+        # If the handle(here) originates from the Source, then scrape the
+        # resource for all links and submit them to `handle_url` (which appends
+        # the handles to `to_visit`)
+        # If the handle is external, then just yield and let processor check
+        # if the page is available.
         while to_visit:
             here, to_visit = to_visit[0], to_visit[1:]
 
-            response = session.head(here.presentation_url)
-            if response.status_code == 200:
-                ct = response.headers['Content-Type']
-                if simplify_mime_type(ct) == 'text/html':
-                    response = session.get(here.presentation_url)
-                    sleep(SLEEP_TIME)
-                    for li in make_outlinks(
-                            response.content, here.presentation_url):
-                        handle_url(here.presentation_url, li)
-            elif response.is_redirect and response.next:
-                handle_url(here.presentation_url, response.next.url)
-                # Don't yield WebHandles for redirects
-                continue
+            if here in self:
+                try:
+                    response = session.head(here.presentation_url)
+                    if response.status_code == 200:
+                        ct = response.headers.get("Content-Type",
+                                                "application/octet-stream")
+                        if simplify_mime_type(ct) == 'text/html':
+                            response = session.get(here.presentation_url)
+                            sleep(SLEEP_TIME)
+                            i = 0
+                            for i, li in enumerate(
+                                    make_outlinks(response.content,
+                                                  here.presentation_url),
+                                    start=1):
+                                handle_url(here.presentation_url, li)
+                            logger.info(f"site {here.presentation} has {i} links")
+                    elif response.is_redirect and response.next:
+                        handle_url(here.presentation_url, response.next.url)
+                        # Don't yield WebHandles for redirects
+                        continue
+
+                # There should newer be a ConnectionError, as only handles
+                # originating from Source are requested. But just in case..
+                except RequestException as e:
+                    logger.error(f"error while getting head of {here.presentation}",
+                                 exc_info=True)
 
             yield here
 
@@ -130,6 +177,9 @@ class WebResource(FileResource):
         return self._get_cookie().head(self._make_url())
 
     def check(self) -> bool:
+        # This might raise an RequestsException, fx.
+        # [Errno -2] Name or service not known' (dns)
+        # [Errno 110] Connection timed out'     (no response)
         response = self._get_head_raw()
         return response.status_code not in (404, 410,)
 
@@ -227,7 +277,7 @@ class WebHandle(Handle):
     @property
     def presentation_url(self) -> str:
         p = self.source.to_url()
-        if p[-1] != "/":
+        if p[-1] != "/" and not self.relative_path.startswith("/"):
             p += "/"
         return p + self.relative_path
 

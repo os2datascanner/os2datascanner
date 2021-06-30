@@ -57,7 +57,7 @@ p,
 ol,
 ul,
 dl {
-  max-width: 40rem;
+  max-width: 45rem;
 }
 
 ol,
@@ -142,4 +142,9 @@ pre code {
   line-height: 1.5;
   font-size: .75rem;
   margin-bottom: 1.5rem;
+}
+
+.information {
+  padding-top: 1rem;
+  font-size: .9rem;
 }

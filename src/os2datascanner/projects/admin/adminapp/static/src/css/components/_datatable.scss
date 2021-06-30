@@ -37,6 +37,23 @@
       width: 11rem;
     }
 
+    &--info {
+      max-width: 15rem;
+    }
+
+    &--btn {
+      width: 28rem;
+    }
+  }
+
+  a {
+    text-decoration: none;
+    font-weight: 500;
+    color: var(--color-primary);
+
+    &:hover {
+      color: var(--color-primary-dark);
+    }
   }
 }
 
@@ -142,6 +159,16 @@
     margin-top: -.25rem;
   }
 
+  &--character {
+    margin-top: 1.25rem;
+    margin-left: 1rem;
+    margin-right: .25rem;
+  }
+
+  &--bottom {
+    margin-bottom: .25rem;
+  }
+
   &--width {
     margin-right: .75rem;
     height: 1.2rem;
@@ -157,6 +184,21 @@
   svg {
     height: 100%;
     width: auto;
+  }
+
+  .btn-text {
+    color: var(--color-text-main);
+    font-weight: 400;
+
+    &:hover {
+      color: var(--color-text-main);
+    }
+  }
+
+  .text {
+    color: var(--color-text-secondary);
+    font-size: .75rem;
+    line-height: 1rem;
   }
 }
 

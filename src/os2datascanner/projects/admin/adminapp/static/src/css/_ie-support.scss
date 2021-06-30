@@ -9,7 +9,7 @@
   }
 
   // navigation
-  .navigation a {
+  .navi a {
     color: #ffffff;
 
     svg {
@@ -17,7 +17,7 @@
     }
   }
 
-  .navigation a:hover {
+  .navi a:hover {
     color: #00496e;
 
     svg {
@@ -29,7 +29,7 @@
     }
   }
 
-  .navigation a.active {
+  .navi a.active {
     color: #00496e;
     background-color: #fcfcfc;
 
