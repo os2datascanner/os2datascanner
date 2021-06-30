@@ -34,7 +34,7 @@ class Imported(models.Model):
 
     # Store unique ID from external service
     imported_id = models.CharField(
-        max_length=256,
+        max_length=1024,
         null=True,
         blank=True,
         verbose_name=_('imported unique ID'),
