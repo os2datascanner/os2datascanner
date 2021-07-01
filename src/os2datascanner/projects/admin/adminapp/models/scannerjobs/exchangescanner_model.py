@@ -33,6 +33,7 @@ from .scanner_model import Scanner
 
 logger = logging.getLogger(__name__)
 
+
 class ExchangeScanner(Scanner):
     """Scanner for Exchange Web Services accounts"""
 
@@ -42,33 +43,34 @@ class ExchangeScanner(Scanner):
         upload_to=upload_path_exchange_users,
     )
 
-    service_endpoint = models.URLField(max_length=256,
-                                       verbose_name='Service endpoint',
-                                       blank=True, default='')
+    service_endpoint = models.URLField(
+        max_length=256, verbose_name="Service endpoint", blank=True, default=""
+    )
     org_unit = TreeForeignKey(
-        'organizations.OrganizationalUnit',
+        "organizations.OrganizationalUnit",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        verbose_name=_('organizational unit'),
+        verbose_name=_("organizational unit"),
     )
 
     def get_userlist_file_path(self):
         return os.path.join(settings.MEDIA_ROOT, self.userlist.name)
 
     def get_type(self):
-        return 'exchange'
+        return "exchange"
 
     def get_absolute_url(self):
         """Get the absolute URL for scanners."""
-        return '/exchangescanners/'
+        return "/exchangescanners/"
 
     def generate_sources(self):
         user_list = ()
         # org_unit check as you cannot do both simultaneously
         if self.userlist and not self.org_unit:
-            user_list = (u.decode("utf-8").strip()
-                         for u in self.userlist if u.strip())
+            user_list = (
+                u.decode("utf-8").strip() for u in self.userlist if u.strip()
+            )
 
         # org_unit should only exist if chosen and then be used,
         # but a user_list is allowed to co-exist.
@@ -77,12 +79,14 @@ class ExchangeScanner(Scanner):
             user_list = set()
             for position in self.org_unit.position_set.all():
                 addresses = position.account.aliases.filter(
-                    _alias_type=AliasType.EMAIL.value)
+                    _alias_type=AliasType.EMAIL.value
+                )
 
                 if not addresses:
-                    # Provide a log message showing user(s) with no email alias.
-                    logger.info("Be aware that user {position.account.username} "
-                                "has no email alias connected")
+                    logger.info(
+                        f"user {position.account.username} has no email alias "
+                        "connected"
+                    )
 
                 else:
                     for alias in addresses:
@@ -92,11 +96,12 @@ class ExchangeScanner(Scanner):
 
         for u in user_list:
             yield EWSAccountSource(
-                    domain=self.url.lstrip('@'),
-                    server=self.service_endpoint or None,
-                    admin_user=self.authentication.username,
-                    admin_password=self.authentication.get_password(),
-                    user=u)
+                domain=self.url.lstrip("@"),
+                server=self.service_endpoint or None,
+                admin_user=self.authentication.username,
+                admin_password=self.authentication.get_password(),
+                user=u,
+            )
 
     def verify(self) -> bool:
         for account in self.generate_sources():
@@ -104,19 +109,17 @@ class ExchangeScanner(Scanner):
                 try:
                     exchangelib_object = sm.open(account)
                     if exchangelib_object.msg_folder_root:
-                        print("OS2datascanner has access to mailbox {0}".format(
-                            account.address)
+                        logger.info(
+                            "OS2datascanner has access to mailbox {0}".format(
+                                account.address
+                            )
                         )
                 except ErrorNonExistentMailbox:
-                    print("Mailbox {0} does not exits".format(account.address))
+                    logger.info("Mailbox {0} does not exits".format(account.address))
                     return False
         return True
 
     def clean(self):
         if not self.userlist and not self.org_unit:
-            error = _(
-                    "Either a user list or an organisational unit is required")
-            raise ValidationError({
-                "userlist": error,
-                "org_unit": error
-            })
+            error = _("Either a user list or an organisational unit is required")
+            raise ValidationError({"userlist": error, "org_unit": error})
