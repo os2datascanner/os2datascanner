@@ -13,10 +13,7 @@ from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 
 from ..reportapp.management.commands import pipeline_collector
-from ..reportapp.models.aliases.emailalias_model import EmailAlias
 from ..reportapp.models.documentreport_model import DocumentReport
-from ..reportapp.models.roles.defaultrole_model import DefaultRole
-from ..reportapp.models.roles.remediator_model import Remediator
 from ..reportapp.models.roles.leader_model import Leader
 from ..reportapp.models.roles.dpo_model import DataProtectionOfficer
 from ..reportapp.views.views import StatisticsPageView
@@ -431,8 +428,9 @@ class StatisticsPageViewTest(TestCase):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         created_timestamp = [m.created_timestamp.date() for m in view.matches][:2]
+
         self.assertEquals(created_timestamp,
-                          [datetime.date.today(), datetime.date.today()])
+                          [timezone.now().date(), timezone.now().date()])
         dpo.delete()
 
     # count_new_matches_by_month()
