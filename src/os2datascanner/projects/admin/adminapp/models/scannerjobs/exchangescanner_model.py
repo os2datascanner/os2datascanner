@@ -44,8 +44,12 @@ class ExchangeScanner(Scanner):
     )
 
     service_endpoint = models.URLField(
-        max_length=256, verbose_name="Service endpoint", blank=True, default=""
+        max_length=256,
+        verbose_name="Service endpoint",
+        blank=True,
+        default=""
     )
+
     org_unit = TreeForeignKey(
         "organizations.OrganizationalUnit",
         null=True,
@@ -77,24 +81,27 @@ class ExchangeScanner(Scanner):
         elif self.org_unit:
             # Create a set so that emails can only occur once.
             user_list = set()
-            for position in self.org_unit.position_set.all():
-                addresses = position.account.aliases.filter(
-                    _alias_type=AliasType.EMAIL.value
-                )
-
-                if not addresses:
-                    logger.info(
-                        f"user {position.account.username} has no email alias "
-                        "connected"
+            # loop over all units incl children
+            for unit in self.org_unit.get_descendants(include_self=True):
+                for position in unit.position_set.all():
+                    addresses = position.account.aliases.filter(
+                        _alias_type=AliasType.EMAIL.value
                     )
 
-                else:
-                    for alias in addresses:
-                        address = alias.value
-                        if address.endswith(self.url):
-                            user_list.add(address.split("@", maxsplit=1)[0])
+                    if not addresses:
+                        logger.info(
+                            f"user {position.account.username} has no email alias "
+                            "connected"
+                        )
+
+                    else:
+                        for alias in addresses:
+                            address = alias.value
+                            if address.endswith(self.url):
+                                user_list.add(address.split("@", maxsplit=1)[0])
 
         for u in user_list:
+            logger.info(f"submitting scan for user {u}")
             yield EWSAccountSource(
                 domain=self.url.lstrip("@"),
                 server=self.service_endpoint or None,
