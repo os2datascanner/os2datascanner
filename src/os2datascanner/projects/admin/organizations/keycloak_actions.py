@@ -30,9 +30,13 @@ def keycloak_group_dn_selector(d):
                 yield RDN.sequence_to_dn(gdn + (dn[-1],))
 
 
+def _dummy_pc(action, *args):
+    pass
+
+
 def perform_import(
         realm: Realm,
-        progress_callback = None) -> Tuple[int, int, int]:
+        progress_callback = _dummy_pc) -> Tuple[int, int, int]:
     """Collects the user hierarchy from the specified realm and creates
     local OrganizationalUnits and Accounts to reflect it. Local objects
     previously imported by this function but no longer backed by an object
@@ -182,8 +186,7 @@ def perform_import(
         path_to_unit(org, path)
 
     diff = list(local_hierarchy.diff(remote_hierarchy))
-    if progress_callback:
-        progress_callback("diff_computed", len(diff))
+    progress_callback("diff_computed", len(diff))
 
     # See what's changed
     for path, l, r in diff:
@@ -236,8 +239,7 @@ def perform_import(
 
             # XXX: also update other stored properties
 
-            if progress_callback:
-                progress_callback("diff_handled", path)
+            progress_callback("diff_handled", path)
 
     with transaction.atomic():
         to_delete.delete()
