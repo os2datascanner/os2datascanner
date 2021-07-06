@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-29 15:53-0500\n"
+"POT-Creation-Date: 2021-07-05 23:51-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -96,25 +96,25 @@ msgstr "scanstatus"
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:39
-msgid "Check links"
-msgstr "Tjek links"
+#: adminapp/models/scannerjobs/webscanner_model.py:40
+msgid "check links"
+msgstr "tjek links"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:54
-msgid "Validation method"
-msgstr "Valideringsmetode"
+#: adminapp/models/scannerjobs/webscanner_model.py:56
+msgid "validation method"
+msgstr "valideringsmetode"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:60
-msgid "Sitemap file"
-msgstr "Sitemap fil"
+#: adminapp/models/scannerjobs/webscanner_model.py:62
+msgid "sitemap file"
+msgstr "sitemap fil"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:64
-msgid "Sitemap URL"
-msgstr "Sitemap URL"
+#: adminapp/models/scannerjobs/webscanner_model.py:69
+msgid "sitemap url"
+msgstr "sitemap url"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:68
-msgid "Download Sitemap from server"
-msgstr "Hent Sitemap fra serveren"
+#: adminapp/models/scannerjobs/webscanner_model.py:74
+msgid "download Sitemap from server"
+msgstr "hent Sitemap fra serveren"
 
 #: adminapp/models/sensitivity_level.py:33
 msgid "Notification"
@@ -1213,15 +1213,15 @@ msgstr "{cls} for {org}"
 msgid "has been imported"
 msgstr "er blevet importeret"
 
-#: import_services/models/imported_mixin.py:40
+#: import_services/models/imported_mixin.py:39
 msgid "imported unique ID"
 msgstr "importeret unikt ID"
 
-#: import_services/models/imported_mixin.py:46
+#: import_services/models/imported_mixin.py:45
 msgid "last time an update was requested"
 msgstr "sidste gang der blev anmodet om en opdatering"
 
-#: import_services/models/imported_mixin.py:52
+#: import_services/models/imported_mixin.py:51
 msgid "last successful import"
 msgstr "sidste succesfulde importering"
 
@@ -1586,26 +1586,3 @@ msgstr "organisatorisk struktur"
 #: organizations/templates/organizations/orgunit_list.html:10
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
-
-#~ msgid "last synced"
-#~ msgstr "sidst synkroniseret"
-
-#~ msgid "Personal info"
-#~ msgstr "Personlig information"
-
-#~ msgid "Important dates"
-#~ msgstr "Vigtige datoer"
-
-#~ msgid "Phone"
-#~ msgstr "Telefon"
-
-#~ msgid "Users"
-#~ msgstr "Brugere"
-
-#~ msgid "User"
-#~ msgstr "Bruger"
-
-#~ msgid ""
-#~ "This action cannot be undone. Are you sure you want to delete this group?"
-#~ msgstr ""
-#~ "Ønsker du virkelig at slette denne gruppe? Handlingen kan ikke fortrydes."

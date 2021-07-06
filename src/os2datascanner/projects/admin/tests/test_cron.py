@@ -118,7 +118,6 @@ class CronTest(django.test.TestCase):
             validation_status=WebScanner.VALID,
             download_sitemap=False,
             do_last_modified_check=False,
-            do_last_modified_check_head_request=False,
             do_link_check=False,
             pk=SCANNER_PK,
             schedule=[],

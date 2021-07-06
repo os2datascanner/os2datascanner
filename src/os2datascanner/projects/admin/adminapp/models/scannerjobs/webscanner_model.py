@@ -8,11 +8,10 @@
 # for the specific language governing rights and limitations under the
 # License.
 #
-# OS2Webscanner was developed by Magenta in collaboration with OS2 the
-# Danish community of open source municipalities (http://www.os2web.dk/).
+# OS2datascanner is developed by Magenta in collaboration with the OS2 public
+# sector open source network <https://os2.eu/>.
 #
-# The code is currently governed by OS2 the Danish community of open
-# source municipalities ( http://www.os2web.dk/ )
+
 import urllib
 
 from django.conf import settings
@@ -36,7 +35,10 @@ class WebScanner(Scanner):
 
     linkable = True
 
-    do_link_check = models.BooleanField(default=False, verbose_name=_("Check links"))
+    do_link_check = models.BooleanField(
+        default=False,
+        verbose_name=_("check links")
+    )
 
     ROBOTSTXT = 0
     WEBSCANFILE = 1
@@ -51,21 +53,25 @@ class WebScanner(Scanner):
     validation_method = models.IntegerField(
         choices=validation_method_choices,
         default=ROBOTSTXT,
-        verbose_name=_("Validation method"),
+        verbose_name=_("validation method"),
     )
 
     sitemap = models.FileField(
         upload_to=upload_path_webscan_sitemap,
         blank=True,
-        verbose_name=_("Sitemap file"),
+        verbose_name=_("sitemap file"),
     )
 
     sitemap_url = models.CharField(
-        max_length=2048, blank=True, default="", verbose_name=_("Sitemap URL")
+        max_length=2048,
+        blank=True,
+        default="",
+        verbose_name=_("sitemap url")
     )
 
     download_sitemap = models.BooleanField(
-        default=True, verbose_name=_("Download Sitemap from server")
+        default=True,
+        verbose_name=_("download Sitemap from server")
     )
 
     def local_all_rules(self) -> list:
