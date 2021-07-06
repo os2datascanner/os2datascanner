@@ -5,7 +5,7 @@ from ..adminapp.models.authentication_model import Authentication
 from ..adminapp.models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ..adminapp.views.exchangescanner_views import ExchangeScannerCreate
 from ..core.models import Administrator
-from ..core.models.client import Client, Feature
+from ..core.models.client import Client
 from ..organizations.models import OrganizationalUnit, Account, Alias
 from ..organizations.models.aliases import AliasType
 from ..organizations.models.organization import Organization
@@ -60,13 +60,7 @@ class ExchangeScannerViewsTest(TestCase):
             organization=test_org,
         )
 
-        benny_org_unit = OrganizationalUnit.objects.create(
-            name="Benny Org. Unit",
-            uuid="30e431fc-2671-4e85-8217-454cb01b18ec",
-            organization=magenta_org,
-        )
-
-        OrganizationalUnit.objects.create(
+        test_org_unit1 = OrganizationalUnit.objects.create(
             name="Test Org. Unit1",
             uuid="d063b582-fcd5-4a36-a99a-7785321de083",
             parent=test_org_unit0,
@@ -95,7 +89,7 @@ class ExchangeScannerViewsTest(TestCase):
             organization=magenta_org,
         )
 
-        benny_alias = Alias.objects.create(
+        Alias.objects.create(
             uuid="1cae2e34-fd56-428e-aa53-6f077da12d99",
             account=benny_account,
             alias_type=AliasType.EMAIL,
@@ -107,19 +101,19 @@ class ExchangeScannerViewsTest(TestCase):
             domain="ThisIsMyExchangeDomain",
         )
 
-        exchange_scanner = ExchangeScanner.objects.create(
+        ExchangeScanner.objects.create(
             pk=1,
             name="This is an Exchange Scanner",
             organization=magenta_org,
             validation_status=ExchangeScanner.VALID,
             userlist='path/to/nothing.csv',
-            org_unit=benny_org_unit,
+            org_unit=test_org_unit0,
             service_endpoint="exchangeendpoint",
             authentication=scanner_auth_obj,
         )
 
-        benny_account.units.add(benny_org_unit)
-        yvonne_account.units.add(benny_org_unit)
+        benny_account.units.add(test_org_unit1)
+        yvonne_account.units.add(test_org_unit0)
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -137,7 +131,7 @@ class ExchangeScannerViewsTest(TestCase):
         )
         response = self.get_exchangescanner_response()
         tree_queryset = response.context_data['org_units']
-        self.assertEqual(len(tree_queryset), 4)
+        self.assertEqual(len(tree_queryset), 3)
         self.assertEqual(str(tree_queryset[0].uuid),
                          "c0f966ea-af0f-4e81-bd65-b0967a47c3a7")
         self.assertEqual(str(tree_queryset[1].uuid),
@@ -179,7 +173,7 @@ class ExchangeScannerViewsTest(TestCase):
         self.kjeld.is_superuser = True
         response = self.get_exchangescanner_response()
         tree_queryset = response.context_data['org_units']
-        self.assertEqual(len(tree_queryset), 7)
+        self.assertEqual(len(tree_queryset), 6)
         self.assertEqual(str(tree_queryset[3].uuid),
                          "466c3f4e-3f64-4c9b-b6ae-26726721a28f")
         self.assertEqual(str(tree_queryset[4].parent.uuid),
@@ -238,6 +232,8 @@ class ExchangeScannerViewsTest(TestCase):
         for ews_source in exchange_scanner_source:
             sources_yielded += 1
 
+        # benny is a member of test_org_unit1
+        # yvonne is a member of test_org_unit0
         self.assertEqual(sources_yielded, 2)
 
         yvonne_alias.delete()
