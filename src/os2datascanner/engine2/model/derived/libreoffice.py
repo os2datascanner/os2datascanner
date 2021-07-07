@@ -2,8 +2,9 @@ from os import unlink, listdir, scandir
 import magic
 from tempfile import TemporaryDirectory
 from contextlib import closing
-from subprocess import run, PIPE
+from subprocess import DEVNULL
 
+from ....utils.system_utilities import run_custom
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, SourceManager
 from ..file import FilesystemResource
@@ -16,12 +17,12 @@ def libreoffice(*args):
     deleted as soon as the program finishes) and returns a CompletedProcess
     with both stdout and stderr captured."""
     with TemporaryDirectory() as settings:
-        return run(
+        return run_custom(
                 ["libreoffice",
                         "-env:UserInstallation=file://{0}".format(settings),
-                        *args], stdout=PIPE, stderr=PIPE,
-                        timeout=engine2_settings.subprocess["timeout"],
-                        check=True)
+                        *args],
+                stdout=DEVNULL, stderr=DEVNULL, kill_group=True,
+                timeout=engine2_settings.subprocess["timeout"], check=True)
 
 
 # CSV handling requres a really complicated filter name which includes some
