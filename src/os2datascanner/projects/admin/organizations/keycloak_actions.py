@@ -132,7 +132,8 @@ def perform_import(
         unit = units.get(path)
         if unit == None:
             try:
-                unit = OrganizationalUnit.objects.get(imported_id=unit_id)
+                unit = OrganizationalUnit.objects.get(
+                        organization=o, imported_id=unit_id)
             except OrganizationalUnit.DoesNotExist:
                 label = path[-1].value if path else ""
 
@@ -147,7 +148,7 @@ def perform_import(
                         path_fragment = path_fragment[:-1]
         
                 unit = OrganizationalUnit(
-                        imported_id=RDN.sequence_to_dn(path),
+                        imported_id=unit_id,
                         name=label, parent=parent, organization=o,
                         # Clear the MPTT tree fields for now -- they get
                         # recomputed after we do bulk_create
@@ -160,22 +161,25 @@ def perform_import(
             o: Organization,
             path: Sequence[RDN],
             node: LDAPNode) -> Account:
-        uuid = node.properties["id"]
-        account = accounts.get(uuid)
+        # One Account object can have multiple paths (if it's a member of
+        # several groups, for example), so we need to use the true DN as our
+        # imported_id here
+        account_id = node.properties["attributes"]["LDAP_ENTRY_DN"][0]
+        account = accounts.get(account_id)
         if account == None:
             try:
                 account = Account.objects.get(
-                        organization=o, uuid=node.properties["id"])
+                        organization=o, imported_id=account_id)
             except Account.DoesNotExist:
                 account = Account(
-                    imported_id=RDN.sequence_to_dn(path),
-                    uuid=node.properties["id"],
-                    username=node.properties["username"],
-                    first_name=node.properties["firstName"],
-                    last_name=node.properties["lastName"],
-                    organization=o)
+                        imported_id=account_id,
+                        uuid=node.properties["id"],
+                        username=node.properties["username"],
+                        first_name=node.properties["firstName"],
+                        last_name=node.properties["lastName"],
+                        organization=o)
                 to_add.append(account)
-            accounts[uuid] = account
+            accounts[account_id] = account
         return account
 
     # Make sure that we have an OrganizationalUnit hierarchy that reflects the
