@@ -10,7 +10,7 @@ info:
     license:
         name: Mozilla Public License, v. 2.0
         url: https://mozilla.org/MPL/2.0/
-    version: 1.0.1
+    version: 1.1.0
 components:
     securitySchemes:
         bpsk:
@@ -192,6 +192,26 @@ components:
             oneOf:
                 - $ref: "#/components/schemas/data-source"
                 - $ref: "#/components/schemas/web-source"
+        configuration:
+            type: object
+            description: >
+                The configuration dictionary contains settings that adjust
+                OS2datascanner's scanning behaviour and strategies.
+            properties:
+                skip_mime_types:
+                    type: array
+                    description: >
+                        A list of the MIME types for which text conversions
+                        should not be performed.
+
+                        <p>This is chiefly used to switch off
+                        computationally-expensive OCR conversions.
+                    default: []
+                    items:
+                        type: string
+                        description:
+                            A MIME type. (The last character can be the
+                            wildcard "*"; for example, "image/*".)
 paths:
     /dummy/1:
         post:
@@ -226,6 +246,8 @@ paths:
                                     $ref: "#/components/schemas/rule"
                                 source:
                                     $ref: "#/components/schemas/source"
+                                configuration:
+                                    $ref: "#/components/schema/configuration"
             responses:
                 "200":
                     description: a number of pipeline output messages
