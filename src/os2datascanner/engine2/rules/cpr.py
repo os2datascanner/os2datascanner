@@ -7,12 +7,7 @@ from collections.abc import Iterable
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .logical import oxford_comma
-from .utilities.cpr_probability import (
-    get_birth_date,
-    CPR_EXCEPTION_DATES,
-    modulus11_check_raw,
-    CprProbabilityCalculator,
-)
+from .utilities.cpr_probability import modulus11_check, CprProbabilityCalculator
 
 cpr_regex = r"\b(\d{2}[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\b"
 calculator = CprProbabilityCalculator()
@@ -99,16 +94,13 @@ class CPRRule(RegexRule):
         for m in self._compiled_expression.finditer(content):
             cpr = m.group(1).replace(" ", "") + m.group(2)
             if self._modulus_11:
-                try:
-                    if not modulus11_check(cpr):
-                        # This can't be a CPR number
-                        continue
-                except ValueError:
-                    pass
+                mod11, reason =  modulus11_check(cpr)
+                if not mod11:
+                    continue
 
             probability = 1.0
             if self._ignore_irrelevant:
-                probability = calculator.cpr_check(cpr)
+                probability = calculator.cpr_check(cpr, do_mod11_check = False)
                 if isinstance(probability, str):
                     # Error text -- this can't be a CPR number
                     continue
@@ -281,28 +273,6 @@ class CPRRule(RegexRule):
             whitelist=obj.get("whitelist", True),
             blacklist=obj.get("blacklist", True),
         )
-
-
-def modulus11_check(cpr: str) -> bool:
-    """Perform a modulo-11 check on a CPR number with exceptions.
-
-    Return True if the number either passes the modulus-11 check OR is one
-    assigned to a person born on one of the exception dates where the
-    modulus-11 check should not be applied.
-    """
-    try:
-        birth_date = get_birth_date(cpr)
-        # IndexError if cpr is less than 7 chars
-    except (ValueError, IndexError):
-        return False
-
-    # Return True if the birth dates are one of the exceptions to the
-    # modulus 11 rule.
-    if birth_date in CPR_EXCEPTION_DATES:
-        return True
-    else:
-        # Otherwise, perform the modulus-11 check
-        return modulus11_check_raw(cpr)
 
 
 def is_number(s: str) -> bool:

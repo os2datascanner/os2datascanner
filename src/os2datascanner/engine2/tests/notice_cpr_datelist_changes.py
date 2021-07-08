@@ -3,7 +3,7 @@ import datetime # noqa
 import requests
 import unittest
 
-from os2datascanner.engine2.rules import cpr
+from os2datascanner.engine2.rules.utilities.cpr_probability import CPR_EXCEPTION_DATES
 
 
 class CPRTest(unittest.TestCase):
@@ -45,4 +45,4 @@ class CPRTest(unittest.TestCase):
             if cell.text.strip()
         }
 
-        self.assertEquals(dates, cpr.CPR_EXCEPTION_DATES)
+        self.assertEquals(dates, CPR_EXCEPTION_DATES)
