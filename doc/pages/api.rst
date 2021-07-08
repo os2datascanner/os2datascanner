@@ -52,12 +52,13 @@ the files that they contain.
 Examples
 --------
 
-Set a bearer token in ``dev-environment/api/dev-settings.toml``.
+Start the server ``docker-compose --profile api up -d``. For development, the
+bearer token is set in ``dev-environment/api/dev-settings.toml`` as
 
 .. code-block:: conf
 
     [server]
-    token = "os2ds"
+    token = "thisIsNotASecret"
 
 Then interact with the API endpoints {``openapi.yaml``, ``dummy/1``, ``scan/1``} or
 use the swaggerUI on http://localhost:8075
@@ -67,13 +68,13 @@ For example using ``httpie``
 .. code-block:: sh
 
     http localhost:8070/openapi.yaml -d
-    http POST localhost:8070/dummy/1 AUTHORIZATION:'Bearer os2ds'
+    http POST localhost:8070/dummy/1 AUTHORIZATION:'Bearer thisIsNotASecret'
     # post a base64 encoded string and use a regex rule
     echo '{"rule":{"type":"regex","expression":"[Tt]est"},"source":{"type":"data","content":"VGhpcyBpcyBvbmx5IGEgdGVzdA==","mime":"text/plain"}}' | \
-    http post localhost:8070/scan/1 AUTHORIZATION:'Bearer os2ds'
+    http post localhost:8070/scan/1 AUTHORIZATION:'Bearer thisIsNotASecret'
     # scan a domain
     echo '{"rule":{"type":"regex","expression":"[Mm]agenta"},"source":{"type":"web","url":"https://www.magenta.dk"}}' | \
-    http post localhost:8070/scan/1 AUTHORIZATION:'Bearer os2ds'
+    http post localhost:8070/scan/1 AUTHORIZATION:'Bearer thisIsNotASecret'
 
 
 The content is ``base64`` encoded
@@ -98,7 +99,7 @@ interpreted as a literal backspace and have to be escaped as well.
 
     echo '{"rule":{"type":"regex", "expression": "\\b(\d{2}(?:\d{2})?[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\\b"},"source":{"type":"data","content":"'$(base64 -w 0 < FILE_TO_ENCODE.txt)'","mime":"text/plain"}}' | \
     sed 's/\\/\\\\/g' | \
-    http post localhost:8070/scan/1 AUTHORIZATION:'Bearer os2ds** | \
+    http post localhost:8070/scan/1 AUTHORIZATION:'Bearer thisIsNotASecret' | \
     jq
 
 
