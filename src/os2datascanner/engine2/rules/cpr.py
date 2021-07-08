@@ -3,12 +3,14 @@ import re
 from itertools import chain
 from enum import Enum, unique
 from collections.abc import Iterable
+import logging
 
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .logical import oxford_comma
 from .utilities.cpr_probability import modulus11_check, CprProbabilityCalculator
 
+logger = logging.getLogger(__name__)
 cpr_regex = r"\b(\d{2}[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\b"
 calculator = CprProbabilityCalculator()
 
@@ -33,6 +35,10 @@ class Context(Enum):
     NUMBER = 4
     SYMBOL = 5
     BLACKLIST = 6
+    PROBABILITY_CALC = 7
+
+    # XXX custom formatter, like __str__ or __format__(self, format_spec), for
+    # printing only the enum name would be nice.
 
 
 class CPRRule(RegexRule):
@@ -53,7 +59,7 @@ class CPRRule(RegexRule):
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
         self._examine_context = examine_context
-        # self._whitelist should be bool or set(str)
+        # self._whitelist is either a set(str) or False
         self._whitelist = (
             self.WHITELIST_WORDS if whitelist is True else (
                 set(whitelist) if isinstance(whitelist, Iterable)
@@ -89,20 +95,24 @@ class CPRRule(RegexRule):
         if self._examine_context and self._blacklist and any(
             w in content.lower() for w in self._blacklist
         ):
+            logger.info("Content contains a word from the blacklist "
+                        f"[{self._blacklist}]")
             return
 
-        for m in self._compiled_expression.finditer(content):
+        imatch = 0
+        for itot, m in enumerate(self._compiled_expression.finditer(content), 1):
             cpr = m.group(1).replace(" ", "") + m.group(2)
             if self._modulus_11:
                 mod11, reason =  modulus11_check(cpr)
                 if not mod11:
+                    logger.info(f"{cpr} failed modulus11 check due to {reason}")
                     continue
 
             probability = 1.0
             if self._ignore_irrelevant:
                 probability = calculator.cpr_check(cpr, do_mod11_check = False)
                 if isinstance(probability, str):
-                    # Error text -- this can't be a CPR number
+                    logger.info(f"{cpr} is not valid cpr due to {probability}")
                     continue
 
             cpr = cpr[0:4] + "XXXXXX"
@@ -110,7 +120,11 @@ class CPRRule(RegexRule):
             # only examine context if there is any
             if self._examine_context and len(content) > (high - low):
                 p, ctype = self.examine_context(m)
+                # determine if probability stems from context or calculator
                 probability = p if p is not None else probability
+                ctype = ctype if ctype != [] else Context.PROBABILITY_CALC
+                logger.info(f"{cpr} with probability {probability} from context "
+                            f"due to {ctype}")
 
 
             # Extract context.
@@ -120,6 +134,7 @@ class CPRRule(RegexRule):
             )
 
             if probability:
+                imatch += 1
                 yield {
                     "offset": m.start(),
                     "match": cpr,
@@ -132,6 +147,8 @@ class CPRRule(RegexRule):
                     ),
                     "probability": probability,
                 }
+            logger.info(f"{itot} cpr-like numbers, "
+                        f"of which {imatch} had a probabiliy > 0")
 
     def examine_context(
         self, match: Match[str]
