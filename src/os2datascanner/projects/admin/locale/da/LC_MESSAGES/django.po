@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-05 23:51-0500\n"
+"POT-Creation-Date: 2021-07-09 06:53-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -51,12 +51,12 @@ msgstr "Brugerdomæne"
 msgid "Login method"
 msgstr "Login metode"
 
-#: adminapp/models/scannerjobs/exchangescanner_model.py:53
+#: adminapp/models/scannerjobs/exchangescanner_model.py:58
 #: organizations/models/organizational_unit.py:63
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
 
-#: adminapp/models/scannerjobs/exchangescanner_model.py:118
+#: adminapp/models/scannerjobs/exchangescanner_model.py:131
 msgid "Either a user list or an organisational unit is required"
 msgstr "Der kræves enten en brugerlist eller en organisatorisk enhed"
 
@@ -164,7 +164,7 @@ msgstr "Regler"
 #: adminapp/templates/partials/breadcrumb.html:74
 #: adminapp/templates/partials/breadcrumb.html:82 organizations/apps.py:8
 #: organizations/models/organization.py:76
-#: organizations/templates/organizations/org_list.html:5
+#: organizations/templates/organizations/org_list.html:6
 msgid "organizations"
 msgstr "organisationer"
 
@@ -237,7 +237,7 @@ msgstr "Regel"
 
 #: adminapp/templates/os2datascanner/cprrule_form.html:188
 #: adminapp/templates/os2datascanner/regexrule_form.html:281
-#: adminapp/templates/os2datascanner/scanner_form.html:770
+#: adminapp/templates/os2datascanner/scanner_form.html:772
 msgid "Save changes"
 msgstr "Gem ændringer"
 
@@ -517,7 +517,7 @@ msgstr "Upload servicekonto"
 #: adminapp/templates/os2datascanner/scanner_form.html:413
 #: adminapp/templates/os2datascanner/scanner_form.html:440
 #: adminapp/templates/os2datascanner/scanner_form.html:476
-#: adminapp/templates/os2datascanner/scanner_form.html:562
+#: adminapp/templates/os2datascanner/scanner_form.html:563
 msgid "Select a file"
 msgstr "Vælg en fil"
 
@@ -526,7 +526,7 @@ msgstr "Vælg en fil"
 #: adminapp/templates/os2datascanner/scanner_form.html:416
 #: adminapp/templates/os2datascanner/scanner_form.html:443
 #: adminapp/templates/os2datascanner/scanner_form.html:479
-#: adminapp/templates/os2datascanner/scanner_form.html:565
+#: adminapp/templates/os2datascanner/scanner_form.html:566
 msgid "Upload"
 msgstr "Upload"
 
@@ -583,55 +583,55 @@ msgstr "Upload sitemap"
 msgid "Click here to upload sitemap.xml"
 msgstr "Klik her for at uploade sitemap.xml"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:513
+#: adminapp/templates/os2datascanner/scanner_form.html:514
 msgid "add users"
 msgstr "tilføj brugere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:516
+#: adminapp/templates/os2datascanner/scanner_form.html:517
 msgid "select users from"
 msgstr "vælg brugere fra"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:554
+#: adminapp/templates/os2datascanner/scanner_form.html:555
 msgid "or upload"
 msgstr "eller upload"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:560
+#: adminapp/templates/os2datascanner/scanner_form.html:561
 msgid "List of mail users"
 msgstr "Liste af mail brugere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:578
+#: adminapp/templates/os2datascanner/scanner_form.html:579
 msgid "Existing file:"
 msgstr "Eksisterende fil:"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:598
+#: adminapp/templates/os2datascanner/scanner_form.html:599
 msgid "Available employees"
 msgstr "Tilgængelige medarbejdere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:614
+#: adminapp/templates/os2datascanner/scanner_form.html:615
 msgid "Selected employees"
 msgstr "Valgte medarbejdere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:628
+#: adminapp/templates/os2datascanner/scanner_form.html:630
 msgid "Scanner settings"
 msgstr "Scannerindstillinger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:697
+#: adminapp/templates/os2datascanner/scanner_form.html:699
 msgid "Add rules"
 msgstr "Tilføj regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:704
+#: adminapp/templates/os2datascanner/scanner_form.html:706
 msgid "Available rules"
 msgstr "Tilgængelige regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:717
+#: adminapp/templates/os2datascanner/scanner_form.html:719
 msgid "Selected rules"
 msgstr "Valgte regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:735
+#: adminapp/templates/os2datascanner/scanner_form.html:737
 msgid "Schedule scan"
 msgstr "Planlæg scan"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:746
+#: adminapp/templates/os2datascanner/scanner_form.html:748
 msgid ""
 "Schedule your scan by creating a fixed interval or adding a date to complete "
 "the scannerjob."
@@ -639,7 +639,7 @@ msgstr ""
 "Planlæg dit scan ved at oprette et fast interval eller tilføj en dato for "
 "afvikling af scannerjobbet."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:762
+#: adminapp/templates/os2datascanner/scanner_form.html:764
 msgid "The scanner will start at the following time for the selected days:"
 msgstr "Scanneren vil starte på følgende tidspunkt på de valgte dage:"
 
@@ -1081,7 +1081,7 @@ msgstr "annullering i gang"
 
 #: core/models/background_job.py:23
 msgid "finished"
-msgstr "færdig"
+msgstr "afsluttet"
 
 #: core/models/background_job.py:25
 msgid "cancelled"
@@ -1162,7 +1162,7 @@ msgstr "kunde-ID"
 
 #: core/models/client.py:72 organizations/models/organization.py:47
 #: organizations/models/organizational_unit.py:44
-#: organizations/templates/organizations/org_list.html:39
+#: organizations/templates/organizations/org_list.html:40
 msgid "name"
 msgstr "navn"
 
@@ -1200,7 +1200,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_list.html:44
+#: organizations/templates/organizations/org_list.html:45
 msgid "import service"
 msgstr "importservice"
 
@@ -1406,11 +1406,11 @@ msgstr "LDAP-konfigurationer"
 msgid "realm id"
 msgstr "realm id"
 
-#: import_services/models/realm.py:33
+#: import_services/models/realm.py:34
 msgid "Keycloak realm"
 msgstr "Keycloak realm"
 
-#: import_services/models/realm.py:34
+#: import_services/models/realm.py:35
 msgid "Keycloak realms"
 msgstr "Keycloak realms"
 
@@ -1486,7 +1486,7 @@ msgid "SID"
 msgstr "SID"
 
 #: organizations/models/aliases.py:46 organizations/models/organization.py:65
-#: organizations/templates/organizations/org_list.html:40
+#: organizations/templates/organizations/org_list.html:41
 msgid "email"
 msgstr "e-mail"
 
@@ -1557,25 +1557,29 @@ msgstr "{cls}: {account} ({role}) ved {unit}"
 msgid "create new organization"
 msgstr "opret ny organisation"
 
-#: organizations/templates/organizations/org_list.html:19
+#: organizations/templates/organizations/org_list.html:20
 msgid "organizations for"
 msgstr "organisationer for"
 
-#: organizations/templates/organizations/org_list.html:25
-#: organizations/templates/organizations/org_list.html:30
+#: organizations/templates/organizations/org_list.html:26
+#: organizations/templates/organizations/org_list.html:31
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_list.html:41
+#: organizations/templates/organizations/org_list.html:42
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_list.html:83
-#: organizations/templates/organizations/org_list.html:86
+#: organizations/templates/organizations/org_list.html:84
+#: organizations/templates/organizations/org_list.html:87
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_list.html:107
+#: organizations/templates/organizations/org_list.html:102
+msgid "last updated"
+msgstr "sidst opdateret"
+
+#: organizations/templates/organizations/org_list.html:123
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 

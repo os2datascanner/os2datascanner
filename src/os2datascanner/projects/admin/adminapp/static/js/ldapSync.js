@@ -1,8 +1,9 @@
 // check sync
-var btnSync = document.querySelectorAll('button[data-sync-for]')
-
-for (let i = 0; i < btnSync.length; i++)
-    btnSync[i].addEventListener('click', ldapSync)
+// Disabled until websockets arrive or we introduce polling.
+// var btnSync = document.querySelectorAll('button[data-sync-for]')
+//
+// for (let i = 0; i < btnSync.length; i++)
+//     btnSync[i].addEventListener('click', ldapSync)
 
 function ldapSync(e) {
     e.preventDefault()

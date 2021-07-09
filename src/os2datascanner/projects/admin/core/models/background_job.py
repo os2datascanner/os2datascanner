@@ -87,6 +87,9 @@ class BackgroundJob(models.Model):
                 "BackgroundJob.run does nothing --"
                 " call this method on a subclass")
 
+    class Meta:
+        ordering = ['-changed_at']
+
 
 class CounterJob(BackgroundJob):
     """A CounterJob is an example of how to use BackgroundJob. Its very

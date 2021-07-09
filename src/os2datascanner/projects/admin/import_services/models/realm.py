@@ -27,6 +27,7 @@ class Realm(Exported, models.Model):
         'organizations.Organization',
         on_delete=models.PROTECT,  # TODO: 43163
         verbose_name=_('organization'),
+        related_name='realm'
     )
 
     class Meta:
