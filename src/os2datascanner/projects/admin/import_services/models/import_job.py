@@ -21,7 +21,7 @@ class ImportJob(BackgroundJob):
     @property
     def progress(self):
         return (self.handled / self.to_handle
-                if self.handled is not None and self.to_handle is not None
+                if self.handled is not None and self.to_handle not in (0, None)
                 else None)
 
     def run(self):
