@@ -13,6 +13,7 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
+
 import os
 import tempfile
 from pathlib import PureWindowsPath
@@ -21,6 +22,7 @@ from subprocess import call
 import structlog
 from django.conf import settings
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.engine2.model.smbc import SMBCSource
 from .scanner_model import Scanner
@@ -28,12 +30,22 @@ from .scanner_model import Scanner
 # Get an instance of a logger
 logger = structlog.get_logger()
 
+
 class FileScanner(Scanner):
 
     """File scanner for scanning network drives and folders"""
 
 
-    alias = models.CharField(max_length=64, verbose_name='Drevbogstav', null=True)
+    alias = models.CharField(
+            max_length=64,
+            verbose_name=_("drive letter"),
+            null=True)
+    skip_super_hidden = models.BooleanField(
+            verbose_name=_("skip super-hidden files"),
+            help_text=_("do not scan files with the HIDDEN and SYSTEM bits"
+                        " set, or files with the HIDDEN bit set whose name"
+                        " starts with a tilde"),
+            default=False)
 
     @property
     def root_url(self):
@@ -71,4 +83,5 @@ class FileScanner(Scanner):
                 user=self.authentication.username,
                 password=self.authentication.get_password(),
                 domain=self.authentication.domain,
-                driveletter=self.alias)
+                driveletter=self.alias,
+                skip_super_hidden=self.skip_super_hidden)

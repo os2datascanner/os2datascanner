@@ -60,6 +60,24 @@ msgstr "organisatorisk enhed"
 msgid "Either a user list or an organisational unit is required"
 msgstr "Der kræves enten en brugerlist eller en organisatorisk enhed"
 
+#: adminapp/models/scannerjobs/filescanner_model.py:41
+#, fuzzy
+#| msgid "Drive letter"
+msgid "drive letter"
+msgstr "drevbogstav"
+
+#: adminapp/models/scannerjobs/filescanner_model.py:44
+msgid "skip super-hidden files"
+msgstr "spring over superskjulte filer"
+
+#: adminapp/models/scannerjobs/filescanner_model.py:45
+msgid ""
+"do not scan files with the HIDDEN and SYSTEM bits set, or files with the "
+"HIDDEN bit set whose name starts with a tilde"
+msgstr ""
+"lad være med at scanne filer med både HIDDEN- og SYSTEM-attributter sat, "
+"samt filer med HIDDEN-attribut sat og et navn med tilde-tegn foran"
+
 #: adminapp/models/scannerjobs/scanner_model.py:413
 msgid "scan tag"
 msgstr "scan tag"
@@ -164,7 +182,7 @@ msgstr "Regler"
 #: adminapp/templates/partials/breadcrumb.html:74
 #: adminapp/templates/partials/breadcrumb.html:82 organizations/apps.py:8
 #: organizations/models/organization.py:76
-#: organizations/templates/organizations/org_list.html:6
+#: organizations/templates/organizations/org_list.html:5
 msgid "organizations"
 msgstr "organisationer"
 
@@ -1162,7 +1180,7 @@ msgstr "kunde-ID"
 
 #: core/models/client.py:72 organizations/models/organization.py:47
 #: organizations/models/organizational_unit.py:44
-#: organizations/templates/organizations/org_list.html:40
+#: organizations/templates/organizations/org_list.html:39
 msgid "name"
 msgstr "navn"
 
@@ -1200,7 +1218,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_list.html:45
+#: organizations/templates/organizations/org_list.html:44
 msgid "import service"
 msgstr "importservice"
 
@@ -1406,11 +1424,11 @@ msgstr "LDAP-konfigurationer"
 msgid "realm id"
 msgstr "realm id"
 
-#: import_services/models/realm.py:34
+#: import_services/models/realm.py:33
 msgid "Keycloak realm"
 msgstr "Keycloak realm"
 
-#: import_services/models/realm.py:35
+#: import_services/models/realm.py:34
 msgid "Keycloak realms"
 msgstr "Keycloak realms"
 
@@ -1486,7 +1504,7 @@ msgid "SID"
 msgstr "SID"
 
 #: organizations/models/aliases.py:46 organizations/models/organization.py:65
-#: organizations/templates/organizations/org_list.html:41
+#: organizations/templates/organizations/org_list.html:40
 msgid "email"
 msgstr "e-mail"
 
@@ -1557,29 +1575,25 @@ msgstr "{cls}: {account} ({role}) ved {unit}"
 msgid "create new organization"
 msgstr "opret ny organisation"
 
-#: organizations/templates/organizations/org_list.html:20
+#: organizations/templates/organizations/org_list.html:19
 msgid "organizations for"
 msgstr "organisationer for"
 
-#: organizations/templates/organizations/org_list.html:26
-#: organizations/templates/organizations/org_list.html:31
+#: organizations/templates/organizations/org_list.html:25
+#: organizations/templates/organizations/org_list.html:30
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_list.html:42
+#: organizations/templates/organizations/org_list.html:41
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_list.html:84
-#: organizations/templates/organizations/org_list.html:87
+#: organizations/templates/organizations/org_list.html:83
+#: organizations/templates/organizations/org_list.html:86
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_list.html:102
-msgid "last updated"
-msgstr "sidst opdateret"
-
-#: organizations/templates/organizations/org_list.html:123
+#: organizations/templates/organizations/org_list.html:107
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
