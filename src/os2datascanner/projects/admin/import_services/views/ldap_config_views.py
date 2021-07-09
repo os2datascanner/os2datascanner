@@ -1,17 +1,19 @@
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
-from django.shortcuts import redirect, get_object_or_404
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 
-from os2datascanner.projects.admin.import_services.keycloak_services import add_ldap_conf, create_realm, request_access_token, request_update_component, get_token_first, create_member_of_attribute_mapper
-from os2datascanner.projects.admin.organizations.keycloak_actions import perform_import
+from os2datascanner.projects.admin.import_services.keycloak_services import \
+    add_ldap_conf, create_realm, request_access_token, request_update_component, \
+    get_token_first, create_member_of_attribute_mapper
 from os2datascanner.projects.admin.organizations.models import Organization
-
 from os2datascanner.projects.admin.import_services.models import LDAPConfig, Realm
+from os2datascanner.projects.admin.core.models.background_job import JobState
+from os2datascanner.projects.admin.import_services.models.import_job import ImportJob
 
 
 class LDAPEditForm(forms.ModelForm):
@@ -184,7 +186,24 @@ class LDAPImportView(LoginRequiredMixin, DetailView):
         self.object = None
 
     def get(self, request, *args, **kwargs):
-        """Handle a get request to the view."""
+        """
+        Handle a get request to the LDAPImportView.
+        LDAP import jobs are allowed to be created if latest import job has finished.
+        """
+
+        # if no organization return 404
         realm = get_object_or_404(Realm, organization_id=self.get_object().pk)
-        perform_import(realm)
-        return HttpResponse(status=200)
+
+        # get latest import job
+        latest_importjob = realm.importjob.first()
+        if not latest_importjob \
+                or latest_importjob.exec_state == JobState.FINISHED\
+                or latest_importjob.exec_state == JobState.FAILED\
+                or latest_importjob.exec_state == JobState.CANCELLED:
+
+            ImportJob.objects.create(
+                realm=realm
+            )
+
+        # redirect back to organizations
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

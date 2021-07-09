@@ -8,10 +8,12 @@ from .realm import Realm
 
 class ImportJob(BackgroundJob):
     realm = models.ForeignKey(
-            Realm,
-            on_delete=models.CASCADE,
-            null=False,
-            blank=False)
+        Realm,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        related_name='importjob',
+    )
 
     handled = models.IntegerField(null=True, blank=True)
     to_handle = models.IntegerField(null=True, blank=True)
@@ -19,7 +21,7 @@ class ImportJob(BackgroundJob):
     @property
     def progress(self):
         return (self.handled / self.to_handle
-                if self.handled is not None and self.to_handle is not None
+                if self.handled is not None and self.to_handle not in (0, None)
                 else None)
 
     def run(self):
@@ -43,4 +45,4 @@ class ImportJob(BackgroundJob):
                         self.handled, RDN.sequence_to_dn(path), self.to_handle)
                 self.save()
 
-        perform_import(self.realm, callback=_callback)
+        perform_import(self.realm, progress_callback=_callback)

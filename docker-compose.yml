@@ -102,6 +102,24 @@ services:
       - admin_application
       - queue
 
+  admin_job_runner:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: docker/admin/Dockerfile
+      target: application
+    environment:
+      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
+    command: python manage.py run_background_jobs
+    volumes:
+      - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      - db
+      - admin_application
+      - queue
+
+
   report_application:
     build:
       context: .
