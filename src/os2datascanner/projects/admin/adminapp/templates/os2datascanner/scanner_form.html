@@ -633,42 +633,19 @@
             <div id="select_scan_rules_container">
 
               <div class="checkbox-group">
-                <div class="ds-checkbox">
-                  <input 
-                    type="checkbox" 
-                    id="id_{{ form.do_ocr.name }}" 
-                    name="{{ form.do_ocr.name }}"
-                    value="{{ form.do_ocr.name }}" 
-                    {% if form.do_ocr.field.disabled %} 
-                    disabled 
-                    {% endif %}
-                    {% if form.do_ocr.value %} 
-                    checked="checked" 
-                    {% endif %}>
-                  <label for="id_{{ form.do_ocr.name }}">
-                    {{ form.do_ocr.label }}
-                    {% if form.do_ocr.help_text %}
-                    <small>{{ form.do_ocr.help_text }}</small>
-                    {% endif %}
-                  </label>
-                </div>
-
-                <div class="ds-checkbox ds-checkbox--inline">
-                  <input 
-                    type="checkbox" 
-                    id="id_{{ form.do_last_modified_check.name }}"
-                    name="{{ form.do_last_modified_check.name }}" 
-                    value="{{ form.do_last_modified_check.name }}"
-                    {% if form.do_last_modified_check.field.disabled %} disabled {% endif %}
-                    {% if form.do_last_modified_check.value %} checked="checked" {% endif %}>
-                  <label for="id_{{ form.do_last_modified_check.name }}">
-                    {{ form.do_last_modified_check.label }}
-                    {% if form.do_last_modified_check.help_text %}
-                    <small>{{ form.do_last_modified_check.help_text }}</small>
-                    {% endif %}
-                  </label>
-                </div>
+                {% if form.do_ocr %}
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.do_ocr %}
+                {% endif %}
+                {% if form.do_last_modified_check %}
+                  {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.do_last_modified_check %}
+                {% endif %}
               </div>
+
+              {% if form.skip_super_hidden %}
+              <div class="checkbox-group">
+                {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.skip_super_hidden %}
+              </div>
+              {% endif %}
 
               {% if view.type == 'web' %}
               <div class="checkbox-group">

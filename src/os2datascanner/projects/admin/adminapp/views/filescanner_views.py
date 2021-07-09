@@ -37,6 +37,7 @@ class FileScannerCreate(ScannerCreate):
         'alias',
         'do_ocr',
         'do_last_modified_check',
+        'skip_super_hidden',
         'rules',
         'organization',
         ]
@@ -66,6 +67,7 @@ class FileScannerUpdate(ScannerUpdate):
         'alias',
         'do_ocr',
         'do_last_modified_check',
+        'skip_super_hidden',
         'rules',
         'organization',
         ]
