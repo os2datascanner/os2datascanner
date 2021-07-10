@@ -1,5 +1,6 @@
-from os import unlink, listdir, scandir
+import logging
 import magic
+from os import unlink, listdir, scandir
 from tempfile import TemporaryDirectory
 from contextlib import closing
 from subprocess import DEVNULL
@@ -11,6 +12,25 @@ from ..file import FilesystemResource
 from .derived import DerivedSource
 from .utilities import office_metadata
 
+logger = logging.getLogger(__name__)
+
+"""Helper functions for converting Office documents
+
+The document is converted to html using libreoffice. If some of the resulting html
+files are larger than @size_treshold, specified in the config file under
+We use LibreOffice to convert Office documents to HTML versions that we can
+then process into plain text. (Just asking directly for a plain text version
+doesn't give us any of the embedded resources, which we also need to scan.)
+
+When the resulting HTML files are too big (according to the
+"model.libreoffice.size_threshold" preference), they're automatically deleted,
+and LibreOffice is invoked again to produce a simpler plain text version.
+
+Later, the html is converted to the representation needed by the rule thats is being
+applied. This is done by the more generic convertes found in the
+src/engine2/conversions folder
+
+"""
 
 def libreoffice(*args):
     """Invokes LibreOffice with a fresh settings directory (which will be
@@ -25,15 +45,25 @@ def libreoffice(*args):
                 timeout=engine2_settings.subprocess["timeout"], check=True)
 
 
+# The fallback CSV filter, used when HTML representations of spreadsheets are
+# too big.
 # CSV handling requres a really complicated filter name which includes some
-# options. "9" means "separate fields with U+0009 CHARACTER TABULATION", "34"
-# means "wrap string values in U+0022 QUOTATION MARK", and "76" means UTF-8
-# output
+# options. The syntax is
+# (filtername):'field sep','text delim','char set', ...[more options]
+# "9" means "separate fields with U+0009 CHARACTER TABULATION", "34" means "wrap
+# string values in U+0022 QUOTATION MARK", and "76" means UTF-8 output
+# The fields are described here
+# https://wiki.openoffice.org/wiki/Documentation/DevGuide/Spreadsheets/Filter_Options#Filter_Options_for_the_CSV_Filter
+# The filter name is found by looking at "oor:name" inside the relevant .xcu file
+# https://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
+# The format of --convert-to is then <TargetFileExtension>:<NameOfFilter>:<Options>
 __csv = "csv:Text - txt - csv (StarCalc):9,34,76"
 
 
 # Filter name keys come from /usr/lib/libreoffice/share/registry/PROG.xcd;
-# the dictionary's values specify the input filter name and a fallback output
+# OR from
+# https://help.libreoffice.org/latest/ro/text/shared/guide/convertfilters.html
+# The dictionary's values specify the input filter name and a fallback output
 # filter to be used after HTML processing
 _actually_supported_types = {
     "application/msword": ("MS Word 97", "txt"),
@@ -60,6 +90,9 @@ def _replace_large_html(
         for entry in file_iterator:
             if entry.name.endswith(".html"):
                 if entry.stat().st_size >= size_threshold:
+                    logger.info(f"{entry.name} is larger than {size_threshold}. "
+                                f"Replacing it with a simpler representation "
+                                f"[{output_filter}]")
                     libreoffice(
                             "--infilter={0}".format(input_filter),
                             "--convert-to", output_filter,
