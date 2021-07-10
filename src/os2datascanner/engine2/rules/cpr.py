@@ -127,11 +127,11 @@ class CPRRule(RegexRule):
                             f"due to {ctype}")
 
 
-            # Extract context.
+            # Extract context, remove newlines and tabs for better representation
             match_context = content[max(low - 50, 0) : high + 50]
-            match_context = self._compiled_expression.sub(
+            match_context = " ".join(self._compiled_expression.sub(
                 "XXXXXX-XXXX", match_context
-            )
+            ).split())
 
             if probability:
                 imatch += 1
