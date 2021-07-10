@@ -27,13 +27,18 @@ class Engine2CompoundSourceTest(unittest.TestCase):
     def setUp(self):
         self.rule = CPRRule(modulus_11=False, ignore_irrelevant=False)
 
-    def run_rule(self, source, sm):
+    def run_rule(self, source, sm, offset=0):
+        """spredsheets are converted to html, which is then converted to text. The html
+        conversion preserves newlines and tabs, inserted between cells. This results
+        in @offset != 0
+
+        """
         results = list(try_apply(sm, source, self.rule))
         self.assertEqual(
                 results,
                 [
                     {
-                        "offset": 0,
+                        "offset": offset,
                         "match": "1310XXXXXX",
                         "context": "XXXXXX-XXXX",
                         "context_offset": 0,
@@ -42,13 +47,13 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                     }
                 ])
 
-    def run_rule_on_handle(self, handle):
+    def run_rule_on_handle(self, handle, offset=0):
         with SourceManager() as sm:
             source = Source.from_handle(handle, sm)
             self.assertIsNotNone(
                     source,
                     "{0} couldn't be made into a Source".format(handle))
-            self.run_rule(source, sm)
+            self.run_rule(source, sm, offset)
 
     def test_odt(self):
         self.run_rule_on_handle(
@@ -83,21 +88,24 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                 FilesystemHandle.make_handle(
                         os.path.join(
                                 test_data_path,
-                                "libreoffice/test.ods")))
+                                "libreoffice/test.ods")),
+                offset=8)
 
     def test_xls(self):
         self.run_rule_on_handle(
                 FilesystemHandle.make_handle(
                         os.path.join(
                                 test_data_path,
-                                "msoffice/test.xls")))
+                                "msoffice/test.xls")),
+                offset=8)
 
     def test_xlsx(self):
         self.run_rule_on_handle(
                 FilesystemHandle.make_handle(
                         os.path.join(
                                 test_data_path,
-                                "msoffice/test.xlsx")))
+                                "msoffice/test.xlsx")),
+                offset=8)
 
     def test_corrupted_doc(self):
         corrupted_doc_handle = FilesystemHandle.make_handle(

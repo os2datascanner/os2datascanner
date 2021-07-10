@@ -5,24 +5,24 @@ from os2datascanner.engine2.rules.cpr import CPRRule
 
 content = """
 @ Godtages fordi det er et valid cpr der opfylder Modulus 11 tjek.
-Anders And 060521-4002
+Anders And 010180-0008
 @ godtages fordi der indgår cpr i linjen
-Anders And, cpr: [060521-4010
+Anders And, cpr: [020280-0009
 @ godtages fordi parenteser er balanceret
-Anders And, [060521-4029], Paradisæblevej 111
+Anders And, [030380-0018], Paradisæblevej 111
 @ godtages fordi der tillades ekstra ord ved parenteser.
-Anders (060521-4037 And), Andeby
+Anders (040480-0019 And), Andeby
 @ godtages ikke fordi foranstående ord er et tal, der IKKE opfylder kriterium for cpr
-Anders And 113 060521-4045
+Anders And 113 050580-0001
 @ godtages fordi bagvedstående/foranstående ord opfylder kriterium for cpr
-Anders And 060521-4053 060521-4061
+Anders And 060680-0002 070680-0018
 
 @ godtages ikke fordi foranstående ord er et mix af store og små bogstaver
-"HOST/ABCD.intra.corp"], "uSNChanged": [060521-4088], "uSNCreated": [123456], "userAccountControl":
+"HOST/ABCD.intra.corp"], "uSNChanged": [070780-0003], "uSNCreated": [123456], "userAccountControl":
 @ godtages ikke pga. omkringstående tal OG fordi kun to ord medtages, vil paranteser være ubalanceret.
-712000 0 0 WET} {060521-4096 3600 1 WEST} [0605214118 0 0 WET]
+712000 0 0 WET} {080880-0004 3600 1 WEST} [090880-0001 0 0 WET]
 @ godtages ikke pga foranstående er unær operatør(dvs. fortegns-minus. På eng: unary) eller specialsymbol
-16768 0 LMT} {-060521-4126} {+060521-4134} (#060521-4142)
+16768 0 LMT} {090980-0005-} {+100980-0006} (#110980-0003)
 
 Følgende kriterier undersøges
 - Kontekst består af de `n_words=2` foranstående/bagvedstående ord incl. tegn.
@@ -32,13 +32,13 @@ der opfylder modulus 11, rent faktisk er et cpr-nummber.
 
 Følgende heuristik benyttes
 - indgår p-nr eller variant deraf noget sted i teksten
-- Er der unær operator før eller efter, fx -060521-4150 eller 060521-4169+
-- Er der ubalanceret symboler eller parenteser omkring, fx [060521-4177. Men [060521-4185] vil være ok.
-- Kommer der et tal der ikke ligner et cpr før eller efter, fx 113 060521-4193
-- Er ord før eller efter ikke ’alle små’-, ’stort begyndelsesbogstav’ eller ’alle caps’, fx uSNChanged 060521-4207
+- Er der unær operator før eller efter, fx -101080-0001 eller 111080-0009+
+- Er der ubalanceret symboler eller parenteser omkring, fx [111180-0002. Men [121180-0018] vil være ok.
+- Kommer der et tal der ikke ligner et cpr før eller efter, fx 113 121280-0003
+- Er ord før eller efter ikke ’alle små’-, ’stort begyndelsesbogstav’ eller ’alle caps’, fx uSNChanged 131280-0019
 resulterer alle i sandsynlighed=0.
 
-- indeholder ord før cpr, fx Anders cpr-nr [060521-4215]
+- indeholder ord før cpr, fx Anders cpr-nr [141280-0008]
 resulterer i  sandsynlighed=1
 
 Følgende symboler undersøges
@@ -47,128 +47,149 @@ Følgende symboler undersøges
 - symboler "!", "#", "%"
 """
 
+
 # all possible matches
 ALL_MATCHES = [
-    {'offset': 79,
-     'match': '0605XXXXXX',
-     'context': 'alid cpr der opfylder Modulus 11 tjek.\nAnders And XXXXXX-XXXX\n@ godtages fordi der indgår cpr i linjen\nAnders A',
+    {'context': 'alid cpr der opfylder Modulus 11 tjek. Anders And XXXXXX-XXXX @ '
+     'godtages fordi der indgår cpr i linjen Anders A',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 150,
-     'match': '0605XXXXXX',
-     'context': 's fordi der indgår cpr i linjen\nAnders And, cpr: [XXXXXX-XXXX\n@ godtages fordi parenteser er balanceret\nAnders ',
+     'match': '0101XXXXXX',
+     'offset': 79,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 's fordi der indgår cpr i linjen Anders And, cpr: [XXXXXX-XXXX @ '
+     'godtages fordi parenteser er balanceret Anders',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 217,
-     'match': '0605XXXXXX',
-     'context': 'tages fordi parenteser er balanceret\nAnders And, [XXXXXX-XXXX], Paradisæblevej 111\n@ godtages fordi der tillade',
+     'match': '0202XXXXXX',
+     'offset': 150,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'tages fordi parenteser er balanceret Anders And, [XXXXXX-XXXX], '
+     'Paradisæblevej 111 @ godtages fordi der tillade',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 315,
-     'match': '0605XXXXXX',
-     'context': 'i der tillades ekstra ord ved parenteser.\nAnders (XXXXXX-XXXX And), Andeby\n@ godtages ikke fordi foranstående o',
+     'match': '0303XXXXXX',
+     'offset': 217,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'i der tillades ekstra ord ved parenteser. Anders (XXXXXX-XXXX '
+     'And), Andeby @ godtages ikke fordi foranstående o',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 441,
-     'match': '0605XXXXXX',
-     'context': 'er IKKE opfylder kriterium for cpr\nAnders And 113 XXXXXX-XXXX\n@ godtages fordi bagvedstående/foranstående ord o',
+     'match': '0404XXXXXX',
+     'offset': 315,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'er IKKE opfylder kriterium for cpr Anders And 113 XXXXXX-XXXX @ '
+     'godtages fordi bagvedstående/foranstående ord o',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 539,
-     'match': '0605XXXXXX',
-     'context': 'stående ord opfylder kriterium for cpr\nAnders And XXXXXX-XXXX XXXXXX-XXXX\n\n@ godtages ikke fordi foranstående o',
+     'match': '0505XXXXXX',
+     'offset': 441,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'stående ord opfylder kriterium for cpr Anders And XXXXXX-XXXX '
+     'XXXXXX-XXXX @ godtages ikke fordi foranstående o',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 551,
-     'match': '0605XXXXXX',
-     'context': 'opfylder kriterium for cpr\nAnders And XXXXXX-XXXX XXXXXX-XXXX\n\n@ godtages ikke fordi foranstående ord er et mix',
+     'match': '0606XXXXXX',
+     'offset': 539,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'opfylder kriterium for cpr Anders And XXXXXX-XXXX XXXXXX-XXXX @ '
+     'godtages ikke fordi foranstående ord er et mix',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 679,
-     'match': '0605XXXXXX',
-     'context': 'bogstaver\n"HOST/ABCD.intra.corp"], "uSNChanged": [XXXXXX-XXXX], "uSNCreated": [123456], "userAccountControl":\n@',
+     'match': '0706XXXXXX',
+     'offset': 551,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'bogstaver "HOST/ABCD.intra.corp"], "uSNChanged": [XXXXXX-XXXX], '
+     '"uSNCreated": [123456], "userAccountControl": @',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 859,
-     'match': '0605XXXXXX',
-     'context': 'vil paranteser være ubalanceret.\n712000 0 0 WET} {XXXXXX-XXXX 3600 1 WEST} [XXXXXX-XXXX 0 0 WET]\n@ godtages ikke',
+     'match': '0707XXXXXX',
+     'offset': 679,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'vil paranteser være ubalanceret. 712000 0 0 WET} {XXXXXX-XXXX '
+     '3600 1 WEST} [XXXXXX-XXXX 0 0 WET] @ godtages ikk',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 885,
-     'match': '0605XXXXXX',
-     'context': 'ceret.\n712000 0 0 WET} {XXXXXX-XXXX 3600 1 WEST} [XXXXXX-XXXX 0 0 WET]\n@ godtages ikke pga foranstående er unær',
+     'match': '0808XXXXXX',
+     'offset': 859,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'ceret. 712000 0 0 WET} {XXXXXX-XXXX 3600 1 WEST} [XXXXXX-XXXX 0 '
+     '0 WET] @ godtages ikke pga foranstående er unær',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 1026,
-     'match': '0605XXXXXX',
-     'context': 'På eng: unary) eller specialsymbol\n16768 0 LMT} {-XXXXXX-XXXX} {+XXXXXX-XXXX} (#XXXXXX-XXXX)\n\nFølgende kriterie',
+     'match': '0908XXXXXX',
+     'offset': 885,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'På eng: unary) eller specialsymbol 16768 0 LMT} {XXXXXX-XXXX-} '
+     '{+XXXXXX-XXXX} (#XXXXXX-XXXX) Følgende kriteri',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 1041,
-     'match': '0605XXXXXX',
-     'context': 'eller specialsymbol\n16768 0 LMT} {-XXXXXX-XXXX} {+XXXXXX-XXXX} (#XXXXXX-XXXX)\n\nFølgende kriterier undersøges\n- ',
+     'match': '0909XXXXXX',
+     'offset': 1026,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'eller specialsymbol 16768 0 LMT} {XXXXXX-XXXX-} {+XXXXXX-XXXX} '
+     '(#XXXXXX-XXXX) Følgende kriterier undersøges -',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 1056,
-     'match': '0605XXXXXX',
-     'context': 'mbol\n16768 0 LMT} {-XXXXXX-XXXX} {+XXXXXX-XXXX} (#XXXXXX-XXXX)\n\nFølgende kriterier undersøges\n- Kontekst består',
+     'match': '1009XXXXXX',
+     'offset': 1042,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'mbol 16768 0 LMT} {XXXXXX-XXXX-} {+XXXXXX-XXXX} (#XXXXXX-XXXX) '
+     'Følgende kriterier undersøges - Kontekst består',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 1511,
-     'match': '0605XXXXXX',
-     'context': 'ksten\n- Er der unær operator før eller efter, fx -XXXXXX-XXXX eller XXXXXX-XXXX+\n- Er der ubalanceret symboler ',
+     'match': '1109XXXXXX',
+     'offset': 1057,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'ksten - Er der unær operator før eller efter, fx -XXXXXX-XXXX '
+     'eller XXXXXX-XXXX+ - Er der ubalanceret symboler',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 1529,
-     'match': '0605XXXXXX',
-     'context': 'r operator før eller efter, fx -XXXXXX-XXXX eller XXXXXX-XXXX+\n- Er der ubalanceret symboler eller parenteser o',
+     'match': '1010XXXXXX',
+     'offset': 1512,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'r operator før eller efter, fx -XXXXXX-XXXX eller XXXXXX-XXXX+ - '
+     'Er der ubalanceret symboler eller parenteser o',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 1602,
-     'match': '0605XXXXXX',
-     'context': 'balanceret symboler eller parenteser omkring, fx [XXXXXX-XXXX. Men [XXXXXX-XXXX] vil være ok.\n- Kommer der et t',
+     'match': '1110XXXXXX',
+     'offset': 1530,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'balanceret symboler eller parenteser omkring, fx [XXXXXX-XXXX. '
+     'Men [XXXXXX-XXXX] vil være ok. - Kommer der et t',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 1620,
-     'match': '0605XXXXXX',
-     'context': 'r eller parenteser omkring, fx [XXXXXX-XXXX. Men [XXXXXX-XXXX] vil være ok.\n- Kommer der et tal der ikke ligner',
+     'match': '1111XXXXXX',
+     'offset': 1603,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'r eller parenteser omkring, fx [XXXXXX-XXXX. Men [XXXXXX-XXXX] '
+     'vil være ok. - Kommer der et tal der ikke ligner',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 1713,
-     'match': '0605XXXXXX',
-     'context': 'al der ikke ligner et cpr før eller efter, fx 113 XXXXXX-XXXX\n- Er ord før eller efter ikke ’alle små’-, ’stort',
+     'match': '1211XXXXXX',
+     'offset': 1621,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'al der ikke ligner et cpr før eller efter, fx 113 XXXXXX-XXXX - '
+     'Er ord før eller efter ikke ’alle små’-, ’stort',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 1828,
-     'match': '0605XXXXXX',
-     'context': 'yndelsesbogstav’ eller ’alle caps’, fx uSNChanged XXXXXX-XXXX\nresulterer alle i sandsynlighed=0.\n\n- indeholder ',
+     'match': '1212XXXXXX',
+     'offset': 1714,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'yndelsesbogstav’ eller ’alle caps’, fx uSNChanged XXXXXX-XXXX '
+     'resulterer alle i sandsynlighed=0. - indeholder',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0},
-    {'offset': 1920,
-     'match': '0605XXXXXX',
-     'context': 'd=0.\n\n- indeholder ord før cpr, fx Anders cpr-nr [XXXXXX-XXXX]\nresulterer i  sandsynlighed=1\n\nFølgende symboler',
+     'match': '1312XXXXXX',
+     'offset': 1829,
+     'probability': 1.0,
+     'sensitivity': None},
+    {'context': 'd=0. - indeholder ord før cpr, fx Anders cpr-nr [XXXXXX-XXXX] '
+     'resulterer i sandsynlighed=1 Følgende symboler',
      'context_offset': 0,
-     'sensitivity': None,
-     'probability': 1.0}
+     'match': '1412XXXXXX',
+     'offset': 1921,
+     'probability': 1.0,
+     'sensitivity': None}
 ]
 
 
@@ -208,12 +229,12 @@ class RuleTests(unittest.TestCase):
         ]
 
         for rule, expected, description in rules:
-            print(description)
+            print(f"testing {description}")
             with self.subTest(rule):
                 matches = rule.match(content)
                 if expected:
                     self.assertCountEqual([match for match in matches],
                                           expected,
-                                          "")
+                                          f"test of {description} failed")
                 else:
                     self.assertFalse(list(matches))
