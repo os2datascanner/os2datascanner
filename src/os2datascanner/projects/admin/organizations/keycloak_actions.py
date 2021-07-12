@@ -44,7 +44,6 @@ def perform_import(
 
     Returns a tuple of counts of objects that were added, updated, and
     removed."""
-    now = time_now()
     org = realm.organization
     import_service = org.importservice
     if not import_service or not import_service.ldapconfig:
@@ -67,13 +66,33 @@ def perform_import(
     keycloak_user_count = keycloak_services.get_user_count_in_realm(
         realm.realm_id, token, timeout=1800)
 
-    # TODO: In the future this kind of logic should be reimplemented using websockets.
+    # TODO: In the future this kind of logic should be reimplemented using
+    # websockets.
     # Gets all users in the given realm
     # Timeout set to 30 minutes
     user_message = keycloak_services.get_users(
         realm.realm_id, token, timeout=1800, max_users=keycloak_user_count)
     user_message.raise_for_status()
     remote = user_message.json()
+
+    return perform_import_raw(org, remote, name_selector, progress_callback)
+
+
+def perform_import_raw(
+        org: Organization,
+        remote,
+        name_selector,
+        progress_callback = _dummy_pc):
+    """The main body of the perform_import function, spun out into a separate
+    function to allow for easier testing. Constructs a LDAPNode hierarchy from
+    a Keycloak JSON response, compares it to an organisation's local hierarchy,
+    and adds, updates and removes database objects to bring the local hierarchy
+    into sync.
+
+    Returns a tuple of counts of objects that were added, updated, and
+    removed."""
+
+    now = time_now()
 
     # XXX: is this correct? It seems to presuppose the existence of a top unit,
     # which the database doesn't actually specify or require
