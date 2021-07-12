@@ -105,7 +105,7 @@ def perform_import_raw(
         local_path_part = RDN.drop_start(full_path, parent_path)
         return LDAPNode.make(
                 local_path_part,
-                id=a.uuid,
+                id=str(a.uuid),
                 firstName=a.first_name,
                 lastName=a.last_name)
 
