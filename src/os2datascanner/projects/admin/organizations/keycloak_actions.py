@@ -78,11 +78,9 @@ def perform_import(
     return perform_import_raw(org, remote, name_selector, progress_callback)
 
 
-def _account_to_node(
-        a: Account, *, parent_path: Sequence[RDN] = ()) -> LDAPNode:
+def _account_to_node(a: Account) -> LDAPNode:
     """Constructs a LDAPNode from an Account object."""
-    full_path = RDN.dn_to_sequence(a.imported_id) if a.imported_id else ()
-    local_path_part = RDN.drop_start(full_path, parent_path)
+    local_path_part = RDN.dn_to_sequence(a.imported_id)[-1:]
     return LDAPNode.make(
             local_path_part,
             attributes={"LDAP_ENTRY_DN": [a.imported_id]},
@@ -103,8 +101,7 @@ def _unit_to_node(
             local_path_part,
             *(_unit_to_node(c, parent_path=full_path)
                     for c in ou.children.all()),
-            *(_account_to_node(c, parent_path=full_path)
-                    for c in ou.account_set.all()))
+            *(_account_to_node(c) for c in ou.account_set.all()))
 
 
 def perform_import_raw(
