@@ -85,6 +85,7 @@ def _account_to_node(
     local_path_part = RDN.drop_start(full_path, parent_path)
     return LDAPNode.make(
             local_path_part,
+            attributes={"LDAP_ENTRY_DN": [a.imported_id]},
             id=str(a.uuid),
             firstName=a.first_name,
             lastName=a.last_name)
