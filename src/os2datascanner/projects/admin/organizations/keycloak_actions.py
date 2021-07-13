@@ -78,6 +78,34 @@ def perform_import(
     return perform_import_raw(org, remote, name_selector, progress_callback)
 
 
+def _account_to_node(
+        a: Account, *, parent_path: Sequence[RDN] = ()) -> LDAPNode:
+    """Constructs a LDAPNode from an Account object."""
+    full_path = RDN.dn_to_sequence(a.imported_id) if a.imported_id else ()
+    local_path_part = RDN.drop_start(full_path, parent_path)
+    return LDAPNode.make(
+            local_path_part,
+            id=str(a.uuid),
+            firstName=a.first_name,
+            lastName=a.last_name)
+
+
+def _unit_to_node(
+        ou: OrganizationalUnit, *,
+        parent_path: Sequence[RDN] = ()) -> LDAPNode:
+    """Constructs a LDAPNode hierarchy from an OrganizationalUnit object,
+    including nodes for every sub-unit and account."""
+    full_path = (
+            RDN.dn_to_sequence(ou.imported_id) if ou.imported_id else ())
+    local_path_part = RDN.drop_start(full_path, parent_path)
+    return LDAPNode.make(
+            local_path_part,
+            *(_unit_to_node(c, parent_path=full_path)
+                    for c in ou.children.all()),
+            *(_account_to_node(c, parent_path=full_path)
+                    for c in ou.account_set.all()))
+
+
 def perform_import_raw(
         org: Organization,
         remote,
@@ -99,34 +127,11 @@ def perform_import_raw(
     local_top = OrganizationalUnit.objects.filter(imported=True,
             parent=None, organization=org).first()
 
-    def account_to_node(
-            a: Account, *, parent_path: Sequence[RDN] = ()) -> LDAPNode:
-        full_path = RDN.dn_to_sequence(a.imported_id) if a.imported_id else ()
-        local_path_part = RDN.drop_start(full_path, parent_path)
-        return LDAPNode.make(
-                local_path_part,
-                id=str(a.uuid),
-                firstName=a.first_name,
-                lastName=a.last_name)
-
-    def unit_to_node(
-            ou: OrganizationalUnit, *,
-            parent_path: Sequence[RDN] = ()) -> LDAPNode:
-        full_path = (
-                RDN.dn_to_sequence(ou.imported_id) if ou.imported_id else ())
-        local_path_part = RDN.drop_start(full_path, parent_path)
-        return LDAPNode.make(
-                local_path_part,
-                *(unit_to_node(c, parent_path=full_path)
-                        for c in ou.children.all()),
-                *(account_to_node(c, parent_path=full_path)
-                        for c in ou.account_set.all()))
-
     # Convert the local objects to a LDAPNode so that we can use its diff
     # operation
 
     local_hierarchy = (
-            unit_to_node(local_top)
+            _unit_to_node(local_top)
             if local_top
             else LDAPNode.make(()))
 
