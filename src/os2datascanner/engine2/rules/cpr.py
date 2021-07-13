@@ -3,17 +3,14 @@ import re
 from itertools import chain
 from enum import Enum, unique
 from collections.abc import Iterable
+import logging
 
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .logical import oxford_comma
-from .utilities.cpr_probability import (
-    get_birth_date,
-    CPR_EXCEPTION_DATES,
-    modulus11_check_raw,
-    CprProbabilityCalculator,
-)
+from .utilities.cpr_probability import modulus11_check, CprProbabilityCalculator
 
+logger = logging.getLogger(__name__)
 cpr_regex = r"\b(\d{2}[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\b"
 calculator = CprProbabilityCalculator()
 
@@ -38,6 +35,10 @@ class Context(Enum):
     NUMBER = 4
     SYMBOL = 5
     BLACKLIST = 6
+    PROBABILITY_CALC = 7
+
+    # XXX custom formatter, like __str__ or __format__(self, format_spec), for
+    # printing only the enum name would be nice.
 
 
 class CPRRule(RegexRule):
@@ -58,7 +59,7 @@ class CPRRule(RegexRule):
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
         self._examine_context = examine_context
-        # self._whitelist should be bool or set(str)
+        # self._whitelist is either a set(str) or False
         self._whitelist = (
             self.WHITELIST_WORDS if whitelist is True else (
                 set(whitelist) if isinstance(whitelist, Iterable)
@@ -94,23 +95,24 @@ class CPRRule(RegexRule):
         if self._examine_context and self._blacklist and any(
             w in content.lower() for w in self._blacklist
         ):
+            logger.info("Content contains a word from the blacklist "
+                        f"[{self._blacklist}]")
             return
 
-        for m in self._compiled_expression.finditer(content):
+        imatch = 0
+        for itot, m in enumerate(self._compiled_expression.finditer(content), 1):
             cpr = m.group(1).replace(" ", "") + m.group(2)
             if self._modulus_11:
-                try:
-                    if not modulus11_check(cpr):
-                        # This can't be a CPR number
-                        continue
-                except ValueError:
-                    pass
+                mod11, reason =  modulus11_check(cpr)
+                if not mod11:
+                    logger.info(f"{cpr} failed modulus11 check due to {reason}")
+                    continue
 
             probability = 1.0
             if self._ignore_irrelevant:
-                probability = calculator.cpr_check(cpr)
+                probability = calculator.cpr_check(cpr, do_mod11_check = False)
                 if isinstance(probability, str):
-                    # Error text -- this can't be a CPR number
+                    logger.info(f"{cpr} is not valid cpr due to {probability}")
                     continue
 
             cpr = cpr[0:4] + "XXXXXX"
@@ -118,16 +120,21 @@ class CPRRule(RegexRule):
             # only examine context if there is any
             if self._examine_context and len(content) > (high - low):
                 p, ctype = self.examine_context(m)
+                # determine if probability stems from context or calculator
                 probability = p if p is not None else probability
+                ctype = ctype if ctype != [] else Context.PROBABILITY_CALC
+                logger.info(f"{cpr} with probability {probability} from context "
+                            f"due to {ctype}")
 
 
-            # Extract context.
+            # Extract context, remove newlines and tabs for better representation
             match_context = content[max(low - 50, 0) : high + 50]
-            match_context = self._compiled_expression.sub(
+            match_context = " ".join(self._compiled_expression.sub(
                 "XXXXXX-XXXX", match_context
-            )
+            ).split())
 
             if probability:
+                imatch += 1
                 yield {
                     "offset": m.start(),
                     "match": cpr,
@@ -140,6 +147,8 @@ class CPRRule(RegexRule):
                     ),
                     "probability": probability,
                 }
+            logger.info(f"{itot} cpr-like numbers, "
+                        f"of which {imatch} had a probabiliy > 0")
 
     def examine_context(
         self, match: Match[str]
@@ -281,28 +290,6 @@ class CPRRule(RegexRule):
             whitelist=obj.get("whitelist", True),
             blacklist=obj.get("blacklist", True),
         )
-
-
-def modulus11_check(cpr: str) -> bool:
-    """Perform a modulo-11 check on a CPR number with exceptions.
-
-    Return True if the number either passes the modulus-11 check OR is one
-    assigned to a person born on one of the exception dates where the
-    modulus-11 check should not be applied.
-    """
-    try:
-        birth_date = get_birth_date(cpr)
-        # IndexError if cpr is less than 7 chars
-    except (ValueError, IndexError):
-        return False
-
-    # Return True if the birth dates are one of the exceptions to the
-    # modulus 11 rule.
-    if birth_date in CPR_EXCEPTION_DATES:
-        return True
-    else:
-        # Otherwise, perform the modulus-11 check
-        return modulus11_check_raw(cpr)
 
 
 def is_number(s: str) -> bool:

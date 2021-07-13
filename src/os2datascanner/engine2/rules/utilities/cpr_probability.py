@@ -1,5 +1,5 @@
 # import time
-from typing import Union
+from typing import Union, Tuple
 from datetime import date
 
 # Updated list of dates with CPR numbers violating the Modulo-11 check. (Last
@@ -66,6 +66,28 @@ def get_birth_date(cpr: str) -> date:
 _mod_11_table = [4, 3, 2, 7, 6, 5, 4, 3, 2, 1]
 
 
+def modulus11_check(cpr: str) -> Tuple[bool, str]:
+    """Perform a modulo-11 check on a CPR number with exceptions.
+
+    Return True if the number either passes the modulus-11 check OR is one
+    assigned to a person born on one of the exception dates where the
+    modulus-11 check should not be applied.
+    """
+    try:
+        birth_date = get_birth_date(cpr)
+        # IndexError if cpr is less than 7 chars
+    except (ValueError, IndexError):
+        return (False, "malformed birth_date")
+
+    # Return True if the birth dates are one of the exceptions to the
+    # modulus 11 rule.
+    if birth_date in CPR_EXCEPTION_DATES:
+        return (True, "in exception_date")
+    else:
+        # Otherwise, perform the modulus-11 check
+        return (modulus11_check_raw(cpr), "due to modulus11")
+
+
 def modulus11_check_raw(cpr: str) -> bool:
     """Perform a modulus-11 check on the CPR number.
 
@@ -73,7 +95,6 @@ def modulus11_check_raw(cpr: str) -> bool:
     for numbers for which the modulus-11 check should not be performed.
     """
     return sum([int(c) * v for c, v in zip(cpr, _mod_11_table)]) % 11 == 0
-
 
 class CprProbabilityCalculator(object):
     """Calculate the probability that a matched str of numbers is actually a CPR
@@ -163,9 +184,8 @@ class CprProbabilityCalculator(object):
         self.cached_cprs[cache_key] = legal_cprs
         return legal_cprs
 
-    def cpr_check(self, cpr: str) -> Union[str, float]:
-        """Check if the CPR number is valid(mod11 check), and if true, estimate a
-        probality that the number is actually a CPR.
+    def cpr_check(self, cpr: str, do_mod11_check = True) -> Union[str, float]:
+        """Estimate a probality that the number is actually a CPR.
 
         The probability is estimated by calculating all possible CPR
         numbers's(ie. the last four digits) for the given CPR date. The CPR's of
@@ -197,7 +217,7 @@ class CprProbabilityCalculator(object):
         if birth_date > date.today():
             return "CPR newer than today"
 
-        if not modulus11_check_raw(cpr):
+        if do_mod11_check and not modulus11_check_raw(cpr):
             if birth_date not in CPR_EXCEPTION_DATES:
                 return "Modulus 11 does not match"
             else:
