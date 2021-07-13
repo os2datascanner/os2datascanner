@@ -178,7 +178,6 @@ def perform_import_raw(
 
     def node_to_account(
             o: Organization,
-            path: Sequence[RDN],
             node: LDAPNode) -> Account:
         # One Account object can have multiple paths (if it's a member of
         # several groups, for example), so we need to use the true DN as our
@@ -217,16 +216,22 @@ def perform_import_raw(
         if not path or (l and l.children) or (r and r.children):
             progress_callback("diff_ignored", path)
             continue
+
+        imported_id = None
+        for node in (r, l,):
+            if (node and "attributes" in node.properties
+                    and "LDAP_ENTRY_DN" in node.properties["attributes"]):
+                imported_id = node.properties["attributes"]["LDAP_ENTRY_DN"][0]
+
         if l and not r:
             # A local object with no remote counterpart. Delete it
-            to_delete |= Account.objects.filter(
-                    imported_id=RDN.sequence_to_dn(path))
+            to_delete |= Account.objects.filter(imported_id=imported_id)
         else:
             # The remote object exists
             if not l:
                 # ... and it has no local counterpart. Create one
                 try:
-                    account = node_to_account(org, path, r)
+                    account = node_to_account(org, r)
                 except KeyError as ex:
                     # Missing required attribute -- skip this object
                     progress_callback("diff_ignored", path)
@@ -236,8 +241,7 @@ def perform_import_raw(
             else:
                 # This should always work -- local_hierarchy has been built on
                 # the basis of local database objects
-                account = Account.objects.get(
-                        imported_id=RDN.sequence_to_dn(path))
+                account = Account.objects.get(imported_id=imported_id)
 
             mail_address = r.properties.get("email")
             if mail_address:
