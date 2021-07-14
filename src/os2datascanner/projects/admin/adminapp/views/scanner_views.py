@@ -147,6 +147,7 @@ class ScannerBase(object):
         fields = super().get_form_fields()
         if self.request.user.is_superuser:
             fields.append('validation_status')
+        print("^^^^^^^^", fields)
 
         self.fields = fields
         return fields
@@ -209,6 +210,9 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         self.old_rules = self.object.rules.get_queryset()
 
         return form
+
+    def get_form_fields(self):
+        return super().get_form_fields()
 
     def form_valid(self, form):
         """Validate the submitted form."""
