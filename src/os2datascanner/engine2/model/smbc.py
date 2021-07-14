@@ -1,6 +1,9 @@
 import io
 from os import stat_result, O_RDONLY
+import enum
+import logging
 import smbc
+from typing import Optional
 from urllib.parse import quote, unquote, urlsplit
 from datetime import datetime
 from contextlib import contextmanager
@@ -14,17 +17,49 @@ from .file import stat_attributes
 from .utilities import NamedTemporaryResource
 
 
+logger = logging.getLogger(__name__)
+
+XATTR_DOS_ATTRIBUTES = "system.dos_attr.mode"
+"""The attribute name for a file's mode flags. (This is not documented in
+pysmbc, but it is in the underlying libsmbclient library.)"""
+
+
+class Mode(enum.IntFlag):
+    """A convenience enumeration for manipulating SMB file mode flags."""
+    # description of flags mapping
+    # https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-smb/65e0c225-5925-44b0-8104-6b91339c709f
+    # https://github.com/samba-team/samba/blob/master/source3/include/libsmbclient.h#L200
+    READ_ONLY = 0x01
+    HIDDEN = 0x02
+    SYSTEM = 0x04
+    VOLUME_ID = 0x08
+    DIRECTORY = 0x10
+    ARCHIVE = 0x20
+
+    @staticmethod
+    def for_url(context: smbc.Context, url: str) -> Optional['Mode']:
+        """Attempts to convert the mode flags retrieved from the given smb://
+        URL to a Mode."""
+        try:
+            mode_ = context.getxattr(url, XATTR_DOS_ATTRIBUTES)
+            return Mode(int(mode_, 16))
+        except ValueError:
+            return None
+
+
 class SMBCSource(Source):
     type_label = "smbc"
-    eq_properties = ("_unc", "_user", "_password", "_domain",)
+    eq_properties = (
+            "_unc", "_user", "_password", "_domain", "_skip_super_hidden")
 
     def __init__(self, unc, user=None, password=None, domain=None,
-            driveletter=None):
+            driveletter=None, *, skip_super_hidden: bool = False):
         self._unc = unc
         self._user = user
         self._password = password
         self._domain = domain if domain is not None else compute_domain(unc)
         self._driveletter = driveletter
+        self._skip_super_hidden = skip_super_hidden
 
     @property
     def unc(self):
@@ -53,12 +88,28 @@ class SMBCSource(Source):
     def handles(self, sm):
         url, context = sm.open(self)
         def handle_dirent(parents, entity):
+            name = entity.name
+
             here = parents + [entity]
             path = '/'.join([h.name for h in here])
-            if entity.smbc_type == smbc.DIR and not (
-                    entity.name == "." or entity.name == ".."):
+            url_here = url + "/" + path
+
+            if self._skip_super_hidden:
+                mode = Mode.for_url(context, url_here)
+
+                # If this object is super-hidden -- that is, if it has the
+                # hidden bit set plus either the system bit or the "~"
+                # character at the start of its name -- then ignore it
+                if (mode is not None
+                        and mode & Mode.HIDDEN
+                        and (mode & Mode.SYSTEM
+                                or name.startswith("~"))):
+                    logger.info(f"skipping super-hidden object {path}")
+                    return
+
+            if entity.smbc_type == smbc.DIR and name not in (".", ".."):
                 try:
-                    obj = context.opendir(url + "/" + path)
+                    obj = context.opendir(url_here)
                     for dent in obj.getdents():
                         yield from handle_dirent(here, dent)
                 except (ValueError, smbc.PermissionError):
@@ -98,7 +149,9 @@ class SMBCSource(Source):
             "user": self._user,
             "password": self._password,
             "domain": self._domain,
-            "driveletter": self._driveletter
+            "driveletter": self._driveletter,
+
+            "skip_super_hidden": self._skip_super_hidden
         })
 
     @staticmethod
@@ -106,7 +159,8 @@ class SMBCSource(Source):
     def from_json_object(obj):
         return SMBCSource(
                 obj["unc"], obj["user"], obj["password"], obj["domain"],
-                obj["driveletter"])
+                obj["driveletter"],
+                skip_super_hidden=obj.get("skip_super_hidden", False))
 
 
 class _SMBCFile(io.RawIOBase):
@@ -223,7 +277,7 @@ class SMBCResource(FileResource):
     def get_owner_sid(self):
         """Returns the Windows security identifier of the owner of this file,
         which libsmbclient exposes as an extended attribute."""
-        return self.get_xattr("system.nt_sec_desc.owner")
+        return self.get_xattr(smbc.XATTR_OWNER)
 
     @contextmanager
     def make_path(self):
