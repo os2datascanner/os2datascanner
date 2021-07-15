@@ -300,10 +300,25 @@ class WebHandle(Handle):
                 lm_hint = OutputType.LastModified.decode_json_object(lm_hint)
         referrer = obj.get("referrer", None)
         if referrer:
-            referrer = WebHandle.from_json_object(referrer)
-        handle = WebHandle(Source.from_json_object(obj["source"]), obj["path"],
-                           referrer=referrer, last_modified_hint=lm_hint)
-        return handle
+            if isinstance(referrer, list):
+                # Prior to the 25th of June, the "referrer" field was a
+                # WebHandle-only property and contained a list of URLs: after
+                # that point, it became a feature of Handles in general and
+                # now contains a serialised Handle. Make sure we still support
+                # the old format
+                if len(referrer) > 1:
+                    logger.warning(f"discarding secondary referrers for {obj}")
+
+                url = referrer[0]
+                scheme, netloc, path, query, fragment = urlsplit(url)
+                source_url = urlunsplit((scheme, netloc, "/", "", ""))
+                handle_path = urlunsplit(("", "", path[1:], query, fragment))
+                referrer = WebHandle(WebSource(source_url), handle_path)
+            else:
+                referrer = WebHandle.from_json_object(referrer)
+        return WebHandle(
+                Source.from_json_object(obj["source"]), obj["path"],
+                referrer=referrer, last_modified_hint=lm_hint)
 
 
 def make_outlinks(content, where):
