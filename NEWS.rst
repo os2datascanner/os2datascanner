@@ -1,6 +1,11 @@
 OS2datascanner
 ==============
 
+Version 3.11.0, 15th July 2021
+------------------------------
+
+"OS2datascanner 3.11 for Workgroups"
+
 Version 3.10.0, 30th June 2021
 ------------------------------
 
