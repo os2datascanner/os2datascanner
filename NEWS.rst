@@ -1,6 +1,53 @@
 OS2datascanner
 ==============
 
+Version 3.11.0, 15th July 2021
+------------------------------
+
+"OS2datascanner 3.11 for Workgroups"
+
+New in this version:
+
+- Optional support for skipping super-hidden files:
+
+  - Files and folders on shared network drives marked as super-hidden can now
+    be skipped.
+
+  - Super-hidden files are files marked with the *hidden* attribute and either
+    the *system* attribute or a tilde at the beginning of their name. (This
+    combination is often used by lock files and online backups.)
+
+General improvements:
+
+- Requesting a scan for a LDAP organisational unit will now also include all
+  units below it in the hierarchy.
+
+- The widget used to select LDAP organisational units and users is now larger.
+
+- The API server now supports scan configuration parameters.
+
+- The LDAP import process is now run on the server as a background task,
+  improving responsiveness.
+
+- Conversions from rich text to plain text no longer replace sequences that
+  include new lines and tabs with spaces, greatly reducing false positive
+  matches from spreadsheets and HTML files.
+
+Bugfixes:
+
+- LibreOffice processes can no longer escape timeout control.
+
+- The LDAP import process should no longer be interrupted by an internal server
+  error.
+
+- The report module can once again display matches from web scans performed by
+  early versions of OS2datascanner properly.
+
+Notes:
+
+- The pre-Docker installation scripts are no longer supported and have been
+  removed.
+
 Version 3.10.0, 30th June 2021
 ------------------------------
 
