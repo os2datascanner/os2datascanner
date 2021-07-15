@@ -200,6 +200,24 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 "{0}: followed link doesn't have base url as base_referrer".format(
                     second_thing))
 
+    def test_old_fashioned_referrers(self):
+        handle = Handle.from_json_object({
+            "type": "web",
+            "source": {
+                "type": "web",
+                "url": "https://www.example.com/"
+            },
+            "path": "index3.html",
+            "referrer": [
+                "https://www.example.com/index.html",
+                "https://www.example.com/index_old.html"
+            ]
+        })
+        self.assertEqual(
+                handle.referrer,
+                WebHandle(WebSource("https://www.example.com/"), "index.html"),
+                "old-fashioned referrer list not handled correctly")
+
     def test_error(self):
         no_such_file = WebHandle(site, "404.404")
         with SourceManager() as sm:
