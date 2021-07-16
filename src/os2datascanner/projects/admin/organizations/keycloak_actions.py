@@ -155,8 +155,8 @@ def perform_import_raw(
             lambda n: n.children[0].label[0].key not in ("ou", "cn"))
 
     to_add = []
-    to_delete = Account.objects.none()
-    to_update = Account.objects.none()
+    to_delete = []
+    to_update = []
 
     units = {}
     accounts = {}
@@ -238,7 +238,11 @@ def perform_import_raw(
 
         if l and not r:
             # A local object with no remote counterpart. Delete it
-            to_delete |= Account.objects.filter(imported_id=iid)
+            try:
+                to_delete.append(Account.objects.get(imported_id=iid))
+            except Account.DoesNotExist:
+                to_delete.append(
+                        OrganizationalUnit.objects.get(imported_id=iid))
         else:
             # The remote object exists
             if not l:
@@ -282,20 +286,27 @@ def perform_import_raw(
             progress_callback("diff_handled", path)
 
     with transaction.atomic():
-        to_delete.delete()
+        if to_delete:
+            for subset in (Alias, Position, Account, OrganizationalUnit,):
+                manager = subset.objects
+
+                instances = [o for o in to_delete if isinstance(o, subset)]
+                if instances:
+                    manager.filter(pk__in=[i.pk for i in instances]).delete()
 
         if to_add:
             for subset in (OrganizationalUnit, Account, Position, Alias,):
                 manager = subset.objects
 
                 instances = [o for o in to_add if isinstance(o, subset)]
-                for o in instances:
-                    o.imported = True
-                    o.last_import = now
-                    o.last_import_requested = now
+                if instances:
+                    for o in instances:
+                        o.imported = True
+                        o.last_import = now
+                        o.last_import_requested = now
 
-                manager.bulk_create(instances)
-                if hasattr(manager, "rebuild"):
-                    manager.rebuild()
+                    manager.bulk_create(instances)
+                    if hasattr(manager, "rebuild"):
+                        manager.rebuild()
 
     return (len(to_add), len(to_update), len(to_delete))
