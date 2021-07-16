@@ -255,33 +255,28 @@ def perform_import_raw(
                     # Missing required attribute -- skip this object
                     progress_callback("diff_ignored", path)
                     continue
-                unit = path_to_unit(org, path[:-1])
-                to_add.append(Position(account=account, unit=unit))
             else:
                 # This should always work -- local_hierarchy has been built on
                 # the basis of local database objects
                 account = Account.objects.get(imported_id=iid)
 
+            # Delete all Aliases and Positions for this account and create them
+            # anew
+            # (XXX: this code will be called once for each group an account is
+            # in, which is harmless but a bit wasteful)
+            to_delete.extend(Alias.objects.filter(account=account))
+            to_delete.extend(Position.objects.filter(account=account))
+
+            unit = path_to_unit(org, path[:-1])
+            to_add.append(Position(account=account, unit=unit))
+
             mail_address = r.properties.get("email")
             if mail_address:
-                try:
-                    Alias.objects.get(
-                            account=account,
-                            _alias_type=AliasType.EMAIL.value,
-                            value=mail_address)
-                except Alias.DoesNotExist:
-                    # The same user (mail_address) can be a member of multiple groups
-                    # or org. units, so we need make sure we only create mail alias
-                    # once.
-                    alias_object = Alias(account=account,
-                                         alias_type=AliasType.EMAIL,
-                                         value=mail_address)
-                    if alias_object not in to_add:
-                        to_add.append(alias_object)
-                except Alias.MultipleObjectsReturned:
-                    # This state should not be possible, however if more than one
-                    # Alias exists ignore.
-                    pass
+                alias_object = Alias(account=account,
+                                     alias_type=AliasType.EMAIL,
+                                     value=mail_address)
+                if alias_object not in to_add:
+                    to_add.append(alias_object)
 
             # XXX: also update other stored properties
 
