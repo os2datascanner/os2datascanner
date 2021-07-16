@@ -219,7 +219,9 @@ def perform_import_raw(
 
     # Make sure that we have an OrganizationalUnit hierarchy that reflects the
     # remote one
+    iids_to_preserve = set()
     for path, r in remote_hierarchy.walk():
+        iids_to_preserve.add(_node_to_iid(path, r))
         if not path or not r.children:
             continue
         path_to_unit(org, path)
@@ -237,7 +239,7 @@ def perform_import_raw(
         iid = _node_to_iid(path, l or r)
 
         if l and not r:
-            # A local object with no remote counterpart. Delete it
+            # A local object with no remote counterpart
             try:
                 to_delete.append(Account.objects.get(imported_id=iid))
             except Account.DoesNotExist:
@@ -284,6 +286,10 @@ def perform_import_raw(
             # XXX: also update other stored properties
 
             progress_callback("diff_handled", path)
+
+    # Make sure we don't try to delete objects that are still referenced in the
+    # remote hierarchy
+    to_delete = [t for t in to_delete if t.imported_id not in iids_to_preserve]
 
     with transaction.atomic():
         if to_delete:
