@@ -104,6 +104,20 @@ def _unit_to_node(
             *(_account_to_node(c) for c in ou.account_set.all()))
 
 
+def _node_to_iid(path: Sequence[RDN], node: LDAPNode) -> str:
+    """Generates the Imported.imported_id for an LDAPNode at a specified
+    position in the hierarchy.
+
+    For organisational units, this will just be the DN specified by the
+    hierarchy, as OUs have no independent existence in OS2datascanner. For
+    users, though, the canonical DN is used instead, as a user might appear at
+    multiple positions (if they're a member of several groups, for example.)"""
+    if node.children:  # The node is a group/OU
+        return RDN.sequence_to_dn(path)
+    else:  # The node is a user
+        return node.properties["attributes"]["LDAP_ENTRY_DN"][0]
+
+
 def perform_import_raw(
         org: Organization,
         remote,
@@ -220,15 +234,11 @@ def perform_import_raw(
             progress_callback("diff_ignored", path)
             continue
 
-        imported_id = None
-        for node in (r, l,):
-            if (node and "attributes" in node.properties
-                    and "LDAP_ENTRY_DN" in node.properties["attributes"]):
-                imported_id = node.properties["attributes"]["LDAP_ENTRY_DN"][0]
+        iid = _node_to_iid(path, l or r)
 
         if l and not r:
             # A local object with no remote counterpart. Delete it
-            to_delete |= Account.objects.filter(imported_id=imported_id)
+            to_delete |= Account.objects.filter(imported_id=iid)
         else:
             # The remote object exists
             if not l:
@@ -244,7 +254,7 @@ def perform_import_raw(
             else:
                 # This should always work -- local_hierarchy has been built on
                 # the basis of local database objects
-                account = Account.objects.get(imported_id=imported_id)
+                account = Account.objects.get(imported_id=iid)
 
             mail_address = r.properties.get("email")
             if mail_address:
