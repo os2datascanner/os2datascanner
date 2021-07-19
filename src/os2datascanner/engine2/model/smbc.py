@@ -24,6 +24,12 @@ XATTR_DOS_ATTRIBUTES = "system.dos_attr.mode"
 pysmbc, but it is in the underlying libsmbclient library.)"""
 
 
+IGNORABLE_SMBC_EXCEPTIONS = (
+        smbc.NoEntryError, smbc.NotDirectoryError, smbc.PermissionError)
+"""The exceptions to ignore during SMBC exploration. Note that this does not
+exclude write errors or connection errors."""
+
+
 class Mode(enum.IntFlag):
     """A convenience enumeration for manipulating SMB file mode flags."""
     # description of flags mapping
@@ -43,7 +49,7 @@ class Mode(enum.IntFlag):
         try:
             mode_ = context.getxattr(url, XATTR_DOS_ATTRIBUTES)
             return Mode(int(mode_, 16))
-        except ValueError:
+        except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS):
             return None
 
 
@@ -112,7 +118,7 @@ class SMBCSource(Source):
                     obj = context.opendir(url_here)
                     for dent in obj.getdents():
                         yield from handle_dirent(here, dent)
-                except (ValueError, smbc.PermissionError):
+                except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS):
                     pass
             elif entity.smbc_type == smbc.FILE:
                 yield SMBCHandle(self, path)
