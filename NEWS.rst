@@ -1,6 +1,12 @@
 OS2datascanner
 ==============
 
+Version 3.11.1, 19th July 2021
+------------------------------
+
+This hotfix release improves the reliability of shared network drive scanning
+by silently handling more exception types.
+
 Version 3.11.0, 15th July 2021
 ------------------------------
 
