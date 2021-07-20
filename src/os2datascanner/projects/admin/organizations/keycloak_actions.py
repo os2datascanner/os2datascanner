@@ -246,6 +246,8 @@ def perform_import_raw(
     diff = list(local_hierarchy.diff(remote_hierarchy))
     progress_callback("diff_computed", len(diff))
 
+    changed_accounts = {}
+
     # See what's changed
     for path, l, r in diff:
         # We're only interested in leaf nodes (accounts) here
@@ -253,7 +255,7 @@ def perform_import_raw(
             progress_callback("diff_ignored", path)
             continue
 
-        iid = _node_to_iid(path, l or r)
+        iid = _node_to_iid(path, r or l)
 
         if l and not r:
             # A local object with no remote counterpart
@@ -273,31 +275,40 @@ def perform_import_raw(
                     progress_callback("diff_ignored", path)
                     continue
             else:
-                # This should always work -- local_hierarchy has been built on
-                # the basis of local database objects
-                account = Account.objects.get(imported_id=iid)
+                # ... and it has a local counterpart. Retrieve it
+                try:
+                    account = Account.objects.get(imported_id=iid)
+                except Account.DoesNotExist:
+                    # This can only happen if an Account has changed its
+                    # imported ID without changing its position in the tree
+                    # (i.e., a user's DN has changed, but their group
+                    # membership has not)
+                    account = Account.objects.get(
+                            imported_id=_node_to_iid(path, l))
 
-            # Delete all Aliases and Positions for this account and create them
-            # anew
-            # (XXX: this code will be called once for each group an account is
-            # in, which is harmless but a bit wasteful)
-            to_delete.extend(Alias.objects.filter(account=account))
-            to_delete.extend(Position.objects.filter(account=account))
+            if not iid in changed_accounts:
+                changed_accounts[iid] = (r, account)
 
             unit = path_to_unit(org, path[:-1])
             to_add.append(Position(account=account, unit=unit))
 
-            mail_address = r.properties.get("email")
-            if mail_address:
-                alias_object = Alias(account=account,
-                                     alias_type=AliasType.EMAIL,
-                                     value=mail_address)
-                if alias_object not in to_add:
-                    to_add.append(alias_object)
-
-            # XXX: also update other stored properties
-
             progress_callback("diff_handled", path)
+
+    for iid, (remote_node, account) in changed_accounts.items():
+        # Delete all Aliases and Positions for this account and create them
+        # anew
+        to_delete.extend(Alias.objects.filter(account=account))
+        to_delete.extend(Position.objects.filter(account=account))
+
+        mail_address = remote_node.properties.get("email")
+        if mail_address:
+            alias_object = Alias(account=account,
+                                 alias_type=AliasType.EMAIL,
+                                 value=mail_address)
+            if alias_object not in to_add:
+                to_add.append(alias_object)
+
+        # XXX: also update other stored properties
 
     # Make sure we don't try to delete objects that are still referenced in the
     # remote hierarchy
