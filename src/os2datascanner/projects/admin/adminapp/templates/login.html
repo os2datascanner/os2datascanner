@@ -21,8 +21,8 @@
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ next }}" />
       <h2>
-        {% trans "Login" %} på<br> 
-        <span class="line-height">administrationsmodulet</span>
+        {% trans "Login" %} <br>
+        <span class="line-height">{% trans "admin module" %}</span>
       </h2>
 
           <fieldset>
