@@ -223,13 +223,8 @@ def perform_import_raw(
                 account = Account.objects.get(
                         organization=o, imported_id=account_id)
             except Account.DoesNotExist:
-                account = Account(
-                        imported_id=account_id,
-                        uuid=node.properties["id"],
-                        username=node.properties["username"],
-                        first_name=node.properties["firstName"],
-                        last_name=node.properties["lastName"],
-                        organization=o)
+                account = Account(organization=o, imported_id=account_id,
+                        uuid=node.properties["id"])
                 to_add.append(account)
             accounts[account_id] = account
         return account
@@ -308,7 +303,15 @@ def perform_import_raw(
             if alias_object not in to_add:
                 to_add.append(alias_object)
 
-        # XXX: also update other stored properties
+        # Update the other properties of the account
+        for attr_name, expected in (
+                ("imported_id", iid),
+                ("username", remote_node.properties["username"]),
+                ("first_name", remote_node.properties["firstName"]),
+                ("last_name", remote_node.properties["lastName"])):
+            if not getattr(account, attr_name) == expected:
+                setattr(account, attr_name, expected)
+                to_update.append((account, (attr_name,)))
 
     # Make sure we don't try to delete objects that are still referenced in the
     # remote hierarchy
