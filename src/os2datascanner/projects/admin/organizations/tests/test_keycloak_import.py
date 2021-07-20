@@ -2,9 +2,8 @@ from copy import deepcopy
 from unittest import TestCase
 
 from ...core.models.client import Client
-from ..models import Account, Organization, OrganizationalUnit
+from ..models import Account, Organization, OrganizationalUnit, Alias, Position
 from .. import keycloak_actions
-
 
 TEST_CORP = [
     {
@@ -52,6 +51,42 @@ TEST_CORP = [
     }
 ]
 
+TEST_CORP_TWO = [
+    {
+        "id": "4f533264-6174-6173-6361-6e6e65720010",
+        "username": "ursula@test.invalid",
+        "firstName": "Ursula",
+        "lastName": "Testsen",
+        "email": "ursulas@brevdue.dk",
+        "attributes": {
+            "LDAP_ENTRY_DN": [
+                "CN=Ursula Testsen,OU=TheUCorp,O=Test Corp."
+            ],
+            "memberOf": [
+                "CN=Group 1,O=Test Corp.",
+                "CN=Group 2,O=Test Corp."
+            ]
+        }
+    },
+    {
+        "id": "4f533264-6174-6173-6361-6e6e65720011",
+        "username": "ulrich@test.invalid",
+        "firstName": "Ulrich",
+        "lastName": "Testsen",
+        "email": "ulrichs@brevdue.dk",
+        "attributes": {
+            "LDAP_ENTRY_DN": [
+                "CN=Ulrich Testsen,OU=TheUCorp,O=Test Corp."
+            ],
+            "memberOf": [
+                "CN=Group 1,O=Test Corp.",
+                "CN=Group 2,O=Test Corp."
+            ]
+        }
+    },
+
+]
+
 
 class KeycloakImportTest(TestCase):
     dummy_client = None
@@ -60,7 +95,6 @@ class KeycloakImportTest(TestCase):
     def setUpClass(cls):
         cls.dummy_client = Client.objects.create(
                 name="OS2datascanner test dummy_client")
-
 
     @classmethod
     def tearDownClass(cls):
@@ -204,3 +238,62 @@ class KeycloakImportTest(TestCase):
                 msg="defunct OU not removed"):
             OrganizationalUnit.objects.get(
                     imported_id="CN=Group 2,O=Test Corp.")
+
+    def test_import_user_in_multiple_groups_should_only_get_one_email_alias(self):
+        """ A user can be a memberOf multiple groups, but it is still only one
+        user, and should result in only one email-alias (given that the user
+        has an email attribute)"""
+        keycloak_actions.perform_import_raw(
+            self.org, TEST_CORP_TWO,
+            keycloak_actions.keycloak_group_dn_selector)
+
+        ursula_aliases = Alias.objects.filter(value="ursulas@brevdue.dk")
+
+        self.assertEqual(ursula_aliases.count(), 1,
+                msg="Either duplicate or no email aliases for user created")
+
+    def test_delete_user_relation_to_group(self):
+        keycloak_actions.perform_import_raw(
+            self.org, TEST_CORP_TWO,
+            keycloak_actions.keycloak_group_dn_selector)
+
+        ursula = TEST_CORP_TWO[0]
+        account = Account.objects.get(uuid=ursula["id"])
+
+        self.assertEqual(Position.objects.filter(account=account).count(), 2,
+                         msg="Position not correctly created")
+
+
+        NEW_CORP = deepcopy(TEST_CORP_TWO)
+        # Now only member of one group instead of two.
+        NEW_CORP[0]["attributes"]["memberOf"] = ["CN=Group 2,O=Test Corp."]
+
+        # Import again
+        keycloak_actions.perform_import_raw(
+            self.org, NEW_CORP,
+            keycloak_actions.keycloak_group_dn_selector)
+
+        self.assertEqual(Position.objects.filter(account=account).count(), 1,
+                         msg="Position not updated correctly")
+
+        # The OU should still exist though, as there is still a user with a
+        # connection to it.
+        self.assertTrue(
+                OrganizationalUnit.objects.filter(
+                        imported_id="CN=Group 1,O=Test Corp.").exists(),
+                msg="OU doesn't exist but should")
+
+        # Delete Ulrich from the TEST_CORP_TWO
+        del NEW_CORP[1]
+
+        # Import again
+        keycloak_actions.perform_import_raw(
+            self.org, NEW_CORP,
+            keycloak_actions.keycloak_group_dn_selector)
+
+        # The OU should now not exist as there is no user with a connection to
+        # it.
+        self.assertFalse(
+                OrganizationalUnit.objects.filter(
+                        imported_id="CN=Group 1,O=Test Corp.").exists(),
+                msg="OU is not deleted")
