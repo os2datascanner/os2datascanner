@@ -118,6 +118,23 @@ def _node_to_iid(path: Sequence[RDN], node: LDAPNode) -> str:
         return node.properties["attributes"]["LDAP_ENTRY_DN"][0]
 
 
+def group_into(collection, *models, key=lambda o: o):
+    """Collects a heterogeneous sequence of Django model objects into subsets
+    of the same type, and yields each model manager and (non-empty) collection
+    in the model order specified.
+
+    The input collection does not need to contain Django model objects, as long
+    as an appropriate key function is provided to select such an object from
+    each item in the collection."""
+    if collection:
+        for subset in models:
+            manager = subset.objects
+
+            instances = [k for k in collection if isinstance(key(k), subset)]
+            if instances:
+                yield (manager, instances)
+
+
 def perform_import_raw(
         org: Organization,
         remote,
@@ -287,27 +304,19 @@ def perform_import_raw(
     to_delete = [t for t in to_delete if t.imported_id not in iids_to_preserve]
 
     with transaction.atomic():
-        if to_delete:
-            for subset in (Alias, Position, Account, OrganizationalUnit,):
-                manager = subset.objects
+        for manager, instances in group_into(
+                to_delete, Alias, Position, Account, OrganizationalUnit):
+            manager.filter(pk__in=[i.pk for i in instances]).delete()
 
-                instances = [o for o in to_delete if isinstance(o, subset)]
-                if instances:
-                    manager.filter(pk__in=[i.pk for i in instances]).delete()
+        for manager, instances in group_into(
+                to_add, OrganizationalUnit, Account, Position, Alias):
+            for o in instances:
+                o.imported = True
+                o.last_import = now
+                o.last_import_requested = now
 
-        if to_add:
-            for subset in (OrganizationalUnit, Account, Position, Alias,):
-                manager = subset.objects
-
-                instances = [o for o in to_add if isinstance(o, subset)]
-                if instances:
-                    for o in instances:
-                        o.imported = True
-                        o.last_import = now
-                        o.last_import_requested = now
-
-                    manager.bulk_create(instances)
-                    if hasattr(manager, "rebuild"):
-                        manager.rebuild()
+            manager.bulk_create(instances)
+            if hasattr(manager, "rebuild"):
+                manager.rebuild()
 
     return (len(to_add), len(to_update), len(to_delete))
