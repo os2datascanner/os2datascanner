@@ -83,6 +83,8 @@ def process_toml_conf_for_django(parent_path, module, sys_var, user_var):
     # Append optional apps - if any:
     if config.get('OPTIONAL_APPS'):
         config['INSTALLED_APPS'] += config['OPTIONAL_APPS']
+    if config.get("OPTIONAL_MIDDLEWARE"):
+        config['MIDDLEWARE'] += config['OPTIONAL_MIDDLEWARE']
 
     _set_constants(module, config)
 

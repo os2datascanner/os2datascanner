@@ -53,7 +53,14 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+# placeholder configs for DEVs. Keys must exist here if they should be read from
+# user-config toml
 OPTIONAL_APPS = []
+OPTIONAL_MIDDLEWARE = []
+INTERNAL_IPS = []
+# XXX: is actually a dict but initialized as list due to how @toml files are parsed
+DEBUG_TOOLBAR_CONFIG = []
+
 AUTH_PROFILE_MODULE = 'os2datascanner.projects.report.reportapp.UserProfile'
 WSGI_APPLICATION = 'os2datascanner.projects.report.wsgi.application'
 ROOT_URLCONF = 'os2datascanner.projects.report.urls'

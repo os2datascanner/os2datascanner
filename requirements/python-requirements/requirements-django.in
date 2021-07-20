@@ -12,6 +12,7 @@ whitenoise
 
 # At the moment only used during development:
 django_extensions
+django-debug-toolbar
 
 # Hard dependencies through engine2 imports:
 dropbox

@@ -19,6 +19,7 @@ process_toml_conf_for_django(
     user_var='OS2DS_ADMIN_USER_CONFIG_PATH',
 )
 
+
 USE_TZ = True
 
 TEMPLATES = [

@@ -13,7 +13,14 @@ ALLOWED_HOSTS = []
 SESSION_COOKIE_NAME = "report_sessionid"
 
 # [installation]
-OPTIONAL_APPS = ["django_extensions"]
+OPTIONAL_APPS = [
+    'debug_toolbar',
+    "django_extensions",
+]
+OPTIONAL_MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
 # The name of the institution, to be included in the notification signoff
 NOTIFICATION_INSTITUTION = 'MAGENTA APS'
 
@@ -38,6 +45,12 @@ DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"
 ADMIN_EMAIL = "os2datascanner@magenta.dk"
 EMAIL_HOST = "localhost"
 EMAIL_PORT = 25
+
+# options for django_debug_toolbar,
+# https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
+[DEBUG_TOOLBAR_CONFIG]
+SHOW_COLLAPSED = true
+SHOW_TOOLBAR_CALLBACK = "os2datascanner.projects.utils.debug.debug_toolbar_callback"
 
 [DATABASES]
 
