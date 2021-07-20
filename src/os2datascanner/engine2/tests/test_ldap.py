@@ -196,7 +196,7 @@ class LDAPTest(unittest.TestCase):
         """LDAPNode.diff should notice when an object is added to the
         hierarchy."""
         self.assertEqual(
-                list(SUMER.diff(POST_FLOOD)),
+                list(SUMER.diff(POST_FLOOD, only_leaves=True)),
                 [
                     (
                         RDN.dn_to_sequence("CN=Etana,L=Kish,L=Sumer"),
@@ -210,7 +210,7 @@ class LDAPTest(unittest.TestCase):
         """LDAPNode.diff should notice when an object is removed from the
         hierarchy."""
         self.assertEqual(
-                list(SUMER.diff(POST_EPIC)),
+                list(SUMER.diff(POST_EPIC, only_leaves=True)),
                 [
                     (
                         RDN.dn_to_sequence("CN=Enkidu,L=Uruk,L=Sumer"),
@@ -226,7 +226,7 @@ class LDAPTest(unittest.TestCase):
         s2 = copy.deepcopy(SUMER)
         s2.children[0].children[0].properties["title"] = "Lord of the Waters"
         self.assertEqual(
-                list(SUMER.diff(s2)),
+                list(SUMER.diff(s2, only_leaves=True)),
                 [
                     (
                         RDN.dn_to_sequence("CN=Enki,L=Eridu,L=Sumer"),

@@ -245,8 +245,8 @@ def perform_import_raw(
 
     # See what's changed
     for path, l, r in diff:
-        # We're only interested in leaf nodes (accounts) here
-        if not path or (l and l.children) or (r and r.children):
+        if not path:
+            # Ignore the contentless root node
             progress_callback("diff_ignored", path)
             continue
 
@@ -259,8 +259,8 @@ def perform_import_raw(
             except Account.DoesNotExist:
                 to_delete.append(
                         OrganizationalUnit.objects.get(imported_id=iid))
-        else:
-            # The remote object exists
+        elif not (r or l).children:
+            # A remote user exists...
             if not l:
                 # ... and it has no local counterpart. Create one
                 try:
@@ -277,7 +277,8 @@ def perform_import_raw(
                     # This can only happen if an Account has changed its
                     # imported ID without changing its position in the tree
                     # (i.e., a user's DN has changed, but their group
-                    # membership has not)
+                    # membership has not). Retrieve the object by the old ID --
+                    # we'll update it in a moment
                     account = Account.objects.get(
                             imported_id=_node_to_iid(path, l))
 
