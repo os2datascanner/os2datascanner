@@ -242,4 +242,22 @@
       opacity: 0.75;
     }
   }
+
+  // nested tables, start
+.datatable--nested {
+  border-collapse: collapse;
+  box-shadow: initial;
+  table-layout: fixed;
+  width: 100%;
+  border-top: none;
+
+  td,
+  td:first-child,
+  td:last-child {
+    border-top: none;
+    padding: var(--size-ds-unit) 0;
+  }
+}
+// nested tables, end
+
 }
