@@ -309,6 +309,15 @@ def perform_import_raw(
             manager.filter(pk__in=[i.pk for i in instances]).delete()
 
         for manager, instances in group_into(
+                to_update, Alias, Position, Account, OrganizationalUnit,
+                key=lambda k: k[0]):
+            properties = set()
+            for _, props in instances:
+                properties |= set(props)
+            manager.bulk_update(
+                    (obj for obj, _ in instances), properties)
+
+        for manager, instances in group_into(
                 to_add, OrganizationalUnit, Account, Position, Alias):
             for o in instances:
                 o.imported = True
