@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-09 06:53-0500\n"
+"POT-Creation-Date: 2021-07-21 06:53-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -42,7 +42,7 @@ msgid "Initialization Vector"
 msgstr "Initaliserings vektor"
 
 #: adminapp/models/authentication_model.py:25
-#: adminapp/views/filescanner_views.py:133
+#: adminapp/views/filescanner_views.py:135
 msgid "User domain"
 msgstr "Brugerdomæne"
 
@@ -182,7 +182,7 @@ msgstr "Regler"
 #: adminapp/templates/partials/breadcrumb.html:74
 #: adminapp/templates/partials/breadcrumb.html:82 organizations/apps.py:8
 #: organizations/models/organization.py:76
-#: organizations/templates/organizations/org_list.html:5
+#: organizations/templates/organizations/org_list.html:6
 msgid "organizations"
 msgstr "organisationer"
 
@@ -255,7 +255,7 @@ msgstr "Regel"
 
 #: adminapp/templates/os2datascanner/cprrule_form.html:188
 #: adminapp/templates/os2datascanner/regexrule_form.html:281
-#: adminapp/templates/os2datascanner/scanner_form.html:772
+#: adminapp/templates/os2datascanner/scanner_form.html:749
 msgid "Save changes"
 msgstr "Gem ændringer"
 
@@ -633,23 +633,23 @@ msgstr "Valgte medarbejdere"
 msgid "Scanner settings"
 msgstr "Scannerindstillinger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:699
+#: adminapp/templates/os2datascanner/scanner_form.html:676
 msgid "Add rules"
 msgstr "Tilføj regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:706
+#: adminapp/templates/os2datascanner/scanner_form.html:683
 msgid "Available rules"
 msgstr "Tilgængelige regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:719
+#: adminapp/templates/os2datascanner/scanner_form.html:696
 msgid "Selected rules"
 msgstr "Valgte regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:737
+#: adminapp/templates/os2datascanner/scanner_form.html:714
 msgid "Schedule scan"
 msgstr "Planlæg scan"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:748
+#: adminapp/templates/os2datascanner/scanner_form.html:725
 msgid ""
 "Schedule your scan by creating a fixed interval or adding a date to complete "
 "the scannerjob."
@@ -657,7 +657,7 @@ msgstr ""
 "Planlæg dit scan ved at oprette et fast interval eller tilføj en dato for "
 "afvikling af scannerjobbet."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:764
+#: adminapp/templates/os2datascanner/scanner_form.html:741
 msgid "The scanner will start at the following time for the selected days:"
 msgstr "Scanneren vil starte på følgende tidspunkt på de valgte dage:"
 
@@ -977,20 +977,20 @@ msgid "e.g. @example.com"
 msgstr "f.eks. @example.com"
 
 #: adminapp/views/exchangescanner_views.py:158
-#: adminapp/views/filescanner_views.py:131
+#: adminapp/views/filescanner_views.py:133
 msgid "Username"
 msgstr "Brugernavn"
 
 #: adminapp/views/exchangescanner_views.py:163
-#: adminapp/views/filescanner_views.py:132
+#: adminapp/views/filescanner_views.py:134
 msgid "Password"
 msgstr "Adgangskode"
 
-#: adminapp/views/filescanner_views.py:130
+#: adminapp/views/filescanner_views.py:132
 msgid "e.g. //network-domain/top-folder"
 msgstr "f.eks. //network-domain/top-folder"
 
-#: adminapp/views/filescanner_views.py:134
+#: adminapp/views/filescanner_views.py:136
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
@@ -1180,7 +1180,7 @@ msgstr "kunde-ID"
 
 #: core/models/client.py:72 organizations/models/organization.py:47
 #: organizations/models/organizational_unit.py:44
-#: organizations/templates/organizations/org_list.html:39
+#: organizations/templates/organizations/org_list.html:40
 msgid "name"
 msgstr "navn"
 
@@ -1218,7 +1218,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_list.html:44
+#: organizations/templates/organizations/org_list.html:45
 msgid "import service"
 msgstr "importservice"
 
@@ -1372,23 +1372,28 @@ msgid "connection URL"
 msgstr "forbindelses-URL"
 
 #: import_services/models/ldap_configuration.py:106
-msgid "Distinguished name for the (top) OU in which to search for users."
+msgid ""
+"Distinguished name for the (top) OU in which to search for users. Groups "
+"present under this OU will not necessarily be imported, as OS2datascanner "
+"reconstructs groups based on users' group memberships."
 msgstr ""
-"'Distinguished name' for den (øverste) OU, hvor der skal søges efter brugere."
+"'Distinguished name' for den (øverste) OU, hvor der skal søges efter "
+"brugere. Grupper under denne OU bliver ikke nødvendigvis importeret, da "
+"OS2datascanner opbygger grupper ud fra brugernes gruppemedlemskab."
 
-#: import_services/models/ldap_configuration.py:108
+#: import_services/models/ldap_configuration.py:111
 msgid "DN for users (OU)"
 msgstr "DN for brugere (OU)"
 
-#: import_services/models/ldap_configuration.py:112
+#: import_services/models/ldap_configuration.py:115
 msgid "one level"
 msgstr "kun øverste lag"
 
-#: import_services/models/ldap_configuration.py:113
+#: import_services/models/ldap_configuration.py:116
 msgid "subtree"
 msgstr "hele undertræet"
 
-#: import_services/models/ldap_configuration.py:116
+#: import_services/models/ldap_configuration.py:119
 msgid ""
 "For one level, the search applies only for users in the DNs specified by "
 "User DNs. For subtree, the search applies to the whole subtree. See LDAP "
@@ -1399,24 +1404,24 @@ msgstr ""
 "angivne OU, samt alle underliggende OU'er. Se LDAP dokumentationen for flere "
 "detaljer."
 
-#: import_services/models/ldap_configuration.py:121
+#: import_services/models/ldap_configuration.py:124
 msgid "search scope"
 msgstr "omfang af søgningen"
 
-#: import_services/models/ldap_configuration.py:125
+#: import_services/models/ldap_configuration.py:128
 msgid "Distinguished name for the service account allowing access to LDAP"
 msgstr "'Distinguished name' for servicekontoen, der giver adgang til LDAP"
 
-#: import_services/models/ldap_configuration.py:127
+#: import_services/models/ldap_configuration.py:130
 msgid "LDAP service account user name"
 msgstr "brugernavn for servicekontoen til LDAP"
 
-#: import_services/models/ldap_configuration.py:156
+#: import_services/models/ldap_configuration.py:159
 #: import_services/templates/import_services/ldap_edit.html:5
 msgid "LDAP configuration"
 msgstr "LDAP-konfiguration"
 
-#: import_services/models/ldap_configuration.py:157
+#: import_services/models/ldap_configuration.py:160
 msgid "LDAP configurations"
 msgstr "LDAP-konfigurationer"
 
@@ -1424,11 +1429,11 @@ msgstr "LDAP-konfigurationer"
 msgid "realm id"
 msgstr "realm id"
 
-#: import_services/models/realm.py:33
+#: import_services/models/realm.py:34
 msgid "Keycloak realm"
 msgstr "Keycloak realm"
 
-#: import_services/models/realm.py:34
+#: import_services/models/realm.py:35
 msgid "Keycloak realms"
 msgstr "Keycloak realms"
 
@@ -1504,7 +1509,7 @@ msgid "SID"
 msgstr "SID"
 
 #: organizations/models/aliases.py:46 organizations/models/organization.py:65
-#: organizations/templates/organizations/org_list.html:40
+#: organizations/templates/organizations/org_list.html:41
 msgid "email"
 msgstr "e-mail"
 
@@ -1575,25 +1580,29 @@ msgstr "{cls}: {account} ({role}) ved {unit}"
 msgid "create new organization"
 msgstr "opret ny organisation"
 
-#: organizations/templates/organizations/org_list.html:19
+#: organizations/templates/organizations/org_list.html:20
 msgid "organizations for"
 msgstr "organisationer for"
 
-#: organizations/templates/organizations/org_list.html:25
-#: organizations/templates/organizations/org_list.html:30
+#: organizations/templates/organizations/org_list.html:26
+#: organizations/templates/organizations/org_list.html:31
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_list.html:41
+#: organizations/templates/organizations/org_list.html:42
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_list.html:83
-#: organizations/templates/organizations/org_list.html:86
+#: organizations/templates/organizations/org_list.html:84
+#: organizations/templates/organizations/org_list.html:87
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_list.html:107
+#: organizations/templates/organizations/org_list.html:102
+msgid "last updated"
+msgstr "sidst opdateret"
+
+#: organizations/templates/organizations/org_list.html:124
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 

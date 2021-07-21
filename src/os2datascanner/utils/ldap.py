@@ -200,27 +200,30 @@ class LDAPNode(NamedTuple):
     def __repr__(self) -> str:
         return str(self) + f" <{len(self.children)}>"
 
-    def walk(self, *, _parents: Sequence[RDN] = ()) -> Iterator[
-            Tuple[Sequence[RDN], 'LDAPNode']]:
+    def walk(self, *, _parents: Sequence[RDN] = ()
+            ) -> Iterator[Tuple[Sequence[RDN], 'LDAPNode']]:
         """Enumerates all LDAPNodes in this hierarchy in depth-first order,
         along with their full distinguished names."""
         yield (_parents + self.label, self)
         for k in self.children:
             yield from k.walk(_parents=_parents + self.label)
 
-    def diff(self, other: 'LDAPNode') -> Iterator[
-            Tuple[Sequence[RDN], Tuple['LDAPNode', 'LDAPNode']]]:
+    def diff(self, other: 'LDAPNode', *, only_leaves: bool = False
+            ) -> Iterator[Tuple[Sequence[RDN], Tuple['LDAPNode', 'LDAPNode']]]:
         """Computes the difference between this LDAPNode hierarchy and another
-        one."""
-        our_leaves = {k: v for k, v in self.walk() if not v.children}
-        their_leaves = {k: v for k, v in other.walk() if not v.children}
-        ours = our_leaves.keys()
-        theirs = their_leaves.keys()
+        one. (By default, the diff includes all nodes, but setting @only_leaves
+        to True will skip any nodes that have children.)"""
+        our_nodes = {k: v for k, v in self.walk()
+                if not v.children or not only_leaves}
+        their_nodes = {k: v for k, v in other.walk()
+                if not v.children or not only_leaves}
+        ours = our_nodes.keys()
+        theirs = their_nodes.keys()
 
-        yield from ((k, our_leaves[k], None) for k in ours - theirs)
-        yield from ((k, our_leaves[k], their_leaves[k])
-                for k in ours & theirs if our_leaves[k] != their_leaves[k])
-        yield from ((k, None, their_leaves[k]) for k in theirs - ours)
+        yield from ((k, our_nodes[k], None) for k in ours - theirs)
+        yield from ((k, our_nodes[k], their_nodes[k])
+                for k in ours & theirs if our_nodes[k] != their_nodes[k])
+        yield from ((k, None, their_nodes[k]) for k in theirs - ours)
 
     def print(self, *, _levels: int = 0):
         """Prints a summary of this LDAP node and its descendants to the
