@@ -240,17 +240,23 @@
                 {% for value, tag in form.sensitivity.field.choices %}
                 <label class="radio radio-before">
                   <span class="radio__input">
-                    <input type="radio" name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" value="{{ value }}">
-                    {% if value == 0 %}
-                      <span class="radio__control radio__control--notify"></span>
-                    {% elif value == 1 %}
-                      <span class="radio__control radio__control--warning"></span>
-                    {% elif value == 2 %}
-                      <span class="radio__control radio__control--problem"></span>
-                    {% elif value == 3 %}
-                      <span class="radio__control radio__control--critical"></span>
-                    {% endif %}
+
+                  {% if value == form.sensitivity.value %}
+                        <input type="radio" name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" value="{{ value }}" checked="checked">
+                  {% else %}
+                        <input type="radio" name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" value="{{ value }}" >
+                  {% endif %}
+                        {% if value == 0 %}
+                          <span class="radio__control radio__control--notify"></span>
+                        {% elif value == 1 %}
+                          <span class="radio__control radio__control--warning"></span>
+                        {% elif value == 2 %}
+                          <span class="radio__control radio__control--problem"></span>
+                        {% elif value == 3 %}
+                          <span class="radio__control radio__control--critical"></span>
+                        {% endif %}
                   </span>
+
                   <span class="radio__label">{{ tag }}</span>
                 </label>
                 {% endfor %}
