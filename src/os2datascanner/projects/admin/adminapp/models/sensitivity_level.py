@@ -30,8 +30,8 @@ class Sensitivity:
     OK = 0
 
     choices = (
-        (OK, _('Notification')),
-        (LOW, _('Warning')),
+        (CRITICAL, _('Critical')),
         (HIGH, _('Problem')),
-        (CRITICAL, _('Critical'))
+        (LOW, _('Warning')),
+        (OK, _('Notification')),
     )
