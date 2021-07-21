@@ -20,3 +20,7 @@ timeout = 45
 # The size at which LibreOffice-generated HTML should be thrown away and
 # replaced by a new plaintext conversion (in bytes)
 size_threshold = 1048576
+
+[model.http]
+# timeout for requests
+timeout = 45

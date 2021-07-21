@@ -83,10 +83,11 @@ class URLTests(unittest.TestCase):
                 ),
                 "smbc://FaithfullA@INT-SRV-01.intern.vstkom.dk/Q%24",
             ),
-            (WebSource("http://www.example.com"), "http://www.example.com"),
+            # always append trailing / on base url if not present
+            (WebSource("http://www.example.com"), "http://www.example.com/"),
             (
                 SecureWebSource("https://www.example.com"),
-                "https://www.example.com",
+                "https://www.example.com/",
             ),
             (
                 DataSource(b"This is a test", "text/plain"),

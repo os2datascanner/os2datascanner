@@ -10,6 +10,7 @@ from contextlib import contextmanager
 from typing import Optional, Set
 from datetime import datetime
 
+from .. import settings as engine2_settings
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
 from .core import Source, Handle, FileResource
@@ -20,7 +21,7 @@ from .utilities.datetime import parse_datetime
 logger = logging.getLogger(__name__)
 MAX_REQUESTS_PER_SECOND = 10
 SLEEP_TIME = 1 / MAX_REQUESTS_PER_SECOND
-TIMEOUT = 5.0
+TIMEOUT = engine2_settings.model["http"]["timeout"]
 
 def simplify_mime_type(mime):
     r = mime.split(';', maxsplit=1)
@@ -30,9 +31,9 @@ def simplify_mime_type(mime):
 class WebSource(Source):
     type_label = "web"
 
-    def __init__(self, url, sitemap = ""):
+    def __init__(self, url: str, sitemap : str = ""):
         assert url.startswith("http:") or url.startswith("https:")
-        self._url = url
+        self._url = url if url.endswith("/") else url + "/"
         self._sitemap = sitemap
 
     def _generate_state(self, sm):
@@ -192,9 +193,7 @@ class WebResource(FileResource):
         return response.status_code not in (404, 410,)
 
     def _make_url(self):
-        handle = self.handle
-        base = handle.source.to_url()
-        return base + str(handle.relative_path)
+        return self.handle.presentation_url
 
     def get_status(self):
         self.unpack_header()
