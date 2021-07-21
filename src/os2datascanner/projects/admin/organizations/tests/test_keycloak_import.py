@@ -5,6 +5,7 @@ from ...core.models.client import Client
 from ..models import Account, Organization, OrganizationalUnit, Alias, Position
 from .. import keycloak_actions
 
+
 TEST_CORP = [
     {
         "id": "4f533264-6174-6173-6361-6e6e65720000",
@@ -297,3 +298,31 @@ class KeycloakImportTest(TestCase):
                 OrganizationalUnit.objects.filter(
                         imported_id="CN=Group 1,O=Test Corp.").exists(),
                 msg="OU is not deleted")
+
+    def test_property_update(self):
+        """Changing a user's name should update the corresponding properties in
+        the database."""
+        self.test_ou_import()
+
+        for user in Account.objects.all():
+            self.assertNotEqual(
+                    user.first_name,
+                    "Tadeusz",
+                    "premature or invalid property update(?)")
+
+        NEW_CORP = deepcopy(TEST_CORP)
+        for tester in NEW_CORP:
+            try:
+                tester["firstName"] = "Tadeusz"
+            except ValueError:
+                pass
+
+        keycloak_actions.perform_import_raw(
+                self.org, NEW_CORP,
+                keycloak_actions.keycloak_group_dn_selector)
+
+        for user in Account.objects.all():
+            self.assertEqual(
+                    user.first_name,
+                    "Tadeusz",
+                    "property update failed")
