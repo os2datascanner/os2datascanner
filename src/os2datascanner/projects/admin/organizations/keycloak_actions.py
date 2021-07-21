@@ -166,10 +166,6 @@ def perform_import_raw(
 
     remote_hierarchy = LDAPNode.from_iterator(
             remote, name_selector=name_selector)
-    # Collapse the top of the hierarchy together, but don't go further than the
-    # first "ou" or "cn" -- groups and organisational units should be preserved
-    remote_hierarchy = remote_hierarchy.collapse(
-            lambda n: n.children[0].label[0].key not in ("ou", "cn"))
 
     to_add = []
     to_delete = []
