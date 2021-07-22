@@ -56,10 +56,6 @@ RENDERABLE_RULES = (
 )
 
 
-class LoginPageView(View):
-    template_name = 'login.html'
-
-
 class LogoutPageView(TemplateView, View):
     template_name = 'logout.html'
 
