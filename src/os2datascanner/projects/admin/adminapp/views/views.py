@@ -77,12 +77,6 @@ class RestrictedListView(ListView, LoginRequiredMixin):
             return self.model.objects.none()
 
 
-class MainPageView(TemplateView, LoginRequiredMixin):
-    """Display the main page."""
-
-    template_name = 'os2datascanner/scanners.html'
-
-
 # Create/Update/Delete Views.
 class RestrictedCreateView(CreateView, LoginRequiredMixin):
     """Base class for create views that are limited by user organization."""
