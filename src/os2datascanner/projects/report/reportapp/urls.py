@@ -21,7 +21,7 @@ urlpatterns = [
     url('settings', SettingsPageView.as_view(), name="settings"),
     url('about',    AboutPageView.as_view(),    name="about"),
     url(r'^health/', lambda r: HttpResponse()),
-    url(r'^version', lambda r: HttpResponse(__version__)),
+    url(r'^version/?$', lambda r: HttpResponse(__version__)),
 ]
 
 if settings.SAML2_ENABLED:

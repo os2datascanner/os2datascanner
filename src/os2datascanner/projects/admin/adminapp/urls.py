@@ -302,5 +302,5 @@ urlpatterns = [
     )),
 
     url(r'^health/', lambda r: HttpResponse()),
-    url(r'^version', lambda r: HttpResponse(__version__)),
+    url(r'^version/?$', lambda r: HttpResponse(__version__)),
 ]
