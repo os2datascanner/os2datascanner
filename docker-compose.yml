@@ -103,6 +103,7 @@ services:
       - db
       - admin
       - queue
+    stop_grace_period: 1m30s
 
   report:
     build:
