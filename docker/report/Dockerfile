@@ -114,7 +114,6 @@ COPY src/os2datascanner/engine2 ./engine2
 
 # Copy VERSION, LICENCE, README, NEWS to PROJECT_DIR
 WORKDIR /code
-COPY VERSION ./
 COPY LICENSE ./
 COPY README.rst ./
 COPY NEWS.rst ./

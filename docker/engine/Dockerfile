@@ -67,7 +67,6 @@ COPY docker/engine/docker-entrypoint.sh /code/docker/docker-entrypoint.sh
 
 # Copy VERSION, LICENCE, README, NEWS to /code
 WORKDIR /code
-COPY VERSION ./
 COPY LICENSE ./
 COPY README.rst ./
 COPY NEWS.rst ./
