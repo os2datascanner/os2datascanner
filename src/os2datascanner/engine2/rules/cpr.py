@@ -11,7 +11,7 @@ from .logical import oxford_comma
 from .utilities.cpr_probability import modulus11_check, CprProbabilityCalculator
 
 logger = logging.getLogger(__name__)
-cpr_regex = r"\b(\d{2}[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\b"
+cpr_regex = r"\b(\d{2}[ ]?\d{2}[ ]?\d{2})(?:[ \-/\.\t]|[ ]\-[ ])?(\d{4})\b"
 calculator = CprProbabilityCalculator()
 
 
