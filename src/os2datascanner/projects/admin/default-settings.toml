@@ -68,7 +68,14 @@ OS2DATASCANNER_APPS = [
     'os2datascanner.projects.admin.organizations',
     'os2datascanner.projects.admin.import_services',
 ]
+
+# placeholder configs for DEVs. Keys must exist here if they should be read from
+# user-config toml
 OPTIONAL_APPS = []
+OPTIONAL_MIDDLEWARE = []
+INTERNAL_IPS = []
+# XXX: is actually a dict but initialized as list due to how @toml files are parsed
+DEBUG_TOOLBAR_CONFIG = []
 
 AUTH_PROFILE_MODULE = "os2datascanner.projects.admin.adminapp.UserProfile"
 WSGI_APPLICATION = "os2datascanner.projects.admin.wsgi.application"

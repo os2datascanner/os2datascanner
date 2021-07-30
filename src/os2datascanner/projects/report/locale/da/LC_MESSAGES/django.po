@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-09 06:04-0500\n"
+"POT-Creation-Date: 2021-07-30 13:58-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,47 +32,47 @@ msgstr "%(value)s er ikke et gyldigt SID"
 msgid "Match relation"
 msgstr "Match relation"
 
-#: reportapp/models/documentreport_model.py:19
+#: reportapp/models/documentreport_model.py:25
 msgid "scan time"
 msgstr "scanningstid"
 
-#: reportapp/models/documentreport_model.py:22
+#: reportapp/models/documentreport_model.py:28
 msgid "created timestamp"
 msgstr "oprettet tidsstempel"
 
-#: reportapp/models/documentreport_model.py:26
+#: reportapp/models/documentreport_model.py:32
 msgid "organization"
 msgstr "organisation"
 
-#: reportapp/models/documentreport_model.py:29
+#: reportapp/models/documentreport_model.py:35
 msgid "path"
 msgstr "filsti"
 
-#: reportapp/models/documentreport_model.py:35
+#: reportapp/models/documentreport_model.py:41
 msgid "source type"
 msgstr "kildetype"
 
-#: reportapp/models/documentreport_model.py:37
+#: reportapp/models/documentreport_model.py:43
 msgid "sensitivity"
 msgstr "følsomhed"
 
-#: reportapp/models/documentreport_model.py:39
+#: reportapp/models/documentreport_model.py:45
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport_model.py:81
+#: reportapp/models/documentreport_model.py:112
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport_model.py:84
+#: reportapp/models/documentreport_model.py:115
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport_model.py:87
+#: reportapp/models/documentreport_model.py:118
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport_model.py:121
+#: reportapp/models/documentreport_model.py:152
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -195,12 +195,8 @@ msgstr "Kontekst"
 msgid "Probability"
 msgstr "Sandsynlighed"
 
-#: reportapp/templates/components/load-results.html:8
-#: reportapp/templates/components/load-results.html:13
-#: reportapp/templates/components/load-results.html:19
-#: reportapp/templates/components/load-results.html:25
-#: reportapp/templates/components/load-results.html:31
-#: reportapp/templates/components/load-results.html:37
+#: reportapp/templates/components/load-results.html:10
+#: reportapp/templates/components/load-results.html:16
 msgid "per page"
 msgstr "pr. side"
 
@@ -208,21 +204,21 @@ msgstr "pr. side"
 msgid "Front page"
 msgstr "Forside"
 
-#: reportapp/templates/components/pagination.html:19
-#: reportapp/templates/components/pagination.html:26
+#: reportapp/templates/components/pagination.html:20
+#: reportapp/templates/components/pagination.html:27
 msgid "Previous"
 msgstr "Forrige"
 
-#: reportapp/templates/components/pagination.html:58
-#: reportapp/templates/components/pagination.html:65
+#: reportapp/templates/components/pagination.html:59
+#: reportapp/templates/components/pagination.html:66
 msgid "Next"
 msgstr "Næste"
 
-#: reportapp/templates/components/pagination.html:74
+#: reportapp/templates/components/pagination.html:75
 msgid "Go to page"
 msgstr "Gå til side"
 
-#: reportapp/templates/components/pagination.html:78
+#: reportapp/templates/components/pagination.html:79
 msgid "Go"
 msgstr "Gå"
 
@@ -474,18 +470,22 @@ msgstr ""
 "Med venlig hilsen<br>\n"
 "OS2datascanner-systemet\n"
 
-#: reportapp/views/views.py:246
+#: reportapp/views/views.py:71
+msgid "The page does not exist"
+msgstr ""
+
+#: reportapp/views/views.py:262
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:247
+#: reportapp/views/views.py:263
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:248
+#: reportapp/views/views.py:264
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:249
+#: reportapp/views/views.py:265
 msgid "Mailscan"
 msgstr "Mailscan"
