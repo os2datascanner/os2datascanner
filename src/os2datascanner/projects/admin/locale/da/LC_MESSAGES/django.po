@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-21 06:53-0500\n"
+"POT-Creation-Date: 2021-07-30 13:57-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -133,20 +133,20 @@ msgid "download Sitemap from server"
 msgstr "hent Sitemap fra serveren"
 
 #: adminapp/models/sensitivity_level.py:33
-msgid "Notification"
-msgstr "Notifikation"
+msgid "Critical"
+msgstr "Kritisk"
 
 #: adminapp/models/sensitivity_level.py:34
-msgid "Warning"
-msgstr "Advarsel"
-
-#: adminapp/models/sensitivity_level.py:35
 msgid "Problem"
 msgstr "Problem"
 
+#: adminapp/models/sensitivity_level.py:35
+msgid "Warning"
+msgstr "Advarsel"
+
 #: adminapp/models/sensitivity_level.py:36
-msgid "Critical"
-msgstr "Kritisk"
+msgid "Notification"
+msgstr "Notifikation"
 
 #: adminapp/templates/403.html:11
 msgid "You need permission to perform this action"
@@ -256,7 +256,7 @@ msgid "Rule"
 msgstr "Regel"
 
 #: adminapp/templates/os2datascanner/cprrule_form.html:188
-#: adminapp/templates/os2datascanner/regexrule_form.html:281
+#: adminapp/templates/os2datascanner/regexrule_form.html:287
 #: adminapp/templates/os2datascanner/scanner_form.html:749
 msgid "Save changes"
 msgstr "Gem ændringer"
@@ -343,7 +343,7 @@ msgstr "Tilføj endnu et regulært udtryk"
 msgid "Assess the sensitivity of the rule"
 msgstr "Vurder reglens følsomhed"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:268
+#: adminapp/templates/os2datascanner/regexrule_form.html:274
 msgid "Description of rule"
 msgstr "Beskrivelse af regel"
 
@@ -926,10 +926,14 @@ msgstr ""
 "adressendu er registreret hos, og tjekke din spam mappe."
 
 #: adminapp/templates/password_reset_email.html:3
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "You're receiving this email because you requested a password reset for "
+#| "your user account at %(site_name)s."
 msgid ""
-"You're receiving this email because you requested a password reset for "
-"your user account at %(site_name)s."
+"\n"
+"  You're receiving this email because you requested a password reset for "
+"your user account at %(site_name)s.\n"
 msgstr ""
 "Du modtager denne e-mail, fordi du har anmodet om nulstilling af adgangskode "
 "til dinbrugerkonto på %(site_name)s."
@@ -947,8 +951,11 @@ msgid "Thanks for using our site!"
 msgstr "Tak, fordi du brugte vores side!"
 
 #: adminapp/templates/password_reset_email.html:18
-#, python-format
-msgid "The %(site_name)s team"
+#, fuzzy, python-format
+#| msgid "The %(site_name)s team"
+msgid ""
+"\n"
+"  The %(site_name)s team\n"
 msgstr "%(site_name)s team"
 
 #: adminapp/templates/password_reset_form.html:27
@@ -989,11 +996,11 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
-#: adminapp/views/views.py:183 import_services/models/exported_mixin.py:31
+#: adminapp/views/views.py:177 import_services/models/exported_mixin.py:31
 msgid "created"
 msgstr "oprettet"
 
-#: adminapp/views/views.py:183
+#: adminapp/views/views.py:177
 msgid "saved"
 msgstr "gemt"
 
