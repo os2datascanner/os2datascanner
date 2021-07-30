@@ -3,10 +3,10 @@ import signal
 import argparse
 import traceback
 import logging
-from prometheus_client import start_http_server
+from prometheus_client import start_http_server, Info
 from .utilities.prometheus import prometheus_summary
 
-
+from ...import __version__
 from ..model.core import SourceManager
 from .utilities.pika import PikaPipelineRunner
 from .utilities.systemd import notify_ready, notify_stopping
@@ -104,6 +104,8 @@ def main():
     logger.info("starting pipeline {0}".format(args.stage))
 
     if args.enable_metrics:
+        i = Info(f"os2datascanner_pipeline_{args.stage}", "version number")
+        i.info({"version": __version__})
         start_http_server(args.prometheus_port)
 
     class GenericRunner(PikaPipelineRunner):

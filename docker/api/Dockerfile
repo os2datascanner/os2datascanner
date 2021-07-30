@@ -68,7 +68,6 @@ COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
 
 WORKDIR /code
-COPY VERSION ./
 COPY LICENSE ./
 COPY README.rst ./
 COPY NEWS.rst ./

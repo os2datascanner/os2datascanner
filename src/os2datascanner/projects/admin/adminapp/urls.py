@@ -18,6 +18,7 @@ from django.conf.urls import url
 from django.http import HttpResponse
 from django.views.i18n import JavaScriptCatalog
 from django.views.generic.base import TemplateView
+from os2datascanner import __version__
 
 from .models.scannerjobs.dropboxscanner_model import DropboxScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
@@ -301,4 +302,5 @@ urlpatterns = [
     )),
 
     url(r'^health/', lambda r: HttpResponse()),
+    url(r'^version/?$', lambda r: HttpResponse(__version__)),
 ]

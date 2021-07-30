@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django.urls import include
 from django.conf import settings
 from django.urls import path
+from os2datascanner import __version__
+
 from .views.api import JSONAPIView
 from .views.views import (MainPageView, LeaderStatisticsPageView, DPOStatisticsPageView, ApprovalPageView,
                           StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
@@ -19,6 +21,7 @@ urlpatterns = [
     url('settings', SettingsPageView.as_view(), name="settings"),
     url('about',    AboutPageView.as_view(),    name="about"),
     url(r'^health/', lambda r: HttpResponse()),
+    url(r'^version/?$', lambda r: HttpResponse(__version__)),
 ]
 
 if settings.SAML2_ENABLED:
