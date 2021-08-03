@@ -8,3 +8,5 @@ __version__ = "3.11.1"
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 # This allows users of this "library" to disable all logging, simply by
 # logging.getLogger('os2datascanner').propagate = False
+
+logging.getLogger("pika").setLevel(logging.WARNING)
