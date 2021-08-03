@@ -11,7 +11,7 @@ from os2datascanner.engine2.conversions.utilities.results import SingleResult
 
 
 here_path = os.path.dirname(__file__)
-test_data_path = os.path.join(here_path, "data", "engine2")
+test_data_path = os.path.join(here_path, "..", "data", "engine2")
 
 
 class Engine2ContainerTest(unittest.TestCase):
