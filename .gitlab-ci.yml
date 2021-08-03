@@ -219,7 +219,9 @@ Unit Test Engine:
   stage: test
   tags:
     - docker
-  image: ${ENGINE_IMAGE}
+  image:
+    name: ${ENGINE_IMAGE}
+    entrypoint: [""]
   variables:
     OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
     OS2DS_ENGINE_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/engine/docker-settings.toml
