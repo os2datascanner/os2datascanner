@@ -57,9 +57,10 @@ defusedxml==0.6.0
     #   exchangelib
     #   pysaml2
     #   python3-saml
+django-debug-toolbar==3.2.1
+    # via -r requirements-django.in
 django-extensions==2.2.9
     # via -r requirements-django.in
-django-debug-toolbar==3.2.1
 django-ipware==2.1.0
     # via django-structlog
 django-model-utils==4.0.0
@@ -77,6 +78,7 @@ django-structlog==1.5.2
 django==3.2.4
     # via
     #   -r requirements-django.in
+    #   django-debug-toolbar
     #   django-model-utils
     #   django-rest-auth
     #   django-settings-export
@@ -328,7 +330,9 @@ six==1.14.0
 soupsieve==2.0
     # via beautifulsoup4
 sqlparse==0.3.1
-    # via django
+    # via
+    #   django
+    #   django-debug-toolbar
 structlog==20.1.0
     # via
     #   -c requirements-engine.txt
