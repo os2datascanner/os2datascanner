@@ -169,8 +169,7 @@ Build documentation:
 
 Test Admin Application:
   extends: .test-default
-  image:
-    name: ${ADMIN_IMAGE}
+  image: ${ADMIN_IMAGE}
   variables:
     OS2DS_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
     OS2DS_ADMIN_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/admin/docker-settings.toml
@@ -193,8 +192,7 @@ Test Admin Application:
 
 Integration Test Engine:
   extends: .test-default
-  image:
-    name: ${ENGINE_IMAGE}
+  image: ${ENGINE_IMAGE}
   variables:
     OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
     OS2DS_ENGINE_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/engine/docker-settings.toml
@@ -238,8 +236,7 @@ Unit Test Engine:
 
 Test Report Application:
   extends: .test-default
-  image:
-    name: ${REPORT_IMAGE}
+  image: ${REPORT_IMAGE}
   variables:
     OS2DS_REPORT_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/report/test-settings.toml
     OS2DS_REPORT_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/report/docker-settings.toml
