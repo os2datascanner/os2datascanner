@@ -83,9 +83,7 @@ Lint shell scripts:
   needs: []
   services: []
   image:
-    # We use kaniko v0.16.0 as both v0.17.0, v0.17.1, v0.18.0 and v0.19.0
-    # contains fatal bugs.
-    name: gcr.io/kaniko-project/executor:debug-v0.16.0
+    name: gcr.io/kaniko-project/executor:v1.6.0-debug
     entrypoint: [""]
   tags:
     - docker
