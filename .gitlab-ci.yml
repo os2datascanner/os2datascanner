@@ -42,15 +42,9 @@ variables:
     - docker
   allow_failure: false
 
-Lint Python:
-  <<: *lint-default
-  image: python:3.6
-  before_script:
-    - pip install flake8
-  script:
-    - flake8 --version
-    - flake8 src/
-  allow_failure: true
+
+# We should lint our Python code. See: #44827.
+
 
 Lint Dockerfiles:
   <<: *lint-default
@@ -277,7 +271,6 @@ Run Engine notice scripts:
 .release-default: &release-default
   stage: release
   needs:
-    - Lint Python
     - Lint Dockerfiles
     - Lint shell scripts
     - Build Report Application
