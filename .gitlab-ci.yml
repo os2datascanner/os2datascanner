@@ -269,22 +269,26 @@ Run Engine notice scripts:
   script:
     - python -m unittest discover -s src/os2datascanner/engine2/tests/ --pattern "notice*.py"
 
+
 # Release stage
 ###############
 
 .release-default: &release-default
   stage: release
   needs:
-    - Lint Dockerfiles
     - Lint Python
-    - Build Admin Application
+    - Lint Dockerfiles
+    - Lint shell scripts
     - Build Report Application
+    - Build Admin Application
     - Build Engine
+    - Build API
     - Build documentation
     - Test Admin Application
-    - Unit Test Engine
     - Integration Test Engine
+    - Unit Test Engine
     - Test Report Application
+    - Run Engine notice scripts
   image: alpine
   variables:
     GIT_STRATEGY: none # We do not need the source code
