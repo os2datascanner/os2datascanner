@@ -70,10 +70,9 @@ Lint shell scripts:
   image: koalaman/shellcheck-alpine:latest
   before_script:
     - apk update
-    - apk add git
+    - apk add fd
   script:
-    - git ls-files --exclude='*.sh' --ignored | xargs shellcheck
-  allow_failure: true
+    - fd --extension sh --exec shellcheck
 
 
 # Build stage
