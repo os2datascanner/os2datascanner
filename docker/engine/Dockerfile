@@ -74,7 +74,5 @@ COPY NEWS.rst ./
 # Set up to run given command as the new user
 USER os2ds_engine:os2ds_engine
 
-ENV AVAILABLE_STAGES="explorer,processor,matcher,tagger,exporter,worker"
-
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
 CMD ["explorer", "-h"]
