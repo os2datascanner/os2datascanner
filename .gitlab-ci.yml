@@ -253,21 +253,22 @@ Test Report Application:
       junit: $CI_PROJECT_DIR/junit.xml
 
 Run Engine notice scripts:
-  <<: *test-default
-  image:
-    name: ${ENGINE_IMAGE}
+  stage: test
+  tags:
+    - docker
+  services: []
+  image: ${ENGINE_IMAGE}
   needs:
     - Build Engine
-  # If the notice scripts need services at some point, just remove the following line
-  services: []
   variables:
     OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
-    OS2DS_ENGINE_SYSTEM_CONFIG_PATH: ${CI_PROJECT_DIR}/docker/engine/docker-settings.toml
     # ensure entrypoint.sh is running without trying to connect to DB/RabbitMQ/
     # This cannot be yes/no or something `yaml` interprets as a boolean
     BARE_MODE: yup
   script:
     - python -m unittest discover -s src/os2datascanner/engine2/tests/ --pattern "notice*.py"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
 
 
 # Release stage
@@ -288,7 +289,6 @@ Run Engine notice scripts:
     - Integration Test Engine
     - Unit Test Engine
     - Test Report Application
-    - Run Engine notice scripts
   image: alpine
   variables:
     GIT_STRATEGY: none # We do not need the source code
@@ -299,7 +299,7 @@ Run Engine notice scripts:
 .release-rc: &release-rc
   <<: *release-default
   rules:
-    - if: $CI_COMMIT_REF_NAME == "development"
+    - if: '$CI_COMMIT_REF_NAME == "development" && $CI_PIPELINE_SOURCE != "schedule"'
   script:
     - apk add skopeo
     - skopeo copy
@@ -425,7 +425,7 @@ Deploy test:
   image: magentalabs/pepper:latest
   services: []
   rules:
-    - if: $CI_COMMIT_REF_NAME == "development"
+    - if: '$CI_COMMIT_REF_NAME == "development" && $CI_PIPELINE_SOURCE != "schedule"'
   dependencies: []
   tags:
     - deploy
