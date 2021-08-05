@@ -7,7 +7,7 @@ A11Y_DIR="${ROOT_DIR}/services/a11y-scanner"
 A11Y_PORT=8888
 
 # Load credentials
-# shellcheck disable=SC1090
+# shellcheck disable=SC1091
 source "${ROOT_DIR}/dev-environment/a11y-scanner/a11y-scanner.env"
 
 curl --user "$A11Y_SCANNER_USERNAME:$A11Y_SCANNER_PASSWORD" \

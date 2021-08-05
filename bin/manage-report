@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-DIR="`dirname "${BASH_SOURCE[0]}"`"
-
-export OS2DS_REPORT_USER_CONFIG_PATH="$DIR/../contrib/config/report-module/user-settings.toml"
-export OS2DS_REPORT_SYSTEM_CONFIG_PATH=""
-
-exec "$DIR/pex" python -m os2datascanner.projects.report.manage "$@"
