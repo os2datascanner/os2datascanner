@@ -10,6 +10,8 @@ Pillow
 prometheus_client
 PyPDF2
 pysmbc
+pytest
+pytest-xdist
 python-dateutil
 python-magic
 regex
