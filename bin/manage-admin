@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-DIR="`dirname "${BASH_SOURCE[0]}"`"
-
-export OS2DS_ADMIN_USER_CONFIG_PATH="$DIR/../contrib/config/admin-module/user-settings.toml"
-export OS2DS_ADMIN_SYSTEM_CONFIG_PATH=""
-
-exec "$DIR/pex" python -m os2datascanner.projects.admin.manage "$@"
