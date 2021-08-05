@@ -39,8 +39,6 @@ else
   echo "Skipping automatic migrations"
 fi
 
-# Generate static content
-./manage.py collectstatic --no-input --clear
 # Compile translations
 ./manage.py compilemessages
 
