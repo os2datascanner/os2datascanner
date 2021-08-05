@@ -15,6 +15,8 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 
+import json
+
 from django.core.management.base import BaseCommand
 from django.core.exceptions import FieldError
 from django.db.models.deletion import ProtectedError
@@ -31,6 +33,7 @@ from ...models.organization_model import Organization
 
 import structlog
 logger = structlog.get_logger(__name__)
+
 
 def result_message_received_raw(body):
     """Method for restructuring and storing result body.
@@ -80,10 +83,22 @@ def event_message_received_raw(body):
     if not event_type or not model_class or not instance:
         return
 
+    # Version 3.9.0 switched to using django.core.serializers for
+    # ModelChangeEvent messages and so has a completely different wire format.
+    # Rather than attempting to handle both, we detect messages from older
+    # versions and drop them on the floor
+    if not (isinstance(instance, str)
+            and instance.startswith("[") and instance.endswith("]")):
+        logger.warning("Ignoring old-style ModelChangeEvent")
+        return
+    else:
+        instance = json.loads(instance)[0]
+
     if model_class == "Organization":
         handle_event(event_type, instance, Organization)
     else:
-        logger.info("Unknown model_class %s in event" % model_class)
+        logger.info("event_message_received_raw:"
+                f" unknown model_class {model_class} in event")
         return
 
     yield from []
