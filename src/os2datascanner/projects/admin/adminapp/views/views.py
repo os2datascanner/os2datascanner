@@ -77,8 +77,8 @@ class RestrictedListView(ListView, LoginRequiredMixin):
             return self.model.objects.none()
 
 
-class Haandbog(TemplateView):
-    template_name = "os2datascanner/haandbogfane.html"
+class GuideView(TemplateView):
+    template_name = "os2datascanner/guide.html"
 
 
 # Create/Update/Delete Views.

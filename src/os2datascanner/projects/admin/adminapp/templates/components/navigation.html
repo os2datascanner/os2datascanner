@@ -46,10 +46,10 @@
           </span>
         </a>
         <li>
-          <a href="/haandbogfane/" target="_NEW">
-            {% include "components/svg-icons/admin_panel.svg" %}
+          <a href="/help/guide/" class="{% if active_tab == 'guide' %}active{% endif %}" target="_new">
+            {% include "components/svg-icons/help.svg" %}
             <span class="width">
-              {% trans "Håndbog" %}
+              {% trans "Guide" %}
             </span>
           </a>
       </li>

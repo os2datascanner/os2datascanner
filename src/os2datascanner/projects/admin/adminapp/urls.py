@@ -30,7 +30,7 @@ from .models.scannerjobs.msgraph_models import (MSGraphMailScanner,
 from .models.scannerjobs.gmail_model import GmailScanner
 from .models.scannerjobs.sbsysscanner_model import SbsysScanner
 from .views.api import JSONAPIView
-from .views.views import DialogSuccess, Haandbog
+from .views.views import GuideView, DialogSuccess
 from .views.exchangescanner_views import (
     ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate,
     ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun)
@@ -74,7 +74,7 @@ urlpatterns = [
     url(r'^status/$', StatusOverview.as_view(), name='status'),
     url(r'^status-completed/$', StatusCompleted.as_view(), name='status-completed'),
     url(r'^status/(?P<pk>\d+)/delete/$', StatusDelete.as_view(), name='status-delete'),
-    url(r'^haandbogfane/$', Haandbog.as_view(), name='haandbogfane'),
+    url(r'^help/guide/$', GuideView.as_view(), name='guide'),
     #Exchangescanner URL's
     url(r'^exchangescanners/$', ExchangeScannerList.as_view(), name='exchangescanners'),
     url(r'^exchangescanners/add/$', ExchangeScannerCreate.as_view(), name='exchangescanner_add'),

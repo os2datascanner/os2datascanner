@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block body %} 
+  {% include "partials/main.html" with active_tab="guide" %}
+<main class="wrapper">
+<div class="content">
 <div>
 <h1>Håndbog for projektledere</h1>
 <h2>Indhold</h2>
@@ -428,5 +431,8 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 
 
 </div>
+
+</div>
+</main>
 {% endblock  %}
 
