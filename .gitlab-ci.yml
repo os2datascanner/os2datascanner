@@ -40,7 +40,6 @@ variables:
   services: []
   tags:
     - docker
-  allow_failure: false
 
 
 # We should lint our Python code. See: #44827.
@@ -81,7 +80,6 @@ Lint shell scripts:
     entrypoint: [""]
   tags:
     - docker
-  allow_failure: false
 
 Build Report Application:
   <<: *build-default
@@ -159,7 +157,6 @@ Build documentation:
     POSTGRES_USER: os2datascanner
     POSTGRES_PASSWORD: os2datascanner
     COVERAGE_FILE: /tmp/.coverage
-  allow_failure: false
 
 Test Admin Application:
   extends: .test-default
