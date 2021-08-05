@@ -172,7 +172,6 @@ Test Admin Application:
   image: ${ADMIN_IMAGE}
   variables:
     OS2DS_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
-    OS2DS_ADMIN_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/admin/docker-settings.toml
   needs:
     - Build Admin Application
   script:
@@ -195,7 +194,6 @@ Integration Test Engine:
   image: ${ENGINE_IMAGE}
   variables:
     OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
-    OS2DS_ENGINE_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/engine/docker-settings.toml
   needs:
     - Build Engine
   script:
@@ -218,7 +216,6 @@ Unit Test Engine:
     entrypoint: [""]
   variables:
     OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
-    OS2DS_ENGINE_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/engine/docker-settings.toml
   needs:
     - Build Engine
   script:
@@ -239,7 +236,6 @@ Test Report Application:
   image: ${REPORT_IMAGE}
   variables:
     OS2DS_REPORT_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/report/test-settings.toml
-    OS2DS_REPORT_SYSTEM_CONFIG_PATH:  ${CI_PROJECT_DIR}/docker/report/docker-settings.toml
   needs:
     - Build Report Application
   script:
