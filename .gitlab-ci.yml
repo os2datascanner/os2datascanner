@@ -181,8 +181,7 @@ Test Admin Application:
     - Build Admin Application
   script:
     - cd /code/src/os2datascanner/projects/admin
-    # - coverage run --branch --omit=*/tests/* --source=os2datascanner.projects.admin -m django test
-    - python manage.py test $(python -c 'from django.conf import settings; print(" ".join(settings.OS2DATASCANNER_APPS))')
+    - coverage run --omit=*/tests/* --source=os2datascanner.projects.admin -m django test
   after_script:
     - coverage html -d ${CI_PROJECT_DIR}/coverage-html
     - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
