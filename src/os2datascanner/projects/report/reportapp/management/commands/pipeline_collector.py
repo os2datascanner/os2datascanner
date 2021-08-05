@@ -261,8 +261,19 @@ def _identify_message(result):
 
 
 def handle_event(event_type, instance, cls):
+    cn = cls.__name__
 
-    event_obj = cls.from_json_object(instance)
+    # We can't just go through django.core.serializers (not yet, anyway),
+    # because the model classes are not actually shared between the admin
+    # system and the report module. Instead, we copy the shared fields to a new
+    # instance of the local model class
+    class_field_names = tuple(f.name for f in cls._meta.fields)
+    instance_fields = {
+            k: v
+            for k, v in instance["fields"].items()
+            if k in class_field_names and v is not None}
+    instance_fields["uuid"] = instance["pk"]
+    event_obj = cls(**instance_fields)
 
     try:
         existing = cls.objects.get(uuid=event_obj.uuid)
@@ -270,28 +281,29 @@ def handle_event(event_type, instance, cls):
         # If we get this far, the object existed
         # go ahead and update or delete
         if event_type == "object_delete":
+            logger.info(f"handle_event: deleted {cn} {existing.uuid}")
             existing.delete()
-            logger.info("handle_event: Deleted %s with uuid: %s" % (cls, existing.uuid))
         elif event_type == "object_update":
-            event_obj_dict = {k: v for k, v in event_obj.__dict__.items() if v is not None}
-            existing.__dict__.update(event_obj_dict)
+            existing.__dict__.update(instance_fields)
             existing.save()
-            logger.info("handle_event: Updated %s with uuid: %s" % (cls, existing.uuid))
+            logger.info(f"handle_event: updated {cn} {existing.uuid}")
         else:
-            logger.info("handle_event: Unexpected event_type %s from %s with uuid: %s" % (event_type, cls, event_obj.uuid))
+            logger.warning("handle_event: unexpected event_type"
+                    f" {event_type} for {cn} {existing.uuid}")
 
     except cls.DoesNotExist:
-        # The object didn't exist - save it
-        # Notice that we might end up here event with an update event, if the initial
-        # create event wasn't created, collected or didn't succeed
+        # The object didn't exist -- save it. Note that we might also end up
+        # here with an update event if the initial create event didn't get
+        # propagated over to the report module
         event_obj.save()
-        logger.info("handle_event: Created %s with uuid: %s" % (cls, event_obj.uuid))
+        logger.info(f"handle_event: created {cn} {event_obj.uuid}")
     except FieldError as e:
-        logger.info("handle_event: FieldError when handling %s from event: %s" % (cls, e))
+        logger.info(f"handle_event: FieldError when handling {cn}: {e}")
     except AttributeError as e:
-        logger.info("handle_event: AttributeError when handling %s from event: %s" % (cls, e))
+        logger.info(f"handle_event: AttributeError when handling {cn}: {e}")
     except ProtectedError as e:
-        logger.info("handle_event: Couldn't delete %s uuid %s from event: %s" % (cls, event_obj.uuid, e))
+        logger.info(
+                f"handle_event: couldn't delete {cn} {event_obj.uuid}: {e}")
 
 
 class ReportCollector(PikaPipelineRunner):
