@@ -458,7 +458,7 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 
 <p>Man kan også oprette en fil ved navn outlook.reg med følgende tekst (vær igen opmærksom på, at stien til Outlook.exe skal være korrekt):</p>
 
-<pre class="page-width">“Windows Registry Editor Version 5.00
+<pre class="page-width">Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\SOFTWARE\Classes\outlook]
 @="URL:Outlook Folders"
@@ -468,8 +468,7 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 [HKEY_CURRENT_USER\SOFTWARE\Classes\outlook\shell\open]
 [HKEY_CURRENT_USER\SOFTWARE\Classes\outlook\shell\open\command]
 @="\"C:\\Program Files (x86)\\Microsoft Office\\Office15\\OUTLOOK.EXE\"
-/select \"%1\""
-<p>”</pre>
+/select \"%1\""</pre>
 
 <p>Hvis du fra Registry Editor importerer outlook.reg-filen vil de forskellige nøgler automatisk blive opdateret i registry.</p>
 <br>
