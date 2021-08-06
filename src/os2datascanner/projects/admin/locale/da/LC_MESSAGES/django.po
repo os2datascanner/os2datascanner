@@ -4,12 +4,13 @@
 # OS2datascanner.
 # IBP <ibp@magenta.dk>, 2021.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-05 08:25-0500\n"
-"PO-Revision-Date: 2021-04-26 10:27+0200\n"
+"POT-Creation-Date: 2021-08-07 02:11-0500\n"
+"PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
 "Language: Danish\n"
@@ -131,6 +132,18 @@ msgstr "sitemap url"
 #: adminapp/models/scannerjobs/webscanner_model.py:74
 msgid "download Sitemap from server"
 msgstr "hent Sitemap fra serveren"
+
+#: adminapp/models/scannerjobs/webscanner_model.py:81
+msgid "comma-separated list of urls to exclude"
+msgstr "Kommasepareret liste af URLs der skal eksluderes"
+
+#: adminapp/models/scannerjobs/webscanner_model.py:83
+msgid ""
+"Be sure to include a trailing '/'to enforce path matching, i.e. https://"
+"example.com/images/ instead of https://example.com/images"
+msgstr ""
+"Afslut URL'en med '/' for at sikre sti-matching, i.e. https://example.com/"
+"images/ i stedet for https://example.com/images"
 
 #: adminapp/models/sensitivity_level.py:33
 msgid "Critical"
@@ -261,7 +274,7 @@ msgstr "Regel"
 
 #: adminapp/templates/os2datascanner/cprrule_form.html:188
 #: adminapp/templates/os2datascanner/regexrule_form.html:287
-#: adminapp/templates/os2datascanner/scanner_form.html:749
+#: adminapp/templates/os2datascanner/scanner_form.html:743
 msgid "Save changes"
 msgstr "Gem ændringer"
 
@@ -639,23 +652,23 @@ msgstr "Valgte medarbejdere"
 msgid "Scanner settings"
 msgstr "Scannerindstillinger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:676
+#: adminapp/templates/os2datascanner/scanner_form.html:670
 msgid "Add rules"
 msgstr "Tilføj regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:683
+#: adminapp/templates/os2datascanner/scanner_form.html:677
 msgid "Available rules"
 msgstr "Tilgængelige regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:696
+#: adminapp/templates/os2datascanner/scanner_form.html:690
 msgid "Selected rules"
 msgstr "Valgte regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:714
+#: adminapp/templates/os2datascanner/scanner_form.html:708
 msgid "Schedule scan"
 msgstr "Planlæg scan"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:725
+#: adminapp/templates/os2datascanner/scanner_form.html:719
 msgid ""
 "Schedule your scan by creating a fixed interval or adding a date to complete "
 "the scannerjob."
@@ -663,7 +676,7 @@ msgstr ""
 "Planlæg dit scan ved at oprette et fast interval eller tilføj en dato for "
 "afvikling af scannerjobbet."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:741
+#: adminapp/templates/os2datascanner/scanner_form.html:735
 msgid "The scanner will start at the following time for the selected days:"
 msgstr "Scanneren vil starte på følgende tidspunkt på de valgte dage:"
 
@@ -1009,10 +1022,16 @@ msgid "saved"
 msgstr "gemt"
 
 #: adminapp/views/webscanner_views.py:47
-msgid "e.g. https://www.example.com"
+#, fuzzy
+#| msgid "e.g. https://www.example.com"
+msgid "e.g. https://example.com"
 msgstr "f.eks. https://www.example.com"
 
-#: adminapp/views/webscanner_views.py:53 adminapp/views/webscanner_views.py:73
+#: adminapp/views/webscanner_views.py:49
+msgid "e.g. https://example.com/exclude1, https://example.com/exclude2"
+msgstr "f.eks. https://example.com/exclude1, https://example.com/exclude2"
+
+#: adminapp/views/webscanner_views.py:55 adminapp/views/webscanner_views.py:75
 msgid "Space is not allowed in the web-domain name."
 msgstr "Mellemrum er ikke tilladt i web-domænenavnet."
 
