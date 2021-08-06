@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-30 13:57-0500\n"
+"POT-Creation-Date: 2021-08-05 08:25-0500\n"
 "PO-Revision-Date: 2021-04-26 10:27+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -187,6 +187,10 @@ msgstr "organisationer"
 #: adminapp/templates/components/navigation.html:45
 msgid "Administration"
 msgstr "Administration"
+
+#: adminapp/templates/components/navigation.html:52
+msgid "Guide"
+msgstr "Håndbog"
 
 #: adminapp/templates/components/user.html:29 adminapp/templates/logout.html:14
 msgid "Logout"
@@ -996,11 +1000,11 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
-#: adminapp/views/views.py:177 import_services/models/exported_mixin.py:31
+#: adminapp/views/views.py:181 import_services/models/exported_mixin.py:31
 msgid "created"
 msgstr "oprettet"
 
-#: adminapp/views/views.py:177
+#: adminapp/views/views.py:181
 msgid "saved"
 msgstr "gemt"
 

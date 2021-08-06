@@ -33,7 +33,7 @@ body {
   max-width: 90rem;
   width: calc(100% - 2rem);
   margin-bottom: 0.5rem;
-  
+
   h1 {
     display: flex;
     justify-content: flex-start;
@@ -79,4 +79,24 @@ body {
   flex-wrap: wrap;
   max-width: 90rem;
   width: calc(100% - 2rem);
+}
+
+.table {
+  border-collapse: collapse;
+  tr {
+    border-bottom: 1px solid #bbb;
+    td, th {
+      vertical-align: top;
+    }
+    td {
+      padding: 0 1em;
+    }
+    th {
+      padding: 1em;
+    }
+  }
+  tbody tr:last-child {
+    border-bottom: 0;
+  }
+
 }

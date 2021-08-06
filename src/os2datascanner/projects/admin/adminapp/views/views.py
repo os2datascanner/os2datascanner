@@ -77,6 +77,10 @@ class RestrictedListView(ListView, LoginRequiredMixin):
             return self.model.objects.none()
 
 
+class GuideView(TemplateView):
+    template_name = "os2datascanner/guide.html"
+
+
 # Create/Update/Delete Views.
 class RestrictedCreateView(CreateView, LoginRequiredMixin):
     """Base class for create views that are limited by user organization."""
