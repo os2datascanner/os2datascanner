@@ -40,17 +40,10 @@ variables:
   services: []
   tags:
     - docker
-  allow_failure: false
 
-Lint Python:
-  <<: *lint-default
-  image: python:3.6
-  before_script:
-    - pip install flake8
-  script:
-    - flake8 --version
-    - flake8 src/
-  allow_failure: true
+
+# We should lint our Python code. See: #44827.
+
 
 Lint Dockerfiles:
   <<: *lint-default
@@ -87,7 +80,6 @@ Lint shell scripts:
     entrypoint: [""]
   tags:
     - docker
-  allow_failure: false
 
 Build Report Application:
   <<: *build-default
@@ -165,7 +157,6 @@ Build documentation:
     POSTGRES_USER: os2datascanner
     POSTGRES_PASSWORD: os2datascanner
     COVERAGE_FILE: /tmp/.coverage
-  allow_failure: false
 
 Test Admin Application:
   extends: .test-default
@@ -277,7 +268,6 @@ Run Engine notice scripts:
 .release-default: &release-default
   stage: release
   needs:
-    - Lint Python
     - Lint Dockerfiles
     - Lint shell scripts
     - Build Report Application
