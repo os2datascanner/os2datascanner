@@ -39,8 +39,5 @@ else
   echo "Skipping automatic migrations"
 fi
 
-# Compile translations
-./manage.py compilemessages
-
 echo "Initialization complete, starting app"
 exec "$@"
