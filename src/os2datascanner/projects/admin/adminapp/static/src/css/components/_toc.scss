@@ -1,0 +1,28 @@
+.toc {
+  a {
+    text-decoration: none;
+    &:hover, &:focus {
+      text-decoration: underline;
+    }
+  }
+  h3, h4, h5, h6 {
+    margin-bottom: .65em;
+    margin-top: .25em;
+  }
+  h3 {
+    font-size: 1.4rem;
+    margin-top: 1.25em;
+  }
+  h4 {
+    font-size: 1.2rem;
+    margin-left: 1rem;
+  }
+  h5 {
+    font-size: 1rem;
+    margin-left: 2rem;
+  }
+  h6 {
+    font-size: .8rem;
+    margin-left: 3rem;
+  }
+}

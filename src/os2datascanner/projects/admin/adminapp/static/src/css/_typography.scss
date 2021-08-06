@@ -34,8 +34,8 @@ strong {
   font-weight: 700;
 }
 
-h1, 
-h2, 
+h1,
+h2,
 h3 {
   line-height: 1;
 }
@@ -56,7 +56,8 @@ h3 {
 p,
 ol,
 ul,
-dl {
+dl,
+.page-width {
   max-width: 45rem;
 }
 
@@ -142,6 +143,22 @@ pre code {
   line-height: 1.5;
   font-size: .75rem;
   margin-bottom: 1.5rem;
+}
+
+.prose {
+  line-height: 1.5;
+  h3 {
+    font-size: 1.4rem;
+  }
+  h4 {
+    font-size: 1.2rem;
+  }
+  h5 {
+    font-size: 1rem;
+  }
+  h6 {
+    font-size: .8rem;
+  }
 }
 
 .information {

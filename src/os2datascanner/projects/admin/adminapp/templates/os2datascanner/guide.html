@@ -1,11 +1,12 @@
 {% extends 'partials/base.html' %}
 {% load static %}
 
-{% block body %} 
+{% block body %}
   {% include "partials/main.html" with active_tab="guide" %}
 <main class="wrapper">
 <div class="content">
-<div>
+<div class="prose">
+  <nav class="toc">
 <h1>Håndbog for projektledere</h1>
 <h2>Indhold</h2>
 <h3><a href="#Indledning">Indledning</a></h3>
@@ -54,6 +55,7 @@
 <h5><a href="#Aabne-i-Outlook">Åbning af matchede mails i Outlook</a></h5>
 <h4><a href="#Arkitekturtegninger">Arkitekturtegninger</a></h4>
 <h3><a href="#Downloads">Downloads</a></h3>
+</nav>
 
 
 
@@ -71,10 +73,10 @@
 
 <p>Opdelingen i to moduler er - sammen med reglen om, at én person <i>opretter</i> og en anden person <i>godkender</i> et scan - med til at sikre, at der ikke er én person, der både opretter og godkender et scan og bagefter kan se resultatet af scannerjobbet. Desuden gemmer OS2datascanner heller aldrig data på serveren, men kun i den midlertidige hukommelse. På den måde er sikkerhed tænkt ind som et helt grundlæggende element i OS2datascanner.</p>
 
-<p>Har du brug for en hurtig genopfriskning af et bestemt begreb, kan du slå det op i ordlisten.</p>
+<p>Har du brug for en hurtig genopfriskning af et bestemt begreb, kan du <a href="#Ordliste">slå det op i ordlisten</a>.</p>
 
 <h2 id="OS2datascanner-helt-kort">OS2datascanner - helt kort</h2>
-<img src="../../static/src/svg/os2ds-workflow-grafik.svg"/>
+<img class="page-width" src="../../static/src/svg/os2ds-workflow-grafik.svg" alt="OS2datascanners overordnede workflow"/>
 
 <h2 id="Implementering-og-forankring">Første del: Implementering og forankring</h2>
 <h4>Sådan bliver OS2datascanner en integreret del af jeres GDPR-arbejde</h4>
@@ -83,37 +85,88 @@
 <h3 id="De-fire-faser">De fire faser</h3>
 <p>Vi lægger op til, at implementeringen har fire faser, der samlet strækker sig over omtrent syv uger.  I korte træk ser forløbet således ud:</p>
 
- <table style="width:100%">
-  <tr>
-    <th>Fase</th>
-    <th>Tidspunkt</th>
-    <th>Jeres opgaver</th>
-    <th>Magentas opgaver</th>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>Opstart - møde og opsætning<p>Dag 0</p></td>
-    <td><li>Før mødet: Nedsæt et team af medarbejdere</li><li>Før mødet: Forbered spørgsmål</li><li>Efter mødet: Kommunikér om OS2datascanner i jeres organisation</li><li>Efter mødet: Giv Magenta adgang til jeres systemer</li></td>
-    <td><li>Før mødet: Indkald til mødet</li><li>På mødet: Præsentér OS2datascanner</li><li>Efter mødet: Opsæt systemet</li></td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>Forberedelse - testscans og oplæring<p>Uge 1-2</p></td>
-    <td><li>Teste systemet en uges tid ved scan af eksempelvis netværksdrev</li><li>Oplære superbrugere</li><li>Møde med Magenta: Evaluering af testscans </li></td>
-    <td><li>Overvåge testscans</li><li>Løbende support</li><li>Indkald til og afhold evaluering af testscans</li></td>
-   </tr>
-   <tr>
-       <td>3</td>
-       <td>Udrulning - hovedrengøringer og overdragelse<p>Uge 3-6</p></td>
-       <td><li>Introducere og implementere OS2datascanner i organisationen i flere faser</li><li>Løbende kommunikation til jeres organisation: Hvorfor og hvordan bruger vi OS2datascanner??</li><li>Support til slutbrugerne, evt. gennem jeres superbrugere</li><li>Efter aftale med Magenta: Lade systemet overgå til normal drift</li></td>
-       <td><li>Løbende support</li><li>Indkalde til møde om at lade systemet overgå til normal drift</li></td>
+<table class="page-width table">
+  <thead>
+    <tr>
+      <th>Fase</th>
+      <th>Tidspunkt</th>
+      <th>Jeres opgaver</th>
+      <th>Magentas opgaver</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><p>1: Opstart - møde og opsætning</p></td>
+      <td><p>Dag 0</p>
+      </td>
+      <td>
+        <ul>
+          <li>Før mødet: Nedsæt et team af medarbejdere</li>
+          <li>Før mødet: Forbered spørgsmål</li>
+          <li>Efter mødet: Kommunikér om OS2datascanner i jeres organisation</li>
+          <li>Efter mødet: Giv Magenta adgang til jeres systemer</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Før mødet: Indkald til mødet</li>
+          <li>På mødet: Præsentér OS2datascanner</li>
+          <li>Efter mødet: Opsæt systemet</li>
+        </ul>
+      </td>
     </tr>
     <tr>
-        <td>4</td>
-        <td>Forankring - løbende scans og nye vaner<p>Uge 7 og frem</p></td>
-        <td><li>Hjælpe medarbejderne med at forankre OS2datascanner som en naturlig del af deres IT-værktøjskasse, eksempelvis ved at lave løbende scans.</li><li>Evaluere, om I får opfyldt jeres mål med at bruge systemet.</li></td>
-     </tr>   
- </table> 
+      <td><p>2: Forberedelse - testscans og oplæring</p></td>
+      <td><p>Uge 1-2</p>
+      </td>
+      <td>
+        <ul>
+          <li>Teste systemet en uges tid ved scan af eksempelvis netværksdrev</li>
+          <li>Oplære superbrugere</li>
+          <li>Møde med Magenta: Evaluering af testscans </li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Overvåge testscans</li>
+          <li>Løbende support</li>
+          <li>Indkald til og afhold evaluering af testscans</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><p>3: Udrulning - hovedrengøringer og overdragelse</p></td>
+      <td><p>Uge 3-6</p>
+      </td>
+      <td>
+        <ul>
+          <li>Introducere og implementere OS2datascanner i organisationen i flere faser</li>
+          <li>Løbende kommunikation til jeres organisation: Hvorfor og hvordan bruger vi OS2datascanner??</li>
+          <li>Support til slutbrugerne, evt. gennem jeres superbrugere</li>
+          <li>Efter aftale med Magenta: Lade systemet overgå til normal drift</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Løbende support</li>
+          <li>Indkalde til møde om at lade systemet overgå til normal drift</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><p>4: Forankring - løbende scans og nye vaner</p></td>
+      <td><p>Uge 7 og frem</p>
+      </td>
+      <td>
+        <ul>
+          <li>Hjælpe medarbejderne med at forankre OS2datascanner som en naturlig del af deres IT-værktøjskasse, eksempelvis ved at lave løbende scans.</li>
+          <li>Evaluere, om I får opfyldt jeres mål med at bruge systemet.</li>
+        </ul>
+      </td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
 
 <h4 id="Foerste-fase">Første fase: Opstart - møde og opsætning</h4>
 <p>Når aftalen mellem jer og Magenta er på plads, holder vi et opstartsmøde. Her vil det være godt, hvis både jeres projektleder og jeres tekniske ansvarlige er til stede, for det er vigtigt at inddrage de relevante medarbejdere fra starten. Det vil også typisk være her, vi sammen vælger en single point of contact (SPOC) for det organisatoriske samarbejde og en SPOC for den tekniske implementering, som efter vores erfaring er den bedste måde at organisere samarbejdet på</p>
@@ -128,7 +181,7 @@
 
 <p>I forbindelse med testscanningerne begynder også oplæringen af jeres implementeringskonsulent og eventuelle superbrugere. Vi foreslår, at uddannelsen lægger mere vægt på, hvordan I får integreret OS2datascanner i jeres organisation og arbejdsgange end på, hvordan man rent teknisk bruger scanneren. Se nærmere herom i afsnittet om roller.</p>
 
-<h4 id="Tredje-fase">Tredje fase 3: Udrulning - hovedrengøringer og overdragelse</h4>
+<h4 id="Tredje-fase">Tredje fase: Udrulning - hovedrengøringer og overdragelse</h4>
 <p>I tredje fase ruller I systemet ud i jeres organisation. Her er det vigtigt, at alle medarbejdere, der på en eller anden måde får berøring med OS2datascanner - om det er som administrator, implementeringskonsulent, superbruger eller som for de allerflestes vedkommende som slutbruger - får en grundig introduktion til systemet. </p>
 
 <p>I jeres kommunikation med alle disse brugere kan I derfor med fordel komme ind på følgende punkter: Hvorfor bruger vi systemet? Hvordan virker systemet, og hvordan bruger jeg det i min hverdag? Hvor kan jeg få hjælp til systemet?</p>
@@ -167,7 +220,7 @@
 
 <p>Slutbrugerne har udelukkende adgang til <a href="#Rapportmodul">rapportmodulet</a>, og her har den enkelte slutbruger udelukkende adgang til de sager, vedkommende har fået ansvaret for at håndtere. Ud over ens egen mailboks kan det eksempelvis være et fællesdrev, som medarbejderen har fået til opgave at rydde op i.</p>
 
-<p>Til slutbrugerne er der lavet en særlig håndbog, der på nogle få sider forklarer processen med at håndtere matches i rapportmodulet. Du kan downloade den <a href="../../static/src/svg/OS2DS-Brugerhaandbog.pdf" download> her</a>.</p>
+<p>Til slutbrugerne er der lavet en særlig håndbog, der på nogle få sider forklarer processen med at håndtere matches i rapportmodulet. <a href="../../static/src/svg/OS2DS-Brugerhaandbog.pdf" download>Du kan downloade den her</a>.</p>
 <h4 id="Superbrugere">Superbrugere</h4>
 <p>Hvis I i forvejen har superbrugere i jeres organisation, kan I med fordel også give disse en mere grundig introduktion til OS2datascanner. Målet er i virkeligheden mere organisatorisk end teknisk. Systemet er nemt at bruge, så superbrugerne kan udover den tekniske support også hjælpe deres kolleger med at få etableret gode vaner, når det kommer til behandling af personoplysninger.</p>
 
@@ -240,12 +293,12 @@
 
 <p>Punktet “Tilføj scannerindstillinger” giver dig en række muligheder. Udover førnævnte “Scan billeder” og “Tjek dato for sidste ændring” kan du vælge “Brug HTTP HEAD-forespørgsler.” Som udgangspunkt skal du slå fluebenet ved “Brug HTTP HEAD-forespørgsler” fra. Kontakt Magenta, hvis du vil slå det til. Ved at sætte flueben i “Tjek links” og “Eksterne links” tjekker OS2datascanner, om henholdsvis interne og eksterne links rent faktisk virker og ikke er <a href="#Doedt-link">døde</a>. Endelig har du ved at sætte flueben i “Saml cookies” mulighed for at få scanneren til at analysere visse cookies.</p>
 <h6 id="Filscanner">Filscanner</h6>
-<p>Filscanneren bruges til at scanne et eller flere lokale fildrev. For at bruge filscanneren skal OS2datascanner være installeret bag jeres firewall. 
+<p>Filscanneren bruges til at scanne et eller flere lokale fildrev. For at bruge filscanneren skal OS2datascanner være installeret bag jeres firewall.
 Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under “drevbogstav” kan du til din egen orientering skrive et drevbogstav; selve scanneren har udelukkende brug for URL’en. Under brugeroplysninger skal du ligesom i Windows taste brugerdomæne, brugernavn og password for at få adgang til det drev, der skal analyseres.</p>
 
 <h6 id="Exchange-scanner">Exchangescanner</h6>
 <p>Exchangescanneren bruger I til at scanne jeres email-konti. Ligesom med filscanneren gemmer OS2datascanner ikke mails og mapper, men henter dem over i <a href="#Hukommelse">hukommelsen</a>, scanner dem og overskriver dem løbende.</p>
-<p>Vær opmærksom på, at I <i>skal</i> skrive jeres service endpoint, hvis jeres Exchange-server ligger i skyen. Endpointet hedder altid "https://outlook.office365.com/EWS/Exchange.asmx". Undlader I at skrive service endpointet, kan slutbrugerne ikke åbne mails med de fundne matches direkte fra rapportmodulet. Har I en on premise-installation, behøver I ikke skrive noget service endpoint.</p> 
+<p>Vær opmærksom på, at I <i>skal</i> skrive jeres service endpoint, hvis jeres Exchange-server ligger i skyen. Endpointet hedder altid "https://outlook.office365.com/EWS/Exchange.asmx". Undlader I at skrive service endpointet, kan slutbrugerne ikke åbne mails med de fundne matches direkte fra rapportmodulet. Har I en on premise-installation, behøver I ikke skrive noget service endpoint.</p>
 
 <p>Under brugeroplysninger skal I skrive brugernavn og adgangskode på jeres servicekonto og uploade en liste over de mailkonti, der skal scannes.</p>
 
@@ -264,7 +317,7 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 <h6 id="Systemregler-1">Systemregler</h6>
 <p>OS2datascanner kommer med en indbygget regel om scan efter CPR-numre. Reglen bygger på en række komplekse algoritmer, der blandt andet udregner sandsynligheden for, at et tal rent faktisk er et CPR-nummer, og reglen kan derfor ikke redigeres.</p>
 <h6 id="Brugerregler-1">Brugerregler</h6>
-<p>Som admin eller superadmin kan du selv opsætte regler, så systemet kan søge efter et hvilket som helst ord. Brugerreglerne er baseret på <a href="#Regulaere-udtryk">regulære udtryk</a>. Har du en vis teknisk forståelse, kan du relativt hurtigt sætte dig ind i, hvordan regulære udtryk skal udformes. En dansksproget guide til regulære udtryk finder du <a href="https://www.computerworld.dk/uploads/eksperten-guider/1156-Regulaere-udtryk%2C-1.-del.pdf" target="_blank">her</a> (kontakt gerne Magenta på info@magenta.dk, hvis du oplever, at linket ikke virker). </p>
+<p>Som admin eller superadmin kan du selv opsætte regler, så systemet kan søge efter et hvilket som helst ord. Brugerreglerne er baseret på <a href="#Regulaere-udtryk">regulære udtryk</a>. Har du en vis teknisk forståelse, kan du relativt hurtigt sætte dig ind i, hvordan regulære udtryk skal udformes. <a href="https://www.computerworld.dk/uploads/eksperten-guider/1156-Regulaere-udtryk%2C-1.-del.pdf" target="_blank">Du finder en dansksproget guide til regulære udtryk her</a> (kontakt gerne Magenta på info@magenta.dk, hvis du oplever, at linket ikke virker). </p>
 <h5 id="Foelsomhed-1">Følsomhed</h5>
 <p>Følsomheden bruges til at fortælle slutbrugeren, hvor alvorligt et match er. Der er fire forskellige kategorier - kritisk, problem, advarsel og notifikation, hvor kritisk er den mest alvorlige.</p>
 <h5 id="Opret-regel">Opret regel</h5>
@@ -282,19 +335,19 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 <h3 id="Rapportmodulet">Rapportmodulet</h3>
 <p>Rapportmodulet indeholder kun ganske få funktioner. Når et scannerjob kører, sender det løbende de fundne matches videre til rapportmodulet. Her kan den eller de brugere, som har fået opgaven med at håndtere matches for det enkelte scannerjob, så se en liste over de fundne matches og markere, hvordan det enkelte match er blevet håndteret, eksempelvis at filen er blevet slettet.</p>
 
-<p>Til slutbrugerne er der en særlig håndbog, der på nogle få sider forklarer, hvordan man bruger rapportmodulet. I kan med fordel lægge den op på jeres intranet, hvor I i forvejen har vejledninger liggende. Du kan downloade håndbogen <a href="../../static/src/svg/OS2DS-Brugerhaandbog.pdf" download> her</a>.</p>
+<p>Til slutbrugerne er der en særlig håndbog, der på nogle få sider forklarer, hvordan man bruger rapportmodulet. I kan med fordel lægge den op på jeres intranet, hvor I i forvejen har vejledninger liggende. <a href="../../static/src/svg/OS2DS-Brugerhaandbog.pdf" download>Du kan downloade håndbogen her</a>.</p>
 <h2 id="Ordliste">Tredje del: Ordliste</h2>
-<p><b id="Admin">Admin:</b> En bruger, der kan oprette og køre <a href="#Scannerjobs">scannerjobs</a>, men ikke godkende dem. Det skal en <a href="#Superadmin">superadmin</a> gøre. Læs mere <a href="#Administrator">her</a>.</p>
+<p><b id="Admin">Admin:</b> En bruger, der kan oprette og køre <a href="#Scannerjobs">scannerjobs</a>, men ikke godkende dem. Det skal en <a href="#Superadmin">superadmin</a> gøre. <a href="#Administrator">Læs mere om superadministrator-rollen</a>.</p>
 
-<p><b id="Administrationsmodul">Administrationsmodul:</b> Det ene af OS2datascanners to moduler. Det er her, <a href="#Admin">admins</a> og <a href="#Superadmin">superadmins</a> opretter, godkender og kører <a href="#Scannerjob">scannerjobs</a>. Resultatet af de enkelte scannerjobs bliver så sendt til <a href="#Rapportmodul">rapportmodulet</a>, hvor <a href="#Slutbruger">slutbrugerne</a> håndterer <a href="#Match">matches</a>. Læs mere <a href="#Administrationsmodulet">her</a>.</p>
+<p><b id="Administrationsmodul">Administrationsmodul:</b> Det ene af OS2datascanners to moduler. Det er her, <a href="#Admin">admins</a> og <a href="#Superadmin">superadmins</a> opretter, godkender og kører <a href="#Scannerjob">scannerjobs</a>. Resultatet af de enkelte scannerjobs bliver så sendt til <a href="#Rapportmodul">rapportmodulet</a>, hvor <a href="#Slutbruger">slutbrugerne</a> håndterer <a href="#Match">matches</a>. <a href="#Administrationsmodulet">Læs mere om administrationsmodulet</a>.</p>
 
-<p><b id="Brugerregler-2">Brugerregler:</b> <a href="#Regler">Regler</a>, som brugeren selv har oprettet. Består af <a href="#Regulaere-udtryk">regulære udtryk</a>. Læs mere <a href="#Brugerregler-1">her</a>.</p>
+<p><b id="Brugerregler-2">Brugerregler:</b> <a href="#Regler">Regler</a>, som brugeren selv har oprettet. Består af <a href="#Regulaere-udtryk">regulære udtryk</a>. <a href="#Brugerregler-1">Læs mere om brugerregler</a>.</p>
 
 <p><b id="Databeskyttelsesraadgiver">Databeskyttelsesrådgiver:</b> Eller DPO. EU’s persondataforordning (GDPR) stiller krav om, at alle offentlige myndigheder og mange virksomheder skal have en databeskyttelsesrådgiver. Denne skal blandt andet være med til at sikre, at persondataforordningen bliver overholdt.</p>
 
 <p><b id="Doedt-link">Dødt link:</b> Et link på en hjemmeside, der peger på en side, der ikke findes. Bliver ofte vist i forbindelse med tallet 404, som er fejlkoden for en side, der ikke blev fundet.</p>
 
-<p><b id="Foelsomhed-2">Følsomhed:</b> Når et <a href="#Scannerjob">scannerjob</a> bliver oprettet, vælger man en følsomhed for den enkelte <a href="#Regler">regel</a>. Det hjælper <a href="#Slutbruger">slutbrugeren</a> til at se, hvilke <a href="#Match">matches</a> der er vigtigst at håndtere. Følsomheden er inddelt i fire kategorier: Kritisk, advarsel, problem og notifikation, hvor kritisk er det mest og notifikation det mindst alvorlige. Læs mere <a href="#Foelsomhed-1">her</a>.</p>
+<p><b id="Foelsomhed-2">Følsomhed:</b> Når et <a href="#Scannerjob">scannerjob</a> bliver oprettet, vælger man en følsomhed for den enkelte <a href="#Regler">regel</a>. Det hjælper <a href="#Slutbruger">slutbrugeren</a> til at se, hvilke <a href="#Match">matches</a> der er vigtigst at håndtere. Følsomheden er inddelt i fire kategorier: Kritisk, advarsel, problem og notifikation, hvor kritisk er det mest og notifikation det mindst alvorlige. <a href="#Foelsomhed-1">Læs mere om følsomhed</a>.</p>
 
 <p><b id="Hukommelse">Hukommelse:</b> Også kendt som RAM. Det sted, hvor computeren lagrer oplysninger midlertidigt, det vil sige mens computeren er tændt. Når computeren bliver slukket, går oplysningerne tabt, medmindre de  forinden er blevet gemt - og netop dét gør OS2datascanner ikke. Det er med til at øge datasikkerheden.</p>
 
@@ -304,7 +357,7 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 
 <p><b id="Modulus-11">Modulus 11:</b> CPR-numrenes kontrolsystem, hvor man ved at sammenholde nummeret første ni cifre med det sidste ciffer - kaldet kontrolcifferet - kan regne ud, om nummeret kan være et CPR-nummer eller ej. Enkelte CPR-numre for en række bestemte fødselsdatoer har dog ikke et kontrolciffer. OS2datascanner tager højde for dette. Se den fulde forklaring på <a href="https://cpr.dk/cpr-systemet/opbygning-af-cpr-nummeret/" target="_blank">CPR-registrets hjemmeside</a> .</p>
 
-<p><b id="Oprydder-2">Oprydder:</b> En medarbejder, der håndterer de <a href="#Match">matches</a>, der ikke kan knyttes til en bestemt person. Læs mere <a href="#Oprydder-1">her</a>.</p>
+<p><b id="Oprydder-2">Oprydder:</b> En medarbejder, der håndterer de <a href="#Match">matches</a>, der ikke kan knyttes til en bestemt person. <a href="#Oprydder-1">Læs mere om oprydder-rollen</a>.</p>
 
 <p><b id="OCR">OCR:</b> Står for Optical Character Recognition, optisk tegngenkendelse. Hvis et dokument er blevet scannet ind, er det ofte gemt som et billede og ikke som tekst. Her konverterer en OCR-scanner billedet til tekst ved at genkende de enkelte tegn.</p>
 
@@ -312,23 +365,23 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 
 <p><b id="Personoplysninger">Personoplysninger:</b> Er enhver information, der kan bruges til at identificere en person. Læs mere på <a href="https://www.datatilsynet.dk/databeskyttelse/hvad-er-personoplysninger" target="_blank">Datatilsynets hjemmeside</a>.</p>
 
-<p><b id="Rapportmodul">Rapportmodul:</b> Det ene af OS2datascanners to moduler. Det er her, <a href="#Slutbruger">slutbrugerne</a> håndterer de <a href="#Match">matches</a>, som et <a href="#Scannerjob">scannerjob</a> har fundet. Læs mere <a href="#Rapportmodulet">her</a>.</p>
+<p><b id="Rapportmodul">Rapportmodul:</b> Det ene af OS2datascanners to moduler. Det er her, <a href="#Slutbruger">slutbrugerne</a> håndterer de <a href="#Match">matches</a>, som et <a href="#Scannerjob">scannerjob</a> har fundet. <a href="#Rapportmodulet">Læs mere om rapportmodulet</a>.</p>
 
-<p><b id="Regler-2">Regler:</b> De søgekriterier, OS2datascanner foretager et <a href="#Scannerjob">scannerjob</a> med. OS2datascanner har en indbygget CPR-scanner, men du kan frit opsætte regler ved hjælp af <a href="#Regulaere-udtryk">regulære udtryk</a>. Læs mere <a href="#Regler-1">her</a>.</p>
+<p><b id="Regler-2">Regler:</b> De søgekriterier, OS2datascanner foretager et <a href="#Scannerjob">scannerjob</a> med. OS2datascanner har en indbygget CPR-scanner, men du kan frit opsætte regler ved hjælp af <a href="#Regulaere-udtryk">regulære udtryk</a>. <a href="#Regler-1">Læs mere om scannerregler</a>.</p>
 
-<p><b id="Regulaere-udtryk">Regulære udtryk:</b> Også kendt som regex eller regexp. En meget anvendt metode til at søge efter bestemte ord eller sætninger. En god guide til at komme i gang med med regulære udtryk finder du <a href="https://www.computerworld.dk/uploads/eksperten-guider/1156-Regulaere-udtryk%2C-1.-del.pdf" target="_blank">her</a> (kontakt Magenta på info@magenta.dk, hvis linket ikke virker). Læs mere  om, hvordan du bruger regulære udtryk i OS2datascanner <a href="#Opret-regel">her</a> og <a href="#Soegekriterier">her</a>.</p>
+<p><b id="Regulaere-udtryk">Regulære udtryk:</b> Også kendt som regex eller regexp. En meget anvendt metode til at søge efter bestemte ord eller sætninger. <a href="https://www.computerworld.dk/uploads/eksperten-guider/1156-Regulaere-udtryk%2C-1.-del.pdf" target="_blank">Du finder en god guide til at komme i gang med med regulære udtryk her</a> (kontakt Magenta på info@magenta.dk, hvis linket ikke virker). <a href="#Opret-regel">Læs mere  om, hvordan du bruger regulære udtryk i OS2datascanner</a> og <a href="#Soegekriterier">hvordan du bruger søgekriterier</a>.</p>
 
-<p><b id="Scannerjob-2">Scannerjob:</b> Et scan efter personoplysninger ud fra en række bestemte kriterier, kaldet <a href="#Regler">regler</a>. Læs mere <a href="#Scannerjob-1">her</a>.</p>
+<p><b id="Scannerjob-2">Scannerjob:</b> Et scan efter personoplysninger ud fra en række bestemte kriterier, kaldet <a href="#Regler">regler</a>. <a href="#Scannerjob-1">Læs mere om scannerjobs</a>.</p>
 
 <p><b id="Sitemap">Sitemap:</b> En oversigt over en hjemmesides struktur. For at få det fulde udbytte af et scan er det vigtigt, at webscanneren har et sitemap for at sikre, at alle undersider bliver taget med.</p>
 
-<p><b id="Slutbruger-2">Slutbruger:</b> En medarbejder, der bruger OS2datascanners <a href="#Rapportmodul">rapportmodul</a> til at se og håndtere de <a href="#Match">matches</a>, som et <a href="#Scannerjob">scannerjob</a> har fundet. Læs mere <a href="#Slutbruger-1">her</a>.</p>
+<p><b id="Slutbruger-2">Slutbruger:</b> En medarbejder, der bruger OS2datascanners <a href="#Rapportmodul">rapportmodul</a> til at se og håndtere de <a href="#Match">matches</a>, som et <a href="#Scannerjob">scannerjob</a> har fundet. <a href="#Slutbruger-1">Læs mere om slutbrugere</a>.</p>
 
-<p><b id="Superadmin">Superadmin:</b> En bruger, der både kan oprette, godkende og køre et <a href="#Scannerjob">scannerjob</a>. Der vil som udgangspunkt kun være en eller to superadmins i din virksomhed eller kommune. Læs mere <a href="#Superadministrator">her</a>.</p>
+<p><b id="Superadmin">Superadmin:</b> En bruger, der både kan oprette, godkende og køre et <a href="#Scannerjob">scannerjob</a>. Der vil som udgangspunkt kun være en eller to superadmins i din virksomhed eller kommune. <a href="#Superadministrator">Læs mere om superadministrator-rollen</a>.</p>
 
-<p><b id="Systemregler-2">Systemregler:</b> De <a href="#Regler">regler</a>, som er indbygget i OS2datascanner. En systemregel er bygget op af komplekse algoritmer, der eksempelvis scanner efter CPR-nummer, og en systemregel kan derfor i modsætning til <a href="#Brugerregler">brugerregler</a> ikke redigeres.  Læs mere <a href="#Systemregler-1">her</a>.</p>
+<p><b id="Systemregler-2">Systemregler:</b> De <a href="#Regler">regler</a>, som er indbygget i OS2datascanner. En systemregel er bygget op af komplekse algoritmer, der eksempelvis scanner efter CPR-nummer, og en systemregel kan derfor i modsætning til <a href="#Brugerregler">brugerregler</a> ikke redigeres. <a href="#Systemregler-1">Læs mere om systemregler</a>.</p>
 
-<p><b id="Valideringsstatus">Valideringsstatus:</b> For at kunne køre et <a href="#Scannerjob">scannerjob</a> skal jobbet være godkendt af en <a href="#Superadmin">superadmin</a>. Det gør denne ved at sætte valideringsstatus til gyldig. På den måde sikres det, at der ikke er brugere, der selv opretter, godkender og kører en søgning efter personoplysninger, de ikke har lov at se. Læs mere <a href="#Validering-koersel">her</a>.</p>
+<p><b id="Valideringsstatus">Valideringsstatus:</b> For at kunne køre et <a href="#Scannerjob">scannerjob</a> skal jobbet være godkendt af en <a href="#Superadmin">superadmin</a>. Det gør denne ved at sætte valideringsstatus til gyldig. På den måde sikres det, at der ikke er brugere, der selv opretter, godkender og kører en søgning efter personoplysninger, de ikke har lov at se. <a href="#Validering-koersel">Læs mere om valideringsstatus</a>.</p>
 
 <h2 id="Teknisk-dokumentation">Fjerde del: Teknisk dokumentation</h2>
 <p>Set fra et teknisk synspunkt kan OS2datascanner inddeles i tre moduler: Et administrationsmodul, et rapportmodul og en scannermotor:</p>
@@ -369,8 +422,8 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
         <li>Entity ID: https://AFTALTE_DOMÆNE/saml2_auth/acs/</li>
         <li>Reply URL: https://AFTALTE_DOMÆNE/saml2_auth/acs/</li>
         <li>Logout URL: https://AFTALTE_DOMÆNE/accounts/logout/</li>
-        <li>User attributes: 
-            <ul class="square">     
+        <li>User attributes:
+            <ul class="square">
             <li>email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress</li>
             <li>username: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name</li>
             <li>first_name: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname</li>
@@ -405,29 +458,29 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 
 <p>Man kan også oprette en fil ved navn outlook.reg med følgende tekst (vær igen opmærksom på, at stien til Outlook.exe skal være korrekt):</p>
 
-<p>“Windows Registry Editor Version 5.00</p>
- 
-<p>[HKEY_CURRENT_USER\SOFTWARE\Classes\outlook]</p>
-<p>@="URL:Outlook Folders"</p>
-<p>"URL Protocol"=""</p>
-<p>[HKEY_CURRENT_USER\SOFTWARE\Classes\outlook\DefaultIcon]</p>
-<p>[HKEY_CURRENT_USER\SOFTWARE\Classes\outlook\shell]</p>
-<p>[HKEY_CURRENT_USER\SOFTWARE\Classes\outlook\shell\open]</p>
-<p>[HKEY_CURRENT_USER\SOFTWARE\Classes\outlook\shell\open\command]</p>
-<p>@="\"C:\\Program Files (x86)\\Microsoft Office\\Office15\\OUTLOOK.EXE\"</p>
-<p>/select \"%1\""</p>
-<p>”</p>
+<pre class="page-width">“Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\SOFTWARE\Classes\outlook]
+@="URL:Outlook Folders"
+"URL Protocol"=""
+[HKEY_CURRENT_USER\SOFTWARE\Classes\outlook\DefaultIcon]
+[HKEY_CURRENT_USER\SOFTWARE\Classes\outlook\shell]
+[HKEY_CURRENT_USER\SOFTWARE\Classes\outlook\shell\open]
+[HKEY_CURRENT_USER\SOFTWARE\Classes\outlook\shell\open\command]
+@="\"C:\\Program Files (x86)\\Microsoft Office\\Office15\\OUTLOOK.EXE\"
+/select \"%1\""
+<p>”</pre>
 
 <p>Hvis du fra Registry Editor importerer outlook.reg-filen vil de forskellige nøgler automatisk blive opdateret i registry.</p>
 <br>
-<h3 id="Arkitekturtegninger">Arkitekturtegninger</h3>
-<img src="../../static/src/svg/os2ds-arkitektur.png"/>
+<h4 id="Arkitekturtegninger">Arkitekturtegninger</h4>
+<a href="../../static/src/svg/os2ds-arkitektur.png" target="_blank"><img class="page-width" src="../../static/src/svg/os2ds-arkitektur.png"/ alt="Illustration af OS2datascanners arkitektur"></a>
 
 
-<h3><a href="#Downloads">Downloads</a></h3>
+<h3 id="Downloads">Downloads</h3>
 
-<p><b><a href="../../static/src/svg/OS2DS-Brugerhaandbog.pdf" download>Brugerhåndbog</a></p></b>
-<p><b><a href="../../static/src/svg/OS2DS-Handout.pdf" download>Handout til afdelingschefer mv.</a></p></b>
+<p><strong><a href="../../static/src/svg/OS2DS-Brugerhaandbog.pdf" download>Brugerhåndbog</a></strong></p>
+<p><strong><a href="../../static/src/svg/OS2DS-Handout.pdf" download>Handout til afdelingschefer mv.</a></strong></p>
 
 
 </div>
@@ -435,4 +488,3 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 </div>
 </main>
 {% endblock  %}
-
