@@ -74,6 +74,16 @@ class WebScanner(Scanner):
         verbose_name=_("download Sitemap from server")
     )
 
+    exclude_urls = models.CharField(
+        max_length=2048,
+        blank=True,
+        default="",
+        verbose_name=_("comma-separated list of urls to exclude"),
+        help_text=_(
+            "Be sure to include a trailing '/'to enforce path matching, i.e. "
+            "https://example.com/images/ instead of https://example.com/images"),
+    )
+
     def local_all_rules(self) -> list:
         if self.do_link_check:
             rule = LinksFollowRule(sensitivity=Sensitivity.INFORMATION)
@@ -119,6 +129,14 @@ class WebScanner(Scanner):
             sitemap_url = self.sitemap_url or self.default_sitemap_path
             return urllib.parse.urljoin(self.root_url, sitemap_url)
 
+    def get_excluded_urls(self):
+        """Convert the comma-delimited exclude string to list and validate the urls"""
+        # "".split returns [""]. If exlcude_urls is empty, initialize with []
+        urls = (
+            [url.strip() for url in self.exclude_urls.split(",")] if
+            self.exclude_urls else [])
+        return urls
+
     def get_type(self):
         return "web"
 
@@ -127,4 +145,5 @@ class WebScanner(Scanner):
         return "/webscanners/"
 
     def generate_sources(self):
-        yield WebSource(self.root_url, self.get_sitemap_url())
+        yield WebSource(self.root_url, sitemap=self.get_sitemap_url(),
+                        exclude=self.get_excluded_urls())

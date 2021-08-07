@@ -73,7 +73,7 @@ obj = {
         "destination": "pipeline_collector",
     },
     "source": WebSource(
-        url="https://www.magenta.dk", sitemap=None
+        url="https://www.magenta.dk/", sitemap=None, exclude=[]
     ).to_json_object(),
     "rule": TwegexRule(
         "fællesskaber", name=None, sensitivity=Twensitivity.NOTICE
@@ -203,7 +203,8 @@ class CronTest(django.test.TestCase):
             self.assertDictEqual(
                 messages[0][0],
                 messages[1][0],
-                "Wrong scan_spec from scanner started by cron job",
+                ("Wrong scan_spec from scanner started by cron job "
+                 f"{pformat(messages[0][0])}"),
             )
             # XXX It is Error phrone to capture stdout and check the content. Because
             # we catch not only the output from cron, but also @scanner_model.run(), etc.

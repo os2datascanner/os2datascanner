@@ -42,7 +42,6 @@ def run_web_server(started):
     finally:
         os.chdir(cwd)
 
-
 site = WebSource("http://localhost:64346/")
 mapped_site = WebSource("http://localhost:64346/",
         sitemap="http://localhost:64346/sitemap.xml")
@@ -56,7 +55,10 @@ external_links_site = WebSource("http://localhost:64346/",
         sitemap="http://localhost:64346/external_sitemap.xml")
 xxe_site = WebSource("http://localhost:64346/",
         sitemap="http://localhost:64346/xxe_sitemap.xml")
-
+excluded_sites = WebSource(
+    "http://localhost:64346/",
+    sitemap="http://localhost:64346/sitemap_underside.xml",
+    exclude=["http://localhost:64346/undermappe", "http://localhost:64346/kontakt.html"])
 
 class Engine2HTTPSetup():
     @classmethod
@@ -265,6 +267,16 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 count,
                 6,
                 "embedded site with compressed sitemap index should have 6 handles")
+
+    def test_excluded_sites(self):
+        count = 0
+        with SourceManager() as sm:
+            for h in excluded_sites.handles(sm):
+                count += 1
+        self.assertEqual(
+                count,
+                4,
+                "WebSource with excluded sites should have 4 handles")
 
     def test_missing_headers(self):
         with SourceManager() as sm:

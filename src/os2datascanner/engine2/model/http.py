@@ -30,11 +30,13 @@ def simplify_mime_type(mime):
 
 class WebSource(Source):
     type_label = "web"
+    eq_properties = ("_url", "_sitemap",)
 
-    def __init__(self, url: str, sitemap : str = ""):
+    def __init__(self, url: str, sitemap : str = "", exclude = []):
         assert url.startswith("http:") or url.startswith("https:")
         self._url = url if url.endswith("/") else url + "/"
         self._sitemap = sitemap
+        self._exclude = exclude
 
     def _generate_state(self, sm):
         with Session() as session:
@@ -61,8 +63,7 @@ class WebSource(Source):
             r.raise_for_status()
         except RequestException as err:
             raise RequestException(
-                f"{to_visit[0].presentation_url} is not available: "
-                f"{err}")
+                f"{to_visit[0].presentation_url} is not available: {err}")
 
         # scheme://netloc/path?query
         # https://example.com/some/path?query=foo
@@ -81,6 +82,10 @@ class WebSource(Source):
             # ensure the new_url actually is a url and not mailto:, etc
             if n_scheme not in("http", "https"):
                 return
+            for exclude in self._exclude:
+                if new_url.startswith(exclude):
+                    logger.info(f"excluded {new_url}")
+                    return
 
             if n_netloc == netloc:
                 # we dont care about whether scheme is http or https
@@ -156,15 +161,18 @@ class WebSource(Source):
     def to_json_object(self):
         return dict(**super().to_json_object(), **{
             "url": self._url,
-            "sitemap": self._sitemap
+            "sitemap": self._sitemap,
+            "exclude": self._exclude,
         })
 
     @staticmethod
     @Source.json_handler(type_label)
     def from_json_object(obj):
         return WebSource(
-                url=obj["url"],
-                sitemap=obj.get("sitemap"))
+            url=obj["url"],
+            sitemap=obj.get("sitemap"),
+            exclude=obj.get("exclude"),
+        )
 
 
 SecureWebSource = WebSource

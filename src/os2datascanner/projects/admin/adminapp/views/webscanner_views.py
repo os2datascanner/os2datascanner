@@ -35,7 +35,7 @@ class WebScannerCreate(ScannerCreate):
     type = 'web'
     fields = ['name', 'schedule', 'url', 'exclusion_rules', 'download_sitemap',
               'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
-              'do_last_modified_check', 'rules', 'organization',]
+              'do_last_modified_check', 'rules', 'organization', 'exclude_urls']
 
     def get_form(self, form_class=None):
         if form_class is None:
@@ -44,7 +44,9 @@ class WebScannerCreate(ScannerCreate):
         form = super().get_form(form_class)
 
         form.fields['url'].widget.attrs['placeholder'] = \
-            _('e.g. https://www.example.com')
+            _('e.g. https://example.com')
+        form.fields['exclude_urls'].widget.attrs['placeholder'] = \
+            _('e.g. https://example.com/exclude1, https://example.com/exclude2')
 
         return form
 
@@ -66,7 +68,7 @@ class WebScannerUpdate(ScannerUpdate):
     type = 'web'
     fields = ['name', 'schedule', 'url', 'exclusion_rules', 'download_sitemap',
               'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
-              'do_last_modified_check', 'rules', 'organization',]
+              'do_last_modified_check', 'rules', 'organization', 'exclude_urls']
 
     def form_valid(self, form):
         if url_contains_spaces(form):

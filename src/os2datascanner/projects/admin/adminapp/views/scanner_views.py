@@ -17,6 +17,7 @@ import structlog
 
 from django.forms import ModelMultipleChoiceField
 from django.forms.models import modelform_factory
+from django.conf import settings
 
 from os2datascanner.projects.admin.organizations.models import Organization
 
@@ -207,6 +208,7 @@ class ScannerAskRun(RestrictedDetailView):
         """Check that user is allowed to run this scanner."""
         context = super().get_context_data(**kwargs)
         last_status = self.object.statuses.last()
+        error_message = ""
         if self.object.validation_status is Scanner.INVALID:
             ok = False
             error_message = Scanner.NOT_VALIDATED
@@ -219,9 +221,12 @@ class ScannerAskRun(RestrictedDetailView):
         else:
             ok = True
 
-        context['ok'] = ok
         if not ok:
             context['error_message'] = error_message
+        if settings.DEBUG:
+            # run the scanner job if we're in debug mode
+            ok = True
+        context['ok'] = ok
 
         return context
 
