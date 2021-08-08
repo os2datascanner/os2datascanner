@@ -5,21 +5,53 @@ from datetime import datetime
 import unittest
 import contextlib
 import logging
+from unittest import mock
 from multiprocessing import Manager, Process
 from requests import RequestException
 
 from os2datascanner.utils.system_utilities import time_now
-from os2datascanner.engine2.model.core import (Handle,
-        Source, SourceManager, UnknownSchemeError)
+from os2datascanner.engine2.model.core import Handle, SourceManager
 from os2datascanner.engine2.model.http import (
         WebSource, WebHandle, make_outlinks)
 from os2datascanner.engine2.model.utilities.datetime import parse_datetime
-from os2datascanner.engine2.model.utilities.sitemap import process_sitemap_url
+from os2datascanner.engine2.model.utilities.sitemap import (
+    process_sitemap_url, _get_url_data)
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
 
 here_path = os.path.dirname(__file__)
 test_data_path = os.path.join(here_path, "data", "www")
+
+
+def mocked_requests_get(*args, **kwargs):
+    class MockResponse:
+        def __init__(self, headers, status_code):
+            self.headers = headers
+            self.status_code = status_code
+            self.content = "Success"
+    if args[0] == "https://some-website.com/content-type-application-xml":
+        return MockResponse(
+            headers={
+                'content-type': 'application/xml; charset=UTF-8'},
+            status_code=200
+        )
+    elif args[0] == "https://some-website.com/content-type-text-xml":
+        return MockResponse(
+            headers={
+                'content-type': 'text/xml; charset=UTF-8'},
+            status_code=200)
+    elif args[0] == "https://some-website.com/content-type-fancy-compressor":
+        return MockResponse(
+            headers={
+                'content-type': 'application/fancy-compressor; original=text/xml'},
+            status_code=200)
+    elif args[0] == "https://some-website.com/content-type-many-spaces":
+        return MockResponse(
+            headers={
+                'content-type': "application/xml    ; charset=UTF-8"},
+            status_code=200)
+
+    return MockResponse(None, 404)
 
 
 def run_web_server(started):
@@ -59,6 +91,7 @@ excluded_sites = WebSource(
     "http://localhost:64346/",
     sitemap="http://localhost:64346/sitemap_underside.xml",
     exclude=["http://localhost:64346/undermappe", "http://localhost:64346/kontakt.html"])
+
 
 class Engine2HTTPSetup():
     @classmethod
@@ -149,6 +182,30 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                     break
             else:
                 self.fail("secret file missing")
+
+    @mock.patch('os2datascanner.engine2.model.utilities.sitemap.requests.get',
+                side_effect=mocked_requests_get)
+    def test_sitemap_content_type_success(self, mock_get):
+        url_text_xml = "https://some-website.com/content-type-text-xml"
+        url_application_xml = "https://some-website.com/content-type-application-xml"
+        url_many_space = "https://some-website.com/content-type-many-spaces"
+        self.assertEqual(
+            (_get_url_data(url_text_xml),
+             _get_url_data(url_application_xml),
+             _get_url_data(url_many_space)),
+            ("Success", "Success", "Success"),
+            "Content-type headers are recognized as expected.",
+        )\
+
+    @mock.patch('os2datascanner.engine2.model.utilities.sitemap.requests.get',
+                side_effect=mocked_requests_get)
+    def test_sitemap_content_type_failure(self, mock_get):
+        url_fancy_compressor = \
+            "https://some-website.com/content-type-fancy-compressor"
+        with self.assertRaises(TypeError) as context:
+            _get_url_data(url_fancy_compressor)
+
+        self.assertTrue(type(context.exception) is TypeError)
 
     def test_resource(self):
         with SourceManager() as sm:

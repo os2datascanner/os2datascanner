@@ -34,33 +34,36 @@ def _xp(e, path: str) -> List[str]:
             })
 
 
+def _get_url_data(url: str, context=requests) -> Optional[bytes]:
+    try:
+        r = context.get(url)
+        if r.status_code == 200:
+            content_type = r.headers["content-type"]
+            simple_content_type = content_type.split(";", 1)[0].strip()
+            if simple_content_type in ("text/xml", "application/xml"):
+                return r.content
+            else:
+                # the server served a file that needs to be unpacked
+                return convert_data_to_text(r.content, mime=content_type)
+        else:
+            return None
+    except requests.exceptions.RequestException:
+        return None
+
+
 def process_sitemap_url(url: str, *, context=requests,
         allow_sitemap: bool=True) -> Iterable[Tuple[str, Optional[datetime]]]:
+
     """Retrieves and parses the sitemap or sitemap index at the given URL and
     yields zero or more (URL, last-modified) tuples.
 
     The given URL can use the "http", "https" or "data" schemes."""
 
-    def get_url_data(url: str) -> Optional[bytes]:
-        try:
-            r = context.get(url)
-            if r.status_code == 200:
-                content_type = r.headers["content-type"]
-                if content_type in ("text/xml", "application/xml"):
-                    return r.content
-                else:
-                    # the server served a file that needs to be unpacked
-                    return convert_data_to_text(r.content, mime=content_type)
-            else:
-                return None
-        except requests.exceptions.RequestException:
-            return None
-
     logger.info("trying to download/unpack sitemap {0}".format(url))
     if url.startswith("data:"):
         _, sitemap = unpack_data_url(url)
     else:
-        sitemap = get_url_data(url)
+        sitemap = _get_url_data(url)
 
     if sitemap is None:
         raise SitemapMissingError(url)
