@@ -19,7 +19,7 @@ or more services in the system:
 
 * **Admin-module**: The application for the *administration interface*
 
-  - Service: ``admin_application``
+  - Service: ``admin``
   - Service: ``admin_collector``
 
 * **Engine-module**: The services for each of the stages that make up the *scanner engine*:
@@ -36,7 +36,7 @@ configuration, as its cache use is much more efficient.
 
 * **Report-module**: The services concerning the *report interface*
 
-  - Service: ``report_application``
+  - Service: ``report``
   - Service: ``report_collector``
 
 Furthermore, the system integrates with some auxiliary services (some of which
@@ -114,7 +114,7 @@ to the individual host - we give the options required to parallel the setup in
 the following ``docker-compose.yml`` file for easier reference in the rest of
 the documentation.
 
-* **Service**: ``admin_application``
+* **Service**: ``admin``
 
   Command:
 
@@ -150,7 +150,7 @@ the documentation.
 
   :code:`docker run -d --mount type=bind,source="$(pwd)"/engine-user-settings.toml,target=/user-settings.toml,readonly magentaaps/os2datascanner-engine exporter`
 
-* Service: ``report_application``
+* Service: ``report``
 
   Command:
 

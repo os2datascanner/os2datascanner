@@ -16,8 +16,8 @@ with full privileges, use the ``createsuperuser`` command for each app:
 
 * For the :ref:`docker-based install<docker-install>` (using ``docker-compose``):
 
-  - :code:`<docker-compose exec admin_application> python manage.py createsuperuser`
-  - :code:`<docker-compose exec report_application> python manage.py createsuperuser`
+  - :code:`<docker-compose exec admin> python manage.py createsuperuser`
+  - :code:`<docker-compose exec report> python manage.py createsuperuser`
 
 The ``createsuperuser`` command will prompt for a username, an email address,
 and a password for the new accounts.

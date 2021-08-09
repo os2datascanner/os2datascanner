@@ -49,7 +49,7 @@ services:
        - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
        - /code/frontend/node_modules
 
-  admin_application:
+  admin:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
@@ -93,7 +93,7 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - admin_application
+      - admin
       - queue
 
   admin_job_runner:
@@ -110,10 +110,10 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - admin_application
+      - admin
       - queue
 
-  report_application:
+  report:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
@@ -162,7 +162,7 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - report_application
+      - report
       - queue
 
   engine_explorer:
@@ -381,7 +381,7 @@ x-disabled:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - admin_application
+      - admin
       - queue
 
   report_cron:
@@ -397,7 +397,7 @@ x-disabled:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - report_application
+      - report
       - queue
 
   engine_processor:
