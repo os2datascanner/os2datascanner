@@ -2,29 +2,29 @@ scrape_configs:
   - job_name: 'engine_explorer'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_explorer:9091']
+      - targets: ['explorer:9091']
 
   - job_name: 'engine_processor'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_processor:9091']
+      - targets: ['processor:9091']
 
   - job_name: 'engine_matcher'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_matcher:9091']
+      - targets: ['matcher:9091']
 
   - job_name: 'engine_tagger'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_tagger:9091']
+      - targets: ['tagger:9091']
 
   - job_name: 'engine_exporter'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_exporter:9091']
+      - targets: ['exporter:9091']
 
   - job_name: 'engine_worker'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_worker:9091']
+      - targets: ['worker:9091']

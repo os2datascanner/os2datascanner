@@ -165,7 +165,7 @@ services:
       - report
       - queue
 
-  engine_explorer:
+  explorer:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
@@ -178,7 +178,7 @@ services:
     depends_on:
       - queue
 
-  engine_worker:
+  worker:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
@@ -191,7 +191,7 @@ services:
     depends_on:
       - queue
 
-  engine_exporter:
+  exporter:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
@@ -400,7 +400,7 @@ x-disabled:
       - report
       - queue
 
-  engine_processor:
+  processor:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
@@ -413,7 +413,7 @@ x-disabled:
     depends_on:
       - queue
 
-  engine_matcher:
+  matcher:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
@@ -427,7 +427,7 @@ x-disabled:
     depends_on:
       - queue
 
-  engine_tagger:
+  tagger:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile

@@ -24,15 +24,15 @@ or more services in the system:
 
 * **Engine-module**: The services for each of the stages that make up the *scanner engine*:
 
-  - Service: ``engine_explorer``
-  - Service: ``engine_processor``
-  - Service: ``engine_matcher``
-  - Service: ``engine_tagger``
-  - Service: ``engine_exporter``
+  - Service: ``explorer``
+  - Service: ``processor``
+  - Service: ``matcher``
+  - Service: ``tagger``
+  - Service: ``exporter``
 
 ``processor``, ``matcher`` and ``tagger`` can also be started as a single
-service, ``engine_worker``. This is the default (and recommended)
-configuration, as its cache use is much more efficient.
+service, ``worker``. This is the default (and recommended) configuration, as
+its cache use is much more efficient.
 
 * **Report-module**: The services concerning the *report interface*
 
@@ -120,31 +120,31 @@ the documentation.
 
   :code:`docker run -d -p 8020:5000 --mount type=bind,source="$(pwd)"/admin-user-settings.toml,target=/user-settings.toml,readonly magentaaps/os2datascanner-admin`
 
-* Service: ``engine_explorer``
+* Service: ``explorer``
 
   Command:
 
   :code:`docker run -d --mount type=bind,source="$(pwd)"/engine-user-settings.toml,target=/user-settings.toml,readonly magentaaps/os2datascanner-engine explorer`
 
-* Service: ``engine_processor``
+* Service: ``processor``
 
   Command:
 
   :code:`docker run -d --mount type=bind,source="$(pwd)"/engine-user-settings.toml,target=/user-settings.toml,readonly magentaaps/os2datascanner-engine processor`
 
-* Service: ``engine_matcher``
+* Service: ``matcher``
 
   Command:
 
   :code:`docker run -d --mount type=bind,source="$(pwd)"/engine-user-settings.toml,target=/user-settings.toml,readonly magentaaps/os2datascanner-engine matcher`
 
-* Service: ``engine_tagger``
+* Service: ``tagger``
 
   Command:
 
   :code:`docker run -d --mount type=bind,source="$(pwd)"/engine-user-settings.toml,target=/user-settings.toml,readonly magentaaps/os2datascanner-engine tagger`
 
-* Service: ``engine_exporter``
+* Service: ``exporter``
 
   Command:
 

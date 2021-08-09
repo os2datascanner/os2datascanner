@@ -207,15 +207,15 @@ The main services for OS2datascanner are:
 
     Runs the django application that provides the administration interface for
     defining and managing organisations, rules, scans etc.
-- ``engine_explorer``:
+- ``explorer``:
     Runs the **explorer** stage of the engine.
-- ``engine_processor``:
+- ``processor``:
     Runs the **processor** stage of the engine.
-- ``engine_matcher``:
+- ``matcher``:
     Runs the **matcher** stage of the engine.
-- ``engine_tagger``:
+- ``tagger``:
     Runs the **tagger** stage of the engine.
-- ``engine_exporter``:
+- ``exporter``:
     Runs the **exporter** stage of the engine.
 - ``report_frontend``:
     Only needed in development.
@@ -311,7 +311,7 @@ To run the test-suites using docker-compose:
 .. code-block:: bash
 
     docker-compose run admin python -m django test os2datascanner.projects.admin.tests
-    docker-compose run engine_explorer python -m unittest discover -s /code/src/os2datascanner/engine2/tests
+    docker-compose run explorer python -m unittest discover -s /code/src/os2datascanner/engine2/tests
     docker-compose run report python -m django test os2datascanner.projects.report.tests
 
 Please note that the engine tests can be run using any of the five pipeline
@@ -351,9 +351,9 @@ Running the engine locally,
 
 Running the engine in Docker, using the namespace sharing between localhost and docker
 .. code-block:: bash
-    docker top os2datascanner_engine_worker_1  # get the <pid> of the python process
+    docker top os2datascanner_worker_1  # get the <pid> of the python process
     kill -USR1 <pid>
-    docker logs os2datascanner_engine_worker_1
+    docker logs os2datascanner_worker_1
 
 
 Documentation
