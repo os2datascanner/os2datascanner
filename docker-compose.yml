@@ -53,7 +53,6 @@ services:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     command: [
       "gunicorn",
       "--config", "/code/docker/gunicorn-settings.py",
@@ -84,7 +83,6 @@ services:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py pipeline_collector
@@ -101,7 +99,6 @@ services:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py run_background_jobs
@@ -117,7 +114,6 @@ services:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
-      target: application
     command: [
       "gunicorn",
       "--config", "/code/docker/gunicorn-settings.py",
@@ -153,7 +149,6 @@ services:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
-      target: application
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py pipeline_collector
@@ -169,7 +164,6 @@ services:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: explorer --enable-metrics
     init: true
     volumes:
@@ -182,7 +176,6 @@ services:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: worker --enable-metrics
     init: true
     volumes:
@@ -195,7 +188,6 @@ services:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: exporter --enable-metrics
     init: true
     volumes:
@@ -223,7 +215,6 @@ services:
     build:
       context: .
       dockerfile: docker/api/Dockerfile
-      target: application
     command: [
         "gunicorn",
         "--config", "/code/docker/gunicorn-settings.py",
@@ -372,7 +363,6 @@ x-disabled:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     command: supercronic /code/docker/crontab
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
@@ -388,7 +378,6 @@ x-disabled:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
-      target: application
     command: supercronic /code/docker/crontab
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
@@ -404,7 +393,6 @@ x-disabled:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: processor --enable-metrics
     init: true
     volumes:
@@ -417,7 +405,6 @@ x-disabled:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: matcher --enable-metrics
     init: true
     restart: unless-stopped
@@ -431,7 +418,6 @@ x-disabled:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: tagger --enable-metrics
     init: true
     volumes:
