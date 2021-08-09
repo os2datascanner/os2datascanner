@@ -147,7 +147,6 @@ class ScannerBase(object):
         fields = super().get_form_fields()
         if self.request.user.is_superuser:
             fields.append('validation_status')
-        print("^^^^^^^^", fields)
 
         self.fields = fields
         return fields
