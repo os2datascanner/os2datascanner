@@ -99,7 +99,7 @@ RUN pip install --no-cache-dir -r requirements-report.txt \
 WORKDIR /code/docker/
 COPY docker/report/crontab ./crontab
 COPY docker/report/docker-settings.toml ./docker-settings.toml
-COPY docker/report/insecure-settings.toml ./insecure-settings.toml
+COPY docker/insecure-settings.toml ./insecure-settings.toml
 COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
 COPY docker/gunicorn-settings.py ./gunicorn-settings.py
 
