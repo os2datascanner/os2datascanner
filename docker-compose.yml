@@ -203,9 +203,12 @@ services:
       dockerfile: docker/Dockerfile
     env_file:
       - ./dev-environment/a11y-scanner/a11y-scanner.env
+    # This is commented because you cant use docker-compose from different dirs
+    # until https://github.com/docker/compose/issues/8470 is resolved.
+    #
     # Set only the necessary security permissions
-    security_opt:
-      - seccomp:./services/a11y-scanner/chrome_seccomp.json
+    # security_opt:
+    #   - seccomp:./services/a11y-scanner/chrome_seccomp.json
     ports:
       - 8888:8888
     profiles:
