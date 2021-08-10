@@ -150,7 +150,7 @@ class DocumentReport(models.Model):
 
     class Meta:
         verbose_name_plural = _("document reports")
-        ordering = ['-sensitivity', '-probability']
+        ordering = ['-sensitivity', '-probability', 'pk']
 
 
 DocumentReport.factory = ModelFactory(DocumentReport)
