@@ -2,3 +2,13 @@ site_name: OS2Datascanner Docs
 site_url: https://os2datascanner.rtfd.io
 
 theme: readthedocs
+
+nav:
+  - Overview: index.md
+  - Installation: installation.md
+  - Configuration: configuration.md
+  - User Guide: user-guide.md
+  - Scan API: api.md
+  - Extending OS2Datascanner: engine2.md
+  - Notes: notes.md
+  - Release notes: changelog.md

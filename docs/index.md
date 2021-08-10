@@ -1,17 +1,21 @@
-# Welcome to MkDocs
+An OS2Datascanner installation consists of three components: the
+*administration interface* (a Django app), the *scanner engine* (a set of
+system services), and the *report interface* (another Django app).
 
-For full documentation visit [mkdocs.org](https://mkdocs.org).
+The administration interface is used to build up scanner jobs: sources of
+scannable things and rules to search for in them. The details of these jobs are
+stored in a PostgreSQL database. It's intended for use by an organisation's
+administrators or data protection officers.
 
-## Commands
+The scanner engine, also known as the *pipeline*, consists of five *stages*
+built around RabbitMQ message queues. Each of these stages is a program that
+reads a message, carries out a small, simple job, and then sends one or more
+messages to another stage. At a high level, the scanner engine receives scan
+requests from the administration interface and produces scan results.
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs help` - Print this help message.
+The report interface displays the results of the scanner engine. It shows
+matched objects and details of why they were matched, and allows users to flag
+certain results as irrelevant. It's intended for use by all of an
+organisation's employees.
 
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+![Pipeline architecture diagram](pipeline-architecture.svg)
