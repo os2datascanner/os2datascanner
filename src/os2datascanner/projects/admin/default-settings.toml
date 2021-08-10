@@ -23,7 +23,7 @@ SESSION_COOKIE_NAME = "sessionid"
 
 # [keycloak]
 KEYCLOAK_BASE_URL = ""
-KEYCLOAK_ADMIN_CLIENT = "os2datascanner-admin"
+KEYCLOAK_ADMIN_CLIENT = "os2datascanner_admin"
 KEYCLOAK_ADMIN_SECRET = ""
 
 # [msgraph]

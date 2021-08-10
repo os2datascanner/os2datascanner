@@ -3,19 +3,15 @@ DECRYPTION_HEX = "4b8930847cba7196a46ede3456fe33df564427a30910dd1ef9bc805f26559a
 
 # [mode]
 DEBUG = true
-# Used for filescan and mounting
-PRODUCTION = false
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
 # OAuth 2.0 services. (This value should end with a forward slash.)
 SITE_URL = "http://localhost:8020/"
-ALLOWED_HOSTS = []
 SESSION_COOKIE_NAME = "admin_sessionid"
 
 # [keycloak]
 KEYCLOAK_BASE_URL = "http://localkeycloak.os2datascanner:8090"
-KEYCLOAK_ADMIN_CLIENT = "os2datascanner_admin"
 KEYCLOAK_ADMIN_SECRET = "thisIsNotASecret"
 
 # [installation]
@@ -40,8 +36,6 @@ ENABLE_SBSYSSCAN = true
 # [email]
 DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"
 ADMIN_EMAIL = "os2datascanner@magenta.dk"
-EMAIL_HOST = "localhost"
-EMAIL_PORT = 25
 
 # https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
 [DEBUG_TOOLBAR_CONFIG]
