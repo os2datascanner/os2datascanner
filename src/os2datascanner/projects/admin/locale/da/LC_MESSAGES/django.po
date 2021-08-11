@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-07 02:11-0500\n"
+"POT-Creation-Date: 2021-08-11 08:55-0500\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: adminapp/models/apikey_model.py:16 adminapp/models/rules/rule_model.py:42
+#: adminapp/models/apikey_model.py:16 adminapp/models/rules/rule_model.py:47
 #: adminapp/models/scannerjobs/scanner_model.py:73
 #: import_services/models/realm.py:29 organizations/models/account.py:58
 #: organizations/models/organization.py:75
@@ -51,6 +51,21 @@ msgstr "Brugerdomæne"
 #: adminapp/models/authenticationmethods_model.py:10
 msgid "Login method"
 msgstr "Login metode"
+
+#: adminapp/models/rules/rule_model.py:40 core/models/client.py:72
+#: organizations/models/organization.py:47
+#: organizations/models/organizational_unit.py:44
+#: organizations/templates/organizations/org_list.html:40
+msgid "name"
+msgstr "navn"
+
+#: adminapp/models/rules/rule_model.py:53
+msgid "description"
+msgstr "Beskrivelse"
+
+#: adminapp/models/rules/rule_model.py:59
+msgid "sensitivity"
+msgstr "Følsomhed"
 
 #: adminapp/models/scannerjobs/exchangescanner_model.py:58
 #: organizations/models/organizational_unit.py:63
@@ -204,6 +219,16 @@ msgstr "Administration"
 #: adminapp/templates/components/navigation.html:52
 msgid "Guide"
 msgstr "Håndbog"
+
+#: adminapp/templates/components/pagination.html:18
+#: adminapp/templates/components/pagination.html:25
+msgid "Previous"
+msgstr ""
+
+#: adminapp/templates/components/pagination.html:57
+#: adminapp/templates/components/pagination.html:64
+msgid "Next"
+msgstr ""
 
 #: adminapp/templates/components/user.html:29 adminapp/templates/logout.html:14
 msgid "Logout"
@@ -459,7 +484,7 @@ msgstr "objekter udforsket"
 msgid "Done"
 msgstr "Udført"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:71
+#: adminapp/templates/os2datascanner/scan_completed.html:72
 msgid "no scans done"
 msgstr "der er ingen udførte scanninger"
 
@@ -1013,11 +1038,15 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
-#: adminapp/views/views.py:181 import_services/models/exported_mixin.py:31
+#: adminapp/views/scanner_views.py:45
+msgid "The page does not exist"
+msgstr ""
+
+#: adminapp/views/views.py:194 import_services/models/exported_mixin.py:31
 msgid "created"
 msgstr "oprettet"
 
-#: adminapp/views/views.py:181
+#: adminapp/views/views.py:194
 msgid "saved"
 msgstr "gemt"
 
@@ -1202,12 +1231,6 @@ msgstr "importservicer"
 #: core/models/client.py:67
 msgid "client ID"
 msgstr "kunde-ID"
-
-#: core/models/client.py:72 organizations/models/organization.py:47
-#: organizations/models/organizational_unit.py:44
-#: organizations/templates/organizations/org_list.html:40
-msgid "name"
-msgstr "navn"
 
 #: core/models/client.py:76
 msgid "e-mail"
