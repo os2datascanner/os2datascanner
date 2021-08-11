@@ -13,11 +13,12 @@ from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 
 from ..reportapp.management.commands import pipeline_collector
+from ..reportapp.models.aliases.emailalias_model import EmailAlias
 from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.models.roles.leader_model import Leader
 from ..reportapp.models.roles.dpo_model import DataProtectionOfficer
-from ..reportapp.views.views import StatisticsPageView
-
+from ..reportapp.utils import create_alias_and_match_relations
+from ..reportapp.views.views import StatisticsPageView, LeaderStatisticsPageView
 
 """Shared data"""
 time0 = "2020-11-11T11:11:59+02:00"
@@ -238,13 +239,13 @@ benny_positive_match_1 = messages.MatchesMessage(
 benny_metadata = messages.MetadataMessage(
     scan_tag=scan_tag0,
     handle=benny_email_handle,
-    metadata={"email-account": "benny@jensen.com"}
+    metadata={"email-account": "benny@frandsen.com"}
 )
 
 benny_metadata_1 = messages.MetadataMessage(
     scan_tag=scan_tag1,
     handle=benny_email_handle_1,
-    metadata={"email-account": "benny@jensen.com"}
+    metadata={"email-account": "benny@frandsen.com"}
 )
 
 """YVONNE DATA"""
@@ -354,25 +355,6 @@ class StatisticsPageViewTest(TestCase):
             email='benny@frandsen.com', password='top_secret') 
 
     # Tests are done as Kjeld
-    # count_handled_matches()
-    def test_statisticspage_count_unhandled_matches_no_role(self):
-        view = self.get_statisticspage_object()
-        self.assertListEqual(view.count_unhandled_matches(), 
-                            [('benny@jensen.com', 2),
-                            ('egon@olsen.com', 2),
-                            ('kjeld@jensen.com', 2),
-                            ('yvonne@jensen.com', 1)])
-
-    def test_statisticspage_count_unhandled_matches_as_leader(self):
-        leader = Leader.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        self.assertListEqual(view.count_unhandled_matches(), 
-                            [('benny@jensen.com', 2),
-                            ('egon@olsen.com', 2),
-                            ('kjeld@jensen.com', 2),
-                            ('yvonne@jensen.com', 1)])
-        leader.delete()
-
     # count_all_matches_grouped_by_sensitivity()
     def test_statisticspage_count_all_matches_grouped_by_sensitivity_as_leader(self):
         leader = Leader.objects.create(user=self.kjeld)
@@ -470,12 +452,42 @@ class StatisticsPageViewTest(TestCase):
         reset_timestamps(original_timestamps)
         dpo.delete()
 
+    def test_statisticspage_five_most_unhandled_employees(self):
+        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+        view = self.get_leader_statisticspage_object()
+        kjeld_emailalias, created = EmailAlias.objects.get_or_create(user=self.kjeld, address='kjeld@jensen.com')
+        yvonne_emailalias, created = EmailAlias.objects.get_or_create(user=self.yvonne, address='yvonne@jensen.com')
+        egon_emailalias, created = EmailAlias.objects.get_or_create(user=self.egon, address='egon@olsen.com')
+        benny_emailalias, created = EmailAlias.objects.get_or_create(user=self.benny, address='benny@frandsen.com')
+        create_alias_and_match_relations(kjeld_emailalias)
+        create_alias_and_match_relations(yvonne_emailalias)
+        create_alias_and_match_relations(egon_emailalias)
+        create_alias_and_match_relations(benny_emailalias)
+
+        self.assertListEqual(view.five_most_unhandled_employees(),
+                             [['Benny', 2, True], ['Egon', 2, True],
+                              ['Kjeld', 2, True], ['Yvonne', 1, True]])
+
+        dpo.delete()
+        kjeld_emailalias.delete()
+        yvonne_emailalias.delete()
+        egon_emailalias.delete()
+        benny_emailalias.delete()
+
     # StatisticsPageView()
     def get_statisticspage_object(self):
         request = self.factory.get('/statistics')
         request.user = self.kjeld
         view = StatisticsPageView()
         return view
+
+    # StatisticsPageView()
+    def get_leader_statisticspage_object(self):
+        request = self.factory.get('/statistics/leader')
+        request.user = self.kjeld
+        view = LeaderStatisticsPageView()
+        return view
+
 
 
 # Helper functions
