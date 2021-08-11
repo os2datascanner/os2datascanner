@@ -79,23 +79,12 @@ class PikaConnectionHolder(ABC):
         self.clear()
 
 
-RECOVERABLE_PIKA_ERRORS = (
-        pika.exceptions.StreamLostError,
-        pika.exceptions.ChannelWrongStateError,
-        pika.exceptions.ConnectionWrongStateError)
-"""The exceptions that PikaPipelineRunner should treat as transient faults and
-silently consume."""
-
-
 class PikaPipelineRunner(PikaConnectionHolder):
     def __init__(self, *,
-            read=set(), write=set(), source_manager=None, **kwargs):
+            read=set(), write=set(), **kwargs):
         super().__init__(**kwargs)
         self._read = set(read)
         self._write = set(write)
-        self._pending = []
-
-        self.source_manager = source_manager
 
     def make_channel(self):
         """As PikaConnectionHolder.make_channel, but automatically declares all
@@ -108,57 +97,11 @@ class PikaPipelineRunner(PikaConnectionHolder):
         return channel
 
     def handle_message_raw(self, channel, method, properties, body):
-        """Handles an AMQP message by calling the handle_message function and
-        sending everything that it yields as a new message.
+        """Handles an AMQP message.
 
-        If a transient fault is produced when sending a message (for example,
-        if handle_message takes too long and the underlying Pika connection is
-        closed), then this function will continue to collect yielded messages
-        and will schedule them to be sent when the connection is reopened."""
-        channel.basic_ack(method.delivery_tag)
-        self.dispatch_pending(expected=0)
-        decoded_body = json_utf8_decode(body)
-        if decoded_body:
-            failed = False
-            for routing_key, message in self.handle_message(
-                    decoded_body, channel=method.routing_key):
-                # Try to dispatch messages as soon as they're generated, but
-                # store them for later if the connection is dropped
-                self._pending.append((routing_key, message))
-                if not failed:
-                    try:
-                        self.dispatch_pending(expected=1)
-                    except RECOVERABLE_PIKA_ERRORS:
-                        failed = True
-
-    @abstractmethod
-    def handle_message(self, message_body, *, channel=None):
-        """Responds to the given message by yielding zero or more (queue name,
-        JSON-serialisable object) pairs to be sent as new messages."""
-
-    def dispatch_pending(self, *, expected: int):
-        """Sends all pending messages.
-
-        This method does not attempt to handle Pika exceptions, but a message
-        will not be removed from the pending list if an exception is raised
-        while it's being processed."""
-        outstanding = len(self._pending)
-        if outstanding > expected:
-            print(("PikaPipelineRunner.dispatch_pending:"
-                    " unexpectedly long queue length {0},"
-                    " dispatching").format(outstanding), file=stderr)
-        while self._pending:
-            self.publish_message(*self._pending[0])
-            # If we got here, then basic_publish succeeded and we can safely
-            # remove the message from the head of the pending queue
-            self._pending = self._pending[1:]
-
-    def publish_message(self, routing_key, message):
-        self.channel.basic_publish(
-                exchange='',
-                routing_key=routing_key,
-                properties=pika.BasicProperties(delivery_mode=2),
-                body=json.dumps(message).encode())
+        The default implementation of this method acknowledges the message and
+        otherwise does nothing."""
+        self.channel.basic_ack(method.delivery_tag)
 
     def _basic_consume(self, *, exclusive=False):
         """Registers this PikaPipelineRunner to receive messages directed to
@@ -169,43 +112,12 @@ class PikaPipelineRunner(PikaConnectionHolder):
             consumer_tags.append(self.channel.basic_consume(
                     queue, self.handle_message_raw,
                     exclusive=exclusive))
-        self.dispatch_pending(expected=0)
         return consumer_tags
 
     def _basic_cancel(self, consumer_tags):
         """Cancels all of the provided consumer registrations."""
         for tag in consumer_tags:
             self.channel.basic_cancel(tag)
-
-    def run_consumer(self, *, exclusive=False):
-        """Runs the Pika channel consumer loop in another loop. Transient
-        faults in the Pika loop are silently handled without dropping any
-        messages."""
-
-        while True:
-            consumer_tags = []
-            try:
-                consumer_tags = self._basic_consume(exclusive=exclusive)
-                self.channel.start_consuming()
-            except RECOVERABLE_PIKA_ERRORS:
-                # Flush the channel and connection and continue the loop
-                self._channel = None
-                self._connection = None
-                continue
-            except:
-                self._basic_cancel(consumer_tags)
-                self.channel.stop_consuming()
-                raise
-            else:
-                # If we get here, then start_consuming() has returned normally,
-                # so we should too
-                self.dispatch_pending(expected=0)
-                break
-
-
-class PikaPipelineSender(PikaPipelineRunner):
-    def handle_message(self, message_body, *, channel=None):
-        yield from []
 
 
 class PikaPipelineThread(threading.Thread, PikaPipelineRunner):

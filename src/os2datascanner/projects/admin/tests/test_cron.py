@@ -11,7 +11,7 @@ from django.core.management import call_command
 from django.utils.text import slugify
 
 from os2datascanner.engine2.model.http import WebSource
-from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.rules.regex import RegexRule as TwegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity as Twensitivity
 from os2datascanner.projects.admin.core.models.client import Client
@@ -49,9 +49,17 @@ class StopHandling(Exception):
     pass
 
 
-class PipelineTestRunner(PikaPipelineRunner):
-    def handle_message(self, body, *, channel=None):
-        yield from []
+class TestRunner(PikaPipelineThread):
+    def handle_message(self, routing_key, body):
+        print(self, routing_key, body)
+        global messages
+
+        # overwrite transient fields
+        body["scan_tag"]["time"] = None
+        body["scan_tag"]["organisation"]["uuid"] = None
+        messages.append((body, "os2ds_scan_specs"))
+        if body:
+            raise StopHandling()
 
 
 # NOTE: rule_pk and org_pk CANNOT be 1, as the default created CPRRule points to
@@ -84,17 +92,6 @@ obj = {
 messages.append(
     (obj, "os2ds_scan_specs",)
 )
-
-
-def result_received(channel, method, properties, body):
-    channel.basic_ack(method.delivery_tag)
-    body = loads(body.decode("utf-8"))
-    # overwrite transient fields
-    body["scan_tag"]["time"] = None
-    body["scan_tag"]["organisation"]["uuid"] = None
-    messages.append((body, "os2ds_scan_specs"))
-    if body:
-        raise StopHandling()
 
 
 class CronTest(django.test.TestCase):
@@ -173,9 +170,8 @@ class CronTest(django.test.TestCase):
         self.magenta_scanner_tomorrow.save()
 
         # open queue
-        self.runner = PipelineTestRunner(
-            read="os2ds_scan_specs", write=set(), heartbeat=6000
-        )
+        self.runner = TestRunner(
+                read=("os2ds_scan_specs",), write=set(), heartbeat=6000)
 
     def tearDown(self):
         self.reg1.delete()
@@ -192,7 +188,6 @@ class CronTest(django.test.TestCase):
             call_command("cron", **{"now": True}, stdout=buf)
             self.output = buf.getvalue().rstrip()
 
-        self.runner.channel.basic_consume("os2ds_scan_specs", result_received)
         try:
             self.runner.run_consumer()
         except StopHandling as e:

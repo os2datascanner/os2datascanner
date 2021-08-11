@@ -7,6 +7,8 @@ import subprocess
 
 from os2datascanner.engine2.model.core import Source
 from os2datascanner.engine2.pipeline.utilities import pika
+from .test_engine2_pipeline_rabbitmq import (
+        StopHandling, PipelineTestRunner)
 
 
 from .test_engine2_pipeline import (
@@ -19,26 +21,10 @@ def python(*args):
     return subprocess.Popen([sys.executable, *args])
 
 
-class StopHandling(Exception):
-    pass
-
-
-class SubprocessPipelineTestRunner(pika.PikaPipelineRunner):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.messages = {}
-
-    def handle_message(self, message_body, *, channel=None):
-        self.messages[message_body["origin"]] = message_body
-        if len(self.messages) == 2:
-            raise StopHandling()
-        yield from []
-
-
 class Engine2SubprocessPipelineTests(unittest.TestCase):
     def setUp(self):
 
-        self.runner = SubprocessPipelineTestRunner(
+        self.runner = PipelineTestRunner(
                 read=["os2ds_results"],
                 write=["os2ds_scan_specs"],
                 heartbeat=6000)
@@ -83,9 +69,7 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
             "rule": rule.to_json_object()
         }
 
-        self.runner.channel.basic_publish(exchange='',
-                routing_key="os2ds_scan_specs",
-                body=dumps(obj).encode())
+        self.runner.enqueue_message("os2ds_scan_specs", obj)
 
         try:
             self.runner.run_consumer()
