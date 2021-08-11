@@ -25,7 +25,7 @@ from os2datascanner.utils.system_utilities import (
         time_now, parse_isoformat_timestamp)
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
-from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.projects.report.reportapp.utils import hash_handle
 from os2datascanner.engine2.conversions.types import OutputType
 from ...models.documentreport_model import DocumentReport
@@ -306,12 +306,12 @@ def handle_event(event_type, instance, cls):
                 f"handle_event: couldn't delete {cn} {event_obj.uuid}: {e}")
 
 
-class ReportCollector(PikaPipelineRunner):
-    def handle_message(self, message_body, *, channel=None):
-        if channel == "os2ds_results":
-            return result_message_received_raw(message_body)
-        elif channel == "os2ds_events":
-            return event_message_received_raw(message_body)
+class CollectorRunner(PikaPipelineThread):
+    def handle_message(self, routing_key, body):
+        if routing_key == "os2ds_results":
+            return result_message_received_raw(body)
+        elif routing_key == "os2ds_events":
+            return event_message_received_raw(body)
 
 
 class Command(BaseCommand):
@@ -319,10 +319,7 @@ class Command(BaseCommand):
     help = __doc__
 
     def handle(self, *args, **options):
-        with ReportCollector(
-                read=["os2ds_results", "os2ds_events"], heartbeat=6000) as runner:
-            try:
-                logger.info("Start")
-                runner.run_consumer(exclusive=True)
-            finally:
-                logger.info("Stop")
+        CollectorRunner(
+                exclusive=True,
+                read=["os2ds_results", "os2ds_events"],
+                heartbeat=6000).run_consumer()
