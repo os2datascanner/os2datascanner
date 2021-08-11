@@ -53,8 +53,9 @@ COPY requirements/python-requirements/requirements-engine.txt \
      requirements/python-requirements/requirements-test.txt \
      requirements/python-requirements/requirements-lint.txt \
      ./
-# hadolint ignore=DL4006
-RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
+RUN pip install --no-cache-dir -r requirements-engine.txt \
+                               -r requirements-test.txt \
+                               -r requirements-lint.txt
 
 # Copy code
 WORKDIR /code/src/os2datascanner

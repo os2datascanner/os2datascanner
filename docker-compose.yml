@@ -1,4 +1,5 @@
 version: '3.9'
+
 services:
   db:
     image: postgres:12
@@ -9,9 +10,6 @@ services:
       - ./docker/postgres-initdb.d/10-test-for-valid-env-variables.sh:/docker-entrypoint-initdb.d/10-test-for-valid-env-variables.sh
       - ./docker/postgres-initdb.d/20-create-admin-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-admin-db-and-user.sh
       - ./docker/postgres-initdb.d/40-create-report-db-and-user.sh:/docker-entrypoint-initdb.d/40-create-report-db-and-user.sh
-      # The following file adds the CREATEDB privilege to the db users to enable it
-      # to run the django tests.
-      # THIS SHOULD NOT BE USED IN PRODUCTION!!!
       - ./dev-environment/postgres-initdb.d/50-add-createdb-permissions.sh:/docker-entrypoint-initdb.d/50-add-createdb-permissions.sh
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -22,17 +20,14 @@ services:
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come
-    # with a set of management plugins installed and enabled by default.
-    # They can be accessed through the web interface on port 15672 (or the port
-    # it has been remapped to).
-    # The credentials are given in the specified `rabbitmq.env` file.
+    # with a set of management plugins installed and enabled by default. They
+    # can be accessed through a web interface. The credentials are os2ds/os2ds.
     image: rabbitmq:3.8-management-alpine
     hostname: os2datascanner_msg_broker
     env_file:
       - dev-environment/rabbitmq.env
     ports:
-      - "5672:5672"
-      - "8030:15672"
+      - "8030:15672"  # management port
 
   admin_frontend:
     build:
@@ -42,7 +37,7 @@ services:
     volumes:
       - ./src/os2datascanner/projects/admin/adminapp/static/src:/code/src/os2datascanner/projects/admin/adminapp/static/src
       - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
-      - /code/frontend/mode_modules
+      - /code/frontend/node_modules
 
   report_frontend:
      build:
@@ -52,13 +47,12 @@ services:
      volumes:
        - ./src/os2datascanner/projects/report/reportapp/static/src:/code/src/os2datascanner/projects/report/reportapp/static/src
        - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
-       - /code/frontend/mode_modules
+       - /code/frontend/node_modules
 
-  admin_application:
+  admin:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     command: [
       "gunicorn",
       "--config", "/code/docker/gunicorn-settings.py",
@@ -85,12 +79,10 @@ services:
       retries: 3
       start_period: 40s
 
-
   admin_collector:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py pipeline_collector
@@ -99,7 +91,7 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - admin_application
+      - admin
       - queue
 
   admin_job_runner:
@@ -107,7 +99,6 @@ services:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py run_background_jobs
@@ -116,15 +107,13 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - admin_application
+      - admin
       - queue
 
-
-  report_application:
+  report:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
-      target: application
     command: [
       "gunicorn",
       "--config", "/code/docker/gunicorn-settings.py",
@@ -149,10 +138,9 @@ services:
       timeout: 5s
       retries: 3
       start_period: 40s
-  
-  # channel layer backend
+
   redis:
-    restart: unless-stopped
+    # Channel layer backend
     image: redis:latest
     profiles:
       - socket
@@ -161,7 +149,6 @@ services:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
-      target: application
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py pipeline_collector
@@ -170,14 +157,13 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - report_application
+      - report
       - queue
 
-  engine_explorer:
+  explorer:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: explorer --enable-metrics
     init: true
     volumes:
@@ -186,11 +172,10 @@ services:
     depends_on:
       - queue
 
-  engine_worker:
+  worker:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: worker --enable-metrics
     init: true
     volumes:
@@ -199,11 +184,10 @@ services:
     depends_on:
       - queue
 
-  engine_exporter:
+  exporter:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: exporter --enable-metrics
     init: true
     volumes:
@@ -219,9 +203,12 @@ services:
       dockerfile: docker/Dockerfile
     env_file:
       - ./dev-environment/a11y-scanner/a11y-scanner.env
+    # This is commented because you cant use docker-compose from different dirs
+    # until https://github.com/docker/compose/issues/8470 is resolved.
+    #
     # Set only the necessary security permissions
-    security_opt:
-      - seccomp:./services/a11y-scanner/chrome_seccomp.json
+    # security_opt:
+    #   - seccomp:./services/a11y-scanner/chrome_seccomp.json
     ports:
       - 8888:8888
     profiles:
@@ -231,7 +218,6 @@ services:
     build:
       context: .
       dockerfile: docker/api/Dockerfile
-      target: application
     command: [
         "gunicorn",
         "--config", "/code/docker/gunicorn-settings.py",
@@ -380,7 +366,6 @@ x-disabled:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     command: supercronic /code/docker/crontab
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
@@ -389,14 +374,13 @@ x-disabled:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - admin_application
+      - admin
       - queue
 
   report_cron:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
-      target: application
     command: supercronic /code/docker/crontab
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
@@ -405,14 +389,13 @@ x-disabled:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - report_application
+      - report
       - queue
 
-  engine_processor:
+  processor:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: processor --enable-metrics
     init: true
     volumes:
@@ -421,11 +404,10 @@ x-disabled:
     depends_on:
       - queue
 
-  engine_matcher:
+  matcher:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: matcher --enable-metrics
     init: true
     restart: unless-stopped
@@ -435,11 +417,10 @@ x-disabled:
     depends_on:
       - queue
 
-  engine_tagger:
+  tagger:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: tagger --enable-metrics
     init: true
     volumes:

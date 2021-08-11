@@ -92,8 +92,9 @@ COPY requirements/python-requirements/requirements-report.txt \
      requirements/python-requirements/requirements-test.txt \
      requirements/python-requirements/requirements-lint.txt \
      ./
-# hadolint ignore=DL4006
-RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
+RUN pip install --no-cache-dir -r requirements-report.txt \
+                               -r requirements-test.txt \
+                               -r requirements-lint.txt
 
 WORKDIR /code/docker/
 COPY docker/report/crontab ./crontab
@@ -122,15 +123,9 @@ COPY NEWS.rst ./
 WORKDIR /code/src/os2datascanner/projects/report/reportapp/static
 COPY --from=frontend /code/src/os2datascanner/projects/report/reportapp/static/dist ./dist
 
-# Run the server as the os2ds_report user on port 8000
+# Run the server as the os2ds_report user on port 5000
 WORKDIR /code/src/os2datascanner/projects/report
-# Change permissions of translation folders
-# hadolint ignore=DL4006
-RUN find . -name 'LC_MESSAGES' -print0 | xargs -0 chown -R os2ds_report:os2ds_report
 USER os2ds_report:os2ds_report
 EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
-
-CMD ["gunicorn", \
-     "--config", "/code/docker/gunicorn-settings.py", \
-     "wsgi"]
+CMD ["gunicorn", "--config", "/code/docker/gunicorn-settings.py", "wsgi"]
