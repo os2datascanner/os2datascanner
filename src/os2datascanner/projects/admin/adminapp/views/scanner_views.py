@@ -12,6 +12,9 @@
 # sector open source network <https://os2.eu/>.
 #
 from json import dumps
+
+from django.core.paginator import Paginator, EmptyPage
+from django.http import Http404
 from pika.exceptions import AMQPError
 import structlog
 
@@ -26,8 +29,21 @@ from .views import RestrictedListView, RestrictedCreateView, \
 from ..models.authentication_model import Authentication
 from ..models.rules.rule_model import Rule
 from ..models.scannerjobs.scanner_model import Scanner, ScanStatus
+from django.utils.translation import ugettext_lazy as _
 
 logger = structlog.get_logger(__name__)
+
+
+class EmptyPagePaginator(Paginator):
+    def validate_number(self, number):
+        try:
+            return super(EmptyPagePaginator, self).validate_number(number)
+        except EmptyPage:
+            if number > 1:
+                return self.num_pages
+            else:
+                raise Http404(_('The page does not exist'))
+
 
 class StatusBase(RestrictedListView):
 
@@ -52,11 +68,25 @@ class StatusOverview(StatusBase):
 
 
 class StatusCompleted(StatusBase):
+    paginate_by = 10
+    paginator_class = EmptyPagePaginator
     template_name = "os2datascanner/scan_completed.html"
     model = ScanStatus
 
     def get_queryset(self):
-        return super().get_queryset().order_by("-pk")
+        """ Returns a queryset of Scannerjobs that are finished"""
+
+        # When a scannerjob is run, we immediately create a ScanStatus object,
+        # but we use a property to get whether or not it is finished.
+        # This means we have to do filtering some filtering in Python and
+        # then reconstruct a queryset, to not include not-finished scannerjobs.
+        finished_scannerjobs = set()
+
+        for scannerjob in super().get_queryset().order_by("-pk"):
+            if scannerjob.finished:
+                finished_scannerjobs.add(scannerjob.pk)
+
+        return super().get_queryset().filter(pk__in=finished_scannerjobs)
 
 
 class StatusDelete(RestrictedDeleteView):
@@ -248,7 +278,7 @@ class ScannerRun(RestrictedDetailView):
 
         try:
             context['scan_tag'] = dumps(
-                    self.object.run(user=request.user), indent=2)
+                self.object.run(user=request.user), indent=2)
         except Exception as ex:
             logger.error("Error while starting ScannerRun", exc_info=True)
             error_type = type(ex).__name__
