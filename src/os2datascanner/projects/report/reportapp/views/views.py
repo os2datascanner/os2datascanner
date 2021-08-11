@@ -192,6 +192,8 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         context['new_matches_by_month'] = self.count_new_matches_by_month(today)
 
+        context['unhandled_matches_by_month'] = self.count_unhandled_matches_by_month(today)
+
         return context
 
     def count_handled_matches_grouped_by_sensitivity(self):
@@ -295,6 +297,72 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             oldest_matches.append(tup)
 
         return oldest_matches
+
+    def count_unhandled_matches(self):
+        # Counts the amount of unhandled matches
+        # TODO: Optimize queries by reading from relational db
+        unhandled_matches = self.unhandled_matches.order_by(
+            'data__metadata__metadata').values(
+            'data__metadata__metadata').annotate(
+            total=Count('data__metadata__metadata')
+        ).values(
+            'data__metadata__metadata', 'total',
+        )
+
+        # TODO: Optimize queries by reading from relational db
+        employee_unhandled_list = []
+        for um in unhandled_matches:
+            dict_values = list(um['data__metadata__metadata'].values())
+            first_value = dict_values[0]
+            employee_unhandled_list.append((first_value, um['total']))
+
+        return employee_unhandled_list
+
+    def count_unhandled_matches_by_month(self, current_date):
+        """Counts new matches and resolved matches by month for the last year,
+        rotates the current month to the end of the list, inserts and subtracts using the counts
+        and then makes a running total"""
+        a_year_ago = current_date - timedelta(days=365)
+
+        new_matches_by_month = self.matches.filter(
+            created_timestamp__range=(a_year_ago, current_date)).annotate(
+            month=TruncMonth('created_timestamp')).values(
+            'month').annotate(
+            total=Count('data')
+        ).order_by('month')
+
+        resolved_matches_by_month = self.handled_matches.filter(
+            created_timestamp__range=(a_year_ago, current_date)).annotate(
+            month=TruncMonth('resolution_time')).values(
+            'month').annotate(
+            total=Count('data')
+        ).order_by('month')
+
+        # Generators with months as integers and the counts
+        new_matches_by_month_gen = ((int(m['month'].strftime('%m')), m['total'])
+                                    for m in new_matches_by_month)
+
+        resolved_matches_by_month_gen = ((int(m['month'].strftime('%m')), m['total'])
+                                         for m in resolved_matches_by_month if m['month'])
+
+        # Double-ended queue with all months abbreviated and a starting value
+        full_year_of_months = deque([[month_abbr[x + 1], 0] for x in range(12)])
+
+        for n in new_matches_by_month_gen:
+            full_year_of_months[n[0] - 1][1] = n[1]  # Inserts the counted new matches
+
+        for r in resolved_matches_by_month_gen:
+            full_year_of_months[r[0] - 1][1] -= r[1]  # Subtracts the counted resolves
+
+        # Rotate the current month to index 11
+        current_month = int(current_date.strftime('%m'))
+        full_year_of_months.rotate(-current_month)
+
+        # Running total
+        for i in range(11):  # Take value from current index and add it to the next
+            full_year_of_months[i + 1][1] += full_year_of_months[i][1]
+
+        return list(full_year_of_months)
 
     def count_new_matches_by_month(self, current_date):
         """Counts matches by months for the last year

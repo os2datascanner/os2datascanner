@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.views.generic import View
 
+from os2datascanner.utils.system_utilities import time_now
 from ..models.documentreport_model import DocumentReport
 from ..utils import iterate_queryset_in_batches
 
@@ -77,8 +78,9 @@ def set_status_2(body):
                 }
             else:
                 dr.resolution_status = status_value
+                dr.resolution_time = time_now()
 
-        DocumentReport.objects.bulk_update(batch, ['resolution_status'])
+        DocumentReport.objects.bulk_update(batch, ['resolution_status', 'resolution_time'])
         return {
             "status": "ok"
         }
