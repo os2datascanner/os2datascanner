@@ -88,7 +88,6 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
     def get_form_fields(self):
         """Get the list of fields to use in the form for the view."""
         fields = [f for f in self.fields]
-        fields.append('organization')
         return fields
 
     def get_form(self, form_class=None):
@@ -116,7 +115,6 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
         if not self.fields:
             return []
         fields = [f for f in self.fields]
-        fields.append('organization')
 
         return fields
 
@@ -134,6 +132,21 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
 class RestrictedUpdateView(UpdateView, OrgRestrictedMixin):
     """Base class for updateviews restricted by organiztion."""
 
+    def get_form(self, form_class=None):
+        """Get the form for the view."""
+        fields = self.get_form_fields()
+        form_class = modelform_factory(self.model, fields=fields)
+        kwargs = self.get_form_kwargs()
+        form = form_class(**kwargs)
+        return form
+    
+    def form_valid(self, form):
+        """Validate the form."""
+        user = self.request.user
+        if not user.is_superuser:
+            self.object = form.save(commit=False)
+
+        return super().form_valid(form)
 
 class RestrictedDetailView(DetailView, OrgRestrictedMixin):
     """Base class for detailviews restricted by organiztion."""

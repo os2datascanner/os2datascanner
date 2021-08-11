@@ -210,6 +210,9 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
 
         return form
 
+    def get_form_fields(self):
+        return super().get_form_fields()
+
     def form_valid(self, form):
         """Validate the submitted form."""
         if self.old_url != self.object.url:
