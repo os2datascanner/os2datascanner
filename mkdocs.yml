@@ -10,5 +10,7 @@ nav:
   - User Guide: user-guide.md
   - Scan API: api.md
   - Extending OS2Datascanner: engine2.md
+  - Architecture:
+    - architecture/frontend.md
   - Notes: notes.md
   - Release notes: changelog.md
