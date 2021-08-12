@@ -12,5 +12,6 @@ nav:
   - Extending OS2Datascanner: engine2.md
   - Architecture:
     - architecture/frontend.md
+  - A11y Scanner: a11y-scanner.md
   - Notes: notes.md
   - Release notes: changelog.md
