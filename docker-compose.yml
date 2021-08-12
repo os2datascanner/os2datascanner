@@ -196,6 +196,14 @@ services:
     depends_on:
       - queue
 
+  docs:
+    image: nicksantamaria/mkdocs
+    volumes:
+      - ./:/data
+    command: ["serve", "-a", "0.0.0.0:8000"]
+    ports:
+      - 8000:8000
+
   # a11y is short for "accessibility". There are 11 chars between a-y
   a11y_scanner:
     build:
