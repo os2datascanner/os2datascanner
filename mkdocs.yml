@@ -8,7 +8,6 @@ nav:
   - Installation: installation.md
   - Configuration: configuration.md
   - Development: dev-environment.md
-  - User Guide: user-guide.md
   - Scan API: api.md
   - Extending OS2Datascanner: engine2.md
   - Architecture:

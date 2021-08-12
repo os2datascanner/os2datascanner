@@ -313,10 +313,27 @@ docker
     docker logs os2datascanner_worker_1
 
 
-# Documentation
+# docker-compose profiles
 
-The documentation can be found on [Read the
-Docs](https://os2datascanner.readthedocs.io/en/latest).
+The `docker-compose.yml` use `--profiles` which requires version
+`docker-compose > 1.28`.
+
+To start the core components(`engine`, `report`- and `admin` interface, `db`
+and `queue`) of datascanner, use
+
+```sh
+docker-compose up -d
+```
+
+To start a service behind a `profiles` flag, use
+
+```sh
+docker-compose --profile api up -d
+```
+
+The following `profiles` are available: `ldap`, `sso`, `api` and `metric`.
+
+The development config files are stored in `os2datascanner/dev-environment/`
 
 
 # Code standards
