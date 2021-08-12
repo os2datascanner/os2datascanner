@@ -33,8 +33,13 @@ _sensitivity_mapping = {
 class Rule(models.Model):
     objects = InheritanceManager()
 
-    name = models.CharField(max_length=256, unique=True, null=False,
-                            verbose_name='Navn')
+    name = models.CharField(
+        max_length=256,
+        unique=True,
+        null=False,
+        verbose_name=_('name'),
+    )
+
     organization = models.ForeignKey(
         'organizations.Organization',
         on_delete=models.CASCADE,
@@ -43,10 +48,16 @@ class Rule(models.Model):
         default=None,
         null=True,
     )
-    description = models.TextField(verbose_name='Beskrivelse')
-    sensitivity = models.IntegerField(choices=Sensitivity.choices,
-                                      default=Sensitivity.HIGH,
-                                      verbose_name='Følsomhed')
+
+    description = models.TextField(
+        verbose_name=_('description')
+    )
+
+    sensitivity = models.IntegerField(
+        choices=Sensitivity.choices,
+        default=Sensitivity.HIGH,
+        verbose_name=_('sensitivity'),
+    )
 
     @property
     def display_name(self):
