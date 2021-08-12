@@ -4,16 +4,18 @@ site_url: https://os2datascanner.rtfd.io
 theme: readthedocs
 
 nav:
-  - Overview: index.md
+  # index.md
   - Installation: installation.md
   - Configuration: configuration.md
-  - Development: dev-environment.md
+  - Development environment: dev-environment.md
+  - Architecture:
+    - Overview: architecture/overview.md
+    - Engine/pipeline: architecture/pipeline.md
+    - Frontend: architecture/frontend.md
   - Scan API: api.md
   - Extending OS2Datascanner: engine2.md
-  - Architecture:
-    - architecture/pipeline.md
-    - architecture/frontend.md
-  - A11y Scanner: a11y-scanner.md
+  - Services:
+    - A11y Scanner: a11y-scanner.md
   - Requirements: requirements.md
   - Notes: notes.md
   - Release notes: changelog.md
