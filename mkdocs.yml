@@ -13,5 +13,6 @@ nav:
   - Architecture:
     - architecture/frontend.md
   - A11y Scanner: a11y-scanner.md
+  - Requirements: requirements.md
   - Notes: notes.md
   - Release notes: changelog.md
