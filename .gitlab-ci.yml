@@ -121,17 +121,6 @@ Build API:
       --dockerfile=$CI_PROJECT_DIR/docker/api/Dockerfile
       --destination=${API_IMAGE}
 
-Build documentation:
-  <<: *build-default
-  image: keimlink/sphinx-doc:latex
-  script:
-    - make -C doc PAPER=a4 html latexpdf
-    - mv doc/_build .
-  artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-    paths:
-      - _build
-
 
 # Test stage
 #############
@@ -274,7 +263,6 @@ Run Engine notice scripts:
     - Build Admin Application
     - Build Engine
     - Build API
-    - Build documentation
     - Test Admin Application
     - Integration Test Engine
     - Unit Test Engine
