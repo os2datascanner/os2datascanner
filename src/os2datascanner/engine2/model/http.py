@@ -90,15 +90,13 @@ class WebSource(Source):
             if n_netloc == netloc:
                 # we dont care about whether scheme is http or https
                 # new_url is under same hirachy as here(referrer)
-                new_handle = WebHandle(self, new_url[len(self._url):], referrer,
-                                       lm_hint)
+                new_handle = WebHandle(self, n_path, referrer, lm_hint)
             else:
                 # new_url is external from here. Create a new handle from a new
                 # Source.
                 base_url = urlunsplit((n_scheme, n_netloc, "", None, None))
-                new_handle = WebHandle(WebSource(base_url),
-                                       new_url[len(base_url):], referrer,
-                                       lm_hint)
+                new_handle = WebHandle(WebSource(base_url), n_path, referrer,
+                        lm_hint)
             if new_handle not in known_addresses:
                 known_addresses.add(new_handle)
                 to_visit.append(new_handle)
