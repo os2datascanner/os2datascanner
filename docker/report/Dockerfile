@@ -99,6 +99,7 @@ RUN pip install --no-cache-dir -r requirements-report.txt \
 WORKDIR /code/docker/
 COPY docker/report/crontab ./crontab
 COPY docker/report/docker-settings.toml ./docker-settings.toml
+COPY docker/insecure-settings.toml ./insecure-settings.toml
 COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
 COPY docker/gunicorn-settings.py ./gunicorn-settings.py
 
@@ -125,7 +126,21 @@ COPY --from=frontend /code/src/os2datascanner/projects/report/reportapp/static/d
 
 # Run the server as the os2ds_report user on port 5000
 WORKDIR /code/src/os2datascanner/projects/report
+# Make os2ds_report owner of /code/docker. This is only needed to remove the
+# insecure settings file after `collectstatic`.
+RUN chown -R os2ds_report:os2ds_report /code/docker
+
 USER os2ds_report:os2ds_report
+
+# Unfortunately, `manage.py` requires all settings to be set. We include a set
+# of insecure setting here for only this purpose. We make sure to delete it
+# afterward. If `insecure-settings.toml` is found in any production image,
+# consider it a bug. See `insecure-settings.toml` for a detailed explanation.
+RUN set -ex \
+  && OS2DS_REPORT_USER_CONFIG_PATH=/code/docker/insecure-settings.toml python manage.py collectstatic --no-input --clear \
+  && OS2DS_REPORT_USER_CONFIG_PATH=/code/docker/insecure-settings.toml python manage.py compilemessages \
+  && rm /code/docker/insecure-settings.toml
+
 EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
 CMD ["gunicorn", "--config", "/code/docker/gunicorn-settings.py", "wsgi"]
