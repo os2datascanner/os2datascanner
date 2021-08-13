@@ -276,7 +276,7 @@ care of the required settings and bindings.
 To run the test-suites using docker-compose:
 
     docker-compose run admin python -m django test os2datascanner.projects.admin.tests
-    docker-compose run explorer python -m unittest discover -s /code/src/os2datascanner/engine2/tests
+    docker-compose run explorer pytest --color=yes src/os2datascanner/engine2/tests
     docker-compose run report python -m django test os2datascanner.projects.report.tests
 
 Please note that the engine tests can be run using any of the five pipeline
