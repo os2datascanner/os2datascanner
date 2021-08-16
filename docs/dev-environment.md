@@ -283,6 +283,16 @@ Please note that the engine tests can be run using any of the five pipeline
 services as the basis, but a specific one is provided above for easy reference.
 
 
+# Translations (i18n)
+
+When the applications are already `up` and running as described above, you can
+recompile the translations with the command:
+
+    docker-compose exec (report|admin) django-admin compilemessages
+
+Refreshing the page, you should see your new translations.
+
+
 # Shell access
 
 To access a shell on any container based on the OS2datascanner module
