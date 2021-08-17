@@ -254,12 +254,10 @@ class ScannerAskRun(RestrictedDetailView):
         else:
             ok = True
 
+        context["ok"] = ok
+
         if not ok:
             context['error_message'] = error_message
-        if settings.DEBUG:
-            # run the scanner job if we're in debug mode
-            ok = True
-        context['ok'] = ok
 
         return context
 
