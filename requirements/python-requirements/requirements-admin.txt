@@ -4,8 +4,10 @@
 #
 #    pip-compile requirements-admin.in
 #
-asgiref==3.3.4
-    # via django
+asgiref==3.4.1
+    # via
+    #   django
+    #   uvicorn
 backcall==0.1.0
     # via ipython
 beautifulsoup4==4.9.0
@@ -35,6 +37,7 @@ click==8.0.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
+    #   uvicorn
 colorama==0.4.3
     # via
     #   -c requirements-engine.txt
@@ -127,12 +130,16 @@ googleapis-common-protos==1.52.0
     #   google-api-core
 gunicorn==20.0.4
     # via -r requirements-django.in
+h11==0.12.0
+    # via uvicorn
 httplib2==0.18.1
     # via
     #   -c requirements-engine.txt
     #   google-api-python-client
     #   google-auth-httplib2
     #   oauth2client
+httptools==0.2.0
+    # via uvicorn
 idna==2.9
     # via
     #   -c requirements-engine.txt
@@ -237,6 +244,8 @@ python-dateutil==2.8.1
     #   -r requirements-admin.in
     #   django-recurrence
     #   exchangelib
+python-dotenv==0.19.0
+    # via uvicorn
 python-magic==0.4.18
     # via
     #   -c requirements-engine.txt
@@ -249,6 +258,8 @@ pytz==2019.3
     #   exchangelib
     #   google-api-core
     #   tzlocal
+pyyaml==5.4.1
+    # via uvicorn
 regex==2020.4.4
     # via
     #   -c requirements-engine.txt
@@ -315,6 +326,7 @@ typing-extensions==3.10.0.0
     #   -c requirements-engine.txt
     #   asgiref
     #   importlib-metadata
+    #   uvicorn
 tzlocal==2.0.0
     # via
     #   -c requirements-engine.txt
@@ -327,8 +339,16 @@ urllib3==1.25.9
     # via
     #   -c requirements-engine.txt
     #   requests
+uvicorn[standard]==0.15.0
+    # via -r requirements-django.in
+uvloop==0.14.0
+    # via uvicorn
+watchgod==0.7
+    # via uvicorn
 wcwidth==0.1.9
     # via prompt-toolkit
+websockets==9.1
+    # via uvicorn
 whitenoise==5.2.0
     # via -r requirements-django.in
 zipp==3.4.1

@@ -61,7 +61,7 @@ services:
       # reload when translations are compiled with `docker-compose exec admin django-admin compilemessages`
       # waiting for gunicorn globbing support: https://github.com/benoitc/gunicorn/issues/1643
       "--reload-extra-file", "/code/src/os2datascanner/projects/admin/locale/da/LC_MESSAGES/django.mo",
-      "wsgi"
+      "asgi"
     ]
     environment:
       - GUNICORN_WORKERS=2
@@ -126,7 +126,7 @@ services:
       # reload when translations are compiled with `docker-compose exec report django-admin compilemessages`
       # waiting for gunicorn globbing support: https://github.com/benoitc/gunicorn/issues/1643
       "--reload-extra-file", "/code/src/os2datascanner/projects/report/locale/da/LC_MESSAGES/django.mo",
-      "wsgi"
+      "asgi"
     ]
     environment:
       - GUNICORN_WORKERS=2
