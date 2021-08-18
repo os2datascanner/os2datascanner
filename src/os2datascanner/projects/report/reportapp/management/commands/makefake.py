@@ -17,10 +17,9 @@
 
 from time import time
 from django.core.management.base import BaseCommand
-from dateutil import tz
 from contextlib import contextmanager
 
-from os2datascanner.utils.system_utils import time_now
+from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model import http
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.rule import Sensitivity
