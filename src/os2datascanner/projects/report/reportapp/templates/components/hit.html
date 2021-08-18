@@ -10,7 +10,9 @@
     <div class="datatable__column--filetype-icon">
       <input type="checkbox" value="" id="match-checkbox" name="match-checkbox" class="datatable-checkbox" data-report-pk="{{ match.pk|unlocalize }}">
       <span class="icon-filetype icon-filetype--{{ type }}">
-        {% include "components/svg-icons/icon-office365.svg" %}
+      {% with svg_icon=type|find_svg_icon %}
+        {% include svg_icon %}
+      {% endwith %}
       </span>
     </div>
   </td>

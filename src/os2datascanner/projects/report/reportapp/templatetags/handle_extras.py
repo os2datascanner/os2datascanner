@@ -67,3 +67,9 @@ def find_type_label(handle):
         return handle.type_label
     else:
         return None
+
+
+@register.filter
+def find_svg_icon(type_label):
+    path = "components/svg-icons/icon-" + type_label + ".svg"
+    return path
