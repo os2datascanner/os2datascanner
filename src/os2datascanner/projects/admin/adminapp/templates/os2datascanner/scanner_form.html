@@ -185,7 +185,7 @@
           {% endif %}
 
           {% if form.token %}
-            {% include "os2datascanner/scanner_form_input_field.html" with field=form.token password="True" %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.token password="True" required="True" %}
           {% endif %}
 
           {% if form.tenant_id %}
@@ -297,7 +297,7 @@
           {% if form.service_account_file_gmail %}
           <div class="form__group">
             <label for="id_{{ form.service_account_file_gmail.name }}">
-              {% trans "Upload service account" %} (.json)
+              {% trans "Upload service account" %} (.json) *
             </label>
             <input id="upload-file-service" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
             <div class="fileUpload button button--grey button--upload">
@@ -333,7 +333,7 @@
           {% if form.user_emails_gmail %}
           <div class="form__group">
             <label for="id_{{ form.user_emails_gmail.name }}">
-              {% trans "Upload list of accounts" %} (.csv)
+              {% trans "Upload list of accounts" %} (.csv) *
             </label>
             <input id="upload-file-email" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
             <div class="fileUpload button button--grey button--upload">
@@ -435,7 +435,7 @@
             {% if form.service_account_file %}
           <div class="form__group">
             <label for="id_{{ form.service_account_file.name }}">
-              {% trans "Upload service account" %} (.json)
+              {% trans "Upload service account" %} (.json) *
             </label>
               <input id="upload-file-service" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
               <div class="fileUpload button button--grey button--upload">
@@ -471,7 +471,7 @@
           {% if form.user_emails %}
           <div class="form__group">
             <label for="id_{{ form.user_emails.name }}">
-              {% trans "Upload list of accounts" %} (.csv)
+              {% trans "Upload list of accounts" %} (.csv) *
             </label>
               <input id="upload-file-email" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
               <div class="fileUpload button button--grey button--upload">
@@ -510,7 +510,7 @@
     {% if form.userlist %}
     <section class="data-form">
         <fieldset class="form__fieldset">
-          <h3>
+          <h3 class="required-form">
             {% trans "add users"|capfirst %}
           </h3>
           {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features %}
