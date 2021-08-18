@@ -1,5 +1,7 @@
+import os
 from urllib.parse import urlsplit
 
+from django.apps import apps
 from django import template
 from django.conf import settings
 
@@ -71,5 +73,10 @@ def find_type_label(handle):
 
 @register.filter
 def find_svg_icon(type_label):
-    path = "components/svg-icons/icon-" + type_label + ".svg"
-    return path
+    svg_dir = "components/svg-icons"
+    full_path = os.path.join(
+        os.path.join(apps.get_app_config('os2datascanner_report').path,
+                     f"templates/{svg_dir}/"), f"icon-{type_label}.svg")
+    return os.path.join(
+        svg_dir, f"icon-{type_label}.svg") if os.path.exists(full_path) else \
+        f"{svg_dir}/icon-default.svg"
