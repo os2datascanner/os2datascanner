@@ -1,7 +1,6 @@
 import enum
 
 from django.db import models
-from django.db.models.signals import post_save, post_delete
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField
 from django.utils.translation import ugettext_lazy as _
@@ -159,6 +158,7 @@ DocumentReport.factory = ModelFactory(DocumentReport)
 @DocumentReport.factory.on_update
 def on_documentreport_created_or_updated(objects, fields=None):
     from .aliases.alias_model import Alias
+    from .aliases.emailalias_model import EmailAlias
 
     tm = Alias.match_relation.through
     new_objects = []
@@ -168,11 +168,15 @@ def on_documentreport_created_or_updated(objects, fields=None):
             metadata = obj.data['metadata']['metadata'].values()
             value = list(metadata)[0]
             aliases = Alias.objects.select_subclasses()
-
             for alias in aliases:
-                if str(alias) == value:
-                    new_objects.append(
+                if type(alias) is EmailAlias:
+                    if alias.address.lower() == value:
+                        new_objects.append(
                             tm(documentreport_id=obj.pk, alias_id=alias.pk))
+                else:
+                    if str(alias) == value:
+                        new_objects.append(
+                                tm(documentreport_id=obj.pk, alias_id=alias.pk))
         except (KeyError, TypeError):
             logger.info(f"{obj} has no metadata")
     try:

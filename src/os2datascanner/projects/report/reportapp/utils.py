@@ -145,6 +145,6 @@ def create_alias_and_match_relations(sub_alias):
     with all the matching DocumentReports"""
     tm = Alias.match_relation.through
     reports = DocumentReport.objects.filter(data__metadata__metadata__contains={
-                    str(sub_alias.key): str(sub_alias)})
+                    str(sub_alias.key): str(sub_alias).lower()})
     tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk) 
                             for r in reports], ignore_conflicts=True)

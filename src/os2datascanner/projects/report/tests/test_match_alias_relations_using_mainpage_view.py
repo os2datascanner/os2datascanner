@@ -259,7 +259,7 @@ class MatchAliasRelationTest(TestCase):
     def test_mainpage_view_with_emailalias_egon(self):
         emailalias = EmailAlias.objects.create(
             user=self.user,
-            address='egon@olsen.com'
+            address='EGON@olsen.com'
         )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
@@ -382,7 +382,7 @@ class MatchAliasRelationTest(TestCase):
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 1)
         remediator.delete()
-    
+
     def test_mainpage_view_with_relation_table(self):
         emailalias, created = EmailAlias.objects.get_or_create(
             user=self.user,
