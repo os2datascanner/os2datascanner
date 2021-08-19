@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load navigation_tags %}
 
 <nav class="navi">
   <ul>
@@ -37,6 +38,14 @@
           </span>
         </a>
       </li>
+      <li>
+        <a href="{% report_module_url %}" target="_blank">
+          {% include "components/svg-icons/assignment.svg" %}
+          <span class="width">
+            {% trans "Report module" %}
+          </span>
+        </a>
+      </li>
       {% if user.is_superuser or user.is_staff %}
       <li>
         <a href="/admin/" target="_NEW">
@@ -45,13 +54,14 @@
             {% trans "Administration" %}
           </span>
         </a>
-        <li>
-          <a href="/help/guide/" class="{% if active_tab == 'guide' %}active{% endif %}" target="_new">
-            {% include "components/svg-icons/help.svg" %}
-            <span class="width">
-              {% trans "Guide" %}
-            </span>
-          </a>
+      </li>
+      <li>
+        <a href="/help/guide/" class="{% if active_tab == 'guide' %}active{% endif %}" target="_new">
+          {% include "components/svg-icons/help.svg" %}
+          <span class="width">
+            {% trans "Guide" %}
+          </span>
+        </a>
       </li>
       {% endif %}
     {% endif %}
