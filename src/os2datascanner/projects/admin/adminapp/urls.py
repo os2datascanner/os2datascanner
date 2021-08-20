@@ -29,54 +29,56 @@ from .models.scannerjobs.msgraph_models import (MSGraphMailScanner,
                                                 MSGraphFileScanner)
 from .models.scannerjobs.gmail_model import GmailScanner
 from .models.scannerjobs.sbsysscanner_model import SbsysScanner
-from .views.exchangescanner_views import ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate, \
-    ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun, ExchangeScannerCopy
-from .views.filescanner_views import FileScannerCreate, FileScannerRun, FileScannerAskRun, FileScannerUpdate, \
-    FileScannerDelete, FileScannerList, FileScannerCopy
-from .views.dropboxscanner_views import DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun, DropboxScannerUpdate, \
-    DropboxScannerDelete, DropboxScannerList
-from .views.googledrivescanner_views import GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun, \
-    GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete, GoogleDriveScannerCopy
-from .views.gmailscanner_views import GmailScannerCreate, GmailScannerRun, GmailScannerAskRun, GmailScannerUpdate, \
-    GmailScannerDelete, GmailScannerList, GmailScannerCopy
-from .views.sbsysscanner_views import SbsysScannerCreate, SbsysScannerList, SbsysScannerAskRun, SbsysScannerDelete, \
-    SbsysScannerRun, SbsysScannerUpdate
-from .views.rule_views import RuleList, \
-    CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, \
-    RegexRuleCreate, RegexRuleUpdate, RegexRuleDelete
 from .views.api import JSONAPIView
 from .views.views import GuideView, DialogSuccess
-from .views.exchangescanner_views import (
-    ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate,
-    ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun)
-from .views.filescanner_views import (
-    FileScannerCreate, FileScannerRun, FileScannerAskRun,
-    FileScannerUpdate, FileScannerDelete, FileScannerList)
-from .views.dropboxscanner_views import (
-    DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun,
-    DropboxScannerUpdate, DropboxScannerDelete, DropboxScannerList)
-from .views.googledrivescanner_views import (
-    GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun,
-    GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete)
-from .views.gmailscanner_views import (
-    GmailScannerCreate, GmailScannerRun, GmailScannerAskRun,
-    GmailScannerUpdate, GmailScannerDelete, GmailScannerList)
-from .views.sbsysscanner_views import (
-    SbsysScannerCreate, SbsysScannerList, SbsysScannerAskRun,
-    SbsysScannerDelete, SbsysScannerRun, SbsysScannerUpdate)
-from .views.rule_views import (
-    RuleList, CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, RegexRuleCreate,
-    RegexRuleUpdate, RegexRuleDelete)
-from .views.scanner_views import (StatusOverview, StatusCompleted, StatusDelete)
+
+from .views.exchangescanner_views import (ExchangeScannerList, ExchangeScannerCreate,
+                                          ExchangeScannerUpdate, ExchangeScannerDelete,
+                                          ExchangeScannerRun, ExchangeScannerAskRun,
+                                          ExchangeScannerCopy)
+
+from .views.filescanner_views import (FileScannerCreate, FileScannerRun,
+                                      FileScannerAskRun, FileScannerUpdate,
+                                      FileScannerDelete, FileScannerList,
+                                      FileScannerCopy)
+
+from .views.dropboxscanner_views import (DropboxScannerCreate, DropboxScannerRun,
+                                         DropboxScannerAskRun, DropboxScannerUpdate,
+                                         DropboxScannerDelete, DropboxScannerList)
+
+from .views.googledrivescanner_views import (GoogleDriveScannerCreate, GoogleDriveScannerRun,
+                                             GoogleDriveScannerAskRun, GoogleDriveScannerUpdate,
+                                             GoogleDriveScannerList, GoogleDriveScannerDelete,
+                                             GoogleDriveScannerCopy)
+
+from .views.gmailscanner_views import (GmailScannerCreate, GmailScannerRun,
+                                       GmailScannerAskRun,GmailScannerUpdate,
+                                       GmailScannerDelete, GmailScannerList,
+                                       GmailScannerCopy)
+
+from .views.sbsysscanner_views import (SbsysScannerCreate, SbsysScannerList,
+                                       SbsysScannerAskRun,SbsysScannerDelete,
+                                       SbsysScannerRun, SbsysScannerUpdate)
+
+from .views.rule_views import (RuleList, CPRRuleCreate,
+                               CPRRuleUpdate, CPRRuleDelete,
+                               RegexRuleCreate,RegexRuleUpdate,
+                               RegexRuleDelete)
+
+from .views.scanner_views import (StatusOverview, StatusCompleted,
+                                  StatusDelete)
+
 from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
                                      WebScannerDelete, WebScannerRun,
                                      WebScannerAskRun, WebScannerList,
                                      WebScannerValidate, WebScannerCopy)
-from .views.msgraph_views import (
-        MSGraphMailList, MSGraphMailDelete, MSGraphMailCreate,
-        MSGraphMailUpdate, MSGraphMailRun, MSGraphMailAskRun,
-        MSGraphFileList, MSGraphFileDelete, MSGraphFileCreate,
-        MSGraphFileUpdate, MSGraphFileRun, MSGraphFileAskRun)
+
+from .views.msgraph_views import (MSGraphMailList, MSGraphMailDelete,
+                                  MSGraphMailCreate, MSGraphMailUpdate,
+                                  MSGraphMailRun, MSGraphMailAskRun,
+                                  MSGraphFileList, MSGraphFileDelete,
+                                  MSGraphFileCreate, MSGraphFileUpdate,
+                                  MSGraphFileRun, MSGraphFileAskRun)
 
 urlpatterns = [
     # App URLs
