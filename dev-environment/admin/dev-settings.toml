@@ -8,6 +8,7 @@ DEBUG = true
 # The URL of this site, used in links in emails and in the redirect URL for
 # OAuth 2.0 services. (This value should end with a forward slash.)
 SITE_URL = "http://localhost:8020/"
+REPORT_URL = "http://localhost:8040/"
 SESSION_COOKIE_NAME = "admin_sessionid"
 
 # [keycloak]

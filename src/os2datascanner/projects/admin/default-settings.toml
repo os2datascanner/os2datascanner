@@ -21,6 +21,8 @@ SITE_ID = 1
 ALLOWED_HOSTS = []
 SESSION_COOKIE_NAME = "sessionid"
 
+REPORT_URL = "*"
+
 # [keycloak]
 KEYCLOAK_BASE_URL = ""
 KEYCLOAK_ADMIN_CLIENT = "os2datascanner_admin"

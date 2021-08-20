@@ -184,26 +184,26 @@ msgstr "Du har ikke tilladelse til at udføre denne handling"
 msgid "Page not found"
 msgstr "Siden blev ikke fundet"
 
-#: adminapp/templates/components/navigation.html:12
+#: adminapp/templates/components/navigation.html:13
 #: adminapp/templates/os2datascanner/scan_status.html:39
 #: adminapp/templates/os2datascanner/scanner_tabs.html:61
 msgid "Scanner status"
 msgstr "Scanner status"
 
-#: adminapp/templates/components/navigation.html:20
+#: adminapp/templates/components/navigation.html:21
 #: adminapp/templates/os2datascanner/scan_completed.html:26
 #: adminapp/templates/os2datascanner/scanners.html:24
 #: adminapp/templates/partials/breadcrumb.html:6
 msgid "Scannerjob"
 msgstr "Scannerjob"
 
-#: adminapp/templates/components/navigation.html:28
+#: adminapp/templates/components/navigation.html:29
 #: adminapp/templates/os2datascanner/rules.html:22
 #: adminapp/templates/partials/breadcrumb.html:52
 msgid "Rules"
 msgstr "Regler"
 
-#: adminapp/templates/components/navigation.html:36
+#: adminapp/templates/components/navigation.html:37
 #: adminapp/templates/partials/breadcrumb.html:66
 #: adminapp/templates/partials/breadcrumb.html:74
 #: adminapp/templates/partials/breadcrumb.html:82 organizations/apps.py:8
@@ -212,13 +212,17 @@ msgstr "Regler"
 msgid "organizations"
 msgstr "organisationer"
 
-#: adminapp/templates/components/navigation.html:45
+#: adminapp/templates/components/navigation.html:46
 msgid "Administration"
 msgstr "Administration"
 
-#: adminapp/templates/components/navigation.html:52
+#: adminapp/templates/components/navigation.html:53
 msgid "Guide"
 msgstr "Håndbog"
+
+#: adminapp/templates/components/navigation.html:61
+msgid "Report module"
+msgstr "Rapport modul"
 
 #: adminapp/templates/components/pagination.html:18
 #: adminapp/templates/components/pagination.html:25
@@ -1051,10 +1055,8 @@ msgid "saved"
 msgstr "gemt"
 
 #: adminapp/views/webscanner_views.py:47
-#, fuzzy
-#| msgid "e.g. https://www.example.com"
 msgid "e.g. https://example.com"
-msgstr "f.eks. https://www.example.com"
+msgstr "f.eks. https://example.com"
 
 #: adminapp/views/webscanner_views.py:49
 msgid "e.g. https://example.com/exclude1, https://example.com/exclude2"
