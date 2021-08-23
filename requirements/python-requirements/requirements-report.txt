@@ -47,10 +47,10 @@ cffi==1.14.0
     #   cryptography
     #   google-crc32c
 channels-redis==3.3.0
-    # via -r requirements-report.in
+    # via -r requirements-django.in
 channels==3.0.4
     # via
-    #   -r requirements-report.in
+    #   -r requirements-django.in
     #   channels-redis
 chardet==3.0.4
     # via
@@ -67,9 +67,10 @@ colorama==0.4.3
     #   -r requirements-common.in
 constantly==15.1.0
     # via twisted
-cryptography==2.9.2
+cryptography==3.4.8
     # via
     #   -c requirements-engine.txt
+    #   -r requirements-django.in
     #   autobahn
     #   josepy
     #   mozilla-django-oidc
@@ -369,7 +370,6 @@ six==1.14.0
     # via
     #   -c requirements-engine.txt
     #   automat
-    #   cryptography
     #   django-extensions
     #   django-rest-auth
     #   dropbox

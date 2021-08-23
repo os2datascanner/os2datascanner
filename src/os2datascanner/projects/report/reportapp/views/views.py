@@ -85,7 +85,6 @@ class MainPageView(LoginRequiredMixin, ListView):
         resolution_status__isnull=True)
     scannerjob_filters = None
     paginate_by_options = [10, 20, 50, 100, 250]
-    print("************************************ HER ")
 
     def get_queryset(self):
         user = self.request.user
@@ -166,6 +165,18 @@ class MainPageView(LoginRequiredMixin, ListView):
         # Overrides get_paginate_by to allow changing it in the template
         # as url param paginate_by=xx
         return self.request.GET.get('paginate_by', self.paginate_by)
+
+    # Function for sending message to socket
+    def send_socket_message():
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'get_updates',
+            {
+                'type': 'websocket_receive',
+                'message': 'new matches'
+            }
+        )
+
 
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
@@ -396,17 +407,6 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         deque_of_months.rotate(-current_month)
 
         return list(deque_of_months)
-
-    # Function for sending message to socket
-    def send_socket_message():
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            'get_updates',
-            {
-                'type': 'websocket_receive',
-                'message': 'new matches'
-            }
-        )
 
 
 class LeaderStatisticsPageView(StatisticsPageView):

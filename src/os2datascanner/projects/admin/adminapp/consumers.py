@@ -3,7 +3,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
 
-class ReportWebsocketConsumer(WebsocketConsumer):
+class AdminWebsocketConsumer(WebsocketConsumer):
     def connect(self):
         self.channel = 'get_updates'
         async_to_sync(self.channel_layer.group_add)(
