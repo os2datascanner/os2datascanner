@@ -10,6 +10,7 @@ gunicorn
 uvicorn[standard]
 psycopg2-binary
 whitenoise
+djangorestframework
 
 # At the moment only used during development:
 django_extensions

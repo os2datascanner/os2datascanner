@@ -84,6 +84,9 @@ django==3.2.4
     #   django-settings-export
     #   django-storages
     #   django-structlog
+    #   djangorestframework
+djangorestframework==3.12.4
+    # via -r requirements-django.in
 dnspython==1.16.0
     # via
     #   -c requirements-engine.txt
