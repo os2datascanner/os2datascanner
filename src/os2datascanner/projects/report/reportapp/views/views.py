@@ -49,6 +49,9 @@ from ..models.roles.remediator_model import Remediator
 from ..models.roles.dpo_model import DataProtectionOfficer
 from ..models.roles.leader_model import Leader
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 logger = structlog.get_logger()
 
 RENDERABLE_RULES = (
@@ -82,6 +85,7 @@ class MainPageView(LoginRequiredMixin, ListView):
         resolution_status__isnull=True)
     scannerjob_filters = None
     paginate_by_options = [10, 20, 50, 100, 250]
+    print("************************************ HER ")
 
     def get_queryset(self):
         user = self.request.user
@@ -392,6 +396,17 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         deque_of_months.rotate(-current_month)
 
         return list(deque_of_months)
+
+    # Function for sending message to socket
+    def send_socket_message():
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'get_updates',
+            {
+                'type': 'websocket_receive',
+                'message': 'new matches'
+            }
+        )
 
 
 class LeaderStatisticsPageView(StatisticsPageView):

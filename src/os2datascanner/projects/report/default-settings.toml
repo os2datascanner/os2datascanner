@@ -37,6 +37,8 @@ LOGOUT_REDIRECT_URL = ""
 LOGOUT_URL = ""
 OIDC_OP_LOGOUT_URL_METHOD = "os2datascanner.projects.report.reportapp.views.views.oidc_op_logout_url_method"
 
+ASGI_APPLICATION = "os2datascanner.projects.report.asgi.application"
+
 # [installation]
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -48,6 +50,8 @@ INSTALLED_APPS = [
     'os2datascanner.projects.report.reportapp.apps.ReportappConfig',
     'mozilla_django_oidc',
     'django_extensions',
+    'channels',
+    'channels_redis',
 ]
 AUTHENTICATION_BACKENDS = [
     'os2datascanner.projects.report.reportapp.utils.OIDCAuthenticationBackend',
