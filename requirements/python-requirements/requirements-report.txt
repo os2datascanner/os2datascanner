@@ -92,7 +92,9 @@ django==3.2.4
 djangorestframework-jwt==1.11.0
     # via django-saml2-auth
 djangorestframework==3.12.1
-    # via django-rest-auth
+    # via
+    #   -r requirements-django.in
+    #   django-rest-auth
 dnspython==1.16.0
     # via
     #   -c requirements-engine.txt
