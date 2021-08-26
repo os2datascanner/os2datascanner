@@ -3,7 +3,7 @@ import enum
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.core.exceptions import ValidationError
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from django.utils.translation import ugettext_lazy as _
 from .organization_model import Organization
 
