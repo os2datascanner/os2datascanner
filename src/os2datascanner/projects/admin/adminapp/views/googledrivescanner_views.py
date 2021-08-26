@@ -92,11 +92,11 @@ class GoogleDriveScannerCopy(ScannerCopy):
         'organization',
     ]
 
-    def dispatch(self, *args, **kwargs):
-        pk = super(GoogleDriveScannerCopy, self).dispatch()
-
-        return HttpResponseRedirect('/googledrivescanners/%s' % pk['copy_pk'])
-
+    def get_initial(self):
+        initial = super(GoogleDriveScannerCopy, self).get_initial()
+        initial["service_account_file"] = self.get_scanner_object().service_account_file
+        initial["user_emails"] = self.get_scanner_object().user_emails
+        return initial
 
 class GoogleDriveScannerAskRun(ScannerAskRun):
     """Prompt for starting google drive scan, validate first."""

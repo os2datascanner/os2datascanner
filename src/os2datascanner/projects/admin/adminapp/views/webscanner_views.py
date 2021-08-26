@@ -69,16 +69,9 @@ class WebScannerCopy(ScannerCopy):
 
     model = WebScanner
     type = 'web'
-    fields = ['name', 'schedule', 'url', 'exclusion_rules',
-              'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
-              'do_link_check', 'do_external_link_check', 'do_collect_cookies',
-              'do_last_modified_check', 'do_last_modified_check_head_request',
-              'rules', 'recipients']
-
-    def dispatch(self, *args, **kwargs):
-        pk = super(WebScannerCopy, self).dispatch()
-
-        return HttpResponseRedirect('/webscanners/%s' % pk['copy_pk'])
+    fields = ['name', 'schedule', 'url', 'exclusion_rules', 'download_sitemap',
+              'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
+              'do_last_modified_check', 'rules', 'organization', 'exclude_urls']
 
 
 class WebScannerUpdate(ScannerUpdate):

@@ -84,27 +84,29 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
         return initialize_form(form)
 
 
-class ExchangeScannerCopy(ScannerCopy):
+class ExchangeScannerCopy(ExchangeScannerBase, ScannerCopy):
     """Create a new copy of an existing ExchangeScanner"""
+
 
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
-              'do_last_modified_check', 'rules', 'recipients', 'userlist',
-              'service_endpoint']
+              'do_last_modified_check', 'rules', 'userlist',
+              'service_endpoint', 'organization', 'org_unit']
 
-    def dispatch(self, *args, **kwargs):
-        pk = super(ExchangeScannerCopy, self).dispatch()
+    def get_form(self, form_class=None):
+        """Adds special field password."""
+        # This doesn't copy over it's values, as credentials shouldn't
+        # be copyable
+        if form_class is None:
+            form_class = self.get_form_class()
 
-        original_scanner_obj = Scanner.objects.get(pk=pk['original_pk'])
-        copy_scanner_obj = Scanner.objects.get(pk=pk['copy_pk'])
+        form = super().get_form(form_class)
+        return initialize_form(form)
 
-        # Copies the auth username
-        # Does not copy the password, user must reenter that.
-        copy_scanner_obj.authentication.username = original_scanner_obj.authentication.username
-
-        copy_scanner_obj.authentication.save()
-
-        return HttpResponseRedirect('/exchangescanners/%s' % pk['copy_pk'])
+    def get_initial(self):
+        initial = super(ExchangeScannerCopy, self).get_initial()
+        initial["userlist"] = self.get_scanner_object().userlist
+        return initial
 
 
 class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):

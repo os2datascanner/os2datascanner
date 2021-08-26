@@ -124,24 +124,18 @@ class FileScannerCopy(ScannerCopy):
         'do_ocr',
         'do_last_modified_check',
         'rules',
-        'recipients'
+        'organization',
         ]
 
-    def dispatch(self, *args, **kwargs):
-        pk = super(FileScannerCopy, self).dispatch()
+    def get_form(self, form_class=None):
+        """Adds special field password."""
+        # This doesn't copy over it's values, as credentials shouldn't
+        # be copyable
+        if form_class is None:
+            form_class = self.get_form_class()
 
-        original_scanner_obj = Scanner.objects.get(pk=pk['original_pk'])
-        copy_scanner_obj = Scanner.objects.get(pk=pk['copy_pk'])
-
-        # Copies the auth username and domain
-        # Does not copy the password, user must reenter that.
-        copy_scanner_obj.authentication.username = original_scanner_obj.authentication.username
-        copy_scanner_obj.authentication.domain = original_scanner_obj.authentication.domain
-
-        copy_scanner_obj.authentication.save()
-
-        return HttpResponseRedirect('/filescanners/%s' % pk['copy_pk'])
-
+        form = super().get_form(form_class)
+        return initialize_form(form)
 
 class FileScannerAskRun(ScannerAskRun):
     """Prompt for starting file scan, validate first."""

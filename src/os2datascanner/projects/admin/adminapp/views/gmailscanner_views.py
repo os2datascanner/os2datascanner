@@ -93,10 +93,12 @@ class GmailScannerCopy(ScannerCopy):
         'organization',
     ]
 
-    def dispatch(self, *args, **kwargs):
-        pk = super(GmailScannerCopy, self).dispatch()
+    def get_initial(self):
+        initial = super(GmailScannerCopy, self).get_initial()
+        initial["service_account_file_gmail"] = self.get_scanner_object().service_account_file_gmail
+        initial["user_emails_gmail"] = self.get_scanner_object().user_emails_gmail
+        return initial
 
-        return HttpResponseRedirect('/gmailscanners/%s' % pk['copy_pk'])
 
 class GmailScannerAskRun(ScannerAskRun):
     """Prompt for starting gmail scan, validate first."""

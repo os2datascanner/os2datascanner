@@ -234,38 +234,28 @@ class ScannerDelete(RestrictedDeleteView):
 
 
 class ScannerCopy(ScannerBase, RestrictedCreateView):
-    """Creates a copy of an existing scanner.
+    """Creates a copy of an existing scanner. """
 
-    For scanner specific fields one must override dispatch method and
-    use the original primary key to fetch and set the scanner specific attributes."""
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
-    scanner_keys = {}
-
-    def dispatch(self, *args, **kwargs):
-        """Returns a dict of the original primary key and the new one.
-        Scanner views must override and return a dispatch URL with the new
-        object's PK."""
+    def get_initial(self):
+        initial = super().get_initial()
 
         scanner_obj = ScannerUpdate.get_scanner_object(self)
-        self.scanner_keys["original_pk"] = scanner_obj.pk
-        scanner_obj.pk = None
-        scanner_obj.id = None
-        auth_obj = Authentication.objects.create()
-        scanner_obj.authentication = auth_obj
 
-        # Adds "Copy" to the end of the name of the copied Scanner
-        # While loop avoids issue of duplicates if job named 'Scanner Copy' already
-        # exists. A new copy would then be 'Scanner Copy Copy'
+        # Copied scannerjobs should be "Invalid" by default
+        # to avoid being able to misuse this feature.
+        initial["validation_status"] = Scanner.INVALID
         while True:
             scanner_obj.name = f'{scanner_obj.name} Copy'
             if not Scanner.objects.filter(name=scanner_obj.name).exists():
-                scanner_obj.validation_status = Scanner.INVALID  # By default a copy is not validated.
-                scanner_obj.save()
-                scanner_obj.rules.set(self.get_scanner_object().rules.all())
-                self.scanner_keys["copy_pk"] = scanner_obj.pk
+                initial["name"] = scanner_obj.name
                 break
 
-        return self.scanner_keys
+        return initial
 
 
 class ScannerAskRun(RestrictedDetailView):
