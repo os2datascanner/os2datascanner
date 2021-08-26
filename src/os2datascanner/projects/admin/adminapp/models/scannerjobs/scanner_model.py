@@ -27,7 +27,7 @@ import structlog
 from django.db import models
 from django.conf import settings
 from django.core.validators import validate_comma_separated_integer_list
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from django.utils.translation import ugettext_lazy as _
 
 from model_utils.managers import InheritanceManager
