@@ -170,7 +170,7 @@ def on_documentreport_created_or_updated(objects, fields=None):
             aliases = Alias.objects.select_subclasses()
             for alias in aliases:
                 if type(alias) is EmailAlias:
-                    if alias.address.lower() == value:
+                    if alias.address.lower() == value.lower():
                         new_objects.append(
                             tm(documentreport_id=obj.pk, alias_id=alias.pk))
                 else:
