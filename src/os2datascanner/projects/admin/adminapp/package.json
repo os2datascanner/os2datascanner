@@ -8,7 +8,7 @@
   "dependencies": {
     "axios": "0.21.1",
     "svgxuse": "^1.2.6",
-    "vue": "2.6.11"
+    "vue": "2.6.14"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
