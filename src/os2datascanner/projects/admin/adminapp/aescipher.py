@@ -1,4 +1,4 @@
-import binascii, os, datetime, logging
+import binascii, os, logging
 from Crypto.Util import Counter
 from Crypto.Cipher import AES
 from Crypto import Random

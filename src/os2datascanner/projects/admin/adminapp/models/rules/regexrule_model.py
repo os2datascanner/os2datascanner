@@ -15,7 +15,6 @@
 # source municipalities ( http://www.os2web.dk/ )
 
 from django.db import models
-from ..sensitivity_level import Sensitivity
 
 
 from os2datascanner.engine2.rules.regex import RegexRule as RegexTwule
@@ -37,9 +36,6 @@ class RegexPattern(models.Model):
     Represents a regular expression pattern to be added to a RegexRule.
     """
 
-    class Meta:
-        verbose_name = 'Pattern'
-
     regex = models.ForeignKey(RegexRule, null=True, on_delete=models.CASCADE,
                               related_name='patterns', verbose_name='Regex')
 
@@ -51,7 +47,8 @@ class RegexPattern(models.Model):
         return self.pattern_string
 
     class Meta:
-        ordering = ('pk', )
+        verbose_name = 'Pattern'
+        ordering = ('pk',)
 
 
 def compund_rules(rule):

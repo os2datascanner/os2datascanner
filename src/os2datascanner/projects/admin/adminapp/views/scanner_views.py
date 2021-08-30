@@ -19,8 +19,6 @@ from pika.exceptions import AMQPError
 import structlog
 
 from django.forms import ModelMultipleChoiceField
-from django.forms.models import modelform_factory
-from django.conf import settings
 
 from os2datascanner.projects.admin.organizations.models import Organization
 
