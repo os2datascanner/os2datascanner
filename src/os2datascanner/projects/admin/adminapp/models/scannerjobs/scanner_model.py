@@ -103,34 +103,6 @@ class Scanner(models.Model):
                                    verbose_name='Regler',
                                    related_name='scanners')
 
-    # Spreadsheet annotation and replacement parameters
-
-    # Save a copy of any spreadsheets scanned with annotations
-    # in each row where matches were found. If this is enabled and any of
-    # the replacement parameters are enabled (e.g. do_cpr_replace), matches
-    # will also be replaced with the specified text (e.g. cpr_replace_text).
-    output_spreadsheet_file = models.BooleanField(default=False)
-
-    # Replace CPRs?
-    do_cpr_replace = models.BooleanField(default=False)
-
-    # Text to replace CPRs with
-    cpr_replace_text = models.CharField(max_length=2048, null=True,
-                                        blank=True)
-
-    # Replace names?
-    do_name_replace = models.BooleanField(default=False)
-
-    # Text to replace names with
-    name_replace_text = models.CharField(max_length=2048, null=True,
-                                         blank=True)
-    # Replace addresses?
-    do_address_replace = models.BooleanField(default=False)
-
-    # Text to replace addresses with
-    address_replace_text = models.CharField(max_length=2048, null=True,
-                                            blank=True)
-
     VALID = 1
     INVALID = 0
 
@@ -195,12 +167,6 @@ class Scanner(models.Model):
         "Scannerjobbet kunne ikke startes," +
         " da dette scan er igang."
     )
-
-    process_urls = JSONField(null=True, blank=True)
-
-    # Booleans for control of scanners run from web service.
-    do_run_synchronously = models.BooleanField(default=False)
-    is_visible = models.BooleanField(default=True)
 
     # First possible start time
     FIRST_START_TIME = datetime.time(hour=18, minute=0)
