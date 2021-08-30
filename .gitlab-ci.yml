@@ -277,7 +277,7 @@ Run Engine notice scripts:
 .release-rc: &release-rc
   <<: *release-default
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "development" && $CI_PIPELINE_SOURCE != "schedule"'
+    - if: '$CI_COMMIT_REF_NAME == "main" && $CI_PIPELINE_SOURCE != "schedule"'
   script:
     - apk add skopeo
     - skopeo copy
@@ -397,13 +397,13 @@ Release API:
 ##############
 
 Deploy test:
-  # Automatic deployment of development branch to
+  # Automatic deployment of main branch to
   # https://test.os2datascanner.dk/ and https://test-admin.os2datascanner.dk/
   stage: deploy
   image: magentalabs/pepper:latest
   services: []
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "development" && $CI_PIPELINE_SOURCE != "schedule"'
+    - if: '$CI_COMMIT_REF_NAME == "main" && $CI_PIPELINE_SOURCE != "schedule"'
   dependencies: []
   tags:
     - deploy
