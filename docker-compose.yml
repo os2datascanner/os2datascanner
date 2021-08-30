@@ -11,12 +11,6 @@ services:
       - ./docker/postgres-initdb.d/20-create-admin-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-admin-db-and-user.sh
       - ./docker/postgres-initdb.d/40-create-report-db-and-user.sh:/docker-entrypoint-initdb.d/40-create-report-db-and-user.sh
       - ./dev-environment/postgres-initdb.d/50-add-createdb-permissions.sh:/docker-entrypoint-initdb.d/50-add-createdb-permissions.sh
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come
@@ -76,12 +70,6 @@ services:
       - db
       - admin_frontend
       - queue
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
-      start_period: 40s
 
   admin_collector:
     build:
@@ -140,12 +128,6 @@ services:
       - db
       - report_frontend
       - queue
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
-      start_period: 40s
 
   redis:
     # Channel layer backend
