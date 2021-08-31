@@ -90,7 +90,7 @@ using Docker, these files need to be mounted correctly as described below.
 OS2datascanner is a multi-service system, and as such also a multi-container
 system. It may be advantageous to run it using `docker-compose`. A
 [docker-compose file for
-development](https://github.com/os2datascanner/os2datascanner/blob/master/docker-compose.yml)
+development](https://github.com/os2datascanner/os2datascanner/blob/main/docker-compose.yml)
 is in the repository root.
 
 Each service for the OS2datascanner system can be started using docker.  Note
