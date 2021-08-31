@@ -1,12 +1,9 @@
 from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django.forms.models import model_to_dict
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
-import json
 import logging
-import sys
 
 logger = logging.getLogger(__name__)
 

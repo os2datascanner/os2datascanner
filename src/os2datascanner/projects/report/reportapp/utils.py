@@ -1,6 +1,5 @@
 import json
 import hashlib
-import unicodedata
 import structlog
 
 from django.conf import settings

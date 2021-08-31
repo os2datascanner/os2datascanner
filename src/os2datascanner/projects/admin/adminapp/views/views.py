@@ -11,15 +11,12 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-"""Contains Django views."""
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import modelform_factory
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import View, ListView, TemplateView, DetailView
+from django.views.generic import ListView, TemplateView, DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
 
@@ -34,28 +31,6 @@ from ..models.scannerjobs.msgraph_models import (
         MSGraphFileScanner, MSGraphMailScanner)
 from ..models.scannerjobs.webscanner_model import WebScanner
 from ..models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
-
-
-class LoginRequiredMixin(View):
-    """Include to require login."""
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        """Check for login and dispatch the view."""
-        return super().dispatch(*args, **kwargs)
-
-
-class SuperUserRequiredMixin(LoginRequiredMixin):
-    """Include to require login and superuser."""
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        """Check for login and superuser and dispatch the view."""
-        user = self.request.user
-        if user.is_superuser:
-            return super().dispatch(*args, **kwargs)
-        else:
-            raise PermissionDenied
 
 
 class RestrictedListView(ListView, LoginRequiredMixin):
@@ -107,7 +82,7 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
         return super().form_valid(form)
 
 
-class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
+class OrgRestrictedMixin(LoginRequiredMixin, ModelFormMixin):
     """Mixin class for views with organization-restricted queryset."""
 
     def get_form_fields(self):
