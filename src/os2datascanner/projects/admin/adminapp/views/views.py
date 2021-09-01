@@ -11,12 +11,14 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import modelform_factory
+from django.utils.decorators import method_decorator
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import ListView, TemplateView, DetailView
+from django.views.generic import View, ListView, TemplateView, DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
 
@@ -33,7 +35,7 @@ from ..models.scannerjobs.webscanner_model import WebScanner
 from ..models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 
 
-class RestrictedListView(ListView, LoginRequiredMixin):
+class RestrictedListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """Restrict to the organization of the logged-in user."""
@@ -57,7 +59,7 @@ class GuideView(TemplateView):
 
 
 # Create/Update/Delete Views.
-class RestrictedCreateView(CreateView, LoginRequiredMixin):
+class RestrictedCreateView(LoginRequiredMixin, CreateView):
     """Base class for create views that are limited by user organization."""
 
     def get_form_fields(self):

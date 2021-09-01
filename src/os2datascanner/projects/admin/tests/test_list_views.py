@@ -2,7 +2,7 @@ from datetime import datetime
 from dateutil.tz import gettz
 from parameterized import parameterized
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.test import RequestFactory, TestCase
 from django.utils.text import slugify
 
@@ -85,6 +85,12 @@ class ListViewsTest(TestCase):
             ("OrganizationListViewTest", '/organizations/', OrganizationListView()),
         ]
         return params
+
+    def test_view_as_anonymous_user(self):
+        request = self.factory.get('/webscanners')
+        request.user = AnonymousUser()
+        response = WebScannerList.as_view()(request)
+        self.assertNotEqual(response.status_code, 200)
 
     @parameterized.expand(get_path_and_class)
     def test_as_superuser(self, _, path, list_type):
