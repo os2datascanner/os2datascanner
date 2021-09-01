@@ -14,13 +14,9 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 
-import os
-import tempfile
 from pathlib import PureWindowsPath
-from subprocess import call
 
 import structlog
-from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
