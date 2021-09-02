@@ -57,7 +57,7 @@ class MSGraphMailCreate(View):
         return handler(request, *args, **kwargs)
 
 
-class _MSGraphMailPermissionRequest(TemplateView, LoginRequiredMixin):
+class _MSGraphMailPermissionRequest(LoginRequiredMixin, TemplateView):
     """Sends the user to the Microsoft Online login system in order to permit
     OS2datascanner to access organisational mail accounts through the Graph
     API.
