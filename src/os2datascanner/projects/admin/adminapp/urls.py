@@ -78,7 +78,7 @@ from .views.msgraph_views import (MSGraphMailList, MSGraphMailDelete,
                                   MSGraphMailRun, MSGraphMailAskRun,
                                   MSGraphFileList, MSGraphFileDelete,
                                   MSGraphFileCreate, MSGraphFileUpdate,
-                                  MSGraphFileRun, MSGraphFileAskRun)
+                                  MSGraphFileRun, MSGraphFileAskRun, MSGraphMailCopy, MSGraphFileCopy)
 
 urlpatterns = [
     # App URLs
@@ -230,6 +230,10 @@ urlpatterns = [
     url(r'^msgraph-mailscanners/(?P<pk>\d+)/delete/$',
             MSGraphMailDelete.as_view(),
             name='msgraphmailscanner_delete'),
+    url(r'^msgraph-mailscanners/(?P<pk>\d+)/copy/$', MSGraphMailCopy.as_view(),
+        name='msgraphmailscanner_copy'),
+    url(r'^msgraph-filescanners/(?P<pk>\d+)/copy/$', MSGraphFileCopy.as_view(),
+        name='filescanners_copy'),
     url(r'^msgraph-filescanners/(?P<pk>\d+)/run/$',
             MSGraphFileRun.as_view(),
             name='msgraphfilescanner_run'),
