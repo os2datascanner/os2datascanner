@@ -48,14 +48,16 @@ services:
       context: .
       dockerfile: docker/admin/Dockerfile
     command: [
-      "gunicorn",
-      "--config", "/code/docker/gunicorn-settings.py",
-      # restart workers when code changes
+      # In production, we use gunicorn with the worker class
+      # "uvicorn.workers.UvicornWorker", but that does not work with --reload,
+      # so we use uvicorn in development at the cost of some dev/prod parity.
+      "uvicorn",
       "--reload",
+      "--host", "0.0.0.0",
+      "--port", "5000",
       # reload when translations are compiled with `docker-compose exec admin django-admin compilemessages`
-      # waiting for gunicorn globbing support: https://github.com/benoitc/gunicorn/issues/1643
-      "--reload-extra-file", "/code/src/os2datascanner/projects/admin/locale/da/LC_MESSAGES/django.mo",
-      "asgi"
+      "--reload-include", "*.mo",
+      "os2datascanner.projects.admin.asgi:application",
     ]
     environment:
       - GUNICORN_WORKERS=2
@@ -107,14 +109,16 @@ services:
       context: .
       dockerfile: docker/report/Dockerfile
     command: [
-      "gunicorn",
-      "--config", "/code/docker/gunicorn-settings.py",
-      # restart workers when code changes
+      # In production, we use gunicorn with the worker class
+      # "uvicorn.workers.UvicornWorker", but that does not work with --reload,
+      # so we use uvicorn in development at the cost of some dev/prod parity.
+      "uvicorn",
       "--reload",
+      "--host", "0.0.0.0",
+      "--port", "5000",
       # reload when translations are compiled with `docker-compose exec report django-admin compilemessages`
-      # waiting for gunicorn globbing support: https://github.com/benoitc/gunicorn/issues/1643
-      "--reload-extra-file", "/code/src/os2datascanner/projects/report/locale/da/LC_MESSAGES/django.mo",
-      "asgi"
+      "--reload-include", "*.mo",
+      "os2datascanner.projects.report.asgi:application",
     ]
     environment:
       - GUNICORN_WORKERS=2
