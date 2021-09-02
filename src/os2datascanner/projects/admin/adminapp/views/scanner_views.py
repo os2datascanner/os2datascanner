@@ -15,6 +15,8 @@ from json import dumps
 
 from django.core.paginator import Paginator, EmptyPage
 from django.http import Http404
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from pika.exceptions import AMQPError
 import structlog
 
@@ -229,6 +231,31 @@ class ScannerDelete(RestrictedDeleteView):
             form_class = self.get_form_class()
 
         return super().get_form(form_class)
+
+
+class ScannerCopy(ScannerBase, RestrictedCreateView):
+    """Creates a copy of an existing scanner. """
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def get_initial(self):
+        initial = super().get_initial()
+
+        scanner_obj = ScannerUpdate.get_scanner_object(self)
+
+        # Copied scannerjobs should be "Invalid" by default
+        # to avoid being able to misuse this feature.
+        initial["validation_status"] = Scanner.INVALID
+        while True:
+            scanner_obj.name = f'{scanner_obj.name} Copy'
+            if not Scanner.objects.filter(name=scanner_obj.name).exists():
+                initial["name"] = scanner_obj.name
+                break
+
+        return initial
 
 
 class ScannerAskRun(RestrictedDetailView):

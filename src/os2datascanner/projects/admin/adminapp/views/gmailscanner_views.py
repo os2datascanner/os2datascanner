@@ -77,6 +77,29 @@ class GmailScannerDelete(ScannerDelete):
     success_url = '/gmailscanners/'
 
 
+class GmailScannerCopy(ScannerCopy):
+    """Create a new copy of an existing GmailScanner"""
+
+    model = GmailScanner
+    fields = [
+        'name',
+        'schedule',
+        'service_account_file_gmail',
+        'user_emails_gmail',
+        'exclusion_rules',
+        'do_ocr',
+        'do_last_modified_check',
+        'rules',
+        'organization',
+    ]
+
+    def get_initial(self):
+        initial = super(GmailScannerCopy, self).get_initial()
+        initial["service_account_file_gmail"] = self.get_scanner_object().service_account_file_gmail
+        initial["user_emails_gmail"] = self.get_scanner_object().user_emails_gmail
+        return initial
+
+
 class GmailScannerAskRun(ScannerAskRun):
     """Prompt for starting gmail scan, validate first."""
     model = GmailScanner

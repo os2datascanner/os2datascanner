@@ -11,6 +11,9 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from requests import request
 from ..validate import validate_domain, get_validation_str
 from .scanner_views import *
 from ..models.scannerjobs.webscanner_model import WebScanner
@@ -59,6 +62,16 @@ class WebScannerCreate(ScannerCreate):
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
         return '/webscanners/%s/created/' % self.object.pk
+
+
+class WebScannerCopy(ScannerCopy):
+    """Create a new copy of an existing WebScanner"""
+
+    model = WebScanner
+    type = 'web'
+    fields = ['name', 'schedule', 'url', 'exclusion_rules', 'download_sitemap',
+              'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
+              'do_last_modified_check', 'rules', 'organization', 'exclude_urls']
 
 
 class WebScannerUpdate(ScannerUpdate):
@@ -110,14 +123,12 @@ class WebScannerAskRun(ScannerAskRun):
 
 
 class WebScannerRun(ScannerRun):
-
     """View that handles starting of a web scanner run."""
 
     model = WebScanner
 
 
 class WebScannerValidate(RestrictedDetailView):
-
     """View that handles validation of a domain."""
 
     model = WebScanner

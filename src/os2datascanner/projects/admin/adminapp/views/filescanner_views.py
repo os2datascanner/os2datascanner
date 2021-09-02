@@ -17,7 +17,6 @@ from ..aescipher import decrypt
 from ..models.scannerjobs.filescanner_model import FileScanner
 from django.utils.translation import ugettext_lazy as _
 
-
 class FileScannerList(ScannerList):
     """Displays list of file scanners."""
 
@@ -112,6 +111,31 @@ class FileScannerDelete(ScannerDelete):
     fields = []
     success_url = '/filescanners/'
 
+
+class FileScannerCopy(ScannerCopy):
+    """Create a new copy of an existing FileScanner"""
+    model = FileScanner
+    fields = [
+        'name',
+        'schedule',
+        'url',
+        'exclusion_rules',
+        'alias',
+        'do_ocr',
+        'do_last_modified_check',
+        'rules',
+        'organization',
+        ]
+
+    def get_form(self, form_class=None):
+        """Adds special field password."""
+        # This doesn't copy over it's values, as credentials shouldn't
+        # be copyable
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        form = super().get_form(form_class)
+        return initialize_form(form)
 
 class FileScannerAskRun(ScannerAskRun):
     """Prompt for starting file scan, validate first."""

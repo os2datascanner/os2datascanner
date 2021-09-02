@@ -20,7 +20,7 @@ from ..models.scannerjobs.msgraph_models import MSGraphMailScanner
 from ..models.scannerjobs.msgraph_models import MSGraphFileScanner
 from .views import LoginRequiredMixin
 from .scanner_views import (ScannerRun, ScannerList,
-        ScannerAskRun, ScannerCreate, ScannerDelete, ScannerUpdate)
+                            ScannerAskRun, ScannerCreate, ScannerDelete, ScannerUpdate, ScannerCopy)
 
 
 def make_consent_url(label):
@@ -81,7 +81,7 @@ class _MSGraphMailCreate(ScannerCreate):
     model = MSGraphMailScanner
     type = 'msgraph-mail'
     fields = ['name', 'schedule', 'tenant_id', 'do_ocr',
-              'do_last_modified_check', 'rules']
+              'do_last_modified_check', 'rules', 'organization',]
 
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
@@ -111,6 +111,12 @@ class MSGraphMailDelete(ScannerDelete):
     fields = []
     success_url = '/msgraph-mailscanners/'
 
+class MSGraphMailCopy(ScannerCopy):
+    """Creates a copy of an existing Microsoft Graph mail scanner job."""
+    model = MSGraphMailScanner
+    type = 'msgraph-mail'
+    fields = ['name', 'schedule', 'tenant_id', 'do_ocr',
+              'do_last_modified_check', 'rules', 'organization',]
 
 class MSGraphMailAskRun(ScannerAskRun):
     """Prompts the user for confirmation before running a Microsoft Graph mail
@@ -194,6 +200,13 @@ class MSGraphFileDelete(ScannerDelete):
     fields = []
     success_url = '/msgraph-filescanners/'
 
+class MSGraphFileCopy(ScannerCopy):
+    """Creates a copy of an existing Microsoft Graph mail scanner job."""
+    model = MSGraphFileScanner
+    type = 'msgraph-file'
+    fields = ['name', 'schedule', 'tenant_id',
+              'scan_site_drives', 'scan_user_drives', 'do_ocr',
+              'do_last_modified_check', 'rules', 'organization', ]
 
 class MSGraphFileAskRun(ScannerAskRun):
     """Prompts the user for confirmation before running a Microsoft Graph file

@@ -77,6 +77,27 @@ class GoogleDriveScannerDelete(ScannerDelete):
     success_url = '/googledrivescanners/'
 
 
+class GoogleDriveScannerCopy(ScannerCopy):
+    """Create a new copy of an existing Google Drive Scanner"""
+    model = GoogleDriveScanner
+    fields = [
+        'name',
+        'schedule',
+        'service_account_file',
+        'user_emails',
+        'exclusion_rules',
+        'do_ocr',
+        'do_last_modified_check',
+        'rules',
+        'organization',
+    ]
+
+    def get_initial(self):
+        initial = super(GoogleDriveScannerCopy, self).get_initial()
+        initial["service_account_file"] = self.get_scanner_object().service_account_file
+        initial["user_emails"] = self.get_scanner_object().user_emails
+        return initial
+
 class GoogleDriveScannerAskRun(ScannerAskRun):
     """Prompt for starting google drive scan, validate first."""
     model = GoogleDriveScanner
