@@ -70,7 +70,7 @@ COPY docker/engine/docker-entrypoint.sh /code/docker/docker-entrypoint.sh
 WORKDIR /code
 COPY LICENSE ./
 COPY README.rst ./
-COPY NEWS.rst ./
+COPY CHANGELOG.md ./
 
 # Set up to run given command as the new user
 USER os2ds_engine:os2ds_engine

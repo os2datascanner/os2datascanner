@@ -118,7 +118,7 @@ COPY src/os2datascanner/engine2 ./engine2
 WORKDIR /code
 COPY LICENSE ./
 COPY README.rst ./
-COPY NEWS.rst ./
+COPY CHANGELOG.md ./
 
 # Copy frontend dist folder to static
 WORKDIR /code/src/os2datascanner/projects/report/reportapp/static
