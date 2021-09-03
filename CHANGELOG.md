@@ -1,3 +1,33 @@
+## Version 3.11.2, 10th August 2021
+
+"README.1ST"
+
+### New in this version
+
+- An implementation manual for system administrators and project owners has
+  been added to the administration system.
+
+- It is now possible to exclude parts of a domain from a web scan.
+
+### General improvements
+
+- Digits present on different input lines are no longer grouped together when
+  looking for CPR matches.
+
+### Bugfixes
+
+- The report module now ensures that matches with the same sensitivity and
+  probability are also sorted by their primary key.
+
+- Sitemap content-type parsing is now more robust.
+
+- LDAP synchronisation is now more robust: user properties will now be updated,
+  and users will be tracked properly even if their place in the hierarchy
+  changes.
+
+- The report module's collector process can once again understand the
+  organisation update messages sent by the administration system.
+
 ## Version 3.11.1, 19th July 2021
 
 This hotfix release improves the reliability of shared network drive

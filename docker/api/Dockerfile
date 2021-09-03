@@ -70,7 +70,7 @@ COPY src/os2datascanner/__init__.py ./
 WORKDIR /code
 COPY LICENSE ./
 COPY README.rst ./
-COPY NEWS.rst ./
+COPY CHANGELOG.md ./
 
 WORKDIR /code/src/os2datascanner/server
 USER os2ds_api:os2ds_api
