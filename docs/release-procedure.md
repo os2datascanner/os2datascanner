@@ -1,18 +1,23 @@
-Proceduren var oprindeligt nedskrevet i #42725. OS2datascanner release
-procedure:
+To release a new version of os2datascanner, first make sure to update the
+version variable and our changelog:
 
-* `git checkout development`
+* `git checkout main`
 * `git pull`
 * `git checkout -b release/%VERSION%`
-* Bump VERSION (`os2datascanner/src/os2datascanner/__init__.py`) and update NEWS
-* `git push release/%VERSION%`
-* Opret merge request og udfyld git template.
-* Når merge request er godkendt og flettet til development fast-forward master.
-* Opret nyt tag på gitlab - https://git.magenta.dk/os2datascanner/os2datascanner/-/tags/new
-* Push nyeste release og ændringer til Github
-    - git remote set-url origin https://github.com/os2datascanner/os2datascanner.git
-    - git push origin master
-    - git push origin VERSION
-* Kør build på readthedocs: https://readthedocs.org/projects/os2datascanner/builds
-* Tjek at docs er opdateret https://os2datascanner.readthedocs.io/en/latest/news.html (husk at cleare cache)
-* Sæt redmine sager som er med i release til status closed.
+* Bump version in (`os2datascanner/src/os2datascanner/__init__.py`)
+* Update `CHANGELOG.md`
+* Commit changes
+* `git push -u origin release/%VERSION%`
+* Create merge request and fill in the git template
+
+
+Once the MR has been approved and merged, push a new tag:
+
+* `git checkout main`
+* `git pull`
+* `git tag %VERSION%  # e.g. "3.11.2" or "3.11.2-rc"`
+* `git push --tags`
+
+
+Finally, please make sure all Redmine issues that are included in the release
+have their status set to closed.
