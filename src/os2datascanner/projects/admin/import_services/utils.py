@@ -14,30 +14,33 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
-from django.core.management import BaseCommand
+import structlog
+
 from django.shortcuts import get_object_or_404
+
 from os2datascanner.projects.admin.core.models.background_job import JobState
 from os2datascanner.projects.admin.import_services.models import LDAPConfig, Realm, ImportJob
 
-"""
-    This command should be run by a cron job at the desired time
-    LDAP synchronizations should take place.
-"""
+logger = structlog.get_logger(__name__)
 
 
-class Command(BaseCommand):
-    help = "Run LDAP synchronization for all LDAP configurations configured"
+def start_ldap_import(ldap_conf: LDAPConfig):
+    """
+    LDAP import jobs are allowed to be created if latest import job has finished.
+    """
+    # if no organization return 404
+    realm = get_object_or_404(Realm, organization_id=ldap_conf.pk)
 
-    def handle(self, *args, **kwargs):
-        for ldapConf in LDAPConfig.objects.all():
-            realm = get_object_or_404(Realm, organization_id=ldapConf.pk)
-
-            latest_importjob = realm.importjob.first()
-            if not latest_importjob \
-                    or latest_importjob.exec_state == JobState.FINISHED \
-                    or latest_importjob.exec_state == JobState.FAILED \
-                    or latest_importjob.exec_state == JobState.CANCELLED:
-
-                ImportJob.objects.create(
-                    realm=realm
-                )
+    # get latest import job
+    latest_importjob = realm.importjob.first()
+    if not latest_importjob \
+            or latest_importjob.exec_state == JobState.FINISHED \
+            or latest_importjob.exec_state == JobState.FAILED \
+            or latest_importjob.exec_state == JobState.CANCELLED:
+        ImportJob.objects.create(
+            realm=realm
+        )
+        logger.info(f"Import job created for LDAPConfig {ldap_conf.pk}")
+    else:
+        logger.info(f"LDAP import is not possible right now for "
+                    f"LDAPConfig {ldap_conf.pk}")

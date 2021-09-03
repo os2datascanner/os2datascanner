@@ -12,8 +12,7 @@ from os2datascanner.projects.admin.import_services.keycloak_services import \
     get_token_first, create_member_of_attribute_mapper
 from os2datascanner.projects.admin.organizations.models import Organization
 from os2datascanner.projects.admin.import_services.models import LDAPConfig, Realm
-from os2datascanner.projects.admin.core.models.background_job import JobState
-from os2datascanner.projects.admin.import_services.models.import_job import ImportJob
+from os2datascanner.projects.admin.import_services.utils import start_ldap_import
 
 
 class LDAPEditForm(forms.ModelForm):
@@ -188,22 +187,8 @@ class LDAPImportView(LoginRequiredMixin, DetailView):
     def get(self, request, *args, **kwargs):
         """
         Handle a get request to the LDAPImportView.
-        LDAP import jobs are allowed to be created if latest import job has finished.
         """
-
-        # if no organization return 404
-        realm = get_object_or_404(Realm, organization_id=self.get_object().pk)
-
-        # get latest import job
-        latest_importjob = realm.importjob.first()
-        if not latest_importjob \
-                or latest_importjob.exec_state == JobState.FINISHED\
-                or latest_importjob.exec_state == JobState.FAILED\
-                or latest_importjob.exec_state == JobState.CANCELLED:
-
-            ImportJob.objects.create(
-                realm=realm
-            )
+        start_ldap_import(self.get_object())
 
         # redirect back to organizations
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
