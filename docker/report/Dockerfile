@@ -10,7 +10,7 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-FROM node:14 AS frontend
+FROM node:14.17.3 AS frontend
 
 WORKDIR /code/src/os2datascanner/projects/report/reportapp
 
