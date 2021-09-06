@@ -102,6 +102,7 @@ def message_received_raw(body, channel, source_manager):
     except Exception as e:
         exception_message = "Processing error. {0}: ".format(type(e).__name__)
         exception_message += ", ".join([str(a) for a in e.args])
+        logger.warning(exception_message)
         for problems_q in ("os2ds_problems", "os2ds_checkups",):
             yield (problems_q, messages.ProblemMessage(
                     scan_tag=conversion.scan_spec.scan_tag,
