@@ -49,7 +49,29 @@ TEST_CORP = [
                 "CN=Group A,O=Test Corp."
             ]
         }
-    }
+    },
+    {
+        "id": "4f533264-6174-6173-6361-6e6e65720003",
+        "username": "root@test.invalid",
+        "attributes": {
+            "LDAP_ENTRY_DN": [
+                "CN=root,OU=Testers,O=Test Corp."
+            ],
+            "memberOf": [
+                "CN=Group A,O=Test Corp."
+            ]
+        }
+    },
+    {
+        "attributes": {
+            "LDAP_ENTRY_DN": [
+                "CN=secret_backdoor,OU=Testers,O=Test Corp."
+            ],
+            "memberOf": [
+                "CN=Group A,O=Test Corp."
+            ]
+        }
+    },
 ]
 
 TEST_CORP_TWO = [
@@ -117,6 +139,8 @@ class KeycloakImportTest(TestCase):
                 keycloak_actions.keycloak_dn_selector)
 
         for tester in TEST_CORP:
+            if not "id" in tester:
+                continue
             account = Account.objects.get(uuid=tester["id"])
             self.assertEqual(
                     tester["username"],
@@ -131,6 +155,8 @@ class KeycloakImportTest(TestCase):
                 keycloak_actions.keycloak_group_dn_selector)
 
         for tester in TEST_CORP:
+            if not "id" in tester:
+                continue
             account = Account.objects.get(uuid=tester["id"])
             self.assertEqual(
                     tester["username"],
@@ -170,7 +196,7 @@ class KeycloakImportTest(TestCase):
 
         NEW_CORP = deepcopy(TEST_CORP)
         for tester in NEW_CORP:
-            if tester["firstName"] == "Todd":
+            if tester.get("firstName") == "Todd":
                 tester["attributes"]["LDAP_ENTRY_DN"] = [
                         f"CN=Todd {tester['lastName']},"
                         "OU=Experimenters,O=Test Corp."]
@@ -200,7 +226,7 @@ class KeycloakImportTest(TestCase):
 
         NEW_CORP = deepcopy(TEST_CORP)
         for tester in NEW_CORP:
-            if tester["firstName"] == "Ted":
+            if tester.get("firstName") == "Ted":
                 tester["attributes"]["memberOf"] = [
                     "CN=Group 1,O=Test Corp."
                 ]
