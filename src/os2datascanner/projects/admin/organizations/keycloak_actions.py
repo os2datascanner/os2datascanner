@@ -248,6 +248,12 @@ def perform_import_raw(
 
         iid = _node_to_iid(path, r or l)
 
+        # Keycloak's UserRepresentation type has no required fields(!); we
+        # can't do anything useful if we don't have the very basics, though
+        if r and not all(n in r.properties
+                for n in ("id", "attributes", "username",)):
+            continue
+
         if l and not r:
             # A local object with no remote counterpart
             try:
