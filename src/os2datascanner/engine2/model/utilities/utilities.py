@@ -11,30 +11,6 @@ from os2datascanner.engine2.model.core import SourceManager, Source
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.conversions import convert
 
-class NamedTemporaryResource:
-    def __init__(self, name):
-        self._name = name
-        self._dir = None
-
-    def open(self, mode):
-        return open(self.get_path(), mode)
-
-    def get_path(self) -> str:
-        if self._dir is None:
-            self._dir = mkdtemp()
-        return os.path.join(self._dir, self._name)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, backtrace):
-        if self._dir:
-            with suppress(FileNotFoundError):
-                remove(self.get_path())
-            with suppress(FileNotFoundError):
-                rmdir(self._dir)
-            self._dir = None
-
 
 def convert_data_to_text(
         content: bytes, mime: str, text_readable: bool=True
