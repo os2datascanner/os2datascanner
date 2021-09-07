@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-24 09:59-0500\n"
+"POT-Creation-Date: 2021-09-07 06:36-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,47 +32,47 @@ msgstr "%(value)s er ikke et gyldigt SID"
 msgid "Match relation"
 msgstr "Match relation"
 
-#: reportapp/models/documentreport_model.py:25
+#: reportapp/models/documentreport_model.py:24
 msgid "scan time"
 msgstr "scanningstid"
 
-#: reportapp/models/documentreport_model.py:28
+#: reportapp/models/documentreport_model.py:27
 msgid "created timestamp"
 msgstr "oprettet tidsstempel"
 
-#: reportapp/models/documentreport_model.py:32
+#: reportapp/models/documentreport_model.py:31
 msgid "organization"
 msgstr "organisation"
 
-#: reportapp/models/documentreport_model.py:35
+#: reportapp/models/documentreport_model.py:34
 msgid "path"
 msgstr "filsti"
 
-#: reportapp/models/documentreport_model.py:41
+#: reportapp/models/documentreport_model.py:40
 msgid "source type"
 msgstr "kildetype"
 
-#: reportapp/models/documentreport_model.py:43
+#: reportapp/models/documentreport_model.py:42
 msgid "sensitivity"
 msgstr "følsomhed"
 
-#: reportapp/models/documentreport_model.py:45
+#: reportapp/models/documentreport_model.py:44
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport_model.py:112
+#: reportapp/models/documentreport_model.py:111
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport_model.py:115
+#: reportapp/models/documentreport_model.py:114
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport_model.py:118
+#: reportapp/models/documentreport_model.py:117
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport_model.py:151
+#: reportapp/models/documentreport_model.py:150
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -163,15 +163,15 @@ msgstr "Udfør"
 msgid "0 out of 10 selected"
 msgstr "0 af 10 valgt"
 
-#: reportapp/templates/components/hit.html:24
+#: reportapp/templates/components/hit.html:26
 msgid "Matches:"
 msgstr "Matches:"
 
-#: reportapp/templates/components/hit.html:35
+#: reportapp/templates/components/hit.html:37
 msgid "Open"
 msgstr "Åben"
 
-#: reportapp/templates/components/hit.html:40
+#: reportapp/templates/components/hit.html:42
 msgid "Copy"
 msgstr "Kopiér"
 

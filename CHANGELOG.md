@@ -1,3 +1,51 @@
+## Version 3.11.3, 7th September 2021
+
+"Identical Twins"
+
+### New in this version
+
+- Support for copying scanner jobs:
+
+  - An existing scanner job can now be used as a template to create a new one.
+
+### General improvements
+
+- Better logging of exceptions in the pipeline.
+
+- Scan status information objects are now paginated.
+
+- LDAP synchronisation is now automatically performed once a day.
+
+- Improved the DPO and manager overviews:
+
+  - DPOs can now see which months have the most unhandled matches.
+
+  - Managers can now see which users have the most unhandled matches.
+
+- The administration system now contains a link to the corresponding report
+  module.
+
+- Various legacy database entries and their associated fields in the UI have
+  been removed.
+
+- Required fields in the administration system are now consistently marked with
+  asterisks.
+
+### Bugfixes
+
+- The validation status of a scanner job is now always enforced, also for
+  system administrators.
+
+- A scanner job's validation status can now be consistently edited.
+
+- Different scanner types now have different icons in the report module.
+
+- It is no longer necessary to re-select the organisation when editing a
+  scanner job.
+
+- LDAP synchronisation no longer fails when Keycloak omits a required field
+  whose value would otherwise be empty.
+
 ## Version 3.11.2, 10th August 2021
 
 "README.1ST"

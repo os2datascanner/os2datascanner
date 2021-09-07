@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-25 04:47-0500\n"
+"POT-Creation-Date: 2021-09-07 06:35-0500\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -43,7 +43,7 @@ msgid "Initialization Vector"
 msgstr "Initaliserings vektor"
 
 #: adminapp/models/authentication_model.py:25
-#: adminapp/views/filescanner_views.py:135
+#: adminapp/views/filescanner_views.py:159
 msgid "User domain"
 msgstr "Brugerdomæne"
 
@@ -76,15 +76,15 @@ msgstr "organisatorisk enhed"
 msgid "Either a user list or an organisational unit is required"
 msgstr "Der kræves enten en brugerlist eller en organisatorisk enhed"
 
-#: adminapp/models/scannerjobs/filescanner_model.py:41
+#: adminapp/models/scannerjobs/filescanner_model.py:37
 msgid "drive letter"
 msgstr "drevbogstav"
 
-#: adminapp/models/scannerjobs/filescanner_model.py:44
+#: adminapp/models/scannerjobs/filescanner_model.py:40
 msgid "skip super-hidden files"
 msgstr "spring over superskjulte filer"
 
-#: adminapp/models/scannerjobs/filescanner_model.py:45
+#: adminapp/models/scannerjobs/filescanner_model.py:41
 msgid ""
 "do not scan files with the HIDDEN and SYSTEM bits set, or files with the "
 "HIDDEN bit set whose name starts with a tilde"
@@ -92,39 +92,39 @@ msgstr ""
 "lad være med at scanne filer med både HIDDEN- og SYSTEM-attributter sat, "
 "samt filer med HIDDEN-attribut sat og et navn med tilde-tegn foran"
 
-#: adminapp/models/scannerjobs/scanner_model.py:413
+#: adminapp/models/scannerjobs/scanner_model.py:379
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:416
+#: adminapp/models/scannerjobs/scanner_model.py:382
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:419
+#: adminapp/models/scannerjobs/scanner_model.py:385
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:421
+#: adminapp/models/scannerjobs/scanner_model.py:387
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:424
+#: adminapp/models/scannerjobs/scanner_model.py:390
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:426
+#: adminapp/models/scannerjobs/scanner_model.py:392
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:429
+#: adminapp/models/scannerjobs/scanner_model.py:395
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:484
+#: adminapp/models/scannerjobs/scanner_model.py:450
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:485
+#: adminapp/models/scannerjobs/scanner_model.py:451
 msgid "scan statuses"
 msgstr "scanstatusser"
 
@@ -311,7 +311,7 @@ msgstr "Gem ændringer"
 #: adminapp/templates/os2datascanner/rules.html:106
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status.html:98
-#: adminapp/templates/os2datascanner/scanners.html:146
+#: adminapp/templates/os2datascanner/scanners.html:155
 msgid "Delete"
 msgstr "Slet"
 
@@ -875,7 +875,7 @@ msgstr "Er ikke godkendt"
 msgid "Run"
 msgstr "Kør"
 
-#: adminapp/templates/os2datascanner/scanners.html:161
+#: adminapp/templates/os2datascanner/scanners.html:170
 msgid "No scannerjob added"
 msgstr "Der er ikke tilføjet nogen scannerjob"
 
@@ -1020,25 +1020,25 @@ msgstr "Email adresse"
 msgid "Reset my password"
 msgstr "Nulstil min adgangskode"
 
-#: adminapp/views/exchangescanner_views.py:154
+#: adminapp/views/exchangescanner_views.py:181
 msgid "e.g. @example.com"
 msgstr "f.eks. @example.com"
 
-#: adminapp/views/exchangescanner_views.py:158
-#: adminapp/views/filescanner_views.py:133
+#: adminapp/views/exchangescanner_views.py:185
+#: adminapp/views/filescanner_views.py:157
 msgid "Username"
 msgstr "Brugernavn"
 
-#: adminapp/views/exchangescanner_views.py:163
-#: adminapp/views/filescanner_views.py:134
+#: adminapp/views/exchangescanner_views.py:190
+#: adminapp/views/filescanner_views.py:158
 msgid "Password"
 msgstr "Adgangskode"
 
-#: adminapp/views/filescanner_views.py:132
+#: adminapp/views/filescanner_views.py:156
 msgid "e.g. //network-domain/top-folder"
 msgstr "f.eks. //network-domain/top-folder"
 
-#: adminapp/views/filescanner_views.py:136
+#: adminapp/views/filescanner_views.py:160
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
@@ -1046,23 +1046,23 @@ msgstr "Drevbogstav"
 msgid "The page does not exist"
 msgstr ""
 
-#: adminapp/views/views.py:194 import_services/models/exported_mixin.py:31
+#: adminapp/views/views.py:171 import_services/models/exported_mixin.py:31
 msgid "created"
 msgstr "oprettet"
 
-#: adminapp/views/views.py:194
+#: adminapp/views/views.py:171
 msgid "saved"
 msgstr "gemt"
 
-#: adminapp/views/webscanner_views.py:47
+#: adminapp/views/webscanner_views.py:50
 msgid "e.g. https://example.com"
 msgstr "f.eks. https://example.com"
 
-#: adminapp/views/webscanner_views.py:49
+#: adminapp/views/webscanner_views.py:52
 msgid "e.g. https://example.com/exclude1, https://example.com/exclude2"
 msgstr "f.eks. https://example.com/exclude1, https://example.com/exclude2"
 
-#: adminapp/views/webscanner_views.py:55 adminapp/views/webscanner_views.py:75
+#: adminapp/views/webscanner_views.py:58 adminapp/views/webscanner_views.py:88
 msgid "Space is not allowed in the web-domain name."
 msgstr "Mellemrum er ikke tilladt i web-domænenavnet."
 
