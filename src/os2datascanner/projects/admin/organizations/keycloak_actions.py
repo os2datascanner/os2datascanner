@@ -248,6 +248,12 @@ def perform_import_raw(
 
         iid = _node_to_iid(path, r or l)
 
+        # Keycloak's UserRepresentation type has no required fields(!); we
+        # can't do anything useful if we don't have the very basics, though
+        if r and not all(n in r.properties
+                for n in ("id", "attributes", "username",)):
+            continue
+
         if l and not r:
             # A local object with no remote counterpart
             try:
@@ -304,9 +310,11 @@ def perform_import_raw(
         for attr_name, expected in (
                 ("imported_id", iid),
                 ("username", remote_node.properties["username"]),
-                ("first_name", remote_node.properties["firstName"]),
-                ("last_name", remote_node.properties["lastName"])):
-            if not getattr(account, attr_name) == expected:
+                # Our database schema requires the name properties, so use the
+                # empty string as the dummy value instead of None
+                ("first_name", remote_node.properties.get("firstName", "")),
+                ("last_name", remote_node.properties.get("lastName", ""))):
+            if getattr(account, attr_name) != expected:
                 setattr(account, attr_name, expected)
                 to_update.append((account, (attr_name,)))
 
