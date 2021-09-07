@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'os2datascanner.projects.report.reportapp.apps.ReportappConfig',
     'mozilla_django_oidc',
+    'django_extensions',
 ]
 AUTHENTICATION_BACKENDS = [
     'os2datascanner.projects.report.reportapp.utils.OIDCAuthenticationBackend',

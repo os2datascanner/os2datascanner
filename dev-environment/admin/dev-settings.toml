@@ -18,7 +18,6 @@ KEYCLOAK_ADMIN_SECRET = "thisIsNotASecret"
 # [installation]
 OPTIONAL_APPS = [
     'debug_toolbar',
-    'django_extensions',
 ]
 OPTIONAL_MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
