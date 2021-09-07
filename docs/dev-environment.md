@@ -341,10 +341,27 @@ To start a service behind a `profiles` flag, use
 docker-compose --profile api up -d
 ```
 
-The following `profiles` are available: `ldap`, `sso`, `api` and `metric`.
+The following `profiles` are available: `ldap`, `sso`, `api`, `metric` and
+`samba`.
 
 The development config files are stored in `os2datascanner/dev-environment/`
 
+## `--profile samba`
+
+The `samba` profile defines a Samba service that serves up some test files in
+a shared folder called `e2test`. This can be useful to test the file scanner.
+
+The Samba server is available as `samba:139` inside the Docker environment and
+`localhost:8139` on the host machine. The full UNC of the shared folder in
+the Docker environment is `//samba/e2test`.
+
+The Samba server doesn't require a workgroup name, but it does require a
+username (`os2`) and password (`swordfish`).
+
+Thus from the host
+```sh
+> smbclient -p 8139 -U os2%swordfish //localhost/e2test
+```
 
 # Code standards
 

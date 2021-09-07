@@ -363,6 +363,23 @@ services:
     profiles:
       - ldap
 
+  samba:
+    image: magentalabs/samba-test:1.1
+    volumes:
+      - ./src/os2datascanner/engine2/tests/data/engine2:/mnt
+    ports:
+      - 8139:139
+      - 8445:445
+    environment:
+      SMB_USER: os2
+      SMB_PASSWD: swordfish
+      SMB_SHARE_NAME: e2test
+      SMB_SHARE_PATH: /mnt
+      SMB_SHARE_BROWSABLE: "no"
+      SMB_SHARE_READONLY: "yes"
+    profiles:
+      - samba
+
 x-disabled:
   admin_cron:
     build:
