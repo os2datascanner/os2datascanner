@@ -209,7 +209,8 @@ class LDAPNode(NamedTuple):
             yield from k.walk(_parents=_parents + self.label)
 
     def diff(self, other: 'LDAPNode', *, only_leaves: bool = False
-            ) -> Iterator[Tuple[Sequence[RDN], Tuple['LDAPNode', 'LDAPNode']]]:
+            ) -> Iterator[
+                Tuple[Sequence[RDN], Optional['LDAPNode'], Optional['LDAPNode']]]:
         """Computes the difference between this LDAPNode hierarchy and another
         one. (By default, the diff includes all nodes, but setting @only_leaves
         to True will skip any nodes that have children.)"""
