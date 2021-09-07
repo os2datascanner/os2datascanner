@@ -13,7 +13,6 @@ SESSION_COOKIE_NAME = "report_sessionid"
 # [installation]
 OPTIONAL_APPS = [
     'debug_toolbar',
-    "django_extensions",
 ]
 OPTIONAL_MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',

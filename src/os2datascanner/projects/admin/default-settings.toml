@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'recurrence',
     'mptt',
+    'django_extensions',
 ]
 OS2DATASCANNER_APPS = [
     'os2datascanner.projects.admin.adminapp',
