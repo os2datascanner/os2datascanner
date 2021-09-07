@@ -1,9 +1,11 @@
 from typing import List
 from ..conversions.types import OutputType
 from .rule import Rule, SimpleRule, Sensitivity
+from .. import settings as engine2_settings
 
 import requests
 from requests.exceptions import RequestException
+TIMEOUT = engine2_settings.model["http"]["timeout"]
 
 class LinksFollowRule(SimpleRule):
     """Rule to find links on a webpage that does not resolve or respond"""
@@ -49,8 +51,7 @@ def check(link: str) -> bool:
     Redirects are allowed and only the headers are retrieved
     """
     try:
-        # XXX: use timeout from ..model.http.TIMEOUT when implemented
-        r =requests.head(link, allow_redirects=True, timeout=5)
+        r =requests.head(link, allow_redirects=True, timeout=TIMEOUT)
         r.raise_for_status()
         return True
         # return response.status_code not in (404, 410,)
