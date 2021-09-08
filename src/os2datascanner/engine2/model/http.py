@@ -23,6 +23,7 @@ MAX_REQUESTS_PER_SECOND = 10
 SLEEP_TIME = 1 / MAX_REQUESTS_PER_SECOND
 TIMEOUT = engine2_settings.model["http"]["timeout"]
 
+
 def simplify_mime_type(mime):
     r = mime.split(';', maxsplit=1)
     return r[0]
@@ -79,8 +80,14 @@ class WebSource(Source):
             new_url = urlunsplit(
                     (n_scheme, n_netloc, n_path, n_query, None))
 
+            # urlsplit assigns the trailing slash after the netloc to the
+            # path, while WebSource treats it as part of the base URL. Make
+            # sure it isn't present in both to avoid conflicts
+            if n_path.startswith("/"):
+                n_path = n_path[1:]
+
             # ensure the new_url actually is a url and not mailto:, etc
-            if n_scheme not in("http", "https"):
+            if n_scheme not in ("http", "https"):
                 return
             for exclude in self._exclude:
                 if new_url.startswith(exclude):
