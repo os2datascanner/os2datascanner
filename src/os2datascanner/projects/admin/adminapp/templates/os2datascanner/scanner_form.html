@@ -514,8 +514,7 @@
           </h3>
           {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features %}
           <p class="information">{% trans "select users from"|capfirst %}</p>
-
-          <div class="form__group">
+          <div class="form__group {% if form.org_unit.errors %} has-error{% endif %}">
             <label 
               class="treeview-label 
               {% if required %}required-form{% endif %}"
@@ -523,7 +522,6 @@
               {{ form.org_unit.label }}
             </label>
             <select class="treeview" id="sel_1" name="{{ form.org_unit.name }}" size="10">
-              <option value="" class="l-0" selected>---------</option>
               {% for node,structure in org_units|tree_info %}              
               {% if node.is_child_node %}
               <option value="{{ node.uuid }}"
@@ -549,6 +547,7 @@
               {% endif %}
               {% endfor %}
             </select>
+            {% if form.org_unit.errors %}{{ form.org_unit.errors }}{% endif %}
           </div>
 
           <p class="information">{% trans "or upload"|capfirst %}</p>

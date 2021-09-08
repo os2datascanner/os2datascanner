@@ -101,16 +101,16 @@ class ExchangeScannerViewsTest(TestCase):
             domain="ThisIsMyExchangeDomain",
         )
 
-        ExchangeScanner.objects.create(
+        exchange_scan = ExchangeScanner.objects.create(
             pk=1,
             name="This is an Exchange Scanner",
             organization=magenta_org,
             validation_status=ExchangeScanner.VALID,
             userlist='path/to/nothing.csv',
-            org_unit=test_org_unit0,
             service_endpoint="exchangeendpoint",
             authentication=scanner_auth_obj,
         )
+        exchange_scan.org_unit.set([test_org_unit0, test_org_unit1 ])
 
         benny_account.units.add(test_org_unit1)
         yvonne_account.units.add(test_org_unit0)

@@ -17,15 +17,13 @@ import os
 import logging
 
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from exchangelib.errors import ErrorNonExistentMailbox
-from mptt.models import TreeForeignKey
-
 from os2datascanner.engine2.model.ews import EWSAccountSource
 from os2datascanner.engine2.model.core import SourceManager
+from mptt.models import TreeManyToManyField
 
 from ....organizations.models.aliases import AliasType
 from ...utils import upload_path_exchange_users
@@ -50,11 +48,10 @@ class ExchangeScanner(Scanner):
         default=""
     )
 
-    org_unit = TreeForeignKey(
+    org_unit = TreeManyToManyField(
         "organizations.OrganizationalUnit",
-        null=True,
+        related_name = "exchangescanners",
         blank=True,
-        on_delete=models.SET_NULL,
         verbose_name=_("organizational unit"),
     )
 
@@ -82,23 +79,24 @@ class ExchangeScanner(Scanner):
             # Create a set so that emails can only occur once.
             user_list = set()
             # loop over all units incl children
-            for unit in self.org_unit.get_descendants(include_self=True):
-                for position in unit.position_set.all():
-                    addresses = position.account.aliases.filter(
-                        _alias_type=AliasType.EMAIL.value
-                    )
-
-                    if not addresses:
-                        logger.info(
-                            f"user {position.account.username} has no email alias "
-                            "connected"
+            for organizational_unit in self.org_unit.all():
+                for unit in organizational_unit.get_descendants(include_self=True):
+                    for position in unit.position_set.all():
+                        addresses = position.account.aliases.filter(
+                            _alias_type=AliasType.EMAIL.value
                         )
 
-                    else:
-                        for alias in addresses:
-                            address = alias.value
-                            if address.endswith(self.url):
-                                user_list.add(address.split("@", maxsplit=1)[0])
+                        if not addresses:
+                            logger.info(
+                                f"user {position.account.username} has no email alias "
+                                "connected"
+                            )
+
+                        else:
+                            for alias in addresses:
+                                address = alias.value
+                                if address.endswith(self.url):
+                                    user_list.add(address.split("@", maxsplit=1)[0])
 
         for u in user_list:
             logger.info(f"submitting scan for user {u}")
@@ -125,8 +123,3 @@ class ExchangeScanner(Scanner):
                     logger.info("Mailbox {0} does not exits".format(account.address))
                     return False
         return True
-
-    def clean(self):
-        if not self.userlist and not self.org_unit:
-            error = _("Either a user list or an organisational unit is required")
-            raise ValidationError({"userlist": error, "org_unit": error})

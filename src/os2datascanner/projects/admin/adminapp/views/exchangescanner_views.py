@@ -15,7 +15,6 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.http import HttpResponseRedirect
-from os2datascanner.projects.admin.core.models import Feature
 
 from .scanner_views import *
 from ..aescipher import decrypt
@@ -81,6 +80,9 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
 
         form = super().get_form(form_class)
 
+        if self.request.method == 'POST':
+            form = validate_userlist_or_org_units(form)
+
         return initialize_form(form)
 
 
@@ -101,6 +103,10 @@ class ExchangeScannerCopy(ExchangeScannerBase, ScannerCopy):
             form_class = self.get_form_class()
 
         form = super().get_form(form_class)
+
+        if self.request.method == 'POST':
+            form = validate_userlist_or_org_units(form)
+
         return initialize_form(form)
 
     def get_initial(self):
@@ -146,6 +152,9 @@ class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):
                                bytes(authentication.ciphertext))
             form.fields['password'].initial = password
 
+        if self.request.method == 'POST':
+            form = validate_userlist_or_org_units(form)
+
         return form
 
 
@@ -173,6 +182,12 @@ class ExchangeScannerRun(ScannerRun):
 
     model = ExchangeScanner
 
+def validate_userlist_or_org_units(form):
+    form.is_valid()
+    if not form.cleaned_data['userlist'] and not form.cleaned_data['org_unit']:
+        form.add_error('org_unit', _("No organizational units has been selected"))
+        form.add_error('userlist', _("No userlist has been selected"))
+    return form
 
 def initialize_form(form):
     """Initializes the form fields for username and password
