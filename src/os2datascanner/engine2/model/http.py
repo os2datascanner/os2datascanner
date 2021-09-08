@@ -19,8 +19,7 @@ from .utilities.sitemap import SitemapError, process_sitemap_url
 from .utilities.datetime import parse_datetime
 
 logger = logging.getLogger(__name__)
-MAX_REQUESTS_PER_SECOND = 10
-SLEEP_TIME = 1 / MAX_REQUESTS_PER_SECOND
+SLEEP_TIME = 1 / engine2_settings.model["http"]["limit"]
 TIMEOUT = engine2_settings.model["http"]["timeout"]
 
 
