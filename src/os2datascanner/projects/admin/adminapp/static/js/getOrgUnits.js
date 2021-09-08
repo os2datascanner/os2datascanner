@@ -5,12 +5,17 @@ $(function() {
 
     // Eventlistener on change 
     var target = document.querySelector('#id_organization_container>.dropdown>.select-selected');
-    var callOnChange = new WebKitMutationObserver(function() {
+    var callOnChange = new MutationObserver(function() {
         
         parameters['organization_id'] = document.querySelector('#id_organization_container>.dropdown>.select-items>.same-as-selected').value
         getOrgUnits();
     });
-    callOnChange.observe(target, { characterData: false, attributes: false, childList: true, subtree: false });
+    callOnChange.observe(target, { 
+        characterData: false, 
+        attributes: false, 
+        childList: true, 
+        subtree: false 
+    });
     
     function getOrgUnits() {
         var url = $('#sel_1').attr("url");
