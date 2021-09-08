@@ -63,7 +63,7 @@ INTERNAL_IPS = []
 DEBUG_TOOLBAR_CONFIG = []
 
 AUTH_PROFILE_MODULE = 'os2datascanner.projects.report.reportapp.UserProfile'
-WSGI_APPLICATION = 'os2datascanner.projects.report.wsgi.application'
+ASGI_APPLICATION = "os2datascanner.projects.report.asgi.application"
 ROOT_URLCONF = 'os2datascanner.projects.report.urls'
 STATIC_URL = '/static/'
 NOTIFICATION_INSTITUTION = ""
