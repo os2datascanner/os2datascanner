@@ -1,3 +1,7 @@
+## Version 3.11.4, 9th September 2021
+
+This hotfix release corrects webscan link parsing.
+
 ## Version 3.11.3, 7th September 2021
 
 "Identical Twins"
