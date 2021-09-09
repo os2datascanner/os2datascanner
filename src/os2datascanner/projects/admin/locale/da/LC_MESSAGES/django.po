@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-09 06:50-0500\n"
+"POT-Creation-Date: 2021-09-10 02:45-0500\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: adminapp/models/apikey_model.py:16 adminapp/models/rules/rule_model.py:47
-#: adminapp/models/scannerjobs/scanner_model.py:73
+#: adminapp/models/scannerjobs/scanner_model.py:74
 #: import_services/models/realm.py:29 organizations/models/account.py:58
 #: organizations/models/organization.py:75
 msgid "organization"
@@ -92,39 +92,39 @@ msgstr ""
 "lad være med at scanne filer med både HIDDEN- og SYSTEM-attributter sat, "
 "samt filer med HIDDEN-attribut sat og et navn med tilde-tegn foran"
 
-#: adminapp/models/scannerjobs/scanner_model.py:379
+#: adminapp/models/scannerjobs/scanner_model.py:386
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:382
+#: adminapp/models/scannerjobs/scanner_model.py:389
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:385
+#: adminapp/models/scannerjobs/scanner_model.py:392
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:387
+#: adminapp/models/scannerjobs/scanner_model.py:394
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:390
+#: adminapp/models/scannerjobs/scanner_model.py:397
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:392
+#: adminapp/models/scannerjobs/scanner_model.py:399
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:395
+#: adminapp/models/scannerjobs/scanner_model.py:402
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:450
+#: adminapp/models/scannerjobs/scanner_model.py:466
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:451
+#: adminapp/models/scannerjobs/scanner_model.py:467
 msgid "scan statuses"
 msgstr "scanstatusser"
 
@@ -185,13 +185,12 @@ msgid "Page not found"
 msgstr "Siden blev ikke fundet"
 
 #: adminapp/templates/components/navigation.html:13
-#: adminapp/templates/os2datascanner/scan_status.html:39
-#: adminapp/templates/os2datascanner/scanner_tabs.html:61
 msgid "Scanner status"
 msgstr "Scanner status"
 
 #: adminapp/templates/components/navigation.html:21
 #: adminapp/templates/os2datascanner/scan_completed.html:26
+#: adminapp/templates/os2datascanner/scan_status.html:31
 #: adminapp/templates/os2datascanner/scanners.html:24
 #: adminapp/templates/partials/breadcrumb.html:6
 msgid "Scannerjob"
@@ -227,12 +226,12 @@ msgstr "Håndbog"
 #: adminapp/templates/components/pagination.html:18
 #: adminapp/templates/components/pagination.html:25
 msgid "Previous"
-msgstr ""
+msgstr "Forrige"
 
 #: adminapp/templates/components/pagination.html:57
 #: adminapp/templates/components/pagination.html:64
 msgid "Next"
-msgstr ""
+msgstr "Næste"
 
 #: adminapp/templates/components/user.html:29 adminapp/templates/logout.html:14
 msgid "Logout"
@@ -310,7 +309,7 @@ msgstr "Gem ændringer"
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:106
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/scan_status.html:98
+#: adminapp/templates/os2datascanner/scan_status.html:87
 #: adminapp/templates/os2datascanner/scanners.html:155
 msgid "Delete"
 msgstr "Slet"
@@ -476,11 +475,11 @@ msgid "Objects"
 msgstr "Objekter"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:35
+#: adminapp/templates/os2datascanner/scan_status.html:37
 msgid "Status"
 msgstr "Status"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:53
-#: adminapp/templates/os2datascanner/scan_status.html:83
 msgid "objects explored"
 msgstr "objekter udforsket"
 
@@ -498,23 +497,46 @@ msgid ""
 msgstr ""
 "Ønsker du virkelig at slette denne rapport? Handlingen kan ikke fortrydes."
 
-#: adminapp/templates/os2datascanner/scan_status.html:60
-msgid "about"
-msgstr "ca."
+#: adminapp/templates/os2datascanner/scan_status.html:22
+#: adminapp/templates/os2datascanner/scanner_tabs.html:61
+msgid "Scans in progress"
+msgstr "Igangværende scanninger"
 
-#: adminapp/templates/os2datascanner/scan_status.html:61
-msgid "left"
-msgstr "tilbage"
+#: adminapp/templates/os2datascanner/scan_status.html:34
+msgid "Phase"
+msgstr "Fase"
+
+#: adminapp/templates/os2datascanner/scan_status.html:40
+msgid "Actions"
+msgstr "Handlinger"
+
+#: adminapp/templates/os2datascanner/scan_status.html:54
+msgid "Indexing data ..."
+msgstr "Indekserer data ..."
+
+#: adminapp/templates/os2datascanner/scan_status.html:56
+msgid "Scanning data (still indexing) ..."
+msgstr "Scanner data (indekserer fortsat) ..."
+
+#: adminapp/templates/os2datascanner/scan_status.html:58
+msgid "Scanning data ..."
+msgstr "Scanner data ..."
+
+#: adminapp/templates/os2datascanner/scan_status.html:68
+msgid "Building index"
+msgstr "Opbygger indeks"
+
+#: adminapp/templates/os2datascanner/scan_status.html:70
+#, python-format
+msgid "%(obj)s objects scanned"
+msgstr "%(obj)s objekter scannet"
+
+#: adminapp/templates/os2datascanner/scan_status.html:72
+#, python-format
+msgid "%(obj)s out of %(total)s objects scanned"
+msgstr "%(obj)s ud af %(total)s objekter scannet"
 
 #: adminapp/templates/os2datascanner/scan_status.html:82
-msgid "Estimating ..."
-msgstr "Estimerer..."
-
-#: adminapp/templates/os2datascanner/scan_status.html:85
-msgid "scanned"
-msgstr "scannet"
-
-#: adminapp/templates/os2datascanner/scan_status.html:93
 #, python-format
 msgid ""
 "Do you really want to delete the status object for scanner "
@@ -522,9 +544,7 @@ msgid ""
 msgstr ""
 "Er du sikker på, at du vil slette status for scanner »%%(scanner_name)s«?"
 
-#: adminapp/templates/os2datascanner/scan_status.html:119
-#: adminapp/templates/os2datascanner/scan_status.html:121
-#: adminapp/templates/os2datascanner/scan_status.html:124
+#: adminapp/templates/os2datascanner/scan_status.html:99
 msgid "no ongoing scans"
 msgstr "der er ingen igangværende scanninger"
 
@@ -1042,9 +1062,9 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
-#: adminapp/views/scanner_views.py:45
+#: adminapp/views/scanner_views.py:46
 msgid "The page does not exist"
-msgstr ""
+msgstr "Siden findes ikke"
 
 #: adminapp/views/views.py:171 import_services/models/exported_mixin.py:31
 msgid "created"
@@ -1102,7 +1122,7 @@ msgstr "vent %(METAVAR)s sekunder hvis der ikke var nogle jobs til afvikling"
 
 #: core/management/commands/run_background_jobs.py:33
 msgid "do not loop: run a single job and then exit"
-msgstr ""
+msgstr "kør ikke i løkke: kør et enkelt job og gå derefter ud"
 
 #: core/management/commands/run_background_jobs.py:98
 #, python-brace-format
@@ -1663,3 +1683,18 @@ msgstr "organisatorisk struktur"
 #: organizations/templates/organizations/orgunit_list.html:10
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
+
+#~ msgid "out of"
+#~ msgstr "ud af"
+
+#~ msgid "about"
+#~ msgstr "ca."
+
+#~ msgid "left"
+#~ msgstr "tilbage"
+
+#~ msgid "Estimating ..."
+#~ msgstr "Estimerer..."
+
+#~ msgid "scanned"
+#~ msgstr "scannet"
