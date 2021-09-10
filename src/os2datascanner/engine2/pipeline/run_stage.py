@@ -8,8 +8,11 @@ from prometheus_client import start_http_server, Info, Summary
 from ... import __version__
 from ...utils.system_utilities import json_utf8_decode
 from ..model.core import SourceManager
-from .utilities.pika import PikaPipelineThread
-from . import explorer, processor, matcher, tagger, exporter, worker
+from .utilities.pika import RejectMessage, PikaPipelineThread
+from . import explorer, processor, matcher, tagger, exporter, worker, messages
+
+
+logger = logging.getLogger(__name__)
 
 
 def backtrace(signal, frame):
@@ -61,12 +64,34 @@ class GenericRunner(PikaPipelineThread):
                 self._module.PROMETHEUS_DESCRIPTION)
         self._source_manager = source_manager
 
+        self._cancelled = deque()
+
     def handle_message(self, routing_key, body):
         with self._summary.time():
             if self._debug:
                 print(routing_key, body)
-            yield from self._module.message_received_raw(
-                    body, routing_key, self._source_manager)
+            if routing_key == "":
+                command = messages.CommandMessage.from_json_object(body)
+
+                if command.abort:
+                    self._cancelled.appendleft(command.abort)
+                yield from []
+            else:
+                raw_scan_tag = body.get("scan_tag")
+                if not raw_scan_tag and "scan_spec" in body:
+                    raw_scan_tag = body["scan_spec"]["scan_tag"]
+
+                if raw_scan_tag:
+                    scan_tag = messages.ScanTagFragment.from_json_object(
+                            raw_scan_tag)
+                    if scan_tag in self._cancelled:
+                        logger.debug(
+                                f"scan {raw_scan_tag} is cancelled, "
+                                "ignoring")
+                        raise RejectMessage(requeue=False)
+
+                yield from self._module.message_received_raw(
+                        body, routing_key, self._source_manager)
 
 
 def main():

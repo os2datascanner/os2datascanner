@@ -319,9 +319,9 @@ def handle_event(event_type, instance, cls):
 class CollectorRunner(PikaPipelineThread):
     def handle_message(self, routing_key, body):
         if routing_key == "os2ds_results":
-            return result_message_received_raw(body)
+            yield from result_message_received_raw(body)
         elif routing_key == "os2ds_events":
-            return event_message_received_raw(body)
+            yield from event_message_received_raw(body)
 
 
 class Command(BaseCommand):

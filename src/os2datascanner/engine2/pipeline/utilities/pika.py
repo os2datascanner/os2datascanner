@@ -241,7 +241,11 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
 
     def run(self):
         """(Background thread.) Runs a loop that processes enqueued actions
-        from, and collects new messages for, the main thread."""
+        from, and collects new messages for, the main thread.
+
+        (Note that it *is* possible, if you're careful, to call this function
+        directly in order to execute a list of enqueued actions on the current
+        thread.)"""
         with self._condition:
             self._live = True
             self._condition.notify()

@@ -143,9 +143,9 @@ def checkup_message_received_raw(body):
 class CollectorRunner(PikaPipelineThread):
     def handle_message(self, routing_key, body):
         if routing_key == "os2ds_status":
-            return status_message_received_raw(body)
+            yield from status_message_received_raw(body)
         elif routing_key == "os2ds_checkups":
-            return checkup_message_received_raw(body)
+            yield from checkup_message_received_raw(body)
 
 
 class Command(BaseCommand):
