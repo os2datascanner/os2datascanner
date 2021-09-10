@@ -42,6 +42,16 @@ This command lists all scanner jobs and the following attributes:
 To execute this command run:
 `docker-compose exec admin python manage.py list_scannerjobs`
 
+
+###### quickstart_dev
+
+This command is only intended for getting a developer environment
+up-and-running quickly. It creates a user named `dev` with the password `dev`
+and registers the Samba share from the `docker-compose` dev env as a filescan.
+
+There is a corresponding command in the Report module.
+
+
 ### Core
 
 ### Import services
@@ -60,3 +70,11 @@ Provided a PK of a scanner job finds associated document reports and lists:
 
 To execute this command run:
 `docker-compose exec report python manage.py scannerjob_info <PK>`
+
+###### quickstart_dev
+
+This command is only intended for getting a developer environment
+up-and-running quickly. It creates a user named `dev` with the password `dev`
+and registers the user as remediator.
+
+There is a corresponding command in the Admin module.
