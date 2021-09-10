@@ -19,6 +19,7 @@
 """Contains Django model for the scanner types."""
 
 import datetime
+from enum import Enum
 import os
 import re
 from typing import Iterator
@@ -372,6 +373,12 @@ class ScheduledCheckup(models.Model):
         return Handle.from_json_object(self.handle_representation)
 
 
+class ScanStage(Enum):
+    INDEXING = 0
+    INDEXING_SCANNING = 1
+    SCANNING = 2
+
+
 class ScanStatus(models.Model):
     """A ScanStatus object collects the status messages received from the
     pipeline for a given scan."""
@@ -396,6 +403,15 @@ class ScanStatus(models.Model):
             null=True)
     message = models.CharField(max_length=2048, blank=True, verbose_name='message')
     status_is_error = models.BooleanField(default=False)
+
+    @property
+    def stage(self) -> int:
+        if self.fraction_scanned is None:
+            if self.explored_sources is None or self.fraction_explored < 1.0:
+                if self.scanned_objects is None or self.scanned_objects == 0:
+                    return ScanStage.INDEXING
+                return ScanStage.INDEXING_SCANNING
+        return ScanStage.SCANNING
 
     @property
     def finished(self) -> bool:

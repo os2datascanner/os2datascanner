@@ -14,6 +14,7 @@
 from json import dumps
 
 from django.core.paginator import Paginator, EmptyPage
+from django.db.models import F, Q
 from django.http import Http404
 from django.contrib import messages
 from django.http import HttpResponseRedirect
@@ -59,12 +60,36 @@ class StatusBase(RestrictedListView):
             return super().get_queryset()
 
 
+# As we do not store the `finished` state of a ScanStatus
+# as a field in the DB, we need to infer that state by
+# looking at other fields. This is what the ScanStatus.finished
+# method does. We can't use that method as a QuerySet filter, though.
+# The filter below implements the same behavior without having
+# to do two queries, which was previously done (one for getting the
+# entire set, then construct a list of pks in Python based on
+# ScanStatus.finished, then a second query with a filter based on
+# the list).
+
+completed_scans = (Q(total_sources__isnull=False)
+    & Q(total_objects__isnull=False)
+    & Q(explored_sources=F('total_sources'))
+    & Q(scanned_objects=F('total_objects')))
+
+
 class StatusOverview(StatusBase):
     template_name = "os2datascanner/scan_status.html"
     model = ScanStatus
 
     def get_queryset(self):
-        return super().get_queryset().order_by("-pk")
+
+        # Only get ScanStatus objects that are not deemed "finished" (see
+        # completed_scans Q object above). That way we avoid manual
+        # filtering in the template and only get the data we intend to display.
+
+        # Use the same filter as for getting completed scans,
+        # but negate it (tilde)
+
+        return super().get_queryset().order_by("-pk").filter(~completed_scans)
 
 
 class StatusCompleted(StatusBase):
@@ -76,17 +101,7 @@ class StatusCompleted(StatusBase):
     def get_queryset(self):
         """ Returns a queryset of Scannerjobs that are finished"""
 
-        # When a scannerjob is run, we immediately create a ScanStatus object,
-        # but we use a property to get whether or not it is finished.
-        # This means we have to do filtering some filtering in Python and
-        # then reconstruct a queryset, to not include not-finished scannerjobs.
-        finished_scannerjobs = set()
-
-        for scannerjob in super().get_queryset().order_by("-pk"):
-            if scannerjob.finished:
-                finished_scannerjobs.add(scannerjob.pk)
-
-        return super().get_queryset().filter(pk__in=finished_scannerjobs)
+        return super().get_queryset().order_by('-pk').filter(completed_scans)
 
 
 class StatusDelete(RestrictedDeleteView):

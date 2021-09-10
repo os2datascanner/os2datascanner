@@ -13,6 +13,93 @@
   }
 }
 
+.datatable .scan-stage {
+  position: relative;
+  padding-left: 4rem;
+}
+
+// Note to the rules below: While dimensions and positioning (width, height,
+// padding, left, top, transform-origin) and colors (background-color)
+// would ideally be expressed via var(--some-var) in the pseudo classes below,
+// IE11 seems to combine var() expressions for ::before and ::after, resulting
+// in the latter overriding the former. Therefore we resort to raw values below.
+
+.datatable .scan-stage::before,
+.datatable .stage-1::after,
+.datatable .stage-2::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 1rem; // var(--datatable-cell-padding) / 2
+  top: 2rem; // var(--datatable-cell-padding)
+  vertical-align: middle;
+  height: 2rem; // var(--datatable-cell-padding)
+}
+
+.datatable .stage-0::before {
+  width: .25rem; // var(--datatable-cell-padding) / 8
+  background-color: var(--color-primary);
+  left: 1.875rem; // var(--datatable-cell-padding) / 8 * 3.5 + var(--datatable-cell-padding)
+  animation: rotate 5s infinite linear;
+  transform-origin: .125rem center; // var(--datatable-cell-padding) / 16
+}
+
+.datatable .stage-1::before,
+.datatable .stage-2::before {
+  width: .25rem; // var(--datatable-cell-padding) / 8
+  animation: pan 2.5s infinite alternate linear;
+  z-index: 1;
+}
+
+.datatable .stage-1::before {
+  background-color: var(--color-primary); // we can keep this var() as the accompanying ::after element does not have a var() background-color
+}
+
+.datatable .stage-2::before {
+  background-color: var(--color-primary-dark); // we can keep this var() as the accompanying ::after element does not have a var() background-color
+  animation-direction: alternate-reverse;
+}
+
+.datatable .stage-1::after,
+.datatable .stage-2::after {
+  z-index: 0;
+  width: 2rem; // var(--datatable-cell-padding)
+  height: 1rem; // var(--datatable-cell-padding) / 2
+  top: 2.5rem; // var(--datatable-cell-padding) * 1.25
+}
+
+.datatable .stage-1::after {
+  background-color: #d0d0d0;
+}
+
+.datatable .stage-2::after {
+  background-color: #5ca4cd; // var(--color-primary-light)
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes pan {
+  0% {
+    transform: translate(.25rem 0); // var(--datatable-cell-padding) / 8
+  }
+  100% {
+    transform: translate(1.5rem 0); // var(--datatable-cell-padding) / 8 * 6
+  }
+}
+
+@media (prefers-reduced-motion) {
+  .datatable .scan-stage::before {
+    animation-duration: 20s !important;
+  }
+}
+
 .scan-time {
   color: var(--color-text-secondary);
   font-size: 1rem;
@@ -31,60 +118,13 @@
   &--width {
     margin-left: .5rem;
   }
+}
 
-  &--icon {
-    display: flex;
-    justify-content: flex-end;
-    color: var(--color-ok-dark);
-    margin-top: -1.5rem;
+.error {
+  color: red;
+  &:last-child {
+    margin-bottom: 0;
   }
-}
-
-progress {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  border: none;
-  width: 100%;
-  height: 2.5rem;
-  border-radius: 20px;
-}
-
-progress::-webkit-progress-bar {
-  background-color: #eee;
-  border-radius: 20px;
-}
-
-progress::-webkit-progress-value {
-  border: none;
-  background-image:
-  -webkit-linear-gradient(-45deg, 
-                          transparent 33%, rgba(0, 0, 0, .1) 33%, 
-                          rgba(0,0, 0, .1) 66%, transparent 0%),
-  -webkit-linear-gradient(top, 
-                          rgba(255, 255, 255, .25), 
-                          rgba(0, 0, 0, .25)),
-  -webkit-linear-gradient(left, var(--color-primary-light), var(--color-primary));
-  border-radius: 20px 0px 0px 20px;
-  background-size: 75px 40px, 100% 100%, 100% 100%;
-}
-
-progress::-moz-progress-bar {
-  background-color: #eee;
-  border-radius: 20px;
-}
-
-progress[value]::-moz-progress-bar { 
-  background-image:
-    -moz-linear-gradient(-45deg, 
-    transparent 33%, rgba(0, 0, 0, .1) 33%, 
-    rgba(0,0, 0, .1) 66%, transparent 0%),
-    -moz-linear-gradient(top, 
-    rgba(255, 255, 255, .25), 
-    rgba(0, 0, 0, .25)),
-    -moz-linear-gradient(left, var(--color-primary-light), var(--color-primary));
-  border-radius: 20px 0px 0px 20px;
-  background-size: 75px 40px, 100% 100%, 100% 100%;
 }
 
 // Completed icon

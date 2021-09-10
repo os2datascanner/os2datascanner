@@ -123,6 +123,11 @@
   }
 }
 
+.datatable.middle th,
+.datatable.middle td {
+  vertical-align: middle;
+}
+
 .datatable tr:last-child {
 
   td:hover:first-child {
