@@ -179,9 +179,11 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         process will not terminate if this method is never called."""
         return self._enqueue("fin")
 
-    def enqueue_message(self, queue: str, body: bytes):
+    def enqueue_message(self,
+            queue: str, body: bytes,
+            exchange: str = "", **basic_properties):
         """Requests that the background thread send a message."""
-        return self._enqueue("msg", queue, body)
+        return self._enqueue("msg", queue, body, exchange, basic_properties)
 
     def await_message(self, timeout: float = None):
         """Returns a message collected by the background thread; the return
@@ -231,12 +233,13 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                                 self._outgoing[0], self._outgoing[1:])
                         label = head[0]
                         if label == "msg":
-                            queue, body = head[1:]
+                            queue, body, exchange, properties = head[1:]
                             self.channel.basic_publish(
-                                    exchange='',
+                                    exchange=exchange,
                                     routing_key=queue,
                                     properties=pika.BasicProperties(
-                                            delivery_mode=2),
+                                            delivery_mode=2,
+                                            **properties),
                                     body=json.dumps(body).encode())
                         elif label == "ack":
                             delivery_tag = head[1]
