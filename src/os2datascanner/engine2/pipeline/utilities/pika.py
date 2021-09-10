@@ -122,6 +122,24 @@ class PikaPipelineRunner(PikaConnectionHolder):
             self.channel.basic_cancel(tag)
 
 
+class RejectMessage(BaseException):
+    """Implementations of PikaPipelineThread.handle_message can raise the
+    RejectMessage exception to indicate that a message should be rejected. (By
+    default, messages are acknowledged once handle_message is finished.)
+
+    Rejected messages are by default re-enqueued for later execution; if
+    requeue=False is passed to the constructor, though, messages will just be
+    dropped.
+
+    This exception is not intended to be handled by anything other than
+    PikaPipelineThread, and is accordingly implemented as a BaseException
+    rather than an Exception."""
+
+    def __init__(self, *args, requeue=True, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.requeue = requeue
+
+
 class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
     """Runs a Pika session in a background thread."""
     def __init__(self, *args, exclusive=False, **kwargs):
@@ -148,6 +166,11 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         """Requests that the background thread acknowledge receipt of the
         message with the given tag."""
         return self._enqueue("ack", delivery_tag)
+
+    def enqueue_reject(self, delivery_tag: int, requeue: bool = True):
+        """Requests that the background thread reject the message with the
+        given tag."""
+        return self._enqueue("rej", delivery_tag, requeue)
 
     def enqueue_stop(self):
         """Requests that the background thread stop running.
@@ -218,6 +241,10 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                         elif label == "ack":
                             delivery_tag = head[1]
                             self.channel.basic_ack(delivery_tag)
+                        elif label == "rej":
+                            delivery_tag, requeue = head[1:]
+                            self.channel.basic_reject(
+                                    delivery_tag, requeue=requeue)
                         elif label == "fin":
                             running = False
                             break
@@ -238,6 +265,9 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 self._condition.notify()
 
     def run_consumer(self):
+        """Receives messages from the registered input queues, dispatches them
+        to the handle_message function, and generates new output messages. All
+        Pika API calls are performed by the background thread."""
         running = True
 
         def _handler(signum, frame):
@@ -252,10 +282,14 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 method, properties, body = self.await_message()
                 if method == properties == body == None:
                     continue
-                for routing_key, message in self.handle_message(
-                        method.routing_key, json_utf8_decode(body)):
-                    self.enqueue_message(routing_key, message)
-                self.enqueue_ack(method.delivery_tag)
+                try:
+                    for routing_key, message in self.handle_message(
+                            method.routing_key, json_utf8_decode(body)):
+                        self.enqueue_message(routing_key, message)
+                    self.enqueue_ack(method.delivery_tag)
+                except RejectMessage as ex:
+                    self.enqueue_reject(method.delivery_tag,
+                            requeue=ex.requeue)
         finally:
             self.enqueue_stop()
             self.join()
