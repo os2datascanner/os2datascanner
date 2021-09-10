@@ -3,8 +3,7 @@ import signal
 import argparse
 import traceback
 import logging
-from prometheus_client import start_http_server, Info
-from .utilities.prometheus import prometheus_summary
+from prometheus_client import start_http_server, Info, Summary
 
 from ... import __version__
 from ...utils.system_utilities import json_utf8_decode
@@ -45,6 +44,29 @@ def _compatibility_main(stage):
             " use run_stage.py instead".format(sys.argv[0]))
     sys.argv = [sys.argv[0], stage]
     main()
+
+
+class GenericRunner(PikaPipelineThread):
+    def __init__(self,
+            source_manager: SourceManager, *args,
+            debug: bool, stage: str, module, **kwargs):
+        super().__init__(*args, **kwargs,
+                read=module.READS_QUEUES,
+                write=module.WRITES_QUEUES,
+                prefetch_count=module.PREFETCH_COUNT)
+        self._debug = debug
+        self._module = module
+        self._summary = Summary(
+                f"os2datascanner_pipeline_{stage}",
+                self._module.PROMETHEUS_DESCRIPTION)
+        self._source_manager = source_manager
+
+    def handle_message(self, routing_key, body):
+        with self._summary.time():
+            if self._debug:
+                print(routing_key, body)
+            yield from self._module.message_received_raw(
+                    body, routing_key, self._source_manager)
 
 
 def main():
@@ -109,21 +131,11 @@ def main():
         start_http_server(args.prometheus_port)
 
     with SourceManager(width=args.width) as source_manager:
-
-        class GenericRunner(PikaPipelineThread):
-            @prometheus_summary(
-                    f"os2datascanner_pipeline_{args.stage}",
-                    module.PROMETHEUS_DESCRIPTION)
-            def handle_message(self, routing_key, body):
-                if args.debug:
-                    print(routing_key, body)
-                yield from module.message_received_raw(
-                        body, routing_key, source_manager)
-
         GenericRunner(
-                read=module.READS_QUEUES,
-                write=module.WRITES_QUEUES,
-                prefetch_count=module.PREFETCH_COUNT).run_consumer()
+                source_manager,
+                debug=args.debug,
+                stage=args.stage,
+                module=module).run_consumer()
 
 if __name__ == "__main__":
     main()
