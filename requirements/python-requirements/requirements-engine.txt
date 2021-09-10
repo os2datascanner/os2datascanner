@@ -80,7 +80,7 @@ packaging==21.0
     # via pytest
 parameterized==0.8.1
     # via -r requirements-common.in
-pika==1.1.0
+pika==1.2.0
     # via -r requirements-common.in
 pillow==7.1.1
     # via -r requirements-engine.in

@@ -80,6 +80,13 @@ class PikaConnectionHolder:
         self.clear()
 
 
+ANON_QUEUE = ""
+"""The special value that indicates to RabbitMQ that the broker should assign
+a randomly-generated unique name to a queue. (When used to identify a queue to
+read from, this value refers to the last randomly-generated queue name for the
+given channel.)"""
+
+
 class PikaPipelineRunner(PikaConnectionHolder):
     def __init__(self, *,
             prefetch_count=1, read=None, write=None, **kwargs):
@@ -96,6 +103,20 @@ class PikaPipelineRunner(PikaConnectionHolder):
         for q in self._read.union(self._write):
             channel.queue_declare(q, passive=False,
                     durable=True, exclusive=False, auto_delete=False)
+
+        # RabbitMQ handles broadcast messages in a slightly convoluted way:
+        # we must first declare a special "fanout" message exchange, and then
+        # each client must declare a separate anonymous queue and bind it to
+        # the exchange in order to receive broadcasts
+        channel.exchange_declare("broadcast", pika.spec.ExchangeType.fanout,
+                passive=False, durable=True, auto_delete=False, internal=False)
+        anon_queue = channel.queue_declare(
+                ANON_QUEUE, passive=False, durable=False,
+                exclusive=False, auto_delete=True, arguments={
+                    "x-max-priority": 10
+                })
+        channel.queue_bind(exchange="broadcast", queue=anon_queue.method.queue)
+
         return channel
 
     def handle_message_raw(self, channel, method, properties, body):
@@ -114,6 +135,8 @@ class PikaPipelineRunner(PikaConnectionHolder):
             consumer_tags.append(self.channel.basic_consume(
                     queue, self.handle_message_raw,
                     exclusive=exclusive))
+        consumer_tags.append(self.channel.basic_consume(
+                ANON_QUEUE, self.handle_message_raw, exclusive=False))
         return consumer_tags
 
     def _basic_cancel(self, consumer_tags):
