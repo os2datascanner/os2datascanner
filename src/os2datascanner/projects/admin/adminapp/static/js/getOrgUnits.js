@@ -1,18 +1,20 @@
 var parameters = {};
 
 $(function() {
+    parameters['organization_id'] = document.querySelector('#id_organization').value
     getOrgUnits();
 
     // Eventlistener on change 
-    var target = document.querySelector('#id_organization_container>.dropdown>.select-selected');
+    var target = document.querySelector('#id_organization_container>.dropdown>.select-items');
     var callOnChange = new MutationObserver(function() {
-        
-        parameters['organization_id'] = document.querySelector('#id_organization_container>.dropdown>.select-items>.same-as-selected').value
-        getOrgUnits();
+        if (parameters['organization_id'] != document.querySelector('#id_organization').value){  
+            parameters['organization_id'] = document.querySelector('#id_organization').value
+            getOrgUnits();
+        }
     });
     callOnChange.observe(target, { 
         characterData: false, 
-        attributes: false, 
+        attributes: true, 
         childList: true, 
         subtree: false 
     });
@@ -60,6 +62,7 @@ $(function() {
 
     function insertData(result) {
         var treeArray = treeify(result)
+        $("#sel_1").empty();
         $("#sel_1").select2ToTree({treeData: {dataArr:treeArray}})
     }
 })
