@@ -27,8 +27,6 @@ class Command(BaseCommand):
         match_msgs = 0
         data_mime_type_problems = defaultdict(int)
         data_mime_type_matches = defaultdict(int)
-        problem_messages_for_mime_type = defaultdict(int)
-        problem_messages = set()
 
         doc_reps = DocumentReport.objects.filter(data__scan_tag__scanner__pk=pk)
 
@@ -46,8 +44,6 @@ class Command(BaseCommand):
                     while handle.source.handle:
                         handle = handle.source.handle
 
-                    problem_messages.add(doc_rep.problem.message)
-                    problem_messages_for_mime_type[(handle.guess_type(), doc_rep.problem.message)] += 1
                     data_mime_type_problems[handle.guess_type()] += 1
 
             if doc_rep.matches:
@@ -69,10 +65,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'--------------------\n'
                                                  f'Problem Messages Mimetypes'))
             for key in data_mime_type_problems:
-                for problem_msg in problem_messages:
-                    problem_msg_count = problem_messages_for_mime_type[(key, problem_msg)]
-                    self.stdout.write(self.style.SUCCESS(f' * {key} : {data_mime_type_problems[key]}\n'
-                                                         f'     * {problem_msg} : {problem_msg_count}'))
+                    self.stdout.write(self.style.SUCCESS(f' * {key} : {data_mime_type_problems[key]}'))
 
         if data_mime_type_matches:
             self.stdout.write(self.style.SUCCESS(f'--------------------\n'

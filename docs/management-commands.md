@@ -57,7 +57,6 @@ Provided a PK of a scanner job finds associated document reports and lists:
 * Problem message count
 * Match message count
 * Mimetype info and count on messages
-* Problem message count for mimetype
 
 To execute this command run:
 `docker-compose exec report python manage.py scannerjob_info <PK>`
