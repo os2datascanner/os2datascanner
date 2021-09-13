@@ -9,6 +9,12 @@ $(function() {
     var callOnChange = new MutationObserver(function() {
         if (parameters['organization_id'] != document.querySelector('#id_organization').value){  
             parameters['organization_id'] = document.querySelector('#id_organization').value
+            
+            //When the organization is called, getorgunit.js removes the selected values, 
+            //but not the already selected values from the variable in dropdowntree.js,
+            //instead of adding another eventlistener on the same dropdown as this, we set the value to empty here
+            selected_values = []
+
             getOrgUnits();
         }
     });
