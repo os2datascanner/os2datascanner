@@ -214,13 +214,13 @@ let selected_values = [];
 			var recursively = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true; 
 			
 			var $selected_node = $('#treeview_option_' + selected_id);
-			var descendents_string = $selected_node.data('descendents');
+			var descendents = $selected_node.data('descendents');
 
-			if (descendents_string) {
-				descendents_array = descendents_string.split(',');
+			if (descendents) {
+				
 				var regex = /\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/; //finds all uuid's
 
-				descendents_array.forEach(function (string) {
+				descendents.forEach(function (string) {
 					//add all isolated uuid's to descendents_id, if not 0
 					if (string.match(regex)) descendents_ids.push(string.match(regex)[0]);
 				});
@@ -287,6 +287,17 @@ let selected_values = [];
 				if ($opt.val() === "") {
 					$opt.prop("disabled", true);
 					$opt.val(getUniqueValue());
+				} else {
+					$opt.attr('id','treeview_option_' + $opt.val())
+				}
+				
+				var inc = data[treeData.incFld || "inc"];
+				if (inc && inc.length > 0) {
+					var descendents = []
+					inc.forEach( function(descendent) {
+						descendents.push(descendent.uuid)	
+					})
+					$opt.data('descendents', descendents)
 				}
 
 				$opt.addClass("l" + curLevel);
