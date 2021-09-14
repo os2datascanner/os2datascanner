@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from recurrence import Recurrence
 
 from os2datascanner.projects.admin.adminapp.models.authentication_model import (
@@ -29,6 +30,7 @@ class Command(BaseCommand):
 
     help = __doc__
 
+    @transaction.atomic
     def handle(self, *args, **options):
         if not settings.DEBUG or settings.PRODUCTION:
             self.stdout.write(self.style.NOTICE("Aborting! This may not be a developer machine."))
