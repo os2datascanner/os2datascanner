@@ -9,8 +9,8 @@ from .organization_model import Organization
 from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.pipeline.messages import (
-    MatchesMessage, ProblemMessage, MetadataMessage
-    )
+    MatchesMessage, ProblemMessage, MetadataMessage, ScanTagFragment
+)
 import structlog
 
 logger = structlog.get_logger(__name__)
@@ -79,6 +79,12 @@ class DocumentReport(models.Model):
 
         presentation = type_msg.handle.presentation if type_msg.handle else ""
         return presentation
+
+    @property
+    def scan_tag(self) -> ScanTagFragment:
+        return (self.matches.scan_spec.scan_tag if self.matches
+                else self.problem.scan_tag if self.problem
+                else self.metadata.scan_tag if self.metadata else None)
 
     @enum.unique
     class ResolutionChoices(enum.Enum):

@@ -47,3 +47,16 @@ To execute this command run:
 ### Import services
 
 ### Report application
+
+###### scannerjob_info
+
+Provided a PK of a scanner job finds associated document reports and lists:
+
+* Scanner job name & PK
+* Total message count
+* Problem message count
+* Match message count
+* Mimetype info and count on messages
+
+To execute this command run:
+`docker-compose exec report python manage.py scannerjob_info <PK>`
