@@ -132,12 +132,12 @@ msgid "Select sensitivity"
 msgstr "Vælg følsomhed"
 
 #: reportapp/templates/components/filters.html:85
-msgid "Include matches, that are less than 30 days old"
-msgstr "Inkludér matches, der er under 30 dage gamle"
+msgid "Include results, that are less than 30 days old"
+msgstr "Inkludér resultater, der er under 30 dage gamle"
 
 #: reportapp/templates/components/handle-match.html:6
-msgid "Handle matches as:"
-msgstr "Håndtér matches som:"
+msgid "Handle results as:"
+msgstr "Håndtér resultater som:"
 
 #: reportapp/templates/components/handle-match.html:14
 msgid "Moved the file"
@@ -164,12 +164,12 @@ msgid "0 out of 10 selected"
 msgstr "0 af 10 valgt"
 
 #: reportapp/templates/components/hit.html:26
-msgid "Matches:"
-msgstr "Matches:"
+msgid "Results:"
+msgstr "Resultater:"
 
 #: reportapp/templates/components/hit.html:37
 msgid "Open"
-msgstr "Åben"
+msgstr "Åbn"
 
 #: reportapp/templates/components/hit.html:42
 msgid "Copy"
@@ -185,7 +185,7 @@ msgstr "Objekt"
 
 #: reportapp/templates/components/hits.html:25
 msgid "Match"
-msgstr "Match"
+msgstr "Resultat"
 
 #: reportapp/templates/components/hits.html:28
 msgid "Context"
@@ -260,33 +260,33 @@ msgid "Development overview"
 msgstr "Udviklingsoverblik"
 
 #: reportapp/templates/components/statistics-template.html:15
-msgid "New matches by month"
-msgstr "Antal nye matches per måned"
+msgid "New results by month"
+msgstr "Antal nye resultater per måned"
 
 #: reportapp/templates/components/statistics-template.html:16
-msgid "Unhandled matches by month"
-msgstr "Antal uhåndterede matches per måned"
+msgid "Unhandled results by month"
+msgstr "Antal uhåndterede resultater per måned"
 
 #: reportapp/templates/components/statistics-template.html:22
 #: reportapp/templates/components/statistics-template.html:28
-msgid "New matches"
-msgstr "Nye matches"
+msgid "New results"
+msgstr "Nye resultater"
 
 #: reportapp/templates/components/statistics-template.html:29
-msgid "Unhandled matches"
-msgstr "Uhåndterede matches"
+msgid "Unhandled results"
+msgstr "Uhåndterede resultater"
 
 #: reportapp/templates/components/statistics-template.html:46
-msgid "Distribution of matches"
-msgstr "Fordeling af matches"
+msgid "Distribution of results"
+msgstr "Fordeling af resultater"
 
 #: reportapp/templates/components/statistics-template.html:47
-msgid "Matches distributed by sensitivities"
-msgstr "Matches fordelt på følsomheder"
+msgid "Results distributed by sensitivities"
+msgstr "Resultater fordelt på følsomheder"
 
 #: reportapp/templates/components/statistics-template.html:48
-msgid "Matches distributed by data sources"
-msgstr "Matches fordelt på datakilder"
+msgid "Results distributed by data sources"
+msgstr "Resultater fordelt på datakilder"
 
 #: reportapp/templates/components/statistics-template.html:54
 #: reportapp/templates/components/statistics-template.html:60
@@ -299,20 +299,20 @@ msgstr "Datakilder"
 
 #: reportapp/templates/components/statistics-template.html:85
 #: reportapp/templates/components/statistics-template.html:151
-msgid "Handled matches"
-msgstr "Håndterede matches"
+msgid "Handled results"
+msgstr "Håndterede resultater"
 
 #: reportapp/templates/components/statistics-template.html:86
-msgid "Percentage of handled matches distributed by sensitivity"
-msgstr "Procentvis andel af håndterede matches fordelt på følsomhed"
+msgid "Percentage of handled results distributed by sensitivity"
+msgstr "Procentvis andel af håndterede resultater fordelt på følsomhed"
 
 #: reportapp/templates/components/statistics-template.html:87
-msgid "The department's percentage of handled matches"
-msgstr "Afdelingens procentvise andel af håndterede matches"
+msgid "The department's percentage of handled results"
+msgstr "Afdelingens procentvise andel af håndterede resultater"
 
 #: reportapp/templates/components/statistics-template.html:100
-msgid "All matches"
-msgstr "Alle matches"
+msgid "All results"
+msgstr "Alle resultater"
 
 #: reportapp/templates/components/statistics-template.html:114
 #: reportapp/templates/components/statistics-template.html:123
@@ -323,12 +323,12 @@ msgid "of"
 msgstr "af"
 
 #: reportapp/templates/components/statistics-template.html:163
-msgid "Overview for department with most unhandled matches"
-msgstr "Overblik over afdelinger med flest uhåndterede matches"
+msgid "Overview for department with most unhandled results"
+msgstr "Overblik over afdelinger med flest uhåndterede resultater"
 
 #: reportapp/templates/components/statistics-template.html:164
-msgid "Overview for departments with the oldest matches"
-msgstr "Overblik over afdelinger med flest uhåndterede matches"
+msgid "Overview for departments with the oldest results"
+msgstr "Overblik over afdelinger med flest uhåndterede resultater"
 
 #: reportapp/templates/components/statistics-template.html:170
 msgid "Comming soon"
@@ -359,8 +359,8 @@ msgid "You have signed out successfully."
 msgstr "Du er nu logget ud."
 
 #: reportapp/templates/index.html:22
-msgid "No matches were found"
-msgstr "Der er ingen matches"
+msgid "No results were found"
+msgstr "Der er ingen resultater"
 
 #: reportapp/templates/login.html:9
 msgid "Log in"
@@ -412,11 +412,11 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"Currently, <strong>%(match_count)s</strong> matches in\n"
+"Currently, <strong>%(match_count)s</strong> results in\n"
 "the OS2datascanner system require your attention:\n"
 msgstr ""
 "\n"
-"Der ligger i øjeblikket <strong>%(match_count)s</strong> matches i\n"
+"Der ligger i øjeblikket <strong>%(match_count)s</strong> resultater i\n"
 "OS2datascanner-systemet, der kræver handling fra din side:\n"
 
 #: reportapp/templates/mail/overview.html:83
@@ -454,11 +454,11 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"Currently, %(match_count)s matches in\n"
+"Currently, %(match_count)s results in\n"
 "the OS2datascanner system require your attention:\n"
 msgstr ""
 "\n"
-"Der ligger i øjeblikket %(match_count)s matches i\n"
+"Der ligger i øjeblikket %(match_count)s resultater i\n"
 "OS2datascanner-systemet, der kræver handling fra din side:\n"
 
 #: reportapp/templates/mail/overview.txt:14
