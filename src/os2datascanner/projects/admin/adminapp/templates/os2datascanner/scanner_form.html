@@ -524,7 +524,7 @@
               class="treeview-label 
               {% if required %}required-form{% endif %}"
               for="{{ form.org_unit.name }}">
-              {{ form.org_unit.label }}
+              {% trans "organizational units"|capfirst %}
             </label>
             <select class="treeview" id="sel_1" name="{{ form.org_unit.name }}" multiple size="10" url="{% url 'org-units-listing' %}">
             </select>

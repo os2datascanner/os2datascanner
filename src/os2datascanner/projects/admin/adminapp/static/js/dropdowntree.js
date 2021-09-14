@@ -30,7 +30,9 @@ let selected_values = [];
 				container.setAttribute("data-val", ele.value);
 				if (ele.className) container.className += " " + ele.className;
 				if(selected_values.indexOf(ele.value)!=-1) {
-					$iteme.children()[0].style.background = "url('/static/src/svg/done.svg'), #47a1c5";
+					console.log($iteme.children()[0])
+					$($iteme.children()[0]).removeClass('org-icon')
+					$($iteme.children()[0]).addClass('org-icon-selected')
 					container.setAttribute('aria-selected', true)
 					ele.selected="selected"
 				}
@@ -55,6 +57,7 @@ let selected_values = [];
 		opts['closeOnSelect'] = false;
 		opts['placeholder'] = gettext('Select one or more organizational units')
     	opts['allowClear'] = true
+		opts['width'] = '100%'
 		var s2inst = this.select2(opts);
 
 		// when building the tree, add all already selected values and mark them 
@@ -88,8 +91,9 @@ let selected_values = [];
 			let options = Array.prototype.slice.call(document.querySelectorAll("li.select2-results__option"));
 			let selected_node = options.filter(function (element) { return element.dataset.val == selected_id })[0];
 			//if the dropdown menu is openend, remove the checkmark
-			if( selected_node ) {
-				selected_node.querySelector(".item-label").children[0].removeAttribute("style"); //finding ancestors
+			if( selected_node ) {	
+				$(selected_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected')
+				$(selected_node.querySelector(".item-label").children[0]).addClass('org-icon')
 			}
 			//finding ancestors
 			let ancestors = [];
@@ -99,7 +103,8 @@ let selected_values = [];
 			ancestors.forEach(function (ancestor_id) { 
 				let parent_node = options.filter(function (element) { return element.dataset.val == ancestor_id })[0];
 				if(  parent_node ) {
-					parent_node.querySelector(".item-label").children[0].removeAttribute("style");
+					$(parent_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected')
+					$(parent_node.querySelector(".item-label").children[0]).addClass('org-icon')
 					parent_node.ariaSelected = false
 				}
 			});
@@ -110,7 +115,8 @@ let selected_values = [];
 			descendents.forEach(function (descendent_id) {
 				let child_node = options.filter(function (element) { return element.dataset.val == descendent_id })[0];
 				if(  child_node ) {
-					child_node.querySelector(".item-label").children[0].removeAttribute("style");
+					$(child_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected')
+					$(child_node.querySelector(".item-label").children[0]).addClass('org-icon')
 					child_node.ariaSelected = false
 				}
 			});
@@ -164,7 +170,9 @@ let selected_values = [];
 				selected_nodes.forEach( function(node){
 					//If the dropdown elements exist
 					if(node.querySelector(".item-label").children[0]) {
-						node.querySelector(".item-label").children[0].style.background="url('/static/src/svg/done.svg'), #47a1c5";
+						$(node.querySelector(".item-label").children[0]).removeClass('org-icon')
+						$(node.querySelector(".item-label").children[0]).addClass('org-icon-selected')
+						//style.background="url('/static/src/svg/done.svg'), #47a1c5";
 						node.setAttribute('aria-selected', true)
 					}
 				})
