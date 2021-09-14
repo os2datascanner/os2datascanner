@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from os2datascanner.utils.system_utilities import time_now
-from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 import logging
 
 logger = logging.getLogger(__name__)
@@ -40,11 +40,13 @@ def publish_events(events):
     """Publishes events using the configured queue (AMQP_EVENTS_TARGET)"""
     try:
         queue = settings.AMQP_EVENTS_TARGET
-        with PikaPipelineSender(write=[queue]) as pps:
+        with PikaPipelineThread(write=[queue]) as ppt:
             for event in events:
                 json_event = event.to_json_object()
                 logger.info("Published to {0}: {1}".format(queue, json_event))
-                pps.publish_message(queue, json_event)
+                ppt.enqueue_message(queue, json_event)
+            ppt.enqueue_stop()
+            ppt.run_consumer()
     except Exception as e:
         # log the error
         logger.error("Could not publish event. Error: " + format(e))

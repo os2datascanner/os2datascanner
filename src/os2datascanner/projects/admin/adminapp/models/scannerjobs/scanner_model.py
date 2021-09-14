@@ -22,6 +22,7 @@ import datetime
 from enum import Enum
 import os
 import re
+import pika
 from typing import Iterator
 import structlog
 
@@ -41,7 +42,7 @@ from os2datascanner.engine2.rules.logical import OrRule, AndRule, AllRule, make_
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
-from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineSender
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
 
 from ..authentication_model import Authentication
@@ -327,9 +328,13 @@ class Scanner(models.Model):
                 total_objects=self.checkups.count())
 
         # ... and dispatch the scan specifications to the pipeline
-        with PikaPipelineSender(write={queue for queue, _ in outbox}) as pps:
+        with PikaPipelineThread(
+                write={queue for queue, _ in outbox}) as sender:
             for queue, message in outbox:
-                pps.publish_message(queue, message.to_json_object())
+                sender.enqueue_message(queue, message.to_json_object())
+            sender.enqueue_stop()
+            sender.start()
+            sender.join()
 
         logger.info(f"scan submitted {self} with rules [{rule.presentation}]")
         return scan_tag.to_json_object()

@@ -1,5 +1,7 @@
 """Runs background jobs."""
 
+import signal
+
 from django.db import transaction
 from django.core.management.base import BaseCommand
 from django.utils.translation import gettext_lazy as _
@@ -23,7 +25,7 @@ class Command(BaseCommand):
                 default=30,
                 metavar="TIME",
                 type=int,
-                help=_("sleep for %(METAVAR)s seconds if there were no"
+                help=_("sleep for %(metavar)s seconds if there were no"
                         " jobs to run"),
         )
         parser.add_argument(
@@ -33,11 +35,18 @@ class Command(BaseCommand):
                 help=_("do not loop: run a single job and then exit"),
         )
 
-    def handle(self, *, wait, **kwargs):
+    def handle(self, *, wait, single, **kwargs):
+        running = True
+
+        def _handler(signum, frame):
+            nonlocal running
+            running = False
+        signal.signal(signal.SIGTERM, _handler)
+
         count = 0
         errors = 0
         try:
-            while True:
+            while running:
                 job = None
 
                 # Several instances of run_background_jobs can run in parallel,
@@ -92,8 +101,13 @@ class Command(BaseCommand):
                                 JobState.CANCELLED):
                             job.exec_state = JobState.FINISHED
                             job.save()
-                else:
+                elif not single:
+                    # We have no job to do and we're running in a loop. Sleep
+                    # to avoid a busy-wait
                     time.sleep(wait)
+
+                if single:
+                    running = False
         finally:
             print(_("{0} job(s) completed.").format(count))
             print(_("{0} job(s) failed.").format(errors))

@@ -19,7 +19,7 @@ from django.core.management.base import BaseCommand
 
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
-from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from ...models.scannerjobs.scanner_model import (Scanner, ScanStatus,
         ScheduledCheckup)
 
@@ -131,12 +131,12 @@ def checkup_message_received_raw(body):
     yield from []
 
 
-class AdminCollector(PikaPipelineRunner):
-    def handle_message(self, message_body, *, channel=None):
-        if channel == "os2ds_status":
-            return status_message_received_raw(message_body)
-        elif channel == "os2ds_checkups":
-            return checkup_message_received_raw(message_body)
+class CollectorRunner(PikaPipelineThread):
+    def handle_message(self, routing_key, body):
+        if routing_key == "os2ds_status":
+            return status_message_received_raw(body)
+        elif routing_key == "os2ds_checkups":
+            return checkup_message_received_raw(body)
 
 
 class Command(BaseCommand):
@@ -144,11 +144,7 @@ class Command(BaseCommand):
     help = __doc__
 
     def handle(self, *args, **options):
-        with AdminCollector(
+        CollectorRunner(
+                exclusive=True,
                 read=["os2ds_status", "os2ds_checkups"],
-                heartbeat=6000) as runner:
-            try:
-                print("Start")
-                runner.run_consumer(exclusive=True)
-            finally:
-                print("Stop")
+                heartbeat=6000).run_consumer()

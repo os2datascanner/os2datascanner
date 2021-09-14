@@ -6,9 +6,10 @@ import logging
 from prometheus_client import start_http_server, Info
 from .utilities.prometheus import prometheus_summary
 
-from ...import __version__
+from ... import __version__
+from ...utils.system_utilities import json_utf8_decode
 from ..model.core import SourceManager
-from .utilities.pika import PikaPipelineRunner
+from .utilities.pika import PikaPipelineThread
 from .utilities.systemd import notify_ready, notify_stopping
 from . import explorer, processor, matcher, tagger, exporter, worker
 
@@ -108,28 +109,22 @@ def main():
         i.info({"version": __version__})
         start_http_server(args.prometheus_port)
 
-    class GenericRunner(PikaPipelineRunner):
-        @prometheus_summary(
-            "os2datascanner_pipeline_{0}".format(args.stage),
-            module.PROMETHEUS_DESCRIPTION)
-        def handle_message(self, body, *, channel=None):
-            if args.debug:
-                print(channel, body)
-            return module.message_received_raw(body, channel, source_manager)
-
     with SourceManager(width=args.width) as source_manager:
-        with GenericRunner(
+
+        class GenericRunner(PikaPipelineThread):
+            @prometheus_summary(
+                    f"os2datascanner_pipeline_{args.stage}",
+                    module.PROMETHEUS_DESCRIPTION)
+            def handle_message(self, routing_key, body):
+                if args.debug:
+                    print(routing_key, body)
+                yield from module.message_received_raw(
+                        body, routing_key, source_manager)
+
+        GenericRunner(
                 read=module.READS_QUEUES,
                 write=module.WRITES_QUEUES,
-                heartbeat=6000) as runner:
-            try:
-                logger.info("Start")
-                notify_ready()
-                runner.run_consumer()
-            finally:
-                logger.info("Stop")
-                notify_stopping()
-
+                heartbeat=6000).run_consumer()
 
 if __name__ == "__main__":
     main()
