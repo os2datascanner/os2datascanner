@@ -28,17 +28,20 @@ class Command(BaseCommand):
         email = "dev@example.org"
 
         self.stdout.write("Creating superuser dev/dev!")
-        user = User(
+        user, created = User.objects.get_or_create(
             username=username,
-            password=make_password(password),
             email=email,
             is_superuser=True,
             is_staff=True,
         )
-        user.save()
-        self.stdout.write(self.style.SUCCESS("Superuser dev/dev created successfully!"))
+        if created:
+            user.set_password(password)
+            user.save()
+            self.stdout.write("Making dev remediator")
+            Remediator.objects.create(user=user)
+            self.stdout.write(self.style.SUCCESS("Superuser dev/dev created successfully!"))
+        else:
+            self.stdout.write("Superuser dev/dev already exists!")
 
-        self.stdout.write("Making dev remediator")
-        Remediator.objects.create(user=user)
 
         self.stdout.write(self.style.SUCCESS("Done! Remember to run the same cmd in the Admin module"))

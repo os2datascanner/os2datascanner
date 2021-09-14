@@ -44,33 +44,41 @@ class Command(BaseCommand):
         smb_url = "//samba/e2test"
 
         self.stdout.write("Creating superuser dev/dev!")
-        User(
+        user, created = User.objects.get_or_create(
             username=username,
-            password=make_password(password),
             email=email,
             is_superuser=True,
             is_staff=True,
-        ).save()
-        self.stdout.write(self.style.SUCCESS("Superuser dev/dev created successfully!"))
+        )
+        if created:
+            user.set_password(password)
+            user.save()
+            self.stdout.write(self.style.SUCCESS("Superuser dev/dev created successfully!"))
+        else:
+            self.stdout.write("Superuser dev/dev already exists!")
 
         self.stdout.write("Creating file scanner for samba share")
-        auth = Authentication(username=smb_user)
-        auth.set_password(smb_password)
-        auth.save()
         org = Organization.objects.first()
         recurrence = Recurrence()
-        share = FileScanner.objects.create(
+        share, created = FileScanner.objects.get_or_create(
             name=smb_name,
             url=smb_url,
             do_ocr=True,
             validation_status=True,
             do_last_modified_check=False,
-            authentication=auth,
             organization=org,
             schedule=recurrence,
         )
-        cpr = CPRRule.objects.first()
-        share.rules.set([cpr])
-        self.stdout.write(self.style.SUCCESS("Samba share file scanner created successfully!"))
+        if created:
+            auth = Authentication(username=smb_user)
+            auth.set_password(smb_password)
+            auth.save()
+            share.authentication = auth
+            share.save()
+            cpr = CPRRule.objects.first()
+            share.rules.set([cpr])
+            self.stdout.write(self.style.SUCCESS("Samba share file scanner created successfully!"))
+        else:
+            self.stdout.write("Samba share file scanner already exists!")
 
         self.stdout.write(self.style.SUCCESS("Done! Remember to run the same cmd in the Report module"))
