@@ -1,3 +1,23 @@
+## Version 3.11.5, 15th September 2021
+
+"We Tried To Deliver Your Package, But You Were Out"
+
+### New in this version
+
+- The scanner engine now supports rolling updates during scans:
+
+  - RabbitMQ communications are now managed by a background thread, improving
+    connection reliability during long operations.
+
+  - Scans can now be stopped and started again without losing any messages.
+
+- A management command summarising the results of a scanner job has been added.
+
+### General improvements
+
+- The administration system's scanner status page now has a cleaner and more
+  reliable presentation. 
+
 ## Version 3.11.4, 9th September 2021
 
 This hotfix release corrects webscan link parsing.

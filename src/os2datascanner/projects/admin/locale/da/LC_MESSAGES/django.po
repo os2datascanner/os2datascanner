@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-10 02:45-0500\n"
+"POT-Creation-Date: 2021-09-15 03:26-0500\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: adminapp/models/apikey_model.py:16 adminapp/models/rules/rule_model.py:47
-#: adminapp/models/scannerjobs/scanner_model.py:74
+#: adminapp/models/scannerjobs/scanner_model.py:75
 #: import_services/models/realm.py:29 organizations/models/account.py:58
 #: organizations/models/organization.py:75
 msgid "organization"
@@ -92,39 +92,39 @@ msgstr ""
 "lad være med at scanne filer med både HIDDEN- og SYSTEM-attributter sat, "
 "samt filer med HIDDEN-attribut sat og et navn med tilde-tegn foran"
 
-#: adminapp/models/scannerjobs/scanner_model.py:386
+#: adminapp/models/scannerjobs/scanner_model.py:391
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:389
+#: adminapp/models/scannerjobs/scanner_model.py:394
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:392
+#: adminapp/models/scannerjobs/scanner_model.py:397
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:394
+#: adminapp/models/scannerjobs/scanner_model.py:399
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:397
+#: adminapp/models/scannerjobs/scanner_model.py:402
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:399
+#: adminapp/models/scannerjobs/scanner_model.py:404
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:402
+#: adminapp/models/scannerjobs/scanner_model.py:407
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:466
+#: adminapp/models/scannerjobs/scanner_model.py:471
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:467
+#: adminapp/models/scannerjobs/scanner_model.py:472
 msgid "scan statuses"
 msgstr "scanstatusser"
 
@@ -1115,21 +1115,22 @@ msgstr "tilgængelige scannertyper"
 msgid "Select a scan type to activate it for this client."
 msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 
-#: core/management/commands/run_background_jobs.py:26
-#, python-format
-msgid "sleep for %(METAVAR)s seconds if there were no jobs to run"
+#: core/management/commands/run_background_jobs.py:28
+#, fuzzy, python-format
+#| msgid "sleep for %(METAVAR)s seconds if there were no jobs to run"
+msgid "sleep for %(metavar)s seconds if there were no jobs to run"
 msgstr "vent %(METAVAR)s sekunder hvis der ikke var nogle jobs til afvikling"
 
-#: core/management/commands/run_background_jobs.py:33
+#: core/management/commands/run_background_jobs.py:35
 msgid "do not loop: run a single job and then exit"
 msgstr "kør ikke i løkke: kør et enkelt job og gå derefter ud"
 
-#: core/management/commands/run_background_jobs.py:98
+#: core/management/commands/run_background_jobs.py:112
 #, python-brace-format
 msgid "{0} job(s) completed."
 msgstr "{0} færdige job(s)."
 
-#: core/management/commands/run_background_jobs.py:99
+#: core/management/commands/run_background_jobs.py:113
 #, python-brace-format
 msgid "{0} job(s) failed."
 msgstr "{0} fejlede job(s)."
