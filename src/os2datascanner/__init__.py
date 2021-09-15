@@ -2,7 +2,7 @@ from . import engine2  # noqa
 from . import utils  # noqa
 import logging
 
-__version__ = "3.11.4"
+__version__ = "3.11.5"
 
 # prevent default configuration, if users do not set one specifically
 logging.getLogger(__name__).addHandler(logging.NullHandler())
