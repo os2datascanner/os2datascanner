@@ -380,7 +380,7 @@ organisation in this format and then give it to a tool like `ldapadd` in order
 to import it into the LDAP world:
 
 ```
-$ cat <END > organisation.ldif
+$ cat <<END > organisation.ldif
 dn: ou=Test Department,dc=magenta,dc=test
 objectClass: organizationalUnit
 ou: Test Department
