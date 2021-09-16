@@ -78,3 +78,12 @@ up-and-running quickly. It creates a user named `dev` with the password `dev`
 and registers the user as remediator.
 
 There is a corresponding command in the Admin module.
+
+###### list_problems
+
+List the problem messages for a scanner job.
+
+Optionally takes a `--head` argument to limit the output.
+
+To execute this command run:
+`docker-compose exec report django-admin list_problems <PK>`
