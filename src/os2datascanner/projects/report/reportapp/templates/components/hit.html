@@ -41,6 +41,11 @@
           <button class="button" data-clipboard-text="{{ match.matches.handle|find_parent:type|present }}">
             {% trans "Copy" %}
           </button>
+          {% if match.matches.handle|find_parent:type|find_file_folder %}
+            <a href="{{ match.matches.handle|find_parent:type|find_file_folder }}" class="button" target="_blank" rel="noopener">
+              {% trans "Open folder" %}
+            </a>
+          {% endif %}
         {% endif %}
       </div>
     </div>

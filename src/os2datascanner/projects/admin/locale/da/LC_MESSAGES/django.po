@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 03:54-0500\n"
+"POT-Creation-Date: 2021-09-21 04:07-0500\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -43,7 +43,7 @@ msgid "Initialization Vector"
 msgstr "Initaliserings vektor"
 
 #: adminapp/models/authentication_model.py:25
-#: adminapp/views/filescanner_views.py:159
+#: adminapp/views/filescanner_views.py:162
 msgid "User domain"
 msgstr "Brugerdomæne"
 
@@ -76,17 +76,21 @@ msgstr "organisatorisk enhed"
 msgid "drive letter"
 msgstr "drevbogstav"
 
-#: adminapp/models/scannerjobs/filescanner_model.py:40
+#: adminapp/models/scannerjobs/filescanner_model.py:41
 msgid "skip super-hidden files"
 msgstr "spring over superskjulte filer"
 
-#: adminapp/models/scannerjobs/filescanner_model.py:41
+#: adminapp/models/scannerjobs/filescanner_model.py:42
 msgid ""
 "do not scan files with the HIDDEN and SYSTEM bits set, or files with the "
 "HIDDEN bit set whose name starts with a tilde"
 msgstr ""
 "lad være med at scanne filer med både HIDDEN- og SYSTEM-attributter sat, "
 "samt filer med HIDDEN-attribut sat og et navn med tilde-tegn foran"
+
+#: adminapp/models/scannerjobs/filescanner_model.py:89
+msgid "URL must follow the UNC format"
+msgstr "URL skal følge UNC-format"
 
 #: adminapp/models/scannerjobs/scanner_model.py:391
 msgid "scan tag"
@@ -1058,11 +1062,11 @@ msgstr "Brugernavn"
 msgid "Password"
 msgstr "Adgangskode"
 
-#: adminapp/views/filescanner_views.py:156
+#: adminapp/views/filescanner_views.py:159
 msgid "e.g. //network-domain/top-folder"
 msgstr "f.eks. //network-domain/top-folder"
 
-#: adminapp/views/filescanner_views.py:160
+#: adminapp/views/filescanner_views.py:163
 msgid "Drive letter"
 msgstr "Drevbogstav"
 

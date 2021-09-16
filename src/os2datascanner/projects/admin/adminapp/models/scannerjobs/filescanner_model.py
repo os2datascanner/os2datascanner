@@ -19,6 +19,7 @@ from pathlib import PureWindowsPath
 import structlog
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from os2datascanner.engine2.model.smbc import SMBCSource
 from .scanner_model import Scanner
@@ -81,3 +82,9 @@ class FileScanner(Scanner):
                 domain=self.authentication.domain,
                 driveletter=self.alias,
                 skip_super_hidden=self.skip_super_hidden)
+
+    def clean(self):
+        # Backslashes (\) are an escaped character and therefore '\\\\' = '\\'
+        if not self.url.startswith(('//', '\\\\')) or any(x in self.url for x in ['\\\\\\','///']):
+            error = _("URL must follow the UNC format")
+            raise ValidationError({"url": error})
