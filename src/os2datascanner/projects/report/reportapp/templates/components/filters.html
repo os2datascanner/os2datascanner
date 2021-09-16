@@ -6,14 +6,18 @@
       document.getElementById("filter_form", element).submit();
   };
   function checkedBox() {
-    var checkbox = document.getElementById('30-days');
+    var checkbox = document.getElementById('30-days-toggle');
+    var thirtyDays = document.getElementById('30-days');
     if (checkbox.checked) {
-      checkbox.value = true;
+      thirtyDays.value = 'true';
     } else {
-      checkbox.value = false;
+      thirtyDays.value = 'false';
     }
     document.getElementById("filter_form").submit();
   };
+  document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('30-days-toggle').addEventListener('click', checkedBox)
+  });
 </script>
 
 <form method="GET" action="{% url 'index' %}" id="filter_form">
@@ -76,13 +80,19 @@
       </div>
   </div>
 
+    {% comment %}
+        We use the hidden input field below to track whether 30-days is enabled or not.
+        If we used the checkbox, unticking it would make it disappear from the form's GET action
+    {% endcomment %}
+
+  <input type="hidden" name="30-days" id="30-days" value="{{ 30_days }}">
   <div class="checkbox_wrapper">
     <div class="checkbox-group">
       <div class="ds-checkbox">
-        <input type="checkbox" id="30-days" name="30-days" value="{{ 30_days }}" onclick="checkedBox()"
+        <input type="checkbox" id="30-days-toggle"
         {% if 30_days == "true" %}checked{% endif %}>
-        <label for="30-days">
-          {% trans "Include matches, that are less than 30 days old" %}
+        <label for="30-days-toggle">
+          {% trans "Include results, that are less than 30 days old" %}
         </label>
       </div>
     </div>

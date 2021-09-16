@@ -12,21 +12,21 @@
       <div class="statistic_header">
         <div class="">
           <h1 class="page-title__sub">{% trans "Development overview" %}</h1>
-          <p class="chart_description">{% trans "New matches by month" %}</p>
-          <p class="hidden chart_description">{% trans "Unhandled matches by month" %}</p>
+          <p class="chart_description">{% trans "New results by month" %}</p>
+          <p class="hidden chart_description">{% trans "Unhandled results by month" %}</p>
         </div>
         <div class="statistic_header_nav">
         <div></div>
         <div class="dropdown">
           <div class="select">
-            <span class="select_span">{% trans "New matches" %}</span>
+            <span class="select_span">{% trans "New results" %}</span>
             <i class="material-icons">
               keyboard_arrow_down
             </i>
           </div>
           <ul class="dropdown-menu">
-            <li>{% trans "New matches" %}</li>
-            <li>{% trans "Unhandled matches" %}</li>
+            <li>{% trans "New results" %}</li>
+            <li>{% trans "Unhandled results" %}</li>
           </ul>
         </div>
         </div>
@@ -43,9 +43,9 @@
     <div class="statistic statistic--two">
       <div class="statistic_header">
         <div>
-          <h1 class="page-title__sub">{% trans "Distribution of matches" %}</h1>
-          <p class="chart_description">{% trans "Matches distributed by sensitivities" %}</p>
-          <p class="hidden chart_description">{% trans "Matches distributed by data sources" %}</p>
+          <h1 class="page-title__sub">{% trans "Distribution of results" %}</h1>
+          <p class="chart_description">{% trans "Results distributed by sensitivities" %}</p>
+          <p class="hidden chart_description">{% trans "Results distributed by data sources" %}</p>
         </div>
         <div class="statistic_header_nav">
           <div></div>
@@ -82,9 +82,9 @@
     <div class="statistic statistic--three">
       <div class="statistic_header">
         <div>
-          <h1 class="page-title__sub">{% trans "Handled matches" %}</h1>
-          <p class="chart_description">{% trans "Percentage of handled matches distributed by sensitivity" %}</p>
-          <p class="hidden chart_description">{% trans "The department's percentage of handled matches" %}</p>
+          <h1 class="page-title__sub">{% trans "Handled results" %}</h1>
+          <p class="chart_description">{% trans "Percentage of handled results distributed by sensitivity" %}</p>
+          <p class="hidden chart_description">{% trans "The department's percentage of handled results" %}</p>
         </div>
         <div class="statistic_header_nav">
           <div></div>
@@ -97,7 +97,7 @@
             </div>
             <ul class="dropdown-menu">
               <li>{% trans "Sensitivity" %}</li>
-              <li>{% trans "All matches" %}</li>
+              <li>{% trans "All results" %}</li>
             </ul>
           </div>
         </div>
@@ -148,7 +148,7 @@
             <canvas id="doughnut_chart_total" width="100" height="100"></canvas>
           </div>
           <div class="doughnut_info_box">
-            <h4>{% trans "Handled matches" %}</h4>
+            <h4>{% trans "Handled results" %}</h4>
             <p>{{total_handled_matches}} {% trans "of" %} {{total_matches}}</p>
           </div>
         </div>
@@ -160,8 +160,8 @@
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">{% trans "Development overview" %}</h1>
-          <p class="chart_description">{% trans "Overview for department with most unhandled matches" %}</p>
-          <p class="hidden chart_description">{% trans "Overview for departments with the oldest matches" %}</p>
+          <p class="chart_description">{% trans "Overview for department with most unhandled results" %}</p>
+          <p class="hidden chart_description">{% trans "Overview for departments with the oldest results" %}</p>
         </div>
         <div class="statistic_header_nav">
         </div>
