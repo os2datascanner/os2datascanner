@@ -31,7 +31,6 @@ class ImportJob(BackgroundJob):
         self.save()
 
         def _callback(action, *args):
-            print(action, *args)
             self.refresh_from_db()
             if action == "diff_computed":
                 count = args[0]
