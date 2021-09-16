@@ -1,4 +1,7 @@
-**TL;DR:** To get a development environment to run, follow these steps:
+# OS2Datascanner Dev-env.
+
+## TL;DR: 
+To get a development environment to run, follow these steps:
 
 1.  Clone the repo and start the containers:
 
@@ -241,7 +244,7 @@ separate folder it lives in) to the global list for git to ignore (usually
 the `ignore` file yourself).
 
 
-# Tests
+## Tests
 
 Each module has its own test-suite. These are run automatically as part of the
 CI pipeline, which also produces a code coverage report for each test-suite.
@@ -262,7 +265,7 @@ Please note that the engine tests can be run using any of the five pipeline
 services as the basis, but a specific one is provided above for easy reference.
 
 
-# Translations (i18n)
+## Translations (i18n)
 
 When the applications are already `up` and running as described above, you can
 recompile the translations with the command:
@@ -272,7 +275,7 @@ recompile the translations with the command:
 Refreshing the page, you should see your new translations.
 
 
-# Shell access
+## Shell access
 
 To access a shell on any container based on the OS2datascanner module
 images, run
@@ -280,9 +283,9 @@ images, run
     docker-compose {exec|run} <container name> bash
 
 
-# Debugging
+## Debugging
 
-## Stacktrace
+### Stacktrace
 
 A stacktrace is printed to `stderr` if pipeline components receive `SIGUSR1`.
 The scan continues without interuption.
@@ -302,7 +305,7 @@ docker
     docker logs os2datascanner_worker_1
 
 
-# docker-compose profiles
+## docker-compose profiles
 
 The `docker-compose.yml` use `--profiles` which requires version
 `docker-compose > 1.28`.
@@ -324,8 +327,87 @@ The following `profiles` are available: `ldap`, `sso`, `api` and `metric`.
 
 The development config files are stored in `os2datascanner/dev-environment/`
 
+###`--profile ldap`
+The `ldap` profile defines a Keycloak instance and connected Postgres database,
+as well as a OpenLDAP server and admin interface.
 
-# Code standards
+Be sure to enable import and structured org. features on the client in the admin module's django admin page.
+
+###### Keycloak instance
+Interface available at `localhost:8090` on the host machine.
+
+By default, login credentials will be `admin:admin`
+
+The Keycloak instance is automatically configured by a mounted `realm.json` file.
+This file contains configurations for a client in the "Master Realm" with appropriate permissions
+to perform actions such as creation of new realms, users and user federation connections.
+
+In `dev-settings.toml` appropriate settings for the **KEYCLOAK_BASE_URL**, **KEYCLOAK_ADMIN_CLIENT** and 
+**KEYCLOAK_CLIENT_SECRET** are set.
+
+The purpose of the Keycloak instance is to use its User Federation support. When an LDAP configuration is set in
+OS2Datascanner, we create a "User Federation" in Keycloak which imports data from e.g. Active Directory. 
+Finally, we import this data to Django.
+
+###### Setting up OpenLDAP
+OS2datascanner's development environment incorporates the OpenLDAP server,
+which should be used to work with the system's organisational import
+functionality. Setting up OpenLDAP is a little complicated, though; even though
+the "L" stands for "lightweight", LDAP is an old technology that doesn't *feel*
+very lightweight.
+
+We suggest two ways of defining an organisation in OpenLDAP:
+
+* through the _phpLDAPadmin_ frontend, also included in the development
+  environment. This is a fairly self-explanatory but clunky UI for much of
+  LDAP's functionality; or
+
+* through an external LDAP client program, such as those provided by the
+  Ubuntu/Debian package `ldap-utils`.
+
+If you wish to access the phpLDAPadmin it will be accessible on the host machine at `localhost:8100`
+
+Credentials will be `cn=admin,dc=magenta,dc=test:testMAG`
+
+###### External LDAP clients
+The development environment's OpenLDAP server is also exposed to the host
+system on port 387, the usual port for LDAP servers. That means it's fairly
+easy to interact with it from outside the Docker universe.
+
+LDAP has a standard text format, known as the _LDAP Data Interchange Format_,
+for representing objects in the organisational hierarchy. We can define an
+organisation in this format and then give it to a tool like `ldapadd` in order
+to import it into the LDAP world:
+
+```
+$ cat <<END > organisation.ldif
+dn: ou=Test Department,dc=magenta,dc=test
+objectClass: organizationalUnit
+ou: Test Department
+
+dn: cn=Mikkel Testsen,ou=Test Department,dc=magenta,dc=test
+objectClass: inetOrgPerson
+cn: Mikkel Testsen
+givenName: Mikkel
+sn: Testsen
+mail: mt@test.example
+
+dn: cn=Hamish MacTester,ou=Test Department,dc=magenta,dc=test
+objectClass: inetOrgPerson
+cn: Hamish MacTester
+givenName: Hamish
+sn: MacTester
+mail: hm@test.example
+END
+$ ldapadd -D cn=admin,dc=magenta,dc=test -w testMAG -f organisation.ldif 
+adding new entry "ou=Test Department,dc=magenta,dc=test"
+
+adding new entry "cn=Mikkel Testsen,ou=Test Department,dc=magenta,dc=test"
+
+adding new entry "cn=Hamish MacTester,ou=Test Department,dc=magenta,dc=test"
+```
+
+## Code standards
 
 The coding standards below should be followed by all new and edited code for
 the project. Linting checks are applied, but currently allowed to fail;

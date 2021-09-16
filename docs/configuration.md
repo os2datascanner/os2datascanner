@@ -1,3 +1,5 @@
+# OS2Datascanner Configurations
+
 The OS2Datascanner system is configured using `.toml`-files - one for each
 module. Most configuration settings come with reasonable defaults and need not
 be changed for a standard set-up, but most can be adjusted as needed, and a few
@@ -45,6 +47,21 @@ AMQP_PWD = "<amqp user password>"
     PASSWORD = "<user password for dedicated admin db-user>"
     HOST = "<database service name>"
 ```
+
+### Keycloak Settings
+These settings are not mandatory for running the admin module, but can be used to enable LDAP import of users and hierarchy.
+
+A prerequisite for this functionality is running and configuring a Keycloak instance.
+OS2Datascanner contains a Keycloak installation that can be used, but using an external installation is also possible.
+
+To configure the admin module's Keycloak functionality the following settings must be set.
+```toml
+# [keycloak]
+KEYCLOAK_BASE_URL = "" # Host url for Keycloak
+KEYCLOAK_ADMIN_CLIENT = "" # Admin client to use Keycloak's API to perform actions
+KEYCLOAK_ADMIN_SECRET = "" # Admin client secret for authenticating 
+```
+
 
 
 ## Configuration for the Engine components
