@@ -330,7 +330,7 @@ class KeycloakImportTest(TestCase):
         the database."""
         self.test_ou_import()
 
-        for user in Account.objects.all():
+        for user in Account.objects.filter(organization=self.org):
             self.assertNotEqual(
                     user.first_name,
                     "Tadeusz",
@@ -347,7 +347,7 @@ class KeycloakImportTest(TestCase):
                 self.org, NEW_CORP,
                 keycloak_actions.keycloak_group_dn_selector)
 
-        for user in Account.objects.all():
+        for user in Account.objects.filter(organization=self.org):
             self.assertEqual(
                     user.first_name,
                     "Tadeusz",
