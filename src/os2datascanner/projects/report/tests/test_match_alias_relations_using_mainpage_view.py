@@ -253,7 +253,7 @@ class MatchAliasRelationTest(TestCase):
     def test_mainpage_view_as_remediator_role_with_matches(self):
         remediator = Remediator.objects.create(user=self.user)
         qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 2)
+        self.assertEqual(len(qs), 3)
         remediator.delete()
 
     def test_mainpage_view_with_emailalias_egon(self):
@@ -263,7 +263,7 @@ class MatchAliasRelationTest(TestCase):
         )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 1)
+        self.assertEqual(len(qs), 2)
         emailalias.delete()
 
     def test_mainpage_view_with_emailalias_kjeld(self):
@@ -281,7 +281,7 @@ class MatchAliasRelationTest(TestCase):
         create_alias_and_match_relations(emailalias)
         create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 2)
+        self.assertEqual(len(qs), 3)
         emailalias.delete()
         emailalias1.delete()
 
@@ -292,7 +292,7 @@ class MatchAliasRelationTest(TestCase):
         )
         remediator = Remediator.objects.create(user=self.user)
         qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 2)
+        self.assertEqual(len(qs), 3)
         remediator.delete()
         emailalias.delete()
 
@@ -312,7 +312,7 @@ class MatchAliasRelationTest(TestCase):
         create_alias_and_match_relations(emailalias)
         create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 1)
+        self.assertEqual(len(qs), 2)
         emailalias.delete()
         emailalias1.delete()
 
@@ -322,7 +322,7 @@ class MatchAliasRelationTest(TestCase):
         create_alias_and_match_relations(emailalias)
         create_alias_and_match_relations(emailalias1)
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 2)
+        self.assertEqual(len(qs), 3)
         emailalias.delete()
         emailalias1.delete()
 
@@ -390,7 +390,7 @@ class MatchAliasRelationTest(TestCase):
         )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 1)
+        self.assertEqual(len(qs), 2)
         emailalias.delete()
 
     def test_mainpage_view_with_relation_table_and_incoming_new_matches(self):
@@ -400,10 +400,10 @@ class MatchAliasRelationTest(TestCase):
         )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 1)
+        self.assertEqual(len(qs), 2)
         MatchAliasRelationTest.generate_new_egon_data()
         qs1 = self.mainpage_get_queryset()
-        self.assertEqual(len(qs1), 2)
+        self.assertEqual(len(qs1), 3)
         emailalias.delete()
 
     def test_update_relation_management_command(self):
@@ -416,7 +416,7 @@ class MatchAliasRelationTest(TestCase):
         MatchAliasRelationTest.generate_new_egon_data()
         update_match_alias_relations()
         qs1 = self.mainpage_get_queryset()
-        self.assertEqual(len(qs1), 2)
+        self.assertEqual(len(qs1), 3)
         emailalias.delete()
 
 # Helper methods
