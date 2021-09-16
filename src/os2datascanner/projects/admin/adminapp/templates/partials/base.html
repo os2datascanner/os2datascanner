@@ -66,11 +66,7 @@
     <!-- End modal dialog -->
   </div>
 
-  {% if not settings.DEBUG %}
-  <script src="{% static '3rdparty/jquery-3.4.1.slim.min.js' %} "></script>
-  {% else %}
-  <script src="{% static '3rdparty/jquery-3.4.1.slim.js' %} "></script>
-  {% endif %}
+  <script src="{% static '3rdparty/jquery-3.6.0.min.js' %} "></script>
 
   {% block scripts %}
 
