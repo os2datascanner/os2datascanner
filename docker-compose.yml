@@ -378,8 +378,6 @@ services:
       SMB_SHARE_PATH: /mnt
       SMB_SHARE_BROWSABLE: "no"
       SMB_SHARE_READONLY: "yes"
-    profiles:
-      - samba
 
 x-disabled:
   admin_cron:

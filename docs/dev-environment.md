@@ -12,68 +12,35 @@
     - Web interface for message queues: http://localhost:8030
     - Report module: http://localhost:8040
 
-2.  Create logins for the django modules Logins for the django modules
-    (Administration and Report) must be created when the development
-    environment is first started (and any time the data volume has been
-    wiped). Having started the environment as described above, simply
-    run
+2. Create users and other initial setup with the [quickstart
+   commands](../management-commands). The commands will describe what they
+   do in more detail, but in short they create users named "dev" with the
+   password "dev" and setup a scan source.
 
-         docker-compose exec admin python manage.py createsuperuser
-         docker-compose exec report python manage.py createsuperuser
-
-    You can pass username and email as arguments to the command by
-    adding `--username <your username>` and/or `--email <your email>` at
-    the end of the snippets above, otherwise you will be prompted for
-    them along with a password.
-
-    As of [Django
-    3.0](<https://docs.djangoproject.com/en/3.2/ref/django-admin/#django-admin-createsuperuser/)
-    users can be created "script-like" as
-
-         docker-compose exec -e DJANGO_SUPERUSER_PASSWORD=test admin python manage.py createsuperuser --noinput --username test --email test@test.dk
-         docker-compose exec -e DJANGO_SUPERUSER_PASSWORD=test report python manage.py createsuperuser --noinput --username test --email test@test.dk
-
-    Credentials for the message queue web interface can be found in
-    here:
-
-    - `dev-environment/rabbitmq.env`
+         docker-compose exec admin django-admin quickstart_dev
+         docker-compose exec report django-admin quickstart_dev
 
 3.  Start a scan:
 
     1.  Log into the administration module with the newly created superuser at
         http://localhost:8020
 
-    2.  Go to `Administration` and add an `Organization`.
+    2.  Go to "Filescans" at http://localhost:8020/filescanners/
 
-    3.  Return to the main page, go to `Regler` (Rules) and add one.
-
-    4.  Go to `Scannerjob` and add a webscan using the organization and rule
-        just created for a website - e.g. `https://www.magenta.dk`
-
-        **NB!** Please note that OS2datascanner has been built to scan an
-        organization's *own* data sources, and to do so as efficiently as
-        possible. Thus, OS2datascanner does not check for or adhere to e.g.
-        `robots.txt` files, and may as a consequence overload a system or
-        trigger automated safety measures; **always ensure that the site
-        administrator is okay with scanning the site!**
-
-    5.  Start the scan by clicking the play button and confirming your choice.
+    3.  Start the scan by clicking the play button and confirming your choice.
 
 4.  Follow the engine activity in RabbitMQ (optional):
 
-    1.  Log into the web interface for RabbitMQ - using the credentials
-        mentioned above - at http://localhost:8030
+    Credentials for the message queue web interface can be found in
+    here in `dev-environment/rabbitmq.env`.
+
+    1.  Log into the web interface for RabbitMQ at http://localhost:8030
     2.  Queue activity is available on the `Queues` tab.
 
 5.  See the results:
 
     1.  Log into the report module with the newly created superuser at
         http://localhost:8040
-    2.  Go to the django admin site at http://localhost:8040/admin
-    3.  Create a new `Remediator` pointing to the superuser just
-        created.
-    4.  Return to the main page and check the results - refresh page for
-        updates.
 
 
 ## Docker
@@ -219,6 +186,18 @@ These depend on some auxillary services:
 
     The web interface can be reached on: http://localhost:8030
 
+-   `samba`: a Samba service that serves up some test files in a shared folder
+    called `e2test`. This can be useful to test the file scanner.
+
+    The Samba server is available as `samba:139` inside the Docker environment
+    and `localhost:8139` on the host machine. The full UNC of the shared folder
+    in the Docker environment is `//samba/e2test`.
+
+    The Samba server doesn't require a workgroup name, but it does require a
+    username (`os2`) and password (`swordfish`).
+
+    Thus from the host: `smbclient -p 8139 -U os2%swordfish //localhost/e2test`
+
 
 ### Postgres initialisation
 
@@ -341,27 +320,10 @@ To start a service behind a `profiles` flag, use
 docker-compose --profile api up -d
 ```
 
-The following `profiles` are available: `ldap`, `sso`, `api`, `metric` and
-`samba`.
+The following `profiles` are available: `ldap`, `sso`, `api` and `metric`.
 
 The development config files are stored in `os2datascanner/dev-environment/`
 
-## `--profile samba`
-
-The `samba` profile defines a Samba service that serves up some test files in
-a shared folder called `e2test`. This can be useful to test the file scanner.
-
-The Samba server is available as `samba:139` inside the Docker environment and
-`localhost:8139` on the host machine. The full UNC of the shared folder in
-the Docker environment is `//samba/e2test`.
-
-The Samba server doesn't require a workgroup name, but it does require a
-username (`os2`) and password (`swordfish`).
-
-Thus from the host
-```sh
-> smbclient -p 8139 -U os2%swordfish //localhost/e2test
-```
 
 # Code standards
 
