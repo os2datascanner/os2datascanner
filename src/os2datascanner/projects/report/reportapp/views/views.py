@@ -94,10 +94,9 @@ class MainPageView(LoginRequiredMixin, ListView):
         # A check whether something is more recent than a month
         # is done by subtracting 30 days from now and then comparing if the saved time is "bigger" than that
         # and vice versa/smaller for older than.
-        # By default we only show matches older than 30 days, if filter enabled we show everything.
-        if not self.request.GET.get('30-days') or self.request.GET.get('30-days') == 'false':
+        # By default true and we show all matches. If false we only show matches older than 30 days
+        if self.request.GET.get('30-days') == 'false':
             # Exactly 30 days is deemed to be "older than 30 days"
-            # and will therefore be shown.
             time_threshold = time_now() - timedelta(days=30)
             older_than_30_days = self.matches.filter(
                 datasource_last_modified__lte=time_threshold)
@@ -140,7 +139,7 @@ class MainPageView(LoginRequiredMixin, ListView):
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
 
-        context['30_days'] = self.request.GET.get('30-days', 'false')
+        context['30_days'] = self.request.GET.get('30-days', 'true')
 
         sensitivities = self.matches.order_by(
             '-sensitivity').values(

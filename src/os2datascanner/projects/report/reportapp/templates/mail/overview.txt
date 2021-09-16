@@ -5,7 +5,7 @@ Dear {{ full_name }},
 {% endblocktrans %}
 
 {% blocktrans %}
-Currently, {{ match_count }} matches in
+Currently, {{ match_count }} results in
 the OS2datascanner system require your attention:
 {% endblocktrans %}
 {% for caption, count in matches %}
