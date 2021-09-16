@@ -43,7 +43,7 @@ def publish_events(events):
         with PikaPipelineThread(write=[queue]) as ppt:
             for event in events:
                 json_event = event.to_json_object()
-                logger.info("Published to {0}: {1}".format(queue, json_event))
+                logger.debug("Published to {0}: {1}".format(queue, json_event))
                 ppt.enqueue_message(queue, json_event)
             ppt.enqueue_stop()
             ppt.run_consumer()
