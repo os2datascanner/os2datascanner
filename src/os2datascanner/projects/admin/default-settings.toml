@@ -81,7 +81,7 @@ INTERNAL_IPS = []
 DEBUG_TOOLBAR_CONFIG = []
 
 AUTH_PROFILE_MODULE = "os2datascanner.projects.admin.adminapp.UserProfile"
-WSGI_APPLICATION = "os2datascanner.projects.admin.wsgi.application"
+ASGI_APPLICATION = "os2datascanner.projects.admin.asgi.application"
 ROOT_URLCONF = "os2datascanner.projects.admin.urls"
 STATIC_URL = "/static/"
 ICON_SPRITE_URL = "/static/src/svg/symbol-defs.svg"
