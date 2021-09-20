@@ -3,6 +3,7 @@ import signal
 import argparse
 import traceback
 import logging
+from collections import deque
 from prometheus_client import start_http_server, Info, Summary
 
 from ... import __version__

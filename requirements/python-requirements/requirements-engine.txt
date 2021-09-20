@@ -165,9 +165,10 @@ six==1.14.0
     #   protobuf
     #   python-dateutil
     #   structlog
+sortedcontainers==2.4.0
+    # via -r requirements-common.in
 structlog==20.1.0
     # via -r requirements-common.in
-    # via -r requirements-engine.in
 toml==0.10.1
     # via
     #   -r requirements-common.in

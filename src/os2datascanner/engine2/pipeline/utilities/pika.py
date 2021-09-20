@@ -3,6 +3,7 @@ import pika
 import time
 import signal
 import threading
+from sortedcontainers import SortedList
 
 from ...utilities.backoff import run_with_backoff
 from ....utils.system_utilities import json_utf8_decode
@@ -168,7 +169,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
     def __init__(self, *args, exclusive=False, **kwargs):
         super().__init__()
         PikaPipelineRunner.__init__(self, *args, **kwargs)
-        self._incoming = []
+        self._incoming = SortedList(key=lambda e: -(e[1].priority or 0))
         self._outgoing = []
         self._live = None
         self._condition = threading.Condition()
@@ -219,9 +220,8 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
             def waiter():
                 return not self._live or len(self._incoming) > 0
             rv = self._condition.wait_for(waiter, timeout)
-            if rv == True and self._live:
-                head, self._incoming = self._incoming[0], self._incoming[1:]
-                return head
+            if rv and self._live:
+                return self._incoming.pop(0)
             else:
                 return (None, None, None)
 
@@ -236,7 +236,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         """(Background thread.) Collects a message and stores it for later
         retrieval by the main thread."""
         with self._condition:
-            self._incoming.append((method, properties, body,))
+            self._incoming.add((method, properties, body,))
             self._condition.notify()
 
     def run(self):
@@ -256,8 +256,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 with self._condition:
                     # Process all of the enqueued actions
                     while self._outgoing:
-                        head, self._outgoing = (
-                                self._outgoing[0], self._outgoing[1:])
+                        head = self._outgoing.pop(0)
                         label = head[0]
                         if label == "msg":
                             queue, body, exchange, properties = head[1:]
