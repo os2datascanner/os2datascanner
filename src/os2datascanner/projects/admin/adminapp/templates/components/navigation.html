@@ -46,7 +46,7 @@
           </span>
         </a>
       </li>
-      {% if user.is_superuser or user.is_staff %}
+      {% if user.is_superuser %}
       <li>
         <a href="/admin/" target="_NEW">
           {% include "components/svg-icons/admin_panel.svg" %}
