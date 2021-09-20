@@ -1,5 +1,3 @@
-from abc import ABC, abstractmethod
-from sys import stderr
 import json
 import pika
 import time
@@ -11,7 +9,7 @@ from ....utils.system_utilities import json_utf8_decode
 from os2datascanner.utils import pika_settings
 
 
-class PikaConnectionHolder(ABC):
+class PikaConnectionHolder:
     """A PikaConnectionHolder manages a blocking connection to a RabbitMQ
     server. (Like Pika itself, it is not thread safe.)"""
 
@@ -80,11 +78,10 @@ class PikaConnectionHolder(ABC):
 
 
 class PikaPipelineRunner(PikaConnectionHolder):
-    def __init__(self, *,
-            read=set(), write=set(), **kwargs):
+    def __init__(self, *, read=None, write=None, **kwargs):
         super().__init__(**kwargs)
-        self._read = set(read)
-        self._write = set(write)
+        self._read = set() if read is None else set(read)
+        self._write = set() if write is None else set(write)
 
     def make_channel(self):
         """As PikaConnectionHolder.make_channel, but automatically declares all
