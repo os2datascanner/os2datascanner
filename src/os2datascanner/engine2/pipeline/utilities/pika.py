@@ -78,11 +78,10 @@ class PikaConnectionHolder:
 
 
 class PikaPipelineRunner(PikaConnectionHolder):
-    def __init__(self, *,
-            read=set(), write=set(), **kwargs):
+    def __init__(self, *, read=None, write=None, **kwargs):
         super().__init__(**kwargs)
-        self._read = set(read)
-        self._write = set(write)
+        self._read = set() if read is None else set(read)
+        self._write = set() if write is None else set(write)
 
     def make_channel(self):
         """As PikaConnectionHolder.make_channel, but automatically declares all
