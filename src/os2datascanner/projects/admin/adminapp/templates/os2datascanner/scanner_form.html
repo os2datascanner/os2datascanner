@@ -521,10 +521,12 @@
               for="{{ form.org_unit.name }}">
               {{ form.org_unit.label }}
             </label>
-            <select class="treeview" id="sel_1" name="{{ form.org_unit.name }}" size="10">
+            <select class="treeview" id="sel_1" multiple="multiple" name="{{ form.org_unit.name }}" size="10">
               {% for node,structure in org_units|tree_info %}              
               {% if node.is_child_node %}
               <option value="{{ node.uuid }}"
+                      id = "treeview_option_{{node.uuid}}"
+                      data-descendents="{{node.children.all}}"
                       data-pup="{{ node.parent.uuid }}"
                       class="l-{{node.get_ancestors.count}}
                       {% if node.get_descendant_count != 0 %} non-leaf {% endif %}" 
@@ -537,6 +539,8 @@
               </option>
               {% else %}
               <option value="{{ node.uuid }}"
+                      id = "treeview_option_{{node.uuid}}"
+                      data-descendents="{{node.children.all}}"
                       class="l-0 {% if node.get_descendant_count != 0 %} non-leaf {% endif %}"
                       {% if form.org_unit.value|add:"0" == node.uuid|add:"0" %}
                         selected="selected"
