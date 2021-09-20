@@ -12,6 +12,7 @@ for (i = 0; i < l; i++) {
   a = document.createElement("DIV");
   a.setAttribute("class", "select-selected");
   a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+  a.value = selElmnt.options[selElmnt.selectedIndex].value;
   x[i].appendChild(a)
 
   /* for each element, create a new DIV that will contain the option list */
@@ -22,6 +23,7 @@ for (i = 0; i < l; i++) {
     create a new DIV that will act as an option item */
     c = document.createElement("DIV");
     c.innerHTML = selElmnt.options[j].innerHTML;
+    c.value = selElmnt.options[j].value;
 
     c.addEventListener("click", function(e) {
         /* when an item is clicked, update the original select box,
@@ -39,6 +41,7 @@ for (i = 0; i < l; i++) {
             for (k = 0; k < yl; k++) {
               y[k].removeAttribute("class");
             }
+            this.setAttribute("value", this.value);
             this.setAttribute("class", "same-as-selected");
             break;
           }

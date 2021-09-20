@@ -14,14 +14,29 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
-from django.http import HttpResponseRedirect
+from rest_framework.generics import ListAPIView
 
 from .scanner_views import *
 from ..aescipher import decrypt
+from ..serializers import OrganizationalUnitSerializer
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ...core.models import Feature, Client
 from ...organizations.models import OrganizationalUnit
 
+
+class OrganizationalUnitListing(ListAPIView):
+    serializer_class = OrganizationalUnitSerializer
+
+    def get_queryset(self):
+        organization_id = self.request.query_params.get('organization_id', None)
+
+        if organization_id:
+            queryList = OrganizationalUnit.objects.filter(
+                    organization=organization_id)
+        else:
+            queryList = []
+
+        return queryList
 
 class ExchangeScannerList(ScannerList):
     """Displays list of exchange scanners."""

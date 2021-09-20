@@ -59,7 +59,7 @@ let selected_values = [];
 
 		// when building the tree, add all already selected values and mark them 
 		s2inst.val().forEach( function(value) {
-			 selectNodes(value)
+			selectNodes(value)
 		} )
 
 		s2inst.on("select2:open", function (evt) {
@@ -274,12 +274,12 @@ let selected_values = [];
 				if (labelPath) {
 					$opt.text(readPath(data, labelPath));
 				} else {
-					$opt.text(data[treeData.labelFld || "text"]);
+					$opt.text(data[treeData.labelFld || "name"]);
 				}
 				if (idPath) {
 					$opt.val(readPath(data, idPath));
 				} else {
-					$opt.val(data[treeData.valFld || "id"]);
+					$opt.val(data[treeData.valFld || "uuid"]);
 				}
 				if (data[treeData.selFld || "selected"] && String(data[treeData.selFld || "selected"]) === "true") {
 					$opt.prop("selected", data[treeData.selFld || "selected"]);
@@ -377,7 +377,7 @@ function findOldestSelectedParent(selected_id) {
 	return selected_id
 }
 
-$(document).ready(function () {
+function createTreeView() {
 	/** disables file upload */
 	function orgUnitSelectOptionValueToggle() {
 		if (document.getElementById("sel_1")) { 
@@ -399,4 +399,4 @@ $(document).ready(function () {
 	}
 	
 	var treeview = $("#sel_1").select2ToTree();
-});
+};

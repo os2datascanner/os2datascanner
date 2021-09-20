@@ -77,7 +77,12 @@
 <!-- Tree view widget -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
+{% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features and FEATURES.ORG_STRUCTURE in client.enabled_features %}
+<!-- if ORG_STRUCTURES is not enabled for the client -->
 <script src="{% static 'js/dropdowntree.js' %}"></script>
+<script src="{% static 'js/getOrgUnits.js' %}"></script>
+{% endif %}
 
 {% endblock %}
 
@@ -512,7 +517,7 @@
           <h3 class="required-form">
             {% trans "add users"|capfirst %}
           </h3>
-          {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features %}
+          {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features and FEATURES.ORG_STRUCTURE in client.enabled_features %}
           <p class="information">{% trans "select users from"|capfirst %}</p>
           <div class="form__group {% if form.org_unit.errors %} has-error{% endif %}">
             <label 
@@ -521,35 +526,7 @@
               for="{{ form.org_unit.name }}">
               {{ form.org_unit.label }}
             </label>
-            <select class="treeview" id="sel_1" multiple="multiple" name="{{ form.org_unit.name }}" size="10">
-              {% for node,structure in org_units|tree_info %}              
-              {% if node.is_child_node %}
-              <option value="{{ node.uuid }}"
-                      id = "treeview_option_{{node.uuid}}"
-                      data-descendents="{{node.children.all}}"
-                      data-pup="{{ node.parent.uuid }}"
-                      class="l-{{node.get_ancestors.count}}
-                      {% if node.get_descendant_count != 0 %} non-leaf {% endif %}" 
-                      {% if form.org_unit.value|add:"0" == node.uuid|add:"0" %}
-                        selected="selected"
-                      {% endif %}
-              >
-                {{ node }}
-                
-              </option>
-              {% else %}
-              <option value="{{ node.uuid }}"
-                      id = "treeview_option_{{node.uuid}}"
-                      data-descendents="{{node.children.all}}"
-                      class="l-0 {% if node.get_descendant_count != 0 %} non-leaf {% endif %}"
-                      {% if form.org_unit.value|add:"0" == node.uuid|add:"0" %}
-                        selected="selected"
-                      {% endif %}
-              >
-                {{ node }}
-              </option>
-              {% endif %}
-              {% endfor %}
+            <select class="treeview" id="sel_1" name="{{ form.org_unit.name }}" multiple size="10" url="{% url 'org-units-listing' %}">
             </select>
             {% if form.org_unit.errors %}{{ form.org_unit.errors }}{% endif %}
           </div>

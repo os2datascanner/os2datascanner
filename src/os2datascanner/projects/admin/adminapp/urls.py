@@ -35,7 +35,7 @@ from .views.views import GuideView, DialogSuccess
 from .views.exchangescanner_views import (ExchangeScannerList, ExchangeScannerCreate,
                                           ExchangeScannerUpdate, ExchangeScannerDelete,
                                           ExchangeScannerRun, ExchangeScannerAskRun,
-                                          ExchangeScannerCopy)
+                                          ExchangeScannerCopy, OrganizationalUnitListing)
 
 from .views.filescanner_views import (FileScannerCreate, FileScannerRun,
                                       FileScannerAskRun, FileScannerUpdate,
@@ -94,6 +94,7 @@ urlpatterns = [
     url(r'^status/(?P<pk>\d+)/delete/$', StatusDelete.as_view(), name='status-delete'),
     url(r'^help/guide/$', GuideView.as_view(), name='guide'),
     #Exchangescanner URL's
+    url(r'^org-units-listing/', OrganizationalUnitListing.as_view(), name='org-units-listing'),
     url(r'^exchangescanners/$', ExchangeScannerList.as_view(), name='exchangescanners'),
     url(r'^exchangescanners/add/$', ExchangeScannerCreate.as_view(), name='exchangescanner_add'),
     url(r'^exchangescanners/(?P<pk>\d+)/delete/$', ExchangeScannerDelete.as_view(),
