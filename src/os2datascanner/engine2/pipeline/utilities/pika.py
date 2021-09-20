@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from sys import stderr
 import json
 import pika
@@ -11,7 +10,7 @@ from ....utils.system_utilities import json_utf8_decode
 from os2datascanner.utils import pika_settings
 
 
-class PikaConnectionHolder(ABC):
+class PikaConnectionHolder:
     """A PikaConnectionHolder manages a blocking connection to a RabbitMQ
     server. (Like Pika itself, it is not thread safe.)"""
 
