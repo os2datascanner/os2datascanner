@@ -122,9 +122,9 @@ def main():
                         body, routing_key, source_manager)
 
         GenericRunner(
-                read=module.READS_QUEUES,
-                write=module.WRITES_QUEUES,
-                heartbeat=6000).run_consumer()
+            read=module.READS_QUEUES,
+            write=module.WRITES_QUEUES,
+        ).run_consumer()
 
 if __name__ == "__main__":
     main()

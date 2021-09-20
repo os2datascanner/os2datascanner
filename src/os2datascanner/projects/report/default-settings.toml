@@ -179,6 +179,7 @@ AMQP_USER = "guest"
 AMQP_PWD = "guest"
 AMQP_SCHEME = "amqp"
 AMQP_PORT = 5672
+AMQP_HEARTBEAT = 6000
 AMQP_VHOST = "/"
     [amqp.AMQP_BACKOFF_PARAMS]
     max_tries = 10

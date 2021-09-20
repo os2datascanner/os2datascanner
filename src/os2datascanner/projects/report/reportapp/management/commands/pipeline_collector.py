@@ -320,6 +320,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         CollectorRunner(
-                exclusive=True,
-                read=["os2ds_results", "os2ds_events"],
-                heartbeat=6000).run_consumer()
+            exclusive=True,
+            read=["os2ds_results", "os2ds_events"],
+        ).run_consumer()
