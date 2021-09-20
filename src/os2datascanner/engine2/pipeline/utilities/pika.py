@@ -13,29 +13,27 @@ class PikaConnectionHolder:
     """A PikaConnectionHolder manages a blocking connection to a RabbitMQ
     server. (Like Pika itself, it is not thread safe.)"""
 
-    def __init__(self,
-                 backoff=pika_settings.AMQP_BACKOFF_PARAMS,
-                 **kwargs):
-        credentials = pika.PlainCredentials(pika_settings.AMQP_USER,
-                                            pika_settings.AMQP_PWD)
-        self._parameters = pika.ConnectionParameters(credentials=credentials,
-                                                     host=pika_settings.AMQP_HOST,
-                                                     **kwargs)
+    def __init__(self, backoff=pika_settings.AMQP_BACKOFF_PARAMS, **kwargs):
+        connection_params = {
+            "host": pika_settings.AMQP_HOST,
+            "port": pika_settings.AMQP_PORT,
+            "virtual_host": pika_settings.AMQP_VHOST,
+            "heartbeat": pika_settings.AMQP_HEARTBEAT,
+        }
+        connection_params.update(kwargs)
+        credentials = pika.PlainCredentials(
+            pika_settings.AMQP_USER, pika_settings.AMQP_PWD
+        )
+        self._parameters = pika.ConnectionParameters(
+            credentials=credentials, **connection_params
+        )
         self._connection = None
         self._channel = None
         self._backoff = backoff
 
     def make_connection(self):
         """Constructs a new Pika connection."""
-        conn_string_tpl = '{0}://{1}:{2}@{3}:{4}/{5}?heartbeat=6000'
-        conn_string = conn_string_tpl.format(pika_settings.AMQP_SCHEME, 
-                                             pika_settings.AMQP_USER, 
-                                             pika_settings.AMQP_PWD, 
-                                             pika_settings.AMQP_HOST,
-                                             pika_settings.AMQP_PORT,
-                                             pika_settings.AMQP_VHOST.lstrip('/'))
-        params = pika.URLParameters(conn_string)
-        return pika.BlockingConnection(params)
+        return pika.BlockingConnection(self._parameters)
 
     @property
     def connection(self):
