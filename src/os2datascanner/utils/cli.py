@@ -1,15 +1,17 @@
-#!/usr/bin/env python3
-
 """Helper commands for monitoring the OS2datascanner pipeline."""
 
-import logging
-import click
+import socket
 import sys
+import time
 
-logger = logging.getLogger(__name__)
+import click
+import pika
 
-# default time(s) to wait before giving up
-_SLEEPING_TIME = 3
+from os2datascanner.engine2.pipeline.utilities.pika import PikaConnectionHolder
+
+
+_SLEEPING_TIME = 2
+
 
 @click.group()
 def group():
@@ -17,32 +19,32 @@ def group():
 
 
 @group.command()
-@click.option("--wait", default=_SLEEPING_TIME, type=float,
-              help="Wait up to n seconds for rabbitmq.")
+@click.option(
+    "--wait",
+    default=60,
+    type=int,
+    help="How long to attempt connecting to RabbitMQ",
+)
 def wait_for_rabbitmq(wait):
     """Check if RabbitMQ can be reached"""
-    logger.debug("checking if RabbitMQ can be reached")
 
-    import pika
-    from os2datascanner.engine2.pipeline.utilities.pika import (
-        PikaConnectionHolder)
+    attempts = wait // _SLEEPING_TIME
+    click.echo(f"Attempting to connect to RabbitMQ. Will attempt {attempts} times.")
 
-    # change backoff parameters to get different timings. These settings gives a
-    # constant sleep time of @base sec.
-    max_tries = 5
-    base = wait / max_tries
-    try:
-        conn = PikaConnectionHolder(
-            backoff={"count":0, "fuzz":0, "ceiling": 1, "base":base,
-                     "warn_after":max_tries, "max_tries":max_tries})
-        con = conn.connection
-        conn.clear()
-        return 0
-
-    except pika.exceptions.AMQPConnectionError:
+    for i in range(1, attempts + 1):
+        try:
+            PikaConnectionHolder().make_connection()
+        except (pika.exceptions.AMQPConnectionError, socket.gaierror):
+            click.echo(f"RabbitMQ is unavailable - attempt {i}/{attempts}")
+            if i < attempts:  # dont sleep after last failed attempt
+                time.sleep(_SLEEPING_TIME)
+        else:
+            click.echo("Successfully connected to RabbitMQ!")
+            break
+    else:
+        click.echo("Failed to connect to RabbitMQ")
         sys.exit(3)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     group()
