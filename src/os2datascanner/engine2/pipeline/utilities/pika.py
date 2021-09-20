@@ -1,4 +1,3 @@
-from sys import stderr
 import json
 import pika
 import time
