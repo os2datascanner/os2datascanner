@@ -33,7 +33,7 @@ Some JS is packaged into `bundle.js`/`bundle.min.js` via
 [Webpack.](https://webpack.js.org/) Other scripts, like
 [jQuery](https://jquery.com/), are just added via script tags.
 
-Admin app uses jQuery-3.4.1, whereas Report app uses jQuery-3.5.0.
+Admin app uses jQuery-3.6.0, whereas Report app uses jQuery-3.5.0.
 
 Admin app also includes [Bootstrap](https://getbootstrap.com/) Javascript but
 without the accompanying bootstrap.css
@@ -92,7 +92,7 @@ Note: Admin app has no apparant organization of static files.
     - bundle.css - built from SASS files in src
 * **Javascript files loaded in browser**
     - bootstrap.js
-    - jquery-3.4.1.slim.min.js
+    - jquery-3.6.0.min.js
     - jquery.modal.min.js
     - main.js
     - svgxuse.js - for IE svg features
