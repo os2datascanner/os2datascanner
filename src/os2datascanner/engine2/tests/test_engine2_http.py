@@ -5,6 +5,7 @@ from datetime import datetime
 import unittest
 import contextlib
 import logging
+import sys
 from unittest import mock
 from multiprocessing import Manager, Process
 from requests import RequestException
@@ -18,6 +19,7 @@ from os2datascanner.engine2.model.utilities.sitemap import (
     process_sitemap_url, _get_url_data)
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
+from os2datascanner.engine2.conversions.registry import convert
 
 here_path = os.path.dirname(__file__)
 test_data_path = os.path.join(here_path, "data", "www")
@@ -91,7 +93,9 @@ excluded_sites = WebSource(
     "http://localhost:64346/",
     sitemap="http://localhost:64346/sitemap_underside.xml",
     exclude=["http://localhost:64346/undermappe", "http://localhost:64346/kontakt.html"])
-
+links_handle = WebHandle(
+    WebSource("http://localhost:64346/"),
+    path="external_links.html")
 
 class Engine2HTTPSetup():
     @classmethod
@@ -402,10 +406,15 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
             for h in external_links_site.handles(sm):
                 print(h.presentation)
                 count += 1
+
+        if sys.version_info < (3, 9):
+            ncount = 12
+        else:
+            ncount = 11
         self.assertEqual(
             count,
-            11,
-            "site with broken internal and external links should have 11 "
+            ncount,
+            f"site with broken internal and external links should have {ncount} "
             "handles that does not produce an exception"
         )
 
@@ -434,6 +443,10 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
         # In case we catch an generic Exception, we could test the type, msg, code
         # self.assertTrue(type(exception) in (RequestException, ))
         # self.assertEqual(exception.msg, "timeout ... ", "wrong exception msg")
+        if sys.version_info < (3, 9):
+            nfollow = 5
+        else:
+            nfollow = 4
         self.assertEqual(
             count_follow,
             6,
@@ -441,8 +454,8 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
             "good links")
         self.assertEqual(
             count_nfollow,
-            4,
-            "site with broken internal and external links should have 4 "
+            nfollow,
+            f"site with broken internal and external links should have {nfollow} "
             "links that cannot be followed. Either by returning (404 or 410) "
             "or domain-not-found(dns) or another Requests.RequestsException")
         self.assertEqual(
@@ -459,4 +472,34 @@ class Engine2SitemapXXE(Engine2HTTPSetup, unittest.TestCase):
             [('http://localhost:64346/?', None)],
             "sitemap xml-parser is vulnerable to XXE(XML External Entity) injection."
             "Make sure to disable `resolve_entities` in the xml parser"
+        )
+
+
+class HTTPConversionTests(Engine2HTTPSetup, unittest.TestCase):
+    def test_links_conversion(self):
+        with SourceManager() as sm:
+            lr = links_handle.follow(sm)
+            links = convert(lr, OutputType.Links, mime_override="text/html").value
+        expected = [
+            "http://localhost:64346/",
+            "http://localhost:64346/vstkom.png",
+            "https://datatracker.ietf.org/doc/html/rfc2606",
+            "http://localhost:64346/intet",
+            "http://example.com",
+            "http://example.com/nonexistent",
+            "http://this-side-does-not-exists.invalid",
+        ]
+        if sys.version_info < (3, 9):
+            """XXX:
+            <a href=tel:123> should result in a absolute link, but in python3.6
+            urllib.parse.urlsplit mistakenly interpret the number after : as a
+            port-number. This is fixed in recent python versions.
+
+            """
+            expected.append("http://localhost:64346/tel:123456789")
+
+        self.assertListEqual(
+            links,
+            expected,
+            "Conversion from html to links did not produce the expected number of links"
         )
