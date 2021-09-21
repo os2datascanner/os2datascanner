@@ -10,6 +10,10 @@ READS_QUEUES = ("os2ds_conversions",)
 WRITES_QUEUES = ("os2ds_matches", "os2ds_checkups", "os2ds_problems",
         "os2ds_metadata", "os2ds_status",)
 PROMETHEUS_DESCRIPTION = "Messages handled by worker"
+# Let the Pika background thread aggressively collect tasks. Workers should
+# always be doing something -- every centisecond of RabbitMQ overhead is time
+# wasted!
+PREFETCH_COUNT = 8
 
 
 def explore(sm, msg):

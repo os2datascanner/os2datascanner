@@ -145,6 +145,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         CollectorRunner(
-            exclusive=True,
-            read=["os2ds_status", "os2ds_checkups"],
-        ).run_consumer()
+                exclusive=True,
+                read=["os2ds_status", "os2ds_checkups"],
+                prefetch_count=8).run_consumer()
