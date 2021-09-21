@@ -76,16 +76,18 @@ class PikaConnectionHolder:
 
 
 class PikaPipelineRunner(PikaConnectionHolder):
-    def __init__(self, *, read=None, write=None, **kwargs):
+    def __init__(self, *,
+            prefetch_count=1, read=None, write=None, **kwargs):
         super().__init__(**kwargs)
         self._read = set() if read is None else set(read)
         self._write = set() if write is None else set(write)
+        self._prefetch_count = prefetch_count
 
     def make_channel(self):
         """As PikaConnectionHolder.make_channel, but automatically declares all
         of the read and write queues used by this pipeline stage."""
         channel = super().make_channel()
-        channel.basic_qos(prefetch_count=1)
+        channel.basic_qos(prefetch_count=self._prefetch_count)
         for q in self._read.union(self._write):
             channel.queue_declare(q, passive=False,
                     durable=True, exclusive=False, auto_delete=False)
