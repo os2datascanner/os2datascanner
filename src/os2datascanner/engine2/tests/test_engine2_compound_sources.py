@@ -113,10 +113,8 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                         test_data_path, "msoffice/corrupted/test.trunc.doc"))
         corrupted_doc = Source.from_handle(corrupted_doc_handle)
         with SourceManager() as sm:
-            self.assertEqual(
-                    list(corrupted_doc.handles(sm)),
-                    [],
-                    "unrecognised CDFV2 document should be empty and wasn't")
+            with self.assertRaises(ValueError):
+                list(corrupted_doc.handles(sm))
 
     def test_libreoffice_size(self):
         large_doc_handle = FilesystemHandle.make_handle(
