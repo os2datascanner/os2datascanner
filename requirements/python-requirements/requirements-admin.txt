@@ -222,7 +222,7 @@ pycparser==2.20
     # via
     #   -c requirements-engine.txt
     #   cffi
-pycrypto==2.6.1
+pycryptodome==3.10.1
     # via -r requirements-admin.in
 pygments==2.6.1
     # via
