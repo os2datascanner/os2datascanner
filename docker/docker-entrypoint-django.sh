@@ -24,7 +24,7 @@ if [[ -z "${BARE_MODE}" ]]; then
 
   # Wait for rabbitmq to start
   echo "Waiting for rabbitmq"
-  python -m os2datascanner.utils.cli wait-for-rabbitmq --wait 30 || exit
+  python -m os2datascanner.utils.cli wait-for-rabbitmq || exit
   echo "OK"
   echo ""
 else
