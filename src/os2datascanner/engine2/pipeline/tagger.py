@@ -5,6 +5,7 @@ from . import messages
 READS_QUEUES = ("os2ds_handles",)
 WRITES_QUEUES = ("os2ds_metadata", "os2ds_problems",)
 PROMETHEUS_DESCRIPTION = "Metadata extractions"
+PREFETCH_COUNT = 8
 
 
 def message_received_raw(body, channel, source_manager):

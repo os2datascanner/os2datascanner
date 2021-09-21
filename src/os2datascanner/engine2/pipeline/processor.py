@@ -11,6 +11,7 @@ READS_QUEUES = ("os2ds_conversions",)
 WRITES_QUEUES = ("os2ds_scan_specs", "os2ds_representations",
         "os2ds_problems", "os2ds_checkups",)
 PROMETHEUS_DESCRIPTION = "Representations generated"
+PREFETCH_COUNT = 8
 
 
 def check(source_manager, handle):

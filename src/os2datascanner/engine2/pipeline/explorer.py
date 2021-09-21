@@ -3,11 +3,17 @@ from ..model.core import (
     Source, SourceManager, UnknownSchemeError, DeserialisationError)
 from . import messages
 
+
 logger = logging.getLogger(__name__)
 
 READS_QUEUES = ("os2ds_scan_specs",)
 WRITES_QUEUES = ("os2ds_conversions", "os2ds_problems", "os2ds_status",)
 PROMETHEUS_DESCRIPTION = "Sources explored"
+# An individual exploration task is typically the longest kind of task, so we
+# want to do as little prefetching as possible here. (If we're doing an
+# agonisingly slow web scan, we don't want to hog scan specs we're not ready
+# to use yet!)
+PREFETCH_COUNT = 1
 
 
 def message_received_raw(body, channel, source_manager):
