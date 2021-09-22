@@ -70,10 +70,11 @@ for _cls in [APIKey, ScheduledCheckup]:
 class ScanStatusAdmin(admin.ModelAdmin):
     model = ScanStatus
     readonly_fields = ('fraction_explored', 'fraction_scanned',
-                       'estimated_completion_time',)
+                       'estimated_completion_time', 'last_modified',)
     fields = ('scan_tag', 'scanner', 'total_sources', 'explored_sources',
               'fraction_explored', 'total_objects', 'scanned_objects',
-              'fraction_scanned', 'scanned_size', 'estimated_completion_time',)
+              'fraction_scanned', 'scanned_size', 'estimated_completion_time',
+              'last_modified',)
 
 
 admin.site.unregister(Group)

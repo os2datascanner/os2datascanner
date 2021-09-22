@@ -114,3 +114,26 @@ class StatusTest(django.test.TestCase):
                 ss.fraction_scanned,
                 None,
                 "scan fraction should not have been defined")
+    
+    def test_updates_on_save(self):
+        ss = ScanStatus(
+            scanner=self.scanner,
+            scan_tag={"time": datetime.now(tz=gettz()).isoformat()},
+            total_sources=5,
+            explored_sources=5,
+            total_objects=0,
+        )
+        self.scanner.save()
+        ss.save()
+        last_modified = ss.last_modified
+        # save should update last_modified field on scannerStatus
+        ss.save()
+
+        self.assertGreater(
+            ss.last_modified,
+            last_modified,
+            "scanStatus does not update last modifed on save",
+        )
+
+        ss.delete()
+        self.scanner.delete()

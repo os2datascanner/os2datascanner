@@ -388,6 +388,8 @@ class ScanStatus(models.Model):
     """A ScanStatus object collects the status messages received from the
     pipeline for a given scan."""
 
+    last_modified = models.DateTimeField(verbose_name=_("last modified"), auto_now=True)
+
     scan_tag = JSONField(verbose_name=_("scan tag"), unique=True)
 
     scanner = models.ForeignKey(Scanner, related_name="statuses",
