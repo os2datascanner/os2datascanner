@@ -233,10 +233,20 @@ def perform_import_raw(
     # remote one
     iids_to_preserve = set()
     for path, r in remote_hierarchy.walk():
+        if not path:
+            continue
+
         iids_to_preserve.add(_node_to_iid(path, r))
-        if not path or not r.children:
+        if not r.children:
             continue
         path_to_unit(org, path)
+
+    if not iids_to_preserve:
+        logger.warning(
+                "no remote users or organisational units available for"
+                f" organisation {org.name}; are you sure your LDAP settings"
+                " are correct?")
+        return (0, 0, 0)
 
     diff = list(local_hierarchy.diff(remote_hierarchy))
     progress_callback("diff_computed", len(diff))
