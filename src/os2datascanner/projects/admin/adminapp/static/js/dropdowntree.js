@@ -30,7 +30,6 @@ let selected_values = [];
 				container.setAttribute("data-val", ele.value);
 				if (ele.className) container.className += " " + ele.className;
 				if(selected_values.indexOf(ele.value)!=-1) {
-					console.log($iteme.children()[0])
 					$($iteme.children()[0]).removeClass('org-icon')
 					$($iteme.children()[0]).addClass('org-icon-selected')
 					container.setAttribute('aria-selected', true)
@@ -55,6 +54,7 @@ let selected_values = [];
 		};
 
 		opts['closeOnSelect'] = false;
+		opts['shouldFocusInput'] = false;
 		opts['placeholder'] = gettext('Select one or more organizational units')
     	opts['allowClear'] = true
 		opts['width'] = '100%'
@@ -62,7 +62,7 @@ let selected_values = [];
 
 		// when building the tree, add all already selected values and mark them 
 		s2inst.val().forEach( function(value) {
-			selectNodes(value)
+			selectNodes(value, false)
 		} )
 
 		s2inst.on("select2:open", function (evt) {
@@ -95,19 +95,6 @@ let selected_values = [];
 				$(selected_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected')
 				$(selected_node.querySelector(".item-label").children[0]).addClass('org-icon')
 			}
-			//finding ancestors
-			let ancestors = [];
-			findParentNodes(selected_id, ancestors);
-
-			//for each ancestor, unselect select element
-			ancestors.forEach(function (ancestor_id) { 
-				let parent_node = options.filter(function (element) { return element.dataset.val == ancestor_id })[0];
-				if(  parent_node ) {
-					$(parent_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected')
-					$(parent_node.querySelector(".item-label").children[0]).addClass('org-icon')
-					parent_node.ariaSelected = false
-				}
-			});
 			//finding descendents
 			let descendents = [];
 			findChildNodes(selected_id, descendents);
@@ -123,28 +110,41 @@ let selected_values = [];
 			//..unselect them from selected_values			
 			let to_be_removed = [selected_id]
 			descendents.forEach(function (item) { to_be_removed.push(item) })
-			ancestors.forEach(function (item) { to_be_removed.push(item) })
-
 			to_be_removed.forEach(function (element) {
 				selected_values = selected_values.filter(function (value) { return value != element });
 			});
 			changeSelectedValuesInDropdown();
 		});
 
-		// add all child nodes and the selected node, also check if parent is completed
+		// add all child nodes and the selected node
 		s2inst.on('select2:selecting', function (evt) {
 			let selected_id = evt.params.args.data.id;
-			 selectNodes(selected_id)
+			selectNodes(selected_id, true)
 			evt.preventDefault()
 		});
 
-		function selectNodes(selected_id) {
+		function selectNodes(selected_id, selectChildren) {
 			selected_values.push(selected_id);
+			selected_ids = [selected_id]
+			
+			if(selectChildren){
+				let descendents = [];
+				findChildNodes(selected_id, descendents);
+				descendents.forEach(function (item) { selected_values.push(item) })
+				descendents.forEach(function (item) { selected_ids.push(item) })
+			}
 
-			let descendents = [];
-			findChildNodes(selected_id, descendents);
-			descendents.forEach(function (item) { selected_values.push(item) })
-			selectCompleteParents(selected_id);
+			let options = Array.prototype.slice.call(document.querySelectorAll("li.select2-results__option"));
+			let selected_nodes = options.filter(function (option) {
+				return selected_ids.indexOf(option.dataset.val)!=-1
+			})
+			selected_nodes.forEach( function(node) {	
+				if( node.className.indexOf('non-leaf') != -1 && node.className.indexOf('opened') == -1  ) {
+					$(node).addClass('opened')
+					showHideSub(node)
+				}
+			})	
+
 			changeSelectedValuesInDropdown();
 		}
 
@@ -157,7 +157,7 @@ let selected_values = [];
 					unique_values.push(value);
 			});
 			selected_values = unique_values;
-			$(s2inst).val(getSanitizedTreeOutput());
+			$(s2inst).val(selected_values);
 			$(s2inst).trigger('change');
 		}
 
@@ -172,50 +172,12 @@ let selected_values = [];
 					if(node.querySelector(".item-label").children[0]) {
 						$(node.querySelector(".item-label").children[0]).removeClass('org-icon')
 						$(node.querySelector(".item-label").children[0]).addClass('org-icon-selected')
-						//style.background="url('/static/src/svg/done.svg'), #47a1c5";
 						node.setAttribute('aria-selected', true)
 					}
 				})
 			}
 		})
 
-		function selectCompleteParents(selected_id) {
-			let nodes = []
-			let parent_check = true
-			let parent_id = $('#treeview_option_' + selected_id).attr('data-pup')
-
-			// finds sibling nodes and if all sibling notes are selected, select parent node. repeats for all ancestors
-			while (parent_check && parent_id) {
-				// filter all nodes by parent_id, but only one lvl down
-				findChildNodes(parent_id, nodes, false)
-
-				//for each node check for selected,
-				nodes.forEach(function (node) {
-					if (selected_values.indexOf(node) == -1) { //if the node is not in included values
-						parent_check = false;
-						return;
-					}
-				});
-				// if all selected, add parent id to selected id, 
-				if (parent_check) {
-					selected_values.push(parent_id)
-				}
-				parent_id = $('#treeview_option_' + parent_id).attr('data-pup')
-			}
-		}
-
-		/** finds all ancestor nodes */
-		function findParentNodes(selected_id, parent_ids) {
-			let $selected_node = $('#treeview_option_' + selected_id)
-			pup = $selected_node.attr('data-pup')
-			if(pup) {
-				while(pup) {
-					parent_ids.push(pup)
-					pup = $('#treeview_option_' + pup).attr('data-pup')
-				}
-			}
-			return parent_ids
-		}
 		/** finds all descendents of a node, if recursively == false, only go one lvl down */
 		function findChildNodes(selected_id, descendents_ids) {
 			//babel conversion for a default param
@@ -361,41 +323,6 @@ let selected_values = [];
 	}
 })(jQuery);
 
-/* makes sure that parent nodes that are selected, doesnt include sub-nodes*/
-function getSanitizedTreeOutput() {
-	// find oldest selected ancestor
-	sanitized_ids = [];
-	selected_values.forEach(function (value_id) {
-		oldest_selected_parent = findOldestSelectedParent(value_id);
-		//if sanitized ids does not contain oldest selected 
-		if (sanitized_ids.indexOf(oldest_selected_parent) == -1) { 
-			sanitized_ids.push(oldest_selected_parent);
-		}
-	});
-	return sanitized_ids;
-}
-
-/** finds all ancestor nodes */
-function findOldestSelectedParent(selected_id) {
-	let $selected_node = $('#treeview_option_' + selected_id)
-	let $cur_ele = $selected_node
-
-	do {
-		let pup = $cur_ele.attr('data-pup')
-		$cur_ele = null
-		// if the parent is currently selected, rerun do to see if a older selected ancestor exists
-		if ( pup && selected_values.indexOf(pup) != -1) { 
-			selected_id = pup
-			$cur_ele = $('#treeview_option_' + selected_id)
-		}
-		else {
-			return selected_id
-		}
-	} while ($cur_ele)
-
-	return selected_id
-}
-
 function createTreeView() {
 	/** disables file upload */
 	function orgUnitSelectOptionValueToggle() {
@@ -416,6 +343,4 @@ function createTreeView() {
 			orgUnitSelectOptionValueToggle();
 		}
 	}
-	
-	var treeview = $("#sel_1").select2ToTree();
 };

@@ -179,7 +179,7 @@
 
 .select2-selection {
 	padding: 0 !important;
-	height: 2.65rem !important;
+	min-height: 2.65rem !important;
 	width: 100% !important;
 }
 
@@ -314,11 +314,11 @@
 	}
 
 	.s2-to-tree li.select2-results__option.non-leaf.opened .expand-collapse:before {
-		content: "⮟" !important;
+		content: "⮞" !important;
 		font-size: 1em !important;
 		top: -.65em !important;
 		transform: rotate(90deg);
-		left: -0.3em !important;
+		left: -0.25em !important;
 	}
 
     .s2-to-tree li.select2-results__option.non-leaf .expand-collapse:before {
