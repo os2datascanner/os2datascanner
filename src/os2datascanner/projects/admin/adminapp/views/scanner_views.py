@@ -99,9 +99,16 @@ class StatusCompleted(StatusBase):
     model = ScanStatus
 
     def get_queryset(self):
-        """ Returns a queryset of Scannerjobs that are finished"""
+        """Returns a queryset of Scannerjobs that are finished.
 
-        return super().get_queryset().order_by('-pk').filter(completed_scans)
+        The queryset consists only of completed scans and is ordered by start time.
+        """
+        
+        return ( 
+            super().get_queryset()
+            .filter(completed_scans)
+            .order_by('-scan_tag__time')
+        ) 
 
 
 class StatusDelete(RestrictedDeleteView):
