@@ -50,7 +50,7 @@ class ExchangeScanner(Scanner):
 
     org_unit = TreeManyToManyField(
         "organizations.OrganizationalUnit",
-        related_name = "exchangescanners",
+        related_name="exchangescanners",
         blank=True,
         verbose_name=_("organizational unit"),
     )
@@ -68,14 +68,13 @@ class ExchangeScanner(Scanner):
     def generate_sources(self):
         user_list = ()
         # org_unit check as you cannot do both simultaneously
-        if self.userlist and not self.org_unit:
+        if self.userlist and not self.org_unit.exists():
             user_list = (
                 u.decode("utf-8").strip() for u in self.userlist if u.strip()
             )
-
         # org_unit should only exist if chosen and then be used,
         # but a user_list is allowed to co-exist.
-        elif self.org_unit:
+        elif self.org_unit.exists():
             # Create a set so that emails can only occur once.
             user_list = set()
             # loop over all units incl children

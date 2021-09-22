@@ -1,6 +1,8 @@
 from django.test import TestCase, RequestFactory
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from ..adminapp.models.authentication_model import Authentication
 from ..adminapp.models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ..adminapp.views.exchangescanner_views import ExchangeScannerCreate
@@ -111,6 +113,31 @@ class ExchangeScannerViewsTest(TestCase):
             authentication=scanner_auth_obj,
         )
         exchange_scan.org_unit.set([test_org_unit0, test_org_unit1 ])
+
+        def generate_file():
+            try:
+                myfile = open('user_list.txt', 'w')
+                myfile.write('user1\n')
+                myfile.write('user2\n')
+                myfile.write('user3\n')
+            finally:
+                myfile.close()
+
+            return myfile
+
+        scanner_auth_obj_2 = Authentication.objects.create(
+            username="ImExchangeAdmin",
+            domain="ThisIsMyExchangeDomain",
+        )
+
+        exchange_scan_with_userlist = ExchangeScanner.objects.create(
+            pk=2,
+            name="This is an Exchange Scanner with userlist",
+            organization=magenta_org,
+            validation_status=ExchangeScanner.VALID,
+            service_endpoint="exchangeendpoint",
+            authentication=scanner_auth_obj_2,
+        )
 
         benny_account.units.add(test_org_unit1)
         yvonne_account.units.add(test_org_unit0)
@@ -237,6 +264,20 @@ class ExchangeScannerViewsTest(TestCase):
         self.assertEqual(sources_yielded, 2)
 
         yvonne_alias.delete()
+
+    def test_exchangescanner_generate_source_with_uploaded_userlist(self):
+        sources_yielded = 0  # Store a count
+        exchange_scanner_obj = ExchangeScanner.objects.get(pk=2)
+        exchange_scanner_obj.authentication.set_password("password")
+
+        exchange_scanner_obj.userlist = SimpleUploadedFile("dummy.txt",
+                                                           b"aleph\nalex\nfred")
+
+        exchange_scanner_source = exchange_scanner_obj.generate_sources()
+        for ews_source in exchange_scanner_source:
+            sources_yielded += 1
+
+        self.assertEqual(sources_yielded, 3)
 
     def get_exchangescanner_response(self):
         request = self.factory.get('/exchangescanners/add/')
