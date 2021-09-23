@@ -339,7 +339,10 @@ class KeycloakImportTest(TestCase):
         NEW_CORP = deepcopy(TEST_CORP)
         for tester in NEW_CORP:
             try:
+                # The hero of the Polish epic poem Pan Tadeusz, since you ask
+                # (the first line of which is "O Lithuania, my homeland!")
                 tester["firstName"] = "Tadeusz"
+                tester["lastName"] = "Soplica"
             except ValueError:
                 pass
 
@@ -349,6 +352,6 @@ class KeycloakImportTest(TestCase):
 
         for user in Account.objects.filter(organization=self.org):
             self.assertEqual(
-                    user.first_name,
-                    "Tadeusz",
+                    (user.first_name, user.last_name),
+                    ("Tadeusz", "Soplica"),
                     "property update failed")
