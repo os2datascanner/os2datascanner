@@ -19,5 +19,6 @@ nav:
     - A11y Scanner: a11y-scanner.md
   - Requirements: requirements.md
   - Notes: notes.md
+  - Reusable components: reusable-components.md
   - Release procedure: release-procedure.md
   - Release notes: changelog.md
