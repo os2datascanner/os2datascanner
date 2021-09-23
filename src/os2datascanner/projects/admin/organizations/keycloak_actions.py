@@ -1,5 +1,6 @@
 from typing import Tuple, Sequence
 from django.db import transaction
+import logging
 
 from os2datascanner.utils.ldap import RDN, LDAPNode
 from os2datascanner.utils.system_utilities import time_now
@@ -9,6 +10,9 @@ from ..import_services import keycloak_services
 from .models import (Alias, Account, Position,
         Organization, OrganizationalUnit)
 from .models.aliases import AliasType
+
+
+logger = logging.getLogger(__name__)
 
 
 def keycloak_dn_selector(d):
@@ -229,10 +233,20 @@ def perform_import_raw(
     # remote one
     iids_to_preserve = set()
     for path, r in remote_hierarchy.walk():
+        if not path:
+            continue
+
         iids_to_preserve.add(_node_to_iid(path, r))
-        if not path or not r.children:
+        if not r.children:
             continue
         path_to_unit(org, path)
+
+    if not iids_to_preserve:
+        logger.warning(
+                "no remote users or organisational units available for"
+                f" organisation {org.name}; are you sure your LDAP settings"
+                " are correct?")
+        return (0, 0, 0)
 
     diff = list(local_hierarchy.diff(remote_hierarchy))
     progress_callback("diff_computed", len(diff))
@@ -323,6 +337,27 @@ def perform_import_raw(
     to_delete = [t for t in to_delete if t.imported_id not in iids_to_preserve]
 
     with transaction.atomic():
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug("Summarising LDAP transaction:")
+            for manager, instances in group_into(
+                    to_delete, Alias, Position, Account, OrganizationalUnit):
+                logger.debug(f"{manager.model.__name__}:"
+                        f" delete [{', '.join(str(i) for i in instances)}]")
+            for manager, instances in group_into(
+                    to_update, Alias, Position, Account, OrganizationalUnit,
+                    key=lambda k: k[0]):
+                properties = set()
+                for _, props in instances:
+                    properties |= set(props)
+                instances = set(str(i) for i, _ in instances)
+                logger.debug(f"{manager.model.__name__}:"
+                        f" update fields ({', '.join(properties)})"
+                        f" of [{', '.join(instances)}]")
+            for manager, instances in group_into(
+                    to_add, OrganizationalUnit, Account, Position, Alias):
+                logger.debug(f"{manager.model.__name__}:"
+                        f" add [{', '.join(str(i) for i in instances)}]")
+
         for manager, instances in group_into(
                 to_delete, Alias, Position, Account, OrganizationalUnit):
             manager.filter(pk__in=[i.pk for i in instances]).delete()
