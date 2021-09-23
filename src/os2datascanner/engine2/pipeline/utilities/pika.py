@@ -9,6 +9,11 @@ from ....utils.system_utilities import json_utf8_decode
 from os2datascanner.utils import pika_settings
 
 
+# We register an exception hook to make sure the main thread does not hang
+# indefinitely should a problem arise in the rabbitmq-connection-thread.
+threading.excepthook = lambda _: signal.raise_signal(signal.SIGKILL)
+
+
 class PikaConnectionHolder:
     """A PikaConnectionHolder manages a blocking connection to a RabbitMQ
     server. (Like Pika itself, it is not thread safe.)"""
