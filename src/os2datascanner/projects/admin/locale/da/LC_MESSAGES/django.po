@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-21 04:07-0500\n"
+"POT-Creation-Date: 2021-09-23 06:47-0500\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -93,38 +93,43 @@ msgid "URL must follow the UNC format"
 msgstr "URL skal følge UNC-format"
 
 #: adminapp/models/scannerjobs/scanner_model.py:391
+#: import_services/models/exported_mixin.py:37
+msgid "last modified"
+msgstr "senest opdateret"
+
+#: adminapp/models/scannerjobs/scanner_model.py:393
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:394
+#: adminapp/models/scannerjobs/scanner_model.py:396
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:397
+#: adminapp/models/scannerjobs/scanner_model.py:399
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:399
+#: adminapp/models/scannerjobs/scanner_model.py:401
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:402
+#: adminapp/models/scannerjobs/scanner_model.py:404
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:404
+#: adminapp/models/scannerjobs/scanner_model.py:406
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:407
+#: adminapp/models/scannerjobs/scanner_model.py:409
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:471
+#: adminapp/models/scannerjobs/scanner_model.py:473
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:472
+#: adminapp/models/scannerjobs/scanner_model.py:474
 msgid "scan statuses"
 msgstr "scanstatusser"
 
@@ -1279,10 +1284,6 @@ msgstr "kunder"
 #, python-brace-format
 msgid "{value} is not a valid {class_name}"
 msgstr "{value} er ikke en gyldig værdi for {class_name}"
-
-#: import_services/models/exported_mixin.py:37
-msgid "last modified"
-msgstr "senest opdateret"
 
 #: import_services/models/exported_mixin.py:42
 msgid "last successful export"
