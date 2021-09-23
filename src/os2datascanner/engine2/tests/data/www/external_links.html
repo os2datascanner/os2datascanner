@@ -44,6 +44,19 @@
                 Her er <a href="http://this-side-does-not-exists.invalid"> et
                 link, der ikke har et navneopslag</a>
             </p>
+            <p>
+              <!-- XXX:
+                   should result in an absolute url, but does not with
+                   urllib.parse.urlsplit in python3.6.
+                   The number after : is interpreted as a port number
+                -->
+                Her er <a href="tel:123456789">et telefonnummer</a>.
+            </p>
+            <p>
+                <!-- result in an absolute url-->
+                Her er <a href="mailto:webmaster@example.com">en mail-addr til John Doe</a>
+            </p>>
+
         </div>
         <footer>
             <p>
