@@ -11,7 +11,8 @@ from contextlib import contextmanager
 from ..utilities.backoff import run_with_backoff
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import MultipleResults
-from .smb import SMBSource, make_smb_url, compute_domain
+from .smb import (SMBSource, make_smb_url, compute_domain, 
+    make_presentation, make_presentation_url)
 from .core import Source, Handle, FileResource
 from .file import stat_attributes
 from .utilities import NamedTemporaryResource
@@ -60,7 +61,7 @@ class SMBCSource(Source):
 
     def __init__(self, unc, user=None, password=None, domain=None,
             driveletter=None, *, skip_super_hidden: bool = False):
-        self._unc = unc
+        self._unc = unc.replace('\\', '/')
         self._user = user
         self._password = password
         self._domain = domain if domain is not None else compute_domain(unc)
@@ -311,34 +312,11 @@ class SMBCHandle(Handle):
 
     @property
     def presentation(self):
-        p = self.source.driveletter
-        if p:
-            p += ":"
-        else:
-            p = self.source.unc
-        if p[-1] != "/":
-            p += "/"
-        return (p + self.relative_path).replace("/", "\\")
+        return make_presentation(self)
 
     @property
     def presentation_url(self):
-        # Note that this implementation returns a Windows-friendly URL to the
-        # underlying file -- i.e., one that uses the file: scheme and not smb:
-        url = "file:"
-        # XXX: our testing seems to indicate that drive letter URLs don't work
-        # properly; we'll leave the disabled logic here for now...
-        if False and self.source.driveletter:
-            # Wikipedia indicates that local filesystem paths are represented
-            # with an empty hostname followed by an absolute path...
-            url += "///{0}:".format(self.source.driveletter)
-        else:
-            # ... and that remote ones are indicated with a hostname in the
-            # usual place. Luckily the UNC already starts with two forward
-            # slashes, so we can just paste it in here
-            url += self.source.unc
-        if url[-1] != "/":
-            url += "/"
-        return url + self.relative_path
+        return make_presentation_url(self)
 
     def censor(self):
         return SMBCHandle(self.source.censor(), self.relative_path)

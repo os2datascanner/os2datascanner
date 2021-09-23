@@ -28,6 +28,7 @@ class FileScannerCreate(ScannerCreate):
     """Create a file scanner view."""
 
     model = FileScanner
+    type = 'file'
     fields = [
         'name',
         'schedule',
@@ -58,6 +59,7 @@ class FileScannerUpdate(ScannerUpdate):
     """Update a scanner view."""
 
     model = FileScanner
+    type = 'file'
     fields = [
         'name',
         'schedule',
@@ -115,6 +117,7 @@ class FileScannerDelete(ScannerDelete):
 class FileScannerCopy(ScannerCopy):
     """Create a new copy of an existing FileScanner"""
     model = FileScanner
+    type = 'file'
     fields = [
         'name',
         'schedule',

@@ -40,7 +40,7 @@ class SMBSource(Source):
 
     def __init__(self, unc, user=None, password=None, domain=None,
             driveletter=None):
-        self._unc = unc
+        self._unc = unc.replace('\\', '/')
         self._user = user
         self._password = password
         self._domain = domain if domain is not None else compute_domain(unc)
@@ -146,14 +146,11 @@ class SMBHandle(Handle):
 
     @property
     def presentation(self):
-        p = self.source.driveletter
-        if p:
-            p += ":"
-        else:
-            p = self.source.unc
-        if p[-1] != "/":
-            p += "/"
-        return (p + self.relative_path).replace("/", "\\")
+        return make_presentation(self)
+
+    @property
+    def presentation_url(self):
+        return make_presentation_url(self)
 
     def censor(self):
         return SMBHandle(self.source.censor(), self.relative_path)
@@ -172,3 +169,32 @@ def make_smb_url(schema, unc, user, domain, password):
         netloc += "@"
     netloc += server
     return urlunsplit((schema, netloc, quote(path), None, None))
+
+def make_presentation(self):
+    p = self.source.driveletter
+    if p:
+        p += ":"
+    else:
+        p = self.source.unc
+    if p[-1] != "/":
+        p += "/"
+    return (p + self.relative_path).replace("/", "\\")
+
+def make_presentation_url(self):
+    # Note that this implementation returns a Windows-friendly URL to the
+    # underlying file -- i.e., one that uses the file: scheme and not smb:
+    url = "file:"
+    # XXX: our testing seems to indicate that drive letter URLs don't work
+    # properly; we'll leave the disabled logic here for now...
+    if False and self.source.driveletter:
+        # Wikipedia indicates that local filesystem paths are represented
+        # with an empty hostname followed by an absolute path...
+        url += "///{0}:".format(self.source.driveletter)
+    else:
+        # ... and that remote ones are indicated with a hostname in the
+        # usual place. Luckily the UNC already starts with two forward
+        # slashes, so we can just paste it in here
+        url += self.source.unc
+    if url[-1] != "/":
+        url += "/"
+    return url + self.relative_path

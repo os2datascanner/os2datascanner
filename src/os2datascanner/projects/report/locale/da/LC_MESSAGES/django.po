@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-16 04:50-0500\n"
+"POT-Creation-Date: 2021-09-16 09:58-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -108,30 +108,30 @@ msgstr "oprydder"
 msgid "remediators"
 msgstr "opryddere"
 
-#: reportapp/templates/components/filters.html:23
-#: reportapp/templates/components/filters.html:52
+#: reportapp/templates/components/filters.html:27
+#: reportapp/templates/components/filters.html:56
 msgid "Clear"
 msgstr "Ryd"
 
-#: reportapp/templates/components/filters.html:26
+#: reportapp/templates/components/filters.html:30
 msgid "Scan"
 msgstr "Scan"
 
-#: reportapp/templates/components/filters.html:35
+#: reportapp/templates/components/filters.html:39
 msgid "Select scannerjob"
 msgstr "Vælg scannerjob"
 
-#: reportapp/templates/components/filters.html:55
+#: reportapp/templates/components/filters.html:59
 #: reportapp/templates/components/statistics-template.html:93
 #: reportapp/templates/components/statistics-template.html:99
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: reportapp/templates/components/filters.html:64
+#: reportapp/templates/components/filters.html:68
 msgid "Select sensitivity"
 msgstr "Vælg følsomhed"
 
-#: reportapp/templates/components/filters.html:85
+#: reportapp/templates/components/filters.html:96
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
@@ -174,6 +174,10 @@ msgstr "Åbn"
 #: reportapp/templates/components/hit.html:42
 msgid "Copy"
 msgstr "Kopiér"
+
+#: reportapp/templates/components/hit.html:46
+msgid "Open folder"
+msgstr "Åbn mappe"
 
 #: reportapp/templates/components/hits.html:17
 msgid "Type"
@@ -483,22 +487,22 @@ msgstr ""
 msgid "The page does not exist"
 msgstr ""
 
-#: reportapp/views/views.py:261
+#: reportapp/views/views.py:263
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:262
+#: reportapp/views/views.py:264
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:263
+#: reportapp/views/views.py:265
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:264
+#: reportapp/views/views.py:266
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:415
+#: reportapp/views/views.py:417
 msgid "Not assigned"
 msgstr "Ikke tildelt"

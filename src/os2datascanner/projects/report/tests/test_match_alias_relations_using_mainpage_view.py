@@ -1,6 +1,10 @@
 from datetime import timedelta
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
+from os2datascanner.engine2.model.smb import SMBSource, SMBHandle
+from os2datascanner.engine2.model.smbc import SMBCSource, SMBCHandle
+from os2datascanner.projects.report.reportapp.templatetags.handle_extras \
+        import find_file_folder, find_parent
 
 from os2datascanner.utils.system_utilities import (
         time_now, parse_isoformat_timestamp)
@@ -418,6 +422,26 @@ class MatchAliasRelationTest(TestCase):
         qs1 = self.mainpage_get_queryset()
         self.assertEqual(len(qs1), 3)
         emailalias.delete()
+
+    def test_find_file_folder_filter_on_handle(self):
+        handle1 = SMBHandle(
+            SMBSource(
+                "//172.16.20.108/toender/presentations",
+                "username"),
+            "os2datascanner.pdf")
+        handle1 = find_parent(handle1, handle1.type_label)
+        converted_handle1 = find_file_folder(handle1, force=True)
+        handle2 = SMBCHandle(
+            SMBCSource(
+                "\\\\172.16.20.108\\toender\presentations",
+                "username", "topsecret", "WORKGROUP8"),
+            "os2datascanner.pdf")
+        handle2 = find_parent(handle2, handle2.type_label)
+        converted_handle2 = find_file_folder(handle2, force=True)
+        self.assertEqual(
+            converted_handle1, 'file://172.16.20.108/toender/presentations')
+        self.assertEqual(
+            converted_handle2, 'file://172.16.20.108/toender/presentations')
 
 # Helper methods
     def create_email_alias_kjeld_and_egon(self):
