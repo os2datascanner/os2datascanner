@@ -45,15 +45,21 @@ class LinksFollowRule(SimpleRule):
                 name=obj["name"] if "name" in obj else None)
 
 
+# Ideally we would do requests.head(), but not all webservers responds correctly to
+# head requests. Instead do a get requests, but ask only for the first byte of the
+# page. Not all webservers respect this, but at least we get the correct repsonse
+# code
+__HEADERS = {"Range": "bytes=0-1"}
 def check(link: str) -> bool:
-    """return True if link can be followed
+    """return True if link can be followed and the final response is less than 400
 
-    Redirects are allowed and only the headers are retrieved
+    Redirects are allowed and only the first byte is downloaded with get-call.
+
     """
+
     try:
-        r =requests.head(link, allow_redirects=True, timeout=TIMEOUT)
+        r =requests.get(link, allow_redirects=True, timeout=TIMEOUT, headers=__HEADERS)
         r.raise_for_status()
         return True
-        # return response.status_code not in (404, 410,)
     except RequestException as e:
         return False
