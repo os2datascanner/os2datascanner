@@ -407,14 +407,10 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
                 print(h.presentation)
                 count += 1
 
-        if sys.version_info < (3, 9):
-            ncount = 12
-        else:
-            ncount = 11
         self.assertEqual(
             count,
-            ncount,
-            f"site with broken internal and external links should have {ncount} "
+            11,
+            "site with broken internal and external links should have 11 "
             "handles that does not produce an exception"
         )
 
@@ -443,10 +439,6 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
         # In case we catch an generic Exception, we could test the type, msg, code
         # self.assertTrue(type(exception) in (RequestException, ))
         # self.assertEqual(exception.msg, "timeout ... ", "wrong exception msg")
-        if sys.version_info < (3, 9):
-            nfollow = 5
-        else:
-            nfollow = 4
         self.assertEqual(
             count_follow,
             6,
@@ -454,8 +446,8 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
             "good links")
         self.assertEqual(
             count_nfollow,
-            nfollow,
-            f"site with broken internal and external links should have {nfollow} "
+            4,
+            "site with broken internal and external links should have 4 "
             "links that cannot be followed. Either by returning (404 or 410) "
             "or domain-not-found(dns) or another Requests.RequestsException")
         self.assertEqual(
@@ -489,14 +481,6 @@ class HTTPConversionTests(Engine2HTTPSetup, unittest.TestCase):
             "http://example.com/nonexistent",
             "http://this-side-does-not-exists.invalid",
         ]
-        if sys.version_info < (3, 9):
-            """XXX:
-            <a href=tel:123> should result in a absolute link, but in python3.6
-            urllib.parse.urlsplit mistakenly interpret the number after : as a
-            port-number. This is fixed in recent python versions.
-
-            """
-            expected.append("http://localhost:64346/tel:123456789")
 
         self.assertListEqual(
             links,
