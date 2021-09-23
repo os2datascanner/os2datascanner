@@ -38,7 +38,7 @@ def _cpr(time_from=None):
             digit_10 = '0'
         else:
             digit_10 = str(11 - remainder)
-        valid_10 = (remainder is not 1)
+        valid_10 = (remainder != 1)
     cpr_number = cpr_number + digit_10
     return cpr_number
 

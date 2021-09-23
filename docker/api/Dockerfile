@@ -10,7 +10,7 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-FROM python:3.6 AS application
+FROM python:3.9.7 AS application
 
 LABEL org.opencontainers.image.title="OS2datascanner - API" \
       org.opencontainers.image.vendor="Magenta ApS" \

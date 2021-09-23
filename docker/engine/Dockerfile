@@ -10,7 +10,7 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-FROM python:3.6 AS engine
+FROM python:3.9.7 AS engine
 
 LABEL org.opencontainers.image.title="OS2datascanner - Engine" \
       org.opencontainers.image.vendor="Magenta ApS" \

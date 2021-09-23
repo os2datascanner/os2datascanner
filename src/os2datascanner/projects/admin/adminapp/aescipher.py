@@ -30,7 +30,7 @@ def encrypt(plaintext):
     aes = AES.new(key, AES.MODE_CTR, counter=ctr)
 
     # Encrypt and return IV and ciphertext.
-    ciphertext = aes.encrypt(plaintext)
+    ciphertext = aes.encrypt(plaintext.encode())
     return (iv, ciphertext)
 
 

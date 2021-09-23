@@ -58,11 +58,6 @@ httplib2==0.18.1
     #   oauth2client
 idna==2.9
     # via requests
-importlib-metadata==4.5.0
-    # via
-    #   click
-    #   pluggy
-    #   pytest
 iniconfig==1.1.1
     # via pytest
 isodate==0.6.0
@@ -179,8 +174,6 @@ toml==0.10.1
     # via
     #   -r requirements-common.in
     #   pytest
-typing-extensions==3.10.0.0
-    # via importlib-metadata
 tzlocal==2.0.0
     # via exchangelib
 uritemplate==3.0.1
@@ -189,8 +182,6 @@ urllib3==1.25.9
     # via requests
 xattr==0.9.7
     # via -r requirements-engine.in
-zipp==3.4.1
-    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
