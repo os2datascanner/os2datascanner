@@ -54,8 +54,6 @@ DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 
 def _datetime_to_str(d):
     if not d.tzinfo or d.tzinfo.utcoffset(d) is None:
-        print("_datetime_to_str: warning: coercing naïve datetime {0} into the"
-                " local time zone for serialisation".format(d), file=stderr)
         d = d.replace(tzinfo=tz.gettz())
     return d.strftime(DATE_FORMAT)
 

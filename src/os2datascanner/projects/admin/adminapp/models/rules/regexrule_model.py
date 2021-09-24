@@ -69,7 +69,6 @@ def compund_rules(rule):
                 compound_rule += ')'
             else:
                 compound_rule += '|'
-        print('Returning< '+compound_rule+' >')
         return compound_rule
     if len(rule_set) < 1:
         return None

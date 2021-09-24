@@ -115,7 +115,6 @@ def iterate_queryset_in_batches(batch_size, queryset):
     while i < total_count:
         batch = queryset[i: batch_size + i]
         batch_count = batch.count()
-        print('{0}-{1}/{2}'.format(i, i + batch_count, total_count))
         yield batch
 
         # The operations performed by the caller might have reduced the size of
