@@ -1,6 +1,10 @@
 from sys import stderr
 from traceback import print_exc
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 class _SourceDescriptor:
     def __init__(self, *, source, parent=None):
@@ -122,11 +126,10 @@ class SourceManager:
                 try:
                     desc.generator.close()
                 except Exception:
-                    stn = type(source).__name__
-                    print("*** BUG: closing {0}._generate_state raised an"
-                            " exception!"
-                            " Continuing anyway...".format(stn), file=stderr)
-                    print_exc(file=stderr)
+                    logger.warning(
+                        "Bug! Closing _generate_state failed.",
+                        source=type(source).__name__,
+                    )
 
             if desc.parent:
                 # Detach this Source from its parent
