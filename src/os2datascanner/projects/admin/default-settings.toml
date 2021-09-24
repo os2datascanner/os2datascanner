@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     'recurrence',
     'mptt',
     'django_extensions',
+    'channels',
+    'channels_redis',
 ]
 OS2DATASCANNER_APPS = [
     'os2datascanner.projects.admin.adminapp',

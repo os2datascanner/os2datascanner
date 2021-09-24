@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'os2datascanner.projects.report.reportapp.apps.ReportappConfig',
     'mozilla_django_oidc',
     'django_extensions',
+    'channels',
+    'channels_redis',
 ]
 AUTHENTICATION_BACKENDS = [
     'os2datascanner.projects.report.reportapp.utils.OIDCAuthenticationBackend',

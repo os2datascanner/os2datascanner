@@ -38,7 +38,7 @@ colorama==0.4.3
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
-cryptography==2.9.2
+cryptography==3.4.8
     # via
     #   -c requirements-engine.txt
     #   requests-ntlm
@@ -254,7 +254,6 @@ rsa==4.6
 six==1.14.0
     # via
     #   -c requirements-engine.txt
-    #   cryptography
     #   dropbox
     #   google-api-core
     #   google-api-python-client

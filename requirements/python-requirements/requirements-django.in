@@ -11,6 +11,9 @@ uvicorn[standard]
 psycopg2-binary
 whitenoise
 djangorestframework
+channels
+channels_redis
+cryptography>=3.2
 
 # At the moment only used during development:
 django_extensions

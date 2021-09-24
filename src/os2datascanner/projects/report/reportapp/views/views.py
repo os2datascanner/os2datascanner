@@ -49,6 +49,9 @@ from ..models.roles.remediator_model import Remediator
 from ..models.roles.dpo_model import DataProtectionOfficer
 from ..models.roles.leader_model import Leader
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 logger = structlog.get_logger()
 
 RENDERABLE_RULES = (
@@ -162,6 +165,18 @@ class MainPageView(LoginRequiredMixin, ListView):
         # Overrides get_paginate_by to allow changing it in the template
         # as url param paginate_by=xx
         return self.request.GET.get('paginate_by', self.paginate_by)
+
+    # Function for sending message to socket
+    def send_socket_message():
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'get_updates',
+            {
+                'type': 'websocket_receive',
+                'message': 'new matches'
+            }
+        )
+
 
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):

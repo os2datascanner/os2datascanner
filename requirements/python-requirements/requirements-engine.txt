@@ -24,7 +24,7 @@ click==8.0.1
     # via -r requirements-common.in
 colorama==0.4.3
     # via -r requirements-common.in
-cryptography==2.9.2
+cryptography==3.4.8
     # via requests-ntlm
 defusedxml==0.6.0
     # via
@@ -155,7 +155,6 @@ rsa==4.6
     #   oauth2client
 six==1.14.0
     # via
-    #   cryptography
     #   dropbox
     #   google-api-core
     #   google-api-python-client

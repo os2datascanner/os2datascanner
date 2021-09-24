@@ -32,6 +32,9 @@ from ..models.rules.rule_model import Rule
 from ..models.scannerjobs.scanner_model import Scanner, ScanStatus
 from django.utils.translation import ugettext_lazy as _
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 logger = structlog.get_logger(__name__)
 
 
@@ -79,6 +82,18 @@ completed_scans = (Q(total_sources__isnull=False)
 class StatusOverview(StatusBase):
     template_name = "os2datascanner/scan_status.html"
     model = ScanStatus
+
+    # Function for sending message to socket
+    def send_socket_message():
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'get_updates',
+            {
+                'type': 'websocket_receive',
+                'message': 'new matches'
+            }
+        )
+
 
     def get_queryset(self):
 
