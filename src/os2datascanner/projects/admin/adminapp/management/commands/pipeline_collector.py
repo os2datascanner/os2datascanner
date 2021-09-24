@@ -16,12 +16,15 @@
 # source municipalities ( https://os2.eu/ )
 
 from django.core.management.base import BaseCommand
+import structlog
 
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from ...models.scannerjobs.scanner_model import (Scanner, ScanStatus,
         ScheduledCheckup)
+
+logger = structlog.get_logger(__name__)
 
 
 def status_message_received_raw(body):
@@ -83,38 +86,44 @@ def checkup_message_received_raw(body):
                     # This object hasn't changed since the last scan. Update
                     # the checkup timestamp so we remember to check it again
                     # next time
-                    print(handle.presentation,
-                            "LM/no change, updating timestamp")
+                    logger.debug(
+                        "LM/no change, updating timestamp",
+                        handle=handle.presentation,
+                    )
                     checkup.interested_before = scan_time
                     checkup.save()
                 else:
                     # This object has been changed and no longer has any
                     # matches. Hooray! Forget about it
-                    print(handle.presentation,
-                            "Changed, no matches, deleting")
+                    logger.debug(
+                        "Changed, no matches, deleting",
+                        handle=handle.presentation,
+                    )
                     checkup.delete()
             else:
                 # This object has changed, but still has matches. Update the
                 # checkup timestamp
-                print(handle.presentation,
-                        "Changed, new matches, updating timestamp")
+                logger.debug(
+                    "Changed, new matches, updating timestamp",
+                    handle=handle.presentation,
+                )
                 checkup.interested_before = scan_time
                 checkup.save()
         elif problem:
             if problem.missing:
                 # Permanent error, so this object has been deleted. Forget
                 # about it
-                print(handle.presentation, "Problem, deleted, deleting")
+                logger.debug("Problem, deleted, deleting", handle=handle.presentation)
                 checkup.delete()
             else:
                 # Transient error -- do nothing. In particular, don't update
                 # the checkup timestamp; we don't want to forget about changes
                 # between the last match and this error
-                print(handle.presentation, "Problem, transient, doing nothing")
+                logger.debug("Problem, transient, doing nothing", handle=handle.presentation)
     except ScheduledCheckup.DoesNotExist:
         if ((matches and matches.matched)
                 or (problem and not problem.missing)):
-            print(handle.presentation, "Interesting, creating")
+            logger.debug("Interesting, creating", handle=handle.presentation)
             # An object with a transient problem or with real matches is an
             # object we'll want to check up on again later
             ScheduledCheckup.objects.create(
@@ -126,7 +135,7 @@ def checkup_message_received_raw(body):
                     # (yet) get enough information out of the pipeline for that
                     interested_before=scan_time)
         else:
-            print(handle.presentation, "Not interesting, doing nothing")
+            logger.debug("Not interesting, doing nothing", handle=handle.presentation)
 
     yield from []
 
