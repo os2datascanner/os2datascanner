@@ -194,7 +194,7 @@
 .select2-selection__rendered {
 	padding: 0.2em !important;
 	min-width: 95% !important;
-	height: 100%;
+	height: 2.6rem !important;
 }
 
 .select2-container .select2-selection--single {
@@ -223,7 +223,7 @@
 
 .select2-container .select2-search--inline {
 	float: left;
-	margin: -.5em -1em;
+	margin: 0.3rem 0.5rem !important;
 }
 
 .select2-results__option {
@@ -235,21 +235,9 @@
 
 .select2-search__field {
 	transition: var(--transition-default);
-	margin-top: 0.75rem !important;
 	outline: none !important;
 	border: none !important;
-}
-
-.select2-search__field:focus {
-	outline: none !important;
-	border: none !important;
-	padding: .2rem .5rem !important;
-}
-
-.select2-search__field:not(:focus) {
-	outline: none !important;
-	border: none !important;
-	padding: .2rem .5rem !important;	
+	top:  0 !important;
 }
 
 .s2-to-tree .org-icon {
