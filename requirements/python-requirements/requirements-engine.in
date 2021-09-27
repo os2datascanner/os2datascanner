@@ -16,5 +16,4 @@ python-dateutil
 python-magic
 regex
 requests
-systemd-python
 xattr

@@ -11,6 +11,5 @@ libreoffice
 imagemagick
 cifs-utils
 libsmbclient-dev
-libsystemd-dev
 
 
