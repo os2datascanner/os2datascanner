@@ -198,7 +198,7 @@ def handle_match_message(previous_report, new_report, body):
         new_report.data["matches"] = sort_matches_by_probability(body)
         new_report.save()
         logger.debug(f"Matches: Saving new {new_report}")
-    else:
+    elif new_report is not None:
         logger.debug(f"No new matches. {new_report} not saved")
 
 
