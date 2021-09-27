@@ -126,12 +126,12 @@ class WebSource(Source):
         while to_visit:
             here, to_visit = to_visit[0], to_visit[1:]
             try:
-                response = session.head(here.presentation_url)
+                response = session.head(here.presentation_url, timeout=TIMEOUT)
                 if response.status_code == 200:
                     ct = response.headers.get("Content-Type",
                                             "application/octet-stream")
                     if simplify_mime_type(ct) == 'text/html':
-                        response = session.get(here.presentation_url)
+                        response = session.get(here.presentation_url, timeout=TIMEOUT)
                         sleep(SLEEP_TIME)
                         i = 0
                         for i, li in enumerate(
@@ -193,7 +193,7 @@ class WebResource(FileResource):
 
     def _get_head_raw(self):
         return self._get_cookie().head(
-            self._make_url(), timeout=TIMEOUT)
+            self.handle.presentation_url, timeout=TIMEOUT)
 
     def check(self) -> bool:
         # This might raise an RequestsException, fx.
@@ -201,9 +201,6 @@ class WebResource(FileResource):
         # [Errno 110] Connection timed out'     (no response)
         response = self._get_head_raw()
         return response.status_code not in (404, 410,)
-
-    def _make_url(self):
-        return self.handle.presentation_url
 
     def get_status(self):
         self.unpack_header()
@@ -253,7 +250,7 @@ class WebResource(FileResource):
     @contextmanager
     def make_stream(self):
         response = self._get_cookie().get(
-            self._make_url(), timeout=TIMEOUT)
+            self.handle.presentation_url, timeout=TIMEOUT)
         response.raise_for_status()
         with BytesIO(response.content) as s:
             yield s
