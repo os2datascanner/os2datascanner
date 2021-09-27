@@ -13,6 +13,9 @@ from os2datascanner.projects.admin.adminapp.models.authentication_model import (
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.filescanner_model import (
     FileScanner,
 )
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import (
+    WebScanner,
+)
 from os2datascanner.projects.admin.adminapp.models.rules.cprrule_model import (
     CPRRule,
 )
@@ -44,6 +47,8 @@ class Command(BaseCommand):
         smb_password = "swordfish"
         smb_name = "Lille Samba"
         smb_url = "//samba/e2test"
+        web_name = "Local nginx"
+        web_url = "http://nginx/"
 
         self.stdout.write("Creating superuser dev/dev!")
         user, created = User.objects.get_or_create(
@@ -82,5 +87,22 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS("Samba share file scanner created successfully!"))
         else:
             self.stdout.write("Samba share file scanner already exists!")
+
+        self.stdout.write("Creating webscanner for local nginx")
+        webscanner, created = WebScanner.objects.get_or_create(
+            name=web_name,
+            url=web_url,
+            validation_status=True,
+            do_last_modified_check=False,
+            organization=org,
+            schedule=recurrence,
+            download_sitemap=False,
+        )
+        if created:
+            cpr = CPRRule.objects.first()
+            webscanner.rules.set([cpr])
+            self.stdout.write(self.style.SUCCESS("Webscanner created successfully!"))
+        else:
+            self.stdout.write("Webscanner already exists!")
 
         self.stdout.write(self.style.SUCCESS("Done! Remember to run the same cmd in the Report module"))
