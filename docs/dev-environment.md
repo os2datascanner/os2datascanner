@@ -201,6 +201,19 @@ These depend on some auxillary services:
 
     Thus from the host: `smbclient -p 8139 -U os2%swordfish //localhost/e2test`
 
+-   `nginx`: a webserver that exposes the same folder as `samba`.
+
+
+### Interesting files for development
+
+We've included some interesting files to scan in `dev-environment/data`.
+Multiple files in the directory include CPR numbers, but because of context
+only 4 should be expected to be found from a scan.
+
+`samba` and `nginx` both expose this folder.
+
+Please expand the folder, if you have something interesting to add.
+
 
 ### Postgres initialisation
 
