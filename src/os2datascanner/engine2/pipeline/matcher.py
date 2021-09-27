@@ -17,7 +17,7 @@ def message_received_raw(body, channel, source_manager):
     message = messages.RepresentationMessage.from_json_object(body)
     representations = decode_dict(message.representations)
     rule = message.progress.rule
-    logger.info(f"{message.handle.presentation} with rules [{rule.presentation}] "
+    logger.debug(f"{message.handle.presentation} with rules [{rule.presentation}] "
                 f"and representation [{list(representations.keys())}]")
 
     new_matches = []
@@ -40,7 +40,7 @@ def message_received_raw(body, channel, source_manager):
             rule = pve
         else:
             rule = nve
-        logger.info(f"rule {head.presentation} matched: {len(matches)}")
+        logger.debug(f"rule {head.presentation} matched: {len(matches)}")
 
     final_matches = message.progress.matches + new_matches
 
@@ -64,7 +64,7 @@ def message_received_raw(body, channel, source_manager):
                             message.handle).to_json_object())
     else:
         # We need a new representation to continue
-        logger.info(
+        logger.debug(
                 f"{message.handle.presentation} needs"
                 f" new representation: [{type_value}].")
         yield ("os2ds_conversions",

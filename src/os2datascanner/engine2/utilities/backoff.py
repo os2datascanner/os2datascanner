@@ -2,6 +2,10 @@ from sys import stderr
 from time import sleep
 from random import random
 
+import structlog
+
+logger = structlog.get_logger(__name__)
+
 
 def run_with_backoff(
         op, *exception_set,
@@ -52,20 +56,20 @@ def run_with_backoff(
                 if count == max_tries:
                     # ... but we've exhausted our maximum attempts
                     if warn_after and count >= warn_after:
-                        print("warning: while executing {0}"
-                                " with backoff: failed {1} times,"
-                                " giving up".format(
-                                        str(op), count),
-                                file=stderr)
+                        logger.warning(
+                            "backoff failed, giving up",
+                            op=str(op),
+                            iterations=count,
+                        )
                     raise
                 elif warn_after and count >= warn_after:
                     max_delay = base * (2 ** (min(count, ceiling) - 1))
-                    print("warning: while executing {0}"
-                            " with backoff: failed {1} times,"
-                            " delaying for {2}±{3:.1f} seconds".format(
-                                    str(op), count, max_delay,
-                                    max_delay * fuzz),
-                            file=stderr)
+                    logger.info(
+                        "backoff failed, delaying",
+                        op=str(op),
+                        iterations=count,
+                        between=(max_delay, max_delay * fuzz),
+                    )
             else:
                 # This is not a backoff exception -- raise it immediately
                 raise

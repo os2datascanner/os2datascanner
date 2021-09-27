@@ -90,7 +90,7 @@ class WebSource(Source):
                 return
             for exclude in self._exclude:
                 if new_url.startswith(exclude):
-                    logger.info(f"excluded {new_url}")
+                    logger.debug(f"excluded {new_url}")
                     return
 
             if n_netloc == netloc:
@@ -116,7 +116,7 @@ class WebSource(Source):
                 handle_url(to_visit[0], address, last_modified, from_sitemap=True)
             # first entry in `to_visit` is `self`(ie. mainpage). If the mainpage
             # is not listed in sitemap this result in +1 in to_visit
-            logger.info("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
+            logger.debug("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
                          format(self._sitemap, i, len(to_visit)))
             yield from to_visit
             return
@@ -139,7 +139,7 @@ class WebSource(Source):
                                                 here.presentation_url),
                                 start=1):
                             handle_url(here, li)
-                        logger.info(f"site {here.presentation} has {i} links")
+                        logger.debug(f"site {here.presentation} has {i} links")
                 elif response.is_redirect and response.next:
                     handle_url(here, response.next.url)
                     # Don't yield WebHandles for redirects
@@ -150,7 +150,6 @@ class WebSource(Source):
             except RequestException as e:
                 logger.error(f"error while getting head of {here.presentation}",
                              exc_info=True)
-
             yield here
 
     def to_url(self):

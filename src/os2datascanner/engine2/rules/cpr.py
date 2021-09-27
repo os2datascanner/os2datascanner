@@ -95,7 +95,7 @@ class CPRRule(RegexRule):
         if self._examine_context and self._blacklist and any(
             w in content.lower() for w in self._blacklist
         ):
-            logger.info("Content contains a word from the blacklist "
+            logger.debug("Content contains a word from the blacklist "
                         f"[{self._blacklist}]")
             return
 
@@ -105,14 +105,14 @@ class CPRRule(RegexRule):
             if self._modulus_11:
                 mod11, reason =  modulus11_check(cpr)
                 if not mod11:
-                    logger.info(f"{cpr} failed modulus11 check due to {reason}")
+                    logger.debug(f"{cpr} failed modulus11 check due to {reason}")
                     continue
 
             probability = 1.0
             if self._ignore_irrelevant:
                 probability = calculator.cpr_check(cpr, do_mod11_check = False)
                 if isinstance(probability, str):
-                    logger.info(f"{cpr} is not valid cpr due to {probability}")
+                    logger.debug(f"{cpr} is not valid cpr due to {probability}")
                     continue
 
             cpr = cpr[0:4] + "XXXXXX"
@@ -123,7 +123,7 @@ class CPRRule(RegexRule):
                 # determine if probability stems from context or calculator
                 probability = p if p is not None else probability
                 ctype = ctype if ctype != [] else Context.PROBABILITY_CALC
-                logger.info(f"{cpr} with probability {probability} from context "
+                logger.debug(f"{cpr} with probability {probability} from context "
                             f"due to {ctype}")
 
 
@@ -147,7 +147,7 @@ class CPRRule(RegexRule):
                     ),
                     "probability": probability,
                 }
-            logger.info(f"{itot} cpr-like numbers, "
+            logger.debug(f"{itot} cpr-like numbers, "
                         f"of which {imatch} had a probabiliy > 0")
 
     def examine_context(

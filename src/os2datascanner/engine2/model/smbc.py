@@ -111,7 +111,7 @@ class SMBCSource(Source):
                         and mode & Mode.HIDDEN
                         and (mode & Mode.SYSTEM
                                 or name.startswith("~"))):
-                    logger.info(f"skipping super-hidden object {path}")
+                    logger.debug(f"skipping super-hidden object {path}")
                     return
 
             if entity.smbc_type == smbc.DIR and name not in (".", ".."):

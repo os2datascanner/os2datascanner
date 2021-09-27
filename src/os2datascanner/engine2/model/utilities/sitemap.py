@@ -59,7 +59,7 @@ def process_sitemap_url(url: str, *, context=requests,
 
     The given URL can use the "http", "https" or "data" schemes."""
 
-    logger.info("trying to download/unpack sitemap {0}".format(url))
+    logger.debug("trying to download/unpack sitemap {0}".format(url))
     if url.startswith("data:"):
         _, sitemap = unpack_data_url(url)
     else:
@@ -84,7 +84,7 @@ def process_sitemap_url(url: str, *, context=requests,
                 for lastmod in _xp(url, "sitemap:lastmod/text()"):
                     lm = parse_datetime(lastmod.strip())
                 yield (loc, lm)
-            logger.info("processed {0} lines in sitemap {1}".format(i, base_url))
+            logger.debug("processed {0} lines in sitemap {1}".format(i, base_url))
         elif _xp(root, "/sitemap:sitemapindex") and allow_sitemap:
             # This appears to be a sitemap index: iterate over all of the valid
             # <sitemap /> elements and recursively yield from them

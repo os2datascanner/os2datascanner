@@ -72,7 +72,6 @@ class SMBSource(Source):
         try:
             args = ["mount", "-t", "cifs", self._unc, mntdir, '-o']
             args.append(self._make_optarg(display=False))
-            print(args)
             assert run(args).returncode == 0
 
             yield mntdir

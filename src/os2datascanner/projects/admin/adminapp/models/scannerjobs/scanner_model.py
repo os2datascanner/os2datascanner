@@ -336,7 +336,14 @@ class Scanner(models.Model):
             sender.start()
             sender.join()
 
-        logger.info(f"scan submitted {self} with rules [{rule.presentation}]")
+        logger.info(
+            "scan submitted",
+            scan=self,
+            pk=self.pk,
+            scan_type=self.get_type(),
+            organization=self.organization,
+            rules=rule.presentation,
+        )
         return scan_tag.to_json_object()
 
     def path_for(self, uri):

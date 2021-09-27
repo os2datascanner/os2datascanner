@@ -56,7 +56,6 @@ def decrypt(iv, ciphertext):
 
 def get_key():
     key = None
-    logger.info("Retrieving key via config")
     if settings.DECRYPTION_HEX:
         key = bytes.fromhex(settings.DECRYPTION_HEX)
     else:

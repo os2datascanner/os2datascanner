@@ -22,7 +22,7 @@ def check(source_manager, handle):
     try:
         return handle.follow(source_manager).check()
     except Exception as e:
-        logger.warning("check of {0} failed: {1}".format(handle.presentation, e))
+        logger.debug("check of {0} failed: {1}".format(handle.presentation, e))
         return False
 
 
