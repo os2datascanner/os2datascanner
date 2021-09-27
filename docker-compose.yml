@@ -367,7 +367,7 @@ services:
   samba:
     image: magentalabs/samba-test:1.1
     volumes:
-      - ./src/os2datascanner/engine2/tests/data/engine2:/mnt
+      - ./dev-environment/data:/mnt
     ports:
       - 8139:139
       - 8445:445
@@ -382,7 +382,7 @@ services:
   nginx:
     image: nginx
     volumes:
-      - ./src/os2datascanner/engine2/tests/data/engine2:/usr/share/nginx/html
+      - ./dev-environment/data:/usr/share/nginx/html
     ports:
       - 8910:80
 
