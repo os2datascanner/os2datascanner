@@ -103,7 +103,9 @@ class WebSource(Source):
                 base_url = urlunsplit((n_scheme, n_netloc, "", None, None))
                 new_handle = WebHandle(WebSource(base_url), n_path, referrer,
                         lm_hint)
-            if new_handle not in known_addresses:
+
+            # don't emit handles that doesn't belong to this Source
+            if new_handle not in known_addresses and new_handle in self:
                 known_addresses.add(new_handle)
                 to_visit.append(new_handle)
 
@@ -116,41 +118,38 @@ class WebSource(Source):
             # is not listed in sitemap this result in +1 in to_visit
             logger.info("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
                          format(self._sitemap, i, len(to_visit)))
+            yield from to_visit
+            return
 
-        # If the handle(here) originates from the Source, then scrape the
-        # resource for all links and submit them to `handle_url` (which appends
-        # the handles to `to_visit`)
-        # If the handle is external, then just yield and let processor check
-        # if the page is available.
+        # scrape the handle(here) for all links and submit them to `handle_url`
+        # (which appends the handles to `to_visit`)
         while to_visit:
             here, to_visit = to_visit[0], to_visit[1:]
-            # only search for links on `here` if it belongs to base Source
-            if here in self:
-                try:
-                    response = session.head(here.presentation_url)
-                    if response.status_code == 200:
-                        ct = response.headers.get("Content-Type",
-                                                "application/octet-stream")
-                        if simplify_mime_type(ct) == 'text/html':
-                            response = session.get(here.presentation_url)
-                            sleep(SLEEP_TIME)
-                            i = 0
-                            for i, li in enumerate(
-                                    make_outlinks(response.content,
-                                                  here.presentation_url),
-                                    start=1):
-                                handle_url(here, li)
-                            logger.info(f"site {here.presentation} has {i} links")
-                    elif response.is_redirect and response.next:
-                        handle_url(here, response.next.url)
-                        # Don't yield WebHandles for redirects
-                        continue
+            try:
+                response = session.head(here.presentation_url)
+                if response.status_code == 200:
+                    ct = response.headers.get("Content-Type",
+                                            "application/octet-stream")
+                    if simplify_mime_type(ct) == 'text/html':
+                        response = session.get(here.presentation_url)
+                        sleep(SLEEP_TIME)
+                        i = 0
+                        for i, li in enumerate(
+                                make_outlinks(response.content,
+                                                here.presentation_url),
+                                start=1):
+                            handle_url(here, li)
+                        logger.info(f"site {here.presentation} has {i} links")
+                elif response.is_redirect and response.next:
+                    handle_url(here, response.next.url)
+                    # Don't yield WebHandles for redirects
+                    continue
 
-                # There should newer be a ConnectionError, as only handles
-                # originating from Source are requested. But just in case..
-                except RequestException as e:
-                    logger.error(f"error while getting head of {here.presentation}",
-                                 exc_info=True)
+            # There should newer be a ConnectionError, as only handles
+            # originating from Source are requested. But just in case..
+            except RequestException as e:
+                logger.error(f"error while getting head of {here.presentation}",
+                             exc_info=True)
 
             yield here
 

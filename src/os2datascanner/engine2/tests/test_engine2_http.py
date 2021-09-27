@@ -151,8 +151,8 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 count += 1
         self.assertEqual(
                 count,
-                5,
-                "embedded site with sitemap should have 5 handles")
+                3,
+                "embedded site with sitemap should have 3 handles")
 
     def test_exploration_data_sitemap(self):
         count = 0
@@ -161,8 +161,8 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 count += 1
         self.assertEqual(
                 count,
-                4,
-                "embedded site with data: sitemap should have 4 handles")
+                2,
+                "embedded site with data: sitemap should have 2 handles")
 
     def test_exploration_index(self):
         count = 0
@@ -171,8 +171,8 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 count += 1
         self.assertEqual(
                 count,
-                6,
-                "embedded site with sitemap index should have 6 handles")
+                4,
+                "embedded site with sitemap index should have 4 handles")
 
     def test_sitemap_lm(self):
         with SourceManager() as sm:
@@ -326,8 +326,8 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 count += 1
         self.assertEqual(
                 count,
-                6,
-                "embedded site with compressed sitemap index should have 6 handles")
+                4,
+                "embedded site with compressed sitemap index should have 4 handles")
 
     def test_excluded_sites(self):
         count = 0
@@ -336,8 +336,8 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 count += 1
         self.assertEqual(
                 count,
-                4,
-                "WebSource with excluded sites should have 4 handles")
+                2,
+                "WebSource with excluded sites should have 2 handles")
 
     def test_missing_headers(self):
         with SourceManager() as sm:
@@ -400,7 +400,7 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
 
 
 class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
-    def test_broken_links(self):
+    def test_broken_links_sitemap(self):
         count = 0
         with SourceManager() as sm:
             for h in external_links_site.handles(sm):
@@ -409,8 +409,8 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
 
         self.assertEqual(
             count,
-            11,
-            "site with broken internal and external links should have 11 "
+            3,
+            "site with broken internal and external links should have 3 "
             "handles that does not produce an exception"
         )
 
@@ -441,19 +441,19 @@ class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
         # self.assertEqual(exception.msg, "timeout ... ", "wrong exception msg")
         self.assertEqual(
             count_follow,
-            6,
-            "site with broken internal and external links should have 6 "
+            2,
+            "site with broken internal and external links should have 2 "
             "good links")
         self.assertEqual(
             count_nfollow,
-            4,
-            "site with broken internal and external links should have 4 "
+            1,
+            "site with broken internal and external links should have 1 "
             "links that cannot be followed. Either by returning (404 or 410) "
             "or domain-not-found(dns) or another Requests.RequestsException")
         self.assertEqual(
             count_nerror,
-            1,
-            "site with broken internal and external links should have 1 link that "
+            0,
+            "site with broken internal and external links should have 0 link that "
             "produces an exception")
 
 
