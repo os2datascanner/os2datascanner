@@ -1,8 +1,8 @@
 import sys
 import signal
+import logging
 import argparse
 import traceback
-import logging
 from collections import deque
 from prometheus_client import start_http_server, Info, Summary
 
@@ -33,6 +33,7 @@ _module_mapping = {
     "worker": worker
 }
 
+
 _loglevels = {
     'critical': logging.CRITICAL,
     'error': logging.ERROR,
@@ -40,7 +41,7 @@ _loglevels = {
     'warning': logging.WARNING,
     'info': logging.INFO,
     'debug': logging.DEBUG
-    }
+}
 
 
 def _compatibility_main(stage):
@@ -53,12 +54,11 @@ def _compatibility_main(stage):
 class GenericRunner(PikaPipelineThread):
     def __init__(self,
             source_manager: SourceManager, *args,
-            debug: bool, stage: str, module, **kwargs):
+            stage: str, module, **kwargs):
         super().__init__(*args, **kwargs,
                 read=module.READS_QUEUES,
                 write=module.WRITES_QUEUES,
                 prefetch_count=module.PREFETCH_COUNT)
-        self._debug = debug
         self._module = module
         self._summary = Summary(
                 f"os2datascanner_pipeline_{stage}",
@@ -69,8 +69,7 @@ class GenericRunner(PikaPipelineThread):
 
     def handle_message(self, routing_key, body):
         with self._summary.time():
-            if self._debug:
-                print(routing_key, body)
+            logger.debug(f"{routing_key}: {str(body)}")
             if routing_key == "":
                 command = messages.CommandMessage.from_json_object(body)
 
@@ -101,10 +100,6 @@ def main():
     parser = argparse.ArgumentParser(
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             description="Runs an OS2datascanner pipeline stage.")
-    parser.add_argument(
-            "--debug",
-            action="store_true",
-            help="print all incoming messages to the console")
     parser.add_argument(
             "--log",
             default="info",
@@ -159,7 +154,6 @@ def main():
     with SourceManager(width=args.width) as source_manager:
         GenericRunner(
                 source_manager,
-                debug=args.debug,
                 stage=args.stage,
                 module=module).run_consumer()
 
