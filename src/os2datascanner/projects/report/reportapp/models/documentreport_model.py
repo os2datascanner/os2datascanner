@@ -184,7 +184,7 @@ def on_documentreport_created_or_updated(objects, fields=None):
                         new_objects.append(
                                 tm(documentreport_id=obj.pk, alias_id=alias.pk))
         except (KeyError, TypeError):
-            logger.info(f"{obj} has no metadata")
+            logger.debug("no metadata", report=obj)
     try:
         # TODO: We do not bulk create DocumentReports, and therefore will we always
         #  bulk_create 1 Alias.match_relation at the time. We do not actually

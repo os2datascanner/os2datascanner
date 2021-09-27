@@ -16,21 +16,21 @@
 # source municipalities ( https://os2.eu/ )
 
 import json
+import structlog
 
 from django.core.management.base import BaseCommand
 from django.core.exceptions import FieldError
 from django.db.models.deletion import ProtectedError
-import structlog
 
-from os2datascanner.utils.system_utilities import (
-        time_now, parse_isoformat_timestamp)
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
-from os2datascanner.projects.report.reportapp.utils import hash_handle
 from os2datascanner.engine2.conversions.types import OutputType
+from os2datascanner.engine2.model.core import Handle
+from os2datascanner.utils.system_utilities import time_now
 from ...models.documentreport_model import DocumentReport
 from ...models.organization_model import Organization
+from ...utils import hash_handle
 
 logger = structlog.get_logger(__name__)
 
@@ -46,22 +46,17 @@ def result_message_received_raw(body):
     if not reference or not tag or not queue:
         return
     tag = messages.ScanTagFragment.from_json_object(tag)
-
     previous_report, new_report = get_reports_for(reference, tag)
 
-    # if presentation=="", then it is a new report still not updated with the
-    # recieved Message
-    new_presentation = new_report.presentation
-    prev_presentation = previous_report.presentation if previous_report else ""
-    logger.debug(f"Message recieved from queue {queue} for {tag.scanner.to_json_object()}")
-    if prev_presentation:
-        logger.debug(f"previous {previous_report} exist for {prev_presentation}")
-    else:
-        logger.debug(f"No previous report exist")
-    if new_presentation:
-        logger.debug(f"new {new_report} for {new_report.presentation}")
-    else:
-        logger.debug(f"new report created but still not saved")
+    # XXX: ideally we would only log once in this file. When all is done, log the
+    # following AND what actions were taken.
+    logger.info(
+        "msg received",
+        queue=queue,
+        tag=tag.scanner.to_json_object(),
+        handle=Handle.from_json_object(reference).presentation,
+        prev_report=previous_report,
+    )
 
     if queue == "matches":
         handle_match_message(previous_report, new_report, body)
@@ -117,7 +112,7 @@ def handle_metadata_message(new_report, result):
         # shown.
         new_report.datasource_last_modified = (
                 message.scan_tag.time or time_now())
-    logger.debug(f"updating timestamp for {new_report.presentation}")
+    logger.debug("updating timestamp", report=new_report.presentation)
     new_report.save()
 
 
@@ -146,7 +141,12 @@ def handle_match_message(previous_report, new_report, body):
 
 
     matches = [(match.rule.presentation, match.matches) for match in new_matches.matches]
-    logger.debug(f"{new_matches.handle.presentation} has the matches: {matches}")
+    logger.debug(
+        "new matchMsg",
+        handle=new_matches.handle.presentation,
+        msgtype="matches",
+        matches=matches,
+    )
     if previous_report and previous_report.resolution_status is None:
         # There are existing unresolved results; resolve them based on the new
         # message
@@ -197,9 +197,9 @@ def handle_match_message(previous_report, new_report, body):
         # Sort matches by prop. desc.
         new_report.data["matches"] = sort_matches_by_probability(body)
         new_report.save()
-        logger.debug(f"Matches: Saving new {new_report}")
+        logger.debug("matches, saving new DocReport", report=new_report)
     elif new_report is not None:
-        logger.debug(f"No new matches. {new_report} not saved")
+        logger.debug(f"No new matches.")
 
 
 def sort_matches_by_probability(body):
