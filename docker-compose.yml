@@ -379,6 +379,13 @@ services:
       SMB_SHARE_BROWSABLE: "no"
       SMB_SHARE_READONLY: "yes"
 
+  nginx:
+    image: nginx
+    volumes:
+      - ./src/os2datascanner/engine2/tests/data/engine2:/usr/share/nginx/html
+    ports:
+      - 8910:80
+
 x-disabled:
   admin_cron:
     build:
