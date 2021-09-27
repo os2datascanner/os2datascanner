@@ -27,7 +27,6 @@ automat==20.2.0
     # via twisted
 backcall==0.1.0
     # via ipython
-beautifulsoup4==4.9.0
     # via -r requirements-django.in
 cached-property==1.5.1
     # via
@@ -360,7 +359,6 @@ six==1.14.0
     #   structlog
     #   traitlets
 soupsieve==2.0
-    # via beautifulsoup4
 sqlparse==0.3.1
     # via
     #   django

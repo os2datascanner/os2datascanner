@@ -268,7 +268,6 @@ structlog==20.1.0
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
-systemd-python==234
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in

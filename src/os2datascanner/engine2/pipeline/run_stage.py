@@ -10,7 +10,6 @@ from ... import __version__
 from ...utils.system_utilities import json_utf8_decode
 from ..model.core import SourceManager
 from .utilities.pika import PikaPipelineThread
-from .utilities.systemd import notify_ready, notify_stopping
 from . import explorer, processor, matcher, tagger, exporter, worker
 
 
