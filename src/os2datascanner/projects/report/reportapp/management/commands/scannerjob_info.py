@@ -28,13 +28,13 @@ class Command(BaseCommand):
         data_mime_type_problems = defaultdict(int)
         data_mime_type_matches = defaultdict(int)
 
-        doc_reps = DocumentReport.objects.filter(data__scan_tag__scanner__pk=pk)
+        doc_reps = DocumentReport.objects.filter(data__scan_tag__scanner__pk=pk).only("data")
 
-        if not doc_reps:
+        if not doc_reps.exists():
             self.stderr.write(self.style.NOTICE("No scanner job PK matching in DocumentReports found"))
             sys.exit(0)
 
-        for doc_rep in doc_reps:
+        for doc_rep in doc_reps.iterator():
             if doc_rep.problem:
                 scanner_name = doc_rep.scan_tag.scanner.name
                 handle = doc_rep.problem.handle
