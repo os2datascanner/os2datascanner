@@ -126,12 +126,12 @@ class WebSource(Source):
         while to_visit:
             here, to_visit = to_visit[0], to_visit[1:]
             try:
-                response = session.head(here.presentation_url)
+                response = session.head(here.presentation_url, timeout=TIMEOUT)
                 if response.status_code == 200:
                     ct = response.headers.get("Content-Type",
                                             "application/octet-stream")
                     if simplify_mime_type(ct) == 'text/html':
-                        response = session.get(here.presentation_url)
+                        response = session.get(here.presentation_url, timeout=TIMEOUT)
                         sleep(SLEEP_TIME)
                         i = 0
                         for i, li in enumerate(
