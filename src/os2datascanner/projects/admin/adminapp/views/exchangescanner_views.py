@@ -80,10 +80,11 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
 
         form = super().get_form(form_class)
 
+        form = initialize_form(form)
         if self.request.method == 'POST':
             form = validate_userlist_or_org_units(form)
 
-        return initialize_form(form)
+        return form
 
 
 class ExchangeScannerCopy(ExchangeScannerBase, ScannerCopy):
@@ -103,11 +104,13 @@ class ExchangeScannerCopy(ExchangeScannerBase, ScannerCopy):
             form_class = self.get_form_class()
 
         form = super().get_form(form_class)
-
+       
+        form =  initialize_form(form)
         if self.request.method == 'POST':
             form = validate_userlist_or_org_units(form)
 
-        return initialize_form(form)
+        return form
+
 
     def get_initial(self):
         initial = super(ExchangeScannerCopy, self).get_initial()
@@ -183,6 +186,8 @@ class ExchangeScannerRun(ScannerRun):
     model = ExchangeScanner
 
 def validate_userlist_or_org_units(form):
+    """Validates whether the form has either a userlist or organizational units.
+    NB : must be called after initialize form. """
     form.is_valid()
     if not form.cleaned_data['userlist'] and not form.cleaned_data['org_unit']:
         form.add_error('org_unit', _("No organizational units has been selected"))

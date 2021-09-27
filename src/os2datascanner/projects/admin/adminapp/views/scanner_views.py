@@ -241,7 +241,8 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         superuser.
         """
         form = super().get_form(form_class)
-        self.old_url = self.get_object().url
+        self.object = self.get_object()
+        self.old_url = self.object.url
         # Store the existing rules selected in the scannerjob
         self.old_rules = self.object.rules.get_queryset()
 
