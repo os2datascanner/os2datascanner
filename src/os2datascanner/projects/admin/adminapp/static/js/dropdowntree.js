@@ -120,6 +120,7 @@ let selected_values = [];
 		s2inst.on('select2:selecting', function (evt) {
 			let selected_id = evt.params.args.data.id;
 			selectNodes(selected_id, true)
+			$('.select2-search__field').val("")
 			evt.preventDefault()
 		});
 
