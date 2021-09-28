@@ -45,7 +45,17 @@ class Context(Enum):
 class CPRRule(RegexRule):
     type_label = "cpr"
     WHITELIST_WORDS = {"cpr", }
-    BLACKLIST_WORDS = {"p-nr", "p.nr", "p-nummer", "pnr", }
+    BLACKLIST_WORDS = {
+        "p-nr", r"p\.nr", "p-nummer", "pnr",
+        "customer no", "customer-no",
+        "bilagsnummer",
+        "order number", "ordrenummer",
+        "fakturanummer", "faknr", "fak-nr",
+        "tullstatistisk", "tullstatistik",
+        "test report no",
+        r"protocol no\.",
+        "dhk:tx",
+    }
 
     def __init__(
         self,
