@@ -169,8 +169,10 @@ services:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-    command: worker --enable-metrics
+    command: worker --enable-metrics --single-cpu
     init: true
+    environment:
+      - SCHEDULE_ON_CPU=0
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
