@@ -71,6 +71,7 @@ class CPRRule(RegexRule):
                 set(blacklist) if isinstance(blacklist, Iterable)
                 else blacklist
         ))
+        self._blacklist_pattern = re.compile("|".join(self._blacklist))
 
     @property
     def presentation_raw(self) -> str:
@@ -91,14 +92,10 @@ class CPRRule(RegexRule):
         if content is None:
             return
 
-        # If there's p-nr or anthore blacklist anywhere in content, assume
-        # there's no valid CPR
-        if self._examine_context and self._blacklist and any(
-            w in content.lower() for w in self._blacklist
-        ):
-            logger.debug("Content contains a word from the blacklist "
-                        f"[{self._blacklist}]")
-            return
+        if self._examine_context and self._blacklist:
+            if (m := self._blacklist_pattern.search(content.lower())):
+                logger.debug("Blacklist matched content", matches=m.group(0))
+                return
 
         imatch = 0
         for itot, m in enumerate(self._compiled_expression.finditer(content), 1):
