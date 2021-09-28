@@ -62,25 +62,16 @@ class CPRRule(RegexRule):
         modulus_11: bool = True,
         ignore_irrelevant: bool = True,
         examine_context: bool = True,
-        whitelist: Union[bool, List[str]] = True,
-        blacklist: Union[bool, List[str]] = True,
+        whitelist: Optional[List[str]] = None,
+        blacklist: Optional[List[str]] = None,
         **super_kwargs,
     ):
         super().__init__(cpr_regex, **super_kwargs)
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
         self._examine_context = examine_context
-        # self._whitelist is either a set(str) or False
-        self._whitelist = (
-            self.WHITELIST_WORDS if whitelist is True else (
-                set(whitelist) if isinstance(whitelist, Iterable)
-                else whitelist
-            ))
-        self._blacklist = (
-            self.BLACKLIST_WORDS if blacklist is True else (
-                set(blacklist) if isinstance(blacklist, Iterable)
-                else blacklist
-        ))
+        self._whitelist = self.WHITELIST_WORDS if whitelist is None else set(whitelist)
+        self._blacklist = self.BLACKLIST_WORDS if blacklist is None else set(blacklist)
         self._blacklist_pattern = re.compile("|".join(self._blacklist))
 
     @property
