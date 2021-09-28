@@ -3,14 +3,15 @@ import re
 from itertools import chain
 from enum import Enum, unique
 from collections.abc import Iterable
-import logging
+import structlog
 
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .logical import oxford_comma
 from .utilities.cpr_probability import modulus11_check, CprProbabilityCalculator
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
+
 cpr_regex = r"\b(\d{2}[ ]?\d{2}[ ]?\d{2})(?:[ \-/\.\t]|[ ]\-[ ])?(\d{4})\b"
 calculator = CprProbabilityCalculator()
 
