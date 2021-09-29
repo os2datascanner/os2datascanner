@@ -2,19 +2,20 @@ from io import BytesIO
 from lxml import etree
 from typing import Tuple, Iterable, Optional, List
 from datetime import datetime
-import logging
+import structlog
 import requests
 from os2datascanner.engine2.model.data import unpack_data_url
 
 from .datetime import parse_datetime
 from .utilities import convert_data_to_text
+from ... import settings as engine2_settings
 
 # disable xml vulnerabilities, as described here
 # https://github.com/tiran/defusedxml#external-entity-expansion-local-file
 # https://lxml.de/api/lxml.etree.XMLParser-class.html
 _PARSER = etree.XMLParser(resolve_entities=False)
-
-logger = logging.getLogger(__name__)
+TIMEOUT = engine2_settings.model["http"]["timeout"]
+logger = structlog.getLogger(__name__)
 
 def _xp(e, path: str) -> List[str]:
     """Parse an `ElementTree` using a namespace with sitemap prefix.
@@ -36,7 +37,7 @@ def _xp(e, path: str) -> List[str]:
 
 def _get_url_data(url: str, context=requests) -> Optional[bytes]:
     try:
-        r = context.get(url)
+        r = context.get(url, timeout=TIMEOUT)
         if r.status_code == 200:
             content_type = r.headers["content-type"]
             simple_content_type = content_type.split(";", 1)[0].strip()
@@ -59,7 +60,7 @@ def process_sitemap_url(url: str, *, context=requests,
 
     The given URL can use the "http", "https" or "data" schemes."""
 
-    logger.debug("trying to download/unpack sitemap {0}".format(url))
+    logger.debug("trying to download/unpack", sitemap=url)
     if url.startswith("data:"):
         _, sitemap = unpack_data_url(url)
     else:
@@ -84,7 +85,7 @@ def process_sitemap_url(url: str, *, context=requests,
                 for lastmod in _xp(url, "sitemap:lastmod/text()"):
                     lm = parse_datetime(lastmod.strip())
                 yield (loc, lm)
-            logger.debug("processed {0} lines in sitemap {1}".format(i, base_url))
+            logger.debug("done processing", lines=i, sitemap=base_url)
         elif _xp(root, "/sitemap:sitemapindex") and allow_sitemap:
             # This appears to be a sitemap index: iterate over all of the valid
             # <sitemap /> elements and recursively yield from them
