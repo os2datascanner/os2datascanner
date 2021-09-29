@@ -14,14 +14,29 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
-from django.http import HttpResponseRedirect
+from rest_framework.generics import ListAPIView
 
 from .scanner_views import *
 from ..aescipher import decrypt
+from ..serializers import OrganizationalUnitSerializer
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ...core.models import Feature, Client
 from ...organizations.models import OrganizationalUnit
 
+
+class OrganizationalUnitListing(ListAPIView):
+    serializer_class = OrganizationalUnitSerializer
+
+    def get_queryset(self):
+        organization_id = self.request.query_params.get('organization_id', None)
+
+        if organization_id:
+            queryList = OrganizationalUnit.objects.filter(
+                    organization=organization_id)
+        else:
+            queryList = []
+
+        return queryList
 
 class ExchangeScannerList(ScannerList):
     """Displays list of exchange scanners."""
@@ -68,6 +83,7 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist',
               'service_endpoint', 'organization', 'org_unit']
+    type = 'exchange'
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -95,6 +111,7 @@ class ExchangeScannerCopy(ExchangeScannerBase, ScannerCopy):
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist',
               'service_endpoint', 'organization', 'org_unit']
+    type = 'exchange'
 
     def get_form(self, form_class=None):
         """Adds special field password."""
@@ -125,6 +142,7 @@ class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist',
               'service_endpoint', 'organization', 'org_unit']
+    type = 'exchange'
 
     def get_success_url(self):
         """The URL to redirect to after successful updating.

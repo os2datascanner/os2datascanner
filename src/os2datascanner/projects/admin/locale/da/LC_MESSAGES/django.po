@@ -682,7 +682,13 @@ msgstr "tilføj brugere"
 msgid "select users from"
 msgstr "vælg brugere fra"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:553
+#: adminapp/templates/os2datascanner/scanner_form.html:524
+#: import_services/models/ldap_configuration.py:38
+#: organizations/models/organizational_unit.py:64
+msgid "organizational units"
+msgstr "organisatoriske enheder"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:531
 msgid "or upload"
 msgstr "eller upload"
 
@@ -1062,7 +1068,7 @@ msgstr "f.eks. @example.com"
 msgid "Username"
 msgstr "Brugernavn"
 
-#: adminapp/views/exchangescanner_views.py:205
+#: adminapp/views/exchangescanner_views.py:226
 #: adminapp/views/filescanner_views.py:158
 msgid "Password"
 msgstr "Adgangskode"
@@ -1356,11 +1362,6 @@ msgstr "leverandør"
 #: import_services/models/ldap_configuration.py:37
 msgid "groups"
 msgstr "grupper"
-
-#: import_services/models/ldap_configuration.py:38
-#: organizations/models/organizational_unit.py:64
-msgid "organizational units"
-msgstr "organisatoriske enheder"
 
 #: import_services/models/ldap_configuration.py:41
 msgid "import users into"

@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'channels',
     'channels_redis',
+    'rest_framework',
 ]
 OS2DATASCANNER_APPS = [
     'os2datascanner.projects.admin.adminapp',

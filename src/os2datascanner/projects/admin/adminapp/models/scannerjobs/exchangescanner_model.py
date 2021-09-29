@@ -79,23 +79,20 @@ class ExchangeScanner(Scanner):
             user_list = set()
             # loop over all units incl children
             for organizational_unit in self.org_unit.all():
-                for unit in organizational_unit.get_descendants(include_self=True):
-                    for position in unit.position_set.all():
-                        addresses = position.account.aliases.filter(
-                            _alias_type=AliasType.EMAIL.value
+                for position in organizational_unit.position_set.all():
+                    addresses = position.account.aliases.filter(
+                        _alias_type=AliasType.EMAIL.value
+                    )
+                    if not addresses:
+                        logger.info(
+                            f"user {position.account.username} has no email alias "
+                            "connected"
                         )
-
-                        if not addresses:
-                            logger.info(
-                                f"user {position.account.username} has no email alias "
-                                "connected"
-                            )
-
-                        else:
-                            for alias in addresses:
-                                address = alias.value
-                                if address.endswith(self.url):
-                                    user_list.add(address.split("@", maxsplit=1)[0])
+                    else:
+                        for alias in addresses:
+                            address = alias.value
+                            if address.endswith(self.url):
+                                user_list.add(address.split("@", maxsplit=1)[0])
 
         for u in user_list:
             logger.info(f"submitting scan for user {u}")

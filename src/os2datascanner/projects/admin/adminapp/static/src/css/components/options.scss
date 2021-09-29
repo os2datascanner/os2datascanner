@@ -16,10 +16,12 @@ label+.dropdown {
 }
 
 /* style the selected item */
+.select2-selection,
 .select-selected {
-  background-color: var(--color-widget-bg);
-  border: none;
-  border-radius: var(--border-radius-small);
+  background-color: var(--color-widget-bg) ;
+  //select2 will override this if not important
+  border: none !important;
+  border-radius: var(--border-radius-small) !important;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
   font-size: 1rem;
   line-height: 1;
@@ -36,6 +38,7 @@ label+.dropdown {
 }
 
 /* style the arrow inside the select element */
+.select2-selection:after,
 .select-selected:after {
   position: absolute;
   content: "";
@@ -48,6 +51,7 @@ label+.dropdown {
 }
 
 /* point the arrow upwards when the select box is open (active) */
+.select2-selection[aria-expanded="true"]:after,
 .select-selected.select-arrow-active:after {
   border-color: transparent transparent #9e9e9e transparent;
   top: 7px;

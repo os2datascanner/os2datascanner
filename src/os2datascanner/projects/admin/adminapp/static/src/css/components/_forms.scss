@@ -371,12 +371,12 @@
   }
 }
 
-.has-error {
-  color: var(--color-error);
+.has-error { 
   border-left: 5px solid var(--color-error);
   padding-left: 1rem;
 
   .errorlist {
+    color: var(--color-error);
     font-size: 0.75rem;
     list-style: none;
     margin: 0.5rem 0 0 0;
