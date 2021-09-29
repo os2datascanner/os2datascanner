@@ -2,7 +2,7 @@ from io import BytesIO
 from time import sleep
 from lxml.html import document_fromstring
 from lxml.etree import ParserError
-from urllib.parse import urljoin, urlsplit, urlunsplit
+from urllib.parse import urljoin, urlsplit, urlunsplit, urldefrag
 import structlog
 from requests.sessions import Session
 from requests.exceptions import RequestException
@@ -34,7 +34,7 @@ class WebSource(Source):
 
     def __init__(self, url: str, sitemap : str = "", exclude = []):
         assert url.startswith("http:") or url.startswith("https:")
-        self._url = url if url.endswith("/") else url + "/"
+        self._url = url.removesuffix("/")
         self._sitemap = sitemap
         self._exclude = exclude
 
@@ -65,43 +65,35 @@ class WebSource(Source):
             raise RequestException(
                 f"{to_visit[0].presentation_url} is not available: {err}")
 
-        # scheme://netloc/path?query
-        # https://example.com/some/path?query=foo
-        scheme, netloc, path, query, fragment = urlsplit(self._url)
+        # scheme://netloc/path?query#fragment
+        # https://example.com/some/path?query=foo#fragment
+        url_split = urlsplit(self._url)
 
         def handle_url(here: "WebHandle", new_url: str,
                        lm_hint: datetime = None, from_sitemap: bool = False):
 
-            here_url = None if from_sitemap else here.presentation_url
+            here_url = "" if from_sitemap else here.presentation_url
             referrer = WebHandle(self, self._sitemap) if from_sitemap else here
-            new_url = urljoin(here_url, new_url)
-            n_scheme, n_netloc, n_path, n_query, _ = urlsplit(new_url)
-            new_url = urlunsplit(
-                    (n_scheme, n_netloc, n_path, n_query, None))
+            new_url, frag = urldefrag(urljoin(here_url, new_url))
+            nurls = urlsplit(new_url)
 
-            # urlsplit assigns the trailing slash after the netloc to the
-            # path, while WebSource treats it as part of the base URL. Make
-            # sure it isn't present in both to avoid conflicts
-            if n_path.startswith("/"):
-                n_path = n_path[1:]
-
-            # ensure the new_url actually is a url and not mailto:, etc
-            if n_scheme not in ("http", "https"):
+            # ensure the new url actually is a url and not mailto:, etc
+            if nurls.scheme not in ("http", "https"):
                 return
             for exclude in self._exclude:
                 if new_url.startswith(exclude):
                     logger.debug(f"excluded {new_url}")
                     return
 
-            if n_netloc == netloc:
+            if nurls.hostname == url_split.hostname:
                 # we dont care about whether scheme is http or https
-                # new_url is under same hirachy as here(referrer)
-                new_handle = WebHandle(self, n_path, referrer, lm_hint)
+                # new_url is under same hierarchy as here(referrer)
+                new_handle = WebHandle(self, nurls.path, referrer, lm_hint)
             else:
                 # new_url is external from here. Create a new handle from a new
                 # Source.
-                base_url = urlunsplit((n_scheme, n_netloc, "", None, None))
-                new_handle = WebHandle(WebSource(base_url), n_path, referrer,
+                base_url = urlunsplit((nurls.scheme, nurls.netloc, "", "", ""))
+                new_handle = WebHandle(WebSource(base_url), nurls.path, referrer,
                         lm_hint)
 
             # don't emit handles that doesn't belong to this Source
@@ -265,6 +257,8 @@ class WebHandle(Handle):
     def __init__(self, source: WebSource, path: str,
                  referrer: Optional["WebHandle"] = None,
                  last_modified_hint: Optional[datetime] = None):
+        # path = path if path.startswith("/") else ("/" + path if path else "")
+        path = path if path.startswith("/") else "/" + path
         super().__init__(source, path, referrer)
         self._lm_hint = last_modified_hint
 
@@ -282,10 +276,11 @@ class WebHandle(Handle):
 
     @property
     def presentation_url(self) -> str:
-        p = self.source.to_url()
-        if p[-1] != "/" and not self.relative_path.startswith("/"):
-            p += "/"
-        return p + self.relative_path
+        path = self.relative_path
+        if path and not path.startswith("/"):
+            path = "/" + path
+        # .removesuffix is probably unnecessary, as it is already done on source._url
+        return self.source.to_url().removesuffix("/") + path
 
     def censor(self):
         return WebHandle(source=self.source.censor(), path=self.relative_path,
