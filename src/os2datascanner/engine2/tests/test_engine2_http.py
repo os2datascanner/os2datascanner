@@ -5,7 +5,6 @@ from datetime import datetime
 import unittest
 import contextlib
 import logging
-import sys
 from unittest import mock
 from multiprocessing import Manager, Process
 from requests import RequestException
@@ -24,6 +23,106 @@ from os2datascanner.engine2.conversions.registry import convert
 here_path = os.path.dirname(__file__)
 test_data_path = os.path.join(here_path, "data", "www")
 
+
+# define Sources and what to expect from them
+site = {
+    "source": WebSource("http://localhost:64346"),
+    "handles": [
+        "http://localhost:64346/",
+        "http://localhost:64346/vstkom.png",
+        "http://localhost:64346/kontakt.html",
+    ],
+}
+mapped_site = {
+    "source": WebSource(
+        "http://localhost:64346", sitemap="http://localhost:64346/sitemap.xml"),
+    "handles": [
+        "http://localhost:64346/",
+        "http://localhost:64346/hemmeligheder.html",
+        "http://localhost:64346/kontakt.html",
+    ],
+}
+indexed_mapped_site = {
+    "source": WebSource(
+        "http://localhost:64346/", sitemap="http://localhost:64346/sitemap_index.xml"
+    ),
+    "handles": [
+        "http://localhost:64346/",
+        "http://localhost:64346/kontakt.html",
+        "http://localhost:64346/hemmeligheder.html",
+        "http://localhost:64346/hemmeligheder2.html",
+    ],
+}
+embedded_mapped_site = {
+    "source": WebSource(
+        "http://localhost:64346/",
+        sitemap='data:text/xml,<urlset xmlns="http://www.sitemaps.org/schemas'
+        '/sitemap/0.9"><url><loc>http://localhost:64346/hemmeligheder'
+        "2.html</loc></url></urlset>",
+    ),
+    "handles": [
+        "http://localhost:64346/",
+        "http://localhost:64346/hemmeligheder2.html",
+    ],
+}
+compressed_mapped_site = {
+    "source": WebSource(
+        "http://localhost:64346/",
+        sitemap="http://localhost:64346/sitemap_compressed.xml.gz",
+    ),
+    "handles": [
+        "http://localhost:64346/",
+        "http://localhost:64346/kontakt.html",
+        "http://localhost:64346/hemmeligheder.html",
+        "http://localhost:64346/hemmeligheder2.html",
+    ],
+}
+external_links_mapped_site = {
+    "source": WebSource(
+        "http://localhost:64346/",
+        sitemap="http://localhost:64346/sitemap_external.xml",
+    ),
+    "handles": [
+        "http://localhost:64346/",
+        "http://localhost:64346/external_links.html",
+        "http://localhost:64346/does-not-exist",
+    ],
+    "follow": [
+        "http://localhost:64346/",
+        "http://localhost:64346/external_links.html",
+    ],
+    "no-follow": [
+        "http://localhost:64346/does-not-exist",
+    ],
+}
+excluded_mapped_site = {
+    "source": WebSource(
+        "http://localhost:64346/",
+        sitemap="http://localhost:64346/sitemap_subpage.xml",
+        exclude=[
+            "http://localhost:64346/undermappe",
+            "http://localhost:64346/kontakt.html",
+        ],
+    ),
+    "handles": [
+        "http://localhost:64346/",
+        "http://localhost:64346/hemmeligheder.html",
+    ],
+}
+links_from_handle = {
+    "handle": WebHandle(
+        WebSource("http://localhost:64346"), path="/external_links.html"
+    ),
+    "http-links": [
+        "http://localhost:64346/",
+        "http://localhost:64346/vstkom.png",
+        "https://datatracker.ietf.org/doc/html/rfc2606",
+        "http://localhost:64346/intet",
+        "http://example.com",
+        "http://example.com/nonexistent",
+        "http://this-side-does-not-exists.invalid",
+    ],
+}
 
 def mocked_requests_get(*args, **kwargs):
     class MockResponse:
@@ -76,27 +175,6 @@ def run_web_server(started):
     finally:
         os.chdir(cwd)
 
-site = WebSource("http://localhost:64346/")
-mapped_site = WebSource("http://localhost:64346/",
-        sitemap="http://localhost:64346/sitemap.xml")
-indexed_mapped_site = WebSource("http://localhost:64346/",
-        sitemap="http://localhost:64346/sitemap_index.xml")
-embedded_mapped_site = WebSource("http://localhost:64346/",
-        sitemap="data:text/xml,<urlset xmlns=\"http://www.sitemaps.org/schemas"
-                "/sitemap/0.9\"><url><loc>http://localhost:64346/hemmeligheder"
-                "2.html</loc></url></urlset>")
-external_links_site = WebSource("http://localhost:64346/",
-        sitemap="http://localhost:64346/external_sitemap.xml")
-xxe_site = WebSource("http://localhost:64346/",
-        sitemap="http://localhost:64346/xxe_sitemap.xml")
-excluded_sites = WebSource(
-    "http://localhost:64346/",
-    sitemap="http://localhost:64346/sitemap_underside.xml",
-    exclude=["http://localhost:64346/undermappe", "http://localhost:64346/kontakt.html"])
-links_handle = WebHandle(
-    WebSource("http://localhost:64346/"),
-    path="external_links.html")
-
 class Engine2HTTPSetup():
     @classmethod
     def setUpClass(cls):
@@ -133,50 +211,107 @@ class Engine2HTTPSetup():
         # logger.addHandler(logging.StreamHandler())
 
 
-class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
+class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
+    "Explore a source and compare the found handles to a list of expected handles"
+
     def test_exploration(self):
-        count = 0
+        "scrape links without using sitemap"
+
         with SourceManager() as sm:
-            for h in site.handles(sm):
-                count += 1
-        self.assertEqual(
-                count,
-                3,
-                "embedded site should have 3 handles")
+            presentation = [h.presentation for h in site["source"].handles(sm)]
+        self.assertCountEqual(
+            presentation,
+            site["handles"],
+            "embedded site without sitemap should have 3 handles",
+        )
 
     def test_exploration_sitemap(self):
-        count = 0
+        "Use sitemap and no scraping"
+
         with SourceManager() as sm:
-            for h in mapped_site.handles(sm):
-                count += 1
-        self.assertEqual(
-                count,
-                3,
-                "embedded site with sitemap should have 3 handles")
+            presentation = [h.presentation for h in mapped_site["source"].handles(sm)]
+        self.assertCountEqual(
+            presentation,
+            mapped_site["handles"],
+            "embedded site without sitemap should have 3 handles",
+        )
 
     def test_exploration_data_sitemap(self):
-        count = 0
+        "use a data-sitemap"
+
         with SourceManager() as sm:
-            for h in embedded_mapped_site.handles(sm):
-                count += 1
-        self.assertEqual(
-                count,
-                2,
-                "embedded site with data: sitemap should have 2 handles")
+            presentation = [
+                h.presentation for h in embedded_mapped_site["source"].handles(sm)
+            ]
+        self.assertCountEqual(
+            presentation,
+            embedded_mapped_site["handles"],
+            "embedded site with data: sitemap should have 2 handles"
+        )
 
     def test_exploration_index(self):
-        count = 0
-        with SourceManager() as sm:
-            for h in indexed_mapped_site.handles(sm):
-                count += 1
-        self.assertEqual(
-                count,
-                4,
-                "embedded site with sitemap index should have 4 handles")
+        "use a sitemap that links to other sitemaps"
 
-    def test_sitemap_lm(self):
         with SourceManager() as sm:
-            for h in indexed_mapped_site.handles(sm):
+            presentation = [
+                h.presentation for h in indexed_mapped_site["source"].handles(sm)
+            ]
+        self.assertCountEqual(
+            presentation,
+            indexed_mapped_site["handles"],
+            "embedded site with sitemap index should have 4 handles",
+        )
+
+    def test_compressed_sitemap(self):
+        "gzip-compressed sitemap"
+    
+        # sitemap_index.xml as gzip compressed
+        # requests.get("http://localhost:64346/compressed_sitemap.xml.gz").headers
+        # > 'Content-type': 'application/gzip', 'Content-Length': '157'
+        with SourceManager() as sm:
+            presentation = [
+                h.presentation for h in compressed_mapped_site["source"].handles(sm)
+            ]
+        self.assertCountEqual(
+            presentation,
+            compressed_mapped_site["handles"],
+            "embedded site with compressed sitemap index should have 4 handles",
+        )
+
+    def test_excluded_sites(self):
+        "Source with excluded site and path"
+        
+        with SourceManager() as sm:
+            presentation = [
+                h.presentation for h in excluded_mapped_site["source"].handles(sm)
+            ]
+        self.assertCountEqual(
+            presentation,
+            excluded_mapped_site["handles"],
+            "WebSource with excluded sites should have 2 handles"
+        )
+
+    def test_external_links_sitemap(self):
+        "site mixed with external-, unresponsive- and non-http links"
+        
+        with SourceManager() as sm:
+            presentation = [
+                h.presentation for h in external_links_mapped_site["source"].handles(sm)
+            ]
+        self.assertCountEqual(
+            presentation,
+            external_links_mapped_site["handles"],
+            "site with mixed internal, external and non-http links should have 3 "
+            "handles that does not produce an exception"
+       )
+
+
+class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
+    def test_sitemap_lm(self):
+        "Get LastModified from secret_sitemap.xml"
+
+        with SourceManager() as sm:
+            for h in indexed_mapped_site["source"].handles(sm):
                 if h.relative_path == "hemmeligheder2.html":
                     lm = h.follow(sm).get_last_modified().value
                     self.assertEqual(
@@ -187,9 +322,39 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
             else:
                 self.fail("secret file missing")
 
+    def test_sitemap_error(self):
+        "Ensure there's an exception if the sitemap doesn't exist or is malformed"
+        
+        # Extant file, valid XML, not a sitemap
+        s1 = WebSource("http://localhost:64346/",
+                sitemap="http://localhost:64346/not_a_sitemap.xml")
+        # Extant file, invalid XML
+        s2 = WebSource("http://localhost:64346/",
+                sitemap="http://localhost:64346/broken_sitemap.xml")
+        # Missing file
+        s3 = WebSource("http://localhost:64346/",
+                sitemap="http://localhost:64346/missing_sitemap.xml")
+        with SourceManager() as sm:
+            for source in (s1, s2, s3,):
+                with self.assertRaises(Exception):
+                    list(source.handles(sm))
+
+    def test_sitemap_xxe(self):
+        "Test if the sitemap-parsing is vulnerable to xxe-injection"
+                         
+        sitemap="http://localhost:64346/sitemap_xxe.xml"
+        self.assertEqual(
+            list(process_sitemap_url(sitemap)),
+            [('http://localhost:64346/?', None)],
+            "sitemap xml-parser is vulnerable to XXE(XML External Entity) injection."
+            "Make sure to disable `resolve_entities` in the xml parser"
+        )
+
     @mock.patch('os2datascanner.engine2.model.utilities.sitemap.requests.get',
                 side_effect=mocked_requests_get)
     def test_sitemap_content_type_success(self, mock_get):
+        "Test successful parsing of different content-types for xml-files"
+
         url_text_xml = "https://some-website.com/content-type-text-xml"
         url_application_xml = "https://some-website.com/content-type-application-xml"
         url_many_space = "https://some-website.com/content-type-many-spaces"
@@ -198,23 +363,32 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
              _get_url_data(url_application_xml),
              _get_url_data(url_many_space)),
             ("Success", "Success", "Success"),
-            "Content-type headers are recognized as expected.",
-        )\
+            "Content-type headers are not recognized as expected.",
+        )
 
     @mock.patch('os2datascanner.engine2.model.utilities.sitemap.requests.get',
                 side_effect=mocked_requests_get)
     def test_sitemap_content_type_failure(self, mock_get):
+        "Test failed parsing of specific content-types for xml-files"
+
         url_fancy_compressor = \
             "https://some-website.com/content-type-fancy-compressor"
         with self.assertRaises(TypeError) as context:
             _get_url_data(url_fancy_compressor)
 
-        self.assertTrue(type(context.exception) is TypeError)
+        self.assertTrue(type(context.exception) is TypeError,
+                        "wrong exceptionType")
+
+
+class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
+    "Test resources by following handles"
 
     def test_resource(self):
+        "Get content and last-modified of a resource"
+
         with SourceManager() as sm:
             first_thing = None
-            with contextlib.closing(site.handles(sm)) as handles:
+            with contextlib.closing(site["source"].handles(sm)) as handles:
                 first_thing = next(handles)
             r = first_thing.follow(sm)
             self.assertIsInstance(
@@ -235,11 +409,103 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
             self.assertEqual(stream_raw, file_raw,
                     "{0}: file and stream not equal".format(first_thing))
 
+    def test_error(self):
+        "Try to follow a handle to a resource that does not exist"
+        
+        no_such_file = WebHandle(site["source"], "404.404")
+        with SourceManager() as sm:
+            r = no_such_file.follow(sm)
+            self.assertEqual(
+                    r.get_status(),
+                    404,
+                    "{0}: broken link doesn't have status 404".format(
+                            no_such_file))
+            with self.assertRaises(Exception):
+                r.get_size()
+            with self.assertRaises(Exception):
+                with r.make_path() as p:
+                    pass
+            with self.assertRaises(Exception):
+                with r.make_stream() as s:
+                    pass
+
+    def test_missing_headers(self):
+        with SourceManager() as sm:
+            first_thing = None
+            with contextlib.closing(site["source"].handles(sm)) as handles:
+                first_thing = next(handles)
+            r = first_thing.follow(sm)
+
+            now = time_now()
+
+            # It is not documented anywhere that WebResource.get_header()
+            # returns a live dictionary, so don't depend on this behaviour
+            header = r.unpack_header()
+            for name in ("content-type", OutputType.LastModified, ):
+                if name in header:
+                    del header[name]
+
+            self.assertEqual(
+                    r.compute_type(),
+                    "application/octet-stream",
+                    "{0}: unexpected backup MIME type".format(first_thing))
+            self.assertGreaterEqual(
+                    r.get_last_modified().value,
+                    now,
+                    "{0}: Last-Modified not fresh".format(first_thing))
+
+    def test_mixed_links_resource(self):
+        "site mixed with external-, unresponsive- and non-http links"
+
+        follow = []
+        nfollow = []
+        nerror = []
+        with SourceManager() as sm:
+            for h in external_links_mapped_site["source"].handles(sm):
+                try:
+                    if h.follow(sm).check():
+                        follow.append(h.presentation)
+                    else:
+                        nfollow.append(h.presentation)
+                except RequestException as e:
+                    print(
+                        f"got an expected exception for {h.presentation}:\n{e}")
+                    nerror.append(h.presentation)
+
+        # We could use unittest internal Exception handling
+        # with self.assertRaises(RequestException) as e:
+        #  ...
+        # exception = e.exception
+        # if exception:
+
+        # In case we catch an generic Exception, we could test the type, msg, code
+        # self.assertTrue(type(exception) in (RequestException, ))
+        # self.assertEqual(exception.msg, "timeout ... ", "wrong exception msg")
+        self.assertEqual(
+            follow,
+            external_links_mapped_site["follow"],
+            "site with broken internal and external links should have 2 "
+            "good links")
+        self.assertEqual(
+            nfollow,
+            external_links_mapped_site["no-follow"],
+            "site with broken internal and external links should have 1 "
+            "links that cannot be followed. Either by returning (404 or 410) "
+            "or domain-not-found(dns) or another Requests.RequestsException")
+        self.assertCountEqual(
+            nerror,
+            [],
+            "site with broken internal and external links should have 0 link that "
+            "produces an exception")
+
+class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
     def test_referrer_urls(self):
+        "Assert that second handle's referrer is the first handle"
+        
         with SourceManager() as sm:
             first_thing = None
             second_thing = None
-            with contextlib.closing(site.handles(sm)) as handles:
+            with contextlib.closing(site["source"].handles(sm)) as handles:
                 # We know nothing about the first page (maybe it has a link to
                 # itself, maybe it doesn't), but the second page is necessarily
                 # something we got to by following a link
@@ -264,6 +530,12 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                     second_thing))
 
     def test_old_fashioned_referrers(self):
+        """Assert that a WebHandle only have one referrer. The old WebHandle-specific
+        implementation allowed for a list with multiple. Now referrer is generic for
+        all Handle's
+
+        """
+
         handle = Handle.from_json_object({
             "type": "web",
             "source": {
@@ -281,93 +553,10 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 WebHandle(WebSource("https://www.example.com/"), "index.html"),
                 "old-fashioned referrer list not handled correctly")
 
-    def test_error(self):
-        no_such_file = WebHandle(site, "404.404")
-        with SourceManager() as sm:
-            r = no_such_file.follow(sm)
-            self.assertEqual(
-                    r.get_status(),
-                    404,
-                    "{0}: broken link doesn't have status 404".format(
-                            no_such_file))
-            with self.assertRaises(Exception):
-                r.get_size()
-            with self.assertRaises(Exception):
-                with r.make_path() as p:
-                    pass
-            with self.assertRaises(Exception):
-                with r.make_stream() as s:
-                    pass
-
-    def test_sitemap_error(self):
-        # Extant file, valid XML, not a sitemap
-        s1 = WebSource("http://localhost:64346/",
-                sitemap="http://localhost:64346/not_a_sitemap.xml")
-        # Extant file, invalid XML
-        s2 = WebSource("http://localhost:64346/",
-                sitemap="http://localhost:64346/broken_sitemap.xml")
-        # Missing file
-        s3 = WebSource("http://localhost:64346/",
-                sitemap="http://localhost:64346/missing_sitemap.xml")
-        with SourceManager() as sm:
-            for source in (s1, s2, s3,):
-                with self.assertRaises(Exception):
-                    list(source.handles(sm))
-
-    def test_compressed_sitemap(self):
-        # sitemap_index.xml as gzip compressed
-        # requests.get("http://localhost:64346/compressed_sitemap.xml.gz").headers
-        # > 'Content-type': 'application/gzip', 'Content-Length': '157'
-        s = WebSource("http://localhost:64346/",
-                sitemap="http://localhost:64346/compressed_sitemap.xml.gz")
-        count = 0
-        with SourceManager() as sm:
-            for h in s.handles(sm):
-                count += 1
-        self.assertEqual(
-                count,
-                4,
-                "embedded site with compressed sitemap index should have 4 handles")
-
-    def test_excluded_sites(self):
-        count = 0
-        with SourceManager() as sm:
-            for h in excluded_sites.handles(sm):
-                count += 1
-        self.assertEqual(
-                count,
-                2,
-                "WebSource with excluded sites should have 2 handles")
-
-    def test_missing_headers(self):
-        with SourceManager() as sm:
-            first_thing = None
-            with contextlib.closing(site.handles(sm)) as handles:
-                first_thing = next(handles)
-            r = first_thing.follow(sm)
-
-            now = time_now()
-
-            # It is not documented anywhere that WebResource.get_header()
-            # returns a live dictionary, so don't depend on this behaviour
-            header = r.unpack_header()
-            for name in ("content-type", OutputType.LastModified, ):
-                if name in header:
-                    del header[name]
-
-            self.assertEqual(
-                    r.compute_type(),
-                    "application/octet-stream",
-                    "{0}: unexpected backup MIME type".format(first_thing))
-            self.assertGreaterEqual(
-                    r.get_last_modified().value,
-                    now,
-                    "{0}: Last-Modified not fresh".format(first_thing))
-
     def test_lm_hint_json(self):
         h = WebHandle(
-            source=WebSource("http://localhost:64346/"),
-            path="hemmeligheder2.html",
+            source=WebSource("http://localhost:64346"),
+            path="/hemmeligheder2.html",
             last_modified_hint=parse_datetime("2011-12-01"))
 
         h2 = Handle.from_json_object(h.to_json_object())
@@ -386,8 +575,8 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
 
     def test_broken_page_handling(self):
         h = WebHandle(
-                WebSource("http://localhost:64346/"),
-                "broken.html")
+                WebSource("http://localhost:64346"),
+                "/broken.html")
         with SourceManager() as sm:
             with h.follow(sm).make_stream() as fp:
                 content = fp.read().decode()
@@ -399,91 +588,14 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 "expected one link to be found in broken document")
 
 
-class Engine2HTTPException(Engine2HTTPSetup, unittest.TestCase):
-    def test_broken_links_sitemap(self):
-        count = 0
-        with SourceManager() as sm:
-            for h in external_links_site.handles(sm):
-                print(h.presentation)
-                count += 1
-
-        self.assertEqual(
-            count,
-            3,
-            "site with broken internal and external links should have 3 "
-            "handles that does not produce an exception"
-        )
-
-    def test_broken_links_resource(self):
-        count_follow = 0
-        count_nfollow = 0
-        count_nerror = 0
-        with SourceManager() as sm:
-            for h in external_links_site.handles(sm):
-                try:
-                    if h.follow(sm).check():
-                        count_follow += 1
-                    else:
-                        count_nfollow += 1
-                except RequestException as e:
-                    print(
-                        f"got an expected exception for {h.presentation}:\n{e}")
-                    count_nerror += 1
-
-        # We could use unittest internal Exception handling
-        # with self.assertRaises(RequestException) as e:
-        #  ...
-        # exception = e.exception
-        # if exception:
-
-        # In case we catch an generic Exception, we could test the type, msg, code
-        # self.assertTrue(type(exception) in (RequestException, ))
-        # self.assertEqual(exception.msg, "timeout ... ", "wrong exception msg")
-        self.assertEqual(
-            count_follow,
-            2,
-            "site with broken internal and external links should have 2 "
-            "good links")
-        self.assertEqual(
-            count_nfollow,
-            1,
-            "site with broken internal and external links should have 1 "
-            "links that cannot be followed. Either by returning (404 or 410) "
-            "or domain-not-found(dns) or another Requests.RequestsException")
-        self.assertEqual(
-            count_nerror,
-            0,
-            "site with broken internal and external links should have 0 link that "
-            "produces an exception")
-
-
-class Engine2SitemapXXE(Engine2HTTPSetup, unittest.TestCase):
-    def test_sitemap_xxe(self):
-        self.assertEqual(
-            list(process_sitemap_url(xxe_site._sitemap)),
-            [('http://localhost:64346/?', None)],
-            "sitemap xml-parser is vulnerable to XXE(XML External Entity) injection."
-            "Make sure to disable `resolve_entities` in the xml parser"
-        )
-
-
-class HTTPConversionTests(Engine2HTTPSetup, unittest.TestCase):
+class Engine2HTTPConversionTests(Engine2HTTPSetup, unittest.TestCase):
     def test_links_conversion(self):
         with SourceManager() as sm:
-            lr = links_handle.follow(sm)
+            lr = links_from_handle["handle"].follow(sm)
             links = convert(lr, OutputType.Links, mime_override="text/html").value
-        expected = [
-            "http://localhost:64346/",
-            "http://localhost:64346/vstkom.png",
-            "https://datatracker.ietf.org/doc/html/rfc2606",
-            "http://localhost:64346/intet",
-            "http://example.com",
-            "http://example.com/nonexistent",
-            "http://this-side-does-not-exists.invalid",
-        ]
 
-        self.assertListEqual(
+        self.assertCountEqual(
             links,
-            expected,
-            "Conversion from html to links did not produce the expected number of links"
+            links_from_handle["http-links"],
+            "Conversion from html to links did not produce the expected links"
         )

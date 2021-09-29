@@ -3,7 +3,7 @@ from time import sleep
 from lxml.html import document_fromstring
 from lxml.etree import ParserError
 from urllib.parse import urljoin, urlsplit, urlunsplit
-import logging
+import structlog
 from requests.sessions import Session
 from requests.exceptions import RequestException
 from contextlib import contextmanager
@@ -18,7 +18,7 @@ from .utilities import NamedTemporaryResource
 from .utilities.sitemap import SitemapError, process_sitemap_url
 from .utilities.datetime import parse_datetime
 
-logger = logging.getLogger(__name__)
+logger = structlog.getLogger(__name__)
 SLEEP_TIME = 1 / engine2_settings.model["http"]["limit"]
 TIMEOUT = engine2_settings.model["http"]["timeout"]
 
@@ -313,7 +313,8 @@ class WebHandle(Handle):
                 # now contains a serialised Handle. Make sure we still support
                 # the old format
                 if len(referrer) > 1:
-                    logger.warning(f"discarding secondary referrers for {obj}")
+                    logger.warning("discarding secondary referrers",
+                                   obj=obj)
 
                 url = referrer[0]
                 scheme, netloc, path, query, fragment = urlsplit(url)
