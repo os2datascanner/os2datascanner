@@ -73,13 +73,21 @@ class PikaConnectionHolder:
 
     def clear(self):
         """Closes the managed Pika connection, if there is one."""
-        if self._connection:
-            try:
+        try:
+            if self._channel:
+                self._channel.close()
+        except pika.exceptions.ChannelWrongStateError:
+            pass
+        finally:
+            self._channel = None
+
+        try:
+            if self._connection:
                 self._connection.close()
-            except pika.exceptions.ConnectionWrongStateError:
-                pass
-        self._channel = None
-        self._connection = None
+        except pika.exceptions.ConnectionWrongStateError:
+            pass
+        finally:
+            self._connection = None
 
     def __enter__(self):
         return self
