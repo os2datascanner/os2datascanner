@@ -3,6 +3,7 @@ import pika
 import time
 import signal
 import threading
+import traceback
 from sortedcontainers import SortedList
 
 from ...utilities.backoff import run_with_backoff
@@ -10,9 +11,15 @@ from ....utils.system_utilities import json_utf8_decode
 from os2datascanner.utils import pika_settings
 
 
+def go_bang(k):
+    exc_type, exc_value, exc_traceback, thread = k
+    traceback.print_exception(exc_type, exc_value, exc_traceback)
+    signal.raise_signal(signal.SIGKILL)
+
+
 # We register an exception hook to make sure the main thread does not hang
 # indefinitely should a problem arise in the rabbitmq-connection-thread.
-threading.excepthook = lambda _: signal.raise_signal(signal.SIGKILL)
+threading.excepthook = go_bang
 
 
 class PikaConnectionHolder:
