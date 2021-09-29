@@ -26,7 +26,7 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
-from os2datascanner.engine2.model.core import Handle
+from os2datascanner.engine2.model.core import Handle, Source
 from os2datascanner.utils.system_utilities import time_now
 from ...models.documentreport_model import DocumentReport
 from ...models.organization_model import Organization
@@ -50,11 +50,14 @@ def result_message_received_raw(body):
 
     # XXX: ideally we would only log once in this file. When all is done, log the
     # following AND what actions were taken.
-    logger.info(
+    logger.debug(
         "msg received",
         queue=queue,
         tag=tag.scanner.to_json_object(),
-        handle=Handle.from_json_object(reference).presentation,
+        handle=Handle.from_json_object(reference).censor().to_json_object()
+        if body.get("handle") else None,
+        source=Source.from_json_object(reference).censor().to_json_object()
+        if not body.get("handle") else None,
         prev_report=previous_report,
     )
 
