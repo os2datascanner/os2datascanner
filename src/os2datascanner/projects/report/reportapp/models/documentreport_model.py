@@ -164,27 +164,21 @@ DocumentReport.factory = ModelFactory(DocumentReport)
 @DocumentReport.factory.on_update
 def on_documentreport_created_or_updated(objects, fields=None):
     from .aliases.alias_model import Alias
+    from .aliases.adsidalias_model import ADSIDAlias
     from .aliases.emailalias_model import EmailAlias
 
     tm = Alias.match_relation.through
     new_objects = []
     for obj in objects:
         # Add DocumentReport to Alias.match_relation, when it's saved to the db.
-        try:
-            metadata = obj.data['metadata']['metadata'].values()
-            value = list(metadata)[0]
-            aliases = Alias.objects.select_subclasses()
-            for alias in aliases:
-                if type(alias) is EmailAlias:
-                    if alias.address.lower() == value.lower():
-                        new_objects.append(
-                            tm(documentreport_id=obj.pk, alias_id=alias.pk))
-                else:
-                    if str(alias) == value:
-                        new_objects.append(
-                                tm(documentreport_id=obj.pk, alias_id=alias.pk))
-        except (KeyError, TypeError):
-            logger.debug("no metadata", report=obj)
+        if not obj.metadata:
+            continue
+        if (email := obj.metadata.metadata.get("email-account")):
+            email_alias = EmailAlias.objects.filter(address__iexact=email)
+            add_new_relations(email_alias, new_objects, obj, tm)
+        if (adsid := obj.metadata.metadata.get("filesystem-owner-sid")):
+            adsid_alias = ADSIDAlias.objects.filter(sid=adsid)
+            add_new_relations(adsid_alias, new_objects, obj, tm)
     try:
         # TODO: We do not bulk create DocumentReports, and therefore will we always
         #  bulk_create 1 Alias.match_relation at the time. We do not actually
@@ -193,6 +187,11 @@ def on_documentreport_created_or_updated(objects, fields=None):
     except:
         logger.error("Failed to create match_relation", exc_info=True)
 
+
+def add_new_relations(adsid_alias, new_objects, obj, tm):
+    for alias in adsid_alias:
+        new_objects.append(
+            tm(documentreport_id=obj.pk, alias_id=alias.pk))
 
 # TODO: #43340 (if we need to explicitly delete the instances of the implicit
 # model class used by Alias.match_relation, we should also hook DocumentReport.
