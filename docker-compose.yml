@@ -137,8 +137,6 @@ services:
   redis:
     # Channel layer backend
     image: redis:latest
-    profiles:
-      - socket
 
   report_collector:
     build:
