@@ -5,7 +5,7 @@ click
 google-api-python-client
 oauth2client
 parameterized
-pika
+pika==1.2.0
+sortedcontainers
 structlog
 toml
-

@@ -139,7 +139,7 @@ parameterized==0.8.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
-pika==1.1.0
+pika==1.2.0
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
@@ -264,13 +264,14 @@ six==1.14.0
     #   protobuf
     #   python-dateutil
     #   structlog
+sortedcontainers==2.4.0
+    # via
+    #   -c requirements-engine.txt
+    #   -r requirements-common.in
 structlog==20.1.0
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
-    # via
-    #   -c requirements-engine.txt
-    #   -r requirements-engine.in
 toml==0.10.1
     # via
     #   -c requirements-engine.txt

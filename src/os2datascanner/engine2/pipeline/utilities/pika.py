@@ -3,15 +3,23 @@ import pika
 import time
 import signal
 import threading
+import traceback
+from sortedcontainers import SortedList
 
 from ...utilities.backoff import run_with_backoff
 from ....utils.system_utilities import json_utf8_decode
 from os2datascanner.utils import pika_settings
 
 
+def go_bang(k):
+    exc_type, exc_value, exc_traceback, thread = k
+    traceback.print_exception(exc_type, exc_value, exc_traceback)
+    signal.raise_signal(signal.SIGKILL)
+
+
 # We register an exception hook to make sure the main thread does not hang
 # indefinitely should a problem arise in the rabbitmq-connection-thread.
-threading.excepthook = lambda _: signal.raise_signal(signal.SIGKILL)
+threading.excepthook = go_bang
 
 
 class PikaConnectionHolder:
@@ -65,19 +73,34 @@ class PikaConnectionHolder:
 
     def clear(self):
         """Closes the managed Pika connection, if there is one."""
-        if self._connection:
-            try:
+        try:
+            if self._channel:
+                self._channel.close()
+        except pika.exceptions.ChannelWrongStateError:
+            pass
+        finally:
+            self._channel = None
+
+        try:
+            if self._connection:
                 self._connection.close()
-            except pika.exceptions.ConnectionWrongStateError:
-                pass
-        self._channel = None
-        self._connection = None
+        except pika.exceptions.ConnectionWrongStateError:
+            pass
+        finally:
+            self._connection = None
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_info, exc_tb):
         self.clear()
+
+
+ANON_QUEUE = ""
+"""The special value that indicates to RabbitMQ that the broker should assign
+a randomly-generated unique name to a queue. (When used to identify a queue to
+read from, this value refers to the last randomly-generated queue name for the
+given channel.)"""
 
 
 class PikaPipelineRunner(PikaConnectionHolder):
@@ -96,6 +119,20 @@ class PikaPipelineRunner(PikaConnectionHolder):
         for q in self._read.union(self._write):
             channel.queue_declare(q, passive=False,
                     durable=True, exclusive=False, auto_delete=False)
+
+        # RabbitMQ handles broadcast messages in a slightly convoluted way:
+        # we must first declare a special "fanout" message exchange, and then
+        # each client must declare a separate anonymous queue and bind it to
+        # the exchange in order to receive broadcasts
+        channel.exchange_declare("broadcast", pika.spec.ExchangeType.fanout,
+                passive=False, durable=True, auto_delete=False, internal=False)
+        anon_queue = channel.queue_declare(
+                ANON_QUEUE, passive=False, durable=False,
+                exclusive=False, auto_delete=True, arguments={
+                    "x-max-priority": 10
+                })
+        channel.queue_bind(exchange="broadcast", queue=anon_queue.method.queue)
+
         return channel
 
     def handle_message_raw(self, channel, method, properties, body):
@@ -114,6 +151,8 @@ class PikaPipelineRunner(PikaConnectionHolder):
             consumer_tags.append(self.channel.basic_consume(
                     queue, self.handle_message_raw,
                     exclusive=exclusive))
+        consumer_tags.append(self.channel.basic_consume(
+                ANON_QUEUE, self.handle_message_raw, exclusive=False))
         return consumer_tags
 
     def _basic_cancel(self, consumer_tags):
@@ -122,12 +161,30 @@ class PikaPipelineRunner(PikaConnectionHolder):
             self.channel.basic_cancel(tag)
 
 
+class RejectMessage(BaseException):
+    """Implementations of PikaPipelineThread.handle_message can raise the
+    RejectMessage exception to indicate that a message should be rejected. (By
+    default, messages are acknowledged once handle_message is finished.)
+
+    Rejected messages are by default re-enqueued for later execution; if
+    requeue=False is passed to the constructor, though, messages will just be
+    dropped.
+
+    This exception is not intended to be handled by anything other than
+    PikaPipelineThread, and is accordingly implemented as a BaseException
+    rather than an Exception."""
+
+    def __init__(self, *args, requeue=True, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.requeue = requeue
+
+
 class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
     """Runs a Pika session in a background thread."""
     def __init__(self, *args, exclusive=False, **kwargs):
         super().__init__()
         PikaPipelineRunner.__init__(self, *args, **kwargs)
-        self._incoming = []
+        self._incoming = SortedList(key=lambda e: -(e[1].priority or 0))
         self._outgoing = []
         self._live = None
         self._condition = threading.Condition()
@@ -149,6 +206,11 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         message with the given tag."""
         return self._enqueue("ack", delivery_tag)
 
+    def enqueue_reject(self, delivery_tag: int, requeue: bool = True):
+        """Requests that the background thread reject the message with the
+        given tag."""
+        return self._enqueue("rej", delivery_tag, requeue)
+
     def enqueue_stop(self):
         """Requests that the background thread stop running.
 
@@ -156,9 +218,11 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         process will not terminate if this method is never called."""
         return self._enqueue("fin")
 
-    def enqueue_message(self, queue: str, body: bytes):
+    def enqueue_message(self,
+            queue: str, body: bytes,
+            exchange: str = "", **basic_properties):
         """Requests that the background thread send a message."""
-        return self._enqueue("msg", queue, body)
+        return self._enqueue("msg", queue, body, exchange, basic_properties)
 
     def await_message(self, timeout: float = None):
         """Returns a message collected by the background thread; the return
@@ -171,9 +235,8 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
             def waiter():
                 return not self._live or len(self._incoming) > 0
             rv = self._condition.wait_for(waiter, timeout)
-            if rv == True and self._live:
-                head, self._incoming = self._incoming[0], self._incoming[1:]
-                return head
+            if rv and self._live:
+                return self._incoming.pop(0)
             else:
                 return (None, None, None)
 
@@ -188,12 +251,16 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         """(Background thread.) Collects a message and stores it for later
         retrieval by the main thread."""
         with self._condition:
-            self._incoming.append((method, properties, body,))
+            self._incoming.add((method, properties, body,))
             self._condition.notify()
 
     def run(self):
         """(Background thread.) Runs a loop that processes enqueued actions
-        from, and collects new messages for, the main thread."""
+        from, and collects new messages for, the main thread.
+
+        (Note that it *is* possible, if you're careful, to call this function
+        directly in order to execute a list of enqueued actions on the current
+        thread.)"""
         with self._condition:
             self._live = True
             self._condition.notify()
@@ -204,20 +271,24 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 with self._condition:
                     # Process all of the enqueued actions
                     while self._outgoing:
-                        head, self._outgoing = (
-                                self._outgoing[0], self._outgoing[1:])
+                        head = self._outgoing.pop(0)
                         label = head[0]
                         if label == "msg":
-                            queue, body = head[1:]
+                            queue, body, exchange, properties = head[1:]
                             self.channel.basic_publish(
-                                    exchange='',
+                                    exchange=exchange,
                                     routing_key=queue,
                                     properties=pika.BasicProperties(
-                                            delivery_mode=2),
+                                            delivery_mode=2,
+                                            **properties),
                                     body=json.dumps(body).encode())
                         elif label == "ack":
                             delivery_tag = head[1]
                             self.channel.basic_ack(delivery_tag)
+                        elif label == "rej":
+                            delivery_tag, requeue = head[1:]
+                            self.channel.basic_reject(
+                                    delivery_tag, requeue=requeue)
                         elif label == "fin":
                             running = False
                             break
@@ -238,6 +309,9 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 self._condition.notify()
 
     def run_consumer(self):
+        """Receives messages from the registered input queues, dispatches them
+        to the handle_message function, and generates new output messages. All
+        Pika API calls are performed by the background thread."""
         running = True
 
         def _handler(signum, frame):
@@ -252,10 +326,14 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 method, properties, body = self.await_message()
                 if method == properties == body == None:
                     continue
-                for routing_key, message in self.handle_message(
-                        method.routing_key, json_utf8_decode(body)):
-                    self.enqueue_message(routing_key, message)
-                self.enqueue_ack(method.delivery_tag)
+                try:
+                    for routing_key, message in self.handle_message(
+                            method.routing_key, json_utf8_decode(body)):
+                        self.enqueue_message(routing_key, message)
+                    self.enqueue_ack(method.delivery_tag)
+                except RejectMessage as ex:
+                    self.enqueue_reject(method.delivery_tag,
+                            requeue=ex.requeue)
         finally:
             self.enqueue_stop()
             self.join()

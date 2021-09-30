@@ -27,7 +27,6 @@ automat==20.2.0
     # via twisted
 backcall==0.1.0
     # via ipython
-    # via -r requirements-django.in
 cached-property==1.5.1
     # via
     #   -c requirements-engine.txt
@@ -186,10 +185,6 @@ idna==2.9
     #   hyperlink
     #   requests
     #   twisted
-importlib-metadata==4.5.0
-    # via
-    #   -c requirements-engine.txt
-    #   click
 incremental==21.3.0
     # via twisted
 ipython-genutils==0.2.0
@@ -235,7 +230,7 @@ pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
-pika==1.1.0
+pika==1.2.0
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
@@ -358,7 +353,10 @@ six==1.14.0
     #   service-identity
     #   structlog
     #   traitlets
-soupsieve==2.0
+sortedcontainers==2.4.0
+    # via
+    #   -c requirements-engine.txt
+    #   -r requirements-common.in
 sqlparse==0.3.1
     # via
     #   django
@@ -379,12 +377,7 @@ twisted[tls]==21.7.0
 txaio==21.2.1
     # via autobahn
 typing-extensions==3.10.0.0
-    # via
-    #   -c requirements-engine.txt
-    #   asgiref
-    #   importlib-metadata
-    #   twisted
-    #   uvicorn
+    # via twisted
 tzlocal==2.0.0
     # via
     #   -c requirements-engine.txt
@@ -409,10 +402,6 @@ websockets==10.0
     # via uvicorn
 whitenoise==5.2.0
     # via -r requirements-django.in
-zipp==3.4.1
-    # via
-    #   -c requirements-engine.txt
-    #   importlib-metadata
 zope.interface==5.4.0
     # via twisted
 

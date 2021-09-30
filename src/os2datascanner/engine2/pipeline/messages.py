@@ -431,3 +431,33 @@ class StatusMessage(NamedTuple):
                 object_type=obj.get("object_type"))
 
     _deep_replace = _deep_replace
+
+
+class CommandMessage(NamedTuple):
+    """A CommandMessage is an order from the administration system. As they may
+    modify the treatment of other messages, they should be processed as soon as
+    possible, and so should be sent on a high-priority queue."""
+
+    abort: Optional[ScanTagFragment]
+    """If set, the scan tag of a scan that should no longer be processed by the
+    pipeline. Pipeline components should acknowledge and silently ignore all
+    messages carrying this tag.
+
+    To avoid accumulating tags indefinitely, pipeline components should store
+    them in a ring buffer of a reasonable size. (What "reasonable" means
+    depends a bit on the installation and on how many concurrent scans it can
+    be expected to perform.)"""
+
+    def to_json_object(self):
+        return {
+            "abort": self.abort.to_json_object() if self.abort else None
+        }
+
+    @staticmethod
+    def from_json_object(obj):
+        abort = obj.get("abort")
+        return CommandMessage(
+                abort=ScanTagFragment.from_json_object(abort)
+                if abort else None)
+
+    _deep_replace = _deep_replace

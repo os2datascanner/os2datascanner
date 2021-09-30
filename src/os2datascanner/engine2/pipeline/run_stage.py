@@ -1,16 +1,19 @@
 import sys
 import signal
+import logging
 import argparse
 import traceback
-import logging
-from prometheus_client import start_http_server, Info
-from .utilities.prometheus import prometheus_summary
+from collections import deque
+from prometheus_client import start_http_server, Info, Summary
 
 from ... import __version__
 from ...utils.system_utilities import json_utf8_decode
 from ..model.core import SourceManager
-from .utilities.pika import PikaPipelineThread
-from . import explorer, processor, matcher, tagger, exporter, worker
+from .utilities.pika import RejectMessage, PikaPipelineThread
+from . import explorer, processor, matcher, tagger, exporter, worker, messages
+
+
+logger = logging.getLogger(__name__)
 
 
 def backtrace(signal, frame):
@@ -30,6 +33,7 @@ _module_mapping = {
     "worker": worker
 }
 
+
 _loglevels = {
     'critical': logging.CRITICAL,
     'error': logging.ERROR,
@@ -37,7 +41,7 @@ _loglevels = {
     'warning': logging.WARNING,
     'info': logging.INFO,
     'debug': logging.DEBUG
-    }
+}
 
 
 def _compatibility_main(stage):
@@ -47,16 +51,55 @@ def _compatibility_main(stage):
     main()
 
 
+class GenericRunner(PikaPipelineThread):
+    def __init__(self,
+            source_manager: SourceManager, *args,
+            stage: str, module, **kwargs):
+        super().__init__(*args, **kwargs,
+                read=module.READS_QUEUES,
+                write=module.WRITES_QUEUES,
+                prefetch_count=module.PREFETCH_COUNT)
+        self._module = module
+        self._summary = Summary(
+                f"os2datascanner_pipeline_{stage}",
+                self._module.PROMETHEUS_DESCRIPTION)
+        self._source_manager = source_manager
+
+        self._cancelled = deque()
+
+    def handle_message(self, routing_key, body):
+        with self._summary.time():
+            logger.debug(f"{routing_key}: {str(body)}")
+            if routing_key == "":
+                command = messages.CommandMessage.from_json_object(body)
+
+                if command.abort:
+                    self._cancelled.appendleft(command.abort)
+                yield from []
+            else:
+                raw_scan_tag = body.get("scan_tag")
+                if not raw_scan_tag and "scan_spec" in body:
+                    raw_scan_tag = body["scan_spec"]["scan_tag"]
+
+                if raw_scan_tag:
+                    scan_tag = messages.ScanTagFragment.from_json_object(
+                            raw_scan_tag)
+                    if scan_tag in self._cancelled:
+                        logger.debug(
+                                f"scan {raw_scan_tag} is cancelled, "
+                                "ignoring")
+                        raise RejectMessage(requeue=False)
+
+                yield from self._module.message_received_raw(
+                        body, routing_key, self._source_manager)
+
+
 def main():
     signal.signal(signal.SIGUSR1, backtrace)
 
     parser = argparse.ArgumentParser(
             formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             description="Runs an OS2datascanner pipeline stage.")
-    parser.add_argument(
-            "--debug",
-            action="store_true",
-            help="print all incoming messages to the console")
     parser.add_argument(
             "--log",
             default="info",
@@ -109,21 +152,10 @@ def main():
         start_http_server(args.prometheus_port)
 
     with SourceManager(width=args.width) as source_manager:
-
-        class GenericRunner(PikaPipelineThread):
-            @prometheus_summary(
-                    f"os2datascanner_pipeline_{args.stage}",
-                    module.PROMETHEUS_DESCRIPTION)
-            def handle_message(self, routing_key, body):
-                if args.debug:
-                    print(routing_key, body)
-                yield from module.message_received_raw(
-                        body, routing_key, source_manager)
-
         GenericRunner(
-                read=module.READS_QUEUES,
-                write=module.WRITES_QUEUES,
-                prefetch_count=module.PREFETCH_COUNT).run_consumer()
+                source_manager,
+                stage=args.stage,
+                module=module).run_consumer()
 
 if __name__ == "__main__":
     main()
