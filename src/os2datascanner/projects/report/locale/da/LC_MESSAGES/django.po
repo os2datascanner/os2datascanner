@@ -136,68 +136,74 @@ msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
 #: reportapp/templates/components/handle-match.html:6
-msgid "Handle results as:"
-msgstr "Håndtér resultater som:"
+msgid "Handle selected results"
+msgstr "Håndtér valgte resultater"
 
-#: reportapp/templates/components/handle-match.html:14
-msgid "Moved the file"
-msgstr "Har flyttet filen"
+#: reportapp/templates/components/handle-match.html:9
+#: reportapp/templates/components/pagination.html:10
+#: reportapp/templates/components/statistics-template.html:114
+#: reportapp/templates/components/statistics-template.html:123
+#: reportapp/templates/components/statistics-template.html:132
+#: reportapp/templates/components/statistics-template.html:141
+#: reportapp/templates/components/statistics-template.html:152
+msgid "of"
+msgstr "af"
 
-#: reportapp/templates/components/handle-match.html:17
-msgid "Deleted the file"
-msgstr "Har slettet filen"
+#: reportapp/templates/components/handle-match.html:9
+msgid "selected"
+msgstr "valgt"
 
-#: reportapp/templates/components/handle-match.html:20
-msgid "Edited the file"
-msgstr "Har redigeret filen"
-
-#: reportapp/templates/components/handle-match.html:23
-msgid "False positive"
-msgstr "Falsk positiv"
-
-#: reportapp/templates/components/handle-match.html:28
-msgid "Submit"
-msgstr "Udfør"
-
-#: reportapp/templates/components/handle-match.html:31
-msgid "0 out of 10 selected"
-msgstr "0 af 10 valgt"
-
-#: reportapp/templates/components/hit.html:26 reportapp/templates/index.html:11
-msgid "Results:"
-msgstr "Resultater:"
-
-#: reportapp/templates/components/hit.html:37
+#: reportapp/templates/components/hit.html:21
 msgid "Open"
 msgstr "Åbn"
 
-#: reportapp/templates/components/hit.html:42
+#: reportapp/templates/components/hit.html:26
 msgid "Copy"
 msgstr "Kopiér"
 
-#: reportapp/templates/components/hit.html:46
+#: reportapp/templates/components/hit.html:30
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hits.html:17
-msgid "Type"
-msgstr "Type"
+#: reportapp/templates/components/hit.html:56
+msgid "Handle"
+msgstr "Håndtér"
 
-#: reportapp/templates/components/hits.html:22
-msgid "Object"
-msgstr "Objekt"
+#: reportapp/templates/components/hit.html:57
+msgid "Show/hide matches"
+msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hits.html:25
-msgid "Result"
-msgstr "Resultat"
+#: reportapp/templates/components/hit.html:69
+msgid "Anonymized match"
+msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hits.html:28
+#: reportapp/templates/components/hit.html:70
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hits.html:31
-msgid "Probability"
-msgstr "Sandsynlighed"
+#: reportapp/templates/components/hits.html:22
+msgid "Select all"
+msgstr "Vælg alle"
+
+#: reportapp/templates/components/hits.html:26
+msgid "Name"
+msgstr "Navn"
+
+#: reportapp/templates/components/hits.html:29
+msgid "Matches"
+msgstr "Matches"
+
+#: reportapp/templates/components/hits.html:32
+msgid "Source"
+msgstr "Kilde"
+
+#: reportapp/templates/components/hits.html:35
+msgid "Path"
+msgstr "Sti"
+
+#: reportapp/templates/components/hits.html:38
+msgid "Actions"
+msgstr "Handlinger"
 
 #: reportapp/templates/components/load-results.html:10
 #: reportapp/templates/components/load-results.html:16
@@ -208,21 +214,25 @@ msgstr "pr. side"
 msgid "Front page"
 msgstr "Forside"
 
-#: reportapp/templates/components/pagination.html:20
-#: reportapp/templates/components/pagination.html:27
+#: reportapp/templates/components/pagination.html:10
+msgid "page"
+msgstr "side"
+
+#: reportapp/templates/components/pagination.html:17
+#: reportapp/templates/components/pagination.html:22
 msgid "Previous"
 msgstr "Forrige"
 
-#: reportapp/templates/components/pagination.html:59
-#: reportapp/templates/components/pagination.html:66
+#: reportapp/templates/components/pagination.html:52
+#: reportapp/templates/components/pagination.html:57
 msgid "Next"
 msgstr "Næste"
 
-#: reportapp/templates/components/pagination.html:75
+#: reportapp/templates/components/pagination.html:64
 msgid "Go to page"
 msgstr "Gå til side"
 
-#: reportapp/templates/components/pagination.html:79
+#: reportapp/templates/components/pagination.html:68
 msgid "Go"
 msgstr "Gå"
 
@@ -318,14 +328,6 @@ msgstr "Afdelingens procentvise andel af håndterede resultater"
 msgid "All results"
 msgstr "Alle resultater"
 
-#: reportapp/templates/components/statistics-template.html:114
-#: reportapp/templates/components/statistics-template.html:123
-#: reportapp/templates/components/statistics-template.html:132
-#: reportapp/templates/components/statistics-template.html:141
-#: reportapp/templates/components/statistics-template.html:152
-msgid "of"
-msgstr "af"
-
 #: reportapp/templates/components/statistics-template.html:163
 msgid "Overview for department with most unhandled results"
 msgstr "Overblik over afdelinger med flest uhåndterede resultater"
@@ -362,7 +364,15 @@ msgstr "Logget ud"
 msgid "You have signed out successfully."
 msgstr "Du er nu logget ud."
 
-#: reportapp/templates/index.html:22
+#: reportapp/templates/index.html:10
+msgid "Results"
+msgstr "Resultater"
+
+#: reportapp/templates/index.html:12
+msgid "results"
+msgstr "resultater"
+
+#: reportapp/templates/index.html:18
 msgid "No results were found"
 msgstr "Der er ingen resultater"
 
@@ -506,3 +516,33 @@ msgstr "Mailscan"
 #: reportapp/views/views.py:432
 msgid "Not assigned"
 msgstr "Ikke tildelt"
+
+#~ msgid "Moved the file"
+#~ msgstr "Har flyttet filen"
+
+#~ msgid "Deleted the file"
+#~ msgstr "Har slettet filen"
+
+#~ msgid "Edited the file"
+#~ msgstr "Har redigeret filen"
+
+#~ msgid "False positive"
+#~ msgstr "Falsk positiv"
+
+#~ msgid "Submit"
+#~ msgstr "Udfør"
+
+#~ msgid "0 out of 10 selected"
+#~ msgstr "0 af 10 valgt"
+
+#~ msgid "Type"
+#~ msgstr "Type"
+
+#~ msgid "Object"
+#~ msgstr "Objekt"
+
+#~ msgid "Result"
+#~ msgstr "Resultat"
+
+#~ msgid "Probability"
+#~ msgstr "Sandsynlighed"

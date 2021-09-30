@@ -1,34 +1,41 @@
 {% load handle_extras %}
 {%  load i18n %}
 
-<table class="datatable">
+<table class="datatable datatable-card">
+  <colgroup>
+    <col class="datatable__column--handle">
+    <col class="datatable__column--name">
+    <col class="datatable__column--matchcount">
+    <col class="datatable__column--source">
+    <col class="datatable__column--path">
+    <col class="datatable__column--actions">
+  </colgroup>
   <thead>
     <tr>
-      <th>
+      <th colspan="6">
         {% include "components/handle-match.html" %}
       </th>
     </tr>
     <tr class="grey-bg">
-      <th class="datatable__column--handle">
+      <th>
         <div class="datatable__column--filetype-icon">
-          <input id="select-all" type="checkbox" name="match-checkbox" class="datatable-checkbox">
-  
-          <span class="screen-reader-only">
-              {% trans "Type" %}
-          </span>
+          <input id="select-all" type="checkbox" class="datatable-checkbox" aria-label="{% trans 'Select all' %}">
         </div>
       </th>
-      <th class="datatable__column--item">
-          {% trans "Object" %}
+      <th>
+          {% trans "Name" %}
       </th>
-      <th class="datatable__column--match">
-          {% trans "Result" %}
+      <th>
+          {% trans "Matches" %}
       </th>
-      <th class="datatable__column--context">
-          {% trans "Context" %}
+      <th>
+          {% trans "Source" %}
       </th>
-      <th class="datatable__column--probability">
-          {% trans "Probability" %}
+      <th>
+          {% trans "Path" %}
+      </th>
+      <th>
+          <span class="screen-reader-only">{% trans "Actions" %}</span>
       </th>
     </tr>
   </thead>
@@ -37,8 +44,47 @@
     {% for match in matches %}
       {% include "components/hit.html" %}
     {% endfor %}
-    
+
   </tbody>
 
   {% include "components/pagination.html" %}
 </table>
+
+<script>
+  // attach click handler to document to be prepared for the scenario
+  // where we dynamically add more rows
+  document.addEventListener('click', function (e) {
+    var targ = e.target
+    var classList = targ.className.split(' ')
+    // IE11 way of doing targ.classList.contains('matches-expand')
+    if (classList.indexOf('matches-expand') > -1) {
+      // IE11 way of doing Element.closest('tr[data-type]')
+      var parent = targ.parentElement
+      while (parent) {
+        if (parent.matches('tr[data-type]')) {
+          break
+        }
+        parent = parent.parentElement
+      }
+
+      var matchesList = parent.nextElementSibling
+
+      // show/hide the matches
+      matchesList.hidden = !matchesList.hidden
+      toggleClass(targ, 'open')
+      toggleClass(parent, 'open')
+    }
+  })
+
+  // IE11 way of doing Element.classList.add and Element.classList.remove
+  function toggleClass(elm, className) {
+    var classList = elm.className ? elm.className.split(' ') : []
+    var classIndex = classList.indexOf(className)
+    if (classIndex == -1) {
+      classList.push(className)
+    } else {
+      classList.splice(classIndex, 1)
+    }
+    elm.className = classList.join(' ')
+  }
+</script>

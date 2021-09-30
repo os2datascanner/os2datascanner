@@ -1,44 +1,26 @@
-// Changes 'x of x' on load, to avoid showing 0 of 10
-// while having less than 10 matches.
-window.addEventListener('load', function () {
-  showChecked();
-});
-
 // Listen for click on toggle checkbox
-$('#select-all').click(function() {
-  if(this.checked) {
-      // Iterate each checkbox
-      $('td input:checkbox').each(function() {
-        this.checked = true;
-      });
-  } else {
-      $('td input:checkbox').each(function() {
-        this.checked = false;                   
-      });
-  }
+$("#select-all").change(function() {
+  $("input[name='match-checkbox']").prop("checked", $(this).prop("checked"));
+  countChecked();
 });
 
-// Show selected checkboxes
-function showChecked(){
-  var selected = $("td input:checked").length
-      + " af " + $("td .datatable-checkbox").length + " valgt";
-  $(".selected-cb").text(selected);
+// Count selected checkboxes
+function countChecked() {
+  var numChecked = $("input[name='match-checkbox']:checked").length;
+  $(".selected-cb .num-selected").text(numChecked);
+  $(".handle-match__action").prop("disabled", !Boolean(numChecked))
 }
 // Iterate each checkbox
-$("input[name=match-checkbox]").each(function( i ) {
-  $(this).on("click", function(){
-    i = showChecked();
-  });
-});
+$("input[name='match-checkbox']").change(countChecked);
 
 function getCookie(name) {
   var cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-      var cookies = document.cookie.split(';');
+  if (document.cookie && document.cookie !== "") {
+      var cookies = document.cookie.split(";");
       for (var i = 0; i < cookies.length; i++) {
           var cookie = cookies[i].trim();
           // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          if (cookie.substring(0, name.length + 1) === (name + "=")) {
               cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
               break;
           }
@@ -48,47 +30,46 @@ function getCookie(name) {
 }
 
 // Handle matches
-const actions = $('.handle-match__action')
-
-$(actions).unbind('click').click(function() {
-  const sel = document.getElementById('match-handle'); // get handle match element
-  const checkbox_nodelist = document.querySelectorAll('#match-checkbox:checked') // get list of checked checkboxes
-  const new_status = parseInt(sel.options[sel.selectedIndex].value); // get value of selected match-handling
-
-  // Create a list of report_ids, populate it and POST it to api.py action
-  var report_ids = [];
-    for (i = 0; i < checkbox_nodelist.length; i++){
-        report_ids.push(parseInt(checkbox_nodelist[i].getAttribute('data-report-pk')));
-    }
-    if (report_ids.length > 0 && !isNaN(new_status)) {
-        $.ajax({
-          url: "/api",
-          method: "POST",
-          data: JSON.stringify({
-            "action": "set-status-2",
-              
-            "report_id": report_ids,
-            "new_status": new_status
-          }),
-          contentType: "application/json; charset=utf-8",
-          dataType: "json",
-          beforeSend: function(xhr, settings) {
-            xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
-          }
-        }).done(function(body) {
-          if (body["status"] == "ok") {
-            location.reload(true)
-              // Removes the handled match row.
-              for (i = 0; i < checkbox_nodelist.length; i++) {
-                  checkbox_nodelist[i].closest('tr').remove();
-              }
-          } else if (body["status"] == "fail") {
-            console.log(
-                "Attempt to call set-status-1 failed: "
-                + body["message"])
-          }
-        })
+function handleMatches(pks) {
+  if (pks.length > 0) {
+    $(".datatable").addClass("disabled");
+    $.ajax({
+      url: "/api",
+      method: "POST",
+      data: JSON.stringify({
+        "action": "set-status-2",
+        "report_id": pks,
+        "new_status": 0
+      }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      beforeSend: function(xhr, settings) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
       }
+    }).done(function(body) {
+      $(".datatable").removeClass("disabled");
+      if (body["status"] == "ok") {
+        location.reload(true)
+      } else if (body["status"] == "fail") {
+        console.log(
+            "Attempt to call set-status-2 failed: "
+            + body["message"])
+      }
+    })
+  }
+}
+
+$(".handle-match__action").click(function() {
+  // get pks from checked checkboxes
+  var pks = $.map($("input[name='match-checkbox']:checked"), function (e) {
+    return $(e).attr("data-report-pk")
+  });
+  handleMatches(pks);
+})
+
+$(".matches-handle").click(function() {
+  var pk = $(this).closest("tr[data-type]").find("input[name='match-checkbox']").attr("data-report-pk");
+  handleMatches([pk])
 })
 
 

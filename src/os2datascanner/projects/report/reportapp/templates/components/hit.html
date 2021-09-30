@@ -2,79 +2,86 @@
 {% load i18n %}
 {% load l10n %}
 {% with type=match.matches.handle|find_type_label %}
-{% for frag in match.matches.matches %}
-  {% if frag.rule.type_label in renderable_rules and frag.matches %}
-<tr tabindex="0" data-type="{{ type }}">
+  {% for frag in match.matches.matches %}
+    {% if frag.rule.type_label in renderable_rules and frag.matches %}
+      <tr data-type="{{ type }}">
+        <td>
+          <div class="datatable__column--filetype-icon">
+            <input type="checkbox" value="" name="match-checkbox" class="datatable-checkbox" data-report-pk="{{ match.pk|unlocalize }}">
+          </div>
+        </td>
 
-  <td class="datatable__column--handle">
-    <div class="datatable__column--filetype-icon">
-      <input type="checkbox" value="" id="match-checkbox" name="match-checkbox" class="datatable-checkbox" data-report-pk="{{ match.pk|unlocalize }}">
-      <span class="icon-filetype icon-filetype--{{ type }}">
-      {% with svg_icon=type|find_svg_icon %}
-        {% include svg_icon %}
-      {% endwith %}
-      </span>
-    </div>
-  </td>
+        <td>
+          <strong>{{ match.matches.handle.name }}</strong>
 
-  <td class="datatable__column--item">
-    <span class="scan__item-title">
-      <strong>{{ match.matches.handle|present }}</strong>
-    </span>
-
-    <span class="scan__item-count">
-      {% trans "Results:" %} <em>{{ frag.matches|length }}</em>
-    </span>
-
-    <div class="scan__item-meta">
-      <span>{{ match.matches.handle|find_parent:type|present }}</span>
-    </div>
-
-    <div class="hit-link">
-      <div class="button-group">
-        {% if match.matches.handle|present_url %}
-          <a href="{{ match.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">
-            {% trans "Open" %}
-          </a>
-        {% endif %}
-        {% if type != 'ews' %}
-          <button class="button" data-clipboard-text="{{ match.matches.handle|find_parent:type|present }}">
-            {% trans "Copy" %}
-          </button>
-          {% if match.matches.handle|find_parent:type|find_file_folder %}
-            <a href="{{ match.matches.handle|find_parent:type|find_file_folder }}" class="button" target="_blank" rel="noopener">
-              {% trans "Open folder" %}
-            </a>
-          {% endif %}
-        {% endif %}
-      </div>
-    </div>
-  </td>
-
-  <td colspan="3">
-    <table class="datatable datatable--nested">
-      <tbody>
-        {% for match in frag.matches|slice:":3" %}
-          <tr>
-            <td class="datatable__column--match">
-                <span class="more">
-                    {{ match.match }}
-                </span>
-            </td>
-            <td class="datatable__column--context">
-                {% if match.context %}
-                    [...]{{ match.context }}[...]
+          <div class="hit-link">
+            <div class="button-group">
+              {% if match.matches.handle|present_url %}
+                <a href="{{ match.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">
+                  {% trans "Open" %}
+                </a>
+              {% endif %}
+              {% if type != 'ews' %}
+                <button class="button" data-clipboard-text="{{ match.matches.handle|find_parent:type|present }}">
+                  {% trans "Copy" %}
+                </button>
+                {% if match.matches.handle|find_parent:type|find_file_folder %}
+                  <a href="{{ match.matches.handle|find_parent:type|find_file_folder }}" class="button" target="_blank" rel="noopener">
+                    {% trans "Open folder" %}
+                  </a>
                 {% endif %}
-            </td>
-            <td class="datatable__column--probability">
-                {% include "components/probability.html"%}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </td>
-</tr>
-{% endif %}
-{% endfor %}
+              {% endif %}
+            </div>
+          </div>
+        </td>
+
+        <td>
+          {{ frag.matches|length }}
+        </td>
+
+        <td>
+          <span class="icon-filetype icon-filetype--{{ type }}">
+          {% with svg_icon=type|find_svg_icon %}
+            {% include svg_icon %}
+          {% endwith %}
+          </span>
+        </td>
+
+        <td>
+          {{ match.matches.handle|present }}
+        </td>
+
+        <td>
+          <div class="button-group matches-actions">
+            <button class="matches-handle button screen-reader-only-focusable" type="button">{% trans "Handle" %}</button>
+            <button class="matches-expand button caret" aria-label="{% trans 'Show/hide matches' %}" type="button"></button>
+          </div>
+        </td>
+      </tr>
+      <tr class="matches-list" hidden>
+        <td colspan="6">
+          <table class="smaller datatable compressed">
+            <colgroup>
+              <col class="matches-list__column--match">
+              <col class="matches-list__column--context">
+            </colgroup>
+            <thead>
+              <th>{% trans "Anonymized match" %}</th>
+              <th>{% trans "Context" %}</th>
+            </thead>
+            <tbody>
+              {% for match in frag.matches %}
+                <tr>
+                  <td>{{ match.match }}</td>
+                  {% if match.context %}
+                  <td class="match-context">{{ match.context }}</td>
+                  {% endif %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    {% endif %}
+  {% endfor %}
 {% endwith %}

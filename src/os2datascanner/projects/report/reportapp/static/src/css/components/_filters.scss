@@ -1,3 +1,9 @@
+.no-results {
+  float: left;
+  clear: both;
+  margin-top: 0;
+}
+
 .match_filtering_wrapper {
   float:left;
   margin-top: 1rem;
@@ -43,9 +49,9 @@
   padding: 8px 16px;
   border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
   cursor: pointer;
-  white-space: nowrap; 
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; 
+  text-overflow: ellipsis;
 }
 
 /* style the arrow inside the select element */
@@ -171,7 +177,7 @@
 
   input[type=checkbox]:focus + label::before {
     border-color: #12496e;
-  } 
+  }
 
   &:hover {
     input[type="checkbox"] + label {

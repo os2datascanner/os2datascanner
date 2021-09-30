@@ -2,32 +2,10 @@
 {%  load i18n %}
 
   <div class="handle-match-wrapper">
-    <span>
-        {% trans "Handle results as:" %}
-    </span>
-      <div class="handle-match">
-          <select name="match-handle" id="match-handle">
-            <option value="" selected="selected">
-                ----------
-            </option>
-            <option value="2">
-                {% trans "Moved the file" %}
-            </option>
-            <option value="3">
-                {% trans "Deleted the file" %}
-            </option>
-            <option value="1">
-                {% trans "Edited the file" %}
-            </option>
-            <option value="4">
-                {% trans "False positive" %}
-            </option>
-          </select>
-      </div>
-      <button type="button" class="handle-match__action" data-status="match-handle">
-          {% trans "Submit" %}
+      <button type="button" class="handle-match__action" data-status="match-handle" disabled>
+          {% trans "Handle selected results" %}
       </button>
       <span class="selected-cb">
-        {% trans "0 out of 10 selected" %}
+        <span class="num-selected">0</span> {% trans "of" %} {{ matches|length }} {% trans "selected" %}
       </span>
   </div>

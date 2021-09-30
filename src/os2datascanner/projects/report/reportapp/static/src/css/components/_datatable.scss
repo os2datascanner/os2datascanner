@@ -4,87 +4,59 @@
 
 // datatable, start
 .datatable {
-  background-color: var(--color-widget-bg);
   border-collapse: collapse;
-  box-shadow: var(--box-shadow-widget);
-  border-radius: var(--border-radius-widget);
-  max-width: 90rem;
   table-layout: fixed;
-  width: calc(100% - 2rem);
-  margin-bottom: 8rem;
-
+  width: 100%;
+  &-card {
+    background-color: var(--color-widget-bg);
+    box-shadow: var(--box-shadow-widget);
+    border-radius: var(--border-radius-widget);
+    margin-bottom: calc(2 * var(--datatable-cell-padding))
+  }
+  &.disabled {
+    pointer-events: none;
+    opacity: .6;
+  }
+  .datatable {
+    margin: calc(var(--datatable-cell-padding) * -1) 0;
+  }
+  tr.open,
+  .matches-list {
+    background-color: rgba(0,0,0,.07);
+  }
+  tr.open > th:first-child,
+  tr.open > td:first-child,
+  .matches-list > th:first-child,
+  .matches-list > td:first-child {
+    box-shadow: inset 4px 0 0 var(--color-primary);
+  }
   &__column {
-    &--label {
+    &--handle {
+      width: 4.2rem;
+    }
+    &--name {
       width: auto;
     }
-
-    &--count {
-      text-align: right;
-      width: 15rem;
+    &--matchcount {
+      width: 6.5rem;
     }
-
-    &--status {
-      text-align: right;
-      width: 8rem;
+    &--source {
+      width: 6.5rem;
     }
-
-    &--handle {
+    &--path {
+      width: auto;
+    }
+    &--actions {
       width: 10rem;
-    }
-
-    &--filetype-icon {
-      display: flex;
-    }
-
-    &--item {
-      width: 40%;
-      word-break: break-all;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-
-    &--match {
-      width: 25%;
-    }
-
-    &--context {
-      text-align: left;
-      width: 35%;
-      word-break: break-all;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      border-bottom: none;
-    }
-
-    &--probability {
       text-align: right;
-      width: 20%;
-      word-wrap: normal;
     }
-
   }
 }
 
-.datatable-none-matches {
-  float: left;
-  width: 90rem;
-}
-
-.datatable-checkbox {
-  margin-right: 5rem;
+.compressed {
+  --datatable-cell-padding: 1rem;
 }
 // datatable, end
-
-// matches & count, start
-.matches {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-// matches & count, end
 
 // probability,  start
 .probability {
@@ -108,35 +80,6 @@
   }
 }
 // probability, end
-
-
-// datatable tr hover, start
-.datatable tr:hover {
-
-  td{
-    background-color: var(--color-hover);
-  }
-
-  .hit-link {
-    opacity: 1;
-  }
-}
-// datatable tr hover, end
-
-@supports(display: grid) {
-  // We use CSS Grid to detect IE11, as "tr:focus" breaks the whole selector in IE11
-  .datatable tr:focus, 
-  .datatable tr:focus-within, 
-  .datatable tr:hover {
-    td {
-      background-color: var(--color-hover);
-    }
-      
-    .hit-link {
-      opacity: 1;
-    }
-  }
-}
 
 // datatable th & td, start
 .datatable th,
@@ -233,44 +176,42 @@
 }
 // .datatable--click-rows, end
 
-// nested tables, start
-.datatable--nested {
-  border-collapse: collapse;
-  box-shadow: initial;
-  table-layout: fixed;
-  width: 100%;
-  border-top: none;
+.matches-actions {
+  text-align: right;
+}
 
-  td,
-  td:first-child,
-  td:last-child {
-    border-top: none;
-    padding: var(--size-ds-unit) 0;
+.button-group .button.matches-handle {
+  opacity: 0;
+
+  tr:hover &,
+  tr:focus &,
+  &:hover,
+  &:focus {
+    opacity: 1;
   }
 }
-// nested tables, end
 
-// object items, start
-.scan {
-  &__item-title {
-    display: block;
-    word-break: break-all;
-  }
-
-  &__item-count {
-    display: block;
-    margin-top: var(--size-ds-unit);
-  }
-
-  &__item-meta {
-    margin-top: var(--size-ds-unit);
-
-    span {
-      display: inline-block;
-      font-size: 0.75rem;
-      margin-right: 0.5rem;
-      opacity: 0.75;
+.matches-list {
+  &__column {
+    &--match {
+      width: 12rem;
+    }
+    &--context {
+      width: auto;
     }
   }
 }
-// object items, end
+
+.match-context {
+  &::before,
+  &::after {
+    content: "[...]";
+    color: #aaa;
+  }
+  &::before {
+    padding-right: .35em;
+  }
+  &::after {
+    padding-left: .35em;
+  }
+}
