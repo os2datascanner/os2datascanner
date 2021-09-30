@@ -192,7 +192,7 @@
 }
 
 .select2-selection__rendered {
-	padding: 0.2em !important;
+	padding: 0 !important;
 	min-width: 95% !important;
 	height: 2.6rem !important;
 }
@@ -223,7 +223,7 @@
 
 .select2-container .select2-search--inline {
 	float: left;
-	margin: 0.3rem 0.5rem !important;
+	margin: 0 !important;
 }
 
 .select2-results__option {
@@ -237,7 +237,8 @@
 	transition: var(--transition-default);
 	outline: none !important;
 	border: none !important;
-	top:  0 !important;
+	margin:  0 !important;
+	padding: 0.75em 0.75em !important;
 }
 
 .s2-to-tree .org-icon {
@@ -283,16 +284,8 @@
 	font-family:  "Inter var", system-ui, sans-serif;
 }
 
-.select2-search__field {
-	left: .75rem !important;
-}
 // For IE support
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-
-	.select2-search__field {
-		margin-top: 0.9rem !important;
-		left: .75rem !important;
-	}
 
 	.s2-to-tree .org-icon-selected::before {
 		left: 0.15rem !important;
