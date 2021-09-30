@@ -28,7 +28,7 @@ class Command(BaseCommand):
         data_mime_type_problems = defaultdict(int)
         data_mime_type_matches = defaultdict(int)
 
-        doc_reps = DocumentReport.objects.filter(data__scan_tag__scanner__pk=pk).only("data")
+        doc_reps = DocumentReport.objects.filter(data__scan_tag__scanner__pk=pk)
 
         if not doc_reps.exists():
             self.stderr.write(self.style.NOTICE("No scanner job PK matching in DocumentReports found"))
