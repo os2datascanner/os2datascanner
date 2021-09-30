@@ -1,3 +1,4 @@
+from parameterized import parameterized
 from datetime import timedelta
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
@@ -397,17 +398,23 @@ class MatchAliasRelationTest(TestCase):
         self.assertEqual(len(qs), 2)
         emailalias.delete()
 
-    def test_mainpage_view_with_relation_table_and_incoming_new_matches(self):
+    @parameterized.expand([
+        ("Normal match", 'egon@olsen.com', 2, 3),
+        ("Normal match", 'EGON@olsen.com', 2, 3),
+        ("Normal match", '', 0, 0)])
+    def test_mainpage_view_with_relation_table_and_incoming_new_matches(
+            self, _, address, expected1, expected2):
+        # Note: address cannot be NoneType due to DB constraint.
         emailalias, created = EmailAlias.objects.get_or_create(
             user=self.user,
-            address='egon@olsen.com'
+            address=address
         )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 2)
+        self.assertEqual(len(qs), expected1)
         MatchAliasRelationTest.generate_new_egon_data()
         qs1 = self.mainpage_get_queryset()
-        self.assertEqual(len(qs1), 3)
+        self.assertEqual(len(qs1), expected2)
         emailalias.delete()
 
     def test_update_relation_management_command(self):
