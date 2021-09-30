@@ -87,3 +87,13 @@ Optionally takes a `--head` argument to limit the output.
 
 To execute this command run:
 `docker-compose exec report django-admin list_problems <PK>`
+
+###### makefake
+
+Randomizes and creates new data types to populate document reports.
+
+To execute this command run:
+`docker-compose exec report python manage.py makefake`
+args: 
+--scan-count = amount of scans (default: random amount between 5 and 10)
+--page-count = amount of pages where at least 1 match will be found (default: random amount between 5 and 10)
