@@ -28,8 +28,8 @@
 - Multiple organisational units can now be chosen from across the organisation
   when setting up an Exchange scanner job.
 
-- The 30-day filter for matches is now enabled by default: until the user
-  disables it, only new matches will be displayed.
+- By default, the report module now displays matches from the last 30 days
+  instead of concealing them.
 
 - The administration system and report module now have helper commands for
   setting up a useful development environment.
