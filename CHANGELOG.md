@@ -1,3 +1,74 @@
+## Version 3.11.6, 30th September 2021
+
+"New Double-Action Formula!"
+
+### New in this version
+
+- Support for prefetching messages:
+
+  - Pipeline components can now collect future tasks from the server while they
+    execute other tasks, greatly reducing protocol overhead and improving
+    performance.
+
+  - (Although message prefetching was disabled in version 3.3.1 to improve
+    reliability, the background thread introduced in the previous version makes
+    it possible to take advantage of this feature safely.)
+
+- Support for directly opening file folders:
+
+  - The report module can now give direct links to the network drive folders in
+    which files with matches have been found, when the administrator has
+    configured the network to allow this.
+
+- The report module now has a management command for extracting information
+  about running scans.
+
+### General improvements
+
+- Multiple organisational units can now be chosen from across the organisation
+  when setting up an Exchange scanner job.
+
+- The 30-day filter for matches is now enabled by default: until the user
+  disables it, only new matches will be displayed.
+
+- The administration system and report module now have helper commands for
+  setting up a useful development environment.
+
+- The documentation now includes an outline of the test LDAP server.
+
+- Scanner status objects in the database are now automatically timestamped
+  whenever they are updated.
+
+- The underlying web frameworks now support WebSockets and ASGI, which future
+  releases will use to provide live updates to the browser.
+
+- To work around servers that do not correctly send the HTTP 405 response to an
+  unsupported request method, the integrated web crawler now uses GET requests
+  when checking external links.
+
+- Less logging output is now produced by default.
+
+### Bugfixes
+
+- The web scanner no longer misdetects `mailto:` and `tel:` URLs as broken
+  links.
+
+- The Danish translation of the user interface now correctly and consistently
+  uses the imperative form of certain verbs.
+
+- Links to the low-level administration pages are now only shown to superusers.
+
+- SSO users without a defined email address no longer produce errors in the
+  report module's metadata handling code.
+
+### Notes
+
+- When a web scan based on a sitemap file is requested, OS2datascanner will now
+  only visit the links given in the file and will not otherwise crawl the site.
+
+- The target Python version for all parts of the OS2datascanner system is now
+  **3.9**.
+
 ## Version 3.11.5, 15th September 2021
 
 "We Tried To Deliver Your Package, But You Were Out"

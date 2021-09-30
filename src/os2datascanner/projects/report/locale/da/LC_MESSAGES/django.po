@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-16 09:58-0500\n"
+"POT-Creation-Date: 2021-09-30 04:51-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -483,26 +483,26 @@ msgstr ""
 "Med venlig hilsen<br>\n"
 "OS2datascanner-systemet\n"
 
-#: reportapp/views/views.py:71
+#: reportapp/views/views.py:74
 msgid "The page does not exist"
 msgstr ""
 
-#: reportapp/views/views.py:263
+#: reportapp/views/views.py:278
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:264
+#: reportapp/views/views.py:279
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:265
+#: reportapp/views/views.py:280
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:266
+#: reportapp/views/views.py:281
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:417
+#: reportapp/views/views.py:432
 msgid "Not assigned"
 msgstr "Ikke tildelt"
