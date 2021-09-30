@@ -312,7 +312,7 @@ class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
 
         with SourceManager() as sm:
             for h in indexed_mapped_site["source"].handles(sm):
-                if h.relative_path == "hemmeligheder2.html":
+                if h.relative_path == "/hemmeligheder2.html":
                     lm = h.follow(sm).get_last_modified().value
                     self.assertEqual(
                             (lm.year, lm.month, lm.day),
