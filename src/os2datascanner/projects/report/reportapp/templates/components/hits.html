@@ -18,8 +18,11 @@
     </tr>
     <tr class="column-headings sticky">
       <th>
-        <div class="datatable__column--filetype-icon">
-          <input id="select-all" type="checkbox" class="datatable-checkbox" aria-label="{% trans 'Select all' %}">
+        <div class="ds-checkbox">
+          <input id="select-all" type="checkbox">
+          <label for="select-all">
+            <span class="screen-reader-only">{% trans 'Select all results' %}</span>
+          </label>
         </div>
       </th>
       <th>

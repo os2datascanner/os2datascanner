@@ -98,30 +98,6 @@
 }
 // datatable th & td, end
 
-// datatable checkbox, start
-.datatable input[type="checkbox"] {
-  width: 1.2rem;
-  height: 1.2rem;
-  border: 2px solid var(--color-primary-dark);
-  cursor: pointer;
-  vertical-align: middle;
-  -webkit-appearance: none;
-  -webkit-border-radius: var(--border-radius-button);
-  border-radius: var(--border-radius-button);
-}
-.datatable input[type="checkbox"]:focus {
-  outline:none;
-}
-.datatable input[type="checkbox"]:checked:before {
-  font-weight: bold;
-  color: #222;
-  content: '\2713';
-  -webkit-margin-start: 0;
-  margin-left: 1px;
-  font-size: 1rem;
-}
-// datatable checkbox, end
-
 .datatable .column-headings th {
   font-size: 1rem;
   font-weight: bold;

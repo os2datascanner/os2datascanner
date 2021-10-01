@@ -6,8 +6,11 @@
     {% if frag.rule.type_label in renderable_rules and frag.matches %}
       <tr data-type="{{ type }}">
         <td>
-          <div class="datatable__column--filetype-icon">
-            <input type="checkbox" value="" name="match-checkbox" class="datatable-checkbox" data-report-pk="{{ match.pk|unlocalize }}">
+          <div class="ds-checkbox">
+            <input type="checkbox" id="match-checkbox-{{ match.pk|unlocalize }}" value="" name="match-checkbox" class="datatable-checkbox" data-report-pk="{{ match.pk|unlocalize }}">
+            <label for="match-checkbox-{{ match.pk|unlocalize }}">
+              <span class="screen-reader-only">{% trans "Select result" %}</span>
+            </label>
           </div>
         </td>
 
