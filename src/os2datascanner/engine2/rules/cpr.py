@@ -3,14 +3,15 @@ import re
 from itertools import chain
 from enum import Enum, unique
 from collections.abc import Iterable
-import logging
+import structlog
 
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .logical import oxford_comma
 from .utilities.cpr_probability import modulus11_check, CprProbabilityCalculator
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
+
 cpr_regex = r"\b(\d{2}[ ]?\d{2}[ ]?\d{2})(?:[ \-/\.\t]|[ ]\-[ ])?(\d{4})\b"
 calculator = CprProbabilityCalculator()
 
@@ -44,32 +45,34 @@ class Context(Enum):
 class CPRRule(RegexRule):
     type_label = "cpr"
     WHITELIST_WORDS = {"cpr", }
-    BLACKLIST_WORDS = {"p-nr", "p.nr", "p-nummer", "pnr", }
+    BLACKLIST_WORDS = {
+        "p-nr", r"p\.nr", "p-nummer", "pnr",
+        "customer no", "customer-no",
+        "bilagsnummer",
+        "order number", "ordrenummer",
+        "fakturanummer", "faknr", "fak-nr",
+        "tullstatistisk", "tullstatistik",
+        "test report no",
+        r"protocol no\.",
+        "dhk:tx",
+    }
 
     def __init__(
         self,
         modulus_11: bool = True,
         ignore_irrelevant: bool = True,
         examine_context: bool = True,
-        whitelist: Union[bool, List[str]] = True,
-        blacklist: Union[bool, List[str]] = True,
+        whitelist: Optional[List[str]] = None,
+        blacklist: Optional[List[str]] = None,
         **super_kwargs,
     ):
         super().__init__(cpr_regex, **super_kwargs)
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
         self._examine_context = examine_context
-        # self._whitelist is either a set(str) or False
-        self._whitelist = (
-            self.WHITELIST_WORDS if whitelist is True else (
-                set(whitelist) if isinstance(whitelist, Iterable)
-                else whitelist
-            ))
-        self._blacklist = (
-            self.BLACKLIST_WORDS if blacklist is True else (
-                set(blacklist) if isinstance(blacklist, Iterable)
-                else blacklist
-        ))
+        self._whitelist = self.WHITELIST_WORDS if whitelist is None else set(whitelist)
+        self._blacklist = self.BLACKLIST_WORDS if blacklist is None else set(blacklist)
+        self._blacklist_pattern = re.compile("|".join(self._blacklist))
 
     @property
     def presentation_raw(self) -> str:
@@ -90,14 +93,10 @@ class CPRRule(RegexRule):
         if content is None:
             return
 
-        # If there's p-nr or anthore blacklist anywhere in content, assume
-        # there's no valid CPR
-        if self._examine_context and self._blacklist and any(
-            w in content.lower() for w in self._blacklist
-        ):
-            logger.debug("Content contains a word from the blacklist "
-                        f"[{self._blacklist}]")
-            return
+        if self._examine_context and self._blacklist:
+            if (m := self._blacklist_pattern.search(content.lower())):
+                logger.debug("Blacklist matched content", matches=m.group(0))
+                return
 
         imatch = 0
         for itot, m in enumerate(self._compiled_expression.finditer(content), 1):
