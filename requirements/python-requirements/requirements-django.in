@@ -3,6 +3,7 @@
 ipython
 Django==3.2.4
 django-model-utils
+django-prometheus
 django-settings-export
 django-storages[google]
 django-structlog

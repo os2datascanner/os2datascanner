@@ -52,7 +52,7 @@ AMQP_PWD = "os2ds"
 [DATABASES]
 
     [DATABASES.default]
-    ENGINE = "django.db.backends.postgresql_psycopg2"
+    ENGINE = "django_prometheus.db.backends.postgresql"
     NAME = "os2datascanner_admin"
     USER = "os2datascanner_admin_dev"
     PASSWORD = "os2datascanner_admin_dev"

@@ -203,3 +203,5 @@ os.makedirs(globals()['BUILD_DIR'], exist_ok=True)
 
 # Set default primary key - new in Django 3.2
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+PROMETHEUS_METRICS_EXPORT_PORT_RANGE = range(5001, 5050)

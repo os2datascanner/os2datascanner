@@ -47,7 +47,7 @@ SHOW_TOOLBAR_CALLBACK = "os2datascanner.projects.utils.debug.debug_toolbar_callb
 [DATABASES]
 
     [DATABASES.default]
-    ENGINE = "django.db.backends.postgresql_psycopg2"
+    ENGINE = "django_prometheus.db.backends.postgresql"
     NAME = "os2datascanner_report"
     USER = "os2datascanner_report_dev"
     PASSWORD = "os2datascanner_report_dev"

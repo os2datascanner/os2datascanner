@@ -9,6 +9,12 @@
 SECRET_KEY = ""
 DECRYPTION_HEX = ""
 
+# django-prometheus will try to connect to postgresql during collectstatic
+# without this setting: https://github.com/korfuri/django-prometheus/issues/34.
+# It only collects a count of un-run migrations, which we don't really care
+# about anyways, so we just leave it off.
+PROMETHEUS_EXPORT_MIGRATIONS = false
+
 # [mode]
 DEBUG = false
 PRODUCTION = false
@@ -64,6 +70,7 @@ INSTALLED_APPS = [
     'recurrence',
     'mptt',
     'django_extensions',
+    'django_prometheus',
     'channels',
     'channels_redis',
     'rest_framework',
@@ -92,6 +99,7 @@ LOGIN_REDIRECT_URL = "/"
 NOTIFICATION_INSTITUTION = ""
 
 MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -103,6 +111,7 @@ MIDDLEWARE = [
     "django_structlog.middlewares.RequestMiddleware",
     # Needed to allow iframe when starting scannerjob
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
@@ -199,7 +208,7 @@ AMQP_VHOST = "/"
 [DATABASES]
 
     [DATABASES.default]
-    ENGINE = "django.db.backends.postgresql_psycopg2"
+    ENGINE = "django_prometheus.db.backends.postgresql"
     NAME = "os2datascanner_admin"
     USER = "os2datascanner_admin"
     PASSWORD = ""
