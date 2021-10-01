@@ -7,8 +7,9 @@ import structlog
 from requests.sessions import Session
 from requests.exceptions import RequestException
 from contextlib import contextmanager
-from typing import Optional, Set
+from typing import Optional, Union
 from datetime import datetime
+import re
 
 from .. import settings as engine2_settings
 from ..conversions.types import OutputType
@@ -22,10 +23,26 @@ logger = structlog.getLogger(__name__)
 SLEEP_TIME = 1 / engine2_settings.model["http"]["limit"]
 TIMEOUT = engine2_settings.model["http"]["timeout"]
 
+_equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
+# match whole words (\bWORD1\b | \bWORD2\b) and escape to handle metachars.
+# It is important to match whole words; www.magenta.dk should be .magenta.dk, not
+# .agta.dk
+_equiv_domains_re = re.compile(
+    r"\b" + r"\b|\b".join(map(re.escape, _equiv_domains)) + r"\b"
+)
+
 
 def simplify_mime_type(mime):
     r = mime.split(';', maxsplit=1)
     return r[0]
+
+
+def netloc_normalize(hostname: Union[str, None]) -> str:
+    "remove common subdomains from a hostname"
+    if hostname:
+        return _equiv_domains_re.sub("", hostname).strip(".")
+
+    return ""
 
 
 class WebSource(Source):
@@ -59,15 +76,18 @@ class WebSource(Source):
         # initial check that url can be reached. After this point, continue
         # exploration at all cost
         try:
-            r = session.head(to_visit[0].presentation_url)
+            r = session.head(to_visit[0].presentation_url, timeout=TIMEOUT)
             r.raise_for_status()
         except RequestException as err:
             raise RequestException(
                 f"{to_visit[0].presentation_url} is not available: {err}")
 
         # scheme://netloc/path?query#fragment
-        # https://example.com/some/path?query=foo#fragment
+        # https://example.com:80/some/path?query=foo#fragment
         url_split = urlsplit(self._url)
+        # remove common subdomains from hostname(hostname is like netloc.lower()
+        # but without port-number, ect)
+        hostname = netloc_normalize(url_split.hostname)
 
         def handle_url(here: "WebHandle", new_url: str,
                        lm_hint: datetime = None, from_sitemap: bool = False):
@@ -86,18 +106,18 @@ class WebSource(Source):
                     return
 
             if nurls.hostname == url_split.hostname:
-                # we dont care about whether scheme is http or https
-                # new_url is under same hierarchy as here(referrer)
+                # exactly same hostname
                 new_handle = WebHandle(self, nurls.path, referrer, lm_hint)
-            else:
-                # new_url is external from here. Create a new handle from a new
-                # Source.
+            elif netloc_normalize(nurls.hostname) == hostname:
+                # hostnames are equivalent
                 base_url = urlunsplit((nurls.scheme, nurls.netloc, "", "", ""))
                 new_handle = WebHandle(WebSource(base_url), nurls.path, referrer,
-                        lm_hint)
+                                       lm_hint)
+            else:
+                # hostname outside current source
+                return
 
-            # don't emit handles that doesn't belong to this Source
-            if new_handle not in known_addresses and new_handle in self:
+            if new_handle not in known_addresses:
                 known_addresses.add(new_handle)
                 to_visit.append(new_handle)
 
@@ -131,7 +151,7 @@ class WebSource(Source):
                                                 here.presentation_url),
                                 start=1):
                             handle_url(here, li)
-                        logger.debug(f"site {here.presentation} has {i} links")
+                        logger.debug("handle parsed for links", handle=here.presentation, links=i)
                 elif response.is_redirect and response.next:
                     handle_url(here, response.next.url)
                     # Don't yield WebHandles for redirects
