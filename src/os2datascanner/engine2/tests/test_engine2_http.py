@@ -6,6 +6,7 @@ import unittest
 import contextlib
 import logging
 from unittest import mock
+from urllib3.util import connection
 from multiprocessing import Manager, Process
 from requests import RequestException
 
@@ -40,6 +41,23 @@ mapped_site = {
         "http://localhost:64346/",
         "http://localhost:64346/hemmeligheder.html",
         "http://localhost:64346/kontakt.html",
+    ],
+}
+equivalent_mapped_site = {
+    "source": WebSource(
+        "http://www.localhost:64346", sitemap="http://www.localhost:64346/sitemap.xml"),
+    "handles": [
+        "http://www.localhost:64346/",
+        "http://localhost:64346/",
+        "http://localhost:64346/hemmeligheder.html",
+        "http://localhost:64346/kontakt.html",
+    ],
+}
+no_equivalent_mapped_site = {
+    "source": WebSource(
+        "http://a.www.localhost:64346", sitemap="http://a.www.localhost:64346/sitemap.xml"),
+    "handles": [
+        "http://a.www.localhost:64346/",
     ],
 }
 indexed_mapped_site = {
@@ -124,6 +142,10 @@ links_from_handle = {
     ],
 }
 
+# mock is way to control what a function returns. By setting e.g.
+# @mock.patch('os2datascanner.engine2.model.utilities.sitemap.requests.get',
+# side_effect=mocked_requests_get), all invocations of requests.get from sitemap.py
+# will return a response based on the url-path and the definitions below.
 def mocked_requests_get(*args, **kwargs):
     class MockResponse:
         def __init__(self, headers, status_code):
@@ -155,13 +177,53 @@ def mocked_requests_get(*args, **kwargs):
     return MockResponse(None, 404)
 
 
+@contextlib.contextmanager
+def resolve_any_to_localhost():
+    """Wrap urllib3's create_connection to resolve any host to point to 127.0.0.1"""
+
+    _orig_create_connection = connection.create_connection
+
+    def patched_create_connection(address, *args, **kwargs):
+        _, port = address
+        hostname = "127.0.0.1"
+        return _orig_create_connection((hostname, port), *args, **kwargs)
+
+    connection.create_connection = patched_create_connection
+    yield
+
+    # restore create_connection at contextmanager exit
+    connection.create_connection = _orig_create_connection
+
+
+class custom_http_server(http.server.SimpleHTTPRequestHandler):
+    """Redirect all *.localhost to localhost"""
+
+    def _redirect_response(self):
+        self.send_response(302)
+        self.send_header("Location", "http://localhost:64346" + self.path)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def do_GET(self):
+        host = self.headers.get("host")
+        if not host.startswith("localhost"):
+            self._redirect_response()
+        else:
+            super().do_GET()
+
+    def do_HEAD(self):
+        host = self.headers.get("host")
+        if not host.startswith("localhost"):
+            self._redirect_response()
+        else:
+            super().do_HEAD()
+
+
 def run_web_server(started):
     cwd = os.getcwd()
     try:
         os.chdir(test_data_path)
-        server = http.server.HTTPServer(
-                ('', 64346),
-                http.server.SimpleHTTPRequestHandler)
+        server = http.server.HTTPServer(("", 64346), custom_http_server)
 
         # The web server is started and listening; let the test runner know
         started.acquire()
@@ -233,7 +295,29 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         self.assertCountEqual(
             presentation,
             mapped_site["handles"],
-            "embedded site without sitemap should have 3 handles",
+            "embedded site with sitemap should have 3 handles",
+        )
+
+    def test_exploration_site_wrong_subdomain(self):
+        "Testing for a subdomain that is not part of the _equiv_domains in http.py "
+
+        with resolve_any_to_localhost(), SourceManager() as sm:
+            presentation = [h.presentation for h in no_equivalent_mapped_site["source"].handles(sm)]
+        self.assertCountEqual(
+            presentation,
+            no_equivalent_mapped_site["handles"],
+            "embedded a.www.localhost site with sitemap should have 1 handles",
+        )
+
+    def test_exploration_site_agnostic_subdomain(self):
+        "Redirect http://www.localhost to http://localhost"
+
+        with resolve_any_to_localhost(), SourceManager() as sm:
+            presentation = [h.presentation for h in equivalent_mapped_site["source"].handles(sm)]
+        self.assertCountEqual(
+            presentation,
+            equivalent_mapped_site["handles"],
+            "embedded redirect site with sitemap should have 4 handles",
         )
 
     def test_exploration_data_sitemap(self):
