@@ -96,6 +96,8 @@ django-ipware==2.1.0
     # via django-structlog
 django-model-utils==4.0.0
     # via -r requirements-django.in
+django-prometheus==2.1.0
+    # via -r requirements-django.in
 django-rest-auth==0.9.5
     # via django-saml2-auth
 git+https://github.com/magenta-aps/django-saml2-auth.git@2.3.0
@@ -255,6 +257,10 @@ pillow==7.1.1
     #   -r requirements-django.in
 pkgconfig==1.5.1
     # via xmlsec
+prometheus-client==0.7.1
+    # via
+    #   -c requirements-engine.txt
+    #   django-prometheus
 prompt-toolkit==3.0.5
     # via ipython
 protobuf==3.13.0

@@ -8,6 +8,12 @@
 
 SECRET_KEY = ""
 
+# django-prometheus will try to connect to postgresql during collectstatic
+# without this setting: https://github.com/korfuri/django-prometheus/issues/34.
+# It only collects a count of un-run migrations, which we don't really care
+# about anyways, so we just leave it off.
+PROMETHEUS_EXPORT_MIGRATIONS = false
+
 # [mode]
 DEBUG = false
 KEYCLOAK_ENABLED = false
@@ -48,6 +54,7 @@ INSTALLED_APPS = [
     'os2datascanner.projects.report.reportapp.apps.ReportappConfig',
     'mozilla_django_oidc',
     'django_extensions',
+    'django_prometheus',
     'channels',
     'channels_redis',
 ]
@@ -76,6 +83,7 @@ PERMITTED_URL_SCHEMES = ['http', 'https']
 
 
 MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -85,6 +93,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_structlog.middlewares.RequestMiddleware',
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 SETTINGS_EXPORT = [
@@ -123,7 +132,7 @@ DJANGO_LOG_LEVEL = "INFO"
 [DATABASES]
 
     [DATABASES.default]
-    ENGINE = "django.db.backends.postgresql_psycopg2"
+    ENGINE = "django_prometheus.db.backends.postgresql"
     NAME = "os2datascanner_report"
     USER = "os2datascanner_report"
     PASSWORD = ""
