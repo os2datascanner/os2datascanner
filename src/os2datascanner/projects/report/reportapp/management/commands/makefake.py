@@ -95,15 +95,18 @@ class Command(BaseCommand):
         }
         stats = {"scans": 0, "handles": 0, "matches": 0}
         for scan in range(0, scan_count):
-
+            _scan_type = None
             if not scan_type:
-                scan_type, handle_generator_function = random.choice(
+                #generate random scan
+                _scan_type, handle_generator_function = random.choice(
                     list(handle_types.items())
                 )
             else:
+                #generate specified scan
                 handle_generator_function = handle_types[scan_type]
+                _scan_type = scan_type
 
-            scan_name = "{0}.{1}".format(scan, scan_type)
+            scan_name = "{0}.{1}".format(scan, _scan_type)
             scan_spec = make_fake_scan_type(organization, scan_name)
 
             for page in range(0, page_count):
