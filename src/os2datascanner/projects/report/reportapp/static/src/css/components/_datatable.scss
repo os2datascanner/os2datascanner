@@ -11,7 +11,7 @@
     background-color: var(--color-widget-bg);
     box-shadow: var(--box-shadow-widget);
     border-radius: var(--border-radius-widget);
-    margin-bottom: calc(2 * var(--datatable-cell-padding))
+    margin-bottom: calc(2 * var(--datatable-cell-padding));
   }
   &.disabled {
     pointer-events: none;
@@ -122,33 +122,29 @@
 }
 // datatable checkbox, end
 
-// handle match th, start
-.datatable .handle-match th {
-  font-size: 1rem;
-  padding-top: 2rem;
-  padding-bottom: 1.5rem;
-}
-// handle match th, end
-
-// grey th, start
-.datatable .grey-bg th {
+.datatable .column-headings th {
   font-size: 1rem;
   font-weight: bold;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 4.5rem;
+  top: 10.5rem;
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
   z-index: 2;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
   background-color: #f4f4f4;
 }
 
-.datatable .grey-bg th.scrollActive {
-  border-radius: 0;
-  background-color: #f4f4f4;
+.datatable .handle-matches th {
+  top: 4.5rem;
+  background-color: #fff;
+  z-index: 2;
+  border-top-left-radius: var(--border-radius-widget);
+  border-top-right-radius: var(--border-radius-widget);
 }
-// grey th, end
+
+.datatable .sticky th {
+  position: -webkit-sticky;
+  position: sticky;
+}
 
 .datatable td {
   border-top: 1px solid rgba(0, 0, 0, 0.2);
