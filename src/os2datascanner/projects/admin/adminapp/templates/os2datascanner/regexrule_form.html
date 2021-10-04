@@ -5,6 +5,7 @@
 {% block jquery_script %}
 <script type="text/javascript">
   (function ($) {
+
     // adding a new expression
     $("#button-add-expression").click(function () {
       var inputContainer = $("#{{ form.pattern_0.auto_id }}_container").find(".form-group").last(); // Take the last item instead of just number _1, as we may have added more items
@@ -31,7 +32,6 @@
         inputClone.next(".input-group-btn").addBack().wrapAll("<div class=\"input-group\"></div>"); // wrap it in the input-group wrapper for proper Bootstrap styling
       }
       inputContainer.after(containerClone);
-      // recalcIframeHeight();
     });
 
     // removing an expression. We need to bind dynamically as fields do not necessarily exist on page load
@@ -69,7 +69,6 @@
         input.attr("name", oldInputName[1] + idx).attr("id", "id_" + oldInputName[1] + idx);
         label.attr("for", "id_" + oldInputName[1] + idx).text("Regulært {{ form.pattern_0.label }} " + (idx + 1)); // we want 1-indexed label texts
       });
-      // recalcIframeHeight();
     }
   })(jQuery);
 
@@ -138,23 +137,7 @@
           </div>
 
           {% if form.organization %}
-          <div 
-            id="{{ form.organization.auto_id }}_container"
-            class="dropdown-group form__group
-             {% if form.organization.errors %}
-                has-error
-             {% endif %}">
-            <label class="required-form" for="id_{{ form.organization.name }}">
-              {{ form.organization.label }}
-            </label>
-            <div class="dropdown">
-               {{ form.organization }}
-            </div>
-            {% if form.organization.help_text %}
-            <span class="form__help-text">{{ form.organization.help_text }}</span>
-            {% endif %}
-           {{ form.organization.errors }}
-          </div>
+           {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.organization required="True" %}
           {% endif %}
         </fieldset>
       </section>
@@ -240,8 +223,7 @@
                 {% for value, tag in form.sensitivity.field.choices %}
                 <label class="radio radio-before">
                   <span class="radio__input">
-
-                  {% if value == form.sensitivity.value %}
+                  {% if value|add:'0' == form.sensitivity.value|add:'0' %}
                         <input type="radio" name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" value="{{ value }}" checked="checked">
                   {% else %}
                         <input type="radio" name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" value="{{ value }}" >
@@ -287,8 +269,6 @@
           {% trans "Save changes" %}
         </button>
       </div>
-
-      {#{ form.as_p }#}
     </form>
   </div>
 </div>

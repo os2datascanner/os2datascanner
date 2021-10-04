@@ -68,9 +68,6 @@ class RuleCreate(RestrictedCreateView):
 
         return form
 
-    def form_invalid(self, form):
-        super().form_invalid(form)
-
     def form_valid(self, form):
         """
         validate all the form first
