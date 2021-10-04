@@ -34,6 +34,18 @@ from ..models.scannerjobs.msgraph_models import (
 from ..models.scannerjobs.webscanner_model import WebScanner
 from ..models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 
+import structlog
+
+
+logger = structlog.get_logger()
+
+
+def _hide_csrf_token(d):
+    """Return a shallow copy of *d* without the `csrfmiddlewaretoken` key."""
+    new = dict(**d)
+    new.pop("csrfmiddlewaretoken", None)
+    return new
+
 
 class RestrictedListView(LoginRequiredMixin, ListView):
 
@@ -61,6 +73,15 @@ class GuideView(TemplateView):
 # Create/Update/Delete Views.
 class RestrictedCreateView(LoginRequiredMixin, CreateView):
     """Base class for create views that are limited by user organization."""
+
+    def post(self, request, *args, **kwargs):
+        logger.info(
+            f"Create issued to {self.__class__.__name__}",
+            request_data=_hide_csrf_token(dict(request.POST)),
+            user=str(request.user),
+            **kwargs,
+        )
+        return super().post(request, *args, **kwargs)
 
     def get_form_fields(self):
         """Get the list of fields to use in the form for the view."""
@@ -109,6 +130,15 @@ class OrgRestrictedMixin(LoginRequiredMixin, ModelFormMixin):
 class RestrictedUpdateView(UpdateView, OrgRestrictedMixin):
     """Base class for updateviews restricted by organiztion."""
 
+    def post(self, request, *args, **kwargs):
+        logger.info(
+            f"Update issued to {self.__class__.__name__}",
+            request_data=_hide_csrf_token(dict(request.POST)),
+            user=str(request.user),
+            **kwargs,
+        )
+        return super().post(request, *args, **kwargs)
+
     def get_form(self, form_class=None):
         """Get the form for the view."""
         fields = self.get_form_fields()
@@ -131,6 +161,14 @@ class RestrictedDetailView(DetailView, OrgRestrictedMixin):
 
 class RestrictedDeleteView(DeleteView, OrgRestrictedMixin):
     """Base class for deleteviews restricted by organiztion."""
+
+    def post(self, request, *args, **kwargs):
+        logger.info(
+            f"Delete issued to {self.__class__.__name__}",
+            user=str(request.user),
+            **kwargs,
+        )
+        return super().post(request, *args, **kwargs)
 
 
 class DialogSuccess(TemplateView):
