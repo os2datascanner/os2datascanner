@@ -1,3 +1,37 @@
+## Version 3.11.7, 4th October 2021
+
+"To kill a Mockingbird"
+
+### New in this version
+
+- The Webscanner is now agnostic about a set of common subdomains
+
+  - When specifying the url of a site, it is no longer important to specify e.g. a `www` subdomain. The list of common subdomains that are treated as equal are
+    `"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"`
+
+- Support for canceling a scan
+
+  - The queue system was recently changed to be persistent, meaning that no messages were lost if OS2datascanner was updated or restarted. As a side-effect it was impossible to cancel a running scan. This release makes it possible again to stop a running scan.
+    Note: This is *initial* support and not hooked up to the user interface yet.
+
+### General improvents
+
+- The `CPRRule` is updated with a list prefix-words that indicates a false match
+
+  - The list of prefixes is updated using feedback from users. If any of the `prefix` words are found in the content and there is a match, the `CPRRule` discard the match as false positive.
+    The list of prefixes are found in `src/os2datascanner/engine2/rules/cpr.p`
+
+- Metrics are now collected from the admin- and report Django applications.
+
+  - The metrics are sent to prometheus and includes `requests latency`, `number of requests` and related performance numbers. No user specific information is collected
+    The collected metrics can be seen with on port `5001` from within the container, e.g. `docker-compose exec report bash -c "curl localhost:5001"`
+
+- There is now a timout value for downloading sitemaps. You server doens't respond? No problem, OS2datascanner now have a default timout of 45s for all http-related requests. This can be changed in the `engine`s toml configuration. See `src/os2datascanner/engine2/default-settings.toml` for default values.
+
+### Bugfixes
+
+- `scanenr_info`, one of the new administration helper commands, had a memory issue for very large scans. This have been fixed and it is possible to get info about VLS (very large scans).
+
 ## Version 3.11.6, 30th September 2021
 
 "New Double-Action Formula!"
