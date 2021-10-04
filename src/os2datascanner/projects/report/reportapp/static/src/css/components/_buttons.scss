@@ -120,4 +120,8 @@
   &.open::after {
     transform: translate(.5em, .75em) rotate(-135deg);
   }
+  &:hover::after,
+  &:focus::after {
+    border-color: var(--color-primary);
+  }
 }

@@ -4,7 +4,8 @@
 
 // datatable, start
 .datatable {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: fixed;
   width: 100%;
   &-card {
@@ -20,15 +21,25 @@
   .datatable {
     margin: calc(var(--datatable-cell-padding) * -1) 0;
   }
-  tr.open,
-  .matches-list {
+  tr.open > td,
+  tr.open > th,
+  .matches-list > td,
+  .matches-list > th {
     background-color: rgba(0,0,0,.07);
   }
   tr.open > th:first-child,
   tr.open > td:first-child,
   .matches-list > th:first-child,
   .matches-list > td:first-child {
+    // Emulate border-left. Adding an actual border-left will shift
+    // the contents of the row
     box-shadow: inset 4px 0 0 var(--color-primary);
+  }
+  tr.highlighted > td,
+  tr.highlighted > th,
+  tr.highlighted + .matches-list > td,
+  tr.highlighted + .matches-list > th {
+    background-color: var(--color-primary-lightest);
   }
   &__column {
     &--handle {
@@ -47,7 +58,7 @@
       width: auto;
     }
     &--actions {
-      width: 10rem;
+      width: 12rem;
       text-align: right;
     }
   }
@@ -86,7 +97,7 @@
 .datatable td {
   line-height: 1;
   padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
-  vertical-align: top;
+  vertical-align: middle;
 
   &:first-child {
     padding-left: var(--datatable-cell-padding);

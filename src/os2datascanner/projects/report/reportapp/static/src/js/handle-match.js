@@ -1,17 +1,20 @@
 // Listen for click on toggle checkbox
 $("#select-all").change(function() {
   $("input[name='match-checkbox']").prop("checked", $(this).prop("checked"));
-  countChecked();
+  handleChecked();
 });
 
-// Count selected checkboxes
-function countChecked() {
+// Handle checkboxes
+function handleChecked() {
   var numChecked = $("input[name='match-checkbox']:checked").length;
   $(".selected-cb .num-selected").text(numChecked);
   $(".handle-match__action").prop("disabled", !Boolean(numChecked))
+
+  $("input[name='match-checkbox']:not(:checked)").closest("tr").removeClass("highlighted");
+  $("input[name='match-checkbox']:checked").closest("tr").addClass("highlighted");
 }
 // Iterate each checkbox
-$("input[name='match-checkbox']").change(countChecked);
+$("input[name='match-checkbox']").change(handleChecked);
 
 function getCookie(name) {
   var cookieValue = null;
