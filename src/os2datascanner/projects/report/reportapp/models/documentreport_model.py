@@ -112,6 +112,9 @@ class DocumentReport(models.Model):
         def choices(cls):
             return [(k.value, k.label) for k in cls]
 
+        def __repr__(self):
+            return f"<{self.__class__.__name__}.{self.name}>"
+
     resolution_status = models.IntegerField(choices=ResolutionChoices.choices(),
                                             null=True, blank=True, db_index=True,
                                             verbose_name=_("resolution status"))

@@ -337,7 +337,7 @@ class Scanner(models.Model):
             sender.join()
 
         logger.info(
-            "scan submitted",
+            "Scan submitted",
             scan=self,
             pk=self.pk,
             scan_type=self.get_type(),
