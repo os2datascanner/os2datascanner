@@ -46,7 +46,7 @@ def publish_events(events):
                 logger.debug("Published to {0}: {1}".format(queue, json_event))
                 ppt.enqueue_message(queue, json_event)
             ppt.enqueue_stop()
-            ppt.run_consumer()
+            ppt.run()
     except Exception as e:
         # log the error
         logger.error("Could not publish event. Error: " + format(e))
