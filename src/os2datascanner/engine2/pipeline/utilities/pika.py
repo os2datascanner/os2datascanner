@@ -312,6 +312,14 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         """Receives messages from the registered input queues, dispatches them
         to the handle_message function, and generates new output messages. All
         Pika API calls are performed by the background thread."""
+
+        if threading.main_thread() != threading.current_thread():
+            raise ValueError(
+                    "only the main thread can call PikaPipelineThread."
+                    "run_consumer(); to execute a queue of Pika actions from"
+                    " an arbitrary thread, call PikaPipelineThread.run()"
+                    " instead")
+
         running = True
 
         def _handler(signum, frame):
