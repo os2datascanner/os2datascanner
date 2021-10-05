@@ -1,4 +1,6 @@
+import os
 import sys
+import random
 import signal
 import logging
 import argparse
@@ -108,6 +110,10 @@ def main():
             ),
             choices=("critical", "error", "warn", "warning", "info", "debug",)
         )
+    parser.add_argument(
+            "stage",
+            choices=("explorer", "processor", "matcher",
+                    "tagger", "exporter", "worker",))
 
     monitoring = parser.add_argument_group("monitoring")
     monitoring.add_argument(
@@ -120,11 +126,6 @@ def main():
             help="the port to serve OpenMetrics data.",
             default=9091)
 
-    parser.add_argument(
-            "stage",
-            choices=("explorer", "processor", "matcher",
-                    "tagger", "exporter", "worker",))
-
     configuration = parser.add_argument_group("configuration")
     configuration.add_argument(
             "--width",
@@ -133,6 +134,12 @@ def main():
             help="allow each source to have at most %(metavar) "
                     "simultaneous open sub-sources",
             default=3)
+    configuration.add_argument(
+            "--single-cpu",
+            action="store_true",
+            help="instruct the scheduler to run this stage, and its"
+                    " subprocesses, on a single CPU, either picked at random"
+                    " or based on the SCHEDULE_ON_CPU environment variable")
 
     args = parser.parse_args()
     module = _module_mapping[args.stage]
@@ -150,6 +157,20 @@ def main():
         i = Info(f"os2datascanner_pipeline_{args.stage}", "version number")
         i.info({"version": __version__})
         start_http_server(args.prometheus_port)
+
+    if args.single_cpu:
+        available_cpus = sorted(os.sched_getaffinity(0))
+        cpu = None
+        if (seq_id := os.getenv("SCHEDULE_ON_CPU", None)):
+            # If we've been assigned to a specific processor, then use that
+            # (modulo the number of actually available CPUs, so we can safely
+            # use an instance counter as a processor selector)
+            cpu = available_cpus[int(seq_id) % len(available_cpus)]
+        else:
+            # Otherwise, pick a random CPU to run on
+            cpu = random.choice(available_cpus)
+        logger.info(f"executing only on CPU {cpu}")
+        os.sched_setaffinity(0, {cpu})
 
     with SourceManager(width=args.width) as source_manager:
         GenericRunner(
