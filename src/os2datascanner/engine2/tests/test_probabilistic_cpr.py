@@ -107,6 +107,20 @@ class TestCprTest(unittest.TestCase):
         )
         self.assertTrue(0.999 < sum(distribution.values()) < 1.0001)
 
+    def test_exception_date_with_mod11(self):
+        """Test that a CPR from an exception data give expected probability"""
+
+        cpr = "0101643066"
+        check = self.cpr_calc.cpr_check(cpr, do_mod11_check=True)
+        self.assertEqual(check, 0.5, "probability for an exception date should be 0.5")
+
+    def test_exception_date_without_mod11(self):
+        """Test that a CPR from an exception data give expected probability"""
+
+        cpr = "0101643012"
+        check = self.cpr_calc.cpr_check(cpr, do_mod11_check=False)
+        self.assertEqual(check, 0.5, "probability for an exception date should be 0.5")
+
     def test_legal_cprs(self):
         distribution = {}
         tests = 1000

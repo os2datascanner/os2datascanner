@@ -1,6 +1,6 @@
-# import time
 from typing import Union, Tuple
 from datetime import date
+
 
 # Updated list of dates with CPR numbers violating the Modulo-11 check. (Last
 # synchronised with the CPR Office's list on January 28, 2021.)
@@ -89,7 +89,7 @@ def modulus11_check(cpr: str) -> Tuple[bool, str]:
 
 
 def modulus11_check_raw(cpr: str) -> bool:
-    """Perform a modulus-11 check on the CPR number.
+    """Check if the CPR fulfils the modulus-11 check
 
     This should not be called directly as it does not make any exceptions
     for numbers for which the modulus-11 check should not be performed.
@@ -217,14 +217,20 @@ class CprProbabilityCalculator(object):
         if birth_date > date.today():
             return "CPR newer than today"
 
-        if do_mod11_check and not modulus11_check_raw(cpr):
-            if birth_date not in CPR_EXCEPTION_DATES:
+        # we cannot say anything about the probability, when the date is an
+        # exception-date
+        if birth_date in CPR_EXCEPTION_DATES:
+            return 0.5
+
+        if (do_mod11_check and not modulus11_check_raw(cpr) and
+            birth_date not in CPR_EXCEPTION_DATES):
                 return "Modulus 11 does not match"
-            else:
-                return 0.5
 
         legal_cprs = self._calc_all_cprs(birth_date)
-        index_number = legal_cprs.index(cpr)
+        try:
+            index_number = legal_cprs.index(cpr)
+        except ValueError:
+            return f"CPR is not a legal value"
 
         if index_number <= 100:
             return 1.0
