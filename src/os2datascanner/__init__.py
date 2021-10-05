@@ -4,7 +4,7 @@ import logging
 import structlog
 from structlog.stdlib import LoggerFactory
 
-__version__ = "3.11.7"
+__version__ = "3.12.0"
 
 # prevent default configuration, if users do not set one specifically
 logging.getLogger(__name__).addHandler(logging.NullHandler())
