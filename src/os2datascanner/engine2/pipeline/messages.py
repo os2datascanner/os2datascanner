@@ -448,9 +448,13 @@ class CommandMessage(NamedTuple):
     depends a bit on the installation and on how many concurrent scans it can
     be expected to perform.)"""
 
+    log_level: Optional[int]
+    """If set, the new logging level of the "os2datascanner" root logger."""
+
     def to_json_object(self):
         return {
-            "abort": self.abort.to_json_object() if self.abort else None
+            "abort": self.abort.to_json_object() if self.abort else None,
+            "log_level": self.log_level
         }
 
     @staticmethod
@@ -458,6 +462,7 @@ class CommandMessage(NamedTuple):
         abort = obj.get("abort")
         return CommandMessage(
                 abort=ScanTagFragment.from_json_object(abort)
-                if abort else None)
+                if abort else None,
+                log_level=obj.get("log_level"))
 
     _deep_replace = _deep_replace

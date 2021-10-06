@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 
 from ...models.scannerjobs.scanner_model import Scanner, ScanStatus
 from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.pipeline.run_stage import _loglevels
 from os2datascanner.engine2.pipeline.utilities import pika
 
 import logging
@@ -48,9 +49,16 @@ class Command(BaseCommand):
                 help="the primary key of a ScanStatus object whose scan should"
                         " be stopped",
                 default=None)
+        group.add_argument(
+                "--log-level",
+                choices=("critical", "error", "warn",
+                        "warning", "info", "debug",),
+                metavar="LEVEL",
+                help="the new log level for pipeline components",
+                default=None)
 
     def handle(self,
-            abort_scantag, abort_scannerjob, abort_scanstatus,
+            abort_scantag, abort_scannerjob, abort_scanstatus, log_level,
             *args, **options):
         if abort_scannerjob:
             abort_scantag = messages.ScanTagFragment.from_json_object(
@@ -59,7 +67,9 @@ class Command(BaseCommand):
             abort_scantag = messages.ScanTagFragment.from_json_object(
                     abort_scanstatus.scan_tag)
 
-        msg = messages.CommandMessage(abort=abort_scantag)
+        msg = messages.CommandMessage(
+                abort=abort_scantag,
+                log_level=_loglevels.get(log_level) if log_level else None)
         logging.info(msg)
 
         with pika.PikaPipelineThread() as p:
