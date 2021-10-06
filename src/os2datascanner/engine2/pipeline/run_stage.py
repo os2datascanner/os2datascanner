@@ -77,6 +77,9 @@ class GenericRunner(PikaPipelineThread):
 
                 if command.abort:
                     self._cancelled.appendleft(command.abort)
+                if command.log_level:
+                    logging.getLogger("os2datascanner").setLevel(
+                            command.log_level)
                 yield from []
             else:
                 raw_scan_tag = body.get("scan_tag")
