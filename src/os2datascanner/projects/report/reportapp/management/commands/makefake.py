@@ -57,10 +57,16 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
+            "--seed",
+            type=int,
+            default=None,
+            help="Get (almost) reproducible results by specifying a seed for the random generator"
+        )
+        parser.add_argument(
             "--page-count",
             type=int,
             metavar="NUM",
-            default=random.randrange(5, 10),
+            default=None,
             help="the number of sites to be scanned per source, each site will produce 1 handle"
             " (default: random amount between 5 and 10) ",
         )
@@ -76,12 +82,27 @@ class Command(BaseCommand):
             "--scan-count",
             type=int,
             metavar="NUM",
-            default=random.randrange(5, 10),
+            default=None,
             help="Amount of different scans that are simulated"
             " (default: random amount between 5 and 10) ",
         )
 
-    def handle(self, *, page_count, scan_count, scan_type, **options):
+    def handle(self, *, page_count, scan_count, scan_type, seed, **options):
+
+        # faker is using the random generator, so seeding here does not give
+        # deterministic results for the code executed after calls to Faker.
+        #
+        # page_count, scan_count and scan_types are deterministic, wheres the number
+        # of matches and content is random
+        if seed is None:
+            import sys
+            seed = random.randrange(sys.maxsize)
+
+        random.seed(seed)
+        # set argument options, so they are seed'ed
+        page_count = page_count if page_count else random.randrange(5, 10)
+        scan_count = scan_count if scan_count else random.randrange(5, 10)
+
         organization = Organization.objects.first()
         handle_types = {
             "FileSystemScan": make_fake_filesystem_handle,
@@ -94,7 +115,7 @@ class Command(BaseCommand):
             "SBSYSScan": make_fake_sbsys_handle,
         }
         stats = {"scans": 0, "handles": 0, "matches": 0}
-        for scan in range(0, scan_count):
+        for scan in range(scan_count):
             _scan_type = None
             if not scan_type:
                 #generate random scan
@@ -109,7 +130,7 @@ class Command(BaseCommand):
             scan_name = "{0}.{1}".format(scan, _scan_type)
             scan_spec = make_fake_scan_type(organization, scan_name)
 
-            for page in range(0, page_count):
+            for page in range(page_count):
                 handle = handle_generator_function()
                 scan_spec = scan_spec._replace(
                     source=handle._source,
@@ -133,7 +154,8 @@ class Command(BaseCommand):
             self.style.SUCCESS(
                 f'Generated {stats["matches"]} matches '
                 f'from {stats["handles"]} handles '
-                f'in {stats["scans"]} scans'
+                f'in {stats["scans"]} scans '
+                f'using seed {seed}'
             )
         )
 
@@ -248,7 +270,7 @@ def generate_fake_data(prefix=None, paths=None, file_names=None, file_types=None
     if prefix:
         path_name = prefix[random.randrange(0, len(prefix)) - 1]
     path_lenght = random.randrange(1, 5)
-    for i in range(0, path_lenght):
+    for i in range(path_lenght):
         path_name += paths[random.randrange(0, len(paths))]
     file_name = (
         file_names[random.randrange(0, len(file_names) - 1)]
@@ -312,13 +334,19 @@ def make_fake_google_drive_handle():
 
 def make_fake_ews_mail_handle():
     path_name, file_name, mail, user = generate_fake_data()
-    source = EWSAccountSource(path_name, "magenta.dk", user, "1234", user)
+    source = EWSAccountSource(
+        # convert fs-path to something that resembles a domain
+        domain=path_name.removeprefix("/").replace("/","."),
+        server="mail.magenta.dk",
+        admin_user=user,
+        admin_password="1234",
+        user=user)
     handle = EWSMailHandle(
         source,
-        path_name,
-        file_name,
-        "/" + path_name.split("/")[0],
-        random.randrange(1000, 9999),
+        path=path_name,
+        mail_subject=file_name,
+        folder_name=path_name,
+        entry_id=random.randrange(1000, 9999),
     )
     return handle
 
