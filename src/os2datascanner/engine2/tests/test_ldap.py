@@ -278,7 +278,7 @@ class LDAPTest(unittest.TestCase):
                         "OU=🍪🎩,"
                         "O=フィクショナル・エンタープライゼズ株式会社,"
                         "ST=Baggårde 497,"
-                        "L=Ærøskøbing\, Ærø,"
+                        "L=Ærøskøbing\\, Ærø,"
                         "C=DK"),
                 dadi,
                 "parsing of complex RDN failed")
@@ -311,7 +311,7 @@ class LDAPTest(unittest.TestCase):
                     "RDN round trip failed")
 
         with self.subTest():
-            worst_case = (RDN("CN", """ "#+\,;<=>"""), RDN("L", "Test"))
+            worst_case = (RDN("CN", """ "#+\\,;<=>"""), RDN("L", "Test"))
             self.assertEqual(
                     worst_case,
                     RDN.dn_to_sequence(RDN.sequence_to_dn(worst_case)),
@@ -323,7 +323,7 @@ class LDAPTest(unittest.TestCase):
 
         self.assertEqual(
                 RDN.sequence_to_dn((RDN("#CN#", " 1 2 3 4 5 "),)),
-                "\\#CN#=\ 1 2 3 4 5\ ",
+                "\\#CN#=\\ 1 2 3 4 5\\ ",
                 "overzealous escape")
 
     def test_raw_escape(self):

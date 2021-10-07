@@ -13,7 +13,7 @@ _hex = "0123456789abcdef"
 
 
 def ldap_split(s: str, codec: str = "utf-8") -> Sequence[str]:
-    """Splits a string representation of a LDAP Distinguished Name according to
+    r"""Splits a string representation of a LDAP Distinguished Name according to
     the rules laid out in RFC 4514.
 
     DNs represent extended characters as escaped bytes in an unspecified
@@ -241,7 +241,7 @@ class LDAPNode(NamedTuple):
             iterator: Iterator[dict],
             name_selector: Callable[[dict], Iterator[str]]=
                     trivial_dn_selector):
-        """Builds an LDAPNode hierarchy from an iterator of dictionaries
+        r"""Builds an LDAPNode hierarchy from an iterator of dictionaries
         representing user objects and returns its root. The hierarchy will be
         constructed based on the users' distinguished names. For example, the
         input
