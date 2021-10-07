@@ -74,9 +74,10 @@ class Command(BaseCommand):
             "--scan-type",
             type=str,
             default=None,
-            help="Run on a specific scan, choose between"
-            "FileSystemScan, WebSourceScan, DropboxScan,"
-            "MSGraphScan, GoogleDriveScan, EWSScan, SMBScan, SBSYSScan",
+            help="Run on a specific scan, choose between "
+            "FileSystemScan, WebSourceScan, DropboxScan, "
+            "MSGraphScan, GoogleDriveScan, EWSScan, SMBScan, SBSYSScan "
+            "OR all",
         )
         parser.add_argument(
             "--scan-count",
@@ -114,7 +115,11 @@ class Command(BaseCommand):
             "SMBScan": make_fake_smb_handle,
             "SBSYSScan": make_fake_sbsys_handle,
         }
+        scan_iterator = iter(handle_types.items())
+
         stats = {"scans": 0, "handles": 0, "matches": 0}
+        if scan_type == "all":
+            scan_count = len(handle_types)
         for scan in range(scan_count):
             _scan_type = None
             if not scan_type:
@@ -122,6 +127,11 @@ class Command(BaseCommand):
                 _scan_type, handle_generator_function = random.choice(
                     list(handle_types.items())
                 )
+            elif scan_type == "all":
+                try:
+                    _scan_type, handle_generator_function = next(scan_iterator)
+                except StopIteration:
+                    break
             else:
                 #generate specified scan
                 handle_generator_function = handle_types[scan_type]
