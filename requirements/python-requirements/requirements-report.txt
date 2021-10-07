@@ -19,6 +19,7 @@ attrs==21.2.0
     # via
     #   -c requirements-engine.txt
     #   automat
+    #   pytest
     #   service-identity
     #   twisted
 autobahn==21.2.1
@@ -198,6 +199,10 @@ idna==2.9
     #   twisted
 incremental==21.3.0
     # via twisted
+iniconfig==1.1.1
+    # via
+    #   -c requirements-engine.txt
+    #   pytest
 ipython-genutils==0.2.0
     # via traitlets
 ipython==7.14.0
@@ -237,6 +242,10 @@ olefile==0.46
     # via
     #   -c requirements-engine.txt
     #   -r requirements-django.in
+packaging==21.0
+    # via
+    #   -c requirements-engine.txt
+    #   pytest
 parameterized==0.8.1
     # via
     #   -c requirements-engine.txt
@@ -257,6 +266,10 @@ pillow==7.1.1
     #   -r requirements-django.in
 pkgconfig==1.5.1
     # via xmlsec
+pluggy==0.13.1
+    # via
+    #   -c requirements-engine.txt
+    #   pytest
 prometheus-client==0.7.1
     # via
     #   -c requirements-engine.txt
@@ -272,6 +285,10 @@ psycopg2-binary==2.8.5
     # via -r requirements-django.in
 ptyprocess==0.6.0
     # via pexpect
+py==1.10.0
+    # via
+    #   -c requirements-engine.txt
+    #   pytest
 pyasn1-modules==0.2.8
     # via
     #   -c requirements-engine.txt
@@ -301,6 +318,10 @@ pyopenssl==19.1.0
     #   josepy
     #   pysaml2
     #   twisted
+pyparsing==2.4.7
+    # via
+    #   -c requirements-engine.txt
+    #   packaging
 pypdf2==1.26.0
     # via
     #   -c requirements-engine.txt
@@ -313,6 +334,12 @@ pysmbc==1.0.21
     # via
     #   -c requirements-engine.txt
     #   -r requirements-django.in
+pytest-django==4.4.0
+    # via -r requirements-report.in
+pytest==6.2.4
+    # via
+    #   -c requirements-engine.txt
+    #   pytest-django
 python-dateutil==2.8.1
     # via
     #   -c requirements-engine.txt
@@ -411,6 +438,7 @@ toml==0.10.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
+    #   pytest
 traitlets==4.3.3
     # via ipython
 twisted[tls]==21.7.0

@@ -155,19 +155,15 @@ Test Admin Application:
   needs:
     - Build Admin Application
   script:
-    - cd /code/src/os2datascanner/projects/admin
-    - coverage run --omit=*/tests/* --source=os2datascanner.projects.admin -m django test
-  after_script:
-    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
-    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
-    - coverage report
-  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
+    - pytest
+      --junitxml $CI_PROJECT_DIR/admin-junit.xml
+      -p no:cacheprovider
+      --color=yes
+      /code/src/os2datascanner/projects/admin
   artifacts:
     when: always
-    paths:
-      - $CI_PROJECT_DIR/coverage-html
     reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+      junit: $CI_PROJECT_DIR/admin-junit.xml
 
 Integration Test Engine:
   extends: .test-default
@@ -178,14 +174,14 @@ Integration Test Engine:
     - Build Engine
   script:
     - pytest
-      --junitxml $CI_PROJECT_DIR/junit.xml
+      --junitxml $CI_PROJECT_DIR/integration-junit.xml
       -p no:cacheprovider
       --color=yes
       src/os2datascanner/engine2/tests/integration/
   artifacts:
     when: always
     reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+      junit: $CI_PROJECT_DIR/integration-junit.xml
 
 Unit Test Engine:
   stage: test
@@ -202,14 +198,14 @@ Unit Test Engine:
     - pytest
       -n 5
       --ignore-glob '*integration*'
-      --junitxml $CI_PROJECT_DIR/junit.xml
+      --junitxml $CI_PROJECT_DIR/engine-junit.xml
       -p no:cacheprovider
       --color=yes
       src/os2datascanner/engine2/tests/
   artifacts:
     when: always
     reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+      junit: $CI_PROJECT_DIR/engine-junit.xml
 
 Test Report Application:
   extends: .test-default
@@ -219,18 +215,15 @@ Test Report Application:
   needs:
     - Build Report Application
   script:
-    - coverage run --omit=*/tests/* --source=os2datascanner.projects.report -m django test os2datascanner.projects.report.tests
-  after_script:
-    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
-    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
-    - coverage report
-  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
+    - pytest
+      --junitxml $CI_PROJECT_DIR/report-junit.xml
+      -p no:cacheprovider
+      --color=yes
+      /code/src/os2datascanner/projects/report
   artifacts:
     when: always
-    paths:
-      - $CI_PROJECT_DIR/coverage-html
     reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+      junit: $CI_PROJECT_DIR/report-junit.xml
 
 Run Engine notice scripts:
   stage: test

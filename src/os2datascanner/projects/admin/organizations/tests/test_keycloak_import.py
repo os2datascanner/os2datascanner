@@ -1,6 +1,5 @@
 from copy import deepcopy
-from unittest import TestCase
-
+from django.test import TestCase
 from ...core.models.client import Client
 from ..models import Account, Organization, OrganizationalUnit, Alias, Position
 from .. import keycloak_actions
@@ -109,7 +108,6 @@ TEST_CORP_TWO = [
     },
 
 ]
-
 
 class KeycloakImportTest(TestCase):
     dummy_client = None
