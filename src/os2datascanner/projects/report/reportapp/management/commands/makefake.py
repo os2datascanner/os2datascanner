@@ -60,15 +60,16 @@ class Command(BaseCommand):
             "--seed",
             type=int,
             default=None,
-            help="Get (almost) reproducible results by specifying a seed for the random generator"
+            help="Get (almost) reproducible results by specifying a seed for the "
+            "random generator",
         )
         parser.add_argument(
-            "--page-count",
+            "--handles",
             type=int,
             metavar="NUM",
             default=None,
-            help="the number of sites to be scanned per source, each site will produce 1 handle"
-            " (default: random amount between 5 and 10) ",
+            help="the number of handles(\"pages\") to scan per source. "
+            "(default: random number between 5 and 10) ",
         )
         parser.add_argument(
             "--scan-type",
@@ -84,8 +85,10 @@ class Command(BaseCommand):
             type=int,
             metavar="NUM",
             default=None,
-            help="Amount of different scans that are simulated"
-            " (default: random amount between 5 and 10) ",
+            help="Number of different scans-types that are simulated. "
+            "If `--scan-type is specified, then the same scan-type is performed "
+            "`scan-count times`. "
+            "(default: random number between 5 and 10) ",
         )
         parser.add_argument(
             "--summarise",
@@ -101,7 +104,7 @@ class Command(BaseCommand):
         )
 
     def handle(
-            self, *, page_count, scan_count, scan_type, seed, summarise, dry_run,
+            self, *, handles, scan_count, scan_type, seed, summarise, dry_run,
             **options
     ):
 
@@ -116,7 +119,7 @@ class Command(BaseCommand):
 
         random.seed(seed)
         # set argument options, so they are seed'ed
-        page_count = page_count if page_count else random.randrange(5, 10)
+        handles = handles if handles else random.randrange(5, 10)
         scan_count = scan_count if scan_count else random.randrange(5, 10)
 
         organization = Organization.objects.first()
@@ -155,7 +158,7 @@ class Command(BaseCommand):
             scan_name = "{0}.{1}".format(scan, _scan_type)
             scan_spec = make_fake_scan_type(organization, scan_name)
 
-            for page in range(page_count):
+            for h in range(handles):
                 handle = handle_generator_function()
                 scan_spec = scan_spec._replace(
                     source=handle._source,
