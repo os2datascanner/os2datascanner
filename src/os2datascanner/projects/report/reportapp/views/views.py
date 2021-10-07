@@ -82,7 +82,7 @@ class MainPageView(LoginRequiredMixin, ListView):
     model = DocumentReport
     matches = DocumentReport.objects.filter(
         data__matches__matched=True).filter(
-        resolution_status__isnull=True)
+        resolution_status__isnull=True).order_by("sort_key")
     scannerjob_filters = None
     paginate_by_options = [10, 20, 50, 100, 250]
 
