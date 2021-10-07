@@ -87,8 +87,23 @@ class Command(BaseCommand):
             help="Amount of different scans that are simulated"
             " (default: random amount between 5 and 10) ",
         )
+        parser.add_argument(
+            "--summarise",
+            action='store_true',
+            default=False,
+            help="Print a brief summary of the created scans.",
+        )
+        parser.add_argument(
+            "--dry-run",
+            action='store_true',
+            default=False,
+            help="Dry run; just tell me what would have happened",
+        )
 
-    def handle(self, *, page_count, scan_count, scan_type, seed, **options):
+    def handle(
+            self, *, page_count, scan_count, scan_type, seed, summarise, dry_run,
+            **options
+    ):
 
         # faker is using the random generator, so seeding here does not give
         # deterministic results for the code executed after calls to Faker.
@@ -147,7 +162,8 @@ class Command(BaseCommand):
                 )
                 match_here, match_stats = make_fake_match(scan_spec, handle)
                 stats["matches"] += match_stats["matches"]
-                for match in match_here:
+                # ok, this is ugly. Sorry Emil...
+                for match in (match for match in match_here if not dry_run):
                     emit_message(
                         "os2ds_metadata",
                         messages.MetadataMessage(
@@ -156,8 +172,16 @@ class Command(BaseCommand):
                             metadata={"is it a fake scan": "yes it is"},
                         ),
                     )
-                emit_message("os2ds_matches", match_here)
+                if not dry_run:
+                    emit_message("os2ds_matches", match_here)
                 stats["handles"] += 1
+                if summarise:
+                    print(
+                        f"type:\t{handle.source.type_label}\n"
+                        f"\thandle  \t{handle.presentation}\n"
+                        f"\tsort_key\t{handle.sort_key}\n"
+                        f"\tname    \t{handle.name}\n"
+                    )
 
             stats["scans"] += 1
         self.stdout.write(
