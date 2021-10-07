@@ -10,12 +10,14 @@ from os2datascanner.engine2.model.core import UnknownSchemeError
 """Explore an url and see what datascanner understands(with `--summarise`)
 
 url can be one of the scheme-types supported by datascanner. Schemes `file:` and
-`http:` are probably the easiet to use.
-The `file` url have to be absolute (i.e. no `~/`)
+`http:` are probably the easiet to use. The urls have to point to a "directory" not a
+specific resource.
+Note: The `file` url have to be absolute (i.e. no `~/` or use file:`readlink -f ~/`)
 
 Example:
 python -m os2datascanner.engine2.demo.url_explorer file:/home/User/Downloads
-python -m os2datascanner.engine2.demo.url_explorer https://magenta.dk
+python -m os2datascanner.engine2.demo.url_explorer file:`readlink -f ~/Downloads`
+python -m os2datascanner.engine2.demo.url_explorer https://www.magenta.dk
 
 Supported urls can be found by:
 
@@ -54,7 +56,10 @@ def add_arguments(parser):
     parser.add_argument(
             "urls",
             metavar="URL",
-            help='A URL to be explored.',
+            help='A URL to be explored. ' +
+            'Examples: file:`readlink -f ~/Downloads` OR https://magenta.dk. ' +
+            'The URL have to start with the scheme and be absolute! ' +
+            'Read the header of this file for more info.',
             nargs='+')
     parser.add_argument(
             "--guess-mime",
