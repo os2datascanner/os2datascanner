@@ -1,9 +1,12 @@
 {% load handle_extras %}
 
+{% widthratio match.probability 1.0 100 as percentage %}
 {% if match.probability < 0.5 %}
-  <div class="probability probability--green">{% widthratio match.probability 1.0 100 %}%</div>
-  {% elif match.probability > 0.49 and match.probability <= 0.74 %}
-  <div class="probability probability--orange">{% widthratio match.probability 1.0 100 %}%</div>
-  {% elif match.probability > 0.74 %}
-  <div class="probability probability--red">{% widthratio match.probability 1.0 100 %}%</div>
+  <div class="probability probability--green">{{ percentage }}%</div>
+{% elif match.probability <= 0.74 %}
+  <div class="probability probability--orange">{{ percentage }}%</div>
+{% elif match.probability > 0.74 %}
+  <div class="probability probability--red">{{ percentage }}%</div>
+{% else %}
+  <div class="probability">{{ percentage }}%</div>
 {% endif %}

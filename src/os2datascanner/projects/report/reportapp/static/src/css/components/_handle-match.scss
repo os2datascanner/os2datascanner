@@ -1,7 +1,12 @@
+.view-options {
+  float: right;
+}
+
 .handle-match-wrapper {
   display: flex;
   align-items: center;
   min-width: 38rem;
+  float:left;
 
   button {
     margin-left: 0;
@@ -38,91 +43,4 @@
     font-weight: normal;
     color: var(--color-text-secondary);
   }
-}
-
-.handle-match {
-  font-size: .9rem;
-  font-weight: normal;
-  width: 12rem;
-  margin-left: 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: var(--border-radius-button);
-}
-
-.handle-match select {
-  display: none;
-}
-
-/* style the selected item */
-.select-handle {
-  background-color: var(--color-widget-bg);
-  border-radius: var(--border-radius-button);
-  z-index: 9;
-  color: var(--color-text-main);
-  padding: 8px 16px;
-  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap; 
-  overflow: hidden;
-  text-overflow: ellipsis; 
-}
-
-/* style the arrow inside the select element */
-.select-handle:after {
-  position: absolute;
-  content: "";
-  top: 14px;
-  right: 10px;
-  width: 0;
-  height: 0;
-  border: 6px solid transparent;
-  border-color: var(--color-icon) transparent transparent transparent;
-}
-
-/* point the arrow upwards when the select box is open (active) */
-.select-handle.select-handle-arrow-active:after {
-  border-color: transparent transparent var(--color-icon) transparent;
-  top: 7px;
-}
-
-/* style the items (options) */
-.select-handle-items div {
-  color: var(--color-text-main);
-  padding: 8px 16px;
-  margin-left: .7rem;
-  margin-right: .7rem;
-  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
-  cursor: pointer;
-  user-select: none;
-}
-
-.select-handle-items div:first-child {
-  margin-top: .7rem;
-}
-.select-handle-items div:last-child {
-  margin-bottom: .7rem;
-}
-
-/* style items (options) */
-.select-handle-items {
-  position: absolute;
-  max-width: 21rem;
-  background-color: var(--color-widget-bg);
-  border-radius: var(--border-radius-button);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  margin-top: .5rem;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 10;
-}
-
-/* hide the items when the select box is closed */
-.select-handle-hide {
-  display: none;
-}
-
-.select-handle-items div:hover, .same-as-selected-handle {
-  background-color: rgba(0, 0, 0, 0.1);
 }

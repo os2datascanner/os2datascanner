@@ -21,11 +21,33 @@
   .datatable {
     margin: calc(var(--datatable-cell-padding) * -1) 0;
   }
+  .matches-expand,
+  .matches-expand-all {
+    background-color: transparent !important;
+    .material-icons {
+      pointer-events: none;
+      color: #aaa;
+      transition: var(--transition-default);
+    }
+    &:hover,
+    &:focus {
+      .material-icons {
+        color: var(--color-primary-dark);
+      }
+    }
+    &.open {
+      .material-icons {
+        transform:rotate(180deg);        
+      }
+    }
+  }
   tr.open > td,
-  tr.open > th,
+  tr.open > th {
+    background-color: rgba(0,0,0,.07);
+  }
   .matches-list > td,
   .matches-list > th {
-    background-color: rgba(0,0,0,.07);
+    background-color: rgba(0,0,0,.035);
   }
   tr.open > th:first-child,
   tr.open > td:first-child,
@@ -59,7 +81,6 @@
     }
     &--actions {
       width: 12rem;
-      text-align: right;
     }
   }
 }
@@ -71,7 +92,7 @@
 
 // probability,  start
 .probability {
-  margin-left: 4rem;
+  display: inline-block;
   font-size: 0.75rem;
   font-weight: bold;
   border-radius: var(--border-radius-button);
@@ -79,6 +100,7 @@
   text-align: center;
   width: 3.5rem;
   padding: 0.5rem;
+  margin: -.6rem 0;
 
   &--red {
     background-color: var(--color-error);
@@ -95,9 +117,14 @@
 // datatable th & td, start
 .datatable th,
 .datatable td {
-  line-height: 1;
+  line-height: 1.2;
   padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
   vertical-align: middle;
+  .overflow-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   &:first-child {
     padding-left: var(--datatable-cell-padding);
@@ -124,8 +151,12 @@
   top: 4.5rem;
   background-color: #fff;
   z-index: 2;
-  border-top-left-radius: var(--border-radius-widget);
-  border-top-right-radius: var(--border-radius-widget);
+  &:first-child {
+    border-top-left-radius: var(--border-radius-widget);
+  }
+  &:last-child {
+    border-top-right-radius: var(--border-radius-widget);
+  }
 }
 
 .datatable .sticky th {
@@ -159,7 +190,7 @@
 }
 // .datatable--click-rows, end
 
-.matches-actions {
+.text-align-right {
   text-align: right;
 }
 
@@ -182,6 +213,9 @@
     &--context {
       width: auto;
     }
+    &--probability {
+      width: 8rem;
+    }
   }
 }
 
@@ -197,4 +231,24 @@
   &::after {
     padding-left: .35em;
   }
+}
+
+.tooltip {
+  &.cursor-help {
+    cursor: help;
+  }
+}
+
+[data-tooltip] {
+  position: absolute;
+  font-size: .85rem;
+  padding: .25rem;
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: var(--border-radius-button);
+  background-color: #f4f4f4;
+  box-shadow: var(--box-shadow-filter);
+  width: auto;
+  white-space: nowrap;
+  z-index: 9999;
+  cursor: text;
 }

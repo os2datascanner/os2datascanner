@@ -13,6 +13,10 @@
   transition-property: background-color;
   border-radius: var(--border-radius-button);
   word-break: normal;
+  > .material-icons {
+    line-height: 1rem;
+    vertical-align: top;
+  }
 
   &:focus:not([disabled]),
   &:hover:not([disabled]) {
@@ -87,41 +91,70 @@
   }
 }
 
+.toggle {
+  position: relative;
+  display: inline-block;
+  background-color: #fff;
+  border: none;
+  color: currentColor;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: .5em .5em .5em 3.5em;
+  border-radius: var(--border-radius-button);
+  &::before,
+  &::after {
+    position: absolute;
+    left: .5em;
+    top: .5em;
+    box-shadow: 0 0 0 3px #aaa;
+    border-radius: .5em;
+    transition: var(--transition-default);
+  }
+  &:hover::before,
+  &:hover::after,
+  &:focus::before,
+  &:focus::after {
+    box-shadow: 0 0 0 3px var(--color-primary);
+  }
+  &::before {
+    color: #aaa;
+    font-weight: bold;
+    font-family: "Material Icons";
+    width: 2.25em;
+    height: 1em;
+  }
+  &::after {
+    background-color: #fff;
+    content: "";
+    width: 1em;
+    height: 1em;
+  }
+  &[aria-pressed=false] {
+    &::before {
+      content: "clear";
+      color: var(--color-error);
+      background-color: #f7b0b0;
+      padding-left: 1em;
+    }
+  }
+  &[aria-pressed=true] {
+    &::before {
+      content: "done";
+      color: var(--color-ok-dark);
+      background-color: #cbf7e3;
+      padding-right: calc(1em + 3px);
+    }
+    &::after {
+      transform: translate(1.25em);
+    }
+  }
+}
+
 .button-group {
   .button {
     margin: 0 .2rem .2rem 0;
     vertical-align: middle;
     display: inline-block;
-  }
-}
-
-.caret {
-  position: relative;
-  border: none;
-  background: transparent !important;
-  box-shadow: none;
-  width: 1em;
-  height: 1em;
-  box-sizing: content-box;
-  cursor: pointer;
-  &::after {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0; // base button padding / 2
-    left: 0; // base button padding
-    width: 1em;
-    height: 1em;
-    transform: translate(.5em, .35em) rotate(45deg);
-    border-right: 3px solid #ccc;
-    border-bottom: 3px solid #ccc;
-    transition: all 300ms ease-in-out;
-  }
-  &.open::after {
-    transform: translate(.5em, .75em) rotate(-135deg);
-  }
-  &:hover::after,
-  &:focus::after {
-    border-color: var(--color-primary);
   }
 }

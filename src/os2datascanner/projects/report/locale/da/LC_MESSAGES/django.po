@@ -153,55 +153,71 @@ msgstr "af"
 msgid "selected"
 msgstr "valgt"
 
-#: reportapp/templates/components/hit.html:21
+#: reportapp/templates/components/hit.html:12
+msgid "Select result"
+msgstr "Vælg resultat"
+
+#: reportapp/templates/components/hit.html:29
 msgid "Open"
 msgstr "Åbn"
 
-#: reportapp/templates/components/hit.html:26
+#: reportapp/templates/components/hit.html:34
 msgid "Copy"
 msgstr "Kopiér"
 
-#: reportapp/templates/components/hit.html:30
+#: reportapp/templates/components/hit.html:38
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:56
+#: reportapp/templates/components/hit.html:68
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:57
+#: reportapp/templates/components/hit.html:69
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:69
+#: reportapp/templates/components/hit.html:82
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:70
+#: reportapp/templates/components/hit.html:83
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hits.html:22
-msgid "Select all"
-msgstr "Vælg alle"
+#: reportapp/templates/components/hit.html:84
+msgid "Probability"
+msgstr "Sandsynlighed"
 
-#: reportapp/templates/components/hits.html:26
+#: reportapp/templates/components/hits.html:19
+msgid "Show match probability"
+msgstr "Vis sandsynlighed"
+
+#: reportapp/templates/components/hits.html:20
+msgid "Show/hide all matches"
+msgstr "Vis/skjul alle matches"
+
+#: reportapp/templates/components/hits.html:28
+msgid "Select all results"
+msgstr "Vælg alle resultater"
+
+#: reportapp/templates/components/hits.html:33
 msgid "Name"
 msgstr "Navn"
 
-#: reportapp/templates/components/hits.html:29
+#: reportapp/templates/components/hits.html:36
 msgid "Matches"
 msgstr "Matches"
 
-#: reportapp/templates/components/hits.html:32
+#: reportapp/templates/components/hits.html:39
 msgid "Source"
 msgstr "Kilde"
 
-#: reportapp/templates/components/hits.html:35
+#: reportapp/templates/components/hits.html:42
 msgid "Path"
 msgstr "Sti"
 
-#: reportapp/templates/components/hits.html:38
+#: reportapp/templates/components/hits.html:45
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -543,6 +559,3 @@ msgstr "Ikke tildelt"
 
 #~ msgid "Result"
 #~ msgstr "Resultat"
-
-#~ msgid "Probability"
-#~ msgstr "Sandsynlighed"
