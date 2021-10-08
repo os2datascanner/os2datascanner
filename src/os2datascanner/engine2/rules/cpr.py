@@ -271,14 +271,27 @@ class CPRRule(RegexRule):
     @staticmethod
     @Rule.json_handler(type_label)
     def from_json_object(obj: dict):
+        # For backwards compatibility, we also need to handle whitelist and
+        # blacklist fields consisting of booleans
+        whitelist = obj.get("whitelist", None)
+        blacklist = obj.get("blacklist", None)
+        if whitelist is True:  # use the default whitelist
+            whitelist = None
+        elif whitelist is False:  # don't use a whitelist at all
+            whitelist = ()
+        if blacklist is True:
+            blacklist = None
+        elif blacklist is False:
+            blacklist = ()
+
         return CPRRule(
             modulus_11=obj.get("modulus_11", True),
             ignore_irrelevant=obj.get("ignore_irrelevant", True),
             examine_context=obj.get("examine_context", True),
             sensitivity=Sensitivity.make_from_dict(obj),
-            name=obj["name"] if "name" in obj else None,
-            whitelist=obj.get("whitelist", True),
-            blacklist=obj.get("blacklist", True),
+            name=obj.get("name"),
+            whitelist=whitelist,
+            blacklist=blacklist,
         )
 
 
