@@ -256,3 +256,12 @@ more!""",
         self.assertEqual(
             OrRule(A, B, C).presentation, "(Fragment A, Fragment B, or Fragment C)"
         )
+
+    def test_json_backwards_compatibility(self):
+        with self.subTest("old CPR rule"):
+            self.assertEqual(
+                    CPRRule.from_json_object({
+                        "type": "cpr"
+                    }),
+                    CPRRule(),
+                    "deserialisation of old CPR rule failed")

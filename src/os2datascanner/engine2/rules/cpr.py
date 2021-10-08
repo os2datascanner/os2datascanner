@@ -2,7 +2,6 @@ from typing import Iterator, List, Match, Optional, Tuple, Dict, Union
 import re
 from itertools import chain
 from enum import Enum, unique
-from collections.abc import Iterable
 import structlog
 
 from .rule import Rule, Sensitivity
@@ -57,15 +56,13 @@ class CPRRule(RegexRule):
         "dhk:tx",
     }
 
-    def __init__(
-        self,
-        modulus_11: bool = True,
-        ignore_irrelevant: bool = True,
-        examine_context: bool = True,
-        whitelist: Optional[List[str]] = None,
-        blacklist: Optional[List[str]] = None,
-        **super_kwargs,
-    ):
+    def __init__(self,
+            modulus_11: bool = True,
+            ignore_irrelevant: bool = True,
+            examine_context: bool = True,
+            whitelist: Optional[List[str]] = None,
+            blacklist: Optional[List[str]] = None,
+            **super_kwargs):
         super().__init__(cpr_regex, **super_kwargs)
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
@@ -266,28 +263,35 @@ class CPRRule(RegexRule):
             **{
                 "modulus_11": self._modulus_11,
                 "ignore_irrelevant": self._ignore_irrelevant,
-                "whitelist": (
-                    list(self._whitelist) if
-                    isinstance(self._whitelist, Iterable) else self._whitelist
-                ),
-                "blacklist": (
-                    list(self._blacklist) if
-                    isinstance(self._blacklist, Iterable) else self._whitelist
-                ),
+                "whitelist": list(self._whitelist),
+                "blacklist": list(self._blacklist),
             },
         )
 
     @staticmethod
     @Rule.json_handler(type_label)
     def from_json_object(obj: dict):
+        # For backwards compatibility, we also need to handle whitelist and
+        # blacklist fields consisting of booleans
+        whitelist = obj.get("whitelist", None)
+        blacklist = obj.get("blacklist", None)
+        if whitelist is True:  # use the default whitelist
+            whitelist = None
+        elif whitelist is False:  # don't use a whitelist at all
+            whitelist = ()
+        if blacklist is True:
+            blacklist = None
+        elif blacklist is False:
+            blacklist = ()
+
         return CPRRule(
             modulus_11=obj.get("modulus_11", True),
             ignore_irrelevant=obj.get("ignore_irrelevant", True),
             examine_context=obj.get("examine_context", True),
             sensitivity=Sensitivity.make_from_dict(obj),
-            name=obj["name"] if "name" in obj else None,
-            whitelist=obj.get("whitelist", True),
-            blacklist=obj.get("blacklist", True),
+            name=obj.get("name"),
+            whitelist=whitelist,
+            blacklist=blacklist,
         )
 
 
