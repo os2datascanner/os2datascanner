@@ -4,6 +4,7 @@ from os import unlink, listdir, scandir
 from tempfile import TemporaryDirectory
 from contextlib import closing
 from subprocess import DEVNULL
+from pathlib import Path
 
 from ....utils.system_utilities import run_custom
 from ... import settings as engine2_settings
@@ -165,7 +166,6 @@ class LibreOfficeObjectResource(FilesystemResource):
         # We deliberately don't yield from the superclass implementation --
         # filesystem metadata is useless for a generated file
 
-
 @Handle.stock_json_handler("lo-object")
 class LibreOfficeObjectHandle(Handle):
     type_label = "lo-object"
@@ -176,5 +176,21 @@ class LibreOfficeObjectHandle(Handle):
         return self.source.handle.presentation
 
     def censor(self):
-        return LibreOfficeObjectHandle(
-                self.source.censor(), self.relative_path)
+        return LibreOfficeObjectHandle(self.source.censor(), self.relative_path)
+
+    @property
+    def sort_key(self):
+        "Return the file path of the document"
+        return str(Path(self.base_handle.presentation).parent)
+
+    @property
+    def presentation_name(self):
+        """Return the filename of the document or, if originating from a container, the
+        filename of the container (filename of document)"""
+
+        if self.base_handle == self.source.handle:
+            return self.base_handle.name
+
+        # Object is unpacked from a container. Get the name of document
+        basename = Path(self.source.handle.relative_path).name
+        return f"{self.base_handle.name} (file {basename})"

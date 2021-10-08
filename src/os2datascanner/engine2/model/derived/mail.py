@@ -1,5 +1,6 @@
 from io import BytesIO
 import os.path
+from pathlib import Path
 import email
 from contextlib import contextmanager
 
@@ -100,9 +101,25 @@ class MailPartHandle(Handle):
     def presentation(self):
         basename = os.path.basename(self.relative_path)
         if not basename:
+            # this is part of the "email text"
             return self.source.handle.presentation
         else:
+            # this is an attachment or equivalent
             return "{0} (in {1})".format(basename, self.source.handle)
+
+    @property
+    def sort_key(self):
+        return str(Path(self.base_handle.presentation).parent)
+
+    @property
+    def presentation_name(self):
+        # Carefull: self.relative_path should not be interpreted as a Path - thus do
+        # not strip trailing / unless you really want to.
+        basename = os.path.basename(self.relative_path)
+        if not basename:
+            return self.base_handle.name
+        else:
+            return f"{self.base_handle.name} (attachment {basename})"
 
     def censor(self):
         return MailPartHandle(

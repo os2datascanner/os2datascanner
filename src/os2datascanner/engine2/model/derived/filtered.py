@@ -6,6 +6,7 @@ from lzma import LZMAFile
 from datetime import datetime
 from functools import partial
 from contextlib import contextmanager
+from pathlib import Path
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
@@ -116,6 +117,14 @@ class FilteredHandle(Handle):
     def presentation(self):
         return "({0}, decompressed)".format(
                 self.source.handle.presentation)
+
+    @property
+    def sort_key(self):
+        return str(Path(self.base_handle.presentation).parent)
+
+    @property
+    def presentation_name(self):
+        return self.base_handle.name
 
     def censor(self):
         return FilteredHandle(self.source.censor(), self.relative_path)
