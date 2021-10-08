@@ -2,7 +2,6 @@ from typing import Iterator, List, Match, Optional, Tuple, Dict, Union
 import re
 from itertools import chain
 from enum import Enum, unique
-from collections.abc import Iterable
 import structlog
 
 from .rule import Rule, Sensitivity
@@ -57,15 +56,13 @@ class CPRRule(RegexRule):
         "dhk:tx",
     }
 
-    def __init__(
-        self,
-        modulus_11: bool = True,
-        ignore_irrelevant: bool = True,
-        examine_context: bool = True,
-        whitelist: Optional[List[str]] = None,
-        blacklist: Optional[List[str]] = None,
-        **super_kwargs,
-    ):
+    def __init__(self,
+            modulus_11: bool = True,
+            ignore_irrelevant: bool = True,
+            examine_context: bool = True,
+            whitelist: Optional[List[str]] = None,
+            blacklist: Optional[List[str]] = None,
+            **super_kwargs):
         super().__init__(cpr_regex, **super_kwargs)
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
@@ -266,14 +263,8 @@ class CPRRule(RegexRule):
             **{
                 "modulus_11": self._modulus_11,
                 "ignore_irrelevant": self._ignore_irrelevant,
-                "whitelist": (
-                    list(self._whitelist) if
-                    isinstance(self._whitelist, Iterable) else self._whitelist
-                ),
-                "blacklist": (
-                    list(self._blacklist) if
-                    isinstance(self._blacklist, Iterable) else self._whitelist
-                ),
+                "whitelist": list(self._whitelist),
+                "blacklist": list(self._blacklist),
             },
         )
 
