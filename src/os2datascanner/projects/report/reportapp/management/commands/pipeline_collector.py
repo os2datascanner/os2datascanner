@@ -192,6 +192,8 @@ def handle_match_message(previous_report, new_report, body):
         while source.handle:
             source = source.handle.source
         new_report.source_type = source.type_label
+        new_report.name = new_matches.handle.name
+        new_report.sort_key = new_matches.handle.sort_key
 
         # Collect and store highest sensitivity value (should never be NoneType).
         new_report.sensitivity = new_matches.sensitivity.value
@@ -227,7 +229,8 @@ def sort_matches_by_probability(body):
 def handle_problem_message(previous_report, new_report, body):
     problem = messages.ProblemMessage.from_json_object(body)
 
-    presentation = problem.handle.presentation if problem.handle else "(source)"
+    handle = problem.handle if problem.handle else None
+    presentation = handle.presentation if handle else "(source)"
     if (previous_report and previous_report.resolution_status is None
             and problem.missing):
         # The file previously had matches, but is now removed.
@@ -246,7 +249,10 @@ def handle_problem_message(previous_report, new_report, body):
         source = problem.handle.source if problem.handle else problem.source
         while source.handle:
             source = source.handle.source
+
         new_report.source_type = source.type_label
+        new_report.name = handle.name if handle else ""
+        new_report.sort_key = handle.sort_key if handle else "(source)"
 
         new_report.data["problem"] = body
         new_report.save()

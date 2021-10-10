@@ -36,6 +36,15 @@ class DocumentReport(models.Model):
     # It could be that the meta data should not be part of the jsonfield...
     data = JSONField(null=True)
 
+    # sort results from a Source. It does not make sense to sort across Sources
+    sort_key = models.CharField(
+        max_length=256, verbose_name=_("sort key"), db_index=True, default=""
+    )
+
+    # the name of the specific resource a handle points to. The equivalent of a #
+    # filename
+    name = models.CharField(max_length=256, verbose_name=_("name"), default="")
+
     source_type = models.CharField(max_length=2000,
                                    verbose_name=_("source type"))
 
