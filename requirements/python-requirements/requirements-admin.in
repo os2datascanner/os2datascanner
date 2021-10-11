@@ -4,4 +4,5 @@
 django-mptt
 django-recurrence
 pycryptodome
+pytest-django
 python-dateutil
