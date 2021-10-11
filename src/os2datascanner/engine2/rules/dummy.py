@@ -79,3 +79,27 @@ class AlwaysMatchesRule(SimpleRule):
     def from_json_object(obj):
         return AlwaysMatchesRule(sensitivity=Sensitivity.make_from_dict(obj),
                 name=obj["name"] if "name" in obj else None)
+
+
+class BuggyRule(SimpleRule):
+    """BuggyRule raises an exception when it's asked to match something."""
+
+    operates_on = OutputType.AlwaysTrue
+    type_label = "buggy"
+
+    @property
+    def presentation_raw(self):
+        return "unconditional crash"
+
+    def match(self, content):
+        getattr(None, str(content))
+
+    def to_json_object(self):
+        return super().to_json_object()
+
+    @staticmethod
+    @Rule.json_handler(type_label)
+    def from_json_object(obj):
+        return BuggyRule(
+                sensitivity=Sensitivity.make_from_dict(obj),
+                name=obj["name"] if "name" in obj else None)
