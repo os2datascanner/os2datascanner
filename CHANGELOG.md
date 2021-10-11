@@ -1,3 +1,8 @@
+## Version 3.12.1, 11th October 2021
+
+This minor bugfix release restores backwards compatibility with messages from
+older versions of OS2datascanner.
+
 ## Version 3.12.0, 5th October 2021
 
 "Stay In Your Lane"

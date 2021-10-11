@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-30 04:51-0500\n"
+"POT-Creation-Date: 2021-10-11 05:50-0500\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -301,12 +301,12 @@ msgid "Organization:"
 msgstr "Organisation:"
 
 #: adminapp/templates/os2datascanner/cprrule_form.html:86
-#: adminapp/templates/os2datascanner/regexrule_form.html:165
+#: adminapp/templates/os2datascanner/regexrule_form.html:148
 msgid "Rule"
 msgstr "Regel"
 
 #: adminapp/templates/os2datascanner/cprrule_form.html:188
-#: adminapp/templates/os2datascanner/regexrule_form.html:287
+#: adminapp/templates/os2datascanner/regexrule_form.html:269
 #: adminapp/templates/os2datascanner/scanner_form.html:722
 msgid "Save changes"
 msgstr "Gem ændringer"
@@ -340,31 +340,31 @@ msgstr "scannerjob og"
 msgid "reports."
 msgstr "rapporter."
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:91
+#: adminapp/templates/os2datascanner/regexrule_form.html:90
 #: adminapp/templates/partials/breadcrumb.html:57
 msgid "Edit rule"
 msgstr "Rediger regel"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:97
+#: adminapp/templates/os2datascanner/regexrule_form.html:96
 #: adminapp/templates/partials/breadcrumb.html:61
 msgid "Create new rule"
 msgstr "Opret ny regel"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:118
+#: adminapp/templates/os2datascanner/regexrule_form.html:117
 #: adminapp/templates/os2datascanner/scanner_form.html:127
 #: import_services/templates/import_services/ldap_edit.html:93
 msgid "General"
 msgstr "Generelt"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:121
+#: adminapp/templates/os2datascanner/regexrule_form.html:120
 msgid "Name the rule and choose which organization the rule should belong to"
 msgstr "Navngiv reglen og vælg hvilken organisation reglen skal tilhøre"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:132
+#: adminapp/templates/os2datascanner/regexrule_form.html:131
 msgid "Name of rule"
 msgstr "Navn på regel"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:168
+#: adminapp/templates/os2datascanner/regexrule_form.html:151
 msgid ""
 "A rule consists one or more regular expressions and defines which text "
 "strings are searched in a scannerjob"
@@ -372,28 +372,28 @@ msgstr ""
 "En regel består af et eller flere regulære udtryk og definerer hvilke "
 "tekststrenge der søges efter i et scannerjob"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:176
+#: adminapp/templates/os2datascanner/regexrule_form.html:159
 msgid "Regular Expression"
 msgstr "Regulært Udtryk"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:186
+#: adminapp/templates/os2datascanner/regexrule_form.html:169
 msgid "e.g. organization"
 msgstr "f.eks. organisation"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:193
+#: adminapp/templates/os2datascanner/regexrule_form.html:176
 msgid "Remove expression"
 msgstr "Fjern udtryk"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:214
-#: adminapp/templates/os2datascanner/regexrule_form.html:217
+#: adminapp/templates/os2datascanner/regexrule_form.html:197
+#: adminapp/templates/os2datascanner/regexrule_form.html:200
 msgid "Add another regular expression"
 msgstr "Tilføj endnu et regulært udtryk"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:231
+#: adminapp/templates/os2datascanner/regexrule_form.html:214
 msgid "Assess the sensitivity of the rule"
 msgstr "Vurder reglens følsomhed"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:274
+#: adminapp/templates/os2datascanner/regexrule_form.html:256
 msgid "Description of rule"
 msgstr "Beskrivelse af regel"
 
@@ -419,8 +419,8 @@ msgid "Description"
 msgstr "Beskrivelse"
 
 #: adminapp/templates/os2datascanner/rules.html:53
-#: adminapp/views/rule_views.py:101 adminapp/views/rule_views.py:191
-#: adminapp/views/rule_views.py:198
+#: adminapp/views/rule_views.py:98 adminapp/views/rule_views.py:188
+#: adminapp/views/rule_views.py:195
 msgid "Expression"
 msgstr "Udtryk"
 
@@ -1085,11 +1085,11 @@ msgstr "Drevbogstav"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/views.py:171 import_services/models/exported_mixin.py:31
+#: adminapp/views/views.py:209 import_services/models/exported_mixin.py:31
 msgid "created"
 msgstr "oprettet"
 
-#: adminapp/views/views.py:171
+#: adminapp/views/views.py:209
 msgid "saved"
 msgstr "gemt"
 
