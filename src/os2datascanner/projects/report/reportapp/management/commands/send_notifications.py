@@ -45,6 +45,10 @@ class Command(BaseCommand):
             action="store_true",
             help="summarise the emails that would be sent without sending"
                     " them")
+        parser.add_argument(
+            "--all-results",
+            action="store_true",
+            help="Allows result under 30 days old to be sent")
 
     def handle(self, **options):
         txt_mail_template = loader.get_template("mail/overview.txt")
@@ -79,12 +83,13 @@ class Command(BaseCommand):
             # Handles filtering by role + org and sets datasource_last_modified if non existing
             data_results = views.filter_inapplicable_matches(user, matches, roles)
 
-            # Exactly 30 days is deemed to be "older than 30 days"
-            # and will therefore be shown.
-            time_threshold = time_now() - timedelta(days=30)
-            older_than_30_days = data_results.filter(
-                datasource_last_modified__lte=time_threshold)
-            data_results = older_than_30_days
+            if not options['all_results']:
+                # Exactly 30 days is deemed to be "older than 30 days"
+                # and will therefore be shown.
+                time_threshold = time_now() - timedelta(days=30)
+                older_than_30_days = data_results.filter(
+                    datasource_last_modified__lte=time_threshold)
+                data_results = older_than_30_days
 
             if not results or not data_results:
                 print("Nothing for user {0}".format(user.username))

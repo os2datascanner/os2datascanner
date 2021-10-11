@@ -203,6 +203,8 @@ These depend on some auxillary services:
 
 -   `nginx`: a webserver that exposes the same folder as `samba`.
 
+-   `mailhog`: a SMTP-server for testing purposes. 
+    web interface available at `http://localhost:8025/`.
 
 ### Interesting files for development
 
