@@ -91,6 +91,7 @@ Build Report Application:
       --dockerfile=$CI_PROJECT_DIR/docker/report/Dockerfile
       --destination=${REPORT_IMAGE}
 
+
 Build Admin Application:
   <<: *build-default
   script:
@@ -243,6 +244,28 @@ Run Engine notice scripts:
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
 
+Migration Status Admin:
+  extends: .test-default
+  image: ${ADMIN_IMAGE}
+  variables:
+    OS2DS_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
+  needs:
+    - Build Admin Application
+  script:
+    - cd src/os2datascanner/projects/admin
+    - python manage.py makemigrations --check --dry-run
+
+Migration Status Report:
+  extends: .test-default
+  image: ${REPORT_IMAGE}
+  variables:
+    OS2DS_REPORT_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/report/test-settings.toml
+  needs:
+    - Build Report Application
+  script:
+    - cd src/os2datascanner/projects/report
+    - python manage.py makemigrations --check --dry-run
+
 
 # Release stage
 ###############
@@ -260,6 +283,8 @@ Run Engine notice scripts:
     - Integration Test Engine
     - Unit Test Engine
     - Test Report Application
+    - Migration Status Admin
+    - Migration Status Report
   image: alpine
   variables:
     GIT_STRATEGY: none # We do not need the source code
