@@ -2,6 +2,7 @@
 
 from sys import stderr
 import argparse
+import logging
 
 from os2datascanner.engine2.model.core import Source, SourceManager
 from os2datascanner.engine2.model.core import FileResource
@@ -24,6 +25,17 @@ Supported urls can be found by:
 from os2datascanner.engine2.model.core import Source
 Source._Source__url_handlers
 """
+
+
+_loglevels = {
+    'critical': logging.CRITICAL,
+    'error': logging.ERROR,
+    'warn': logging.WARNING,
+    'warning': logging.WARNING,
+    'info': logging.INFO,
+    'debug': logging.DEBUG
+}
+
 
 def format_d(depth, fmt, *args, **kwargs):
     return "{0}{1}".format("  " * depth, fmt.format(*args, **kwargs))
@@ -83,12 +95,23 @@ def add_arguments(parser):
             metavar="DEPTH",
             type=int,
             help="Don't recurse deeper than %(metavar)s levels.")
+    parser.add_argument(
+            "--log-level",
+            default="info",
+            help=("Set logging level. Example --log-level=debug', default='info'"),
+            choices=("critical", "error", "warn", "warning", "info", "debug",)
+        )
 
 def main():
     parser = argparse.ArgumentParser()
     add_arguments(parser)
 
     args = parser.parse_args()
+
+    # https://docs.python.org/3/library/logging.html#logrecord-attributes
+    logging.basicConfig(format="%(name)s - %(levelname)s - %(message)s")
+    logger = logging.getLogger("os2datascanner")
+    logger.setLevel(_loglevels[args.log_level])
 
     with SourceManager() as sm:
         for i in args.urls:
