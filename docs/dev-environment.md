@@ -268,11 +268,18 @@ services - such as access to a database and/or message queue - we recommend
 using the development docker-compose set-up to run the tests, as this takes
 care of the required settings and bindings.
 
-To run the test-suites using docker-compose:
+To run the test-suites using docker-compose and PyTest:
+```bash
+docker-compose run admin pytest /code/src/os2datascanner/projects/admin
+docker-compose run explorer pytest --color=yes src/os2datascanner/engine2/tests
+docker-compose run report pytest /code/src/os2datascanner/projects/report/tests
+```
 
-    docker-compose run admin python -m django test os2datascanner.projects.admin.tests
-    docker-compose run explorer pytest --color=yes src/os2datascanner/engine2/tests
-    docker-compose run report python -m django test os2datascanner.projects.report.tests
+The admin and report projects can also be run with django test:
+```bash
+docker-compose run admin python -m django test os2datascanner.projects.admin.tests
+docker-compose run report python -m django test os2datascanner.projects.report.tests
+```
 
 Please note that the engine tests can be run using any of the five pipeline
 services as the basis, but a specific one is provided above for easy reference.
