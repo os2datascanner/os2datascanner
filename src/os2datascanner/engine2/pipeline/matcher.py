@@ -20,27 +20,44 @@ def message_received_raw(body, channel, source_manager):
     logger.debug(f"{message.handle.presentation} with rules [{rule.presentation}] "
                 f"and representation [{list(representations.keys())}]")
 
-    new_matches = []
-    # Keep executing rules for as long as we can with the representations we
-    # have
-    while not isinstance(rule, bool):
-        head, pve, nve = rule.split()
+    head = None
+    try:
+        new_matches = []
+        # Keep executing rules for as long as we can with the representations
+        # we have
+        while not isinstance(rule, bool):
+            head, pve, nve = rule.split()
 
-        target_type = head.operates_on
-        type_value = target_type.value
-        if type_value not in representations:
-            # We don't have this representation -- bail out
-            break
-        representation = representations[type_value]
+            target_type = head.operates_on
+            type_value = target_type.value
+            if type_value not in representations:
+                # We don't have this representation -- bail out
+                break
+            representation = representations[type_value]
 
-        matches = list(head.match(representation))
-        new_matches.append(
-                messages.MatchFragment(head, matches or None))
-        if matches:
-            rule = pve
-        else:
-            rule = nve
-        logger.debug(f"rule {head.presentation} matched: {len(matches)}")
+            matches = list(head.match(representation))
+            new_matches.append(
+                    messages.MatchFragment(head, matches or None))
+            if matches:
+                rule = pve
+            else:
+                rule = nve
+            logger.debug(f"rule {head.presentation} matched: {len(matches)}")
+    except Exception as e:
+        exception_message = "Matching error"
+        if head:
+            exception_message += (
+                    " during execution of"
+                    f" {head.presentation} ({head.type_label})")
+        exception_message += ". {0}: ".format(type(e).__name__)
+        exception_message += ", ".join([str(a) for a in e.args])
+        logger.warning(exception_message)
+        for problems_q in ("os2ds_problems", "os2ds_checkups",):
+            yield (problems_q, messages.ProblemMessage(
+                    scan_tag=message.scan_spec.scan_tag,
+                    source=None, handle=message.handle,
+                    message=exception_message).to_json_object())
+        return
 
     final_matches = message.progress.matches + new_matches
 
