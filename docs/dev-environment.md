@@ -326,6 +326,19 @@ docker
     kill -USR1 `<pid>`
     docker logs os2datascanner_worker_1
 
+### Removing messages from the queue
+
+If a malformed message get published to the queue, the `pipeline_collector`s or
+engine components might crash when trying to parse the message.
+
+And since messages are only removed from the queue after parsing succeeded and
+acknowledged by the consumer (the queues are persistent; restarting `RabbitMQ`
+does not clear the queues), you might end up in a crash-loop.
+
+There are two ways to clear the queues.
+1. use the web-interface to `RabbitMQ`, as described in [step 4 in TL;DR:](## TL;DR:),
+   to `Purge Messages`
+2. or from the CLI: `docker-compose exec queue rabbitmqctl purge_queue os2ds_scan_specs`
 
 ## docker-compose profiles
 
