@@ -7,7 +7,7 @@
     <col class="datatable__column--name">
     <col class="datatable__column--matchcount">
     <col class="datatable__column--source">
-    <col class="datatable__column--path">
+    {% comment %}<col class="datatable__column--path">{% endcomment %}
     <col class="datatable__column--actions">
   </colgroup>
   <thead>
@@ -38,9 +38,11 @@
       <th>
           {% trans "Source" %}
       </th>
+      {% comment %}
       <th>
           {% trans "Path" %}
       </th>
+      {% endcomment %}
       <th>
           <span class="screen-reader-only">{% trans "Actions" %}</span>
       </th>
