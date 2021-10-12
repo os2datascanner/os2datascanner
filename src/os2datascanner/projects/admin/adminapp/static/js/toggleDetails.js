@@ -1,3 +1,4 @@
+/* jshint -W098 */ //disable check is used ( called from html )
 // toggle scan details
 function toggleDetails() {
   var x = document.getElementById("scan-details");

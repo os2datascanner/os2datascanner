@@ -1,19 +1,19 @@
 var parameters = {};
 
 $(function() {
-    parameters.organization_id = document.querySelector('#id_organization').value;
+    parameters.organizationId = document.querySelector('#id_organization').value;
     getOrgUnits();
 
     // Eventlistener on change 
     var target = document.querySelector('#id_organization_container>.dropdown>.select-items');
     var callOnChange = new MutationObserver(function() {
-        if (parameters.organization_id != document.querySelector('#id_organization').value ){  
-            parameters.organization_id = document.querySelector('#id_organization').value;
+        if (parameters.organizationId !== document.querySelector('#id_organization').value ){  
+            parameters.organizationId = document.querySelector('#id_organization').value;
 
             //When the organization is called, getorgunit.js removes the selected values, 
             //but not the already selected values from the variable in dropdowntree.js,
             //instead of adding another eventlistener on the same dropdown as this, we set the value to empty here
-            selected_values = [];
+            selectedValues = [];
 
             getOrgUnits();
         }
@@ -43,9 +43,15 @@ function getOrgUnits() {
 
 // Function for restructuring object to fit format of select2ToTree
 function treeify(list, idAttr, parentAttr, childrenAttr) {
-    if (!idAttr) idAttr = 'uuid';
-    if (!parentAttr) parentAttr = 'parent';
-    if (!childrenAttr) childrenAttr = 'inc';
+    if (!idAttr) {
+        idAttr = 'uuid';
+    }
+    if (!parentAttr) {
+        parentAttr = 'parent';
+    }
+    if (!childrenAttr) {
+        childrenAttr = 'inc';
+    }
    
     var treeList = [];
     var lookup = {};
@@ -54,7 +60,7 @@ function treeify(list, idAttr, parentAttr, childrenAttr) {
         obj[childrenAttr] = [];
     });
     list.forEach(function(obj) {
-        if (obj[parentAttr] != null) {
+        if (obj[parentAttr] !== null) {
             if (lookup[obj[parentAttr]] !== undefined) {
                 lookup[obj[parentAttr]][childrenAttr].push(obj);
             } else {
@@ -67,7 +73,7 @@ function treeify(list, idAttr, parentAttr, childrenAttr) {
     return treeList;
 }
 
-function isOrgUnitSelected(org_units) {
+function isOrgUnitSelected(orgUnits) {
     // Empty the function when it's called, to make sure it's only called once
     // since we don't want to "refill" the select box, everytime a user changes organization
     /* jshint -W021 */
@@ -75,12 +81,12 @@ function isOrgUnitSelected(org_units) {
     /* jshint +W021 */
     // determine wether the orginazational unit is selected
     // do not use this on add new
-    if( document.location.pathname.indexOf('add') == -1){ //if not indexof
+    if( document.location.pathname.indexOf('add') === -1){ //if not indexof
         var scannerJobId = document.location.pathname.split('/')[2];
-        for(var i = 0; i < org_units.length; i++){
-            for(var j = 0;j < org_units[i].exchangescanners.length;j++) {
-                if(org_units[i].exchangescanners[j] == scannerJobId) {
-                    org_units[i].selected = "true";
+        for(var i = 0; i < orgUnits.length; i += 1){
+            for(var j = 0;j < orgUnits[i].exchangescanners.length;j += 1) {
+                if(orgUnits[i].exchangescanners[j] === scannerJobId) {
+                    orgUnits[i].selected = "true";
                     break;
                 }
             }

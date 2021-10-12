@@ -3,8 +3,9 @@ os2web = window.os2web || {};
     // Enable iframe-based modal dialogs
     $('.modal.iframe').on('shown.bs.modal', function() {
       var $this = $(this), src = $this.attr("data-href");
-      if(src)
-        $this.find('iframe').first().attr("src", src);
+      if (src) {
+          $this.find('iframe').first().attr("src", src);
+      }
     });
 
     // Validation radio buttons in the domain dialog
@@ -25,21 +26,21 @@ os2web = window.os2web || {};
     });
 
     $.extend(os2web, {
-        iframeDialog: function(id_or_elem, url, title) {
-            $elem = $(id_or_elem);
+        iframeDialog: function(idOrElem, url, title) {
+            $elem = $(idOrElem);
             $elem.find('iframe').first().attr('src', 'about:blank');
             $elem.attr('data-href', url);
             if(title) {
-                label_id = $elem.attr('aria-labelledby');
-                if(label_id) {
-                    $('#' + label_id).html(title);
+                labelId = $elem.attr('aria-labelledby');
+                if(labelId) {
+                    $('#' + labelId).html(title);
                 }
             }
             $elem.modal({show: true});
         }
     });
 })(os2web, jQuery);
-
+/* jshint -W098 */ //disable check for 'is used'
 // declared globally so we can access it from separate IIFEs.
 function handleSubChoices(choice) {
   var state = choice.prop("checked");
@@ -67,11 +68,15 @@ function os2debounce(func, wait, immediate) {
 		var context = this, args = arguments;
 		var later = function() {
 			timeout = null;
-			if (!immediate) func.apply(context, args);
+			if (!immediate) {
+                func.apply(context, args);
+            }
 		};
 		var callNow = immediate && !timeout;
 		clearTimeout(timeout);
 		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
+		if (callNow) {
+            func.apply(context, args);
+        }
 	};
 }

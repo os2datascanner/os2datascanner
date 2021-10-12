@@ -10,7 +10,7 @@ var hiddenInput = document.getElementsByName('user_obj_classes')[0];
 
 // add new input field
 var addInput = function() {
-    counter++;
+    counter += 1;
     var input = document.createElement("input");
     input.id = 'userClass' + counter;
     input.type = 'text';
@@ -48,7 +48,7 @@ function addUserClassInput(element) {
 function updateTagList() {
     inputValues = document.querySelectorAll('.user-class-input');
     taglist = [];
-    for (let i = 0; i < inputValues.length; i++) {  
+    for (let i = 0; i < inputValues.length; i += 1) {  
         taglist.push(inputValues[i].value);
     }
     hiddenInput.value = taglist.join(', ');

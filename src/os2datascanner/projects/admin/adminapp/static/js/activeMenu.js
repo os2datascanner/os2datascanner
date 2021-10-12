@@ -5,7 +5,7 @@
  */
 function setActive() {
   aObj = document.getElementById('navigation').getElementsByTagName('a');
-  for(i=0;i<aObj.length;i++) {
+  for(i=0;i<aObj.length;i += 1) {
     // Loop over all a tags.
     if(document.location.href.indexOf(aObj[i].href)>=0) {
       // if the a tag is clicked add active to the link.
