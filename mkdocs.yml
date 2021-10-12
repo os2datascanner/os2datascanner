@@ -11,6 +11,7 @@ nav:
   - Management Commands: management-commands.md
   - Architecture:
     - Overview: architecture/overview.md
+    - Security: architecture/security.md
     - Engine/pipeline: architecture/pipeline.md
     - Frontend: architecture/frontend.md
   - Scan API: api.md
