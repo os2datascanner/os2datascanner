@@ -76,7 +76,7 @@ class StatusBase(RestrictedListView):
 completed_scans = (Q(total_sources__isnull=False)
     & Q(total_objects__isnull=False)
     & Q(explored_sources=F('total_sources'))
-    & Q(scanned_objects=F('total_objects')))
+    & Q(scanned_objects__gte=F('total_objects')))
 
 
 class StatusOverview(StatusBase):

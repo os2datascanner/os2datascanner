@@ -432,7 +432,7 @@ class ScanStatus(models.Model):
         return (self.total_sources is not None
                 and self.total_sources == self.explored_sources
                 and self.total_objects is not None
-                and self.total_objects == self.scanned_objects)
+                and (self.scanned_objects or 0) >= self.total_objects)
 
     @property
     def fraction_explored(self) -> float:
