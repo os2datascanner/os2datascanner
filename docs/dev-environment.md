@@ -445,6 +445,11 @@ adding new entry "cn=Hamish MacTester,ou=Test Department,dc=magenta,dc=test"
 ## Code standards
 
 The coding standards below should be followed by all new and edited code for
-the project. Linting checks are applied, but currently allowed to fail;
-introducing a hard requirement would mean having to fill the version control
-history with commits only related to style, which is considered undesirable.
+the project.
+
+Linting checks are applied for:
+
+JS : Linting is done with JSHint and will fail hard if not being complied with.
+check https://jshint.com/docs/options/ for a list of all options/rules jshint 
+uses.
+

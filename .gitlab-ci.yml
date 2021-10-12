@@ -68,6 +68,20 @@ Lint shell scripts:
     - fd --extension sh --exec shellcheck
 
 
+Lint js scripts:
+  <<: *lint-default
+  image: node:16-alpine3.11
+  stage: lint
+  script:
+    # Install JSHint in this docker container
+    - npm install -g jshint
+    
+    # Run JSHint
+    - jshint ./src/os2datascanner/projects 
+      --config .jshintrc 
+      --exclude-path .jshintignore
+
+
 # Build stage
 ##############
 
