@@ -6,21 +6,17 @@
       {% include "partials/sidemenu.html" with active_tab="home" %}
 
       <div class="content">
-        
-        <div class="aside">
-          <h1 class="page-title">{% trans "Results:" %}</h1>
-        </div>
 
-        <div class="aside">
-          <span class="matches">Samlede antal: {{ page_obj.paginator.count }}</span>
-        </div>
+        <h1 class="page-title">{% trans "Results" %}</h1>
+
+        <p>{{ page_obj.paginator.count }} {% trans "results" %}</p>
 
         {% include "components/filters.html" %}
 
         {% if page_obj.paginator.count == 0 %}
-          <span class="datatable-none-matches">
+          <p class="no-results">
             {% trans "No results were found" %}
-          </span>
+          </p>
         {% else %}
           {% include "components/hits.html" %}
         {% endif %}

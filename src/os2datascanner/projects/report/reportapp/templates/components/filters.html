@@ -1,4 +1,5 @@
 {%  load i18n %}
+{% load l10n %}
 
 <script>
   function clear_filter(elementid){
@@ -39,7 +40,7 @@
                     {% trans "Select scannerjob" %}
             </option>
               {% for scan in scannerjobs|first %}
-                  <option value="{{ scan.data__scan_tag__scanner__pk }}"
+                  <option value="{{ scan.data__scan_tag__scanner__pk|unlocalize }}"
                           {% if scannerjobs|last == scan.data__scan_tag__scanner__pk|stringformat:"i" %}
                             selected="selected"
                           {% endif %} >

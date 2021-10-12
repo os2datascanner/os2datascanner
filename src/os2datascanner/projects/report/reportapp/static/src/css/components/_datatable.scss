@@ -4,91 +4,95 @@
 
 // datatable, start
 .datatable {
-  background-color: var(--color-widget-bg);
-  border-collapse: collapse;
-  box-shadow: var(--box-shadow-widget);
-  border-radius: var(--border-radius-widget);
-  max-width: 90rem;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: fixed;
-  width: calc(100% - 2rem);
-  margin-bottom: 8rem;
-
+  width: 100%;
+  &-card {
+    background-color: var(--color-widget-bg);
+    box-shadow: var(--box-shadow-widget);
+    border-radius: var(--border-radius-widget);
+    margin-bottom: calc(2 * var(--datatable-cell-padding));
+  }
+  &.disabled {
+    pointer-events: none;
+    opacity: .6;
+  }
+  .datatable {
+    margin: calc(var(--datatable-cell-padding) * -1) 0;
+  }
+  .matches-expand,
+  .matches-expand-all {
+    background-color: transparent !important;
+    .material-icons {
+      pointer-events: none;
+      color: #aaa;
+      transition: var(--transition-default);
+    }
+    &:hover,
+    &:focus {
+      .material-icons {
+        color: var(--color-primary-dark);
+      }
+    }
+    &.open {
+      .material-icons {
+        transform:rotate(180deg);        
+      }
+    }
+  }
+  tr.open > td,
+  tr.open > th {
+    background-color: rgba(0,0,0,.07);
+  }
+  .matches-list > td,
+  .matches-list > th {
+    background-color: rgba(0,0,0,.035);
+  }
+  tr.open > th:first-child,
+  tr.open > td:first-child,
+  .matches-list > th:first-child,
+  .matches-list > td:first-child {
+    // Emulate border-left. Adding an actual border-left will shift
+    // the contents of the row
+    box-shadow: inset 4px 0 0 var(--color-primary);
+  }
+  tr.highlighted > td,
+  tr.highlighted > th,
+  tr.highlighted + .matches-list > td,
+  tr.highlighted + .matches-list > th {
+    background-color: var(--color-primary-lightest);
+  }
   &__column {
-    &--label {
-      width: auto;
-    }
-
-    &--count {
-      text-align: right;
-      width: 15rem;
-    }
-
-    &--status {
-      text-align: right;
-      width: 8rem;
-    }
-
     &--handle {
-      width: 10rem;
+      width: 4.2rem;
     }
-
-    &--filetype-icon {
-      display: flex;
+    &--name {
+      width: 100%;
     }
-
-    &--item {
-      width: 40%;
-      word-break: break-all;
-      text-overflow: ellipsis;
-      overflow: hidden;
+    &--matchcount {
+      width: 6.5rem;
     }
-
-    &--match {
-      width: 25%;
+    &--source {
+      width: 6.5rem;
     }
-
-    &--context {
-      text-align: left;
-      width: 35%;
-      word-break: break-all;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      border-bottom: none;
+    &--path {
+      width: 100%;
     }
-
-    &--probability {
-      text-align: right;
-      width: 20%;
-      word-wrap: normal;
+    &--actions {
+      width: 12rem;
     }
-
   }
 }
 
-.datatable-none-matches {
-  float: left;
-  width: 90rem;
-}
-
-.datatable-checkbox {
-  margin-right: 5rem;
+.compressed {
+  --datatable-cell-padding: 1rem;
 }
 // datatable, end
 
-// matches & count, start
-.matches {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-// matches & count, end
-
 // probability,  start
 .probability {
-  margin-left: 4rem;
+  display: inline-block;
   font-size: 0.75rem;
   font-weight: bold;
   border-radius: var(--border-radius-button);
@@ -96,6 +100,7 @@
   text-align: center;
   width: 3.5rem;
   padding: 0.5rem;
+  margin: -.6rem 0;
 
   &--red {
     background-color: var(--color-error);
@@ -109,41 +114,17 @@
 }
 // probability, end
 
-
-// datatable tr hover, start
-.datatable tr:hover {
-
-  td{
-    background-color: var(--color-hover);
-  }
-
-  .hit-link {
-    opacity: 1;
-  }
-}
-// datatable tr hover, end
-
-@supports(display: grid) {
-  // We use CSS Grid to detect IE11, as "tr:focus" breaks the whole selector in IE11
-  .datatable tr:focus, 
-  .datatable tr:focus-within, 
-  .datatable tr:hover {
-    td {
-      background-color: var(--color-hover);
-    }
-      
-    .hit-link {
-      opacity: 1;
-    }
-  }
-}
-
 // datatable th & td, start
 .datatable th,
 .datatable td {
-  line-height: 1;
+  line-height: 1.2;
   padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
-  vertical-align: top;
+  vertical-align: middle;
+  .overflow-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   &:first-child {
     padding-left: var(--datatable-cell-padding);
@@ -155,57 +136,33 @@
 }
 // datatable th & td, end
 
-// datatable checkbox, start
-.datatable input[type="checkbox"] {
-  width: 1.2rem;
-  height: 1.2rem;
-  border: 2px solid var(--color-primary-dark);
-  cursor: pointer;
-  vertical-align: middle;
-  -webkit-appearance: none;
-  -webkit-border-radius: var(--border-radius-button);
-  border-radius: var(--border-radius-button);
-}
-.datatable input[type="checkbox"]:focus {
-  outline:none;
-}
-.datatable input[type="checkbox"]:checked:before {
-  font-weight: bold;
-  color: #222;
-  content: '\2713';
-  -webkit-margin-start: 0;
-  margin-left: 1px;
-  font-size: 1rem;
-}
-// datatable checkbox, end
-
-// handle match th, start
-.datatable .handle-match th {
-  font-size: 1rem;
-  padding-top: 2rem;
-  padding-bottom: 1.5rem;
-}
-// handle match th, end
-
-// grey th, start
-.datatable .grey-bg th {
+.datatable .column-headings th {
   font-size: 1rem;
   font-weight: bold;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 4.5rem;
+  top: 10.5rem;
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
   z-index: 2;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
   background-color: #f4f4f4;
 }
 
-.datatable .grey-bg th.scrollActive {
-  border-radius: 0;
-  background-color: #f4f4f4;
+.datatable .handle-matches th {
+  top: 4.5rem;
+  background-color: #fff;
+  z-index: 2;
+  &:first-child {
+    border-top-left-radius: var(--border-radius-widget);
+  }
+  &:last-child {
+    border-top-right-radius: var(--border-radius-widget);
+  }
 }
-// grey th, end
+
+.datatable .sticky th {
+  position: -webkit-sticky;
+  position: sticky;
+}
 
 .datatable td {
   border-top: 1px solid rgba(0, 0, 0, 0.2);
@@ -233,44 +190,65 @@
 }
 // .datatable--click-rows, end
 
-// nested tables, start
-.datatable--nested {
-  border-collapse: collapse;
-  box-shadow: initial;
-  table-layout: fixed;
-  width: 100%;
-  border-top: none;
+.text-align-right {
+  text-align: right;
+}
 
-  td,
-  td:first-child,
-  td:last-child {
-    border-top: none;
-    padding: var(--size-ds-unit) 0;
+.button-group .button.matches-handle {
+  opacity: 0;
+
+  tr:hover &,
+  tr:focus &,
+  &:hover,
+  &:focus {
+    opacity: 1;
   }
 }
-// nested tables, end
 
-// object items, start
-.scan {
-  &__item-title {
-    display: block;
-    word-break: break-all;
-  }
-
-  &__item-count {
-    display: block;
-    margin-top: var(--size-ds-unit);
-  }
-
-  &__item-meta {
-    margin-top: var(--size-ds-unit);
-
-    span {
-      display: inline-block;
-      font-size: 0.75rem;
-      margin-right: 0.5rem;
-      opacity: 0.75;
+.matches-list {
+  &__column {
+    &--match {
+      width: 12rem;
+    }
+    &--context {
+      width: auto;
+    }
+    &--probability {
+      width: 8rem;
     }
   }
 }
-// object items, end
+
+.match-context {
+  &::before,
+  &::after {
+    content: "[...]";
+    color: #aaa;
+  }
+  &::before {
+    padding-right: .35em;
+  }
+  &::after {
+    padding-left: .35em;
+  }
+}
+
+.tooltip {
+  &.cursor-help {
+    cursor: help;
+  }
+}
+
+[data-tooltip] {
+  position: absolute;
+  font-size: .85rem;
+  padding: .25rem;
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: var(--border-radius-button);
+  background-color: #f4f4f4;
+  box-shadow: var(--box-shadow-filter);
+  width: auto;
+  white-space: nowrap;
+  z-index: 9999;
+  cursor: text;
+}

@@ -1,44 +1,199 @@
-// Changes 'x of x' on load, to avoid showing 0 of 10
-// while having less than 10 matches.
-window.addEventListener('load', function () {
-  showChecked();
+// Listen for click on toggle checkbox
+$("#select-all").change(function() {
+  $("input[name='match-checkbox']").prop("checked", $(this).prop("checked"));
+  handleChecked();
 });
 
-// Listen for click on toggle checkbox
-$('#select-all').click(function() {
-  if(this.checked) {
-      // Iterate each checkbox
-      $('td input:checkbox').each(function() {
-        this.checked = true;
-      });
-  } else {
-      $('td input:checkbox').each(function() {
-        this.checked = false;                   
-      });
+// Handle checkboxes
+function handleChecked() {
+  var numChecked = $("input[name='match-checkbox']:checked").length;
+  $(".selected-cb .num-selected").text(numChecked);
+  $(".handle-match__action").prop("disabled", !Boolean(numChecked))
+
+  $("input[name='match-checkbox']:not(:checked)").closest("tr").removeClass("highlighted");
+  $("input[name='match-checkbox']:checked").closest("tr").addClass("highlighted");
+}
+// Iterate each checkbox
+$("input[name='match-checkbox']").change(handleChecked);
+
+// attach click handler to document to be prepared for the scenario
+// where we dynamically add more rows
+document.addEventListener("click", function (e) {
+  var targ = e.target;
+
+  if (hasClass(targ, "matches-expand")) {
+    // toggle the matches of a single row
+    var row = closestElement(targ, "tr[data-type]");
+    toggleMatchesList([row], targ);
+  }
+
+  if (hasClass(targ, "matches-expand-all")) {
+    // toggle the matches of all rows
+    var rows = document.querySelectorAll("tr[data-type]");
+    toggleMatchesList(rows, targ);
+
+    // store the user's preference in window.localStorage
+    var preference = hasClass(targ, "open") ? "expanded" : "collapsed";
+    setStorage("os2ds-prefers-expanded-results", preference);
+  }
+
+  if (hasClass(targ, "probability-toggle")) {
+    var isPressed = targ.getAttribute("aria-pressed") === "true";
+    if (isPressed) {
+      targ.setAttribute("aria-pressed", "false");
+    } else {
+      targ.setAttribute("aria-pressed", "true");
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll(".matches-list__column--probability"), function (col) {
+      if (isPressed) {
+        col.setAttribute("hidden", "");
+      } else {
+        col.removeAttribute("hidden");
+      }
+    });
+
+    // store the user's preference in window.localStorage
+    var preference = isPressed ? "hide" : "show";
+    setStorage("os2ds-prefers-probability", preference);
   }
 });
 
-// Show selected checkboxes
-function showChecked(){
-  var selected = $("td input:checked").length
-      + " af " + $("td .datatable-checkbox").length + " valgt";
-  $(".selected-cb").text(selected);
-}
-// Iterate each checkbox
-$("input[name=match-checkbox]").each(function( i ) {
-  $(this).on("click", function(){
-    i = showChecked();
-  });
+document.addEventListener("DOMContentLoaded", function () {
+  // if user prefers to have all rows expanded, do that.
+  var prefersExpanded = window.localStorage.getItem("os2ds-prefers-expanded-results")
+  if (prefersExpanded && prefersExpanded == "expanded") {
+    document.querySelector(".matches-expand-all").click();
+  }
+
+  // if user prefers to see probability, do that.
+  var prefersExpanded = window.localStorage.getItem("os2ds-prefers-probability")
+  if (prefersExpanded && prefersExpanded == "show") {
+    document.querySelector(".probability-toggle").click();
+  }
 });
+
+Array.prototype.forEach.call(document.querySelectorAll(".tooltip"), function (element) {
+  element.addEventListener("mouseenter", showTooltip);
+  element.addEventListener("mouseleave", hideTooltip);
+});
+
+// function to use localStorage
+function setStorage (item, value) {
+  try {
+    window.localStorage.setItem(item, value);
+  } catch (e) {
+    console.error("Could not save " + item + " with value " + value + " to localStorage", e)
+  }
+}
+
+// IE11 way of doing Element.closest
+function closestElement(elm, selector) {
+  var parent = elm.parentElement;
+  while (parent) {
+    if (parent.matches(selector)) {
+      break;
+    }
+    parent = parent.parentElement;
+  }
+  return parent;
+}
+
+function toggleMatchesList(objectRows, toggleButton) {
+  toggleClass(toggleButton, "open");
+  var buttonOpen = hasClass(toggleButton, "open");
+
+  Array.prototype.forEach.call(objectRows, function (row) {
+    var matchesList = row.nextElementSibling;
+
+    // show/hide the matches. We can't just toggle their state as
+    // we may have clicked the matches-expand-all button, so we need to read
+    // the state from the button that was clicked.
+    // toggleButton may be the button that belongs to the row we're iterating
+    // or it may be the matches-expand-all button. If the latter is the case,
+    // we also need to toggle the button that belongs to the row.
+    matchesList.hidden = !buttonOpen;
+    rowButton = row.querySelector(".matches-expand");
+    if (buttonOpen) {
+      addClass(row, "open");
+      if (rowButton !== toggleButton) {
+        addClass(rowButton, "open");
+      }
+    } else {
+      removeClass(row, "open");
+      if (rowButton !== toggleButton) {
+        removeClass(rowButton, "open");
+      }
+    }
+  })
+}
+
+// IE11 way of doing Element.classList.add and Element.classList.remove
+function toggleClass(elm, className) {
+  if (!hasClass(elm, className)) {
+    addClass(elm, className);
+  } else {
+    removeClass(elm, className);
+  }
+}
+
+function addClass(elm, className) {
+  if (!hasClass(elm, className)) {
+    elm.className = (elm.className + " " + className).trim();
+  }
+}
+
+function removeClass(elm, className) {
+  elm.className = elm.className.replace(className, "").trim();
+}
+
+// IE11 way of doing elm.classList.contains
+function hasClass(elm, className) {
+  var classList = elm.className ? elm.className.split(" ") : [];
+  return classList.indexOf(className) > -1;
+}
+
+// show a tooltip based on an event and its target. Assumes a DOM structure
+// where event.target has a descendant [data-tooltip-text]
+function showTooltip(event) {
+  var wrapper = event.target;
+  var tooltipElm = wrapper.querySelector("[data-tooltip-text]");
+  var textWidth = tooltipElm.offsetWidth;
+  var wrapperStyle = getComputedStyle(wrapper);
+  var wrapperWidth = wrapper.offsetWidth - parseFloat(wrapperStyle.paddingLeft) - parseFloat(wrapperStyle.paddingRight);
+
+  if (textWidth > wrapperWidth) {
+    addClass(wrapper, "cursor-help");
+    var tip = document.createElement("div");
+    var rect = wrapper.getBoundingClientRect();
+    var x = Math.round(event.pageX - rect.left - window.scrollX);
+    var y = Math.round(event.pageY - rect.top - window.scrollY);
+    tip.innerText = tooltipElm.innerText;
+    tip.setAttribute("data-tooltip", "");
+    tip.setAttribute("style", "top:" + y  + "px;left:" + x + "px;");
+    wrapper.appendChild(tip);
+  }
+}
+
+function hideTooltip(event) {
+  // delete the [data-tooltip] element from the DOM
+  var targ = event.target;
+  var tooltip = document.querySelector("[data-tooltip]");
+  if (tooltip) {
+    targ.removeChild(tooltip);
+  }
+  // Remove the .cursor-help class from the mouseout'ed tooltip
+  removeClass(targ, "cursor-help");
+}
 
 function getCookie(name) {
   var cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-      var cookies = document.cookie.split(';');
+  if (document.cookie && document.cookie !== "") {
+      var cookies = document.cookie.split(";");
       for (var i = 0; i < cookies.length; i++) {
           var cookie = cookies[i].trim();
           // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          if (cookie.substring(0, name.length + 1) === (name + "=")) {
               cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
               break;
           }
@@ -48,135 +203,44 @@ function getCookie(name) {
 }
 
 // Handle matches
-const actions = $('.handle-match__action')
-
-$(actions).unbind('click').click(function() {
-  const sel = document.getElementById('match-handle'); // get handle match element
-  const checkbox_nodelist = document.querySelectorAll('#match-checkbox:checked') // get list of checked checkboxes
-  const new_status = parseInt(sel.options[sel.selectedIndex].value); // get value of selected match-handling
-
-  // Create a list of report_ids, populate it and POST it to api.py action
-  var report_ids = [];
-    for (i = 0; i < checkbox_nodelist.length; i++){
-        report_ids.push(parseInt(checkbox_nodelist[i].getAttribute('data-report-pk')));
-    }
-    if (report_ids.length > 0 && !isNaN(new_status)) {
-        $.ajax({
-          url: "/api",
-          method: "POST",
-          data: JSON.stringify({
-            "action": "set-status-2",
-              
-            "report_id": report_ids,
-            "new_status": new_status
-          }),
-          contentType: "application/json; charset=utf-8",
-          dataType: "json",
-          beforeSend: function(xhr, settings) {
-            xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
-          }
-        }).done(function(body) {
-          if (body["status"] == "ok") {
-            location.reload(true)
-              // Removes the handled match row.
-              for (i = 0; i < checkbox_nodelist.length; i++) {
-                  checkbox_nodelist[i].closest('tr').remove();
-              }
-          } else if (body["status"] == "fail") {
-            console.log(
-                "Attempt to call set-status-1 failed: "
-                + body["message"])
-          }
-        })
+function handleMatches(pks) {
+  if (pks.length > 0) {
+    $(".datatable").addClass("disabled");
+    $.ajax({
+      url: "/api",
+      method: "POST",
+      data: JSON.stringify({
+        "action": "set-status-2",
+        "report_id": pks,
+        "new_status": 0
+      }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      beforeSend: function(xhr, settings) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
       }
+    }).done(function(body) {
+      $(".datatable").removeClass("disabled");
+      if (body["status"] == "ok") {
+        location.reload(true)
+      } else if (body["status"] == "fail") {
+        console.log(
+            "Attempt to call set-status-2 failed: "
+            + body["message"])
+      }
+    })
+  }
+}
+
+$(".handle-match__action").click(function() {
+  // get pks from checked checkboxes
+  var pks = $.map($("input[name='match-checkbox']:checked"), function (e) {
+    return $(e).attr("data-report-pk")
+  });
+  handleMatches(pks);
 })
 
-
-// Handle match options
-
-var x, i, j, l, ll, selElmnt, a, b, c;
-
-/* look for any elements with the class "handle-match" */
-x = document.getElementsByClassName("handle-match");
-l = x.length;
-
-for (i = 0; i < l; i++) {
-  selElmnt = x[i].getElementsByTagName("select")[0];
-  ll = selElmnt.length;
-
-  /* for each element, create a new DIV that will act as the selected item */
-  a = document.createElement("DIV");
-  a.setAttribute("class", "select-handle");
-  a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
-  x[i].appendChild(a)
-
-  /* for each element, create a new DIV that will contain the option list */
-  b = document.createElement("DIV");
-  b.setAttribute("class", "select-handle-items select-handle-hide");
-  for (j = 1; j < ll; j++) {
-    /* for each option in the original select element,
-    create a new DIV that will act as an option item */
-    c = document.createElement("DIV");
-    c.innerHTML = selElmnt.options[j].innerHTML;
-
-    c.addEventListener("click", function(e) {
-        /* when an item is clicked, update the original select box,
-        and the selected item */
-        var y, i, k, s, h, sl, yl;
-        s = this.parentNode.parentNode.getElementsByTagName("select")[0];
-        sl = s.length;
-        h = this.parentNode.previousSibling;
-        for (i = 0; i < sl; i++) {
-          if (s.options[i].innerHTML == this.innerHTML) {
-            s.selectedIndex = i;
-            h.innerHTML = this.innerHTML;
-            y = this.parentNode.getElementsByClassName("same-as-selected-handle");
-            yl = y.length;
-            for (k = 0; k < yl; k++) {
-              y[k].removeAttribute("class");
-            }
-            this.setAttribute("class", "same-as-selected-handle");
-            break;
-          }
-        }
-        h.click();
-    });
-    b.appendChild(c);
-  }
-  x[i].appendChild(b);
-
-  a.addEventListener("click", function(e) {
-      /* when the select box is clicked, close any other select boxes,
-      and open/close the current select box */
-      e.stopPropagation();
-      closeAllSelect(this);
-      this.nextSibling.classList.toggle("select-handle-hide");
-      this.classList.toggle("select-handle-arrow-active");
-    });
-}
-
-function closeAllSelect(elmnt) {
-  /* a function that will close all select boxes in the document,
-  except the current select box */
-  var x, y, i, xl, yl, arrNo = [];
-  x = document.getElementsByClassName("select-handle-items");
-  y = document.getElementsByClassName("select-handle");
-  xl = x.length;
-  yl = y.length;
-  for (i = 0; i < yl; i++) {
-    if (elmnt == y[i]) {
-      arrNo.push(i)
-    } else {
-      y[i].classList.remove("select-handle-arrow-active");
-    }
-  }
-  for (i = 0; i < xl; i++) {
-    if (arrNo.indexOf(i)) {
-      x[i].classList.add("select-handle-hide");
-    }
-  }
-}
-
-/* if the user clicks anywhere outside the select box,
-then close all select boxes */
-document.addEventListener("click", closeAllSelect);
+$(".matches-handle").click(function() {
+  var pk = $(this).closest("tr[data-type]").find("input[name='match-checkbox']").attr("data-report-pk");
+  handleMatches([pk])
+})

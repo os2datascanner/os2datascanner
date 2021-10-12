@@ -68,6 +68,10 @@ a {
   max-width: 60rem;
 }
 
+.smaller {
+  font-size: .85em;
+}
+
 .click-to-copy {
   box-shadow: inset 0 -1px 0 var(--color-main);
   cursor: pointer;

@@ -18,23 +18,9 @@ body {
   width: 100%;
   padding-top: 10rem;
   padding-left: 20rem;
+  padding-right: 5rem;
 }
 
 .wrapper > *:first-child {
   margin-top: 0;
-}
-
-.aside {
-  display: flex;
-  align-items: center;
-  max-width: 90rem;
-  width: calc(100% - 2rem);
-  margin-bottom: 0.5rem;
-  
-  h1 {
-    display: flex;
-    justify-content: flex-start;
-    width: 50%;
-    margin-bottom: 0;
-  }
 }

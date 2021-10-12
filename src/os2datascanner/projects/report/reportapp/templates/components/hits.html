@@ -1,34 +1,50 @@
 {% load handle_extras %}
 {%  load i18n %}
 
-<table class="datatable">
+<table class="datatable datatable-card">
+  <colgroup>
+    <col class="datatable__column--handle">
+    <col class="datatable__column--name">
+    <col class="datatable__column--matchcount">
+    <col class="datatable__column--source">
+    {% comment %}<col class="datatable__column--path">{% endcomment %}
+    <col class="datatable__column--actions">
+  </colgroup>
   <thead>
-    <tr>
-      <th>
+    <tr class="handle-matches sticky">
+      <th colspan="6">
         {% include "components/handle-match.html" %}
-      </th>
-    </tr>
-    <tr class="grey-bg">
-      <th class="datatable__column--handle">
-        <div class="datatable__column--filetype-icon">
-          <input id="select-all" type="checkbox" name="match-checkbox" class="datatable-checkbox">
-  
-          <span class="screen-reader-only">
-              {% trans "Type" %}
-          </span>
+        <div class="view-options">
+          <button class="toggle probability-toggle" type="button" aria-pressed="false">{% trans 'Show match probability' %}</button>
+          <button class="matches-expand-all button" type="button">{% trans "Show/hide all matches" %} <i class="material-icons" aria-hidden="true">expand_more</i></button>
         </div>
       </th>
-      <th class="datatable__column--item">
-          {% trans "Object" %}
+    </tr>
+    <tr class="column-headings sticky">
+      <th>
+        <div class="ds-checkbox">
+          <input id="select-all" type="checkbox">
+          <label for="select-all">
+            <span class="screen-reader-only">{% trans 'Select all results' %}</span>
+          </label>
+        </div>
       </th>
-      <th class="datatable__column--match">
-          {% trans "Result" %}
+      <th>
+          {% trans "Name" %}
       </th>
-      <th class="datatable__column--context">
-          {% trans "Context" %}
+      <th>
+          {% trans "Matches" %}
       </th>
-      <th class="datatable__column--probability">
-          {% trans "Probability" %}
+      <th>
+          {% trans "Source" %}
+      </th>
+      {% comment %}
+      <th>
+          {% trans "Path" %}
+      </th>
+      {% endcomment %}
+      <th>
+          <span class="screen-reader-only">{% trans "Actions" %}</span>
       </th>
     </tr>
   </thead>
@@ -37,7 +53,7 @@
     {% for match in matches %}
       {% include "components/hit.html" %}
     {% endfor %}
-    
+
   </tbody>
 
   {% include "components/pagination.html" %}
