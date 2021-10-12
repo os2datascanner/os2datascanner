@@ -102,7 +102,7 @@ recurrence.Rule.prototype = {
                     });
             }
             return items.join(', ');
-        }
+        };
 
         if (this.interval > 1)
             parts.push(
@@ -118,10 +118,10 @@ recurrence.Rule.prototype = {
             if (this.bymonth.length) {
                 // i.e. 'each january, june'
                 if (short)
-                    var months = recurrence.display.months_short;
+                    months = recurrence.display.months_short;
                 else
-                    var months = recurrence.display.months;
-                var items = recurrence.array.foreach(
+                    months = recurrence.display.months;
+                items = recurrence.array.foreach(
                     this.bymonth, function(month, i) {
                         return months[month - 1];
                     });
@@ -133,7 +133,7 @@ recurrence.Rule.prototype = {
             }
 
             if (this.byday.length || this.bysetpos.length) {
-                var weekday_items = get_position_weekday(this);
+                weekday_items = get_position_weekday(this);
                 parts.push(
                     interpolate(
                         recurrence.display.tokens.on_the_items,
@@ -144,7 +144,7 @@ recurrence.Rule.prototype = {
         if (this.freq == recurrence.MONTHLY) {
             if (this.bymonthday.length) {
                 // i.e. 'on the 1st, 5th, 10th'
-                var items = recurrence.array.foreach(
+                items = recurrence.array.foreach(
                     this.bymonthday, function(day, i) {
                         var dt = new Date();
                         dt.setDate(day);
@@ -158,7 +158,7 @@ recurrence.Rule.prototype = {
 
             } else if (this.byday.length) {
                 if (this.byday.length || this.bysetpos.length) {
-                    var weekday_items = get_position_weekday(this);
+                    weekday_items = get_position_weekday(this);
                     parts.push(
                         interpolate(
                             recurrence.display.tokens.on_the_items,
@@ -170,14 +170,14 @@ recurrence.Rule.prototype = {
         if (this.freq == recurrence.WEEKLY) {
             if (this.byday.length) {
                 // i.e. 'each tuesday, wednesday'
-                var items = recurrence.array.foreach(
+                items = recurrence.array.foreach(
                     this.byday, function(byday) {
                         var weekday_number = recurrence.to_weekday(byday).number;
                         if (short)
-                            var weekday = recurrence.display.weekdays_short[
+                            weekday = recurrence.display.weekdays_short[
                                 weekday_number];
                         else
-                            var weekday = recurrence.display.weekdays[
+                            weekday = recurrence.display.weekdays[
                                 weekday_number];
                         return weekday;
                     });
@@ -379,7 +379,7 @@ recurrence.DateFormat.prototype = {
         var date2 = new Date(now.getFullYear(), 6, 1, 0, 0, 0, 0);
         var temp = date1.toGMTString();
         var date3 = new Date(temp.substring(0, temp.lastIndexOf(' ')-1));
-        var temp = date2.toGMTString();
+        temp = date2.toGMTString();
         var date4 = new Date(temp.substring(0, temp.lastIndexOf(" ")-1));
         var hours_diff_standard_time = (date1 - date3) / (1000 * 60 * 60);
         var hours_diff_daylight_time = (date2 - date4) / (1000 * 60 * 60);
@@ -448,7 +448,7 @@ recurrence.DateFormat.prototype = {
     },
 
     t: function() {
-        var month = this.data.getMonth()
+        var month = this.data.getMonth();
         var ndays =
             recurrence.DateFormat.mdays[month] +
             (month == recurrence.FEBRUARY && this.L());
@@ -485,9 +485,9 @@ recurrence.DateFormat.prototype = {
                 week_number = 52;
         } else {
             if (recurrence.date.isleap(this.data))
-                var i = 366;
+                i = 366;
             else
-                var i = 365;
+                i = 365;
             if ((i - day_of_year) < (4 - weekday)) {
                 week_number = 1;
             } else {
@@ -502,10 +502,6 @@ recurrence.DateFormat.prototype = {
 
     y: function() {
         return String(this.data.getFullYear()).slice(2);
-    },
-
-    Y: function() {
-        return this.data.getFullYear();
     },
 
     z: function() {
@@ -533,7 +529,7 @@ recurrence.to_weekday = function(token) {
     if (token.number && token.index) {
         return new recurrence.Weekday(token.number, token.index);
     } else if (String(token).match(/[^0-9\-]/g)) {
-        var token = String(token);
+        token = String(token);
         var constant = token.slice(-2, token.length);
         var nth = token.slice(0, -2);
         if (nth.match(/[^0-9\-]/g))
@@ -553,7 +549,7 @@ recurrence.to_weekday = function(token) {
 recurrence.serialize = function(rule_or_recurrence) {
     var serialize_dt = function(dt) {
         var pad = function(initial, length) {
-            initial = String(initial)
+            initial = String(initial);
             var offset = length - initial.length;
             if (offset < 0) {
                 return initial;
@@ -661,14 +657,17 @@ recurrence.deserialize = function(text) {
         var year = parseInt(text.slice(0, 4), 10);
         var month = parseInt(text.slice(4, 6), 10);
         var day = parseInt(text.slice(6, 8), 10);
+        var hour;
+        var minute;
+        var second;
         if (text.indexOf('T') > 0) {
-            var hour = parseInt(text.slice(9, 11), 10);
-            var minute = parseInt(text.slice(11, 13), 10);
-            var second = parseInt(text.slice(13, 15), 10);
+            hour = parseInt(text.slice(9, 11), 10);
+            minute = parseInt(text.slice(11, 13), 10);
+            second = parseInt(text.slice(13, 15), 10);
         } else {
-            var hour = 0;
-            var minute = 0;
-            var second = 0;
+            hour = 0;
+            minute = 0;
+            second = 0;
         }
         var dt = new Date();
         if (text.indexOf('Z') > 0) {
@@ -703,19 +702,19 @@ recurrence.deserialize = function(text) {
         tokens, function(token) {
             var label = token.split(':', 2)[0];
             var param_text = token.split(':', 2)[1];
-
+            var params;
             if (param_text.indexOf('=') < 0) {
-                var params = param_text;
+                params = param_text;
             } else {
                 var param_tokens = param_text.split(';');
-                var params = recurrence.array.foreach(
+                params = recurrence.array.foreach(
                     param_tokens, function(item) {
                         var param_name = recurrence.string.strip(
                             item.split('=', 2)[0]);
                         var param_value = recurrence.string.strip(
                             item.split('=', 2)[1]);
                         var value_list = param_value.split(',');
-                        var value_list = recurrence.array.foreach(
+                        value_list = recurrence.array.foreach(
                             param_value.split(','), function(item) {
                                 return recurrence.string.strip(item);
                             });
@@ -791,7 +790,7 @@ recurrence.string = {
     format: function(string, map) {
         for (var key in map)
             string = string.replace(RegExp('%' + key, 'g'), map[key]);
-        return string
+        return string;
     },
 
     capitalize: function(string) {
@@ -908,7 +907,7 @@ recurrence.func = {
         return function() {
             return func.apply(
                 object, args.concat(recurrence.array.from(arguments)));
-        }
+        };
     }
 };
 
@@ -985,18 +984,19 @@ if (!gettext) {
         } else {
             return (typeof(value) == 'string') ? value : value[0];
         }
-    }
+    };
 }
 
 if (!interpolate) {
+    /* jshint -W082 */
     function interpolate(fmt, obj, named) {
         if (named) {
             return fmt.replace(/%\(\w+\)s/g, function(match) {
-                return String(obj[match.slice(2,-2)])
+                return String(obj[match.slice(2,-2)]);
             });
         } else {
             return fmt.replace(/%s/g, function(match) {
-                return String(obj.shift())
+                return String(obj.shift());
             });
         }
     }

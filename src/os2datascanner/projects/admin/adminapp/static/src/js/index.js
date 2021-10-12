@@ -2,13 +2,13 @@ import '../css/master.scss';
 
 $(document).ready(function(){
   $("a[data-modal='modal:open']").click(function(e){
-      e.preventDefault()
+      e.preventDefault();
 
       // Find the target element (same as our href)
-      var target = $(this).attr("href")
+      var target = $(this).attr("href");
 
       // Find the src to set
-      var src = $(this).attr("data-src")
+      var src = $(this).attr("data-src");
 
       // Find the iframe in our target and set its src
       $(target).find("iframe").attr("src",src);
@@ -25,4 +25,4 @@ $(document).ready(function(){
     }
   });
   // Toggle visiblity of expandable rows, stop
-})
+});

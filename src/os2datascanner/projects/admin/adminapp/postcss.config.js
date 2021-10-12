@@ -9,5 +9,5 @@ if (process.env.NODE_ENV === 'development') {
       require('cssnano'),
       // More postCSS modules here if needed
     ]
-  }
+  };
 }

@@ -1,19 +1,19 @@
 // test connection and authentication
 
-var btnConnection = document.querySelector('#button-connection')
-var btnAuth = document.querySelector('#button-auth')
-var textConnection = document.querySelector('#responseConnection')
-var textAuth = document.querySelector('#responseAuth')
-var responseSuccessCon = document.querySelector('#responseSuccessCon')
-var responseErrorCon = document.querySelector('#responseErrorCon')
-var responseSuccessAuth = document.querySelector('#responseSuccessAuth')
-var responseErrorAuth = document.querySelector('#responseErrorAuth')
+var btnConnection = document.querySelector('#button-connection');
+var btnAuth = document.querySelector('#button-auth');
+var textConnection = document.querySelector('#responseConnection');
+var textAuth = document.querySelector('#responseAuth');
+var responseSuccessCon = document.querySelector('#responseSuccessCon');
+var responseErrorCon = document.querySelector('#responseErrorCon');
+var responseSuccessAuth = document.querySelector('#responseSuccessAuth');
+var responseErrorAuth = document.querySelector('#responseErrorAuth');
 
 // button - test connection
-btnConnection.addEventListener('click', testConnection)
+btnConnection.addEventListener('click', testConnection);
 
 function testConnection(e) {
-    e.preventDefault()
+    e.preventDefault();
 
     // Get values from connection protocol and connection url
     var connection_protocol = document.getElementById("id_connection_protocol").value;
@@ -28,27 +28,27 @@ function testConnection(e) {
         if (oReq.readyState === 4) {
             // if connection succeeded
             if (oReq.status === 200) {
-                responseSuccessCon.style.display = "block"
-                responseErrorCon.style.display = "none"
-                textConnection.innerText = gettext('Connection succeeded')
+                responseSuccessCon.style.display = "block";
+                responseErrorCon.style.display = "none";
+                textConnection.innerText = gettext('Connection succeeded');
             } else {
             // else connection failed
-                responseErrorCon.style.display = "block"
-                responseSuccessCon.style.display = "none"
-                textConnection.innerText = gettext('Connection failed')
+                responseErrorCon.style.display = "block";
+                responseSuccessCon.style.display = "none";
+                textConnection.innerText = gettext('Connection failed');
             }
         }
-    }
+    };
     
     oReq.send();
 }
 
 
 // button - test auth
-btnAuth.addEventListener('click', testAuth)
+btnAuth.addEventListener('click', testAuth);
 
 function testAuth(e) {
-    e.preventDefault()
+    e.preventDefault();
 
     // Get values from connection protocol, connection url, bind_dn and credential
     var connection_protocol = document.getElementById("id_connection_protocol").value;
@@ -65,17 +65,17 @@ function testAuth(e) {
         if (oReq.readyState === 4) {
             if (oReq.status === 200) {
                 // if connection succeeded
-                responseSuccessAuth.style.display = "block"
-                responseErrorAuth.style.display = "none"
-                textAuth.innerText = gettext('Authentication succeeded')
+                responseSuccessAuth.style.display = "block";
+                responseErrorAuth.style.display = "none";
+                textAuth.innerText = gettext('Authentication succeeded');
             } else {
                 // else connection failed
-                responseErrorAuth.style.display = "block"
-                responseSuccessAuth.style.display = "none"
-                textAuth.innerText = gettext('Authentication failed')
+                responseErrorAuth.style.display = "block";
+                responseSuccessAuth.style.display = "none";
+                textAuth.innerText = gettext('Authentication failed');
             }
         }
-    }
+    };
     
     oReq.send();
 }
