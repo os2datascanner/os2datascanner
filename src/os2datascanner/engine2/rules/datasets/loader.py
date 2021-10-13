@@ -48,7 +48,8 @@ class Loader:
             entries = []
             with dataset_file.open("rt") as f:
                 for line in f:
-                    entries.append(json.loads(line))
+                    if not line.startswith("#"):
+                        entries.append(json.loads(line))
             self._datasets.setdefault(category, {})[dataset] = entries
             return entries
         except FileNotFoundError:
