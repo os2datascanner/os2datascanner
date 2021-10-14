@@ -212,3 +212,32 @@ class Engine2PipelineTests(unittest.TestCase):
         self.assertEqual(
                 self.unhandled[0][0]["origin"],
                 "os2ds_problems")
+
+    def test_rule_crash(self):
+        obj = {
+            "scan_tag": {
+                "scanner": {
+                    "name": "integration_test",
+                    "pk": 0
+                },
+                "user": None,
+                "organisation": "Vejstrand Kommune",
+                "time": "2020-01-01T00:00:00+00:00"
+            },
+            "source": Source.from_url(data_url).to_json_object(),
+            "rule": {
+                "type": "buggy"
+            }
+        }
+
+        self.messages.append((obj, "os2ds_scan_specs",))
+        self.run_pipeline()
+
+        print(self.unhandled)
+
+        self.assertEqual(
+                len(self.unhandled),
+                1)
+        self.assertEqual(
+                self.unhandled[0][0]["origin"],
+                "os2ds_problems")

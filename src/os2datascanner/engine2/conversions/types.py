@@ -29,6 +29,8 @@ class OutputType(Enum):
             return [int(v[0]), int(v[1])]
         elif self == OutputType.Links:
             return list(v)
+        elif self == OutputType.AlwaysTrue:
+            return True
         else:
             raise TypeError(self.value)
 
@@ -45,6 +47,8 @@ class OutputType(Enum):
             return (int(v[0]), int(v[1]))
         elif self == OutputType.Links:
             return list(v)
+        elif self == OutputType.AlwaysTrue:
+            return True
         else:
             raise TypeError(self.value)
 
