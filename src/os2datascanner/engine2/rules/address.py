@@ -79,7 +79,7 @@ class AddressRule(SimpleRule):
     eq_properties = ("_whitelist", "_blacklist",)
 
 
-    def __init__(self, whitelist=[], blacklist=[], **super_kwargs):
+    def __init__(self, whitelist=None, blacklist=None, **super_kwargs):
         super().__init__(**super_kwargs)
 
         # Convert list of str to upper case and to sets for efficient lookup
@@ -87,8 +87,8 @@ class AddressRule(SimpleRule):
                 common_loader.load_dataset(
                         "addresses", "da_addresses")))
 
-        self._whitelist = [n.upper() for n in whitelist]
-        self._blacklist = [n.upper() for n in blacklist]
+        self._whitelist = [n.upper() for n in (whitelist or [])]
+        self._blacklist = [n.upper() for n in (blacklist or [])]
 
     @property
     def presentation_raw(self):
