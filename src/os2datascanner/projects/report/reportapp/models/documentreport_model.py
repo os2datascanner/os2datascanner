@@ -169,6 +169,7 @@ def on_documentreport_created_or_updated(objects, fields=None):
     from .aliases.alias_model import Alias
     from .aliases.adsidalias_model import ADSIDAlias
     from .aliases.emailalias_model import EmailAlias
+    from .aliases.webdomainalias_model import WebDomainAlias
 
     tm = Alias.match_relation.through
     new_objects = []
@@ -182,6 +183,9 @@ def on_documentreport_created_or_updated(objects, fields=None):
         if (adsid := obj.metadata.metadata.get("filesystem-owner-sid")):
             adsid_alias = ADSIDAlias.objects.filter(sid=adsid)
             add_new_relations(adsid_alias, new_objects, obj, tm)
+        if (web_domain := obj.metadata.metadata.get("web-domain")):
+            web_domain_alias = WebDomainAlias.objects.filter(domain=web_domain)
+            add_new_relations(web_domain_alias, new_objects, obj, tm)
     try:
         # TODO: We do not bulk create DocumentReports, and therefore will we always
         #  bulk_create 1 Alias.match_relation at the time. We do not actually
