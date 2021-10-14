@@ -56,6 +56,9 @@ class DocumentReport(models.Model):
     # This timestamp is collected during scan and is from the datasource.
     datasource_last_modified = models.DateTimeField(null=True)
 
+    # Field to store the primary key of the scanner job that this DocumentReport stems from.
+    scanner_job_pk = models.IntegerField(null=True)
+
     def _str_(self):
         return self.path
 
@@ -170,7 +173,10 @@ class DocumentReport(models.Model):
         indexes = [
             models.Index("data__matches__matched", name="documentreport_matched"),
         ]
-
+        constraints = [
+            models.UniqueConstraint(fields=["scanner_job_pk", "path"],
+                                    name="unique_scanner_pk_and_path")
+        ]
 
 DocumentReport.factory = ModelFactory(DocumentReport)
 
