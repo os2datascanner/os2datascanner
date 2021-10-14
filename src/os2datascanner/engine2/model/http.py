@@ -12,7 +12,7 @@ from datetime import datetime
 import re
 
 from .. import settings as engine2_settings
-from ..conversions.types import OutputType
+from ..conversions.types import Link, OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
 from .core import Source, Handle, FileResource
 from .utilities import NamedTemporaryResource
@@ -146,11 +146,11 @@ class WebSource(Source):
                         response = session.get(here.presentation_url, timeout=TIMEOUT)
                         sleep(SLEEP_TIME)
                         i = 0
-                        for i, li in enumerate(
+                        for i, link in enumerate(
                                 make_outlinks(response.content,
                                                 here.presentation_url),
                                 start=1):
-                            handle_url(here, li)
+                            handle_url(here, link.url)
                         logger.debug("handle parsed for links", handle=here.presentation, links=i)
                 elif response.is_redirect and response.next:
                     handle_url(here, response.next.url)
@@ -347,9 +347,9 @@ def make_outlinks(content, where):
     try:
         doc = document_fromstring(content)
         doc.make_links_absolute(where, resolve_base_href=True)
-        for el, _, li, _ in doc.iterlinks():
-            if el.tag in ("a", "img",):
-                yield li
+        for element, _, link, _ in doc.iterlinks():
+            if element.tag in ("a", "img",):
+                yield Link(link, link_text=element.text)
     except ParserError as e:
         # Silently drop ParserErrors, but only for empty documents
         if content and not content.isspace():

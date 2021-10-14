@@ -1,5 +1,5 @@
 from typing import List
-from ..conversions.types import OutputType
+from ..conversions.types import Link, OutputType
 from .rule import Rule, SimpleRule, Sensitivity
 from .. import settings as engine2_settings
 
@@ -20,7 +20,7 @@ class LinksFollowRule(SimpleRule):
     def presentation_raw(self):
         return "Check if links resolve"
 
-    def match(self, links: List[str]):
+    def match(self, links: List[Link]):
         """Yield a match if a link could not be followed."""
         if links is None:
             return
@@ -28,9 +28,12 @@ class LinksFollowRule(SimpleRule):
         for link in links:
             followable, status_code = check(link)
             if not followable:
+                context = f"Unable to follow link. Error code: {status_code}."
+                if link.link_text is not None:
+                    context = f"{context} Text: {link.link_text!r}"
                 yield {
-                    "match": link,
-                    "context": f"unable to follow link, error code {status_code}",
+                    "match": OutputType.Links.encode_json_object(link),
+                    "context": context,
                     "sensitivity": (
                         self.sensitivity.value
                         if self.sensitivity
@@ -54,15 +57,15 @@ class LinksFollowRule(SimpleRule):
 # page. Not all webservers respect this, but at least we get the correct repsonse
 # code
 __HEADERS = {"Range": "bytes=0-1"}
-def check(link: str) -> tuple[bool, int]:
+def check(link: Link) -> tuple[bool, int]:
     """return True if link can be followed and the final response is less than 400
 
     Redirects are allowed and only the first byte is downloaded with get-call.
 
     """
 
+    r = requests.get(link.url, allow_redirects=True, timeout=TIMEOUT, headers=__HEADERS)
     try:
-        r =requests.get(link, allow_redirects=True, timeout=TIMEOUT, headers=__HEADERS)
         r.raise_for_status()
         return True, r.status_code
     except RequestException as e:

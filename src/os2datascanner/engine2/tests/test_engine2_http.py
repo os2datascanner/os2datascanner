@@ -17,7 +17,7 @@ from os2datascanner.engine2.model.http import (
 from os2datascanner.engine2.model.utilities.datetime import parse_datetime
 from os2datascanner.engine2.model.utilities.sitemap import (
     process_sitemap_url, _get_url_data)
-from os2datascanner.engine2.conversions.types import OutputType
+from os2datascanner.engine2.conversions.types import Link, OutputType
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
 from os2datascanner.engine2.conversions.registry import convert
 
@@ -132,13 +132,13 @@ links_from_handle = {
         WebSource("http://localhost:64346"), path="/external_links.html"
     ),
     "http-links": [
-        "http://localhost:64346/",
-        "http://localhost:64346/vstkom.png",
-        "https://datatracker.ietf.org/doc/html/rfc2606",
-        "http://localhost:64346/intet",
-        "http://example.com",
-        "http://example.com/nonexistent",
-        "http://this-side-does-not-exists.invalid",
+        Link("http://localhost:64346/", "\n            "),
+        Link("http://localhost:64346/vstkom.png", None),
+        Link("https://datatracker.ietf.org/doc/html/rfc2606", "rfc2606"),
+        Link("http://localhost:64346/intet", "et link, der peger på en intern side der\n                ikke findes"),
+        Link("http://example.com", " et link, der peger på en\n                ekstern side"),
+        Link("http://example.com/nonexistent", " et link, der\n                peger på en ekstern side der ikke findes"),
+        Link("http://this-side-does-not-exists.invalid", " et\n                link, der ikke har et navneopslag"),
     ],
 }
 
@@ -666,8 +666,8 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 content = fp.read().decode()
 
         self.assertEqual(
-                list(make_outlinks(
-                        content, "http://localhost:64346/broken.html")),
+                [link.url for link in make_outlinks(
+                        content, "http://localhost:64346/broken.html")],
                 ["http://localhost:64346/kontakt.html"],
                 "expected one link to be found in broken document")
 

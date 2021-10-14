@@ -15,7 +15,7 @@ def links_processor(r, **kwargs):
             content = fp.read().decode()
             return [
                 link for link in make_outlinks(content, r.handle.presentation) if
-                link.startswith("http")
+                link.url.startswith("http")
             ]
         except ParserError as e:
             logger.error("Conversion error while extracting links",
