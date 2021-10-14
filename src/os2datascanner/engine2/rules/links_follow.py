@@ -5,7 +5,10 @@ from .. import settings as engine2_settings
 
 import requests
 from requests.exceptions import RequestException
+
+
 TIMEOUT = engine2_settings.model["http"]["timeout"]
+
 
 class LinksFollowRule(SimpleRule):
     """Rule to find links on a webpage that does not resolve or respond"""
@@ -17,12 +20,12 @@ class LinksFollowRule(SimpleRule):
     def presentation_raw(self):
         return "Check if links resolve"
 
-    def match(self, content: List[str]):
-        """Yield a mach if a link could not be followed"""
-        if content is None:
+    def match(self, links: List[str]):
+        """Yield a match if a link could not be followed."""
+        if links is None:
             return
 
-        for link in content:
+        for link in links:
             if not check(link):
                 yield {
                     "match": link,
