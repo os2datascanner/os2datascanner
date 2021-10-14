@@ -20,8 +20,9 @@ from .utilities.sitemap import process_sitemap_url
 from .utilities.datetime import parse_datetime
 
 logger = structlog.getLogger(__name__)
-SLEEP_TIME = 1 / engine2_settings.model["http"]["limit"]
-TIMEOUT = engine2_settings.model["http"]["timeout"]
+SLEEP_TIME: float = 1 / engine2_settings.model["http"]["limit"]
+TIMEOUT: int = engine2_settings.model["http"]["timeout"]
+TTL: int = engine2_settings.model["http"]["ttl"]
 
 _equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
 # match whole words (\bWORD1\b | \bWORD2\b) and escape to handle metachars.
@@ -74,17 +75,18 @@ class WebSource(Source):
 
     def handles(self, sm):
         session = sm.open(self)
-        to_visit = [WebHandle(self, "")]
-        known_addresses = set(to_visit)
+        origin = WebHandle(self, "")
+        to_visit = [(origin, TTL)]
+        known_addresses = {origin, }
 
         # initial check that url can be reached. After this point, continue
         # exploration at all cost
         try:
-            r = session.head(to_visit[0].presentation_url, timeout=TIMEOUT)
+            r = session.head(origin.presentation_url, timeout=TIMEOUT)
             r.raise_for_status()
         except RequestException as err:
             raise RequestException(
-                f"{to_visit[0].presentation_url} is not available: {err}")
+                f"{origin.presentation_url} is not available: {err}")
 
         # scheme://netloc/path?query#fragment
         # https://example.com:80/some/path?query=foo#fragment
@@ -93,23 +95,24 @@ class WebSource(Source):
         # but without port-number, ect)
         hostname = netloc_normalize(url_split.hostname)
 
-        def handle_url(here: "WebHandle", new_url: str,
+        def handle_url(here: "WebHandle", new_url: str, ttl: int = TTL,
                        lm_hint: datetime = None, from_sitemap: bool = False):
 
             here_url = "" if from_sitemap else here.presentation_url
             new_url, frag = urldefrag(urljoin(here_url, new_url))
             nurls = urlsplit(new_url)
             referrer = WebHandle(self, self._sitemap) if from_sitemap else here
-            if here.ttl == 0:
+
+            if ttl == 0:
                 logger.debug("max TTL reached. Not appending url", url=new_url,
-                             referrer=referrer.presentation_url, TTL=TTL)
+                             referrer=referrer.presentation_url, ttl=ttl)
                 return
             # ensure the new url actually is a url and not mailto:, etc
             if nurls.scheme not in ("http", "https"):
                 return
             for exclude in self._exclude:
                 if new_url.startswith(exclude):
-                    logger.debug(f"excluded {new_url}")
+                    logger.debug("excluded", url=new_url)
                     return
 
             if nurls.hostname == url_split.hostname:
@@ -123,32 +126,37 @@ class WebSource(Source):
                     (nurls.scheme, nurls.netloc, url_split.path, "", "")
                 )
                 rel_path = new_url.removeprefix(base_url)
-                new_handle = WebHandle(WebSource(base_url), rel_path, referrer,
-                                       lm_hint)
+                new_handle = WebHandle(WebSource(base_url), rel_path, referrer, lm_hint)
             else:
-                # hostname outside current source
+                logger.debug("hostname outside current source", url=new_url)
                 return
 
             if new_handle not in known_addresses:
                 known_addresses.add(new_handle)
-                to_visit.append(new_handle)
+                to_visit.append((new_handle, ttl-1))
+                logger.debug("appended new url to visit", url=new_handle.presentation_url,
+                             referrer=new_handle.referrer.presentation_url,
+                             ttl=ttl)
 
         if self._sitemap:
             i = 0  # prevent i from being undefined if sitemap is empty
             for i, (address, last_modified) in enumerate(
                     process_sitemap_url(self._sitemap), start=1):
-                handle_url(to_visit[0], address, last_modified, from_sitemap=True)
+                handle_url(origin, address, lm_hint=last_modified, from_sitemap=True)
             # first entry in `to_visit` is `self`(ie. mainpage). If the mainpage
             # is not listed in sitemap this result in +1 in to_visit
             logger.debug("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
                          format(self._sitemap, i, len(to_visit)))
-            yield from to_visit
+            yield from known_addresses
             return
 
         # scrape the handle(here) for all links and submit them to `handle_url`
         # (which appends the handles to `to_visit`)
         while to_visit:
-            here, to_visit = to_visit[0], to_visit[1:]
+            (here, ttl), to_visit = to_visit[0], to_visit[1:]
+            if ttl == 0:
+                continue
+
             try:
                 response = session.head(here.presentation_url, timeout=TIMEOUT)
                 if response.status_code == 200:
@@ -162,8 +170,10 @@ class WebSource(Source):
                                 make_outlinks(response.content,
                                               here.presentation_url),
                                 start=1):
-                            handle_url(here, link.url)
-                        logger.debug("handle parsed for links", handle=here.presentation, links=i)
+                            handle_url(here, link.url, ttl)
+                        logger.debug("url scraped for links", url=here.presentation,
+                                     links=i, ttl=ttl)
+
                 elif response.is_redirect and response.next:
                     handle_url(here, response.next.url)
                     # Don't yield WebHandles for redirects

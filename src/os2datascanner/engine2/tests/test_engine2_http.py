@@ -570,12 +570,12 @@ class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
         # In case we catch an generic Exception, we could test the type, msg, code
         # self.assertTrue(type(exception) in (RequestException, ))
         # self.assertEqual(exception.msg, "timeout ... ", "wrong exception msg")
-        self.assertEqual(
+        self.assertCountEqual(
             follow,
             external_links_mapped_site["follow"],
             "site with broken internal and external links should have 2 "
             "good links")
-        self.assertEqual(
+        self.assertCountEqual(
             nfollow,
             external_links_mapped_site["no-follow"],
             "site with broken internal and external links should have 1 "
