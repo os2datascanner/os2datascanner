@@ -16,8 +16,10 @@
 # source municipalities ( https://os2.eu/ )
 import random
 import string
+import sys
 from faker import Faker
 from django.core.management.base import BaseCommand
+from django.conf import settings
 from os2datascanner.engine2.model.dropbox import DropboxHandle, DropboxSource
 from os2datascanner.engine2.model.ews import EWSAccountSource, EWSMailHandle
 from os2datascanner.engine2.model.file import FilesystemHandle, FilesystemSource
@@ -107,6 +109,9 @@ class Command(BaseCommand):
             self, *, handles, scan_count, scan_type, seed, summarise, dry_run,
             **options
     ):
+        if not settings.DEBUG:
+            self.stdout.write(self.style.NOTICE("makefake: refusing to run in a production environment; switch settings.DEBUG on to use this command"))
+            sys.exit(1)
 
         # faker is using the random generator, so seeding here does not give
         # deterministic results for the code executed after calls to Faker.
