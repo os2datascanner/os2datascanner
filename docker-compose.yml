@@ -59,8 +59,6 @@ services:
       "--reload-include", "*.mo",
       "os2datascanner.projects.admin.asgi:application",
     ]
-    environment:
-      - GUNICORN_WORKERS=2
     volumes:
       - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
@@ -121,8 +119,6 @@ services:
       "--reload-include", "*.mo",
       "os2datascanner.projects.report.asgi:application",
     ]
-    environment:
-      - GUNICORN_WORKERS=2
     volumes:
       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
