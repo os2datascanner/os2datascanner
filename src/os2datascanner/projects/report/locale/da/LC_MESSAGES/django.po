@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-11 05:50-0500\n"
+"POT-Creation-Date: 2021-10-14 03:03-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -108,30 +108,30 @@ msgstr "oprydder"
 msgid "remediators"
 msgstr "opryddere"
 
-#: reportapp/templates/components/filters.html:27
-#: reportapp/templates/components/filters.html:56
+#: reportapp/templates/components/filters.html:28
+#: reportapp/templates/components/filters.html:57
 msgid "Clear"
 msgstr "Ryd"
 
-#: reportapp/templates/components/filters.html:30
+#: reportapp/templates/components/filters.html:31
 msgid "Scan"
 msgstr "Scan"
 
-#: reportapp/templates/components/filters.html:39
+#: reportapp/templates/components/filters.html:40
 msgid "Select scannerjob"
 msgstr "Vælg scannerjob"
 
-#: reportapp/templates/components/filters.html:59
+#: reportapp/templates/components/filters.html:60
 #: reportapp/templates/components/statistics-template.html:93
 #: reportapp/templates/components/statistics-template.html:99
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: reportapp/templates/components/filters.html:68
+#: reportapp/templates/components/filters.html:69
 msgid "Select sensitivity"
 msgstr "Vælg følsomhed"
 
-#: reportapp/templates/components/filters.html:96
+#: reportapp/templates/components/filters.html:97
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
@@ -157,35 +157,35 @@ msgstr "valgt"
 msgid "Select result"
 msgstr "Vælg resultat"
 
-#: reportapp/templates/components/hit.html:29
+#: reportapp/templates/components/hit.html:27
 msgid "Open"
 msgstr "Åbn"
 
-#: reportapp/templates/components/hit.html:34
+#: reportapp/templates/components/hit.html:32
 msgid "Copy"
 msgstr "Kopiér"
 
-#: reportapp/templates/components/hit.html:38
+#: reportapp/templates/components/hit.html:36
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:68
+#: reportapp/templates/components/hit.html:69
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:69
+#: reportapp/templates/components/hit.html:70
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:82
+#: reportapp/templates/components/hit.html:83
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:83
+#: reportapp/templates/components/hit.html:84
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:84
+#: reportapp/templates/components/hit.html:85
 msgid "Probability"
 msgstr "Sandsynlighed"
 
@@ -197,27 +197,23 @@ msgstr "Vis sandsynlighed"
 msgid "Show/hide all matches"
 msgstr "Vis/skjul alle matches"
 
-#: reportapp/templates/components/hits.html:28
+#: reportapp/templates/components/hits.html:29
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: reportapp/templates/components/hits.html:33
+#: reportapp/templates/components/hits.html:34
 msgid "Name"
 msgstr "Navn"
 
-#: reportapp/templates/components/hits.html:36
+#: reportapp/templates/components/hits.html:37
 msgid "Matches"
 msgstr "Matches"
 
-#: reportapp/templates/components/hits.html:39
+#: reportapp/templates/components/hits.html:40
 msgid "Source"
 msgstr "Kilde"
 
-#: reportapp/templates/components/hits.html:42
-msgid "Path"
-msgstr "Sti"
-
-#: reportapp/templates/components/hits.html:45
+#: reportapp/templates/components/hits.html:49
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -532,6 +528,9 @@ msgstr "Mailscan"
 #: reportapp/views/views.py:432
 msgid "Not assigned"
 msgstr "Ikke tildelt"
+
+#~ msgid "Path"
+#~ msgstr "Sti"
 
 #~ msgid "Moved the file"
 #~ msgstr "Har flyttet filen"
