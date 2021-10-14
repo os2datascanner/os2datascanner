@@ -1,3 +1,8 @@
+/* jshint -W083 */ 
+/** disable lintcheck for: 
+ * Functions declared within loops referencing an outer scoped 
+ * variable may lead to confusing semantics. 
+*/
 if (!recurrence)
     var recurrence = {};
 
@@ -166,7 +171,7 @@ recurrence.widget.Calendar.prototype = {
         var number = 1;
         recurrence.array.foreach(
             grid.cells, function(cell, i) {
-                var cell = grid.cells[i];
+                cell = grid.cells[i];
                 if (i < 7) {
                     var weekday_number = i - 1;
                     if (weekday_number < 0)
@@ -306,9 +311,9 @@ recurrence.widget.DateSelector.prototype = {
         var dateselector = this;
 
         if (this.date)
-            var date_value = recurrence.date.format(this.date, '%Y-%m-%d');
+            date_value = recurrence.date.format(this.date, '%Y-%m-%d');
         else
-            var date_value = '';
+            date_value = '';
         var date_field = recurrence.widget.e(
             'input', {
                 'class': 'form-control date-field', 'size': 10,
@@ -573,13 +578,13 @@ recurrence.widget.Widget.prototype = {
     },
 
     add_rule: function(rule) {
-        var rule = rule || new recurrence.Rule(this.default_freq);
+        rule = rule || new recurrence.Rule(this.default_freq);
         this.data.rrules.push(rule);
         this.add_rule_panel(recurrence.widget.INCLUSION, rule).expand();
     },
 
     add_date: function(date) {
-        var date = date || recurrence.widget.date_today();
+        date = date || recurrence.widget.date_today();
         this.data.rdates.push(date);
         this.add_date_panel(recurrence.widget.INCLUSION, date).expand();
     },
@@ -889,10 +894,10 @@ recurrence.widget.RuleForm.prototype = {
             }
         );
         if (this.rule.count && this.rule.count < 2)
-            var token = recurrence.string.capitalize(
+            token = recurrence.string.capitalize(
                 recurrence.display.labels.count);
         else
-            var token = recurrence.string.capitalize(
+            token = recurrence.string.capitalize(
                 recurrence.display.labels.count_plural);
         var count_label1 = recurrence.widget.e(
             'label', {'class': 'recurrence-label', 'for': 'count'}, token.split('%(number)s')[0]);
@@ -1001,7 +1006,7 @@ recurrence.widget.RuleForm.prototype = {
                     });
                 form.update();
             }
-        }
+        };
 
         // for compatibility with ie, use timeout
         setTimeout(function () {
@@ -1088,10 +1093,10 @@ recurrence.widget.RuleForm.prototype = {
 
     set_count: function(count) {
         if (count == 1)
-            var token = recurrence.string.capitalize(
+            token = recurrence.string.capitalize(
                 recurrence.display.labels.count);
         else
-            var token = recurrence.string.capitalize(
+            token = recurrence.string.capitalize(
                 recurrence.display.labels.count_plural);
         var label1 = this.elements.count_field.previousSibling;
         var label2 = this.elements.count_field.nextSibling;
@@ -1329,7 +1334,7 @@ recurrence.widget.RuleYearlyForm.prototype = {
             this.elements.grid.cells, function(cell) {
                 if (recurrence.widget.has_class(cell, 'bg--success'))
                     bymonth.push(cell.value);
-            })
+            });
         this.rule.bymonth = bymonth;
         this.panel.update();
     },
@@ -1389,7 +1394,7 @@ recurrence.widget.RuleMonthlyForm.prototype = {
                                 recurrence.widget.add_class(this, 'bg--success');
                             form.set_bymonthday();
                         }
-                    }
+                    };
                 }
             }
         }
@@ -1561,7 +1566,7 @@ recurrence.widget.RuleWeeklyForm.prototype = {
 
         var weekday_grid = new recurrence.widget.Grid(7, 1);
         var days = [];
-        var days = recurrence.array.foreach(
+        days = recurrence.array.foreach(
             this.rule.byday, function(day) {
                 return recurrence.to_weekday(day).number;
             });

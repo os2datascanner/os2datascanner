@@ -13,7 +13,7 @@ for (i = 0; i < l; i++) {
   a.setAttribute("class", "select-selected");
   a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
   a.value = selElmnt.options[selElmnt.selectedIndex].value;
-  x[i].appendChild(a)
+  x[i].appendChild(a);
 
   /* for each element, create a new DIV that will contain the option list */
   b = document.createElement("DIV");
@@ -51,7 +51,7 @@ for (i = 0; i < l; i++) {
     b.appendChild(c);
   }
   x[i].appendChild(b);
-
+  /* jshint -W083 */
   a.addEventListener("click", function(e) {
       /* when the select box is clicked, close any other select boxes,
       and open/close the current select box */
@@ -60,6 +60,7 @@ for (i = 0; i < l; i++) {
       this.nextSibling.classList.toggle("select-hide");
       this.classList.toggle("select-arrow-active");
     });
+  /* jshint +W083 */
 }
 
 function closeAllSelect(elmnt) {
@@ -72,7 +73,7 @@ function closeAllSelect(elmnt) {
   yl = y.length;
   for (i = 0; i < yl; i++) {
     if (elmnt == y[i]) {
-      arrNo.push(i)
+      arrNo.push(i);
     } else {
       y[i].classList.remove("select-arrow-active");
     }

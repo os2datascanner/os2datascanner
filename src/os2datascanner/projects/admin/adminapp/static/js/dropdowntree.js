@@ -30,10 +30,10 @@ let selected_values = [];
 				container.setAttribute("data-val", ele.value);
 				if (ele.className) container.className += " " + ele.className;
 				if(selected_values.indexOf(ele.value)!=-1) {
-					$($iteme.children()[0]).removeClass('org-icon')
-					$($iteme.children()[0]).addClass('org-icon-selected')
-					container.setAttribute('aria-selected', true)
-					ele.selected="selected"
+					$($iteme.children()[0]).removeClass('org-icon');
+					$($iteme.children()[0]).addClass('org-icon-selected');
+					container.setAttribute('aria-selected', true);
+					ele.selected="selected";
 				}
 				if (ele.getAttribute("data-pup")) {
 					container.setAttribute("data-pup", ele.getAttribute("data-pup"));
@@ -49,21 +49,23 @@ let selected_values = [];
 		window.expColMouseupHandler = function (evt) {
 			toggleSubOptions(evt.target || evt.srcElement);
 			// prevent Select2 from doing "select2:selecting","select2:unselecting","select2:closing" 
+			/*jshint -W030 */
 			evt.stopPropagation ? evt.stopPropagation() : evt.cancelBubble = true;
 			evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+			/*jshint +W030 */
 		};
 
-		opts['closeOnSelect'] = false;
-		opts['shouldFocusInput'] = false;
-		opts['placeholder'] = gettext('Select one or more organizational units')
-    	opts['allowClear'] = true
-		opts['width'] = '100%'
+		opts.closeOnSelect = false;
+		opts.shouldFocusInput = false;
+		opts.placeholder = gettext('Select one or more organizational units');
+    	opts.allowClear = true;
+		opts.width = '100%';
 		var s2inst = this.select2(opts);
 
 		// when building the tree, add all already selected values and mark them 
 		s2inst.val().forEach( function(value) {
-			selectNodes(value, false)
-		} )
+			selectNodes(value, false);
+		} );
 
 		s2inst.on("select2:open", function (evt) {
 			var s2data = s2inst.data("select2");
@@ -83,35 +85,35 @@ let selected_values = [];
 			} else {
 				s2data.$dropdown.removeClass("searching-result");
 			}
-		};
+		}
 
 		// when unselecting a node, unselect all descendents and ancestors  
 		s2inst.on('select2:unselect', function (evt) {
 			let selected_id = evt.params.data.id;
 			let options = Array.prototype.slice.call(document.querySelectorAll("li.select2-results__option"));
-			let selected_node = options.filter(function (element) { return element.dataset.val == selected_id })[0];
+			let selected_node = options.filter(function (element) { return element.dataset.val == selected_id; })[0];
 			//if the dropdown menu is openend, remove the checkmark
 			if( selected_node ) {	
-				$(selected_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected')
-				$(selected_node.querySelector(".item-label").children[0]).addClass('org-icon')
+				$(selected_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected');
+				$(selected_node.querySelector(".item-label").children[0]).addClass('org-icon');
 			}
 			//finding descendents
 			let descendents = [];
 			findChildNodes(selected_id, descendents);
 			//for each descendent, unselect select element
 			descendents.forEach(function (descendent_id) {
-				let child_node = options.filter(function (element) { return element.dataset.val == descendent_id })[0];
+				let child_node = options.filter(function (element) { return element.dataset.val == descendent_id; })[0];
 				if(  child_node ) {
-					$(child_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected')
-					$(child_node.querySelector(".item-label").children[0]).addClass('org-icon')
-					child_node.ariaSelected = false
+					$(child_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected');
+					$(child_node.querySelector(".item-label").children[0]).addClass('org-icon');
+					child_node.ariaSelected = false;
 				}
 			});
 			//..unselect them from selected_values			
-			let to_be_removed = [selected_id]
-			descendents.forEach(function (item) { to_be_removed.push(item) })
+			let to_be_removed = [selected_id];
+			descendents.forEach(function (item) { to_be_removed.push(item); });
 			to_be_removed.forEach(function (element) {
-				selected_values = selected_values.filter(function (value) { return value != element });
+				selected_values = selected_values.filter(function (value) { return value != element; });
 			});
 			changeSelectedValuesInDropdown();
 		});
@@ -119,32 +121,32 @@ let selected_values = [];
 		// add all child nodes and the selected node
 		s2inst.on('select2:selecting', function (evt) {
 			let selected_id = evt.params.args.data.id;
-			selectNodes(selected_id, true)
-			$('.select2-search__field').val("")
-			evt.preventDefault()
+			selectNodes(selected_id, true);
+			$('.select2-search__field').val("");
+			evt.preventDefault();
 		});
 
 		function selectNodes(selected_id, selectChildren) {
 			selected_values.push(selected_id);
-			selected_ids = [selected_id]
+			selected_ids = [selected_id];
 			
 			if(selectChildren){
 				let descendents = [];
 				findChildNodes(selected_id, descendents);
-				descendents.forEach(function (item) { selected_values.push(item) })
-				descendents.forEach(function (item) { selected_ids.push(item) })
+				descendents.forEach(function (item) { selected_values.push(item); });
+				descendents.forEach(function (item) { selected_ids.push(item); });
 			}
 
 			let options = Array.prototype.slice.call(document.querySelectorAll("li.select2-results__option"));
 			let selected_nodes = options.filter(function (option) {
-				return selected_ids.indexOf(option.dataset.val)!=-1
-			})
+				return selected_ids.indexOf(option.dataset.val)!=-1;
+			});
 			selected_nodes.forEach( function(node) {	
 				if( node.className.indexOf('non-leaf') != -1 && node.className.indexOf('opened') == -1  ) {
-					$(node).addClass('opened')
-					showHideSub(node)
+					$(node).addClass('opened');
+					showHideSub(node);
 				}
-			})	
+			});
 
 			changeSelectedValuesInDropdown();
 		}
@@ -166,18 +168,18 @@ let selected_values = [];
 			if(selected_values.length > 0) {
 				let options = Array.prototype.slice.call(document.querySelectorAll("li.select2-results__option"));
 				let selected_nodes = options.filter(function (option) {
-					return selected_values.indexOf(option.dataset.val)!=-1
-				})
+					return selected_values.indexOf(option.dataset.val)!=-1;
+				});
 				selected_nodes.forEach( function(node){
 					//If the dropdown elements exist
 					if(node.querySelector(".item-label").children[0]) {
-						$(node.querySelector(".item-label").children[0]).removeClass('org-icon')
-						$(node.querySelector(".item-label").children[0]).addClass('org-icon-selected')
-						node.setAttribute('aria-selected', true)
+						$(node.querySelector(".item-label").children[0]).removeClass('org-icon');
+						$(node.querySelector(".item-label").children[0]).addClass('org-icon-selected');
+						node.setAttribute('aria-selected', true);
 					}
-				})
+				});
 			}
-		})
+		});
 
 		/** finds all descendents of a node, if recursively == false, only go one lvl down */
 		function findChildNodes(selected_id, descendents_ids) {
@@ -259,22 +261,22 @@ let selected_values = [];
 					$opt.prop("disabled", true);
 					$opt.val(getUniqueValue());
 				} else {
-					$opt.attr('id','treeview_option_' + $opt.val())
+					$opt.attr('id','treeview_option_' + $opt.val());
 				}
 				
 				var inc = data[treeData.incFld || "inc"];
 				if (inc && inc.length > 0) {
-					var descendents = []
-					inc.forEach( function(descendent) {
-						descendents.push(descendent.uuid)	
-					})
-					$opt.data('descendents', descendents)
+					var descendents = [];
+					for (var descendent in inc) {
+						descendents.push(descendent.uuid);
+					}
+					$opt.data('descendents', descendents);
 				}
 
 				$opt.addClass("l" + curLevel);
 				if (pup) $opt.attr("data-pup", pup);
 				$el.append($opt);
-				var inc = data[treeData.incFld || "inc"];
+				inc = data[treeData.incFld || "inc"];
 				if (inc && inc.length > 0) {
 					$opt.addClass("non-leaf");
 					buildOptions(inc, curLevel + 1, $opt.val());
@@ -338,10 +340,10 @@ function createTreeView() {
 			}
 		}
 	}
-	orgUnitSelectOptionValueToggle()
+	orgUnitSelectOptionValueToggle();
 	if (document.getElementById("sel_1")) { 
 		document.getElementById("sel_1").onchange = function () {
 			orgUnitSelectOptionValueToggle();
-		}
+		};
 	}
-};
+}

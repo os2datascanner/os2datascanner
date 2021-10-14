@@ -40,7 +40,7 @@
     $("#available_employees li[data-employee-id]:not([data-disabled])").on("click", function() {
       $("#changed_employees").show(); // show warning
       $("#messageColorId").addClass("has-warning");
-    })
+    });
 
     $this.closest("form").append($("<input/>", { // add a hidden input field to the form
       type: "hidden",
