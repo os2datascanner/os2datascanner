@@ -26,10 +26,11 @@ class LinksFollowRule(SimpleRule):
             return
 
         for link in links:
-            if not check(link):
+            followable, status_code = check(link)
+            if not followable:
                 yield {
                     "match": link,
-                    "context": "unable to follow links",
+                    "context": f"unable to follow link, error code {status_code}",
                     "sensitivity": (
                         self.sensitivity.value
                         if self.sensitivity
@@ -53,7 +54,7 @@ class LinksFollowRule(SimpleRule):
 # page. Not all webservers respect this, but at least we get the correct repsonse
 # code
 __HEADERS = {"Range": "bytes=0-1"}
-def check(link: str) -> bool:
+def check(link: str) -> tuple[bool, int]:
     """return True if link can be followed and the final response is less than 400
 
     Redirects are allowed and only the first byte is downloaded with get-call.
@@ -63,6 +64,6 @@ def check(link: str) -> bool:
     try:
         r =requests.get(link, allow_redirects=True, timeout=TIMEOUT, headers=__HEADERS)
         r.raise_for_status()
-        return True
+        return True, r.status_code
     except RequestException as e:
-        return False
+        return False, r.status_code
