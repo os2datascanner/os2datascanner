@@ -143,7 +143,15 @@ def create_alias_and_match_relations(sub_alias):
     """Method for creating match_relations for a given alias
     with all the matching DocumentReports"""
     tm = Alias.match_relation.through
-    reports = DocumentReport.objects.filter(data__metadata__metadata__contains={
-                    str(sub_alias.key): str(sub_alias).lower()})
+    
+    # Although RFC 5321 says that the local part of an email address 
+    # -- the bit to the left of the @ -- 
+    # is case sensitive, the real world disagrees..
+    if isinstance(sub_alias, EmailAlias):
+        reports = DocumentReport.objects.filter(data__metadata__metadata__contains={
+                        str(sub_alias.key): str(sub_alias).lower()})
+    else:
+        reports = DocumentReport.objects.filter(data__metadata__metadata__contains={
+                        str(sub_alias.key): str(sub_alias)})
     tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk) 
                             for r in reports], ignore_conflicts=True)

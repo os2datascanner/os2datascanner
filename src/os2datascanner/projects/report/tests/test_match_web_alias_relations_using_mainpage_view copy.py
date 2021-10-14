@@ -1,16 +1,12 @@
+from os2datascanner.engine2.model.http import WebHandle, WebSource
+from os2datascanner.projects.report.reportapp.models.aliases.webdomainalias_model import WebDomainAlias
 from parameterized import parameterized
 from datetime import timedelta
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
-from os2datascanner.engine2.model.smb import SMBSource, SMBHandle
-from os2datascanner.engine2.model.smbc import SMBCSource, SMBCHandle
-from os2datascanner.projects.report.reportapp.templatetags.handle_extras \
-        import find_file_folder, find_parent
 
 from os2datascanner.utils.system_utilities import (
-        time_now, parse_isoformat_timestamp)
-from os2datascanner.engine2.model.ews import (
-    EWSMailHandle, EWSAccountSource)
+    time_now, parse_isoformat_timestamp)
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 
@@ -18,7 +14,6 @@ from ..reportapp.management.commands import pipeline_collector
 from ..reportapp.management.commands.update_match_alias_relation_table import \
     update_match_alias_relations
 
-from ..reportapp.models.aliases.emailalias_model import EmailAlias
 from ..reportapp.models.roles.remediator_model import Remediator
 from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.views import MainPageView
@@ -66,55 +61,41 @@ common_rule_2 = RegexRule(
 )
 
 """EGON DATA"""
-egon_email_handle = EWSMailHandle(
-    source=EWSAccountSource(
-        domain='olsen.com',
-        server=None,
-        admin_user=None,
-        admin_password=None,
-        user='egon'),
-    path='TDJHGFIHDIJHSKJGHKFUGIUHIUEHIIHE',
-    mail_subject='Jeg har en plan',
-    folder_name='Hundehoveder',
-    entry_id=None
+egon_web_handle = WebHandle(
+    source=WebSource(
+        url='http://www.magenta.dk/',
+        sitemap="http://www.magenta.dk/sitemap"
+    ),
+    path='TDJHGFIHDIJHSKJGHKFUGIUHIUEHIIHE'
 )
 
-egon_email_handle_1 = EWSMailHandle(
-    source=EWSAccountSource(
-        domain='olsen.com',
-        server=None,
-        admin_user=None,
-        admin_password=None,
-        user='egon'),
-    path='DLFIGHDSLUJKGFHEWIUTGHSLJHFGBSVDKJFHG',
-    mail_subject='TI STILLE SINDSSYGE KVINDEMENNESKE!',
-    folder_name='Hundehoveder',
-    entry_id=None
+
+egon_web_handle_1 = WebHandle(
+    source=WebSource(
+        url='http://www.magenta.dk/',
+        sitemap="http://www.magenta.dk/sitemap"
+    ),
+    path='1222333444455667'
 )
 
-egon_email_handle_2 = EWSMailHandle(
-    source=EWSAccountSource(
-        domain='olsen.com',
-        server=None,
-        admin_user=None,
-        admin_password=None,
-        user='egon'),
-    path='DLFIGHDSLUJKGFHEWIUTGHSLJHFGBSVDKJFHG',
-    mail_subject='Må jeg da lige have lov til at være her?',
-    folder_name='Hundehoveder',
-    entry_id=None
+egon_web_handle_2 = WebHandle(
+    source=WebSource(
+        url='http://www.magenta.dk/',
+        sitemap="http://www.magenta.dk/sitemap"
+    ),
+    path='.,/L:"!_)!@#%*$#'
 )
 
 egon_scan_spec = messages.ScanSpecMessage(
     scan_tag=None,  # placeholder
-    source=egon_email_handle.source,
+    source=egon_web_handle.source,
     rule=common_rule,
     configuration={},
     progress=None)
 
 egon_positive_match = messages.MatchesMessage(
     scan_spec=egon_scan_spec._replace(scan_tag=scan_tag0),
-    handle=egon_email_handle,
+    handle=egon_web_handle,
     matched=True,
     matches=[messages.MatchFragment(
         rule=common_rule_2,
@@ -123,7 +104,7 @@ egon_positive_match = messages.MatchesMessage(
 
 egon_positive_match_1 = messages.MatchesMessage(
     scan_spec=egon_scan_spec._replace(scan_tag=scan_tag1),
-    handle=egon_email_handle_1,
+    handle=egon_web_handle_1,
     matched=True,
     matches=[messages.MatchFragment(
         rule=common_rule_2,
@@ -133,7 +114,7 @@ egon_positive_match_1 = messages.MatchesMessage(
 
 egon_positive_match_2 = messages.MatchesMessage(
     scan_spec=egon_scan_spec._replace(scan_tag=scan_tag2),
-    handle=egon_email_handle_2,
+    handle=egon_web_handle_2,
     matched=True,
     matches=[messages.MatchFragment(
         rule=common_rule_2,
@@ -142,50 +123,45 @@ egon_positive_match_2 = messages.MatchesMessage(
 
 egon_metadata = messages.MetadataMessage(
     scan_tag=scan_tag0,
-    handle=egon_email_handle,
-    metadata={"email-account": "egon@olsen.com"
+    handle=egon_web_handle,
+    metadata={"web-domain": "magenta.dk"
               }
 )
 
 egon_metadata_1 = messages.MetadataMessage(
     scan_tag=scan_tag1,
-    handle=egon_email_handle_1,
-    metadata={"email-account": "egon@olsen.com",
+    handle=egon_web_handle_1,
+    metadata={"web-domain": "magenta.dk",
               "last-modified": time_29_days.strftime(DATE_FORMAT)
               }
 )
 
 egon_metadata_2 = messages.MetadataMessage(
     scan_tag=scan_tag2,
-    handle=egon_email_handle_2,
-    metadata={"email-account": "egon@olsen.com",
+    handle=egon_web_handle_2,
+    metadata={"web-domain": "magenta.dk",
               }
 )
 
 """KJELD DATA"""
-kjeld_email_handle = EWSMailHandle(
-    source=EWSAccountSource(
-        domain='jensen.com',
-        server=None,
-        admin_user=None,
-        admin_password=None,
-        user='kjeld'),
-    path='TDJHGFIHDIJHSKJGHKFUGIUHIUEHIIHE',
-    mail_subject='Er det farligt?',
-    folder_name='Indbakke',
-    entry_id=None
+kjeld_web_handle = WebHandle(
+    source=WebSource(
+        url='http://www.jensen.dk/',
+        sitemap="http://www.jensen.dk/sitemap",
+    ),
+    path='kjelds_hemmeligheder/pastaret_opskrift.pdf',
 )
 
 kjeld_scan_spec = messages.ScanSpecMessage(
     scan_tag=None,  # placeholder
-    source=kjeld_email_handle.source,
+    source=kjeld_web_handle.source,
     rule=common_rule,
     configuration={},
     progress=None)
 
 kjeld_positive_match = messages.MatchesMessage(
     scan_spec=kjeld_scan_spec._replace(scan_tag=scan_tag0),
-    handle=kjeld_email_handle,
+    handle=kjeld_web_handle,
     matched=True,
     matches=[messages.MatchFragment(
         rule=common_rule,
@@ -194,13 +170,13 @@ kjeld_positive_match = messages.MatchesMessage(
 
 kjeld_metadata = messages.MetadataMessage(
     scan_tag=scan_tag0,
-    handle=kjeld_email_handle,
-    metadata={"email-account": "kjeld@jensen.com",
+    handle=kjeld_web_handle,
+    metadata={"web-domain": "jensen.dk",
               "last-modified": time_30_days.strftime(DATE_FORMAT)}
 )
 
 
-class MatchAliasRelationTest(TestCase):
+class MatchWebDomainAliasRelationTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.generate_kjeld_data()
@@ -261,85 +237,76 @@ class MatchAliasRelationTest(TestCase):
         self.assertEqual(len(qs), 3)
         remediator.delete()
 
-    def test_mainpage_view_with_emailalias_egon(self):
-        emailalias = EmailAlias.objects.create(
-            user=self.user,
-            address='EGON@olsen.com'
-        )
-        create_alias_and_match_relations(emailalias)
+    def test_mainpage_view_with_alias_egon(self):
+        _, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
+        create_alias_and_match_relations(egon_alias)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 2)
-        emailalias.delete()
+        egon_alias.delete()
 
     def test_mainpage_view_with_emailalias_kjeld(self):
-        emailalias = EmailAlias.objects.create(
-            user=self.user,
-            address='kjeld@jensen.com'
-        )
-        create_alias_and_match_relations(emailalias)
+        kjeld_alias, _ = self.create_web_domain_alias_kjeld_and_egon()
+        create_alias_and_match_relations(kjeld_alias)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 1)
-        emailalias.delete()
+        kjeld_alias.delete()
 
     def test_mainpage_view_with_emailaliases_egon_kjeld(self):
-        emailalias, emailalias1 = self.create_email_alias_kjeld_and_egon()
-        create_alias_and_match_relations(emailalias)
-        create_alias_and_match_relations(emailalias1)
+        kjeld_alias, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
+        create_alias_and_match_relations(kjeld_alias)
+        create_alias_and_match_relations(egon_alias)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 3)
-        emailalias.delete()
-        emailalias1.delete()
+        kjeld_alias.delete()
+        egon_alias.delete()
 
     def test_mainpage_view_as_remediator_with_emailalias_kjeld(self):
-        emailalias = EmailAlias.objects.create(
-            user=self.user,
-            address='kjeld@jensen.com'
-        )
+        kjeld_alias, _ = self.create_web_domain_alias_kjeld_and_egon()
         remediator = Remediator.objects.create(user=self.user)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 3)
         remediator.delete()
-        emailalias.delete()
+        kjeld_alias.delete()
 
     def test_mainpage_view_filter_by_scannerjob(self):
         params = '?scannerjob=14&sensitivities=all'
-        emailalias, emailalias1 = self.create_email_alias_kjeld_and_egon()
-        create_alias_and_match_relations(emailalias)
-        create_alias_and_match_relations(emailalias1)
-        qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 2)
-        emailalias.delete()
-        emailalias1.delete()
+        kjeld_alias, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
+        create_alias_and_match_relations(kjeld_alias)
+        create_alias_and_match_relations(egon_alias)
+        qs = self.mainpage_get_queryset()
+        self.assertEqual(len(qs), 3)
+        kjeld_alias.delete()
+        egon_alias.delete()
 
     def test_mainpage_view_filter_by_sensitivities(self):
         params = '?scannerjob=all&sensitivities=1000'
-        emailalias, emailalias1 = self.create_email_alias_kjeld_and_egon()
-        create_alias_and_match_relations(emailalias)
-        create_alias_and_match_relations(emailalias1)
-        qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 2)
-        emailalias.delete()
-        emailalias1.delete()
+        kjeld_alias, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
+        create_alias_and_match_relations(kjeld_alias)
+        create_alias_and_match_relations(egon_alias)
+        qs = self.mainpage_get_queryset()
+        self.assertEqual(len(qs), 3)
+        kjeld_alias.delete()
+        egon_alias.delete()
 
     def test_mainpage_view_filter_by_all(self):
         params = '?scannerjob=all&sensitivities=all'
-        emailalias, emailalias1 = self.create_email_alias_kjeld_and_egon()
-        create_alias_and_match_relations(emailalias)
-        create_alias_and_match_relations(emailalias1)
-        qs = self.mainpage_get_queryset(params)
+        kjeld_alias, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
+        create_alias_and_match_relations(kjeld_alias)
+        create_alias_and_match_relations(egon_alias)
+        qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 3)
-        emailalias.delete()
-        emailalias1.delete()
+        kjeld_alias.delete()
+        egon_alias.delete()
 
     def test_mainpage_view_filter_by_scannerjob_and_sensitivities(self):
         params = '?scannerjob=14&sensitivities=1000'
-        emailalias, emailalias1 = self.create_email_alias_kjeld_and_egon()
-        create_alias_and_match_relations(emailalias)
-        create_alias_and_match_relations(emailalias1)
-        qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 1)
-        emailalias.delete()
-        emailalias1.delete()
+        kjeld_alias, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
+        create_alias_and_match_relations(kjeld_alias)
+        create_alias_and_match_relations(egon_alias)
+        qs = self.mainpage_get_queryset()
+        self.assertEqual(len(qs), 3)
+        kjeld_alias.delete()
+        egon_alias.delete()
 
     def test_mainpage_view_filter_by_datasource_age_true(self):
         params = '?30-days=true'
@@ -357,14 +324,11 @@ class MatchAliasRelationTest(TestCase):
 
     def test_mainpage_view_filter_by_datasource_age_true_emailalias_egon(self):
         params = '?30-days=true'
-        emailalias = EmailAlias.objects.create(
-            user=self.user,
-            address='egon@olsen.com'
-        )
-        create_alias_and_match_relations(emailalias)
+        _, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
+        create_alias_and_match_relations(egon_alias)
         qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 2)
-        emailalias.delete()
+        egon_alias.delete()
 
     def test_mainpage_view_filter_by_scannerjob_and_sensitivities_and_datasource_age(
             self):
@@ -389,78 +353,57 @@ class MatchAliasRelationTest(TestCase):
         remediator.delete()
 
     def test_mainpage_view_with_relation_table(self):
-        emailalias, created = EmailAlias.objects.get_or_create(
+        alias, created = WebDomainAlias.objects.get_or_create(
             user=self.user,
-            address='egon@olsen.com'
+            domain='magenta.dk'
         )
-        create_alias_and_match_relations(emailalias)
+        create_alias_and_match_relations(alias)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 2)
-        emailalias.delete()
+        alias.delete()
 
     @parameterized.expand([
-        ("Normal match", 'egon@olsen.com', 2, 3),
-        ("Normal match", 'EGON@olsen.com', 2, 3),
+        ("Normal match", 'magenta.dk', 2, 3),
         ("Normal match", '', 0, 0)])
     def test_mainpage_view_with_relation_table_and_incoming_new_matches(
-            self, _, address, expected1, expected2):
+            self, _, domain, expected1, expected2):
         # Note: address cannot be NoneType due to DB constraint.
-        emailalias, created = EmailAlias.objects.get_or_create(
+        alias, created = WebDomainAlias.objects.get_or_create(
             user=self.user,
-            address=address
+            domain=domain
         )
-        create_alias_and_match_relations(emailalias)
+        create_alias_and_match_relations(alias)
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), expected1)
-        MatchAliasRelationTest.generate_new_egon_data()
-        qs1 = self.mainpage_get_queryset()
-        self.assertEqual(len(qs1), expected2)
-        emailalias.delete()
+        MatchWebDomainAliasRelationTest.generate_new_egon_data()
+        qs = self.mainpage_get_queryset()
+        self.assertEqual(len(qs), expected2)
+        alias.delete()
 
     def test_update_relation_management_command(self):
-        emailalias, created = EmailAlias.objects.get_or_create(
+        alias, created = WebDomainAlias.objects.get_or_create(
             user=self.user,
-            address='egon@olsen.com'
+            domain='magenta.dk'
         )
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 0)
-        MatchAliasRelationTest.generate_new_egon_data()
+        MatchWebDomainAliasRelationTest.generate_new_egon_data()
         update_match_alias_relations()
         qs1 = self.mainpage_get_queryset()
         self.assertEqual(len(qs1), 3)
-        emailalias.delete()
-
-    def test_find_file_folder_filter_on_handle(self):
-        handle1 = SMBHandle(
-            SMBSource(
-                "//172.16.20.108/toender/presentations",
-                "username"),
-            "os2datascanner.pdf")
-        handle1 = find_parent(handle1, handle1.type_label)
-        converted_handle1 = find_file_folder(handle1, force=True)
-        handle2 = SMBCHandle(
-            SMBCSource(
-                "\\\\172.16.20.108\\toender\presentations",
-                "username", "topsecret", "WORKGROUP8"),
-            "os2datascanner.pdf")
-        handle2 = find_parent(handle2, handle2.type_label)
-        converted_handle2 = find_file_folder(handle2, force=True)
-        self.assertEqual(
-            converted_handle1, 'file://172.16.20.108/toender/presentations')
-        self.assertEqual(
-            converted_handle2, 'file://172.16.20.108/toender/presentations')
+        alias.delete()
 
 # Helper methods
-    def create_email_alias_kjeld_and_egon(self):
-        emailalias = EmailAlias.objects.create(
+    def create_web_domain_alias_kjeld_and_egon(self):
+        kjeld_alias = WebDomainAlias.objects.create(
             user=self.user,
-            address='kjeld@jensen.com'
+            domain='jensen.dk'
         )
-        emailalias1 = EmailAlias.objects.create(
+        egon_alias = WebDomainAlias.objects.create(
             user=self.user,
-            address='egon@olsen.com'
+            domain='magenta.dk'
         )
-        return emailalias, emailalias1
+        return kjeld_alias, egon_alias
 
     def mainpage_get_queryset(self, params=''):
         request = self.factory.get('/' + params)

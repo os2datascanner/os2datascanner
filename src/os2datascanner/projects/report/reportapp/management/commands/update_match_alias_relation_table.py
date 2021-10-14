@@ -17,6 +17,8 @@
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 
+from os2datascanner.projects.report.reportapp.models.aliases.webdomainalias_model import WebDomainAlias
+
 from ...models.aliases.adsidalias_model import ADSIDAlias
 from ...models.aliases.alias_model import Alias
 from ...models.documentreport_model import DocumentReport
@@ -41,6 +43,15 @@ def update_match_alias_relations():
                     [tm(documentreport_id=r.pk, alias_id=alias.pk) for r in
                      reports], ignore_conflicts=True)
                 print("Approx. {0} EmailAlias' relation created.".format(
+                    len(reports)))
+            elif WebDomainAlias.objects.filter(pk=alias.pk):
+                subAlias = WebDomainAlias.objects.get(pk=alias.pk)
+                reports = matches.filter(data__metadata__metadata__contains={
+                    str('web-domain'): str(subAlias.domain)})
+                tm.objects.bulk_create(
+                    [tm(documentreport_id=r.pk, alias_id=alias.pk) for r in
+                     reports], ignore_conflicts=True)
+                print("Approx. {0} WebDomainAlias' relation created.".format(
                     len(reports)))
             elif ADSIDAlias.objects.filter(pk=alias.pk):
                 subAlias = ADSIDAlias.objects.get(pk=alias.pk)
