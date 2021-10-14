@@ -97,10 +97,13 @@ class WebSource(Source):
                        lm_hint: datetime = None, from_sitemap: bool = False):
 
             here_url = "" if from_sitemap else here.presentation_url
-            referrer = WebHandle(self, self._sitemap) if from_sitemap else here
             new_url, frag = urldefrag(urljoin(here_url, new_url))
             nurls = urlsplit(new_url)
-
+            referrer = WebHandle(self, self._sitemap) if from_sitemap else here
+            if here.ttl == 0:
+                logger.debug("max TTL reached. Not appending url", url=new_url,
+                             referrer=referrer.presentation_url, TTL=TTL)
+                return
             # ensure the new url actually is a url and not mailto:, etc
             if nurls.scheme not in ("http", "https"):
                 return
@@ -111,11 +114,16 @@ class WebSource(Source):
 
             if nurls.hostname == url_split.hostname:
                 # exactly same hostname
-                new_handle = WebHandle(self, nurls.path, referrer, lm_hint)
+                rel_path = new_url.removeprefix(self._url)
+                new_handle = WebHandle(self, rel_path, referrer, lm_hint)
             elif netloc_normalize(nurls.hostname) == hostname:
-                # hostnames are equivalent
-                base_url = urlunsplit((nurls.scheme, nurls.netloc, "", "", ""))
-                new_handle = WebHandle(WebSource(base_url), nurls.path, referrer,
+                # hostnames are equivalent. Create new Source from "new" hostname but
+                # retain original path, if present
+                base_url = urlunsplit(
+                    (nurls.scheme, nurls.netloc, url_split.path, "", "")
+                )
+                rel_path = new_url.removeprefix(base_url)
+                new_handle = WebHandle(WebSource(base_url), rel_path, referrer,
                                        lm_hint)
             else:
                 # hostname outside current source
