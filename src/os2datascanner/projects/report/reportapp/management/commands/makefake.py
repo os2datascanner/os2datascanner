@@ -129,20 +129,26 @@ class Command(BaseCommand):
 
         organization = Organization.objects.first()
         handle_types = {
-            "FileSystemScan": make_fake_filesystem_handle,
-            "WebSourceScan": make_fake_websource_handle,
-            "DropboxScan": make_fake_dropbox_handle,
-            "MSGraphScan": make_fake_msgraph_file_handle,
-            "GoogleDriveScan": make_fake_google_drive_handle,
-            "EWSScan": make_fake_ews_mail_handle,
-            "SMBScan": make_fake_smb_handle,
-            "SBSYSScan": make_fake_sbsys_handle,
+            "filesystem": make_fake_filesystem_handle,
+            "websource": make_fake_websource_handle,
+            "dropbox": make_fake_dropbox_handle,
+            "msgraph": make_fake_msgraph_file_handle,
+            "googledrive": make_fake_google_drive_handle,
+            "ews": make_fake_ews_mail_handle,
+            "smb": make_fake_smb_handle,
+            "sbsys": make_fake_sbsys_handle,
         }
         scan_iterator = iter(handle_types.items())
 
         stats = {"scans": 0, "handles": 0, "matches": 0}
+
         if scan_type == "all":
             scan_count = len(handle_types)
+        elif scan_type.lower() not in handle_types.keys():
+            print(f"wrong scan_type {scan_type}.\n"
+                  f"Should be one of {', '.join(handle_types.keys())} or all")
+            exit(0)
+
         for scan in range(scan_count):
             _scan_type = None
             if not scan_type:
@@ -157,7 +163,7 @@ class Command(BaseCommand):
                     break
             else:
                 #generate specified scan
-                handle_generator_function = handle_types[scan_type]
+                handle_generator_function = handle_types[scan_type.lower()]
                 _scan_type = scan_type
 
             scan_name = "{0}.{1}".format(scan, _scan_type)
