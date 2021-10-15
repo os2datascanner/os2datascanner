@@ -1,6 +1,7 @@
 from zipfile import ZipFile
 from datetime import datetime
 from contextlib import contextmanager
+from pathlib import Path
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
@@ -91,6 +92,14 @@ class ZipHandle(Handle):
     def presentation(self):
         return "{0} (in {1})".format(
                 self.relative_path, self.source.handle)
+
+    @property
+    def sort_key(self):
+        return str(Path(self.base_handle.presentation).parent)
+
+    @property
+    def presentation_name(self):
+        return f"{self.base_handle.name} (file {self.relative_path})"
 
     def censor(self):
         return ZipHandle(self.source.censor(), self.relative_path)

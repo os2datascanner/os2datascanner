@@ -49,7 +49,7 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         return self._relpath
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Returns the base name -- everything after the last '/' -- of this
         Handle's path, or "file" if the result would otherwise be empty."""
         return os.path.basename(self._relpath) or 'file'
@@ -63,7 +63,7 @@ class Handle(TypePropertyEquality, JSONSerialisable):
 
     @property
     @abstractmethod
-    def presentation(self):
+    def presentation(self) -> str:
         """Returns a (perhaps localised) human-readable string representing
         this Handle, for use in user interfaces."""
 
@@ -79,6 +79,23 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         return None
 
     @property
+    def sort_key(self) -> str:
+        """Returns a string that can be used to position this object in an
+        ordered list in a way that would make sense to a user. This might be,
+        for example, a filesystem path or an email user@domain.
+
+        Note that comparing sort keys across different types of Source is not
+        meaningful."""
+        return self.presentation.removesuffix(self.name).removesuffix("/")
+
+    @property
+    def presentation_name(self) -> str:
+        """Returns a string that, in some meaningfull way, can be used to localize
+        this object within a source. This might be, for example, a filename or an
+        email subject"""
+        return self.name
+
+    @property
     def referrer(self) -> Optional["Handle"]:
         """Returns this Handle's referrer or None, if there is no referrer"""
         return self._referrer
@@ -90,6 +107,18 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         while h:
             if h.referrer:
                 h = h.referrer
+            else:
+                break
+        return h
+
+    @property
+    def base_handle(self) -> "Handle":
+        """Returns this Handle's base Handle or self, if this object does not
+        originate from a derived Source"""
+        h = self
+        while h:
+            if h.source.handle:
+                h = h.source.handle
             else:
                 break
         return h

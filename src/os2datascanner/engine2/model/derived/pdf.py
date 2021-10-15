@@ -2,6 +2,7 @@ from os import listdir
 import PyPDF2
 from tempfile import TemporaryDirectory
 from subprocess import run
+from pathlib import Path
 
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, SourceManager
@@ -68,6 +69,24 @@ class PDFPageHandle(Handle):
     def presentation(self):
         return "page {0} of {1}".format(self.relative_path, self.source.handle)
 
+    @property
+    def sort_key(self):
+        "Return the file path of the document"
+        return str(Path(self.base_handle.presentation).parent)
+
+    @property
+    def presentation_name(self):
+        """Return the filename of the document or, if originating from a container, the
+        filename of the container + (filename of document)"""
+        if self.base_handle == self.source.handle:
+            return self.base_handle.name + f" (page {self.relative_path})"
+
+        # document originates from container
+        return (
+            self.base_handle.name +
+            f" (file {self.source.handle.relative_path} (page {self.relative_path}))"
+        )
+
     def censor(self):
         return PDFPageHandle(self.source.censor(), self.relative_path)
 
@@ -128,3 +147,13 @@ class PDFObjectHandle(Handle):
 
     def censor(self):
         return PDFObjectHandle(self.source.censor(), self.relative_path)
+
+    @property
+    def sort_key(self):
+        "Return from the parent PDFPage handle"
+        return self.source.handle.sort_key
+
+    @property
+    def presentation_name(self):
+        "Return from the parent PDFPage handle"
+        return self.source.handle.presentation_name

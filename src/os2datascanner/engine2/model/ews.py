@@ -241,14 +241,18 @@ class EWSMailHandle(Handle):
     # The mail subject and folder name are useful for presentation purposes,
     # but not important when computing equality
     eq_properties = Handle.BASE_PROPERTIES
-
-    def __init__(self, source,
-            path, mail_subject, folder_name, entry_id):
+    def __init__(
+        self,
+        source: EWSAccountSource,
+        path: str,
+        mail_subject: str,
+        folder_name: str,
+        entry_id: int,
+    ):
         super().__init__(source, path)
         self._mail_subject = mail_subject
         self._folder_name = folder_name
         self._entry_id = entry_id
-
     @property
     def presentation(self):
         return "\"{0}\" (in folder {1} of account {2})".format(
@@ -269,6 +273,17 @@ class EWSMailHandle(Handle):
             return "outlook:{0}".format(self._entry_id)
         else:
             return None
+
+    @property
+    def sort_key(self):
+        "Return adress@example.com/folder"
+        return "{0}/{1}".format(
+            self.source.address,
+            self._folder_name.removeprefix("/") or "(unknown folder)")
+
+    @property
+    def presentation_name(self):
+        return self._mail_subject
 
     def censor(self):
         return EWSMailHandle(
