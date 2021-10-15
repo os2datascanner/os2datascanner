@@ -1,7 +1,15 @@
-from sys import stderr
-from enum import Enum
+from dataclasses import dataclass
 from datetime import datetime
 from dateutil import tz
+from enum import Enum
+from sys import stderr
+from typing import Optional
+
+
+@dataclass
+class Link:
+    url: str
+    link_text: Optional[str]
 
 
 class OutputType(Enum):
@@ -11,7 +19,7 @@ class OutputType(Enum):
     Text = "text" # str
     LastModified = "last-modified" # datetime.datetime
     ImageDimensions = "image-dimensions" # (int, int)
-    Links = "links"  # list
+    Links = "links"  # list[Link]
 
     AlwaysTrue = "fallback" # True
     NoConversions = "dummy"
@@ -28,7 +36,9 @@ class OutputType(Enum):
         elif self == OutputType.ImageDimensions:
             return [int(v[0]), int(v[1])]
         elif self == OutputType.Links:
-            return list(v)
+            if isinstance(v, list):
+                return [(link.url, link.link_text) for link in v]
+            return (v.url, v.link_text)
         elif self == OutputType.AlwaysTrue:
             return True
         else:
@@ -46,7 +56,7 @@ class OutputType(Enum):
         elif self == OutputType.ImageDimensions:
             return (int(v[0]), int(v[1]))
         elif self == OutputType.Links:
-            return list(v)
+            return [Link(url, link_text) for url, link_text in v]
         elif self == OutputType.AlwaysTrue:
             return True
         else:
