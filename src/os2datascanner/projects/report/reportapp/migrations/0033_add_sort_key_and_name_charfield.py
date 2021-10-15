@@ -45,9 +45,13 @@ def get_presentation(query):
 
 def bulk_update_created_fpath_name_fields(apps, schema_editor):
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
+    print("starting batch migration")
+    print(f"length of queryset, {DocumentReport.objects.count()}")
+
     queryset = DocumentReport.objects.all()
 
-    for batch in iterate_queryset_in_batches(10000, queryset):
+
+    for i, batch in enumerate(iterate_queryset_in_batches(10000, queryset)):
         for report in batch:
             if report.sort_key == "" or report.name == "":
                 try:
@@ -55,7 +59,7 @@ def bulk_update_created_fpath_name_fields(apps, schema_editor):
                     if not handle:
                         continue
 
-                    name = handle.name
+                    name = handle.presentation_name
                     report.sort_key = handle.sort_key
                     report.name = name
                 except Exception as e:
@@ -65,7 +69,9 @@ def bulk_update_created_fpath_name_fields(apps, schema_editor):
                         f"e={e}"
                     )
 
+        print(f"preparing chunk {i} of bulk update")
         DocumentReport.objects.bulk_update(batch, ["sort_key", "name"])
+        print("chunk done")
 
 
 class Migration(migrations.Migration):
@@ -87,8 +93,9 @@ class Migration(migrations.Migration):
                 db_index=True, default="", max_length=256, verbose_name="sort key"
             ),
         ),
-        migrations.RunPython(
-            bulk_update_created_fpath_name_fields,
-            reverse_code=migrations.RunPython.noop,
-        ),
+        # XXX don't populate fields. For large DBs this kills the migration
+        # migrations.RunPython(
+        #     bulk_update_created_fpath_name_fields,
+        #     reverse_code=migrations.RunPython.noop,
+        # ),
     ]
