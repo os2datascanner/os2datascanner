@@ -274,7 +274,7 @@ class MatchWebDomainAliasRelationTest(TestCase):
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 3)
+        self.assertEqual(len(qs), 2)
         kjeld_alias.delete()
         egon_alias.delete()
 
@@ -284,7 +284,7 @@ class MatchWebDomainAliasRelationTest(TestCase):
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 3)
+        self.assertEqual(len(qs), 2)
         kjeld_alias.delete()
         egon_alias.delete()
 
@@ -304,7 +304,7 @@ class MatchWebDomainAliasRelationTest(TestCase):
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 3)
+        self.assertEqual(len(qs), 1)
         kjeld_alias.delete()
         egon_alias.delete()
 
@@ -367,7 +367,6 @@ class MatchWebDomainAliasRelationTest(TestCase):
         ("Normal match", '', 0, 0)])
     def test_mainpage_view_with_relation_table_and_incoming_new_matches(
             self, _, domain, expected1, expected2):
-        # Note: address cannot be NoneType due to DB constraint.
         alias, created = WebDomainAlias.objects.get_or_create(
             user=self.user,
             domain=domain

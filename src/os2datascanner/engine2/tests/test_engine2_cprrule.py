@@ -18,13 +18,10 @@ Anders And 113 050580-0001
 Anders And 060680-0002 070680-0018
 
 @ godtages ikke fordi foranstående ord er et mix af store og små bogstaver
-  "HOST/ABCD.intra.corp"], "uSNChanged": [070780-0003],
-  "uSNCreated": [123456], "userAccountControl":
-@ godtages ikke pga. omkringstående tal OG fordi kun to ord medtages,
-  vil paranteser være ubalanceret.
-  712000 0 0 WET} {080880-0004 3600 1 WEST} [090880-0001 0 0 WET]
-@ godtages ikke pga foranstående er unær operatør(dvs. fortegns-minus. På eng: unary)
-  eller specialsymbol
+"HOST/ABCD.intra.corp"], "uSNChanged": [070780-0003], "uSNCreated": [123456], "userAccountControl":
+@ godtages ikke pga. omkringstående tal OG fordi kun to ord medtages, vil paranteser være ubalanceret.
+712000 0 0 WET} {080880-0004 3600 1 WEST} [090880-0001 0 0 WET]
+@ godtages ikke pga foranstående er unær operatør(dvs. fortegns-minus. På eng: unary) eller specialsymbol
 16768 0 LMT} {090980-0005-} {+100980-0006} (#110980-0003)
 
 Følgende kriterier undersøges
@@ -36,11 +33,9 @@ der opfylder modulus 11, rent faktisk er et cpr-nummber.
 Følgende heuristik benyttes
 - indgår p-nr eller variant deraf noget sted i teksten
 - Er der unær operator før eller efter, fx -101080-0001 eller 111080-0009+
-- Er der ubalanceret symboler eller parenteser omkring, fx [111180-0002.
-  Men [121180-0018] vil være ok.
+- Er der ubalanceret symboler eller parenteser omkring, fx [111180-0002. Men [121180-0018] vil være ok.
 - Kommer der et tal der ikke ligner et cpr før eller efter, fx 113 121280-0003
-- Er ord før eller efter ikke ’alle små’-, ’stort begyndelsesbogstav’ eller ’alle caps’,
-  fx uSNChanged 131280-0019
+- Er ord før eller efter ikke ’alle små’-, ’stort begyndelsesbogstav’ eller ’alle caps’, fx uSNChanged 131280-0019
 resulterer alle i sandsynlighed=0.
 
 - indeholder ord før cpr, fx Anders cpr-nr [141280-0008]
@@ -50,7 +45,7 @@ Følgende symboler undersøges
 - unær operatører "+", "-"
 - parenteser "(", "[", "{", "<", "<?", "<%", "/*"
 - symboler "!", "#", "%"
-"""
+"""  # noqa: E501
 
 
 # all possible matches

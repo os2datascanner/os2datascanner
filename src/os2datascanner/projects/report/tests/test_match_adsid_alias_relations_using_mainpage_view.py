@@ -66,14 +66,14 @@ common_rule_2 = RegexRule(
 """EGON DATA"""
 egon_adsid_handle = SMBCHandle(
     source=SMBCSource(
-                "//172.16.20.108/1234/",
+                "//172.16.20.106/1234/",
                 "username"),
     relpath="os2datascanner.pdf"
 )
 
 egon_adsid_handle_1 = SMBCHandle(
     source=SMBCSource(
-                "//172.16.20.108/toender/",
+                "//172.16.20.107/toender/",
                 "username"),
     relpath="os2datascanner.png"
 )
@@ -269,11 +269,10 @@ class MatchADSIDAliasRelationTest(TestCase):
     def test_mainpage_view_filter_by_scannerjob(self):
         params = '?scannerjob=14&sensitivities=all'
         kjeld_alias, egon_alias = self.create_adsid_alias_kjeld_and_egon()
-
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 3)
+        self.assertEqual(len(qs), 2)
         kjeld_alias.delete()
         egon_alias.delete()
 
@@ -283,7 +282,7 @@ class MatchADSIDAliasRelationTest(TestCase):
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 3)
+        self.assertEqual(len(qs), 2)
         kjeld_alias.delete()
         egon_alias.delete()
 
@@ -303,7 +302,7 @@ class MatchADSIDAliasRelationTest(TestCase):
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
         qs = self.mainpage_get_queryset(params)
-        self.assertEqual(len(qs), 3)
+        self.assertEqual(len(qs), 1)
         kjeld_alias.delete()
         egon_alias.delete()
 

@@ -354,7 +354,7 @@ def make_outlinks(content, where):
         for element, _, link, _ in doc.iterlinks():
             if element.tag in ("a", "img",):
                 yield Link(link, link_text=element.text)
-    except ParserError as e:
+    except ParserError:
         # Silently drop ParserErrors, but only for empty documents
         if content and not content.isspace():
             logger.error("{0}: unexpected ParserError".format(where),

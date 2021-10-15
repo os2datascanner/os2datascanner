@@ -110,7 +110,9 @@ class Command(BaseCommand):
             **options
     ):
         if not settings.DEBUG:
-            self.stdout.write(self.style.NOTICE("makefake: refusing to run in a production environment; switch settings.DEBUG on to use this command"))
+            self.stdout.write(self.style.NOTICE("makefake: refusing to run in a production "
+                                                "environment; switch settings.DEBUG on to "
+                                                "use this command"))
             sys.exit(1)
 
         # faker is using the random generator, so seeding here does not give

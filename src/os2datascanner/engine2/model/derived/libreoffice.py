@@ -164,6 +164,7 @@ class LibreOfficeObjectResource(FilesystemResource):
         # We deliberately don't yield from the superclass implementation --
         # filesystem metadata is useless for a generated file
 
+
 @Handle.stock_json_handler("lo-object")
 class LibreOfficeObjectHandle(Handle):
     type_label = "lo-object"

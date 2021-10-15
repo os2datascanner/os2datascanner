@@ -2,8 +2,6 @@ from dataclasses import dataclass
 from enum import Enum
 from datetime import datetime
 from dateutil import tz
-from enum import Enum
-from sys import stderr
 from typing import Optional
 
 
@@ -17,9 +15,9 @@ class OutputType(Enum):
     """Conversion functions return a typed result, and the type is a member of
     the OutputType enumeration. The values associated with these members are
     simple string identifiers that can be used in serialisation formats."""
-    Text = "text" # str
-    LastModified = "last-modified" # datetime.datetime
-    ImageDimensions = "image-dimensions" # (int, int)
+    Text = "text"  # str
+    LastModified = "last-modified"  # datetime.datetime
+    ImageDimensions = "image-dimensions"  # (int, int)
     Links = "links"  # list[Link]
 
     AlwaysTrue = "fallback"  # True

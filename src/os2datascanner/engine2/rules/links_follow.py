@@ -57,13 +57,9 @@ class LinksFollowRule(SimpleRule):
 # page. Not all webservers respect this, but at least we get the correct repsonse
 # code
 __HEADERS = {"Range": "bytes=0-1"}
-<<<<<<< HEAD
+
+
 def check(link: Link) -> tuple[bool, int]:
-=======
-
-
-def check(link: str) -> bool:
->>>>>>> e58d558c ([#44827] lint python code and add ci job)
     """return True if link can be followed and the final response is less than 400
 
     Redirects are allowed and only the first byte is downloaded with get-call.
@@ -72,15 +68,7 @@ def check(link: str) -> bool:
 
     r = requests.get(link.url, allow_redirects=True, timeout=TIMEOUT, headers=__HEADERS)
     try:
-<<<<<<< HEAD
         r.raise_for_status()
         return True, r.status_code
-    except RequestException as e:
-        return False, r.status_code
-=======
-        r = requests.get(link, allow_redirects=True, timeout=TIMEOUT, headers=__HEADERS)
-        r.raise_for_status()
-        return True
     except RequestException:
-        return False
->>>>>>> e58d558c ([#44827] lint python code and add ci job)
+        return False, r.status_code
