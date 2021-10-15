@@ -16,13 +16,13 @@ function testConnection(e) {
     e.preventDefault();
 
     // Get values from connection protocol and connection url
-    var connection_protocol = document.getElementById("id_connection_protocol").value;
-    var connection_url = document.getElementById("id_connection_url").value;
+    var connectionProtocol = document.getElementById("id_connection_protocol").value;
+    var connectionUrl = document.getElementById("id_connection_url").value;
 
     var oReq = new XMLHttpRequest();
 
     // Get Http request with params
-    oReq.open("GET", urlConnection + "?url=" + connection_protocol + connection_url);
+    oReq.open("GET", urlConnection + "?url=" + connectionProtocol + connectionUrl);
 
     oReq.onreadystatechange = function () {
         if (oReq.readyState === 4) {
@@ -51,15 +51,15 @@ function testAuth(e) {
     e.preventDefault();
 
     // Get values from connection protocol, connection url, bind_dn and credential
-    var connection_protocol = document.getElementById("id_connection_protocol").value;
-    var connection_url = document.getElementById("id_connection_url").value;
-    var bind_dn = document.getElementById("id_bind_dn").value;
+    var connectionProtocol = document.getElementById("id_connection_protocol").value;
+    var connectionUrl = document.getElementById("id_connection_url").value;
+    var bindDn = document.getElementById("id_bind_dn").value;
     var credential = document.getElementById("id_ldap_password").value;
 
     var oReq = new XMLHttpRequest();
 
     // Get Http request with params
-    oReq.open("GET", urlAuth + "?url=" + connection_protocol + connection_url + "&bind_dn=" + bind_dn  + "&bind_credential=" + credential);
+    oReq.open("GET", urlAuth + "?url=" + connectionProtocol + connectionUrl + "&bind_dn=" + bindDn  + "&bind_credential=" + credential);
 
     oReq.onreadystatechange = function () {
         if (oReq.readyState === 4) {

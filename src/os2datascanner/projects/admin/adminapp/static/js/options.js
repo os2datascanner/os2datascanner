@@ -4,7 +4,7 @@ var x, i, j, l, ll, selElmnt, a, b, c;
 x = document.getElementsByClassName("dropdown");
 l = x.length;
 
-for (i = 0; i < l; i++) {
+for (i = 0; i < l; i += 1) {
   selElmnt = x[i].getElementsByTagName("select")[0];
   ll = selElmnt.length;
 
@@ -18,27 +18,27 @@ for (i = 0; i < l; i++) {
   /* for each element, create a new DIV that will contain the option list */
   b = document.createElement("DIV");
   b.setAttribute("class", "select-items select-hide");
-  for (j = 0; j < ll; j++) {
+  for (j = 0; j < ll; j += 1) {
     /* for each option in the original select element,
     create a new DIV that will act as an option item */
     c = document.createElement("DIV");
     c.innerHTML = selElmnt.options[j].innerHTML;
     c.value = selElmnt.options[j].value;
 
-    c.addEventListener("click", function(e) {
+    c.addEventListener("click", function() {
         /* when an item is clicked, update the original select box,
         and the selected item */
         var y, i, k, s, h, sl, yl;
         s = this.parentNode.parentNode.getElementsByTagName("select")[0];
         sl = s.length;
         h = this.parentNode.previousSibling;
-        for (i = 0; i < sl; i++) {
-          if (s.options[i].innerHTML == this.innerHTML) {
+        for (i = 0; i < sl; i += 1) {
+          if (s.options[i].innerHTML === this.innerHTML) {
             s.selectedIndex = i;
             h.innerHTML = this.innerHTML;
             y = this.parentNode.getElementsByClassName("same-as-selected");
             yl = y.length;
-            for (k = 0; k < yl; k++) {
+            for (k = 0; k < yl; k += 1) {
               y[k].removeAttribute("class");
             }
             this.setAttribute("value", this.value);
@@ -71,14 +71,14 @@ function closeAllSelect(elmnt) {
   y = document.getElementsByClassName("select-selected");
   xl = x.length;
   yl = y.length;
-  for (i = 0; i < yl; i++) {
-    if (elmnt == y[i]) {
+  for (i = 0; i < yl; i += 1) {
+    if (elmnt === y[i]) {
       arrNo.push(i);
     } else {
       y[i].classList.remove("select-arrow-active");
     }
   }
-  for (i = 0; i < xl; i++) {
+  for (i = 0; i < xl; i += 1) {
     if (arrNo.indexOf(i)) {
       x[i].classList.add("select-hide");
     }

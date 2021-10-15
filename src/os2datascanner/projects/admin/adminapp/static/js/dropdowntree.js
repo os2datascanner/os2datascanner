@@ -8,7 +8,7 @@ Copyright (C) 2016  Joseph Safwat Khella
  * Select2-to-Tree 1.1.1
  * https://github.com/clivezhg/select2-to-tree
  */
-let selected_values = [];
+let selectedValues = [];
 (function ($) {
 	$.fn.select2ToTree = function (options) {
 		var opts = $.extend({}, options);
@@ -28,8 +28,10 @@ let selected_values = [];
 			if (data.element) {
 				var ele = data.element;
 				container.setAttribute("data-val", ele.value);
-				if (ele.className) container.className += " " + ele.className;
-				if(selected_values.indexOf(ele.value)!=-1) {
+				if (ele.className) {
+                    container.className += " " + ele.className;
+                }
+				if(selectedValues.indexOf(ele.value)!==-1) {
 					$($iteme.children()[0]).removeClass('org-icon');
 					$($iteme.children()[0]).addClass('org-icon-selected');
 					container.setAttribute('aria-selected', true);
@@ -67,7 +69,7 @@ let selected_values = [];
 			selectNodes(value, false);
 		} );
 
-		s2inst.on("select2:open", function (evt) {
+		s2inst.on("select2:open", function () {
 			var s2data = s2inst.data("select2");
 			s2data.$dropdown.addClass("s2-to-tree");
 			s2data.$dropdown.removeClass("searching-result");
@@ -77,7 +79,7 @@ let selected_values = [];
 		});
 
 		// Show search result options even if they are collapsed 
-		function inputHandler(evt) {
+		function inputHandler() {
 			var s2data = s2inst.data("select2");
 
 			if ($(this).val().trim().length > 0) {
@@ -89,60 +91,60 @@ let selected_values = [];
 
 		// when unselecting a node, unselect all descendents and ancestors  
 		s2inst.on('select2:unselect', function (evt) {
-			let selected_id = evt.params.data.id;
+			let selectedId = evt.params.data.id;
 			let options = Array.prototype.slice.call(document.querySelectorAll("li.select2-results__option"));
-			let selected_node = options.filter(function (element) { return element.dataset.val == selected_id; })[0];
+			let selectedNode = options.filter(function (element) { return element.dataset.val === selectedId; })[0];
 			//if the dropdown menu is openend, remove the checkmark
-			if( selected_node ) {	
-				$(selected_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected');
-				$(selected_node.querySelector(".item-label").children[0]).addClass('org-icon');
+			if( selectedNode ) {	
+				$(selectedNode.querySelector(".item-label").children[0]).removeClass('org-icon-selected');
+				$(selectedNode.querySelector(".item-label").children[0]).addClass('org-icon');
 			}
 			//finding descendents
 			let descendents = [];
-			findChildNodes(selected_id, descendents);
+			findChildNodes(selectedId, descendents);
 			//for each descendent, unselect select element
-			descendents.forEach(function (descendent_id) {
-				let child_node = options.filter(function (element) { return element.dataset.val == descendent_id; })[0];
-				if(  child_node ) {
-					$(child_node.querySelector(".item-label").children[0]).removeClass('org-icon-selected');
-					$(child_node.querySelector(".item-label").children[0]).addClass('org-icon');
-					child_node.ariaSelected = false;
+			descendents.forEach(function (descendentId) {
+				let childNode = options.filter(function (element) { return element.dataset.val === descendentId; })[0];
+				if(  childNode ) {
+					$(childNode.querySelector(".item-label").children[0]).removeClass('org-icon-selected');
+					$(childNode.querySelector(".item-label").children[0]).addClass('org-icon');
+					childNode.ariaSelected = false;
 				}
 			});
-			//..unselect them from selected_values			
-			let to_be_removed = [selected_id];
-			descendents.forEach(function (item) { to_be_removed.push(item); });
-			to_be_removed.forEach(function (element) {
-				selected_values = selected_values.filter(function (value) { return value != element; });
+			//..unselect them from selectedValues			
+			let toBeRemoved = [selectedId];
+			descendents.forEach(function (item) { toBeRemoved.push(item); });
+			toBeRemoved.forEach(function (element) {
+				selectedValues = selectedValues.filter(function (value) { return value !== element; });
 			});
 			changeSelectedValuesInDropdown();
 		});
 
 		// add all child nodes and the selected node
 		s2inst.on('select2:selecting', function (evt) {
-			let selected_id = evt.params.args.data.id;
-			selectNodes(selected_id, true);
+			let selectedId = evt.params.args.data.id;
+			selectNodes(selectedId, true);
 			$('.select2-search__field').val("");
 			evt.preventDefault();
 		});
 
-		function selectNodes(selected_id, selectChildren) {
-			selected_values.push(selected_id);
-			selected_ids = [selected_id];
+		function selectNodes(selectedId, selectChildren) {
+			selectedValues.push(selectedId);
+			selectedIds = [selectedId];
 			
 			if(selectChildren){
 				let descendents = [];
-				findChildNodes(selected_id, descendents);
-				descendents.forEach(function (item) { selected_values.push(item); });
-				descendents.forEach(function (item) { selected_ids.push(item); });
+				findChildNodes(selectedId, descendents);
+				descendents.forEach(function (item) { selectedValues.push(item); });
+				descendents.forEach(function (item) { selectedIds.push(item); });
 			}
 
 			let options = Array.prototype.slice.call(document.querySelectorAll("li.select2-results__option"));
-			let selected_nodes = options.filter(function (option) {
-				return selected_ids.indexOf(option.dataset.val)!=-1;
+			let selectedNodes = options.filter(function (option) {
+				return selectedIds.indexOf(option.dataset.val)!==-1;
 			});
-			selected_nodes.forEach( function(node) {	
-				if( node.className.indexOf('non-leaf') != -1 && node.className.indexOf('opened') == -1  ) {
+			selectedNodes.forEach( function(node) {	
+				if( node.className.indexOf('non-leaf') !== -1 && node.className.indexOf('opened') === -1  ) {
 					$(node).addClass('opened');
 					showHideSub(node);
 				}
@@ -153,24 +155,25 @@ let selected_values = [];
 
 		// changes the selected values, and triggers change on tree 
 		function changeSelectedValuesInDropdown() {
-			unique_values = [];
+			uniqueValues = [];
 			//remove duplicates
-			selected_values.forEach(function (value) {
-				if (unique_values.indexOf(value) == -1) 
-					unique_values.push(value);
+			selectedValues.forEach(function (value) {
+				if (uniqueValues.indexOf(value) === -1) {
+                    uniqueValues.push(value);
+                }
 			});
-			selected_values = unique_values;
-			$(s2inst).val(selected_values);
+			selectedValues = uniqueValues;
+			$(s2inst).val(selectedValues);
 			$(s2inst).trigger('change');
 		}
 
 		s2inst.on('change', function () {
-			if(selected_values.length > 0) {
+			if(selectedValues.length > 0) {
 				let options = Array.prototype.slice.call(document.querySelectorAll("li.select2-results__option"));
-				let selected_nodes = options.filter(function (option) {
-					return selected_values.indexOf(option.dataset.val)!=-1;
+				let selectedNodes = options.filter(function (option) {
+					return selectedValues.indexOf(option.dataset.val)!==-1;
 				});
-				selected_nodes.forEach( function(node){
+				selectedNodes.forEach( function(node){
 					//If the dropdown elements exist
 					if(node.querySelector(".item-label").children[0]) {
 						$(node.querySelector(".item-label").children[0]).removeClass('org-icon');
@@ -181,13 +184,13 @@ let selected_values = [];
 			}
 		});
 
-		/** finds all descendents of a node, if recursively == false, only go one lvl down */
-		function findChildNodes(selected_id, descendents_ids) {
+		/** finds all descendents of a node, if recursively === false, only go one lvl down */
+		function findChildNodes(selectedId, descendentsIds) {
 			//babel conversion for a default param
 			var recursively = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true; 
 			
-			var $selected_node = $('#treeview_option_' + selected_id);
-			var descendents = $selected_node.data('descendents');
+			var $selectedNode = $('#treeview_option_' + selectedId);
+			var descendents = $selectedNode.data('descendents');
 
 			if (descendents) {
 				
@@ -195,19 +198,23 @@ let selected_values = [];
 
 				descendents.forEach(function (string) {
 					//add all isolated uuid's to descendents_id, if not 0
-					if (string.match(regex)) descendents_ids.push(string.match(regex)[0]);
+					if (string.match(regex)) {
+                        descendentsIds.push(string.match(regex)[0]);
+                    }
 				});
 
 				if (recursively) {
-					descendents_ids.forEach(function (id) {
+					descendentsIds.forEach(function (id) {
 						// recursively search down the tree for more descendents
-						var temp_ids = [];
-						findChildNodes(id, temp_ids);
-						if (temp_ids) descendents_ids.push.apply(descendents_ids, temp_ids);
+						var tempIds = [];
+						findChildNodes(id, tempIds);
+						if (tempIds) {
+                            descendentsIds.push.apply(descendentsIds, tempIds);
+                        }
 					});
 				}
 			}
-			return descendents_ids;
+			return descendentsIds;
 		}
 		return s2inst;
 	};
@@ -220,7 +227,7 @@ let selected_values = [];
 		*/
 		function readPath(object, path) {
 			var currentPosition = object;
-			for (var j = 0; j < path.length; j++) {
+			for (var j = 0; j < path.length; j += 1) {
 				var currentPath = path[j];
 				if (currentPosition[currentPath]) {
 					currentPosition = currentPosition[currentPath];
@@ -241,7 +248,7 @@ let selected_values = [];
 				idPath = treeData.valFld.split('.');
 			}
 
-			for (var i = 0; i < dataArr.length; i++) {
+			for (var i = 0; i < dataArr.length; i += 1) {
 				var data = dataArr[i] || {};
 				var $opt = $("<option></option>"); // the option element to be build
 				if (labelPath) {
@@ -268,13 +275,17 @@ let selected_values = [];
 				if (inc && inc.length > 0) {
 					var descendents = [];
 					for (var descendent in inc) {
+						if (descendent) {
 						descendents.push(descendent.uuid);
+						}
 					}
 					$opt.data('descendents', descendents);
 				}
 
 				$opt.addClass("l" + curLevel);
-				if (pup) $opt.attr("data-pup", pup);
+				if (pup) {
+                    $opt.attr("data-pup", pup);
+                }
 				$el.append($opt);
 				inc = data[treeData.incFld || "inc"];
 				if (inc && inc.length > 0) {
@@ -285,12 +296,14 @@ let selected_values = [];
 		} // end 'buildOptions'
 
 		buildOptions(treeData.dataArr, 1, "");
-		if (treeData.dftVal) $el.val(treeData.dftVal);
+		if (treeData.dftVal) {
+            $el.val(treeData.dftVal);
+        }
 	}
 
 	var uniqueIdx = 1;
 	function getUniqueValue() {
-		return "autoUniqueVal_" + uniqueIdx++;
+		return "autoUniqueVal_" + (uniqueIdx += 1);
 	}
 
 	function toggleSubOptions(target) {
@@ -317,7 +330,9 @@ let selected_values = [];
 				}
 			}
 		} while (curEle);
-		if (shouldShow) $(ele).addClass("showme");
+		if (shouldShow) {
+            $(ele).addClass("showme");
+        }
 
 		var val = ($(ele).attr("data-val") || "").replace(/'/g, "\\'");
 		$options.find(".select2-results__option[data-pup='" + val + "']").each(function () {
@@ -325,7 +340,7 @@ let selected_values = [];
 		});
 	}
 })(jQuery);
-
+/* jshint -W098 */ //disable check is used ( called from other file )
 function createTreeView() {
 	/** disables file upload */
 	function orgUnitSelectOptionValueToggle() {

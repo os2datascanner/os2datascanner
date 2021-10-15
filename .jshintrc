@@ -1,5 +1,13 @@
+/* general rules for js linting  */
 {
     "esversion": 6,
     "laxbreak":true,
-    "scripturl": true
+    "scripturl": true,
+    "bitwise":true,
+    "camelcase":true,
+    "curly": true,
+    "eqeqeq":true,
+    "forin": true,
+    "freeze": true,
+    "unused": true
 }

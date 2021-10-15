@@ -4,7 +4,7 @@
 //
 // for (let i = 0; i < btnSync.length; i++)
 //     btnSync[i].addEventListener('click', ldapSync)
-
+/* jshint -W098 */ //disable check is used ( called from html )
 function ldapSync(e) {
     e.preventDefault();
 
