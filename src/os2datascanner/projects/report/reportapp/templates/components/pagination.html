@@ -60,7 +60,7 @@
           {% endif %}
         </div>
         <form action="" class="flex">
-          <label for="page" class="text">
+          <label for="page">
             {% trans "Go to page" %}
           </label>
           <input id="page" type="number" name="page" min="1" max="{{ paginator.num_pages|unlocalize }}" onkeyup=imposeMinMax(this)>

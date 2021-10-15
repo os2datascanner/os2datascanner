@@ -80,6 +80,8 @@
   margin-right: .7rem;
   border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
   cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .select-items div:first-child {

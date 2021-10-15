@@ -7,13 +7,21 @@
   td {
     border-top: none;
     line-height: 1;
-    padding: var(--datatable-cell-padding);
+    padding: calc(var(--datatable-cell-padding) / 2) !important; // !important in order to override specificity of .datatable td:first-child selector
     vertical-align: top;
+  }
+
+  .page_of_pages,
+  form,
+  .pages,
+  .get-results {
+    display: block;
+    margin: calc(var(--datatable-cell-padding) / 2);
   }
 
   .flex {
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
     align-items: center;
     justify-content: space-between;
     font-size: 1rem;
@@ -25,14 +33,23 @@
   }
 
   .pages {
-    flex: 1 1 auto;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
+  .get-results {
+    flex: 0 1 auto;
+  }
+
   form {
     flex: 0 1 auto;
+    margin-left: auto;
+    @media (min-width: $break-sm) {
+      margin-left: calc(var(--datatable-cell-padding) / 2);
+      margin-right: auto;
+      padding-right: calc(var(--datatable-cell-padding) / 2);
+    }
   }
 
   .link {
@@ -58,6 +75,7 @@
     margin-right: 0.5rem;
     color: var(--color-text-main);
     text-decoration: none;
+    display: none;
 
     &--dot {
       font-weight: normal;
@@ -86,10 +104,17 @@
     }
   }
 
-  .text {
-    margin: 0 .5rem;
+  .page,
+  .page--dot {
+    display: none;
+    @media (min-width: $break-sm) {
+      display: inline;
+    }
+  }
+
+  label {
+    margin-right: .5rem;
     color: var(--color-text-secondary);
-    width: 5rem;
     font-size: .9rem;
   }
 

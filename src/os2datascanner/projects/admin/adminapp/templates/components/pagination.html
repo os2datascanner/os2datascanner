@@ -6,66 +6,68 @@
 <tbody class="pagination">
 
       <td colspan="4" class="pagination__column--page">
-        <span class="page_of_pages">
-          {{ page_obj.number }} af {{ paginator.num_pages }}
-        </span>
-
         <div class="flex">
-          {% if page_obj.previous_page_number != 0 %}
-            <a class="link link--pre" href="?{% param_replace page=page_obj.previous_page_number %}">
+          <span class="page_of_pages">
+            {{ page_obj.number }} af {{ paginator.num_pages }}
+          </span>
+
+          <div class="flex paginator">
+            {% if page_obj.previous_page_number != 0 %}
+              <a class="link link--pre" href="?{% param_replace page=page_obj.previous_page_number %}">
+                <span class="flex">
+                  <i id="chevron_left" class="material-icons">chevron_left</i>
+                  {% trans "Previous" %}
+                </span>
+              </a>
+            {% else %}
+              <a class="link--pre disabled">
+                <span class="flex">
+                  <i id="chevron_left" class="material-icons">chevron_left</i>
+                  {% trans "Previous" %}
+                </span>
+              </a>
+            {% endif %}
+
+            {% if paginator.num_pages > 1 %}
+              {% for n in paginator.page_range %}
+                {% if page_obj.number|add:'-2' == n %} <!-- If current page -2 = 1 (n)  -->
+                  {# First page #}
+                  <a class="page" href="?{% param_replace page=1 %}">1</a>
+                  {% if n != 1 %}
+                    <span class="page--dot">...</span>
+                  {% endif %}
+                {% elif page_obj.number == n %}
+                  {# Current page #}
+                  <a class="page page--active" href="#">{{ n }}</a>
+                    {# Set how many pages on each side of current page #}
+                {% elif page_obj.number|add:'-2' < n and n < page_obj.number|add:'2' %} {# Pages around current page #}
+                    <a class="page" href="?{% param_replace page=n %}">{{ n }}</a>
+                {% elif page_obj.number|add:'2' == n %}
+                  {# Last page #}
+                  {% if page_obj.number != paginator.num_pages %}
+                    <span class="page--dot">...</span>
+                  {% endif %}
+                    <a class="page" href="?{% param_replace page=paginator.num_pages %}">{{ paginator.num_pages }}</a>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+
+            {% if page_obj.number != page_obj.paginator.num_pages %}
+            <a class="link link--next" href="?{% param_replace page=page_obj.next_page_number %}">
               <span class="flex">
-                <i id="chevron_left" class="material-icons">chevron_left</i>
-                {% trans "Previous" %}
+                {% trans "Next" %}
+                <i id="chevron_right" class="material-icons">chevron_right</i>
               </span>
             </a>
-          {% else %}
-            <a class="link--pre disabled">
+            {% else %}
+            <a class="link--next disabled">
               <span class="flex">
-                <i id="chevron_left" class="material-icons">chevron_left</i>
-                {% trans "Previous" %}
+                {% trans "Next" %}
+                <i id="chevron_right" class="material-icons">chevron_right</i>
               </span>
             </a>
-          {% endif %}
-
-          {% if paginator.num_pages > 1 %}
-            {% for n in paginator.page_range %}
-              {% if page_obj.number|add:'-2' == n %} <!-- If current page -2 = 1 (n)  -->
-                {# First page #}
-                <a class="page" href="?{% param_replace page=1 %}">1</a>
-                {% if n != 1 %}
-                  <span class="page--dot">...</span>
-                {% endif %}
-              {% elif page_obj.number == n %}
-                {# Current page #}
-                <a class="page page--active" href="#">{{ n }}</a>
-                  {# Set how many pages on each side of current page #}
-              {% elif page_obj.number|add:'-2' < n and n < page_obj.number|add:'2' %} {# Pages around current page #}
-                  <a class="page" href="?{% param_replace page=n %}">{{ n }}</a>
-              {% elif page_obj.number|add:'2' == n %}
-                {# Last page #}
-                {% if page_obj.number != paginator.num_pages %}
-                  <span class="page--dot">...</span>
-                {% endif %}
-                  <a class="page" href="?{% param_replace page=paginator.num_pages %}">{{ paginator.num_pages }}</a>
-              {% endif %}
-            {% endfor %}
-          {% endif %}
-
-          {% if page_obj.number != page_obj.paginator.num_pages %}
-          <a class="link link--next" href="?{% param_replace page=page_obj.next_page_number %}">
-            <span class="flex">
-              {% trans "Next" %}
-              <i id="chevron_right" class="material-icons">chevron_right</i>
-            </span>
-          </a>
-          {% else %}
-          <a class="link--next disabled">
-            <span class="flex">
-              {% trans "Next" %}
-              <i id="chevron_right" class="material-icons">chevron_right</i>
-            </span>
-          </a>
-          {% endif %}
+            {% endif %}
+          </div>
         </div>
       </td>
 

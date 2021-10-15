@@ -1,3 +1,5 @@
+@import "_sass_vars";
+
 @font-face {
 	font-family: "Material Icons";
 	font-style: normal;
@@ -18,8 +20,8 @@
 		var(--transition-timing-function) var(--transition-delay);
 
 	--size-ds-unit: 8px;
-	--size-logo-height: calc(var(--size-ds-unit) * 5);
-	--size-logo-width: calc(var(--size-ds-unit) * 25);
+	--size-logo-height: calc(var(--size-ds-unit) * 3.75);
+	--size-logo-width: calc(var(--size-ds-unit) * 3.75 * 6.3546875); // this number is the logo graphic's aspect ratio
 	--size-base-font-size: calc(var(--size-ds-unit) * 2);
 
 	//primary colors

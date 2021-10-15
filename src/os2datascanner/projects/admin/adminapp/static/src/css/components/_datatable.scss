@@ -1,16 +1,58 @@
 :root {
-  --datatable-cell-padding: 2rem;
+  --datatable-cell-padding: 2em;
+}
+
+.datatable-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-bottom: 3rem;
+  box-shadow: var(--box-shadow-widget);
+  border-radius: var(--border-radius-widget);
+  background-color: var(--color-widget-bg);
+
+  // use gradients to signify that the table is scrollable
+  background:
+    linear-gradient(to right, white var(--datatable-cell-padding), transparent 100%),
+    linear-gradient(to right, #22222266, transparent 100%),
+    linear-gradient(to left, white var(--datatable-cell-padding), transparent 100%) 100% 0,
+    linear-gradient(to left, #22222266, transparent 100%) 100% 0,
+    var(--color-widget-bg);
+  background-repeat: no-repeat;
+  background-size:
+    calc(var(--datatable-cell-padding) * 4) 100%,
+    var(--datatable-cell-padding) 100%,
+    calc(var(--datatable-cell-padding) * 4) 100%,
+    var(--datatable-cell-padding) 100%;
+  background-attachment:
+    local,
+    scroll,
+    local,
+    scroll;
+
+  &:focus {
+    box-shadow: var(--box-shadow-widget), 0 0 0 3px var(--color-primary-light);
+  }
+  &.sm {
+    > .datatable {
+      min-width: 35rem;
+    }
+  }
+  &.md {
+    > .datatable {
+      min-width: 45rem;
+    }
+  }
+  &.lg {
+    > .datatable {
+      min-width: 55rem;
+    }
+  }
 }
 
 .datatable {
-  background-color: #fff;
   border-collapse: collapse;
-  box-shadow: var(--box-shadow-widget);
-  border-radius: var(--border-radius-widget);
-  max-width: 90rem;
   table-layout: fixed;
-  width: calc(100% - 2rem);
-  margin-bottom: 3rem;
+  width: 100%;
 
   &--wide {
     max-width: none;
@@ -46,7 +88,18 @@
     }
 
     &--actions {
-      width: 15rem;
+      max-width: 15rem;
+      .action-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -.25rem 0 0 -.25rem;
+        .button {
+          margin: .25rem 0 0 .25rem;
+        }
+        > * {
+          flex: 0 1 auto; // be explicit for IE11s sake
+        }
+      }
     }
 
     &--info {
@@ -113,6 +166,8 @@
   line-height: 1;
   padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
   vertical-align: top;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:first-child {
     padding-left: var(--datatable-cell-padding);
@@ -230,6 +285,7 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: var(--border-radius-button);
   padding: .5rem;
+  margin: 0 .25rem .25rem 0;
 }
 
 .scan {

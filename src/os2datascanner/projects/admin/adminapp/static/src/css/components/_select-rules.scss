@@ -2,10 +2,20 @@
 .select-employees {
   display: grid;
   gap: 1rem;
-  grid-template-columns: 1fr .03fr 1fr;
-  grid-template-areas: "available icon selected";
+  justify-items: stretch;
+  grid-template-areas:
+    "available"
+    "icon"
+    "selected";
+  grid-template-rows: 1fr .03fr 1fr;
+  grid-template-columns: 1fr;
   line-height: 1;
   padding-bottom: 0.25rem;
+  @media (min-width: $break-sm) {
+    grid-template-rows: auto;
+    grid-template-columns: 1fr .03fr 1fr;
+    grid-template-areas: "available icon selected";
+  }
 
   &__available {
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
@@ -14,6 +24,8 @@
     list-style: none;
     margin: 0;
     padding: 0.5rem;
+    max-width: 100%;
+    min-width: 0; // to prevent grid blowout;
   }
 
   &__selected {
@@ -21,6 +33,8 @@
     border-radius: .25rem;
     grid-area: selected;
     padding: 0.5rem;
+    max-width: 100%;
+    min-width: 0; // to prevent grid blowout;
   }
 
   .select-rules-title,
@@ -41,6 +55,11 @@
     font-size: 3rem;
     padding-right: .25rem;
     color: #9E9E9E;
+    justify-self: center;
+    transform: rotate(90deg);
+    @media (min-width: $break-sm) {
+      transform: none;
+    }
   }
 
 }
@@ -51,7 +70,9 @@
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
   border: none;
   border-radius: var(--border-radius-small);
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin: 0;
   padding: 0.5rem;
   transition: var(--transition-default);
@@ -76,20 +97,36 @@
   }
 }
 
+.add-rule-button,
+.add-employee-button {
+  max-width: 100%;
+  flex: 1 1 calc(100% - 2rem);
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  line-height: normal; // prevent y-overflow
+}
+
 .remove-rule-button,
 .remove-employee-button {
-  float: right;
+  order: 1;
   background: no-repeat 50%/50% 50%;
   background-image: url("../svg/clear.svg");
-  height: 2.5rem;
-  width: 2.5rem;
-  margin-right: .5rem;
-  margin-top: -.75rem;
+  width: 2rem;
+  height: 2rem;
+  margin: -.5rem;
 
   &.disabled {
     background-color: rgba(0, 0, 0, 0.2);
     cursor: not-allowed;
   }
+}
+
+.selected_rule span {
+  min-width: 0;
+  flex: 0 1 calc(100% - 2rem); // make room for button
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: normal; // prevent y-overflow
 }
 
 //Filter

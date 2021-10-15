@@ -2,8 +2,9 @@
 {% load static %}
 
 {% block body %}
-  {% include "partials/main.html" with active_tab="guide" %}
+{% include "partials/header.html" %}
 <main class="wrapper">
+  {% include "partials/main.html" with active_tab="guide" %}
 <div class="content">
 <div class="prose">
   <nav class="toc">
@@ -76,7 +77,7 @@
 <p>Har du brug for en hurtig genopfriskning af et bestemt begreb, kan du <a href="#Ordliste">slå det op i ordlisten</a>.</p>
 
 <h2 id="OS2datascanner-helt-kort">OS2datascanner - helt kort</h2>
-<img class="page-width" src="../../static/src/svg/os2ds-workflow-grafik.svg" alt="OS2datascanners overordnede workflow"/>
+<img src="../../static/src/svg/os2ds-workflow-grafik.svg" alt="OS2datascanners overordnede workflow"/>
 
 <h2 id="Implementering-og-forankring">Første del: Implementering og forankring</h2>
 <h4>Sådan bliver OS2datascanner en integreret del af jeres GDPR-arbejde</h4>
@@ -85,88 +86,90 @@
 <h3 id="De-fire-faser">De fire faser</h3>
 <p>Vi lægger op til, at implementeringen har fire faser, der samlet strækker sig over omtrent syv uger.  I korte træk ser forløbet således ud:</p>
 
-<table class="page-width table">
-  <thead>
-    <tr>
-      <th>Fase</th>
-      <th>Tidspunkt</th>
-      <th>Jeres opgaver</th>
-      <th>Magentas opgaver</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><p>1: Opstart - møde og opsætning</p></td>
-      <td><p>Dag 0</p>
-      </td>
-      <td>
-        <ul>
-          <li>Før mødet: Nedsæt et team af medarbejdere</li>
-          <li>Før mødet: Forbered spørgsmål</li>
-          <li>Efter mødet: Kommunikér om OS2datascanner i jeres organisation</li>
-          <li>Efter mødet: Giv Magenta adgang til jeres systemer</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Før mødet: Indkald til mødet</li>
-          <li>På mødet: Præsentér OS2datascanner</li>
-          <li>Efter mødet: Opsæt systemet</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><p>2: Forberedelse - testscans og oplæring</p></td>
-      <td><p>Uge 1-2</p>
-      </td>
-      <td>
-        <ul>
-          <li>Teste systemet en uges tid ved scan af eksempelvis netværksdrev</li>
-          <li>Oplære superbrugere</li>
-          <li>Møde med Magenta: Evaluering af testscans </li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Overvåge testscans</li>
-          <li>Løbende support</li>
-          <li>Indkald til og afhold evaluering af testscans</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><p>3: Udrulning - hovedrengøringer og overdragelse</p></td>
-      <td><p>Uge 3-6</p>
-      </td>
-      <td>
-        <ul>
-          <li>Introducere og implementere OS2datascanner i organisationen i flere faser</li>
-          <li>Løbende kommunikation til jeres organisation: Hvorfor og hvordan bruger vi OS2datascanner??</li>
-          <li>Support til slutbrugerne, evt. gennem jeres superbrugere</li>
-          <li>Efter aftale med Magenta: Lade systemet overgå til normal drift</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Løbende support</li>
-          <li>Indkalde til møde om at lade systemet overgå til normal drift</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><p>4: Forankring - løbende scans og nye vaner</p></td>
-      <td><p>Uge 7 og frem</p>
-      </td>
-      <td>
-        <ul>
-          <li>Hjælpe medarbejderne med at forankre OS2datascanner som en naturlig del af deres IT-værktøjskasse, eksempelvis ved at lave løbende scans.</li>
-          <li>Evaluere, om I får opfyldt jeres mål med at bruge systemet.</li>
-        </ul>
-      </td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
+<div class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Fase</th>
+        <th>Tidspunkt</th>
+        <th>Jeres opgaver</th>
+        <th>Magentas opgaver</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><p>1: Opstart - møde og opsætning</p></td>
+        <td><p>Dag 0</p>
+        </td>
+        <td>
+          <ul>
+            <li>Før mødet: Nedsæt et team af medarbejdere</li>
+            <li>Før mødet: Forbered spørgsmål</li>
+            <li>Efter mødet: Kommunikér om OS2datascanner i jeres organisation</li>
+            <li>Efter mødet: Giv Magenta adgang til jeres systemer</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Før mødet: Indkald til mødet</li>
+            <li>På mødet: Præsentér OS2datascanner</li>
+            <li>Efter mødet: Opsæt systemet</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td><p>2: Forberedelse - testscans og oplæring</p></td>
+        <td><p>Uge 1-2</p>
+        </td>
+        <td>
+          <ul>
+            <li>Teste systemet en uges tid ved scan af eksempelvis netværksdrev</li>
+            <li>Oplære superbrugere</li>
+            <li>Møde med Magenta: Evaluering af testscans </li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Overvåge testscans</li>
+            <li>Løbende support</li>
+            <li>Indkald til og afhold evaluering af testscans</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td><p>3: Udrulning - hovedrengøringer og overdragelse</p></td>
+        <td><p>Uge 3-6</p>
+        </td>
+        <td>
+          <ul>
+            <li>Introducere og implementere OS2datascanner i organisationen i flere faser</li>
+            <li>Løbende kommunikation til jeres organisation: Hvorfor og hvordan bruger vi OS2datascanner??</li>
+            <li>Support til slutbrugerne, evt. gennem jeres superbrugere</li>
+            <li>Efter aftale med Magenta: Lade systemet overgå til normal drift</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Løbende support</li>
+            <li>Indkalde til møde om at lade systemet overgå til normal drift</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td><p>4: Forankring - løbende scans og nye vaner</p></td>
+        <td><p>Uge 7 og frem</p>
+        </td>
+        <td>
+          <ul>
+            <li>Hjælpe medarbejderne med at forankre OS2datascanner som en naturlig del af deres IT-værktøjskasse, eksempelvis ved at lave løbende scans.</li>
+            <li>Evaluere, om I får opfyldt jeres mål med at bruge systemet.</li>
+          </ul>
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <h4 id="Foerste-fase">Første fase: Opstart - møde og opsætning</h4>
 <p>Når aftalen mellem jer og Magenta er på plads, holder vi et opstartsmøde. Her vil det være godt, hvis både jeres projektleder og jeres tekniske ansvarlige er til stede, for det er vigtigt at inddrage de relevante medarbejdere fra starten. Det vil også typisk være her, vi sammen vælger en single point of contact (SPOC) for det organisatoriske samarbejde og en SPOC for den tekniske implementering, som efter vores erfaring er den bedste måde at organisere samarbejdet på</p>
@@ -458,7 +461,7 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 
 <p>Man kan også oprette en fil ved navn outlook.reg med følgende tekst (vær igen opmærksom på, at stien til Outlook.exe skal være korrekt):</p>
 
-<pre class="page-width">Windows Registry Editor Version 5.00
+<pre>Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\SOFTWARE\Classes\outlook]
 @="URL:Outlook Folders"
@@ -473,7 +476,7 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 <p>Hvis du fra Registry Editor importerer outlook.reg-filen vil de forskellige nøgler automatisk blive opdateret i registry.</p>
 <br>
 <h4 id="Arkitekturtegninger">Arkitekturtegninger</h4>
-<a href="../../static/src/svg/os2ds-arkitektur.png" target="_blank"><img class="page-width" src="../../static/src/svg/os2ds-arkitektur.png"/ alt="Illustration af OS2datascanners arkitektur"></a>
+<a href="../../static/src/svg/os2ds-arkitektur.png" target="_blank"><img src="../../static/src/svg/os2ds-arkitektur.png"/ alt="Illustration af OS2datascanners arkitektur"></a>
 
 
 <h3 id="Downloads">Downloads</h3>

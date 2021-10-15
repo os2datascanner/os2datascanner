@@ -66,6 +66,8 @@ label+.dropdown {
   border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
   cursor: pointer;
   user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .select-items div:first-child {

@@ -3,7 +3,7 @@
     {% if user.is_authenticated %}
         {% if not user.profile.is_upload_only %}
 <div class="scrollbar-content">
-    <div class="tabs scroll-width-none">
+    <div class="tabs">
         {% if settings.ENABLE_WEBSCAN %}
         <a id="web" class="tabs__control" href="/webscanners/">
             {% trans "Webscanner" %}
