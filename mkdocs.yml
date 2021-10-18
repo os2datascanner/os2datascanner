@@ -18,7 +18,6 @@ nav:
   - Scan API: api.md
   - Extending OS2Datascanner: engine2.md
   - Requirements: requirements.md
-  - Notes: notes.md
   - Reusable components: reusable-components.md
   - Release procedure: release-procedure.md
   - Release notes: changelog.md
