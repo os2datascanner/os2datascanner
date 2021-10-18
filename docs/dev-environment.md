@@ -74,82 +74,6 @@ other users write permissions on your local setup, will not compromise
 production security.
 
 
-## Docker-compose
-
-You can use `docker-compose` to start the OS2datascanner system and its runtime
-dependencies (PostgreSQL and RabbitMQ).
-
-A `docker-compose.yml` for development is included in the repository. It
-specifies the settings to start and connect all required services.
-
-
-### Services
-
-The main services for OS2datascanner are:
-
--   `admin_frontend`: Only needed in development.
-
-    Watches the frontend files and provides support for rebuilding the
-    frontend easily during the development process.
-
--   `admin`: Reachable on: http://localhost:8020
-
-    Runs the django application that provides the administration
-    interface for defining and managing organisations, rules, scans etc.
-
--   `explorer`: Runs the **explorer** stage of the engine.
-
--   `processor`: Runs the **processor** stage of the engine.
-
--   `matcher`: Runs the **matcher** stage of the engine.
-
--   `tagger`: Runs the **tagger** stage of the engine.
-
--   `exporter`: Runs the **exporter** stage of the engine.
-
--   `report_frontend`: Only needed in development.
-
-    Watches the frontend files and provides support for rebuilding the
-    frontend easily during the development process.
-
--   `report`: Reachable on: http://localhost:8040
-
-    Runs the django application that provides the interface for
-    accessing and handling reported matches.
-
--   `report_collector`: Runs the **collector** service that saves match
-    results to the database of the report module.
-
-These depend on some auxillary services:
-
--   `db`: Runs a postgres database server based on [the official postgres
-    docker image](https://hub.docker.com/_/postgres/).
-
--   `queue`: Runs a RabbitMQ message queue server based on [the official
-    RabbitMQ docker image](https://hub.docker.com/_/rabbitmq/) , including a
-    plugin providing a web interface for monitoring (and managing) queues and
-    users.
-
-    The web interface can be reached on: http://localhost:8030
-
--   `samba`: a Samba service that serves up some test files in a shared folder
-    called `e2test`. This can be useful to test the file scanner.
-
-    The Samba server is available as `samba:139` inside the Docker environment
-    and `localhost:8139` on the host machine. The full UNC of the shared folder
-    in the Docker environment is `//samba/e2test`.
-
-    The Samba server doesn't require a workgroup name, but it does require a
-    username (`os2`) and password (`swordfish`).
-
-    Thus from the host: `smbclient -p 8139 -U os2%swordfish //localhost/e2test`
-
--   `nginx`: a webserver that exposes the same folder as `samba`.
-
--   `mailhog`: a SMTP-server for testing purposes. 
-    web interface available at `http://localhost:8025/`.
-
-
 ## Interesting files for development
 
 We've included some interesting files to scan in `dev-environment/data`.
@@ -244,7 +168,83 @@ There are two ways to clear the queues.
 2. or from the CLI: `docker-compose exec queue rabbitmqctl purge_queue os2ds_scan_specs`
 
 
-## docker-compose profiles
+## docker-compose
+
+You can use `docker-compose` to start the OS2datascanner system and its runtime
+dependencies (PostgreSQL and RabbitMQ).
+
+A `docker-compose.yml` for development is included in the repository. It
+specifies the settings to start and connect all required services.
+
+
+### Services
+
+The main services for OS2datascanner are:
+
+-   `admin_frontend`: Only needed in development.
+
+    Watches the frontend files and provides support for rebuilding the
+    frontend easily during the development process.
+
+-   `admin`: Reachable on: http://localhost:8020
+
+    Runs the django application that provides the administration
+    interface for defining and managing organisations, rules, scans etc.
+
+-   `explorer`: Runs the **explorer** stage of the engine.
+
+-   `processor`: Runs the **processor** stage of the engine.
+
+-   `matcher`: Runs the **matcher** stage of the engine.
+
+-   `tagger`: Runs the **tagger** stage of the engine.
+
+-   `exporter`: Runs the **exporter** stage of the engine.
+
+-   `report_frontend`: Only needed in development.
+
+    Watches the frontend files and provides support for rebuilding the
+    frontend easily during the development process.
+
+-   `report`: Reachable on: http://localhost:8040
+
+    Runs the django application that provides the interface for
+    accessing and handling reported matches.
+
+-   `report_collector`: Runs the **collector** service that saves match
+    results to the database of the report module.
+
+These depend on some auxillary services:
+
+-   `db`: Runs a postgres database server based on [the official postgres
+    docker image](https://hub.docker.com/_/postgres/).
+
+-   `queue`: Runs a RabbitMQ message queue server based on [the official
+    RabbitMQ docker image](https://hub.docker.com/_/rabbitmq/) , including a
+    plugin providing a web interface for monitoring (and managing) queues and
+    users.
+
+    The web interface can be reached on: http://localhost:8030
+
+-   `samba`: a Samba service that serves up some test files in a shared folder
+    called `e2test`. This can be useful to test the file scanner.
+
+    The Samba server is available as `samba:139` inside the Docker environment
+    and `localhost:8139` on the host machine. The full UNC of the shared folder
+    in the Docker environment is `//samba/e2test`.
+
+    The Samba server doesn't require a workgroup name, but it does require a
+    username (`os2`) and password (`swordfish`).
+
+    Thus from the host: `smbclient -p 8139 -U os2%swordfish //localhost/e2test`
+
+-   `nginx`: a webserver that exposes the same folder as `samba`.
+
+-   `mailhog`: a SMTP-server for testing purposes. 
+    web interface available at `http://localhost:8025/`.
+
+
+### profiles
 
 The `docker-compose.yml` use `--profiles` which requires version
 `docker-compose > 1.28`.
@@ -267,14 +267,15 @@ The following `profiles` are available: `ldap`, `sso`, `api` and `metric`.
 The development config files are stored in `os2datascanner/dev-environment/`
 
 
-### `--profile ldap`
+#### `--profile ldap`
+
 The `ldap` profile defines a Keycloak instance and connected Postgres database,
 as well as a OpenLDAP server and admin interface.
 
 Be sure to enable import and structured org. features on the client in the admin module's django admin page.
 
 
-### Keycloak instance
+#### Keycloak instance
 
 Interface available at `localhost:8090` on the host machine.
 
@@ -291,7 +292,8 @@ The purpose of the Keycloak instance is to use its User Federation support. When
 OS2Datascanner, we create a "User Federation" in Keycloak which imports data from e.g. Active Directory. 
 Finally, we import this data to Django.
 
-### Setting up OpenLDAP
+
+#### Setting up OpenLDAP
 
 OS2datascanner's development environment incorporates the OpenLDAP server,
 which should be used to work with the system's organisational import
@@ -313,7 +315,7 @@ If you wish to access the phpLDAPadmin it will be accessible on the host machine
 Credentials will be `cn=admin,dc=magenta,dc=test:testMAG`
 
 
-#### External LDAP clients
+##### External LDAP clients
 
 The development environment's OpenLDAP server is also exposed to the host
 system on port 387, the usual port for LDAP servers. That means it's fairly
