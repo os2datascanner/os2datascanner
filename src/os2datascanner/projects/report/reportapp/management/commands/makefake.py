@@ -48,7 +48,7 @@ from .pipeline_collector import result_message_received_raw
 def emit_message(queue, m):
     m = m.to_json_object()
     m["origin"] = queue
-    for k in result_message_received_raw(m):
+    for _k in result_message_received_raw(m):
         pass
 
 
@@ -105,7 +105,7 @@ class Command(BaseCommand):
             help="Dry run; just tell me what would have happened",
         )
 
-    def handle(
+    def handle(  # noqa: CCR001, too high cognitive complexity
             self, *, handles, scan_count, scan_type, seed, summarise, dry_run,
             **options
     ):
@@ -171,7 +171,7 @@ class Command(BaseCommand):
             scan_name = "{0}.{1}".format(scan, _scan_type)
             scan_spec = make_fake_scan_type(organization, scan_name)
 
-            for h in range(handles):
+            for _h in range(handles):
                 handle = handle_generator_function()
                 scan_spec = scan_spec._replace(
                     source=handle._source,
@@ -179,7 +179,7 @@ class Command(BaseCommand):
                 match_here, match_stats = make_fake_match(scan_spec, handle)
                 stats["matches"] += match_stats["matches"]
                 # ok, this is ugly. Sorry Emil...
-                for match in (match for match in match_here if not dry_run):
+                for _match in (match for match in match_here if not dry_run):
                     emit_message(
                         "os2ds_metadata",
                         messages.MetadataMessage(
@@ -320,7 +320,7 @@ def generate_fake_data(prefix=None, paths=None, file_names=None, file_types=None
     if prefix:
         path_name = prefix[random.randrange(0, len(prefix)) - 1]
     path_lenght = random.randrange(1, 5)
-    for i in range(path_lenght):
+    for _i in range(path_lenght):
         path_name += paths[random.randrange(0, len(paths))]
     file_name = (
         file_names[random.randrange(0, len(file_names) - 1)]

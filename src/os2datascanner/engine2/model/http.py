@@ -50,7 +50,7 @@ class WebSource(Source):
     type_label = "web"
     eq_properties = ("_url", "_sitemap",)
 
-    def __init__(self, url: str, sitemap : str = "", exclude=None):
+    def __init__(self, url: str, sitemap: str = "", exclude=None):
 
         if exclude is None:
             exclude = []
@@ -73,7 +73,7 @@ class WebSource(Source):
         # details from netloc
         return self
 
-    def handles(self, sm):
+    def handles(self, sm):  # noqa: CCR001, C901 too high complexity
         session = sm.open(self)
         origin = WebHandle(self, "")
         to_visit = [(origin, TTL)]
@@ -139,14 +139,14 @@ class WebSource(Source):
                              ttl=ttl)
 
         if self._sitemap:
-            i = 0  # prevent i from being undefined if sitemap is empty
-            for i, (address, last_modified) in enumerate(
+            _i = 0  # prevent i from being undefined if sitemap is empty
+            for _i, (address, last_modified) in enumerate(
                     process_sitemap_url(self._sitemap), start=1):
                 handle_url(origin, address, lm_hint=last_modified, from_sitemap=True)
             # first entry in `to_visit` is `self`(ie. mainpage). If the mainpage
             # is not listed in sitemap this result in +1 in to_visit
             logger.debug("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
-                         format(self._sitemap, i, len(to_visit)))
+                         format(self._sitemap, _i, len(to_visit)))
             yield from known_addresses
             return
 
@@ -166,7 +166,7 @@ class WebSource(Source):
                         response = session.get(here.presentation_url, timeout=TIMEOUT)
                         sleep(SLEEP_TIME)
                         i = 0
-                        for i, link in enumerate(
+                        for _i, link in enumerate(
                                 make_outlinks(response.content,
                                               here.presentation_url),
                                 start=1):

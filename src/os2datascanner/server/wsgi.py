@@ -94,7 +94,7 @@ def _get_top(s: Source) -> Source:
 
 
 @api_endpoint
-def scan_1(body):
+def scan_1(body):  # noqa: CCR001 too high cognitive complexity
     if not body:
         yield "400 Bad Request"
         yield {

@@ -545,7 +545,7 @@ def static_timestamps(time_type: str = 'created_timestamp',
 
 
 # Reset to old values
-def reset_timestamps(arg: List[Tuple[int, datetime]],
+def reset_timestamps(arg: List[Tuple[int, datetime]],  # noqa: CCR001, E501 too high cognitive complexity
                      time_type: str = 'created_timestamp'):
 
     if time_type == 'created_timestamp':  # Default

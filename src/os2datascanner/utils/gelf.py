@@ -239,12 +239,12 @@ class GraylogDatagramHandler(logging.handlers.DatagramHandler):
             str(datetime.datetime.now().microsecond) + socket.gethostname()
         )
 
-        for i, offset in enumerate(range(0, len(data), chunk_size)):
+        for _i, offset in enumerate(range(0, len(data), chunk_size)):
             header = struct.pack(
                 "!ccqBB", b"\x1e", b"\x0f", message_id, count, total_chunks
             )
 
-            yield header + data[offset : offset + chunk_size]
+            yield header + data[offset: offset + chunk_size]
 
     def emit(self, record):
         try:

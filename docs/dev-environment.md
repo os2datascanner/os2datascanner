@@ -353,3 +353,60 @@ adding new entry "cn=Mikkel Testsen,ou=Test Department,dc=magenta,dc=test"
 
 adding new entry "cn=Hamish MacTester,ou=Test Department,dc=magenta,dc=test"
 ```
+
+## Linting and static analysis
+
+The coding standards below should be followed by all new and edited code for
+the project.
+
+To test any CI job, you can do so by running:
+```
+docker run -d \
+    --name gitlab-runner \
+    --restart always \
+    -v $PWD:$PWD \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    gitlab/gitlab-runner:latest
+```
+then run 
+`docker exec -it -w $PWD gitlab-runner gitlab-runner exec docker <job name>`
+
+where job name could be "Lint Python".
+
+
+
+Linting checks are applied for:
+
+JS : Linting is done with JSHint and will fail hard if not being complied with.
+check https://jshint.com/docs/options/ for a list of all options/rules jshint 
+uses.
+
+linting for specific lines or rules can be done with /* jshint -<error-code> */,
+however a developer should write the reson for disabling a specific rule.
+
+
+Python: Linting checks are done for python as well, the test are based on PEP 8 standards
+implemented through flake8 and bugbear. Furthermore there are static code analyzers that 
+evaluate the commited code based on three complexity metrics:
+
+Cognitive complexcity: a metric for how readable a piece of code is. this can be reduced
+by reducing nested loops and if -statements.
+
+Cyclomatic complexity: a fancy way of saying how many paths your code can take, it helps us 
+see how testable a piece of code is. Commonly a good cyclomatic number for a method would
+be less than 15, when it reaches 16-30 this is normally a sign that the code is not easy 
+to test and it should be considered reducing its complexity. 30 to 50 should be stricly 
+prohibited.
+Above 75 is an indicator for each change may trigger a 'bad fix'.
+https://betterembsw.blogspot.com/2014/06/avoid-high-cyclomatic-complexity.html
+
+
+Expressive complexcity: a way to measure how complex individual statements are. Ideally they 
+should not have a a value higher than 7.
+
+Linting can be checked locally by installing:
+`pip install pyproject-flake8 flake8-bugbear flake8-cognitive-complexity flake8-expression-complexity`
+and the running:
+`pflake8 src`
+
+

@@ -23,7 +23,7 @@ def get_different_scan_tag():
 
 def get_different_filesystemhandle(file_ending, folder_level):
     path = '/'
-    for x in range(0, folder_level):
+    for _x in range(0, folder_level):
         path += ''.join(random.choice(
             string.ascii_lowercase) for i in range(10)) + '/'
     return FilesystemHandle(

@@ -65,7 +65,7 @@ class ExchangeScanner(Scanner):
         """Get the absolute URL for scanners."""
         return "/exchangescanners/"
 
-    def generate_sources(self):
+    def generate_sources(self):  # noqa: CCR001, too high cognitive complexity
         user_list = ()
         # org_unit check as you cannot do both simultaneously
         if self.userlist and not self.org_unit.exists():

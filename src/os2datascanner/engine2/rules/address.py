@@ -34,7 +34,7 @@ _zip_city = r"(?P<zip_code>{0}){1}(?P<city>(?:{2}{3})+)".format(
     _simple_name,
     _optional_whitespace
 )
-full_address_regex = regex.compile(
+full_address_regex = regex.compile(  # noqa: ECE001
     r"\b" + _street_address + _optional_comma + _floor_number + _optional_comma +
     r"(" + _optional_whitespace + _zip_city + r")?" + r"\b",
     regex.UNICODE

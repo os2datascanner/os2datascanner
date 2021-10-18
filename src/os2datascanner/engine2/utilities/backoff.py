@@ -6,7 +6,7 @@ import structlog
 logger = structlog.get_logger(__name__)
 
 
-def run_with_backoff(
+def run_with_backoff(  # noqa: CCR001, too high cognitive complexity
         op, *exception_set,
         count=0, max_tries=10, ceiling=7, base=1, warn_after=6, fuzz=0):
     """Performs an operation until it succeeds (or until the maximum number of

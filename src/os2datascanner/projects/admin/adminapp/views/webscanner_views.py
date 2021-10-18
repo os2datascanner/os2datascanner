@@ -97,7 +97,7 @@ class WebScannerUpdate(ScannerUpdate):
     def get_context_data(self, **kwargs):
         """Get the context used when rendering the template."""
         context = super().get_context_data(**kwargs)
-        for value, desc in WebScanner.validation_method_choices:
+        for value, _desc in WebScanner.validation_method_choices:
             key = 'valid_txt_' + str(value)
             context[key] = get_validation_str(self.object, value)
         return context

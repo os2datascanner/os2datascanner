@@ -53,7 +53,7 @@ def _get_url_data(url: str, context=requests) -> Optional[bytes]:
         return None
 
 
-def process_sitemap_url(url: str, *, context=requests,
+def process_sitemap_url(url: str, *, context=requests,  # noqa: CCR001, E501 too high cognitive complexity
                         allow_sitemap: bool = True) -> Iterable[Tuple[str, Optional[datetime]]]:
 
     """Retrieves and parses the sitemap or sitemap index at the given URL and
@@ -76,9 +76,9 @@ def process_sitemap_url(url: str, *, context=requests,
             # This appears to be a normal sitemap: iterate over all of the
             # valid <url /> elements and yield their addresses and last
             # modification dates
-            i = 0
+            _i = 0
             base_url = url
-            for i, url in enumerate(
+            for _i, url in enumerate(
                     _xp(root, "/sitemap:urlset/sitemap:url[sitemap:loc]"),
                     start=1):
                 loc = _xp(url, "sitemap:loc/text()")[0].strip()
@@ -86,7 +86,7 @@ def process_sitemap_url(url: str, *, context=requests,
                 for lastmod in _xp(url, "sitemap:lastmod/text()"):
                     lm = parse_datetime(lastmod.strip())
                 yield (loc, lm)
-            logger.debug("done processing", lines=i, sitemap=base_url)
+            logger.debug("done processing", lines=_i, sitemap=base_url)
         elif _xp(root, "/sitemap:sitemapindex") and allow_sitemap:
             # This appears to be a sitemap index: iterate over all of the valid
             # <sitemap /> elements and recursively yield from them

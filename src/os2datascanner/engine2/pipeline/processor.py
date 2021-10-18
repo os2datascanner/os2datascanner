@@ -28,7 +28,7 @@ def check(source_manager, handle):
         return False
 
 
-def message_received_raw(body, channel, source_manager):
+def message_received_raw(body, channel, source_manager):  # noqa: CCR001,E501 too high cognitive complexity
     conversion = messages.ConversionMessage.from_json_object(body)
     configuration = conversion.scan_spec.configuration
     head, _, _ = conversion.progress.rule.split()

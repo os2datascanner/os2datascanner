@@ -116,7 +116,7 @@ class EWSAccountSource(Source):
         return EWSAccountSource(
                 self._domain, self._server, None, None, self._user)
 
-    def handles(self, sm):
+    def handles(self, sm):  # noqa: CCR001, E501 too high cognitive complexity
         account = sm.open(self)
 
         def relevant_folders():

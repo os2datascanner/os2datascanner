@@ -41,7 +41,7 @@ def format_d(depth, fmt, *args, **kwargs):
     return "{0}{1}".format("  " * depth, fmt.format(*args, **kwargs))
 
 
-def print_source(manager, source, depth=0, *,
+def print_source(manager, source, depth=0, *,  # noqa: CCR001, E501 too high cognitive complexity
                  guess=False, summarise=False, max_depth=None):
     for handle in source.handles(manager):
         print(format_d(depth, "{0}", handle))

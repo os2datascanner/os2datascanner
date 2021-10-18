@@ -84,7 +84,7 @@ class TestCprTest(unittest.TestCase):
     def test_random_distribution(self):
         distribution = {}
         tests = 10000
-        for i in range(0, tests):
+        for _i in range(0, tests):
             random_cpr = random.randrange(0, 9999999999)
             check = self.cpr_calc.cpr_check(str(random_cpr).zfill(10))
             key = check if isinstance(check, str) else 'ok'
@@ -124,7 +124,7 @@ class TestCprTest(unittest.TestCase):
     def test_legal_cprs(self):
         distribution = {}
         tests = 1000
-        for i in range(0, tests):
+        for _i in range(0, tests):
             random_cpr = _cpr()
             value = self.cpr_calc.cpr_check(random_cpr)
             key = str(value)

@@ -11,7 +11,7 @@ from .datasets.loader import common as common_loader
 _whitespace = r"[^\S\n\r]+"
 _simple_name = r"\p{Lu}(?:\p{L}+|\.?)"
 _name = r"{0}(?:-{0})?".format(_simple_name)
-full_name_regex = regex.compile(
+full_name_regex = regex.compile(  # noqa: ECE001, expression is too complex
     r"\b(?P<first>" + _name + r")" +
     r"(?P<middle>(" + _whitespace + _name + r"){0,3})" +
     r"(?P<last>" + _whitespace + _name + r")\b", regex.UNICODE)
@@ -84,7 +84,7 @@ class NameRule(SimpleRule):
     def presentation_raw(self):
         return "personal name"
 
-    def match(self, text):
+    def match(self, text):  # noqa: CCR001, too high cognitive complexity
         unmatched_text = text
 
         def is_name_fragment(fragment, candidates, use_blacklist=True):

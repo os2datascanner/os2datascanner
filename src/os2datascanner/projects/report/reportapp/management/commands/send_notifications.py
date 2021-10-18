@@ -50,7 +50,7 @@ class Command(BaseCommand):
             action="store_true",
             help="Allows result under 30 days old to be sent")
 
-    def handle(self, **options):
+    def handle(self, **options):  # noqa: CCR001, too high cognitive complexity
         txt_mail_template = loader.get_template("mail/overview.txt")
         html_mail_template = loader.get_template("mail/overview.html")
 

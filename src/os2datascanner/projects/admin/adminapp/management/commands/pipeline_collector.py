@@ -51,7 +51,7 @@ def status_message_received_raw(body):
     yield from []
 
 
-def checkup_message_received_raw(body):
+def checkup_message_received_raw(body):  # noqa: CCR001, too high cognitive complexity
     handle = None
     scan_tag = None
     matches = None

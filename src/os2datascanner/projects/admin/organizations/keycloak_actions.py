@@ -139,7 +139,7 @@ def group_into(collection, *models, key=lambda o: o):
                 yield (manager, instances)
 
 
-def perform_import_raw(
+def perform_import_raw(  # noqa: C901, CCR001 too complex
         org: Organization,
         remote,
         name_selector,

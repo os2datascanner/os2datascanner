@@ -93,7 +93,7 @@ class SMBCSource(Source):
     def censor(self):
         return SMBCSource(self.unc, None, None, None, self.driveletter)
 
-    def handles(self, sm):
+    def handles(self, sm):  # noqa: CCR001, E501 too high cognitive complexity
         url, context = sm.open(self)
 
         def handle_dirent(parents, entity):

@@ -1,7 +1,0 @@
-[flake8]
-max-line-length = 85
-exclude =
-    src/os2datascanner/projects/*/*/migrations/*
-extend-ignore =
-    # See https://github.com/PyCQA/pycodestyle/issues/373
-    E203,

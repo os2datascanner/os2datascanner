@@ -139,7 +139,7 @@ def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
     return previous_report, new_report
 
 
-def handle_match_message(previous_report, new_report, body):
+def handle_match_message(previous_report, new_report, body):  # noqa: CCR001, E501 too high cognitive complexity
     new_matches = messages.MatchesMessage.from_json_object(body)
     previous_matches = previous_report.matches if previous_report else None
 
