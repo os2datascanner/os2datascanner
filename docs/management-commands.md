@@ -9,7 +9,9 @@ Custom commands must be created in the correct path (`<app>/management/commands`
 
 More information regarding how to create custom commands, can be found in [Django's documentation (3.2)](https://docs.djangoproject.com/en/3.2/howto/custom-management-commands/)
 
+
 ## Quick guide to command execution
+
 In general, to execute these commands, do one of the following, dependent on whether your container is already running:
 
 Container running:
@@ -25,6 +27,7 @@ This section is to be updated continuously when new management commands are impl
 
 Command documentation should be placed under the headline they concern,
 and what is to be included upon a new command is a short description of it. 
+
 
 ### Admin application
 
@@ -52,11 +55,8 @@ and registers the Samba share from the `docker-compose` dev env as a filescan.
 There is a corresponding command in the Report module.
 
 
-### Core
-
-### Import services
-
 ### Report application
+
 
 ###### scannerjob_info
 
@@ -71,6 +71,7 @@ Provided a PK of a scanner job finds associated document reports and lists:
 To execute this command run:
 `docker-compose exec report python manage.py scannerjob_info <PK>`
 
+
 ###### quickstart_dev
 
 This command is only intended for getting a developer environment
@@ -78,6 +79,7 @@ up-and-running quickly. It creates a user named `dev` with the password `dev`
 and registers the user as remediator.
 
 There is a corresponding command in the Admin module.
+
 
 ###### list_problems
 
@@ -87,6 +89,7 @@ Optionally takes a `--head` argument to limit the output.
 
 To execute this command run:
 `docker-compose exec report django-admin list_problems <PK>`
+
 
 ###### makefake
 

@@ -1,6 +1,7 @@
-# OS2Datascanner Dev-env.
+# Development environment
 
-## TL;DR: 
+## TL;DR
+
 To get a development environment to run, follow these steps:
 
 1.  Clone the repo and start the containers:
@@ -81,6 +82,7 @@ passed to the container:
 To run a fully functional OS2datascanner system, you will need to start
 a number of services. The recommended way to set up an appropriate
 development environment is to use docker-compose.
+
 
 ## User permissions
 
@@ -206,7 +208,8 @@ These depend on some auxillary services:
 -   `mailhog`: a SMTP-server for testing purposes. 
     web interface available at `http://localhost:8025/`.
 
-### Interesting files for development
+
+## Interesting files for development
 
 We've included some interesting files to scan in `dev-environment/data`.
 Multiple files in the directory include CPR numbers, but because of context
@@ -217,7 +220,7 @@ only 4 should be expected to be found from a scan.
 Please expand the folder, if you have something interesting to add.
 
 
-### Postgres initialisation
+## Postgres initialisation
 
 The postgres database is initialized using the scripts included in
 `docker/postgres-initdb.d/` folder, which checks that the configuration is
@@ -225,11 +228,12 @@ valid, and adds **postgres users** for the modules that need them.  They do not
 populate the database with users for the django modules or any other data.
 
 
-### Gunicorn worker configuration
+## Gunicorn worker configuration
 
 The two Django apps and the API use `Gunicorn` to serve web requests. By
 default Gunicorn starts up `CPU_COUNT*2+1` workers. To override this default
 use the `GUNICORN_WORKERS` environment variable. Eg.  `GUNICORN_WORKERS=2`.
+
 
 ## Django application users
 
@@ -297,7 +301,9 @@ recompile the translations with the command:
 Refreshing the page, you should see your new translations.
 
 
-## Shell access
+## Debugging
+
+### Shell access
 
 To access a shell on any container based on the OS2datascanner module
 images, run
@@ -305,9 +311,7 @@ images, run
     docker-compose {exec|run} <container name> bash
 
 
-## Debugging
-
-### Stacktrace
+### Printing Stacktraces
 
 A stacktrace is printed to `stderr` if pipeline components receive `SIGUSR1`.
 The scan continues without interuption.
@@ -326,6 +330,7 @@ docker
     kill -USR1 `<pid>`
     docker logs os2datascanner_worker_1
 
+
 ### Removing messages from the queue
 
 If a malformed message get published to the queue, the `pipeline_collector`s or
@@ -339,6 +344,7 @@ There are two ways to clear the queues.
 1. use the web-interface to `RabbitMQ`, as described in [step 4 in TL;DR:](## TL;DR:),
    to `Purge Messages`
 2. or from the CLI: `docker-compose exec queue rabbitmqctl purge_queue os2ds_scan_specs`
+
 
 ## docker-compose profiles
 
@@ -362,13 +368,16 @@ The following `profiles` are available: `ldap`, `sso`, `api` and `metric`.
 
 The development config files are stored in `os2datascanner/dev-environment/`
 
-###`--profile ldap`
+
+### `--profile ldap`
 The `ldap` profile defines a Keycloak instance and connected Postgres database,
 as well as a OpenLDAP server and admin interface.
 
 Be sure to enable import and structured org. features on the client in the admin module's django admin page.
 
-###### Keycloak instance
+
+### Keycloak instance
+
 Interface available at `localhost:8090` on the host machine.
 
 By default, login credentials will be `admin:admin`
@@ -384,7 +393,8 @@ The purpose of the Keycloak instance is to use its User Federation support. When
 OS2Datascanner, we create a "User Federation" in Keycloak which imports data from e.g. Active Directory. 
 Finally, we import this data to Django.
 
-###### Setting up OpenLDAP
+### Setting up OpenLDAP
+
 OS2datascanner's development environment incorporates the OpenLDAP server,
 which should be used to work with the system's organisational import
 functionality. Setting up OpenLDAP is a little complicated, though; even though
@@ -404,7 +414,9 @@ If you wish to access the phpLDAPadmin it will be accessible on the host machine
 
 Credentials will be `cn=admin,dc=magenta,dc=test:testMAG`
 
-###### External LDAP clients
+
+#### External LDAP clients
+
 The development environment's OpenLDAP server is also exposed to the host
 system on port 387, the usual port for LDAP servers. That means it's fairly
 easy to interact with it from outside the Docker universe.
@@ -441,6 +453,7 @@ adding new entry "cn=Mikkel Testsen,ou=Test Department,dc=magenta,dc=test"
 
 adding new entry "cn=Hamish MacTester,ou=Test Department,dc=magenta,dc=test"
 ```
+
 
 ## Code standards
 

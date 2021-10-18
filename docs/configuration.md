@@ -1,4 +1,4 @@
-# OS2Datascanner Configurations
+# Configuration
 
 The OS2Datascanner system is configured using `.toml`-files - one for each
 module. Most configuration settings come with reasonable defaults and need not
@@ -127,7 +127,7 @@ METADATA_LOCAL_FILE_PATH = '[The metadata configuration file path]'
 ```
 
 
-# SAML
+## SAML
 
 OS2datascanner - Single Sign On via SAML 2.0
 
