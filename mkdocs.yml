@@ -5,11 +5,8 @@ theme: readthedocs
 
 nav:
   # index.md
-  - Installation: installation.md
-  - Configuration: configuration.md
   - Development environment: dev-environment.md
   - Management Commands: management-commands.md
-  - Docker: docker.md
   - Architecture:
     - Overview: architecture/overview.md
     - Security: architecture/security.md
@@ -17,7 +14,11 @@ nav:
     - Frontend: architecture/frontend.md
   - Scan API: api.md
   - Extending OS2Datascanner: engine2.md
-  - Requirements: requirements.md
+  - Deployment:
+    - Installation: installation.md
+    - Docker: docker.md
+    - Configuration: configuration.md
+    - Requirements: requirements.md
+    - Release procedure: release-procedure.md
   - Reusable components: reusable-components.md
-  - Release procedure: release-procedure.md
   - Release notes: changelog.md
