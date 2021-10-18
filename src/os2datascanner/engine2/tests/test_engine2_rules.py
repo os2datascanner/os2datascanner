@@ -15,6 +15,9 @@ from os2datascanner.engine2.rules.logical import (
 from os2datascanner.engine2.rules.name import NameRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.conversions.types import OutputType
+
+import logging
 
 
 class RuleTests(unittest.TestCase):
@@ -206,29 +209,21 @@ more!""",
     def test_compound_rule_matches(self):
         for rule, tests in RuleTests.compound_candidates:
             for input_string, outcome, evaluation_count in tests:
-                now = rule
-                evaluations = 0
+                representations = {
+                    "text": input_string
+                }
+                conclusion, evaluations = rule.try_match(representations.get)
 
-                while True:
-                    print(f"evaluating rule {now}")
-                    head, pve, nve = now.split()
-                    evaluations += 1
-                    match = list(head.match(input_string))
-                    print(f"{head} had the matches {match}")
-                    if match:
-                        now = pve
-                    else:
-                        now = nve
-                    if isinstance(now, bool):
-                        break
-                print(f"conclusion: input: {input_string}; result: {now}; "
+                print(f"conclusion: input: {input_string};"
+                      f"result: {conclusion}; "
                       f"expected: {outcome}; evaluations: {evaluations}")
                 self.assertEqual(
-                    outcome, now, "{0}: wrong result".format(input_string)
+                    outcome, conclusion,
+                    "{0}: wrong result".format(input_string)
                 )
                 self.assertEqual(
                     evaluation_count,
-                    evaluations,
+                    len(evaluations),
                     "{0}: wrong evaluation count".format(input_string),
                 )
 

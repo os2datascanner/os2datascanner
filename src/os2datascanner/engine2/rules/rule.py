@@ -51,7 +51,8 @@ class Rule(TypePropertyEquality, JSONSerialisable):
     object.
 
     Rules cannot necessarily be evaluated directly, but they can always be
-    broken apart to find an evaluable component; see the split() method.
+    broken apart to find an evaluable component; see the split() and
+    try_match() methods.
 
     If you're not sure which class your new rule should inherit from, then use
     SimpleRule."""
@@ -94,6 +95,31 @@ class Rule(TypePropertyEquality, JSONSerialisable):
 
         (Following a chain of continuations will always eventually reduce to
         True, if the rule as a whole has matched, or False if it has not.)"""
+
+    def try_match(self, get_representation):
+        """Reduces this Rule as much as possible, given a helper function that
+        can (attempt to) produce new representations when required. (When a
+        representation is not available, the helper function should raise a
+        KeyError.)
+
+        Note that this method can optimise the reduction of this Rule; the
+        result of a SimpleRule might be cached and reused, for example."""
+        head, pve, nve = self.split()
+        matches = {}
+        while not isinstance(head, bool):
+            try:
+                required_form = get_representation(head.operates_on.value)
+            except KeyError:
+                # Our helper callback can't produce the data we need. Stop
+                # evaluating rules and return what we have to the caller
+                break
+            if head not in matches:
+                matches[head] = list(head.match(required_form))
+            next = pve if matches[head] else nve
+            head, pve, nve = (
+                    next.split()
+                    if isinstance(next, Rule) else (next, None, None))
+        return (head, list(matches.items()))
 
     _json_handlers = {}
 
