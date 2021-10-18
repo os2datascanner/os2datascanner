@@ -228,34 +228,6 @@ valid, and adds **postgres users** for the modules that need them.  They do not
 populate the database with users for the django modules or any other data.
 
 
-## Django application users
-
-As mentioned above, the system is not initialised with any default users for
-the django applications. Instead, these will need to be created by running
-
-    docker-compose {exec|run} {admin|report}-application python manage.py createsuperuser [--username <your username>] [--email <your email>]
-
-where `exec` is used when the development environment is already running, and
-`run` when it is not.
-
-If you find yourself having to wipe the database often, you may find it helpful
-to write a small script to aid with this, e.g.:
-
-    # Go to correct directory
-    cd <path to repository root>
-    # create admin user:
-    echo "Creating superuser for admin module..."
-    docker-compose <command> admin python manage.py createsuperuser --username <your username> --email <your email>
-    # create report user:
-    echo "Creating superuser for report module..."
-    docker-compose <command> report python manage.py createsuperuser --username <your username> --email <your email>
-
-**NB!** Make sure your script is **not** added to the repo: add the file (or a
-separate folder it lives in) to the global list for git to ignore (usually
-`~/.config/git/ignore`, of which you may have to create the `git` folder and
-the `ignore` file yourself).
-
-
 ## Tests
 
 Each module has its own test-suite. These are run automatically as part of the
