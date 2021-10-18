@@ -409,3 +409,52 @@ more!""",
                 self.assertEqual(
                         tuple(wrl.match(in_value)),
                         expected)
+
+    def test_medical_combinations(self):
+        candidates = (
+            (
+                """
+REGION NORDSTRAND -- PERSONFØLSOMT MATERIALE UNDER TAVSHEDSPLIGT
+
+Nordstrand Sygehus
+Strandvej 17
+9999 Vejstrand
+
+Patient: Jens Testsen
+Konsultationsdato: 2021-10-18
+
+Ifølge analyseresultater lider patienten af akut arteriel insufficiens i alle
+ekstremiteterne. Han selv tilføjer, at han har ondt i albuen. Der er også
+indledende tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM. Henvist til
+speciellæger.""",
+                ({
+                    "match": "akut arteriel insufficiens ekstremiteterne",
+                    "offset": 212,
+                    "context": "0-18\n\nIfølge analyseresultater lider"
+                               " patienten af akut arteriel insufficiens i"
+                               " alle\nekstremiteterne. Han selv tilføjer,"
+                               " at han har ondt i albuen. Der",
+                    "context_offset": 50
+                }, {
+                    "match": "albue",
+                    "offset": 300,
+                    "context": "remiteterne. Han selv tilføjer, at han har"
+                               " ondt i albuen. Der er også\nindledende tegn"
+                               " på AUTOIMMUNT POLYG",
+                    "context_offset": 50
+                }, {
+                    "match": "autoimmunt polyglandulært syndrom",
+                    "offset": 339,
+                    "context": "har ondt i albuen. Der er også\nindledende"
+                               " tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM."
+                               " Henvist til\nspeciellæger.",
+                    "context_offset": 50
+                })
+            ),
+        )
+        wrl = OrderedWordlistRule("da_20211018_laegehaandbog_stikord")
+        for in_value, expected in candidates:
+            with self.subTest(in_value):
+                self.assertEqual(
+                        tuple(wrl.match(in_value)),
+                        expected)
