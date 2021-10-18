@@ -11,7 +11,9 @@ def delete_duplicate_scanner_pk_and_path(apps, schema_editor):
         "data__scan_tag__scanner__pk", "path").values_list(
         "data__scan_tag__scanner__pk", "path").distinct()
 
-    for scanner_pk, path in doc_reps:
+    # Using iterator which has a default batch size of 2000 to protect
+    # us from potentially huge datasets
+    for scanner_pk, path in doc_reps.iterator():
         # Negative order_by and slicing to delete all old duplicates.
         oldest_doc_reps = DocumentReport.objects.filter(data__scan_tag__scanner__pk = scanner_pk,
                                                         path = path).order_by("-pk")[1:]

@@ -5,29 +5,29 @@ from django.db import migrations, models
 from ..utils import iterate_queryset_in_batches
 
 """
-We update the database Queryset in batches; if not, the update might fail
+We update the database Queryset in batches/chunks; if not, the update might fail
 if the queryset is too large
 
-This migration reads the jsonb-field, tries to get the scanner PK and populate the new DocumentReport field
+This migration reads the jsonb-field, tries to get the scanner PK 
+and populate the new DocumentReport field: scanner_job_pk
 """
 
 def bulk_update_document_report_scanner_job_pk(apps, schema_editor):
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
-    queryset = DocumentReport.objects.all()
+    chunk = []
 
-    for batch in iterate_queryset_in_batches(1000, queryset):
-        for report in batch:
-            if not report.scanner_job_pk:
-                try:
-                    report.scanner_job_pk = report.data.get("scan_tag").get("scanner").get("pk")
-                except Exception as e:
-                    print(
-                        f"Exception {type(e).__name__}\t"
-                        f"report={report}\t"
-                        f"e={e}"
-                    )
-        DocumentReport.objects.bulk_update(batch, ["scanner_job_pk"])
+    # Using iterator() to save memory.
+    # It's default chunk size is 2000, here we specify it to be explicit
+    # and make it clear why we use modulus 2000.
+    for i, doc_rep in enumerate(DocumentReport.objects.all().iterator(chunk_size = 2000)):
+        doc_rep.scanner_job_pk = doc_rep.data.get("scan_tag").get("scanner").get("pk")
+        chunk.append(doc_rep)
 
+        if i % 2000 == 0 and chunk:
+            DocumentReport.objects.bulk_update(chunk, ["scanner_job_pk"])
+
+    if chunk:
+        DocumentReport.objects.bulk_update(chunk, ["scanner_job_pk"])
 
 class Migration(migrations.Migration):
 

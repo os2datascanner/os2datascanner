@@ -116,8 +116,23 @@ def handle_metadata_message(new_report, result):
         new_report.datasource_last_modified = (
                 message.scan_tag.time or time_now())
     logger.debug("updating timestamp", report=new_report.presentation)
-    new_report.scanner_job_pk = message.scan_tag.scanner.pk
-    new_report.save()
+
+    # If a DocumentReport with this scanner_job_pk and path exists,
+    # creating a new will violate path and scanner_job_pk constraint,
+    # hence, delete the existing first and then store the new one.
+    try:
+        existing_report = DocumentReport.objects.filter(
+            scanner_job_pk=message.scan_tag.scanner.pk,
+            path=new_report.path
+        ).get()
+
+        existing_report.delete()
+        new_report.scanner_job_pk = message.scan_tag.scanner.pk
+        new_report.save()
+
+    except DocumentReport.DoesNotExist:
+        new_report.scanner_job_pk = message.scan_tag.scanner.pk
+        new_report.save()
 
 
 def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
@@ -202,8 +217,24 @@ def handle_match_message(previous_report, new_report, body):  # noqa: CCR001, E5
         new_report.probability = new_matches.probability
         # Sort matches by prop. desc.
         new_report.data["matches"] = sort_matches_by_probability(body)
-        new_report.scanner_job_pk = new_matches.scan_spec.scan_tag.scanner.pk
-        new_report.save()
+
+        # If a DocumentReport with this scanner_job_pk and path exists,
+        # creating a new will violate path and scanner_job_pk constraint,
+        # hence, delete the existing first and then store the new one.
+        try:
+            existing_report = DocumentReport.objects.filter(
+                scanner_job_pk=new_matches.scan_spec.scan_tag.scanner.pk,
+                path=new_report.path
+            ).get()
+
+            existing_report.delete()
+            new_report.scanner_job_pk = new_matches.scan_spec.scan_tag.scanner.pk
+            new_report.save()
+
+        except DocumentReport.DoesNotExist:
+            new_report.scanner_job_pk = new_matches.scan_spec.scan_tag.scanner.pk
+            new_report.save()
+
         logger.debug("matches, saving new DocReport", report=new_report)
     elif new_report is not None:
         logger.debug("No new matches.")
@@ -257,8 +288,24 @@ def handle_problem_message(previous_report, new_report, body):
         new_report.sort_key = handle.sort_key if handle else "(source)"
 
         new_report.data["problem"] = body
-        new_report.scanner_job_pk = problem.scan_tag.scanner.pk
-        new_report.save()
+
+        # If a DocumentReport with this scanner_job_pk and path exists,
+        # creating a new will violate path and scanner_job_pk constraint,
+        # hence, delete the existing first and then store the new one.
+        try:
+            existing_report = DocumentReport.objects.filter(
+                scanner_job_pk=problem.scan_tag.scanner.pk,
+                path=new_report.path
+            ).get()
+
+            existing_report.delete()
+            new_report.scanner_job_pk = problem.scan_tag.scanner.pk
+            new_report.save()
+
+        except DocumentReport.DoesNotExist:
+            new_report.scanner_job_pk = problem.scan_tag.scanner.pk
+            new_report.save()
+
         logger.debug(
             "Unresolved, saving new report",
             report=new_report,
