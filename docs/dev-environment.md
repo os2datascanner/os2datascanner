@@ -228,13 +228,6 @@ valid, and adds **postgres users** for the modules that need them.  They do not
 populate the database with users for the django modules or any other data.
 
 
-## Gunicorn worker configuration
-
-The two Django apps and the API use `Gunicorn` to serve web requests. By
-default Gunicorn starts up `CPU_COUNT*2+1` workers. To override this default
-use the `GUNICORN_WORKERS` environment variable. Eg.  `GUNICORN_WORKERS=2`.
-
-
 ## Django application users
 
 As mentioned above, the system is not initialised with any default users for
