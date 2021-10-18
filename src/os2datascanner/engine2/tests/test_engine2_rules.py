@@ -14,10 +14,8 @@ from os2datascanner.engine2.rules.logical import (
 )
 from os2datascanner.engine2.rules.name import NameRule
 from os2datascanner.engine2.rules.regex import RegexRule
+from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.engine2.rules.rule import Sensitivity
-from os2datascanner.engine2.conversions.types import OutputType
-
-import logging
 
 
 class RuleTests(unittest.TestCase):
@@ -343,3 +341,71 @@ more!""",
                 self.assertCountEqual(
                     [[match["match"], match['sensitivity']] for match in matches],
                     expected)
+
+    def test_wordlists_rule(self):
+        candidates = (
+            (
+                "This is a really good dog!",
+                ({
+                    "match": "GOOD DOG",
+                    "offset": 17,
+                    "context": "This is a really good dog!",
+                    "context_offset": 17
+                },)
+            ),
+            (
+                "This dog is really good!",
+                ()
+            ),
+            (
+                f"This is a good{'dog':>32}",
+                ({
+                    "match": "GOOD DOG",
+                    "offset": 10,
+                    "context": f"This is a good{'':>29}dog",
+                    "context_offset": 10
+                },)
+            ),
+            (
+                f"This is a good {'dog':>33}",
+                ()
+            ),
+            (
+                f"This is a totally{'tubular':>32}{'tapir':>32}",
+                ({
+                    "match": "totally tubular tapir",
+                    "offset": 10,
+                    "context": f"This is a totally{'':>25}tubular{'':>27}tapir",
+                    "context_offset": 10
+                },)
+            ),
+            (
+                "This CRAZY cat's a good dog!",
+                ({
+                    "match": "GOOD DOG",
+                    "offset": 19,
+                    "context": "This CRAZY cat's a good dog!",
+                    "context_offset": 19
+                }, {
+                    "match": "crazy cat",
+                    "offset": 5,
+                    "context": "This CRAZY cat's a good dog!",
+                    "context_offset": 5
+                })
+            ),
+            (
+                "This is an awesomely amazing arachnid!",
+                ({
+                    "match": "awesome arachnid",
+                    "offset": 11,
+                    "context": "This is an awesomely amazing arachnid!",
+                    "context_offset": 11
+                },)
+            )
+        )
+        wrl = OrderedWordlistRule("en_20211018_unit_test_words")
+        for in_value, expected in candidates:
+            with self.subTest(in_value):
+                self.assertEqual(
+                        tuple(wrl.match(in_value)),
+                        expected)
