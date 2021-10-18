@@ -1,5 +1,0 @@
-- targets:
-  - localhost:9187
-  labels:
-    component: postgres
-
