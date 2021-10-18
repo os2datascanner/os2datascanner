@@ -16,8 +16,6 @@ nav:
     - Frontend: architecture/frontend.md
   - Scan API: api.md
   - Extending OS2Datascanner: engine2.md
-  - Services:
-    - A11y Scanner: a11y-scanner.md
   - Requirements: requirements.md
   - Notes: notes.md
   - Reusable components: reusable-components.md
