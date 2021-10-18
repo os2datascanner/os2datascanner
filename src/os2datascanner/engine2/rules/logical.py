@@ -53,7 +53,7 @@ class CompoundRule(Rule):
     def split(self):
         fst, rest = self._components[0], self._components[1:]
         head, pve, nve = fst.split()
-        return (head, self.make(pve, *rest), self.make(nve, *rest))
+        return head, self.make(pve, *rest), self.make(nve, *rest)
 
     def to_json_object(self):
         return dict(
@@ -90,16 +90,16 @@ class AllRule(CompoundRule):
 
         new_components = []
         for k in components:
-            if k == True:
+            if k is True:
                 satisfied = True
-            elif k != False:
+            elif k is not False:
                 new_components.append(k)
         return (AllRule(*new_components, satisfied=satisfied)
                 if new_components else satisfied)
 
     def split(self):
         fst, rest = self._components[0], self._components[1:]
-        return (fst, self.make(*rest, True), self.make(*rest, self._satisfied))
+        return fst, self.make(*rest, True), self.make(*rest, self._satisfied)
 
     def to_json_object(self):
         return dict(
@@ -116,7 +116,6 @@ class AllRule(CompoundRule):
             name=obj["name"] if "name" in obj else None,
             satisfied=obj.get("satisfied", False)
         )
-
 
 
 class AndRule(CompoundRule):
@@ -193,9 +192,9 @@ class NotRule(Rule):
 
     @staticmethod
     def make(component):
-        if component == True:
+        if component is True:
             return False
-        elif component == False:
+        elif component is False:
             return True
         elif isinstance(component, NotRule):
             return component._rule
@@ -204,7 +203,7 @@ class NotRule(Rule):
 
     def split(self):
         rule, pve, nve = self._rule.split()
-        return (rule, self.make(pve), self.make(nve))
+        return rule, self.make(pve), self.make(nve)
 
     def to_json_object(self):
         return dict(

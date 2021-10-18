@@ -1,6 +1,5 @@
 import logging
-from ..model.core import (
-    Source, SourceManager, UnknownSchemeError, DeserialisationError)
+from ..model.core import UnknownSchemeError, DeserialisationError
 from . import messages
 
 
@@ -39,7 +38,7 @@ def message_received_raw(body, channel, source_manager):
                 message=("Unknown scheme '{0}'".format(
                         ex.args[0]))).to_json_object())
         return
-    except (KeyError, DeserialisationError) as ex:
+    except (KeyError, DeserialisationError):
         yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=scan_tag, source=None, handle=None,
                 message="Malformed input").to_json_object())
@@ -58,8 +57,8 @@ def message_received_raw(body, channel, source_manager):
                 logger.warning("(unprintable handle {0})".format(type(handle).__name__))
             count += 1
             yield ("os2ds_conversions",
-                    messages.ConversionMessage(
-                            scan_spec, handle, progress).to_json_object())
+                   messages.ConversionMessage(
+                       scan_spec, handle, progress).to_json_object())
     except Exception as e:
         exception_message = "Exploration error. {0}: ".format(type(e).__name__)
         exception_message += ", ".join([str(a) for a in e.args])
@@ -71,7 +70,7 @@ def message_received_raw(body, channel, source_manager):
     finally:
         yield ("os2ds_status", messages.StatusMessage(
             scan_tag=scan_tag, total_objects=count,
-            message=exception_message, status_is_error=exception_message!="").
+            message=exception_message, status_is_error=exception_message != "").
                to_json_object())
 
 

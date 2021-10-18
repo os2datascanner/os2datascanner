@@ -117,7 +117,8 @@ class ScannerTest(TestCase):
         form_fields = view.get_form_fields()
         self.assertNotIn(
             'validation_status', str(form_fields),
-            msg="User not superuser but validation_status field present in WebscannerUpdate get_form_fields"
+            msg="User not superuser but validation_status"
+            "field present in WebscannerUpdate get_form_fields"
         )
 
     def get_webscannerupdate_view(self):

@@ -34,8 +34,3 @@ class UtilsTest(TestCase):
                              DocumentReport.objects.first(),
                              'sensitivity').value
                          )
-
-
-
-
-

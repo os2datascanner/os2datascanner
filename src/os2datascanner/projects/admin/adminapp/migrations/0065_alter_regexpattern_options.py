@@ -15,3 +15,6 @@ class Migration(migrations.Migration):
             options={'ordering': ('pk',), 'verbose_name': 'Pattern'},
         ),
     ]
+
+
+

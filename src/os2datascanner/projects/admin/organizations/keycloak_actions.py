@@ -8,7 +8,7 @@ from os2datascanner.utils.system_utilities import time_now
 from ..import_services.models.realm import Realm
 from ..import_services import keycloak_services
 from .models import (Alias, Account, Position,
-        Organization, OrganizationalUnit)
+                     Organization, OrganizationalUnit)
 from .models.aliases import AliasType
 
 
@@ -40,7 +40,7 @@ def _dummy_pc(action, *args):
 
 def perform_import(
         realm: Realm,
-        progress_callback = _dummy_pc) -> Tuple[int, int, int]:
+        progress_callback=_dummy_pc) -> Tuple[int, int, int]:
     """Collects the user hierarchy from the specified realm and creates
     local OrganizationalUnits and Accounts to reflect it. Local objects
     previously imported by this function but no longer backed by an object
@@ -51,7 +51,7 @@ def perform_import(
     org = realm.organization
     import_service = org.importservice
     if not import_service or not import_service.ldapconfig:
-        return (0, 0, 0)
+        return 0, 0, 0
 
     name_selector = keycloak_dn_selector
     if import_service.ldapconfig.import_into == "group":
@@ -104,7 +104,7 @@ def _unit_to_node(
     return LDAPNode.make(
             local_path_part,
             *(_unit_to_node(c, parent_path=full_path)
-                    for c in ou.children.all()),
+              for c in ou.children.all()),
             *(_account_to_node(c) for c in ou.account_set.all()))
 
 
@@ -143,7 +143,7 @@ def perform_import_raw(
         org: Organization,
         remote,
         name_selector,
-        progress_callback = _dummy_pc):
+        progress_callback=_dummy_pc):
     """The main body of the perform_import function, spun out into a separate
     function to allow for easier testing. Constructs a LDAPNode hierarchy from
     a Keycloak JSON response, compares it to an organisation's local hierarchy,
@@ -157,8 +157,8 @@ def perform_import_raw(
 
     # XXX: is this correct? It seems to presuppose the existence of a top unit,
     # which the database doesn't actually specify or require
-    local_top = OrganizationalUnit.objects.filter(imported=True,
-            parent=None, organization=org).first()
+    local_top = OrganizationalUnit.objects.filter(
+        imported=True, parent=None, organization=org).first()
 
     # Convert the local objects to a LDAPNode so that we can use its diff
     # operation
@@ -183,7 +183,7 @@ def perform_import_raw(
             path: Sequence[RDN]) -> OrganizationalUnit:
         unit_id = RDN.sequence_to_dn(path)
         unit = units.get(path)
-        if unit == None:
+        if unit is None:
             try:
                 unit = OrganizationalUnit.objects.get(
                         organization=o, imported_id=unit_id)
@@ -199,7 +199,7 @@ def perform_import_raw(
                     while path_fragment and not parent:
                         parent = units.get(path_fragment)
                         path_fragment = path_fragment[:-1]
-        
+
                 unit = OrganizationalUnit(
                         imported_id=unit_id,
                         name=label, parent=parent, organization=o,
@@ -218,13 +218,13 @@ def perform_import_raw(
         # imported_id here
         account_id = node.properties["attributes"]["LDAP_ENTRY_DN"][0]
         account = accounts.get(account_id)
-        if account == None:
+        if account is None:
             try:
                 account = Account.objects.get(
                         organization=o, imported_id=account_id)
             except Account.DoesNotExist:
                 account = Account(organization=o, imported_id=account_id,
-                        uuid=node.properties["id"])
+                                  uuid=node.properties["id"])
                 to_add.append(account)
             accounts[account_id] = account
         return account
@@ -246,7 +246,7 @@ def perform_import_raw(
                 "no remote users or organisational units available for"
                 f" organisation {org.name}; are you sure your LDAP settings"
                 " are correct?")
-        return (0, 0, 0)
+        return 0, 0, 0
 
     diff = list(local_hierarchy.diff(remote_hierarchy))
     progress_callback("diff_computed", len(diff))
@@ -264,8 +264,7 @@ def perform_import_raw(
 
         # Keycloak's UserRepresentation type has no required fields(!); we
         # can't do anything useful if we don't have the very basics, though
-        if r and not all(n in r.properties
-                for n in ("id", "attributes", "username",)):
+        if r and not all(n in r.properties for n in ("id", "attributes", "username",)):
             continue
 
         if l and not r:
@@ -281,7 +280,7 @@ def perform_import_raw(
                 # ... and it has no local counterpart. Create one
                 try:
                     account = node_to_account(org, r)
-                except KeyError as ex:
+                except KeyError:
                     # Missing required attribute -- skip this object
                     progress_callback("diff_ignored", path)
                     continue
@@ -298,7 +297,7 @@ def perform_import_raw(
                     account = Account.objects.get(
                             imported_id=_node_to_iid(path, l))
 
-            if not iid in changed_accounts:
+            if iid not in changed_accounts:
                 changed_accounts[iid] = (r, account)
 
             unit = path_to_unit(org, path[:-1])
@@ -342,7 +341,7 @@ def perform_import_raw(
             for manager, instances in group_into(
                     to_delete, Alias, Position, Account, OrganizationalUnit):
                 logger.debug(f"{manager.model.__name__}:"
-                        f" delete [{', '.join(str(i) for i in instances)}]")
+                             f" delete [{', '.join(str(i) for i in instances)}]")
             for manager, instances in group_into(
                     to_update, Alias, Position, Account, OrganizationalUnit,
                     key=lambda k: k[0]):
@@ -351,12 +350,12 @@ def perform_import_raw(
                     properties |= set(props)
                 instances = set(str(i) for i, _ in instances)
                 logger.debug(f"{manager.model.__name__}:"
-                        f" update fields ({', '.join(properties)})"
-                        f" of [{', '.join(instances)}]")
+                             f" update fields ({', '.join(properties)})"
+                             f" of [{', '.join(instances)}]")
             for manager, instances in group_into(
                     to_add, OrganizationalUnit, Account, Position, Alias):
                 logger.debug(f"{manager.model.__name__}:"
-                        f" add [{', '.join(str(i) for i in instances)}]")
+                             f" add [{', '.join(str(i) for i in instances)}]")
 
         for manager, instances in group_into(
                 to_delete, Alias, Position, Account, OrganizationalUnit):
@@ -382,4 +381,4 @@ def perform_import_raw(
             if hasattr(manager, "rebuild"):
                 manager.rebuild()
 
-    return (len(to_add), len(to_update), len(to_delete))
+    return len(to_add), len(to_update), len(to_delete)

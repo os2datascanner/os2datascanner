@@ -16,6 +16,7 @@ full_name_regex = regex.compile(
     r"(?P<middle>(" + _whitespace + _name + r"){0,3})" +
     r"(?P<last>" + _whitespace + _name + r")\b", regex.UNICODE)
 
+
 def match_full_name(text):
     """Return possible name matches in the given text as a `set`."""
 

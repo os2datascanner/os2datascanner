@@ -27,7 +27,7 @@ class NeverMatchesRule(SimpleRule):
     @Rule.json_handler(type_label)
     def from_json_object(obj):
         return NeverMatchesRule(sensitivity=Sensitivity.make_from_dict(obj),
-                name=obj["name"] if "name" in obj else None)
+                                name=obj["name"] if "name" in obj else None)
 
 
 class AlwaysMatchesRule(SimpleRule):
@@ -78,7 +78,7 @@ class AlwaysMatchesRule(SimpleRule):
     @Rule.json_handler(type_label)
     def from_json_object(obj):
         return AlwaysMatchesRule(sensitivity=Sensitivity.make_from_dict(obj),
-                name=obj["name"] if "name" in obj else None)
+                                 name=obj["name"] if "name" in obj else None)
 
 
 class BuggyRule(SimpleRule):

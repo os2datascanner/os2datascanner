@@ -4,13 +4,13 @@ $(function() {
     parameters.organizationId = document.querySelector('#id_organization').value;
     getOrgUnits();
 
-    // Eventlistener on change 
+    // Eventlistener on change
     var target = document.querySelector('#id_organization_container>.dropdown>.select-items');
     var callOnChange = new MutationObserver(function() {
         if (parameters.organizationId !== document.querySelector('#id_organization').value ){  
             parameters.organizationId = document.querySelector('#id_organization').value;
 
-            //When the organization is called, getorgunit.js removes the selected values, 
+            //When the organization is called, getorgunit.js removes the selected values,
             //but not the already selected values from the variable in dropdowntree.js,
             //instead of adding another eventlistener on the same dropdown as this, we set the value to empty here
             selectedValues = [];
@@ -18,12 +18,12 @@ $(function() {
             getOrgUnits();
         }
     });
-    callOnChange.observe(target, { 
-        characterData: false, 
-        attributes: true, 
-        childList: true, 
+    callOnChange.observe(target, {
+        characterData: false,
+        attributes: true,
+        childList: true,
         subtree: false }
-    );    
+    );
 });
 
 function getOrgUnits() {
@@ -65,7 +65,7 @@ function treeify(list, idAttr, parentAttr, childrenAttr) {
                 lookup[obj[parentAttr]][childrenAttr].push(obj);
             } else {
                  treeList.push(obj);
-            }               
+            }
         } else {
             treeList.push(obj);
         }

@@ -81,7 +81,7 @@ class _MSGraphMailCreate(ScannerCreate):
     model = MSGraphMailScanner
     type = 'msgraph-mail'
     fields = ['name', 'schedule', 'tenant_id', 'do_ocr',
-              'do_last_modified_check', 'rules', 'organization',]
+              'do_last_modified_check', 'rules', 'organization', ]
 
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
@@ -99,7 +99,7 @@ class MSGraphMailUpdate(ScannerUpdate):
     model = MSGraphMailScanner
     type = 'msgraph-mailscanners'
     fields = ['name', 'schedule', 'tenant_id', 'do_ocr',
-              'do_last_modified_check', 'rules', 'organization',]
+              'do_last_modified_check', 'rules', 'organization', ]
 
     def get_success_url(self):
         return '/msgraph-mailscanners/%s/saved/' % self.object.pk
@@ -111,12 +111,14 @@ class MSGraphMailDelete(ScannerDelete):
     fields = []
     success_url = '/msgraph-mailscanners/'
 
+
 class MSGraphMailCopy(ScannerCopy):
     """Creates a copy of an existing Microsoft Graph mail scanner job."""
     model = MSGraphMailScanner
     type = 'msgraph-mail'
     fields = ['name', 'schedule', 'tenant_id', 'do_ocr',
-              'do_last_modified_check', 'rules', 'organization',]
+              'do_last_modified_check', 'rules', 'organization', ]
+
 
 class MSGraphMailAskRun(ScannerAskRun):
     """Prompts the user for confirmation before running a Microsoft Graph mail
@@ -169,7 +171,7 @@ class _MSGraphFileCreate(ScannerCreate):
     type = 'msgraph-file'
     fields = ['name', 'schedule', 'tenant_id',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
-              'do_last_modified_check', 'rules', 'organization',]
+              'do_last_modified_check', 'rules', 'organization', ]
 
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
@@ -188,7 +190,7 @@ class MSGraphFileUpdate(ScannerUpdate):
     type = 'msgraph-filescanners'
     fields = ['name', 'schedule', 'tenant_id',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
-              'do_last_modified_check', 'rules', 'organization',]
+              'do_last_modified_check', 'rules', 'organization', ]
 
     def get_success_url(self):
         return '/msgraph-filescanners/%s/saved/' % self.object.pk
@@ -200,6 +202,7 @@ class MSGraphFileDelete(ScannerDelete):
     fields = []
     success_url = '/msgraph-filescanners/'
 
+
 class MSGraphFileCopy(ScannerCopy):
     """Creates a copy of an existing Microsoft Graph mail scanner job."""
     model = MSGraphFileScanner
@@ -207,6 +210,7 @@ class MSGraphFileCopy(ScannerCopy):
     fields = ['name', 'schedule', 'tenant_id',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
               'do_last_modified_check', 'rules', 'organization', ]
+
 
 class MSGraphFileAskRun(ScannerAskRun):
     """Prompts the user for confirmation before running a Microsoft Graph file

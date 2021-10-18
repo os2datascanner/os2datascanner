@@ -51,9 +51,12 @@ def time_now() -> datetime:
     return datetime.now().replace(tzinfo=tz.gettz(), microsecond=0)
 
 
-def run_custom(args,
+def run_custom(
+        args,
         # Arguments from subprocess.run not present in the Popen constructor
-        input=None, timeout=None, check=False,
+        input=None,
+        timeout=None,
+        check=False,
         # Our own arguments
         kill_group=False,
         **kwargs):
@@ -80,16 +83,14 @@ def run_custom(args,
         try:
             out, err = process.communicate(input, timeout)
         except subprocess.TimeoutExpired:
-            (os.killpg(process.pid, signal.SIGKILL)
-                    if kill_group else process.kill())
+            (os.killpg(process.pid, signal.SIGKILL) if kill_group else process.kill())
             # We only need to take responsibility for our immediate child
             # process -- init will reap anything else
             o2, e2 = process.communicate()
             raise subprocess.TimeoutExpired(
                     args, timeout, output=o2, stderr=e2)
-        except:
-            (os.killpg(process.pid, signal.SIGKILL)
-                    if kill_group else process.kill())
+        except Exception:
+            (os.killpg(process.pid, signal.SIGKILL) if kill_group else process.kill())
             raise
     cp = subprocess.CompletedProcess(
             args=args,

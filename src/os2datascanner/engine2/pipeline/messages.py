@@ -61,7 +61,7 @@ class ProgressFragment(NamedTuple):
         return ProgressFragment(
                 rule=Rule.from_json_object(obj["rule"]),
                 matches=[MatchFragment.from_json_object(mf)
-                        for mf in obj["matches"]])
+                         for mf in obj["matches"]])
 
     _deep_replace = _deep_replace
 
@@ -119,7 +119,8 @@ class ScanTagFragment(NamedTuple):
             "user": self.user,
             "scanner": self.scanner.to_json_object() if self.scanner else None,
             "organisation": (self.organisation.to_json_object()
-                    if self.organisation else None),
+                             if self.organisation
+                             else None),
             "destination": self.destination
         }
 
@@ -185,8 +186,10 @@ class ScanSpecMessage(NamedTuple):
                 # specs, so not all clients will send it. Add an empty one if
                 # necessary
                 configuration=obj.get("configuration", {}),
-                progress=ProgressFragment.from_json_object(progress_fragment)
-                        if progress_fragment else None)
+                progress=(
+                    ProgressFragment.from_json_object(progress_fragment)
+                    if progress_fragment
+                    else None))
 
     _deep_replace = _deep_replace
 
@@ -299,7 +302,10 @@ class MatchesMessage(NamedTuple):
                 rule, returning (in order of preference) the highest
                 sensitivity (lower than that of the rule) associated with a
                 match, the sensitivity of the rule, or 0."""
-                rule_sensitivity = fragment.rule.sensitivity.value if fragment.rule.sensitivity else None
+                rule_sensitivity = (
+                    fragment.rule.sensitivity.value
+                    if fragment.rule.sensitivity
+                    else None)
 
                 max_sub = None
                 if (rule_sensitivity is not None
@@ -360,7 +366,7 @@ class MatchesMessage(NamedTuple):
                 handle=Handle.from_json_object(obj["handle"]),
                 matched=obj["matched"],
                 matches=[MatchFragment.from_json_object(mf)
-                        for mf in obj["matches"]])
+                         for mf in obj["matches"]])
 
     _deep_replace = _deep_replace
 
@@ -406,7 +412,6 @@ class StatusMessage(NamedTuple):
     # Emitted by workers
     object_size: Optional[int] = None
     object_type: Optional[str] = None
-
 
     def to_json_object(self):
         return {

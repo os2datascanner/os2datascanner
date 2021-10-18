@@ -15,20 +15,20 @@
 <div class="runner-container">
 {% if ok %}
 
-  
+
   <div class="runner-content">
     <span class="icon">
       {% include "components/svg-icons/scan_run.svg" %}
     </span>
-  
+
     <h1>
       {% trans "Run scanner" %}
     </h1>
-  
+
     <h3>
       {% trans "Are you sure you want to start the scanner?" %}
     </h3>
-  
+
     <p>
       {% if webscanner.pk %}
       <a href="/webscanners/{{webscanner.pk}}/run/" class="button button--cta button--large">
@@ -69,13 +69,13 @@
       {% endif %}
     </p>
   </div>
-  
+
   {% else %}
   <div class="runner-content">
     <span class="icon">
       {% include "components/svg-icons/scan_warning.svg" %}
     </span>
-  
+
     <h1>
       {% trans "Run scanner" %}
     </h1>

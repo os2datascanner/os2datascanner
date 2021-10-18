@@ -1,6 +1,4 @@
-from os import getenv
 import sys
-from json import dumps, loads
 import unittest
 import subprocess
 
@@ -11,8 +9,7 @@ from .test_engine2_pipeline_rabbitmq import (
         StopHandling, PipelineTestRunner)
 
 
-from .test_engine2_pipeline import (
-        handle_message, data_url, rule, expected_matches)
+from .test_engine2_pipeline import (data_url, rule, expected_matches)
 
 
 def python(*args):
@@ -30,9 +27,14 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
                 heartbeat=6000)
 
         with pika.PikaConnectionHolder() as clearer:
-            for channel_name in ("os2ds_scan_specs", "os2ds_conversions",
-                    "os2ds_representations", "os2ds_matches", "os2ds_handles",
-                    "os2ds_metadata", "os2ds_problems", "os2ds_results",):
+            for channel_name in (
+                    "os2ds_scan_specs",
+                    "os2ds_conversions",
+                    "os2ds_representations",
+                    "os2ds_matches", "os2ds_handles",
+                    "os2ds_metadata",
+                    "os2ds_problems",
+                    "os2ds_results",):
                 clearer.channel.queue_purge(channel_name)
 
         self.explorer = python(
@@ -49,7 +51,7 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
     def tearDown(self):
         self.runner.clear()
         for p in (self.explorer, self.processor, self.matcher, self.tagger,
-                self.exporter):
+                  self.exporter):
             p.kill()
             p.wait()
 
@@ -73,7 +75,7 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
 
         try:
             self.runner.run_consumer()
-        except StopHandling as e:
+        except StopHandling:
             self.assertTrue(
                     self.runner.messages["os2ds_matches"]["matched"],
                     "RegexRule match failed")

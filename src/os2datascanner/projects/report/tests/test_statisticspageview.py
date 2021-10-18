@@ -344,17 +344,17 @@ class StatisticsPageViewTest(TestCase):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
         self.kjeld = User.objects.create_user(
-            first_name='Kjeld', username='kjeld', 
+            first_name='Kjeld', username='kjeld',
             email='kjeld@jensen.com', password='top_secret')
         self.egon = User.objects.create_user(
             first_name='Egon', username='egon',
             email='egon@olsen.com', password='top_secret')
         self.yvonne = User.objects.create_user(
-            first_name='Yvonne', username='yvonne', 
-            email='yvonne@jensen.com', password='top_secret') 
+            first_name='Yvonne', username='yvonne',
+            email='yvonne@jensen.com', password='top_secret')
         self.benny = User.objects.create_user(
-            first_name='Benny', username='benny', 
-            email='benny@frandsen.com', password='top_secret') 
+            first_name='Benny', username='benny',
+            email='benny@frandsen.com', password='top_secret')
 
     # Tests are done as Kjeld
     # count_all_matches_grouped_by_sensitivity()
@@ -362,9 +362,9 @@ class StatisticsPageViewTest(TestCase):
         leader = Leader.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         sens_list, total = view.count_all_matches_grouped_by_sensitivity()
-        self.assertListEqual(sens_list, 
-                            [['Kritisk', 4], ['Problem', 2], 
-                            ['Advarsel', 1], ['Notifikation', 0]])
+        self.assertListEqual(sens_list,
+                             [['Kritisk', 4], ['Problem', 2],
+                              ['Advarsel', 1], ['Notifikation', 0]])
         self.assertEquals(total, 7)
         leader.delete()
 
@@ -372,9 +372,9 @@ class StatisticsPageViewTest(TestCase):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         sens_list, total = view.count_all_matches_grouped_by_sensitivity()
-        self.assertListEqual(sens_list, 
-                            [['Kritisk', 4], ['Problem', 2], 
-                            ['Advarsel', 1], ['Notifikation', 0]])
+        self.assertListEqual(sens_list,
+                             [['Kritisk', 4], ['Problem', 2],
+                              ['Advarsel', 1], ['Notifikation', 0]])
         self.assertEquals(total, 7)
         dpo.delete()
 
@@ -393,8 +393,8 @@ class StatisticsPageViewTest(TestCase):
         view = self.get_statisticspage_object()
         sens_list, total = view.count_handled_matches_grouped_by_sensitivity()
         self.assertListEqual(sens_list,
-                            [['Kritisk', 0], ['Problem', 0], 
-                            ['Advarsel', 0], ['Notifikation', 0]])
+                             [['Kritisk', 0], ['Problem', 0],
+                              ['Advarsel', 0], ['Notifikation', 0]])
         self.assertEquals(total, 0)
         leader.delete()
 
@@ -403,8 +403,8 @@ class StatisticsPageViewTest(TestCase):
         view = self.get_statisticspage_object()
         sens_list, total = view.count_handled_matches_grouped_by_sensitivity()
         self.assertListEqual(sens_list,
-                            [['Kritisk', 0], ['Problem', 0], 
-                            ['Advarsel', 0], ['Notifikation', 0]])
+                             [['Kritisk', 0], ['Problem', 0],
+                              ['Advarsel', 0], ['Notifikation', 0]])
         dpo.delete()
 
     # created_timestamp
@@ -456,10 +456,18 @@ class StatisticsPageViewTest(TestCase):
     def test_statisticspage_five_most_unhandled_employees(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_leader_statisticspage_object()
-        kjeld_emailalias, created = EmailAlias.objects.get_or_create(user=self.kjeld, address='kjeld@jensen.com')
-        yvonne_emailalias, created = EmailAlias.objects.get_or_create(user=self.yvonne, address='yvonne@jensen.com')
-        egon_emailalias, created = EmailAlias.objects.get_or_create(user=self.egon, address='egon@olsen.com')
-        benny_emailalias, created = EmailAlias.objects.get_or_create(user=self.benny, address='benny@frandsen.com')
+        kjeld_emailalias, created = EmailAlias.objects.get_or_create(
+            user=self.kjeld,
+            address='kjeld@jensen.com')
+        yvonne_emailalias, created = EmailAlias.objects.get_or_create(
+            user=self.yvonne,
+            address='yvonne@jensen.com')
+        egon_emailalias, created = EmailAlias.objects.get_or_create(
+            user=self.egon,
+            address='egon@olsen.com')
+        benny_emailalias, created = EmailAlias.objects.get_or_create(
+            user=self.benny,
+            address='benny@frandsen.com')
         create_alias_and_match_relations(kjeld_emailalias)
         create_alias_and_match_relations(yvonne_emailalias)
         create_alias_and_match_relations(egon_emailalias)
@@ -509,7 +517,6 @@ class StatisticsPageViewTest(TestCase):
         request.user = self.kjeld
         view = LeaderStatisticsPageView()
         return view
-
 
 
 # Helper functions

@@ -24,6 +24,7 @@ class EmailAlias(Alias):
     address = models.EmailField(verbose_name="Mailadresse")
 
     key = "email-account"
+
     def __str__(self):
         return self.address
 

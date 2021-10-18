@@ -32,17 +32,16 @@ class FileScanner(Scanner):
 
     """File scanner for scanning network drives and folders"""
 
-
     alias = models.CharField(
-            max_length=64,
-            verbose_name=_("drive letter"),
-            null=True)
+        max_length=64,
+        verbose_name=_("drive letter"),
+        null=True)
     skip_super_hidden = models.BooleanField(
-            verbose_name=_("skip super-hidden files"),
-            help_text=_("do not scan files with the HIDDEN and SYSTEM bits"
-                        " set, or files with the HIDDEN bit set whose name"
-                        " starts with a tilde"),
-            default=False)
+        verbose_name=_("skip super-hidden files"),
+        help_text=_("do not scan files with the HIDDEN and SYSTEM bits"
+                    " set, or files with the HIDDEN bit set whose name"
+                    " starts with a tilde"),
+        default=False)
 
     @property
     def root_url(self):
@@ -85,6 +84,6 @@ class FileScanner(Scanner):
 
     def clean(self):
         # Backslashes (\) are an escaped character and therefore '\\\\' = '\\'
-        if not self.url.startswith(('//', '\\\\')) or any(x in self.url for x in ['\\\\\\','///']):
+        if not self.url.startswith(('//', '\\\\')) or any(x in self.url for x in ['\\\\\\', '///']):
             error = _("URL must follow the UNC format")
             raise ValidationError({"url": error})

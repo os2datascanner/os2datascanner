@@ -18,3 +18,6 @@ class Migration(migrations.Migration):
             field=models.CharField(blank=True, max_length=128, null=True, validators=[django.core.validators.RegexValidator(re.compile('^\\d+(?:,\\d+)*\\Z'), code='invalid', message='Enter only digits separated by commas.')]),
         ),
     ]
+
+
+

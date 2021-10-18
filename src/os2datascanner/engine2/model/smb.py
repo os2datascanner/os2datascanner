@@ -22,10 +22,10 @@ def compute_domain(unc):
     dot_count = server.count(".")
     # Check if we can extract an authentication domain from a fully-qualified
     # server name
-    if (server.startswith('[') # IPv6 address
-            or dot_count == 0 # NetBIOS name
+    if (server.startswith('[')  # IPv6 address
+            or dot_count == 0  # NetBIOS name
             or (inlang("0123456789.", server)
-                    and dot_count == 3)): # IPv4 address
+                and dot_count == 3)):  # IPv4 address
         return None
     else:
         # The machine name is the first component, and the rest is the domain
@@ -39,7 +39,7 @@ class SMBSource(Source):
     eq_properties = ("_unc", "_user", "_password", "_domain",)
 
     def __init__(self, unc, user=None, password=None, domain=None,
-            driveletter=None):
+                 driveletter=None):
         self._unc = unc.replace('\\', '/')
         self._user = user
         self._password = password
@@ -88,7 +88,7 @@ class SMBSource(Source):
         args = ["umount", mntdir]
         try:
             assert run(args).returncode == 0
-        except:
+        except Exception:
             raise
         finally:
             rmdir(mntdir)
@@ -108,14 +108,17 @@ class SMBSource(Source):
         return make_smb_url(
                 "smb", self._unc, self._user, self._domain, self._password)
 
-    netloc_regex = compile(r"^(((?P<domain>\w+);)?(?P<username>\w+)(:(?P<password>\w+))?@)?(?P<unc>[\w.-]+)$")
+    netloc_regex = compile(
+        r"^(((?P<domain>\w+);)?(?P<username>\w+)(:(?P<password>\w+))?@)?(?P<unc>[\w.-]+)$")
+
     @staticmethod
     @Source.url_handler("smb")
     def from_url(url):
         scheme, netloc, path, _, _ = urlsplit(url.replace("\\", "/"))
         match = SMBSource.netloc_regex.match(netloc)
         if match:
-            return SMBSource("//" + match.group("unc") + unquote(path),
+            return SMBSource(
+                "//" + match.group("unc") + unquote(path),
                 match.group("username"), match.group("password"),
                 match.group("domain"))
         else:
@@ -169,6 +172,7 @@ def make_smb_url(schema, unc, user, domain, password):
     netloc += server
     return urlunsplit((schema, netloc, quote(path), None, None))
 
+
 def make_presentation(self):
     p = self.source.driveletter
     if p:
@@ -178,6 +182,7 @@ def make_presentation(self):
     if p[-1] != "/":
         p += "/"
     return (p + self.relative_path).replace("/", "\\")
+
 
 def make_presentation_url(self):
     # Note that this implementation returns a Windows-friendly URL to the

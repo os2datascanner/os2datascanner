@@ -11,14 +11,12 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import modelform_factory
-from django.utils.decorators import method_decorator
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import View, ListView, TemplateView, DetailView
+from django.views.generic import ListView, TemplateView, DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
 
@@ -146,7 +144,7 @@ class RestrictedUpdateView(UpdateView, OrgRestrictedMixin):
         kwargs = self.get_form_kwargs()
         form = form_class(**kwargs)
         return form
-    
+
     def form_valid(self, form):
         """Validate the form."""
         user = self.request.user
@@ -154,6 +152,7 @@ class RestrictedUpdateView(UpdateView, OrgRestrictedMixin):
             self.object = form.save(commit=False)
 
         return super().form_valid(form)
+
 
 class RestrictedDetailView(DetailView, OrgRestrictedMixin):
     """Base class for detailviews restricted by organiztion."""

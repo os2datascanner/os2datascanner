@@ -30,7 +30,7 @@ class RegexRule(SimpleRule):
                 "offset": match.start(),
                 "match": match.string[match.start() : match.end()],
                 "context": match_context,
-                "context_offset": max(low-50,0),
+                "context_offset": max(low-50, 0),
             }
 
     def to_json_object(self) -> dict:

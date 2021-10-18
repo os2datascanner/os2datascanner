@@ -29,8 +29,9 @@ class Sensitivity(Enum):
     def presentation(self):
         """Returns a (perhaps localised) human-readable string representing
         this Rule, for use in user interfaces."""
-         # XXX: interim hack
+        # XXX: interim hack
         return sensitivity_labels["da"].get(self, self.name)
+
 
 # XXX: this is a hack that should be replaced by real translation support once
 # we get that sorted out
@@ -82,7 +83,7 @@ class Rule(TypePropertyEquality, JSONSerialisable):
 
     @abstractmethod
     def split(self) -> Tuple['SimpleRule',
-            Union['SimpleRule', bool], Union['SimpleRule', bool]]:
+                             Union['SimpleRule', bool], Union['SimpleRule', bool]]:
         """Splits this Rule.
 
         Splitting a Rule produces a SimpleRule, suitable for immediate
@@ -102,8 +103,7 @@ class Rule(TypePropertyEquality, JSONSerialisable):
         this Rule."""
         return {
             "type": self.type_label,
-            "sensitivity": self.sensitivity.value
-                    if self.sensitivity else None,
+            "sensitivity": self.sensitivity.value if self.sensitivity else None,
             "name": self._name
         }
 
@@ -119,7 +119,7 @@ class SimpleRule(Rule):
     this one."""
 
     def split(self):
-        return (self, True, False)
+        return self, True, False
 
     @property
     @abstractmethod

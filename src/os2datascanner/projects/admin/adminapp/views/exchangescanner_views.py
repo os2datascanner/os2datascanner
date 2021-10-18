@@ -16,7 +16,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from rest_framework.generics import ListAPIView
 
-from .scanner_views import *
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCopy,
+    ScannerCreate,
+    ScannerList)
 from ..aescipher import decrypt
 from ..serializers import OrganizationalUnitSerializer
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
@@ -37,6 +44,7 @@ class OrganizationalUnitListing(ListAPIView):
             queryList = []
 
         return queryList
+
 
 class ExchangeScannerList(ScannerList):
     """Displays list of exchange scanners."""
@@ -106,7 +114,6 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
 class ExchangeScannerCopy(ExchangeScannerBase, ScannerCopy):
     """Create a new copy of an existing ExchangeScanner"""
 
-
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist',
@@ -121,13 +128,12 @@ class ExchangeScannerCopy(ExchangeScannerBase, ScannerCopy):
             form_class = self.get_form_class()
 
         form = super().get_form(form_class)
-       
-        form =  initialize_form(form)
+
+        form = initialize_form(form)
         if self.request.method == 'POST':
             form = validate_userlist_or_org_units(form)
 
         return form
-
 
     def get_initial(self):
         initial = super(ExchangeScannerCopy, self).get_initial()
@@ -203,6 +209,7 @@ class ExchangeScannerRun(ScannerRun):
 
     model = ExchangeScanner
 
+
 def validate_userlist_or_org_units(form):
     """Validates whether the form has either a userlist or organizational units.
     NB : must be called after initialize form. """
@@ -211,6 +218,7 @@ def validate_userlist_or_org_units(form):
         form.add_error('org_unit', _("No organizational units has been selected"))
         form.add_error('userlist', _("No userlist has been selected"))
     return form
+
 
 def initialize_form(form):
     """Initializes the form fields for username and password

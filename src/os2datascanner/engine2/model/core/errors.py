@@ -9,6 +9,7 @@ class UnknownSchemeError(LookupError):
     if no handler exists for an object's type label; in these circumstances,
     the single associated value is the type label."""
 
+
 class DeserialisationError(KeyError):
     """When converting a JSON representation of an object back into an object,
     if a required property is missing or has a nonsensical value, a

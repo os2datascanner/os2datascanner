@@ -1,6 +1,3 @@
-from sys import stderr
-from traceback import print_exc
-
 import structlog
 
 logger = structlog.get_logger(__name__)

@@ -21,3 +21,4 @@ class Migration(migrations.Migration):
             field=models.IntegerField(choices=[(0, 'Grøn'), (1, 'Gul'), (2, 'Rød'), (3, 'Sort')], default=2, verbose_name='Følsomhed'),
         ),
     ]
+

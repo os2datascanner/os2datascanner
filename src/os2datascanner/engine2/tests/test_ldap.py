@@ -141,8 +141,10 @@ class LDAPTest(unittest.TestCase):
         the group information present in a flat list of users."""
         self.assertEqual(
                 SUMER_GROUPS,
-                LDAPNode.from_iterator(SUMER_ITERATOR,
-                        name_selector=group_dn_selector).collapse(),
+                LDAPNode.from_iterator(
+                        SUMER_ITERATOR,
+                        name_selector=group_dn_selector
+                        ).collapse(),
                 "LDAP iterator group construction failed")
 
     def test_iterator_skipping(self):
@@ -172,12 +174,12 @@ class LDAPTest(unittest.TestCase):
                 LDAPNode.from_iterator([
                     # memberOf structurally valid but with no valid groups
                     {"distinguishedName": "CN=Enki",
-                        "memberOf": [""] },
+                        "memberOf": [""]},
                     # memberOf valid
                     {"distinguishedName": "CN=Enkidu",
-                        "memberOf": ["CN=Heroes,L=Sumer"] },
+                        "memberOf": ["CN=Heroes,L=Sumer"]},
                     # memberOf missing
-                    {"distinguishedName": "CN=Ninhursag" }
+                    {"distinguishedName": "CN=Ninhursag"}
                 ], name_selector=group_dn_selector),
                 LDAPNode.make(
                     (),

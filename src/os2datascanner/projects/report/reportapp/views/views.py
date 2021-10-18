@@ -95,7 +95,8 @@ class MainPageView(LoginRequiredMixin, ListView):
         # Filters by datasource_last_modified.
         # lte mean less than or equal to.
         # A check whether something is more recent than a month
-        # is done by subtracting 30 days from now and then comparing if the saved time is "bigger" than that
+        # is done by subtracting 30 days from now and then comparing if
+        # the saved time is "bigger" than that
         # and vice versa/smaller for older than.
         # By default true and we show all matches. If false we only show matches older than 30 days
         if self.request.GET.get('30-days') == 'false':
@@ -176,7 +177,6 @@ class MainPageView(LoginRequiredMixin, ListView):
                 'message': 'new matches'
             }
         )
-
 
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
@@ -301,7 +301,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         now = time_now
 
         for org_user in self.users:
-            org_roles = Role.get_user_roles_or_default(org_user)
+            Role.get_user_roles_or_default(org_user)
             earliest_date = now
             for match in self.unhandled_matches:
                 if match.scan_time < earliest_date:

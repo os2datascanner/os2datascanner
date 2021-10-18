@@ -80,7 +80,7 @@ class ModelChoiceFlag(Flag):
         ]
         return selected
 
-    def __contains__(self, flag: 'ModelFlag') -> bool:
+    def __contains__(self, flag: 'ModelFlag') -> bool:  # noqa: F821
         """Indicate whether this ModelFlag is a (possibly equal) superset of
         its argument.
 
@@ -88,5 +88,3 @@ class ModelChoiceFlag(Flag):
         ModelFlag(0) to be contained in any valid ModelFlag - including itself.
         """
         return bool(self & flag) and self & flag == flag
-
-

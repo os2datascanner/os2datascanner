@@ -90,7 +90,7 @@
         {% trans "Edit rule" %}
       </h1>
       {% endif %}
-  
+
       {% if not view.edit %}
       <h1 class="page-title">
         {% trans "Create new rule" %}
@@ -122,11 +122,11 @@
 
           <div class="form__group{% if form.name.errors %} has-error{% endif %}">
             <label class="required-form" for="id_{{ form.name.name }}">{{ form.name.label }}</label>
-            <input 
+            <input
               autofocus="autofocus"
-              type="text" 
-              class="form-control" 
-              name="{{ form.name.name }}" 
+              type="text"
+              class="form-control"
+              name="{{ form.name.name }}"
               id="id_{{ form.name.name }}"
               placeholder="{% trans 'Name of rule' %}"
               {% if form.name.value %}value="{{ form.name.value }}" {% endif %}>
@@ -161,10 +161,10 @@
                 {% if forloop.counter > 1 %}
                 <div class="input-group">
                   {% endif %}
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="{{ pattern_name }}" 
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="{{ pattern_name }}"
                     id="id_{{ pattern_name }}"
                     placeholder="{% trans 'e.g. organization' %}"
                     {% if pattern_value %}value="{{ pattern_value }}" {% endif %}>

@@ -1,4 +1,6 @@
-import binascii, os, logging
+import binascii
+import os
+import logging
 from Crypto.Util import Counter
 from Crypto.Cipher import AES
 from Crypto import Random
@@ -31,7 +33,7 @@ def encrypt(plaintext):
 
     # Encrypt and return IV and ciphertext.
     ciphertext = aes.encrypt(plaintext.encode())
-    return (iv, ciphertext)
+    return iv, ciphertext
 
 
 def decrypt(iv, ciphertext):
@@ -87,9 +89,9 @@ def _email_admin(subject, body):
     try:
         message = EmailMessage(subject, body, settings.ADMIN_EMAIL)
         message.send()
-    except Exception as ex:
+    except Exception:
         logger.error(
-            'Error occurred while sending email to administrator.'.format(ex)
+            'Error occurred while sending email to administrator.'
         )
 
 
@@ -115,7 +117,10 @@ def key_file_handling(data, command, filename, create):
         elif command == 'ab':
             file.write(data)
     except (OSError, IOError) as ex:
-        logger.error('An error occured while trying to {0} {1} file. {2}'.format(command, filename, ex))
+        logger.error('An error occured while trying to {0} {1} file. {2}'.format(
+            command,
+            filename,
+            ex))
     finally:
         if file is not None:
             file.close()

@@ -71,7 +71,7 @@ def request_create_new_realm(realm, token):
 def request_access_token():
     """TODO:"""
     url = (settings.KEYCLOAK_BASE_URL +
-           f'/auth/realms/master/protocol/openid-connect/token')
+           '/auth/realms/master/protocol/openid-connect/token')
     payload = {
         'client_id': settings.KEYCLOAK_ADMIN_CLIENT,
         'client_secret': settings.KEYCLOAK_ADMIN_SECRET,

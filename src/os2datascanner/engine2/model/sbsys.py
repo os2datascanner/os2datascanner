@@ -23,8 +23,9 @@ class SbsysSource(Source):
 
         # Using the oauth grant type client_credentials
         grant_type = {'grant_type': 'client_credentials'}
-        access_token_response = requests.post(self._token_url, data=grant_type, allow_redirects=False,
-                                              auth=(self._client_id, self._client_secret))
+        access_token_response = requests.post(
+            self._token_url, data=grant_type, allow_redirects=False,
+            auth=(self._client_id, self._client_secret))
         # Picking out the access token
         token = access_token_response.json()["access_token"]
 
@@ -84,6 +85,7 @@ class SbsysSource(Source):
             )
             return response
 
+
 # Used for more case specific scan
 CASE_TYPE = "application/x.os2datascanner.sbsys-case"
 
@@ -97,11 +99,10 @@ class SbsysResource(FileResource):
 
     @contextmanager
     def make_path(self):
-        with NamedTemporaryResource(self._handle.relative_path) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-                yield ntr.get_path()
+        with NamedTemporaryResource(self._handle.relative_path) as ntr, ntr.open("wb") as res:
+            with self.make_stream() as s:
+                res.write(s.read())
+            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):
@@ -148,7 +149,8 @@ class SbsysCaseSource(DerivedSource):
         yield sm.open(self.handle.source)
 
     def handles(self, sm):
-        api_search_docs = sm.open(self).get(tail='sag/{0}/dokumenter'.format(self.handle.relative_path))
+        api_search_docs = sm.open(self).get(
+            tail='sag/{0}/dokumenter'.format(self.handle.relative_path))
         for d in api_search_docs.json():
             # For every document on case, picking out the DocumentId.
             docId = d["DokumentID"]
@@ -162,11 +164,10 @@ class SbsysCaseResource(FileResource):
 
     @contextmanager
     def make_path(self):
-        with NamedTemporaryResource(self.handle.relative_path) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-                yield ntr.get_path()
+        with NamedTemporaryResource(self.handle.relative_path) as ntr, ntr.open("wb") as res:
+            with self.make_stream() as s:
+                res.write(s.read())
+            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):

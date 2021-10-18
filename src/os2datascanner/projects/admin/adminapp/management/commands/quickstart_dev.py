@@ -1,6 +1,5 @@
 import sys
 
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -105,4 +104,5 @@ class Command(BaseCommand):
         else:
             self.stdout.write("Webscanner already exists!")
 
-        self.stdout.write(self.style.SUCCESS("Done! Remember to run the same cmd in the Report module"))
+        self.stdout.write(self.style.SUCCESS(
+            "Done! Remember to run the same cmd in the Report module"))

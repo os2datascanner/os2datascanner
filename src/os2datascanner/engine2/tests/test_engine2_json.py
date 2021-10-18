@@ -1,7 +1,7 @@
 import unittest
 
-from os2datascanner.engine2.model.core import (Source,
-        Handle, SourceManager, UnknownSchemeError, DeserialisationError)
+from os2datascanner.engine2.model.core import (
+        Source, Handle, SourceManager, UnknownSchemeError, DeserialisationError)
 from os2datascanner.engine2.model.data import DataSource, DataHandle
 from os2datascanner.engine2.model.ews import (
         EWSMailHandle, EWSAccountSource, OFFICE_365_ENDPOINT as CLOUD)
@@ -10,11 +10,11 @@ from os2datascanner.engine2.model.file import (
 from os2datascanner.engine2.model.http import WebSource, WebHandle
 from os2datascanner.engine2.model.smb import SMBSource, SMBHandle
 from os2datascanner.engine2.model.smbc import SMBCSource, SMBCHandle
-from os2datascanner.engine2.model.msgraph.mail import (MSGraphMailSource,
-        MSGraphMailAccountHandle, MSGraphMailAccountSource,
-        MSGraphMailMessageHandle)
-from os2datascanner.engine2.model.msgraph.files import (MSGraphFilesSource,
-        MSGraphDriveHandle, MSGraphDriveSource, MSGraphFileHandle)
+from os2datascanner.engine2.model.msgraph.mail import (
+        MSGraphMailSource, MSGraphMailAccountHandle,
+        MSGraphMailAccountSource, MSGraphMailMessageHandle)
+from os2datascanner.engine2.model.msgraph.files import (
+        MSGraphFilesSource, MSGraphDriveHandle, MSGraphDriveSource, MSGraphFileHandle)
 
 from os2datascanner.engine2.model.derived.filtered import (
         GzipSource, FilteredHandle)
@@ -86,21 +86,20 @@ example_handles = [
             "1/pictograph.jpeg",
             "image/jpeg"),
     PDFObjectHandle(
-            PDFPageSource(
+        PDFPageSource(
                     PDFPageHandle(
                             PDFSource(
                                     FilesystemHandle(
-                                            FilesystemSource(
-                                                    "/home/kiddw/Documents"),
+                                            FilesystemSource("/home/kiddw/Documents"),
                                             "1699 Gardiners trip/"
-                                            "treasure_map.pdf")),
-                    "10")),
-            "X-marks-the-spot_000-0.png"),
+                                            "treasure_map.pdf")
+                                        ),
+                            "10")),
+        "X-marks-the-spot_000-0.png"),
     LibreOfficeObjectHandle(
             LibreOfficeSource(
                     FilesystemHandle(
-                            FilesystemSource(
-                                    "/media/user/USB STICK"),
+                            FilesystemSource("/media/user/USB STICK"),
                             "What I Did On My Holidays.doc")),
             "What I Did On My Holidays.html"),
     MSGraphMailMessageHandle(
@@ -126,6 +125,7 @@ example_handles = [
                             "Guy Fawkes")),
             "PLOTS/1605-11/GUNPWDER.WP"),
 ]
+
 
 class JSONTests(unittest.TestCase):
     def test_json_round_trip(self):
@@ -181,9 +181,9 @@ class JSONTests(unittest.TestCase):
     def test_double_json_registration(self):
         with self.assertRaises(ValueError):
             @Source.json_handler("file")
-            def handle_json(j):
+            def handle_json(j):  # noqa
                 pass
         with self.assertRaises(ValueError):
             @Handle.json_handler("file")
-            def handle_json(j):
+            def handle_json(j):  # noqa
                 pass

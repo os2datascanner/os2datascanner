@@ -26,8 +26,8 @@ _street_address = (
         _prepend_number,
         _street_name,
         ws=_optional_whitespace) +
-    r"(?P<house_number>{0})?".format(_house_number) )
-_floor_number = r"(?P<floor>{0}{1})?".format(_whitespace,_floor)
+    r"(?P<house_number>{0})?".format(_house_number))
+_floor_number = r"(?P<floor>{0}{1})?".format(_whitespace, _floor)
 _zip_city = r"(?P<zip_code>{0}){1}(?P<city>(?:{2}{3})+)".format(
     _zip_code,
     _whitespace,
@@ -35,7 +35,7 @@ _zip_city = r"(?P<zip_code>{0}){1}(?P<city>(?:{2}{3})+)".format(
     _optional_whitespace
 )
 full_address_regex = regex.compile(
-    r"\b" + _street_address + _optional_comma +  _floor_number + _optional_comma +
+    r"\b" + _street_address + _optional_comma + _floor_number + _optional_comma +
     r"(" + _optional_whitespace + _zip_city + r")?" + r"\b",
     regex.UNICODE
 )
@@ -78,14 +78,13 @@ class AddressRule(SimpleRule):
     type_label = "address"
     eq_properties = ("_whitelist", "_blacklist",)
 
-
     def __init__(self, whitelist=None, blacklist=None, **super_kwargs):
         super().__init__(**super_kwargs)
 
         # Convert list of str to upper case and to sets for efficient lookup
         self.street_names = set(map(str.upper,
-                common_loader.load_dataset(
-                        "addresses", "da_addresses")))
+                                    common_loader.load_dataset(
+                                        "addresses", "da_addresses")))
 
         self._whitelist = [n.upper() for n in (whitelist or [])]
         self._blacklist = [n.upper() for n in (blacklist or [])]
@@ -106,15 +105,6 @@ class AddressRule(SimpleRule):
         for address in addresses:
             street_name = address[0]
             house_number = address[1] if address[1] else ''
-            floor = address[2] if address[2] else ''
-            zip_code = address[3] if address[4] else ''
-            city = address[4] if address[4] else ''
-
-            street_address = f"{street_name} {house_number}"
-            full_address = (
-                f"{street_address}{', ' + floor if floor else ''}, "
-                f"{zip_code} {city}"
-            )
 
             # Store the original matching text
             matched_text = address[5]
@@ -133,7 +123,6 @@ class AddressRule(SimpleRule):
                 "match": matched_text,
                 "sensitivity": sensitivity.value
             }
-
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{

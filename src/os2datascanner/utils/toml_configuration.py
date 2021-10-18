@@ -38,11 +38,11 @@ def update_config(configuration, new_settings):
             logger.warning("Invalid key in config: %s", key)
 
 
-def update_from_env(configuration, traversed_path = []):
-    # Update config from (possible nested) environment variables
-    # Only existing config vars will be overridden
-    # Environment var "var=newval" will override {'var': 'oldval'}
-    # Nested environment variable "my__var__path=newval" will override {'my':{'var': 'path': 'oldval'}}
+def update_from_env(configuration, traversed_path=None):
+
+    if traversed_path is None:
+        traversed_path = []
+
     for key in configuration:
         if isinstance(configuration[key], dict):
             update_from_env(configuration[key], traversed_path + [key])

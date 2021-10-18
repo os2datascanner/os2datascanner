@@ -1,19 +1,18 @@
+import argparse
+import logging
 import os
-import sys
 import random
 import signal
-import logging
-import argparse
+import sys
 import traceback
 from collections import deque
-from prometheus_client import start_http_server, Info, Summary
+
+from prometheus_client import Info, Summary, start_http_server
 
 from ... import __version__
-from ...utils.system_utilities import json_utf8_decode
 from ..model.core import SourceManager
-from .utilities.pika import RejectMessage, PikaPipelineThread
-from . import explorer, processor, matcher, tagger, exporter, worker, messages
-
+from . import explorer, exporter, matcher, messages, processor, tagger, worker
+from .utilities.pika import PikaPipelineThread, RejectMessage
 
 logger = logging.getLogger(__name__)
 
@@ -48,19 +47,20 @@ _loglevels = {
 
 def _compatibility_main(stage):
     print("{0}: warning: this command is deprecated,"
-            " use run_stage.py instead".format(sys.argv[0]))
+          " use run_stage.py instead".format(sys.argv[0]))
     sys.argv = [sys.argv[0], stage]
     main()
 
 
 class GenericRunner(PikaPipelineThread):
     def __init__(self,
-            source_manager: SourceManager, *args,
-            stage: str, module, **kwargs):
-        super().__init__(*args, **kwargs,
-                read=module.READS_QUEUES,
-                write=module.WRITES_QUEUES,
-                prefetch_count=module.PREFETCH_COUNT)
+                 source_manager: SourceManager, *args,
+                 stage: str, module, **kwargs):
+        super().__init__(
+            *args, **kwargs,
+            read=module.READS_QUEUES,
+            write=module.WRITES_QUEUES,
+            prefetch_count=module.PREFETCH_COUNT)
         self._module = module
         self._summary = Summary(
                 f"os2datascanner_pipeline_{stage}",
@@ -116,7 +116,7 @@ def main():
     parser.add_argument(
             "stage",
             choices=("explorer", "processor", "matcher",
-                    "tagger", "exporter", "worker",))
+                     "tagger", "exporter", "worker",))
 
     monitoring = parser.add_argument_group("monitoring")
     monitoring.add_argument(
@@ -141,8 +141,8 @@ def main():
             "--single-cpu",
             action="store_true",
             help="instruct the scheduler to run this stage, and its"
-                    " subprocesses, on a single CPU, either picked at random"
-                    " or based on the SCHEDULE_ON_CPU environment variable")
+                 " subprocesses, on a single CPU, either picked at random"
+                 " or based on the SCHEDULE_ON_CPU environment variable")
 
     args = parser.parse_args()
     module = _module_mapping[args.stage]
@@ -180,6 +180,7 @@ def main():
                 source_manager,
                 stage=args.stage,
                 module=module).run_consumer()
+
 
 if __name__ == "__main__":
     main()

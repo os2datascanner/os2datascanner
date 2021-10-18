@@ -122,7 +122,7 @@
     border-radius: var(--border-radius-button);
     padding: .15rem .25rem;
     margin-right: 1rem;
-    
+
     &:hover,
     &:focus {
       background-color: #fff;
@@ -181,7 +181,7 @@
   vertical-align: bottom;
 }
 
-.button svg + span, 
+.button svg + span,
 .button span + svg {
     margin-left: 0.5rem;
 }

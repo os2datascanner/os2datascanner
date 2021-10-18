@@ -1,10 +1,10 @@
 window.addEventListener('load', function () {
 	// Doughnut chart
-	// // 
-	// // 
-	// // 
-	// // 
-	// // 
+	// //
+	// //
+	// //
+	// //
+	// //
 	// function for rounded corners
 	Chart.pluginService.register({
 		afterUpdate: function (chart) {
@@ -39,7 +39,7 @@ window.addEventListener('load', function () {
 			}
 		},
 	});
-	
+
 	// http://jsfiddle.net/kdvuxbtj/
 
 	// function for moving label to center of chart
@@ -129,14 +129,14 @@ window.addEventListener('load', function () {
 			}
 		}
 	});
-	var handledMatches = JSON.parse(document.getElementById('handled_matches').textContent); 
+	var handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
 	// console.log(document.getElementById('handled_matches').textContent);
 	var criticalHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_critical").getContext('2d');
 	new Chart(criticalHandledDoughnutChartCtx, {
 		type: 'doughnut',
 		data: {
 			datasets: [{
-				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100. 
+				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
 				// This is so that the secondary color will fill the whole graph
 				// this could be prettier, if we 'pre-calculated' the %
 				data: [handledMatches[0][1], ((!sensitivities[0][1]) && (!handledMatches[0][1])) ? 100 : sensitivities[0][1]-handledMatches[0][1]],
@@ -164,7 +164,7 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
-		} 
+		}
 	});
 
 	var problemHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_problem").getContext('2d');
@@ -172,7 +172,7 @@ window.addEventListener('load', function () {
 		type: 'doughnut',
 		data: {
 			datasets: [{
-				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100. 
+				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
 				// This is so that the secondary color will fill the whole graph
 				// this could be prettier, if we 'pre-calculated' the %
 				data: [handledMatches[1][1], ((!sensitivities[1][1]) && (!handledMatches[1][1])) ? 100 : sensitivities[1][1]-handledMatches[1][1]],
@@ -200,7 +200,7 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
-		} 
+		}
 	});
 
 	var warningHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_warning").getContext('2d');
@@ -208,7 +208,7 @@ window.addEventListener('load', function () {
 		type: 'doughnut',
 		data: {
 			datasets: [{
-				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100. 
+				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
 				// This is so that the secondary color will fill the whole graph
 				// this could be prettier, if we 'pre-calculated' the %
 				data: [handledMatches[2][1], ((!sensitivities[2][1]) && (!handledMatches[2][1])) ? 100 : sensitivities[2][1]-handledMatches[2][1]],
@@ -236,7 +236,7 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
-		} 
+		}
 	});
 
 	var notificationHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_notification").getContext('2d');
@@ -244,7 +244,7 @@ window.addEventListener('load', function () {
 		type: 'doughnut',
 		data: {
 			datasets: [{
-				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100. 
+				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
 				// This is so that the secondary color will fill the whole graph
 				// this could be prettier, if we 'pre-calculated' the %
 				data: [handledMatches[3][1], ((!sensitivities[3][1]) && (!handledMatches[3][1])) ? 100 : sensitivities[3][1]-handledMatches[3][1]],
@@ -271,7 +271,7 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
-		} 
+		}
 	});
 	var totalHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_total").getContext('2d');
 	new Chart(totalHandledDoughnutChartCtx, {
@@ -293,7 +293,7 @@ window.addEventListener('load', function () {
 					minFontSize: 20,
 					maxFontSize: 20,
 					weight: 'bold',
-					text: isNaN(handledPercentage) ? 0 : handledPercentage.toFixed(0) + '%', 
+					text: isNaN(handledPercentage) ? 0 : handledPercentage.toFixed(0) + '%',
 				}
 			},
 			plugins: {
@@ -302,6 +302,6 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
-		} 
+		}
 	});
 });

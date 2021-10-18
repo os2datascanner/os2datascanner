@@ -76,7 +76,9 @@ class MSGraphMailAccountSource(DerivedSource):
                 "users/{0}/messages?$select=id,subject,webLink".format(
                         pn))["value"]:
             yield MSGraphMailMessageHandle(self,
-                    message["id"], message["subject"], message["webLink"])
+                                           message["id"],
+                                           message["subject"],
+                                           message["webLink"])
 
 
 class MSGraphMailMessageResource(FileResource):

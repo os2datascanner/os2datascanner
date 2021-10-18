@@ -1,7 +1,7 @@
 import os.path
 import unittest
 
-from os2datascanner.engine2.model.core import Handle, Source, SourceManager
+from os2datascanner.engine2.model.core import SourceManager
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
 from os2datascanner.engine2.model.http import (WebHandle, WebSource)

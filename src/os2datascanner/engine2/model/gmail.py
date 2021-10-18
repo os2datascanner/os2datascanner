@@ -15,13 +15,16 @@ import base64
 
 class GmailSource(Source):
     """Implements Gmail API using a service account.
-       The organization must create a project, a service account, enable G Suite Domain-wide Delegation
-        for the service account, download the credentials in .json format
+       The organization must create a project, a service account,
+        enable G Suite Domain-wide Delegation for the service account,
+        download the credentials in .json format
         and enable the Gmail API and scope for the account to use this feature.
 
-        Guidance to complete the above can be found at: https://support.google.com/a/answer/7378726?hl=en
+        Guidance to complete the above can be found at:
+        https://support.google.com/a/answer/7378726?hl=en
         List of users in organization downloadable by admin from: https://admin.google.com/ac/users
-        Add scope https://www.googleapis.com/auth/gmail.readonly to: https://admin.google.com/ac/owl/domainwidedelegation
+        Add scope https://www.googleapis.com/auth/gmail.readonly to:
+        https://admin.google.com/ac/owl/domainwidedelegation
     """
 
     type_label = "gmail"
@@ -33,9 +36,11 @@ class GmailSource(Source):
     def _generate_state(self, source_manager):
         SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
         service_account_info = json.loads(self._service_account_file_gmail)
-        credentials = service_account.Credentials.from_service_account_info(service_account_info,
-                                                                            scopes=SCOPES).with_subject(
-            self._user_email_gmail)
+        credentials = service_account.Credentials.from_service_account_info(
+            service_account_info,
+            scopes=SCOPES).with_subject(
+                self._user_email_gmail
+            )
 
         service = build(serviceName='gmail', version='v1', credentials=credentials)
         yield service
@@ -44,7 +49,7 @@ class GmailSource(Source):
         service = sm.open(self)
         # Call the Gmail API to fetch INBOX
         results = service.users().messages().list(userId=self._user_email_gmail,
-                                                      labelIds=['INBOX'], maxResults=500).execute()
+                                                  labelIds=['INBOX'], maxResults=500).execute()
         messages = []
         if 'messages' in results:
             messages.extend(results['messages'])
@@ -117,9 +122,10 @@ class GmailResource(FileResource):
 
     @contextmanager
     def make_stream(self):
-        response = self._get_cookie().users().messages().get(userId=self.handle.source._user_email_gmail,
-                                                             id=self.handle.relative_path,
-                                                             format="raw").execute()
+        response = self._get_cookie().users().messages().get(
+            userId=self.handle.source._user_email_gmail,
+            id=self.handle.relative_path,
+            format="raw").execute()
         response_bts = base64.urlsafe_b64decode(response['raw'].encode('ASCII'))
         with BytesIO(response_bts) as fp:
             yield fp

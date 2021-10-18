@@ -16,3 +16,6 @@ class Migration(migrations.Migration):
             field=models.TextField(help_text="Distinguished name for the (top) OU in which to search for users. Groups present under this OU will not necessarily be imported, as OS2datascanner reconstructs groups based on users' group memberships.", verbose_name='DN for users (OU)'),
         ),
     ]
+
+
+

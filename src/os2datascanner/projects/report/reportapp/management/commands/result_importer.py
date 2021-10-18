@@ -15,10 +15,9 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 
-import  argparse
-from    django.core.management.base import BaseCommand
-
-from    .pipeline_collector import _restructure_and_save_result
+import argparse
+from django.core.management.base import BaseCommand
+from .pipeline_collector import _restructure_and_save_result
 
 
 class Command(BaseCommand):
@@ -30,7 +29,7 @@ class Command(BaseCommand):
             "INPUT_FILE",
             type=argparse.FileType("rt"),
             help="a JSON Lines file containing result messages to import into"
-                    " the report database")
+                 " the report database")
 
     def handle(self, *args, **options):
         with options["INPUT_FILE"] as fp:

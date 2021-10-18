@@ -53,7 +53,7 @@ class APITest(TestCase):
                     "application/json",
                     HTTP_AUTHORIZATION="Bearer {0}".format(key.uuid))
             self.assertEqual(r.status_code, 200,
-                    "API request failed")
+                             "API request failed")
             body = json.loads(r.content.decode("ascii"))
             self.assertEqual(
                     Rule.from_json_object(body["rule"]),

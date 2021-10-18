@@ -1,36 +1,36 @@
 // // Bar Chart start
-// // 
-// // 
-// // 
-// // 
-// // 
+// //
+// //
+// //
+// //
+// //
 // Function for creating gradient background for each bar size.
 Chart.pluginService.register({
 	afterUpdate: function(chart) {
 		if (chart.config.type === 'bar'){
-	
+
 			// For every dataset ...
 			for (var i = 0; i < chart.config.data.datasets.length; i++) {
 				// We store it
-				var dsMeta = chart.getDatasetMeta(i) 
+				var dsMeta = chart.getDatasetMeta(i)
 				var dataset = chart.config.data.datasets[i];
 
 				// For every data in this dataset
 				for (var j = 0; j < dataset.data.length; j++) {
 
-					// We use the model to get the bottom and top border Y position 
+					// We use the model to get the bottom and top border Y position
 					var model = dsMeta.data[j]._model;
 					var yAxis = chart.scales['y-axis-0'];
 					height = Math.round(yAxis.bottom - yAxis.getPixelForValue(dataset.data[j]));
 					var start = model.y;
 					var end = model.y + height;
-					
-					
+
+
 					// and to create the gradient
 					gradient = chart.ctx.createLinearGradient(0, start, 0, end);
 
 					// Make the gradient yellow if -> Find something to check for
-					// TODO: 
+					// TODO:
 					// if (model.label !== !user) {
 					// 	// The colors of the gradient that were defined in the data
 					// 	gradient.addColorStop(0, dataset.backgroundColor[0][2]);
@@ -52,7 +52,7 @@ Chart.pluginService.register({
 		}
 	}
 });
-  
+
 // function for rounded corners
 Chart.elements.Rectangle.prototype.draw = function() {
 	var ctx = this._chart.ctx;
@@ -123,7 +123,7 @@ Chart.elements.Rectangle.prototype.draw = function() {
 			right = borderRight;
 		}
 	}
-	
+
 	ctx.beginPath();
 	ctx.fillStyle = vm.backgroundColor;
 	ctx.strokeStyle = vm.borderColor;
@@ -254,7 +254,7 @@ Chart.elements.Rectangle.prototype.draw = function() {
 			ctx.quadraticCurveTo(x_bl, y_bl, x_bl + radius, y_bl);
 
 		} else {
-		
+
 				var lastVisible = 0;
 			for (var findLast = 0, findLastTo = this._chart.data.datasets.length; findLast < findLastTo; findLast++) {
 				if (!this._chart.getDatasetMeta(findLast).hidden) {
@@ -313,7 +313,7 @@ Chart.elements.Rectangle.prototype.draw = function() {
 		ctx.stroke();
 	}
 };
-  
+
 // Function for 'average-line'
 Chart.pluginService.register({
 	beforeDraw: function(chart) {
@@ -364,7 +364,7 @@ new Chart(unhandledBarChartCtx, {
 		}]
 	},
 	options: {
-		cornerRadius: 5, 
+		cornerRadius: 5,
 		//Default: false; if true, this would round all corners of final box;
 		fullCornerRadius: true,
 		legend: {
@@ -435,7 +435,7 @@ new Chart(oldestBarChartCtx, {
     }]
   },
   options: {
-    cornerRadius: 5, 
+    cornerRadius: 5,
     //Default: false; if true, this would round all corners of final box;
     fullCornerRadius: true,
     legend: {

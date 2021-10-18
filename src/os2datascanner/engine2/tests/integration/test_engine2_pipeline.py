@@ -3,8 +3,7 @@ import base64
 import unittest
 
 from os2datascanner.engine2.model.core import Source, SourceManager
-from os2datascanner.engine2.model.file import (
-        FilesystemSource, FilesystemHandle)
+from os2datascanner.engine2.model.file import FilesystemSource
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
@@ -166,8 +165,9 @@ class Engine2PipelineTests(unittest.TestCase):
             },
             "source": FilesystemSource(os.path.join(
                     test_data_path, "ocr", "good")).to_json_object(),
-            "rule": CPRRule(modulus_11=False,
-                    ignore_irrelevant=False).to_json_object(),
+            "rule": CPRRule(
+                modulus_11=False,
+                ignore_irrelevant=False).to_json_object(),
             "configuration": {
                 "skip_mime_types": ["image/*"]
             }
@@ -178,8 +178,9 @@ class Engine2PipelineTests(unittest.TestCase):
 
         for message, queue in self.unhandled:
             if queue == "os2ds_results":
-                self.assertFalse(message["matched"],
-                        "OCR match found with OCR disabled")
+                self.assertFalse(
+                    message["matched"],
+                    "OCR match found with OCR disabled")
             else:
                 self.fail("unexpected message in queue {0}".format(queue))
 
@@ -194,10 +195,11 @@ class Engine2PipelineTests(unittest.TestCase):
                 "organisation": "Vejstrand Kommune",
                 "time": "2020-01-01T00:00:00+00:00"
             },
-            "source": FilesystemSource(os.path.join(
-                    test_data_path, "pdf", "corrupted")).to_json_object(),
-            "rule": CPRRule(modulus_11=False,
-                    ignore_irrelevant=False).to_json_object(),
+            "source": FilesystemSource(
+                os.path.join(test_data_path, "pdf", "corrupted")).to_json_object(),
+            "rule": CPRRule(
+                modulus_11=False,
+                ignore_irrelevant=False).to_json_object(),
             "configuration": {}
         }
 

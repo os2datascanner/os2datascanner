@@ -13,6 +13,7 @@
 #
 """Utility methods for the Admin application."""
 
+
 def upload_path_webscan_sitemap(instance, filename):
     return "organisation/%s" % instance.organization.slug + "/sitemaps/%s" % filename
 
@@ -30,7 +31,8 @@ def upload_path_exchange_users(instance, filename):
 
 
 def upload_path_gdrive_service_account(instance, filename):
-    return "organisation/%s" % instance.organization.slug + "/googledrive/serviceaccount/%s" % filename
+    return ("organisation/%s" % instance.organization.slug
+            + "/googledrive/serviceaccount/%s" % filename)
 
 
 def upload_path_gdrive_users(instance, filename):

@@ -1,4 +1,4 @@
-from typing import Iterator, List, Match, Optional, Tuple, Dict, Union
+from typing import Iterator, List, Match, Optional, Tuple, Dict
 import re
 from itertools import chain
 from enum import Enum, unique
@@ -57,12 +57,12 @@ class CPRRule(RegexRule):
     }
 
     def __init__(self,
-            modulus_11: bool = True,
-            ignore_irrelevant: bool = True,
-            examine_context: bool = True,
-            whitelist: Optional[List[str]] = None,
-            blacklist: Optional[List[str]] = None,
-            **super_kwargs):
+                 modulus_11: bool = True,
+                 ignore_irrelevant: bool = True,
+                 examine_context: bool = True,
+                 whitelist: Optional[List[str]] = None,
+                 blacklist: Optional[List[str]] = None,
+                 **super_kwargs):
         super().__init__(cpr_regex, **super_kwargs)
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
@@ -99,14 +99,14 @@ class CPRRule(RegexRule):
         for itot, m in enumerate(self._compiled_expression.finditer(content), 1):
             cpr = m.group(1).replace(" ", "") + m.group(2)
             if self._modulus_11:
-                mod11, reason =  modulus11_check(cpr)
+                mod11, reason = modulus11_check(cpr)
                 if not mod11:
                     logger.debug(f"{cpr} failed modulus11 check due to {reason}")
                     continue
 
             probability = 1.0
             if self._ignore_irrelevant:
-                probability = calculator.cpr_check(cpr, do_mod11_check = False)
+                probability = calculator.cpr_check(cpr, do_mod11_check=False)
                 if isinstance(probability, str):
                     logger.debug(f"{cpr} is not valid cpr due to {probability}")
                     continue
@@ -120,8 +120,7 @@ class CPRRule(RegexRule):
                 probability = p if p is not None else probability
                 ctype = ctype if ctype != [] else Context.PROBABILITY_CALC
                 logger.debug(f"{cpr} with probability {probability} from context "
-                            f"due to {ctype}")
-
+                             f"due to {ctype}")
 
             # Extract context, remove newlines and tabs for better representation
             match_context = content[max(low - 50, 0) : high + 50]
@@ -144,7 +143,7 @@ class CPRRule(RegexRule):
                     "probability": probability,
                 }
             logger.debug(f"{itot} cpr-like numbers, "
-                        f"of which {imatch} had a probabiliy > 0")
+                         f"of which {imatch} had a probabiliy > 0")
 
     def examine_context(
         self, match: Match[str]
@@ -227,7 +226,7 @@ class CPRRule(RegexRule):
         content = match.string
         low, high = match.span()
         # get previous/next n words
-        pre = " ".join(content[max(low-50,0):low].split()[-n_words:])
+        pre = " ".join(content[max(low-50, 0):low].split()[-n_words:])
         post = " ".join(content[high:high+50].split()[:n_words])
 
         # split in two capture groups: (word, symbol)

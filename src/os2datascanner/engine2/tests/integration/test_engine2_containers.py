@@ -1,7 +1,6 @@
 import os.path
 from datetime import datetime
 import unittest
-import contextlib
 
 from os2datascanner.engine2.model.core import (Source, SourceManager)
 from os2datascanner.engine2.model.file import (
@@ -51,28 +50,27 @@ class Engine2ContainerTest(unittest.TestCase):
                     stream_raw = fp.read()
                     stream_size = len(stream_raw)
                     stream_content = stream_raw.decode("utf-8")
-                with r.make_path() as p:
-                    with open(p, "rb") as fp:
-                        file_raw = fp.read()
-                        file_size = len(file_raw)
-                        file_content = file_raw.decode("utf-8")
+                with r.make_path() as p, open(p, "rb") as fp:
+                    file_raw = fp.read()
+                    file_size = len(file_raw)
+                    file_content = file_raw.decode("utf-8")
 
                 self.assertIsInstance(
                         last_modified,
                         SingleResult,
                         ("{0}: last modification date is not a"
-                                " SingleResult").format(handle))
+                         " SingleResult").format(handle))
                 self.assertIsInstance(
                         last_modified.value,
                         datetime,
                         ("{0}: last modification date value is not a"
-                                "datetime.datetime").format(handle))
+                         "datetime.datetime").format(handle))
 
                 self.assertIsInstance(
                         reported_size,
                         SingleResult,
                         ("{0}: resource length is not a"
-                                " SingleResult").format(handle))
+                         " SingleResult").format(handle))
                 self.assertEqual(
                         stream_size,
                         reported_size.value,
@@ -108,7 +106,7 @@ class Engine2ContainerTest(unittest.TestCase):
             self.process(source, sm)
 
     def test_derived_source(self):
-        with SourceManager() as sm:
+        with SourceManager():
             s = FilesystemSource(test_data_path)
             h = FilesystemHandle(s, "data/engine2/zip-here/test-vector.zip")
 

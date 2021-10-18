@@ -1,6 +1,5 @@
 import unittest
 
-from os2datascanner.engine2.model.core import Source
 from os2datascanner.engine2.model.data import DataSource
 from os2datascanner.engine2.model.file import FilesystemSource
 from os2datascanner.engine2.model.http import SecureWebSource, WebSource
@@ -63,7 +62,7 @@ class URLTests(unittest.TestCase):
                     "secretpassword",
                     None,
                 ),
-                "smbc://intern.vstkom.dk;FaithfullA:secretpassword@INT-SRV-01.intern.vstkom.dk/Q%24",
+                "smbc://intern.vstkom.dk;FaithfullA:secretpassword@INT-SRV-01.intern.vstkom.dk/Q%24",  # noqa
             ),
             (
                 SMBCSource(

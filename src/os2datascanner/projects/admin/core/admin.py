@@ -33,7 +33,6 @@ class AdministratorAdmin(admin.ModelAdmin):
             if field._queryset.filter(**choice_limits).count() == 0:
                 field.empty_label = _('-- No valid users available --')
 
-
         return form
 
     def get_readonly_fields(self, request, obj=None):

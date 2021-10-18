@@ -1,6 +1,4 @@
 from .core import Source, Handle, FileResource
-
-from os import stat
 import os.path
 from urllib.parse import quote, unquote, urlsplit, urlunsplit
 from pathlib import Path
@@ -30,8 +28,8 @@ class FilesystemSource(Source):
             try:
                 for f in d.iterdir():
                     if f.is_file():
-                        yield FilesystemHandle(self,
-                                str(f.relative_to(pathlib_path)))
+                        yield FilesystemHandle(
+                            self, str(f.relative_to(pathlib_path)))
             except PermissionError:
                 continue
 
@@ -67,9 +65,10 @@ class FilesystemSource(Source):
         return FilesystemSource(path=obj["path"])
 
 
-stat_attributes = ("st_mode", "st_ino", "st_dev", "st_nlink", "st_uid",
-        "st_gid", "st_size", "st_atime", "st_mtime", "st_ctime",
-        "st_blksize", "st_blocks", "st_rdev", "st_flags",)
+stat_attributes = (
+    "st_mode", "st_ino", "st_dev", "st_nlink", "st_uid",
+    "st_gid", "st_size", "st_atime", "st_mtime", "st_ctime",
+    "st_blksize", "st_blocks", "st_rdev", "st_flags",)
 
 
 class FilesystemResource(FileResource):

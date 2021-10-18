@@ -89,7 +89,8 @@ class RegexRuleCreate(RuleCreate):
         form = super().get_form(form_class)
 
         # Then a dynamic form to create multiple pattern fields
-        # See - https://www.caktusgroup.com/blog/2018/05/07/creating-dynamic-forms-django/ (Creating a dynamic form)
+        # See - https://www.caktusgroup.com/blog/2018/05/07/creating-dynamic-forms-django/
+        # (Creating a dynamic form)
         self.patterns = extract_pattern_fields(form.data)
 
         idx = 0
@@ -160,7 +161,7 @@ class RuleUpdate(RestrictedUpdateView):
             with transaction.atomic():
                 RuleCreate._save_rule_form(form)
                 return super().form_valid(form)
-        except:
+        except Exception:
             return super().form_invalid(form)
 
 
@@ -225,7 +226,7 @@ class RegexRuleUpdate(RuleUpdate):
                 # Skip the RuleUpdate implementation of form_valid -- we've
                 # already created our (Regex)Rule object
                 return super(RuleUpdate, self).form_valid(form)
-        except:
+        except Exception:
             return super().form_invalid(form)
 
     def get_pattern_fields(self):
@@ -249,6 +250,7 @@ class CPRRuleUpdate(RuleUpdate):
     def get_success_url(self):
         """The URL to redirect to after successful update."""
         return '/rules/cpr/%s/saved/' % self.object.pk
+
 
 class RuleDelete(RestrictedDeleteView):
     """Delete a rule view."""

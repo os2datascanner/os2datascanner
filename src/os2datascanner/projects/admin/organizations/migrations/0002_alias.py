@@ -28,3 +28,6 @@ class Migration(migrations.Migration):
             bases=(os2datascanner.projects.admin.organizations.models.broadcasted_mixin.Broadcasted, models.Model),
         ),
     ]
+
+
+

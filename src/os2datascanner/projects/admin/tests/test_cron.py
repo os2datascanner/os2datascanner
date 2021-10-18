@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from io import StringIO
-from json import loads
 from contextlib import redirect_stdout
 from pprint import pformat
 
@@ -190,7 +189,7 @@ class CronTest(django.test.TestCase):
 
         try:
             self.runner.run_consumer()
-        except StopHandling as e:
+        except StopHandling:
             print('############################')
             print('scan_spec recieved after starting the scan job by cron')
             print("{0}".format(pformat(messages[1][0])))

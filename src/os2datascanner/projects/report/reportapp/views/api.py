@@ -20,7 +20,7 @@ def set_status_1(username, body):
     status_value = body.get("new_status")
 
     try:
-        status = DocumentReport.ResolutionChoices(status_value).value
+        DocumentReport.ResolutionChoices(status_value).value
     except ValueError:
         return {
             "status": "fail",

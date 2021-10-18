@@ -45,7 +45,7 @@ for (i = 0; i < l; i++) {
           }
         }
         h.click();
-        
+
         // add parameter 'paginate_by' to url
         function addParameterToURL(){
           if ('URLSearchParams' in window) {

@@ -57,14 +57,13 @@ def get_scanner_1(key, body):
             "message": "scanner {0} does not exist".format(pk)
         }
 
-    rule_generator = (r.make_engine2_rule()
-            for r in scanner.rules.all().select_subclasses())
+    rule_generator = (r.make_engine2_rule() for r in scanner.rules.all().select_subclasses())
     return {
         "status": "ok",
         "name": scanner.name,
         "rule": OrRule.make(*rule_generator).to_json_object(),
         "sources": list(s.censor().to_json_object()
-                for s in scanner.generate_sources())
+                        for s in scanner.generate_sources())
     }
 
 
@@ -118,14 +117,14 @@ class JSONAPIView(View):
         if not auth:
             r = HttpResponse(status=401)
             r["WWW-Authentication"] = "Bearer realm=\"admin-api\""
-            return (None, r)
+            return None, r
         else:
             auth = auth.split()
             if not auth[0] == "Bearer" or len(auth) != 2:
                 r = HttpResponse(status=400)
                 r["WWW-Authentication"] = (
                         "Bearer realm=\"admin-api\" error=\"invalid_request\"")
-                return (None, r)
+                return None, r
             else:
                 try:
                     key = APIKey.objects.get(uuid=auth[1])
@@ -134,12 +133,12 @@ class JSONAPIView(View):
                     r["WWW-Authentication"] = (
                             "Bearer realm=\"admin-api\""
                             " error=\"invalid_token\"")
-                    return (None, r)
-                if not path in key:
+                    return None, r
+                if path not in key:
                     r = HttpResponse(status=403)
                     r["WWW-Authentication"] = (
                             "Bearer realm=\"admin-api\""
                             " error=\"insufficient_scope\"")
-                    return (None, r)
+                    return None, r
                 else:
-                    return (key, None)
+                    return key, None

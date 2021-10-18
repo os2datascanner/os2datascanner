@@ -24,6 +24,7 @@ class WebDomainAlias(Alias):
     domain = models.TextField(verbose_name="Web-domænenavn")
 
     key = "web-domain"
+
     def __str__(self):
         return self.domain
 

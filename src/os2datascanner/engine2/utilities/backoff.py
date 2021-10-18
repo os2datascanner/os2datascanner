@@ -1,4 +1,3 @@
-from sys import stderr
 from time import sleep
 from random import random
 

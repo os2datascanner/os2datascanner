@@ -12,7 +12,14 @@
 # sector open source network <https://os2.eu/>.
 #
 from ..models.scannerjobs.gmail_model import GmailScanner
-from .scanner_views import *
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCopy,
+    ScannerCreate,
+    ScannerList)
 
 
 class GmailScannerList(ScannerList):

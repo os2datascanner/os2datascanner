@@ -1,23 +1,21 @@
 from io import BytesIO
-import email
-from email.utils import parsedate_to_datetime
-import email.policy
 from urllib.parse import urlsplit, quote
 from contextlib import contextmanager
-from exchangelib import (Account, Message, Credentials,
-        IMPERSONATION, Configuration, FaultTolerance, ExtendedProperty)
-from exchangelib.errors import (ErrorServerBusy,
-        ErrorItemNotFound, ErrorNonExistentMailbox)
+from exchangelib import (
+    Account, Message, Credentials, IMPERSONATION,
+    Configuration, FaultTolerance, ExtendedProperty)
+from exchangelib.errors import (ErrorServerBusy, ErrorItemNotFound)
 from exchangelib.protocol import BaseProtocol
 
 from .utilities import NamedTemporaryResource
 from ..utilities.backoff import run_with_backoff
 from ..conversions.types import OutputType
-from ..conversions.utilities.results import SingleResult, MultipleResults
+from ..conversions.utilities.results import SingleResult
 from .core import Source, Handle, FileResource
 
 
 BaseProtocol.SESSION_POOLSIZE = 1
+
 
 # An "entry ID" is the special identifier used to open something in the Outlook
 # rich client (after converting it to a hexadecimal string). This property can
@@ -27,6 +25,7 @@ BaseProtocol.SESSION_POOLSIZE = 1
 class EntryID(ExtendedProperty):
     property_tag = 4095
     property_type = 'Binary'
+
 
 Message.register("entry_id", EntryID)
 
@@ -48,7 +47,7 @@ def _dictify_headers(headers):
         d = InsensitiveDict()
         for mh in headers:
             n, v = mh.name, mh.value
-            if not n in d:
+            if n not in d:
                 d[n] = v
             else:
                 if isinstance(d[n], list):
@@ -130,15 +129,16 @@ class EWSAccountSource(Source):
         def relevant_mails(relevant_folders):
             for folder in relevant_folders:
                 for mail in (m
-                        for m in folder.all().only("id", "headers", "entry_id")
-                        if isinstance(m, Message) and hasattr(m, "entry_id")):
+                             for m in folder.all().only("id", "headers", "entry_id")
+                             if isinstance(m, Message) and hasattr(m, "entry_id")):
                     headers = _dictify_headers(mail.headers)
                     if headers:
-                        yield EWSMailHandle(self,
-                                "{0}.{1}".format(folder.id, mail.id),
-                                headers.get("subject", "(no subject)"),
-                                folder.name,
-                                mail.entry_id.hex())
+                        yield EWSMailHandle(
+                            self,
+                            "{0}.{1}".format(folder.id, mail.id),
+                            headers.get("subject", "(no subject)"),
+                            folder.name,
+                            mail.entry_id.hex())
 
         yield from relevant_mails(relevant_folders())
 
@@ -304,6 +304,7 @@ class EWSMailHandle(Handle):
     @staticmethod
     @Handle.json_handler(type_label)
     def from_json_object(obj):
-        return EWSMailHandle(Source.from_json_object(obj["source"]),
-                obj["path"], obj["mail_subject"],
-                obj.get("folder_name"), obj.get("entry_id"))
+        return EWSMailHandle(Source.from_json_object(
+            obj["source"]),
+            obj["path"], obj["mail_subject"],
+            obj.get("folder_name"), obj.get("entry_id"))

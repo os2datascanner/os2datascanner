@@ -26,3 +26,6 @@ class Migration(migrations.Migration):
             field=models.CharField(choices=[('ad', 'Active Directory'), ('other', 'Other')], max_length=32, verbose_name='vendor'),
         ),
     ]
+
+
+

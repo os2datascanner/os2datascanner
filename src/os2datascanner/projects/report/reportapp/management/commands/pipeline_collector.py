@@ -94,7 +94,7 @@ def event_message_received_raw(body):
         handle_event(event_type, instance, Organization)
     else:
         logger.debug("event_message_received_raw:"
-                f" unknown model_class {model_class} in event")
+                     f" unknown model_class {model_class} in event")
         return
 
     yield from []
@@ -122,9 +122,9 @@ def handle_metadata_message(new_report, result):
 def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
     path = hash_handle(reference)
     scanner_json = scan_tag.scanner.to_json_object()
-    previous_report = DocumentReport.objects.filter(path=path,
-            data__scan_tag__scanner=scanner_json).order_by(
-            "-scan_time").first()
+    previous_report = DocumentReport.objects.filter(
+        path=path,
+        data__scan_tag__scanner=scanner_json).order_by("-scan_time").first()
     # get_or_create unconditionally writes freshly-created objects to the
     # database (in the version of Django we're using at the moment, at least),
     # so we have to implement similar logic ourselves
@@ -132,8 +132,9 @@ def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
         new_report = DocumentReport.objects.filter(
                 path=path, scan_time=scan_tag.time).get()
     except DocumentReport.DoesNotExist:
-        new_report = DocumentReport(path=path, scan_time=scan_tag.time,
-                data={"scan_tag": scan_tag.to_json_object()})
+        new_report = DocumentReport(
+            path=path, scan_time=scan_tag.time,
+            data={"scan_tag": scan_tag.to_json_object()})
 
     return previous_report, new_report
 
@@ -141,7 +142,6 @@ def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
 def handle_match_message(previous_report, new_report, body):
     new_matches = messages.MatchesMessage.from_json_object(body)
     previous_matches = previous_report.matches if previous_report else None
-
 
     matches = [(match.rule.presentation, match.matches) for match in new_matches.matches]
     logger.debug(
@@ -159,7 +159,7 @@ def handle_match_message(previous_report, new_report, body):
                 # actually happened
                 if (len(new_matches.matches) == 1
                         and isinstance(new_matches.matches[0].rule,
-                                LastModifiedRule)):
+                                       LastModifiedRule)):
                     # The file hasn't been changed, so the matches are the same
                     # as they were last time. Instead of making a new entry,
                     # just update the timestamp on the old one
@@ -204,7 +204,7 @@ def handle_match_message(previous_report, new_report, body):
         new_report.save()
         logger.debug("matches, saving new DocReport", report=new_report)
     elif new_report is not None:
-        logger.debug(f"No new matches.")
+        logger.debug("No new matches.")
 
 
 def sort_matches_by_probability(body):
@@ -263,15 +263,16 @@ def handle_problem_message(previous_report, new_report, body):
             msgtype="problem",
         )
 
+
 def _identify_message(result):
     origin = result.get('origin')
 
     if origin == 'os2ds_problems':
-        return (result.get("scan_tag"), "problem")
+        return result.get("scan_tag"), "problem"
     elif origin == 'os2ds_metadata':
-        return (result.get("scan_tag"), "metadata")
+        return result.get("scan_tag"), "metadata"
     elif origin == "os2ds_matches":
-        return (result["scan_spec"].get("scan_tag"), "matches")
+        return result["scan_spec"].get("scan_tag"), "matches"
     else:
         return None, None
 
@@ -305,7 +306,7 @@ def handle_event(event_type, instance, cls):
             logger.debug(f"handle_event: updated {cn} {existing.uuid}")
         else:
             logger.warning("handle_event: unexpected event_type"
-                    f" {event_type} for {cn} {existing.uuid}")
+                           f" {event_type} for {cn} {existing.uuid}")
 
     except cls.DoesNotExist:
         # The object didn't exist -- save it. Note that we might also end up

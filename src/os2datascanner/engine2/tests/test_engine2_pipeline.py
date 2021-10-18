@@ -8,8 +8,8 @@ from os2datascanner.engine2.pipeline import messages
 class Engine2PipelineTests(unittest.TestCase):
     def test_rule_sensitivity(self):
         message = messages.MatchesMessage(
-            scan_spec=None, # unused (at present)
-            handle=None, # unused (at present)
+            scan_spec=None,  # unused (at present)
+            handle=None,  # unused (at present)
             matched=True,
             matches=[
                 messages.MatchFragment(
@@ -37,8 +37,8 @@ class Engine2PipelineTests(unittest.TestCase):
 
     def test_match_sensitivity(self):
         message = messages.MatchesMessage(
-            scan_spec={}, # unused (at present)
-            handle=None, # unused (at present)
+            scan_spec={},  # unused (at present)
+            handle=None,  # unused (at present)
             matched=True,
             matches=[
                 messages.MatchFragment(
@@ -68,8 +68,8 @@ class Engine2PipelineTests(unittest.TestCase):
 
     def test_anomalous_sensitivity(self):
         message = messages.MatchesMessage(
-            scan_spec={}, # unused (at present)
-            handle=None, # unused (at present)
+            scan_spec={},  # unused (at present)
+            handle=None,  # unused (at present)
             matched=True,
             matches=[
                 messages.MatchFragment(

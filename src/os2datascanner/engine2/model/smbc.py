@@ -11,7 +11,8 @@ from contextlib import contextmanager
 from ..utilities.backoff import run_with_backoff
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import MultipleResults
-from .smb import (SMBSource, make_smb_url, compute_domain, 
+from .smb import (
+    SMBSource, make_smb_url, compute_domain,
     make_presentation, make_presentation_url)
 from .core import Source, Handle, FileResource
 from .file import stat_attributes
@@ -60,7 +61,7 @@ class SMBCSource(Source):
             "_unc", "_user", "_password", "_domain", "_skip_super_hidden")
 
     def __init__(self, unc, user=None, password=None, domain=None,
-            driveletter=None, *, skip_super_hidden: bool = False):
+                 driveletter=None, *, skip_super_hidden: bool = False):
         self._unc = unc.replace('\\', '/')
         self._user = user
         self._password = password
@@ -94,6 +95,7 @@ class SMBCSource(Source):
 
     def handles(self, sm):
         url, context = sm.open(self)
+
         def handle_dirent(parents, entity):
             name = entity.name
 
@@ -110,7 +112,7 @@ class SMBCSource(Source):
                 if (mode is not None
                         and mode & Mode.HIDDEN
                         and (mode & Mode.SYSTEM
-                                or name.startswith("~"))):
+                             or name.startswith("~"))):
                     logger.debug(f"skipping super-hidden object {path}")
                     return
 
@@ -144,7 +146,8 @@ class SMBCSource(Source):
         scheme, netloc, path, _, _ = urlsplit(url)
         match = SMBSource.netloc_regex.match(netloc)
         if match:
-            return SMBCSource("//" + match.group("unc") + unquote(path),
+            return SMBCSource(
+                "//" + match.group("unc") + unquote(path),
                 match.group("username"), match.group("password"),
                 match.group("domain"))
         else:
@@ -279,7 +282,7 @@ class SMBCResource(FileResource):
 
     def get_last_modified(self):
         return self.unpack_stat().setdefault(OutputType.LastModified,
-                super().get_last_modified())
+                                             super().get_last_modified())
 
     def get_owner_sid(self):
         """Returns the Windows security identifier of the owner of this file,

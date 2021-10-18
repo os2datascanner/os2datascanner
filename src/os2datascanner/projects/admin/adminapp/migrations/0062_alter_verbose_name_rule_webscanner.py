@@ -31,3 +31,6 @@ class Migration(migrations.Migration):
             field=models.CharField(blank=True, default='', help_text="Be sure to include a trailing '/'to enforce path matching, i.e. https://example.com/images/ instead of https://example.com/images", max_length=2048, verbose_name='comma-separated list of urls to exclude'),
         ),
     ]
+
+
+

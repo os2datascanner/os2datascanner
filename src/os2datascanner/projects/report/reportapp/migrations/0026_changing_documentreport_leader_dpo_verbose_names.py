@@ -69,3 +69,6 @@ class Migration(migrations.Migration):
             field=models.DateTimeField(null=True, db_index=True, verbose_name='scan time'),
         ),
     ]
+
+
+

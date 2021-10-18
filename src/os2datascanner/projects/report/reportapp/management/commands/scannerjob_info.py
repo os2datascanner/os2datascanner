@@ -20,7 +20,6 @@ class Command(BaseCommand):
             default=None,
         )
 
-
     def handle(self, pk, *args, **options):
         scanner_name = None
         problem_msgs = 0
@@ -31,7 +30,8 @@ class Command(BaseCommand):
         doc_reps = DocumentReport.objects.filter(data__scan_tag__scanner__pk=pk)
 
         if not doc_reps.exists():
-            self.stderr.write(self.style.NOTICE("No scanner job PK matching in DocumentReports found"))
+            self.stderr.write(self.style.NOTICE(
+                "No scanner job PK matching in DocumentReports found"))
             sys.exit(0)
 
         for doc_rep in doc_reps.iterator():
@@ -62,13 +62,14 @@ class Command(BaseCommand):
                                              f' * Problems {problem_msgs}'))
 
         if data_mime_type_problems:
-            self.stdout.write(self.style.SUCCESS(f'--------------------\n'
-                                                 f'Problem Messages Mimetypes'))
+            self.stdout.write(self.style.SUCCESS('--------------------\n'
+                                                 'Problem Messages Mimetypes'))
             for key in data_mime_type_problems:
-                    self.stdout.write(self.style.SUCCESS(f' * {key} : {data_mime_type_problems[key]}'))
+                self.stdout.write(self.style.SUCCESS(
+                    f' * {key} : {data_mime_type_problems[key]}'))
 
         if data_mime_type_matches:
-            self.stdout.write(self.style.SUCCESS(f'--------------------\n'
-                                                 f'Match Messages Mimetypes'))
+            self.stdout.write(self.style.SUCCESS('--------------------\n'
+                                                 'Match Messages Mimetypes'))
             for key in data_mime_type_matches:
                 self.stdout.write(self.style.SUCCESS(f' * {key} : {data_mime_type_matches[key]}'))

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 from datetime import datetime
 from dateutil import tz
 from enum import Enum
@@ -21,13 +22,13 @@ class OutputType(Enum):
     ImageDimensions = "image-dimensions" # (int, int)
     Links = "links"  # list[Link]
 
-    AlwaysTrue = "fallback" # True
+    AlwaysTrue = "fallback"  # True
     NoConversions = "dummy"
 
     def encode_json_object(self, v):
         """Converts an object (of the appropriate type for this OutputType) to
         a JSON-friendly representation."""
-        if v == None:
+        if v is None:
             return None
         elif self == OutputType.Text:
             return str(v)
@@ -47,14 +48,14 @@ class OutputType(Enum):
     def decode_json_object(self, v):
         """Constructs an object (of the appropriate type for this OutputType)
         from a JSON representation."""
-        if v == None:
+        if v is None:
             return None
         elif self == OutputType.Text:
             return v
         elif self == OutputType.LastModified:
             return _str_to_datetime(v)
         elif self == OutputType.ImageDimensions:
-            return (int(v[0]), int(v[1]))
+            return int(v[0]), int(v[1])
         elif self == OutputType.Links:
             return [Link(url, link_text) for url, link_text in v]
         elif self == OutputType.AlwaysTrue:

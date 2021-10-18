@@ -13,7 +13,7 @@
 
 <div class="runner-container">
 {% if scan_tag %}
-  
+
   <div class="runner-content">
     <span class="icon">
       {% include "components/svg-icons/scan_succes.svg" %}
@@ -71,12 +71,12 @@
             <i id="arrow_right" class="material-icons">arrow_right</i>
             <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
           </span>
-  
+
           <span class="text">
             {% trans "Technical details" %}
           </span>
         </div>
-  
+
         <pre id="scan-details" style="display: none;">
           {% trans "Could not open data source:" %} {{ engine2_error }}
         </pre>
@@ -106,12 +106,12 @@
             <i id="arrow_right" class="material-icons">arrow_right</i>
             <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
           </span>
-  
+
           <span class="text">
             {% trans "Technical details" %}
           </span>
         </div>
-  
+
         <pre id="scan-details" style="display: none;">
           {% trans "Could not communicate with the scanner engine:" %} {{ pika_error }}
         </pre>

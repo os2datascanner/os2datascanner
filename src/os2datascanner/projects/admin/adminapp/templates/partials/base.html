@@ -71,13 +71,13 @@
   {% block scripts %}
 
     <!-- TODO: Since the following scripts are in a 'scripts' block, are they supposed to be overwritten by templates? -->
-  
+
     {% if not settings.DEBUG %}
 
       <!-- TODO: Is jquery.modal not used in development? -->
       <!-- ANSWER: Yes, sometimes in some templates (ex. os2datascanner/rules.html). This setup potentially loads jquery.modal twice, though. -->
       <script src="{% static '3rdparty/jquery.modal.min.js' %} "></script>
-      
+
       <!-- TODO: No bootstrap.css to go with this? -->
       <script src="{% static '3rdparty/bootstrap.min.js' %}"></script>
 

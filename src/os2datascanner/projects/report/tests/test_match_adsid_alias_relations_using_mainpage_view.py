@@ -1,7 +1,8 @@
 from os2datascanner.engine2.model.smb import SMBHandle, SMBSource
 from os2datascanner.engine2.model.smbc import SMBCHandle, SMBCSource
 from os2datascanner.projects.report.reportapp.models.aliases.adsidalias_model import ADSIDAlias
-from os2datascanner.projects.report.reportapp.templatetags.handle_extras import find_file_folder, find_parent
+from os2datascanner.projects.report.reportapp.templatetags.handle_extras import (
+    find_file_folder, find_parent)
 from parameterized import parameterized
 from datetime import timedelta
 from django.test import RequestFactory, TestCase
@@ -64,21 +65,21 @@ common_rule_2 = RegexRule(
 
 """EGON DATA"""
 egon_adsid_handle = SMBCHandle(
-    source = SMBCSource(
+    source=SMBCSource(
                 "//172.16.20.108/1234/",
                 "username"),
     relpath="os2datascanner.pdf"
 )
 
 egon_adsid_handle_1 = SMBCHandle(
-    source = SMBCSource(
+    source=SMBCSource(
                 "//172.16.20.108/toender/",
                 "username"),
     relpath="os2datascanner.png"
 )
 
 egon_adsid_handle_2 = SMBCHandle(
-    source = SMBCSource(
+    source=SMBCSource(
                 "//172.16.20.108/toender/presentations",
                 "username"),
     relpath="os2datascanner.txt"
@@ -143,7 +144,7 @@ egon_metadata_2 = messages.MetadataMessage(
 
 """KJELD DATA"""
 kjeld_adsid_handle = SMBCHandle(
-    source = SMBCSource(
+    source=SMBCSource(
                 "//172.16.20.108/toender/presentations",
                 "username"),
     relpath="os2datascanner.pdf"
@@ -271,7 +272,7 @@ class MatchADSIDAliasRelationTest(TestCase):
 
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
-        qs = self.mainpage_get_queryset()
+        qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 3)
         kjeld_alias.delete()
         egon_alias.delete()
@@ -281,7 +282,7 @@ class MatchADSIDAliasRelationTest(TestCase):
         kjeld_alias, egon_alias = self.create_adsid_alias_kjeld_and_egon()
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
-        qs = self.mainpage_get_queryset()
+        qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 3)
         kjeld_alias.delete()
         egon_alias.delete()
@@ -291,7 +292,7 @@ class MatchADSIDAliasRelationTest(TestCase):
         kjeld_alias, egon_alias = self.create_adsid_alias_kjeld_and_egon()
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
-        qs = self.mainpage_get_queryset()
+        qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 3)
         kjeld_alias.delete()
         egon_alias.delete()
@@ -301,7 +302,7 @@ class MatchADSIDAliasRelationTest(TestCase):
         kjeld_alias, egon_alias = self.create_adsid_alias_kjeld_and_egon()
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
-        qs = self.mainpage_get_queryset()
+        qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 3)
         kjeld_alias.delete()
         egon_alias.delete()
@@ -390,7 +391,7 @@ class MatchADSIDAliasRelationTest(TestCase):
         qs1 = self.mainpage_get_queryset()
         self.assertEqual(len(qs1), 3)
         alias.delete()
-    
+
     def test_find_file_folder_filter_on_handle(self):
         handle1 = SMBHandle(
             SMBSource(
@@ -401,7 +402,7 @@ class MatchADSIDAliasRelationTest(TestCase):
         converted_handle1 = find_file_folder(handle1, force=True)
         handle2 = SMBHandle(
             SMBSource(
-                "\\\\172.16.20.108\\toender\presentations",
+                "\\\\172.16.20.108\\toender\presentations",  # noqa: W605
                 "username", "topsecret", "WORKGROUP8"),
             "os2datascanner.pdf")
         handle2 = find_parent(handle2, handle2.type_label)

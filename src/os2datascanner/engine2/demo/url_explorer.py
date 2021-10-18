@@ -40,8 +40,9 @@ _loglevels = {
 def format_d(depth, fmt, *args, **kwargs):
     return "{0}{1}".format("  " * depth, fmt.format(*args, **kwargs))
 
+
 def print_source(manager, source, depth=0, *,
-        guess=False, summarise=False, max_depth=None):
+                 guess=False, summarise=False, max_depth=None):
     for handle in source.handles(manager):
         print(format_d(depth, "{0}", handle))
         if summarise:
@@ -61,24 +62,24 @@ def print_source(manager, source, depth=0, *,
                     handle, manager if not guess else None)
             if derived_source:
                 print_source(manager, derived_source, depth + 1,
-                        guess=guess, summarise=summarise, max_depth=max_depth)
+                             guess=guess, summarise=summarise, max_depth=max_depth)
 
 
 def add_arguments(parser):
     parser.add_argument(
             "urls",
             metavar="URL",
-            help='A URL to be explored. ' +
-            'Examples: file:`readlink -f ~/Downloads` OR https://magenta.dk. ' +
-            'The URL have to start with the scheme and be absolute! ' +
-            'Read the header of this file for more info.',
+            help='A URL to be explored. '
+            + 'Examples: file:`readlink -f ~/Downloads` OR https://magenta.dk. '
+            + 'The URL have to start with the scheme and be absolute! '
+            + 'Read the header of this file for more info.',
             nargs='+')
     parser.add_argument(
             "--guess-mime",
             action='store_true',
             dest='guess',
             help='Compute the MIME type of each file' +
-                    ' based on its filename. (default)',
+                 ' based on its filename. (default)',
             default=True)
     parser.add_argument(
             "--compute-mime",
@@ -102,6 +103,7 @@ def add_arguments(parser):
             choices=("critical", "error", "warn", "warning", "info", "debug",)
         )
 
+
 def main():
     parser = argparse.ArgumentParser()
     add_arguments(parser)
@@ -120,12 +122,14 @@ def main():
                 if not s:
                     print("{0}: URL parsing failure".format(i), file=stderr)
                 else:
-                    print_source(sm, s,
-                            guess=args.guess,
-                            summarise=args.summarise,
-                            max_depth=args.max_depth)
-            except UnknownSchemeError as ex:
+                    print_source(
+                        sm, s,
+                        guess=args.guess,
+                        summarise=args.summarise,
+                        max_depth=args.max_depth)
+            except UnknownSchemeError:
                 print("{0}: unknown URL scheme".format(i), file=stderr)
+
 
 if __name__ == '__main__':
     main()

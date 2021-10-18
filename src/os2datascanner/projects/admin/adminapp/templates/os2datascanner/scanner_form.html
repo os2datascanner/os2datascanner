@@ -510,7 +510,7 @@
           </fieldset>
         {% endif %}
     </section>
-    
+
     {% if form.userlist %}
     <section class="data-form">
         <fieldset class="form__fieldset">
@@ -520,8 +520,8 @@
           {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features and FEATURES.ORG_STRUCTURE in client.enabled_features %}
           <p class="information">{% trans "select users from"|capfirst %}</p>
           <div class="form__group {% if form.org_unit.errors %} has-error{% endif %}">
-            <label 
-              class="treeview-label 
+            <label
+              class="treeview-label
               {% if required %}required-form{% endif %}"
               for="{{ form.org_unit.name }}">
               {% trans "organizational units"|capfirst %}
@@ -572,7 +572,7 @@
 
           <div id="{% if view.edit %}messageColorId{% endif %}" class="form__group{% if form.rules.errors %} has-error{% endif %}">
             <div class="select-employees">
-              
+
               <ul id="available_employees" class="select-employees__available">
                 <div class="select-employees-title">
                   {% trans "Available employees" %}
@@ -588,7 +588,7 @@
               </ul>
 
               <i id="chevron_right" class="material-icons">chevron_right</i>
-              
+
               <div id="selected_employees" class="select-employees__selected">
                 <div class="select-employees-title">
                   {% trans "Selected employees" %}
@@ -652,7 +652,7 @@
           </h3>
           <div id="{% if view.edit %}messageColorId{% endif %}" class="form__group{% if form.rules.errors %} has-error{% endif %}">
             <div class="select-rules">
-              
+
               <ul id="available_rules" class="select-rules__available">
                 <div class="select-rules-title">
                   {% trans "Available rules" %}
@@ -665,7 +665,7 @@
               </ul>
 
               <i id="chevron_right" class="material-icons">chevron_right</i>
-              
+
               <div id="selected_rules" class="select-rules__selected">
                 <div class="select-rules-title">
                   {% trans "Selected rules" %}

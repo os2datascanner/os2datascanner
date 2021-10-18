@@ -1,5 +1,5 @@
-/*    
-@licstart  The following is the entire license notice for the 
+/*
+@licstart  The following is the entire license notice for the
 JavaScript code in this page.
 
 Copyright (C) 2016  Joseph Safwat Khella
@@ -45,12 +45,12 @@ let selectedValues = [];
 				}
 			}
 			return $iteme;
-		}; 
-		
+		};
+
 		// handles mouse input on tree-item, allows a parent node to expand without selecting it
 		window.expColMouseupHandler = function (evt) {
 			toggleSubOptions(evt.target || evt.srcElement);
-			// prevent Select2 from doing "select2:selecting","select2:unselecting","select2:closing" 
+			// prevent Select2 from doing "select2:selecting","select2:unselecting","select2:closing"
 			/*jshint -W030 */
 			evt.stopPropagation ? evt.stopPropagation() : evt.cancelBubble = true;
 			evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
@@ -64,7 +64,7 @@ let selectedValues = [];
 		opts.width = '100%';
 		var s2inst = this.select2(opts);
 
-		// when building the tree, add all already selected values and mark them 
+		// when building the tree, add all already selected values and mark them
 		s2inst.val().forEach( function(value) {
 			selectNodes(value, false);
 		} );
@@ -89,7 +89,7 @@ let selectedValues = [];
 			}
 		}
 
-		// when unselecting a node, unselect all descendents and ancestors  
+		// when unselecting a node, unselect all descendents and ancestors
 		s2inst.on('select2:unselect', function (evt) {
 			let selectedId = evt.params.data.id;
 			let options = Array.prototype.slice.call(document.querySelectorAll("li.select2-results__option"));
@@ -153,7 +153,7 @@ let selectedValues = [];
 			changeSelectedValuesInDropdown();
 		}
 
-		// changes the selected values, and triggers change on tree 
+		// changes the selected values, and triggers change on tree
 		function changeSelectedValuesInDropdown() {
 			uniqueValues = [];
 			//remove duplicates
@@ -193,7 +193,7 @@ let selectedValues = [];
 			var descendents = $selectedNode.data('descendents');
 
 			if (descendents) {
-				
+
 				var regex = /\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/; //finds all uuid's
 
 				descendents.forEach(function (string) {
@@ -222,8 +222,8 @@ let selectedValues = [];
 	/* Build the Select Option elements */
 	function buildSelect(treeData, $el) {
 
-		/* Support the object path (eg: `item.label`) for 'valFld' & 'labelFld' 
-		* path : 
+		/* Support the object path (eg: `item.label`) for 'valFld' & 'labelFld'
+		* path :
 		*/
 		function readPath(object, path) {
 			var currentPosition = object;
@@ -270,7 +270,7 @@ let selectedValues = [];
 				} else {
 					$opt.attr('id','treeview_option_' + $opt.val());
 				}
-				
+
 				var inc = data[treeData.incFld || "inc"];
 				if (inc && inc.length > 0) {
 					var descendents = [];
@@ -344,7 +344,7 @@ let selectedValues = [];
 function createTreeView() {
 	/** disables file upload */
 	function orgUnitSelectOptionValueToggle() {
-		if (document.getElementById("sel_1")) { 
+		if (document.getElementById("sel_1")) {
 			if (document.getElementById("sel_1").value) {
 				document.getElementById("id_userlist").disabled = true;
 				document.getElementById("upload-file").style.backgroundColor = "#dddddd";
@@ -356,7 +356,7 @@ function createTreeView() {
 		}
 	}
 	orgUnitSelectOptionValueToggle();
-	if (document.getElementById("sel_1")) { 
+	if (document.getElementById("sel_1")) {
 		document.getElementById("sel_1").onchange = function () {
 			orgUnitSelectOptionValueToggle();
 		};

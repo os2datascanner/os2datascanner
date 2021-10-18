@@ -16,3 +16,6 @@ class Migration(migrations.Migration):
             field=models.JSONField(null=True),
         ),
     ]
+
+
+

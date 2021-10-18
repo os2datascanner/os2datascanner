@@ -15,3 +15,6 @@ class Migration(migrations.Migration):
             options={'ordering': ['-sensitivity', '-probability', 'pk'], 'verbose_name_plural': 'document reports'},
         ),
     ]
+
+
+

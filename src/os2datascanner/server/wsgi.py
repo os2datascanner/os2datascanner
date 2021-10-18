@@ -1,5 +1,4 @@
 import json
-import time
 from uuid import uuid4
 from pathlib import Path
 
@@ -26,7 +25,7 @@ def requires_token(func):
 <p>No API token configured.</body></html>"""
             return
 
-        if not "HTTP_AUTHORIZATION" in env:
+        if "HTTP_AUTHORIZATION" not in env:
             start_response("401 Unauthorized", [
                     ("WWW-Authentication", "Bearer realm=\"api\"")])
             return
@@ -35,14 +34,14 @@ def requires_token(func):
             if not authentication[0] == "Bearer" or len(authentication) != 2:
                 start_response("400 Bad Request", [
                         ("WWW-Authentication",
-                                "Bearer realm=\"api\""
-                                " error=\"invalid_request\"")])
+                         "Bearer realm=\"api\""
+                         " error=\"invalid_request\"")])
                 return
             elif authentication[1] != server_token:
                 start_response("401 Unauthorized", [
                         ("WWW-Authentication",
-                                "Bearer realm=\"api\""
-                                " error=\"invalid_token\"")])
+                         "Bearer realm=\"api\""
+                         " error=\"invalid_token\"")])
                 return
         yield from func(env, start_response, body)
     return runner
@@ -126,7 +125,7 @@ def scan_1(body):
         yield {
             "status": "fail",
             "message": "cannot scan Sources "
-                    "of type \"{0}\"".format(source.type_label)
+                       "of type \"{0}\"".format(source.type_label)
         }
         return
 
@@ -161,7 +160,7 @@ def scan_1(body):
             if c1 in ("os2ds_conversions",):
                 for c2, m2 in worker_mrr(m1, c1, sm):
                     if c2 in ("os2ds_matches",
-                            "os2ds_metadata", "os2ds_problems",):
+                              "os2ds_metadata", "os2ds_problems",):
                         yield from (m3 for _, m3 in exporter_mrr(m2, c2, sm))
             elif c1 in ("os2ds_problems",):
                 yield from (m2 for _, m2 in exporter_mrr(m1, c1, sm))

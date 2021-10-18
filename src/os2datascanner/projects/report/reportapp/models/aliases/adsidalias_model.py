@@ -23,7 +23,8 @@ from django.utils.translation import ugettext_lazy as _
 from .alias_model import Alias
 
 
-_sid = re.compile("^S-1-\d+(-\d+){0,15}$")
+_sid = re.compile("^S-1-\d+(-\d+){0,15}$")  # noqa: W605
+
 
 def validate_sid(value):
     if not _sid.match(value):

@@ -3,7 +3,7 @@ from typing import Iterator
 
 from ...utilities.json import JSONSerialisable
 from ...utilities.equality import TypePropertyEquality
-from .errors import UnknownSchemeError, DeserialisationError
+from .errors import UnknownSchemeError
 from .import handle as mhandle
 from .utilities import SourceManager
 
@@ -21,8 +21,6 @@ class Source(TypePropertyEquality, JSONSerialisable):
     with the same type and properties compare equal. (One useful consequence of
     this is that SourceManager will collapse several equal Sources together,
     only opening one of them.)"""
-
-
     def __contains__(self, h: "mhandle.Handle") -> bool:
         """Test if a handle originated from this Source"""
         while h:
@@ -72,6 +70,7 @@ class Source(TypePropertyEquality, JSONSerialisable):
         a Handle yielded by this method will be this Source."""
 
     __url_handlers = {}
+
     @staticmethod
     def url_handler(*schemes):
         """Decorator: registers the decorated function as the handler for the
@@ -100,13 +99,12 @@ class Source(TypePropertyEquality, JSONSerialisable):
             return Source.__url_handlers[scheme](url)
         except ValueError:
             raise UnknownSchemeError()
-
     # There is no general requirement that subclasses implement a to_url
     # method (what's the URL of a file in a deeply-nested archive?), but many
     # of them do. If a Source provides a to_url method, it is a requirement
     # that Source.from_url(Source.to_url(src)) == src.
-
     __mime_handlers = {}
+
     @staticmethod
     def mime_handler(*mimes):
         """Decorator: registers the decorated function as the handler for the

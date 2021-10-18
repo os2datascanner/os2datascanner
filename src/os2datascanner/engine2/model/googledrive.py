@@ -1,7 +1,6 @@
 import json
 from contextlib import contextmanager
 from io import BytesIO
-from urllib.parse import urlsplit
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
@@ -17,7 +16,8 @@ class GoogleDriveSource(Source):
      for the service account, download the credentials in .json format
      and enable the Google Drive API for the account to use this feature.
 
-     Guidance to complete the above can be found at: https://support.google.com/a/answer/7378726?hl=en
+     Guidance to complete the above can be found at:
+      https://support.google.com/a/answer/7378726?hl=en
      List of users in organization downloadable by admin from: https://admin.google.com/ac/users
     """
 
@@ -30,9 +30,9 @@ class GoogleDriveSource(Source):
     def _generate_state(self, source_manager):
         SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
         service_account_info = json.loads(self._service_account_file)
-        credentials = service_account.Credentials.from_service_account_info(service_account_info,
-                                                                            scopes=SCOPES).with_subject(
-            self._user_email)
+        credentials = service_account.Credentials.from_service_account_info(
+            service_account_info,
+            scopes=SCOPES).with_subject(self._user_email)
 
         service = build(serviceName='drive', version='v3', credentials=credentials)
         yield service
@@ -86,11 +86,15 @@ class GoogleDriveResource(FileResource):
         metadata = service.files().get(fileId=self.handle.relative_path).execute()
         # Export and download Google-type files to pdf
         if 'vnd.google-apps' in metadata.get('mimeType'):
-            request = service.files().export_media(fileId=self.handle.relative_path, fields='files(id, name)',
-                                                   mimeType='application/pdf')
+            request = service.files().export_media(
+                fileId=self.handle.relative_path,
+                fields='files(id, name)',
+                mimeType='application/pdf')
         # Download files where no export needed
         else:
-            request = service.files().get_media(fileId=self.handle.relative_path, fields='files(id, name)')
+            request = service.files().get_media(
+                fileId=self.handle.relative_path,
+                fields='files(id, name)')
 
         fh = BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -125,7 +129,8 @@ class GoogleDriveResource(FileResource):
         return self._metadata
 
     def get_size(self):
-        return SingleResult(None, 'size', self.metadata.get('size', self.metadata.get('quotaBytesUsed')))
+        return SingleResult(None, 'size', self.metadata.get(
+            'size', self.metadata.get('quotaBytesUsed')))
 
 
 class GoogleDriveHandle(Handle):

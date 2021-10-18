@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/templates/api/#writing-your-own-contex
 
 """
 
+
 def version(request):
     return {
         "version": __version__

@@ -113,8 +113,6 @@ class Engine2SourceManagerTest(unittest.TestCase):
         tracker2 = Tracker()
         tracker3 = Tracker()
         tracker4 = Dependent(tracker1)
-        tracker5 = Dependent(tracker1)
-        tracker6 = Dependent(tracker1)
         with SourceManager(width=2) as sm:
             sm.open(tracker1)
             sm.open(tracker2)

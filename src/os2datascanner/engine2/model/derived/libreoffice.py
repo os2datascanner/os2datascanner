@@ -8,7 +8,7 @@ from pathlib import Path
 
 from ....utils.system_utilities import run_custom
 from ... import settings as engine2_settings
-from ..core import Handle, Source, Resource, SourceManager
+from ..core import Handle, Source
 from ..file import FilesystemResource
 from .derived import DerivedSource
 from .utilities import office_metadata
@@ -33,6 +33,7 @@ src/engine2/conversions folder
 
 """
 
+
 def libreoffice(*args):
     """Invokes LibreOffice with a fresh settings directory (which will be
     deleted as soon as the program finishes) and returns a CompletedProcess
@@ -40,8 +41,8 @@ def libreoffice(*args):
     with TemporaryDirectory() as settings:
         return run_custom(
                 ["libreoffice",
-                        "-env:UserInstallation=file://{0}".format(settings),
-                        *args],
+                 "-env:UserInstallation=file://{0}".format(settings),
+                 *args],
                 stdout=DEVNULL, stderr=DEVNULL, kill_group=True,
                 timeout=engine2_settings.subprocess["timeout"], check=True)
 
@@ -75,9 +76,9 @@ _actually_supported_types = {
     # XXX: libmagic usually can't detect OOXML files -- see the special
     # handling of these types in in LibreOfficeSource._generate_state
     "application/vnd.openxmlformats-officedocument"
-            ".wordprocessingml.document": ("Office Open XML Text", "txt"),
+    ".wordprocessingml.document": ("Office Open XML Text", "txt"),
     "application/vnd.openxmlformats-officedocument"
-            ".spreadsheetml.sheet": ("Calc Office Open XML", __csv)
+    ".spreadsheetml.sheet": ("Calc Office Open XML", __csv)
 }
 
 
@@ -92,7 +93,7 @@ def _replace_large_html(
             if entry.name.endswith(".html"):
                 if entry.stat().st_size >= size_threshold:
                     logger.info(f"{entry.name} is larger than {size_threshold}. "
-                                f"Replacing it with a simpler representation "
+                                "Replacing it with a simpler representation "
                                 f"[{output_filter}]")
                     libreoffice(
                             "--infilter={0}".format(input_filter),
@@ -102,10 +103,8 @@ def _replace_large_html(
                 break
 
 
-
-@Source.mime_handler(
-        "application/CDFV2",
-        *_actually_supported_types.keys())
+@Source.mime_handler("application/CDFV2",
+                     *_actually_supported_types.keys())
 class LibreOfficeSource(DerivedSource):
     type_label = "lo"
 
@@ -155,10 +154,9 @@ class LibreOfficeObjectResource(FilesystemResource):
         with parent.make_path() as fp:
             mime = magic.from_file(fp, mime=True)
             if mime in ("application/msword", "application/vnd.ms-excel",
-                    "application/vnd.ms-powerpoint",):
+                        "application/vnd.ms-powerpoint",):
                 yield from office_metadata.generate_ole_metadata(fp)
-            elif mime.startswith(
-                    "application/vnd.openxmlformats-officedocument."):
+            elif mime.startswith("application/vnd.openxmlformats-officedocument."):
                 yield from office_metadata.generate_ooxml_metadata(fp)
             elif mime.startswith(
                     "application/vnd.oasis.opendocument."):

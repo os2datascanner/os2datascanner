@@ -3,7 +3,7 @@ from dateutil.parser import parse
 from dateutil.tz import gettz
 
 
-def parse_datetime(val: str, local: bool=False) -> datetime.datetime:
+def parse_datetime(val: str, local: bool = False) -> datetime.datetime:
     """Parses an input string as though with dateutil.parser.parse, and returns
     a datetime.datetime guaranteed to be timezone-aware.
 
@@ -14,8 +14,3 @@ def parse_datetime(val: str, local: bool=False) -> datetime.datetime:
     if not rv.tzinfo:
         rv = rv.replace(tzinfo=datetime.timezone.utc if not local else gettz())
     return rv
-
-
-__all__ = [
-    "parse_datetime"
-]

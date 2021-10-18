@@ -21,3 +21,6 @@ class Migration(migrations.Migration):
             name='TypeStatistics',
         ),
     ]
+
+
+

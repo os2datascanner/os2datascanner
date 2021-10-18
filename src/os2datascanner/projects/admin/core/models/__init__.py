@@ -1,5 +1,5 @@
 # Import needed here for django models:
-from .administrator import Administrator
-from .client import Client, Feature, Scan
-from .utilities import ModelChoiceEnum, ModelChoiceFlag
-from .background_job import BackgroundJob
+from .administrator import Administrator  # noqa
+from .client import Client, Feature, Scan  # noqa
+from .utilities import ModelChoiceEnum, ModelChoiceFlag  # noqa
+from .background_job import BackgroundJob  # noqa

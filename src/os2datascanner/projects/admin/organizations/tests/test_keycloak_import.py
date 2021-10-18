@@ -109,6 +109,7 @@ TEST_CORP_TWO = [
 
 ]
 
+
 class KeycloakImportTest(TestCase):
     dummy_client = None
 
@@ -120,7 +121,7 @@ class KeycloakImportTest(TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.dummy_client.delete()
- 
+
     def setUp(self):
         self.org = Organization.objects.create(
                 name="Test Corp.",
@@ -137,7 +138,7 @@ class KeycloakImportTest(TestCase):
                 keycloak_actions.keycloak_dn_selector)
 
         for tester in TEST_CORP:
-            if not "id" in tester:
+            if "id" not in tester:
                 continue
             account = Account.objects.get(uuid=tester["id"])
             self.assertEqual(
@@ -153,7 +154,7 @@ class KeycloakImportTest(TestCase):
                 keycloak_actions.keycloak_group_dn_selector)
 
         for tester in TEST_CORP:
-            if not "id" in tester:
+            if "id" not in tester:
                 continue
             account = Account.objects.get(uuid=tester["id"])
             self.assertEqual(
@@ -182,7 +183,7 @@ class KeycloakImportTest(TestCase):
 
         for thad in thads:
             with self.assertRaises(Account.DoesNotExist,
-                    msg="user still present after deletion"):
+                                   msg="user still present after deletion"):
                 thad.refresh_from_db()
 
     def test_group_change_ou(self):
@@ -219,7 +220,7 @@ class KeycloakImportTest(TestCase):
         for ted in teds:
             ted.units.get(imported_id="CN=Group 2,O=Test Corp.")
             with self.assertRaises(OrganizationalUnit.DoesNotExist,
-                    msg="user in new group before move"):
+                                   msg="user in new group before move"):
                 ted.units.get(imported_id="CN=Group 1,O=Test Corp.")
 
         NEW_CORP = deepcopy(TEST_CORP)
@@ -237,7 +238,7 @@ class KeycloakImportTest(TestCase):
             ted.refresh_from_db()
             ted.units.get(imported_id="CN=Group 1,O=Test Corp.")
             with self.assertRaises(OrganizationalUnit.DoesNotExist,
-                    msg="user in old group after move"):
+                                   msg="user in old group after move"):
                 ted.units.get(imported_id="CN=Group 2,O=Test Corp.")
 
     def test_remove_ou(self):
@@ -260,7 +261,7 @@ class KeycloakImportTest(TestCase):
                 keycloak_actions.keycloak_group_dn_selector)
 
         with self.assertRaises(OrganizationalUnit.DoesNotExist,
-                msg="defunct OU not removed"):
+                               msg="defunct OU not removed"):
             OrganizationalUnit.objects.get(
                     imported_id="CN=Group 2,O=Test Corp.")
 
@@ -275,7 +276,7 @@ class KeycloakImportTest(TestCase):
         ursula_aliases = Alias.objects.filter(value="ursulas@brevdue.dk")
 
         self.assertEqual(ursula_aliases.count(), 1,
-                msg="Either duplicate or no email aliases for user created")
+                         msg="Either duplicate or no email aliases for user created")
 
     def test_delete_user_relation_to_group(self):
         keycloak_actions.perform_import_raw(
@@ -287,7 +288,6 @@ class KeycloakImportTest(TestCase):
 
         self.assertEqual(Position.objects.filter(account=account).count(), 2,
                          msg="Position not correctly created")
-
 
         NEW_CORP = deepcopy(TEST_CORP_TWO)
         # Now only member of one group instead of two.

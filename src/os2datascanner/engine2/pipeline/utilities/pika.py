@@ -105,7 +105,7 @@ given channel.)"""
 
 class PikaPipelineRunner(PikaConnectionHolder):
     def __init__(self, *,
-            prefetch_count=1, read=None, write=None, **kwargs):
+                 prefetch_count=1, read=None, write=None, **kwargs):
         super().__init__(**kwargs)
         self._read = set() if read is None else set(read)
         self._write = set() if write is None else set(write)
@@ -117,20 +117,31 @@ class PikaPipelineRunner(PikaConnectionHolder):
         channel = super().make_channel()
         channel.basic_qos(prefetch_count=self._prefetch_count)
         for q in self._read.union(self._write):
-            channel.queue_declare(q, passive=False,
-                    durable=True, exclusive=False, auto_delete=False)
+            channel.queue_declare(
+                q,
+                passive=False,
+                durable=True,
+                exclusive=False,
+                auto_delete=False)
 
         # RabbitMQ handles broadcast messages in a slightly convoluted way:
         # we must first declare a special "fanout" message exchange, and then
         # each client must declare a separate anonymous queue and bind it to
         # the exchange in order to receive broadcasts
-        channel.exchange_declare("broadcast", pika.spec.ExchangeType.fanout,
-                passive=False, durable=True, auto_delete=False, internal=False)
+        channel.exchange_declare(
+            "broadcast",
+            pika.spec.ExchangeType.fanout,
+            passive=False,
+            durable=True,
+            auto_delete=False,
+            internal=False)
         anon_queue = channel.queue_declare(
-                ANON_QUEUE, passive=False, durable=False,
-                exclusive=False, auto_delete=True, arguments={
-                    "x-max-priority": 10
-                })
+            ANON_QUEUE,
+            passive=False,
+            durable=False,
+            exclusive=False,
+            auto_delete=True,
+            arguments={"x-max-priority": 10})
         channel.queue_bind(exchange="broadcast", queue=anon_queue.method.queue)
 
         return channel
@@ -219,8 +230,10 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         return self._enqueue("fin")
 
     def enqueue_message(self,
-            queue: str, body: bytes,
-            exchange: str = "", **basic_properties):
+                        queue: str,
+                        body: bytes,
+                        exchange: str = "",
+                        **basic_properties):
         """Requests that the background thread send a message."""
         return self._enqueue("msg", queue, body, exchange, basic_properties)
 
@@ -238,7 +251,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
             if rv and self._live:
                 return self._incoming.pop(0)
             else:
-                return (None, None, None)
+                return None, None, None
 
     def handle_message(self, routing_key, body):
         """Handles an AMQP message by yielding zero or more (queue name,
@@ -332,7 +345,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         try:
             while running and self.is_alive():
                 method, properties, body = self.await_message()
-                if method == properties == body == None:
+                if method == properties == body is None:
                     continue
                 try:
                     for routing_key, message in self.handle_message(
@@ -340,8 +353,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                         self.enqueue_message(routing_key, message)
                     self.enqueue_ack(method.delivery_tag)
                 except RejectMessage as ex:
-                    self.enqueue_reject(method.delivery_tag,
-                            requeue=ex.requeue)
+                    self.enqueue_reject(method.delivery_tag, requeue=ex.requeue)
         finally:
             self.enqueue_stop()
             self.join()

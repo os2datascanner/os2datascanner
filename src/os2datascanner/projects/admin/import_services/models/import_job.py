@@ -2,7 +2,7 @@ from django.db import models
 
 from os2datascanner.utils.ldap import RDN
 
-from ...core.models.background_job import JobState, BackgroundJob
+from ...core.models.background_job import BackgroundJob
 from .realm import Realm
 
 

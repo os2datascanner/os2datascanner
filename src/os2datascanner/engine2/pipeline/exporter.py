@@ -1,8 +1,3 @@
-import json
-import argparse
-
-from ..model.core import (Handle,
-        Source, UnknownSchemeError, DeserialisationError)
 from . import messages
 
 
@@ -13,7 +8,6 @@ PREFETCH_COUNT = 8
 
 
 def message_received_raw(body, channel, source_manager):
-    source_manager = None
     body["origin"] = channel
 
     message = None

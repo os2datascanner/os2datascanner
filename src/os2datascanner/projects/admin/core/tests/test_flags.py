@@ -62,7 +62,7 @@ class ModelChoiceFlagTest(TestCase):
         ('First', 1),
         ('Second', 0b10)
     ])
-    def test_feature_validator_invalid(self, _, value):
+    def test_feature_validator_invalid(self, _, value):  # noqa: F811
         """Validator passes as expected."""
         self.enum_class.validator(value)
 

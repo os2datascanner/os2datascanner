@@ -12,7 +12,14 @@
 # sector open source network <https://os2.eu/>.
 #
 from ..models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
-from .scanner_views import *
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCopy,
+    ScannerCreate,
+    ScannerList)
 
 
 class GoogleDriveScannerList(ScannerList):
@@ -97,6 +104,7 @@ class GoogleDriveScannerCopy(ScannerCopy):
         initial["service_account_file"] = self.get_scanner_object().service_account_file
         initial["user_emails"] = self.get_scanner_object().user_emails
         return initial
+
 
 class GoogleDriveScannerAskRun(ScannerAskRun):
     """Prompt for starting google drive scan, validate first."""

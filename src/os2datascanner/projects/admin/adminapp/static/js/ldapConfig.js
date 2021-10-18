@@ -39,7 +39,7 @@ function testConnection(e) {
             }
         }
     };
-    
+
     oReq.send();
 }
 
@@ -76,6 +76,6 @@ function testAuth(e) {
             }
         }
     };
-    
+
     oReq.send();
 }

@@ -54,7 +54,7 @@ function updateTagList() {
     hiddenInput.value = taglist.join(', ');
 }
 
-function saveInputs() { 
+function saveInputs() {
     if (hiddenInput.value) {
       // dont show input field in ui (this input field contains all input values)
       hiddenInput.style.display = "none";
