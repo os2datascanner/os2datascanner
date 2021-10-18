@@ -108,7 +108,7 @@ class TestBackoff(unittest.TestCase):
             # Setting count=1 means that we sleep for 2^0=1 second, which
             # conveniently means that each fuzz factor can be treated directly
             # as a time adjustment
-            for i in range(0, 5):
+            for _i in range(0, 5):
                 start = time()
                 try:
                     run_with_backoff(

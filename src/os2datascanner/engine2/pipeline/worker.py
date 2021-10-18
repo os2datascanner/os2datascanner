@@ -51,7 +51,7 @@ def tag(sm, msg):
     yield from tagger_handler(msg, "os2ds_handles", sm)
 
 
-def message_received_raw(body, channel, source_manager):
+def message_received_raw(body, channel, source_manager):  # noqa: CCR001, E501 too high cognitive complexity
     try:
         for channel, message in process(source_manager, body):
             if channel == "os2ds_matches":

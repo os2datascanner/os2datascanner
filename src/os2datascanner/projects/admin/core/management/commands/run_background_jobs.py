@@ -35,7 +35,7 @@ class Command(BaseCommand):
                 help=_("do not loop: run a single job and then exit"),
         )
 
-    def handle(self, *, wait, single, **kwargs):
+    def handle(self, *, wait, single, **kwargs):  # noqa: CCR001, too high cognitive complexity
         running = True
 
         def _handler(signum, frame):

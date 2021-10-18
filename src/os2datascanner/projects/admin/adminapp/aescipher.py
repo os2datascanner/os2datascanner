@@ -116,7 +116,7 @@ def key_file_handling(data, command, filename, create):
             data = file.read()
         elif command == 'ab':
             file.write(data)
-    except (OSError, IOError) as ex:
+    except OSError as ex:
         logger.error('An error occured while trying to {0} {1} file. {2}'.format(
             command,
             filename,

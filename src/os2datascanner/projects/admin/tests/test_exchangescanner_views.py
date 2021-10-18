@@ -266,7 +266,7 @@ class ExchangeScannerViewsTest(TestCase):
         )
 
         exchange_scanner_source = exchange_scanner_obj.generate_sources()
-        for ews_source in exchange_scanner_source:
+        for _ews_source in exchange_scanner_source:
             sources_yielded += 1
 
         # benny is a member of test_org_unit1
@@ -284,7 +284,7 @@ class ExchangeScannerViewsTest(TestCase):
                                                            b"aleph\nalex\nfred")
 
         exchange_scanner_source = exchange_scanner_obj.generate_sources()
-        for ews_source in exchange_scanner_source:
+        for _ews_source in exchange_scanner_source:
             sources_yielded += 1
 
         self.assertEqual(sources_yielded, 3)

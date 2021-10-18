@@ -86,7 +86,7 @@ class CPRRule(RegexRule):
         else:
             return "CPR number"
 
-    def match(self, content: str) -> Optional[Iterator[dict]]:
+    def match(self, content: str) -> Optional[Iterator[dict]]:  # noqa: CCR001,E501 too high cognitive complexity
         if content is None:
             return
 
@@ -123,7 +123,7 @@ class CPRRule(RegexRule):
                              f"due to {ctype}")
 
             # Extract context, remove newlines and tabs for better representation
-            match_context = content[max(low - 50, 0) : high + 50]
+            match_context = content[max(low - 50, 0): high + 50]
             match_context = " ".join(self._compiled_expression.sub(
                 "XXXXXX-XXXX", match_context
             ).split())
@@ -145,7 +145,7 @@ class CPRRule(RegexRule):
             logger.debug(f"{itot} cpr-like numbers, "
                          f"of which {imatch} had a probabiliy > 0")
 
-    def examine_context(
+    def examine_context(  # noqa: CCR001, C901 too high cognitive complexity
         self, match: Match[str]
     ) -> Tuple[Optional[float], List[tuple]]:
         """Estimate a probality (0-1) based on the context of the match

@@ -12,7 +12,7 @@ _scs = """ "#+,;<=>\\"""
 _hex = "0123456789abcdef"
 
 
-def ldap_split(s: str, codec: str = "utf-8") -> Sequence[str]:
+def ldap_split(s: str, codec: str = "utf-8") -> Sequence[str]:  # noqa: CCR001, E501 too high cognitive complexity
     r"""Splits a string representation of a LDAP Distinguished Name according to
     the rules laid out in RFC 4514.
 
@@ -234,7 +234,7 @@ class LDAPNode(NamedTuple):
             k.print(_levels=_levels + 1)
 
     @classmethod
-    def from_iterator(
+    def from_iterator(  # noqa: CCR001, too high cognitive complexity
             cls,
             iterator: Iterator[dict],
             name_selector: Callable[[dict], Iterator[str]] = trivial_dn_selector):

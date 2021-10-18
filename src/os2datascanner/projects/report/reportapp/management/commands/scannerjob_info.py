@@ -20,7 +20,7 @@ class Command(BaseCommand):
             default=None,
         )
 
-    def handle(self, pk, *args, **options):
+    def handle(self, pk, *args, **options):  # noqa: CCR001, too high cognitive complexity
         scanner_name = None
         problem_msgs = 0
         match_msgs = 0

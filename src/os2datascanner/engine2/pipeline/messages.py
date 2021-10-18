@@ -289,7 +289,7 @@ class MatchesMessage(NamedTuple):
     matches: Sequence[MatchFragment]
 
     @property
-    def sensitivity(self):
+    def sensitivity(self):  # noqa: CCR001, too high cognitive complexity
         """Computes the overall sensitivity of the matches contained in this
         message (i.e., the highest sensitivity of any submatch), or None if
         there are no matches."""
@@ -297,7 +297,7 @@ class MatchesMessage(NamedTuple):
             return None
         else:
 
-            def _cms(fragment):
+            def _cms(fragment):  # noqa: CCR001, E501 too high cognitive complexity
                 """Computes the sensitivity of a set of results returned by a
                 rule, returning (in order of preference) the highest
                 sensitivity (lower than that of the rule) associated with a
@@ -334,7 +334,7 @@ class MatchesMessage(NamedTuple):
         }
 
     @property
-    def probability(self):
+    def probability(self):  # noqa: CCR001, too high cognitive complexity
         """Computes the overall probability of the matches contained in this
         message (i.e., the highest probability of any submatch), or None if
         there are no matches."""

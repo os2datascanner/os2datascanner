@@ -28,7 +28,7 @@ def _codepage_to_codec(cp):
         return None
 
 
-def _get_ole_metadata(fp):
+def _get_ole_metadata(fp):  # noqa: CCR001, too high cognitive complexity
     try:
         raw = olefile.OleFileIO(fp).get_metadata()
 

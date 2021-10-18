@@ -182,7 +182,7 @@ class DialogSuccess(TemplateView):
         'dropboxscanners': DropboxScanner,
         'msgraph-filescanners': MSGraphFileScanner,
         'msgraph-mailscanners': MSGraphMailScanner,
-        'googledrivescanners' : GoogleDriveScanner,
+        'googledrivescanners': GoogleDriveScanner,
         'gmailscanners': GmailScanner,
         'sbsysscanners': SbsysScanner,
         'rules/cpr': CPRRule,

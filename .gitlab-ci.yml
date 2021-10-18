@@ -67,14 +67,13 @@ Lint shell scripts:
   script:
     - fd --extension sh --exec shellcheck
 
-Lint python:
+Lint Python:
   <<: *lint-default
-  image: python:3
+  image: python:3.9
   stage: lint
   script:
-    - pip install flake8
-    - flake8 src --max-line-length 100
-
+    - pip install pyproject-flake8 flake8-bugbear flake8-cognitive-complexity flake8-expression-complexity --quiet
+    - pflake8 src
 
 Lint js scripts:
   <<: *lint-default

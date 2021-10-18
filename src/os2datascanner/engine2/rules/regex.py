@@ -25,10 +25,10 @@ class RegexRule(SimpleRule):
 
         for match in self._compiled_expression.finditer(content):
             low, high = match.span()
-            match_context = content[max(low - 50, 0) : high + 50]
+            match_context = content[max(low - 50, 0): high + 50]
             yield {
                 "offset": match.start(),
-                "match": match.string[match.start() : match.end()],
+                "match": match.string[match.start(): match.end()],
                 "context": match_context,
                 "context_offset": max(low-50, 0),
             }

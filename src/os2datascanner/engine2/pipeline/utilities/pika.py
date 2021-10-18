@@ -267,7 +267,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
             self._incoming.add((method, properties, body,))
             self._condition.notify()
 
-    def run(self):
+    def run(self):  # noqa: CCR001, too high cognitive complexity
         """(Background thread.) Runs a loop that processes enqueued actions
         from, and collects new messages for, the main thread.
 
@@ -321,7 +321,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 self._live = False
                 self._condition.notify()
 
-    def run_consumer(self):
+    def run_consumer(self):  # noqa: CCR001, E501 too high cognitive complexity
         """Receives messages from the registered input queues, dispatches them
         to the handle_message function, and generates new output messages. All
         Pika API calls are performed by the background thread."""

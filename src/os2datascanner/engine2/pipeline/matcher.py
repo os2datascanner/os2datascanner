@@ -14,7 +14,7 @@ PROMETHEUS_DESCRIPTION = "Representations examined"
 PREFETCH_COUNT = 8
 
 
-def message_received_raw(body, channel, source_manager):
+def message_received_raw(body, channel, source_manager):  # noqa: CCR001,E501 too high cognitive complexity
     message = messages.RepresentationMessage.from_json_object(body)
     representations = decode_dict(message.representations)
     rule = message.progress.rule
