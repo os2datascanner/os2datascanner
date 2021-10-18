@@ -9,6 +9,7 @@ nav:
   - Configuration: configuration.md
   - Development environment: dev-environment.md
   - Management Commands: management-commands.md
+  - Docker: docker.md
   - Architecture:
     - Overview: architecture/overview.md
     - Security: architecture/security.md
