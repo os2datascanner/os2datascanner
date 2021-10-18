@@ -1,3 +1,5 @@
+# Extending OS2Datascanner
+
 This document is a short guide to adding new objects to OS2Datascanner's
 scanner engine, `engine2`.
 
@@ -12,13 +14,13 @@ scanner engine, `engine2`.
 > Python environment.
 
 
-# Key scanner engine concepts
+## Key scanner engine concepts
 
 At the heart of the scanner engine is its *model*. The model consists of three
 abstract base classes and a number of helper classes.
 
 
-## `Source`
+### `Source`
 
 A `Source` represents a local or remote data source. It stores all of the
 information needed to open, or connect to, a data source, and implements a
@@ -32,7 +34,7 @@ state, but these can only be used along with an instance of a state management
 class called `SourceManager`.
 
 
-## `Handle`
+### `Handle`
 
 A `Handle` is a reference to an object. The exploration strategy of a `Source`
 produces these.
@@ -53,7 +55,7 @@ removing Scrapy, was a deliberate design goal of `engine2`.)
 Like `Source`s, `Handle`s are also stateless.
 
 
-## `Resource`
+### `Resource`
 
 A `Resource` is a *followed* `Handle`. That is, it's not just a *reference* to
 an object: it represents an available object, with concrete operations that
@@ -93,7 +95,7 @@ def open_source(source):
 > does behind the scenes.)
 
 
-# Adding a new data source
+## Adding a new data source
 
 Supporting a new data source is a matter of implementing three classes: a
 `Source` subclass, a `Resource` subclass, and a `Handle` subclass to join them

@@ -1,4 +1,4 @@
-# OS2Datascanner Configurations
+# Configuration
 
 The OS2Datascanner system is configured using `.toml`-files - one for each
 module. Most configuration settings come with reasonable defaults and need not
@@ -127,7 +127,7 @@ METADATA_LOCAL_FILE_PATH = '[The metadata configuration file path]'
 ```
 
 
-# SAML
+## SAML
 
 OS2datascanner - Single Sign On via SAML 2.0
 
@@ -150,3 +150,10 @@ OS2datascanner installation:
     * `last_name`: `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname`,
     * `sid`: `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/securityidentifier`,
 * The public key of the OS2datascanner installation's certificate, for SAML authentication
+
+
+## Gunicorn
+
+The two Django apps and the API use `Gunicorn` to serve web requests. By
+default Gunicorn starts up `CPU_COUNT*2+1` workers. To override this default
+use the `GUNICORN_WORKERS` environment variable. Eg.  `GUNICORN_WORKERS=2`.

@@ -1,10 +1,12 @@
+# Installation
+
 OS2Datascanner is composed of many services. Each service is packaged in Docker
 and can be run with any container orchestration system, such as
 `docker-compose`. For general information on using Docker and `docker-compose`,
 please refer to [the official Docker documentation](https://docs.docker.com/).
 
 
-# Docker services overview
+## Docker services overview
 
 As mentioned in the [system overview](./index.md), the OS2Datascanner consists
 of three components, or modules. These are each responsible for one or more
@@ -39,7 +41,7 @@ which are optional):
     -   Grafana (visualisation of metrics)
 
 
-# Docker images
+## Docker images
 
 All images related to OS2datascanner can be found [on Magenta's Docker image
 repository](https://hub.docker.com/u/magentaaps), but here follows the images
@@ -78,14 +80,14 @@ REPORT_DATABASE_PASSWORD=<password for report module db user>
 ```
 
 
-# System configuration
+## System configuration
 
 All three modules are configured using a TOML-file (one for each module) as
 described in [the section on configuration](configuration.md). When installing
 using Docker, these files need to be mounted correctly as described below.
 
 
-# Running the system
+## Running the system
 
 OS2datascanner is a multi-service system, and as such also a multi-container
 system. It may be advantageous to run it using `docker-compose`. A
@@ -110,7 +112,6 @@ file for easier reference in the rest of the documentation.
 | exporter         | `docker run -d --mount type=bind,source="$(pwd)"/engine-user-settings.toml,target=/user-settings.toml,readonly magentaaps/os2datascanner-engine exporter`                                                                  |
 
     
-
 Furthermore, OS2datascanner depends PostgreSQL for the two databases (one each
 for the Admin- and Report modules), and a RabbitMQ service.  Both can be run
 directly on the host, or using docker images. Note that the [configuration of

@@ -4,20 +4,19 @@ site_url: https://os2datascanner.rtfd.io
 theme: readthedocs
 
 nav:
-  # index.md
-  - Installation: installation.md
-  - Configuration: configuration.md
+  - Overview: index.md
   - Development environment: dev-environment.md
   - Management Commands: management-commands.md
-  - Architecture:
-    - Overview: architecture/overview.md
-    - Security: architecture/security.md
-    - Engine/pipeline: architecture/pipeline.md
-    - Frontend: architecture/frontend.md
+  - Engine/pipeline: architecture/pipeline.md
+  - Security Architecture: architecture/security.md
+  - Frontend Architecture: architecture/frontend.md
   - Scan API: api.md
   - Extending OS2Datascanner: engine2.md
-  - Requirements: requirements.md
-  - Notes: notes.md
+  - Deployment:
+    - Installation: installation.md
+    - Docker: docker.md
+    - Configuration: configuration.md
+    - Requirements: requirements.md
+    - Release procedure: release-procedure.md
   - Reusable components: reusable-components.md
-  - Release procedure: release-procedure.md
   - Release notes: changelog.md

@@ -1,3 +1,5 @@
+# Scan API
+
 This document is a short guide to making use of OS2Datascanner services from
 external systems.
 

@@ -1,4 +1,6 @@
-# Dependency tree
+# Requirements
+
+## Dependency tree
 
 To avoid having to repeat shared requirements in several files, both system
 requirements and python requirements have been split into several files
@@ -17,7 +19,7 @@ according to the "inheritance" tree below:
 ```
 
 
-# Python dependency tree
+## Python dependency tree
 
 For each of the OS²datascanner components (**engine**, **admin**, **report**), a
 `requirements-<component>.txt` file is generated using `pip-tools` and `.in`-files.

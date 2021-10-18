@@ -1,6 +1,6 @@
-# os2datascanner.engine2.pipeline
+# Pipeline architecture
 
-This module contains the `engine2` pipeline.
+The `os2datascanner.engine2.pipeline` module contains the `engine2` pipeline.
 
 ## What components make up the pipeline?
 
