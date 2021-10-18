@@ -17,7 +17,7 @@ class PipelineCollectorTest(TestCase):
         """
         # handle1 - dummy json
         handle1 = '{"handle": {"abc": "Mdr-tl-frvgt-rb", "qpd": "xxtg", "wnm": ' \
-                 '{"kkk": "shared_folder", "qqpd": "xxtg", "jjj": null, ' \
+                  '{"kkk": "shared_folder", "qqpd": "xxtg", "jjj": null, ' \
                   '"cmn": null, "ppli": null, "dsr": null}}, "rgn": "sdsm", ' \
                   '"mtd": {"pdfr": "hn", ' \
                   '"fwn": "6009036913111988543-1616249304-1001", "wnr": 1013}, ' \

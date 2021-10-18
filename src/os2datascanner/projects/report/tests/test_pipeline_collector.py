@@ -1,5 +1,3 @@
-import json
-
 from django.test import TestCase
 
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
@@ -43,7 +41,7 @@ dimension_rule = DimensionsRule()
 
 
 common_scan_spec = messages.ScanSpecMessage(
-        scan_tag=None, # placeholder
+        scan_tag=None,  # placeholder
         source=common_handle.source,
         rule=common_rule,
         configuration={},

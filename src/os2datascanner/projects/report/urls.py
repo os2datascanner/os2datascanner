@@ -23,7 +23,6 @@ urlpatterns = [
     url('^admin/', admin.site.urls),
 ]
 
-if (hasattr(settings, "OPTIONAL_APPS") and
-    "debug_toolbar" in settings.OPTIONAL_APPS):
+if (hasattr(settings, "OPTIONAL_APPS") and "debug_toolbar" in settings.OPTIONAL_APPS):
     import debug_toolbar
     urlpatterns.append(path('__debug__/', include(debug_toolbar.urls))),

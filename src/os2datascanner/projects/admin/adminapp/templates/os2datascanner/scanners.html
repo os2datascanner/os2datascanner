@@ -23,10 +23,10 @@
       <h1 class="page-title">
         {% trans "Scannerjob" %}
       </h1>
-      
+
       <div class="btn">
-        <a 
-        class="button button--cta" 
+        <a
+        class="button button--cta"
         href="/{{ view.type }}scanners/add/"
         title="{% trans 'Add scannerjob' %}">
         <svg class="icon icon--white">
@@ -38,7 +38,7 @@
         </a>
       </div>
     </div>
-    
+
     {% if scanner_list %}
     <table class="datatable">
       <thead>
@@ -67,11 +67,11 @@
           </th>
         </tr>
       </thead>
-      
+
       <tbody>
         {% for scanner in scanner_list %}
         <tr tabindex="0">
-          
+
           <td class="domain-url">
             <div>{{scanner.name}}</div>
             <div style="margin-top: 0.5rem;"><small>{{scanner.url}}</small></div>
@@ -79,7 +79,7 @@
           {% if user.is_superuser %}
           <td class="scanner-organization datatable__column--org">{{scanner.organization}}</td>
           {% endif %}
-          
+
           {% if view.type == 'file' %}
           <td class="domain-letter datatable__column--drive">
             {% if scanner.alias %}
@@ -87,7 +87,7 @@
             {% endif %}
           </td>
           {% endif %}
-          
+
           <td class="domain-validation datatable__column--validated">
             {% if scanner.validation_status %}
             <span class="flex flex--icon">
@@ -109,15 +109,15 @@
             </span>
             {% endif %}
           </td>
-          
+
           <td class="scanner-runtime datatable__column--automatic">
             {{ scanner.schedule_description|truncatechars:20 }}
           </td>
-          
+
           <td class="scanner-actions datatable__column--actions">
-            <a 
-            href="#run-scanner-modal" 
-            data-modal="modal:open" 
+            <a
+            href="#run-scanner-modal"
+            data-modal="modal:open"
             data-src="/{{ view.type }}scanners/{{scanner.pk}}/askrun/"
             class="button button--small button--grey"
             title="{% trans 'Run' %}">
@@ -125,8 +125,8 @@
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-play"></use>
               </svg>
             </a>
-          
-            <a 
+
+            <a
             href="/{{ view.type }}scanners/{{scanner.pk}}"
             class="button button--small button--grey"
             title="{% trans 'Edit' %}">
@@ -143,12 +143,12 @@
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-copy"></use>
               </svg>
             </a>
-        
+
             {% if not scanner.scans %}
             <form action="/{{ view.type }}scanners/{{scanner.pk}}/delete/" method="post" style="display: inline-block;">
               {% csrf_token %}
               {{ form.as_p }}
-              <button 
+              <button
               type="submit"
               class="button button--small button--grey"
               onclick="return confirm('Ønsker du virkelig at slette denne scanner?\n{{scanner.name}}\n\nHandlingen kan ikke fortrydes.')"

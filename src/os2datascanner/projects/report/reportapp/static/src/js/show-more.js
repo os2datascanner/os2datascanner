@@ -4,7 +4,7 @@ $(document).ready(function() {
   var ellipsestext = "...";
   var moretext = "Vis mere";
   var lesstext = "Vis mindre";
-  
+
 
   $('.more').each(function() {
       var content = $(this).html();

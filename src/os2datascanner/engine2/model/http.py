@@ -16,7 +16,7 @@ from ..conversions.types import Link, OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
 from .core import Source, Handle, FileResource
 from .utilities import NamedTemporaryResource
-from .utilities.sitemap import SitemapError, process_sitemap_url
+from .utilities.sitemap import process_sitemap_url
 from .utilities.datetime import parse_datetime
 
 logger = structlog.getLogger(__name__)
@@ -49,7 +49,11 @@ class WebSource(Source):
     type_label = "web"
     eq_properties = ("_url", "_sitemap",)
 
-    def __init__(self, url: str, sitemap : str = "", exclude = []):
+    def __init__(self, url: str, sitemap : str = "", exclude=None):
+
+        if exclude is None:
+            exclude = []
+
         assert url.startswith("http:") or url.startswith("https:")
         self._url = url.removesuffix("/")
         self._sitemap = sitemap
@@ -141,14 +145,14 @@ class WebSource(Source):
                 response = session.head(here.presentation_url, timeout=TIMEOUT)
                 if response.status_code == 200:
                     ct = response.headers.get("Content-Type",
-                                            "application/octet-stream")
+                                              "application/octet-stream")
                     if simplify_mime_type(ct) == 'text/html':
                         response = session.get(here.presentation_url, timeout=TIMEOUT)
                         sleep(SLEEP_TIME)
                         i = 0
                         for i, link in enumerate(
                                 make_outlinks(response.content,
-                                                here.presentation_url),
+                                              here.presentation_url),
                                 start=1):
                             handle_url(here, link.url)
                         logger.debug("handle parsed for links", handle=here.presentation, links=i)
@@ -159,7 +163,7 @@ class WebSource(Source):
 
             # There should newer be a ConnectionError, as only handles
             # originating from Source are requested. But just in case..
-            except RequestException as e:
+            except RequestException:
                 logger.error(f"error while getting head of {here.presentation}",
                              exc_info=True)
             yield here
@@ -248,8 +252,8 @@ class WebResource(FileResource):
     def compute_type(self):
         # At least for now, strip off any extra parameters the media type might
         # specify
-        return self.unpack_header(check=True).get("content-type",
-                "application/octet-stream").value.split(";", maxsplit=1)[0]
+        return self.unpack_header(check=True).get(
+            "content-type", "application/octet-stream").value.split(";", maxsplit=1)[0]
 
     @contextmanager
     def make_path(self):
@@ -318,7 +322,7 @@ class WebHandle(Handle):
     def from_json_object(obj):
         lm_hint = obj.get("last_modified", None)
         if lm_hint:
-                lm_hint = OutputType.LastModified.decode_json_object(lm_hint)
+            lm_hint = OutputType.LastModified.decode_json_object(lm_hint)
         referrer = obj.get("referrer", None)
         if referrer:
             if isinstance(referrer, list):
@@ -350,7 +354,7 @@ def make_outlinks(content, where):
         for element, _, link, _ in doc.iterlinks():
             if element.tag in ("a", "img",):
                 yield Link(link, link_text=element.text)
-    except ParserError as e:
+    except ParserError:
         # Silently drop ParserErrors, but only for empty documents
         if content and not content.isspace():
             logger.error("{0}: unexpected ParserError".format(where),

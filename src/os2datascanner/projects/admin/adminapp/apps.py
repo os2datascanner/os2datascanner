@@ -23,4 +23,4 @@ class AdminappConfig(AppConfig):
     verbose_name = "OS2datascanner"
 
     def ready(self):
-        from .signals import ModelChangeEvent
+        from .signals import ModelChangeEvent  # noqa

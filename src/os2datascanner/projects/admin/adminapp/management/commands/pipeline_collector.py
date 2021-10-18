@@ -21,8 +21,8 @@ import structlog
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
-from ...models.scannerjobs.scanner_model import (Scanner, ScanStatus,
-        ScheduledCheckup)
+from ...models.scannerjobs.scanner_model import (
+    Scanner, ScanStatus, ScheduledCheckup)
 
 logger = structlog.get_logger(__name__)
 
@@ -81,8 +81,7 @@ def checkup_message_received_raw(body):
         if matches:
             if not matches.matched:
                 if (len(matches.matches) == 1
-                        and isinstance(matches.matches[0].rule,
-                                LastModifiedRule)):
+                        and isinstance(matches.matches[0].rule, LastModifiedRule)):
                     # This object hasn't changed since the last scan. Update
                     # the checkup timestamp so we remember to check it again
                     # next time

@@ -28,7 +28,7 @@
     color: var(--color-text-main);
   }
 
-  label + input, 
+  label + input,
   label + .input-group {
     margin-top: 0.25rem;
   }
@@ -45,10 +45,10 @@
     display: flex;
   }
 
-  // input [type=text],[type=password] 
+  // input [type=text],[type=password]
   input[type=text],
   input[type=password] {
-    background-color: #fff;  
+    background-color: #fff;
     border: none;
     border-radius: var(--border-radius-small);
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
@@ -71,7 +71,7 @@
   }
 
   .date-field {
-    background-color: #fff;  
+    background-color: #fff;
     border: none;
     border-radius: var(--border-radius-small);
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
@@ -89,7 +89,7 @@
 
   // textarea
   textarea {
-    background-color: #fff;  
+    background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: var(--border-radius-small);
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
@@ -121,20 +121,20 @@
     margin-right: 5rem;
     cursor: pointer;
   }
-  
+
   .radio__label {
     line-height: 1.1;
     opacity: 0.8;
   }
-  
+
   .radio__input {
     display: flex;
-  
+
     input {
       opacity: 0;
       width: 0;
       height: 0;
-  
+
       &:focus + .radio__control {
 
         &--notify {
@@ -152,7 +152,7 @@
       }
     }
   }
-  
+
   .radio-before {
     .radio__control {
       display: grid;
@@ -188,7 +188,7 @@
       transition: 180ms transform ease-in-out;
       transform: scale(0);
     }
-  
+
     input + .radio__control--critical::before {
       content: "";
       width: .5rem;
@@ -198,12 +198,12 @@
       transition: 180ms transform ease-in-out;
       transform: scale(0);
     }
-  
+
     input:checked + .radio__control::before {
       transform: scale(1);
     }
   }
-  
+
   .radio__control {
     display: block;
     width: 1rem;
@@ -238,7 +238,7 @@
     height: .8rem;
     background-size: 100% 100%;
     cursor: pointer;
-  
+
     .helptext {
       visibility: hidden;
       min-width: 20rem;
@@ -274,7 +274,7 @@
 }
 
 .required-form:after{
-    content: " *"; 
+    content: " *";
     color: var(--color-text-main);
 }
 
@@ -339,7 +339,7 @@
 
   input[type=checkbox]:focus + label::before {
     border-color: #12496e;
-  } 
+  }
 
   &:hover {
     input[type="checkbox"] + label {
@@ -369,7 +369,7 @@
   }
 }
 
-.has-error { 
+.has-error {
   border-left: 5px solid var(--color-error);
   padding-left: 1rem;
 

@@ -1,10 +1,10 @@
 window.addEventListener('load', function () {
 	// Line chart
-	// // 
-	// // 
-	// // 
-	// // 
-	// // 
+	// //
+	// //
+	// //
+	// //
+	// //
 	// Creating xx line chart
 
 	Chart.pluginService.register({
@@ -19,12 +19,12 @@ window.addEventListener('load', function () {
 
 			// half the width of a 'bar'
 			var margin = (meta.data[1]._model.x-meta.data[0]._model.x)/2;
-			
-			// Position at index 2 - margin (index 0 is null) 
+
+			// Position at index 2 - margin (index 0 is null)
 			var start = meta.data[1]._model.x-margin;
 
 			var stop  = meta.data[meta.data.length-1]._model.x-margin;
-			
+
 			ctx.save();
 			ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
 
@@ -70,11 +70,11 @@ window.addEventListener('load', function () {
 			tooltips: {
 				// Disable the on-canvas tooltip
 				enabled: false,
-		
+
 				custom: function(tooltipModel) {
 					// Tooltip Element
 					var tooltipEl = document.getElementById('line-chart-new-matches-tooltip');
-		
+
 					// Create element on first render
 					if (!tooltipEl) {
 						tooltipEl = document.createElement('div');
@@ -82,13 +82,13 @@ window.addEventListener('load', function () {
 						tooltipEl.innerHTML = '<table></table>';
 						document.body.appendChild(tooltipEl);
 					}
-		
+
 					// Hide if no tooltip
 					if (tooltipModel.opacity === 0) {
 						tooltipEl.style.opacity = 0;
 						return;
 					}
-		
+
 					// Set caret Position
 					tooltipEl.classList.remove('above', 'below', 'no-transform');
 					if (tooltipModel.yAlign) {
@@ -96,23 +96,23 @@ window.addEventListener('load', function () {
 					} else {
 						tooltipEl.classList.add('no-transform');
 					}
-		
+
 					function getBody(bodyItem) {
 						return bodyItem.lines;
 					}
-		
+
 					// Set Text
 					if (tooltipModel.body) {
 						var titleLines = tooltipModel.title || [];
 						var bodyLines = tooltipModel.body.map(getBody);
-		
+
 						var innerHtml = '<thead>';
-		
+
 						titleLines.forEach(function(title) {
 							innerHtml += '<tr><th>' + title + '</th></tr>';
 						});
 						innerHtml += '</thead><tbody>';
-		
+
 						bodyLines.forEach(function(body, i) {
 							var colors = tooltipModel.labelColors[i];
 							var style = 'background:' + colors.backgroundColor;
@@ -122,14 +122,14 @@ window.addEventListener('load', function () {
 							innerHtml += '<tr><td>' + span + body + '</td></tr>';
 						});
 						innerHtml += '</tbody>';
-		
+
 						var tableRoot = tooltipEl.querySelector('table');
 						tableRoot.innerHTML = innerHtml;
 					}
-		
+
 					// `this` will be the overall tooltip
 					var position = this._chart.canvas.getBoundingClientRect();
-		
+
 					// Display, position, and set styles for font
 					tooltipEl.style.opacity = 1;
 					tooltipEl.style.position = 'absolute';
@@ -164,7 +164,7 @@ window.addEventListener('load', function () {
 				xAxes: [{
 					gridLines: {
 						offsetGridLines: true,
-						display: true,                
+						display: true,
 						color: "#fff",
 						lineWidth: 3
 					},
@@ -222,11 +222,11 @@ window.addEventListener('load', function () {
 			tooltips: {
 				// Disable the on-canvas tooltip
 				enabled: false,
-		
+
 				custom: function(tooltipModel) {
 					// Tooltip Element
 					var tooltipEl = document.getElementById('line-chart-new-matches-tooltip');
-		
+
 					// Create element on first render
 					if (!tooltipEl) {
 						tooltipEl = document.createElement('div');
@@ -234,13 +234,13 @@ window.addEventListener('load', function () {
 						tooltipEl.innerHTML = '<table></table>';
 						document.body.appendChild(tooltipEl);
 					}
-		
+
 					// Hide if no tooltip
 					if (tooltipModel.opacity === 0) {
 						tooltipEl.style.opacity = 0;
 						return;
 					}
-		
+
 					// Set caret Position
 					tooltipEl.classList.remove('above', 'below', 'no-transform');
 					if (tooltipModel.yAlign) {
@@ -248,23 +248,23 @@ window.addEventListener('load', function () {
 					} else {
 						tooltipEl.classList.add('no-transform');
 					}
-		
+
 					function getBody(bodyItem) {
 						return bodyItem.lines;
 					}
-		
+
 					// Set Text
 					if (tooltipModel.body) {
 						var titleLines = tooltipModel.title || [];
 						var bodyLines = tooltipModel.body.map(getBody);
-		
+
 						var innerHtml = '<thead>';
-		
+
 						titleLines.forEach(function(title) {
 							innerHtml += '<tr><th>' + title + '</th></tr>';
 						});
 						innerHtml += '</thead><tbody>';
-		
+
 						bodyLines.forEach(function(body, i) {
 							var colors = tooltipModel.labelColors[i];
 							var style = 'background:' + colors.backgroundColor;
@@ -274,14 +274,14 @@ window.addEventListener('load', function () {
 							innerHtml += '<tr><td>' + span + body + '</td></tr>';
 						});
 						innerHtml += '</tbody>';
-		
+
 						var tableRoot = tooltipEl.querySelector('table');
 						tableRoot.innerHTML = innerHtml;
 					}
-		
+
 					// `this` will be the overall tooltip
 					var position = this._chart.canvas.getBoundingClientRect();
-		
+
 					// Display, position, and set styles for font
 					tooltipEl.style.opacity = 1;
 					tooltipEl.style.position = 'absolute';
@@ -316,7 +316,7 @@ window.addEventListener('load', function () {
 				xAxes: [{
 					gridLines: {
 						offsetGridLines: true,
-						display: true,                
+						display: true,
 						color: "#fff",
 						lineWidth: 3
 					},
@@ -338,5 +338,5 @@ window.addEventListener('load', function () {
 		}
 	});
 
-	
+
 });

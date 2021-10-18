@@ -42,5 +42,5 @@ def start_ldap_import(ldap_conf: LDAPConfig):
         )
         logger.info(f"Import job created for LDAPConfig {ldap_conf.pk}")
     else:
-        logger.info(f"LDAP import is not possible right now for "
+        logger.info("LDAP import is not possible right now for "
                     f"LDAPConfig {ldap_conf.pk}")

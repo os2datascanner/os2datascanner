@@ -1,4 +1,3 @@
-from ..model.core import SourceManager
 from .explorer import message_received_raw as explorer_handler
 from .processor import message_received_raw as processor_handler
 from .matcher import message_received_raw as matcher_handler
@@ -7,8 +6,12 @@ from . import messages
 
 
 READS_QUEUES = ("os2ds_conversions",)
-WRITES_QUEUES = ("os2ds_matches", "os2ds_checkups", "os2ds_problems",
-        "os2ds_metadata", "os2ds_status",)
+WRITES_QUEUES = (
+    "os2ds_matches",
+    "os2ds_checkups",
+    "os2ds_problems",
+    "os2ds_metadata",
+    "os2ds_status",)
 PROMETHEUS_DESCRIPTION = "Messages handled by worker"
 # Let the Pika background thread aggressively collect tasks. Workers should
 # always be doing something -- every centisecond of RabbitMQ overhead is time

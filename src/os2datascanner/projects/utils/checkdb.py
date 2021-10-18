@@ -2,7 +2,7 @@ import logging
 import sys
 import time
 import pprint
-from django.db import connection, connections
+from django.db import connections
 from django.db.utils import OperationalError
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ def waitdb(wait: int = 5):
             connections["default"].ensure_connection()
             logger.info("{0} Connected to database.".format(attempt))
             return 0
-        except OperationalError as e:
+        except OperationalError:
             if i < wait - 1:
                 time.sleep(1)
 

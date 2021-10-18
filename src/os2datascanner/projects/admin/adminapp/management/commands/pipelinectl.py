@@ -46,20 +46,19 @@ class Command(BaseCommand):
                 "--abort-scanstatus",
                 type=model_pk(ScanStatus),
                 metavar="PK",
-                help="the primary key of a ScanStatus object whose scan should"
-                        " be stopped",
+                help="the primary key of a ScanStatus object whose scan should be stopped",
                 default=None)
         group.add_argument(
                 "--log-level",
                 choices=("critical", "error", "warn",
-                        "warning", "info", "debug",),
+                         "warning", "info", "debug",),
                 metavar="LEVEL",
                 help="the new log level for pipeline components",
                 default=None)
 
     def handle(self,
-            abort_scantag, abort_scannerjob, abort_scanstatus, log_level,
-            *args, **options):
+               abort_scantag, abort_scannerjob, abort_scanstatus, log_level,
+               *args, **options):
         if abort_scannerjob:
             abort_scantag = messages.ScanTagFragment.from_json_object(
                     abort_scannerjob.statuses.last().scan_tag)

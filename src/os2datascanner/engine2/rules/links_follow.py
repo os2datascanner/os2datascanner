@@ -57,6 +57,8 @@ class LinksFollowRule(SimpleRule):
 # page. Not all webservers respect this, but at least we get the correct repsonse
 # code
 __HEADERS = {"Range": "bytes=0-1"}
+
+
 def check(link: Link) -> tuple[bool, int]:
     """return True if link can be followed and the final response is less than 400
 
@@ -68,5 +70,5 @@ def check(link: Link) -> tuple[bool, int]:
     try:
         r.raise_for_status()
         return True, r.status_code
-    except RequestException as e:
+    except RequestException:
         return False, r.status_code

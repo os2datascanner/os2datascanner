@@ -1,4 +1,3 @@
-from ..model.core import Handle, SourceManager
 from . import messages
 
 
@@ -13,7 +12,7 @@ def message_received_raw(body, channel, source_manager):
 
     try:
         yield ("os2ds_metadata",
-                messages.MetadataMessage(
+               messages.MetadataMessage(
                         message.scan_tag, message.handle,
                         message.handle.follow(source_manager).get_metadata()
                 ).to_json_object())

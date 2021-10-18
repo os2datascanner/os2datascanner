@@ -38,11 +38,13 @@ next_qhr = current_qhr + datetime.timedelta(
     minutes=15, microseconds=-1
 )
 
+
 class Command(BaseCommand):
     help = __doc__
+
     def add_arguments(self, parser):
-       parser.add_argument(
-             "--now",
+        parser.add_argument(
+            "--now",
             metavar="now",
             type=bool,
             default=False,

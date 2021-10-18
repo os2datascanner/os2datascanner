@@ -22,7 +22,6 @@ import datetime
 from enum import Enum
 import os
 import re
-import pika
 from typing import Iterator
 import structlog
 
@@ -237,7 +236,7 @@ class Scanner(models.Model):
         # Create a new engine2 scan specification
         rule = OrRule.make(
                 *[r.make_engine2_rule()
-                        for r in self.rules.all().select_subclasses()])
+                  for r in self.rules.all().select_subclasses()])
 
         configuration = {}
 
@@ -284,14 +283,16 @@ class Scanner(models.Model):
                         uuid=self.organization.uuid))
 
         # Build ScanSpecMessages for all Sources
-        message_template = messages.ScanSpecMessage(scan_tag=scan_tag,
-                rule=rule, configuration=configuration, source=None,
-                progress=None)
+        message_template = messages.ScanSpecMessage(
+            scan_tag=scan_tag,
+            rule=rule, configuration=configuration, source=None,
+            progress=None)
         outbox = []
         source_count = 0
         for source in self.generate_sources():
-            outbox.append((settings.AMQP_PIPELINE_TARGET,
-                    message_template._replace(source=source)))
+            outbox.append((
+                settings.AMQP_PIPELINE_TARGET,
+                message_template._replace(source=source)))
             source_count += 1
 
         if source_count == 0:
@@ -302,9 +303,10 @@ class Scanner(models.Model):
         # deleting these reminders)
         message_template = messages.ConversionMessage(
                 scan_spec=message_template,
-                handle=None, progress=messages.ProgressFragment(
-                        rule=None,
-                        matches=[]))
+                handle=None,
+                progress=messages.ProgressFragment(
+                    rule=None,
+                    matches=[]))
         for reminder in self.checkups.all():
             # XXX: we could be adding LastModifiedRule twice
             ib = reminder.interested_before
@@ -312,10 +314,10 @@ class Scanner(models.Model):
                     LastModifiedRule(ib) if ib else True,
                     rule)
             outbox.append((settings.AMQP_CONVERSION_TARGET,
-                    message_template._deep_replace(
-                            scan_spec__source=reminder.handle.source,
-                            handle=reminder.handle,
-                            progress__rule=rule_here)))
+                           message_template._deep_replace(
+                               scan_spec__source=reminder.handle.source,
+                               handle=reminder.handle,
+                               progress__rule=rule_here)))
 
         self.e2_last_run_at = now
         self.save()
@@ -404,9 +406,9 @@ class ScanStatus(models.Model):
                                 on_delete=models.CASCADE)
 
     total_sources = models.IntegerField(verbose_name=_("total sources"),
-                                       null=True)
+                                        null=True)
     explored_sources = models.IntegerField(verbose_name=_("explored sources"),
-                                         null=True)
+                                           null=True)
 
     total_objects = models.IntegerField(verbose_name=_("total objects"),
                                         null=True)

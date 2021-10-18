@@ -1,24 +1,25 @@
 import logging
-from ..rules.last_modified import LastModifiedRule
 from ..conversions.types import decode_dict
 from . import messages
 
 logger = logging.getLogger(__name__)
 
 READS_QUEUES = ("os2ds_representations",)
-WRITES_QUEUES = ("os2ds_handles",
-        "os2ds_matches", "os2ds_checkups", "os2ds_conversions",)
+WRITES_QUEUES = (
+    "os2ds_handles",
+    "os2ds_matches",
+    "os2ds_checkups",
+    "os2ds_conversions",)
 PROMETHEUS_DESCRIPTION = "Representations examined"
 PREFETCH_COUNT = 8
 
 
 def message_received_raw(body, channel, source_manager):
-    source_manager = None
     message = messages.RepresentationMessage.from_json_object(body)
     representations = decode_dict(message.representations)
     rule = message.progress.rule
     logger.debug(f"{message.handle.presentation} with rules [{rule.presentation}] "
-                f"and representation [{list(representations.keys())}]")
+                 f"and representation [{list(representations.keys())}]")
 
     head = None
     try:
@@ -70,13 +71,13 @@ def message_received_raw(body, channel, source_manager):
 
         for matches_q in ("os2ds_matches", "os2ds_checkups",):
             yield (matches_q,
-                    messages.MatchesMessage(
+                   messages.MatchesMessage(
                             message.scan_spec, message.handle,
                             matched=rule, matches=final_matches).to_json_object())
         # Only trigger metadata scanning if the match succeeded
         if rule:
             yield ("os2ds_handles",
-                    messages.HandleMessage(
+                   messages.HandleMessage(
                             message.scan_spec.scan_tag,
                             message.handle).to_json_object())
     else:
@@ -85,11 +86,11 @@ def message_received_raw(body, channel, source_manager):
                 f"{message.handle.presentation} needs"
                 f" new representation: [{type_value}].")
         yield ("os2ds_conversions",
-                messages.ConversionMessage(
-                        message.scan_spec, message.handle,
-                        message.progress._replace(
-                                rule=rule,
-                                matches=final_matches)).to_json_object())
+               messages.ConversionMessage(
+                            message.scan_spec, message.handle,
+                            message.progress._replace(
+                                    rule=rule,
+                                    matches=final_matches)).to_json_object())
 
 
 if __name__ == "__main__":

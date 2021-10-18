@@ -1,8 +1,4 @@
-from os import rmdir, remove
 import binascii
-import os.path
-from tempfile import mkdtemp
-from contextlib import suppress
 from typing import Optional, Union
 from base64 import b64decode, b64encode
 from contextlib import closing
@@ -13,7 +9,7 @@ from os2datascanner.engine2.conversions import convert
 
 
 def convert_data_to_text(
-        content: bytes, mime: str, text_readable: bool=True
+        content: bytes, mime: str, text_readable: bool = True
 ) -> Optional[bytes]:
     """Convert data to text representation
 
@@ -38,7 +34,7 @@ def convert_data_to_text(
     sm = SourceManager()
     source = Source.from_json_object(json)
     representation = None
-    while source and representation == None:
+    while source and representation is None:
         # It's important that the Source.handles() generator gets a chance to
         # clean up properly, which means using contextlib.closing() if it's not
         # going to run to completion
@@ -58,7 +54,7 @@ def convert_data_to_text(
             # registry.__converters
             representation = convert(r, OutputType.Text)
             return representation.value
-        except KeyError as e:
+        except KeyError:
             # Try to reinterpret the Handle as a new Source
             source = Source.from_handle(h)
             if not source:

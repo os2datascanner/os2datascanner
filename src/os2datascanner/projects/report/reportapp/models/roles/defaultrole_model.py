@@ -14,8 +14,6 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 
-from django.db import models
-
 from ..documentreport_model import DocumentReport
 from .role_model import Role
 

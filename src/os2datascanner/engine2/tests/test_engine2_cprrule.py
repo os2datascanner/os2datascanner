@@ -45,7 +45,7 @@ Følgende symboler undersøges
 - unær operatører "+", "-"
 - parenteser "(", "[", "{", "<", "<?", "<%", "/*"
 - symboler "!", "#", "%"
-"""
+"""  # noqa: E501
 
 
 # all possible matches
@@ -205,13 +205,13 @@ class RuleTests(unittest.TestCase):
             (
                 CPRRule(modulus_11=True, ignore_irrelevant=False, examine_context=True,
                         blacklist=[]),
-                [ALL_MATCHES[i] for i in [0,1,2,3,5,6,19]],
+                [ALL_MATCHES[i] for i in [0, 1, 2, 3, 5, 6, 19]],
                 "match using context rules"
             ),
             (
                 CPRRule(modulus_11=True, ignore_irrelevant=False, examine_context=True,
                         blacklist=[], whitelist=[]),
-                [ALL_MATCHES[i] for i in [0,2,3,5,6,19]],
+                [ALL_MATCHES[i] for i in [0, 2, 3, 5, 6, 19]],
                 "match setting `whitelist=[]`"
             ),
             (
@@ -222,7 +222,7 @@ class RuleTests(unittest.TestCase):
             (
                 CPRRule(modulus_11=True, ignore_irrelevant=False, examine_context=True,
                         blacklist=[], whitelist=["anders", "and"]),
-                [ALL_MATCHES[i] for i in [0,1,2,3,4,5,6,19]],
+                [ALL_MATCHES[i] for i in [0, 1, 2, 3, 4, 5, 6, 19]],
                 "match setting `whitelist=['anders', 'and']`"
             ),
         ]

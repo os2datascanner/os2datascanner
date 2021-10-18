@@ -31,4 +31,3 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         for ldapConf in LDAPConfig.objects.all():
             start_ldap_import(ldapConf)
-

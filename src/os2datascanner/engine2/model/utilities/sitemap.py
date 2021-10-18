@@ -17,6 +17,7 @@ _PARSER = etree.XMLParser(resolve_entities=False)
 TIMEOUT = engine2_settings.model["http"]["timeout"]
 logger = structlog.getLogger(__name__)
 
+
 def _xp(e, path: str) -> List[str]:
     """Parse an `ElementTree` using a namespace with sitemap prefix.
 
@@ -30,9 +31,9 @@ def _xp(e, path: str) -> List[str]:
 
     """
     return e.xpath(path,
-            namespaces={
-                "sitemap": "http://www.sitemaps.org/schemas/sitemap/0.9"
-            })
+                   namespaces={
+                       "sitemap": "http://www.sitemaps.org/schemas/sitemap/0.9"
+                   })
 
 
 def _get_url_data(url: str, context=requests) -> Optional[bytes]:
@@ -53,7 +54,7 @@ def _get_url_data(url: str, context=requests) -> Optional[bytes]:
 
 
 def process_sitemap_url(url: str, *, context=requests,
-        allow_sitemap: bool=True) -> Iterable[Tuple[str, Optional[datetime]]]:
+                        allow_sitemap: bool = True) -> Iterable[Tuple[str, Optional[datetime]]]:
 
     """Retrieves and parses the sitemap or sitemap index at the given URL and
     yields zero or more (URL, last-modified) tuples.
@@ -90,12 +91,12 @@ def process_sitemap_url(url: str, *, context=requests,
             # This appears to be a sitemap index: iterate over all of the valid
             # <sitemap /> elements and recursively yield from them
             for sitemap in _xp(root,
-                    "/sitemap:sitemapindex/sitemap:sitemap[sitemap:loc]"):
+                               "/sitemap:sitemapindex/sitemap:sitemap[sitemap:loc]"):
                 loc = _xp(sitemap, "sitemap:loc/text()")[0].strip()
                 # Sitemap indexes aren't allowed to reference other sitemap
                 # indexes, so forbid that to avoid infinite loops
                 yield from process_sitemap_url(loc,
-                        context=context, allow_sitemap=False)
+                                               context=context, allow_sitemap=False)
         else:
             raise SitemapMalformedError(url)
     except etree.XMLSyntaxError:
@@ -105,7 +106,7 @@ def process_sitemap_url(url: str, *, context=requests,
 class SitemapError(Exception):
     # print the Exception type and not only the Exception message.
     def __str__(self):
-      return repr(self)
+        return repr(self)
 
 
 class SitemapMissingError(SitemapError):

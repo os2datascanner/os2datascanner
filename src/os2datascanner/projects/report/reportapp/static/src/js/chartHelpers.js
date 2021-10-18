@@ -1,6 +1,6 @@
 "use strict"
 // Color function
-// reads colors from :root 
+// reads colors from :root
 var colorFunction = function (color) {
   return getComputedStyle(document.querySelector(':root')).getPropertyValue(color);
 }
@@ -43,7 +43,7 @@ $('.dropdown .dropdown-menu li').click(function () {
   }
 });
 
-// Toggle the class 'hidden' on change from the select list 
+// Toggle the class 'hidden' on change from the select list
 $(document).ready(function(){
   $(".select_span").on('DOMSubtreeModified',function(){
     $($(this).parents('.statistic').find('.chart_container, .chart_description').toggleClass("hidden"));

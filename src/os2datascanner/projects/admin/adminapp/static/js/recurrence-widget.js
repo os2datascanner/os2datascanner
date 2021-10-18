@@ -138,10 +138,10 @@ recurrence.widget.Calendar.prototype = {
         var td = recurrence.widget.e(
             'td', {},
             [
-                remove, 
-                calendar_year, 
-                calendar_navigation, 
-                calendar_body, 
+                remove,
+                calendar_year,
+                calendar_navigation,
+                calendar_body,
                 calendar_footer
             ]);
         var tr = recurrence.widget.e('tr', {}, [td]);
@@ -789,15 +789,15 @@ recurrence.widget.RuleForm.prototype = {
 
         var mode_checkbox = recurrence.widget.e(
             'input', {
-                'class': 'checkbox-inline', 
-                'type': 'checkbox', 
-                'name': 'mode', 
+                'class': 'checkbox-inline',
+                'type': 'checkbox',
+                'name': 'mode',
                 'id': 'mode'
             }
         );
         var mode_label = recurrence.widget.e(
             'label', {
-                'class': 'recurrence-label', 
+                'class': 'recurrence-label',
                 'for': 'mode'
             },
             recurrence.display.labels.exclude_occurrences);
@@ -806,7 +806,7 @@ recurrence.widget.RuleForm.prototype = {
                 'class': 'mode form__group ds-checkbox'
             },
             [
-                mode_checkbox, 
+                mode_checkbox,
                 mode_label
             ]
         );
@@ -830,13 +830,13 @@ recurrence.widget.RuleForm.prototype = {
             });
         var freq_select = recurrence.widget.e(
             'select', {
-                'name': 'freq', 
-                'id': 'freq', 
+                'name': 'freq',
+                'id': 'freq',
                 'class': 'form-control'
             }, freq_options);
         var freq_label = recurrence.widget.e(
             'label', {
-                'class': 'recurrence-label', 
+                'class': 'recurrence-label',
                 'for': 'freq'
             },
             recurrence.display.labels.frequency + ':');
@@ -850,17 +850,17 @@ recurrence.widget.RuleForm.prototype = {
 
         var interval_field = recurrence.widget.e(
             'input', {
-                'name': 'interval', 
-                'type': 'text', 
-                'size': 1, 
-                'value': this.rule.interval, 
-                'id': 'interval', 
+                'name': 'interval',
+                'type': 'text',
+                'size': 1,
+                'value': this.rule.interval,
+                'id': 'interval',
                 'class': 'form-control interval-field'
             }
         );
         var interval_label1 = recurrence.widget.e(
             'label', {
-                'class': 'recurrence-label', 
+                'class': 'recurrence-label',
                 'for': 'interval'
             },
             recurrence.display.labels.every);
@@ -885,10 +885,10 @@ recurrence.widget.RuleForm.prototype = {
         }
         var until_radio = recurrence.widget.e(
             'input', {
-                'class': 'radio-inline', 
-                'type': 'radio', 
-                'name': 'until_count', 
-                'value': 'until', 
+                'class': 'radio-inline',
+                'type': 'radio',
+                'name': 'until_count',
+                'value': 'until',
                 'id': 'until'
             }
         );
@@ -899,7 +899,7 @@ recurrence.widget.RuleForm.prototype = {
             });
         var until_label = recurrence.widget.e(
             'label', {
-                'class': 'recurrence-label', 
+                'class': 'recurrence-label',
                 'for': 'until'
             },
             recurrence.display.labels.date + ':');
@@ -919,19 +919,19 @@ recurrence.widget.RuleForm.prototype = {
         }
         var count_radio = recurrence.widget.e(
             'input', {
-                'class': 'radio-inline', 
+                'class': 'radio-inline',
                 'type': 'radio',
-                'name': 'until_count', 
-                'value': 'count', 
+                'name': 'until_count',
+                'value': 'count',
                 'id': 'count'
             }
         );
         var count_field = recurrence.widget.e(
             'input', {
-                'name': 'count', 
-                'size': 1, 
-                'value': count_value, 
-                'type': 'text', 
+                'name': 'count',
+                'size': 1,
+                'value': count_value,
+                'type': 'text',
                 'class':'form-control count-field'
             }
         );
@@ -960,15 +960,15 @@ recurrence.widget.RuleForm.prototype = {
             [until_container, count_container]);
         var limit_checkbox = recurrence.widget.e(
             'input', {
-                'class': 'checkbox-inline', 
+                'class': 'checkbox-inline',
                 'type': 'checkbox',
-                'name': 'limit', 
+                'name': 'limit',
                 'id': 'limit'
             }
         );
         var limit_label = recurrence.widget.e(
             'label', {
-                'class': 'recurrence-label', 
+                'class': 'recurrence-label',
                 'for': 'limit'
             },
             recurrence.display.labels.repeat_until + ':');
@@ -995,12 +995,12 @@ recurrence.widget.RuleForm.prototype = {
             }
         );
         var root = recurrence.widget.e(
-            'form', 
+            'form',
             {}, [
-                mode_container, 
-                freq_container, 
+                mode_container,
+                freq_container,
                 interval_container,
-                freq_form_container, 
+                freq_form_container,
                 limit_container
             ]
         );
@@ -1284,15 +1284,15 @@ recurrence.widget.RuleYearlyForm.prototype = {
 
         var byday_checkbox = recurrence.widget.e(
             'input', {
-                'class': 'checkbox-inline', 
+                'class': 'checkbox-inline',
                 'type': 'checkbox',
-                'name': 'byday', 
+                'name': 'byday',
                 'id': 'byday'
             }
         );
         var byday_label = recurrence.widget.e(
             'label', {
-                'class': 'recurrence-label', 
+                'class': 'recurrence-label',
                 'for': 'byday'
             },
             recurrence.string.capitalize(

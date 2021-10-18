@@ -1,11 +1,11 @@
 window.addEventListener('load', function () {
-  // 
+  //
   // Pie Chart start
-  // 
-  // 
-  // 
-  // 
-  // 
+  //
+  //
+  //
+  //
+  //
   // Creating sensitivites pie chart
 
 
@@ -16,22 +16,22 @@ window.addEventListener('load', function () {
     data: {
       labels:[sensitivities[0][0],sensitivities[1][0],sensitivities[2][0],sensitivities[3][0]],
       datasets: [{
-        data: [sensitivities[0][1],sensitivities[1][1],sensitivities[2][1],sensitivities[3][1]], 
+        data: [sensitivities[0][1],sensitivities[1][1],sensitivities[2][1],sensitivities[3][1]],
         backgroundColor: ['#e24e4e', '#ffab00', '#fed149', '#21759c'],
         borderColor: ['#e24e4e', '#ffab00', '#fed149', '#21759c'],
         borderAlign: 'center',
-        //Put hoverBorderWidth on - this gives the canvas a small margin, so it doesn't 'cut off' when our 'click-highlight' function 
+        //Put hoverBorderWidth on - this gives the canvas a small margin, so it doesn't 'cut off' when our 'click-highlight' function
         // (sensitivityLegendClickCallback) is called. (the hover is not used, as the option: events is set to 0 ( events: [] ))
         hoverBorderWidth: [20,20,20,20]
       }]
-      
+
     },
     options: {
       legend: {
         position:'top',
         align: 'end',
         display: false,
-    
+
       },
       // Callback for placing legends inside of <ul>
       legendCallback: function(chart) {
@@ -113,11 +113,11 @@ window.addEventListener('load', function () {
     data: {
       labels:[sourceTypes[0][0],sourceTypes[1][0],sourceTypes[2][0],sourceTypes[3][0]],
       datasets: [{
-        data: [sourceTypes[0][1],sourceTypes[1][1],sourceTypes[2][1],sourceTypes[3][1]], 
+        data: [sourceTypes[0][1],sourceTypes[1][1],sourceTypes[2][1],sourceTypes[3][1]],
         backgroundColor: ['#fed149', '#5ca4cd', '#21759c', '#00496e'],
         borderColor: ['#fed149', '#5ca4cd', '#21759c', '#00496e'],
         borderAlign: 'center',
-        //Put hoverBorderWidth on - this gives the canvas a small margin, so it doesn't 'cut off' when our 'click-highlight' function 
+        //Put hoverBorderWidth on - this gives the canvas a small margin, so it doesn't 'cut off' when our 'click-highlight' function
         // (sensitivityLegendClickCallback) is called. (the hover is not used, as the option: events is set to 0 ( events: [] ))
         hoverBorderWidth: [20,20,20,20]
       }]

@@ -5,7 +5,7 @@ import email
 from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
-from ..core import Source, Handle, FileResource, SourceManager
+from ..core import Source, Handle, FileResource
 from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
@@ -136,5 +136,5 @@ class MailPartHandle(Handle):
     @staticmethod
     @Handle.json_handler(type_label)
     def from_json_object(obj):
-        return MailPartHandle(Source.from_json_object(obj["source"]),
-                obj["path"], obj["mime"])
+        return MailPartHandle(
+            Source.from_json_object(obj["source"]), obj["path"], obj["mime"])

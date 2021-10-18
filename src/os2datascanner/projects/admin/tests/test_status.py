@@ -5,7 +5,8 @@ from django.utils.text import slugify
 
 from os2datascanner.projects.admin.core.models.client import Client
 from os2datascanner.projects.admin.organizations.models.organization import Organization
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import Scanner, ScanStatus
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import (
+        Scanner, ScanStatus)
 
 
 class StatusTest(django.test.TestCase):
@@ -114,7 +115,7 @@ class StatusTest(django.test.TestCase):
                 ss.fraction_scanned,
                 None,
                 "scan fraction should not have been defined")
-    
+
     def test_updates_on_save(self):
         ss = ScanStatus(
             scanner=self.scanner,

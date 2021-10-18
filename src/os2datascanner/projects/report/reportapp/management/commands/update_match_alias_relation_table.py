@@ -17,7 +17,7 @@
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 
-from os2datascanner.projects.report.reportapp.models.aliases.webdomainalias_model import WebDomainAlias
+from os2datascanner.projects.report.reportapp.models.aliases.webdomainalias_model import WebDomainAlias  # noqa: E501
 
 from ...models.aliases.adsidalias_model import ADSIDAlias
 from ...models.aliases.alias_model import Alias
@@ -62,7 +62,7 @@ def update_match_alias_relations():
                      reports], ignore_conflicts=True)
                 print("Approx. {0} ADSIDAlias' relation created.".format(
                     len(reports)))
-        except:
+        except Exception:
             print("no subAlias")
 
 

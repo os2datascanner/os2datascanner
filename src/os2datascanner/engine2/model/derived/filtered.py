@@ -4,13 +4,12 @@ from bz2 import BZ2File
 from gzip import GzipFile
 from lzma import LZMAFile
 from datetime import datetime
-from functools import partial
 from contextlib import contextmanager
 from pathlib import Path
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
-from ..core import Source, Handle, FileResource, SourceManager
+from ..core import Source, Handle, FileResource
 from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
@@ -80,8 +79,7 @@ class FilteredResource(FileResource):
                 # Compute the size by seeking to the end of a fresh stream, in
                 # the process also populating the last modification date field
                 s.seek(0, 2)
-                self._mr = MultipleResults.make_from_attrs(s,
-                        "mtime", "filename", size=s.tell())
+                self._mr = MultipleResults.make_from_attrs(s, "mtime", "filename", size=s.tell())
                 self._mr[OutputType.LastModified] = datetime.fromtimestamp(
                         s.mtime)
         return self._mr
@@ -91,7 +89,7 @@ class FilteredResource(FileResource):
 
     def get_last_modified(self):
         return self.unpack_stream().setdefault(OutputType.LastModified,
-                super().get_last_modified())
+                                               super().get_last_modified())
 
     @contextmanager
     def make_path(self):
@@ -103,9 +101,8 @@ class FilteredResource(FileResource):
 
     @contextmanager
     def make_stream(self):
-        with self._get_cookie().make_stream() as s_:
-            with self.handle.source._decompress(s_) as s:
-                yield self._poke_stream(s)
+        with self._get_cookie().make_stream() as s_, self.handle.source._decompress(s_) as s:
+            yield self._poke_stream(s)
 
 
 @Handle.stock_json_handler("filtered")

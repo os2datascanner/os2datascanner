@@ -45,3 +45,6 @@ class Migration(migrations.Migration):
             field=models.FileField(blank=True, upload_to=os2datascanner.projects.admin.adminapp.utils.upload_path_webscan_sitemap, verbose_name='Sitemap Fil'),
         ),
     ]
+
+
+

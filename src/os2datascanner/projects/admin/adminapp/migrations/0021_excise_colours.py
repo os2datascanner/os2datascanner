@@ -21,3 +21,6 @@ class Migration(migrations.Migration):
             field=models.IntegerField(choices=[(0, 'Notifikation'), (1, 'Advarsel'), (2, 'Problem'), (3, 'Kritisk')], default=2, verbose_name='Følsomhed'),
         ),
     ]
+
+
+

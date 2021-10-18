@@ -100,16 +100,16 @@
         {% endif %}
     </div>
 </main>
-<script> 
+<script>
     var wsStart = window.location.protocol == 'https:' ? 'wss://' : 'ws://'
     var endpoint = wsStart + window.location.host + window.location.pathname
-    
+
     var socket = new WebSocket(endpoint)
 
     socket.onopen = function(e){
       console.log("open", e);
     };
-    
+
     socket.onmessage = function(e){
       console.log("message", e)
     };

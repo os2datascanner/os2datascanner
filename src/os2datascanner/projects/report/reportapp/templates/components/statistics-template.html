@@ -182,7 +182,7 @@
   // json_script solution - Safe from in-page script execution
 
   var sensitivities = JSON.parse(document.getElementById('sensitivities').textContent);
-  
+
   var handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
 
   var sourceTypes = JSON.parse(document.getElementById('source_types').textContent);
@@ -199,7 +199,7 @@
     }
     return number;
   };
-  // Calculates the percentage for 'Håndterede matches -> Alle matches' 
+  // Calculates the percentage for 'Håndterede matches -> Alle matches'
   var totalMatches = totalArrayValue(sensitivities, 1)
   var totalHandledMatches = totalArrayValue(handledMatches, 1)
   var handledPercentage = totalHandledMatches / totalMatches  * 100;

@@ -5,7 +5,7 @@ from pathlib import Path
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
-from ..core import Source, Handle, FileResource, SourceManager
+from ..core import Source, Handle, FileResource
 from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
@@ -29,9 +29,8 @@ class ZipSource(DerivedSource):
                 yield ZipHandle(self, name)
 
     def _generate_state(self, sm):
-        with self.handle.follow(sm).make_path() as r:
-            with ZipFile(str(r)) as zp:
-                yield zp
+        with self.handle.follow(sm).make_path() as r, ZipFile(str(r)) as zp:
+            yield zp
 
 
 class ZipResource(FileResource):
@@ -67,7 +66,7 @@ class ZipResource(FileResource):
 
     def get_last_modified(self):
         return self.unpack_info().get(OutputType.LastModified,
-                super().get_last_modified())
+                                      super().get_last_modified())
 
     @contextmanager
     def make_path(self):

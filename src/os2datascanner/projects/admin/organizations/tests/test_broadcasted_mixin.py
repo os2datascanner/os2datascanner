@@ -1,5 +1,3 @@
-from parameterized import parameterized
-
 from django.db import connection
 from django.db.models import Model, BooleanField
 from django.db.utils import DatabaseError
@@ -38,5 +36,5 @@ class BroadcastedTest(TestCase):
     # used to test signal error output
     def testBroadcastingCreate(self):
         self.assertEqual(DummyBroadcastedModel.objects.count(), 0)
-        obj = DummyBroadcastedModel.objects.create()
+        DummyBroadcastedModel.objects.create()
         self.assertEqual(DummyBroadcastedModel.objects.count(), 1)

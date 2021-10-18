@@ -12,10 +12,18 @@
 # sector open source network <https://os2.eu/>.
 #
 from django import forms
-from .scanner_views import *
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCopy,
+    ScannerCreate,
+    ScannerList)
 from ..aescipher import decrypt
 from ..models.scannerjobs.filescanner_model import FileScanner
 from django.utils.translation import ugettext_lazy as _
+
 
 class FileScannerList(ScannerList):
     """Displays list of file scanners."""
@@ -139,6 +147,7 @@ class FileScannerCopy(ScannerCopy):
 
         form = super().get_form(form_class)
         return initialize_form(form)
+
 
 class FileScannerAskRun(ScannerAskRun):
     """Prompt for starting file scan, validate first."""

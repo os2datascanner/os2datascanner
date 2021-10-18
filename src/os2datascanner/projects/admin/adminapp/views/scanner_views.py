@@ -16,8 +16,6 @@ from json import dumps
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models import F, Q
 from django.http import Http404
-from django.contrib import messages
-from django.http import HttpResponseRedirect
 from pika.exceptions import AMQPError
 import structlog
 
@@ -55,9 +53,9 @@ class StatusBase(RestrictedListView):
         user = self.request.user
         if not user.is_superuser and hasattr(user, 'administrator_for'):
             return self.model.objects.filter(
-                scanner__organization__in=
-                [org.uuid for org in
-                 user.administrator_for.client.organizations.all()]
+                scanner__organization__in=[
+                    org.uuid for org in
+                    user.administrator_for.client.organizations.all()]
             )
         else:
             return super().get_queryset()
@@ -73,7 +71,8 @@ class StatusBase(RestrictedListView):
 # ScanStatus.finished, then a second query with a filter based on
 # the list).
 
-completed_scans = (Q(total_sources__isnull=False)
+completed_scans = (
+    Q(total_sources__isnull=False)
     & Q(total_objects__isnull=False)
     & Q(explored_sources=F('total_sources'))
     & Q(scanned_objects__gte=F('total_objects')))
@@ -93,7 +92,6 @@ class StatusOverview(StatusBase):
                 'message': 'new matches'
             }
         )
-
 
     def get_queryset(self):
 
@@ -118,12 +116,12 @@ class StatusCompleted(StatusBase):
 
         The queryset consists only of completed scans and is ordered by start time.
         """
-        
-        return ( 
+
+        return (
             super().get_queryset()
             .filter(completed_scans)
             .order_by('-scan_tag__time')
-        ) 
+        )
 
 
 class StatusDelete(RestrictedDeleteView):

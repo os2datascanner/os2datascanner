@@ -1,6 +1,5 @@
 import logging
-from ..rules.rule import Rule
-from ..model.core import Source, Handle, SourceManager
+from ..model.core import Source
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
 from . import messages
@@ -8,8 +7,11 @@ from . import messages
 logger = logging.getLogger(__name__)
 
 READS_QUEUES = ("os2ds_conversions",)
-WRITES_QUEUES = ("os2ds_scan_specs", "os2ds_representations",
-        "os2ds_problems", "os2ds_checkups",)
+WRITES_QUEUES = (
+    "os2ds_scan_specs",
+    "os2ds_representations",
+    "os2ds_problems",
+    "os2ds_checkups",)
 PROMETHEUS_DESCRIPTION = "Representations generated"
 PREFETCH_COUNT = 8
 
@@ -67,16 +69,15 @@ def message_received_raw(body, channel, source_manager):
             # If the conversion also produced other values at the same
             # time, then include all of those as well; they might also be
             # useful for the rule engine
-            dv = {k.value: v.value
-                    for k, v in representation.parent.items()
-                    if isinstance(k, OutputType)}
+            dv = {k.value: v.value for k, v in representation.parent.items()
+                  if isinstance(k, OutputType)}
         else:
             dv = {required.value: representation.value
-                    if representation else None}
+                  if representation else None}
 
         logger.info(f"Required representation for {conversion.handle} is {required}")
         yield ("os2ds_representations",
-                messages.RepresentationMessage(
+               messages.RepresentationMessage(
                         conversion.scan_spec, conversion.handle,
                         conversion.progress, encode_dict(dv)).to_json_object())
     except KeyError:
@@ -95,7 +96,7 @@ def message_received_raw(body, channel, source_manager):
             # so that the matcher stage has something to work with
             # (XXX: is this always the right approach?)
             yield ("os2ds_representations",
-                    messages.RepresentationMessage(
+                   messages.RepresentationMessage(
                             conversion.scan_spec, conversion.handle,
                             conversion.progress, {
                                 required.value: None

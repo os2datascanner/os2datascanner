@@ -5,7 +5,7 @@ from pathlib import Path
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
-from ..core import Source, Handle, FileResource, SourceManager
+from ..core import Source, Handle, FileResource
 from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
@@ -21,9 +21,8 @@ class TarSource(DerivedSource):
                 yield TarHandle(self, f.name)
 
     def _generate_state(self, sm):
-        with self.handle.follow(sm).make_path() as r:
-            with open_tar(str(r), "r") as tp:
-                yield tp
+        with self.handle.follow(sm).make_path() as r, open_tar(str(r), "r") as tp:
+            yield tp
 
 
 class TarResource(FileResource):
@@ -58,7 +57,7 @@ class TarResource(FileResource):
 
     def get_last_modified(self):
         return self.unpack_info().setdefault(OutputType.LastModified,
-                super().get_last_modified())
+                                             super().get_last_modified())
 
     @contextmanager
     def make_path(self):

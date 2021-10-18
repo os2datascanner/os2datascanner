@@ -1,5 +1,5 @@
 from typing import (
-        Tuple, Union, Callable, Iterator, Optional, Sequence, NamedTuple,
+        Tuple, Callable, Iterator, Optional, Sequence, NamedTuple,
         MutableSequence)
 import logging
 from itertools import zip_longest
@@ -179,8 +179,7 @@ class LDAPNode(NamedTuple):
         return LDAPNode(tuple(label), list(children), properties)
 
     def collapse(self,
-            collapse_ok: Callable[['LDAPNode'], bool] =
-                    lambda n: True) -> 'LDAPNode':
+                 collapse_ok: Callable[['LDAPNode'], bool] = lambda n: True) -> 'LDAPNode':
         """Returns a new simplified LDAP hierarchy: multiple nodes at the top
         with a single child (and for which the collapse_ok function returns
         True) will be reduced to a single node with a multi-part label.."""
@@ -200,30 +199,29 @@ class LDAPNode(NamedTuple):
     def __repr__(self) -> str:
         return str(self) + f" <{len(self.children)}>"
 
-    def walk(self, *, _parents: Sequence[RDN] = ()
-            ) -> Iterator[Tuple[Sequence[RDN], 'LDAPNode']]:
+    def walk(self, *, _parents: Sequence[RDN] = ()) -> Iterator[
+             Tuple[Sequence[RDN], 'LDAPNode']]:
         """Enumerates all LDAPNodes in this hierarchy in depth-first order,
         along with their full distinguished names."""
         yield (_parents + self.label, self)
         for k in self.children:
             yield from k.walk(_parents=_parents + self.label)
 
-    def diff(self, other: 'LDAPNode', *, only_leaves: bool = False
-            ) -> Iterator[
+    def diff(self, other: 'LDAPNode', *, only_leaves: bool = False) -> Iterator[
                 Tuple[Sequence[RDN], Optional['LDAPNode'], Optional['LDAPNode']]]:
         """Computes the difference between this LDAPNode hierarchy and another
         one. (By default, the diff includes all nodes, but setting @only_leaves
         to True will skip any nodes that have children.)"""
         our_nodes = {k: v for k, v in self.walk()
-                if not v.children or not only_leaves}
+                     if not v.children or not only_leaves}
         their_nodes = {k: v for k, v in other.walk()
-                if not v.children or not only_leaves}
+                       if not v.children or not only_leaves}
         ours = our_nodes.keys()
         theirs = their_nodes.keys()
 
         yield from ((k, our_nodes[k], None) for k in ours - theirs)
         yield from ((k, our_nodes[k], their_nodes[k])
-                for k in ours & theirs if our_nodes[k] != their_nodes[k])
+                    for k in ours & theirs if our_nodes[k] != their_nodes[k])
         yield from ((k, None, their_nodes[k]) for k in theirs - ours)
 
     def print(self, *, _levels: int = 0):
@@ -239,8 +237,7 @@ class LDAPNode(NamedTuple):
     def from_iterator(
             cls,
             iterator: Iterator[dict],
-            name_selector: Callable[[dict], Iterator[str]]=
-                    trivial_dn_selector):
+            name_selector: Callable[[dict], Iterator[str]] = trivial_dn_selector):
         r"""Builds an LDAPNode hierarchy from an iterator of dictionaries
         representing user objects and returns its root. The hierarchy will be
         constructed based on the users' distinguished names. For example, the

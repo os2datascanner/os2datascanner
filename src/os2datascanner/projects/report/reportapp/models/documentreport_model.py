@@ -16,12 +16,11 @@ import structlog
 logger = structlog.get_logger(__name__)
 
 
-
 class DocumentReport(models.Model):
     factory = None
 
     scan_time = models.DateTimeField(null=True, db_index=True,
-                                            verbose_name=_('scan time'))
+                                     verbose_name=_('scan time'))
 
     created_timestamp = models.DateTimeField(null=True,
                                              verbose_name=_('created timestamp'))
@@ -52,7 +51,8 @@ class DocumentReport(models.Model):
 
     probability = models.FloatField(null=True, verbose_name=_("probability"))
 
-    # datasource_last_modified stores when the scanned file/email/element itself, has last been updated.
+    # datasource_last_modified stores when the scanned file/email/element itself,
+    #  has last been updated.
     # This timestamp is collected during scan and is from the datasource.
     datasource_last_modified = models.DateTimeField(null=True)
 
@@ -129,7 +129,7 @@ class DocumentReport(models.Model):
                                             verbose_name=_("resolution status"))
 
     resolution_time = models.DateTimeField(blank=True, null=True,
-                                                verbose_name=_("resolution time"))
+                                           verbose_name=_("resolution time"))
 
     custom_resolution_status = models.CharField(max_length=1024, blank=True,
                                                 verbose_name=_("justification"))
@@ -140,12 +140,12 @@ class DocumentReport(models.Model):
     def clean_custom_resolution_status(self):
         self.custom_resolution_status = self.custom_resolution_status.strip()
         if self.resolution_status == 0 and not self.custom_resolution_status:
-                raise ValidationError(
-                        {
-                            "custom_resolution_status":
-                                    "Resolution status 0 requires an"
-                                    " explanation"
-                        })
+            raise ValidationError(
+                    {
+                        "custom_resolution_status":
+                        "Resolution status 0 requires an"
+                        " explanation"
+                    })
 
     def __init__(self, *args, **kwargs):
         # TODO: move to property/model method
@@ -200,7 +200,7 @@ def on_documentreport_created_or_updated(objects, fields=None):
         #  bulk_create 1 Alias.match_relation at the time. We do not actually
         #  use the bulk functionality.
         tm.objects.bulk_create(new_objects, ignore_conflicts=True)
-    except:
+    except Exception:
         logger.error("Failed to create match_relation", exc_info=True)
 
 

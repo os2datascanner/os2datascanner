@@ -20,8 +20,8 @@
             {% trans 'organizations for'|capfirst %} {{ client }}
         </h1>
         <div class="btn">
-            <a 
-            class="button button--cta" 
+            <a
+            class="button button--cta"
             href="{% url 'add-organization-for' client_id=client.pk %}"
             title="{% trans 'Add new organization' %}">
               <svg class="icon icon--white">
@@ -65,16 +65,16 @@
                         {% if not organization.importservice %}
                         <a
                             href="{% url 'add-ldap' org_id=organization.pk %}"
-                            id="button-add-configuration" 
-                            type="button" 
+                            id="button-add-configuration"
+                            type="button"
                             class="button button--transparent">
                             <i id="library_add" title="Tilføj LDAP konfiguration" class="material-icons">library_add</i>
                         </a>
                         {% else %}
                         <a
                             href="{% url 'edit-ldap' pk=organization.pk %}"
-                            id="button-add-configuration" 
-                            type="button" 
+                            id="button-add-configuration"
+                            type="button"
                             class="button button--transparent">
                             <i id="library_add_check" title="Redigér LDAP konfiguration" class="material-icons">library_add_check</i>
                         </a>

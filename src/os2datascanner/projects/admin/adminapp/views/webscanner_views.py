@@ -11,11 +11,16 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from requests import request
+from os2datascanner.projects.admin.adminapp.views.views import RestrictedDetailView
 from ..validate import validate_domain, get_validation_str
-from .scanner_views import *
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCopy,
+    ScannerCreate,
+    ScannerList)
 from ..models.scannerjobs.webscanner_model import WebScanner
 from django.utils.translation import ugettext_lazy as _
 

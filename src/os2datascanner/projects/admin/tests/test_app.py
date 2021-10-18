@@ -101,4 +101,3 @@ class ScannerTest(TestCase):
         engine2_source = next(source_generator)
 
         self.assertEqual(engine2_source.driveletter, "K")
-

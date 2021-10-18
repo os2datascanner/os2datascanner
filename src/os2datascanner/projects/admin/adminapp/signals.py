@@ -11,7 +11,11 @@ logger = logging.getLogger(__name__)
 class ModelChangeEvent():
     publisher = "admin"
 
-    def __init__(self, event_type, model_class, instance, meta={}):
+    def __init__(self, event_type, model_class, instance, meta=None):
+
+        if meta is None:
+            meta = {}
+
         self.event_type = event_type
         self.model_class = model_class
         self.instance = instance
@@ -23,16 +27,14 @@ class ModelChangeEvent():
             "time": self.time,
             # Event type (one of object_create, object_update, object_delete)
             "type": self.event_type,
-            # Publisher ID the service 
+            # Publisher ID the service
             "publisher": self.publisher,
             # The type of model
             "model_class": self.instance.__class__.__name__,
             # The actual model (JSON-representation using to_json_object())
             "instance": self.instance.to_json_object()
-            if hasattr(self.instance, "to_json_object") and
-               callable(self.instance.to_json_object)
-            else {"error": "missing to_json_object() method"},
-            "meta": self.meta
+            if hasattr(self.instance, "to_json_object") and callable(self.instance.to_json_object)
+            else {"error": "missing to_json_object() method"}, "meta": self.meta
         }
 
 

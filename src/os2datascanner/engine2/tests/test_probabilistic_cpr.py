@@ -140,9 +140,8 @@ class TestCprTest(unittest.TestCase):
         print()
 
         for key, value in distribution.items():
-            if key == 0.5: # Magic value, only hit on magic dates.
+            if key == 0.5:  # Magic value, only hit on magic dates.
                 self.assertTrue(0 < value < 0.05)
                 continue
             self.assertTrue(0.05 < value < 0.25)
         self.assertTrue(0.999 < sum(distribution.values()) < 1.0001)
-

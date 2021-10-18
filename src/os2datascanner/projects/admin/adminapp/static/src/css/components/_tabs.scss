@@ -22,8 +22,8 @@
     text-decoration: none;
     transition: 0.1s;
 
-    &:focus, 
-    &:hover, 
+    &:focus,
+    &:hover,
     &.active {
       border-bottom: 2px solid var(--color-primary-dark);
       color: var(--color-primary-dark);
@@ -43,14 +43,13 @@
     width: 0;
     height: 0;
   }
-  
+
   ::-webkit-scrollbar-button {
     width: 0;
     height: 0;
   }
-  
+
   .scroll-width-none {
     scrollbar-width: none;
   }
 }
-

@@ -21,3 +21,6 @@ class Migration(migrations.Migration):
             field=models.IntegerField(blank=True, choices=[(0, 'Andet'), (1, 'Redigeret'), (2, 'Flyttet'), (3, 'Slettet')], null=True, verbose_name='Håndteringsstatus'),
         ),
     ]
+
+
+

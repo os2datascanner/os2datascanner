@@ -1,4 +1,3 @@
-from parameterized import parameterized
 from django.test import TestCase
 from django.utils import translation
 

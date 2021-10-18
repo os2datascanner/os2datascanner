@@ -110,7 +110,9 @@ class Command(BaseCommand):
             **options
     ):
         if not settings.DEBUG:
-            self.stdout.write(self.style.NOTICE("makefake: refusing to run in a production environment; switch settings.DEBUG on to use this command"))
+            self.stdout.write(self.style.NOTICE("makefake: refusing to run in a production "
+                                                "environment; switch settings.DEBUG on to "
+                                                "use this command"))
             sys.exit(1)
 
         # faker is using the random generator, so seeding here does not give
@@ -152,7 +154,7 @@ class Command(BaseCommand):
         for scan in range(scan_count):
             _scan_type = None
             if not scan_type:
-                #generate random scan
+                # generate random scan
                 _scan_type, handle_generator_function = random.choice(
                     list(handle_types.items())
                 )
@@ -162,7 +164,7 @@ class Command(BaseCommand):
                 except StopIteration:
                     break
             else:
-                #generate specified scan
+                # generate specified scan
                 handle_generator_function = handle_types[scan_type.lower()]
                 _scan_type = scan_type
 
@@ -384,7 +386,7 @@ def make_fake_ews_mail_handle():
     path_name, file_name, mail, user = generate_fake_data()
     source = EWSAccountSource(
         # convert fs-path to something that resembles a domain
-        domain=path_name.removeprefix("/").replace("/","."),
+        domain=path_name.removeprefix("/").replace("/", "."),
         server="mail.magenta.dk",
         admin_user=user,
         admin_password="1234",

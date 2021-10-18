@@ -1,10 +1,10 @@
-import  os.path
-import  unittest
+import os.path
+import unittest
 
-from    os2datascanner.engine2.model.core import SourceManager
-from    os2datascanner.engine2.model.file import FilesystemSource
-from    os2datascanner.engine2.conversions import convert
-from    os2datascanner.engine2.conversions.types import OutputType
+from os2datascanner.engine2.model.core import SourceManager
+from os2datascanner.engine2.model.file import FilesystemSource
+from os2datascanner.engine2.conversions import convert
+from os2datascanner.engine2.conversions.types import OutputType
 
 here_path = os.path.dirname(__file__)
 test_data_path = os.path.join(here_path, "data", "ocr")

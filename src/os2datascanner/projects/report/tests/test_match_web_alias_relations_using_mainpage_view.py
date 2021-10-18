@@ -1,5 +1,5 @@
 from os2datascanner.engine2.model.http import WebHandle, WebSource
-from os2datascanner.projects.report.reportapp.models.aliases.webdomainalias_model import WebDomainAlias
+from os2datascanner.projects.report.reportapp.models.aliases.webdomainalias_model import WebDomainAlias  # noqa: E501
 from parameterized import parameterized
 from datetime import timedelta
 from django.test import RequestFactory, TestCase
@@ -273,8 +273,8 @@ class MatchWebDomainAliasRelationTest(TestCase):
         kjeld_alias, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
-        qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 3)
+        qs = self.mainpage_get_queryset(params)
+        self.assertEqual(len(qs), 2)
         kjeld_alias.delete()
         egon_alias.delete()
 
@@ -283,8 +283,8 @@ class MatchWebDomainAliasRelationTest(TestCase):
         kjeld_alias, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
-        qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 3)
+        qs = self.mainpage_get_queryset(params)
+        self.assertEqual(len(qs), 2)
         kjeld_alias.delete()
         egon_alias.delete()
 
@@ -293,7 +293,7 @@ class MatchWebDomainAliasRelationTest(TestCase):
         kjeld_alias, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
-        qs = self.mainpage_get_queryset()
+        qs = self.mainpage_get_queryset(params)
         self.assertEqual(len(qs), 3)
         kjeld_alias.delete()
         egon_alias.delete()
@@ -303,8 +303,8 @@ class MatchWebDomainAliasRelationTest(TestCase):
         kjeld_alias, egon_alias = self.create_web_domain_alias_kjeld_and_egon()
         create_alias_and_match_relations(kjeld_alias)
         create_alias_and_match_relations(egon_alias)
-        qs = self.mainpage_get_queryset()
-        self.assertEqual(len(qs), 3)
+        qs = self.mainpage_get_queryset(params)
+        self.assertEqual(len(qs), 1)
         kjeld_alias.delete()
         egon_alias.delete()
 
@@ -367,7 +367,6 @@ class MatchWebDomainAliasRelationTest(TestCase):
         ("Normal match", '', 0, 0)])
     def test_mainpage_view_with_relation_table_and_incoming_new_matches(
             self, _, domain, expected1, expected2):
-        # Note: address cannot be NoneType due to DB constraint.
         alias, created = WebDomainAlias.objects.get_or_create(
             user=self.user,
             domain=domain

@@ -8,15 +8,15 @@ Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Content-Type: multipart/alternative; boundary=cuthere
 
---cuthere 
-Content-Type: text/plain; charset=us-ascii 
+--cuthere
+Content-Type: text/plain; charset=us-ascii
 
 Hej Jens!
 
 Det var dejligt at se dig.
 
---cuthere 
-Content-Type: text/html 
+--cuthere
+Content-Type: text/html
 
 <html>
   <body>

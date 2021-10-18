@@ -44,7 +44,7 @@ class Command(BaseCommand):
             "--dry-run",
             action="store_true",
             help="summarise the emails that would be sent without sending"
-                    " them")
+                 " them")
         parser.add_argument(
             "--all-results",
             action="store_true",
@@ -101,10 +101,10 @@ class Command(BaseCommand):
                     match_counts[dr.matches.sensitivity] += 1
             context["matches"] = {
                     k.presentation: v for k, v in match_counts.items()
-                            if k != Sensitivity.INFORMATION}.items()
+                    if k != Sensitivity.INFORMATION}.items()
             context["match_count"] = sum(
                     [v for k, v in match_counts.items()
-                            if k != Sensitivity.INFORMATION])
+                     if k != Sensitivity.INFORMATION])
 
             msg = EmailMultiAlternatives(
                     "Der ligger uhåndterede matches i OS2datascanner",

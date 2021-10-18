@@ -135,12 +135,13 @@ links_from_handle = {
         Link("http://localhost:64346/", "\n            "),
         Link("http://localhost:64346/vstkom.png", None),
         Link("https://datatracker.ietf.org/doc/html/rfc2606", "rfc2606"),
-        Link("http://localhost:64346/intet", "et link, der peger på en intern side der\n                ikke findes"),
-        Link("http://example.com", " et link, der peger på en\n                ekstern side"),
-        Link("http://example.com/nonexistent", " et link, der\n                peger på en ekstern side der ikke findes"),
-        Link("http://this-side-does-not-exists.invalid", " et\n                link, der ikke har et navneopslag"),
+        Link("http://localhost:64346/intet", "et link, der peger på en intern side der\n                ikke findes"),  # noqa
+        Link("http://example.com", " et link, der peger på en\n                ekstern side"),  # noqa
+        Link("http://example.com/nonexistent", " et link, der\n                peger på en ekstern side der ikke findes"),  # noqa
+        Link("http://this-side-does-not-exists.invalid", " et\n                link, der ikke har et navneopslag"),  # noqa
     ],
 }
+
 
 # mock is way to control what a function returns. By setting e.g.
 # @mock.patch('os2datascanner.engine2.model.utilities.sitemap.requests.get',
@@ -237,6 +238,7 @@ def run_web_server(started):
     finally:
         os.chdir(cwd)
 
+
 class Engine2HTTPSetup():
     @classmethod
     def setUpClass(cls):
@@ -261,7 +263,7 @@ class Engine2HTTPSetup():
 
     def setUp(self):
         # list all loggers, just example
-        loggers = [logging.getLogger(name) for name in
+        loggers = [logging.getLogger(name) for name in  # noqa
                    logging.root.manager.loggerDict]
 
         # we only want the module and log message
@@ -348,7 +350,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
 
     def test_compressed_sitemap(self):
         "gzip-compressed sitemap"
-    
+
         # sitemap_index.xml as gzip compressed
         # requests.get("http://localhost:64346/compressed_sitemap.xml.gz").headers
         # > 'Content-type': 'application/gzip', 'Content-Length': '157'
@@ -364,7 +366,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
 
     def test_excluded_sites(self):
         "Source with excluded site and path"
-        
+
         with SourceManager() as sm:
             presentation = [
                 h.presentation for h in excluded_mapped_site["source"].handles(sm)
@@ -377,7 +379,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
 
     def test_external_links_sitemap(self):
         "site mixed with external-, unresponsive- and non-http links"
-        
+
         with SourceManager() as sm:
             presentation = [
                 h.presentation for h in external_links_mapped_site["source"].handles(sm)
@@ -386,8 +388,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
             presentation,
             external_links_mapped_site["handles"],
             "site with mixed internal, external and non-http links should have 3 "
-            "handles that does not produce an exception"
-       )
+            "handles that does not produce an exception")
 
 
 class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
@@ -408,16 +409,19 @@ class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
 
     def test_sitemap_error(self):
         "Ensure there's an exception if the sitemap doesn't exist or is malformed"
-        
+
         # Extant file, valid XML, not a sitemap
-        s1 = WebSource("http://localhost:64346/",
-                sitemap="http://localhost:64346/not_a_sitemap.xml")
+        s1 = WebSource(
+            "http://localhost:64346/",
+            sitemap="http://localhost:64346/not_a_sitemap.xml")
         # Extant file, invalid XML
-        s2 = WebSource("http://localhost:64346/",
-                sitemap="http://localhost:64346/broken_sitemap.xml")
+        s2 = WebSource(
+            "http://localhost:64346/",
+            sitemap="http://localhost:64346/broken_sitemap.xml")
         # Missing file
-        s3 = WebSource("http://localhost:64346/",
-                sitemap="http://localhost:64346/missing_sitemap.xml")
+        s3 = WebSource(
+            "http://localhost:64346/",
+            sitemap="http://localhost:64346/missing_sitemap.xml")
         with SourceManager() as sm:
             for source in (s1, s2, s3,):
                 with self.assertRaises(Exception):
@@ -425,8 +429,8 @@ class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
 
     def test_sitemap_xxe(self):
         "Test if the sitemap-parsing is vulnerable to xxe-injection"
-                         
-        sitemap="http://localhost:64346/sitemap_xxe.xml"
+
+        sitemap = "http://localhost:64346/sitemap_xxe.xml"
         self.assertEqual(
             list(process_sitemap_url(sitemap)),
             [('http://localhost:64346/?', None)],
@@ -479,23 +483,24 @@ class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
                     r.get_last_modified(),
                     SingleResult,
                     ("{0}: last modification date is not a"
-                            " SingleResult").format(first_thing))
+                     " SingleResult").format(first_thing))
             self.assertIsInstance(
                     r.get_last_modified().value,
                     datetime,
                     ("{0}: last modification date value is not a"
-                            " datetime.datetime").format(first_thing))
+                     " datetime.datetime").format(first_thing))
             with r.make_stream() as fp:
                 stream_raw = fp.read()
             with r.make_path() as p:
                 with open(p, "rb") as fp:
                     file_raw = fp.read()
-            self.assertEqual(stream_raw, file_raw,
-                    "{0}: file and stream not equal".format(first_thing))
+            self.assertEqual(
+                stream_raw, file_raw,
+                "{0}: file and stream not equal".format(first_thing))
 
     def test_error(self):
         "Try to follow a handle to a resource that does not exist"
-        
+
         no_such_file = WebHandle(site["source"], "404.404")
         with SourceManager() as sm:
             r = no_such_file.follow(sm)
@@ -507,10 +512,10 @@ class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
             with self.assertRaises(Exception):
                 r.get_size()
             with self.assertRaises(Exception):
-                with r.make_path() as p:
+                with r.make_path():
                     pass
             with self.assertRaises(Exception):
-                with r.make_stream() as s:
+                with r.make_stream():
                     pass
 
     def test_missing_headers(self):
@@ -582,10 +587,11 @@ class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
             "site with broken internal and external links should have 0 link that "
             "produces an exception")
 
+
 class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
     def test_referrer_urls(self):
         "Assert that second handle's referrer is the first handle"
-        
+
         with SourceManager() as sm:
             first_thing = None
             second_thing = None
@@ -661,9 +667,8 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
         h = WebHandle(
                 WebSource("http://localhost:64346"),
                 "/broken.html")
-        with SourceManager() as sm:
-            with h.follow(sm).make_stream() as fp:
-                content = fp.read().decode()
+        with SourceManager() as sm, h.follow(sm).make_stream() as fp:
+            content = fp.read().decode()
 
         self.assertEqual(
                 [link.url for link in make_outlinks(

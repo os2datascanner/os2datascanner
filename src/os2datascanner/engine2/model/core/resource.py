@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
 from sys import stderr
 import magic
-from datetime import datetime
 from traceback import print_exc
 
 from os2datascanner.utils.system_utilities import time_now
 from ...conversions.types import OutputType
-from ...conversions.utilities.results import SingleResult, MultipleResults
+from ...conversions.utilities.results import SingleResult
 
 
 class Resource(ABC):
@@ -67,7 +66,7 @@ class Resource(ABC):
                 metadata[k] = v
         except Exception:
             print("warning: Resource.get_metadata:"
-                    " continuing after unexpected exception", file=stderr)
+                  " continuing after unexpected exception", file=stderr)
             print_exc(file=stderr)
 
         if self.handle.source.handle:
@@ -107,7 +106,7 @@ class FileResource(TimestampedResource):
     sequence of bytes with a size."""
 
     GENERIC_TYPES = ("application/zip", "application/CDFV2",
-            "text/plain", "text/html",)
+                     "text/plain", "text/html",)
     """The computed types that should be discarded in favour of the guessed
     type, which is likely to be more specific. (Not used if the guessed type is
     the completely generic value "application/octet-stream")."""

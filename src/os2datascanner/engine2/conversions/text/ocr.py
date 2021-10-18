@@ -30,10 +30,9 @@ def image_processor(r):
 # palatable
 @conversion(OutputType.Text, "image/gif", "image/x-ms-bmp")
 def intermediate_image_processor(r):
-    with r.make_path() as p:
-        with NamedTemporaryFile("rb", suffix=".png") as ntf:
-            result = run(["convert", p, "png:{0}".format(ntf.name)])
-            if result.returncode == 0:
-                return tesseract(ntf.name)
-            else:
-                return None
+    with r.make_path() as p, NamedTemporaryFile("rb", suffix=".png") as ntf:
+        result = run(["convert", p, "png:{0}".format(ntf.name)])
+        if result.returncode == 0:
+            return tesseract(ntf.name)
+        else:
+            return None

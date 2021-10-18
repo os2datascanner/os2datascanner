@@ -8,8 +8,10 @@ from django.urls import path
 from os2datascanner import __version__
 
 from .views.api import JSONAPIView
-from .views.views import (MainPageView, LeaderStatisticsPageView, DPOStatisticsPageView, ApprovalPageView,
-                          StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
+from .views.views import (
+    MainPageView, LeaderStatisticsPageView,
+    DPOStatisticsPageView, ApprovalPageView,
+    StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
 
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),

@@ -113,25 +113,25 @@ derived_sources = {
         "fname": "embedded-cpr-pdf.zip",
         "handles": [
             {
-                "presentation": f"page 1 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",
+                "presentation": f"page 1 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",  # noqa: E501
                 "presentation_name": "embedded-cpr-pdf.zip (file embedded-cpr.pdf (page 1))",
                 "sort_key": f"{test_data_path}/zip",
                 "type": "pdf-page",
             },
             {
-                "presentation": f"page 2 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",
+                "presentation": f"page 2 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",  # noqa: E501
                 "presentation_name": "embedded-cpr-pdf.zip (file embedded-cpr.pdf (page 2))",
                 "sort_key": f"{test_data_path}/zip",
                 "type": "pdf-page",
             },
             {
-                "presentation": f"page 2 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",
+                "presentation": f"page 2 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",  # noqa: E501
                 "presentation_name": "embedded-cpr-pdf.zip (file embedded-cpr.pdf (page 2))",
                 "sort_key": f"{test_data_path}/zip",
                 "type": "pdf-page",
             },
             {
-                "presentation": f"page 2 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",
+                "presentation": f"page 2 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",  # noqa: E501
                 "presentation_name": "embedded-cpr-pdf.zip (file embedded-cpr.pdf (page 2))",
                 "sort_key": f"{test_data_path}/zip",
                 "type": "pdf-page",
@@ -154,21 +154,21 @@ derived_sources = {
                 # "name": "cpr.jpg",
                 "presentation": "cpr.jpg (in "
                 f"{test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml)",
-                "presentation_name": "mail-with-inline-img-and-attached-odt.eml (attachment cpr.jpg)",
+                "presentation_name": "mail-with-inline-img-and-attached-odt.eml (attachment cpr.jpg)",  # noqa: E501
                 "sort_key": f"{test_data_path}/mail",
                 "type": "mail",
             },
             {
                 # "name": "embedded-cpr.html",
-                "presentation": f"embedded-cpr.odt (in {test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml)",
-                "presentation_name": "mail-with-inline-img-and-attached-odt.eml (file embedded-cpr.odt)",
+                "presentation": f"embedded-cpr.odt (in {test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml)",  # noqa: E501
+                "presentation_name": "mail-with-inline-img-and-attached-odt.eml (file embedded-cpr.odt)",  # noqa: E501
                 "sort_key": f"{test_data_path}/mail",
                 "type": "lo",
             },
             {
                 # "name": "embedded-cpr_html_3ebb4365c1c086a0.png",
-                "presentation": f"embedded-cpr.odt (in {test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml)",
-                "presentation_name": "mail-with-inline-img-and-attached-odt.eml (file embedded-cpr.odt)",
+                "presentation": f"embedded-cpr.odt (in {test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml)",  # noqa: E501
+                "presentation_name": "mail-with-inline-img-and-attached-odt.eml (file embedded-cpr.odt)",  # noqa: E501
                 "sort_key": f"{test_data_path}/mail",
                 "type": "lo",
             },
@@ -257,6 +257,7 @@ def traverse_derived_source(source, sm):
                 "presentation_name": handle.presentation_name,
             }
 
+
 class Engine2PresentationTest(unittest.TestCase):
     def test_derived_models(self):
         "test presentations of models that acts as containers"
@@ -272,7 +273,7 @@ class Engine2PresentationTest(unittest.TestCase):
 
             # remove name from handle-dicts
             presentation = [
-                {k: v for k, v in l.items() if k != "name"} for l in presentation
+                {k: v for k, v in a.items() if k != "name"} for a in presentation
             ]
 
             for exp, pre in zip_longest(expected["handles"], presentation, fillvalue={}):

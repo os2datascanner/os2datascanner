@@ -1,8 +1,5 @@
 """Performs URL exploration on one or more Sources."""
 
-import os.path
-
-import argparse
 from django.core.management.base import BaseCommand
 
 from os2datascanner.engine2.demo import url_explorer

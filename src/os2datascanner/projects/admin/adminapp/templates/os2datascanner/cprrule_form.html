@@ -35,15 +35,15 @@
       {% trans "Organization:" %}
     </legend>
 
-    <div 
+    <div
       id="{{ form.name.auto_id }}_container"
       class="form__group col-sm-12{% if form.name.errors %} has-error{% endif %}">
       <label class="control-label col-sm-2" for="id_{{ form.name.name }}">{{ form.name.label }}</label>
       <div class="col-sm-10">
-        <input 
-          type="text" 
-          class="form-control" 
-          name="{{ form.name.name }}" 
+        <input
+          type="text"
+          class="form-control"
+          name="{{ form.name.name }}"
           id="id_{{ form.name.name }}"
           {% if form.name.value %}value="{{ form.name.value }}" {% endif %}
           {% if form.name.field.required %}required{% endif %}>
@@ -57,7 +57,7 @@
     </div>
 
     {% if form.organization %}
-    <div 
+    <div
       id="{{ form.organization.auto_id }}_container"
       class="form__group col-sm-12{% if form.organization.errors %} has-error{% endif %}">
       <label class="control-label col-sm-2" for="id_{{ form.organization.name }}">{{ form.organization.label }}</label>
@@ -86,28 +86,28 @@
       {% trans "Rule" %}
     </legend>
 
-    <div 
-      id="cpr_settings_container" 
+    <div
+      id="cpr_settings_container"
       class="form__group col-sm-12">
       <div class="col-sm-10">
 
         <div class="checkbox-group">
-          <input 
-            type="checkbox" 
-            id="id_{{ form.do_modulus11.name }}" 
+          <input
+            type="checkbox"
+            id="id_{{ form.do_modulus11.name }}"
             name="{{ form.do_modulus11.name }}"
-            value="{{ form.do_modulus11.name }}" 
+            value="{{ form.do_modulus11.name }}"
             {% if form.do_modulus11.value %} checked="checked" {% endif %}>
           <label class="cpr_option" for="id_{{ form.do_modulus11.name }}">
             {{ form.do_modulus11.label }}
             {% if form.do_modulus11.help_text %}<small>{{ form.do_modulus11.help_text }}</small>{% endif %}
           </label>
 
-          <input 
-            type="checkbox" 
-            id="id_{{ form.ignore_irrelevant.name }}" 
+          <input
+            type="checkbox"
+            id="id_{{ form.ignore_irrelevant.name }}"
             name="{{ form.ignore_irrelevant.name }}"
-            value="{{ form.ignore_irrelevant.name }}" 
+            value="{{ form.ignore_irrelevant.name }}"
             {% if form.ignore_irrelevant.value %} checked="checked"{% endif %}>
           <label class="cpr_option" for="id_{{ form.ignore_irrelevant.name }}">
             {{ form.ignore_irrelevant.label }}
@@ -118,14 +118,14 @@
       </div>
     </div>
 
-    <div 
+    <div
       id="{{ form.description.auto_id }}_container"
       class="form__group col-sm-12{% if form.description.errors %} has-error{% endif %}">
       <label class="control-label col-sm-2" for="id_{{ form.description.name }}">{{ form.description.label }}</label>
       <div class="col-sm-10">
-        <textarea 
-          class="form-control" 
-          name="{{ form.description.name }}" 
+        <textarea
+          class="form-control"
+          name="{{ form.description.name }}"
           id="id_{{ form.description.name }}" rows="3"
           {% if form.description.field.required %}required{% endif %}>{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
 
@@ -137,15 +137,15 @@
       </div>
     </div>
 
-    <div 
-      id="{{ form.whitelist.auto_id }}_container" 
+    <div
+      id="{{ form.whitelist.auto_id }}_container"
       class="form__group col-sm-12{% if form.whitelist.errors %} has-error{% endif %}">
       <label class="control-label col-sm-2" for="id_{{ form.whitelist.name }}">{{ form.whitelist.label }}</label>
       <div class="col-sm-10">
-        <textarea 
-          class="form-control" 
-          name="{{ form.whitelist.name }}" 
-          id="id_{{ form.whitelist.name }}" 
+        <textarea
+          class="form-control"
+          name="{{ form.whitelist.name }}"
+          id="id_{{ form.whitelist.name }}"
           rows="3"
           {% if form.whitelist.field.required %}required{% endif %}>{% if form.whitelist.value %}{{ form.whitelist.value }}{% endif %}</textarea>
 
@@ -157,17 +157,17 @@
       </div>
     </div>
 
-    <div 
+    <div
       id="{{ form.sensitivity.auto_id }}_container"
       class="form__group col-sm-12{% if form.sensitivity.errors %} has-error{% endif %}">
       <label class="control-label col-sm-2" for="id_{{ form.sensitivity.name }}">{{ form.sensitivity.label }}</label>
       <div class="col-sm-10">
-        <select 
-          name="{{ form.sensitivity.name }}" 
-          id="id_{{ form.sensitivity.name }}" 
+        <select
+          name="{{ form.sensitivity.name }}"
+          id="id_{{ form.sensitivity.name }}"
           class="form-control"
           {% if form.sensitivity.field.required %}required{% endif %}>
-          
+
           {% for value, tag in form.sensitivity.field.choices %}
           <option value="{{ value }}" {% if form.sensitivity.value|add:"0" == value|add:"0" %} selected="selected"
             {% endif %}>{{ tag }}</option>

@@ -26,3 +26,6 @@ class Migration(migrations.Migration):
             field=mptt.fields.TreeManyToManyField(blank=True, related_name='exchangescanners', to='organizations.OrganizationalUnit', verbose_name='organizational unit')
         ),
     ]
+
+
+

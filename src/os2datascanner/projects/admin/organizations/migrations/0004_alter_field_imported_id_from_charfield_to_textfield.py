@@ -31,3 +31,6 @@ class Migration(migrations.Migration):
             field=models.TextField(blank=True, null=True, verbose_name='imported unique ID'),
         ),
     ]
+
+
+

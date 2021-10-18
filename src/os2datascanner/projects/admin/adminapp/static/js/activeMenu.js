@@ -1,6 +1,6 @@
 /**
  * Set active link in the sidebar menu
- * 
+ *
  * @param {object} aObj   All a tag links in the sidebar menu.
  */
 function setActive() {

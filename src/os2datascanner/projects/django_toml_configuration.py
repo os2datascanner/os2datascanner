@@ -87,4 +87,3 @@ def process_toml_conf_for_django(parent_path, module, sys_var, user_var):
         config['MIDDLEWARE'] += config['OPTIONAL_MIDDLEWARE']
 
     _set_constants(module, config)
-

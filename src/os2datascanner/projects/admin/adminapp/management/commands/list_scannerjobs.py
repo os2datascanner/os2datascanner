@@ -17,20 +17,21 @@
 
 from django.core.management import BaseCommand
 
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import (Scanner, ScanStatus,
-                                                                                     ScheduledCheckup,)
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import (
+    Scanner, ScanStatus, ScheduledCheckup, )
 
-"""
-    This command lists all scanner jobs and the following attributes:
-    PK
-    Name
-    Start time
-    Number of objects scanned
-    Scan status as bool
-    Checkup messages as count()
-"""
 
 class Command(BaseCommand):
+    """
+        This command lists all scanner jobs and the following attributes:
+        PK
+        Name
+        Start time
+        Number of objects scanned
+        Scan status as bool
+        Checkup messages as count()
+    """
+
     help = "List all scannerjobs and some of their attributes."
 
     def handle(self, *args, **options):
@@ -52,6 +53,8 @@ class Command(BaseCommand):
                 scanned_objects = scan_status_obj.scanned_objects
                 scan_status = scan_status_obj.finished
 
-            self.stdout.write(self.style.SUCCESS(f'\nScanner PK: {pk} \nScanner Name: {name} \n'
-                  f'Start Time: {start_time} \nScanned Objects: {scanned_objects} \n'
-                  f'Scan Status Finished(T/F): {scan_status} \nCheck-up Msg Obj Count: {check_up_msgs}\n'))
+            self.stdout.write(self.style.SUCCESS(
+                f'\nScanner PK: {pk} \nScanner Name: {name} \n'
+                f'Start Time: {start_time} \nScanned Objects: {scanned_objects} \n'
+                f'Scan Status Finished(T/F): {scan_status} \n'
+                f'Check-up Msg Obj Count: {check_up_msgs}\n'))

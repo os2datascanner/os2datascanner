@@ -26,7 +26,7 @@ from os2datascanner.projects.admin.import_services.models import Imported
 from .broadcasted_mixin import Broadcasted
 
 # Kept here to ensure it compiles only once
-_sid_regex = re.compile('^S-1-\d+(-\d+){0,15}$')
+_sid_regex = re.compile('^S-1-\d+(-\d+){0,15}$')  # noqa
 
 
 def validate_sid(value):

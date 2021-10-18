@@ -21,3 +21,6 @@ class Migration(migrations.Migration):
             field=models.CharField(choices=[('employee', 'Employee'), ('manager', 'Manager'), ('dpo', 'Data protection officer')], db_index=True, default='employee', max_length=30),
         ),
     ]
+
+
+

@@ -77,15 +77,15 @@ def modulus11_check(cpr: str) -> Tuple[bool, str]:
         birth_date = get_birth_date(cpr)
         # IndexError if cpr is less than 7 chars
     except (ValueError, IndexError):
-        return (False, "malformed birth_date")
+        return False, "malformed birth_date"
 
     # Return True if the birth dates are one of the exceptions to the
     # modulus 11 rule.
     if birth_date in CPR_EXCEPTION_DATES:
-        return (True, "in exception_date")
+        return True, "in exception_date"
     else:
         # Otherwise, perform the modulus-11 check
-        return (modulus11_check_raw(cpr), "due to modulus11")
+        return modulus11_check_raw(cpr), "due to modulus11"
 
 
 def modulus11_check_raw(cpr: str) -> bool:
@@ -95,6 +95,7 @@ def modulus11_check_raw(cpr: str) -> bool:
     for numbers for which the modulus-11 check should not be performed.
     """
     return sum([int(c) * v for c, v in zip(cpr, _mod_11_table)]) % 11 == 0
+
 
 class CprProbabilityCalculator(object):
     """Calculate the probability that a matched str of numbers is actually a CPR
@@ -184,7 +185,7 @@ class CprProbabilityCalculator(object):
         self.cached_cprs[cache_key] = legal_cprs
         return legal_cprs
 
-    def cpr_check(self, cpr: str, do_mod11_check = True) -> Union[str, float]:
+    def cpr_check(self, cpr: str, do_mod11_check=True) -> Union[str, float]:
         """Estimate a probality that the number is actually a CPR.
 
         The probability is estimated by calculating all possible CPR
@@ -223,14 +224,14 @@ class CprProbabilityCalculator(object):
             return 0.5
 
         if (do_mod11_check and not modulus11_check_raw(cpr) and
-            birth_date not in CPR_EXCEPTION_DATES):
-                return "Modulus 11 does not match"
+                birth_date not in CPR_EXCEPTION_DATES):
+            return "Modulus 11 does not match"
 
         legal_cprs = self._calc_all_cprs(birth_date)
         try:
             index_number = legal_cprs.index(cpr)
         except ValueError:
-            return f"CPR is not a legal value"
+            return "CPR is not a legal value"
 
         if index_number <= 100:
             return 1.0

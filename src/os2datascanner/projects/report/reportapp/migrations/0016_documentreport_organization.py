@@ -17,3 +17,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='os2datascanner_report.Organization', verbose_name='Organisation'),
         ),
     ]
+
+
+

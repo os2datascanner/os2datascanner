@@ -12,7 +12,6 @@ here_path = os.path.dirname(__file__)
 test_data_path = os.path.join(here_path, "data", "mail")
 
 
-
 class Engine2MailTest(TestCase):
     def test_eml_files(self):
         fs = FilesystemSource(test_data_path)

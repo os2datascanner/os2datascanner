@@ -1,11 +1,6 @@
-from json import dumps, loads
 import unittest
-
-
 from os2datascanner.engine2.model.core import Source
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
-
-
 from .test_engine2_pipeline import (
         handle_message, data_url, rule, expected_matches)
 
@@ -32,9 +27,9 @@ class Engine2PipelineTests(unittest.TestCase):
     def setUp(self):
         self.runner = PipelineTestRunner(
                 read=["os2ds_scan_specs", "os2ds_conversions",
-                        "os2ds_representations", "os2ds_matches",
-                        "os2ds_handles", "os2ds_metadata",
-                        "os2ds_problems", "os2ds_results"],
+                      "os2ds_representations", "os2ds_matches",
+                      "os2ds_handles", "os2ds_metadata",
+                      "os2ds_problems", "os2ds_results"],
                 write=["os2ds_scan_specs"],
                 heartbeat=6000)
 
@@ -61,7 +56,7 @@ class Engine2PipelineTests(unittest.TestCase):
 
         try:
             self.runner.run_consumer()
-        except StopHandling as e:
+        except StopHandling:
             self.assertTrue(
                     self.runner.messages["os2ds_matches"]["matched"],
                     "RegexRule match failed")

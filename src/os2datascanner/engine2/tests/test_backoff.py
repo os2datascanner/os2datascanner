@@ -122,6 +122,5 @@ class TestBackoff(unittest.TestCase):
                 # Check that we slept for a duration in the expected fuzz range
                 # (with a bit of leeway)
                 self.assertTrue(
-                        duration >= (1 - fuzz - 0.05)
-                                and duration <= (1 + fuzz + 0.05),
+                        duration >= (1 - fuzz - 0.05) and duration <= (1 + fuzz + 0.05),
                         "Fuzz range exceeded")

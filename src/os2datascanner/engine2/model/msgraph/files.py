@@ -12,7 +12,7 @@ class MSGraphFilesSource(MSGraphSource):
     type_label = "msgraph-files"
 
     def __init__(self, client_id, tenant_id, client_secret,
-            site_drives=True, user_drives=True):
+                 site_drives=True, user_drives=True):
         super().__init__(client_id, tenant_id, client_secret)
         self._site_drives = site_drives
         self._user_drives = user_drives
@@ -92,7 +92,7 @@ class MSGraphDriveHandle(Handle):
 
     def censor(self):
         return MSGraphDriveHandle(self.source.censor(), self.relative_path,
-                self._folder_name, self._owner_name)
+                                  self._folder_name, self._owner_name)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), **{

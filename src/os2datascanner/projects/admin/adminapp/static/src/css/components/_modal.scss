@@ -28,7 +28,7 @@
     width: 100%;
     border-radius: var(--border-radius-widget);
   }
-} 
+}
 
 .runner-container {
   margin-top: 3rem;
@@ -45,7 +45,7 @@
     text-align: center;
     width: 100%;
     height: auto;
-  
+
     .icon {
       width: 15rem;
       height: auto;
@@ -74,13 +74,13 @@
           font-weight: 600;
           width: 100%;
         }
-        
+
         .material-icons {
           color: #222222;
           font-size: 2rem;
         }
       }
-      
+
       pre {
         display: flex;
         align-items: flex-start;
@@ -129,7 +129,7 @@
     width: 2px;
     margin: 0 1px;
     display: inline-block;
-  
+
     animation: sk-stretchdelay 1.2s infinite ease-in-out;
   }
 

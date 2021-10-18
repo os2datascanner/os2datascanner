@@ -16,14 +16,14 @@
   {% include "partials/main.html" with active_tab="rules" %}
 
   <div class="content">
-    
+
   <div class="aside">
     <h1 class="page-title">
       {% trans "Rules" %}
     </h1>
-    
+
     <div class="btn">
-      <a 
+      <a
         class="button button--cta"
         href="/rules/regex/add/"
         title="{% trans 'Add rule' %}">
@@ -33,9 +33,9 @@
         <span>
           {% trans "Add rule" %}
         </span>
-      </a> 
+      </a>
     </div>
-  </div>        
+  </div>
 
   <table class="datatable">
     <thead>
@@ -69,8 +69,8 @@
 
         <td class="datatable__column--expression">
           {% if rule.regexrule.patterns.all|length > 0 %}
-          <button 
-            type="button" 
+          <button
+            type="button"
             class="button button--grey button--small"
             title="{% trans 'Show expression' %}"
             data-toggle="#show-patterns-{{ forloop.counter }}">
@@ -87,7 +87,7 @@
           </span>
         </td>
         <td class="datatable__column--actions">
-          <a 
+          <a
             href="/rules/regex/{{rule.pk}}"
             class="button button--small button--grey"
             title="{% trans 'Edit' %}">
@@ -99,7 +99,7 @@
           <form action="/{{ view.type }}rules/regex/{{rule.pk}}/delete/" method="post" style="display: inline-block;">
             {% csrf_token %}
             {{ form.as_p }}
-            <button 
+            <button
               type="submit"
               class="button button--small button--grey"
               onclick="return confirm('Ønsker du virkelig at slette denne regel?\n{{ rule.name }}\n\nHandlingen kan ikke fortrydes.')"
@@ -196,18 +196,18 @@
     <form action="" method="post">
       {% csrf_token %}
       {{ form.as_p }}
-  
+
       <p>
-        {% trans "Do you want to delete" %} <em>{{ object }}</em>? 
+        {% trans "Do you want to delete" %} <em>{{ object }}</em>?
         {% trans "This action cannot be undone." %}
       </p>
       <p>
-        {% trans "Please note that this rule is currently included in" %} 
-        <em>{{ object.scanners.all.count }}</em> 
-        {% trans "scannerjob and" %} <em>{{ object.scans.all.count }}</em> 
+        {% trans "Please note that this rule is currently included in" %}
+        <em>{{ object.scanners.all.count }}</em>
+        {% trans "scannerjob and" %} <em>{{ object.scans.all.count }}</em>
         {% trans "reports." %}
       </p>
-  
+
       <div class="form__group">
         <button class="button button--cta button--small btn btn-default" type="submit">
           {% trans "Yes" %}

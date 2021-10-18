@@ -45,3 +45,6 @@ class Migration(migrations.Migration):
             bases=('os2datascanner_report.alias',),
         ),
     ]
+
+
+

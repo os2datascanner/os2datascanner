@@ -23,18 +23,20 @@ from .scanner_model import Scanner
 # Get an instance of a logger
 logger = structlog.get_logger()
 
+
 class DropboxScanner(Scanner):
 
     """File scanner for scanning network drives and folders"""
 
-
-    token = models.CharField(max_length=64, verbose_name='Token', null=True, validators=[MinLengthValidator(64)])
-
+    token = models.CharField(
+        max_length=64,
+        verbose_name='Token',
+        null=True,
+        validators=[MinLengthValidator(64)])
 
     def __str__(self):
         """Return the URL for the scanner."""
         return self.url
-
 
     def get_type(self):
         return 'dropbox'

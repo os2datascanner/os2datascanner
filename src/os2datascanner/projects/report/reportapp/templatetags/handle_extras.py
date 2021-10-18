@@ -86,7 +86,7 @@ def find_svg_icon(type_label):
 
 @register.filter
 def find_file_folder(handle, force=False):
-    """Removes the filename of a match and then returns it (the folder where 
+    """Removes the filename of a match and then returns it (the folder where
     the file is placed"""
     if isinstance(handle, (SMBHandle, SMBCHandle)):
         # the force variable is only for testing, since 'file'-protocol is

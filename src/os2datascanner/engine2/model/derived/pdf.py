@@ -5,7 +5,7 @@ from subprocess import run
 from pathlib import Path
 
 from ... import settings as engine2_settings
-from ..core import Handle, Source, Resource, SourceManager
+from ..core import Handle, Source, Resource
 from ..file import FilesystemResource
 from .derived import DerivedSource
 
@@ -110,18 +110,18 @@ class PDFPageSource(DerivedSource):
             # itself, but what's even better is that pdfimages doesn't produce
             # uncountably many texture images for embedded vector graphics
             run(["pdftotext",
-                    "-q", "-nopgbrk",
-                    "-eol", "unix",
-                    "-f", page, "-l", page,
-                    path, "{0}/page.txt".format(outputdir)],
-                    timeout=engine2_settings.subprocess["timeout"],
-                    check=True)
+                 "-q", "-nopgbrk",
+                 "-eol", "unix",
+                 "-f", page, "-l", page,
+                 path, "{0}/page.txt".format(outputdir)],
+                timeout=engine2_settings.subprocess["timeout"],
+                check=True)
             run(["pdfimages",
-                    "-q", "-all",
-                    "-f", page, "-l", page,
-                    path, "{0}/image".format(outputdir)],
-                    timeout=engine2_settings.subprocess["timeout"],
-                    check=True)
+                "-q", "-all",
+                 "-f", page, "-l", page,
+                 path, "{0}/image".format(outputdir)],
+                timeout=engine2_settings.subprocess["timeout"],
+                check=True)
             yield outputdir
 
     def handles(self, sm):

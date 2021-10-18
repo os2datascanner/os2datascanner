@@ -121,9 +121,9 @@ class MyUserAdmin(UserAdmin):
             self.fieldsets = (
                 (None,
                  {'fields': ('username', 'password', 'is_active')}),
-                (_('Personal info'),
+                (_('Personal info'),  # noqa: F821
                  {'fields': ('first_name', 'last_name', 'email')}),
-                (_('Important dates'), {'fields': ('last_login',
+                (_('Important dates'), {'fields': ('last_login',  # noqa: F821
                                                    'date_joined')}),
             )
 

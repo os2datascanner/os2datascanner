@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from os2datascanner.projects.utils.checkdb import waitdb
 
+
 class Command(BaseCommand):
     help = "Check the connection to the database."
 
