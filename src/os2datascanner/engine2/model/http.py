@@ -115,12 +115,20 @@ class WebSource(Source):
                     logger.debug("excluded", url=new_url)
                     return
 
-            if nurls.hostname == url_split.hostname:
-                # exactly same hostname
+            # ensure hostnames and optionally path(if the source were created with a
+            # nonempty path) matches
+            if (
+                    nurls.hostname == url_split.hostname and
+                    nurls.path.startswith(url_split.path)
+            ):
+                # exactly same hostname and same path
                 rel_path = new_url.removeprefix(self._url)
                 new_handle = WebHandle(self, rel_path, referrer, lm_hint)
-            elif netloc_normalize(nurls.hostname) == hostname:
-                # hostnames are equivalent. Create new Source from "new" hostname but
+            elif (
+                    netloc_normalize(nurls.hostname) == hostname and
+                    nurls.path.startswith(url_split.path)
+            ):
+                # hostnames and are equivalent. Create new Source from "new" hostname but
                 # retain original path, if present
                 base_url = urlunsplit(
                     (nurls.scheme, nurls.netloc, url_split.path, "", "")
