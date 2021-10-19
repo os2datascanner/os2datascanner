@@ -148,6 +148,23 @@ links_from_handle = {
 infinite_links_site = {
     "source": WebSource("http://localhost:64346/redirect")
 }
+source_with_path_site = {
+    "source": WebSource("http://localhost:64346/undermappe"),
+    "handles": [
+        "http://localhost:64346/undermappe/",
+        "http://localhost:64346/undermappe/vstkom.png",
+        "http://localhost:64346/undermappe/rel-page.html",
+    ]
+}
+source_with_path_mapped_site = {
+    "source": WebSource(
+        "http://localhost:64346/undermappe",
+        sitemap="http://localhost:64346/sitemap_subpage.xml"),
+    "handles": [
+        "http://localhost:64346/undermappe/",
+        "http://localhost:64346/undermappe/index.html",
+    ]
+}
 
 
 # mock is way to control what a function returns. By setting e.g.
@@ -444,6 +461,29 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
                     # prevent infinite redirects if something is broken i http.py
                     break
         self.assertEqual(i, TTL, "Wrong number of links scraped. TTL not respected")
+
+    def test_source_with_path(self):
+        "Test that new handles are created correctly if the source contains a path"
+        with SourceManager() as sm:
+            presentation = [
+                h.presentation for h in source_with_path_site["source"].handles(sm)
+            ]
+        self.assertCountEqual(
+            presentation,
+            source_with_path_site["handles"],
+            "Source with path should produce 3 handles")
+
+    def test_source_with_path_sitemap(self):
+        "Test that new handles are created correctly if the source contains a path"
+        with SourceManager() as sm:
+            presentation = [
+                h.presentation for h in source_with_path_mapped_site["source"].handles(sm)
+            ]
+        self.assertCountEqual(
+            presentation,
+            source_with_path_mapped_site["handles"],
+            "mapped Source with path should produce 2 handles")
+
 
 class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
     def test_sitemap_lm(self):
