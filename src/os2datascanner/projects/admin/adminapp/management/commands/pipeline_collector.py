@@ -67,7 +67,13 @@ def checkup_message_received_raw(body):  # noqa: CCR001, too high cognitive comp
 
     if not scan_tag or not handle:
         return
-    scanner = Scanner.objects.get(pk=scan_tag.scanner.pk)
+    try:
+        scanner = Scanner.objects.get(pk=scan_tag.scanner.pk)
+    except Scanner.DoesNotExist:
+        # This is a residual message for a scanner that the administrator has
+        # deleted. Throw it away
+        return
+
     scan_time = scan_tag.time
 
     try:
