@@ -30,9 +30,7 @@ class HasConversionRule(SimpleRule):
             pass
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "target": self._target.value
-        })
+        return dict(**super().to_json_object(), target=self._target.value)
 
     @staticmethod
     @Rule.json_handler(type_label)

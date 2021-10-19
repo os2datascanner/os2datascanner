@@ -154,15 +154,15 @@ class SMBCSource(Source):
             return None
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "unc": self._unc,
-            "user": self._user,
-            "password": self._password,
-            "domain": self._domain,
-            "driveletter": self._driveletter,
-
-            "skip_super_hidden": self._skip_super_hidden
-        })
+        return dict(
+            **super().to_json_object(),
+            unc=self._unc,
+            user=self._user,
+            password=self._password,
+            domain=self._domain,
+            driveletter=self._driveletter,
+            skip_super_hidden=self._skip_super_hidden,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)

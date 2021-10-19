@@ -39,11 +39,12 @@ class DimensionsRule(SimpleRule):
             }
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "width": [self._width_range.start, self._width_range.stop],
-            "height": [self._height_range.start, self._height_range.stop],
-            "minimum": self._min_dim
-        })
+        return dict(
+            **super().to_json_object(),
+            width=[self._width_range.start, self._width_range.stop],
+            height=[self._height_range.start, self._height_range.stop],
+            minimum=self._min_dim,
+        )
 
     @staticmethod
     @Rule.json_handler(type_label)

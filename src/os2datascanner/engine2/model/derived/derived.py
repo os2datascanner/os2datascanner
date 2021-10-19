@@ -18,9 +18,7 @@ class DerivedSource(Source):
         return type(self)(self.handle.censor())
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "handle": self.handle.to_json_object()
-        })
+        return dict(**super().to_json_object(), handle=self.handle.to_json_object())
 
     @classmethod
     def __init_subclass__(cls, **kwargs):

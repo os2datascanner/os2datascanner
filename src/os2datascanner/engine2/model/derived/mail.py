@@ -129,9 +129,7 @@ class MailPartHandle(Handle):
         return self._mime
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "mime": self._mime
-        })
+        return dict(**super().to_json_object(), mime=self._mime)
 
     @staticmethod
     @Handle.json_handler(type_label)

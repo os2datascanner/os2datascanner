@@ -42,7 +42,7 @@ class LinksFollowRule(SimpleRule):
                 }
 
     def to_json_object(self):
-        return dict(**super().to_json_object())
+        return super().to_json_object()
 
     @staticmethod
     @Rule.json_handler(type_label)

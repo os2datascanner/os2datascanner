@@ -195,11 +195,12 @@ class WebSource(Source):
         return WebSource(url)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "url": self._url,
-            "sitemap": self._sitemap,
-            "exclude": self._exclude,
-        })
+        return dict(
+            **super().to_json_object(),
+            url=self._url,
+            sitemap=self._sitemap,
+            exclude=self._exclude,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)

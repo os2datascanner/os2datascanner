@@ -50,11 +50,12 @@ class DataSource(Source):
         return DataSource(content, mime)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-                    "content": b64encode(
-                        self._content).decode(encoding="ascii") if self._content else None,
-                    "mime": self.mime,
-                    "name": self.name})
+        return dict(
+            **super().to_json_object(),
+            content=b64encode(self._content).decode(encoding="ascii") if self._content else None,
+            mime=self.mime,
+            name=self.name,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)

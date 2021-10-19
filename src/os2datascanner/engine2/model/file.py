@@ -55,9 +55,7 @@ class FilesystemSource(Source):
         return FilesystemSource(unquote(path) if path else None)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "path": self.path
-        })
+        return dict(**super().to_json_object(), path=self.path)
 
     @staticmethod
     @Source.json_handler(type_label)

@@ -67,9 +67,7 @@ class DropboxSource(Source):
         return "dropbox://{0}".format(self._token)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "token": self._token
-        })
+        return dict(**super().to_json_object(), token=self._token)
 
     @staticmethod
     @Source.json_handler(type_label)

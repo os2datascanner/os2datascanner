@@ -75,10 +75,11 @@ class GmailSource(Source):
         return GmailSource(None, self._user_email_gmail)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "service_account_file": self._service_account_file_gmail,
-            "user_email": self._user_email_gmail
-        })
+        return dict(
+            **super().to_json_object(),
+            service_account_file=self._service_account_file_gmail,
+            user_email=self._user_email_gmail,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)

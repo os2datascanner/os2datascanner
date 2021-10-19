@@ -28,9 +28,10 @@ class LastModifiedRule(SimpleRule):
             }
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "after": OutputType.LastModified.encode_json_object(self._after)
-        })
+        return dict(
+            **super().to_json_object(),
+            after=OutputType.LastModified.encode_json_object(self._after),
+        )
 
     @staticmethod
     @Rule.json_handler(type_label)

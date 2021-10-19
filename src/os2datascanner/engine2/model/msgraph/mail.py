@@ -163,10 +163,11 @@ class MSGraphMailMessageHandle(Handle):
         return "message/rfc822"
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "mail_subject": self._mail_subject,
-            "weblink": self._weblink
-        })
+        return dict(
+            **super().to_json_object(),
+            mail_subject=self._mail_subject,
+            weblink=self._weblink,
+        )
 
     @staticmethod
     @Handle.json_handler(type_label)

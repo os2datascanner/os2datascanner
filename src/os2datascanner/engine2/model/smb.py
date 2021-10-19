@@ -125,13 +125,14 @@ class SMBSource(Source):
             return None
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "unc": self._unc,
-            "user": self._user,
-            "password": self._password,
-            "domain": self._domain,
-            "driveletter": self._driveletter
-        })
+        return dict(
+            **super().to_json_object(),
+            unc=self._unc,
+            user=self._user,
+            password=self._password,
+            domain=self._domain,
+            driveletter=self._driveletter,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)
