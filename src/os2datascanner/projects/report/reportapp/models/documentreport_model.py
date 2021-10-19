@@ -167,6 +167,9 @@ class DocumentReport(models.Model):
     class Meta:
         verbose_name_plural = _("document reports")
         ordering = ['-sensitivity', '-probability', 'pk']
+        indexes = [
+            models.Index("data__matches__matched", name="documentreport_matched"),
+        ]
 
 
 DocumentReport.factory = ModelFactory(DocumentReport)
