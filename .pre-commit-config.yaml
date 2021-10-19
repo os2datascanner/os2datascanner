@@ -1,0 +1,15 @@
+repos:
+-   repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: 'v1.5.7'
+    hooks:
+    - id: autopep8
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
+    - id: flake8
+      entry: pflake8 src
+      additional_dependencies: [pyproject-flake8, flake8-cognitive-complexity, flake8-expression-complexity, flake8-bugbear]
+-   repo: https://github.com/pre-commit/mirrors-jshint
+    rev: 'v2.13.0'
+    hooks:
+    -   id: jshint
