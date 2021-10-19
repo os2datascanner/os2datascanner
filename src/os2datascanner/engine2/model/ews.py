@@ -143,13 +143,14 @@ class EWSAccountSource(Source):
         yield from relevant_mails(relevant_folders())
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "domain": self._domain,
-            "server": self._server,
-            "admin_user": self._admin_user,
-            "admin_password": self._admin_password,
-            "user": self._user
-        })
+        return dict(
+            **super().to_json_object(),
+            domain=self._domain,
+            server=self._server,
+            admin_user=self._admin_user,
+            admin_password=self._admin_password,
+            user=self._user,
+        )
 
     @staticmethod
     @Source.url_handler("test-ews365")
@@ -297,11 +298,12 @@ class EWSMailHandle(Handle):
         return "message/rfc822"
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "mail_subject": self._mail_subject,
-            "folder_name": self._folder_name,
-            "entry_id": self._entry_id
-        })
+        return dict(
+            **super().to_json_object(),
+            mail_subject=self._mail_subject,
+            folder_name=self._folder_name,
+            entry_id=self._entry_id,
+        )
 
     @staticmethod
     @Handle.json_handler(type_label)

@@ -58,7 +58,7 @@ class CompoundRule(Rule):
     def to_json_object(self):
         return dict(
             **super().to_json_object(),
-            **{"components": [c.to_json_object() for c in self._components]},
+            components=[c.to_json_object() for c in self._components],
         )
 
 
@@ -206,9 +206,7 @@ class NotRule(Rule):
         return rule, self.make(pve), self.make(nve)
 
     def to_json_object(self):
-        return dict(
-            **super().to_json_object(), **{"rule": self._rule.to_json_object()}
-        )
+        return dict(**super().to_json_object(), rule=self._rule.to_json_object())
 
     @staticmethod
     @Rule.json_handler(type_label)

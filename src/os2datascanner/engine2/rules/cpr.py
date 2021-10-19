@@ -259,12 +259,10 @@ class CPRRule(RegexRule):
         # don't need to include our expression, as it's static)
         return dict(
             **super(RegexRule, self).to_json_object(),
-            **{
-                "modulus_11": self._modulus_11,
-                "ignore_irrelevant": self._ignore_irrelevant,
-                "whitelist": list(self._whitelist),
-                "blacklist": list(self._blacklist),
-            },
+            modulus_11=self._modulus_11,
+            ignore_irrelevant=self._ignore_irrelevant,
+            whitelist=list(self._whitelist),
+            blacklist=list(self._blacklist),
         )
 
     @staticmethod

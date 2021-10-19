@@ -64,11 +64,12 @@ class MSGraphSource(Source):
             return response
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "client_id": self._client_id,
-            "tenant_id": self._tenant_id,
-            "client_secret": self._client_secret
-        })
+        return dict(
+            **super().to_json_object(),
+            client_id=self._client_id,
+            tenant_id=self._tenant_id,
+            client_secret=self._client_secret,
+        )
 
 
 @contextmanager

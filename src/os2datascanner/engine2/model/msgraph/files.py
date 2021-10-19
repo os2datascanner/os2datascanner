@@ -40,10 +40,11 @@ class MSGraphFilesSource(MSGraphSource):
                     yield self._make_drive_handle(drive)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "site_drives": self._site_drives,
-            "user_drives": self._user_drives
-        })
+        return dict(
+            **super().to_json_object(),
+            site_drives=self._site_drives,
+            user_drives=self._user_drives,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -95,10 +96,11 @@ class MSGraphDriveHandle(Handle):
                                   self._folder_name, self._owner_name)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "folder_name": self._folder_name,
-            "owner_name": self._owner_name
-        })
+        return dict(
+            **super().to_json_object(),
+            folder_name=self._folder_name,
+            owner_name=self._owner_name,
+        )
 
     @staticmethod
     @Handle.json_handler(type_label)

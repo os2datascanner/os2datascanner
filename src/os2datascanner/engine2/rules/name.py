@@ -175,10 +175,11 @@ class NameRule(SimpleRule):
                 }
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "whitelist": self._whitelist,
-            "blacklist": self._blacklist
-        })
+        return dict(
+            **super().to_json_object(),
+            whitelist=self._whitelist,
+            blacklist=self._blacklist,
+        )
 
     @staticmethod
     @Rule.json_handler(type_label)

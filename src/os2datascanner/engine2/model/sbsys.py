@@ -46,12 +46,13 @@ class SbsysSource(Source):
             yield SbsysHandle(self, str(caseId))
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "client_id": self._client_id,
-            "client_secret": self._client_secret,
-            "token_url": self._token_url,
-            "api_url": self._api_url
-        })
+        return dict(
+            **super().to_json_object(),
+            client_id=self._client_id,
+            client_secret=self._client_secret,
+            token_url=self._token_url,
+            api_url=self._api_url,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -131,9 +132,6 @@ class SbsysHandle(Handle):
 
     def censor(self):
         return SbsysHandle(self.source.censor(), self.relative_path)
-
-    def to_json_object(self):
-        return dict(**super().to_json_object(), **{})
 
     @staticmethod
     @Handle.json_handler(type_label)

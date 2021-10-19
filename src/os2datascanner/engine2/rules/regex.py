@@ -34,7 +34,7 @@ class RegexRule(SimpleRule):
             }
 
     def to_json_object(self) -> dict:
-        return dict(**super().to_json_object(), **{"expression": self._expression})
+        return dict(**super().to_json_object(), expression=self._expression)
 
     @staticmethod
     @Rule.json_handler(type_label)

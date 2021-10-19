@@ -55,10 +55,11 @@ class GoogleDriveSource(Source):
         return GoogleDriveSource(None, self._user_email)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "service_account_file": self._service_account_file,
-            "user_email": self._user_email
-        })
+        return dict(
+            **super().to_json_object(),
+            service_account_file=self._service_account_file,
+            user_email=self._user_email,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -151,9 +152,7 @@ class GoogleDriveHandle(Handle):
         return GoogleDriveHandle(self.source.censor(), relpath=self.relative_path, name=self._name)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "name": self._name
-        })
+        return dict(**super().to_json_object(), name=self._name)
 
     @staticmethod
     @Handle.json_handler(type_label)
