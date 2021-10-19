@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from datetime import datetime
 from dateutil import tz
@@ -8,7 +8,21 @@ from typing import Optional
 @dataclass
 class Link:
     url: str
+    # combine public link_text with setter
+    # https://stackoverflow.com/a/61191878
     link_text: Optional[str]
+    _link_text: Optional[str] = field(init=False, repr=False)
+
+    @property
+    def link_text(self):
+        return self._link_text
+
+    @link_text.setter
+    def link_text(self, s: Optional[str]):
+        # remove newlines and extra whitespace
+        if isinstance(s, str):
+            s = " ".join([s.strip() for s in s.split()])
+        self._link_text = s
 
 
 class OutputType(Enum):
