@@ -78,8 +78,7 @@ class Command(BaseCommand):
             type=str,
             default=None,
             help="Run on a specific scan, choose between "
-            "FileSystemScan, WebSourceScan, DropboxScan, "
-            "MSGraphScan, GoogleDriveScan, EWSScan, SMBScan, SBSYSScan "
+            "filesystem, websource, dropbox, msgraph, googledrive, ews, smb, sbsys "
             "OR all",
         )
         parser.add_argument(
@@ -110,9 +109,10 @@ class Command(BaseCommand):
             **options
     ):
         if not settings.DEBUG:
-            self.stdout.write(self.style.NOTICE("makefake: refusing to run in a production "
-                                                "environment; switch settings.DEBUG on to "
-                                                "use this command"))
+            self.stdout.write(self.style.NOTICE(
+                "makefake: refusing to run in a production environment; switch "
+                "settings.DEBUG on to use this command")
+                              )
             sys.exit(1)
 
         # faker is using the random generator, so seeding here does not give
@@ -121,7 +121,6 @@ class Command(BaseCommand):
         # page_count, scan_count and scan_types are deterministic, wheres the number
         # of matches and content is random
         if seed is None:
-            import sys
             seed = random.randrange(sys.maxsize)
 
         random.seed(seed)
@@ -146,7 +145,7 @@ class Command(BaseCommand):
 
         if scan_type == "all":
             scan_count = len(handle_types)
-        elif scan_type.lower() not in handle_types.keys():
+        elif scan_type and scan_type.lower() not in handle_types.keys():
             print(f"wrong scan_type {scan_type}.\n"
                   f"Should be one of {', '.join(handle_types.keys())} or all")
             exit(0)
