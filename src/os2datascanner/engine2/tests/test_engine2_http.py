@@ -1,14 +1,15 @@
 import os
 import os.path
 import http.server
-from datetime import datetime
 import unittest
 import contextlib
 import logging
-from unittest import mock
-from urllib3.util import connection
+import time
+from datetime import datetime
 from multiprocessing import Manager, Process
 from requests import RequestException
+from unittest import mock
+from urllib3.util import connection
 
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import Handle, SourceManager
@@ -20,10 +21,13 @@ from os2datascanner.engine2.model.utilities.sitemap import (
 from os2datascanner.engine2.conversions.types import Link, OutputType
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
 from os2datascanner.engine2.conversions.registry import convert
+from os2datascanner.engine2 import settings as engine2_settings
 
 here_path = os.path.dirname(__file__)
 test_data_path = os.path.join(here_path, "data", "www")
 
+# depth of "redirect chain", TimeToLive
+TTL: int = engine2_settings.model["http"]["ttl"]
 
 # define Sources and what to expect from them
 site = {
@@ -141,6 +145,9 @@ links_from_handle = {
         Link("http://this-side-does-not-exists.invalid", "et link, der ikke har et navneopslag"),  # noqa
     ],
 }
+infinite_links_site = {
+    "source": WebSource("http://localhost:64346/redirect")
+}
 
 
 # mock is way to control what a function returns. By setting e.g.
@@ -199,6 +206,37 @@ def resolve_any_to_localhost():
 class custom_http_server(http.server.SimpleHTTPRequestHandler):
     """Redirect all *.localhost to localhost"""
 
+    def _normal_response(self):
+        "just ack and smile"
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+
+    def _infinite_redirects(self):
+        "return a html-page with one link. Try to follow it..."
+
+        body = \
+            f"""
+<!doctype html>
+<html lang="da">
+<head><meta charset="utf-8">
+  <title>infinite redirects</title>
+</head>
+<body>
+  <p>Oh no, you fell down the rabbit hole.
+     <a href="/redirect?q={time.time()}">click this link to get out!</a>
+  </p>
+</body>
+</html>
+"""
+
+        self.send_response(200)
+        self.send_header("Content-type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body.encode())
+        return
+
     def _redirect_response(self):
         self.send_response(302)
         self.send_header("Location", "http://localhost:64346" + self.path)
@@ -209,6 +247,8 @@ class custom_http_server(http.server.SimpleHTTPRequestHandler):
         host = self.headers.get("host")
         if not host.startswith("localhost"):
             self._redirect_response()
+        elif self.path.startswith("/redirect"):
+            self._infinite_redirects()
         else:
             super().do_GET()
 
@@ -216,6 +256,8 @@ class custom_http_server(http.server.SimpleHTTPRequestHandler):
         host = self.headers.get("host")
         if not host.startswith("localhost"):
             self._redirect_response()
+        elif self.path.startswith("/redirect"):
+            self._normal_response()
         else:
             super().do_HEAD()
 
@@ -270,7 +312,7 @@ class Engine2HTTPSetup():
         fmt = "[%(name)s] - [%(message)s]"
         logging.basicConfig(format=fmt)
         logger = logging.getLogger("os2datascanner")
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
         # we have no handler in os2ds (except the NullHandler)
         # logger.addHandler(logging.StreamHandler())
 
@@ -390,6 +432,18 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
             "site with mixed internal, external and non-http links should have 3 "
             "handles that does not produce an exception")
 
+    def test_infinite_self_links(self):
+        """Site that returns a new link in the format /redirect?q=time.time()
+
+        This test both TTL and that the query-part of the url is kept
+        """
+        i = 0
+        with SourceManager() as sm:
+            for i, _h in enumerate(infinite_links_site["source"].handles(sm), start=1):
+                if i > TTL+2:
+                    # prevent infinite redirects if something is broken i http.py
+                    break
+        self.assertEqual(i, TTL, "Wrong number of links scraped. TTL not respected")
 
 class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
     def test_sitemap_lm(self):
