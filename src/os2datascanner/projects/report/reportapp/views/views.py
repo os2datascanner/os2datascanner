@@ -36,6 +36,7 @@ from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.links_follow import LinksFollowRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.projects.report.reportapp.models.roles.role_model import Role
 
 from ..utils import user_is
@@ -56,6 +57,7 @@ logger = structlog.get_logger()
 
 RENDERABLE_RULES = (
     CPRRule.type_label, RegexRule.type_label, LinksFollowRule.type_label,
+    OrderedWordlistRule.type_label,
 )
 
 
