@@ -14,6 +14,7 @@ from os2datascanner.engine2.rules.logical import (
 )
 from os2datascanner.engine2.rules.name import NameRule
 from os2datascanner.engine2.rules.regex import RegexRule
+from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 
 
@@ -206,29 +207,21 @@ more!""",
     def test_compound_rule_matches(self):
         for rule, tests in RuleTests.compound_candidates:
             for input_string, outcome, evaluation_count in tests:
-                now = rule
-                evaluations = 0
+                representations = {
+                    "text": input_string
+                }
+                conclusion, evaluations = rule.try_match(representations.get)
 
-                while True:
-                    print(f"evaluating rule {now}")
-                    head, pve, nve = now.split()
-                    evaluations += 1
-                    match = list(head.match(input_string))
-                    print(f"{head} had the matches {match}")
-                    if match:
-                        now = pve
-                    else:
-                        now = nve
-                    if isinstance(now, bool):
-                        break
-                print(f"conclusion: input: {input_string}; result: {now}; "
+                print(f"conclusion: input: {input_string};"
+                      f"result: {conclusion}; "
                       f"expected: {outcome}; evaluations: {evaluations}")
                 self.assertEqual(
-                    outcome, now, "{0}: wrong result".format(input_string)
+                    outcome, conclusion,
+                    "{0}: wrong result".format(input_string)
                 )
                 self.assertEqual(
                     evaluation_count,
-                    evaluations,
+                    len(evaluations),
                     "{0}: wrong evaluation count".format(input_string),
                 )
 
@@ -348,3 +341,120 @@ more!""",
                 self.assertCountEqual(
                     [[match["match"], match['sensitivity']] for match in matches],
                     expected)
+
+    def test_wordlists_rule(self):
+        candidates = (
+            (
+                "This is a really good dog!",
+                ({
+                    "match": "GOOD DOG",
+                    "offset": 17,
+                    "context": "This is a really good dog!",
+                    "context_offset": 17
+                },)
+            ),
+            (
+                "This dog is really good!",
+                ()
+            ),
+            (
+                f"This is a good{'dog':>32}",
+                ({
+                    "match": "GOOD DOG",
+                    "offset": 10,
+                    "context": f"This is a good{'':>29}dog",
+                    "context_offset": 10
+                },)
+            ),
+            (
+                f"This is a good {'dog':>33}",
+                ()
+            ),
+            (
+                f"This is a totally{'tubular':>32}{'tapir':>32}",
+                ({
+                    "match": "totally tubular tapir",
+                    "offset": 10,
+                    "context": f"This is a totally{'':>25}tubular{'':>27}tapir",
+                    "context_offset": 10
+                },)
+            ),
+            (
+                "This CRAZY cat's a good dog!",
+                ({
+                    "match": "GOOD DOG",
+                    "offset": 19,
+                    "context": "This CRAZY cat's a good dog!",
+                    "context_offset": 19
+                }, {
+                    "match": "crazy cat",
+                    "offset": 5,
+                    "context": "This CRAZY cat's a good dog!",
+                    "context_offset": 5
+                })
+            ),
+            (
+                "This is an awesomely amazing arachnid!",
+                ({
+                    "match": "awesome arachnid",
+                    "offset": 11,
+                    "context": "This is an awesomely amazing arachnid!",
+                    "context_offset": 11
+                },)
+            )
+        )
+        wrl = OrderedWordlistRule("en_20211018_unit_test_words")
+        for in_value, expected in candidates:
+            with self.subTest(in_value):
+                self.assertEqual(
+                        tuple(wrl.match(in_value)),
+                        expected)
+
+    def test_medical_combinations(self):
+        candidates = (
+            (
+                """
+REGION NORDSTRAND -- PERSONFØLSOMT MATERIALE UNDER TAVSHEDSPLIGT
+
+Nordstrand Sygehus
+Strandvej 17
+9999 Vejstrand
+
+Patient: Jens Testsen
+Konsultationsdato: 2021-10-18
+
+Ifølge analyseresultater lider patienten af akut arteriel insufficiens i alle
+ekstremiteterne. Han selv tilføjer, at han har ondt i albuen. Der er også
+indledende tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM. Henvist til
+speciellæger.""",
+                ({
+                    "match": "akut arteriel insufficiens ekstremiteterne",
+                    "offset": 212,
+                    "context": "0-18\n\nIfølge analyseresultater lider"
+                               " patienten af akut arteriel insufficiens i"
+                               " alle\nekstremiteterne. Han selv tilføjer,"
+                               " at han har ondt i albuen. Der",
+                    "context_offset": 50
+                }, {
+                    "match": "albue",
+                    "offset": 300,
+                    "context": "remiteterne. Han selv tilføjer, at han har"
+                               " ondt i albuen. Der er også\nindledende tegn"
+                               " på AUTOIMMUNT POLYG",
+                    "context_offset": 50
+                }, {
+                    "match": "autoimmunt polyglandulært syndrom",
+                    "offset": 339,
+                    "context": "har ondt i albuen. Der er også\nindledende"
+                               " tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM."
+                               " Henvist til\nspeciellæger.",
+                    "context_offset": 50
+                })
+            ),
+        )
+        wrl = OrderedWordlistRule("da_20211018_laegehaandbog_stikord")
+        for in_value, expected in candidates:
+            with self.subTest(in_value):
+                self.assertEqual(
+                        tuple(wrl.match(in_value)),
+                        expected)

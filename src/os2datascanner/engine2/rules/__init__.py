@@ -8,3 +8,4 @@ from . import last_modified  # noqa
 from . import links_follow  # noqa
 from . import name  # noqa
 from . import address  # noqa
+from . import wordlists  # noqa

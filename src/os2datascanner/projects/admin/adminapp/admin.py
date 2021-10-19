@@ -21,6 +21,7 @@ from .models.apikey_model import APIKey
 from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
+from .models.rules.customrule_model import CustomRule
 from .models.rules.addressrule_model import AddressRule
 from .models.scannerjobs.scanner_model import ScanStatus, ScheduledCheckup
 from .models.scannerjobs.msgraph_models import MSGraphMailScanner
@@ -40,6 +41,7 @@ class AuthenticationAdmin(admin.ModelAdmin):
 @admin.register(CPRRule)
 @admin.register(NameRule)
 @admin.register(RegexRule)
+@admin.register(CustomRule)
 @admin.register(AddressRule)
 class RuleAdmin(admin.ModelAdmin):
     list_filter = ('sensitivity',)
