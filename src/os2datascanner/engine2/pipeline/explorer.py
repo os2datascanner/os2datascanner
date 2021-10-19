@@ -1,9 +1,11 @@
-import logging
 from ..model.core import UnknownSchemeError, DeserialisationError
 from . import messages
 
+import structlog
 
-logger = logging.getLogger(__name__)
+
+logger = structlog.get_logger(__name__)
+
 
 READS_QUEUES = ("os2ds_scan_specs",)
 WRITES_QUEUES = ("os2ds_conversions", "os2ds_problems", "os2ds_status",)
@@ -67,11 +69,13 @@ def message_received_raw(body, channel, source_manager):
             scan_tag=scan_tag, source=scan_spec.source, handle=None,
             message=exception_message)
         yield ("os2ds_problems", problem_message.to_json_object())
+        return
     finally:
         yield ("os2ds_status", messages.StatusMessage(
             scan_tag=scan_tag, total_objects=count,
             message=exception_message, status_is_error=exception_message != "").
                to_json_object())
+    logger.info("Finished exploration successfully", count=count, scan_tag=scan_tag)
 
 
 if __name__ == "__main__":
