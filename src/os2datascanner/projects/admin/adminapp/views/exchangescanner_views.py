@@ -35,7 +35,7 @@ class OrganizationalUnitListing(ListAPIView):
     serializer_class = OrganizationalUnitSerializer
 
     def get_queryset(self):
-        organization_id = self.request.query_params.get('organization_id', None)
+        organization_id = self.request.query_params.get('organizationId', None)
 
         if organization_id:
             queryList = OrganizationalUnit.objects.filter(
