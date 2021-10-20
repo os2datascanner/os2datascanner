@@ -3,6 +3,12 @@ target-version = ["py39"]
 # default black line length is 88. But we match it with .flake
 line-length = 100
 
+[tool.autopep8]
+max_line_length = 100
+ignore = "B009, B017, W503, E126, W504, E226, E121, E241, E123, B008"
+exclude = "**/**/migrations/**"
+recursive = true
+aggressive = 3
 
 [tool.flake8]
 max-line-length = 100

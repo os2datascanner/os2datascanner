@@ -409,4 +409,14 @@ Linting can be checked locally by installing:
 and the running:
 `pflake8 src`
 
+### Git hooks
 
+developers can install the precommit framework to run automated pre-commit test to tell them 
+if they will fail the linter-jobs.
+The pre-commit framework can be installed like this:
+
+`pip install pre-commit`,
+
+`pre-commit install`.
+
+to skip hooks a single time use the `--no-verify` option on your git commit command.
