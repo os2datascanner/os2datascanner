@@ -9,11 +9,11 @@ from os2datascanner.engine2.pipeline.messages import (
 from ..utils import iterate_queryset_in_batches
 
 """NOTE:
-We update the database Queryset in batches; if not, the update might fail
+We update the database queryset using .iterator(); if not, the update might fail
 if the queryset is too large
 
-This migration reads the jsonb-field, tries to get a presentation-string, split this
-and populates the newly created sort_key and name fields
+This migration reads the jsonb-field, tries to get a name- and sort_key strings from
+the handle and populates the newly created fields
 """
 
 
@@ -26,7 +26,12 @@ def get_msg(query):
     if matches:
         return MatchesMessage.from_json_object(matches)
     elif problem:
-        return ProblemMessage.from_json_object(problem)
+        problem = ProblemMessage.from_json_object(problem)
+        # problemMessage have optional handle and source fields. Try the latter if
+        # the first is None.
+        if not problem.handle:
+            problem = problem.source if problem.source else problem
+        return problem
     elif metadata:
         return MetadataMessage.from_json_object(metadata)
     else:
@@ -46,32 +51,30 @@ def get_presentation(query):
 def bulk_update_created_fpath_name_fields(apps, schema_editor):
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
     print("starting batch migration")
-    print(f"length of queryset, {DocumentReport.objects.count()}")
+    print(f"length of DocumentReport queryset, {DocumentReport.objects.count()}")
 
     queryset = DocumentReport.objects.all()
+    for report in queryset.iterator():
+        if report.sort_key == "" or report.name == "":
+            try:
+                handle = get_presentation(report)
+                if not handle:
+                    continue
 
-
-    for i, batch in enumerate(iterate_queryset_in_batches(10000, queryset)):
-        for report in batch:
-            if report.sort_key == "" or report.name == "":
-                try:
-                    handle = get_presentation(report)
-                    if not handle:
-                        continue
-
-                    name = handle.presentation_name
-                    report.sort_key = handle.sort_key
-                    report.name = name
-                except Exception as e:
-                    print(
-                        f"Exception {type(e).__name__}\t"
-                        f"report={report}\t"
-                        f"e={e}"
-                    )
-
-        print(f"preparing chunk {i} of bulk update")
-        DocumentReport.objects.bulk_update(batch, ["sort_key", "name"])
-        print("chunk done")
+                # ensure we don't try to put more chars into the db-fields than there's room for.
+                # failing to do this will result in an django.db.DataError exception
+                name = handle.presentation_name[:256]
+                sort_key = handle.sort_key[:256]
+                report.sort_key = sort_key
+                report.name = name
+                report.save()
+            except Exception as e:
+                print(
+                    f"Exception {type(e).__name__}\t"
+                    f"report={report}\t"
+                    f"e={e}"
+                )
+                raise
 
 
 class Migration(migrations.Migration):
@@ -93,9 +96,8 @@ class Migration(migrations.Migration):
                 db_index=True, default="", max_length=256, verbose_name="sort key"
             ),
         ),
-        # XXX don't populate fields. For large DBs this kills the migration
-        # migrations.RunPython(
-        #     bulk_update_created_fpath_name_fields,
-        #     reverse_code=migrations.RunPython.noop,
-        # ),
+        migrations.RunPython(
+            bulk_update_created_fpath_name_fields,
+            reverse_code=migrations.RunPython.noop,
+        ),
     ]
