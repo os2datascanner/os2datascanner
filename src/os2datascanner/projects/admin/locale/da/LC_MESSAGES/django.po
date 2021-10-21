@@ -445,8 +445,8 @@ msgid "Edit"
 msgstr "Redigér"
 
 #: adminapp/templates/os2datascanner/rules.html:134
-msgid "CPR rules"
-msgstr "CPR-regler"
+msgid "System rules"
+msgstr "Systemregler"
 
 #: adminapp/templates/os2datascanner/rules.html:185
 #: adminapp/templates/os2datascanner/rules.html:192

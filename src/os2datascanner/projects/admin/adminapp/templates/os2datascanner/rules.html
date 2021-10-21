@@ -131,7 +131,7 @@
 
   <div class="aside">
     <h1 class="page-title">
-      {% trans "CPR rules" %}
+      {% trans "System rules" %}
     </h1>
   </div>
 
@@ -156,7 +156,7 @@
     </thead>
 
     <tbody>
-      {% for rule in cprrule_list %}
+      {% for rule in systemrule_list %}
       <tr tabindex="0">
         <td class="datatable__column--name">{{ rule.name }}</td>
         <td class="datatable__column--org">{{ rule.organization }}</td>

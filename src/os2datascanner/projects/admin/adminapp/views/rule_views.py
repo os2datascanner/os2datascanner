@@ -34,7 +34,7 @@ class RuleList(RestrictedListView):
     def get_context_data(self):
         context = super().get_context_data()
 
-        context["cprrule_list"] = self.get_queryset().filter(cprrule__isnull=False)
+        context["systemrule_list"] = self.get_queryset().filter(regexrule__isnull=True)
         context["regexrule_list"] = self.get_queryset().filter(regexrule__isnull=False)
         context["sensitivity"] = Sensitivity
 
