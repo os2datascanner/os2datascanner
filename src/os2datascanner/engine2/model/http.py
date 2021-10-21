@@ -378,8 +378,9 @@ def make_outlinks(content, where):
     try:
         doc = document_fromstring(content)
         doc.make_links_absolute(where, resolve_base_href=True)
-        for element, _, link, _ in doc.iterlinks():
-            if element.tag in ("a", "img",):
+        for element, _attr, link, _pos in doc.iterlinks():
+            # ignore e.g. <a href="" rel="nofollow">
+            if element.tag in ("a", "img",) and element.get("rel") != "nofollow":
                 yield Link(link, link_text=element.text)
     except ParserError:
         # Silently drop ParserErrors, but only for empty documents
