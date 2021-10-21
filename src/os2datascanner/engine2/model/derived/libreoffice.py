@@ -1,6 +1,6 @@
 import logging
 import magic
-from os import unlink, listdir, scandir
+from os import unlink, environ, listdir, scandir
 from tempfile import TemporaryDirectory
 from contextlib import closing
 from subprocess import DEVNULL
@@ -38,12 +38,17 @@ def libreoffice(*args):
     """Invokes LibreOffice with a fresh settings directory (which will be
     deleted as soon as the program finishes) and returns a CompletedProcess
     with both stdout and stderr captured."""
-    with TemporaryDirectory() as settings:
+    with TemporaryDirectory() as tmpdir:
         return run_custom(
                 ["libreoffice",
-                 "-env:UserInstallation=file://{0}".format(settings),
+                 "-env:UserInstallation=file://{0}/profile".format(tmpdir),
                  *args],
                 stdout=DEVNULL, stderr=DEVNULL, kill_group=True,
+                # Patch the environment to make sure that LibreOffice's
+                # temporary working files also get deleted whenever the
+                # process stops
+                env=environ | {
+                        "TMPDIR": tmpdir, "TEMP": tmpdir, "TMP": tmpdir},
                 timeout=engine2_settings.subprocess["timeout"], check=True)
 
 
