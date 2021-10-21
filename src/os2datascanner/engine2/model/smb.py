@@ -155,6 +155,10 @@ class SMBHandle(Handle):
     def presentation_url(self):
         return make_presentation_url(self)
 
+    @property
+    def sort_key(self):
+        return self.presentation.removesuffix(self.name).removesuffix("\\")
+
     def censor(self):
         return SMBHandle(self.source.censor(), self.relative_path)
 

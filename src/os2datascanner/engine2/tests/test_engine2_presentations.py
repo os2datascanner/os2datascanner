@@ -231,7 +231,7 @@ direct_sources = {
             "name": "not_a_file.txt",
             "presentation": "\\\\SERVER\\not_a_file.txt",
             "presentation_name": "not_a_file.txt",
-            "sort_key": "\\\\SERVER\\",
+            "sort_key": "\\\\SERVER",
             "type": "smb",
         },
     },
