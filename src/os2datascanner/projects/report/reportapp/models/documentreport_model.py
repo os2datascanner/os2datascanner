@@ -178,6 +178,7 @@ class DocumentReport(models.Model):
                                     name="unique_scanner_pk_and_path")
         ]
 
+
 DocumentReport.factory = ModelFactory(DocumentReport)
 
 

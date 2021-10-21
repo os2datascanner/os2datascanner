@@ -17,7 +17,7 @@ def bulk_update_document_report_scanner_job_pk(apps, schema_editor):
     chunk = []
 
     # Using iterator() to save memory.
-    # It's default chunk size is 2000, here we specify it to be explicit
+    # Its default chunk size is 2000, here we specify it to be explicit
     # and make it clear why we use modulus 2000.
     for i, doc_rep in enumerate(DocumentReport.objects.all().iterator(chunk_size = 2000)):
         doc_rep.scanner_job_pk = doc_rep.data.get("scan_tag").get("scanner").get("pk")
