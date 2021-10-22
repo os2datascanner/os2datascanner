@@ -361,6 +361,7 @@ services:
     image: nginx
     volumes:
       - ./dev-environment/data:/usr/share/nginx/html
+      - ./dev-environment/nginx_default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 8910:80
 
