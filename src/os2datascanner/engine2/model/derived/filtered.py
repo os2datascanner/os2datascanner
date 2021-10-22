@@ -5,7 +5,6 @@ from gzip import GzipFile
 from lzma import LZMAFile
 from datetime import datetime
 from contextlib import contextmanager
-from pathlib import Path
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
@@ -117,7 +116,7 @@ class FilteredHandle(Handle):
 
     @property
     def sort_key(self):
-        return str(Path(self.base_handle.presentation).parent)
+        return self.base_handle.sort_key
 
     @property
     def presentation_name(self):

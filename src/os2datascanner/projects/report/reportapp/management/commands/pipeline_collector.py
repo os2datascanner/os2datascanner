@@ -192,7 +192,7 @@ def handle_match_message(previous_report, new_report, body):  # noqa: CCR001, E5
         while source.handle:
             source = source.handle.source
         new_report.source_type = source.type_label
-        new_report.name = new_matches.handle.name
+        new_report.name = new_matches.handle.presentation_name
         new_report.sort_key = new_matches.handle.sort_key
 
         # Collect and store highest sensitivity value (should never be NoneType).
@@ -251,7 +251,7 @@ def handle_problem_message(previous_report, new_report, body):
             source = source.handle.source
 
         new_report.source_type = source.type_label
-        new_report.name = handle.name if handle else ""
+        new_report.name = handle.presentation_name if handle else ""
         new_report.sort_key = handle.sort_key if handle else "(source)"
 
         new_report.data["problem"] = body

@@ -185,7 +185,7 @@ class LibreOfficeObjectHandle(Handle):
     @property
     def sort_key(self):
         "Return the file path of the document"
-        return str(Path(self.base_handle.presentation).parent)
+        return self.base_handle.sort_key
 
     @property
     def presentation_name(self):

@@ -2,7 +2,6 @@ from os import listdir
 import PyPDF2
 from tempfile import TemporaryDirectory
 from subprocess import run
-from pathlib import Path
 
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource
@@ -72,7 +71,7 @@ class PDFPageHandle(Handle):
     @property
     def sort_key(self):
         "Return the file path of the document"
-        return str(Path(self.base_handle.presentation).parent)
+        return self.base_handle.sort_key
 
     @property
     def presentation_name(self):
@@ -150,7 +149,6 @@ class PDFObjectHandle(Handle):
 
     @property
     def sort_key(self):
-        "Return from the parent PDFPage handle"
         return self.source.handle.sort_key
 
     @property
