@@ -64,7 +64,8 @@ class TestRunner(PikaPipelineThread):
 # NOTE: rule_pk and org_pk CANNOT be 1, as the default created CPRRule points to
 # these keys. Thus the tearDown(or deletion) will fail when trying to delete the
 # rule and org.
-CONST_PK = 0  # const to add, in case we run this script outside testing
+# (XXX: don't hard-code primary keys ever)
+CONST_PK = 50000000  # const to add, in case we run this script outside testing
 SCANNER_PK = 1 + CONST_PK
 PATTERN_PK = 1 + CONST_PK
 RULE_PK = 2 + CONST_PK
@@ -94,6 +95,8 @@ messages.append(
 
 
 class CronTest(django.test.TestCase):
+    maxDiff = None
+
     def setUp(self):
         # create organisations
         client1 = Client.objects.create(name="client1")
