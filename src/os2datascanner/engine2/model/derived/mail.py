@@ -1,6 +1,5 @@
 from io import BytesIO
 import os.path
-from pathlib import Path
 import email
 from contextlib import contextmanager
 
@@ -109,7 +108,7 @@ class MailPartHandle(Handle):
 
     @property
     def sort_key(self):
-        return str(Path(self.base_handle.presentation).parent)
+        return self.base_handle.sort_key
 
     @property
     def presentation_name(self):
