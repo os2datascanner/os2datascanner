@@ -97,7 +97,7 @@ class ListViewsTest(TestCase):
         self.user.is_superuser = True
         qs = self.listview_get_queryset(path, list_type)
         if isinstance(list_type, RuleList):
-            self.assertEqual(len(qs), 3)
+            self.assertEqual(len(qs), 6)
         elif isinstance(list_type, OrganizationListView):
             # Migrations 0042 adds os2datascanner as an organization
             # and that is why we expect 3 organizations listed as superuser.
