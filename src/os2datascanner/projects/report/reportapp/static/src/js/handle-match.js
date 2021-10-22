@@ -33,7 +33,7 @@ document.addEventListener("click", function (e) {
     toggleMatchesList(rows, targ);
 
     // store the user's preference in window.localStorage
-    var preference = hasClass(targ, "open") ? "expanded" : "collapsed";
+    var preference = hasClass(targ, "up") ? "expanded" : "collapsed";
     setStorage("os2ds-prefers-expanded-results", preference);
   }
 
@@ -52,11 +52,20 @@ document.addEventListener("click", function (e) {
         col.removeAttribute("hidden");
       }
     });
-
+ 
     // store the user's preference in window.localStorage
     var preference = isPressed ? "hide" : "show";
     setStorage("os2ds-prefers-probability", preference);
   }
+
+  if (hasClass(targ, "order-by")) {
+    $form = $('#filter_form')
+    orderBy = '<input type="hidden" name="order_by" value="' + targ.name + '">' 
+    order = '<input type="hidden" name="order" value="' + targ.value + '">'
+    $form.append(orderBy+order)
+    $form.submit()
+  }
+
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -100,8 +109,8 @@ function closestElement(elm, selector) {
 }
 
 function toggleMatchesList(objectRows, toggleButton) {
-  toggleClass(toggleButton, "open");
-  var buttonOpen = hasClass(toggleButton, "open");
+  toggleClass(toggleButton, "up");
+  var buttonOpen = hasClass(toggleButton, "up");
 
   Array.prototype.forEach.call(objectRows, function (row) {
     var matchesList = row.nextElementSibling;
@@ -115,14 +124,14 @@ function toggleMatchesList(objectRows, toggleButton) {
     matchesList.hidden = !buttonOpen;
     rowButton = row.querySelector(".matches-expand");
     if (buttonOpen) {
-      addClass(row, "open");
+      addClass(row, "up");
       if (rowButton !== toggleButton) {
-        addClass(rowButton, "open");
+        addClass(rowButton, "up");
       }
     } else {
-      removeClass(row, "open");
+      removeClass(row, "up");
       if (rowButton !== toggleButton) {
-        removeClass(rowButton, "open");
+        removeClass(rowButton, "up");
       }
     }
   })

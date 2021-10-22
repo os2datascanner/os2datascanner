@@ -80,9 +80,9 @@ class MainPageView(LoginRequiredMixin, ListView):
     template_name = 'index.html'
     paginator_class = EmptyPagePaginator
     paginate_by = 10  # Determines how many objects pr. page.
-    context_object_name = "matches"  # object_list renamed to something more relevant
+    context_object_name = "document_reports"  # object_list renamed to something more relevant
     model = DocumentReport
-    matches = DocumentReport.objects.filter(
+    document_reports = DocumentReport.objects.filter(
         data__matches__matched=True).filter(
         resolution_status__isnull=True).order_by("sort_key")
     scannerjob_filters = None
@@ -92,7 +92,7 @@ class MainPageView(LoginRequiredMixin, ListView):
         user = self.request.user
         roles = Role.get_user_roles_or_default(user)
         # Handles filtering by role + org and sets datasource_last_modified if non existing
-        self.matches = filter_inapplicable_matches(user, self.matches, roles)
+        self.document_reports = filter_inapplicable_matches(user, self.document_reports, roles)
 
         # Filters by datasource_last_modified.
         # lte mean less than or equal to.
@@ -100,31 +100,23 @@ class MainPageView(LoginRequiredMixin, ListView):
         # is done by subtracting 30 days from now and then comparing if
         # the saved time is "bigger" than that
         # and vice versa/smaller for older than.
-        # By default true and we show all matches. If false we only show matches older than 30 days
+        # By default true and we show all document_reports. If false we only show
+        # document_reports older than 30 days
         if self.request.GET.get('30-days') == 'false':
-            # Exactly 30 days is deemed to be "older than 30 days"
-            time_threshold = time_now() - timedelta(days=30)
-            older_than_30_days = self.matches.filter(
-                datasource_last_modified__lte=time_threshold)
-            self.matches = older_than_30_days
+            older_than_30 = time_now() - timedelta(days=30)
+            self.document_reports = self.document_reports.filter(
+                datasource_last_modified__lte=older_than_30)
 
-        if self.request.GET.get('scannerjob') \
-                and self.request.GET.get('scannerjob') != 'all':
-            # Filter by scannerjob
-            self.matches = self.matches.filter(
-                data__scan_tag__scanner__pk=int(
-                    self.request.GET.get('scannerjob'))
-            )
-        if self.request.GET.get('sensitivities') \
-                and self.request.GET.get('sensitivities') != 'all':
-            # Filter by sensitivities
-            self.matches = self.matches.filter(
-                sensitivity=int(
-                    self.request.GET.get('sensitivities'))
-            )
+        if (scannerjob := self.request.GET.get('scannerjob')) and scannerjob != 'all':
+            self.document_reports = self.document_reports.filter(
+                data__scan_tag__scanner__pk=int(scannerjob))
 
-        # matches are always ordered by sensitivity desc. and probability desc.
-        return self.matches
+        if (sensitivity := self.request.GET.get('sensitivities')) and sensitivity != 'all':
+            self.document_reports = self.document_reports.filter(sensitivity=int(sensitivity))
+
+        self.order_queryset_by_property()
+
+        return self.document_reports
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -132,7 +124,7 @@ class MainPageView(LoginRequiredMixin, ListView):
 
         if self.scannerjob_filters is None:
             # Create select options
-            self.scannerjob_filters = self.matches.order_by(
+            self.scannerjob_filters = self.document_reports.order_by(
                 'data__scan_tag__scanner__pk').values(
                 'data__scan_tag__scanner__pk').annotate(
                 total=Count('data__scan_tag__scanner__pk')
@@ -147,7 +139,7 @@ class MainPageView(LoginRequiredMixin, ListView):
 
         context['30_days'] = self.request.GET.get('30-days', 'true')
 
-        sensitivities = self.matches.order_by(
+        sensitivities = self.document_reports.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
             total=Count('sensitivity')
@@ -161,6 +153,9 @@ class MainPageView(LoginRequiredMixin, ListView):
 
         context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
         context['paginate_by_options'] = self.paginate_by_options
+
+        context['order_by'] = self.request.GET.get('order_by', 'sort_key')
+        context['order'] = self.request.GET.get('order', 'ascending')
 
         return context
 
@@ -179,6 +174,19 @@ class MainPageView(LoginRequiredMixin, ListView):
                 'message': 'new matches'
             }
         )
+
+    def order_queryset_by_property(self):
+        """Checks if a sort key is allowed and orders the querset"""
+        allowed_sorting_properties = ['sort_key']
+        if (sort_key := self.request.GET.get('order_by')) and (
+                order := self.request.GET.get('order')):
+
+            if sort_key not in allowed_sorting_properties:
+                return
+
+            if order != 'ascending':
+                sort_key = '-'+sort_key
+            self.document_reports = self.document_reports.order_by(sort_key)
 
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
