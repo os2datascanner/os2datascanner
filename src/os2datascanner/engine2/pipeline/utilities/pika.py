@@ -235,6 +235,8 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                         exchange: str = "",
                         **basic_properties):
         """Requests that the background thread send a message."""
+        if not isinstance(body, bytes):
+            body = json.dumps(body).encode()
         return self._enqueue("msg", queue, body, exchange, basic_properties)
 
     def await_message(self, timeout: float = None):
@@ -294,7 +296,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                                     properties=pika.BasicProperties(
                                             delivery_mode=2,
                                             **properties),
-                                    body=json.dumps(body).encode())
+                                    body=body)
                         elif label == "ack":
                             delivery_tag = head[1]
                             self.channel.basic_ack(delivery_tag)
