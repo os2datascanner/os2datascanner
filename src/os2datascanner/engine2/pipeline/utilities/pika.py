@@ -1,3 +1,4 @@
+import gzip
 import json
 import pika
 import time
@@ -190,6 +191,11 @@ class RejectMessage(BaseException):
         self.requeue = requeue
 
 
+_coders = {
+    "gzip": (gzip.compress, gzip.decompress)
+}
+
+
 class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
     """Runs a Pika session in a background thread."""
     def __init__(self, *args, exclusive=False, **kwargs):
@@ -234,9 +240,16 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                         body: bytes,
                         exchange: str = "",
                         **basic_properties):
-        """Requests that the background thread send a message."""
+        """Requests that the background thread send a message.
+
+        Note that the content_encoding property gets special treatment: if it's
+        set, the message will be encoded accordingly -- on the calling thread,
+        not the background one -- before it's enqueued."""
         if not isinstance(body, bytes):
             body = json.dumps(body).encode()
+        if (encoding := basic_properties.get("content_encoding")):
+            encoder, _ = _coders[encoding]
+            body = encoder(body)
         return self._enqueue("msg", queue, body, exchange, basic_properties)
 
     def await_message(self, timeout: float = None):
@@ -244,16 +257,25 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         value is the (method, properties, body) 3-tuple normally returned by
         BlockingConnection.basic_get. This method will return immediately if
         the background thread isn't running; otherwise, it will block until a
-        message is  available or until the given timeout elapses."""
+        message is available or until the given timeout elapses.
+
+        Note that messages with a declared content encoding will be decoded
+        automatically before being returned."""
+        method, properties, body = None, None, None
         with self._condition:
 
             def waiter():
                 return not self._live or len(self._incoming) > 0
             rv = self._condition.wait_for(waiter, timeout)
             if rv and self._live:
-                return self._incoming.pop(0)
-            else:
-                return None, None, None
+                method, properties, body = self._incoming.pop(0)
+        if body and properties and properties.content_encoding:
+            _, decoder = _coders[properties.content_encoding]
+            body = decoder(body)
+            # We've decoded the content, so from this point on it should be
+            # regarded as unencoded
+            properties.content_encoding = None
+        return method, properties, body
 
     def handle_message(self, routing_key, body):
         """Handles an AMQP message by yielding zero or more (queue name,
