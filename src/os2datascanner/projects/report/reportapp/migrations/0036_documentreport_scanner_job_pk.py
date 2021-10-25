@@ -19,18 +19,18 @@ def bulk_update_document_report_scanner_job_pk(apps, schema_editor):
     # Using iterator() to save memory.
     # Its default chunk size is 2000, here we specify it to be explicit
     # and make it clear why we use modulus 2000.
-    for i, doc_rep in enumerate(DocumentReport.objects.all().iterator(chunk_size = 2000)):
+    for i, doc_rep in enumerate(DocumentReport.objects.all().only("data").iterator(chunk_size = 2000)):
         doc_rep.scanner_job_pk = doc_rep.data.get("scan_tag").get("scanner").get("pk")
         chunk.append(doc_rep)
 
         if i % 2000 == 0 and chunk:
             DocumentReport.objects.bulk_update(chunk, ["scanner_job_pk"])
+            chunk.clear()
 
     if chunk:
         DocumentReport.objects.bulk_update(chunk, ["scanner_job_pk"])
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('os2datascanner_report', '0035_documentreport_delete_duplicate_scannerpk_and_path'),
     ]
