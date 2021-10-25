@@ -198,7 +198,9 @@ _coders = {
 
 class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
     """Runs a Pika session in a background thread."""
-    def __init__(self, *args, exclusive=False, **kwargs):
+    def __init__(
+            self, *args, exclusive=False, default_basic_properties=None,
+            **kwargs):
         super().__init__()
         PikaPipelineRunner.__init__(self, *args, **kwargs)
         self._incoming = SortedList(key=lambda e: -(e[1].priority or 0))
@@ -206,6 +208,10 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         self._live = None
         self._condition = threading.Condition()
         self._exclusive = exclusive
+        if default_basic_properties is None:
+            default_basic_properties = dict(
+                    delivery_mode=2, content_encoding="gzip")
+        self._default_basic_properties = default_basic_properties
 
         self._shutdown_exception = None
 
@@ -245,6 +251,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         Note that the content_encoding property gets special treatment: if it's
         set, the message will be encoded accordingly -- on the calling thread,
         not the background one -- before it's enqueued."""
+        basic_properties = self._default_basic_properties | basic_properties
         if not isinstance(body, bytes):
             body = json.dumps(body).encode()
         if (encoding := basic_properties.get("content_encoding")):
@@ -316,7 +323,6 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                                     exchange=exchange,
                                     routing_key=queue,
                                     properties=pika.BasicProperties(
-                                            delivery_mode=2,
                                             **properties),
                                     body=body)
                         elif label == "ack":
