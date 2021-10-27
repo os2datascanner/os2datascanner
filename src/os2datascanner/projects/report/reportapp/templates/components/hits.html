@@ -7,7 +7,7 @@
     <col class="datatable__column--name">
     <col class="datatable__column--matchcount">
     <col class="datatable__column--source">
-    {% comment %}<col class="datatable__column--path">{% endcomment %}
+    <col class="datatable__column--path">
     <col class="datatable__column--actions">
   </colgroup>
   <thead>
@@ -16,7 +16,7 @@
         {% include "components/handle-match.html" %}
         <div class="view-options">
           <button class="toggle probability-toggle" type="button" aria-pressed="false">{% trans 'Show match probability' %}</button>
-          <button class="matches-expand-all button" type="button">{% trans "Show/hide all matches" %} <i class="material-icons" aria-hidden="true">expand_more</i></button>
+          <button class="matches-expand-all button button-caret" type="button">{% trans "Show/hide all matches" %} <i class="material-icons" aria-hidden="true">expand_more</i></button>
         </div>
       </th>
     </tr>
@@ -38,11 +38,20 @@
       <th>
           {% trans "Source" %}
       </th>
-      {% comment %}
       <th>
           {% trans "Path" %}
+          {% comment %}We use a click event handler on this button to
+          submit the <form> defined in filters.html{% endcomment %}
+
+          <button
+            type="button"
+            name="sort_key"
+            class="order-by button button-caret{% if order_by == 'sort_key' and order == 'descending' %} up{% endif %}"
+            value="{% if order_by == 'sort_key' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+          >
+            <i class="material-icons" aria-hidden="true">expand_more</i>
+          </button>
       </th>
-      {% endcomment %}
       <th>
           <span class="screen-reader-only">{% trans "Actions" %}</span>
       </th>
@@ -50,7 +59,7 @@
   </thead>
 
   <tbody>
-    {% for match in matches %}
+    {% for document_report in document_reports %}
       {% include "components/hit.html" %}
     {% endfor %}
 

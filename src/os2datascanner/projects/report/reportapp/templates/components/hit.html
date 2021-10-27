@@ -1,14 +1,14 @@
 {% load handle_extras %}
 {% load i18n %}
 {% load l10n %}
-{% with type=match.matches.handle|find_type_label %}
-  {% for frag in match.matches.matches %}
+{% with type=document_report.matches.handle|find_type_label %}
+  {% for frag in document_report.matches.matches %}
     {% if frag.rule.type_label in renderable_rules and frag.matches %}
       <tr data-type="{{ type }}">
         <td>
           <div class="ds-checkbox">
-            <input type="checkbox" id="match-checkbox-{{ match.pk|unlocalize }}" value="" name="match-checkbox" class="datatable-checkbox" data-report-pk="{{ match.pk|unlocalize }}">
-            <label for="match-checkbox-{{ match.pk|unlocalize }}">
+            <input type="checkbox" id="match-checkbox-{{ document_report.pk|unlocalize }}" value="" name="match-checkbox" class="datatable-checkbox" data-report-pk="{{ document_report.pk|unlocalize }}">
+            <label for="match-checkbox-{{ document_report.pk|unlocalize }}">
               <span class="screen-reader-only">{% trans "Select result" %}</span>
             </label>
           </div>
@@ -17,22 +17,22 @@
         <td>
           <div class="tooltip">
             <div class="overflow-ellipsis">
-              <strong data-tooltip-text>{{ match.matches.handle|present }}</strong>
+              <strong data-tooltip-text>{{ document_report.matches.handle|present }}</strong>
             </div>
           </div>
           <div class="hit-link">
             <div class="button-group">
-              {% if match.matches.handle|present_url %}
-                <a href="{{ match.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">
+              {% if document_report.matches.handle|present_url %}
+                <a href="{{ document_report.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">
                   {% trans "Open" %}
                 </a>
               {% endif %}
               {% if type != 'ews' %}
-                <button class="button" data-clipboard-text="{{ match.matches.handle|find_parent:type|present }}">
+                <button class="button" data-clipboard-text="{{ document_report.matches.handle|find_parent:type|present }}">
                   {% trans "Copy" %}
                 </button>
-                {% if match.matches.handle|find_parent:type|find_file_folder %}
-                  <a href="{{ match.matches.handle|find_parent:type|find_file_folder }}" class="button" target="_blank" rel="noopener">
+                {% if document_report.matches.handle|find_parent:type|find_file_folder %}
+                  <a href="{{ document_report.matches.handle|find_parent:type|find_file_folder }}" class="button" target="_blank" rel="noopener">
                     {% trans "Open folder" %}
                   </a>
                 {% endif %}
@@ -53,20 +53,19 @@
           </span>
         </td>
 
-        {% comment %}
+        {% comment %} path column {% endcomment%}
         <td>
           <div class="tooltip">
             <div class="overflow-ellipsis">
-              <span data-tooltip-text>{{ match.matches.handle|present }}</span>
+              <span data-tooltip-text>{{ document_report.sort_key }}</span>
             </div>
           </div>
         </td>
-        {% endcomment %}
 
         <td>
           <div class="button-group text-align-right">
             <button class="matches-handle button screen-reader-only-focusable" type="button">{% trans "Handle" %}</button>
-            <button class="matches-expand button" title="{% trans 'Show/hide matches' %}" type="button"><i class="material-icons" aria-hidden="true">expand_more</i></button>
+            <button class="matches-expand button button-caret" title="{% trans 'Show/hide matches' %}" type="button"><i class="material-icons" aria-hidden="true">expand_more</i></button>
           </div>
         </td>
       </tr>

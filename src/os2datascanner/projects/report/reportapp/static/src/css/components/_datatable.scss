@@ -21,8 +21,7 @@
   .datatable {
     margin: calc(var(--datatable-cell-padding) * -1) 0;
   }
-  .matches-expand,
-  .matches-expand-all {
+  .button-caret {
     background-color: transparent !important;
     .material-icons {
       pointer-events: none;
@@ -35,12 +34,13 @@
         color: var(--color-primary-dark);
       }
     }
-    &.open {
+    &.up {
       .material-icons {
         transform:rotate(180deg);
       }
     }
   }
+
   tr.open > td,
   tr.open > th {
     background-color: rgba(0,0,0,.07);

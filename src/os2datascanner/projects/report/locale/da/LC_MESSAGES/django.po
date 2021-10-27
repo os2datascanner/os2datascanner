@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-14 03:03-0500\n"
+"POT-Creation-Date: 2021-10-22 05:34-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,56 +23,61 @@ msgstr "Personlig information"
 msgid "Important dates"
 msgstr "Vigtige datoer"
 
-#: reportapp/models/aliases/adsidalias_model.py:31
+#: reportapp/models/aliases/adsidalias_model.py:32
 #, python-format
 msgid "%(value)s is not a valid SID"
 msgstr "%(value)s er ikke et gyldigt SID"
 
-#: reportapp/models/aliases/alias_model.py:35
+#: reportapp/models/aliases/alias_model.py:36
 msgid "Match relation"
 msgstr "Match relation"
 
-#: reportapp/models/documentreport_model.py:24
+#: reportapp/models/documentreport_model.py:23
 msgid "scan time"
 msgstr "scanningstid"
 
-#: reportapp/models/documentreport_model.py:27
+#: reportapp/models/documentreport_model.py:26
 msgid "created timestamp"
 msgstr "oprettet tidsstempel"
 
-#: reportapp/models/documentreport_model.py:31
+#: reportapp/models/documentreport_model.py:30
 msgid "organization"
 msgstr "organisation"
 
-#: reportapp/models/documentreport_model.py:34
+#: reportapp/models/documentreport_model.py:33
 msgid "path"
-msgstr "filsti"
+msgstr "sti"
 
-#: reportapp/models/documentreport_model.py:40
+#: reportapp/models/documentreport_model.py:45
+#, fuzzy
+msgid "name"
+msgstr "navn"
+
+#: reportapp/models/documentreport_model.py:48
 msgid "source type"
 msgstr "kildetype"
 
-#: reportapp/models/documentreport_model.py:42
+#: reportapp/models/documentreport_model.py:50
 msgid "sensitivity"
 msgstr "følsomhed"
 
-#: reportapp/models/documentreport_model.py:44
+#: reportapp/models/documentreport_model.py:52
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport_model.py:120
+#: reportapp/models/documentreport_model.py:129
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport_model.py:123
+#: reportapp/models/documentreport_model.py:132
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport_model.py:126
+#: reportapp/models/documentreport_model.py:135
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport_model.py:159
+#: reportapp/models/documentreport_model.py:168
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -100,38 +105,49 @@ msgstr "leder"
 msgid "leaders"
 msgstr "ledere"
 
-#: reportapp/models/roles/remediator_model.py:35
+#: reportapp/models/roles/remediator_model.py:33
 msgid "remediator"
 msgstr "oprydder"
 
-#: reportapp/models/roles/remediator_model.py:36
+#: reportapp/models/roles/remediator_model.py:34
 msgid "remediators"
 msgstr "opryddere"
 
 #: reportapp/templates/components/filters.html:28
 #: reportapp/templates/components/filters.html:57
+#: reportapp/templates/components/order-by.html:28
+#: reportapp/templates/components/order-by.html:57
 msgid "Clear"
 msgstr "Ryd"
 
 #: reportapp/templates/components/filters.html:31
+#: reportapp/templates/components/order-by.html:31
 msgid "Scan"
 msgstr "Scan"
 
 #: reportapp/templates/components/filters.html:40
+#: reportapp/templates/components/order-by.html:40
 msgid "Select scannerjob"
 msgstr "Vælg scannerjob"
 
 #: reportapp/templates/components/filters.html:60
+#: reportapp/templates/components/order-by.html:60
 #: reportapp/templates/components/statistics-template.html:93
 #: reportapp/templates/components/statistics-template.html:99
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
 #: reportapp/templates/components/filters.html:69
+#: reportapp/templates/components/order-by.html:69
 msgid "Select sensitivity"
 msgstr "Vælg følsomhed"
 
-#: reportapp/templates/components/filters.html:97
+#: reportapp/templates/components/filters.html:87
+msgid "Sort by"
+msgstr "Sortér efter"
+
+#: reportapp/templates/components/filters.html:120
+#: reportapp/templates/components/order-by.html:97
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
@@ -505,29 +521,32 @@ msgstr ""
 "Med venlig hilsen<br>\n"
 "OS2datascanner-systemet\n"
 
-#: reportapp/views/views.py:74
+#: reportapp/views/views.py:77
 msgid "The page does not exist"
 msgstr ""
 
-#: reportapp/views/views.py:278
+#: reportapp/views/views.py:288
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:279
+#: reportapp/views/views.py:289
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:280
+#: reportapp/views/views.py:290
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:281
+#: reportapp/views/views.py:291
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:432
+#: reportapp/views/views.py:442
 msgid "Not assigned"
 msgstr "Ikke tildelt"
+
+#~ msgid "Order"
+#~ msgstr "Rækkefølge"
 
 #~ msgid "Path"
 #~ msgstr "Sti"
