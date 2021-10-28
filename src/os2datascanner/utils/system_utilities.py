@@ -4,6 +4,7 @@ import json
 import signal
 from datetime import datetime
 from dateutil import tz
+import tempfile
 import subprocess
 
 from os2datascanner.engine2.conversions.types import DATE_FORMAT
@@ -59,12 +60,16 @@ def run_custom(
         check=False,
         # Our own arguments
         kill_group=False,
+        isolate_tmp=False,
         **kwargs):
     """As subprocess.run, but with the following extra keyword arguments:
 
     * kill_group - if True, runs the subprocess in a new process group; in the
                    event of a timeout or error, the group rather than the
-                   individual process will be killed"""
+                   individual process will be killed
+    * isolate_tmp - if True, runs the subprocess with an environment in which
+                    $TMP, $TMPDIR and $TEMP all point to a freshly-created
+                    temporary folder that will be deleted at process exit"""
 
     def _setpgrp(next=None):
         def __setpgrp():
@@ -78,20 +83,33 @@ def run_custom(
     if kill_group:
         kwargs["preexec_fn"] = _setpgrp(kwargs.get("preexec_fn"))
 
+    temp_dir = None
+    if isolate_tmp:
+        temp_dir = tempfile.TemporaryDirectory()
+        temp_path = temp_dir.name
+        kwargs["env"] = kwargs.get("env", os.environ) | dict(
+                TMP=temp_path, TMPDIR=temp_path, TEMP=temp_path)
+
     out, err = None, None
     with subprocess.Popen(args, **kwargs) as process:
         try:
             out, err = process.communicate(input, timeout)
         except subprocess.TimeoutExpired:
-            (os.killpg(process.pid, signal.SIGKILL) if kill_group else process.kill())
+            (os.killpg(process.pid, signal.SIGKILL)
+                    if kill_group else process.kill())
             # We only need to take responsibility for our immediate child
             # process -- init will reap anything else
             o2, e2 = process.communicate()
             raise subprocess.TimeoutExpired(
                     args, timeout, output=o2, stderr=e2)
         except Exception:
-            (os.killpg(process.pid, signal.SIGKILL) if kill_group else process.kill())
+            (os.killpg(process.pid, signal.SIGKILL)
+                    if kill_group else process.kill())
             raise
+        finally:
+            if temp_dir:
+                temp_dir.cleanup()
+
     cp = subprocess.CompletedProcess(
             args=args,
             returncode=process.poll(),
