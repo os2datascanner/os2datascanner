@@ -41,15 +41,11 @@ def libreoffice(*args):
     with TemporaryDirectory() as tmpdir:
         return run_custom(
                 ["libreoffice",
-                 "-env:UserInstallation=file://{0}/profile".format(tmpdir),
+                 "-env:UserInstallation=file://{0}".format(tmpdir),
                  *args],
-                stdout=DEVNULL, stderr=DEVNULL, kill_group=True,
-                # Patch the environment to make sure that LibreOffice's
-                # temporary working files also get deleted whenever the
-                # process stops
-                env=environ | {
-                        "TMPDIR": tmpdir, "TEMP": tmpdir, "TMP": tmpdir},
-                timeout=engine2_settings.subprocess["timeout"], check=True)
+                stdout=DEVNULL, stderr=DEVNULL, check=True,
+                timeout=engine2_settings.subprocess["timeout"],
+                kill_group=True, isolate_tmp=True,)
 
 
 # The fallback CSV filter, used when HTML representations of spreadsheets are

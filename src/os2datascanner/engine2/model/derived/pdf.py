@@ -1,8 +1,8 @@
 from os import listdir
 import PyPDF2
 from tempfile import TemporaryDirectory
-from subprocess import run
 
+from ....utils.system_utilities import run_custom
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource
 from ..file import FilesystemResource
@@ -108,19 +108,19 @@ class PDFPageSource(DerivedSource):
             # pdftohtml. Not having to parse HTML is a big performance win by
             # itself, but what's even better is that pdfimages doesn't produce
             # uncountably many texture images for embedded vector graphics
-            run(["pdftotext",
+            run_custom(["pdftotext",
                  "-q", "-nopgbrk",
                  "-eol", "unix",
                  "-f", page, "-l", page,
                  path, "{0}/page.txt".format(outputdir)],
                 timeout=engine2_settings.subprocess["timeout"],
-                check=True)
-            run(["pdfimages",
+                check=True, isolate_tmp=True)
+            run_custom(["pdfimages",
                 "-q", "-all",
                  "-f", page, "-l", page,
                  path, "{0}/image".format(outputdir)],
                 timeout=engine2_settings.subprocess["timeout"],
-                check=True)
+                check=True, isolate_tmp=True)
             yield outputdir
 
     def handles(self, sm):
