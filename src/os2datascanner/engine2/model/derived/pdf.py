@@ -108,19 +108,21 @@ class PDFPageSource(DerivedSource):
             # pdftohtml. Not having to parse HTML is a big performance win by
             # itself, but what's even better is that pdfimages doesn't produce
             # uncountably many texture images for embedded vector graphics
-            run_custom(["pdftotext",
-                 "-q", "-nopgbrk",
-                 "-eol", "unix",
-                 "-f", page, "-l", page,
-                 path, "{0}/page.txt".format(outputdir)],
-                timeout=engine2_settings.subprocess["timeout"],
-                check=True, isolate_tmp=True)
-            run_custom(["pdfimages",
-                "-q", "-all",
-                 "-f", page, "-l", page,
-                 path, "{0}/image".format(outputdir)],
-                timeout=engine2_settings.subprocess["timeout"],
-                check=True, isolate_tmp=True)
+            run_custom(
+                    [
+                            "pdftotext", "-q", "-nopgbrk", "-eol", "unix",
+                            "-f", page, "-l", page, path,
+                            "{0}/page.txt".format(outputdir)
+                    ],
+                    timeout=engine2_settings.subprocess["timeout"],
+                    check=True, isolate_tmp=True)
+            run_custom(
+                    [
+                            "pdfimages", "-q", "-all", "-f", page, "-l", page,
+                            path, "{0}/image".format(outputdir)
+                    ],
+                    timeout=engine2_settings.subprocess["timeout"],
+                    check=True, isolate_tmp=True)
             yield outputdir
 
     def handles(self, sm):

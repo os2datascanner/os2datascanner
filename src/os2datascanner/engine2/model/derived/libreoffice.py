@@ -1,6 +1,6 @@
 import logging
 import magic
-from os import unlink, environ, listdir, scandir
+from os import unlink, listdir, scandir
 from tempfile import TemporaryDirectory
 from contextlib import closing
 from subprocess import DEVNULL
