@@ -116,7 +116,8 @@ def handle_metadata_message(new_report, result):
         new_report.datasource_last_modified = (
                 message.scan_tag.time or time_now())
     logger.debug("updating timestamp", report=new_report.presentation)
-    new_report.save()
+
+    save_if_path_and_scanner_job_pk_unique(new_report, message.scan_tag.scanner.pk)
 
 
 def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
@@ -201,7 +202,10 @@ def handle_match_message(previous_report, new_report, body):  # noqa: CCR001, E5
         new_report.probability = new_matches.probability
         # Sort matches by prop. desc.
         new_report.data["matches"] = sort_matches_by_probability(body)
-        new_report.save()
+
+        save_if_path_and_scanner_job_pk_unique(
+            new_report, new_matches.scan_spec.scan_tag.scanner.pk)
+
         logger.debug("matches, saving new DocReport", report=new_report)
     elif new_report is not None:
         logger.debug("No new matches.")
@@ -253,9 +257,10 @@ def handle_problem_message(previous_report, new_report, body):
         new_report.source_type = source.type_label
         new_report.name = handle.presentation_name if handle else ""
         new_report.sort_key = handle.sort_key if handle else "(source)"
-
         new_report.data["problem"] = body
-        new_report.save()
+
+        save_if_path_and_scanner_job_pk_unique(new_report, problem.scan_tag.scanner.pk)
+
         logger.debug(
             "Unresolved, saving new report",
             report=new_report,
@@ -321,6 +326,28 @@ def handle_event(event_type, instance, cls):
     except ProtectedError as e:
         logger.debug(
                 f"handle_event: couldn't delete {cn} {event_obj.uuid}: {e}")
+
+
+def save_if_path_and_scanner_job_pk_unique(new_report, scanner_job_pk):
+    """
+      If a DocumentReport with scanner_job_pk and path already exists,
+      then creating a new one will violate path and scanner_job_pk unique constraint.
+
+      Therefore we check if one already exist, delete it if so, and then we create a new one.
+    """
+    try:
+        existing_report = DocumentReport.objects.filter(
+            scanner_job_pk=scanner_job_pk,
+            path=new_report.path
+        ).get()
+
+        existing_report.delete()
+        new_report.scanner_job_pk = scanner_job_pk
+        new_report.save()
+
+    except DocumentReport.DoesNotExist:
+        new_report.scanner_job_pk = scanner_job_pk
+        new_report.save()
 
 
 class CollectorRunner(PikaPipelineThread):
