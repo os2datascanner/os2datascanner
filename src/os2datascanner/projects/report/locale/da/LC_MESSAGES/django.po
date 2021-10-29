@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 05:34-0500\n"
+"POT-Creation-Date: 2021-10-29 02:39-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -48,6 +48,10 @@ msgstr "organisation"
 msgid "path"
 msgstr "sti"
 
+#: reportapp/models/documentreport_model.py:40
+msgid "sort key"
+msgstr "sortér efter"
+
 #: reportapp/models/documentreport_model.py:45
 #, fuzzy
 msgid "name"
@@ -65,19 +69,19 @@ msgstr "følsomhed"
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport_model.py:129
+#: reportapp/models/documentreport_model.py:132
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport_model.py:132
+#: reportapp/models/documentreport_model.py:135
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport_model.py:135
+#: reportapp/models/documentreport_model.py:138
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport_model.py:168
+#: reportapp/models/documentreport_model.py:171
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -115,39 +119,28 @@ msgstr "opryddere"
 
 #: reportapp/templates/components/filters.html:28
 #: reportapp/templates/components/filters.html:57
-#: reportapp/templates/components/order-by.html:28
-#: reportapp/templates/components/order-by.html:57
 msgid "Clear"
 msgstr "Ryd"
 
 #: reportapp/templates/components/filters.html:31
-#: reportapp/templates/components/order-by.html:31
 msgid "Scan"
 msgstr "Scan"
 
 #: reportapp/templates/components/filters.html:40
-#: reportapp/templates/components/order-by.html:40
 msgid "Select scannerjob"
 msgstr "Vælg scannerjob"
 
 #: reportapp/templates/components/filters.html:60
-#: reportapp/templates/components/order-by.html:60
 #: reportapp/templates/components/statistics-template.html:93
 #: reportapp/templates/components/statistics-template.html:99
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
 #: reportapp/templates/components/filters.html:69
-#: reportapp/templates/components/order-by.html:69
 msgid "Select sensitivity"
 msgstr "Vælg følsomhed"
 
-#: reportapp/templates/components/filters.html:87
-msgid "Sort by"
-msgstr "Sortér efter"
-
-#: reportapp/templates/components/filters.html:120
-#: reportapp/templates/components/order-by.html:97
+#: reportapp/templates/components/filters.html:97
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
@@ -185,51 +178,55 @@ msgstr "Kopiér"
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:69
+#: reportapp/templates/components/hit.html:68
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:70
+#: reportapp/templates/components/hit.html:69
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:83
+#: reportapp/templates/components/hit.html:82
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:84
+#: reportapp/templates/components/hit.html:83
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:85
+#: reportapp/templates/components/hit.html:84
 msgid "Probability"
 msgstr "Sandsynlighed"
 
-#: reportapp/templates/components/hits.html:19
+#: reportapp/templates/components/hits.html:18
 msgid "Show match probability"
 msgstr "Vis sandsynlighed"
 
-#: reportapp/templates/components/hits.html:20
+#: reportapp/templates/components/hits.html:19
 msgid "Show/hide all matches"
 msgstr "Vis/skjul alle matches"
 
-#: reportapp/templates/components/hits.html:29
+#: reportapp/templates/components/hits.html:28
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: reportapp/templates/components/hits.html:34
+#: reportapp/templates/components/hits.html:33
 msgid "Name"
 msgstr "Navn"
 
-#: reportapp/templates/components/hits.html:37
+#: reportapp/templates/components/hits.html:36
 msgid "Matches"
 msgstr "Matches"
 
-#: reportapp/templates/components/hits.html:40
+#: reportapp/templates/components/hits.html:39
 msgid "Source"
 msgstr "Kilde"
 
-#: reportapp/templates/components/hits.html:49
+#: reportapp/templates/components/hits.html:42
+msgid "Path"
+msgstr "Sti"
+
+#: reportapp/templates/components/hits.html:57
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -521,9 +518,9 @@ msgstr ""
 "Med venlig hilsen<br>\n"
 "OS2datascanner-systemet\n"
 
-#: reportapp/views/views.py:77
+#: reportapp/views/views.py:76
 msgid "The page does not exist"
-msgstr ""
+msgstr "Siden eksisterer ikke"
 
 #: reportapp/views/views.py:288
 msgid "Other"
@@ -547,9 +544,6 @@ msgstr "Ikke tildelt"
 
 #~ msgid "Order"
 #~ msgstr "Rækkefølge"
-
-#~ msgid "Path"
-#~ msgstr "Sti"
 
 #~ msgid "Moved the file"
 #~ msgstr "Har flyttet filen"
