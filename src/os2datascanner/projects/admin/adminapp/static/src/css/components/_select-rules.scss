@@ -2,18 +2,19 @@
 .select-employees {
   display: grid;
   gap: 1rem;
+  grid-gap: 1rem;
   justify-items: stretch;
   grid-template-areas:
     "available"
     "icon"
     "selected";
-  grid-template-rows: 1fr .03fr 1fr;
+  grid-template-rows: auto 3.25rem auto auto;
   grid-template-columns: 1fr;
   line-height: 1;
   padding-bottom: 0.25rem;
   @media (min-width: $break-sm) {
     grid-template-rows: auto;
-    grid-template-columns: 1fr .03fr 1fr;
+    grid-template-columns: 1fr 3.25rem 1fr;
     grid-template-areas: "available icon selected";
   }
 
@@ -40,7 +41,6 @@
   .select-rules-title,
   .select-employees-title {
     width: 100%;
-    margin-bottom: .5rem;
     padding: .5rem;
     background-color: var(--color-primary-dark);
     color: var(--color-text-white);
@@ -73,7 +73,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 0;
+  margin: .5rem 0 0;
   padding: 0.5rem;
   transition: var(--transition-default);
 
@@ -90,10 +90,6 @@
   a {
     color: #222;
     text-decoration: none;
-  }
-
-  & + & {
-    margin-top: 0.5rem;
   }
 }
 
@@ -127,6 +123,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: normal; // prevent y-overflow
+}
+
+#changed_rules {
+  grid-column: 1 / -1;
+  grid-row: 4 / -1;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 5; // lines count towards the span value
+  -ms-grid-row: 6;
+  -ms-grid-row-span: 1;
 }
 
 //Filter

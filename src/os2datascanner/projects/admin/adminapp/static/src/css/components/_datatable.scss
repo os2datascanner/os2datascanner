@@ -11,13 +11,17 @@
   background-color: var(--color-widget-bg);
 
   // use gradients to signify that the table is scrollable
-  background:
+  background-image:
     linear-gradient(to right, white var(--datatable-cell-padding), transparent 100%),
-    linear-gradient(to right, #22222266, transparent 100%),
-    linear-gradient(to left, white var(--datatable-cell-padding), transparent 100%) 100% 0,
-    linear-gradient(to left, #22222266, transparent 100%) 100% 0,
-    var(--color-widget-bg);
+    linear-gradient(to right, #22222244, transparent 100%),
+    linear-gradient(to left, white var(--datatable-cell-padding), transparent 100%),
+    linear-gradient(to left, #22222244, transparent 100%);
   background-repeat: no-repeat;
+  background-position:
+    left top,
+    left top,
+    100% 0,
+    100% 0;
   background-size:
     calc(var(--datatable-cell-padding) * 4) 100%,
     var(--datatable-cell-padding) 100%,
@@ -28,6 +32,12 @@
     scroll,
     local,
     scroll;
+
+  // IE11 doesn't understand this implementation properly, so we use the media
+  // query below to target IE11 and then remove the shadows
+  @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    background-image: none !important;
+  }
 
   &:focus {
     box-shadow: var(--box-shadow-widget), 0 0 0 3px var(--color-primary-light);

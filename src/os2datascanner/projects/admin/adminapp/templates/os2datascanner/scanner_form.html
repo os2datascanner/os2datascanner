@@ -585,7 +585,7 @@
 
                 {% for value, tag in form.org_unit.field.choices %}
                 <li class="employee" data-employee-id="{{ value }}">
-                  <a href="javascript:void();" class="add-employee-button" title="{{ description }}" role="button">{{ tag }}</a>
+                  <a href="javascript:void(0);" class="add-employee-button" title="{{ description }}" role="button">{{ tag }}</a>
                 </li>
                 {% endfor %}
               </ul>
@@ -662,7 +662,7 @@
                 </div>
                 {% for value, tag in form.rules.field.choices %}
                 <li class="rule" data-rule-id="{{ value }}">
-                  <a href="javascript:void();" class="add-rule-button" title="{{ description }}" role="button">{{ tag }}</a>
+                  <a href="javascript:void(0);" class="add-rule-button" title="{{ description }}" role="button">{{ tag }}</a>
                 </li>
                 {% endfor %}
               </ul>

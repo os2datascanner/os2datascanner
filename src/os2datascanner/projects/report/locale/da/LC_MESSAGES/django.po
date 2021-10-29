@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-29 02:39-0500\n"
+"POT-Creation-Date: 2021-10-29 05:23-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -205,31 +205,31 @@ msgstr "Resultater"
 msgid "Show match probability"
 msgstr "Vis sandsynlighed"
 
-#: reportapp/templates/components/hits.html:19
+#: reportapp/templates/components/hits.html:20
 msgid "Show/hide all matches"
 msgstr "Vis/skjul alle matches"
 
-#: reportapp/templates/components/hits.html:28
+#: reportapp/templates/components/hits.html:29
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: reportapp/templates/components/hits.html:33
+#: reportapp/templates/components/hits.html:34
 msgid "Name"
 msgstr "Navn"
 
-#: reportapp/templates/components/hits.html:36
+#: reportapp/templates/components/hits.html:37
 msgid "Matches"
 msgstr "Matches"
 
-#: reportapp/templates/components/hits.html:39
+#: reportapp/templates/components/hits.html:40
 msgid "Source"
 msgstr "Kilde"
 
-#: reportapp/templates/components/hits.html:42
+#: reportapp/templates/components/hits.html:43
 msgid "Path"
 msgstr "Sti"
 
-#: reportapp/templates/components/hits.html:57
+#: reportapp/templates/components/hits.html:58
 msgid "Actions"
 msgstr "Handlinger"
 

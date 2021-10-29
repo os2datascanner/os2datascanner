@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-21 01:38-0500\n"
+"POT-Creation-Date: 2021-10-29 05:23-0500\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -197,12 +197,14 @@ msgstr "Scanner status"
 #: adminapp/templates/os2datascanner/scan_completed.html:28
 #: adminapp/templates/os2datascanner/scan_status.html:33
 #: adminapp/templates/os2datascanner/scanners.html:25
+#: adminapp/templates/os2datascanner/scanners.html:44
 #: adminapp/templates/partials/breadcrumb.html:6
 msgid "Scannerjob"
 msgstr "Scannerjob"
 
 #: adminapp/templates/components/navigation.html:29
 #: adminapp/templates/os2datascanner/rules.html:23
+#: adminapp/templates/os2datascanner/rules.html:41
 #: adminapp/templates/partials/breadcrumb.html:52
 msgid "Rules"
 msgstr "Regler"
@@ -233,13 +235,13 @@ msgstr "Håndbog"
 msgid "Logout"
 msgstr "Log ud"
 
-#: adminapp/templates/components/pagination.html:18
-#: adminapp/templates/components/pagination.html:25
+#: adminapp/templates/components/pagination.html:19
+#: adminapp/templates/components/pagination.html:26
 msgid "Previous"
 msgstr "Forrige"
 
-#: adminapp/templates/components/pagination.html:57
-#: adminapp/templates/components/pagination.html:64
+#: adminapp/templates/components/pagination.html:58
+#: adminapp/templates/components/pagination.html:65
 msgid "Next"
 msgstr "Næste"
 
@@ -288,7 +290,7 @@ msgstr "Ønsker du virkelig at slette?"
 
 #: adminapp/templates/os2datascanner/cprrule_confirm_delete.html:19
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:23
-#: adminapp/templates/os2datascanner/rules.html:219
+#: adminapp/templates/os2datascanner/rules.html:217
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:18
 #: adminapp/templates/os2datascanner/scanners.html:109
 msgid "No"
@@ -309,7 +311,7 @@ msgstr "Regel"
 
 #: adminapp/templates/os2datascanner/cprrule_form.html:188
 #: adminapp/templates/os2datascanner/regexrule_form.html:270
-#: adminapp/templates/os2datascanner/scanner_form.html:725
+#: adminapp/templates/os2datascanner/scanner_form.html:727
 msgid "Save changes"
 msgstr "Gem ændringer"
 
@@ -328,17 +330,17 @@ msgstr ""
 "Ønsker du virkelig at slette denne regel? Handlingen kan ikke fortrydes."
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:15
-#: adminapp/templates/os2datascanner/rules.html:208
+#: adminapp/templates/os2datascanner/rules.html:206
 msgid "Please note that this rule is currently included in"
 msgstr "Bemærk venligst at denne regel i øjeblikket indgår i"
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:16
-#: adminapp/templates/os2datascanner/rules.html:210
+#: adminapp/templates/os2datascanner/rules.html:208
 msgid "scannerjob and"
 msgstr "scannerjob og"
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:17
-#: adminapp/templates/os2datascanner/rules.html:211
+#: adminapp/templates/os2datascanner/rules.html:209
 msgid "reports."
 msgstr "rapporter."
 
@@ -405,18 +407,18 @@ msgid "Add rule"
 msgstr "Tilføj regel"
 
 #: adminapp/templates/os2datascanner/rules.html:46
-#: adminapp/templates/os2datascanner/rules.html:148
+#: adminapp/templates/os2datascanner/rules.html:146
 msgid "Name"
 msgstr "Navn"
 
 #: adminapp/templates/os2datascanner/rules.html:49
-#: adminapp/templates/os2datascanner/rules.html:151
+#: adminapp/templates/os2datascanner/rules.html:149
 #: adminapp/templates/os2datascanner/scanners.html:53
 msgid "Organization"
 msgstr "Organisation"
 
 #: adminapp/templates/os2datascanner/rules.html:52
-#: adminapp/templates/os2datascanner/rules.html:154
+#: adminapp/templates/os2datascanner/rules.html:152
 msgid "Description"
 msgstr "Beskrivelse"
 
@@ -427,7 +429,7 @@ msgid "Expression"
 msgstr "Udtryk"
 
 #: adminapp/templates/os2datascanner/rules.html:58
-#: adminapp/templates/os2datascanner/rules.html:157
+#: adminapp/templates/os2datascanner/rules.html:155
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
@@ -446,29 +448,31 @@ msgstr "Vis udtryk"
 msgid "Edit"
 msgstr "Redigér"
 
-#: adminapp/templates/os2datascanner/rules.html:134
+#: adminapp/templates/os2datascanner/rules.html:137
+#: adminapp/templates/os2datascanner/rules.html:141
 msgid "System rules"
 msgstr "Systemregler"
 
-#: adminapp/templates/os2datascanner/rules.html:188
-#: adminapp/templates/os2datascanner/rules.html:195
+#: adminapp/templates/os2datascanner/rules.html:186
+#: adminapp/templates/os2datascanner/rules.html:193
 msgid "Delete rule"
 msgstr "Slet regel"
 
-#: adminapp/templates/os2datascanner/rules.html:204
+#: adminapp/templates/os2datascanner/rules.html:202
 msgid "Do you want to delete"
 msgstr "Ønsker du at slette"
 
-#: adminapp/templates/os2datascanner/rules.html:205
+#: adminapp/templates/os2datascanner/rules.html:203
 msgid "This action cannot be undone."
 msgstr "Handlingen kan ikke fortrydes."
 
-#: adminapp/templates/os2datascanner/rules.html:216
+#: adminapp/templates/os2datascanner/rules.html:214
 #: adminapp/templates/os2datascanner/scanners.html:100
 msgid "Yes"
 msgstr "Ja"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:18
+#: adminapp/templates/os2datascanner/scan_completed.html:23
 #: adminapp/templates/os2datascanner/scanner_tabs.html:64
 msgid "Completed scans"
 msgstr "Udførte scanninger"
@@ -505,6 +509,7 @@ msgstr ""
 "Ønsker du virkelig at slette denne rapport? Handlingen kan ikke fortrydes."
 
 #: adminapp/templates/os2datascanner/scan_status.html:23
+#: adminapp/templates/os2datascanner/scan_status.html:28
 #: adminapp/templates/os2datascanner/scanner_tabs.html:61
 msgid "Scans in progress"
 msgstr "Igangværende scanninger"
@@ -698,39 +703,39 @@ msgstr "eller upload"
 msgid "List of mail users"
 msgstr "Liste af mail brugere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:559
+#: adminapp/templates/os2datascanner/scanner_form.html:560
 msgid "Existing file:"
 msgstr "Eksisterende fil:"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:579
+#: adminapp/templates/os2datascanner/scanner_form.html:581
 msgid "Available employees"
 msgstr "Tilgængelige medarbejdere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:595
+#: adminapp/templates/os2datascanner/scanner_form.html:597
 msgid "Selected employees"
 msgstr "Valgte medarbejdere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:610
+#: adminapp/templates/os2datascanner/scanner_form.html:612
 msgid "Scanner settings"
 msgstr "Scannerindstillinger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:652
+#: adminapp/templates/os2datascanner/scanner_form.html:654
 msgid "Add rules"
 msgstr "Tilføj regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:659
+#: adminapp/templates/os2datascanner/scanner_form.html:661
 msgid "Available rules"
 msgstr "Tilgængelige regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:672
+#: adminapp/templates/os2datascanner/scanner_form.html:674
 msgid "Selected rules"
 msgstr "Valgte regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:690
+#: adminapp/templates/os2datascanner/scanner_form.html:692
 msgid "Schedule scan"
 msgstr "Planlæg scan"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:701
+#: adminapp/templates/os2datascanner/scanner_form.html:703
 msgid ""
 "Schedule your scan by creating a fixed interval or adding a date to complete "
 "the scannerjob."
@@ -738,7 +743,7 @@ msgstr ""
 "Planlæg dit scan ved at oprette et fast interval eller tilføj en dato for "
 "afvikling af scannerjobbet."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:717
+#: adminapp/templates/os2datascanner/scanner_form.html:719
 msgid "The scanner will start at the following time for the selected days:"
 msgstr "Scanneren vil starte på følgende tidspunkt på de valgte dage:"
 
