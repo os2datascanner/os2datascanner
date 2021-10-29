@@ -234,7 +234,7 @@
     border-top: 1px solid rgba(0, 0, 0, 0.2);
     background-color: #f4f4f4;
     top: calc(2rem + var(--size-logo-height) + 6rem); // for sticky purposes; header height + 6rem
-    @media (min-width: $break-md) {
+    @media (min-width: $break-lg) {
       top: 6rem; // for sticky purposes
     }
   }
@@ -251,7 +251,7 @@
     &:last-child {
       border-top-right-radius: var(--border-radius-widget);
     }
-    @media (min-width: $break-md) {
+    @media (min-width: $break-lg) {
       top: 0; // for sticky purposes
     }
   }

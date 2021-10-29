@@ -5,7 +5,7 @@
   width: 100%;
   box-shadow: var(--box-shadow);
   z-index: 20;
-  @media (min-width: $break-md) {
+  @media (min-width: $break-lg) {
     position: static;
     width: 15rem;
     min-width: 15rem; // for IE11's sake, otherwise element will collapse completely if next to something that has flex-grow: 1
@@ -19,7 +19,7 @@
   font-size: 1rem;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  @media (min-width: $break-md) {
+  @media (min-width: $break-lg) {
     margin-left: 1rem;
     margin-top: 5rem;
   }
@@ -35,7 +35,7 @@
   text-decoration: none;
   margin-left: 1rem;
   margin-right: 1rem;
-  @media (min-width: $break-md) {
+  @media (min-width: $break-lg) {
     margin-top: 1.8rem;
     margin-right: 0;
   }
@@ -55,7 +55,7 @@
     height: 3.9rem;
     padding-left: 1rem;
   }
-  @media (min-width: $break-md) {
+  @media (min-width: $break-lg) {
     width: 13rem;
   }
 
@@ -83,7 +83,7 @@
   font-weight: 700;
   background-color: var(--color-body-bg);
   border-radius: 10px;
-  @media (min-width: $break-md) {
+  @media (min-width: $break-lg) {
     border-radius: 10px 0px 0px 10px;
   }
 
@@ -117,13 +117,13 @@
   }
 }
 
-@media (min-width: $break-md) {
+@media (min-width: $break-lg) {
   .navigation .logout {
     display: none;
   }
 }
 
-@media screen and (min-width: $break-md) {
+@media screen and (min-width: $break-lg) {
   .navigation li a.active::before {
     display: block !important;
   }

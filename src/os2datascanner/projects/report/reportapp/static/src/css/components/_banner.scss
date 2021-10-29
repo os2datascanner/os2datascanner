@@ -19,7 +19,7 @@
   @media (min-width: $break-xs) {
     flex-wrap: nowrap;
   }
-  @media (min-width: $break-md) {
+  @media (min-width: $break-lg) {
     position: static;
     width: auto;
     z-index: auto;
@@ -61,7 +61,7 @@
   &:hover {
     @include menuicon(var(--color-primary-light));
   }
-  @media (min-width: $break-md) {
+  @media (min-width: $break-lg) {
     display: none;
   }
 }
