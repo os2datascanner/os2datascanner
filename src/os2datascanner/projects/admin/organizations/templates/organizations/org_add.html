@@ -13,7 +13,9 @@
 
     <form class="form" role="form" method="post">{% csrf_token %}
         <section class="data-form">
+          <fieldset class="form__fieldset">
             {{ form.as_table }}
+          </fieldset>
         </section>
         <div class="form__group last-btn">
             <button type="submit" class="button button--cta" name="save" value="{% trans "create new organization"|capfirst %}">

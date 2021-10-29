@@ -53,14 +53,6 @@ h3 {
   font-weight: 600;
 }
 
-p,
-ol,
-ul,
-dl,
-.page-width {
-  max-width: 45rem;
-}
-
 ol,
 ul {
   ol,
@@ -116,6 +108,7 @@ code {
   background-color: rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.05);
   padding: 0.125rem 0.25em;
+  display: inline-block;
 }
 
 pre code {
@@ -146,6 +139,7 @@ pre code {
 }
 
 .prose {
+  max-width: 45rem;
   line-height: 1.5;
   h3 {
     font-size: 1.4rem;

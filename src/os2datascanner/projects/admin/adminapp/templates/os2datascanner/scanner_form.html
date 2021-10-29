@@ -87,6 +87,7 @@
 {% endblock %}
 
 {% block body %}
+{% include "partials/header.html" %}
 <div class="wrapper">
   {% include "partials/main.html" with active_tab="home" %}
 
@@ -299,11 +300,11 @@
           {% endif %}
 
           {% if form.service_account_file_gmail %}
-          <div class="form__group">
-            <label for="id_{{ form.service_account_file_gmail.name }}">
+          <div class="form__group form__group--flex">
+            <label for="id_{{ form.service_account_file_gmail.name }}" class="block">
               {% trans "Upload service account" %} (.json) *
             </label>
-            <input id="upload-file-service" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+            <input id="upload-file-service" placeholder="{% trans 'Select a file' %}" disabled="disabled" class="grow" />
             <div class="fileUpload button button--grey button--upload">
               <span>
                 {% trans "Upload" %}
@@ -335,11 +336,11 @@
           {% endif %}
 
           {% if form.user_emails_gmail %}
-          <div class="form__group">
-            <label for="id_{{ form.user_emails_gmail.name }}">
+          <div class="form__group form__group--flex">
+            <label for="id_{{ form.user_emails_gmail.name }}" class="block">
               {% trans "Upload list of accounts" %} (.csv) *
             </label>
-            <input id="upload-file-email" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+            <input id="upload-file-email" placeholder="{% trans 'Select a file' %}" disabled="disabled" class="grow" />
             <div class="fileUpload button button--grey button--upload">
               <span>
                 {% trans "Upload" %}
@@ -410,11 +411,11 @@
           {% endif %}
 
           {% if form.sitemap %}
-          <div class="form__group">
-            <label for="id_{{ form.sitemap.name }}">
+          <div class="form__group form__group--flex">
+            <label for="id_{{ form.sitemap.name }}" class="block">
               {% trans "Upload sitemap" %}
             </label>
-            <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+            <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" class="grow" />
             <div class="fileUpload button button--grey button--upload">
               <span>
                 {% trans "Upload" %}
@@ -437,11 +438,11 @@
           {% endif %}
 
             {% if form.service_account_file %}
-          <div class="form__group">
-            <label for="id_{{ form.service_account_file.name }}">
+          <div class="form__group form__group--flex">
+            <label for="id_{{ form.service_account_file.name }}" class="block">
               {% trans "Upload service account" %} (.json) *
             </label>
-              <input id="upload-file-service" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+              <input id="upload-file-service" placeholder="{% trans 'Select a file' %}" disabled="disabled" class="grow" />
               <div class="fileUpload button button--grey button--upload">
                 <span>
                   {% trans "Upload" %}
@@ -473,11 +474,11 @@
           {% endif %}
 
           {% if form.user_emails %}
-          <div class="form__group">
-            <label for="id_{{ form.user_emails.name }}">
+          <div class="form__group form__group--flex">
+            <label for="id_{{ form.user_emails.name }}" class="block">
               {% trans "Upload list of accounts" %} (.csv) *
             </label>
-              <input id="upload-file-email" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+              <input id="upload-file-email" placeholder="{% trans 'Select a file' %}" disabled="disabled" class="grow" />
               <div class="fileUpload button button--grey button--upload">
                 <span>
                   {% trans "Upload" %}
@@ -535,11 +536,11 @@
           {% endif %}
 
           {% if form.userlist %}
-          <div id="{{ form.userlist.auto_id }}_container" class="form__group{% if form.userlist.errors %} has-error{% endif %}">
-            <label class="control-label" for="id_{{ form.userlist.name }}">
+          <div id="{{ form.userlist.auto_id }}_container" class="form__group form__group--flex{% if form.userlist.errors %} has-error{% endif %}">
+            <label class="control-label block" for="id_{{ form.userlist.name }}">
               {% trans "List of mail users" %}
             </label>
-            <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" />
+            <input id="upload-file" placeholder="{% trans 'Select a file' %}" disabled="disabled" class="grow" />
             <div id="fileUpload" class="fileUpload button button--grey button--upload">
               <span>
                 {% trans "Upload" %}
@@ -553,11 +554,13 @@
                 value="{{ form.userlist.value }}"
                 {% endif %}>
             </div>
+            {% if form.userlist.value %}
             <p>
               <small>
                 {% trans "Existing file:" %} {{ form.userlist.value }}
               </small>
             </p>
+            {% endif %}
 
             {% if form.userlist.help_text %}
             <span class="form__help-text">{{ form.userlist.help_text }}</span>
@@ -582,7 +585,7 @@
 
                 {% for value, tag in form.org_unit.field.choices %}
                 <li class="employee" data-employee-id="{{ value }}">
-                  <a href="javascript:void();" class="add-employee-button" title="{{ description }}" role="button">{{ tag }}</a>
+                  <a href="javascript:void(0);" class="add-employee-button" title="{{ description }}" role="button">{{ tag }}</a>
                 </li>
                 {% endfor %}
               </ul>
@@ -659,7 +662,7 @@
                 </div>
                 {% for value, tag in form.rules.field.choices %}
                 <li class="rule" data-rule-id="{{ value }}">
-                  <a href="javascript:void();" class="add-rule-button" title="{{ description }}" role="button">{{ tag }}</a>
+                  <a href="javascript:void(0);" class="add-rule-button" title="{{ description }}" role="button">{{ tag }}</a>
                 </li>
                 {% endfor %}
               </ul>
@@ -710,7 +713,7 @@
           </div>
         </fieldset>
 
-        <fieldset>
+        <fieldset class="form__fieldset">
           {% if object.pk %}
               <p>
                 {% trans "The scanner will start at the following time for the selected days:" %}<br /> {{ object.get_start_time }}

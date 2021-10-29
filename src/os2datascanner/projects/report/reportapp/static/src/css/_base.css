@@ -17,6 +17,10 @@ footer {
   display: block;
 }
 
+img {
+  max-width: 100%;
+}
+
 .align-right {
   text-align: right !important;
 }

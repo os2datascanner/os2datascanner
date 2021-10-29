@@ -1,68 +1,64 @@
-<html class="login-bg">
-  {%  load i18n %}
-  {% include "partials/header.html" %}
+{% load i18n %}
+{% include "partials/header.html" %}
 
-    <section class="login-form">
-      <form method="post" action="{% url 'login' %}" class="form">
-          {% csrf_token %}
-        <h2>
-          {% trans "Log in" %}<br>
-          <span class="line-height">
-            {% trans "report module" %}
-          </span>
-        </h2>
+<section class="login-card">
+  <form method="post" action="{% url 'login' %}" class="form">
+      {% csrf_token %}
+    <h2>
+      {% trans "Log in" %}<br>{% trans "report module" %}
+    </h2>
 
-        <fieldset>
-          <div class="form__group">
-            <label for="username">
-              {% trans "Username" %}
-            </label>
-            <input type="text" name="{{ form.username.name }}" id="id_{{ form.username.name }}" autofocus>
+    <fieldset>
+      <div class="form__group">
+        <label for="id_{{ form.username.name }}">
+          {% trans "Username" %}
+        </label>
+        <input type="text" name="{{ form.username.name }}" id="id_{{ form.username.name }}" autofocus>
+      </div>
+
+      <div class="form__group">
+        <label for="id_{{ form.password.name }}">
+          {% trans "Password" %}
+        </label>
+        <input type="password" name="{{ form.password.name }}"  id="id_{{ form.password.name }}">
+
+        {% if form.password.errors %}
+          <div class="form__error">
+            {% trans "The username or password is incorrect" %}
           </div>
+        {% endif %}
+      </div>
 
-          <div class="form__group">
-            <label for="password">
-              {% trans "Password" %}
-            </label>
-            <input type="password" name="{{ form.password.name }}"  id="id_{{ form.password.name }}">
+      <div class="form__group">
+        <div class="ds-checkbox">
+          <input type="checkbox" name="remember-me" id="remember-me">
+          <label class="width" for="remember-me">
+            {% trans "Remember me" %}
+          </label>
+        </div>
+      </div>
 
-            {% if form.password.errors %}
-              <div class="form__error">
-                {% trans "The username or password is incorrect" %}
-              </div>
-            {% endif %}
-          </div>
+      <div class="form__group">
+        <button type="submit" class="login-btn">
+          {% trans "Login" %}
+        </button>
+      </div>
 
-          <div class="form__group">
-            <div class="ds-checkbox">
-              <input type="checkbox" name="remember-me" id="remember-me">
-              <label class="width" for="remember-me">
-                {% trans "Remember me" %}
-              </label>
-            </div>
-          </div>
+      <div class="form__group">
+        <label class="info">
+          {% trans "Did you forget your password?" %}
+          <a class="link" href="#">
+            {% trans "Click here" %}
+          </a>
+        </label>
+      </div>
 
-          <div class="form__group">
-            <button type="submit" class="login-btn">
-              {% trans "Login" %}
-            </button>
-          </div>
+      <div class="form__group logo">
+        {% include "components/logo-o.html" %}
+      </div>
+    </fieldset>
+  </form>
+</section>
 
-          <div class="form__group">
-            <label class="info">
-              {% trans "Did you forget your password?" %}
-              <a class="link" href="#">
-                {% trans "Click here" %}
-              </a>
-            </label>
-          </div>
-
-          <div class="form__group logo">
-            {% include "components/logo-o.html" %}
-          </div>
-        </fieldset>
-      </form>
-    </section>
-
-  </body>
+</body>
 </html>

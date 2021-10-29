@@ -5,7 +5,7 @@
   {% for frag in document_report.matches.matches %}
     {% if frag.rule.type_label in renderable_rules and frag.matches %}
       <tr data-type="{{ type }}">
-        <td>
+        <td class="datatable__column--handle">
           <div class="ds-checkbox">
             <input type="checkbox" id="match-checkbox-{{ document_report.pk|unlocalize }}" value="" name="match-checkbox" class="datatable-checkbox" data-report-pk="{{ document_report.pk|unlocalize }}">
             <label for="match-checkbox-{{ document_report.pk|unlocalize }}">
@@ -14,7 +14,7 @@
           </div>
         </td>
 
-        <td>
+        <td class="datatable__column--name">
           <div class="tooltip">
             <div class="overflow-ellipsis">
               <strong data-tooltip-text>{{ document_report.matches.handle|present }}</strong>
@@ -41,11 +41,11 @@
           </div>
         </td>
 
-        <td>
+        <td class="datatable__column--matchcount">
           {{ frag.matches|length }}
         </td>
 
-        <td>
+        <td class="datatable__column--source">
           <span class="icon-filetype icon-filetype--{{ type }}">
           {% with svg_icon=type|find_svg_icon %}
             {% include svg_icon %}
@@ -54,7 +54,7 @@
         </td>
 
         {% comment %} path column {% endcomment%}
-        <td>
+        <td class="datatable__column--path">
           <div class="tooltip">
             <div class="overflow-ellipsis">
               <span data-tooltip-text>{{ document_report.sort_key }}</span>
@@ -62,7 +62,7 @@
           </div>
         </td>
 
-        <td>
+        <td class="datatable__column--actions">
           <div class="button-group text-align-right">
             <button class="matches-handle button screen-reader-only-focusable" type="button">{% trans "Handle" %}</button>
             <button class="matches-expand button button-caret" title="{% trans 'Show/hide matches' %}" type="button"><i class="material-icons" aria-hidden="true">expand_more</i></button>

@@ -1,10 +1,19 @@
 .logo {
-  padding-top: .25rem;
+  height: var(--size-logo-height);
+  width: var(--size-logo-width);
+}
+
+.logo > a {
+  display: block;
+  height: 100%;
 }
 
 .logo svg {
-  margin-left: 0.25rem;
-  height: 2rem;
+  height: var(--size-logo-height);
+  max-height: 100%;
+  display: block;
+  max-width: 100%;
+  min-width: calc(var(--size-logo-width) / 2);
 }
 
 .logo .cls-1 {

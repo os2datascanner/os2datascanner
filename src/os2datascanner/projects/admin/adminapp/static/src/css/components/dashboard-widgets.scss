@@ -1,9 +1,7 @@
 .dashboard-widgets {
   display: grid;
   gap: var(--size-ds-unit);
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr) ) ;
-  max-width: 80rem;
-  width: calc(100% - 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .dashboard-widget {

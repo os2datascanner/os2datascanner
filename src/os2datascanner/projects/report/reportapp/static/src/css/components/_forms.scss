@@ -14,6 +14,20 @@
 
   .form__group {
     display: block;
+    &--flex {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      .block {
+        flex: 0 0 100%;
+      }
+      .grow {
+        flex: 1 0 auto;
+      }
+      .shrink {
+        flex: 0 1 auto;
+      }
+    }
   }
 
   .form__group + .form__group {

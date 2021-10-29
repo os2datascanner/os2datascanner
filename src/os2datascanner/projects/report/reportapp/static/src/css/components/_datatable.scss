@@ -1,5 +1,67 @@
 :root {
-  --datatable-cell-padding: 2rem;
+  --datatable-cell-padding: 2em;
+}
+
+.datatable-wrapper {
+  clear: both;
+  &.sm, &.md, &.lg {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  &.sm {
+    > .datatable {
+      min-width: 35rem;
+    }
+  }
+  &.md {
+    > .datatable {
+      min-width: 45rem;
+    }
+  }
+  &.lg {
+    > .datatable {
+      min-width: 55rem;
+    }
+  }
+  &.card {
+    box-shadow: var(--box-shadow-widget);
+    border-radius: var(--border-radius-widget);
+    margin-bottom: calc(2 * var(--datatable-cell-padding));
+    background-color: var(--color-widget-bg);
+
+    // use gradients to signify that the table is scrollable
+    background-image:
+      linear-gradient(to right, white var(--datatable-cell-padding), transparent 100%),
+      linear-gradient(to right, #22222244, transparent 100%),
+      linear-gradient(to left, white var(--datatable-cell-padding), transparent 100%),
+      linear-gradient(to left, #22222244, transparent 100%);
+    background-repeat: no-repeat;
+    background-position:
+      left top,
+      left top,
+      100% 0,
+      100% 0;
+    background-size:
+      calc(var(--datatable-cell-padding) * 4) 100%,
+      var(--datatable-cell-padding) 100%,
+      calc(var(--datatable-cell-padding) * 4) 100%,
+      var(--datatable-cell-padding) 100%;
+    background-attachment:
+      local,
+      scroll,
+      local,
+      scroll;
+
+    // IE11 doesn't understand this implementation properly, so we use the media
+    // query below to target IE11 and then remove the shadows
+    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+      background-image: none !important;
+    }
+
+    &:focus {
+      box-shadow: var(--box-shadow-widget), 0 0 0 3px var(--color-primary-light);
+    }
+  }
 }
 
 // datatable, start
@@ -8,12 +70,6 @@
   border-spacing: 0;
   table-layout: fixed;
   width: 100%;
-  &-card {
-    background-color: var(--color-widget-bg);
-    box-shadow: var(--box-shadow-widget);
-    border-radius: var(--border-radius-widget);
-    margin-bottom: calc(2 * var(--datatable-cell-padding));
-  }
   &.disabled {
     pointer-events: none;
     opacity: .6;
@@ -72,16 +128,43 @@
     }
     &--matchcount {
       width: 6.5rem;
+      display: none;
     }
     &--source {
       width: 6.5rem;
+      display: none;
     }
     &--path {
       width: 100%;
     }
     &--actions {
       width: 12rem;
+      .action-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -.25rem 0 0 -.25rem;
+        .button {
+          margin: .25rem 0 0 .25rem;
+        }
+        > * {
+          flex: 0 1 auto; // be explicit for IE11s sake
+        }
+      }
     }
+  }
+}
+
+
+@media (min-width: $break-sm) {
+  col.datatable__column--matchcount,
+  col.datatable__column--source {
+    display: table-column;
+  }
+  td.datatable__column--matchcount,
+  th.datatable__column--matchcount,
+  td.datatable__column--source,
+  th.datatable__column--source {
+    display: table-cell;
   }
 }
 
@@ -136,26 +219,41 @@
 }
 // datatable th & td, end
 
-.datatable .column-headings th {
-  font-size: 1rem;
-  font-weight: bold;
-  top: 10.5rem;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-  z-index: 2;
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
-  background-color: #f4f4f4;
+.datatable .column-headings th,
+.datatable .handle-matches th {
+  position: static; // override aggressive position: relative; on * in _base.scss
 }
 
-.datatable .handle-matches th {
-  top: 4.5rem;
-  background-color: #fff;
-  z-index: 2;
-  &:first-child {
-    border-top-left-radius: var(--border-radius-widget);
+.datatable .column-headings {
+  th {
+    font-size: 1rem;
+    font-weight: bold;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    z-index: 2;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: #f4f4f4;
+    top: calc(2rem + var(--size-logo-height) + 6rem); // for sticky purposes; header height + 6rem
+    @media (min-width: $break-md) {
+      top: 6rem; // for sticky purposes
+    }
   }
-  &:last-child {
-    border-top-right-radius: var(--border-radius-widget);
+}
+
+.datatable .handle-matches {
+  th {
+    background-color: #fff;
+    z-index: 2;
+    top: calc(2rem + var(--size-logo-height)); // for sticky purposes; header height
+    &:first-child {
+      border-top-left-radius: var(--border-radius-widget);
+    }
+    &:last-child {
+      border-top-right-radius: var(--border-radius-widget);
+    }
+    @media (min-width: $break-md) {
+      top: 0; // for sticky purposes
+    }
   }
 }
 

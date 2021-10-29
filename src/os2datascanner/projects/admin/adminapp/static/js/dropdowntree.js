@@ -61,7 +61,7 @@ let selectedValues = [];
 		opts.shouldFocusInput = false;
 		opts.placeholder = gettext('Select one or more organizational units');
     	opts.allowClear = true;
-		opts.width = '100%';
+		opts.width = 'element';
 		var s2inst = this.select2(opts);
 
 		// when building the tree, add all already selected values and mark them
@@ -78,7 +78,7 @@ let selectedValues = [];
 			$allsch.on("input", inputHandler);
 		});
 
-		// Show search result options even if they are collapsed 
+		// Show search result options even if they are collapsed
 		function inputHandler() {
 			var s2data = s2inst.data("select2");
 
@@ -95,7 +95,7 @@ let selectedValues = [];
 			let options = Array.prototype.slice.call(document.querySelectorAll("li.select2-results__option"));
 			let selectedNode = options.filter(function (element) { return element.dataset.val === selectedId; })[0];
 			//if the dropdown menu is openend, remove the checkmark
-			if( selectedNode ) {	
+			if( selectedNode ) {
 				$(selectedNode.querySelector(".item-label").children[0]).removeClass('org-icon-selected');
 				$(selectedNode.querySelector(".item-label").children[0]).addClass('org-icon');
 			}
@@ -111,7 +111,7 @@ let selectedValues = [];
 					childNode.ariaSelected = false;
 				}
 			});
-			//..unselect them from selectedValues			
+			//..unselect them from selectedValues
 			let toBeRemoved = [selectedId];
 			descendents.forEach(function (item) { toBeRemoved.push(item); });
 			toBeRemoved.forEach(function (element) {
@@ -131,7 +131,7 @@ let selectedValues = [];
 		function selectNodes(selectedId, selectChildren) {
 			selectedValues.push(selectedId);
 			selectedIds = [selectedId];
-			
+
 			if(selectChildren){
 				let descendents = [];
 				findChildNodes(selectedId, descendents);
@@ -143,7 +143,7 @@ let selectedValues = [];
 			let selectedNodes = options.filter(function (option) {
 				return selectedIds.indexOf(option.dataset.val)!==-1;
 			});
-			selectedNodes.forEach( function(node) {	
+			selectedNodes.forEach( function(node) {
 				if( node.className.indexOf('non-leaf') !== -1 && node.className.indexOf('opened') === -1  ) {
 					$(node).addClass('opened');
 					showHideSub(node);
@@ -187,8 +187,8 @@ let selectedValues = [];
 		/** finds all descendents of a node, if recursively === false, only go one lvl down */
 		function findChildNodes(selectedId, descendentsIds) {
 			//babel conversion for a default param
-			var recursively = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true; 
-			
+			var recursively = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
 			var $selectedNode = $('#treeview_option_' + selectedId);
 			var descendents = $selectedNode.data('descendents');
 

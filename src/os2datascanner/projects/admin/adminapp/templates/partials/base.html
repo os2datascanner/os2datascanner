@@ -51,7 +51,7 @@
   <script src="{% static 'src/js/svgxuse.js' %}" defer></script>
 
 </head>
-<body class="{{ body_class|default:'page' }}">
+<body class="{% block body_class %}{% endblock %} page">
 
   {% block additional_styles %}
   {% endblock %}

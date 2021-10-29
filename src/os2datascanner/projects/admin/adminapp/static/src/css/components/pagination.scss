@@ -1,20 +1,11 @@
 .pagination {
-  background-color: var(--color-widget-bg);
   border-top: 1px solid rgba(0, 0, 0, 0.2);
-  max-width: 90rem;
   table-layout: fixed;
-  width: calc(100% - 2rem);
   margin-bottom: 2rem;
 
   &__column {
     &--page {
-      width: 100%;
-      max-width: 11rem;
       border-radius: 0 0 0 1.25rem;
-    }
-
-    &--pages {
-      max-width: 45rem;
     }
   }
 
@@ -29,21 +20,25 @@
     background-color: transparent;
     border-top: none;
     line-height: 1;
-    padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
+    padding: calc(var(--datatable-cell-padding) / 2) !important; // !important in order to override specificity of .datatable td:first-child selector
     vertical-align: top;
   }
 
   .flex {
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
     align-items: center;
+    justify-content: space-between;
     font-size: 1rem;
-    justify-content: center;
     margin-top: 0;
   }
 
+  .page_of_pages,
+  .paginator {
+    padding: calc(var(--datatable-cell-padding) / 2);
+  }
+
   .page_of_pages {
-    padding-left: 1rem;
     color: var(--color-text-secondary);
     vertical-align: top;
   }

@@ -2,13 +2,7 @@
 {% load static %}
 {% load i18n %}
 
-{% block additional_styles %}
-<style>
-  html {
-    background: transparent linear-gradient(180deg, #5CA4CD 0%, #21759C 100%) 0% 0% no-repeat padding-box;
-  }
-</style>
-{% endblock %}
+{% block body_class %}login-bg{% endblock %}
 
 {%  block title %}
   {% trans "Logout" %}
@@ -16,14 +10,16 @@
 
 {% block body %}
 
-<section class="logout-content">
+<section class="login-card">
     <p>
       {% trans "Thank you for using OS2datascanner." %}
     </p>
-    <a href="/accounts/login/">
-      {% trans "Log in" %}
-    </a>
-    <span>{% trans "again" %}</span>
+    
+    <a href="/accounts/login/">{% trans "Log in" %}</a> <span>{% trans "again" %}</span>
+
+    <div class="form__group logo">
+      {% include "components/logo-o.html" %}
+    </div>
 </section>
 
 {% endblock %}

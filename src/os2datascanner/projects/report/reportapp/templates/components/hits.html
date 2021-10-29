@@ -1,69 +1,71 @@
 {% load handle_extras %}
 {%  load i18n %}
 
-<table class="datatable datatable-card">
-  <colgroup>
-    <col class="datatable__column--handle">
-    <col class="datatable__column--name">
-    <col class="datatable__column--matchcount">
-    <col class="datatable__column--source">
-    <col class="datatable__column--path">
-    <col class="datatable__column--actions">
-  </colgroup>
-  <thead>
-    <tr class="handle-matches sticky">
-      <th colspan="6">
-        {% include "components/handle-match.html" %}
-        <div class="view-options">
-          <button class="toggle probability-toggle" type="button" aria-pressed="false">{% trans 'Show match probability' %}</button>
-          <button class="matches-expand-all button button-caret" type="button">{% trans "Show/hide all matches" %} <i class="material-icons" aria-hidden="true">expand_more</i></button>
-        </div>
-      </th>
-    </tr>
-    <tr class="column-headings sticky">
-      <th>
-        <div class="ds-checkbox">
-          <input id="select-all" type="checkbox">
-          <label for="select-all">
-            <span class="screen-reader-only">{% trans 'Select all results' %}</span>
-          </label>
-        </div>
-      </th>
-      <th>
-          {% trans "Name" %}
-      </th>
-      <th>
-          {% trans "Matches" %}
-      </th>
-      <th>
-          {% trans "Source" %}
-      </th>
-      <th>
-          {% trans "Path" %}
-          {% comment %}We use a click event handler on this button to
-          submit the <form> defined in filters.html{% endcomment %}
+<div class="datatable-wrapper card" role="region" tabindex="0" aria-label="{% trans 'Results' %}">
+  <table class="datatable">
+    <colgroup>
+      <col class="datatable__column--handle">
+      <col class="datatable__column--name">
+      <col class="datatable__column--matchcount">
+      <col class="datatable__column--source">
+      <col class="datatable__column--path">
+      <col class="datatable__column--actions">
+    </colgroup>
+    <thead>
+      <tr class="handle-matches sticky">
+        <th colspan="6">
+          {% include "components/handle-match.html" %}
+          <div class="view-options">
+            <button class="toggle probability-toggle" type="button" aria-pressed="false">{% trans 'Show match probability' %}</button>
+            <button class="matches-expand-all button button-caret" type="button">{% trans "Show/hide all matches" %} <i class="material-icons" aria-hidden="true">expand_more</i></button>
+          </div>
+        </th>
+      </tr>
+      <tr class="column-headings sticky">
+        <th class="datatable__column--handle">
+          <div class="ds-checkbox">
+            <input id="select-all" type="checkbox">
+            <label for="select-all">
+              <span class="screen-reader-only">{% trans 'Select all results' %}</span>
+            </label>
+          </div>
+        </th>
+        <th class="datatable__column--name">
+            {% trans "Name" %}
+        </th>
+        <th class="datatable__column--matchcount">
+            {% trans "Matches" %}
+        </th>
+        <th class="datatable__column--source">
+            {% trans "Source" %}
+        </th>
+        <th class="datatable__column--path">
+            {% trans "Path" %}
+            {% comment %}We use a click event handler on this button to
+            submit the <form> defined in filters.html{% endcomment %}
 
-          <button
-            type="button"
-            name="sort_key"
-            class="order-by button button-caret{% if order_by == 'sort_key' and order == 'descending' %} up{% endif %}"
-            value="{% if order_by == 'sort_key' and order == 'descending' %}ascending{% else %}descending{% endif %}"
-          >
-            <i class="material-icons" aria-hidden="true">expand_more</i>
-          </button>
-      </th>
-      <th>
-          <span class="screen-reader-only">{% trans "Actions" %}</span>
-      </th>
-    </tr>
-  </thead>
+            <button
+              type="button"
+              name="sort_key"
+              class="order-by button button-caret{% if order_by == 'sort_key' and order == 'descending' %} up{% endif %}"
+              value="{% if order_by == 'sort_key' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+            >
+              <i class="material-icons" aria-hidden="true">expand_more</i>
+            </button>
+        </th>
+        <th class="datatable__column--actions">
+            <span class="screen-reader-only">{% trans "Actions" %}</span>
+        </th>
+      </tr>
+    </thead>
 
-  <tbody>
-    {% for document_report in document_reports %}
-      {% include "components/hit.html" %}
-    {% endfor %}
+    <tbody>
+      {% for document_report in document_reports %}
+        {% include "components/hit.html" %}
+      {% endfor %}
 
-  </tbody>
+    </tbody>
 
-  {% include "components/pagination.html" %}
-</table>
+    {% include "components/pagination.html" %}
+  </table>
+</div>

@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-29 02:39-0500\n"
+"POT-Creation-Date: 2021-10-29 05:23-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -53,7 +53,6 @@ msgid "sort key"
 msgstr "sortér efter"
 
 #: reportapp/models/documentreport_model.py:45
-#, fuzzy
 msgid "name"
 msgstr "navn"
 
@@ -198,35 +197,39 @@ msgstr "Kontekst"
 msgid "Probability"
 msgstr "Sandsynlighed"
 
-#: reportapp/templates/components/hits.html:18
+#: reportapp/templates/components/hits.html:4 reportapp/templates/index.html:10
+msgid "Results"
+msgstr "Resultater"
+
+#: reportapp/templates/components/hits.html:19
 msgid "Show match probability"
 msgstr "Vis sandsynlighed"
 
-#: reportapp/templates/components/hits.html:19
+#: reportapp/templates/components/hits.html:20
 msgid "Show/hide all matches"
 msgstr "Vis/skjul alle matches"
 
-#: reportapp/templates/components/hits.html:28
+#: reportapp/templates/components/hits.html:29
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: reportapp/templates/components/hits.html:33
+#: reportapp/templates/components/hits.html:34
 msgid "Name"
 msgstr "Navn"
 
-#: reportapp/templates/components/hits.html:36
+#: reportapp/templates/components/hits.html:37
 msgid "Matches"
 msgstr "Matches"
 
-#: reportapp/templates/components/hits.html:39
+#: reportapp/templates/components/hits.html:40
 msgid "Source"
 msgstr "Kilde"
 
-#: reportapp/templates/components/hits.html:42
+#: reportapp/templates/components/hits.html:43
 msgid "Path"
 msgstr "Sti"
 
-#: reportapp/templates/components/hits.html:57
+#: reportapp/templates/components/hits.html:58
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -238,6 +241,10 @@ msgstr "pr. side"
 #: reportapp/templates/components/navigation.html:9
 msgid "Front page"
 msgstr "Forside"
+
+#: reportapp/templates/components/navigation.html:26
+msgid "Logout"
+msgstr "Log ud"
 
 #: reportapp/templates/components/pagination.html:10
 msgid "page"
@@ -389,10 +396,6 @@ msgstr "Logget ud"
 msgid "You have signed out successfully."
 msgstr "Du er nu logget ud."
 
-#: reportapp/templates/index.html:10
-msgid "Results"
-msgstr "Resultater"
-
 #: reportapp/templates/index.html:12
 msgid "results"
 msgstr "resultater"
@@ -401,41 +404,49 @@ msgstr "resultater"
 msgid "No results were found"
 msgstr "Der er ingen resultater"
 
-#: reportapp/templates/login.html:9
+#: reportapp/templates/login.html:8 reportapp/templates/logout.html:8
 msgid "Log in"
 msgstr "Log ind på"
 
-#: reportapp/templates/login.html:11
+#: reportapp/templates/login.html:8
 msgid "report module"
 msgstr "rapportmodulet"
 
-#: reportapp/templates/login.html:18
+#: reportapp/templates/login.html:14
 msgid "Username"
 msgstr "Brugernavn"
 
-#: reportapp/templates/login.html:25
+#: reportapp/templates/login.html:21
 msgid "Password"
 msgstr "Adgangskode"
 
-#: reportapp/templates/login.html:31
+#: reportapp/templates/login.html:27
 msgid "The username or password is incorrect"
 msgstr "Fejl i brugernavn eller password"
 
-#: reportapp/templates/login.html:40
+#: reportapp/templates/login.html:36
 msgid "Remember me"
 msgstr "Husk mig"
 
-#: reportapp/templates/login.html:47
+#: reportapp/templates/login.html:43
 msgid "Login"
 msgstr "Log ind"
 
-#: reportapp/templates/login.html:53
+#: reportapp/templates/login.html:49
 msgid "Did you forget your password?"
 msgstr "Har du glemt din adgangskode?"
 
-#: reportapp/templates/login.html:55
+#: reportapp/templates/login.html:51
 msgid "Click here"
 msgstr "Klik her"
+
+#: reportapp/templates/logout.html:6
+msgid "Thank you for using OS2datascanner."
+msgstr "Tak fordi du brugte OS2datascanner."
+
+#: reportapp/templates/logout.html:8
+msgid "again"
+msgstr "igen"
 
 #: reportapp/templates/mail/overview.html:57
 #: reportapp/templates/mail/overview.txt:3
