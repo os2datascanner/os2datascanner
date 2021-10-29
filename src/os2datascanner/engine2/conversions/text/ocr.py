@@ -1,18 +1,20 @@
 from tempfile import NamedTemporaryFile
-from subprocess import run, PIPE, DEVNULL
+from subprocess import PIPE, DEVNULL
 
+from os2datascanner.utils.system_utilities import run_custom
 from ... import settings as engine2_settings
 from ..types import OutputType
 from ..registry import conversion
 
 
 def tesseract(path):
-    result = run(
+    result = run_custom(
             ["tesseract", path, "stdout"],
             universal_newlines=True,
             stdout=PIPE,
             stderr=DEVNULL,
-            timeout=engine2_settings.subprocess["timeout"])
+            timeout=engine2_settings.subprocess["timeout"],
+            isolate_tmp=True)
     if result.returncode == 0:
         return result.stdout.strip()
     else:
@@ -31,7 +33,8 @@ def image_processor(r):
 @conversion(OutputType.Text, "image/gif", "image/x-ms-bmp")
 def intermediate_image_processor(r):
     with r.make_path() as p, NamedTemporaryFile("rb", suffix=".png") as ntf:
-        result = run(["convert", p, "png:{0}".format(ntf.name)])
+        result = run_custom(
+                ["convert", p, "png:{0}".format(ntf.name)], isolate_tmp=True)
         if result.returncode == 0:
             return tesseract(ntf.name)
         else:
