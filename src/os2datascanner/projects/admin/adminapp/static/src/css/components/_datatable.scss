@@ -193,6 +193,11 @@
   vertical-align: middle;
 }
 
+.datatable tr.error td{
+  border-top: 0;
+  padding-top: 0;
+}
+
 .datatable tr:last-child {
 
   td:hover:first-child {
