@@ -281,6 +281,8 @@ protobuf==3.13.0
     #   -c requirements-engine.txt
     #   google-api-core
     #   googleapis-common-protos
+psutil==5.8.0
+    # via -r requirements-report.in
 psycopg2-binary==2.8.5
     # via -r requirements-django.in
 ptyprocess==0.6.0

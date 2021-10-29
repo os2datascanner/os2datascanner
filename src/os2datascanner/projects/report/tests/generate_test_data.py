@@ -9,6 +9,7 @@ from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
+from ..reportapp.management.commands import pipeline_collector
 
 
 def get_different_scan_tag():
@@ -75,3 +76,11 @@ def get_dimension_rule_match():
     return messages.MatchFragment(
         rule=DimensionsRule(),
         matches=[{"match": [2496, 3508]}])
+
+
+def generate_match(match):
+    prev, new = pipeline_collector.get_reports_for(
+        match.handle.to_json_object(),
+        match.scan_spec.scan_tag)
+    pipeline_collector.handle_match_message(
+        prev, new, match.to_json_object())
