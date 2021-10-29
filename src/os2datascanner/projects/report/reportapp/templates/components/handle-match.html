@@ -2,10 +2,12 @@
 {%  load i18n %}
 
   <div class="handle-match-wrapper">
-      <button type="button" class="handle-match__action" data-status="match-handle" disabled>
-          {% trans "Handle selected results" %}
+      <button type="button" class="handle-match__action" data-status="match-handle" disabled
+        title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned.
+Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}">
+          {% trans "Mark as handled" %}
       </button>
       <span class="selected-cb">
-        <span class="num-selected">0</span> {% trans "of" %} {{ matches|length }} {% trans "selected" %}
+        <span class="num-selected">0</span> {% trans "of" %} {{ document_reports|length }} {% trans "selected" %}
       </span>
   </div>
