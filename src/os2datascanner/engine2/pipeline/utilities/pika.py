@@ -1,3 +1,4 @@
+import gzip
 import json
 import pika
 import time
@@ -190,9 +191,16 @@ class RejectMessage(BaseException):
         self.requeue = requeue
 
 
+_coders = {
+    "gzip": (gzip.compress, gzip.decompress)
+}
+
+
 class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
     """Runs a Pika session in a background thread."""
-    def __init__(self, *args, exclusive=False, **kwargs):
+    def __init__(
+            self, *args, exclusive=False, default_basic_properties=None,
+            **kwargs):
         super().__init__()
         PikaPipelineRunner.__init__(self, *args, **kwargs)
         self._incoming = SortedList(key=lambda e: -(e[1].priority or 0))
@@ -200,6 +208,10 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         self._live = None
         self._condition = threading.Condition()
         self._exclusive = exclusive
+        if default_basic_properties is None:
+            default_basic_properties = dict(
+                    delivery_mode=2, content_encoding="gzip")
+        self._default_basic_properties = default_basic_properties
 
         self._shutdown_exception = None
 
@@ -234,7 +246,17 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                         body: bytes,
                         exchange: str = "",
                         **basic_properties):
-        """Requests that the background thread send a message."""
+        """Requests that the background thread send a message.
+
+        Note that the content_encoding property gets special treatment: if it's
+        set, the message will be encoded accordingly -- on the calling thread,
+        not the background one -- before it's enqueued."""
+        basic_properties = self._default_basic_properties | basic_properties
+        if not isinstance(body, bytes):
+            body = json.dumps(body).encode()
+        if (encoding := basic_properties.get("content_encoding")):
+            encoder, _ = _coders[encoding]
+            body = encoder(body)
         return self._enqueue("msg", queue, body, exchange, basic_properties)
 
     def await_message(self, timeout: float = None):
@@ -242,16 +264,25 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         value is the (method, properties, body) 3-tuple normally returned by
         BlockingConnection.basic_get. This method will return immediately if
         the background thread isn't running; otherwise, it will block until a
-        message is  available or until the given timeout elapses."""
+        message is available or until the given timeout elapses.
+
+        Note that messages with a declared content encoding will be decoded
+        automatically before being returned."""
+        method, properties, body = None, None, None
         with self._condition:
 
             def waiter():
                 return not self._live or len(self._incoming) > 0
             rv = self._condition.wait_for(waiter, timeout)
             if rv and self._live:
-                return self._incoming.pop(0)
-            else:
-                return None, None, None
+                method, properties, body = self._incoming.pop(0)
+        if body and properties and properties.content_encoding:
+            _, decoder = _coders[properties.content_encoding]
+            body = decoder(body)
+            # We've decoded the content, so from this point on it should be
+            # regarded as unencoded
+            properties.content_encoding = None
+        return method, properties, body
 
     def handle_message(self, routing_key, body):
         """Handles an AMQP message by yielding zero or more (queue name,
@@ -292,9 +323,8 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                                     exchange=exchange,
                                     routing_key=queue,
                                     properties=pika.BasicProperties(
-                                            delivery_mode=2,
                                             **properties),
-                                    body=json.dumps(body).encode())
+                                    body=body)
                         elif label == "ack":
                             delivery_tag = head[1]
                             self.channel.basic_ack(delivery_tag)
