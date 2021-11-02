@@ -28,7 +28,11 @@
     border-radius: var(--border-radius-widget);
     margin-bottom: calc(2 * var(--datatable-cell-padding));
     background-color: var(--color-widget-bg);
+  }
 
+  &.sm.card,
+  &.md.card,
+  &.lg.card {
     // use gradients to signify that the table is scrollable
     background-image:
       linear-gradient(to right, white var(--datatable-cell-padding), transparent 100%),
@@ -233,8 +237,15 @@
     z-index: 2;
     border-top: 1px solid rgba(0, 0, 0, 0.2);
     background-color: #f4f4f4;
-    top: calc(2rem + var(--size-logo-height) + 6rem); // for sticky purposes; header height + 6rem
+    white-space: nowrap;
+    top: calc(2rem + var(--size-logo-height) + 12rem); // for sticky purposes; header height + row height of 9rem  
+    @media (min-width: $break-sm) {
+      top: calc(2rem + var(--size-logo-height) + 9rem); // for sticky purposes; header height + row height of 9rem
+    }
     @media (min-width: $break-md) {
+      top: calc(2rem + var(--size-logo-height) + 6rem); // for sticky purposes; header height + row height of 6rem
+    }
+    @media (min-width: $break-lg) {
       top: 6rem; // for sticky purposes
     }
   }
@@ -251,7 +262,7 @@
     &:last-child {
       border-top-right-radius: var(--border-radius-widget);
     }
-    @media (min-width: $break-md) {
+    @media (min-width: $break-lg) {
       top: 0; // for sticky purposes
     }
   }

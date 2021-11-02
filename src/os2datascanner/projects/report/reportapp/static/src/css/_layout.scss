@@ -22,7 +22,7 @@ body {
   // below *should* be calc(var(--size-logo-height) + 2rem), we have to hard-
   // code the value of --size-logo-height (which equates to 30px)
   margin-top: calc(30px + 2rem);
-  @media (min-width: $break-md) {
+  @media (min-width: $break-lg) {
     flex-direction: row;
     margin-top: 0;
   }
@@ -33,7 +33,7 @@ body {
   min-width: 0;
   width: 100%;
   padding: 2rem;
-  @media (min-width: $break-md) {
+  @media (min-width: $break-lg) {
     padding: 5rem;
   }
 }

@@ -1,5 +1,25 @@
 .view-options {
-  float: right;
+  clear: both;
+  @media (min-width: $break-sm) {
+    padding-top: 1rem;
+  }
+  @media (min-width: $break-md) {
+    float: right;
+    clear: none;
+    background:transparent;
+    padding-top: 0;
+  }
+  button {
+    float: left;
+    clear: both;
+    margin-top: 1rem;
+
+    @media (min-width: $break-sm) {
+      float: none;
+      clear: none;
+      margin-top: 0;
+    }
+  }
 }
 
 .handle-match-wrapper {

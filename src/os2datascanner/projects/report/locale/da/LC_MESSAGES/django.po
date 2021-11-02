@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-29 05:23-0500\n"
+"POT-Creation-Date: 2021-10-29 06:09-0500\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -144,10 +144,19 @@ msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
 #: reportapp/templates/components/handle-match.html:6
-msgid "Handle selected results"
-msgstr "Håndtér valgte resultater"
+#: reportapp/templates/components/hit.html:69
+msgid ""
+"OS2datascanner will not delete results from the system that was scanned.\n"
+"Marking a result as handled will only remove the result from OS2datascanner."
+msgstr ""
+"OS2datascanner sletter ikke resultater fra systemet der blev scannet.\n"
+"Resultatet markeres udelukkende som håndteret i OS2datascanner."
 
-#: reportapp/templates/components/handle-match.html:9
+#: reportapp/templates/components/handle-match.html:8
+msgid "Mark as handled"
+msgstr "Markér som håndterede"
+
+#: reportapp/templates/components/handle-match.html:11
 #: reportapp/templates/components/pagination.html:10
 #: reportapp/templates/components/statistics-template.html:114
 #: reportapp/templates/components/statistics-template.html:123
@@ -157,7 +166,7 @@ msgstr "Håndtér valgte resultater"
 msgid "of"
 msgstr "af"
 
-#: reportapp/templates/components/handle-match.html:9
+#: reportapp/templates/components/handle-match.html:11
 msgid "selected"
 msgstr "valgt"
 
@@ -177,23 +186,23 @@ msgstr "Kopiér"
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:68
-msgid "Handle"
-msgstr "Håndtér"
+#: reportapp/templates/components/hit.html:71
+msgid "Handled"
+msgstr "Håndteret"
 
-#: reportapp/templates/components/hit.html:69
+#: reportapp/templates/components/hit.html:72
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:82
+#: reportapp/templates/components/hit.html:85
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:83
+#: reportapp/templates/components/hit.html:86
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:84
+#: reportapp/templates/components/hit.html:87
 msgid "Probability"
 msgstr "Sandsynlighed"
 
