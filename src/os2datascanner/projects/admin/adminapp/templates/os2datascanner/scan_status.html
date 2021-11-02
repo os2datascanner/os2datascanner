@@ -59,11 +59,6 @@
                                     {% elif status.stage.value == 2 %}
                                         {% trans "Scanning data ..." %}
                                     {% endif %}
-                                    {% if status.message and status.status_is_error %}
-                                        <p class="error">
-                                            {{ status.message }}
-                                        </p>
-                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if status.stage.value == 0 %}
@@ -96,6 +91,13 @@
                                     </div>
                                 </td>
                             </tr>
+                            {% if status.message and status.status_is_error %}
+                              <tr class="error">
+                                <td colspan="4">
+                                  {{ status.message }}
+                                </td>
+                              </tr>
+                            {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
