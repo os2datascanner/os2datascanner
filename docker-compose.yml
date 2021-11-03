@@ -153,7 +153,7 @@ services:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-    command: explorer --enable-metrics
+    command: explorer --enable-metrics --restart-after=500
     init: true
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
@@ -165,7 +165,7 @@ services:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-    command: worker --enable-metrics --single-cpu
+    command: worker --enable-metrics --single-cpu --restart-after=500
     init: true
     environment:
       - SCHEDULE_ON_CPU=0
@@ -179,7 +179,7 @@ services:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-    command: exporter --enable-metrics
+    command: exporter --enable-metrics --restart-after=500
     init: true
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml

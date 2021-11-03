@@ -291,6 +291,13 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         The default implementation of this method does nothing."""
         yield from []
 
+    def after_message(self, routing_key, body):
+        """Performs an action of some kind after the given message has been
+        processed and an acknowledgement has been enqueued. (Note that this
+        function will not be called when a message is rejected.)
+
+        The default implementation of this method does nothing."""
+
     def handle_message_raw(self, channel, method, properties, body):
         """(Background thread.) Collects a message and stores it for later
         retrieval by the main thread."""
@@ -378,10 +385,13 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 if method == properties == body is None:
                     continue
                 try:
-                    for routing_key, message in self.handle_message(
-                            method.routing_key, json_utf8_decode(body)):
+                    key = method.routing_key
+                    dbd = json_utf8_decode(body)
+
+                    for routing_key, message in self.handle_message(key, dbd):
                         self.enqueue_message(routing_key, message)
                     self.enqueue_ack(method.delivery_tag)
+                    self.after_message(key, dbd)
                 except RejectMessage as ex:
                     self.enqueue_reject(method.delivery_tag, requeue=ex.requeue)
         finally:
