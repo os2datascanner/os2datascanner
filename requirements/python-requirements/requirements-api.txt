@@ -160,6 +160,10 @@ protobuf==3.13.0
     #   -c requirements-engine.txt
     #   google-api-core
     #   googleapis-common-protos
+psutil==5.8.0
+    # via
+    #   -c requirements-engine.txt
+    #   -r requirements-engine.in
 py==1.10.0
     # via
     #   -c requirements-engine.txt

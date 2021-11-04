@@ -6,6 +6,7 @@ import signal
 import sys
 import traceback
 from collections import deque
+import psutil
 
 from prometheus_client import Info, Summary, start_http_server
 
@@ -52,15 +53,27 @@ def _compatibility_main(stage):
     main()
 
 
+def restart_process():
+    """Replaces this process with a new Python interpreter with the same
+    arguments and environment.
+
+    The usual caveats of os.execve and friends apply: in particular, open files
+    will not be flushed before the process is replaced."""
+    # We're restarting the operating system-level process, so we need the
+    # operating system-level command line -- sys.argv has been manipulated too
+    # much by the Python interpreter
+    os.execl(sys.executable, *psutil.Process().cmdline())
+
+
 class GenericRunner(PikaPipelineThread):
     def __init__(self,
                  source_manager: SourceManager, *args,
-                 stage: str, module, **kwargs):
+                 stage: str, module, limit, **kwargs):
         super().__init__(
-            *args, **kwargs,
-            read=module.READS_QUEUES,
-            write=module.WRITES_QUEUES,
-            prefetch_count=module.PREFETCH_COUNT)
+                *args, **kwargs,
+                read=module.READS_QUEUES,
+                write=module.WRITES_QUEUES,
+                prefetch_count=module.PREFETCH_COUNT)
         self._module = module
         self._summary = Summary(
                 f"os2datascanner_pipeline_{stage}",
@@ -69,34 +82,54 @@ class GenericRunner(PikaPipelineThread):
 
         self._cancelled = deque()
 
+        self._limit = limit
+        self._count = 0
+
+    def _handle_command(self, routing_key, body):
+        command = messages.CommandMessage.from_json_object(body)
+
+        if command.abort:
+            self._cancelled.appendleft(command.abort)
+        if command.log_level:
+            logging.getLogger("os2datascanner").setLevel(
+                    command.log_level)
+        yield from []
+
+    def _handle_content(self, routing_key, body):
+        raw_scan_tag = body.get("scan_tag")
+        if not raw_scan_tag and "scan_spec" in body:
+            raw_scan_tag = body["scan_spec"]["scan_tag"]
+
+        if raw_scan_tag:
+            scan_tag = messages.ScanTagFragment.from_json_object(
+                    raw_scan_tag)
+            if scan_tag in self._cancelled:
+                logger.debug(
+                        f"scan {raw_scan_tag} is cancelled, "
+                        "ignoring")
+                raise RejectMessage(requeue=False)
+
+        yield from self._module.message_received_raw(
+                body, routing_key, self._source_manager)
+
     def handle_message(self, routing_key, body):
         with self._summary.time():
             logger.debug(f"{routing_key}: {str(body)}")
             if routing_key == "":
-                command = messages.CommandMessage.from_json_object(body)
-
-                if command.abort:
-                    self._cancelled.appendleft(command.abort)
-                if command.log_level:
-                    logging.getLogger("os2datascanner").setLevel(
-                            command.log_level)
-                yield from []
+                yield from self._handle_command(routing_key, body)
             else:
-                raw_scan_tag = body.get("scan_tag")
-                if not raw_scan_tag and "scan_spec" in body:
-                    raw_scan_tag = body["scan_spec"]["scan_tag"]
+                yield from self._handle_content(routing_key, body)
 
-                if raw_scan_tag:
-                    scan_tag = messages.ScanTagFragment.from_json_object(
-                            raw_scan_tag)
-                    if scan_tag in self._cancelled:
-                        logger.debug(
-                                f"scan {raw_scan_tag} is cancelled, "
-                                "ignoring")
-                        raise RejectMessage(requeue=False)
+    def after_message(self, routing_key, body):
+        # Check to see if we've met our quota and should restart
+        self._count += 1
+        if self._limit is not None and self._count >= self._limit:
+            global restarting
+            restarting = True
+            self.enqueue_stop()
 
-                yield from self._module.message_received_raw(
-                        body, routing_key, self._source_manager)
+
+restarting = False
 
 
 def main():
@@ -143,6 +176,14 @@ def main():
             help="instruct the scheduler to run this stage, and its"
                  " subprocesses, on a single CPU, either picked at random"
                  " or based on the SCHEDULE_ON_CPU environment variable")
+    configuration.add_argument(
+            "--restart-after",
+            metavar="COUNT",
+            dest="limit",
+            type=int,
+            default=None,
+            help="re-execute this stage after it has handled %(metavar)s"
+                    " messages")
 
     args = parser.parse_args()
     module = _module_mapping[args.stage]
@@ -152,9 +193,9 @@ def main():
     fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
     # set level for root logger
-    logger = logging.getLogger("os2datascanner")
-    logger.setLevel(_loglevels[args.log])
-    logger.info("starting pipeline {0}".format(args.stage))
+    root_logger = logging.getLogger("os2datascanner")
+    root_logger.setLevel(_loglevels[args.log])
+    root_logger.info("starting pipeline {0}".format(args.stage))
 
     if args.enable_metrics:
         i = Info(f"os2datascanner_pipeline_{args.stage}", "version number")
@@ -172,14 +213,19 @@ def main():
         else:
             # Otherwise, pick a random CPU to run on
             cpu = random.choice(available_cpus)
-        logger.info(f"executing only on CPU {cpu}")
+        root_logger.info(f"executing only on CPU {cpu}")
         os.sched_setaffinity(0, {cpu})
 
     with SourceManager(width=args.width) as source_manager:
         GenericRunner(
                 source_manager,
                 stage=args.stage,
-                module=module).run_consumer()
+                module=module,
+                limit=args.limit).run_consumer()
+
+    if restarting:
+        root_logger.info(f"restarting after {args.limit} messages")
+        restart_process()
 
 
 if __name__ == "__main__":
