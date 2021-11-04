@@ -40,11 +40,11 @@
                     {% trans "Select scannerjob" %}
             </option>
               {% for scan in scannerjobs|first %}
-                  <option value="{{ scan.data__scan_tag__scanner__pk|unlocalize }}"
-                          {% if scannerjobs|last == scan.data__scan_tag__scanner__pk|stringformat:"i" %}
+                  <option value="{{ scan.scanner_job_pk|unlocalize }}"
+                          {% if scannerjobs|last == scan.scanner_job_pk|stringformat:"i" %}
                             selected="selected"
                           {% endif %} >
-                      {{ scan.data__scan_tag__scanner__name }} ({{ scan.total }})
+                      {{ scan.scanner_job_name }} ({{ scan.total }})
                   </option>
                {% endfor %}
           </select>
