@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-29 05:23-0500\n"
+"POT-Creation-Date: 2021-11-04 07:16-0500\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -125,11 +125,11 @@ msgstr "scannede objekter"
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:482
+#: adminapp/models/scannerjobs/scanner_model.py:487
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:483
+#: adminapp/models/scannerjobs/scanner_model.py:488
 msgid "scan statuses"
 msgstr "scanstatusser"
 
@@ -318,7 +318,7 @@ msgstr "Gem ændringer"
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:109
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/scan_status.html:90
+#: adminapp/templates/os2datascanner/scan_status.html:85
 #: adminapp/templates/os2datascanner/scanners.html:158
 msgid "Delete"
 msgstr "Slet"
@@ -534,21 +534,21 @@ msgstr "Scanner data (indekserer fortsat) ..."
 msgid "Scanning data ..."
 msgstr "Scanner data ..."
 
-#: adminapp/templates/os2datascanner/scan_status.html:70
+#: adminapp/templates/os2datascanner/scan_status.html:65
 msgid "Building index"
 msgstr "Opbygger indeks"
 
-#: adminapp/templates/os2datascanner/scan_status.html:72
+#: adminapp/templates/os2datascanner/scan_status.html:67
 #, python-format
 msgid "%(obj)s objects scanned"
 msgstr "%(obj)s objekter scannet"
 
-#: adminapp/templates/os2datascanner/scan_status.html:74
+#: adminapp/templates/os2datascanner/scan_status.html:69
 #, python-format
 msgid "%(obj)s out of %(total)s objects scanned"
 msgstr "%(obj)s ud af %(total)s objekter scannet"
 
-#: adminapp/templates/os2datascanner/scan_status.html:85
+#: adminapp/templates/os2datascanner/scan_status.html:80
 #, python-format
 msgid ""
 "Do you really want to delete the status object for scanner "
@@ -556,7 +556,7 @@ msgid ""
 msgstr ""
 "Er du sikker på, at du vil slette status for scanner »%%(scanner_name)s«?"
 
-#: adminapp/templates/os2datascanner/scan_status.html:104
+#: adminapp/templates/os2datascanner/scan_status.html:106
 msgid "no ongoing scans"
 msgstr "der er ingen igangværende scanninger"
 

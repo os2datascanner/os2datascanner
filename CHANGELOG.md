@@ -1,5 +1,82 @@
 # Changelog
 
+## Version 3.13.0, 4th November 2021
+
+"An Iron Fist in a Velvet Glove"
+
+### New in this version
+
+- Support for new types of rules:
+
+  - The name and address rules from the OS2datascanner 2.x series are once more
+    available in the administration system.
+
+  - The administration system now also includes a new rule for Danish-language
+    medical terminology. (This rule uses a mechanically-generated data set and
+    so may produce false positives.)
+
+- A refreshed user interface:
+
+  - A new user interface has been introduced in the report module.
+
+  - The design of both the administration system and the report module has been
+    made responsive.
+
+### General improvements
+
+- Improved the reliability of the scanner engine:
+
+  - Pipeline components can now proactively restart themselves to defend
+    against potential resource leaks in third-party libraries.
+
+  - Messages sent between pipeline components are now compressed to reduce
+    network traffic.
+
+  - Messages sent between pipeline components are now stored more reliably on
+    the disk.
+
+- The project's JavaScript and Python code is now subject to automated quality
+  and consistency checks.
+
+- Matches should now be presented in the report module in a more intuitive
+  order.
+
+- The web scanner now produces more helpful information when it encounters a
+  dead link.
+
+- The report module's database queries now have better performance.
+
+- The documentation now includes remarks about how to run test scans for a
+  selection of data sources.
+
+- The development environment now incorporates MailHog, to make it easier to
+  test email-related functionality.
+
+### Bugfixes
+
+- Errors produced during the rule matching process no longer cause
+  pipeline components to fail.
+
+- The web scanner no longer follows `nofollow` links and so should be able to
+  traverse procedurally-generated web pages more safely.
+
+- Scanners no longer declare that they are still running in the event that
+  extra checks have caused more objects to be scanned than were initially
+  found.
+
+- Microsoft Graph and web aliases are now correctly translated to database
+  relations in the report module.
+
+- Sending mail notifications now uses significantly fewer system resources.
+
+- Deleting a scanner job that is executing no longer causes the administration
+  system's status overview to get out of sync.
+
+- Temporary files created by external tools are now correctly deleted when the
+  tools are forcibly stopped.
+
+- RabbitMQ should no longer conclude that a pipeline component executing a
+  complex task is unresponsive and should be disconnected.
 
 ## Version 3.12.1, 11th October 2021
 
