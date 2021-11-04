@@ -34,19 +34,7 @@ window.addEventListener('load', function () {
 
       },
       // Callback for placing legends inside of <ul>
-      legendCallback: function(chart) {
-        var text = [];
-        text.push('<ul id="' + chart.id + '" class="pie_legend_list">');
-        for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
-          text.push('<li><span id="bullet" style="color:' + chart.data.datasets[0].backgroundColor[i] + '">&#8226;</span>');
-          if (chart.data.labels[i]) {
-            text.push('<span>' + chart.data.labels[i]);
-          }
-          text.push('</span></li>');
-        }
-        text.push('</ul>');
-        return text.join("");
-      },
+      legendCallback: unorderedListLegend,
       tooltips: {
         enabled: false,
       },
@@ -58,21 +46,15 @@ window.addEventListener('load', function () {
             size: 16,
             weight: 'bold'
           },
-          posotion:'top',
-          align:'end',
-          formatter: function(value, ctx) {
-            let sum = 0;
-            let dataArr = ctx.chart.data.datasets[0].data;
-            dataArr.map(function(data) {
-              sum += data;
-            });
-            var percentage = (value*100 / sum).toFixed(0)+"%";
-            return value ? percentage : '';
-          },
+          position:'top',
+          align:'center',
+          formatter: displayAsPercentage,
           color: '#fff',
         }
       },
       responsive: true,
+      aspectRatio: 1,
+      maintainAspectRatio: true
     }
   });
 
@@ -129,19 +111,7 @@ window.addEventListener('load', function () {
         display: false,
       },
       // Callback for placing legends inside of <ul>
-      legendCallback: function(chart) {
-        var text = [];
-        text.push('<ul id="' + chart.id + '" class="pie_legend_list">');
-        for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
-          text.push('<li><span id="bullet" style="color:' + chart.data.datasets[0].backgroundColor[i] + '">&#8226;</span>');
-          if (chart.data.labels[i]) {
-            text.push('<span>' + chart.data.labels[i]);
-          }
-          text.push('</span></li>');
-        }
-        text.push('</ul>');
-        return text.join("");
-      },
+      legendCallback: unorderedListLegend,
       tooltips: {
         enabled: false,
       },
@@ -153,21 +123,15 @@ window.addEventListener('load', function () {
             size: 16,
             weight: 'bold'
           },
-          posotion:'top',
-          align:'end',
-          formatter: function(value, ctx) {
-            var sum = 0;
-            var dataArr = ctx.chart.data.datasets[0].data;
-            dataArr.map(function(data) {
-              sum += data;
-            });
-            var percentage = (value*100 / sum).toFixed(0)+"%";
-            return value ? percentage : '';
-          },
+          position:'top',
+          align:'center',
+          formatter: displayAsPercentage,
           color: '#fff',
         }
       },
       responsive: true,
+      aspectRatio: 1,
+      maintainAspectRatio: true
       // If we want the animation to start from the center - set to true
       // animation: {
       //     animateScale: true,
@@ -202,5 +166,26 @@ window.addEventListener('load', function () {
     // Run chart.update() to "reset" the chart and then add outerRadius after.
     chart.update();
     item._model.outerRadius += 5;
+  }
+
+  function displayAsPercentage (value, ctx) {
+    let dataArr = ctx.chart.data.datasets[0].data;
+    let sum = dataArr.reduce(function (total, frac) { return total + frac; });
+    var percentage = Math.round(value * 100 / sum) + "%";
+    return value ? percentage : '';
+  }
+
+  function unorderedListLegend (chart) {
+    var text = [];
+    text.push('<ul id="' + chart.id + '" class="pie_legend_list">');
+    for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+      text.push('<li><span class="bullet" style="color:' + chart.data.datasets[0].backgroundColor[i] + '">&#8226;</span>');
+      if (chart.data.labels[i]) {
+        text.push('<span>' + chart.data.labels[i]);
+      }
+      text.push('</span></li>');
+    }
+    text.push('</ul>');
+    return text.join("");
   }
 });

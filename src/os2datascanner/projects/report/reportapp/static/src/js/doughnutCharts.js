@@ -164,6 +164,9 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
+      responsive: true,
+      aspectRatio: 1,
+      maintainAspectRatio: true
 		}
 	});
 
@@ -200,6 +203,9 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
+      responsive: true,
+      aspectRatio: 1,
+      maintainAspectRatio: true
 		}
 	});
 
@@ -236,6 +242,9 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
+      responsive: true,
+      aspectRatio: 1,
+      maintainAspectRatio: true
 		}
 	});
 
@@ -271,6 +280,9 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
+      responsive: true,
+      aspectRatio: 1,
+      maintainAspectRatio: true
 		}
 	});
 	var totalHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_total").getContext('2d');
@@ -302,6 +314,9 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
+      responsive: true,
+      aspectRatio: 1,
+      maintainAspectRatio: true
 		}
 	});
 });
