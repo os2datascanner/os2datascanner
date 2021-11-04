@@ -1,9 +1,7 @@
 .statistic_wrapper {
-	display: -webkit-box;
-	display: -ms-flexbox;
 	display: flex;
-	max-width: 90rem;
-	width: calc(100% - 2rem);
+	margin: -1.75rem;
+	flex-wrap: wrap;
 }
 
 .statistic {
@@ -12,62 +10,25 @@
 	box-shadow: var(--box-shadow-widget);
 	border-radius: var(--border-radius-widget);
 	padding: 2rem;
-	margin-bottom: 3.5rem;
-
-	&--one {
-		width: 50rem;
-		min-height: 28rem;
-	}
-
-	&--two {
-		margin-left: 3.5rem;
-		width: 40rem;
-		min-height: 28rem;
-	}
-
-	&--three {
-		width: 40rem;
-		min-height: 28rem;
-	}
-
-	&--four {
-		margin-left: 3.5rem;
-		width: 50rem;
-		min-height: 28rem;
-	}
+	margin: 1.75rem;
+	flex: 1 1 auto;
+	min-width: 0;
+	max-width: 100%;
 
 	.statistic_header {
-		display: -ms-grid;
-		display: grid;
-		-ms-grid-columns: 2fr 1fr;
-		grid-template-columns: 2fr 1fr;
-		grid-gap: 1rem;
-		margin-bottom: 1rem;
+		display: flex;
+		align-items: flex-end;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		margin: -.5rem -.5rem 1.5rem;
 
-		.statistic_header_nav {
-			-ms-grid-columns: 1fr 10fr;
+		.page-title__sub {
+			margin-bottom: 0;
 		}
 
 		> div {
-			display: -ms-grid;
-			display: grid;
-			-ms-grid-rows: 1fr 1fr;
-			grid-template-rows: 1fr 1fr;
-		}
-		div:nth-child(1) {
-			-ms-grid-column: 1;
-
-			:nth-child(2),
-			:nth-child(3) {
-				-ms-grid-row: 2;
-			}
-		}
-
-		div:nth-child(2) {
-			-ms-grid-column: 2;
-			div:nth-child(2) {
-				-ms-grid-row: 2;
-			}
+			margin: .5rem;
+			flex: 0 1 auto; // make explicit for IE11's sake
 		}
 	}
 
@@ -87,10 +48,26 @@
 	}
 }
 
-// Chart css
+.chart_container {
+	max-width: 32rem;
 
-canvas {
-	width: 100% !important;
+	// use the approach below to visually hide charts from the screen.
+	// if using display: none;, ChartJS can't determine the proper dimensions
+	// for the chart, as it can't determine the bounding box of the container.
+	&.hidden {
+		opacity: 0;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: -1000;
+		pointer-events: none;
+	}
+}
+
+.chart_description {
+	&.hidden {
+		display: none !important;
+	}
 }
 
 // Pie chart CSS
@@ -98,24 +75,25 @@ canvas {
 .pie_chart_container {
 	display: -ms-grid;
 	display: grid;
-	-ms-grid-columns: 4fr 2fr;
-	grid-template-columns: 4fr 2fr;
-	-webkit-box-align: end;
-	-ms-flex-align: end;
-	align-items: end;
+	-ms-grid-columns: 1fr 1fr;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	-ms-grid-rows: minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr);
+
+	> div {
+		display: flex;
+		align-items: center;
+	}
 
 	div:nth-child(2) {
 		-ms-grid-column: 2;
-		display: flex;
-		align-items: flex-end;
 	}
 }
 
 .pie_legend_list {
 	list-style: none;
 	bottom: 0;
-	margin: 0;
-	padding-left: 3.125rem;
+	margin: 0 0 0 1rem;
 }
 
 li > span {
@@ -125,12 +103,10 @@ li > span {
 	cursor: pointer;
 }
 
-#bullet {
-	content: "\2022"; /* Add content: \2022 is the CSS Code/unicode for a bullet */
+.bullet {
+	content: "\2022 "; /* Add content: \2022 is the CSS Code/unicode for a bullet */
 	font-weight: bold;
-	display: inline-block; /* Needed to add space between the bullet and the text */
-	width: 1rem; /* Also needed for space (tweak if needed)  */
-	margin-left: -1em; /* Also needed for space (tweak if needed) */
+	padding-right: .5rem;
 	font-size: 2rem;
 	line-height: 1;
 }
@@ -138,51 +114,25 @@ li > span {
 // Doughnut
 
 .doughnut_charts_container {
-	display: -ms-grid;
-	display: grid;
-	-ms-grid-rows: 1fr 3rem 1fr;
-	grid-template-rows: 1fr 1fr;
-	-ms-grid-columns: 1fr 1fr;
-	grid-template-columns: 1fr 1fr;
-	grid-row-gap: 2rem;
-}
-
-// Doughnut
-
-.doughnut_charts_container > :nth-child(1) {
-	-ms-grid-row: 1;
-	-ms-grid-column: 1;
-}
-
-// Doughnut
-
-.doughnut_charts_container > :nth-child(2) {
-	-ms-grid-row: 1;
-	-ms-grid-column: 2;
-}
-
-// Doughnut
-
-.doughnut_charts_container > :nth-child(3) {
-	-ms-grid-row: 3;
-	-ms-grid-column: 1;
-}
-
-// Doughnut
-
-.doughnut_charts_container > :nth-child(4) {
-	-ms-grid-row: 3;
-	-ms-grid-column: 2;
+	display: flex;
+	flex-wrap: wrap;
+	max-width: none;
+	> .doughnut_chart_container {
+		flex: 1 1 100%;
+		max-width: 19rem;
+	}
 }
 
 .doughnut_chart_container {
 	display: -ms-grid;
 	display: grid;
 	-ms-grid-columns: 1fr 1fr;
-	grid-template-columns: 1fr 1fr;
-	-webkit-box-align: end;
-	-ms-flex-align: end;
-	align-items: end;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	-ms-grid-rows: minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr);
+	-webkit-box-align: center;
+	-ms-grid-row-align: center;
+	align-items: center;
 
 	h4 {
 		font-weight: 600;
@@ -193,13 +143,8 @@ li > span {
 		line-height: 1;
 		margin-left: 1rem;
 		-ms-grid-column: 2;
-		display: flex;
-		flex-flow: column wrap;
-		justify-content: flex-end;
+		-ms-grid-row-align: center;
 	}
-}
-.margin-2-5 {
-	margin-top: 2.5rem;
 }
 
 // LINE
@@ -211,12 +156,6 @@ li > span {
 	-webkit-transform: translate(-50%, 0);
 	-ms-transform: translate(-50%, 0);
 	transform: translate(-50%, 0);
-}
-
-// Hidden class
-
-.hidden {
-	display: none !important;
 }
 
 // select
@@ -239,8 +178,9 @@ li > span {
 }
 .dropdown .select {
 	cursor: pointer;
-	display: block;
+	display: flex;
 	padding: 0.625rem;
+	white-space: nowrap;
 }
 
 .dropdown .select > i {
