@@ -29,7 +29,7 @@ def format_d(depth, fmt, *args, **kwargs):
 
 def print_source(  # noqa
         manager, source, depth=0, *,
-        guess=False, summarise=False, max_depth=None):
+        guess=False, summarise=False, metadata=False, max_depth=None):  # noqa
     try:
         for handle in source.handles(manager):
             print(format_d(depth, "{0}", handle))
@@ -45,6 +45,10 @@ def print_source(  # noqa
                         print(format_d(depth + 1, "lmod {0}", lm))
                 except Exception:
                     print(format_d(depth + 1, "not available"))
+            if metadata:
+                resource = handle.follow(manager)
+                for k, v in resource.get_metadata().items():
+                    print(format_d(depth + 1, "metadata:{0} {1}", k, v))
             if max_depth is None or depth < max_depth:
                 derived_source = Source.from_handle(
                         handle, manager if not guess else None)
@@ -86,6 +90,11 @@ def add_arguments(parser):
             dest='summarise',
             help='Print a brief summary of the content of each file.')
     parser.add_argument(
+            "--metadata",
+            action='store_true',
+            dest='metadata',
+            help='Print the metadata associated with each file.')
+    parser.add_argument(
             "--max-depth",
             metavar="DEPTH",
             type=int,
@@ -117,10 +126,11 @@ def main():
                     print("{0}: URL parsing failure".format(i), file=stderr)
                 else:
                     print_source(
-                        sm, s,
-                        guess=args.guess,
-                        summarise=args.summarise,
-                        max_depth=args.max_depth)
+                            sm, s,
+                            guess=args.guess,
+                            summarise=args.summarise,
+                            metadata=args.metadata,
+                            max_depth=args.max_depth)
             except UnknownSchemeError:
                 print("{0}: unknown URL scheme".format(i), file=stderr)
 
