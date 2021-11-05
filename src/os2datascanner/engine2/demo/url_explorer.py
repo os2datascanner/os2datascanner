@@ -1,30 +1,16 @@
 #!/usr/bin/env python
 
+"""Summarises an OS2datascanner data source, showing the system's view of
+it."""
+
 from sys import stderr
 import argparse
 import logging
+import traceback
 
 from os2datascanner.engine2.model.core import Source, SourceManager
 from os2datascanner.engine2.model.core import FileResource
 from os2datascanner.engine2.model.core import UnknownSchemeError
-
-"""Explore an url and see what datascanner understands(with `--summarise`)
-
-url can be one of the scheme-types supported by datascanner. Schemes `file:` and
-`http:` are probably the easiet to use. The urls have to point to a "directory" not a
-specific resource.
-Note: The `file` url have to be absolute (i.e. no `~/` or use file:`readlink -f ~/`)
-
-Example:
-python -m os2datascanner.engine2.demo.url_explorer file:/home/User/Downloads
-python -m os2datascanner.engine2.demo.url_explorer file:`readlink -f ~/Downloads`
-python -m os2datascanner.engine2.demo.url_explorer https://www.magenta.dk
-
-Supported urls can be found by:
-
-from os2datascanner.engine2.model.core import Source
-Source._Source__url_handlers
-"""
 
 
 _loglevels = {
@@ -41,44 +27,52 @@ def format_d(depth, fmt, *args, **kwargs):
     return "{0}{1}".format("  " * depth, fmt.format(*args, **kwargs))
 
 
-def print_source(manager, source, depth=0, *,  # noqa: CCR001, E501 too high cognitive complexity
-                 guess=False, summarise=False, max_depth=None):
-    for handle in source.handles(manager):
-        print(format_d(depth, "{0}", handle))
-        if summarise:
-            resource = handle.follow(manager)
-            try:
-                if isinstance(resource, FileResource):
-                    size = resource.get_size().value
-                    mime = resource.compute_type()
-                    lm = resource.get_last_modified().value
-                    print(format_d(depth + 1, "size {0} bytes", size))
-                    print(format_d(depth + 1, "type {0}", mime))
-                    print(format_d(depth + 1, "lmod {0}", lm))
-            except Exception:
-                print(format_d(depth + 1, "not available"))
-        if max_depth is None or depth < max_depth:
-            derived_source = Source.from_handle(
-                    handle, manager if not guess else None)
-            if derived_source:
-                print_source(manager, derived_source, depth + 1,
-                             guess=guess, summarise=summarise, max_depth=max_depth)
+def print_source(  # noqa
+        manager, source, depth=0, *,
+        guess=False, summarise=False, max_depth=None):
+    try:
+        for handle in source.handles(manager):
+            print(format_d(depth, "{0}", handle))
+            if summarise:
+                resource = handle.follow(manager)
+                try:
+                    if isinstance(resource, FileResource):
+                        size = resource.get_size().value
+                        mime = resource.compute_type()
+                        lm = resource.get_last_modified().value
+                        print(format_d(depth + 1, "size {0} bytes", size))
+                        print(format_d(depth + 1, "type {0}", mime))
+                        print(format_d(depth + 1, "lmod {0}", lm))
+                except Exception:
+                    print(format_d(depth + 1, "not available"))
+            if max_depth is None or depth < max_depth:
+                derived_source = Source.from_handle(
+                        handle, manager if not guess else None)
+                if derived_source:
+                    print_source(
+                            manager, derived_source, depth + 1,
+                            guess=guess, summarise=summarise,
+                            metadata=metadata, max_depth=max_depth)
+    except Exception:
+        print(format_d(depth, f"{type(source).__name__}: unexpected error:"))
+        lines = traceback.format_exc().strip().split("\n")
+        for line in lines:
+            print(format_d(depth + 1, line))
 
 
 def add_arguments(parser):
     parser.add_argument(
             "urls",
             metavar="URL",
-            help='A URL to be explored. '
-            + 'Examples: file:`readlink -f ~/Downloads` OR https://magenta.dk. '
-            + 'The URL have to start with the scheme and be absolute! '
-            + 'Read the header of this file for more info.',
+            help="A URL to be explored, for example file:///usr/share/doc or"
+                 " https://www.magenta.dk. (Note that not all OS2datascanner"
+                 " sources have URL representations.)",
             nargs='+')
     parser.add_argument(
             "--guess-mime",
             action='store_true',
             dest='guess',
-            help='Compute the MIME type of each file' +
+            help='Compute the MIME type of each file'
                  ' based on its filename. (default)',
             default=True)
     parser.add_argument(
@@ -99,7 +93,7 @@ def add_arguments(parser):
     parser.add_argument(
             "--log-level",
             default="info",
-            help=("Set logging level. Example --log-level=debug', default='info'"),
+            help="Set the logging level.",
             choices=("critical", "error", "warn", "warning", "info", "debug",)
         )
 
