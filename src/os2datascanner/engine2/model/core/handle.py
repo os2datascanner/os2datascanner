@@ -8,6 +8,13 @@ from ...utilities.equality import TypePropertyEquality
 from .import source as msource
 
 
+_encodings_map = {
+    "gzip": "application/gzip",
+    "bzip2": "application/x-bzip2",
+    "xz": "application/xz"
+}
+
+
 class Handle(TypePropertyEquality, JSONSerialisable):
     """A Handle is a reference to a leaf node in a hierarchy maintained by a
     Source. Handles can be followed to give a Resource, a concrete object.
@@ -57,8 +64,15 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         """Guesses the type of this Handle's target based on its name. (For a
         potentially better, but more expensive, guess, follow this Handle to
         get a Resource and call its compute_type() method instead.)"""
-        mime, _ = guess_type(self.name)
-        return mime or "application/octet-stream"
+        mime, encoding = guess_type(self.name)
+
+        if encoding:
+            # The mimetypes module helpfully maps (for example) "doc.pdf.gz"
+            # to "application/pdf", but we need the actual MIME type of the
+            # encoded form to be able to decode it properly
+            return _encodings_map.get(encoding, "application/octet-stream")
+        else:
+            return mime or "application/octet-stream"
 
     @property
     @abstractmethod
