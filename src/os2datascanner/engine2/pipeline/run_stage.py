@@ -6,7 +6,6 @@ import signal
 import sys
 import traceback
 from collections import deque
-import psutil
 
 from prometheus_client import Info, Summary, start_http_server
 
@@ -54,15 +53,10 @@ def _compatibility_main(stage):
 
 
 def restart_process():
-    """Replaces this process with a new Python interpreter with the same
-    arguments and environment.
+    """Clean exit, used to release all ressources used by this process and children.
 
-    The usual caveats of os.execve and friends apply: in particular, open files
-    will not be flushed before the process is replaced."""
-    # We're restarting the operating system-level process, so we need the
-    # operating system-level command line -- sys.argv has been manipulated too
-    # much by the Python interpreter
-    os.execl(sys.executable, *psutil.Process().cmdline())
+    Restart will be handled by kubernetes or docker, depending on the setup."""
+    sys.exit(0)
 
 
 class GenericRunner(PikaPipelineThread):

@@ -4,6 +4,7 @@ WORKDIR /requirements/sys-requirements
 COPY requirements/sys-requirements .
 RUN rm sys-requirements-for-bash-install.txt
 # Combine all system dependencies
+# hadolint ignore=DL3059
 RUN cat sys-requirements-*.txt > sys-requirements.txt
 # hadolint ignore=DL3059
 RUN cat sys-requirements.txt
