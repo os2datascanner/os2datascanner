@@ -8,7 +8,6 @@ lxml
 olefile
 Pillow
 prometheus_client
-psutil
 PyPDF2
 pysmbc
 pytest

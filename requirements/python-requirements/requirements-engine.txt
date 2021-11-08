@@ -92,8 +92,6 @@ protobuf==3.13.0
     # via
     #   google-api-core
     #   googleapis-common-protos
-psutil==5.8.0
-    # via -r requirements-engine.in
 py==1.10.0
     # via
     #   pytest

@@ -151,7 +151,7 @@ pluggy==0.13.1
     # via
     #   -c requirements-engine.txt
     #   pytest
-prometheus-client==0.7.1
+prometheus_client==0.7.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
@@ -160,10 +160,6 @@ protobuf==3.13.0
     #   -c requirements-engine.txt
     #   google-api-core
     #   googleapis-common-protos
-psutil==5.8.0
-    # via
-    #   -c requirements-engine.txt
-    #   -r requirements-engine.in
 py==1.10.0
     # via
     #   -c requirements-engine.txt
