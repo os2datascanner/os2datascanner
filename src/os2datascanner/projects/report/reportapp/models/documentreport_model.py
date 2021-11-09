@@ -171,7 +171,20 @@ class DocumentReport(models.Model):
         if not self.pk:
             self.created_timestamp = time_now()
 
+        # ensure model field constrains
+        if len(old_name := self.name) > 256:
+            self.name = self.name[:256]
+        if len(old_sort_key := self.sort_key) > 256:
+            self.sort_key = self.sort_key[:256]
+
         super().save(*args, **kwargs)
+
+        # log after save, so self returns the Object pk.
+        if len(old_name) > 256:
+            logger.info("truncated name before saving", report=self, name=old_name)
+        if len(old_sort_key) > 256:
+            logger.info("truncated sort_key before saving", report=self,
+                        sort_key=self.sort_key)
 
     class Meta:
         verbose_name_plural = _("document reports")
