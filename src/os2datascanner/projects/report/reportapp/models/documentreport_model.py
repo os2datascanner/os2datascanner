@@ -58,6 +58,12 @@ class DocumentReport(models.Model):
 
     # Field to store the primary key of the scanner job that this DocumentReport stems from.
     scanner_job_pk = models.IntegerField(null=True)
+    # Field to store name of the scanner job that this DocumentReport stems from.
+    scanner_job_name = models.CharField(
+        max_length=256,
+        null=True,
+        db_index=True,
+    )
 
     def _str_(self):
         return self.path

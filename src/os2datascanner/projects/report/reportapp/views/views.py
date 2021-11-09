@@ -109,7 +109,7 @@ class MainPageView(LoginRequiredMixin, ListView):
 
         if (scannerjob := self.request.GET.get('scannerjob')) and scannerjob != 'all':
             self.document_reports = self.document_reports.filter(
-                data__scan_tag__scanner__pk=int(scannerjob))
+                scanner_job_pk=int(scannerjob))
 
         if (sensitivity := self.request.GET.get('sensitivities')) and sensitivity != 'all':
             self.document_reports = self.document_reports.filter(sensitivity=int(sensitivity))
@@ -125,13 +125,13 @@ class MainPageView(LoginRequiredMixin, ListView):
         if self.scannerjob_filters is None:
             # Create select options
             self.scannerjob_filters = self.document_reports.order_by(
-                'data__scan_tag__scanner__pk').values(
-                'data__scan_tag__scanner__pk').annotate(
-                total=Count('data__scan_tag__scanner__pk')
+                'scanner_job_pk').values(
+                'scanner_job_pk').annotate(
+                total=Count('scanner_job_pk')
             ).values(
-                'data__scan_tag__scanner__name',
+                'scanner_job_name',
                 'total',
-                'data__scan_tag__scanner__pk'
+                'scanner_job_pk'
             )
 
         context['scannerjobs'] = (self.scannerjob_filters,

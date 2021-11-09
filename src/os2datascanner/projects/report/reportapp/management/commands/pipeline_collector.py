@@ -116,7 +116,7 @@ def handle_metadata_message(new_report, result):
         new_report.datasource_last_modified = (
                 message.scan_tag.time or time_now())
     logger.debug("updating timestamp", report=new_report.presentation)
-
+    new_report.scanner_job_name = message.scan_tag.scanner.name
     save_if_path_and_scanner_job_pk_unique(new_report, message.scan_tag.scanner.pk)
 
 
@@ -202,6 +202,7 @@ def handle_match_message(previous_report, new_report, body):  # noqa: CCR001, E5
         new_report.probability = new_matches.probability
         # Sort matches by prop. desc.
         new_report.data["matches"] = sort_matches_by_probability(body)
+        new_report.scanner_job_name = new_matches.scan_spec.scan_tag.scanner.name
 
         save_if_path_and_scanner_job_pk_unique(
             new_report, new_matches.scan_spec.scan_tag.scanner.pk)
@@ -258,6 +259,7 @@ def handle_problem_message(previous_report, new_report, body):
         new_report.name = handle.presentation_name if handle else ""
         new_report.sort_key = handle.sort_key if handle else "(source)"
         new_report.data["problem"] = body
+        new_report.scanner_job_name = problem.scan_tag.scanner.name
 
         save_if_path_and_scanner_job_pk_unique(new_report, problem.scan_tag.scanner.pk)
 
