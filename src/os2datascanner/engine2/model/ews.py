@@ -285,6 +285,10 @@ class EWSMailHandle(Handle):
             self._folder_name.removeprefix("/") or "(unknown folder)")
 
     @property
+    def name(self):
+        return self.presentation_name
+
+    @property
     def presentation_name(self):
         return self._mail_subject
 
