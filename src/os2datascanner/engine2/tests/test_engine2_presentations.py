@@ -4,12 +4,13 @@ import unittest
 from pathlib import Path
 from itertools import zip_longest
 
-from os2datascanner.engine2.model.ews import EWSAccountSource, EWSMailHandle
+from os2datascanner.engine2.model.ews import \
+    EWSMailHandle, EWSAccountSource, OFFICE_365_ENDPOINT
 from os2datascanner.engine2.model.file import FilesystemHandle, FilesystemSource
 from os2datascanner.engine2.model.core import SourceManager, Source
 from os2datascanner.engine2.model.http import WebSource, WebHandle
-
 from os2datascanner.engine2.model.smb import SMBHandle, SMBSource
+from os2datascanner.engine2.model.derived.mail import MailPartHandle, MailSource
 
 here_path = Path(__file__).resolve().parent
 test_data_path = here_path / "data"
@@ -217,7 +218,7 @@ direct_sources = {
             entry_id=5000,
         ),
         "handles": {
-            "name": "some_path",
+            "name": "subject: you got mail",
             "presentation": '"subject: you got mail" (in folder /inbox of account '
             "dummy@example.com)",
             "presentation_name": "subject: you got mail",
@@ -235,6 +236,32 @@ direct_sources = {
             "type": "smb",
         },
     },
+    "mail-part": {
+        "handle": MailPartHandle(
+            MailSource(
+                EWSMailHandle(
+                            EWSAccountSource(
+                                    domain="cloudy.example",
+                                    server=OFFICE_365_ENDPOINT,
+                                    admin_user="cloudministrator",
+                                    admin_password="littlefluffy",
+                                    user="claude"),
+                            path="SW5ib3hJRA==.TWVzc2dJRA==",
+                            mail_subject="Re: Castles in the sky",
+                            folder_name="Inbox",
+                            entry_id="000001234567")
+            ),
+            path="1/pictograph.jpeg",
+            mime="image/jpeg"),
+        "handles": {
+            "name": "pictograph.jpeg",
+            "presentation": 'pictograph.jpeg (in "Re: Castles in the sky" (in folder Inbox of account '  # noqa: E501
+                            "claude@cloudy.example))",
+            "presentation_name": 'Re: Castles in the sky (attachment pictograph.jpeg)',  # noqa: E501
+            "sort_key": "claude@cloudy.example/Inbox",
+            "type": "mail",
+        },
+    }
 }
 
 
