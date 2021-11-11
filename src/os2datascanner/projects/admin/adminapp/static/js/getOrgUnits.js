@@ -15,7 +15,6 @@ $(function() {
             //instead of adding another eventlistener on the same dropdown as this, we set the value to empty here
             selectedValues = [];
 
-            getOrgUnits();
         }
     });
     callOnChange.observe(target, {
@@ -85,7 +84,7 @@ function isOrgUnitSelected(orgUnits) {
         var scannerJobId = document.location.pathname.split('/')[2];
         for(var i = 0; i < orgUnits.length; i += 1){
             for(var j = 0;j < orgUnits[i].exchangescanners.length;j += 1) {
-                if(orgUnits[i].exchangescanners[j] === scannerJobId) {
+                if(orgUnits[i].exchangescanners[j] === parseInt(scannerJobId)) {
                     orgUnits[i].selected = "true";
                     break;
                 }
