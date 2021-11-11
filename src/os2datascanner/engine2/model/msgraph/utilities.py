@@ -63,6 +63,10 @@ class MSGraphSource(Source):
             response.raise_for_status()
             return response
 
+        def follow_next_link(self, next_page):
+            return requests.get(next_page,
+                                headers={"authorization": f"Bearer {self._token}"}).json()
+
     def to_json_object(self):
         return dict(
             **super().to_json_object(),
