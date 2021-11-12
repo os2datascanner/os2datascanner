@@ -63,7 +63,6 @@ let selectedValues = [];
     	opts.allowClear = true;
 		opts.width = 'element';
 		var s2inst = this.select2(opts);
-
 		// when building the tree, add all already selected values and mark them
 		s2inst.val().forEach( function(value) {
 			selectNodes(value, false);
@@ -276,7 +275,7 @@ let selectedValues = [];
 					var descendents = [];
 					for (var descendent in inc) {
 						if (descendent) {
-						descendents.push(descendent.uuid);
+							descendents.push(inc[descendent].uuid);
 						}
 					}
 					$opt.data('descendents', descendents);
