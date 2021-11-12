@@ -72,9 +72,19 @@ class MSGraphMailAccountSource(DerivedSource):
 
     def handles(self, sm):
         pn = self.handle.relative_path
-        for message in sm.open(self).get(
-                "users/{0}/messages?$select=id,subject,webLink".format(
-                        pn))["value"]:
+        result = sm.open(self).get(
+                "users/{0}/messages?$select=id,subject,webLink&$top=100".format(
+                        pn))
+        messages = []
+        messages.extend(result["value"])
+        # We want to get all emails for given account
+        # This key takes us to the next page and is only present
+        # as long as there is one.
+        while '@odata.nextLink' in result:
+            result = sm.open(self).follow_next_link(result["@odata.nextLink"])
+            messages.extend(result["value"])
+
+        for message in messages:
             yield MSGraphMailMessageHandle(self,
                                            message["id"],
                                            message["subject"],
