@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-04 07:17-0500\n"
+"POT-Creation-Date: 2021-11-16 07:47-0600\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -68,19 +68,19 @@ msgstr "følsomhed"
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport_model.py:132
+#: reportapp/models/documentreport_model.py:138
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport_model.py:135
+#: reportapp/models/documentreport_model.py:141
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport_model.py:138
+#: reportapp/models/documentreport_model.py:144
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport_model.py:171
+#: reportapp/models/documentreport_model.py:190
 msgid "document reports"
 msgstr "dokument rapporter"
 
