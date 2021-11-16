@@ -1,7 +1,10 @@
+import logging
 import requests
 from contextlib import contextmanager
 
 from ..core import Source
+
+logger = logging.getLogger(__name__)
 
 
 def _make_token_endpoint(tenant_id):
@@ -19,7 +22,7 @@ class MSGraphSource(Source):
     def censor(self):
         return type(self)(self._client_id, self._tenant_id, None)
 
-    def _generate_state(self, sm):
+    def make_token(self):
         response = requests.post(
                 _make_token_endpoint(self._tenant_id),
                 {
@@ -29,43 +32,71 @@ class MSGraphSource(Source):
                     "grant_type": "client_credentials"
                 })
         response.raise_for_status()
-        token = response.json()["access_token"]
+        logger.info("Collected new token")
+        return response.json()["access_token"]
 
-        yield MSGraphSource.GraphCaller(token)
+    def _generate_state(self, sm):
+        yield MSGraphSource.GraphCaller(self.make_token)
 
     def _list_users(self, sm):
         return sm.open(self).get("users")
 
     class GraphCaller:
-        def __init__(self, token):
-            self._token = token
+        def __init__(self, token_creator):
+            self._token_creator = token_creator
+            self._token = token_creator()
 
         def get_raw(self, tail):
             return requests.get(
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
                     headers={"authorization": "Bearer {0}".format(self._token)})
 
-        def get(self, tail, *, json=True):
+        def get(self, tail, *, json=True, _retry=False):
             response = self.get_raw(tail)
-            response.raise_for_status()
-            if json:
-                return response.json()
-            else:
-                return response.content
+            try:
+                response.raise_for_status()
+                if json:
+                    return response.json()
+                else:
+                    return response.content
+            except requests.exceptions.HTTPError as ex:
+                # If _retry, it means we have a status code 401 but are trying a second time.
+                # It should've succeeded the first time, so we raise an exc to avoid a potential
+                # endless loop
+                if ex.response.status_code != 401 or _retry:
+                    raise ex
+
+                self._token = self._token_creator()
+                return self.get(tail, json=json, _retry=True)
 
         def head_raw(self, tail):
             return requests.head(
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
                     headers={"authorization": "Bearer {0}".format(self._token)})
 
-        def head(self, tail):
+        def head(self, tail, _retry=False):
             response = self.head_raw(tail)
-            response.raise_for_status()
-            return response
+            try:
+                response.raise_for_status()
+                return response
+            except requests.exceptions.HTTPError as ex:
+                if ex.response.status_code != 401 or _retry:
+                    raise ex
 
-        def follow_next_link(self, next_page):
-            return requests.get(next_page,
-                                headers={"authorization": f"Bearer {self._token}"}).json()
+            self._token = self._token_creator()
+            return self.head(tail, _retry=True)
+
+        def follow_next_link(self, next_page, _retry=False):
+            response = requests.get(next_page,
+                                    headers={"authorization": f"Bearer {self._token}"})
+            try:
+                response.raise_for_status()
+                return response.json()
+            except requests.exceptions.HTTPError as ex:
+                if ex.response.status_code != 401 or _retry:
+                    raise ex
+            self._token = self._token_creator()
+            return self.follow_next_link(next_page, _retry=True)
 
     def to_json_object(self):
         return dict(
