@@ -1,5 +1,31 @@
 # Changelog
 
+## Version 3.13.1, 16th November 2021
+
+"Batch Processing" 
+
+### New in this version
+
+- Support for protocol-level pagination for Microsoft Graph emails.
+
+- Support for automatic renewal of Microsoft Graph access token.
+
+### General improvements
+
+- The proactive restart logic now uses `sys.exit` to terminate the Docker
+  container.
+
+- The report module's performance has been improved by making better use of
+  database indexes.
+
+### Bugfixes
+
+- Previously selected organisational units are now correctly shown when editing
+  an existing scanner job.
+
+- The report module can once more handle messages for objects with unusually
+  long names.
+
 ## Version 3.13.0, 4th November 2021
 
 "An Iron Fist in a Velvet Glove"
