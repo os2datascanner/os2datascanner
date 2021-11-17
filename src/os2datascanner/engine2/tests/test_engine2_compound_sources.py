@@ -69,6 +69,13 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                                 test_data_path,
                                 "pdf/embedded-cpr.pdf")))
 
+    def test_pdf_gz(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "pdf/embedded-cpr.pdf.gz")))
+
     def test_doc(self):
         self.run_rule_on_handle(
                 FilesystemHandle.make_handle(
