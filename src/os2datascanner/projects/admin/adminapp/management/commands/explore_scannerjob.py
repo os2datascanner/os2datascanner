@@ -24,11 +24,17 @@ class Command(BaseCommand):
                 type=model_pk(Scanner),
                 metavar="PK",
                 nargs="+")
+        url_explorer.add_control_arguments(parser)
 
-    def handle(self, scanners, **kwargs):
-        guess, summarise = kwargs.get('guess', False), kwargs.get('summarise', False)
+    def handle(
+            self, scanners, *,
+            guess, summarise, metadata, max_depth, **kwargs):
         with SourceManager() as sm:
             for scanner in scanners:
                 for source in scanner.generate_sources():
                     url_explorer.print_source(
-                            sm, source, guess=guess, summarise=summarise)
+                            sm, source,
+                            guess=guess,
+                            summarise=summarise,
+                            metadata=metadata,
+                            max_depth=max_depth)
