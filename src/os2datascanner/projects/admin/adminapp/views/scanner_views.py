@@ -13,8 +13,9 @@
 #
 from json import dumps
 
-from django.core.paginator import Paginator, EmptyPage
+from django.db import transaction
 from django.db.models import F, Q
+from django.core.paginator import Paginator, EmptyPage
 from django.http import Http404
 from pika.exceptions import AMQPError
 import structlog
@@ -134,6 +135,15 @@ class StatusDelete(RestrictedDeleteView):
             form_class = self.get_form_class()
 
         return super().get_form(form_class)
+
+    @transaction.atomic
+    def form_valid(self):
+        # We need to take a lock on the status object here so our background
+        # processes can't retrieve it before deletion, update it, and then save
+        # it back to the database again
+        self.object = self.get_object(
+                queryset=self.get_queryset().select_for_update())
+        return super().form_valid()
 
 
 class ScannerList(RestrictedListView):

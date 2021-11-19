@@ -15,6 +15,7 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 
+from django.db import transaction
 from django.core.management.base import BaseCommand
 import structlog
 
@@ -30,7 +31,8 @@ logger = structlog.get_logger(__name__)
 def status_message_received_raw(body):
     message = messages.StatusMessage.from_json_object(body)
 
-    status = ScanStatus.objects.filter(scan_tag=body["scan_tag"]).first()
+    status = ScanStatus.objects.select_for_update().filter(
+            scan_tag=body["scan_tag"]).first()
     if not status:
         return
 
@@ -77,7 +79,7 @@ def checkup_message_received_raw(body):  # noqa: CCR001, too high cognitive comp
     scan_time = scan_tag.time
 
     try:
-        checkup = ScheduledCheckup.objects.get(
+        checkup = ScheduledCheckup.objects.select_for_update().get(
                 handle_representation=handle.to_json_object(),
                 scanner=scanner)
 
@@ -147,10 +149,11 @@ def checkup_message_received_raw(body):  # noqa: CCR001, too high cognitive comp
 
 class CollectorRunner(PikaPipelineThread):
     def handle_message(self, routing_key, body):
-        if routing_key == "os2ds_status":
-            yield from status_message_received_raw(body)
-        elif routing_key == "os2ds_checkups":
-            yield from checkup_message_received_raw(body)
+        with transaction.atomic():
+            if routing_key == "os2ds_status":
+                yield from status_message_received_raw(body)
+            elif routing_key == "os2ds_checkups":
+                yield from checkup_message_received_raw(body)
 
 
 class Command(BaseCommand):

@@ -3,6 +3,7 @@ from datetime import datetime
 from dateutil.tz import gettz
 from django.utils.text import slugify
 
+from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.projects.admin.core.models.client import Client
 from os2datascanner.projects.admin.organizations.models.organization import Organization
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import (
@@ -106,7 +107,7 @@ class StatusTest(django.test.TestCase):
         fail cleanly."""
         ss = ScanStatus(
                 scanner=self.scanner,
-                scan_tag={"time": datetime.now(tz=gettz()).isoformat()},
+                scan_tag={"time": time_now().isoformat()},
                 total_sources=5,
                 explored_sources=5,
                 total_objects=0)
@@ -119,7 +120,7 @@ class StatusTest(django.test.TestCase):
     def test_updates_on_save(self):
         ss = ScanStatus(
             scanner=self.scanner,
-            scan_tag={"time": datetime.now(tz=gettz()).isoformat()},
+            scan_tag={"time": time_now().isoformat()},
             total_sources=5,
             explored_sources=5,
             total_objects=0,

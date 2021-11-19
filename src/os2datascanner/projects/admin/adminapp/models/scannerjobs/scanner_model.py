@@ -29,7 +29,9 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import validate_comma_separated_integer_list
 from django.db.models import JSONField
+from django.db.models.signals import post_delete
 from django.utils.translation import ugettext_lazy as _
+from django.dispatch import receiver
 
 from model_utils.managers import InheritanceManager
 from recurrence.fields import RecurrenceField
@@ -486,3 +488,21 @@ class ScanStatus(models.Model):
     class Meta:
         verbose_name = _("scan status")
         verbose_name_plural = _("scan statuses")
+
+
+@receiver(post_delete)
+def post_delete_callback(sender, instance, using, **kwargs):
+    """Signal handler for post_delete. Requests that all running pipeline
+    components blacklist and ignore the scan tag of the now-deleted scan."""
+    if not isinstance(instance, ScanStatus):
+        return
+
+    msg = messages.CommandMessage(
+            abort=messages.ScanTagFragment.from_json_object(
+                    instance.scan_tag))
+    with PikaPipelineThread() as p:
+        p.enqueue_message(
+                "", msg.to_json_object(),
+                "broadcast", priority=10)
+        p.enqueue_stop()
+        p.run()

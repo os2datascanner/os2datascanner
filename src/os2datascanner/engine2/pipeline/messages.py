@@ -443,7 +443,7 @@ class CommandMessage(NamedTuple):
     modify the treatment of other messages, they should be processed as soon as
     possible, and so should be sent on a high-priority queue."""
 
-    abort: Optional[ScanTagFragment]
+    abort: Optional[ScanTagFragment] = None
     """If set, the scan tag of a scan that should no longer be processed by the
     pipeline. Pipeline components should acknowledge and silently ignore all
     messages carrying this tag.
@@ -453,7 +453,7 @@ class CommandMessage(NamedTuple):
     depends a bit on the installation and on how many concurrent scans it can
     be expected to perform.)"""
 
-    log_level: Optional[int]
+    log_level: Optional[int] = None
     """If set, the new logging level of the "os2datascanner" root logger."""
 
     def to_json_object(self):
