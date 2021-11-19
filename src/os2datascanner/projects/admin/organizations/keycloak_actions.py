@@ -265,6 +265,7 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
         # Keycloak's UserRepresentation type has no required fields(!); we
         # can't do anything useful if we don't have the very basics, though
         if r and not all(n in r.properties for n in ("id", "attributes", "username",)):
+            progress_callback("diff_ignored", path)
             continue
 
         if l and not r:
