@@ -64,14 +64,7 @@ def print_source(  # noqa
             print(format_d(depth + 1, line))
 
 
-def add_arguments(parser):
-    parser.add_argument(
-            "urls",
-            metavar="URL",
-            help="A URL to be explored, for example file:///usr/share/doc or"
-                 " https://www.magenta.dk. (Note that not all OS2datascanner"
-                 " sources have URL representations.)",
-            nargs='+')
+def add_control_arguments(parser):
     parser.add_argument(
             "--guess-mime",
             action='store_true',
@@ -99,6 +92,17 @@ def add_arguments(parser):
             metavar="DEPTH",
             type=int,
             help="Don't recurse deeper than %(metavar)s levels.")
+
+
+def add_arguments(parser):
+    parser.add_argument(
+            "urls",
+            metavar="URL",
+            help="A URL to be explored, for example file:///usr/share/doc or"
+                 " https://www.magenta.dk. (Note that not all OS2datascanner"
+                 " sources have URL representations.)",
+            nargs='+')
+    add_control_arguments(parser)
     parser.add_argument(
             "--log-level",
             default="info",
