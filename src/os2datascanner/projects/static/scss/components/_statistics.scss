@@ -106,9 +106,11 @@
 		-o-transition: all 0.2s ease-in-out;
 		transition: all 0.2s ease-in-out;
 		cursor: pointer;
+		margin-left: 0;
 	}
 	.dropdown .dropdown-menu {
 		padding: 0;
+		margin: 0;
 		list-style: none;
 	}
 	.dropdown .dropdown-menu li:hover {

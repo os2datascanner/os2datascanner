@@ -1,15 +1,7 @@
 {%  load i18n %}
 
-{% if page_obj.paginator.count >= 10 %}
-<div class="get-results">
+<form class="dropdown" data-autosubmit="preserve">
   <select name="paginate_by" id="paginate_by">
-      <option value="10"
-              {% if paginate_by_options|first == 10 %}
-              selected="selected"
-              {% endif %} >
-          {% trans "per page" %}
-      </option>
-
         {% for option in paginate_by_options %}
             <option value="{{ option }}"
             {% if option == paginate_by %} selected="selected"{% endif %}>
@@ -17,5 +9,4 @@
             </option>
         {% endfor %}
   </select>
-</div>
-{% endif %}
+</form>

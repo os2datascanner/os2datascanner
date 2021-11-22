@@ -37,13 +37,13 @@
             {% trans "Scan" %}
           </label>
       </div>
-      <div class="match_filtering">
+      <div class="match_filtering dropdown" data-autosubmit="preserve" data-compareto="all">
           <select name="scannerjob" id="scannerjobs">
             <option value="all"
                     {% if scannerjobs|last == "all" %}
                         selected="selected"
                     {% endif %} >
-                    {% trans "Select scannerjob" %}
+                    {% trans "All scannerjobs" %}
             </option>
               {% for scan in scannerjobs|first %}
                   <option value="{{ scan.scanner_job_pk|unlocalize }}"
@@ -66,13 +66,13 @@
             {% trans "Sensitivity" %}
           </label>
       </div>
-      <div class="match_filtering">
+      <div class="match_filtering dropdown" data-autosubmit="preserve" data-compareto="all">
           <select name="sensitivities" id="sensitivities" >
             <option value="all"
                     {% if sensitivities|last == "all" %}
                         selected="selected"
                     {% endif %} >
-              {% trans "Select sensitivity" %}
+              {% trans "All sensitivities" %}
             </option>
               {% for sensitivity in sensitivities|first %}
                   <option value="{{ sensitivity.0.value|stringformat:"i" }}"

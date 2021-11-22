@@ -19,10 +19,19 @@
 
   .page_of_pages,
   form,
-  .pages,
-  .get-results {
+  .pages {
     display: block;
+    margin-top: calc(var(--datatable-cell-padding) / 2) !important; // in order to not have margin-top: 0; from .flex class below
     margin: calc(var(--datatable-cell-padding) / 2);
+  }
+  
+  .dropdown {
+    width: auto;
+    &,
+    .select-items,
+    .select-selected {
+      min-width: 10rem;
+    }
   }
 
   .flex {
@@ -31,6 +40,7 @@
     align-items: center;
     justify-content: space-between;
     font-size: 1rem;
+    margin-top: 0;
   }
 
   .page_of_pages,
@@ -51,12 +61,6 @@
 
   form {
     flex: 0 1 auto;
-    margin-left: auto;
-    @media (min-width: $break-sm) {
-      margin-left: calc(var(--datatable-cell-padding) / 2);
-      margin-right: auto;
-      padding-right: calc(var(--datatable-cell-padding) / 2);
-    }
   }
 
   .link {

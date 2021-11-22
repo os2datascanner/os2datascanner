@@ -1,6 +1,6 @@
 var x, i, j, l, ll, selElmnt, a, b, c;
 
-/* look for any elements with the class "match_filtering" */
+/* look for any elements with the class "dropdown" */
 x = document.getElementsByClassName("dropdown");
 l = x.length;
 
@@ -13,6 +13,13 @@ for (i = 0; i < l; i += 1) {
   a.setAttribute("class", "select-selected");
   a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
   a.value = selElmnt.options[selElmnt.selectedIndex].value;
+
+  /* change color if value is not equal to the value-to-compare-to */
+  if (x[i].getAttribute("data-compareto") && selElmnt.options[selElmnt.selectedIndex].value != x[i].getAttribute("data-compareto")) {
+    a.style.color = '#00496e';
+    a.style.fontWeight = 'bold';
+  }
+  
   x[i].appendChild(a);
 
   /* for each element, create a new DIV that will contain the option list */
@@ -47,6 +54,48 @@ for (i = 0; i < l; i += 1) {
           }
         }
         h.click();
+        
+        var dropdown = $(this).closest(".dropdown");
+        var form = dropdown.closest("form");
+        var autosubmit = dropdown.attr("data-autosubmit");
+        if (autosubmit) {
+          if (autosubmit === "preserve") {
+            // if we need to preserve the other URL params of the page we're on,
+            // first get all params from window.location.search (no support for
+            // URLSearchParams in IE11 :'-()
+            var params = {};
+            window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+              function(_, key, value) {
+                params[key] = value;
+              }
+            );
+            
+            // since we're changing settings, we don't want to persist the 'page'
+            // param, if it exists. Otherwise you'd end up in scenarios where skipping
+            // from e.g. page 2 of 'all scans' to 'only scan ID xyz' would still be
+            // on page 2. Or changing page size from 10 to 50 while on page 2
+            // would still attempt to load page 2 with a page size of 50
+            delete params.page;
+            
+            // now append hidden form fields corresponding to all the params
+            // to the parent form we're within
+            var hiddenFields = $('');
+            for (var param in params) {
+              if (params.hasOwnProperty(param)) { // filter out prototype properties
+                var existingField = form.find('[name="' + param + '"]');
+                if (!existingField.length) {
+                  hiddenFields = hiddenFields.add($('<input/>', {
+                    type: 'hidden',
+                    name: param,
+                    value: params[param]
+                  }));
+                }
+              }
+            }
+            form.append(hiddenFields);
+          }
+          form.submit();
+        }
     });
     b.appendChild(c);
   }

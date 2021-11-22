@@ -98,7 +98,7 @@ function setStorage (item, value) {
 
 // IE11 way of doing Element.closest
 function closestElement(elm, selector) {
-  var parent = elm.parentElement;
+  var parent = elm;
   while (parent) {
     if (parent.matches(selector)) {
       break;

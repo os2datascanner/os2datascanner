@@ -125,6 +125,10 @@ msgstr "Ryd"
 msgid "Scan"
 msgstr "Scan"
 
+#: reportapp/templates/components/filters.html:40
+msgid "All scannerjobs"
+msgstr "Alle scannerjobs"
+
 #: reportapp/templates/components/filters.html:47
 msgid "Select scannerjob"
 msgstr "Vælg scannerjob"
@@ -138,6 +142,10 @@ msgstr "Følsomhed"
 #: reportapp/templates/components/filters.html:76
 msgid "Select sensitivity"
 msgstr "Vælg følsomhed"
+
+#: reportapp/templates/components/filters.html:69
+msgid "All sensitivities"
+msgstr "Alle følsomheder"
 
 #: reportapp/templates/components/filters.html:104
 msgid "Include results, that are less than 30 days old"
@@ -250,8 +258,7 @@ msgstr "Sti"
 msgid "Actions"
 msgstr "Handlinger"
 
-#: reportapp/templates/components/load-results.html:10
-#: reportapp/templates/components/load-results.html:16
+#: reportapp/templates/components/load-results.html:8
 msgid "per page"
 msgstr "pr. side"
 
@@ -556,6 +563,9 @@ msgstr "Mailscan"
 #: reportapp/views/views.py:442
 msgid "Not assigned"
 msgstr "Ikke tildelt"
+
+#~ msgid "Select sensitivity"
+#~ msgstr "Vælg følsomhed"
 
 #~ msgid "Overview for department with most unhandled results"
 #~ msgstr "Overblik over afdelinger med flest uhåndterede resultater"
