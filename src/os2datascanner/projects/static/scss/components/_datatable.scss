@@ -4,7 +4,7 @@
 
 .datatable-wrapper {
   clear: both;
-  &.sm, &.md, &.lg {
+  &.sm, &.md, &.lg, &.xl {
     max-width: 100%;
     overflow-x: auto;
   }
@@ -23,6 +23,11 @@
       min-width: 55rem;
     }
   }
+  &.xl {
+    > .datatable {
+      min-width: 75rem;
+    }
+  }
   &.card {
     box-shadow: var(--box-shadow-widget);
     border-radius: var(--border-radius-widget);
@@ -32,7 +37,8 @@
 
   &.sm.card,
   &.md.card,
-  &.lg.card {
+  &.lg.card,
+  &.xl.card {
     // use gradients to signify that the table is scrollable
     background-image:
       linear-gradient(to right, white var(--datatable-cell-padding), transparent 100%),
@@ -69,7 +75,6 @@
 }
 
 .datatable {
-  background-color: #fff;
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
@@ -164,7 +169,7 @@
     }
 
     &--automatic {
-      width: 12rem;
+      width: 8rem;
     }
 
     &--source {
@@ -205,7 +210,7 @@
     word-break: break-all;
   }
 
-  a {
+  a:not(.button) {
     text-decoration: none;
     font-weight: 500;
     color: var(--color-primary);
@@ -259,7 +264,7 @@
 
 .datatable th,
 .datatable td {
-  line-height: 1;
+  line-height: normal; // prevent y-overflow
   padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
   vertical-align: middle;
   .overflow-ellipsis {

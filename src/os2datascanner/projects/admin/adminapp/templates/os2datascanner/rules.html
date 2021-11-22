@@ -34,99 +34,111 @@
     </div>
   </div>
 
-  <div class="datatable-wrapper lg" role="region" tabindex="0" aria-label="{% trans 'Rules' %}">
-    <table class="datatable">
-      <thead>
-        <tr>
-          <th class="datatable__column--name">
-            {% trans "Name" %}
-          </th>
-          <th class="datatable__column--org">
-            {% trans "Organization" %}
-          </th>
-          <th class="datatable__column--description">
-            {% trans "Description" %}
-          </th>
-          <th class="datatable__column--expression">
-            {% trans "Expression" %}
-          </th>
-          <th class="datatable__column--sensitivity">
-            {% trans "Sensitivity" %}
-          </th>
-          <th class="datatable__column--actions">
-            {% trans "Action" %}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for rule in regexrule_list %}
-        <tr tabindex="0">
-          <td class="datatable__column--name">{{ rule.name }}</td>
-          <td class="datatable__column--org">{{ rule.organization }}</td>
-          <td class="datatable__column--description">{{ rule.description }}</td>
+  {% if regexrule_list %}
+    <div class="datatable-wrapper card xl" role="region" tabindex="0" aria-label="{% trans 'Rules' %}">
+      <table class="datatable">
+        <colgroup>
+          <col class="datatable__column--name">
+          <col class="datatable__column--org">
+          <col class="datatable__column--info">
+          <col class="datatable__column--expression">
+          <col class="datatable__column--sensitivity">
+          <col class="datatable__column--actions">
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="datatable__column--name">
+              {% trans "Name" %}
+            </th>
+            <th class="datatable__column--org">
+              {% trans "Organization" %}
+            </th>
+            <th class="datatable__column--info">
+              {% trans "Description" %}
+            </th>
+            <th class="datatable__column--expression">
+              {% trans "Expression" %}
+            </th>
+            <th class="datatable__column--sensitivity">
+              {% trans "Sensitivity" %}
+            </th>
+            <th class="datatable__column--actions">
+              {% trans "Action" %}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rule in regexrule_list %}
+          <tr tabindex="0">
+            <td class="datatable__column--name">{{ rule.name }}</td>
+            <td class="datatable__column--org">{{ rule.organization }}</td>
+            <td class="datatable__column--info">{{ rule.description }}</td>
 
-          <td class="datatable__column--expression">
-            {% if rule.regexrule.patterns.all|length > 0 %}
-            <button
-              type="button"
-              class="button button--grey button--small"
-              title="{% trans 'Show expression' %}"
-              data-toggle="#show-patterns-{{ forloop.counter }}">
-              {% trans "Show expression" %}
-            </button>
-            {% endif %}
-          </td>
-          <td class="datatable__column--sensitivity">
-            <span class="flex">
-              <span class="flex--width">
-                {% include "components/sensitivity-icon.html" %}
+            <td class="datatable__column--expression">
+              {% if rule.regexrule.patterns.all|length > 0 %}
+              <button
+                type="button"
+                class="button button--grey button--small"
+                title="{% trans 'Show expression' %}"
+                data-toggle="#show-patterns-{{ forloop.counter }}">
+                {% trans "Show expression" %}
+              </button>
+              {% endif %}
+            </td>
+            <td class="datatable__column--sensitivity">
+              <span class="flex">
+                <span class="flex--width">
+                  {% include "components/sensitivity-icon.html" %}
+                </span>
+                <span>{{ rule.get_sensitivity_display }}</span>
               </span>
-              <span>{{ rule.get_sensitivity_display }}</span>
-            </span>
-          </td>
-          <td class="datatable__column--actions">
-            <div class="action-wrapper">
-              <a
-                href="/rules/regex/{{rule.pk}}"
-                class="button button--small button--grey"
-                title="{% trans 'Edit' %}">
-                <svg class="icon">
-                  <use xlink:href="/static/svg/symbol-defs.svg#icon-pencil"></use>
-                </svg>
-              </a>
-
-              <form action="/{{ view.type }}rules/regex/{{rule.pk}}/delete/" method="post" style="display: inline-block;">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button
-                  type="submit"
+            </td>
+            <td class="datatable__column--actions">
+              <div class="action-wrapper">
+                <a
+                  href="/rules/regex/{{rule.pk}}"
                   class="button button--small button--grey"
-                  onclick="return confirm('Ønsker du virkelig at slette denne regel?\n{{ rule.name }}\n\nHandlingen kan ikke fortrydes.')"
-                        title="{% trans 'Delete' %}">
+                  title="{% trans 'Edit' %}">
                   <svg class="icon">
-                    <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                    <use xlink:href="/static/svg/symbol-defs.svg#icon-pencil"></use>
                   </svg>
-                </button>
-              </form>
-            </div>
+                </a>
 
-          </td>
-        </tr>
-        <tr class="expandable-row" id="show-patterns-{{ forloop.counter }}" hidden>
-          {% if user.is_superuser %}
-          <td colspan="6">
-          {% else %}
-          <td colspan="5">
-          {% endif %}
-            {% if rule.regexrule.patterns.all|length > 0 %}
-            {% for pattern in rule.regexrule.patterns.all %}<code class="code-grey">{{ pattern.pattern_string }}</code>{% endfor %}
+                <form action="/{{ view.type }}rules/regex/{{rule.pk}}/delete/" method="post" style="display: inline-block;">
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                  <button
+                    type="submit"
+                    class="button button--small button--grey"
+                    onclick="return confirm('Ønsker du virkelig at slette denne regel?\n{{ rule.name }}\n\nHandlingen kan ikke fortrydes.')"
+                          title="{% trans 'Delete' %}">
+                    <svg class="icon">
+                      <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                    </svg>
+                  </button>
+                </form>
+              </div>
+
+            </td>
+          </tr>
+          <tr class="expandable-row" id="show-patterns-{{ forloop.counter }}" hidden>
+            {% if user.is_superuser %}
+            <td colspan="6">
+            {% else %}
+            <td colspan="5">
             {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+              {% if rule.regexrule.patterns.all|length > 0 %}
+              {% for pattern in rule.regexrule.patterns.all %}<code class="code-grey">{{ pattern.pattern_string }}</code>{% endfor %}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p><em>{% trans "No rules added yet" %}</em></p>
+  {% endif %}
 
   <div class="aside">
     <h1 class="page-title">
@@ -134,8 +146,14 @@
     </h1>
   </div>
 
-  <div class="datatable-wrapper md" role="region" tabindex="0" aria-label="{% trans 'System rules' %}">
+  <div class="datatable-wrapper card lg" role="region" tabindex="0" aria-label="{% trans 'System rules' %}">
     <table class="datatable">
+      <colgroup>
+        <col class="datatable__column--name">
+        <col class="datatable__column--org">
+        <col class="datatable__column--info">
+        <col class="datatable__column--sensitivity">
+      </colgroup>
       <thead>
         <tr>
           <th class="datatable__column--name">
@@ -144,7 +162,7 @@
           <th class="datatable__column--org">
             {% trans "Organization" %}
           </th>
-          <th class="datatable__column--description">
+          <th class="datatable__column--info">
             {% trans "Description" %}
           </th>
           <th class="datatable__column--sensitivity">
@@ -158,7 +176,7 @@
         <tr tabindex="0">
           <td class="datatable__column--name">{{ rule.name }}</td>
           <td class="datatable__column--org">{{ rule.organization }}</td>
-          <td class="datatable__column--description">{{ rule.description }}</td>
+          <td class="datatable__column--info">{{ rule.description }}</td>
           <td class="datatable__column--sensitivity">
             <span class="flex">
               <span class="flex--width">

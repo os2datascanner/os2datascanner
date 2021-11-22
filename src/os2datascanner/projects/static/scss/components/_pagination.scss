@@ -94,7 +94,7 @@
       color: var(--color-primary-dark);
     }
 
-    &--active {
+    &--active:not(.button) {
       font-weight: 600;
       color: var(--color-text-white);
       background-color: var(--color-primary-dark);

@@ -19,17 +19,23 @@
         </div>
 
         {% if object_list  %}
-        <div class="datatable-wrapper md" role="region" tabindex="0" aria-label="{% trans 'Completed scans' %}">
+        <div class="datatable-wrapper card lg" role="region" tabindex="0" aria-label="{% trans 'Completed scans' %}">
           <table class="datatable">
+            <colgroup>
+              <col class="datatable__column--name">
+              <col class="datatable__column--org">
+              <col class="datatable__column--info">
+              <col class="datatable__column--actions">
+            </colgroup>
             <thead>
               <tr>
-                <th>
+                <th class="datatable__column--name">
                   {% trans "Scannerjob" %}
                 </th>
                 <th class="datatable__column--org">
                   {% trans "Started" %}
                 </th>
-                <th class="datatable__column--automatic">
+                <th class="datatable__column--info">
                   {% trans "Objects" %}
                 </th>
                 <th class="datatable__column--actions">
@@ -42,18 +48,18 @@
               {% for status in object_list %}
                 {% if status.finished == True %}
                   <tr>
-                    <td>
+                    <td class="datatable__column--name">
                         {{ status.scanner.name }}
                     </td>
-                    <td>
+                    <td class="datatable__column--org">
                       {% timezone "Europe/Copenhagen" %}
                       {{ status.start_time }}
                       {% endtimezone %}
                     </td>
-                    <td>
+                    <td class="datatable__column--automatic">
                       {{ status.total_objects }} {% trans "objects explored" %}
                     </td>
-                    <td>
+                    <td class="datatable__column--actions">
                       <span class="completed_icon">
                         {% include "components/svg-icons/check_circle_full.svg" %}
                         <span class="width">

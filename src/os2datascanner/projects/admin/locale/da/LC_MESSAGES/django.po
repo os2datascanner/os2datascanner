@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-16 07:46-0600\n"
+"POT-Creation-Date: 2021-11-29 04:22-0600\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -448,8 +448,12 @@ msgstr "Vis udtryk"
 msgid "Edit"
 msgstr "Redigér"
 
-#: adminapp/templates/os2datascanner/rules.html:137
-#: adminapp/templates/os2datascanner/rules.html:141
+#: adminapp/templates/os2datascanner/rules.html:140
+msgid "No rules added yet"
+msgstr "Der er endnu ikke tilføjet nogen regler"
+
+#: adminapp/templates/os2datascanner/rules.html:145
+#: adminapp/templates/os2datascanner/rules.html:149
 msgid "System rules"
 msgstr "Systemregler"
 
