@@ -135,7 +135,7 @@ def iterate_queryset_in_batches(batch_size, queryset):
 
 
 def get_max_sens_prop_value(doc_report_obj, key):
-    """Helper method for migration 0014_documentreport_added_sensitivity_and_probability.
+    """Helper method for migration 0017_documentreport_added_sensitivity_and_probability.
     This method returns either a Sensitivity object or probability maximum value.
     The method is located in utils as could become handy else where."""
     if (doc_report_obj.data
@@ -161,3 +161,40 @@ def create_alias_and_match_relations(sub_alias):
                         str(sub_alias.key): str(sub_alias)})
     tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk)
                             for r in reports], ignore_conflicts=True)
+
+
+def get_msg(query):
+    """ Utility function used in get_presentation,
+        which is used in migration 0033_add_sort_key_and_name_charfield
+        and in management command refresh_sort_key.
+        """
+    # only one of these are not None
+    matches = query.data.get("matches")
+    metadata = query.data.get("metadata")
+    problem = query.data.get("problem")
+
+    if matches:
+        return messages.MatchesMessage.from_json_object(matches)
+    elif problem:
+        problem = messages.ProblemMessage.from_json_object(problem)
+        # problemMessage have optional handle and source fields. Try the latter if
+        # the first is None.
+        if not problem.handle:
+            problem = problem.source if problem.source else problem
+        return problem
+    elif metadata:
+        return messages.MetadataMessage.from_json_object(metadata)
+    else:
+        return None
+
+
+def get_presentation(query):
+    """ Utility function used in used in migration 0033_add_sort_key_and_name_charfield
+        and in management command refresh_sort_key.
+        Returns handle of a message"""
+
+    type_msg = get_msg(query)
+    if not type_msg:
+        return ""
+
+    return type_msg.handle if type_msg.handle else ""

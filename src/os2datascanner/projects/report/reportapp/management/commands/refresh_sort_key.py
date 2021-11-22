@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
-from os2datascanner.engine2.pipeline.messages import MetadataMessage, MatchesMessage, ProblemMessage
 
 from ...models.documentreport_model import DocumentReport
+from ...utils import get_presentation
 
 
 class Command(BaseCommand):
@@ -31,34 +31,3 @@ class Command(BaseCommand):
                 )
                 raise
         self.stdout.write(self.style.SUCCESS("Refreshed sort keys!"))
-
-
-def get_msg(query):
-    # only one of these are not None
-    matches = query.data.get("matches")
-    metadata = query.data.get("metadata")
-    problem = query.data.get("problem")
-
-    if matches:
-        return MatchesMessage.from_json_object(matches)
-    elif problem:
-        problem = ProblemMessage.from_json_object(problem)
-        # problemMessage have optional handle and source fields. Try the latter if
-        # the first is None.
-        if not problem.handle:
-            problem = problem.source if problem.source else problem
-        return problem
-    elif metadata:
-        return MetadataMessage.from_json_object(metadata)
-    else:
-        return None
-
-
-def get_presentation(query):
-    """Get the handle"""
-
-    type_msg = get_msg(query)
-    if not type_msg:
-        return ""
-
-    return type_msg.handle if type_msg.handle else ""
