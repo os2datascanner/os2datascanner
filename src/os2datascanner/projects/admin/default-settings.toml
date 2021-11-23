@@ -94,7 +94,10 @@ AUTH_PROFILE_MODULE = "os2datascanner.projects.admin.adminapp.UserProfile"
 ASGI_APPLICATION = "os2datascanner.projects.admin.asgi.application"
 ROOT_URLCONF = "os2datascanner.projects.admin.urls"
 STATIC_URL = "/static/"
-ICON_SPRITE_URL = "/static/src/svg/symbol-defs.svg"
+STATICFILES_DIRS = [
+  '/code/src/os2datascanner/projects/static/dist'
+]
+ICON_SPRITE_URL = "/static/svg/symbol-defs.svg"
 LOGIN_REDIRECT_URL = "/"
 NOTIFICATION_INSTITUTION = ""
 

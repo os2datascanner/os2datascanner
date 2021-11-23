@@ -4,11 +4,7 @@
 
 {% block scripts %}
 <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
-  {% if not settings.DEBUG %}
-    <script src="{% static "dist/bundle.min.js" %}"></script>
-  {% else %}
-    <script src="{% static "dist/bundle.js" %}"></script>
-  {% endif %}
+<script src="{% static "js/index.js" %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -29,7 +25,7 @@
         href="/rules/regex/add/"
         title="{% trans 'Add rule' %}">
         <svg class="icon icon--white">
-          <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
+          <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
         </svg>
         <span>
           {% trans "Add rule" %}
@@ -95,7 +91,7 @@
                 class="button button--small button--grey"
                 title="{% trans 'Edit' %}">
                 <svg class="icon">
-                  <use xlink:href="/static/src/svg/symbol-defs.svg#icon-pencil"></use>
+                  <use xlink:href="/static/svg/symbol-defs.svg#icon-pencil"></use>
                 </svg>
               </a>
 
@@ -108,7 +104,7 @@
                   onclick="return confirm('Ønsker du virkelig at slette denne regel?\n{{ rule.name }}\n\nHandlingen kan ikke fortrydes.')"
                         title="{% trans 'Delete' %}">
                   <svg class="icon">
-                    <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
+                    <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
                   </svg>
                 </button>
               </form>

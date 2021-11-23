@@ -1,6 +1,5 @@
 {% extends 'partials/base.html' %}
 {% load l10n %}
-{% load static %}
 {% load i18n %}
 {% load tz %}
 
@@ -84,7 +83,7 @@
                                                 onclick="return confirm(interpolate('{{ r_u_sure|escapejs }}', {'scanner_name': '{{ status.scanner.name|escapejs }}'}, true))"
                                                 title="{% trans 'Delete' %}">
                                                 <svg class="icon">
-                                                    <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
+                                                    <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
                                                 </svg>
                                             </button>
                                         </form>

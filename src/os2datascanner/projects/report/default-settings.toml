@@ -75,6 +75,9 @@ AUTH_PROFILE_MODULE = 'os2datascanner.projects.report.reportapp.UserProfile'
 ASGI_APPLICATION = "os2datascanner.projects.report.asgi.application"
 ROOT_URLCONF = 'os2datascanner.projects.report.urls'
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+  '/code/src/os2datascanner/projects/static/dist'
+]
 NOTIFICATION_INSTITUTION = ""
 
 # Which URL schemes can be used in links to matched objects? (The possible
