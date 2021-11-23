@@ -19,5 +19,6 @@ nav:
     - Configuration: configuration.md
     - Requirements: requirements.md
     - Release procedure: release-procedure.md
+    - Microsoft Azure: azure/azure-setup-guide.md
   - Reusable components: reusable-components.md
   - Release notes: changelog.md
