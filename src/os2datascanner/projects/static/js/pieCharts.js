@@ -142,8 +142,8 @@ window.addEventListener('load', function () {
   $("#pie_legend_datasources").html(dataSourcesPieChart.generateLegend());
 
   var datasourcesLegendItems = document.querySelector("#pie_legend_datasources").getElementsByTagName('li');
-  for (var i = 0; i < datasourcesLegendItems.length; i += 1) {
-    datasourcesLegendItems[i].addEventListener("click", datasourcesLegendClickCallback, false);
+  for (var j = 0; j < datasourcesLegendItems.length; j += 1) {
+    datasourcesLegendItems[j].addEventListener("click", datasourcesLegendClickCallback, false);
   }
 
   function datasourcesLegendClickCallback(event) {

@@ -16,7 +16,7 @@ window.addEventListener('load', function () {
 					radius: (chart.outerRadius + chart.innerRadius) / 2,
 					thickness: (chart.outerRadius - chart.innerRadius) / 2 - 1,
 					backgroundColor: arc._model.backgroundColor
-				}
+				};
 			}
 		},
 
@@ -45,20 +45,21 @@ window.addEventListener('load', function () {
 	// function for moving label to center of chart
 	Chart.pluginService.register({
 		beforeDraw: function(chart) {
-			if(chart.config.type == 'doughnut') {
+			if(chart.config.type === 'doughnut') {
+				var ctx, centerConfig, fontStyle, txt, weight, color, maxFontSize, sidePadding, sidePaddingCalculated;
 				if (chart.config.options.elements.center) {
 					// Get ctx from string
-					var ctx = chart.chart.ctx;
+					ctx = chart.chart.ctx;
 
 					// Get options from the center object in options
-					var centerConfig = chart.config.options.elements.center;
-					var fontStyle = centerConfig.fontStyle || 'Arial';
-					var txt = centerConfig.text;
-					var weight = centerConfig.weight;
-					var color = centerConfig.color || '#000';
-					var maxFontSize = centerConfig.maxFontSize || 75;
-					var sidePadding = centerConfig.sidePadding || 20;
-					var sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2)
+					centerConfig = chart.config.options.elements.center;
+					fontStyle = centerConfig.fontStyle || 'Arial';
+					txt = centerConfig.text;
+					weight = centerConfig.weight;
+					color = centerConfig.color || '#000';
+					maxFontSize = centerConfig.maxFontSize || 75;
+					sidePadding = centerConfig.sidePadding || 20;
+					sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2);
 					// Start with a base font of 30px
 					ctx.font = weight +" 30px " + fontStyle;
 				}
@@ -120,8 +121,8 @@ window.addEventListener('load', function () {
 				// Move the center up depending on line height and number of lines
 				centerY -= (lines.length / 2) * lineHeight;
 
-				for (var n = 0; n < lines.length; n++) {
-					ctx.fillText(lines[n], centerX, centerY);
+				for (var m = 0; m < lines.length; m++) {
+					ctx.fillText(lines[m], centerX, centerY);
 					centerY += lineHeight;
 				}
 				//Draw text in center

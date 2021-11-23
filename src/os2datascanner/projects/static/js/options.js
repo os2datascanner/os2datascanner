@@ -15,7 +15,7 @@ for (i = 0; i < l; i += 1) {
   a.value = selElmnt.options[selElmnt.selectedIndex].value;
 
   /* change color if value is not equal to the value-to-compare-to */
-  if (x[i].getAttribute("data-compareto") && selElmnt.options[selElmnt.selectedIndex].value != x[i].getAttribute("data-compareto")) {
+  if (x[i].getAttribute("data-compareto") && selElmnt.options[selElmnt.selectedIndex].value !== x[i].getAttribute("data-compareto")) {
     a.style.color = '#00496e';
     a.style.fontWeight = 'bold';
   }
@@ -32,6 +32,7 @@ for (i = 0; i < l; i += 1) {
     c.innerHTML = selElmnt.options[j].innerHTML;
     c.value = selElmnt.options[j].value;
 
+    /* jshint -W083 */
     c.addEventListener("click", function() {
         /* when an item is clicked, update the original select box,
         and the selected item */
@@ -97,6 +98,7 @@ for (i = 0; i < l; i += 1) {
           form.submit();
         }
     });
+    /* jshint +W083 */
     b.appendChild(c);
   }
   x[i].appendChild(b);

@@ -33,8 +33,8 @@ document.addEventListener("click", function (e) {
     toggleMatchesList(rows, targ);
 
     // store the user's preference in window.localStorage
-    var preference = hasClass(targ, "up") ? "expanded" : "collapsed";
-    setStorage("os2ds-prefers-expanded-results", preference);
+    var preferenceExpand = hasClass(targ, "up") ? "expanded" : "collapsed";
+    setStorage("os2ds-prefers-expanded-results", preferenceExpand);
   }
 
   if (hasClass(targ, "probability-toggle")) {
@@ -54,8 +54,8 @@ document.addEventListener("click", function (e) {
     });
  
     // store the user's preference in window.localStorage
-    var preference = isPressed ? "hide" : "show";
-    setStorage("os2ds-prefers-probability", preference);
+    var preferenceProbability = isPressed ? "hide" : "show";
+    setStorage("os2ds-prefers-probability", preferenceProbability);
   }
 
   if (hasClass(targ, "order-by")) {
@@ -70,14 +70,14 @@ document.addEventListener("click", function (e) {
 
 document.addEventListener("DOMContentLoaded", function () {
   // if user prefers to have all rows expanded, do that.
-  var prefersExpanded = window.localStorage.getItem("os2ds-prefers-expanded-results")
-  if (prefersExpanded && prefersExpanded == "expanded") {
+  var prefersExpanded = window.localStorage.getItem("os2ds-prefers-expanded-results");
+  if (prefersExpanded && prefersExpanded === "expanded") {
     document.querySelector(".matches-expand-all").click();
   }
 
   // if user prefers to see probability, do that.
-  var prefersExpanded = window.localStorage.getItem("os2ds-prefers-probability")
-  if (prefersExpanded && prefersExpanded == "show") {
+  var prefersProbability = window.localStorage.getItem("os2ds-prefers-probability");
+  if (prefersProbability && prefersProbability === "show") {
     document.querySelector(".probability-toggle").click();
   }
 });

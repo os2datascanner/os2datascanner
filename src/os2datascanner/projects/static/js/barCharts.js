@@ -12,7 +12,7 @@ Chart.pluginService.register({
 			// For every dataset ...
 			for (var i = 0; i < chart.config.data.datasets.length; i++) {
 				// We store it
-				var dsMeta = chart.getDatasetMeta(i)
+				var dsMeta = chart.getDatasetMeta(i);
 				var dataset = chart.config.data.datasets[i];
 
 				// For every data in this dataset
@@ -70,13 +70,13 @@ Chart.elements.Rectangle.prototype.draw = function() {
 	if (cornerRadius < 0) {
 		cornerRadius = 0;
 	}
-	if (typeof cornerRadius == 'undefined') {
+	if (typeof cornerRadius === 'undefined') {
 		cornerRadius = 0;
 	}
-	if (typeof fullCornerRadius == 'undefined') {
+	if (typeof fullCornerRadius === 'undefined') {
 		fullCornerRadius = false;
 	}
-	if (typeof stackedRounded == 'undefined') {
+	if (typeof stackedRounded === 'undefined') {
 		stackedRounded = false;
 	}
 
@@ -159,8 +159,8 @@ Chart.elements.Rectangle.prototype.draw = function() {
 	for (var i = 1; i < 4; i++) {
 		corner = cornerAt(i);
 		nextCornerId = i + 1;
-		if (nextCornerId == 4) {
-			nextCornerId = 0
+		if (nextCornerId === 4) {
+			nextCornerId = 0;
 		}
 
 		nextCorner = cornerAt(nextCornerId);
@@ -170,88 +170,103 @@ Chart.elements.Rectangle.prototype.draw = function() {
 		x = corners[1][0];
 		y = corners[1][1];
 
-		var radius = cornerRadius;
+		var r = cornerRadius;
 		// Fix radius being too large
-		if (radius > Math.abs(height) / 2) {
-			radius = Math.floor(Math.abs(height) / 2);
+		if (r > Math.abs(height) / 2) {
+			r = Math.floor(Math.abs(height) / 2);
 		}
-		if (radius > Math.abs(width) / 2) {
-			radius = Math.floor(Math.abs(width) / 2);
+		if (r > Math.abs(width) / 2) {
+			r = Math.floor(Math.abs(width) / 2);
 		}
 
-		var x_tl, x_tr, y_tl, y_tr, x_bl, x_br, y_bl, y_br;
+		var xTl, xTr, yTl, yTr, xBl, xBr, yBl, yBr;
 		if (height < 0) {
 			// Negative values in a standard bar chart
-			x_tl = x;
-			x_tr = x + width;
-			y_tl = y + height;
-			y_tr = y + height;
+			xTl = x;
+			xTr = x + width;
+			yTl = y + height;
+			yTr = y + height;
 
-			x_bl = x;
-			x_br = x + width;
-			y_bl = y;
-			y_br = y;
+			xBl = x;
+			xBr = x + width;
+			yBl = y;
+			yBr = y;
 
 			// Draw
-			ctx.moveTo(x_bl + radius, y_bl);
+			ctx.moveTo(xBl + r, yBl);
 
-			ctx.lineTo(x_br - radius, y_br);
+			ctx.lineTo(xBr - r, yBr);
 
 			// bottom right
-			ctx.quadraticCurveTo(x_br, y_br, x_br, y_br - radius);
+			ctx.quadraticCurveTo(xBr, yBr, xBr, yBr - r);
 
 
-			ctx.lineTo(x_tr, y_tr + radius);
+			ctx.lineTo(xTr, yTr + r);
 
 			// top right
-			fullCornerRadius ? ctx.quadraticCurveTo(x_tr, y_tr, x_tr - radius, y_tr) : ctx.lineTo(x_tr, y_tr, x_tr - radius, y_tr);
+			if (fullCornerRadius) {
+				ctx.quadraticCurveTo(xTr, yTr, xTr - r, yTr);
+			} else {
+			 	ctx.lineTo(xTr, yTr, xTr - r, yTr);	
+			}
 
-
-			ctx.lineTo(x_tl + radius, y_tl);
+			ctx.lineTo(xTl + r, yTl);
 
 			// top left
-			fullCornerRadius ? ctx.quadraticCurveTo(x_tl, y_tl, x_tl, y_tl + radius) : ctx.lineTo(x_tl, y_tl, x_tl, y_tl + radius);
+			if (fullCornerRadius) {
+				ctx.quadraticCurveTo(xTl, yTl, xTl, yTl + r);
+			} else {
+				ctx.lineTo(xTl, yTl, xTl, yTl + r);
+			}
 
 
-			ctx.lineTo(x_bl, y_bl - radius);
+			ctx.lineTo(xBl, yBl - r);
 
 			//  bottom left
-			ctx.quadraticCurveTo(x_bl, y_bl, x_bl + radius, y_bl);
+			ctx.quadraticCurveTo(xBl, yBl, xBl + r, yBl);
 
 		} else if (width < 0) {
 			// Negative values in a horizontal bar chart
-			x_tl = x + width;
-			x_tr = x;
-			y_tl = y;
-			y_tr = y;
+			xTl = x + width;
+			xTr = x;
+			yTl = y;
+			yTr = y;
 
-			x_bl = x + width;
-			x_br = x;
-			y_bl = y + height;
-			y_br = y + height;
+			xBl = x + width;
+			xBr = x;
+			yBl = y + height;
+			yBr = y + height;
 
 			// Draw
-			ctx.moveTo(x_bl + radius, y_bl);
+			ctx.moveTo(xBl + radius, yBl);
 
-			ctx.lineTo(x_br - radius, y_br);
+			ctx.lineTo(xBr - radius, yBr);
 
 			//  Bottom right corner
-			fullCornerRadius ? ctx.quadraticCurveTo(x_br, y_br, x_br, y_br - radius) : ctx.lineTo(x_br, y_br, x_br, y_br - radius);
+			if (fullCornerRadius) {
+				ctx.quadraticCurveTo(xBr, yBr, xBr, yBr - radius);
+			} else {
+				ctx.lineTo(xBr, yBr, xBr, yBr - radius);
+			}
 
-			ctx.lineTo(x_tr, y_tr + radius);
+			ctx.lineTo(xTr, yTr + radius);
 
 			// top right Corner
-			fullCornerRadius ? ctx.quadraticCurveTo(x_tr, y_tr, x_tr - radius, y_tr) : ctx.lineTo(x_tr, y_tr, x_tr - radius, y_tr);
+			if (fullCornerRadius) {
+				ctx.quadraticCurveTo(xTr, yTr, xTr - radius, yTr);
+			} else {
+				ctx.lineTo(xTr, yTr, xTr - radius, yTr);
+			}
 
-			ctx.lineTo(x_tl + radius, y_tl);
+			ctx.lineTo(xTl + radius, yTl);
 
 			// top left corner
-			ctx.quadraticCurveTo(x_tl, y_tl, x_tl, y_tl + radius);
+			ctx.quadraticCurveTo(xTl, yTl, xTl, yTl + radius);
 
-			ctx.lineTo(x_bl, y_bl - radius);
+			ctx.lineTo(xBl, yBl - radius);
 
 			//  bttom left corner
-			ctx.quadraticCurveTo(x_bl, y_bl, x_bl + radius, y_bl);
+			ctx.quadraticCurveTo(xBl, yBl, xBl + radius, yBl);
 
 		} else {
 
@@ -276,28 +291,29 @@ Chart.elements.Rectangle.prototype.draw = function() {
 				ctx.lineTo(x + width, y + height - radius);
 
 				// bottom right
-				if (fullCornerRadius || typeOfChart == 'horizontalBar')
-					ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-				else
+				if (fullCornerRadius || typeOfChart === 'horizontalBar') {
+					ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);					
+				} else {
 					ctx.lineTo(x + width, y + height, x + width - radius, y + height);
-
+				}
 
 				ctx.lineTo(x + radius, y + height);
 
 				// bottom left
-				if (fullCornerRadius)
+				if (fullCornerRadius) {
 					ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-				else
+				} else {
 					ctx.lineTo(x, y + height, x, y + height - radius);
-
+				}
 
 				ctx.lineTo(x, y + radius);
 
 				// top left
-				if (fullCornerRadius || typeOfChart == 'bar')
+				if (fullCornerRadius || typeOfChart === 'bar') {
 					ctx.quadraticCurveTo(x, y, x + radius, y);
-				else
+				} else {
 					ctx.lineTo(x, y, x + radius, y);
+				}
 			}else {
 				ctx.moveTo(x, y);
 				ctx.lineTo(x + width, y);
@@ -317,14 +333,14 @@ Chart.elements.Rectangle.prototype.draw = function() {
 // Function for 'average-line'
 Chart.pluginService.register({
 	beforeDraw: function(chart) {
-		if (typeof chart.config.options.lineAt != 'undefined') {
+		if (typeof chart.config.options.lineAt !== 'undefined') {
 			var lineAt = chart.config.options.lineAt;
 			var ctxPlugin = chart.chart.ctx;
 			var xAxe = chart.scales[chart.config.options.scales.xAxes[0].id];
 			var yAxe = chart.scales[chart.config.options.scales.yAxes[0].id];
 			ctxPlugin.strokeStyle = colorFunction('--color-grey-dark');
 			ctxPlugin.lineWidth = 2;
-			ctxPlugin.setLineDash([5, 5])
+			ctxPlugin.setLineDash([5, 5]);
 			ctxPlugin.beginPath();
 			lineAt = yAxe.getPixelForValue(lineAt);
 			ctxPlugin.moveTo(xAxe.left, lineAt);

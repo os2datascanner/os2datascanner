@@ -9,7 +9,7 @@ window.addEventListener('load', function () {
 
 	Chart.pluginService.register({
 		// This works to color the background
-		beforeDraw: function (chart, easing) {
+		beforeDraw: function (chart) {
 
 		if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
 			var ctx = chart.chart.ctx;
@@ -189,9 +189,9 @@ window.addEventListener('load', function () {
 	var unhandledMatchesLineChartLabels = [];
 	var unhandledMatchesLineChartValues = [];
 
-	for(var i = 0; i<unhandledMatchesByMonth.length;i++) {
-		unhandledMatchesLineChartLabels.push(unhandledMatchesByMonth[i][0].toUpperCase());
-		unhandledMatchesLineChartValues.push(unhandledMatchesByMonth[i][1]);
+	for(var j = 0; j<unhandledMatchesByMonth.length;j++) {
+		unhandledMatchesLineChartLabels.push(unhandledMatchesByMonth[j][0].toUpperCase());
+		unhandledMatchesLineChartValues.push(unhandledMatchesByMonth[j][1]);
 	}
 
 	// Adds empty values in front of both arrays (for styling purposes)
