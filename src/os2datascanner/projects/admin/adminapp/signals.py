@@ -1,9 +1,13 @@
+import logging
+import warnings
+
 from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+
+from os2datascanner.utils.test_helpers import in_test_environment
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +45,13 @@ class ModelChangeEvent():
 def publish_events(events):
     """Publishes events using the configured queue (AMQP_EVENTS_TARGET)"""
     try:
+        # Don't publish events if we appear to be running in a test environment
+        if in_test_environment():
+            warnings.warn(
+                    "running in a test environment; "
+                    "suppressing RabbitMQ events", RuntimeWarning)
+            return
+
         queue = settings.AMQP_EVENTS_TARGET
         with PikaPipelineThread(write=[queue]) as ppt:
             for event in events:
