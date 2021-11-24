@@ -22,6 +22,12 @@
 </script>
 
 <form method="GET" action="{% url 'index' %}" id="filter_form">
+  {% comment %}
+      Hidden input field stores the paginate_by parameter set by the user upon form submit, which
+      allows us to remember it when the filtering parameters are changed.
+  {% endcomment %}
+  <input type="hidden" name="paginate_by" id="paginate_by" value="{{ paginate_by }}">
+
   <div class="match_filtering_wrapper">
       <div>
           <button type="button" onclick="clear_filter('scannerjobs')" class="match_filtering_clear_button">
