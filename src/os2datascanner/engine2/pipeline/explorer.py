@@ -57,10 +57,10 @@ def message_received_raw(body, channel, source_manager):
                 # that it doesn't know enough about its internal state to
                 # censor itself -- just print its type
                 logger.warning("(unprintable handle {0})".format(type(handle).__name__))
-            count += 1
             yield ("os2ds_conversions",
                    messages.ConversionMessage(
                        scan_spec, handle, progress).to_json_object())
+            count += 1
     except Exception as e:
         exception_message = "Exploration error. {0}: ".format(type(e).__name__)
         exception_message += ", ".join([str(a) for a in e.args])
