@@ -13,15 +13,17 @@
   transition-property: background-color;
   border-radius: var(--border-radius-button);
   word-break: normal;
-  > .material-icons {
-    line-height: 1rem;
-    vertical-align: top;
-  }
 
   &:focus:not([disabled]),
   &:hover:not([disabled]) {
     background-color: rgba(0, 0, 0, 0.2);
     text-decoration: none;
+  }
+  &--has-icon {
+    .material-icons {
+      line-height: 1rem;
+      vertical-align: top;
+    }
   }
 
   &--round {
