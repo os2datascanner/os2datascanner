@@ -215,6 +215,10 @@ function getCookie(name) {
 function handleMatches(pks) {
   if (pks.length > 0) {
     $(".datatable").addClass("disabled");
+    // let user know that we're processing the action by mutating the button
+    // of the selected row(s)
+    updateButtons(pks, 'sync', 'data-label-processing');
+
     $.ajax({
       url: "/api",
       method: "POST",
@@ -229,10 +233,15 @@ function handleMatches(pks) {
         xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
       }
     }).done(function(body) {
-      $(".datatable").removeClass("disabled");
       if (body["status"] == "ok") {
+        // let user know that we succeeded the action by mutating the button(s) again
+        updateButtons(pks, 'done', 'data-label-done', 'text-ok-dark', 'text-secondary');
         location.reload(true)
       } else if (body["status"] == "fail") {
+        $(".datatable").removeClass("disabled");
+        
+        // revert the button(s)
+        updateButtons(pks, 'archive', 'data-label-default');
         console.log(
             "Attempt to call set-status-2 failed: "
             + body["message"])
@@ -253,3 +262,16 @@ $(".matches-handle").click(function() {
   var pk = $(this).closest("tr[data-type]").find("input[name='match-checkbox']").attr("data-report-pk");
   handleMatches([pk])
 })
+
+function updateButtons(pks, icon, attr, addClasses, removeClasses) {
+  for (var pki = 0; pki < pks.length; pki++) {
+    var button = $('button[data-report-pk="' + pks[pki] + '"]');
+    if (button) {
+      $(button).find('.material-icons').text(icon).addClass(addClasses).removeClass(removeClasses);
+      var label = $(button).attr(attr);
+      if (label) {
+        $(button).find('span').text(label);
+      }
+    }
+  }
+}

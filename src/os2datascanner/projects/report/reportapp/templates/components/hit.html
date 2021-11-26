@@ -66,8 +66,12 @@
           <div class="button-group text-align-right">
             <button class="matches-handle button" type="button"
                     title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned.
-Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}">
-                {% trans "Handled" %}</button>
+Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}"
+                    data-label-processing="{% trans 'Working' %} &hellip;"
+                    data-label-done="{% trans 'Handled' %}!"
+                    data-label-default="{% trans 'Handle' %}"
+                    data-report-pk="{{ document_report.pk|unlocalize }}">
+                <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Handle" %}</span></button>
             <button class="matches-expand button button-caret" title="{% trans 'Show/hide matches' %}" type="button"><i class="material-icons" aria-hidden="true">expand_more</i></button>
           </div>
         </td>
