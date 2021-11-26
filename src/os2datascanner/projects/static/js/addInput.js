@@ -37,7 +37,7 @@ function removeUserClass(element, parent) {
     btnRemove.type = 'button';
     btnRemove.name = 'removeUserClass'+ counter;
     btnRemove.textContent = 'Fjern';
-    btnRemove.className += 'button--danger';
+    btnRemove.className += 'button button--danger';
     return btnRemove;
 }
 
