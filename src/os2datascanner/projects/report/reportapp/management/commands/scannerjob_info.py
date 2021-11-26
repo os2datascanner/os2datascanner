@@ -32,7 +32,7 @@ class Command(BaseCommand):
         if not doc_reps.exists():
             self.stderr.write(self.style.NOTICE(
                 "No scanner job PK matching in DocumentReports found"))
-            sys.exit(0)
+            sys.exit(1)
 
         for doc_rep in doc_reps.iterator():
             if doc_rep.problem:
