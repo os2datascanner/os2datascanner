@@ -155,10 +155,10 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         return self.resource_type(self, sm)
 
     BASE_PROPERTIES = ('_source', '_relpath',)
-    """The properties defined by Handle. (If a subclass defines other
-    properties, but wants those properties to be ignored when comparing
-    objects, it should set the 'eq_properties' class attribute to this
-    value.)"""
+    # The properties defined by Handle. (If a subclass defines other
+    # properties, but wants those properties to be ignored when comparing
+    # objects, it should set the 'eq_properties' class attribute to this
+    # value.)
 
     _json_handlers = {}
 

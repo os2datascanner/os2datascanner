@@ -376,13 +376,13 @@ class ScheduledCheckup(models.Model):
     objects that are later removed."""
 
     handle_representation = JSONField(verbose_name="Reference")
-    """The handle to test again."""
+    # The handle to test again.
     interested_before = models.DateTimeField(null=True)
-    """The Last-Modified cutoff date to attach to the test."""
+    # The Last-Modified cutoff date to attach to the test.
     scanner = models.ForeignKey(Scanner, related_name="checkups",
                                 verbose_name="Tilknyttet scannerjob",
                                 on_delete=models.CASCADE)
-    """The scanner job that produced this handle."""
+    # The scanner job that produced this handle.
 
     @property
     def handle(self):
