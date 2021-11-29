@@ -11,20 +11,20 @@ from .utilities import ModelChoiceEnum
 
 class JobState(ModelChoiceEnum):
     WAITING = ("waiting", _("waiting"))
-    """This job is awaiting execution."""
+    # This job is awaiting execution.
 
     RUNNING = ("running", _("running"))
-    """This job is running on a specific executor."""
+    # This job is running on a specific executor.
     CANCELLING = ("cancelling", _("cancelling"))
-    """This job is running on a specific executor, but has been asked to
-    stop."""
+    # This job is running on a specific executor, but has been asked to
+    # stop.
 
     FINISHED = ("finished", _("finished"))
-    """Execution of this job was successful."""
+    # Execution of this job was successful.
     CANCELLED = ("cancelled", _("cancelled"))
-    """Execution of this job was cancelled by the user."""
+    # Execution of this job was cancelled by the user.
     FAILED = ("failed", _("failed"))
-    """Execution of this job failed."""
+    # Execution of this job failed.
 
 
 class BackgroundJob(models.Model):

@@ -17,8 +17,8 @@ class APIKey(models.Model):
         default=None,
         null=True,
     )
-    """A newline-separated list of API functions that can be called with this
-    API key."""
+    # A newline-separated list of API functions that can be called with this
+    # API key.
     scope = models.TextField()
 
     def __contains__(self, function):
