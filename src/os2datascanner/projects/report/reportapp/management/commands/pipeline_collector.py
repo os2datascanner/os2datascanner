@@ -18,9 +18,10 @@
 import json
 import structlog
 
+from django.db import DataError, transaction
+from django.db.models.deletion import ProtectedError
 from django.core.management.base import BaseCommand
 from django.core.exceptions import FieldError
-from django.db.models.deletion import ProtectedError
 
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
@@ -30,7 +31,7 @@ from os2datascanner.engine2.model.core import Handle, Source
 from os2datascanner.utils.system_utilities import time_now
 from ...models.documentreport_model import DocumentReport
 from ...models.organization_model import Organization
-from ...utils import hash_handle
+from ...utils import hash_handle, prepare_json_object
 
 logger = structlog.get_logger(__name__)
 
@@ -344,11 +345,19 @@ def save_if_path_and_scanner_job_pk_unique(new_report, scanner_job_pk):
         ).get()
 
         existing_report.delete()
-        new_report.scanner_job_pk = scanner_job_pk
-        new_report.save()
-
     except DocumentReport.DoesNotExist:
-        new_report.scanner_job_pk = scanner_job_pk
+        pass
+
+    new_report.scanner_job_pk = scanner_job_pk
+    try:
+        with transaction.atomic():
+            new_report.save()
+    except DataError:
+        # To the best of our knowledge, this can only happen if we try to store
+        # a null byte in a PostgreSQL text field (or something that's related
+        # to a text field, like the JSON field types). Edit these bytes out and
+        # try again
+        new_report.data = prepare_json_object(new_report.data)
         new_report.save()
 
 
