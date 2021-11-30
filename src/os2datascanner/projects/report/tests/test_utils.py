@@ -1,3 +1,4 @@
+from django.db import models, DataError, connection, transaction
 from django.test import TestCase
 
 from ..reportapp.management.commands import pipeline_collector
@@ -8,7 +9,26 @@ from .generate_test_data import \
     get_positive_match_with_probability_and_sensitivity
 
 
+class JSONHolder(models.Model):
+    json = models.JSONField()
+
+    class Meta:
+        app_label = "os2datascanner_report_test"
+
+
 class UtilsTest(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        with connection.schema_editor() as schema_editor:
+            schema_editor.create_model(JSONHolder)
+
+    @classmethod
+    def tearDownClass(cls):
+        with connection.schema_editor() as schema_editor:
+            schema_editor.delete_model(JSONHolder)
+        super().tearDownClass()
 
     @classmethod
     def setUpTestData(cls):
@@ -34,3 +54,10 @@ class UtilsTest(TestCase):
                              DocumentReport.objects.first(),
                              'sensitivity').value
                          )
+
+    def test_json_null_bytes(self):
+        """PostgreSQL-backed JSONFields cannot store null bytes."""
+        test_json = {"This\0 is": {"a\0": "te\0st"}, "you": "see"}
+        with (self.assertRaises(DataError),
+                transaction.atomic()):
+            JSONHolder(json=test_json).save()
