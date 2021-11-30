@@ -2,7 +2,7 @@ from django.db import models, DataError, connection, transaction
 from django.test import TestCase
 
 from ..reportapp.management.commands import pipeline_collector
-from ..reportapp.utils import get_max_sens_prop_value
+from ..reportapp.utils import prepare_json_object, get_max_sens_prop_value
 from ..reportapp.models.documentreport_model import DocumentReport
 
 from .generate_test_data import \
@@ -56,8 +56,20 @@ class UtilsTest(TestCase):
                          )
 
     def test_json_null_bytes(self):
-        """PostgreSQL-backed JSONFields cannot store null bytes."""
+        """PostgreSQL-backed JSONFields cannot store null bytes, but our
+        utility function can address that by detecting and removing them."""
         test_json = {"This\0 is": {"a\0": "te\0st"}, "you": "see"}
-        with (self.assertRaises(DataError),
+        with (self.subTest(),
+                self.assertRaises(DataError),
                 transaction.atomic()):
             JSONHolder(json=test_json).save()
+        with self.subTest():
+            o = JSONHolder(json=prepare_json_object(test_json))
+            o.save()
+            self.assertIsNotNone(
+                    o.pk,
+                    "saving stripped JSON object failed")
+            self.assertEqual(
+                    o.json,
+                    {"This is": {"a": "test"}, "you": "see"},
+                    "JSON stripping did not behave as expected")

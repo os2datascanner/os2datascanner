@@ -1,5 +1,6 @@
 import json
 import hashlib
+import warnings
 import structlog
 
 from django.conf import settings
@@ -198,3 +199,24 @@ def get_presentation(query):
         return ""
 
     return type_msg.handle if type_msg.handle else ""
+
+
+def prepare_json_object(o):
+    """Processes an object suitable for JSON serialisation to make it suitable
+    for storing in the OS2datascanner report module's database. (At the moment
+    this just means removing all null bytes from string values, as PostgreSQL
+    can't deal with them in any string or JSON data type.)"""
+    if isinstance(o, dict):
+        return {prepare_json_object(k): prepare_json_object(v)
+                for k, v in o.items()}
+    elif isinstance(o, (list, tuple)):
+        return [prepare_json_object(i) for i in o]
+    elif isinstance(o, str):
+        if "\0" in o:
+            warnings.warn(
+                    "stripping null byte for PostgreSQL compatibility",
+                    UnicodeWarning)
+            o = o.replace("\0", "")
+        return o
+    else:
+        return o
