@@ -142,7 +142,7 @@
       width: 100%;
     }
     &--actions {
-      width: 12rem;
+      width: 14rem;
       .action-wrapper {
         display: flex;
         flex-wrap: wrap;
@@ -301,17 +301,6 @@
 
 .text-align-right {
   text-align: right;
-}
-
-.button-group .button.matches-handle {
-  opacity: 0;
-
-  tr:hover &,
-  tr:focus &,
-  &:hover,
-  &:focus {
-    opacity: 1;
-  }
 }
 
 .matches-list {

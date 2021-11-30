@@ -8,7 +8,7 @@ $("#select-all").change(function() {
 function handleChecked() {
   var numChecked = $("input[name='match-checkbox']:checked").length;
   $(".selected-cb .num-selected").text(numChecked);
-  $(".handle-match__action").prop("disabled", !Boolean(numChecked))
+  $(".handle-match__action").prop("disabled", !Boolean(numChecked));
 
   $("input[name='match-checkbox']:not(:checked)").closest("tr").removeClass("highlighted");
   $("input[name='match-checkbox']:checked").closest("tr").addClass("highlighted");
@@ -59,11 +59,11 @@ document.addEventListener("click", function (e) {
   }
 
   if (hasClass(targ, "order-by")) {
-    $form = $('#filter_form')
-    orderBy = '<input type="hidden" name="order_by" value="' + targ.name + '">' 
-    order = '<input type="hidden" name="order" value="' + targ.value + '">'
-    $form.append(orderBy+order)
-    $form.submit()
+    $form = $('#filter_form');
+    orderBy = '<input type="hidden" name="order_by" value="' + targ.name + '">';
+    order = '<input type="hidden" name="order" value="' + targ.value + '">';
+    $form.append(orderBy+order);
+    $form.submit();
   }
 
 });
@@ -92,7 +92,7 @@ function setStorage (item, value) {
   try {
     window.localStorage.setItem(item, value);
   } catch (e) {
-    console.error("Could not save " + item + " with value " + value + " to localStorage", e)
+    console.error("Could not save " + item + " with value " + value + " to localStorage", e);
   }
 }
 
@@ -134,7 +134,7 @@ function toggleMatchesList(objectRows, toggleButton) {
         removeClass(rowButton, "up");
       }
     }
-  })
+  });
 }
 
 // IE11 way of doing Element.classList.add and Element.classList.remove
@@ -212,9 +212,13 @@ function getCookie(name) {
 }
 
 // Handle matches
-function handleMatches(pks) {
+function handleMatches(pks, buttonEl) {
   if (pks.length > 0) {
     $(".datatable").addClass("disabled");
+    // let user know that we're processing the action by mutating the button
+    // of the selected row(s)
+    updateButtons(pks, buttonEl, 'sync', 'data-label-processing');
+
     $.ajax({
       url: "/api",
       method: "POST",
@@ -225,31 +229,63 @@ function handleMatches(pks) {
       }),
       contentType: "application/json; charset=utf-8",
       dataType: "json",
-      beforeSend: function(xhr, settings) {
-        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
       }
     }).done(function(body) {
-      $(".datatable").removeClass("disabled");
-      if (body["status"] == "ok") {
-        location.reload(true)
-      } else if (body["status"] == "fail") {
+      if (body.status === "ok") {
+        // let user know that we succeeded the action by mutating the button(s) again
+        updateButtons(pks, buttonEl, 'done', 'data-label-done', 'text-ok-dark', 'text-secondary');
+        location.reload(true);
+      } else if (body.status === "fail") {
+        $(".datatable").removeClass("disabled");
+        
+        // revert the button(s)
+        updateButtons(pks, buttonEl, 'archive', 'data-label-default');
         console.log(
             "Attempt to call set-status-2 failed: "
-            + body["message"])
+            + body.message);
       }
-    })
+    });
   }
 }
 
 $(".handle-match__action").click(function() {
   // get pks from checked checkboxes
   var pks = $.map($("input[name='match-checkbox']:checked"), function (e) {
-    return $(e).attr("data-report-pk")
+    return $(e).attr("data-report-pk");
   });
-  handleMatches(pks);
-})
+  handleMatches(pks, $(this));
+});
 
 $(".matches-handle").click(function() {
-  var pk = $(this).closest("tr[data-type]").find("input[name='match-checkbox']").attr("data-report-pk");
-  handleMatches([pk])
-})
+  var pk = $(this).attr("data-report-pk");
+  handleMatches([pk]);
+});
+
+function updateButtons(pks, buttonEl, icon, attr, addClasses, removeClasses) {
+  var buttonSelectors = pks.map(function (pk) {
+    return "button[data-report-pk='" + pk + "']";
+  }).join(",");
+  
+  var buttons = $(buttonSelectors);
+  
+  // use buttonEl to target extra button(s) that are not targeted by
+  // using the data-report-pk property.
+  if (buttonEl) {
+    if (buttonEl instanceof jQuery) {
+      buttons = buttons.add(buttonEl);
+    } else if (buttonEl instanceof String) {
+      buttons = buttons.add($(buttonEl));
+    }
+  }
+  
+  buttons.each(function() {
+    var button = $(this);
+    button.find('.material-icons').text(icon).addClass(addClasses).removeClass(removeClasses);
+    var label = button.attr(attr);
+    if (label) {
+      button.find('span').text(label);
+    }
+  });
+}

@@ -48,6 +48,14 @@ a {
   text-decoration-skip-ink: auto;
 }
 
+.text-ok-dark {
+  color: var(--color-ok-dark);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
 .page-title {
   font-size: 1.75rem;
   font-weight: 700;

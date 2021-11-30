@@ -30,7 +30,6 @@
   button {
     margin-left: 0;
     height: 2rem;
-    font-weight: bold;
     border: none;
     border-radius: var(--border-radius-button);
     font-size: 1rem;
@@ -40,19 +39,25 @@
     word-break: normal;
     cursor: pointer;
     background-color: var(--color-primary-dark);
-    color: var(--color-text-white);
+    &, .text-secondary {
+      color: var(--color-text-white);
+    }
     &[disabled] {
       cursor: default;
       background-color: rgba(0,0,0,.07);
-      color: rgba(0,0,0,.35);
+      &, .text-secondary {
+        color: rgba(0,0,0,.35);
+      }
     }
 
     &:focus:not([disabled]),
     &:hover:not([disabled]) {
-      color: var(--color-text-main);
       background-color: rgba(0, 0, 0, 0.2);
       text-decoration: none;
       transition: background-color 0.2s ease-in-out;
+      &, .text-secondary {
+        color: var(--color-text-main);
+      }
     }
   }
 
@@ -62,4 +67,8 @@
     font-weight: normal;
     color: var(--color-text-secondary);
   }
+}
+
+.matches-handle {
+  min-width: 7.8rem;
 }
