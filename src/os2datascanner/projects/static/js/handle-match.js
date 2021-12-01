@@ -59,11 +59,10 @@ document.addEventListener("click", function (e) {
   }
 
   if (hasClass(targ, "order-by")) {
-    $form = $('#filter_form');
-    orderBy = '<input type="hidden" name="order_by" value="' + targ.name + '">';
-    order = '<input type="hidden" name="order" value="' + targ.value + '">';
-    $form.append(orderBy+order);
-    $form.submit();
+    var form = $('#filter_form');
+    form.find('[name="order_by"]').val(targ.name);
+    form.find('[name="order"]').val(targ.value);
+    form.submit();
   }
 
 });
