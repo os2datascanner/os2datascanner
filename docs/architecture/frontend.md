@@ -14,36 +14,38 @@ Markup is mostly generated using [Django
 templates.](https://docs.djangoproject.com/en/3.2/topics/templates/)
 
 
+## Shared static resources
+
+The static resources are located in
+[src/os2datascanner/projects/static](./src/os2datascanner/projects/static). Django is configured to look in this path (actually on the corresponding `dist` path in the Docker container) when it collects static resources.
+This allows both apps to use the same set of static resources without
+having to maintain duplicate copies. Static resources are bundled up via
+Webpack and output in a `dist` subfolder; consult
+[src/os2datascanner/projects/static/webpack.base.js](./src/os2datascanner/projects/static/webpack.base.js)
+for the configuration. Note that since the JS code isn't really modularized,
+most of what Webpack does is statically copy over the folders `js`&dagger;, `3rdparty`, `admin`, `css`, `favicons`, `fonts`, `recurrence` and `svg` with `CopyWebpackPlugin`. &dagger; The exception to the JS files is the file `index.js` which serves as the Webpack entry point. Finally, the `scss` folder is also not copied over, as its contents need to be transpiled into CSS first. This is achieved by importing `master.scss` into `index.js` and then using `sass-loader` for Webpack to handle that import statement.
+
+
 ## CSS styling
 
-The [README.md](./src/os2datascanner/projects/report/reportapp/README.md)
-states "please use only SCSS".  An effort has been made to establish SASS as
-the guiding workflow for CSS builds but it is mixed with other approaches.
+An effort has been made to establish SASS as the guiding workflow for CSS builds
+but it is mixed with other approaches.
 Amongst others:
 
-* CSS built from SASS and prefixed/minified with PostCSS (`bundle.css` via
-  Webpack)
+* CSS built from SASS and bundled up via Webpack (via plugins)
 * CSS imported directly or from 3rd parties
-* Use of CSS custom properties (CSS vars) in stead of SASS variables
 
+## JavaScript
 
-## Javascript
-
-Some JS is packaged into `bundle.js`/`bundle.min.js` via
-[Webpack.](https://webpack.js.org/) Other scripts, like
-[jQuery](https://jquery.com/), are just added via script tags.
-
-Admin app uses jQuery-3.6.0, whereas Report app uses jQuery-3.5.0.
+A minimal set of JS is bundled as described in "Shared static resources" above. Other scripts are just added via script tags in the Django templates.
 
 Admin app also includes [Bootstrap](https://getbootstrap.com/) Javascript but
 without the accompanying bootstrap.css
 
 * **Package management**
-  [npm](https://www.npmjs.com/)
+  [npm](https://www.npmjs.com/). At the time of writing, NPM packages are exclusively used for the bundling setup (you'll only see `devDependencies` in `package.json`, no `dependencies`). JS code imports no modules.
 * **Old browser support**
-  There are two approaches for supporting older browsers:
-    * [Using Babel](https://babeljs.io/)
-    * Using IE conditional comments in `<head>`
+  Babel is currently neither installed nor configured. IE support is achieved via conditional comments in `<head>`.
 
 
 ## Fonts
@@ -55,17 +57,12 @@ Admin and Report app use the "Inter" font.
 
 There are several icon styles and frameworks in use:
 
-* [Google Material Icons](https://fonts.google.com/icons) Admin app links from
-  base.html: https://fonts.googleapis.com/icon?family=Material+Icons Report app
-  refers to local font files in `_vars.scss`.
+* [Google Material Icons](https://fonts.google.com/icons) is self-hosted—see [src/os2datascanner/projects/static/fonts/materialicons](src/os2datascanner/projects/static/fonts/materialicons) and the accompanying CSS file.
 * Admin app has [Glyphicons](https://www.glyphicons.com/sets/halflings/).
-  These could be related to a Bootstrap implementation.
-* Both Report and Admin apps hide a set of SVG icon files in
-  `/templates/components/svg-icons/` folder.
-* A small set of SVG icon files are available in [report
-  app](src/os2datascanner/projects/admin/adminapp/static/src/images/) and
-  [admin app](src/os2datascanner/projects/admin/adminapp/static/src/svg/)
-  static folders. (/static/src/svg)
+  These are most likely a leftover from the webscanner incarnation of the project. They may still be in use, however.
+* Both Report and Admin apps hide a set of SVG icon files in their respective
+  `templates/components/svg-icons/` folders.
+* A small set of SVG icon files are available in the shared static files in `src/os2datascanner/projects/static/svg`
 
 
 ## Build & package management
@@ -75,67 +72,33 @@ There are several icon styles and frameworks in use:
 
 ## Admin app specifics
 
-Note: Admin app has no apparant organization of static files.
-
 * **Django template files**
     - src/os2datascanner/projects/admin/adminapp/templates
-* **Templates that load JS/CSS/etc**
+* **Templates that load JS**
+    - src/os2datascanner/projects/admin/adminapp/templates/components/user.html
+    - src/os2datascanner/projects/admin/adminapp/templates/os2datascanner/regexrule_form.html
+    - src/os2datascanner/projects/admin/adminapp/templates/os2datascanner/rules.html
+    - src/os2datascanner/projects/admin/adminapp/templates/os2datascanner/scanner_askrun.html
+    - src/os2datascanner/projects/admin/adminapp/templates/os2datascanner/scanner_form.html
+    - src/os2datascanner/projects/admin/adminapp/templates/os2datascanner/scanner_run.html
+    - src/os2datascanner/projects/admin/adminapp/templates/os2datascanner/scanners.html
     - src/os2datascanner/projects/admin/adminapp/templates/partials/base.html
-* **Position of `package.json` and conf files:**
-    - src/os2datascanner/projects/admin/adminapp/package.json
-    - src/os2datascanner/projects/admin/adminapp/postcss.config.js
-    - src/os2datascanner/projects/admin/adminapp/webpack.dev.js
-    - src/os2datascanner/projects/admin/adminapp/webpack.prod.js
-* **Postion of JS & (S)CSS source files**
-    - src/os2datascanner/projects/admin/adminapp/static/src/
-* **Style files loaded in browser**
-    - bundle.css - built from SASS files in src
-* **Javascript files loaded in browser**
-    - bootstrap.js
-    - jquery-3.6.0.min.js
-    - jquery.modal.min.js
-    - main.js
-    - svgxuse.js - for IE svg features
-
-
-### Admin app module file relations
-
-* **Bundle.js**
-    - templates/os2datascanner/scanners.html and
-    - templates/os2datascanner/rules.html and
-    - templates/os2datascanner/scanner_askrun.html and
-    - templates/designguide.html depend on 
-    - static/dist/bundle.js - must be built first
+* **Templates that load CSS**
+    - src/os2datascanner/projects/admin/adminapp/templates/os2datascanner/scanner_form.html
+    - src/os2datascanner/projects/admin/adminapp/templates/partials/base.html
 
 
 ## Report app specifics
 
 * **Django template files**
     - src/os2datascanner/projects/report/reportapp/templates
-* **Templates that load JS/CSS/etc**
+* **Templates that load JS**
+    - src/os2datascanner/projects/report/reportapp/templates/components/user.html
     - src/os2datascanner/projects/report/reportapp/templates/partials/header.html
-* **Position of `package.json` and conf files:**
-    - src/os2datascanner/projects/report/reportapp/package.json
-    - src/os2datascanner/projects/report/reportapp/postcss.config.js
-    - src/os2datascanner/projects/report/reportapp/webpack.dev.js
-    - src/os2datascanner/projects/report/reportapp/webpack.prod.js
-    - src/os2datascanner/projects/report/reportapp/.browserslistrc **Only exists in reportapp!**
-* **Postion of JS & (S)CSS source files**
-    - src/os2datascanner/projects/report/reportapp/static/src/
-* **Style files loaded in browser**
-    - bundle.css - built from SASS files in src
-* **Javascript files loaded in browser**
-    - bundle.js - built from JS files in src
-    - jQuery-3.5.0.js
-    - clipboard.js
-
-
-### Report app module file relations
-
-* **Statistics**
-    - templates/statistics.html depends on
-    - static/3rdparty/chart-2.9.4.min.js and
-    - static/3rdparty/chartjs-plugin-datalabels.js
+    - src/os2datascanner/projects/report/reportapp/templates/partials/scripts.html
+    - src/os2datascanner/projects/report/reportapp/templates/statistics.html
+* **Templates that load CSS**
+    - src/os2datascanner/projects/report/reportapp/templates/partials/header.html
 
 
 ----------------------
