@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-26 05:58-0600\n"
+"POT-Creation-Date: 2021-12-01 05:49-0600\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -125,13 +125,9 @@ msgstr "Ryd"
 msgid "Scan"
 msgstr "Scan"
 
-#: reportapp/templates/components/filters.html:40
+#: reportapp/templates/components/filters.html:47
 msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
-
-#: reportapp/templates/components/filters.html:47
-msgid "Select scannerjob"
-msgstr "Vælg scannerjob"
 
 #: reportapp/templates/components/filters.html:67
 #: reportapp/templates/components/statistics-template.html:89
@@ -140,10 +136,6 @@ msgid "Sensitivity"
 msgstr "Følsomhed"
 
 #: reportapp/templates/components/filters.html:76
-msgid "Select sensitivity"
-msgstr "Vælg følsomhed"
-
-#: reportapp/templates/components/filters.html:69
 msgid "All sensitivities"
 msgstr "Alle følsomheder"
 
@@ -151,7 +143,7 @@ msgstr "Alle følsomheder"
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
-#: reportapp/templates/components/handle-match.html:6
+#: reportapp/templates/components/handle-match.html:8
 #: reportapp/templates/components/hit.html:69
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned.\n"
@@ -160,11 +152,22 @@ msgstr ""
 "OS2datascanner sletter ikke resultater fra systemet der blev scannet.\n"
 "Resultatet markeres udelukkende som håndteret i OS2datascanner."
 
-#: reportapp/templates/components/handle-match.html:8
+#: reportapp/templates/components/handle-match.html:10
+#: reportapp/templates/components/hit.html:71
+msgid "Working"
+msgstr "Arbejder"
+
+#: reportapp/templates/components/handle-match.html:11
+#: reportapp/templates/components/hit.html:72
+msgid "Handled"
+msgstr "Håndteret"
+
+#: reportapp/templates/components/handle-match.html:12
+#: reportapp/templates/components/handle-match.html:13
 msgid "Mark as handled"
 msgstr "Markér som håndterede"
 
-#: reportapp/templates/components/handle-match.html:11
+#: reportapp/templates/components/handle-match.html:16
 #: reportapp/templates/components/pagination.html:10
 #: reportapp/templates/components/statistics-template.html:110
 #: reportapp/templates/components/statistics-template.html:119
@@ -174,7 +177,7 @@ msgstr "Markér som håndterede"
 msgid "of"
 msgstr "af"
 
-#: reportapp/templates/components/handle-match.html:11
+#: reportapp/templates/components/handle-match.html:16
 msgid "selected"
 msgstr "valgt"
 
@@ -194,31 +197,24 @@ msgstr "Kopiér"
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:71
-msgid "Working"
-msgstr "Arbejder"
-
-#: reportapp/templates/components/hit.html:72
-msgid "Handled"
-msgstr "Håndteret"
-
 #: reportapp/templates/components/hit.html:73
+#: reportapp/templates/components/hit.html:75
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:74
+#: reportapp/templates/components/hit.html:76
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:87
+#: reportapp/templates/components/hit.html:89
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:88
+#: reportapp/templates/components/hit.html:90
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:89
+#: reportapp/templates/components/hit.html:91
 msgid "Probability"
 msgstr "Sandsynlighed"
 
@@ -563,6 +559,9 @@ msgstr "Mailscan"
 #: reportapp/views/views.py:442
 msgid "Not assigned"
 msgstr "Ikke tildelt"
+
+#~ msgid "Select scannerjob"
+#~ msgstr "Vælg scannerjob"
 
 #~ msgid "Select sensitivity"
 #~ msgstr "Vælg følsomhed"
