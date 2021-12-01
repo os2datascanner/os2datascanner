@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-01 05:50-0600\n"
+"POT-Creation-Date: 2021-11-29 07:00-0600\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -181,13 +181,57 @@ msgstr "Advarsel"
 msgid "Notification"
 msgstr "Notifikation"
 
-#: adminapp/templates/403.html:11
+#: adminapp/templates/403.html:6 adminapp/templates/404.html:6
+msgid "Page not found"
+msgstr "Siden blev ikke fundet"
+
+#: adminapp/templates/403.html:10
 msgid "You need permission to perform this action"
 msgstr "Du har ikke tilladelse til at udføre denne handling"
 
-#: adminapp/templates/404.html:11
-msgid "Page not found"
-msgstr "Siden blev ikke fundet"
+#: adminapp/templates/403.html:14
+msgid ""
+"You lack the required permission to perform this action. Please contact us "
+"if you think this is an error."
+msgstr ""
+"Du mangler den nødvendige tilladelse til at udføre denne handling. Kontakt os venligst "
+"hvis du mener dette er en fejl."
+
+#: adminapp/templates/404.html:10
+msgid "The page could not be found"
+msgstr "Siden kunne ikke findes"
+
+#: adminapp/templates/404.html:14
+msgid "Unfortunately, we could not find the page"
+msgstr "Vi kunne desværre ikke finde siden"
+
+#: adminapp/templates/404.html:15
+msgid "Go to the front page"
+msgstr "Gå til forsiden"
+
+#: adminapp/templates/500.html:6
+msgid "Server error"
+msgstr "Serverfejl"
+
+#: adminapp/templates/500.html:10
+msgid "It looks like something went wrong"
+msgstr "Det ser ud til, at der er gået noget galt"
+
+#: adminapp/templates/500.html:14
+msgid ""
+"Unfortunately, we can't process your request at the moment. If the problem "
+"persists, you're more than welcome to contact us."
+msgstr ""
+"Vi kan desværre ikke behandle din forespørgsel lige nu. Hvis problemet "
+"bliver ved, er du meget velkommen til at kontakte os."
+
+#: adminapp/templates/500.html:15
+msgid "In the meantime, you may attempt to refresh the page or"
+msgstr "I mellemtiden kan du forsøge at genindlæse siden eller"
+
+#: adminapp/templates/500.html:15
+msgid "go to the front page"
+msgstr "gå til forsiden"
 
 #: adminapp/templates/components/navigation.html:12
 msgid "Scanner status"
