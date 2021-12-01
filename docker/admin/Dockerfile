@@ -10,28 +10,20 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-FROM node:14 AS frontend
+FROM node:15 AS frontend
 
-WORKDIR /code/src/os2datascanner/projects/admin/adminapp
+WORKDIR /code/src/os2datascanner/projects
 
-COPY src/os2datascanner/projects/admin/adminapp/package.json .
-COPY src/os2datascanner/projects/admin/adminapp/package-lock.json .
-RUN npm ci
-
-COPY src/os2datascanner/projects/admin/adminapp/postcss.config.js .
-COPY src/os2datascanner/projects/admin/adminapp/webpack.dev.js .
-COPY src/os2datascanner/projects/admin/adminapp/webpack.prod.js .
-COPY src/os2datascanner/projects/admin/adminapp/static/src ./static/src
-COPY src/os2datascanner/projects/admin/adminapp/static/3rdparty ./static/3rdparty
-# Do we need templates?
+COPY src/os2datascanner/projects/static ./static
+RUN npm ci --prefix static; \
 
 # Build production bundle
 # NB! Doesn't start a webserver, only bundles files!
-RUN npm run prod
+    npm run prod --prefix static
 
 # Build development bundle
 # NB! Watches for changes, so no automatic exit!
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--prefix", "static"]
 
 ######################
 
@@ -122,8 +114,8 @@ COPY README.rst ./
 COPY CHANGELOG.md ./
 
 # Copy frontend dist folder to static
-WORKDIR /code/src/os2datascanner/projects/admin/adminapp/static
-COPY --from=frontend /code/src/os2datascanner/projects/admin/adminapp/static/dist ./dist
+WORKDIR /code/src/os2datascanner/projects/static
+COPY --from=frontend /code/src/os2datascanner/projects/static/dist ./dist
 
 # Run the server as the os2ds_admin user on port 5000
 WORKDIR /code/src/os2datascanner/projects/admin

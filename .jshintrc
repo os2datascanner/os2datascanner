@@ -1,6 +1,6 @@
 /* general rules for js linting  */
 {
-    "esversion": 6,
+    "esversion": 9,
     "laxbreak":true,
     "scripturl": true,
     "bitwise":true,

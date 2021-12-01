@@ -25,7 +25,7 @@
             href="{% url 'add-organization-for' client_id=client.pk %}"
             title="{% trans 'Add new organization' %}">
               <svg class="icon icon--white">
-                <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
+                <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
               </svg>
               <span>
                 {% trans "Add new organization" %}
@@ -34,8 +34,16 @@
         </div>
     </div>
 
-    <div class="datatable-wrapper lg">
+    <div class="datatable-wrapper card xl">
         <table class="datatable">
+            <colgroup>
+                <col class="datatable__column--name">
+                <col class="datatable__column--info">
+                <col class="datatable__column--info">
+                {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
+                    <col class="datatable__column--btn">
+                {% endif %}
+            </colgroup>
             <thead>
                 <tr>
                     <th class="datatable__column--name">{% trans "name"|capfirst %}</th>

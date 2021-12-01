@@ -1,0 +1,500 @@
+:root {
+  --datatable-cell-padding: 2em;
+}
+
+.datatable-wrapper {
+  clear: both;
+  &.sm, &.md, &.lg, &.xl {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  &.sm {
+    > .datatable {
+      min-width: 35rem;
+    }
+  }
+  &.md {
+    > .datatable {
+      min-width: 45rem;
+    }
+  }
+  &.lg {
+    > .datatable {
+      min-width: 55rem;
+    }
+  }
+  &.xl {
+    > .datatable {
+      min-width: 75rem;
+    }
+  }
+  &.card {
+    box-shadow: var(--box-shadow-widget);
+    border-radius: var(--border-radius-widget);
+    margin-bottom: calc(2 * var(--datatable-cell-padding));
+    background-color: var(--color-widget-bg);
+  }
+
+  &.sm.card,
+  &.md.card,
+  &.lg.card,
+  &.xl.card {
+    // use gradients to signify that the table is scrollable
+    background-image:
+      linear-gradient(to right, white var(--datatable-cell-padding), transparent 100%),
+      linear-gradient(to right, #22222244, transparent 100%),
+      linear-gradient(to left, white var(--datatable-cell-padding), transparent 100%),
+      linear-gradient(to left, #22222244, transparent 100%);
+    background-repeat: no-repeat;
+    background-position:
+      left top,
+      left top,
+      100% 0,
+      100% 0;
+    background-size:
+      calc(var(--datatable-cell-padding) * 4) 100%,
+      var(--datatable-cell-padding) 100%,
+      calc(var(--datatable-cell-padding) * 4) 100%,
+      var(--datatable-cell-padding) 100%;
+    background-attachment:
+      local,
+      scroll,
+      local,
+      scroll;
+
+    // IE11 doesn't understand this implementation properly, so we use the media
+    // query below to target IE11 and then remove the shadows
+    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+      background-image: none !important;
+    }
+
+    &:focus {
+      box-shadow: var(--box-shadow-widget), 0 0 0 3px var(--color-primary-light);
+    }
+  }
+}
+
+.datatable {
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  width: 100%;
+  &.disabled {
+    pointer-events: none;
+    opacity: .6;
+  }
+  .datatable {
+    margin: calc(var(--datatable-cell-padding) * -1) 0;
+  }
+  .button-caret {
+    background-color: transparent !important;
+    .material-icons {
+      pointer-events: none;
+      color: #aaa;
+      transition: var(--transition-default);
+    }
+    &:hover,
+    &:focus {
+      .material-icons {
+        color: var(--color-primary-dark);
+      }
+    }
+    &.up {
+      .material-icons {
+        transform:rotate(180deg);
+      }
+    }
+  }
+
+  tr.open > td,
+  tr.open > th {
+    background-color: rgba(0,0,0,.07);
+  }
+  .matches-list > td,
+  .matches-list > th {
+    background-color: rgba(0,0,0,.035);
+  }
+  tr.open > th:first-child,
+  tr.open > td:first-child,
+  .matches-list > th:first-child,
+  .matches-list > td:first-child {
+    // Emulate border-left. Adding an actual border-left will shift
+    // the contents of the row
+    box-shadow: inset 4px 0 0 var(--color-primary);
+  }
+  tr.highlighted > td,
+  tr.highlighted > th,
+  tr.highlighted + .matches-list > td,
+  tr.highlighted + .matches-list > th {
+    background-color: var(--color-primary-lightest);
+  }
+
+  &--wide {
+    max-width: none;
+  }
+
+  &__column {
+    &--handle {
+      width: 4.2rem;
+    }
+
+    &--name {
+      width: 100%;
+      max-width: 15rem;
+    }
+
+    &--matchcount {
+      width: 6.5rem;
+      display: none;
+    }
+
+    &--org {
+      width: 15rem;
+    }
+
+    &--expression {
+      width: 11rem;
+    }
+
+    &--sensitivity {
+      width: 12rem;
+    }
+
+    &--drive {
+      width: 6rem;
+    }
+
+    &--validated {
+      width: 10rem;
+    }
+
+    &--automatic {
+      width: 8rem;
+    }
+
+    &--source {
+      width: 6.5rem;
+      display: none;
+    }
+
+    &--path {
+      width: 100%;
+    }
+
+    &--actions {
+      width: 14rem;
+      .action-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -.25rem 0 0 -.25rem;
+        .button {
+          margin: .25rem 0 0 .25rem;
+        }
+        > * {
+          flex: 0 1 auto; // be explicit for IE11s sake
+        }
+      }
+    }
+
+    &--info {
+      width: 15rem;
+    }
+
+    &--btn {
+      width: 28rem;
+    }
+  }
+
+  .domain-url {
+    text-overflow: ellipsis;
+    word-break: break-all;
+  }
+
+  a:not(.button) {
+    text-decoration: none;
+    font-weight: 500;
+    color: var(--color-primary);
+
+    &:hover {
+      color: var(--color-primary-dark);
+    }
+  }
+}
+
+
+@media (min-width: $break-sm) {
+  col.datatable__column--matchcount,
+  col.datatable__column--source {
+    display: table-column;
+  }
+  td.datatable__column--matchcount,
+  th.datatable__column--matchcount,
+  td.datatable__column--source,
+  th.datatable__column--source {
+    display: table-cell;
+  }
+}
+
+.compressed {
+  --datatable-cell-padding: 1rem;
+}
+
+// probability,  start
+.probability {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: var(--border-radius-button);
+  color: var(--color-text-white);
+  text-align: center;
+  width: 3.5rem;
+  padding: 0.5rem;
+  margin: -.6rem 0;
+
+  &--red {
+    background-color: var(--color-error);
+  }
+  &--orange {
+    background-color: var(--color-problem);
+  }
+  &--green {
+    background-color: var(--color-ok-dark);
+  }
+}
+
+.datatable th,
+.datatable td {
+  line-height: normal; // prevent y-overflow
+  padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
+  vertical-align: middle;
+  .overflow-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:first-child {
+    padding-left: var(--datatable-cell-padding);
+  }
+
+  &:last-child {
+    padding-right: var(--datatable-cell-padding);
+  }
+}
+
+.datatable.middle th,
+.datatable.middle td {
+  vertical-align: middle;
+}
+
+.datatable tr.error td {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.datatable .column-headings th,
+.datatable .handle-matches th {
+  position: static; // override aggressive position: relative; on * in _base.scss
+}
+
+.datatable .column-headings {
+  th {
+    font-size: 1rem;
+    font-weight: bold;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    z-index: 2;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: #f4f4f4;
+    white-space: nowrap;
+    top: calc(2rem + var(--size-logo-height) + 12rem); // for sticky purposes; header height + row height of 9rem
+    @media (min-width: $break-sm) {
+      top: calc(2rem + var(--size-logo-height) + 9rem); // for sticky purposes; header height + row height of 9rem
+    }
+    @media (min-width: $break-md) {
+      top: calc(2rem + var(--size-logo-height) + 6rem); // for sticky purposes; header height + row height of 6rem
+    }
+    @media (min-width: $break-lg) {
+      top: 6rem; // for sticky purposes
+    }
+  }
+}
+
+.datatable .handle-matches {
+  th {
+    background-color: #fff;
+    z-index: 2;
+    top: calc(2rem + var(--size-logo-height)); // for sticky purposes; header height
+    &:first-child {
+      border-top-left-radius: var(--border-radius-widget);
+    }
+    &:last-child {
+      border-top-right-radius: var(--border-radius-widget);
+    }
+    @media (min-width: $break-lg) {
+      top: 0; // for sticky purposes
+    }
+  }
+}
+
+.datatable .sticky th {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+.datatable td {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* .datatable--click-rows, start */
+.datatable--click-rows td {
+  padding: 0;
+
+  &:first-child {
+    padding-left: inherit;
+  }
+
+  &:last-child {
+    padding-right: inherit;
+  }
+}
+
+.datatable--click-rows a {
+  color: inherit;
+  display: block;
+  padding: 2rem;
+  text-decoration: none;
+}
+/* .datatable--click-rows, stop */
+
+/* Icons and text in datatable  */
+.flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-top: .5rem;
+
+  &--icon {
+    margin-top: -.25rem;
+  }
+
+  &--character {
+    margin-top: 1.25rem;
+    margin-left: 1rem;
+    margin-right: .25rem;
+  }
+
+  &--bottom {
+    margin-bottom: .25rem;
+  }
+
+  &--width {
+    margin-right: .75rem;
+    height: 1.2rem;
+    max-width: 1.5rem;
+
+    &--icon {
+      height: auto;
+      max-width: 1.5rem;
+      color: #222222;
+    }
+  }
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
+
+  .btn-text {
+    color: var(--color-text-main);
+    font-weight: 400;
+
+    &:hover {
+      color: var(--color-text-main);
+    }
+  }
+
+  .text {
+    color: var(--color-text-secondary);
+    font-size: .75rem;
+    line-height: 1rem;
+  }
+}
+
+/* expression in datatable  */
+.code-grey {
+  background-color: #e0e0e0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-button);
+  padding: .5rem;
+}
+
+.scan {
+  &__item-title {
+    display: block;
+  }
+
+  &__item-meta {
+    margin-top: var(--size-ds-unit);
+
+    span {
+      display: inline-block;
+      font-size: 0.75rem;
+      margin-right: 0.5rem;
+      opacity: 0.75;
+    }
+  }
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+.matches-list {
+  &__column {
+    &--match {
+      width: 12rem;
+    }
+    &--context {
+      width: auto;
+    }
+    &--probability {
+      width: 8rem;
+    }
+  }
+}
+
+.match-context {
+  &::before,
+  &::after {
+    content: "[...]";
+    color: #aaa;
+  }
+  &::before {
+    padding-right: .35em;
+  }
+  &::after {
+    padding-left: .35em;
+  }
+}
+
+.tooltip {
+  &.cursor-help {
+    cursor: help;
+  }
+}
+
+[data-tooltip] {
+  position: absolute;
+  font-size: .85rem;
+  padding: .25rem;
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: var(--border-radius-button);
+  background-color: #f4f4f4;
+  box-shadow: var(--box-shadow-filter);
+  width: auto;
+  white-space: nowrap;
+  z-index: 9999;
+  cursor: text;
+}

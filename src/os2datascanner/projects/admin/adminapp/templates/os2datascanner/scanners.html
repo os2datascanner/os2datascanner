@@ -4,11 +4,7 @@
 
 {% block scripts %}
   <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
-  {% if not settings.DEBUG %}
-    <script src="{% static "dist/bundle.min.js" %}"></script>
-  {% else %}
-    <script src="{% static "dist/bundle.js" %}"></script>
-  {% endif %}
+  <script src="{% static "js/index.js" %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -31,7 +27,7 @@
         href="/{{ view.type }}scanners/add/"
         title="{% trans 'Add scannerjob' %}">
         <svg class="icon icon--white">
-          <use xlink:href="/static/src/svg/symbol-defs.svg#icon-plus"></use>
+          <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
         </svg>
           <span>
             {% trans "Add scannerjob" %}
@@ -41,11 +37,23 @@
     </div>
 
     {% if scanner_list %}
-    <div class="datatable-wrapper lg" role="region" tabindex="0" aria-label="{% trans 'Scannerjob' %}">
+    <div class="datatable-wrapper card {% if view.type == 'file' and user.is_superuser %}xl{% else %}lg{% endif %}" role="region" tabindex="0" aria-label="{% trans 'Scannerjob' %}">
       <table class="datatable">
+        <colgroup>
+          <col class="datatable__column--name">
+          {% if user.is_superuser %}
+          <col class="datatable__column--org">
+          {% endif %}
+          {% if view.type == 'file' %}
+          <col class="datatable__column--drive">
+          {% endif %}
+          <col class="datatable__column--validated">
+          <col class="datatable__column--automatic">
+          <col class="datatable__column--actions">
+        </colgroup>
         <thead>
           <tr>
-            <th>
+            <th class="datatable__column--name">
               {% trans "Name/URL" %}
             </th>
             {% if user.is_superuser %}
@@ -74,7 +82,7 @@
           {% for scanner in scanner_list %}
           <tr tabindex="0">
 
-            <td class="domain-url">
+            <td class="domain-url datatable__column--name">
               <div>{{scanner.name}}</div>
               <div style="margin-top: 0.5rem;"><small>{{scanner.url}}</small></div>
             </td>
@@ -125,7 +133,7 @@
                 class="button button--small button--grey"
                 title="{% trans 'Run' %}">
                   <svg class="icon">
-                    <use xlink:href="/static/src/svg/symbol-defs.svg#icon-play"></use>
+                    <use xlink:href="/static/svg/symbol-defs.svg#icon-play"></use>
                   </svg>
                 </a>
 
@@ -134,7 +142,7 @@
                 class="button button--small button--grey"
                 title="{% trans 'Edit' %}">
                   <svg class="icon">
-                    <use xlink:href="/static/src/svg/symbol-defs.svg#icon-pencil"></use>
+                    <use xlink:href="/static/svg/symbol-defs.svg#icon-pencil"></use>
                   </svg>
                 </a>
 
@@ -143,7 +151,7 @@
                 class="button button--small button--grey"
                 title="Kopiér">
                   <svg class="icon">
-                    <use xlink:href="/static/src/svg/symbol-defs.svg#icon-copy"></use>
+                    <use xlink:href="/static/svg/symbol-defs.svg#icon-copy"></use>
                   </svg>
                 </a>
 
@@ -157,7 +165,7 @@
                   onclick="return confirm('Ønsker du virkelig at slette denne scanner?\n{{scanner.name}}\n\nHandlingen kan ikke fortrydes.')"
                   title="{% trans 'Delete' %}">
                   <svg class="icon">
-                    <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
+                    <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
                   </svg>
                 </button>
                 </form>

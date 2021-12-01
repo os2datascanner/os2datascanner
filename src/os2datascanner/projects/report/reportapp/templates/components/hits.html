@@ -17,7 +17,7 @@
           {% include "components/handle-match.html" %}
           <div class="view-options">
             <button class="toggle probability-toggle" type="button" aria-pressed="false">{% trans 'Show match probability' %}</button>
-            <button class="matches-expand-all button button-caret" type="button">{% trans "Show/hide all matches" %} <i class="material-icons" aria-hidden="true">expand_more</i></button>
+            <button class="matches-expand-all button button-caret button--has-icon" type="button">{% trans "Show/hide all matches" %} <i class="material-icons" aria-hidden="true">expand_more</i></button>
           </div>
         </th>
       </tr>
@@ -47,7 +47,7 @@
             <button
               type="button"
               name="sort_key"
-              class="order-by button button-caret{% if order_by == 'sort_key' and order == 'descending' %} up{% endif %}"
+              class="order-by button button-caret button--has-icon{% if order_by == 'sort_key' and order == 'descending' %} up{% endif %}"
               value="{% if order_by == 'sort_key' and order == 'descending' %}ascending{% else %}descending{% endif %}"
             >
               <i class="material-icons" aria-hidden="true">expand_more</i>

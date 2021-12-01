@@ -1,0 +1,43 @@
+.no-results {
+  float: left;
+  clear: both;
+  margin-top: 0;
+}
+
+.match_filtering_wrapper {
+  float:left;
+  margin-top: 1rem;
+  max-width: 100%;
+}
+
+/* style checkbox */
+.checkbox_wrapper {
+  float: left;
+  clear: left;
+  max-width: 100%;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+.match_filtering_clear_button {
+  cursor:pointer;
+  float:right;
+  margin-right: 2rem;
+  border:none;
+  background: none;
+  color: var(--color-primary-dark);
+  font-size: small;
+}
+
+.match_filtering_label {
+  display: block;
+  font-weight: bold;
+  float:left;
+}
+
+.match_filtering {
+  width: 12.5rem;
+  margin-right: 2rem;
+  margin-top: 2rem;
+  font-size: .9rem;
+}

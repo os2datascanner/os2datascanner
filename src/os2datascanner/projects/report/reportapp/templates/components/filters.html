@@ -21,12 +21,15 @@
   });
 </script>
 
-<form method="GET" action="{% url 'index' %}" id="filter_form">
+<form method="GET" action="{% url 'index' %}" id="filter_form">  
   {% comment %}
-      Hidden input field stores the paginate_by parameter set by the user upon form submit, which
-      allows us to remember it when the filtering parameters are changed.
+      Hidden input fields store the pagination and sort options so that they
+      "survive" when the user changes filter options.
   {% endcomment %}
+  
   <input type="hidden" name="paginate_by" id="paginate_by" value="{{ paginate_by }}">
+  <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
+  <input type="hidden" name="order" id="order" value="{{ order }}">
 
   <div class="match_filtering_wrapper">
       <div>
@@ -37,13 +40,13 @@
             {% trans "Scan" %}
           </label>
       </div>
-      <div class="match_filtering">
+      <div class="match_filtering dropdown" data-autosubmit data-compareto="all">
           <select name="scannerjob" id="scannerjobs">
             <option value="all"
                     {% if scannerjobs|last == "all" %}
                         selected="selected"
                     {% endif %} >
-                    {% trans "Select scannerjob" %}
+                    {% trans "All scannerjobs" %}
             </option>
               {% for scan in scannerjobs|first %}
                   <option value="{{ scan.scanner_job_pk|unlocalize }}"
@@ -66,13 +69,13 @@
             {% trans "Sensitivity" %}
           </label>
       </div>
-      <div class="match_filtering">
+      <div class="match_filtering dropdown" data-autosubmit data-compareto="all">
           <select name="sensitivities" id="sensitivities" >
             <option value="all"
                     {% if sensitivities|last == "all" %}
                         selected="selected"
                     {% endif %} >
-              {% trans "Select sensitivity" %}
+              {% trans "All sensitivities" %}
             </option>
               {% for sensitivity in sensitivities|first %}
                   <option value="{{ sensitivity.0.value|stringformat:"i" }}"

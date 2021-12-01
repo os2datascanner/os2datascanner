@@ -1,4 +1,4 @@
 #exclusions
-src/os2datascanner/projects/admin/adminapp/static/3rdparty/**/*
-src/os2datascanner/projects/report/reportapp/node_modules/**/*
-src/os2datascanner/projects/report/reportapp/static/**/*
+src/os2datascanner/projects/static/3rdparty/**/*
+src/os2datascanner/projects/static/dist/**/*
+src/os2datascanner/projects/static/node_modules/**/*
