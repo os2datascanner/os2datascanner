@@ -92,6 +92,10 @@ class PDFPageHandle(Handle):
     def guess_type(self):
         return PAGE_TYPE
 
+    @classmethod
+    def make(cls, handle: Handle, page: int):
+        return PDFPageHandle(PDFSource(handle), str(page))
+
 
 @Source.mime_handler(PAGE_TYPE)
 class PDFPageSource(DerivedSource):
@@ -157,3 +161,8 @@ class PDFObjectHandle(Handle):
     def presentation_name(self):
         "Return from the parent PDFPage handle"
         return self.source.handle.presentation_name
+
+    @classmethod
+    def make(cls, handle: Handle, page: int, name: str):
+        return PDFObjectHandle(
+                PDFPageSource(PDFPageHandle.make(handle, page)), name)
