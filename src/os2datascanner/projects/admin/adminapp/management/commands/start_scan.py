@@ -1,3 +1,4 @@
+import sys
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -22,6 +23,6 @@ class Command(BaseCommand):
             scanner = Scanner.objects.select_subclasses().get(pk=id)
         except ObjectDoesNotExist:
             print(f"no scanner job exists with id {id}")
-            exit(1)
+            sys.exit(1)
 
         print(scanner.run())

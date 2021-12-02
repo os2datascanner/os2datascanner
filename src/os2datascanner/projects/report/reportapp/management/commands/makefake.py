@@ -148,7 +148,7 @@ class Command(BaseCommand):
         elif scan_type and scan_type.lower() not in handle_types.keys():
             print(f"wrong scan_type {scan_type}.\n"
                   f"Should be one of {', '.join(handle_types.keys())} or all")
-            exit(0)
+            sys.exit(1)
 
         for scan in range(scan_count):
             _scan_type = None
