@@ -17,7 +17,7 @@
         <td class="datatable__column--name">
           <div class="tooltip">
             <div class="overflow-ellipsis">
-              <strong data-tooltip-text>{{ document_report.matches.handle|present }}</strong>
+              <strong data-tooltip-text>{{ document_report.matches.handle.presentation_name }}</strong>
             </div>
           </div>
           <div class="hit-link">
@@ -57,7 +57,7 @@
         <td class="datatable__column--path">
           <div class="tooltip">
             <div class="overflow-ellipsis">
-              <span data-tooltip-text>{{ document_report.sort_key }}</span>
+              <span data-tooltip-text>{{ document_report.matches.handle|present}}</span>
             </div>
           </div>
         </td>

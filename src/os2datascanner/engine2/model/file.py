@@ -120,8 +120,9 @@ class FilesystemHandle(Handle):
 
     @property
     def sort_key(self):
-        "Return the folder path"
-        return str(Path(self.presentation).parent)
+        """Return the folder path"""
+        # return the full path including filename
+        return str(Path(self.source.path).joinpath(self.relative_path))
 
     def censor(self):
         return FilesystemHandle(self.source.censor(), self.relative_path)
