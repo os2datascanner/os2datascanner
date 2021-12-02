@@ -38,6 +38,16 @@ body {
   margin-top: 0;
 }
 
+.error-page {
+  text-align: center;
+  .error-splash {
+    max-width: 100%;
+    width: 50rem;
+    display: block;
+    margin: 0 auto;
+  }
+}
+
 .content {
   flex: 1 1 auto;
   min-width: 0;
