@@ -55,6 +55,15 @@ class MSGraphMailAccountHandle(Handle):
     def presentation(self):
         return self.relative_path
 
+    @property
+    def sort_key(self):
+        """ Returns a string to sort by formatted as:
+            DOMAIN/ACCOUNT/MAIL_SUBJECT"""
+        # We should probably look towards EWS implementation and see if you get/can get folder
+        # the mail resides in and add this.
+        account, domain = self.relative_path.split("@", 1)
+        return f'{domain}/{account}/'
+
     def guess_type(self):
         return DUMMY_MIME
 
@@ -157,8 +166,9 @@ class MSGraphMailMessageHandle(Handle):
 
     @property
     def presentation(self):
-        return "\"{0}\" (in account {1})".format(
-                self._mail_subject, self.source.handle.relative_path)
+        # We should probably look towards EWS implementation and see if you get/can get folder
+        # the mail resides in and add this.
+        return f'Account {self.source.handle.relative_path}'
 
     @property
     def presentation_url(self):

@@ -144,9 +144,24 @@ class GoogleDriveHandle(Handle):
 
     @property
     def presentation(self):
-        return "{0} (in account {1})".format(
-                self._name or "file",
-                self.source._user_email)
+        # For some reason rel path contains spaces between "/"
+        # stripping them as they add no value for presentation
+        return f'In folder {self.relative_path.strip(" ")} of account {self.source._user_email}'
+
+    @property
+    def name(self):
+        return self.presentation_name
+
+    @property
+    def presentation_name(self):
+        return self._name
+
+    @property
+    def sort_key(self):
+        """Returns a string to sort by formatted as:
+        DOMAIN/ACCOUNT/PATH/FILE_NAME"""
+        account, domain = self.source._user_email.split("@", 1)
+        return f'{domain}/{account}/{self.relative_path}/{self._name}'
 
     def censor(self):
         return GoogleDriveHandle(self.source.censor(), relpath=self.relative_path, name=self._name)

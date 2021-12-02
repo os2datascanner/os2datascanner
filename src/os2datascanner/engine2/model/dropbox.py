@@ -136,14 +136,21 @@ class DropboxHandle(Handle):
 
     @property
     def presentation(self):
-        return "\"{0}\" (of account {1})".format(
-            self.relative_path, self.email)
+        # We don't need to show the filename here, just the path it resides in.
+        return f'In folder {self.relative_path.removesuffix(self.name)} of account {self.email}'
 
     @property
     def presentation_url(self):
         path = self.relative_path.split('/')
         return "https://www.dropbox.com/home{0}?preview={1}".format(
             '/'.join(path[:-1]), path[-1])
+
+    @property
+    def sort_key(self):
+        """Returns a string to sort by formatted as:
+        EMAIL/PATH
+        """
+        return f'{self.email}/{self.relative_path}'
 
     def censor(self):
         return DropboxHandle(self.source.censor(),

@@ -115,8 +115,8 @@ class FilesystemHandle(Handle):
 
     @property
     def presentation(self):
-        # return the full path including filename
-        return str(Path(self.source.path).joinpath(self.relative_path))
+        # return path, shouldn't need filename here
+        return str(Path(self.source.path))
 
     @property
     def sort_key(self):

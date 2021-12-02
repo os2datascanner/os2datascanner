@@ -154,13 +154,30 @@ class GmailHandle(Handle):
 
     @property
     def presentation(self):
-        return "\"{0}\" (in account {1})".format(
-            self._mail_subject or "mail",
-            self.source._user_email_gmail)
+        # Look towards EWS implementation if we can get folder information
+        # we should add this here. Right now we don't, just "inbox", hence we just say which account
+        return f'In account {self.source._user_email_gmail}'
 
     @property
     def presentation_url(self):
         return "https://mail.google.com/mail/#inbox/{0}".format(self.relative_path)
+
+    @property
+    def sort_key(self):
+        """ Returns a string to sort by formatted as:
+             DOMAIN/ACCOUNT/MAIL_SUBJECT"""
+        # We should probably look towards EWS implementation and see if you get/can get folder
+        # the mail resides in and add this.
+        account, domain = self.source._user_email_gmail.split("@", 1)
+        return f'{domain}/{account}/{self._mail_subject}'
+
+    @property
+    def name(self):
+        return self.presentation_name
+
+    @property
+    def presentation_name(self):
+        return self._mail_subject
 
     def censor(self):
         return GmailHandle(
