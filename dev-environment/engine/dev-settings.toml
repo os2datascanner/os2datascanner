@@ -9,5 +9,5 @@ AMQP_PWD = "os2ds"
 # per second
 limit = 10
 # timeout for requests (in seconds)
-timeout = 2
+timeout = 20
 ttl = 5
