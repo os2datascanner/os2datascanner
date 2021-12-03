@@ -1,5 +1,6 @@
 from os import listdir
 import PyPDF2
+import string
 from tempfile import TemporaryDirectory
 
 from ....utils.system_utilities import run_custom
@@ -10,6 +11,7 @@ from .derived import DerivedSource
 
 
 PAGE_TYPE = "application/x.os2datascanner.pdf-page"
+WHITESPACE_PLUS = string.whitespace + "\0"
 
 
 def _open_pdf_wrapped(obj):
@@ -45,7 +47,11 @@ class PDFPageResource(Resource):
         with self.handle.source.handle.follow(self._sm).make_stream() as fp:
             reader = _open_pdf_wrapped(fp)
             info = reader.getDocumentInfo() if reader else None
-            author = info.get("/Author") if info else None
+            # Some PDF authoring tools helpfully stick null bytes into the
+            # author field. Make sure we remove these
+            author = (
+                    info.get("/Author").strip(WHITESPACE_PLUS)
+                    if info else None)
         if author:
             yield "pdf-author", str(author)
 
@@ -91,6 +97,10 @@ class PDFPageHandle(Handle):
 
     def guess_type(self):
         return PAGE_TYPE
+
+    @classmethod
+    def make(cls, handle: Handle, page: int):
+        return PDFPageHandle(PDFSource(handle), str(page))
 
 
 @Source.mime_handler(PAGE_TYPE)
@@ -157,3 +167,8 @@ class PDFObjectHandle(Handle):
     def presentation_name(self):
         "Return from the parent PDFPage handle"
         return self.source.handle.presentation_name
+
+    @classmethod
+    def make(cls, handle: Handle, page: int, name: str):
+        return PDFObjectHandle(
+                PDFPageSource(PDFPageHandle.make(handle, page)), name)
