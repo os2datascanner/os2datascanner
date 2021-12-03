@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from os2datascanner.engine2.rules.address import AddressRule
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
+from os2datascanner.engine2.rules.dummy import AlwaysMatchesRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.rules.logical import (
     OrRule,
@@ -224,6 +225,38 @@ more!""",
                     len(evaluations),
                     "{0}: wrong evaluation count".format(input_string),
                 )
+
+    def test_resume(self):
+        """Resuming execution of a rule after its try_match method has returned
+        should complete the execution correctly."""
+        rule = AndRule(
+                RegexRule("First fragment"),
+                AlwaysMatchesRule(),
+                RegexRule("second fragment"),
+                AlwaysMatchesRule())
+
+        representations = {
+            "text": "First fragment goes here, and then the second fragment"
+        }
+        remaining, matches1 = rule.try_match(lambda k: representations[k])
+        representations["fallback"] = True
+        remaining, matches2 = remaining.try_match(lambda k: representations[k])
+
+        self.assertTrue(
+                remaining,
+                "incorrect conclusion of decomposed rule")
+        # Because Rule.try_match is allowed to perform optimisation, we can't
+        # rely on rules being executed in any particular order or number, so
+        # all we do here is to ensure that all of the rules we expect to see
+        # executed were actually executed
+        self.assertEqual(
+                set(r for r, _ in matches1) | set(r for r, _ in matches2),
+                {
+                    RegexRule("First fragment"),
+                    RegexRule("second fragment"),
+                    AlwaysMatchesRule()
+                },
+                "incorrect execution of decomposed rule")
 
     def test_json_round_trip(self):
         for rule, _ in RuleTests.compound_candidates:

@@ -104,9 +104,10 @@ class Rule(TypePropertyEquality, JSONSerialisable):
 
         Note that this method can optimise the reduction of this Rule; the
         result of a SimpleRule might be cached and reused, for example."""
-        head, pve, nve = self.split()
+        here = self
         matches = {}
-        while not isinstance(head, bool):
+        while not isinstance(here, bool):
+            head, pve, nve = here.split()
             try:
                 required_form = get_representation(head.operates_on.value)
             except KeyError:
@@ -115,11 +116,8 @@ class Rule(TypePropertyEquality, JSONSerialisable):
                 break
             if head not in matches:
                 matches[head] = list(head.match(required_form))
-            next = pve if matches[head] else nve
-            head, pve, nve = (
-                    next.split()
-                    if isinstance(next, Rule) else (next, None, None))
-        return (head, list(matches.items()))
+            here = pve if matches[head] else nve
+        return (here, list(matches.items()))
 
     _json_handlers = {}
 
