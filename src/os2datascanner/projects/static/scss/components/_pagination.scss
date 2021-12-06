@@ -25,15 +25,6 @@
     margin: calc(var(--datatable-cell-padding) / 2);
   }
   
-  .dropdown {
-    width: auto;
-    &,
-    .select-items,
-    .select-selected {
-      min-width: 10rem;
-    }
-  }
-
   .flex {
     display: flex;
     flex-flow: row wrap;

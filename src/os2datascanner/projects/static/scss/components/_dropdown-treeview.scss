@@ -161,9 +161,9 @@
 
 .select2-selection__choice {
 	padding: .2rem .5rem !important;
-    transition: var(--transition-default) !important;
+  transition: var(--transition-default) !important;
 	background-color: #e9e9e9 !important;
-	margin-top: .35rem !important;
+	margin: .175rem !important;
 }
 
 .select2-selection__choice__remove {
@@ -192,7 +192,7 @@
 }
 
 .select2-selection__rendered {
-	padding: 0 !important;
+	padding: .175rem !important;
 	min-width: 95% !important;
 	height: 2.6rem !important;
 }
@@ -238,7 +238,7 @@
 	outline: none !important;
 	border: none !important;
 	margin:  0 !important;
-	padding: 0.75em 0.75em !important;
+	padding: .575rem !important;
 }
 
 .s2-to-tree .org-icon {
@@ -255,12 +255,14 @@
 }
 
 .s2-to-tree .org-icon-selected {
-    background-color: #12496e;
+  background-color: #12496e;
 	border-radius: 3px;
 	display: block;
 	width: 18px;
 	height: 18px;
-	background-size: 100% 100%;
+	background-size: 80% auto;
+	background-position: center;
+	background-repeat: no-repeat;
 	position: absolute;
 	top: 0.3em;
 	transition-delay: 0.2s;

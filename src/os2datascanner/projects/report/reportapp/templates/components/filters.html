@@ -40,8 +40,8 @@
             {% trans "Scan" %}
           </label>
       </div>
-      <div class="match_filtering dropdown" data-autosubmit data-compareto="all">
-          <select name="scannerjob" id="scannerjobs">
+      <div class="match_filtering dropdown">
+          <select name="scannerjob" id="scannerjobs" data-autosubmit data-compareto="all">
             <option value="all"
                     {% if scannerjobs|last == "all" %}
                         selected="selected"
@@ -69,8 +69,8 @@
             {% trans "Sensitivity" %}
           </label>
       </div>
-      <div class="match_filtering dropdown" data-autosubmit data-compareto="all">
-          <select name="sensitivities" id="sensitivities" >
+      <div class="match_filtering dropdown">
+          <select name="sensitivities" id="sensitivities" data-autosubmit data-compareto="all">
             <option value="all"
                     {% if sensitivities|last == "all" %}
                         selected="selected"
