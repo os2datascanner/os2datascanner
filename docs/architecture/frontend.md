@@ -17,14 +17,38 @@ templates.](https://docs.djangoproject.com/en/3.2/topics/templates/)
 ## Shared static resources
 
 The static resources are located in
-[src/os2datascanner/projects/static](./src/os2datascanner/projects/static). Django is configured to look in this path (actually on the corresponding `dist` path in the Docker container) when it collects static resources.
-This allows both apps to use the same set of static resources without
-having to maintain duplicate copies. Static resources are bundled up via
-Webpack and output in a `dist` subfolder; consult
+[src/os2datascanner/projects/static](./src/os2datascanner/projects/static). Django is configured to look in this path (actually on the corresponding `dist` path in the Docker container) when it collects static resources. This allows both apps to use the same set of static resources without
+having to maintain duplicate copies.
+
+## Webpack setup
+
+Static resources are bundled up via
+Webpack and output in a `dist` subfolder to `src/os2datascanner/projects/static`; consult
 [src/os2datascanner/projects/static/webpack.base.js](./src/os2datascanner/projects/static/webpack.base.js)
 for the configuration. Note that since the JS code isn't really modularized,
 most of what Webpack does is statically copy over the folders `js`&dagger;, `3rdparty`, `admin`, `css`, `favicons`, `fonts`, `recurrence` and `svg` with `CopyWebpackPlugin`. &dagger; The exception to the JS files is the file `index.js` which serves as the Webpack entry point. Finally, the `scss` folder is also not copied over, as its contents need to be transpiled into CSS first. This is achieved by importing `master.scss` into `index.js` and then using `sass-loader` for Webpack to handle that import statement.
 
+For hot reloading to work, we define the CMD `["npm", "run", "dev", "--prefix", "static"]`
+in `/docker/admin/Dockerfile` (and `/docker/report/Dockerfile`). This CMD is defined
+in the `frontend` stage of those Dockerfiles and will boot up a webpack dev server
+that listens for changes to the static frontend files. We stop at that stage in
+development when using the `frontend` service; consult `/docker-compose.yml`.
+This means that we can then mount in the static files from the host into the
+`frontend` container, and the webpack dev server will refresh when we edit the
+files on the host. Since the `dist` folder that webpack outputs its files to is
+shared with the `admin` and `report` services (our two Django apps), changes
+to the static files will automatically be picked up by Django.
+
+For all this to work, however, we need to explicitly define
+`/code/src/os2datascanner/projects/static/node_modules/` as volumes in the `frontend`
+service. If we don't, mounting in the static directory from the host into the
+container will lead to errors, if the directory of the host doesn't contain a
+`node_modules` folder (which it won't, unless you happened to run `npm install`
+on the host). The caveat to this is that if you install new dependencies with
+`npm` on the host (which will make them appear in the host's `node_modules` folder),
+they won't automatically appear in the container's `node_modules`. You need to
+rebuild the `frontend` and boot up the container again.
+`docker-compose up --build -d frontend` should do the trick.
 
 ## CSS styling
 

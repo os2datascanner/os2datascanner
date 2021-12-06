@@ -23,23 +23,20 @@ services:
     ports:
       - "8030:15672"  # management port
 
-  admin_frontend:
+  frontend:
     build:
       context: .
+      # we could also use docker/report/Dockerfile as our dockerfile
       dockerfile: docker/admin/Dockerfile
       target: frontend
     volumes:
+      # "create" the folder node_modules in the container as otherwise it will
+      # be overwritten/removed if ./src/os2datascanner/projects/static on the
+      # host does not contain node_modules. node_modules is required for
+      # the webpack dev server to run
+      - /code/src/os2datascanner/projects/static/node_modules/
       - ./src/os2datascanner/projects/static:/code/src/os2datascanner/projects/static
       - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
-
-  report_frontend:
-     build:
-       context: .
-       dockerfile: docker/report/Dockerfile
-       target: frontend
-     volumes:
-       - ./src/os2datascanner/projects/static:/code/src/os2datascanner/projects/static
-       - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
 
   admin:
     build:
@@ -66,7 +63,7 @@ services:
       - "8020:5000"
     depends_on:
       - db
-      - admin_frontend
+      - frontend
       - queue
 
   admin_collector:
@@ -125,7 +122,7 @@ services:
       - "8040:5000"
     depends_on:
       - db
-      - report_frontend
+      - frontend
       - queue
 
   redis:
