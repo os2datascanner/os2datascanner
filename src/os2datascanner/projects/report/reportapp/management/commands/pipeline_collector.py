@@ -16,6 +16,7 @@
 # source municipalities ( https://os2.eu/ )
 
 import json
+import logging
 import structlog
 
 from django.db import DataError, transaction
@@ -25,6 +26,7 @@ from django.core.exceptions import FieldError
 
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.pipeline.run_stage import _loglevels
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.model.core import Handle, Source
@@ -32,6 +34,7 @@ from os2datascanner.utils.system_utilities import time_now
 from ...models.documentreport_model import DocumentReport
 from ...models.organization_model import Organization
 from ...utils import hash_handle, prepare_json_object
+
 
 logger = structlog.get_logger(__name__)
 
@@ -363,6 +366,10 @@ def save_if_path_and_scanner_job_pk_unique(new_report, scanner_job_pk):
 
 class CollectorRunner(PikaPipelineThread):
     def handle_message(self, routing_key, body):
+        logger.debug(
+                "raw message received",
+                routing_key=routing_key,
+                body=body)
         if routing_key == "os2ds_results":
             yield from result_message_received_raw(body)
         elif routing_key == "os2ds_events":
@@ -373,7 +380,20 @@ class Command(BaseCommand):
     """Command for starting a pipeline collector process."""
     help = __doc__
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument(
+                "--log",
+                default="info",
+                help="change the level at which log messages will be printed",
+                choices=_loglevels.keys())
+
+    def handle(self, *args, log, **options):
+        # change formatting to include datestamp
+        fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
+        # set level for root logger
+        logging.getLogger("os2datascanner").setLevel(_loglevels[log])
+
         CollectorRunner(
                 exclusive=True,
                 read=["os2ds_results", "os2ds_events"],

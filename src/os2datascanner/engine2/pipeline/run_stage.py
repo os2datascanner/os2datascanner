@@ -14,6 +14,7 @@ from ..model.core import SourceManager
 from . import explorer, exporter, matcher, messages, processor, tagger, worker
 from .utilities.pika import PikaPipelineThread, RejectMessage
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -135,10 +136,8 @@ def main():
     parser.add_argument(
             "--log",
             default="info",
-            help=(
-                "Set logging level. Example --log debug', default='info'"
-            ),
-            choices=("critical", "error", "warn", "warning", "info", "debug",)
+            help="change the level at which log messages will be printed",
+            choices=_loglevels.keys()
         )
     parser.add_argument(
             "stage",
