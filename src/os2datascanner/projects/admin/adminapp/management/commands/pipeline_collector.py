@@ -17,13 +17,16 @@
 
 from django.db import transaction
 from django.core.management.base import BaseCommand
+import logging
 import structlog
 
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.pipeline.run_stage import _loglevels
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from ...models.scannerjobs.scanner_model import (
     Scanner, ScanStatus, ScheduledCheckup)
+
 
 logger = structlog.get_logger(__name__)
 
@@ -160,7 +163,20 @@ class Command(BaseCommand):
     """Command for starting a pipeline collector process."""
     help = __doc__
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument(
+                "--log",
+                default="info",
+                help="change the level at which log messages will be printed",
+                choices=_loglevels.keys())
+
+    def handle(self, *args, log, **options):
+        # change formatting to include datestamp
+        fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
+        # set level for root logger
+        logging.getLogger("os2datascanner").setLevel(_loglevels[log])
+
         CollectorRunner(
                 exclusive=True,
                 read=["os2ds_status", "os2ds_checkups"],
