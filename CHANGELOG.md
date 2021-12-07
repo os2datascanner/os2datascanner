@@ -1,5 +1,57 @@
 # Changelog
 
+## Version 3.13.2, 7th December 2021
+
+"Erase & rewind" 
+
+### New in this version
+- Experimental support for cancelling a scan:
+
+  - Deleting the status object for a running scan will now signal to the
+    pipeline that it should ignore the tasks from that scan.
+
+### General improvements
+
+- The sort keys used by the report module's database can now be recomputed.
+
+- Custom pagination values are now preserved when filter options are changed.
+
+- Style and presentation resources are now shared between the administration
+  system and report module for greater consistency.
+
+- The errors produced when an invalid TOML configuration file is detected are
+  now more informative.
+
+### Bugfixes
+
+- Scanning stream-compressed files should now work properly again.
+
+- The progress of an LDAP synchronisation background job is once again
+  correctly reported to the administration system.
+
+- The test suite of the administration system can now be run in the development
+  environment without causing conflicts with the report module.
+
+- Errors late in a scan should no longer cause status objects to get out of
+  sync.
+
+- The rule engine can once again request new conversions from the scan pipeline
+  without producing incoherent results.
+
+- Improved handling of PostgreSQL database limitations:
+
+  - The report module's pipeline collector now strips all instances of the null
+    byte (Unicode character U+0000) from JSON objects before saving them to the
+    database.
+
+### Notes
+
+- The repository now contains (Danish-language) documentation for the process
+  of setting up an OS2datascanner installation for use with Microsoft Graph.
+
+- Due to the nature of the conversion bug in the rule engine, it is recommended
+  that scans performed with releases `3.13.0` or `3.13.1` be repeated.
+
 ## Version 3.13.1, 16th November 2021
 
 "Batch Processing" 
