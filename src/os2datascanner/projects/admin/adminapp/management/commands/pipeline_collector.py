@@ -152,6 +152,10 @@ def checkup_message_received_raw(body):  # noqa: CCR001, too high cognitive comp
 
 class CollectorRunner(PikaPipelineThread):
     def handle_message(self, routing_key, body):
+        logger.debug(
+                "raw message received",
+                routing_key=routing_key,
+                body=body)
         with transaction.atomic():
             if routing_key == "os2ds_status":
                 yield from status_message_received_raw(body)

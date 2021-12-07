@@ -366,6 +366,10 @@ def save_if_path_and_scanner_job_pk_unique(new_report, scanner_job_pk):
 
 class CollectorRunner(PikaPipelineThread):
     def handle_message(self, routing_key, body):
+        logger.debug(
+                "raw message received",
+                routing_key=routing_key,
+                body=body)
         if routing_key == "os2ds_results":
             yield from result_message_received_raw(body)
         elif routing_key == "os2ds_events":
