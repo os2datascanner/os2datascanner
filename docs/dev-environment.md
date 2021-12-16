@@ -240,6 +240,14 @@ These depend on some auxillary services:
 
 -   `nginx`: a webserver that exposes the same folder as `samba`.
 
+-   `datasynth`: a webserver that generates websites based on url configuration.
+    If you want to use a customized websource for testing, you can also go to:
+    `http://0.0.0.0:5000/websource` and add query parameters to define your websource.
+    the site will respond with a reference to a web site which is randomly generated.
+    the parameters allowed are: size (in bytes), sub_files, seed, 
+    matches( ie. `matches={"match":amount}`), and depth. The generated sources are
+    available to the host by replacing `datasynth` with `localhost` or `0.0.0.0`.
+
 -   `mailhog`: a SMTP-server for testing purposes. 
     web interface available at `http://localhost:8025/`.
 
