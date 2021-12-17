@@ -3,7 +3,7 @@ from urllib.parse import urlsplit, quote
 from contextlib import contextmanager
 from exchangelib import (
     Account, Message, Credentials, IMPERSONATION,
-    Configuration, FaultTolerance, ExtendedProperty)
+    Configuration, ExtendedProperty)
 from exchangelib.errors import (ErrorServerBusy, ErrorItemNotFound)
 from exchangelib.protocol import BaseProtocol
 
@@ -93,7 +93,6 @@ class EWSAccountSource(Source):
         service_account = Credentials(
                 username=self._admin_user, password=self._admin_password)
         config = Configuration(
-                retry_policy=FaultTolerance(max_wait=1800),
                 service_endpoint=self._server,
                 credentials=service_account if self._server else None)
 
