@@ -8,7 +8,7 @@ from exchangelib.errors import (ErrorServerBusy, ErrorItemNotFound)
 from exchangelib.protocol import BaseProtocol
 
 from .utilities import NamedTemporaryResource
-from ..utilities.backoff import run_with_backoff
+from ..utilities.backoff import DefaultRetrier
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import SingleResult
 from .core import Source, Handle, FileResource
@@ -190,8 +190,8 @@ class EWSMailResource(FileResource):
         def _retrieve_message():
             return account.root.get_folder(
                     folder_id).all().only("message_id").get(id=mail_id)
-        m, _ = run_with_backoff(_retrieve_message, ErrorServerBusy, fuzz=0.25)
 
+        m = DefaultRetrier(ErrorServerBusy).run(_retrieve_message)
         return not isinstance(m, ErrorItemNotFound)
 
     def get_message_object(self):
@@ -201,8 +201,8 @@ class EWSMailResource(FileResource):
 
             def _retrieve_message():
                 return account.root.get_folder(folder_id).get(id=mail_id)
-            self._message, _ = run_with_backoff(
-                    _retrieve_message, ErrorServerBusy, fuzz=0.25)
+            self._message = DefaultRetrier(
+                    ErrorServerBusy, fuzz=0.25).run(_retrieve_message)
         return self._message
 
     @contextmanager
