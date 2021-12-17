@@ -1,4 +1,4 @@
-from time import sleep
+from time import time, sleep
 from random import random
 
 import structlog
@@ -122,6 +122,44 @@ DefaultRetrier = ExponentialBackoffRetrier
 the best choice at any given point. If you just want to retry a function a
 reasonable number of times with sensible default behaviour and don't need any
 particular tuning parameters, then instantiate one of these."""
+
+
+class Testing:
+    """Helper utilities for testing the Retrier classes."""
+    @classmethod
+    def requires_k_attempts(cls, k, exception_class):
+        """Returns a function that will raise a TryAgain exception k-1 times
+        before eventually succeeding."""
+        attempts = 0
+
+        def _requires_k_attempts(p, q, *, scale_factor):
+            nonlocal attempts
+            try:
+                if attempts <= k:
+                    raise exception_class()
+                else:
+                    return (p + q) * scale_factor
+            finally:
+                attempts += 1
+        return _requires_k_attempts
+
+    @classmethod
+    def requires_k_seconds(cls, k, exception_class):
+        """Returns a function that will raise a TryAgain exception unless at
+        least k seconds have passed since the last call to it."""
+        start = time()
+
+        def _requires_k_seconds(p, q, *, scale_factor):
+            nonlocal start
+            now = time()
+            try:
+                if now - start < k:
+                    raise exception_class()
+                else:
+                    return (p + q) * scale_factor
+            finally:
+                start = now
+        return _requires_k_seconds
 
 
 def run_with_backoff(  # noqa: CCR001, too high cognitive complexity

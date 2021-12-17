@@ -1,7 +1,7 @@
-from time import time
 import unittest
 
-from os2datascanner.engine2.utilities.backoff import run_with_backoff
+from os2datascanner.engine2.utilities.backoff import (
+        Testing, ExponentialBackoffRetrier as EBRetrier)
 
 
 class EtiquetteBreach(Exception):
@@ -17,60 +17,45 @@ class ImpatientClientFauxPas(ImpoliteClientFauxPas):
 
 
 class TestBackoff(unittest.TestCase):
-    def setUp(self):
-        self.reset_busy_time()
-
-    def fail_unconditionally(self):
-        raise EtiquetteBreach()
-
-    def fail_if_too_busy(self):
-        now = time()
-        try:
-            if now - self.last_call_at < 7:
-                raise ImpatientClientFauxPas()
-            else:
-                return "Successful result"
-        finally:
-            self.last_call_at = now
-
-    def reset_busy_time(self):
-        self.last_call_at = time()
-
     def test_base_failure(self):
         with self.assertRaises(ImpatientClientFauxPas):
-            self.fail_if_too_busy()
+            Testing.requires_k_seconds(8, ImpatientClientFauxPas)(
+                    2, 3, scale_factor=4)
 
     def test_eventual_success(self):
+        operation = Testing.requires_k_seconds(8, ImpatientClientFauxPas)
         self.assertEqual(
-                run_with_backoff(
-                        self.fail_if_too_busy, ImpatientClientFauxPas)[0],
-                "Successful result")
+                EBRetrier(ImpatientClientFauxPas).run(
+                        operation, 2, 3, scale_factor=4),
+                20)
 
     def test_base_class_success(self):
+        operation = Testing.requires_k_seconds(8, ImpatientClientFauxPas)
         self.assertEqual(
-                run_with_backoff(
-                        self.fail_if_too_busy, EtiquetteBreach)[0],
-                "Successful result")
+                EBRetrier(EtiquetteBreach).run(
+                        operation, 2, 3, scale_factor=4),
+                20)
 
     def test_impatient_failure1(self):
+        operation = Testing.requires_k_seconds(8, ImpatientClientFauxPas)
         with self.assertRaises(ImpatientClientFauxPas):
-            run_with_backoff(
-                    self.fail_if_too_busy, ImpatientClientFauxPas,
-                    max_tries=3)
+            EBRetrier(ImpatientClientFauxPas, max_tries=3).run(
+                    operation, 2, 3, scale_factor=4)
 
     def test_impatient_failure2(self):
+        operation = Testing.requires_k_attempts(11, ImpatientClientFauxPas)
         call_counter = 0
         with self.assertRaises(ImpatientClientFauxPas):
 
             def _try_counting():
                 nonlocal call_counter
                 try:
-                    return self.fail_if_too_busy()
+                    return operation(2, 3, scale_factor=4)
                 finally:
                     call_counter += 1
-            run_with_backoff(
-                    _try_counting, ImpatientClientFauxPas,
-                    base=0.0125)
+            EBRetrier(
+                    ImpatientClientFauxPas,
+                    base=0.0125, ceiling=1, max_tries=10).run(_try_counting)
         self.assertEqual(
                 call_counter,
                 10,
