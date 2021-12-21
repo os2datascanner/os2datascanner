@@ -14,12 +14,14 @@ FROM node:15 AS frontend
 
 WORKDIR /code/src/os2datascanner/projects
 
-COPY src/os2datascanner/projects/static ./static
+COPY --chown=node:node src/os2datascanner/projects/static ./static
 RUN npm ci --prefix static; \
 
 # Build production bundle
 # NB! Doesn't start a webserver, only bundles files!
     npm run prod --prefix static
+
+USER node
 
 # Build development bundle
 # NB! Watches for changes, so no automatic exit!
