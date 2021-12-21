@@ -12,28 +12,22 @@
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">{% trans "Development overview" %}</h1>
-          <p class="chart_description">{% trans "New results by month" %}</p>
-          <p class="hidden chart_description">{% trans "Unhandled results by month" %}</p>
+          <p class="chart_description" data-chartid="development-new-results">{% trans "New results by month" %}</p>
+          <p class="hidden chart_description" data-chartid="development-unhandled-results">{% trans "Unhandled results by month" %}</p>
         </div>
         <div class="statistic_header_nav">
           <div class="dropdown">
-            <div class="select">
-              <span class="select_span">{% trans "New results" %}</span>
-              <i class="material-icons">
-                keyboard_arrow_down
-              </i>
-            </div>
-            <ul class="dropdown-menu">
-              <li>{% trans "New results" %}</li>
-              <li>{% trans "Unhandled results" %}</li>
-            </ul>
+            <select>
+              <option value="development-new-results">{% trans "New results" %}</option>
+              <option value="development-unhandled-results">{% trans "Unhandled results" %}</option>
+            </select>
           </div>
         </div>
       </div>
-      <div class="chart_container">
+      <div class="chart_container" data-chartid="development-new-results">
         <canvas id="line_chart_new_matches_by_month"></canvas>
       </div>
-      <div class="hidden chart_container">
+      <div class="hidden chart_container" data-chartid="development-unhandled-results">
         <canvas id="line_chart_unhandled_matches"></canvas>
       </div>
     </div>
@@ -43,31 +37,25 @@
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">{% trans "Distribution of results" %}</h1>
-          <p class="chart_description">{% trans "Results distributed by sensitivities" %}</p>
-          <p class="hidden chart_description">{% trans "Results distributed by data sources" %}</p>
+          <p class="chart_description" data-chartid="distribution-sensitivities">{% trans "Results distributed by sensitivities" %}</p>
+          <p class="hidden chart_description" data-chartid="distribution-data-sources">{% trans "Results distributed by data sources" %}</p>
         </div>
         <div class="statistic_header_nav">
           <div class="dropdown">
-            <div class="select">
-              <span class="select_span">{% trans "Sensitivities" %}</span>
-              <i class="material-icons">
-                keyboard_arrow_down
-              </i>
-            </div>
-            <ul class="dropdown-menu">
-              <li>{% trans "Sensitivities" %}</li>
-              <li>{% trans "Data sources" %}</li>
-            </ul>
+            <select>
+              <option value="distribution-sensitivities">{% trans "Sensitivities" %}</option>
+              <option value="distribution-data-sources">{% trans "Data sources" %}</option>
+            </select>
           </div>
         </div>
       </div>
-      <div class="pie_chart_container chart_container">
+      <div class="pie_chart_container chart_container" data-chartid="distribution-sensitivities">
         <div>
           <canvas id="pie_chart_sensitivity"></canvas>
         </div>
         <div id="pie_legend_sensitivity"></div>
       </div>
-      <div class="hidden pie_chart_container chart_container">
+      <div class="hidden pie_chart_container chart_container" data-chartid="distribution-data-sources">
         <div>
           <canvas id="pie_chart_datasources"></canvas>
         </div>
@@ -80,25 +68,19 @@
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">{% trans "Handled results" %}</h1>
-          <p class="chart_description">{% trans "Percentage of handled results distributed by sensitivity" %}</p>
-          <p class="hidden chart_description">{% trans "The department's percentage of handled results" %}</p>
+          <p class="chart_description" data-chartid="handling-sensitivity">{% trans "Percentage of handled results distributed by sensitivity" %}</p>
+          <p class="hidden chart_description" data-chartid="handling-all-results">{% trans "The department's percentage of handled results" %}</p>
         </div>
         <div class="statistic_header_nav">
           <div class="dropdown">
-            <div class="select">
-              <span class="select_span">{% trans "Sensitivity" %}</span>
-              <i class="material-icons">
-                keyboard_arrow_down
-              </i>
-            </div>
-            <ul class="dropdown-menu">
-              <li>{% trans "Sensitivity" %}</li>
-              <li>{% trans "All results" %}</li>
-            </ul>
+            <select>
+              <option value="handling-sensitivity">{% trans "Sensitivity" %}</option>
+              <option value="handling-all-results">{% trans "All results" %}</option>
+            </select>
           </div>
         </div>
       </div>
-      <div class="doughnut_charts_container chart_container">
+      <div class="doughnut_charts_container chart_container" data-chartid="handling-sensitivity">
         <!-- Could be rewritten as for loop instead? -->
         <!-- TODO -->
         <div class="doughnut_chart_container">
@@ -138,7 +120,7 @@
           </div>
         </div>
       </div>
-      <div class="hidden chart_container">
+      <div class="hidden chart_container" data-chartid="handling-all-results">
         <div class="doughnut_chart_container">
           <div>
             <canvas id="doughnut_chart_total"></canvas>

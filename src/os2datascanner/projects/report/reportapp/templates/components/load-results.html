@@ -1,6 +1,6 @@
 {%  load i18n %}
 
-<form class="dropdown" data-autosubmit>
+<form class="dropdown">
   {% comment %}
       Hidden input fields store the filter and sort options so that they
       "survive" when the user changes page size.
@@ -12,7 +12,7 @@
   <input type="hidden" name="sensitivities" id="sensitivities" value="{{ sensitivities|last }}">
   <input type="hidden" name="30-days" id="30-days" value="{{ 30_days }}">
 
-  <select name="paginate_by" id="paginate_by">
+  <select name="paginate_by" id="paginate_by" data-autosubmit>
         {% for option in paginate_by_options %}
             <option value="{{ option }}"
             {% if option == paginate_by %} selected="selected"{% endif %}>

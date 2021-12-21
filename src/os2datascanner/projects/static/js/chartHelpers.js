@@ -26,34 +26,26 @@ var avoidZero = function(a, b) {
 Chart.defaults.global.animation.easing = 'easeOutQuad';
 Chart.defaults.global.animation.duration = 1700;
 
-
-// Select list
-$('.dropdown').click(function () {
-  "use strict";
-  $(this).attr('tabindex', 1).focus();
-  $(this).toggleClass('active');
-  $(this).find('.dropdown-menu').slideToggle(300);
-});
-
-$('.dropdown').focusout(function () {
-    "use strict";
-    $(this).removeClass('active');
-  $(this).find('.dropdown-menu').slideUp(300);
-});
-
-$('.dropdown .dropdown-menu li').click(function () {
-  "use strict";
-  if($(this).text() !== $(this).parents('.dropdown').find('.select_span').text()) {
-    $(this).parents('.dropdown').find('span')[0].firstChild.data = $(this).text();
-    // Was part of the solution - haven't found a use for it
-    // $(this).parents('.dropdown').find('input').attr('value', $(this).attr('id'));
-  }
-});
-
-// Toggle the class 'hidden' on change from the select list
-$(document).ready(function(){
-  "use strict";
-  $(".select_span").on('DOMSubtreeModified',function(){
-    $($(this).parents('.statistic').find('.chart_container, .chart_description').toggleClass("hidden"));
+document.addEventListener('DOMContentLoaded', function () {
+  // capture the change event on the .statistic wrappers for easier DOM manipulation
+  // when the dropdowns change values
+  var statistics = document.querySelectorAll('.statistic');
+  Array.prototype.forEach.call(statistics, function (statistic) {
+    statistic.addEventListener('change', function (e) {
+      var chartTarget = e.target.value;
+      
+      // hide the elements to be hidden
+      Array.prototype.forEach.call(
+        statistic.querySelectorAll('.chart_description:not([data-chartid="' + chartTarget + '"]), .chart_container:not([data-chartid="' + chartTarget + '"])'),
+        function (elmToHide) {
+          elmToHide.className = (elmToHide.className + ' hidden').trim();
+        }
+      );
+      
+      // show the elements to be shown
+      Array.prototype.forEach.call(statistic.querySelectorAll('[data-chartid="' + chartTarget + '"]'), function (elmToShow) {
+        elmToShow.className = elmToShow.className.replace(/hidden\s?/gi, '').trim();
+      });
+    });
   });
 });

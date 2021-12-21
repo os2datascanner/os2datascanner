@@ -67,41 +67,4 @@
     return false;
   });
 
-  // filter the list of rules when search field changes value
-  $("#rule-filter").on("textInput input", os2debounce(function() {
-    var value = $(this).val().trim();
-    if(value.length < 3) {
-      $("#available_rules li").show(); // reset all li to shown
-      return; // return early!
-    }
-    var needle = new RegExp(value, "gi");
-    $("#available_rules .rule").each(function() {
-      var haystack = $(this);
-      if(!haystack.text().match(needle)) {
-        haystack.hide();
-      } else {
-        haystack.show();
-      }
-    });
-    // we also need to hide headings and separators if an entire section becomes invisible.
-    $("#available_rules .dropdown-header").each(function() {
-      var header = $(this);
-      var nextRules = header.nextUntil(".dropdown-header", ".rule"); // check to see if we're in a section of the list that actually contains rules (i.e. not filter box at the top)
-      if(nextRules.length > 0) {
-        var isEmpty = true;
-        nextRules.each(function() {
-          if($(this).is(":visible")) {
-            isEmpty = false;
-            return;
-          }
-        });
-        if(isEmpty) {
-          header.hide();
-        } else {
-          header.show();
-        }
-      }
-    });
-  }, 150));
-
 })(os2web, jQuery);

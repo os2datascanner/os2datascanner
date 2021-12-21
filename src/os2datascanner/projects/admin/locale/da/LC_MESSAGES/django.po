@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-07 07:20-0600\n"
+"POT-Creation-Date: 2021-12-08 06:13-0600\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -340,25 +340,6 @@ msgstr "Ønsker du virkelig at slette?"
 msgid "No"
 msgstr "Nej"
 
-#: adminapp/templates/os2datascanner/cprrule_form.html:19
-msgid "Please make sure all fields are filled in correctly:"
-msgstr "Følgende felter er ikke udfyldt korrekt:"
-
-#: adminapp/templates/os2datascanner/cprrule_form.html:34
-msgid "Organization:"
-msgstr "Organisation:"
-
-#: adminapp/templates/os2datascanner/cprrule_form.html:85
-#: adminapp/templates/os2datascanner/regexrule_form.html:149
-msgid "Rule"
-msgstr "Regel"
-
-#: adminapp/templates/os2datascanner/cprrule_form.html:187
-#: adminapp/templates/os2datascanner/regexrule_form.html:270
-#: adminapp/templates/os2datascanner/scanner_form.html:725
-msgid "Save changes"
-msgstr "Gem ændringer"
-
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:114
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
@@ -412,6 +393,10 @@ msgstr "Navngiv reglen og vælg hvilken organisation reglen skal tilhøre"
 msgid "Name of rule"
 msgstr "Navn på regel"
 
+#: adminapp/templates/os2datascanner/regexrule_form.html:149
+msgid "Rule"
+msgstr "Regel"
+
 #: adminapp/templates/os2datascanner/regexrule_form.html:152
 msgid ""
 "A rule consists one or more regular expressions and defines which text "
@@ -444,6 +429,11 @@ msgstr "Vurder reglens følsomhed"
 #: adminapp/templates/os2datascanner/regexrule_form.html:257
 msgid "Description of rule"
 msgstr "Beskrivelse af regel"
+
+#: adminapp/templates/os2datascanner/regexrule_form.html:270
+#: adminapp/templates/os2datascanner/scanner_form.html:725
+msgid "Save changes"
+msgstr "Gem ændringer"
 
 #: adminapp/templates/os2datascanner/rules.html:26
 #: adminapp/templates/os2datascanner/rules.html:31
@@ -1730,6 +1720,12 @@ msgstr "organisatorisk struktur"
 #: organizations/templates/organizations/orgunit_list.html:9
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
+
+#~ msgid "Please make sure all fields are filled in correctly:"
+#~ msgstr "Følgende felter er ikke udfyldt korrekt:"
+
+#~ msgid "Organization:"
+#~ msgstr "Organisation:"
 
 #~ msgid "The following fields are not filled correctly:"
 #~ msgstr "Følgende felter er ikke udfyldt korrekt:"
