@@ -2,8 +2,6 @@
 
 from django.db import migrations, models
 
-from ..utils import iterate_queryset_in_batches
-
 """
 We update the database Queryset in batches/chunks; if not, the update might fail
 if the queryset is too large
@@ -12,6 +10,7 @@ This migration reads the jsonb-field, tries to get the scanner PK
 and populate the new DocumentReport field: scanner_job_pk
 """
 
+
 def bulk_update_document_report_scanner_job_pk(apps, schema_editor):
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
     chunk = []
@@ -19,8 +18,16 @@ def bulk_update_document_report_scanner_job_pk(apps, schema_editor):
     # Using iterator() to save memory.
     # Its default chunk size is 2000, here we specify it to be explicit
     # and make it clear why we use modulus 2000.
-    for i, doc_rep in enumerate(DocumentReport.objects.all().only("data").iterator(chunk_size = 2000)):
-        doc_rep.scanner_job_pk = doc_rep.data.get("scan_tag").get("scanner").get("pk")
+    for i, doc_rep in enumerate(
+            DocumentReport.objects.all().only("data").iterator(chunk_size=2000)):
+        try:
+            doc_rep.scanner_job_pk = doc_rep.data.get("scan_tag").get(
+                "scanner").get("pk")
+        except AttributeError:
+            print("DocumentReport with ID {0} is old a do not contain "
+                  "scanner information.".format(doc_rep.pk))
+            continue
+
         chunk.append(doc_rep)
 
         if i % 2000 == 0 and chunk:
@@ -29,6 +36,7 @@ def bulk_update_document_report_scanner_job_pk(apps, schema_editor):
 
     if chunk:
         DocumentReport.objects.bulk_update(chunk, ["scanner_job_pk"])
+
 
 class Migration(migrations.Migration):
     dependencies = [

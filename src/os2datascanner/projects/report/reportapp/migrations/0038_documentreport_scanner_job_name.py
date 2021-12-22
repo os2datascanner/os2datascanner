@@ -2,6 +2,7 @@
 
 from django.db import migrations, models
 
+
 def bulk_update_document_report_scanner_job_name(apps, schema_editor):
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
     chunk = []
@@ -9,8 +10,15 @@ def bulk_update_document_report_scanner_job_name(apps, schema_editor):
     # Using iterator() to save memory.
     # Its default chunk size is 2000, here we specify it to be explicit
     # and make it clear why we use modulus 2000.
-    for i, doc_rep in enumerate(DocumentReport.objects.all().only("data").iterator(chunk_size = 2000)):
-        doc_rep.scanner_job_name = doc_rep.data.get("scan_tag").get("scanner").get("name")
+    for i, doc_rep in enumerate(
+            DocumentReport.objects.all().only("data").iterator(chunk_size=2000)):
+        try:
+            doc_rep.scanner_job_name = doc_rep.data.get("scan_tag").get(
+                "scanner").get("name")
+        except AttributeError:
+            print("DocumentReport with ID {0} is old a do not contain "
+                  "scanner information.".format(doc_rep.pk))
+            continue
         chunk.append(doc_rep)
 
         if i % 2000 == 0 and chunk:
@@ -19,7 +27,6 @@ def bulk_update_document_report_scanner_job_name(apps, schema_editor):
 
     if chunk:
         DocumentReport.objects.bulk_update(chunk, ["scanner_job_name"])
-
 
 
 class Migration(migrations.Migration):
