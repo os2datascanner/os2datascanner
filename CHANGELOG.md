@@ -1,5 +1,21 @@
 # Changelog
 
+## Version 3.13.3, 22nd December 2021
+
+"Soft gifts"
+
+### General improvements
+
+- The admin module now has a command for creating a new web source on demand.
+
+### Bugfixes
+
+- Select option dropdowns are now accessible from the keyboard.
+
+- The report module data migrations now supports old data formats.
+
+- Automatic reload works again in development when files are changed. 
+
 ## Version 3.13.2, 7th December 2021
 
 "Erase & rewind" 
