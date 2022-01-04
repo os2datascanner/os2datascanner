@@ -1,7 +1,7 @@
 -r requirements-common.in
 
 ipython
-Django==3.2.4
+Django==3.2.11
 django-model-utils
 django-prometheus
 django-settings-export
