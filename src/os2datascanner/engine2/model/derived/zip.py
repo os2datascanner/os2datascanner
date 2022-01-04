@@ -90,7 +90,7 @@ class ZipHandle(Handle):
     def presentation(self):
         # Present something along the lines of: \\{domain}\test-folder\contains-cpr.zip
         # then presentation_name will show which file inside the container has the match.
-        return self.source.handle
+        return str(self.source.handle)
 
     @property
     def sort_key(self):
