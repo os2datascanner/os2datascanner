@@ -50,6 +50,14 @@ class MetadataTest(unittest.TestCase):
                 "Alexander John Faithfull",
                 "metadata extraction failed")
 
+    def test_no_author_pdf_metadata(self):
+        handle = PDFPageHandle.make(
+            FilesystemHandle(test_data, "pdf/null-byte-no-author.pdf"), 1)
+
+        with SourceManager() as sm:
+            self.assertEqual(0, len([v for k, v in handle.follow(
+                sm)._generate_metadata()]))
+
     def test_web_domain_extraction(self):
         with SourceManager() as sm:
             metadata = WebHandle(
