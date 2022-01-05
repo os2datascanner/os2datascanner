@@ -106,7 +106,7 @@ django-storages[google]==1.10.1
     # via -r requirements-django.in
 django-structlog==1.5.2
     # via -r requirements-django.in
-django==3.2.4
+django==3.2.11
     # via
     #   -r requirements-django.in
     #   channels
