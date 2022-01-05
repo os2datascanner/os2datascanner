@@ -46,7 +46,7 @@ class PDFPageResource(Resource):
     def _generate_metadata(self):
         with self.handle.source.handle.follow(self._sm).make_stream() as fp:
             reader = _open_pdf_wrapped(fp)
-            info = reader.getDocumentInfo() if reader else "something"
+            info = reader.getDocumentInfo() if reader else None
             # Some PDF authoring tools helpfully stick null bytes into the
             # author field. Make sure we remove these
             author = (
