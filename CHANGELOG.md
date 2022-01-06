@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 3.13.4, 5th January 2022
+
+"Authorless"
+
+### General improvements
+
+- The user interface now uses version 3.2.11 of the Django framework.
+
+### Bugfixes
+
+- Better support for extracting pdf metadata without any author. 
+
 ## Version 3.13.3, 22nd December 2021
 
 "Soft gifts"
