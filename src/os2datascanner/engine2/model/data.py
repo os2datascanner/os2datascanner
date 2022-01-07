@@ -109,6 +109,10 @@ class DataHandle(Handle):
             return super().name
 
     @property
+    def sort_key(self):
+        return self.name
+
+    @property
     def presentation(self):
         if self.source.name:
             return "{0} (embedded)".format(self.source.name)

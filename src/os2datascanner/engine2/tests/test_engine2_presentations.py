@@ -41,30 +41,30 @@ derived_sources = {
         "handles": [
             {
                 # "name": "page.txt",
-                "presentation": f"page 1 of {test_data_path}/pdf/embedded-cpr.pdf",
+                "presentation": f"{test_data_path}/pdf",
                 "presentation_name": "embedded-cpr.pdf (page 1)",
-                "sort_key": f"{test_data_path}/pdf",
+                "sort_key": f"{test_data_path}/pdf/embedded-cpr.pdf",
                 "type": "pdf-page",
             },
             {
                 # "name": "page.txt",
-                "presentation": f"page 2 of {test_data_path}/pdf/embedded-cpr.pdf",
+                "presentation": f"{test_data_path}/pdf",
                 "presentation_name": "embedded-cpr.pdf (page 2)",
-                "sort_key": f"{test_data_path}/pdf",
+                "sort_key": f"{test_data_path}/pdf/embedded-cpr.pdf",
                 "type": "pdf-page",
             },
             {
                 # "name": "image-000.png",
-                "presentation": f"page 2 of {test_data_path}/pdf/embedded-cpr.pdf",
+                "presentation": f"{test_data_path}/pdf",
                 "presentation_name": "embedded-cpr.pdf (page 2)",
-                "sort_key": f"{test_data_path}/pdf",
+                "sort_key": f"{test_data_path}/pdf/embedded-cpr.pdf",
                 "type": "pdf-page",
             },
             {
                 # "name": "image-001.png",
-                "presentation": f"page 2 of {test_data_path}/pdf/embedded-cpr.pdf",
+                "presentation": f"{test_data_path}/pdf",
                 "presentation_name": "embedded-cpr.pdf (page 2)",
-                "sort_key": f"{test_data_path}/pdf",
+                "sort_key": f"{test_data_path}/pdf/embedded-cpr.pdf",
                 "type": "pdf-page",
             },
         ],
@@ -75,16 +75,16 @@ derived_sources = {
         "handles": [
             {
                 # "name": "embedded-cpr.html",
-                "presentation": f"{test_data_path}/libreoffice/embedded-cpr.odt",
+                "presentation": f"{test_data_path}/libreoffice",
                 "presentation_name": "embedded-cpr.odt",
-                "sort_key": f"{test_data_path}/libreoffice",
+                "sort_key": f"{test_data_path}/libreoffice/embedded-cpr.odt",
                 "type": "lo",
             },
             {
                 # "name": "embedded-cpr_html_3ebb4365c1c086a0.png",
-                "presentation": f"{test_data_path}/libreoffice/embedded-cpr.odt",
+                "presentation": f"{test_data_path}/libreoffice",
                 "presentation_name": "embedded-cpr.odt",
-                "sort_key": f"{test_data_path}/libreoffice",
+                "sort_key": f"{test_data_path}/libreoffice/embedded-cpr.odt",
                 "type": "lo",
             },
         ],
@@ -95,16 +95,16 @@ derived_sources = {
         "handles": [
             {
                 # "name": "embedded-cpr.html",
-                "presentation": f"embedded-cpr.odt (in {test_data_path}/zip/embedded-cpr-odt.zip)",
+                "presentation": f"{test_data_path}/zip",
                 "presentation_name": "embedded-cpr-odt.zip (file embedded-cpr.odt)",
-                "sort_key": f"{test_data_path}/zip",
+                "sort_key": f"{test_data_path}/zip/embedded-cpr-odt.zip",
                 "type": "lo",
             },
             {
                 # "name": "embedded-cpr_html_3ebb4365c1c086a0.png",
-                "presentation": f"embedded-cpr.odt (in {test_data_path}/zip/embedded-cpr-odt.zip)",
+                "presentation": f"{test_data_path}/zip",
                 "presentation_name": "embedded-cpr-odt.zip (file embedded-cpr.odt)",
-                "sort_key": f"{test_data_path}/zip",
+                "sort_key": f"{test_data_path}/zip/embedded-cpr-odt.zip",
                 "type": "lo",
             },
         ],
@@ -114,27 +114,27 @@ derived_sources = {
         "fname": "embedded-cpr-pdf.zip",
         "handles": [
             {
-                "presentation": f"page 1 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",  # noqa: E501
+                "presentation": f"{test_data_path}/zip",  # noqa: E501
                 "presentation_name": "embedded-cpr-pdf.zip (file embedded-cpr.pdf (page 1))",
-                "sort_key": f"{test_data_path}/zip",
+                "sort_key": f"{test_data_path}/zip/embedded-cpr-pdf.zip",
                 "type": "pdf-page",
             },
             {
-                "presentation": f"page 2 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",  # noqa: E501
+                "presentation": f"{test_data_path}/zip",  # noqa: E501
                 "presentation_name": "embedded-cpr-pdf.zip (file embedded-cpr.pdf (page 2))",
-                "sort_key": f"{test_data_path}/zip",
+                "sort_key": f"{test_data_path}/zip/embedded-cpr-pdf.zip",
                 "type": "pdf-page",
             },
             {
-                "presentation": f"page 2 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",  # noqa: E501
+                "presentation": f"{test_data_path}/zip",  # noqa: E501
                 "presentation_name": "embedded-cpr-pdf.zip (file embedded-cpr.pdf (page 2))",
-                "sort_key": f"{test_data_path}/zip",
+                "sort_key": f"{test_data_path}/zip/embedded-cpr-pdf.zip",
                 "type": "pdf-page",
             },
             {
-                "presentation": f"page 2 of embedded-cpr.pdf (in {test_data_path}/zip/embedded-cpr-pdf.zip)",  # noqa: E501
+                "presentation": f"{test_data_path}/zip",  # noqa: E501
                 "presentation_name": "embedded-cpr-pdf.zip (file embedded-cpr.pdf (page 2))",
-                "sort_key": f"{test_data_path}/zip",
+                "sort_key": f"{test_data_path}/zip/embedded-cpr-pdf.zip",
                 "type": "pdf-page",
             },
         ],
@@ -146,31 +146,30 @@ derived_sources = {
         "handles": [
             {
                 # "name": "file",
-                "presentation": f"{test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml",
+                "presentation": f"{test_data_path}/mail",
                 "presentation_name": "mail-with-inline-img-and-attached-odt.eml",
-                "sort_key": f"{test_data_path}/mail",
+                "sort_key": f"{test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml",
                 "type": "mail",
             },
             {
                 # "name": "cpr.jpg",
-                "presentation": "cpr.jpg (in "
-                f"{test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml)",
+                "presentation": f"{test_data_path}/mail",
                 "presentation_name": "mail-with-inline-img-and-attached-odt.eml (attachment cpr.jpg)",  # noqa: E501
-                "sort_key": f"{test_data_path}/mail",
+                "sort_key": f"{test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml",
                 "type": "mail",
             },
             {
                 # "name": "embedded-cpr.html",
-                "presentation": f"embedded-cpr.odt (in {test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml)",  # noqa: E501
+                "presentation": f"{test_data_path}/mail",  # noqa: E501
                 "presentation_name": "mail-with-inline-img-and-attached-odt.eml (file embedded-cpr.odt)",  # noqa: E501
-                "sort_key": f"{test_data_path}/mail",
+                "sort_key": f"{test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml",
                 "type": "lo",
             },
             {
                 # "name": "embedded-cpr_html_3ebb4365c1c086a0.png",
-                "presentation": f"embedded-cpr.odt (in {test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml)",  # noqa: E501
+                "presentation": f"{test_data_path}/mail",  # noqa: E501
                 "presentation_name": "mail-with-inline-img-and-attached-odt.eml (file embedded-cpr.odt)",  # noqa: E501
-                "sort_key": f"{test_data_path}/mail",
+                "sort_key": f"{test_data_path}/mail/mail-with-inline-img-and-attached-odt.eml",
                 "type": "lo",
             },
         ],
@@ -187,19 +186,19 @@ direct_sources = {
             "name": "not_a_page.html",
             "presentation": "https://www.example.com/not_a_page.html",
             "presentation_name": "not_a_page.html",
-            "sort_key": "https://www.example.com",
+            "sort_key": "https://www.example.com/not_a_page.html",
             "type": "web",
         },
     },
-    "filestystem": {
+    "filesystem": {
         "handle": FilesystemHandle(
             FilesystemSource(path="/home/dummy/"), "not_a_file.txt"
         ),
         "handles": {
             "name": "not_a_file.txt",
-            "presentation": "/home/dummy/not_a_file.txt",
+            "presentation": "/home/dummy",
             "presentation_name": "not_a_file.txt",
-            "sort_key": "/home/dummy",
+            "sort_key": "/home/dummy/not_a_file.txt",
             "type": "file",
         },
     },
@@ -219,10 +218,9 @@ direct_sources = {
         ),
         "handles": {
             "name": "subject: you got mail",
-            "presentation": '"subject: you got mail" (in folder /inbox of account '
-            "dummy@example.com)",
+            "presentation": "In folder /inbox of account dummy@example.com",
             "presentation_name": "subject: you got mail",
-            "sort_key": "dummy@example.com/inbox",
+            "sort_key": "example.com/dummy/inbox/subject: you got mail",
             "type": "ews",
         },
     },
@@ -232,7 +230,7 @@ direct_sources = {
             "name": "not_a_file.txt",
             "presentation": "\\\\SERVER\\not_a_file.txt",
             "presentation_name": "not_a_file.txt",
-            "sort_key": "\\\\SERVER",
+            "sort_key": "\\\\SERVER\\not_a_file.txt",
             "type": "smb",
         },
     },
@@ -255,10 +253,9 @@ direct_sources = {
             mime="image/jpeg"),
         "handles": {
             "name": "pictograph.jpeg",
-            "presentation": 'pictograph.jpeg (in "Re: Castles in the sky" (in folder Inbox of account '  # noqa: E501
-                            "claude@cloudy.example))",
+            "presentation": "In folder Inbox of account claude@cloudy.example",  # noqa: E501
             "presentation_name": 'Re: Castles in the sky (attachment pictograph.jpeg)',  # noqa: E501
-            "sort_key": "claude@cloudy.example/Inbox",
+            "sort_key": "cloudy.example/claude/Inbox/Re: Castles in the sky",
             "type": "mail",
         },
     }

@@ -157,7 +157,7 @@ class SMBHandle(Handle):
 
     @property
     def sort_key(self):
-        return self.presentation.removesuffix(self.name).removesuffix("\\")
+        return self.presentation.removesuffix("\\")
 
     def censor(self):
         return SMBHandle(self.source.censor(), self.relative_path)

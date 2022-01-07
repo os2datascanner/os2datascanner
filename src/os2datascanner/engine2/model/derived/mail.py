@@ -98,13 +98,10 @@ class MailPartHandle(Handle):
 
     @property
     def presentation(self):
-        basename = os.path.basename(self.relative_path)
-        if not basename:
-            # this is part of the "email text"
-            return self.source.handle.presentation
-        else:
-            # this is an attachment or equivalent
-            return "{0} (in {1})".format(basename, self.source.handle)
+        # We could provide more information here such as
+        # if this is an attachment etc. but in our
+        # UI this has shown to be too much information.
+        return self.source.handle.presentation
 
     @property
     def sort_key(self):

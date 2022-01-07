@@ -72,7 +72,7 @@ class PDFPageHandle(Handle):
 
     @property
     def presentation(self):
-        return "page {0} of {1}".format(self.relative_path, self.source.handle)
+        return self.source.handle.presentation
 
     @property
     def sort_key(self):

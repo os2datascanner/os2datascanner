@@ -88,8 +88,9 @@ class ZipHandle(Handle):
 
     @property
     def presentation(self):
-        return "{0} (in {1})".format(
-                self.relative_path, self.source.handle)
+        # Present something along the lines of: \\{domain}\test-folder\contains-cpr.zip
+        # then presentation_name will show which file inside the container has the match.
+        return str(self.source.handle)
 
     @property
     def sort_key(self):

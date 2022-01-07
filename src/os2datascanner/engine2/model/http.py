@@ -322,7 +322,7 @@ class WebHandle(Handle):
         self._lm_hint = lm_hint
 
     @property
-    def presentation(self) -> str:
+    def presentation(self):
         return self.presentation_url
 
     @property
@@ -332,6 +332,12 @@ class WebHandle(Handle):
             path = "/" + path
         # .removesuffix is probably unnecessary, as it is already done on source._url
         return self.source.to_url().removesuffix("/") + path
+
+    @property
+    def sort_key(self):
+        """ Returns a string to sort by.
+        For a website the URL makes sense"""
+        return self.presentation
 
     def censor(self):
         return WebHandle(source=self.source.censor(), path=self.relative_path,

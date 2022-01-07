@@ -258,9 +258,8 @@ class EWSMailHandle(Handle):
 
     @property
     def presentation(self):
-        return "\"{0}\" (in folder {1} of account {2})".format(
-                self._mail_subject,
-                self._folder_name or "(unknown folder)", self.source.address)
+        """ Return folder of email and the account it's in"""
+        return f'In folder {self._folder_name} of account {self.source.address}'
 
     @property
     def presentation_url(self):
@@ -279,10 +278,12 @@ class EWSMailHandle(Handle):
 
     @property
     def sort_key(self):
-        "Return adress@example.com/folder"
-        return "{0}/{1}".format(
-            self.source.address,
-            self._folder_name.removeprefix("/") or "(unknown folder)")
+        """ Returns a string to sort by formatted as:
+        DOMAIN/ACCOUNT/INBOX/MAIL_SUBJECT"""
+        account, domain = self.source.address.split("@", 1)
+
+        return f'{domain}/{account}/' \
+               f'{self._folder_name.removeprefix("/") or "(unknown folder)"}/{self._mail_subject}'
 
     @property
     def name(self):
