@@ -115,3 +115,18 @@ To execute this command run:
 args: 
 --scan-count = amount of scans (default: random amount between 5 and 10)
 --page-count = amount of pages where at least 1 match will be found (default: random amount between 5 and 10)
+
+### `performance_scan`
+
+creates and runs 2 (limited by gitlabs runners max timeout) scans and then measures
+the average time a scan takes. Also generates a report with cProfile that informs
+about which methods have used how much time. However the report only monitors the
+admin module when run. In the future the reports generated in the pipeline should 
+contain information about the engine components.
+the location of the output is a .prof file located in `/src/datascanner/` of the project dir. 
+The .prof file is used with snakeviz( pip install snakeviz), to give
+an icicle visualization of the performance of the scan.
+To see the visualization: `snakeviz {report_location}/performance.prof`
+
+To execute this command run:
+`docker-compose exec -u 0 admin python manage.py performance_measurement`
