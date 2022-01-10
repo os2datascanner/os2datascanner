@@ -113,7 +113,7 @@ _LOCALE_PATHS = [
 _LANGUAGES = [
     ["da", "Danish"],
 ]
-TIMEZONE = "Europe/Copenhagen"
+TIME_ZONE = "Europe/Copenhagen"
 USE_I18N = true
 USE_L10N = true
 USE_TZ = true
