@@ -1,4 +1,5 @@
 from io import BytesIO
+from urllib.parse import urlsplit
 from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
@@ -13,7 +14,9 @@ class MSGraphMailSource(MSGraphSource):
 
     def handles(self, sm):
         for user in self._list_users(sm)["value"]:
-            pn = user["userPrincipalName"]
+            pn = user["userPrincipalName"]  # e.g. dan@contoso.onmicrosoft.com
+            # Getting a HTTP 404 response from the /messages endpoint means
+            # that this user doesn't have a mail account at all
             with ignore_responses(404):
                 any_mails = sm.open(self).get(
                         "users/{0}/messages?$select=id&$top=1".format(pn))
@@ -98,6 +101,18 @@ class MSGraphMailAccountSource(DerivedSource):
                                            message["id"],
                                            message["subject"],
                                            message["webLink"])
+
+    @staticmethod
+    @Source.url_handler("test-msgraph")
+    def from_url(url):
+        scheme, netloc, path, _, _ = urlsplit(url)
+        auth, tenant_id = netloc.split("@", maxsplit=1)
+        client_id, client_secret = auth.split(":", maxsplit=1)
+        user = path[1:]
+        return MSGraphMailAccountSource(
+                MSGraphMailAccountHandle(
+                        MSGraphMailSource(client_id, tenant_id, client_secret),
+                        user))
 
 
 class MSGraphMailMessageResource(FileResource):
