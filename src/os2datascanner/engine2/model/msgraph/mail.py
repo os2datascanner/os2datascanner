@@ -87,20 +87,18 @@ class MSGraphMailAccountSource(DerivedSource):
         result = sm.open(self).get(
                 "users/{0}/messages?$select=id,subject,webLink&$top=100".format(
                         pn))
-        messages = []
-        messages.extend(result["value"])
+
+        yield from (self._wrap(msg) for msg in result["value"])
         # We want to get all emails for given account
         # This key takes us to the next page and is only present
         # as long as there is one.
         while '@odata.nextLink' in result:
             result = sm.open(self).follow_next_link(result["@odata.nextLink"])
-            messages.extend(result["value"])
+            yield from (self._wrap(msg) for msg in result["value"])
 
-        for message in messages:
-            yield MSGraphMailMessageHandle(self,
-                                           message["id"],
-                                           message["subject"],
-                                           message["webLink"])
+    def _wrap(self, message):
+        return MSGraphMailMessageHandle(
+                self, message["id"], message["subject"], message["webLink"])
 
     @staticmethod
     @Source.url_handler("test-msgraph")
