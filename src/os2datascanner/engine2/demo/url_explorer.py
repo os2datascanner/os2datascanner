@@ -8,6 +8,7 @@ import argparse
 import logging
 import traceback
 
+from os2datascanner.engine2 import settings as engine2_settings
 from os2datascanner.engine2.model.core import Source, SourceManager
 from os2datascanner.engine2.model.core import FileResource
 from os2datascanner.engine2.model.core import UnknownSchemeError
@@ -92,6 +93,14 @@ def add_control_arguments(parser):
             metavar="DEPTH",
             type=int,
             help="Don't recurse deeper than %(metavar)s levels.")
+    parser.add_argument(
+            "--setting",
+            metavar=("KEY", "VALUE"),
+            nargs=2,
+            action="append",
+            dest="settings",
+            default=[],
+            help="Override an engine2 setting for the duration of this scan.")
 
 
 def add_arguments(parser):
@@ -116,6 +125,37 @@ def main():
     add_arguments(parser)
 
     args = parser.parse_args()
+
+    # Patch the settings module
+    for key, value in args.settings:
+        try:
+            value = float(value)
+            if value.is_integer():
+                value = int(value)
+        except ValueError:
+            pass
+
+        # Work out where in the settings hierarchy to apply this patch. This
+        # code is a bit fiddly because the first tier of the hierarchy is
+        # fields in a module, and then everything after that is a dict...
+        components = key.split(".")
+        here = engine2_settings
+        while here and (head := components[0]) and (tail := components[1:]):
+            try:
+                here = here[head]
+            except TypeError:  # here isn't a dict; use getattr
+                here = getattr(here, head, None)
+            components = tail
+
+        if here is None:
+            continue
+
+        try:
+            if head in here:
+                here[head] = value
+        except TypeError:
+            if hasattr(here, head):
+                setattr(here, head, value)
 
     # https://docs.python.org/3/library/logging.html#logrecord-attributes
     logging.basicConfig(format="%(name)s - %(levelname)s - %(message)s")
