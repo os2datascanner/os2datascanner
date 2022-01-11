@@ -7,7 +7,7 @@ import threading
 import traceback
 from sortedcontainers import SortedList
 
-from ...utilities.backoff import run_with_backoff
+from ...utilities.backoff import ExponentialBackoffRetrier
 from ....utils.system_utilities import json_utf8_decode
 from os2datascanner.utils import pika_settings
 
@@ -53,11 +53,9 @@ class PikaConnectionHolder:
     def connection(self):
         """Returns the managed Pika connection, creating one if necessary."""
         if not self._connection:
-            self._connection, _ = run_with_backoff(
-                self.make_connection,
-                pika.exceptions.AMQPConnectionError,
-                **self._backoff,
-            )
+            self._connection = ExponentialBackoffRetrier(
+                    pika.exceptions.AMQPConnectionError,
+                    **self._backoff).run(self.make_connection)
         return self._connection
 
     def make_channel(self):

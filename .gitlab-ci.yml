@@ -218,7 +218,7 @@ Unit Test Engine:
     - Build Engine
   script:
     - pytest
-      -n 5
+      -n 1
       --ignore-glob '*integration*'
       --junitxml $CI_PROJECT_DIR/engine-junit.xml
       -p no:cacheprovider
