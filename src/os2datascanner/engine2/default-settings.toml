@@ -30,3 +30,7 @@ limit = 10
 timeout = 45
 # Maximum allowed depth of related links while crawling a domain
 ttl = 10
+
+[model.msgraph]
+# The maximum number of items to retrieve in each API call to the server
+page_size = 100

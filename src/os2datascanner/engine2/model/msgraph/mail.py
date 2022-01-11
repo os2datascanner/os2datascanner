@@ -3,6 +3,7 @@ from urllib.parse import urlsplit
 from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
+from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
 from ..utilities import NamedTemporaryResource
@@ -85,8 +86,8 @@ class MSGraphMailAccountSource(DerivedSource):
     def handles(self, sm):
         pn = self.handle.relative_path
         result = sm.open(self).get(
-                "users/{0}/messages?$select=id,subject,webLink&$top=100".format(
-                        pn))
+                "users/{}/messages?$select=id,subject,webLink&$top={}".format(
+                        pn, engine2_settings.model["msgraph"]["page_size"]))
 
         yield from (self._wrap(msg) for msg in result["value"])
         # We want to get all emails for given account
