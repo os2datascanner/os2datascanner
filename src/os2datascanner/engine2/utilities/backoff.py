@@ -139,6 +139,45 @@ reasonable number of times with sensible default behaviour and don't need any
 particular tuning parameters, then instantiate one of these."""
 
 
+class WebRetrier(ExponentialBackoffRetrier):
+    """A WebRetrier is an ExponentialBackoffRetrier with a special backoff
+    strategy that respects the HTTP/1.1 429 Too Many Requests error code: if
+    it's returned, and the server also specifies a backoff duration, then that
+    overrides the exponential backoff behaviour.
+
+    (Note that WebRetrier's exception set is hard-coded: it only catches
+    HTTPErrors from the requests package.)"""
+
+    def __init__(self, **kwargs):
+        super().__init__(requests.exceptions.HTTPError, **kwargs)
+
+    def _should_retry(self, ex):
+        return (super()._should_retry(ex)
+                and hasattr(ex, "response") and ex.response is not None
+                and ex.response.status_code == 429)
+
+    def _test_return_value(self, rv):
+        if (isinstance(rv, requests.Response)
+                and rv.status_code == 429):
+            rv.raise_for_status()
+
+    def _before_retry(self, ex, op):
+        # Skip the superclass implementations: we reimplement a more
+        # sophisticated version of their logic here
+        super(SleepingRetrier, self)._before_retry(ex, op)
+
+        if self._should_proceed:
+            delay = None
+            if hasattr(ex, "response"):
+                # If the server has requested a specific wait period, then use
+                # that instead of the default exponential backoff behaviour
+                if "retry-after" in ex.response.headers:
+                    # XXX: do we want to trust the server unconditionally here?
+                    # It could ask us to wait for a year...
+                    delay = float(ex.response.headers["retry-after"])
+            sleep(delay or self._compute_delay())
+
+
 class Testing:
     """Helper utilities for testing the Retrier classes."""
     @classmethod
