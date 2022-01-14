@@ -4,6 +4,7 @@
 it."""
 
 from sys import stderr
+import signal
 import argparse
 import logging
 import traceback
@@ -111,6 +112,10 @@ def add_control_arguments(parser):
             default=[],
             help="Override an engine2 setting for the duration of this scan.")
     parser.add_argument(
+            "--stop",
+            action="store_true",
+            help="Raise the SIGSTOP signal after exploring each source.")
+    parser.add_argument(
             "-q", "--quiet",
             action="store_true",
             help="Explore sources without printing anything (apart from"
@@ -193,6 +198,8 @@ def main():  # noqa: C901, CCR001
                             summarise=args.summarise,
                             metadata=args.metadata,
                             max_depth=args.max_depth)
+                    if args.stop:
+                        signal.raise_signal(signal.SIGSTOP)
             except UnknownSchemeError:
                 print("{0}: unknown URL scheme".format(i), file=stderr)
 
