@@ -24,6 +24,13 @@ _loglevels = {
 }
 
 
+def do_nothing(*args, **kwargs):
+    pass
+
+
+printfunc = print
+
+
 def format_d(depth, fmt, *args, **kwargs):
     return "{0}{1}".format("  " * depth, fmt.format(*args, **kwargs))
 
@@ -33,7 +40,7 @@ def print_source(  # noqa
         guess=False, summarise=False, metadata=False, max_depth=None):  # noqa
     try:
         for handle in source.handles(manager):
-            print(format_d(depth, "{0}", handle))
+            printfunc(format_d(depth, "{0}", handle))
             if summarise:
                 resource = handle.follow(manager)
                 try:
@@ -41,15 +48,15 @@ def print_source(  # noqa
                         size = resource.get_size().value
                         mime = resource.compute_type()
                         lm = resource.get_last_modified().value
-                        print(format_d(depth + 1, "size {0} bytes", size))
-                        print(format_d(depth + 1, "type {0}", mime))
-                        print(format_d(depth + 1, "lmod {0}", lm))
+                        printfunc(format_d(depth + 1, "size {0} bytes", size))
+                        printfunc(format_d(depth + 1, "type {0}", mime))
+                        printfunc(format_d(depth + 1, "lmod {0}", lm))
                 except Exception:
-                    print(format_d(depth + 1, "not available"))
+                    printfunc(format_d(depth + 1, "not available"))
             if metadata:
                 resource = handle.follow(manager)
                 for k, v in resource.get_metadata().items():
-                    print(format_d(depth + 1, "metadata:{0} {1}", k, v))
+                    printfunc(format_d(depth + 1, "metadata:{0} {1}", k, v))
             if max_depth is None or depth < max_depth:
                 derived_source = Source.from_handle(
                         handle, manager if not guess else None)
@@ -59,10 +66,12 @@ def print_source(  # noqa
                             guess=guess, summarise=summarise,
                             metadata=metadata, max_depth=max_depth)
     except Exception:
-        print(format_d(depth, f"{type(source).__name__}: unexpected error:"))
+        print(
+                format_d(depth, f"{type(source).__name__}: unexpected error:"),
+                file=stderr)
         lines = traceback.format_exc().strip().split("\n")
         for line in lines:
-            print(format_d(depth + 1, line))
+            print(format_d(depth + 1, line), file=stderr)
 
 
 def add_control_arguments(parser):
@@ -101,6 +110,11 @@ def add_control_arguments(parser):
             dest="settings",
             default=[],
             help="Override an engine2 setting for the duration of this scan.")
+    parser.add_argument(
+            "-q", "--quiet",
+            action="store_true",
+            help="Explore sources without printing anything (apart from"
+                 " errors) to the console.")
 
 
 def add_arguments(parser):
@@ -120,11 +134,15 @@ def add_arguments(parser):
         )
 
 
-def main():
+def main():  # noqa: C901, CCR001
     parser = argparse.ArgumentParser()
     add_arguments(parser)
 
     args = parser.parse_args()
+
+    if args.quiet:
+        global printfunc
+        printfunc = do_nothing
 
     # Patch the settings module
     for key, value in args.settings:
