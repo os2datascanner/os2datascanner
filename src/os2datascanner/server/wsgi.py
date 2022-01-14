@@ -94,13 +94,14 @@ def _get_top(s: Source) -> Source:
 
 
 @api_endpoint
-def scan_1(body):  # noqa: CCR001 too high cognitive complexity
+def scan_1(body):  # noqa: CCR001
     if not body:
         yield "400 Bad Request"
         yield {
             "status": "fail",
             "message": "parameters missing"
         }
+        return
 
     if "source" not in body or "rule" not in body:
         yield "400 Bad Request"
