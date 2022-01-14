@@ -1,6 +1,6 @@
 from time import time, sleep
 from random import random
-
+import requests
 import structlog
 
 logger = structlog.get_logger(__name__)
@@ -35,6 +35,16 @@ class Retrier:
         want to extend it to update internal state or to insert a delay."""
         pass
 
+    def _test_return_value(self, rv):
+        """Called with the result of the operation immediately before it is
+        returned by Retrier.run. Any exceptions raised by this method will be
+        examined by the usual retry logic.
+
+        (This is a convenience hook for subclasses that need to inspect the
+        result to confirm that it is not an alternative representation of a
+        transient error.)"""
+        return rv
+
     def run(self, operation, *args, **kwargs):
         """Repeatedly calls operation(*args, **kwargs) until it returns without
         raising a transient error. Returns whatever that function eventually
@@ -44,7 +54,9 @@ class Retrier:
         of their internal state before calling this implementation."""
         while self._should_proceed:
             try:
-                return operation(*args, **kwargs)
+                rv = operation(*args, **kwargs)
+                self._test_return_value(rv)
+                return rv
             except Exception as ex:
                 if self._should_retry(ex):
                     self._before_retry(ex, operation)
@@ -102,6 +114,9 @@ class SleepingRetrier(CountingRetrier):
 
 
 class ExponentialBackoffRetrier(SleepingRetrier):
+    """An ExponentialBackoffRetrier is a SleepingRetrier that increases its
+    delay exponentially: the first failure causes a delay of one second, the
+    second of two seconds, the third of four seconds and so on."""
     def __init__(self, *exception_set, base=1, ceiling=7, fuzz=0.2, **kwargs):
         super().__init__(*exception_set, **kwargs)
         self._base = base
