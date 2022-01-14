@@ -168,6 +168,40 @@ def scan_1(body):  # noqa: CCR001
 
 
 @api_endpoint
+def parse_url_1(body):  # noqa: CCR001
+    if not body:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "parameters missing"
+        }
+        return
+
+    if "url" not in body:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "no URL was specified"
+        }
+        return
+
+    source = Source.from_url(body["url"])
+    if not source:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "\"url\" could not be converted to a Source"
+        }
+        return
+
+    yield "200 OK"
+    yield {
+        "status": "ok",
+        "source": source.to_json_object()
+    }
+
+
+@api_endpoint
 def catastrophe_1(body):
     yield "400 Really Very Bad Request Indeed"
     yield {
@@ -206,6 +240,10 @@ endpoints = {
     "/scan/1": {
         "POST": scan_1,
         "OPTIONS": option_endpoint("/scan/1")
+    },
+    "/parse-url/1": {
+        "POST": parse_url_1,
+        "OPTIONS": option_endpoint("/parse-url/1")
     }
 }
 

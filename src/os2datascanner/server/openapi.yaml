@@ -10,7 +10,7 @@ info:
     license:
         name: Mozilla Public License, v. 2.0
         url: https://mozilla.org/MPL/2.0/
-    version: 1.1.0
+    version: 1.2.0
 components:
     securitySchemes:
         bpsk:
@@ -256,7 +256,40 @@ paths:
                             example: >
                                 {"scan_spec": {"scan_tag": "395c1473-0868-443b-bff4-ff058a52a81e", "source": {"type": "data", "content": "VGhpcyBpcyBvbmx5IGEgdGVzdA==", "mime": "text/plain"}, "rule": {"type": "regex", "sensitivity": null, "name": null, "expression": "[Tt]est"}, "configuration": {}, "progress": null}, "handle": {"type": "data", "source": {"type": "data", "content": None, "mime": "text/plain", "name": "test.txt"}, "path": "test.txt"}, "matched": true, "matches": [{"rule": {"type": "regex", "sensitivity": null, "name": null, "expression": "[Tt]est"}, "matches": [{"offset": 15, "match": "test"}]}], "origin": "os2ds_matches"}
                                 {"scan_tag": "395c1473-0868-443b-bff4-ff058a52a81e", "handle": {"type": "data", "source": {"type": "data", "content": None, "mime": "text/plain", "name": "test.txt"}, "path": "test.txt"}, "metadata": {}, "origin": "os2ds_metadata"}
+    /parse-url/1:
+        post:
+            operationId: parse-url-1
+            summary: Converts a URL to a Source
+            description: >
+                This operation requests that OS2datascanner convert a URL to a
+                JSON representation of a Source, for use with the /scan/1
+                endpoint.
 
+                <p>This operation supports all of the URLs that the scanner
+                engine does, but the settings of the API host may prevent you
+                from actually scanning the returned Source. Contact your system
+                administrator for more information.
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: ["url"]
+                            properties:
+                                url:
+                                    type: string
+                                    description: >
+                                        A URL recognised by the OS2datascanner
+                                        model.
+                                    example:
+                                        https://www.example.com/
+            responses:
+                "200":
+                    description: an OS2datascanner Source
+                    content:
+                        application/jsonl:
+                            example: >
+                                {"status": "ok", "source": {"type": "web", "url": "https://www.example.com", "sitemap": "", "exclude": []}
 security:
     -
         bpsk: []
