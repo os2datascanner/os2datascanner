@@ -1,7 +1,9 @@
 from io import BytesIO
+from urllib.parse import urlsplit
 from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
+from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
 from ..utilities import NamedTemporaryResource
@@ -13,7 +15,9 @@ class MSGraphMailSource(MSGraphSource):
 
     def handles(self, sm):
         for user in self._list_users(sm)["value"]:
-            pn = user["userPrincipalName"]
+            pn = user["userPrincipalName"]  # e.g. dan@contoso.onmicrosoft.com
+            # Getting a HTTP 404 response from the /messages endpoint means
+            # that this user doesn't have a mail account at all
             with ignore_responses(404):
                 any_mails = sm.open(self).get(
                         "users/{0}/messages?$select=id&$top=1".format(pn))
@@ -82,22 +86,32 @@ class MSGraphMailAccountSource(DerivedSource):
     def handles(self, sm):
         pn = self.handle.relative_path
         result = sm.open(self).get(
-                "users/{0}/messages?$select=id,subject,webLink&$top=100".format(
-                        pn))
-        messages = []
-        messages.extend(result["value"])
+                "users/{}/messages?$select=id,subject,webLink&$top={}".format(
+                        pn, engine2_settings.model["msgraph"]["page_size"]))
+
+        yield from (self._wrap(msg) for msg in result["value"])
         # We want to get all emails for given account
         # This key takes us to the next page and is only present
         # as long as there is one.
         while '@odata.nextLink' in result:
             result = sm.open(self).follow_next_link(result["@odata.nextLink"])
-            messages.extend(result["value"])
+            yield from (self._wrap(msg) for msg in result["value"])
 
-        for message in messages:
-            yield MSGraphMailMessageHandle(self,
-                                           message["id"],
-                                           message["subject"],
-                                           message["webLink"])
+    def _wrap(self, message):
+        return MSGraphMailMessageHandle(
+                self, message["id"], message["subject"], message["webLink"])
+
+    @staticmethod
+    @Source.url_handler("test-msgraph")
+    def from_url(url):
+        scheme, netloc, path, _, _ = urlsplit(url)
+        auth, tenant_id = netloc.split("@", maxsplit=1)
+        client_id, client_secret = auth.split(":", maxsplit=1)
+        user = path[1:]
+        return MSGraphMailAccountSource(
+                MSGraphMailAccountHandle(
+                        MSGraphMailSource(client_id, tenant_id, client_secret),
+                        user))
 
 
 class MSGraphMailMessageResource(FileResource):

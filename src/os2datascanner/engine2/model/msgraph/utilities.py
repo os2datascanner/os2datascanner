@@ -46,10 +46,15 @@ class MSGraphSource(Source):
             self._token_creator = token_creator
             self._token = token_creator()
 
+        def _make_headers(self):
+            return {
+                "authorization": "Bearer {0}".format(self._token),
+            }
+
         def get_raw(self, tail):
             return requests.get(
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
-                    headers={"authorization": "Bearer {0}".format(self._token)})
+                    headers=self._make_headers())
 
         def get(self, tail, *, json=True, _retry=False):
             response = self.get_raw(tail)
@@ -72,7 +77,7 @@ class MSGraphSource(Source):
         def head_raw(self, tail):
             return requests.head(
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
-                    headers={"authorization": "Bearer {0}".format(self._token)})
+                    headers=self._make_headers())
 
         def head(self, tail, _retry=False):
             response = self.head_raw(tail)
@@ -87,8 +92,7 @@ class MSGraphSource(Source):
             return self.head(tail, _retry=True)
 
         def follow_next_link(self, next_page, _retry=False):
-            response = requests.get(next_page,
-                                    headers={"authorization": f"Bearer {self._token}"})
+            response = requests.get(next_page, headers=self._make_headers())
             try:
                 response.raise_for_status()
                 return response.json()
