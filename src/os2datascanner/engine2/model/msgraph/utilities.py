@@ -2,7 +2,10 @@ import logging
 import requests
 from contextlib import contextmanager
 
+from os2datascanner.engine2.utilities.backoff import WebRetrier
+
 from ..core import Source
+
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +26,8 @@ class MSGraphSource(Source):
         return type(self)(self._client_id, self._tenant_id, None)
 
     def make_token(self):
-        response = requests.post(
+        response = WebRetrier().run(
+                requests.post,
                 _make_token_endpoint(self._tenant_id),
                 {
                     "client_id": self._client_id,
@@ -52,7 +56,8 @@ class MSGraphSource(Source):
             }
 
         def get_raw(self, tail):
-            return requests.get(
+            return WebRetrier().run(
+                    requests.get,
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
                     headers=self._make_headers())
 
@@ -75,7 +80,8 @@ class MSGraphSource(Source):
                 return self.get(tail, json=json, _retry=True)
 
         def head_raw(self, tail):
-            return requests.head(
+            return WebRetrier().run(
+                    requests.head,
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
                     headers=self._make_headers())
 
@@ -92,7 +98,8 @@ class MSGraphSource(Source):
             return self.head(tail, _retry=True)
 
         def follow_next_link(self, next_page, _retry=False):
-            response = requests.get(next_page, headers=self._make_headers())
+            response = WebRetrier().run(
+                    requests.get, next_page, headers=self._make_headers())
             try:
                 response.raise_for_status()
                 return response.json()
