@@ -1,4 +1,4 @@
-from ..model.core import UnknownSchemeError, DeserialisationError
+from ..model.core import Source, UnknownSchemeError, DeserialisationError
 from . import messages
 
 import structlog
@@ -8,7 +8,9 @@ logger = structlog.get_logger(__name__)
 
 
 READS_QUEUES = ("os2ds_scan_specs",)
-WRITES_QUEUES = ("os2ds_conversions", "os2ds_problems", "os2ds_status",)
+WRITES_QUEUES = (
+        "os2ds_conversions", "os2ds_problems", "os2ds_status",
+        "os2ds_scan_specs",)
 PROMETHEUS_DESCRIPTION = "Sources explored"
 # An individual exploration task is typically the longest kind of task, so we
 # want to do as little prefetching as possible here. (If we're doing an
@@ -50,9 +52,18 @@ def message_received_raw(body, channel, source_manager):
     exception_message = ""
     try:
         for handle in scan_spec.source.handles(source_manager):
-            yield ("os2ds_conversions",
-                   messages.ConversionMessage(
-                       scan_spec, handle, progress).to_json_object())
+            if not scan_spec.source.yields_independent_sources:
+                # This Handle is just a normal reference to a scannable object.
+                # Send it on to be processed
+                yield ("os2ds_conversions",
+                       messages.ConversionMessage(
+                           scan_spec, handle, progress).to_json_object())
+            else:
+                # This Handle is a thin wrapper around an independent Source.
+                # Construct that Source and enqueue it for further exploration
+                new_source = Source.from_handle(handle)
+                yield ("os2ds_scan_specs", scan_spec._replace(
+                        source=new_source).to_json_object())
             count += 1
     except Exception as e:
         exception_message = "Exploration error. {0}: ".format(type(e).__name__)
