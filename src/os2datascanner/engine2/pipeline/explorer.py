@@ -50,13 +50,6 @@ def message_received_raw(body, channel, source_manager):
     exception_message = ""
     try:
         for handle in scan_spec.source.handles(source_manager):
-            try:
-                logger.info("ConversionMsg for handle {0}".format(handle.censor()))
-            except NotImplementedError:
-                # If a Handle doesn't implement censor(), then that indicates
-                # that it doesn't know enough about its internal state to
-                # censor itself -- just print its type
-                logger.warning("(unprintable handle {0})".format(type(handle).__name__))
             yield ("os2ds_conversions",
                    messages.ConversionMessage(
                        scan_spec, handle, progress).to_json_object())
