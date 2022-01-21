@@ -226,8 +226,15 @@ services:
       - "./dev-environment/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
     ports:
       - "8050:9090"
+    links:
+      - pushgateway:pushgateway
     profiles:
       - metric
+
+  pushgateway:
+    image: prom/pushgateway
+    ports:
+      - "9091:9091"
 
   # default user is admin/admin
   grafana:

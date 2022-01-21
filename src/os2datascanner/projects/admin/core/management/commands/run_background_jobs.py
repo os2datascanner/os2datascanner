@@ -5,14 +5,25 @@ import signal
 from django.db import transaction
 from django.core.management.base import BaseCommand
 from django.utils.translation import gettext_lazy as _
+from prometheus_client import CollectorRegistry, Enum, push_to_gateway
+from django.conf import settings
 
 from ...models.background_job import JobState, BackgroundJob
 
 import time
 import logging
 
-
 logger = logging.getLogger(__name__)
+# Registry for Prometheus
+REGISTRY = CollectorRegistry()
+JOB_STATE = Enum('ldap_import_job_status',
+                 'Shows the current/last state of given LDAP '
+                 'synchronization',
+                 states=['waiting', 'running', 'cancelling',
+                         'finished', 'cancelled', 'failed'],
+                 labelnames=['JobType', 'OrgSlug', 'OrgId'])
+REGISTRY.register(JOB_STATE)  # Register the metric
+PROM_PUSHGATEWAY = settings.PROM_PUSHGATEWAY
 
 
 class Command(BaseCommand):
@@ -41,6 +52,7 @@ class Command(BaseCommand):
         def _handler(signum, frame):
             nonlocal running
             running = False
+
         signal.signal(signal.SIGTERM, _handler)
 
         count = 0
@@ -69,13 +81,34 @@ class Command(BaseCommand):
                     # receive status information to and from the outside world,
                     # so we only hold the database-level lock in order to set
                     # our own application-level lock flag
+
                     if job:
+                        # job_type() should always be implemented, it is an abstract method of
+                        # BackgroundJob
+                        job_type = job.job_type()
+                        # TODO: This way of getting org info will only work for import jobs.
+                        org_slug = job.realm.organization.slug or 'No Org Info'
+                        org_id = job.realm.organization.pk or 'No Org Info'
+
                         job.exec_state = JobState.RUNNING
                         job.save()
+
+                        JOB_STATE.labels(
+                            JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('running')
+
+                        push_to_gateway(gateway=PROM_PUSHGATEWAY,
+                                        job='pushgateway', registry=REGISTRY)
+
                 # Now we have a job object that no other runner will try to
                 # take, but that clients can still read from and write to
-
                 if job:
+                    # job_type() should always be implemented, it is an abstract method of
+                    # BackgroundJob
+                    job_type = job.job_type()
+                    # TODO: This way of getting org info will only work for import jobs.
+                    org_slug = job.realm.organization.slug or 'No Org Info'
+                    org_id = job.realm.organization.pk or 'No Org Info'
+
                     try:
                         if (job.exec_state == JobState.CANCELLING
                                 or job.progress == 1.0):
@@ -88,19 +121,35 @@ class Command(BaseCommand):
                         except Exception:
                             job.exec_state = JobState.FAILED
                             job.save()
+                            JOB_STATE.labels(
+                                JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('failed')
+                            push_to_gateway(gateway=PROM_PUSHGATEWAY,
+                                            job='pushgateway', registry=REGISTRY)
                             logger.exception("ignoring unexpected error")
                             errors += 1
                     except KeyboardInterrupt:
                         job.exec_state = JobState.CANCELLING
+                        JOB_STATE.labels(
+                            JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('cancelling')
+                        push_to_gateway(gateway=PROM_PUSHGATEWAY,
+                                        job='pushgateway', registry=REGISTRY)
                     finally:
                         if job.exec_state == JobState.CANCELLING:
                             job.exec_state = JobState.CANCELLED
                             job.save()
+                            JOB_STATE.labels(
+                                JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('cancelled')
+                            push_to_gateway(gateway=PROM_PUSHGATEWAY,
+                                            job='pushgateway', registry=REGISTRY)
                         elif job.exec_state not in (
                                 JobState.FAILED,
                                 JobState.CANCELLED):
                             job.exec_state = JobState.FINISHED
                             job.save()
+                            JOB_STATE.labels(
+                                JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('finished')
+                            push_to_gateway(gateway=PROM_PUSHGATEWAY,
+                                            job='pushgateway', registry=REGISTRY)
                 elif not single:
                     # We have no job to do and we're running in a loop. Sleep
                     # to avoid a busy-wait

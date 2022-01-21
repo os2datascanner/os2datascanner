@@ -24,6 +24,9 @@ class ImportJob(BackgroundJob):
                 if self.handled is not None and self.to_handle not in (0, None)
                 else None)
 
+    def job_type(self) -> str:
+        return "Import Job"
+
     def run(self):
         from ...organizations.keycloak_actions import perform_import
 

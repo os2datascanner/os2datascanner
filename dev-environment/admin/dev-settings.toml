@@ -15,6 +15,9 @@ SESSION_COOKIE_NAME = "admin_sessionid"
 KEYCLOAK_BASE_URL = "http://localkeycloak.os2datascanner:8090"
 KEYCLOAK_ADMIN_SECRET = "thisIsNotASecret"
 
+# [Prometheus pushgateway]
+PROM_PUSHGATEWAY = "http://pushgateway:9091"
+
 # [installation]
 OPTIONAL_APPS = [
     'debug_toolbar',
