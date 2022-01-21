@@ -1,8 +1,13 @@
+import logging
+
 from .explorer import message_received_raw as explorer_handler
 from .processor import message_received_raw as processor_handler
 from .matcher import message_received_raw as matcher_handler
 from .tagger import message_received_raw as tagger_handler
 from . import messages
+
+
+logger = logging.getLogger(__name__)
 
 
 READS_QUEUES = ("os2ds_conversions",)
@@ -23,6 +28,10 @@ def explore(sm, msg):
     for channel, message in explorer_handler(msg, "os2ds_scan_specs", sm):
         if channel == "os2ds_conversions":
             yield from process(sm, message)
+        elif channel == "os2ds_scan_specs":
+            # Huh? Surely a standalone explorer should have handled this
+            logger.warning("worker exploring unexpected nested Source")
+            yield from explore(sm, message)
         elif channel in ("os2ds_problems",):
             yield channel, message
 

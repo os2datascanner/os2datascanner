@@ -69,6 +69,18 @@ class Source(TypePropertyEquality, JSONSerialisable):
         It is not necessarily the case that the value of the source property on
         a Handle yielded by this method will be this Source."""
 
+    @property
+    def yields_independent_sources(self) -> bool:
+        """Indicates whether or not the Handles yielded by this Source
+        represent top-level Sources that should be processed independently.
+        This might be the case, for example, for a Source that queries a
+        directory server and returns a Handle for each relevant account that it
+        finds.
+
+        (This method is just an optimisation hint intended for use when working
+        out how best to distribute work across many nodes.)"""
+        return False
+
     __url_handlers = {}
 
     @staticmethod

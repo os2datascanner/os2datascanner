@@ -16,6 +16,8 @@ def _make_token_endpoint(tenant_id):
 
 
 class MSGraphSource(Source):
+    yields_independent_sources = True
+
     def __init__(self, client_id, tenant_id, client_secret):
         super().__init__()
         self._client_id = client_id
