@@ -143,6 +143,12 @@ class MSGraphFileResource(FileResource):
         super().__init__(sm, handle)
         self._metadata = None
 
+    def _generate_metadata(self):
+        msgraph_metadata = self.get_file_metadata()
+        yield "msgraph_owner_account", msgraph_metadata["createdBy"]["user"]["email"]
+        yield "msgraph_last_modified_by", msgraph_metadata["lastModifiedBy"]["user"]["email"]
+        yield from super()._generate_metadata()
+
     def check(self) -> bool:
         response = self._get_cookie().get_raw("drives/{0}/root:/{1}".format(
                 self.handle.source.handle.relative_path,
