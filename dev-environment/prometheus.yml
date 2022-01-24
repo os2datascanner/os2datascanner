@@ -32,3 +32,18 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets: ['pushgateway:9091']
+
+  - job_name: 'report_collector'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['report_collector:9091']
+
+  - job_name: 'admin_collector'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['admin_collector:9091']
+
+  - job_name: 'rabbitMQ'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['queue:15692']

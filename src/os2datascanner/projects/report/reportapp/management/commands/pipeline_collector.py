@@ -31,12 +31,16 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.model.core import Handle, Source
 from os2datascanner.utils.system_utilities import time_now
+
+from prometheus_client import Summary, start_http_server
+
 from ...models.documentreport_model import DocumentReport
 from ...models.organization_model import Organization
 from ...utils import hash_handle, prepare_json_object
 
-
 logger = structlog.get_logger(__name__)
+SUMMARY = Summary("os2datascanner_pipeline_collector_report",
+                  "Messages through report collector")
 
 
 def result_message_received_raw(body):
@@ -367,15 +371,18 @@ def save_if_path_and_scanner_job_pk_unique(new_report, scanner_job_pk):
 
 
 class CollectorRunner(PikaPipelineThread):
+    start_http_server(9091)
+
     def handle_message(self, routing_key, body):
-        logger.debug(
+        with SUMMARY.time():
+            logger.debug(
                 "raw message received",
                 routing_key=routing_key,
                 body=body)
-        if routing_key == "os2ds_results":
-            yield from result_message_received_raw(body)
-        elif routing_key == "os2ds_events":
-            yield from event_message_received_raw(body)
+            if routing_key == "os2ds_results":
+                yield from result_message_received_raw(body)
+            elif routing_key == "os2ds_events":
+                yield from event_message_received_raw(body)
 
 
 class Command(BaseCommand):
