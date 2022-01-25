@@ -42,15 +42,18 @@ class MSGraphSource(Source):
         return response.json()["access_token"]
 
     def _generate_state(self, sm):
-        yield MSGraphSource.GraphCaller(self.make_token)
+        with requests.Session() as session:
+            yield MSGraphSource.GraphCaller(self.make_token, session)
 
     def _list_users(self, sm):
         return sm.open(self).get("users")
 
     class GraphCaller:
-        def __init__(self, token_creator):
+        def __init__(self, token_creator, session=None):
             self._token_creator = token_creator
             self._token = token_creator()
+
+            self._session = session or requests
 
         def _make_headers(self):
             return {
@@ -59,7 +62,7 @@ class MSGraphSource(Source):
 
         def get_raw(self, tail):
             return WebRetrier().run(
-                    requests.get,
+                    self._session.get,
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
                     headers=self._make_headers())
 
@@ -83,7 +86,7 @@ class MSGraphSource(Source):
 
         def head_raw(self, tail):
             return WebRetrier().run(
-                    requests.head,
+                    self._session.head,
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
                     headers=self._make_headers())
 
@@ -101,7 +104,7 @@ class MSGraphSource(Source):
 
         def follow_next_link(self, next_page, _retry=False):
             response = WebRetrier().run(
-                    requests.get, next_page, headers=self._make_headers())
+                    self._session.get, next_page, headers=self._make_headers())
             try:
                 response.raise_for_status()
                 return response.json()
