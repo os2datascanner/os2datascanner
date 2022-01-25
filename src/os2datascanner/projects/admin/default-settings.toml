@@ -14,7 +14,7 @@ DECRYPTION_HEX = ""
 # It only collects a count of un-run migrations, which we don't really care
 # about anyways, so we just leave it off.
 PROMETHEUS_EXPORT_MIGRATIONS = false
-PROM_PUSHGATEWAY = ""
+PUSHGATEWAY_HOST = ""
 
 # [mode]
 DEBUG = false

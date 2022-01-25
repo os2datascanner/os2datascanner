@@ -23,7 +23,7 @@ JOB_STATE = Enum('ldap_import_job_status',
                          'finished', 'cancelled', 'failed'],
                  labelnames=['JobType', 'OrgSlug', 'OrgId'])
 REGISTRY.register(JOB_STATE)  # Register the metric
-PROM_PUSHGATEWAY = settings.PROM_PUSHGATEWAY
+PUSHGATEWAY_HOST = settings.PUSHGATEWAY_HOST
 
 
 class Command(BaseCommand):
@@ -96,7 +96,7 @@ class Command(BaseCommand):
                         JOB_STATE.labels(
                             JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('running')
 
-                        push_to_gateway(gateway=PROM_PUSHGATEWAY,
+                        push_to_gateway(gateway=PUSHGATEWAY_HOST,
                                         job='pushgateway', registry=REGISTRY)
 
                 # Now we have a job object that no other runner will try to
@@ -123,7 +123,7 @@ class Command(BaseCommand):
                             job.save()
                             JOB_STATE.labels(
                                 JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('failed')
-                            push_to_gateway(gateway=PROM_PUSHGATEWAY,
+                            push_to_gateway(gateway=PUSHGATEWAY_HOST,
                                             job='pushgateway', registry=REGISTRY)
                             logger.exception("ignoring unexpected error")
                             errors += 1
@@ -131,7 +131,7 @@ class Command(BaseCommand):
                         job.exec_state = JobState.CANCELLING
                         JOB_STATE.labels(
                             JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('cancelling')
-                        push_to_gateway(gateway=PROM_PUSHGATEWAY,
+                        push_to_gateway(gateway=PUSHGATEWAY_HOST,
                                         job='pushgateway', registry=REGISTRY)
                     finally:
                         if job.exec_state == JobState.CANCELLING:
@@ -139,7 +139,7 @@ class Command(BaseCommand):
                             job.save()
                             JOB_STATE.labels(
                                 JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('cancelled')
-                            push_to_gateway(gateway=PROM_PUSHGATEWAY,
+                            push_to_gateway(gateway=PUSHGATEWAY_HOST,
                                             job='pushgateway', registry=REGISTRY)
                         elif job.exec_state not in (
                                 JobState.FAILED,
@@ -148,7 +148,7 @@ class Command(BaseCommand):
                             job.save()
                             JOB_STATE.labels(
                                 JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('finished')
-                            push_to_gateway(gateway=PROM_PUSHGATEWAY,
+                            push_to_gateway(gateway=PUSHGATEWAY_HOST,
                                             job='pushgateway', registry=REGISTRY)
                 elif not single:
                     # We have no job to do and we're running in a loop. Sleep
