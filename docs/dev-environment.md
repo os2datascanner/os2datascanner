@@ -248,6 +248,16 @@ These depend on some auxillary services:
     matches( ie. `matches={"match":amount}`), and depth. The generated sources are
     available to the host by replacing `datasynth` with `localhost` or `0.0.0.0`.
 
+    Note: due to limitations of the way datasynth configures the generation of data,
+    and because the source both can contain a specific amount of matches scattered 
+    through-out dynamically via links, but also with sitemap. This means that to allow a 
+    source having matches spread throughout all subfiles (for dynamic exploration) 
+    the sitemap cannot take into account how many matches are included in the index/landing
+    page without a rewrite of datasynth. this means that when scanning with a sitemap, 
+    datascanner will find all the matches on the landing page and all the matches created 
+    with the sitemap. this leads to more matches than configured in the source params.
+    (landingpage.matches + sitemap.matches) 
+
 -   `mailhog`: a SMTP-server for testing purposes. 
     web interface available at `http://localhost:8025/`.
 
