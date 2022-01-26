@@ -74,7 +74,7 @@ class Command(BaseCommand):
             params["depth"] = depth
         params = urllib.parse.urlencode(params)
 
-        response = requests.get(f"http://datasynth:5000/websource?{params}").json()
+        response = requests.get(f"http://datasynth:5010/websource?{params}").json()
 
         scan_url = response["reference"]
 
