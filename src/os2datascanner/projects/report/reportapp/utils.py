@@ -1,3 +1,4 @@
+import re
 import json
 import hashlib
 import warnings
@@ -217,6 +218,11 @@ def prepare_json_object(o):
                     "stripping null byte for PostgreSQL compatibility",
                     UnicodeWarning)
             o = o.replace("\0", "")
+        if re.search(r'[\uD800-\uDFFF]', o):
+            warnings.warn(
+                    "stripping illegal surrogates for PostgreSQL compatibility",
+                    UnicodeWarning)
+            o = re.sub(r'[\uD800-\uDFFF]', '\ufffd', o)
         return o
     else:
         return o
