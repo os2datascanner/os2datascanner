@@ -149,7 +149,7 @@ Build API:
     - docker
     - network-per-build
   services:
-    - name: egnmagenta/os2datasynth:v0.2.1 
+    - name: egnmagenta/os2datasynth:v0.2.4 
       alias: datasynth
     - postgres:12
     - rabbitmq:3.8-alpine
@@ -249,7 +249,7 @@ Performance Test:
   rules:
     - if: '$CI_COMMIT_REF_NAME == "main"'
   services:
-    - name: egnmagenta/os2datasynth:v0.2.1 
+    - name: egnmagenta/os2datasynth:v0.2.4 
       alias: datasynth
       variables:
        DATASYNTH_HOST: "datasynth"

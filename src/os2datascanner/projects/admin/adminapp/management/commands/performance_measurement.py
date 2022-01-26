@@ -60,8 +60,8 @@ class Command(BaseCommand):
 
         params = urllib.parse.urlencode(params)
 
-        response = requests.get(f"http://datasynth:5000/websource?{params}").json()
-        stats = requests.get(f"http://datasynth:5000/websource?{params}").json()
+        response = requests.get(f"http://datasynth:5010/websource?{params}").json()
+        stats = requests.get(f"http://datasynth:5010/websource?{params}").json()
         logger.info(f"response -> {response}")
 
         scan_url = response["reference"]
