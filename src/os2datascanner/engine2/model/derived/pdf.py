@@ -128,7 +128,7 @@ class PDFPageSource(DerivedSource):
                     check=True, isolate_tmp=True)
             run_custom(
                     [
-                            "pdfimages", "-q", "-png", "-f", page, "-l", page,
+                            "pdfimages", "-q", "-png", "-j", "-f", page, "-l", page,
                             path, "{0}/image".format(outputdir)
                     ],
                     timeout=engine2_settings.subprocess["timeout"],
