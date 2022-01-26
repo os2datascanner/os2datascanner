@@ -24,7 +24,8 @@ class ImportJob(BackgroundJob):
                 if self.handled is not None and self.to_handle not in (0, None)
                 else None)
 
-    def job_type(self) -> str:
+    @property
+    def job_label(self) -> str:
         return "Import Job"
 
     def run(self):

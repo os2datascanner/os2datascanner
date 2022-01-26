@@ -21,7 +21,7 @@ JOB_STATE = Enum('ldap_import_job_status',
                  'synchronization',
                  states=['waiting', 'running', 'cancelling',
                          'finished', 'cancelled', 'failed'],
-                 labelnames=['JobType', 'OrgSlug', 'OrgId'])
+                 labelnames=['JobLabel', 'OrgSlug', 'OrgId'])
 REGISTRY.register(JOB_STATE)  # Register the metric
 PUSHGATEWAY_HOST = settings.PUSHGATEWAY_HOST
 
@@ -83,9 +83,9 @@ class Command(BaseCommand):
                     # our own application-level lock flag
 
                     if job:
-                        # job_type() should always be implemented, it is an abstract method of
-                        # BackgroundJob
-                        job_type = job.job_type()
+                        # job_label should always be implemented, it is an abstract method and
+                        # property of BackgroundJob
+                        job_label = job.job_label
                         # TODO: This way of getting org info will only work for import jobs.
                         org_slug = job.realm.organization.slug or 'No Org Info'
                         org_id = job.realm.organization.pk or 'No Org Info'
@@ -94,7 +94,7 @@ class Command(BaseCommand):
                         job.save()
 
                         JOB_STATE.labels(
-                            JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('running')
+                            JobLabel=job_label, OrgSlug=org_slug, OrgId=org_id).state('running')
 
                         push_to_gateway(gateway=PUSHGATEWAY_HOST,
                                         job='pushgateway', registry=REGISTRY)
@@ -102,9 +102,7 @@ class Command(BaseCommand):
                 # Now we have a job object that no other runner will try to
                 # take, but that clients can still read from and write to
                 if job:
-                    # job_type() should always be implemented, it is an abstract method of
-                    # BackgroundJob
-                    job_type = job.job_type()
+                    job_label = job.job_label
                     # TODO: This way of getting org info will only work for import jobs.
                     org_slug = job.realm.organization.slug or 'No Org Info'
                     org_id = job.realm.organization.pk or 'No Org Info'
@@ -122,7 +120,7 @@ class Command(BaseCommand):
                             job.exec_state = JobState.FAILED
                             job.save()
                             JOB_STATE.labels(
-                                JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('failed')
+                                JobLabel=job_label, OrgSlug=org_slug, OrgId=org_id).state('failed')
                             push_to_gateway(gateway=PUSHGATEWAY_HOST,
                                             job='pushgateway', registry=REGISTRY)
                             logger.exception("ignoring unexpected error")
@@ -130,7 +128,7 @@ class Command(BaseCommand):
                     except KeyboardInterrupt:
                         job.exec_state = JobState.CANCELLING
                         JOB_STATE.labels(
-                            JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('cancelling')
+                            JobLabel=job_label, OrgSlug=org_slug, OrgId=org_id).state('cancelling')
                         push_to_gateway(gateway=PUSHGATEWAY_HOST,
                                         job='pushgateway', registry=REGISTRY)
                     finally:
@@ -138,7 +136,9 @@ class Command(BaseCommand):
                             job.exec_state = JobState.CANCELLED
                             job.save()
                             JOB_STATE.labels(
-                                JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('cancelled')
+                                JobLabel=job_label,
+                                OrgSlug=org_slug,
+                                OrgId=org_id).state('cancelled')
                             push_to_gateway(gateway=PUSHGATEWAY_HOST,
                                             job='pushgateway', registry=REGISTRY)
                         elif job.exec_state not in (
@@ -147,7 +147,9 @@ class Command(BaseCommand):
                             job.exec_state = JobState.FINISHED
                             job.save()
                             JOB_STATE.labels(
-                                JobType=job_type, OrgSlug=org_slug, OrgId=org_id).state('finished')
+                                JobLabel=job_label,
+                                OrgSlug=org_slug,
+                                OrgId=org_id).state('finished')
                             push_to_gateway(gateway=PUSHGATEWAY_HOST,
                                             job='pushgateway', registry=REGISTRY)
                 elif not single:
