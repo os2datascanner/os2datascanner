@@ -145,8 +145,8 @@ class MSGraphFileResource(FileResource):
 
     def _generate_metadata(self):
         msgraph_metadata = self.get_file_metadata()
-        yield "msgraph_owner_account", msgraph_metadata["createdBy"]["user"]["email"]
-        yield "msgraph_last_modified_by", msgraph_metadata["lastModifiedBy"]["user"]["email"]
+        yield "msgraph-owner-account", msgraph_metadata["createdBy"]["user"]["email"]
+        yield "msgraph-last-modified-by", msgraph_metadata["lastModifiedBy"]["user"]["email"]
         yield from super()._generate_metadata()
 
     def check(self) -> bool:
