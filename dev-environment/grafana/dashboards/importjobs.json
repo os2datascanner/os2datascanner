@@ -66,11 +66,11 @@
       "pluginVersion": "7.3.4",
       "targets": [
         {
-          "expr": "ldap_import_job_status{OrgSlug=\"$organization\" }",
+          "expr": "background_job_status{OrgSlug=\"$organization\" }",
           "format": "time_series",
           "instant": true,
           "interval": "",
-          "legendFormat": "{{ ldap_import_job_status }}",
+          "legendFormat": "{{ background_job_status }}",
           "refId": "A"
         }
       ],
@@ -140,11 +140,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "ldap_import_job_status{OrgSlug=\"$organization\" }",
+          "expr": "background_job_status{OrgSlug=\"$organization\" }",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{ ldap_import_job_status }}",
+          "legendFormat": "{{ background_job_status }}",
           "refId": "A"
         }
       ],
@@ -238,7 +238,7 @@
           "value": ""
         },
         "datasource": "Prometheus",
-        "definition": "label_values(ldap_import_job_status{instance=\"$instance\"}, OrgSlug)",
+        "definition": "label_values(background_job_status{instance=\"$instance\"}, OrgSlug)",
         "error": null,
         "hide": 0,
         "includeAll": false,
@@ -253,7 +253,7 @@
             "value": ""
           }
         ],
-        "query": "label_values(ldap_import_job_status{instance=\"$instance\"}, OrgSlug)",
+        "query": "label_values(background_job_status{instance=\"$instance\"}, OrgSlug)",
         "refresh": 0,
         "regex": "",
         "skipUrlSync": false,

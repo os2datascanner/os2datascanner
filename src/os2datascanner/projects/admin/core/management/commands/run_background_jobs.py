@@ -16,9 +16,8 @@ import logging
 logger = logging.getLogger(__name__)
 # Registry for Prometheus
 REGISTRY = CollectorRegistry()
-JOB_STATE = Enum('ldap_import_job_status',
-                 'Shows the current/last state of given LDAP '
-                 'synchronization',
+JOB_STATE = Enum('background_job_status',
+                 'Shows the current/last state of given background job',
                  states=['waiting', 'running', 'cancelling',
                          'finished', 'cancelled', 'failed'],
                  labelnames=['JobLabel', 'OrgSlug', 'OrgId'])
