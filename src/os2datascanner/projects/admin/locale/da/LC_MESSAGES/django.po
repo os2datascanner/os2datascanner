@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-05 09:40-0600\n"
+"POT-Creation-Date: 2022-01-27 16:07+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -1160,22 +1160,22 @@ msgstr "tilgængelige scannertyper"
 msgid "Select a scan type to activate it for this client."
 msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 
-#: core/management/commands/run_background_jobs.py:28
+#: core/management/commands/run_background_jobs.py:38
 #, fuzzy, python-format
 #| msgid "sleep for %(METAVAR)s seconds if there were no jobs to run"
 msgid "sleep for %(metavar)s seconds if there were no jobs to run"
 msgstr "vent %(METAVAR)s sekunder hvis der ikke var nogle jobs til afvikling"
 
-#: core/management/commands/run_background_jobs.py:35
+#: core/management/commands/run_background_jobs.py:45
 msgid "do not loop: run a single job and then exit"
 msgstr "kør ikke i løkke: kør et enkelt job og gå derefter ud"
 
-#: core/management/commands/run_background_jobs.py:112
+#: core/management/commands/run_background_jobs.py:162
 #, python-brace-format
 msgid "{0} job(s) completed."
 msgstr "{0} færdige job(s)."
 
-#: core/management/commands/run_background_jobs.py:113
+#: core/management/commands/run_background_jobs.py:163
 #, python-brace-format
 msgid "{0} job(s) failed."
 msgstr "{0} fejlede job(s)."
@@ -1207,43 +1207,43 @@ msgstr "Administrator: {user} (for {client})"
 msgid "<Administrator: {uid} (User) for {cid} (Client)>"
 msgstr "<Administrator: {uid} (User) for {cid} (Client)>"
 
-#: core/models/background_job.py:13
+#: core/models/background_job.py:14
 msgid "waiting"
 msgstr "afventer"
 
-#: core/models/background_job.py:16
+#: core/models/background_job.py:17
 msgid "running"
 msgstr "kører"
 
-#: core/models/background_job.py:18
+#: core/models/background_job.py:19
 msgid "cancelling"
 msgstr "annullering i gang"
 
-#: core/models/background_job.py:22
+#: core/models/background_job.py:23
 msgid "finished"
 msgstr "afsluttet"
 
-#: core/models/background_job.py:24
+#: core/models/background_job.py:25
 msgid "cancelled"
 msgstr "annulleret"
 
-#: core/models/background_job.py:26
+#: core/models/background_job.py:27
 msgid "failed"
 msgstr "fejlet"
 
-#: core/models/background_job.py:40
+#: core/models/background_job.py:41
 msgid "job creation time"
 msgstr "job-oprettelsestid"
 
-#: core/models/background_job.py:43
+#: core/models/background_job.py:44
 msgid "job update time"
 msgstr "job-opdateringstid"
 
-#: core/models/background_job.py:48
+#: core/models/background_job.py:49
 msgid "execution state"
 msgstr "kørselsstatus"
 
-#: core/models/background_job.py:52
+#: core/models/background_job.py:53
 msgid "last status message"
 msgstr "sidst status-besked"
 

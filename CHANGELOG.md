@@ -1,5 +1,47 @@
 # Changelog
 
+## Version 3.13.5, 27th January 2022
+
+"Back Down, Speed Up"
+
+### New in this version
+
+- Initial support for Microsoft Graph backoff messages.
+
+- Initial support for retrieving metadata from OneDrive and SharePoint files.
+
+- Support for converting URLs to scan sources using the API server.
+
+### General improvements
+
+- Matches in the report module are now presented in a more predictable and
+  consistent order.
+
+- Exchange Web Services scans now use OS2datascanner's common backoff services
+  rather than the unusual `exchangelib` implementation.
+
+- JBIG2 and CCITT Group 4 images embedded in PDF files are now correctly
+  extracted and scanned.
+
+- Microsoft Graph accounts are no longer scanned as single objects, allowing
+  for greater parallelisation.
+
+- Emails discovered under exploration of a Microsoft Graph account are now sent
+  to the pipeline as soon as they're discovered.
+
+- Better support for benchmarking the performance of sources.
+
+### Bugfixes
+
+- Connections to Microsoft Graph API services are now reused for future calls
+  rather than being torn down immediately.
+
+- The administration system's pipeline collector will no longer stop if it
+  receives a message whose content is rejected by the database.
+
+- The report module's pipeline collector now applies more corrective
+  transformations to messages whose content is rejected by the database.
+
 ## Version 3.13.4, 5th January 2022
 
 "Authorless"
