@@ -14,6 +14,10 @@ DECRYPTION_HEX = ""
 # It only collects a count of un-run migrations, which we don't really care
 # about anyways, so we just leave it off.
 PROMETHEUS_EXPORT_MIGRATIONS = false
+# Prometheus pushgateway, used as input when push_to_gateway method is used.
+# Must point to the pushgateway, example: http://pushgateway:9091
+# Without it, no metrics can be pushed to the pushgateway.
+PUSHGATEWAY_HOST = ""
 
 # [mode]
 DEBUG = false

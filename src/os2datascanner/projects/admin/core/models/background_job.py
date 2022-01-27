@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from time import sleep
 import uuid
 from typing import Optional
@@ -79,6 +80,14 @@ class BackgroundJob(models.Model):
         or has been cancelled, returns None."""
         return None
 
+    @property
+    @abstractmethod
+    def job_label(self) -> str:
+        """ Should return a str simply stating what type of job it is.
+        For example, an ImportJob could return just that: Import Job.
+        Mainly used as a way to label metrics for prometheus/grafana.
+        """
+
     def run(self):
         """Runs this job to completion (or cancellation), updating its
         properties until it finishes."""
@@ -101,6 +110,10 @@ class CounterJob(BackgroundJob):
         return (self.counted_to / self.count_to
                 if self.counted_to is not None
                 else None)
+
+    @property
+    def job_label(self) -> str:
+        return "Counter Job"
 
     def run(self):
         self.refresh_from_db()
