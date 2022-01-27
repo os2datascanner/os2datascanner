@@ -355,12 +355,14 @@ def save_if_path_and_scanner_job_pk_unique(new_report, scanner_job_pk):
     try:
         with transaction.atomic():
             new_report.save()
-    except DataError:
+    except (DataError, UnicodeEncodeError):
         # To the best of our knowledge, this can only happen if we try to store
         # a null byte in a PostgreSQL text field (or something that's related
         # to a text field, like the JSON field types). Edit these bytes out and
         # try again
         new_report.data = prepare_json_object(new_report.data)
+        new_report.sort_key = prepare_json_object(new_report.sort_key)
+        new_report.name = prepare_json_object(new_report.name)
         new_report.save()
 
 
