@@ -30,7 +30,7 @@ class Command(BaseCommand):
         """ Tests the performance of a webscan
         will fail if the average time of a scan goes above the given uncertainty factor
         """
-        allowed_time_per_scan = 190
+        allowed_time_per_scan = 800
         uncertainty_factor = 0.2
         uncertainty = allowed_time_per_scan*uncertainty_factor
 
@@ -79,7 +79,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(scan_url))
         start = time.process_time()
 
-        iterations = 5
+        iterations = 2
         with cProfile.Profile() as profile:
             for _ in range(iterations):
                 scan_start = time.process_time()
