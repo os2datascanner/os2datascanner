@@ -246,8 +246,8 @@ Performance Test:
     - docker
     - network-per-build
     - high-mem
-  # rules:
-  #   - if: '$CI_COMMIT_REF_NAME == "main"'
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "main"'
   services:
     - name: egnmagenta/os2datasynth:v0.2.4 
       alias: datasynth
