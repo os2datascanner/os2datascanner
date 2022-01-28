@@ -1,5 +1,7 @@
 from io import BytesIO
 from time import sleep
+
+import requests
 from lxml.html import document_fromstring
 from lxml.etree import ParserError
 from urllib.parse import urljoin, urlsplit, urlunsplit, urldefrag
@@ -23,7 +25,7 @@ logger = structlog.getLogger(__name__)
 SLEEP_TIME: float = 1 / engine2_settings.model["http"]["limit"]
 TIMEOUT: int = engine2_settings.model["http"]["timeout"]
 TTL: int = engine2_settings.model["http"]["ttl"]
-
+LIMIT: int = engine2_settings.model["http"]["limit"]
 _equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
 # match whole words (\bWORD1\b | \bWORD2\b) and escape to handle metachars.
 # It is important to match whole words; www.magenta.dk should be .magenta.dk, not
@@ -31,6 +33,32 @@ _equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
 _equiv_domains_re = re.compile(
     r"\b" + r"\b|\b".join(map(re.escape, _equiv_domains)) + r"\b"
 )
+
+# Used in __requests_per_second to count amount of requests made.
+# Will be incremented and then reset to 0 when LIMIT is met.
+http_requests_made = 0
+
+
+def __requests_per_second(request_function):
+    """ Wrapper function to force a proces to sleep by a set amount, when a set amount of
+    requests are made by it """
+    def limit_rate(*args, **kwargs):
+        global http_requests_made
+
+        if http_requests_made == LIMIT:
+            sleep(SLEEP_TIME)
+            http_requests_made = 0
+
+        response = request_function(*args, **kwargs)
+        http_requests_made += 1
+        return response
+
+    return limit_rate
+
+
+# Make sure session HTTP methods are wrapped to constrain requests per second
+requests.Session.get = __requests_per_second(requests.Session.get)
+requests.Session.head = __requests_per_second(requests.Session.head)
 
 
 def simplify_mime_type(mime):
@@ -173,7 +201,6 @@ class WebSource(Source):
                                               "application/octet-stream")
                     if simplify_mime_type(ct) == 'text/html':
                         response = session.get(here.presentation_url, timeout=TIMEOUT)
-                        sleep(SLEEP_TIME)
                         i = 0
                         for _i, link in enumerate(
                                 make_outlinks(response.content,
