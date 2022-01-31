@@ -1,3 +1,4 @@
+from parameterized import parameterized
 from django.test import TestCase
 
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
@@ -8,7 +9,10 @@ from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 
 from ..adminapp.management.commands import pipeline_collector
-from ..adminapp.models.scannerjobs.scanner_model import ScheduledCheckup
+from ..adminapp.management.commands.pipeline_collector import \
+    status_message_received_raw
+from ..adminapp.models.scannerjobs.scanner_model import ScheduledCheckup, ScanStatus, \
+    Scanner
 
 time0 = "2020-10-28T13:51:49+01:00"
 time1 = "2020-10-28T14:21:27+01:00"
@@ -49,6 +53,7 @@ common_scan_spec = messages.ScanSpecMessage(
         configuration={},
         progress=None)
 
+# Positive MatchMessage objects.
 positive_match_corrupt = messages.MatchesMessage(
         scan_spec=common_scan_spec_corrupt,
         handle=common_handle_corrupt,
@@ -69,8 +74,66 @@ positive_match = messages.MatchesMessage(
                 matches=[{"dummy": "match object"}])
         ])
 
+# ScanStatus message objects.
+total_objects_scan_status = messages.StatusMessage(
+    scan_tag=scan_tag0,
+    message="dummy",
+    total_objects=10,
+    status_is_error=False)
+
+message_scan_status = messages.StatusMessage(
+    scan_tag=scan_tag0,
+    message="dummy1",
+    total_objects=0,
+    status_is_error=True)
+
+object_size_scan_status = messages.StatusMessage(
+    scan_tag=scan_tag0,
+    message="dummy2",
+    status_is_error=False,
+    object_type="some_type",
+    object_size=100)
+
 
 class PipelineCollectorTests(TestCase):
+
+    @parameterized.expand([
+        ("total objects update", total_objects_scan_status, 18020, "dummy",
+         False, 0, 0),
+        ("message update", message_scan_status, 0, "dummy1", True, 0, 0),
+        ("object size update", object_size_scan_status, 0, "dummy2", False, 1, 100),
+    ])
+    def test_scan_status_update(self, _, scan_status_object, expected_total_objects,
+                                expected_message, expected_is_error,
+                                expected_scanned_objects, expected_scanned_size):
+        ScanStatus.objects.create(
+                scanner=Scanner.objects.create(name="dummy"),
+                scan_tag=scan_tag0.to_json_object(),
+                total_sources=11,
+                total_objects=expected_total_objects - 10
+                if expected_total_objects > 0 else 0,
+                scanned_objects=0,
+                scanned_size=0)
+        body = scan_status_object.to_json_object()
+        [s for s in status_message_received_raw(body)]
+        scan_status = ScanStatus.objects.get(scan_tag=body["scan_tag"])
+        self.assertEqual(
+            scan_status.total_objects, expected_total_objects,
+            "total objects was not the expected.")
+        self.assertEqual(
+            scan_status.message, expected_message,
+            "message was not the expected.")
+        self.assertEqual(
+            scan_status.status_is_error, expected_is_error,
+            "status_is_error was not the expected.")
+        self.assertEqual(
+            scan_status.scanned_objects, expected_scanned_objects,
+            "scanned_objects was not the expected.")
+        self.assertEqual(
+            scan_status.scanned_size, expected_scanned_size,
+            "scanned_size was not the expected.")
+        ScanStatus.objects.all().delete()
+        Scanner.objects.all().delete()
 
     def test_surrogate_errors_are_caught(self):
         """How to test an exception is caught?

@@ -399,55 +399,78 @@ class ScanStatus(models.Model):
     """A ScanStatus object collects the status messages received from the
     pipeline for a given scan."""
 
-    last_modified = models.DateTimeField(verbose_name=_("last modified"), auto_now=True)
+    last_modified = models.DateTimeField(
+        verbose_name=_("last modified"),
+        auto_now=True,
+    )
 
-    scan_tag = JSONField(verbose_name=_("scan tag"), unique=True)
+    scan_tag = JSONField(
+        verbose_name=_("scan tag"),
+        unique=True,
+    )
 
-    scanner = models.ForeignKey(Scanner, related_name="statuses",
-                                verbose_name=_("associated scanner job"),
-                                on_delete=models.CASCADE)
+    scanner = models.ForeignKey(
+        Scanner,
+        related_name="statuses",
+        verbose_name=_("associated scanner job"),
+        on_delete=models.CASCADE,
+    )
 
-    total_sources = models.IntegerField(verbose_name=_("total sources"),
-                                        null=True)
-    explored_sources = models.IntegerField(verbose_name=_("explored sources"),
-                                           null=True)
+    total_sources = models.IntegerField(
+        verbose_name=_("total sources"),
+        default=0,
+    )
 
-    total_objects = models.IntegerField(verbose_name=_("total objects"),
-                                        null=True)
-    scanned_objects = models.IntegerField(verbose_name=_("scanned objects"),
-                                          null=True)
+    explored_sources = models.IntegerField(
+        verbose_name=_("explored sources"),
+        default=0,
+    )
+
+    total_objects = models.IntegerField(
+        verbose_name=_("total objects"),
+        default=0,
+    )
+
+    scanned_objects = models.IntegerField(
+        verbose_name=_("scanned objects"),
+        default=0,
+    )
+
     scanned_size = models.BigIntegerField(
             verbose_name=_("size of scanned objects"),
-            null=True)
+            default=0,
+    )
 
     message = models.TextField(
         blank=True,
-        verbose_name='message'
+        verbose_name='message',
     )
 
-    status_is_error = models.BooleanField(default=False)
+    status_is_error = models.BooleanField(
+        default=False,
+    )
 
     @property
     def stage(self) -> int:
         if self.fraction_scanned is None:
-            if self.explored_sources is None or self.fraction_explored < 1.0:
-                if self.scanned_objects is None or self.scanned_objects == 0:
+            if self.explored_sources > 0 or self.fraction_explored < 1.0:
+                if self.scanned_objects == 0:
                     return ScanStage.INDEXING
                 return ScanStage.INDEXING_SCANNING
         return ScanStage.SCANNING
 
     @property
     def finished(self) -> bool:
-        return (self.total_sources is not None
+        return ((self.total_sources > 0)
                 and self.total_sources == self.explored_sources
-                and self.total_objects is not None
+                and (self.total_objects > 0)
                 and (self.scanned_objects or 0) >= self.total_objects)
 
     @property
     def fraction_explored(self) -> float:
         """Returns the fraction of the sources in this scan that has been
         explored, or None if this is not yet computable."""
-        if self.total_sources:
+        if self.total_sources > 0:
             return (self.explored_sources or 0) / self.total_sources
         else:
             return None
@@ -456,7 +479,7 @@ class ScanStatus(models.Model):
     def fraction_scanned(self) -> float:
         """Returns the fraction of this scan that has been scanned, or None if
         this is not yet computable."""
-        if self.fraction_explored == 1.0 and self.total_objects:
+        if self.fraction_explored == 1.0 and self.total_objects > 0:
             return (self.scanned_objects or 0) / self.total_objects
         else:
             return None
