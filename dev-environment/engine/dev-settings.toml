@@ -4,10 +4,6 @@ AMQP_HOST = "queue"
 AMQP_USER = "os2ds"
 AMQP_PWD = "os2ds"
 
-[model.http]
-# The maximum number of outgoing HTTP requests an individual process can make
-# every second
-limit = 2
 # timeout for requests (in seconds)
 timeout = 20
 ttl = 5

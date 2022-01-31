@@ -1,7 +1,5 @@
 from io import BytesIO
 from time import sleep
-
-import requests
 from lxml.html import document_fromstring
 from lxml.etree import ParserError
 from urllib.parse import urljoin, urlsplit, urlunsplit, urldefrag
@@ -39,12 +37,11 @@ _equiv_domains_re = re.compile(
 http_requests_made = 0
 
 
-def __requests_per_second(request_function):
+def rate_limit(request_function):
     """ Wrapper function to force a proces to sleep by a set amount, when a set amount of
     requests are made by it """
-    def limit_rate(*args, **kwargs):
+    def _rate_limit(*args, **kwargs):
         global http_requests_made
-
         if http_requests_made == LIMIT:
             sleep(SLEEP_TIME)
             http_requests_made = 0
@@ -53,12 +50,7 @@ def __requests_per_second(request_function):
         http_requests_made += 1
         return response
 
-    return limit_rate
-
-
-# Make sure session HTTP methods are wrapped to constrain requests per second
-requests.Session.get = __requests_per_second(requests.Session.get)
-requests.Session.head = __requests_per_second(requests.Session.head)
+    return _rate_limit
 
 
 def simplify_mime_type(mime):
@@ -108,10 +100,14 @@ class WebSource(Source):
         to_visit = [(origin, TTL)]
         known_addresses = {origin, }
 
+        # Assign session HTTP methods to variables, wrapped to constrain requests per second
+        throttled_session_get = rate_limit(session.get)
+        throttled_session_head = rate_limit(session.head)
+
         # initial check that url can be reached. After this point, continue
         # exploration at all cost
         try:
-            r = session.head(origin.presentation_url, timeout=TIMEOUT)
+            r = throttled_session_head(origin.presentation_url, timeout=TIMEOUT)
             r.raise_for_status()
         except RequestException as err:
             raise RequestException(
@@ -195,12 +191,12 @@ class WebSource(Source):
                 continue
 
             try:
-                response = session.head(here.presentation_url, timeout=TIMEOUT)
+                response = throttled_session_head(here.presentation_url, timeout=TIMEOUT)
                 if response.status_code == 200:
                     ct = response.headers.get("Content-Type",
                                               "application/octet-stream")
                     if simplify_mime_type(ct) == 'text/html':
-                        response = session.get(here.presentation_url, timeout=TIMEOUT)
+                        response = throttled_session_get(here.presentation_url, timeout=TIMEOUT)
                         i = 0
                         for _i, link in enumerate(
                                 make_outlinks(response.content,
