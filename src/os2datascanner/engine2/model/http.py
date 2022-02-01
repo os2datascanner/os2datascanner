@@ -83,9 +83,10 @@ class WebSource(Source):
     def _generate_state(self, sm):
         from ... import __version__
         with Session() as session:
-            session.headers.update(
+            throttled_session_headers_update = rate_limit(session.headers.update)
+            throttled_session_headers_update(
                 {'User-Agent': f'OS2datascanner {__version__} ({session.headers["User-Agent"]})'
-                               ' (+http://os2datascanner.dk/agent)'}
+                               ' (+https://os2datascanner.dk/agent)'}
             )
             yield session
 
@@ -259,7 +260,8 @@ class WebResource(FileResource):
         yield from super()._generate_metadata()
 
     def _get_head_raw(self):
-        return self._get_cookie().head(
+        throttled_session_head = rate_limit(self._get_cookie().head)
+        return throttled_session_head(
             self.handle.presentation_url, timeout=TIMEOUT)
 
     def check(self) -> bool:
@@ -316,7 +318,9 @@ class WebResource(FileResource):
 
     @contextmanager
     def make_stream(self):
-        response = self._get_cookie().get(
+        # Assign session HTTP methods to variables, wrapped to constrain requests per second
+        throttled_session_get = rate_limit(self._get_cookie().get)
+        response = throttled_session_get(
             self.handle.presentation_url, timeout=TIMEOUT)
         response.raise_for_status()
         with BytesIO(response.content) as s:
