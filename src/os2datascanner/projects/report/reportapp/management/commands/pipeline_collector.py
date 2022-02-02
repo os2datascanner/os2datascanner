@@ -111,7 +111,7 @@ def event_message_received_raw(body):
 def handle_metadata_message(new_report, result):
     message = messages.MetadataMessage.from_json_object(result)
 
-    new_report.data["metadata"] = result
+    new_report.raw_metadata = result
     if "last-modified" in message.metadata:
         new_report.datasource_last_modified = (
                 OutputType.LastModified.decode_json_object(
@@ -133,17 +133,18 @@ def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
     scanner_json = scan_tag.scanner.to_json_object()
     previous_report = DocumentReport.objects.filter(
         path=path,
-        data__scan_tag__scanner=scanner_json).order_by("-scan_time").first()
+        raw_scan_tag__scanner=scanner_json).order_by("-scan_time").first()
     # get_or_create unconditionally writes freshly-created objects to the
     # database (in the version of Django we're using at the moment, at least),
     # so we have to implement similar logic ourselves
     try:
         new_report = DocumentReport.objects.filter(
-                path=path, scan_time=scan_tag.time).get()
+                path=path, scan_time=scan_tag.time,
+                raw_scan_tag=scan_tag.to_json_object()).get()
     except DocumentReport.DoesNotExist:
         new_report = DocumentReport(
             path=path, scan_time=scan_tag.time,
-            data={"scan_tag": scan_tag.to_json_object()})
+            raw_scan_tag=scan_tag.to_json_object())
 
     return previous_report, new_report
 
@@ -209,7 +210,7 @@ def handle_match_message(previous_report, new_report, body):  # noqa: CCR001, E5
         # Collect and store highest propability value (should never be NoneType).
         new_report.probability = new_matches.probability
         # Sort matches by prop. desc.
-        new_report.data["matches"] = sort_matches_by_probability(body)
+        new_report.raw_matches = sort_matches_by_probability(body)
         new_report.scanner_job_name = new_matches.scan_spec.scan_tag.scanner.name
 
         save_if_path_and_scanner_job_pk_unique(
@@ -266,7 +267,7 @@ def handle_problem_message(previous_report, new_report, body):
         new_report.source_type = source.type_label
         new_report.name = handle.presentation_name if handle else ""
         new_report.sort_key = handle.sort_key if handle else "(source)"
-        new_report.data["problem"] = body
+        new_report.raw_problem = body
         new_report.scanner_job_name = problem.scan_tag.scanner.name
 
         save_if_path_and_scanner_job_pk_unique(new_report, problem.scan_tag.scanner.pk)
@@ -364,9 +365,10 @@ def save_if_path_and_scanner_job_pk_unique(new_report, scanner_job_pk):
         # a null byte in a PostgreSQL text field (or something that's related
         # to a text field, like the JSON field types). Edit these bytes out and
         # try again
-        new_report.data = prepare_json_object(new_report.data)
-        new_report.sort_key = prepare_json_object(new_report.sort_key)
-        new_report.name = prepare_json_object(new_report.name)
+        for field in ("raw_scan_tag", "raw_matches",
+                "raw_problem", "raw_metadata", "sort_key", "name"):
+            setattr(new_report, field,
+                    prepare_json_object(getattr(new_report, field)))
         new_report.save()
 
 

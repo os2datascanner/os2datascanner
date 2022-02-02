@@ -29,7 +29,7 @@ class AliasAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
         if obj.match_relation:
             reports = DocumentReport.objects.filter(
-                data__metadata__metadata__contains={
+                raw_metadata__metadata__contains={
                     str(obj.key): str(obj)
                 })
             form.cleaned_data['match_relation'] = reports

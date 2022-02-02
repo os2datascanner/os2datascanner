@@ -22,8 +22,8 @@ class Command(BaseCommand):
 
     def handle(self, pk, *args, **options):
         docs = DocumentReport.objects.filter(
-            data__scan_tag__scanner__pk=pk
-        ).filter(data__problem__isnull=False)
+            raw_scan_tag__scanner__pk=pk
+        ).filter(raw_problem__isnull=False)
 
         head = options.get("head")
         if head is not None:

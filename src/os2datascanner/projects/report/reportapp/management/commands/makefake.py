@@ -212,7 +212,7 @@ class Command(BaseCommand):
 def make_fake_scan_type(organization, scan_name):
     """Create and save a random fake scan"""
     pk = random.randrange(1000, 2**15)
-    while DocumentReport.objects.filter(data__scan_tag__scanner__pk=pk).exists():
+    while DocumentReport.objects.filter(raw_scan_tag__scanner__pk=pk).exists():
         pk = random.randrange(1000, 2**15)
 
     scanner_fragment = messages.ScannerFragment(

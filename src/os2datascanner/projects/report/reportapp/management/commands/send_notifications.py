@@ -70,9 +70,9 @@ class Command(BaseCommand):
 
         # filter all document reports objects that are matched and is not resoluted.
         document_reports = DocumentReport.objects.only(
-            'organization', 'data', 'resolution_status'
+            'organization', 'raw_matches', 'resolution_status'
             ).filter(
-            data__matches__matched=True
+            raw_matches__matched=True
             ).filter(
             resolution_status__isnull=True)
 

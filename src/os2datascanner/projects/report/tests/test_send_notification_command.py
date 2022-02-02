@@ -142,9 +142,9 @@ class EmailNotificationTest(TestCase):
         generate_match(match_1)
         # get only the reports that have matches, and which have not been resolved
         self.document_reports = DocumentReport.objects.only(
-            'organization', 'data', 'resolution_status'
+            'organization', 'raw_matches', 'resolution_status'
             ).filter(
-            data__matches__matched=True
+            raw_matches__matched=True
             ).filter(
             resolution_status__isnull=True)
 

@@ -140,6 +140,10 @@ def get_max_sens_prop_value(doc_report_obj, key):
     """Helper method for migration 0017_documentreport_added_sensitivity_and_probability.
     This method returns either a Sensitivity object or probability maximum value.
     The method is located in utils as could become handy else where."""
+
+    if not hasattr(doc_report_obj, "data"):
+        raise NotImplementedError()
+
     if (doc_report_obj.data
             and "matches" in doc_report_obj.data
             and doc_report_obj.data["matches"]):
@@ -156,10 +160,10 @@ def create_alias_and_match_relations(sub_alias):
     # -- the bit to the left of the @ --
     # is case sensitive, the real world disagrees..
     if isinstance(sub_alias, EmailAlias):
-        reports = DocumentReport.objects.filter(data__metadata__metadata__contains={
+        reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
                         str(sub_alias.key): str(sub_alias).lower()})
     else:
-        reports = DocumentReport.objects.filter(data__metadata__metadata__contains={
+        reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
                         str(sub_alias.key): str(sub_alias)})
     tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk)
                             for r in reports], ignore_conflicts=True)
@@ -170,6 +174,9 @@ def get_msg(query):
         which is used in migration 0033_add_sort_key_and_name_charfield
         and in management command refresh_sort_key.
         """
+    if not hasattr(query, "data"):
+        raise NotImplementedError()
+
     # only one of these are not None
     matches = query.data.get("matches")
     metadata = query.data.get("metadata")
@@ -205,8 +212,9 @@ def get_presentation(query):
 def prepare_json_object(o):
     """Processes an object suitable for JSON serialisation to make it suitable
     for storing in the OS2datascanner report module's database. (At the moment
-    this just means removing all null bytes from string values, as PostgreSQL
-    can't deal with them in any string or JSON data type.)"""
+    this just means removing all null bytes and PEP 383 surrogate pairs from
+    string values, as PostgreSQL can't deal with them in any string or JSON
+    data type.)"""
     if isinstance(o, dict):
         return {prepare_json_object(k): prepare_json_object(v)
                 for k, v in o.items()}

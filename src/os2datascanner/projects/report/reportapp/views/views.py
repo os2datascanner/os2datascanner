@@ -83,7 +83,7 @@ class MainPageView(LoginRequiredMixin, ListView):
     context_object_name = "document_reports"  # object_list renamed to something more relevant
     model = DocumentReport
     document_reports = DocumentReport.objects.filter(
-        data__matches__matched=True).filter(
+        raw_matches__matched=True).filter(
         resolution_status__isnull=True).order_by("sort_key")
     scannerjob_filters = None
     paginate_by_options = [10, 20, 50, 100, 250]
@@ -195,7 +195,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
     model = DocumentReport
     users = UserProfile.objects.all()
     matches = DocumentReport.objects.filter(
-        data__matches__matched=True)
+        raw_matches__matched=True)
     handled_matches = matches.filter(
         resolution_status__isnull=False)
     unhandled_matches = matches.filter(
@@ -326,17 +326,17 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         # Counts the amount of unhandled matches
         # TODO: Optimize queries by reading from relational db
         unhandled_matches = self.unhandled_matches.order_by(
-            'data__metadata__metadata').values(
-            'data__metadata__metadata').annotate(
-            total=Count('data__metadata__metadata')
+            'raw_metadata__metadata').values(
+            'raw_metadata__metadata').annotate(
+            total=Count('raw_metadata__metadata')
         ).values(
-            'data__metadata__metadata', 'total',
+            'raw_metadata__metadata', 'total',
         )
 
         # TODO: Optimize queries by reading from relational db
         employee_unhandled_list = []
         for um in unhandled_matches:
-            dict_values = list(um['data__metadata__metadata'].values())
+            dict_values = list(um['raw_metadata__metadata'].values())
             first_value = dict_values[0]
             employee_unhandled_list.append((first_value, um['total']))
 
@@ -352,14 +352,14 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             created_timestamp__range=(a_year_ago, current_date)).annotate(
             month=TruncMonth('created_timestamp')).values(
             'month').annotate(
-            total=Count('data')
+            total=Count('raw_matches')
         ).order_by('month')
 
         resolved_matches_by_month = self.handled_matches.filter(
             created_timestamp__range=(a_year_ago, current_date)).annotate(
             month=TruncMonth('resolution_time')).values(
             'month').annotate(
-            total=Count('data')
+            total=Count('raw_matches')
         ).order_by('month')
 
         # Generators with months as integers and the counts
@@ -398,7 +398,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             created_timestamp__range=(a_year_ago, current_date)).annotate(
             month=TruncMonth('created_timestamp')).values(
             'month').annotate(
-            total=Count('data')
+            total=Count('raw_matches')
         ).order_by('month')
 
         # Generator with the months as integers and the total
@@ -430,7 +430,7 @@ class LeaderStatisticsPageView(StatisticsPageView):
     def five_most_unhandled_employees(self):
         counted_unhandled_matches_alias = self.unhandled_matches.values(
             'alias_relation__user__id').annotate(
-            total=Count('data')).values(
+            total=Count('raw_matches')).values(
                 'alias_relation__user__first_name', 'total'
             ).order_by('-total')
 
