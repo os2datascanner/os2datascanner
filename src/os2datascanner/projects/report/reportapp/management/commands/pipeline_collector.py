@@ -38,6 +38,12 @@ from ...models.documentreport_model import DocumentReport
 from ...models.organization_model import Organization
 from ...utils import hash_handle, prepare_json_object
 
+from ...models.aliases.alias_model import Alias
+from ...models.aliases.adsidalias_model import ADSIDAlias
+from ...models.aliases.emailalias_model import EmailAlias
+from ...models.aliases.webdomainalias_model import WebDomainAlias
+
+
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_pipeline_collector_report",
                   "Messages through report collector")
@@ -50,6 +56,7 @@ def result_message_received_raw(body):
     {'scan_tag': {...}, 'matches': null, 'metadata': null, 'problem': null}
     """
     reference = body.get("handle") or body.get("source")
+    path = hash_handle(reference)
     tag, queue = _identify_message(body)
     if not reference or not tag or not queue:
         return
@@ -74,7 +81,7 @@ def result_message_received_raw(body):
     elif queue == "problem":
         handle_problem_message(previous_report, new_report, body)
     elif queue == "metadata":
-        handle_metadata_message(new_report, body)
+        handle_metadata_message(path, tag, body)
 
     yield from []
 
@@ -108,24 +115,60 @@ def event_message_received_raw(body):
     yield from []
 
 
-def handle_metadata_message(new_report, result):
+def handle_metadata_message(path, scan_tag, result):
     message = messages.MetadataMessage.from_json_object(result)
 
-    new_report.raw_metadata = result
+    lm = None
     if "last-modified" in message.metadata:
-        new_report.datasource_last_modified = (
-                OutputType.LastModified.decode_json_object(
-                        message.metadata["last-modified"]))
+        lm = OutputType.LastModified.decode_json_object(
+                message.metadata["last-modified"])
     else:
         # If no scan_tag time is found, default value to current time as this
         # must be some-what close to actual scan_tag time.
         # If no datasource_last_modified value is ever set, matches will not be
         # shown.
-        new_report.datasource_last_modified = (
-                message.scan_tag.time or time_now())
-    logger.debug("updating timestamp", report=new_report.presentation)
-    new_report.scanner_job_name = message.scan_tag.scanner.name
-    save_if_path_and_scanner_job_pk_unique(new_report, message.scan_tag.scanner.pk)
+        lm = message.scan_tag.time or time_now()
+
+    dr, _ = DocumentReport.objects.update_or_create(
+            path=path, scan_time=scan_tag.time,
+            raw_scan_tag=prepare_json_object(
+                    message.scan_tag.to_json_object()),
+            defaults={
+                "raw_metadata": prepare_json_object(result),
+                "datasource_last_modified": lm,
+                "scanner_job_name": message.scan_tag.scanner.name,
+            })
+    create_aliases(dr)
+
+
+def create_aliases(obj):
+    tm = Alias.match_relation.through
+    new_objects = []
+
+    metadata = obj.metadata
+    if not metadata:
+        return
+
+    if (email := metadata.metadata.get("email-account")):
+        email_alias = EmailAlias.objects.filter(address__iexact=email)
+        add_new_relations(email_alias, new_objects, obj, tm)
+    if (adsid := metadata.metadata.get("filesystem-owner-sid")):
+        adsid_alias = ADSIDAlias.objects.filter(sid=adsid)
+        add_new_relations(adsid_alias, new_objects, obj, tm)
+    if (web_domain := metadata.metadata.get("web-domain")):
+        web_domain_alias = WebDomainAlias.objects.filter(domain=web_domain)
+        add_new_relations(web_domain_alias, new_objects, obj, tm)
+
+    try:
+        tm.objects.bulk_create(new_objects, ignore_conflicts=True)
+    except Exception:
+        logger.error("Failed to create match_relation", exc_info=True)
+
+
+def add_new_relations(adsid_alias, new_objects, obj, tm):
+    for alias in adsid_alias:
+        new_objects.append(
+            tm(documentreport_id=obj.pk, alias_id=alias.pk))
 
 
 def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
