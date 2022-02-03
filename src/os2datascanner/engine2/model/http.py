@@ -63,7 +63,8 @@ class WebSource(Source):
     def _generate_state(self, sm):
         with Session() as session:
             session.headers.update(
-                {'User-Agent': 'https://os2datascanner.dk/agent'}
+                {'User-Agent': f'OS2datascanner ({session.headers["User-Agent"]})'
+                               ' (+https://os2datascanner.dk/agent)'}
             )
             yield session
 
