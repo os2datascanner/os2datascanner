@@ -23,7 +23,7 @@ logger = structlog.getLogger(__name__)
 SLEEP_TIME: float = 1 / engine2_settings.model["http"]["limit"]
 TIMEOUT: int = engine2_settings.model["http"]["timeout"]
 TTL: int = engine2_settings.model["http"]["ttl"]
-
+LIMIT: int = engine2_settings.model["http"]["limit"]
 _equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
 # match whole words (\bWORD1\b | \bWORD2\b) and escape to handle metachars.
 # It is important to match whole words; www.magenta.dk should be .magenta.dk, not
@@ -31,6 +31,26 @@ _equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
 _equiv_domains_re = re.compile(
     r"\b" + r"\b|\b".join(map(re.escape, _equiv_domains)) + r"\b"
 )
+
+# Used in __requests_per_second to count amount of requests made.
+# Will be incremented and then reset to 0 when LIMIT is met.
+http_requests_made = 0
+
+
+def rate_limit(request_function):
+    """ Wrapper function to force a proces to sleep by a set amount, when a set amount of
+    requests are made by it """
+    def _rate_limit(*args, **kwargs):
+        global http_requests_made
+        if http_requests_made == LIMIT:
+            sleep(SLEEP_TIME)
+            http_requests_made = 0
+
+        response = request_function(*args, **kwargs)
+        http_requests_made += 1
+        return response
+
+    return _rate_limit
 
 
 def simplify_mime_type(mime):
@@ -63,9 +83,10 @@ class WebSource(Source):
     def _generate_state(self, sm):
         from ... import __version__
         with Session() as session:
-            session.headers.update(
+            throttled_session_headers_update = rate_limit(session.headers.update)
+            throttled_session_headers_update(
                 {'User-Agent': f'OS2datascanner {__version__} ({session.headers["User-Agent"]})'
-                               ' (+http://os2datascanner.dk/agent)'}
+                               ' (+https://os2datascanner.dk/agent)'}
             )
             yield session
 
@@ -80,10 +101,14 @@ class WebSource(Source):
         to_visit = [(origin, TTL)]
         known_addresses = {origin, }
 
+        # Assign session HTTP methods to variables, wrapped to constrain requests per second
+        throttled_session_get = rate_limit(session.get)
+        throttled_session_head = rate_limit(session.head)
+
         # initial check that url can be reached. After this point, continue
         # exploration at all cost
         try:
-            r = session.head(origin.presentation_url, timeout=TIMEOUT)
+            r = throttled_session_head(origin.presentation_url, timeout=TIMEOUT)
             r.raise_for_status()
         except RequestException as err:
             raise RequestException(
@@ -167,13 +192,12 @@ class WebSource(Source):
                 continue
 
             try:
-                response = session.head(here.presentation_url, timeout=TIMEOUT)
+                response = throttled_session_head(here.presentation_url, timeout=TIMEOUT)
                 if response.status_code == 200:
                     ct = response.headers.get("Content-Type",
                                               "application/octet-stream")
                     if simplify_mime_type(ct) == 'text/html':
-                        response = session.get(here.presentation_url, timeout=TIMEOUT)
-                        sleep(SLEEP_TIME)
+                        response = throttled_session_get(here.presentation_url, timeout=TIMEOUT)
                         i = 0
                         for _i, link in enumerate(
                                 make_outlinks(response.content,
@@ -236,7 +260,8 @@ class WebResource(FileResource):
         yield from super()._generate_metadata()
 
     def _get_head_raw(self):
-        return self._get_cookie().head(
+        throttled_session_head = rate_limit(self._get_cookie().head)
+        return throttled_session_head(
             self.handle.presentation_url, timeout=TIMEOUT)
 
     def check(self) -> bool:
@@ -293,7 +318,9 @@ class WebResource(FileResource):
 
     @contextmanager
     def make_stream(self):
-        response = self._get_cookie().get(
+        # Assign session HTTP methods to variables, wrapped to constrain requests per second
+        throttled_session_get = rate_limit(self._get_cookie().get)
+        response = throttled_session_get(
             self.handle.presentation_url, timeout=TIMEOUT)
         response.raise_for_status()
         with BytesIO(response.content) as s:

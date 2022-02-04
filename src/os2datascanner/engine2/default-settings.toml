@@ -23,9 +23,9 @@ timeout = 45
 size_threshold = 1048576
 
 [model.http]
-# The maximum number of pages whose content the WebSource crawler can retrieve
-# per second
-limit = 10
+# The maximum number of outgoing HTTP requests an individual process can make
+# every second
+limit = 2
 # timeout for requests (in seconds)
 timeout = 45
 # Maximum allowed depth of related links while crawling a domain
