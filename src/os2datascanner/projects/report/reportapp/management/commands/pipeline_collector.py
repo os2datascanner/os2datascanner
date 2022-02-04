@@ -114,6 +114,7 @@ def event_message_received_raw(body):
 
 
 def handle_metadata_message(path, scan_tag, result):
+    locked_qs = DocumentReport.objects.select_for_update(of=('self',))
     message = messages.MetadataMessage.from_json_object(result)
 
     lm = None
@@ -127,7 +128,7 @@ def handle_metadata_message(path, scan_tag, result):
         # shown.
         lm = scan_tag.time or time_now()
 
-    dr, _ = DocumentReport.objects.update_or_create(
+    dr, _ = locked_qs.update_or_create(
             path=path, scanner_job_pk=scan_tag.scanner.pk,
             defaults={
                 "scan_time": scan_tag.time,
@@ -174,9 +175,10 @@ def add_new_relations(adsid_alias, new_objects, obj, tm):
 
 
 def handle_match_message(path, scan_tag, result):  # noqa: CCR001, E501 too high cognitive complexity
+    locked_qs = DocumentReport.objects.select_for_update(of=('self',))
     new_matches = messages.MatchesMessage.from_json_object(result)
-    previous_report = (DocumentReport.objects.filter(
-            path=path, raw_scan_tag__scanner=scan_tag.scanner.to_json_object()).
+    previous_report = (locked_qs.filter(
+            path=path, scanner_job_pk=scan_tag.scanner.pk).
             exclude(scan_time=scan_tag.time).order_by("-scan_time").first())
 
     matches = [(match.rule.presentation, match.matches) for match in new_matches.matches]
@@ -200,14 +202,14 @@ def handle_match_message(path, scan_tag, result):  # noqa: CCR001, E501 too high
                 # just update the timestamp on the old one
                 logger.debug("Resource not changed: updating scan timestamp",
                              report=previous_report)
-                DocumentReport.objects.filter(pk=previous_report.pk).update(
+                locked_qs.filter(pk=previous_report.pk).update(
                         scan_time=scan_tag.time)
             else:
                 # The file has been edited and the matches are no longer
                 # present
                 logger.debug("Resource changed: no matches, status is EDITED",
                              report=previous_report)
-                DocumentReport.objects.filter(pk=previous_report.pk).update(
+                locked_qs.filter(pk=previous_report.pk).update(
                         resolution_status=(
                                 DocumentReport.ResolutionChoices.
                                 EDITED.value))
@@ -216,7 +218,7 @@ def handle_match_message(path, scan_tag, result):  # noqa: CCR001, E501 too high
             # Resolve the previous ones
             logger.debug("matches still present, status is EDITED",
                          report=previous_report)
-            DocumentReport.objects.filter(pk=previous_report.pk).update(
+            locked_qs.filter(pk=previous_report.pk).update(
                     resolution_status=(
                             DocumentReport.ResolutionChoices.EDITED.value))
 
@@ -226,7 +228,7 @@ def handle_match_message(path, scan_tag, result):  # noqa: CCR001, E501 too high
         while source.handle:
             source = source.handle.source
 
-        dr, _ = DocumentReport.objects.update_or_create(
+        dr, _ = locked_qs.update_or_create(
                 path=path, scanner_job_pk=scan_tag.scanner.pk,
                 defaults={
                     "scan_time": scan_tag.time,
@@ -272,9 +274,10 @@ def sort_matches_by_probability(body):
 
 
 def handle_problem_message(path, scan_tag, result):
+    locked_qs = DocumentReport.objects.select_for_update(of=('self',))
     problem = messages.ProblemMessage.from_json_object(result)
-    previous_report = (DocumentReport.objects.filter(
-            path=path, raw_scan_tag__scanner=scan_tag.scanner.to_json_object()).
+    previous_report = (locked_qs.filter(
+            path=path, scanner_job_pk=scan_tag.scanner.pk).
             exclude(scan_time=scan_tag.time).order_by("-scan_time").first())
 
     handle = problem.handle if problem.handle else None
@@ -289,9 +292,8 @@ def handle_problem_message(path, scan_tag, result):
             handle=presentation,
             msgtype="problem",
         )
-        DocumentReport.objects.filter(pk=previous_report.pk).update(
-                resolution_status=
-                        DocumentReport.ResolutionChoices.REMOVED.value)
+        locked_qs.filter(pk=previous_report.pk).update(resolution_status=(
+                DocumentReport.ResolutionChoices.REMOVED.value))
     else:
 
         # Collect and store the top-level type label from the failing object
@@ -299,7 +301,7 @@ def handle_problem_message(path, scan_tag, result):
         while source.handle:
             source = source.handle.source
 
-        dr, _ = DocumentReport.objects.update_or_create(
+        dr, _ = locked_qs.update_or_create(
                 path=path, scanner_job_pk=scan_tag.scanner.pk,
                 defaults={
                     "scan_time": scan_tag.time,
@@ -396,7 +398,8 @@ class CollectorRunner(PikaPipelineThread):
                 routing_key=routing_key,
                 body=body)
             if routing_key == "os2ds_results":
-                yield from result_message_received_raw(body)
+                with transaction.atomic():
+                    yield from result_message_received_raw(body)
             elif routing_key == "os2ds_events":
                 yield from event_message_received_raw(body)
 
