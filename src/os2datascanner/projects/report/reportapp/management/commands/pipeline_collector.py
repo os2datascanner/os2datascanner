@@ -19,7 +19,7 @@ import json
 import logging
 import structlog
 
-from django.db import DataError, transaction
+from django.db import transaction
 from django.db.models.deletion import ProtectedError
 from django.core.management.base import BaseCommand
 from django.core.exceptions import FieldError
@@ -61,7 +61,6 @@ def result_message_received_raw(body):
     if not reference or not tag or not queue:
         return
     tag = messages.ScanTagFragment.from_json_object(tag)
-    previous_report, new_report = get_reports_for(reference, tag)
 
     # XXX: ideally we would only log once in this file. When all is done, log the
     # following AND what actions were taken.
@@ -73,13 +72,12 @@ def result_message_received_raw(body):
         if body.get("handle") else None,
         source=Source.from_json_object(reference).censor().to_json_object()
         if not body.get("handle") else None,
-        prev_report=previous_report,
     )
 
     if queue == "matches":
-        handle_match_message(previous_report, new_report, body)
+        handle_match_message(path, tag, body)
     elif queue == "problem":
-        handle_problem_message(previous_report, new_report, body)
+        handle_problem_message(path, tag, body)
     elif queue == "metadata":
         handle_metadata_message(path, tag, body)
 
@@ -127,16 +125,20 @@ def handle_metadata_message(path, scan_tag, result):
         # must be some-what close to actual scan_tag time.
         # If no datasource_last_modified value is ever set, matches will not be
         # shown.
-        lm = message.scan_tag.time or time_now()
+        lm = scan_tag.time or time_now()
 
     dr, _ = DocumentReport.objects.update_or_create(
-            path=path, scan_time=scan_tag.time,
-            raw_scan_tag=prepare_json_object(
-                    message.scan_tag.to_json_object()),
+            path=path, scanner_job_pk=scan_tag.scanner.pk,
             defaults={
+                "scan_time": scan_tag.time,
+                "raw_scan_tag": prepare_json_object(
+                        scan_tag.to_json_object()),
+
                 "raw_metadata": prepare_json_object(result),
                 "datasource_last_modified": lm,
-                "scanner_job_name": message.scan_tag.scanner.name,
+                "scanner_job_name": scan_tag.scanner.name,
+
+                "resolution_status": None
             })
     create_aliases(dr)
 
@@ -171,30 +173,11 @@ def add_new_relations(adsid_alias, new_objects, obj, tm):
             tm(documentreport_id=obj.pk, alias_id=alias.pk))
 
 
-def get_reports_for(reference, scan_tag: messages.ScanTagFragment):
-    path = hash_handle(reference)
-    scanner_json = scan_tag.scanner.to_json_object()
-    previous_report = DocumentReport.objects.filter(
-        path=path,
-        raw_scan_tag__scanner=scanner_json).order_by("-scan_time").first()
-    # get_or_create unconditionally writes freshly-created objects to the
-    # database (in the version of Django we're using at the moment, at least),
-    # so we have to implement similar logic ourselves
-    try:
-        new_report = DocumentReport.objects.filter(
-                path=path, scan_time=scan_tag.time,
-                raw_scan_tag=scan_tag.to_json_object()).get()
-    except DocumentReport.DoesNotExist:
-        new_report = DocumentReport(
-            path=path, scan_time=scan_tag.time,
-            raw_scan_tag=scan_tag.to_json_object())
-
-    return previous_report, new_report
-
-
-def handle_match_message(previous_report, new_report, body):  # noqa: CCR001, E501 too high cognitive complexity
-    new_matches = messages.MatchesMessage.from_json_object(body)
-    previous_matches = previous_report.matches if previous_report else None
+def handle_match_message(path, scan_tag, result):  # noqa: CCR001, E501 too high cognitive complexity
+    new_matches = messages.MatchesMessage.from_json_object(result)
+    previous_report = (DocumentReport.objects.filter(
+            path=path, raw_scan_tag__scanner=scan_tag.scanner.to_json_object()).
+            exclude(scan_time=scan_tag.time).order_by("-scan_time").first())
 
     matches = [(match.rule.presentation, match.matches) for match in new_matches.matches]
     logger.debug(
@@ -206,61 +189,66 @@ def handle_match_message(previous_report, new_report, body):  # noqa: CCR001, E5
     if previous_report and previous_report.resolution_status is None:
         # There are existing unresolved results; resolve them based on the new
         # message
-        if previous_matches:
-            if not new_matches.matched:
-                # No new matches. Be cautiously optimistic, but check what
-                # actually happened
-                if (len(new_matches.matches) == 1
-                        and isinstance(new_matches.matches[0].rule,
-                                       LastModifiedRule)):
-                    # The file hasn't been changed, so the matches are the same
-                    # as they were last time. Instead of making a new entry,
-                    # just update the timestamp on the old one
-                    logger.debug("Resource not changed: updating scan timestamp",
-                                 report=previous_report)
-                    previous_report.scan_time = (
-                            new_matches.scan_spec.scan_tag.time)
-                    previous_report.save()
-                else:
-                    # The file has been edited and the matches are no longer
-                    # present
-                    logger.debug("Resource changed: no matches, status is EDITED",
-                                 report=previous_report)
-                    previous_report.resolution_status = (
-                            DocumentReport.ResolutionChoices.EDITED.value)
-                    previous_report.save()
-            else:
-                # The file has been edited, but matches are still present.
-                # Resolve the previous ones
-                logger.debug("matches still present, status is EDITED",
+        if not new_matches.matched:
+            # No new matches. Be cautiously optimistic, but check what
+            # actually happened
+            if (len(new_matches.matches) == 1
+                    and isinstance(new_matches.matches[0].rule,
+                                   LastModifiedRule)):
+                # The file hasn't been changed, so the matches are the same
+                # as they were last time. Instead of making a new entry,
+                # just update the timestamp on the old one
+                logger.debug("Resource not changed: updating scan timestamp",
                              report=previous_report)
-                previous_report.resolution_status = (
-                        DocumentReport.ResolutionChoices.EDITED.value)
-                previous_report.save()
+                DocumentReport.objects.filter(pk=previous_report.pk).update(
+                        scan_time=scan_tag.time)
+            else:
+                # The file has been edited and the matches are no longer
+                # present
+                logger.debug("Resource changed: no matches, status is EDITED",
+                             report=previous_report)
+                DocumentReport.objects.filter(pk=previous_report.pk).update(
+                        resolution_status=(
+                                DocumentReport.ResolutionChoices.
+                                EDITED.value))
+        else:
+            # The file has been edited, but matches are still present.
+            # Resolve the previous ones
+            logger.debug("matches still present, status is EDITED",
+                         report=previous_report)
+            DocumentReport.objects.filter(pk=previous_report.pk).update(
+                    resolution_status=(
+                            DocumentReport.ResolutionChoices.EDITED.value))
 
     if new_matches.matched:
-
         # Collect and store the top-level type label from the matched object
         source = new_matches.handle.source
         while source.handle:
             source = source.handle.source
-        new_report.source_type = source.type_label
-        new_report.name = new_matches.handle.presentation_name
-        new_report.sort_key = new_matches.handle.sort_key
 
-        # Collect and store highest sensitivity value (should never be NoneType).
-        new_report.sensitivity = new_matches.sensitivity.value
-        # Collect and store highest propability value (should never be NoneType).
-        new_report.probability = new_matches.probability
-        # Sort matches by prop. desc.
-        new_report.raw_matches = sort_matches_by_probability(body)
-        new_report.scanner_job_name = new_matches.scan_spec.scan_tag.scanner.name
+        dr, _ = DocumentReport.objects.update_or_create(
+                path=path, scanner_job_pk=scan_tag.scanner.pk,
+                defaults={
+                    "scan_time": scan_tag.time,
+                    "raw_scan_tag": prepare_json_object(
+                            scan_tag.to_json_object()),
 
-        save_if_path_and_scanner_job_pk_unique(
-            new_report, new_matches.scan_spec.scan_tag.scanner.pk)
+                    "source_type": source.type_label,
+                    "name": prepare_json_object(
+                            new_matches.handle.presentation_name),
+                    "sort_key": prepare_json_object(
+                            new_matches.handle.sort_key),
+                    "sensitivity": new_matches.sensitivity.value,
+                    "probability": new_matches.probability,
+                    "raw_matches": prepare_json_object(
+                            sort_matches_by_probability(result)),
+                    "scanner_job_name": scan_tag.scanner.name,
 
-        logger.debug("matches, saving new DocReport", report=new_report)
-    elif new_report is not None:
+                    "resolution_status": None
+                })
+
+        logger.debug("matches, saved DocReport", report=dr)
+    else:
         logger.debug("No new matches.")
 
 
@@ -283,12 +271,16 @@ def sort_matches_by_probability(body):
     return body
 
 
-def handle_problem_message(previous_report, new_report, body):
-    problem = messages.ProblemMessage.from_json_object(body)
+def handle_problem_message(path, scan_tag, result):
+    problem = messages.ProblemMessage.from_json_object(result)
+    previous_report = (DocumentReport.objects.filter(
+            path=path, raw_scan_tag__scanner=scan_tag.scanner.to_json_object()).
+            exclude(scan_time=scan_tag.time).order_by("-scan_time").first())
 
     handle = problem.handle if problem.handle else None
     presentation = handle.presentation if handle else "(source)"
-    if (previous_report and previous_report.resolution_status is None
+    if (previous_report
+            and previous_report.resolution_status is None
             and problem.missing):
         # The file previously had matches, but is now removed.
         logger.debug(
@@ -297,9 +289,9 @@ def handle_problem_message(previous_report, new_report, body):
             handle=presentation,
             msgtype="problem",
         )
-        previous_report.resolution_status = (
-                DocumentReport.ResolutionChoices.REMOVED.value)
-        previous_report.save()
+        DocumentReport.objects.filter(pk=previous_report.pk).update(
+                resolution_status=
+                        DocumentReport.ResolutionChoices.REMOVED.value)
     else:
 
         # Collect and store the top-level type label from the failing object
@@ -307,17 +299,27 @@ def handle_problem_message(previous_report, new_report, body):
         while source.handle:
             source = source.handle.source
 
-        new_report.source_type = source.type_label
-        new_report.name = handle.presentation_name if handle else ""
-        new_report.sort_key = handle.sort_key if handle else "(source)"
-        new_report.raw_problem = body
-        new_report.scanner_job_name = problem.scan_tag.scanner.name
+        dr, _ = DocumentReport.objects.update_or_create(
+                path=path, scanner_job_pk=scan_tag.scanner.pk,
+                defaults={
+                    "scan_time": scan_tag.time,
+                    "raw_scan_tag": prepare_json_object(
+                            scan_tag.to_json_object()),
 
-        save_if_path_and_scanner_job_pk_unique(new_report, problem.scan_tag.scanner.pk)
+                    "source_type": source.type_label,
+                    "name": prepare_json_object(
+                            handle.presentation_name) if handle else "",
+                    "sort_key": prepare_json_object(
+                            handle.sort_key if handle else "(source)"),
+                    "raw_problem": prepare_json_object(result),
+                    "scanner_job_name": scan_tag.scanner.name,
+
+                    "resolution_status": None
+                })
 
         logger.debug(
             "Unresolved, saving new report",
-            report=new_report,
+            report=dr,
             handle=presentation,
             msgtype="problem",
         )
@@ -382,39 +384,6 @@ def handle_event(event_type, instance, cls):
                 f"handle_event: couldn't delete {cn} {event_obj.uuid}: {e}")
 
 
-def save_if_path_and_scanner_job_pk_unique(new_report, scanner_job_pk):
-    """
-      If a DocumentReport with scanner_job_pk and path already exists,
-      then creating a new one will violate path and scanner_job_pk unique constraint.
-
-      Therefore we check if one already exist, delete it if so, and then we create a new one.
-    """
-    try:
-        existing_report = DocumentReport.objects.filter(
-            scanner_job_pk=scanner_job_pk,
-            path=new_report.path
-        ).get()
-
-        existing_report.delete()
-    except DocumentReport.DoesNotExist:
-        pass
-
-    new_report.scanner_job_pk = scanner_job_pk
-    try:
-        with transaction.atomic():
-            new_report.save()
-    except (DataError, UnicodeEncodeError):
-        # To the best of our knowledge, this can only happen if we try to store
-        # a null byte in a PostgreSQL text field (or something that's related
-        # to a text field, like the JSON field types). Edit these bytes out and
-        # try again
-        for field in ("raw_scan_tag", "raw_matches",
-                "raw_problem", "raw_metadata", "sort_key", "name"):
-            setattr(new_report, field,
-                    prepare_json_object(getattr(new_report, field)))
-        new_report.save()
-
-
 class CollectorRunner(PikaPipelineThread):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -451,6 +420,5 @@ class Command(BaseCommand):
         logging.getLogger("os2datascanner").setLevel(_loglevels[log])
 
         CollectorRunner(
-                exclusive=True,
                 read=["os2ds_results", "os2ds_events"],
                 prefetch_count=8).run_consumer()
