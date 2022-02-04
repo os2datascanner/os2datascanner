@@ -61,9 +61,10 @@ class WebSource(Source):
         self._exclude = exclude
 
     def _generate_state(self, sm):
+        from ... import __version__
         with Session() as session:
             session.headers.update(
-                {'User-Agent': f'OS2datascanner ({session.headers["User-Agent"]})'
+                {'User-Agent': f'OS2datascanner {__version__} ({session.headers["User-Agent"]})'
                                ' (+http://os2datascanner.dk/agent)'}
             )
             yield session
