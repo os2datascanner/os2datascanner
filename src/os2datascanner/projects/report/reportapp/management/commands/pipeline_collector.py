@@ -371,7 +371,9 @@ def save_if_path_and_scanner_job_pk_unique(new_report, scanner_job_pk):
 
 
 class CollectorRunner(PikaPipelineThread):
-    start_http_server(9091)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        start_http_server(9091)
 
     def handle_message(self, routing_key, body):
         with SUMMARY.time():

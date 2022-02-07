@@ -171,7 +171,9 @@ def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # n
 
 
 class CollectorRunner(PikaPipelineThread):
-    start_http_server(9091)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        start_http_server(9091)
 
     def handle_message(self, routing_key, body):
         with SUMMARY.time():
