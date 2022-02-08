@@ -15,6 +15,7 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 
+from django.db.models import F
 from django.db import transaction
 from django.db.utils import DataError
 from django.core.management.base import BaseCommand
@@ -28,31 +29,31 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from ...models.scannerjobs.scanner_model import (
     Scanner, ScanStatus, ScheduledCheckup)
 
-
 logger = structlog.get_logger(__name__)
 
 
 def status_message_received_raw(body):
+    """A status message for a scannerjob is created in Scanner.run().
+    Therefore this method can focus merely on updating the ScanStatus object."""
     message = messages.StatusMessage.from_json_object(body)
-
-    status = ScanStatus.objects.select_for_update().filter(
-            scan_tag=body["scan_tag"]).first()
-    if not status:
-        return
-
-    status.message = message.message
-    status.status_is_error = message.status_is_error
+    scan_status = ScanStatus.objects.filter(scan_tag=body["scan_tag"])
     if message.total_objects is not None:
-        # ScanStatus uses this value as a divisor, so avoid setting it to zero
         if message.total_objects > 0:
-            status.total_objects = (
-                    (status.total_objects or 0) + message.total_objects)
-        status.explored_sources = (status.explored_sources or 0) + 1
+            scan_status.update(
+                message=message.message,
+                status_is_error=message.status_is_error,
+                total_objects=F('total_objects') + message.total_objects,
+                explored_sources=F('explored_sources') + 1)
+        else:
+            scan_status.update(
+                message=message.message,
+                status_is_error=message.status_is_error)
     elif message.object_size is not None and message.object_type is not None:
-        status.scanned_size = (status.scanned_size or 0) + message.object_size
-        status.scanned_objects = (status.scanned_objects or 0) + 1
-
-    status.save()
+        scan_status.update(
+            message=message.message,
+            status_is_error=message.status_is_error,
+            scanned_size=F('scanned_size') + message.object_size,
+            scanned_objects=F('scanned_objects') + 1)
 
     yield from []
 
@@ -100,7 +101,8 @@ def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # n
             if matches:
                 if not matches.matched:
                     if (len(matches.matches) == 1
-                            and isinstance(matches.matches[0].rule, LastModifiedRule)):
+                            and isinstance(matches.matches[0].rule,
+                                           LastModifiedRule)):
                         # This object hasn't changed since the last scan. Update
                         # the checkup timestamp so we remember to check it again
                         # next time
