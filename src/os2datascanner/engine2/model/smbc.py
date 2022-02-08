@@ -145,6 +145,12 @@ class SMBCSource(Source):
                     logger.debug(f"skipping super-hidden object {path}")
                     return
 
+                # Special-case the ~snapshot folder, which we should never scan
+                # (XXX: revisit this once we know the Samba bug is fixed)
+                if name == "~snapshot":
+                    logger.info(f"skipping snapshot directory {path}")
+                    return
+
             if entity.smbc_type == smbc.DIR and name not in (".", ".."):
                 try:
                     obj = context.opendir(url_here)
