@@ -6,6 +6,8 @@ import smbc
 from typing import Optional
 from urllib.parse import quote, unquote, urlsplit
 from datetime import datetime
+import operator
+from functools import reduce
 from contextlib import contextmanager
 
 from ..utilities.backoff import DefaultRetrier
@@ -64,6 +66,9 @@ class Mode(enum.IntFlag):
             return None
 
 
+ModeMask = reduce(operator.or_, Mode, Mode.NONE)
+
+
 class SMBCSource(Source):
     type_label = "smbc"
     eq_properties = (
@@ -114,6 +119,21 @@ class SMBCSource(Source):
 
             if self._skip_super_hidden:
                 mode = Mode.for_url(context, url_here)
+
+                # If the Mode.NORMAL bit is set *along with* other bits...
+                if ((mode & Mode.NORMAL
+                        and mode != Mode.NORMAL)
+                        # ... or if a bit not permitted by the specification is
+                        # set...
+                        or mode & ~Mode_Mask):
+                    # ... then something has gone very badly wrong
+                    logger.warning(
+                            f"mode flags for {path} are incoherent:"
+                            f" {mode!s}"
+                            " (Samba bug #14101?)")
+                    if name.startswith("~"):
+                        logger.info("skipping perhaps-hidden object {path}")
+                        return
 
                 # If this object is super-hidden -- that is, if it has the
                 # hidden bit set plus either the system bit or the "~"
