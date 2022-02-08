@@ -165,7 +165,7 @@ Build API:
     POSTGRES_DB: os2datascanner
     POSTGRES_USER: os2datascanner
     POSTGRES_PASSWORD: os2datascanner
-    COVERAGE_FILE: /tmp/.coverage
+  coverage: '/^TOTAL.+?(\d+\%)$/'
 
 Test Admin Application:
   extends: .test-default
@@ -175,15 +175,21 @@ Test Admin Application:
   needs:
     - Build Admin Application
   script:
-    - pytest
+    - cd /code/src/os2datascanner/projects/admin
+    - coverage run -m pytest tests
       --junitxml $CI_PROJECT_DIR/admin-junit.xml
       -p no:cacheprovider
       --color=yes
-      /code/src/os2datascanner/projects/admin
+    - coverage report
+    - coverage xml -o ${CI_PROJECT_DIR}/admin-coverage.xml
   artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/admin-coverage.xml
     when: always
     reports:
       junit: $CI_PROJECT_DIR/admin-junit.xml
+      cobertura: ${CI_PROJECT_DIR}/admin-coverage.xml
+
 
 Integration Test Engine:
   extends: .test-default
@@ -193,49 +199,48 @@ Integration Test Engine:
   needs:
     - Build Engine
   script:
-    - pytest
+    - cd /code/src/os2datascanner/engine2/tests
+    - coverage run -m pytest integration/
       --junitxml $CI_PROJECT_DIR/integration-junit.xml
       -p no:cacheprovider
       --color=yes
-      src/os2datascanner/engine2/tests/integration/
+    - coverage report
+    - coverage xml -o ${CI_PROJECT_DIR}/intergration-engine-coverage.xml
   artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/intergration-engine-coverage.xml
     when: always
     reports:
       junit: $CI_PROJECT_DIR/integration-junit.xml
+      cobertura: ${CI_PROJECT_DIR}/intergration-engine-coverage.xml
 
 Unit Test Engine:
+  extends: .test-default
   stage: test
   tags:
     - docker
   image:
     name: ${ENGINE_IMAGE}
-    entrypoint: [""]
   variables:
-    SMB_USER: os2
-    SMB_PASSWD: 12345_rosebud_password_admin
-    SMB_SHARE_NAME: general
-    SMB_SHARE_PATH: ${CI_PROJECT_DIR}/src/os2datascanner/engine2/tests/data/engine2
-    SMB_SHARE_BROWSABLE: "no"
-    SMB_SHARE_READONLY: "yes"
-    POSTGRES_DB: os2datascanner
-    POSTGRES_USER: os2datascanner
-    POSTGRES_PASSWORD: os2datascanner
-    COVERAGE_FILE: /tmp/.coverage
     OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
   needs:
     - Build Engine
   script:
-    - pytest
-      -n 1
+    - cd /code/src/os2datascanner/engine2
+    - coverage run -m pytest tests
       --ignore-glob '*integration*'
       --junitxml $CI_PROJECT_DIR/engine-junit.xml
       -p no:cacheprovider
       --color=yes
-      src/os2datascanner/engine2/tests/
+    - coverage report
+    - coverage xml -o ${CI_PROJECT_DIR}/engine-coverage.xml
   artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/engine-coverage.xml
     when: always
     reports:
       junit: $CI_PROJECT_DIR/engine-junit.xml
+      cobertura: ${CI_PROJECT_DIR}/engine-coverage.xml
 
 
 Performance Test:  
@@ -310,15 +315,20 @@ Test Report Application:
   needs:
     - Build Report Application
   script:
-    - pytest
+    - cd /code/src/os2datascanner/projects/report
+    - coverage run -m pytest tests
       --junitxml $CI_PROJECT_DIR/report-junit.xml
       -p no:cacheprovider
       --color=yes
-      /code/src/os2datascanner/projects/report
+    - coverage report
+    - coverage xml -o ${CI_PROJECT_DIR}/report-coverage.xml
   artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/report-coverage.xml
     when: always
     reports:
       junit: $CI_PROJECT_DIR/report-junit.xml
+      cobertura: ${CI_PROJECT_DIR}/report-coverage.xml
 
 Run Engine notice scripts:
   stage: test
