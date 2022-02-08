@@ -61,6 +61,7 @@ class Mode(enum.IntFlag):
         URL to a Mode."""
         try:
             mode_ = context.getxattr(url, XATTR_DOS_ATTRIBUTES)
+            logger.debug(f"mode flags for {url}: {mode_}")
             return Mode(int(mode_, 16))
         except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS):
             return None
@@ -142,7 +143,7 @@ class SMBCSource(Source):
                         and mode & Mode.HIDDEN
                         and (mode & Mode.SYSTEM
                              or name.startswith("~"))):
-                    logger.debug(f"skipping super-hidden object {path}")
+                    logger.info(f"skipping super-hidden object {path}")
                     return
 
                 # Special-case the ~snapshot folder, which we should never scan
