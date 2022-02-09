@@ -1,5 +1,25 @@
 # Changelog
 
+## Version 3.13.6, 9th February 2022
+
+"Postel's Principle"
+
+### General improvements
+
+- The OS2datascanner version number is now also included in the scanner
+  engine's HTTP `User-Agent` field.
+
+- The scanner engine should now do a better job of throttling its web scan
+  functions.
+
+### Bugfixes
+
+- All CSV files, including those generated internally when converting certain
+  spreadsheets, are now scanned correctly.
+
+- The detection code for live backup folders on network shares is now more
+  tolerant of metadata inconsistencies.
+
 ## Version 3.13.5, 27th January 2022
 
 "Back Down, Speed Up"
