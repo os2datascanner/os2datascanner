@@ -6,6 +6,8 @@ import smbc
 from typing import Optional
 from urllib.parse import quote, unquote, urlsplit
 from datetime import datetime
+import operator
+from functools import reduce
 from contextlib import contextmanager
 
 from ..utilities.backoff import DefaultRetrier
@@ -36,13 +38,22 @@ class Mode(enum.IntFlag):
     """A convenience enumeration for manipulating SMB file mode flags."""
     # description of flags mapping
     # https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-smb/65e0c225-5925-44b0-8104-6b91339c709f
-    # https://github.com/samba-team/samba/blob/master/source3/include/libsmbclient.h#L200
+    NONE = 0x0
     READ_ONLY = 0x01
     HIDDEN = 0x02
     SYSTEM = 0x04
-    VOLUME_ID = 0x08
+    # Windows defines VOLUME_ID = 0x08, but CIFS/SMB doesn't
     DIRECTORY = 0x10
     ARCHIVE = 0x20
+    # Windows defines DEVICE = 0x40, but CIFS/SMB doesn't
+    NORMAL = 0x80
+    TEMPORARY = 0x100
+    SPARSE = 0x200
+    REPARSE_POINT = 0x400
+    COMPRESSED = 0x800
+    OFFLINE = 0x1000
+    NONINDEXED = 0x2000
+    ENCRYPTED = 0x4000
 
     @staticmethod
     def for_url(context: smbc.Context, url: str) -> Optional['Mode']:
@@ -50,9 +61,13 @@ class Mode(enum.IntFlag):
         URL to a Mode."""
         try:
             mode_ = context.getxattr(url, XATTR_DOS_ATTRIBUTES)
+            logger.debug(f"mode flags for {url}: {mode_}")
             return Mode(int(mode_, 16))
         except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS):
             return None
+
+
+ModeMask = reduce(operator.or_, Mode, Mode.NONE)
 
 
 class SMBCSource(Source):
@@ -93,6 +108,47 @@ class SMBCSource(Source):
     def censor(self):
         return SMBCSource(self.unc, None, None, None, self.driveletter)
 
+    @classmethod
+    def is_skippable(cls, context, url, path, name):
+        """Evaluates whether or not the given file is skippable: i.e., whether
+        its attributes and other properties indicate that we should ignore it.
+
+        (Note that the policy decision about whether or not to *actually* skip
+        a skippable file is not implemented here.)"""
+        mode = Mode.for_url(context, url)
+
+        # If the Mode.NORMAL bit is set *along with* other bits...
+        if ((mode & Mode.NORMAL
+                and mode != Mode.NORMAL)
+                # ... or if a bit not permitted by the specification is set...
+                or mode & ~ModeMask):
+            # ... then something has gone very badly wrong
+            logger.warning(
+                    f"mode flags for {path} are incoherent:"
+                    f" {mode!s}"
+                    " (Samba bug #14101?)")
+            if name.startswith("~"):
+                logger.info("skipping perhaps-hidden object {path}")
+                return True
+
+        # If this object is super-hidden -- that is, if it has the hidden bit
+        # set plus either the system bit or the "~" character at the start of
+        # its name -- then ignore it
+        if (mode is not None
+                and mode & Mode.HIDDEN
+                and (mode & Mode.SYSTEM
+                     or name.startswith("~"))):
+            logger.info(f"skipping super-hidden object {path}")
+            return True
+
+        # Special-case the ~snapshot folder, which we should never scan
+        # (XXX: revisit this once we know the Samba bug is fixed)
+        if name == "~snapshot":
+            logger.info(f"skipping snapshot directory {path}")
+            return True
+
+        return False
+
     def handles(self, sm):  # noqa: CCR001, E501 too high cognitive complexity
         url, context = sm.open(self)
 
@@ -103,18 +159,10 @@ class SMBCSource(Source):
             path = '/'.join([h.name for h in here])
             url_here = url + "/" + path
 
-            if self._skip_super_hidden:
-                mode = Mode.for_url(context, url_here)
-
-                # If this object is super-hidden -- that is, if it has the
-                # hidden bit set plus either the system bit or the "~"
-                # character at the start of its name -- then ignore it
-                if (mode is not None
-                        and mode & Mode.HIDDEN
-                        and (mode & Mode.SYSTEM
-                             or name.startswith("~"))):
-                    logger.debug(f"skipping super-hidden object {path}")
-                    return
+            if (self._skip_super_hidden
+                    and SMBCSource.is_skippable(
+                            context, url_here, path, name)):
+                return
 
             if entity.smbc_type == smbc.DIR and name not in (".", ".."):
                 try:
