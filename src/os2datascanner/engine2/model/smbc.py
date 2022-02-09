@@ -108,6 +108,47 @@ class SMBCSource(Source):
     def censor(self):
         return SMBCSource(self.unc, None, None, None, self.driveletter)
 
+    @classmethod
+    def is_skippable(cls, context, url, path, name):
+        """Evaluates whether or not the given file is skippable: i.e., whether
+        its attributes and other properties indicate that we should ignore it.
+
+        (Note that the policy decision about whether or not to *actually* skip
+        a skippable file is not implemented here.)"""
+        mode = Mode.for_url(context, url)
+
+        # If the Mode.NORMAL bit is set *along with* other bits...
+        if ((mode & Mode.NORMAL
+                and mode != Mode.NORMAL)
+                # ... or if a bit not permitted by the specification is set...
+                or mode & ~ModeMask):
+            # ... then something has gone very badly wrong
+            logger.warning(
+                    f"mode flags for {path} are incoherent:"
+                    f" {mode!s}"
+                    " (Samba bug #14101?)")
+            if name.startswith("~"):
+                logger.info("skipping perhaps-hidden object {path}")
+                return True
+
+        # If this object is super-hidden -- that is, if it has the hidden bit
+        # set plus either the system bit or the "~" character at the start of
+        # its name -- then ignore it
+        if (mode is not None
+                and mode & Mode.HIDDEN
+                and (mode & Mode.SYSTEM
+                     or name.startswith("~"))):
+            logger.info(f"skipping super-hidden object {path}")
+            return True
+
+        # Special-case the ~snapshot folder, which we should never scan
+        # (XXX: revisit this once we know the Samba bug is fixed)
+        if name == "~snapshot":
+            logger.info(f"skipping snapshot directory {path}")
+            return True
+
+        return False
+
     def handles(self, sm):  # noqa: CCR001, E501 too high cognitive complexity
         url, context = sm.open(self)
 
@@ -118,39 +159,10 @@ class SMBCSource(Source):
             path = '/'.join([h.name for h in here])
             url_here = url + "/" + path
 
-            if self._skip_super_hidden:
-                mode = Mode.for_url(context, url_here)
-
-                # If the Mode.NORMAL bit is set *along with* other bits...
-                if ((mode & Mode.NORMAL
-                        and mode != Mode.NORMAL)
-                        # ... or if a bit not permitted by the specification is
-                        # set...
-                        or mode & ~Mode_Mask):
-                    # ... then something has gone very badly wrong
-                    logger.warning(
-                            f"mode flags for {path} are incoherent:"
-                            f" {mode!s}"
-                            " (Samba bug #14101?)")
-                    if name.startswith("~"):
-                        logger.info("skipping perhaps-hidden object {path}")
-                        return
-
-                # If this object is super-hidden -- that is, if it has the
-                # hidden bit set plus either the system bit or the "~"
-                # character at the start of its name -- then ignore it
-                if (mode is not None
-                        and mode & Mode.HIDDEN
-                        and (mode & Mode.SYSTEM
-                             or name.startswith("~"))):
-                    logger.info(f"skipping super-hidden object {path}")
-                    return
-
-                # Special-case the ~snapshot folder, which we should never scan
-                # (XXX: revisit this once we know the Samba bug is fixed)
-                if name == "~snapshot":
-                    logger.info(f"skipping snapshot directory {path}")
-                    return
+            if (self._skip_super_hidden
+                    and SMBCSource.is_skippable(
+                            context, url_here, path, name)):
+                return
 
             if entity.smbc_type == smbc.DIR and name not in (".", ".."):
                 try:
