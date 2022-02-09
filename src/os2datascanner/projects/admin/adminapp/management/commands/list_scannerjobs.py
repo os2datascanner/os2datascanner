@@ -35,7 +35,10 @@ class Command(BaseCommand):
     help = "List all scannerjobs and some of their attributes."
 
     def handle(self, *args, **options):
+        self.list_scannerjobs()
 
+    def list_scannerjobs(self):
+        scannerjobs = {}
         for scannerjob in Scanner.objects.all():
             pk = scannerjob.pk
             name = scannerjob.name
@@ -43,6 +46,7 @@ class Command(BaseCommand):
             scanned_objects = None
             scan_status = None
             check_up_msgs = ScheduledCheckup.objects.filter(scanner=scannerjob.pk).count()
+            msg = ""
 
             if ScanStatus.objects.filter(scanner=scannerjob.pk).exists():
                 # We are only interested in the most recent ScanStatus object,
@@ -52,9 +56,17 @@ class Command(BaseCommand):
                 start_time = scan_status_obj.start_time
                 scanned_objects = scan_status_obj.scanned_objects
                 scan_status = scan_status_obj.finished
+                msg = scan_status_obj.message
 
             self.stdout.write(self.style.SUCCESS(
                 f'\nScanner PK: {pk} \nScanner Name: {name} \n'
                 f'Start Time: {start_time} \nScanned Objects: {scanned_objects} \n'
                 f'Scan Status Finished(T/F): {scan_status} \n'
-                f'Check-up Msg Obj Count: {check_up_msgs}\n'))
+                f'Check-up Msg Obj Count: {check_up_msgs}\n'
+                f'message: {msg}\n'))
+            scannerjobs[name] = {
+                "pk": pk,
+                "name": name,
+                "start_time": start_time,
+                "scanned_objects": scanned_objects}
+        return scannerjobs
