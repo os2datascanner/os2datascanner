@@ -6,6 +6,7 @@ from os2datascanner.engine2.model.core import (Source, SourceManager)
 from os2datascanner.engine2.model.file import (
         FilesystemSource, FilesystemHandle)
 from os2datascanner.engine2.model.data import DataSource
+from os2datascanner.engine2.model.smbc import SMBCSource
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
 
 
@@ -104,6 +105,23 @@ class Engine2ContainerTest(unittest.TestCase):
             source = Source.from_url(
                     "smbc://os2:12345_rosebud_password_admin@samba/general")
             self.process(source, sm)
+
+    def test_smbc_snapshot_exclusion(self):
+        with SourceManager() as sm:
+            source = SMBCSource(
+                    "//samba/general/backup",
+                    "os2", "12345_rosebud_password_admin",
+                    skip_super_hidden=False)
+            self.assertEquals(
+                    [k.relative_path for k in source.handles(sm)],
+                    ["~snapshot/test-vector-hidden"],
+                    "unskipped file not found")
+
+            source._skip_super_hidden = True
+            self.assertEquals(
+                    [k.relative_path for k in source.handles(sm)],
+                    [],
+                    "skipped file unexpectedly found")
 
     def test_derived_source(self):
         with SourceManager():
