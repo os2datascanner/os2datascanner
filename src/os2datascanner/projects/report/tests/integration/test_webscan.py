@@ -45,7 +45,8 @@ class WebScanTest(unittest.TestCase):
         messages_2 = response_2.content.decode("utf-8")
         match_locations_2 = self.parse_api_response(messages_2)
 
-        assert excluded_file not in match_locations_2
+        self.assertNotIn(excluded_file, match_locations_2,
+                         "the excluded file was found in the scan")
 
     def test_web_scan_with_last_modified(self):
         """ A webscan with last modified should find

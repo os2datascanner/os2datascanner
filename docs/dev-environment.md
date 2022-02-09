@@ -244,21 +244,23 @@ These depend on some auxillary services:
     If you want to use a customized websource for testing, you can also go to:
     `http://0.0.0.0:5000/websource` and add query parameters to define your websource.
     the site will respond with a reference to a web site which is randomly generated.
-    the parameters allowed are: size (in bytes), sub_files, seed, 
+    the parameters allowed are: size (in bytes), sub_files, seed,
     matches( ie. `matches={"match":amount}`), and depth. The generated sources are
     available to the host by replacing `datasynth` with `localhost` or `0.0.0.0`.
 
-    Note: due to limitations of the way datasynth configures the generation of data,
-    and because the source both can contain a specific amount of matches scattered 
-    through-out dynamically via links, but also with sitemap. This means that to allow a 
-    source having matches spread throughout all subfiles (for dynamic exploration) 
+    Note: Due to the limitations in the way datasynth configures the generation of data,
+    and because a web-source can contain both a specific amount of matches scattered
+    through-out via links, but also a sitemap. This means that to allow a
+    web-source having matches spread throughout all subfiles (for dynamic exploration)
     the sitemap cannot take into account how many matches are included in the index/landing
-    page without a rewrite of datasynth. this means that when scanning with a sitemap, 
-    datascanner will find all the matches on the landing page and all the matches created 
-    with the sitemap. this leads to more matches than configured in the source params.
-    (landingpage.matches + sitemap.matches) 
+    page without a rewrite of datasynth. This means that when scanning with a sitemap,
+    datascanner will find all the matches on the landing page and all the matches created
+    with the sitemap, leading to more matches found than configured in the source params.
+    So when creating tests with datasynth using a sitemap keep this in mind. The easy
+    workaround is to not count matches found on the landing page.
+    (landing_page.matches + sitemap.matches)
 
--   `mailhog`: a SMTP-server for testing purposes. 
+-   `mailhog`: a SMTP-server for testing purposes.
     web interface available at `http://localhost:8025/`.
 
 
