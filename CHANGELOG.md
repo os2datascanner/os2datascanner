@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 3.13.7, 10th February 2022
+
+"Brown Paper Bag"
+
+This minor release improves some of the project's internal documentation and
+fixes a bug in a recently-introduced migration.
+
 ## Version 3.13.6, 9th February 2022
 
 "Postel's Principle"
