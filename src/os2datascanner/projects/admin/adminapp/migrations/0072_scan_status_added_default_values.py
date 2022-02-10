@@ -3,13 +3,43 @@
 from django.db import migrations, models
 
 
+def scan_status_introduce_default_values(apps, schema_editor):
+    ScanStatus = apps.get_model("os2datascanner", "ScanStatus")
+    print(f"starting scan status update")
+    print("Number of explored_sources updated: {0}".format(
+        ScanStatus.objects.filter(
+            explored_sources__isnull=True).update(
+            explored_sources=0)))
+    print("Number of scanned_objects updated {0}:".format(
+        ScanStatus.objects.filter(
+            scanned_objects__isnull=True).update(
+            scanned_objects=0)))
+    print("Number of scanned_size updated {0}:".format(
+        ScanStatus.objects.filter(
+            scanned_size__isnull=True).update(
+            scanned_size=0)))
+    print("Number of total_objects updated {0}:".format(
+        ScanStatus.objects.filter(
+            total_objects__isnull=True).update(
+            total_objects=0)))
+    print("Number of total_objects updated {0}:".format(
+        ScanStatus.objects.filter(
+            total_sources__isnull=True).update(
+            total_sources=0)))
+    
+
 class Migration(migrations.Migration):
+    atomic = False
 
     dependencies = [
         ('os2datascanner', '0071_alter_scanstatus_message'),
     ]
 
     operations = [
+        migrations.RunPython(
+            scan_status_introduce_default_values,
+            reverse_code=migrations.RunPython.noop,
+        ),
         migrations.AlterField(
             model_name='scanstatus',
             name='explored_sources',
