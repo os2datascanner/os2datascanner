@@ -7,6 +7,7 @@ from typing import Optional
 from urllib.parse import quote, unquote, urlsplit
 from datetime import datetime
 import operator
+import warnings
 from functools import reduce
 from contextlib import contextmanager
 
@@ -117,29 +118,28 @@ class SMBCSource(Source):
         a skippable file is not implemented here.)"""
         mode = Mode.for_url(context, url)
 
-        # If the Mode.NORMAL bit is set *along with* other bits...
-        if ((mode & Mode.NORMAL
-                and mode != Mode.NORMAL)
-                # ... or if a bit not permitted by the specification is set...
-                or mode & ~ModeMask):
-            # ... then something has gone very badly wrong
-            logger.warning(
-                    f"mode flags for {path} are incoherent:"
-                    f" {mode!s}"
-                    " (Samba bug #14101?)")
-            if name.startswith("~"):
-                logger.info("skipping perhaps-hidden object {path}")
-                return True
+        if mode is not None:
+            # If the Mode.NORMAL bit is set *along with* other bits...
+            if ((mode & Mode.NORMAL
+                    and mode != Mode.NORMAL)
+                    # ... or if a bit not permitted by the specification is
+                    # set...
+                    or mode & ~ModeMask):
+                # ... then something has gone very badly wrong
+                warnings.warn(
+                        "incoherent mode flags detected"
+                        " (Samba bug #14101?)")
+                if name.startswith("~"):
+                    logger.info("skipping perhaps-hidden object {path}")
+                    return True
 
-        # If this object is super-hidden -- that is, if it has the hidden bit
-        # set plus either the system bit or the "~" character at the start of
-        # its name -- then ignore it
-        if (mode is not None
-                and mode & Mode.HIDDEN
-                and (mode & Mode.SYSTEM
-                     or name.startswith("~"))):
-            logger.info(f"skipping super-hidden object {path}")
-            return True
+            # If this object is super-hidden -- that is, if it has the hidden
+            # bit set plus either the system bit or the "~" character at the
+            # start of its name -- then ignore it
+            if (mode & Mode.HIDDEN
+                    and (mode & Mode.SYSTEM or name.startswith("~"))):
+                logger.info(f"skipping super-hidden object {path}")
+                return True
 
         # Special-case the ~snapshot folder, which we should never scan
         # (XXX: revisit this once we know the Samba bug is fixed)
