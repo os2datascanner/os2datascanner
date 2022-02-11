@@ -32,7 +32,7 @@ def explore(sm, msg):
             # Huh? Surely a standalone explorer should have handled this
             logger.warning("worker exploring unexpected nested Source")
             yield from explore(sm, message)
-        elif channel in ("os2ds_problems",):
+        else:
             yield channel, message
 
 
@@ -42,7 +42,7 @@ def process(sm, msg):
             yield from match(sm, message)
         elif channel == "os2ds_scan_specs":
             yield from explore(sm, message)
-        elif channel in ("os2ds_problems",):
+        else:
             yield channel, message
 
 
@@ -52,7 +52,7 @@ def match(sm, msg):
             yield from tag(sm, message)
         elif channel == "os2ds_conversions":
             yield from process(sm, message)
-        elif channel in ("os2ds_matches",):
+        else:
             yield channel, message
 
 
@@ -63,14 +63,10 @@ def tag(sm, msg):
 def message_received_raw(body, channel, source_manager):  # noqa: CCR001, E501 too high cognitive complexity
     try:
         for channel, message in process(source_manager, body):
-            if channel == "os2ds_matches":
-                for matches_q in ("os2ds_matches", "os2ds_checkups",):
-                    yield (matches_q, message)
-            elif channel == "os2ds_metadata":
-                yield ("os2ds_metadata", message)
-            elif channel == "os2ds_problems":
-                for problems_q in ("os2ds_problems", "os2ds_checkups",):
-                    yield (problems_q, message)
+            if channel in WRITES_QUEUES:
+                yield (channel, message)
+            else:
+                logger.error(f"unexpected message to queue {channel}")
     finally:
         message = messages.ConversionMessage.from_json_object(body)
         object_size = 0
