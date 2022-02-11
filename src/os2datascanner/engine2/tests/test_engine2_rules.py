@@ -4,7 +4,8 @@ from datetime import datetime, timezone
 from os2datascanner.engine2.rules.address import AddressRule
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
-from os2datascanner.engine2.rules.dummy import AlwaysMatchesRule
+from os2datascanner.engine2.rules.dummy import (
+        NeverMatchesRule, AlwaysMatchesRule)
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.rules.logical import (
     OrRule,
@@ -13,10 +14,13 @@ from os2datascanner.engine2.rules.logical import (
     AllRule,
     oxford_comma,
 )
+from os2datascanner.engine2.rules.meta import HasConversionRule
 from os2datascanner.engine2.rules.name import NameRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+
+from os2datascanner.engine2.conversions.types import OutputType
 
 
 class RuleTests(unittest.TestCase):
@@ -491,3 +495,24 @@ speciellæger.""",
                 self.assertEqual(
                         tuple(wrl.match(in_value)),
                         expected)
+
+    def test_all_of_them(self):
+        rule = AndRule(
+                HasConversionRule(OutputType.Text),
+                CPRRule(),
+                NameRule(),
+                OrRule(NeverMatchesRule(), AlwaysMatchesRule()),
+                NotRule(HasConversionRule(OutputType.ImageDimensions)),
+                AddressRule())
+        rhu = rule.try_match({
+            OutputType.Text.value: (
+                    "Jens Jensen, 111111-1118,"
+                    " Strandvej 198, 1tv, 2000 Frederiksberg"),
+            OutputType.NoConversions.value: None,
+            OutputType.AlwaysTrue.value: True,
+            OutputType.ImageDimensions.value: None,
+        })
+        self.assertEqual(
+                rhu[0],
+                True,
+                "complex match failed")

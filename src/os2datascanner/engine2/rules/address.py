@@ -86,8 +86,8 @@ class AddressRule(SimpleRule):
                                     common_loader.load_dataset(
                                         "addresses", "da_addresses")))
 
-        self._whitelist = [n.upper() for n in (whitelist or [])]
-        self._blacklist = [n.upper() for n in (blacklist or [])]
+        self._whitelist = frozenset(n.upper() for n in (whitelist or []))
+        self._blacklist = frozenset(n.upper() for n in (blacklist or []))
 
     @property
     def presentation_raw(self):
@@ -127,14 +127,14 @@ class AddressRule(SimpleRule):
     def to_json_object(self):
         return dict(
             **super().to_json_object(),
-            whitelist=self._whitelist,
-            blacklist=self._blacklist,
+            whitelist=list(self._whitelist),
+            blacklist=list(self._blacklist),
         )
 
     @staticmethod
     @Rule.json_handler(type_label)
     def from_json_object(obj):
         return AddressRule(
-                whitelist=obj["whitelist"],
-                blacklist=obj["blacklist"],
+                whitelist=frozenset(obj["whitelist"]),
+                blacklist=frozenset(obj["blacklist"]),
                 sensitivity=Sensitivity.make_from_dict(obj))
