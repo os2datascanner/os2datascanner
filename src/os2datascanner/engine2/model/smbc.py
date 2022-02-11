@@ -7,6 +7,7 @@ from typing import Optional
 from urllib.parse import quote, unquote, urlsplit
 from datetime import datetime
 import operator
+import warnings
 from functools import reduce
 from contextlib import contextmanager
 
@@ -125,9 +126,8 @@ class SMBCSource(Source):
                     # set...
                     or mode & ~ModeMask):
                 # ... then something has gone very badly wrong
-                logger.warning(
-                        f"mode flags for {path} are incoherent:"
-                        f" {mode!s}"
+                warnings.warn(
+                        "incoherent mode flags detected"
                         " (Samba bug #14101?)")
                 if name.startswith("~"):
                     logger.info("skipping perhaps-hidden object {path}")
