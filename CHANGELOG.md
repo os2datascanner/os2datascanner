@@ -1,5 +1,19 @@
 # Changelog
 
+## Version 3.13.8, 11th February 2022
+
+"The Long Walk"
+
+Bugfixes:
+
+- The name and address rules now behave correctly again.
+
+- Errors produced during the rule matching process are once more correctly
+  transmitted to the report module.
+
+- Additional safety preconditions are now performed before checking SMB file
+  attributes.
+
 ## Version 3.13.7, 10th February 2022
 
 "Brown Paper Bag"
