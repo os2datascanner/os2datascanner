@@ -203,6 +203,8 @@ services:
     ]
     ports:
       - "8070:5000"
+    environment:
+      -  OS2DS_ADMIN_USER_CONFIG_PATH="/dev-environment/api/dev-settings.toml"
     volumes:
       - ./dev-environment/api/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner

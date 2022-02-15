@@ -151,6 +151,8 @@ Build API:
   services:
     - name: egnmagenta/os2datasynth:v0.2.5
       alias: datasynth
+      variables:
+        DATASYNTH_HOST: "datasynth"
     - postgres:12
     - rabbitmq:3.8-alpine
     - name: magentalabs/samba-test:1.1
@@ -167,9 +169,11 @@ Build API:
     POSTGRES_PASSWORD: os2datascanner
   coverage: '/^TOTAL.+?(\d+\%)$/'
 
-Test Admin Application:
+Unit Test Admin Application:
   extends: .test-default
-  image: ${ADMIN_IMAGE}
+  image:
+    name: ${ADMIN_IMAGE}
+    entrypoint: [""]
   variables:
     OS2DS_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
   needs:
@@ -177,7 +181,8 @@ Test Admin Application:
   script:
     - cd /code/src/os2datascanner/projects/admin
     - coverage run -m pytest tests
-      --junitxml $CI_PROJECT_DIR/admin-junit.xml
+      --ignore=/code/src/os2datascanner/projects/admin/tests/integration
+      --junitxml $CI_PROJECT_DIR/admin_unit_tests-junit.xml
       -p no:cacheprovider
       --color=yes
     - coverage report
@@ -294,7 +299,6 @@ Unit Test Engine:
       junit: $CI_PROJECT_DIR/engine-junit.xml
       cobertura: ${CI_PROJECT_DIR}/engine-coverage.xml
 
-
 Performance Test:
   image:
     name: ${ADMIN_IMAGE}
@@ -310,25 +314,19 @@ Performance Test:
       alias: datasynth
       variables:
        DATASYNTH_HOST: "datasynth"
-
     - rabbitmq:3.8-alpine
     - postgres:12
-
     - name: magentalabs/samba-test:1.1
       alias: samba
-
     - name: ${ENGINE_IMAGE}
       alias: worker
       command: [worker]
-
     - name: ${ENGINE_IMAGE}
       alias: explorer
       command: [explorer]
-
     - name: ${ENGINE_IMAGE}
       alias: exporter
       command: [exporter]
-
   variables:
     SMB_USER: os2
     SMB_PASSWD: 12345_rosebud_password_admin
@@ -350,6 +348,7 @@ Performance Test:
     - export OS2DS_ADMIN_USER_CONFIG_PATH=${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
     - cd src/os2datascanner/projects/admin
     - bash /code/docker/docker-entrypoint.sh
+    
     # The pipeline collector cannot be created as a service, as the ADMIN_USER_PATH
     # overwrites the ENGINE_USER_PATH and individual services cannot have variables set.
     - python manage.py pipeline_collector &
@@ -359,7 +358,7 @@ Performance Test:
     paths:
       - ${CI_PROJECT_DIR}/performance.prof
 
-Test Report Application:
+Unit Test Report Application:
   extends: .test-default
   image: ${REPORT_IMAGE}
   variables:
@@ -371,6 +370,7 @@ Test Report Application:
     - coverage run -m pytest tests
       --ignore=/code/src/os2datascanner/projects/report/tests/integration
       --junitxml $CI_PROJECT_DIR/report-junit.xml
+      --ignore=/code/src/os2datascanner/projects/report/tests/integration
       -p no:cacheprovider
       --color=yes
     - coverage report
@@ -471,10 +471,12 @@ Migration Status Report:
     - Build Admin Application
     - Build Engine
     - Build API
-    - Test Admin Application
+    - Unit Test Admin Application
+    - Integration Test Admin Application
     - Integration Test Engine
     - Unit Test Engine
-    - Test Report Application
+    - Unit Test Report Application
+    - Integration Test Report Application
     - Migration Status Admin
     - Migration Status Report
   image: alpine
