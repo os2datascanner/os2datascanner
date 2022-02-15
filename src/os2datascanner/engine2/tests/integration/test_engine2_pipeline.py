@@ -1,4 +1,5 @@
 import os.path
+from copy import deepcopy
 import base64
 import unittest
 
@@ -59,6 +60,21 @@ expected_matches = [
 ]
 
 
+raw_scan_spec = {
+    "scan_tag": {
+        "scanner": {
+            "name": "integration_test",
+            "pk": 0
+        },
+        "user": None,
+        "organisation": "Vejstrand Kommune",
+        "time": "2020-01-01T00:00:00+00:00"
+    },
+    "source": Source.from_url(data_url).to_json_object(),
+    "rule": rule.to_json_object()
+}
+
+
 class StopHandling(Exception):
     pass
 
@@ -93,22 +109,7 @@ class Engine2PipelineTests(unittest.TestCase):
                 self.unhandled.append((body, channel,))
 
     def test_simple_regex_match(self):
-        print(Source.from_url(data_url).to_json_object())
-        obj = {
-            "scan_tag": {
-                "scanner": {
-                    "name": "integration_test",
-                    "pk": 0
-                },
-                "user": None,
-                "organisation": "Vejstrand Kommune",
-                "time": "2020-01-01T00:00:00+00:00"
-            },
-            "source": Source.from_url(data_url).to_json_object(),
-            "rule": rule.to_json_object()
-        }
-
-        self.messages.append((obj, "os2ds_scan_specs",))
+        self.messages.append((raw_scan_spec, "os2ds_scan_specs",))
         self.run_pipeline()
 
         self.assertEqual(
@@ -125,21 +126,10 @@ class Engine2PipelineTests(unittest.TestCase):
                 "RegexRule match did not produce expected result")
 
     def test_unsupported_sources(self):
-        obj = {
-            "scan_tag": {
-                "scanner": {
-                    "name": "integration_test",
-                    "pk": 0
-                },
-                "user": None,
-                "organisation": "Vejstrand Kommune",
-                "time": "2020-01-01T00:00:00+00:00"
-            },
-            "source": {
-                "type": "forbidden-knowledge",
-                "of": ["good", "evil"]
-            },
-            "rule": rule.to_json_object()
+        obj = deepcopy(raw_scan_spec)
+        obj["source"] = {
+            "type": "forbidden-knowledge",
+            "of": ["good", "evil"]
         }
 
         self.messages.append((obj, "os2ds_scan_specs",))
@@ -153,24 +143,17 @@ class Engine2PipelineTests(unittest.TestCase):
                 "os2ds_problems")
 
     def test_ocr_skip(self):
-        obj = {
-            "scan_tag": {
-                "scanner": {
-                    "name": "integration_test",
-                    "pk": 0
-                },
-                "user": None,
-                "organisation": "Vejstrand Kommune",
-                "time": "2020-01-01T00:00:00+00:00"
-            },
-            "source": FilesystemSource(os.path.join(
-                    test_data_path, "ocr", "good")).to_json_object(),
-            "rule": CPRRule(
-                modulus_11=False,
-                ignore_irrelevant=False).to_json_object(),
-            "configuration": {
-                "skip_mime_types": ["image/*"]
-            }
+        obj = deepcopy(raw_scan_spec)
+        obj["source"] = (
+                FilesystemSource(os.path.join(
+                        test_data_path, "ocr", "good")
+                ).to_json_object())
+        obj["rule"] = (
+                CPRRule(
+                        modulus_11=False, ignore_irrelevant=False
+                ).to_json_object())
+        obj["configuration"] = {
+            "skip_mime_types": ["image/*"]
         }
 
         self.messages.append((obj, "os2ds_scan_specs",))
@@ -185,23 +168,15 @@ class Engine2PipelineTests(unittest.TestCase):
                 self.fail("unexpected message in queue {0}".format(queue))
 
     def test_corrupted_container(self):
-        obj = {
-            "scan_tag": {
-                "scanner": {
-                    "name": "integration_test",
-                    "pk": 0
-                },
-                "user": None,
-                "organisation": "Vejstrand Kommune",
-                "time": "2020-01-01T00:00:00+00:00"
-            },
-            "source": FilesystemSource(
-                os.path.join(test_data_path, "pdf", "corrupted")).to_json_object(),
-            "rule": CPRRule(
-                modulus_11=False,
-                ignore_irrelevant=False).to_json_object(),
-            "configuration": {}
-        }
+        obj = deepcopy(raw_scan_spec)
+        obj["source"] = (
+                FilesystemSource(
+                        os.path.join(test_data_path, "pdf", "corrupted")
+                ).to_json_object())
+        obj["rule"] = (
+                CPRRule(
+                        modulus_11=False, ignore_irrelevant=False
+                ).to_json_object())
 
         self.messages.append((obj, "os2ds_scan_specs",))
         self.run_pipeline()
@@ -216,20 +191,9 @@ class Engine2PipelineTests(unittest.TestCase):
                 "os2ds_problems")
 
     def test_rule_crash(self):
-        obj = {
-            "scan_tag": {
-                "scanner": {
-                    "name": "integration_test",
-                    "pk": 0
-                },
-                "user": None,
-                "organisation": "Vejstrand Kommune",
-                "time": "2020-01-01T00:00:00+00:00"
-            },
-            "source": Source.from_url(data_url).to_json_object(),
-            "rule": {
-                "type": "buggy"
-            }
+        obj = deepcopy(raw_scan_spec)
+        obj["rule"] = {
+            "type": "buggy"
         }
 
         self.messages.append((obj, "os2ds_scan_specs",))
