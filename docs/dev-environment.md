@@ -244,11 +244,22 @@ These depend on some auxillary services:
     If you want to use a customized websource for testing, you can also go to:
     `http://0.0.0.0:5000/websource` and add query parameters to define your websource.
     the site will respond with a reference to a web site which is randomly generated.
-    the parameters allowed are: size (in bytes), sub_files, seed, 
+    the parameters allowed are: size (in bytes), sub_files, seed,
     matches( ie. `matches={"match":amount}`), and depth. The generated sources are
     available to the host by replacing `datasynth` with `localhost` or `0.0.0.0`.
 
--   `mailhog`: a SMTP-server for testing purposes. 
+Note: Due to limitations in the way datasynth is configured to generate data, 
+scanning a datasynth web-source with sitemap can lead to more matches than expected.
+
+A generated web-source can contain matches scattered throughout subfiles(links to other pages/files), 
+but the generated sitemap currently cannot take into account how many matches are located at the root/index page. 
+This means that when scanning with a sitemap, datascanner will find all the matches on the landing page and all the matches created
+with the sitemap, leading to more matches found than configured in the source params.
+So when creating tests with datasynth using a sitemap keep this in mind. The easy
+workaround is to not count matches found on the landing page. (landing_page.matches + sitemap.matches)
+
+
+-   `mailhog`: a SMTP-server for testing purposes.
     web interface available at `http://localhost:8025/`.
 
 

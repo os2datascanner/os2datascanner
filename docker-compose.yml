@@ -368,7 +368,7 @@ services:
       - 8910:80
 
   datasynth:
-    image: egnmagenta/os2datasynth:v0.2.4
+    image: datasynth:latest #egnmagenta/os2datasynth:v0.2.5
     environment:
       - DATASYNTH_HOST=datasynth
     ports:
