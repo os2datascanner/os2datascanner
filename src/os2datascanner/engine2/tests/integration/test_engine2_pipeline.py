@@ -10,7 +10,7 @@ from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.logical import OrRule
 from os2datascanner.engine2.pipeline import (
-        explorer, processor, matcher, tagger, exporter)
+        explorer, processor, matcher, tagger, exporter, worker, messages)
 
 
 here_path = os.path.dirname(__file__)
@@ -94,6 +94,24 @@ def handle_message(body, channel):
         # "os2ds_status" messages get dropped on the floor
 
 
+def handle_message_worker(body, channel, *, stat_dict=None):
+    with SourceManager() as sm:
+        if channel == "os2ds_scan_specs":
+            yield from explorer.message_received_raw(body, channel, sm)
+        elif channel in "os2ds_conversions":
+            yield from worker.message_received_raw(body, channel, sm)
+        elif channel in ("os2ds_matches", "os2ds_metadata", "os2ds_problems"):
+            yield from exporter.message_received_raw(body, channel, sm)
+        elif channel == "os2ds_status" and stat_dict is not None:
+            message = messages.StatusMessage.from_json_object(body)
+            for k in ("total_objects", "object_size",):
+                value = getattr(message, k)
+                if value is not None:
+                    if k not in stat_dict:
+                        stat_dict[k] = 0
+                    stat_dict[k] += value
+
+
 class Engine2PipelineTests(unittest.TestCase):
     def setUp(self):
         self.messages = []
@@ -111,6 +129,26 @@ class Engine2PipelineTests(unittest.TestCase):
     def test_simple_regex_match(self):
         self.messages.append((raw_scan_spec, "os2ds_scan_specs",))
         self.run_pipeline()
+
+        self.assertEqual(
+                len(self.unhandled),
+                2)
+        results = {body["origin"]: body for body, _ in self.unhandled}
+
+        self.assertTrue(
+                results["os2ds_matches"]["matched"],
+                "RegexRule match failed")
+        self.assertEqual(
+                results["os2ds_matches"]["matches"],
+                expected_matches,
+                "RegexRule match did not produce expected result")
+
+    def test_simple_regex_match_with_worker(self):
+        self.messages.append((raw_scan_spec, "os2ds_scan_specs",))
+
+        stat_dict = {}
+
+        self.run_pipeline(runner=handle_message_worker, stat_dict=stat_dict)
 
         self.assertEqual(
                 len(self.unhandled),
