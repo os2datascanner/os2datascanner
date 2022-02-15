@@ -1,12 +1,11 @@
 from django.db import models, DataError, connection, transaction
 from django.test import TestCase
 
-from ..reportapp.management.commands import pipeline_collector
 from ..reportapp.utils import prepare_json_object, get_max_sens_prop_value
 from ..reportapp.models.documentreport_model import DocumentReport
 
-from .generate_test_data import \
-    get_positive_match_with_probability_and_sensitivity
+from .generate_test_data import (
+        get_positive_match_with_probability_and_sensitivity, record_match)
 
 
 class JSONHolder(models.Model):
@@ -32,16 +31,7 @@ class UtilsTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.generate_match(
-            get_positive_match_with_probability_and_sensitivity())
-
-    @classmethod
-    def generate_match(cls, match):
-        prev, new = pipeline_collector.get_reports_for(
-            match.handle.to_json_object(),
-            match.scan_spec.scan_tag)
-        pipeline_collector.handle_match_message(
-            prev, new, match.to_json_object())
+        record_match(get_positive_match_with_probability_and_sensitivity())
 
     def test_get_max_sens_prop_value(self):
         self.assertEqual(1.0,

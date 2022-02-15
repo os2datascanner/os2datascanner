@@ -140,15 +140,21 @@ def get_max_sens_prop_value(doc_report_obj, key):
     """Helper method for migration 0017_documentreport_added_sensitivity_and_probability.
     This method returns either a Sensitivity object or probability maximum value.
     The method is located in utils as could become handy else where."""
+    warnings.warn(
+            ("get_max_sens_prop_value is deprecated;"
+             " use DocumentReport.matches directly"),
+            DeprecationWarning,
+            stacklevel=2)
 
     if not hasattr(doc_report_obj, "data"):
-        raise NotImplementedError()
-
-    if (doc_report_obj.data
-            and "matches" in doc_report_obj.data
-            and doc_report_obj.data["matches"]):
-        return getattr(messages.MatchesMessage.from_json_object(
-            doc_report_obj.data["matches"]), key)
+        if doc_report_obj.matches:
+            return getattr(doc_report_obj.matches, key)
+    else:
+        if (doc_report_obj.data
+                and "matches" in doc_report_obj.data
+                and doc_report_obj.data["matches"]):
+            return getattr(messages.MatchesMessage.from_json_object(
+                doc_report_obj.data["matches"]), key)
 
 
 def create_alias_and_match_relations(sub_alias):

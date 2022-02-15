@@ -12,7 +12,6 @@ from os2datascanner.engine2.model.ews import (
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 
-from ..reportapp.management.commands import pipeline_collector
 from ..reportapp.models.aliases.emailalias_model import EmailAlias
 from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.models.roles.leader_model import Leader
@@ -20,6 +19,8 @@ from ..reportapp.models.roles.dpo_model import DataProtectionOfficer
 from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.views import StatisticsPageView, LeaderStatisticsPageView
 from ..reportapp.utils import iterate_queryset_in_batches
+
+from .generate_test_data import record_match, record_metadata
 
 
 """Shared data"""
@@ -297,48 +298,32 @@ class StatisticsPageViewTest(TestCase):
 
     @classmethod
     def generate_kjeld_data(cls):
-        cls.generate_match(kjeld_positive_match)
-        cls.generate_metadata(kjeld_metadata)
+        record_match(kjeld_positive_match)
+        record_metadata(kjeld_metadata)
 
-        cls.generate_match(kjeld_positive_match_1)
-        cls.generate_metadata(kjeld_metadata_1)
+        record_match(kjeld_positive_match_1)
+        record_metadata(kjeld_metadata_1)
 
     @classmethod
     def generate_egon_data(cls):
-        cls.generate_match(egon_positive_match)
-        cls.generate_metadata(egon_metadata)
+        record_match(egon_positive_match)
+        record_metadata(egon_metadata)
 
-        cls.generate_match(egon_positive_match_1)
-        cls.generate_metadata(egon_metadata_1)
+        record_match(egon_positive_match_1)
+        record_metadata(egon_metadata_1)
 
     @classmethod
     def generate_yvonne_data(cls):
-        cls.generate_match(yvonne_positive_match)
-        cls.generate_metadata(yvonne_metadata)
+        record_match(yvonne_positive_match)
+        record_metadata(yvonne_metadata)
 
     @classmethod
     def generate_benny_data(cls):
-        cls.generate_match(benny_positive_match)
-        cls.generate_metadata(benny_metadata)
+        record_match(benny_positive_match)
+        record_metadata(benny_metadata)
 
-        cls.generate_match(benny_positive_match_1)
-        cls.generate_metadata(benny_metadata_1)
-
-    @classmethod
-    def generate_match(cls, match):
-        prev, new = pipeline_collector.get_reports_for(
-            match.handle.to_json_object(),
-            match.scan_spec.scan_tag)
-        pipeline_collector.handle_match_message(
-            prev, new, match.to_json_object())
-
-    @classmethod
-    def generate_metadata(cls, metadata):
-        prev, new = pipeline_collector.get_reports_for(
-            metadata.handle.to_json_object(),
-            metadata.scan_tag)
-        pipeline_collector.handle_metadata_message(
-            new, metadata.to_json_object())
+        record_match(benny_positive_match_1)
+        record_metadata(benny_metadata_1)
 
     def setUp(self):
         # Every test needs access to the request factory.

@@ -16,8 +16,9 @@ from os2datascanner.projects.report.reportapp.models.documentreport_model import
 from os2datascanner.projects.report.reportapp.models.roles.remediator_model import Remediator
 from os2datascanner.projects.report.reportapp.utils import create_alias_and_match_relations
 from os2datascanner.projects.report.tests.generate_test_data import \
-    generate_match
+    record_match
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp, time_now
+from ..reportapp.utils import hash_handle
 from ..reportapp.management.commands import pipeline_collector
 
 time = "2020-11-11T11:11:59+02:00"
@@ -135,11 +136,11 @@ class EmailNotificationTest(TestCase):
             user=self.user_2,
             address=self.user_2.email
         )
-        generate_match(match)
-        generate_metadata(metadata)
+        record_match(match)
+        record_metadata(metadata)
         create_alias_and_match_relations(alias)
 
-        generate_match(match_1)
+        record_match(match_1)
         # get only the reports that have matches, and which have not been resolved
         self.document_reports = DocumentReport.objects.only(
             'organization', 'raw_matches', 'resolution_status'
@@ -223,9 +224,8 @@ class EmailNotificationTest(TestCase):
         self.assertEqual(new_document_reports.count(), 1)
 
 
-def generate_metadata(metadata):
-    _, new = pipeline_collector.get_reports_for(
-        metadata.handle.to_json_object(),
-        metadata.scan_tag)
-    pipeline_collector.handle_metadata_message(
-        new, metadata.to_json_object())
+def record_metadata(metadata):
+    return pipeline_collector.handle_metadata_message(
+            hash_handle(metadata.handle.to_json_object()),
+            metadata.scan_tag,
+            metadata.to_json_object())

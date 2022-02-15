@@ -10,13 +10,15 @@ from os2datascanner.utils.system_utilities import (
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 
-from ..reportapp.management.commands import pipeline_collector
 from ..reportapp.management.commands.update_match_alias_relation_table import \
     update_match_alias_relations
 
 from ..reportapp.models.roles.remediator_model import Remediator
 from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.views import MainPageView
+
+from .generate_test_data import record_match, record_metadata
+
 
 """Shared data"""
 time0 = parse_isoformat_timestamp("2020-11-11T11:11:59+02:00")  # noqa
@@ -184,37 +186,21 @@ class MatchWebDomainAliasRelationTest(TestCase):
 
     @classmethod
     def generate_kjeld_data(cls):
-        cls.generate_match(kjeld_positive_match)
-        cls.generate_metadata(kjeld_metadata)
+        record_match(kjeld_positive_match)
+        record_metadata(kjeld_metadata)
 
     @classmethod
     def generate_egon_data(cls):
-        cls.generate_match(egon_positive_match)
-        cls.generate_metadata(egon_metadata)
+        record_match(egon_positive_match)
+        record_metadata(egon_metadata)
 
-        cls.generate_match(egon_positive_match_1)
-        cls.generate_metadata(egon_metadata_1)
+        record_match(egon_positive_match_1)
+        record_metadata(egon_metadata_1)
 
     @classmethod
     def generate_new_egon_data(cls):
-        cls.generate_match(egon_positive_match_2)
-        cls.generate_metadata(egon_metadata_2)
-
-    @classmethod
-    def generate_match(cls, match):
-        prev, new = pipeline_collector.get_reports_for(
-            match.handle.to_json_object(),
-            match.scan_spec.scan_tag)
-        pipeline_collector.handle_match_message(
-            prev, new, match.to_json_object())
-
-    @classmethod
-    def generate_metadata(cls, metadata):
-        prev, new = pipeline_collector.get_reports_for(
-            metadata.handle.to_json_object(),
-            metadata.scan_tag)
-        pipeline_collector.handle_metadata_message(
-            new, metadata.to_json_object())
+        record_match(egon_positive_match_2)
+        record_metadata(egon_metadata_2)
 
     def setUp(self):
         # Every test needs access to the request factory.

@@ -142,6 +142,7 @@ def handle_metadata_message(path, scan_tag, result):
                 "resolution_status": None
             })
     create_aliases(dr)
+    return dr
 
 
 def create_aliases(obj):
@@ -250,8 +251,10 @@ def handle_match_message(path, scan_tag, result):  # noqa: CCR001, E501 too high
                 })
 
         logger.debug("matches, saved DocReport", report=dr)
+        return dr
     else:
         logger.debug("No new matches.")
+        return None
 
 
 def sort_matches_by_probability(body):
@@ -294,6 +297,7 @@ def handle_problem_message(path, scan_tag, result):
         )
         locked_qs.filter(pk=previous_report.pk).update(resolution_status=(
                 DocumentReport.ResolutionChoices.REMOVED.value))
+        return None
     else:
 
         # Collect and store the top-level type label from the failing object
@@ -325,6 +329,7 @@ def handle_problem_message(path, scan_tag, result):
             handle=presentation,
             msgtype="problem",
         )
+        return dr
 
 
 def _identify_message(result):
