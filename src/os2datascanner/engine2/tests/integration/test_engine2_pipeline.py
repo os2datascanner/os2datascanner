@@ -181,8 +181,6 @@ class Engine2PipelineTests(unittest.TestCase):
         self.messages.append((obj, "os2ds_scan_specs",))
         self.run_pipeline()
 
-        print(self.unhandled)
-
         self.assertEqual(
                 len(self.unhandled),
                 1)
@@ -198,8 +196,6 @@ class Engine2PipelineTests(unittest.TestCase):
 
         self.messages.append((obj, "os2ds_scan_specs",))
         self.run_pipeline()
-
-        print(self.unhandled)
 
         self.assertEqual(
                 len(self.unhandled),
