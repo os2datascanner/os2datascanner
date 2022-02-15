@@ -99,11 +99,11 @@ class Engine2PipelineTests(unittest.TestCase):
         self.messages = []
         self.unhandled = []
 
-    def run_pipeline(self):
+    def run_pipeline(self, runner=handle_message, **runner_kwargs):
         while self.messages:
             (body, channel), self.messages = self.messages[0], self.messages[1:]
             if channel != "os2ds_results":
-                for channel, body in handle_message(body, channel):
+                for channel, body in runner(body, channel, **runner_kwargs):
                     self.messages.append((body, channel,))
             else:
                 self.unhandled.append((body, channel,))
