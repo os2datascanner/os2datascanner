@@ -1,6 +1,8 @@
+from io import BytesIO
 import os.path
 from copy import deepcopy
 import base64
+from zipfile import ZipFile
 import unittest
 
 from os2datascanner.engine2.model.core import Source, SourceManager
@@ -22,8 +24,9 @@ data = """Hwæt! wē Gār-Dena in gēar-dagum
 hū ðā æþeling as ell en fremedon.
 Oft Scyld Scēfing sceaþena þrēatum,
 monegum mǣgþum meodo-setla oftēah."""
+encoded_data = data.encode("utf-8")
 data_url = "data:text/plain;base64,{0}".format(
-       base64.encodebytes(data.encode("utf-8")).decode("ascii"))
+       base64.encodebytes(encoded_data).decode("ascii"))
 
 rule = OrRule(
         RegexRule("Æthelred the Unready", name="Check for ill-advised kings"),
@@ -241,3 +244,35 @@ class Engine2PipelineTests(unittest.TestCase):
         self.assertEqual(
                 self.unhandled[0][0]["origin"],
                 "os2ds_problems")
+
+    def test_zip_worker(self):
+        obj = deepcopy(raw_scan_spec)
+
+        bio = BytesIO()
+        with ZipFile(bio, "w") as zf:
+            zf.writestr("dummy.txt", encoded_data)
+        bio.seek(0)
+
+        content = base64.encodebytes(bio.read())
+        obj["source"] = Source.from_url(
+                "data:application/zip;base64," + content.decode("ascii")
+        ).to_json_object()
+
+        stat_dict = {}
+
+        self.messages.append((obj, "os2ds_scan_specs",))
+        self.run_pipeline(handle_message_worker, stat_dict=stat_dict)
+
+        results = {body["origin"]: body for body, _ in self.unhandled}
+        self.assertTrue(
+                results["os2ds_matches"]["matched"],
+                "RegexRule match failed")
+        self.assertEqual(
+                results["os2ds_matches"]["matches"],
+                expected_matches,
+                "RegexRule match did not produce expected result")
+
+        self.assertEqual(
+                stat_dict["total_objects"],
+                1,
+                "incorrect scanned object count")
