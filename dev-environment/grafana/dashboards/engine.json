@@ -66,7 +66,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.0.5",
+      "pluginVersion": "7.3.4",
       "targets": [
         {
           "expr": "os2datascanner_pipeline_explorer_count",
@@ -109,6 +109,18 @@
           "intervalFactor": 1,
           "legendFormat": "Tagger",
           "refId": "F"
+        },
+        {
+          "expr": "os2datascanner_pipeline_collector_admin_count",
+          "interval": "",
+          "legendFormat": "Admin Collector",
+          "refId": "G"
+        },
+        {
+          "expr": "os2datascanner_pipeline_collector_report_count",
+          "interval": "",
+          "legendFormat": "Report Collector",
+          "refId": "H"
         }
       ],
       "timeFrom": null,
@@ -166,7 +178,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.0.5",
+      "pluginVersion": "7.3.4",
       "targets": [
         {
           "expr": "os2datascanner_pipeline_explorer_sum * 1000",
@@ -211,6 +223,18 @@
           "intervalFactor": 1,
           "legendFormat": "Tagger",
           "refId": "F"
+        },
+        {
+          "expr": "os2datascanner_pipeline_collector_admin_sum * 1000",
+          "interval": "",
+          "legendFormat": "Admin Collector",
+          "refId": "G"
+        },
+        {
+          "expr": "os2datascanner_pipeline_collector_report_sum * 1000",
+          "interval": "",
+          "legendFormat": "Report Collector",
+          "refId": "H"
         }
       ],
       "timeFrom": null,
@@ -228,7 +252,8 @@
       "description": "As measured over the previous 5 minutes.",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -259,9 +284,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -305,6 +331,18 @@
           "intervalFactor": 2,
           "legendFormat": "Tagger",
           "refId": "F"
+        },
+        {
+          "expr": "rate(os2datascanner_pipeline_collector_admin_count[5m])",
+          "interval": "",
+          "legendFormat": "Admin Collector",
+          "refId": "G"
+        },
+        {
+          "expr": "rate(os2datascanner_pipeline_collector_report_count[5m])",
+          "interval": "",
+          "legendFormat": "Report Collector",
+          "refId": "H"
         }
       ],
       "thresholds": [],
@@ -358,7 +396,8 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -391,9 +430,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -443,6 +483,18 @@
           "intervalFactor": 2,
           "legendFormat": "Tagger",
           "refId": "F"
+        },
+        {
+          "expr": "(os2datascanner_pipeline_collector_admin_sum * 1000) / os2datascanner_pipeline_collector_admin_count",
+          "interval": "",
+          "legendFormat": "Admin Collector",
+          "refId": "G"
+        },
+        {
+          "expr": "(os2datascanner_pipeline_collector_report_sum * 1000) / os2datascanner_pipeline_collector_report_count",
+          "interval": "",
+          "legendFormat": "Report Collector",
+          "refId": "H"
         }
       ],
       "thresholds": [],
@@ -488,7 +540,7 @@
       }
     }
   ],
-  "schemaVersion": 25,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -514,5 +566,5 @@
   "timezone": "",
   "title": "Datascanner Engine Dashboard",
   "uid": "vkYhwfMGk",
-  "version": 4
+  "version": 2
 }

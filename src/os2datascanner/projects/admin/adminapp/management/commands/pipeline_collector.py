@@ -26,10 +26,15 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.run_stage import _loglevels
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
+
+from prometheus_client import Summary, start_http_server
+
 from ...models.scannerjobs.scanner_model import (
     Scanner, ScanStatus, ScheduledCheckup)
 
 logger = structlog.get_logger(__name__)
+SUMMARY = Summary("os2datascanner_pipeline_collector_admin",
+                  "Messages through admin collector")
 
 
 def status_message_received_raw(body):
@@ -166,16 +171,21 @@ def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # n
 
 
 class CollectorRunner(PikaPipelineThread):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        start_http_server(9091)
+
     def handle_message(self, routing_key, body):
-        logger.debug(
-                "raw message received",
-                routing_key=routing_key,
-                body=body)
-        with transaction.atomic():
-            if routing_key == "os2ds_status":
-                yield from status_message_received_raw(body)
-            elif routing_key == "os2ds_checkups":
-                yield from checkup_message_received_raw(body)
+        with SUMMARY.time():
+            logger.debug(
+                    "raw message received",
+                    routing_key=routing_key,
+                    body=body)
+            with transaction.atomic():
+                if routing_key == "os2ds_status":
+                    yield from status_message_received_raw(body)
+                elif routing_key == "os2ds_checkups":
+                    yield from checkup_message_received_raw(body)
 
 
 class Command(BaseCommand):
