@@ -19,6 +19,17 @@ def censor_outgoing_message(message):
         return message._replace(
                 handle=message.handle.censor() if message.handle else None,
                 source=message.source.censor() if message.source else None)
+
+    # Not exported from the pipeline, but included here for completeness
+    elif isinstance(message, messages.ScanSpecMessage):
+        return message._replace(source=message.source.censor())
+    elif isinstance(message, (
+            messages.ConversionMessage, messages.RepresentationMessage)):
+        return message._replace(
+                handle=message.handle.censor(),
+                scan_spec=censor_outgoing_message(message.scan_spec))
+    elif isinstance(message, messages.HandleMessage):
+        return message._replace(handle=message.handle.censor())
     else:
         return message
 
