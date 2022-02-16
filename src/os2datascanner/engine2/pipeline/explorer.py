@@ -65,21 +65,25 @@ def message_received_raw(body, channel, source_manager):
                 yield ("os2ds_scan_specs", scan_spec._replace(
                         source=new_source).to_json_object())
             count += 1
+        logger.info(
+                "Finished exploration successfully",
+                count=count, scan_tag=scan_tag)
     except Exception as e:
         exception_message = "Exploration error. {0}: ".format(type(e).__name__)
         exception_message += ", ".join([str(a) for a in e.args])
-        logger.error(exception_message)
         problem_message = messages.ProblemMessage(
             scan_tag=scan_tag, source=scan_spec.source, handle=None,
             message=exception_message)
         yield ("os2ds_problems", problem_message.to_json_object())
-        return
+        logger.warning(
+                "Finished exploration unsuccessfully",
+                count=count, scan_tag=scan_tag,
+                exc_info=e)
     finally:
         yield ("os2ds_status", messages.StatusMessage(
-            scan_tag=scan_tag, total_objects=count,
-            message=exception_message, status_is_error=exception_message != "").
-               to_json_object())
-    logger.info("Finished exploration successfully", count=count, scan_tag=scan_tag)
+                scan_tag=scan_tag, total_objects=count,
+                message=exception_message,
+                status_is_error=exception_message != "").to_json_object())
 
 
 if __name__ == "__main__":

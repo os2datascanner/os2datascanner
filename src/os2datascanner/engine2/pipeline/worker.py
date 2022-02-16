@@ -32,6 +32,10 @@ def explore(sm, msg):
             # Huh? Surely a standalone explorer should have handled this
             logger.warning("worker exploring unexpected nested Source")
             yield from explore(sm, message)
+        elif channel == "os2ds_status":
+            # Explorer status messages are not interesting in the worker
+            # context
+            pass
         else:
             yield channel, message
 

@@ -43,22 +43,19 @@ def status_message_received_raw(body):
     message = messages.StatusMessage.from_json_object(body)
     scan_status = ScanStatus.objects.filter(scan_tag=body["scan_tag"])
     if message.total_objects is not None:
-        if message.total_objects > 0:
-            scan_status.update(
+        # An explorer has finished exploring a Source
+        scan_status.update(
                 message=message.message,
                 status_is_error=message.status_is_error,
                 total_objects=F('total_objects') + message.total_objects,
                 explored_sources=F('explored_sources') + 1)
-        else:
-            scan_status.update(
-                message=message.message,
-                status_is_error=message.status_is_error)
     elif message.object_size is not None and message.object_type is not None:
+        # A worker has finished processing a Handle
         scan_status.update(
-            message=message.message,
-            status_is_error=message.status_is_error,
-            scanned_size=F('scanned_size') + message.object_size,
-            scanned_objects=F('scanned_objects') + 1)
+                message=message.message,
+                status_is_error=message.status_is_error,
+                scanned_size=F('scanned_size') + message.object_size,
+                scanned_objects=F('scanned_objects') + 1)
 
     yield from []
 

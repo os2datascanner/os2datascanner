@@ -1,5 +1,8 @@
+from io import BytesIO
 import os.path
+from copy import deepcopy
 import base64
+from zipfile import ZipFile
 import unittest
 
 from os2datascanner.engine2.model.core import Source, SourceManager
@@ -9,7 +12,7 @@ from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.logical import OrRule
 from os2datascanner.engine2.pipeline import (
-        explorer, processor, matcher, tagger, exporter)
+        explorer, processor, matcher, tagger, exporter, worker, messages)
 
 
 here_path = os.path.dirname(__file__)
@@ -21,8 +24,9 @@ data = """Hwæt! wē Gār-Dena in gēar-dagum
 hū ðā æþeling as ell en fremedon.
 Oft Scyld Scēfing sceaþena þrēatum,
 monegum mǣgþum meodo-setla oftēah."""
+encoded_data = data.encode("utf-8")
 data_url = "data:text/plain;base64,{0}".format(
-       base64.encodebytes(data.encode("utf-8")).decode("ascii"))
+       base64.encodebytes(encoded_data).decode("ascii"))
 
 rule = OrRule(
         RegexRule("Æthelred the Unready", name="Check for ill-advised kings"),
@@ -59,6 +63,21 @@ expected_matches = [
 ]
 
 
+raw_scan_spec = {
+    "scan_tag": {
+        "scanner": {
+            "name": "integration_test",
+            "pk": 0
+        },
+        "user": None,
+        "organisation": "Vejstrand Kommune",
+        "time": "2020-01-01T00:00:00+00:00"
+    },
+    "source": Source.from_url(data_url).to_json_object(),
+    "rule": rule.to_json_object()
+}
+
+
 class StopHandling(Exception):
     pass
 
@@ -78,37 +97,40 @@ def handle_message(body, channel):
         # "os2ds_status" messages get dropped on the floor
 
 
+def handle_message_worker(body, channel, *, stat_dict=None):
+    with SourceManager() as sm:
+        if channel == "os2ds_scan_specs":
+            yield from explorer.message_received_raw(body, channel, sm)
+        elif channel in "os2ds_conversions":
+            yield from worker.message_received_raw(body, channel, sm)
+        elif channel in ("os2ds_matches", "os2ds_metadata", "os2ds_problems"):
+            yield from exporter.message_received_raw(body, channel, sm)
+        elif channel == "os2ds_status" and stat_dict is not None:
+            message = messages.StatusMessage.from_json_object(body)
+            for k in ("total_objects", "object_size",):
+                value = getattr(message, k)
+                if value is not None:
+                    if k not in stat_dict:
+                        stat_dict[k] = 0
+                    stat_dict[k] += value
+
+
 class Engine2PipelineTests(unittest.TestCase):
     def setUp(self):
         self.messages = []
         self.unhandled = []
 
-    def run_pipeline(self):
+    def run_pipeline(self, runner=handle_message, **runner_kwargs):
         while self.messages:
             (body, channel), self.messages = self.messages[0], self.messages[1:]
             if channel != "os2ds_results":
-                for channel, body in handle_message(body, channel):
+                for channel, body in runner(body, channel, **runner_kwargs):
                     self.messages.append((body, channel,))
             else:
                 self.unhandled.append((body, channel,))
 
     def test_simple_regex_match(self):
-        print(Source.from_url(data_url).to_json_object())
-        obj = {
-            "scan_tag": {
-                "scanner": {
-                    "name": "integration_test",
-                    "pk": 0
-                },
-                "user": None,
-                "organisation": "Vejstrand Kommune",
-                "time": "2020-01-01T00:00:00+00:00"
-            },
-            "source": Source.from_url(data_url).to_json_object(),
-            "rule": rule.to_json_object()
-        }
-
-        self.messages.append((obj, "os2ds_scan_specs",))
+        self.messages.append((raw_scan_spec, "os2ds_scan_specs",))
         self.run_pipeline()
 
         self.assertEqual(
@@ -124,22 +146,31 @@ class Engine2PipelineTests(unittest.TestCase):
                 expected_matches,
                 "RegexRule match did not produce expected result")
 
+    def test_simple_regex_match_with_worker(self):
+        self.messages.append((raw_scan_spec, "os2ds_scan_specs",))
+
+        stat_dict = {}
+
+        self.run_pipeline(runner=handle_message_worker, stat_dict=stat_dict)
+
+        self.assertEqual(
+                len(self.unhandled),
+                2)
+        results = {body["origin"]: body for body, _ in self.unhandled}
+
+        self.assertTrue(
+                results["os2ds_matches"]["matched"],
+                "RegexRule match failed")
+        self.assertEqual(
+                results["os2ds_matches"]["matches"],
+                expected_matches,
+                "RegexRule match did not produce expected result")
+
     def test_unsupported_sources(self):
-        obj = {
-            "scan_tag": {
-                "scanner": {
-                    "name": "integration_test",
-                    "pk": 0
-                },
-                "user": None,
-                "organisation": "Vejstrand Kommune",
-                "time": "2020-01-01T00:00:00+00:00"
-            },
-            "source": {
-                "type": "forbidden-knowledge",
-                "of": ["good", "evil"]
-            },
-            "rule": rule.to_json_object()
+        obj = deepcopy(raw_scan_spec)
+        obj["source"] = {
+            "type": "forbidden-knowledge",
+            "of": ["good", "evil"]
         }
 
         self.messages.append((obj, "os2ds_scan_specs",))
@@ -153,24 +184,17 @@ class Engine2PipelineTests(unittest.TestCase):
                 "os2ds_problems")
 
     def test_ocr_skip(self):
-        obj = {
-            "scan_tag": {
-                "scanner": {
-                    "name": "integration_test",
-                    "pk": 0
-                },
-                "user": None,
-                "organisation": "Vejstrand Kommune",
-                "time": "2020-01-01T00:00:00+00:00"
-            },
-            "source": FilesystemSource(os.path.join(
-                    test_data_path, "ocr", "good")).to_json_object(),
-            "rule": CPRRule(
-                modulus_11=False,
-                ignore_irrelevant=False).to_json_object(),
-            "configuration": {
-                "skip_mime_types": ["image/*"]
-            }
+        obj = deepcopy(raw_scan_spec)
+        obj["source"] = (
+                FilesystemSource(os.path.join(
+                        test_data_path, "ocr", "good")
+                ).to_json_object())
+        obj["rule"] = (
+                CPRRule(
+                        modulus_11=False, ignore_irrelevant=False
+                ).to_json_object())
+        obj["configuration"] = {
+            "skip_mime_types": ["image/*"]
         }
 
         self.messages.append((obj, "os2ds_scan_specs",))
@@ -185,28 +209,18 @@ class Engine2PipelineTests(unittest.TestCase):
                 self.fail("unexpected message in queue {0}".format(queue))
 
     def test_corrupted_container(self):
-        obj = {
-            "scan_tag": {
-                "scanner": {
-                    "name": "integration_test",
-                    "pk": 0
-                },
-                "user": None,
-                "organisation": "Vejstrand Kommune",
-                "time": "2020-01-01T00:00:00+00:00"
-            },
-            "source": FilesystemSource(
-                os.path.join(test_data_path, "pdf", "corrupted")).to_json_object(),
-            "rule": CPRRule(
-                modulus_11=False,
-                ignore_irrelevant=False).to_json_object(),
-            "configuration": {}
-        }
+        obj = deepcopy(raw_scan_spec)
+        obj["source"] = (
+                FilesystemSource(
+                        os.path.join(test_data_path, "pdf", "corrupted")
+                ).to_json_object())
+        obj["rule"] = (
+                CPRRule(
+                        modulus_11=False, ignore_irrelevant=False
+                ).to_json_object())
 
         self.messages.append((obj, "os2ds_scan_specs",))
         self.run_pipeline()
-
-        print(self.unhandled)
 
         self.assertEqual(
                 len(self.unhandled),
@@ -216,26 +230,13 @@ class Engine2PipelineTests(unittest.TestCase):
                 "os2ds_problems")
 
     def test_rule_crash(self):
-        obj = {
-            "scan_tag": {
-                "scanner": {
-                    "name": "integration_test",
-                    "pk": 0
-                },
-                "user": None,
-                "organisation": "Vejstrand Kommune",
-                "time": "2020-01-01T00:00:00+00:00"
-            },
-            "source": Source.from_url(data_url).to_json_object(),
-            "rule": {
-                "type": "buggy"
-            }
+        obj = deepcopy(raw_scan_spec)
+        obj["rule"] = {
+            "type": "buggy"
         }
 
         self.messages.append((obj, "os2ds_scan_specs",))
         self.run_pipeline()
-
-        print(self.unhandled)
 
         self.assertEqual(
                 len(self.unhandled),
@@ -243,3 +244,35 @@ class Engine2PipelineTests(unittest.TestCase):
         self.assertEqual(
                 self.unhandled[0][0]["origin"],
                 "os2ds_problems")
+
+    def test_zip_worker(self):
+        obj = deepcopy(raw_scan_spec)
+
+        bio = BytesIO()
+        with ZipFile(bio, "w") as zf:
+            zf.writestr("dummy.txt", encoded_data)
+        bio.seek(0)
+
+        content = base64.encodebytes(bio.read())
+        obj["source"] = Source.from_url(
+                "data:application/zip;base64," + content.decode("ascii")
+        ).to_json_object()
+
+        stat_dict = {}
+
+        self.messages.append((obj, "os2ds_scan_specs",))
+        self.run_pipeline(handle_message_worker, stat_dict=stat_dict)
+
+        results = {body["origin"]: body for body, _ in self.unhandled}
+        self.assertTrue(
+                results["os2ds_matches"]["matched"],
+                "RegexRule match failed")
+        self.assertEqual(
+                results["os2ds_matches"]["matches"],
+                expected_matches,
+                "RegexRule match did not produce expected result")
+
+        self.assertEqual(
+                stat_dict["total_objects"],
+                1,
+                "incorrect scanned object count")
