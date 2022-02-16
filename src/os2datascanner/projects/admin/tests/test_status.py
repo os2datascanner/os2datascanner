@@ -1,16 +1,26 @@
-import django
+from django.test import TestCase
 from datetime import datetime
 from dateutil.tz import gettz
 from django.utils.text import slugify
 
 from os2datascanner.utils.system_utilities import time_now
+from os2datascanner.engine2.pipeline import messages
 from os2datascanner.projects.admin.core.models.client import Client
 from os2datascanner.projects.admin.organizations.models.organization import Organization
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import (
         Scanner, ScanStatus)
 
+from os2datascanner.projects.admin.adminapp.management.commands import pipeline_collector
 
-class StatusTest(django.test.TestCase):
+
+def record_status(status):
+    """Records a status message to the database as though it were received by
+    the administration system's pipeline collector."""
+    return list(pipeline_collector.status_message_received_raw(
+            status.to_json_object()))
+
+
+class StatusTest(TestCase):
     def setUp(self):
         client1 = Client.objects.create(name="client1")
         self.organization = Organization.objects.create(
@@ -19,7 +29,9 @@ class StatusTest(django.test.TestCase):
             slug=slugify("Magenta"),
             client=client1,
         )
-        self.scanner = Scanner(organization=self.organization)
+        self.scanner = Scanner.objects.create(
+                name="Do unspecified action(s)(?)",
+                organization=self.organization)
 
     def test_estimates(self):
         ss = ScanStatus(
@@ -139,3 +151,39 @@ class StatusTest(django.test.TestCase):
 
         ss.delete()
         self.scanner.delete()
+
+    def test_counting_broken_sources(self):
+        dummy_scan_tag = messages.ScanTagFragment(
+                time=time_now(),
+                user=None,
+                scanner=messages.ScannerFragment(
+                        pk=self.scanner.pk,
+                        name=self.scanner.name),
+                organisation=None)
+
+        ss = ScanStatus.objects.create(
+                scanner=self.scanner,
+                scan_tag=dummy_scan_tag.to_json_object(),
+                total_sources=5,
+                explored_sources=0,
+                total_objects=0)
+
+        error = "Exploration error. None: a, b, c, d, e"
+
+        record_status(messages.StatusMessage(
+                scan_tag=dummy_scan_tag,
+                total_objects=20,
+                message="", status_is_error=False))
+
+        for _ in range(0, 4):
+            record_status(messages.StatusMessage(
+                    scan_tag=dummy_scan_tag,
+                    total_objects=0,
+                    message=error,
+                    status_is_error=True))
+
+        ss.refresh_from_db()
+        self.assertEqual(
+                ss.explored_sources,
+                5,
+                "failing Sources were not counted")
