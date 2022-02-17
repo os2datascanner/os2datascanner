@@ -8,6 +8,7 @@ PREFETCH_COUNT = 8
 
 
 def censor_outgoing_message(message):
+    print(type(message))
     """Censors a message before sending it to the outside world."""
     if isinstance(message, messages.MetadataMessage):
         return message._replace(handle=message.handle.censor())
