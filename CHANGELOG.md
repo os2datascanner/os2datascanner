@@ -1,5 +1,28 @@
 # Changelog
 
+## Version 3.13.9, 17th February 2022
+
+"The Hits Keep Coming"
+
+New in this version:
+
+- The pipeline collector processes now also report Prometheus metrics, enabling
+  better monitoring.
+
+General improvements:
+
+- To more extensively test the functionality and performance of the scanner
+  engine, the test suite now includes simulated scans of a suite of
+  randomly-generated websites.
+
+Bugfixes:
+
+- Embedded containers, such as Zip files or MIME-format messages, are no longer
+  misreported as separate top-level sources.
+
+- A scan that includes an invalid source, such as an Exchange scan that
+  requests a nonexistent account, will no longer appear to be stuck.
+
 ## Version 3.13.8, 11th February 2022
 
 "The Long Walk"
