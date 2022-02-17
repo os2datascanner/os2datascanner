@@ -30,7 +30,7 @@ class Command(BaseCommand):
         """ Tests the performance of a webscan
         will fail if the average time of a scan goes above the given uncertainty factor
         """
-        allowed_time_per_scan = 800
+        allowed_time_per_scan = 900
         uncertainty_factor = 0.2
         uncertainty = allowed_time_per_scan*uncertainty_factor
 
@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
         if average_scan_time - uncertainty > allowed_time_per_scan:
             self.stdout.write(self.style.ERROR(f"average: {average_scan_time}"))
-            raise AssertionError("The average time of a scan took too long"
+            raise AssertionError("The average time of a scan took too long "
                                  + f"total time: {total_time}, average_time:{average_scan_time}")
         else:
             self.stdout.write(self.style.SUCCESS(f"average: {average_scan_time}"))
@@ -47,8 +47,8 @@ class Command(BaseCommand):
         """ Runs a performance scan 5 times and measures the average time from start to finish
 
             NOTE: There are however some caveats:
-            - since the scan runs asynchronous it is hard to measure how much time that is spend
-                within datascanner and how much time that is spend with generating the data.
+            - since the scan runs asynchronous it is hard to measure how much time that is spent
+                within datascanner and how much time that is spent with generating the data.
         """
         params = {"seed": "os2datascanner",
                   "sub_files": 100,
