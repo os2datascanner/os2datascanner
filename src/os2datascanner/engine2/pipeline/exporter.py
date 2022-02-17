@@ -7,32 +7,48 @@ PROMETHEUS_DESCRIPTION = "Messages exported"
 PREFETCH_COUNT = 8
 
 
+def censor_outgoing_message(message):
+    print(type(message))
+    """Censors a message before sending it to the outside world."""
+    if isinstance(message, messages.MetadataMessage):
+        return message._replace(handle=message.handle.censor())
+    elif isinstance(message, messages.MatchesMessage):
+        return message._replace(
+                handle=message.handle.censor(),
+                scan_spec=censor_outgoing_message(message.scan_spec))
+    elif isinstance(message, messages.ProblemMessage):
+        return message._replace(
+                handle=message.handle.censor() if message.handle else None,
+                source=message.source.censor() if message.source else None)
+
+    # Not exported from the pipeline, but included here for completeness
+    elif isinstance(message, messages.ScanSpecMessage):
+        return message._replace(source=message.source.censor())
+    elif isinstance(message, (
+            messages.ConversionMessage, messages.RepresentationMessage)):
+        return message._replace(
+                handle=message.handle.censor(),
+                scan_spec=censor_outgoing_message(message.scan_spec))
+    elif isinstance(message, messages.HandleMessage):
+        return message._replace(handle=message.handle.censor())
+    else:
+        return message
+
+
 def message_received_raw(body, channel, source_manager):
     body["origin"] = channel
 
     message = None
     if "metadata" in body:
         message = messages.MetadataMessage.from_json_object(body)
-        # MetadataMessages carry a scan tag rather than a complete scan spec,
-        # so all we need to censor is the handle
-        message = message._replace(handle=message.handle.censor())
     elif "matched" in body:
         message = messages.MatchesMessage.from_json_object(body)
-        # Censor both the scan spec and the object handle
-        censored_scan_spec = message.scan_spec._replace(
-                source=message.scan_spec.source.censor())
-        message = message._replace(
-                handle=message.handle.censor(),
-                scan_spec=censored_scan_spec)
     elif "message" in body:
         message = messages.ProblemMessage.from_json_object(body)
-        message = message._replace(
-                handle=message.handle.censor() if message.handle else None,
-                source=message.source.censor() if message.source else None)
     # Old-style problem messages are now ignored
 
     if message:
-        result_body = message.to_json_object()
+        result_body = censor_outgoing_message(message).to_json_object()
         result_body["origin"] = channel
 
         yield ("os2ds_results", result_body)

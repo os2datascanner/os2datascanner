@@ -1,6 +1,9 @@
+import uuid
 from uuid import UUID
+import random
 from typing import Optional, Sequence, NamedTuple
 from datetime import datetime
+from dateutil import tz
 import warnings
 
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
@@ -123,6 +126,22 @@ class ScanTagFragment(NamedTuple):
                              else None),
             "destination": self.destination
         }
+
+    @classmethod
+    def make_dummy(cls):
+        account = "".join(
+                random.choice("bdfghjkqvwxyz13579_") for _ in range(0, 10))
+        return ScanTagFragment(
+                time=datetime.fromtimestamp(
+                        random.randint(0, 2**32), tz=tz.gettz()),
+                user=f"{account}@placeholder.invalid",
+                scanner=ScannerFragment(
+                        pk=random.randint(0, 1000000000),
+                        name="Search for Datas"),
+                organisation=OrganisationFragment(
+                        name="Placeholder Heavy Industries, Ivld.",
+                        uuid=uuid.uuid4()
+                ))
 
     @classmethod
     def from_json_object(cls, obj):
