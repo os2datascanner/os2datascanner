@@ -389,6 +389,7 @@ Integration Test Report Application:
     entrypoint: [""]
   rules:
     - if: '$CI_COMMIT_REF_NAME == "main"'
+  allow_failure: true # until 48725 has been fixed
   tags:
     - docker
     - network-per-build
