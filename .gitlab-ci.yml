@@ -202,11 +202,8 @@ Integration Test Admin Application:
   tags:
     - docker
     - network-per-build
-  stage: test
-  only:
-    refs:
-      - main
-      - tags
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "main"'
   services:
     - name: egnmagenta/os2datasynth:v0.2.5
       alias: datasynth
@@ -310,9 +307,8 @@ Performance Test:
     - docker
     - network-per-build
     - high-mem
-  only:
-    refs:
-      - main
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "main"'
   services:
     - name: egnmagenta/os2datasynth:v0.2.5
       alias: datasynth
@@ -391,11 +387,8 @@ Integration Test Report Application:
   image:
     name: ${REPORT_IMAGE}
     entrypoint: [""]
-  stage: test
-  only:
-    refs:
-      - main
-      - tags
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "main"'
   allow_failure: true # until 48725 has been fixed
   tags:
     - docker
@@ -575,7 +568,7 @@ Release API pinned Candidate:
   <<: *release-default
   rules:
       # Matches <version core> from SemVer 2.0.0 BNF grammar. Ex. 2.3.4, but not 2.3.4-rc
-      - if: $CI_COMMIT_TAG =~ /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(_[a-z])?$/
+      - if: $CI_COMMIT_TAG =~ /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/
   script:
     - apk add skopeo
     - skopeo copy
