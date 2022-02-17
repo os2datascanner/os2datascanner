@@ -202,8 +202,11 @@ Integration Test Admin Application:
   tags:
     - docker
     - network-per-build
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "main"'
+  stage: test
+  only:
+    refs:
+      - main
+      - tags
   services:
     - name: egnmagenta/os2datasynth:v0.2.5
       alias: datasynth
@@ -307,8 +310,9 @@ Performance Test:
     - docker
     - network-per-build
     - high-mem
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "main"'
+  only:
+    refs:
+      - main
   services:
     - name: egnmagenta/os2datasynth:v0.2.5
       alias: datasynth
@@ -387,8 +391,11 @@ Integration Test Report Application:
   image:
     name: ${REPORT_IMAGE}
     entrypoint: [""]
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "main"'
+  stage: test
+  only:
+    refs:
+      - main
+      - tags
   allow_failure: true # until 48725 has been fixed
   tags:
     - docker
