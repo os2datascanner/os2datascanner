@@ -9,6 +9,7 @@ from collections import deque
 
 from prometheus_client import Info, Summary, start_http_server
 
+from os2datascanner.utils import profiling
 from ... import __version__
 from ..model.core import SourceManager
 from . import explorer, exporter, matcher, messages, processor, tagger, worker
@@ -140,6 +141,11 @@ def main():
             choices=_loglevels.keys()
         )
     parser.add_argument(
+            "--profile",
+            action="store_true",
+            help="record and print profiling output"
+        )
+    parser.add_argument(
             "stage",
             choices=("explorer", "processor", "matcher",
                      "tagger", "exporter", "worker",))
@@ -209,16 +215,25 @@ def main():
         root_logger.info(f"executing only on CPU {cpu}")
         os.sched_setaffinity(0, {cpu})
 
-    with SourceManager(width=args.width) as source_manager:
-        GenericRunner(
-                source_manager,
-                stage=args.stage,
-                module=module,
-                limit=args.limit).run_consumer()
+    if args.profile:
+        root_logger.info("enabling profiling")
+        profiling.enable_profiling()
 
-    if restarting:
-        root_logger.info(f"restarting after {args.limit} messages")
-        restart_process()
+    try:
+        with SourceManager(width=args.width) as source_manager:
+            GenericRunner(
+                    source_manager,
+                    stage=args.stage,
+                    module=module,
+                    limit=args.limit).run_consumer()
+
+        if restarting:
+            root_logger.info(f"restarting after {args.limit} messages")
+            restart_process()
+    finally:
+        profiling.disable_profiling()
+        import pstats
+        profiling.print_stats(pstats.SortKey.CUMULATIVE, silent=True)
 
 
 if __name__ == "__main__":
