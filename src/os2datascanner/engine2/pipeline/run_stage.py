@@ -17,7 +17,9 @@ from . import explorer, exporter, matcher, messages, processor, tagger, worker
 from .utilities.pika import PikaPipelineThread, RejectMessage
 
 
-logger = logging.getLogger(__name__)
+# __name__ is "__main__" in this context, which isn't quite what we want for
+# our position in the logging hierarchy
+logger = logging.getLogger("os2datascanner.engine2.pipeline.run_stage")
 
 
 def backtrace(signal, frame):
