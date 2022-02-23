@@ -113,7 +113,7 @@ class Command(BaseCommand):
 
         self.stdout.write(debug)
 
-    def get_filtered_results(self, user, matches, all_results=False):
+    def get_filtered_results(self, user, matches, all_results=True):
         """ Finds results based on the users role and organization
         NOTE: do not iterate over the queryset unless in batches, as
         it will cache all the items and might lead to too high ram usage.
