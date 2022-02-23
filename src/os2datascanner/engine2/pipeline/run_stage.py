@@ -5,6 +5,7 @@ import random
 import signal
 import sys
 import traceback
+import pstats
 from collections import deque
 
 from prometheus_client import Info, Summary, start_http_server
@@ -86,9 +87,20 @@ class GenericRunner(PikaPipelineThread):
 
         if command.abort:
             self._cancelled.appendleft(command.abort)
+
         if command.log_level:
             logging.getLogger("os2datascanner").setLevel(
                     command.log_level)
+
+        if command.profiling is not None:
+            profiling.print_stats(pstats.SortKey.CUMULATIVE, silent=True)
+            if command.profiling:
+                profiling.enable_profiling()
+                logger.info("enabling profiling")
+            else:
+                profiling.disable_profiling()
+                logger.info("disabling profiling")
+
         yield from []
 
     def _handle_content(self, routing_key, body):
@@ -231,8 +243,6 @@ def main():
             root_logger.info(f"restarting after {args.limit} messages")
             restart_process()
     finally:
-        profiling.disable_profiling()
-        import pstats
         profiling.print_stats(pstats.SortKey.CUMULATIVE, silent=True)
 
 
