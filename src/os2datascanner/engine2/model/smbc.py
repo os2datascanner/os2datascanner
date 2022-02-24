@@ -64,7 +64,9 @@ class Mode(enum.IntFlag):
             mode_ = context.getxattr(url, XATTR_DOS_ATTRIBUTES)
             logger.debug(f"mode flags for {url}: {mode_}")
             return Mode(int(mode_, 16))
-        except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS):
+        except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS, MemoryError) as exc:
+            logger.info(f"Exception thrown: {exc}\n for {url}\n"
+                        f"Ignoring and continuing")
             return None
 
 
