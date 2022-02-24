@@ -14,6 +14,7 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+import atexit
 import random
 import string
 import sys
@@ -41,15 +42,22 @@ from os2datascanner.engine2.model import http
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.pipeline.utilities import pika
 from ...models.organization_model import Organization
 from .pipeline_collector import result_message_received_raw
 
 
-def emit_message(queue, m):
+def emit_to_collector(queue, m):
     m = m.to_json_object()
     m["origin"] = queue
     for _k in result_message_received_raw(m):
         pass
+
+
+def emit_to_rabbitmq(ppt):
+    def _emit_to_rabbitmq(queue, m):
+        ppt.enqueue_message(queue, m.to_json_object())
+    return _emit_to_rabbitmq
 
 
 class Command(BaseCommand):
@@ -103,17 +111,33 @@ class Command(BaseCommand):
             default=False,
             help="Dry run; just tell me what would have happened",
         )
+        parser.add_argument(
+            "--destination",
+            choices=('rabbit', 'collector'),
+            default='collector',
+            help="send the produced messages to a specific component",
+        )
 
     def handle(  # noqa: CCR001, too high cognitive complexity
             self, *, handles, scan_count, scan_type, seed, summarise, dry_run,
-            **options
-    ):
+            destination, **options):
         if not settings.DEBUG:
             self.stdout.write(self.style.NOTICE(
                 "makefake: refusing to run in a production environment; switch "
                 "settings.DEBUG on to use this command")
                               )
             sys.exit(1)
+
+        ppt = None
+        emit_message = emit_to_collector
+        if destination == "rabbit":
+            ppt = pika.PikaPipelineThread(
+                    write={"os2ds_metadata", "os2ds_matches"})
+            ppt.daemon = True
+            ppt.start()
+            atexit.register(ppt.enqueue_stop)
+
+            emit_message = emit_to_rabbitmq(ppt)
 
         # faker is using the random generator, so seeding here does not give
         # deterministic results for the code executed after calls to Faker.
