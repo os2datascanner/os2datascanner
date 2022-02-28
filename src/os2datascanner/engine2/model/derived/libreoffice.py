@@ -60,7 +60,9 @@ def libreoffice(*args):
 # The filter name is found by looking at "oor:name" inside the relevant .xcu file
 # https://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
 # The format of --convert-to is then <TargetFileExtension>:<NameOfFilter>:<Options>
-__csv = "csv:Text - txt - csv (StarCalc):9,34,76"
+# As pr. LibreOffice 7.2, the 12th numeric parameter determines behaviour when encountering
+# spreadsheets with multiple sheets/tabs. (-1 will convert each tab to a csv file named accordingly)
+__csv = "csv:Text - txt - csv (StarCalc):9,34,76,UTF8,1,,0,false,true,false,false,-1"
 
 
 # Filter name keys come from /usr/lib/libreoffice/share/registry/PROG.xcd;
@@ -96,10 +98,15 @@ def _replace_large_html(
                     logger.info(f"{entry.name} is larger than {size_threshold}. "
                                 "Replacing it with a simpler representation "
                                 f"[{output_filter}]")
+                    # --headless Starts in "headless mode"
+                    # which allows using the application without GUI.
+                    # This special mode can be used when the application is controlled
+                    # by external clients via the API.
                     libreoffice(
                             "--infilter={0}".format(input_filter),
                             "--convert-to", output_filter,
-                            "--outdir", output_directory, input_file)
+                            "--outdir", output_directory, input_file,
+                            "--headless")
                     unlink(entry.path)
                 break
 

@@ -30,6 +30,7 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /code/requirements/sys-requirements
 COPY requirements/sys-requirements/sys-requirements-common.txt \
      requirements/sys-requirements/sys-requirements-engine.txt \
+     requirements/sys-requirements/backport-sys-requirements.txt \
      ./
 # hadolint ignore=DL3008,SC2046
 RUN set -ex \
@@ -41,9 +42,15 @@ RUN set -ex \
   # host system or users of other docker containers.
   && groupadd -g 73030 -r os2ds_engine\
   && useradd -u 73030 --no-log-init -r -g os2ds_engine os2ds_engine \
+  # We need LibreOffice 7.2 or higher, but this is not easily available through Debian \
+  # Use a backport repo to achieve this.
+  && echo "deb https://deb.debian.org/debian bullseye-backports main contrib non-free \
+  deb-src https://deb.debian.org/debian bullseye-backports main contrib non-free" >> /etc/apt/sources.list \
   # Install system dependencies from file.
   && apt-get -y update \
   && apt-get -y install --no-install-recommends $(grep -oh '^[^#][[:alnum:].-]*' sys-requirements*.txt) \
+  # Install from backport file too.
+  && apt-get -y -t bullseye-backports install --no-install-recommends $(grep -oh '^[^#][[:alnum:].-]*' backport-sys-requirements.txt) \
   # clean up after apt-get and man-pages
   && apt-get clean && rm -rf "/var/lib/apt/lists/*" "/tmp/*" "/var/tmp/*" "/usr/share/man/??" "/usr/share/man/??_*"
 
