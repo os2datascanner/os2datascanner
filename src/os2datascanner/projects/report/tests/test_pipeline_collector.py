@@ -14,6 +14,8 @@ from os2datascanner.engine2.rules.rule import Sensitivity
 from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.management.commands import pipeline_collector
 
+from .generate_test_data import record_match, record_problem
+
 
 time0 = "2020-10-28T13:51:49+01:00"
 time1 = "2020-10-28T14:21:27+01:00"
@@ -141,31 +143,11 @@ late_negative_match = messages.MatchesMessage(
 
 
 class PipelineCollectorTests(TestCase):
-
-    @staticmethod
-    def construct_match(match):
-        prev, new = pipeline_collector.get_reports_for(
-            match.handle.to_json_object(),
-            match.scan_spec.scan_tag)
-        pipeline_collector.handle_match_message(
-            prev, new, match.to_json_object())
-        return new
-
-    @staticmethod
-    def construct_problem(problem_source_to_json_object,
-                          problem_scan_tag, problem_to_json_object):
-        prev, new = pipeline_collector.get_reports_for(
-            problem_source_to_json_object,
-            problem_scan_tag)
-        pipeline_collector.handle_problem_message(
-            prev, new, problem_to_json_object)
-        return new
-
     def test_rejection(self):
         """Failed match messages shouldn't be stored in the database."""
-        new = PipelineCollectorTests.construct_match(negative_match)
+        new = record_match(negative_match)
         self.assertEqual(
-                new.pk,
+                new,
                 None,
                 "negative match was saved anyway")
 
@@ -181,7 +163,8 @@ class PipelineCollectorTests(TestCase):
     ])
     def test_acceptance(self, _, match, expected):
         """Successful match messages should be stored in the database."""
-        new = PipelineCollectorTests.construct_match(match)
+        new = record_match(match)
+        print(new)
         self.assertNotEqual(
                 new.pk,
                 expected[0],
@@ -203,7 +186,8 @@ class PipelineCollectorTests(TestCase):
     def test_edit(self):
         """Removing matches from a file should update the status of the
         previous match message."""
-        saved_match = PipelineCollectorTests.construct_match(positive_match)
+        saved_match = record_match(positive_match)
+        print(saved_match)
         self.test_rejection()
         saved_match.refresh_from_db()
         self.assertEqual(
@@ -214,12 +198,9 @@ class PipelineCollectorTests(TestCase):
     def test_removal(self):
         """Deleting a file should update the status of the previous match
         message."""
-        saved_match = PipelineCollectorTests.construct_match(positive_match)
+        saved_match = record_match(positive_match)
 
-        PipelineCollectorTests.construct_problem(
-            deletion.handle.to_json_object(),
-            deletion.scan_tag,
-            deletion.to_json_object())
+        record_problem(deletion)
 
         saved_match.refresh_from_db()
         self.assertEqual(
@@ -229,10 +210,7 @@ class PipelineCollectorTests(TestCase):
 
     def test_transient_handle_errors(self):
         """Source types should be correctly extracted from Handle errors."""
-        new = PipelineCollectorTests.construct_problem(
-            transient_handle_error.handle.to_json_object(),
-            transient_handle_error.scan_tag,
-            transient_handle_error.to_json_object())
+        new = record_problem(transient_handle_error)
 
         self.assertEqual(
                 new.source_type,
@@ -241,10 +219,7 @@ class PipelineCollectorTests(TestCase):
 
     def test_transient_source_errors(self):
         """Source types should be correctly extracted from Source errors."""
-        new = PipelineCollectorTests.construct_problem(
-            transient_source_error.source.to_json_object(),
-            transient_source_error.scan_tag,
-            transient_handle_error.to_json_object())
+        new = record_problem(transient_source_error)
 
         self.assertEqual(
                 new.source_type,
@@ -255,11 +230,11 @@ class PipelineCollectorTests(TestCase):
         """Receiving a failed match message which failed because of the
         Last-Modified check should update the timestamp of the previous match
         message, but should not create a new database object."""
-        saved_match = PipelineCollectorTests.construct_match(positive_match)
-        new = PipelineCollectorTests.construct_match(late_negative_match)
+        saved_match = record_match(positive_match)
+        new = record_match(late_negative_match)
 
         self.assertEqual(
-                new.pk,
+                new,
                 None,
                 "negative match was saved anyway")
         saved_match.refresh_from_db()

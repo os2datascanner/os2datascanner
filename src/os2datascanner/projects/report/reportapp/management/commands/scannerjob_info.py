@@ -27,7 +27,7 @@ class Command(BaseCommand):
         data_mime_type_problems = defaultdict(int)
         data_mime_type_matches = defaultdict(int)
 
-        doc_reps = DocumentReport.objects.filter(data__scan_tag__scanner__pk=pk)
+        doc_reps = DocumentReport.objects.filter(raw_scan_tag__scanner__pk=pk)
 
         if not doc_reps.exists():
             self.stderr.write(self.style.NOTICE(

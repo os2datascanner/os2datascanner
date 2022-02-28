@@ -32,8 +32,11 @@ class DocumentReport(models.Model):
 
     path = models.CharField(max_length=2000, verbose_name=_("path"),
                             db_index=True)
-    # It could be that the meta data should not be part of the jsonfield...
-    data = JSONField(null=True)
+
+    raw_scan_tag = JSONField(null=True)
+    raw_matches = JSONField(null=True)
+    raw_problem = JSONField(null=True)
+    raw_metadata = JSONField(null=True)
 
     # sort results from a Source. It does not make sense to sort across Sources
     sort_key = models.CharField(
@@ -69,19 +72,23 @@ class DocumentReport(models.Model):
         return self.path
 
     @property
+    def scan_tag(self):
+        return ScanTagFragment.from_json_object(self.raw_scan_tag)
+
+    @property
     def matches(self):
-        matches = self.data.get("matches")
-        return MatchesMessage.from_json_object(matches) if matches else None
+        return (MatchesMessage.from_json_object(self.raw_matches)
+                if self.raw_matches else None)
 
     @property
     def problem(self):
-        problem = self.data.get("problem")
-        return ProblemMessage.from_json_object(problem) if problem else None
+        return (ProblemMessage.from_json_object(self.raw_problem)
+                if self.raw_problem else None)
 
     @property
     def metadata(self):
-        metadata = self.data.get("metadata")
-        return MetadataMessage.from_json_object(metadata) if metadata else None
+        return (MetadataMessage.from_json_object(self.raw_metadata)
+                if self.raw_metadata else None)
 
     @property
     def presentation(self) -> str:
@@ -97,12 +104,6 @@ class DocumentReport(models.Model):
 
         presentation = type_msg.handle.presentation if type_msg.handle else ""
         return presentation
-
-    @property
-    def scan_tag(self) -> ScanTagFragment:
-        return (self.matches.scan_spec.scan_tag if self.matches
-                else self.problem.scan_tag if self.problem
-                else self.metadata.scan_tag if self.metadata else None)
 
     @enum.unique
     class ResolutionChoices(enum.Enum):
@@ -190,54 +191,18 @@ class DocumentReport(models.Model):
         verbose_name_plural = _("document reports")
         ordering = ['-sensitivity', '-probability', 'pk']
         indexes = [
-            models.Index("data__matches__matched", name="documentreport_matched"),
+            models.Index(
+                    "raw_matches__matched",
+                    name="documentreport_matched"),
+            models.Index(
+                    fields=("scanner_job_pk", "path",),
+                    name="pc_update_query"),
         ]
         constraints = [
-            models.UniqueConstraint(fields=["scanner_job_pk", "path"],
-                                    name="unique_scanner_pk_and_path")
+            models.UniqueConstraint(
+                    fields=["scanner_job_pk", "path"],
+                    name="unique_scanner_pk_and_path")
         ]
 
 
 DocumentReport.factory = ModelFactory(DocumentReport)
-
-
-@DocumentReport.factory.on_create
-@DocumentReport.factory.on_update
-def on_documentreport_created_or_updated(objects, fields=None):
-    from .aliases.alias_model import Alias
-    from .aliases.adsidalias_model import ADSIDAlias
-    from .aliases.emailalias_model import EmailAlias
-    from .aliases.webdomainalias_model import WebDomainAlias
-
-    tm = Alias.match_relation.through
-    new_objects = []
-    for obj in objects:
-        # Add DocumentReport to Alias.match_relation, when it's saved to the db.
-        if not obj.metadata:
-            continue
-        if (email := obj.metadata.metadata.get("email-account")):
-            email_alias = EmailAlias.objects.filter(address__iexact=email)
-            add_new_relations(email_alias, new_objects, obj, tm)
-        if (adsid := obj.metadata.metadata.get("filesystem-owner-sid")):
-            adsid_alias = ADSIDAlias.objects.filter(sid=adsid)
-            add_new_relations(adsid_alias, new_objects, obj, tm)
-        if (web_domain := obj.metadata.metadata.get("web-domain")):
-            web_domain_alias = WebDomainAlias.objects.filter(domain=web_domain)
-            add_new_relations(web_domain_alias, new_objects, obj, tm)
-    try:
-        # TODO: We do not bulk create DocumentReports, and therefore will we always
-        #  bulk_create 1 Alias.match_relation at the time. We do not actually
-        #  use the bulk functionality.
-        tm.objects.bulk_create(new_objects, ignore_conflicts=True)
-    except Exception:
-        logger.error("Failed to create match_relation", exc_info=True)
-
-
-def add_new_relations(adsid_alias, new_objects, obj, tm):
-    for alias in adsid_alias:
-        new_objects.append(
-            tm(documentreport_id=obj.pk, alias_id=alias.pk))
-
-# TODO: #43340 (if we need to explicitly delete the instances of the implicit
-# model class used by Alias.match_relation, we should also hook DocumentReport.
-# factory.on_delete here)

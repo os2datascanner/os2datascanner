@@ -27,7 +27,7 @@ from ...models.aliases.emailalias_model import EmailAlias
 
 def update_match_alias_relations():
     matches = DocumentReport.objects.filter(
-        Q(data__matches__matched=True))
+        Q(raw_matches__matched=True))
     print("Found {0} matches.".format(matches.count()))
     aliases = Alias.objects.all()
     print("Found {0} aliases.".format(aliases.count()))
@@ -37,7 +37,7 @@ def update_match_alias_relations():
 
             if EmailAlias.objects.filter(pk=alias.pk):
                 subAlias = EmailAlias.objects.get(pk=alias.pk)
-                reports = matches.filter(data__metadata__metadata__contains={
+                reports = matches.filter(raw_metadata__metadata__contains={
                     str('email-account'): str(subAlias.address)})
                 tm.objects.bulk_create(
                     [tm(documentreport_id=r.pk, alias_id=alias.pk) for r in
@@ -46,7 +46,7 @@ def update_match_alias_relations():
                     len(reports)))
             elif WebDomainAlias.objects.filter(pk=alias.pk):
                 subAlias = WebDomainAlias.objects.get(pk=alias.pk)
-                reports = matches.filter(data__metadata__metadata__contains={
+                reports = matches.filter(raw_metadata__metadata__contains={
                     str('web-domain'): str(subAlias.domain)})
                 tm.objects.bulk_create(
                     [tm(documentreport_id=r.pk, alias_id=alias.pk) for r in
@@ -55,7 +55,7 @@ def update_match_alias_relations():
                     len(reports)))
             elif ADSIDAlias.objects.filter(pk=alias.pk):
                 subAlias = ADSIDAlias.objects.get(pk=alias.pk)
-                reports = matches.filter(data__metadata__metadata__contains={
+                reports = matches.filter(raw_metadata__metadata__contains={
                     str('filesystem-owner-sid'): str(subAlias.sid)})
                 tm.objects.bulk_create(
                     [tm(documentreport_id=r.pk, alias_id=alias.pk) for r in
