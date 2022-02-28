@@ -91,80 +91,77 @@ def checkup_message_received_raw(body):
 
 
 def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # noqa: CCR001, E501 too high cognitive complexity
-    try:
-        with transaction.atomic():
-            checkup = ScheduledCheckup.objects.select_for_update().get(
-                handle_representation=handle.to_json_object(),
-                scanner=scanner)
-
-            # If we get here, then there was already a checkup object in the
-            # database. Let's take a look at it
-
-            if matches:
-                if not matches.matched:
-                    if (len(matches.matches) == 1
-                            and isinstance(matches.matches[0].rule,
-                                           LastModifiedRule)):
-                        # This object hasn't changed since the last scan. Update
-                        # the checkup timestamp so we remember to check it again
-                        # next time
-                        logger.debug(
-                            "LM/no change, updating timestamp",
-                            handle=handle.presentation,
-                        )
-                        checkup.interested_before = scan_time
-                        checkup.save()
-                    else:
-                        # This object has been changed and no longer has any
-                        # matches. Hooray! Forget about it
-                        logger.debug(
-                            "Changed, no matches, deleting",
-                            handle=handle.presentation,
-                        )
-                        checkup.delete()
-                else:
-                    # This object has changed, but still has matches. Update the
-                    # checkup timestamp
+    locked_qs = ScheduledCheckup.objects.select_for_update(of=('self',))
+    checkup = locked_qs.filter(
+            handle_representation=handle.to_json_object(),
+            scanner=scanner)
+    if checkup:
+        # There was already a checkup object in the database. Let's take a
+        # look at it
+        if matches:
+            if not matches.matched:
+                if (len(matches.matches) == 1
+                        and isinstance(matches.matches[0].rule,
+                                       LastModifiedRule)):
+                    # This object hasn't changed since the last scan.
+                    # Update the checkup timestamp so we remember to check
+                    # it again next time
                     logger.debug(
-                        "Changed, new matches, updating timestamp",
-                        handle=handle.presentation,
-                    )
-                    checkup.interested_before = scan_time
-                    checkup.save()
-            elif problem:
-                if problem.missing:
-                    # Permanent error, so this object has been deleted. Forget
-                    # about it
-                    logger.debug("Problem, deleted, deleting", handle=handle.presentation)
-                    checkup.delete()
+                            "LM/no change, updating timestamp",
+                            handle=handle.presentation)
+                    checkup.update(
+                            interested_before=scan_time)
                 else:
-                    # Transient error -- do nothing. In particular, don't update
-                    # the checkup timestamp; we don't want to forget about changes
-                    # between the last match and this error
-                    logger.debug("Problem, transient, doing nothing",
-                                 handle=handle.presentation)
-    except ScheduledCheckup.DoesNotExist:
-        if ((matches and matches.matched)
-                or (problem and not problem.missing)):
-            logger.debug("Interesting, creating", handle=handle.presentation)
-            # An object with a transient problem or with real matches is an
-            # object we'll want to check up on again later
-            ScheduledCheckup.objects.create(
+                    # This object has been changed and no longer has any
+                    # matches. Hooray! Forget about it
+                    logger.debug(
+                            "Changed, no matches, deleting",
+                            handle=handle.presentation)
+                    checkup.delete()
+            else:
+                # This object has changed, but still has matches. Update
+                # the checkup timestamp
+                logger.debug(
+                        "Changed, new matches, updating timestamp",
+                        handle=handle.presentation)
+                checkup.update(
+                        interested_before=scan_time)
+        elif problem:
+            if problem.missing:
+                # Permanent error, so this object has been deleted. Forget
+                # about it
+                logger.debug(
+                        "Problem, deleted, deleting",
+                        handle=handle.presentation)
+                checkup.delete()
+            else:
+                # Transient error -- do nothing. In particular, don't
+                # update the checkup timestamp; we don't want to forget
+                # about changes between the last match and this error
+                logger.debug("Problem, transient, doing nothing",
+                             handle=handle.presentation)
+
+    elif ((matches and matches.matched)
+            or (problem and not problem.missing)):
+        logger.debug(
+                "Interesting, creating", handle=handle.presentation)
+        # An object with a transient problem or with real matches is an
+        # object we'll want to check up on again later
+        locked_qs.update_or_create(
                 handle_representation=handle.to_json_object(),
                 scanner=scanner,
                 # XXX: ideally we'd detect if a LastModifiedRule is the
-                # victim of a transient failure so that we can preserve the
-                # date to scan the object properly next time, but we don't
-                # (yet) get enough information out of the pipeline for that
-                interested_before=scan_time)
-        else:
-            logger.debug("Not interesting, doing nothing", handle=handle.presentation)
-    except DataError as de:
-        # DataError occurs when something went wrong trying to select or
-        # create/update data in the database. Often regarding ScheduledCheckups
-        # it is related to the json data. For now, we only log the error message.
-        logger.error("Could not get or create object, due to DataError",
-                     error=de)
+                # victim of a transient failure so that we can preserve
+                # the date to scan the object properly next time, but
+                # we don't (yet) get enough information out of the
+                # pipeline for that
+                defaults={
+                    "interested_before": scan_time
+                })
+    else:
+        logger.debug(
+                "Not interesting, doing nothing",
+                handle=handle.presentation)
 
 
 class CollectorRunner(PikaPipelineThread):
@@ -178,11 +175,20 @@ class CollectorRunner(PikaPipelineThread):
                     "raw message received",
                     routing_key=routing_key,
                     body=body)
-            with transaction.atomic():
-                if routing_key == "os2ds_status":
-                    yield from status_message_received_raw(body)
-                elif routing_key == "os2ds_checkups":
-                    yield from checkup_message_received_raw(body)
+            try:
+                with transaction.atomic():
+                    if routing_key == "os2ds_status":
+                        yield from status_message_received_raw(body)
+                    elif routing_key == "os2ds_checkups":
+                        yield from checkup_message_received_raw(body)
+            except DataError as de:
+                # DataError occurs when something went wrong trying to select
+                # or create/update data in the database. Often regarding
+                # ScheduledCheckups it is related to the json data. For now, we
+                # only log the error message.
+                logger.error(
+                        "Could not get or create object, due to DataError",
+                        error=de)
 
 
 class Command(BaseCommand):

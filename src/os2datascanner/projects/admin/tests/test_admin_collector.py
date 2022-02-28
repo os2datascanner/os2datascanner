@@ -1,4 +1,6 @@
 from parameterized import parameterized
+from django.db import transaction
+from django.db.utils import DataError
 from django.test import TestCase
 
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
@@ -142,14 +144,18 @@ class PipelineCollectorTests(TestCase):
         the file again, and then there is no reason to store the data.
         We could consider checking the file path. For now, we log the dataerror.
         """
-        pipeline_collector.update_scheduled_checkup(
-                handle=positive_match_corrupt.handle,
-                matches=positive_match_corrupt,
-                problem=None,
-                scan_time=positive_match_corrupt.scan_spec.scan_tag.time,
-                scanner=None)
+        try:
+            with transaction.atomic():
+                pipeline_collector.update_scheduled_checkup(
+                        handle=positive_match_corrupt.handle,
+                        matches=positive_match_corrupt,
+                        problem=None,
+                        scan_time=positive_match_corrupt.scan_spec.scan_tag.time,
+                        scanner=None)
+        except DataError:
+            # Expected behaviour
+            pass
 
-        from django.db.utils import DataError
         with self.assertRaises(DataError):
             ScheduledCheckup.objects.select_for_update().get(
                 handle_representation=positive_match_corrupt.handle.to_json_object())
