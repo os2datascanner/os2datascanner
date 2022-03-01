@@ -1,5 +1,22 @@
 # Changelog
 
+## Version 3.14.0, 1st March 2022
+
+"A Parallel Universe"
+
+### New in this version
+
+- The pipeline collector processes are now parallelizable, allowing for multiple to be run whilst
+keeping the database integrity intact. Thus, enabling scalability to enhance performance on large queues.
+
+### Bugfixes
+
+- Encountering filenames that used Windows 1252 characters previously raised a MemoryError which could lead
+to scan stoppage. This is now caught.
+
+- Email reports sent to users did not count matches younger than 30 days. These are now included
+to reflect the default behaviour of the report module.
+
 ## Version 3.13.9, 17th February 2022
 
 "The Hits Keep Coming"
