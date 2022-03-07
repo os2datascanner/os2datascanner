@@ -9,11 +9,15 @@ from prometheus_client import CollectorRegistry, Enum, push_to_gateway
 from django.conf import settings
 
 from ...models.background_job import JobState, BackgroundJob
+from os2datascanner.engine2.pipeline.run_stage import _loglevels
 
 import time
 import logging
 
-logger = logging.getLogger(__name__)
+
+logger = logging.getLogger(
+        "os2datascanner.projects.admin.core.management"
+        ".commands.run_background_jobs")
 # Registry for Prometheus
 REGISTRY = CollectorRegistry()
 JOB_STATE = Enum('background_job_status',
@@ -44,8 +48,22 @@ class Command(BaseCommand):
                 action='store_true',
                 help=_("do not loop: run a single job and then exit"),
         )
+        parser.add_argument(
+                "--log",
+                default="info",
+                help="change the level at which log messages will be printed",
+                choices=_loglevels.keys()
+        )
 
-    def handle(self, *, wait, single, **kwargs):  # noqa: CCR001, too high cognitive complexity
+    def handle(self, *, wait, single, log, **kwargs):  # noqa: CCR001
+        # leave all loggers from external libraries at default(WARNING) level.
+        # change formatting to include datestamp
+        fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
+        # set level for root logger
+        root_logger = logging.getLogger("os2datascanner")
+        root_logger.setLevel(_loglevels[log])
+
         running = True
 
         def _handler(signum, frame):
