@@ -134,6 +134,7 @@ class FileScannerCopy(ScannerCopy):
         'alias',
         'do_ocr',
         'do_last_modified_check',
+        'skip_super_hidden',
         'rules',
         'organization',
         ]
