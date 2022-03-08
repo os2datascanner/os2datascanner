@@ -25,6 +25,14 @@ $(document).ready(function(){
     }
   });
   // Toggle visiblity of expandable rows, stop
+
+  // Hides the "Let's go" button when starting scans after a click
+  // to prevent users accidentally starting multiple.
+  $('.run-scan-button').on("click", function () {
+    $(this).hide();
+    $("#waiting-scanner-run-btn").show();
+  });
+
 });
 
 // Copy Path function
