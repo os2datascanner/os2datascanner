@@ -108,9 +108,12 @@ class PipelineCollectorTests(TestCase):
     def test_scan_status_update(self, _, scan_status_object, expected_total_objects,
                                 expected_message, expected_is_error,
                                 expected_scanned_objects, expected_scanned_size):
+        scanner = Scanner.objects.create(name="dummy")
+        scan_status_object = scan_status_object._deep_replace(
+                scan_tag__scanner__pk=scanner.pk)
         ScanStatus.objects.create(
-                scanner=Scanner.objects.create(name="dummy"),
-                scan_tag=scan_tag0.to_json_object(),
+                scanner=scanner,
+                scan_tag=scan_status_object.scan_tag.to_json_object(),
                 total_sources=11,
                 total_objects=expected_total_objects - 10
                 if expected_total_objects > 0 else 0,
