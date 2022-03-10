@@ -236,6 +236,5 @@ class Command(BaseCommand):
         logging.getLogger("os2datascanner").setLevel(_loglevels[log])
 
         CollectorRunner(
-                exclusive=True,
                 read=["os2ds_status", "os2ds_checkups"],
                 prefetch_count=8).run_consumer()
