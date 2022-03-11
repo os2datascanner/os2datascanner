@@ -90,6 +90,20 @@ class CensorTests(unittest.TestCase):
                 handle = handle.censor()
                 self.assertIsNone(handle.source.handle.source._user)
 
+    def test_source_mapping(self):
+        share = SMBCSource("//SERVER/Resource", "username", driveletter="W")
+        zh = ZipHandle(
+                ZipSource(
+                        SMBCHandle(
+                                share, "Confidential Documents.zip")),
+                "doc/Personal Information.docx")
+        self.assertEqual(
+                zh.censor(),
+                zh.remap({share: share.censor()}))
+        self.assertEqual(
+                zh,
+                zh.censor().remap({share.censor(): share}))
+
     def test_data_censoring(self):
         handle = DataHandle(
                 DataSource(
