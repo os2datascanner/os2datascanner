@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Iterator
+from typing import Mapping, Iterator
 
 from ...utilities.json import JSONSerialisable
 from ...utilities.equality import TypePropertyEquality
@@ -167,3 +167,6 @@ class Source(TypePropertyEquality, JSONSerialisable):
         return {
             "type": self.type_label
         }
+
+    def remap(self, mapping: Mapping["Source", "Source"]) -> "Source":
+        return mapping.get(self, self)
