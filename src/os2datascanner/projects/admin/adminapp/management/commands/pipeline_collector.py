@@ -111,7 +111,8 @@ def checkup_message_received_raw(body):
 
     scan_time = scan_tag.time
 
-    update_scheduled_checkup(handle, matches, problem, scan_time, scanner)
+    update_scheduled_checkup(
+            handle.censor(), matches, problem, scan_time, scanner)
 
     yield from []
 
