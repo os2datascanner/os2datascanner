@@ -388,6 +388,13 @@ class ScheduledCheckup(models.Model):
     def handle(self):
         return Handle.from_json_object(self.handle_representation)
 
+    class Meta:
+        indexes = [
+            models.Index(
+                    fields=("scanner", "handle_representation",),
+                    name="sc_pc_lookup"),
+        ]
+
 
 class ScanStage(Enum):
     INDEXING = 0
@@ -511,6 +518,12 @@ class ScanStatus(models.Model):
     class Meta:
         verbose_name = _("scan status")
         verbose_name_plural = _("scan statuses")
+
+        indexes = [
+            models.Index(
+                    fields=("scanner", "scan_tag",),
+                    name="ss_pc_lookup"),
+        ]
 
 
 @receiver(post_delete)

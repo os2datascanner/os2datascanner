@@ -41,7 +41,19 @@ def status_message_received_raw(body):
     """A status message for a scannerjob is created in Scanner.run().
     Therefore this method can focus merely on updating the ScanStatus object."""
     message = messages.StatusMessage.from_json_object(body)
-    scan_status = ScanStatus.objects.filter(scan_tag=body["scan_tag"])
+
+    try:
+        scanner = Scanner.objects.get(pk=message.scan_tag.scanner.pk)
+    except Scanner.DoesNotExist:
+        # This is a residual message for a scanner that the administrator has
+        # deleted. Throw it away
+        return
+
+    locked_qs = ScanStatus.objects.select_for_update(of=('self',))
+    scan_status = locked_qs.filter(  # Uses the "ss_pc_lookup" index
+            scanner=scanner,
+            scan_tag=body["scan_tag"])
+
     if message.total_objects is not None:
         # An explorer has finished exploring a Source
         scan_status.update(
@@ -106,9 +118,9 @@ def checkup_message_received_raw(body):
 
 def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # noqa: CCR001, E501 too high cognitive complexity
     locked_qs = ScheduledCheckup.objects.select_for_update(of=('self',))
-    checkup = locked_qs.filter(
-            handle_representation=handle.to_json_object(),
-            scanner=scanner)
+    checkup = locked_qs.filter(  # Uses the "sc_pc_lookup" index
+            scanner=scanner,
+            handle_representation=handle.to_json_object())
     if checkup:
         # There was already a checkup object in the database. Let's take a
         # look at it
@@ -224,6 +236,5 @@ class Command(BaseCommand):
         logging.getLogger("os2datascanner").setLevel(_loglevels[log])
 
         CollectorRunner(
-                exclusive=True,
                 read=["os2ds_status", "os2ds_checkups"],
                 prefetch_count=8).run_consumer()
