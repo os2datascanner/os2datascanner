@@ -78,9 +78,23 @@ def checkup_message_received_raw(body):
         return
     try:
         scanner = Scanner.objects.get(pk=scan_tag.scanner.pk)
+        ScanStatus.objects.get(scan_tag=scan_tag.to_json_object())
     except Scanner.DoesNotExist:
         # This is a residual message for a scanner that the administrator has
         # deleted. Throw it away
+        return
+    except ScanStatus.DoesNotExist:
+        # This means that there is no corresponding ScanStatus object.
+        # Likely, this means that the scan has been cancelled. Tell processes to throwaway messages.
+        msg = messages.CommandMessage(
+            abort=messages.ScanTagFragment.from_json_object(
+                scan_tag.to_json_object()))
+        with PikaPipelineThread() as p:
+            p.enqueue_message(
+                "", msg.to_json_object(),
+                "broadcast", priority=10)
+            p.enqueue_stop()
+            p.run()
         return
 
     scan_time = scan_tag.time
