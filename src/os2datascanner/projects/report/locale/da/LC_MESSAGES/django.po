@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-15 16:22+0100\n"
+"POT-Creation-Date: 2022-03-16 09:54+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -314,6 +314,7 @@ msgid "Front page"
 msgstr "Forside"
 
 #: reportapp/templates/components/navigation.html:26
+#: reportapp/templates/components/user.html:40
 msgid "Logout"
 msgstr "Log ud"
 
@@ -428,6 +429,13 @@ msgstr "Afdelingens procentvise andel af håndterede resultater"
 msgid "All results"
 msgstr "Alle resultater"
 
+#: reportapp/templates/components/user.html:37
+#: reportapp/templates/password_change.html:6
+#: reportapp/templates/password_change.html:16
+#: reportapp/templates/password_change.html:43
+msgid "Change password"
+msgstr "Skift adgangskode"
+
 #: reportapp/templates/django_saml2_auth/denied.html:6
 msgid "Permission denied"
 msgstr "Ingen adgang"
@@ -461,6 +469,7 @@ msgid "No results were found"
 msgstr "Der er ingen resultater"
 
 #: reportapp/templates/login.html:8 reportapp/templates/logout.html:8
+#: reportapp/templates/password_change_done.html:23
 msgid "Log in"
 msgstr "Log ind på"
 
@@ -584,6 +593,15 @@ msgstr ""
 "\n"
 "Med venlig hilsen<br>\n"
 "OS2datascanner-systemet\n"
+
+#: reportapp/templates/password_change_done.html:6
+#: reportapp/templates/password_change_done.html:12
+msgid "Password change successful"
+msgstr "Skift adgangskode lykkedes"
+
+#: reportapp/templates/password_change_done.html:18
+msgid "Your password was changed."
+msgstr "Din adgangskode blev ændret."
 
 #: reportapp/views/views.py:76
 msgid "The page does not exist"

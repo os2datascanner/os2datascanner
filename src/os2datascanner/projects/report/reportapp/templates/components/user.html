@@ -33,8 +33,11 @@
           </a>
         </form>
         {% else %}
+	<a class="password-change" href="/accounts/password_change">
+	    {% trans "Change password" %}
+	</a>
         <a class="logout" href="/accounts/logout">
-          Log ud
+	    {% trans "Logout" %}
         </a>
         {% endif %}
       </div>
