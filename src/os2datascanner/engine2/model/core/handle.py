@@ -1,7 +1,8 @@
 import os.path
 from abc import abstractmethod
+from copy import copy
+from typing import Mapping, Optional
 from mimetypes import guess_type
-from typing import Optional
 
 from ...utilities.json import JSONSerialisable
 from ...utilities.equality import TypePropertyEquality
@@ -45,7 +46,7 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         self._referrer = referrer
 
     @property
-    def source(self):
+    def source(self) -> "msource.Source":
         """Returns this Handle's Source."""
         return self._source
 
@@ -187,3 +188,10 @@ class Handle(TypePropertyEquality, JSONSerialisable):
                         obj["path"])
             return cls
         return _stock_json_handler
+
+    def remap(
+            self,
+            mapping: Mapping["msource.Source", "msource.Source"]) -> "Handle":
+        nc = copy(self)
+        nc._source = nc._source.remap(mapping)
+        return nc

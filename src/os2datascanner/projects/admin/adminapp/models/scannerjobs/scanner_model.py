@@ -291,7 +291,9 @@ class Scanner(models.Model):
             progress=None)
         outbox = []
         source_count = 0
+        uncensor_map = {}
         for source in self.generate_sources():
+            uncensor_map[source.censor()] = source
             outbox.append((
                 settings.AMQP_PIPELINE_TARGET,
                 message_template._replace(source=source)))
@@ -309,7 +311,16 @@ class Scanner(models.Model):
                 progress=messages.ProgressFragment(
                     rule=None,
                     matches=[]))
-        for reminder in self.checkups.all():
+        for reminder in self.checkups.iterator():
+            rh = reminder.handle
+            if rh.source not in uncensor_map:
+                # This checkup refers to a Source that we no longer care about
+                # (for example, an account that's been removed from the scan).
+                # Delete it
+                reminder.delete()
+            else:
+                rh = rh.remap(uncensor_map)
+
             # XXX: we could be adding LastModifiedRule twice
             ib = reminder.interested_before
             rule_here = AndRule.make(
@@ -317,8 +328,8 @@ class Scanner(models.Model):
                     rule)
             outbox.append((settings.AMQP_CONVERSION_TARGET,
                            message_template._deep_replace(
-                               scan_spec__source=reminder.handle.source,
-                               handle=reminder.handle,
+                               scan_spec__source=rh.source,
+                               handle=rh,
                                progress__rule=rule_here)))
 
         self.e2_last_run_at = now
