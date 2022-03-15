@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-01 10:53+0100\n"
+"POT-Creation-Date: 2022-03-08 10:25+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -599,7 +599,7 @@ msgid "no ongoing scans"
 msgstr "der er ingen igangværende scanninger"
 
 #: adminapp/templates/os2datascanner/scanner_askrun.html:25
-#: adminapp/templates/os2datascanner/scanner_askrun.html:80
+#: adminapp/templates/os2datascanner/scanner_askrun.html:87
 msgid "Run scanner"
 msgstr "Kør scanner"
 
@@ -618,6 +618,10 @@ msgstr "Er du sikker på, at du vil starte scanneren?"
 #: adminapp/templates/os2datascanner/scanner_askrun.html:67
 msgid "Let's go!"
 msgstr "Ja, kør"
+
+#: adminapp/templates/os2datascanner/scanner_askrun.html:74
+msgid "Waiting..."
+msgstr "Afventer..."
 
 #: adminapp/templates/os2datascanner/scanner_form.html:99
 #: adminapp/templates/partials/breadcrumb.html:44
