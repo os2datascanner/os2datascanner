@@ -1,5 +1,30 @@
 # Changelog
 
+## Version 3.14.1, 15th March 2022
+"Jet Fuel for the Parallelisation Rocket"
+
+### New in this version
+
+- The database indexes have been optimised for the administration system's
+  collector process, allowing for better performance and more efficient
+  parallelism.
+
+- The log level of the background job runner can now be adjusted, enabling LDAP
+  debugging.
+
+### Bugfixes
+
+- Changing the credentials of a data source no longer renders existing
+  ScheduledCheckup messages invalid.
+
+- The administration system's collector process now reminds restarted pipeline
+  components that a scan has been cancelled.
+
+- It is no longer possible to start multiple scans at once by clicking the
+  "Let's go!" button several times in quick succession.
+
+- When copying a file scanner, the "Skip super hidden" field is now included.
+
 ## Version 3.14.0, 1st March 2022
 
 "A Parallel Universe"
