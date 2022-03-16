@@ -97,15 +97,11 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
               <th class="text-align-right matches-list__column--probability" hidden>{% trans "Probability" %}</th>
             </thead>
             <tbody>
-              {% for match in frag.matches %}
-                <tr>
-                  <td>{{ match.match }}</td>
-                  {% if match.context %}
-                  <td class="match-context">{{ match.context }}</td>
-                  {% endif %}
-                  <td class="text-align-right matches-list__column--probability" hidden>{% include "components/probability.html"%}</td>
-                </tr>
-              {% endfor %}
+            {% with document_report.pk as pk %}
+            {% with None as interval %}
+              {% include "components/matches_table.html" %}
+            {% endwith %}
+            {% endwith %}
             </tbody>
           </table>
         </td>
