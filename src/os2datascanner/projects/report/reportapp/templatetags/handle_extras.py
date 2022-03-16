@@ -101,3 +101,10 @@ def find_file_folder(handle, force=False):
             return file_path
         else:
             return None
+
+
+@register.filter
+def upto(lst, interval):
+    if interval is None:
+        interval = (0, 10)
+    return lst[interval[0]:interval[1]]
