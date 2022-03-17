@@ -35,6 +35,7 @@
 <h6><a href="#Webscanner">Webscanner</a></h6>
 <h6><a href="#Filscanner">Filscanner</a></h6>
 <h6><a href="#Exchange-scanner">Exchange-scanner</a></h6>
+<h6><a href="#Office365-scanner">Office 365 mailscanner og Office 365 OneDrive filscanner</a></h6>
 <h6><a href="#Validering-koersel">Validering og kørsel af scannerjobs</a></h6>
 <h5><a href="#Status">Status-fanen</a></h5>
 <h5><a href="#Regler-1">Regler-fanen</a></h5>
@@ -303,6 +304,9 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 <p>Vær opmærksom på, at I <i>skal</i> skrive jeres service endpoint, hvis jeres Exchange-server ligger i skyen. Endpointet hedder altid "https://outlook.office365.com/EWS/Exchange.asmx". Undlader I at skrive service endpointet, kan slutbrugerne ikke åbne mails med de fundne matches direkte fra rapportmodulet. Har I en on premise-installation, behøver I ikke skrive noget service endpoint.</p>
 
 <p>Under brugeroplysninger skal I skrive brugernavn og adgangskode på jeres servicekonto og uploade en liste over de mailkonti, der skal scannes.</p>
+
+<h6 id="Office365-scanner">Office 365 mailscanner og Office 365 OneDrive filscanner</h6>
+<p>Med indførelsen af Microsofts Office 365 cloud suite er det nu muligt at scanne mails fra Outlook og filer fra OneDrive i Office 365. For at dette kan virke, så skal der registeres en "Azure Application" i Microsoft Azure's portal: <a href="https://portal.azure.com/#home">https://portal.azure.com/#home</a>. Der er blevet udarbejdet en guide til opsætning og afvikling af scannerjobs i OS2datascanner, som involverer datakilder fra Office 365, herunder mails og OneDrive filer. Denne guide kan findes her: <a href="https://os2datascanner.readthedocs.io/azure/azure-setup-guide/">https://os2datascanner.readthedocs.io/azure/azure-setup-guide/</a>. OS2datascanner laver på intet tidpunkt permanente kopier af data, som analyseres under kørsel af et scannerjob. Data hentes derimod over i <a href="#Hukommelse">hukommelsen</a>, som overskrives løbende.</p>
 
 <h5 id="Validering-koersel">Validering og kørsel af scannerjobs</h5>
 <p>Når en administrator har oprettet et scannerjob, skal en superadmin godkende det. Det sker ved at åbne selve scannerjobbet og sætte valideringsstatus til “gyldig.” Herefter kan både superadmins og admins sætte jobbet i gang. Når et scannerjob er sat i gang, bliver de fundne <a href="#Match">matches</a> løbende sendt videre til OS2datascanners rapportmodul, hvor slutbrugeren kan se dem. </p>
