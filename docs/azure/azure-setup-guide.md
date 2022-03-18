@@ -36,7 +36,7 @@ en Azure Applikation.
 *Step 5:* Når ovenstående er udfyldt, så skal du klikke på "Register".
 	Nu har du registreret en ny app, og du skulle gerne se en oversigt over den nye app.
 
-*Step 5½ (Valgfri):* Hvis der også ønskes at scanne filer Onedrive skal der tilføjes en Redirect URI mere.
+*Step 5½ (Valgfri):* Hvis der også ønskes at scanne filer fra OneDrive skal der tilføjes en Redirect URI mere.
 	Det gøres ved at klikke på menu punktet i venstre side kaldet "Authentication".
 	Klik herefter på "Add URI" og indsæt følgende redirect URI: `https://<DIN_KOMMUNES_NAVN>-admin.os2datascanner.dk/msgraph-filescanners/add/`.
 	Tryk på "Save".
@@ -112,7 +112,7 @@ Fremgangsmåden for "Office 365 mailscanner" og "Office 365 OneDrive filscanner"
 *OS2datascanner* gør det bl.a. muligt at scanne mails i Office 365 email konti. Hvis fanen "Office 365 mailscanner" er synlig, er det muligt at tilføje et nyt scannerjob.
 
 *Step 1:* Klik på "Office 365 mailscanner" fanebladet.
-	Klik herefter på "Tilføj Scannerjob" knappen.
+	Klik herefter på "Tilføj scannerjob" knappen.
 
 ![](img-026.png)
 
