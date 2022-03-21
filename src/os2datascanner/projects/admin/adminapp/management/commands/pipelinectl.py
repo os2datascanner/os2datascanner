@@ -1,4 +1,5 @@
 import json
+import argparse
 from django.core.management.base import BaseCommand
 
 from ...models.scannerjobs.scanner_model import Scanner, ScanStatus
@@ -55,10 +56,15 @@ class Command(BaseCommand):
                 metavar="LEVEL",
                 help="the new log level for pipeline components",
                 default=None)
+        group.add_argument(
+                "--profile",
+                action=argparse.BooleanOptionalAction,
+                help="whether to enable or disable profiling",
+                default=None)
 
     def handle(self,
                abort_scantag, abort_scannerjob, abort_scanstatus, log_level,
-               *args, **options):
+               profile, *args, **options):
         if abort_scannerjob:
             abort_scantag = messages.ScanTagFragment.from_json_object(
                     abort_scannerjob.statuses.last().scan_tag)
@@ -68,7 +74,8 @@ class Command(BaseCommand):
 
         msg = messages.CommandMessage(
                 abort=abort_scantag,
-                log_level=_loglevels.get(log_level) if log_level else None)
+                log_level=_loglevels.get(log_level) if log_level else None,
+                profiling=profile)
         logging.info(msg)
 
         with pika.PikaPipelineThread() as p:

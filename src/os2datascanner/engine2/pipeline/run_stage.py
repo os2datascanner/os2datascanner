@@ -5,17 +5,21 @@ import random
 import signal
 import sys
 import traceback
+import pstats
 from collections import deque
 
 from prometheus_client import Info, Summary, start_http_server
 
+from os2datascanner.utils import profiling
 from ... import __version__
 from ..model.core import SourceManager
 from . import explorer, exporter, matcher, messages, processor, tagger, worker
 from .utilities.pika import PikaPipelineThread, RejectMessage
 
 
-logger = logging.getLogger(__name__)
+# __name__ is "__main__" in this context, which isn't quite what we want for
+# our position in the logging hierarchy
+logger = logging.getLogger("os2datascanner.engine2.pipeline.run_stage")
 
 
 def backtrace(signal, frame):
@@ -85,9 +89,20 @@ class GenericRunner(PikaPipelineThread):
 
         if command.abort:
             self._cancelled.appendleft(command.abort)
+
         if command.log_level:
             logging.getLogger("os2datascanner").setLevel(
                     command.log_level)
+
+        if command.profiling is not None:
+            profiling.print_stats(pstats.SortKey.CUMULATIVE, silent=True)
+            if command.profiling:
+                profiling.enable_profiling()
+                logger.info("enabling profiling")
+            else:
+                profiling.disable_profiling()
+                logger.info("disabling profiling")
+
         yield from []
 
     def _handle_content(self, routing_key, body):
@@ -138,6 +153,11 @@ def main():
             default="info",
             help="change the level at which log messages will be printed",
             choices=_loglevels.keys()
+        )
+    parser.add_argument(
+            "--profile",
+            action="store_true",
+            help="record and print profiling output"
         )
     parser.add_argument(
             "stage",
@@ -209,16 +229,23 @@ def main():
         root_logger.info(f"executing only on CPU {cpu}")
         os.sched_setaffinity(0, {cpu})
 
-    with SourceManager(width=args.width) as source_manager:
-        GenericRunner(
-                source_manager,
-                stage=args.stage,
-                module=module,
-                limit=args.limit).run_consumer()
+    if args.profile:
+        root_logger.info("enabling profiling")
+        profiling.enable_profiling()
 
-    if restarting:
-        root_logger.info(f"restarting after {args.limit} messages")
-        restart_process()
+    try:
+        with SourceManager(width=args.width) as source_manager:
+            GenericRunner(
+                    source_manager,
+                    stage=args.stage,
+                    module=module,
+                    limit=args.limit).run_consumer()
+
+        if restarting:
+            root_logger.info(f"restarting after {args.limit} messages")
+            restart_process()
+    finally:
+        profiling.print_stats(pstats.SortKey.CUMULATIVE, silent=True)
 
 
 if __name__ == "__main__":

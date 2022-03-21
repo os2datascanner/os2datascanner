@@ -475,10 +475,18 @@ class CommandMessage(NamedTuple):
     log_level: Optional[int] = None
     # If set, the new logging level of the "os2datascanner" root logger.
 
+    profiling: Optional[bool] = None
+    """If set, whether or not to perform runtime profiling.
+
+    As a side effect of processing a message with this attribute set, the
+    target process will print and clear any profiling statistics it might
+    already have collected."""
+
     def to_json_object(self):
         return {
             "abort": self.abort.to_json_object() if self.abort else None,
-            "log_level": self.log_level
+            "log_level": self.log_level,
+            "profiling": self.profiling
         }
 
     @staticmethod
@@ -487,6 +495,7 @@ class CommandMessage(NamedTuple):
         return CommandMessage(
                 abort=ScanTagFragment.from_json_object(abort)
                 if abort else None,
-                log_level=obj.get("log_level"))
+                log_level=obj.get("log_level"),
+                profiling=obj.get("profiling"))
 
     _deep_replace = _deep_replace
