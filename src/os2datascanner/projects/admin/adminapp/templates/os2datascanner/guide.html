@@ -35,6 +35,7 @@
 <h6><a href="#Webscanner">Webscanner</a></h6>
 <h6><a href="#Filscanner">Filscanner</a></h6>
 <h6><a href="#Exchange-scanner">Exchange-scanner</a></h6>
+<h6><a href="#Office365-scanner">Office 365 mailscanner og Office 365 OneDrive filscanner</a></h6>
 <h6><a href="#Validering-koersel">Validering og kørsel af scannerjobs</a></h6>
 <h5><a href="#Status">Status-fanen</a></h5>
 <h5><a href="#Regler-1">Regler-fanen</a></h5>
@@ -61,13 +62,13 @@
 
 
 <h2 id="Indledning">Indledning</h2>
-<p>Denne håndbog er til dig, der er organisatorisk eller teknisk projektleder for implementeringen af OS2datascanner. Scanneren er et værktøj, der hjælper jeres organisation med at gennemsøge drev, emails og hjemmesider og finde frem til dokumenter, hvor der ligger personoplysninger - alt lige fra de almindelige personoplysninger som navn, adresse og CPR-nummer til følsomme personoplysninger om eksempelvis helbred. Det kan være data, der er blevet samlet gennem mange år, og som I derfor måske ikke har det fulde overblik over. Scanneren er derfor et vigtigt redskab til at hjælpe jer med at overholde gældende lovgivning om behandling af personoplysninger.</p>
+<p>Denne håndbog er til dig, der er organisatorisk eller teknisk projektleder for implementeringen af OS2datascanner. Scanneren er et værktøj, der hjælper jeres organisation med at gennemsøge drev, emails og hjemmesider for at finde frem til dokumenter, hvor der ligger personoplysninger - alt lige fra de almindelige personoplysninger som navn, adresse og CPR-nummer til følsomme personoplysninger som eksempelvis helbred. Det kan være data, der er blevet samlet gennem mange år, og som I derfor måske ikke har det fulde overblik over. Scanneren er derfor et vigtigt redskab til at hjælpe jer med at overholde gældende lovgivning om behandling af personoplysninger.</p>
 
 <p>Mange bruger scanneren til først at lave en <b>“hovedrengøring”</b> og efterfølgende at lave <b>løbende scans</b> eksempelvis hver anden uge. Ved hovedrengøringen bliver alt scannet, så man efterfølgende kan rydde op i oplysningerne, og ved de løbende scans tjekker scanneren, om der er fundet nye oplysninger i systemet. I kan derfor også bruge scanneren til at få <b>indarbejdet gode vaner omkring behandling af personoplysninger. </b></p>
 
 <p>Det betyder også, at <b>implementering og forankring i hele organisationen er helt afgørende for, at arbejdet med OS2datascanner bliver en succes - herunder, at opgaven med at rydde op i og holde styr på personoplysninger er solidt forankret på alle ledelsesniveauer.</b> Derfor kommer denne håndbog ikke blot ind på, hvordan I rent teknisk bruger scanneren, men lige så meget hvordan I kan arbejde med OS2datascanner på et organisatorisk plan. </p>
 
-<p>Scanneren er inddelt i to moduler: Et <b>administrationsmodul og et rapportmodul.</b> I førstnævnte opretter og godkender I scans, og som regel er det nogle få centralt placerede medarbejdere med særligt indblik i administrationsmodulet, der tager sig af denne del af arbejdet. For at få det fulde udbytte af scanneren kan det dog være en god idé, at en medarbejder på eksempelvis socialområdet arbejder sammen med en administrator om at identificere de rette søgekriterier. Denne del af processen bliver beskrevet i afsnittet om adminmodulet.</p>
+<p>Scanneren er inddelt i to moduler: Et <b>administrationsmodul og et rapportmodul.</b> I førstnævnte opretter og godkender I scans, og som regel er det nogle få centralt placerede medarbejdere med særligt indblik i administrationsmodulet, der tager sig af denne del af arbejdet. For at få det fulde udbytte af scanneren kan det dog være en god idé, at en medarbejder, på eksempelvis socialområdet, arbejder sammen med en administrator om at identificere de rette søgekriterier. Denne del af processen bliver beskrevet i afsnittet om administrationsmodulet.</p>
 
 <p>I rapportmodulet kan medarbejderne se listen over de fundne dokumenter, åbne dem direkte i ens mailprogram eller stifinder og så håndtere dem ved eksempelvis at slette eller arkivere dem på en bestemt måde. Arbejdet med at håndtere dokumenter ligger som regel ude i de enkelte afdelinger, hvor hver medarbejder eksempelvis håndterer sine egne mails. Til disse medarbejdere, <a href="#Slutbruger-1">slutbrugerne</a>, har vi lavet en <a href="../static/svg/OS2DS-Brugerhaandbog.pdf" download>brugerhåndbog</a>, der på nogle få sider forklarer, hvordan man rent teknisk bruger rapportmodulet. Til afdelingschefer og andre med personaleansvar har vi desuden lavet et <a href="../static/svg/OS2DS-Handout.pdf" download>handout</a>, der fortæller om fordelen ved at bruge datascanneren i afdelingen.</p>
 
@@ -273,7 +274,7 @@
 
 <h5 id="Opret-scannerjob">Sådan opretter du et scannerjob</h5>
 
-<p>Under hver type scanner kan du oprette et nyt scannerjob ved at klikke på “Tilføj nyt”. Alle scannertyper har det tilfælles, at du øverst vælger et navn. Du skal også vælge din <a href="#Organisation">organisation</a> og en <a href="#Valideringsstatus">valideringsstatus</a>. Sidstnævnte er som udgangspunkt sat til “ugyldig”, hvilket betyder, at scannerjobbet endnu ikke er blevet godkendt af en superadmin og altså ikke kan køres, før dette er sket. </p>
+<p>Under hver type scanner kan du oprette et nyt scannerjob ved at klikke på “Tilføj scannerjob”. Alle scannertyper har det tilfælles, at du øverst vælger et navn. Du skal også vælge din <a href="#Organisation">organisation</a> og en <a href="#Valideringsstatus">valideringsstatus</a>. Sidstnævnte er som udgangspunkt sat til “ugyldig”, hvilket betyder, at scannerjobbet endnu ikke er blevet godkendt af en superadmin og altså ikke kan køres, før dette er sket. </p>
 
 <p><i>Navnet på scannerjobbet er vigtigt, fordi du her kan give en ordentlig beskrivelse af, hvad netop dette scannerjob skal bruges til. Er det til en hovedrengøring eller et løbende scan? Scanner det udelukkende efter CPR-numre eller efter nogle regler, I selv har opsat?</i></p>
 
@@ -303,6 +304,12 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 <p>Vær opmærksom på, at I <i>skal</i> skrive jeres service endpoint, hvis jeres Exchange-server ligger i skyen. Endpointet hedder altid "https://outlook.office365.com/EWS/Exchange.asmx". Undlader I at skrive service endpointet, kan slutbrugerne ikke åbne mails med de fundne matches direkte fra rapportmodulet. Har I en on premise-installation, behøver I ikke skrive noget service endpoint.</p>
 
 <p>Under brugeroplysninger skal I skrive brugernavn og adgangskode på jeres servicekonto og uploade en liste over de mailkonti, der skal scannes.</p>
+
+<h6 id="Office365-scanner">Office 365 mailscanner og Office 365 OneDrive filscanner</h6>
+<p>Med indførelsen af Microsofts Office 365 cloud suite er det nu muligt at scanne mails fra Outlook og filer fra OneDrive i Office 365.</p>
+<p>For at dette kan virke, så skal der registeres en "Azure Application" i Microsoft Azure's portal: <a href="https://portal.azure.com/#home">https://portal.azure.com/#home</a>. Der er blevet udarbejdet en guide til opsætning og afvikling af scannerjobs i OS2datascanner, som involverer datakilder fra Office 365, herunder mails og OneDrive filer. Denne guide kan findes her: <a href="https://os2datascanner.readthedocs.io/azure/azure-setup-guide/">https://os2datascanner.readthedocs.io/azure/azure-setup-guide/</a>.</p>
+
+<p>OS2datascanner laver på intet tidpunkt permanente kopier af data, som analyseres under kørsel af et scannerjob. Data hentes derimod over i <a href="#Hukommelse">hukommelsen</a>, som overskrives løbende.</p>
 
 <h5 id="Validering-koersel">Validering og kørsel af scannerjobs</h5>
 <p>Når en administrator har oprettet et scannerjob, skal en superadmin godkende det. Det sker ved at åbne selve scannerjobbet og sætte valideringsstatus til “gyldig.” Herefter kan både superadmins og admins sætte jobbet i gang. Når et scannerjob er sat i gang, bliver de fundne <a href="#Match">matches</a> løbende sendt videre til OS2datascanners rapportmodul, hvor slutbrugeren kan se dem. </p>
