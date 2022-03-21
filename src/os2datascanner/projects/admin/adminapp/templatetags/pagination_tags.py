@@ -24,6 +24,6 @@ def param_replace(context, **kwargs):
     d = context['request'].GET.copy()
     for k, v in kwargs.items():
         d[k] = v
-    for k in [k for k, v in d.items() if not v]:
-        del d[k]
+    for key in [k for k, v in d.items() if not v]:
+        del d[key]
     return d.urlencode()
