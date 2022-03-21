@@ -135,3 +135,10 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                             r.get_size().value,
                             1048576,
                             "LibreOffice HTML output was too big")
+
+    def test_second_sheet(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "libreoffice/two-sheets.ods")))
