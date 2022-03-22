@@ -84,6 +84,16 @@ class MSGraphSource(Source):
                 self._token = self._token_creator()
                 return self.get(tail, json=json, _retry=True)
 
+        def paginated_get(self, endpoint: str):
+            """ Performs a GET request on specified MSGraph endpoint and
+            uses generators to go through pages if response is paginated"""
+            result = self.get(endpoint)
+            yield from result.get('value')
+
+            while '@odata.nextLink' in result:
+                result = self.follow_next_link(result["@odata.nextLink"])
+                yield from result.get('value')
+
         def head_raw(self, tail):
             return WebRetrier().run(
                     self._session.head,

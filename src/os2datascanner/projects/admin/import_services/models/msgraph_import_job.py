@@ -22,13 +22,10 @@ def _make_token_endpoint(tenant_id):
         tenant_id)
 
 
-# TODO: Convert prints to logging & write more useful log messages
-
 class MSGraphImportJob(BackgroundJob):
     tenant_id = models.CharField(max_length=256, verbose_name="Tenant ID",
                                  null=False)
 
-    # Should maybe not be limited to "One"?
     organization = models.OneToOneField(
         'organizations.Organization',
         on_delete=models.PROTECT,
@@ -64,61 +61,67 @@ class MSGraphImportJob(BackgroundJob):
         return "MSGraph Import Job"
 
     # TODO: Remember to set "status" & handle progress
-    # TODO: Try to bring down complexity and not just ignore it
-    def run(self):  # noqa: CCR001, too high cognitive complexity
+    def run(self):
         data_type_user = "#microsoft.graph.user"
         data_type_group = "#microsoft.graph.group"
-        # TODO: Perhaps do this in a smarter way
         hierarchy = list()
         group_info = dict()
         group_members = list()
-        member_info = dict()
-        group_child_info = dict()
+
+        self.status = "Initializing MSGraph AAD Import..."
+        self.save()
 
         with requests.Session() as session:
             gc = GraphCaller(self.make_token, session)
-            groups = gc.get("groups")
+            groups = gc.paginated_get("groups")
 
-            # TODO: Consider using .get() instead of direct key lookups for better error handling
-            for group in groups["value"]:
-                uuid = group["id"]
-                dn = group["displayName"]
-
+            for group in groups:
+                uuid = group["id"]  # We absolutely need an id.
+                dn = group.get("displayName", "No display name")
                 # Store group info in dict
                 group_info['uuid'] = uuid
                 group_info['name'] = dn
 
                 # Check for transitive members of current group
-                transitive_members = gc.get(f'groups/{uuid}/transitiveMembers')
-
-                # Pagination TODO: verify this works
-                while '@odata.nextLink' in transitive_members:
-                    transitive_members += gc.follow_next_link(transitive_members["@odata.nextLink"])
+                transitive_members = gc.paginated_get(f'groups/{uuid}/transitiveMembers')
 
                 # TODO: Should we include groups with no members?
-                if transitive_members['value']:
-                    for member in transitive_members["value"]:
+                if transitive_members:
+                    for member in transitive_members:
                         if member['@odata.type'] == data_type_group:
-                            group_child_info['type'] = "group"
-                            group_child_info['displayName'] = member['displayName']
-                            group_members.append(group_child_info.copy())
+                            group_members.append({
+                                "type": "group",
+                                "uuid": member.get("id"),
+                                "displayName": member.get("displayName", "Unnamed group")
+
+                            })
 
                         if member['@odata.type'] == data_type_user:
-                            member_info['type'] = "user"
-                            member_info['givenName'] = member['givenName']
-                            member_info['surname'] = member['surname']
-                            member_info['userPrincipalName'] = member['userPrincipalName']
-                            group_members.append(member_info.copy())
+                            group_members.append({
+                                "type": "user",
+                                "uuid": member.get("id"),
+                                "givenName": member.get("givenName", "No first name"),
+                                "surname": member.get("surname", "No surname"),
+                                "userPrincipalName": member.get("userPrincipalName", "No "
+                                                                                     "principal "
+                                                                                     "name")
+                            })
                         else:
+                            # Not an object of interest. Pass.
                             pass
 
-                    # TODO: This copying and clearing of internal data doesn't seem sustainable
+                    # Copy objects and then clear. Otherwise, referenced objects will be lost
                     group_info["members"] = group_members.copy()
                     hierarchy.append(group_info.copy())
                     group_info.clear()
                     group_members.clear()
-                    member_info.clear()
-                    group_child_info.clear()
 
         from ...organizations.msgraph_import_actions import perform_msgraph_import
+
+        def _callback(*args):
+            # TODO: Implement a way to track progress
+            pass
+
+        self.status = "OK.. Data received, build and store relations..."
+        self.save()
         perform_msgraph_import(hierarchy, self.organization)
