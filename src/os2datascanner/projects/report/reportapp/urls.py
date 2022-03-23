@@ -54,3 +54,13 @@ else:
                                extra_context={'body_class': 'login-bg'}
                            ),
                            name='logout'))
+    urlpatterns.append(url(r'^accounts/password_change/',
+                           django.contrib.auth.views.PasswordChangeView.as_view(
+                               template_name='password_change.html',
+                           ),
+                           name='password_change'))
+    urlpatterns.append(url(r'^accounts/password_change_done/',
+                           django.contrib.auth.views.PasswordChangeDoneView.as_view(
+                               template_name='password_change_done.html',
+                           ),
+                           name='password_change_done'))
