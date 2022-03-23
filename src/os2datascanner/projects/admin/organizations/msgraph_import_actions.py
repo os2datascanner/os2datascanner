@@ -27,11 +27,11 @@ def perform_msgraph_import(data: list,  # noqa: CCR001, too high cognitive compl
         org_unit_obj, created = OrganizationalUnit.objects.update_or_create(
             imported_id=group.get("uuid"),
             imported=True,
-            name=group.get("name"),
             organization=organization,
             defaults={
                 "last_import": now,
-                "last_import_requested": now
+                "last_import_requested": now,
+                "name": group.get("name")
             }
         )
         logger.info(f' Org Unit {org_unit_obj.name}, '
@@ -44,13 +44,13 @@ def perform_msgraph_import(data: list,  # noqa: CCR001, too high cognitive compl
                 account_obj, created = Account.objects.update_or_create(
                     imported_id=member.get("uuid"),
                     imported=True,
-                    username=member.get('userPrincipalName'),
-                    first_name=member.get('givenName'),
-                    last_name=member.get('surname'),
                     organization=organization,
                     defaults={
                         "last_import": now,
-                        "last_import_requested": now
+                        "last_import_requested": now,
+                        "username": member.get("userPrincipalName"),
+                        "first_name": member.get("givenName"),
+                        "last_name": member.get("surname")
                     }
                 )
                 logger.info(f' Member {account_obj.username}, '
@@ -64,10 +64,10 @@ def perform_msgraph_import(data: list,  # noqa: CCR001, too high cognitive compl
                     imported=True,
                     account=account_obj,
                     _alias_type=AliasType.EMAIL.value,
-                    value=member.get('userPrincipalName'),
                     defaults={
                         "last_import": now,
-                        "last_import_requested": now
+                        "last_import_requested": now,
+                        "value": member.get('userPrincipalName')
                     }
                 )
                 logger.info(f'Alias for account {alias_obj.account.username} '
