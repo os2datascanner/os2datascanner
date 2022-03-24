@@ -47,6 +47,7 @@ class Feature(ModelChoiceFlag):
     # overwhelmed by additional features.
     ORG_STRUCTURE = (1 << 1, _('structured organization support'))
     IMPORT_SERVICES = (1 << 2, _('import services'))
+    IMPORT_SERVICES_MS_GRAPH = (1 << 3, _('import services (MS Graph)'))
 
 
 class Client(models.Model):

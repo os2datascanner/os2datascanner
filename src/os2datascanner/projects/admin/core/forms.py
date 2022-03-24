@@ -13,6 +13,7 @@
 #
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from .models import Client
@@ -55,7 +56,13 @@ class ClientAdminForm(forms.ModelForm):
 
     def clean_enabled_features(self):
         selected = self.cleaned_data['enabled_features']
-        self.instance.features = sum([int(x) for x in selected])
+
+        selected_sum = sum([int(x) for x in selected])
+
+        if selected_sum > 11:
+            raise ValidationError(_("Only one type of import service can be active at a time."))
+
+        self.instance.features = selected_sum
         return selected
 
     def clean_activated_scan_types(self):

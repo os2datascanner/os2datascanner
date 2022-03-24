@@ -1,0 +1,38 @@
+{% extends 'organizations/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Microsoft Graph configuration" %}{% endblock %}
+
+{% block content %}
+    {% include "partials/breadcrumb.html" with page="organization"  %}
+
+    <div class="aside">
+        <h1>{% trans "configure Microsoft Graph"|capfirst %}</h1>
+	{% if not is_new %}
+	    <h2>Organization: {{ organization }}</h2>
+	{% endif %}
+    </div>
+
+    <form class="form" role="form" action="" method="post">
+	{% csrf_token %}
+	<section class="data-form">
+	    <fieldset class="form__fieldset">
+		<div class="form__group">
+		    <label for="{{ form.tenant.id_for_label }}">Tenant ID:</label>
+		    {% if is_new %}
+			<input id="{{ form.tenant.id_for_label }}" type="text" name="tenant" readonly value="{{ tenant }}">
+		    {% else %}
+			<input id="{{ form.tenant.id_for_label }}" type="text" name="tenant" value="{{ tenant }}">
+		    {% endif %}
+		</div>
+	    </fieldset>
+	</section>
+	<div class="form__group last-btn">
+	    <button type="submit" class="button button--cta" name="save">
+		{% trans "save Microsoft Graph configuration"|capfirst %}
+	    </button>
+	</div>
+    </form>
+
+{% endblock %}

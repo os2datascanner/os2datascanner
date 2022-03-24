@@ -52,7 +52,9 @@
                     <!-- TODO: add conditional columns for users and units dependent on FEATURES.ORG_STRUCTURE (see below) -->
                     {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
                         <th class="datatable__column--btn">{% trans "import service"|capfirst %}</th>
-                    {% endif %}
+		    {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+			<th class="datatable__column--btn">{% trans "Import service (Microsoft Graph)" %}</th>
+		    {% endif %}
                 </tr>
             </thead>
             {% if client.organizations.all %}
@@ -120,6 +122,36 @@
                                 </div>
                             </div>
                             {% endif %}
+                        </div>
+                    </td>
+		    {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+                    <td class="datatable__column--btn">
+                        <div class="flex flex--icon">
+                            {% if not organization.importservice %}
+                            <a
+                                href="{% url 'add-msgraph' org_id=organization.pk %}"
+                                id="button-add-msgraph-configuration"
+                                type="button"
+                                class="button button--transparent">
+                                <i id="library_add" title="Tilføj Microsoft Graph konfiguration" class="material-icons">library_add</i>
+                            </a>
+			    {% else %}
+			    <a
+				href="{% url 'edit-msgraph' pk=organization.pk %}"
+                                id="button-add-msgraph-configuration"
+                                type="button"
+                                class="button button--transparent">
+                                <i id="library_add_check" title="Redigér Microsoft Graph konfiguration" class="material-icons">library_add_check</i>
+			    </a>
+                            <a
+                                href="{% url 'import-msgraph' pk=organization.pk %}"
+                                type="button"
+                                title="{% trans 'sync'|capfirst %}"
+                                class="button button--transparent button--transparent--text btn-text"
+                                data-sync-for="{{ organization.pk }}">
+                                {% trans "sync"|capfirst %}
+                            </a>
+			    {% endif %}
                         </div>
                     </td>
                     {% endif %}

@@ -1,0 +1,43 @@
+{% extends 'organizations/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Microsoft Graph configuration" %}{% endblock %}
+
+{% block content %}
+    {% include "partials/breadcrumb.html" with page="organization"  %}
+
+    <div class="aside">
+        <h1>{% trans "configure Microsoft Graph"|capfirst %}</h1>
+    </div>
+
+    <p>
+      {% trans "The source of this organization is in the cloud and an external service must allow OS2datascanner to access it's content." %}
+      {% if auth_endpoint %}
+      {% if error %}
+    <p>
+      {% trans "The service refused to grant OS2datascanner the necessary rights:" %}
+    <pre class="alert alert--danger">{{ error_description }}</pre>
+    <p>
+      {% trans "Click the button below to try again." %}
+    {% else %}
+      {% trans "Click the button below to forward to this service." %}
+    {% endif %}
+    <p>
+      <a href="{{ auth_endpoint }}"
+          id="button-authenticate"
+          type="button"
+          class="button button--cta button--small btn btn-default">
+          {% trans "Continue to" %} {{ service_name }}
+      </a>
+    </p>
+    <p>
+      {% trans "You will be forwarded to the creation form after the service has issued the necessary rights." %}
+    </p>
+    {% else %}
+    <p>
+      {% trans "The information pointing to the OS2datascanner system for this service is missing." %}
+    </p>
+    {% endif %}
+
+{% endblock %}
