@@ -60,8 +60,8 @@ class MSGraphImportJob(BackgroundJob):
     def job_label(self) -> str:
         return "MSGraph Import Job"
 
-    # TODO: Remember to set "status" & handle progress
-    def run(self):
+    # TODO: Try to bring down complexity.
+    def run(self):  # noqa: CCR001, too high cognitive complexity
         data_type_user = "#microsoft.graph.user"
         data_type_group = "#microsoft.graph.group"
         # MSGraph allows constructing select statements as a query parameter, this is a
@@ -127,10 +127,23 @@ class MSGraphImportJob(BackgroundJob):
 
         from ...organizations.msgraph_import_actions import perform_msgraph_import
 
-        def _callback(*args):
-            # TODO: Implement a way to track progress
-            pass
+        # Perform msgraph import runs in a transaction, this means we can't get
+        # updates while it runs.
+        def _callback(action, *args):
+            self.refresh_from_db()
+            if action == "group_count":
+                count = args[0]
+                self.to_handle = count
+                self.handled = 0
+                self.save()
+            elif action == "group_handled":
+                group_name = args[0]
+                self.handled += 1
+                self.status = f"Handled {self.handled}/{self.to_handle} groups \n" \
+                              f"Last group handled: {group_name}"
+                self.save()
 
         self.status = "OK.. Data received, build and store relations..."
         self.save()
-        perform_msgraph_import(hierarchy, self.organization)
+        perform_msgraph_import(hierarchy, self.organization,
+                               progress_callback=_callback)

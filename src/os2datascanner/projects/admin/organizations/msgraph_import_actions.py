@@ -1,5 +1,6 @@
 import logging
 from django.db import transaction
+from .keycloak_actions import _dummy_pc
 
 from .models import (Account, Alias, Position,
                      Organization, OrganizationalUnit)
@@ -12,7 +13,8 @@ logger = logging.getLogger(__name__)
 # TODO: Try to bring down complexity.
 @transaction.atomic
 def perform_msgraph_import(data: list,  # noqa: CCR001, too high cognitive complexity
-                           organization: Organization):
+                           organization: Organization,
+                           progress_callback=_dummy_pc):
     now = time_now()
     # Set to contain retrieved uuids - things we have locally but aren't present remotely
     # will be deleted.
@@ -22,6 +24,8 @@ def perform_msgraph_import(data: list,  # noqa: CCR001, too high cognitive compl
     # reflection of remote.
     Position.objects.filter(imported=True).delete()
     Alias.objects.filter(imported=True).delete()
+
+    progress_callback("group_count", len(data))
 
     for group in data:
         org_unit_obj, created = OrganizationalUnit.objects.update_or_create(
@@ -108,6 +112,8 @@ def perform_msgraph_import(data: list,  # noqa: CCR001, too high cognitive compl
                             f'Created: {created if created else "Up-to-date"}')
 
                 all_uuids.add(member.get("uuid"))
+
+        progress_callback("group_handled", org_unit_obj.name)
 
     # Deleting local objects no longer present remotely.
     Account.objects.exclude(imported_id__in=all_uuids).exclude(imported=False).delete()
