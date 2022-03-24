@@ -56,22 +56,43 @@ def perform_msgraph_import(data: list,  # noqa: CCR001, too high cognitive compl
                 logger.info(f' Member {account_obj.username}, '
                             f'Created: {created if created else "Up-to-date"}')
 
-                # Position and alias objects are deleted every time we import
-                # which means that doing update or create will always be a "create", so it
-                # might be unnecessary to use update_or_create
-                alias_obj, created = Alias.objects.update_or_create(
-                    imported_id=member.get("uuid"),  # Note: Same ID as for the account obj.
-                    imported=True,
-                    account=account_obj,
-                    _alias_type=AliasType.EMAIL.value,
-                    defaults={
-                        "last_import": now,
-                        "last_import_requested": now,
-                        "value": member.get('userPrincipalName')
-                    }
-                )
-                logger.info(f'Alias for account {alias_obj.account.username} '
-                            f'Created: {created if created else "Up-to-date"}')
+                if not member.get("email"):
+                    logger.info(f'No Email for account {account_obj.username}')
+                else:
+                    # Position and alias objects are deleted every time we import
+                    # which means that doing update or create will always be a "create", so it
+                    # might be unnecessary to use update_or_create
+                    alias_obj, created = Alias.objects.update_or_create(
+                        imported_id=member.get("uuid"),  # Note: Same ID as for the account obj.
+                        imported=True,
+                        account=account_obj,
+                        _alias_type=AliasType.EMAIL.value,
+                        defaults={
+                            "last_import": now,
+                            "last_import_requested": now,
+                            "value": member.get("email")
+                        }
+                    )
+                    logger.info(f'Alias for account {alias_obj.account.username} '
+                                f'Created: {created if created else "Up-to-date"}')
+
+                # This comes from an on prem AD
+                if not member.get("sid"):
+                    logger.info(f'No SID for account {account_obj.username}')
+                else:
+                    sid_alias_obj, created = Alias.objects.update_or_create(
+                        imported_id=member.get("uuid"),  # Note: Same ID as for the account obj.
+                        imported=True,
+                        account=account_obj,
+                        _alias_type=AliasType.SID.value,
+                        defaults={
+                            "last_import": now,
+                            "last_import_requested": now,
+                            "value": member.get('sid')
+                        }
+                    )
+                    logger.info(f'SID Alias for account {sid_alias_obj.account.username} '
+                                f'Created: {created if created else "Up-to-date"}')
 
                 position_obj, created = Position.objects.update_or_create(
                     imported=True,

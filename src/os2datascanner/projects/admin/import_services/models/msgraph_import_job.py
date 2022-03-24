@@ -64,6 +64,12 @@ class MSGraphImportJob(BackgroundJob):
     def run(self):
         data_type_user = "#microsoft.graph.user"
         data_type_group = "#microsoft.graph.group"
+        # MSGraph allows constructing select statements as a query parameter, this is a
+        # specification of the fields we're interested in.
+        graph_select = "?$select="
+        graph_select_params = "id, displayName, givenName, surname, " \
+                              "mail, userPrincipalName, onPremisesSecurityIdentifier"
+
         hierarchy = list()
         group_info = dict()
         group_members = list()
@@ -83,7 +89,8 @@ class MSGraphImportJob(BackgroundJob):
                 group_info['name'] = dn
 
                 # Check for transitive members of current group
-                transitive_members = gc.paginated_get(f'groups/{uuid}/transitiveMembers')
+                transitive_members = gc.paginated_get(
+                    f'groups/{uuid}/transitiveMembers{graph_select}{graph_select_params}')
 
                 # TODO: Should we include groups with no members?
                 if transitive_members:
@@ -102,6 +109,8 @@ class MSGraphImportJob(BackgroundJob):
                                 "uuid": member.get("id"),
                                 "givenName": member.get("givenName", "No first name"),
                                 "surname": member.get("surname", "No surname"),
+                                "email": member.get("mail", "No email"),
+                                "sid": member.get("onPremisesSecurityIdentifier", None),
                                 "userPrincipalName": member.get("userPrincipalName", "No "
                                                                                      "principal "
                                                                                      "name")

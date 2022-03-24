@@ -14,7 +14,8 @@ TEST_CORP = [
                 "uuid": "118e5d18-90ba-4150-a11c-9162c24bb5ce",
                 "givenName": "Charles",
                 "surname": "Darwin",
-                "userPrincipalName": "Charles@darwindomain.onmicrosoft.com"
+                "userPrincipalName": "Charles@darwindomain.onmicrosoft.com",
+                "email": "Charles@darwindomain.onmicrosoft.com"
             }
         ]
     },
@@ -27,14 +28,16 @@ TEST_CORP = [
                 "uuid": "3382c90d-9646-4562-9f47-3994957030a6",
                 "givenName": "Albert",
                 "surname": "Twostones",
-                "userPrincipalName": "albert@darwindomain.onmicrosoft.com"
+                "userPrincipalName": "albert@darwindomain.onmicrosoft.com",
+                "sid": "S-1-5-21-1004336348-1177238915-682003330-512"
             },
             {
                 "type": "user",
                 "uuid": "118e5d18-90ba-4150-a11c-9162c24bb5ce",
                 "givenName": "Charles",
                 "surname": "Darwin",
-                "userPrincipalName": "Charles@darwindomain.onmicrosoft.com"
+                "userPrincipalName": "Charles@darwindomain.onmicrosoft.com",
+                "email": "Charles@darwindomain.onmicrosoft.com",
             },
         ]
     },
@@ -47,7 +50,8 @@ TEST_CORP = [
                 "uuid": "118e5d18-90ba-4150-a11c-9162c24bb5ce",
                 "givenName": "Charles",
                 "surname": "Darwin",
-                "userPrincipalName": "Charles@darwindomain.onmicrosoft.com"
+                "userPrincipalName": "Charles@darwindomain.onmicrosoft.com",
+                "email": "Charles@darwindomain.onmicrosoft.com"
             },
             {
                 "type": "group",
@@ -59,7 +63,8 @@ TEST_CORP = [
                 "uuid": "93f2f74e-3811-476f-ac56-e7f0d3007fcc",
                 "givenName": "Guy",
                 "surname": "Average",
-                "userPrincipalName": "guy@darwindomain.onmicrosoft.com"
+                "userPrincipalName": "guy@darwindomain.onmicrosoft.com",
+                "email": "guy@darwindomain.onmicrosoft.com"
             }
         ]
     }
@@ -138,6 +143,10 @@ class MSGraphImportTest(TestCase):
                                     )
 
     def test_create_alias(self):
+        # Most users have an email and will have an email alias.
+        # "Albert Twostones" doesn't have an email, but only an SID
+        # He should get an SID-alias (which is also verified here)
+
         for ou in TEST_CORP:
             for member in ou["members"]:
                 if member["type"] == "user":
