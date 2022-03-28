@@ -129,7 +129,7 @@ class StatusTest(TestCase):
                 None,
                 "scan fraction should not have been defined")
 
-    def test_updates_on_save(self):
+    def test_no_updates_on_save(self):
         ss = ScanStatus(
             scanner=self.scanner,
             scan_tag={"time": time_now().isoformat()},
@@ -140,13 +140,13 @@ class StatusTest(TestCase):
         self.scanner.save()
         ss.save()
         last_modified = ss.last_modified
-        # save should update last_modified field on scannerStatus
+        # save should not update last_modified field on scannerStatus
         ss.save()
 
-        self.assertGreater(
-            ss.last_modified,
+        self.assertEqual(
             last_modified,
-            "scanStatus does not update last modifed on save",
+            ss.last_modified,
+            "scanStatus does update last modifed on save",
         )
 
         ss.delete()

@@ -19,6 +19,7 @@ from django.db.models import F
 from django.db import transaction
 from django.db.utils import DataError
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 import logging
 import structlog
 
@@ -58,6 +59,7 @@ def status_message_received_raw(body):
         # An explorer has finished exploring a Source
         scan_status.update(
                 message=message.message,
+                last_modified=timezone.now(),
                 status_is_error=message.status_is_error,
                 total_objects=F('total_objects') + message.total_objects,
                 total_sources=F('total_sources') + (message.new_sources or 0),
@@ -66,6 +68,7 @@ def status_message_received_raw(body):
         # A worker has finished processing a Handle
         scan_status.update(
                 message=message.message,
+                last_modified=timezone.now(),
                 status_is_error=message.status_is_error,
                 scanned_size=F('scanned_size') + message.object_size,
                 scanned_objects=F('scanned_objects') + 1)
