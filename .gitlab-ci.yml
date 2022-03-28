@@ -8,6 +8,11 @@
 # RELEASE_REGISTRY_USER
 # RELEASE_REGISTRY_PASSWORD
 
+# Saltbert, used for automatic deployment of our test server
+include:
+  - project: 'labs/salt-automation'
+    file:
+      - '/gitlab-ci-templates/common/saltbert.v1.yml'
 
 stages:
   - lint
@@ -619,25 +624,19 @@ Release API:
 Deploy test:
   # Automatic deployment of main branch to
   # https://test.os2datascanner.dk/ and https://test-admin.os2datascanner.dk/
-  stage: deploy
-  image: magentalabs/pepper:latest
-  services: []
+  extends:
+    - .saltbert
   rules:
     - if: '$CI_COMMIT_REF_NAME == "main" && $CI_PIPELINE_SOURCE != "schedule"'
-  dependencies: []
-  tags:
-    - deploy
   needs:
     - Release Report Application Candidate
     - Release Admin Application Candidate
     - Release Engine Candidate
     - Release API Candidate
   variables:
-    SALTAPI_URL: https://ctrldev1.magenta-aps.dk/api/
-    SALTAPI_EAUTH: file
-    GIT_STRATEGY: none
-  script:
-    - pepper --client runner --fail-any state.orchestrate os2ds.service-test
+    SALTBERT_ORCHESTRATION: os2ds.service-test
+    SALTBERT_URL: https://ctrldev1.magenta-aps.dk
+    SALTBERT_PASSWORD: $SALTBERT_PASSWORD
   environment:
     name: test
     url: https://test-admin.os2datascanner.dk/
