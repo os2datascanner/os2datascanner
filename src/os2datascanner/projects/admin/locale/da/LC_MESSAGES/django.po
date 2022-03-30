@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-15 16:22+0100\n"
+"POT-Creation-Date: 2022-03-30 12:54+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -275,7 +275,7 @@ msgid "Guide"
 msgstr "Håndbog"
 
 #: adminapp/templates/components/navigation.html:73
-#: adminapp/templates/components/user.html:29 adminapp/templates/logout.html:7
+#: adminapp/templates/components/user.html:32 adminapp/templates/logout.html:7
 msgid "Logout"
 msgstr "Log ud"
 
@@ -288,6 +288,14 @@ msgstr "Forrige"
 #: adminapp/templates/components/pagination.html:65
 msgid "Next"
 msgstr "Næste"
+
+#: adminapp/templates/components/user.html:29
+#: adminapp/templates/password_change.html:6
+#: adminapp/templates/password_change.html:16
+#: adminapp/templates/password_change.html:43
+#: adminapp/templates/password_reset_confirm.html:42
+msgid "Change password"
+msgstr "Skift password"
 
 #: adminapp/templates/login.html:7 adminapp/templates/login.html:17
 #: adminapp/templates/login.html:48 adminapp/templates/login.html:70
@@ -511,7 +519,7 @@ msgstr "Ja"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:17
 #: adminapp/templates/os2datascanner/scan_completed.html:22
-#: adminapp/templates/os2datascanner/scanner_tabs.html:64
+#: adminapp/templates/os2datascanner/scanner_tabs.html:69
 msgid "Completed scans"
 msgstr "Udførte scanninger"
 
@@ -548,7 +556,7 @@ msgstr ""
 
 #: adminapp/templates/os2datascanner/scan_status.html:22
 #: adminapp/templates/os2datascanner/scan_status.html:27
-#: adminapp/templates/os2datascanner/scanner_tabs.html:61
+#: adminapp/templates/os2datascanner/scanner_tabs.html:66
 msgid "Scans in progress"
 msgstr "Igangværende scanninger"
 
@@ -599,7 +607,7 @@ msgid "no ongoing scans"
 msgstr "der er ingen igangværende scanninger"
 
 #: adminapp/templates/os2datascanner/scanner_askrun.html:25
-#: adminapp/templates/os2datascanner/scanner_askrun.html:87
+#: adminapp/templates/os2datascanner/scanner_askrun.html:91
 msgid "Run scanner"
 msgstr "Kør scanner"
 
@@ -616,10 +624,11 @@ msgstr "Er du sikker på, at du vil starte scanneren?"
 #: adminapp/templates/os2datascanner/scanner_askrun.html:59
 #: adminapp/templates/os2datascanner/scanner_askrun.html:63
 #: adminapp/templates/os2datascanner/scanner_askrun.html:67
+#: adminapp/templates/os2datascanner/scanner_askrun.html:71
 msgid "Let's go!"
 msgstr "Ja, kør"
 
-#: adminapp/templates/os2datascanner/scanner_askrun.html:74
+#: adminapp/templates/os2datascanner/scanner_askrun.html:78
 msgid "Waiting..."
 msgstr "Afventer..."
 
@@ -908,16 +917,22 @@ msgid "Office 365 OneDrive filscanner"
 msgstr "Office 365 OneDrive filscanner"
 
 #: adminapp/templates/os2datascanner/scanner_tabs.html:39
+#, fuzzy
+#| msgid "Office 365 mailscanner"
+msgid "Office 365 kalenderscanner"
+msgstr "Office 365 mailscanner"
+
+#: adminapp/templates/os2datascanner/scanner_tabs.html:44
 #: adminapp/templates/partials/breadcrumb.html:30
 msgid "Google Drive scanner"
 msgstr "Google Drive scanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:44
+#: adminapp/templates/os2datascanner/scanner_tabs.html:49
 #: adminapp/templates/partials/breadcrumb.html:34
 msgid "Gmailscanner"
 msgstr "Gmailscanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:49
+#: adminapp/templates/os2datascanner/scanner_tabs.html:54
 #: adminapp/templates/partials/breadcrumb.html:38
 msgid "Sbsysscanner"
 msgstr "Sbsysscanner"
@@ -982,13 +997,6 @@ msgstr "tilføj LDAP-konfiguration"
 #: adminapp/templates/partials/breadcrumb.html:88
 msgid "update LDAP configuration"
 msgstr "opdatér LDAP-konfiguration"
-
-#: adminapp/templates/password_change.html:6
-#: adminapp/templates/password_change.html:16
-#: adminapp/templates/password_change.html:43
-#: adminapp/templates/password_reset_confirm.html:42
-msgid "Change password"
-msgstr "Skift password"
 
 #: adminapp/templates/password_change_done.html:6
 #: adminapp/templates/password_change_done.html:12

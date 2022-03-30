@@ -19,6 +19,7 @@ from django.conf import settings
 
 from os2datascanner.engine2.model.msgraph.mail import MSGraphMailSource
 from os2datascanner.engine2.model.msgraph.files import MSGraphFilesSource
+from os2datascanner.engine2.model.msgraph.calendar import MSGraphCalendarSource
 from .scanner_model import Scanner
 
 
@@ -66,4 +67,21 @@ class MSGraphFileScanner(MSGraphScanner):
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
                 site_drives=self.scan_site_drives,
                 user_drives=self.scan_user_drives
+        )
+
+
+class MSGraphCalendarScanner(MSGraphScanner):
+    """Model for MSGraphCalendarSource."""
+    def get_type(self):
+        return 'msgraph-calendar'
+
+    def get_absolute_url(self):
+        """Get the absolute URL for scanners."""
+        return '/msgraph-calendarscanners/'
+
+    def generate_sources(self):
+        yield MSGraphCalendarSource(
+            client_id=settings.MSGRAPH_APP_ID,
+            tenant_id=self.tenant_id,
+            client_secret=settings.MSGRAPH_CLIENT_SECRET,
         )

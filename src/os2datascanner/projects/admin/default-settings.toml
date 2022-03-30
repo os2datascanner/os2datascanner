@@ -41,7 +41,7 @@ KEYCLOAK_ADMIN_SECRET = ""
 # [msgraph]
 # The GUID of the registered Azure application corresponding to this
 # OS2datascanner installation, used when requesting Microsoft Graph access:
-MSGRAPH_APP_ID = ""
+MSGRAPH_APP_ID = "da5ae7df-dc68-4c02-87ea-8bdbb00857d8"
 # The client secret used to demonstrate to Microsoft Graph that this
 # OS2datascanner installation corresponds to a registered Azure application
 # (client private keys are not yet supported):
@@ -132,6 +132,7 @@ SETTINGS_EXPORT = [
     'ENABLE_DROPBOXSCAN',
     'ENABLE_MSGRAPH_MAILSCAN',
     'ENABLE_MSGRAPH_FILESCAN',
+    'ENABLE_MSGRAPH_CALENDARSCAN',
     'ENABLE_GOOGLEDRIVESCAN',
     'ENABLE_GMAILSCAN',
     'ENABLE_SBSYSSCAN',
@@ -172,6 +173,7 @@ ENABLE_EXCHANGESCAN = false
 ENABLE_DROPBOXSCAN = false
 ENABLE_MSGRAPH_MAILSCAN = false
 ENABLE_MSGRAPH_FILESCAN = false
+ENABLE_MSGRAPH_CALENDARSCAN = false
 ENABLE_GOOGLEDRIVESCAN = false
 ENABLE_GMAILSCAN = false
 ENABLE_SBSYSSCAN = false
