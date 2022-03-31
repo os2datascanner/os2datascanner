@@ -1,7 +1,9 @@
 """Runs background jobs."""
 
+import sys
 import signal
 from typing import Optional
+import traceback
 
 from django.db import transaction
 from django.core.management.base import BaseCommand
@@ -63,6 +65,26 @@ def acquire_job(**filters) -> Optional[BackgroundJob]:
             return None
 
 
+def _get_org(j: BackgroundJob):
+    """Attempts to extract an admin.organizations Organization from the given
+    BackgroundJob."""
+    # This method is a hack: the BackgroundJob API doesn't expose an
+    # organisation, so run_background_jobs shouldn't actually care about it.
+    # We need it for Prometheus metrics, though...
+    if hasattr(j, "organization"):  # MSGraphImportJob
+        return j.organization
+    elif (hasattr(j, "realm")
+            and hasattr(j.realm, "organization")):  # ImportJob (LDAP)
+        return j.realm.organization
+    else:
+        return None
+
+
+def backtrace(signal, frame):
+    print("Got SIGUSR1, printing stacktrace:", file=sys.stderr)
+    traceback.print_stack()
+
+
 class Command(BaseCommand):
     help = __doc__
 
@@ -105,6 +127,7 @@ class Command(BaseCommand):
             running = False
 
         signal.signal(signal.SIGTERM, _handler)
+        signal.signal(signal.SIGUSR1, backtrace)
 
         count = 0
         errors = 0
@@ -114,9 +137,9 @@ class Command(BaseCommand):
 
                 if job:
                     job_label = job.job_label
-                    # TODO: This way of getting org info will only work for import jobs.
-                    org_slug = job.realm.organization.slug or 'No Org Info'
-                    org_id = job.realm.organization.pk or 'No Org Info'
+                    org = _get_org(job)
+                    org_slug = org.slug if org else "unknown"
+                    org_id = org.pk if org else "N/A"
 
                     JOB_STATE.labels(
                             JobLabel=job_label,
