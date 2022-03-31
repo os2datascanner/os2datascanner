@@ -23,9 +23,6 @@ logger = logging.getLogger("os2datascanner.engine2.pipeline.run_stage")
 
 
 def backtrace(signal, frame):
-    """send `SIGURS1` to print the stacktrace,
-    kill -USR1 <pid>
-    """
     print("Got SIGUSR1, printing stacktrace:", file=sys.stderr)
     traceback.print_stack()
 

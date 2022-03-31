@@ -1,7 +1,9 @@
 """Runs background jobs."""
 
+import sys
 import signal
 from typing import Optional
+import traceback
 
 from django.db import transaction
 from django.core.management.base import BaseCommand
@@ -63,6 +65,11 @@ def acquire_job(**filters) -> Optional[BackgroundJob]:
             return None
 
 
+def backtrace(signal, frame):
+    print("Got SIGUSR1, printing stacktrace:", file=sys.stderr)
+    traceback.print_stack()
+
+
 class Command(BaseCommand):
     help = __doc__
 
@@ -105,6 +112,7 @@ class Command(BaseCommand):
             running = False
 
         signal.signal(signal.SIGTERM, _handler)
+        signal.signal(signal.SIGUSR1, backtrace)
 
         count = 0
         errors = 0
