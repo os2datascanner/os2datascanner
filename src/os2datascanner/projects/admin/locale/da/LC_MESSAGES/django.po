@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-05 11:17+0200\n"
+"POT-Creation-Date: 2022-04-05 12:47+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -1012,7 +1012,7 @@ msgstr "Tilføj Microsoft Graph konfiguration"
 
 #: adminapp/templates/partials/breadcrumb.html:100
 msgid "update MS Graph configuration"
-msgstr "opdatér LDAP-konfiguration"
+msgstr "opdatér Microsoft Graph konfiguration"
 
 #: adminapp/templates/password_change_done.html:6
 #: adminapp/templates/password_change_done.html:12

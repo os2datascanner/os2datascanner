@@ -51,7 +51,9 @@ def start_ldap_import(ldap_conf: LDAPConfig):
 
 
 def start_msgraph_import(msgraph_conf: MSGraphConfiguration):
-    """"""
+    """
+    MS Graph Import Job start utility.
+    """
     MSGraphImportJob.objects.create(
         tenant_id=msgraph_conf.tenant_id,
         organization=msgraph_conf.organization,
