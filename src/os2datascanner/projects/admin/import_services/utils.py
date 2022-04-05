@@ -19,7 +19,11 @@ import structlog
 from django.shortcuts import get_object_or_404
 
 from os2datascanner.projects.admin.core.models.background_job import JobState
-from os2datascanner.projects.admin.import_services.models import LDAPConfig, Realm, ImportJob
+from os2datascanner.projects.admin.import_services.models import (LDAPConfig,
+                                                                  Realm,
+                                                                  ImportJob,
+                                                                  MSGraphImportJob)
+from .models.msgraph_configuration import MSGraphConfiguration
 
 logger = structlog.get_logger(__name__)
 
@@ -44,3 +48,12 @@ def start_ldap_import(ldap_conf: LDAPConfig):
     else:
         logger.info("LDAP import is not possible right now for "
                     f"LDAPConfig {ldap_conf.pk}")
+
+
+def start_msgraph_import(msgraph_conf: MSGraphConfiguration):
+    """"""
+    MSGraphImportJob.objects.create(
+        tenant_id=msgraph_conf.tenant_id,
+        organization=msgraph_conf.organization,
+    )
+    logger.info(f"Import job created for MSGraphConfiguration {msgraph_conf.pk}")

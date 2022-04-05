@@ -17,6 +17,7 @@ from django.views.generic.detail import DetailView
 
 from os2datascanner.projects.admin.organizations.models import Organization
 from ..models.msgraph_configuration import MSGraphConfiguration
+from os2datascanner.projects.admin.import_services.utils import start_msgraph_import
 
 
 def make_consent_url(label):
@@ -163,5 +164,6 @@ class MSGraphImportView(LoginRequiredMixin, DetailView):
     def get(self, request, *args, **kwargs):
         """
         """
+        start_msgraph_import(self.get_object())
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
