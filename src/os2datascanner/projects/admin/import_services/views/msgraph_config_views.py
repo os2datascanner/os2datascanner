@@ -16,7 +16,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 
 from os2datascanner.projects.admin.organizations.models import Organization
-from ..models.msgraph_configuration import MSGraphConfig
+from ..models.msgraph_configuration import MSGraphConfiguration
 
 
 SESSION_ORGANIZATION = None
@@ -46,7 +46,7 @@ class MSGraphAddView(View):
     Works as a dispatcher depending on whether or not the user is logged into
     Microsoft Online.
     """
-    model = MSGraphConfig
+    model = MSGraphConfiguration
     type = "msgraph-add"
 
     def dispatch(self, request, *args, **kwargs):
@@ -79,7 +79,7 @@ class _MSGraphAddView(LoginRequiredMixin, CreateView):
     Microsoft Graph by using a Tenant ID.
     """
 
-    model = MSGraphConfig
+    model = MSGraphConfiguration
     template_name = 'import_services/msgraph_edit.html'
     success_url = reverse_lazy('organization-list')
     fields = ['tenant']
@@ -129,7 +129,7 @@ class MSGraphUpdateView(LoginRequiredMixin, UpdateView):
     for importing organizations.
     """
 
-    model = MSGraphConfig
+    model = MSGraphConfiguration
     template_name = 'import_services/msgraph_edit.html'
     success_url = reverse_lazy('organization-list')
     fields = ['tenant']
@@ -157,7 +157,7 @@ class MSGraphImportView(LoginRequiredMixin, DetailView):
     """
     """
 
-    model = MSGraphConfig
+    model = MSGraphConfiguration
 
     def __init__(self):
         self.object = None
