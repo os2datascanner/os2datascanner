@@ -82,17 +82,17 @@ class _MSGraphAddView(LoginRequiredMixin, CreateView):
     model = MSGraphConfiguration
     template_name = 'import_services/msgraph_edit.html'
     success_url = reverse_lazy('organization-list')
-    fields = ['tenant']
+    fields = ['tenant_id']
 
     def setup(self, request, *args, **kwargs):
         tenant_id = request.GET.get("tenant")
-        kwargs["tenant"] = tenant_id
+        kwargs["tenant_id"] = tenant_id
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_new'] = True
-        context["tenant"] = self.kwargs["tenant"]
+        context["tenant_id"] = self.kwargs["tenant_id"]
         return context
 
     def form_valid(self, form):
@@ -132,19 +132,19 @@ class MSGraphUpdateView(LoginRequiredMixin, UpdateView):
     model = MSGraphConfiguration
     template_name = 'import_services/msgraph_edit.html'
     success_url = reverse_lazy('organization-list')
-    fields = ['tenant']
+    fields = ['tenant_id']
 
     def setup(self, request, *args, **kwargs):
         organization = get_object_or_404(Organization, pk=kwargs['org_id'])
         kwargs['organization'] = organization
         tenant_id = request.GET.get("tenant")
-        kwargs["tenant"] = tenant_id
+        kwargs["tenant_id"] = tenant_id
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_new'] = False
-        context['tenant'] = self.kwargs['tenant']
+        context['tenant_id'] = self.kwargs['tenant_id']
         context['organization'] = self.kwargs['organization']
         return context
 
