@@ -88,4 +88,16 @@
             <span class="text-grey">{% trans 'update LDAP configuration'|capfirst %}</span>
         {% endif %}
     {% endif %}
+
+    {% if page == 'msgraph' %}
+        <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+        <i id="chevron_right" class="material-icons">chevron_right</i>
+
+        {% if is_new %}
+            <span class="text-grey">{% trans 'add MS Graph configuration'|capfirst %}</span>
+            {% else %}
+            <span class="text-grey">{% trans 'update MS Graph configuration'|capfirst %}</span>
+        {% endif %}
+    {% endif %}
 </div>

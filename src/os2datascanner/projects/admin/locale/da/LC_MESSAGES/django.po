@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 12:54+0200\n"
+"POT-Creation-Date: 2022-04-05 11:17+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -21,6 +21,7 @@ msgstr ""
 
 #: adminapp/models/apikey_model.py:16 adminapp/models/rules/rule_model.py:47
 #: adminapp/models/scannerjobs/scanner_model.py:76
+#: import_services/models/msgraph_import_job.py:32
 #: import_services/models/realm.py:29 organizations/models/account.py:58
 #: organizations/models/organization.py:73
 msgid "organization"
@@ -256,7 +257,8 @@ msgstr "Regler"
 #: adminapp/templates/components/navigation.html:36
 #: adminapp/templates/partials/breadcrumb.html:65
 #: adminapp/templates/partials/breadcrumb.html:73
-#: adminapp/templates/partials/breadcrumb.html:81 organizations/apps.py:8
+#: adminapp/templates/partials/breadcrumb.html:81
+#: adminapp/templates/partials/breadcrumb.html:93 organizations/apps.py:8
 #: organizations/models/organization.py:74
 #: organizations/templates/organizations/org_list.html:6
 msgid "organizations"
@@ -1004,6 +1006,14 @@ msgstr "tilføj LDAP-konfiguration"
 msgid "update LDAP configuration"
 msgstr "opdatér LDAP-konfiguration"
 
+#: adminapp/templates/partials/breadcrumb.html:98
+msgid "add MS Graph configuration"
+msgstr "Tilføj Microsoft Graph konfiguration"
+
+#: adminapp/templates/partials/breadcrumb.html:100
+msgid "update MS Graph configuration"
+msgstr "opdatér LDAP-konfiguration"
+
 #: adminapp/templates/password_change_done.html:6
 #: adminapp/templates/password_change_done.html:12
 msgid "Password change successful"
@@ -1182,22 +1192,22 @@ msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 msgid "Only one type of import service can be active at a time."
 msgstr "Kun en type ad importservice kan være aktiveret."
 
-#: core/management/commands/run_background_jobs.py:76
+#: core/management/commands/run_background_jobs.py:98
 #, fuzzy, python-format
 #| msgid "sleep for %(METAVAR)s seconds if there were no jobs to run"
 msgid "sleep for %(metavar)s seconds if there were no jobs to run"
 msgstr "vent %(METAVAR)s sekunder hvis der ikke var nogle jobs til afvikling"
 
-#: core/management/commands/run_background_jobs.py:83
+#: core/management/commands/run_background_jobs.py:105
 msgid "do not loop: run a single job and then exit"
 msgstr "kør ikke i løkke: kør et enkelt job og gå derefter ud"
 
-#: core/management/commands/run_background_jobs.py:186
+#: core/management/commands/run_background_jobs.py:209
 #, python-brace-format
 msgid "{0} job(s) completed."
 msgstr "{0} færdige job(s)."
 
-#: core/management/commands/run_background_jobs.py:187
+#: core/management/commands/run_background_jobs.py:210
 #, python-brace-format
 msgid "{0} job(s) failed."
 msgstr "{0} fejlede job(s)."
@@ -1319,10 +1329,8 @@ msgid "import services"
 msgstr "importservicer"
 
 #: core/models/client.py:50
-#, fuzzy
-#| msgid "import services"
 msgid "import services (MS Graph)"
-msgstr "importservicer"
+msgstr "importservices (MS Graph)"
 
 #: core/models/client.py:68
 msgid "client ID"
@@ -1615,27 +1623,19 @@ msgstr "gem LDAP-konfiguration"
 
 #: import_services/templates/import_services/msgraph_edit.html:5
 #: import_services/templates/import_services/msgraph_oauth.html:5
-#, fuzzy
-#| msgid "Microsoft Graph - file scan"
 msgid "Microsoft Graph configuration"
-msgstr "Microsoft Graph - filscan"
+msgstr "Microsoft Graph konfiguration"
 
 #: import_services/templates/import_services/msgraph_edit.html:11
 #: import_services/templates/import_services/msgraph_oauth.html:11
 msgid "configure Microsoft Graph"
 msgstr "konfigurer Microsoft Graph"
 
-#: import_services/templates/import_services/msgraph_edit.html:33
-#, fuzzy
-#| msgid "save LDAP configuration"
+#: import_services/templates/import_services/msgraph_edit.html:34
 msgid "save Microsoft Graph configuration"
 msgstr "gem Microsoft Graph konfiguration"
 
 #: import_services/templates/import_services/msgraph_oauth.html:15
-#, fuzzy
-#| msgid ""
-#| "The data source of this scannerjob is in the cloud and an external "
-#| "service must allow OS2datascanner to access it's content."
 msgid ""
 "The source of this organization is in the cloud and an external service must "
 "allow OS2datascanner to access it's content."
@@ -1764,8 +1764,8 @@ msgstr "Importservice (Microsoft Graph)"
 
 #: organizations/templates/organizations/org_list.html:95
 #: organizations/templates/organizations/org_list.html:98
-#: organizations/templates/organizations/org_list.html:149
-#: organizations/templates/organizations/org_list.html:152
+#: organizations/templates/organizations/org_list.html:159
+#: organizations/templates/organizations/org_list.html:162
 msgid "sync"
 msgstr "synkroniser"
 
@@ -1773,7 +1773,7 @@ msgstr "synkroniser"
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_list.html:166
+#: organizations/templates/organizations/org_list.html:176
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 

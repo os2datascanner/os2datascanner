@@ -2,8 +2,6 @@
 Views for adding and updating configurations for Microsoft Graph
 for importing organizations.
 """
-import logging
-
 from urllib.parse import urlencode
 from django import forms
 from django.conf import settings
@@ -19,8 +17,6 @@ from django.views.generic.detail import DetailView
 
 from os2datascanner.projects.admin.organizations.models import Organization
 from ..models.msgraph_configuration import MSGraphConfiguration
-
-logger = logging.getLogger(__name__)
 
 
 def make_consent_url(label):
