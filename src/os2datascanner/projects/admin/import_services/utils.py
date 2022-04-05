@@ -52,10 +52,23 @@ def start_ldap_import(ldap_conf: LDAPConfig):
 
 def start_msgraph_import(msgraph_conf: MSGraphConfiguration):
     """
-    MS Graph Import Job start utility.
+    MS Graph Import Job start utility. MS Graph Import Jobs can only be
+    created if no other jobs are running.
     """
-    MSGraphImportJob.objects.create(
-        tenant_id=msgraph_conf.tenant_id,
-        organization=msgraph_conf.organization,
-    )
-    logger.info(f"Import job created for MSGraphConfiguration {msgraph_conf.pk}")
+
+    latest_importjob = MSGraphImportJob.objects.filter(
+        tenant_id=msgraph_conf.tenant_id
+    ).latest('created')
+
+    if not latest_importjob \
+            or latest_importjob.exec_state == JobState.FINISHED \
+            or latest_importjob.exec_state == JobState.FAILED \
+            or latest_importjob.exec_state == JobState.CANCELLED:
+        MSGraphImportJob.objects.create(
+            tenant_id=msgraph_conf.tenant_id,
+            organization=msgraph_conf.organization,
+        )
+        logger.info(f"Import job created for MSGraphConfiguration {msgraph_conf.pk}")
+    else:
+        logger.info("MS Graph import is not possible right now for "
+                    f"MSGraphConfiguration {msgraph_conf.pk}")
