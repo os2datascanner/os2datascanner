@@ -2,11 +2,13 @@
 Views for adding and updating configurations for Microsoft Graph
 for importing organizations.
 """
+import logging
 
 from urllib.parse import urlencode
+from django import forms
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.timezone import now
@@ -18,18 +20,17 @@ from django.views.generic.detail import DetailView
 from os2datascanner.projects.admin.organizations.models import Organization
 from ..models.msgraph_configuration import MSGraphConfiguration
 
-
-SESSION_ORGANIZATION = None
+logger = logging.getLogger(__name__)
 
 
 def make_consent_url(label):
     """
     Directs the user to Microsoft Online in order to obtain consent.
     After successful login to Microsoft Online, the user is redirected to
-    'imports/msgraph-<label>/add/'.
+    'organizations'.
     """
     if settings.MSGRAPH_APP_ID:
-        redirect_uri = settings.SITE_URL + "imports/msgraph-{0}/add/".format(label)
+        redirect_uri = settings.SITE_URL + "{0}".format(label)
         return ("https://login.microsoftonline.com/common/adminconsent?"
                 + urlencode({
                     "client_id": settings.MSGRAPH_APP_ID,
@@ -38,6 +39,16 @@ def make_consent_url(label):
                     "redirect_uri": redirect_uri
                 }))
     return None
+
+
+class MSGraphEditForm(forms.ModelForm):
+    required_css_class = 'required-form'
+
+    class Meta:
+        model = MSGraphConfiguration
+        fields = [
+            'tenant_id',
+        ]
 
 
 class MSGraphAddView(View):
@@ -50,23 +61,12 @@ class MSGraphAddView(View):
     type = "msgraph-add"
 
     def dispatch(self, request, *args, **kwargs):
-        if request.method == "POST":
-            if "tenant" in request.POST:
-                # tenant_id = request.POST.get('tenant')
-                # TODO: Run an msgraph_import_job here!
-                return HttpResponseRedirect(reverse_lazy('organization-list'))
+        tenant_id = None
+        if "tenant_id" in kwargs:
+            tenant_id = kwargs["tenant_id"]
+        org_id = kwargs["org_id"]
 
-            raise Http404("No tenant id available.")
-
-        if "org_id" in request.GET:
-            org_id = self.request.GET.get('org_id')
-            kwargs['org_id'] = org_id
-
-        if "organization" in request.GET:
-            organization = self.request.GET.get('organization')
-            kwargs['organization'] = organization
-
-        if "tenant" in request.GET:
+        if tenant_id and org_id:
             handler = _MSGraphAddView.as_view()
         else:
             handler = _MSGraphPermissionRequest.as_view()
@@ -82,23 +82,25 @@ class _MSGraphAddView(LoginRequiredMixin, CreateView):
     model = MSGraphConfiguration
     template_name = 'import_services/msgraph_edit.html'
     success_url = reverse_lazy('organization-list')
-    fields = ['tenant_id']
+    form_class = MSGraphEditForm
 
     def setup(self, request, *args, **kwargs):
-        tenant_id = request.GET.get("tenant")
-        kwargs["tenant_id"] = tenant_id
+        organization = get_object_or_404(Organization, pk=kwargs['org_id'])
+        kwargs["organization"] = organization
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_new'] = True
         context["tenant_id"] = self.kwargs["tenant_id"]
+        context["organization"] = self.kwargs["organization"]
         return context
 
     def form_valid(self, form):
         form.instance.created = now()
         form.instance.last_modified = now()
-        form.instance.tenant = self.kwargs["tenant"]
+        form.instance.tenant_id = self.kwargs["tenant_id"]
+        form.instance.organization = self.kwargs['organization']
         result = super().form_valid(form)
         return result
 
@@ -116,7 +118,7 @@ class _MSGraphPermissionRequest(LoginRequiredMixin, TemplateView):
             **super().get_context_data(**kwargs),
             **{
                 "service_name": "Microsoft Online",
-                "auth_endpoint": make_consent_url("organization"),
+                "auth_endpoint": make_consent_url("organizations"),
                 "error": self.request.GET.get("error"),
                 "error_description": self.request.GET.get("error_description"),
             }
@@ -132,13 +134,11 @@ class MSGraphUpdateView(LoginRequiredMixin, UpdateView):
     model = MSGraphConfiguration
     template_name = 'import_services/msgraph_edit.html'
     success_url = reverse_lazy('organization-list')
-    fields = ['tenant_id']
+    form_class = MSGraphEditForm
 
     def setup(self, request, *args, **kwargs):
         organization = get_object_or_404(Organization, pk=kwargs['org_id'])
         kwargs['organization'] = organization
-        tenant_id = request.GET.get("tenant")
-        kwargs["tenant_id"] = tenant_id
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -149,7 +149,9 @@ class MSGraphUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        form.instance.tenant = self.kwargs["tenant"]
+        form.instance.last_modified = now()
+        form.instance.tenant_id = self.kwargs["tenant_id"]
+        form.instance.organization = self.kwargs['organization']
         return super().form_valid(form)
 
 

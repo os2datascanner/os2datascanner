@@ -128,13 +128,23 @@
                     <td class="datatable__column--btn">
                         <div class="flex flex--icon">
                             {% if not organization.importservice %}
-                            <a
-                                href="{% url 'add-msgraph' org_id=organization.pk %}"
-                                id="button-add-msgraph-configuration"
-                                type="button"
-                                class="button button--transparent">
-                                <i id="library_add" title="Tilføj Microsoft Graph konfiguration" class="material-icons">library_add</i>
-                            </a>
+				{% if not tenant_id %}
+				    <a
+					href="{% url 'add-msgraph' org_id=organization.pk %}"
+					id="button-add-msgraph-configuration"
+					      type="button"
+					      class="button button--transparent">
+					<i id="library_add" title="Tilføj Microsoft Graph konfiguration" class="material-icons">library_add</i>
+				    </a>
+				{% else %}
+				    <a
+					href="{% url 'add-msgraph' org_id=organization.pk tenant_id=tenant_id %}"
+					id="button-add-msgraph-configuration"
+					type="button"
+					class="button button--transparent">
+					<i id="library_add" title="Tilføj Microsoft Graph konfiguration" class="material-icons">library_add</i>
+				    </a>
+				{% endif %}
 			    {% else %}
 			    <a
 				href="{% url 'edit-msgraph' pk=organization.pk %}"

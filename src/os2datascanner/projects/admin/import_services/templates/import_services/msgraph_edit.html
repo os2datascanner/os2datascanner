@@ -9,21 +9,22 @@
 
     <div class="aside">
         <h1>{% trans "configure Microsoft Graph"|capfirst %}</h1>
-	{% if not is_new %}
-	    <h2>Organization: {{ organization }}</h2>
-	{% endif %}
     </div>
 
-    <form class="form" role="form" action="" method="post">
+    <div class="aside">
+	<h2>Organization: {{ organization }}</h2>
+    </div>
+
+    <form class="form" method="post">
 	{% csrf_token %}
 	<section class="data-form">
 	    <fieldset class="form__fieldset">
 		<div class="form__group">
-		    <label for="{{ form.tenant.id_for_label }}">Tenant ID:</label>
+		    <label for="{{ form.tenant_id.id_for_label }}">Tenant ID:</label>
 		    {% if is_new %}
-			<input id="{{ form.tenant.id_for_label }}" type="text" name="tenant" readonly value="{{ tenant }}">
+			<input id="{{ form.tenant_id.id_for_label }}" type="text" name="tenant" readonly value="{{ tenant_id }}">
 		    {% else %}
-			<input id="{{ form.tenant.id_for_label }}" type="text" name="tenant" value="{{ tenant }}">
+			<input id="{{ form.tenant_id.id_for_label }}" type="text" name="tenant" value="{{ tenant_id }}">
 		    {% endif %}
 		</div>
 	    </fieldset>

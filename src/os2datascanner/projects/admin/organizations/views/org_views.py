@@ -8,12 +8,21 @@ from os2datascanner.projects.admin.core.models import Client, Feature
 
 from ..models import Organization
 
+import logging
+
+logger = logging.getLogger("admin")
+
 
 class OrganizationListView(LoginRequiredMixin, ListView):
     model = Organization
     paginate_by = 10  # TODO: reasonable number? Possibly irrelevant?
     context_object_name = 'client_list'
     template_name = 'organizations/org_list.html'
+
+    def setup(self, request, *args, **kwargs):
+        tenant_id = request.GET.get("tenant")
+        kwargs["tenant_id"] = tenant_id
+        return super().setup(request, *args, **kwargs)
 
     # filter list based on user
     def get_queryset(self):
@@ -29,6 +38,7 @@ class OrganizationListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['FEATURES'] = Feature.__members__
+        context["tenant_id"] = self.kwargs["tenant_id"]
         return context
 
 
