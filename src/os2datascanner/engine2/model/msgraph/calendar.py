@@ -157,6 +157,10 @@ class MSGraphCalendarEventHandle(Handle):
         return f'Account {self.source.handle.relative_path}'
 
     @property
+    def presentation_name(self):
+        return self._event_subject
+
+    @property
     def presentation_url(self):
         return self._weblink
 
