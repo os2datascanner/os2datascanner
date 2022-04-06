@@ -92,10 +92,17 @@ class MSGraphCalendarEventResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
         self._event = None
+        self._body = None
 
     def _generate_metadata(self):
         yield "email-account", self.handle.source.handle.relative_path
         yield from super()._generate_metadata()
+
+    def _get_body(self):
+        if not self._body:
+            self._body = self._get_cookie().get(
+                    self.make_object_path() + "?$select=body")
+        return self._body
 
     def check(self) -> bool:
         response = self._get_cookie().get_raw(
@@ -123,10 +130,13 @@ class MSGraphCalendarEventResource(FileResource):
 
     @contextmanager
     def make_stream(self):
-        response = self._get_cookie().get(
-                self.make_object_path(), json=False)
-        with BytesIO(response) as fp:
+        with BytesIO(self._get_body()["body"]["content"].encode()) as fp:
             yield fp
+
+    def compute_type(self):
+        return ("text/html"
+                if self._get_body()["body"]["contentType"] == "html"
+                else "text/plain")
 
     def get_size(self):
         return SingleResult(None, 'size', 1024)
