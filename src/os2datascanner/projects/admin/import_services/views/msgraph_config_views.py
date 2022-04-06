@@ -134,15 +134,13 @@ class MSGraphUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MSGraphEditForm
 
     def setup(self, request, *args, **kwargs):
-        organization = get_object_or_404(Organization, pk=kwargs['org_id'])
-        kwargs['organization'] = organization
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_new'] = False
         context['tenant_id'] = self.kwargs['tenant_id']
-        context['organization'] = self.kwargs['organization']
+        context['organization'] = self.object.organization
         return context
 
     def form_valid(self, form):
