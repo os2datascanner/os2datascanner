@@ -180,13 +180,12 @@ def get_msg(query):
         which is used in migration 0033_add_sort_key_and_name_charfield
         and in management command refresh_sort_key.
         """
-    if not hasattr(query, "data"):
-        raise NotImplementedError()
+    old_db = hasattr(query, "data")
 
     # only one of these are not None
-    matches = query.data.get("matches")
-    metadata = query.data.get("metadata")
-    problem = query.data.get("problem")
+    matches = query.data.get("matches") if old_db else query.raw_matches
+    metadata = query.data.get("metadata") if old_db else query.raw_metadata
+    problem = query.data.get("problem") if old_db else query.raw_problem
 
     if matches:
         return messages.MatchesMessage.from_json_object(matches)
