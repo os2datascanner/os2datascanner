@@ -74,7 +74,7 @@ class MSGraphCalendarAccountSource(DerivedSource):
     def handles(self, sm):
         pn = self.handle.relative_path
         result = sm.open(self).get(
-            "users/{}/events?$select=id,subject,webLink$top={}".format(
+            "users/{}/events?$select=id,subject,webLink&$top={}".format(
                 pn, engine2_settings.model["msgraph"]["page_size"]))
 
         yield from (self._wrap(msg) for msg in result["value"])
@@ -124,7 +124,7 @@ class MSGraphCalendarEventResource(FileResource):
     @contextmanager
     def make_stream(self):
         response = self._get_cookie().get(
-                self.make_object_path() + "/$value", json=False)
+                self.make_object_path(), json=False)
         with BytesIO(response) as fp:
             yield fp
 

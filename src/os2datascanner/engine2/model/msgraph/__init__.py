@@ -1,4 +1,5 @@
-from .mail import (MSGraphMailSource, MSGraphMailAccountHandle, # noqa
+from .mail import (MSGraphMailSource, MSGraphMailAccountHandle,  # noqa
                    MSGraphMailAccountResource, MSGraphMailAccountSource,
                    MSGraphMailMessageResource, MSGraphMailMessageHandle)
-from . import files# noqa
+from . import files  # noqa
+from . import calendar  # noqa
