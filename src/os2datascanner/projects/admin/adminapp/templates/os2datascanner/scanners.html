@@ -93,7 +93,7 @@
             {% if view.type == 'file' %}
             <td class="domain-letter datatable__column--drive">
               {% if scanner.alias %}
-              {{ scanner.alias }}:
+              {{ scanner.alias }}{% if ":" not in scanner.alias %}:{% endif %}
               {% endif %}
             </td>
             {% endif %}

@@ -12,7 +12,7 @@ from subprocess import run
 def inlang(lang, s):
     """Indicates whether or not every character in a given string @s can be
     found in the string @lang."""
-    return all([c in lang for c in s])
+    return all(c in lang for c in s)
 
 
 def compute_domain(unc):
@@ -181,9 +181,16 @@ def make_smb_url(schema, unc, user, domain, password):
 def make_presentation(self):
     p = self.source.driveletter
     if p:
-        p += ":"
+        # If you have a network drive //SERVER/DRIVE with the drive letter X,
+        # sometimes you want to set up a scan for a specific subfolder that
+        # nonetheless uses the drive letter X ("X:\Departments\Finance", for
+        # example). Checking to see if the "drive letter" already contains a
+        # colon makes this work properly
+        if ":" not in p:
+            p += ":"
     else:
         p = self.source.unc
+
     if p[-1] != "/":
         p += "/"
     return (p + self.relative_path).replace("/", "\\")
