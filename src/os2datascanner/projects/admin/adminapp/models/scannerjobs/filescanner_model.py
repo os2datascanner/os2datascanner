@@ -14,8 +14,6 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 
-from pathlib import PureWindowsPath
-
 import structlog
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -52,19 +50,6 @@ class FileScanner(Scanner):
     def __str__(self):
         """Return the URL for the scanner."""
         return self.url
-
-    def path_for(self, path):
-        root_url = (
-            self.url if self.url.startswith('file:')
-            else PureWindowsPath(self.url).as_uri()
-        )
-
-        if path.startswith(root_url):
-            return str(
-                PureWindowsPath(self.alias + ':\\') / path[len(root_url):]
-            )
-
-        return path
 
     def get_type(self):
         return 'file'
