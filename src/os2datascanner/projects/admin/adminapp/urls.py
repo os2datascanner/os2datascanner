@@ -26,7 +26,8 @@ from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 from .models.scannerjobs.msgraph_models import (MSGraphMailScanner,
-                                                MSGraphFileScanner)
+                                                MSGraphFileScanner,
+                                                MSGraphCalendarScanner)
 from .models.scannerjobs.gmail_model import GmailScanner
 from .models.scannerjobs.sbsysscanner_model import SbsysScanner
 from .views.api import JSONAPIView
@@ -79,7 +80,11 @@ from .views.msgraph_views import (MSGraphMailList, MSGraphMailDelete,
                                   MSGraphFileList, MSGraphFileDelete,
                                   MSGraphFileCreate, MSGraphFileUpdate,
                                   MSGraphFileRun, MSGraphFileAskRun,
-                                  MSGraphMailCopy, MSGraphFileCopy)
+                                  MSGraphMailCopy, MSGraphFileCopy,
+                                  MSGraphCalendarList, MSGraphCalendarDelete,
+                                  MSGraphCalendarCreate, MSGraphCalendarUpdate,
+                                  MSGraphCalendarRun, MSGraphCalendarAskRun,
+                                  MSGraphCalendarCopy)
 
 urlpatterns = [
     # App URLs
@@ -212,6 +217,29 @@ urlpatterns = [
         name='sbsysscanner_askrun'),
 
     # OAuth-based data sources
+    url(r'^msgraph-calendarscanners/$',
+        MSGraphCalendarList.as_view(),
+        name='msgraphcalendarscanner_list'),
+    url(r'^msgraph-calendarscanners/add/$',
+        MSGraphCalendarCreate.as_view(),
+        name='msgraphcalendarscanner_add'),
+    url(r'^msgraph-calendarscanners/(?P<pk>\d+)/$',
+        MSGraphCalendarUpdate.as_view(),
+        name='msgraphcalendarscanner_update'),
+    url(r'^msgraph-calendarscanners/(?P<pk>\d+)/delete/$',
+        MSGraphCalendarDelete.as_view(),
+        name='msgraphcalendarscanner_delete'),
+    url(r'^msgraph-calendarscanners/(?P<pk>\d+)/copy/$',
+        MSGraphCalendarCopy.as_view(),
+        name='msgraphcalendarscanner_copy'),
+    url(r'^msgraph-calendarscanners/(?P<pk>\d+)/run/$',
+        MSGraphCalendarRun.as_view(),
+        name='msgraphcalendarscanner_run'),
+    url(r'^msgraph-calendarscanners/(?P<pk>\d+)/askrun/$',
+        MSGraphCalendarAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=MSGraphCalendarScanner),
+        name='msgraphcalendarscanner_askrun'),
     url(r'^msgraph-filescanners/$',
         MSGraphFileList.as_view(),
         name='msgraphfilescanner_list'),
@@ -257,6 +285,8 @@ urlpatterns = [
             model=MSGraphMailScanner),
         name='msgraphmailscanner_askrun'),
     url(r'^(msgraph-mailscanners|msgraph-filescanners)/(\d+)/(created|saved)/$',
+        DialogSuccess.as_view()),
+    url(r'^(msgraph-calendarscanners)/(\d+)/(created|saved)/$',
         DialogSuccess.as_view()),
 
     # Rules
