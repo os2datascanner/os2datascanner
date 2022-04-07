@@ -44,7 +44,8 @@ class SMBSource(Source):
         self._user = user
         self._password = password
         self._domain = domain if domain is not None else compute_domain(unc)
-        self._driveletter = driveletter
+        self._driveletter = (
+                driveletter.replace('\\', '/') if driveletter else None)
 
     @property
     def unc(self):

@@ -10,6 +10,7 @@ from os2datascanner.engine2.model.file import FilesystemHandle, FilesystemSource
 from os2datascanner.engine2.model.core import SourceManager, Source
 from os2datascanner.engine2.model.http import WebSource, WebHandle
 from os2datascanner.engine2.model.smb import SMBHandle, SMBSource
+from os2datascanner.engine2.model.smbc import SMBCHandle, SMBCSource
 from os2datascanner.engine2.model.derived.mail import MailPartHandle, MailSource
 
 here_path = Path(__file__).resolve().parent
@@ -321,3 +322,36 @@ class Engine2PresentationTest(unittest.TestCase):
                 presentation,
                 f"{fdesc} didn't produce the expected presentations",
             )
+
+    def test_drive_letters(self):
+        expected = (
+            (SMBHandle(
+                    SMBSource("//SERVER/DRIVE"),
+                    "Departments/Finance/FY 2022.ods"),
+             r"\\SERVER\DRIVE\Departments\Finance\FY 2022.ods"),
+            (SMBHandle(
+                    SMBSource("//SERVER/DRIVE", driveletter="H:"),
+                    "Departments/Finance/FY 2022.ods"),
+             r"H:\Departments\Finance\FY 2022.ods"),
+            (SMBCHandle(
+                    SMBCSource("//SERVER/DRIVE", driveletter="H"),
+                    "Departments/Finance/FY 2022.ods"),
+             r"H:\Departments\Finance\FY 2022.ods"),
+            (SMBHandle(
+                    SMBSource(
+                            "//SERVER/DRIVE/Departments",
+                            driveletter="H:/Departments"),
+                    "Finance/FY 2022.ods"),
+             r"H:\Departments\Finance\FY 2022.ods"),
+            (SMBCHandle(
+                    SMBCSource(
+                            "//SERVER/DRIVE/Departments/Finance",
+                            driveletter="H:\\Departments\\Finance\\"),
+                    "FY 2022.ods"),
+             r"H:\Departments\Finance\FY 2022.ods"),
+        )
+        for handle, presentation in expected:
+            self.assertEqual(
+                    handle.presentation,
+                    presentation,
+                    "drive letter substitution failed")
