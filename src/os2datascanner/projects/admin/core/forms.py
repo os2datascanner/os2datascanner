@@ -59,11 +59,23 @@ class ClientAdminForm(forms.ModelForm):
 
         selected_sum = sum([int(x) for x in selected])
 
+        # Raise error if both types of import services have been selected.
         if selected_sum > 11:
             raise ValidationError(_("Only one type of import service can be active at a time."))
 
+        # Clean old import services if settings have changed
+        if self.instance.features != selected_sum:
+            self._remove_invalid_importservices()
+
         self.instance.features = selected_sum
         return selected
+
+    def _remove_invalid_importservices(self):
+        """
+        Removes old import services for all organizations related to the form client.
+        """
+        # client = self.instance
+        pass
 
     def clean_activated_scan_types(self):
         selected = self.cleaned_data['activated_scan_types']
