@@ -13,27 +13,40 @@ from .utilities import MSGraphSource, ignore_responses
 class MSGraphMailSource(MSGraphSource):
     type_label = "msgraph-mail"
 
-    def handles(self, sm):
-        for user in self._list_users(sm)["value"]:
-            pn = user["userPrincipalName"]  # e.g. dan@contoso.onmicrosoft.com
-            # Getting a HTTP 404 response from the /messages endpoint means
-            # that this user doesn't have a mail account at all
+    def __init__(self, client_id, tenant_id, client_secret, user=None):
+        super().__init__(client_id, tenant_id, client_secret)
+        self._user = user
+
+    def handles(self, sm):  # noqa
+        if self._user is None:
+            for user in self._list_users(sm)["value"]:
+                pn = user["userPrincipalName"]  # e.g. dan@contoso.onmicrosoft.com
+                # Getting a HTTP 404 response from the /messages endpoint means
+                # that this user doesn't have a mail account at all
+                with ignore_responses(404):
+                    any_mails = sm.open(self).get(
+                        "users/{0}/messages?$select=id&$top=1".format(pn))
+                    if not any_mails["value"]:
+                        # This user has a mail account that contains no mails
+                        continue
+                    else:
+                        yield MSGraphMailAccountHandle(self, pn)
+
+        else:
             with ignore_responses(404):
                 any_mails = sm.open(self).get(
-                        "users/{0}/messages?$select=id&$top=1".format(pn))
-                if not any_mails["value"]:
-                    # This user has a mail account that contains no mails
-                    continue
-                else:
-                    yield MSGraphMailAccountHandle(self, pn)
+                    "users/{0}/messages?$select=id&$top=1".format(self._user))
+                if any_mails["value"]:
+                    yield MSGraphMailAccountHandle(self, self._user)
 
     @staticmethod
     @Source.json_handler(type_label)
     def from_json_object(obj):
         return MSGraphMailSource(
-                client_id=obj["client_id"],
-                tenant_id=obj["tenant_id"],
-                client_secret=obj["client_secret"])
+            client_id=obj["client_id"],
+            tenant_id=obj["tenant_id"],
+            client_secret=obj["client_secret"],
+        )
 
 
 DUMMY_MIME = "application/vnd.os2.datascanner.graphmailaccount"

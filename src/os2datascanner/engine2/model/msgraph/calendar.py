@@ -12,17 +12,28 @@ from .utilities import MSGraphSource, ignore_responses
 class MSGraphCalendarSource(MSGraphSource):
     type_label = "msgraph-calendar"
 
-    def handles(self, sm):
-        for user in self._list_users(sm)["value"]:
-            pn = user["userPrincipalName"]
+    def __init__(self, client_id, tenant_id, client_secret, user=None):
+        super().__init__(client_id, tenant_id, client_secret)
+        self._user = user
 
+    def handles(self, sm):  # noqa
+        if self._user is None:
+            for user in self._list_users(sm)["value"]:
+                pn = user["userPrincipalName"]
+
+                with ignore_responses(404):
+                    any_events = sm.open(self).get(
+                        "users/{0}/events?$select=id&$top=1".format(pn))
+                    if not any_events["value"]:
+                        continue
+
+                    yield MSGraphCalendarAccountHandle(self, pn)
+        else:
             with ignore_responses(404):
                 any_events = sm.open(self).get(
-                    "users/{0}/events?$select=id&$top=1".format(pn))
-                if not any_events["value"]:
-                    continue
-
-                yield MSGraphCalendarAccountHandle(self, pn)
+                    f"users/{self._user}/events?$select=id&$top=1")
+                if any_events["value"]:
+                    yield MSGraphCalendarAccountHandle(self, self._user)
 
     @staticmethod
     @Source.json_handler(type_label)

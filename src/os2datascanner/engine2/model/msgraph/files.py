@@ -12,10 +12,11 @@ class MSGraphFilesSource(MSGraphSource):
     type_label = "msgraph-files"
 
     def __init__(self, client_id, tenant_id, client_secret,
-                 site_drives=True, user_drives=True):
+                 site_drives=True, user_drives=True, user=None):
         super().__init__(client_id, tenant_id, client_secret)
         self._site_drives = site_drives
         self._user_drives = user_drives
+        self._user = user
 
     def _make_drive_handle(self, obj):
         owner_name = None
@@ -26,17 +27,23 @@ class MSGraphFilesSource(MSGraphSource):
                 owner_name = obj["owner"]["group"]["displayName"]
         return MSGraphDriveHandle(self, obj["id"], obj["name"], owner_name)
 
-    def handles(self, sm):
+    def handles(self, sm):  # noqa
         if self._site_drives:
             with ignore_responses(404):
                 drives = sm.open(self).get("sites/root/drives")
                 for drive in drives["value"]:
                     yield self._make_drive_handle(drive)
         if self._user_drives:
-            for user in self._list_users(sm)["value"]:
-                pn = user["userPrincipalName"]
+            if self._user is None:
+                for user in self._list_users(sm)["value"]:
+                    pn = user["userPrincipalName"]
+                    with ignore_responses(404):
+                        drive = sm.open(self).get("users/{0}/drive".format(pn))
+                        yield self._make_drive_handle(drive)
+
+            else:
                 with ignore_responses(404):
-                    drive = sm.open(self).get("users/{0}/drive".format(pn))
+                    drive = sm.open(self).get(f"users/{self._user}/drive")
                     yield self._make_drive_handle(drive)
 
     def to_json_object(self):

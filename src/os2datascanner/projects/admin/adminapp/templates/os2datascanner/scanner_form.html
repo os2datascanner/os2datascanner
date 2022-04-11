@@ -603,6 +603,32 @@
     </section>
     {% endif %}
 
+    {% if not form.userlist and form.org_unit %}
+    <section class="data-form">
+        <fieldset class="form__fieldset">
+          <h3 class="required-form">
+            {% trans "add users"|capfirst %}
+          </h3>
+          {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features and FEATURES.ORG_STRUCTURE in client.enabled_features %}
+          <p class="information">{% trans "select users from"|capfirst %}</p>
+          <div class="form__group {% if form.org_unit.errors %} has-error{% endif %}">
+            <label
+              class="treeview-label
+              {% if required %}required-form{% endif %}"
+              for="{{ form.org_unit.name }}">
+              {% trans "organizational units"|capfirst %}
+            </label>
+            <select class="treeview" id="sel_1" name="{{ form.org_unit.name }}" multiple size="10" url="{% url 'org-units-listing' %}">
+            </select>
+            {% if form.org_unit.errors %}{{ form.org_unit.errors }}{% endif %}
+          </div>
+          {% endif %}
+	    
+	</fieldset>
+    </section>
+
+    {% endif %}
+
 
     <section class="data-form">
         <fieldset class="form__fieldset">
