@@ -622,14 +622,14 @@
             {% trans "add users"|capfirst %}
           </h3>
           {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features and FEATURES.ORG_STRUCTURE in client.enabled_features %}
-	     <input type="radio" name="show-org-units" value="hide-org-units" onclick="hideOrgUnits();" id="entire-org" checked /> 
 	     <label for="entire-org">
 		 {% trans "all users in this organization"|capfirst %}
 	     </label>
-	     <input type="radio" name="show-org-units" value="show-org-units" onclick="showOrgUnits();" id="select-org-units"/> 
+	     <input type="radio" name="show-org-units" value="hide-org-units" onclick="hideOrgUnits();" id="entire-org" checked /> 
 	     <label for="select-org-units">
 		 {% trans "select users from organizational units"|capfirst %}
 	     </label>
+	     <input type="radio" name="show-org-units" value="show-org-units" onclick="showOrgUnits();" id="select-org-units"/> 
 
           <p class="information" id="org-unit-info">{% trans "select users from"|capfirst %}</p>
           <div class="form__group {% if form.org_unit.errors %} has-error{% endif %}" id="org-units">
