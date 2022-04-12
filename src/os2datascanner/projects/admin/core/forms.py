@@ -58,11 +58,12 @@ class ClientAdminForm(forms.ModelForm):
     def clean_enabled_features(self):
         selected = self.cleaned_data['enabled_features']
 
-        selected_sum = sum([int(x) for x in selected])
-
         # Raise error if both types of import services have been selected.
-        if selected_sum > 11:
+        # TODO: Refactor this to a more maintainable and less hacky.
+        if "4" in selected and "8" in selected:
             raise ValidationError(_("Only one type of import service can be active at a time."))
+
+        selected_sum = sum([int(x) for x in selected])
 
         # Clean old import services if settings have changed
         self._remove_invalid_importservices(selected_sum, self.instance.features)
@@ -74,6 +75,8 @@ class ClientAdminForm(forms.ModelForm):
         """
         Removes old import services for all organizations related to the form client.
         """
+
+        # TODO: Refactor this to a more maintainable and less hacky.
 
         # If settings are unchanged don't do anything
         if new_settings == old_settings:
