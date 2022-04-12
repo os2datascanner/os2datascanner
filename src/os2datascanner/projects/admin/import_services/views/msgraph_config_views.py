@@ -160,6 +160,7 @@ class MSGraphUpdateView(LoginRequiredMixin, UpdateView):
 
 class MSGraphImportView(LoginRequiredMixin, DetailView):
     """
+    View for creating background import jobs with MS Graph.
     """
 
     model = MSGraphConfiguration
@@ -169,6 +170,7 @@ class MSGraphImportView(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         """
+        Initiates importation of an organization through MS Graph.
         """
         start_msgraph_import(self.get_object())
 
