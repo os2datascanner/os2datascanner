@@ -13,12 +13,12 @@ from .utilities import MSGraphSource, ignore_responses
 class MSGraphMailSource(MSGraphSource):
     type_label = "msgraph-mail"
 
-    def __init__(self, client_id, tenant_id, client_secret, user=None):
+    def __init__(self, client_id, tenant_id, client_secret, userlist=None):
         super().__init__(client_id, tenant_id, client_secret)
-        self._user = user
+        self._userlist = userlist
 
     def handles(self, sm):  # noqa
-        if self._user is None:
+        if self._userlist is None:
             for user in self._list_users(sm)["value"]:
                 pn = user["userPrincipalName"]  # e.g. dan@contoso.onmicrosoft.com
                 # Getting a HTTP 404 response from the /messages endpoint means
@@ -33,11 +33,12 @@ class MSGraphMailSource(MSGraphSource):
                         yield MSGraphMailAccountHandle(self, pn)
 
         else:
-            with ignore_responses(404):
-                any_mails = sm.open(self).get(
-                    "users/{0}/messages?$select=id&$top=1".format(self._user))
-                if any_mails["value"]:
-                    yield MSGraphMailAccountHandle(self, self._user)
+            for pn in self._userlist:
+                with ignore_responses(404):
+                    any_mails = sm.open(self).get(
+                        "users/{0}/messages?$select=id&$top=1".format(pn))
+                    if any_mails["value"]:
+                        yield MSGraphMailAccountHandle(self, pn)
 
     @staticmethod
     @Source.json_handler(type_label)

@@ -46,13 +46,13 @@ def _create_user_list(org_unit, url):  # noqa
                     f"user {position.account.username} has no email alias "
                     "connected"
                 )
-    else:
-        for alias in addresses:
-            address = alias.value
-            if address.endswith(url):
-                user_list.add(address)
+            else:
+                for alias in addresses:
+                    address = alias.value
+                    if address.endswith(url):
+                        user_list.add(address)
 
-    return user_list
+    return frozenset(user_list)
 
 
 class MSGraphScanner(Scanner):
@@ -90,14 +90,12 @@ class MSGraphMailScanner(MSGraphScanner):
         else:
             # Otherwise yield a source for every user
             # in the selected organizational unit(s).
-            for user in _create_user_list(self.org_unit, self.url):
-                logger.info(f"submitting scan for user {user}")
-                yield MSGraphMailSource(
-                    client_id=settings.MSGRAPH_APP_ID,
-                    tenant_id=self.tenant_id,
-                    client_secret=settings.MSGRAPH_CLIENT_SECRET,
-                    user=user,
-                )
+            yield MSGraphMailSource(
+                client_id=settings.MSGRAPH_APP_ID,
+                tenant_id=self.tenant_id,
+                client_secret=settings.MSGRAPH_CLIENT_SECRET,
+                userlist=_create_user_list(self.org_unit, self.url),
+            )
 
 
 class MSGraphFileScanner(MSGraphScanner):
@@ -133,16 +131,14 @@ class MSGraphFileScanner(MSGraphScanner):
         else:
             # Otherwise yield a source for every user
             # in the selected organizational unit(s).
-            for user in _create_user_list(self.org_unit, self.url):
-                logger.info(f"submitting scan for user {user}")
-                yield MSGraphFilesSource(
-                    client_id=settings.MSGRAPH_APP_ID,
-                    tenant_id=self.tenant_id,
-                    client_secret=settings.MSGRAPH_CLIENT_SECRET,
-                    site_drives=self.scan_site_drives,
-                    user_drives=self.scan_user_drives,
-                    user=user,
-                )
+            yield MSGraphFilesSource(
+                client_id=settings.MSGRAPH_APP_ID,
+                tenant_id=self.tenant_id,
+                client_secret=settings.MSGRAPH_CLIENT_SECRET,
+                site_drives=self.scan_site_drives,
+                user_drives=self.scan_user_drives,
+                userlist=_create_user_list(self.org_unit, self.url),
+            )
 
 
 class MSGraphCalendarScanner(MSGraphScanner):
@@ -173,11 +169,9 @@ class MSGraphCalendarScanner(MSGraphScanner):
         else:
             # Otherwise yield a source for every user
             # in the selected organizational unit(s).
-            for user in _create_user_list(self.org_unit, self.url):
-                logger.info(f"submitting scan for user {user}")
-                yield MSGraphCalendarSource(
-                    client_id=settings.MSGRAPH_APP_ID,
-                    tenant_id=self.tenant_id,
-                    client_secret=settings.MSGRAPH_CLIENT_SECRET,
-                    user=user,
-                )
+            yield MSGraphCalendarSource(
+                client_id=settings.MSGRAPH_APP_ID,
+                tenant_id=self.tenant_id,
+                client_secret=settings.MSGRAPH_CLIENT_SECRET,
+                userlist=_create_user_list(self.org_unit, self.url)
+            )

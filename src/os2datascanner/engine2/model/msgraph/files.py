@@ -12,11 +12,11 @@ class MSGraphFilesSource(MSGraphSource):
     type_label = "msgraph-files"
 
     def __init__(self, client_id, tenant_id, client_secret,
-                 site_drives=True, user_drives=True, user=None):
+                 site_drives=True, user_drives=True, userlist=None):
         super().__init__(client_id, tenant_id, client_secret)
         self._site_drives = site_drives
         self._user_drives = user_drives
-        self._user = user
+        self._userlist = userlist
 
     def _make_drive_handle(self, obj):
         owner_name = None
@@ -34,7 +34,7 @@ class MSGraphFilesSource(MSGraphSource):
                 for drive in drives["value"]:
                     yield self._make_drive_handle(drive)
         if self._user_drives:
-            if self._user is None:
+            if self._userlist is None:
                 for user in self._list_users(sm)["value"]:
                     pn = user["userPrincipalName"]
                     with ignore_responses(404):
@@ -42,9 +42,10 @@ class MSGraphFilesSource(MSGraphSource):
                         yield self._make_drive_handle(drive)
 
             else:
-                with ignore_responses(404):
-                    drive = sm.open(self).get(f"users/{self._user}/drive")
-                    yield self._make_drive_handle(drive)
+                for pn in self._userlist:
+                    with ignore_responses(404):
+                        drive = sm.open(self).get(f"users/{pn}/drive")
+                        yield self._make_drive_handle(drive)
 
     def to_json_object(self):
         return dict(
