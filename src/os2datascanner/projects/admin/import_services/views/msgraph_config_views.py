@@ -20,7 +20,7 @@ from ..models.msgraph_configuration import MSGraphConfiguration
 from os2datascanner.projects.admin.import_services.utils import start_msgraph_import
 
 
-def make_consent_url(label):
+def make_consent_url(label, org_id):
     """
     Directs the user to Microsoft Online in order to obtain consent.
     After successful login to Microsoft Online, the user is redirected to
@@ -33,7 +33,8 @@ def make_consent_url(label):
                     "client_id": settings.MSGRAPH_APP_ID,
                     "scope": "https://graph.microsoft.com/.default",
                     "response_type": "code",
-                    "redirect_uri": redirect_uri
+                    "redirect_uri": redirect_uri,
+                    "state": org_id,
                 }))
     return None
 
@@ -41,9 +42,14 @@ def make_consent_url(label):
 class MSGraphEditForm(forms.ModelForm):
     required_css_class = 'required-form'
 
+    def __init__(self, *args, **kwargs):
+        super(MSGraphEditForm, self).__init__(*args, **kwargs)
+        self.fields['organization'].disabled = True
+
     class Meta:
         model = MSGraphConfiguration
         fields = [
+            'organization',
             'tenant_id',
         ]
 
@@ -75,14 +81,16 @@ class _MSGraphAddView(LoginRequiredMixin, CreateView):
     View for adding a configuration for importing organizations through
     Microsoft Graph by using a Tenant ID.
     """
-
-    model = MSGraphConfiguration
     template_name = 'import_services/msgraph_edit.html'
     success_url = reverse_lazy('organization-list')
     form_class = MSGraphEditForm
 
     def setup(self, request, *args, **kwargs):
         organization = get_object_or_404(Organization, pk=kwargs['org_id'])
+        self.initial = {
+            "organization": organization,
+            "tenant_id": kwargs["tenant_id"],
+        }
         kwargs["organization"] = organization
         return super().setup(request, *args, **kwargs)
 
@@ -115,7 +123,7 @@ class _MSGraphPermissionRequest(LoginRequiredMixin, TemplateView):
             **super().get_context_data(**kwargs),
             **{
                 "service_name": "Microsoft Online",
-                "auth_endpoint": make_consent_url("organizations"),
+                "auth_endpoint": make_consent_url("organizations", self.kwargs["org_id"]),
                 "error": self.request.GET.get("error"),
                 "error_description": self.request.GET.get("error_description"),
             }
@@ -139,14 +147,14 @@ class MSGraphUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_new'] = False
-        context['tenant_id'] = self.kwargs['tenant_id']
+        context['tenant_id'] = self.object.tenant_id
         context['organization'] = self.object.organization
         return context
 
     def form_valid(self, form):
         form.instance.last_modified = now()
-        form.instance.tenant_id = self.kwargs["tenant_id"]
-        form.instance.organization = self.kwargs['organization']
+        form.instance.tenant_id = form.cleaned_data["tenant_id"]
+        form.instance.organization = form.cleaned_data['organization']
         return super().form_valid(form)
 
 

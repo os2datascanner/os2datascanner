@@ -20,12 +20,9 @@
 	<section class="data-form">
 	    <fieldset class="form__fieldset">
 		<div class="form__group">
-		    <label for="{{ form.tenant_id.id_for_label }}">Tenant ID:</label>
-		    {% if is_new %}
-			<input id="{{ form.tenant_id.id_for_label }}" type="text" name="tenant" readonly value="{{ tenant_id }}">
-		    {% else %}
-			<input id="{{ form.tenant_id.id_for_label }}" type="text" name="tenant" value="{{ tenant_id }}">
-		    {% endif %}
+            {% for field in form %}
+                {% include 'import_services/msgraph_import_field_snippet.html' %}
+            {% endfor %}
 		</div>
 	    </fieldset>
 	</section>

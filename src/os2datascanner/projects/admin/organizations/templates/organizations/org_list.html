@@ -153,15 +153,39 @@
                                 class="button button--transparent">
                                 <i id="library_add_check" title="Redigér Microsoft Graph konfiguration" class="material-icons">library_add_check</i>
 			    </a>
-                            <a
-                                href="{% url 'import-msgraph' pk=organization.pk %}"
-                                type="button"
-                                title="{% trans 'sync'|capfirst %}"
-                                class="button button--transparent button--transparent--text btn-text"
-                                data-sync-for="{{ organization.pk }}">
-                                {% trans "sync"|capfirst %}
-                            </a>
-			    {% endif %}
+                    <a
+                        href="{% url 'import-msgraph' pk=organization.pk %}"
+                        type="button"
+                        title="{% trans 'sync'|capfirst %}"
+                        class="button button--transparent button--transparent--text btn-text"
+                        data-sync-for="{{ organization.pk }}">
+                        {% trans "sync"|capfirst %}
+                    </a>
+                    <div class="flex">
+                        <div class="response">
+                            {% if organization.msimport %}
+                                {% with exec_state_value=organization.msimport.first.exec_state.value %}
+                                    {% if exec_state_value == "finished" %}
+                                        <span class="response-icon response-icon--success" data-sync-for="{{ organization.pk }}"><i class="material-icons">check</i></span>
+                                    {% elif exec_state_value == "failed" %}
+                                        <span class="response-icon response-icon--error" data-sync-for="{{ organization.pk }}"><i class="material-icons">error</i></span>
+                                    {% elif exec_state_value == "waiting" or exec_state_value == "running" %}
+                                        <span class="response-icon response-icon--waiting" data-sync-for="{{ organization.pk }}"><i class="material-icons">hourglass_top</i></span>
+                                    {% endif %}
+                                    <span class="response-text" data-sync-for="{{ organization.pk }}">
+                                        {% if exec_state_value == "finished" %}
+                                            {% trans 'last updated'|capfirst %},
+                                        {% else %}
+                                            {{ organization.msimport.first.exec_state.label|capfirst  }},
+                                        {% endif %}
+<!--                                            {# XXX: remove this hardcoded timezone once #39963 is fixed #}-->
+                                        {{ organization.msimport.first.changed_at|timezone:"Europe/Paris"|date:'d-m-Y H:i'}}
+                                    </span>
+                                {% endwith %}
+                            {% endif %}
+                        </div>
+                    </div>
+        {% endif %}
                         </div>
                     </td>
                     {% endif %}

@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from os2datascanner.projects.admin.core.models import Client, Feature
-
 from ..models import Organization
 
 import logging
@@ -23,6 +23,15 @@ class OrganizationListView(LoginRequiredMixin, ListView):
         tenant_id = request.GET.get("tenant")
         kwargs["tenant_id"] = tenant_id
         return super().setup(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('tenant'):
+            tenant_id = request.GET.get('tenant')
+            org_id = request.GET.get('state')
+            return redirect('add-msgraph',
+                            org_id=org_id,
+                            tenant_id=tenant_id)
+        return super(OrganizationListView, self).get(request, *args, **kwargs)
 
     # filter list based on user
     def get_queryset(self):

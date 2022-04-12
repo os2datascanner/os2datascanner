@@ -26,7 +26,7 @@ class MSGraphImportJob(BackgroundJob):
     tenant_id = models.CharField(max_length=256, verbose_name="Tenant ID",
                                  null=False)
 
-    organization = models.OneToOneField(
+    organization = models.ForeignKey(
         'organizations.Organization',
         on_delete=models.PROTECT,
         verbose_name=_('organization'),
