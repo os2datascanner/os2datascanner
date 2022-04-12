@@ -67,6 +67,18 @@
   {% endif %}
 </script>
 
+<script type="text/javascript">
+ function hideOrgUnits() {
+     sel_1 = document.getElementById("sel_1");
+     sel_1.setAttribute("disabled", "");
+ }
+
+ function showOrgUnits() {
+     sel_1 = document.getElementById("sel_1");
+     sel_1.removeAttribute("disabled");
+ }
+</script>
+
 <!-- Available Employees widget -->
 <!-- <script type="text/javascript" src="{% static 'js/employeeSelector.js' %}"></script> -->
 <script type="text/javascript" src="{% static 'js/ruleselector.js' %}"></script>
@@ -610,15 +622,24 @@
             {% trans "add users"|capfirst %}
           </h3>
           {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features and FEATURES.ORG_STRUCTURE in client.enabled_features %}
-          <p class="information">{% trans "select users from"|capfirst %}</p>
-          <div class="form__group {% if form.org_unit.errors %} has-error{% endif %}">
+	     <input type="radio" name="show-org-units" value="hide-org-units" onclick="hideOrgUnits();" id="entire-org" checked /> 
+	     <label for="entire-org">
+		 {% trans "all users in this organization"|capfirst %}
+	     </label>
+	     <input type="radio" name="show-org-units" value="show-org-units" onclick="showOrgUnits();" id="select-org-units"/> 
+	     <label for="select-org-units">
+		 {% trans "select users from organizational units"|capfirst %}
+	     </label>
+
+          <p class="information" id="org-unit-info">{% trans "select users from"|capfirst %}</p>
+          <div class="form__group {% if form.org_unit.errors %} has-error{% endif %}" id="org-units">
             <label
               class="treeview-label
               {% if required %}required-form{% endif %}"
               for="{{ form.org_unit.name }}">
               {% trans "organizational units"|capfirst %}
             </label>
-            <select class="treeview" id="sel_1" name="{{ form.org_unit.name }}" multiple size="10" url="{% url 'org-units-listing' %}">
+            <select class="treeview" id="sel_1" name="{{ form.org_unit.name }}" multiple size="10" url="{% url 'org-units-listing' %}" disabled>
             </select>
             {% if form.org_unit.errors %}{{ form.org_unit.errors }}{% endif %}
           </div>
