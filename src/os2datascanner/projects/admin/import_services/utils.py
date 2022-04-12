@@ -19,7 +19,11 @@ import structlog
 from django.shortcuts import get_object_or_404
 
 from os2datascanner.projects.admin.core.models.background_job import JobState
-from os2datascanner.projects.admin.import_services.models import LDAPConfig, Realm, ImportJob
+from os2datascanner.projects.admin.import_services.models import (LDAPConfig,
+                                                                  Realm,
+                                                                  ImportJob,
+                                                                  MSGraphImportJob)
+from .models.msgraph_configuration import MSGraphConfiguration
 
 logger = structlog.get_logger(__name__)
 
@@ -44,3 +48,35 @@ def start_ldap_import(ldap_conf: LDAPConfig):
     else:
         logger.info("LDAP import is not possible right now for "
                     f"LDAPConfig {ldap_conf.pk}")
+
+
+def start_msgraph_import(msgraph_conf: MSGraphConfiguration):
+    """
+    MS Graph Import Job start utility. MS Graph Import Jobs can only be
+    created if no other jobs are running.
+    """
+
+    try:
+        latest_importjob = MSGraphImportJob.objects.filter(
+            tenant_id=msgraph_conf.tenant_id
+        ).latest('created_at')
+
+        if latest_importjob.exec_state == JobState.FINISHED \
+                or latest_importjob.exec_state == JobState.FAILED \
+                or latest_importjob.exec_state == JobState.CANCELLED:
+            MSGraphImportJob.objects.create(
+                tenant_id=msgraph_conf.tenant_id,
+                organization=msgraph_conf.organization,
+            )
+            logger.info(f"Import job created for MSGraphConfiguration {msgraph_conf.pk}")
+
+        else:
+            logger.info("MS Graph import is not possible right now for "
+                        f"MSGraphConfiguration {msgraph_conf.pk}")
+
+    except MSGraphImportJob.DoesNotExist:
+        MSGraphImportJob.objects.create(
+            tenant_id=msgraph_conf.tenant_id,
+            organization=msgraph_conf.organization,
+        )
+        logger.info(f"Import job created for MSGraphConfiguration {msgraph_conf.pk}")

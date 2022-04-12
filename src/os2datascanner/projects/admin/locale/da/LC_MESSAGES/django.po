@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 12:54+0200\n"
+"POT-Creation-Date: 2022-04-05 12:47+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -21,6 +21,7 @@ msgstr ""
 
 #: adminapp/models/apikey_model.py:16 adminapp/models/rules/rule_model.py:47
 #: adminapp/models/scannerjobs/scanner_model.py:76
+#: import_services/models/msgraph_import_job.py:32
 #: import_services/models/realm.py:29 organizations/models/account.py:58
 #: organizations/models/organization.py:73
 msgid "organization"
@@ -52,7 +53,7 @@ msgstr "Brugerdomæne"
 msgid "Login method"
 msgstr "Login metode"
 
-#: adminapp/models/rules/rule_model.py:40 core/models/client.py:72
+#: adminapp/models/rules/rule_model.py:40 core/models/client.py:73
 #: organizations/models/organization.py:45
 #: organizations/models/organizational_unit.py:44
 #: organizations/templates/organizations/org_list.html:49
@@ -256,7 +257,8 @@ msgstr "Regler"
 #: adminapp/templates/components/navigation.html:36
 #: adminapp/templates/partials/breadcrumb.html:65
 #: adminapp/templates/partials/breadcrumb.html:73
-#: adminapp/templates/partials/breadcrumb.html:81 organizations/apps.py:8
+#: adminapp/templates/partials/breadcrumb.html:81
+#: adminapp/templates/partials/breadcrumb.html:93 organizations/apps.py:8
 #: organizations/models/organization.py:74
 #: organizations/templates/organizations/org_list.html:6
 msgid "organizations"
@@ -816,22 +818,27 @@ msgstr ""
 "tillade OS2datascanner adgang til dens indhold."
 
 #: adminapp/templates/os2datascanner/scanner_oauth_start.html:24
+#: import_services/templates/import_services/msgraph_oauth.html:19
 msgid "The service refused to grant OS2datascanner the necessary rights:"
 msgstr "Tjenesten nægtede at give OS2datascanner de nødvendige rettigheder:"
 
 #: adminapp/templates/os2datascanner/scanner_oauth_start.html:27
+#: import_services/templates/import_services/msgraph_oauth.html:22
 msgid "Click the button below to try again."
 msgstr "Klik på knappen nedenfor for at prøve igen."
 
 #: adminapp/templates/os2datascanner/scanner_oauth_start.html:29
+#: import_services/templates/import_services/msgraph_oauth.html:24
 msgid "Click the button below to forward to this service."
 msgstr "Klik på knappen nedenfor for at blive videresendt til denne tjeneste."
 
 #: adminapp/templates/os2datascanner/scanner_oauth_start.html:36
+#: import_services/templates/import_services/msgraph_oauth.html:31
 msgid "Continue to"
 msgstr "Fortsæt til"
 
 #: adminapp/templates/os2datascanner/scanner_oauth_start.html:40
+#: import_services/templates/import_services/msgraph_oauth.html:35
 msgid ""
 "You will be forwarded to the creation form after the service has issued the "
 "necessary rights."
@@ -840,6 +847,7 @@ msgstr ""
 "de nødvendige rettigheder."
 
 #: adminapp/templates/os2datascanner/scanner_oauth_start.html:44
+#: import_services/templates/import_services/msgraph_oauth.html:39
 msgid ""
 "The information pointing to the OS2datascanner system for this service is "
 "missing."
@@ -997,6 +1005,14 @@ msgstr "tilføj LDAP-konfiguration"
 #: adminapp/templates/partials/breadcrumb.html:88
 msgid "update LDAP configuration"
 msgstr "opdatér LDAP-konfiguration"
+
+#: adminapp/templates/partials/breadcrumb.html:98
+msgid "add MS Graph configuration"
+msgstr "Tilføj Microsoft Graph konfiguration"
+
+#: adminapp/templates/partials/breadcrumb.html:100
+msgid "update MS Graph configuration"
+msgstr "opdatér Microsoft Graph konfiguration"
 
 #: adminapp/templates/password_change_done.html:6
 #: adminapp/templates/password_change_done.html:12
@@ -1156,38 +1172,42 @@ msgctxt "Verbose name for core app"
 msgid "Management"
 msgstr "Administration"
 
-#: core/forms.py:30 core/models/client.py:86
+#: core/forms.py:31 core/models/client.py:87
 msgid "enabled features"
 msgstr "aktiverede features"
 
-#: core/forms.py:31
+#: core/forms.py:32
 msgid "Select a feature to enable it for this client."
 msgstr "Vælg en feature for at aktivere den for denne kunde."
 
-#: core/forms.py:38 core/models/client.py:92
+#: core/forms.py:39 core/models/client.py:93
 msgid "activated scan types"
 msgstr "tilgængelige scannertyper"
 
-#: core/forms.py:39
+#: core/forms.py:40
 msgid "Select a scan type to activate it for this client."
 msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 
-#: core/management/commands/run_background_jobs.py:76
+#: core/forms.py:63
+msgid "Only one type of import service can be active at a time."
+msgstr "Kun en type ad importservice kan være aktiveret."
+
+#: core/management/commands/run_background_jobs.py:98
 #, fuzzy, python-format
 #| msgid "sleep for %(METAVAR)s seconds if there were no jobs to run"
 msgid "sleep for %(metavar)s seconds if there were no jobs to run"
 msgstr "vent %(METAVAR)s sekunder hvis der ikke var nogle jobs til afvikling"
 
-#: core/management/commands/run_background_jobs.py:83
+#: core/management/commands/run_background_jobs.py:105
 msgid "do not loop: run a single job and then exit"
 msgstr "kør ikke i løkke: kør et enkelt job og gå derefter ud"
 
-#: core/management/commands/run_background_jobs.py:186
+#: core/management/commands/run_background_jobs.py:209
 #, python-brace-format
 msgid "{0} job(s) completed."
 msgstr "{0} færdige job(s)."
 
-#: core/management/commands/run_background_jobs.py:187
+#: core/management/commands/run_background_jobs.py:210
 #, python-brace-format
 msgid "{0} job(s) failed."
 msgstr "{0} fejlede job(s)."
@@ -1196,7 +1216,7 @@ msgstr "{0} fejlede job(s)."
 msgid "user"
 msgstr "bruger"
 
-#: core/models/administrator.py:37 core/models/client.py:112
+#: core/models/administrator.py:37 core/models/client.py:113
 #: organizations/models/organization.py:57
 msgid "client"
 msgstr "kunde"
@@ -1308,19 +1328,23 @@ msgstr "understøttelse af strukturerede organisationer"
 msgid "import services"
 msgstr "importservicer"
 
-#: core/models/client.py:67
+#: core/models/client.py:50
+msgid "import services (MS Graph)"
+msgstr "importservices (MS Graph)"
+
+#: core/models/client.py:68
 msgid "client ID"
 msgstr "kunde-ID"
 
-#: core/models/client.py:76
+#: core/models/client.py:77
 msgid "e-mail"
 msgstr "e-mail"
 
-#: core/models/client.py:80 organizations/models/organization.py:69
+#: core/models/client.py:81 organizations/models/organization.py:69
 msgid "phone number"
 msgstr "telefonnummer"
 
-#: core/models/client.py:113
+#: core/models/client.py:114
 msgid "clients"
 msgstr "kunder"
 
@@ -1597,6 +1621,28 @@ msgstr "tilføj bruger-attributter"
 msgid "save LDAP configuration"
 msgstr "gem LDAP-konfiguration"
 
+#: import_services/templates/import_services/msgraph_edit.html:5
+#: import_services/templates/import_services/msgraph_oauth.html:5
+msgid "Microsoft Graph configuration"
+msgstr "Microsoft Graph konfiguration"
+
+#: import_services/templates/import_services/msgraph_edit.html:11
+#: import_services/templates/import_services/msgraph_oauth.html:11
+msgid "configure Microsoft Graph"
+msgstr "konfigurer Microsoft Graph"
+
+#: import_services/templates/import_services/msgraph_edit.html:34
+msgid "save Microsoft Graph configuration"
+msgstr "gem Microsoft Graph konfiguration"
+
+#: import_services/templates/import_services/msgraph_oauth.html:15
+msgid ""
+"The source of this organization is in the cloud and an external service must "
+"allow OS2datascanner to access it's content."
+msgstr ""
+"Denne organisationsstruktur ligger i skyen, og en eksterne tjeneste skal "
+"tillade OS2datascanner adgang til dens indhold."
+
 #: organizations/models/account.py:44
 msgid "username"
 msgstr "brugernavn"
@@ -1712,16 +1758,22 @@ msgstr "Tilføj ny organisation"
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_list.html:93
-#: organizations/templates/organizations/org_list.html:96
+#: organizations/templates/organizations/org_list.html:56
+msgid "Import service (Microsoft Graph)"
+msgstr "Importservice (Microsoft Graph)"
+
+#: organizations/templates/organizations/org_list.html:95
+#: organizations/templates/organizations/org_list.html:98
+#: organizations/templates/organizations/org_list.html:159
+#: organizations/templates/organizations/org_list.html:162
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_list.html:111
+#: organizations/templates/organizations/org_list.html:113
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_list.html:134
+#: organizations/templates/organizations/org_list.html:176
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 

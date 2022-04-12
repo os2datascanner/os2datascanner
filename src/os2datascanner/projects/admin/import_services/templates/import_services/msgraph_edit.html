@@ -1,0 +1,36 @@
+{% extends 'organizations/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Microsoft Graph configuration" %}{% endblock %}
+
+{% block content %}
+    {% include "partials/breadcrumb.html" with page="msgraph" %}
+
+    <div class="aside">
+        <h1>{% trans "configure Microsoft Graph"|capfirst %}</h1>
+    </div>
+
+    <div class="aside">
+	<h2>Organization: {{ organization }}</h2>
+    </div>
+
+    <form class="form" method="post">
+	{% csrf_token %}
+	<section class="data-form">
+	    <fieldset class="form__fieldset">
+		<div class="form__group">
+            {% for field in form %}
+                {% include 'import_services/msgraph_import_field_snippet.html' %}
+            {% endfor %}
+		</div>
+	    </fieldset>
+	</section>
+	<div class="form__group last-btn">
+	    <button type="submit" class="button button--cta" name="save">
+		{% trans "save Microsoft Graph configuration"|capfirst %}
+	    </button>
+	</div>
+    </form>
+
+{% endblock %}

@@ -13,10 +13,12 @@
 #
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from .models import Client
 from .models.client import Scan, Feature
+from .utils import clear_import_services
 
 
 class ClientAdminForm(forms.ModelForm):
@@ -55,8 +57,42 @@ class ClientAdminForm(forms.ModelForm):
 
     def clean_enabled_features(self):
         selected = self.cleaned_data['enabled_features']
-        self.instance.features = sum([int(x) for x in selected])
+
+        # Raise error if both types of import services have been selected.
+        # TODO: Refactor this to a more maintainable and less hacky.
+        if "4" in selected and "8" in selected:
+            raise ValidationError(_("Only one type of import service can be active at a time."))
+
+        selected_sum = sum([int(x) for x in selected])
+
+        # Clean old import services if settings have changed
+        self._remove_invalid_importservices(selected_sum, self.instance.features)
+
+        self.instance.features = selected_sum
         return selected
+
+    def _remove_invalid_importservices(self, new_settings, old_settings):
+        """
+        Removes old import services for all organizations related to the form client.
+        """
+
+        # TODO: Refactor this to a more maintainable and less hacky.
+
+        # If settings are unchanged don't do anything
+        if new_settings == old_settings:
+            return
+
+        # If ldap import services is still on, don't clean
+        if new_settings < 8 and old_settings < 8:
+            return
+
+        # If MS graph import services is still on, don't clean
+        if new_settings > 7 and old_settings > 7:
+            return
+
+        # Otherwise clear all import_services if features have changed
+        client = self.instance
+        clear_import_services(client)
 
     def clean_activated_scan_types(self):
         selected = self.cleaned_data['activated_scan_types']

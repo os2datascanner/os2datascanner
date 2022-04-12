@@ -52,7 +52,9 @@
                     <!-- TODO: add conditional columns for users and units dependent on FEATURES.ORG_STRUCTURE (see below) -->
                     {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
                         <th class="datatable__column--btn">{% trans "import service"|capfirst %}</th>
-                    {% endif %}
+		    {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+			<th class="datatable__column--btn">{% trans "Import service (Microsoft Graph)" %}</th>
+		    {% endif %}
                 </tr>
             </thead>
             {% if client.organizations.all %}
@@ -120,6 +122,70 @@
                                 </div>
                             </div>
                             {% endif %}
+                        </div>
+                    </td>
+		    {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+                    <td class="datatable__column--btn">
+                        <div class="flex flex--icon">
+                            {% if not organization.importservice %}
+				{% if not tenant_id %}
+				    <a
+					href="{% url 'add-msgraph' org_id=organization.pk %}"
+					id="button-add-msgraph-configuration"
+					      type="button"
+					      class="button button--transparent">
+					<i id="library_add" title="Tilføj Microsoft Graph konfiguration" class="material-icons">library_add</i>
+				    </a>
+				{% else %}
+				    <a
+					href="{% url 'add-msgraph' org_id=organization.pk tenant_id=tenant_id %}"
+					id="button-add-msgraph-configuration"
+					type="button"
+					class="button button--transparent">
+					<i id="library_add" title="Tilføj Microsoft Graph konfiguration" class="material-icons">library_add</i>
+				    </a>
+				{% endif %}
+			    {% else %}
+			    <a
+				href="{% url 'edit-msgraph' pk=organization.pk %}"
+                                id="button-add-msgraph-configuration"
+                                type="button"
+                                class="button button--transparent">
+                                <i id="library_add_check" title="Redigér Microsoft Graph konfiguration" class="material-icons">library_add_check</i>
+			    </a>
+                    <a
+                        href="{% url 'import-msgraph' pk=organization.pk %}"
+                        type="button"
+                        title="{% trans 'sync'|capfirst %}"
+                        class="button button--transparent button--transparent--text btn-text"
+                        data-sync-for="{{ organization.pk }}">
+                        {% trans "sync"|capfirst %}
+                    </a>
+                    <div class="flex">
+                        <div class="response">
+                            {% if organization.msimport %}
+                                {% with exec_state_value=organization.msimport.first.exec_state.value %}
+                                    {% if exec_state_value == "finished" %}
+                                        <span class="response-icon response-icon--success" data-sync-for="{{ organization.pk }}"><i class="material-icons">check</i></span>
+                                    {% elif exec_state_value == "failed" %}
+                                        <span class="response-icon response-icon--error" data-sync-for="{{ organization.pk }}"><i class="material-icons">error</i></span>
+                                    {% elif exec_state_value == "waiting" or exec_state_value == "running" %}
+                                        <span class="response-icon response-icon--waiting" data-sync-for="{{ organization.pk }}"><i class="material-icons">hourglass_top</i></span>
+                                    {% endif %}
+                                    <span class="response-text" data-sync-for="{{ organization.pk }}">
+                                        {% if exec_state_value == "finished" %}
+                                            {% trans 'last updated'|capfirst %},
+                                        {% else %}
+                                            {{ organization.msimport.first.exec_state.label|capfirst  }},
+                                        {% endif %}
+<!--                                            {# XXX: remove this hardcoded timezone once #39963 is fixed #}-->
+                                        {{ organization.msimport.first.changed_at|timezone:"Europe/Paris"|date:'d-m-Y H:i'}}
+                                    </span>
+                                {% endwith %}
+                            {% endif %}
+                        </div>
+                    </div>
+        {% endif %}
                         </div>
                     </td>
                     {% endif %}
