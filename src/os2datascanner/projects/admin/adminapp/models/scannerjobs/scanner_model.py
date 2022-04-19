@@ -313,7 +313,7 @@ class Scanner(models.Model):
                     matches=[]))
         for reminder in self.checkups.iterator():
             rh = reminder.handle
-            if rh.source not in uncensor_map:
+            if rh.base_handle.source not in uncensor_map:
                 # This checkup refers to a Source that we no longer care about
                 # (for example, an account that's been removed from the scan).
                 # Delete it
