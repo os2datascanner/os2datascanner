@@ -318,6 +318,7 @@ class Scanner(models.Model):
                 # (for example, an account that's been removed from the scan).
                 # Delete it
                 reminder.delete()
+                continue
             else:
                 rh = rh.remap(uncensor_map)
 
