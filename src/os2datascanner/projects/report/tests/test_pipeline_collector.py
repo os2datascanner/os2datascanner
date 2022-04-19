@@ -242,6 +242,10 @@ class PipelineCollectorTests(TestCase):
                 saved_match.scan_time,
                 parse_isoformat_timestamp(time2),
                 "match timestamp not correctly updated")
+        self.assertEqual(
+                saved_match.resolution_status,
+                None,
+                "resolution status changed(?!)")
 
     def test_filter_internal_rules_matches(self):
         match_to_match = messages.MatchesMessage(
