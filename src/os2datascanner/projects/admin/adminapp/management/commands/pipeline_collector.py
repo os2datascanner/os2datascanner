@@ -60,6 +60,7 @@ def status_message_received_raw(body):
                 message=message.message,
                 status_is_error=message.status_is_error,
                 total_objects=F('total_objects') + message.total_objects,
+                total_sources=F('total_sources') + (message.new_sources or 0),
                 explored_sources=F('explored_sources') + 1)
     elif message.object_size is not None and message.object_type is not None:
         # A worker has finished processing a Handle
