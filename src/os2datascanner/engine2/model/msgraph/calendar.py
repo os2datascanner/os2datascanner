@@ -14,7 +14,7 @@ class MSGraphCalendarSource(MSGraphSource):
 
     def __init__(self, client_id, tenant_id, client_secret, userlist=None):
         super().__init__(client_id, tenant_id, client_secret)
-        self._userlist = userlist
+        self._userlist = userlist or None
 
     def handles(self, sm):  # noqa
         if self._userlist is None:
@@ -36,13 +36,20 @@ class MSGraphCalendarSource(MSGraphSource):
                     if any_events["value"]:
                         yield MSGraphCalendarAccountHandle(self, pn)
 
+    def to_json_object(self):
+        return dict(
+                **super().to_json_object(),
+                userlist=list(self._userlist) if self._userlist else None)
+
     @staticmethod
     @Source.json_handler(type_label)
     def from_json_object(obj):
+        userlist = obj.get("userlist")
         return MSGraphCalendarSource(
-            client_id=obj["client_id"],
-            tenant_id=obj["tenant_id"],
-            client_secret=obj["client_secret"])
+                client_id=obj["client_id"],
+                tenant_id=obj["tenant_id"],
+                client_secret=obj["client_secret"],
+                userlist=frozenset(userlist) if userlist else None)
 
 
 DUMMY_MIME = "application/vnd.os2.datascanner.graphcalendaraccount"
