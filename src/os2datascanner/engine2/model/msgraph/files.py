@@ -12,10 +12,11 @@ class MSGraphFilesSource(MSGraphSource):
     type_label = "msgraph-files"
 
     def __init__(self, client_id, tenant_id, client_secret,
-                 site_drives=True, user_drives=True):
+                 site_drives=True, user_drives=True, userlist=None):
         super().__init__(client_id, tenant_id, client_secret)
         self._site_drives = site_drives
         self._user_drives = user_drives
+        self._userlist = userlist or None
 
     def _make_drive_handle(self, obj):
         owner_name = None
@@ -26,35 +27,45 @@ class MSGraphFilesSource(MSGraphSource):
                 owner_name = obj["owner"]["group"]["displayName"]
         return MSGraphDriveHandle(self, obj["id"], obj["name"], owner_name)
 
-    def handles(self, sm):
+    def handles(self, sm):  # noqa
         if self._site_drives:
             with ignore_responses(404):
                 drives = sm.open(self).get("sites/root/drives")
                 for drive in drives["value"]:
                     yield self._make_drive_handle(drive)
         if self._user_drives:
-            for user in self._list_users(sm)["value"]:
-                pn = user["userPrincipalName"]
-                with ignore_responses(404):
-                    drive = sm.open(self).get("users/{0}/drive".format(pn))
-                    yield self._make_drive_handle(drive)
+            if self._userlist is None:
+                for user in self._list_users(sm)["value"]:
+                    pn = user["userPrincipalName"]
+                    with ignore_responses(404):
+                        drive = sm.open(self).get("users/{0}/drive".format(pn))
+                        yield self._make_drive_handle(drive)
+
+            else:
+                for pn in self._userlist:
+                    with ignore_responses(404):
+                        drive = sm.open(self).get(f"users/{pn}/drive")
+                        yield self._make_drive_handle(drive)
 
     def to_json_object(self):
         return dict(
             **super().to_json_object(),
             site_drives=self._site_drives,
             user_drives=self._user_drives,
+            userlist=list(self._userlist) if self._userlist else None,
         )
 
     @staticmethod
     @Source.json_handler(type_label)
     def from_json_object(obj):
+        userlist = obj.get("userlist")
         return MSGraphFilesSource(
                 client_id=obj["client_id"],
                 tenant_id=obj["tenant_id"],
                 client_secret=obj["client_secret"],
                 site_drives=obj["site_drives"],
-                user_drives=obj["user_drives"])
+                user_drives=obj["user_drives"],
+                userlist=frozenset(userlist) if userlist else None)
 
 
 DUMMY_MIME = "application/vnd.os2.datascanner.graphdrive"

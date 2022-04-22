@@ -13,27 +13,47 @@ from .utilities import MSGraphSource, ignore_responses
 class MSGraphMailSource(MSGraphSource):
     type_label = "msgraph-mail"
 
-    def handles(self, sm):
-        for user in self._list_users(sm)["value"]:
-            pn = user["userPrincipalName"]  # e.g. dan@contoso.onmicrosoft.com
-            # Getting a HTTP 404 response from the /messages endpoint means
-            # that this user doesn't have a mail account at all
-            with ignore_responses(404):
-                any_mails = sm.open(self).get(
+    def __init__(self, client_id, tenant_id, client_secret, userlist=None):
+        super().__init__(client_id, tenant_id, client_secret)
+        self._userlist = userlist or None
+
+    def handles(self, sm):  # noqa
+        if self._userlist is None:
+            for user in self._list_users(sm)["value"]:
+                pn = user["userPrincipalName"]  # e.g. dan@contoso.onmicrosoft.com
+                # Getting a HTTP 404 response from the /messages endpoint means
+                # that this user doesn't have a mail account at all
+                with ignore_responses(404):
+                    any_mails = sm.open(self).get(
                         "users/{0}/messages?$select=id&$top=1".format(pn))
-                if not any_mails["value"]:
-                    # This user has a mail account that contains no mails
-                    continue
-                else:
-                    yield MSGraphMailAccountHandle(self, pn)
+                    if not any_mails["value"]:
+                        # This user has a mail account that contains no mails
+                        continue
+                    else:
+                        yield MSGraphMailAccountHandle(self, pn)
+
+        else:
+            for pn in self._userlist:
+                with ignore_responses(404):
+                    any_mails = sm.open(self).get(
+                        "users/{0}/messages?$select=id&$top=1".format(pn))
+                    if any_mails["value"]:
+                        yield MSGraphMailAccountHandle(self, pn)
+
+    def to_json_object(self):
+        return dict(
+                **super().to_json_object(),
+                userlist=list(self._userlist) if self._userlist else None)
 
     @staticmethod
     @Source.json_handler(type_label)
     def from_json_object(obj):
+        userlist = obj.get("userlist")
         return MSGraphMailSource(
                 client_id=obj["client_id"],
                 tenant_id=obj["tenant_id"],
-                client_secret=obj["client_secret"])
+                client_secret=obj["client_secret"],
+                userlist=frozenset(userlist) if userlist else None)
 
 
 DUMMY_MIME = "application/vnd.os2.datascanner.graphmailaccount"
