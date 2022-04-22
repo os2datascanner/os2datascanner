@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-12 08:38+0200\n"
+"POT-Creation-Date: 2022-04-22 14:50+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -69,9 +69,9 @@ msgid "sensitivity"
 msgstr "Følsomhed"
 
 #: adminapp/models/scannerjobs/exchangescanner_model.py:55
-#: adminapp/models/scannerjobs/msgraph_models.py:71
+#: adminapp/models/scannerjobs/msgraph_models.py:73
 #: adminapp/models/scannerjobs/msgraph_models.py:112
-#: adminapp/models/scannerjobs/msgraph_models.py:154
+#: adminapp/models/scannerjobs/msgraph_models.py:152
 #: organizations/models/organizational_unit.py:63
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
@@ -96,44 +96,44 @@ msgstr ""
 msgid "URL must follow the UNC format"
 msgstr "URL skal følge UNC-format"
 
-#: adminapp/models/scannerjobs/scanner_model.py:421
+#: adminapp/models/scannerjobs/scanner_model.py:422
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
 
-#: adminapp/models/scannerjobs/scanner_model.py:426
+#: adminapp/models/scannerjobs/scanner_model.py:427
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:433
+#: adminapp/models/scannerjobs/scanner_model.py:434
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:438
+#: adminapp/models/scannerjobs/scanner_model.py:439
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:443
+#: adminapp/models/scannerjobs/scanner_model.py:444
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:448
+#: adminapp/models/scannerjobs/scanner_model.py:449
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:453
+#: adminapp/models/scannerjobs/scanner_model.py:454
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:458
+#: adminapp/models/scannerjobs/scanner_model.py:459
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:530
+#: adminapp/models/scannerjobs/scanner_model.py:531
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:531
+#: adminapp/models/scannerjobs/scanner_model.py:532
 msgid "scan statuses"
 msgstr "scanstatusser"
 
@@ -444,7 +444,7 @@ msgid "Description of rule"
 msgstr "Beskrivelse af regel"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:270
-#: adminapp/templates/os2datascanner/scanner_form.html:771
+#: adminapp/templates/os2datascanner/scanner_form.html:772
 msgid "Save changes"
 msgstr "Gem ændringer"
 
@@ -743,12 +743,12 @@ msgid "add users"
 msgstr "tilføj brugere"
 
 #: adminapp/templates/os2datascanner/scanner_form.html:532
-#: adminapp/templates/os2datascanner/scanner_form.html:633
+#: adminapp/templates/os2datascanner/scanner_form.html:634
 msgid "select users from"
 msgstr "vælg brugere fra"
 
 #: adminapp/templates/os2datascanner/scanner_form.html:538
-#: adminapp/templates/os2datascanner/scanner_form.html:639
+#: adminapp/templates/os2datascanner/scanner_form.html:640
 #: import_services/models/ldap_configuration.py:38
 #: organizations/models/organizational_unit.py:64
 msgid "organizational units"
@@ -774,35 +774,35 @@ msgstr "Tilgængelige medarbejdere"
 msgid "Selected employees"
 msgstr "Valgte medarbejdere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:627
+#: adminapp/templates/os2datascanner/scanner_form.html:626
 msgid "all users in this organization"
 msgstr "alle brugere i denne organisation"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:631
+#: adminapp/templates/os2datascanner/scanner_form.html:630
 msgid "select users from organizational units"
 msgstr "vælg brugere fra organisatoriske enheder"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:656
+#: adminapp/templates/os2datascanner/scanner_form.html:657
 msgid "Scanner settings"
 msgstr "Scannerindstillinger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:698
+#: adminapp/templates/os2datascanner/scanner_form.html:699
 msgid "Add rules"
 msgstr "Tilføj regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:705
+#: adminapp/templates/os2datascanner/scanner_form.html:706
 msgid "Available rules"
 msgstr "Tilgængelige regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:718
+#: adminapp/templates/os2datascanner/scanner_form.html:719
 msgid "Selected rules"
 msgstr "Valgte regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:736
+#: adminapp/templates/os2datascanner/scanner_form.html:737
 msgid "Schedule scan"
 msgstr "Planlæg scan"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:747
+#: adminapp/templates/os2datascanner/scanner_form.html:748
 msgid ""
 "Schedule your scan by creating a fixed interval or adding a date to complete "
 "the scannerjob."
@@ -810,7 +810,7 @@ msgstr ""
 "Planlæg dit scan ved at oprette et fast interval eller tilføj en dato for "
 "afvikling af scannerjobbet."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:763
+#: adminapp/templates/os2datascanner/scanner_form.html:764
 msgid "The scanner will start at the following time for the selected days:"
 msgstr "Scanneren vil starte på følgende tidspunkt på de valgte dage:"
 
@@ -1186,25 +1186,26 @@ msgctxt "Verbose name for core app"
 msgid "Management"
 msgstr "Administration"
 
-#: core/forms.py:31 core/models/client.py:87
+#: core/forms.py:32 core/models/client.py:87
 msgid "enabled features"
 msgstr "aktiverede features"
 
-#: core/forms.py:32
+#: core/forms.py:33
 msgid "Select a feature to enable it for this client."
 msgstr "Vælg en feature for at aktivere den for denne kunde."
 
-#: core/forms.py:39 core/models/client.py:93
+#: core/forms.py:40 core/models/client.py:93
 msgid "activated scan types"
 msgstr "tilgængelige scannertyper"
 
-#: core/forms.py:40
+#: core/forms.py:41
 msgid "Select a scan type to activate it for this client."
 msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 
-#: core/forms.py:63
+#: core/forms.py:64
 msgid "Only one type of import service can be active at a time."
 msgstr "Kun en type ad importservice kan være aktiveret."
+
 #: core/management/commands/run_background_jobs.py:98
 #, fuzzy, python-format
 #| msgid "sleep for %(METAVAR)s seconds if there were no jobs to run"
@@ -1644,7 +1645,7 @@ msgstr "Microsoft Graph konfiguration"
 msgid "configure Microsoft Graph"
 msgstr "konfigurer Microsoft Graph"
 
-#: import_services/templates/import_services/msgraph_edit.html:34
+#: import_services/templates/import_services/msgraph_edit.html:31
 msgid "save Microsoft Graph configuration"
 msgstr "gem Microsoft Graph konfiguration"
 
@@ -1783,10 +1784,11 @@ msgid "sync"
 msgstr "synkroniser"
 
 #: organizations/templates/organizations/org_list.html:113
+#: organizations/templates/organizations/org_list.html:177
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_list.html:176
+#: organizations/templates/organizations/org_list.html:200
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
