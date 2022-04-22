@@ -1,5 +1,48 @@
 # Changelog
 
+## Version 3.14.2, 22nd April 2022
+"Graphiti"
+
+### New in this version
+
+- Initial support for scanning Outlook Calendar appointments using Microsoft
+  Graph.
+
+- Support for importing organisational structure from Microsoft Azure Active
+  Directory, as an alternative to on-premise AD synchronisation via LDAP.
+
+- Initial support for selecting organizational units in Microsoft Graph-based
+  scanners.
+
+- The administration module documentation now includes an Office 365 section.
+
+### General improvements
+
+- Microsoft Graph-based scans of Office 365, OneDrive and SharePoint should now
+  be considered mature enough for test deployments.
+
+- OS2datascanner can now scan all tabs of a large spreadsheet file thanks to a
+  new version of LibreOffice.
+
+- Integrated support for profiling running code using Python's `cProfile`
+  module.
+
+- The "change password" forms are now accessible from the user interface.
+  (This is primarily useful when not using an SSO based login.)
+
+- The background job runner can now also run other tasks, not just LDAP import.
+
+- Updated CD flow to our test servers.
+
+### Bugfixes
+
+- Email notifications now correctly display all results by default.
+
+- Censored checkup objects no longer confuse the report module into hiding
+  matches.
+
+- Scan status objects now work reliably with Microsoft Graph-based scanners.
+
 ## Version 3.14.1, 15th March 2022
 "Jet Fuel for the Parallelisation Rocket"
 
