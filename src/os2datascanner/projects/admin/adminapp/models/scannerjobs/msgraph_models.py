@@ -52,6 +52,8 @@ def _create_user_list(org_unit, url):  # noqa
                     if address.endswith(url):
                         user_list.add(address)
 
+    logger.info(f"submitting scan for accounts {', '.join(user_list)}")
+
     return frozenset(user_list)
 
 
