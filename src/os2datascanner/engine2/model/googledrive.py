@@ -6,7 +6,6 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.errors import HttpError
 from .core import Source, Handle, FileResource
-from .utilities import NamedTemporaryResource
 from ..conversions.utilities.results import SingleResult
 
 
@@ -106,14 +105,6 @@ class GoogleDriveResource(FileResource):
         # Seek(0) points back to the beginning of the file as it appears to not do this by it self.
         fh.seek(0)
         yield fh
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):

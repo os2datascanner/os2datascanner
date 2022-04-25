@@ -5,7 +5,6 @@ from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
 from ..core import Source, Handle, FileResource
-from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
 
@@ -74,14 +73,6 @@ class MailPartResource(FileResource):
                 return SingleResult(None, "size", s.tell())
             finally:
                 s.seek(initial, 0)
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):

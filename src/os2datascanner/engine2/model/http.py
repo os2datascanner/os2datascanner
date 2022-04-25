@@ -15,7 +15,6 @@ from .. import settings as engine2_settings
 from ..conversions.types import Link, OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
 from .core import Source, Handle, FileResource
-from .utilities import NamedTemporaryResource
 from .utilities.sitemap import process_sitemap_url
 from .utilities.datetime import parse_datetime
 
@@ -307,14 +306,6 @@ class WebResource(FileResource):
         # specify
         return self.unpack_header(check=True).get(
             "content-type", "application/octet-stream").value.split(";", maxsplit=1)[0]
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):

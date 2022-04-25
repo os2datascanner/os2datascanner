@@ -6,7 +6,6 @@ from ...conversions.types import OutputType
 from ...conversions.utilities.results import SingleResult
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
-from ..utilities import NamedTemporaryResource
 from .utilities import MSGraphSource, ignore_responses
 
 
@@ -187,14 +186,6 @@ class MSGraphFileResource(FileResource):
     def get_size(self):
         size = self.get_file_metadata()["size"]
         return SingleResult(size, 'size', 1024)
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):

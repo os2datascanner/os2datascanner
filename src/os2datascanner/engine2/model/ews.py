@@ -7,7 +7,6 @@ from exchangelib import (
 from exchangelib.errors import (ErrorServerBusy, ErrorItemNotFound)
 from exchangelib.protocol import BaseProtocol
 
-from .utilities import NamedTemporaryResource
 from ..utilities.backoff import DefaultRetrier
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import SingleResult
@@ -204,14 +203,6 @@ class EWSMailResource(FileResource):
             self._message = DefaultRetrier(
                     ErrorServerBusy, fuzz=0.25).run(_retrieve_message)
         return self._message
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):

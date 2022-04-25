@@ -7,7 +7,6 @@ from ...conversions.utilities.results import SingleResult
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
-from ..utilities import NamedTemporaryResource
 from .utilities import MSGraphSource, ignore_responses
 
 
@@ -140,14 +139,6 @@ class MSGraphCalendarEventResource(FileResource):
             self._event = self._get_cookie().get(
                 self.make_object_path() + "?$select=lastModifiedDateTime")
         return self._event
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):

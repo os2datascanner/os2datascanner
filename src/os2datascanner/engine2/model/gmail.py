@@ -6,7 +6,6 @@ from google.oauth2 import service_account
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 
-from .utilities import NamedTemporaryResource
 from ..conversions.utilities.results import SingleResult
 
 import json
@@ -112,14 +111,6 @@ class GmailResource(FileResource):
                 userId=self.handle.source._user_email_gmail,
                 id=self.handle.relative_path, format="metadata").execute()
         return self._metadata
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):

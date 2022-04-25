@@ -5,7 +5,6 @@ import requests
 from os2datascanner.engine2.model.derived.derived import DerivedSource
 
 from .core import Source, Handle, FileResource
-from .utilities import NamedTemporaryResource
 
 
 class SbsysSource(Source):
@@ -99,13 +98,6 @@ class SbsysResource(FileResource):
         return CASE_TYPE
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self._handle.relative_path) as ntr, ntr.open("wb") as res:
-            with self.make_stream() as s:
-                res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         response = self._get_cookie().get(tail='sag/{0}'.format(self._handle.relative_path))
         with BytesIO(response.content) as fp:
@@ -159,13 +151,6 @@ class SbsysCaseResource(FileResource):
 
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.relative_path) as ntr, ntr.open("wb") as res:
-            with self.make_stream() as s:
-                res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):

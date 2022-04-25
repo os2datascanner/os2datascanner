@@ -102,11 +102,6 @@ class FilesystemResource(FileResource):
     def make_path(self):
         yield self._full_path
 
-    @contextmanager
-    def make_stream(self):
-        with open(self._full_path, "rb") as s:
-            yield s
-
 
 @Handle.stock_json_handler("file")
 class FilesystemHandle(Handle):

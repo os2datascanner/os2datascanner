@@ -19,7 +19,6 @@ from .smb import (
     make_presentation, make_presentation_url)
 from .core import Source, Handle, FileResource
 from .file import stat_attributes
-from .utilities import NamedTemporaryResource
 
 
 logger = logging.getLogger(__name__)
@@ -344,17 +343,6 @@ class SMBCResource(FileResource):
         """Returns the Windows security identifier of the owner of this file,
         which libsmbclient exposes as an extended attribute."""
         return self.get_xattr(smbc.XATTR_OWNER)
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as f:
-                with self.make_stream() as rf:
-                    buf = rf.read(self.DOWNLOAD_CHUNK_SIZE)
-                    while buf:
-                        f.write(buf)
-                        buf = rf.read(self.DOWNLOAD_CHUNK_SIZE)
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):

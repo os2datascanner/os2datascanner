@@ -5,7 +5,6 @@ from contextlib import contextmanager
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
 from ..core import Source, Handle, FileResource
-from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
 
@@ -57,14 +56,6 @@ class TarResource(FileResource):
     def get_last_modified(self):
         return self.unpack_info().setdefault(OutputType.LastModified,
                                              super().get_last_modified())
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as f:
-                with self.make_stream() as s:
-                    f.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):
