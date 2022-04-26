@@ -32,6 +32,7 @@ from django.db.models import JSONField
 from django.db.models.signals import post_delete
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
+from django.utils import timezone
 
 from model_utils.managers import InheritanceManager
 from recurrence.fields import RecurrenceField
@@ -340,7 +341,7 @@ class Scanner(models.Model):
         # this scan...
         ScanStatus.objects.create(
                 scanner=self, scan_tag=scan_tag.to_json_object(),
-                total_sources=source_count,
+                last_modified=timezone.now(), total_sources=source_count,
                 total_objects=self.checkups.count())
 
         # ... and dispatch the scan specifications to the pipeline
@@ -420,7 +421,7 @@ class ScanStatus(models.Model):
 
     last_modified = models.DateTimeField(
         verbose_name=_("last modified"),
-        auto_now=True,
+        default=timezone.now,
     )
 
     scan_tag = JSONField(
