@@ -3,6 +3,7 @@
 ipython
 Django==3.2.11
 django-model-utils
+django-mptt
 django-prometheus
 django-settings-export
 django-storages[google]

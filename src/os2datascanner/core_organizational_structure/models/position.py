@@ -42,7 +42,7 @@ class Position(models.Model):
     )
     role = models.CharField(
         max_length=30,
-        choices=Role.choices(),
+        choices=Role.choices,
         null=False,
         blank=False,
         default=Role.EMPLOYEE.value,

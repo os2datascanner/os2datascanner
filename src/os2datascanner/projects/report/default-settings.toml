@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django_prometheus',
     'channels',
     'channels_redis',
+    'os2datascanner.core_organizational_structure.apps.CoreOrganizationalStructureConfig'
 ]
 AUTHENTICATION_BACKENDS = [
     'os2datascanner.projects.report.reportapp.utils.OIDCAuthenticationBackend',

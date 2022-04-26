@@ -95,7 +95,11 @@ django-extensions==2.2.9
     # via -r requirements-django.in
 django-ipware==2.1.0
     # via django-structlog
+django-js-asset==2.0.0
+    # via django-mptt
 django-model-utils==4.0.0
+    # via -r requirements-django.in
+django-mptt==0.13.4
     # via -r requirements-django.in
 django-prometheus==2.1.0
     # via -r requirements-django.in
@@ -114,6 +118,7 @@ django==3.2.11
     #   -r requirements-django.in
     #   channels
     #   django-debug-toolbar
+    #   django-js-asset
     #   django-model-utils
     #   django-rest-auth
     #   django-settings-export

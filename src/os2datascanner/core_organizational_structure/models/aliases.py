@@ -11,44 +11,33 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-import re
 
 from uuid import uuid4
 
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
+from django.core.validators import validate_email, RegexValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-# Kept here to ensure it compiles only once
-_sid_regex = re.compile('^S-1-\d+(-\d+){0,15}$')  # noqa
+# Instance of regex validator, using regex to validate a SID
+validate_regex_SID = RegexValidator(regex=r'^S-1-\d+(-\d+){0,15}$')
 
 
-def validate_sid(value):
-    if not _sid_regex.match(value):
-        raise ValidationError(
-            _("%(value)s is not a valid SID"),
-            params={"value": value})
-
-
-def validate_generic(_):
-    pass
+def validate_aliastype_value(kind, value):
+    if kind == AliasType.SID:
+        validate_regex_SID(value)
+    if kind == AliasType.EMAIL:
+        validate_email(value)
+    if kind == AliasType.GENERIC:
+        # Generic/unspecified; always passes
+        pass
 
 
 class AliasType(models.TextChoices):
     """Enumeration of Alias types and their respective validators."""
-    SID = 'SID', _('SID'), validate_sid
-    EMAIL = 'email', _('email'), validate_email
-    # Generic is used for unspecified aliases; dummy validator always passes
-    GENERIC = 'generic', _('generic'), validate_generic
-
-    def __new__(cls, value, label, validator):
-        obj = super().__new__(value, label)
-        obj.validator = validator
-        return obj
-
-    def check(self, value):
-        self.validator(value)
+    SID = 'SID', _('SID')
+    EMAIL = 'email', _('email')
+    # Generic is used for unspecified aliases
+    GENERIC = 'generic', _('generic')
 
 
 class Alias(models.Model):
@@ -76,10 +65,10 @@ class Alias(models.Model):
         max_length=32,
         db_column='alias_type',
         db_index=True,
-        choices=AliasType.choices(),
+        choices=AliasType.choices,
         verbose_name=_('alias type'),
     )
-    value = models.CharField(
+    _value = models.CharField(
         max_length=256,
         verbose_name=_('value')
     )
@@ -91,6 +80,15 @@ class Alias(models.Model):
     @alias_type.setter
     def alias_type(self, enum):
         self._alias_type = enum.value
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, val):
+        validate_aliastype_value(self.alias_type, val)
+        self._value = val
 
     class Meta:
         abstract = True
@@ -114,14 +112,3 @@ class Alias(models.Model):
             value=self.value,
             uuid=self.uuid,
         )
-
-    def clean(self):
-        """
-        Validate instance data.
-
-        In addition to the functionality of Model.clean(), this implementation
-        validates the alias value against the requirements for the alias type.
-        """
-        super().clean()
-        if self.value:
-            self.alias_type.check(self.value)
