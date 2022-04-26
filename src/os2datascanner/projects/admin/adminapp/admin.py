@@ -23,7 +23,9 @@ from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
 from .models.rules.customrule_model import CustomRule
 from .models.rules.addressrule_model import AddressRule
-from .models.scannerjobs.scanner_model import ScanStatus, ScheduledCheckup
+from .models.scannerjobs.scanner_model import (ScanStatus,
+                                               ScheduledCheckup,
+                                               ScanStatusSnapshot)
 from .models.scannerjobs.msgraph_models import MSGraphMailScanner
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.filescanner_model import FileScanner
@@ -77,6 +79,14 @@ class ScanStatusAdmin(admin.ModelAdmin):
               'fraction_explored', 'total_objects', 'scanned_objects',
               'fraction_scanned', 'scanned_size', 'estimated_completion_time',
               'last_modified',)
+
+
+@admin.register(ScanStatusSnapshot)
+class ScanStatusSnapshotAdmin(admin.ModelAdmin):
+    model = ScanStatusSnapshot
+    readonly_fields = ('scan_status', 'time_stamp', 'total_sources',
+                       'explored_sources', 'fraction_explored', 'total_objects',
+                       'scanned_objects', 'fraction_scanned', 'scanned_size')
 
 
 admin.site.unregister(Group)

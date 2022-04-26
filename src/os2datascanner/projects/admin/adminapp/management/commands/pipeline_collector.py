@@ -19,9 +19,11 @@ from django.db.models import F
 from django.db import transaction
 from django.db.utils import DataError
 from django.core.management.base import BaseCommand
+from django.conf import settings
 from django.utils import timezone
 import logging
 import structlog
+import math
 
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
@@ -31,7 +33,7 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from prometheus_client import Summary, start_http_server
 
 from ...models.scannerjobs.scanner_model import (
-    Scanner, ScanStatus, ScheduledCheckup)
+    Scanner, ScanStatus, ScheduledCheckup, ScanStatusSnapshot)
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_pipeline_collector_admin",
@@ -64,6 +66,7 @@ def status_message_received_raw(body):
                 total_objects=F('total_objects') + message.total_objects,
                 total_sources=F('total_sources') + (message.new_sources or 0),
                 explored_sources=F('explored_sources') + 1)
+
     elif message.object_size is not None and message.object_type is not None:
         # A worker has finished processing a Handle
         scan_status.update(
@@ -72,6 +75,24 @@ def status_message_received_raw(body):
                 status_is_error=message.status_is_error,
                 scanned_size=F('scanned_size') + message.object_size,
                 scanned_objects=F('scanned_objects') + 1)
+
+    # Get the frequency setting and decide whether or not to create a snapshot
+    snapshot_param = settings.SNAPSHOT_PARAMETER
+    scan_status = scan_status.first()
+    n_total = scan_status.total_objects
+    if n_total and n_total > 0:
+        frequency = n_total * math.log(snapshot_param, n_total)
+        take_snap = scan_status.scanned_objects % max(1, math.floor(frequency))
+        if take_snap == 0:
+            ScanStatusSnapshot.objects.create(
+                scan_status=scan_status,
+                time_stamp=timezone.now(),
+                total_sources=scan_status.total_sources,
+                explored_sources=scan_status.explored_sources,
+                total_objects=scan_status.total_objects,
+                scanned_objects=scan_status.scanned_objects,
+                scanned_size=scan_status.scanned_size,
+            )
 
     yield from []
 
