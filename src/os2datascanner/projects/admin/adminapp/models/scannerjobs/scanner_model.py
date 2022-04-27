@@ -363,9 +363,6 @@ class Scanner(models.Model):
         )
         return scan_tag.to_json_object()
 
-    def path_for(self, uri):
-        return uri
-
     def generate_sources(self) -> Iterator[Source]:
         """Yields one or more engine2 Sources corresponding to the target of
         this Scanner."""
