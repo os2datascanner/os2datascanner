@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
+from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.projects.admin.core.models import Client, Feature
 from ..models import Organization
@@ -67,7 +68,11 @@ class AddOrganizationView(LoginRequiredMixin, CreateView):
         client_id = self.kwargs['client_id']
         form.instance.client = Client.objects.get(pk=client_id)
         form.instance.slug = slugify(form.instance.name, allow_unicode=True)
-        return super().form_valid(form)
+        if Organization.objects.filter(slug=form.instance.slug).exists():
+            form.add_error('name', _('That name is already taken.'))
+            return self.form_invalid(form)
+        else:
+            return super().form_valid(form)
 
 
 class UpdateOrganizationView(LoginRequiredMixin, UpdateView):
