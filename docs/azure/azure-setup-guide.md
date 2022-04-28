@@ -36,9 +36,13 @@ en Azure Applikation.
 *Step 5:* Når ovenstående er udfyldt, så skal du klikke på "Register".
 	Nu har du registreret en ny app, og du skulle gerne se en oversigt over den nye app.
 
-*Step 5½ (Valgfri):* Hvis der også ønskes at scanne filer fra OneDrive skal der tilføjes en Redirect URI mere.
+*Step 5½ (Valgfri):* Hvis der også ønskes at anvende flere typer af scannerjob for Office365 
+	eller importere organisationer fra Office365 skal der tilføjes flere Redirect URI'er.
 	Det gøres ved at klikke på menu punktet i venstre side kaldet "Authentication".
-	Klik herefter på "Add URI" og indsæt følgende redirect URI: `https://<DIN_KOMMUNES_NAVN>-admin.os2datascanner.dk/msgraph-filescanners/add/`.
+	Klik herefter på "Add URI" og indsæt følgende redirect URI'er: 
+	`https://<DIN_KOMMUNES_NAVN>-admin.os2datascanner.dk/msgraph-filescanners/add/`,
+	`https://<DIN_KOMMUNES_NAVN>-admin.os2datascanner.dk/msgraph-calendarscanners/add/` og
+	`https://<DIN_KOMMUNES_NAVN>-admin.os2datascanner.dk/organizations/`.
 	Tryk på "Save".
 
 ![](img-008.png)
