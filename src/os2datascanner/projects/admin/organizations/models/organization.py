@@ -12,69 +12,25 @@
 # sector open source network <https://os2.eu/>.
 #
 
-from uuid import uuid4
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
 from .broadcasted_mixin import Broadcasted
 
+from os2datascanner.core_organizational_structure.models import Organization as Core_Organization
 
-class Organization(Broadcasted, models.Model):
-    """Stores data for a specific organization.
 
-    An Organization represents the administrative context for a self-contained
-    organization, with an optional reference to a representation of its
-    hierarchical structure.
-
-    Note that the system distinguishes between Client and Organization. This
-    is to allow the case where one Client (e.g. a service provider) administers
-    scans for several Organizations.
-
-    All Organizations are related to exactly one Client.
-    """
-
-    uuid = models.UUIDField(
-        primary_key=True,
-        default=uuid4,
-        editable=False,
-        verbose_name=_('UUID'),
-    )
-    name = models.CharField(
-        max_length=256,
-        verbose_name=_('name'),
-    )
-    slug = models.SlugField(
-        max_length=256,  # Taken from above
-        allow_unicode=True,
-        unique=True,
-        verbose_name=_('slug'),
-    )
+class Organization(Core_Organization, Broadcasted):
+    """ Core logic lives in the core_organizational_structure app.
+      Additional logic can be implemented here, but currently, none needed, hence we pass. """
     client = models.ForeignKey(
         'core.Client',
         on_delete=models.CASCADE,
         related_name='organizations',
         verbose_name=_('client'),
     )
-    contact_email = models.CharField(
+    slug = models.SlugField(
         max_length=256,
-        blank=True,
-        null=True,
-        verbose_name=_('email'),
+        allow_unicode=True,
+        unique=True,
+        verbose_name=_('slug'),
     )
-    contact_phone = models.CharField(
-        max_length=32,
-        blank=True,
-        null=True,
-        verbose_name=_('phone number'),
-    )
-
-    class Meta:
-        verbose_name = _('organization')
-        verbose_name_plural = _('organizations')
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__}: {self.name} ({self.uuid})>"

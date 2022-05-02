@@ -42,18 +42,6 @@ class Organization(models.Model):
         max_length=256,
         verbose_name=_('name'),
     )
-    slug = models.SlugField(
-        max_length=256,  # Taken from above
-        allow_unicode=True,
-        unique=True,
-        verbose_name=_('slug'),
-    )
-    client = models.ForeignKey(
-        'core.Client',
-        on_delete=models.CASCADE,
-        related_name='organizations',
-        verbose_name=_('client'),
-    )
     contact_email = models.CharField(
         max_length=256,
         blank=True,

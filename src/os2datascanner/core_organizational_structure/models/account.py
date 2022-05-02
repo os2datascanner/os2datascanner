@@ -42,10 +42,14 @@ class Account(models.Model):
     first_name = models.CharField(
         max_length=256,
         verbose_name=_('first name'),
+        blank=True,
+        null=True,
     )
     last_name = models.CharField(
         max_length=256,
         verbose_name=_('last name'),
+        blank=True,
+        null=True,
     )
     organization = models.ForeignKey(
         'organizations.Organization',
