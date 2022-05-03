@@ -38,10 +38,11 @@ import structlog
 logger = structlog.get_logger()
 
 
-def _hide_csrf_token(d):
+def _hide_csrf_token_and_password(d):
     """Return a shallow copy of *d* without the `csrfmiddlewaretoken` key."""
     new = dict(**d)
     new.pop("csrfmiddlewaretoken", None)
+    new.pop("password", None)
     return new
 
 
@@ -75,7 +76,7 @@ class RestrictedCreateView(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         logger.info(
             f"Create issued to {self.__class__.__name__}",
-            request_data=_hide_csrf_token(dict(request.POST)),
+            request_data=_hide_csrf_token_and_password(dict(request.POST)),
             user=str(request.user),
             **kwargs,
         )
@@ -131,7 +132,7 @@ class RestrictedUpdateView(UpdateView, OrgRestrictedMixin):
     def post(self, request, *args, **kwargs):
         logger.info(
             f"Update issued to {self.__class__.__name__}",
-            request_data=_hide_csrf_token(dict(request.POST)),
+            request_data=_hide_csrf_token_and_password(dict(request.POST)),
             user=str(request.user),
             **kwargs,
         )
