@@ -96,7 +96,7 @@ msgstr ""
 msgid "URL must follow the UNC format"
 msgstr "URL skal følge UNC-format"
 
-#: adminapp/models/scannerjobs/scanner_model.py:420
+#: adminapp/models/scannerjobs/scanner_model.py:423
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
@@ -135,6 +135,26 @@ msgstr "scanstatus"
 
 #: adminapp/models/scannerjobs/scanner_model.py:530
 msgid "scan statuses"
+msgstr "scanstatusser"
+
+#: adminapp/models/scannerjobs/scanner_model.py:572
+msgid "timestamp"
+msgstr ""
+
+#: adminapp/models/scannerjobs/scanner_model.py:602
+msgid "fraction explored"
+msgstr "objekter udforsket"
+
+#: adminapp/models/scannerjobs/scanner_model.py:607
+msgid "fraction scanned"
+msgstr "scannet"
+
+#: adminapp/models/scannerjobs/scanner_model.py:612
+msgid "scan status shapshot"
+msgstr "scanstatusser"
+
+#: adminapp/models/scannerjobs/scanner_model.py:613
+msgid "scan status shapshots"
 msgstr "scanstatusser"
 
 #: adminapp/models/scannerjobs/webscanner_model.py:40
@@ -1836,6 +1856,3 @@ msgstr "Navnet er allerede i brug."
 
 #~ msgid "Estimating ..."
 #~ msgstr "Estimerer..."
-
-#~ msgid "scanned"
-#~ msgstr "scannet"

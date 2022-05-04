@@ -186,6 +186,9 @@ AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
 AMQP_CONVERSION_TARGET = "os2ds_conversions"
 AMQP_EVENTS_TARGET = "os2ds_events"
 
+# [stats]
+SNAPSHOT_PARAMETER = 1.02
+
 # [storage]
 # File storage class - default is regular file system storage
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"

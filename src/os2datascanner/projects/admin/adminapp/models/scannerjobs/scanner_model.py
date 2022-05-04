@@ -412,26 +412,10 @@ class ScanStage(Enum):
     SCANNING = 2
 
 
-class ScanStatus(models.Model):
-    """A ScanStatus object collects the status messages received from the
-    pipeline for a given scan."""
-
-    last_modified = models.DateTimeField(
-        verbose_name=_("last modified"),
-        default=timezone.now,
-    )
-
-    scan_tag = JSONField(
-        verbose_name=_("scan tag"),
-        unique=True,
-    )
-
-    scanner = models.ForeignKey(
-        Scanner,
-        related_name="statuses",
-        verbose_name=_("associated scanner job"),
-        on_delete=models.CASCADE,
-    )
+class AbstractScanStatus(models.Model):
+    """
+    Abstract base class for models relating to the status of a scanner job.
+    """
 
     total_sources = models.IntegerField(
         verbose_name=_("total sources"),
@@ -501,6 +485,31 @@ class ScanStatus(models.Model):
         else:
             return None
 
+    class Meta:
+        abstract = True
+
+
+class ScanStatus(AbstractScanStatus):
+    """A ScanStatus object collects the status messages received from the
+    pipeline for a given scan."""
+
+    last_modified = models.DateTimeField(
+        verbose_name=_("last modified"),
+        default=timezone.now,
+    )
+
+    scan_tag = JSONField(
+        verbose_name=_("scan tag"),
+        unique=True,
+    )
+
+    scanner = models.ForeignKey(
+        Scanner,
+        related_name="statuses",
+        verbose_name=_("associated scanner job"),
+        on_delete=models.CASCADE,
+    )
+
     @property
     def estimated_completion_time(self) -> datetime.datetime:
         """Returns the linearly interpolated completion time of this scan
@@ -552,3 +561,24 @@ def post_delete_callback(sender, instance, using, **kwargs):
                 "broadcast", priority=10)
         p.enqueue_stop()
         p.run()
+
+
+class ScanStatusSnapshot(AbstractScanStatus):
+    """
+    Snapshot of a ScanStatus object, where the attributes of ScanStatus
+    are copied and stored for analysis.
+    """
+
+    scan_status = models.ForeignKey(
+        ScanStatus,
+        on_delete=models.CASCADE
+    )
+
+    time_stamp = models.DateTimeField(
+        verbose_name=_("timestamp"),
+        default=timezone.now,
+    )
+
+    class Meta:
+        verbose_name = _("scan status snapshot")
+        verbose_name_plural = _("scan status snapshots")
