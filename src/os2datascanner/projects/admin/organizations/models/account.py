@@ -50,6 +50,8 @@ class Account(Imported, Broadcasted, models.Model):
     last_name = models.CharField(
         max_length=256,
         verbose_name=_('last name'),
+        blank=True,
+        null=True,
     )
     organization = models.ForeignKey(
         'organizations.Organization',
