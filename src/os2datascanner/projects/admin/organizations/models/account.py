@@ -46,6 +46,8 @@ class Account(Imported, Broadcasted, models.Model):
     first_name = models.CharField(
         max_length=256,
         verbose_name=_('first name'),
+        blank=True,
+        null=True,
     )
     last_name = models.CharField(
         max_length=256,
