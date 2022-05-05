@@ -60,10 +60,13 @@ class ClientAdminForm(forms.ModelForm):
 
         # Raise error if both types of import services have been selected.
         # TODO: Refactor this to a more maintainable and less hacky.
-        if "4" in selected and "8" in selected:
-            raise ValidationError(_("Only one type of import service can be active at a time."))
-
         selected_sum = sum([int(x) for x in selected])
+
+        if _check_is_both_features_enabled(
+                selected_sum,
+                Feature.IMPORT_SERVICES,
+                Feature.IMPORT_SERVICES_MS_GRAPH):
+            raise ValidationError(_("Only one type of import service can be active at a time."))
 
         # Clean old import services if settings have changed
         self._remove_invalid_importservices(selected_sum, self.instance.features)
@@ -75,19 +78,18 @@ class ClientAdminForm(forms.ModelForm):
         """
         Removes old import services for all organizations related to the form client.
         """
-
-        # TODO: Refactor this to a more maintainable and less hacky.
-
         # If settings are unchanged don't do anything
         if new_settings == old_settings:
             return
 
         # If ldap import services is still on, don't clean
-        if new_settings < 8 and old_settings < 8:
+        if _check_is_feature_still_enabled(
+                new_settings, old_settings, Feature.IMPORT_SERVICES):
             return
 
         # If MS graph import services is still on, don't clean
-        if new_settings > 7 and old_settings > 7:
+        if _check_is_feature_still_enabled(
+                new_settings, old_settings, Feature.IMPORT_SERVICES_MS_GRAPH):
             return
 
         # Otherwise clear all import_services if features have changed
@@ -98,3 +100,15 @@ class ClientAdminForm(forms.ModelForm):
         selected = self.cleaned_data['activated_scan_types']
         self.instance.scans = sum([int(x) for x in selected])
         return selected
+
+
+def _check_is_feature_still_enabled(new_settings, old_settings, feature):
+    return _is_feature_enabled(new_settings, feature) and _is_feature_enabled(old_settings, feature)
+
+
+def _check_is_both_features_enabled(selected_sum, f1, f2):
+    return _is_feature_enabled(selected_sum, f1) and _is_feature_enabled(selected_sum, f2)
+
+
+def _is_feature_enabled(selected_sum, feature):
+    return not ((selected_sum & feature.value) == 0)

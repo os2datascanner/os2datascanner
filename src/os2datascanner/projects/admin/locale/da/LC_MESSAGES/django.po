@@ -1222,7 +1222,7 @@ msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 
 #: core/forms.py:64
 msgid "Only one type of import service can be active at a time."
-msgstr "Kun en type ad importservice kan være aktiveret."
+msgstr "Kun en type af importservice kan være aktiveret."
 
 #: core/management/commands/run_background_jobs.py:98
 #, fuzzy, python-format
