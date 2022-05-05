@@ -32,10 +32,11 @@ from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.model.core import Handle, Source
 from os2datascanner.utils.system_utilities import time_now
 
+from os2datascanner.projects.report.organizations.models import Organization
+
 from prometheus_client import Summary, start_http_server
 
 from ...models.documentreport_model import DocumentReport
-from ...models.organization_model import Organization
 from ...utils import hash_handle, prepare_json_object
 
 from ...models.aliases.alias_model import Alias

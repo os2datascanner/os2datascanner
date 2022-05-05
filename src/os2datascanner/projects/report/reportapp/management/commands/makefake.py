@@ -34,8 +34,8 @@ from os2datascanner.engine2.model.msgraph.files import (
 )
 from os2datascanner.engine2.model.sbsys import SbsysHandle, SbsysSource
 from os2datascanner.engine2.model.smb import SMBHandle, SMBSource
+from os2datascanner.projects.report.organizations.models import Organization
 from os2datascanner.projects.report.reportapp.models.documentreport_model import DocumentReport
-
 
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model import http
@@ -43,7 +43,6 @@ from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities import pika
-from ...models.organization_model import Organization
 from .pipeline_collector import result_message_received_raw
 
 

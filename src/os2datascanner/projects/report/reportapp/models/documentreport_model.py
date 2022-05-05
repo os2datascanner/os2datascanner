@@ -4,8 +4,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField
 from django.utils.translation import ugettext_lazy as _
-from .organization_model import Organization
 
+from os2datascanner.projects.report.organizations.models import Organization
 from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.pipeline.messages import (
