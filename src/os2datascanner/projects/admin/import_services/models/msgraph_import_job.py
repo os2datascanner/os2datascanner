@@ -99,21 +99,21 @@ class MSGraphImportJob(BackgroundJob):
                             group_members.append({
                                 "type": "group",
                                 "uuid": member.get("id"),
-                                "displayName": member.get("displayName", "Unnamed group")
-
+                                "displayName": (
+                                        member.get("displayName")
+                                        or "Unnamed group")
                             })
 
                         if member['@odata.type'] == data_type_user:
                             group_members.append({
                                 "type": "user",
                                 "uuid": member.get("id"),
-                                "givenName": member.get("givenName", "No first name"),
-                                "surname": member.get("surname", "No surname"),
-                                "email": member.get("mail", "No email"),
-                                "sid": member.get("onPremisesSecurityIdentifier", None),
-                                "userPrincipalName": member.get("userPrincipalName", "No "
-                                                                                     "principal "
-                                                                                     "name")
+                                "givenName": member.get("givenName"),
+                                "surname": member.get("surname"),
+                                "email": member.get("mail"),
+                                "sid": member.get("onPremisesSecurityIdentifier"),
+                                "userPrincipalName": member.get(
+                                        "userPrincipalName")
                             })
                         else:
                             # Not an object of interest. Pass.
