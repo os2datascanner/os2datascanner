@@ -286,7 +286,7 @@ def handle_problem_message(path, scan_tag, result):
     handle = problem.handle if problem.handle else None
     presentation = handle.presentation if handle else "(source)"
     if (previous_report
-            and previous_report.resolution_status is None
+            and previous_report.resolution_status in [0, None]
             and problem.missing):
         # The file previously had matches, but is now removed.
         logger.debug(
