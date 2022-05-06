@@ -79,20 +79,24 @@ def status_message_received_raw(body):
     # Get the frequency setting and decide whether or not to create a snapshot
     snapshot_param = settings.SNAPSHOT_PARAMETER
     scan_status = scan_status.first()
-    n_total = scan_status.total_objects
-    if n_total and n_total > 0:
-        frequency = n_total * math.log(snapshot_param, n_total)
-        take_snap = scan_status.scanned_objects % max(1, math.floor(frequency))
-        if take_snap == 0:
-            ScanStatusSnapshot.objects.create(
-                scan_status=scan_status,
-                time_stamp=timezone.now(),
-                total_sources=scan_status.total_sources,
-                explored_sources=scan_status.explored_sources,
-                total_objects=scan_status.total_objects,
-                scanned_objects=scan_status.scanned_objects,
-                scanned_size=scan_status.scanned_size,
-            )
+    if scan_status:
+        n_total = scan_status.total_objects
+        if n_total and n_total > 0:
+            # Calculate a frequency for how often to take a snapshot.
+            # n_total must be a least 2 for this to work.
+            frequency = n_total * math.log(snapshot_param, max(n_total, 2))
+            # Decide whether it is time to take a snapshot.
+            take_snap = scan_status.scanned_objects % max(1, math.floor(frequency))
+            if take_snap == 0:
+                ScanStatusSnapshot.objects.create(
+                    scan_status=scan_status,
+                    time_stamp=timezone.now(),
+                    total_sources=scan_status.total_sources,
+                    explored_sources=scan_status.explored_sources,
+                    total_objects=scan_status.total_objects,
+                    scanned_objects=scan_status.scanned_objects,
+                    scanned_size=scan_status.scanned_size,
+                )
 
     yield from []
 
