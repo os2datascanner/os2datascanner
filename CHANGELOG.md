@@ -1,5 +1,42 @@
 # Changelog
 
+## Version 3.14.3, 6th May 2022
+
+"A Thousand Pictures Are Worth A Million Words"
+
+### New in this version
+
+- Scan status snapshots:
+
+  - The system now records snapshots of the execution status of each scan.
+  
+  - This information will be used in future releases to improve scan time
+    estimates and to provide a visualisation of the system's performance.
+
+### General improvements
+
+- The drive letters associated with network drives can now be used to specify
+  an arbitrary path prefix.
+
+- Database conflicts that may occur during the organisation creation process no
+  longer produce an unhelpful default error page.
+
+### Bugfixes
+
+- The timestamps associated with scan status objects are once more kept up to
+  date.
+
+- Handled matches should no longer reappear when certain files are deleted.
+
+- Microsoft Azure Active Directory accounts that do not define a first name or
+  surname no longer cause import failures.
+
+- The administration system no longer records changes to potentially sensitive
+  scanner fields in the log.
+
+- Organisations whose name contains a Danish character are now supported
+  correctly.
+
 ## Version 3.14.2, 22nd April 2022
 "Graphiti"
 
