@@ -24,14 +24,14 @@ PROMETHEUS_DESCRIPTION = "Messages handled by worker"
 PREFETCH_COUNT = 8
 
 
-def explore(sm, msg):
+def explore(sm, msg, *, check=True):
     for channel, message in explorer_handler(msg, "os2ds_scan_specs", sm):
         if channel == "os2ds_conversions":
-            yield from process(sm, message)
+            yield from process(sm, message, check=check)
         elif channel == "os2ds_scan_specs":
             # Huh? Surely a standalone explorer should have handled this
             logger.warning("worker exploring unexpected nested Source")
-            yield from explore(sm, message)
+            yield from explore(sm, message, check=check)
         elif channel == "os2ds_status":
             # Explorer status messages are not interesting in the worker
             # context
@@ -40,22 +40,28 @@ def explore(sm, msg):
             yield channel, message
 
 
-def process(sm, msg):
-    for channel, message in processor_handler(msg, "os2ds_conversions", sm):
+def process(sm, msg, *, check=True):
+    for channel, message in processor_handler(
+            msg, "os2ds_conversions", sm, _check=check):
         if channel == "os2ds_representations":
-            yield from match(sm, message)
+            # Processing this object has produced a request for a new
+            # conversion; there's no need to call Resource.check() a second
+            # time
+            yield from match(sm, message, check=False)
         elif channel == "os2ds_scan_specs":
-            yield from explore(sm, message)
+            # Processing this object has given us a new source to scan. Make
+            # sure we don't call Resource.check() on the objects under it
+            yield from explore(sm, message, check=False)
         else:
             yield channel, message
 
 
-def match(sm, msg):
+def match(sm, msg, *, check=True):
     for channel, message in matcher_handler(msg, "os2ds_representations", sm):
         if channel == "os2ds_handles":
             yield from tag(sm, message)
         elif channel == "os2ds_conversions":
-            yield from process(sm, message)
+            yield from process(sm, message, check=check)
         else:
             yield channel, message
 

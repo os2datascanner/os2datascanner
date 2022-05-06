@@ -28,7 +28,7 @@ def check(source_manager, handle):
         return False
 
 
-def message_received_raw(body, channel, source_manager):  # noqa: CCR001,E501, C901 too high cognitive complexity
+def message_received_raw(body, channel, source_manager, *, _check=True):  # noqa: CCR001,E501,C901
     conversion = messages.ConversionMessage.from_json_object(body)
     configuration = conversion.scan_spec.configuration
     head, _, _ = conversion.progress.rule.split()
@@ -36,9 +36,10 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001,E501, C
     exception = None
 
     try:
-        if not check(source_manager, conversion.handle):
-            # The resource is missing. Generate a special problem message and
-            # stop the generator immediately
+        if _check and not check(source_manager, conversion.handle):
+            # The resource is missing (and we're in a context where we care).
+            # Generate a special problem message and stop the generator
+            # immediately
             for problems_q in ("os2ds_problems", "os2ds_checkups",):
                 yield (problems_q, messages.ProblemMessage(
                         scan_tag=conversion.scan_spec.scan_tag,
