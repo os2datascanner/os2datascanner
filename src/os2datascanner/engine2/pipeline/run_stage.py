@@ -15,6 +15,7 @@ from ... import __version__
 from ..model.core import SourceManager
 from . import explorer, exporter, matcher, messages, processor, tagger, worker
 from .utilities.pika import PikaPipelineThread, RejectMessage
+from ..utilities.timeout import yield_from_with_default_timeout
 
 
 # __name__ is "__main__" in this context, which isn't quite what we want for
@@ -104,20 +105,22 @@ class GenericRunner(PikaPipelineThread):
 
     def _handle_content(self, routing_key, body):
         raw_scan_tag = body.get("scan_tag")
+
         if not raw_scan_tag and "scan_spec" in body:
             raw_scan_tag = body["scan_spec"]["scan_tag"]
 
         if raw_scan_tag:
-            scan_tag = messages.ScanTagFragment.from_json_object(
-                    raw_scan_tag)
+            scan_tag = messages.ScanTagFragment.from_json_object(raw_scan_tag)
+
             if scan_tag in self._cancelled:
                 logger.debug(
                         f"scan {raw_scan_tag} is cancelled, "
                         "ignoring")
                 raise RejectMessage(requeue=False)
 
-        yield from self._module.message_received_raw(
-                body, routing_key, self._source_manager)
+        yield from yield_from_with_default_timeout(
+            self._module.message_received_raw(
+                body, routing_key, self._source_manager))
 
     def handle_message(self, routing_key, body):
         with self._summary.time():
