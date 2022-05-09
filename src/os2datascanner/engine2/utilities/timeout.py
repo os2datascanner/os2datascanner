@@ -51,22 +51,36 @@ def run_with_default_timeout(fn, *args, **kwargs):
     return run_with_timeout(engine2_settings.subprocess["timeout"], fn, *args, **kwargs)
 
 
+def _timeout_start(seconds):
+    handler = signal.signal(signal.SIGALRM, _signal_timeout_handler)
+    signal.alarm(seconds)
+    return handler
+
+
+def _timeout_stop(handler):
+    signal.alarm(0)
+    signal.signal(signal.SIGALRM, handler)
+
+
+def _compute_next(seconds, iterable):
+    try:
+        handler = _timeout_start(seconds)
+        return (False, next(iterable))
+    except SignalAlarmException:
+        return (True, None)
+    finally:
+        _timeout_stop(handler)
+
+
 def yield_from_with_timeout(time_limit, iterable):
     """
     Utility for wrapping lazy generators in timeout that forces eager evaluation.
     """
     result = []
 
-    def compute(iterable):
-        with _timeout(time_limit):
-            try:
-                return (False, next(iterable))
-            except SignalAlarmException:
-                return (True, None)
-
     try:
         while True:
-            (timeout, element) = compute(iterable)
+            (timeout, element) = _compute_next(time_limit, iterable)
             if not timeout:
                 result.append(element)
             else:

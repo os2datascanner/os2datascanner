@@ -27,10 +27,7 @@ PREFETCH_COUNT = 8
 def explore(sm, msg, *, check=True):
     for channel, message in explorer_handler(msg, "os2ds_scan_specs", sm):
         if channel == "os2ds_conversions":
-            try:
-                yield from process(sm, message)
-            except GeneratorExit:
-                return
+            yield from process(sm, message, check=check)
         elif channel == "os2ds_scan_specs":
             # Huh? Surely a standalone explorer should have handled this
             logger.warning("worker exploring unexpected nested Source")

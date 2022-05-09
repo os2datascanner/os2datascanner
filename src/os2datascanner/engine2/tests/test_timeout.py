@@ -165,6 +165,18 @@ class TestTimeout(unittest.TestCase):
 
         self.assertEqual([2, 4], result)
 
+    def test_yield_from_with_timeout_produces_half_of_the_results(self):
+        def func(elements):
+            for element in elements:
+                time.sleep(element)
+                yield element*2
+
+        elements = [1, 2]
+
+        result = list(yield_from_with_timeout(2, func(elements)))
+
+        self.assertEqual([2], result)
+
     def test_yield_from_with_timeout_generates_nothing_in_edge_case(self):
         def func(elements):
             for element in elements:
