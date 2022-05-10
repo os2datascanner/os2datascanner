@@ -17,9 +17,6 @@ from abc import abstractmethod
 from django.db import models
 from django.contrib.auth.models import User
 from model_utils.managers import InheritanceManager
-from ..documentreport_model import DocumentReport
-
-from django.utils.translation import ugettext_lazy as _
 
 
 class Alias(models.Model):
@@ -28,16 +25,7 @@ class Alias(models.Model):
     user = models.ForeignKey(User, null=False, verbose_name="Bruger",
                              related_name="aliases", on_delete=models.CASCADE)
 
-    # Solution created in admin.py, since save() method doesn't work with m2m relations.
-    # Changed save_model in admin.py, to make sure m2m relations doesn't get cleared after save
-    # noqa Source: https://stackoverflow.com/questions/1925383/issue-with-manytomany-relationships-not-updating-immediately-after-save/1925784#1925784 
-
-    match_relation = models.ManyToManyField(DocumentReport, blank=True,
-                                            verbose_name=_('Match relation'),
-                                            related_name='alias_relation')
-
     @property
     @abstractmethod
     def key(self):
-
         """Returns the metadata property name associated with this alias."""
