@@ -14,16 +14,45 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 from abc import abstractmethod
+from uuid import uuid4
 from django.db import models
+
 from django.contrib.auth.models import User
 from model_utils.managers import InheritanceManager
+from os2datascanner.core_organizational_structure.models.aliases import AliasType  # noqa
+from django.utils.translation import ugettext_lazy as _
 
 
 class Alias(models.Model):
     objects = InheritanceManager()
+    # Serializes the inheritance manager, such that it can be used in migrations.
+    objects.use_in_migrations = True
 
     user = models.ForeignKey(User, null=False, verbose_name="Bruger",
                              related_name="aliases", on_delete=models.CASCADE)
+
+    uuid = models.UUIDField(
+        default=uuid4,
+        unique=True,
+        editable=False,
+        verbose_name=_('alias ID'),
+    )
+
+    _alias_type = models.CharField(
+        max_length=32,
+        db_column='alias_type',
+        db_index=True,
+        choices=AliasType.choices,
+        verbose_name=_('alias type'),
+        blank=True,
+        null=True,
+    )
+    _value = models.CharField(
+        max_length=256,
+        verbose_name=_('value'),
+        blank=True,
+        null=True,
+    )
 
     @property
     @abstractmethod
