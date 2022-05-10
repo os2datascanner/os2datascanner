@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-12 09:47+0200\n"
+"POT-Creation-Date: 2022-05-19 11:21+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -44,7 +44,7 @@ msgid "Initialization Vector"
 msgstr "Initaliserings vektor"
 
 #: adminapp/models/authentication_model.py:25
-#: adminapp/views/filescanner_views.py:172
+#: adminapp/views/filescanner_views.py:170
 msgid "User domain"
 msgstr "Brugerdomæne"
 
@@ -196,6 +196,19 @@ msgstr "Advarsel"
 #: adminapp/models/sensitivity_level.py:36
 msgid "Notification"
 msgstr "Notifikation"
+
+#: adminapp/models/usererrorlog_model.py:9
+#, python-brace-format
+msgid "Folder at {path} using outdated encoding. Please     rename the folder."
+msgstr "Mappe i stien {path} benytter forældet indkodning. Omdøb venligst mappen."
+
+#: adminapp/models/usererrorlog_model.py:24
+msgid "Path"
+msgstr "Sti"
+
+#: adminapp/models/usererrorlog_model.py:29
+msgid "Error message"
+msgstr "Fejlbesked"
 
 #: adminapp/templates/403.html:6 adminapp/templates/404.html:6
 msgid "Page not found"
@@ -1137,33 +1150,33 @@ msgstr ""
 msgid "Reset my password"
 msgstr "Nulstil min adgangskode"
 
-#: adminapp/views/exchangescanner_views.py:218
+#: adminapp/views/exchangescanner_views.py:215
 msgid "No organizational units has been selected"
 msgstr "Der er ikke valgt nogen organisatoriske enheder"
 
-#: adminapp/views/exchangescanner_views.py:219
+#: adminapp/views/exchangescanner_views.py:216
 msgid "No userlist has been selected"
 msgstr "Der er ikke valgt nogen brugerliste"
 
-#: adminapp/views/exchangescanner_views.py:227
+#: adminapp/views/exchangescanner_views.py:224
 msgid "e.g. @example.com"
 msgstr "f.eks. @example.com"
 
-#: adminapp/views/exchangescanner_views.py:231
-#: adminapp/views/filescanner_views.py:170
+#: adminapp/views/exchangescanner_views.py:228
+#: adminapp/views/filescanner_views.py:168
 msgid "Username"
 msgstr "Brugernavn"
 
-#: adminapp/views/exchangescanner_views.py:236
-#: adminapp/views/filescanner_views.py:171
+#: adminapp/views/exchangescanner_views.py:233
+#: adminapp/views/filescanner_views.py:169
 msgid "Password"
 msgstr "Adgangskode"
 
-#: adminapp/views/filescanner_views.py:169
+#: adminapp/views/filescanner_views.py:167
 msgid "e.g. //network-domain/top-folder"
 msgstr "f.eks. //network-domain/top-folder"
 
-#: adminapp/views/filescanner_views.py:173
+#: adminapp/views/filescanner_views.py:171
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
@@ -1220,7 +1233,7 @@ msgstr "tilgængelige scannertyper"
 msgid "Select a scan type to activate it for this client."
 msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 
-#: core/forms.py:64
+#: core/forms.py:69
 msgid "Only one type of import service can be active at a time."
 msgstr "Kun en type af importservice kan være aktiveret."
 

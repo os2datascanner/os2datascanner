@@ -18,6 +18,7 @@ from django.contrib.auth.models import Group
 
 from .models.authentication_model import Authentication
 from .models.apikey_model import APIKey
+from .models.usererrorlog_model import UserErrorLog
 from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
@@ -68,6 +69,13 @@ class ScannerAdmin(admin.ModelAdmin):
 
 for _cls in [APIKey, ScheduledCheckup]:
     admin.site.register(_cls)
+
+
+@admin.register(UserErrorLog)
+class UserErrorLogAdmin(admin.ModelAdmin):
+    model = UserErrorLog
+    readonly_fields = ('path', 'user_friendly_error_message', 'error_message', 'scan_status')
+    fields = ('path', 'user_friendly_error_message', 'error_message', 'scan_status')
 
 
 @admin.register(ScanStatus)

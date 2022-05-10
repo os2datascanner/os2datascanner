@@ -171,11 +171,12 @@ class SMBCSource(Source):
                 try:
                     try:
                         obj = context.opendir(url_here)
-                    except MemoryError:
+                    except MemoryError as e:
                         # A memory error here means that the path is using
                         # deprecated encoding. Skip the path and keep going!
                         logger.warning(
                             f"Skipping handle with memory error at {url_here}")
+                        yield (SMBCHandle(self, path), e)
                         return
                     for dent in obj.getdents():
                         yield from handle_dirent(here, dent)
