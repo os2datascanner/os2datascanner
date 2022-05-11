@@ -1,12 +1,13 @@
 from django.core.management.base import BaseCommand
 
 from ...models.documentreport_model import DocumentReport
-from ...utils import get_presentation
+from ...utils import get_presentation, prepare_json_object
 
 
 class Command(BaseCommand):
-    """ When run, updates every DocumentReport's sort_key value
-    with its handles current implementation of sort_key."""
+    """Update every DocumentReport's cache fields with values produced by the
+    current implementation of the Handle.sort_key and Handle.presentation_name
+    functions."""
 
     help = __doc__
 
@@ -19,8 +20,8 @@ class Command(BaseCommand):
                     continue
                 # ensure we don't try to put more chars into the db-fields than there's room for.
                 # failing to do this will result in a django.db.DataError exception
-                sort_key = handle.sort_key[:256]
-                report.sort_key = sort_key
+                report.sort_key = handle.sort_key[:256]
+                report.name = prepare_json_object(handle.presentation_name)
                 report.save()
 
             except Exception as e:
