@@ -4,7 +4,7 @@ from .file import FilesystemResource
 from os import rmdir
 from regex import compile
 from urllib.parse import quote, unquote, urlsplit, urlunsplit
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from tempfile import mkdtemp
 from subprocess import run
 
@@ -149,8 +149,15 @@ class SMBHandle(Handle):
     resource_type = FilesystemResource
 
     @property
-    def presentation(self):
-        return make_presentation(self)
+    def presentation_name(self):
+        return PureWindowsPath(make_full_windows_path(self)).name
+
+    @property
+    def presentation_place(self):
+        return str(PureWindowsPath(make_full_windows_path(self)).parent)
+
+    def __str__(self):
+        return make_full_windows_path(self)
 
     @property
     def presentation_url(self):
@@ -179,7 +186,7 @@ def make_smb_url(schema, unc, user, domain, password):
     return urlunsplit((schema, netloc, quote(path), None, None))
 
 
-def make_presentation(self):
+def make_full_windows_path(self):
     p = self.source.driveletter
     if p:
         # If you have a network drive //SERVER/DRIVE with the drive letter X,

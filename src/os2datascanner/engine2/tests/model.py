@@ -57,8 +57,12 @@ class DummyHandle(Handle):
         return DummyHandle(self.source.censor(), self.relative_path)
 
     @property
-    def presentation(self):
+    def presentation_name(self):
         return f"dummy no. {self.relative_path}"
+
+    @property
+    def presentation_place(self):
+        return "dreamland"
 
     def guess_type(self):
         return DUMMY_MIME
@@ -86,9 +90,13 @@ class DummySubhandle(Handle):
     type_label = "-test-dummy-sub"
     resource_type = DummySubresource
 
-    def presentation(self):
-        return (f"sub-dummy no. {self.relative_path}"
-                f" (in {self.source.handle.presentation}")
+    @property
+    def presentation_name(self):
+        return f"sub-dummy no. {self.relative_path}"
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     def censor(self):
         return DummySubhandle(self.source.censor(), self.relative_path)

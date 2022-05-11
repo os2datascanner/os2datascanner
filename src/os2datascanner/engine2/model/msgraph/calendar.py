@@ -73,8 +73,12 @@ class MSGraphCalendarAccountHandle(Handle):
     resource_type = MSGraphCalendarAccountResource
 
     @property
-    def presentation(self):
+    def presentation_name(self):
         return self.relative_path
+
+    @property
+    def presentation_place(self):
+        return "Office 365"
 
     def guess_type(self):
         return DUMMY_MIME
@@ -170,12 +174,12 @@ class MSGraphCalendarEventHandle(Handle):
         self._weblink = weblink
 
     @property
-    def presentation(self):
-        return f'Account {self.source.handle.relative_path}'
-
-    @property
     def presentation_name(self):
         return self._event_subject
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     @property
     def presentation_url(self):

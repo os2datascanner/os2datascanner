@@ -126,9 +126,14 @@ class DropboxHandle(Handle):
         self.email = email
 
     @property
-    def presentation(self):
+    def presentation_name(self):
+        return self.name
+
+    @property
+    def presentation_place(self):
         # We don't need to show the filename here, just the path it resides in.
-        return f'In folder {self.relative_path.removesuffix(self.name)} of account {self.email}'
+        return (f"folder {self.relative_path.removesuffix(self.name)}"
+                f" of account {self.email}")
 
     @property
     def presentation_url(self):

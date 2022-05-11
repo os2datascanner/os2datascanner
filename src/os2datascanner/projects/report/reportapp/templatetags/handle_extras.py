@@ -17,7 +17,7 @@ register = template.Library()
 def present(handle):
     """Returns the presentation of the given Handle."""
     if isinstance(handle, Handle):
-        return handle.presentation
+        return str(handle)
     else:
         return None
 

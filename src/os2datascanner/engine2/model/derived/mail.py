@@ -88,25 +88,30 @@ class MailPartHandle(Handle):
         self._mime = mime
 
     @property
-    def presentation(self):
-        # We could provide more information here such as
-        # if this is an attachment etc. but in our
-        # UI this has shown to be too much information.
-        return self.source.handle.presentation
-
-    @property
-    def sort_key(self):
-        return self.base_handle.sort_key
+    def _path_name(self):
+        return os.path.basename(self.relative_path)
 
     @property
     def presentation_name(self):
-        # Carefull: self.relative_path should not be interpreted as a Path - thus do
-        # not strip trailing / unless you really want to.
-        basename = os.path.basename(self.relative_path)
-        if not basename:
-            return self.base_handle.name
+        container = self.source.handle.presentation_name
+        if (name := self._path_name):
+            # This is a named attachment
+            return f"attachment \"{name}\" in {container}"
         else:
-            return f"{self.base_handle.name} (attachment {basename})"
+            # This is a message body. Use its subject
+            return container
+
+    @property
+    def sort_key(self):
+        return self.source.handle.sort_key
+
+    @property
+    def presentation_place(self):
+        return self.source.handle.presentation_place
+
+    def __str__(self):
+        return (f"{self.presentation_name} (attached"
+                f" to {self.presentation_place})")
 
     def censor(self):
         return MailPartHandle(

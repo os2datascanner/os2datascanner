@@ -71,26 +71,20 @@ class PDFPageHandle(Handle):
     resource_type = PDFPageResource
 
     @property
-    def presentation(self):
-        return self.source.handle.presentation
+    def presentation_name(self):
+        return f"page {self.relative_path}"
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
+
+    def __str__(self):
+        return f"{self.presentation_name} of {self.presentation_place}"
 
     @property
     def sort_key(self):
         "Return the file path of the document"
         return self.base_handle.sort_key
-
-    @property
-    def presentation_name(self):
-        """Return the filename of the document or, if originating from a container, the
-        filename of the container + (filename of document)"""
-        if self.base_handle == self.source.handle:
-            return self.base_handle.name + f" (page {self.relative_path})"
-
-        # document originates from container
-        return (
-            self.base_handle.name +
-            f" (file {self.source.handle.relative_path} (page {self.relative_path}))"
-        )
 
     def censor(self):
         return PDFPageHandle(self.source.censor(), self.relative_path)
@@ -152,10 +146,6 @@ class PDFObjectHandle(Handle):
     type_label = "pdf-object"
     resource_type = PDFObjectResource
 
-    @property
-    def presentation(self):
-        return self.source.handle.presentation
-
     def censor(self):
         return PDFObjectHandle(self.source.censor(), self.relative_path)
 
@@ -165,8 +155,19 @@ class PDFObjectHandle(Handle):
 
     @property
     def presentation_name(self):
-        "Return from the parent PDFPage handle"
-        return self.source.handle.presentation_name
+        mime = self.guess_type()
+        page = str(self.source.handle.presentation_name)
+        container = self.source.handle.source.handle.presentation_name
+        if mime.startswith("text/"):
+            return f"text on {page} of {container}"
+        elif mime.startswith("image/"):
+            return f"image on {page} of {container}"
+        else:
+            return f"unknown object on {page} of {container}"
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle.source.handle.presentation_place)
 
     @classmethod
     def make(cls, handle: Handle, page: int, name: str):

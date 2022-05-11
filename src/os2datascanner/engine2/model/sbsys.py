@@ -110,17 +110,20 @@ class SbsysResource(FileResource):
 
 
 class SbsysHandle(Handle):
-
-    @property
-    def presentation(self):
-        return "Sag ID: {0}".format(self.relative_path)
-
     type_label = "sbsys"
     resource_type = SbsysResource
     eq_properties = Handle.BASE_PROPERTIES
 
     def __init__(self, source, path):
         super().__init__(source, path)
+
+    @property
+    def presentation_name(self):
+        return "Sag ID: {0}".format(self.relative_path)
+
+    @property
+    def presentation_place(self):
+        return "SBSYS"
 
     def censor(self):
         return SbsysHandle(self.source.censor(), self.relative_path)
@@ -170,8 +173,12 @@ class SbsysCaseHandle(Handle):
     eq_properties = Handle.BASE_PROPERTIES
 
     @property
-    def presentation(self):
-        return "Dokument ID: {0} i {1}".format(self.relative_path, self.source.handle.presentation)
+    def presentation_name(self):
+        return self.relative_path
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     def censor(self):
         return SbsysCaseHandle(self.source.censor(), self.relative_path)

@@ -102,17 +102,16 @@ class FilteredHandle(Handle):
     resource_type = FilteredResource
 
     @property
-    def presentation(self):
-        return "({0}, decompressed)".format(
-                self.source.handle.presentation)
+    def presentation_name(self):
+        return self.name
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     @property
     def sort_key(self):
         return self.base_handle.sort_key
-
-    @property
-    def presentation_name(self):
-        return self.base_handle.name
 
     def censor(self):
         return FilteredHandle(self.source.censor(), self.relative_path)

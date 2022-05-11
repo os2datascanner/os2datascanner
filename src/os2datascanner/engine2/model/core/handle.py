@@ -2,6 +2,7 @@ import os.path
 from abc import abstractmethod
 from copy import copy
 from typing import Mapping, Optional
+import warnings
 from mimetypes import guess_type
 
 from ...utilities.json import JSONSerialisable
@@ -58,7 +59,10 @@ class Handle(TypePropertyEquality, JSONSerialisable):
     @property
     def name(self) -> str:
         """Returns the base name -- everything after the last '/' -- of this
-        Handle's path, or "file" if the result would otherwise be empty."""
+        Handle's path, or "file" if the result would otherwise be empty.
+
+        Note that the return value of this function must be a valid filesystem
+        name."""
         return os.path.basename(self._relpath) or 'file'
 
     def guess_type(self):
@@ -77,9 +81,16 @@ class Handle(TypePropertyEquality, JSONSerialisable):
 
     @property
     @abstractmethod
-    def presentation(self) -> str:
+    def presentation_name(self) -> str:
+        """Returns the human-readable name of this object."""
+
+    @property
+    @abstractmethod
+    def presentation_place(self) -> str:
         """Returns a (perhaps localised) human-readable string representing
-        this Handle, for use in user interfaces."""
+        the location of this Handle, for use in user interfaces (a folder, for
+        example, for a filesystem file, or an archive path for a compressed
+        document)."""
 
     @property
     def presentation_url(self):
@@ -92,6 +103,18 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         that points at that email in an appropriate webmail system.)"""
         return None
 
+    def __str__(self):
+        """Returns a (perhaps localised) human-readable string representing
+        this Handle: its name and its position."""
+        return f"{self.presentation_name} (in {self.presentation_place})"
+
+    @property
+    def presentation(self) -> str:
+        warnings.warn(
+                "Handle.presentation is deprecated; use str(handle) instead",
+                DeprecationWarning, stacklevel=2)
+        return str(self)
+
     @property
     def sort_key(self) -> str:
         """Returns a string that can be used to position this object in an
@@ -100,14 +123,7 @@ class Handle(TypePropertyEquality, JSONSerialisable):
 
         Note that comparing sort keys across different types of Source is not
         meaningful."""
-        return self.presentation.removesuffix(self.name).removesuffix("/")
-
-    @property
-    def presentation_name(self) -> str:
-        """Returns a string that, in some meaningfull way, can be used to localize
-        this object within a source. This might be, for example, a filename or an
-        email subject"""
-        return self.name
+        return str(self).removesuffix(self.name).removesuffix("/")
 
     @property
     def referrer(self) -> Optional["Handle"]:
@@ -146,9 +162,6 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         As the Handle returned by this method is not useful for anything other
         than identifying an object, this method should normally only be used
         when transmitting a Handle to a less trusted context."""
-
-    def __str__(self):
-        return self.presentation
 
     def follow(self, sm):
         """Follows this Handle using the state in the StateManager @sm,

@@ -69,17 +69,16 @@ class TarHandle(Handle):
     resource_type = TarResource
 
     @property
-    def presentation(self):
-        return "{0} (in {1})".format(
-                self.relative_path, self.source.handle)
+    def presentation_name(self):
+        return self.relative_path
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     @property
     def sort_key(self):
-        return self.base_handle.sort_key
-
-    @property
-    def presentation_name(self):
-        return f"{self.base_handle.name} (file {self.relative_path})"
+        return self.source.handle.sort_key
 
     def censor(self):
         return TarHandle(self.source.censor(), self.relative_path)
