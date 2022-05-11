@@ -118,7 +118,12 @@ class MailPartHandle(Handle):
                 self.source.censor(), self.relative_path, self._mime)
 
     def guess_type(self):
-        return self._mime
+        if self._mime != "application/octet-stream":
+            return self._mime
+        else:
+            # If this mail part has a completely generic type, then see if our
+            # filename-based detection can manage anything better
+            return super().guess_type()
 
     def to_json_object(self):
         return dict(**super().to_json_object(), mime=self._mime)
