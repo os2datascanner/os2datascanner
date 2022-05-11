@@ -13,7 +13,7 @@ from os2datascanner.engine2.pipeline.messages import (
 )
 import structlog
 
-from .aliases.alias_model import Alias
+from os2datascanner.projects.report.organizations.models import Alias
 
 logger = structlog.get_logger(__name__)
 

@@ -6,9 +6,6 @@ from .models.roles.remediator_model import Remediator
 from .models.roles.leader_model import Leader
 from .models.roles.dpo_model import DataProtectionOfficer
 from .models.roles.defaultrole_model import DefaultRole
-from .models.aliases.adsidalias_model import ADSIDAlias
-from .models.aliases.emailalias_model import EmailAlias
-from .models.aliases.webdomainalias_model import WebDomainAlias
 from .models.documentreport_model import DocumentReport
 from .models.userprofile_model import UserProfile
 
@@ -33,21 +30,6 @@ class AliasAdmin(admin.ModelAdmin):
                     str(obj.key): str(obj)
                 })
             form.cleaned_data['match_relation'] = reports
-
-
-@admin.register(ADSIDAlias)
-class ADSIDAliasAdmin(AliasAdmin):
-    list_display = ('sid', 'user', )
-
-
-@admin.register(EmailAlias)
-class EmailAliasAdmin(AliasAdmin):
-    list_display = ('address', 'user', )
-
-
-@admin.register(WebDomainAlias)
-class WebDomainAliasAdmin(AliasAdmin):
-    list_display = ('domain', 'user', )
 
 
 @admin.register(DefaultRole)

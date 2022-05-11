@@ -28,7 +28,7 @@ class DefaultRole(Role):
     other roles.)"""
 
     def filter(self, document_reports):
-        aliases = self.user.aliases.select_subclasses()
+        aliases = self.user.aliases.all()
         results = DocumentReport.objects.none()
         for alias in aliases:
             result = document_reports.filter(alias_relation=alias.pk)

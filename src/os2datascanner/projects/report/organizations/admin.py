@@ -3,7 +3,7 @@ from django.contrib import admin
 
 
 from .models.account import Account
-# from .models.aliases import Alias
+from .models.aliases import Alias
 from .models.organization import Organization
 from .models.organizational_unit import OrganizationalUnit
 from .models.position import Position
@@ -24,12 +24,10 @@ class ReadOnlyAdminMixin:
         return False
 
 
-# @admin.register(Alias)
-# class AliasAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
-#     # TODO: What do these aliases mean?
-#     # they are connected to accounts, so I assume also readonly?
-#     list_display = ('account', '_alias_type', '_value')
-#     readonly_fields = ('account', '_alias_type', '_value')
+@admin.register(Alias)
+class AliasAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
+    list_display = ('user', 'account', '_alias_type', '_value')
+    readonly_fields = ('user', 'account', '_alias_type', '_value')
 
 
 @admin.register(Account)
@@ -48,15 +46,6 @@ class OrganizationAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
 class OrganizationalUnitAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = ('uuid', 'name', 'parent', 'organization')
     readonly_fields = ('uuid', 'name', 'parent', 'organization')
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 
 @admin.register(Position)

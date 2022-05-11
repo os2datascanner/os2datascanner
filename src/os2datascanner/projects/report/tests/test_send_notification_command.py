@@ -11,7 +11,7 @@ from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.projects.report.reportapp.management.commands.send_notifications import \
     Command
-from os2datascanner.projects.report.reportapp.models.aliases.emailalias_model import EmailAlias
+from os2datascanner.projects.report.organizations.models.aliases import Alias, AliasType
 from os2datascanner.projects.report.reportapp.models.documentreport_model import DocumentReport
 from os2datascanner.projects.report.reportapp.models.roles.remediator_model import Remediator
 from os2datascanner.projects.report.reportapp.utils import create_alias_and_match_relations
@@ -132,9 +132,10 @@ class EmailNotificationTest(TestCase):
             email='af@pink.com',
             password='top_secret')
 
-        alias = EmailAlias.objects.create(
+        alias = Alias.objects.create(
             user=self.user_2,
-            address=self.user_2.email
+            _value=self.user_2.email,
+            _alias_type=AliasType.EMAIL
         )
         record_match(match)
         record_metadata(metadata)

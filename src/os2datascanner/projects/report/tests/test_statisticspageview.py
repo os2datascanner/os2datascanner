@@ -12,7 +12,8 @@ from os2datascanner.engine2.model.ews import (
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 
-from ..reportapp.models.aliases.emailalias_model import EmailAlias
+from ..organizations.models.aliases import Alias
+from ..organizations.models.aliases import AliasType
 from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.models.roles.leader_model import Leader
 from ..reportapp.models.roles.dpo_model import DataProtectionOfficer
@@ -441,18 +442,23 @@ class StatisticsPageViewTest(TestCase):
     def test_statisticspage_five_most_unhandled_employees(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_leader_statisticspage_object()
-        kjeld_emailalias, created = EmailAlias.objects.get_or_create(
+        kjeld_emailalias, created = Alias.objects.get_or_create(
             user=self.kjeld,
-            address='kjeld@jensen.com')
-        yvonne_emailalias, created = EmailAlias.objects.get_or_create(
+            _value='kjeld@jensen.com',
+            _alias_type=AliasType.EMAIL)
+        yvonne_emailalias, created = Alias.objects.get_or_create(
             user=self.yvonne,
-            address='yvonne@jensen.com')
-        egon_emailalias, created = EmailAlias.objects.get_or_create(
+            _value='yvonne@jensen.com',
+            _alias_type=AliasType.EMAIL)
+        egon_emailalias, created = Alias.objects.get_or_create(
             user=self.egon,
-            address='egon@olsen.com')
-        benny_emailalias, created = EmailAlias.objects.get_or_create(
+            _value='egon@olsen.com',
+            _alias_type=AliasType.EMAIL)
+        benny_emailalias, created = Alias.objects.get_or_create(
             user=self.benny,
-            address='benny@frandsen.com')
+            _value='benny@frandsen.com',
+            _alias_type=AliasType.EMAIL)
+
         create_alias_and_match_relations(kjeld_emailalias)
         create_alias_and_match_relations(yvonne_emailalias)
         create_alias_and_match_relations(egon_emailalias)

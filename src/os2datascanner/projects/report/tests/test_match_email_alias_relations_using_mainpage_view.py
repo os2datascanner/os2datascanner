@@ -13,11 +13,12 @@ from os2datascanner.engine2.pipeline import messages
 from ..reportapp.management.commands.update_match_alias_relation_table import \
     update_match_alias_relations
 
-from ..reportapp.models.aliases.emailalias_model import EmailAlias
+
+from ..organizations.models.aliases import Alias
+from ..organizations.models.aliases import AliasType
 from ..reportapp.models.roles.remediator_model import Remediator
 from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.views import MainPageView
-
 from .generate_test_data import record_match, record_metadata
 
 """Shared data"""
@@ -243,9 +244,10 @@ class MatchAliasRelationTest(TestCase):
         remediator.delete()
 
     def test_mainpage_view_with_emailalias_egon(self):
-        emailalias = EmailAlias.objects.create(
+        emailalias = Alias.objects.create(
             user=self.user,
-            address='EGON@olsen.com'
+            _value='EGON@olsen.com',
+            _alias_type=AliasType.EMAIL
         )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
@@ -253,9 +255,10 @@ class MatchAliasRelationTest(TestCase):
         emailalias.delete()
 
     def test_mainpage_view_with_emailalias_kjeld(self):
-        emailalias = EmailAlias.objects.create(
+        emailalias = Alias.objects.create(
             user=self.user,
-            address='kjeld@jensen.com'
+            _value='kjeld@jensen.com',
+            _alias_type=AliasType.EMAIL
         )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
@@ -272,9 +275,10 @@ class MatchAliasRelationTest(TestCase):
         emailalias1.delete()
 
     def test_mainpage_view_as_remediator_with_emailalias_kjeld(self):
-        emailalias = EmailAlias.objects.create(
+        emailalias = Alias.objects.create(
             user=self.user,
-            address='kjeld@jensen.com'
+            _value='kjeld@jensen.com',
+            _alias_type=AliasType.EMAIL
         )
         remediator = Remediator.objects.create(user=self.user)
         qs = self.mainpage_get_queryset()
@@ -338,9 +342,10 @@ class MatchAliasRelationTest(TestCase):
 
     def test_mainpage_view_filter_by_datasource_age_true_emailalias_egon(self):
         params = '?30-days=true'
-        emailalias = EmailAlias.objects.create(
+        emailalias = Alias.objects.create(
             user=self.user,
-            address='egon@olsen.com'
+            _value='egon@olsen.com',
+            _alias_type=AliasType.EMAIL
         )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset(params)
@@ -370,9 +375,10 @@ class MatchAliasRelationTest(TestCase):
         remediator.delete()
 
     def test_mainpage_view_with_relation_table(self):
-        emailalias, created = EmailAlias.objects.get_or_create(
+        emailalias, created = Alias.objects.get_or_create(
             user=self.user,
-            address='egon@olsen.com'
+            _value='egon@olsen.com',
+            _alias_type=AliasType.EMAIL
         )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
@@ -386,9 +392,10 @@ class MatchAliasRelationTest(TestCase):
     def test_mainpage_view_with_relation_table_and_incoming_new_matches(
             self, _, address, expected1, expected2):
         # Note: address cannot be NoneType due to DB constraint.
-        emailalias, created = EmailAlias.objects.get_or_create(
+        emailalias, created = Alias.objects.get_or_create(
             user=self.user,
-            address=address
+            _value=address,
+            _alias_type=AliasType.EMAIL
         )
         create_alias_and_match_relations(emailalias)
         qs = self.mainpage_get_queryset()
@@ -399,9 +406,10 @@ class MatchAliasRelationTest(TestCase):
         emailalias.delete()
 
     def test_update_relation_management_command(self):
-        emailalias, created = EmailAlias.objects.get_or_create(
+        emailalias, created = Alias.objects.get_or_create(
             user=self.user,
-            address='egon@olsen.com'
+            _value='egon@olsen.com',
+            _alias_type=AliasType.EMAIL
         )
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 0)
@@ -413,13 +421,15 @@ class MatchAliasRelationTest(TestCase):
 
     # Helper methods
     def create_email_alias_kjeld_and_egon(self):
-        emailalias = EmailAlias.objects.create(
+        emailalias = Alias.objects.create(
             user=self.user,
-            address='kjeld@jensen.com'
+            _value='kjeld@jensen.com',
+            _alias_type=AliasType.EMAIL
         )
-        emailalias1 = EmailAlias.objects.create(
+        emailalias1 = Alias.objects.create(
             user=self.user,
-            address='egon@olsen.com'
+            _value='egon@olsen.com',
+            _alias_type=AliasType.EMAIL
         )
         return emailalias, emailalias1
 
