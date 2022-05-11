@@ -410,6 +410,7 @@ class ScanStage(Enum):
     INDEXING = 0
     INDEXING_SCANNING = 1
     SCANNING = 2
+    EMPTY = 3
 
 
 class AbstractScanStatus(models.Model):
@@ -453,19 +454,25 @@ class AbstractScanStatus(models.Model):
 
     @property
     def stage(self) -> int:
+        # Workers have not begun scanning any objects yet
         if self.fraction_scanned is None:
-            if self.explored_sources > 0 or self.fraction_explored < 1.0:
+            if self.explored_sources >= 0 and self.fraction_explored < 1.0:
+                # The explorer is definitely running
                 if self.scanned_objects == 0:
+                    # The explorer is running, but the scanner is waiting
                     return ScanStage.INDEXING
+                # The explorer and worker are running in parallel
                 return ScanStage.INDEXING_SCANNING
+            elif self.fraction_explored == 1.0:
+                # The explorer has finished and did not find any objects
+                return ScanStage.EMPTY
+
+        # Workers are scanning objects. Everything is good.
         return ScanStage.SCANNING
 
     @property
     def finished(self) -> bool:
-        return ((self.total_sources > 0)
-                and self.total_sources == self.explored_sources
-                and (self.total_objects > 0)
-                and (self.scanned_objects or 0) >= self.total_objects)
+        return self.fraction_explored == 1.0 and self.fraction_scanned == 1.0
 
     @property
     def fraction_explored(self) -> float:
