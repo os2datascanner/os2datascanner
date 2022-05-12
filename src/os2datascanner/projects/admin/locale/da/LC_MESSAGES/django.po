@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-06 14:53+0200\n"
+"POT-Creation-Date: 2022-05-12 09:47+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -96,62 +96,58 @@ msgstr ""
 msgid "URL must follow the UNC format"
 msgstr "URL skal følge UNC-format"
 
-#: adminapp/models/scannerjobs/scanner_model.py:421
+#: adminapp/models/scannerjobs/scanner_model.py:422
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:426
+#: adminapp/models/scannerjobs/scanner_model.py:427
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:431
+#: adminapp/models/scannerjobs/scanner_model.py:432
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:436
+#: adminapp/models/scannerjobs/scanner_model.py:437
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:441
+#: adminapp/models/scannerjobs/scanner_model.py:442
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:497
+#: adminapp/models/scannerjobs/scanner_model.py:504
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
 
-#: adminapp/models/scannerjobs/scanner_model.py:502
+#: adminapp/models/scannerjobs/scanner_model.py:509
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:509
+#: adminapp/models/scannerjobs/scanner_model.py:516
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:538
+#: adminapp/models/scannerjobs/scanner_model.py:545
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:539
+#: adminapp/models/scannerjobs/scanner_model.py:546
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/scanner_model.py:578
+#: adminapp/models/scannerjobs/scanner_model.py:585
 msgid "timestamp"
 msgstr ""
 
-#: adminapp/models/scannerjobs/scanner_model.py:583
-#, fuzzy
-#| msgid "scan status shapshot"
+#: adminapp/models/scannerjobs/scanner_model.py:590
 msgid "scan status snapshot"
-msgstr "scanstatusser"
+msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/scanner_model.py:584
-#, fuzzy
-#| msgid "scan status shapshots"
+#: adminapp/models/scannerjobs/scanner_model.py:591
 msgid "scan status snapshots"
-msgstr "scanstatusser"
+msgstr "scanstatus snapshot"
 
 #: adminapp/models/scannerjobs/webscanner_model.py:40
 msgid "check dead links"
@@ -372,7 +368,7 @@ msgstr "Nej"
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:114
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/scan_status.html:90
+#: adminapp/templates/os2datascanner/scan_status.html:94
 #: adminapp/templates/os2datascanner/scanners.html:166
 msgid "Delete"
 msgstr "Slet"
@@ -601,21 +597,29 @@ msgstr "Scanner data (indekserer fortsat) ..."
 msgid "Scanning data ..."
 msgstr "Scanner data ..."
 
-#: adminapp/templates/os2datascanner/scan_status.html:70
+#: adminapp/templates/os2datascanner/scan_status.html:67
+msgid "No objects to scan"
+msgstr "Ingen objekter at scanne"
+
+#: adminapp/templates/os2datascanner/scan_status.html:72
 msgid "Building index"
 msgstr "Opbygger indeks"
 
-#: adminapp/templates/os2datascanner/scan_status.html:72
+#: adminapp/templates/os2datascanner/scan_status.html:74
 #, python-format
 msgid "%(obj)s objects scanned"
 msgstr "%(obj)s objekter scannet"
 
-#: adminapp/templates/os2datascanner/scan_status.html:74
+#: adminapp/templates/os2datascanner/scan_status.html:76
 #, python-format
 msgid "%(obj)s out of %(total)s objects scanned"
 msgstr "%(obj)s ud af %(total)s objekter scannet"
 
-#: adminapp/templates/os2datascanner/scan_status.html:85
+#: adminapp/templates/os2datascanner/scan_status.html:78
+msgid "The sources do not contain any scannable objects"
+msgstr "Datakilden indeholder ikke nogle objekter"
+
+#: adminapp/templates/os2datascanner/scan_status.html:89
 #, python-format
 msgid ""
 "Do you really want to delete the status object for scanner "
@@ -623,7 +627,7 @@ msgid ""
 msgstr ""
 "Er du sikker på, at du vil slette status for scanner »%%(scanner_name)s«?"
 
-#: adminapp/templates/os2datascanner/scan_status.html:111
+#: adminapp/templates/os2datascanner/scan_status.html:115
 msgid "no ongoing scans"
 msgstr "der er ingen igangværende scanninger"
 
@@ -955,10 +959,8 @@ msgid "Office 365 OneDrive filscanner"
 msgstr "Office 365 OneDrive filscanner"
 
 #: adminapp/templates/os2datascanner/scanner_tabs.html:39
-#, fuzzy
-#| msgid "Office 365 mailscanner"
 msgid "Office 365 kalenderscanner"
-msgstr "Office 365 mailscanner"
+msgstr "Office 365 kalenderscanner"
 
 #: adminapp/templates/os2datascanner/scanner_tabs.html:44
 #: adminapp/templates/partials/breadcrumb.html:30

@@ -63,6 +63,8 @@
                                         {% trans "Scanning data (still indexing) ..." %}
                                     {% elif status.stage.value == 2 %}
                                         {% trans "Scanning data ..." %}
+				    {% elif status.stage.value == 3 %}
+					{% trans "No objects to scan" %}
                                     {% endif %}
                                 </td>
                                 <td class="datatable__column--info">
@@ -72,6 +74,8 @@
                                         {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned{% endblocktranslate %}
                                     {% elif status.stage.value == 2 %}
                                         {% blocktranslate with obj=status.scanned_objects total=status.total_objects %}{{ obj }} out of {{ total }} objects scanned{% endblocktranslate %}
+				    {% elif status.stage.value == 3 %}
+					{% trans "The sources do not contain any scannable objects" %}
                                     {% endif %}
 
                                     {# don't show number of bytes scanned as it's not very useful #}
