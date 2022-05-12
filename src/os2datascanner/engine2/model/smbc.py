@@ -169,7 +169,14 @@ class SMBCSource(Source):
 
             if entity.smbc_type == smbc.DIR and name not in (".", ".."):
                 try:
-                    obj = context.opendir(url_here)
+                    try:
+                        obj = context.opendir(url_here)
+                    except MemoryError:
+                        # A memory error here means that the path is using
+                        # deprecated encoding. Skip the path and keep going!
+                        logger.warning(
+                            f"Skipping handle with memory error at {url_here}")
+                        return
                     for dent in obj.getdents():
                         yield from handle_dirent(here, dent)
                 except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS):
