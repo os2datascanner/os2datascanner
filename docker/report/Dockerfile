@@ -105,6 +105,7 @@ COPY src/os2datascanner/projects/utils ./projects/utils
 COPY src/os2datascanner/projects/django_toml_configuration.py ./projects/
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
+
 # Copy necessary files from engine modul TODO: minimize this
 COPY src/os2datascanner/engine2 ./engine2
 

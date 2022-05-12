@@ -70,6 +70,7 @@ COPY src/os2datascanner/engine2 ./engine2/
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
 
+
 COPY docker/engine/docker-settings.toml /code/docker/docker-settings.toml
 COPY docker/engine/docker-entrypoint.sh /code/docker/docker-entrypoint.sh
 
