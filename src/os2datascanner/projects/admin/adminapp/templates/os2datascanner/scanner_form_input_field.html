@@ -11,9 +11,12 @@
       {% else %}
         type="text"
       {% endif %}
-        class="form-control" name="{{ field.name }}" id="id_{{ field.name }}" placeholder="{{ placeholder }}"
-      {% if field.value %}
+        class="form-control" name="{{ field.name }}" id="id_{{ field.name }}"
+      {% if field.value and not password %}
         value="{{ field.value }}"
+      {% endif %}
+      {% if not password or field.value %}
+	placeholder="{{ placeholder }}"
       {% endif %}
       {% if autofocus %}
         autofocus

@@ -200,7 +200,7 @@
           {% endif %}
 
           {% if form.token %}
-            {% include "os2datascanner/scanner_form_input_field.html" with field=form.token password="True" required="True" %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.token placeholder="(Uændret)" password="True" required="True" %}
           {% endif %}
 
           {% if form.tenant_id %}
@@ -237,7 +237,7 @@
           {% endif %}
 
           {% if form.password %}
-            {% include "os2datascanner/scanner_form_input_field.html" with field=form.password password="True" %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.password placeholder="(Uændret)" password="True" %}
           {% endif %}
 
           {% if form.scan_site_drives %}
