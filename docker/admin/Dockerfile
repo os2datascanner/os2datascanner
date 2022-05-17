@@ -106,6 +106,7 @@ COPY src/os2datascanner/projects/utils ./projects/utils
 COPY src/os2datascanner/projects/django_toml_configuration.py ./projects/
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
+
 # Copy necessary files from engine module TODO: minimize this
 COPY src/os2datascanner/engine2 ./engine2
 
@@ -140,3 +141,10 @@ RUN set -ex \
 EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
 CMD ["gunicorn", "--config", "/code/docker/gunicorn-settings.py", "asgi", "os2datascanner.projects.report.asgi:application"]
+
+ARG COMMIT_TAG
+ARG COMMIT_SHA
+ARG CURRENT_BRANCH
+ENV COMMIT_TAG=${COMMIT_TAG} \
+    COMMIT_SHA=${COMMIT_SHA} \
+    CURRENT_BRANCH=${CURRENT_BRANCH}

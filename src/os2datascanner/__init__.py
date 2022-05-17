@@ -2,9 +2,14 @@ from . import engine2  # noqa
 from . import utils  # noqa
 import logging
 import structlog
+import os
+
 from structlog.stdlib import LoggerFactory
 
 __version__ = "3.14.3"
+__commit__ = os.getenv("COMMIT_SHA", "")
+__tag__ = os.getenv("COMMIT_TAG", __version__)
+__branch__ = os.getenv("CURRENT_BRANCH", "main")
 
 # prevent default configuration, if users do not set one specifically
 logging.getLogger(__name__).addHandler(logging.NullHandler())

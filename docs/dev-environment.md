@@ -8,6 +8,7 @@ To get a development environment to run, follow these steps:
 
          git clone git@git.magenta.dk:os2datascanner/os2datascanner.git
          cd os2datascanner
+         source build_env.sh # exports git variables for build arguments
          docker-compose up -d
 
     You can now reach the following services on their respective ports:
