@@ -24,7 +24,6 @@ from .scanner_views import (
     ScannerCopy,
     ScannerCreate,
     ScannerList)
-from ..aescipher import decrypt
 from ..serializers import OrganizationalUnitSerializer
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ...core.models import Feature, Client
@@ -174,11 +173,9 @@ class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):
 
         if authentication.username:
             form.fields['username'].initial = authentication.username
-        if authentication.ciphertext:
-            password = decrypt(bytes(authentication.iv),
-                               bytes(authentication.ciphertext))
-            form.fields['password'].initial = password
-
+        if authentication.iv:
+            # if there is a set password already, use a dummy to enable the placeholder
+            form.fields['password'].initial = "dummy"
         if self.request.method == 'POST':
             form = validate_userlist_or_org_units(form)
 

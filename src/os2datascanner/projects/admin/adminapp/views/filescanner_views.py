@@ -20,7 +20,6 @@ from .scanner_views import (
     ScannerCopy,
     ScannerCreate,
     ScannerList)
-from ..aescipher import decrypt
 from ..models.scannerjobs.filescanner_model import FileScanner
 from django.utils.translation import ugettext_lazy as _
 
@@ -82,7 +81,7 @@ class FileScannerUpdate(ScannerUpdate):
         ]
 
     def get_form(self, form_class=None):
-        """Adds special field password and decrypts password."""
+        """Adds special field password."""
         if form_class is None:
             form_class = self.get_form_class()
 
@@ -94,10 +93,9 @@ class FileScannerUpdate(ScannerUpdate):
 
         if authentication.username:
             form.fields['username'].initial = authentication.username
-        if authentication.ciphertext:
-            password = decrypt(bytes(authentication.iv),
-                               bytes(authentication.ciphertext))
-            form.fields['password'].initial = password
+        if authentication.iv:
+            # if there is a set password already, use a dummy to enable the placeholder
+            form.fields['password'].initial = "dummy"
         if authentication.domain:
             form.fields['domain'].initial = authentication.domain
 

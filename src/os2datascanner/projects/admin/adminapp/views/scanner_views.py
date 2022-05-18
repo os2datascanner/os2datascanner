@@ -219,7 +219,7 @@ class ScannerBase(object):
 
         if 'username' in form.cleaned_data:
             authentication.username = form.cleaned_data['username']
-        if 'password' in form.cleaned_data:
+        if 'password' in form.cleaned_data and form.cleaned_data['password'] != "":
             authentication.set_password(str(form.cleaned_data['password']))
         if 'domain' in form.cleaned_data:
             authentication.domain = form.cleaned_data['domain']
