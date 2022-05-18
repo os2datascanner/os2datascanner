@@ -17,10 +17,19 @@ PREFETCH_COUNT = 8
 
 
 def check(source_manager, handle):
-    """Runs Resource.check() on the ultimate top-level Handle behind a given
-    Handle."""
+    """
+    Runs Resource.check() on the top-level Handle behind a given Handle.
+    """
+
+    # In most cases top-level is the >ultimate top-level<, for example a container of files. In
+    # cases where the next "layer" up has yields_independent_sources set true, f.e. email
+    # accounts, we stop traversing. Thus checking the email's existence and not the mail
+    # account's.
     while handle.source.handle:
-        handle = handle.source.handle
+        if not handle.source.handle.source.yields_independent_sources:
+            handle = handle.source.handle
+        else:
+            break
     try:
         return handle.follow(source_manager).check()
     except Exception as e:
