@@ -68,6 +68,9 @@
     <a id="completed" class="tabs__control" href="/status-completed/">
         {% trans "Completed scans" %}
     </a>
+    <a id="error-log" class="tabs__control" href="/error-log/">
+        {% trans "Error Log" %}
+    </a>
     <!-- <a id="upcoming" class="tabs__control" href="#">Kommende scanninger</a> -->
 </div>
 {% endif %}
@@ -153,11 +156,15 @@
     // Status tabs
     var scan_status = document.getElementById("scan-status")
     var completed = document.getElementById("completed")
+    var error_log = document.getElementById("error-log")
 
     if (location.pathname === '/status/') {
         scan_status.classList.add('active')
     }
     if (location.pathname === '/status-completed/') {
         completed.classList.add("active")
+    }
+    if (location.pathname === '/error-log/') {
+        error_log.classList.add("active")
     }
 </script>

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-19 11:21+0200\n"
+"POT-Creation-Date: 2022-05-20 11:14+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -198,11 +198,12 @@ msgid "Notification"
 msgstr "Notifikation"
 
 #: adminapp/models/usererrorlog_model.py:9
-#, python-brace-format
-msgid "Folder at {path} using outdated encoding. Please     rename the folder."
-msgstr "Mappe i stien {path} benytter forældet indkodning. Omdøb venligst mappen."
+msgid ""
+"Folder at the path is using outdated encoding. Please rename the folder."
+msgstr "Mappe på stien indeholder forældet indkodning. Omdøb venligst mappen."
 
 #: adminapp/models/usererrorlog_model.py:24
+#: adminapp/templates/os2datascanner/error_log.html:39
 msgid "Path"
 msgstr "Sti"
 
@@ -378,6 +379,29 @@ msgstr "Ønsker du virkelig at slette?"
 msgid "No"
 msgstr "Nej"
 
+#: adminapp/templates/os2datascanner/error_log.html:17
+#: adminapp/templates/os2datascanner/error_log.html:22
+#: adminapp/templates/os2datascanner/scanner_tabs.html:72
+msgid "Error Log"
+msgstr "Fejlbeskeder"
+
+#: adminapp/templates/os2datascanner/error_log.html:33
+msgid "Error"
+msgstr "Fejl"
+
+#: adminapp/templates/os2datascanner/error_log.html:36
+#: adminapp/templates/os2datascanner/scan_completed.html:36
+msgid "Started"
+msgstr "Startet"
+
+#: adminapp/templates/os2datascanner/error_log.html:42
+msgid "Scan"
+msgstr "Scan"
+
+#: adminapp/templates/os2datascanner/error_log.html:72
+msgid "no errors found"
+msgstr "ingen fejl fundet"
+
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:114
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
@@ -552,10 +576,6 @@ msgstr "Ja"
 #: adminapp/templates/os2datascanner/scanner_tabs.html:69
 msgid "Completed scans"
 msgstr "Udførte scanninger"
-
-#: adminapp/templates/os2datascanner/scan_completed.html:36
-msgid "Started"
-msgstr "Startet"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:39
 msgid "Objects"
@@ -1180,7 +1200,7 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
-#: adminapp/views/scanner_views.py:48
+#: adminapp/views/scanner_views.py:49
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 

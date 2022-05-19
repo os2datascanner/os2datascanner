@@ -29,6 +29,7 @@ from .views import RestrictedListView, RestrictedCreateView, \
 from ..models.authentication_model import Authentication
 from ..models.rules.rule_model import Rule
 from ..models.scannerjobs.scanner_model import Scanner, ScanStatus
+from ..models.usererrorlog_model import UserErrorLog
 from django.utils.translation import ugettext_lazy as _
 
 from channels.layers import get_channel_layer
@@ -144,6 +145,16 @@ class StatusDelete(RestrictedDeleteView):
         self.object = self.get_object(
                 queryset=self.get_queryset().select_for_update())
         return super().form_valid()
+
+
+class UserErrorLogView(RestrictedListView):
+    """Displays list of errors encountered."""
+    template_name = 'os2datascanner/error_log.html'
+    model = UserErrorLog
+
+    def get_queryset(self):
+        """Order errors by most recent scan."""
+        return super().get_queryset().order_by('-scan_status__scan_tag__time')
 
 
 class ScannerList(RestrictedListView):
