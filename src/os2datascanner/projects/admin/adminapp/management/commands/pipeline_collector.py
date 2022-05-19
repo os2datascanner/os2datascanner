@@ -53,14 +53,18 @@ def status_message_received_raw(body):
         # deleted. Throw it away
         return
 
-    locked_qs = ScanStatus.objects.select_for_update(of=('self',))
-    scan_status = locked_qs.filter(  # Uses the "ss_pc_lookup" index
-            scanner=scanner,
-            scan_tag=body["scan_tag"])
+    locked_qs = ScanStatus.objects.select_for_update(
+        of=('self',)
+    ).filter(
+        scanner=scanner,
+        scan_tag=body["scan_tag"]
+    )
+    # Queryset is evaluated immediately with .first() to lock the database entry.
+    locked_qs.first()
 
     if message.total_objects is not None:
         # An explorer has finished exploring a Source
-        scan_status.update(
+        locked_qs.update(
                 message=message.message,
                 last_modified=timezone.now(),
                 status_is_error=message.status_is_error,
@@ -70,7 +74,7 @@ def status_message_received_raw(body):
 
     elif message.object_size is not None and message.object_type is not None:
         # A worker has finished processing a Handle
-        scan_status.update(
+        locked_qs.update(
                 message=message.message,
                 last_modified=timezone.now(),
                 status_is_error=message.status_is_error,
@@ -79,7 +83,7 @@ def status_message_received_raw(body):
 
     # Get the frequency setting and decide whether or not to create a snapshot
     snapshot_param = settings.SNAPSHOT_PARAMETER
-    scan_status = scan_status.first()
+    scan_status = locked_qs.first()
     if scan_status:
         n_total = scan_status.total_objects
         if n_total and n_total > 0:
@@ -182,11 +186,15 @@ def checkup_message_received_raw(body):
 
 
 def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # noqa: CCR001, E501 too high cognitive complexity
-    locked_qs = ScheduledCheckup.objects.select_for_update(of=('self',))
-    checkup = locked_qs.filter(  # Uses the "sc_pc_lookup" index
-            scanner=scanner,
-            handle_representation=handle.to_json_object())
-    if checkup:
+    locked_qs = ScheduledCheckup.objects.select_for_update(
+        of=('self',)
+    ).filter(  # Uses the "sc_pc_lookup" index
+        scanner=scanner,
+        handle_representation=handle.to_json_object()
+    )
+    # Queryset is evaluated immediately with .first() to lock the database entry.
+    locked_qs.first()
+    if locked_qs:
         # There was already a checkup object in the database. Let's take a
         # look at it
         if matches:
@@ -200,7 +208,7 @@ def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # n
                     logger.debug(
                             "LM/no change, updating timestamp",
                             handle=handle.presentation)
-                    checkup.update(
+                    locked_qs.update(
                             interested_before=scan_time)
                 else:
                     # This object has been changed and no longer has any
@@ -208,14 +216,14 @@ def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # n
                     logger.debug(
                             "Changed, no matches, deleting",
                             handle=handle.presentation)
-                    checkup.delete()
+                    locked_qs.delete()
             else:
                 # This object has changed, but still has matches. Update
                 # the checkup timestamp
                 logger.debug(
                         "Changed, new matches, updating timestamp",
                         handle=handle.presentation)
-                checkup.update(
+                locked_qs.update(
                         interested_before=scan_time)
         elif problem:
             if problem.missing:
@@ -224,7 +232,7 @@ def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # n
                 logger.debug(
                         "Problem, deleted, deleting",
                         handle=handle.presentation)
-                checkup.delete()
+                locked_qs.delete()
             else:
                 # Transient error -- do nothing. In particular, don't
                 # update the checkup timestamp; we don't want to forget
@@ -238,7 +246,7 @@ def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # n
                 "Interesting, creating", handle=handle.presentation)
         # An object with a transient problem or with real matches is an
         # object we'll want to check up on again later
-        locked_qs.update_or_create(
+        ScheduledCheckup.objects.update_or_create(
                 handle_representation=handle.to_json_object(),
                 scanner=scanner,
                 # XXX: ideally we'd detect if a LastModifiedRule is the
