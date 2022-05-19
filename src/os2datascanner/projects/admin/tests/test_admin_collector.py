@@ -12,7 +12,8 @@ from os2datascanner.engine2.rules.rule import Sensitivity
 
 from ..adminapp.management.commands import pipeline_collector
 from ..adminapp.management.commands.pipeline_collector import \
-    status_message_received_raw
+    status_message_received_raw, problem_message_recieved_raw
+from ..adminapp.models.usererrorlog_model import UserErrorLog, translation_table
 from ..adminapp.models.scannerjobs.scanner_model import ScheduledCheckup, ScanStatus, \
     Scanner
 
@@ -162,3 +163,23 @@ class PipelineCollectorTests(TestCase):
         with self.assertRaises(DataError):
             ScheduledCheckup.objects.select_for_update().get(
                 handle_representation=positive_match_corrupt.handle.to_json_object())
+
+    def test_problem_message_is_logged(self):
+        """Test that a UserErrorLog object is successfully created when the pipeline_collector
+        recieves a problem message."""
+        scan_spec = common_scan_spec
+        scan_tag = scan_spec.scan_tag
+        handle = common_handle
+        error_message = "Exploration error. MemoryError: 12, Cannot allocate memory"
+
+        problem_message = messages.ProblemMessage(
+            scan_tag=scan_tag, source=scan_spec.source, handle=handle,
+            message=error_message)
+        body = problem_message.to_json_object()
+        yield from problem_message_recieved_raw(body)
+
+        self.assertTrue(UserErrorLog.objects.all().exists())
+        self.assertEqual(
+            UserErrorLog.objects.first().user_friendly_error_message,
+            translation_table[error_message](handle.presentation_url)
+        )

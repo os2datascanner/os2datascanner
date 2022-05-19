@@ -34,6 +34,7 @@ from prometheus_client import Summary, start_http_server
 
 from ...models.scannerjobs.scanner_model import (
     Scanner, ScanStatus, ScheduledCheckup, ScanStatusSnapshot)
+from ...models.usererrorlog_model import UserErrorLog
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_pipeline_collector_admin",
@@ -97,6 +98,40 @@ def status_message_received_raw(body):
                     scanned_objects=scan_status.scanned_objects,
                     scanned_size=scan_status.scanned_size,
                 )
+
+    yield from []
+
+
+def problem_message_recieved_raw(body):
+    """Send the error message on to the UserErrorLog object."""
+    message = messages.ProblemMessage.from_json_object(body)
+
+    try:
+        scanner = Scanner.objects.get(pk=message.scan_tag.scanner.pk)
+    except Scanner.DoesNotExist:
+        # This is a residual message for a scanner that the administrator has
+        # deleted. Throw it away
+        return
+
+    error_message = message.message
+    # Different types of scans have different source classes, where the
+    # source path is contained differently.
+    if message.handle:
+        path = message.handle.presentation_url
+    else:
+        path = ""
+
+    # Determine related ScanStatus object
+    scan_status = ScanStatus.objects.filter(  # Uses the "ss_pc_lookup" index
+            scanner=scanner,
+            scan_tag=body["scan_tag"]).first()
+
+    if scan_status:
+        UserErrorLog.objects.create(
+            scan_status=scan_status,
+            error_message=error_message,
+            path=path,
+        )
 
     yield from []
 
@@ -237,6 +272,8 @@ class CollectorRunner(PikaPipelineThread):
                         yield from status_message_received_raw(body)
                     elif routing_key == "os2ds_checkups":
                         yield from checkup_message_received_raw(body)
+                    elif routing_key == "os2ds_problems":
+                        yield from problem_message_recieved_raw(body)
             except DataError as de:
                 # DataError occurs when something went wrong trying to select
                 # or create/update data in the database. Often regarding
@@ -266,5 +303,5 @@ class Command(BaseCommand):
         logging.getLogger("os2datascanner").setLevel(_loglevels[log])
 
         CollectorRunner(
-                read=["os2ds_status", "os2ds_checkups"],
+                read=["os2ds_status", "os2ds_checkups", "os2ds_problems"],
                 prefetch_count=8).run_consumer()

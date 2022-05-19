@@ -21,6 +21,7 @@ class Source(TypePropertyEquality, JSONSerialisable):
     with the same type and properties compare equal. (One useful consequence of
     this is that SourceManager will collapse several equal Sources together,
     only opening one of them.)"""
+
     def __contains__(self, h: "mhandle.Handle") -> bool:
         """Test if a handle originated from this Source"""
         while h:

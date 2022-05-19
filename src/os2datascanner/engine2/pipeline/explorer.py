@@ -19,7 +19,7 @@ PROMETHEUS_DESCRIPTION = "Sources explored"
 PREFETCH_COUNT = 1
 
 
-def message_received_raw(body, channel, source_manager):
+def message_received_raw(body, channel, source_manager):  # noqa
     try:
         scan_tag = messages.ScanTagFragment.from_json_object(body["scan_tag"])
     except KeyError:
@@ -54,12 +54,24 @@ def message_received_raw(body, channel, source_manager):
     try:
         for handle in scan_spec.source.handles(source_manager):
             if not scan_spec.source.yields_independent_sources:
-                # This Handle is just a normal reference to a scannable object.
-                # Send it on to be processed
-                yield ("os2ds_conversions",
-                       messages.ConversionMessage(
-                           scan_spec, handle, progress).to_json_object())
-                handle_count += 1
+                if isinstance(handle, tuple) and handle[1]:
+                    # This Handle threw an exception during exploration.
+                    # Send a problem message, so the user can be notified.
+                    handle_object, error = handle
+                    exception_message = "Exploration error. {0}: ".format(type(error).__name__)
+                    exception_message += ", ".join([str(a) for a in error.args])
+                    problem_message = messages.ProblemMessage(
+                        scan_tag=scan_tag, source=scan_spec.source, handle=handle_object,
+                        message=exception_message)
+                    yield ("os2ds_problems", problem_message.to_json_object())
+                    logger.info(f"Sent problem message for handle: {handle_object}.")
+                else:
+                    # This Handle is just a normal reference to a scannable object.
+                    # Send it on to be processed
+                    yield ("os2ds_conversions",
+                           messages.ConversionMessage(
+                                scan_spec, handle, progress).to_json_object())
+                    handle_count += 1
             else:
                 # This Handle is a thin wrapper around an independent Source.
                 # Construct that Source and enqueue it for further exploration
