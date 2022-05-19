@@ -9,7 +9,6 @@ from os2datascanner.utils.system_utilities import time_now
 
 from ..utilities.temp_resource import NamedTemporaryResource
 from ...conversions.types import OutputType
-from ...conversions.utilities.results import SingleResult
 
 
 class Resource(ABC):
@@ -20,9 +19,8 @@ class Resource(ABC):
     subclass.
 
     Resources normally have functions that retrieve individual property values
-    from an object. To minimise wasted computation, these values are wrapped in
-    the SingleResult class, which allows them to include by reference other
-    values that were computed at the same time.
+    from an object. To minimise wasted computation, these values may be made
+    navigable.
 
     Resources are short-lived -- they should only be used when you actually
     need to get to content. As such, they are not serialisable."""
@@ -93,15 +91,14 @@ class TimestampedResource(Resource):
 
     def get_last_modified(self):
         """Returns the last modification date of this TimestampedResource as a
-        wrapped Python datetime.datetime; this may be used to decide whether or
-        not a FileResource's content should be re-examined. Multiple calls to
-        this method should normally return the same value.
+        Python datetime.datetime; this may be used to decide whether or not a
+        FileResource's content should be re-examined. Multiple calls to this
+        method should normally return the same value.
 
         The default implementation of this method returns the time this
         method was first called on this TimestampedResource."""
         if not self._lm_timestamp:
-            self._lm_timestamp = SingleResult(
-                    None, OutputType.LastModified, time_now())
+            self._lm_timestamp = time_now()
         return self._lm_timestamp
 
 
@@ -154,7 +151,7 @@ class FileResource(TimestampedResource):
 
     def _generate_metadata(self):
         yield "last-modified", OutputType.LastModified.encode_json_object(
-                self.get_last_modified().value)
+                self.get_last_modified())
 
     def compute_type(self):
         """Guesses the type of this file, possibly examining its content in the

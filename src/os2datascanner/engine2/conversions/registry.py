@@ -1,4 +1,4 @@
-from .utilities.results import SingleResult
+from .utilities.navigable import make_navigable
 
 
 __converters = {}
@@ -25,7 +25,7 @@ def conversion(output_type, *mime_types):
     return _conversion
 
 
-def convert(resource, output_type, mime_override=None) -> SingleResult:
+def convert(resource, output_type, mime_override=None):
     """Tries to convert a Resource to the specified OutputType by using the
     database of registered conversion functions.
 
@@ -41,6 +41,6 @@ def convert(resource, output_type, mime_override=None) -> SingleResult:
             raise KeyError("No converters registered for "
                            "{0}".format(e)) from e
     value = converter(resource)
-    if value is not None and not isinstance(value, SingleResult):
-        value = SingleResult(None, output_type, value)
+    if value is not None and not hasattr(value, 'parent'):
+        value = make_navigable(value)
     return value

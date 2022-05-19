@@ -2,8 +2,6 @@ from io import BytesIO
 from contextlib import contextmanager
 from dateutil.parser import isoparse
 
-from ...conversions.types import OutputType
-from ...conversions.utilities.results import SingleResult
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
@@ -155,12 +153,11 @@ class MSGraphCalendarEventResource(FileResource):
                 else "text/plain")
 
     def get_size(self):
-        return SingleResult(None, 'size', 1024)
+        return 1024
 
     def get_last_modified(self):
         timestamp = self.get_event_metadata().get("lastModifiedDateTime")
-        timestamp = isoparse(timestamp) if timestamp else None
-        return SingleResult(None, OutputType.LastModified, timestamp)
+        return isoparse(timestamp) if timestamp else None
 
 
 class MSGraphCalendarEventHandle(Handle):

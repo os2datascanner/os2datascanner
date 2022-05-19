@@ -14,7 +14,7 @@ from contextlib import contextmanager
 
 from ..utilities.backoff import DefaultRetrier
 from ..conversions.types import OutputType
-from ..conversions.utilities.results import MultipleResults
+from ..conversions.utilities.navigable import make_values_navigable
 from .smb import (
     SMBSource, make_smb_url, compute_domain,
     make_full_windows_path, make_presentation_url)
@@ -325,10 +325,11 @@ class SMBCResource(FileResource):
         if not self._mr:
             f = self.open_file()
             try:
-                self._mr = MultipleResults.make_from_attrs(
-                        stat_result(f.fstat()), *stat_attributes)
-                self._mr[OutputType.LastModified] = datetime.fromtimestamp(
-                        self._mr["st_mtime"].value)
+                stat = stat_result(f.fstat())
+                ts = datetime.fromtimestamp(stat.st_mtime)
+                self._mr = make_values_navigable(
+                        {k: getattr(stat, k) for k in stat_attributes} |
+                        {OutputType.LastModified: ts})
             finally:
                 f.close()
         return self._mr

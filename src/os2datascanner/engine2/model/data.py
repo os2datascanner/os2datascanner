@@ -6,7 +6,6 @@ from tempfile import NamedTemporaryFile
 from contextlib import contextmanager
 from typing import Tuple
 
-from ..conversions.utilities.results import SingleResult
 from .core import Source, Handle, FileResource
 
 
@@ -71,7 +70,7 @@ class DataResource(FileResource):
         return True
 
     def get_size(self):
-        return SingleResult(None, "size", len(self.handle.source._content))
+        return len(self.handle.source._content)
 
     def get_last_modified(self):
         # This is not redundant -- the superclass's default implementation is

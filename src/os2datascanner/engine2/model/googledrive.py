@@ -6,7 +6,6 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.errors import HttpError
 from .core import Source, Handle, FileResource
-from ..conversions.utilities.results import SingleResult
 
 
 class GoogleDriveSource(Source):
@@ -121,8 +120,7 @@ class GoogleDriveResource(FileResource):
         return self._metadata
 
     def get_size(self):
-        return SingleResult(None, 'size', self.metadata.get(
-            'size', self.metadata.get('quotaBytesUsed')))
+        return self.metadata.get('size', self.metadata.get('quotaBytesUsed'))
 
 
 class GoogleDriveHandle(Handle):
@@ -141,10 +139,6 @@ class GoogleDriveHandle(Handle):
     def presentation_place(self):
         return (f"folder {self.relative_path.strip(' ')}"
                 f" of account {self.source._user_email}")
-
-    @property
-    def name(self):
-        return self.presentation_name
 
     @property
     def sort_key(self):

@@ -21,7 +21,7 @@ def try_apply(sm, source, rule):
             resource = handle.follow(sm)
             representation = convert(resource, rule.operates_on)
             if representation:
-                yield from rule.match(representation.value)
+                yield from rule.match(representation)
 
 
 class Engine2CompoundSourceTest(unittest.TestCase):
@@ -134,7 +134,7 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                 if h.name.endswith(".html"):
                     r = h.follow(sm)
                     self.assertLess(
-                            r.get_size().value,
+                            r.get_size(),
                             1048576,
                             "LibreOffice HTML output was too big")
 

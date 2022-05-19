@@ -32,17 +32,17 @@ class Engine2ConversionTest(unittest.TestCase):
 
     def test_last_modified(self):
         self.assertIsNotNone(
-            convert(self._ir, OutputType.LastModified).value)
+            convert(self._ir, OutputType.LastModified))
 
     def test_image_dimensions(self):
         self.assertEqual(
-            convert(self._ir, OutputType.ImageDimensions).value,
+            convert(self._ir, OutputType.ImageDimensions),
             (896, 896)
         )
 
     def test_fallback(self):
         self.assertEqual(
-            convert(self._ir, OutputType.AlwaysTrue).value,
+            convert(self._ir, OutputType.AlwaysTrue),
             True)
 
     def test_dummy(self):
@@ -61,7 +61,7 @@ class Engine2ConversionTest(unittest.TestCase):
             f"\n{'':16}"
             "paragraph."
             f"\n{'':8}\n{'':4}",
-            convert(self._hr, OutputType.Text).value,
+            convert(self._hr, OutputType.Text),
             "converted HTML do not match the expected result",
         )
 

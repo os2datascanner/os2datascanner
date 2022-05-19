@@ -83,7 +83,7 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001, E501 t
         object_type = "application/octet-stream"
         try:
             resource = message.handle.follow(source_manager)
-            object_size = resource.get_size().value
+            object_size = resource.get_size()
             object_type = resource.compute_type()
         except Exception:
             pass

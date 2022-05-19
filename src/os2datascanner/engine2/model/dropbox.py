@@ -7,8 +7,6 @@ import dropbox
 from dropbox.files import GetMetadataError
 from dropbox.dropbox import create_session
 from dropbox.exceptions import ApiError
-from ..conversions.utilities.results import SingleResult
-from ..conversions.types import OutputType
 from .core import Source, Handle, FileResource
 
 
@@ -110,11 +108,10 @@ class DropboxResource(FileResource):
             yield BytesIO(res.content)
 
     def get_last_modified(self):
-        return SingleResult(None,
-                            OutputType.LastModified, self.metadata.server_modified)
+        return self.metadata.server_modified
 
     def get_size(self):
-        return SingleResult(None, 'size', self.metadata.size)
+        return self.metadata.size
 
 
 class DropboxHandle(Handle):

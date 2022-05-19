@@ -19,7 +19,6 @@ from os2datascanner.engine2.model.utilities.sitemap import (
     process_sitemap_url, _get_url_data)
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 from os2datascanner.engine2.conversions.types import Link, OutputType
-from os2datascanner.engine2.conversions.utilities.results import SingleResult
 from os2datascanner.engine2.conversions.registry import convert
 from os2datascanner.engine2 import settings as engine2_settings
 
@@ -492,7 +491,7 @@ class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
         with SourceManager() as sm:
             for h in indexed_mapped_site["source"].handles(sm):
                 if h.relative_path == "/hemmeligheder2.html":
-                    lm = h.follow(sm).get_last_modified().value
+                    lm = h.follow(sm).get_last_modified()
                     self.assertEqual(
                             (lm.year, lm.month, lm.day),
                             (2011, 12, 1),
@@ -575,11 +574,6 @@ class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
             r = first_thing.follow(sm)
             self.assertIsInstance(
                     r.get_last_modified(),
-                    SingleResult,
-                    ("{0}: last modification date is not a"
-                     " SingleResult").format(first_thing))
-            self.assertIsInstance(
-                    r.get_last_modified().value,
                     datetime,
                     ("{0}: last modification date value is not a"
                      " datetime.datetime").format(first_thing))
@@ -633,7 +627,7 @@ class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
                     "application/octet-stream",
                     "{0}: unexpected backup MIME type".format(first_thing))
             self.assertGreaterEqual(
-                    r.get_last_modified().value,
+                    r.get_last_modified(),
                     now,
                     "{0}: Last-Modified not fresh".format(first_thing))
 
@@ -775,7 +769,7 @@ class Engine2HTTPConversionTests(Engine2HTTPSetup, unittest.TestCase):
     def test_links_conversion(self):
         with SourceManager() as sm:
             lr = links_from_handle["handle"].follow(sm)
-            links = convert(lr, OutputType.Links, mime_override="text/html").value
+            links = convert(lr, OutputType.Links, mime_override="text/html")
 
         self.assertCountEqual(
             links,

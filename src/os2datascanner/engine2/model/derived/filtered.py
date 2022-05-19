@@ -7,7 +7,7 @@ from datetime import datetime
 from contextlib import contextmanager
 
 from ...conversions.types import OutputType
-from ...conversions.utilities.results import MultipleResults
+from ...conversions.utilities.navigable import make_values_navigable
 from ..core import Source, Handle, FileResource
 from .derived import DerivedSource
 
@@ -77,9 +77,11 @@ class FilteredResource(FileResource):
                 # Compute the size by seeking to the end of a fresh stream, in
                 # the process also populating the last modification date field
                 s.seek(0, 2)
-                self._mr = MultipleResults.make_from_attrs(s, "mtime", "filename", size=s.tell())
-                self._mr[OutputType.LastModified] = datetime.fromtimestamp(
-                        s.mtime)
+                ts = datetime.fromtimestamp(s.mtime)
+                self._mr = make_values_navigable(
+                        {k: getattr(s, k) for k in ("mtime", "filename")} |
+                        {"size": s.tell()} |
+                        {OutputType.LastModified: ts})
         return self._mr
 
     def get_size(self):

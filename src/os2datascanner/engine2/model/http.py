@@ -13,7 +13,8 @@ import re
 from .. import settings as engine2_settings
 from ..utilities.datetime import parse_datetime
 from ..conversions.types import Link, OutputType
-from ..conversions.utilities.results import SingleResult, MultipleResults
+from ..conversions.utilities.navigable import (
+        make_navigable, make_values_navigable)
 from .core import Source, Handle, FileResource
 from .utilities.sitemap import process_sitemap_url
 from ..utilities.backoff import WebRetrier
@@ -269,11 +270,12 @@ class WebResource(FileResource):
             self._response = self._get_head_raw()
             header = self._response.headers
 
-            self._mr = MultipleResults(
+            self._mr = make_values_navigable(
                     {k.lower(): v for k, v in header.items()})
             try:
-                self._mr[OutputType.LastModified] = parse_datetime(
-                        self._mr["last-modified"].value)
+                self._mr[OutputType.LastModified] = make_navigable(
+                        parse_datetime(self._mr["last-modified"]),
+                        parent=self._mr)
             except (KeyError, ValueError):
                 pass
         if check:
@@ -289,13 +291,13 @@ class WebResource(FileResource):
             return self.unpack_header(check=True).setdefault(
                     OutputType.LastModified, super().get_last_modified())
         else:
-            return SingleResult(None, OutputType.LastModified, lm_hint)
+            return lm_hint
 
     def compute_type(self):
         # At least for now, strip off any extra parameters the media type might
         # specify
         return self.unpack_header(check=True).get(
-            "content-type", "application/octet-stream").value.split(";", maxsplit=1)[0]
+            "content-type", "application/octet-stream").split(";", maxsplit=1)[0]
 
     @contextmanager
     def make_stream(self):
