@@ -1,15 +1,15 @@
 from django.test import TestCase
 from parameterized import parameterized
 
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.logical import AndRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
-from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.utilities.datetime import parse_datetime
 
 from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.management.commands import pipeline_collector
@@ -23,17 +23,17 @@ time2 = "2020-10-28T14:36:20+01:00"
 scan_tag0 = messages.ScanTagFragment(
     scanner=messages.ScannerFragment(
             pk=22, name="Dummy test scanner"),
-    time=parse_isoformat_timestamp(time0),
+    time=parse_datetime(time0),
     user=None, organisation=None)
 scan_tag1 = messages.ScanTagFragment(
     scanner=messages.ScannerFragment(
             pk=22, name="Dummy test scanner"),
-    time=parse_isoformat_timestamp(time1),
+    time=parse_datetime(time1),
     user=None, organisation=None)
 scan_tag2 = messages.ScanTagFragment(
     scanner=messages.ScannerFragment(
             pk=22, name="Dummy test scanner"),
-    time=parse_isoformat_timestamp(time2), user=None, organisation=None)
+    time=parse_datetime(time2), user=None, organisation=None)
 
 common_handle = FilesystemHandle(
         FilesystemSource("/mnt/fs01.magenta.dk/brugere/af"),
@@ -130,7 +130,7 @@ transient_source_error = messages.ProblemMessage(
         handle=None,
         message="Not ready reading drive A: [A]bort, [R]etry, [F]ail?")
 
-late_rule = LastModifiedRule(parse_isoformat_timestamp(time2))
+late_rule = LastModifiedRule(parse_datetime(time2))
 late_negative_match = messages.MatchesMessage(
         scan_spec=common_scan_spec._replace(
                 scan_tag=scan_tag2,
@@ -242,7 +242,7 @@ class PipelineCollectorTests(TestCase):
         saved_match.refresh_from_db()
         self.assertEqual(
                 saved_match.scan_time,
-                parse_isoformat_timestamp(time2),
+                parse_datetime(time2),
                 "match timestamp not correctly updated")
         self.assertEqual(
                 saved_match.resolution_status,

@@ -6,11 +6,11 @@ from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.model.ews import (
         EWSMailHandle, EWSAccountSource)
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.utilities.datetime import parse_datetime
 
 from ..organizations.models.aliases import Alias
 from ..organizations.models.aliases import AliasType
@@ -30,17 +30,17 @@ time1 = "2020-10-28T14:21:27+01:00"
 time2 = "2020-09-22T04:07:12+03:00"
 
 scan_tag0 = messages.ScanTagFragment(
-        time=parse_isoformat_timestamp(time0),
+        time=parse_datetime(time0),
         scanner=messages.ScannerFragment(pk=14, name="Dummy test scanner"),
         user=None, organisation=None)
 
 scan_tag1 = messages.ScanTagFragment(
-        time=parse_isoformat_timestamp(time1),
+        time=parse_datetime(time1),
         scanner=messages.ScannerFragment(pk=11, name="Dummy test scanner2"),
         user=None, organisation=None)
 
 scan_tag2 = messages.ScanTagFragment(
-        time=parse_isoformat_timestamp(time2),
+        time=parse_datetime(time2),
         scanner=messages.ScannerFragment(pk=17, name="Dummy test scanner3"),
         user=None, organisation=None)
 

@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime, timezone, timedelta
 
 
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
+from os2datascanner.engine2.utilities.datetime import parse_datetime
 
 
 def seconds_to_tz(sec):
@@ -31,6 +31,6 @@ class MessagesTests(unittest.TestCase):
         ]
         for string, timestamp in tests:
             self.assertEqual(
-                    parse_isoformat_timestamp(string),
+                    parse_datetime(string),
                     timestamp,
                     "datestamp comparison failed")

@@ -6,9 +6,8 @@ from traceback import print_exc
 from contextlib import contextmanager
 
 from os2datascanner.utils.system_utilities import time_now
-
+from ...utilities.datetime import unparse_datetime
 from ..utilities.temp_resource import NamedTemporaryResource
-from ...conversions.types import OutputType
 
 
 class Resource(ABC):
@@ -150,8 +149,7 @@ class FileResource(TimestampedResource):
                 yield fp
 
     def _generate_metadata(self):
-        yield "last-modified", OutputType.LastModified.encode_json_object(
-                self.get_last_modified())
+        yield "last-modified", unparse_datetime(self.get_last_modified())
 
     def compute_type(self):
         """Guesses the type of this file, possibly examining its content in the
