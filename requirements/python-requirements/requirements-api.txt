@@ -151,7 +151,7 @@ pluggy==0.13.1
     # via
     #   -c requirements-engine.txt
     #   pytest
-prometheus-client==0.7.1
+prometheus_client==0.7.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
