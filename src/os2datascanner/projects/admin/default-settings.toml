@@ -84,6 +84,7 @@ OS2DATASCANNER_APPS = [
     'os2datascanner.projects.admin.core',
     'os2datascanner.projects.admin.organizations',
     'os2datascanner.projects.admin.import_services',
+    'os2datascanner.core_organizational_structure.apps.CoreOrganizationalStructureConfig'
 ]
 
 # placeholder configs for DEVs. Keys must exist here if they should be read from

@@ -9,11 +9,10 @@ from django.contrib.auth.models import User
 from mozilla_django_oidc import auth
 
 from os2datascanner.engine2.pipeline import messages
-
-from .models.aliases.alias_model import Alias
-from .models.aliases.emailalias_model import EmailAlias
-from .models.aliases.adsidalias_model import ADSIDAlias
 from .models.documentreport_model import DocumentReport
+
+from os2datascanner.projects.report.organizations.models import Alias
+from os2datascanner.projects.report.organizations.models import AliasType
 
 logger = structlog.get_logger()
 
@@ -42,10 +41,12 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
     sid = get_user_data(saml_attr.get('sid'), user_data)
     user = User.objects.get(username=username)
     if email:
-        sub_alias, is_created = EmailAlias.objects.get_or_create(user=user, address=email)
+        sub_alias, is_created = Alias.objects.get_or_create(user=user, _value=email,
+                                                            _alias_type=AliasType.EMAIL)
         create_alias_and_match_relations(sub_alias)
     if sid:
-        sub_alias, is_created = ADSIDAlias.objects.get_or_create(user=user, sid=sid)
+        sub_alias, is_created = Alias.objects.get_or_create(user=user, _value=sid,
+                                                            _alias_type=AliasType.SID)
         create_alias_and_match_relations(sub_alias)
 
 
@@ -90,9 +91,11 @@ def get_claim_user_info(claims, user):
 def get_or_create_user_aliases_OIDC(user, email, sid):  # noqa: D401
     """ This method creates or updates the users aliases  """
     if email:
-        EmailAlias.objects.get_or_create(user=user, address=email)
+        Alias.objects.get_or_create(user=user, _value=email,
+                                    _alias_type=AliasType.EMAIL)
     if sid:
-        ADSIDAlias.objects.get_or_create(user=user, sid=sid)
+        Alias.objects.get_or_create(user=user, _value=sid,
+                                    _alias_type=AliasType.SID)
 
 
 def get_user_data(key, user_data):
@@ -165,12 +168,18 @@ def create_alias_and_match_relations(sub_alias):
     # Although RFC 5321 says that the local part of an email address
     # -- the bit to the left of the @ --
     # is case sensitive, the real world disagrees..
-    if isinstance(sub_alias, EmailAlias):
+
+    if sub_alias.alias_type == AliasType.EMAIL:
         reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
-                        str(sub_alias.key): str(sub_alias).lower()})
-    else:
+                        "email-account": sub_alias.value.lower()})
+    elif sub_alias.alias_type == AliasType.SID:
         reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
-                        str(sub_alias.key): str(sub_alias)})
+                        "filesystem-owner-sid": sub_alias.value})
+    # TODO: web-domain should have its own AliasType, not use GENERIC
+    # TODO: Perhaps Alias should have a field with these key strings instead as well.
+    elif sub_alias.alias_type == AliasType.GENERIC:
+        reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
+                        "web-domain": sub_alias.value})
     tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk)
                             for r in reports], ignore_conflicts=True)
 

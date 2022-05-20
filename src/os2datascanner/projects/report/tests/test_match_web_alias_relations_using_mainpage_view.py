@@ -1,5 +1,5 @@
 from os2datascanner.engine2.model.http import WebHandle, WebSource
-from os2datascanner.projects.report.reportapp.models.aliases.webdomainalias_model import WebDomainAlias  # noqa: E501
+from os2datascanner.projects.report.organizations.models.aliases import Alias, AliasType
 from parameterized import parameterized
 from datetime import timedelta
 from django.test import RequestFactory, TestCase
@@ -339,9 +339,10 @@ class MatchWebDomainAliasRelationTest(TestCase):
         remediator.delete()
 
     def test_mainpage_view_with_relation_table(self):
-        alias, created = WebDomainAlias.objects.get_or_create(
+        alias, created = Alias.objects.get_or_create(
             user=self.user,
-            domain='magenta.dk'
+            _value='magenta.dk',
+            _alias_type=AliasType.GENERIC
         )
         create_alias_and_match_relations(alias)
         qs = self.mainpage_get_queryset()
@@ -353,9 +354,10 @@ class MatchWebDomainAliasRelationTest(TestCase):
         ("Normal match", '', 0, 0)])
     def test_mainpage_view_with_relation_table_and_incoming_new_matches(
             self, _, domain, expected1, expected2):
-        alias, created = WebDomainAlias.objects.get_or_create(
+        alias, created = Alias.objects.get_or_create(
             user=self.user,
-            domain=domain
+            _value=domain,
+            _alias_type=AliasType.GENERIC
         )
         create_alias_and_match_relations(alias)
         qs = self.mainpage_get_queryset()
@@ -366,9 +368,10 @@ class MatchWebDomainAliasRelationTest(TestCase):
         alias.delete()
 
     def test_update_relation_management_command(self):
-        alias, created = WebDomainAlias.objects.get_or_create(
+        alias, created = Alias.objects.get_or_create(
             user=self.user,
-            domain='magenta.dk'
+            _value='magenta.dk',
+            _alias_type=AliasType.GENERIC
         )
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 0)
@@ -380,13 +383,15 @@ class MatchWebDomainAliasRelationTest(TestCase):
 
 # Helper methods
     def create_web_domain_alias_kjeld_and_egon(self):
-        kjeld_alias = WebDomainAlias.objects.create(
+        kjeld_alias = Alias.objects.create(
             user=self.user,
-            domain='jensen.dk'
+            _value='jensen.dk',
+            _alias_type=AliasType.GENERIC
         )
-        egon_alias = WebDomainAlias.objects.create(
+        egon_alias = Alias.objects.create(
             user=self.user,
-            domain='magenta.dk'
+            _value='magenta.dk',
+            _alias_type=AliasType.GENERIC
         )
         return kjeld_alias, egon_alias
 

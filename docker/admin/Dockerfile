@@ -109,6 +109,8 @@ COPY src/os2datascanner/__init__.py ./
 
 # Copy necessary files from engine module TODO: minimize this
 COPY src/os2datascanner/engine2 ./engine2
+# Copy in core_oprganizational_structure app
+COPY src/os2datascanner/core_organizational_structure ./core_organizational_structure
 
 # Copy VERSION, LICENCE, README, NEWS to PROJECT_DIR
 WORKDIR /code

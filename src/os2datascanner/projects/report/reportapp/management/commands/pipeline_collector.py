@@ -32,17 +32,14 @@ from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.model.core import Handle, Source
 from os2datascanner.utils.system_utilities import time_now
 
+from os2datascanner.projects.report.organizations.models import Organization
+
 from prometheus_client import Summary, start_http_server
 
 from ...models.documentreport_model import DocumentReport
-from ...models.organization_model import Organization
 from ...utils import hash_handle, prepare_json_object
 
-from ...models.aliases.alias_model import Alias
-from ...models.aliases.adsidalias_model import ADSIDAlias
-from ...models.aliases.emailalias_model import EmailAlias
-from ...models.aliases.webdomainalias_model import WebDomainAlias
-
+from os2datascanner.projects.report.organizations.models import Alias
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_pipeline_collector_report",
@@ -161,13 +158,13 @@ def create_aliases(obj):
         return
 
     if (email := metadata.metadata.get("email-account")):
-        email_alias = EmailAlias.objects.filter(address__iexact=email)
+        email_alias = Alias.objects.filter(_alias_type="email", _value__iexact=email)
         add_new_relations(email_alias, new_objects, obj, tm)
     if (adsid := metadata.metadata.get("filesystem-owner-sid")):
-        adsid_alias = ADSIDAlias.objects.filter(sid=adsid)
+        adsid_alias = Alias.objects.filter(_alias_type="SID", _value=adsid)
         add_new_relations(adsid_alias, new_objects, obj, tm)
     if (web_domain := metadata.metadata.get("web-domain")):
-        web_domain_alias = WebDomainAlias.objects.filter(domain=web_domain)
+        web_domain_alias = Alias.objects.filter(_alias_type="generic", _value=web_domain)
         add_new_relations(web_domain_alias, new_objects, obj, tm)
 
     try:

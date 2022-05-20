@@ -4,8 +4,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField
 from django.utils.translation import ugettext_lazy as _
-from .organization_model import Organization
 
+from os2datascanner.projects.report.organizations.models import Organization
 from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.pipeline.messages import (
@@ -13,11 +13,22 @@ from os2datascanner.engine2.pipeline.messages import (
 )
 import structlog
 
+from os2datascanner.projects.report.organizations.models import Alias
+
 logger = structlog.get_logger(__name__)
 
 
 class DocumentReport(models.Model):
     factory = None
+
+    # Solution created in admin.py, since save() method doesn't work with m2m relations.
+    # Changed save_model in admin.py, to make sure m2m relations doesn't get cleared after save
+    # noqa Source: https://stackoverflow.com/questions/1925383/issue-with-manytomany-relationships-not-updating-immediately-after-save/1925784#1925784
+
+    alias_relation = models.ManyToManyField(Alias, blank=True,
+                                            verbose_name=_('Alias relation'),
+                                            related_name='match_relation',
+                                            db_table="new_alias_relation")
 
     scan_time = models.DateTimeField(null=True, db_index=True,
                                      verbose_name=_('scan time'))
@@ -151,11 +162,11 @@ class DocumentReport(models.Model):
         self.custom_resolution_status = self.custom_resolution_status.strip()
         if self.resolution_status == 0 and not self.custom_resolution_status:
             raise ValidationError(
-                    {
-                        "custom_resolution_status":
+                {
+                    "custom_resolution_status":
                         "Resolution status 0 requires an"
                         " explanation"
-                    })
+                })
 
     def __init__(self, *args, **kwargs):
         # TODO: move to property/model method
@@ -192,16 +203,16 @@ class DocumentReport(models.Model):
         ordering = ['-sensitivity', '-probability', 'pk']
         indexes = [
             models.Index(
-                    "raw_matches__matched",
-                    name="documentreport_matched"),
+                "raw_matches__matched",
+                name="documentreport_matched"),
             models.Index(
-                    fields=("scanner_job_pk", "path",),
-                    name="pc_update_query"),
+                fields=("scanner_job_pk", "path",),
+                name="pc_update_query"),
         ]
         constraints = [
             models.UniqueConstraint(
-                    fields=["scanner_job_pk", "path"],
-                    name="unique_scanner_pk_and_path")
+                fields=["scanner_job_pk", "path"],
+                name="unique_scanner_pk_and_path")
         ]
 
 

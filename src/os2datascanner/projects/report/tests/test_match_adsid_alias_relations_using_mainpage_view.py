@@ -1,6 +1,6 @@
 from os2datascanner.engine2.model.smb import SMBHandle, SMBSource
 from os2datascanner.engine2.model.smbc import SMBCHandle, SMBCSource
-from os2datascanner.projects.report.reportapp.models.aliases.adsidalias_model import ADSIDAlias
+from os2datascanner.projects.report.organizations.models.aliases import Alias, AliasType
 from os2datascanner.projects.report.reportapp.templatetags.handle_extras import (
     find_file_folder, find_parent)
 from parameterized import parameterized
@@ -337,9 +337,10 @@ class MatchADSIDAliasRelationTest(TestCase):
         remediator.delete()
 
     def test_mainpage_view_with_relation_table(self):
-        alias, created = ADSIDAlias.objects.get_or_create(
+        alias, created = Alias.objects.get_or_create(
             user=self.user,
-            sid='S-1-5-21-1180699209-877415012-3182924384-1004'
+            _value='S-1-5-21-1180699209-877415012-3182924384-1004',
+            _alias_type=AliasType.SID
         )
         create_alias_and_match_relations(alias)
         qs = self.mainpage_get_queryset()
@@ -351,10 +352,10 @@ class MatchADSIDAliasRelationTest(TestCase):
         ("Normal match", '', 0, 0)])
     def test_mainpage_view_with_relation_table_and_incoming_new_matches(
             self, _, sid, expected1, expected2):
-        # Note: address cannot be NoneType due to DB constraint.
-        alias, created = ADSIDAlias.objects.get_or_create(
+        alias, created = Alias.objects.get_or_create(
             user=self.user,
-            sid=sid
+            _value=sid,
+            _alias_type=AliasType.SID
         )
         create_alias_and_match_relations(alias)
         qs = self.mainpage_get_queryset()
@@ -365,9 +366,10 @@ class MatchADSIDAliasRelationTest(TestCase):
         alias.delete()
 
     def test_update_relation_management_command(self):
-        alias, created = ADSIDAlias.objects.get_or_create(
+        alias, created = Alias.objects.get_or_create(
             user=self.user,
-            sid='S-1-5-21-1180699209-877415012-3182924384-1004'
+            _value='S-1-5-21-1180699209-877415012-3182924384-1004',
+            _alias_type=AliasType.SID
         )
         qs = self.mainpage_get_queryset()
         self.assertEqual(len(qs), 0)
@@ -399,13 +401,15 @@ class MatchADSIDAliasRelationTest(TestCase):
 
 # Helper methods
     def create_adsid_alias_kjeld_and_egon(self):
-        kjeld_alias = ADSIDAlias.objects.create(
+        kjeld_alias = Alias.objects.create(
             user=self.user,
-            sid='S-1-5-21-82206942009-31-1004'
+            _value='S-1-5-21-82206942009-31-1004',
+            _alias_type=AliasType.SID
         )
-        egon_alias = ADSIDAlias.objects.create(
+        egon_alias = Alias.objects.create(
             user=self.user,
-            sid='S-1-5-21-1180699209-877415012-3182924384-1004'
+            _value='S-1-5-21-1180699209-877415012-3182924384-1004',
+            _alias_type=AliasType.SID
         )
         return kjeld_alias, egon_alias
 
