@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 11:14+0200\n"
+"POT-Creation-Date: 2022-05-20 14:20+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -22,8 +22,7 @@ msgstr ""
 #: adminapp/models/apikey_model.py:16 adminapp/models/rules/rule_model.py:47
 #: adminapp/models/scannerjobs/scanner_model.py:77
 #: import_services/models/msgraph_import_job.py:32
-#: import_services/models/realm.py:29 organizations/models/account.py:62
-#: organizations/models/organization.py:73
+#: import_services/models/realm.py:29
 msgid "organization"
 msgstr "organisation"
 
@@ -54,8 +53,6 @@ msgid "Login method"
 msgstr "Login metode"
 
 #: adminapp/models/rules/rule_model.py:40 core/models/client.py:73
-#: organizations/models/organization.py:45
-#: organizations/models/organizational_unit.py:44
 #: organizations/templates/organizations/org_list.html:49
 msgid "name"
 msgstr "navn"
@@ -72,7 +69,6 @@ msgstr "Følsomhed"
 #: adminapp/models/scannerjobs/msgraph_models.py:73
 #: adminapp/models/scannerjobs/msgraph_models.py:112
 #: adminapp/models/scannerjobs/msgraph_models.py:152
-#: organizations/models/organizational_unit.py:63
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
 
@@ -288,7 +284,6 @@ msgstr "Regler"
 #: adminapp/templates/partials/breadcrumb.html:73
 #: adminapp/templates/partials/breadcrumb.html:81
 #: adminapp/templates/partials/breadcrumb.html:93 organizations/apps.py:8
-#: organizations/models/organization.py:74
 #: organizations/templates/organizations/org_list.html:6
 msgid "organizations"
 msgstr "organisationer"
@@ -362,6 +357,138 @@ msgstr "Log ind"
 #: adminapp/templates/logout.html:17
 msgid "again"
 msgstr "igen"
+
+#: adminapp/templates/mail/finished_scannerjob.html:36
+#, python-format
+msgid ""
+"\n"
+"\tHello %(full_name)s,\n"
+"    "
+msgstr "\n\tHej %(full_name)s,\n    "
+
+#: adminapp/templates/mail/finished_scannerjob.html:41
+#, python-format
+msgid ""
+"\n"
+"\tFor you information, your OS2datascanner-scan @ <strong>%(scanner_name)s</"
+"strong> has just finished.\n"
+"    "
+msgstr ""
+"\n"
+"\tTil orientering er dit OS2datascanner-scan @ <strong>%(scanner_name)s</"
+"strong> has just finished.\n"
+"    "
+
+#: adminapp/templates/mail/finished_scannerjob.html:46
+#, python-format
+#| msgid ""
+#| "\n"
+#| "%(total_objects)s objects were scanned - %(object_size)s in total - in "
+#| "%(completion_time)s.\n"
+msgid ""
+"\n"
+"\t<strong>%(total_objects)s</strong> objects were scanned - <strong>"
+"%(object_size)s</strong> in total - in <strong>%(completion_time)s</"
+"strong>.\n"
+"    "
+msgstr ""
+"\n"
+"\tDer blev scannet <strong>%(total_objects)s</strong> objekter - i alt "
+"<strong>%(object_size)s</strong> - i <strong>%(completion_time)s</"
+"strong>.\n"
+"    "
+
+#: adminapp/templates/mail/finished_scannerjob.html:51
+#, python-format
+msgid ""
+"\n"
+"    <a href=\"%(admin_login_url)s\">Log into OS2datascanner with your\n"
+"\torganisation account</a> for further details.\n"
+msgstr ""
+"\n"
+"    <a href=\"%(admin_login_url)s\">Log på OS2datascanner med din\n"
+"\torganisationskonto</a> for at se detajlerne.\n"
+
+#: adminapp/templates/mail/finished_scannerjob.html:57
+msgid ""
+"\n"
+"\tKind regards,<br>\n"
+"\tthe OS2datascanner system\n"
+"    "
+msgstr ""
+"\n"
+"\tMed venlig hilsen<br>\n"
+"\tOS2datascanner-systemet\n"
+"    "
+
+#: adminapp/templates/mail/finished_scannerjob.html:62
+#, python-format
+msgid ""
+"\n"
+"\t    (on behalf of %(institution)s)\n"
+"\t"
+msgstr ""
+"\n"
+"\t    (på vegne af %(institution)s)\n"
+"\t"
+
+#: adminapp/templates/mail/finished_scannerjob.txt:3
+#, python-format
+msgid ""
+"\n"
+"Hello %(full_name)s,\n"
+msgstr ""
+"\n"
+"Hej %(full_name)s\n"
+
+#: adminapp/templates/mail/finished_scannerjob.txt:7
+#, python-format
+msgid ""
+"\n"
+"For you information, your OS2datascanner-scan @ %(scanner_name)s has just "
+"finished.\n"
+msgstr ""
+"\n"
+"Til orientering er dit OS2datascanner-scan @ %(scanner_name)s lige kørt "
+"færdigt.\n"
+
+#: adminapp/templates/mail/finished_scannerjob.txt:11
+#, python-format
+msgid ""
+"\n"
+"%(total_objects)s objects were scanned - %(object_size)s in total - in "
+"%(completion_time)s.\n"
+msgstr ""
+"\n"
+"Der blev scannet %(total_objects)s objekter - i alt %(object_size)s - i "
+"%(completion_time)s.\n"
+
+#: adminapp/templates/mail/finished_scannerjob.txt:15
+msgid ""
+"\n"
+"Log into OS2datascanner with your organisation account for further details.\n"
+msgstr ""
+"\n"
+"Log på OS2datascanner med din organisationskonto for at se detajlerne.\n"
+
+#: adminapp/templates/mail/finished_scannerjob.txt:22
+msgid ""
+"\n"
+"Kind regards,\n"
+"the OS2datascanner system\n"
+msgstr ""
+"\n"
+"Med venlig hilsen\n"
+"OS2datascanner-systemet\n"
+
+#: adminapp/templates/mail/finished_scannerjob.txt:27
+#, python-format
+msgid ""
+"\n"
+"(on behalf of %(institution)s)\n"
+msgstr ""
+"\n"
+"(på vegne af %(institution)s)\n"
 
 #: adminapp/templates/os2datascanner/cprrule_confirm_delete.html:7
 msgid "Delete rule?"
@@ -803,7 +930,6 @@ msgstr "vælg brugere fra"
 #: adminapp/templates/os2datascanner/scanner_form.html:538
 #: adminapp/templates/os2datascanner/scanner_form.html:640
 #: import_services/models/ldap_configuration.py:38
-#: organizations/models/organizational_unit.py:64
 msgid "organizational units"
 msgstr "organisatoriske enheder"
 
@@ -1282,7 +1408,7 @@ msgid "user"
 msgstr "bruger"
 
 #: core/models/administrator.py:37 core/models/client.py:113
-#: organizations/models/organization.py:57
+#: organizations/models/organization.py:29
 msgid "client"
 msgstr "kunde"
 
@@ -1405,7 +1531,7 @@ msgstr "kunde-ID"
 msgid "e-mail"
 msgstr "e-mail"
 
-#: core/models/client.py:81 organizations/models/organization.py:69
+#: core/models/client.py:81
 msgid "phone number"
 msgstr "telefonnummer"
 
@@ -1456,9 +1582,7 @@ msgstr "sidste gang der blev anmodet om en opdatering"
 msgid "last successful import"
 msgstr "sidste succesfulde importering"
 
-#: import_services/models/keycloak.py:28 organizations/models/account.py:40
-#: organizations/models/organization.py:41
-#: organizations/models/organizational_unit.py:39
+#: import_services/models/keycloak.py:28
 msgid "UUID"
 msgstr "UUID"
 
@@ -1708,102 +1832,9 @@ msgstr ""
 "Denne organisationsstruktur ligger i skyen, og en eksterne tjeneste skal "
 "tillade OS2datascanner adgang til dens indhold."
 
-#: organizations/models/account.py:44
-msgid "username"
-msgstr "brugernavn"
-
-#: organizations/models/account.py:48
-msgid "first name"
-msgstr "fornavn"
-
-#: organizations/models/account.py:54
-msgid "last name"
-msgstr "efternavn"
-
-#: organizations/models/account.py:70 organizations/models/aliases.py:78
-#: organizations/models/position.py:43
-msgid "account"
-msgstr "brugerkonto"
-
-#: organizations/models/account.py:71
-msgid "accounts"
-msgstr "konti"
-
-#: organizations/models/aliases.py:35
-#, python-format
-msgid "%(value)s is not a valid SID"
-msgstr "%(value)s er ikke et gyldigt SID"
-
-#: organizations/models/aliases.py:45
-msgid "SID"
-msgstr "SID"
-
-#: organizations/models/aliases.py:46 organizations/models/organization.py:63
-#: organizations/templates/organizations/org_list.html:50
-msgid "email"
-msgstr "e-mail"
-
-#: organizations/models/aliases.py:48
-msgid "generic"
-msgstr "generisk"
-
-#: organizations/models/aliases.py:72
-msgid "alias ID"
-msgstr "alias ID"
-
-#: organizations/models/aliases.py:85
-msgid "alias type"
-msgstr "aliastype"
-
-#: organizations/models/aliases.py:89
-msgid "value"
-msgstr "værdi"
-
-#: organizations/models/aliases.py:101
-msgid "alias"
-msgstr "alias"
-
-#: organizations/models/aliases.py:102
-msgid "aliases"
-msgstr "aliaser"
-
-#: organizations/models/aliases.py:105
-#, python-brace-format
-msgid "Alias ({type}) for {account_user}: {value}"
-msgstr "Alias ({type}) for {account_user}: {value}"
-
-#: organizations/models/organization.py:51
+#: organizations/models/organization.py:35
 msgid "slug"
 msgstr "slug"
-
-#: organizations/models/organizational_unit.py:52
-msgid "parent unit"
-msgstr "overordnet enhed"
-
-#: organizations/models/position.py:32
-msgid "employee"
-msgstr "medarbejder"
-
-#: organizations/models/position.py:33
-msgid "manager"
-msgstr "leder"
-
-#: organizations/models/position.py:34
-msgid "data protection officer"
-msgstr "data protection officer"
-
-#: organizations/models/position.py:60
-msgid "position"
-msgstr "tilknytning"
-
-#: organizations/models/position.py:61
-msgid "positions"
-msgstr "tilknytninger"
-
-#: organizations/models/position.py:64
-#, python-brace-format
-msgid "{cls}: {account} ({role}) at {unit}"
-msgstr "{cls}: {account} ({role}) ved {unit}"
 
 #: organizations/templates/organizations/org_add.html:20
 #: organizations/templates/organizations/org_add.html:21
@@ -1818,6 +1849,10 @@ msgstr "organisationer for"
 #: organizations/templates/organizations/org_list.html:31
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
+
+#: organizations/templates/organizations/org_list.html:50
+msgid "email"
+msgstr "e-mail"
 
 #: organizations/templates/organizations/org_list.html:51
 msgid "phone"
@@ -1854,6 +1889,72 @@ msgstr "organisatorisk struktur for"
 #: organizations/views/org_views.py:91
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
+
+#~ msgid "username"
+#~ msgstr "brugernavn"
+
+#~ msgid "first name"
+#~ msgstr "fornavn"
+
+#~ msgid "last name"
+#~ msgstr "efternavn"
+
+#~ msgid "account"
+#~ msgstr "brugerkonto"
+
+#~ msgid "accounts"
+#~ msgstr "konti"
+
+#, python-format
+#~ msgid "%(value)s is not a valid SID"
+#~ msgstr "%(value)s er ikke et gyldigt SID"
+
+#~ msgid "SID"
+#~ msgstr "SID"
+
+#~ msgid "generic"
+#~ msgstr "generisk"
+
+#~ msgid "alias ID"
+#~ msgstr "alias ID"
+
+#~ msgid "alias type"
+#~ msgstr "aliastype"
+
+#~ msgid "value"
+#~ msgstr "værdi"
+
+#~ msgid "alias"
+#~ msgstr "alias"
+
+#~ msgid "aliases"
+#~ msgstr "aliaser"
+
+#, python-brace-format
+#~ msgid "Alias ({type}) for {account_user}: {value}"
+#~ msgstr "Alias ({type}) for {account_user}: {value}"
+
+#~ msgid "parent unit"
+#~ msgstr "overordnet enhed"
+
+#~ msgid "employee"
+#~ msgstr "medarbejder"
+
+#~ msgid "manager"
+#~ msgstr "leder"
+
+#~ msgid "data protection officer"
+#~ msgstr "data protection officer"
+
+#~ msgid "position"
+#~ msgstr "tilknytning"
+
+#~ msgid "positions"
+#~ msgstr "tilknytninger"
+
+#, python-brace-format
+#~ msgid "{cls}: {account} ({role}) at {unit}"
+#~ msgstr "{cls}: {account} ({role}) ved {unit}"
 
 #~ msgid "fraction explored"
 #~ msgstr "objekter udforsket"

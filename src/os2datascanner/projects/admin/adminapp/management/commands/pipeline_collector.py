@@ -35,6 +35,7 @@ from prometheus_client import Summary, start_http_server
 from ...models.scannerjobs.scanner_model import (
     Scanner, ScanStatus, ScheduledCheckup, ScanStatusSnapshot)
 from ...models.usererrorlog_model import UserErrorLog
+from ...notification import send_mail_upon_completion
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_pipeline_collector_admin",
@@ -102,6 +103,11 @@ def status_message_received_raw(body):
                     scanned_objects=scan_status.scanned_objects,
                     scanned_size=scan_status.scanned_size,
                 )
+
+        # Send email upon scannerjob completion
+        if scan_status.finished:
+            logger.info("Sending notification mail for finished scannerjob.")
+            send_mail_upon_completion(scanner, scan_status)
 
     yield from []
 

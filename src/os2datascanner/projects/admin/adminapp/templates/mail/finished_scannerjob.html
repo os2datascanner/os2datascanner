@@ -1,0 +1,68 @@
+{% load i18n %}
+
+<!doctype html>
+<html>
+<head>
+<style>
+
+  td {
+    text-align: right;
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+  .flex {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+  }
+
+  .width {
+    margin-top: .5rem;
+    margin-right: 1rem;
+    height: 1.2rem;
+    width: auto;
+  }
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
+
+</style>
+</head>
+<body>
+<p>
+    {% blocktrans %}
+	Hello {{ full_name }},
+    {% endblocktrans %}
+</p>
+<p>
+    {% blocktrans %}
+	For you information, your OS2datascanner-scan @ <strong>{{ scanner_name }}</strong> has just finished.
+    {% endblocktrans %}
+</p>
+<p>
+    {% blocktrans %}
+	<strong>{{ total_objects }}</strong> objects were scanned - <strong>{{ object_size }}</strong> in total - in <strong>{{ completion_time }}</strong>.
+    {% endblocktrans %}
+</p>
+<p>
+{% blocktrans %}
+    <a href="{{ admin_login_url }}">Log into OS2datascanner with your
+	organisation account</a> for further details.
+{% endblocktrans %}
+</p>
+<p>
+    {% blocktrans %}
+	Kind regards,<br>
+	the OS2datascanner system
+    {% endblocktrans %}
+    {% if institution %}
+	{% blocktrans %}
+	    (on behalf of {{ institution }})
+	{% endblocktrans %}
+    {% endif %}
+</p>
+</body>
+</html>
