@@ -145,6 +145,9 @@ class DocumentReport(models.Model):
         def __repr__(self):
             return f"<{self.__class__.__name__}.{self.name}>"
 
+    number_of_matches = models.IntegerField(default=0,
+                                            verbose_name=_("number of matches"))
+
     resolution_status = models.IntegerField(choices=ResolutionChoices.choices(),
                                             null=True, blank=True, db_index=True,
                                             verbose_name=_("resolution status"))
@@ -174,6 +177,15 @@ class DocumentReport(models.Model):
         self.__resolution_status = self.resolution_status
 
     def save(self, *args, **kwargs):
+        # Count and save number of matches
+        self.number_of_matches = 0
+        # Exclude rules meant for image conversion
+        excluded_rules = ["dimensions", "conversion"]
+        if self.matches:
+            for rule_dict in self.matches.matches:
+                if rule_dict.matches and rule_dict.rule.type_label not in excluded_rules:
+                    self.number_of_matches += len(rule_dict.matches)
+
         # If Resolution status goes from not handled to handled - change resolution_time to now
         if self.__resolution_status is None and (
                 self.resolution_status or self.resolution_status == 0):

@@ -35,6 +35,15 @@
         </th>
         <th class="datatable__column--matchcount">
             {% trans "Matches" %}
+
+            <button
+              type="button"
+              name="number_of_matches"
+              class="order-by button button-caret button--has-icon{% if order_by == 'number_of_matches' and order == 'descending' %} up{% endif %}"
+              value="{% if order_by == 'number_of_matches' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+            >
+              <i class="material-icons" aria-hidden="true">expand_more</i>
+            </button>
         </th>
         <th class="datatable__column--source">
             {% trans "Source" %}

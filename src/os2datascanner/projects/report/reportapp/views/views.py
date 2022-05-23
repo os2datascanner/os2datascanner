@@ -177,7 +177,7 @@ class MainPageView(LoginRequiredMixin, ListView):
 
     def order_queryset_by_property(self):
         """Checks if a sort key is allowed and orders the querset"""
-        allowed_sorting_properties = ['sort_key']
+        allowed_sorting_properties = ['sort_key', 'number_of_matches']
         if (sort_key := self.request.GET.get('order_by')) and (
                 order := self.request.GET.get('order')):
 
