@@ -181,5 +181,5 @@ class PipelineCollectorTests(TestCase):
         self.assertTrue(UserErrorLog.objects.all().exists())
         self.assertEqual(
             UserErrorLog.objects.first().user_friendly_error_message,
-            translation_table[error_message](handle.presentation_url)
+            translation_table[error_message]
         )

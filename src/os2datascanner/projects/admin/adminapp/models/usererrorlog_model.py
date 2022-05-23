@@ -6,8 +6,8 @@ from .scannerjobs.scanner_model import ScanStatus
 
 translation_table = {
     "Exploration error. MemoryError: 12, Cannot allocate memory":
-    lambda path: _(f"Folder at {path} using outdated encoding. Please \
-    rename the folder."),
+    _("Folder at the path is using outdated encoding. Please "
+      "rename the folder."),
 }
 
 
@@ -34,6 +34,6 @@ class UserErrorLog(models.Model):
         """Translates an error message into a meaningful instruction
         for the user, if one is available."""
         if self.error_message in translation_table.keys():
-            return translation_table[self.error_message](self.path)
+            return translation_table[self.error_message]
         else:
             return self.error_message

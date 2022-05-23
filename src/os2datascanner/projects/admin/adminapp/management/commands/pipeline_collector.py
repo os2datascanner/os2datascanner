@@ -131,6 +131,7 @@ def problem_message_recieved_raw(body):
             scan_tag=body["scan_tag"]).first()
 
     if scan_status:
+        logger.info(f"Logging error from scanner {scan_status.scanner.name}.")
         UserErrorLog.objects.create(
             scan_status=scan_status,
             error_message=error_message,
