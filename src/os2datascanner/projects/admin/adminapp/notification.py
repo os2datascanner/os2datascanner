@@ -21,8 +21,9 @@ def send_mail_upon_completion(scanner: Scanner, scan_status: ScanStatus):
     html_mail_template = loader.get_template("mail/finished_scannerjob.html")
 
     # Find suitable user to notify.
-    username = scan_status.scan_tag.user
-    user = User.objects.filter(username=username)
+    username = scan_status.scan_tag.get("user")
+    if username:
+        user = User.objects.filter(username=username).first()
     email = user.email if user else scanner.organization.contact_email
 
     context = create_context(scanner, scan_status, user)
