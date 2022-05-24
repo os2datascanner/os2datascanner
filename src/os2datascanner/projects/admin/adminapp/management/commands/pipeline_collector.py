@@ -126,11 +126,11 @@ def problem_message_recieved_raw(body):
     error_message = message.message
     # Different types of scans have different source classes, where the
     # source path is contained differently.
-    if message.handle.presentation_url:
+    if message.handle and message.handle.presentation_url:
         path = message.handle.presentation_url
-    elif message.handle.presentation:
+    elif message.handle and message.handle.presentation:
         path = message.handle.presentation
-    elif message.handle.presentation_name:
+    elif message.handle and message.handle.presentation_name:
         path = message.handle.presentation_name
     else:
         path = ""
