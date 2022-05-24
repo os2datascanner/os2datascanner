@@ -126,8 +126,12 @@ def problem_message_recieved_raw(body):
     error_message = message.message
     # Different types of scans have different source classes, where the
     # source path is contained differently.
-    if message.handle:
+    if message.handle.presentation_url:
         path = message.handle.presentation_url
+    elif message.handle.presentation:
+        path = message.handle.presentation
+    elif message.handle.presentation_name:
+        path = message.handle.presentation_name
     else:
         path = ""
 
@@ -137,7 +141,8 @@ def problem_message_recieved_raw(body):
             scan_tag=body["scan_tag"]).first()
 
     if scan_status:
-        logger.info(f"Logging error from scanner {scan_status.scanner.name}.")
+        logger.info(
+            f"Logging the error: '{error_message}' from scanner {scan_status.scanner.name}.")
         UserErrorLog.objects.create(
             scan_status=scan_status,
             error_message=error_message,
