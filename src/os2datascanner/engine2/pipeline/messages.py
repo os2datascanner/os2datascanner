@@ -380,6 +380,8 @@ class MatchesMessage(NamedTuple):
 
     @staticmethod
     def from_json_object(obj):
+        # WARNING! Migration 0052 in the report app is dependent on this method.
+        # Alter with care!
         return MatchesMessage(
                 scan_spec=ScanSpecMessage.from_json_object(obj["scan_spec"]),
                 handle=Handle.from_json_object(obj["handle"]),
