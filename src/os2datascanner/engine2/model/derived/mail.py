@@ -5,6 +5,7 @@ from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
 from ..core import Source, Handle, FileResource
+from ..utilities.mail import decode_encoded_words
 from .derived import DerivedSource
 
 
@@ -96,7 +97,8 @@ class MailPartHandle(Handle):
         container = self.source.handle.presentation_name
         if (name := self._path_name):
             # This is a named attachment
-            return f"attachment \"{name}\" in {container}"
+            return (f"attachment \"{decode_encoded_words(name)}\""
+                    f" in {container}")
         else:
             # This is a message body. Use its subject
             return container
