@@ -14,7 +14,9 @@
 from uuid import uuid4
 from django.db import models
 from django.contrib.auth.models import User
+from rest_framework import serializers
 from django.utils.translation import ugettext_lazy as _
+
 from os2datascanner.core_organizational_structure.models import Alias as Core_Alias
 from os2datascanner.core_organizational_structure.models.aliases import AliasType, \
     validate_regex_SID  # noqa
@@ -58,3 +60,25 @@ class Alias(Core_Alias):
             type=self.alias_type.label,
             value=self.value,
         )
+
+
+class AliasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Alias
+        fields = '__all__'
+
+    # This field has to be redefined here, because it is read-only on model.
+    uuid = serializers.UUIDField()
+
+    def create(self, validated_data):
+        return Alias.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.uuid = validated_data.get('uuid', instance.uuid)
+        instance.user = validated_data.get('user', instance.user)
+        instance.account = validated_data.get('account', instance.account)
+        instance._alias_type = validated_data.get('_alias_type', instance._alias_type)
+        instance._value = validated_data.get('_value', instance._value)
+
+        instance.save()
+        return instance
