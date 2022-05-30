@@ -4,7 +4,6 @@ from os import unlink, listdir, scandir
 from tempfile import TemporaryDirectory
 from contextlib import closing
 from subprocess import DEVNULL
-from pathlib import Path
 
 from ....utils.system_utilities import run_custom
 from ... import settings as engine2_settings
@@ -179,8 +178,19 @@ class LibreOfficeObjectHandle(Handle):
     resource_type = LibreOfficeObjectResource
 
     @property
-    def presentation(self):
-        return self.source.handle.presentation
+    def presentation_name(self):
+        mime = self.guess_type()
+        container = self.source.handle.presentation_name
+        if mime.startswith("text/"):
+            return f"text of {container}"
+        elif mime.startswith("image/"):
+            return f"image in {container}"
+        else:
+            return f"unknown object in {container}"
+
+    @property
+    def presentation_place(self):
+        return self.source.handle.presentation_place
 
     def censor(self):
         return LibreOfficeObjectHandle(self.source.censor(), self.relative_path)
@@ -189,15 +199,3 @@ class LibreOfficeObjectHandle(Handle):
     def sort_key(self):
         "Return the file path of the document"
         return self.base_handle.sort_key
-
-    @property
-    def presentation_name(self):
-        """Return the filename of the document or, if originating from a container, the
-        filename of the container (filename of document)"""
-
-        if self.base_handle == self.source.handle:
-            return self.base_handle.name
-
-        # Object is unpacked from a container. Get the name of document
-        basename = Path(self.source.handle.relative_path).name
-        return f"{self.base_handle.name} (file {basename})"

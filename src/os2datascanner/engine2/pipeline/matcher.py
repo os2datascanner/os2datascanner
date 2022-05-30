@@ -18,7 +18,7 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001,E501 to
     message = messages.RepresentationMessage.from_json_object(body)
     representations = decode_dict(message.representations)
     rule = message.progress.rule
-    logger.debug(f"{message.handle.presentation} with rules [{rule.presentation}] "
+    logger.debug(f"{message.handle} with rules [{rule.presentation}] "
                  f"and representation [{list(representations.keys())}]")
 
     try:
@@ -45,7 +45,7 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001,E501 to
         # We've come to a conclusion!
 
         logger.info(
-                f"{message.handle.presentation} done."
+                f"{message.handle} done."
                 f" Matched status: {conclusion}")
 
         for matches_q in ("os2ds_matches", "os2ds_checkups",):
@@ -64,7 +64,7 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001,E501 to
         new_rep = conclusion.split()[0].operates_on
         # We need a new representation to continue
         logger.debug(
-                f"{message.handle.presentation} needs"
+                f"{message.handle} needs"
                 f" new representation: [{new_rep}].")
         yield ("os2ds_conversions",
                messages.ConversionMessage(

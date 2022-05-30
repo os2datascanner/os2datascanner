@@ -1,4 +1,5 @@
 from ..core import Source, Handle
+import inspect
 
 
 class DerivedSource(Source):
@@ -23,13 +24,12 @@ class DerivedSource(Source):
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
-        """Class creation controller. Whenever a subclass is initialised,
-        registers its constructor as a JSON object decoder for Sources."""
+        """Class creation controller. Whenever a concrete subclass is
+        initialised, registers its constructor as a JSON object decoder for
+        Sources."""
         super().__init_subclass__(**kwargs)
 
-        # Only register classes whose type_label attribute resolves to a string
-        # value. This should effectively filter out abstract classes
-        if isinstance(cls.type_label, str):
+        if not inspect.isabstract(cls):
             @Source.json_handler(cls.type_label)
             def _from_json_object(obj):
                 return cls(Handle.from_json_object(obj["handle"]))

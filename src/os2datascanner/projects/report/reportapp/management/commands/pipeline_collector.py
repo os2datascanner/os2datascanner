@@ -306,7 +306,7 @@ def handle_problem_message(path, scan_tag, result):
             exclude(scan_time=scan_tag.time).order_by("-scan_time").first())
 
     handle = problem.handle if problem.handle else None
-    presentation = handle.presentation if handle else "(source)"
+    presentation = str(handle) if handle else "(source)"
     if (previous_report
             and previous_report.resolution_status in [0, None]
             and problem.missing):

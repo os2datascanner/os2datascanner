@@ -1,9 +1,13 @@
 from abc import ABC, abstractmethod
 from sys import stderr
 import magic
+import inspect
 from traceback import print_exc
+from contextlib import contextmanager
 
 from os2datascanner.utils.system_utilities import time_now
+
+from ..utilities.temp_resource import NamedTemporaryResource
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import SingleResult
 
@@ -122,18 +126,31 @@ class FileResource(TimestampedResource):
         same as the *actual* size of that content: some Sources support
         transparent compression and decompression.)"""
 
-    @abstractmethod
+    @contextmanager
     def make_path(self):
         """Returns a context manager that, when entered, returns a path through
         which the content of this FileResource can be accessed until the
         context is exited. (Do not attempt to write to this path -- the result
         is undefined.)"""
 
-    @abstractmethod
+        with NamedTemporaryResource(self.handle.name) as ntr:
+            with ntr.open("wb") as f, self.make_stream() as rf:
+                buf = rf.read(self.DOWNLOAD_CHUNK_SIZE)
+                while buf:
+                    f.write(buf)
+                    buf = rf.read(self.DOWNLOAD_CHUNK_SIZE)
+            yield ntr.get_path()
+
+    DOWNLOAD_CHUNK_SIZE = None
+
+    @contextmanager
     def make_stream(self):
         """Returns a context manager that, when entered, returns a read-only
         Python stream through which the content of this FileResource can be
         accessed until the context is exited."""
+        with self.make_path() as path:
+            with open(path, "rb") as fp:
+                yield fp
 
     def _generate_metadata(self):
         yield "last-modified", OutputType.LastModified.encode_json_object(
@@ -159,3 +176,18 @@ class FileResource(TimestampedResource):
         else:
             # Otherwise, we prefer the computed type
             return computed
+
+    @classmethod
+    def __init_subclass__(subclass, **kwargs):
+        super().__init_subclass__(*kwargs)
+
+        # The make_path and make_stream methods have default implementations in
+        # terms of each other. Make sure that concrete subclasses override at
+        # least one of these!
+        if (not inspect.isabstract(subclass)
+                and subclass.make_path == FileResource.make_path
+                and subclass.make_stream == FileResource.make_stream):
+            raise TypeError(
+                    f"instantiable class {subclass.__name__} must implement"
+                    " at least one of FileResource.make_path or"
+                    " FileResource.make_stream")

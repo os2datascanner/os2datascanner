@@ -6,7 +6,6 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.errors import HttpError
 from .core import Source, Handle, FileResource
-from .utilities import NamedTemporaryResource
 from ..conversions.utilities.results import SingleResult
 
 
@@ -108,14 +107,6 @@ class GoogleDriveResource(FileResource):
         yield fh
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         with self.open_file() as res:
             yield res
@@ -143,18 +134,17 @@ class GoogleDriveHandle(Handle):
         self._name = name
 
     @property
-    def presentation(self):
-        # For some reason rel path contains spaces between "/"
-        # stripping them as they add no value for presentation
-        return f'In folder {self.relative_path.strip(" ")} of account {self.source._user_email}'
+    def presentation_name(self):
+        return self._name
+
+    @property
+    def presentation_place(self):
+        return (f"folder {self.relative_path.strip(' ')}"
+                f" of account {self.source._user_email}")
 
     @property
     def name(self):
         return self.presentation_name
-
-    @property
-    def presentation_name(self):
-        return self._name
 
     @property
     def sort_key(self):

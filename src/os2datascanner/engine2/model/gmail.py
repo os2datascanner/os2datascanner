@@ -6,7 +6,6 @@ from google.oauth2 import service_account
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 
-from .utilities import NamedTemporaryResource
 from ..conversions.utilities.results import SingleResult
 
 import json
@@ -114,14 +113,6 @@ class GmailResource(FileResource):
         return self._metadata
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         response = self._get_cookie().users().messages().get(
             userId=self.handle.source._user_email_gmail,
@@ -153,10 +144,12 @@ class GmailHandle(Handle):
         self._mail_subject = mail_subject
 
     @property
-    def presentation(self):
-        # Look towards EWS implementation if we can get folder information
-        # we should add this here. Right now we don't, just "inbox", hence we just say which account
-        return f'In account {self.source._user_email_gmail}'
+    def presentation_name(self):
+        return f"\"{self._mail_subject}\""
+
+    @property
+    def presentation_place(self):
+        return f"account {self.source._user_email_gmail}"
 
     @property
     def presentation_url(self):
@@ -170,14 +163,6 @@ class GmailHandle(Handle):
         # the mail resides in and add this.
         account, domain = self.source._user_email_gmail.split("@", 1)
         return f'{domain}/{account}/{self._mail_subject}'
-
-    @property
-    def name(self):
-        return self.presentation_name
-
-    @property
-    def presentation_name(self):
-        return self._mail_subject
 
     def censor(self):
         return GmailHandle(

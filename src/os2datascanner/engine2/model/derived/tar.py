@@ -5,7 +5,6 @@ from contextlib import contextmanager
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
 from ..core import Source, Handle, FileResource
-from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
 
@@ -59,14 +58,6 @@ class TarResource(FileResource):
                                              super().get_last_modified())
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as f:
-                with self.make_stream() as s:
-                    f.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         with self._get_cookie().extractfile(self.handle.relative_path) as s:
             yield s
@@ -78,17 +69,16 @@ class TarHandle(Handle):
     resource_type = TarResource
 
     @property
-    def presentation(self):
-        return "{0} (in {1})".format(
-                self.relative_path, self.source.handle)
+    def presentation_name(self):
+        return self.relative_path
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     @property
     def sort_key(self):
-        return self.base_handle.sort_key
-
-    @property
-    def presentation_name(self):
-        return f"{self.base_handle.name} (file {self.relative_path})"
+        return self.source.handle.sort_key
 
     def censor(self):
         return TarHandle(self.source.censor(), self.relative_path)

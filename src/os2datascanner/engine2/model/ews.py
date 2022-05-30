@@ -7,7 +7,6 @@ from exchangelib import (
 from exchangelib.errors import (ErrorServerBusy, ErrorItemNotFound)
 from exchangelib.protocol import BaseProtocol
 
-from .utilities import NamedTemporaryResource
 from ..utilities.backoff import DefaultRetrier
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import SingleResult
@@ -206,14 +205,6 @@ class EWSMailResource(FileResource):
         return self._message
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         with BytesIO(self.get_message_object().mime_content) as fp:
             yield fp
@@ -256,9 +247,12 @@ class EWSMailHandle(Handle):
         self._entry_id = entry_id
 
     @property
-    def presentation(self):
-        """ Return folder of email and the account it's in"""
-        return f'In folder {self._folder_name} of account {self.source.address}'
+    def presentation_name(self):
+        return f"\"{self._mail_subject}\""
+
+    @property
+    def presentation_place(self):
+        return f"folder {self._folder_name} of account {self.source.address}"
 
     @property
     def presentation_url(self):
@@ -283,14 +277,6 @@ class EWSMailHandle(Handle):
 
         return f'{domain}/{account}/' \
                f'{self._folder_name.removeprefix("/") or "(unknown folder)"}/{self._mail_subject}'
-
-    @property
-    def name(self):
-        return self.presentation_name
-
-    @property
-    def presentation_name(self):
-        return self._mail_subject
 
     def censor(self):
         return EWSMailHandle(

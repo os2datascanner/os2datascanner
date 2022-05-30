@@ -113,7 +113,7 @@ class DocumentReport(models.Model):
             return ""
         type_msg = type_msg[0]
 
-        presentation = type_msg.handle.presentation if type_msg.handle else ""
+        presentation = str(type_msg.handle) if type_msg.handle else ""
         return presentation
 
     @enum.unique

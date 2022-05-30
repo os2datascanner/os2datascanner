@@ -8,7 +8,6 @@ from ...conversions.utilities.results import SingleResult
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
-from ..utilities import NamedTemporaryResource
 from .utilities import MSGraphSource, ignore_responses
 
 
@@ -78,8 +77,12 @@ class MSGraphMailAccountHandle(Handle):
     resource_type = MSGraphMailAccountResource
 
     @property
-    def presentation(self):
+    def presentation_name(self):
         return self.relative_path
+
+    @property
+    def presentation_place(self):
+        return "Office 365"
 
     @property
     def sort_key(self):
@@ -162,14 +165,6 @@ class MSGraphMailMessageResource(FileResource):
         return self._message
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         response = self._get_cookie().get(
                 self.make_object_path() + "/$value", json=False)
@@ -203,10 +198,12 @@ class MSGraphMailMessageHandle(Handle):
         self._weblink = weblink
 
     @property
-    def presentation(self):
-        # We should probably look towards EWS implementation and see if you get/can get folder
-        # the mail resides in and add this.
-        return f'Account {self.source.handle.relative_path}'
+    def presentation_name(self):
+        return f"\"{self._mail_subject}\""
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     @property
     def presentation_url(self):

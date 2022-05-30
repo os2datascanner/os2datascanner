@@ -7,7 +7,6 @@ from ...conversions.utilities.results import SingleResult
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
-from ..utilities import NamedTemporaryResource
 from .utilities import MSGraphSource, ignore_responses
 
 
@@ -74,8 +73,12 @@ class MSGraphCalendarAccountHandle(Handle):
     resource_type = MSGraphCalendarAccountResource
 
     @property
-    def presentation(self):
+    def presentation_name(self):
         return self.relative_path
+
+    @property
+    def presentation_place(self):
+        return "Office 365"
 
     def guess_type(self):
         return DUMMY_MIME
@@ -142,14 +145,6 @@ class MSGraphCalendarEventResource(FileResource):
         return self._event
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         with BytesIO(self._get_body()["body"]["content"].encode()) as fp:
             yield fp
@@ -179,12 +174,12 @@ class MSGraphCalendarEventHandle(Handle):
         self._weblink = weblink
 
     @property
-    def presentation(self):
-        return f'Account {self.source.handle.relative_path}'
-
-    @property
     def presentation_name(self):
         return self._event_subject
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     @property
     def presentation_url(self):

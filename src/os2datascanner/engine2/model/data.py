@@ -113,11 +113,18 @@ class DataHandle(Handle):
         return self.name
 
     @property
-    def presentation(self):
+    def presentation_name(self):
         if self.source.name:
-            return "{0} (embedded)".format(self.source.name)
+            return f"{self.source.name}"
         else:
-            return "(embedded file of type {0})".format(self.guess_type())
+            return f"(anonymous file of type {self.guess_type()})"
+
+    @property
+    def presentation_place(self):
+        return "(embedded)"
+
+    def __str__(self):
+        return f"{self.presentation_name} {self.presentation_place}"
 
     def censor(self):
         return DataHandle(self.source.censor(), self.relative_path)

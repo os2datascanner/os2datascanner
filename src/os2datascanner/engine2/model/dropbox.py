@@ -10,7 +10,6 @@ from dropbox.exceptions import ApiError
 from ..conversions.utilities.results import SingleResult
 from ..conversions.types import OutputType
 from .core import Source, Handle, FileResource
-from .utilities import NamedTemporaryResource
 
 
 class DropboxSource(Source):
@@ -106,14 +105,6 @@ class DropboxResource(FileResource):
         return self._metadata
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         with self.open_file() as res:
             yield BytesIO(res.content)
@@ -135,9 +126,14 @@ class DropboxHandle(Handle):
         self.email = email
 
     @property
-    def presentation(self):
+    def presentation_name(self):
+        return self.name
+
+    @property
+    def presentation_place(self):
         # We don't need to show the filename here, just the path it resides in.
-        return f'In folder {self.relative_path.removesuffix(self.name)} of account {self.email}'
+        return (f"folder {self.relative_path.removesuffix(self.name)}"
+                f" of account {self.email}")
 
     @property
     def presentation_url(self):

@@ -102,11 +102,6 @@ class FilesystemResource(FileResource):
     def make_path(self):
         yield self._full_path
 
-    @contextmanager
-    def make_stream(self):
-        with open(self._full_path, "rb") as s:
-            yield s
-
 
 @Handle.stock_json_handler("file")
 class FilesystemHandle(Handle):
@@ -114,15 +109,25 @@ class FilesystemHandle(Handle):
     resource_type = FilesystemResource
 
     @property
-    def presentation(self):
+    def _full_path(self):
+        return Path(self.source.path).joinpath(self.relative_path)
+
+    @property
+    def presentation_name(self):
         # return path, shouldn't need filename here
-        return str(Path(self.source.path))
+        return self._full_path.name
+
+    @property
+    def presentation_place(self):
+        return str(self._full_path.parent)
 
     @property
     def sort_key(self):
-        """Return the folder path"""
         # return the full path including filename
-        return str(Path(self.source.path).joinpath(self.relative_path))
+        return str(self._full_path)
+
+    def __str__(self):
+        return str(self._full_path)
 
     def censor(self):
         return FilesystemHandle(self.source.censor(), self.relative_path)

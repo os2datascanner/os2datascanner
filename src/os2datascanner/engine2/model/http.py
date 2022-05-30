@@ -15,7 +15,6 @@ from .. import settings as engine2_settings
 from ..conversions.types import Link, OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
 from .core import Source, Handle, FileResource
-from .utilities import NamedTemporaryResource
 from .utilities.sitemap import process_sitemap_url
 from .utilities.datetime import parse_datetime
 
@@ -309,14 +308,6 @@ class WebResource(FileResource):
             "content-type", "application/octet-stream").value.split(";", maxsplit=1)[0]
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         # Assign session HTTP methods to variables, wrapped to constrain requests per second
         throttled_session_get = rate_limit(self._get_cookie().get)
@@ -350,7 +341,15 @@ class WebHandle(Handle):
         self._lm_hint = lm_hint
 
     @property
-    def presentation(self):
+    def presentation_name(self):
+        return self.presentation_url
+
+    @property
+    def presentation_place(self):
+        split = urlsplit(self.presentation_url)
+        return split.hostname
+
+    def __str__(self):
         return self.presentation_url
 
     @property

@@ -5,7 +5,6 @@ import requests
 from os2datascanner.engine2.model.derived.derived import DerivedSource
 
 from .core import Source, Handle, FileResource
-from .utilities import NamedTemporaryResource
 
 
 class SbsysSource(Source):
@@ -99,13 +98,6 @@ class SbsysResource(FileResource):
         return CASE_TYPE
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self._handle.relative_path) as ntr, ntr.open("wb") as res:
-            with self.make_stream() as s:
-                res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         response = self._get_cookie().get(tail='sag/{0}'.format(self._handle.relative_path))
         with BytesIO(response.content) as fp:
@@ -118,17 +110,20 @@ class SbsysResource(FileResource):
 
 
 class SbsysHandle(Handle):
-
-    @property
-    def presentation(self):
-        return "Sag ID: {0}".format(self.relative_path)
-
     type_label = "sbsys"
     resource_type = SbsysResource
     eq_properties = Handle.BASE_PROPERTIES
 
     def __init__(self, source, path):
         super().__init__(source, path)
+
+    @property
+    def presentation_name(self):
+        return "Sag ID: {0}".format(self.relative_path)
+
+    @property
+    def presentation_place(self):
+        return "SBSYS"
 
     def censor(self):
         return SbsysHandle(self.source.censor(), self.relative_path)
@@ -161,13 +156,6 @@ class SbsysCaseResource(FileResource):
         super().__init__(handle, sm)
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.relative_path) as ntr, ntr.open("wb") as res:
-            with self.make_stream() as s:
-                res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         response = self._get_cookie().get(tail='dokument/{0}'.format(self.handle.relative_path))
         with BytesIO(response.content) as fp:
@@ -185,8 +173,12 @@ class SbsysCaseHandle(Handle):
     eq_properties = Handle.BASE_PROPERTIES
 
     @property
-    def presentation(self):
-        return "Dokument ID: {0} i {1}".format(self.relative_path, self.source.handle.presentation)
+    def presentation_name(self):
+        return self.relative_path
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     def censor(self):
         return SbsysCaseHandle(self.source.censor(), self.relative_path)

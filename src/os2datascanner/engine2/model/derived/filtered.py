@@ -9,7 +9,6 @@ from contextlib import contextmanager
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
 from ..core import Source, Handle, FileResource
-from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
 
@@ -91,16 +90,9 @@ class FilteredResource(FileResource):
                                                super().get_last_modified())
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as f:
-                with self.make_stream() as s:
-                    f.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
-        with self._get_cookie().make_stream() as s_, self.handle.source._decompress(s_) as s:
+        with self._get_cookie().make_stream() as s_, \
+                self.handle.source._decompress(s_) as s:
             yield self._poke_stream(s)
 
 
@@ -110,17 +102,16 @@ class FilteredHandle(Handle):
     resource_type = FilteredResource
 
     @property
-    def presentation(self):
-        return "({0}, decompressed)".format(
-                self.source.handle.presentation)
+    def presentation_name(self):
+        return self.name
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     @property
     def sort_key(self):
         return self.base_handle.sort_key
-
-    @property
-    def presentation_name(self):
-        return self.base_handle.name
 
     def censor(self):
         return FilteredHandle(self.source.censor(), self.relative_path)

@@ -5,6 +5,7 @@ import logging
 import smbc
 from typing import Optional
 from urllib.parse import quote, unquote, urlsplit
+from pathlib import PureWindowsPath
 from datetime import datetime
 import operator
 import warnings
@@ -16,10 +17,9 @@ from ..conversions.types import OutputType
 from ..conversions.utilities.results import MultipleResults
 from .smb import (
     SMBSource, make_smb_url, compute_domain,
-    make_presentation, make_presentation_url)
+    make_full_windows_path, make_presentation_url)
 from .core import Source, Handle, FileResource
 from .file import stat_attributes
-from .utilities import NamedTemporaryResource
 
 
 logger = logging.getLogger(__name__)
@@ -346,17 +346,6 @@ class SMBCResource(FileResource):
         return self.get_xattr(smbc.XATTR_OWNER)
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as f:
-                with self.make_stream() as rf:
-                    buf = rf.read(self.DOWNLOAD_CHUNK_SIZE)
-                    while buf:
-                        f.write(buf)
-                        buf = rf.read(self.DOWNLOAD_CHUNK_SIZE)
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         with _SMBCFile(self.open_file()) as fp:
             yield fp
@@ -370,12 +359,19 @@ class SMBCHandle(Handle):
     resource_type = SMBCResource
 
     @property
-    def presentation(self):
-        return make_presentation(self)
+    def presentation_name(self):
+        return PureWindowsPath(make_full_windows_path(self)).name
+
+    @property
+    def presentation_place(self):
+        return str(PureWindowsPath(make_full_windows_path(self)).parent)
 
     @property
     def presentation_url(self):
         return make_presentation_url(self)
+
+    def __str__(self):
+        return make_full_windows_path(self)
 
     @property
     def sort_key(self):

@@ -5,7 +5,6 @@ from contextlib import contextmanager
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
 from ..core import Source, Handle, FileResource
-from ..utilities import NamedTemporaryResource
 from .derived import DerivedSource
 
 
@@ -68,14 +67,6 @@ class ZipResource(FileResource):
                                       super().get_last_modified())
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as f:
-                with self.make_stream() as s:
-                    f.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         with self._get_cookie().open(self.handle.relative_path) as s:
             yield s
@@ -87,18 +78,16 @@ class ZipHandle(Handle):
     resource_type = ZipResource
 
     @property
-    def presentation(self):
-        # Present something along the lines of: \\{domain}\test-folder\contains-cpr.zip
-        # then presentation_name will show which file inside the container has the match.
-        return str(self.source.handle)
+    def presentation_name(self):
+        return self.relative_path
 
     @property
     def sort_key(self):
-        return self.base_handle.sort_key
+        return self.source.handle.sort_key
 
     @property
-    def presentation_name(self):
-        return f"{self.base_handle.name} (file {self.relative_path})"
+    def presentation_place(self):
+        return str(self.source.handle)
 
     def censor(self):
         return ZipHandle(self.source.censor(), self.relative_path)

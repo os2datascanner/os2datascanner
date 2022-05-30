@@ -6,7 +6,6 @@ from ...conversions.types import OutputType
 from ...conversions.utilities.results import SingleResult
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
-from ..utilities import NamedTemporaryResource
 from .utilities import MSGraphSource, ignore_responses
 
 
@@ -94,12 +93,16 @@ class MSGraphDriveHandle(Handle):
         self._owner_name = owner_name
 
     @property
-    def presentation(self):
+    def presentation_name(self):
         if self._owner_name:
             return "\"{0}\" (owned by {1})".format(
                     self._folder_name, self._owner_name)
         else:
             return "\"{0}\"".format(self._folder_name)
+
+    @property
+    def presentation_place(self):
+        return "Office 365"
 
     def guess_type(self):
         return DUMMY_MIME
@@ -189,14 +192,6 @@ class MSGraphFileResource(FileResource):
         return SingleResult(size, 'size', 1024)
 
     @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
-
-    @contextmanager
     def make_stream(self):
         response = self._get_cookie().get(
                 self.make_object_path() + ":/content", json=False)
@@ -210,9 +205,12 @@ class MSGraphFileHandle(Handle):
     resource_type = MSGraphFileResource
 
     @property
-    def presentation(self):
-        return "{0} (in {1})".format(
-                self.relative_path, self.source.handle.presentation)
+    def presentation_name(self):
+        return self.relative_path
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     def censor(self):
         return MSGraphFileHandle(self.source.censor(), self.relative_path)
