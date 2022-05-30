@@ -11,9 +11,10 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-
 from os2datascanner.core_organizational_structure.models import Account as Core_Account
 from rest_framework import serializers
+
+from ..serializer import BaseSerializer
 
 
 class Account(Core_Account):
@@ -22,23 +23,10 @@ class Account(Core_Account):
     pass
 
 
-class AccountSerializer(serializers.ModelSerializer):
+class AccountSerializer(BaseSerializer):
     class Meta:
         model = Account
         fields = '__all__'
 
     # This field has to be redefined here, cause it is read-only on model.
     uuid = serializers.UUIDField()
-
-    def create(self, validated_data):
-        return Account.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.uuid = validated_data.get('uuid', instance.uuid)
-        instance.username = validated_data.get('username', instance.username)
-        instance.first_name = validated_data.get('first_name', instance.first_name)
-        instance.last_name = validated_data.get('last_name', instance.last_name)
-        instance.organization = validated_data.get('organization', instance.organization)
-
-        instance.save()
-        return instance

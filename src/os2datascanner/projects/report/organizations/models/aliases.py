@@ -21,6 +21,8 @@ from os2datascanner.core_organizational_structure.models import Alias as Core_Al
 from os2datascanner.core_organizational_structure.models.aliases import AliasType, \
     validate_regex_SID  # noqa
 
+from ..serializer import BaseSerializer
+
 
 class Alias(Core_Alias):
     """ Core logic lives in the core_organizational_structure app. """
@@ -62,23 +64,10 @@ class Alias(Core_Alias):
         )
 
 
-class AliasSerializer(serializers.ModelSerializer):
+class AliasSerializer(BaseSerializer):
     class Meta:
         model = Alias
         fields = '__all__'
 
     # This field has to be redefined here, because it is read-only on model.
     uuid = serializers.UUIDField()
-
-    def create(self, validated_data):
-        return Alias.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.uuid = validated_data.get('uuid', instance.uuid)
-        instance.user = validated_data.get('user', instance.user)
-        instance.account = validated_data.get('account', instance.account)
-        instance._alias_type = validated_data.get('_alias_type', instance._alias_type)
-        instance._value = validated_data.get('_value', instance._value)
-
-        instance.save()
-        return instance

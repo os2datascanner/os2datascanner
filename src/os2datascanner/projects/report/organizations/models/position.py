@@ -14,6 +14,8 @@
 from rest_framework import serializers
 from os2datascanner.core_organizational_structure.models import Position as Core_Position
 
+from ..serializer import BaseSerializer
+
 
 class Position(Core_Position):
     """ Core logic lives in the core_organizational_structure app.
@@ -21,21 +23,10 @@ class Position(Core_Position):
     pass
 
 
-class PositionSerializer(serializers.ModelSerializer):
+class PositionSerializer(BaseSerializer):
     class Meta:
         model = Position
         fields = '__all__'
 
     # This field has to be redefined here, because it is read-only on model.
     pk = serializers.IntegerField()
-
-    def create(self, validated_data):
-        return Position.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.account = validated_data.get('account', instance.account)
-        instance.unit = validated_data.get('unit', instance.unit)
-        instance.role = validated_data.get('role', instance.role)
-
-        instance.save()
-        return instance

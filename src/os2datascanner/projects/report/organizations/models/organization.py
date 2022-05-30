@@ -16,6 +16,8 @@ from rest_framework import serializers
 from django.db import models
 from os2datascanner.core_organizational_structure.models import Organization as Core_Organization
 
+from ..serializer import BaseSerializer
+
 
 class Organization(Core_Organization):
     """ Core logic lives in the core_organizational_structure app. """
@@ -35,7 +37,7 @@ class Organization(Core_Organization):
         )
 
 
-class OrganizationSerializer(serializers.ModelSerializer):
+class OrganizationSerializer(BaseSerializer):
     class Meta:
         model = Organization
         exclude = ['id']
@@ -44,14 +46,3 @@ class OrganizationSerializer(serializers.ModelSerializer):
     uuid = serializers.UUIDField()
 
     # TODO: should the concept of a "Client" also exist in the report module?
-    def create(self, validated_data):
-        return Organization.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.uuid = validated_data.get('uuid', instance.uuid)
-        instance.name = validated_data.get('name', instance.name)
-        instance.contact_email = validated_data.get('contact_email', instance.contact_email)
-        instance.contact_phone = validated_data.get('contact_phone', instance.contact_phone)
-
-        instance.save()
-        return instance
