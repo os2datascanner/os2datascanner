@@ -111,4 +111,15 @@ function insertData(result) {
     var treeArray = treeify(result);
     $("#sel_1").empty();
     $("#sel_1").select2ToTree({ treeData: { dataArr: treeArray } });
+    // Count the number of chosen units. If any, keep the correct radio button checked.
+    var orgUnits = 0;
+    for (var res of result) {
+        if (res.selected === "true") {
+            orgUnits++;
+        }
+    }
+    if (orgUnits > 0) {
+        $("#select-org-units").prop("checked", true);
+        $("#sel_1").prop("disabled", false);
+    }
 }
