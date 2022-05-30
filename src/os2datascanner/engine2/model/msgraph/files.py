@@ -37,7 +37,7 @@ class MSGraphFilesSource(MSGraphSource):
                     yield self._make_drive_handle(drive)
         if self._user_drives:
             if self._userlist is None:
-                for user in self._list_users(sm)["value"]:
+                for user in self._list_users(sm):
                     pn = user["userPrincipalName"]
                     with ignore_responses(404):
                         drive = sm.open(self).get("users/{0}/drive".format(pn))

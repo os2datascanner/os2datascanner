@@ -21,7 +21,7 @@ class MSGraphMailSource(MSGraphSource):
 
     def handles(self, sm):  # noqa
         if self._userlist is None:
-            for user in self._list_users(sm)["value"]:
+            for user in self._list_users(sm):
                 pn = user["userPrincipalName"]  # e.g. dan@contoso.onmicrosoft.com
                 # Getting a HTTP 404 response from the /messages endpoint means
                 # that this user doesn't have a mail account at all
