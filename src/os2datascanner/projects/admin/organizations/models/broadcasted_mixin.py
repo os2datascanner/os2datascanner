@@ -35,7 +35,7 @@ class Broadcasted:
 
     def to_json_object(self):
         """Return object serialized to JSON format."""
-        return serialize('json', [self])
+        return serialize('json', [self], use_natural_foreign_keys=True)
 
 
 # TODO: consider expanding with publication functionality when moving away from signals

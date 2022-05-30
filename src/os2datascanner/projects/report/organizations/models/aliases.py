@@ -14,10 +14,14 @@
 from uuid import uuid4
 from django.db import models
 from django.contrib.auth.models import User
+from rest_framework import serializers
 from django.utils.translation import ugettext_lazy as _
+
 from os2datascanner.core_organizational_structure.models import Alias as Core_Alias
 from os2datascanner.core_organizational_structure.models.aliases import AliasType, \
     validate_regex_SID  # noqa
+
+from ..serializer import BaseSerializer
 
 
 class Alias(Core_Alias):
@@ -58,3 +62,12 @@ class Alias(Core_Alias):
             type=self.alias_type.label,
             value=self.value,
         )
+
+
+class AliasSerializer(BaseSerializer):
+    class Meta:
+        model = Alias
+        fields = '__all__'
+
+    # This field has to be redefined here, because it is read-only on model.
+    uuid = serializers.UUIDField()

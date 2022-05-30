@@ -22,4 +22,8 @@ from .broadcasted_mixin import Broadcasted
 class Account(Core_Account, Imported, Broadcasted):
     """ Core logic lives in the core_organizational_structure app.
     Additional logic can be implemented here, but currently, none needed, hence we pass. """
-    pass
+
+    def natural_key(self):
+        return (self.pk, self.username,
+                self.organization.uuid, self.organization.name,
+                )

@@ -12,9 +12,11 @@
 # sector open source network <https://os2.eu/>.
 #
 from uuid import uuid4
-
+from rest_framework import serializers
 from django.db import models
 from os2datascanner.core_organizational_structure.models import Organization as Core_Organization
+
+from ..serializer import BaseSerializer
 
 
 class Organization(Core_Organization):
@@ -33,3 +35,14 @@ class Organization(Core_Organization):
             name=obj["name"],
             uuid=obj["uuid"]
         )
+
+
+class OrganizationSerializer(BaseSerializer):
+    class Meta:
+        model = Organization
+        exclude = ['id']
+
+    # This field has to be redefined here, because it is read-only on model.
+    uuid = serializers.UUIDField()
+
+    # TODO: should the concept of a "Client" also exist in the report module?

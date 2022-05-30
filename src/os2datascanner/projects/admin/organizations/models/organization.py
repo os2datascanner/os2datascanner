@@ -34,3 +34,6 @@ class Organization(Core_Organization, Broadcasted):
         unique=True,
         verbose_name=_('slug'),
     )
+
+    def natural_key(self):
+        return (self.uuid, self.name)
