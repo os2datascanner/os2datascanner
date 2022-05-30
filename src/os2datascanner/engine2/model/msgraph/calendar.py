@@ -20,7 +20,7 @@ class MSGraphCalendarSource(MSGraphSource):
 
     def handles(self, sm):  # noqa
         if self._userlist is None:
-            for user in self._list_users(sm)["value"]:
+            for user in self._list_users(sm):
                 pn = user["userPrincipalName"]
 
                 with ignore_responses(404):

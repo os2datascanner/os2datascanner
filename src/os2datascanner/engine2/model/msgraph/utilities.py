@@ -46,7 +46,7 @@ class MSGraphSource(Source):
             yield MSGraphSource.GraphCaller(self.make_token, session)
 
     def _list_users(self, sm):
-        return sm.open(self).get("users")
+        yield from sm.open(self).paginated_get("users")
 
     class GraphCaller:
         def __init__(self, token_creator, session=None):
