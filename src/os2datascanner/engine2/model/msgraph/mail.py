@@ -1,7 +1,9 @@
 from io import BytesIO
 from urllib.parse import urlsplit
 from contextlib import contextmanager
+from dateutil.parser import isoparse
 
+from ...conversions.types import OutputType
 from ...conversions.utilities.results import SingleResult
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
@@ -156,7 +158,7 @@ class MSGraphMailMessageResource(FileResource):
     def get_message_metadata(self):
         if not self._message:
             self._message = self._get_cookie().get(
-                    self.make_object_path() + "?$select=lastModifiedDateTime")
+                self.make_object_path() + "?$select=lastModifiedDateTime")
         return self._message
 
     @contextmanager
@@ -182,7 +184,9 @@ class MSGraphMailMessageResource(FileResource):
         return SingleResult(None, 'size', 1024)
 
     def get_last_modified(self):
-        return super().get_last_modified()
+        timestamp = self.get_message_metadata().get("lastModifiedDateTime")
+        timestamp = isoparse(timestamp) if timestamp else None
+        return SingleResult(None, OutputType.LastModified, timestamp)
 
     def compute_type(self):
         return "message/rfc822"
