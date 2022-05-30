@@ -1,22 +1,22 @@
 var parameters = {};
 
-$(function() {
+$(function () {
     parameters.organizationId = document.querySelector('#id_organization').value;
     getOrgUnits();
 
     // Eventlistener on change
     document.querySelector('#id_organization').addEventListener('change', function (e) {
-      var org = e.target.value;
-      if (parameters.organizationId !== org) {
-        parameters.organizationId = org;
-        
-        //When the organization is called, getorgunit.js removes the selected values,
-        //but not the already selected values from the variable in dropdowntree.js,
-        //instead of adding another eventlistener on the same dropdown as this, we set the value to empty here
-        selectedValues = [];
-        
-        getOrgUnits();
-      }
+        var org = e.target.value;
+        if (parameters.organizationId !== org) {
+            parameters.organizationId = org;
+
+            //When the organization is called, getorgunit.js removes the selected values,
+            //but not the already selected values from the variable in dropdowntree.js,
+            //instead of adding another eventlistener on the same dropdown as this, we set the value to empty here
+            selectedValues = [];
+
+            getOrgUnits();
+        }
     });
 });
 
@@ -46,19 +46,19 @@ function treeify(list, idAttr, parentAttr, childrenAttr) {
     if (!childrenAttr) {
         childrenAttr = 'inc';
     }
-   
+
     var treeList = [];
     var lookup = {};
-    list.forEach(function(obj) {
+    list.forEach(function (obj) {
         lookup[obj[idAttr]] = obj;
         obj[childrenAttr] = [];
     });
-    list.forEach(function(obj) {
+    list.forEach(function (obj) {
         if (obj[parentAttr] !== null) {
             if (lookup[obj[parentAttr]] !== undefined) {
                 lookup[obj[parentAttr]][childrenAttr].push(obj);
             } else {
-                 treeList.push(obj);
+                treeList.push(obj);
             }
         } else {
             treeList.push(obj);
@@ -71,15 +71,33 @@ function isOrgUnitSelected(orgUnits) {
     // Empty the function when it's called, to make sure it's only called once
     // since we don't want to "refill" the select box, everytime a user changes organization
     /* jshint -W021 */
-    isOrgUnitSelected = function(){};
+    isOrgUnitSelected = function () { };
     /* jshint +W021 */
     // determine wether the orginazational unit is selected
     // do not use this on add new
-    if( document.location.pathname.indexOf('add') === -1){ //if not indexof
+    if (document.location.pathname.indexOf('add') === -1) { //if not indexof
         var scannerJobId = document.location.pathname.split('/')[2];
-        for(var i = 0; i < orgUnits.length; i += 1){
-            for(var j = 0;j < orgUnits[i].exchangescanners.length;j += 1) {
-                if(orgUnits[i].exchangescanners[j] === parseInt(scannerJobId)) {
+        for (var i = 0; i < orgUnits.length; i += 1) {
+            for (var j = 0; j < orgUnits[i].exchangescanners.length; j += 1) {
+                if (orgUnits[i].exchangescanners[j] === parseInt(scannerJobId)) {
+                    orgUnits[i].selected = "true";
+                    break;
+                }
+            }
+            for (var k = 0; k < orgUnits[i].msgraphmailscanners.length; k += 1) {
+                if (orgUnits[i].msgraphmailscanners[k] === parseInt(scannerJobId)) {
+                    orgUnits[i].selected = "true";
+                    break;
+                }
+            }
+            for (var l = 0; l < orgUnits[i].msgraphfilescanners.length; l += 1) {
+                if (orgUnits[i].msgraphfilescanners[l] === parseInt(scannerJobId)) {
+                    orgUnits[i].selected = "true";
+                    break;
+                }
+            }
+            for (var m = 0; m < orgUnits[i].msgraphcalendarscanners.length; m += 1) {
+                if (orgUnits[i].msgraphcalendarscanners[m] === parseInt(scannerJobId)) {
                     orgUnits[i].selected = "true";
                     break;
                 }
@@ -92,5 +110,5 @@ function insertData(result) {
     isOrgUnitSelected(result);
     var treeArray = treeify(result);
     $("#sel_1").empty();
-    $("#sel_1").select2ToTree({treeData: {dataArr:treeArray}});
+    $("#sel_1").select2ToTree({ treeData: { dataArr: treeArray } });
 }

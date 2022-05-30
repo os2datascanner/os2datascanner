@@ -12,4 +12,7 @@ class OrganizationalUnitSerializer(serializers.ModelSerializer):
             'level',
             'parent',
             'organization',
-            'exchangescanners')
+            'exchangescanners',
+            'msgraphmailscanners',
+            'msgraphfilescanners',
+            'msgraphcalendarscanners')
