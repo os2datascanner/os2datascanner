@@ -17,7 +17,7 @@ class MSGraphFilesSource(MSGraphSource):
         super().__init__(client_id, tenant_id, client_secret)
         self._site_drives = site_drives
         self._user_drives = user_drives
-        self._userlist = userlist or None
+        self._userlist = userlist
 
     def _make_drive_handle(self, obj):
         owner_name = None
@@ -53,7 +53,7 @@ class MSGraphFilesSource(MSGraphSource):
             **super().to_json_object(),
             site_drives=self._site_drives,
             user_drives=self._user_drives,
-            userlist=list(self._userlist) if self._userlist else None,
+            userlist=list(self._userlist) if self._userlist is not None else None
         )
 
     @staticmethod
@@ -66,7 +66,7 @@ class MSGraphFilesSource(MSGraphSource):
                 client_secret=obj["client_secret"],
                 site_drives=obj["site_drives"],
                 user_drives=obj["user_drives"],
-                userlist=frozenset(userlist) if userlist else None)
+                userlist=frozenset(userlist) if userlist is not None else None)
 
 
 DUMMY_MIME = "application/vnd.os2.datascanner.graphdrive"
