@@ -70,6 +70,20 @@ class RegexPatternAdmin(admin.ModelAdmin):
 class ScannerAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'validation_status')
 
+    # For excluding orgunits.
+    include_orgunit_scanners = [ExchangeScanner,
+                                MSGraphMailScanner,
+                                MSGraphFileScanner,
+                                MSGraphCalendarScanner]
+
+    def get_fields(self, request, obj=None):
+        """Only show organizational units if relevant."""
+
+        if type(obj) not in self.include_orgunit_scanners:
+            self.exclude = ('org_unit', )
+
+        return super().get_fields(request, obj=obj)
+
 
 for _cls in [APIKey, ScheduledCheckup]:
     admin.site.register(_cls)

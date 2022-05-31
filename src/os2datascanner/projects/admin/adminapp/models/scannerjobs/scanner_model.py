@@ -46,6 +46,7 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
+from mptt.models import TreeManyToManyField
 
 from ..authentication_model import Authentication
 from ..rules.rule_model import Rule
@@ -77,6 +78,13 @@ class Scanner(models.Model):
         verbose_name=_('organization'),
         default=None,
         null=True,
+    )
+
+    org_unit = TreeManyToManyField(
+        "organizations.OrganizationalUnit",
+        related_name="scanners",
+        blank=True,
+        verbose_name=_("organizational unit"),
     )
 
     schedule = RecurrenceField(

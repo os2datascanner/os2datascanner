@@ -78,28 +78,9 @@ function isOrgUnitSelected(orgUnits) {
     if (document.location.pathname.indexOf('add') === -1) { //if not indexof
         var scannerJobId = document.location.pathname.split('/')[2];
         for (var i = 0; i < orgUnits.length; i += 1) {
-            for (var j = 0; j < orgUnits[i].exchangescanners.length; j += 1) {
-                if (orgUnits[i].exchangescanners[j] === parseInt(scannerJobId)) {
+            for (var j = 0; j < orgUnits[i].scanners.length; j++) {
+                if (orgUnits[i].scanners[j] === parseInt(scannerJobId)) {
                     orgUnits[i].selected = "true";
-                    break;
-                }
-            }
-            for (var k = 0; k < orgUnits[i].msgraphmailscanners.length; k += 1) {
-                if (orgUnits[i].msgraphmailscanners[k] === parseInt(scannerJobId)) {
-                    orgUnits[i].selected = "true";
-                    break;
-                }
-            }
-            for (var l = 0; l < orgUnits[i].msgraphfilescanners.length; l += 1) {
-                if (orgUnits[i].msgraphfilescanners[l] === parseInt(scannerJobId)) {
-                    orgUnits[i].selected = "true";
-                    break;
-                }
-            }
-            for (var m = 0; m < orgUnits[i].msgraphcalendarscanners.length; m += 1) {
-                if (orgUnits[i].msgraphcalendarscanners[m] === parseInt(scannerJobId)) {
-                    orgUnits[i].selected = "true";
-                    break;
                 }
             }
         }
