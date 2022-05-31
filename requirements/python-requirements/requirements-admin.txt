@@ -399,6 +399,8 @@ structlog==20.1.0
     #   -c requirements-engine.txt
     #   -r requirements-common.in
     #   django-structlog
+tqdm==4.64.0
+    # via pip
 toml==0.10.1
     # via
     #   -c requirements-engine.txt

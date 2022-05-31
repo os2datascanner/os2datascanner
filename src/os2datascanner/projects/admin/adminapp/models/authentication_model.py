@@ -33,8 +33,8 @@ class Authentication(models.Model):
     def get_password(self):
         return decrypt(bytes(self.iv), bytes(self.ciphertext))
 
-    def set_password(self, password):
-        self.iv, self.ciphertext = encrypt(password)
+    def set_password(self, password, key=None):
+        self.iv, self.ciphertext = encrypt(password, key)
 
     def __str__(self):
         if self.domain:

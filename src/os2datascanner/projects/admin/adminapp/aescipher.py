@@ -12,12 +12,12 @@ from django.core.exceptions import ImproperlyConfigured
 logger = logging.getLogger(__name__)
 
 
-def encrypt(plaintext):
+def encrypt(plaintext, key=None):
     """
     Takes as input a 32-byte key and an arbitrary-length plaintext and returns a
     pair (iv, ciphtertext). "iv" stands for initialization vector.
     """
-    key = get_key()
+    key = key if key else get_key()
 
     # Choose a random, 16-byte IV.
     iv = Random.new().read(AES.block_size)
@@ -36,12 +36,12 @@ def encrypt(plaintext):
     return iv, ciphertext
 
 
-def decrypt(iv, ciphertext):
+def decrypt(iv, ciphertext, key=None):
     """
     Takes as input a 32-byte key, a 16-byte IV, and a ciphertext, and outputs
     the corresponding plaintext.
     """
-    key = get_key()
+    key = key if key else get_key()
 
     # Initialize counter for decryption. iv should be the same as the output of
     # encrypt().

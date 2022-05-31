@@ -155,6 +155,10 @@ class LDAPConfig(Exported, ImportService):
     def ldap_credential(self, value):
         self._iv_ldap_credential, self._cipher_ldap_credential = encrypt(value)
 
+    def rotate_credential(self, key=None):
+        credential = self.ldap_credential
+        self._iv_ldap_credential, self._cipher_ldap_credential = encrypt(credential, key)
+
     class Meta:
         verbose_name = _('LDAP configuration')
         verbose_name_plural = _('LDAP configurations')
