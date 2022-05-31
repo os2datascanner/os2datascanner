@@ -39,13 +39,12 @@
 </p>
 <p>
     {% blocktrans %}
-	For you information, your OS2datascanner-scan @ <strong>{{ scanner_name }}</strong> has just finished.
+	For your information, your OS2datascanner-scan @ <strong>{{ scanner_name }}</strong> has just finished.
     {% endblocktrans %}
 </p>
 <p>
-    {% blocktrans %}
-	<strong>{{ total_objects }}</strong> objects were scanned - <strong>{{ object_size }}</strong> in total - in <strong>{{ completion_time }}</strong>.
-    {% endblocktrans %}
+    <strong>{{ total_objects }}</strong>{% trans " objects were scanned - " %} <strong>{{ object_size|filesizeformat }}</strong>
+    {% trans " in total - in " %} <strong>{{ completion_time }}</strong>.
 </p>
 <p>
 {% blocktrans %}

@@ -5,12 +5,10 @@ Hello {{ full_name }},
 {% endblocktrans %}
 
 {% blocktrans %}
-For you information, your OS2datascanner-scan @ {{ scanner_name }} has just finished.
+For your information, your OS2datascanner-scan @ {{ scanner_name }} has just finished.
 {% endblocktrans %}
 
-{% blocktrans %}
-{{ total_objects }} objects were scanned - {{ object_size }} in total - in {{ completion_time }}.
-{% endblocktrans %}
+{{ total_objects }}{% trans " objects were scanned - " %}{{ object_size|filesizeformat }}{% trans " in total - in " %}{{ completion_time }}.
 
 {% blocktrans %}
 Log into OS2datascanner with your organisation account for further details.
