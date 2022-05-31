@@ -200,7 +200,7 @@ def checkup_message_received_raw(body):
 def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # noqa: CCR001, E501 too high cognitive complexity
     locked_qs = ScheduledCheckup.objects.select_for_update(
         of=('self',)
-    ).filter(  # Uses the "sc_pc_lookup" index
+    ).filter(
         scanner=scanner,
         handle_representation=handle.to_json_object()
     )
