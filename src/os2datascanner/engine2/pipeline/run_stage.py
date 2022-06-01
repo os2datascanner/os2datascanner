@@ -15,7 +15,7 @@ from ... import __version__
 from ..model.core import SourceManager
 from . import explorer, exporter, matcher, messages, processor, tagger, worker
 from .utilities.pika import PikaPipelineThread, RejectMessage
-from ..utilities.timeout import yield_from_with_default_timeout
+from ..utilities.timeout import run_with_default_timeout
 
 
 # __name__ is "__main__" in this context, which isn't quite what we want for
@@ -118,9 +118,14 @@ class GenericRunner(PikaPipelineThread):
                         "ignoring")
                 raise RejectMessage(requeue=False)
 
-        yield from yield_from_with_default_timeout(
-            self._module.message_received_raw(
-                body, routing_key, self._source_manager))
+        is_success, result = run_with_default_timeout(
+            self._module.message_received_raw,
+            body, routing_key, self._source_manager)
+
+        if is_success:
+            yield from result
+        else:
+            yield from []
 
     def handle_message(self, routing_key, body):
         with self._summary.time():

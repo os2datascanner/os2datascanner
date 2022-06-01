@@ -63,6 +63,7 @@ def _timeout_stop(handler):
 
 
 def _compute_next(seconds, iterable):
+    handler = None
     try:
         handler = _timeout_start(seconds)
         return (False, next(iterable))
@@ -106,13 +107,11 @@ def _timeout(seconds):
     if seconds <= 0:
         raise ValueError()
 
-    original_handler = signal.signal(signal.SIGALRM, _signal_timeout_handler)
-    signal.alarm(seconds)
+    original_handler = _timeout_start(seconds)
 
     try:
         yield
     except GeneratorExit:
         return
     finally:
-        signal.alarm(0)
-        signal.signal(signal.SIGALRM, original_handler)
+        _timeout_stop(original_handler)
