@@ -114,8 +114,7 @@
                                                 {% else %}
                                                     {{ organization.realm.importjob.first.exec_state.label|capfirst  }},
                                                 {% endif %}
-    <!--                                            {# XXX: remove this hardcoded timezone once #39963 is fixed #}-->
-                                                {{ organization.realm.importjob.first.changed_at|timezone:"Europe/Paris"|date:'d-m-Y H:i'}}
+                                                {{ organization.realm.importjob.first.changed_at|date:'d-m-Y H:i'}}
                                             </span>
                                         {% endwith %}
                                     {% endif %}
@@ -178,8 +177,7 @@
                                         {% else %}
                                             {{ organization.msimport.first.exec_state.label|capfirst  }},
                                         {% endif %}
-<!--                                            {# XXX: remove this hardcoded timezone once #39963 is fixed #}-->
-                                        {{ organization.msimport.first.changed_at|timezone:"Europe/Paris"|date:'d-m-Y H:i'}}
+                                        {{ organization.msimport.first.changed_at|date:'d-m-Y H:i'}}
                                     </span>
                                 {% endwith %}
                             {% endif %}
