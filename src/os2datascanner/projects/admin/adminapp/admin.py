@@ -27,7 +27,9 @@ from .models.rules.addressrule_model import AddressRule
 from .models.scannerjobs.scanner_model import (ScanStatus,
                                                ScheduledCheckup,
                                                ScanStatusSnapshot)
-from .models.scannerjobs.msgraph_models import MSGraphMailScanner
+from .models.scannerjobs.msgraph_models import (MSGraphMailScanner,
+                                                MSGraphFileScanner,
+                                                MSGraphCalendarScanner)
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
@@ -61,6 +63,8 @@ class RegexPatternAdmin(admin.ModelAdmin):
 @admin.register(DropboxScanner)
 @admin.register(ExchangeScanner)
 @admin.register(MSGraphMailScanner)
+@admin.register(MSGraphFileScanner)
+@admin.register(MSGraphCalendarScanner)
 @admin.register(GoogleDriveScanner)
 @admin.register(GmailScanner)
 class ScannerAdmin(admin.ModelAdmin):
