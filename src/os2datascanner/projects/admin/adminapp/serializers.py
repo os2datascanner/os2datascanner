@@ -12,4 +12,4 @@ class OrganizationalUnitSerializer(serializers.ModelSerializer):
             'level',
             'parent',
             'organization',
-            'exchangescanners')
+            'scanners')

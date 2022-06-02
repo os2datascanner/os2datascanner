@@ -18,12 +18,10 @@ import logging
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
 
 from exchangelib.errors import ErrorNonExistentMailbox
 from os2datascanner.engine2.model.ews import EWSAccountSource
 from os2datascanner.engine2.model.core import SourceManager
-from mptt.models import TreeManyToManyField
 
 from ....organizations.models.aliases import AliasType
 from ...utils import upload_path_exchange_users
@@ -46,13 +44,6 @@ class ExchangeScanner(Scanner):
         verbose_name="Service endpoint",
         blank=True,
         default=""
-    )
-
-    org_unit = TreeManyToManyField(
-        "organizations.OrganizationalUnit",
-        related_name="exchangescanners",
-        blank=True,
-        verbose_name=_("organizational unit"),
     )
 
     def get_userlist_file_path(self):
