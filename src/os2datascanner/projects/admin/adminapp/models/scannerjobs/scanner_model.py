@@ -406,13 +406,6 @@ class ScheduledCheckup(models.Model):
     def handle(self):
         return Handle.from_json_object(self.handle_representation)
 
-    class Meta:
-        indexes = [
-            models.Index(
-                    fields=("scanner", "handle_representation",),
-                    name="sc_pc_lookup"),
-        ]
-
 
 class ScanStage(Enum):
     INDEXING = 0

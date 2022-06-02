@@ -14,8 +14,19 @@ class Migration(migrations.Migration):
             model_name='scanstatus',
             index=models.Index(fields=['scanner', 'scan_tag'], name='ss_pc_lookup'),
         ),
-        migrations.AddIndex(
-            model_name='scheduledcheckup',
-            index=models.Index(fields=['scanner', 'handle_representation'], name='sc_pc_lookup'),
+        # Prior to version 3.15.0, this migration also created an index based
+        # on ScheduledCheckup's handle_representation field, but that produced
+        # migration failures in production, as that field is often too big to
+        # index. Dummying out this part of the migration lets us finish the
+        # production deployments, and migration 0081 should get everybody back
+        # in sync
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AddIndex(
+                    model_name='scheduledcheckup',
+                    index=models.Index(fields=['scanner', 'handle_representation'], name='sc_pc_lookup'),
+                ),
+            ],
+            database_operations=[]
         ),
     ]
