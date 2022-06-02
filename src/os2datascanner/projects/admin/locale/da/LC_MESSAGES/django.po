@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 14:20+0200\n"
+"POT-Creation-Date: 2022-05-31 15:46+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -364,7 +364,10 @@ msgid ""
 "\n"
 "\tHello %(full_name)s,\n"
 "    "
-msgstr "\n\tHej %(full_name)s,\n    "
+msgstr ""
+"\n"
+"\tHej %(full_name)s,\n"
+"    "
 
 #: adminapp/templates/mail/finished_scannerjob.html:41
 #, python-format
@@ -380,25 +383,16 @@ msgstr ""
 "    "
 
 #: adminapp/templates/mail/finished_scannerjob.html:46
-#, python-format
-#| msgid ""
-#| "\n"
-#| "%(total_objects)s objects were scanned - %(object_size)s in total - in "
-#| "%(completion_time)s.\n"
-msgid ""
-"\n"
-"\t<strong>%(total_objects)s</strong> objects were scanned - <strong>"
-"%(object_size)s</strong> in total - in <strong>%(completion_time)s</"
-"strong>.\n"
-"    "
-msgstr ""
-"\n"
-"\tDer blev scannet <strong>%(total_objects)s</strong> objekter - i alt "
-"<strong>%(object_size)s</strong> - Scanner tog <strong>%(completion_time)s</"
-"strong>.\n"
-"    "
+#: adminapp/templates/mail/finished_scannerjob.txt:11
+msgid " objects were scanned - "
+msgstr " objekter scannet - "
 
-#: adminapp/templates/mail/finished_scannerjob.html:51
+#: adminapp/templates/mail/finished_scannerjob.html:47
+#: adminapp/templates/mail/finished_scannerjob.txt:11
+msgid " in total - in "
+msgstr " i alt - på "
+
+#: adminapp/templates/mail/finished_scannerjob.html:50
 #, python-format
 msgid ""
 "\n"
@@ -409,7 +403,7 @@ msgstr ""
 "    <a href=\"%(admin_login_url)s\">Log på OS2datascanner med din\n"
 "\torganisationskonto</a> for at se detajlerne.\n"
 
-#: adminapp/templates/mail/finished_scannerjob.html:57
+#: adminapp/templates/mail/finished_scannerjob.html:56
 msgid ""
 "\n"
 "\tKind regards,<br>\n"
@@ -421,7 +415,7 @@ msgstr ""
 "\tOS2datascanner-systemet\n"
 "    "
 
-#: adminapp/templates/mail/finished_scannerjob.html:62
+#: adminapp/templates/mail/finished_scannerjob.html:61
 #, python-format
 msgid ""
 "\n"
@@ -445,25 +439,14 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"For you information, your OS2datascanner-scan @ %(scanner_name)s has just "
+"For your information, your OS2datascanner-scan @ %(scanner_name)s has just "
 "finished.\n"
 msgstr ""
 "\n"
 "Til orientering er dit OS2datascanner-scan @ %(scanner_name)s lige kørt "
 "færdigt.\n"
 
-#: adminapp/templates/mail/finished_scannerjob.txt:11
-#, python-format
-msgid ""
-"\n"
-"%(total_objects)s objects were scanned - %(object_size)s in total - in "
-"%(completion_time)s.\n"
-msgstr ""
-"\n"
-"Der blev scannet %(total_objects)s objekter - i alt %(object_size)s - i "
-"%(completion_time)s.\n"
-
-#: adminapp/templates/mail/finished_scannerjob.txt:15
+#: adminapp/templates/mail/finished_scannerjob.txt:13
 msgid ""
 "\n"
 "Log into OS2datascanner with your organisation account for further details.\n"
@@ -471,7 +454,7 @@ msgstr ""
 "\n"
 "Log på OS2datascanner med din organisationskonto for at se detajlerne.\n"
 
-#: adminapp/templates/mail/finished_scannerjob.txt:22
+#: adminapp/templates/mail/finished_scannerjob.txt:20
 msgid ""
 "\n"
 "Kind regards,\n"
@@ -481,7 +464,7 @@ msgstr ""
 "Med venlig hilsen\n"
 "OS2datascanner-systemet\n"
 
-#: adminapp/templates/mail/finished_scannerjob.txt:27
+#: adminapp/templates/mail/finished_scannerjob.txt:25
 #, python-format
 msgid ""
 "\n"
@@ -1889,6 +1872,30 @@ msgstr "organisatorisk struktur for"
 #: organizations/views/org_views.py:91
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "\t<strong>%(total_objects)s</strong> objects were scanned - <strong>"
+#~ "%(object_size|filesizeformat)s</strong> in total - in <strong>"
+#~ "%(completion_time)s</strong>.\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "\tDer blev scannet <strong>%(total_objects)s</strong> objekter - i alt "
+#~ "<strong>%(object_size|filesizeformat)s</strong> - Scanner tog <strong>"
+#~ "%(completion_time)s</strong>.\n"
+#~ "    "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "%(total_objects)s objects were scanned - %(object_size|filesizeformat)s "
+#~ "in total - in %(completion_time)s.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Der blev scannet %(total_objects)s objekter - i alt "
+#~ "%(object_size|filesizeformat)s - i %(completion_time)s.\n"
 
 #~ msgid "username"
 #~ msgstr "brugernavn"

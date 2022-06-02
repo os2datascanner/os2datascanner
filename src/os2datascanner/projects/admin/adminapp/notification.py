@@ -44,7 +44,7 @@ def create_context(scanner: Scanner, scan_status: ScanStatus, user: User):
         "full_name": user.get_full_name() or user.username if user else "",
         "total_objects": scan_status.total_objects,
         "scanner_name": scanner.name,
-        "object_size": get_formatted_object_size(scan_status),
+        "object_size": scan_status.scanned_size,
         "completion_time": get_scanner_time(scan_status)
     }
 
@@ -62,14 +62,6 @@ def get_scanner_time(scan_status: ScanStatus):
     seconds = round((total_time.total_seconds() % 3600) % 60)
 
     return str(hours) + "t" + str(minutes) + "m" + str(seconds) + "s"
-
-
-def get_formatted_object_size(scan_status: ScanStatus):
-    """
-    Calculates the total size of all scanned objects for a scannerjob in gigabytes (GB).
-    """
-    gigabytes = round(scan_status.scanned_size / GIGABYTE, 2)
-    return str(gigabytes) + "GB"
 
 
 def create_msg(context, user, email, txt_mail_template, html_mail_template):
