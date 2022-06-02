@@ -2,6 +2,8 @@
 {% load static %}
 {% load i18n %}
 {% load tz %}
+{% load mptt_tags %}
+{% load get_orgunit_list %}
 
 {% block title %}{% trans "organizations"|capfirst %}{% endblock %}
 
@@ -188,6 +190,31 @@
                     </td>
                     {% endif %}
                 </tr>
+                {% with organization|get_orgunit_list as orgunit_list %}
+                {% if orgunit_list %}
+                <tr>
+                    <td class="datatable__column--name" colspan="12">
+                        <div class="orgunits" url={% url 'org-units-listing' %}>
+                                
+                                <ul class="root">
+                                    {% recursetree orgunit_list %}
+                                        <li>
+                                            {{ node.name }}
+                                            {% if not node.is_leaf_node %}
+                                                <ul class="children">
+                                                    {{ children }}
+                                                </ul>
+                                            {% endif %}
+                                        </li>
+                                    {% endrecursetree %}
+                                
+                                </ul>
+                        </div>
+                        
+                    </td>
+                </tr>
+                {% endif %}
+                {% endwith %}
                 {% endfor %}
             </tbody>
             {% endif %}
