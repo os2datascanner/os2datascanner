@@ -1,5 +1,68 @@
 # Changelog
 
+## Version 3.15.0, 3rd June 2022
+
+"Hey! Listen!"
+
+### New in this version
+
+- Synchronisation of organisational information:
+
+  - Organisational information imported from external systems is now available
+    in both the administration system and the report module.
+
+  - As a consequence, users who have not yet logged into the report module are
+    still known to it, and can have matches associated with them.
+
+- When a scanner job is completed, the associated administrative user will now
+  receive an email summarising the data that was scanned.
+
+- Error messages raised during the execution of a scan are now collected and
+  displayed in the administration system.
+
+### General improvements
+
+- The location information shown for matches in the report module has been
+  improved and made more consistent.
+
+- The administration system no longer decrypts protected values for the sake of
+  prepopulating a form.
+
+- The user interface for Microsoft Graph scanner jobs now correctly shows the
+  previously chosen organisational units, if there were any.
+
+- Email attachments whose name includes non-ASCII characters are now correctly
+  displayed.
+
+### Bugfixes
+
+- The system no longer appears to freeze when asked to scan a data source with
+  no content.
+
+- Network drive files whose name contains an invalid character no longer cause
+  some of their siblings to be skipped.
+
+- Scanning a Microsoft Graph organisational unit with no members no longer
+  causes the whole organisation to be scanned.
+
+- Microsoft Graph organisations with more than a single page of users are now
+  supported correctly.
+
+- The administration system's collector process can once more be run in
+  parallel without risk of making the scan status inconsistent.
+
+- The scanner motor can now correctly detect the deletion of Microsoft Graph
+  mails.
+
+- The administration system's collector process no longer raises a database
+  error when it attempts to store an unexpectedly large object.
+
+### Notes
+
+- The logic that checks whether or not a file has changed since the last scan
+  may reach the wrong conclusion for certain deeply-nested files. We expect a
+  fix for this issue to be included in the next minor release.
+
 ## Version 3.14.3, 6th May 2022
 
 "A Thousand Pictures Are Worth A Million Words"
