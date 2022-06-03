@@ -8,79 +8,92 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-06 14:53+0200\n"
+"POT-Creation-Date: 2022-06-03 16:09+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: reportapp/admin.py:124
+#: organizations/models/aliases.py:38
+msgid "alias ID"
+msgstr ""
+
+#: organizations/models/aliases.py:41
+msgid "user"
+msgstr ""
+
+#: organizations/models/aliases.py:50
+msgid "account"
+msgstr ""
+
+#: reportapp/admin.py:88
 msgid "Personal info"
 msgstr "Personlig information"
 
-#: reportapp/admin.py:126
+#: reportapp/admin.py:90
 msgid "Important dates"
 msgstr "Vigtige datoer"
 
-#: reportapp/models/aliases/adsidalias_model.py:32
-#, python-format
-msgid "%(value)s is not a valid SID"
-msgstr "%(value)s er ikke et gyldigt SID"
-
-#: reportapp/models/aliases/alias_model.py:36
-msgid "Match relation"
+#: reportapp/models/documentreport_model.py:29
+#, fuzzy
+#| msgid "Match relation"
+msgid "Alias relation"
 msgstr "Match relation"
 
-#: reportapp/models/documentreport_model.py:23
+#: reportapp/models/documentreport_model.py:34
 msgid "scan time"
 msgstr "scanningstid"
 
-#: reportapp/models/documentreport_model.py:26
+#: reportapp/models/documentreport_model.py:37
 msgid "created timestamp"
 msgstr "oprettet tidsstempel"
 
-#: reportapp/models/documentreport_model.py:30
+#: reportapp/models/documentreport_model.py:41
 msgid "organization"
 msgstr "organisation"
 
-#: reportapp/models/documentreport_model.py:33
+#: reportapp/models/documentreport_model.py:44
 msgid "path"
 msgstr "sti"
 
-#: reportapp/models/documentreport_model.py:43
+#: reportapp/models/documentreport_model.py:54
 msgid "sort key"
 msgstr "sortér efter"
 
-#: reportapp/models/documentreport_model.py:48
+#: reportapp/models/documentreport_model.py:59
 msgid "name"
 msgstr "navn"
 
-#: reportapp/models/documentreport_model.py:51
+#: reportapp/models/documentreport_model.py:62
 msgid "source type"
 msgstr "kildetype"
 
-#: reportapp/models/documentreport_model.py:53
+#: reportapp/models/documentreport_model.py:64
 msgid "sensitivity"
 msgstr "følsomhed"
 
-#: reportapp/models/documentreport_model.py:55
+#: reportapp/models/documentreport_model.py:66
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport_model.py:139
+#: reportapp/models/documentreport_model.py:149
+msgid "number of matches"
+msgstr ""
+
+#: reportapp/models/documentreport_model.py:153
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport_model.py:142
+#: reportapp/models/documentreport_model.py:156
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport_model.py:145
+#: reportapp/models/documentreport_model.py:159
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport_model.py:191
+#: reportapp/models/documentreport_model.py:214
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -293,15 +306,15 @@ msgstr "Navn"
 msgid "Matches"
 msgstr "Matches"
 
-#: reportapp/templates/components/hits.html:40
+#: reportapp/templates/components/hits.html:49
 msgid "Source"
 msgstr "Kilde"
 
-#: reportapp/templates/components/hits.html:43
+#: reportapp/templates/components/hits.html:52
 msgid "Path"
 msgstr "Sti"
 
-#: reportapp/templates/components/hits.html:58
+#: reportapp/templates/components/hits.html:67
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -626,6 +639,10 @@ msgstr "Mailscan"
 #: reportapp/views/views.py:442
 msgid "Not assigned"
 msgstr "Ikke tildelt"
+
+#, python-format
+#~ msgid "%(value)s is not a valid SID"
+#~ msgstr "%(value)s er ikke et gyldigt SID"
 
 #~ msgid "Select scannerjob"
 #~ msgstr "Vælg scannerjob"

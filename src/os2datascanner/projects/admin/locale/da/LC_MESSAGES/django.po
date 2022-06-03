@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-31 15:46+0200\n"
+"POT-Creation-Date: 2022-06-03 16:11+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: adminapp/models/apikey_model.py:16 adminapp/models/rules/rule_model.py:47
-#: adminapp/models/scannerjobs/scanner_model.py:77
+#: adminapp/models/scannerjobs/scanner_model.py:78
 #: import_services/models/msgraph_import_job.py:32
 #: import_services/models/realm.py:29
 msgid "organization"
@@ -65,13 +65,6 @@ msgstr "Beskrivelse"
 msgid "sensitivity"
 msgstr "Følsomhed"
 
-#: adminapp/models/scannerjobs/exchangescanner_model.py:55
-#: adminapp/models/scannerjobs/msgraph_models.py:73
-#: adminapp/models/scannerjobs/msgraph_models.py:112
-#: adminapp/models/scannerjobs/msgraph_models.py:152
-msgid "organizational unit"
-msgstr "organisatorisk enhed"
-
 #: adminapp/models/scannerjobs/filescanner_model.py:35
 msgid "drive letter"
 msgstr "drevbogstav"
@@ -92,56 +85,60 @@ msgstr ""
 msgid "URL must follow the UNC format"
 msgstr "URL skal følge UNC-format"
 
-#: adminapp/models/scannerjobs/scanner_model.py:422
+#: adminapp/models/scannerjobs/scanner_model.py:87
+msgid "organizational unit"
+msgstr "organisatorisk enhed"
+
+#: adminapp/models/scannerjobs/scanner_model.py:423
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:427
+#: adminapp/models/scannerjobs/scanner_model.py:428
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:432
+#: adminapp/models/scannerjobs/scanner_model.py:433
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:437
+#: adminapp/models/scannerjobs/scanner_model.py:438
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:442
+#: adminapp/models/scannerjobs/scanner_model.py:443
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:504
+#: adminapp/models/scannerjobs/scanner_model.py:505
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
 
-#: adminapp/models/scannerjobs/scanner_model.py:509
+#: adminapp/models/scannerjobs/scanner_model.py:510
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:516
+#: adminapp/models/scannerjobs/scanner_model.py:517
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:545
+#: adminapp/models/scannerjobs/scanner_model.py:546
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:546
+#: adminapp/models/scannerjobs/scanner_model.py:547
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/scanner_model.py:585
+#: adminapp/models/scannerjobs/scanner_model.py:586
 msgid "timestamp"
 msgstr ""
 
-#: adminapp/models/scannerjobs/scanner_model.py:590
+#: adminapp/models/scannerjobs/scanner_model.py:591
 msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/scanner_model.py:591
+#: adminapp/models/scannerjobs/scanner_model.py:592
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
@@ -1847,17 +1844,17 @@ msgstr "Importservice (Microsoft Graph)"
 
 #: organizations/templates/organizations/org_list.html:95
 #: organizations/templates/organizations/org_list.html:98
-#: organizations/templates/organizations/org_list.html:159
-#: organizations/templates/organizations/org_list.html:162
+#: organizations/templates/organizations/org_list.html:158
+#: organizations/templates/organizations/org_list.html:161
 msgid "sync"
 msgstr "synkroniser"
 
 #: organizations/templates/organizations/org_list.html:113
-#: organizations/templates/organizations/org_list.html:177
+#: organizations/templates/organizations/org_list.html:176
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_list.html:200
+#: organizations/templates/organizations/org_list.html:198
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
