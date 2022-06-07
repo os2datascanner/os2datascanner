@@ -1,8 +1,11 @@
 from os import listdir
 import PyPDF2
 import string
+import datetime
 from tempfile import TemporaryDirectory
 
+from ...conversions.types import OutputType
+from ...conversions.utilities.results import SingleResult
 from ....utils.system_utilities import run_custom
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource
@@ -52,6 +55,7 @@ class PDFPageResource(Resource):
             author = (
                     info.get("/Author").strip(WHITESPACE_PLUS)
                     if info and info.get("/Author") else None)
+
         if author:
             yield "pdf-author", str(author)
 
@@ -139,6 +143,23 @@ class PDFObjectResource(FilesystemResource):
         # Suppress the superclass implementation of this method -- generated
         # files have no interesting metadata
         yield from ()
+
+    def get_last_modified(self):
+        # This is a generated, embedded file, so the last_modified_date should
+        # be taken from the parent container.
+        last_modified = None
+        # Get the top-level handle and follow it.
+        parent_handle = self.handle.source.handle.source.handle
+        with parent_handle.follow(self._sm).make_stream() as fp:
+            reader = _open_pdf_wrapped(fp)
+            info = reader.getDocumentInfo()
+            # Extract the modification date time and format it properly.
+            mod_date = info.get("/ModDate")
+            # Check that the mod_date is a string-like object.
+            if isinstance(mod_date, PyPDF2.generic.TextStringObject):
+                mod_date = mod_date.strip(WHITESPACE_PLUS).replace("'", "")[2:]
+                last_modified = datetime.datetime.strptime(mod_date, "%Y%m%d%H%M%S%z")
+        return SingleResult(None, OutputType.LastModified, last_modified)
 
 
 @Handle.stock_json_handler("pdf-object")
