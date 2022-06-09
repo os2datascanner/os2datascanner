@@ -274,10 +274,6 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         """Validate the submitted form."""
         if self.old_url != self.object.url:
             self.object.validation_status = Scanner.INVALID
-        # Compare the previous set of rules with new selection of rules
-        if not set(self.old_rules) == set(form.cleaned_data["rules"]):
-            # Reset last scanner-run timestamp if the rule sets differ
-            self.object.e2_last_run_at = None
         return super().form_valid(form)
 
 

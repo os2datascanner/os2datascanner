@@ -139,8 +139,6 @@ class Scanner(models.Model):
                                        default="",
                                        verbose_name='Ekskluderingsregler')
 
-    e2_last_run_at = models.DateTimeField(null=True)
-
     def verify(self) -> bool:
         """Method documentation"""
         raise NotImplementedError("Scanner.verify")
@@ -342,7 +340,6 @@ class Scanner(models.Model):
                                handle=rh,
                                progress__rule=rule_here)))
 
-        self.e2_last_run_at = now
         self.save()
 
         # OK, we're committed now! Create a model object to track the status of
