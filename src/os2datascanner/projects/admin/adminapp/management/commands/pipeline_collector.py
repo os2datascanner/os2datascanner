@@ -104,8 +104,11 @@ def status_message_received_raw(body):
                     scanned_size=scan_status.scanned_size,
                 )
 
-        # Send email upon scannerjob completion
         if scan_status.finished:
+            # Update last_modified for scanner
+            scanner.e2_last_run_at = scan_status.last_modified
+            scanner.save()
+            # Send email upon scannerjob completion
             logger.info("Sending notification mail for finished scannerjob.")
             send_mail_upon_completion(scanner, scan_status)
 
