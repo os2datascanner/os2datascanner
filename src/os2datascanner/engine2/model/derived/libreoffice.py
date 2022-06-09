@@ -5,6 +5,8 @@ from tempfile import TemporaryDirectory
 from contextlib import closing
 from subprocess import DEVNULL
 
+from ...conversions.types import OutputType
+from ...conversions.utilities.results import SingleResult
 from ....utils.system_utilities import run_custom
 from ... import settings as engine2_settings
 from ..core import Handle, Source
@@ -170,6 +172,14 @@ class LibreOfficeObjectResource(FilesystemResource):
                 yield from office_metadata.generate_opendocument_metadata(fp)
         # We deliberately don't yield from the superclass implementation --
         # filesystem metadata is useless for a generated file
+
+    def get_last_modified(self):
+        last_modified = None
+        parent_source = self.handle.source
+        res = parent_source.handle.follow(self._sm)
+        last_modified = res.get_last_modified()
+        return SingleResult(None, OutputType.LastModified,
+                            last_modified.value if last_modified else None)
 
 
 @Handle.stock_json_handler("lo-object")

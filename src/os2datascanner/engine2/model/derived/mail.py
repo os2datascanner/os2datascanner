@@ -64,7 +64,7 @@ class MailPartResource(FileResource):
         return self._fragment
 
     def get_last_modified(self):
-        return super().get_last_modified()
+        return self.handle.source.handle.follow(self._sm).get_last_modified()
 
     def get_size(self):
         with self.make_stream() as s:
