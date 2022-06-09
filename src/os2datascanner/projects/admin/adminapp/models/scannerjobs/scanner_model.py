@@ -253,7 +253,7 @@ class Scanner(models.Model):
 
         prerules = []
         if self.do_last_modified_check:
-            last = self.e2_last_run_at
+            last = self.get_last_successful_run_at()
             if last:
                 prerules.append(LastModifiedRule(last))
 
@@ -370,6 +370,12 @@ class Scanner(models.Model):
             rules=rule.presentation,
         )
         return scan_tag.to_json_object()
+
+    def get_last_successful_run_at(self) -> datetime:
+        query = ScanStatus.objects.filter(scanner=self)
+        finished = (e for e in query if e.finished)
+        last = max(finished, key=lambda e: e.last_modified, default=None)
+        return last.last_modified if last else None
 
     def generate_sources(self) -> Iterator[Source]:
         """Yields one or more engine2 Sources corresponding to the target of
