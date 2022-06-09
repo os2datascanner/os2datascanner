@@ -11,6 +11,7 @@ class Retrier:
     transient exception is raised. A concrete instance of Retrier or of one of
     its subclasses is a stateful object representing a strategy for repeat
     execution."""
+
     def __init__(self, *exception_set: Exception):
         self._exception_set = tuple(exception_set)
 
@@ -58,10 +59,17 @@ class Retrier:
                 self._test_return_value(rv)
                 return rv
             except Exception as ex:
+                logger.debug(f'Retrier: Exception raised: {ex}')
                 if self._should_retry(ex):
                     self._before_retry(ex, operation)
                     if self._should_proceed:
                         continue
+                    else:
+                        logger.debug(
+                            f'Retrier: Not proceeding! Number of attempts \
+                                ({self._tries}) exceeds allowed maximum of \
+                                {self._max_tries}.'
+                        )
                 raise
 
     def bind(self, operation):
@@ -73,6 +81,7 @@ class Retrier:
 class CountingRetrier(Retrier):
     """A CountingRetrier tracks the number of attempts made to call an
     operation, and gives up after a certain number."""
+
     def __init__(self, *exception_set, max_tries=10, warn_after=6, **kwargs):
         super().__init__(*exception_set, **kwargs)
         self._tries = 0
@@ -117,6 +126,7 @@ class ExponentialBackoffRetrier(SleepingRetrier):
     """An ExponentialBackoffRetrier is a SleepingRetrier that increases its
     delay exponentially: the first failure causes a delay of one second, the
     second of two seconds, the third of four seconds and so on."""
+
     def __init__(self, *exception_set, base=1, ceiling=7, fuzz=0.2, **kwargs):
         super().__init__(*exception_set, **kwargs)
         self._base = base
@@ -175,7 +185,17 @@ class WebRetrier(ExponentialBackoffRetrier):
                     # XXX: do we want to trust the server unconditionally here?
                     # It could ask us to wait for a year...
                     delay = float(ex.response.headers["retry-after"])
-            sleep(delay or self._compute_delay())
+                    logger.debug(
+                        f"WebRetrier: 'retry-after'-attribute found, \
+                            sleeping for {delay} seconds."
+                    )
+            else:
+                delay = self._compute_delay()
+                logger.debug(
+                    f"WebRetrier: 'retry-after'-attribute not found, \
+                        sleeping for {delay} seconds."
+                )
+            sleep(delay)
 
 
 class Testing:
