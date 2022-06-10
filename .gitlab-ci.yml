@@ -357,7 +357,7 @@ Performance Test:
     - export OS2DS_ADMIN_USER_CONFIG_PATH=${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
     - cd src/os2datascanner/projects/admin
     - bash /code/docker/docker-entrypoint.sh
-    
+
     # The pipeline collector cannot be created as a service, as the ADMIN_USER_PATH
     # overwrites the ENGINE_USER_PATH and individual services cannot have variables set.
     - python manage.py pipeline_collector &
@@ -478,8 +478,6 @@ Migration Status Report:
 .release-default: &release-default
   stage: release
   needs:
-    - Lint Dockerfiles
-    - Lint shell scripts
     - Build Report Application
     - Build Admin Application
     - Build Engine
@@ -499,8 +497,17 @@ Migration Status Report:
     - docker
 
 # Rolling rc release:
+# NOTICE: We are optimizing for the 99% case here by releasing a new image as soon as
+# it is built. This is ok because (semi-)linear history means that the most recently
+# merged branch is line-for-line equivalent to main and as such has been tested
+# thoroughly. Branch protection ensures nobody commits directly to main.
 .release-rc: &release-rc
   <<: *release-default
+  needs:
+    - Build Report Application
+    - Build Admin Application
+    - Build Engine
+    - Build API
   rules:
     - if: '$CI_COMMIT_REF_NAME == "main" && $CI_PIPELINE_SOURCE != "schedule"'
   script:
