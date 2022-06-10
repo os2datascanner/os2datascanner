@@ -332,11 +332,11 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
             while running:
                 with self._condition:
                     # Process all of the enqueued actions
-                    logger.debug(f"PikaPipelineThread - Thread TID: {self.native_id}"
-                                 " got the conditional. Processing outgoing messages.")
                     while self._outgoing:
                         head = self._outgoing.pop(0)
                         label = head[0]
+                        logger.debug(f"PikaPipelineThread - Thread TID: {self.native_id}"
+                                     f" got the conditional. Processing outgoing message: {head}")
                         if label == "msg":
                             queue, body, exchange, properties = head[1:]
                             self.channel.basic_publish(
