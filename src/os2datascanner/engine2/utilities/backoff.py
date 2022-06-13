@@ -1,5 +1,5 @@
 from time import time, sleep
-from random import random
+from random import random, uniform
 import requests
 import structlog
 
@@ -169,6 +169,7 @@ class WebRetrier(ExponentialBackoffRetrier):
     def _test_return_value(self, rv):
         if (isinstance(rv, requests.Response)
                 and rv.status_code == 429):
+            logger.debug(rv)
             rv.raise_for_status()
 
     def _before_retry(self, ex, op):
@@ -181,13 +182,17 @@ class WebRetrier(ExponentialBackoffRetrier):
             if hasattr(ex, "response"):
                 # If the server has requested a specific wait period, then use
                 # that instead of the default exponential backoff behaviour
+                # Multiply it by some random number proportional to the number
+                # of tries. This will prevent workers from being livelocked.
                 if "retry-after" in ex.response.headers:
-                    # XXX: do we want to trust the server unconditionally here?
-                    # It could ask us to wait for a year...
-                    delay = float(ex.response.headers["retry-after"])
+                    delay_multiplier = uniform(1.1, 1.3)**self._tries
+                    retry_after = float(ex.response.headers["retry-after"])
+                    # Consider implementing an upper limit to the delay
+                    delay = delay_multiplier * retry_after
                     logger.debug(
-                        f"WebRetrier: 'retry-after'-attribute found, \
-                            sleeping for {delay} seconds."
+                        f"WebRetrier: 'retry-after'-attribute with a value of \
+                            {retry_after} seconds found, sleeping for {delay} \
+                            seconds."
                     )
             else:
                 delay = self._compute_delay()
