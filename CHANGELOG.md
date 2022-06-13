@@ -1,5 +1,19 @@
 # Changelog
 
+## Version 3.15.1, 13th June 2022
+
+"Gentlemen, we can rebuild him. We have the technology."
+
+### General Improvements
+
+- The e2_last_modified-attribute of a scanner is no longer set unless the
+scan successfully finishes.
+
+### Bugfixes
+
+- The last_modified-property of a spawned object is no longer set to the time
+it was spawned, but rather to the value of its parent object.
+
 ## Version 3.15.0, 3rd June 2022
 
 "Hey! Listen!"
