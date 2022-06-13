@@ -1,7 +1,9 @@
+from http import HTTPStatus
 from time import time, sleep
 from random import random, uniform
 import requests
 import structlog
+
 
 logger = structlog.get_logger(__name__)
 
@@ -149,6 +151,13 @@ reasonable number of times with sensible default behaviour and don't need any
 particular tuning parameters, then instantiate one of these."""
 
 
+def _stringify_response(r: requests.Response):
+    hs = HTTPStatus(r.status_code)
+    yield f"HTTP/1.1 {hs.value} {hs.phrase}"
+    for k, v in r.headers.items():
+        yield f"{k}: {v}"
+
+
 class WebRetrier(ExponentialBackoffRetrier):
     """A WebRetrier is an ExponentialBackoffRetrier with a special backoff
     strategy that respects the HTTP/1.1 429 Too Many Requests error code: if
@@ -169,7 +178,7 @@ class WebRetrier(ExponentialBackoffRetrier):
     def _test_return_value(self, rv):
         if (isinstance(rv, requests.Response)
                 and rv.status_code == 429):
-            logger.debug(rv)
+            logger.debug("\n".join(_stringify_response(rv)))
             rv.raise_for_status()
 
     def _before_retry(self, ex, op):
