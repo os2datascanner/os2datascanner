@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-13 10:46+0200\n"
+"POT-Creation-Date: 2022-06-13 14:28+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -1309,6 +1309,10 @@ msgstr "Drevbogstav"
 #: adminapp/views/scanner_views.py:49
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
+
+#: adminapp/views/scanner_views.py:279
+msgid "Password must be updated, when changing username or url."
+msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
 #: adminapp/views/views.py:210 import_services/models/exported_mixin.py:31
 msgid "created"
