@@ -371,10 +371,16 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 # system
                 time.sleep(0.1)
         except BaseException as ex:
+            if isinstance(ex, (
+                    pika.exceptions.ChannelClosed,
+                    pika.exceptions.ConnectionClosed)):
+                # Using our channel or connection objects is no longer safe.
+                # Clear them so we don't try to reuse their state
+                self.clear()
             self._shutdown_exception = ex
-            raise
         finally:
-            self._basic_cancel(consumer_tags)
+            if self.has_channel:
+                self._basic_cancel(consumer_tags)
             with self._condition:
                 self._live = False
                 self._condition.notify()
