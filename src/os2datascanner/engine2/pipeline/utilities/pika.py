@@ -408,7 +408,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         self.start()
         try:
             while running and self.is_alive():
-                method, properties, body = self.await_message()
+                method, properties, body = self.await_message(timeout=30.0)
                 if method == properties == body is None:
                     continue
                 try:
