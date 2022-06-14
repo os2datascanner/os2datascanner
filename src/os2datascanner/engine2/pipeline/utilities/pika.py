@@ -55,11 +55,15 @@ class PikaConnectionHolder:
     @property
     def connection(self):
         """Returns the managed Pika connection, creating one if necessary."""
-        if not self._connection:
+        if not self.has_connection:
             self._connection = ExponentialBackoffRetrier(
                     pika.exceptions.AMQPConnectionError,
                     **self._backoff).run(self.make_connection)
         return self._connection
+
+    @property
+    def has_connection(self):
+        return bool(self._connection)
 
     def make_channel(self):
         """Constructs a new Pika channel."""
@@ -69,14 +73,18 @@ class PikaConnectionHolder:
     def channel(self):
         """Returns the managed Pika channel, creating one (and a backing
         connection) if necessary."""
-        if not self._channel:
+        if not self.has_channel:
             self._channel = self.make_channel()
         return self._channel
+
+    @property
+    def has_channel(self):
+        return bool(self._channel)
 
     def clear(self):
         """Closes the managed Pika connection, if there is one."""
         try:
-            if self._channel:
+            if self.has_channel:
                 self._channel.close()
         except pika.exceptions.ChannelWrongStateError:
             pass
@@ -84,7 +92,7 @@ class PikaConnectionHolder:
             self._channel = None
 
         try:
-            if self._connection:
+            if self.has_connection:
                 self._connection.close()
         except pika.exceptions.ConnectionWrongStateError:
             pass
