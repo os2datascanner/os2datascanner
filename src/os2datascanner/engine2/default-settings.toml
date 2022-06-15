@@ -35,4 +35,4 @@ ttl = 25
 page_size = 100
 
 # The time to spend waiting for an API response to begin (in seconds)
-timeout = 5
+timeout = 30

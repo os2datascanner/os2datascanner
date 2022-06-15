@@ -162,10 +162,7 @@ class WebRetrier(ExponentialBackoffRetrier):
     """A WebRetrier is an ExponentialBackoffRetrier with a special backoff
     strategy that respects the HTTP/1.1 429 Too Many Requests error code: if
     it's returned, and the server also specifies a backoff duration, then that
-    overrides the exponential backoff behaviour.
-
-    (Note that WebRetrier's exception set is hard-coded: it only catches
-    HTTPErrors from the requests package.)"""
+    overrides the exponential backoff behaviour."""
 
     def __init__(self, **kwargs):
         super().__init__(
@@ -192,7 +189,7 @@ class WebRetrier(ExponentialBackoffRetrier):
 
         if self._should_proceed:
             delay = None
-            if hasattr(ex, "response") and ex.response:
+            if hasattr(ex, "response") and ex.response is not None:
                 # If the server has requested a specific wait period, then use
                 # that instead of the default exponential backoff behaviour
                 # Multiply it by some random number proportional to the number
