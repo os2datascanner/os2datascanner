@@ -192,7 +192,7 @@ class WebRetrier(ExponentialBackoffRetrier):
 
         if self._should_proceed:
             delay = None
-            if hasattr(ex, "response") and ex.response:
+            if hasattr(ex, "response") and ex.response is not None:
                 # If the server has requested a specific wait period, then use
                 # that instead of the default exponential backoff behaviour
                 # Multiply it by some random number proportional to the number
