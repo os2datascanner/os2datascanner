@@ -336,7 +336,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                         head = self._outgoing.pop(0)
                         label = head[0]
                         logger.debug(f"PikaPipelineThread - Thread TID: {self.native_id}"
-                                     f" got the conditional. Processing outgoing message: {head}")
+                                     f" got the conditional. Processing outgoing message.")
                         if label == "msg":
                             queue, body, exchange, properties = head[1:]
                             self.channel.basic_publish(
