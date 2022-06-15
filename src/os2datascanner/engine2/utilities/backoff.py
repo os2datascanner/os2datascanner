@@ -169,14 +169,15 @@ class WebRetrier(ExponentialBackoffRetrier):
 
     def __init__(self, **kwargs):
         super().__init__(
-            requests.exceptions.HTTPError,
             requests.exceptions.Timeout,
             **kwargs)
 
     def _should_retry(self, ex):
-        return (super()._should_retry(ex)
-                or (hasattr(ex, "response") and ex.response is not None
-                and ex.response.status_code == 429))
+        is_429 = (isinstance(ex, requests.exceptions.HTTPError)
+                  and hasattr(ex, "response") and ex.response is not None
+                  and ex.response.status_code == 429)
+
+        return is_429 or super()._should_retry(ex)
 
     def _test_return_value(self, rv):
         if (isinstance(rv, requests.Response)
