@@ -168,7 +168,10 @@ class WebRetrier(ExponentialBackoffRetrier):
     HTTPErrors from the requests package.)"""
 
     def __init__(self, **kwargs):
-        super().__init__(requests.exceptions.HTTPError, **kwargs)
+        super().__init__(
+            requests.exceptions.HTTPError,
+            requests.exceptions.Timeout,
+            **kwargs)
 
     def _should_retry(self, ex):
         return (super()._should_retry(ex)
