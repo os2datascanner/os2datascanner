@@ -3,6 +3,7 @@ import requests
 from contextlib import contextmanager
 
 from os2datascanner.engine2.utilities.backoff import WebRetrier
+from os2datascanner.engine2 import settings as engine2_settings
 
 from ..core import Source
 
@@ -60,14 +61,16 @@ class MSGraphSource(Source):
                 "authorization": "Bearer {0}".format(self._token),
             }
 
-        def get_raw(self, tail):
+        def get_raw(self, tail, timeout=None):
             return WebRetrier().run(
                     self._session.get,
                     "https://graph.microsoft.com/v1.0/{0}".format(tail),
-                    headers=self._make_headers())
+                    headers=self._make_headers(),
+                    timeout=timeout)
 
         def get(self, tail, *, json=True, _retry=False):
-            response = self.get_raw(tail)
+            timeout = engine2_settings.model["msgraph"]["timeout"]
+            response = self.get_raw(tail, timeout=timeout)
             try:
                 response.raise_for_status()
                 if json:
