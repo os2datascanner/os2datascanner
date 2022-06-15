@@ -55,11 +55,15 @@ class PikaConnectionHolder:
     @property
     def connection(self):
         """Returns the managed Pika connection, creating one if necessary."""
-        if not self._connection:
+        if not self.has_connection:
             self._connection = ExponentialBackoffRetrier(
                     pika.exceptions.AMQPConnectionError,
                     **self._backoff).run(self.make_connection)
         return self._connection
+
+    @property
+    def has_connection(self):
+        return bool(self._connection)
 
     def make_channel(self):
         """Constructs a new Pika channel."""
@@ -69,14 +73,18 @@ class PikaConnectionHolder:
     def channel(self):
         """Returns the managed Pika channel, creating one (and a backing
         connection) if necessary."""
-        if not self._channel:
+        if not self.has_channel:
             self._channel = self.make_channel()
         return self._channel
+
+    @property
+    def has_channel(self):
+        return bool(self._channel)
 
     def clear(self):
         """Closes the managed Pika connection, if there is one."""
         try:
-            if self._channel:
+            if self.has_channel:
                 self._channel.close()
         except pika.exceptions.ChannelWrongStateError:
             pass
@@ -84,7 +92,7 @@ class PikaConnectionHolder:
             self._channel = None
 
         try:
-            if self._connection:
+            if self.has_connection:
                 self._connection.close()
         except pika.exceptions.ConnectionWrongStateError:
             pass
@@ -363,10 +371,16 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 # system
                 time.sleep(0.1)
         except BaseException as ex:
+            if isinstance(ex, (
+                    pika.exceptions.ChannelClosed,
+                    pika.exceptions.ConnectionClosed)):
+                # Using our channel or connection objects is no longer safe.
+                # Clear them so we don't try to reuse their state
+                self.clear()
             self._shutdown_exception = ex
-            raise
         finally:
-            self._basic_cancel(consumer_tags)
+            if self.has_channel:
+                self._basic_cancel(consumer_tags)
             with self._condition:
                 self._live = False
                 self._condition.notify()
@@ -394,7 +408,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         self.start()
         try:
             while running and self.is_alive():
-                method, properties, body = self.await_message()
+                method, properties, body = self.await_message(timeout=30.0)
                 if method == properties == body is None:
                     continue
                 try:
