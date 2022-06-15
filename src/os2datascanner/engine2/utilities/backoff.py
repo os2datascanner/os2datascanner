@@ -175,8 +175,8 @@ class WebRetrier(ExponentialBackoffRetrier):
 
     def _should_retry(self, ex):
         return (super()._should_retry(ex)
-                and hasattr(ex, "response") and ex.response is not None
-                and ex.response.status_code == 429)
+                or (hasattr(ex, "response") and ex.response is not None
+                and ex.response.status_code == 429))
 
     def _test_return_value(self, rv):
         if (isinstance(rv, requests.Response)
