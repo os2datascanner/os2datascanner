@@ -30,6 +30,21 @@ encoded_subjects = {
 }
 
 
+invalid_encoded_subjects = {
+    "no-such-charset": (
+            # UTF-8 declared with a nonexistent codec
+            "=?ebcdic-gopher2010?b?"
+            "U1Y6IMOGbmRyZXQga8O4YnNhZnRhbGUgcMOlIHBsYWRz?=",
+            # (all of the codepoints here become two bytes in UTF-8, so they
+            # get two replacement characters)
+            "SV: ��ndret k��bsaftale p�� plads"),
+    "lying-encoding": (
+            # Latin-1 declared as UTF-8
+            "=?utf-8?q?SV=3A_=C6ndret_k=F8bsaftale_p=E5_plads?=",
+            "SV: �ndret k�bsaftale p� plads"),
+}
+
+
 class Engine2MailTest(TestCase):
     def test_eml_files(self):
         fs = FilesystemSource(test_data_path)
@@ -63,3 +78,12 @@ class Engine2MailTest(TestCase):
                         test_subject,
                         decode_encoded_words(value),
                         f"decoding {sort} failed")
+
+    def test_encoded_word_failures(self):
+        """Broken Encoded-Word values can still be decoded (slightly)."""
+        for sort, (value, expected) in invalid_encoded_subjects.items():
+            with self.subTest():
+                self.assertEqual(
+                        expected,
+                        decode_encoded_words(value),
+                        f"fallback decoding of {sort} failed")
