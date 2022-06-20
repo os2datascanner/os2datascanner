@@ -87,6 +87,7 @@ obj = {
         "fællesskaber", name=None, sensitivity=Twensitivity.NOTICE
     ).to_json_object(),
     "configuration": {"skip_mime_types": ["image/*"]},
+    "filter_rule": None,
     "progress": None,
 }
 messages.append(

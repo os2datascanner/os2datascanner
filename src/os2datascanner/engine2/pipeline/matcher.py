@@ -1,6 +1,7 @@
 import logging
 from ..conversions.types import decode_dict
 from . import messages
+from .utilities.filtering import MATCHER_FILTER_TYPES
 
 logger = logging.getLogger(__name__)
 
@@ -48,12 +49,15 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001,E501 to
                 f"{message.handle} done."
                 f" Matched status: {conclusion}")
 
-        for matches_q in ("os2ds_matches", "os2ds_checkups",):
-            yield (matches_q,
-                   messages.MatchesMessage(
-                            message.scan_spec, message.handle,
-                            matched=conclusion,
-                            matches=final_matches).to_json_object())
+        type_label = message.handle.type_label
+        if conclusion or type_label not in MATCHER_FILTER_TYPES:
+            for matches_q in ("os2ds_matches", "os2ds_checkups",):
+                yield (matches_q,
+                       messages.MatchesMessage(
+                           message.scan_spec, message.handle,
+                           matched=conclusion,
+                           matches=final_matches).to_json_object())
+
         # Only trigger metadata scanning if the match succeeded
         if conclusion:
             yield ("os2ds_handles",

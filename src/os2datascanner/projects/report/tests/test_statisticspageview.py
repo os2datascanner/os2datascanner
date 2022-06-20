@@ -91,6 +91,7 @@ egon_scan_spec = messages.ScanSpecMessage(
         source=egon_email_handle.source,
         rule=common_rule,
         configuration={},
+        filter_rule=None,
         progress=None)
 
 egon_positive_match = messages.MatchesMessage(
@@ -156,6 +157,7 @@ kjeld_scan_spec = messages.ScanSpecMessage(
     source=kjeld_email_handle.source,
     rule=common_rule,
     configuration={},
+    filter_rule=None,
     progress=None)
 
 kjeld_positive_match = messages.MatchesMessage(
@@ -220,6 +222,7 @@ benny_scan_spec = messages.ScanSpecMessage(
     source=benny_email_handle.source,
     rule=common_rule,
     configuration={},
+    filter_rule=None,
     progress=None)
 
 benny_positive_match = messages.MatchesMessage(
@@ -271,6 +274,7 @@ yvonne_scan_spec = messages.ScanSpecMessage(
     source=yvonne_email_handle.source,
     rule=common_rule,
     configuration={},
+    filter_rule=None,
     progress=None)
 
 yvonne_positive_match = messages.MatchesMessage(

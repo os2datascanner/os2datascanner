@@ -47,6 +47,7 @@ common_scan_spec_corrupt = messages.ScanSpecMessage(
         source=common_handle_corrupt.source,
         rule=common_rule,
         configuration={},
+        filter_rule=None,
         progress=None)
 
 common_scan_spec = messages.ScanSpecMessage(
@@ -54,6 +55,7 @@ common_scan_spec = messages.ScanSpecMessage(
         source=common_handle.source,
         rule=common_rule,
         configuration={},
+        filter_rule=None,
         progress=None)
 
 # Positive MatchMessage objects.

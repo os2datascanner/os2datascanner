@@ -1,5 +1,6 @@
 from ..model.core import Source, UnknownSchemeError, DeserialisationError
 from . import messages
+from .utilities.filtering import is_handle_relevant
 
 import structlog
 
@@ -66,19 +67,28 @@ def message_received_raw(body, channel, source_manager):  # noqa
                     yield ("os2ds_problems", problem_message.to_json_object())
                     logger.info(f"Sent problem message for handle: {handle_object}.")
                 else:
-                    # This Handle is just a normal reference to a scannable object.
-                    # Send it on to be processed
-                    yield ("os2ds_conversions",
-                           messages.ConversionMessage(
+                    # Check if the handle should be excluded.
+                    if is_handle_relevant(handle, scan_spec.filter_rule):
+                        # This Handle is just a normal reference to a scannable object.
+                        # Send it on to be processed
+                        yield ("os2ds_conversions",
+                               messages.ConversionMessage(
                                 scan_spec, handle, progress).to_json_object())
-                    handle_count += 1
+                        handle_count += 1
+                    else:
+                        logger.info(f"A handle matched the exclusion rules: {handle}")
             else:
-                # This Handle is a thin wrapper around an independent Source.
-                # Construct that Source and enqueue it for further exploration
-                new_source = Source.from_handle(handle)
-                yield ("os2ds_scan_specs", scan_spec._replace(
+                # Check if the handle should be excluded.
+                if is_handle_relevant(handle, scan_spec.filter_rule):
+                    # This Handle is a thin wrapper around an independent Source.
+                    # Construct that Source and enqueue it for further exploration
+                    new_source = Source.from_handle(handle)
+                    yield ("os2ds_scan_specs", scan_spec._replace(
                         source=new_source).to_json_object())
-                source_count = (source_count or 0) + 1
+                    source_count = (source_count or 0) + 1
+                else:
+                    logger.info(f"A handle matched the exclusion rules: {handle}")
+
         logger.info(
                 "Finished exploration successfully",
                 handle_count=handle_count, source_count=source_count,
