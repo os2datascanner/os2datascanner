@@ -11,7 +11,7 @@ Examples:
 /label ~trivial
 
 <!-- Other recommended quick actions (remove # to apply):
-#/request_review @af @danni
+#/request_review @af @jkh @tha @jdk
 #/label ~bug
 #/label ~enhancement
 -->
@@ -29,11 +29,12 @@ Checkboxes can be pre-filled before submitting the MR by replacing
     - [ ] Screenshots of any UI changes have been added to the MR description
 - [ ] Workflow:
     - [ ] The title of this MR contains the relevant ticket no., formatted like `[#12345]`
-    - [ ] The corresponding Redmine ticket has been set to `Needs review` and assigned to the principal reviewer
+    - [ ] The corresponding Redmine ticket has been set to `Needs review`, assigned to the principal reviewer and contains a link to MR
     - [ ] The MR has been labelled with either ~bug (if it is a bugfix) or ~enhancement (if it is a feature)
+    - [ ] Milestone has been set
 
 ## On Merge
 - [ ] Update redmine:
-    - [ ] Status (to `QA (int)` or `Done`)
+    - [ ] Status (to `Done`)
     - [ ] Version (upcoming release)
     - [ ] Assignee (if relevant)
