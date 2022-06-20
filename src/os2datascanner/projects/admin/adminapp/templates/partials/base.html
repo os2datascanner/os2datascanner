@@ -66,6 +66,8 @@
   {% block scripts %}
 
     <!-- TODO: Since the following scripts are in a 'scripts' block, are they supposed to be overwritten by templates? -->
+    <script src="{% static '3rdparty/htmx.min.js' %}"></script>
+
 
     {% if not settings.DEBUG %}
 

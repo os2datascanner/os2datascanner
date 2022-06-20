@@ -16,7 +16,9 @@ from json import dumps
 from django.db import transaction
 from django.db.models import F, Q
 from django.core.paginator import Paginator, EmptyPage
-from django.http import Http404
+from django.http import Http404, HttpRequest, HttpResponse
+from django.shortcuts import render
+from django.views.decorators.http import require_GET
 from pika.exceptions import AMQPError
 import structlog
 
@@ -105,6 +107,29 @@ class StatusOverview(StatusBase):
         # but negate it (tilde)
 
         return super().get_queryset().order_by("-pk").filter(~completed_scans)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["delay"] = "load"
+        return context
+
+
+@require_GET
+def scanstatus_table(request: HttpRequest) -> HttpResponse:
+    queryset = ScanStatus.objects.order_by("-pk").filter(~completed_scans)
+    if queryset.exists():
+        delay = "every 500ms"
+    else:
+        delay = "every 10s"
+
+    return render(
+        request,
+        "os2datascanner/scan_status_table.html",
+        {
+            "object_list": queryset,
+            "delay": delay
+        }
+    )
 
 
 class StatusCompleted(StatusBase):
