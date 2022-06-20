@@ -11,9 +11,10 @@ def decode_encoded_words(k: str) -> str:
         elif isinstance(segment, bytes):
             try:
                 segment_str = segment.decode(charset or "ascii")
-            except LookupError:
-                # The character set of this segment isn't recognised. Decode it
-                # it as ASCII and replace unknown bytes with placeholders
+            except (LookupError, UnicodeDecodeError):
+                # The character set of this segment isn't recognised (or was
+                # recognised, but is incorrect). Decode it as ASCII and replace
+                # unknown bytes with placeholders
                 segment_str = segment.decode(
                         encoding="ascii", errors="replace")
         if segment_str:
