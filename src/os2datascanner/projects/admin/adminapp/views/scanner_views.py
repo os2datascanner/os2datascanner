@@ -16,9 +16,7 @@ from json import dumps
 from django.db import transaction
 from django.db.models import F, Q
 from django.core.paginator import Paginator, EmptyPage
-from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import render
-from django.views.decorators.http import require_GET
+from django.http import Http404
 from pika.exceptions import AMQPError
 import structlog
 
@@ -113,23 +111,24 @@ class StatusOverview(StatusBase):
         context["delay"] = "load"
         return context
 
+    def get_template_names(self):
+        is_htmx = self.request.headers.get("HX-Request") == 'true'
+        return "os2datascanner/scan_status_table.html" if is_htmx \
+            else "os2datascanner/scan_status.html"
 
-@require_GET
-def scanstatus_table(request: HttpRequest) -> HttpResponse:
-    queryset = ScanStatus.objects.order_by("-pk").filter(~completed_scans)
-    if queryset.exists():
-        delay = "every 500ms"
-    else:
-        delay = "every 10s"
-
-    return render(
-        request,
-        "os2datascanner/scan_status_table.html",
-        {
-            "object_list": queryset,
-            "delay": delay
-        }
-    )
+    def get(self, request, *args, **kwargs):
+        if request.headers.get('HX_REQUEST') == "true":
+            queryset = self.get_queryset()
+            if queryset.exists():
+                delay = "every 500ms"
+            else:
+                delay = "every 10s"
+            context = self.get_context_data(object_list=queryset)
+            context['delay'] = delay
+            context['object_list'] = queryset
+            return self.render_to_response(context)
+        else:
+            return super().get(request, *args, **kwargs)
 
 
 class StatusCompleted(StatusBase):
