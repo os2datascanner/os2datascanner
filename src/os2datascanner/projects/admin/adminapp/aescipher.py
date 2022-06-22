@@ -43,17 +43,22 @@ def decrypt(iv, ciphertext, key=None):
     """
     key = key if key else get_key()
 
-    # Initialize counter for decryption. iv should be the same as the output of
-    # encrypt().
-    iv_int = int(binascii.hexlify(iv), 16)
-    ctr = Counter.new(AES.block_size * 8, initial_value=iv_int)
+    # Check if there is anything to encrypt at all
+    if iv != b'':
+        # Initialize counter for decryption. iv should be the same as the output of
+        # encrypt().
+        iv_int = int(binascii.hexlify(iv), 16)
+        ctr = Counter.new(AES.block_size * 8, initial_value=iv_int)
 
-    # Create AES-CTR cipher.
-    aes = AES.new(key, AES.MODE_CTR, counter=ctr)
+        # Create AES-CTR cipher.
+        aes = AES.new(key, AES.MODE_CTR, counter=ctr)
 
-    # Decrypt and return the plaintext.
-    plaintext = aes.decrypt(ciphertext)
-    return plaintext.decode('utf-8')
+        # Decrypt and return the plaintext.
+        plaintext = aes.decrypt(ciphertext)
+        return plaintext.decode('utf-8')
+
+    # otherwise just return some empty plaintext.
+    return ""
 
 
 def get_key():
