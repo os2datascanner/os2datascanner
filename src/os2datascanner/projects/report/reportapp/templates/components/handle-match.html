@@ -9,7 +9,11 @@
 Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}"
               data-label-processing="{% trans 'Working' %} &hellip;"
               data-label-done="{% trans 'Handled' %}!"
-              data-label-default="{% trans 'Mark as handled' %}">
+              data-label-default="{% trans 'Mark as handled' %}"
+              hx-get="{% url "index" %}"
+              hx-swap="innerHTML"
+              hx-trigger="click delay:500ms"
+              hx-target=".content">
           <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Mark as handled" %}</span>
       </button>
       <span class="selected-cb">
