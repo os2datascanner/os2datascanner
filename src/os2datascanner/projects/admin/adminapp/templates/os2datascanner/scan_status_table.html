@@ -3,7 +3,7 @@
 {% load tz %}
 
 <div class="scan-status-table"
-        hx-get="{% url 'status-table' %}" 
+        hx-get="{% url 'status' %}" 
         hx-target=".scan-status-table" 
         hx-swap="outerHTML" 
         hx-trigger="{{ delay }}">

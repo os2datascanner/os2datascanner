@@ -67,7 +67,7 @@ from .views.rule_views import (RuleList, CPRRuleCreate,
                                RegexRuleDelete)
 
 from .views.scanner_views import (StatusOverview, StatusCompleted,
-                                  StatusDelete, UserErrorLogView, scanstatus_table)
+                                  StatusDelete, UserErrorLogView)
 
 from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
                                      WebScannerDelete, WebScannerRun,
@@ -96,7 +96,6 @@ urlpatterns = [
 
     # App URLs
     url(r'^status/$', StatusOverview.as_view(), name='status'),
-    url(r'^status-table/$', scanstatus_table, name='status-table'),
     url(r'^status-completed/$', StatusCompleted.as_view(), name='status-completed'),
     url(r'^error-log/$', UserErrorLogView.as_view(), name='error-log'),
     url(r'^status/(?P<pk>\d+)/delete/$', StatusDelete.as_view(), name='status-delete'),
