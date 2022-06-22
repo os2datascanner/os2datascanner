@@ -2,13 +2,14 @@
 from tqdm import tqdm
 
 from django.core.management.base import BaseCommand
-from django.db import transaction
+from django.db import connection, transaction
 
 # from os2datascanner.projects.admin.import_services.models.keycloak import KeycloakServer
 from os2datascanner.projects.admin.import_services.models.ldap_configuration import LDAPConfig
 from os2datascanner.projects.admin.adminapp.models.authentication_model import Authentication
 from os2datascanner.projects.admin.adminapp.aescipher import (generate_new_hex,
                                                               get_key)
+LOCK_MODE = 'ACCESS EXCLUSIVE'
 
 
 def _censor_hex(secret):
@@ -38,8 +39,14 @@ class Command(BaseCommand):
             f"New DECRYPTION_HEX: {new_hex}"
         ))
 
+        cursor = connection.cursor()
+
         try:
             with transaction.atomic():
+                # Lock the database tables for LDAPConfig and Authentication.
+                cursor.execute(f"LOCK TABLE {LDAPConfig._meta.db_table} IN {LOCK_MODE} MODE")
+                cursor.execute(f"LOCK TABLE {Authentication._meta.db_table} IN {LOCK_MODE} MODE")
+
                 # Query the database for all objects with encrypted data.
                 # keycloaks = KeycloakServer.objects.all()
                 ldap_configs = LDAPConfig.objects.select_for_update()
