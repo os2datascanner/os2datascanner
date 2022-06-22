@@ -13,7 +13,7 @@
 
 .datatable .scan-stage {
   position: relative;
-  padding-left: 4rem;
+  // padding-left: 4rem;
 }
 
 // Note to the rules below: While dimensions and positioning (width, height,
@@ -22,17 +22,17 @@
 // IE11 seems to combine var() expressions for ::before and ::after, resulting
 // in the latter overriding the former. Therefore we resort to raw values below.
 
-.datatable .scan-stage::before,
-.datatable .stage-1::after,
-.datatable .stage-2::after {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 1rem; // var(--datatable-cell-padding) / 2
-  top: 2rem; // var(--datatable-cell-padding)
-  vertical-align: middle;
-  height: 2rem; // var(--datatable-cell-padding)
-}
+// .datatable .scan-stage::before,
+// .datatable .stage-1::after,
+// .datatable .stage-2::after {
+//   content: "";
+//   display: block;
+//   position: absolute;
+//   left: 1rem; // var(--datatable-cell-padding) / 2
+//   top: 2rem; // var(--datatable-cell-padding)
+//   vertical-align: middle;
+//   height: 2rem; // var(--datatable-cell-padding)
+// }
 
 .datatable .stage-0::before {
   width: .25rem; // var(--datatable-cell-padding) / 8
@@ -42,42 +42,43 @@
   transform-origin: .125rem center; // var(--datatable-cell-padding) / 16
 }
 
-.datatable .stage-1::before,
-.datatable .stage-2::before {
-  width: .25rem; // var(--datatable-cell-padding) / 8
-  animation: pan 2.5s infinite alternate linear;
-  z-index: 1;
-}
+// .datatable .stage-1::before,
+// .datatable .stage-2::before {
+//   width: .25rem; // var(--datatable-cell-padding) / 8
+//   animation: pan 2.5s infinite alternate linear;
+//   z-index: 1;
+// }
 
 .datatable .stage-1::before {
   background-color: var(--color-primary); // we can keep this var() as the accompanying ::after element does not have a var() background-color
 }
 
-.datatable .stage-2::before {
-  background-color: var(--color-primary-dark); // we can keep this var() as the accompanying ::after element does not have a var() background-color
-  animation-direction: alternate-reverse;
-}
+// .datatable .stage-2::before {
+//   background-color: var(--color-primary-dark); // we can keep this var() as the accompanying ::after element does not have a var() background-color
+//   animation-direction: alternate-reverse;
+// }
 
-.datatable .stage-1::after,
-.datatable .stage-2::after {
-  z-index: 0;
-  width: 2rem; // var(--datatable-cell-padding)
-  height: 1rem; // var(--datatable-cell-padding) / 2
-  top: 2.5rem; // var(--datatable-cell-padding) * 1.25
-}
+// .datatable .stage-1::after,
+// .datatable .stage-2::after {
+//   z-index: 0;
+//   width: 2rem; // var(--datatable-cell-padding)
+//   height: 1rem; // var(--datatable-cell-padding) / 2
+//   top: 2.5rem; // var(--datatable-cell-padding) * 1.25
+// }
 
 .datatable .stage-1::after {
   background-color: #d0d0d0;
 }
 
-.datatable .stage-2::after {
-  background-color: #5ca4cd; // var(--color-primary-light)
-}
+// .datatable .stage-2::after {
+//   background-color: #5ca4cd; // var(--color-primary-light)
+// }
 
 @keyframes rotate {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(180deg);
   }
@@ -87,16 +88,17 @@
   0% {
     transform: translate(.25rem, 0); // var(--datatable-cell-padding) / 8
   }
+
   100% {
     transform: translate(1.5rem, 0); // var(--datatable-cell-padding) / 8 * 6
   }
 }
 
-@media (prefers-reduced-motion) {
-  .datatable .scan-stage::before {
-    animation-duration: 20s !important;
-  }
-}
+// @media (prefers-reduced-motion) {
+//   .datatable .scan-stage::before {
+//     animation-duration: 20s !important;
+//   }
+// }
 
 .scan-time {
   color: var(--color-text-secondary);
@@ -120,6 +122,7 @@
 
 .error {
   color: red;
+
   &:last-child {
     margin-bottom: 0;
   }

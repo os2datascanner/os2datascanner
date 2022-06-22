@@ -10,7 +10,7 @@
 
 {% block body %}
 {% include "partials/header.html" %}
-<main class="wrapper">
+<main class="wrapper" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% include "partials/main.html" with active_tab="status" %}
 
     <div class="content">
@@ -22,98 +22,10 @@
                 {% trans "Scans in progress" %}
             </h1>
         </div>
-
-        {% if object_list %}
-            <div class="datatable-wrapper card lg" role="region" tabindex="0" aria-label="{% trans 'Scans in progress' %}">
-                <table class="datatable middle">
-                    <colgroup>
-                        <col class="datatable__column--name">
-                        <col class="datatable__column--org">
-                        <col class="datatable__column--info">
-                        <col class="datatable__column--actions">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th class="datatable__column--name">
-                                {% trans "Scannerjob" %}
-                            </th>
-                            <th class="datatable__column--org">
-                                {% trans "Phase" %}
-                            </th>
-                            <th class="datatable__column--info">
-                                {% trans "Status" %}
-                            </th>
-                            <th class="datatable__column--actions">
-                                {% trans "Actions" %}
-                            </th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for status in object_list %}
-                            {% widthratio status.fraction_scanned 1.0 100 as percentage %}
-                            <tr>
-                                <td class="datatable__column--name">
-                                    {{ status.scanner.name }}
-                                </td>
-                                <td class="scan-stage stage-{{ status.stage.value }} datatable__column--org">
-                                    {% if status.stage.value == 0 %}
-                                        {% trans "Indexing data ..." %}
-                                    {% elif status.stage.value == 1 %}
-                                        {% trans "Scanning data (still indexing) ..." %}
-                                    {% elif status.stage.value == 2 %}
-                                        {% trans "Scanning data ..." %}
-				    {% elif status.stage.value == 3 %}
-					{% trans "No objects to scan" %}
-                                    {% endif %}
-                                </td>
-                                <td class="datatable__column--info">
-                                    {% if status.stage.value == 0 %}
-                                        {% trans "Building index" %}
-                                    {% elif status.stage.value == 1 %}
-                                        {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned{% endblocktranslate %}
-                                    {% elif status.stage.value == 2 %}
-                                        {% blocktranslate with obj=status.scanned_objects total=status.total_objects %}{{ obj }} out of {{ total }} objects scanned{% endblocktranslate %}
-				    {% elif status.stage.value == 3 %}
-					{% trans "The sources do not contain any scannable objects" %}
-                                    {% endif %}
-
-                                    {# don't show number of bytes scanned as it's not very useful #}
-                                    {# don't show estimated time as it's very imprecise #}
-                                    {# don't show a progress bar to represent status, as "100%" can vary #}
-                                </td>
-                                <td class="datatable__column--actions">
-                                    <div class="action-wrapper">
-                                        <form action="/status/{{status.pk}}/delete/" method="post" class="status-delete">
-                                            {% csrf_token %}
-                                            {% trans "Do you really want to delete the status object for scanner '%(scanner_name)s'?" as r_u_sure %}
-                                            <button
-                                                type="submit"
-                                                class="button button--small button--grey"
-                                                onclick="return confirm(interpolate('{{ r_u_sure|escapejs }}', {'scanner_name': '{{ status.scanner.name|escapejs }}'}, true))"
-                                                title="{% trans 'Delete' %}">
-                                                <svg class="icon">
-                                                    <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% if status.message and status.status_is_error %}
-                              <tr class="error">
-                                <td colspan="4">
-                                  {{ status.message }}
-                                </td>
-                              </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <p>{% trans "no ongoing scans"|capfirst %}</p>
-        {% endif %}
+        
+        {% include "os2datascanner/scan_status_table.html" %}
+        
+        
     </div>
 </main>
 <script>
