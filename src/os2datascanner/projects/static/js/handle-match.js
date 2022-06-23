@@ -1,14 +1,3 @@
-// Uncheck checkboxes on load.
-$("input[name='match-checkbox']").prop("checked", false);
-$("#select-all").prop("checked", false);
-$(".handle-match__action").prop("disabled", true);
-
-// Listen for click on toggle checkbox
-$("#select-all").change(function () {
-  $("input[name='match-checkbox']").prop("checked", $(this).prop("checked"));
-  handleChecked();
-});
-
 // Handle checkboxes
 function handleChecked() {
   var numChecked = $("input[name='match-checkbox']:checked").length;
@@ -18,8 +7,6 @@ function handleChecked() {
   $("input[name='match-checkbox']:not(:checked)").closest("tr").removeClass("highlighted");
   $("input[name='match-checkbox']:checked").closest("tr").addClass("highlighted");
 }
-// Iterate each checkbox
-$("input[name='match-checkbox']").change(handleChecked);
 
 // attach click handler to document to be prepared for the scenario
 // where we dynamically add more rows
@@ -253,17 +240,39 @@ function handleMatches(pks, buttonEl) {
   }
 }
 
-$(".handle-match__action").click(function () {
-  // get pks from checked checkboxes
-  var pks = $.map($("input[name='match-checkbox']:checked"), function (e) {
-    return $(e).attr("data-report-pk");
-  });
-  handleMatches(pks, $(this));
-});
+htmx.onLoad(function (content) {
 
-$(".matches-handle").click(function () {
-  var pk = $(this).attr("data-report-pk");
-  handleMatches([pk]);
+  if (hasClass(content, 'page') || hasClass(content, 'datatable-wrapper')) {
+
+    $(".handle-match__action").click(function () {
+      // get pks from checked checkboxes
+      var pks = $.map($("input[name='match-checkbox']:checked"), function (e) {
+        return $(e).attr("data-report-pk");
+      });
+      handleMatches(pks, $(this));
+    });
+
+    $(".matches-handle").click(function () {
+      var pk = $(this).attr("data-report-pk");
+      handleMatches([pk]);
+    });
+
+    // Listen for click on toggle checkbox
+    $("#select-all").change(function () {
+      $("input[name='match-checkbox']").prop("checked", $(this).prop("checked"));
+      handleChecked();
+    });
+
+    // Iterate each checkbox
+    $("input[name='match-checkbox']").change(handleChecked);
+
+    // // Uncheck checkboxes on load.
+    // $("input[name='match-checkbox']").prop("checked", false);
+    // $("#select-all").prop("checked", false);
+    // $(".handle-match__action").prop("disabled", true);
+
+  }
+
 });
 
 function updateButtons(pks, buttonEl, icon, attr, addClasses, removeClasses) {
