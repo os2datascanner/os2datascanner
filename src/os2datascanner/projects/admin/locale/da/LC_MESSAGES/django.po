@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-13 14:28+0200\n"
+"POT-Creation-Date: 2022-06-23 15:07+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -53,7 +53,7 @@ msgid "Login method"
 msgstr "Login metode"
 
 #: adminapp/models/rules/rule_model.py:40 core/models/client.py:73
-#: organizations/templates/organizations/org_list.html:49
+#: organizations/templates/organizations/org_list.html:51
 msgid "name"
 msgstr "navn"
 
@@ -262,7 +262,7 @@ msgstr "Scanner status"
 
 #: adminapp/templates/components/navigation.html:20
 #: adminapp/templates/os2datascanner/scan_completed.html:33
-#: adminapp/templates/os2datascanner/scan_status.html:38
+#: adminapp/templates/os2datascanner/scan_status_table.html:22
 #: adminapp/templates/os2datascanner/scanners.html:21
 #: adminapp/templates/os2datascanner/scanners.html:40
 #: adminapp/templates/partials/breadcrumb.html:5
@@ -281,7 +281,7 @@ msgstr "Regler"
 #: adminapp/templates/partials/breadcrumb.html:73
 #: adminapp/templates/partials/breadcrumb.html:81
 #: adminapp/templates/partials/breadcrumb.html:93 organizations/apps.py:8
-#: organizations/templates/organizations/org_list.html:6
+#: organizations/templates/organizations/org_list.html:8
 msgid "organizations"
 msgstr "organisationer"
 
@@ -512,7 +512,7 @@ msgstr "ingen fejl fundet"
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:114
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/scan_status.html:94
+#: adminapp/templates/os2datascanner/scan_status_table.html:78
 #: adminapp/templates/os2datascanner/scanners.html:166
 msgid "Delete"
 msgstr "Slet"
@@ -689,7 +689,7 @@ msgid "Objects"
 msgstr "Objekter"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:42
-#: adminapp/templates/os2datascanner/scan_status.html:44
+#: adminapp/templates/os2datascanner/scan_status_table.html:28
 msgid "Status"
 msgstr "Status"
 
@@ -712,54 +712,54 @@ msgstr ""
 "Ønsker du virkelig at slette denne rapport? Handlingen kan ikke fortrydes."
 
 #: adminapp/templates/os2datascanner/scan_status.html:22
-#: adminapp/templates/os2datascanner/scan_status.html:27
+#: adminapp/templates/os2datascanner/scan_status_table.html:11
 #: adminapp/templates/os2datascanner/scanner_tabs.html:66
 msgid "Scans in progress"
 msgstr "Igangværende scanninger"
 
-#: adminapp/templates/os2datascanner/scan_status.html:41
+#: adminapp/templates/os2datascanner/scan_status_table.html:25
 msgid "Phase"
 msgstr "Fase"
 
-#: adminapp/templates/os2datascanner/scan_status.html:47
+#: adminapp/templates/os2datascanner/scan_status_table.html:31
 msgid "Actions"
 msgstr "Handlinger"
 
-#: adminapp/templates/os2datascanner/scan_status.html:61
+#: adminapp/templates/os2datascanner/scan_status_table.html:45
 msgid "Indexing data ..."
 msgstr "Indekserer data ..."
 
-#: adminapp/templates/os2datascanner/scan_status.html:63
+#: adminapp/templates/os2datascanner/scan_status_table.html:47
 msgid "Scanning data (still indexing) ..."
 msgstr "Scanner data (indekserer fortsat) ..."
 
-#: adminapp/templates/os2datascanner/scan_status.html:65
+#: adminapp/templates/os2datascanner/scan_status_table.html:49
 msgid "Scanning data ..."
 msgstr "Scanner data ..."
 
-#: adminapp/templates/os2datascanner/scan_status.html:67
+#: adminapp/templates/os2datascanner/scan_status_table.html:51
 msgid "No objects to scan"
 msgstr "Ingen objekter at scanne"
 
-#: adminapp/templates/os2datascanner/scan_status.html:72
+#: adminapp/templates/os2datascanner/scan_status_table.html:56
 msgid "Building index"
 msgstr "Opbygger indeks"
 
-#: adminapp/templates/os2datascanner/scan_status.html:74
+#: adminapp/templates/os2datascanner/scan_status_table.html:58
 #, python-format
 msgid "%(obj)s objects scanned"
 msgstr "%(obj)s objekter scannet"
 
-#: adminapp/templates/os2datascanner/scan_status.html:76
+#: adminapp/templates/os2datascanner/scan_status_table.html:60
 #, python-format
 msgid "%(obj)s out of %(total)s objects scanned"
 msgstr "%(obj)s ud af %(total)s objekter scannet"
 
-#: adminapp/templates/os2datascanner/scan_status.html:78
+#: adminapp/templates/os2datascanner/scan_status_table.html:62
 msgid "The sources do not contain any scannable objects"
 msgstr "Datakilden indeholder ikke nogle objekter"
 
-#: adminapp/templates/os2datascanner/scan_status.html:89
+#: adminapp/templates/os2datascanner/scan_status_table.html:73
 #, python-format
 msgid ""
 "Do you really want to delete the status object for scanner "
@@ -767,7 +767,7 @@ msgid ""
 msgstr ""
 "Er du sikker på, at du vil slette status for scanner »%%(scanner_name)s«?"
 
-#: adminapp/templates/os2datascanner/scan_status.html:115
+#: adminapp/templates/os2datascanner/scan_status_table.html:99
 msgid "no ongoing scans"
 msgstr "der er ingen igangværende scanninger"
 
@@ -1310,7 +1310,7 @@ msgstr "Drevbogstav"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:279
+#: adminapp/views/scanner_views.py:315
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
@@ -1541,7 +1541,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_list.html:54
+#: organizations/templates/organizations/org_list.html:56
 msgid "import service"
 msgstr "importservice"
 
@@ -1732,12 +1732,12 @@ msgstr "'Distinguished name' for servicekontoen, der giver adgang til LDAP"
 msgid "LDAP service account user name"
 msgstr "brugernavn for servicekontoen til LDAP"
 
-#: import_services/models/ldap_configuration.py:159
+#: import_services/models/ldap_configuration.py:163
 #: import_services/templates/import_services/ldap_edit.html:5
 msgid "LDAP configuration"
 msgstr "LDAP-konfiguration"
 
-#: import_services/models/ldap_configuration.py:160
+#: import_services/models/ldap_configuration.py:164
 msgid "LDAP configurations"
 msgstr "LDAP-konfigurationer"
 
@@ -1825,40 +1825,40 @@ msgstr "slug"
 msgid "create new organization"
 msgstr "opret ny organisation"
 
-#: organizations/templates/organizations/org_list.html:20
+#: organizations/templates/organizations/org_list.html:22
 msgid "organizations for"
 msgstr "organisationer for"
 
-#: organizations/templates/organizations/org_list.html:26
-#: organizations/templates/organizations/org_list.html:31
+#: organizations/templates/organizations/org_list.html:28
+#: organizations/templates/organizations/org_list.html:33
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_list.html:50
+#: organizations/templates/organizations/org_list.html:52
 msgid "email"
 msgstr "e-mail"
 
-#: organizations/templates/organizations/org_list.html:51
+#: organizations/templates/organizations/org_list.html:53
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_list.html:56
+#: organizations/templates/organizations/org_list.html:58
 msgid "Import service (Microsoft Graph)"
 msgstr "Importservice (Microsoft Graph)"
 
-#: organizations/templates/organizations/org_list.html:95
-#: organizations/templates/organizations/org_list.html:98
-#: organizations/templates/organizations/org_list.html:158
-#: organizations/templates/organizations/org_list.html:161
+#: organizations/templates/organizations/org_list.html:97
+#: organizations/templates/organizations/org_list.html:100
+#: organizations/templates/organizations/org_list.html:160
+#: organizations/templates/organizations/org_list.html:163
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_list.html:113
-#: organizations/templates/organizations/org_list.html:176
+#: organizations/templates/organizations/org_list.html:115
+#: organizations/templates/organizations/org_list.html:178
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_list.html:198
+#: organizations/templates/organizations/org_list.html:225
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
