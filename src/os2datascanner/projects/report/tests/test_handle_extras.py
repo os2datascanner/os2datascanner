@@ -9,7 +9,8 @@ class HandleExtraTest(TestCase):
     @parameterized.expand([
         ('web', 'web', "components/svg-icons/icon-web.svg"),
         ('smbc', 'smbc', "components/svg-icons/icon-smbc.svg"),
-        ('msgraph-mail', 'msgraph-mail', "components/svg-icons/icon-msgraph-mail.svg"),
+        ('msgraph-mail-account', 'msgraph-mail-account',
+         "components/svg-icons/icon-msgraph-mail-account.svg"),
         ('googledrive', 'googledrive', "components/svg-icons/icon-googledrive.svg"),
         ('gmail', 'gmail', "components/svg-icons/icon-gmail.svg"),
         ('dropbox', 'dropbox', "components/svg-icons/icon-dropbox.svg"),
