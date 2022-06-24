@@ -266,6 +266,11 @@ htmx.onLoad(function (content) {
     // Iterate each checkbox
     $("input[name='match-checkbox']").change(handleChecked);
 
+    // Copy Path function
+    if (typeof ClipboardJS !== 'undefined') {
+      new ClipboardJS(document.querySelectorAll('[data-clipboard-text]'));
+    }
+
     // // Uncheck checkboxes on load.
     // $("input[name='match-checkbox']").prop("checked", false);
     // $("#select-all").prop("checked", false);
