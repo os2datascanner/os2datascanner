@@ -275,6 +275,7 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
     edit = True
     old_url = ''
     old_rules = None
+    old_user = ''
 
     def get_form(self, form_class=None):
         """Get the form for the view.
@@ -285,7 +286,11 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         """
         form = super().get_form(form_class)
         self.object = self.get_object()
-        self.old_url = self.object.url
+        if hasattr(self.object, "url"):
+            self.old_url = self.object.url
+        if (hasattr(self.object, "authentication")
+                and hasattr(self.object.authentication, "username")):
+            self.old_user = self.object.authentication.username
         # Store the existing rules selected in the scannerjob
         self.old_rules = self.object.rules.get_queryset()
 
@@ -298,6 +303,17 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         """Validate the submitted form."""
         if self.old_url != self.object.url:
             self.object.validation_status = Scanner.INVALID
+
+        def is_in_cleaned(entry, comparable):
+            data = form.cleaned_data
+            return entry in data and data[entry] != comparable
+
+        if is_in_cleaned("url", self.old_url) or is_in_cleaned("username", self.old_user):
+            # No password supplied for new username or URL, displaying error to user.
+            if 'password' in form.cleaned_data and form.cleaned_data["password"] == "":
+                form.add_error("password",
+                               _("Password must be updated, when changing username or url."))
+                return super().form_invalid(form)
         # Compare the previous set of rules with new selection of rules
         if not set(self.old_rules) == set(form.cleaned_data["rules"]):
             # Reset last scanner-run timestamp if the rule sets differ

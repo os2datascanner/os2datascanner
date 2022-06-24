@@ -1,5 +1,36 @@
 # Changelog
 
+## Version 3.15.2, 23rd June 2022
+"Natural Reactor"
+
+### New in this version
+
+- The scanner status page now automatically refreshes to track the status of
+  running scans.
+
+- Organizational structure is now displayed on the organizations page.
+
+- Security improvements:
+
+  - The user must now reenter or update the password used for authentication
+    if the URL or the username of a scanner job is changed.
+  
+  - The database encryption key can now be easily rotated with the new
+    `rotate_keys` command.
+
+### Bugfixes
+
+- A randomized timeout is now added to backoff requests from web APIs, reducing
+  the risk of workers locking each other out of the server.
+
+- Embedded objects now produce a correct `LastModified` date.
+
+- All components of the scanner engine gracefully disconnect when the RabbitMQ
+  message bus is stopped or restarted.
+
+- Email elements whose name uses the MIME encoded-word syntax are now displayed
+  correctly throughout the system.
+
 ## Version 3.15.1, 13th June 2022
 
 "Gentlemen, we can rebuild him. We have the technology."
