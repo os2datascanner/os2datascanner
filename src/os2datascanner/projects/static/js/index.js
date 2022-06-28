@@ -35,7 +35,4 @@ $(document).ready(function(){
 
 });
 
-// Copy Path function
-if (typeof ClipboardJS !== 'undefined') {
-  new ClipboardJS(document.querySelectorAll('[data-clipboard-text]'));
-}
+

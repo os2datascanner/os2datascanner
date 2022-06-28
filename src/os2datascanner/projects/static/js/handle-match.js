@@ -1,9 +1,3 @@
-// Listen for click on toggle checkbox
-$("#select-all").change(function() {
-  $("input[name='match-checkbox']").prop("checked", $(this).prop("checked"));
-  handleChecked();
-});
-
 // Handle checkboxes
 function handleChecked() {
   var numChecked = $("input[name='match-checkbox']:checked").length;
@@ -13,8 +7,6 @@ function handleChecked() {
   $("input[name='match-checkbox']:not(:checked)").closest("tr").removeClass("highlighted");
   $("input[name='match-checkbox']:checked").closest("tr").addClass("highlighted");
 }
-// Iterate each checkbox
-$("input[name='match-checkbox']").change(handleChecked);
 
 // attach click handler to document to be prepared for the scenario
 // where we dynamically add more rows
@@ -52,7 +44,7 @@ document.addEventListener("click", function (e) {
         col.removeAttribute("hidden");
       }
     });
- 
+
     // store the user's preference in window.localStorage
     var preferenceProbability = isPressed ? "hide" : "show";
     setStorage("os2ds-prefers-probability", preferenceProbability);
@@ -87,7 +79,7 @@ Array.prototype.forEach.call(document.querySelectorAll(".tooltip"), function (el
 });
 
 // function to use localStorage
-function setStorage (item, value) {
+function setStorage(item, value) {
   try {
     window.localStorage.setItem(item, value);
   } catch (e) {
@@ -178,7 +170,7 @@ function showTooltip(event) {
     var y = Math.round(event.pageY - rect.top - window.scrollY);
     tip.innerText = tooltipElm.innerText;
     tip.setAttribute("data-tooltip", "");
-    tip.setAttribute("style", "top:" + y  + "px;left:" + x + "px;");
+    tip.setAttribute("style", "top:" + y + "px;left:" + x + "px;");
     wrapper.appendChild(tip);
   }
 }
@@ -197,15 +189,15 @@ function hideTooltip(event) {
 function getCookie(name) {
   var cookieValue = null;
   if (document.cookie && document.cookie !== "") {
-      var cookies = document.cookie.split(";");
-      for (var i = 0; i < cookies.length; i++) {
-          var cookie = cookies[i].trim();
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + "=")) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
+    var cookies = document.cookie.split(";");
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (name + "=")) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
       }
+    }
   }
   return cookieValue;
 }
@@ -228,47 +220,73 @@ function handleMatches(pks, buttonEl) {
       }),
       contentType: "application/json; charset=utf-8",
       dataType: "json",
-      beforeSend: function(xhr) {
+      beforeSend: function (xhr) {
         xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
       }
-    }).done(function(body) {
+    }).done(function (body) {
       if (body.status === "ok") {
         // let user know that we succeeded the action by mutating the button(s) again
         updateButtons(pks, buttonEl, 'done', 'data-label-done', 'text-ok-dark', 'text-secondary');
-        location.reload(true);
       } else if (body.status === "fail") {
         $(".datatable").removeClass("disabled");
-        
+
         // revert the button(s)
         updateButtons(pks, buttonEl, 'archive', 'data-label-default');
         console.log(
-            "Attempt to call set-status-2 failed: "
-            + body.message);
+          "Attempt to call set-status-2 failed: "
+          + body.message);
       }
     });
   }
 }
 
-$(".handle-match__action").click(function() {
-  // get pks from checked checkboxes
-  var pks = $.map($("input[name='match-checkbox']:checked"), function (e) {
-    return $(e).attr("data-report-pk");
-  });
-  handleMatches(pks, $(this));
-});
+htmx.onLoad(function (content) {
 
-$(".matches-handle").click(function() {
-  var pk = $(this).attr("data-report-pk");
-  handleMatches([pk]);
+  if (hasClass(content, 'page') || hasClass(content, 'datatable-wrapper')) {
+
+    $(".handle-match__action").click(function () {
+      // get pks from checked checkboxes
+      var pks = $.map($("input[name='match-checkbox']:checked"), function (e) {
+        return $(e).attr("data-report-pk");
+      });
+      handleMatches(pks, $(this));
+    });
+
+    $(".matches-handle").click(function () {
+      var pk = $(this).attr("data-report-pk");
+      handleMatches([pk]);
+    });
+
+    // Listen for click on toggle checkbox
+    $("#select-all").change(function () {
+      $("input[name='match-checkbox']").prop("checked", $(this).prop("checked"));
+      handleChecked();
+    });
+
+    // Iterate each checkbox
+    $("input[name='match-checkbox']").change(handleChecked);
+
+    // Copy Path function
+    if (typeof ClipboardJS !== 'undefined') {
+      new ClipboardJS(document.querySelectorAll('[data-clipboard-text]'));
+    }
+
+    // // Uncheck checkboxes on load.
+    // $("input[name='match-checkbox']").prop("checked", false);
+    // $("#select-all").prop("checked", false);
+    // $(".handle-match__action").prop("disabled", true);
+
+  }
+
 });
 
 function updateButtons(pks, buttonEl, icon, attr, addClasses, removeClasses) {
   var buttonSelectors = pks.map(function (pk) {
     return "button[data-report-pk='" + pk + "']";
   }).join(",");
-  
+
   var buttons = $(buttonSelectors);
-  
+
   // use buttonEl to target extra button(s) that are not targeted by
   // using the data-report-pk property.
   if (buttonEl) {
@@ -278,8 +296,8 @@ function updateButtons(pks, buttonEl, icon, attr, addClasses, removeClasses) {
       buttons = buttons.add($(buttonEl));
     }
   }
-  
-  buttons.each(function() {
+
+  buttons.each(function () {
     var button = $(this);
     button.find('.material-icons').text(icon).addClass(addClasses).removeClass(removeClasses);
     var label = button.attr(attr);

@@ -27,5 +27,5 @@ class TestLoginRequired(TestCase):
 
         # Should get status code 200 OK and index.html template
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.template_name[0], "index.html")
+        self.assertEqual(response.template_name, "index.html")
         user.delete()

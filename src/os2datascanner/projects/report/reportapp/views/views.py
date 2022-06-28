@@ -176,7 +176,7 @@ class MainPageView(LoginRequiredMixin, ListView):
         )
 
     def order_queryset_by_property(self):
-        """Checks if a sort key is allowed and orders the querset"""
+        """Checks if a sort key is allowed and orders the queryset"""
         allowed_sorting_properties = ['sort_key', 'number_of_matches']
         if (sort_key := self.request.GET.get('order_by')) and (
                 order := self.request.GET.get('order')):
@@ -187,6 +187,11 @@ class MainPageView(LoginRequiredMixin, ListView):
             if order != 'ascending':
                 sort_key = '-'+sort_key
             self.document_reports = self.document_reports.order_by(sort_key)
+
+    def get_template_names(self):
+        is_htmx = self.request.headers.get('HX-Request') == "true"
+        return 'content.html' if is_htmx \
+            else 'index.html'
 
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
