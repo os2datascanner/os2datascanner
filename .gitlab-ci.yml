@@ -325,19 +325,7 @@ Benchmark Test Engine:
     POSTGRES_PASSWORD: os2datascanner
   script:
     - cd /code/src/os2datascanner/engine2
-    - coverage run -m pytest --benchmark-only tests/benchmarks
-      --junitxml $CI_PROJECT_DIR/engine-benchmark-junit.xml
-      -p no:cacheprovider
-      --color=yes
-    - coverage report
-    - coverage xml -o ${CI_PROJECT_DIR}/engine-benchmark-coverage.xml
-  artifacts:
-    paths:
-      - ${CI_PROJECT_DIR}/engine-benchmark-coverage.xml
-    when: always
-    reports:
-      junit: $CI_PROJECT_DIR/engine-benchmark-junit.xml
-      cobertura: ${CI_PROJECT_DIR}/engine-benchmark-coverage.xml
+    - pytest --color=yes --benchmark-only tests/benchmarks
   coverage: '/^TOTAL.+?(\d+\%)$/'
 
 Performance Test:
