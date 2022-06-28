@@ -1,23 +1,24 @@
 """Benchmarking for CPRRule."""
-import codecs
+from pathlib import Path
 
 from os2datascanner.engine2.rules.cpr import CPRRule
 
-CONTENT_PATH = '/code/src/os2datascanner/engine2/tests/data/html/Midler-til-frivilligt-arbejde.html'
+DATA_ROOT = Path('/code/src/os2datascanner/engine2/tests/data/')
+
+BIG_HTML = DATA_ROOT / 'html' / 'Midler-til-frivilligt-arbejde.html'
 
 
-def read_content():
+def read_content(path):
     """Helper function that reads some content into memory."""
     content = ""
-    with codecs.open(CONTENT_PATH, "r",
-                     encoding="utf-8",
-                     errors="ignore") as file_pointer:
+    with path.open("r", encoding="utf-8",
+                   errors="ignore") as file_pointer:
         content = file_pointer.read()
 
     return content
 
 
-CONTENT = read_content()
+CONTENT = read_content(BIG_HTML)
 
 
 def test_benchmark_cpr_rule_no_context(benchmark):
