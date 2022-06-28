@@ -1,5 +1,4 @@
 from io import BytesIO
-from time import sleep
 from lxml.html import document_fromstring
 from lxml.etree import ParserError
 from urllib.parse import urljoin, urlsplit, urlunsplit, urldefrag
@@ -17,12 +16,11 @@ from ..conversions.types import Link, OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
 from .core import Source, Handle, FileResource
 from .utilities.sitemap import process_sitemap_url
+from ..utilities.backoff import WebRetrier
 
 logger = structlog.getLogger(__name__)
-SLEEP_TIME: float = 1 / engine2_settings.model["http"]["limit"]
 TIMEOUT: int = engine2_settings.model["http"]["timeout"]
 TTL: int = engine2_settings.model["http"]["ttl"]
-LIMIT: int = engine2_settings.model["http"]["limit"]
 _equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
 # match whole words (\bWORD1\b | \bWORD2\b) and escape to handle metachars.
 # It is important to match whole words; www.magenta.dk should be .magenta.dk, not
@@ -31,23 +29,15 @@ _equiv_domains_re = re.compile(
     r"\b" + r"\b|\b".join(map(re.escape, _equiv_domains)) + r"\b"
 )
 
-# Used in __requests_per_second to count amount of requests made.
-# Will be incremented and then reset to 0 when LIMIT is met.
-http_requests_made = 0
-
 
 def rate_limit(request_function):
-    """ Wrapper function to force a proces to sleep by a set amount, when a set amount of
-    requests are made by it """
+    """ Wrapper function to force a proces to sleep by a requested amount,
+    when a certain amount of requests are made by it """
     def _rate_limit(*args, **kwargs):
-        global http_requests_made
-        if http_requests_made == LIMIT:
-            sleep(SLEEP_TIME)
-            http_requests_made = 0
-
-        response = request_function(*args, **kwargs)
-        http_requests_made += 1
-        return response
+        return WebRetrier().run(
+            request_function,
+            *args,
+            **kwargs)
 
     return _rate_limit
 
