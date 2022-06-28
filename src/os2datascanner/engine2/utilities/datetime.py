@@ -14,3 +14,12 @@ def parse_datetime(val: str, local: bool = False) -> datetime.datetime:
     if not rv.tzinfo:
         rv = rv.replace(tzinfo=datetime.timezone.utc if not local else gettz())
     return rv
+
+
+DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
+
+
+def unparse_datetime(d: datetime.datetime) -> str:
+    if not d.tzinfo or d.tzinfo.utcoffset(d) is None:
+        d = d.replace(tzinfo=gettz())
+    return d.strftime(DATE_FORMAT)

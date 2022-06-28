@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from datetime import datetime
-from dateutil import tz
 from typing import Optional
+
+from os2datascanner.engine2.utilities.datetime import (
+        parse_datetime, unparse_datetime)
 
 
 @dataclass
@@ -45,7 +46,7 @@ class OutputType(Enum):
         elif self == OutputType.Text:
             return str(v)
         elif self == OutputType.LastModified:
-            return _datetime_to_str(v)
+            return unparse_datetime(v)
         elif self == OutputType.ImageDimensions:
             return [int(v[0]), int(v[1])]
         elif self == OutputType.Links:
@@ -65,7 +66,7 @@ class OutputType(Enum):
         elif self == OutputType.Text:
             return v
         elif self == OutputType.LastModified:
-            return _str_to_datetime(v)
+            return parse_datetime(v)
         elif self == OutputType.ImageDimensions:
             return int(v[0]), int(v[1])
         elif self == OutputType.Links:
@@ -74,19 +75,6 @@ class OutputType(Enum):
             return True
         else:
             raise TypeError(self.value)
-
-
-DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
-
-
-def _datetime_to_str(d):
-    if not d.tzinfo or d.tzinfo.utcoffset(d) is None:
-        d = d.replace(tzinfo=tz.gettz())
-    return d.strftime(DATE_FORMAT)
-
-
-def _str_to_datetime(s):
-    return datetime.strptime(s, DATE_FORMAT)
 
 
 def encode_dict(d):

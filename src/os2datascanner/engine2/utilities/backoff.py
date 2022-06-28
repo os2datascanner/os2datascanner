@@ -4,6 +4,9 @@ from random import random, uniform
 import requests
 import structlog
 
+from os2datascanner.utils.system_utilities import time_now
+from .datetime import parse_datetime
+
 
 logger = structlog.get_logger(__name__)
 
@@ -173,9 +176,10 @@ class WebRetrier(ExponentialBackoffRetrier):
             **kwargs)
 
     def _should_retry(self, ex):
-        is_retry = (isinstance(ex, requests.exceptions.HTTPError)
-                  and hasattr(ex, "response") and ex.response is not None
-                  and ex.response.status_code in self.RETRY_CODES)
+        is_retry = (
+                isinstance(ex, requests.exceptions.HTTPError)
+                and hasattr(ex, "response") and ex.response is not None
+                and ex.response.status_code in self.RETRY_CODES)
 
         return is_retry or super()._should_retry(ex)
 
@@ -199,19 +203,27 @@ class WebRetrier(ExponentialBackoffRetrier):
                 # of tries. This will prevent workers from being livelocked.
                 if "retry-after" in ex.response.headers:
                     delay_multiplier = uniform(1.1, 1.3)**self._tries
-                    retry_after = float(ex.response.headers["retry-after"])
+                    raw = ex.response.headers["retry-after"]
+                    try:
+                        retry_after = float(raw)
+                    except ValueError:
+                        # The Retry-After header can also specify a date until
+                        # which we should back off
+                        retry_after = (
+                                (parse_datetime(raw) - time_now()).seconds())
                     # Consider implementing an upper limit to the delay
                     delay = delay_multiplier * retry_after
                     logger.debug(
-                        f"WebRetrier: 'retry-after'-attribute with a value of \
-                            {retry_after} seconds found, sleeping for {delay} \
-                            seconds."
+                        f"WebRetrier: 'retry-after'-attribute with a value of"
+                        f" {retry_after} seconds found, sleeping for {delay}"
+                        "seconds."
                     )
-            else:
+
+            if delay is None:
                 delay = self._compute_delay()
                 logger.debug(
-                    f"WebRetrier: 'retry-after'-attribute not found, \
-                        sleeping for {delay} seconds."
+                    f"WebRetrier: 'retry-after'-attribute not found,"
+                    f" sleeping for {delay} seconds."
                 )
             sleep(delay)
 
