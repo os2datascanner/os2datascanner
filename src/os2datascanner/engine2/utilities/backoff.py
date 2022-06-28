@@ -160,9 +160,12 @@ def _stringify_response(r: requests.Response):
 
 class WebRetrier(ExponentialBackoffRetrier):
     """A WebRetrier is an ExponentialBackoffRetrier with a special backoff
-    strategy that respects the HTTP/1.1 429 Too Many Requests error code: if
-    it's returned, and the server also specifies a backoff duration, then that
-    overrides the exponential backoff behaviour."""
+    strategy that respects the HTTP/1.1 429 Too Many Requests and 503 Service
+    Unavailable error codes: if one of these is returned along with a
+    Retry-After header, then that overrides the exponential backoff
+    behaviour."""
+
+    RETRY_CODES = (429, 503,)
 
     def __init__(self, **kwargs):
         super().__init__(
@@ -170,15 +173,15 @@ class WebRetrier(ExponentialBackoffRetrier):
             **kwargs)
 
     def _should_retry(self, ex):
-        is_429 = (isinstance(ex, requests.exceptions.HTTPError)
+        is_retry = (isinstance(ex, requests.exceptions.HTTPError)
                   and hasattr(ex, "response") and ex.response is not None
-                  and ex.response.status_code == 429)
+                  and ex.response.status_code in self.RETRY_CODES)
 
-        return is_429 or super()._should_retry(ex)
+        return is_retry or super()._should_retry(ex)
 
     def _test_return_value(self, rv):
         if (isinstance(rv, requests.Response)
-                and rv.status_code == 429):
+                and rv.status_code in self.RETRY_CODES):
             logger.debug("\n".join(_stringify_response(rv)))
             rv.raise_for_status()
 
