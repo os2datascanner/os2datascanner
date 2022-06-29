@@ -100,7 +100,7 @@ care of the required settings and bindings.
 To run the test-suites using docker-compose and PyTest:
 ```bash
 docker-compose run admin pytest /code/src/os2datascanner/projects/admin
-docker-compose run explorer pytest --color=yes src/os2datascanner/engine2/tests
+docker-compose run explorer pytest --color=yes /code/src/os2datascanner/engine2/tests
 docker-compose run report pytest /code/src/os2datascanner/projects/report/tests
 ```
 
@@ -113,6 +113,16 @@ docker-compose run report python -m django test os2datascanner.projects.report.t
 Please note that the engine tests can be run using any of the five pipeline
 services as the basis, but a specific one is provided above for easy reference.
 
+## Benchmark
+
+Like the test-suite, the engine also has a benchmarking suite, which is run
+automatically as a part of the CI pipeline. It can be run manually as well
+with `pytest` due to the `pytest-benchmark` fixture.
+
+To run the benchmarks execute the following command:
+```bash
+docker-compose run explorer pytest --color=yes --benchmark-only /code/src/os2datascanner/engine2/tests/benchmarks
+```
 
 ## Translations (i18n)
 
