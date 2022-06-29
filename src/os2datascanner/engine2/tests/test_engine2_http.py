@@ -15,9 +15,9 @@ from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import Handle, SourceManager
 from os2datascanner.engine2.model.http import (
         WebSource, WebHandle, make_outlinks)
-from os2datascanner.engine2.model.utilities.datetime import parse_datetime
 from os2datascanner.engine2.model.utilities.sitemap import (
     process_sitemap_url, _get_url_data)
+from os2datascanner.engine2.utilities.datetime import parse_datetime
 from os2datascanner.engine2.conversions.types import Link, OutputType
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
 from os2datascanner.engine2.conversions.registry import convert

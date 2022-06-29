@@ -6,9 +6,9 @@ import structlog
 import requests
 from os2datascanner.engine2.model.data import unpack_data_url
 
-from .datetime import parse_datetime
-from .utilities import convert_data_to_text
 from ... import settings as engine2_settings
+from ...utilities.datetime import parse_datetime
+from .utilities import convert_data_to_text
 
 # disable xml vulnerabilities, as described here
 # https://github.com/tiran/defusedxml#external-entity-expansion-local-file

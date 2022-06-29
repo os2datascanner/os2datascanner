@@ -4,6 +4,9 @@ from random import random, uniform
 import requests
 import structlog
 
+from os2datascanner.utils.system_utilities import time_now
+from .datetime import parse_datetime
+
 
 logger = structlog.get_logger(__name__)
 
@@ -160,9 +163,12 @@ def _stringify_response(r: requests.Response):
 
 class WebRetrier(ExponentialBackoffRetrier):
     """A WebRetrier is an ExponentialBackoffRetrier with a special backoff
-    strategy that respects the HTTP/1.1 429 Too Many Requests error code: if
-    it's returned, and the server also specifies a backoff duration, then that
-    overrides the exponential backoff behaviour."""
+    strategy that respects the HTTP/1.1 429 Too Many Requests and 503 Service
+    Unavailable error codes: if one of these is returned along with a
+    Retry-After header, then that overrides the exponential backoff
+    behaviour."""
+
+    RETRY_CODES = (429, 503,)
 
     def __init__(self, **kwargs):
         super().__init__(
@@ -170,15 +176,16 @@ class WebRetrier(ExponentialBackoffRetrier):
             **kwargs)
 
     def _should_retry(self, ex):
-        is_429 = (isinstance(ex, requests.exceptions.HTTPError)
-                  and hasattr(ex, "response") and ex.response is not None
-                  and ex.response.status_code == 429)
+        is_retry = (
+                isinstance(ex, requests.exceptions.HTTPError)
+                and hasattr(ex, "response") and ex.response is not None
+                and ex.response.status_code in self.RETRY_CODES)
 
-        return is_429 or super()._should_retry(ex)
+        return is_retry or super()._should_retry(ex)
 
     def _test_return_value(self, rv):
         if (isinstance(rv, requests.Response)
-                and rv.status_code == 429):
+                and rv.status_code in self.RETRY_CODES):
             logger.debug("\n".join(_stringify_response(rv)))
             rv.raise_for_status()
 
@@ -196,19 +203,27 @@ class WebRetrier(ExponentialBackoffRetrier):
                 # of tries. This will prevent workers from being livelocked.
                 if "retry-after" in ex.response.headers:
                     delay_multiplier = uniform(1.1, 1.3)**self._tries
-                    retry_after = float(ex.response.headers["retry-after"])
+                    raw = ex.response.headers["retry-after"]
+                    try:
+                        retry_after = float(raw)
+                    except ValueError:
+                        # The Retry-After header can also specify a date until
+                        # which we should back off
+                        retry_after = (
+                                (parse_datetime(raw) - time_now()).seconds())
                     # Consider implementing an upper limit to the delay
                     delay = delay_multiplier * retry_after
                     logger.debug(
-                        f"WebRetrier: 'retry-after'-attribute with a value of \
-                            {retry_after} seconds found, sleeping for {delay} \
-                            seconds."
+                        f"WebRetrier: 'retry-after'-attribute with a value of"
+                        f" {retry_after} seconds found, sleeping for {delay}"
+                        "seconds."
                     )
-            else:
+
+            if delay is None:
                 delay = self._compute_delay()
                 logger.debug(
-                    f"WebRetrier: 'retry-after'-attribute not found, \
-                        sleeping for {delay} seconds."
+                    f"WebRetrier: 'retry-after'-attribute not found,"
+                    f" sleeping for {delay} seconds."
                 )
             sleep(delay)
 
