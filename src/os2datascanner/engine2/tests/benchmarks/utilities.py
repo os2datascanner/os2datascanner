@@ -1,9 +1,14 @@
 """Utilities for benchmarking"""
 from pathlib import Path
 
-DATA_ROOT = Path('/code/src/os2datascanner/engine2/tests/data/')
+# Root folder for benchmarking data.
+DATA_ROOT = Path('/code/src/os2datascanner/engine2/tests/benchmarks/data/')
 
-BIG_HTML = DATA_ROOT / 'html' / 'Midler-til-frivilligt-arbejde.html'
+# This is the html of the longest page on Wikipedia:
+# "List of victims of the September 11 attacks"
+# which is 2.3MB of plain text where
+# irrelevant images and scripts have been removed.
+BIG_HTML = DATA_ROOT / 'list_9_11_victims.html'
 
 
 def read_content(path):
@@ -16,4 +21,5 @@ def read_content(path):
     return content
 
 
-CONTENT = read_content(BIG_HTML)
+# Read the contents into memory. Yes, this will hurt.
+HTML_CONTENT = read_content(BIG_HTML)
