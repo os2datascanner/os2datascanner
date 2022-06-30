@@ -36,7 +36,6 @@ class OrganizationListView(LoginRequiredMixin, ListView):
     model = Organization
     paginate_by = 10  # TODO: reasonable number? Possibly irrelevant?
     context_object_name = 'client_list'
-    template_name = 'organizations/org_list.html'
 
     def setup(self, request, *args, **kwargs):
         tenant_id = request.GET.get("tenant")
@@ -68,6 +67,10 @@ class OrganizationListView(LoginRequiredMixin, ListView):
         context['FEATURES'] = Feature.__members__
         context["tenant_id"] = self.kwargs["tenant_id"]
         return context
+
+    def get_template_names(self):
+        is_htmx = self.request.headers.get('HX-Request') == "true"
+        return 'organizations/org_table.html' if is_htmx else "organizations/org_list.html"
 
 
 class AddOrganizationView(LoginRequiredMixin, CreateView):
