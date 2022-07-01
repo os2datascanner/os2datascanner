@@ -1,13 +1,14 @@
-{%  load i18n %}
+{% load i18n %}
 {% load pagination_tags %}
 {% load l10n %}
+
 
 <tbody class="pagination">
   <tr>
     <td colspan="6">
       <div class="flex">
         <span class="page_of_pages">
-          {% trans "page" %} {{ page_obj.number }} {% trans "of" %} {{ paginator.num_pages }}
+          {% trans "matches"|capfirst %} {% match_interval document_reports page_obj paginate_by %} {% trans "of" %} {{ page_obj.paginator.count }}
         </span>
         {% if is_paginated %}
         <div class="pages">

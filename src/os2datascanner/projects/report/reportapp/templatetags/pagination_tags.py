@@ -27,3 +27,13 @@ def param_replace(context, **kwargs):
     for key in [k for k, v in d.items() if not v]:
         del d[key]
     return d.urlencode()
+
+
+@register.simple_tag
+def match_interval(document_reports, page_obj, paginate_by):
+    """Used for displaying which matches are being shown."""
+    curr_page = int(page_obj.number)
+    pag_by = int(paginate_by)
+    first_match = pag_by * curr_page - (pag_by - 1)
+    last_match = first_match + document_reports.count() - 1
+    return f"{first_match} - {last_match}"
