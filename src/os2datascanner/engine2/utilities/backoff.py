@@ -42,13 +42,13 @@ class Retrier:
         pass
 
     def _test_return_value(self, rv):
-        """Called with the result of the operation immediately before it is
-        returned by Retrier.run. Any exceptions raised by this method will be
-        examined by the usual retry logic.
+        """Called to inspect or modify the result of the operation immediately
+        before it is returned by Retrier.run. Any exceptions raised by this
+        method will be examined by the usual retry logic.
 
         (This is a convenience hook for subclasses that need to inspect the
         result to confirm that it is not an alternative representation of a
-        transient error.)"""
+        transient error, or to return only a specific part of the result.)"""
         return rv
 
     def run(self, operation, *args, **kwargs):
@@ -61,8 +61,7 @@ class Retrier:
         while self._should_proceed:
             try:
                 rv = operation(*args, **kwargs)
-                self._test_return_value(rv)
-                return rv
+                return self._test_return_value(rv)
             except Exception as ex:
                 logger.debug(f'Retrier: Exception raised: {ex}')
                 if self._should_retry(ex):
@@ -188,6 +187,7 @@ class WebRetrier(ExponentialBackoffRetrier):
                 and rv.status_code in self.RETRY_CODES):
             logger.debug("\n".join(_stringify_response(rv)))
             rv.raise_for_status()
+        return rv
 
     def _before_retry(self, ex, op):
         # Skip the superclass implementations: we reimplement a more
