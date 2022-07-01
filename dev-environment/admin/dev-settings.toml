@@ -26,6 +26,10 @@ OPTIONAL_MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
+# [msgraph]
+MSGRAPH_APP_ID = ""
+MSGRAPH_CLIENT_SECRET = ""
+
 # [scans]
 ENABLE_FILESCAN = true
 ENABLE_WEBSCAN = true
