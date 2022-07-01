@@ -1,3 +1,5 @@
+from .. import settings
+from ..utilities.backoff import TimeoutRetrier
 from . import messages
 
 
@@ -10,11 +12,16 @@ PREFETCH_COUNT = 8
 def message_received_raw(body, channel, source_manager):
     message = messages.HandleMessage.from_json_object(body)
 
+    tr = TimeoutRetrier(
+            seconds=settings.pipeline["op_timeout"],
+            max_tries=settings.pipeline["op_tries"])
+
     try:
+        resource = message.handle.follow(source_manager)
+        metadata = tr.run(resource.get_metadata)
         yield ("os2ds_metadata",
                messages.MetadataMessage(
-                        message.scan_tag, message.handle,
-                        message.handle.follow(source_manager).get_metadata()
+                        message.scan_tag, message.handle, metadata
                 ).to_json_object())
     except Exception as e:
         exception_message = (
