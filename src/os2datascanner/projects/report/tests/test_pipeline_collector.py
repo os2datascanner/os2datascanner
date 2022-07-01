@@ -52,6 +52,7 @@ common_scan_spec = messages.ScanSpecMessage(
         source=common_handle.source,
         rule=common_rule,
         configuration={},
+        filter_rule=None,
         progress=None)
 
 common_scan_spec_corrupt = messages.ScanSpecMessage(
@@ -59,6 +60,7 @@ common_scan_spec_corrupt = messages.ScanSpecMessage(
         source=common_handle_corrupt.source,
         rule=common_rule,
         configuration={},
+        filter_rule=None,
         progress=None)
 
 positive_match = messages.MatchesMessage(
@@ -267,5 +269,5 @@ class PipelineCollectorTests(TestCase):
             ])
 
         self.assertEqual(pipeline_collector.sort_matches_by_probability(
-            positive_match_with_dimension_rule_probability_and_sensitivity.to_json_object() # noqa E501
+            positive_match_with_dimension_rule_probability_and_sensitivity.to_json_object()  # noqa E501
         )["matches"], match_to_match.to_json_object()["matches"])

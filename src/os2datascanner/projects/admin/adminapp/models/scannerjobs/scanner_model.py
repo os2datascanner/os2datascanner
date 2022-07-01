@@ -21,7 +21,6 @@
 import datetime
 from enum import Enum
 import os
-import re
 from typing import Iterator
 import structlog
 
@@ -135,28 +134,16 @@ class Scanner(models.Model):
                                             default=INVALID,
                                             verbose_name='Valideringsstatus')
 
-    exclusion_rules = models.TextField(blank=True,
-                                       default="",
-                                       verbose_name='Ekskluderingsregler')
+    exclusion_rules = models.ManyToManyField(Rule,
+                                             blank=True,
+                                             verbose_name='Udelukkelsesregler',
+                                             related_name='scanners_ex_rules')
 
     e2_last_run_at = models.DateTimeField(null=True)
 
     def verify(self) -> bool:
         """Method documentation"""
         raise NotImplementedError("Scanner.verify")
-
-    def exclusion_rule_list(self):
-        """Return the exclusion rules as a list of strings or regexes."""
-        REGEX_PREFIX = "regex:"
-        rules = []
-        for line in self.exclusion_rules.splitlines():
-            line = line.strip()
-            if line.startswith(REGEX_PREFIX):
-                rules.append(re.compile(line[len(REGEX_PREFIX):],
-                                        re.IGNORECASE))
-            else:
-                rules.append(line)
-        return rules
 
     @property
     def schedule_description(self):
@@ -235,7 +222,7 @@ class Scanner(models.Model):
         """
         return []
 
-    def run(self, user=None):
+    def run(self, user=None):  # noqa: CCR001
         """Schedules a scan to be run by the pipeline. Returns the scan tag of
         the resulting scan on success.
 
@@ -248,6 +235,13 @@ class Scanner(models.Model):
         rule = OrRule.make(
                 *[r.make_engine2_rule()
                   for r in self.rules.all().select_subclasses()])
+
+        try:
+            filter_rule = OrRule.make(
+                *[er.make_engine2_rule()
+                  for er in self.exclusion_rules.all().select_subclasses()])
+        except ValueError:
+            filter_rule = None
 
         configuration = {}
 
@@ -295,9 +289,8 @@ class Scanner(models.Model):
 
         # Build ScanSpecMessages for all Sources
         message_template = messages.ScanSpecMessage(
-            scan_tag=scan_tag,
-            rule=rule, configuration=configuration, source=None,
-            progress=None)
+            scan_tag=scan_tag, rule=rule, configuration=configuration,
+            filter_rule=filter_rule, source=None, progress=None)
         outbox = []
         source_count = 0
         uncensor_map = {}
