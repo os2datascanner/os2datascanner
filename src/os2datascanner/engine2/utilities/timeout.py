@@ -58,6 +58,7 @@ def _timeout_start(seconds: float):
 
 
 def _timeout_stop(handler):
+    signal.setitimer(signal.ITIMER_REAL, 0)
     signal.signal(signal.SIGALRM, handler)
 
 

@@ -5,6 +5,7 @@ import requests
 import structlog
 
 from os2datascanner.utils.system_utilities import time_now
+from .timeout import run_with_timeout
 from .datetime import parse_datetime
 
 
@@ -108,6 +109,29 @@ class CountingRetrier(Retrier):
     def run(self, operation, *args, **kwargs):
         self._tries = 0
         return super().run(operation, *args, **kwargs)
+
+
+class TimeoutRetrier(CountingRetrier):
+    """A TimeoutRetrier is a CountingRetrier that requires that its operation
+    finish within a certain period. (Note that this is implemented using a
+    one-shot interval timer behind the scenes and consequently can only be
+    used on the main thread.)"""
+    def __init__(self, *exception_set, seconds=5.0, **kwargs):
+        super().__init__(TimeoutError, *exception_set, **kwargs)
+        self._timeout = seconds
+
+    def _test_return_value(self, rv):
+        if rv == (False, None):
+            raise TimeoutError()
+        else:
+            return rv[1]
+
+    def run(self, operation, *args, **kwargs):
+
+        def _op_wrap(*args, **kwargs):
+            return run_with_timeout(
+                    self._timeout, operation, *args, **kwargs)
+        return super().run(_op_wrap, *args, **kwargs)
 
 
 class SleepingRetrier(CountingRetrier):

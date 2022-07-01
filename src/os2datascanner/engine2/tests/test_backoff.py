@@ -1,7 +1,9 @@
+from time import sleep
 import unittest
 
 from os2datascanner.engine2.utilities.backoff import (
-        Testing, ExponentialBackoffRetrier as EBRetrier)
+        Testing, ExponentialBackoffRetrier as EBRetrier,
+        TimeoutRetrier)
 
 
 class EtiquetteBreach(Exception):
@@ -28,6 +30,17 @@ class TestBackoff(unittest.TestCase):
                 EBRetrier(ImpatientClientFauxPas).run(
                         operation, 2, 3, scale_factor=4),
                 20)
+
+    def test_timeout_failure(self):
+        with self.assertRaises(TimeoutError):
+            TimeoutRetrier(
+                    seconds=5.0,
+                    max_tries=2, warn_after=1).run(sleep, 6.0)
+
+    def test_timeout_success(self):
+        TimeoutRetrier(
+                seconds=7.0,
+                max_tries=2, warn_after=1).run(sleep, 6.0)
 
     def test_base_class_success(self):
         operation = Testing.requires_k_seconds(8, ImpatientClientFauxPas)
