@@ -51,14 +51,13 @@ def run_with_default_timeout(fn, *args, **kwargs):
     return run_with_timeout(engine2_settings.subprocess["timeout"], fn, *args, **kwargs)
 
 
-def _timeout_start(seconds):
+def _timeout_start(seconds: float):
     handler = signal.signal(signal.SIGALRM, _signal_timeout_handler)
-    signal.alarm(seconds)
+    signal.setitimer(signal.ITIMER_REAL, seconds)
     return handler
 
 
 def _timeout_stop(handler):
-    signal.alarm(0)
     signal.signal(signal.SIGALRM, handler)
 
 
@@ -95,9 +94,9 @@ def yield_from_with_default_timeout(iterable):
 
 
 @contextlib.contextmanager
-def _timeout(seconds):
+def _timeout(seconds: float):
     """
-    Uses signal.alarm() to set an alarm to send a SIGALRM after 'seconds' and then yields.
+    Uses signal.itimer() to set an alarm to send a SIGALRM after 'seconds' and then yields.
     If more than 'seconds' elapses, a SignalAlarmException is raised.
     Otherwise, the alarm is cancelled and the handler is removed.
     """
