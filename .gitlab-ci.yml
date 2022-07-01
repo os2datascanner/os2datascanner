@@ -307,6 +307,27 @@ Unit Test Engine:
       junit: $CI_PROJECT_DIR/engine-junit.xml
       cobertura: ${CI_PROJECT_DIR}/engine-coverage.xml
 
+Benchmark Test Engine:
+  stage: test
+  tags:
+    - docker
+  image:
+    name: ${ENGINE_IMAGE}
+  needs:
+    - Build Engine
+  services:
+    - postgres:12
+    - rabbitmq:3.8-alpine
+  variables:
+    OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
+    POSTGRES_DB: os2datascanner
+    POSTGRES_USER: os2datascanner
+    POSTGRES_PASSWORD: os2datascanner
+  script:
+    - cd /code/src/os2datascanner/engine2
+    - pytest --color=yes --benchmark-only tests/benchmarks
+  coverage: '/^TOTAL.+?(\d+\%)$/'
+
 Performance Test:
   image:
     name: ${ADMIN_IMAGE}

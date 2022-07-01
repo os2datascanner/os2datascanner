@@ -12,6 +12,7 @@ PyPDF2
 pysmbc
 pytest
 pytest-xdist
+pytest-benchmark
 python-dateutil
 python-magic
 regex

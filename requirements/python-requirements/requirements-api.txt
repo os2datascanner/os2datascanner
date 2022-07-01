@@ -151,7 +151,7 @@ pluggy==0.13.1
     # via
     #   -c requirements-engine.txt
     #   pytest
-prometheus_client==0.7.1
+prometheus-client==0.7.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
@@ -160,6 +160,10 @@ protobuf==3.13.0
     #   -c requirements-engine.txt
     #   google-api-core
     #   googleapis-common-protos
+py-cpuinfo==8.0.0
+    # via
+    #   -c requirements-engine.txt
+    #   pytest-benchmark
 py==1.10.0
     # via
     #   -c requirements-engine.txt
@@ -196,6 +200,10 @@ pysmbc==1.0.21
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
+pytest-benchmark==3.4.1
+    # via
+    #   -c requirements-engine.txt
+    #   -r requirements-engine.in
 pytest-forked==1.3.0
     # via
     #   -c requirements-engine.txt
@@ -208,6 +216,7 @@ pytest==6.2.4
     # via
     #   -c requirements-engine.txt
     #   -r requirements-engine.in
+    #   pytest-benchmark
     #   pytest-forked
     #   pytest-xdist
 python-dateutil==2.8.1
