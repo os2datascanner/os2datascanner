@@ -203,6 +203,7 @@ class ScannerBase(object):
         user = self.request.user
 
         form.fields['schedule'].required = False
+        form.fields['exclusion_rules'].required = False
         org_qs = Organization.objects.none()
         if hasattr(user, 'administrator_for'):
             org_qs = Organization.objects.filter(
@@ -215,6 +216,11 @@ class ScannerBase(object):
         form.fields["rules"] = ModelMultipleChoiceField(
             Rule.objects.all(),
             validators=ModelMultipleChoiceField.default_validators)
+
+        form.fields["exclusion_rules"] = ModelMultipleChoiceField(
+            Rule.objects.all(),
+            validators=ModelMultipleChoiceField.default_validators,
+            required=False)
 
         return form
 
@@ -232,7 +238,7 @@ class ScannerBase(object):
         return fields
 
     def filter_queryset(self, form, organization):
-        for field_name in ['rules']:
+        for field_name in ['rules', 'exclusion_rules']:
             queryset = form.fields[field_name].queryset
             queryset = queryset.filter(organization=organization)
             form.fields[field_name].queryset = queryset
