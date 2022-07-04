@@ -40,6 +40,7 @@ class GoogleDriveScannerCreate(ScannerCreate):
         'exclusion_rules',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]
@@ -61,6 +62,7 @@ class GoogleDriveScannerUpdate(ScannerUpdate):
         'exclusion_rules',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]
@@ -95,6 +97,7 @@ class GoogleDriveScannerCopy(ScannerCopy):
         'exclusion_rules',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]

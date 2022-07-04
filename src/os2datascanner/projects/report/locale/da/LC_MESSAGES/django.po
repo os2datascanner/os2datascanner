@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-23 15:07+0200\n"
+"POT-Creation-Date: 2022-07-06 14:13+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -77,23 +77,23 @@ msgstr "følsomhed"
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport_model.py:149
+#: reportapp/models/documentreport_model.py:154
 msgid "number of matches"
-msgstr ""
+msgstr "antal matches"
 
-#: reportapp/models/documentreport_model.py:153
+#: reportapp/models/documentreport_model.py:158
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport_model.py:156
+#: reportapp/models/documentreport_model.py:161
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport_model.py:159
+#: reportapp/models/documentreport_model.py:164
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport_model.py:214
+#: reportapp/models/documentreport_model.py:219
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -227,12 +227,12 @@ msgid "Handled"
 msgstr "Håndteret"
 
 #: reportapp/templates/components/handle-match.html:12
-#: reportapp/templates/components/handle-match.html:13
+#: reportapp/templates/components/handle-match.html:17
 msgid "Mark as handled"
 msgstr "Markér som håndterede"
 
-#: reportapp/templates/components/handle-match.html:16
-#: reportapp/templates/components/pagination.html:10
+#: reportapp/templates/components/handle-match.html:20
+#: reportapp/templates/components/pagination.html:11
 #: reportapp/templates/components/statistics-template.html:92
 #: reportapp/templates/components/statistics-template.html:101
 #: reportapp/templates/components/statistics-template.html:110
@@ -241,7 +241,7 @@ msgstr "Markér som håndterede"
 msgid "of"
 msgstr "af"
 
-#: reportapp/templates/components/handle-match.html:16
+#: reportapp/templates/components/handle-match.html:20
 msgid "selected"
 msgstr "valgt"
 
@@ -262,27 +262,28 @@ msgid "Open folder"
 msgstr "Åbn mappe"
 
 #: reportapp/templates/components/hit.html:73
-#: reportapp/templates/components/hit.html:75
+#: reportapp/templates/components/hit.html:79
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:76
+#: reportapp/templates/components/hit.html:80
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:89
+#: reportapp/templates/components/hit.html:93
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:90
+#: reportapp/templates/components/hit.html:94
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:91
+#: reportapp/templates/components/hit.html:95
 msgid "Probability"
 msgstr "Sandsynlighed"
 
-#: reportapp/templates/components/hits.html:4 reportapp/templates/index.html:10
+#: reportapp/templates/components/hits.html:4
+#: reportapp/templates/content.html:3
 msgid "Results"
 msgstr "Resultater"
 
@@ -331,25 +332,25 @@ msgstr "Forside"
 msgid "Logout"
 msgstr "Log ud"
 
-#: reportapp/templates/components/pagination.html:10
-msgid "page"
-msgstr "side"
+#: reportapp/templates/components/pagination.html:11
+msgid "matches"
+msgstr "matches"
 
-#: reportapp/templates/components/pagination.html:17
-#: reportapp/templates/components/pagination.html:22
+#: reportapp/templates/components/pagination.html:18
+#: reportapp/templates/components/pagination.html:23
 msgid "Previous"
 msgstr "Forrige"
 
-#: reportapp/templates/components/pagination.html:52
-#: reportapp/templates/components/pagination.html:57
+#: reportapp/templates/components/pagination.html:53
+#: reportapp/templates/components/pagination.html:58
 msgid "Next"
 msgstr "Næste"
 
-#: reportapp/templates/components/pagination.html:64
+#: reportapp/templates/components/pagination.html:65
 msgid "Go to page"
 msgstr "Gå til side"
 
-#: reportapp/templates/components/pagination.html:68
+#: reportapp/templates/components/pagination.html:69
 msgid "Go"
 msgstr "Gå"
 
@@ -449,6 +450,25 @@ msgstr "Alle resultater"
 msgid "Change password"
 msgstr "Skift adgangskode"
 
+#: reportapp/templates/content.html:5
+msgid "results"
+msgstr "resultater"
+
+#: reportapp/templates/content.html:8
+msgid ""
+"Are you sure you want to distribute matches to the users? This action cannot "
+"be reverted."
+msgstr ""
+"Er du sikker på, at du vil dele matches ud til brugerne? Denne handling kan ikke fortrydes."
+
+#: reportapp/templates/content.html:10
+msgid "Distribute"
+msgstr "Uddel"
+
+#: reportapp/templates/content.html:17
+msgid "No results were found"
+msgstr "Der er ingen resultater"
+
 #: reportapp/templates/django_saml2_auth/denied.html:6
 msgid "Permission denied"
 msgstr "Ingen adgang"
@@ -472,14 +492,6 @@ msgstr "Logget ud"
 #: reportapp/templates/django_saml2_auth/signout.html:9
 msgid "You have signed out successfully."
 msgstr "Du er nu logget ud."
-
-#: reportapp/templates/index.html:12
-msgid "results"
-msgstr "resultater"
-
-#: reportapp/templates/index.html:18
-msgid "No results were found"
-msgstr "Der er ingen resultater"
 
 #: reportapp/templates/login.html:8 reportapp/templates/logout.html:8
 #: reportapp/templates/password_change_done.html:23
@@ -616,29 +628,32 @@ msgstr "Skift adgangskode lykkedes"
 msgid "Your password was changed."
 msgstr "Din adgangskode blev ændret."
 
-#: reportapp/views/views.py:76
+#: reportapp/views/views.py:84
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:288
+#: reportapp/views/views.py:313
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:289
+#: reportapp/views/views.py:314
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:290
+#: reportapp/views/views.py:315
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:291
+#: reportapp/views/views.py:316
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:442
+#: reportapp/views/views.py:467
 msgid "Not assigned"
 msgstr "Ikke tildelt"
+
+#~ msgid "page"
+#~ msgstr "side"
 
 #, python-format
 #~ msgid "%(value)s is not a valid SID"

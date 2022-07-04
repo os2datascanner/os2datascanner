@@ -61,6 +61,14 @@ RENDERABLE_RULES = (
 )
 
 
+def user_is_superadmin(user):
+    """Relevant users to notify if matches exist with
+    the `only_notify_superuser`-flag."""
+    roles = Role.get_user_roles_or_default(user)
+    return (user_is(roles, DataProtectionOfficer)
+            or user_is(roles, Leader) or user.is_superuser)
+
+
 class LogoutPageView(TemplateView, View):
     template_name = 'logout.html'
 
@@ -91,6 +99,13 @@ class MainPageView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         roles = Role.get_user_roles_or_default(user)
+        # If called from a "distribute-matches"-button, remove all
+        # `only_notify_superadmin`-flags from reports.
+        print(self.request.headers)
+        if self.request.headers.get(
+                "Hx-Trigger") and self.request.headers.get("Hx-Trigger") == "distribute-matches":
+            DocumentReport.objects.update(only_notify_superadmin=False)
+
         # Handles filtering by role + org and sets datasource_last_modified if non existing
         self.document_reports = filter_inapplicable_matches(user, self.document_reports, roles)
 
@@ -121,6 +136,11 @@ class MainPageView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["renderable_rules"] = RENDERABLE_RULES
+
+        # Tell template if "distribute"-button should be visible
+        context["distributable_matches"] = user_is_superadmin(
+            self.request.user) and self.document_reports.filter(
+            only_notify_superadmin=True).exists()
 
         if self.scannerjob_filters is None:
             # Create select options
@@ -502,12 +522,19 @@ def filter_inapplicable_matches(user, matches, roles):
         if Organization.objects.count() > 1:
             matches = matches.filter(organization=None)
 
+    if user_is_superadmin(user):
+        hidden_matches = matches.filter(only_notify_superadmin=True)
+        user_matches = DefaultRole(user=user).filter(matches)
+        matches_all = hidden_matches | user_matches
+    else:
+        matches_all = DefaultRole(user=user).filter(matches)
+        matches_all = matches_all.filter(only_notify_superadmin=False)
+
     if user_is(roles, Remediator):
         unassigned_matches = Remediator(user=user).filter(matches)
-        user_matches = DefaultRole(user=user).filter(matches)
-        matches = unassigned_matches | user_matches
+        matches = unassigned_matches | matches_all
     else:
-        matches = DefaultRole(user=user).filter(matches)
+        matches = matches_all
 
     return matches
 

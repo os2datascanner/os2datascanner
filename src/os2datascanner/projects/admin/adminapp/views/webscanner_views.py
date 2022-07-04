@@ -41,9 +41,10 @@ class WebScannerCreate(ScannerCreate):
 
     model = WebScanner
     type = 'web'
-    fields = ['name', 'schedule', 'url', 'exclusion_rules', 'download_sitemap',
-              'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
-              'do_last_modified_check', 'rules', 'organization', 'exclude_urls']
+    fields = ['name', 'schedule', 'url', 'exclusion_rules',
+              'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
+              'do_link_check', 'only_notify_superadmin', 'do_last_modified_check',
+              'rules', 'organization', 'exclude_urls']
 
     def get_form(self, form_class=None):
         if form_class is None:
@@ -74,9 +75,10 @@ class WebScannerCopy(ScannerCopy):
 
     model = WebScanner
     type = 'web'
-    fields = ['name', 'schedule', 'url', 'exclusion_rules', 'download_sitemap',
-              'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
-              'do_last_modified_check', 'rules', 'organization', 'exclude_urls']
+    fields = ['name', 'schedule', 'url', 'exclusion_rules',
+              'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
+              'do_link_check', 'only_notify_superadmin', 'do_last_modified_check',
+              'rules', 'organization', 'exclude_urls']
 
 
 class WebScannerUpdate(ScannerUpdate):
@@ -84,9 +86,10 @@ class WebScannerUpdate(ScannerUpdate):
 
     model = WebScanner
     type = 'web'
-    fields = ['name', 'schedule', 'url', 'exclusion_rules', 'download_sitemap',
-              'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
-              'do_last_modified_check', 'rules', 'organization', 'exclude_urls']
+    fields = ['name', 'schedule', 'url', 'exclusion_rules',
+              'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
+              'do_link_check', 'only_notify_superadmin', 'do_last_modified_check',
+              'rules', 'organization', 'exclude_urls']
 
     def form_valid(self, form):
         if url_contains_spaces(form):

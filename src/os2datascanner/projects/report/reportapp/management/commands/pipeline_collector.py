@@ -158,7 +158,7 @@ def handle_metadata_message(path, scan_tag, result):
                 "raw_metadata": prepare_json_object(result),
                 "datasource_last_modified": lm,
                 "scanner_job_name": scan_tag.scanner.name,
-
+                "only_notify_superadmin": scan_tag.scanner.test,
                 "resolution_status": None
             })
     create_aliases(dr)
@@ -267,7 +267,7 @@ def handle_match_message(path, scan_tag, result):  # noqa: CCR001, E501 too high
                     "raw_matches": prepare_json_object(
                             sort_matches_by_probability(result)),
                     "scanner_job_name": scan_tag.scanner.name,
-
+                    "only_notify_superadmin": scan_tag.scanner.test,
                     "resolution_status": None
                 })
 
@@ -341,7 +341,7 @@ def handle_problem_message(path, scan_tag, result):
                             handle.sort_key if handle else "(source)"),
                     "raw_problem": prepare_json_object(result),
                     "scanner_job_name": scan_tag.scanner.name,
-
+                    "only_notify_superadmin": scan_tag.scanner.test,
                     "resolution_status": None
                 })
 

@@ -74,7 +74,11 @@ messages = []
 # expected json message
 obj = {
     "scan_tag": {
-        "scanner": {"name": "Magenta", "pk": SCANNER_PK},
+        "scanner": {
+            "name": "Magenta",
+            "pk": SCANNER_PK,
+            "test": False,
+        },
         "user": None,
         "organisation": {"name": "Magenta", "uuid": None},
         "time": None,  # set to now() in scanner_model.py

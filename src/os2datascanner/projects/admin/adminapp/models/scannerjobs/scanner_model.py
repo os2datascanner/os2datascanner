@@ -103,6 +103,11 @@ class Scanner(models.Model):
         verbose_name='Tjek dato for sidste ændring',
     )
 
+    only_notify_superadmin = models.BooleanField(
+        default=False,
+        verbose_name='Underret kun superadmin',
+    )
+
     columns = models.CharField(validators=[validate_comma_separated_integer_list],
                                max_length=128,
                                null=True,
@@ -282,7 +287,8 @@ class Scanner(models.Model):
                 user=user.username if user else None,
                 scanner=messages.ScannerFragment(
                         pk=self.pk,
-                        name=self.name),
+                        name=self.name,
+                        test=self.only_notify_superadmin),
                 organisation=messages.OrganisationFragment(
                         name=self.organization.name,
                         uuid=self.organization.uuid))
