@@ -4,6 +4,9 @@ DECRYPTION_HEX = "4b8930847cba7196a46ede3456fe33df564427a30910dd1ef9bc805f26559a
 # [mode]
 DEBUG = true
 
+# [functionality]
+EXCLUSION_RULES = true
+
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
 # OAuth 2.0 services. (This value should end with a forward slash.)

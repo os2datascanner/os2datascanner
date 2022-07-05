@@ -23,6 +23,9 @@ PUSHGATEWAY_HOST = ""
 DEBUG = false
 PRODUCTION = false
 
+# [functionality]
+EXCLUSION_RULES = false
+
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
 # OAuth 2.0 services. (This value should end with a forward slash.)
@@ -138,7 +141,8 @@ SETTINGS_EXPORT = [
     'ENABLE_GMAILSCAN',
     'ENABLE_SBSYSSCAN',
     'ICON_SPRITE_URL',
-    'ESTIMATE_AFTER'
+    'ESTIMATE_AFTER',
+    'EXCLUSION_RULES'
 ]
 
 # [internationalization]
