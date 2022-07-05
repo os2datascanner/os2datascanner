@@ -82,7 +82,8 @@ class _MSGraphMailCreate(ScannerCreate):
     """Creates a new Microsoft Graph mail scanner job."""
     model = MSGraphMailScanner
     type = 'msgraph-mail'
-    fields = ['name', 'schedule', 'tenant_id', 'do_ocr', 'org_unit',
+    fields = ['name', 'schedule', 'tenant_id',
+              'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
     def get_context_data(self, **kwargs):
@@ -100,7 +101,8 @@ class MSGraphMailUpdate(ScannerUpdate):
     for modification."""
     model = MSGraphMailScanner
     type = 'msgraph-mailscanners'
-    fields = ['name', 'schedule', 'tenant_id', 'do_ocr', 'org_unit',
+    fields = ['name', 'schedule', 'tenant_id',
+              'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
     def get_success_url(self):
@@ -118,7 +120,8 @@ class MSGraphMailCopy(ScannerCopy):
     """Creates a copy of an existing Microsoft Graph mail scanner job."""
     model = MSGraphMailScanner
     type = 'msgraph-mail'
-    fields = ['name', 'schedule', 'tenant_id', 'do_ocr', 'org_unit',
+    fields = ['name', 'schedule', 'tenant_id',
+              'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
 
@@ -172,7 +175,7 @@ class _MSGraphFileCreate(ScannerCreate):
     """Creates a new Microsoft Graph file scanner job."""
     model = MSGraphFileScanner
     type = 'msgraph-file'
-    fields = ['name', 'schedule', 'tenant_id', 'org_unit',
+    fields = ['name', 'schedule', 'tenant_id', 'org_unit', 'exclusion_rules',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
               'do_last_modified_check', 'rules', 'organization', ]
 
@@ -191,7 +194,7 @@ class MSGraphFileUpdate(ScannerUpdate):
     for modification."""
     model = MSGraphFileScanner
     type = 'msgraph-filescanners'
-    fields = ['name', 'schedule', 'tenant_id', 'org_unit',
+    fields = ['name', 'schedule', 'tenant_id', 'org_unit', 'exclusion_rules',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
               'do_last_modified_check', 'rules', 'organization', ]
 
@@ -210,7 +213,7 @@ class MSGraphFileCopy(ScannerCopy):
     """Creates a copy of an existing Microsoft Graph mail scanner job."""
     model = MSGraphFileScanner
     type = 'msgraph-file'
-    fields = ['name', 'schedule', 'tenant_id', 'org_unit',
+    fields = ['name', 'schedule', 'tenant_id', 'org_unit', 'exclusion_rules',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
               'do_last_modified_check', 'rules', 'organization', ]
 
@@ -262,7 +265,8 @@ class _MSGraphCalendarCreate(ScannerCreate):
     """Creates a new Microsoft Graph calendar scanner job."""
     model = MSGraphCalendarScanner
     type = 'msgraph-calendar'
-    fields = ['name', 'schedule', 'tenant_id', 'do_ocr', 'org_unit',
+    fields = ['name', 'schedule', 'tenant_id',
+              'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
     def get_context_data(self, **kwargs):
@@ -280,7 +284,8 @@ class MSGraphCalendarUpdate(ScannerUpdate):
     for modification."""
     model = MSGraphCalendarScanner
     type = 'msgraph-calendarscanners'
-    fields = ['name', 'schedule', 'tenant_id', 'do_ocr', 'org_unit',
+    fields = ['name', 'schedule', 'tenant_id',
+              'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
     def get_success_url(self):
@@ -299,7 +304,8 @@ class MSGraphCalendarCopy(ScannerCopy):
     """Creates a copy of an existing Microsoft Graph calendar scanner job."""
     model = MSGraphCalendarScanner
     type = 'msgraph-calendar'
-    fields = ['name', 'schedule', 'tenant_id', 'do_ocr', 'org_unit',
+    fields = ['name', 'schedule', 'tenant_id',
+              'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
 
