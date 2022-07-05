@@ -1,5 +1,7 @@
 import logging
+from .. import settings
 from ..model.core import Source
+from ..utilities.backoff import TimeoutRetrier
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
 from . import messages
@@ -44,8 +46,12 @@ def message_received_raw(body, channel, source_manager, *, _check=True):  # noqa
     required = head.operates_on
     exception = None
 
+    tr = TimeoutRetrier(
+            seconds=settings.pipeline["op_timeout"],
+            max_tries=settings.pipeline["op_tries"])
+
     try:
-        if _check and not check(source_manager, conversion.handle):
+        if _check and not tr.run(check, source_manager, conversion.handle):
             # The resource is missing (and we're in a context where we care).
             # Generate a special problem message and stop the generator
             # immediately
@@ -72,9 +78,9 @@ def message_received_raw(body, channel, source_manager, *, _check=True):  # noqa
                 elif mime_type == mt:
                     break
             else:
-                representation = convert(resource, OutputType.Text)
+                representation = tr.run(convert, resource, OutputType.Text)
         else:
-            representation = convert(resource, required)
+            representation = tr.run(convert, resource, required)
 
         if representation and representation.parent:
             # If the conversion also produced other values at the same

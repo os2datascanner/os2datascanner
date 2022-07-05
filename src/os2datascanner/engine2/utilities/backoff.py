@@ -5,6 +5,7 @@ import requests
 import structlog
 
 from os2datascanner.utils.system_utilities import time_now
+from .timeout import run_with_timeout
 from .datetime import parse_datetime
 
 
@@ -42,13 +43,13 @@ class Retrier:
         pass
 
     def _test_return_value(self, rv):
-        """Called with the result of the operation immediately before it is
-        returned by Retrier.run. Any exceptions raised by this method will be
-        examined by the usual retry logic.
+        """Called to inspect or modify the result of the operation immediately
+        before it is returned by Retrier.run. Any exceptions raised by this
+        method will be examined by the usual retry logic.
 
         (This is a convenience hook for subclasses that need to inspect the
         result to confirm that it is not an alternative representation of a
-        transient error.)"""
+        transient error, or to return only a specific part of the result.)"""
         return rv
 
     def run(self, operation, *args, **kwargs):
@@ -61,8 +62,7 @@ class Retrier:
         while self._should_proceed:
             try:
                 rv = operation(*args, **kwargs)
-                self._test_return_value(rv)
-                return rv
+                return self._test_return_value(rv)
             except Exception as ex:
                 logger.debug(f'Retrier: Exception raised: {ex}')
                 if self._should_retry(ex):
@@ -109,6 +109,29 @@ class CountingRetrier(Retrier):
     def run(self, operation, *args, **kwargs):
         self._tries = 0
         return super().run(operation, *args, **kwargs)
+
+
+class TimeoutRetrier(CountingRetrier):
+    """A TimeoutRetrier is a CountingRetrier that requires that its operation
+    finish within a certain period. (Note that this is implemented using a
+    one-shot interval timer behind the scenes and consequently can only be
+    used on the main thread.)"""
+    def __init__(self, *exception_set, seconds=5.0, **kwargs):
+        super().__init__(TimeoutError, *exception_set, **kwargs)
+        self._timeout = seconds
+
+    def _test_return_value(self, rv):
+        if rv == (False, None):
+            raise TimeoutError()
+        else:
+            return rv[1]
+
+    def run(self, operation, *args, **kwargs):
+
+        def _op_wrap(*args, **kwargs):
+            return run_with_timeout(
+                    self._timeout, operation, *args, **kwargs)
+        return super().run(_op_wrap, *args, **kwargs)
 
 
 class SleepingRetrier(CountingRetrier):
@@ -188,6 +211,7 @@ class WebRetrier(ExponentialBackoffRetrier):
                 and rv.status_code in self.RETRY_CODES):
             logger.debug("\n".join(_stringify_response(rv)))
             rv.raise_for_status()
+        return rv
 
     def _before_retry(self, ex, op):
         # Skip the superclass implementations: we reimplement a more

@@ -17,6 +17,15 @@ AMQP_VHOST = "/"
 # The maximum runtime allowed for an external tool (in seconds)
 timeout = 45
 
+[pipeline]
+# The maximum runtime (in seconds) allowed:
+# * in the explorer stage, for a Source to produce a single Handle;
+# * in the processor stage, for a single conversion operation; or
+# * in the tagger stage, for a single metadata extraction
+op_timeout = 60
+# The number of times to try one of the above pipeline operations
+op_tries = 2
+
 [model.libreoffice]
 # The size at which LibreOffice-generated HTML should be thrown away and
 # replaced by a new plaintext conversion (in bytes)

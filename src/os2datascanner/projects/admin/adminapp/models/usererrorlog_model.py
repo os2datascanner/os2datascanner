@@ -8,6 +8,9 @@ translation_table = {
     "Exploration error. MemoryError: 12, Cannot allocate memory":
     _("Folder at the path is using outdated encoding. Please "
       "rename the folder."),
+    "Exploration error. ValueError: Source could not be opened (perhaps corrupt content)":
+    _("An object was skipped either because it could not be opened or "
+      "it was taking too long to scan."),
 }
 
 

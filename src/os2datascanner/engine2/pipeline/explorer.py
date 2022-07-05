@@ -1,4 +1,6 @@
+from .. import settings
 from ..model.core import Source, UnknownSchemeError, DeserialisationError
+from ..utilities.backoff import TimeoutRetrier
 from . import messages
 from .utilities.filtering import is_handle_relevant
 
@@ -18,6 +20,17 @@ PROMETHEUS_DESCRIPTION = "Sources explored"
 # agonisingly slow web scan, we don't want to hog scan specs we're not ready
 # to use yet!)
 PREFETCH_COUNT = 1
+
+
+def process_exploration_error(scan_spec, handle_candidate, ex):
+    exception_message = (
+            f"Exploration error. {type(ex).__name__}: "
+            + ", ".join(str(a) for a in ex.args))
+    problem_message = messages.ProblemMessage(
+            scan_tag=scan_spec.scan_tag, source=scan_spec.source,
+            handle=handle_candidate, message=exception_message)
+    yield ("os2ds_problems", problem_message.to_json_object())
+    logger.info(f"Sent problem message for handle: {handle_candidate}.")
 
 
 def message_received_raw(body, channel, source_manager):  # noqa
@@ -52,31 +65,27 @@ def message_received_raw(body, channel, source_manager):  # noqa
     handle_count = 0
     source_count = None
     exception_message = ""
+
+    it = scan_spec.source.handles(source_manager)
+
+    tr = TimeoutRetrier(
+            seconds=settings.pipeline["op_timeout"],
+            max_tries=settings.pipeline["op_tries"])
+
     try:
-        for handle in scan_spec.source.handles(source_manager):
-            if not scan_spec.source.yields_independent_sources:
-                if isinstance(handle, tuple) and handle[1]:
-                    # This Handle threw an exception during exploration.
-                    # Send a problem message, so the user can be notified.
-                    handle_object, error = handle
-                    exception_message = "Exploration error. {0}: ".format(type(error).__name__)
-                    exception_message += ", ".join([str(a) for a in error.args])
-                    problem_message = messages.ProblemMessage(
-                        scan_tag=scan_tag, source=scan_spec.source, handle=handle_object,
-                        message=exception_message)
-                    yield ("os2ds_problems", problem_message.to_json_object())
-                    logger.info(f"Sent problem message for handle: {handle_object}.")
-                else:
-                    # Check if the handle should be excluded.
-                    if is_handle_relevant(handle, scan_spec.filter_rule):
-                        # This Handle is just a normal reference to a scannable object.
-                        # Send it on to be processed
-                        yield ("os2ds_conversions",
-                               messages.ConversionMessage(
-                                scan_spec, handle, progress).to_json_object())
-                        handle_count += 1
-                    else:
-                        logger.info(f"A handle matched the exclusion rules: {handle}")
+        while (handle := tr.run(next, it)):
+            if isinstance(handle, tuple) and handle[1]:
+                # We were able to construct a Handle for something that
+                # exists, but then something unexpected (that we can tie to
+                # that specific Handle) went wrong. Send a problem message
+                yield from process_exploration_error(scan_spec, *handle)
+            elif not scan_spec.source.yields_independent_sources:
+                # This Handle is just a normal reference to a scannable object.
+                # Send it on to be processed
+                yield ("os2ds_conversions",
+                       messages.ConversionMessage(
+                            scan_spec, handle, progress).to_json_object())
+                handle_count += 1
             else:
                 # Check if the handle should be excluded.
                 if is_handle_relevant(handle, scan_spec.filter_rule):
@@ -93,6 +102,9 @@ def message_received_raw(body, channel, source_manager):  # noqa
                 "Finished exploration successfully",
                 handle_count=handle_count, source_count=source_count,
                 scan_tag=scan_tag)
+    except StopIteration:
+        # Exploration is complete
+        pass
     except Exception as e:
         exception_message = "Exploration error. {0}: ".format(type(e).__name__)
         exception_message += ", ".join([str(a) for a in e.args])
@@ -105,6 +117,8 @@ def message_received_raw(body, channel, source_manager):  # noqa
                 handle_count=handle_count, source_count=source_count,
                 scan_tag=scan_tag, exc_info=e)
     finally:
+        if hasattr(it, "close"):
+            it.close()
         yield ("os2ds_status", messages.StatusMessage(
                 scan_tag=scan_tag,
                 total_objects=handle_count, new_sources=source_count,

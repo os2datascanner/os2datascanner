@@ -195,12 +195,20 @@ msgid ""
 "Folder at the path is using outdated encoding. Please rename the folder."
 msgstr "Mappe på stien indeholder forældet indkodning. Omdøb venligst mappen."
 
-#: adminapp/models/usererrorlog_model.py:24
+#: adminapp/models/usererrorlog_model.py:12
+msgid ""
+"An object was skipped either because it could not be opened or it was taking "
+"too long to scan."
+msgstr ""
+"Et objekt blev sprunget over enten fordi det ikke kunne åbnes eller at det "
+"tog for lang tid at skanne."
+
+#: adminapp/models/usererrorlog_model.py:27
 #: adminapp/templates/os2datascanner/error_log.html:39
 msgid "Path"
 msgstr "Sti"
 
-#: adminapp/models/usererrorlog_model.py:29
+#: adminapp/models/usererrorlog_model.py:32
 msgid "Error message"
 msgstr "Fejlbesked"
 

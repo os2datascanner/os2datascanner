@@ -104,12 +104,13 @@ class GenericRunner(PikaPipelineThread):
 
     def _handle_content(self, routing_key, body):
         raw_scan_tag = body.get("scan_tag")
+
         if not raw_scan_tag and "scan_spec" in body:
             raw_scan_tag = body["scan_spec"]["scan_tag"]
 
         if raw_scan_tag:
-            scan_tag = messages.ScanTagFragment.from_json_object(
-                    raw_scan_tag)
+            scan_tag = messages.ScanTagFragment.from_json_object(raw_scan_tag)
+
             if scan_tag in self._cancelled:
                 logger.debug(
                         f"scan {raw_scan_tag} is cancelled, "
