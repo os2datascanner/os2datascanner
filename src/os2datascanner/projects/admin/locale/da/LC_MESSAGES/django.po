@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-23 15:07+0200\n"
+"POT-Creation-Date: 2022-07-05 11:52+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -53,7 +53,7 @@ msgid "Login method"
 msgstr "Login metode"
 
 #: adminapp/models/rules/rule_model.py:40 core/models/client.py:73
-#: organizations/templates/organizations/org_list.html:51
+#: organizations/templates/organizations/org_table.html:38
 msgid "name"
 msgstr "navn"
 
@@ -281,7 +281,7 @@ msgstr "Regler"
 #: adminapp/templates/partials/breadcrumb.html:73
 #: adminapp/templates/partials/breadcrumb.html:81
 #: adminapp/templates/partials/breadcrumb.html:93 organizations/apps.py:8
-#: organizations/templates/organizations/org_list.html:8
+#: organizations/templates/organizations/org_list.html:6
 msgid "organizations"
 msgstr "organisationer"
 
@@ -549,7 +549,7 @@ msgid "Create new rule"
 msgstr "Opret ny regel"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:118
-#: adminapp/templates/os2datascanner/scanner_form.html:138
+#: adminapp/templates/os2datascanner/scanner_form.html:142
 #: import_services/templates/import_services/ldap_edit.html:93
 msgid "General"
 msgstr "Generelt"
@@ -600,7 +600,7 @@ msgid "Description of rule"
 msgstr "Beskrivelse af regel"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:270
-#: adminapp/templates/os2datascanner/scanner_form.html:772
+#: adminapp/templates/os2datascanner/scanner_form.html:816
 msgid "Save changes"
 msgstr "Gem ændringer"
 
@@ -797,171 +797,183 @@ msgstr "Ja, kør"
 msgid "Waiting..."
 msgstr "Afventer..."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:111
+#: adminapp/templates/os2datascanner/scanner_form.html:115
 #: adminapp/templates/partials/breadcrumb.html:44
 msgid "Edit scannerjob"
 msgstr "Rediger scannerjob"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:117
+#: adminapp/templates/os2datascanner/scanner_form.html:121
 #: adminapp/templates/os2datascanner/scanner_no_client_credentials.html:15
 #: adminapp/templates/os2datascanner/scanner_oauth_start.html:15
 #: adminapp/templates/partials/breadcrumb.html:46
 msgid "Create new scannerjob"
 msgstr "Opret nyt scannerjob"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:170
-#: adminapp/templates/os2datascanner/scanner_form.html:408
+#: adminapp/templates/os2datascanner/scanner_form.html:174
+#: adminapp/templates/os2datascanner/scanner_form.html:412
 msgid "Sitemap"
 msgstr "Sitemap"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:176
-#: adminapp/templates/os2datascanner/scanner_form.html:182
-#: adminapp/templates/os2datascanner/scanner_form.html:188
-#: adminapp/templates/os2datascanner/scanner_form.html:194
+#: adminapp/templates/os2datascanner/scanner_form.html:180
+#: adminapp/templates/os2datascanner/scanner_form.html:186
+#: adminapp/templates/os2datascanner/scanner_form.html:192
+#: adminapp/templates/os2datascanner/scanner_form.html:198
 msgid "User information"
 msgstr "Brugeroplysninger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:315
-#: adminapp/templates/os2datascanner/scanner_form.html:453
+#: adminapp/templates/os2datascanner/scanner_form.html:319
+#: adminapp/templates/os2datascanner/scanner_form.html:457
 msgid "Upload service account"
 msgstr "Upload servicekonto"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:317
-#: adminapp/templates/os2datascanner/scanner_form.html:353
-#: adminapp/templates/os2datascanner/scanner_form.html:428
-#: adminapp/templates/os2datascanner/scanner_form.html:455
-#: adminapp/templates/os2datascanner/scanner_form.html:491
-#: adminapp/templates/os2datascanner/scanner_form.html:553
+#: adminapp/templates/os2datascanner/scanner_form.html:321
+#: adminapp/templates/os2datascanner/scanner_form.html:357
+#: adminapp/templates/os2datascanner/scanner_form.html:432
+#: adminapp/templates/os2datascanner/scanner_form.html:459
+#: adminapp/templates/os2datascanner/scanner_form.html:495
+#: adminapp/templates/os2datascanner/scanner_form.html:557
 msgid "Select a file"
 msgstr "Vælg en fil"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:320
-#: adminapp/templates/os2datascanner/scanner_form.html:356
-#: adminapp/templates/os2datascanner/scanner_form.html:431
-#: adminapp/templates/os2datascanner/scanner_form.html:458
-#: adminapp/templates/os2datascanner/scanner_form.html:494
-#: adminapp/templates/os2datascanner/scanner_form.html:556
+#: adminapp/templates/os2datascanner/scanner_form.html:324
+#: adminapp/templates/os2datascanner/scanner_form.html:360
+#: adminapp/templates/os2datascanner/scanner_form.html:435
+#: adminapp/templates/os2datascanner/scanner_form.html:462
+#: adminapp/templates/os2datascanner/scanner_form.html:498
+#: adminapp/templates/os2datascanner/scanner_form.html:560
 msgid "Upload"
 msgstr "Upload"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:328
-#: adminapp/templates/os2datascanner/scanner_form.html:466
+#: adminapp/templates/os2datascanner/scanner_form.html:332
+#: adminapp/templates/os2datascanner/scanner_form.html:470
 msgid "Click here to upload service account credentials (JSON FORMAT)"
 msgstr ""
 "Klik her for at uploade servicekonto legitimationsoplysninger (JSON FORMAT)"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:342
-#: adminapp/templates/os2datascanner/scanner_form.html:480
+#: adminapp/templates/os2datascanner/scanner_form.html:346
+#: adminapp/templates/os2datascanner/scanner_form.html:484
 msgid "Service account"
 msgstr "Servicekonto"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:344
-#: adminapp/templates/os2datascanner/scanner_form.html:380
-#: adminapp/templates/os2datascanner/scanner_form.html:482
-#: adminapp/templates/os2datascanner/scanner_form.html:518
+#: adminapp/templates/os2datascanner/scanner_form.html:348
+#: adminapp/templates/os2datascanner/scanner_form.html:384
+#: adminapp/templates/os2datascanner/scanner_form.html:486
+#: adminapp/templates/os2datascanner/scanner_form.html:522
 msgid "Current file:"
 msgstr "Nuværende fil:"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:351
-#: adminapp/templates/os2datascanner/scanner_form.html:489
+#: adminapp/templates/os2datascanner/scanner_form.html:355
+#: adminapp/templates/os2datascanner/scanner_form.html:493
 msgid "Upload list of accounts"
 msgstr "Upload liste af konti"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:364
-#: adminapp/templates/os2datascanner/scanner_form.html:502
+#: adminapp/templates/os2datascanner/scanner_form.html:368
+#: adminapp/templates/os2datascanner/scanner_form.html:506
 msgid "Click here to upload list of accounts (CSV FORMAT)"
 msgstr "Klik her for at uploade liste af konti (CSV FORMAT)"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:378
-#: adminapp/templates/os2datascanner/scanner_form.html:516
+#: adminapp/templates/os2datascanner/scanner_form.html:382
+#: adminapp/templates/os2datascanner/scanner_form.html:520
 msgid "List of accounts"
 msgstr "Liste af konti"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:392
+#: adminapp/templates/os2datascanner/scanner_form.html:396
 msgid "e.g. /sitemap.xml"
 msgstr "f.eks. /sitemap.xml"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:410
+#: adminapp/templates/os2datascanner/scanner_form.html:414
 msgid "Current:"
 msgstr "Aktuelt:"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:417
+#: adminapp/templates/os2datascanner/scanner_form.html:421
 msgid "Remove"
 msgstr "Fjern"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:426
+#: adminapp/templates/os2datascanner/scanner_form.html:430
 msgid "Upload sitemap"
 msgstr "Upload sitemap"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:439
+#: adminapp/templates/os2datascanner/scanner_form.html:443
 msgid "Click here to upload sitemap.xml"
 msgstr "Klik her for at uploade sitemap.xml"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:529
-#: adminapp/templates/os2datascanner/scanner_form.html:622
+#: adminapp/templates/os2datascanner/scanner_form.html:533
+#: adminapp/templates/os2datascanner/scanner_form.html:626
 msgid "add users"
 msgstr "tilføj brugere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:532
-#: adminapp/templates/os2datascanner/scanner_form.html:634
+#: adminapp/templates/os2datascanner/scanner_form.html:536
+#: adminapp/templates/os2datascanner/scanner_form.html:638
 msgid "select users from"
 msgstr "vælg brugere fra"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:538
-#: adminapp/templates/os2datascanner/scanner_form.html:640
+#: adminapp/templates/os2datascanner/scanner_form.html:542
+#: adminapp/templates/os2datascanner/scanner_form.html:644
 #: import_services/models/ldap_configuration.py:38
 msgid "organizational units"
 msgstr "organisatoriske enheder"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:545
+#: adminapp/templates/os2datascanner/scanner_form.html:549
 msgid "or upload"
 msgstr "eller upload"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:551
+#: adminapp/templates/os2datascanner/scanner_form.html:555
 msgid "List of mail users"
 msgstr "Liste af mail brugere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:570
+#: adminapp/templates/os2datascanner/scanner_form.html:574
 msgid "Existing file:"
 msgstr "Eksisterende fil:"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:591
+#: adminapp/templates/os2datascanner/scanner_form.html:595
 msgid "Available employees"
 msgstr "Tilgængelige medarbejdere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:607
+#: adminapp/templates/os2datascanner/scanner_form.html:611
 msgid "Selected employees"
 msgstr "Valgte medarbejdere"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:626
+#: adminapp/templates/os2datascanner/scanner_form.html:630
 msgid "all users in this organization"
 msgstr "alle brugere i denne organisation"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:630
+#: adminapp/templates/os2datascanner/scanner_form.html:634
 msgid "select users from organizational units"
 msgstr "vælg brugere fra organisatoriske enheder"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:657
+#: adminapp/templates/os2datascanner/scanner_form.html:661
 msgid "Scanner settings"
 msgstr "Scannerindstillinger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:699
+#: adminapp/templates/os2datascanner/scanner_form.html:703
 msgid "Add rules"
 msgstr "Tilføj regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:706
+#: adminapp/templates/os2datascanner/scanner_form.html:710
 msgid "Available rules"
 msgstr "Tilgængelige regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:719
+#: adminapp/templates/os2datascanner/scanner_form.html:723
 msgid "Selected rules"
 msgstr "Valgte regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:737
+#: adminapp/templates/os2datascanner/scanner_form.html:742
+msgid "Add exclusion rules"
+msgstr "Tilføj udelukkelsesregler"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:749
+msgid "Available exclusion rules"
+msgstr "Tilgængelige udelukkelsesregler"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:762
+msgid "Selected exclusion rules"
+msgstr "Valgte udelukkelsesregler"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:781
 msgid "Schedule scan"
 msgstr "Planlæg scan"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:748
+#: adminapp/templates/os2datascanner/scanner_form.html:792
 msgid ""
 "Schedule your scan by creating a fixed interval or adding a date to complete "
 "the scannerjob."
@@ -969,7 +981,7 @@ msgstr ""
 "Planlæg dit scan ved at oprette et fast interval eller tilføj en dato for "
 "afvikling af scannerjobbet."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:764
+#: adminapp/templates/os2datascanner/scanner_form.html:808
 msgid "The scanner will start at the following time for the selected days:"
 msgstr "Scanneren vil starte på følgende tidspunkt på de valgte dage:"
 
@@ -1306,11 +1318,11 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
-#: adminapp/views/scanner_views.py:51
+#: adminapp/views/scanner_views.py:49
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:315
+#: adminapp/views/scanner_views.py:321
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
@@ -1541,7 +1553,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_list.html:56
+#: organizations/templates/organizations/org_table.html:42
 msgid "import service"
 msgstr "importservice"
 
@@ -1825,40 +1837,40 @@ msgstr "slug"
 msgid "create new organization"
 msgstr "opret ny organisation"
 
-#: organizations/templates/organizations/org_list.html:22
+#: organizations/templates/organizations/org_table.html:9
 msgid "organizations for"
 msgstr "organisationer for"
 
-#: organizations/templates/organizations/org_list.html:28
-#: organizations/templates/organizations/org_list.html:33
+#: organizations/templates/organizations/org_table.html:15
+#: organizations/templates/organizations/org_table.html:20
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_list.html:52
+#: organizations/templates/organizations/org_table.html:39
 msgid "email"
 msgstr "e-mail"
 
-#: organizations/templates/organizations/org_list.html:53
+#: organizations/templates/organizations/org_table.html:40
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_list.html:58
+#: organizations/templates/organizations/org_table.html:44
 msgid "Import service (Microsoft Graph)"
 msgstr "Importservice (Microsoft Graph)"
 
-#: organizations/templates/organizations/org_list.html:97
-#: organizations/templates/organizations/org_list.html:100
-#: organizations/templates/organizations/org_list.html:160
-#: organizations/templates/organizations/org_list.html:163
+#: organizations/templates/organizations/org_table.html:82
+#: organizations/templates/organizations/org_table.html:90
+#: organizations/templates/organizations/org_table.html:151
+#: organizations/templates/organizations/org_table.html:158
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_list.html:115
-#: organizations/templates/organizations/org_list.html:178
+#: organizations/templates/organizations/org_table.html:106
+#: organizations/templates/organizations/org_table.html:174
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_list.html:225
+#: organizations/templates/organizations/org_table.html:221
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
@@ -1870,7 +1882,7 @@ msgstr "organisatorisk struktur"
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
 
-#: organizations/views/org_views.py:91
+#: organizations/views/org_views.py:94
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 

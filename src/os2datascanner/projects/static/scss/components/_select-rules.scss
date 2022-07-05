@@ -12,6 +12,7 @@
   grid-template-columns: 1fr;
   line-height: 1;
   padding-bottom: 0.25rem;
+
   @media (min-width: $break-sm) {
     grid-template-rows: auto;
     grid-template-columns: 1fr 3.25rem 1fr;
@@ -57,6 +58,7 @@
     color: #9E9E9E;
     justify-self: center;
     transform: rotate(90deg);
+
     @media (min-width: $break-sm) {
       transform: none;
     }
@@ -125,7 +127,7 @@
   line-height: normal; // prevent y-overflow
 }
 
-#changed_rules {
+.changed_rules {
   grid-column: 1 / -1;
   grid-row: 4 / -1;
   -ms-grid-column: 1;
