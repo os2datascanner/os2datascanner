@@ -39,6 +39,7 @@ class DropboxScannerCreate(ScannerCreate):
         'token',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]
@@ -68,6 +69,7 @@ class DropboxScannerUpdate(ScannerUpdate):
         'token',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]

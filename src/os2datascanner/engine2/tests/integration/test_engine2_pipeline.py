@@ -67,7 +67,8 @@ raw_scan_spec = {
     "scan_tag": {
         "scanner": {
             "name": "integration_test",
-            "pk": 0
+            "pk": 0,
+            "test": False,
         },
         "user": None,
         "organisation": "Vejstrand Kommune",

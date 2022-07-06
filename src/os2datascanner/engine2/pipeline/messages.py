@@ -72,16 +72,20 @@ class ProgressFragment(NamedTuple):
 class ScannerFragment(NamedTuple):
     pk: int
     name: str
+    test: bool = False
 
     def to_json_object(self):
         return {
             "pk": self.pk,
-            "name": self.name
+            "name": self.name,
+            "test": self.test,
         }
 
     @classmethod
     def from_json_object(cls, obj):
-        return ScannerFragment(pk=obj["pk"], name=obj["name"])
+        return ScannerFragment(
+            pk=obj["pk"], name=obj["name"],
+            test=obj.get("test", False))
 
     _deep_replace = _deep_replace
 

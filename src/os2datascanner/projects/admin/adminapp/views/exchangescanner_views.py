@@ -88,7 +88,7 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
 
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
-              'do_last_modified_check', 'rules', 'userlist',
+              'do_last_modified_check', 'rules', 'userlist', 'only_notify_superadmin',
               'service_endpoint', 'organization', 'org_unit']
     type = 'exchange'
 
@@ -115,7 +115,7 @@ class ExchangeScannerCopy(ExchangeScannerBase, ScannerCopy):
 
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
-              'do_last_modified_check', 'rules', 'userlist',
+              'do_last_modified_check', 'rules', 'userlist', 'only_notify_superadmin',
               'service_endpoint', 'organization', 'org_unit']
     type = 'exchange'
 
@@ -145,7 +145,7 @@ class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):
 
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
-              'do_last_modified_check', 'rules', 'userlist',
+              'do_last_modified_check', 'rules', 'userlist', 'only_notify_superadmin',
               'service_endpoint', 'organization', 'org_unit']
     type = 'exchange'
 

@@ -40,6 +40,7 @@ class GmailScannerCreate(ScannerCreate):
         'exclusion_rules',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]
@@ -61,6 +62,7 @@ class GmailScannerUpdate(ScannerUpdate):
         'exclusion_rules',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]
@@ -96,6 +98,7 @@ class GmailScannerCopy(ScannerCopy):
         'exclusion_rules',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]

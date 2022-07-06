@@ -79,6 +79,11 @@ class DocumentReport(models.Model):
         db_index=True,
     )
 
+    only_notify_superadmin = models.BooleanField(
+        default=False,
+        verbose_name='Underret kun superadmin',
+    )
+
     def _str_(self):
         return self.path
 

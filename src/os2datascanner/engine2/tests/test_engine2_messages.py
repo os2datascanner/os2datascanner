@@ -81,7 +81,8 @@ class MessageTest(unittest.TestCase):
                 "user": "jens",
                 "scanner": {
                     "pk": 10,
-                    "name": "Test scanner"
+                    "name": "Test scanner",
+                    "test": False,
                 },
                 "organisation": "Vejstrand Kommune"
             })
