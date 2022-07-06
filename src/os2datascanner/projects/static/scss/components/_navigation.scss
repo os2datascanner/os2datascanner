@@ -20,12 +20,12 @@
   font-size: 1rem;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  position: fixed;
-  top: 2rem;
 
   @media (min-width: $break-lg) {
     margin-left: 1rem;
     margin-top: 5rem;
+    position: fixed;
+    top: 2rem;
   }
 }
 
