@@ -4,30 +4,39 @@
 
 .datatable-wrapper {
   clear: both;
-  &.sm, &.md, &.lg, &.xl {
+
+  &.sm,
+  &.md,
+  &.lg,
+  &.xl {
     max-width: 100%;
     overflow-x: auto;
   }
+
   &.sm {
-    > .datatable {
+    >.datatable {
       min-width: 35rem;
     }
   }
+
   &.md {
-    > .datatable {
+    >.datatable {
       min-width: 45rem;
     }
   }
+
   &.lg {
-    > .datatable {
+    >.datatable {
       min-width: 55rem;
     }
   }
+
   &.xl {
-    > .datatable {
+    >.datatable {
       min-width: 75rem;
     }
   }
+
   &.card {
     box-shadow: var(--box-shadow-widget);
     border-radius: var(--border-radius-widget);
@@ -64,7 +73,8 @@
 
     // IE11 doesn't understand this implementation properly, so we use the media
     // query below to target IE11 and then remove the shadows
-    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    @media (-ms-high-contrast: active),
+    (-ms-high-contrast: none) {
       background-image: none !important;
     }
 
@@ -79,53 +89,62 @@
   border-spacing: 0;
   table-layout: fixed;
   width: 100%;
+
   &.disabled {
     pointer-events: none;
     opacity: .6;
   }
+
   .datatable {
     margin: calc(var(--datatable-cell-padding) * -1) 0;
   }
+
   .button-caret {
     background-color: transparent !important;
+
     .material-icons {
       pointer-events: none;
       color: #aaa;
       transition: var(--transition-default);
     }
+
     &:hover,
     &:focus {
       .material-icons {
         color: var(--color-primary-dark);
       }
     }
+
     &.up {
       .material-icons {
-        transform:rotate(180deg);
+        transform: rotate(180deg);
       }
     }
   }
 
-  tr.open > td,
-  tr.open > th {
-    background-color: rgba(0,0,0,.07);
+  tr.open>td,
+  tr.open>th {
+    background-color: rgba(0, 0, 0, .07);
   }
-  .matches-list > td,
-  .matches-list > th {
-    background-color: rgba(0,0,0,.035);
+
+  .matches-list>td,
+  .matches-list>th {
+    background-color: rgba(0, 0, 0, .035);
   }
-  tr.open > th:first-child,
-  tr.open > td:first-child,
-  .matches-list > th:first-child,
-  .matches-list > td:first-child {
+
+  tr.open>th:first-child,
+  tr.open>td:first-child,
+  .matches-list>th:first-child,
+  .matches-list>td:first-child {
     // Emulate border-left. Adding an actual border-left will shift
     // the contents of the row
     box-shadow: inset 4px 0 0 var(--color-primary);
   }
-  tr.highlighted > td,
-  tr.highlighted > th,
-  tr.highlighted + .matches-list > td,
-  tr.highlighted + .matches-list > th {
+
+  tr.highlighted>td,
+  tr.highlighted>th,
+  tr.highlighted+.matches-list>td,
+  tr.highlighted+.matches-list>th {
     background-color: var(--color-primary-lightest);
   }
 
@@ -183,21 +202,24 @@
 
     &--actions {
       width: 14rem;
+
       .action-wrapper {
         display: flex;
         flex-wrap: wrap;
         margin: -.25rem 0 0 -.25rem;
+
         .button {
           margin: .25rem 0 0 .25rem;
         }
-        > * {
+
+        >* {
           flex: 0 1 auto; // be explicit for IE11s sake
         }
       }
     }
 
     &--info {
-      width: 15rem;
+      width: 20rem;
     }
 
     &--btn {
@@ -223,10 +245,12 @@
 
 
 @media (min-width: $break-sm) {
+
   col.datatable__column--matchcount,
   col.datatable__column--source {
     display: table-column;
   }
+
   td.datatable__column--matchcount,
   th.datatable__column--matchcount,
   td.datatable__column--source,
@@ -254,9 +278,11 @@
   &--red {
     background-color: var(--color-error);
   }
+
   &--orange {
     background-color: var(--color-problem);
   }
+
   &--green {
     background-color: var(--color-ok-dark);
   }
@@ -267,6 +293,7 @@
   line-height: normal; // prevent y-overflow
   padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
   vertical-align: middle;
+
   .overflow-ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -308,12 +335,15 @@
     background-color: #f4f4f4;
     white-space: nowrap;
     top: calc(2rem + var(--size-logo-height) + 12rem); // for sticky purposes; header height + row height of 9rem
+
     @media (min-width: $break-sm) {
       top: calc(2rem + var(--size-logo-height) + 9rem); // for sticky purposes; header height + row height of 9rem
     }
+
     @media (min-width: $break-md) {
       top: calc(2rem + var(--size-logo-height) + 6rem); // for sticky purposes; header height + row height of 6rem
     }
+
     @media (min-width: $break-lg) {
       top: 6rem; // for sticky purposes
     }
@@ -325,12 +355,15 @@
     background-color: #fff;
     z-index: 2;
     top: calc(2rem + var(--size-logo-height)); // for sticky purposes; header height
+
     &:first-child {
       border-top-left-radius: var(--border-radius-widget);
     }
+
     &:last-child {
       border-top-right-radius: var(--border-radius-widget);
     }
+
     @media (min-width: $break-lg) {
       top: 0; // for sticky purposes
     }
@@ -366,6 +399,7 @@
   padding: 2rem;
   text-decoration: none;
 }
+
 /* .datatable--click-rows, stop */
 
 /* Icons and text in datatable  */
@@ -456,9 +490,11 @@
     &--match {
       width: 12rem;
     }
+
     &--context {
       width: auto;
     }
+
     &--probability {
       width: 8rem;
     }
@@ -466,14 +502,17 @@
 }
 
 .match-context {
+
   &::before,
   &::after {
     content: "[...]";
     color: #aaa;
   }
+
   &::before {
     padding-right: .35em;
   }
+
   &::after {
     padding-left: .35em;
   }
@@ -489,7 +528,7 @@
   position: absolute;
   font-size: .85rem;
   padding: .25rem;
-  border: 1px solid rgba(0,0,0,.2);
+  border: 1px solid rgba(0, 0, 0, .2);
   border-radius: var(--border-radius-button);
   background-color: #f4f4f4;
   box-shadow: var(--box-shadow-filter);

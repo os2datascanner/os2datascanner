@@ -35,7 +35,6 @@
 
                     <tbody>
                         {% for status in object_list %}
-                            {% widthratio status.fraction_scanned 1.0 100 as percentage %}
                             <tr>
                                 <td class="datatable__column--name">
                                     {{ status.scanner.name }}
@@ -57,7 +56,13 @@
                                     {% elif status.stage.value == 1 %}
                                         {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned{% endblocktranslate %}
                                     {% elif status.stage.value == 2 %}
-                                        {% blocktranslate with obj=status.scanned_objects total=status.total_objects %}{{ obj }} out of {{ total }} objects scanned{% endblocktranslate %}
+                                        {% blocktranslate with obj=status.scanned_objects total=status.total_objects %}{{ obj }} out of {{ total }} objects scanned {% endblocktranslate %}
+                                        {% with frac=status.fraction_scanned %}
+                                        <div class="progressbar-container">
+                                            <div class="progressbar" id="pb__{{ status.pk }}"
+                                                 style="width:{% widthratio frac 1 100 %}%"></div>
+                                        </div>
+                                        {% endwith %}
 				                    {% elif status.stage.value == 3 %}
 					                    {% trans "The sources do not contain any scannable objects" %}
                                     {% endif %}
@@ -98,4 +103,9 @@
 {% else %}
     <p>{% trans "no ongoing scans"|capfirst %}</p>
 {% endif %}
+{% comment %} <div class="progressbar-container">
+    <div id="scanstatus-progressbar" class="progressbar" 
+         style="width:50%"></div>
+</div> {% endcomment %}
 </div>
+
