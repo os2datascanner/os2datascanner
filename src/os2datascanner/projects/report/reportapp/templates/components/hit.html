@@ -27,7 +27,7 @@
                   {% trans "Open" %}
                 </a>
               {% endif %}
-              {% if type != 'ews' %}
+              {% if type != 'ews' and type != 'msgraph-mail-account' %}
                 <button class="button" data-clipboard-text="{{ document_report.matches.handle|find_parent:type|present }}">
                   {% trans "Copy" %}
                 </button>
