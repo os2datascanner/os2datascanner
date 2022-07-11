@@ -137,6 +137,9 @@ services:
       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
+      # used for assertion signage see dev-environment/report/dev-settings.toml
+      #- ./ssl/domain.crt:/etc/ssl/certs/signing.crt:ro
+      #- ./ssl/domain.key:/etc/ssl/certs/signing.key:ro
     ports:
       - "8040:5000"
     depends_on:

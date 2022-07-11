@@ -147,6 +147,10 @@ NAME_ID_FORMAT = 'FormatString' # Sets the Format property of authn NameIDPolicy
 ACCEPTED_TIME_DIFF = 0
 USE_JWT = false # Set this to True if you are running a Single Page Application (SPA) with Django Rest Framework (DRF), and are using JWT authentication to authorize client users
 FRONTEND_URL = 'https://myfrontendclient.com' # Redirect URL for the client if you are using JWT auth with DRF. See explanation below
+# Samlt assertion signage
+CERT_FILE = ''
+KEY_FILE = ''
+AUTHN_REQUESTS_SIGNED = false
 
     [SAML2_AUTH.NEW_USER_PROFILE]
     USER_GROUPS = []  # The default group name when a new user logs in
@@ -165,11 +169,6 @@ FRONTEND_URL = 'https://myfrontendclient.com' # Redirect URL for the client if y
     [SAML2_AUTH.TRIGGER]
     CREATE_USER = 'path.to.your.new.user.hook.method'
     BEFORE_LOGIN = 'path.to.your.login.hook.method'
-
-    [SAML2_AUTH.CERTIFICATE]
-    CERT_FILE = ''
-    KEY_FILE = ''
-    AUTHN_REQUESTS_SIGNED = false
 
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module
