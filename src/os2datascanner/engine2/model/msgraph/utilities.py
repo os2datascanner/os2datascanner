@@ -1,6 +1,7 @@
+from dataclasses import dataclass
+from contextlib import contextmanager
 import logging
 import requests
-from contextlib import contextmanager
 
 from os2datascanner.engine2.utilities.backoff import WebRetrier
 from os2datascanner.engine2 import settings as engine2_settings
@@ -145,3 +146,88 @@ def ignore_responses(*status_codes):
             pass
         else:
             raise
+
+
+class MailFSBuilder:
+    """Utility class to construct folder system for MS Graph mailscanner"""
+
+    def __init__(self, source, sm, pn):
+        self._source = source
+        self._sm = sm
+        self._pn = pn
+        self._folder_map = {}
+        self.build_mail_fs_map()
+
+    def build_mail_fs_map(self):
+        """Constructs a dict of mail folders with fid as keys"""
+        pn = self._pn
+        sm = self._sm
+        src = self._source
+        ps = engine2_settings.model["msgraph"]["page_size"]
+
+        recursion_stack = []
+
+        result = sm.open(src).get(
+            (f"users/{pn}/mailFolders?$select=id,"
+             f"parentFolderId,displayName,childFolderCount&$top={ps}"))
+
+        recursion_stack = self._process_result(result, recursion_stack)
+        if len(recursion_stack) > 0:
+            self._recurse_child_folders(recursion_stack)
+
+    def _process_result(self, result, recursion_stack):
+        for folder in result["value"]:
+            mail_folder = MailFolder(folder["id"],
+                                     folder["parentFolderId"],
+                                     folder["displayName"],
+                                     folder["childFolderCount"])
+
+            self._folder_map[folder["id"]] = mail_folder
+
+            if mail_folder.children > 0:
+                recursion_stack.append(mail_folder)
+
+        if '@odata.nextLink' in result:
+            result = self._sm.open(self._source).follow_next_link(result["@odata.nextLink"])
+            self._process_result(result, recursion_stack)
+
+        return recursion_stack
+
+    def _recurse_child_folders(self, recursion_stack):
+        ps = engine2_settings.model["msgraph"]["page_size"]
+        head = recursion_stack.pop()
+        fid = head.fid
+
+        result = self._sm.open(self._source).get(
+            (f"users/{self._pn}/mailFolders/{fid}/childFolders?$select=id,"
+             f"parentFolderId,displayName,childFolderCount&$top={ps}"))
+
+        recursion_stack = self._process_result(result, recursion_stack)
+
+        if len(recursion_stack) > 0:
+            self._recurse_child_folders(recursion_stack)
+
+    def build_path(self, fid):
+        """Builds a folder path given an fid"""
+        root = self._folder_map.get(fid, None)
+
+        def _reverse_traverse(folder: MailFolder):
+            if folder is None:
+                return ""
+
+            parent = self._folder_map.get(folder.parent_folder_id, None)
+            if parent is None:
+                return folder.display_name
+
+            return _reverse_traverse(parent) + '/' + folder.display_name
+
+        return _reverse_traverse(root)
+
+
+@dataclass
+class MailFolder:
+    """Object to represent a mail folder in MS Graph."""
+    fid: str
+    parent_folder_id: str
+    display_name: str
+    children: int
