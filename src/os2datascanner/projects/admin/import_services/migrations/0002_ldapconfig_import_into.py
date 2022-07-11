@@ -16,3 +16,6 @@ class Migration(migrations.Migration):
             field=models.CharField(choices=[('group', 'groups'), ('ou', 'organizational units')], default='ou', max_length=32, verbose_name='import users into'),
         ),
     ]
+
+
+

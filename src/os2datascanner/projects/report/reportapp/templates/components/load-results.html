@@ -1,15 +1,18 @@
 {%  load i18n %}
 
-{% if page_obj.paginator.count >= 10 %}
-<div class="get-results">
-  <select name="paginate_by" id="paginate_by">
-      <option value="10"
-              {% if paginate_by_options|first == 10 %}
-              selected="selected"
-              {% endif %} >
-          {% trans "per page" %}
-      </option>
+<form class="dropdown">
+  {% comment %}
+      Hidden input fields store the filter and sort options so that they
+      "survive" when the user changes page size.
+  {% endcomment %}
+  
+  <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
+  <input type="hidden" name="order" id="order" value="{{ order }}">
+  <input type="hidden" name="scannerjob" id="scannerjob" value="{{ scannerjobs|last }}">
+  <input type="hidden" name="sensitivities" id="sensitivities" value="{{ sensitivities|last }}">
+  <input type="hidden" name="30-days" id="30-days" value="{{ 30_days }}">
 
+  <select name="paginate_by" id="paginate_by" data-autosubmit>
         {% for option in paginate_by_options %}
             <option value="{{ option }}"
             {% if option == paginate_by %} selected="selected"{% endif %}>
@@ -17,5 +20,4 @@
             </option>
         {% endfor %}
   </select>
-</div>
-{% endif %}
+</form>

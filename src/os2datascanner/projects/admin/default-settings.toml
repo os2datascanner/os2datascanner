@@ -9,9 +9,22 @@
 SECRET_KEY = ""
 DECRYPTION_HEX = ""
 
+# django-prometheus will try to connect to postgresql during collectstatic
+# without this setting: https://github.com/korfuri/django-prometheus/issues/34.
+# It only collects a count of un-run migrations, which we don't really care
+# about anyways, so we just leave it off.
+PROMETHEUS_EXPORT_MIGRATIONS = false
+# Prometheus pushgateway, used as input when push_to_gateway method is used.
+# Must point to the pushgateway, example: http://pushgateway:9091
+# Without it, no metrics can be pushed to the pushgateway.
+PUSHGATEWAY_HOST = ""
+
 # [mode]
 DEBUG = false
 PRODUCTION = false
+
+# [functionality]
+EXCLUSION_RULES = false
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
@@ -21,15 +34,17 @@ SITE_ID = 1
 ALLOWED_HOSTS = []
 SESSION_COOKIE_NAME = "sessionid"
 
+REPORT_URL = "*"
+
 # [keycloak]
 KEYCLOAK_BASE_URL = ""
-KEYCLOAK_ADMIN_CLIENT = "os2datascanner-admin"
+KEYCLOAK_ADMIN_CLIENT = "os2datascanner_admin"
 KEYCLOAK_ADMIN_SECRET = ""
 
 # [msgraph]
 # The GUID of the registered Azure application corresponding to this
 # OS2datascanner installation, used when requesting Microsoft Graph access:
-MSGRAPH_APP_ID = ""
+MSGRAPH_APP_ID = "da5ae7df-dc68-4c02-87ea-8bdbb00857d8"
 # The client secret used to demonstrate to Microsoft Graph that this
 # OS2datascanner installation corresponds to a registered Azure application
 # (client private keys are not yet supported):
@@ -61,12 +76,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'recurrence',
     'mptt',
+    'django_extensions',
+    'django_prometheus',
+    'channels',
+    'channels_redis',
+    'rest_framework',
 ]
 OS2DATASCANNER_APPS = [
     'os2datascanner.projects.admin.adminapp',
     'os2datascanner.projects.admin.core',
     'os2datascanner.projects.admin.organizations',
     'os2datascanner.projects.admin.import_services',
+    'os2datascanner.core_organizational_structure.apps.CoreOrganizationalStructureConfig'
 ]
 
 # placeholder configs for DEVs. Keys must exist here if they should be read from
@@ -78,14 +99,18 @@ INTERNAL_IPS = []
 DEBUG_TOOLBAR_CONFIG = []
 
 AUTH_PROFILE_MODULE = "os2datascanner.projects.admin.adminapp.UserProfile"
-WSGI_APPLICATION = "os2datascanner.projects.admin.wsgi.application"
+ASGI_APPLICATION = "os2datascanner.projects.admin.asgi.application"
 ROOT_URLCONF = "os2datascanner.projects.admin.urls"
 STATIC_URL = "/static/"
-ICON_SPRITE_URL = "/static/src/svg/symbol-defs.svg"
+STATICFILES_DIRS = [
+  '/code/src/os2datascanner/projects/static/dist'
+]
+ICON_SPRITE_URL = "/static/svg/symbol-defs.svg"
 LOGIN_REDIRECT_URL = "/"
 NOTIFICATION_INSTITUTION = ""
 
 MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -97,6 +122,7 @@ MIDDLEWARE = [
     "django_structlog.middlewares.RequestMiddleware",
     # Needed to allow iframe when starting scannerjob
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
@@ -110,11 +136,13 @@ SETTINGS_EXPORT = [
     'ENABLE_DROPBOXSCAN',
     'ENABLE_MSGRAPH_MAILSCAN',
     'ENABLE_MSGRAPH_FILESCAN',
+    'ENABLE_MSGRAPH_CALENDARSCAN',
     'ENABLE_GOOGLEDRIVESCAN',
     'ENABLE_GMAILSCAN',
     'ENABLE_SBSYSSCAN',
     'ICON_SPRITE_URL',
-    'ESTIMATE_AFTER'
+    'ESTIMATE_AFTER',
+    'EXCLUSION_RULES'
 ]
 
 # [internationalization]
@@ -127,7 +155,7 @@ _LOCALE_PATHS = [
 _LANGUAGES = [
     ["da", "Danish"],
 ]
-TIMEZONE = "Europe/Copenhagen"
+TIME_ZONE = "Europe/Copenhagen"
 USE_I18N = true
 USE_L10N = true
 USE_TZ = true
@@ -150,6 +178,7 @@ ENABLE_EXCHANGESCAN = false
 ENABLE_DROPBOXSCAN = false
 ENABLE_MSGRAPH_MAILSCAN = false
 ENABLE_MSGRAPH_FILESCAN = false
+ENABLE_MSGRAPH_CALENDARSCAN = false
 ENABLE_GOOGLEDRIVESCAN = false
 ENABLE_GMAILSCAN = false
 ENABLE_SBSYSSCAN = false
@@ -161,6 +190,9 @@ DJANGO_LOG_LEVEL = "INFO"
 AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
 AMQP_CONVERSION_TARGET = "os2ds_conversions"
 AMQP_EVENTS_TARGET = "os2ds_events"
+
+# [stats]
+SNAPSHOT_PARAMETER = 1.02
 
 # [storage]
 # File storage class - default is regular file system storage
@@ -182,6 +214,7 @@ AMQP_USER = ""
 AMQP_PWD = ""
 AMQP_SCHEME = "amqp"
 AMQP_PORT = 5672
+AMQP_HEARTBEAT = 6000
 AMQP_VHOST = "/"
     [amqp.AMQP_BACKOFF_PARAMS]
     max_tries = 10
@@ -192,7 +225,7 @@ AMQP_VHOST = "/"
 [DATABASES]
 
     [DATABASES.default]
-    ENGINE = "django.db.backends.postgresql_psycopg2"
+    ENGINE = "django_prometheus.db.backends.postgresql"
     NAME = "os2datascanner_admin"
     USER = "os2datascanner_admin"
     PASSWORD = ""

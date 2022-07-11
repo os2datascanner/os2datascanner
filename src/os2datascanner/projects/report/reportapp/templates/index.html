@@ -6,30 +6,13 @@
       {% include "partials/sidemenu.html" with active_tab="home" %}
 
       <div class="content">
-        
-        <div class="aside">
-          <h1 class="page-title">Matches</h1>
-        </div>
 
-        <div class="aside">
-          <span class="matches">Samlede antal: {{ page_obj.paginator.count }}</span>
-        </div>
-
-        {% include "components/filters.html" %}
-
-        {% if page_obj.paginator.count == 0 %}
-          <span class="datatable-none-matches">
-            {% trans "No matches were found" %}
-          </span>
-        {% else %}
-          {% include "components/hits.html" %}
-        {% endif %}
+        {% include "content.html" %}
 
       </div>
 
     </main>
 
     {% include "partials/scripts.html" %}
-
 </body>
 </html>

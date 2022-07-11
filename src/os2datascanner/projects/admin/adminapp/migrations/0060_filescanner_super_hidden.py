@@ -21,3 +21,6 @@ class Migration(migrations.Migration):
             field=models.CharField(max_length=64, null=True, verbose_name='drive letter'),
         ),
     ]
+
+
+

@@ -18,3 +18,6 @@ class Migration(migrations.Migration):
             name='ReferrerUrl',
         ),
     ]
+
+
+

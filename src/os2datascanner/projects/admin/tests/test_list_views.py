@@ -2,7 +2,7 @@ from datetime import datetime
 from dateutil.tz import gettz
 from parameterized import parameterized
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.test import RequestFactory, TestCase
 from django.utils.text import slugify
 
@@ -86,12 +86,18 @@ class ListViewsTest(TestCase):
         ]
         return params
 
+    def test_view_as_anonymous_user(self):
+        request = self.factory.get('/webscanners')
+        request.user = AnonymousUser()
+        response = WebScannerList.as_view()(request)
+        self.assertNotEqual(response.status_code, 200)
+
     @parameterized.expand(get_path_and_class)
     def test_as_superuser(self, _, path, list_type):
         self.user.is_superuser = True
         qs = self.listview_get_queryset(path, list_type)
         if isinstance(list_type, RuleList):
-            self.assertEqual(len(qs), 3)
+            self.assertEqual(len(qs), 6)
         elif isinstance(list_type, OrganizationListView):
             # Migrations 0042 adds os2datascanner as an organization
             # and that is why we expect 3 organizations listed as superuser.

@@ -4,8 +4,8 @@ import email
 from contextlib import contextmanager
 
 from ...conversions.utilities.results import SingleResult
-from ..core import Source, Handle, FileResource, SourceManager
-from ..utilities import NamedTemporaryResource
+from ..core import Source, Handle, FileResource
+from ..utilities.mail import decode_encoded_words
 from .derived import DerivedSource
 
 
@@ -64,7 +64,7 @@ class MailPartResource(FileResource):
         return self._fragment
 
     def get_last_modified(self):
-        return super().get_last_modified()
+        return self.handle.source.handle.follow(self._sm).get_last_modified()
 
     def get_size(self):
         with self.make_stream() as s:
@@ -74,14 +74,6 @@ class MailPartResource(FileResource):
                 return SingleResult(None, "size", s.tell())
             finally:
                 s.seek(initial, 0)
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):
@@ -97,27 +89,49 @@ class MailPartHandle(Handle):
         self._mime = mime
 
     @property
-    def presentation(self):
-        basename = os.path.basename(self.relative_path)
-        if not basename:
-            return self.source.handle.presentation
+    def _path_name(self):
+        return os.path.basename(self.relative_path)
+
+    @property
+    def presentation_name(self):
+        container = self.source.handle.presentation_name
+        if (name := self._path_name):
+            # This is a named attachment
+            return (f"attachment \"{decode_encoded_words(name)}\""
+                    f" in {container}")
         else:
-            return "{0} (in {1})".format(basename, self.source.handle)
+            # This is a message body. Use its subject
+            return container
+
+    @property
+    def sort_key(self):
+        return self.source.handle.sort_key
+
+    @property
+    def presentation_place(self):
+        return self.source.handle.presentation_place
+
+    def __str__(self):
+        return (f"{self.presentation_name} (attached"
+                f" to {self.presentation_place})")
 
     def censor(self):
         return MailPartHandle(
                 self.source.censor(), self.relative_path, self._mime)
 
     def guess_type(self):
-        return self._mime
+        if self._mime != "application/octet-stream":
+            return self._mime
+        else:
+            # If this mail part has a completely generic type, then see if our
+            # filename-based detection can manage anything better
+            return super().guess_type()
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "mime": self._mime
-        })
+        return dict(**super().to_json_object(), mime=self._mime)
 
     @staticmethod
     @Handle.json_handler(type_label)
     def from_json_object(obj):
-        return MailPartHandle(Source.from_json_object(obj["source"]),
-                obj["path"], obj["mime"])
+        return MailPartHandle(
+            Source.from_json_object(obj["source"]), obj["path"], obj["mime"])

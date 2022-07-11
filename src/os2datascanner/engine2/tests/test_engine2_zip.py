@@ -1,7 +1,7 @@
 import os.path
 import unittest
 
-from os2datascanner.engine2.model.core import Source, SourceManager
+from os2datascanner.engine2.model.core import SourceManager
 from os2datascanner.engine2.model.file import (
         FilesystemSource, FilesystemHandle)
 from os2datascanner.engine2.model.derived.zip import ZipSource

@@ -1,30 +1,49 @@
 scrape_configs:
-  - job_name: 'engine_explorer'
+  - job_name: 'admin'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_explorer:9091']
+      - targets:
+          - 'admin:5001'
+          # - 'admin:5002'
 
-  - job_name: 'engine_processor'
+  - job_name: 'report'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_processor:9091']
+      - targets:
+          - 'report:5001'
+          # - 'report:5002'
 
-  - job_name: 'engine_matcher'
+  - job_name: 'explorer'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_matcher:9091']
+      - targets: ['explorer:9091']
 
-  - job_name: 'engine_tagger'
+  - job_name: 'worker'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_tagger:9091']
+      - targets: ['worker:9091']
 
-  - job_name: 'engine_exporter'
+  - job_name: 'exporter'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_exporter:9091']
+      - targets: ['exporter:9091']
 
-  - job_name: 'engine_worker'
+  - job_name: 'pushgateway'
     scrape_interval: 5s
     static_configs:
-      - targets: ['engine_worker:9091']
+      - targets: ['pushgateway:9091']
+
+  - job_name: 'report_collector'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['report_collector:9091']
+
+  - job_name: 'admin_collector'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['admin_collector:9091']
+
+  - job_name: 'rabbitMQ'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['queue:15692']

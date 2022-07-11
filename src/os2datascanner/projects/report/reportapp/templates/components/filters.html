@@ -1,4 +1,5 @@
 {%  load i18n %}
+{% load l10n %}
 
 <script>
   function clear_filter(elementid){
@@ -6,17 +7,30 @@
       document.getElementById("filter_form", element).submit();
   };
   function checkedBox() {
-    var checkbox = document.getElementById('30-days');
+    var checkbox = document.getElementById('30-days-toggle');
+    var thirtyDays = document.getElementById('30-days');
     if (checkbox.checked) {
-      checkbox.value = true;
+      thirtyDays.value = 'true';
     } else {
-      checkbox.value = false;
+      thirtyDays.value = 'false';
     }
     document.getElementById("filter_form").submit();
   };
+  document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('30-days-toggle').addEventListener('click', checkedBox)
+  });
 </script>
 
-<form method="GET" action="{% url 'index' %}" id="filter_form">
+<form method="GET" action="{% url 'index' %}" id="filter_form">  
+  {% comment %}
+      Hidden input fields store the pagination and sort options so that they
+      "survive" when the user changes filter options.
+  {% endcomment %}
+  
+  <input type="hidden" name="paginate_by" id="paginate_by" value="{{ paginate_by }}">
+  <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
+  <input type="hidden" name="order" id="order" value="{{ order }}">
+
   <div class="match_filtering_wrapper">
       <div>
           <button type="button" onclick="clear_filter('scannerjobs')" class="match_filtering_clear_button">
@@ -26,20 +40,20 @@
             {% trans "Scan" %}
           </label>
       </div>
-      <div class="match_filtering">
-          <select name="scannerjob" id="scannerjobs">
+      <div class="match_filtering dropdown">
+          <select name="scannerjob" id="scannerjobs" data-autosubmit data-compareto="all">
             <option value="all"
                     {% if scannerjobs|last == "all" %}
                         selected="selected"
                     {% endif %} >
-                    {% trans "Select scannerjob" %}
+                    {% trans "All scannerjobs" %}
             </option>
               {% for scan in scannerjobs|first %}
-                  <option value="{{ scan.data__scan_tag__scanner__pk }}"
-                          {% if scannerjobs|last == scan.data__scan_tag__scanner__pk|stringformat:"i" %}
+                  <option value="{{ scan.scanner_job_pk|unlocalize }}"
+                          {% if scannerjobs|last == scan.scanner_job_pk|stringformat:"i" %}
                             selected="selected"
                           {% endif %} >
-                      {{ scan.data__scan_tag__scanner__name }} ({{ scan.total }})
+                      {{ scan.scanner_job_name }} ({{ scan.total }})
                   </option>
                {% endfor %}
           </select>
@@ -55,13 +69,13 @@
             {% trans "Sensitivity" %}
           </label>
       </div>
-      <div class="match_filtering">
-          <select name="sensitivities" id="sensitivities" >
+      <div class="match_filtering dropdown">
+          <select name="sensitivities" id="sensitivities" data-autosubmit data-compareto="all">
             <option value="all"
                     {% if sensitivities|last == "all" %}
                         selected="selected"
                     {% endif %} >
-              {% trans "Select sensitivity" %}
+              {% trans "All sensitivities" %}
             </option>
               {% for sensitivity in sensitivities|first %}
                   <option value="{{ sensitivity.0.value|stringformat:"i" }}"
@@ -76,13 +90,19 @@
       </div>
   </div>
 
+  {% comment %}
+      We use the hidden input field below to track whether 30-days is enabled or not.
+      If we used the checkbox, unticking it would make it disappear from the form's GET action
+  {% endcomment %}
+
+  <input type="hidden" name="30-days" id="30-days" value="{{ 30_days }}">
   <div class="checkbox_wrapper">
     <div class="checkbox-group">
       <div class="ds-checkbox">
-        <input type="checkbox" id="30-days" name="30-days" value="{{ 30_days }}" onclick="checkedBox()"
+        <input type="checkbox" id="30-days-toggle"
         {% if 30_days == "true" %}checked{% endif %}>
-        <label for="30-days">
-          {% trans "Only show matches less than 30 days old" %}
+        <label for="30-days-toggle">
+          {% trans "Include results, that are less than 30 days old" %}
         </label>
       </div>
     </div>

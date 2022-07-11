@@ -1,5 +1,5 @@
 from typing import (
-        Tuple, Union, Callable, Iterator, Optional, Sequence, NamedTuple,
+        Tuple, Callable, Iterator, Optional, Sequence, NamedTuple,
         MutableSequence)
 import logging
 from itertools import zip_longest
@@ -12,8 +12,8 @@ _scs = """ "#+,;<=>\\"""
 _hex = "0123456789abcdef"
 
 
-def ldap_split(s: str, codec: str = "utf-8") -> Sequence[str]:
-    """Splits a string representation of a LDAP Distinguished Name according to
+def ldap_split(s: str, codec: str = "utf-8") -> Sequence[str]:  # noqa: CCR001, E501 too high cognitive complexity
+    r"""Splits a string representation of a LDAP Distinguished Name according to
     the rules laid out in RFC 4514.
 
     DNs represent extended characters as escaped bytes in an unspecified
@@ -179,8 +179,7 @@ class LDAPNode(NamedTuple):
         return LDAPNode(tuple(label), list(children), properties)
 
     def collapse(self,
-            collapse_ok: Callable[['LDAPNode'], bool] =
-                    lambda n: True) -> 'LDAPNode':
+                 collapse_ok: Callable[['LDAPNode'], bool] = lambda n: True) -> 'LDAPNode':
         """Returns a new simplified LDAP hierarchy: multiple nodes at the top
         with a single child (and for which the collapse_ok function returns
         True) will be reduced to a single node with a multi-part label.."""
@@ -200,29 +199,29 @@ class LDAPNode(NamedTuple):
     def __repr__(self) -> str:
         return str(self) + f" <{len(self.children)}>"
 
-    def walk(self, *, _parents: Sequence[RDN] = ()
-            ) -> Iterator[Tuple[Sequence[RDN], 'LDAPNode']]:
+    def walk(self, *, _parents: Sequence[RDN] = ()) -> Iterator[
+             Tuple[Sequence[RDN], 'LDAPNode']]:
         """Enumerates all LDAPNodes in this hierarchy in depth-first order,
         along with their full distinguished names."""
         yield (_parents + self.label, self)
         for k in self.children:
             yield from k.walk(_parents=_parents + self.label)
 
-    def diff(self, other: 'LDAPNode', *, only_leaves: bool = False
-            ) -> Iterator[Tuple[Sequence[RDN], Tuple['LDAPNode', 'LDAPNode']]]:
+    def diff(self, other: 'LDAPNode', *, only_leaves: bool = False) -> Iterator[
+                Tuple[Sequence[RDN], Optional['LDAPNode'], Optional['LDAPNode']]]:
         """Computes the difference between this LDAPNode hierarchy and another
         one. (By default, the diff includes all nodes, but setting @only_leaves
         to True will skip any nodes that have children.)"""
         our_nodes = {k: v for k, v in self.walk()
-                if not v.children or not only_leaves}
+                     if not v.children or not only_leaves}
         their_nodes = {k: v for k, v in other.walk()
-                if not v.children or not only_leaves}
+                       if not v.children or not only_leaves}
         ours = our_nodes.keys()
         theirs = their_nodes.keys()
 
         yield from ((k, our_nodes[k], None) for k in ours - theirs)
         yield from ((k, our_nodes[k], their_nodes[k])
-                for k in ours & theirs if our_nodes[k] != their_nodes[k])
+                    for k in ours & theirs if our_nodes[k] != their_nodes[k])
         yield from ((k, None, their_nodes[k]) for k in theirs - ours)
 
     def print(self, *, _levels: int = 0):
@@ -235,12 +234,11 @@ class LDAPNode(NamedTuple):
             k.print(_levels=_levels + 1)
 
     @classmethod
-    def from_iterator(
+    def from_iterator(  # noqa: CCR001, too high cognitive complexity
             cls,
             iterator: Iterator[dict],
-            name_selector: Callable[[dict], Iterator[str]]=
-                    trivial_dn_selector):
-        """Builds an LDAPNode hierarchy from an iterator of dictionaries
+            name_selector: Callable[[dict], Iterator[str]] = trivial_dn_selector):
+        r"""Builds an LDAPNode hierarchy from an iterator of dictionaries
         representing user objects and returns its root. The hierarchy will be
         constructed based on the users' distinguished names. For example, the
         input

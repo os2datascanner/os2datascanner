@@ -1,6 +1,5 @@
-import json
-
 from django.test import TestCase
+from parameterized import parameterized
 
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.model.file import (
@@ -14,6 +13,8 @@ from os2datascanner.engine2.rules.rule import Sensitivity
 
 from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.management.commands import pipeline_collector
+
+from .generate_test_data import record_match, record_problem
 
 
 time0 = "2020-10-28T13:51:49+01:00"
@@ -37,21 +38,44 @@ scan_tag2 = messages.ScanTagFragment(
 common_handle = FilesystemHandle(
         FilesystemSource("/mnt/fs01.magenta.dk/brugere/af"),
         "OS2datascanner/Dokumenter/Verdensherredømme - plan.txt")
+
+common_handle_corrupt = FilesystemHandle(
+        FilesystemSource("/mnt/fs01.magenta.dk/brugere/af"),
+        "/logo/Flag/Gr\udce6kenland.jpg")
+
 common_rule = RegexRule("Vores hemmelige adgangskode er",
                         sensitivity=Sensitivity.WARNING)
 dimension_rule = DimensionsRule()
 
-
 common_scan_spec = messages.ScanSpecMessage(
-        scan_tag=None, # placeholder
+        scan_tag=None,  # placeholder
         source=common_handle.source,
         rule=common_rule,
         configuration={},
+        filter_rule=None,
+        progress=None)
+
+common_scan_spec_corrupt = messages.ScanSpecMessage(
+        scan_tag=None,  # placeholder
+        source=common_handle_corrupt.source,
+        rule=common_rule,
+        configuration={},
+        filter_rule=None,
         progress=None)
 
 positive_match = messages.MatchesMessage(
         scan_spec=common_scan_spec._replace(scan_tag=scan_tag0),
         handle=common_handle,
+        matched=True,
+        matches=[
+            messages.MatchFragment(
+                rule=common_rule,
+                matches=[{"dummy": "match object"}])
+        ])
+
+positive_match_corrupt = messages.MatchesMessage(
+        scan_spec=common_scan_spec_corrupt._replace(scan_tag=scan_tag0),
+        handle=common_handle_corrupt,
         matched=True,
         matches=[
             messages.MatchFragment(
@@ -123,45 +147,49 @@ late_negative_match = messages.MatchesMessage(
 class PipelineCollectorTests(TestCase):
     def test_rejection(self):
         """Failed match messages shouldn't be stored in the database."""
-        prev, new = pipeline_collector.get_reports_for(
-                negative_match.handle.to_json_object(),
-                negative_match.scan_spec.scan_tag)
-        pipeline_collector.handle_match_message(
-                prev, new, negative_match.to_json_object())
+        new = record_match(negative_match)
         self.assertEqual(
-                new.pk,
+                new,
                 None,
                 "negative match was saved anyway")
 
-    def test_acceptance(self):
+    @parameterized.expand([
+        ('positive match',
+         positive_match,
+         [None, None, positive_match.scan_spec.scan_tag.time,
+          common_handle.source.type_label]),
+        ('positive corrupted match',
+         positive_match_corrupt,
+         [None, None, positive_match_corrupt.scan_spec.scan_tag.time,
+          common_handle_corrupt.source.type_label]),
+    ])
+    def test_acceptance(self, _, match, expected):
         """Successful match messages should be stored in the database."""
-        prev, new = pipeline_collector.get_reports_for(
-                positive_match.handle.to_json_object(),
-                positive_match.scan_spec.scan_tag)
-        pipeline_collector.handle_match_message(
-                prev, new, positive_match.to_json_object())
+        new = record_match(match)
+        print(new)
         self.assertNotEqual(
                 new.pk,
-                None,
+                expected[0],
                 "positive match was not saved")
         self.assertEqual(
                 new.resolution_status,
-                None,
+                expected[1],
                 "fresh match was already resolved")
         self.assertEqual(
                 new.scan_time,
-                positive_match.scan_spec.scan_tag.time,
+                expected[2],
                 "match time was not taken from scan specification")
         self.assertEqual(
                 new.source_type,
-                common_handle.source.type_label,
+                expected[3],
                 "type label was not extracted to database")
         return new
 
     def test_edit(self):
         """Removing matches from a file should update the status of the
         previous match message."""
-        saved_match = self.test_acceptance()
+        saved_match = record_match(positive_match)
+        print(saved_match)
         self.test_rejection()
         saved_match.refresh_from_db()
         self.assertEqual(
@@ -172,13 +200,9 @@ class PipelineCollectorTests(TestCase):
     def test_removal(self):
         """Deleting a file should update the status of the previous match
         message."""
-        saved_match = self.test_acceptance()
+        saved_match = record_match(positive_match)
 
-        prev, new = pipeline_collector.get_reports_for(
-                deletion.handle.to_json_object(),
-                deletion.scan_tag)
-        pipeline_collector.handle_problem_message(
-                prev, new, deletion.to_json_object())
+        record_problem(deletion)
 
         saved_match.refresh_from_db()
         self.assertEqual(
@@ -188,11 +212,7 @@ class PipelineCollectorTests(TestCase):
 
     def test_transient_handle_errors(self):
         """Source types should be correctly extracted from Handle errors."""
-        prev, new = pipeline_collector.get_reports_for(
-                transient_handle_error.handle.to_json_object(),
-                transient_handle_error.scan_tag)
-        pipeline_collector.handle_problem_message(
-                prev, new, transient_handle_error.to_json_object())
+        new = record_problem(transient_handle_error)
 
         self.assertEqual(
                 new.source_type,
@@ -201,11 +221,7 @@ class PipelineCollectorTests(TestCase):
 
     def test_transient_source_errors(self):
         """Source types should be correctly extracted from Source errors."""
-        prev, new = pipeline_collector.get_reports_for(
-                transient_source_error.source.to_json_object(),
-                transient_source_error.scan_tag)
-        pipeline_collector.handle_problem_message(
-                prev, new, transient_source_error.to_json_object())
+        new = record_problem(transient_source_error)
 
         self.assertEqual(
                 new.source_type,
@@ -216,16 +232,11 @@ class PipelineCollectorTests(TestCase):
         """Receiving a failed match message which failed because of the
         Last-Modified check should update the timestamp of the previous match
         message, but should not create a new database object."""
-        saved_match = self.test_acceptance()
-
-        prev, new = pipeline_collector.get_reports_for(
-                late_negative_match.handle.to_json_object(),
-                late_negative_match.scan_spec.scan_tag)
-        pipeline_collector.handle_match_message(
-                prev, new, late_negative_match.to_json_object())
+        saved_match = record_match(positive_match)
+        new = record_match(late_negative_match)
 
         self.assertEqual(
-                new.pk,
+                new,
                 None,
                 "negative match was saved anyway")
         saved_match.refresh_from_db()
@@ -233,6 +244,10 @@ class PipelineCollectorTests(TestCase):
                 saved_match.scan_time,
                 parse_isoformat_timestamp(time2),
                 "match timestamp not correctly updated")
+        self.assertEqual(
+                saved_match.resolution_status,
+                None,
+                "resolution status changed(?!)")
 
     def test_filter_internal_rules_matches(self):
         match_to_match = messages.MatchesMessage(
@@ -254,5 +269,5 @@ class PipelineCollectorTests(TestCase):
             ])
 
         self.assertEqual(pipeline_collector.sort_matches_by_probability(
-            positive_match_with_dimension_rule_probability_and_sensitivity.to_json_object()
+            positive_match_with_dimension_rule_probability_and_sensitivity.to_json_object()  # noqa E501
         )["matches"], match_to_match.to_json_object()["matches"])

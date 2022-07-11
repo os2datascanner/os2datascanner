@@ -12,20 +12,20 @@ from .utilities import ModelChoiceEnum
 
 class JobState(ModelChoiceEnum):
     WAITING = ("waiting", _("waiting"))
-    """This job is awaiting execution."""
+    # This job is awaiting execution.
 
     RUNNING = ("running", _("running"))
-    """This job is running on a specific executor."""
+    # This job is running on a specific executor.
     CANCELLING = ("cancelling", _("cancelling"))
-    """This job is running on a specific executor, but has been asked to
-    stop."""
+    # This job is running on a specific executor, but has been asked to
+    # stop.
 
     FINISHED = ("finished", _("finished"))
-    """Execution of this job was successful."""
+    # Execution of this job was successful.
     CANCELLED = ("cancelled", _("cancelled"))
-    """Execution of this job was cancelled by the user."""
+    # Execution of this job was cancelled by the user.
     FAILED = ("failed", _("failed"))
-    """Execution of this job failed."""
+    # Execution of this job failed.
 
 
 class BackgroundJob(models.Model):
@@ -80,6 +80,14 @@ class BackgroundJob(models.Model):
         or has been cancelled, returns None."""
         return None
 
+    @property
+    @abstractmethod
+    def job_label(self) -> str:
+        """ Should return a str simply stating what type of job it is.
+        For example, an ImportJob could return just that: Import Job.
+        Mainly used as a way to label metrics for prometheus/grafana.
+        """
+
     def run(self):
         """Runs this job to completion (or cancellation), updating its
         properties until it finishes."""
@@ -102,6 +110,10 @@ class CounterJob(BackgroundJob):
         return (self.counted_to / self.count_to
                 if self.counted_to is not None
                 else None)
+
+    @property
+    def job_label(self) -> str:
+        return "Counter Job"
 
     def run(self):
         self.refresh_from_db()

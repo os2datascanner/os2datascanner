@@ -1,7 +1,7 @@
 import unittest
 
 from os2datascanner.engine2.model.ews import (
-        EWSMailHandle, EWSAccountSource, OFFICE_365_ENDPOINT as CLOUD)
+        EWSMailHandle, EWSAccountSource)
 from os2datascanner.engine2.model.smb import SMBSource, SMBHandle
 from os2datascanner.engine2.model.smbc import SMBCSource, SMBCHandle
 from os2datascanner.engine2.model.data import DataSource, DataHandle
@@ -89,6 +89,20 @@ class CensorTests(unittest.TestCase):
                 self.assertIsNotNone(handle.source.handle.source._user)
                 handle = handle.censor()
                 self.assertIsNone(handle.source.handle.source._user)
+
+    def test_source_mapping(self):
+        share = SMBCSource("//SERVER/Resource", "username", driveletter="W")
+        zh = ZipHandle(
+                ZipSource(
+                        SMBCHandle(
+                                share, "Confidential Documents.zip")),
+                "doc/Personal Information.docx")
+        self.assertEqual(
+                zh.censor(),
+                zh.remap({share: share.censor()}))
+        self.assertEqual(
+                zh,
+                zh.censor().remap({share.censor(): share}))
 
     def test_data_censoring(self):
         handle = DataHandle(

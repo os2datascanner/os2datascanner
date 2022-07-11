@@ -1,7 +1,7 @@
 {%  load i18n %}
 {% load get_settings_tag %}
 
-<nav class="navigation">
+<nav class="navi">
   <ul>
     <li>
       <a href="/" class="{% if request.path == '/' %}active{% endif %}">
@@ -18,5 +18,15 @@
       </a>
     </li>
   {% endfor %}
+  {% if request.user.is_authenticated %}
+    <li class="logout">
+      <a href="/accounts/logout">
+        {% include "components/svg-icons/account_circle.svg" %}
+        <span class="width">
+          {% trans "Logout" %}
+        </span>
+      </a>
+    </li>
+  {% endif %}
   </ul>
 </nav>

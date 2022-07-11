@@ -36,24 +36,37 @@ from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.links_follow import LinksFollowRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
+from os2datascanner.projects.report.organizations.models import Organization
 from os2datascanner.projects.report.reportapp.models.roles.role_model import Role
 
 from ..utils import user_is
 from ..models.documentreport_model import DocumentReport
 from ..models.roles.defaultrole_model import DefaultRole
 from ..models.userprofile_model import UserProfile
-from ..models.organization_model import Organization
 from ..models.roles.remediator_model import Remediator
 
 # For permissions
 from ..models.roles.dpo_model import DataProtectionOfficer
 from ..models.roles.leader_model import Leader
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 logger = structlog.get_logger()
 
 RENDERABLE_RULES = (
     CPRRule.type_label, RegexRule.type_label, LinksFollowRule.type_label,
+    OrderedWordlistRule.type_label,
 )
+
+
+def user_is_superadmin(user):
+    """Relevant users to notify if matches exist with
+    the `only_notify_superuser`-flag."""
+    roles = Role.get_user_roles_or_default(user)
+    return (user_is(roles, DataProtectionOfficer)
+            or user_is(roles, Leader) or user.is_superuser)
 
 
 class LogoutPageView(TemplateView, View):
@@ -75,74 +88,78 @@ class MainPageView(LoginRequiredMixin, ListView):
     template_name = 'index.html'
     paginator_class = EmptyPagePaginator
     paginate_by = 10  # Determines how many objects pr. page.
-    context_object_name = "matches"  # object_list renamed to something more relevant
+    context_object_name = "document_reports"  # object_list renamed to something more relevant
     model = DocumentReport
-    matches = DocumentReport.objects.filter(
-        data__matches__matched=True).filter(
-        resolution_status__isnull=True)
+    document_reports = DocumentReport.objects.filter(
+        raw_matches__matched=True).filter(
+        resolution_status__isnull=True).order_by("sort_key")
     scannerjob_filters = None
     paginate_by_options = [10, 20, 50, 100, 250]
 
     def get_queryset(self):
         user = self.request.user
         roles = Role.get_user_roles_or_default(user)
+        # If called from a "distribute-matches"-button, remove all
+        # `only_notify_superadmin`-flags from reports.
+        print(self.request.headers)
+        if self.request.headers.get(
+                "Hx-Trigger") and self.request.headers.get("Hx-Trigger") == "distribute-matches":
+            DocumentReport.objects.update(only_notify_superadmin=False)
+
         # Handles filtering by role + org and sets datasource_last_modified if non existing
-        self.matches = filter_inapplicable_matches(user, self.matches, roles)
+        self.document_reports = filter_inapplicable_matches(user, self.document_reports, roles)
 
         # Filters by datasource_last_modified.
         # lte mean less than or equal to.
         # A check whether something is more recent than a month
-        # is done by subtracting 30 days from now and then comparing if the saved time is "bigger" than that
+        # is done by subtracting 30 days from now and then comparing if
+        # the saved time is "bigger" than that
         # and vice versa/smaller for older than.
-        # By default we only show matches older than 30 days, if filter enabled we show everything.
-        if not self.request.GET.get('30-days') or self.request.GET.get('30-days') == 'false':
-            # Exactly 30 days is deemed to be "older than 30 days"
-            # and will therefore be shown.
-            time_threshold = time_now() - timedelta(days=30)
-            older_than_30_days = self.matches.filter(
-                datasource_last_modified__lte=time_threshold)
-            self.matches = older_than_30_days
+        # By default true and we show all document_reports. If false we only show
+        # document_reports older than 30 days
+        if self.request.GET.get('30-days') == 'false':
+            older_than_30 = time_now() - timedelta(days=30)
+            self.document_reports = self.document_reports.filter(
+                datasource_last_modified__lte=older_than_30)
 
-        if self.request.GET.get('scannerjob') \
-                and self.request.GET.get('scannerjob') != 'all':
-            # Filter by scannerjob
-            self.matches = self.matches.filter(
-                data__scan_tag__scanner__pk=int(
-                    self.request.GET.get('scannerjob'))
-            )
-        if self.request.GET.get('sensitivities') \
-                and self.request.GET.get('sensitivities') != 'all':
-            # Filter by sensitivities
-            self.matches = self.matches.filter(
-                sensitivity=int(
-                    self.request.GET.get('sensitivities'))
-            )
+        if (scannerjob := self.request.GET.get('scannerjob')) and scannerjob != 'all':
+            self.document_reports = self.document_reports.filter(
+                scanner_job_pk=int(scannerjob))
 
-        # matches are always ordered by sensitivity desc. and probability desc.
-        return self.matches
+        if (sensitivity := self.request.GET.get('sensitivities')) and sensitivity != 'all':
+            self.document_reports = self.document_reports.filter(sensitivity=int(sensitivity))
+
+        self.order_queryset_by_property()
+
+        return self.document_reports
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["renderable_rules"] = RENDERABLE_RULES
 
+        # Tell template if "distribute"-button should be visible
+        context["distributable_matches"] = user_is_superadmin(
+            self.request.user) and self.document_reports.filter(
+            only_notify_superadmin=True).exists()
+
         if self.scannerjob_filters is None:
             # Create select options
-            self.scannerjob_filters = self.matches.order_by(
-                'data__scan_tag__scanner__pk').values(
-                'data__scan_tag__scanner__pk').annotate(
-                total=Count('data__scan_tag__scanner__pk')
+            self.scannerjob_filters = self.document_reports.order_by(
+                'scanner_job_pk').values(
+                'scanner_job_pk').annotate(
+                total=Count('scanner_job_pk')
             ).values(
-                'data__scan_tag__scanner__name',
+                'scanner_job_name',
                 'total',
-                'data__scan_tag__scanner__pk'
+                'scanner_job_pk'
             )
 
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
 
-        context['30_days'] = self.request.GET.get('30-days', 'false')
+        context['30_days'] = self.request.GET.get('30-days', 'true')
 
-        sensitivities = self.matches.order_by(
+        sensitivities = self.document_reports.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
             total=Count('sensitivity')
@@ -157,12 +174,44 @@ class MainPageView(LoginRequiredMixin, ListView):
         context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
         context['paginate_by_options'] = self.paginate_by_options
 
+        context['order_by'] = self.request.GET.get('order_by', 'sort_key')
+        context['order'] = self.request.GET.get('order', 'ascending')
+
         return context
 
     def get_paginate_by(self, queryset):
         # Overrides get_paginate_by to allow changing it in the template
         # as url param paginate_by=xx
         return self.request.GET.get('paginate_by', self.paginate_by)
+
+    # Function for sending message to socket
+    def send_socket_message():
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'get_updates',
+            {
+                'type': 'websocket_receive',
+                'message': 'new matches'
+            }
+        )
+
+    def order_queryset_by_property(self):
+        """Checks if a sort key is allowed and orders the queryset"""
+        allowed_sorting_properties = ['sort_key', 'number_of_matches']
+        if (sort_key := self.request.GET.get('order_by')) and (
+                order := self.request.GET.get('order')):
+
+            if sort_key not in allowed_sorting_properties:
+                return
+
+            if order != 'ascending':
+                sort_key = '-'+sort_key
+            self.document_reports = self.document_reports.order_by(sort_key)
+
+    def get_template_names(self):
+        is_htmx = self.request.headers.get('HX-Request') == "true"
+        return 'content.html' if is_htmx \
+            else 'index.html'
 
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
@@ -171,7 +220,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
     model = DocumentReport
     users = UserProfile.objects.all()
     matches = DocumentReport.objects.filter(
-        data__matches__matched=True)
+        raw_matches__matched=True)
     handled_matches = matches.filter(
         resolution_status__isnull=False)
     unhandled_matches = matches.filter(
@@ -191,6 +240,8 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         context['source_types'] = self.count_by_source_types()
 
         context['new_matches_by_month'] = self.count_new_matches_by_month(today)
+
+        context['unhandled_matches_by_month'] = self.count_unhandled_matches_by_month(today)
 
         return context
 
@@ -278,26 +329,6 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         return formatted_counts
 
-    def count_unhandled_matches(self):
-        # Counts the amount of unhandled matches
-        # TODO: Optimize queries by reading from relational db
-        unhandled_matches = self.unhandled_matches.order_by(
-            'data__metadata__metadata').values(
-            'data__metadata__metadata').annotate(
-            total=Count('data__metadata__metadata')
-        ).values(
-            'data__metadata__metadata', 'total',
-        )
-
-        # TODO: Optimize queries by reading from relational db
-        employee_unhandled_list = []
-        for um in unhandled_matches:
-            dict_values = list(um['data__metadata__metadata'].values())
-            first_value = dict_values[0]
-            employee_unhandled_list.append((first_value, um['total']))
-
-        return employee_unhandled_list
-
     def get_oldest_matches(self):
         # TODO: Needs to be rewritten if a better 'time' is added(#41326)
         # Gets days since oldest unhandled match for each user
@@ -305,7 +336,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         now = time_now
 
         for org_user in self.users:
-            org_roles = Role.get_user_roles_or_default(org_user)
+            Role.get_user_roles_or_default(org_user)
             earliest_date = now
             for match in self.unhandled_matches:
                 if match.scan_time < earliest_date:
@@ -315,6 +346,72 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             oldest_matches.append(tup)
 
         return oldest_matches
+
+    def count_unhandled_matches(self):
+        # Counts the amount of unhandled matches
+        # TODO: Optimize queries by reading from relational db
+        unhandled_matches = self.unhandled_matches.order_by(
+            'raw_metadata__metadata').values(
+            'raw_metadata__metadata').annotate(
+            total=Count('raw_metadata__metadata')
+        ).values(
+            'raw_metadata__metadata', 'total',
+        )
+
+        # TODO: Optimize queries by reading from relational db
+        employee_unhandled_list = []
+        for um in unhandled_matches:
+            dict_values = list(um['raw_metadata__metadata'].values())
+            first_value = dict_values[0]
+            employee_unhandled_list.append((first_value, um['total']))
+
+        return employee_unhandled_list
+
+    def count_unhandled_matches_by_month(self, current_date):
+        """Counts new matches and resolved matches by month for the last year,
+        rotates the current month to the end of the list, inserts and subtracts using the counts
+        and then makes a running total"""
+        a_year_ago = current_date - timedelta(days=365)
+
+        new_matches_by_month = self.matches.filter(
+            created_timestamp__range=(a_year_ago, current_date)).annotate(
+            month=TruncMonth('created_timestamp')).values(
+            'month').annotate(
+            total=Count('raw_matches')
+        ).order_by('month')
+
+        resolved_matches_by_month = self.handled_matches.filter(
+            created_timestamp__range=(a_year_ago, current_date)).annotate(
+            month=TruncMonth('resolution_time')).values(
+            'month').annotate(
+            total=Count('raw_matches')
+        ).order_by('month')
+
+        # Generators with months as integers and the counts
+        new_matches_by_month_gen = ((int(m['month'].strftime('%m')), m['total'])
+                                    for m in new_matches_by_month)
+
+        resolved_matches_by_month_gen = ((int(m['month'].strftime('%m')), m['total'])
+                                         for m in resolved_matches_by_month if m['month'])
+
+        # Double-ended queue with all months abbreviated and a starting value
+        full_year_of_months = deque([[month_abbr[x + 1], 0] for x in range(12)])
+
+        for n in new_matches_by_month_gen:
+            full_year_of_months[n[0] - 1][1] = n[1]  # Inserts the counted new matches
+
+        for r in resolved_matches_by_month_gen:
+            full_year_of_months[r[0] - 1][1] -= r[1]  # Subtracts the counted resolves
+
+        # Rotate the current month to index 11
+        current_month = int(current_date.strftime('%m'))
+        full_year_of_months.rotate(-current_month)
+
+        # Running total
+        for i in range(11):  # Take value from current index and add it to the next
+            full_year_of_months[i + 1][1] += full_year_of_months[i][1]
+
+        return list(full_year_of_months)
 
     def count_new_matches_by_month(self, current_date):
         """Counts matches by months for the last year
@@ -326,7 +423,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             created_timestamp__range=(a_year_ago, current_date)).annotate(
             month=TruncMonth('created_timestamp')).values(
             'month').annotate(
-            total=Count('data')
+            total=Count('raw_matches')
         ).order_by('month')
 
         # Generator with the months as integers and the total
@@ -348,6 +445,29 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
 
 class LeaderStatisticsPageView(StatisticsPageView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['most_unhandled_employees'] = self.five_most_unhandled_employees()
+
+        return context
+
+    def five_most_unhandled_employees(self):
+        counted_unhandled_matches_alias = self.unhandled_matches.values(
+            'alias_relation__user__id').annotate(
+            total=Count('raw_matches')).values(
+                'alias_relation__user__first_name', 'total'
+            ).order_by('-total')
+
+        top_five = [[c['alias_relation__user__first_name'], c['total'], True]
+                    for c in counted_unhandled_matches_alias][:5]
+
+        for t in top_five:  # Finds and replaces 'None' with translated 'Not assigned'
+            if t[0] is None:
+                t[0], t[2] = _('Not assigned'), False
+
+        # Sorted by counts, then alphabetically to make tests stable
+        return sorted(top_five, key=lambda x: (-x[1], x[0]))
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -402,12 +522,19 @@ def filter_inapplicable_matches(user, matches, roles):
         if Organization.objects.count() > 1:
             matches = matches.filter(organization=None)
 
+    if user_is_superadmin(user):
+        hidden_matches = matches.filter(only_notify_superadmin=True)
+        user_matches = DefaultRole(user=user).filter(matches)
+        matches_all = hidden_matches | user_matches
+    else:
+        matches_all = DefaultRole(user=user).filter(matches)
+        matches_all = matches_all.filter(only_notify_superadmin=False)
+
     if user_is(roles, Remediator):
         unassigned_matches = Remediator(user=user).filter(matches)
-        user_matches = DefaultRole(user=user).filter(matches)
-        matches = unassigned_matches | user_matches
+        matches = unassigned_matches | matches_all
     else:
-        matches = DefaultRole(user=user).filter(matches)
+        matches = matches_all
 
     return matches
 

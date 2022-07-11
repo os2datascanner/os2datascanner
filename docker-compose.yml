@@ -1,4 +1,5 @@
 version: '3.9'
+
 services:
   db:
     image: postgres:12
@@ -9,66 +10,59 @@ services:
       - ./docker/postgres-initdb.d/10-test-for-valid-env-variables.sh:/docker-entrypoint-initdb.d/10-test-for-valid-env-variables.sh
       - ./docker/postgres-initdb.d/20-create-admin-db-and-user.sh:/docker-entrypoint-initdb.d/20-create-admin-db-and-user.sh
       - ./docker/postgres-initdb.d/40-create-report-db-and-user.sh:/docker-entrypoint-initdb.d/40-create-report-db-and-user.sh
-      # The following file adds the CREATEDB privilege to the db users to enable it
-      # to run the django tests.
-      # THIS SHOULD NOT BE USED IN PRODUCTION!!!
       - ./dev-environment/postgres-initdb.d/50-add-createdb-permissions.sh:/docker-entrypoint-initdb.d/50-add-createdb-permissions.sh
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
 
   queue:
     # Normally, we expect the `rabbitmq` image. The -management images come
-    # with a set of management plugins installed and enabled by default.
-    # They can be accessed through the web interface on port 15672 (or the port
-    # it has been remapped to).
-    # The credentials are given in the specified `rabbitmq.env` file.
+    # with a set of management plugins installed and enabled by default. They
+    # can be accessed through a web interface. The credentials are os2ds/os2ds.
     image: rabbitmq:3.8-management-alpine
     hostname: os2datascanner_msg_broker
     env_file:
       - dev-environment/rabbitmq.env
     ports:
-      - "5672:5672"
-      - "8030:15672"
+      - "8030:15672"  # management port
 
-  admin_frontend:
+  frontend:
     build:
       context: .
+      # we could also use docker/report/Dockerfile as our dockerfile
       dockerfile: docker/admin/Dockerfile
       target: frontend
     volumes:
-      - ./src/os2datascanner/projects/admin/adminapp/static/src:/code/src/os2datascanner/projects/admin/adminapp/static/src
-      - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
-      - /code/frontend/mode_modules
+      # "create" the folder node_modules in the container as otherwise it will
+      # be overwritten/removed if ./src/os2datascanner/projects/static on the
+      # host does not contain node_modules. node_modules is required for
+      # the webpack dev server to run
+      - /code/src/os2datascanner/projects/static/node_modules/
+      - ./src/os2datascanner/projects/static:/code/src/os2datascanner/projects/static
+      - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
 
-  report_frontend:
-     build:
-       context: .
-       dockerfile: docker/report/Dockerfile
-       target: frontend
-     volumes:
-       - ./src/os2datascanner/projects/report/reportapp/static/src:/code/src/os2datascanner/projects/report/reportapp/static/src
-       - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
-       - /code/frontend/mode_modules
-
-  admin_application:
+  admin:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
+      args:
+       COMMIT_SHA: "${OS2DS_COMMIT_SHA}"
+       COMMIT_TAG: "${OS2DS_COMMIT_TAG}"
+       CURRENT_BRANCH: "${OS2DS_CURRENT_BRANCH}"
     command: [
-      "gunicorn",
-      "--config", "/code/docker/gunicorn-settings.py",
-      "--reload", # restart workers when code changes
-      "wsgi"
+      # In production, we use gunicorn with the worker class
+      # "uvicorn.workers.UvicornWorker", but that does not work with --reload,
+      # so we use uvicorn in development at the cost of some dev/prod parity.
+      "uvicorn",
+      "--reload",
+      "--host", "0.0.0.0",
+      "--port", "5000",
+      # reload when translations are compiled with `docker-compose exec admin django-admin compilemessages`
+      "--reload-include", "*.mo",
+      "os2datascanner.projects.admin.asgi:application",
     ]
-    environment:
-      - GUNICORN_WORKERS=2
     volumes:
-      - frontend-bundles-admin:/code/src/os2datascanner/projects/admin/adminapp/static/dist/
+      # First line below is needed in dev, because we copy all our live code in, which replaces
+      # the built-in code from Dockerfile (this is for watchdog reasons)
+      - /code/src/os2datascanner/core_organizational_structure/
+      - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./dev-environment/admin/.secret:/code/.secret
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -76,21 +70,13 @@ services:
       - "8020:5000"
     depends_on:
       - db
-      - admin_frontend
+      - frontend
       - queue
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
-      start_period: 40s
-
 
   admin_collector:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py pipeline_collector
@@ -99,7 +85,7 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - admin_application
+      - admin
       - queue
 
   admin_job_runner:
@@ -107,7 +93,6 @@ services:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py run_background_jobs
@@ -116,27 +101,33 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - admin_application
+      - admin
       - queue
+    stop_grace_period: 1m30s
 
-
-  report_application:
+  report:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
-      target: application
     command: [
-      "gunicorn",
-      "--config", "/code/docker/gunicorn-settings.py",
-      "--reload", # restart workers when code changes
-      "wsgi"
+      # In production, we use gunicorn with the worker class
+      # "uvicorn.workers.UvicornWorker", but that does not work with --reload,
+      # so we use uvicorn in development at the cost of some dev/prod parity.
+      "uvicorn",
+      "--reload",
+      "--host", "0.0.0.0",
+      "--port", "5000",
+      # reload when translations are compiled with `docker-compose exec report django-admin compilemessages`
+      "--reload-include", "*.mo",
+      "os2datascanner.projects.report.asgi:application",
     ]
-    environment:
-      - GUNICORN_WORKERS=2
     volumes:
-      - frontend-bundles-report:/code/src/os2datascanner/projects/report/reportapp/static/dist/
+      # First line below is needed in dev, because we copy all our live code in, which replaces
+      # the built-in code from Dockerfile (this is for watchdog reasons)
+      - /code/src/os2datascanner/core_organizational_structure/
+      - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
-      - ./src/os2datascanner:/code/src/os2datascanner
+      - ./src/os2datascanner/projects/report/:/code/src/os2datascanner/projects/report/
       # used for assertion signage see dev-environment/report/dev-settings.toml
       #- ./ssl/domain.crt:/etc/ssl/certs/signing.crt:ro
       #- ./ssl/domain.key:/etc/ssl/certs/signing.key:ro
@@ -144,27 +135,17 @@ services:
       - "8040:5000"
     depends_on:
       - db
-      - report_frontend
+      - frontend
       - queue
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
-      start_period: 40s
-  
-  # channel layer backend
+
   redis:
-    restart: unless-stopped
+    # Channel layer backend
     image: redis:latest
-    profiles:
-      - socket
 
   report_collector:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
-      target: application
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py pipeline_collector
@@ -173,14 +154,13 @@ services:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - report_application
+      - report
       - queue
 
-  engine_explorer:
+  explorer:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: explorer --enable-metrics
     init: true
     volumes:
@@ -189,24 +169,24 @@ services:
     depends_on:
       - queue
 
-  engine_worker:
+  worker:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
-    command: worker --enable-metrics
+    command: worker --enable-metrics --single-cpu
     init: true
+    environment:
+      - SCHEDULE_ON_CPU=0
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - queue
 
-  engine_exporter:
+  exporter:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: exporter --enable-metrics
     init: true
     volumes:
@@ -215,26 +195,18 @@ services:
     depends_on:
       - queue
 
-  # a11y is short for "accessibility". There are 11 chars between a-y
-  a11y_scanner:
-    build:
-      context: ./services/a11y-scanner
-      dockerfile: docker/Dockerfile
-    env_file:
-      - ./dev-environment/a11y-scanner/a11y-scanner.env
-    # Set only the necessary security permissions
-    security_opt:
-      - seccomp:./services/a11y-scanner/chrome_seccomp.json
+  docs:
+    image: nicksantamaria/mkdocs
+    volumes:
+      - ./:/data
+    command: ["serve", "-a", "0.0.0.0:8000"]
     ports:
-      - 8888:8888
-    profiles:
-      - a11y
+      - "9000:8000"
 
   api_server:
     build:
       context: .
       dockerfile: docker/api/Dockerfile
-      target: application
     command: [
         "gunicorn",
         "--config", "/code/docker/gunicorn-settings.py",
@@ -244,6 +216,8 @@ services:
     ]
     ports:
       - "8070:5000"
+    environment:
+      -  OS2DS_ADMIN_USER_CONFIG_PATH="/dev-environment/api/dev-settings.toml"
     volumes:
       - ./dev-environment/api/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -267,8 +241,15 @@ services:
       - "./dev-environment/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
     ports:
       - "8050:9090"
+    links:
+      - pushgateway:pushgateway
     profiles:
       - metric
+
+  pushgateway:
+    image: prom/pushgateway
+    ports:
+      - "9091:9091"
 
   # default user is admin/admin
   grafana:
@@ -378,12 +359,46 @@ services:
     profiles:
       - ldap
 
+  samba:
+    image: magentalabs/samba-test:1.1
+    volumes:
+      - ./dev-environment/data:/mnt
+    ports:
+      - 8139:139
+      - 8445:445
+    environment:
+      SMB_USER: os2
+      SMB_PASSWD: swordfish
+      SMB_SHARE_NAME: e2test
+      SMB_SHARE_PATH: /mnt
+      SMB_SHARE_BROWSABLE: "no"
+      SMB_SHARE_READONLY: "yes"
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./dev-environment/data:/usr/share/nginx/html
+      - ./dev-environment/nginx_default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 8910:80
+
+  datasynth:
+    image: egnmagenta/os2datasynth:v0.2.5
+    environment:
+      - DATASYNTH_HOST=datasynth
+    ports:
+      - 5010:5010
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - 8025:8025
+
 x-disabled:
   admin_cron:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
-      target: application
     command: supercronic /code/docker/crontab
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
@@ -392,14 +407,13 @@ x-disabled:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - admin_application
+      - admin
       - queue
 
   report_cron:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
-      target: application
     command: supercronic /code/docker/crontab
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
@@ -408,14 +422,13 @@ x-disabled:
       - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
       - db
-      - report_application
+      - report
       - queue
 
-  engine_processor:
+  processor:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: processor --enable-metrics
     init: true
     volumes:
@@ -424,11 +437,10 @@ x-disabled:
     depends_on:
       - queue
 
-  engine_matcher:
+  matcher:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: matcher --enable-metrics
     init: true
     restart: unless-stopped
@@ -438,11 +450,10 @@ x-disabled:
     depends_on:
       - queue
 
-  engine_tagger:
+  tagger:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-      target: engine
     command: tagger --enable-metrics
     init: true
     volumes:
@@ -453,8 +464,7 @@ x-disabled:
 
 
 volumes:
-  frontend-bundles-admin:
-  frontend-bundles-report:
+  frontend-bundles:
   postgres-data:
   postgres-initdb.d:
   knr-postgres-keycloak-volume:

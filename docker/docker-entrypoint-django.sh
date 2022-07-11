@@ -24,7 +24,7 @@ if [[ -z "${BARE_MODE}" ]]; then
 
   # Wait for rabbitmq to start
   echo "Waiting for rabbitmq"
-  python -m os2datascanner.utils.cli wait-for-rabbitmq --wait 30 || exit
+  python -m os2datascanner.utils.cli wait-for-rabbitmq || exit
   echo "OK"
   echo ""
 else
@@ -38,11 +38,6 @@ else
   echo "OS2DS_SKIP_DJANGO_MIGRATIONS set: ${OS2DS_SKIP_DJANGO_MIGRATIONS}"
   echo "Skipping automatic migrations"
 fi
-
-# Generate static content
-./manage.py collectstatic --no-input --clear
-# Compile translations
-./manage.py compilemessages
 
 echo "Initialization complete, starting app"
 exec "$@"

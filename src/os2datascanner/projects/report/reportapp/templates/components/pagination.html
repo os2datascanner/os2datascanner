@@ -1,31 +1,26 @@
-{%  load i18n %}
+{% load i18n %}
 {% load pagination_tags %}
 {% load l10n %}
 
-{% if is_paginated %}
+
 <tbody class="pagination">
-    <tr>
-      <td class="pagination__column--page">
+  <tr>
+    <td colspan="6">
+      <div class="flex">
         <span class="page_of_pages">
-          {{ page_obj.number }} af {{ paginator.num_pages }}
+          {% trans "matches"|capfirst %} {% match_interval document_reports page_obj paginate_by %} {% trans "of" %} {{ page_obj.paginator.count }}
         </span>
-      </td>
-    
-      <td class="pagination__column--pages">
-        <div class="flex">
+        {% if is_paginated %}
+        <div class="pages">
           {% if page_obj.previous_page_number != 0 %}
-            <a class="link link--pre" href="?{% param_replace page=page_obj.previous_page_number %}">
-              <span class="flex">
-                <i id="chevron_left" class="material-icons">chevron_left</i>
-                {% trans "Previous" %}
-              </span>
+            <a class="link link--pre flex" href="?{% param_replace page=page_obj.previous_page_number %}">
+              <i id="chevron_left" class="material-icons">chevron_left</i>
+              {% trans "Previous" %}
             </a>
           {% else %}
-            <a class="link--pre disabled">
-              <span class="flex">
-                <i id="chevron_left" class="material-icons">chevron_left</i>
-                {% trans "Previous" %}
-              </span>
+            <a class="link--pre disabled flex">
+              <i id="chevron_left" class="material-icons">chevron_left</i>
+              {% trans "Previous" %}
             </a>
           {% endif %}
 
@@ -54,48 +49,42 @@
           {% endif %}
 
           {% if page_obj.number != page_obj.paginator.num_pages %}
-          <a class="link link--next" href="?{% param_replace page=page_obj.next_page_number %}">
-            <span class="flex">
-              {% trans "Next" %}
-              <i id="chevron_right" class="material-icons">chevron_right</i>
-            </span>
+          <a class="link link--next flex" href="?{% param_replace page=page_obj.next_page_number %}">
+            {% trans "Next" %}
+            <i id="chevron_right" class="material-icons">chevron_right</i>
           </a>
           {% else %}
-          <a class="link--next disabled">
-            <span class="flex">
-              {% trans "Next" %}
-              <i id="chevron_right" class="material-icons">chevron_right</i>
-            </span>
+          <a class="link--next disabled flex">
+            {% trans "Next" %}
+            <i id="chevron_right" class="material-icons">chevron_right</i>
           </a>
           {% endif %}
-          <div class="line"></div>
-          <form action="">
-            <div class="flex">
-              <label for="page" class="text">
-                {% trans "Go to page" %}
-              </label>
-              <input id="page" type="number" name="page" min="1" max="{{ paginator.num_pages|unlocalize }}" onkeyup=imposeMinMax(this)>
-              <button class="button button--submit" type="submit" id="form-button">
-                {% trans "Go" %}
-              </button>
-            </div>
-          </form>
-
-          {% include "components/load-results.html" %}
         </div>
-      </td>
-    </tr>
+        <form action="" class="flex">
+          <label for="page">
+            {% trans "Go to page" %}
+          </label>
+          <input id="page" type="number" name="page" min="1" max="{{ paginator.num_pages|unlocalize }}" onkeyup=imposeMinMax(this)>
+          <button class="button button--submit" type="submit" id="form-button">
+            {% trans "Go" %}
+          </button>
+        </form>
+        <script>
+        function imposeMinMax(el){
+          if(el.value != ""){
+            if(parseInt(el.value) < parseInt(el.min)){
+              el.value = el.min;
+            }
+            if(parseInt(el.value) > parseInt(el.max)){
+              el.value = el.max;
+            }
+          }
+        }
+        </script>
+        {% endif %}
+
+        {% include "components/load-results.html" %}
+      </div>
+    </td>
+  </tr>
 </tbody>
-    <script>
-    function imposeMinMax(el){
-  if(el.value != ""){
-    if(parseInt(el.value) < parseInt(el.min)){
-      el.value = el.min;
-    }
-    if(parseInt(el.value) > parseInt(el.max)){
-      el.value = el.max;
-    }
-  }
-}
-    </script>
-{% endif %}

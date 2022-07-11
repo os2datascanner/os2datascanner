@@ -23,3 +23,6 @@ class Migration(migrations.Migration):
             bases=('core.backgroundjob',),
         ),
     ]
+
+
+

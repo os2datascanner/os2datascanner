@@ -10,32 +10,26 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-FROM node:14 AS frontend
+FROM node:15 AS frontend
 
-WORKDIR /code/src/os2datascanner/projects/report/reportapp
+WORKDIR /code/src/os2datascanner/projects
 
-COPY src/os2datascanner/projects/report/reportapp/package.json .
-COPY src/os2datascanner/projects/report/reportapp/package-lock.json .
-RUN npm ci
-
-COPY src/os2datascanner/projects/report/reportapp/postcss.config.js .
-COPY src/os2datascanner/projects/report/reportapp/webpack.dev.js .
-COPY src/os2datascanner/projects/report/reportapp/webpack.prod.js .
-COPY src/os2datascanner/projects/report/reportapp/static/src ./static/src
-COPY src/os2datascanner/projects/report/reportapp/static/3rdparty ./static/3rdparty
-# Do we need templates?
+COPY --chown=node:node src/os2datascanner/projects/static ./static
+RUN npm ci --prefix static; \
 
 # Build production bundle
 # NB! Doesn't start a webserver, only bundles files!
-RUN npm run prod
+    npm run prod --prefix static
+
+USER node
 
 # Build development bundle
 # NB! Watches for changes, so no automatic exit!
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--prefix", "static"]
 
 ######################
 
-FROM python:3.6 AS application
+FROM python:3.9.7 AS application
 
 ARG SUPERCRONIC_VERSION=v0.1.12
 ARG SUPERCRONIC_SHA1SUM=048b95b48b708983effb2e5c935a1ef8483d9e3e
@@ -92,12 +86,14 @@ COPY requirements/python-requirements/requirements-report.txt \
      requirements/python-requirements/requirements-test.txt \
      requirements/python-requirements/requirements-lint.txt \
      ./
-# hadolint ignore=DL4006
-RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
+RUN pip install --no-cache-dir -r requirements-report.txt \
+                               -r requirements-test.txt \
+                               -r requirements-lint.txt
 
 WORKDIR /code/docker/
 COPY docker/report/crontab ./crontab
 COPY docker/report/docker-settings.toml ./docker-settings.toml
+COPY docker/insecure-settings.toml ./insecure-settings.toml
 COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
 COPY docker/gunicorn-settings.py ./gunicorn-settings.py
 
@@ -109,28 +105,39 @@ COPY src/os2datascanner/projects/utils ./projects/utils
 COPY src/os2datascanner/projects/django_toml_configuration.py ./projects/
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
+
 # Copy necessary files from engine modul TODO: minimize this
 COPY src/os2datascanner/engine2 ./engine2
+# Copy in core_oprganizational_structure app,
+COPY src/os2datascanner/core_organizational_structure ./core_organizational_structure
 
 # Copy VERSION, LICENCE, README, NEWS to PROJECT_DIR
 WORKDIR /code
 COPY LICENSE ./
 COPY README.rst ./
-COPY NEWS.rst ./
+COPY CHANGELOG.md ./
 
 # Copy frontend dist folder to static
-WORKDIR /code/src/os2datascanner/projects/report/reportapp/static
-COPY --from=frontend /code/src/os2datascanner/projects/report/reportapp/static/dist ./dist
+WORKDIR /code/src/os2datascanner/projects/static
+COPY --from=frontend /code/src/os2datascanner/projects/static/dist ./dist
 
-# Run the server as the os2ds_report user on port 8000
+# Run the server as the os2ds_report user on port 5000
 WORKDIR /code/src/os2datascanner/projects/report
-# Change permissions of translation folders
-# hadolint ignore=DL4006
-RUN find . -name 'LC_MESSAGES' -print0 | xargs -0 chown -R os2ds_report:os2ds_report
+# Make os2ds_report owner of /code/docker. This is only needed to remove the
+# insecure settings file after `collectstatic`.
+RUN chown -R os2ds_report:os2ds_report /code/docker
+
 USER os2ds_report:os2ds_report
+
+# Unfortunately, `manage.py` requires all settings to be set. We include a set
+# of insecure setting here for only this purpose. We make sure to delete it
+# afterward. If `insecure-settings.toml` is found in any production image,
+# consider it a bug. See `insecure-settings.toml` for a detailed explanation.
+RUN set -ex \
+  && OS2DS_REPORT_USER_CONFIG_PATH=/code/docker/insecure-settings.toml python manage.py collectstatic --no-input --clear \
+  && OS2DS_REPORT_USER_CONFIG_PATH=/code/docker/insecure-settings.toml python manage.py compilemessages \
+  && rm /code/docker/insecure-settings.toml
+
 EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
-
-CMD ["gunicorn", \
-     "--config", "/code/docker/gunicorn-settings.py", \
-     "wsgi"]
+CMD ["gunicorn", "--config", "/code/docker/gunicorn-settings.py", "asgi", "os2datascanner.projects.report.asgi:application"]

@@ -1,9 +1,9 @@
 from abc import abstractmethod
-from typing import Iterator
+from typing import Mapping, Iterator
 
 from ...utilities.json import JSONSerialisable
 from ...utilities.equality import TypePropertyEquality
-from .errors import UnknownSchemeError, DeserialisationError
+from .errors import UnknownSchemeError
 from .import handle as mhandle
 from .utilities import SourceManager
 
@@ -21,7 +21,6 @@ class Source(TypePropertyEquality, JSONSerialisable):
     with the same type and properties compare equal. (One useful consequence of
     this is that SourceManager will collapse several equal Sources together,
     only opening one of them.)"""
-
 
     def __contains__(self, h: "mhandle.Handle") -> bool:
         """Test if a handle originated from this Source"""
@@ -71,7 +70,20 @@ class Source(TypePropertyEquality, JSONSerialisable):
         It is not necessarily the case that the value of the source property on
         a Handle yielded by this method will be this Source."""
 
+    @property
+    def yields_independent_sources(self) -> bool:
+        """Indicates whether or not the Handles yielded by this Source
+        represent top-level Sources that should be processed independently.
+        This might be the case, for example, for a Source that queries a
+        directory server and returns a Handle for each relevant account that it
+        finds.
+
+        (This method is just an optimisation hint intended for use when working
+        out how best to distribute work across many nodes.)"""
+        return False
+
     __url_handlers = {}
+
     @staticmethod
     def url_handler(*schemes):
         """Decorator: registers the decorated function as the handler for the
@@ -100,13 +112,12 @@ class Source(TypePropertyEquality, JSONSerialisable):
             return Source.__url_handlers[scheme](url)
         except ValueError:
             raise UnknownSchemeError()
-
     # There is no general requirement that subclasses implement a to_url
     # method (what's the URL of a file in a deeply-nested archive?), but many
     # of them do. If a Source provides a to_url method, it is a requirement
     # that Source.from_url(Source.to_url(src)) == src.
-
     __mime_handlers = {}
+
     @staticmethod
     def mime_handler(*mimes):
         """Decorator: registers the decorated function as the handler for the
@@ -157,3 +168,6 @@ class Source(TypePropertyEquality, JSONSerialisable):
         return {
             "type": self.type_label
         }
+
+    def remap(self, mapping: Mapping["Source", "Source"]) -> "Source":
+        return mapping.get(self, self)

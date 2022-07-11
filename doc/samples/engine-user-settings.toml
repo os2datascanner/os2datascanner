@@ -1,5 +1,0 @@
-[amqp]
-# Nested amqp settings are picked up by the common amqp utility module
-AMQP_HOST = "<amqp service name>"
-AMQP_USER = "<amqp user name>"
-AMQP_PWD = "<amqp user password>"

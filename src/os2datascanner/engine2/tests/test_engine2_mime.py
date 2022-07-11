@@ -29,12 +29,10 @@ class Engine2MIMETests(unittest.TestCase):
     def test_docx_mime(self):
         self.assertEqual(
                 docx_handle.guess_type(),
-                "application/vnd.openxmlformats-officedocument"
-                        ".wordprocessingml.document",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 ".docx MIME guess is incorrect")
         with SourceManager() as sm:
             self.assertEqual(
                     docx_handle.follow(sm).compute_type(),
-                    "application/vnd.openxmlformats-officedocument"
-                            ".wordprocessingml.document",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                     ".docx MIME computation is incorrect")

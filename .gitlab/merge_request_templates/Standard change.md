@@ -2,13 +2,15 @@
 <!--
 Describe what this MR is about AND how to test it.
 Include any points that reviewers should pay special attention to.
+
+If any UI changes have been made, please include screenshots.
 -->
 
 <!-- sets current user as assignee -->
 /assign me
 
 <!-- Other recommended quick actions (remove # to apply):
-#/request_review @af @danni
+#/request_review @af @jkh @tha @jdk
 #/label ~bug
 #/label ~enhancement
 -->
@@ -21,8 +23,9 @@ Checkboxes can be pre-filled before submitting the MR by replacing
 -->
 - [ ] Workflow:
     - [ ] The title of this MR contains the relevant ticket no., formatted like `[#12345]`
-    - [ ] The corresponding Redmine ticket has been set to `Needs review` and assigned to the principal reviewer
+    - [ ] The corresponding Redmine ticket has been set to `Needs review`, assigned to the principal reviewer and contains a link to MR
     - [ ] The MR has been labelled with either ~bug (if it is a bugfix) or ~enhancement (if it is a feature)
+    - [ ] Milestone has been set
 - [ ] Maintainability:
     - [ ] I have rebased/squashed the code into a minimal amount of atomic commits that reference the ticket ID (eg. `[#12345] Implement featureX in Y`)
     - [ ] I have ensured the MR does not introduce indentation or charset issues
@@ -33,7 +36,6 @@ Checkboxes can be pre-filled before submitting the MR by replacing
     - [ ] I have tested all UI changes in:
         - [ ] Firefox
         - [ ] Chrome
-        - [ ] Internet Explorer 11
 - [ ] QA:
     - [ ] I have tested the feature/bugfix manually
     - [ ] I have added/updated and verified translations where relevant
@@ -47,6 +49,6 @@ Checkboxes can be pre-filled before submitting the MR by replacing
 
 ## On Merge
 - [ ] Update redmine:
-    - [ ] Status (to `QA (int)`)
+    - [ ] Status (to `Done`)
     - [ ] Version (upcoming release)
     - [ ] Assignee (if relevant)

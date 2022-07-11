@@ -8,12 +8,11 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 
 from os2datascanner.projects.admin.import_services.keycloak_services import \
-    add_ldap_conf, create_realm, request_access_token, request_update_component, \
+    add_ldap_conf, create_realm, request_update_component, \
     get_token_first, create_member_of_attribute_mapper
 from os2datascanner.projects.admin.organizations.models import Organization
 from os2datascanner.projects.admin.import_services.models import LDAPConfig, Realm
-from os2datascanner.projects.admin.core.models.background_job import JobState
-from os2datascanner.projects.admin.import_services.models.import_job import ImportJob
+from os2datascanner.projects.admin.import_services.utils import start_ldap_import
 
 
 class LDAPEditForm(forms.ModelForm):
@@ -130,7 +129,8 @@ class LDAPAddView(LoginRequiredMixin, CreateView):
 # TODO: add proper error-handling
 def _keycloak_creation(config_instance):
     organization = config_instance.organization
-    # TODO: ensure Realm existence upon activating feature! And on Org creation (if feature is active)
+    # TODO: ensure Realm existence upon activating feature! And on Org creation
+    # (if feature is active)
     realm, created = Realm.objects.get_or_create(
         realm_id=organization.slug,
         organization=organization,
@@ -142,7 +142,9 @@ def _keycloak_creation(config_instance):
     if created:
         create_realm(realm.pk)
     payload = config_instance.get_payload_dict()
-    add_ldap_conf(realm.pk, payload)  # TODO: consider moving request elsewhere, else add error-handling!
+    add_ldap_conf(realm.pk, payload)
+    # TODO: consider moving request elsewhere,
+    # else add error-handling!
     # Create a memberOf attribute mapper on the LDAP user federation in Keycloak upon creation
     get_token_first(create_member_of_attribute_mapper, realm.pk, payload["id"])
 
@@ -188,22 +190,8 @@ class LDAPImportView(LoginRequiredMixin, DetailView):
     def get(self, request, *args, **kwargs):
         """
         Handle a get request to the LDAPImportView.
-        LDAP import jobs are allowed to be created if latest import job has finished.
         """
-
-        # if no organization return 404
-        realm = get_object_or_404(Realm, organization_id=self.get_object().pk)
-
-        # get latest import job
-        latest_importjob = realm.importjob.first()
-        if not latest_importjob \
-                or latest_importjob.exec_state == JobState.FINISHED\
-                or latest_importjob.exec_state == JobState.FAILED\
-                or latest_importjob.exec_state == JobState.CANCELLED:
-
-            ImportJob.objects.create(
-                realm=realm
-            )
+        start_ldap_import(self.get_object())
 
         # redirect back to organizations
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

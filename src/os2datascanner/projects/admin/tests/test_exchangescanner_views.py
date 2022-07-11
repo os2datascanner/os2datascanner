@@ -1,9 +1,14 @@
 from django.test import TestCase, RequestFactory
+from django.urls.base import reverse
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+from ..adminapp.models.rules.rule_model import Rule
 from ..adminapp.models.authentication_model import Authentication
 from ..adminapp.models.scannerjobs.exchangescanner_model import ExchangeScanner
-from ..adminapp.views.exchangescanner_views import ExchangeScannerCreate
+from ..adminapp.views.exchangescanner_views import (
+    ExchangeScannerCopy, ExchangeScannerCreate, ExchangeScannerUpdate)
 from ..core.models import Administrator
 from ..core.models.client import Client
 from ..organizations.models import OrganizationalUnit, Account, Alias
@@ -101,15 +106,46 @@ class ExchangeScannerViewsTest(TestCase):
             domain="ThisIsMyExchangeDomain",
         )
 
-        ExchangeScanner.objects.create(
+        exchange_rule = Rule.objects.create(
+            organization=magenta_org,
+            name="cool rule",
+        )
+
+        exchange_scan = ExchangeScanner.objects.create(
             pk=1,
             name="This is an Exchange Scanner",
             organization=magenta_org,
             validation_status=ExchangeScanner.VALID,
             userlist='path/to/nothing.csv',
-            org_unit=test_org_unit0,
             service_endpoint="exchangeendpoint",
             authentication=scanner_auth_obj,
+        )
+        exchange_scan.rules.set([exchange_rule])
+        exchange_scan.org_unit.set([test_org_unit0, test_org_unit1])
+
+        def generate_file():
+            try:
+                myfile = open('user_list.txt', 'w')
+                myfile.write('user1\n')
+                myfile.write('user2\n')
+                myfile.write('user3\n')
+            finally:
+                myfile.close()
+
+            return myfile
+
+        scanner_auth_obj_2 = Authentication.objects.create(
+            username="ImExchangeAdmin",
+            domain="ThisIsMyExchangeDomain",
+        )
+
+        ExchangeScanner.objects.create(
+            pk=2,
+            name="This is an Exchange Scanner with userlist",
+            organization=magenta_org,
+            validation_status=ExchangeScanner.VALID,
+            service_endpoint="exchangeendpoint",
+            authentication=scanner_auth_obj_2,
         )
 
         benny_account.units.add(test_org_unit1)
@@ -121,6 +157,7 @@ class ExchangeScannerViewsTest(TestCase):
             username='kjeld', email='kjeld@jensen.com', password='top_secret')
         self.benny_alias = Alias.objects.get(uuid="1cae2e34-fd56-428e-aa53-6f077da12d99")
         self.yvonne = Account.objects.get(uuid="1cae2e37-fd99-428e-aa53-6f077da53d51")
+        self.exchange_scan = ExchangeScanner.objects.get(pk=1)
 
     def test_exchangesscanner_org_units_list_as_administrator(self):
         """Note that this is not a django administrator role,
@@ -185,7 +222,7 @@ class ExchangeScannerViewsTest(TestCase):
         tree_queryset = response.context_data['org_units']
         self.assertEqual(len(tree_queryset), 0)
 
-    def test_exchangescanner_generate_source_should_use_orgunit_when_both_userlist_and_orgunit_are_present(self):
+    def test_exchangescanner_generate_source_should_use_orgunit_when_both_userlist_and_orgunit_are_present(self):  # noqa
         """ The used scannerjob has a filepath stored but also an org_unit chosen.
         The system should choose to use the org_unit selected.
 
@@ -229,7 +266,7 @@ class ExchangeScannerViewsTest(TestCase):
         )
 
         exchange_scanner_source = exchange_scanner_obj.generate_sources()
-        for ews_source in exchange_scanner_source:
+        for _ews_source in exchange_scanner_source:
             sources_yielded += 1
 
         # benny is a member of test_org_unit1
@@ -238,8 +275,59 @@ class ExchangeScannerViewsTest(TestCase):
 
         yvonne_alias.delete()
 
+    def test_exchangescanner_generate_source_with_uploaded_userlist(self):
+        sources_yielded = 0  # Store a count
+        exchange_scanner_obj = ExchangeScanner.objects.get(pk=2)
+        exchange_scanner_obj.authentication.set_password("password")
+
+        exchange_scanner_obj.userlist = SimpleUploadedFile("dummy.txt",
+                                                           b"aleph\nalex\nfred")
+
+        exchange_scanner_source = exchange_scanner_obj.generate_sources()
+        for _ews_source in exchange_scanner_source:
+            sources_yielded += 1
+
+        self.assertEqual(sources_yielded, 3)
+
     def get_exchangescanner_response(self):
         request = self.factory.get('/exchangescanners/add/')
         request.user = self.kjeld
         response = ExchangeScannerCreate.as_view()(request)
         return response
+
+    def test_create_form_adds_authenthication_fields(self):
+        """Tests whether authentication is properly added in an exchangescan"""
+        create_view = ExchangeScannerCreate()
+        request = self.factory.post('/exchangescanners/add/')
+        request.user = self.kjeld
+        create_view.setup(request)
+
+        create_form = create_view.get_form()
+        self.assertTrue('username' in create_form.cleaned_data)
+        self.assertTrue('password' in create_form.cleaned_data)
+
+    def test_update_form_adds_authenthication_fields(self):
+        """Tests whether authentication is properly added in an exchangescan"""
+        update_view = ExchangeScannerUpdate()
+        request = self.factory.post(
+            reverse('exchangescanner_update', kwargs={'pk': self.exchange_scan.pk})
+        )
+        request.user = self.kjeld
+        update_view.setup(request, pk=self.exchange_scan.pk)
+
+        update_form = update_view.get_form()
+        self.assertTrue('username' in update_form.cleaned_data)
+        self.assertTrue('password' in update_form.cleaned_data)
+
+    def test_copy_form_adds_authenthication_fields(self):
+        """Tests whether authentication is properly added in an exchangescan"""
+        copy_view = ExchangeScannerCopy()
+        request = self.factory.post(
+            reverse('exchangescanner_copy', kwargs={'pk': self.exchange_scan.pk})
+        )
+        request.user = self.kjeld
+        copy_view.setup(request, pk=self.exchange_scan.pk)
+
+        copy_form = copy_view.get_form()
+        self.assertTrue('username' in copy_form.cleaned_data)
+        self.assertTrue('password' in copy_form.cleaned_data)

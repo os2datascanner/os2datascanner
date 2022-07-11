@@ -39,7 +39,7 @@ def convert(resource, output_type, mime_override=None) -> SingleResult:
         except KeyError:
             # Raise the original, more specific, exception
             raise KeyError("No converters registered for "
-                           "{0}".format(e)) from  e
+                           "{0}".format(e)) from e
     value = converter(resource)
     if value is not None and not isinstance(value, SingleResult):
         value = SingleResult(None, output_type, value)

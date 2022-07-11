@@ -19,6 +19,15 @@ process_toml_conf_for_django(
     user_var='OS2DS_ADMIN_USER_CONFIG_PATH',
 )
 
+# https://github.com/django/channels/issues/624#issuecomment-609483480
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)]
+        }
+    }
+}
 
 USE_TZ = True
 
@@ -168,3 +177,8 @@ LOGGING = {
         },
     }
 }
+
+# Set default primary key - new in Django 3.2
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+PROMETHEUS_METRICS_EXPORT_PORT_RANGE = range(5001, 5050)

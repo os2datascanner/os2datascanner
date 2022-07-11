@@ -13,10 +13,12 @@
 #
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from .models import Client
 from .models.client import Scan, Feature
+from .utils import clear_import_services
 
 
 class ClientAdminForm(forms.ModelForm):
@@ -55,10 +57,58 @@ class ClientAdminForm(forms.ModelForm):
 
     def clean_enabled_features(self):
         selected = self.cleaned_data['enabled_features']
-        self.instance.features = sum([int(x) for x in selected])
+
+        # Raise error if both types of import services have been selected.
+        # TODO: Refactor this to a more maintainable and less hacky.
+        selected_sum = sum([int(x) for x in selected])
+
+        if _check_is_both_features_enabled(
+                selected_sum,
+                Feature.IMPORT_SERVICES,
+                Feature.IMPORT_SERVICES_MS_GRAPH):
+            raise ValidationError(_("Only one type of import service can be active at a time."))
+
+        # Clean old import services if settings have changed
+        self._remove_invalid_importservices(selected_sum, self.instance.features)
+
+        self.instance.features = selected_sum
         return selected
+
+    def _remove_invalid_importservices(self, new_settings, old_settings):
+        """
+        Removes old import services for all organizations related to the form client.
+        """
+        # If settings are unchanged don't do anything
+        if new_settings == old_settings:
+            return
+
+        # If ldap import services is still on, don't clean
+        if _check_is_feature_still_enabled(
+                new_settings, old_settings, Feature.IMPORT_SERVICES):
+            return
+
+        # If MS graph import services is still on, don't clean
+        if _check_is_feature_still_enabled(
+                new_settings, old_settings, Feature.IMPORT_SERVICES_MS_GRAPH):
+            return
+
+        # Otherwise clear all import_services if features have changed
+        client = self.instance
+        clear_import_services(client)
 
     def clean_activated_scan_types(self):
         selected = self.cleaned_data['activated_scan_types']
         self.instance.scans = sum([int(x) for x in selected])
         return selected
+
+
+def _check_is_feature_still_enabled(new_settings, old_settings, feature):
+    return _is_feature_enabled(new_settings, feature) and _is_feature_enabled(old_settings, feature)
+
+
+def _check_is_both_features_enabled(selected_sum, f1, f2):
+    return _is_feature_enabled(selected_sum, f1) and _is_feature_enabled(selected_sum, f2)
+
+
+def _is_feature_enabled(selected_sum, feature):
+    return not ((selected_sum & feature.value) == 0)

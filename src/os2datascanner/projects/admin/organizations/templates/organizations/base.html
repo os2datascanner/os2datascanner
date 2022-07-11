@@ -3,19 +3,19 @@
 
 {% block scripts %}
     <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
-    <script src="{% static "dist/bundle.min.js" %}"></script>
+    <script src="{% static "js/index.js" %}"></script>
     <script src="{% static 'js/options.js' %}"></script>
 {% endblock %}
 
 {% block body %}
+    <!-- override with empty block to remove header -->
+    {% block header %}
+        {% include 'partials/header.html' %}
+    {% endblock %}
     <main class="wrapper">
-        <!-- override with empty block to remove header -->
-        {% block header %}
-            {% include 'partials/header.html' %}
-        {% endblock %}
         <!-- override with empty block to remove sidebar navigation -->
         {% block sidenav %}
-            <section class="sidemenu">
+            <section class="sidemenu" id="sidemenu" aria-labelledby="navigation-toggle">
                 <!-- TODO: does it make sense to separate the tag from the rest? -->
                 {% include "components/navigation.html" with active_tab="organizations" %}
             </section>

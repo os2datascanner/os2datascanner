@@ -40,7 +40,7 @@ class SbsysScannerCreate(View):
         return handler(request, *args, **kwargs)
 
 
-class _SbsysNoPermission(TemplateView, LoginRequiredMixin):
+class _SbsysNoPermission(LoginRequiredMixin, TemplateView):
     # TODO make a more fitting template or adjust that one
     template_name = "os2datascanner/scanner_no_client_credentials.html"
 
@@ -49,7 +49,7 @@ class _SbsysScannerCreate(ScannerCreate):
     """Creates a Sbsys scannerjob"""
     model = SbsysScanner
     type = "sbsys"
-    fields = ['name', 'schedule', 'do_ocr',
+    fields = ['name', 'schedule', 'do_ocr', 'only_notify_superadmin',
               'do_last_modified_check', 'rules', 'organization']
 
     def get_success_url(self):
@@ -60,7 +60,7 @@ class SbsysScannerUpdate(ScannerUpdate):
     """Displays parameters of existing Sbsys scannerjob for modification"""
     model = SbsysScanner
     type = "sbsys"
-    fields = ['name', 'schedule', 'do_ocr',
+    fields = ['name', 'schedule', 'do_ocr', 'only_notify_superadmin',
               'do_last_modified_check', 'rules', 'organization']
 
     def get_success_url(self):

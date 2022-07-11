@@ -11,15 +11,12 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-"""Contains Django views."""
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import modelform_factory
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import View, ListView, TemplateView, DetailView
+from django.views.generic import ListView, TemplateView, DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
 
@@ -31,34 +28,25 @@ from ..models.scannerjobs.sbsysscanner_model import SbsysScanner
 from ..models.rules.cprrule_model import CPRRule
 from ..models.rules.regexrule_model import RegexRule
 from ..models.scannerjobs.msgraph_models import (
-        MSGraphFileScanner, MSGraphMailScanner)
+        MSGraphFileScanner, MSGraphMailScanner, MSGraphCalendarScanner)
 from ..models.scannerjobs.webscanner_model import WebScanner
 from ..models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 
-
-class LoginRequiredMixin(View):
-    """Include to require login."""
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        """Check for login and dispatch the view."""
-        return super().dispatch(*args, **kwargs)
+import structlog
 
 
-class SuperUserRequiredMixin(LoginRequiredMixin):
-    """Include to require login and superuser."""
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        """Check for login and superuser and dispatch the view."""
-        user = self.request.user
-        if user.is_superuser:
-            return super().dispatch(*args, **kwargs)
-        else:
-            raise PermissionDenied
+logger = structlog.get_logger()
 
 
-class RestrictedListView(ListView, LoginRequiredMixin):
+def _hide_csrf_token_and_password(d):
+    """Return a shallow copy of *d* without the `csrfmiddlewaretoken` key."""
+    new = dict(**d)
+    new.pop("csrfmiddlewaretoken", None)
+    new.pop("password", None)
+    return new
+
+
+class RestrictedListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """Restrict to the organization of the logged-in user."""
@@ -82,13 +70,21 @@ class GuideView(TemplateView):
 
 
 # Create/Update/Delete Views.
-class RestrictedCreateView(CreateView, LoginRequiredMixin):
+class RestrictedCreateView(LoginRequiredMixin, CreateView):
     """Base class for create views that are limited by user organization."""
+
+    def post(self, request, *args, **kwargs):
+        logger.info(
+            f"Create issued to {self.__class__.__name__}",
+            request_data=_hide_csrf_token_and_password(dict(request.POST)),
+            user=str(request.user),
+            **kwargs,
+        )
+        return super().post(request, *args, **kwargs)
 
     def get_form_fields(self):
         """Get the list of fields to use in the form for the view."""
         fields = [f for f in self.fields]
-        fields.append('organization')
         return fields
 
     def get_form(self, form_class=None):
@@ -108,7 +104,7 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
         return super().form_valid(form)
 
 
-class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
+class OrgRestrictedMixin(LoginRequiredMixin, ModelFormMixin):
     """Mixin class for views with organization-restricted queryset."""
 
     def get_form_fields(self):
@@ -116,7 +112,6 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
         if not self.fields:
             return []
         fields = [f for f in self.fields]
-        fields.append('organization')
 
         return fields
 
@@ -134,6 +129,31 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
 class RestrictedUpdateView(UpdateView, OrgRestrictedMixin):
     """Base class for updateviews restricted by organiztion."""
 
+    def post(self, request, *args, **kwargs):
+        logger.info(
+            f"Update issued to {self.__class__.__name__}",
+            request_data=_hide_csrf_token_and_password(dict(request.POST)),
+            user=str(request.user),
+            **kwargs,
+        )
+        return super().post(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        """Get the form for the view."""
+        fields = self.get_form_fields()
+        form_class = modelform_factory(self.model, fields=fields)
+        kwargs = self.get_form_kwargs()
+        form = form_class(**kwargs)
+        return form
+
+    def form_valid(self, form):
+        """Validate the form."""
+        user = self.request.user
+        if not user.is_superuser:
+            self.object = form.save(commit=False)
+
+        return super().form_valid(form)
+
 
 class RestrictedDetailView(DetailView, OrgRestrictedMixin):
     """Base class for detailviews restricted by organiztion."""
@@ -141,6 +161,14 @@ class RestrictedDetailView(DetailView, OrgRestrictedMixin):
 
 class RestrictedDeleteView(DeleteView, OrgRestrictedMixin):
     """Base class for deleteviews restricted by organiztion."""
+
+    def post(self, request, *args, **kwargs):
+        logger.info(
+            f"Delete issued to {self.__class__.__name__}",
+            user=str(request.user),
+            **kwargs,
+        )
+        return super().post(request, *args, **kwargs)
 
 
 class DialogSuccess(TemplateView):
@@ -155,7 +183,8 @@ class DialogSuccess(TemplateView):
         'dropboxscanners': DropboxScanner,
         'msgraph-filescanners': MSGraphFileScanner,
         'msgraph-mailscanners': MSGraphMailScanner,
-        'googledrivescanners' : GoogleDriveScanner,
+        'msgraph-calendarscanners': MSGraphCalendarScanner,
+        'googledrivescanners': GoogleDriveScanner,
         'gmailscanners': GmailScanner,
         'sbsysscanners': SbsysScanner,
         'rules/cpr': CPRRule,

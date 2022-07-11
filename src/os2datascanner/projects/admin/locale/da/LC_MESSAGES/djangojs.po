@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-08 01:38-0500\n"
+"POT-Creation-Date: 2021-09-07 02:13-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: adminapp/static/js/dropdowntree.js:58
+msgid "Select one or more organizational units"
+msgstr "Vælg en eller flere organisatoriske enheder"
 
 #: adminapp/static/js/ldapConfig.js:33
 msgid "Connection succeeded"
@@ -34,466 +38,460 @@ msgstr "Autentificeret"
 msgid "Authentication failed"
 msgstr "Autentificering mislykkedes"
 
-#: adminapp/static/js/ldapSync.js:25
+#: adminapp/static/js/ldapSync.js:26
 msgid "Pending..."
 msgstr "Afventer..."
 
-#: adminapp/static/js/ldapSync.js:42
+#: adminapp/static/js/ldapSync.js:43
 msgid "Synchronization succeeded"
 msgstr "Synkronisering lykkedes"
 
-#: adminapp/static/js/ldapSync.js:47
+#: adminapp/static/js/ldapSync.js:48
 msgid "Synchronization failed"
 msgstr "Synkronisering fejlede"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1869
+#: adminapp/static/js/recurrence-widget.js:1869
 msgid "including"
 msgstr "inkluderer"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1869
+#: adminapp/static/js/recurrence-widget.js:1869
 msgid "excluding"
 msgstr "ekskluderer"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1873
+#: adminapp/static/js/recurrence-widget.js:1873
 msgid "Frequency"
 msgstr "Interval"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1874
+#: adminapp/static/js/recurrence-widget.js:1874
 msgid "On the"
 msgstr "den"
 
 # Assumed it was "on the 'date'"
-#: adminapp/static/recurrence/js/recurrence-widget.js:1875
+#: adminapp/static/js/recurrence-widget.js:1875
 msgid "Each"
 msgstr "Hver"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1876
+#: adminapp/static/js/recurrence-widget.js:1876
 msgid "Every"
 msgstr "Hver"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1877
+#: adminapp/static/js/recurrence-widget.js:1877
 msgid "Until"
 msgstr "Indtil"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1878
+#: adminapp/static/js/recurrence-widget.js:1878
 msgid "Occurs %(number)s time"
 msgstr "Opstår %(number)s gang"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1879
+#: adminapp/static/js/recurrence-widget.js:1879
 msgid "Occurs %(number)s times"
 msgstr "Opstår %(number)s gange"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1880
+#: adminapp/static/js/recurrence-widget.js:1880
 msgid "Date"
 msgstr "Dato"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1881
+#: adminapp/static/js/recurrence-widget.js:1881
 msgid "Time"
 msgstr "Gang"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1882
+#: adminapp/static/js/recurrence-widget.js:1882
 msgid "Repeat until"
 msgstr "Gentag indtil"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1883
+#: adminapp/static/js/recurrence-widget.js:1883
 msgid "Exclude these occurences"
 msgstr "Ekskluder disse hændelser"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1884
+#: adminapp/static/js/recurrence-widget.js:1884
 msgid "Exclude this date"
 msgstr "Ekskluder denne dato"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1885
+#: adminapp/static/js/recurrence-widget.js:1885
 msgid "Add interval"
 msgstr "Tilføj interval"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1886
+#: adminapp/static/js/recurrence-widget.js:1886
 msgid "Add date"
 msgstr "Tilføj dato"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1887
+#: adminapp/static/js/recurrence-widget.js:1887
 msgid "Remove"
 msgstr "Fjern"
 
-#: adminapp/static/recurrence/js/recurrence-widget.js:1888
+#: adminapp/static/js/recurrence-widget.js:1888
 msgid "Calendar"
 msgstr "Kalender"
 
-#: adminapp/static/recurrence/js/recurrence.js:1012
+#: adminapp/static/js/recurrence.js:1012
 msgid "midnight"
 msgstr "midnat"
 
-#: adminapp/static/recurrence/js/recurrence.js:1013
+#: adminapp/static/js/recurrence.js:1013
 msgid "noon"
 msgstr "middag"
 
-#: adminapp/static/recurrence/js/recurrence.js:1014
+#: adminapp/static/js/recurrence.js:1014
 msgid "on the %(items)s"
 msgstr "den %(items)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1015
+#: adminapp/static/js/recurrence.js:1015
 msgid "every %(number)s %(freq)s"
 msgstr "hver %(number)s. %(freq)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1016
+#: adminapp/static/js/recurrence.js:1016
 msgid "each %(items)s"
 msgstr "hver %(items)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1017
+#: adminapp/static/js/recurrence.js:1017
 msgid "occuring %(number)s time"
 msgstr "opstår %(number)s gang"
 
-#: adminapp/static/recurrence/js/recurrence.js:1018
+#: adminapp/static/js/recurrence.js:1018
 msgid "occuring %(number)s times"
 msgstr "opstår %(number)s gange"
 
-#: adminapp/static/recurrence/js/recurrence.js:1019
+#: adminapp/static/js/recurrence.js:1019
 msgid "until %(date)s"
 msgstr "indtil %(date)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1023
+#: adminapp/static/js/recurrence.js:1023
 msgid "year"
 msgstr "år"
 
-#: adminapp/static/recurrence/js/recurrence.js:1023
+#: adminapp/static/js/recurrence.js:1023
 msgid "month"
 msgstr "måned"
 
-#: adminapp/static/recurrence/js/recurrence.js:1023
+#: adminapp/static/js/recurrence.js:1023
 msgid "week"
 msgstr "uge"
 
-#: adminapp/static/recurrence/js/recurrence.js:1023
+#: adminapp/static/js/recurrence.js:1023
 msgid "day"
 msgstr "dag"
 
-#: adminapp/static/recurrence/js/recurrence.js:1024
+#: adminapp/static/js/recurrence.js:1024
 msgid "hour"
 msgstr "time"
 
-#: adminapp/static/recurrence/js/recurrence.js:1024
+#: adminapp/static/js/recurrence.js:1024
 msgid "minute"
 msgstr "minut"
 
-#: adminapp/static/recurrence/js/recurrence.js:1024
+#: adminapp/static/js/recurrence.js:1024
 msgid "second"
 msgstr "sekund"
 
-#: adminapp/static/recurrence/js/recurrence.js:1027
+#: adminapp/static/js/recurrence.js:1027
 msgid "years"
 msgstr "år"
 
-#: adminapp/static/recurrence/js/recurrence.js:1027
+#: adminapp/static/js/recurrence.js:1027
 msgid "months"
 msgstr "måneder"
 
-#: adminapp/static/recurrence/js/recurrence.js:1027
+#: adminapp/static/js/recurrence.js:1027
 msgid "weeks"
 msgstr "uger"
 
-#: adminapp/static/recurrence/js/recurrence.js:1027
+#: adminapp/static/js/recurrence.js:1027
 msgid "days"
 msgstr "dage"
 
-#: adminapp/static/recurrence/js/recurrence.js:1028
+#: adminapp/static/js/recurrence.js:1028
 msgid "hours"
 msgstr "timer"
 
-#: adminapp/static/recurrence/js/recurrence.js:1028
+#: adminapp/static/js/recurrence.js:1028
 msgid "minutes"
 msgstr "minutter"
 
-#: adminapp/static/recurrence/js/recurrence.js:1028
+#: adminapp/static/js/recurrence.js:1028
 msgid "seconds"
 msgstr "sekunder"
 
-#: adminapp/static/recurrence/js/recurrence.js:1031
+#: adminapp/static/js/recurrence.js:1031
 msgid "annually"
 msgstr "årligt"
 
-#: adminapp/static/recurrence/js/recurrence.js:1031
+#: adminapp/static/js/recurrence.js:1031
 msgid "monthly"
 msgstr "månedligt"
 
-#: adminapp/static/recurrence/js/recurrence.js:1031
+#: adminapp/static/js/recurrence.js:1031
 msgid "weekly"
 msgstr "ugentligt"
 
-#: adminapp/static/recurrence/js/recurrence.js:1031
+#: adminapp/static/js/recurrence.js:1031
 msgid "daily"
 msgstr "dagligt"
 
-#: adminapp/static/recurrence/js/recurrence.js:1032
+#: adminapp/static/js/recurrence.js:1032
 msgid "hourly"
 msgstr "hver time"
 
-#: adminapp/static/recurrence/js/recurrence.js:1032
+#: adminapp/static/js/recurrence.js:1032
 msgid "minutely"
 msgstr "hvert minut"
 
-#: adminapp/static/recurrence/js/recurrence.js:1032
+#: adminapp/static/js/recurrence.js:1032
 msgid "secondly"
 msgstr "hvert sekund"
 
-#: adminapp/static/recurrence/js/recurrence.js:1035
+#: adminapp/static/js/recurrence.js:1035
 msgid "Monday"
 msgstr "Mandag"
 
-#: adminapp/static/recurrence/js/recurrence.js:1035
+#: adminapp/static/js/recurrence.js:1035
 msgid "Tuesday"
 msgstr "Tirsdag"
 
-#: adminapp/static/recurrence/js/recurrence.js:1035
+#: adminapp/static/js/recurrence.js:1035
 msgid "Wednesday"
 msgstr "Onsdag"
 
-#: adminapp/static/recurrence/js/recurrence.js:1035
+#: adminapp/static/js/recurrence.js:1035
 msgid "Thursday"
 msgstr "Torsdag"
 
-#: adminapp/static/recurrence/js/recurrence.js:1036
+#: adminapp/static/js/recurrence.js:1036
 msgid "Friday"
 msgstr "Fredag"
 
-#: adminapp/static/recurrence/js/recurrence.js:1036
+#: adminapp/static/js/recurrence.js:1036
 msgid "Saturday"
 msgstr "Lørdag"
 
-#: adminapp/static/recurrence/js/recurrence.js:1036
+#: adminapp/static/js/recurrence.js:1036
 msgid "Sunday"
 msgstr "Søndag"
 
-#: adminapp/static/recurrence/js/recurrence.js:1039
+#: adminapp/static/js/recurrence.js:1039
 msgid "Mon"
 msgstr "Man"
 
-#: adminapp/static/recurrence/js/recurrence.js:1039
+#: adminapp/static/js/recurrence.js:1039
 msgid "Tue"
 msgstr "Tir"
 
-#: adminapp/static/recurrence/js/recurrence.js:1039
+#: adminapp/static/js/recurrence.js:1039
 msgid "Wed"
 msgstr "Ons"
 
-#: adminapp/static/recurrence/js/recurrence.js:1039
+#: adminapp/static/js/recurrence.js:1039
 msgid "Thu"
 msgstr "Tor"
 
-#: adminapp/static/recurrence/js/recurrence.js:1040
+#: adminapp/static/js/recurrence.js:1040
 msgid "Fri"
 msgstr "Fre"
 
-#: adminapp/static/recurrence/js/recurrence.js:1040
+#: adminapp/static/js/recurrence.js:1040
 msgid "Sat"
 msgstr "Lør"
 
-#: adminapp/static/recurrence/js/recurrence.js:1040
+#: adminapp/static/js/recurrence.js:1040
 msgid "Sun"
 msgstr "Søn"
 
-#: adminapp/static/recurrence/js/recurrence.js:1043
+#: adminapp/static/js/recurrence.js:1043
 msgid "M"
 msgstr "M"
 
-#: adminapp/static/recurrence/js/recurrence.js:1043
+#: adminapp/static/js/recurrence.js:1043
 msgid "T"
 msgstr "T"
 
-#: adminapp/static/recurrence/js/recurrence.js:1043
+#: adminapp/static/js/recurrence.js:1043
 msgid "W"
 msgstr "O"
 
-#: adminapp/static/recurrence/js/recurrence.js:1044
+#: adminapp/static/js/recurrence.js:1044
 msgid "F"
 msgstr "F"
 
-#: adminapp/static/recurrence/js/recurrence.js:1044
+#: adminapp/static/js/recurrence.js:1044
 msgid "S"
 msgstr "L"
 
-#: adminapp/static/recurrence/js/recurrence.js:1047
+#: adminapp/static/js/recurrence.js:1047
 msgid "first %(weekday)s"
 msgstr "første %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1048
+#: adminapp/static/js/recurrence.js:1048
 msgid "second %(weekday)s"
 msgstr "anden %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1049
+#: adminapp/static/js/recurrence.js:1049
 msgid "third %(weekday)s"
 msgstr "tredje %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1050
-#: adminapp/static/recurrence/js/recurrence.js:1058
+#: adminapp/static/js/recurrence.js:1050 adminapp/static/js/recurrence.js:1058
 msgid "last %(weekday)s"
 msgstr "sidste %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1051
+#: adminapp/static/js/recurrence.js:1051
 msgid "second last %(weekday)s"
 msgstr "anden sidste %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1052
+#: adminapp/static/js/recurrence.js:1052
 msgid "third last %(weekday)s"
 msgstr "tredje sidste %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1055
+#: adminapp/static/js/recurrence.js:1055
 msgid "1st %(weekday)s"
 msgstr "1. %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1056
+#: adminapp/static/js/recurrence.js:1056
 msgid "2nd %(weekday)s"
 msgstr "2. %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1057
+#: adminapp/static/js/recurrence.js:1057
 msgid "3rd %(weekday)s"
 msgstr "3. %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1059
+#: adminapp/static/js/recurrence.js:1059
 msgid "2nd last %(weekday)s"
 msgstr "2. sidste %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1060
+#: adminapp/static/js/recurrence.js:1060
 msgid "3rd last %(weekday)s"
 msgstr "3. sidste %(weekday)s"
 
-#: adminapp/static/recurrence/js/recurrence.js:1063
+#: adminapp/static/js/recurrence.js:1063
 msgid "January"
 msgstr "januar"
 
-#: adminapp/static/recurrence/js/recurrence.js:1063
+#: adminapp/static/js/recurrence.js:1063
 msgid "February"
 msgstr "februar"
 
-#: adminapp/static/recurrence/js/recurrence.js:1063
-#: adminapp/static/recurrence/js/recurrence.js:1075
+#: adminapp/static/js/recurrence.js:1063 adminapp/static/js/recurrence.js:1075
 msgid "March"
 msgstr "marts"
 
-#: adminapp/static/recurrence/js/recurrence.js:1064
-#: adminapp/static/recurrence/js/recurrence.js:1076
+#: adminapp/static/js/recurrence.js:1064 adminapp/static/js/recurrence.js:1076
 msgid "April"
 msgstr "april"
 
-#: adminapp/static/recurrence/js/recurrence.js:1064
-#: adminapp/static/recurrence/js/recurrence.js:1070
-#: adminapp/static/recurrence/js/recurrence.js:1076
+#: adminapp/static/js/recurrence.js:1064 adminapp/static/js/recurrence.js:1070
+#: adminapp/static/js/recurrence.js:1076
 msgid "May"
 msgstr "maj"
 
-#: adminapp/static/recurrence/js/recurrence.js:1064
-#: adminapp/static/recurrence/js/recurrence.js:1076
+#: adminapp/static/js/recurrence.js:1064 adminapp/static/js/recurrence.js:1076
 msgid "June"
 msgstr "juni"
 
-#: adminapp/static/recurrence/js/recurrence.js:1065
-#: adminapp/static/recurrence/js/recurrence.js:1077
+#: adminapp/static/js/recurrence.js:1065 adminapp/static/js/recurrence.js:1077
 msgid "July"
 msgstr "juli"
 
-#: adminapp/static/recurrence/js/recurrence.js:1065
+#: adminapp/static/js/recurrence.js:1065
 msgid "August"
 msgstr "august"
 
-#: adminapp/static/recurrence/js/recurrence.js:1065
+#: adminapp/static/js/recurrence.js:1065
 msgid "September"
 msgstr "september"
 
-#: adminapp/static/recurrence/js/recurrence.js:1066
+#: adminapp/static/js/recurrence.js:1066
 msgid "October"
 msgstr "oktober"
 
-#: adminapp/static/recurrence/js/recurrence.js:1066
+#: adminapp/static/js/recurrence.js:1066
 msgid "November"
 msgstr "november"
 
-#: adminapp/static/recurrence/js/recurrence.js:1066
+#: adminapp/static/js/recurrence.js:1066
 msgid "December"
 msgstr "december"
 
-#: adminapp/static/recurrence/js/recurrence.js:1069
+#: adminapp/static/js/recurrence.js:1069
 msgid "Jan"
 msgstr "jan"
 
-#: adminapp/static/recurrence/js/recurrence.js:1069
+#: adminapp/static/js/recurrence.js:1069
 msgid "Feb"
 msgstr "feb"
 
-#: adminapp/static/recurrence/js/recurrence.js:1069
+#: adminapp/static/js/recurrence.js:1069
 msgid "Mar"
 msgstr "mar"
 
-#: adminapp/static/recurrence/js/recurrence.js:1070
+#: adminapp/static/js/recurrence.js:1070
 msgid "Apr"
 msgstr "apr"
 
-#: adminapp/static/recurrence/js/recurrence.js:1070
+#: adminapp/static/js/recurrence.js:1070
 msgid "Jun"
 msgstr "jun"
 
-#: adminapp/static/recurrence/js/recurrence.js:1071
+#: adminapp/static/js/recurrence.js:1071
 msgid "Jul"
 msgstr "jul"
 
-#: adminapp/static/recurrence/js/recurrence.js:1071
+#: adminapp/static/js/recurrence.js:1071
 msgid "Aug"
 msgstr "aug"
 
-#: adminapp/static/recurrence/js/recurrence.js:1071
+#: adminapp/static/js/recurrence.js:1071
 msgid "Sep"
 msgstr "sep"
 
-#: adminapp/static/recurrence/js/recurrence.js:1072
+#: adminapp/static/js/recurrence.js:1072
 msgid "Oct"
 msgstr "okt"
 
-#: adminapp/static/recurrence/js/recurrence.js:1072
+#: adminapp/static/js/recurrence.js:1072
 msgid "Nov"
 msgstr "nov"
 
-#: adminapp/static/recurrence/js/recurrence.js:1072
+#: adminapp/static/js/recurrence.js:1072
 msgid "Dec"
 msgstr "dec"
 
-#: adminapp/static/recurrence/js/recurrence.js:1075
+#: adminapp/static/js/recurrence.js:1075
 msgid "Jan."
 msgstr "jan."
 
-#: adminapp/static/recurrence/js/recurrence.js:1075
+#: adminapp/static/js/recurrence.js:1075
 msgid "Feb."
 msgstr "feb."
 
-#: adminapp/static/recurrence/js/recurrence.js:1077
+#: adminapp/static/js/recurrence.js:1077
 msgid "Aug."
 msgstr "aug."
 
-#: adminapp/static/recurrence/js/recurrence.js:1077
+#: adminapp/static/js/recurrence.js:1077
 msgid "Sept."
 msgstr "sep."
 
-#: adminapp/static/recurrence/js/recurrence.js:1078
+#: adminapp/static/js/recurrence.js:1078
 msgid "Oct."
 msgstr "okt."
 
-#: adminapp/static/recurrence/js/recurrence.js:1078
+#: adminapp/static/js/recurrence.js:1078
 msgid "Nov."
 msgstr "nov."
 
-#: adminapp/static/recurrence/js/recurrence.js:1078
+#: adminapp/static/js/recurrence.js:1078
 msgid "Dec."
 msgstr "dec."
 
-#: adminapp/static/recurrence/js/recurrence.js:1081
+#: adminapp/static/js/recurrence.js:1081
 msgid "a.m."
 msgstr "om morgenen"
 
-#: adminapp/static/recurrence/js/recurrence.js:1081
+#: adminapp/static/js/recurrence.js:1081
 msgid "p.m."
 msgstr "om eftermiddagen"
 
-#: adminapp/static/recurrence/js/recurrence.js:1082
+#: adminapp/static/js/recurrence.js:1082
 msgid "AM"
 msgstr "om morgenen"
 
-#: adminapp/static/recurrence/js/recurrence.js:1082
+#: adminapp/static/js/recurrence.js:1082
 msgid "PM"
 msgstr "om eftermiddagen"

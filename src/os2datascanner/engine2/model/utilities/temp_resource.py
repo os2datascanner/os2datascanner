@@ -3,6 +3,7 @@ import os.path
 from tempfile import mkdtemp
 from contextlib import suppress
 
+
 class NamedTemporaryResource:
     def __init__(self, name):
         self._name = name

@@ -69,6 +69,13 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                                 test_data_path,
                                 "pdf/embedded-cpr.pdf")))
 
+    def test_pdf_gz(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "pdf/embedded-cpr.pdf.gz")))
+
     def test_doc(self):
         self.run_rule_on_handle(
                 FilesystemHandle.make_handle(
@@ -112,11 +119,8 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                 os.path.join(
                         test_data_path, "msoffice/corrupted/test.trunc.doc"))
         corrupted_doc = Source.from_handle(corrupted_doc_handle)
-        with SourceManager() as sm:
-            self.assertEqual(
-                    list(corrupted_doc.handles(sm)),
-                    [],
-                    "unrecognised CDFV2 document should be empty and wasn't")
+        with SourceManager() as sm, self.assertRaises(ValueError):
+            list(corrupted_doc.handles(sm))
 
     def test_libreoffice_size(self):
         large_doc_handle = FilesystemHandle.make_handle(
@@ -131,3 +135,10 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                             r.get_size().value,
                             1048576,
                             "LibreOffice HTML output was too big")
+
+    def test_second_sheet(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "libreoffice/two-sheets.ods")))

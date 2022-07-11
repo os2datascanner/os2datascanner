@@ -1,15 +1,20 @@
 from os import listdir
 import PyPDF2
+import string
+import datetime
 from tempfile import TemporaryDirectory
-from subprocess import run
 
+from ...conversions.types import OutputType
+from ...conversions.utilities.results import SingleResult
+from ....utils.system_utilities import run_custom
 from ... import settings as engine2_settings
-from ..core import Handle, Source, Resource, SourceManager
+from ..core import Handle, Source, Resource
 from ..file import FilesystemResource
 from .derived import DerivedSource
 
 
 PAGE_TYPE = "application/x.os2datascanner.pdf-page"
+WHITESPACE_PLUS = string.whitespace + "\0"
 
 
 def _open_pdf_wrapped(obj):
@@ -45,7 +50,12 @@ class PDFPageResource(Resource):
         with self.handle.source.handle.follow(self._sm).make_stream() as fp:
             reader = _open_pdf_wrapped(fp)
             info = reader.getDocumentInfo() if reader else None
-            author = info.get("/Author") if info else None
+            # Some PDF authoring tools helpfully stick null bytes into the
+            # author field. Make sure we remove these
+            author = (
+                    info.get("/Author").strip(WHITESPACE_PLUS)
+                    if info and info.get("/Author") else None)
+
         if author:
             yield "pdf-author", str(author)
 
@@ -65,14 +75,30 @@ class PDFPageHandle(Handle):
     resource_type = PDFPageResource
 
     @property
-    def presentation(self):
-        return "page {0} of {1}".format(self.relative_path, self.source.handle)
+    def presentation_name(self):
+        return f"page {self.relative_path}"
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
+
+    def __str__(self):
+        return f"{self.presentation_name} of {self.presentation_place}"
+
+    @property
+    def sort_key(self):
+        "Return the file path of the document"
+        return self.base_handle.sort_key
 
     def censor(self):
         return PDFPageHandle(self.source.censor(), self.relative_path)
 
     def guess_type(self):
         return PAGE_TYPE
+
+    @classmethod
+    def make(cls, handle: Handle, page: int):
+        return PDFPageHandle(PDFSource(handle), str(page))
 
 
 @Source.mime_handler(PAGE_TYPE)
@@ -90,19 +116,21 @@ class PDFPageSource(DerivedSource):
             # pdftohtml. Not having to parse HTML is a big performance win by
             # itself, but what's even better is that pdfimages doesn't produce
             # uncountably many texture images for embedded vector graphics
-            run(["pdftotext",
-                    "-q", "-nopgbrk",
-                    "-eol", "unix",
-                    "-f", page, "-l", page,
-                    path, "{0}/page.txt".format(outputdir)],
+            run_custom(
+                    [
+                            "pdftotext", "-q", "-nopgbrk", "-eol", "unix",
+                            "-f", page, "-l", page, path,
+                            "{0}/page.txt".format(outputdir)
+                    ],
                     timeout=engine2_settings.subprocess["timeout"],
-                    check=True)
-            run(["pdfimages",
-                    "-q", "-all",
-                    "-f", page, "-l", page,
-                    path, "{0}/image".format(outputdir)],
+                    check=True, isolate_tmp=True)
+            run_custom(
+                    [
+                            "pdfimages", "-q", "-png", "-j", "-f", page, "-l", page,
+                            path, "{0}/image".format(outputdir)
+                    ],
                     timeout=engine2_settings.subprocess["timeout"],
-                    check=True)
+                    check=True, isolate_tmp=True)
             yield outputdir
 
     def handles(self, sm):
@@ -116,15 +144,53 @@ class PDFObjectResource(FilesystemResource):
         # files have no interesting metadata
         yield from ()
 
+    def get_last_modified(self):
+        # This is a generated, embedded file, so the last_modified_date should
+        # be taken from the parent container.
+        last_modified = None
+        # Get the top-level handle and follow it.
+        parent_handle = self.handle.source.handle.source.handle
+        with parent_handle.follow(self._sm).make_stream() as fp:
+            reader = _open_pdf_wrapped(fp)
+            info = reader.getDocumentInfo()
+            # Extract the modification date time and format it properly.
+            mod_date = info.get("/ModDate")
+            # Check that the mod_date is a string-like object.
+            if isinstance(mod_date, PyPDF2.generic.TextStringObject):
+                mod_date = mod_date.strip(WHITESPACE_PLUS).replace("'", "")[2:]
+                last_modified = datetime.datetime.strptime(mod_date, "%Y%m%d%H%M%S%z")
+        return SingleResult(None, OutputType.LastModified, last_modified)
+
 
 @Handle.stock_json_handler("pdf-object")
 class PDFObjectHandle(Handle):
     type_label = "pdf-object"
     resource_type = PDFObjectResource
 
-    @property
-    def presentation(self):
-        return self.source.handle.presentation
-
     def censor(self):
         return PDFObjectHandle(self.source.censor(), self.relative_path)
+
+    @property
+    def sort_key(self):
+        return self.source.handle.sort_key
+
+    @property
+    def presentation_name(self):
+        mime = self.guess_type()
+        page = str(self.source.handle.presentation_name)
+        container = self.source.handle.source.handle.presentation_name
+        if mime.startswith("text/"):
+            return f"text on {page} of {container}"
+        elif mime.startswith("image/"):
+            return f"image on {page} of {container}"
+        else:
+            return f"unknown object on {page} of {container}"
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle.source.handle.presentation_place)
+
+    @classmethod
+    def make(cls, handle: Handle, page: int, name: str):
+        return PDFObjectHandle(
+                PDFPageSource(PDFPageHandle.make(handle, page)), name)

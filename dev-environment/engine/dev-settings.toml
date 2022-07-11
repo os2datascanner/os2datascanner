@@ -3,3 +3,7 @@
 AMQP_HOST = "queue"
 AMQP_USER = "os2ds"
 AMQP_PWD = "os2ds"
+
+# timeout for requests (in seconds)
+timeout = 20
+ttl = 25

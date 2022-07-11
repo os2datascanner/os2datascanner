@@ -19,3 +19,6 @@ class Migration(migrations.Migration):
             options={'verbose_name': 'remediator', 'verbose_name_plural': 'remediators'},
         ),
     ]
+
+
+

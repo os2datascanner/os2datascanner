@@ -16,3 +16,6 @@ class Migration(migrations.Migration):
             field=models.URLField(max_length=256, null=True, verbose_name='Service endpoint'),
         ),
     ]
+
+
+

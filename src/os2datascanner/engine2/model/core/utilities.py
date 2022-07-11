@@ -1,5 +1,6 @@
-from sys import stderr
-from traceback import print_exc
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 
 class _SourceDescriptor:
@@ -96,9 +97,9 @@ class SourceManager:
                 desc.generator = source._generate_state(self)
                 try:
                     desc.cookie = next(desc.generator)
-                except Exception:
+                except Exception as e:
                     self.close(source)
-                    raise
+                    raise ValueError("Source could not be opened (perhaps corrupt content)") from e
             return desc.cookie
         finally:
             self._opening = self._opening[:-1]
@@ -122,11 +123,10 @@ class SourceManager:
                 try:
                     desc.generator.close()
                 except Exception:
-                    stn = type(source).__name__
-                    print("*** BUG: closing {0}._generate_state raised an"
-                            " exception!"
-                            " Continuing anyway...".format(stn), file=stderr)
-                    print_exc(file=stderr)
+                    logger.warning(
+                        "Bug! Closing _generate_state failed.",
+                        source=type(source).__name__,
+                    )
 
             if desc.parent:
                 # Detach this Source from its parent

@@ -11,7 +11,13 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-from .scanner_views import *
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCreate,
+    ScannerList)
 from ..models.scannerjobs.dropboxscanner_model import DropboxScanner
 
 
@@ -33,6 +39,7 @@ class DropboxScannerCreate(ScannerCreate):
         'token',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]
@@ -62,6 +69,7 @@ class DropboxScannerUpdate(ScannerUpdate):
         'token',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]

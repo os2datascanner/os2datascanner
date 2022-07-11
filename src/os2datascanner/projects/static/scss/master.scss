@@ -1,0 +1,43 @@
+/* Generic styling */
+@import 'vars';
+@import 'base';
+@import 'layout';
+@import '../fonts/inter/inter.css';
+@import '../fonts/materialicons/materialicons.css';
+@import 'typography';
+
+@import 'ie-support';
+@import 'bugfixes';
+
+/* Areas */
+@import 'components/banner';
+@import 'components/logo';
+@import 'components/navigation';
+@import 'components/user';
+@import 'components/breadcrumb';
+@import 'components/footer';
+
+/* Single components */
+@import 'components/login';
+@import 'components/datatable';
+@import 'components/statistics';
+@import 'components/filter-options';
+@import 'components/icons';
+@import 'components/alerts';
+@import 'components/forms';
+@import 'components/buttons';
+@import 'components/dashboard-widgets';
+@import 'components/modal';
+@import 'components/options';
+@import 'components/tabs';
+@import 'components/select-rules';
+@import 'components/scanner-status';
+@import 'components/organizations';
+@import 'components/recurrence';
+@import 'components/dropdown-treeview';
+@import 'components/toc';
+@import 'components/hit-links';
+@import 'components/sensitivity-chart';
+@import 'components/handle-match';
+@import 'components/filters';
+@import 'components/pagination';

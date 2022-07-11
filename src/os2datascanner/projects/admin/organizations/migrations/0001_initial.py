@@ -89,3 +89,6 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(through='organizations.Position', to='organizations.OrganizationalUnit'),
         ),
     ]
+
+
+

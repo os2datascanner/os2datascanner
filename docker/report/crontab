@@ -10,4 +10,4 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-0 12 * * 5 ./manage.py send_notifications
+0 12 * * 5 ./manage.py send_notifications --all-results

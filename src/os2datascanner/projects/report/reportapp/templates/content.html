@@ -1,0 +1,21 @@
+{%  load i18n %}
+
+<h1 class="page-title">{% trans "Results" %}</h1>
+
+        {{ page_obj.paginator.count }} {% trans "results" %}
+        {% if distributable_matches %}
+          <button class="button button--cta" id="distribute-matches" name="distribute-matches"
+          hx-confirm="{% trans "Are you sure you want to distribute matches to the users? This action cannot be reverted." %}"
+          hx-target=".content" hx-trigger="click" hx-swap="innerHTML" hx-get=""
+          > {% trans "Distribute" %} </button>
+        {% endif %}
+
+        {% include "components/filters.html" %}
+
+        {% if page_obj.paginator.count == 0 %}
+          <p class="no-results">
+            {% trans "No results were found" %}
+          </p>
+        {% else %}
+          {% include "components/hits.html" %}
+        {% endif %}

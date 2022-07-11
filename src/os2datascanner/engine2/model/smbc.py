@@ -5,16 +5,21 @@ import logging
 import smbc
 from typing import Optional
 from urllib.parse import quote, unquote, urlsplit
+from pathlib import PureWindowsPath
 from datetime import datetime
+import operator
+import warnings
+from functools import reduce
 from contextlib import contextmanager
 
-from ..utilities.backoff import run_with_backoff
+from ..utilities.backoff import DefaultRetrier
 from ..conversions.types import OutputType
 from ..conversions.utilities.results import MultipleResults
-from .smb import SMBSource, make_smb_url, compute_domain
+from .smb import (
+    SMBSource, make_smb_url, compute_domain,
+    make_full_windows_path, make_presentation_url)
 from .core import Source, Handle, FileResource
 from .file import stat_attributes
-from .utilities import NamedTemporaryResource
 
 
 logger = logging.getLogger(__name__)
@@ -34,13 +39,22 @@ class Mode(enum.IntFlag):
     """A convenience enumeration for manipulating SMB file mode flags."""
     # description of flags mapping
     # https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-smb/65e0c225-5925-44b0-8104-6b91339c709f
-    # https://github.com/samba-team/samba/blob/master/source3/include/libsmbclient.h#L200
+    NONE = 0x0
     READ_ONLY = 0x01
     HIDDEN = 0x02
     SYSTEM = 0x04
-    VOLUME_ID = 0x08
+    # Windows defines VOLUME_ID = 0x08, but CIFS/SMB doesn't
     DIRECTORY = 0x10
     ARCHIVE = 0x20
+    # Windows defines DEVICE = 0x40, but CIFS/SMB doesn't
+    NORMAL = 0x80
+    TEMPORARY = 0x100
+    SPARSE = 0x200
+    REPARSE_POINT = 0x400
+    COMPRESSED = 0x800
+    OFFLINE = 0x1000
+    NONINDEXED = 0x2000
+    ENCRYPTED = 0x4000
 
     @staticmethod
     def for_url(context: smbc.Context, url: str) -> Optional['Mode']:
@@ -48,9 +62,15 @@ class Mode(enum.IntFlag):
         URL to a Mode."""
         try:
             mode_ = context.getxattr(url, XATTR_DOS_ATTRIBUTES)
+            logger.debug(f"mode flags for {url}: {mode_}")
             return Mode(int(mode_, 16))
-        except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS):
+        except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS, MemoryError) as exc:
+            logger.info(f"Exception thrown: {exc}\n for {url}\n"
+                        f"Ignoring and continuing")
             return None
+
+
+ModeMask = reduce(operator.or_, Mode, Mode.NONE)
 
 
 class SMBCSource(Source):
@@ -59,12 +79,13 @@ class SMBCSource(Source):
             "_unc", "_user", "_password", "_domain", "_skip_super_hidden")
 
     def __init__(self, unc, user=None, password=None, domain=None,
-            driveletter=None, *, skip_super_hidden: bool = False):
-        self._unc = unc
+                 driveletter=None, *, skip_super_hidden: bool = False):
+        self._unc = unc.replace('\\', '/')
         self._user = user
         self._password = password
         self._domain = domain if domain is not None else compute_domain(unc)
-        self._driveletter = driveletter
+        self._driveletter = (
+                driveletter.replace('\\', '/') if driveletter else None)
         self._skip_super_hidden = skip_super_hidden
 
     @property
@@ -91,8 +112,49 @@ class SMBCSource(Source):
     def censor(self):
         return SMBCSource(self.unc, None, None, None, self.driveletter)
 
-    def handles(self, sm):
+    @classmethod
+    def is_skippable(cls, context, url, path, name):
+        """Evaluates whether or not the given file is skippable: i.e., whether
+        its attributes and other properties indicate that we should ignore it.
+
+        (Note that the policy decision about whether or not to *actually* skip
+        a skippable file is not implemented here.)"""
+        mode = Mode.for_url(context, url)
+
+        if mode is not None:
+            # If the Mode.NORMAL bit is set *along with* other bits...
+            if ((mode & Mode.NORMAL
+                    and mode != Mode.NORMAL)
+                    # ... or if a bit not permitted by the specification is
+                    # set...
+                    or mode & ~ModeMask):
+                # ... then something has gone very badly wrong
+                warnings.warn(
+                        "incoherent mode flags detected"
+                        " (Samba bug #14101?)")
+                if name.startswith("~"):
+                    logger.info("skipping perhaps-hidden object {path}")
+                    return True
+
+            # If this object is super-hidden -- that is, if it has the hidden
+            # bit set plus either the system bit or the "~" character at the
+            # start of its name -- then ignore it
+            if (mode & Mode.HIDDEN
+                    and (mode & Mode.SYSTEM or name.startswith("~"))):
+                logger.info(f"skipping super-hidden object {path}")
+                return True
+
+        # Special-case the ~snapshot folder, which we should never scan
+        # (XXX: revisit this once we know the Samba bug is fixed)
+        if name == "~snapshot":
+            logger.info(f"skipping snapshot directory {path}")
+            return True
+
+        return False
+
+    def handles(self, sm):  # noqa: CCR001, E501 too high cognitive complexity
         url, context = sm.open(self)
+
         def handle_dirent(parents, entity):
             name = entity.name
 
@@ -100,22 +162,22 @@ class SMBCSource(Source):
             path = '/'.join([h.name for h in here])
             url_here = url + "/" + path
 
-            if self._skip_super_hidden:
-                mode = Mode.for_url(context, url_here)
-
-                # If this object is super-hidden -- that is, if it has the
-                # hidden bit set plus either the system bit or the "~"
-                # character at the start of its name -- then ignore it
-                if (mode is not None
-                        and mode & Mode.HIDDEN
-                        and (mode & Mode.SYSTEM
-                                or name.startswith("~"))):
-                    logger.info(f"skipping super-hidden object {path}")
-                    return
+            if (self._skip_super_hidden
+                    and SMBCSource.is_skippable(
+                            context, url_here, path, name)):
+                return
 
             if entity.smbc_type == smbc.DIR and name not in (".", ".."):
                 try:
-                    obj = context.opendir(url_here)
+                    try:
+                        obj = context.opendir(url_here)
+                    except MemoryError as e:
+                        # A memory error here means that the path is using
+                        # deprecated encoding. Skip the path and keep going!
+                        logger.warning(
+                            f"Skipping handle with memory error at {url_here}")
+                        yield (SMBCHandle(self, path), e)
+                        return
                     for dent in obj.getdents():
                         yield from handle_dirent(here, dent)
                 except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS):
@@ -143,22 +205,23 @@ class SMBCSource(Source):
         scheme, netloc, path, _, _ = urlsplit(url)
         match = SMBSource.netloc_regex.match(netloc)
         if match:
-            return SMBCSource("//" + match.group("unc") + unquote(path),
+            return SMBCSource(
+                "//" + match.group("unc") + unquote(path),
                 match.group("username"), match.group("password"),
                 match.group("domain"))
         else:
             return None
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "unc": self._unc,
-            "user": self._user,
-            "password": self._password,
-            "domain": self._domain,
-            "driveletter": self._driveletter,
-
-            "skip_super_hidden": self._skip_super_hidden
-        })
+        return dict(
+            **super().to_json_object(),
+            unc=self._unc,
+            user=self._user,
+            password=self._password,
+            domain=self._domain,
+            driveletter=self._driveletter,
+            skip_super_hidden=self._skip_super_hidden,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -246,20 +309,17 @@ class SMBCResource(FileResource):
         return url + "/" + quote(self.handle.relative_path)
 
     def open_file(self):
-        def _open_file():
-            _, context = self._get_cookie()
-            return context.open(self._make_url(), O_RDONLY)
-        return run_with_backoff(_open_file, smbc.TimedOutError)[0]
+        _, context = self._get_cookie()
+        return DefaultRetrier(smbc.TimedOutError).run(
+                context.open, self._make_url(), O_RDONLY)
 
     def get_xattr(self, attr):
         """Retrieves a SMB extended attribute for this file. (See the
         documentation for smbc.Context.getxattr for *most* of the supported
         attribute names.)"""
-        def _get_xattr():
-            _, context = self._get_cookie()
-            # Don't attempt to catch the ValueError if attr isn't valid
-            return context.getxattr(self._make_url(), attr)
-        return run_with_backoff(_get_xattr, smbc.TimedOutError)[0]
+        _, context = self._get_cookie()
+        return DefaultRetrier(smbc.TimedOutError).run(
+                context.getxattr, self._make_url(), attr)
 
     def unpack_stat(self):
         if not self._mr:
@@ -278,23 +338,12 @@ class SMBCResource(FileResource):
 
     def get_last_modified(self):
         return self.unpack_stat().setdefault(OutputType.LastModified,
-                super().get_last_modified())
+                                             super().get_last_modified())
 
     def get_owner_sid(self):
         """Returns the Windows security identifier of the owner of this file,
         which libsmbclient exposes as an extended attribute."""
         return self.get_xattr(smbc.XATTR_OWNER)
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as f:
-                with self.make_stream() as rf:
-                    buf = rf.read(self.DOWNLOAD_CHUNK_SIZE)
-                    while buf:
-                        f.write(buf)
-                        buf = rf.read(self.DOWNLOAD_CHUNK_SIZE)
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):
@@ -310,35 +359,23 @@ class SMBCHandle(Handle):
     resource_type = SMBCResource
 
     @property
-    def presentation(self):
-        p = self.source.driveletter
-        if p:
-            p += ":"
-        else:
-            p = self.source.unc
-        if p[-1] != "/":
-            p += "/"
-        return (p + self.relative_path).replace("/", "\\")
+    def presentation_name(self):
+        return PureWindowsPath(make_full_windows_path(self)).name
+
+    @property
+    def presentation_place(self):
+        return str(PureWindowsPath(make_full_windows_path(self)).parent)
 
     @property
     def presentation_url(self):
-        # Note that this implementation returns a Windows-friendly URL to the
-        # underlying file -- i.e., one that uses the file: scheme and not smb:
-        url = "file:"
-        # XXX: our testing seems to indicate that drive letter URLs don't work
-        # properly; we'll leave the disabled logic here for now...
-        if False and self.source.driveletter:
-            # Wikipedia indicates that local filesystem paths are represented
-            # with an empty hostname followed by an absolute path...
-            url += "///{0}:".format(self.source.driveletter)
-        else:
-            # ... and that remote ones are indicated with a hostname in the
-            # usual place. Luckily the UNC already starts with two forward
-            # slashes, so we can just paste it in here
-            url += self.source.unc
-        if url[-1] != "/":
-            url += "/"
-        return url + self.relative_path
+        return make_presentation_url(self)
+
+    def __str__(self):
+        return make_full_windows_path(self)
+
+    @property
+    def sort_key(self):
+        return self.presentation.removesuffix("\\")
 
     def censor(self):
         return SMBCHandle(self.source.censor(), self.relative_path)

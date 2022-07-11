@@ -1,8 +1,9 @@
+{% load i18n %}
 {% load static %}
 {% load get_settings_tag %}
 
 {% block scripts %}
-<script src="{% static 'src/js/user_menu.js' %}"></script>
+<script src="{% static 'js/user_menu.js' %}"></script>
 {% endblock %}
 
   <div class="user">
@@ -33,8 +34,11 @@
           </a>
         </form>
         {% else %}
+	<a class="password-change" href="/accounts/password_change">
+	    {% trans "Change password" %}
+	</a>
         <a class="logout" href="/accounts/logout">
-          Log ud
+	    {% trans "Logout" %}
         </a>
         {% endif %}
       </div>

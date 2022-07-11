@@ -1,44 +1,80 @@
 {% load handle_extras %}
 {%  load i18n %}
 
-<table class="datatable">
-  <thead>
-    <tr>
-      <th>
-        {% include "components/handle-match.html" %}
-      </th>
-    </tr>
-    <tr class="grey-bg">
-      <th class="datatable__column--handle">
-        <div class="datatable__column--filetype-icon">
-          <input id="select-all" type="checkbox" name="match-checkbox" class="datatable-checkbox">
-  
-          <span class="screen-reader-only">
-              {% trans "Type" %}
-          </span>
-        </div>
-      </th>
-      <th class="datatable__column--item">
-          {% trans "Object" %}
-      </th>
-      <th class="datatable__column--match">
-          {% trans "Match" %}
-      </th>
-      <th class="datatable__column--context">
-          {% trans "Context" %}
-      </th>
-      <th class="datatable__column--probability">
-          {% trans "Probability" %}
-      </th>
-    </tr>
-  </thead>
+<div class="datatable-wrapper card" role="region" tabindex="0" aria-label="{% trans 'Results' %}">
+  <table class="datatable">
+    <colgroup>
+      <col class="datatable__column--handle">
+      <col class="datatable__column--name">
+      <col class="datatable__column--matchcount">
+      <col class="datatable__column--source">
+      <col class="datatable__column--path">
+      <col class="datatable__column--actions">
+    </colgroup>
+    <thead>
+      <tr class="handle-matches sticky">
+        <th colspan="6">
+          {% include "components/handle-match.html" %}
+          <div class="view-options">
+            <button class="toggle probability-toggle" type="button" aria-pressed="false">{% trans 'Show match probability' %}</button>
+            <button class="matches-expand-all button button-caret button--has-icon" type="button">{% trans "Show/hide all matches" %} <i class="material-icons" aria-hidden="true">expand_more</i></button>
+          </div>
+        </th>
+      </tr>
+      <tr class="column-headings sticky">
+        <th class="datatable__column--handle">
+          <div class="ds-checkbox">
+            <input id="select-all" type="checkbox">
+            <label for="select-all">
+              <span class="screen-reader-only">{% trans 'Select all results' %}</span>
+            </label>
+          </div>
+        </th>
+        <th class="datatable__column--name">
+            {% trans "Name" %}
+        </th>
+        <th class="datatable__column--matchcount">
+            {% trans "Matches" %}
 
-  <tbody>
-    {% for match in matches %}
-      {% include "components/hit.html" %}
-    {% endfor %}
-    
-  </tbody>
+            <button
+              type="button"
+              name="number_of_matches"
+              class="order-by button button-caret button--has-icon{% if order_by == 'number_of_matches' and order == 'descending' %} up{% endif %}"
+              value="{% if order_by == 'number_of_matches' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+            >
+              <i class="material-icons" aria-hidden="true">expand_more</i>
+            </button>
+        </th>
+        <th class="datatable__column--source">
+            {% trans "Source" %}
+        </th>
+        <th class="datatable__column--path">
+            {% trans "Path" %}
+            {% comment %}We use a click event handler on this button to
+            submit the <form> defined in filters.html{% endcomment %}
 
-  {% include "components/pagination.html" %}
-</table>
+            <button
+              type="button"
+              name="sort_key"
+              class="order-by button button-caret button--has-icon{% if order_by == 'sort_key' and order == 'descending' %} up{% endif %}"
+              value="{% if order_by == 'sort_key' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+            >
+              <i class="material-icons" aria-hidden="true">expand_more</i>
+            </button>
+        </th>
+        <th class="datatable__column--actions">
+            <span class="screen-reader-only">{% trans "Actions" %}</span>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for document_report in document_reports %}
+        {% include "components/hit.html" %}
+      {% endfor %}
+
+    </tbody>
+
+    {% include "components/pagination.html" %}
+  </table>
+</div>

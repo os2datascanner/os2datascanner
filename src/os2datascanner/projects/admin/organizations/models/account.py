@@ -12,62 +12,18 @@
 # sector open source network <https://os2.eu/>.
 #
 
-from uuid import uuid4
 
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
-
+from os2datascanner.core_organizational_structure.models import Account as Core_Account
 from os2datascanner.projects.admin.import_services.models import Imported
 
 from .broadcasted_mixin import Broadcasted
 
 
-class Account(Imported, Broadcasted, models.Model):
-    """Represents a known entity in an organizational hierarchy.
+class Account(Core_Account, Imported, Broadcasted):
+    """ Core logic lives in the core_organizational_structure app.
+    Additional logic can be implemented here, but currently, none needed, hence we pass. """
 
-    An Account may be related to several OrganizationalUnits within the same
-    Organization.
-
-    Note that Accounts are data representations of accounts on other systems
-    and as such does not give its corresponding entity access to the
-    OS2datascanner administration system.
-    """
-
-    uuid = models.UUIDField(
-        primary_key=True,
-        default=uuid4,
-        editable=False,
-        verbose_name=_('UUID'),
-    )
-    username = models.CharField(
-        max_length=256,
-        verbose_name=_('username'),
-    )
-    first_name = models.CharField(
-        max_length=256,
-        verbose_name=_('first name'),
-    )
-    last_name = models.CharField(
-        max_length=256,
-        verbose_name=_('last name'),
-    )
-    organization = models.ForeignKey(
-        'organizations.Organization',
-        on_delete=models.CASCADE,
-        related_name='user_accounts',
-        verbose_name=_('organization'),
-    )
-    units = models.ManyToManyField(
-        'OrganizationalUnit',
-        through='Position',
-    )
-
-    class Meta:
-        verbose_name = _('account')
-        verbose_name_plural = _('accounts')
-
-    def __str__(self):
-        return self.username
-
-    def __repr__(self):
-        return f'<{self.__class__.__name__}: {self.username} ({self.uuid})>'
+    def natural_key(self):
+        return (self.pk, self.username,
+                self.organization.uuid, self.organization.name,
+                )

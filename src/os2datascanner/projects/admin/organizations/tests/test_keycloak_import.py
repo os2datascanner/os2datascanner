@@ -1,6 +1,5 @@
 from copy import deepcopy
-from unittest import TestCase
-
+from django.test import TestCase
 from ...core.models.client import Client
 from ..models import Account, Organization, OrganizationalUnit, Alias, Position
 from .. import keycloak_actions
@@ -49,7 +48,29 @@ TEST_CORP = [
                 "CN=Group A,O=Test Corp."
             ]
         }
-    }
+    },
+    {
+        "id": "4f533264-6174-6173-6361-6e6e65720003",
+        "username": "root@test.invalid",
+        "attributes": {
+            "LDAP_ENTRY_DN": [
+                "CN=root,OU=Testers,O=Test Corp."
+            ],
+            "memberOf": [
+                "CN=Group A,O=Test Corp."
+            ]
+        }
+    },
+    {
+        "attributes": {
+            "LDAP_ENTRY_DN": [
+                "CN=secret_backdoor,OU=Testers,O=Test Corp."
+            ],
+            "memberOf": [
+                "CN=Group A,O=Test Corp."
+            ]
+        }
+    },
 ]
 
 TEST_CORP_TWO = [
@@ -100,7 +121,7 @@ class KeycloakImportTest(TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.dummy_client.delete()
- 
+
     def setUp(self):
         self.org = Organization.objects.create(
                 name="Test Corp.",
@@ -117,6 +138,8 @@ class KeycloakImportTest(TestCase):
                 keycloak_actions.keycloak_dn_selector)
 
         for tester in TEST_CORP:
+            if "id" not in tester:
+                continue
             account = Account.objects.get(uuid=tester["id"])
             self.assertEqual(
                     tester["username"],
@@ -131,6 +154,8 @@ class KeycloakImportTest(TestCase):
                 keycloak_actions.keycloak_group_dn_selector)
 
         for tester in TEST_CORP:
+            if "id" not in tester:
+                continue
             account = Account.objects.get(uuid=tester["id"])
             self.assertEqual(
                     tester["username"],
@@ -158,7 +183,7 @@ class KeycloakImportTest(TestCase):
 
         for thad in thads:
             with self.assertRaises(Account.DoesNotExist,
-                    msg="user still present after deletion"):
+                                   msg="user still present after deletion"):
                 thad.refresh_from_db()
 
     def test_group_change_ou(self):
@@ -170,7 +195,7 @@ class KeycloakImportTest(TestCase):
 
         NEW_CORP = deepcopy(TEST_CORP)
         for tester in NEW_CORP:
-            if tester["firstName"] == "Todd":
+            if tester.get("firstName") == "Todd":
                 tester["attributes"]["LDAP_ENTRY_DN"] = [
                         f"CN=Todd {tester['lastName']},"
                         "OU=Experimenters,O=Test Corp."]
@@ -195,12 +220,12 @@ class KeycloakImportTest(TestCase):
         for ted in teds:
             ted.units.get(imported_id="CN=Group 2,O=Test Corp.")
             with self.assertRaises(OrganizationalUnit.DoesNotExist,
-                    msg="user in new group before move"):
+                                   msg="user in new group before move"):
                 ted.units.get(imported_id="CN=Group 1,O=Test Corp.")
 
         NEW_CORP = deepcopy(TEST_CORP)
         for tester in NEW_CORP:
-            if tester["firstName"] == "Ted":
+            if tester.get("firstName") == "Ted":
                 tester["attributes"]["memberOf"] = [
                     "CN=Group 1,O=Test Corp."
                 ]
@@ -213,7 +238,7 @@ class KeycloakImportTest(TestCase):
             ted.refresh_from_db()
             ted.units.get(imported_id="CN=Group 1,O=Test Corp.")
             with self.assertRaises(OrganizationalUnit.DoesNotExist,
-                    msg="user in old group after move"):
+                                   msg="user in old group after move"):
                 ted.units.get(imported_id="CN=Group 2,O=Test Corp.")
 
     def test_remove_ou(self):
@@ -236,7 +261,7 @@ class KeycloakImportTest(TestCase):
                 keycloak_actions.keycloak_group_dn_selector)
 
         with self.assertRaises(OrganizationalUnit.DoesNotExist,
-                msg="defunct OU not removed"):
+                               msg="defunct OU not removed"):
             OrganizationalUnit.objects.get(
                     imported_id="CN=Group 2,O=Test Corp.")
 
@@ -251,7 +276,7 @@ class KeycloakImportTest(TestCase):
         ursula_aliases = Alias.objects.filter(value="ursulas@brevdue.dk")
 
         self.assertEqual(ursula_aliases.count(), 1,
-                msg="Either duplicate or no email aliases for user created")
+                         msg="Either duplicate or no email aliases for user created")
 
     def test_delete_user_relation_to_group(self):
         keycloak_actions.perform_import_raw(
@@ -263,7 +288,6 @@ class KeycloakImportTest(TestCase):
 
         self.assertEqual(Position.objects.filter(account=account).count(), 2,
                          msg="Position not correctly created")
-
 
         NEW_CORP = deepcopy(TEST_CORP_TWO)
         # Now only member of one group instead of two.
@@ -304,7 +328,7 @@ class KeycloakImportTest(TestCase):
         the database."""
         self.test_ou_import()
 
-        for user in Account.objects.all():
+        for user in Account.objects.filter(organization=self.org):
             self.assertNotEqual(
                     user.first_name,
                     "Tadeusz",
@@ -313,7 +337,10 @@ class KeycloakImportTest(TestCase):
         NEW_CORP = deepcopy(TEST_CORP)
         for tester in NEW_CORP:
             try:
+                # The hero of the Polish epic poem Pan Tadeusz, since you ask
+                # (the first line of which is "O Lithuania, my homeland!")
                 tester["firstName"] = "Tadeusz"
+                tester["lastName"] = "Soplica"
             except ValueError:
                 pass
 
@@ -321,8 +348,8 @@ class KeycloakImportTest(TestCase):
                 self.org, NEW_CORP,
                 keycloak_actions.keycloak_group_dn_selector)
 
-        for user in Account.objects.all():
+        for user in Account.objects.filter(organization=self.org):
             self.assertEqual(
-                    user.first_name,
-                    "Tadeusz",
+                    (user.first_name, user.last_name),
+                    ("Tadeusz", "Soplica"),
                     "property update failed")

@@ -1,14 +1,7 @@
 {% extends 'partials/base.html' %}
-{% load static %}
 {% load i18n %}
 
-{% block additional_styles %}
-<style>
-  html {
-    background: transparent linear-gradient(180deg, #5CA4CD 0%, #21759C 100%) 0% 0% no-repeat padding-box;
-  }
-</style>
-{% endblock %}
+{% block body_class %}login-bg{% endblock %}
 
 {%  block title %}
   {% trans 'Login' %}
@@ -16,13 +9,12 @@
 
 {% block body %}
 
-  <section class="login-form">
+  <section class="login-card">
     <form class="form" method="post" action="{% url 'login' %}">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ next }}" />
       <h2>
-        {% trans "Login" %} <br>
-        <span class="line-height">{% trans "admin module" %}</span>
+        {% trans "Login" %}<br>{% trans "admin module" %}
       </h2>
 
           <fieldset>
@@ -36,11 +28,11 @@
               <label for="id_{{ form.password.name }}">{{ form.password.label }}</label>
               <input type="password" name="{{ form.password.name }}" id="id_{{ form.password.name }}" {% if form.password.value %}value="{{ form.password.value }}"{% endif %}>
               <label>{% if form.password.errors %}{{ form.password.errors }}{% endif %}</label>
-
-              {% for error in form.non_field_errors %}
-                <div class="form__error">{{ error }}</div>
-              {% endfor %}
             </div>
+
+            {% for error in form.non_field_errors %}
+              <div class="form__error">{{ error }}</div>
+            {% endfor %}
 
             <div class="form__group">
               <div class="ds-checkbox">
@@ -74,6 +66,6 @@
   </section>
 {% endblock %}
 
-{% block heading %} 
+{% block heading %}
   OS2datascanner {% trans "Login" %}
 {% endblock %}

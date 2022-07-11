@@ -5,7 +5,6 @@ import requests
 from os2datascanner.engine2.model.derived.derived import DerivedSource
 
 from .core import Source, Handle, FileResource
-from .utilities import NamedTemporaryResource
 
 
 class SbsysSource(Source):
@@ -23,8 +22,9 @@ class SbsysSource(Source):
 
         # Using the oauth grant type client_credentials
         grant_type = {'grant_type': 'client_credentials'}
-        access_token_response = requests.post(self._token_url, data=grant_type, allow_redirects=False,
-                                              auth=(self._client_id, self._client_secret))
+        access_token_response = requests.post(
+            self._token_url, data=grant_type, allow_redirects=False,
+            auth=(self._client_id, self._client_secret))
         # Picking out the access token
         token = access_token_response.json()["access_token"]
 
@@ -45,12 +45,13 @@ class SbsysSource(Source):
             yield SbsysHandle(self, str(caseId))
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "client_id": self._client_id,
-            "client_secret": self._client_secret,
-            "token_url": self._token_url,
-            "api_url": self._api_url
-        })
+        return dict(
+            **super().to_json_object(),
+            client_id=self._client_id,
+            client_secret=self._client_secret,
+            token_url=self._token_url,
+            api_url=self._api_url,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -84,6 +85,7 @@ class SbsysSource(Source):
             )
             return response
 
+
 # Used for more case specific scan
 CASE_TYPE = "application/x.os2datascanner.sbsys-case"
 
@@ -94,14 +96,6 @@ class SbsysResource(FileResource):
 
     def compute_type(self):
         return CASE_TYPE
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self._handle.relative_path) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-                yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):
@@ -116,11 +110,6 @@ class SbsysResource(FileResource):
 
 
 class SbsysHandle(Handle):
-
-    @property
-    def presentation(self):
-        return "Sag ID: {0}".format(self.relative_path)
-
     type_label = "sbsys"
     resource_type = SbsysResource
     eq_properties = Handle.BASE_PROPERTIES
@@ -128,11 +117,16 @@ class SbsysHandle(Handle):
     def __init__(self, source, path):
         super().__init__(source, path)
 
+    @property
+    def presentation_name(self):
+        return "Sag ID: {0}".format(self.relative_path)
+
+    @property
+    def presentation_place(self):
+        return "SBSYS"
+
     def censor(self):
         return SbsysHandle(self.source.censor(), self.relative_path)
-
-    def to_json_object(self):
-        return dict(**super().to_json_object(), **{})
 
     @staticmethod
     @Handle.json_handler(type_label)
@@ -148,7 +142,8 @@ class SbsysCaseSource(DerivedSource):
         yield sm.open(self.handle.source)
 
     def handles(self, sm):
-        api_search_docs = sm.open(self).get(tail='sag/{0}/dokumenter'.format(self.handle.relative_path))
+        api_search_docs = sm.open(self).get(
+            tail='sag/{0}/dokumenter'.format(self.handle.relative_path))
         for d in api_search_docs.json():
             # For every document on case, picking out the DocumentId.
             docId = d["DokumentID"]
@@ -159,14 +154,6 @@ class SbsysCaseResource(FileResource):
 
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.relative_path) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-                yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):
@@ -186,8 +173,12 @@ class SbsysCaseHandle(Handle):
     eq_properties = Handle.BASE_PROPERTIES
 
     @property
-    def presentation(self):
-        return "Dokument ID: {0} i {1}".format(self.relative_path, self.source.handle.presentation)
+    def presentation_name(self):
+        return self.relative_path
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     def censor(self):
         return SbsysCaseHandle(self.source.censor(), self.relative_path)

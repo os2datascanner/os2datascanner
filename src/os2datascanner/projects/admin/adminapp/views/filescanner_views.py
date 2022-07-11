@@ -12,8 +12,14 @@
 # sector open source network <https://os2.eu/>.
 #
 from django import forms
-from .scanner_views import *
-from ..aescipher import decrypt
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCopy,
+    ScannerCreate,
+    ScannerList)
 from ..models.scannerjobs.filescanner_model import FileScanner
 from django.utils.translation import ugettext_lazy as _
 
@@ -29,6 +35,7 @@ class FileScannerCreate(ScannerCreate):
     """Create a file scanner view."""
 
     model = FileScanner
+    type = 'file'
     fields = [
         'name',
         'schedule',
@@ -37,6 +44,7 @@ class FileScannerCreate(ScannerCreate):
         'alias',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'skip_super_hidden',
         'rules',
         'organization',
@@ -59,6 +67,7 @@ class FileScannerUpdate(ScannerUpdate):
     """Update a scanner view."""
 
     model = FileScanner
+    type = 'file'
     fields = [
         'name',
         'schedule',
@@ -67,13 +76,14 @@ class FileScannerUpdate(ScannerUpdate):
         'alias',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'skip_super_hidden',
         'rules',
         'organization',
         ]
 
     def get_form(self, form_class=None):
-        """Adds special field password and decrypts password."""
+        """Adds special field password."""
         if form_class is None:
             form_class = self.get_form_class()
 
@@ -85,10 +95,9 @@ class FileScannerUpdate(ScannerUpdate):
 
         if authentication.username:
             form.fields['username'].initial = authentication.username
-        if authentication.ciphertext:
-            password = decrypt(bytes(authentication.iv),
-                               bytes(authentication.ciphertext))
-            form.fields['password'].initial = password
+        if authentication.iv:
+            # if there is a set password already, use a dummy to enable the placeholder
+            form.fields['password'].initial = "dummy"
         if authentication.domain:
             form.fields['domain'].initial = authentication.domain
 
@@ -111,6 +120,35 @@ class FileScannerDelete(ScannerDelete):
     model = FileScanner
     fields = []
     success_url = '/filescanners/'
+
+
+class FileScannerCopy(ScannerCopy):
+    """Create a new copy of an existing FileScanner"""
+    model = FileScanner
+    type = 'file'
+    fields = [
+        'name',
+        'schedule',
+        'url',
+        'exclusion_rules',
+        'alias',
+        'do_ocr',
+        'do_last_modified_check',
+        'only_notify_superadmin',
+        'skip_super_hidden',
+        'rules',
+        'organization',
+        ]
+
+    def get_form(self, form_class=None):
+        """Adds special field password."""
+        # This doesn't copy over it's values, as credentials shouldn't
+        # be copyable
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        form = super().get_form(form_class)
+        return initialize_form(form)
 
 
 class FileScannerAskRun(ScannerAskRun):

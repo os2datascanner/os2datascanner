@@ -12,7 +12,7 @@
         {% for value, tag in field.field.choices %}
         <option
           value="{{ value }}"
-          {% if field.value|add:"0" == value|add:"0" %}
+          {% if field.value|stringformat:"s"  == value|stringformat:"s" %}
           selected="selected"
           {% endif %}>
           {{ tag }}

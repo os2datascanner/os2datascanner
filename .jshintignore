@@ -1,0 +1,4 @@
+#exclusions
+src/os2datascanner/projects/static/3rdparty/**/*
+src/os2datascanner/projects/static/dist/**/*
+src/os2datascanner/projects/static/node_modules/**/*

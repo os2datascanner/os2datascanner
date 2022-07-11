@@ -105,14 +105,21 @@ class ScannerTest(TestCase):
         self.user.save()
         view = self.get_webscannerupdate_view()
         form_fields = view.get_form_fields()
-        self.assertEqual(str(form_fields[-1]), 'validation_status')
-        self.user.is_superuser = False
-        self.user.save()
+        self.assertIn(
+                      'validation_status', str(form_fields),
+                      msg="No validation_status field in WebscannerUpdate get_form_fields"
+                      )
 
     def test_user_cannot_validate_scannerjob(self):
+        self.user.is_superuser = False
+        self.user.save()
         view = self.get_webscannerupdate_view()
         form_fields = view.get_form_fields()
-        self.assertEqual(str(form_fields[-1]), 'organization')
+        self.assertNotIn(
+            'validation_status', str(form_fields),
+            msg="User not superuser but validation_status"
+            "field present in WebscannerUpdate get_form_fields"
+        )
 
     def get_webscannerupdate_view(self):
         request = self.factory.get('/')

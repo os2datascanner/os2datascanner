@@ -11,8 +11,16 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
+from os2datascanner.projects.admin.adminapp.views.views import RestrictedDetailView
 from ..validate import validate_domain, get_validation_str
-from .scanner_views import *
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCopy,
+    ScannerCreate,
+    ScannerList)
 from ..models.scannerjobs.webscanner_model import WebScanner
 from django.utils.translation import ugettext_lazy as _
 
@@ -33,9 +41,10 @@ class WebScannerCreate(ScannerCreate):
 
     model = WebScanner
     type = 'web'
-    fields = ['name', 'schedule', 'url', 'exclusion_rules', 'download_sitemap',
-              'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
-              'do_last_modified_check', 'rules', 'organization', 'exclude_urls']
+    fields = ['name', 'schedule', 'url', 'exclusion_rules',
+              'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
+              'do_link_check', 'only_notify_superadmin', 'do_last_modified_check',
+              'rules', 'organization', 'exclude_urls']
 
     def get_form(self, form_class=None):
         if form_class is None:
@@ -61,14 +70,26 @@ class WebScannerCreate(ScannerCreate):
         return '/webscanners/%s/created/' % self.object.pk
 
 
+class WebScannerCopy(ScannerCopy):
+    """Create a new copy of an existing WebScanner"""
+
+    model = WebScanner
+    type = 'web'
+    fields = ['name', 'schedule', 'url', 'exclusion_rules',
+              'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
+              'do_link_check', 'only_notify_superadmin', 'do_last_modified_check',
+              'rules', 'organization', 'exclude_urls']
+
+
 class WebScannerUpdate(ScannerUpdate):
     """Update a scanner view."""
 
     model = WebScanner
     type = 'web'
-    fields = ['name', 'schedule', 'url', 'exclusion_rules', 'download_sitemap',
-              'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
-              'do_last_modified_check', 'rules', 'organization', 'exclude_urls']
+    fields = ['name', 'schedule', 'url', 'exclusion_rules',
+              'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
+              'do_link_check', 'only_notify_superadmin', 'do_last_modified_check',
+              'rules', 'organization', 'exclude_urls']
 
     def form_valid(self, form):
         if url_contains_spaces(form):
@@ -79,7 +100,7 @@ class WebScannerUpdate(ScannerUpdate):
     def get_context_data(self, **kwargs):
         """Get the context used when rendering the template."""
         context = super().get_context_data(**kwargs)
-        for value, desc in WebScanner.validation_method_choices:
+        for value, _desc in WebScanner.validation_method_choices:
             key = 'valid_txt_' + str(value)
             context[key] = get_validation_str(self.object, value)
         return context
@@ -110,14 +131,12 @@ class WebScannerAskRun(ScannerAskRun):
 
 
 class WebScannerRun(ScannerRun):
-
     """View that handles starting of a web scanner run."""
 
     model = WebScanner
 
 
 class WebScannerValidate(RestrictedDetailView):
-
     """View that handles validation of a domain."""
 
     model = WebScanner

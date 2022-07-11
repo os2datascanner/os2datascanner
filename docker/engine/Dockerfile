@@ -10,7 +10,7 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-FROM python:3.6 AS engine
+FROM python:3.9.7 AS engine
 
 LABEL org.opencontainers.image.title="OS2datascanner - Engine" \
       org.opencontainers.image.vendor="Magenta ApS" \
@@ -30,6 +30,7 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /code/requirements/sys-requirements
 COPY requirements/sys-requirements/sys-requirements-common.txt \
      requirements/sys-requirements/sys-requirements-engine.txt \
+     requirements/sys-requirements/backport-sys-requirements.txt \
      ./
 # hadolint ignore=DL3008,SC2046
 RUN set -ex \
@@ -41,9 +42,15 @@ RUN set -ex \
   # host system or users of other docker containers.
   && groupadd -g 73030 -r os2ds_engine\
   && useradd -u 73030 --no-log-init -r -g os2ds_engine os2ds_engine \
+  # We need LibreOffice 7.2 or higher, but this is not easily available through Debian \
+  # Use a backport repo to achieve this.
+  && echo "deb https://deb.debian.org/debian bullseye-backports main contrib non-free \
+  deb-src https://deb.debian.org/debian bullseye-backports main contrib non-free" >> /etc/apt/sources.list \
   # Install system dependencies from file.
   && apt-get -y update \
   && apt-get -y install --no-install-recommends $(grep -oh '^[^#][[:alnum:].-]*' sys-requirements*.txt) \
+  # Install from backport file too.
+  && apt-get -y -t bullseye-backports install --no-install-recommends $(grep -oh '^[^#][[:alnum:].-]*' backport-sys-requirements.txt) \
   # clean up after apt-get and man-pages
   && apt-get clean && rm -rf "/var/lib/apt/lists/*" "/tmp/*" "/var/tmp/*" "/usr/share/man/??" "/usr/share/man/??_*"
 
@@ -53,14 +60,16 @@ COPY requirements/python-requirements/requirements-engine.txt \
      requirements/python-requirements/requirements-test.txt \
      requirements/python-requirements/requirements-lint.txt \
      ./
-# hadolint ignore=DL4006
-RUN find requirements*.txt -print0 | xargs -0 -n1 pip install -r
+RUN pip install --no-cache-dir -r requirements-engine.txt \
+                               -r requirements-test.txt \
+                               -r requirements-lint.txt
 
 # Copy code
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/engine2 ./engine2/
 COPY src/os2datascanner/utils ./utils
 COPY src/os2datascanner/__init__.py ./
+
 
 COPY docker/engine/docker-settings.toml /code/docker/docker-settings.toml
 COPY docker/engine/docker-entrypoint.sh /code/docker/docker-entrypoint.sh
@@ -69,10 +78,11 @@ COPY docker/engine/docker-entrypoint.sh /code/docker/docker-entrypoint.sh
 WORKDIR /code
 COPY LICENSE ./
 COPY README.rst ./
-COPY NEWS.rst ./
+COPY CHANGELOG.md ./
 
 # Set up to run given command as the new user
 USER os2ds_engine:os2ds_engine
 
+EXPOSE 9091
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
 CMD ["explorer", "-h"]

@@ -39,8 +39,9 @@ class DataSource(Source):
         return DataSource(None, self._mime, self._name)
 
     def to_url(self):
-        return "data:{0};base64,{1}".format(self.mime,
-                b64encode(self._content).decode(encoding='ascii'))
+        return "data:{0};base64,{1}".format(
+            self.mime,
+            b64encode(self._content).decode(encoding='ascii'))
 
     @staticmethod
     @Source.url_handler("data")
@@ -49,19 +50,20 @@ class DataSource(Source):
         return DataSource(content, mime)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "content": b64encode(self._content).decode(encoding="ascii")
-                    if self._content else None,
-            "mime": self.mime,
-            "name": self.name
-        })
+        return dict(
+            **super().to_json_object(),
+            content=b64encode(self._content).decode(encoding="ascii") if self._content else None,
+            mime=self.mime,
+            name=self.name,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)
     def from_json_object(obj):
         content = obj["content"]
-        return DataSource(b64decode(content) if content else None,
-                obj["mime"], obj.get("name"))
+        return DataSource(
+            b64decode(content) if content else None,
+            obj["mime"], obj.get("name"))
 
 
 class DataResource(FileResource):
@@ -107,11 +109,22 @@ class DataHandle(Handle):
             return super().name
 
     @property
-    def presentation(self):
+    def sort_key(self):
+        return self.name
+
+    @property
+    def presentation_name(self):
         if self.source.name:
-            return "{0} (embedded)".format(self.source.name)
+            return f"{self.source.name}"
         else:
-            return "(embedded file of type {0})".format(self.guess_type())
+            return f"(anonymous file of type {self.guess_type()})"
+
+    @property
+    def presentation_place(self):
+        return "(embedded)"
+
+    def __str__(self):
+        return f"{self.presentation_name} {self.presentation_place}"
 
     def censor(self):
         return DataHandle(self.source.censor(), self.relative_path)
@@ -151,4 +164,4 @@ def unpack_data_url(url: str) -> Tuple[str, bytes]:
     # Our input was a normal Python string, and we expect our content to be raw
     # bytes. b64decode produces those already, but a plain string must be
     # explicitly converted
-    return (mime, b64decode(content) if base64 else content.encode())
+    return mime, b64decode(content) if base64 else content.encode()

@@ -22,7 +22,7 @@ fi
 # check if env var $BARE_MODE is set. If yes, don't wait for rabbitMQ
 if [[ -z "${BARE_MODE}" ]]; then
   echo "Waiting for rabbitmq"
-  python -m os2datascanner.utils.cli wait-for-rabbitmq --wait 30 || exit
+  python -m os2datascanner.utils.cli wait-for-rabbitmq || exit
   echo "OK"
   echo ""
 else

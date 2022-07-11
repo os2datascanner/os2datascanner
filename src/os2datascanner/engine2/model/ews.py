@@ -1,23 +1,20 @@
 from io import BytesIO
-import email
-from email.utils import parsedate_to_datetime
-import email.policy
 from urllib.parse import urlsplit, quote
 from contextlib import contextmanager
-from exchangelib import (Account, Message, Credentials,
-        IMPERSONATION, Configuration, FaultTolerance, ExtendedProperty)
-from exchangelib.errors import (ErrorServerBusy,
-        ErrorItemNotFound, ErrorNonExistentMailbox)
+from exchangelib import (
+    Account, Message, Credentials, IMPERSONATION,
+    Configuration, ExtendedProperty)
+from exchangelib.errors import (ErrorServerBusy, ErrorItemNotFound)
 from exchangelib.protocol import BaseProtocol
 
-from .utilities import NamedTemporaryResource
-from ..utilities.backoff import run_with_backoff
+from ..utilities.backoff import DefaultRetrier
 from ..conversions.types import OutputType
-from ..conversions.utilities.results import SingleResult, MultipleResults
+from ..conversions.utilities.results import SingleResult
 from .core import Source, Handle, FileResource
 
 
 BaseProtocol.SESSION_POOLSIZE = 1
+
 
 # An "entry ID" is the special identifier used to open something in the Outlook
 # rich client (after converting it to a hexadecimal string). This property can
@@ -27,6 +24,7 @@ BaseProtocol.SESSION_POOLSIZE = 1
 class EntryID(ExtendedProperty):
     property_tag = 4095
     property_type = 'Binary'
+
 
 Message.register("entry_id", EntryID)
 
@@ -48,7 +46,7 @@ def _dictify_headers(headers):
         d = InsensitiveDict()
         for mh in headers:
             n, v = mh.name, mh.value
-            if not n in d:
+            if n not in d:
                 d[n] = v
             else:
                 if isinstance(d[n], list):
@@ -94,7 +92,6 @@ class EWSAccountSource(Source):
         service_account = Credentials(
                 username=self._admin_user, password=self._admin_password)
         config = Configuration(
-                retry_policy=FaultTolerance(max_wait=1800),
                 service_endpoint=self._server,
                 credentials=service_account if self._server else None)
 
@@ -117,7 +114,7 @@ class EWSAccountSource(Source):
         return EWSAccountSource(
                 self._domain, self._server, None, None, self._user)
 
-    def handles(self, sm):
+    def handles(self, sm):  # noqa: CCR001, E501 too high cognitive complexity
         account = sm.open(self)
 
         def relevant_folders():
@@ -130,26 +127,28 @@ class EWSAccountSource(Source):
         def relevant_mails(relevant_folders):
             for folder in relevant_folders:
                 for mail in (m
-                        for m in folder.all().only("id", "headers", "entry_id")
-                        if isinstance(m, Message) and hasattr(m, "entry_id")):
+                             for m in folder.all().only("id", "headers", "entry_id")
+                             if isinstance(m, Message) and hasattr(m, "entry_id")):
                     headers = _dictify_headers(mail.headers)
                     if headers:
-                        yield EWSMailHandle(self,
-                                "{0}.{1}".format(folder.id, mail.id),
-                                headers.get("subject", "(no subject)"),
-                                folder.name,
-                                mail.entry_id.hex())
+                        yield EWSMailHandle(
+                            self,
+                            "{0}.{1}".format(folder.id, mail.id),
+                            headers.get("subject", "(no subject)"),
+                            folder.name,
+                            mail.entry_id.hex())
 
         yield from relevant_mails(relevant_folders())
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "domain": self._domain,
-            "server": self._server,
-            "admin_user": self._admin_user,
-            "admin_password": self._admin_password,
-            "user": self._user
-        })
+        return dict(
+            **super().to_json_object(),
+            domain=self._domain,
+            server=self._server,
+            admin_user=self._admin_user,
+            admin_password=self._admin_password,
+            user=self._user,
+        )
 
     @staticmethod
     @Source.url_handler("test-ews365")
@@ -190,8 +189,8 @@ class EWSMailResource(FileResource):
         def _retrieve_message():
             return account.root.get_folder(
                     folder_id).all().only("message_id").get(id=mail_id)
-        m, _ = run_with_backoff(_retrieve_message, ErrorServerBusy, fuzz=0.25)
 
+        m = DefaultRetrier(ErrorServerBusy).run(_retrieve_message)
         return not isinstance(m, ErrorItemNotFound)
 
     def get_message_object(self):
@@ -201,17 +200,9 @@ class EWSMailResource(FileResource):
 
             def _retrieve_message():
                 return account.root.get_folder(folder_id).get(id=mail_id)
-            self._message, _ = run_with_backoff(
-                    _retrieve_message, ErrorServerBusy, fuzz=0.25)
+            self._message = DefaultRetrier(
+                    ErrorServerBusy, fuzz=0.25).run(_retrieve_message)
         return self._message
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):
@@ -242,18 +233,26 @@ class EWSMailHandle(Handle):
     # but not important when computing equality
     eq_properties = Handle.BASE_PROPERTIES
 
-    def __init__(self, source,
-            path, mail_subject, folder_name, entry_id):
+    def __init__(
+        self,
+        source: EWSAccountSource,
+        path: str,
+        mail_subject: str,
+        folder_name: str,
+        entry_id: int,
+    ):
         super().__init__(source, path)
         self._mail_subject = mail_subject
         self._folder_name = folder_name
         self._entry_id = entry_id
 
     @property
-    def presentation(self):
-        return "\"{0}\" (in folder {1} of account {2})".format(
-                self._mail_subject,
-                self._folder_name or "(unknown folder)", self.source.address)
+    def presentation_name(self):
+        return f"\"{self._mail_subject}\""
+
+    @property
+    def presentation_place(self):
+        return f"folder {self._folder_name} of account {self.source.address}"
 
     @property
     def presentation_url(self):
@@ -270,6 +269,15 @@ class EWSMailHandle(Handle):
         else:
             return None
 
+    @property
+    def sort_key(self):
+        """ Returns a string to sort by formatted as:
+        DOMAIN/ACCOUNT/INBOX/MAIL_SUBJECT"""
+        account, domain = self.source.address.split("@", 1)
+
+        return f'{domain}/{account}/' \
+               f'{self._folder_name.removeprefix("/") or "(unknown folder)"}/{self._mail_subject}'
+
     def censor(self):
         return EWSMailHandle(
                 self.source.censor(), self.relative_path,
@@ -280,15 +288,17 @@ class EWSMailHandle(Handle):
         return "message/rfc822"
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "mail_subject": self._mail_subject,
-            "folder_name": self._folder_name,
-            "entry_id": self._entry_id
-        })
+        return dict(
+            **super().to_json_object(),
+            mail_subject=self._mail_subject,
+            folder_name=self._folder_name,
+            entry_id=self._entry_id,
+        )
 
     @staticmethod
     @Handle.json_handler(type_label)
     def from_json_object(obj):
-        return EWSMailHandle(Source.from_json_object(obj["source"]),
-                obj["path"], obj["mail_subject"],
-                obj.get("folder_name"), obj.get("entry_id"))
+        return EWSMailHandle(Source.from_json_object(
+            obj["source"]),
+            obj["path"], obj["mail_subject"],
+            obj.get("folder_name"), obj.get("entry_id"))

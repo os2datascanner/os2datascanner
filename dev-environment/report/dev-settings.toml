@@ -2,8 +2,6 @@ SECRET_KEY = "DUMMYKEY(for development)DUMMYKEY(for development)"
 
 # [mode]
 DEBUG = true
-KEYCLOAK_ENABLED = false
-SAML2_ENABLED = false
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
@@ -15,7 +13,6 @@ SESSION_COOKIE_NAME = "report_sessionid"
 # [installation]
 OPTIONAL_APPS = [
     'debug_toolbar',
-    "django_extensions",
 ]
 OPTIONAL_MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -26,25 +23,22 @@ NOTIFICATION_INSTITUTION = 'MAGENTA APS'
 
 # KEYCLOAK
 OIDC_RP_CLIENT_ID = "os2datascanner"
-OIDC_RP_CLIENT_SECRET = ""
 # endpoints
 OIDC_OP_AUTHORIZATION_ENDPOINT = "http://localkeycloak.os2datascanner:8090/auth/realms/magenta/protocol/openid-connect/auth"
 OIDC_OP_TOKEN_ENDPOINT = "http://localkeycloak.os2datascanner:8090/auth/realms/magenta/protocol/openid-connect/token"
 OIDC_OP_USER_ENDPOINT = "http://localkeycloak.os2datascanner:8090/auth/realms/magenta/protocol/openid-connect/userinfo"
 # signing algorithm and key
-OIDC_RP_SIGN_ALGO = "RS256"
 OIDC_OP_JWKS_ENDPOINT = "http://localkeycloak.os2datascanner:8090/auth/realms/magenta/protocol/openid-connect/certs"
 # login and logout urls
 LOGOUT_URL = "http://localkeycloak.os2datascanner:8090/auth/realms/magenta/protocol/openid-connect/logout"
 # Redirect urls
 LOGIN_REDIRECT_URL = "http://localhost:8040/"
-LOGOUT_REDIRECT_URL = ""
 
 # [email]
 DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"
 ADMIN_EMAIL = "os2datascanner@magenta.dk"
-EMAIL_HOST = "localhost"
-EMAIL_PORT = 25
+EMAIL_HOST = 'mailhog'
+EMAIL_PORT = 1025
 
 # options for django_debug_toolbar,
 # https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
@@ -55,7 +49,7 @@ SHOW_TOOLBAR_CALLBACK = "os2datascanner.projects.utils.debug.debug_toolbar_callb
 [DATABASES]
 
     [DATABASES.default]
-    ENGINE = "django.db.backends.postgresql_psycopg2"
+    ENGINE = "django_prometheus.db.backends.postgresql"
     NAME = "os2datascanner_report"
     USER = "os2datascanner_report_dev"
     PASSWORD = "os2datascanner_report_dev"

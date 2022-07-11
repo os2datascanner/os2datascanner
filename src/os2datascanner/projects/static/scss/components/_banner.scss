@@ -1,0 +1,67 @@
+.banner {
+  flex: 0 1 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 1rem;
+  background-color: var(--color-header-bg);
+  box-shadow: var(--box-shadow);
+  position: fixed;
+  width: 100%;
+  z-index: 9999;
+  .logo {
+    margin-right: 2em;
+  }
+  .user {
+    margin-left: auto;
+  }
+  @media (min-width: $break-xs) {
+    flex-wrap: nowrap;
+  }
+  @media (min-width: $break-lg) {
+    position: static;
+    width: auto;
+    z-index: auto;
+  }
+}
+
+@mixin menuicon($color) {
+  background-image: linear-gradient(180deg,
+    transparent 18%,
+    $color 18%,
+    $color 28%,
+    transparent 28%,
+    transparent 45%,
+    $color 45%,
+    $color 55%,
+    transparent 55%,
+    transparent 72%,
+    $color 72%,
+    $color 82%,
+    transparent 82%);
+}
+
+#navigation-toggle {
+  flex: 0 0 var(--size-logo-height);
+  order: 2;
+  display: inline;
+  appearance: none;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 1rem;
+  width: var(--size-logo-height);
+  height: var(--size-logo-height);
+  margin-right: .5rem;
+  cursor: pointer;
+  box-sizing: content-box;
+  @include menuicon(var(--color-primary-dark));
+  &:focus,
+  &:hover {
+    @include menuicon(var(--color-primary-light));
+  }
+  @media (min-width: $break-lg) {
+    display: none;
+  }
+}

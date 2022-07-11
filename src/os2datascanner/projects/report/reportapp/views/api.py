@@ -5,13 +5,14 @@ from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.views.generic import View
 
+from os2datascanner.utils.system_utilities import time_now
 from ..models.documentreport_model import DocumentReport
 from ..utils import iterate_queryset_in_batches
 
 logger = structlog.get_logger()
 
 
-def set_status_1(body):
+def set_status_1(username, body):
     """ Used for handling a match by a DocumentReport ID and resolutionstatus value.
     Supports handling one match at a time.
     May eventually be deprecated"""
@@ -19,7 +20,7 @@ def set_status_1(body):
     status_value = body.get("new_status")
 
     try:
-        status = DocumentReport.ResolutionChoices(status_value).value
+        DocumentReport.ResolutionChoices(status_value).value
     except ValueError:
         return {
             "status": "fail",
@@ -53,7 +54,7 @@ def set_status_1(body):
     }
 
 
-def set_status_2(body):
+def set_status_2(username, body):
     """ Refines set_status_1 functionality.
     Retrieves a list of DocumentReport id's and a handling-status value
     from template.
@@ -63,7 +64,19 @@ def set_status_2(body):
     status_value = body.get("new_status")
     doc_reports = DocumentReport.objects.filter(pk__in=doc_rep_pk)
 
+    logger.info(
+        "User changing match status",
+        user=username,
+        status=DocumentReport.ResolutionChoices(status_value),
+        **body,
+    )
+
     if not doc_reports.exists():
+        logger.warning(
+            "Could not find reports for status change",
+            user=username,
+            **body,
+        )
         return {
             "status": "fail",
             "message": "unable to populate list of doc reports"
@@ -77,14 +90,16 @@ def set_status_2(body):
                 }
             else:
                 dr.resolution_status = status_value
+                dr.resolution_time = time_now()
 
-        DocumentReport.objects.bulk_update(batch, ['resolution_status'])
+        DocumentReport.objects.bulk_update(batch, ['resolution_status', 'resolution_time'])
         return {
             "status": "ok"
         }
 
 
-def error_1(body):
+def error_1(username, body):
+    logger.warning("User called non-existing endpoint", user=username, **body)
     return {
         "status": "fail",
         "message": "action was missing or did not identify an endpoint"
@@ -112,8 +127,7 @@ class JSONAPIView(LoginRequiredMixin, View):
     def get_data(self, request):
         try:
             body = json.loads(request.body.decode("utf-8"))
-            logger.info("API call for user {0}".format(request.user), **body)
-            return api_endpoints.get(body.get("action"), error_1)(body)
+            return api_endpoints.get(body.get("action"), error_1)(str(request.user), body)
         except json.JSONDecodeError:
             return {
                 "status": "fail",

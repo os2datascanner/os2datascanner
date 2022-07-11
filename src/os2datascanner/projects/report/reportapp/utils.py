@@ -1,6 +1,7 @@
+import re
 import json
 import hashlib
-import unicodedata
+import warnings
 import structlog
 
 from django.conf import settings
@@ -8,11 +9,10 @@ from django.contrib.auth.models import User
 from mozilla_django_oidc import auth
 
 from os2datascanner.engine2.pipeline import messages
-
-from .models.aliases.alias_model import Alias
-from .models.aliases.emailalias_model import EmailAlias
-from .models.aliases.adsidalias_model import ADSIDAlias
 from .models.documentreport_model import DocumentReport
+
+from os2datascanner.projects.report.organizations.models import Alias
+from os2datascanner.projects.report.organizations.models import AliasType
 
 logger = structlog.get_logger()
 
@@ -41,10 +41,12 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
     sid = get_user_data(saml_attr.get('sid'), user_data)
     user = User.objects.get(username=username)
     if email:
-        sub_alias, is_created = EmailAlias.objects.get_or_create(user= user, address=email)
+        sub_alias, is_created = Alias.objects.get_or_create(user=user, _value=email,
+                                                            _alias_type=AliasType.EMAIL)
         create_alias_and_match_relations(sub_alias)
     if sid:
-        sub_alias, is_created = ADSIDAlias.objects.get_or_create(user=user, sid=sid)
+        sub_alias, is_created = Alias.objects.get_or_create(user=user, _value=sid,
+                                                            _alias_type=AliasType.SID)
         create_alias_and_match_relations(sub_alias)
 
 
@@ -59,7 +61,10 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
         user = super(OIDCAuthenticationBackend, self).create_user(claims)
         get_claim_user_info(claims, user)
         user.save()
-        get_or_create_user_aliases_OIDC(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
+        get_or_create_user_aliases_OIDC(
+            user,
+            email=claims.get('email', ''),
+            sid=claims.get('sid', ''))
 
         # self.update_groups(user, claims)
 
@@ -68,7 +73,10 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
     def update_user(self, user, claims):
         get_claim_user_info(claims, user)
         user.save()
-        get_or_create_user_aliases_OIDC(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
+        get_or_create_user_aliases_OIDC(
+            user,
+            email=claims.get('email', ''),
+            sid=claims.get('sid', ''))
         # self.update_groups(user, claims)
 
         return user
@@ -83,9 +91,11 @@ def get_claim_user_info(claims, user):
 def get_or_create_user_aliases_OIDC(user, email, sid):  # noqa: D401
     """ This method creates or updates the users aliases  """
     if email:
-        EmailAlias.objects.get_or_create(user=user, address=email)
+        Alias.objects.get_or_create(user=user, _value=email,
+                                    _alias_type=AliasType.EMAIL)
     if sid:
-        ADSIDAlias.objects.get_or_create(user=user, sid=sid)
+        Alias.objects.get_or_create(user=user, _value=sid,
+                                    _alias_type=AliasType.SID)
 
 
 def get_user_data(key, user_data):
@@ -116,7 +126,6 @@ def iterate_queryset_in_batches(batch_size, queryset):
     while i < total_count:
         batch = queryset[i: batch_size + i]
         batch_count = batch.count()
-        print('{0}-{1}/{2}'.format(i, i + batch_count, total_count))
         yield batch
 
         # The operations performed by the caller might have reduced the size of
@@ -131,21 +140,111 @@ def iterate_queryset_in_batches(batch_size, queryset):
 
 
 def get_max_sens_prop_value(doc_report_obj, key):
-    """Helper method for migration 0014_documentreport_added_sensitivity_and_probability.
+    """Helper method for migration 0017_documentreport_added_sensitivity_and_probability.
     This method returns either a Sensitivity object or probability maximum value.
     The method is located in utils as could become handy else where."""
-    if (doc_report_obj.data
-            and "matches" in doc_report_obj.data
-            and doc_report_obj.data["matches"]):
-        return getattr(messages.MatchesMessage.from_json_object(
-            doc_report_obj.data["matches"]), key)
+    warnings.warn(
+            ("get_max_sens_prop_value is deprecated;"
+             " use DocumentReport.matches directly"),
+            DeprecationWarning,
+            stacklevel=2)
+
+    if not hasattr(doc_report_obj, "data"):
+        if doc_report_obj.matches:
+            return getattr(doc_report_obj.matches, key)
+    else:
+        if (doc_report_obj.data
+                and "matches" in doc_report_obj.data
+                and doc_report_obj.data["matches"]):
+            return getattr(messages.MatchesMessage.from_json_object(
+                doc_report_obj.data["matches"]), key)
 
 
 def create_alias_and_match_relations(sub_alias):
     """Method for creating match_relations for a given alias
     with all the matching DocumentReports"""
     tm = Alias.match_relation.through
-    reports = DocumentReport.objects.filter(data__metadata__metadata__contains={
-                    str(sub_alias.key): str(sub_alias)})
-    tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk) 
+
+    # Although RFC 5321 says that the local part of an email address
+    # -- the bit to the left of the @ --
+    # is case sensitive, the real world disagrees..
+
+    if sub_alias.alias_type == AliasType.EMAIL:
+        reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
+                        "email-account": sub_alias.value.lower()})
+    elif sub_alias.alias_type == AliasType.SID:
+        reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
+                        "filesystem-owner-sid": sub_alias.value})
+    # TODO: web-domain should have its own AliasType, not use GENERIC
+    # TODO: Perhaps Alias should have a field with these key strings instead as well.
+    elif sub_alias.alias_type == AliasType.GENERIC:
+        reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
+                        "web-domain": sub_alias.value})
+    tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk)
                             for r in reports], ignore_conflicts=True)
+
+
+def get_msg(query):
+    """ Utility function used in get_presentation,
+        which is used in migration 0033_add_sort_key_and_name_charfield
+        and in management command refresh_sort_key.
+        """
+    old_db = hasattr(query, "data")
+
+    # only one of these are not None
+    matches = query.data.get("matches") if old_db else query.raw_matches
+    metadata = query.data.get("metadata") if old_db else query.raw_metadata
+    problem = query.data.get("problem") if old_db else query.raw_problem
+
+    if matches:
+        return messages.MatchesMessage.from_json_object(matches)
+    elif problem:
+        problem = messages.ProblemMessage.from_json_object(problem)
+        # problemMessage have optional handle and source fields. Try the latter if
+        # the first is None.
+        if not problem.handle:
+            problem = problem.source if problem.source else problem
+        return problem
+    elif metadata:
+        return messages.MetadataMessage.from_json_object(metadata)
+    else:
+        return None
+
+
+def get_presentation(query):
+    """ Utility function used in used in migration 0033_add_sort_key_and_name_charfield
+        and in management command refresh_sort_key.
+        Returns handle of a message"""
+
+    type_msg = get_msg(query)
+    if not type_msg:
+        return ""
+
+    return type_msg.handle if type_msg.handle else ""
+
+
+def prepare_json_object(o):
+    """Processes an object suitable for JSON serialisation to make it suitable
+    for storing in the OS2datascanner report module's database. (At the moment
+    this just means removing all null bytes and PEP 383 surrogate pairs from
+    string values, as PostgreSQL can't deal with them in any string or JSON
+    data type.)"""
+    if isinstance(o, dict):
+        return {prepare_json_object(k): prepare_json_object(v)
+                for k, v in o.items()}
+    elif isinstance(o, (list, tuple)):
+        return [prepare_json_object(i) for i in o]
+    elif isinstance(o, str):
+        if "\0" in o:
+            warnings.warn(
+                    "stripping null byte for PostgreSQL compatibility",
+                    UnicodeWarning)
+            o = o.replace("\0", "")
+        if re.search(r'[\uD800-\uDFFF]', o):
+            warnings.warn(
+                    "stripping illegal surrogates for PostgreSQL compatibility",
+                    UnicodeWarning)
+            o = re.sub(r'[\uD800-\uDFFF]', '\ufffd', o)
+        return o
+    else:
+        return o

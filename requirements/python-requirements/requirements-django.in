@@ -1,14 +1,21 @@
 -r requirements-common.in
 
 ipython
-Django==3.2.4
+Django==3.2.11
 django-model-utils
+django-mptt
+django-prometheus
 django-settings-export
 django-storages[google]
 django-structlog
 gunicorn
+uvicorn[standard]
 psycopg2-binary
 whitenoise
+djangorestframework
+channels
+channels_redis
+cryptography>=3.2
 
 # At the moment only used during development:
 django_extensions
@@ -24,5 +31,4 @@ python-magic
 regex
 
 # Needed to avoid model loading issue:
-beautifulsoup4
 Pillow

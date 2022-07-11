@@ -3,7 +3,7 @@
     {% if user.is_authenticated %}
         {% if not user.profile.is_upload_only %}
 <div class="scrollbar-content">
-    <div class="tabs scroll-width-none">
+    <div class="tabs">
         {% if settings.ENABLE_WEBSCAN %}
         <a id="web" class="tabs__control" href="/webscanners/">
             {% trans "Webscanner" %}
@@ -34,6 +34,11 @@
             {% trans "Office 365 OneDrive filscanner" %}
         </a>
         {% endif %}
+        {% if settings.ENABLE_MSGRAPH_CALENDARSCAN %}
+        <a id="msgraph-calendar" class="tabs__control" href="/msgraph-calendarscanners/">
+            {% trans "Office 365 kalenderscanner" %}
+        </a>
+        {% endif %}
         {% if settings.ENABLE_GOOGLEDRIVESCAN %}
         <a id="googledrive" class="tabs__control" href="/googledrivescanners/">
             {% trans "Google Drive scanner" %}
@@ -58,10 +63,13 @@
 {% if page == 'scan-status' %}
 <div class="tabs">
     <a id="scan-status" class="tabs__control" href="/status/">
-        {% trans "Scanner status" %}
+        {% trans "Scans in progress" %}
     </a>
     <a id="completed" class="tabs__control" href="/status-completed/">
         {% trans "Completed scans" %}
+    </a>
+    <a id="error-log" class="tabs__control" href="/error-log/">
+        {% trans "Error Log" %}
     </a>
     <!-- <a id="upcoming" class="tabs__control" href="#">Kommende scanninger</a> -->
 </div>
@@ -75,6 +83,7 @@
     var dropbox = document.getElementById("dropbox")
     var msgraph_mail = document.getElementById("msgraph-mail")
     var msgraph_file = document.getElementById("msgraph-file")
+    var msgraph_calendar = document.getElementById("msgraph-calendar")
     var googledrive = document.getElementById("googledrive")
     var gmail = document.getElementById("gmail")
     var sbsys = document.getElementById("sbsys")
@@ -98,6 +107,9 @@
         } else if (msgraph_file) {
             window.location.href = "/msgraph-filescanners/"
             msgraph_file.classList.add('active')
+        } else if (msgraph_calendar) {
+            window.location.href = "/msgraph-calendarscanners/"
+            msgraph_calendar.classList.add('active')
         } else if (googledrive) {
             window.location.href = "/googledrivescanners/"
             googledrive.classList.add('active')
@@ -127,6 +139,9 @@
     if (location.pathname === '/msgraph-filescanners/') {
         msgraph_file.classList.add("active")
     }
+    if (location.pathname === '/msgraph-calendarscanners/') {
+        msgraph_calendar.classList.add("active")
+    }
     if (location.pathname === '/gmailscanners/') {
         gmail.classList.add("active")
     }
@@ -141,11 +156,15 @@
     // Status tabs
     var scan_status = document.getElementById("scan-status")
     var completed = document.getElementById("completed")
+    var error_log = document.getElementById("error-log")
 
     if (location.pathname === '/status/') {
         scan_status.classList.add('active')
     }
     if (location.pathname === '/status-completed/') {
         completed.classList.add("active")
+    }
+    if (location.pathname === '/error-log/') {
+        error_log.classList.add("active")
     }
 </script>

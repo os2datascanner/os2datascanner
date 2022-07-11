@@ -1,6 +1,7 @@
 import logging
-from ..rules.rule import Rule
-from ..model.core import Source, Handle, SourceManager
+from .. import settings
+from ..model.core import Source
+from ..utilities.backoff import TimeoutRetrier
 from ..conversions import convert
 from ..conversions.types import OutputType, encode_dict
 from . import messages
@@ -8,33 +9,52 @@ from . import messages
 logger = logging.getLogger(__name__)
 
 READS_QUEUES = ("os2ds_conversions",)
-WRITES_QUEUES = ("os2ds_scan_specs", "os2ds_representations",
-        "os2ds_problems", "os2ds_checkups",)
+WRITES_QUEUES = (
+    "os2ds_scan_specs",
+    "os2ds_representations",
+    "os2ds_problems",
+    "os2ds_checkups",)
 PROMETHEUS_DESCRIPTION = "Representations generated"
+PREFETCH_COUNT = 8
 
 
 def check(source_manager, handle):
-    """Runs Resource.check() on the ultimate top-level Handle behind a given
-    Handle."""
+    """
+    Runs Resource.check() on the top-level Handle behind a given Handle.
+    """
+
+    # In most cases top-level is the >ultimate top-level<, for example a container of files. In
+    # cases where the next "layer" up has yields_independent_sources set true, f.e. email
+    # accounts, we stop traversing. Thus checking the email's existence and not the mail
+    # account's.
     while handle.source.handle:
-        handle = handle.source.handle
+        if not handle.source.handle.source.yields_independent_sources:
+            handle = handle.source.handle
+        else:
+            break
     try:
         return handle.follow(source_manager).check()
     except Exception as e:
-        logger.warning("check of {0} failed: {1}".format(handle.presentation, e))
+        logger.debug("check of {0} failed: {1}".format(handle.presentation, e))
         return False
 
 
-def message_received_raw(body, channel, source_manager):
+def message_received_raw(body, channel, source_manager, *, _check=True):  # noqa: CCR001,E501,C901
     conversion = messages.ConversionMessage.from_json_object(body)
     configuration = conversion.scan_spec.configuration
     head, _, _ = conversion.progress.rule.split()
     required = head.operates_on
+    exception = None
+
+    tr = TimeoutRetrier(
+            seconds=settings.pipeline["op_timeout"],
+            max_tries=settings.pipeline["op_tries"])
 
     try:
-        if not check(source_manager, conversion.handle):
-            # The resource is missing. Generate a special problem message and
-            # stop the generator immediately
+        if _check and not tr.run(check, source_manager, conversion.handle):
+            # The resource is missing (and we're in a context where we care).
+            # Generate a special problem message and stop the generator
+            # immediately
             for problems_q in ("os2ds_problems", "os2ds_checkups",):
                 yield (problems_q, messages.ProblemMessage(
                         scan_tag=conversion.scan_spec.scan_tag,
@@ -58,50 +78,57 @@ def message_received_raw(body, channel, source_manager):
                 elif mime_type == mt:
                     break
             else:
-                representation = convert(resource, OutputType.Text)
+                representation = tr.run(convert, resource, OutputType.Text)
         else:
-            representation = convert(resource, required)
+            representation = tr.run(convert, resource, required)
 
         if representation and representation.parent:
             # If the conversion also produced other values at the same
             # time, then include all of those as well; they might also be
             # useful for the rule engine
-            dv = {k.value: v.value
-                    for k, v in representation.parent.items()
-                    if isinstance(k, OutputType)}
+            dv = {k.value: v.value for k, v in representation.parent.items()
+                  if isinstance(k, OutputType)}
         else:
             dv = {required.value: representation.value
-                    if representation else None}
+                  if representation else None}
 
         logger.info(f"Required representation for {conversion.handle} is {required}")
         yield ("os2ds_representations",
-                messages.RepresentationMessage(
+               messages.RepresentationMessage(
                         conversion.scan_spec, conversion.handle,
                         conversion.progress, encode_dict(dv)).to_json_object())
     except KeyError:
         # If we have a conversion we don't support, then check if the current
         # handle can be reinterpreted as a Source; if it can, then try again
         # with that
-        derived_source = Source.from_handle(conversion.handle, source_manager)
-        if derived_source:
-            # Copy almost all of the existing scan spec, but note the progress
-            # of rule execution and replace the source
-            new_scan_spec = conversion.scan_spec._replace(
-                    source=derived_source, progress=conversion.progress)
-            yield ("os2ds_scan_specs", new_scan_spec.to_json_object())
-        else:
-            # If we can't recurse any deeper, then produce an empty conversion
-            # so that the matcher stage has something to work with
-            # (XXX: is this always the right approach?)
-            yield ("os2ds_representations",
-                    messages.RepresentationMessage(
-                            conversion.scan_spec, conversion.handle,
-                            conversion.progress, {
-                                required.value: None
-                            }).to_json_object())
+        try:
+            derived_source = Source.from_handle(conversion.handle, source_manager)
+            if derived_source:
+                # Copy almost all of the existing scan spec, but note the progress
+                # of rule execution and replace the source
+                new_scan_spec = conversion.scan_spec._replace(
+                        source=derived_source, progress=conversion.progress)
+                yield ("os2ds_scan_specs", new_scan_spec.to_json_object())
+            else:
+                # If we can't recurse any deeper, then produce an empty conversion
+                # so that the matcher stage has something to work with
+                # (XXX: is this always the right approach?)
+                yield ("os2ds_representations",
+                       messages.RepresentationMessage(
+                                conversion.scan_spec, conversion.handle,
+                                conversion.progress, {
+                                    required.value: None
+                                }).to_json_object())
+        except Exception as e:
+            exception = e
+
     except Exception as e:
-        exception_message = "Processing error. {0}: ".format(type(e).__name__)
-        exception_message += ", ".join([str(a) for a in e.args])
+        exception = e
+
+    if exception:
+        exception_message = "Processing error. {0}: ".format(type(exception).__name__)
+        exception_message += ", ".join([str(a) for a in exception.args])
+        logger.warning(exception_message)
         for problems_q in ("os2ds_problems", "os2ds_checkups",):
             yield (problems_q, messages.ProblemMessage(
                     scan_tag=conversion.scan_spec.scan_tag,

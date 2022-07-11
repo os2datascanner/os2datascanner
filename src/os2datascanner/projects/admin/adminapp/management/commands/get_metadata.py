@@ -8,6 +8,7 @@ from django.core.management.base import BaseCommand
 from os2datascanner.engine2.model.core import SourceManager
 from os2datascanner.engine2.model.file import FilesystemHandle
 
+
 def valid_path(path):
     if os.path.exists(path):
         return path

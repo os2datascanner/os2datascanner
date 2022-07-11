@@ -34,7 +34,7 @@ class RuleList(RestrictedListView):
     def get_context_data(self):
         context = super().get_context_data()
 
-        context["cprrule_list"] = self.get_queryset().filter(cprrule__isnull=False)
+        context["systemrule_list"] = self.get_queryset().filter(regexrule__isnull=True)
         context["regexrule_list"] = self.get_queryset().filter(regexrule__isnull=False)
         context["sensitivity"] = Sensitivity
 
@@ -68,9 +68,6 @@ class RuleCreate(RestrictedCreateView):
 
         return form
 
-    def form_invalid(self, form):
-        super().form_invalid(form)
-
     def form_valid(self, form):
         """
         validate all the form first
@@ -92,7 +89,8 @@ class RegexRuleCreate(RuleCreate):
         form = super().get_form(form_class)
 
         # Then a dynamic form to create multiple pattern fields
-        # See - https://www.caktusgroup.com/blog/2018/05/07/creating-dynamic-forms-django/ (Creating a dynamic form)
+        # See - https://www.caktusgroup.com/blog/2018/05/07/creating-dynamic-forms-django/
+        # (Creating a dynamic form)
         self.patterns = extract_pattern_fields(form.data)
 
         idx = 0
@@ -163,7 +161,7 @@ class RuleUpdate(RestrictedUpdateView):
             with transaction.atomic():
                 RuleCreate._save_rule_form(form)
                 return super().form_valid(form)
-        except:
+        except Exception:
             return super().form_invalid(form)
 
 
@@ -228,7 +226,7 @@ class RegexRuleUpdate(RuleUpdate):
                 # Skip the RuleUpdate implementation of form_valid -- we've
                 # already created our (Regex)Rule object
                 return super(RuleUpdate, self).form_valid(form)
-        except:
+        except Exception:
             return super().form_invalid(form)
 
     def get_pattern_fields(self):
@@ -252,6 +250,7 @@ class CPRRuleUpdate(RuleUpdate):
     def get_success_url(self):
         """The URL to redirect to after successful update."""
         return '/rules/cpr/%s/saved/' % self.object.pk
+
 
 class RuleDelete(RestrictedDeleteView):
     """Delete a rule view."""

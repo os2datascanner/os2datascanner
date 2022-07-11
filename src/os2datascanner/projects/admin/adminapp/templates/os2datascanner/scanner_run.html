@@ -13,7 +13,7 @@
 
 <div class="runner-container">
 {% if scan_tag %}
-  
+
   <div class="runner-content">
     <span class="icon">
       {% include "components/svg-icons/scan_succes.svg" %}
@@ -34,8 +34,8 @@
     <div class="detail-toggle" onclick="toggleDetails()">
       <div class="flex">
         <span>
-          <i id="arrow_right" class="material-icons">arrow_right</i>
-          <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
+          <i id="chevron_right" class="material-icons">chevron_right</i>
+          <i id="expand_more" class="material-icons" style="display: none;">expand_more</i>
         </span>
 
         <span class="text">
@@ -68,15 +68,15 @@
       <div class="detail-toggle" onclick="toggleDetails()">
         <div class="flex">
           <span>
-            <i id="arrow_right" class="material-icons">arrow_right</i>
-            <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
+            <i id="chevron_right" class="material-icons">chevron_right</i>
+            <i id="expand_more" class="material-icons" style="display: none;">expand_more</i>
           </span>
-  
+
           <span class="text">
             {% trans "Technical details" %}
           </span>
         </div>
-  
+
         <pre id="scan-details" style="display: none;">
           {% trans "Could not open data source:" %} {{ engine2_error }}
         </pre>
@@ -103,15 +103,15 @@
       <div class="detail-toggle" onclick="toggleDetails()">
         <div class="flex">
           <span>
-            <i id="arrow_right" class="material-icons">arrow_right</i>
-            <i id="arrow_drop_down" class="material-icons" style="display: none;">arrow_drop_down</i>
+            <i id="chevron_right" class="material-icons">chevron_right</i>
+            <i id="expand_more" class="material-icons" style="display: none;">expand_more</i>
           </span>
-  
+
           <span class="text">
             {% trans "Technical details" %}
           </span>
         </div>
-  
+
         <pre id="scan-details" style="display: none;">
           {% trans "Could not communicate with the scanner engine:" %} {{ pika_error }}
         </pre>

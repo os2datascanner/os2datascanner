@@ -14,10 +14,10 @@ for model in [OrganizationalUnit, Position]:
 class AliasAdmin(ImportedAdmin):
     """ Controls behaviour in Django Admin
            for the Alias model"""
-    fields = ('account', '_alias_type', 'value',
+    fields = ('account', '_alias_type', '_value',
               'last_import_requested', 'last_import'
               )
-    list_display = ('account', '_alias_type', 'value', 'last_import')
+    list_display = ('account', '_alias_type', '_value', 'last_import')
 
 
 @admin.register(Organization)

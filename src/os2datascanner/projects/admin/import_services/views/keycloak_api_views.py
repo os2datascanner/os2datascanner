@@ -41,7 +41,8 @@ def process_request(request, parameter_keys, kc_call):
         status = 408
         json_data['errorMessage'] = "Keycloak: no response"
     finally:
-        return JsonResponse(json_data, status=status)
+        return JsonResponse(json_data, status=status)  # noqa: B012,
+        # return inside finally blocks cause exceptions to be silenced
 
 
 def verify_connection(request):

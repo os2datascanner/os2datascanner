@@ -1,6 +1,9 @@
+import uuid
 from uuid import UUID
+import random
 from typing import Optional, Sequence, NamedTuple
 from datetime import datetime
+from dateutil import tz
 import warnings
 
 from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
@@ -61,7 +64,7 @@ class ProgressFragment(NamedTuple):
         return ProgressFragment(
                 rule=Rule.from_json_object(obj["rule"]),
                 matches=[MatchFragment.from_json_object(mf)
-                        for mf in obj["matches"]])
+                         for mf in obj["matches"]])
 
     _deep_replace = _deep_replace
 
@@ -69,16 +72,20 @@ class ProgressFragment(NamedTuple):
 class ScannerFragment(NamedTuple):
     pk: int
     name: str
+    test: bool = False
 
     def to_json_object(self):
         return {
             "pk": self.pk,
-            "name": self.name
+            "name": self.name,
+            "test": self.test,
         }
 
     @classmethod
     def from_json_object(cls, obj):
-        return ScannerFragment(pk=obj["pk"], name=obj["name"])
+        return ScannerFragment(
+            pk=obj["pk"], name=obj["name"],
+            test=obj.get("test", False))
 
     _deep_replace = _deep_replace
 
@@ -119,9 +126,26 @@ class ScanTagFragment(NamedTuple):
             "user": self.user,
             "scanner": self.scanner.to_json_object() if self.scanner else None,
             "organisation": (self.organisation.to_json_object()
-                    if self.organisation else None),
+                             if self.organisation
+                             else None),
             "destination": self.destination
         }
+
+    @classmethod
+    def make_dummy(cls):
+        account = "".join(
+                random.choice("bdfghjkqvwxyz13579_") for _ in range(0, 10))
+        return ScanTagFragment(
+                time=datetime.fromtimestamp(
+                        random.randint(0, 2**32), tz=tz.gettz()),
+                user=f"{account}@placeholder.invalid",
+                scanner=ScannerFragment(
+                        pk=random.randint(0, 1000000000),
+                        name="Search for Datas"),
+                organisation=OrganisationFragment(
+                        name="Placeholder Heavy Industries, Ivld.",
+                        uuid=uuid.uuid4()
+                ))
 
     @classmethod
     def from_json_object(cls, obj):
@@ -161,6 +185,7 @@ class ScanSpecMessage(NamedTuple):
     rule: Rule
     configuration: dict
     progress: ProgressFragment
+    filter_rule: Rule
 
     def to_json_object(self):
         return {
@@ -168,6 +193,9 @@ class ScanSpecMessage(NamedTuple):
             "source": self.source.to_json_object(),
             "rule": self.rule.to_json_object(),
             "configuration": self.configuration or {},
+            "filter_rule": (
+                self.filter_rule.to_json_object()
+                if self.filter_rule else None),
             "progress": (
                     self.progress.to_json_object() if self.progress else None)
         }
@@ -177,6 +205,7 @@ class ScanSpecMessage(NamedTuple):
         # The progress fragment is only present when a scan spec is based on a
         # derived source and so already contains scan progress information
         progress_fragment = obj.get("progress")
+        filter_rule = obj.get("filter_rule")
         return ScanSpecMessage(
                 scan_tag=ScanTagFragment.from_json_object(obj["scan_tag"]),
                 source=Source.from_json_object(obj["source"]),
@@ -185,8 +214,14 @@ class ScanSpecMessage(NamedTuple):
                 # specs, so not all clients will send it. Add an empty one if
                 # necessary
                 configuration=obj.get("configuration", {}),
-                progress=ProgressFragment.from_json_object(progress_fragment)
-                        if progress_fragment else None)
+                filter_rule=(
+                    SimpleRule.from_json_object(filter_rule)
+                    if filter_rule
+                    else None),
+                progress=(
+                    ProgressFragment.from_json_object(progress_fragment)
+                    if progress_fragment
+                    else None))
 
     _deep_replace = _deep_replace
 
@@ -286,7 +321,7 @@ class MatchesMessage(NamedTuple):
     matches: Sequence[MatchFragment]
 
     @property
-    def sensitivity(self):
+    def sensitivity(self):  # noqa: CCR001, too high cognitive complexity
         """Computes the overall sensitivity of the matches contained in this
         message (i.e., the highest sensitivity of any submatch), or None if
         there are no matches."""
@@ -294,12 +329,15 @@ class MatchesMessage(NamedTuple):
             return None
         else:
 
-            def _cms(fragment):
+            def _cms(fragment):  # noqa: CCR001, E501 too high cognitive complexity
                 """Computes the sensitivity of a set of results returned by a
                 rule, returning (in order of preference) the highest
                 sensitivity (lower than that of the rule) associated with a
                 match, the sensitivity of the rule, or 0."""
-                rule_sensitivity = fragment.rule.sensitivity.value if fragment.rule.sensitivity else None
+                rule_sensitivity = (
+                    fragment.rule.sensitivity.value
+                    if fragment.rule.sensitivity
+                    else None)
 
                 max_sub = None
                 if (rule_sensitivity is not None
@@ -328,7 +366,7 @@ class MatchesMessage(NamedTuple):
         }
 
     @property
-    def probability(self):
+    def probability(self):  # noqa: CCR001, too high cognitive complexity
         """Computes the overall probability of the matches contained in this
         message (i.e., the highest probability of any submatch), or None if
         there are no matches."""
@@ -355,12 +393,14 @@ class MatchesMessage(NamedTuple):
 
     @staticmethod
     def from_json_object(obj):
+        # WARNING! Migration 0052 in the report app is dependent on this method.
+        # Alter with care!
         return MatchesMessage(
                 scan_spec=ScanSpecMessage.from_json_object(obj["scan_spec"]),
                 handle=Handle.from_json_object(obj["handle"]),
                 matched=obj["matched"],
                 matches=[MatchFragment.from_json_object(mf)
-                        for mf in obj["matches"]])
+                         for mf in obj["matches"]])
 
     _deep_replace = _deep_replace
 
@@ -401,12 +441,15 @@ class StatusMessage(NamedTuple):
     status_is_error: bool = False
 
     # Emitted by (top-level) explorers
+    """If set, the number of Handles found during an exploration pass."""
     total_objects: Optional[int] = None
+    """If set, the number of new Sources produced and enqueued during an
+    exploration pass."""
+    new_sources: Optional[int] = None
 
     # Emitted by workers
     object_size: Optional[int] = None
     object_type: Optional[str] = None
-
 
     def to_json_object(self):
         return {
@@ -415,6 +458,7 @@ class StatusMessage(NamedTuple):
             "status_is_error": self.status_is_error,
 
             "total_objects": self.total_objects,
+            "new_sources": self.new_sources,
 
             "object_size": self.object_size,
             "object_type": self.object_type
@@ -427,7 +471,52 @@ class StatusMessage(NamedTuple):
                 message=obj.get("message"),
                 status_is_error=obj.get("status_is_error"),
                 total_objects=obj.get("total_objects"),
+                new_sources=obj.get("new_sources"),
                 object_size=obj.get("object_size"),
                 object_type=obj.get("object_type"))
+
+    _deep_replace = _deep_replace
+
+
+class CommandMessage(NamedTuple):
+    """A CommandMessage is an order from the administration system. As they may
+    modify the treatment of other messages, they should be processed as soon as
+    possible, and so should be sent on a high-priority queue."""
+
+    abort: Optional[ScanTagFragment] = None
+    # If set, the scan tag of a scan that should no longer be processed by the
+    # pipeline. Pipeline components should acknowledge and silently ignore all
+    # messages carrying this tag.
+    #
+    # To avoid accumulating tags indefinitely, pipeline components should store
+    # them in a ring buffer of a reasonable size. (What "reasonable" means
+    # depends a bit on the installation and on how many concurrent scans it can
+    # be expected to perform.)
+
+    log_level: Optional[int] = None
+    # If set, the new logging level of the "os2datascanner" root logger.
+
+    profiling: Optional[bool] = None
+    """If set, whether or not to perform runtime profiling.
+
+    As a side effect of processing a message with this attribute set, the
+    target process will print and clear any profiling statistics it might
+    already have collected."""
+
+    def to_json_object(self):
+        return {
+            "abort": self.abort.to_json_object() if self.abort else None,
+            "log_level": self.log_level,
+            "profiling": self.profiling
+        }
+
+    @staticmethod
+    def from_json_object(obj):
+        abort = obj.get("abort")
+        return CommandMessage(
+                abort=ScanTagFragment.from_json_object(abort)
+                if abort else None,
+                log_level=obj.get("log_level"),
+                profiling=obj.get("profiling"))
 
     _deep_replace = _deep_replace

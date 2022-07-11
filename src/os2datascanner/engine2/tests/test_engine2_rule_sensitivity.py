@@ -1,9 +1,7 @@
-from datetime import datetime, timezone
 import unittest
 
 from os2datascanner.engine2.rules.rule import Rule, Sensitivity
 
-from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.dummy import AlwaysMatchesRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.logical import OrRule, AndRule
@@ -24,7 +22,7 @@ def run_rule(rule, in_v):
             rule = pve
         else:
             rule = nve
-    return (rule, results)
+    return rule, results
 
 
 class RuleSensitivityTests(unittest.TestCase):
@@ -53,5 +51,5 @@ class RuleSensitivityTests(unittest.TestCase):
             self.assertEqual(matched, True)
             self.assertEqual(sensitivity, max(
                     [rule.sensitivity for rule, matches in results.items()
-                            if rule.sensitivity is not None and matches],
+                        if rule.sensitivity is not None and matches],
                     key=lambda sensitivity: sensitivity.value))

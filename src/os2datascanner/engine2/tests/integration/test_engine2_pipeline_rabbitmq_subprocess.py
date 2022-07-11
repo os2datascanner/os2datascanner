@@ -1,16 +1,15 @@
-from os import getenv
 import sys
-from json import dumps, loads
 import unittest
 import subprocess
 
 
 from os2datascanner.engine2.model.core import Source
 from os2datascanner.engine2.pipeline.utilities import pika
+from .test_engine2_pipeline_rabbitmq import (
+        StopHandling, PipelineTestRunner)
 
 
-from .test_engine2_pipeline import (
-        handle_message, data_url, rule, expected_matches)
+from .test_engine2_pipeline import (data_url, rule, expected_matches)
 
 
 def python(*args):
@@ -19,34 +18,23 @@ def python(*args):
     return subprocess.Popen([sys.executable, *args])
 
 
-class StopHandling(Exception):
-    pass
-
-
-class SubprocessPipelineTestRunner(pika.PikaPipelineRunner):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.messages = {}
-
-    def handle_message(self, message_body, *, channel=None):
-        self.messages[message_body["origin"]] = message_body
-        if len(self.messages) == 2:
-            raise StopHandling()
-        yield from []
-
-
 class Engine2SubprocessPipelineTests(unittest.TestCase):
     def setUp(self):
 
-        self.runner = SubprocessPipelineTestRunner(
+        self.runner = PipelineTestRunner(
                 read=["os2ds_results"],
                 write=["os2ds_scan_specs"],
                 heartbeat=6000)
 
         with pika.PikaConnectionHolder() as clearer:
-            for channel_name in ("os2ds_scan_specs", "os2ds_conversions",
-                    "os2ds_representations", "os2ds_matches", "os2ds_handles",
-                    "os2ds_metadata", "os2ds_problems", "os2ds_results",):
+            for channel_name in (
+                    "os2ds_scan_specs",
+                    "os2ds_conversions",
+                    "os2ds_representations",
+                    "os2ds_matches", "os2ds_handles",
+                    "os2ds_metadata",
+                    "os2ds_problems",
+                    "os2ds_results",):
                 clearer.channel.queue_purge(channel_name)
 
         self.explorer = python(
@@ -63,7 +51,7 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
     def tearDown(self):
         self.runner.clear()
         for p in (self.explorer, self.processor, self.matcher, self.tagger,
-                self.exporter):
+                  self.exporter):
             p.kill()
             p.wait()
 
@@ -73,7 +61,8 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
             "scan_tag": {
                 "scanner": {
                     "name": "integration_test",
-                    "pk": 0
+                    "pk": 0,
+                    "test": False,
                 },
                 "time": "2020-01-01T00:00:00+00:00",
                 "user": None,
@@ -83,13 +72,11 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
             "rule": rule.to_json_object()
         }
 
-        self.runner.channel.basic_publish(exchange='',
-                routing_key="os2ds_scan_specs",
-                body=dumps(obj).encode())
+        self.runner.enqueue_message("os2ds_scan_specs", obj)
 
         try:
             self.runner.run_consumer()
-        except StopHandling as e:
+        except StopHandling:
             self.assertTrue(
                     self.runner.messages["os2ds_matches"]["matched"],
                     "RegexRule match failed")

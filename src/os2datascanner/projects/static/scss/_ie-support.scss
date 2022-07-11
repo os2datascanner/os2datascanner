@@ -1,0 +1,131 @@
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  // logo
+  .logo .cls-1 {
+    fill: #3a69b4;
+  }
+
+  .logo .cls-2 {
+    fill: #222;
+  }
+
+  // navigation
+  .navi a {
+    color: #ffffff;
+
+    svg {
+      fill: #ffffff;
+    }
+  }
+
+  .navi a:hover {
+    color: #00496e;
+
+    svg {
+      fill: #00496e;
+    }
+
+    .st1,.st2,.st3 {
+      stroke: #00496e;
+    }
+  }
+
+  .navi a.active {
+    color: #00496e;
+    background-color: #fcfcfc;
+
+    svg {
+      fill: #00496e;
+    }
+
+    .st1,.st2,.st3 {
+      stroke: #00496e;
+      fill: none;
+    }
+  }
+
+  //tabs
+  .tabs {
+
+    &__control {
+      color: #222;
+
+      &:focus,
+      &:hover {
+        border-bottom: 2px solid #00496e;
+        color: #00496e;
+      }
+    }
+    a.active {
+      border-bottom: 2px solid #00496e;
+      color: #00496e;
+    }
+  }
+
+  //breadcrumb
+  .breadcrumb {
+
+    .link-color {
+      color: #21759c;
+    }
+    a:hover {
+      color: #00496e;
+    }
+
+    .text-grey {
+      color: #777777;
+    }
+
+    .material-icons {
+      color: #777777;
+      fill: #777777;
+    }
+  }
+
+  //datatable
+  .datatable {
+    -ms-box-shadow: 0px 0px 40px #22222229;
+    box-shadow: 0px 0px 40px #22222229;
+    border-radius: 1.25rem;
+  }
+
+  //buttons
+  .button {
+    transition: all 0.2s cubic-bezier(.86,0,.07,1) 0s;
+
+    &--cta {
+      background-color: #21759c;
+      color: #ffffff;
+
+      &:focus,
+      &:hover {
+        background-color: #00496e;
+        color: #ffffff;
+      }
+
+    }
+  }
+
+  //radio button
+  .radio__label {
+    padding-left: 1.5rem;
+  }
+
+  //add rules
+  .select-rules {
+    color: #222;
+
+    &__available {
+      color: #222;
+    }
+
+    &__selected {
+      color: #222;
+    }
+
+    .select-rules-title {
+      background-color: #00496e;
+      color: #ffffff;
+    }
+  }
+
+}

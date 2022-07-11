@@ -8,8 +8,10 @@ from django.urls import path
 from os2datascanner import __version__
 
 from .views.api import JSONAPIView
-from .views.views import (MainPageView, LeaderStatisticsPageView, DPOStatisticsPageView, ApprovalPageView,
-                          StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
+from .views.views import (
+    MainPageView, LeaderStatisticsPageView,
+    DPOStatisticsPageView, ApprovalPageView,
+    StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
 
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),
@@ -36,16 +38,29 @@ if settings.KEYCLOAK_ENABLED:
     urlpatterns.append(url(r'^accounts/logout/',
                            LogoutPageView.as_view(
                                template_name='logout.html',
+                               extra_context={'body_class': 'login-bg'}
                            ),
                            name='logout'))
 else:
     urlpatterns.append(url(r'^accounts/login/',
                            django.contrib.auth.views.LoginView.as_view(
                                template_name='login.html',
+                               extra_context={'body_class': 'login-bg'}
                            ),
                            name='login'))
     urlpatterns.append(url(r'^accounts/logout/',
                            django.contrib.auth.views.LogoutView.as_view(
                                template_name='logout.html',
+                               extra_context={'body_class': 'login-bg'}
                            ),
                            name='logout'))
+    urlpatterns.append(url(r'^accounts/password_change/',
+                           django.contrib.auth.views.PasswordChangeView.as_view(
+                               template_name='password_change.html',
+                           ),
+                           name='password_change'))
+    urlpatterns.append(url(r'^accounts/password_change_done/',
+                           django.contrib.auth.views.PasswordChangeDoneView.as_view(
+                               template_name='password_change_done.html',
+                           ),
+                           name='password_change_done'))

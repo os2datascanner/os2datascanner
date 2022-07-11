@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from enum import Enum
-from typing import Union, Optional, Tuple, Iterator
+from typing import Union, Optional, Tuple, Iterator, Callable, Any
 
 from ..utilities.json import JSONSerialisable
 from ..utilities.equality import TypePropertyEquality
@@ -29,8 +29,9 @@ class Sensitivity(Enum):
     def presentation(self):
         """Returns a (perhaps localised) human-readable string representing
         this Rule, for use in user interfaces."""
-         # XXX: interim hack
+        # XXX: interim hack
         return sensitivity_labels["da"].get(self, self.name)
+
 
 # XXX: this is a hack that should be replaced by real translation support once
 # we get that sorted out
@@ -50,7 +51,8 @@ class Rule(TypePropertyEquality, JSONSerialisable):
     object.
 
     Rules cannot necessarily be evaluated directly, but they can always be
-    broken apart to find an evaluable component; see the split() method.
+    broken apart to find an evaluable component; see the split() and
+    try_match() methods.
 
     If you're not sure which class your new rule should inherit from, then use
     SimpleRule."""
@@ -82,7 +84,7 @@ class Rule(TypePropertyEquality, JSONSerialisable):
 
     @abstractmethod
     def split(self) -> Tuple['SimpleRule',
-            Union['SimpleRule', bool], Union['SimpleRule', bool]]:
+                             Union['SimpleRule', bool], Union['SimpleRule', bool]]:
         """Splits this Rule.
 
         Splitting a Rule produces a SimpleRule, suitable for immediate
@@ -94,6 +96,35 @@ class Rule(TypePropertyEquality, JSONSerialisable):
         (Following a chain of continuations will always eventually reduce to
         True, if the rule as a whole has matched, or False if it has not.)"""
 
+    def try_match(
+            self,
+            get_representation: Union[Callable[[str], Optional[Any]], dict]):
+        """Reduces this Rule as much as possible, given a helper function that
+        can (attempt to) produce new representations when required. When the
+        content of a representation is not available, the helper function
+        should raise a KeyError. (For convenience, this function also accepts a
+        dictionary; in this case it'll use its __getitem__ method.)
+
+        Note that this method can optimise the reduction of this Rule; the
+        result of a SimpleRule might be cached and reused, for example."""
+        if isinstance(get_representation, dict):
+            get_representation = get_representation.__getitem__
+
+        here = self
+        matches = {}
+        while not isinstance(here, bool):
+            head, pve, nve = here.split()
+            try:
+                required_form = get_representation(head.operates_on.value)
+            except KeyError:
+                # Our helper callback can't produce the data we need. Stop
+                # evaluating rules and return what we have to the caller
+                break
+            if head not in matches:
+                matches[head] = list(head.match(required_form))
+            here = pve if matches[head] else nve
+        return (here, list(matches.items()))
+
     _json_handlers = {}
 
     @abstractmethod
@@ -102,8 +133,7 @@ class Rule(TypePropertyEquality, JSONSerialisable):
         this Rule."""
         return {
             "type": self.type_label,
-            "sensitivity": self.sensitivity.value
-                    if self.sensitivity else None,
+            "sensitivity": self.sensitivity.value if self.sensitivity else None,
             "name": self._name
         }
 
@@ -119,7 +149,7 @@ class SimpleRule(Rule):
     this one."""
 
     def split(self):
-        return (self, True, False)
+        return self, True, False
 
     @property
     @abstractmethod

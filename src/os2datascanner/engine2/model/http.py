@@ -1,47 +1,80 @@
 from io import BytesIO
-from time import sleep
 from lxml.html import document_fromstring
 from lxml.etree import ParserError
-from urllib.parse import urljoin, urlsplit, urlunsplit
-import logging
+from urllib.parse import urljoin, urlsplit, urlunsplit, urldefrag
+import structlog
 from requests.sessions import Session
 from requests.exceptions import RequestException
 from contextlib import contextmanager
-from typing import Optional, Set
+from typing import Optional, Union
 from datetime import datetime
+import re
 
 from .. import settings as engine2_settings
-from ..conversions.types import OutputType
+from ..utilities.datetime import parse_datetime
+from ..conversions.types import Link, OutputType
 from ..conversions.utilities.results import SingleResult, MultipleResults
 from .core import Source, Handle, FileResource
-from .utilities import NamedTemporaryResource
-from .utilities.sitemap import SitemapError, process_sitemap_url
-from .utilities.datetime import parse_datetime
+from .utilities.sitemap import process_sitemap_url
+from ..utilities.backoff import WebRetrier
 
-logger = logging.getLogger(__name__)
-MAX_REQUESTS_PER_SECOND = 10
-SLEEP_TIME = 1 / MAX_REQUESTS_PER_SECOND
-TIMEOUT = engine2_settings.model["http"]["timeout"]
+logger = structlog.getLogger(__name__)
+TIMEOUT: int = engine2_settings.model["http"]["timeout"]
+TTL: int = engine2_settings.model["http"]["ttl"]
+_equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
+# match whole words (\bWORD1\b | \bWORD2\b) and escape to handle metachars.
+# It is important to match whole words; www.magenta.dk should be .magenta.dk, not
+# .agta.dk
+_equiv_domains_re = re.compile(
+    r"\b" + r"\b|\b".join(map(re.escape, _equiv_domains)) + r"\b"
+)
+
+
+def rate_limit(request_function):
+    """ Wrapper function to force a proces to sleep by a requested amount,
+    when a certain amount of requests are made by it """
+    def _rate_limit(*args, **kwargs):
+        return WebRetrier().run(
+            request_function,
+            *args,
+            **kwargs)
+
+    return _rate_limit
+
 
 def simplify_mime_type(mime):
     r = mime.split(';', maxsplit=1)
     return r[0]
 
 
+def netloc_normalize(hostname: Union[str, None]) -> str:
+    "remove common subdomains from a hostname"
+    if hostname:
+        return _equiv_domains_re.sub("", hostname).strip(".")
+
+    return ""
+
+
 class WebSource(Source):
     type_label = "web"
     eq_properties = ("_url", "_sitemap",)
 
-    def __init__(self, url: str, sitemap : str = "", exclude = []):
+    def __init__(self, url: str, sitemap: str = "", exclude=None):
+
+        if exclude is None:
+            exclude = []
+
         assert url.startswith("http:") or url.startswith("https:")
-        self._url = url if url.endswith("/") else url + "/"
+        self._url = url.removesuffix("/")
         self._sitemap = sitemap
         self._exclude = exclude
 
     def _generate_state(self, sm):
+        from ... import __version__
         with Session() as session:
-            session.headers.update(
-                {'User-Agent': f'OS2datascanner ({session.headers["User-Agent"]})'
+            throttled_session_headers_update = rate_limit(session.headers.update)
+            throttled_session_headers_update(
+                {'User-Agent': f'OS2datascanner {__version__} ({session.headers["User-Agent"]})'
                                ' (+https://os2datascanner.dk/agent)'}
             )
             yield session
@@ -51,103 +84,128 @@ class WebSource(Source):
         # details from netloc
         return self
 
-    def handles(self, sm):
+    def handles(self, sm):  # noqa: CCR001, C901 too high complexity
         session = sm.open(self)
-        to_visit = [WebHandle(self, "")]
-        known_addresses = set(to_visit)
+        origin = WebHandle(self, "")
+        to_visit = [(origin, TTL)]
+        known_addresses = {origin, }
+
+        # Assign session HTTP methods to variables, wrapped to constrain requests per second
+        throttled_session_get = rate_limit(session.get)
+        throttled_session_head = rate_limit(session.head)
 
         # initial check that url can be reached. After this point, continue
         # exploration at all cost
         try:
-            r = session.head(to_visit[0].presentation_url)
+            r = throttled_session_head(origin.presentation_url, timeout=TIMEOUT)
             r.raise_for_status()
         except RequestException as err:
             raise RequestException(
-                f"{to_visit[0].presentation_url} is not available: {err}")
+                f"{origin.presentation_url} is not available: {err}")
 
-        # scheme://netloc/path?query
-        # https://example.com/some/path?query=foo
-        scheme, netloc, path, query, fragment = urlsplit(self._url)
+        # scheme://netloc/path?query#fragment
+        # https://example.com:80/some/path?query=foo#fragment
+        url_split = urlsplit(self._url)
+        # remove common subdomains from hostname(hostname is like netloc.lower()
+        # but without port-number, ect)
+        hostname = netloc_normalize(url_split.hostname)
 
-        def handle_url(here: "WebHandle", new_url: str,
+        def handle_url(here: "WebHandle", new_url: str, ttl: int = TTL,
                        lm_hint: datetime = None, from_sitemap: bool = False):
 
-            here_url = None if from_sitemap else here.presentation_url
+            here_url = "" if from_sitemap else here.presentation_url
+            new_url, frag = urldefrag(urljoin(here_url, new_url))
+            nurls = urlsplit(new_url)
             referrer = WebHandle(self, self._sitemap) if from_sitemap else here
-            new_url = urljoin(here_url, new_url)
-            n_scheme, n_netloc, n_path, n_query, _ = urlsplit(new_url)
-            new_url = urlunsplit(
-                    (n_scheme, n_netloc, n_path, n_query, None))
 
-            # ensure the new_url actually is a url and not mailto:, etc
-            if n_scheme not in("http", "https"):
+            if ttl == 0:
+                logger.debug("max TTL reached. Not appending url", url=new_url,
+                             referrer=referrer.presentation_url, ttl=ttl)
+                return
+            # ensure the new url actually is a url and not mailto:, etc
+            if nurls.scheme not in ("http", "https"):
                 return
             for exclude in self._exclude:
                 if new_url.startswith(exclude):
-                    logger.info(f"excluded {new_url}")
+                    logger.debug("excluded", url=new_url)
                     return
 
-            if n_netloc == netloc:
-                # we dont care about whether scheme is http or https
-                # new_url is under same hirachy as here(referrer)
-                new_handle = WebHandle(self, new_url[len(self._url):], referrer,
-                                       lm_hint)
+            # ensure hostnames and optionally path(if the source were created with a
+            # nonempty path) matches
+            if (
+                    nurls.hostname == url_split.hostname and
+                    nurls.path.startswith(url_split.path)
+            ):
+                # exactly same hostname and same path
+                rel_path = new_url.removeprefix(self._url)
+                new_handle = WebHandle(self, rel_path, referrer, lm_hint)
+            elif (
+                    netloc_normalize(nurls.hostname) == hostname and
+                    nurls.path.startswith(url_split.path)
+            ):
+                # hostnames and are equivalent. Create new Source from "new" hostname but
+                # retain original path, if present
+                base_url = urlunsplit(
+                    (nurls.scheme, nurls.netloc, url_split.path, "", "")
+                )
+                rel_path = new_url.removeprefix(base_url)
+                new_handle = WebHandle(WebSource(base_url), rel_path, referrer, lm_hint)
             else:
-                # new_url is external from here. Create a new handle from a new
-                # Source.
-                base_url = urlunsplit((n_scheme, n_netloc, "", None, None))
-                new_handle = WebHandle(WebSource(base_url),
-                                       new_url[len(base_url):], referrer,
-                                       lm_hint)
+                logger.debug("hostname outside current source", url=new_url)
+                return
+
             if new_handle not in known_addresses:
                 known_addresses.add(new_handle)
-                to_visit.append(new_handle)
+                to_visit.append((new_handle, ttl-1))
+                logger.debug("appended new url to visit", url=new_handle.presentation_url,
+                             referrer=new_handle.referrer.presentation_url,
+                             ttl=ttl)
 
         if self._sitemap:
-            i = 0  # prevent i from being undefined if sitemap is empty
-            for i, (address, last_modified) in enumerate(
+            _i = 0  # prevent i from being undefined if sitemap is empty
+            for _i, (address, last_modified) in enumerate(
                     process_sitemap_url(self._sitemap), start=1):
-                handle_url(to_visit[0], address, last_modified, from_sitemap=True)
+                handle_url(origin, address, lm_hint=last_modified, from_sitemap=True)
             # first entry in `to_visit` is `self`(ie. mainpage). If the mainpage
             # is not listed in sitemap this result in +1 in to_visit
-            logger.info("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
-                         format(self._sitemap, i, len(to_visit)))
+            logger.debug("sitemap {0} processed. #entries {1}, #urls to_visit {2}".
+                         format(self._sitemap, _i, len(to_visit)))
+            yield from known_addresses
+            return
 
-        # If the handle(here) originates from the Source, then scrape the
-        # resource for all links and submit them to `handle_url` (which appends
-        # the handles to `to_visit`)
-        # If the handle is external, then just yield and let processor check
-        # if the page is available.
+        # scrape the handle(here) for all links and submit them to `handle_url`
+        # (which appends the handles to `to_visit`)
         while to_visit:
-            here, to_visit = to_visit[0], to_visit[1:]
-            # only search for links on `here` if it belongs to base Source
-            if here in self:
-                try:
-                    response = session.head(here.presentation_url)
-                    if response.status_code == 200:
-                        ct = response.headers.get("Content-Type",
-                                                "application/octet-stream")
-                        if simplify_mime_type(ct) == 'text/html':
-                            response = session.get(here.presentation_url)
-                            sleep(SLEEP_TIME)
-                            i = 0
-                            for i, li in enumerate(
-                                    make_outlinks(response.content,
-                                                  here.presentation_url),
-                                    start=1):
-                                handle_url(here, li)
-                            logger.info(f"site {here.presentation} has {i} links")
-                    elif response.is_redirect and response.next:
-                        handle_url(here, response.next.url)
-                        # Don't yield WebHandles for redirects
-                        continue
+            (here, ttl), to_visit = to_visit[0], to_visit[1:]
+            if ttl == 0:
+                continue
 
-                # There should newer be a ConnectionError, as only handles
-                # originating from Source are requested. But just in case..
-                except RequestException as e:
-                    logger.error(f"error while getting head of {here.presentation}",
-                                 exc_info=True)
+            try:
+                response = throttled_session_head(here.presentation_url, timeout=TIMEOUT)
+                if response.status_code == 200:
+                    ct = response.headers.get("Content-Type",
+                                              "application/octet-stream")
+                    if simplify_mime_type(ct) == 'text/html':
+                        response = throttled_session_get(here.presentation_url, timeout=TIMEOUT)
+                        i = 0
+                        for _i, link in enumerate(
+                                make_outlinks(response.content,
+                                              here.presentation_url),
+                                start=1):
+                            handle_url(here, link.url, ttl)
+                        logger.debug("url scraped for links", url=here.presentation,
+                                     links=i, ttl=ttl)
 
+                elif response.is_redirect and response.next:
+                    handle_url(here, response.next.url)
+                    # Don't yield WebHandles for redirects
+                    continue
+
+            # There should newer be a ConnectionError, as only handles
+            # originating from Source are requested. But just in case..
+            except RequestException:
+                logger.error(f"error while getting head of {here.presentation}",
+                             exc_info=True)
             yield here
 
     def to_url(self):
@@ -159,11 +217,12 @@ class WebSource(Source):
         return WebSource(url)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "url": self._url,
-            "sitemap": self._sitemap,
-            "exclude": self._exclude,
-        })
+        return dict(
+            **super().to_json_object(),
+            url=self._url,
+            sitemap=self._sitemap,
+            exclude=self._exclude,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -190,8 +249,9 @@ class WebResource(FileResource):
         yield from super()._generate_metadata()
 
     def _get_head_raw(self):
-        return self._get_cookie().head(
-            self._make_url(), timeout=TIMEOUT)
+        throttled_session_head = rate_limit(self._get_cookie().head)
+        return throttled_session_head(
+            self.handle.presentation_url, timeout=TIMEOUT)
 
     def check(self) -> bool:
         # This might raise an RequestsException, fx.
@@ -199,9 +259,6 @@ class WebResource(FileResource):
         # [Errno 110] Connection timed out'     (no response)
         response = self._get_head_raw()
         return response.status_code not in (404, 410,)
-
-    def _make_url(self):
-        return self.handle.presentation_url
 
     def get_status(self):
         self.unpack_header()
@@ -237,21 +294,15 @@ class WebResource(FileResource):
     def compute_type(self):
         # At least for now, strip off any extra parameters the media type might
         # specify
-        return self.unpack_header(check=True).get("content-type",
-                "application/octet-stream").value.split(";", maxsplit=1)[0]
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
+        return self.unpack_header(check=True).get(
+            "content-type", "application/octet-stream").value.split(";", maxsplit=1)[0]
 
     @contextmanager
     def make_stream(self):
-        response = self._get_cookie().get(
-            self._make_url(), timeout=TIMEOUT)
+        # Assign session HTTP methods to variables, wrapped to constrain requests per second
+        throttled_session_get = rate_limit(self._get_cookie().get)
+        response = throttled_session_get(
+            self.handle.presentation_url, timeout=TIMEOUT)
         response.raise_for_status()
         with BytesIO(response.content) as s:
             yield s
@@ -266,6 +317,8 @@ class WebHandle(Handle):
     def __init__(self, source: WebSource, path: str,
                  referrer: Optional["WebHandle"] = None,
                  last_modified_hint: Optional[datetime] = None):
+        # path = path if path.startswith("/") else ("/" + path if path else "")
+        path = path if path.startswith("/") else "/" + path
         super().__init__(source, path, referrer)
         self._lm_hint = last_modified_hint
 
@@ -278,15 +331,30 @@ class WebHandle(Handle):
         self._lm_hint = lm_hint
 
     @property
-    def presentation(self) -> str:
+    def presentation_name(self):
+        return self.presentation_url
+
+    @property
+    def presentation_place(self):
+        split = urlsplit(self.presentation_url)
+        return split.hostname
+
+    def __str__(self):
         return self.presentation_url
 
     @property
     def presentation_url(self) -> str:
-        p = self.source.to_url()
-        if p[-1] != "/" and not self.relative_path.startswith("/"):
-            p += "/"
-        return p + self.relative_path
+        path = self.relative_path
+        if path and not path.startswith("/"):
+            path = "/" + path
+        # .removesuffix is probably unnecessary, as it is already done on source._url
+        return self.source.to_url().removesuffix("/") + path
+
+    @property
+    def sort_key(self):
+        """ Returns a string to sort by.
+        For a website the URL makes sense"""
+        return self.presentation
 
     def censor(self):
         return WebHandle(source=self.source.censor(), path=self.relative_path,
@@ -304,7 +372,7 @@ class WebHandle(Handle):
     def from_json_object(obj):
         lm_hint = obj.get("last_modified", None)
         if lm_hint:
-                lm_hint = OutputType.LastModified.decode_json_object(lm_hint)
+            lm_hint = OutputType.LastModified.decode_json_object(lm_hint)
         referrer = obj.get("referrer", None)
         if referrer:
             if isinstance(referrer, list):
@@ -314,7 +382,8 @@ class WebHandle(Handle):
                 # now contains a serialised Handle. Make sure we still support
                 # the old format
                 if len(referrer) > 1:
-                    logger.warning(f"discarding secondary referrers for {obj}")
+                    logger.warning("discarding secondary referrers",
+                                   obj=obj)
 
                 url = referrer[0]
                 scheme, netloc, path, query, fragment = urlsplit(url)
@@ -332,10 +401,11 @@ def make_outlinks(content, where):
     try:
         doc = document_fromstring(content)
         doc.make_links_absolute(where, resolve_base_href=True)
-        for el, _, li, _ in doc.iterlinks():
-            if el.tag in ("a", "img",):
-                yield li
-    except ParserError as e:
+        for element, _attr, link, _pos in doc.iterlinks():
+            # ignore e.g. <a href="" rel="nofollow">
+            if element.tag in ("a", "img",) and element.get("rel") != "nofollow":
+                yield Link(link, link_text=element.text)
+    except ParserError:
         # Silently drop ParserErrors, but only for empty documents
         if content and not content.isspace():
             logger.error("{0}: unexpected ParserError".format(where),

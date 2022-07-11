@@ -1,8 +1,7 @@
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import User
 
-from .organization_model import Organization
+from os2datascanner.projects.report.organizations.models import Organization
 
 
 class UserProfile(models.Model):

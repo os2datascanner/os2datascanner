@@ -1,16 +1,39 @@
-import logging
-from ..model.core import (
-    Source, SourceManager, UnknownSchemeError, DeserialisationError)
+from .. import settings
+from ..model.core import Source, UnknownSchemeError, DeserialisationError
+from ..utilities.backoff import TimeoutRetrier
 from . import messages
+from .utilities.filtering import is_handle_relevant
 
-logger = logging.getLogger(__name__)
+import structlog
+
+
+logger = structlog.get_logger(__name__)
+
 
 READS_QUEUES = ("os2ds_scan_specs",)
-WRITES_QUEUES = ("os2ds_conversions", "os2ds_problems", "os2ds_status",)
+WRITES_QUEUES = (
+        "os2ds_conversions", "os2ds_problems", "os2ds_status",
+        "os2ds_scan_specs",)
 PROMETHEUS_DESCRIPTION = "Sources explored"
+# An individual exploration task is typically the longest kind of task, so we
+# want to do as little prefetching as possible here. (If we're doing an
+# agonisingly slow web scan, we don't want to hog scan specs we're not ready
+# to use yet!)
+PREFETCH_COUNT = 1
 
 
-def message_received_raw(body, channel, source_manager):
+def process_exploration_error(scan_spec, handle_candidate, ex):
+    exception_message = (
+            f"Exploration error. {type(ex).__name__}: "
+            + ", ".join(str(a) for a in ex.args))
+    problem_message = messages.ProblemMessage(
+            scan_tag=scan_spec.scan_tag, source=scan_spec.source,
+            handle=handle_candidate, message=exception_message)
+    yield ("os2ds_problems", problem_message.to_json_object())
+    logger.info(f"Sent problem message for handle: {handle_candidate}.")
+
+
+def message_received_raw(body, channel, source_manager):  # noqa
     try:
         scan_tag = messages.ScanTagFragment.from_json_object(body["scan_tag"])
     except KeyError:
@@ -33,40 +56,74 @@ def message_received_raw(body, channel, source_manager):
                 message=("Unknown scheme '{0}'".format(
                         ex.args[0]))).to_json_object())
         return
-    except (KeyError, DeserialisationError) as ex:
+    except (KeyError, DeserialisationError):
         yield ("os2ds_problems", messages.ProblemMessage(
                 scan_tag=scan_tag, source=None, handle=None,
                 message="Malformed input").to_json_object())
         return
 
-    count = 0
+    handle_count = 0
+    source_count = None
     exception_message = ""
+
+    it = scan_spec.source.handles(source_manager)
+
+    tr = TimeoutRetrier(
+            seconds=settings.pipeline["op_timeout"],
+            max_tries=settings.pipeline["op_tries"])
+
     try:
-        for handle in scan_spec.source.handles(source_manager):
-            try:
-                logger.info("ConversionMsg for handle {0}".format(handle.censor()))
-            except NotImplementedError:
-                # If a Handle doesn't implement censor(), then that indicates
-                # that it doesn't know enough about its internal state to
-                # censor itself -- just print its type
-                logger.warning("(unprintable handle {0})".format(type(handle).__name__))
-            count += 1
-            yield ("os2ds_conversions",
-                    messages.ConversionMessage(
+        while (handle := tr.run(next, it)):
+            if isinstance(handle, tuple) and handle[1]:
+                # We were able to construct a Handle for something that
+                # exists, but then something unexpected (that we can tie to
+                # that specific Handle) went wrong. Send a problem message
+                yield from process_exploration_error(scan_spec, *handle)
+            elif not scan_spec.source.yields_independent_sources:
+                # This Handle is just a normal reference to a scannable object.
+                # Send it on to be processed
+                yield ("os2ds_conversions",
+                       messages.ConversionMessage(
                             scan_spec, handle, progress).to_json_object())
+                handle_count += 1
+            else:
+                # Check if the handle should be excluded.
+                if is_handle_relevant(handle, scan_spec.filter_rule):
+                    # This Handle is a thin wrapper around an independent Source.
+                    # Construct that Source and enqueue it for further exploration
+                    new_source = Source.from_handle(handle)
+                    yield ("os2ds_scan_specs", scan_spec._replace(
+                        source=new_source).to_json_object())
+                    source_count = (source_count or 0) + 1
+                else:
+                    logger.info(f"A handle matched the exclusion rules: {handle}")
+
+        logger.info(
+                "Finished exploration successfully",
+                handle_count=handle_count, source_count=source_count,
+                scan_tag=scan_tag)
+    except StopIteration:
+        # Exploration is complete
+        pass
     except Exception as e:
         exception_message = "Exploration error. {0}: ".format(type(e).__name__)
         exception_message += ", ".join([str(a) for a in e.args])
-        logger.error(exception_message)
         problem_message = messages.ProblemMessage(
             scan_tag=scan_tag, source=scan_spec.source, handle=None,
             message=exception_message)
         yield ("os2ds_problems", problem_message.to_json_object())
+        logger.warning(
+                "Finished exploration unsuccessfully",
+                handle_count=handle_count, source_count=source_count,
+                scan_tag=scan_tag, exc_info=e)
     finally:
+        if hasattr(it, "close"):
+            it.close()
         yield ("os2ds_status", messages.StatusMessage(
-            scan_tag=scan_tag, total_objects=count,
-            message=exception_message, status_is_error=exception_message!="").
-               to_json_object())
+                scan_tag=scan_tag,
+                total_objects=handle_count, new_sources=source_count,
+                message=exception_message,
+                status_is_error=exception_message != "").to_json_object())
 
 
 if __name__ == "__main__":

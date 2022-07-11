@@ -1,19 +1,15 @@
-{% extends 'partials/base.html' %}
+{% extends 'error_base.html' %}
+
 {% load i18n %}
 
-{%  block title %}
-    OS2Webscanner
+{% block title %}
+  {% trans "Page not found" %}
 {% endblock %}
 
-{% block body %}
-
-<div class="container">
-    {% trans "You need permission to perform this action" %}
-</div>
-
+{% block error_heading %}
+  {% trans "You need permission to perform this action" %}
 {% endblock %}
 
-{% block heading %} 
-
+{% block error_content %}
+  <p>{% trans "You lack the required permission to perform this action. Please contact us if you think this is an error." %}</p>
 {% endblock %}
-

@@ -1,16 +1,16 @@
-from typing import Iterator, List, Match, Optional, Tuple, Dict, Union
+from typing import Iterator, List, Match, Optional, Tuple, Dict
 import re
 from itertools import chain
 from enum import Enum, unique
-from collections.abc import Iterable
-import logging
+import structlog
 
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .logical import oxford_comma
 from .utilities.cpr_probability import modulus11_check, CprProbabilityCalculator
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
+
 cpr_regex = r"\b(\d{2}[ ]?\d{2}[ ]?\d{2})(?:[ \-/\.\t]|[ ]\-[ ])?(\d{4})\b"
 calculator = CprProbabilityCalculator()
 
@@ -44,32 +44,32 @@ class Context(Enum):
 class CPRRule(RegexRule):
     type_label = "cpr"
     WHITELIST_WORDS = {"cpr", }
-    BLACKLIST_WORDS = {"p-nr", "p.nr", "p-nummer", "pnr", }
+    BLACKLIST_WORDS = {
+        "p-nr", r"p\.nr", "p-nummer", "pnr",
+        "customer no", "customer-no",
+        "bilagsnummer",
+        "order number", "ordrenummer",
+        "fakturanummer", "faknr", "fak-nr",
+        "tullstatistisk", "tullstatistik",
+        "test report no",
+        r"protocol no\.",
+        "dhk:tx",
+    }
 
-    def __init__(
-        self,
-        modulus_11: bool = True,
-        ignore_irrelevant: bool = True,
-        examine_context: bool = True,
-        whitelist: Union[bool, List[str]] = True,
-        blacklist: Union[bool, List[str]] = True,
-        **super_kwargs,
-    ):
+    def __init__(self,
+                 modulus_11: bool = True,
+                 ignore_irrelevant: bool = True,
+                 examine_context: bool = True,
+                 whitelist: Optional[List[str]] = None,
+                 blacklist: Optional[List[str]] = None,
+                 **super_kwargs):
         super().__init__(cpr_regex, **super_kwargs)
         self._modulus_11 = modulus_11
         self._ignore_irrelevant = ignore_irrelevant
         self._examine_context = examine_context
-        # self._whitelist is either a set(str) or False
-        self._whitelist = (
-            self.WHITELIST_WORDS if whitelist is True else (
-                set(whitelist) if isinstance(whitelist, Iterable)
-                else whitelist
-            ))
-        self._blacklist = (
-            self.BLACKLIST_WORDS if blacklist is True else (
-                set(blacklist) if isinstance(blacklist, Iterable)
-                else blacklist
-        ))
+        self._whitelist = self.WHITELIST_WORDS if whitelist is None else set(whitelist)
+        self._blacklist = self.BLACKLIST_WORDS if blacklist is None else set(blacklist)
+        self._blacklist_pattern = re.compile("|".join(self._blacklist))
 
     @property
     def presentation_raw(self) -> str:
@@ -86,33 +86,29 @@ class CPRRule(RegexRule):
         else:
             return "CPR number"
 
-    def match(self, content: str) -> Optional[Iterator[dict]]:
+    def match(self, content: str) -> Optional[Iterator[dict]]:  # noqa: CCR001,E501 too high cognitive complexity
         if content is None:
             return
 
-        # If there's p-nr or anthore blacklist anywhere in content, assume
-        # there's no valid CPR
-        if self._examine_context and self._blacklist and any(
-            w in content.lower() for w in self._blacklist
-        ):
-            logger.info("Content contains a word from the blacklist "
-                        f"[{self._blacklist}]")
-            return
+        if self._examine_context and self._blacklist:
+            if (m := self._blacklist_pattern.search(content.lower())):
+                logger.debug("Blacklist matched content", matches=m.group(0))
+                return
 
         imatch = 0
         for itot, m in enumerate(self._compiled_expression.finditer(content), 1):
             cpr = m.group(1).replace(" ", "") + m.group(2)
             if self._modulus_11:
-                mod11, reason =  modulus11_check(cpr)
+                mod11, reason = modulus11_check(cpr)
                 if not mod11:
-                    logger.info(f"{cpr} failed modulus11 check due to {reason}")
+                    logger.debug(f"{cpr} failed modulus11 check due to {reason}")
                     continue
 
             probability = 1.0
             if self._ignore_irrelevant:
-                probability = calculator.cpr_check(cpr, do_mod11_check = False)
+                probability = calculator.cpr_check(cpr, do_mod11_check=False)
                 if isinstance(probability, str):
-                    logger.info(f"{cpr} is not valid cpr due to {probability}")
+                    logger.debug(f"{cpr} is not valid cpr due to {probability}")
                     continue
 
             cpr = cpr[0:4] + "XXXXXX"
@@ -123,12 +119,11 @@ class CPRRule(RegexRule):
                 # determine if probability stems from context or calculator
                 probability = p if p is not None else probability
                 ctype = ctype if ctype != [] else Context.PROBABILITY_CALC
-                logger.info(f"{cpr} with probability {probability} from context "
-                            f"due to {ctype}")
-
+                logger.debug(f"{cpr} with probability {probability} from context "
+                             f"due to {ctype}")
 
             # Extract context, remove newlines and tabs for better representation
-            match_context = content[max(low - 50, 0) : high + 50]
+            match_context = content[max(low - 50, 0): high + 50]
             match_context = " ".join(self._compiled_expression.sub(
                 "XXXXXX-XXXX", match_context
             ).split())
@@ -147,10 +142,10 @@ class CPRRule(RegexRule):
                     ),
                     "probability": probability,
                 }
-            logger.info(f"{itot} cpr-like numbers, "
-                        f"of which {imatch} had a probabiliy > 0")
+            logger.debug(f"{itot} cpr-like numbers, "
+                         f"of which {imatch} had a probabiliy > 0")
 
-    def examine_context(
+    def examine_context(  # noqa: CCR001, C901 too high cognitive complexity
         self, match: Match[str]
     ) -> Tuple[Optional[float], List[tuple]]:
         """Estimate a probality (0-1) based on the context of the match
@@ -231,7 +226,7 @@ class CPRRule(RegexRule):
         content = match.string
         low, high = match.span()
         # get previous/next n words
-        pre = " ".join(content[max(low-50,0):low].split()[-n_words:])
+        pre = " ".join(content[max(low-50, 0):low].split()[-n_words:])
         post = " ".join(content[high:high+50].split()[:n_words])
 
         # split in two capture groups: (word, symbol)
@@ -264,31 +259,36 @@ class CPRRule(RegexRule):
         # don't need to include our expression, as it's static)
         return dict(
             **super(RegexRule, self).to_json_object(),
-            **{
-                "modulus_11": self._modulus_11,
-                "ignore_irrelevant": self._ignore_irrelevant,
-                "whitelist": (
-                    list(self._whitelist) if
-                    isinstance(self._whitelist, Iterable) else self._whitelist
-                ),
-                "blacklist": (
-                    list(self._blacklist) if
-                    isinstance(self._blacklist, Iterable) else self._whitelist
-                ),
-            },
+            modulus_11=self._modulus_11,
+            ignore_irrelevant=self._ignore_irrelevant,
+            whitelist=list(self._whitelist),
+            blacklist=list(self._blacklist),
         )
 
     @staticmethod
     @Rule.json_handler(type_label)
     def from_json_object(obj: dict):
+        # For backwards compatibility, we also need to handle whitelist and
+        # blacklist fields consisting of booleans
+        whitelist = obj.get("whitelist", None)
+        blacklist = obj.get("blacklist", None)
+        if whitelist is True:  # use the default whitelist
+            whitelist = None
+        elif whitelist is False:  # don't use a whitelist at all
+            whitelist = ()
+        if blacklist is True:
+            blacklist = None
+        elif blacklist is False:
+            blacklist = ()
+
         return CPRRule(
             modulus_11=obj.get("modulus_11", True),
             ignore_irrelevant=obj.get("ignore_irrelevant", True),
             examine_context=obj.get("examine_context", True),
             sensitivity=Sensitivity.make_from_dict(obj),
-            name=obj["name"] if "name" in obj else None,
-            whitelist=obj.get("whitelist", True),
-            blacklist=obj.get("blacklist", True),
+            name=obj.get("name"),
+            whitelist=whitelist,
+            blacklist=blacklist,
         )
 
 

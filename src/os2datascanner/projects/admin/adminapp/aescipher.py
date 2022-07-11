@@ -1,4 +1,6 @@
-import binascii, os, datetime, logging
+import binascii
+import os
+import logging
 from Crypto.Util import Counter
 from Crypto.Cipher import AES
 from Crypto import Random
@@ -10,12 +12,12 @@ from django.core.exceptions import ImproperlyConfigured
 logger = logging.getLogger(__name__)
 
 
-def encrypt(plaintext):
+def encrypt(plaintext, key=None):
     """
     Takes as input a 32-byte key and an arbitrary-length plaintext and returns a
     pair (iv, ciphtertext). "iv" stands for initialization vector.
     """
-    key = get_key()
+    key = key if key else get_key()
 
     # Choose a random, 16-byte IV.
     iv = Random.new().read(AES.block_size)
@@ -30,33 +32,37 @@ def encrypt(plaintext):
     aes = AES.new(key, AES.MODE_CTR, counter=ctr)
 
     # Encrypt and return IV and ciphertext.
-    ciphertext = aes.encrypt(plaintext)
-    return (iv, ciphertext)
+    ciphertext = aes.encrypt(plaintext.encode())
+    return iv, ciphertext
 
 
-def decrypt(iv, ciphertext):
+def decrypt(iv, ciphertext, key=None):
     """
     Takes as input a 32-byte key, a 16-byte IV, and a ciphertext, and outputs
     the corresponding plaintext.
     """
-    key = get_key()
+    key = key if key else get_key()
 
-    # Initialize counter for decryption. iv should be the same as the output of
-    # encrypt().
-    iv_int = int(binascii.hexlify(iv), 16)
-    ctr = Counter.new(AES.block_size * 8, initial_value=iv_int)
+    # Check if there is anything to encrypt at all
+    if iv != b'':
+        # Initialize counter for decryption. iv should be the same as the output of
+        # encrypt().
+        iv_int = int(binascii.hexlify(iv), 16)
+        ctr = Counter.new(AES.block_size * 8, initial_value=iv_int)
 
-    # Create AES-CTR cipher.
-    aes = AES.new(key, AES.MODE_CTR, counter=ctr)
+        # Create AES-CTR cipher.
+        aes = AES.new(key, AES.MODE_CTR, counter=ctr)
 
-    # Decrypt and return the plaintext.
-    plaintext = aes.decrypt(ciphertext)
-    return plaintext.decode('utf-8')
+        # Decrypt and return the plaintext.
+        plaintext = aes.decrypt(ciphertext)
+        return plaintext.decode('utf-8')
+
+    # otherwise just return some empty plaintext.
+    return ""
 
 
 def get_key():
     key = None
-    logger.info("Retrieving key via config")
     if settings.DECRYPTION_HEX:
         key = bytes.fromhex(settings.DECRYPTION_HEX)
     else:
@@ -88,9 +94,9 @@ def _email_admin(subject, body):
     try:
         message = EmailMessage(subject, body, settings.ADMIN_EMAIL)
         message.send()
-    except Exception as ex:
+    except Exception:
         logger.error(
-            'Error occurred while sending email to administrator.'.format(ex)
+            'Error occurred while sending email to administrator.'
         )
 
 
@@ -115,8 +121,11 @@ def key_file_handling(data, command, filename, create):
             data = file.read()
         elif command == 'ab':
             file.write(data)
-    except (OSError, IOError) as ex:
-        logger.error('An error occured while trying to {0} {1} file. {2}'.format(command, filename, ex))
+    except OSError as ex:
+        logger.error('An error occured while trying to {0} {1} file. {2}'.format(
+            command,
+            filename,
+            ex))
     finally:
         if file is not None:
             file.close()

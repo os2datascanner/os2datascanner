@@ -19,3 +19,6 @@ class Migration(migrations.Migration):
             field=mptt.fields.TreeForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='organizations.OrganizationalUnit', verbose_name='organizational unit'),
         ),
     ]
+
+
+

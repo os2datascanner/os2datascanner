@@ -27,3 +27,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='scannerjob', to='organizations.Organization', verbose_name='organization'),
         ),
     ]
+
+
+

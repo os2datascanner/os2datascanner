@@ -1,14 +1,15 @@
-<html class="login-bg">
-  {% include "partials/header.html" %}
+{% load i18n %}
+{% include "partials/header.html" %}
 
-    <section class="logout-content">
-        <p>
-          Tak, fordi du brugte OS2datascanner.
-        </p>
-        <a href="/">Log ind</a> igen
-    </section>
+<section class="login-card">
+  <p>
+    {% trans "Thank you for using OS2datascanner." %}
+  </p>
+  <a href="/">{% trans "Log in" %}</a> <span>{% trans "again" %}</span>
+  <div class="form__group logo">
+    {% include "components/logo-o.html" %}
+  </div>
+</section>
 
-  </body>
+</body>
 </html>
-
-

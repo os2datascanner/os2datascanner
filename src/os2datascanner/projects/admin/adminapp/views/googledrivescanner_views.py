@@ -12,7 +12,14 @@
 # sector open source network <https://os2.eu/>.
 #
 from ..models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
-from .scanner_views import *
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCopy,
+    ScannerCreate,
+    ScannerList)
 
 
 class GoogleDriveScannerList(ScannerList):
@@ -33,6 +40,7 @@ class GoogleDriveScannerCreate(ScannerCreate):
         'exclusion_rules',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]
@@ -54,6 +62,7 @@ class GoogleDriveScannerUpdate(ScannerUpdate):
         'exclusion_rules',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]
@@ -75,6 +84,29 @@ class GoogleDriveScannerDelete(ScannerDelete):
     model = GoogleDriveScanner
     fields = []
     success_url = '/googledrivescanners/'
+
+
+class GoogleDriveScannerCopy(ScannerCopy):
+    """Create a new copy of an existing Google Drive Scanner"""
+    model = GoogleDriveScanner
+    fields = [
+        'name',
+        'schedule',
+        'service_account_file',
+        'user_emails',
+        'exclusion_rules',
+        'do_ocr',
+        'do_last_modified_check',
+        'only_notify_superadmin',
+        'rules',
+        'organization',
+    ]
+
+    def get_initial(self):
+        initial = super(GoogleDriveScannerCopy, self).get_initial()
+        initial["service_account_file"] = self.get_scanner_object().service_account_file
+        initial["user_emails"] = self.get_scanner_object().user_emails
+        return initial
 
 
 class GoogleDriveScannerAskRun(ScannerAskRun):

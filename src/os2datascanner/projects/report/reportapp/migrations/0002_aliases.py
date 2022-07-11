@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import os2datascanner.projects.report.reportapp.models.aliases.adsidalias_model
+from os2datascanner.projects.report.organizations.models.aliases import validate_regex_SID
 
 
 class Migration(migrations.Migration):
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
             name='ADSIDAlias',
             fields=[
                 ('alias_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner_report.Alias')),
-                ('sid', models.CharField(max_length=192, validators=[os2datascanner.projects.report.reportapp.models.aliases.adsidalias_model.validate_sid], verbose_name='SID')),
+                ('sid', models.CharField(max_length=192, validators=[validate_regex_SID], verbose_name='SID')),
             ],
             options={
                 'verbose_name': 'ADSID alias',
@@ -45,3 +45,6 @@ class Migration(migrations.Migration):
             bases=('os2datascanner_report.alias',),
         ),
     ]
+
+
+

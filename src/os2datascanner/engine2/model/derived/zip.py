@@ -4,8 +4,7 @@ from contextlib import contextmanager
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
-from ..core import Source, Handle, FileResource, SourceManager
-from ..utilities import NamedTemporaryResource
+from ..core import Source, Handle, FileResource
 from .derived import DerivedSource
 
 
@@ -28,9 +27,8 @@ class ZipSource(DerivedSource):
                 yield ZipHandle(self, name)
 
     def _generate_state(self, sm):
-        with self.handle.follow(sm).make_path() as r:
-            with ZipFile(str(r)) as zp:
-                yield zp
+        with self.handle.follow(sm).make_path() as r, ZipFile(str(r)) as zp:
+            yield zp
 
 
 class ZipResource(FileResource):
@@ -66,15 +64,7 @@ class ZipResource(FileResource):
 
     def get_last_modified(self):
         return self.unpack_info().get(OutputType.LastModified,
-                super().get_last_modified())
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as f:
-                with self.make_stream() as s:
-                    f.write(s.read())
-            yield ntr.get_path()
+                                      super().get_last_modified())
 
     @contextmanager
     def make_stream(self):
@@ -88,9 +78,16 @@ class ZipHandle(Handle):
     resource_type = ZipResource
 
     @property
-    def presentation(self):
-        return "{0} (in {1})".format(
-                self.relative_path, self.source.handle)
+    def presentation_name(self):
+        return self.relative_path
+
+    @property
+    def sort_key(self):
+        return self.source.handle.sort_key
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
 
     def censor(self):
         return ZipHandle(self.source.censor(), self.relative_path)

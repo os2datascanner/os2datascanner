@@ -1,0 +1,145 @@
+.pagination {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  table-layout: fixed;
+  width: 100%;
+  margin-bottom: 2rem;
+
+  &__column {
+    &--page {
+      border-radius: 0 0 0 1.25rem;
+    }
+  }
+
+  td {
+    border-top: none;
+    line-height: 1;
+    padding: calc(var(--datatable-cell-padding) / 2) !important; // !important in order to override specificity of .datatable td:first-child selector
+    vertical-align: top;
+  }
+
+  .page_of_pages,
+  form,
+  .pages {
+    display: block;
+    margin-top: calc(var(--datatable-cell-padding) / 2) !important; // in order to not have margin-top: 0; from .flex class below
+    margin: calc(var(--datatable-cell-padding) / 2);
+  }
+  
+  .flex {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1rem;
+    margin-top: 0;
+  }
+
+  .page_of_pages,
+  .paginator {
+    color: var(--color-text-secondary);
+    flex: 0 1 auto;
+  }
+
+  .pages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .get-results {
+    flex: 0 1 auto;
+  }
+
+  form {
+    flex: 0 1 auto;
+  }
+
+  .link {
+    font-weight: normal;
+    color: var(--color-primary-dark);
+    text-decoration: none;
+
+    &--pre {
+      margin-right: 1rem;
+    }
+
+    &--next {
+      margin-left: 1rem;
+    }
+  }
+
+  .disabled {
+    color: var(--color-text-secondary);
+  }
+
+  .page {
+    padding: .25rem .75rem;
+    margin-right: 0.5rem;
+    color: var(--color-text-main);
+    text-decoration: none;
+
+    &--dot {
+      font-weight: normal;
+      color: var(--color-text-main);
+    }
+
+    &:hover,
+    &:focus {
+      text-decoration: underline;
+      color: var(--color-primary-dark);
+    }
+
+    &--active:not(.button) {
+      font-weight: 600;
+      color: var(--color-text-white);
+      background-color: var(--color-primary-dark);
+      border-radius: var(--border-radius-button);
+      transition: var(--transition-default);
+
+      &:hover,
+      &:focus {
+        color: var(--color-text-main);
+        text-decoration: none;
+        background-color:rgba(0,0,0,.2)
+      }
+    }
+  }
+
+  .page,
+  .page--dot {
+    display: none;
+    @media (min-width: $break-sm) {
+      display: inline;
+    }
+  }
+
+  label {
+    margin-right: .5rem;
+    color: var(--color-text-secondary);
+    font-size: .9rem;
+  }
+
+  input[type=number] {
+    background-color: #fff;
+    border: none;
+    border-radius: var(--border-radius-button);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+    font-size: 1rem;
+    line-height: 1;
+    text-align: center;
+    outline: none;
+    padding: .35rem;
+    width: 2.5rem;
+    -moz-appearance: textfield;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number]:focus {
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.4);
+  }
+}

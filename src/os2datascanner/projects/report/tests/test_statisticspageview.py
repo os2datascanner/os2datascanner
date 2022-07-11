@@ -1,5 +1,5 @@
-import datetime
 import dateutil.parser
+from datetime import datetime, timedelta
 from typing import List, Tuple
 
 from django.test import RequestFactory, TestCase
@@ -12,11 +12,16 @@ from os2datascanner.engine2.model.ews import (
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 
-from ..reportapp.management.commands import pipeline_collector
+from ..organizations.models.aliases import Alias
+from ..organizations.models.aliases import AliasType
 from ..reportapp.models.documentreport_model import DocumentReport
 from ..reportapp.models.roles.leader_model import Leader
 from ..reportapp.models.roles.dpo_model import DataProtectionOfficer
-from ..reportapp.views.views import StatisticsPageView
+from ..reportapp.utils import create_alias_and_match_relations
+from ..reportapp.views.views import StatisticsPageView, LeaderStatisticsPageView
+from ..reportapp.utils import iterate_queryset_in_batches
+
+from .generate_test_data import record_match, record_metadata
 
 
 """Shared data"""
@@ -86,6 +91,7 @@ egon_scan_spec = messages.ScanSpecMessage(
         source=egon_email_handle.source,
         rule=common_rule,
         configuration={},
+        filter_rule=None,
         progress=None)
 
 egon_positive_match = messages.MatchesMessage(
@@ -151,6 +157,7 @@ kjeld_scan_spec = messages.ScanSpecMessage(
     source=kjeld_email_handle.source,
     rule=common_rule,
     configuration={},
+    filter_rule=None,
     progress=None)
 
 kjeld_positive_match = messages.MatchesMessage(
@@ -215,6 +222,7 @@ benny_scan_spec = messages.ScanSpecMessage(
     source=benny_email_handle.source,
     rule=common_rule,
     configuration={},
+    filter_rule=None,
     progress=None)
 
 benny_positive_match = messages.MatchesMessage(
@@ -238,13 +246,13 @@ benny_positive_match_1 = messages.MatchesMessage(
 benny_metadata = messages.MetadataMessage(
     scan_tag=scan_tag0,
     handle=benny_email_handle,
-    metadata={"email-account": "benny@jensen.com"}
+    metadata={"email-account": "benny@frandsen.com"}
 )
 
 benny_metadata_1 = messages.MetadataMessage(
     scan_tag=scan_tag1,
     handle=benny_email_handle_1,
-    metadata={"email-account": "benny@jensen.com"}
+    metadata={"email-account": "benny@frandsen.com"}
 )
 
 """YVONNE DATA"""
@@ -266,6 +274,7 @@ yvonne_scan_spec = messages.ScanSpecMessage(
     source=yvonne_email_handle.source,
     rule=common_rule,
     configuration={},
+    filter_rule=None,
     progress=None)
 
 yvonne_positive_match = messages.MatchesMessage(
@@ -294,93 +303,58 @@ class StatisticsPageViewTest(TestCase):
 
     @classmethod
     def generate_kjeld_data(cls):
-        cls.generate_match(kjeld_positive_match)
-        cls.generate_metadata(kjeld_metadata)
+        record_match(kjeld_positive_match)
+        record_metadata(kjeld_metadata)
 
-        cls.generate_match(kjeld_positive_match_1)
-        cls.generate_metadata(kjeld_metadata_1)
+        record_match(kjeld_positive_match_1)
+        record_metadata(kjeld_metadata_1)
 
     @classmethod
     def generate_egon_data(cls):
-        cls.generate_match(egon_positive_match)
-        cls.generate_metadata(egon_metadata)
+        record_match(egon_positive_match)
+        record_metadata(egon_metadata)
 
-        cls.generate_match(egon_positive_match_1)
-        cls.generate_metadata(egon_metadata_1)
+        record_match(egon_positive_match_1)
+        record_metadata(egon_metadata_1)
 
     @classmethod
     def generate_yvonne_data(cls):
-        cls.generate_match(yvonne_positive_match)
-        cls.generate_metadata(yvonne_metadata)
+        record_match(yvonne_positive_match)
+        record_metadata(yvonne_metadata)
 
     @classmethod
     def generate_benny_data(cls):
-        cls.generate_match(benny_positive_match)
-        cls.generate_metadata(benny_metadata)
+        record_match(benny_positive_match)
+        record_metadata(benny_metadata)
 
-        cls.generate_match(benny_positive_match_1)
-        cls.generate_metadata(benny_metadata_1)
-
-    @classmethod
-    def generate_match(cls, match):
-        prev, new = pipeline_collector.get_reports_for(
-            match.handle.to_json_object(),
-            match.scan_spec.scan_tag)
-        pipeline_collector.handle_match_message(
-            prev, new, match.to_json_object())
-
-    @classmethod
-    def generate_metadata(cls, metadata):
-        prev, new = pipeline_collector.get_reports_for(
-            metadata.handle.to_json_object(),
-            metadata.scan_tag)
-        pipeline_collector.handle_metadata_message(
-            new, metadata.to_json_object())
+        record_match(benny_positive_match_1)
+        record_metadata(benny_metadata_1)
 
     def setUp(self):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
         self.kjeld = User.objects.create_user(
-            first_name='Kjeld', username='kjeld', 
+            first_name='Kjeld', username='kjeld',
             email='kjeld@jensen.com', password='top_secret')
         self.egon = User.objects.create_user(
             first_name='Egon', username='egon',
             email='egon@olsen.com', password='top_secret')
         self.yvonne = User.objects.create_user(
-            first_name='Yvonne', username='yvonne', 
-            email='yvonne@jensen.com', password='top_secret') 
+            first_name='Yvonne', username='yvonne',
+            email='yvonne@jensen.com', password='top_secret')
         self.benny = User.objects.create_user(
-            first_name='Benny', username='benny', 
-            email='benny@frandsen.com', password='top_secret') 
+            first_name='Benny', username='benny',
+            email='benny@frandsen.com', password='top_secret')
 
     # Tests are done as Kjeld
-    # count_handled_matches()
-    def test_statisticspage_count_unhandled_matches_no_role(self):
-        view = self.get_statisticspage_object()
-        self.assertListEqual(view.count_unhandled_matches(), 
-                            [('benny@jensen.com', 2),
-                            ('egon@olsen.com', 2),
-                            ('kjeld@jensen.com', 2),
-                            ('yvonne@jensen.com', 1)])
-
-    def test_statisticspage_count_unhandled_matches_as_leader(self):
-        leader = Leader.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        self.assertListEqual(view.count_unhandled_matches(), 
-                            [('benny@jensen.com', 2),
-                            ('egon@olsen.com', 2),
-                            ('kjeld@jensen.com', 2),
-                            ('yvonne@jensen.com', 1)])
-        leader.delete()
-
     # count_all_matches_grouped_by_sensitivity()
     def test_statisticspage_count_all_matches_grouped_by_sensitivity_as_leader(self):
         leader = Leader.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         sens_list, total = view.count_all_matches_grouped_by_sensitivity()
-        self.assertListEqual(sens_list, 
-                            [['Kritisk', 4], ['Problem', 2], 
-                            ['Advarsel', 1], ['Notifikation', 0]])
+        self.assertListEqual(sens_list,
+                             [['Kritisk', 4], ['Problem', 2],
+                              ['Advarsel', 1], ['Notifikation', 0]])
         self.assertEquals(total, 7)
         leader.delete()
 
@@ -388,9 +362,9 @@ class StatisticsPageViewTest(TestCase):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
         sens_list, total = view.count_all_matches_grouped_by_sensitivity()
-        self.assertListEqual(sens_list, 
-                            [['Kritisk', 4], ['Problem', 2], 
-                            ['Advarsel', 1], ['Notifikation', 0]])
+        self.assertListEqual(sens_list,
+                             [['Kritisk', 4], ['Problem', 2],
+                              ['Advarsel', 1], ['Notifikation', 0]])
         self.assertEquals(total, 7)
         dpo.delete()
 
@@ -409,8 +383,8 @@ class StatisticsPageViewTest(TestCase):
         view = self.get_statisticspage_object()
         sens_list, total = view.count_handled_matches_grouped_by_sensitivity()
         self.assertListEqual(sens_list,
-                            [['Kritisk', 0], ['Problem', 0], 
-                            ['Advarsel', 0], ['Notifikation', 0]])
+                             [['Kritisk', 0], ['Problem', 0],
+                              ['Advarsel', 0], ['Notifikation', 0]])
         self.assertEquals(total, 0)
         leader.delete()
 
@@ -419,8 +393,8 @@ class StatisticsPageViewTest(TestCase):
         view = self.get_statisticspage_object()
         sens_list, total = view.count_handled_matches_grouped_by_sensitivity()
         self.assertListEqual(sens_list,
-                            [['Kritisk', 0], ['Problem', 0], 
-                            ['Advarsel', 0], ['Notifikation', 0]])
+                             [['Kritisk', 0], ['Problem', 0],
+                              ['Advarsel', 0], ['Notifikation', 0]])
         dpo.delete()
 
     # created_timestamp
@@ -429,8 +403,7 @@ class StatisticsPageViewTest(TestCase):
         view = self.get_statisticspage_object()
         created_timestamp = [m.created_timestamp.date() for m in view.matches][:2]
 
-        self.assertEquals(created_timestamp,
-                          [timezone.now().date(), timezone.now().date()])
+        self.assertEquals(created_timestamp, [timezone.now().date(), timezone.now().date()])
         dpo.delete()
 
     # count_new_matches_by_month()
@@ -470,6 +443,62 @@ class StatisticsPageViewTest(TestCase):
         reset_timestamps(original_timestamps)
         dpo.delete()
 
+    def test_statisticspage_five_most_unhandled_employees(self):
+        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+        view = self.get_leader_statisticspage_object()
+        kjeld_emailalias, created = Alias.objects.get_or_create(
+            user=self.kjeld,
+            _value='kjeld@jensen.com',
+            _alias_type=AliasType.EMAIL)
+        yvonne_emailalias, created = Alias.objects.get_or_create(
+            user=self.yvonne,
+            _value='yvonne@jensen.com',
+            _alias_type=AliasType.EMAIL)
+        egon_emailalias, created = Alias.objects.get_or_create(
+            user=self.egon,
+            _value='egon@olsen.com',
+            _alias_type=AliasType.EMAIL)
+        benny_emailalias, created = Alias.objects.get_or_create(
+            user=self.benny,
+            _value='benny@frandsen.com',
+            _alias_type=AliasType.EMAIL)
+
+        create_alias_and_match_relations(kjeld_emailalias)
+        create_alias_and_match_relations(yvonne_emailalias)
+        create_alias_and_match_relations(egon_emailalias)
+        create_alias_and_match_relations(benny_emailalias)
+
+        self.assertListEqual(view.five_most_unhandled_employees(),
+                             [['Benny', 2, True], ['Egon', 2, True],
+                              ['Kjeld', 2, True], ['Yvonne', 1, True]])
+
+        dpo.delete()
+        kjeld_emailalias.delete()
+        yvonne_emailalias.delete()
+        egon_emailalias.delete()
+        benny_emailalias.delete()
+
+    def test_statisticspage_count_unhandled_matches_by_month(self):
+        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+        view = self.get_statisticspage_object()
+        test_date = dateutil.parser.parse("2021-4-28T14:21:59+05:00")
+
+        # Saves old timestamps and overrides
+        original_created_timestamps = static_timestamps('created_timestamp')
+        original_resolution_time = static_timestamps('resolution_time')
+
+        self.assertListEqual(view.count_unhandled_matches_by_month(test_date),
+                             [['May', 0], ['Jun', 0], ['Jul', 0],
+                              ['Aug', 0], ['Sep', 1], ['Oct', 3],
+                              ['Nov', 7], ['Dec', 7], ['Jan', 7],
+                              ['Feb', 7], ['Mar', 0], ['Apr', 0]])
+
+        # Resets back to old values
+        reset_timestamps(original_created_timestamps, 'created_timestamp')
+        reset_timestamps(original_resolution_time, 'resolution_time')
+
+        dpo.delete()
+
     # StatisticsPageView()
     def get_statisticspage_object(self):
         request = self.factory.get('/statistics')
@@ -477,22 +506,57 @@ class StatisticsPageViewTest(TestCase):
         view = StatisticsPageView()
         return view
 
+    # StatisticsPageView()
+    def get_leader_statisticspage_object(self):
+        request = self.factory.get('/statistics/leader')
+        request.user = self.kjeld
+        view = LeaderStatisticsPageView()
+        return view
+
 
 # Helper functions
 # Overrides timestamps to have static data
-def static_timestamps() -> List[Tuple[int, datetime.datetime]]:
+def static_timestamps(time_type: str = 'created_timestamp',
+                      added_days: int = 0) -> List[Tuple[int, datetime]]:
     original_timestamps = []
-    for match in DocumentReport.objects.all():
-        original_timestamps.append((match.pk, match.created_timestamp))
-        match.created_timestamp = match.scan_time
-        match.save()
+
+    if time_type == 'created_timestamp':  # Default
+        for match in DocumentReport.objects.all():
+            original_timestamps.append((match.pk, match.created_timestamp))
+            match.created_timestamp = match.scan_time + timedelta(days=added_days)
+            match.save()
+
+    elif time_type == 'resolution_time':
+        for batch in iterate_queryset_in_batches(10000, DocumentReport.objects.all()):
+            for match in batch:
+                original_timestamps.append((match.pk, match.resolution_time))
+                match.resolution_status = 3
+                match.resolution_time = dateutil.parser.parse("2021-3-28T14:21:59+05:00")
+            DocumentReport.objects.bulk_update(batch, ['resolution_status', 'resolution_time'])
+    else:
+        print("Typo in argument 'time_type' in static_timestamps()")
+
     return original_timestamps
 
 
 # Reset to old values
-def reset_timestamps(arg: List[Tuple[int, datetime.datetime]]):
-    for match in DocumentReport.objects.all():
-        for a in arg:
-            if a[0] == match.pk:
-                match.created_timestamp = a[1]
-        match.save()
+def reset_timestamps(arg: List[Tuple[int, datetime]],  # noqa: CCR001, E501 too high cognitive complexity
+                     time_type: str = 'created_timestamp'):
+
+    if time_type == 'created_timestamp':  # Default
+        for match in DocumentReport.objects.all():
+            for a in arg:
+                if a[0] == match.pk:
+                    match.created_timestamp = a[1]
+            match.save()
+
+    elif time_type == 'resolution_time':
+        for match in DocumentReport.objects.all():
+            for a in arg:
+                if a[0] == match.pk:
+                    match.resolution_status = None
+                    match.resolution_time = a[1]
+            match.save()
+
+    else:
+        print("Typo in argument 'time_type' in reset_timestamps()")

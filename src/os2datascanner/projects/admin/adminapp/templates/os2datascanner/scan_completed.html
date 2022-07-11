@@ -1,10 +1,10 @@
 {% extends 'partials/base.html' %}
 {% load l10n %}
-{% load static %}
 {% load i18n %}
 {% load tz %}
 
 {% block body %}
+{% include "partials/header.html" %}
 <main class="wrapper">
     {% include "partials/main.html" with active_tab="status" %}
 
@@ -19,52 +19,61 @@
         </div>
 
         {% if object_list  %}
-        <table class="datatable">
-          <thead>
-            <tr>
-              <th>
-                {% trans "Scannerjob" %}
-              </th>
-              <th class="datatable__column--org">
-                {% trans "Started" %}
-              </th>
-              <th class="datatable__column--automatic">
-                {% trans "Objects" %}
-              </th>
-              <th class="datatable__column--actions">
-                {% trans "Status" %}
-              </th>
-            </tr>
-          </thead>
+        <div class="datatable-wrapper card lg" role="region" tabindex="0" aria-label="{% trans 'Completed scans' %}">
+          <table class="datatable">
+            <colgroup>
+              <col class="datatable__column--name">
+              <col class="datatable__column--org">
+              <col class="datatable__column--info">
+              <col class="datatable__column--actions">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="datatable__column--name">
+                  {% trans "Scannerjob" %}
+                </th>
+                <th class="datatable__column--org">
+                  {% trans "Started" %}
+                </th>
+                <th class="datatable__column--info">
+                  {% trans "Objects" %}
+                </th>
+                <th class="datatable__column--actions">
+                  {% trans "Status" %}
+                </th>
+              </tr>
+            </thead>
 
-          <tbody>
-            {% for status in object_list %}
-              {% if status.finished == True %}
-                <tr tabindex="0">
-                  <td>
-                      {{ status.scanner.name }}
-                  </td>
-                  <td>
-                    {% timezone "Europe/Copenhagen" %}
-                    {{ status.start_time }}
-                    {% endtimezone %}
-                  </td>
-                  <td>
-                    {{ status.total_objects }} {% trans "objects explored" %}
-                  </td>
-                  <td>
-                    <span class="completed_icon">
-                      {% include "components/svg-icons/check_circle_full.svg" %}
-                      <span class="width">
-                        {% trans "Done" %}
+            <tbody>
+              {% for status in object_list %}
+                {% if status.finished == True %}
+                  <tr>
+                    <td class="datatable__column--name">
+                        {{ status.scanner.name }}
+                    </td>
+                    <td class="datatable__column--org">
+                      {% timezone "Europe/Copenhagen" %}
+                      {{ status.start_time }}
+                      {% endtimezone %}
+                    </td>
+                    <td class="datatable__column--automatic">
+                      {{ status.total_objects }} {% trans "objects explored" %}
+                    </td>
+                    <td class="datatable__column--actions">
+                      <span class="completed_icon">
+                        {% include "components/svg-icons/check_circle_full.svg" %}
+                        <span class="width">
+                          {% trans "Done" %}
+                        </span>
                       </span>
-                    </span>
-                  </td>
-                </tr>
-              {% endif %}
-            {% endfor %}
-          </tbody>
-        </table>
+                    </td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            </tbody>
+              {% include "components/pagination.html" %}
+          </table>
+        </div>
 
         {% else %}
         <p>

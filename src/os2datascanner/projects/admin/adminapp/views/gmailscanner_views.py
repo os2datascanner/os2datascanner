@@ -12,7 +12,14 @@
 # sector open source network <https://os2.eu/>.
 #
 from ..models.scannerjobs.gmail_model import GmailScanner
-from .scanner_views import *
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCopy,
+    ScannerCreate,
+    ScannerList)
 
 
 class GmailScannerList(ScannerList):
@@ -33,6 +40,7 @@ class GmailScannerCreate(ScannerCreate):
         'exclusion_rules',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]
@@ -54,6 +62,7 @@ class GmailScannerUpdate(ScannerUpdate):
         'exclusion_rules',
         'do_ocr',
         'do_last_modified_check',
+        'only_notify_superadmin',
         'rules',
         'organization',
     ]
@@ -75,6 +84,30 @@ class GmailScannerDelete(ScannerDelete):
     model = GmailScanner
     fields = []
     success_url = '/gmailscanners/'
+
+
+class GmailScannerCopy(ScannerCopy):
+    """Create a new copy of an existing GmailScanner"""
+
+    model = GmailScanner
+    fields = [
+        'name',
+        'schedule',
+        'service_account_file_gmail',
+        'user_emails_gmail',
+        'exclusion_rules',
+        'do_ocr',
+        'do_last_modified_check',
+        'only_notify_superadmin',
+        'rules',
+        'organization',
+    ]
+
+    def get_initial(self):
+        initial = super(GmailScannerCopy, self).get_initial()
+        initial["service_account_file_gmail"] = self.get_scanner_object().service_account_file_gmail
+        initial["user_emails_gmail"] = self.get_scanner_object().user_emails_gmail
+        return initial
 
 
 class GmailScannerAskRun(ScannerAskRun):

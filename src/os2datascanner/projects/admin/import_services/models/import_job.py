@@ -2,7 +2,7 @@ from django.db import models
 
 from os2datascanner.utils.ldap import RDN
 
-from ...core.models.background_job import JobState, BackgroundJob
+from ...core.models.background_job import BackgroundJob
 from .realm import Realm
 
 
@@ -24,6 +24,10 @@ class ImportJob(BackgroundJob):
                 if self.handled is not None and self.to_handle not in (0, None)
                 else None)
 
+    @property
+    def job_label(self) -> str:
+        return "Import Job"
+
     def run(self):
         from ...organizations.keycloak_actions import perform_import
 
@@ -31,7 +35,6 @@ class ImportJob(BackgroundJob):
         self.save()
 
         def _callback(action, *args):
-            print(action, *args)
             self.refresh_from_db()
             if action == "diff_computed":
                 count = args[0]

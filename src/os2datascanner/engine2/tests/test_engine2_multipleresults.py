@@ -13,7 +13,7 @@ class MultipleResultsTest(unittest.TestCase):
         mr["third"] = 3
         mr["fourth"] = 4
 
-        for k, v in mr.items():
+        for _k, v in mr.items():
             self.assertIsInstance(
                     v,
                     SingleResult)
@@ -38,7 +38,7 @@ class MultipleResultsTest(unittest.TestCase):
 
     def test_simple_constructor(self):
         mr = MultipleResults(a="alpha", b="beta", g="gamma", d="delta")
-        for k, v in mr.items():
+        for _k, v in mr.items():
             self.expect_sr(v, mr)
 
     def test_import_constructor(self):
@@ -51,7 +51,7 @@ class MultipleResultsTest(unittest.TestCase):
     def test_mr_constructor(self):
         base = MultipleResults(one=1, two=2, three=3, four=4)
         mr = MultipleResults(base, five=5, six=6, seven=7, eight=8)
-        for k, v in mr.items():
+        for _k, v in mr.items():
             self.expect_sr(v, mr)
 
     def test_get(self):

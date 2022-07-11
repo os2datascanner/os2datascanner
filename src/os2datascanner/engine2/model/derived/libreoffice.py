@@ -5,9 +5,11 @@ from tempfile import TemporaryDirectory
 from contextlib import closing
 from subprocess import DEVNULL
 
+from ...conversions.types import OutputType
+from ...conversions.utilities.results import SingleResult
 from ....utils.system_utilities import run_custom
 from ... import settings as engine2_settings
-from ..core import Handle, Source, Resource, SourceManager
+from ..core import Handle, Source
 from ..file import FilesystemResource
 from .derived import DerivedSource
 from .utilities import office_metadata
@@ -32,17 +34,19 @@ src/engine2/conversions folder
 
 """
 
+
 def libreoffice(*args):
     """Invokes LibreOffice with a fresh settings directory (which will be
     deleted as soon as the program finishes) and returns a CompletedProcess
     with both stdout and stderr captured."""
-    with TemporaryDirectory() as settings:
+    with TemporaryDirectory() as tmpdir:
         return run_custom(
                 ["libreoffice",
-                        "-env:UserInstallation=file://{0}".format(settings),
-                        *args],
-                stdout=DEVNULL, stderr=DEVNULL, kill_group=True,
-                timeout=engine2_settings.subprocess["timeout"], check=True)
+                 "-env:UserInstallation=file://{0}".format(tmpdir),
+                 *args],
+                stdout=DEVNULL, stderr=DEVNULL, check=True,
+                timeout=engine2_settings.subprocess["timeout"],
+                kill_group=True, isolate_tmp=True,)
 
 
 # The fallback CSV filter, used when HTML representations of spreadsheets are
@@ -57,7 +61,9 @@ def libreoffice(*args):
 # The filter name is found by looking at "oor:name" inside the relevant .xcu file
 # https://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
 # The format of --convert-to is then <TargetFileExtension>:<NameOfFilter>:<Options>
-__csv = "csv:Text - txt - csv (StarCalc):9,34,76"
+# As pr. LibreOffice 7.2, the 12th numeric parameter determines behaviour when encountering
+# spreadsheets with multiple sheets/tabs. (-1 will convert each tab to a csv file named accordingly)
+__csv = "csv:Text - txt - csv (StarCalc):9,34,76,UTF8,1,,0,false,true,false,false,-1"
 
 
 # Filter name keys come from /usr/lib/libreoffice/share/registry/PROG.xcd;
@@ -74,9 +80,9 @@ _actually_supported_types = {
     # XXX: libmagic usually can't detect OOXML files -- see the special
     # handling of these types in in LibreOfficeSource._generate_state
     "application/vnd.openxmlformats-officedocument"
-            ".wordprocessingml.document": ("Office Open XML Text", "txt"),
+    ".wordprocessingml.document": ("Office Open XML Text", "txt"),
     "application/vnd.openxmlformats-officedocument"
-            ".spreadsheetml.sheet": ("Calc Office Open XML", __csv)
+    ".spreadsheetml.sheet": ("Calc Office Open XML", __csv)
 }
 
 
@@ -91,20 +97,23 @@ def _replace_large_html(
             if entry.name.endswith(".html"):
                 if entry.stat().st_size >= size_threshold:
                     logger.info(f"{entry.name} is larger than {size_threshold}. "
-                                f"Replacing it with a simpler representation "
+                                "Replacing it with a simpler representation "
                                 f"[{output_filter}]")
+                    # --headless Starts in "headless mode"
+                    # which allows using the application without GUI.
+                    # This special mode can be used when the application is controlled
+                    # by external clients via the API.
                     libreoffice(
                             "--infilter={0}".format(input_filter),
                             "--convert-to", output_filter,
-                            "--outdir", output_directory, input_file)
+                            "--outdir", output_directory, input_file,
+                            "--headless")
                     unlink(entry.path)
                 break
 
 
-
-@Source.mime_handler(
-        "application/CDFV2",
-        *_actually_supported_types.keys())
+@Source.mime_handler("application/CDFV2",
+                     *_actually_supported_types.keys())
 class LibreOfficeSource(DerivedSource):
     type_label = "lo"
 
@@ -154,16 +163,23 @@ class LibreOfficeObjectResource(FilesystemResource):
         with parent.make_path() as fp:
             mime = magic.from_file(fp, mime=True)
             if mime in ("application/msword", "application/vnd.ms-excel",
-                    "application/vnd.ms-powerpoint",):
+                        "application/vnd.ms-powerpoint",):
                 yield from office_metadata.generate_ole_metadata(fp)
-            elif mime.startswith(
-                    "application/vnd.openxmlformats-officedocument."):
+            elif mime.startswith("application/vnd.openxmlformats-officedocument."):
                 yield from office_metadata.generate_ooxml_metadata(fp)
             elif mime.startswith(
                     "application/vnd.oasis.opendocument."):
                 yield from office_metadata.generate_opendocument_metadata(fp)
         # We deliberately don't yield from the superclass implementation --
         # filesystem metadata is useless for a generated file
+
+    def get_last_modified(self):
+        last_modified = None
+        parent_source = self.handle.source
+        res = parent_source.handle.follow(self._sm)
+        last_modified = res.get_last_modified()
+        return SingleResult(None, OutputType.LastModified,
+                            last_modified.value if last_modified else None)
 
 
 @Handle.stock_json_handler("lo-object")
@@ -172,9 +188,24 @@ class LibreOfficeObjectHandle(Handle):
     resource_type = LibreOfficeObjectResource
 
     @property
-    def presentation(self):
-        return self.source.handle.presentation
+    def presentation_name(self):
+        mime = self.guess_type()
+        container = self.source.handle.presentation_name
+        if mime.startswith("text/"):
+            return f"text of {container}"
+        elif mime.startswith("image/"):
+            return f"image in {container}"
+        else:
+            return f"unknown object in {container}"
+
+    @property
+    def presentation_place(self):
+        return self.source.handle.presentation_place
 
     def censor(self):
-        return LibreOfficeObjectHandle(
-                self.source.censor(), self.relative_path)
+        return LibreOfficeObjectHandle(self.source.censor(), self.relative_path)
+
+    @property
+    def sort_key(self):
+        "Return the file path of the document"
+        return self.base_handle.sort_key

@@ -1,12 +1,12 @@
 import os.path
 from datetime import datetime
 import unittest
-import contextlib
 
 from os2datascanner.engine2.model.core import (Source, SourceManager)
 from os2datascanner.engine2.model.file import (
         FilesystemSource, FilesystemHandle)
 from os2datascanner.engine2.model.data import DataSource
+from os2datascanner.engine2.model.smbc import SMBCSource
 from os2datascanner.engine2.conversions.utilities.results import SingleResult
 
 
@@ -51,28 +51,27 @@ class Engine2ContainerTest(unittest.TestCase):
                     stream_raw = fp.read()
                     stream_size = len(stream_raw)
                     stream_content = stream_raw.decode("utf-8")
-                with r.make_path() as p:
-                    with open(p, "rb") as fp:
-                        file_raw = fp.read()
-                        file_size = len(file_raw)
-                        file_content = file_raw.decode("utf-8")
+                with r.make_path() as p, open(p, "rb") as fp:
+                    file_raw = fp.read()
+                    file_size = len(file_raw)
+                    file_content = file_raw.decode("utf-8")
 
                 self.assertIsInstance(
                         last_modified,
                         SingleResult,
                         ("{0}: last modification date is not a"
-                                " SingleResult").format(handle))
+                         " SingleResult").format(handle))
                 self.assertIsInstance(
                         last_modified.value,
                         datetime,
                         ("{0}: last modification date value is not a"
-                                "datetime.datetime").format(handle))
+                         "datetime.datetime").format(handle))
 
                 self.assertIsInstance(
                         reported_size,
                         SingleResult,
                         ("{0}: resource length is not a"
-                                " SingleResult").format(handle))
+                         " SingleResult").format(handle))
                 self.assertEqual(
                         stream_size,
                         reported_size.value,
@@ -107,8 +106,25 @@ class Engine2ContainerTest(unittest.TestCase):
                     "smbc://os2:12345_rosebud_password_admin@samba/general")
             self.process(source, sm)
 
-    def test_derived_source(self):
+    def test_smbc_snapshot_exclusion(self):
         with SourceManager() as sm:
+            source = SMBCSource(
+                    "//samba/general/backup",
+                    "os2", "12345_rosebud_password_admin",
+                    skip_super_hidden=False)
+            self.assertEquals(
+                    [k.relative_path for k in source.handles(sm)],
+                    ["~snapshot/test-vector-hidden"],
+                    "unskipped file not found")
+
+            source._skip_super_hidden = True
+            self.assertEquals(
+                    [k.relative_path for k in source.handles(sm)],
+                    [],
+                    "skipped file unexpectedly found")
+
+    def test_derived_source(self):
+        with SourceManager():
             s = FilesystemSource(test_data_path)
             h = FilesystemHandle(s, "data/engine2/zip-here/test-vector.zip")
 

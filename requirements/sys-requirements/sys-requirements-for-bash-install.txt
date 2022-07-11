@@ -27,7 +27,6 @@ libsmbclient-dev
 moreutils
 linux-image-generic
 rsync
-libsystemd-dev
 openssl
 libxmlsec1-dev
 pkg-config

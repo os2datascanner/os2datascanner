@@ -28,7 +28,7 @@ def _codepage_to_codec(cp):
         return None
 
 
-def _get_ole_metadata(fp):
+def _get_ole_metadata(fp):  # noqa: CCR001, too high cognitive complexity
     try:
         raw = olefile.OleFileIO(fp).get_metadata()
 
@@ -61,9 +61,8 @@ def _get_ole_metadata(fp):
 
 def _process_zip_resource(fp, member, func):
     try:
-        with ZipFile(fp, "r") as z:
-            with z.open(member, "r") as f:
-                return func(f)
+        with ZipFile(fp, "r") as z, z.open(member, "r") as f:
+            return func(f)
     except (KeyError, BadZipFile, FileNotFoundError):
         return None
 

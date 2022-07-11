@@ -18,7 +18,7 @@ from django.conf.urls import url
 from django.http import HttpResponse
 from django.views.i18n import JavaScriptCatalog
 from django.views.generic.base import TemplateView
-from os2datascanner import __version__
+from os2datascanner import __version__, __commit__, __tag__, __branch__
 
 from .models.scannerjobs.dropboxscanner_model import DropboxScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
@@ -26,56 +26,82 @@ from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
 from .models.scannerjobs.msgraph_models import (MSGraphMailScanner,
-                                                MSGraphFileScanner)
+                                                MSGraphFileScanner,
+                                                MSGraphCalendarScanner)
 from .models.scannerjobs.gmail_model import GmailScanner
 from .models.scannerjobs.sbsysscanner_model import SbsysScanner
 from .views.api import JSONAPIView
 from .views.views import GuideView, DialogSuccess
-from .views.exchangescanner_views import (
-    ExchangeScannerList, ExchangeScannerCreate, ExchangeScannerUpdate,
-    ExchangeScannerDelete, ExchangeScannerRun, ExchangeScannerAskRun)
-from .views.filescanner_views import (
-    FileScannerCreate, FileScannerRun, FileScannerAskRun,
-    FileScannerUpdate, FileScannerDelete, FileScannerList)
-from .views.dropboxscanner_views import (
-    DropboxScannerCreate, DropboxScannerRun, DropboxScannerAskRun,
-    DropboxScannerUpdate, DropboxScannerDelete, DropboxScannerList)
-from .views.googledrivescanner_views import (
-    GoogleDriveScannerCreate, GoogleDriveScannerRun, GoogleDriveScannerAskRun,
-    GoogleDriveScannerUpdate, GoogleDriveScannerList, GoogleDriveScannerDelete)
-from .views.gmailscanner_views import (
-    GmailScannerCreate, GmailScannerRun, GmailScannerAskRun,
-    GmailScannerUpdate, GmailScannerDelete, GmailScannerList)
-from .views.sbsysscanner_views import (
-    SbsysScannerCreate, SbsysScannerList, SbsysScannerAskRun,
-    SbsysScannerDelete, SbsysScannerRun, SbsysScannerUpdate)
-from .views.rule_views import (
-    RuleList, CPRRuleCreate, CPRRuleUpdate, CPRRuleDelete, RegexRuleCreate,
-    RegexRuleUpdate, RegexRuleDelete)
-from .views.scanner_views import (StatusOverview, StatusCompleted, StatusDelete)
-from .views.webscanner_views import (
-    WebScannerCreate, WebScannerUpdate, WebScannerDelete,
-    WebScannerRun, WebScannerAskRun, WebScannerList, WebScannerValidate)
-from .views.msgraph_views import (
-        MSGraphMailList, MSGraphMailDelete, MSGraphMailCreate,
-        MSGraphMailUpdate, MSGraphMailRun, MSGraphMailAskRun,
-        MSGraphFileList, MSGraphFileDelete, MSGraphFileCreate,
-        MSGraphFileUpdate, MSGraphFileRun, MSGraphFileAskRun)
+
+from .views.exchangescanner_views import (ExchangeScannerList, ExchangeScannerCreate,
+                                          ExchangeScannerUpdate, ExchangeScannerDelete,
+                                          ExchangeScannerRun, ExchangeScannerAskRun,
+                                          ExchangeScannerCopy, OrganizationalUnitListing)
+
+from .views.filescanner_views import (FileScannerCreate, FileScannerRun,
+                                      FileScannerAskRun, FileScannerUpdate,
+                                      FileScannerDelete, FileScannerList,
+                                      FileScannerCopy)
+
+from .views.dropboxscanner_views import (DropboxScannerCreate, DropboxScannerRun,
+                                         DropboxScannerAskRun, DropboxScannerUpdate,
+                                         DropboxScannerDelete, DropboxScannerList)
+
+from .views.googledrivescanner_views import (GoogleDriveScannerCreate, GoogleDriveScannerRun,
+                                             GoogleDriveScannerAskRun, GoogleDriveScannerUpdate,
+                                             GoogleDriveScannerList, GoogleDriveScannerDelete,
+                                             GoogleDriveScannerCopy)
+
+from .views.gmailscanner_views import (GmailScannerCreate, GmailScannerRun,
+                                       GmailScannerAskRun, GmailScannerUpdate,
+                                       GmailScannerDelete, GmailScannerList,
+                                       GmailScannerCopy)
+
+from .views.sbsysscanner_views import (SbsysScannerCreate, SbsysScannerList,
+                                       SbsysScannerAskRun, SbsysScannerDelete,
+                                       SbsysScannerRun, SbsysScannerUpdate)
+
+from .views.rule_views import (RuleList, CPRRuleCreate,
+                               CPRRuleUpdate, CPRRuleDelete,
+                               RegexRuleCreate, RegexRuleUpdate,
+                               RegexRuleDelete)
+
+from .views.scanner_views import (StatusOverview, StatusCompleted,
+                                  StatusDelete, UserErrorLogView)
+
+from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
+                                     WebScannerDelete, WebScannerRun,
+                                     WebScannerAskRun, WebScannerList,
+                                     WebScannerValidate, WebScannerCopy)
+
+from .views.msgraph_views import (MSGraphMailList, MSGraphMailDelete,
+                                  MSGraphMailCreate, MSGraphMailUpdate,
+                                  MSGraphMailRun, MSGraphMailAskRun,
+                                  MSGraphFileList, MSGraphFileDelete,
+                                  MSGraphFileCreate, MSGraphFileUpdate,
+                                  MSGraphFileRun, MSGraphFileAskRun,
+                                  MSGraphMailCopy, MSGraphFileCopy,
+                                  MSGraphCalendarList, MSGraphCalendarDelete,
+                                  MSGraphCalendarCreate, MSGraphCalendarUpdate,
+                                  MSGraphCalendarRun, MSGraphCalendarAskRun,
+                                  MSGraphCalendarCopy)
 
 urlpatterns = [
     # App URLs
     url(r'^$', WebScannerList.as_view(), name='index'),
     url(r'^api/openapi.yaml$', TemplateView.as_view(
-            template_name="openapi.yaml", content_type="application/yaml"),
-            name="json-api"),
+        template_name="openapi.yaml", content_type="application/yaml"),
+        name="json-api"),
     url(r'^api/(?P<path>.*)$', JSONAPIView.as_view(), name="json-api"),
 
     # App URLs
     url(r'^status/$', StatusOverview.as_view(), name='status'),
     url(r'^status-completed/$', StatusCompleted.as_view(), name='status-completed'),
+    url(r'^error-log/$', UserErrorLogView.as_view(), name='error-log'),
     url(r'^status/(?P<pk>\d+)/delete/$', StatusDelete.as_view(), name='status-delete'),
     url(r'^help/guide/$', GuideView.as_view(), name='guide'),
-    #Exchangescanner URL's
+    # Exchangescanner URL's
+    url(r'^org-units-listing/', OrganizationalUnitListing.as_view(), name='org-units-listing'),
     url(r'^exchangescanners/$', ExchangeScannerList.as_view(), name='exchangescanners'),
     url(r'^exchangescanners/add/$', ExchangeScannerCreate.as_view(), name='exchangescanner_add'),
     url(r'^exchangescanners/(?P<pk>\d+)/delete/$', ExchangeScannerDelete.as_view(),
@@ -89,6 +115,8 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=ExchangeScanner),
         name='scanner_askrun'),
+    url(r'^exchangescanners/(?P<pk>\d+)/copy/$', ExchangeScannerCopy.as_view(),
+        name='exchangescanner_copy'),
 
     # Webscanner URL's
     url(r'^webscanners/$', WebScannerList.as_view(), name='webscanners'),
@@ -106,6 +134,7 @@ urlpatterns = [
         name='webscanner_askrun'),
     url(r'^webscanners/(?P<pk>\d+)/$', WebScannerUpdate.as_view(),
         name='webscanner_update'),
+    url(r'^webscanners/(?P<pk>\d+)/copy/$', WebScannerCopy.as_view(), name='webscanner_copy'),
 
     # Filescanner URL's
     url(r'^filescanners/$', FileScannerList.as_view(), name='filescanners'),
@@ -121,6 +150,7 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=FileScanner),
         name='filescanner_askrun'),
+    url(r'^filescanners/(?P<pk>\d+)/copy/$', FileScannerCopy.as_view(), name='filescanner_copy'),
 
     # Dropbox scanner URL's
     url(r'^dropboxscanners/$', DropboxScannerList.as_view(), name='dropboxscanners'),
@@ -138,8 +168,10 @@ urlpatterns = [
         name='dropboxscanner_askrun'),
 
     # Google Drive scanner URL's
-    url(r'^googledrivescanners/$', GoogleDriveScannerList.as_view(), name='googledrivescanners'),
-    url(r'^googledrivescanners/add/$', GoogleDriveScannerCreate.as_view(), name='googledrivescanner_add'),
+    url(r'^googledrivescanners/$', GoogleDriveScannerList.as_view(),
+        name='googledrivescanners'),
+    url(r'^googledrivescanners/add/$', GoogleDriveScannerCreate.as_view(),
+        name='googledrivescanner_add'),
     url(r'^googledrivescanners/(?P<pk>\d+)/$', GoogleDriveScannerUpdate.as_view(),
         name='googledrivescanner_update'),
     url(r'^googledrivescanners/(?P<pk>\d+)/delete/$', GoogleDriveScannerDelete.as_view(),
@@ -151,6 +183,8 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=GoogleDriveScanner),
         name='googledrivescanner_askrun'),
+    url(r'^googledrivescanners/(?P<pk>\d+)/copy/$', GoogleDriveScannerCopy.as_view(),
+        name='googledrivescanner_copy'),
 
     # Gmail scanner URL's
     url(r'^gmailscanners/$', GmailScannerList.as_view(), name='gmailscanners'),
@@ -166,6 +200,7 @@ urlpatterns = [
             template_name='os2datascanner/scanner_askrun.html',
             model=GmailScanner),
         name='gmailscanner_askrun'),
+    url(r'^gmailscanners/(?P<pk>\d+)/copy/$', GmailScannerCopy.as_view(), name='gmailscanner_copy'),
 
     # Sbsys scanner URL's
     url(r'^sbsysscanners/$', SbsysScannerList.as_view(), name='sbsysscanners'),
@@ -183,48 +218,77 @@ urlpatterns = [
         name='sbsysscanner_askrun'),
 
     # OAuth-based data sources
+    url(r'^msgraph-calendarscanners/$',
+        MSGraphCalendarList.as_view(),
+        name='msgraphcalendarscanner_list'),
+    url(r'^msgraph-calendarscanners/add/$',
+        MSGraphCalendarCreate.as_view(),
+        name='msgraphcalendarscanner_add'),
+    url(r'^msgraph-calendarscanners/(?P<pk>\d+)/$',
+        MSGraphCalendarUpdate.as_view(),
+        name='msgraphcalendarscanner_update'),
+    url(r'^msgraph-calendarscanners/(?P<pk>\d+)/delete/$',
+        MSGraphCalendarDelete.as_view(),
+        name='msgraphcalendarscanner_delete'),
+    url(r'^msgraph-calendarscanners/(?P<pk>\d+)/copy/$',
+        MSGraphCalendarCopy.as_view(),
+        name='msgraphcalendarscanner_copy'),
+    url(r'^msgraph-calendarscanners/(?P<pk>\d+)/run/$',
+        MSGraphCalendarRun.as_view(),
+        name='msgraphcalendarscanner_run'),
+    url(r'^msgraph-calendarscanners/(?P<pk>\d+)/askrun/$',
+        MSGraphCalendarAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=MSGraphCalendarScanner),
+        name='msgraphcalendarscanner_askrun'),
     url(r'^msgraph-filescanners/$',
-            MSGraphFileList.as_view(),
-            name='msgraphfilescanner_list'),
+        MSGraphFileList.as_view(),
+        name='msgraphfilescanner_list'),
     url(r'^msgraph-mailscanners/$',
-            MSGraphMailList.as_view(),
-            name='msgraphmailscanner_list'),
+        MSGraphMailList.as_view(),
+        name='msgraphmailscanner_list'),
     url(r'^msgraph-filescanners/add/$',
-            MSGraphFileCreate.as_view(),
-            name='msgraphfilescanner_add'),
+        MSGraphFileCreate.as_view(),
+        name='msgraphfilescanner_add'),
     url(r'^msgraph-mailscanners/add/$',
-            MSGraphMailCreate.as_view(),
-            name='msgraphmailscanner_add'),
+        MSGraphMailCreate.as_view(),
+        name='msgraphmailscanner_add'),
     url(r'^msgraph-filescanners/(?P<pk>\d+)/$',
-            MSGraphFileUpdate.as_view(),
-            name='msgraphfilescanner_update'),
+        MSGraphFileUpdate.as_view(),
+        name='msgraphfilescanner_update'),
     url(r'^msgraph-mailscanners/(?P<pk>\d+)/$',
-            MSGraphMailUpdate.as_view(),
-            name='msgraphmailscanner_update'),
+        MSGraphMailUpdate.as_view(),
+        name='msgraphmailscanner_update'),
     url(r'^msgraph-filescanners/(?P<pk>\d+)/delete/$',
-            MSGraphFileDelete.as_view(),
-            name='msgraphfilescanner_delete'),
+        MSGraphFileDelete.as_view(),
+        name='msgraphfilescanner_delete'),
     url(r'^msgraph-mailscanners/(?P<pk>\d+)/delete/$',
-            MSGraphMailDelete.as_view(),
-            name='msgraphmailscanner_delete'),
+        MSGraphMailDelete.as_view(),
+        name='msgraphmailscanner_delete'),
+    url(r'^msgraph-mailscanners/(?P<pk>\d+)/copy/$', MSGraphMailCopy.as_view(),
+        name='msgraphmailscanner_copy'),
+    url(r'^msgraph-filescanners/(?P<pk>\d+)/copy/$', MSGraphFileCopy.as_view(),
+        name='filescanners_copy'),
     url(r'^msgraph-filescanners/(?P<pk>\d+)/run/$',
-            MSGraphFileRun.as_view(),
-            name='msgraphfilescanner_run'),
+        MSGraphFileRun.as_view(),
+        name='msgraphfilescanner_run'),
     url(r'^msgraph-mailscanners/(?P<pk>\d+)/run/$',
-            MSGraphMailRun.as_view(),
-            name='msgraphmailscanner_run'),
+        MSGraphMailRun.as_view(),
+        name='msgraphmailscanner_run'),
     url(r'^msgraph-filescanners/(?P<pk>\d+)/askrun/$',
-            MSGraphFileAskRun.as_view(
-                    template_name='os2datascanner/scanner_askrun.html',
-                    model=MSGraphFileScanner),
-            name='msgraphfilescanner_askrun'),
+        MSGraphFileAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=MSGraphFileScanner),
+        name='msgraphfilescanner_askrun'),
     url(r'^msgraph-mailscanners/(?P<pk>\d+)/askrun/$',
-            MSGraphMailAskRun.as_view(
-                    template_name='os2datascanner/scanner_askrun.html',
-                    model=MSGraphMailScanner),
-            name='msgraphmailscanner_askrun'),
+        MSGraphMailAskRun.as_view(
+            template_name='os2datascanner/scanner_askrun.html',
+            model=MSGraphMailScanner),
+        name='msgraphmailscanner_askrun'),
     url(r'^(msgraph-mailscanners|msgraph-filescanners)/(\d+)/(created|saved)/$',
-            DialogSuccess.as_view()),
+        DialogSuccess.as_view()),
+    url(r'^(msgraph-calendarscanners)/(\d+)/(created|saved)/$',
+        DialogSuccess.as_view()),
 
     # Rules
     url(r'^rules/$', RuleList.as_view(), name='rules'),
@@ -288,9 +352,9 @@ urlpatterns = [
         ),
 
     # General success handler
-    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(created)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(created)/$',  # noqa
         DialogSuccess.as_view()),
-    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(saved)/$',
+    url(r'^(webscanners|filescanners|exchangescanners|dropboxscanners|googledrivescanners|gmailscanners|sbsysscanners)/(\d+)/(saved)/$',  # noqa
         DialogSuccess.as_view()),
     url(r'^(rules/regex|rules/cpr)/(\d+)/(created)/$',
         DialogSuccess.as_view()),
@@ -302,5 +366,11 @@ urlpatterns = [
     )),
 
     url(r'^health/', lambda r: HttpResponse()),
-    url(r'^version/?$', lambda r: HttpResponse(__version__)),
+    url(r'^version/?$', lambda r: HttpResponse(
+        f"""
+        Version:   {__version__}<br/>
+        Commit-ID: {__commit__}<br/>
+        Tag:       {__tag__}<br/>
+        Branch:    {__branch__}
+        """)),
 ]

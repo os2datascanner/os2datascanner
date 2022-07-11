@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from io import StringIO
-from json import loads
 from contextlib import redirect_stdout
 from pprint import pformat
 
@@ -11,7 +10,7 @@ from django.core.management import call_command
 from django.utils.text import slugify
 
 from os2datascanner.engine2.model.http import WebSource
-from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineRunner
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.rules.regex import RegexRule as TwegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity as Twensitivity
 from os2datascanner.projects.admin.core.models.client import Client
@@ -49,15 +48,24 @@ class StopHandling(Exception):
     pass
 
 
-class PipelineTestRunner(PikaPipelineRunner):
-    def handle_message(self, body, *, channel=None):
-        yield from []
+class TestRunner(PikaPipelineThread):
+    def handle_message(self, routing_key, body):
+        print(self, routing_key, body)
+        global messages
+
+        # overwrite transient fields
+        body["scan_tag"]["time"] = None
+        body["scan_tag"]["organisation"]["uuid"] = None
+        messages.append((body, "os2ds_scan_specs"))
+        if body:
+            raise StopHandling()
 
 
 # NOTE: rule_pk and org_pk CANNOT be 1, as the default created CPRRule points to
 # these keys. Thus the tearDown(or deletion) will fail when trying to delete the
 # rule and org.
-CONST_PK = 0  # const to add, in case we run this script outside testing
+# (XXX: don't hard-code primary keys ever)
+CONST_PK = 50000000  # const to add, in case we run this script outside testing
 SCANNER_PK = 1 + CONST_PK
 PATTERN_PK = 1 + CONST_PK
 RULE_PK = 2 + CONST_PK
@@ -66,7 +74,11 @@ messages = []
 # expected json message
 obj = {
     "scan_tag": {
-        "scanner": {"name": "Magenta", "pk": SCANNER_PK},
+        "scanner": {
+            "name": "Magenta",
+            "pk": SCANNER_PK,
+            "test": False,
+        },
         "user": None,
         "organisation": {"name": "Magenta", "uuid": None},
         "time": None,  # set to now() in scanner_model.py
@@ -79,6 +91,7 @@ obj = {
         "fællesskaber", name=None, sensitivity=Twensitivity.NOTICE
     ).to_json_object(),
     "configuration": {"skip_mime_types": ["image/*"]},
+    "filter_rule": None,
     "progress": None,
 }
 messages.append(
@@ -86,18 +99,9 @@ messages.append(
 )
 
 
-def result_received(channel, method, properties, body):
-    channel.basic_ack(method.delivery_tag)
-    body = loads(body.decode("utf-8"))
-    # overwrite transient fields
-    body["scan_tag"]["time"] = None
-    body["scan_tag"]["organisation"]["uuid"] = None
-    messages.append((body, "os2ds_scan_specs"))
-    if body:
-        raise StopHandling()
-
-
 class CronTest(django.test.TestCase):
+    maxDiff = None
+
     def setUp(self):
         # create organisations
         client1 = Client.objects.create(name="client1")
@@ -173,9 +177,8 @@ class CronTest(django.test.TestCase):
         self.magenta_scanner_tomorrow.save()
 
         # open queue
-        self.runner = PipelineTestRunner(
-            read="os2ds_scan_specs", write=set(), heartbeat=6000
-        )
+        self.runner = TestRunner(
+                read=("os2ds_scan_specs",), write=set(), heartbeat=6000)
 
     def tearDown(self):
         self.reg1.delete()
@@ -192,10 +195,9 @@ class CronTest(django.test.TestCase):
             call_command("cron", **{"now": True}, stdout=buf)
             self.output = buf.getvalue().rstrip()
 
-        self.runner.channel.basic_consume("os2ds_scan_specs", result_received)
         try:
             self.runner.run_consumer()
-        except StopHandling as e:
+        except StopHandling:
             print('############################')
             print('scan_spec recieved after starting the scan job by cron')
             print("{0}".format(pformat(messages[1][0])))

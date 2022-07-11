@@ -44,7 +44,7 @@ class JSONSerialisable(ABC):
         to_json_object method, back into an object."""
         try:
             tl = obj["type"]
-            if not tl in cls._json_handlers:
+            if tl not in cls._json_handlers:
                 raise UnknownSchemeError(tl)
             return cls._json_handlers[tl](obj)
         except KeyError as k:

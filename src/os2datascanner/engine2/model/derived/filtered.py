@@ -4,13 +4,11 @@ from bz2 import BZ2File
 from gzip import GzipFile
 from lzma import LZMAFile
 from datetime import datetime
-from functools import partial
 from contextlib import contextmanager
 
 from ...conversions.types import OutputType
 from ...conversions.utilities.results import MultipleResults
-from ..core import Source, Handle, FileResource, SourceManager
-from ..utilities import NamedTemporaryResource
+from ..core import Source, Handle, FileResource
 from .derived import DerivedSource
 
 
@@ -79,8 +77,7 @@ class FilteredResource(FileResource):
                 # Compute the size by seeking to the end of a fresh stream, in
                 # the process also populating the last modification date field
                 s.seek(0, 2)
-                self._mr = MultipleResults.make_from_attrs(s,
-                        "mtime", "filename", size=s.tell())
+                self._mr = MultipleResults.make_from_attrs(s, "mtime", "filename", size=s.tell())
                 self._mr[OutputType.LastModified] = datetime.fromtimestamp(
                         s.mtime)
         return self._mr
@@ -90,21 +87,13 @@ class FilteredResource(FileResource):
 
     def get_last_modified(self):
         return self.unpack_stream().setdefault(OutputType.LastModified,
-                super().get_last_modified())
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as f:
-                with self.make_stream() as s:
-                    f.write(s.read())
-            yield ntr.get_path()
+                                               super().get_last_modified())
 
     @contextmanager
     def make_stream(self):
-        with self._get_cookie().make_stream() as s_:
-            with self.handle.source._decompress(s_) as s:
-                yield self._poke_stream(s)
+        with self._get_cookie().make_stream() as s_, \
+                self.handle.source._decompress(s_) as s:
+            yield self._poke_stream(s)
 
 
 @Handle.stock_json_handler("filtered")
@@ -113,9 +102,16 @@ class FilteredHandle(Handle):
     resource_type = FilteredResource
 
     @property
-    def presentation(self):
-        return "({0}, decompressed)".format(
-                self.source.handle.presentation)
+    def presentation_name(self):
+        return self.name
+
+    @property
+    def presentation_place(self):
+        return str(self.source.handle)
+
+    @property
+    def sort_key(self):
+        return self.base_handle.sort_key
 
     def censor(self):
         return FilteredHandle(self.source.censor(), self.relative_path)

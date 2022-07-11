@@ -1,0 +1,48 @@
+.sensitivity-chart {
+  background-color: #fff;
+  box-shadow: var(--box-shadow-large);
+  margin: 2rem 0;
+  max-width: 90rem;
+  padding: 2rem;
+  width: calc(100% - 2rem);
+  cursor: pointer;
+
+  ul {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    margin: 1rem 0 0 0;
+  }
+
+  li {
+    list-style-type: none;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    padding-right: 1.5rem;
+  }
+
+  &--width {
+    margin-right: .5rem;
+    height: 1.3rem;
+    width: auto;
+  }
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
+
+  .icons {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+  }
+
+  legend {
+    text-align: left;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+}

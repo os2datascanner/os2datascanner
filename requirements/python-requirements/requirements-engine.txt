@@ -24,7 +24,7 @@ click==8.0.1
     # via -r requirements-common.in
 colorama==0.4.3
     # via -r requirements-common.in
-cryptography==2.9.2
+cryptography==3.4.8
     # via requests-ntlm
 defusedxml==0.6.0
     # via
@@ -58,11 +58,6 @@ httplib2==0.18.1
     #   oauth2client
 idna==2.9
     # via requests
-importlib-metadata==4.5.0
-    # via
-    #   click
-    #   pluggy
-    #   pytest
 iniconfig==1.1.1
     # via pytest
 isodate==0.6.0
@@ -85,7 +80,7 @@ packaging==21.0
     # via pytest
 parameterized==0.8.1
     # via -r requirements-common.in
-pika==1.1.0
+pika==1.2.0
     # via -r requirements-common.in
 pillow==7.1.1
     # via -r requirements-engine.in
@@ -97,6 +92,8 @@ protobuf==3.13.0
     # via
     #   google-api-core
     #   googleapis-common-protos
+py-cpuinfo==8.0.0
+    # via pytest-benchmark
 py==1.10.0
     # via
     #   pytest
@@ -120,6 +117,8 @@ pypdf2==1.26.0
     # via -r requirements-engine.in
 pysmbc==1.0.21
     # via -r requirements-engine.in
+pytest-benchmark==3.4.1
+    # via -r requirements-engine.in
 pytest-forked==1.3.0
     # via pytest-xdist
 pytest-xdist==2.3.0
@@ -127,6 +126,7 @@ pytest-xdist==2.3.0
 pytest==6.2.4
     # via
     #   -r requirements-engine.in
+    #   pytest-benchmark
     #   pytest-forked
     #   pytest-xdist
 python-dateutil==2.8.1
@@ -160,7 +160,6 @@ rsa==4.6
     #   oauth2client
 six==1.14.0
     # via
-    #   cryptography
     #   dropbox
     #   google-api-core
     #   google-api-python-client
@@ -171,16 +170,14 @@ six==1.14.0
     #   protobuf
     #   python-dateutil
     #   structlog
+sortedcontainers==2.4.0
+    # via -r requirements-common.in
 structlog==20.1.0
     # via -r requirements-common.in
-systemd-python==234
-    # via -r requirements-engine.in
 toml==0.10.1
     # via
     #   -r requirements-common.in
     #   pytest
-typing-extensions==3.10.0.0
-    # via importlib-metadata
 tzlocal==2.0.0
     # via exchangelib
 uritemplate==3.0.1
@@ -189,8 +186,6 @@ urllib3==1.25.9
     # via requests
 xattr==0.9.7
     # via -r requirements-engine.in
-zipp==3.4.1
-    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

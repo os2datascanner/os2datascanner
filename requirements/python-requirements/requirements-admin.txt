@@ -4,12 +4,30 @@
 #
 #    pip-compile requirements-admin.in
 #
-asgiref==3.3.4
-    # via django
+aioredis==1.3.1
+    # via channels-redis
+asgiref==3.4.1
+    # via
+    #   channels
+    #   channels-redis
+    #   daphne
+    #   django
+    #   uvicorn
+async-timeout==3.0.1
+    # via aioredis
+attrs==21.2.0
+    # via
+    #   -c requirements-engine.txt
+    #   automat
+    #   pytest
+    #   service-identity
+    #   twisted
+autobahn==21.2.1
+    # via daphne
+automat==20.2.0
+    # via twisted
 backcall==0.1.0
     # via ipython
-beautifulsoup4==4.9.0
-    # via -r requirements-django.in
 cached-property==1.5.1
     # via
     #   -c requirements-engine.txt
@@ -27,6 +45,12 @@ cffi==1.14.0
     #   -c requirements-engine.txt
     #   cryptography
     #   google-crc32c
+channels-redis==3.3.0
+    # via -r requirements-django.in
+channels==3.0.4
+    # via
+    #   -r requirements-django.in
+    #   channels-redis
 chardet==3.0.4
     # via
     #   -c requirements-engine.txt
@@ -35,14 +59,23 @@ click==8.0.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
+    #   uvicorn
 colorama==0.4.3
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
-cryptography==2.9.2
+constantly==15.1.0
+    # via twisted
+cryptography==3.4.8
     # via
     #   -c requirements-engine.txt
+    #   -r requirements-django.in
+    #   autobahn
+    #   pyopenssl
     #   requests-ntlm
+    #   service-identity
+daphne==3.0.2
+    # via channels
 decorator==4.4.2
     # via
     #   ipython
@@ -62,7 +95,9 @@ django-js-asset==1.2.2
 django-model-utils==4.0.0
     # via -r requirements-django.in
 django-mptt==0.11.0
-    # via -r requirements-admin.in
+    # via -r requirements-django.in
+django-prometheus==2.1.0
+    # via -r requirements-django.in
 django-recurrence==1.10.2
     # via -r requirements-admin.in
 django-settings-export==1.2.1
@@ -71,9 +106,10 @@ django-storages[google]==1.10.1
     # via -r requirements-django.in
 django-structlog==1.5.2
     # via -r requirements-django.in
-django==3.2.4
+django==3.2.11
     # via
     #   -r requirements-django.in
+    #   channels
     #   django-debug-toolbar
     #   django-model-utils
     #   django-mptt
@@ -81,6 +117,9 @@ django==3.2.4
     #   django-settings-export
     #   django-storages
     #   django-structlog
+    #   djangorestframework
+djangorestframework==3.12.4
+    # via -r requirements-django.in
 dnspython==1.16.0
     # via
     #   -c requirements-engine.txt
@@ -127,20 +166,34 @@ googleapis-common-protos==1.52.0
     #   google-api-core
 gunicorn==20.0.4
     # via -r requirements-django.in
+h11==0.12.0
+    # via uvicorn
+hiredis==2.0.0
+    # via aioredis
 httplib2==0.18.1
     # via
     #   -c requirements-engine.txt
     #   google-api-python-client
     #   google-auth-httplib2
     #   oauth2client
+httptools==0.2.0
+    # via uvicorn
+hyperlink==21.0.0
+    # via
+    #   autobahn
+    #   twisted
 idna==2.9
     # via
     #   -c requirements-engine.txt
+    #   hyperlink
     #   requests
-importlib-metadata==4.5.0
+    #   twisted
+incremental==21.3.0
+    # via twisted
+iniconfig==1.1.1
     # via
     #   -c requirements-engine.txt
-    #   click
+    #   pytest
 ipython-genutils==0.2.0
     # via traitlets
 ipython==7.14.0
@@ -155,6 +208,8 @@ lxml==4.5.0
     # via
     #   -c requirements-engine.txt
     #   exchangelib
+msgpack==1.0.2
+    # via channels-redis
 ntlm-auth==1.4.0
     # via
     #   -c requirements-engine.txt
@@ -172,6 +227,10 @@ olefile==0.46
     # via
     #   -c requirements-engine.txt
     #   -r requirements-django.in
+packaging==21.0
+    # via
+    #   -c requirements-engine.txt
+    #   pytest
 parameterized==0.8.1
     # via
     #   -c requirements-engine.txt
@@ -182,7 +241,7 @@ pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
-pika==1.1.0
+pika==1.2.0
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
@@ -190,6 +249,14 @@ pillow==7.1.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-django.in
+pluggy==0.13.1
+    # via
+    #   -c requirements-engine.txt
+    #   pytest
+prometheus-client==0.7.1
+    # via
+    #   -c requirements-engine.txt
+    #   django-prometheus
 prompt-toolkit==3.0.5
     # via ipython
 protobuf==3.13.0
@@ -201,28 +268,40 @@ psycopg2-binary==2.8.5
     # via -r requirements-django.in
 ptyprocess==0.6.0
     # via pexpect
+py==1.10.0
+    # via
+    #   -c requirements-engine.txt
+    #   pytest
 pyasn1-modules==0.2.8
     # via
     #   -c requirements-engine.txt
     #   google-auth
     #   oauth2client
+    #   service-identity
 pyasn1==0.4.8
     # via
     #   -c requirements-engine.txt
     #   oauth2client
     #   pyasn1-modules
     #   rsa
+    #   service-identity
 pycparser==2.20
     # via
     #   -c requirements-engine.txt
     #   cffi
-pycrypto==2.6.1
+pycryptodome==3.10.1
     # via -r requirements-admin.in
 pygments==2.6.1
     # via
     #   -c requirements-engine.txt
     #   exchangelib
     #   ipython
+pyopenssl==20.0.1
+    # via twisted
+pyparsing==2.4.7
+    # via
+    #   -c requirements-engine.txt
+    #   packaging
 pypdf2==1.26.0
     # via
     #   -c requirements-engine.txt
@@ -231,12 +310,20 @@ pysmbc==1.0.21
     # via
     #   -c requirements-engine.txt
     #   -r requirements-django.in
+pytest-django==4.4.0
+    # via -r requirements-admin.in
+pytest==6.2.4
+    # via
+    #   -c requirements-engine.txt
+    #   pytest-django
 python-dateutil==2.8.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-admin.in
     #   django-recurrence
     #   exchangelib
+python-dotenv==0.19.0
+    # via uvicorn
 python-magic==0.4.18
     # via
     #   -c requirements-engine.txt
@@ -249,6 +336,8 @@ pytz==2019.3
     #   exchangelib
     #   google-api-core
     #   tzlocal
+pyyaml==5.4.1
+    # via uvicorn
 regex==2020.4.4
     # via
     #   -c requirements-engine.txt
@@ -275,10 +364,12 @@ rsa==4.6
     #   -c requirements-engine.txt
     #   google-auth
     #   oauth2client
+service-identity==21.1.0
+    # via twisted
 six==1.14.0
     # via
     #   -c requirements-engine.txt
-    #   cryptography
+    #   automat
     #   django-extensions
     #   dropbox
     #   google-api-core
@@ -290,11 +381,15 @@ six==1.14.0
     #   isodate
     #   oauth2client
     #   protobuf
+    #   pyopenssl
     #   python-dateutil
+    #   service-identity
     #   structlog
     #   traitlets
-soupsieve==2.0
-    # via beautifulsoup4
+sortedcontainers==2.4.0
+    # via
+    #   -c requirements-engine.txt
+    #   -r requirements-common.in
 sqlparse==0.3.1
     # via
     #   django
@@ -304,17 +399,21 @@ structlog==20.1.0
     #   -c requirements-engine.txt
     #   -r requirements-common.in
     #   django-structlog
+tqdm==4.64.0
+    # via pip
 toml==0.10.1
     # via
     #   -c requirements-engine.txt
     #   -r requirements-common.in
+    #   pytest
 traitlets==4.3.3
     # via ipython
+twisted[tls]==21.7.0
+    # via daphne
+txaio==21.2.1
+    # via autobahn
 typing-extensions==3.10.0.0
-    # via
-    #   -c requirements-engine.txt
-    #   asgiref
-    #   importlib-metadata
+    # via twisted
 tzlocal==2.0.0
     # via
     #   -c requirements-engine.txt
@@ -327,14 +426,20 @@ urllib3==1.25.9
     # via
     #   -c requirements-engine.txt
     #   requests
+uvicorn[standard]==0.15.0
+    # via -r requirements-django.in
+uvloop==0.16.0
+    # via uvicorn
+watchgod==0.7
+    # via uvicorn
 wcwidth==0.1.9
     # via prompt-toolkit
+websockets==10.0
+    # via uvicorn
 whitenoise==5.2.0
     # via -r requirements-django.in
-zipp==3.4.1
-    # via
-    #   -c requirements-engine.txt
-    #   importlib-metadata
+zope.interface==5.4.0
+    # via twisted
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

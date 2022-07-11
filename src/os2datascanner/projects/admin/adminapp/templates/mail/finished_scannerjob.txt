@@ -1,0 +1,28 @@
+{% load i18n %}
+
+{% blocktrans %}
+Hello {{ full_name }},
+{% endblocktrans %}
+
+{% blocktrans %}
+For your information, your OS2datascanner-scan @ {{ scanner_name }} has just finished.
+{% endblocktrans %}
+
+{{ total_objects }}{% trans " objects were scanned - " %}{{ object_size|filesizeformat }}{% trans " in total - in " %}{{ completion_time }}.
+
+{% blocktrans %}
+Log into OS2datascanner with your organisation account for further details.
+{% endblocktrans %}
+
+    {{ admin_login_url }}
+
+
+{% blocktrans %}
+Kind regards,
+the OS2datascanner system
+{% endblocktrans %}
+{% if institution %}
+{% blocktrans %}
+(on behalf of {{ institution }})
+{% endblocktrans %}
+{% endif %}

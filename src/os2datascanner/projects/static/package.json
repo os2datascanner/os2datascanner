@@ -1,0 +1,20 @@
+{
+  "name": "os2datascanner",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "MPL2.0",
+  "devDependencies": {
+    "copy-webpack-plugin": "^9.0.1",
+    "css-loader": "^6.2.0",
+    "mini-css-extract-plugin": "^2.3.0",
+    "sass": "^1.23.0",
+    "sass-loader": "^12.1.0",
+    "webpack": "^5.52.1",
+    "webpack-cli": "^4.8.0"
+  },
+  "scripts": {
+    "dev": "webpack --config webpack.dev.js",
+    "prod": "webpack --config webpack.prod.js"
+  }
+}

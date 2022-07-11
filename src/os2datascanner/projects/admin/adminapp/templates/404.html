@@ -1,19 +1,16 @@
-{% extends 'partials/base.html' %}
+{% extends 'error_base.html' %}
+
 {% load i18n %}
 
-{%  block title %}
-    OS2Webscanner
+{% block title %}
+  {% trans "Page not found" %}
 {% endblock %}
 
-{% block body %}
-
-<div class="container">
-    {% trans "Page not found" %}
-</div>
-
+{% block error_heading %}
+  {% trans "The page could not be found" %}
 {% endblock %}
 
-{% block heading %} 
-
+{% block error_content %}
+  <p>{% trans "Unfortunately, we could not find the page" %} <code>{{ request_path }}</code>.</p>
+  <p><a href="/">{% trans "Go to the front page" %}</a>.</p>
 {% endblock %}
-

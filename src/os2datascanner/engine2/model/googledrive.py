@@ -1,13 +1,11 @@
 import json
 from contextlib import contextmanager
 from io import BytesIO
-from urllib.parse import urlsplit
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.errors import HttpError
 from .core import Source, Handle, FileResource
-from .utilities import NamedTemporaryResource
 from ..conversions.utilities.results import SingleResult
 
 
@@ -17,7 +15,8 @@ class GoogleDriveSource(Source):
      for the service account, download the credentials in .json format
      and enable the Google Drive API for the account to use this feature.
 
-     Guidance to complete the above can be found at: https://support.google.com/a/answer/7378726?hl=en
+     Guidance to complete the above can be found at:
+      https://support.google.com/a/answer/7378726?hl=en
      List of users in organization downloadable by admin from: https://admin.google.com/ac/users
     """
 
@@ -30,9 +29,9 @@ class GoogleDriveSource(Source):
     def _generate_state(self, source_manager):
         SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
         service_account_info = json.loads(self._service_account_file)
-        credentials = service_account.Credentials.from_service_account_info(service_account_info,
-                                                                            scopes=SCOPES).with_subject(
-            self._user_email)
+        credentials = service_account.Credentials.from_service_account_info(
+            service_account_info,
+            scopes=SCOPES).with_subject(self._user_email)
 
         service = build(serviceName='drive', version='v3', credentials=credentials)
         yield service
@@ -55,10 +54,11 @@ class GoogleDriveSource(Source):
         return GoogleDriveSource(None, self._user_email)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "service_account_file": self._service_account_file,
-            "user_email": self._user_email
-        })
+        return dict(
+            **super().to_json_object(),
+            service_account_file=self._service_account_file,
+            user_email=self._user_email,
+        )
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -86,11 +86,15 @@ class GoogleDriveResource(FileResource):
         metadata = service.files().get(fileId=self.handle.relative_path).execute()
         # Export and download Google-type files to pdf
         if 'vnd.google-apps' in metadata.get('mimeType'):
-            request = service.files().export_media(fileId=self.handle.relative_path, fields='files(id, name)',
-                                                   mimeType='application/pdf')
+            request = service.files().export_media(
+                fileId=self.handle.relative_path,
+                fields='files(id, name)',
+                mimeType='application/pdf')
         # Download files where no export needed
         else:
-            request = service.files().get_media(fileId=self.handle.relative_path, fields='files(id, name)')
+            request = service.files().get_media(
+                fileId=self.handle.relative_path,
+                fields='files(id, name)')
 
         fh = BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -101,14 +105,6 @@ class GoogleDriveResource(FileResource):
         # Seek(0) points back to the beginning of the file as it appears to not do this by it self.
         fh.seek(0)
         yield fh
-
-    @contextmanager
-    def make_path(self):
-        with NamedTemporaryResource(self.handle.name) as ntr:
-            with ntr.open("wb") as res:
-                with self.make_stream() as s:
-                    res.write(s.read())
-            yield ntr.get_path()
 
     @contextmanager
     def make_stream(self):
@@ -125,7 +121,8 @@ class GoogleDriveResource(FileResource):
         return self._metadata
 
     def get_size(self):
-        return SingleResult(None, 'size', self.metadata.get('size', self.metadata.get('quotaBytesUsed')))
+        return SingleResult(None, 'size', self.metadata.get(
+            'size', self.metadata.get('quotaBytesUsed')))
 
 
 class GoogleDriveHandle(Handle):
@@ -137,18 +134,30 @@ class GoogleDriveHandle(Handle):
         self._name = name
 
     @property
-    def presentation(self):
-        return "{0} (in account {1})".format(
-                self._name or "file",
-                self.source._user_email)
+    def presentation_name(self):
+        return self._name
+
+    @property
+    def presentation_place(self):
+        return (f"folder {self.relative_path.strip(' ')}"
+                f" of account {self.source._user_email}")
+
+    @property
+    def name(self):
+        return self.presentation_name
+
+    @property
+    def sort_key(self):
+        """Returns a string to sort by formatted as:
+        DOMAIN/ACCOUNT/PATH/FILE_NAME"""
+        account, domain = self.source._user_email.split("@", 1)
+        return f'{domain}/{account}/{self.relative_path}/{self._name}'
 
     def censor(self):
         return GoogleDriveHandle(self.source.censor(), relpath=self.relative_path, name=self._name)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "name": self._name
-        })
+        return dict(**super().to_json_object(), name=self._name)
 
     @staticmethod
     @Handle.json_handler(type_label)

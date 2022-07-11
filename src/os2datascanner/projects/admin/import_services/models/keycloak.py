@@ -33,7 +33,8 @@ class KeycloakServer(models.Model):
 
     # TODO: Consider need for specific clients (we currently use one universally)?
     #        if so: add requests for client settings AND retrieval of secret
-    #       NB! client refers to a client in Keycloak, NOT a core.Client instance in the datascanner system
+    #       NB! client refers to a client in Keycloak, NOT a core.Client instance
+    #        in the datascanner system
     # Initialization vector for decryption
     _iv = models.BinaryField(
         db_column='iv',

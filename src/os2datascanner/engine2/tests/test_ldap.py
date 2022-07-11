@@ -141,8 +141,10 @@ class LDAPTest(unittest.TestCase):
         the group information present in a flat list of users."""
         self.assertEqual(
                 SUMER_GROUPS,
-                LDAPNode.from_iterator(SUMER_ITERATOR,
-                        name_selector=group_dn_selector).collapse(),
+                LDAPNode.from_iterator(
+                        SUMER_ITERATOR,
+                        name_selector=group_dn_selector
+                        ).collapse(),
                 "LDAP iterator group construction failed")
 
     def test_iterator_skipping(self):
@@ -172,12 +174,12 @@ class LDAPTest(unittest.TestCase):
                 LDAPNode.from_iterator([
                     # memberOf structurally valid but with no valid groups
                     {"distinguishedName": "CN=Enki",
-                        "memberOf": [""] },
+                        "memberOf": [""]},
                     # memberOf valid
                     {"distinguishedName": "CN=Enkidu",
-                        "memberOf": ["CN=Heroes,L=Sumer"] },
+                        "memberOf": ["CN=Heroes,L=Sumer"]},
                     # memberOf missing
-                    {"distinguishedName": "CN=Ninhursag" }
+                    {"distinguishedName": "CN=Ninhursag"}
                 ], name_selector=group_dn_selector),
                 LDAPNode.make(
                     (),
@@ -278,7 +280,7 @@ class LDAPTest(unittest.TestCase):
                         "OU=🍪🎩,"
                         "O=フィクショナル・エンタープライゼズ株式会社,"
                         "ST=Baggårde 497,"
-                        "L=Ærøskøbing\, Ærø,"
+                        "L=Ærøskøbing\\, Ærø,"
                         "C=DK"),
                 dadi,
                 "parsing of complex RDN failed")
@@ -311,7 +313,7 @@ class LDAPTest(unittest.TestCase):
                     "RDN round trip failed")
 
         with self.subTest():
-            worst_case = (RDN("CN", """ "#+\,;<=>"""), RDN("L", "Test"))
+            worst_case = (RDN("CN", """ "#+\\,;<=>"""), RDN("L", "Test"))
             self.assertEqual(
                     worst_case,
                     RDN.dn_to_sequence(RDN.sequence_to_dn(worst_case)),
@@ -323,7 +325,7 @@ class LDAPTest(unittest.TestCase):
 
         self.assertEqual(
                 RDN.sequence_to_dn((RDN("#CN#", " 1 2 3 4 5 "),)),
-                "\\#CN#=\ 1 2 3 4 5\ ",
+                "\\#CN#=\\ 1 2 3 4 5\\ ",
                 "overzealous escape")
 
     def test_raw_escape(self):

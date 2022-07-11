@@ -14,8 +14,6 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 
-from django.db import models
-
 from ..documentreport_model import DocumentReport
 from .role_model import Role
 
@@ -30,7 +28,7 @@ class DefaultRole(Role):
     other roles.)"""
 
     def filter(self, document_reports):
-        aliases = self.user.aliases.select_subclasses()
+        aliases = self.user.aliases.all()
         results = DocumentReport.objects.none()
         for alias in aliases:
             result = document_reports.filter(alias_relation=alias.pk)

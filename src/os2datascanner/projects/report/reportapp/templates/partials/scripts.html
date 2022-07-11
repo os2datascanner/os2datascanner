@@ -1,11 +1,13 @@
 {% load static %}
 
 {% block scripts %}
-<script src="{% static '3rdparty/jquery-3.5.0.min.js' %} "></script>
+<script src="{% static '3rdparty/jquery-3.6.0.min.js' %} "></script>
 <script src="{% static '3rdparty/clipboard.min.js' %} "></script>
-{% if not settings.DEBUG %}
-<script src="{% static 'dist/bundle.min.js' %} "></script>
-{% else %}
-<script src="{% static 'dist/bundle.js' %} "></script>
-{% endif %}
+<script src="{% static '3rdparty/htmx.min.js' %}"></script>
+<script src="{% static 'js/index.js' %} "></script>
+<script src="{% static 'js/handle-match.js' %} "></script>
+<script src="{% static 'js/show-more.js' %} "></script>
+<script src="{% static 'js/options.js' %} "></script>
+<script src="{% static 'js/pagination.js' %} "></script>
+
 {% endblock %}

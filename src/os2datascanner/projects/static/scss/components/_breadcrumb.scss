@@ -1,0 +1,24 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+
+  .link-color {
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--color-primary-dark);
+  }
+
+  .text-grey {
+    color: var(--color-text-secondary);
+  }
+
+  .material-icons {
+    color: var(--color-text-secondary);
+    fill: var(--color-text-secondary);
+    height: 100%;
+    width: auto;
+  }
+}

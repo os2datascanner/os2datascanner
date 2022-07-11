@@ -3,11 +3,16 @@
 # Labs as required approval to your MR if you have any changes.                #
 ################################################################################
 
-# For the release steps to work, the following envionment variables have to set
+# For the release steps to work, the following environment variables have to set
 # in the Gitlab UI:
 # RELEASE_REGISTRY_USER
 # RELEASE_REGISTRY_PASSWORD
 
+# Saltbert, used for automatic deployment of our test server
+include:
+  - project: 'labs/salt-automation'
+    file:
+      - '/gitlab-ci-templates/common/saltbert.v1.yml'
 
 stages:
   - lint
@@ -41,10 +46,6 @@ variables:
   tags:
     - docker
 
-
-# We should lint our Python code. See: #44827.
-
-
 Lint Dockerfiles:
   <<: *lint-default
   image: hadolint/hadolint:latest-alpine
@@ -66,6 +67,27 @@ Lint shell scripts:
     - apk add fd
   script:
     - fd --extension sh --exec shellcheck
+
+Lint Python:
+  <<: *lint-default
+  image: python:3.9
+  stage: lint
+  script:
+    - pip install pyproject-flake8 flake8-bugbear flake8-cognitive-complexity flake8-expression-complexity --quiet
+    - pflake8 src
+
+Lint js scripts:
+  <<: *lint-default
+  image: node:16-alpine3.11
+  stage: lint
+  script:
+    # Install JSHint in this docker container
+    - npm install -g jshint
+
+    # Run JSHint
+    - jshint ./src/os2datascanner/projects
+      --config .jshintrc
+      --exclude-path .jshintignore
 
 
 # Build stage
@@ -90,6 +112,7 @@ Build Report Application:
       --context=$CI_PROJECT_DIR
       --dockerfile=$CI_PROJECT_DIR/docker/report/Dockerfile
       --destination=${REPORT_IMAGE}
+
 
 Build Admin Application:
   <<: *build-default
@@ -121,17 +144,6 @@ Build API:
       --dockerfile=$CI_PROJECT_DIR/docker/api/Dockerfile
       --destination=${API_IMAGE}
 
-Build documentation:
-  <<: *build-default
-  image: keimlink/sphinx-doc:latex
-  script:
-    - make -C doc PAPER=a4 html latexpdf
-    - mv doc/_build .
-  artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-    paths:
-      - _build
-
 
 # Test stage
 #############
@@ -142,6 +154,10 @@ Build documentation:
     - docker
     - network-per-build
   services:
+    - name: egnmagenta/os2datasynth:v0.2.5
+      alias: datasynth
+      variables:
+        DATASYNTH_HOST: "datasynth"
     - postgres:12
     - rabbitmq:3.8-alpine
     - name: magentalabs/samba-test:1.1
@@ -156,29 +172,89 @@ Build documentation:
     POSTGRES_DB: os2datascanner
     POSTGRES_USER: os2datascanner
     POSTGRES_PASSWORD: os2datascanner
-    COVERAGE_FILE: /tmp/.coverage
+  coverage: '/^TOTAL.+?(\d+\%)$/'
 
-Test Admin Application:
+Unit Test Admin Application:
   extends: .test-default
-  image: ${ADMIN_IMAGE}
+  image:
+    name: ${ADMIN_IMAGE}
+    entrypoint: [""]
   variables:
     OS2DS_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
   needs:
     - Build Admin Application
   script:
     - cd /code/src/os2datascanner/projects/admin
-    - coverage run --omit=*/tests/* --source=os2datascanner.projects.admin -m django test
-  after_script:
-    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
-    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
+    - coverage run -m pytest tests
+      --ignore=/code/src/os2datascanner/projects/admin/tests/integration
+      --junitxml $CI_PROJECT_DIR/admin_unit_tests-junit.xml
+      -p no:cacheprovider
+      --color=yes
     - coverage report
-  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
+    - coverage xml -o ${CI_PROJECT_DIR}/admin-coverage.xml
   artifacts:
-    when: always
     paths:
-      - $CI_PROJECT_DIR/coverage-html
+      - ${CI_PROJECT_DIR}/admin-coverage.xml
+    when: always
     reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+      junit: $CI_PROJECT_DIR/admin_unit_tests-junit.xml
+      cobertura: ${CI_PROJECT_DIR}/admin_unit_tests-junit.xml
+
+Integration Test Admin Application:
+  image:
+    name: ${ADMIN_IMAGE}
+    entrypoint: [""]
+  tags:
+    - docker
+    - network-per-build
+  stage: test
+  only:
+    refs:
+      - main
+      - tags
+  services:
+    - name: egnmagenta/os2datasynth:v0.2.5
+      alias: datasynth
+      variables:
+       DATASYNTH_HOST: "datasynth"
+    - rabbitmq:3.8-alpine
+    - postgres:12
+    - name: magentalabs/samba-test:1.1
+      alias: samba
+    - name: ${ENGINE_IMAGE}
+      alias: worker
+      command: [worker]
+    - name: ${ENGINE_IMAGE}
+      alias: explorer
+      command: [explorer]
+    - name: ${ENGINE_IMAGE}
+      alias: exporter
+      command: [exporter]
+  variables:
+    SMB_USER: os2
+    SMB_PASSWD: 12345_rosebud_password_admin
+    SMB_SHARE_NAME: general
+    SMB_SHARE_PATH: ${CI_PROJECT_DIR}/src/os2datascanner/engine2/tests/data/engine2
+    SMB_SHARE_BROWSABLE: "no"
+    SMB_SHARE_READONLY: "yes"
+    POSTGRES_DB: os2datascanner
+    POSTGRES_USER: os2datascanner
+    POSTGRES_PASSWORD: os2datascanner
+    COVERAGE_FILE: /tmp/.coverage
+    FF_NETWORK_PER_BUILD: "true"
+    DATASYNTH_HOST: "datasynth"
+    OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
+  needs:
+    - Build Admin Application
+    - Build Engine
+  script:
+    - export OS2DS_ADMIN_USER_CONFIG_PATH=${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
+    - cd src/os2datascanner/projects/admin
+    - bash /code/docker/docker-entrypoint.sh
+    # The pipeline collector cannot be created as a service, as the ADMIN_USER_PATH
+    # overwrites the ENGINE_USER_PATH and individual services cannot have variables set.
+    - python manage.py pipeline_collector &
+    - django-admin test os2datascanner.projects.admin.tests.integration
 
 Integration Test Engine:
   extends: .test-default
@@ -188,41 +264,131 @@ Integration Test Engine:
   needs:
     - Build Engine
   script:
-    - pytest
-      --junitxml $CI_PROJECT_DIR/junit.xml
+    - cd /code/src/os2datascanner/engine2/tests
+    - coverage run -m pytest integration/
+      --junitxml $CI_PROJECT_DIR/integration-junit.xml
       -p no:cacheprovider
       --color=yes
-      src/os2datascanner/engine2/tests/integration/
+    - coverage report
+    - coverage xml -o ${CI_PROJECT_DIR}/intergration-engine-coverage.xml
   artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/intergration-engine-coverage.xml
     when: always
     reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+      junit: $CI_PROJECT_DIR/integration-junit.xml
+      cobertura: ${CI_PROJECT_DIR}/intergration-engine-coverage.xml
 
 Unit Test Engine:
+  extends: .test-default
   stage: test
   tags:
     - docker
   image:
     name: ${ENGINE_IMAGE}
-    entrypoint: [""]
   variables:
     OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
   needs:
     - Build Engine
   script:
-    - pytest
-      -n 5
+    - cd /code/src/os2datascanner/engine2
+    - coverage run -m pytest tests
       --ignore-glob '*integration*'
-      --junitxml $CI_PROJECT_DIR/junit.xml
+      --junitxml $CI_PROJECT_DIR/engine-junit.xml
       -p no:cacheprovider
       --color=yes
-      src/os2datascanner/engine2/tests/
+    - coverage report
+    - coverage xml -o ${CI_PROJECT_DIR}/engine-coverage.xml
   artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/engine-coverage.xml
     when: always
     reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+      junit: $CI_PROJECT_DIR/engine-junit.xml
+      cobertura: ${CI_PROJECT_DIR}/engine-coverage.xml
 
-Test Report Application:
+Benchmark Test Engine:
+  stage: test
+  tags:
+    - docker
+  image:
+    name: ${ENGINE_IMAGE}
+  needs:
+    - Build Engine
+  services:
+    - postgres:12
+    - rabbitmq:3.8-alpine
+  variables:
+    OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
+    POSTGRES_DB: os2datascanner
+    POSTGRES_USER: os2datascanner
+    POSTGRES_PASSWORD: os2datascanner
+  script:
+    - cd /code/src/os2datascanner/engine2
+    - pytest --color=yes --benchmark-only tests/benchmarks
+  coverage: '/^TOTAL.+?(\d+\%)$/'
+
+Performance Test:
+  image:
+    name: ${ADMIN_IMAGE}
+    entrypoint: [""]
+  tags:
+    - docker
+    - network-per-build
+    - high-mem
+  only:
+    refs:
+      - main
+  services:
+    - name: egnmagenta/os2datasynth:v0.2.5
+      alias: datasynth
+      variables:
+       DATASYNTH_HOST: "datasynth"
+    - rabbitmq:3.8-alpine
+    - postgres:12
+    - name: magentalabs/samba-test:1.1
+      alias: samba
+    - name: ${ENGINE_IMAGE}
+      alias: worker
+      command: [worker]
+    - name: ${ENGINE_IMAGE}
+      alias: explorer
+      command: [explorer]
+    - name: ${ENGINE_IMAGE}
+      alias: exporter
+      command: [exporter]
+  variables:
+    SMB_USER: os2
+    SMB_PASSWD: 12345_rosebud_password_admin
+    SMB_SHARE_NAME: general
+    SMB_SHARE_PATH: ${CI_PROJECT_DIR}/src/os2datascanner/engine2/tests/data/engine2
+    SMB_SHARE_BROWSABLE: "no"
+    SMB_SHARE_READONLY: "yes"
+    POSTGRES_DB: os2datascanner
+    POSTGRES_USER: os2datascanner
+    POSTGRES_PASSWORD: os2datascanner
+    COVERAGE_FILE: /tmp/.coverage
+    FF_NETWORK_PER_BUILD: "true"
+    DATASYNTH_HOST: "datasynth"
+    OS2DS_ENGINE_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/engine/test-settings.toml
+  needs:
+    - Build Admin Application
+    - Build Engine
+  script:
+    - export OS2DS_ADMIN_USER_CONFIG_PATH=${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
+    - cd src/os2datascanner/projects/admin
+    - bash /code/docker/docker-entrypoint.sh
+
+    # The pipeline collector cannot be created as a service, as the ADMIN_USER_PATH
+    # overwrites the ENGINE_USER_PATH and individual services cannot have variables set.
+    - python manage.py pipeline_collector &
+    - python manage.py performance_measurement ${CI_PROJECT_DIR}
+  artifacts:
+    when: always
+    paths:
+      - ${CI_PROJECT_DIR}/performance.prof
+
+Unit Test Report Application:
   extends: .test-default
   image: ${REPORT_IMAGE}
   variables:
@@ -230,18 +396,61 @@ Test Report Application:
   needs:
     - Build Report Application
   script:
-    - coverage run --omit=*/tests/* --source=os2datascanner.projects.report -m django test os2datascanner.projects.report.tests
-  after_script:
-    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
-    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
+    - cd /code/src/os2datascanner/projects/report
+    - coverage run -m pytest tests
+      --ignore=/code/src/os2datascanner/projects/report/tests/integration
+      --junitxml $CI_PROJECT_DIR/report-junit.xml
+      --ignore=/code/src/os2datascanner/projects/report/tests/integration
+      -p no:cacheprovider
+      --color=yes
     - coverage report
-  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
+    - coverage xml -o ${CI_PROJECT_DIR}/report-coverage.xml
   artifacts:
-    when: always
     paths:
-      - $CI_PROJECT_DIR/coverage-html
+      - ${CI_PROJECT_DIR}/report-coverage.xml
+    when: always
     reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+      junit: $CI_PROJECT_DIR/report-junit.xml
+      cobertura: ${CI_PROJECT_DIR}/report-coverage.xml
+
+Integration Test Report Application:
+  image:
+    name: ${REPORT_IMAGE}
+    entrypoint: [""]
+  stage: test
+  only:
+    refs:
+      - main
+      - tags
+  allow_failure: true # until 48725 has been fixed
+  tags:
+    - docker
+    - network-per-build
+  services:
+    - name: egnmagenta/os2datasynth:v0.2.5
+      alias: datasynth
+      variables:
+        DATASYNTH_HOST: "datasynth"
+    - rabbitmq:3.8-alpine
+    - postgres:12
+    - name: ${API_IMAGE}
+      alias: api_server
+  variables:
+    POSTGRES_DB: os2datascanner
+    POSTGRES_USER: os2datascanner
+    POSTGRES_PASSWORD: os2datascanner
+    DATASYNTH_HOST: "datasynth"
+    server__token: 'thisIsNotASecret'
+    FF_NETWORK_PER_BUILD: "true"
+    OS2DS_SERVER_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/api/dev-settings.toml
+  needs:
+    - Build Report Application
+    - Build API
+  script:
+    - export OS2DS_REPORT_USER_CONFIG_PATH=${CI_PROJECT_DIR}/dev-environment/report/test-settings.toml
+    - cd src/os2datascanner/projects/report
+    - bash /code/docker/docker-entrypoint.sh
+    - django-admin test os2datascanner.projects.report.tests.integration
 
 Run Engine notice scripts:
   stage: test
@@ -261,6 +470,28 @@ Run Engine notice scripts:
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
 
+Migration Status Admin:
+  extends: .test-default
+  image: ${ADMIN_IMAGE}
+  variables:
+    OS2DS_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
+  needs:
+    - Build Admin Application
+  script:
+    - cd src/os2datascanner/projects/admin
+    - python manage.py makemigrations --check --dry-run
+
+Migration Status Report:
+  extends: .test-default
+  image: ${REPORT_IMAGE}
+  variables:
+    OS2DS_REPORT_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/report/test-settings.toml
+  needs:
+    - Build Report Application
+  script:
+    - cd src/os2datascanner/projects/report
+    - python manage.py makemigrations --check --dry-run
+
 
 # Release stage
 ###############
@@ -268,17 +499,18 @@ Run Engine notice scripts:
 .release-default: &release-default
   stage: release
   needs:
-    - Lint Dockerfiles
-    - Lint shell scripts
     - Build Report Application
     - Build Admin Application
     - Build Engine
     - Build API
-    - Build documentation
-    - Test Admin Application
+    - Unit Test Admin Application
+    - Integration Test Admin Application
     - Integration Test Engine
     - Unit Test Engine
-    - Test Report Application
+    - Unit Test Report Application
+    - Integration Test Report Application
+    - Migration Status Admin
+    - Migration Status Report
   image: alpine
   variables:
     GIT_STRATEGY: none # We do not need the source code
@@ -286,10 +518,19 @@ Run Engine notice scripts:
     - docker
 
 # Rolling rc release:
+# NOTICE: We are optimizing for the 99% case here by releasing a new image as soon as
+# it is built. This is ok because (semi-)linear history means that the most recently
+# merged branch is line-for-line equivalent to main and as such has been tested
+# thoroughly. Branch protection ensures nobody commits directly to main.
 .release-rc: &release-rc
   <<: *release-default
+  needs:
+    - Build Report Application
+    - Build Admin Application
+    - Build Engine
+    - Build API
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "development" && $CI_PIPELINE_SOURCE != "schedule"'
+    - if: '$CI_COMMIT_REF_NAME == "main" && $CI_PIPELINE_SOURCE != "schedule"'
   script:
     - apk add skopeo
     - skopeo copy
@@ -409,27 +650,21 @@ Release API:
 ##############
 
 Deploy test:
-  # Automatic deployment of development branch to
+  # Automatic deployment of main branch to
   # https://test.os2datascanner.dk/ and https://test-admin.os2datascanner.dk/
-  stage: deploy
-  image: magentalabs/pepper:latest
-  services: []
+  extends:
+    - .saltbert
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "development" && $CI_PIPELINE_SOURCE != "schedule"'
-  dependencies: []
-  tags:
-    - deploy
+    - if: '$CI_COMMIT_REF_NAME == "main" && $CI_PIPELINE_SOURCE != "schedule"'
   needs:
     - Release Report Application Candidate
     - Release Admin Application Candidate
     - Release Engine Candidate
     - Release API Candidate
   variables:
-    SALTAPI_URL: https://ctrldev1.magenta-aps.dk/api/
-    SALTAPI_EAUTH: file
-    GIT_STRATEGY: none
-  script:
-    - pepper --client runner --fail-any state.orchestrate os2ds.service-test
+    SALTBERT_ORCHESTRATION: os2ds.service-test
+    SALTBERT_URL: https://ctrldev1.magenta-aps.dk
+    SALTBERT_PASSWORD: $SALTBERT_PASSWORD
   environment:
     name: test
     url: https://test-admin.os2datascanner.dk/

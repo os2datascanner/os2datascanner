@@ -1,77 +1,81 @@
 import logging
-from ..rules.last_modified import LastModifiedRule
 from ..conversions.types import decode_dict
 from . import messages
+from .utilities.filtering import MATCHER_FILTER_TYPES
 
 logger = logging.getLogger(__name__)
 
 READS_QUEUES = ("os2ds_representations",)
-WRITES_QUEUES = ("os2ds_handles",
-        "os2ds_matches", "os2ds_checkups", "os2ds_conversions",)
+WRITES_QUEUES = (
+    "os2ds_handles",
+    "os2ds_matches",
+    "os2ds_checkups",
+    "os2ds_conversions",)
 PROMETHEUS_DESCRIPTION = "Representations examined"
+PREFETCH_COUNT = 8
 
 
-def message_received_raw(body, channel, source_manager):
-    source_manager = None
+def message_received_raw(body, channel, source_manager):  # noqa: CCR001,E501 too high cognitive complexity
     message = messages.RepresentationMessage.from_json_object(body)
     representations = decode_dict(message.representations)
     rule = message.progress.rule
-    logger.info(f"{message.handle.presentation} with rules [{rule.presentation}] "
-                f"and representation [{list(representations.keys())}]")
+    logger.debug(f"{message.handle} with rules [{rule.presentation}] "
+                 f"and representation [{list(representations.keys())}]")
 
-    new_matches = []
-    # Keep executing rules for as long as we can with the representations we
-    # have
-    while not isinstance(rule, bool):
-        head, pve, nve = rule.split()
+    try:
+        # Keep executing rules for as long as we can with the representations
+        # we have
+        conclusion, new_matches = rule.try_match(lambda t: representations[t])
+    except Exception as e:
+        exception_message = "Matching error"
+        exception_message += ". {0}: ".format(type(e).__name__)
+        exception_message += ", ".join([str(a) for a in e.args])
+        logger.warning(exception_message)
+        for problems_q in ("os2ds_problems", "os2ds_checkups",):
+            yield (problems_q, messages.ProblemMessage(
+                    scan_tag=message.scan_spec.scan_tag,
+                    source=None, handle=message.handle,
+                    message=exception_message).to_json_object())
+        return
 
-        target_type = head.operates_on
-        type_value = target_type.value
-        if type_value not in representations:
-            # We don't have this representation -- bail out
-            break
-        representation = representations[type_value]
+    final_matches = message.progress.matches + [
+            messages.MatchFragment(rule, matches or None)
+            for rule, matches in new_matches]
 
-        matches = list(head.match(representation))
-        new_matches.append(
-                messages.MatchFragment(head, matches or None))
-        if matches:
-            rule = pve
-        else:
-            rule = nve
-        logger.info(f"rule {head.presentation} matched: {len(matches)}")
-
-    final_matches = message.progress.matches + new_matches
-
-    if isinstance(rule, bool):
+    if isinstance(conclusion, bool):
         # We've come to a conclusion!
 
         logger.info(
-                f"{message.handle.presentation} done."
-                f" Matched status: {rule}")
+                f"{message.handle} done."
+                f" Matched status: {conclusion}")
 
-        for matches_q in ("os2ds_matches", "os2ds_checkups",):
-            yield (matches_q,
-                    messages.MatchesMessage(
-                            message.scan_spec, message.handle,
-                            matched=rule, matches=final_matches).to_json_object())
+        type_label = message.handle.type_label
+        if conclusion or type_label not in MATCHER_FILTER_TYPES:
+            for matches_q in ("os2ds_matches", "os2ds_checkups",):
+                yield (matches_q,
+                       messages.MatchesMessage(
+                           message.scan_spec, message.handle,
+                           matched=conclusion,
+                           matches=final_matches).to_json_object())
+
         # Only trigger metadata scanning if the match succeeded
-        if rule:
+        if conclusion:
             yield ("os2ds_handles",
-                    messages.HandleMessage(
+                   messages.HandleMessage(
                             message.scan_spec.scan_tag,
                             message.handle).to_json_object())
     else:
+        new_rep = conclusion.split()[0].operates_on
         # We need a new representation to continue
-        logger.info(
-                f"{message.handle.presentation} needs"
-                f" new representation: [{type_value}].")
+        logger.debug(
+                f"{message.handle} needs"
+                f" new representation: [{new_rep}].")
         yield ("os2ds_conversions",
-                messages.ConversionMessage(
-                        message.scan_spec, message.handle,
-                        message.progress._replace(
-                                rule=rule,
-                                matches=final_matches)).to_json_object())
+               messages.ConversionMessage(
+                            message.scan_spec, message.handle,
+                            message.progress._replace(
+                                    rule=conclusion,
+                                    matches=final_matches)).to_json_object())
 
 
 if __name__ == "__main__":

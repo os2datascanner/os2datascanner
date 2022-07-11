@@ -37,7 +37,7 @@ class WebScanner(Scanner):
 
     do_link_check = models.BooleanField(
         default=False,
-        verbose_name=_("check links")
+        verbose_name=_("check dead links")
     )
 
     ROBOTSTXT = 0

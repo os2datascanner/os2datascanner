@@ -6,13 +6,10 @@ from .models.roles.remediator_model import Remediator
 from .models.roles.leader_model import Leader
 from .models.roles.dpo_model import DataProtectionOfficer
 from .models.roles.defaultrole_model import DefaultRole
-from .models.aliases.adsidalias_model import ADSIDAlias
-from .models.aliases.emailalias_model import EmailAlias
-from .models.aliases.webdomainalias_model import WebDomainAlias
 from .models.documentreport_model import DocumentReport
-from .models.organization_model import Organization
 from .models.userprofile_model import UserProfile
 
+from os2datascanner.projects.report.organizations.models import Organization
 # Register your models here.
 
 admin.site.register(DocumentReport)
@@ -29,25 +26,10 @@ class AliasAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
         if obj.match_relation:
             reports = DocumentReport.objects.filter(
-                data__metadata__metadata__contains={
+                raw_metadata__metadata__contains={
                     str(obj.key): str(obj)
                 })
             form.cleaned_data['match_relation'] = reports
-
-
-@admin.register(ADSIDAlias)
-class ADSIDAliasAdmin(AliasAdmin):
-    list_display = ('sid', 'user', )
-
-
-@admin.register(EmailAlias)
-class EmailAliasAdmin(AliasAdmin):
-    list_display = ('address', 'user', )
-
-
-@admin.register(WebDomainAlias)
-class WebDomainAliasAdmin(AliasAdmin):
-    list_display = ('domain', 'user', )
 
 
 @admin.register(DefaultRole)
@@ -68,24 +50,6 @@ class LeaderAdmin(admin.ModelAdmin):
 @admin.register(DataProtectionOfficer)
 class DataProtectionOfficerAdmin(admin.ModelAdmin):
     list_display = ('user', )
-
-
-@admin.register(Organization)
-class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'uuid',)
-    readonly_fields = ('name', 'uuid',)
-
-    # This object is owned by another system (admin)
-    # We can't change instances directly - only view
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 
 class ProfileInline(admin.TabularInline):
@@ -121,9 +85,9 @@ class MyUserAdmin(UserAdmin):
             self.fieldsets = (
                 (None,
                  {'fields': ('username', 'password', 'is_active')}),
-                (_('Personal info'),
+                (_('Personal info'),  # noqa: F821
                  {'fields': ('first_name', 'last_name', 'email')}),
-                (_('Important dates'), {'fields': ('last_login',
+                (_('Important dates'), {'fields': ('last_login',  # noqa: F821
                                                    'date_joined')}),
             )
 

@@ -1,0 +1,78 @@
+{% extends 'partials/base.html' %}
+{% load l10n %}
+{% load i18n %}
+{% load tz %}
+
+{% block body %}
+{% include "partials/header.html" %}
+<main class="wrapper">
+    {% include "partials/main.html" with active_tab="status" %}
+
+    <div class="content">
+
+        {% include "os2datascanner/scanner_tabs.html" with page="scan-status" %}
+
+        <div class="aside">
+            <h1 class="page-title">
+                {% trans "Error Log" %}
+            </h1>
+        </div>
+
+        {% if object_list  %}
+        <div class="datatable-wrapper card lg" role="region" tabindex="0" aria-label="{% trans 'Error Log' %}">
+          <table class="datatable">
+            <colgroup>
+              <col class="datatable__column--name">
+              <col class="datatable__column--automatic">
+              <col class="datatable__column--path">
+              <col class="datatable__column--automatic"
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="datatable__column--name">
+                  {% trans "Error" %}
+                </th>
+                <th class="datatable__column--automatic">
+                  {% trans "Started"%}
+                </th>
+                <th class="datatable__column--path">
+                  {% trans "Path" %}
+                </th>
+                <th class="datatable__column--automatic">
+                  {% trans "Scan" %}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+                {% for error_log in object_list %}
+                    <tr>
+                        <td class="datatable__column--name">
+                            {{ error_log.user_friendly_error_message }}
+                        </td>
+                        <td class="datatable__column--automatic">
+                            {% timezone "Europe/Copenhagen" %}
+                            {{ error_log.scan_status.start_time }}
+                            {% endtimezone %}
+                        <td class="datatable__column--path">
+                            {{ error_log.path }}
+                        </td>
+                        <td class="datatable__column--automatic">
+                            {{ error_log.scan_status.scanner.name }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% include "components/pagination.html" %}
+        </table>
+      </div>
+
+      {% else %}
+        <p>
+          {% trans "no errors found"|capfirst %}
+        </p>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}
+

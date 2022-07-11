@@ -1,9 +1,9 @@
 {% extends 'partials/base.html' %}
-{% load static %}
 
 {% block body %}
-  {% include "partials/main.html" with active_tab="guide" %}
+{% include "partials/header.html" %}
 <main class="wrapper">
+  {% include "partials/main.html" with active_tab="guide" %}
 <div class="content">
 <div class="prose">
   <nav class="toc">
@@ -35,6 +35,7 @@
 <h6><a href="#Webscanner">Webscanner</a></h6>
 <h6><a href="#Filscanner">Filscanner</a></h6>
 <h6><a href="#Exchange-scanner">Exchange-scanner</a></h6>
+<h6><a href="#Office365-scanner">Office 365 mailscanner og Office 365 OneDrive filscanner</a></h6>
 <h6><a href="#Validering-koersel">Validering og kørsel af scannerjobs</a></h6>
 <h5><a href="#Status">Status-fanen</a></h5>
 <h5><a href="#Regler-1">Regler-fanen</a></h5>
@@ -61,22 +62,22 @@
 
 
 <h2 id="Indledning">Indledning</h2>
-<p>Denne håndbog er til dig, der er organisatorisk eller teknisk projektleder for implementeringen af OS2datascanner. Scanneren er et værktøj, der hjælper jeres organisation med at gennemsøge drev, emails og hjemmesider og finde frem til dokumenter, hvor der ligger personoplysninger - alt lige fra de almindelige personoplysninger som navn, adresse og CPR-nummer til følsomme personoplysninger om eksempelvis helbred. Det kan være data, der er blevet samlet gennem mange år, og som I derfor måske ikke har det fulde overblik over. Scanneren er derfor et vigtigt redskab til at hjælpe jer med at overholde gældende lovgivning om behandling af personoplysninger.</p>
+<p>Denne håndbog er til dig, der er organisatorisk eller teknisk projektleder for implementeringen af OS2datascanner. Scanneren er et værktøj, der hjælper jeres organisation med at gennemsøge drev, emails og hjemmesider for at finde frem til dokumenter, hvor der ligger personoplysninger - alt lige fra de almindelige personoplysninger som navn, adresse og CPR-nummer til følsomme personoplysninger som eksempelvis helbred. Det kan være data, der er blevet samlet gennem mange år, og som I derfor måske ikke har det fulde overblik over. Scanneren er derfor et vigtigt redskab til at hjælpe jer med at overholde gældende lovgivning om behandling af personoplysninger.</p>
 
 <p>Mange bruger scanneren til først at lave en <b>“hovedrengøring”</b> og efterfølgende at lave <b>løbende scans</b> eksempelvis hver anden uge. Ved hovedrengøringen bliver alt scannet, så man efterfølgende kan rydde op i oplysningerne, og ved de løbende scans tjekker scanneren, om der er fundet nye oplysninger i systemet. I kan derfor også bruge scanneren til at få <b>indarbejdet gode vaner omkring behandling af personoplysninger. </b></p>
 
 <p>Det betyder også, at <b>implementering og forankring i hele organisationen er helt afgørende for, at arbejdet med OS2datascanner bliver en succes - herunder, at opgaven med at rydde op i og holde styr på personoplysninger er solidt forankret på alle ledelsesniveauer.</b> Derfor kommer denne håndbog ikke blot ind på, hvordan I rent teknisk bruger scanneren, men lige så meget hvordan I kan arbejde med OS2datascanner på et organisatorisk plan. </p>
 
-<p>Scanneren er inddelt i to moduler: Et <b>administrationsmodul og et rapportmodul.</b> I førstnævnte opretter og godkender I scans, og som regel er det nogle få centralt placerede medarbejdere med særligt indblik i administrationsmodulet, der tager sig af denne del af arbejdet. For at få det fulde udbytte af scanneren kan det dog være en god idé, at en medarbejder på eksempelvis socialområdet arbejder sammen med en administrator om at identificere de rette søgekriterier. Denne del af processen bliver beskrevet i afsnittet om adminmodulet.</p>
+<p>Scanneren er inddelt i to moduler: Et <b>administrationsmodul og et rapportmodul.</b> I førstnævnte opretter og godkender I scans, og som regel er det nogle få centralt placerede medarbejdere med særligt indblik i administrationsmodulet, der tager sig af denne del af arbejdet. For at få det fulde udbytte af scanneren kan det dog være en god idé, at en medarbejder, på eksempelvis socialområdet, arbejder sammen med en administrator om at identificere de rette søgekriterier. Denne del af processen bliver beskrevet i afsnittet om administrationsmodulet.</p>
 
-<p>I rapportmodulet kan medarbejderne se listen over de fundne dokumenter, åbne dem direkte i ens mailprogram eller stifinder og så håndtere dem ved eksempelvis at slette eller arkivere dem på en bestemt måde. Arbejdet med at håndtere dokumenter ligger som regel ude i de enkelte afdelinger, hvor hver medarbejder eksempelvis håndterer sine egne mails. Til disse medarbejdere, <a href="#Slutbruger-1">slutbrugerne</a>, har vi lavet en <a href="../../static/src/svg/OS2DS-Brugerhaandbog.pdf" download>brugerhåndbog</a>, der på nogle få sider forklarer, hvordan man rent teknisk bruger rapportmodulet. Til afdelingschefer og andre med personaleansvar har vi desuden lavet et <a href="../../static/src/svg/OS2DS-Handout.pdf" download>handout</a>, der fortæller om fordelen ved at bruge datascanneren i afdelingen.</p>
+<p>I rapportmodulet kan medarbejderne se listen over de fundne dokumenter, åbne dem direkte i ens mailprogram eller stifinder og så håndtere dem ved eksempelvis at slette eller arkivere dem på en bestemt måde. Arbejdet med at håndtere dokumenter ligger som regel ude i de enkelte afdelinger, hvor hver medarbejder eksempelvis håndterer sine egne mails. Til disse medarbejdere, <a href="#Slutbruger-1">slutbrugerne</a>, har vi lavet en <a href="../static/svg/OS2DS-Brugerhaandbog.pdf" download>brugerhåndbog</a>, der på nogle få sider forklarer, hvordan man rent teknisk bruger rapportmodulet. Til afdelingschefer og andre med personaleansvar har vi desuden lavet et <a href="../static/svg/OS2DS-Handout.pdf" download>handout</a>, der fortæller om fordelen ved at bruge datascanneren i afdelingen.</p>
 
 <p>Opdelingen i to moduler er - sammen med reglen om, at én person <i>opretter</i> og en anden person <i>godkender</i> et scan - med til at sikre, at der ikke er én person, der både opretter og godkender et scan og bagefter kan se resultatet af scannerjobbet. Desuden gemmer OS2datascanner heller aldrig data på serveren, men kun i den midlertidige hukommelse. På den måde er sikkerhed tænkt ind som et helt grundlæggende element i OS2datascanner.</p>
 
 <p>Har du brug for en hurtig genopfriskning af et bestemt begreb, kan du <a href="#Ordliste">slå det op i ordlisten</a>.</p>
 
 <h2 id="OS2datascanner-helt-kort">OS2datascanner - helt kort</h2>
-<img class="page-width" src="../../static/src/svg/os2ds-workflow-grafik.svg" alt="OS2datascanners overordnede workflow"/>
+<img src="../static/svg/os2ds-workflow-grafik.svg" alt="OS2datascanners overordnede workflow"/>
 
 <h2 id="Implementering-og-forankring">Første del: Implementering og forankring</h2>
 <h4>Sådan bliver OS2datascanner en integreret del af jeres GDPR-arbejde</h4>
@@ -85,88 +86,90 @@
 <h3 id="De-fire-faser">De fire faser</h3>
 <p>Vi lægger op til, at implementeringen har fire faser, der samlet strækker sig over omtrent syv uger.  I korte træk ser forløbet således ud:</p>
 
-<table class="page-width table">
-  <thead>
-    <tr>
-      <th>Fase</th>
-      <th>Tidspunkt</th>
-      <th>Jeres opgaver</th>
-      <th>Magentas opgaver</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><p>1: Opstart - møde og opsætning</p></td>
-      <td><p>Dag 0</p>
-      </td>
-      <td>
-        <ul>
-          <li>Før mødet: Nedsæt et team af medarbejdere</li>
-          <li>Før mødet: Forbered spørgsmål</li>
-          <li>Efter mødet: Kommunikér om OS2datascanner i jeres organisation</li>
-          <li>Efter mødet: Giv Magenta adgang til jeres systemer</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Før mødet: Indkald til mødet</li>
-          <li>På mødet: Præsentér OS2datascanner</li>
-          <li>Efter mødet: Opsæt systemet</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><p>2: Forberedelse - testscans og oplæring</p></td>
-      <td><p>Uge 1-2</p>
-      </td>
-      <td>
-        <ul>
-          <li>Teste systemet en uges tid ved scan af eksempelvis netværksdrev</li>
-          <li>Oplære superbrugere</li>
-          <li>Møde med Magenta: Evaluering af testscans </li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Overvåge testscans</li>
-          <li>Løbende support</li>
-          <li>Indkald til og afhold evaluering af testscans</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><p>3: Udrulning - hovedrengøringer og overdragelse</p></td>
-      <td><p>Uge 3-6</p>
-      </td>
-      <td>
-        <ul>
-          <li>Introducere og implementere OS2datascanner i organisationen i flere faser</li>
-          <li>Løbende kommunikation til jeres organisation: Hvorfor og hvordan bruger vi OS2datascanner??</li>
-          <li>Support til slutbrugerne, evt. gennem jeres superbrugere</li>
-          <li>Efter aftale med Magenta: Lade systemet overgå til normal drift</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Løbende support</li>
-          <li>Indkalde til møde om at lade systemet overgå til normal drift</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><p>4: Forankring - løbende scans og nye vaner</p></td>
-      <td><p>Uge 7 og frem</p>
-      </td>
-      <td>
-        <ul>
-          <li>Hjælpe medarbejderne med at forankre OS2datascanner som en naturlig del af deres IT-værktøjskasse, eksempelvis ved at lave løbende scans.</li>
-          <li>Evaluere, om I får opfyldt jeres mål med at bruge systemet.</li>
-        </ul>
-      </td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
+<div class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Fase</th>
+        <th>Tidspunkt</th>
+        <th>Jeres opgaver</th>
+        <th>Magentas opgaver</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><p>1: Opstart - møde og opsætning</p></td>
+        <td><p>Dag 0</p>
+        </td>
+        <td>
+          <ul>
+            <li>Før mødet: Nedsæt et team af medarbejdere</li>
+            <li>Før mødet: Forbered spørgsmål</li>
+            <li>Efter mødet: Kommunikér om OS2datascanner i jeres organisation</li>
+            <li>Efter mødet: Giv Magenta adgang til jeres systemer</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Før mødet: Indkald til mødet</li>
+            <li>På mødet: Præsentér OS2datascanner</li>
+            <li>Efter mødet: Opsæt systemet</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td><p>2: Forberedelse - testscans og oplæring</p></td>
+        <td><p>Uge 1-2</p>
+        </td>
+        <td>
+          <ul>
+            <li>Teste systemet en uges tid ved scan af eksempelvis netværksdrev</li>
+            <li>Oplære superbrugere</li>
+            <li>Møde med Magenta: Evaluering af testscans </li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Overvåge testscans</li>
+            <li>Løbende support</li>
+            <li>Indkald til og afhold evaluering af testscans</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td><p>3: Udrulning - hovedrengøringer og overdragelse</p></td>
+        <td><p>Uge 3-6</p>
+        </td>
+        <td>
+          <ul>
+            <li>Introducere og implementere OS2datascanner i organisationen i flere faser</li>
+            <li>Løbende kommunikation til jeres organisation: Hvorfor og hvordan bruger vi OS2datascanner??</li>
+            <li>Support til slutbrugerne, evt. gennem jeres superbrugere</li>
+            <li>Efter aftale med Magenta: Lade systemet overgå til normal drift</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Løbende support</li>
+            <li>Indkalde til møde om at lade systemet overgå til normal drift</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td><p>4: Forankring - løbende scans og nye vaner</p></td>
+        <td><p>Uge 7 og frem</p>
+        </td>
+        <td>
+          <ul>
+            <li>Hjælpe medarbejderne med at forankre OS2datascanner som en naturlig del af deres IT-værktøjskasse, eksempelvis ved at lave løbende scans.</li>
+            <li>Evaluere, om I får opfyldt jeres mål med at bruge systemet.</li>
+          </ul>
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <h4 id="Foerste-fase">Første fase: Opstart - møde og opsætning</h4>
 <p>Når aftalen mellem jer og Magenta er på plads, holder vi et opstartsmøde. Her vil det være godt, hvis både jeres projektleder og jeres tekniske ansvarlige er til stede, for det er vigtigt at inddrage de relevante medarbejdere fra starten. Det vil også typisk være her, vi sammen vælger en single point of contact (SPOC) for det organisatoriske samarbejde og en SPOC for den tekniske implementering, som efter vores erfaring er den bedste måde at organisere samarbejdet på</p>
@@ -220,7 +223,7 @@
 
 <p>Slutbrugerne har udelukkende adgang til <a href="#Rapportmodul">rapportmodulet</a>, og her har den enkelte slutbruger udelukkende adgang til de sager, vedkommende har fået ansvaret for at håndtere. Ud over ens egen mailboks kan det eksempelvis være et fællesdrev, som medarbejderen har fået til opgave at rydde op i.</p>
 
-<p>Til slutbrugerne er der lavet en særlig håndbog, der på nogle få sider forklarer processen med at håndtere matches i rapportmodulet. <a href="../../static/src/svg/OS2DS-Brugerhaandbog.pdf" download>Du kan downloade den her</a>.</p>
+<p>Til slutbrugerne er der lavet en særlig håndbog, der på nogle få sider forklarer processen med at håndtere matches i rapportmodulet. <a href="../static/svg/OS2DS-Brugerhaandbog.pdf" download>Du kan downloade den her</a>.</p>
 <h4 id="Superbrugere">Superbrugere</h4>
 <p>Hvis I i forvejen har superbrugere i jeres organisation, kan I med fordel også give disse en mere grundig introduktion til OS2datascanner. Målet er i virkeligheden mere organisatorisk end teknisk. Systemet er nemt at bruge, så superbrugerne kan udover den tekniske support også hjælpe deres kolleger med at få etableret gode vaner, når det kommer til behandling af personoplysninger.</p>
 
@@ -271,7 +274,7 @@
 
 <h5 id="Opret-scannerjob">Sådan opretter du et scannerjob</h5>
 
-<p>Under hver type scanner kan du oprette et nyt scannerjob ved at klikke på “Tilføj nyt”. Alle scannertyper har det tilfælles, at du øverst vælger et navn. Du skal også vælge din <a href="#Organisation">organisation</a> og en <a href="#Valideringsstatus">valideringsstatus</a>. Sidstnævnte er som udgangspunkt sat til “ugyldig”, hvilket betyder, at scannerjobbet endnu ikke er blevet godkendt af en superadmin og altså ikke kan køres, før dette er sket. </p>
+<p>Under hver type scanner kan du oprette et nyt scannerjob ved at klikke på “Tilføj scannerjob”. Alle scannertyper har det tilfælles, at du øverst vælger et navn. Du skal også vælge din <a href="#Organisation">organisation</a> og en <a href="#Valideringsstatus">valideringsstatus</a>. Sidstnævnte er som udgangspunkt sat til “ugyldig”, hvilket betyder, at scannerjobbet endnu ikke er blevet godkendt af en superadmin og altså ikke kan køres, før dette er sket. </p>
 
 <p><i>Navnet på scannerjobbet er vigtigt, fordi du her kan give en ordentlig beskrivelse af, hvad netop dette scannerjob skal bruges til. Er det til en hovedrengøring eller et løbende scan? Scanner det udelukkende efter CPR-numre eller efter nogle regler, I selv har opsat?</i></p>
 
@@ -301,6 +304,12 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 <p>Vær opmærksom på, at I <i>skal</i> skrive jeres service endpoint, hvis jeres Exchange-server ligger i skyen. Endpointet hedder altid "https://outlook.office365.com/EWS/Exchange.asmx". Undlader I at skrive service endpointet, kan slutbrugerne ikke åbne mails med de fundne matches direkte fra rapportmodulet. Har I en on premise-installation, behøver I ikke skrive noget service endpoint.</p>
 
 <p>Under brugeroplysninger skal I skrive brugernavn og adgangskode på jeres servicekonto og uploade en liste over de mailkonti, der skal scannes.</p>
+
+<h6 id="Office365-scanner">Office 365 mailscanner og Office 365 OneDrive filscanner</h6>
+<p>Med indførelsen af Microsofts Office 365 cloud suite er det nu muligt at scanne mails fra Outlook og filer fra OneDrive i Office 365.</p>
+<p>For at dette kan virke, så skal der registeres en "Azure Application" i Microsoft Azure's portal: <a href="https://portal.azure.com/#home">https://portal.azure.com/#home</a>. Der er blevet udarbejdet en guide til opsætning og afvikling af scannerjobs i OS2datascanner, som involverer datakilder fra Office 365, herunder mails og OneDrive filer. Denne guide kan findes her: <a href="https://os2datascanner.readthedocs.io/azure/azure-setup-guide/">https://os2datascanner.readthedocs.io/azure/azure-setup-guide/</a>.</p>
+
+<p>OS2datascanner laver på intet tidpunkt permanente kopier af data, som analyseres under kørsel af et scannerjob. Data hentes derimod over i <a href="#Hukommelse">hukommelsen</a>, som overskrives løbende.</p>
 
 <h5 id="Validering-koersel">Validering og kørsel af scannerjobs</h5>
 <p>Når en administrator har oprettet et scannerjob, skal en superadmin godkende det. Det sker ved at åbne selve scannerjobbet og sætte valideringsstatus til “gyldig.” Herefter kan både superadmins og admins sætte jobbet i gang. Når et scannerjob er sat i gang, bliver de fundne <a href="#Match">matches</a> løbende sendt videre til OS2datascanners rapportmodul, hvor slutbrugeren kan se dem. </p>
@@ -335,7 +344,7 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 <h3 id="Rapportmodulet">Rapportmodulet</h3>
 <p>Rapportmodulet indeholder kun ganske få funktioner. Når et scannerjob kører, sender det løbende de fundne matches videre til rapportmodulet. Her kan den eller de brugere, som har fået opgaven med at håndtere matches for det enkelte scannerjob, så se en liste over de fundne matches og markere, hvordan det enkelte match er blevet håndteret, eksempelvis at filen er blevet slettet.</p>
 
-<p>Til slutbrugerne er der en særlig håndbog, der på nogle få sider forklarer, hvordan man bruger rapportmodulet. I kan med fordel lægge den op på jeres intranet, hvor I i forvejen har vejledninger liggende. <a href="../../static/src/svg/OS2DS-Brugerhaandbog.pdf" download>Du kan downloade håndbogen her</a>.</p>
+<p>Til slutbrugerne er der en særlig håndbog, der på nogle få sider forklarer, hvordan man bruger rapportmodulet. I kan med fordel lægge den op på jeres intranet, hvor I i forvejen har vejledninger liggende. <a href="../static/svg/OS2DS-Brugerhaandbog.pdf" download>Du kan downloade håndbogen her</a>.</p>
 <h2 id="Ordliste">Tredje del: Ordliste</h2>
 <p><b id="Admin">Admin:</b> En bruger, der kan oprette og køre <a href="#Scannerjobs">scannerjobs</a>, men ikke godkende dem. Det skal en <a href="#Superadmin">superadmin</a> gøre. <a href="#Administrator">Læs mere om superadministrator-rollen</a>.</p>
 
@@ -458,7 +467,7 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 
 <p>Man kan også oprette en fil ved navn outlook.reg med følgende tekst (vær igen opmærksom på, at stien til Outlook.exe skal være korrekt):</p>
 
-<pre class="page-width">Windows Registry Editor Version 5.00
+<pre>Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\SOFTWARE\Classes\outlook]
 @="URL:Outlook Folders"
@@ -473,13 +482,13 @@ Efter navnet skal du under URL taste stien til det drev, der skal scannes. Under
 <p>Hvis du fra Registry Editor importerer outlook.reg-filen vil de forskellige nøgler automatisk blive opdateret i registry.</p>
 <br>
 <h4 id="Arkitekturtegninger">Arkitekturtegninger</h4>
-<a href="../../static/src/svg/os2ds-arkitektur.png" target="_blank"><img class="page-width" src="../../static/src/svg/os2ds-arkitektur.png"/ alt="Illustration af OS2datascanners arkitektur"></a>
+<a href="../static/svg/os2ds-arkitektur.png" target="_blank"><img src="../static/svg/os2ds-arkitektur.png"/ alt="Illustration af OS2datascanners arkitektur"></a>
 
 
 <h3 id="Downloads">Downloads</h3>
 
-<p><strong><a href="../../static/src/svg/OS2DS-Brugerhaandbog.pdf" download>Brugerhåndbog</a></strong></p>
-<p><strong><a href="../../static/src/svg/OS2DS-Handout.pdf" download>Handout til afdelingschefer mv.</a></strong></p>
+<p><strong><a href="../static/svg/OS2DS-Brugerhaandbog.pdf" download>Brugerhåndbog</a></strong></p>
+<p><strong><a href="../static/svg/OS2DS-Handout.pdf" download>Handout til afdelingschefer mv.</a></strong></p>
 
 
 </div>

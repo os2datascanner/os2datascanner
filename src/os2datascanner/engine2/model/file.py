@@ -1,6 +1,4 @@
 from .core import Source, Handle, FileResource
-
-from os import stat
 import os.path
 from urllib.parse import quote, unquote, urlsplit, urlunsplit
 from pathlib import Path
@@ -30,8 +28,8 @@ class FilesystemSource(Source):
             try:
                 for f in d.iterdir():
                     if f.is_file():
-                        yield FilesystemHandle(self,
-                                str(f.relative_to(pathlib_path)))
+                        yield FilesystemHandle(
+                            self, str(f.relative_to(pathlib_path)))
             except PermissionError:
                 continue
 
@@ -57,9 +55,7 @@ class FilesystemSource(Source):
         return FilesystemSource(unquote(path) if path else None)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "path": self.path
-        })
+        return dict(**super().to_json_object(), path=self.path)
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -67,9 +63,10 @@ class FilesystemSource(Source):
         return FilesystemSource(path=obj["path"])
 
 
-stat_attributes = ("st_mode", "st_ino", "st_dev", "st_nlink", "st_uid",
-        "st_gid", "st_size", "st_atime", "st_mtime", "st_ctime",
-        "st_blksize", "st_blocks", "st_rdev", "st_flags",)
+stat_attributes = (
+    "st_mode", "st_ino", "st_dev", "st_nlink", "st_uid",
+    "st_gid", "st_size", "st_atime", "st_mtime", "st_ctime",
+    "st_blksize", "st_blocks", "st_rdev", "st_flags",)
 
 
 class FilesystemResource(FileResource):
@@ -105,11 +102,6 @@ class FilesystemResource(FileResource):
     def make_path(self):
         yield self._full_path
 
-    @contextmanager
-    def make_stream(self):
-        with open(self._full_path, "rb") as s:
-            yield s
-
 
 @Handle.stock_json_handler("file")
 class FilesystemHandle(Handle):
@@ -117,8 +109,25 @@ class FilesystemHandle(Handle):
     resource_type = FilesystemResource
 
     @property
-    def presentation(self):
-        return str(Path(self.source.path).joinpath(self.relative_path))
+    def _full_path(self):
+        return Path(self.source.path).joinpath(self.relative_path)
+
+    @property
+    def presentation_name(self):
+        # return path, shouldn't need filename here
+        return self._full_path.name
+
+    @property
+    def presentation_place(self):
+        return str(self._full_path.parent)
+
+    @property
+    def sort_key(self):
+        # return the full path including filename
+        return str(self._full_path)
+
+    def __str__(self):
+        return str(self._full_path)
 
     def censor(self):
         return FilesystemHandle(self.source.censor(), self.relative_path)

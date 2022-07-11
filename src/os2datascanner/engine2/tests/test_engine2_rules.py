@@ -1,9 +1,11 @@
-from datetime import datetime, timezone
 import unittest
+from datetime import datetime, timezone
 
+from os2datascanner.engine2.rules.address import AddressRule
 from os2datascanner.engine2.rules.cpr import CPRRule
-from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
+from os2datascanner.engine2.rules.dummy import (
+        NeverMatchesRule, AlwaysMatchesRule)
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.rules.logical import (
     OrRule,
@@ -12,6 +14,13 @@ from os2datascanner.engine2.rules.logical import (
     AllRule,
     oxford_comma,
 )
+from os2datascanner.engine2.rules.meta import HasConversionRule
+from os2datascanner.engine2.rules.name import NameRule
+from os2datascanner.engine2.rules.regex import RegexRule
+from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
+from os2datascanner.engine2.rules.rule import Sensitivity
+
+from os2datascanner.engine2.conversions.types import OutputType
 
 
 class RuleTests(unittest.TestCase):
@@ -48,7 +57,7 @@ Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nummer: 2305000003
             (
                 CPRRule(
                     modulus_11=True, ignore_irrelevant=True, examine_context=True,
-                    blacklist=False
+                    blacklist=[],
                 ),
                 """
 Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nr. 2205995008
@@ -69,7 +78,7 @@ Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nummer: 2305000003
             (
                 CPRRule(
                     modulus_11=True, ignore_irrelevant=True, examine_context=True,
-                    whitelist=["whiteword"], blacklist=True
+                    whitelist=["whiteword"]
                 ),
                 """
 Vejstrand Kommune, Børn- og Ungeforvaltningen. WhiteWord 2205995008
@@ -203,31 +212,55 @@ more!""",
     def test_compound_rule_matches(self):
         for rule, tests in RuleTests.compound_candidates:
             for input_string, outcome, evaluation_count in tests:
-                now = rule
-                evaluations = 0
+                representations = {
+                    "text": input_string
+                }
+                conclusion, evaluations = rule.try_match(representations.get)
 
-                while True:
-                    print(f"evaluating rule {now}")
-                    head, pve, nve = now.split()
-                    evaluations += 1
-                    match = list(head.match(input_string))
-                    print(f"{head} had the matches {match}")
-                    if match:
-                        now = pve
-                    else:
-                        now = nve
-                    if isinstance(now, bool):
-                        break
-                print(f"conclusion: input: {input_string}; result: {now}; "
+                print(f"conclusion: input: {input_string};"
+                      f"result: {conclusion}; "
                       f"expected: {outcome}; evaluations: {evaluations}")
                 self.assertEqual(
-                    outcome, now, "{0}: wrong result".format(input_string)
+                    outcome, conclusion,
+                    "{0}: wrong result".format(input_string)
                 )
                 self.assertEqual(
                     evaluation_count,
-                    evaluations,
+                    len(evaluations),
                     "{0}: wrong evaluation count".format(input_string),
                 )
+
+    def test_resume(self):
+        """Resuming execution of a rule after its try_match method has returned
+        should complete the execution correctly."""
+        rule = AndRule(
+                RegexRule("First fragment"),
+                AlwaysMatchesRule(),
+                RegexRule("second fragment"),
+                AlwaysMatchesRule())
+
+        representations = {
+            "text": "First fragment goes here, and then the second fragment"
+        }
+        remaining, matches1 = rule.try_match(lambda k: representations[k])
+        representations["fallback"] = True
+        remaining, matches2 = remaining.try_match(lambda k: representations[k])
+
+        self.assertTrue(
+                remaining,
+                "incorrect conclusion of decomposed rule")
+        # Because Rule.try_match is allowed to perform optimisation, we can't
+        # rely on rules being executed in any particular order or number, so
+        # all we do here is to ensure that all of the rules we expect to see
+        # executed were actually executed
+        self.assertEqual(
+                set(r for r, _ in matches1) | set(r for r, _ in matches2),
+                {
+                    RegexRule("First fragment"),
+                    RegexRule("second fragment"),
+                    AlwaysMatchesRule()
+                },
+                "incorrect execution of decomposed rule")
 
     def test_json_round_trip(self):
         for rule, _ in RuleTests.compound_candidates:
@@ -256,3 +289,230 @@ more!""",
         self.assertEqual(
             OrRule(A, B, C).presentation, "(Fragment A, Fragment B, or Fragment C)"
         )
+
+    def test_json_backwards_compatibility(self):
+        with self.subTest("old CPR rule"):
+            self.assertEqual(
+                    CPRRule.from_json_object({
+                        "type": "cpr"
+                    }),
+                    CPRRule(),
+                    "deserialisation of old CPR rule failed")
+
+    def test_name_address_rule_matches(self):
+        candidates = [
+            (
+                # sensitivity is for standalone matches
+                NameRule(whitelist=["Joakim"], blacklist=["Malkeko"],
+                         sensitivity=Sensitivity.INFORMATION.value),
+                (
+                    "Anders\n"           # match standalone name.
+                    "Anders and\n"       # match standalone name
+                    "Anders      And\n"  # match full name. Only first name in namelist
+                    "Anders And\n"       # match full name
+                    "A. And\n"           # match regex, but not in namelist -> not returned
+                    "J.-V And\n"         # -"-
+                    "J-V. And\n"         # -"-
+                    "J.V. And\n"         # -"-
+                    "J.v. And\n"         # Does not match regex
+                    "Joakim And\n"       # match regex and namelist, but in whitelist
+                    "Andrea V. And\n"    # First name in namelist
+                    "Joakim Nielsen\n"   # last name in namelist and not whitelisted.
+                    "Anders Andersine Mickey Per Nielsen\n"
+                    # match full name
+                    "Nora Malkeko\n"     # In blacklist
+                ),
+                [    # expected matches
+                    ["Anders", Sensitivity.INFORMATION.value],
+                    ["Anders", Sensitivity.INFORMATION.value],
+                    ["Anders And", Sensitivity.PROBLEM.value],
+                    ["Anders      And", Sensitivity.PROBLEM.value],
+                    ["Joakim Nielsen", Sensitivity.PROBLEM.value],
+                    ["Andrea V. And", Sensitivity.PROBLEM.value],
+                    ["Anders Andersine Mickey Per Nielsen",
+                     Sensitivity.CRITICAL.value],
+                    ["Nora Malkeko", Sensitivity.CRITICAL.value],
+                ]
+            ),
+            (
+                # user supplied sensitivity is not used
+                AddressRule(whitelist=["Tagensvej"], blacklist=["PilÆstræde"]),
+                (
+                    "H.C. Andersens Boul 15, 2. 0006, 1553 København V, Danmark\n"
+                    "H.C. Andersens Boul, 1553 Kbh. V\n"
+                    "10. Februar Vej 75\n"                    # unusual names from the list
+                    "400-Rtalik\n"
+                    "H/F Solpl-Lærkevej\n"
+                    "H. H. Hansens Vej\n"
+                    "H H Kochs Vej\n"
+                    "Øer I Isefjord 15\n"                     # does unicode work?
+                    "Tagensvej 15\n"                          # whitelisted
+                    "der er en bygning på PilÆstræde, men\n"  # not in address list/blacklisted
+                    "Magenta APS, PilÆstræde 43,  3. sal, 1112 København\n"
+                ),
+                [
+                    ["H.C. Andersens Boul 15, 2. 0006, 1553 København V",
+                     Sensitivity.CRITICAL.value],
+                    ["H.C. Andersens Boul, 1553 Kbh. V", Sensitivity.PROBLEM.value],
+                    ["10. Februar Vej 75", Sensitivity.CRITICAL.value],
+                    ["400-Rtalik", Sensitivity.PROBLEM.value],
+                    ["H/F Solpl-Lærkevej", Sensitivity.PROBLEM.value],
+                    ["H. H. Hansens Vej", Sensitivity.PROBLEM.value],
+                    ["H H Kochs Vej", Sensitivity.PROBLEM.value],
+                    ["Øer I Isefjord 15", Sensitivity.CRITICAL.value],
+                    ["PilÆstræde", Sensitivity.CRITICAL.value],
+                    ["PilÆstræde 43,  3. sal, 1112 København", Sensitivity.CRITICAL.value],
+                ]
+            ),
+        ]
+
+        for rule, in_value, expected in candidates:
+            with self.subTest(rule):
+                json = rule.to_json_object()
+                back_again = rule.from_json_object(json)
+                self.assertEqual(rule, back_again)
+
+            with self.subTest(rule):
+                matches = rule.match(in_value)
+                # matches ARE NOT returned in order. They are stored as a set
+                self.assertCountEqual(
+                    [[match["match"], match['sensitivity']] for match in matches],
+                    expected)
+
+    def test_wordlists_rule(self):
+        candidates = (
+            (
+                "This is a really good dog!",
+                ({
+                    "match": "GOOD DOG",
+                    "offset": 17,
+                    "context": "This is a really good dog!",
+                    "context_offset": 17
+                },)
+            ),
+            (
+                "This dog is really good!",
+                ()
+            ),
+            (
+                f"This is a good{'dog':>32}",
+                ({
+                    "match": "GOOD DOG",
+                    "offset": 10,
+                    "context": f"This is a good{'':>29}dog",
+                    "context_offset": 10
+                },)
+            ),
+            (
+                f"This is a good {'dog':>33}",
+                ()
+            ),
+            (
+                f"This is a totally{'tubular':>32}{'tapir':>32}",
+                ({
+                    "match": "totally tubular tapir",
+                    "offset": 10,
+                    "context": f"This is a totally{'':>25}tubular{'':>27}tapir",
+                    "context_offset": 10
+                },)
+            ),
+            (
+                "This CRAZY cat's a good dog!",
+                ({
+                    "match": "GOOD DOG",
+                    "offset": 19,
+                    "context": "This CRAZY cat's a good dog!",
+                    "context_offset": 19
+                }, {
+                    "match": "crazy cat",
+                    "offset": 5,
+                    "context": "This CRAZY cat's a good dog!",
+                    "context_offset": 5
+                })
+            ),
+            (
+                "This is an awesomely amazing arachnid!",
+                ({
+                    "match": "awesome arachnid",
+                    "offset": 11,
+                    "context": "This is an awesomely amazing arachnid!",
+                    "context_offset": 11
+                },)
+            )
+        )
+        wrl = OrderedWordlistRule("en_20211018_unit_test_words")
+        for in_value, expected in candidates:
+            with self.subTest(in_value):
+                self.assertEqual(
+                        tuple(wrl.match(in_value)),
+                        expected)
+
+    def test_medical_combinations(self):
+        candidates = (
+            (
+                """
+REGION NORDSTRAND -- PERSONFØLSOMT MATERIALE UNDER TAVSHEDSPLIGT
+
+Nordstrand Sygehus
+Strandvej 17
+9999 Vejstrand
+
+Patient: Jens Testsen
+Konsultationsdato: 2021-10-18
+
+Ifølge analyseresultater lider patienten af akut arteriel insufficiens i alle
+ekstremiteterne. Han selv tilføjer, at han har ondt i albuen. Der er også
+indledende tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM. Henvist til
+speciellæger.""",
+                ({
+                    "match": "akut arteriel insufficiens ekstremiteterne",
+                    "offset": 212,
+                    "context": "0-18\n\nIfølge analyseresultater lider"
+                               " patienten af akut arteriel insufficiens i"
+                               " alle\nekstremiteterne. Han selv tilføjer,"
+                               " at han har ondt i albuen. Der",
+                    "context_offset": 50
+                }, {
+                    "match": "albue",
+                    "offset": 300,
+                    "context": "remiteterne. Han selv tilføjer, at han har"
+                               " ondt i albuen. Der er også\nindledende tegn"
+                               " på AUTOIMMUNT POLYG",
+                    "context_offset": 50
+                }, {
+                    "match": "autoimmunt polyglandulært syndrom",
+                    "offset": 339,
+                    "context": "har ondt i albuen. Der er også\nindledende"
+                               " tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM."
+                               " Henvist til\nspeciellæger.",
+                    "context_offset": 50
+                })
+            ),
+        )
+        wrl = OrderedWordlistRule("da_20211018_laegehaandbog_stikord")
+        for in_value, expected in candidates:
+            with self.subTest(in_value):
+                self.assertEqual(
+                        tuple(wrl.match(in_value)),
+                        expected)
+
+    def test_all_of_them(self):
+        rule = AndRule(
+                HasConversionRule(OutputType.Text),
+                CPRRule(),
+                NameRule(),
+                OrRule(NeverMatchesRule(), AlwaysMatchesRule()),
+                NotRule(HasConversionRule(OutputType.ImageDimensions)),
+                AddressRule())
+        rhu = rule.try_match({
+            OutputType.Text.value: (
+                    "Jens Jensen, 111111-1118,"
+                    " Strandvej 198, 1tv, 2000 Frederiksberg"),
+            OutputType.NoConversions.value: None,
+            OutputType.AlwaysTrue.value: True,
+            OutputType.ImageDimensions.value: None,
+        })
+        self.assertEqual(
+                rhu[0],
+                True,
+                "complex match failed")

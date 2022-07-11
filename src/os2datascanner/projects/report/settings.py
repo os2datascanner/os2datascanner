@@ -15,8 +15,6 @@ import sys
 import pathlib
 import structlog
 
-from django.utils.translation import gettext_lazy as _
-
 from os2datascanner.projects.django_toml_configuration import process_toml_conf_for_django
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -37,11 +35,21 @@ process_toml_conf_for_django(
 # to catch typos early and to not have deprecated settings in layer 2 and 3. To
 # circumvent these two incompatibilities, we set file or url as usual and the
 # other to empty string. This will unset the empty string:
-if not SAML2_AUTH['METADATA_AUTO_CONF_URL']:
-    del SAML2_AUTH['METADATA_AUTO_CONF_URL']
-if not SAML2_AUTH['METADATA_LOCAL_FILE_PATH']:
-    del SAML2_AUTH['METADATA_LOCAL_FILE_PATH']
+if not SAML2_AUTH['METADATA_AUTO_CONF_URL']:  # noqa: F821
+    del SAML2_AUTH['METADATA_AUTO_CONF_URL']  # noqa: F821
+if not SAML2_AUTH['METADATA_LOCAL_FILE_PATH']:  # noqa: F821
+    del SAML2_AUTH['METADATA_LOCAL_FILE_PATH']  # noqa: F821
 
+
+# https://github.com/django/channels/issues/624#issuecomment-609483480
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)]
+        }
+    }
+}
 
 TEMPLATES = [
     {
@@ -55,7 +63,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django_settings_export.settings_export',
-                'os2datascanner.projects.report.reportapp.shared_context_processor.check_dpo_and_leader_roles',
+                'os2datascanner.projects.report.reportapp.shared_context_processor'
+                + '.check_dpo_and_leader_roles',
                 'os2datascanner.projects.utils.context_processors.version',
             ],
         },
@@ -190,3 +199,8 @@ LOGGING = {
 }
 
 os.makedirs(globals()['BUILD_DIR'], exist_ok=True)
+
+# Set default primary key - new in Django 3.2
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+PROMETHEUS_METRICS_EXPORT_PORT_RANGE = range(5001, 5050)

@@ -91,3 +91,6 @@ class Migration(migrations.Migration):
             field=models.DateTimeField(blank=True, null=True, verbose_name='last time an update was requested'),
         ),
     ]
+
+
+

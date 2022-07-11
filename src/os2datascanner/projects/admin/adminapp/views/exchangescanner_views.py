@@ -14,12 +14,35 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
+from rest_framework.generics import ListAPIView
 
-from .scanner_views import *
-from ..aescipher import decrypt
+from .scanner_views import (
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+    ScannerUpdate,
+    ScannerCopy,
+    ScannerCreate,
+    ScannerList)
+from ..serializers import OrganizationalUnitSerializer
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ...core.models import Feature, Client
 from ...organizations.models import OrganizationalUnit
+
+
+class OrganizationalUnitListing(ListAPIView):
+    serializer_class = OrganizationalUnitSerializer
+
+    def get_queryset(self):
+        organization_id = self.request.query_params.get('organizationId', None)
+
+        if organization_id:
+            queryList = OrganizationalUnit.objects.filter(
+                    organization=organization_id)
+        else:
+            queryList = []
+
+        return queryList
 
 
 class ExchangeScannerList(ScannerList):
@@ -65,8 +88,9 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
 
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
-              'do_last_modified_check', 'rules', 'userlist',
+              'do_last_modified_check', 'rules', 'userlist', 'only_notify_superadmin',
               'service_endpoint', 'organization', 'org_unit']
+    type = 'exchange'
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -79,7 +103,41 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
 
         form = super().get_form(form_class)
 
-        return initialize_form(form)
+        form = initialize_form(form)
+        if self.request.method == 'POST':
+            form = validate_userlist_or_org_units(form)
+
+        return form
+
+
+class ExchangeScannerCopy(ExchangeScannerBase, ScannerCopy):
+    """Create a new copy of an existing ExchangeScanner"""
+
+    model = ExchangeScanner
+    fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
+              'do_last_modified_check', 'rules', 'userlist', 'only_notify_superadmin',
+              'service_endpoint', 'organization', 'org_unit']
+    type = 'exchange'
+
+    def get_form(self, form_class=None):
+        """Adds special field password."""
+        # This doesn't copy over it's values, as credentials shouldn't
+        # be copyable
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        form = super().get_form(form_class)
+
+        form = initialize_form(form)
+        if self.request.method == 'POST':
+            form = validate_userlist_or_org_units(form)
+
+        return form
+
+    def get_initial(self):
+        initial = super(ExchangeScannerCopy, self).get_initial()
+        initial["userlist"] = self.get_scanner_object().userlist
+        return initial
 
 
 class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):
@@ -87,8 +145,9 @@ class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):
 
     model = ExchangeScanner
     fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
-              'do_last_modified_check', 'rules', 'userlist',
+              'do_last_modified_check', 'rules', 'userlist', 'only_notify_superadmin',
               'service_endpoint', 'organization', 'org_unit']
+    type = 'exchange'
 
     def get_success_url(self):
         """The URL to redirect to after successful updating.
@@ -114,10 +173,11 @@ class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):
 
         if authentication.username:
             form.fields['username'].initial = authentication.username
-        if authentication.ciphertext:
-            password = decrypt(bytes(authentication.iv),
-                               bytes(authentication.ciphertext))
-            form.fields['password'].initial = password
+        if authentication.iv:
+            # if there is a set password already, use a dummy to enable the placeholder
+            form.fields['password'].initial = "dummy"
+        if self.request.method == 'POST':
+            form = validate_userlist_or_org_units(form)
 
         return form
 
@@ -145,6 +205,16 @@ class ExchangeScannerRun(ScannerRun):
     """View that handles starting of a exchange scanner run."""
 
     model = ExchangeScanner
+
+
+def validate_userlist_or_org_units(form):
+    """Validates whether the form has either a userlist or organizational units.
+    NB : must be called after initialize form. """
+    form.is_valid()
+    if not form.cleaned_data['userlist'] and not form.cleaned_data['org_unit']:
+        form.add_error('org_unit', _("No organizational units has been selected"))
+        form.add_error('userlist', _("No userlist has been selected"))
+    return form
 
 
 def initialize_form(form):

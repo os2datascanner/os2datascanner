@@ -15,12 +15,12 @@ def read_config(config_path):
         with open(config_path) as f:
             content = f.read()
     except FileNotFoundError as err:
-        logger.critical("%s: %r", err.strerror, err.filename)
+        logger.critical("%s: %r", err.strerror, err.filename, exc_info=True)
         sys.exit(5)
     try:
         return toml.loads(content)
     except toml.TomlDecodeError:
-        logger.critical("Failed to parse TOML")
+        logger.critical("Failed to parse TOML", exc_info=True)
         sys.exit(4)
 
 
@@ -38,11 +38,11 @@ def update_config(configuration, new_settings):
             logger.warning("Invalid key in config: %s", key)
 
 
-def update_from_env(configuration, traversed_path = []):
-    # Update config from (possible nested) environment variables
-    # Only existing config vars will be overridden
-    # Environment var "var=newval" will override {'var': 'oldval'}
-    # Nested environment variable "my__var__path=newval" will override {'my':{'var': 'path': 'oldval'}}
+def update_from_env(configuration, traversed_path=None):
+
+    if traversed_path is None:
+        traversed_path = []
+
     for key in configuration:
         if isinstance(configuration[key], dict):
             update_from_env(configuration[key], traversed_path + [key])

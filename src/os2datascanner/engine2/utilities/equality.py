@@ -20,7 +20,11 @@ class TypePropertyEquality:
                 self.__get_state(self) == self.__get_state(other))
 
     def __hash__(self):
-        h = 42 + hash(type(self))
-        for k, v in self.__get_state(self).items():
-            h += hash(k) + (hash(v) * 3)
-        return h
+        try:
+            h = 42 + hash(type(self))
+            for k, v in self.__get_state(self).items():
+                h += hash(k) + (hash(v) * 3)
+            return h
+        except Exception as ex:
+            raise TypeError(
+                    f"{type(self)!s}.__hash__()") from ex

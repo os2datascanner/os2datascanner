@@ -1,12 +1,20 @@
 import os.path
 from abc import abstractmethod
+from copy import copy
+from typing import Mapping, Optional
+import warnings
 from mimetypes import guess_type
-from typing import Optional
 
 from ...utilities.json import JSONSerialisable
 from ...utilities.equality import TypePropertyEquality
-from .errors import UnknownSchemeError, DeserialisationError
 from .import source as msource
+
+
+_encodings_map = {
+    "gzip": "application/gzip",
+    "bzip2": "application/x-bzip2",
+    "xz": "application/xz"
+}
 
 
 class Handle(TypePropertyEquality, JSONSerialisable):
@@ -39,7 +47,7 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         self._referrer = referrer
 
     @property
-    def source(self):
+    def source(self) -> "msource.Source":
         """Returns this Handle's Source."""
         return self._source
 
@@ -49,23 +57,40 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         return self._relpath
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Returns the base name -- everything after the last '/' -- of this
-        Handle's path, or "file" if the result would otherwise be empty."""
+        Handle's path, or "file" if the result would otherwise be empty.
+
+        Note that the return value of this function must be a valid filesystem
+        name."""
         return os.path.basename(self._relpath) or 'file'
 
     def guess_type(self):
         """Guesses the type of this Handle's target based on its name. (For a
         potentially better, but more expensive, guess, follow this Handle to
         get a Resource and call its compute_type() method instead.)"""
-        mime, _ = guess_type(self.name)
-        return mime or "application/octet-stream"
+        mime, encoding = guess_type(self.name)
+
+        if encoding:
+            # The mimetypes module helpfully maps (for example) "doc.pdf.gz"
+            # to "application/pdf", but we need the actual MIME type of the
+            # encoded form to be able to decode it properly
+            return _encodings_map.get(encoding, "application/octet-stream")
+        else:
+            return mime or "application/octet-stream"
 
     @property
     @abstractmethod
-    def presentation(self):
+    def presentation_name(self) -> str:
+        """Returns the human-readable name of this object."""
+
+    @property
+    @abstractmethod
+    def presentation_place(self) -> str:
         """Returns a (perhaps localised) human-readable string representing
-        this Handle, for use in user interfaces."""
+        the location of this Handle, for use in user interfaces (a folder, for
+        example, for a filesystem file, or an archive path for a compressed
+        document)."""
 
     @property
     def presentation_url(self):
@@ -77,6 +102,28 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         this function might, for a Handle identifying an email, return a URL
         that points at that email in an appropriate webmail system.)"""
         return None
+
+    def __str__(self):
+        """Returns a (perhaps localised) human-readable string representing
+        this Handle: its name and its position."""
+        return f"{self.presentation_name} (in {self.presentation_place})"
+
+    @property
+    def presentation(self) -> str:
+        warnings.warn(
+                "Handle.presentation is deprecated; use str(handle) instead",
+                DeprecationWarning, stacklevel=2)
+        return str(self)
+
+    @property
+    def sort_key(self) -> str:
+        """Returns a string that can be used to position this object in an
+        ordered list in a way that would make sense to a user. This might be,
+        for example, a filesystem path or an email user@domain.
+
+        Note that comparing sort keys across different types of Source is not
+        meaningful."""
+        return str(self).removesuffix(self.name).removesuffix("/")
 
     @property
     def referrer(self) -> Optional["Handle"]:
@@ -94,6 +141,18 @@ class Handle(TypePropertyEquality, JSONSerialisable):
                 break
         return h
 
+    @property
+    def base_handle(self) -> "Handle":
+        """Returns this Handle's base Handle or self, if this object does not
+        originate from a derived Source"""
+        h = self
+        while h:
+            if h.source.handle:
+                h = h.source.handle
+            else:
+                break
+        return h
+
     @abstractmethod
     def censor(self):
         """Returns a Handle identical to this one but whose Source does not
@@ -104,19 +163,16 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         than identifying an object, this method should normally only be used
         when transmitting a Handle to a less trusted context."""
 
-    def __str__(self):
-        return self.presentation
-
     def follow(self, sm):
         """Follows this Handle using the state in the StateManager @sm,
         returning a concrete Resource."""
         return self.resource_type(self, sm)
 
     BASE_PROPERTIES = ('_source', '_relpath',)
-    """The properties defined by Handle. (If a subclass defines other
-    properties, but wants those properties to be ignored when comparing
-    objects, it should set the 'eq_properties' class attribute to this
-    value.)"""
+    # The properties defined by Handle. (If a subclass defines other
+    # properties, but wants those properties to be ignored when comparing
+    # objects, it should set the 'eq_properties' class attribute to this
+    # value.)
 
     _json_handlers = {}
 
@@ -145,3 +201,10 @@ class Handle(TypePropertyEquality, JSONSerialisable):
                         obj["path"])
             return cls
         return _stock_json_handler
+
+    def remap(
+            self,
+            mapping: Mapping["msource.Source", "msource.Source"]) -> "Handle":
+        nc = copy(self)
+        nc._source = nc._source.remap(mapping)
+        return nc

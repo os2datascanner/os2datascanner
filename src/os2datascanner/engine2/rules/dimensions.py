@@ -7,9 +7,9 @@ class DimensionsRule(SimpleRule):
     type_label = "dimensions"
 
     def __init__(self,
-            width_range=range(16, 16385),
-            height_range=range(16, 16385),
-            min_dim=128, **super_kwargs):
+                 width_range=range(16, 16385),
+                 height_range=range(16, 16385),
+                 min_dim=128, **super_kwargs):
         super().__init__(**super_kwargs)
         self._width_range = width_range
         self._height_range = height_range
@@ -39,11 +39,12 @@ class DimensionsRule(SimpleRule):
             }
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "width": [self._width_range.start, self._width_range.stop],
-            "height": [self._height_range.start, self._height_range.stop],
-            "minimum": self._min_dim
-        })
+        return dict(
+            **super().to_json_object(),
+            width=[self._width_range.start, self._width_range.stop],
+            height=[self._height_range.start, self._height_range.stop],
+            minimum=self._min_dim,
+        )
 
     @staticmethod
     @Rule.json_handler(type_label)

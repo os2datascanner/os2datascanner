@@ -62,7 +62,7 @@ class ModelFactory:
         return func
 
     def _post_save(self, *,
-            sender, instance, created, raw, using, update_fields, **kwargs):
+                   sender, instance, created, raw, using, update_fields, **kwargs):
         if isinstance(instance, self.model):
             if created:
                 self.create(instance, just_notify=True)
@@ -70,6 +70,6 @@ class ModelFactory:
                 self.update([instance], update_fields, just_notify=True)
 
     def _post_delete(self, *,
-            sender, instance, using, **kwargs):
+                     sender, instance, using, **kwargs):
         if isinstance(instance, self.model):
             self.delete([instance], just_notify=True)

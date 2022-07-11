@@ -3,29 +3,35 @@ DECRYPTION_HEX = "4b8930847cba7196a46ede3456fe33df564427a30910dd1ef9bc805f26559a
 
 # [mode]
 DEBUG = true
-# Used for filescan and mounting
-PRODUCTION = false
+
+# [functionality]
+EXCLUSION_RULES = true
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
 # OAuth 2.0 services. (This value should end with a forward slash.)
 SITE_URL = "http://localhost:8020/"
-ALLOWED_HOSTS = []
+REPORT_URL = "http://localhost:8040/"
 SESSION_COOKIE_NAME = "admin_sessionid"
 
 # [keycloak]
 KEYCLOAK_BASE_URL = "http://localkeycloak.os2datascanner:8090"
-KEYCLOAK_ADMIN_CLIENT = "os2datascanner_admin"
 KEYCLOAK_ADMIN_SECRET = "thisIsNotASecret"
+
+# [Prometheus pushgateway]
+PUSHGATEWAY_HOST = "http://pushgateway:9091"
 
 # [installation]
 OPTIONAL_APPS = [
     'debug_toolbar',
-    'django_extensions',
 ]
 OPTIONAL_MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+# [msgraph]
+MSGRAPH_APP_ID = ""
+MSGRAPH_CLIENT_SECRET = ""
 
 # [scans]
 ENABLE_FILESCAN = true
@@ -35,13 +41,14 @@ ENABLE_GOOGLEDRIVESCAN = true
 ENABLE_GMAILSCAN = true
 ENABLE_MSGRAPH_MAILSCAN = true
 ENABLE_MSGRAPH_FILESCAN = true
+ENABLE_MSGRAPH_CALENDARSCAN = true
 ENABLE_SBSYSSCAN = true
 
 # [email]
 DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"
 ADMIN_EMAIL = "os2datascanner@magenta.dk"
-EMAIL_HOST = "localhost"
-EMAIL_PORT = 25
+EMAIL_HOST = 'mailhog'
+EMAIL_PORT = 1025
 
 # https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
 [DEBUG_TOOLBAR_CONFIG]
@@ -58,7 +65,7 @@ AMQP_PWD = "os2ds"
 [DATABASES]
 
     [DATABASES.default]
-    ENGINE = "django.db.backends.postgresql_psycopg2"
+    ENGINE = "django_prometheus.db.backends.postgresql"
     NAME = "os2datascanner_admin"
     USER = "os2datascanner_admin_dev"
     PASSWORD = "os2datascanner_admin_dev"
