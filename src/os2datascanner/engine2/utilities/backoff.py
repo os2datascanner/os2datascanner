@@ -122,7 +122,7 @@ class TimeoutRetrier(CountingRetrier):
 
     def _test_return_value(self, rv):
         if rv == (False, None):
-            raise TimeoutError()
+            raise TimeoutError("The operation timed out")
         else:
             return rv[1]
 
