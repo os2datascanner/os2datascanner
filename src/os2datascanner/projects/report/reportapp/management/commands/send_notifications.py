@@ -29,6 +29,8 @@ from os2datascanner.engine2.rules.rule import Sensitivity
 from ...views import views
 from ...models.documentreport_model import DocumentReport
 from ...models.roles.defaultrole_model import DefaultRole
+from ....organizations.models.account import Account
+from ....organizations.models.aliases import Alias, AliasType
 
 
 class Command(BaseCommand):
@@ -160,11 +162,14 @@ class Command(BaseCommand):
         If a image have been supplied, it will be used at the top of the mail.
         """
 
+        email = self.get_user_email(user)
+        print(f"user email detected: {email}")
+
         msg = EmailMultiAlternatives(
             "Der ligger uhåndterede matches i OS2datascanner",
             self.txt_mail_template.render(context),
             settings.DEFAULT_FROM_EMAIL,
-            [user.email])
+            [email])
         msg.attach_alternative(self.html_mail_template.render(context), "text/html")
 
         if image_name and image_content:
@@ -175,13 +180,30 @@ class Command(BaseCommand):
         return msg
 
     def send_to_user(self, user, msg, dry_run=False):
+        email = self.get_user_email(user)
         try:
             if not dry_run:
                 msg.send()
-            self.debug_message['successful_users'].append({str(user): user.email})
+            self.debug_message['successful_users'].append({str(user): email})
             self.debug_message['successful_amount_of_users'] += 1
         except Exception as ex:
             self.stdout.write(self.style.ERROR(
                 f'Exception occurred while trying to send an email: '
                 f'{ex} to user {user}'))
-            self.debug_message['unsuccessful_users'].append({str(user): user.email})
+            self.debug_message['unsuccessful_users'].append({str(user): email})
+
+    def get_user_email(self, user):
+        account = Account.objects.filter(
+            username=user.username).first()
+
+        if account is None:
+            return user.email
+
+        alias = Alias.objects.filter(
+            _alias_type=AliasType.EMAIL,
+            account=account).first()
+
+        if alias is None:
+            return user.email
+
+        return alias.value

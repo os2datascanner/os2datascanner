@@ -10,10 +10,14 @@ CPR_EXCEPTION_DATES = {
     date(1964, 1, 1),
     date(1965, 1, 1),
     date(1966, 1, 1),
+    date(1967, 1, 1),
     date(1969, 1, 1),
     date(1970, 1, 1),
     date(1974, 1, 1),
+    date(1975, 1, 1),
+    date(1978, 1, 1),
     date(1980, 1, 1),
+    date(1981, 1, 1),
     date(1982, 1, 1),
     date(1984, 1, 1),
     date(1985, 1, 1),
@@ -24,6 +28,7 @@ CPR_EXCEPTION_DATES = {
     date(1990, 1, 1),
     date(1991, 1, 1),
     date(1992, 1, 1),
+    date(1994, 1, 1),
     date(1995, 1, 1),
 }
 
