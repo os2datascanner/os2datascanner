@@ -71,6 +71,12 @@ NAME_ID_FORMAT = 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient' # Sets th
 ACCEPTED_TIME_DIFF = 0
 USE_JWT = false # Set this to True if you are running a Single Page Application (SPA) with Django Rest Framework (DRF), and are using JWT authentication to authorize client users
 FRONTEND_URL = 'http://localhost:8040/' # Redirect URL for the client if you are using JWT auth with DRF. See explanation below
+# For testing assertion signage
+# Generate a self signed certificat and mount it in the container.
+# Remember to set SAML2_ENABLED = true
+#CERT_FILE = '/etc/ssl/certs/signing.crt'
+#KEY_FILE = '/etc/ssl/certs/signing.key'
+#AUTHN_REQUESTS_SIGNED = true
 
     [SAML2_AUTH.NEW_USER_PROFILE]
     USER_GROUPS = []  # The default group name when a new user logs in
