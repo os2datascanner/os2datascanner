@@ -397,7 +397,22 @@ msgstr " objekter scannet - "
 msgid " in total - in "
 msgstr " i alt - på "
 
-#: adminapp/templates/mail/finished_scannerjob.html:50
+#: adminapp/templates/mail/finished_scannerjob.html:51
+#, python-format
+msgid ""
+"\n"
+"          <strong>%(usererrorlogs)s</strong> errors occured during the scan."
+"<br/>\n"
+"          <a href=\"%(admin_login_url)serror_log/\">Click here to inpect "
+"the error logs</a>\n"
+"      "
+msgstr ""
+"\n"
+"         <strong>%(usererrorlogs)s</strong> fejl opstod under scannet."
+"<br/>\n"
+"         <a href=\"%(admin_login_url)serror_log/\">Klik her for at inspicere fejlbeskederne.</a>"
+
+#: adminapp/templates/mail/finished_scannerjob.html:58
 #, python-format
 msgid ""
 "\n"
@@ -408,7 +423,7 @@ msgstr ""
 "    <a href=\"%(admin_login_url)s\">Log på OS2datascanner med din\n"
 "\torganisationskonto</a> for at se detajlerne.\n"
 
-#: adminapp/templates/mail/finished_scannerjob.html:56
+#: adminapp/templates/mail/finished_scannerjob.html:64
 msgid ""
 "\n"
 "\tKind regards,<br>\n"
@@ -420,7 +435,7 @@ msgstr ""
 "\tOS2datascanner-systemet\n"
 "    "
 
-#: adminapp/templates/mail/finished_scannerjob.html:61
+#: adminapp/templates/mail/finished_scannerjob.html:69
 #, python-format
 msgid ""
 "\n"
@@ -451,7 +466,16 @@ msgstr ""
 "Til orientering er dit OS2datascanner-scan @ %(scanner_name)s lige kørt "
 "færdigt.\n"
 
-#: adminapp/templates/mail/finished_scannerjob.txt:13
+#: adminapp/templates/mail/finished_scannerjob.txt:14
+#, python-format
+msgid ""
+"\n"
+"%(usererrorlogs)s errors occured during the scan.\n"
+msgstr ""
+"\n"
+"%(usererrorlogs)s fejl opstod under scannet.\n"
+
+#: adminapp/templates/mail/finished_scannerjob.txt:19
 msgid ""
 "\n"
 "Log into OS2datascanner with your organisation account for further details.\n"
@@ -459,7 +483,7 @@ msgstr ""
 "\n"
 "Log på OS2datascanner med din organisationskonto for at se detajlerne.\n"
 
-#: adminapp/templates/mail/finished_scannerjob.txt:20
+#: adminapp/templates/mail/finished_scannerjob.txt:26
 msgid ""
 "\n"
 "Kind regards,\n"
@@ -469,7 +493,7 @@ msgstr ""
 "Med venlig hilsen\n"
 "OS2datascanner-systemet\n"
 
-#: adminapp/templates/mail/finished_scannerjob.txt:25
+#: adminapp/templates/mail/finished_scannerjob.txt:31
 #, python-format
 msgid ""
 "\n"
