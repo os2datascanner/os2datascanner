@@ -97,9 +97,9 @@ class SourceManager:
                 desc.generator = source._generate_state(self)
                 try:
                     desc.cookie = next(desc.generator)
-                except Exception as e:
+                except BaseException:
                     self.close(source)
-                    raise ValueError("Source could not be opened (perhaps corrupt content)") from e
+                    raise
             return desc.cookie
         finally:
             self._opening = self._opening[:-1]
