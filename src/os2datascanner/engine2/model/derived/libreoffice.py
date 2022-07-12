@@ -112,6 +112,10 @@ def _replace_large_html(
                 break
 
 
+class UnrecognisedFormatError(LookupError):
+    pass
+
+
 @Source.mime_handler("application/CDFV2",
                      *_actually_supported_types.keys())
 class LibreOfficeSource(DerivedSource):
@@ -138,7 +142,8 @@ class LibreOfficeSource(DerivedSource):
                         mime_guess, (None, None))
 
             if filter_name is None:
-                return
+                raise UnrecognisedFormatError(
+                        str(self.handle), best_mime_guess)
 
             with TemporaryDirectory() as outputdir:
                 libreoffice(

@@ -2,6 +2,7 @@ import os.path
 import unittest
 
 from os2datascanner.engine2.model.core import Source, SourceManager
+from os2datascanner.engine2.model.derived import libreoffice
 from os2datascanner.engine2.model.file import FilesystemHandle
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.conversions import convert
@@ -119,7 +120,8 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                 os.path.join(
                         test_data_path, "msoffice/corrupted/test.trunc.doc"))
         corrupted_doc = Source.from_handle(corrupted_doc_handle)
-        with SourceManager() as sm, self.assertRaises(ValueError):
+        with SourceManager() as sm, self.assertRaises(
+                libreoffice.UnrecognisedFormatError):
             list(corrupted_doc.handles(sm))
 
     def test_libreoffice_size(self):
