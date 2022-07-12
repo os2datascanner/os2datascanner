@@ -112,6 +112,10 @@ def _replace_large_html(
                 break
 
 
+class UnrecognisedFormatError(LookupError):
+    pass
+
+
 @Source.mime_handler("application/CDFV2",
                      *_actually_supported_types.keys())
 class LibreOfficeSource(DerivedSource):
@@ -119,25 +123,27 @@ class LibreOfficeSource(DerivedSource):
 
     def _generate_state(self, sm):
         with self.handle.follow(sm).make_path() as p:
-            # To filter out application/CDFV2 files that we don't actually
-            # support, we compute the type of the whole file by calling
-            # libmagic directly on the local filesystem path...
+            # Office files are special instances of generic formats (CDFV2 for
+            # old Microsoft Office files and Zip for everything else). To make
+            # sure that we get a MIME guess we can actually use, we need to
+            # operate on the whole file...
             best_mime_guess = magic.from_file(p, mime=True)
             # ... and, just to be extra safe, we tell LibreOffice what sort of
             # file we're passing it so it can do its own sanity checks
             filter_name, backup_filter = _actually_supported_types.get(
                     best_mime_guess, (None, None))
 
-            # (... with special handling for OOXML files, since libmagic has
-            # problems detecting them)
+            # (... although, if that produced something totally generic, we
+            # should have one last shot based on the name)
             if (not filter_name and best_mime_guess in
                     ("application/octet-stream", "application/zip")):
                 mime_guess = self.handle.guess_type()
-                if mime_guess.startswith(
-                        "application/vnd.openxmlformats-officedocument."):
-                    filter_name = _actually_supported_types.get(mime_guess)
+                filter_name, backup_filter = _actually_supported_types.get(
+                        mime_guess, (None, None))
+
             if filter_name is None:
-                return
+                raise UnrecognisedFormatError(
+                        str(self.handle), best_mime_guess)
 
             with TemporaryDirectory() as outputdir:
                 libreoffice(
