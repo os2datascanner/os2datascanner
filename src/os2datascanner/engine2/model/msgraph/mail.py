@@ -214,7 +214,7 @@ class MSGraphMailMessageHandle(Handle):
 
     @property
     def sort_key(self):
-        return self.presentation_place
+        return self.source.handle.sort_key + (f"{self._folder or ''}/{self._mail_subject}")
 
     def censor(self):
         return MSGraphMailMessageHandle(
