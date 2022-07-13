@@ -175,6 +175,8 @@ class UserErrorLogView(RestrictedListView):
     """Displays list of errors encountered."""
     template_name = 'os2datascanner/error_log.html'
     model = UserErrorLog
+    paginate_by = 10
+    paginator_class = EmptyPagePaginator
 
     def get_queryset(self):
         """Order errors by most recent scan."""
