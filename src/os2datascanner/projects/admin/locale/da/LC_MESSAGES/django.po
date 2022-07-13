@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-05 11:52+0200\n"
+"POT-Creation-Date: 2022-07-13 15:02+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -43,7 +43,7 @@ msgid "Initialization Vector"
 msgstr "Initaliserings vektor"
 
 #: adminapp/models/authentication_model.py:25
-#: adminapp/views/filescanner_views.py:170
+#: adminapp/views/filescanner_views.py:173
 msgid "User domain"
 msgstr "Brugerdomæne"
 
@@ -89,56 +89,56 @@ msgstr "URL skal følge UNC-format"
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
 
-#: adminapp/models/scannerjobs/scanner_model.py:422
+#: adminapp/models/scannerjobs/scanner_model.py:428
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:427
+#: adminapp/models/scannerjobs/scanner_model.py:433
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:432
+#: adminapp/models/scannerjobs/scanner_model.py:438
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:437
+#: adminapp/models/scannerjobs/scanner_model.py:443
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:442
+#: adminapp/models/scannerjobs/scanner_model.py:448
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:504
+#: adminapp/models/scannerjobs/scanner_model.py:510
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
 
-#: adminapp/models/scannerjobs/scanner_model.py:509
+#: adminapp/models/scannerjobs/scanner_model.py:515
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:516
+#: adminapp/models/scannerjobs/scanner_model.py:522
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:545
+#: adminapp/models/scannerjobs/scanner_model.py:551
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:546
+#: adminapp/models/scannerjobs/scanner_model.py:552
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/scanner_model.py:585
+#: adminapp/models/scannerjobs/scanner_model.py:591
 msgid "timestamp"
 msgstr ""
 
-#: adminapp/models/scannerjobs/scanner_model.py:590
+#: adminapp/models/scannerjobs/scanner_model.py:596
 msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/scanner_model.py:591
+#: adminapp/models/scannerjobs/scanner_model.py:597
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
@@ -520,7 +520,7 @@ msgstr "ingen fejl fundet"
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:114
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/scan_status_table.html:78
+#: adminapp/templates/os2datascanner/scan_status_table.html:83
 #: adminapp/templates/os2datascanner/scanners.html:166
 msgid "Delete"
 msgstr "Slet"
@@ -608,7 +608,7 @@ msgid "Description of rule"
 msgstr "Beskrivelse af regel"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:270
-#: adminapp/templates/os2datascanner/scanner_form.html:816
+#: adminapp/templates/os2datascanner/scanner_form.html:821
 msgid "Save changes"
 msgstr "Gem ændringer"
 
@@ -733,41 +733,42 @@ msgstr "Fase"
 msgid "Actions"
 msgstr "Handlinger"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:45
+#: adminapp/templates/os2datascanner/scan_status_table.html:44
 msgid "Indexing data ..."
 msgstr "Indekserer data ..."
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:47
+#: adminapp/templates/os2datascanner/scan_status_table.html:46
 msgid "Scanning data (still indexing) ..."
 msgstr "Scanner data (indekserer fortsat) ..."
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:49
+#: adminapp/templates/os2datascanner/scan_status_table.html:48
 msgid "Scanning data ..."
 msgstr "Scanner data ..."
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:51
+#: adminapp/templates/os2datascanner/scan_status_table.html:50
 msgid "No objects to scan"
 msgstr "Ingen objekter at scanne"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:56
+#: adminapp/templates/os2datascanner/scan_status_table.html:55
 msgid "Building index"
 msgstr "Opbygger indeks"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:58
+#: adminapp/templates/os2datascanner/scan_status_table.html:57
 #, python-format
 msgid "%(obj)s objects scanned"
 msgstr "%(obj)s objekter scannet"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:60
-#, python-format
-msgid "%(obj)s out of %(total)s objects scanned"
+#: adminapp/templates/os2datascanner/scan_status_table.html:59
+#, fuzzy, python-format
+#| msgid "%(obj)s out of %(total)s objects scanned"
+msgid "%(obj)s out of %(total)s objects scanned "
 msgstr "%(obj)s ud af %(total)s objekter scannet"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:62
+#: adminapp/templates/os2datascanner/scan_status_table.html:67
 msgid "The sources do not contain any scannable objects"
 msgstr "Datakilden indeholder ikke nogle objekter"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:73
+#: adminapp/templates/os2datascanner/scan_status_table.html:78
 #, python-format
 msgid ""
 "Do you really want to delete the status object for scanner "
@@ -775,7 +776,7 @@ msgid ""
 msgstr ""
 "Er du sikker på, at du vil slette status for scanner »%%(scanner_name)s«?"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:99
+#: adminapp/templates/os2datascanner/scan_status_table.html:104
 msgid "no ongoing scans"
 msgstr "der er ingen igangværende scanninger"
 
@@ -953,35 +954,35 @@ msgstr "vælg brugere fra organisatoriske enheder"
 msgid "Scanner settings"
 msgstr "Scannerindstillinger"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:703
+#: adminapp/templates/os2datascanner/scanner_form.html:708
 msgid "Add rules"
 msgstr "Tilføj regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:710
+#: adminapp/templates/os2datascanner/scanner_form.html:715
 msgid "Available rules"
 msgstr "Tilgængelige regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:723
+#: adminapp/templates/os2datascanner/scanner_form.html:728
 msgid "Selected rules"
 msgstr "Valgte regler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:742
+#: adminapp/templates/os2datascanner/scanner_form.html:747
 msgid "Add exclusion rules"
 msgstr "Tilføj udelukkelsesregler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:749
+#: adminapp/templates/os2datascanner/scanner_form.html:754
 msgid "Available exclusion rules"
 msgstr "Tilgængelige udelukkelsesregler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:762
+#: adminapp/templates/os2datascanner/scanner_form.html:767
 msgid "Selected exclusion rules"
 msgstr "Valgte udelukkelsesregler"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:781
+#: adminapp/templates/os2datascanner/scanner_form.html:786
 msgid "Schedule scan"
 msgstr "Planlæg scan"
 
-#: adminapp/templates/os2datascanner/scanner_form.html:792
+#: adminapp/templates/os2datascanner/scanner_form.html:797
 msgid ""
 "Schedule your scan by creating a fixed interval or adding a date to complete "
 "the scannerjob."
@@ -989,7 +990,7 @@ msgstr ""
 "Planlæg dit scan ved at oprette et fast interval eller tilføj en dato for "
 "afvikling af scannerjobbet."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:808
+#: adminapp/templates/os2datascanner/scanner_form.html:813
 msgid "The scanner will start at the following time for the selected days:"
 msgstr "Scanneren vil starte på følgende tidspunkt på de valgte dage:"
 
@@ -1309,20 +1310,20 @@ msgid "e.g. @example.com"
 msgstr "f.eks. @example.com"
 
 #: adminapp/views/exchangescanner_views.py:228
-#: adminapp/views/filescanner_views.py:168
+#: adminapp/views/filescanner_views.py:171
 msgid "Username"
 msgstr "Brugernavn"
 
 #: adminapp/views/exchangescanner_views.py:233
-#: adminapp/views/filescanner_views.py:169
+#: adminapp/views/filescanner_views.py:172
 msgid "Password"
 msgstr "Adgangskode"
 
-#: adminapp/views/filescanner_views.py:167
+#: adminapp/views/filescanner_views.py:170
 msgid "e.g. //network-domain/top-folder"
 msgstr "f.eks. //network-domain/top-folder"
 
-#: adminapp/views/filescanner_views.py:171
+#: adminapp/views/filescanner_views.py:174
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
@@ -1330,7 +1331,7 @@ msgstr "Drevbogstav"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:321
+#: adminapp/views/scanner_views.py:323
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
@@ -1342,15 +1343,15 @@ msgstr "oprettet"
 msgid "saved"
 msgstr "gemt"
 
-#: adminapp/views/webscanner_views.py:55
+#: adminapp/views/webscanner_views.py:56
 msgid "e.g. https://example.com"
 msgstr "f.eks. https://example.com"
 
-#: adminapp/views/webscanner_views.py:57
+#: adminapp/views/webscanner_views.py:58
 msgid "e.g. https://example.com/exclude1, https://example.com/exclude2"
 msgstr "f.eks. https://example.com/exclude1, https://example.com/exclude2"
 
-#: adminapp/views/webscanner_views.py:63 adminapp/views/webscanner_views.py:93
+#: adminapp/views/webscanner_views.py:64 adminapp/views/webscanner_views.py:96
 msgid "Space is not allowed in the web-domain name."
 msgstr "Mellemrum er ikke tilladt i web-domænenavnet."
 
