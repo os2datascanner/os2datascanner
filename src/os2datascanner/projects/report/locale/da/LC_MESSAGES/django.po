@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-06 14:13+0200\n"
+"POT-Creation-Date: 2022-07-13 15:02+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -459,7 +459,8 @@ msgid ""
 "Are you sure you want to distribute matches to the users? This action cannot "
 "be reverted."
 msgstr ""
-"Er du sikker på, at du vil dele matches ud til brugerne? Denne handling kan ikke fortrydes."
+"Er du sikker på, at du vil dele matches ud til brugerne? Denne handling kan "
+"ikke fortrydes."
 
 #: reportapp/templates/content.html:10
 msgid "Distribute"

@@ -1,6 +1,67 @@
 # Changelog
 
+## Version 3.15.3, 13th July 2022
+
+"Can't Reach It, Don't Need It"
+
+### New in this version
+
+- More reactive features in the user interface:
+
+  - The report module no longer needs to refresh when a match is handled --
+    matches are removed and updated dynamically.
+
+  - The state of an organisational import task is now updated dynamically.
+
+  - The scanner status page now has dynamic progress bars.
+
+- Initial support for skipping objects:
+
+  - Rules can be specified for dropping objects from the scan based on their
+    path. (This functionality is off by default.)
+
+- Support for running test scans:
+
+  - Superusers can now specify that the matches produced by a scan should not
+    be sent directly out to users.
+
+  - These matches can either be handled by the superuser or be distributed to
+    the recipients without scanning again.
+
+- Matches in Microsoft Graph mail messages now include the name of the folder
+  containing the mail.
+
+### General Improvements
+
+- HTTP throttling and backoff requests are now treated consistently across all
+  data sources.
+
+- The bottom of the report module's match view now shows the range of matches
+  shown instead of a contextless page number.
+
+- The side menus of both the admin and report modules are now fixed to the side
+  of the screen.
+
+- The "copy" button has been removed from matches from Microsoft Graph-based
+  scans.
+
+- A benchmarking framework has been implemented for future performance tests.
+
+- The administration system's log viewer now supports paginated display.
+
+### Bugfixes
+
+- HTTP 503 Service Unavailable responses are now treated as backoff requests.
+
+- The scanner engine's internal operations are now also constrained by a
+  timeout, making the system much more able to continue after an unexpected
+  failure.
+
+- Nonconformant OpenDocument office files can now be detected and scanned
+  correctly.
+
 ## Version 3.15.2, 23rd June 2022
+
 "Natural Reactor"
 
 ### New in this version
