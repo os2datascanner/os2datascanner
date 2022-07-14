@@ -251,6 +251,8 @@ Integration Test Admin Application:
     - export OS2DS_ADMIN_USER_CONFIG_PATH=${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
     - cd src/os2datascanner/projects/admin
     - bash /code/docker/docker-entrypoint.sh
+    # check migrations
+    - python manage.py makemigrations --check --dry-run
     # The pipeline collector cannot be created as a service, as the ADMIN_USER_PATH
     # overwrites the ENGINE_USER_PATH and individual services cannot have variables set.
     - python manage.py pipeline_collector &
@@ -469,17 +471,6 @@ Run Engine notice scripts:
     - python -m unittest discover -s src/os2datascanner/engine2/tests/ --pattern "notice*.py"
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
-
-Migration Status Admin:
-  extends: .test-default
-  image: ${ADMIN_IMAGE}
-  variables:
-    OS2DS_ADMIN_USER_CONFIG_PATH: ${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
-  needs:
-    - Build Admin Application
-  script:
-    - cd src/os2datascanner/projects/admin
-    - python manage.py makemigrations --check --dry-run
 
 Migration Status Report:
   extends: .test-default
