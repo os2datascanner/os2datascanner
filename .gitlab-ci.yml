@@ -185,6 +185,8 @@ Unit Test Admin Application:
     - Build Admin Application
   script:
     - cd /code/src/os2datascanner/projects/admin
+    # check migrations
+    - python manage.py makemigrations --check --dry-run
     - coverage run -m pytest tests
       --ignore=/code/src/os2datascanner/projects/admin/tests/integration
       --junitxml $CI_PROJECT_DIR/admin_unit_tests-junit.xml
@@ -251,8 +253,6 @@ Integration Test Admin Application:
     - export OS2DS_ADMIN_USER_CONFIG_PATH=${CI_PROJECT_DIR}/dev-environment/admin/test-settings.toml
     - cd src/os2datascanner/projects/admin
     - bash /code/docker/docker-entrypoint.sh
-    # check migrations
-    - python manage.py makemigrations --check --dry-run
     # The pipeline collector cannot be created as a service, as the ADMIN_USER_PATH
     # overwrites the ENGINE_USER_PATH and individual services cannot have variables set.
     - python manage.py pipeline_collector &
