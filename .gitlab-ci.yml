@@ -500,7 +500,6 @@ Migration Status Report:
     - Unit Test Engine
     - Unit Test Report Application
     - Integration Test Report Application
-    - Migration Status Admin
     - Migration Status Report
   image: alpine
   variables:
