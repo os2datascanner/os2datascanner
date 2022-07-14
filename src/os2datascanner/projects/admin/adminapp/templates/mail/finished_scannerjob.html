@@ -47,6 +47,14 @@
     {% trans " in total - in " %} <strong>{{ completion_time }}</strong>.
 </p>
 <p>
+  {% if usererrorlogs > 0 %}
+      {% blocktrans %}
+          <strong>{{ usererrorlogs }}</strong> errors occured during the scan.<br/>
+          <a href="{{ admin_login_url }}error_log/">Click here to inpect the error logs</a>
+      {% endblocktrans %}
+  {% endif %}
+</p>
+<p>
 {% blocktrans %}
     <a href="{{ admin_login_url }}">Log into OS2datascanner with your
 	organisation account</a> for further details.

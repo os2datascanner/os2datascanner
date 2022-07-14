@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.template import loader
 
 from .models.scannerjobs.scanner_model import Scanner, ScanStatus
+from .models.usererrorlog_model import UserErrorLog
 
 logger = structlog.get_logger(__name__)
 
@@ -38,6 +39,8 @@ def create_context(scanner: Scanner, scan_status: ScanStatus, user: User):
     """
     Creates a context dict for the finished scannerjob ready for rendering.
     """
+    user_logs = UserErrorLog.objects.filter(
+        scan_status=scan_status).count()
     context = {
         "admin_login_url": settings.SITE_URL,
         "institution": settings.NOTIFICATION_INSTITUTION,
@@ -45,7 +48,8 @@ def create_context(scanner: Scanner, scan_status: ScanStatus, user: User):
         "total_objects": scan_status.total_objects,
         "scanner_name": scanner.name,
         "object_size": scan_status.scanned_size,
-        "completion_time": get_scanner_time(scan_status)
+        "completion_time": get_scanner_time(scan_status),
+        "usererrorlogs": user_logs,
     }
 
     return context
