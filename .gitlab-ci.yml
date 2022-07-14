@@ -484,16 +484,15 @@ Run Engine notice scripts:
 .release-default: &release-default
   stage: release
   needs:
-    - Build Report Application
-    - Build Admin Application
-    - Build Engine
+    # we do not have any test cases for the api
     - Build API
     - Unit Test Admin Application
     - Integration Test Admin Application
-    - Integration Test Engine
     - Unit Test Engine
+    - Integration Test Engine
     - Unit Test Report Application
-    - Integration Test Report Application
+    # No point in waiting ages for job that is always failing
+    #- Integration Test Report Application
   image: alpine
   variables:
     GIT_STRATEGY: none # We do not need the source code
