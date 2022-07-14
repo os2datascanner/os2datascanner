@@ -95,7 +95,11 @@ Lint js scripts:
 
 .build-default: &build-default
   stage: build
-  needs: []
+  needs:
+    - Lint Dockerfiles
+    - Lint shell scripts
+    - Lint Python
+    - Lint js scripts
   services: []
   image:
     name: gcr.io/kaniko-project/executor:v1.6.0-debug
