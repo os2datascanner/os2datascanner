@@ -19,7 +19,7 @@ class TestEngine2Images(unittest.TestCase):
             for h in fs.handles(sm):
                 resource = h.follow(sm)
                 self.assertEqual(
-                        convert(resource, OutputType.Text).value,
+                        convert(resource, OutputType.Text),
                         expected_result,
                         "{0}: content failed".format(h))
 
@@ -39,11 +39,9 @@ class TestEngine2Images(unittest.TestCase):
             for h in fs.handles(sm):
                 resource = h.follow(sm)
                 size = convert(resource, OutputType.ImageDimensions)
-                if not size:
+                if size is None:
                     if "rgba32" in h.relative_path:
                         self.skipTest("Pillow RGBA bug detected -- skipping")
-                else:
-                    size = size.value
                 self.assertEqual(
                         size,
                         expected_size,

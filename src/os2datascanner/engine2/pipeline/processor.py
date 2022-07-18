@@ -82,15 +82,14 @@ def message_received_raw(body, channel, source_manager, *, _check=True):  # noqa
         else:
             representation = tr.run(convert, resource, required)
 
-        if representation and representation.parent:
+        if representation and getattr(representation, "parent", None):
             # If the conversion also produced other values at the same
             # time, then include all of those as well; they might also be
             # useful for the rule engine
-            dv = {k.value: v.value for k, v in representation.parent.items()
+            dv = {k.value: v for k, v in representation.parent.items()
                   if isinstance(k, OutputType)}
         else:
-            dv = {required.value: representation.value
-                  if representation else None}
+            dv = {required.value: representation}
 
         logger.info(f"Required representation for {conversion.handle} is {required}")
         yield ("os2ds_representations",

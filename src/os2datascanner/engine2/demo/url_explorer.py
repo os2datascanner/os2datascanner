@@ -46,10 +46,10 @@ def print_source(  # noqa
                 resource = handle.follow(manager)
                 try:
                     if isinstance(resource, FileResource):
-                        size = resource.get_size().value
+                        size = resource.get_size()
                         mime = (resource.compute_type()
                                 if not guess else handle.guess_type())
-                        lm = resource.get_last_modified().value
+                        lm = resource.get_last_modified()
                         printfunc(format_d(depth + 1, "size {0} bytes", size))
                         printfunc(format_d(depth + 1, "type {0}", mime))
                         printfunc(format_d(depth + 1, "lmod {0}", lm))

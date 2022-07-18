@@ -6,7 +6,7 @@ from datetime import datetime
 from dateutil import tz
 import warnings
 
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
+from ..utilities.datetime import parse_datetime
 from ..model.core import Handle, Source
 from ..rules.rule import Rule, SimpleRule, Sensitivity
 
@@ -151,7 +151,7 @@ class ScanTagFragment(NamedTuple):
     def from_json_object(cls, obj):
         try:
             return ScanTagFragment(
-                    time=parse_isoformat_timestamp(obj["time"]),
+                    time=parse_datetime(obj["time"]),
                     user=obj["user"],  # can be None, must be present
                     scanner=ScannerFragment.from_json_object(obj["scanner"]),
                     organisation=OrganisationFragment.from_json_object(
@@ -163,7 +163,7 @@ class ScanTagFragment(NamedTuple):
             scanner = obj.get("scanner")
             organisation = obj.get("organisation")
             return ScanTagFragment(
-                    time=parse_isoformat_timestamp(time) if time else None,
+                    time=parse_datetime(time) if time else None,
                     user=user or None,
                     scanner=ScannerFragment.from_json_object(
                             scanner) if scanner else None,
@@ -173,7 +173,7 @@ class ScanTagFragment(NamedTuple):
             # Scan tags created between versions 3.0.0 and 3.3.2 inclusive were
             # just simple timestamps
             return ScanTagFragment(
-                    time=parse_isoformat_timestamp(obj),
+                    time=parse_datetime(obj),
                     user=None, scanner=None, organisation=None)
 
     _deep_replace = _deep_replace

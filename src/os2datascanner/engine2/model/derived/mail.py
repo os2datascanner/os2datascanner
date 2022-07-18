@@ -3,7 +3,6 @@ import os.path
 import email
 from contextlib import contextmanager
 
-from ...conversions.utilities.results import SingleResult
 from ..core import Source, Handle, FileResource
 from ..utilities.mail import decode_encoded_words
 from .derived import DerivedSource
@@ -71,7 +70,7 @@ class MailPartResource(FileResource):
             initial = s.seek(0, 1)
             try:
                 s.seek(0, 2)
-                return SingleResult(None, "size", s.tell())
+                return s.tell()
             finally:
                 s.seek(initial, 0)
 

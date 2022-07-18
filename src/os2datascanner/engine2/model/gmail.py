@@ -6,8 +6,6 @@ from google.oauth2 import service_account
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 
-from ..conversions.utilities.results import SingleResult
-
 import json
 import base64
 
@@ -125,7 +123,7 @@ class GmailResource(FileResource):
     # Estimated size in bytes of the message.
     # Is this used anywhere?
     def get_size(self):
-        return SingleResult(None, 'size', self.metadata.get('sizeEstimate'))
+        return self.metadata.get('sizeEstimate')
 
     def get_last_modified(self):
         return super().get_last_modified()

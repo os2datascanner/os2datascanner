@@ -3,7 +3,7 @@ from datetime import datetime
 from contextlib import contextmanager
 
 from ...conversions.types import OutputType
-from ...conversions.utilities.results import MultipleResults
+from ...conversions.utilities.navigable import make_values_navigable
 from ..core import Source, Handle, FileResource
 from .derived import DerivedSource
 
@@ -23,6 +23,12 @@ class TarSource(DerivedSource):
             yield tp
 
 
+tarinfo_attributes = (
+        "chksum", "devmajor", "devminor", "gid", "gname", "linkname",
+        "linkpath", "mode", "mtime", "name", "offset", "offset_data", "path",
+        "pax_headers", "size", "sparse", "type", "uid", "uname",)
+
+
 class TarResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
@@ -40,14 +46,11 @@ class TarResource(FileResource):
 
     def unpack_info(self):
         if not self._mr:
-            self._mr = MultipleResults.make_from_attrs(
-                    self._get_raw_info(),
-                    "chksum", "devmajor", "devminor", "gid", "gname",
-                    "linkname", "linkpath", "mode", "mtime", "name", "offset",
-                    "offset_data", "path", "pax_headers", "size", "sparse",
-                    "tarfile", "type", "uid", "uname")
-            self._mr[OutputType.LastModified] = datetime.fromtimestamp(
-                    self._mr["mtime"].value)
+            raw_info = self._get_raw_info()
+            ts = datetime.fromtimestamp(raw_info.mtime)
+            self._mr = make_values_navigable(
+                    {k: getattr(raw_info, k) for k in tarinfo_attributes} |
+                    {OutputType.LastModified: ts})
         return self._mr
 
     def get_size(self):

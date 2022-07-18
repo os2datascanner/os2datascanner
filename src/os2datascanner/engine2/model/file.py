@@ -7,7 +7,7 @@ from dateutil.tz import gettz
 from contextlib import contextmanager
 
 from ..conversions.types import OutputType
-from ..conversions.utilities.results import MultipleResults
+from ..conversions.utilities.navigable import make_values_navigable
 
 
 class FilesystemSource(Source):
@@ -65,8 +65,8 @@ class FilesystemSource(Source):
 
 stat_attributes = (
     "st_mode", "st_ino", "st_dev", "st_nlink", "st_uid",
-    "st_gid", "st_size", "st_atime", "st_mtime", "st_ctime",
-    "st_blksize", "st_blocks", "st_rdev", "st_flags",)
+    "st_gid", "st_size", "st_atime", "st_mtime", "st_ctime",)
+#    "st_blksize", "st_blocks", "st_rdev", "st_flags",)
 
 
 class FilesystemResource(FileResource):
@@ -78,17 +78,18 @@ class FilesystemResource(FileResource):
 
     def _generate_metadata(self):
         yield from super()._generate_metadata()
-        yield "filesystem-owner-uid", self.unpack_stat()["st_uid"].value
+        yield "filesystem-owner-uid", self.unpack_stat()["st_uid"]
 
     def check(self) -> bool:
         return os.path.exists(self._full_path)
 
     def unpack_stat(self):
         if not self._mr:
-            self._mr = MultipleResults.make_from_attrs(
-                    os.stat(self._full_path), *stat_attributes)
-            self._mr[OutputType.LastModified] = datetime.fromtimestamp(
-                    self._mr["st_mtime"].value, gettz())
+            stat = os.stat(self._full_path)
+            ts = datetime.fromtimestamp(stat.st_mtime, gettz())
+            self._mr = make_values_navigable(
+                    {attr: getattr(stat, attr) for attr in stat_attributes} |
+                    {OutputType.LastModified: ts})
         return self._mr
 
     def get_size(self):

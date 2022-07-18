@@ -8,8 +8,6 @@ from exchangelib.errors import (ErrorServerBusy, ErrorItemNotFound)
 from exchangelib.protocol import BaseProtocol
 
 from ..utilities.backoff import DefaultRetrier
-from ..conversions.types import OutputType
-from ..conversions.utilities.results import SingleResult
 from .core import Source, Handle, FileResource
 
 
@@ -209,17 +207,17 @@ class EWSMailResource(FileResource):
         with BytesIO(self.get_message_object().mime_content) as fp:
             yield fp
 
-    # XXX: actually pack these SingleResult objects into a MultipleResults
+    # XXX: actually make these values navigable
 
     def get_size(self):
-        return SingleResult(None, "size", self.get_message_object().size)
+        return self.get_message_object().size
 
     def get_last_modified(self):
         o = self.get_message_object()
         oldest_stamp = max(filter(
                 lambda ts: ts is not None,
                 [o.datetime_created, o.datetime_received, o.datetime_sent]))
-        return SingleResult(None, OutputType.LastModified, oldest_stamp)
+        return oldest_stamp
 
     def compute_type(self):
         return "message/rfc822"

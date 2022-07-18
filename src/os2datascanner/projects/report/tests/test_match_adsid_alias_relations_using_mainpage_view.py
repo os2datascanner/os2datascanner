@@ -8,10 +8,10 @@ from datetime import timedelta
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
 
-from os2datascanner.utils.system_utilities import (
-    time_now, parse_isoformat_timestamp)
+from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
+from os2datascanner.engine2.utilities.datetime import parse_datetime
 
 from ..reportapp.management.commands.update_match_alias_relation_table import \
     update_match_alias_relations
@@ -24,8 +24,8 @@ from .generate_test_data import record_match, record_metadata
 
 
 """Shared data"""
-time0 = parse_isoformat_timestamp("2020-11-11T11:11:59+02:00")  # noqa
-time1 = parse_isoformat_timestamp("2020-10-28T14:21:27+01:00")
+time0 = parse_datetime("2020-11-11T11:11:59+02:00")  # noqa
+time1 = parse_datetime("2020-10-28T14:21:27+01:00")
 
 # Used to always have a recent date in test.
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"

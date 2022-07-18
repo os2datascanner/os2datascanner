@@ -4,8 +4,6 @@ import string
 import datetime
 from tempfile import TemporaryDirectory
 
-from ...conversions.types import OutputType
-from ...conversions.utilities.results import SingleResult
 from ....utils.system_utilities import run_custom
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource
@@ -159,7 +157,7 @@ class PDFObjectResource(FilesystemResource):
             if isinstance(mod_date, PyPDF2.generic.TextStringObject):
                 mod_date = mod_date.strip(WHITESPACE_PLUS).replace("'", "")[2:]
                 last_modified = datetime.datetime.strptime(mod_date, "%Y%m%d%H%M%S%z")
-        return SingleResult(None, OutputType.LastModified, last_modified)
+        return last_modified
 
 
 @Handle.stock_json_handler("pdf-object")

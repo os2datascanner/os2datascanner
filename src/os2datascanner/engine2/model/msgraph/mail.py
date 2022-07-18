@@ -3,8 +3,6 @@ from urllib.parse import urlsplit
 from contextlib import contextmanager
 from dateutil.parser import isoparse
 
-from ...conversions.types import OutputType
-from ...conversions.utilities.results import SingleResult
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
@@ -166,7 +164,7 @@ class MSGraphMailMessageResource(FileResource):
     def get_message_metadata(self):
         if not self._message:
             self._message = self._get_cookie().get(
-                self.make_object_path() + "?$select=lastModifiedDateTime")
+                    self.make_object_path() + "?$select=lastModifiedDateTime")
         return self._message
 
     @contextmanager
@@ -176,17 +174,14 @@ class MSGraphMailMessageResource(FileResource):
         with BytesIO(response) as fp:
             yield fp
 
-    # XXX: actually pack these SingleResult objects into a MultipleResults
-
     def get_size(self):
         # XXX: there's no obvious way to implement this, but is this a problem?
         # Do we really need it for anything?
-        return SingleResult(None, 'size', 1024)
+        return 1024
 
     def get_last_modified(self):
         timestamp = self.get_message_metadata().get("lastModifiedDateTime")
-        timestamp = isoparse(timestamp) if timestamp else None
-        return SingleResult(None, OutputType.LastModified, timestamp)
+        return isoparse(timestamp) if timestamp else None
 
     def compute_type(self):
         return "message/rfc822"

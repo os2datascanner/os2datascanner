@@ -3,7 +3,7 @@ from datetime import datetime
 from contextlib import contextmanager
 
 from ...conversions.types import OutputType
-from ...conversions.utilities.results import MultipleResults
+from ...conversions.utilities.navigable import make_values_navigable
 from ..core import Source, Handle, FileResource
 from .derived import DerivedSource
 
@@ -31,6 +31,14 @@ class ZipSource(DerivedSource):
             yield zp
 
 
+zipinfo_attributes = (
+        "CRC", "comment", "compress_size", "compress_type", "create_system",
+        "create_version", "date_time", "external_attr", "extra",
+        "extract_version", "file_size", "filename", "flag_bits",
+        "header_offset", "internal_attr", "orig_filename", "reserved",
+        "volume")
+
+
 class ZipResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
@@ -48,15 +56,10 @@ class ZipResource(FileResource):
 
     def unpack_info(self):
         if not self._mr:
-            self._mr = MultipleResults.make_from_attrs(
-                    self._get_raw_info(),
-                    "CRC", "comment", "compress_size", "compress_type",
-                    "create_system", "create_version", "date_time",
-                    "external_attr", "extra", "extract_version", "file_size",
-                    "filename", "flag_bits", "header_offset", "internal_attr",
-                    "orig_filename", "reserved", "volume")
-            self._mr[OutputType.LastModified] = datetime(
-                    *self._mr["date_time"].value)
+            raw_info = self._get_raw_info()
+            self._mr = make_values_navigable(
+                    {k: getattr(raw_info, k) for k in zipinfo_attributes} |
+                    {OutputType.LastModified: datetime(*raw_info.date_time)})
         return self._mr
 
     def get_size(self):

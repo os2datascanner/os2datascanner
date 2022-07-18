@@ -9,6 +9,7 @@ from os2datascanner.engine2.model.ews import EWSAccountSource, EWSMailHandle
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.utilities.datetime import parse_datetime
 from os2datascanner.projects.report.reportapp.management.commands.send_notifications import \
     Command
 from os2datascanner.projects.report.organizations.models.aliases import Alias, AliasType
@@ -17,13 +18,13 @@ from os2datascanner.projects.report.reportapp.models.roles.remediator_model impo
 from os2datascanner.projects.report.reportapp.utils import create_alias_and_match_relations
 from os2datascanner.projects.report.tests.generate_test_data import \
     record_match
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp, time_now
+from os2datascanner.utils.system_utilities import time_now
 from ..reportapp.utils import hash_handle
 from ..reportapp.management.commands import pipeline_collector
 
 time = "2020-11-11T11:11:59+02:00"
 scan_tag = messages.ScanTagFragment(
-        time=parse_isoformat_timestamp(time),
+        time=parse_datetime(time),
         scanner=messages.ScannerFragment(pk=14, name="Dummy test scanner"),
         user=None, organisation=None)
 

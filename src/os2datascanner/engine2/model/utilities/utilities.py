@@ -52,8 +52,7 @@ def convert_data_to_text(
             # The conversion will succeed for registrered converters
             # from os2datascanner.engine2.conversions import registry
             # registry.__converters
-            representation = convert(r, OutputType.Text)
-            return representation.value
+            return convert(r, OutputType.Text)
         except KeyError:
             # Try to reinterpret the Handle as a new Source
             source = Source.from_handle(h)

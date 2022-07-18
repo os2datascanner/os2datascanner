@@ -2,8 +2,6 @@ from io import BytesIO
 from contextlib import contextmanager
 from dateutil.parser import isoparse
 
-from ...conversions.types import OutputType
-from ...conversions.utilities.results import SingleResult
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
 from .utilities import MSGraphSource, ignore_responses
@@ -184,12 +182,10 @@ class MSGraphFileResource(FileResource):
 
     def get_last_modified(self):
         timestamp = self.get_file_metadata().get("lastModifiedDateTime")
-        timestamp = isoparse(timestamp) if timestamp else None
-        return SingleResult(None, OutputType.LastModified, timestamp)
+        return isoparse(timestamp) if timestamp else None
 
     def get_size(self):
-        size = self.get_file_metadata()["size"]
-        return SingleResult(size, 'size', 1024)
+        return self.get_file_metadata()["size"]
 
     @contextmanager
     def make_stream(self):

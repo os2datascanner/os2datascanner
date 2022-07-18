@@ -3,12 +3,12 @@ from django.db import transaction
 from django.db.utils import DataError
 from django.test import TestCase
 
-from os2datascanner.utils.system_utilities import parse_isoformat_timestamp
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.utilities.datetime import parse_datetime
 
 from ..adminapp.management.commands import pipeline_collector
 from ..adminapp.management.commands.pipeline_collector import \
@@ -23,12 +23,12 @@ time2 = "2020-10-28T14:36:20+01:00"
 scan_tag0 = messages.ScanTagFragment(
     scanner=messages.ScannerFragment(
             pk=22, name="Dummy test scanner"),
-    time=parse_isoformat_timestamp(time0),
+    time=parse_datetime(time0),
     user=None, organisation=None)
 scan_tag1 = messages.ScanTagFragment(
     scanner=messages.ScannerFragment(
             pk=22, name="Dummy test scanner"),
-    time=parse_isoformat_timestamp(time1),
+    time=parse_datetime(time1),
     user=None, organisation=None)
 
 common_rule = RegexRule("Vores hemmelige adgangskode er",
