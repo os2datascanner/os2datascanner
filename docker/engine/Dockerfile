@@ -85,4 +85,4 @@ USER os2ds_engine:os2ds_engine
 
 EXPOSE 9091
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
-CMD ["explorer", "-h"]
+CMD ["explorer", "--help"]

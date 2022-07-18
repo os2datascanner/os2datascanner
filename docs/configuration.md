@@ -76,6 +76,18 @@ AMQP_USER = "<amqp user name>"
 AMQP_PWD = "<amqp user password>"
 ```
 
+Each container also accepts the following environment variables:
+
+|Variable|                   Values                    |Default|
+|:------:|:-------------------------------------------:|:-----:|
+|LOG_LEVEL| critical, error, warn, warning, info, debug |info|
+|ENABLE_PROFILING|                 true, false                 |false|
+|EXPORT_METRICS|                 true, false                 |false|
+|PROMETHEUS_PORT|                 port number                 |9091|
+|WIDTH|                 size (int)                  |3|
+|SCHEDULE_ON_CPU|                  cpu (int)                  |None|
+|RESTART_AFTER|             Message count (int)             |None|
+
 
 ## Configuration for the Report-module
 

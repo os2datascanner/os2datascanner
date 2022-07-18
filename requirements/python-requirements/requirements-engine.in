@@ -18,3 +18,4 @@ python-magic
 regex
 requests
 xattr
+click
