@@ -6,7 +6,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from ...core.models.background_job import BackgroundJob
 from os2datascanner.engine2.utilities.backoff import WebRetrier
-from os2datascanner.engine2.model.msgraph.utilities import MSGraphSource
+from os2datascanner.engine2.model.msgraph.utilities import (
+        make_token, MSGraphSource)
 
 logger = logging.getLogger(__name__)
 
@@ -15,11 +16,6 @@ GraphCaller = MSGraphSource.GraphCaller
 # We don't need the MSGraphSource itself here, but GraphCaller is useful
 # Deleting MSGraphSource from this module's globals.
 del MSGraphSource
-
-
-def _make_token_endpoint(tenant_id):
-    return "https://login.microsoftonline.com/{0}/oauth2/v2.0/token".format(
-        tenant_id)
 
 
 class MSGraphImportJob(BackgroundJob):
@@ -36,19 +32,11 @@ class MSGraphImportJob(BackgroundJob):
     handled = models.IntegerField(null=True, blank=True)
     to_handle = models.IntegerField(null=True, blank=True)
 
-    def make_token(self):
-        response = WebRetrier().run(
-            requests.post,
-            _make_token_endpoint(self.tenant_id),
-            {
-                "client_id": settings.MSGRAPH_APP_ID,
-                "scope": "https://graph.microsoft.com/.default",
-                "client_secret": settings.MSGRAPH_CLIENT_SECRET,
-                "grant_type": "client_credentials"
-            })
-        response.raise_for_status()
-        logger.info("Collected new token")
-        return response.json()["access_token"]
+    def _make_token(self):
+        return make_token(
+                settings.MSGRAPH_APP_ID,
+                self.tenant_id,
+                settings.MSGRAPH_CLIENT_SECRET)
 
     @property
     def progress(self):
@@ -78,7 +66,7 @@ class MSGraphImportJob(BackgroundJob):
         self.save()
 
         with requests.Session() as session:
-            gc = GraphCaller(self.make_token, session)
+            gc = GraphCaller(self._make_token, session)
             groups = gc.paginated_get("groups")
 
             for group in groups:

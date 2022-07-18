@@ -12,9 +12,19 @@ from ..core import Source
 logger = logging.getLogger(__name__)
 
 
-def _make_token_endpoint(tenant_id):
-    return "https://login.microsoftonline.com/{0}/oauth2/v2.0/token".format(
-            tenant_id)
+def make_token(client_id, tenant_id, client_secret):
+    response = WebRetrier().run(
+            requests.post,
+            f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
+            {
+                "client_id": client_id,
+                "scope": "https://graph.microsoft.com/.default",
+                "client_secret": client_secret,
+                "grant_type": "client_credentials"
+            })
+    response.raise_for_status()
+    logger.info("Collected new token")
+    return response.json()["access_token"]
 
 
 class MSGraphSource(Source):
@@ -30,18 +40,8 @@ class MSGraphSource(Source):
         return type(self)(self._client_id, self._tenant_id, None)
 
     def make_token(self):
-        response = WebRetrier().run(
-                requests.post,
-                _make_token_endpoint(self._tenant_id),
-                {
-                    "client_id": self._client_id,
-                    "scope": "https://graph.microsoft.com/.default",
-                    "client_secret": self._client_secret,
-                    "grant_type": "client_credentials"
-                })
-        response.raise_for_status()
-        logger.info("Collected new token")
-        return response.json()["access_token"]
+        return make_token(
+                self._client_id, self._tenant_id, self._client_secret)
 
     def _generate_state(self, sm):
         with requests.Session() as session:
