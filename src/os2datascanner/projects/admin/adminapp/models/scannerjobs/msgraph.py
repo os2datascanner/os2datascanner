@@ -18,11 +18,12 @@ import logging
 from django.db import models
 from django.conf import settings
 
-from ....organizations.models.aliases import AliasType
-
 from os2datascanner.engine2.model.msgraph.mail import MSGraphMailSource
 from os2datascanner.engine2.model.msgraph.files import MSGraphFilesSource
 from os2datascanner.engine2.model.msgraph.calendar import MSGraphCalendarSource
+
+from ....organizations.models.aliases import AliasType
+from ....grants.models import GraphGrant
 from .scanner import Scanner
 
 logger = logging.getLogger(__name__)
@@ -56,8 +57,10 @@ def _create_user_list(org_unit, url):  # noqa
 
 
 class MSGraphScanner(Scanner):
-    tenant_id = models.CharField(max_length=256, verbose_name="Tenant ID",
-                                 null=False)
+    tenant_id = models.CharField(
+            max_length=256, verbose_name="Tenant ID", null=False)
+
+    grant = models.ForeignKey(GraphGrant, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         abstract = True
