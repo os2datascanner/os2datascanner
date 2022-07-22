@@ -32,9 +32,9 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 
 from prometheus_client import Summary, start_http_server
 
-from ...models.scannerjobs.scanner_model import (
+from ...models.scannerjobs.scanner import (
     Scanner, ScanStatus, ScheduledCheckup, ScanStatusSnapshot)
-from ...models.usererrorlog_model import UserErrorLog
+from ...models.usererrorlog import UserErrorLog
 from ...notification import send_mail_upon_completion
 
 logger = structlog.get_logger(__name__)

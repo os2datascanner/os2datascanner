@@ -3,9 +3,9 @@ from django.core.management.base import BaseCommand
 import requests
 import urllib.parse
 import structlog
-from os2datascanner.projects.admin.adminapp.models.rules.cprrule_model import CPRRule
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import ScanStatus
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import WebScanner
+from os2datascanner.projects.admin.adminapp.models.rules.cprrule import CPRRule
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import ScanStatus
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner import WebScanner
 from os2datascanner.projects.admin.organizations.models.organization import Organization
 import cProfile
 import pstats

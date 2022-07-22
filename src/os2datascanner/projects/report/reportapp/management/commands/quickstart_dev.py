@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from os2datascanner.projects.report.reportapp.models.roles.remediator_model import (
+from os2datascanner.projects.report.reportapp.models.roles.remediator import (
     Remediator,
 )
 

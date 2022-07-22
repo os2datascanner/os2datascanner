@@ -2,8 +2,8 @@ import sys
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.\
-    scanner_model import Scanner
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import (
+        Scanner)
 
 
 class Command(BaseCommand):

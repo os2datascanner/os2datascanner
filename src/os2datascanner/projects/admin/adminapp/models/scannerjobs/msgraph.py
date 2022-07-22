@@ -23,7 +23,7 @@ from ....organizations.models.aliases import AliasType
 from os2datascanner.engine2.model.msgraph.mail import MSGraphMailSource
 from os2datascanner.engine2.model.msgraph.files import MSGraphFilesSource
 from os2datascanner.engine2.model.msgraph.calendar import MSGraphCalendarSource
-from .scanner_model import Scanner
+from .scanner import Scanner
 
 logger = logging.getLogger(__name__)
 

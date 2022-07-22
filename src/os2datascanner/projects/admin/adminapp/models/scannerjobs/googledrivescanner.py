@@ -5,7 +5,7 @@ from csv import DictReader
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from .scanner_model import Scanner
+from .scanner import Scanner
 from ...utils import upload_path_gdrive_users, upload_path_gdrive_service_account
 from os2datascanner.engine2.model.googledrive import GoogleDriveSource
 

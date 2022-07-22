@@ -17,7 +17,7 @@
 
 from django.core.management import BaseCommand
 
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import (
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import (
     Scanner, ScanStatus, ScheduledCheckup, )
 
 

@@ -19,25 +19,28 @@
 from django.db import models
 
 
-from os2datascanner.engine2.rules.cpr import CPRRule as CPRTwule
-from .rule_model import Rule
+from .rule import Rule
 
 
-class CPRRule(Rule):
-    do_modulus11 = models.BooleanField(
-            default=False, verbose_name='Tjek modulus-11')
-    ignore_irrelevant = models.BooleanField(
-            default=False, verbose_name='Ignorer ugyldige fødselsdatoer')
-    examine_context = models.BooleanField(
-            default=False, verbose_name='Tjek kontekst omkring match')
+class NameRule(Rule):
+    DATABASE_DST_2014 = 0
 
-    def make_engine2_rule(self):
-        return CPRTwule(
-                modulus_11=self.do_modulus11,
-                ignore_irrelevant=self.ignore_irrelevant,
-                examine_context=self.examine_context,
-                sensitivity=self.make_engine2_sensitivity())
+    database_choices = (
+        (DATABASE_DST_2014, u'Danmarks Statistiks liste over navne pr. 1. januar 2014'),
+    )
+
+    database = models.IntegerField(
+            choices=database_choices,
+            default=DATABASE_DST_2014,
+            verbose_name="Navnedatabase")
 
     whitelist = models.TextField(blank=True,
                                  default="",
-                                 verbose_name='Godkendte CPR-numre')
+                                 verbose_name='Godkendte navne')
+    blacklist = models.TextField(blank=True,
+                                 default="",
+                                 verbose_name='Sortlistede navne')
+
+    def make_engine2_rule(self):
+        # engine2 doesn't have name rules yet
+        raise NotImplementedError("NameRule.make_engine2_rule")

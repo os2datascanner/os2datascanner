@@ -16,7 +16,7 @@ from ..reportapp.management.commands.update_match_alias_relation_table import \
 
 from ..organizations.models.aliases import Alias
 from ..organizations.models.aliases import AliasType
-from ..reportapp.models.roles.remediator_model import Remediator
+from ..reportapp.models.roles.remediator import Remediator
 from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.views import MainPageView
 from .generate_test_data import record_match, record_metadata

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from os2datascanner.projects.report.reportapp.models.documentreport_model import DocumentReport
+from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
 
 
 class Command(BaseCommand):

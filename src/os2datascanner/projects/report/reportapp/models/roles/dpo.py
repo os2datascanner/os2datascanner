@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from .role_model import Role
+from .role import Role
 
 
 class DataProtectionOfficer(Role):

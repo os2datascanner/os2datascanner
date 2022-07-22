@@ -1,5 +1,5 @@
 from django.conf import settings
-from .scanner_model import Scanner
+from .scanner import Scanner
 
 from os2datascanner.engine2.model.sbsys import SbsysSource
 

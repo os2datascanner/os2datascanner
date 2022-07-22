@@ -22,10 +22,10 @@ from django.utils.text import slugify
 from os2datascanner.projects.admin.core.models.administrator import Administrator
 from os2datascanner.projects.admin.organizations.models.organization import Organization
 from os2datascanner.projects.admin.core.models.client import Client
-from os2datascanner.projects.admin.adminapp.models.authentication_model import Authentication
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import Scanner
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import WebScanner
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.filescanner_model import FileScanner
+from os2datascanner.projects.admin.adminapp.models.authentication import Authentication
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import Scanner
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner import WebScanner
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.filescanner import FileScanner
 from os2datascanner.projects.admin.adminapp.validate import validate_domain
 
 

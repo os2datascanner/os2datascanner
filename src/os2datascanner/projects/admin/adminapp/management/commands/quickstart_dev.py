@@ -6,16 +6,16 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from recurrence import Recurrence
 
-from os2datascanner.projects.admin.adminapp.models.authentication_model import (
+from os2datascanner.projects.admin.adminapp.models.authentication import (
     Authentication,
 )
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.filescanner_model import (
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.filescanner import (
     FileScanner,
 )
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import (
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner import (
     WebScanner,
 )
-from os2datascanner.projects.admin.adminapp.models.rules.cprrule_model import (
+from os2datascanner.projects.admin.adminapp.models.rules.cprrule import (
     CPRRule,
 )
 from os2datascanner.projects.admin.organizations.models.organization import (

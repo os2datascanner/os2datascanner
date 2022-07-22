@@ -2,7 +2,7 @@ import json
 import argparse
 from django.core.management.base import BaseCommand
 
-from ...models.scannerjobs.scanner_model import Scanner, ScanStatus
+from ...models.scannerjobs.scanner import Scanner, ScanStatus
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.run_stage import _loglevels
 from os2datascanner.engine2.pipeline.utilities import pika

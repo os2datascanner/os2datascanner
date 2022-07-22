@@ -19,7 +19,7 @@ from urllib.error import URLError
 from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 
-from .models.scannerjobs.webscanner_model import WebScanner
+from .models.scannerjobs.webscanner import WebScanner
 
 
 def _do_request(url):

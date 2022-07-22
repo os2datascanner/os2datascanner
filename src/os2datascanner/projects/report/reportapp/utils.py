@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from mozilla_django_oidc import auth
 
 from os2datascanner.engine2.pipeline import messages
-from .models.documentreport_model import DocumentReport
+from .models.documentreport import DocumentReport
 
 from os2datascanner.projects.report.organizations.models import Alias
 from os2datascanner.projects.report.organizations.models import AliasType

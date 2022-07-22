@@ -11,7 +11,7 @@ from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 
-from ..reportapp.models.documentreport_model import DocumentReport
+from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.management.commands import pipeline_collector
 
 from .generate_test_data import record_match, record_problem

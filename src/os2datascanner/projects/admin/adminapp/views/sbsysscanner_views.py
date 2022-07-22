@@ -18,7 +18,7 @@ from django.views.generic.base import TemplateView
 from .views import LoginRequiredMixin
 from .scanner_views import (ScannerRun, ScannerList,
                             ScannerAskRun, ScannerCreate, ScannerDelete, ScannerUpdate)
-from ..models.scannerjobs.sbsysscanner_model import SbsysScanner
+from ..models.scannerjobs.sbsysscanner import SbsysScanner
 
 
 class SbsysScannerList(ScannerList):

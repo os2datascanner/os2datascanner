@@ -7,7 +7,7 @@ from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.projects.admin.core.models.client import Client
 from os2datascanner.projects.admin.organizations.models.organization import Organization
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import (
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import (
         Scanner, ScanStatus)
 
 from os2datascanner.projects.admin.adminapp.management.commands import pipeline_collector

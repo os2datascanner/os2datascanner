@@ -15,7 +15,7 @@
 # source municipalities ( http://www.os2web.dk/ )
 
 from django.utils.translation import ugettext_lazy as _
-from .role_model import Role
+from .role import Role
 
 
 class Remediator(Role):

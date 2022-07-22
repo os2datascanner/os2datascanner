@@ -20,17 +20,17 @@ from django.views.generic import ListView, TemplateView, DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
 
-from ..models.scannerjobs.dropboxscanner_model import DropboxScanner
-from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
-from ..models.scannerjobs.filescanner_model import FileScanner
-from ..models.scannerjobs.gmail_model import GmailScanner
-from ..models.scannerjobs.sbsysscanner_model import SbsysScanner
-from ..models.rules.cprrule_model import CPRRule
-from ..models.rules.regexrule_model import RegexRule
-from ..models.scannerjobs.msgraph_models import (
+from ..models.scannerjobs.dropboxscanner import DropboxScanner
+from ..models.scannerjobs.exchangescanner import ExchangeScanner
+from ..models.scannerjobs.filescanner import FileScanner
+from ..models.scannerjobs.gmail import GmailScanner
+from ..models.scannerjobs.sbsysscanner import SbsysScanner
+from ..models.rules.cprrule import CPRRule
+from ..models.rules.regexrule import RegexRule
+from ..models.scannerjobs.msgraph import (
         MSGraphFileScanner, MSGraphMailScanner, MSGraphCalendarScanner)
-from ..models.scannerjobs.webscanner_model import WebScanner
-from ..models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
+from ..models.scannerjobs.webscanner import WebScanner
+from ..models.scannerjobs.googledrivescanner import GoogleDriveScanner
 
 import structlog
 

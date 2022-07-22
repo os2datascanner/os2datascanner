@@ -27,8 +27,8 @@ from django.template import loader
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.rules.rule import Sensitivity
 from ...views import views
-from ...models.documentreport_model import DocumentReport
-from ...models.roles.defaultrole_model import DefaultRole
+from ...models.documentreport import DocumentReport
+from ...models.roles.defaultrole import DefaultRole
 from ....organizations.models.account import Account
 from ....organizations.models.aliases import Alias, AliasType
 

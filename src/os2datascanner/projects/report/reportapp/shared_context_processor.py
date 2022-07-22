@@ -1,8 +1,7 @@
-
 from .utils import user_is
-from .models.roles.role_model import Role
-from .models.roles.dpo_model import DataProtectionOfficer
-from .models.roles.leader_model import Leader
+from .models.roles.role import Role
+from .models.roles.dpo import DataProtectionOfficer
+from .models.roles.leader import Leader
 
 
 def check_dpo_and_leader_roles(request):

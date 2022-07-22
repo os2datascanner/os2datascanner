@@ -1,8 +1,8 @@
-from . import exchangescanner_model  # noqa
-from . import filescanner_model  # noqa
-from . import scanner_model  # noqa
-from . import webscanner_model  # noqa
-from . import msgraph_models  # noqa
-from . import googledrivescanner_model # noqa
-from . import gmail_model # noqa
-from . import sbsysscanner_model # noqa
+from . import exchangescanner  # noqa
+from . import filescanner  # noqa
+from . import scanner  # noqa
+from . import webscanner  # noqa
+from . import msgraph  # noqa
+from . import googledrivescanner # noqa
+from . import gmail # noqa
+from . import sbsysscanner # noqa

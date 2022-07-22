@@ -19,28 +19,25 @@
 from django.db import models
 
 
-from .rule_model import Rule
+from os2datascanner.engine2.rules.cpr import CPRRule as CPRTwule
+from .rule import Rule
 
 
-class AddressRule(Rule):
-    DATABASE_PD_2015 = 0
+class CPRRule(Rule):
+    do_modulus11 = models.BooleanField(
+            default=False, verbose_name='Tjek modulus-11')
+    ignore_irrelevant = models.BooleanField(
+            default=False, verbose_name='Ignorer ugyldige fødselsdatoer')
+    examine_context = models.BooleanField(
+            default=False, verbose_name='Tjek kontekst omkring match')
 
-    database_choices = (
-        (DATABASE_PD_2015, u'Post Danmarks liste over gadenavne pr. ca. 1. januar 2015'),
-    )
-
-    database = models.IntegerField(
-            choices=database_choices,
-            default=DATABASE_PD_2015,
-            verbose_name="Gadenavnedatabase")
+    def make_engine2_rule(self):
+        return CPRTwule(
+                modulus_11=self.do_modulus11,
+                ignore_irrelevant=self.ignore_irrelevant,
+                examine_context=self.examine_context,
+                sensitivity=self.make_engine2_sensitivity())
 
     whitelist = models.TextField(blank=True,
                                  default="",
-                                 verbose_name='Godkendte adresser')
-    blacklist = models.TextField(blank=True,
-                                 default="",
-                                 verbose_name='Sortlistede adresser')
-
-    def make_engine2_rule(self):
-        # engine2 doesn't have address rules yet
-        raise NotImplementedError("AddressRule.make_engine2_rule")
+                                 verbose_name='Godkendte CPR-numre')

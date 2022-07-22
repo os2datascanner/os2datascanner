@@ -2,7 +2,7 @@ from django.db import models, DataError, connection, transaction
 from django.test import TestCase
 
 from ..reportapp.utils import prepare_json_object, get_max_sens_prop_value
-from ..reportapp.models.documentreport_model import DocumentReport
+from ..reportapp.models.documentreport import DocumentReport
 
 from .generate_test_data import (
         get_positive_match_with_probability_and_sensitivity, record_match)

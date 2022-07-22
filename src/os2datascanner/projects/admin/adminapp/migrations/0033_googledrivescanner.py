@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import os2datascanner.projects.admin.adminapp.models.scannerjobs.googledrivescanner_model
+import os2datascanner.projects.admin.adminapp.models.scannerjobs.googledrivescanner
 
 
 class Migration(migrations.Migration):
@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             name='GoogleDriveScanner',
             fields=[
                 ('scanner_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner.Scanner')),
-                ('service_account_file', models.FileField(upload_to='googledrive/serviceaccount/', validators=[os2datascanner.projects.admin.adminapp.models.scannerjobs.googledrivescanner_model.GoogleDriveScanner.validate_filetype_json])),
-                ('user_emails', models.FileField(upload_to='googledrive/users/', validators=[os2datascanner.projects.admin.adminapp.models.scannerjobs.googledrivescanner_model.GoogleDriveScanner.validate_filetype_csv])),
+                ('service_account_file', models.FileField(upload_to='googledrive/serviceaccount/', validators=[os2datascanner.projects.admin.adminapp.models.scannerjobs.googledrivescanner.GoogleDriveScanner.validate_filetype_json])),
+                ('user_emails', models.FileField(upload_to='googledrive/users/', validators=[os2datascanner.projects.admin.adminapp.models.scannerjobs.googledrivescanner.GoogleDriveScanner.validate_filetype_csv])),
             ],
             bases=('os2datascanner.scanner',),
         ),

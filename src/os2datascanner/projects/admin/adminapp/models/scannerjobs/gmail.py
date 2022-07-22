@@ -5,7 +5,7 @@ from csv import DictReader
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from .scanner_model import Scanner
+from .scanner import Scanner
 from os2datascanner.engine2.model.gmail import GmailSource
 from ...utils import upload_path_gmail_users, upload_path_gmail_service_account
 

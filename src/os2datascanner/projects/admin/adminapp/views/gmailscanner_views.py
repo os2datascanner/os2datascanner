@@ -11,7 +11,7 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-from ..models.scannerjobs.gmail_model import GmailScanner
+from ..models.scannerjobs.gmail import GmailScanner
 from .scanner_views import (
     ScannerDelete,
     ScannerAskRun,

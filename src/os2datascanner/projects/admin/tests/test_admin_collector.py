@@ -13,8 +13,8 @@ from os2datascanner.engine2.utilities.datetime import parse_datetime
 from ..adminapp.management.commands import pipeline_collector
 from ..adminapp.management.commands.pipeline_collector import \
     status_message_received_raw, problem_message_recieved_raw
-from ..adminapp.models.usererrorlog_model import UserErrorLog, translation_table
-from ..adminapp.models.scannerjobs.scanner_model import ScheduledCheckup, ScanStatus, \
+from ..adminapp.models.usererrorlog import UserErrorLog, translation_table
+from ..adminapp.models.scannerjobs.scanner import ScheduledCheckup, ScanStatus, \
     Scanner
 
 time0 = "2020-10-28T13:51:49+01:00"

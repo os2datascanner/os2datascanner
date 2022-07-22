@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-13 15:02+0200\n"
+"POT-Creation-Date: 2022-07-22 16:36+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -19,61 +19,60 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: adminapp/models/apikey_model.py:16 adminapp/models/rules/rule_model.py:47
-#: adminapp/models/scannerjobs/scanner_model.py:77
+#: adminapp/models/apikey.py:16 adminapp/models/rules/rule.py:47
+#: adminapp/models/scannerjobs/scanner.py:77
 #: import_services/models/msgraph_import_job.py:32
 #: import_services/models/realm.py:29
 msgid "organization"
 msgstr "organisation"
 
-#: adminapp/models/apikey_model.py:30
+#: adminapp/models/apikey.py:30
 msgid "API key"
 msgstr "API-nøgle"
 
-#: adminapp/models/apikey_model.py:31
+#: adminapp/models/apikey.py:31
 msgid "API keys"
 msgstr "API-nøgler"
 
-#: adminapp/models/authentication_model.py:14
+#: adminapp/models/authentication.py:14
 msgid "Brugernavn"
 msgstr "Username"
 
-#: adminapp/models/authentication_model.py:18
+#: adminapp/models/authentication.py:18
 msgid "Initialization Vector"
 msgstr "Initaliserings vektor"
 
-#: adminapp/models/authentication_model.py:25
-#: adminapp/views/filescanner_views.py:173
+#: adminapp/models/authentication.py:25 adminapp/views/filescanner_views.py:173
 msgid "User domain"
 msgstr "Brugerdomæne"
 
-#: adminapp/models/authentication_model.py:30
-#: adminapp/models/authenticationmethods_model.py:10
+#: adminapp/models/authentication.py:30
+#: adminapp/models/authenticationmethods.py:10
 msgid "Login method"
 msgstr "Login metode"
 
-#: adminapp/models/rules/rule_model.py:40 core/models/client.py:73
+#: adminapp/models/rules/rule.py:40 core/models/client.py:73
 #: organizations/templates/organizations/org_table.html:38
 msgid "name"
 msgstr "navn"
 
-#: adminapp/models/rules/rule_model.py:53
+#: adminapp/models/rules/rule.py:53
 msgid "description"
 msgstr "Beskrivelse"
 
-#: adminapp/models/rules/rule_model.py:59
+#: adminapp/models/rules/rule.py:59
 msgid "sensitivity"
 msgstr "Følsomhed"
 
-#: adminapp/models/scannerjobs/filescanner_model.py:35
+#: adminapp/models/scannerjobs/filescanner.py:35
 msgid "drive letter"
 msgstr "drevbogstav"
 
-#: adminapp/models/scannerjobs/filescanner_model.py:38
+#: adminapp/models/scannerjobs/filescanner.py:38
 msgid "skip super-hidden files"
 msgstr "spring over superskjulte filer"
 
-#: adminapp/models/scannerjobs/filescanner_model.py:39
+#: adminapp/models/scannerjobs/filescanner.py:39
 msgid ""
 "do not scan files with the HIDDEN and SYSTEM bits set, or files with the "
 "HIDDEN bit set whose name starts with a tilde"
@@ -81,92 +80,92 @@ msgstr ""
 "lad være med at scanne filer med både HIDDEN- og SYSTEM-attributter sat, "
 "samt filer med HIDDEN-attribut sat og et navn med tilde-tegn foran"
 
-#: adminapp/models/scannerjobs/filescanner_model.py:73
+#: adminapp/models/scannerjobs/filescanner.py:73
 msgid "URL must follow the UNC format"
 msgstr "URL skal følge UNC-format"
 
-#: adminapp/models/scannerjobs/scanner_model.py:86
+#: adminapp/models/scannerjobs/scanner.py:86
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
 
-#: adminapp/models/scannerjobs/scanner_model.py:428
+#: adminapp/models/scannerjobs/scanner.py:428
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:433
+#: adminapp/models/scannerjobs/scanner.py:433
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner_model.py:438
+#: adminapp/models/scannerjobs/scanner.py:438
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:443
+#: adminapp/models/scannerjobs/scanner.py:443
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:448
+#: adminapp/models/scannerjobs/scanner.py:448
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner_model.py:510
+#: adminapp/models/scannerjobs/scanner.py:510
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
 
-#: adminapp/models/scannerjobs/scanner_model.py:515
+#: adminapp/models/scannerjobs/scanner.py:515
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner_model.py:522
+#: adminapp/models/scannerjobs/scanner.py:522
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner_model.py:551
+#: adminapp/models/scannerjobs/scanner.py:551
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner_model.py:552
+#: adminapp/models/scannerjobs/scanner.py:552
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/scanner_model.py:591
+#: adminapp/models/scannerjobs/scanner.py:591
 msgid "timestamp"
 msgstr ""
 
-#: adminapp/models/scannerjobs/scanner_model.py:596
+#: adminapp/models/scannerjobs/scanner.py:596
 msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/scanner_model.py:597
+#: adminapp/models/scannerjobs/scanner.py:597
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:40
+#: adminapp/models/scannerjobs/webscanner.py:40
 msgid "check dead links"
 msgstr "tjek døde links"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:56
+#: adminapp/models/scannerjobs/webscanner.py:56
 msgid "validation method"
 msgstr "valideringsmetode"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:62
+#: adminapp/models/scannerjobs/webscanner.py:62
 msgid "sitemap file"
 msgstr "sitemap fil"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:69
+#: adminapp/models/scannerjobs/webscanner.py:69
 msgid "sitemap url"
 msgstr "sitemap url"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:74
+#: adminapp/models/scannerjobs/webscanner.py:74
 msgid "download Sitemap from server"
 msgstr "hent Sitemap fra serveren"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:81
+#: adminapp/models/scannerjobs/webscanner.py:81
 msgid "comma-separated list of urls to exclude"
 msgstr "Kommasepareret liste af URLs der skal eksluderes"
 
-#: adminapp/models/scannerjobs/webscanner_model.py:83
+#: adminapp/models/scannerjobs/webscanner.py:83
 msgid ""
 "Be sure to include a trailing '/'to enforce path matching, i.e. https://"
 "example.com/images/ instead of https://example.com/images"
@@ -190,12 +189,12 @@ msgstr "Advarsel"
 msgid "Notification"
 msgstr "Notifikation"
 
-#: adminapp/models/usererrorlog_model.py:9
+#: adminapp/models/usererrorlog.py:9
 msgid ""
 "Folder at the path is using outdated encoding. Please rename the folder."
 msgstr "Mappe på stien indeholder forældet indkodning. Omdøb venligst mappen."
 
-#: adminapp/models/usererrorlog_model.py:12
+#: adminapp/models/usererrorlog.py:12
 msgid ""
 "An object was skipped either because it could not be opened or it was taking "
 "too long to scan."
@@ -203,12 +202,12 @@ msgstr ""
 "Et objekt blev sprunget over enten fordi det ikke kunne åbnes eller at det "
 "tog for lang tid at skanne."
 
-#: adminapp/models/usererrorlog_model.py:27
+#: adminapp/models/usererrorlog.py:27
 #: adminapp/templates/os2datascanner/error_log.html:39
 msgid "Path"
 msgstr "Sti"
 
-#: adminapp/models/usererrorlog_model.py:32
+#: adminapp/models/usererrorlog.py:32
 msgid "Error message"
 msgstr "Fejlbesked"
 
@@ -403,14 +402,14 @@ msgid ""
 "\n"
 "          <strong>%(usererrorlogs)s</strong> errors occured during the scan."
 "<br/>\n"
-"          <a href=\"%(admin_login_url)serror_log/\">Click here to inpect "
-"the error logs</a>\n"
+"          <a href=\"%(admin_login_url)serror_log/\">Click here to inpect the "
+"error logs</a>\n"
 "      "
 msgstr ""
 "\n"
-"         <strong>%(usererrorlogs)s</strong> fejl opstod under scannet."
-"<br/>\n"
-"         <a href=\"%(admin_login_url)serror_log/\">Klik her for at inspicere fejlbeskederne.</a>"
+"         <strong>%(usererrorlogs)s</strong> fejl opstod under scannet.<br/>\n"
+"         <a href=\"%(admin_login_url)serror_log/\">Klik her for at inspicere "
+"fejlbeskederne.</a>"
 
 #: adminapp/templates/mail/finished_scannerjob.html:58
 #, python-format

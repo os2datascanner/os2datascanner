@@ -13,8 +13,8 @@ from os2datascanner.engine2.utilities.datetime import parse_datetime
 from os2datascanner.projects.report.reportapp.management.commands.send_notifications import \
     Command
 from os2datascanner.projects.report.organizations.models.aliases import Alias, AliasType
-from os2datascanner.projects.report.reportapp.models.documentreport_model import DocumentReport
-from os2datascanner.projects.report.reportapp.models.roles.remediator_model import Remediator
+from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
+from os2datascanner.projects.report.reportapp.models.roles.remediator import Remediator
 from os2datascanner.projects.report.reportapp.utils import create_alias_and_match_relations
 from os2datascanner.projects.report.tests.generate_test_data import \
     record_match

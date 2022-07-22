@@ -6,7 +6,7 @@ from django.db import connection, transaction
 
 # from os2datascanner.projects.admin.import_services.models.keycloak import KeycloakServer
 from os2datascanner.projects.admin.import_services.models.ldap_configuration import LDAPConfig
-from os2datascanner.projects.admin.adminapp.models.authentication_model import Authentication
+from os2datascanner.projects.admin.adminapp.models.authentication import Authentication
 from os2datascanner.projects.admin.adminapp.aescipher import (generate_new_hex,
                                                               get_key)
 LOCK_MODE = 'ACCESS EXCLUSIVE'

@@ -5,11 +5,11 @@ from django.utils.text import slugify
 from os2datascanner.projects.admin.core.models.client import Client
 from os2datascanner.projects.admin.organizations.models.organization \
     import Organization
-from os2datascanner.projects.admin.adminapp.models.rules.regexrule_model \
+from os2datascanner.projects.admin.adminapp.models.rules.regexrule \
     import RegexRule, RegexPattern
 from os2datascanner.projects.admin.adminapp.models.sensitivity_level \
     import Sensitivity
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model \
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner \
     import WebScanner
 from os2datascanner.projects.admin.adminapp.views.webscanner_views \
     import WebScannerUpdate

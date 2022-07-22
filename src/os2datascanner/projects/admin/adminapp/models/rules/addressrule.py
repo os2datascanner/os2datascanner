@@ -19,28 +19,28 @@
 from django.db import models
 
 
-from .rule_model import Rule
+from .rule import Rule
 
 
-class NameRule(Rule):
-    DATABASE_DST_2014 = 0
+class AddressRule(Rule):
+    DATABASE_PD_2015 = 0
 
     database_choices = (
-        (DATABASE_DST_2014, u'Danmarks Statistiks liste over navne pr. 1. januar 2014'),
+        (DATABASE_PD_2015, u'Post Danmarks liste over gadenavne pr. ca. 1. januar 2015'),
     )
 
     database = models.IntegerField(
             choices=database_choices,
-            default=DATABASE_DST_2014,
-            verbose_name="Navnedatabase")
+            default=DATABASE_PD_2015,
+            verbose_name="Gadenavnedatabase")
 
     whitelist = models.TextField(blank=True,
                                  default="",
-                                 verbose_name='Godkendte navne')
+                                 verbose_name='Godkendte adresser')
     blacklist = models.TextField(blank=True,
                                  default="",
-                                 verbose_name='Sortlistede navne')
+                                 verbose_name='Sortlistede adresser')
 
     def make_engine2_rule(self):
-        # engine2 doesn't have name rules yet
-        raise NotImplementedError("NameRule.make_engine2_rule")
+        # engine2 doesn't have address rules yet
+        raise NotImplementedError("AddressRule.make_engine2_rule")
