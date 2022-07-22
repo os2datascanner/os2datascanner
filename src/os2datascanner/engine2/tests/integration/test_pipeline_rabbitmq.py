@@ -1,8 +1,7 @@
 import unittest
 from os2datascanner.engine2.model.core import Source
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
-from .test_engine2_pipeline import (
-        handle_message, data_url, rule, expected_matches)
+from .test_pipeline import (handle_message, data_url, rule, expected_matches)
 
 
 class PipelineTestRunner(PikaPipelineThread):
