@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from ...core.models.background_job import BackgroundJob
+from ...grants.models import GraphGrant
 from os2datascanner.engine2.utilities.backoff import WebRetrier
 from os2datascanner.engine2.model.msgraph.utilities import (
         make_token, MSGraphSource)
@@ -19,8 +20,7 @@ del MSGraphSource
 
 
 class MSGraphImportJob(BackgroundJob):
-    tenant_id = models.CharField(max_length=256, verbose_name="Tenant ID",
-                                 null=False)
+    grant = models.ForeignKey(GraphGrant, on_delete=models.CASCADE)
 
     organization = models.ForeignKey(
         'organizations.Organization',
@@ -35,7 +35,7 @@ class MSGraphImportJob(BackgroundJob):
     def _make_token(self):
         return make_token(
                 settings.MSGRAPH_APP_ID,
-                self.tenant_id,
+                self.grant.tenant_id,
                 settings.MSGRAPH_CLIENT_SECRET)
 
     @property

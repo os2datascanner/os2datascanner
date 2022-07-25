@@ -11,11 +11,15 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
+import json
+import base64
 from django.conf import settings
 from django.views import View
 from django.views.generic.base import TemplateView
 from urllib.parse import urlencode
 
+from os2datascanner.projects.admin.grants.models.graphgrant import GraphGrant
+from os2datascanner.projects.admin.utilities import UserWrapper
 from ..models.scannerjobs.msgraph import MSGraphMailScanner
 from ..models.scannerjobs.msgraph import MSGraphFileScanner
 from ..models.scannerjobs.msgraph import MSGraphCalendarScanner
@@ -24,15 +28,16 @@ from .scanner_views import (ScannerRun, ScannerList,
                             ScannerAskRun, ScannerCreate, ScannerDelete, ScannerUpdate, ScannerCopy)
 
 
-def make_consent_url(label):
+def make_consent_url(state):
     if settings.MSGRAPH_APP_ID:
-        redirect_uri = settings.SITE_URL + "msgraph-{0}/add/".format(label)
         return ("https://login.microsoftonline.com/common/adminconsent?"
                 + urlencode({
                     "client_id": settings.MSGRAPH_APP_ID,
                     "scope": "https://graph.microsoft.com/.default",
                     "response_type": "code",
-                    "redirect_uri": redirect_uri
+                    "state": base64.b64encode(json.dumps(state).encode()),
+                    "redirect_uri": (
+                            settings.SITE_URL + "grants/msgraph/receive/")
                 }))
     else:
         return None
@@ -52,7 +57,8 @@ class MSGraphMailCreate(View):
     scanner job creation form when the response comes back."""
 
     def dispatch(self, request, *args, **kwargs):
-        if 'tenant' in request.GET:
+        user = UserWrapper(request.user)
+        if GraphGrant.objects.filter(user.make_org_Q()).exists():
             handler = _MSGraphMailCreate.as_view()
         else:
             handler = _MSGraphMailPermissionRequest.as_view()
@@ -72,7 +78,11 @@ class _MSGraphMailPermissionRequest(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
             "service_name": "Microsoft Online",
-            "auth_endpoint": make_consent_url("mailscanners"),
+            "auth_endpoint": make_consent_url(
+                    state={
+                        "red": "msgraphmailscanner_add",
+                        "org": str(UserWrapper(self.request.user).get_org().pk)
+                    }),
             "error": self.request.GET.get("error"),
             "error_description": self.request.GET.get("error_description")
         })
@@ -82,14 +92,9 @@ class _MSGraphMailCreate(ScannerCreate):
     """Creates a new Microsoft Graph mail scanner job."""
     model = MSGraphMailScanner
     type = 'msgraph-mail'
-    fields = ['name', 'schedule', 'tenant_id', 'only_notify_superadmin',
+    fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
-
-    def get_context_data(self, **kwargs):
-        return dict(**super().get_context_data(**kwargs), **{
-            "tenant_id": self.request.GET['tenant']
-        })
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -101,7 +106,7 @@ class MSGraphMailUpdate(ScannerUpdate):
     for modification."""
     model = MSGraphMailScanner
     type = 'msgraph-mailscanners'
-    fields = ['name', 'schedule', 'tenant_id', 'only_notify_superadmin',
+    fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
@@ -120,7 +125,7 @@ class MSGraphMailCopy(ScannerCopy):
     """Creates a copy of an existing Microsoft Graph mail scanner job."""
     model = MSGraphMailScanner
     type = 'msgraph-mail'
-    fields = ['name', 'schedule', 'tenant_id', 'only_notify_superadmin',
+    fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
@@ -165,7 +170,7 @@ class _MSGraphFilePermissionRequest(TemplateView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
             "service_name": "Microsoft Online",
-            "auth_endpoint": make_consent_url("filescanners"),
+            "auth_endpoint": make_consent_url(state="msgraphfilescanner_add"),
             "error": self.request.GET.get("error"),
             "error_description": self.request.GET.get("error_description")
         })
@@ -175,15 +180,10 @@ class _MSGraphFileCreate(ScannerCreate):
     """Creates a new Microsoft Graph file scanner job."""
     model = MSGraphFileScanner
     type = 'msgraph-file'
-    fields = ['name', 'schedule', 'tenant_id',
+    fields = ['name', 'schedule', 'grant',
               'org_unit', 'exclusion_rules', 'only_notify_superadmin',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
               'do_last_modified_check', 'rules', 'organization', ]
-
-    def get_context_data(self, **kwargs):
-        return dict(**super().get_context_data(**kwargs), **{
-            "tenant_id": self.request.GET['tenant']
-        })
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -195,7 +195,7 @@ class MSGraphFileUpdate(ScannerUpdate):
     for modification."""
     model = MSGraphFileScanner
     type = 'msgraph-filescanners'
-    fields = ['name', 'schedule', 'tenant_id', 'org_unit',
+    fields = ['name', 'schedule', 'grant', 'org_unit',
               'scan_site_drives', 'scan_user_drives',
               'do_ocr', 'only_notify_superadmin', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
@@ -215,7 +215,7 @@ class MSGraphFileCopy(ScannerCopy):
     """Creates a copy of an existing Microsoft Graph mail scanner job."""
     model = MSGraphFileScanner
     type = 'msgraph-file'
-    fields = ['name', 'schedule', 'tenant_id',
+    fields = ['name', 'schedule', 'grant',
               'org_unit', 'exclusion_rules', 'only_notify_superadmin',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
               'do_last_modified_check', 'rules', 'organization', ]
@@ -258,7 +258,8 @@ class _MSGraphCalendarPermissionRequest(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
             "service_name": "Microsoft Online",
-            "auth_endpoint": make_consent_url("calendarscanners"),
+            "auth_endpoint": make_consent_url(
+                    state="msgraphcalendarscanner_add"),
             "error": self.request.GET.get("error"),
             "error_description": self.request.GET.get("error_description")
         })
@@ -268,14 +269,9 @@ class _MSGraphCalendarCreate(ScannerCreate):
     """Creates a new Microsoft Graph calendar scanner job."""
     model = MSGraphCalendarScanner
     type = 'msgraph-calendar'
-    fields = ['name', 'schedule', 'tenant_id', 'only_notify_superadmin',
+    fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
-
-    def get_context_data(self, **kwargs):
-        return dict(**super().get_context_data(**kwargs), **{
-            "tenant_id": self.request.GET['tenant']
-        })
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -287,7 +283,7 @@ class MSGraphCalendarUpdate(ScannerUpdate):
     for modification."""
     model = MSGraphCalendarScanner
     type = 'msgraph-calendarscanners'
-    fields = ['name', 'schedule', 'tenant_id', 'only_notify_superadmin',
+    fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
@@ -307,7 +303,7 @@ class MSGraphCalendarCopy(ScannerCopy):
     """Creates a copy of an existing Microsoft Graph calendar scanner job."""
     model = MSGraphCalendarScanner
     type = 'msgraph-calendar'
-    fields = ['name', 'schedule', 'tenant_id', 'only_notify_superadmin',
+    fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 

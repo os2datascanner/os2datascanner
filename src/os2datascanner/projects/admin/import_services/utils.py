@@ -58,14 +58,14 @@ def start_msgraph_import(msgraph_conf: MSGraphConfiguration):
 
     try:
         latest_importjob = MSGraphImportJob.objects.filter(
-            tenant_id=msgraph_conf.tenant_id
+            grant=msgraph_conf.grant
         ).latest('created_at')
 
         if latest_importjob.exec_state == JobState.FINISHED \
                 or latest_importjob.exec_state == JobState.FAILED \
                 or latest_importjob.exec_state == JobState.CANCELLED:
             MSGraphImportJob.objects.create(
-                tenant_id=msgraph_conf.tenant_id,
+                grant=msgraph_conf.grant,
                 organization=msgraph_conf.organization,
             )
             logger.info(f"Import job created for MSGraphConfiguration {msgraph_conf.pk}")
@@ -76,7 +76,7 @@ def start_msgraph_import(msgraph_conf: MSGraphConfiguration):
 
     except MSGraphImportJob.DoesNotExist:
         MSGraphImportJob.objects.create(
-            tenant_id=msgraph_conf.tenant_id,
+            grant=msgraph_conf.grant,
             organization=msgraph_conf.organization,
         )
         logger.info(f"Import job created for MSGraphConfiguration {msgraph_conf.pk}")
