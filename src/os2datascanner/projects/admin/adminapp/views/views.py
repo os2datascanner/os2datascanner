@@ -20,6 +20,7 @@ from django.views.generic import ListView, TemplateView, DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
 
+from os2datascanner.projects.admin.utilities import UserWrapper
 from ..models.scannerjobs.dropboxscanner import DropboxScanner
 from ..models.scannerjobs.exchangescanner import ExchangeScanner
 from ..models.scannerjobs.filescanner import FileScanner
@@ -47,22 +48,10 @@ def _hide_csrf_token_and_password(d):
 
 
 class RestrictedListView(LoginRequiredMixin, ListView):
-
     def get_queryset(self):
         """Restrict to the organization of the logged-in user."""
-
-        user = self.request.user
-        if user.is_superuser:
-            return self.model.objects.all()
-        elif hasattr(user, 'administrator_for'):
-            return self.model.objects.filter(
-                organization__in=[
-                    org.uuid for org in
-                    user.administrator_for.client.organizations.all()
-                ]
-            )
-        else:
-            return self.model.objects.none()
+        return self.model.objects.filter(
+                UserWrapper(self.request.user).make_org_Q())
 
 
 class GuideView(TemplateView):
@@ -117,13 +106,8 @@ class OrgRestrictedMixin(LoginRequiredMixin, ModelFormMixin):
 
     def get_queryset(self):
         """Get queryset filtered by user's organization."""
-        queryset = super().get_queryset()
-        user = self.request.user
-        if not user.is_superuser and hasattr(user, 'administrator_for'):
-            queryset = queryset.filter(
-                organization__in=user.administrator_for.client.organizations.all()
-            )
-        return queryset
+        return super().get_queryset().filter(
+                UserWrapper(self.request.user).make_org_Q())
 
 
 class RestrictedUpdateView(UpdateView, OrgRestrictedMixin):

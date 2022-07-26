@@ -59,27 +59,13 @@ class ExchangeScannerBase(View):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        org_units = OrganizationalUnit.objects.all()
-        client = Client.objects.none()
-        user = self.request.user
-        if self.request.user.is_superuser:
-            # if you are superuser you are allowed to view all org_units
-            # across customers. Also if org_unit featureflags are disabled.
-            context['org_units'] = org_units
-        elif hasattr(user, 'administrator_for'):
-            # if I am administrator for a client I can view org_units
-            # for that client.
-            client = user.administrator_for.client
-            org_units = org_units.filter(
-                organization__in=client.organizations.all()
-            )
-            context['org_units'] = org_units
-        else:
-            context['org_units'] = OrganizationalUnit.objects.none()
+        user = WrappedUser(self.request.user)
+        context["org_units"] = (
+                OrganizationalUnit.objects.filter(user.make_org_Q()))
 
         # Needed to upheld feature flags.
         context['FEATURES'] = Feature.__members__
-        context['client'] = client
+        context['client'] = WrappedUser.get_client()
         return context
 
 
