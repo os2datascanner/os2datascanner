@@ -74,7 +74,10 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
                     hx-get="{% url "index" %}"
                     hx-swap="innerHTML"
                     hx-trigger="click delay:500ms"
-                    hx-target=".content">
+                    hx-target=".content"
+                    {% comment %} This is a consequence of our choice to use HTMX, while using URL kwargs. This should be structured in a more intelligent way. {% endcomment %}
+                    hx-vals='{"paginate_by":"{{ paginate_by }}", "order_by":"{{ order_by }}", "order":"{{ order }}", "scannerjob":"{{ scannerjobs|last }}", "sensitivities":"{{ sensitivities|last }}"}'
+                    name="handle-match">
                 <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Handle" %}</span></button>
             <button class="matches-expand button button-caret button--has-icon" title="{% trans 'Show/hide matches' %}" type="button"><i class="material-icons" aria-hidden="true">expand_more</i></button>
           </div>
