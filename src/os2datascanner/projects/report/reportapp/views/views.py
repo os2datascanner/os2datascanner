@@ -106,7 +106,8 @@ class MainPageView(LoginRequiredMixin, ListView):
             DocumentReport.objects.update(only_notify_superadmin=False)
 
         # Handles filtering by role + org and sets datasource_last_modified if non existing
-        self.document_reports = filter_inapplicable_matches(user, self.document_reports, roles)
+        self.user_reports = filter_inapplicable_matches(user, self.document_reports, roles)
+        self.document_reports = self.user_reports
 
         # Filters by datasource_last_modified.
         # lte mean less than or equal to.
@@ -141,27 +142,32 @@ class MainPageView(LoginRequiredMixin, ListView):
             self.request.user) and self.document_reports.filter(
             only_notify_superadmin=True).exists()
 
+        sensitivity_filter = Q(sensitivity=self.request.GET.get('sensitivities')
+                               ) if self.request.GET.get('sensitivities') not in \
+            ['all', None] else None
+        scannerjob_filter = Q(scanner_job_pk=self.request.GET.get('scannerjob')
+                              ) if self.request.GET.get('scannerjob') not in \
+            ['all', None] else None
+
         if self.scannerjob_filters is None:
             # Create select options
-            self.scannerjob_filters = self.document_reports.order_by(
+            self.scannerjob_filters = self.user_reports.order_by(
                 'scanner_job_pk').values(
                 'scanner_job_pk').annotate(
-                total=Count('scanner_job_pk')
-            ).values(
-                'scanner_job_name',
-                'total',
-                'scanner_job_pk'
-            )
+                total=Count('scanner_job_pk', filter=sensitivity_filter)
+                ).values(
+                    'scanner_job_name', 'total', 'scanner_job_pk'
+                )
 
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
 
         context['30_days'] = self.request.GET.get('30-days', 'true')
 
-        sensitivities = self.document_reports.order_by(
+        sensitivities = self.user_reports.order_by(
             '-sensitivity').values(
             'sensitivity').annotate(
-            total=Count('sensitivity')
+            total=Count('sensitivity', filter=scannerjob_filter)
         ).values(
             'sensitivity', 'total'
         )
