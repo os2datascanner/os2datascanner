@@ -7,7 +7,8 @@
     <div class="dropdown">
       <select
         name="{{ field.name }}"
-        id="id_{{ field.name }}">
+        id="id_{{ field.name }}"
+        {% if field.field.choices|length <= 1 %} disabled="disabled" {% endif %}>
 
         {% for value, tag in field.field.choices %}
         <option
