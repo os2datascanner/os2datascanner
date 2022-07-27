@@ -1,12 +1,40 @@
+// Someone who knows what they're doing: Change this please!
+
+.user-general-info-table {
+  margin: 0 0 10px 0;
+
+  td {
+    padding: 2px 1rem 2px 0;
+
+    div {
+      height: 1rem;
+      width: 1rem;
+
+      border: 2px solid black;
+      border-radius: 50%;
+    }
+  }
+
+  .checkmark_true {
+    background-color: green;
+  }
+
+  .checkmark_false {
+    background-color: red;
+  }
+}
+
 .user {
   align-items: center;
   display: none;
   margin-top: 1em;
   flex: 0 1 0;
+
   @media (min-width: $break-xs) {
     justify-content: flex-end;
     margin-top: 0;
   }
+
   @media (min-width: $break-lg) {
     display: flex;
   }
@@ -90,7 +118,8 @@
     z-index: 10;
   }
 
-  .user-content a, .user-content div {
+  .user-content a,
+  .user-content div {
     display: flex;
     align-items: center;
     padding: 12px 16px;
@@ -111,6 +140,11 @@
   }
 
   .password-change {
+    border-top: 1px solid var(--color-hover);
+    font-weight: 600;
+  }
+
+  .show-account {
     border-top: 1px solid var(--color-hover);
     font-weight: 600;
   }
