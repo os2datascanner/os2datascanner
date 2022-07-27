@@ -18,7 +18,7 @@ from django.db import models
 from django.core.validators import MinLengthValidator
 
 from os2datascanner.engine2.model.dropbox import DropboxSource
-from .scanner_model import Scanner
+from .scanner import Scanner
 
 # Get an instance of a logger
 logger = structlog.get_logger()

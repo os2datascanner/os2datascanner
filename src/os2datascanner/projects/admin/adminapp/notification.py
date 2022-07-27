@@ -5,8 +5,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.models import User
 from django.template import loader
 
-from .models.scannerjobs.scanner_model import Scanner, ScanStatus
-from .models.usererrorlog_model import UserErrorLog
+from .models.scannerjobs.scanner import Scanner, ScanStatus
+from .models.usererrorlog import UserErrorLog
 
 logger = structlog.get_logger(__name__)
 

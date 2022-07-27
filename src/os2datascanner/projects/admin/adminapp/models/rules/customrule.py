@@ -19,7 +19,7 @@
 from django.db import models
 
 from os2datascanner.engine2.rules.rule import Rule as E2Rule
-from .rule_model import Rule
+from .rule import Rule
 
 
 class CustomRule(Rule):

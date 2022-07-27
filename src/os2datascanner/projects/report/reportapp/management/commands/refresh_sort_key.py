@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from ...models.documentreport_model import DocumentReport
+from ...models.documentreport import DocumentReport
 from ...utils import get_presentation, prepare_json_object
 
 

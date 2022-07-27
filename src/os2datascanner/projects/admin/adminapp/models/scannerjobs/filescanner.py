@@ -20,7 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from os2datascanner.engine2.model.smbc import SMBCSource
-from .scanner_model import Scanner
+from .scanner import Scanner
 
 # Get an instance of a logger
 logger = structlog.get_logger()

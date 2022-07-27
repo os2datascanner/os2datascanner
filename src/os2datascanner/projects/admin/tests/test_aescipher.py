@@ -1,7 +1,7 @@
 import django
 
 from os2datascanner.projects.admin.adminapp.aescipher import encrypt, decrypt
-from os2datascanner.projects.admin.adminapp.models.authentication_model import Authentication
+from os2datascanner.projects.admin.adminapp.models.authentication import Authentication
 
 
 class AESCipherTest(django.test.TestCase):

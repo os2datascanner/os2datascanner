@@ -47,8 +47,8 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
 from mptt.models import TreeManyToManyField
 
-from ..authentication_model import Authentication
-from ..rules.rule_model import Rule
+from ..authentication import Authentication
+from ..rules.rule import Rule
 
 logger = structlog.get_logger(__name__)
 base_dir = os.path.dirname(

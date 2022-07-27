@@ -14,9 +14,9 @@ from os2datascanner.engine2.utilities.datetime import parse_datetime
 
 from ..organizations.models.aliases import Alias
 from ..organizations.models.aliases import AliasType
-from ..reportapp.models.documentreport_model import DocumentReport
-from ..reportapp.models.roles.leader_model import Leader
-from ..reportapp.models.roles.dpo_model import DataProtectionOfficer
+from ..reportapp.models.documentreport import DocumentReport
+from ..reportapp.models.roles.leader import Leader
+from ..reportapp.models.roles.dpo import DataProtectionOfficer
 from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.views import StatisticsPageView, LeaderStatisticsPageView
 from ..reportapp.utils import iterate_queryset_in_batches

@@ -20,16 +20,16 @@ from django.views.i18n import JavaScriptCatalog
 from django.views.generic.base import TemplateView
 from os2datascanner import __version__, __commit__, __tag__, __branch__
 
-from .models.scannerjobs.dropboxscanner_model import DropboxScanner
-from .models.scannerjobs.exchangescanner_model import ExchangeScanner
-from .models.scannerjobs.filescanner_model import FileScanner
-from .models.scannerjobs.webscanner_model import WebScanner
-from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
-from .models.scannerjobs.msgraph_models import (MSGraphMailScanner,
-                                                MSGraphFileScanner,
-                                                MSGraphCalendarScanner)
-from .models.scannerjobs.gmail_model import GmailScanner
-from .models.scannerjobs.sbsysscanner_model import SbsysScanner
+from .models.scannerjobs.dropboxscanner import DropboxScanner
+from .models.scannerjobs.exchangescanner import ExchangeScanner
+from .models.scannerjobs.filescanner import FileScanner
+from .models.scannerjobs.webscanner import WebScanner
+from .models.scannerjobs.googledrivescanner import GoogleDriveScanner
+from .models.scannerjobs.msgraph import (MSGraphMailScanner,
+                                         MSGraphFileScanner,
+                                         MSGraphCalendarScanner)
+from .models.scannerjobs.gmail import GmailScanner
+from .models.scannerjobs.sbsysscanner import SbsysScanner
 from .views.api import JSONAPIView
 from .views.views import GuideView, DialogSuccess
 

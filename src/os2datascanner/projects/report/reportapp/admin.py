@@ -2,12 +2,12 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models.roles.remediator_model import Remediator
-from .models.roles.leader_model import Leader
-from .models.roles.dpo_model import DataProtectionOfficer
-from .models.roles.defaultrole_model import DefaultRole
-from .models.documentreport_model import DocumentReport
-from .models.userprofile_model import UserProfile
+from .models.roles.remediator import Remediator
+from .models.roles.leader import Leader
+from .models.roles.dpo import DataProtectionOfficer
+from .models.roles.defaultrole import DefaultRole
+from .models.documentreport import DocumentReport
+from .models.userprofile import UserProfile
 
 from os2datascanner.projects.report.organizations.models import Organization
 # Register your models here.

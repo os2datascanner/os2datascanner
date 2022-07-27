@@ -25,7 +25,7 @@ from os2datascanner.engine2.model.core import SourceManager
 
 from ....organizations.models.aliases import AliasType
 from ...utils import upload_path_exchange_users
-from .scanner_model import Scanner
+from .scanner import Scanner
 
 logger = logging.getLogger(__name__)
 

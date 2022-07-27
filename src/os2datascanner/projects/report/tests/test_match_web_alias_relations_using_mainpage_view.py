@@ -13,7 +13,7 @@ from os2datascanner.engine2.utilities.datetime import parse_datetime
 from ..reportapp.management.commands.update_match_alias_relation_table import \
     update_match_alias_relations
 
-from ..reportapp.models.roles.remediator_model import Remediator
+from ..reportapp.models.roles.remediator import Remediator
 from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.views import MainPageView
 

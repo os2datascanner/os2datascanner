@@ -18,7 +18,7 @@ from django.db import models
 
 
 from os2datascanner.engine2.rules.regex import RegexRule as RegexTwule
-from .rule_model import Rule
+from .rule import Rule
 
 
 class RegexRule(Rule):

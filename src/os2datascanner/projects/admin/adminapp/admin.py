@@ -16,26 +16,26 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 
-from .models.authentication_model import Authentication
-from .models.apikey_model import APIKey
-from .models.usererrorlog_model import UserErrorLog
-from .models.rules.cprrule_model import CPRRule
-from .models.rules.namerule_model import NameRule
-from .models.rules.regexrule_model import RegexRule, RegexPattern
-from .models.rules.customrule_model import CustomRule
-from .models.rules.addressrule_model import AddressRule
-from .models.scannerjobs.scanner_model import (ScanStatus,
-                                               ScheduledCheckup,
-                                               ScanStatusSnapshot)
-from .models.scannerjobs.msgraph_models import (MSGraphMailScanner,
-                                                MSGraphFileScanner,
-                                                MSGraphCalendarScanner)
-from .models.scannerjobs.webscanner_model import WebScanner
-from .models.scannerjobs.filescanner_model import FileScanner
-from .models.scannerjobs.exchangescanner_model import ExchangeScanner
-from .models.scannerjobs.dropboxscanner_model import DropboxScanner
-from .models.scannerjobs.googledrivescanner_model import GoogleDriveScanner
-from .models.scannerjobs.gmail_model import GmailScanner
+from .models.authentication import Authentication
+from .models.apikey import APIKey
+from .models.usererrorlog import UserErrorLog
+from .models.rules.cprrule import CPRRule
+from .models.rules.namerule import NameRule
+from .models.rules.regexrule import RegexRule, RegexPattern
+from .models.rules.customrule import CustomRule
+from .models.rules.addressrule import AddressRule
+from .models.scannerjobs.scanner import (ScanStatus,
+                                         ScheduledCheckup,
+                                         ScanStatusSnapshot)
+from .models.scannerjobs.msgraph import (MSGraphMailScanner,
+                                         MSGraphFileScanner,
+                                         MSGraphCalendarScanner)
+from .models.scannerjobs.webscanner import WebScanner
+from .models.scannerjobs.filescanner import FileScanner
+from .models.scannerjobs.exchangescanner import ExchangeScanner
+from .models.scannerjobs.dropboxscanner import DropboxScanner
+from .models.scannerjobs.googledrivescanner import GoogleDriveScanner
+from .models.scannerjobs.gmail import GmailScanner
 
 
 @admin.register(Authentication)

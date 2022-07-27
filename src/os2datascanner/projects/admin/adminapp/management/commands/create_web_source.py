@@ -3,9 +3,9 @@ from django.core.management.base import BaseCommand
 from recurrence.base import Recurrence
 import requests
 import urllib.parse
-from os2datascanner.projects.admin.adminapp.models.rules.cprrule_model import CPRRule
+from os2datascanner.projects.admin.adminapp.models.rules.cprrule import CPRRule
 
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import WebScanner
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner import WebScanner
 from os2datascanner.projects.admin.organizations.models.organization import Organization
 
 

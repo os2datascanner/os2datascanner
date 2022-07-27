@@ -17,11 +17,11 @@ from os2datascanner.projects.admin.core.models.client import Client
 from os2datascanner.projects.admin.organizations.models.organization import (
     Organization,
 )
-from os2datascanner.projects.admin.adminapp.models.rules.regexrule_model import (
+from os2datascanner.projects.admin.adminapp.models.rules.regexrule import (
     RegexPattern,
     RegexRule,
 )
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import (
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner import (
     WebScanner,
 )
 from os2datascanner.projects.admin.adminapp.models.sensitivity_level import (
@@ -81,7 +81,7 @@ obj = {
         },
         "user": None,
         "organisation": {"name": "Magenta", "uuid": None},
-        "time": None,  # set to now() in scanner_model.py
+        "time": None,  # set to now() in scanner.py
         "destination": "pipeline_collector",
     },
     "source": WebSource(
@@ -209,7 +209,7 @@ class CronTest(django.test.TestCase):
                  f"{pformat(messages[0][0])}"),
             )
             # XXX It is Error phrone to capture stdout and check the content. Because
-            # we catch not only the output from cron, but also @scanner_model.run(), etc.
+            # we catch not only the output from cron, but also @scanner.run(), etc.
             # self.assertEqual(
             #     self.output,
             #     "Running scanner Magenta",

@@ -38,17 +38,17 @@ from os2datascanner.engine2.rules.links_follow import LinksFollowRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.projects.report.organizations.models import Organization
-from os2datascanner.projects.report.reportapp.models.roles.role_model import Role
+from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
 from ..utils import user_is
-from ..models.documentreport_model import DocumentReport
-from ..models.roles.defaultrole_model import DefaultRole
-from ..models.userprofile_model import UserProfile
-from ..models.roles.remediator_model import Remediator
+from ..models.documentreport import DocumentReport
+from ..models.roles.defaultrole import DefaultRole
+from ..models.userprofile import UserProfile
+from ..models.roles.remediator import Remediator
 
 # For permissions
-from ..models.roles.dpo_model import DataProtectionOfficer
-from ..models.roles.leader_model import Leader
+from ..models.roles.dpo import DataProtectionOfficer
+from ..models.roles.leader import Leader
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync

@@ -2,14 +2,10 @@ import sys
 import unittest
 import subprocess
 
-
 from os2datascanner.engine2.model.core import Source
 from os2datascanner.engine2.pipeline.utilities import pika
-from .test_engine2_pipeline_rabbitmq import (
-        StopHandling, PipelineTestRunner)
-
-
-from .test_engine2_pipeline import (data_url, rule, expected_matches)
+from .test_pipeline import (data_url, rule, expected_matches)
+from .test_pipeline_rabbitmq import (StopHandling, PipelineTestRunner)
 
 
 def python(*args):

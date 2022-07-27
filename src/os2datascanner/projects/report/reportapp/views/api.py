@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.views.generic import View
 
 from os2datascanner.utils.system_utilities import time_now
-from ..models.documentreport_model import DocumentReport
+from ..models.documentreport import DocumentReport
 from ..utils import iterate_queryset_in_batches
 
 logger = structlog.get_logger()

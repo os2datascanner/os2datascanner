@@ -18,7 +18,7 @@ from .scanner_views import (
     ScannerUpdate,
     ScannerCreate,
     ScannerList)
-from ..models.scannerjobs.dropboxscanner_model import DropboxScanner
+from ..models.scannerjobs.dropboxscanner import DropboxScanner
 
 
 class DropboxScannerList(ScannerList):

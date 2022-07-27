@@ -26,10 +26,10 @@ from os2datascanner.projects.admin.organizations.models import Organization
 
 from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
-from ..models.authentication_model import Authentication
-from ..models.rules.rule_model import Rule
-from ..models.scannerjobs.scanner_model import Scanner, ScanStatus
-from ..models.usererrorlog_model import UserErrorLog
+from ..models.authentication import Authentication
+from ..models.rules.rule import Rule
+from ..models.scannerjobs.scanner import Scanner, ScanStatus
+from ..models.usererrorlog import UserErrorLog
 from django.utils.translation import ugettext_lazy as _
 
 from channels.layers import get_channel_layer

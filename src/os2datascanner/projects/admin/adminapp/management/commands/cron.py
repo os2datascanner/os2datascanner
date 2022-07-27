@@ -26,7 +26,7 @@ from dateutil import tz
 from django.core.management.base import BaseCommand
 
 from os2datascanner.utils.system_utilities import time_now
-from ...models.scannerjobs.scanner_model import Scanner
+from ...models.scannerjobs.scanner import Scanner
 
 
 current_qhr = time_now().replace(second=0)

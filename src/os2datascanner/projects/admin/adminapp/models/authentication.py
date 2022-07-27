@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from ..aescipher import encrypt, decrypt
-from .authenticationmethods_model import AuthenticationMethods
+from .authenticationmethods import AuthenticationMethods
 
 
 class Authentication(models.Model):

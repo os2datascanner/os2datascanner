@@ -16,9 +16,9 @@ from django.views import View
 from django.views.generic.base import TemplateView
 from urllib.parse import urlencode
 
-from ..models.scannerjobs.msgraph_models import MSGraphMailScanner
-from ..models.scannerjobs.msgraph_models import MSGraphFileScanner
-from ..models.scannerjobs.msgraph_models import MSGraphCalendarScanner
+from ..models.scannerjobs.msgraph import MSGraphMailScanner
+from ..models.scannerjobs.msgraph import MSGraphFileScanner
+from ..models.scannerjobs.msgraph import MSGraphCalendarScanner
 from .views import LoginRequiredMixin
 from .scanner_views import (ScannerRun, ScannerList,
                             ScannerAskRun, ScannerCreate, ScannerDelete, ScannerUpdate, ScannerCopy)

@@ -1,7 +1,7 @@
 import sys
 from collections import defaultdict
 from django.core.management.base import BaseCommand
-from ...models.documentreport_model import DocumentReport
+from ...models.documentreport import DocumentReport
 
 
 class Command(BaseCommand):

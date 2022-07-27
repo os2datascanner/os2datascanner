@@ -1,3 +1,3 @@
-from . import role_model  # noqa
-from . import remediator_model  # noqa
-from . import defaultrole_model  # noqa
+from . import role  # noqa
+from . import remediator  # noqa
+from . import defaultrole  # noqa

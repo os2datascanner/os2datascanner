@@ -20,9 +20,9 @@ from os2datascanner.projects.admin.organizations.models import Organization
 from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDeleteView
 from ..models.sensitivity_level import Sensitivity
-from ..models.rules.rule_model import Rule
-from ..models.rules.cprrule_model import CPRRule
-from ..models.rules.regexrule_model import RegexRule, RegexPattern
+from ..models.rules.rule import Rule
+from ..models.rules.cprrule import CPRRule
+from ..models.rules.regexrule import RegexRule, RegexPattern
 
 
 class RuleList(RestrictedListView):

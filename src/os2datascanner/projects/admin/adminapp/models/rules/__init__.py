@@ -1,6 +1,6 @@
-from . import addressrule_model  # noqa
-from . import cprrule_model  # noqa
-from . import namerule_model  # noqa
-from . import regexrule_model  # noqa
-from . import rule_model  # noqa
-from . import customrule_model  # noqa
+from . import addressrule  # noqa
+from . import cprrule  # noqa
+from . import namerule  # noqa
+from . import regexrule  # noqa
+from . import rule  # noqa
+from . import customrule  # noqa

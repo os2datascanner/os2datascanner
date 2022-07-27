@@ -36,7 +36,7 @@ class Role(models.Model):
     @classmethod
     def get_user_roles_or_default(cls, user):
         # Avoiding circular import
-        from .defaultrole_model import DefaultRole
+        from .defaultrole import DefaultRole
         # TODO: User's should always have DefaultRole
         return user.roles.select_subclasses() or [
             DefaultRole(user=user)

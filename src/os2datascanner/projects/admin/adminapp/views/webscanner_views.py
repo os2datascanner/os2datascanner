@@ -21,7 +21,7 @@ from .scanner_views import (
     ScannerCopy,
     ScannerCreate,
     ScannerList)
-from ..models.scannerjobs.webscanner_model import WebScanner
+from ..models.scannerjobs.webscanner import WebScanner
 from django.utils.translation import ugettext_lazy as _
 
 

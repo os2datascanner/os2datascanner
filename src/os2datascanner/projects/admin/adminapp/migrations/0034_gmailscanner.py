@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import os2datascanner.projects.admin.adminapp.models.scannerjobs.gmail_model
+import os2datascanner.projects.admin.adminapp.models.scannerjobs.gmail
 
 
 class Migration(migrations.Migration):
@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             name='GmailScanner',
             fields=[
                 ('scanner_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner.Scanner')),
-                ('service_account_file_gmail', models.FileField(upload_to='gmail/serviceaccount/', validators=[os2datascanner.projects.admin.adminapp.models.scannerjobs.gmail_model.GmailScanner.validate_filetype_json])),
-                ('user_emails_gmail', models.FileField(upload_to='gmail/users/', validators=[os2datascanner.projects.admin.adminapp.models.scannerjobs.gmail_model.GmailScanner.validate_filetype_csv])),
+                ('service_account_file_gmail', models.FileField(upload_to='gmail/serviceaccount/', validators=[os2datascanner.projects.admin.adminapp.models.scannerjobs.gmail.GmailScanner.validate_filetype_json])),
+                ('user_emails_gmail', models.FileField(upload_to='gmail/users/', validators=[os2datascanner.projects.admin.adminapp.models.scannerjobs.gmail.GmailScanner.validate_filetype_csv])),
             ],
             bases=('os2datascanner.scanner',),
         ),

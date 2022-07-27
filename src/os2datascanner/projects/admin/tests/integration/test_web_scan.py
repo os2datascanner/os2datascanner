@@ -1,10 +1,10 @@
 import random
 from recurrence.base import Recurrence
-from os2datascanner.projects.admin.adminapp.models.rules.cprrule_model import CPRRule
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import WebScanner
+from os2datascanner.projects.admin.adminapp.models.rules.cprrule import CPRRule
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner import WebScanner
 
 from os2datascanner.projects.admin.organizations.models.organization import Organization
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner_model import ScanStatus
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import ScanStatus
 from os2datascanner.projects.admin.adminapp.management.commands.list_scannerjobs import \
         Command as list_scannerjobs
 import requests

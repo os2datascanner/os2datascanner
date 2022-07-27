@@ -25,7 +25,7 @@ from .scanner_views import (
     ScannerCreate,
     ScannerList)
 from ..serializers import OrganizationalUnitSerializer
-from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
+from ..models.scannerjobs.exchangescanner import ExchangeScanner
 from ...core.models import Feature, Client
 from ...organizations.models import OrganizationalUnit
 

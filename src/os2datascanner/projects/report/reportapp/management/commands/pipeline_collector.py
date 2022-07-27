@@ -42,7 +42,7 @@ from os2datascanner.projects.report.organizations.models import \
 from os2datascanner.utils.system_utilities import time_now
 from prometheus_client import Summary, start_http_server
 
-from ...models.documentreport_model import DocumentReport
+from ...models.documentreport import DocumentReport
 from ...utils import hash_handle, prepare_json_object
 
 logger = structlog.get_logger(__name__)

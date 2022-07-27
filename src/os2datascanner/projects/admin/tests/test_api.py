@@ -6,8 +6,8 @@ from django.utils.text import slugify
 from os2datascanner.projects.admin.core.models.client import Client
 from os2datascanner.projects.admin.organizations.models.organization import Organization
 from os2datascanner.engine2.rules.rule import Rule
-from ..adminapp.models.rules.regexrule_model import RegexRule, RegexPattern
-from ..adminapp.models.apikey_model import APIKey
+from ..adminapp.models.rules.regexrule import RegexRule, RegexPattern
+from ..adminapp.models.apikey import APIKey
 
 
 class APITest(TestCase):

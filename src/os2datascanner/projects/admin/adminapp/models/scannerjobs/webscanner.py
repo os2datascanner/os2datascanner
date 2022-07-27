@@ -22,7 +22,7 @@ from os2datascanner.engine2.model.http import WebSource
 from os2datascanner.engine2.rules.links_follow import LinksFollowRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 
-from .scanner_model import Scanner
+from .scanner import Scanner
 from ...utils import upload_path_webscan_sitemap
 
 import structlog

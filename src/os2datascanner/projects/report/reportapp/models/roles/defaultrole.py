@@ -14,8 +14,8 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 
-from ..documentreport_model import DocumentReport
-from .role_model import Role
+from ..documentreport import DocumentReport
+from .role import Role
 
 
 class DefaultRole(Role):

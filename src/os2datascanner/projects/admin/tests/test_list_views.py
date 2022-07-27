@@ -7,11 +7,11 @@ from django.test import RequestFactory, TestCase
 from django.utils.text import slugify
 
 from ..adminapp.views.webscanner_views import WebScannerList
-from ..adminapp.models.scannerjobs.webscanner_model import WebScanner
-from ..adminapp.models.rules.rule_model import Rule
+from ..adminapp.models.scannerjobs.webscanner import WebScanner
+from ..adminapp.models.rules.rule import Rule
 from ..adminapp.views.rule_views import RuleList
 from ..adminapp.views.scanner_views import StatusOverview
-from ..adminapp.models.scannerjobs.scanner_model import Scanner, ScanStatus
+from ..adminapp.models.scannerjobs.scanner import Scanner, ScanStatus
 from ..core.models import Client, Administrator
 from ..organizations.models import Organization
 from ..organizations.views import OrganizationListView

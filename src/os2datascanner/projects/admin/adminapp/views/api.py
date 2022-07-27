@@ -6,9 +6,9 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
 from os2datascanner.engine2.rules.logical import OrRule
-from ..models.rules.rule_model import Rule
-from ..models.apikey_model import APIKey
-from ..models.scannerjobs.scanner_model import Scanner
+from ..models.rules.rule import Rule
+from ..models.apikey import APIKey
+from ..models.scannerjobs.scanner import Scanner
 
 
 def get_rule_1(key, body):

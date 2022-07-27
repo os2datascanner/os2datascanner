@@ -19,7 +19,7 @@ from django.db.models import Q
 
 from os2datascanner.projects.report.organizations.models import Alias
 from os2datascanner.projects.report.organizations.models import AliasType
-from ...models.documentreport_model import DocumentReport
+from ...models.documentreport import DocumentReport
 
 
 def update_match_alias_relations():
