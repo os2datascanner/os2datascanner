@@ -60,6 +60,7 @@ label + .dropdown {
   	font-size: 1em;
   	font-family: inherit;
   	font-weight: normal;
+    cursor: pointer;
   	color: var(--color-text-main);
   	padding: .75rem 2.25rem .75rem .75rem;
   	width: 100%;
