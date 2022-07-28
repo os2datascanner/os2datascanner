@@ -20,7 +20,7 @@ from django.http import Http404
 from pika.exceptions import AMQPError
 import structlog
 
-from django.forms import ModelMultipleChoiceField
+from django.forms import ModelMultipleChoiceField, ModelChoiceField
 
 from os2datascanner.projects.admin.organizations.models import Organization
 
@@ -213,7 +213,7 @@ class ScannerBase(object):
             )
         elif user.is_superuser:
             org_qs = Organization.objects.all()
-        form.fields['organization'].queryset = org_qs
+        form.fields['organization'] = ModelChoiceField(org_qs, empty_label=None)
 
         form.fields["rules"] = ModelMultipleChoiceField(
             Rule.objects.all(),
