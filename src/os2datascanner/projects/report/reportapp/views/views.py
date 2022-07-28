@@ -101,7 +101,6 @@ class MainPageView(LoginRequiredMixin, ListView):
         roles = Role.get_user_roles_or_default(user)
         # If called from a "distribute-matches"-button, remove all
         # `only_notify_superadmin`-flags from reports.
-        print(self.request.headers)
         if self.request.headers.get(
                 "Hx-Trigger") and self.request.headers.get("Hx-Trigger") == "distribute-matches":
             DocumentReport.objects.update(only_notify_superadmin=False)

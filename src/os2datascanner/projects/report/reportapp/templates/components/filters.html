@@ -1,5 +1,6 @@
-{%  load i18n %}
+{% load i18n %}
 {% load l10n %}
+
 
 <script>
   function clear_filter(elementid){
@@ -16,9 +17,21 @@
     }
     document.getElementById("filter_form").submit();
   };
-  document.addEventListener('DOMContentLoaded', function () {
-      document.getElementById('30-days-toggle').addEventListener('click', checkedBox)
-  });
+  function setCheckEvent() {
+    document.getElementById('30-days-toggle').addEventListener('click', checkedBox)
+  }
+  function setDropdownEvent() {
+    Array.prototype.forEach.call(document.querySelectorAll('.dropdown > select'), function (dropdown) {
+      dropdown.addEventListener('change', function (e) {
+        if (e.target.hasAttribute('data-autosubmit')) {
+          var form = e.target.form;
+          if (form) {
+            form.submit();
+          }
+        }
+      });
+    });
+  }
 </script>
 
 <form method="GET" action="{% url 'index' %}" id="filter_form">  
@@ -107,4 +120,8 @@
       </div>
     </div>
   </div>
+  <script>
+    setCheckEvent();
+    setDropdownEvent();
+  </script>
 </form>
