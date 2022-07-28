@@ -146,6 +146,13 @@ h1.userprofile-text {
     fill: #fff;
     font-size: var(--size-logo-height);
   }
+
+  img {
+    width: var(--size-logo-height);
+    height: var(--size-logo-height);
+    object-fit: cover;
+    border-radius: 50%;
+  }
 }
 
 .user__avatar_big {
@@ -159,6 +166,13 @@ h1.userprofile-text {
     height: 100%;
     width: 100%;
     font-size: 3.5rem;
+  }
+
+  img {
+    width: 3.5rem;
+    height: 3.5rem;
+    object-fit: cover;
+    border-radius: 50%;
   }
 }
 

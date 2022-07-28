@@ -22,6 +22,9 @@ BASE_DIR = str(pathlib.Path(
     __file__).resolve().parent.parent.parent.parent.absolute())
 PROJECT_DIR = os.path.dirname(BASE_DIR)
 
+MEDIA_ROOT = os.path.join(BASE_DIR, "os2datascanner/projects/report")
+MEDIA_URL = "/media/"
+
 process_toml_conf_for_django(
     parent_path=PROJECT_DIR,
     module=sys.modules[__name__],
