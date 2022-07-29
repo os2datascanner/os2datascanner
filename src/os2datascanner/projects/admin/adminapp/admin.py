@@ -92,8 +92,13 @@ for _cls in [APIKey, ScheduledCheckup]:
 @admin.register(UserErrorLog)
 class UserErrorLogAdmin(admin.ModelAdmin):
     model = UserErrorLog
-    readonly_fields = ('path', 'user_friendly_error_message', 'error_message', 'scan_status')
-    fields = ('path', 'user_friendly_error_message', 'error_message', 'scan_status')
+    readonly_fields = (
+        'path',
+        'user_friendly_error_message',
+        'error_message',
+        'scan_status',
+        'organization')
+    fields = ('path', 'user_friendly_error_message', 'error_message', 'scan_status', 'organization')
 
 
 @admin.register(ScanStatus)

@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from .scannerjobs.scanner import ScanStatus
+from ...organizations.models.organization import Organization
 
 
 translation_table = {
@@ -20,7 +21,8 @@ class UserErrorLog(models.Model):
 
     scan_status = models.ForeignKey(
         ScanStatus,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name=_('scan status')
     )
     path = models.CharField(
         max_length=1024,
@@ -30,6 +32,13 @@ class UserErrorLog(models.Model):
     error_message = models.CharField(
         max_length=1024,
         verbose_name=_('Error message')
+    )
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name='usererrorlog',
+        verbose_name=_('organization'),
+        null=True
     )
 
     @property

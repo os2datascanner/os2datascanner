@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-22 16:36+0200\n"
+"POT-Creation-Date: 2022-08-01 15:37+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: adminapp/models/apikey.py:16 adminapp/models/rules/rule.py:47
-#: adminapp/models/scannerjobs/scanner.py:77
+#: adminapp/models/scannerjobs/scanner.py:77 adminapp/models/usererrorlog.py:40
 #: import_services/models/msgraph_import_job.py:32
 #: import_services/models/realm.py:29
 msgid "organization"
@@ -122,6 +122,7 @@ msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
 #: adminapp/models/scannerjobs/scanner.py:551
+#: adminapp/models/usererrorlog.py:25
 msgid "scan status"
 msgstr "scanstatus"
 
@@ -189,12 +190,12 @@ msgstr "Advarsel"
 msgid "Notification"
 msgstr "Notifikation"
 
-#: adminapp/models/usererrorlog.py:9
+#: adminapp/models/usererrorlog.py:10
 msgid ""
 "Folder at the path is using outdated encoding. Please rename the folder."
 msgstr "Mappe på stien indeholder forældet indkodning. Omdøb venligst mappen."
 
-#: adminapp/models/usererrorlog.py:12
+#: adminapp/models/usererrorlog.py:13
 msgid ""
 "An object was skipped either because it could not be opened or it was taking "
 "too long to scan."
@@ -202,12 +203,12 @@ msgstr ""
 "Et objekt blev sprunget over enten fordi det ikke kunne åbnes eller at det "
 "tog for lang tid at skanne."
 
-#: adminapp/models/usererrorlog.py:27
+#: adminapp/models/usererrorlog.py:29
 #: adminapp/templates/os2datascanner/error_log.html:39
 msgid "Path"
 msgstr "Sti"
 
-#: adminapp/models/usererrorlog.py:32
+#: adminapp/models/usererrorlog.py:34
 msgid "Error message"
 msgstr "Fejlbesked"
 
