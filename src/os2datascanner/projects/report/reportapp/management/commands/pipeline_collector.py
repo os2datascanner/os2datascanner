@@ -492,6 +492,12 @@ def handle_event(event_type, instance, cls, cls_serializer):  # noqa: CCR001, C9
                            f" {event_type} for {cn} {existing}")
 
     except cls.DoesNotExist:
+        if event_type == "object_delete":
+            # Take no action if we're being asked to delete an object that
+            # already doesn't exist
+            logger.debug(f"handle_event: not creating deleted {cn}")
+            return
+
         # The object didn't exist -- save it. Note that we might also end up
         # here with an update event if the initial create event didn't get
         # propagated over to the report module
