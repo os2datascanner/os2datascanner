@@ -73,7 +73,9 @@ Lint Python:
   image: python:3.9
   stage: lint
   script:
-    - pip install pyproject-flake8 flake8-bugbear flake8-cognitive-complexity flake8-expression-complexity --quiet
+    # Flake8 5.0.0 introduced a bug: module 'flake8.options.config' has no attribute 'ConfigFileFinder'
+    # pinning to flake8 version 4.0.1, until a fix by either flake8 or pflake8 is released.
+    - pip install flake8==4.0.1 pyproject-flake8 flake8-bugbear flake8-cognitive-complexity flake8-expression-complexity --quiet
     - pflake8 src
 
 Lint js scripts:
@@ -95,11 +97,7 @@ Lint js scripts:
 
 .build-default: &build-default
   stage: build
-  needs:
-    - Lint Dockerfiles
-    - Lint shell scripts
-    - Lint Python
-    - Lint js scripts
+  needs: []
   services: []
   image:
     name: gcr.io/kaniko-project/executor:v1.6.0-debug

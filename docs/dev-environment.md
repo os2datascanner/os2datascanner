@@ -432,7 +432,7 @@ https://betterembsw.blogspot.com/2014/06/avoid-high-cyclomatic-complexity.html
 
 
 Expressive complexcity: a way to measure how complex individual statements are. Ideally they 
-should not have a a value higher than 7.
+should not have a value higher than 7.
 
 Linting can be checked locally by installing:
 `pip install pyproject-flake8 flake8-bugbear flake8-cognitive-complexity flake8-expression-complexity`
