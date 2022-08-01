@@ -36,6 +36,8 @@ class DocumentReport(models.Model):
     created_timestamp = models.DateTimeField(null=True,
                                              verbose_name=_('created timestamp'))
 
+    last_opened_time = models.DateTimeField(null=True, verbose_name=_('time last opened'))
+
     organization = models.ForeignKey(Organization,
                                      null=True, blank=True,
                                      verbose_name=_('organization'),
@@ -120,6 +122,10 @@ class DocumentReport(models.Model):
 
         presentation = str(type_msg.handle) if type_msg.handle else ""
         return presentation
+
+    def update_opened(self):
+        self.last_opened_time = time_now()
+        self.save()
 
     @enum.unique
     class ResolutionChoices(enum.Enum):

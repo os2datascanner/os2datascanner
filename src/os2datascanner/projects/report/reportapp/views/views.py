@@ -102,8 +102,14 @@ class MainPageView(LoginRequiredMixin, ListView):
         # If called from a "distribute-matches"-button, remove all
         # `only_notify_superadmin`-flags from reports.
         if self.request.headers.get(
-                "Hx-Trigger") and self.request.headers.get("Hx-Trigger") == "distribute-matches":
+                    "Hx-Trigger-Name") and self.request.headers.get("Hx-Trigger-Name") \
+                == "distribute-matches":
             DocumentReport.objects.update(only_notify_superadmin=False)
+        # If called from a "open-button"-htmx link, update the last_opened_time value.
+        if self.request.headers.get(
+                    "Hx-Trigger-Name") and self.request.headers.get("Hx-Trigger-Name") \
+                == "open-button":
+            DocumentReport.objects.get(pk=self.request.GET.get('pk')).update_opened()
 
         # Handles filtering by role + org and sets datasource_last_modified if non existing
         self.user_reports = filter_inapplicable_matches(user, self.document_reports, roles)
@@ -173,7 +179,7 @@ class MainPageView(LoginRequiredMixin, ListView):
         )
 
         context['sensitivities'] = (((Sensitivity(s["sensitivity"]),
-                                      s["total"]) for s in sensitivities),
+                                    s["total"]) for s in sensitivities),
                                     self.request.GET.get('sensitivities', 'all'))
 
         context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
@@ -237,11 +243,10 @@ class MainPageView(LoginRequiredMixin, ListView):
     def get_template_names(self):
         is_htmx = self.request.headers.get('HX-Request') == "true"
         htmx_trigger = self.request.headers.get('HX-Trigger-Name')
-
         if is_htmx:
-            if htmx_trigger == "handle-match":
+            if htmx_trigger in ['open-button', 'handle-match']:
                 return 'content.html'
-            elif htmx_trigger == "show-more-matches":
+            elif htmx_trigger in ['show-more-matches']:
                 return 'components/matches_table.html'
         else:
             return 'index.html'
