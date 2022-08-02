@@ -73,7 +73,7 @@
                                 </td>
                                 <td class="datatable__column--actions">
                                     <div class="action-wrapper">
-                                        <form action="/status/{{status.pk}}/delete/" method="post" class="status-delete">
+                                        <form action="/status/{{status.pk|unlocalize}}/delete/" method="post" class="status-delete">
                                             {% csrf_token %}
                                             {% trans "Do you really want to delete the status object for scanner '%(scanner_name)s'?" as r_u_sure %}
                                             <button
