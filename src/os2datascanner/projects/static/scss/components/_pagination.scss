@@ -24,7 +24,7 @@
     margin-top: calc(var(--datatable-cell-padding) / 2) !important; // in order to not have margin-top: 0; from .flex class below
     margin: calc(var(--datatable-cell-padding) / 2);
   }
-  
+
   .flex {
     display: flex;
     flex-flow: row wrap;
@@ -69,7 +69,8 @@
   }
 
   .disabled {
-    color: var(--color-text-secondary);
+    color: var(--color-text-secondary) !important;
+    cursor: default;
   }
 
   .page {
@@ -100,7 +101,7 @@
       &:focus {
         color: var(--color-text-main);
         text-decoration: none;
-        background-color:rgba(0,0,0,.2)
+        background-color: rgba(0, 0, 0, .2)
       }
     }
   }
@@ -108,6 +109,7 @@
   .page,
   .page--dot {
     display: none;
+
     @media (min-width: $break-sm) {
       display: inline;
     }
