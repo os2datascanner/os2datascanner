@@ -375,6 +375,17 @@
   position: sticky;
 }
 
+.datatable .stuck th {
+
+  &:first-child {
+    border-top-left-radius: 0;
+  }
+
+  &:last-child {
+    border-top-right-radius: 0;
+  }
+}
+
 .datatable td {
   border-top: 1px solid rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s ease-in-out;
