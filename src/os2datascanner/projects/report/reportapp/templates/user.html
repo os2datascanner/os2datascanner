@@ -1,0 +1,16 @@
+{%  load i18n %}
+{% include "partials/header.html" %}
+{% include "components/banner.html" %}
+
+    <main class="wrapper">
+      {% include "partials/sidemenu.html" with active_tab="home" %}
+
+      <div class="content">
+        {% include "user_content.html" %}
+      </div>
+
+    </main>
+
+    {% include "partials/scripts.html" %}
+</body>
+</html>

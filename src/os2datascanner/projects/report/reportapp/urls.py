@@ -12,10 +12,12 @@ from .views.views import (
     MainPageView, LeaderStatisticsPageView,
     DPOStatisticsPageView, ApprovalPageView,
     StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
+from .views.user_views import UserView
 
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),
     url('api$',     JSONAPIView.as_view(),     name="json-api"),
+    url(r'^user/', UserView.as_view(), name="user"),
     url(r'^statistics/leader/$', LeaderStatisticsPageView.as_view(), name='statistics'),
     url(r'^statistics/dpo/$', DPOStatisticsPageView.as_view(), name='statistics'),
     url('approval', ApprovalPageView.as_view(), name="about"),

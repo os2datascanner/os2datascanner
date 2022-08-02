@@ -14,6 +14,7 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
 
+from django.utils.translation import ugettext_lazy as _
 from ..documentreport import DocumentReport
 from .role import Role
 
@@ -35,3 +36,6 @@ class DefaultRole(Role):
             # Merges django querysets together
             results = results | result
         return results
+
+    class Meta:
+        verbose_name = _("default role")
