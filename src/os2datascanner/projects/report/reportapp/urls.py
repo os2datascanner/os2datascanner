@@ -16,6 +16,7 @@ from .views.user_views import UserView
 
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),
+    url(r'^content', MainPageView.as_view(), name="content"),
     url('api$',     JSONAPIView.as_view(),     name="json-api"),
     url(r'^user/', UserView.as_view(), name="user"),
     url(r'^statistics/leader/$', LeaderStatisticsPageView.as_view(), name='statistics'),

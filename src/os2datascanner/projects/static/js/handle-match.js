@@ -76,6 +76,11 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector(".matches-expand-all").click();
   }
 
+  // Uncheck checkboxes on load.
+  $("input[name='match-checkbox']").prop("checked", false);
+  $("#select-all").prop("checked", false);
+  $(".handle-match__action").prop("disabled", true);
+
   // if user prefers to see probability, do that.
   var prefersProbability = window.localStorage.getItem("os2ds-prefers-probability");
   if (prefersProbability && prefersProbability === "show") {
@@ -280,11 +285,6 @@ htmx.onLoad(function (content) {
     if (typeof ClipboardJS !== 'undefined') {
       new ClipboardJS(document.querySelectorAll('[data-clipboard-text]'));
     }
-
-    // // Uncheck checkboxes on load.
-    // $("input[name='match-checkbox']").prop("checked", false);
-    // $("#select-all").prop("checked", false);
-    // $(".handle-match__action").prop("disabled", true);
 
   }
 
