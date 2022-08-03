@@ -21,7 +21,7 @@ from django.shortcuts import get_object_or_404
 from os2datascanner.projects.admin.core.models.background_job import JobState
 from os2datascanner.projects.admin.import_services.models import (LDAPConfig,
                                                                   Realm,
-                                                                  ImportJob,
+                                                                  LDAPImportJob,
                                                                   MSGraphImportJob)
 from .models.msgraph_configuration import MSGraphConfiguration
 
@@ -41,7 +41,7 @@ def start_ldap_import(ldap_conf: LDAPConfig):
             or latest_importjob.exec_state == JobState.FINISHED \
             or latest_importjob.exec_state == JobState.FAILED \
             or latest_importjob.exec_state == JobState.CANCELLED:
-        ImportJob.objects.create(
+        LDAPImportJob.objects.create(
             realm=realm
         )
         logger.info(f"Import job created for LDAPConfig {ldap_conf.pk}")

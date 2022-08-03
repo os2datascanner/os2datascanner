@@ -6,7 +6,7 @@ from ...core.models.background_job import BackgroundJob
 from .realm import Realm
 
 
-class ImportJob(BackgroundJob):
+class LDAPImportJob(BackgroundJob):
     realm = models.ForeignKey(
         Realm,
         on_delete=models.CASCADE,
