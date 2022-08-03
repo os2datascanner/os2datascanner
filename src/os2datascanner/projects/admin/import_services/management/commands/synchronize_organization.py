@@ -14,20 +14,32 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+import logging
 from django.core.management import BaseCommand
 
+from os2datascanner.projects.admin.import_services.models import ImportService
 from os2datascanner.projects.admin.import_services.models import LDAPConfig
-from os2datascanner.projects.admin.import_services.utils import start_ldap_import
+from os2datascanner.projects.admin.import_services.models import MSGraphConfiguration
+from os2datascanner.projects.admin.import_services.utils import start_ldap_import, \
+    start_msgraph_import
 
 """
     This command should be run by a cron job at the desired time
-    LDAP synchronizations should take place.
+    organizational synchronizations should take place.
 """
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = "Run LDAP synchronization for all LDAP configurations configured"
+
+    help = "Run organization synchronization for current configured type(s):"
 
     def handle(self, *args, **kwargs):
-        for ldapConf in LDAPConfig.objects.all():
-            start_ldap_import(ldapConf)
+        for conf in ImportService.objects.select_subclasses().all():
+            if isinstance(conf, LDAPConfig):
+                start_ldap_import(conf)
+            elif isinstance(conf, MSGraphConfiguration):
+                start_msgraph_import(conf)
+            else:
+                logger.warning(f"ignoring unknown import service {type(conf).__name__}")
