@@ -14,6 +14,7 @@
 import json
 import base64
 from django.conf import settings
+from django.forms import ModelChoiceField
 from django.views import View
 from django.views.generic.base import TemplateView
 from urllib.parse import urlencode
@@ -24,8 +25,9 @@ from ..models.scannerjobs.msgraph import MSGraphMailScanner
 from ..models.scannerjobs.msgraph import MSGraphFileScanner
 from ..models.scannerjobs.msgraph import MSGraphCalendarScanner
 from .views import LoginRequiredMixin
-from .scanner_views import (ScannerRun, ScannerList,
-                            ScannerAskRun, ScannerCreate, ScannerDelete, ScannerUpdate, ScannerCopy)
+from .scanner_views import (
+        ScannerRun, ScannerList, ScannerAskRun, ScannerCreate, ScannerDelete,
+        ScannerUpdate, ScannerCopy)
 
 
 def make_consent_url(state):
@@ -61,11 +63,21 @@ class MSGraphMailCreate(View):
         if GraphGrant.objects.filter(user.make_org_Q()).exists():
             handler = _MSGraphMailCreate.as_view()
         else:
-            handler = _MSGraphMailPermissionRequest.as_view()
+            handler = _MSGraphPermissionRequest.as_view(
+                    redirect_token="msgraphmailscanner_add")
         return handler(request, *args, **kwargs)
 
 
-class _MSGraphMailPermissionRequest(LoginRequiredMixin, TemplateView):
+def patch_form(view, form):
+    user = UserWrapper(view.request.user)
+
+    grant_qs = GraphGrant.objects.filter(user.make_org_Q())
+    form.fields['grant'] = ModelChoiceField(grant_qs, empty_label=None)
+
+    return form
+
+
+class _MSGraphPermissionRequest(LoginRequiredMixin, TemplateView):
     """Sends the user to the Microsoft Online login system in order to permit
     OS2datascanner to access organisational mail accounts through the Graph
     API.
@@ -73,14 +85,16 @@ class _MSGraphMailPermissionRequest(LoginRequiredMixin, TemplateView):
     Note that only Microsoft accounts with organisational administrator
     privileges can grant applications the right to access Graph resources
     without having to go through a specific user account."""
-    template_name = "os2datascanner/scanner_oauth_start.html"
+    template_name = "grants/grant_start.html"
+
+    redirect_token = None
 
     def get_context_data(self, **kwargs):
         return dict(**super().get_context_data(**kwargs), **{
             "service_name": "Microsoft Online",
             "auth_endpoint": make_consent_url(
                     state={
-                        "red": "msgraphmailscanner_add",
+                        "red": self.redirect_token,
                         "org": str(UserWrapper(self.request.user).get_org().pk)
                     }),
             "error": self.request.GET.get("error"),
@@ -96,6 +110,9 @@ class _MSGraphMailCreate(ScannerCreate):
               'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
+    def get_form(self, form_class=None):
+        return patch_form(self, super().get_form(form_class))
+
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
         return '/msgraph-mailscanners/%s/created/' % self.object.pk
@@ -109,6 +126,9 @@ class MSGraphMailUpdate(ScannerUpdate):
     fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
+
+    def get_form(self, form_class=None):
+        return patch_form(self, super().get_form(form_class))
 
     def get_success_url(self):
         return '/msgraph-mailscanners/%s/saved/' % self.object.pk
@@ -153,27 +173,13 @@ class MSGraphFileCreate(View):
     for more details.)"""
 
     def dispatch(self, request, *args, **kwargs):
-        if 'tenant' in request.GET:
+        user = UserWrapper(request.user)
+        if GraphGrant.objects.filter(user.make_org_Q()).exists():
             handler = _MSGraphFileCreate.as_view()
         else:
-            handler = _MSGraphFilePermissionRequest.as_view()
+            handler = _MSGraphPermissionRequest.as_view(
+                    redirect_token="msgraphfilescanner_add")
         return handler(request, *args, **kwargs)
-
-
-class _MSGraphFilePermissionRequest(TemplateView, LoginRequiredMixin):
-    """Sends the user to the Microsoft Online login system in order to permit
-    OS2datascanner to access organisational OneDrive and SharePoint drives
-    through the Graph API. (See _MSGraphMailPermissionRequest for more
-    details.)"""
-    template_name = "os2datascanner/scanner_oauth_start.html"
-
-    def get_context_data(self, **kwargs):
-        return dict(**super().get_context_data(**kwargs), **{
-            "service_name": "Microsoft Online",
-            "auth_endpoint": make_consent_url(state="msgraphfilescanner_add"),
-            "error": self.request.GET.get("error"),
-            "error_description": self.request.GET.get("error_description")
-        })
 
 
 class _MSGraphFileCreate(ScannerCreate):
@@ -184,6 +190,9 @@ class _MSGraphFileCreate(ScannerCreate):
               'org_unit', 'exclusion_rules', 'only_notify_superadmin',
               'scan_site_drives', 'scan_user_drives', 'do_ocr',
               'do_last_modified_check', 'rules', 'organization', ]
+
+    def get_form(self, form_class=None):
+        return patch_form(self, super().get_form(form_class))
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -199,6 +208,9 @@ class MSGraphFileUpdate(ScannerUpdate):
               'scan_site_drives', 'scan_user_drives',
               'do_ocr', 'only_notify_superadmin', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
+
+    def get_form(self, form_class=None):
+        return patch_form(self, super().get_form(form_class))
 
     def get_success_url(self):
         return '/msgraph-filescanners/%s/saved/' % self.object.pk
@@ -244,25 +256,13 @@ class MSGraphCalendarCreate(View):
     type = 'msgraph-calendar'
 
     def dispatch(self, request, *args, **kwargs):
-        if 'tenant' in request.GET:
+        user = UserWrapper(request.user)
+        if GraphGrant.objects.filter(user.make_org_Q()).exists():
             handler = _MSGraphCalendarCreate.as_view()
         else:
-            handler = _MSGraphCalendarPermissionRequest.as_view()
+            handler = _MSGraphPermissionRequest.as_view(
+                    redirect_token="msgraphcalendarscanner_add")
         return handler(request, *args, **kwargs)
-
-
-class _MSGraphCalendarPermissionRequest(LoginRequiredMixin, TemplateView):
-    """"""
-    template_name = "os2datascanner/scanner_oauth_start.html"
-
-    def get_context_data(self, **kwargs):
-        return dict(**super().get_context_data(**kwargs), **{
-            "service_name": "Microsoft Online",
-            "auth_endpoint": make_consent_url(
-                    state="msgraphcalendarscanner_add"),
-            "error": self.request.GET.get("error"),
-            "error_description": self.request.GET.get("error_description")
-        })
 
 
 class _MSGraphCalendarCreate(ScannerCreate):
@@ -272,6 +272,9 @@ class _MSGraphCalendarCreate(ScannerCreate):
     fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
+
+    def get_form(self, form_class=None):
+        return patch_form(self, super().get_form(form_class))
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -286,6 +289,9 @@ class MSGraphCalendarUpdate(ScannerUpdate):
     fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
+
+    def get_form(self, form_class=None):
+        return patch_form(self, super().get_form(form_class))
 
     def get_success_url(self):
         return '/msgraph-calendarscanners/%s/saved/' % self.object.pk
