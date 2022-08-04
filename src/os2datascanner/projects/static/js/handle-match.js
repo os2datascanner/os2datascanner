@@ -2,9 +2,8 @@
 const stickyElm = document.querySelector('.handle-matches');
 
 const observer = new IntersectionObserver(
-  ([e]) => e.target.classList.toggle('stuck', e.intersectionRatio < 0.0001),
-  //([e]) => console.log(e.intersectionRatio),
-  { rootMargin: '-1px 0px 0px 0px', treshold: [1] }
+  ([e]) => e.target.classList.toggle('stuck', e.intersectionRatio < 1),
+  { rootMargin: '-1px 0px 0px 0px', threshold: [1] }
 );
 
 observer.observe(stickyElm);
