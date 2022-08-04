@@ -104,7 +104,7 @@ def find_file_folder(handle, force=False):
 
 
 @register.filter
-def upto(lst, interval):
+def between(lst, interval):
     if interval is None:
         interval = (0, 10)
     return lst[interval[0]:interval[1]]

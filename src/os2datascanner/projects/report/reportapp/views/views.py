@@ -236,10 +236,13 @@ class MainPageView(LoginRequiredMixin, ListView):
 
     def get_template_names(self):
         is_htmx = self.request.headers.get('HX-Request') == "true"
-        if is_htmx and self.request.headers.get('HX-Trigger-Name') == "handle-match":
-            return 'content.html'
-        elif is_htmx and self.request.headers.get('HX-Trigger-Name') == 'show-more-matches':
-            return 'components/matches_table.html'
+        htmx_trigger = self.request.headers.get('HX-Trigger-Name')
+
+        if is_htmx:
+            if htmx_trigger == "handle-match":
+                return 'content.html'
+            elif htmx_trigger == "show-more-matches":
+                return 'components/matches_table.html'
         else:
             return 'index.html'
 

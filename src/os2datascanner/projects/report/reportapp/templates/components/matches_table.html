@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load l10n %}
 
-    {% with frag.matches|upto:interval as matches %}
+    {% with frag.matches|between:interval as matches %}
       {% for match in matches %}
         <tr>
           <td>{{ match.match }}</td>
@@ -14,9 +14,7 @@
       {% endfor %}
     {% endwith %}
 
-{% if interval and interval|last >= frag.matches|length or frag.matches|length <= 10 %}
-
-{% else %}
+{% if not interval and frag.matches|length > 10 or interval|last < frag.matches|length %}
 <tr id="replaceRow__{{ pk }}">
     <td colspan="2">
             <button class="button" title="{% trans 'Show more matches...' %}" type="button" name='show-more-matches'
