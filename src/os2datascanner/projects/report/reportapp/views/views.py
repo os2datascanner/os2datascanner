@@ -182,6 +182,27 @@ class MainPageView(LoginRequiredMixin, ListView):
         context['order_by'] = self.request.GET.get('order_by', 'sort_key')
         context['order'] = self.request.GET.get('order', 'ascending')
 
+        # Serve the match fragment of the document report, that the user requested
+        # more matches from. This could probably use a refactor.
+        if self.request.headers.get(
+                    'HX-Request') == "true" and \
+                self.request.headers.get('HX-Trigger-Name') == 'show-more-matches':
+
+            # Increase number of shown matches
+            last_index = int(self.request.GET.get('last_match') or 10)
+            interval = [last_index, last_index + 10]
+            context['interval'] = interval
+
+            # Serve the fragments associated with the document report
+            frags = self.document_reports.get(
+                pk=self.request.GET.get('dr_pk')).matches.matches
+            for frag in frags:
+                if frag.rule.type_label in RENDERABLE_RULES:
+                    context['frag'] = frag
+
+            # Serve the document report key
+            context['pk'] = self.request.GET.get('dr_pk')
+
         return context
 
     def get_paginate_by(self, queryset):
@@ -215,8 +236,15 @@ class MainPageView(LoginRequiredMixin, ListView):
 
     def get_template_names(self):
         is_htmx = self.request.headers.get('HX-Request') == "true"
-        return 'content.html' if is_htmx \
-            else 'index.html'
+        htmx_trigger = self.request.headers.get('HX-Trigger-Name')
+
+        if is_htmx:
+            if htmx_trigger == "handle-match":
+                return 'content.html'
+            elif htmx_trigger == "show-more-matches":
+                return 'components/matches_table.html'
+        else:
+            return 'index.html'
 
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):

@@ -1,0 +1,30 @@
+{% load handle_extras %}
+{% load i18n %}
+{% load l10n %}
+
+    {% with frag.matches|between:interval as matches %}
+      {% for match in matches %}
+        <tr>
+          <td>{{ match.match }}</td>
+          {% if match.context %}
+          <td class="match-context">{{ match.context }}</td>
+          {% endif %}
+          <td class="text-align-right matches-list__column--probability" hidden>{% include "components/probability.html"%}</td>
+        </tr>
+      {% endfor %}
+    {% endwith %}
+
+{% if not interval and frag.matches|length > 10 or interval|last < frag.matches|length %}
+<tr id="replaceRow__{{ pk }}">
+    <td colspan="2">
+            <button class="button" title="{% trans 'Show more matches...' %}" type="button" name='show-more-matches'
+            hx-get="" 
+            {% if interval %} hx-vals='{"last_match": "{{ interval|last }}", "dr_pk": "{{ pk }}"}' {% else %} 
+            hx-vals='{"dr_pk": "{{ pk }}"}' {% endif %} 
+            hx-target="#replaceRow__{{ pk }}" hx-swap="outerHTML" hx-trigger="click">
+                {% trans "Show more matches..." %}
+            </button>
+        
+    </td>
+</tr>
+{% endif %}
