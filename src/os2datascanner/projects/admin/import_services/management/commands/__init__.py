@@ -1,1 +1,1 @@
-from . import synchronize_ldap  # noqa
+from . import synchronize_organization  # noqa
