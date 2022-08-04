@@ -1,3 +1,13 @@
+// Remove rounds corners of table when stuck on top of screen.
+const stickyElm = document.querySelector('.handle-matches');
+
+const observer = new IntersectionObserver(
+  ([e]) => e.target.classList.toggle('stuck', e.intersectionRatio < 1),
+  { rootMargin: '-1px 0px 0px 0px', threshold: [1] }
+);
+
+observer.observe(stickyElm);
+
 // Handle checkboxes
 function handleChecked() {
   var numChecked = $("input[name='match-checkbox']:checked").length;
