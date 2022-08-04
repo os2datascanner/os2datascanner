@@ -42,6 +42,9 @@ class UserProfile(models.Model):
 @receiver(post_save, sender=UserProfile)
 def resize_image(sender, **kwargs):
     size = (300, 300)
-    with Image.open(kwargs["instance"].image.path) as image:
-        image.thumbnail(size, Image.ANTIALIAS)
-        image.save(kwargs["instance"].image.path, optimize=True)
+    try:
+        with Image.open(kwargs["instance"]._image.path) as image:
+            image.thumbnail(size, Image.ANTIALIAS)
+            image.save(kwargs["instance"]._image.path, optimize=True)
+    except ValueError as e:
+        print(e)

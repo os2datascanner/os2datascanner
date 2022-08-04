@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner_report', '0054_documentreport_last_opened_time'),
+        ('os2datascanner_report', '0053_documentreport_only_notify_superadmin'),
     ]
 
     operations = [
