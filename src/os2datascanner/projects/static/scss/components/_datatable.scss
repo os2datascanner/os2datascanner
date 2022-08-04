@@ -90,6 +90,10 @@
   table-layout: fixed;
   width: 100%;
 
+  .last-opened {
+    opacity: .6;
+  }
+
   &.disabled {
     pointer-events: none;
     opacity: .6;

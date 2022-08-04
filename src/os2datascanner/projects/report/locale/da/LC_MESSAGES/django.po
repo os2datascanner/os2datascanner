@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-01 08:43+0200\n"
+"POT-Creation-Date: 2022-08-04 10:45+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -49,51 +49,55 @@ msgstr "scanningstid"
 msgid "created timestamp"
 msgstr "oprettet tidsstempel"
 
-#: reportapp/models/documentreport.py:41
+#: reportapp/models/documentreport.py:39
+msgid "time last opened"
+msgstr "tidspunkt åbnet"
+
+#: reportapp/models/documentreport.py:43
 msgid "organization"
 msgstr "organisation"
 
-#: reportapp/models/documentreport.py:44
+#: reportapp/models/documentreport.py:46
 msgid "path"
 msgstr "sti"
 
-#: reportapp/models/documentreport.py:54
+#: reportapp/models/documentreport.py:56
 msgid "sort key"
 msgstr "sortér efter"
 
-#: reportapp/models/documentreport.py:59
+#: reportapp/models/documentreport.py:61
 msgid "name"
 msgstr "navn"
 
-#: reportapp/models/documentreport.py:62
+#: reportapp/models/documentreport.py:64
 msgid "source type"
 msgstr "kildetype"
 
-#: reportapp/models/documentreport.py:64
+#: reportapp/models/documentreport.py:66
 msgid "sensitivity"
 msgstr "følsomhed"
 
-#: reportapp/models/documentreport.py:66
+#: reportapp/models/documentreport.py:68
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport.py:154
+#: reportapp/models/documentreport.py:160
 msgid "number of matches"
 msgstr "antal matches"
 
-#: reportapp/models/documentreport.py:158
+#: reportapp/models/documentreport.py:164
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport.py:161
+#: reportapp/models/documentreport.py:167
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport.py:164
+#: reportapp/models/documentreport.py:170
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport.py:219
+#: reportapp/models/documentreport.py:225
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -212,7 +216,7 @@ msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
 #: reportapp/templates/components/handle-match.html:8
-#: reportapp/templates/components/hit.html:69
+#: reportapp/templates/components/hit.html:79
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned.\n"
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -221,12 +225,12 @@ msgstr ""
 "Resultatet markeres udelukkende som håndteret i OS2datascanner."
 
 #: reportapp/templates/components/handle-match.html:10
-#: reportapp/templates/components/hit.html:71
+#: reportapp/templates/components/hit.html:81
 msgid "Working"
 msgstr "Arbejder"
 
 #: reportapp/templates/components/handle-match.html:11
-#: reportapp/templates/components/hit.html:72
+#: reportapp/templates/components/hit.html:82
 msgid "Handled"
 msgstr "Håndteret"
 
@@ -249,40 +253,44 @@ msgstr "af"
 msgid "selected"
 msgstr "valgt"
 
-#: reportapp/templates/components/hit.html:12
+#: reportapp/templates/components/hit.html:14
 msgid "Select result"
 msgstr "Vælg resultat"
 
-#: reportapp/templates/components/hit.html:27
+#: reportapp/templates/components/hit.html:30
 msgid "Open"
 msgstr "Åbn"
 
-#: reportapp/templates/components/hit.html:32
+#: reportapp/templates/components/hit.html:35
 msgid "Copy"
 msgstr "Kopiér"
 
-#: reportapp/templates/components/hit.html:36
+#: reportapp/templates/components/hit.html:39
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:73
+#: reportapp/templates/components/hit.html:47
+msgid "Opened"
+msgstr "Åbnet: "
+
 #: reportapp/templates/components/hit.html:83
+#: reportapp/templates/components/hit.html:93
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:84
+#: reportapp/templates/components/hit.html:94
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:97
+#: reportapp/templates/components/hit.html:107
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:98
+#: reportapp/templates/components/hit.html:108
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:99
+#: reportapp/templates/components/hit.html:109
 msgid "Probability"
 msgstr "Sandsynlighed"
 
@@ -304,7 +312,7 @@ msgid "Select all results"
 msgstr "Vælg alle resultater"
 
 #: reportapp/templates/components/hits.html:34
-#: reportapp/templates/user_content.html:9
+#: reportapp/templates/user_content.html:10
 msgid "Name"
 msgstr "Navn"
 
@@ -328,7 +336,8 @@ msgstr "Handlinger"
 msgid "per page"
 msgstr "pr. side"
 
-#: reportapp/templates/components/matches_table.html:22
+#: reportapp/templates/components/matches_table.html:20
+#: reportapp/templates/components/matches_table.html:25
 msgid "Show more matches..."
 msgstr "Vis flere matches..."
 
@@ -509,7 +518,7 @@ msgstr "Log ind på"
 msgid "report module"
 msgstr "rapportmodulet"
 
-#: reportapp/templates/login.html:14 reportapp/templates/user_content.html:13
+#: reportapp/templates/login.html:14 reportapp/templates/user_content.html:14
 msgid "Username"
 msgstr "Brugernavn"
 
@@ -625,7 +634,7 @@ msgstr ""
 #: reportapp/templates/password_change.html:6
 #: reportapp/templates/password_change.html:16
 #: reportapp/templates/password_change.html:43
-#: reportapp/templates/user_content.html:75
+#: reportapp/templates/user_content.html:78
 msgid "Change password"
 msgstr "Skift adgangskode"
 
@@ -638,39 +647,39 @@ msgstr "Skift adgangskode lykkedes"
 msgid "Your password was changed."
 msgstr "Din adgangskode blev ændret."
 
-#: reportapp/templates/user_content.html:3
+#: reportapp/templates/user_content.html:4
 msgid "User information for "
 msgstr "Brugerinformation for "
 
-#: reportapp/templates/user_content.html:17
+#: reportapp/templates/user_content.html:18
 msgid "Email"
 msgstr "E-mail"
 
-#: reportapp/templates/user_content.html:21
+#: reportapp/templates/user_content.html:22
 msgid "Organization"
 msgstr "Organisation"
 
-#: reportapp/templates/user_content.html:25
+#: reportapp/templates/user_content.html:26
 msgid "User since"
 msgstr "Bruger siden"
 
-#: reportapp/templates/user_content.html:30
+#: reportapp/templates/user_content.html:31
 msgid "Roles"
 msgstr "Roller"
 
-#: reportapp/templates/user_content.html:39
+#: reportapp/templates/user_content.html:40
 msgid "Active"
 msgstr "Aktiv"
 
-#: reportapp/templates/user_content.html:46
+#: reportapp/templates/user_content.html:47
 msgid "Staff"
 msgstr "Adgangsbevilget"
 
-#: reportapp/templates/user_content.html:53
+#: reportapp/templates/user_content.html:54
 msgid "Superuser"
 msgstr "Superbruger"
 
-#: reportapp/templates/user_content.html:61
+#: reportapp/templates/user_content.html:62
 msgid "Aliases"
 msgstr "Aliasser"
 
@@ -678,23 +687,23 @@ msgstr "Aliasser"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:337
+#: reportapp/views/views.py:352
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:338
+#: reportapp/views/views.py:353
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:339
+#: reportapp/views/views.py:354
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:340
+#: reportapp/views/views.py:355
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:491
+#: reportapp/views/views.py:506
 msgid "Not assigned"
 msgstr "Ikke tildelt"
 

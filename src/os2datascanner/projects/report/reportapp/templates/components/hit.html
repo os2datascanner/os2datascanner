@@ -1,6 +1,8 @@
 {% load handle_extras %}
 {% load i18n %}
 {% load l10n %}
+{% load humanize %}
+
 {% with type=document_report.matches.handle|find_type_label %}
   {% for frag in document_report.matches.matches %}
     {% if frag.rule.type_label in renderable_rules and frag.matches %}
@@ -21,23 +23,31 @@
             </div>
           </div>
           <div class="hit-link">
-            <div class="button-group">
+            <div class="button-group" name='open-button'
+            hx-vals='{"pk": "{{ document_report.pk|unlocalize }}"}' hx-get="" hx-swap="innerHTML" hx-target=".content" hx-trigger="click target:.btn-{{ document_report.pk|unlocalize }}">
               {% if document_report.matches.handle|present_url %}
-                <a href="{{ document_report.matches.handle|present_url }}" class="button" target="_blank" rel="noopener">
+                <a href="{{ document_report.matches.handle|present_url }}" class="button btn-{{ document_report.pk|unlocalize }}" target="_blank" rel="noopener">
                   {% trans "Open" %}
                 </a>
               {% endif %}
               {% if type != 'ews' and type != 'msgraph-mail-account' %}
-                <button class="button" data-clipboard-text="{{ document_report.matches.handle|find_parent:type|present }}">
+                <button class="button btn-{{ document_report.pk|unlocalize }}" data-clipboard-text="{{ document_report.matches.handle|find_parent:type|present }}">
                   {% trans "Copy" %}
                 </button>
                 {% if document_report.matches.handle|find_parent:type|find_file_folder %}
-                  <a href="{{ document_report.matches.handle|find_parent:type|find_file_folder }}" class="button" target="_blank" rel="noopener">
+                  <a href="{{ document_report.matches.handle|find_parent:type|find_file_folder }}" class="button btn-{{ document_report.pk|unlocalize }}" target="_blank" rel="noopener">
                     {% trans "Open folder" %}
                   </a>
                 {% endif %}
               {% endif %}
             </div>
+            {% if document_report.last_opened_time %}
+              {% with document_report.last_opened_time|naturaltime as time_since %}
+              <div class='last-opened'>
+                  {% trans "Opened" %} {{ time_since|capfirst }}.
+              </div>
+              {% endwith %}
+            {% endif %}
           </div>
         </td>
 
