@@ -202,7 +202,9 @@ Unit Test Admin Application:
     when: always
     reports:
       junit: $CI_PROJECT_DIR/admin_unit_tests-junit.xml
-      cobertura: ${CI_PROJECT_DIR}/admin_unit_tests-junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: ${CI_PROJECT_DIR}/admin_unit_tests-junit.xml
 
 Integration Test Admin Application:
   image:
@@ -281,7 +283,9 @@ Integration Test Engine:
     when: always
     reports:
       junit: $CI_PROJECT_DIR/integration-junit.xml
-      cobertura: ${CI_PROJECT_DIR}/intergration-engine-coverage.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: ${CI_PROJECT_DIR}/intergration-engine-coverage.xml
 
 Unit Test Engine:
   extends: .test-default
@@ -309,7 +313,9 @@ Unit Test Engine:
     when: always
     reports:
       junit: $CI_PROJECT_DIR/engine-junit.xml
-      cobertura: ${CI_PROJECT_DIR}/engine-coverage.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: ${CI_PROJECT_DIR}/engine-coverage.xml
 
 Benchmark Test Engine:
   stage: test
@@ -417,7 +423,9 @@ Unit Test Report Application:
     when: always
     reports:
       junit: $CI_PROJECT_DIR/report-junit.xml
-      cobertura: ${CI_PROJECT_DIR}/report-coverage.xml
+      coverage_report: 
+        coverage_format: cobertura
+        path: ${CI_PROJECT_DIR}/report-coverage.xml
 
 Integration Test Report Application:
   image:
