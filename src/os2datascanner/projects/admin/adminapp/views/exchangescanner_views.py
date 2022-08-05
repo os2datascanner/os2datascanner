@@ -16,6 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from rest_framework.generics import ListAPIView
 
+from os2datascanner.projects.admin.utilities import UserWrapper
 from .scanner_views import (
     ScannerDelete,
     ScannerAskRun,
@@ -26,7 +27,7 @@ from .scanner_views import (
     ScannerList)
 from ..serializers import OrganizationalUnitSerializer
 from ..models.scannerjobs.exchangescanner import ExchangeScanner
-from ...core.models import Feature, Client
+from ...core.models import Feature
 from ...organizations.models import OrganizationalUnit
 
 
@@ -59,13 +60,13 @@ class ExchangeScannerBase(View):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = WrappedUser(self.request.user)
+        user = UserWrapper(self.request.user)
         context["org_units"] = (
                 OrganizationalUnit.objects.filter(user.make_org_Q()))
 
         # Needed to upheld feature flags.
         context['FEATURES'] = Feature.__members__
-        context['client'] = WrappedUser.get_client()
+        context['client'] = user.get_client()
         return context
 
 

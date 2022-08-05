@@ -23,7 +23,7 @@ class GraphGrant(Grant):
                 settings.MSGRAPH_CLIENT_SECRET)
 
     def validate(self):
-        return self.make_token() != None
+        return self.make_token() is not None
 
     def __str__(self):
         return f"Microsoft Graph access to tenant {self.tenant_id}"

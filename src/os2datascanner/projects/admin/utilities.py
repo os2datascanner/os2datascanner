@@ -6,7 +6,7 @@ from typing import Optional
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 
-from os2datascanner.projects.admin.core.models import Client, Administrator
+from os2datascanner.projects.admin.core.models import Client
 from os2datascanner.projects.admin.organizations.models import Organization
 
 
@@ -21,7 +21,6 @@ class UserWrapper:
         return f"[[{repr(self.user)}]]"
 
     def make_org_Q(self, org_path: str = "organization") -> Q:
-        print(self.user)
         """Returns a Q object that selects all objects whose Organization the
         wrapped User can interact with. (Note that this might, in the worst
         case, mean *no* objects.)"""

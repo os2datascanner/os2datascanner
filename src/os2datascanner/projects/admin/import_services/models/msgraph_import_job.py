@@ -6,7 +6,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from ...core.models.background_job import BackgroundJob
 from ...grants.models import GraphGrant
-from os2datascanner.engine2.utilities.backoff import WebRetrier
 from os2datascanner.engine2.model.msgraph.utilities import (
         make_token, MSGraphSource)
 

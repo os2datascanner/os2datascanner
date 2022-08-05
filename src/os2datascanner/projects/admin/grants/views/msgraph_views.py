@@ -5,7 +5,6 @@ import urllib.parse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import View
-from django.views.generic import ListView, TemplateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ..models.graphgrant import GraphGrant
