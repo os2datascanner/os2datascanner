@@ -244,7 +244,7 @@ class MainPageView(LoginRequiredMixin, ListView):
         is_htmx = self.request.headers.get('HX-Request') == "true"
         htmx_trigger = self.request.headers.get('HX-Trigger-Name')
         if is_htmx:
-            if htmx_trigger in ['open-button', 'handle-match']:
+            if htmx_trigger in ['open-button', 'handle-match', 'distribute-matches']:
                 return 'content.html'
             elif htmx_trigger in ['show-more-matches']:
                 return 'components/matches_table.html'
