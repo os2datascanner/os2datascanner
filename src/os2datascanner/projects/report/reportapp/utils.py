@@ -40,14 +40,42 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
     email = get_user_data(saml_attr.get('email'), user_data)
     sid = get_user_data(saml_attr.get('sid'), user_data)
     user = User.objects.get(username=username)
+
     if email:
-        sub_alias, is_created = Alias.objects.get_or_create(user=user, _value=email,
-                                                            _alias_type=AliasType.EMAIL)
-        create_alias_and_match_relations(sub_alias)
+        email_aliases = Alias.objects.filter(user=user, _value=email,
+                                             _alias_type=AliasType.EMAIL)
+
+        if not email_aliases:
+            email_alias = Alias.objects.create(user=user, _value=email,
+                                               _alias_type=AliasType.EMAIL)
+            create_alias_and_match_relations(email_alias)
+
+        elif email_aliases:
+            # A user shouldn't have duplicated aliases... This is solely to prevent SSO from
+            # failing in case one does - and delete duplicates.
+            email_alias = Alias.objects.filter(user=user, _value=email,
+                                               _alias_type=AliasType.EMAIL).first()
+            if email_aliases.count() > 1:
+                email_aliases.exclude(pk=email_alias.pk).delete()
+
+            create_alias_and_match_relations(email_alias)
+
     if sid:
-        sub_alias, is_created = Alias.objects.get_or_create(user=user, _value=sid,
-                                                            _alias_type=AliasType.SID)
-        create_alias_and_match_relations(sub_alias)
+        sid_aliases = Alias.objects.filter(user=user, _value=sid, _alias_type=AliasType.SID)
+
+        if not sid_aliases:
+            sid_alias = Alias.objects.create(user=user, _value=sid,
+                                             _alias_type=AliasType.SID)
+            create_alias_and_match_relations(sid_alias)
+
+        elif sid_aliases:
+            sid_alias = Alias.objects.filter(user=user, _value=sid,
+                                             _alias_type=AliasType.SID).first()
+
+            if sid_aliases.count() > 1:
+                sid_aliases.exclude(pk=sid_alias.pk).delete()
+
+            create_alias_and_match_relations(sid_alias)
 
 
 def user_is(roles, role_cls):
