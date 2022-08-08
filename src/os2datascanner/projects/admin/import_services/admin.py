@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import LDAPConfig, Realm
+from .models import LDAPConfig, MSGraphConfiguration, Realm
 
 
 # Register your models here.
@@ -16,6 +16,9 @@ class LDAPConfigAdmin(admin.ModelAdmin):
     list_display = ('vendor', 'connection_url', 'connection_protocol',
                     'search_scope',
                     )
+
+
+admin.site.register(MSGraphConfiguration)
 
 
 @admin.register(Realm)

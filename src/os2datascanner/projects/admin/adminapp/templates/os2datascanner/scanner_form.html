@@ -207,33 +207,8 @@
             {% include "os2datascanner/scanner_form_input_field.html" with field=form.token placeholder="(Uændret)" password="True" required="True" %}
           {% endif %}
 
-          {% if form.tenant_id %}
-          <div id="{{ form.tenant_id.auto_id }}_container" class="form__group{% if form.tenant_id.errors %} has-error{% endif %}">
-            <label for="id_tenant_presentation">{{ form.tenant_id.label }}</label>
-            <span id="id_tenant_presentation"><strong>
-              {% if form.tenant_id.value %}
-              {{ form.tenant_id.value }}
-              {% else %}
-              {{ tenant_id }}
-              {% endif %}
-            </strong></span>
-            <input
-                type="hidden"
-                name="{{ form.tenant_id.name }}"
-                id="id_{{ form.tenant_id.name }}"
-                {% if form.tenant_id.value %}
-                value="{{ form.tenant_id.value }}"
-                {% else %}
-                value="{{ tenant_id }}"
-                {% endif %}>
-            {% if form.tenant_id.help_text %}
-            <span class="form__help-text">{{ form.tenant_id.help_text }}</span>
-            {% endif %}
-
-            {% if form.tenant_id.errors %}
-            {{ form.tenant_id.errors }}
-            {% endif %}
-          </div>
+          {% if form.grant %}
+            {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.grant required="True" %}
           {% endif %}
 
           {% if form.username %}

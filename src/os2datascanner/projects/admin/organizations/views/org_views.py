@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.views.generic.edit import CreateView, UpdateView
@@ -37,20 +36,6 @@ class OrganizationListView(LoginRequiredMixin, ListView):
     paginate_by = 10  # TODO: reasonable number? Possibly irrelevant?
     context_object_name = 'client_list'
 
-    def setup(self, request, *args, **kwargs):
-        tenant_id = request.GET.get("tenant")
-        kwargs["tenant_id"] = tenant_id
-        return super().setup(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        if request.GET.get('tenant'):
-            tenant_id = request.GET.get('tenant')
-            org_id = request.GET.get('state')
-            return redirect('add-msgraph',
-                            org_id=org_id,
-                            tenant_id=tenant_id)
-        return super(OrganizationListView, self).get(request, *args, **kwargs)
-
     # filter list based on user
     def get_queryset(self):
         user = self.request.user
@@ -65,7 +50,6 @@ class OrganizationListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['FEATURES'] = Feature.__members__
-        context["tenant_id"] = self.kwargs["tenant_id"]
         return context
 
     def get_template_names(self):

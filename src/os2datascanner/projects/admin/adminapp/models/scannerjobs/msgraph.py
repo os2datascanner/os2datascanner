@@ -18,11 +18,12 @@ import logging
 from django.db import models
 from django.conf import settings
 
-from ....organizations.models.aliases import AliasType
-
 from os2datascanner.engine2.model.msgraph.mail import MSGraphMailSource
 from os2datascanner.engine2.model.msgraph.files import MSGraphFilesSource
 from os2datascanner.engine2.model.msgraph.calendar import MSGraphCalendarSource
+
+from ....organizations.models.aliases import AliasType
+from ....grants.models import GraphGrant
 from .scanner import Scanner
 
 logger = logging.getLogger(__name__)
@@ -56,8 +57,7 @@ def _create_user_list(org_unit, url):  # noqa
 
 
 class MSGraphScanner(Scanner):
-    tenant_id = models.CharField(max_length=256, verbose_name="Tenant ID",
-                                 null=False)
+    grant = models.ForeignKey(GraphGrant, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         abstract = True
@@ -78,7 +78,7 @@ class MSGraphMailScanner(MSGraphScanner):
             # yield one source.
             yield MSGraphMailSource(
                 client_id=settings.MSGRAPH_APP_ID,
-                tenant_id=self.tenant_id,
+                tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET
             )
         else:
@@ -86,7 +86,7 @@ class MSGraphMailScanner(MSGraphScanner):
             # in the selected organizational unit(s).
             yield MSGraphMailSource(
                 client_id=settings.MSGRAPH_APP_ID,
-                tenant_id=self.tenant_id,
+                tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
                 userlist=_create_user_list(self.org_unit, self.url),
             )
@@ -111,7 +111,7 @@ class MSGraphFileScanner(MSGraphScanner):
             # yield one source.
             yield MSGraphFilesSource(
                 client_id=settings.MSGRAPH_APP_ID,
-                tenant_id=self.tenant_id,
+                tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
                 site_drives=self.scan_site_drives,
                 user_drives=self.scan_user_drives
@@ -121,7 +121,7 @@ class MSGraphFileScanner(MSGraphScanner):
             # in the selected organizational unit(s).
             yield MSGraphFilesSource(
                 client_id=settings.MSGRAPH_APP_ID,
-                tenant_id=self.tenant_id,
+                tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
                 site_drives=self.scan_site_drives,
                 user_drives=self.scan_user_drives,
@@ -145,7 +145,7 @@ class MSGraphCalendarScanner(MSGraphScanner):
             # yield one source.
             yield MSGraphCalendarSource(
                 client_id=settings.MSGRAPH_APP_ID,
-                tenant_id=self.tenant_id,
+                tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
             )
         else:
@@ -153,7 +153,7 @@ class MSGraphCalendarScanner(MSGraphScanner):
             # in the selected organizational unit(s).
             yield MSGraphCalendarSource(
                 client_id=settings.MSGRAPH_APP_ID,
-                tenant_id=self.tenant_id,
+                tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
                 userlist=_create_user_list(self.org_unit, self.url)
             )

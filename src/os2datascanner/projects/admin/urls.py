@@ -12,9 +12,10 @@ _active_apps = [
 ]
 
 urlpatterns = [
-    # Include webscanner URLs
-    path('', include('os2datascanner.projects.admin.adminapp.urls'))
+    path('', include('os2datascanner.projects.admin.adminapp.urls')),
+    path('grants/', include('grants.urls')),
 ]
+
 # Conditionally include urls for relevant active os2datascanner apps:
 if 'organizations' in _active_apps:
     urlpatterns.append(path('organizations/', include('organizations.urls')))

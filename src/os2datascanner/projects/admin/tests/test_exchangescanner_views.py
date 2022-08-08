@@ -155,18 +155,23 @@ class ExchangeScannerViewsTest(TestCase):
         self.factory = RequestFactory()
         self.kjeld = get_user_model().objects.create_user(
             username='kjeld', email='kjeld@jensen.com', password='top_secret')
+        # Egon is admin
+        self.egon = get_user_model().objects.create_user(
+            username='egon', email='egon@olsen.com', password='no_secret')
+        Administrator.objects.create(user=self.egon, client=Client.objects.get(name="client1"))
+
         self.benny_alias = Alias.objects.get(uuid="1cae2e34-fd56-428e-aa53-6f077da12d99")
         self.yvonne = Account.objects.get(uuid="1cae2e37-fd99-428e-aa53-6f077da53d51")
         self.exchange_scan = ExchangeScanner.objects.get(pk=1)
 
     def test_exchangesscanner_org_units_list_as_administrator(self):
         """Note that this is not a django administrator role,
-        but instead an organization administrator."""
-        admin = Administrator.objects.create(
-            user=self.kjeld,
-            client=Client.objects.get(name="client1"),
-        )
-        response = self.get_exchangescanner_response()
+        but instead an organization administrator.
+        Egon has this role."""
+        request = self.factory.get('/exchangescanners/add/')
+        request.user = self.egon
+        response = ExchangeScannerCreate.as_view()(request)
+
         tree_queryset = response.context_data['org_units']
         self.assertEqual(len(tree_queryset), 3)
         self.assertEqual(str(tree_queryset[0].uuid),
@@ -177,7 +182,6 @@ class ExchangeScannerViewsTest(TestCase):
                          "b50e34c2-4e61-4cae-b08d-19fac55d3e35")
         self.assertEqual(str(tree_queryset[2].parent.uuid),
                          str(tree_queryset[1].uuid))
-        admin.delete()
 
     # TODO: Figure out why client is not updated in database and make unit test pass
     # def test_exchangesscanner_org_units_list_viewable_as_administrator(self):
@@ -312,7 +316,7 @@ class ExchangeScannerViewsTest(TestCase):
         request = self.factory.post(
             reverse('exchangescanner_update', kwargs={'pk': self.exchange_scan.pk})
         )
-        request.user = self.kjeld
+        request.user = self.egon
         update_view.setup(request, pk=self.exchange_scan.pk)
 
         update_form = update_view.get_form()

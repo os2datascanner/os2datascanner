@@ -24,7 +24,7 @@ urlpatterns = [
     path('msgraph-organization/add/<uuid:org_id>',
          views.MSGraphAddView.as_view(),
          name='add-msgraph'),
-    path('msgraph-organization/add/<uuid:org_id>/<uuid:tenant_id>',
+    path('msgraph-organization/add/<uuid:org_id>/',
          views.MSGraphAddView.as_view(),
          name='add-msgraph'),
     path('msgraph-organization/edit/<uuid:pk>',

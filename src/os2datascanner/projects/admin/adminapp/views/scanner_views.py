@@ -24,6 +24,7 @@ from django.forms import ModelMultipleChoiceField, ModelChoiceField
 
 from os2datascanner.projects.admin.organizations.models import Organization
 
+from os2datascanner.projects.admin.utilities import UserWrapper
 from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
 from ..models.authentication import Authentication
@@ -50,17 +51,10 @@ class EmptyPagePaginator(Paginator):
 
 
 class StatusBase(RestrictedListView):
-
     def get_queryset(self):
-        user = self.request.user
-        if not user.is_superuser and hasattr(user, 'administrator_for'):
-            return self.model.objects.filter(
-                scanner__organization__in=[
-                    org.uuid for org in
-                    user.administrator_for.client.organizations.all()]
-            )
-        else:
-            return super().get_queryset()
+        user = UserWrapper(self.request.user)
+        return self.model.objects.filter(
+                user.make_org_Q("scanner__organization"))
 
 
 # As we do not store the `finished` state of a ScanStatus
