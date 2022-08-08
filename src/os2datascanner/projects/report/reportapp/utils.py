@@ -17,6 +17,27 @@ from os2datascanner.projects.report.organizations.models import AliasType
 logger = structlog.get_logger()
 
 
+def relate_matches_to_user(user, value, alias_type):
+    """
+    Relates all relevant matches to the user through its aliases.
+    """
+    aliases = Alias.objects.filter(user=user, _value=value, _alias_type=alias_type)
+
+    if not aliases:
+        alias = Alias.objects.create(user=user, _value=value, _alias_type=alias_type)
+        create_alias_and_match_relations(alias)
+
+    elif aliases:
+        # A user shouldn't have duplicated aliases... This is solely to prevent SSO from
+        # failing in case one does - and delete duplicates.
+        alias = Alias.objects.filter(user=user, _value=value, _alias_type=alias_type).first()
+
+        if aliases.count() > 1:
+            aliases.exclude(pk=alias.pk).delete()
+
+        create_alias_and_match_relations(alias)
+
+
 def hash_handle(handle):
     """
     Creates a SHA-512 hash value from the handle string
@@ -40,14 +61,12 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
     email = get_user_data(saml_attr.get('email'), user_data)
     sid = get_user_data(saml_attr.get('sid'), user_data)
     user = User.objects.get(username=username)
+
     if email:
-        sub_alias, is_created = Alias.objects.get_or_create(user=user, _value=email,
-                                                            _alias_type=AliasType.EMAIL)
-        create_alias_and_match_relations(sub_alias)
+        relate_matches_to_user(user, email, AliasType.EMAIL)
+
     if sid:
-        sub_alias, is_created = Alias.objects.get_or_create(user=user, _value=sid,
-                                                            _alias_type=AliasType.SID)
-        create_alias_and_match_relations(sub_alias)
+        relate_matches_to_user(user, sid, AliasType.SID)
 
 
 def user_is(roles, role_cls):
