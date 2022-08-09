@@ -1,5 +1,57 @@
 # Changelog
 
+## Version 3.15.4, 9th August 2022
+
+"Respect My Authority!"
+
+### New in this version
+
+- Number of error log objects found during scan is now included in the mail summary.
+
+- When only one option is available in a dropdown menu, that option is automatically selected, and the dropdown is disabled.
+
+- Filtering options in the report module are now much more intuitive and easy to use.
+
+  - When an option is chosen, other options are now still shown in the dropdown menu.
+
+  - The number of matches of a given filtering option accurately describes how many matches will be left when switching to that filtering option.
+
+- Users in the report module can now see the information associated with their account on a user profile page.
+
+- Created import jobs via MSGraph are now automatically run every day at 00:00.
+
+- The report module now only loads the first 10 matches of each match report. More matches can be loaded with the new "show more matches"-button.
+
+- When pressing the "Open", "Open folder" or "Copy"-buttons in the report module, a time stamp is now added to the report, to keep track of when it has been accessed. This timestamp is shown on the report in the report module.
+
+- OS2datascanner now remembers your credentials when connecting to your Microsoft account. It is no longer required to log in more than once.
+
+### General Improvements
+
+- The complex `SingleResult` and `MultipleResult` classes have been removed.
+
+- Redundant path fragments have been removed (such as `_model`-suffix on files in `models`-folder).
+
+- The cursor is now a pointer when hovering over dropwdown menus.
+
+- The table of match reports are no longer visible behind the round corners of the header when scrolling.
+
+- The sort key for mail objects have been improved. Further improvements are on the way.
+
+### Bugfixes
+
+- The login-page in the report module now displays the correct error message on wrong username or password.
+
+- After handling a match in the report module, the dropdown menus and checkboxes now work correctly.
+
+- Non-superusers in the admin module can now access the error log.
+
+- Deleting a ScanStatus object with a primary key larger than 1000 now works.
+
+- Trying to log in as a user with duplicate aliases associated no longer fails.
+
+- Trying to delete a missing object in the report module no longer creates one instead.
+
 ## Version 3.15.3, 13th July 2022
 
 "Can't Reach It, Don't Need It"
