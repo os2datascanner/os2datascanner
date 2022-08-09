@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-04 10:45+0200\n"
+"POT-Creation-Date: 2022-08-09 14:34+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -189,29 +189,29 @@ msgstr "I mellemtiden kan du forsøge at genindlæse siden eller"
 msgid "go to the front page"
 msgstr "gå til forsiden"
 
-#: reportapp/templates/components/filters.html:51
-#: reportapp/templates/components/filters.html:80
+#: reportapp/templates/components/filters.html:18
+#: reportapp/templates/components/filters.html:47
 msgid "Clear"
 msgstr "Ryd"
 
-#: reportapp/templates/components/filters.html:54
+#: reportapp/templates/components/filters.html:21
 msgid "Scan"
 msgstr "Scan"
 
-#: reportapp/templates/components/filters.html:63
+#: reportapp/templates/components/filters.html:30
 msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
 
-#: reportapp/templates/components/filters.html:83
+#: reportapp/templates/components/filters.html:50
 #: reportapp/templates/components/statistics-template.html:77
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: reportapp/templates/components/filters.html:92
+#: reportapp/templates/components/filters.html:59
 msgid "All sensitivities"
 msgstr "Alle følsomheder"
 
-#: reportapp/templates/components/filters.html:120
+#: reportapp/templates/components/filters.html:87
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
@@ -687,23 +687,23 @@ msgstr "Aliasser"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:352
+#: reportapp/views/views.py:353
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:353
+#: reportapp/views/views.py:354
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:354
+#: reportapp/views/views.py:355
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:355
+#: reportapp/views/views.py:356
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:506
+#: reportapp/views/views.py:507
 msgid "Not assigned"
 msgstr "Ikke tildelt"
 
