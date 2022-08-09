@@ -1,39 +1,6 @@
 {% load i18n %}
 {% load l10n %}
 
-
-<script>
-  function clear_filter(elementid){
-      var element = document.querySelector('#' + elementid + ' [value="all"]').selected = true;
-      document.getElementById("filter_form", element).submit();
-  };
-  function checkedBox() {
-    var checkbox = document.getElementById('30-days-toggle');
-    var thirtyDays = document.getElementById('30-days');
-    if (checkbox.checked) {
-      thirtyDays.value = 'true';
-    } else {
-      thirtyDays.value = 'false';
-    }
-    document.getElementById("filter_form").submit();
-  };
-  function setCheckEvent() {
-    document.getElementById('30-days-toggle').addEventListener('click', checkedBox)
-  }
-  function setDropdownEvent() {
-    Array.prototype.forEach.call(document.querySelectorAll('.dropdown > select'), function (dropdown) {
-      dropdown.addEventListener('change', function (e) {
-        if (e.target.hasAttribute('data-autosubmit')) {
-          var form = e.target.form;
-          if (form) {
-            form.submit();
-          }
-        }
-      });
-    });
-  }
-</script>
-
 <form method="GET" action="{% url 'index' %}" id="filter_form">  
   {% comment %}
       Hidden input fields store the pagination and sort options so that they
@@ -46,7 +13,7 @@
 
   <div class="match_filtering_wrapper">
       <div>
-          <button type="button" onclick="clear_filter('scannerjobs')" class="match_filtering_clear_button">
+          <button type="button" onclick="clearFilter('scannerjobs')" class="match_filtering_clear_button">
             {% trans "Clear" %}
           </button>
           <label for="scannerjobs" class="match_filtering_label">
@@ -75,7 +42,7 @@
 
   <div class="match_filtering_wrapper">
       <div>
-          <button type="button" onclick="clear_filter('sensitivities')" class="match_filtering_clear_button">
+          <button type="button" onclick="clearFilter('sensitivities')" class="match_filtering_clear_button">
             {% trans "Clear" %}
           </button>
           <label for="sensitivities" class="match_filtering_label">
@@ -120,8 +87,4 @@
       </div>
     </div>
   </div>
-  <script>
-    setCheckEvent();
-    setDropdownEvent();
-  </script>
 </form>
