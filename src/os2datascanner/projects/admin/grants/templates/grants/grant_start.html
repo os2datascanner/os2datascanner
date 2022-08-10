@@ -4,20 +4,29 @@
 {% block body %}
 {% include "partials/header.html" %}
 <div class="wrapper">
-  {% include "partials/main.html" with active_tab="home" %}
+    {% if request.resolver_match.url_name == 'msgraphmailscanner_add' %}
+        {% include "partials/main.html" with active_tab="home" %}
+    {% else %}
+        {% include "partials/main.html" with active_tab="organizations" %}
+    {% endif %}
 
   <div class="content">
 
-    {% include "partials/breadcrumb.html" with page="scannerjob"  %}
+    {% if request.resolver_match.url_name == 'msgraphmailscanner_add' %}
+        {% include "partials/breadcrumb.html" with page="scannerjob"  %}
+
+    {% else %}
+        {% include "partials/breadcrumb.html" with page="msgraph" %}
+    {% endif %}
 
     <div class="aside">
       <h1 class="page-title">
-        {% trans "Create new scannerjob" %}
+        {% trans "Configure Microsoft Graph" %}
       </h1>
     </div>
 
     <p>
-      {% trans "The data source of this scannerjob is in the cloud and an external service must allow OS2datascanner to access it's content." %}
+      {% trans "To use this service, you must allow OS2datascanner access to its content." %}
       {% if auth_endpoint %}
       {% if error %}
     <p>
