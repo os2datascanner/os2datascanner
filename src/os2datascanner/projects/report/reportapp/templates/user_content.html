@@ -1,7 +1,7 @@
 {%  load i18n %}
 {% load get_settings_tag %}
 
-<h1> {% trans "User information for " %} {{ user.get_short_name }} </h1>
+<h1> {% trans "User information for " %} {% if user.get_short_name %}{{ user.get_short_name }}{% elif user.username %}{{ user.username }}{% endif %} </h1>
 
 <div class="user-general-info">
     <table class="user-general-info-table">
