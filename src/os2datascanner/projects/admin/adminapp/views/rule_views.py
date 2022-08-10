@@ -23,6 +23,7 @@ from ..models.sensitivity_level import Sensitivity
 from ..models.rules.rule import Rule
 from ..models.rules.cprrule import CPRRule
 from ..models.rules.regexrule import RegexRule, RegexPattern
+from ...utilities import UserWrapper
 
 
 class RuleList(RestrictedListView):
@@ -58,13 +59,10 @@ class RuleCreate(RestrictedCreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        user = self.request.user
-        org_qs = Organization.objects.none()
-        if hasattr(user, 'administrator_for'):
-            org_qs = user.administrator_for.client.organizations.all()
-        elif user.is_superuser:
-            org_qs = Organization.objects.all()
+        user = UserWrapper(self.request.user)
+        org_qs = Organization.objects.filter(user.make_org_Q("uuid"))
         form.fields['organization'].queryset = org_qs
+        form.fields['organization'].empty_label = None
 
         return form
 
@@ -150,6 +148,15 @@ class RuleUpdate(RestrictedUpdateView):
     model = Rule
     edit = True
     fields = ['name', 'description', 'sensitivity', 'organization']
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        user = UserWrapper(self.request.user)
+        org_qs = Organization.objects.filter(user.make_org_Q("uuid"))
+        form.fields['organization'].queryset = org_qs
+        form.fields['organization'].empty_label = None
+
+        return form
 
     def form_valid(self, form):
         """
