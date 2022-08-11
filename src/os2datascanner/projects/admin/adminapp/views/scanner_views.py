@@ -196,17 +196,11 @@ class ScannerBase(object):
         """
 
         form = super().get_form(form_class)
-        user = self.request.user
+        user = UserWrapper(self.request.user)
 
         form.fields['schedule'].required = False
         form.fields['exclusion_rules'].required = False
-        org_qs = Organization.objects.none()
-        if hasattr(user, 'administrator_for'):
-            org_qs = Organization.objects.filter(
-                client=user.administrator_for.client
-            )
-        elif user.is_superuser:
-            org_qs = Organization.objects.all()
+        org_qs = Organization.objects.filter(user.make_org_Q())
         form.fields['organization'].queryset = org_qs
         form.fields['organization'].empty_label = None
 
