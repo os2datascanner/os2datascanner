@@ -26,11 +26,14 @@
 #### Close existing GitLab milestone and create a new one.
 These are found in the top "Menu" in the GitLab UI and are Group Milestone's.
 They are named according to release version.
+All current MRs will be on the "Next Release" milestone.
+Rename this to the version number, then close it.
+Create a new milestone named "Next Release".
 Start day is usually day of closing the previous and end day 14 days ahead.
 
 
 #### Create a Release in GitLab
-In the left-hand side of GitLab, click Releases and create a new one.
+In the left-hand side of GitLab, click Deployments -> Releases and create a new one.
 
 * Provide tag
 * Release title from release notes
@@ -41,3 +44,5 @@ In the left-hand side of GitLab, click Releases and create a new one.
 ### Finally
 Please make sure all Redmine issues that are included in the release
 have their status set to closed.
+Also, rename the "Next Release" edition to the version number.
+Create a new edition called "Next Release".
