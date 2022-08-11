@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-11 12:31+0200\n"
+"POT-Creation-Date: 2022-08-11 08:16+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -312,7 +312,7 @@ msgid "Select all results"
 msgstr "Vælg alle resultater"
 
 #: reportapp/templates/components/hits.html:34
-#: reportapp/templates/user_content.html:10
+#: reportapp/templates/user_content.html:22
 msgid "Name"
 msgstr "Navn"
 
@@ -518,11 +518,11 @@ msgstr "Log ind på"
 msgid "report module"
 msgstr "rapportmodulet"
 
-#: reportapp/templates/login.html:14 reportapp/templates/user_content.html:14
+#: reportapp/templates/login.html:14 reportapp/templates/user_content.html:27
 msgid "Username"
 msgstr "Brugernavn"
 
-#: reportapp/templates/login.html:22
+#: reportapp/templates/login.html:22 reportapp/templates/user_content.html:116
 msgid "Password"
 msgstr "Adgangskode"
 
@@ -634,7 +634,6 @@ msgstr ""
 #: reportapp/templates/password_change.html:6
 #: reportapp/templates/password_change.html:16
 #: reportapp/templates/password_change.html:43
-#: reportapp/templates/user_content.html:78
 msgid "Change password"
 msgstr "Skift adgangskode"
 
@@ -647,41 +646,71 @@ msgstr "Skift adgangskode lykkedes"
 msgid "Your password was changed."
 msgstr "Din adgangskode blev ændret."
 
-#: reportapp/templates/user_content.html:4
-msgid "User information for "
-msgstr "Brugerinformation for "
+#: reportapp/templates/user_content.html:5
+msgid "Account"
+msgstr "Konto"
 
 #: reportapp/templates/user_content.html:18
-msgid "Email"
+msgid "Account information"
+msgstr "Brugerinformation"
+
+#: reportapp/templates/user_content.html:32
+msgid "E-mail"
 msgstr "E-mail"
 
-#: reportapp/templates/user_content.html:22
+#: reportapp/templates/user_content.html:37
 msgid "Organization"
 msgstr "Organisation"
 
-#: reportapp/templates/user_content.html:26
-msgid "User since"
-msgstr "Bruger siden"
+#: reportapp/templates/user_content.html:44
+msgid "User Rights"
+msgstr "Rettigheder"
 
-#: reportapp/templates/user_content.html:31
+#: reportapp/templates/user_content.html:48
 msgid "Roles"
 msgstr "Roller"
 
-#: reportapp/templates/user_content.html:40
+#: reportapp/templates/user_content.html:59
 msgid "Active"
 msgstr "Aktiv"
 
-#: reportapp/templates/user_content.html:47
+#: reportapp/templates/user_content.html:63
+#: reportapp/templates/user_content.html:76
+#: reportapp/templates/user_content.html:89
+msgid "Yes"
+msgstr "Ja"
+
+#: reportapp/templates/user_content.html:66
+#: reportapp/templates/user_content.html:79
+#: reportapp/templates/user_content.html:92
+msgid "No"
+msgstr "Nej"
+
+#: reportapp/templates/user_content.html:72
 msgid "Staff"
 msgstr "Adgangsbevilget"
 
-#: reportapp/templates/user_content.html:54
+#: reportapp/templates/user_content.html:85
 msgid "Superuser"
 msgstr "Superbruger"
 
-#: reportapp/templates/user_content.html:62
+#: reportapp/templates/user_content.html:98
 msgid "Aliases"
 msgstr "Aliasser"
+
+#: reportapp/templates/user_content.html:111
+#, fuzzy
+#| msgid "Thank you for using OS2datascanner."
+msgid "Login to OS2datascanner"
+msgstr "Tak fordi du brugte OS2datascanner."
+
+#: reportapp/templates/user_content.html:120
+msgid "Change"
+msgstr "Skift"
+
+#: reportapp/templates/user_content.html:126
+msgid "User since"
+msgstr "Bruger siden"
 
 #: reportapp/views/views.py:84
 msgid "The page does not exist"
