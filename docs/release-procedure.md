@@ -33,7 +33,7 @@ Start day is usually day of closing the previous and end day 14 days ahead.
 
 
 #### Create a Release in GitLab
-In the left-hand side of GitLab, click Releases and create a new one.
+In the left-hand side of GitLab, click Deployments -> Releases and create a new one.
 
 * Provide tag
 * Release title from release notes
