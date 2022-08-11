@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 3.15.5, 11th August 2022
+
+"Here Comes the Drop!"
+
+### General Improvements
+
+- On the user page, the username is now displayed in the title if no short-form name is available.
+
+### Bugfixes
+
+- The dropdown menus in the report module now work again.
+
 ## Version 3.15.4, 9th August 2022
 
 "Respect My Authority!"
