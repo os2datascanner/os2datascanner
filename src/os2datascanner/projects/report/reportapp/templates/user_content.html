@@ -1,81 +1,131 @@
 {%  load i18n %}
 {% load get_settings_tag %}
+{% settings_value "SAML2_ENABLED" as saml2_enabled %}
 
-<h1> {% trans "User information for " %} {% if user.get_short_name %}{{ user.get_short_name }}{% elif user.username %}{{ user.username }}{% endif %} </h1>
+<h1 class="userprofile-text"> {% trans "Account" %} </h1>
 
-<div class="user-general-info">
-    <table class="user-general-info-table">
-        <tbody>
-            <tr>
-                <td>{% trans "Name" %}:</td>
-                <td>{{ user.get_full_name }}</td>
-            </tr>
-            <tr>
-                <td>{% trans "Username" %}:</td>
-                <td>{{ user.username }}</td>
-            </tr>
-            <tr>
-                <td>{% trans "Email" %}:</td>
-                <td>{{ user.email }}</td>
-            </tr>
-            <tr>
-                <td>{% trans "Organization" %}:</td>
-                <td>{{ user.profile.organization.name }}</td>
-            </tr>
-            <tr>
-                <td>{% trans "User since" %}:</td>
-                <td>{{ user.date_joined }}</td>
-            </tr>
-            {% if user_roles %}
-            <tr>
-                <td>{% trans "Roles" %}:</td>
-                <td><ul>
-                    {% for role in user_roles %}
-                    <li>{{ role|capfirst }}</li>
-                    {% endfor %}
-                </ul></td>
-            </tr>
-            {% endif %}
-            <tr>
-                <td>{% trans "Active" %}:</td>
-                <td><div
-                    {% if user.is_active %} class="checkmark_true"
-                    {% else %} class="checkmark_false" {% endif %}>
-                </div></td>
-            </tr>
-            <tr>
-                <td>{% trans "Staff" %}:</td>
-                <td><div
-                    {% if user.is_staff %} class="checkmark_true"
-                    {% else %} class="checkmark_false" {% endif %}>
-                </div></td>
-            </tr>
-            <tr>
-                <td>{% trans "Superuser" %}:</td>
-                <td><div
-                    {% if user.is_superuser %} class="checkmark_true"
-                    {% else %} class="checkmark_false" {% endif %}>
-                </div></td>
-            </tr>
-            {% if user.aliases %}
-            <tr>
-                <td>{% trans "Aliases" %}:</td>
-                <td><ul>
-                    {% for alias in aliases %}
-                    <li>{{ alias.value }} ({{ alias.alias_type }})</li>
-                    {% endfor %}
-                </ul></td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
+<div class="userprofile-content-wrapper user-image">
+  {% if user.profile.image %}
+    <img class="userprofile-image" src="{{ user.profile.image }}">
+  {% else %}
+    <span class="user__avatar_verybig">
+      <i id="account_circle" class="material-icons">account_circle</i>
+    </span>
+  {% endif %}
 </div>
 
-{% settings_value "SAML2_ENABLED" as saml2_enabled %}
-{% if not saml2_enabled %}
-    <div class="password-changer__wrapper">
-        <a class="password-change button button--cta" href="/accounts/password_change">
-            {% trans "Change password" %}
-        </a>
-    </div>
-{% endif %}
+<div class="userprofile-content-wrapper user-tables">
+  <h2>{% trans "Account information" %}</h2>
+  <table class="userprofile-table account-info">
+    <tbody>
+      <tr>
+        <td>{% trans "Name" %}</td>
+        <td>{{ user.get_full_name }}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>{% trans "Username" %}</td>
+        <td>{{ user.username }}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>{% trans "E-mail" %}</td>
+        <td>{{ user.email }}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>{% trans "Organization" %}</td>
+        <td>{{ user.profile.organization }}</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>{% trans "User Rights" %}</h2>
+  <table class="userprofile-table user-rights">
+    <tbody>
+      <tr>
+        <td>{% trans "Roles" %}</td>
+        <td>
+          <ul>
+            {% for role in user_roles %}
+              <li>{{ role|capfirst }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>{% trans "Active" %}</td>
+        <td>
+          {% if user.is_active %}
+            <div class="checkmark_true"></div>
+            {% trans "Yes" %}
+          {% else %}
+            <div class="checkmark_false"></div>
+            {% trans "No" %}
+          {% endif %}
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>{% trans "Staff" %}</td>
+        <td>
+          {% if user.is_staff %}
+            <div class="checkmark_true"></div>
+            {% trans "Yes" %}
+          {% else %}
+            <div class="checkmark_false"></div>
+            {% trans "No" %}
+          {% endif %}
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>{% trans "Superuser" %}</td>
+        <td>
+          {% if user.is_superuser %}
+            <div class="checkmark_true"></div>
+            {% trans "Yes" %}
+          {% else %}
+            <div class="checkmark_false"></div>
+            {% trans "No" %}
+          {% endif %}
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>{% trans "Aliases" %}</td>
+        <td>
+          <ul>
+            {% for alias in aliases %}
+              <li>{{ alias.value }} ({{ alias.alias_type }})</li>
+            {% endfor %}
+          </ul>
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>{% trans "Login to OS2datascanner" %}</h2>
+  <table class="userprofile-table login-info">
+    <tbody>
+      {% if not saml2_enabled %}
+        <tr>
+          <td>{% trans "Password" %}</td>
+          <td>********</td>
+          <td>
+            <a class="password-change" href="/accounts/password_change">
+              {% trans "Change" %}
+            </a>
+          </td>
+        </tr>
+      {% endif %}
+      <tr>
+        <td>{% trans "User since" %}</td>
+        <td>{{ user.date_joined }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

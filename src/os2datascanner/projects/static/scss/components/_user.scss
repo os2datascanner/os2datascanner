@@ -1,10 +1,87 @@
-// Someone who knows what they're doing: Change this please!
+.userprofile-content-wrapper {
+  display: inline-block;
+  margin: 1rem;
+  margin-top: 0;
 
-.user-general-info-table {
+  &.user-image {
+    vertical-align: top;
+  }
+
+  h2 {
+    margin-top: 2rem;
+    font-size: larger;
+
+    &:first-of-type {
+      margin-top: 0.7rem;
+    }
+  }
+
+  &:first-of-type {
+    margin-left: 3rem;
+  }
+
+}
+
+h1.userprofile-text {
+  margin-left: 4rem;
+  font-size: x-large;
+}
+
+.userprofile-table {
   margin: 0 0 10px 0;
 
+  background-color: var(--color-widget-bg);
+  border-radius: var(--border-radius-default);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-collapse: separate;
+  border-spacing: 0px;
+
+  tr:not(:last-child) {
+
+    td {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+  }
+
+  tr {
+
+    td {
+
+      &:nth-of-type(1) {
+        font-weight: bold;
+        color: var(--color-text-secondary);
+        width: 15rem
+      }
+
+      &:nth-of-type(2) {
+        width: 20rem;
+      }
+
+      &:nth-of-type(3) {
+        width: 5rem;
+      }
+
+      ul {
+        display: inline;
+        list-style: none;
+        padding: 0px;
+
+        li {
+          display: inline;
+          margin: 0px;
+
+          &:not(:last-child):after {
+            content: ", "
+          }
+        }
+      }
+
+    }
+  }
+
   td {
-    padding: 2px 1rem 2px 0;
+    padding: 0.8rem 1rem;
 
     div {
       height: 1rem;
@@ -12,6 +89,10 @@
 
       border: 2px solid black;
       border-radius: 50%;
+
+      display: inline-block;
+
+      margin-right: 0.2rem;
     }
   }
 
@@ -78,6 +159,21 @@
     height: 100%;
     width: 100%;
     font-size: 3.5rem;
+  }
+}
+
+.user__avatar_verybig {
+  border-radius: 50%;
+  margin-right: 1rem;
+  height: 10rem;
+  width: 10rem;
+
+  .material-icons {
+    color: var(--color-text-secondary);
+    fill: #fff;
+    height: 100%;
+    width: 100%;
+    font-size: 10rem;
   }
 }
 
