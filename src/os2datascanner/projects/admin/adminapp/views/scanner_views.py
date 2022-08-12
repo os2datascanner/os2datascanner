@@ -200,7 +200,7 @@ class ScannerBase(object):
 
         form.fields['schedule'].required = False
         form.fields['exclusion_rules'].required = False
-        org_qs = Organization.objects.filter(user.make_org_Q())
+        org_qs = Organization.objects.filter(user.make_org_Q("uuid"))
         form.fields['organization'].queryset = org_qs
         form.fields['organization'].empty_label = None
 
