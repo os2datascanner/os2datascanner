@@ -32,7 +32,11 @@
       </tr>
       <tr>
         <td>{% trans "Organization" %}</td>
-        <td>{{ user.profile.organization }}</td>
+        <td>
+          {% if user.profile.organization %}
+            {{ user.profile.organization }}
+          {% endif %}
+        </td>
       </tr>
     </tbody>
   </table>

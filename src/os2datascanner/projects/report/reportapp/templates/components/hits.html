@@ -2,6 +2,8 @@
 {%  load i18n %}
 
 <div class="datatable-wrapper card" role="region" tabindex="0" aria-label="{% trans 'Results' %}">
+  
+  <form id="match_checkboxes">
   <table class="datatable">
     <colgroup>
       <col class="datatable__column--handle">
@@ -68,13 +70,14 @@
       </tr>
     </thead>
 
-    <tbody>
-      {% for document_report in document_reports %}
-        {% include "components/hit.html" %}
-      {% endfor %}
+      <tbody>
+        {% for document_report in document_reports %}
+          {% include "components/hit.html" %}
+        {% endfor %}
 
-    </tbody>
+      </tbody>
 
     {% include "components/pagination.html" %}
   </table>
+</form>
 </div>

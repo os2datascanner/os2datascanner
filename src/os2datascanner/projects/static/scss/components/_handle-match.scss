@@ -1,14 +1,17 @@
 .view-options {
   clear: both;
+
   @media (min-width: $break-sm) {
     padding-top: 1rem;
   }
+
   @media (min-width: $break-md) {
     float: right;
     clear: none;
-    background:transparent;
+    background: transparent;
     padding-top: 0;
   }
+
   button {
     float: left;
     clear: both;
@@ -22,10 +25,17 @@
   }
 }
 
+tr.htmx-request {
+  opacity: 0.1;
+  font-size: 0px;
+  background-color: var(--color-text-secondary);
+  transition: all 300ms linear;
+}
+
 .handle-match-wrapper {
   display: flex;
   align-items: center;
-  float:left;
+  float: left;
 
   button {
     margin-left: 0;
@@ -39,14 +49,19 @@
     word-break: normal;
     cursor: pointer;
     background-color: var(--color-primary-dark);
-    &, .text-secondary {
+
+    &,
+    .text-secondary {
       color: var(--color-text-white);
     }
+
     &[disabled] {
       cursor: default;
-      background-color: rgba(0,0,0,.07);
-      &, .text-secondary {
-        color: rgba(0,0,0,.35);
+      background-color: rgba(0, 0, 0, .07);
+
+      &,
+      .text-secondary {
+        color: rgba(0, 0, 0, .35);
       }
     }
 
@@ -55,7 +70,9 @@
       background-color: rgba(0, 0, 0, 0.2);
       text-decoration: none;
       transition: background-color 0.2s ease-in-out;
-      &, .text-secondary {
+
+      &,
+      .text-secondary {
         color: var(--color-text-main);
       }
     }

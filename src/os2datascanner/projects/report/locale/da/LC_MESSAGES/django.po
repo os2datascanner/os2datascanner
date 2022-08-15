@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-11 08:16+0200\n"
+"POT-Creation-Date: 2022-08-17 09:35+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -216,7 +216,7 @@ msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
 #: reportapp/templates/components/handle-match.html:8
-#: reportapp/templates/components/hit.html:79
+#: reportapp/templates/components/hit.html:86
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned.\n"
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -225,21 +225,31 @@ msgstr ""
 "Resultatet markeres udelukkende som håndteret i OS2datascanner."
 
 #: reportapp/templates/components/handle-match.html:10
-#: reportapp/templates/components/hit.html:81
+#: reportapp/templates/components/hit.html:88
 msgid "Working"
 msgstr "Arbejder"
 
 #: reportapp/templates/components/handle-match.html:11
-#: reportapp/templates/components/hit.html:82
+#: reportapp/templates/components/hit.html:89
 msgid "Handled"
 msgstr "Håndteret"
 
 #: reportapp/templates/components/handle-match.html:12
-#: reportapp/templates/components/handle-match.html:21
+#: reportapp/templates/components/handle-match.html:25
 msgid "Mark as handled"
 msgstr "Markér som håndterede"
 
-#: reportapp/templates/components/handle-match.html:24
+#: reportapp/templates/components/handle-match.html:22
+msgid ""
+"You are about to handle the marked reports. This action does not change the "
+"files, that the reports are about. Please do not handle a report before "
+"action has been manually taken to the file."
+msgstr ""
+"Du er ved at håndtere de markerede rapporter. Denne handling ændrer ikke "
+"på filerne, som rapporterne handler om. Håndtér venligst ikke en rapport, "
+"før du manuelt har gjort noget ved filen."
+
+#: reportapp/templates/components/handle-match.html:28
 #: reportapp/templates/components/pagination.html:11
 #: reportapp/templates/components/statistics-template.html:92
 #: reportapp/templates/components/statistics-template.html:101
@@ -249,48 +259,58 @@ msgstr "Markér som håndterede"
 msgid "of"
 msgstr "af"
 
-#: reportapp/templates/components/handle-match.html:24
+#: reportapp/templates/components/handle-match.html:28
 msgid "selected"
 msgstr "valgt"
 
-#: reportapp/templates/components/hit.html:14
+#: reportapp/templates/components/hit.html:19
 msgid "Select result"
 msgstr "Vælg resultat"
 
-#: reportapp/templates/components/hit.html:30
+#: reportapp/templates/components/hit.html:37
 msgid "Open"
 msgstr "Åbn"
 
-#: reportapp/templates/components/hit.html:35
+#: reportapp/templates/components/hit.html:42
 msgid "Copy"
 msgstr "Kopiér"
 
-#: reportapp/templates/components/hit.html:39
+#: reportapp/templates/components/hit.html:46
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:47
+#: reportapp/templates/components/hit.html:54
 msgid "Opened"
 msgstr "Åbnet: "
 
-#: reportapp/templates/components/hit.html:83
-#: reportapp/templates/components/hit.html:93
+#: reportapp/templates/components/hit.html:90
+#: reportapp/templates/components/hit.html:104
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:94
+#: reportapp/templates/components/hit.html:101
+msgid ""
+"You are about to handle this report. This action does not change the file, "
+"that the report is about. Please do not handle a report before action has "
+"been manually taken to the file."
+msgstr ""
+"Du er ved at håndtere den markerede rapport. Denne handling ændrer ikke "
+"på filen, som rapporten handler om. Håndtér venligst ikke en rapport, "
+"før du manuelt har gjort noget ved filen."
+
+#: reportapp/templates/components/hit.html:105
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:107
+#: reportapp/templates/components/hit.html:118
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:108
+#: reportapp/templates/components/hit.html:119
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:109
+#: reportapp/templates/components/hit.html:120
 msgid "Probability"
 msgstr "Sandsynlighed"
 
@@ -473,7 +493,7 @@ msgstr "resultater"
 msgid "Distribute matches to users from"
 msgstr "Uddel matches til brugere fra"
 
-#: reportapp/templates/content.html:23
+#: reportapp/templates/content.html:20
 msgid ""
 "Are you sure you want to distribute matches to the users? This action cannot "
 "be reverted."
@@ -481,11 +501,11 @@ msgstr ""
 "Er du sikker på, at du vil dele matches ud til brugerne? Denne handling kan "
 "ikke fortrydes."
 
-#: reportapp/templates/content.html:25
+#: reportapp/templates/content.html:22
 msgid "Distribute"
 msgstr "Uddel"
 
-#: reportapp/templates/content.html:33
+#: reportapp/templates/content.html:30
 msgid "No results were found"
 msgstr "Der er ingen resultater"
 
@@ -522,11 +542,11 @@ msgstr "Log ind på"
 msgid "report module"
 msgstr "rapportmodulet"
 
-#: reportapp/templates/login.html:14 reportapp/templates/user_content.html:27
+#: reportapp/templates/login.html:14 reportapp/templates/user_content.html:26
 msgid "Username"
 msgstr "Brugernavn"
 
-#: reportapp/templates/login.html:22 reportapp/templates/user_content.html:116
+#: reportapp/templates/login.html:22 reportapp/templates/user_content.html:107
 msgid "Password"
 msgstr "Adgangskode"
 
@@ -658,61 +678,61 @@ msgstr "Konto"
 msgid "Account information"
 msgstr "Brugerinformation"
 
-#: reportapp/templates/user_content.html:32
+#: reportapp/templates/user_content.html:30
 msgid "E-mail"
 msgstr "E-mail"
 
-#: reportapp/templates/user_content.html:37
+#: reportapp/templates/user_content.html:34
 msgid "Organization"
 msgstr "Organisation"
 
-#: reportapp/templates/user_content.html:44
+#: reportapp/templates/user_content.html:40
 msgid "User Rights"
 msgstr "Rettigheder"
 
-#: reportapp/templates/user_content.html:48
+#: reportapp/templates/user_content.html:44
 msgid "Roles"
 msgstr "Roller"
 
-#: reportapp/templates/user_content.html:59
+#: reportapp/templates/user_content.html:54
 msgid "Active"
 msgstr "Aktiv"
 
-#: reportapp/templates/user_content.html:63
-#: reportapp/templates/user_content.html:76
-#: reportapp/templates/user_content.html:89
+#: reportapp/templates/user_content.html:58
+#: reportapp/templates/user_content.html:70
+#: reportapp/templates/user_content.html:82
 msgid "Yes"
 msgstr "Ja"
 
-#: reportapp/templates/user_content.html:66
-#: reportapp/templates/user_content.html:79
-#: reportapp/templates/user_content.html:92
+#: reportapp/templates/user_content.html:61
+#: reportapp/templates/user_content.html:73
+#: reportapp/templates/user_content.html:85
 msgid "No"
 msgstr "Nej"
 
-#: reportapp/templates/user_content.html:72
+#: reportapp/templates/user_content.html:66
 msgid "Staff"
 msgstr "Adgangsbevilget"
 
-#: reportapp/templates/user_content.html:85
+#: reportapp/templates/user_content.html:78
 msgid "Superuser"
 msgstr "Superbruger"
 
-#: reportapp/templates/user_content.html:98
+#: reportapp/templates/user_content.html:90
 msgid "Aliases"
 msgstr "Aliasser"
 
-#: reportapp/templates/user_content.html:111
+#: reportapp/templates/user_content.html:102
 #, fuzzy
 #| msgid "Thank you for using OS2datascanner."
 msgid "Login to OS2datascanner"
 msgstr "Tak fordi du brugte OS2datascanner."
 
-#: reportapp/templates/user_content.html:120
+#: reportapp/templates/user_content.html:110
 msgid "Change"
 msgstr "Skift"
 
-#: reportapp/templates/user_content.html:126
+#: reportapp/templates/user_content.html:116
 msgid "User since"
 msgstr "Bruger siden"
 
@@ -720,23 +740,23 @@ msgstr "Bruger siden"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:356
+#: reportapp/views/views.py:376
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:357
+#: reportapp/views/views.py:377
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:358
+#: reportapp/views/views.py:378
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:359
+#: reportapp/views/views.py:379
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:510
+#: reportapp/views/views.py:530
 msgid "Not assigned"
 msgstr "Ikke tildelt"
 
