@@ -104,7 +104,10 @@ class MainPageView(LoginRequiredMixin, ListView):
         if self.request.headers.get(
                     "Hx-Trigger-Name") and self.request.headers.get("Hx-Trigger-Name") \
                 == "distribute-matches":
-            DocumentReport.objects.update(only_notify_superadmin=False)
+            update_pks = self.request.GET.getlist('distribute-to')
+            DocumentReport.objects.filter(
+                scanner_job_pk__in=update_pks).update(
+                only_notify_superadmin=False)
         # If called from a "open-button"-htmx link, update the last_opened_time value.
         if self.request.headers.get(
                     "Hx-Trigger-Name") and self.request.headers.get("Hx-Trigger-Name") \
@@ -145,7 +148,7 @@ class MainPageView(LoginRequiredMixin, ListView):
 
         # Tell template if "distribute"-button should be visible
         context["distributable_matches"] = user_is_superadmin(
-            self.request.user) and self.document_reports.filter(
+            self.request.user) and self.user_reports.filter(
             only_notify_superadmin=True).exists()
 
         sensitivity_filter = Q(sensitivity=self.request.GET.get('sensitivities')
@@ -187,6 +190,15 @@ class MainPageView(LoginRequiredMixin, ListView):
 
         context['order_by'] = self.request.GET.get('order_by', 'sort_key')
         context['order'] = self.request.GET.get('order', 'ascending')
+
+        context['undistributed_scannerjobs'] = self.user_reports.filter(
+                only_notify_superadmin=True).order_by(
+                'scanner_job_pk').values(
+                'scanner_job_pk').annotate(
+                total=Count('scanner_job_pk')
+                ).values(
+                    'scanner_job_name', 'total', 'scanner_job_pk'
+                )
 
         # Serve the match fragment of the document report, that the user requested
         # more matches from. This could probably use a refactor.

@@ -295,7 +295,7 @@ msgid "Probability"
 msgstr "Sandsynlighed"
 
 #: reportapp/templates/components/hits.html:4
-#: reportapp/templates/content.html:3
+#: reportapp/templates/content.html:4
 msgid "Results"
 msgstr "Resultater"
 
@@ -465,11 +465,15 @@ msgstr "Alle resultater"
 msgid "Show Account"
 msgstr "Vis konto"
 
-#: reportapp/templates/content.html:5
+#: reportapp/templates/content.html:6
 msgid "results"
 msgstr "resultater"
 
-#: reportapp/templates/content.html:8
+#: reportapp/templates/content.html:9
+msgid "Distribute matches to users from"
+msgstr "Uddel matches til brugere fra"
+
+#: reportapp/templates/content.html:23
 msgid ""
 "Are you sure you want to distribute matches to the users? This action cannot "
 "be reverted."
@@ -477,11 +481,11 @@ msgstr ""
 "Er du sikker på, at du vil dele matches ud til brugerne? Denne handling kan "
 "ikke fortrydes."
 
-#: reportapp/templates/content.html:10
+#: reportapp/templates/content.html:25
 msgid "Distribute"
 msgstr "Uddel"
 
-#: reportapp/templates/content.html:17
+#: reportapp/templates/content.html:33
 msgid "No results were found"
 msgstr "Der er ingen resultater"
 
@@ -716,23 +720,23 @@ msgstr "Bruger siden"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:353
+#: reportapp/views/views.py:356
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:354
+#: reportapp/views/views.py:357
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:355
+#: reportapp/views/views.py:358
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:356
+#: reportapp/views/views.py:359
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:507
+#: reportapp/views/views.py:510
 msgid "Not assigned"
 msgstr "Ikke tildelt"
 
