@@ -151,6 +151,15 @@ class MainPageView(LoginRequiredMixin, ListView):
             self.request.user) and self.user_reports.filter(
             only_notify_superadmin=True).exists()
 
+        context['undistributed_scannerjobs'] = self.user_reports.filter(  # noqa ECE001
+                only_notify_superadmin=True).order_by(
+                'scanner_job_pk').values(
+                'scanner_job_pk').annotate(
+                total=Count('scanner_job_pk')
+                ).values(
+                    'scanner_job_name', 'total', 'scanner_job_pk', 'scan_time'
+                ).order_by('-scan_time')
+
         sensitivity_filter = Q(sensitivity=self.request.GET.get('sensitivities')
                                ) if self.request.GET.get('sensitivities') not in \
             ['all', None] else None
@@ -190,15 +199,6 @@ class MainPageView(LoginRequiredMixin, ListView):
 
         context['order_by'] = self.request.GET.get('order_by', 'sort_key')
         context['order'] = self.request.GET.get('order', 'ascending')
-
-        context['undistributed_scannerjobs'] = self.user_reports.filter(
-                only_notify_superadmin=True).order_by(
-                'scanner_job_pk').values(
-                'scanner_job_pk').annotate(
-                total=Count('scanner_job_pk')
-                ).values(
-                    'scanner_job_name', 'total', 'scanner_job_pk'
-                )
 
         # Serve the match fragment of the document report, that the user requested
         # more matches from. This could probably use a refactor.
