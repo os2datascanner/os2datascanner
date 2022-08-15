@@ -20,7 +20,7 @@ from django.http import Http404
 from pika.exceptions import AMQPError
 import structlog
 
-from django.forms import ModelMultipleChoiceField, ModelChoiceField
+from django.forms import ModelMultipleChoiceField
 
 from os2datascanner.projects.admin.organizations.models import Organization
 
@@ -196,18 +196,13 @@ class ScannerBase(object):
         """
 
         form = super().get_form(form_class)
-        user = self.request.user
+        user = UserWrapper(self.request.user)
 
         form.fields['schedule'].required = False
         form.fields['exclusion_rules'].required = False
-        org_qs = Organization.objects.none()
-        if hasattr(user, 'administrator_for'):
-            org_qs = Organization.objects.filter(
-                client=user.administrator_for.client
-            )
-        elif user.is_superuser:
-            org_qs = Organization.objects.all()
-        form.fields['organization'] = ModelChoiceField(org_qs, empty_label=None)
+        org_qs = Organization.objects.filter(user.make_org_Q("uuid"))
+        form.fields['organization'].queryset = org_qs
+        form.fields['organization'].empty_label = None
 
         form.fields["rules"] = ModelMultipleChoiceField(
             Rule.objects.all(),
