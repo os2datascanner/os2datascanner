@@ -21,22 +21,18 @@
       <tr>
         <td>{% trans "Name" %}</td>
         <td>{{ user.get_full_name }}</td>
-        <td></td>
       </tr>
       <tr>
         <td>{% trans "Username" %}</td>
         <td>{{ user.username }}</td>
-        <td></td>
       </tr>
       <tr>
         <td>{% trans "E-mail" %}</td>
         <td>{{ user.email }}</td>
-        <td></td>
       </tr>
       <tr>
         <td>{% trans "Organization" %}</td>
         <td>{{ user.profile.organization }}</td>
-        <td></td>
       </tr>
     </tbody>
   </table>
@@ -53,7 +49,6 @@
             {% endfor %}
           </ul>
         </td>
-        <td></td>
       </tr>
       <tr>
         <td>{% trans "Active" %}</td>
@@ -66,7 +61,6 @@
             {% trans "No" %}
           {% endif %}
         </td>
-        <td></td>
       </tr>
       <tr>
         <td>{% trans "Staff" %}</td>
@@ -79,7 +73,6 @@
             {% trans "No" %}
           {% endif %}
         </td>
-        <td></td>
       </tr>
       <tr>
         <td>{% trans "Superuser" %}</td>
@@ -92,7 +85,6 @@
             {% trans "No" %}
           {% endif %}
         </td>
-        <td></td>
       </tr>
       <tr>
         <td>{% trans "Aliases" %}</td>
@@ -103,7 +95,6 @@
             {% endfor %}
           </ul>
         </td>
-        <td></td>
       </tr>
     </tbody>
   </table>
@@ -114,7 +105,6 @@
       {% if not saml2_enabled %}
         <tr>
           <td>{% trans "Password" %}</td>
-          <td>********</td>
           <td>
             <a class="password-change" href="/accounts/password_change">
               {% trans "Change" %}
