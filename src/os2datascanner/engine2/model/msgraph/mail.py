@@ -206,7 +206,8 @@ class MSGraphMailMessageHandle(Handle):
 
     @property
     def presentation_place(self):
-        return f"\"{self._folder}\" of {str(self.source.handle)}"
+        return f"\"{self._folder}\" of {str(self.source.handle)}" \
+            if self._folder else f"{str(self.source.handle)}"
 
     @property
     def presentation_url(self):
