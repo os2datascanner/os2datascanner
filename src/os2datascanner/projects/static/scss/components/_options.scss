@@ -96,7 +96,8 @@ label+.dropdown {
     }
 
     &#distribute-to {
-      width: 30%;
+      max-width: 100%;
+      width: 30rem;
       height: 8rem;
     }
   }
@@ -153,7 +154,8 @@ label+.dropdown {
   }
 
   >button {
-    width: 30%;
+    max-width: 100%;
+    width: 30rem;
     margin: 0.5rem 0rem;
   }
 }
