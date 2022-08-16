@@ -67,6 +67,22 @@ TEST_CORP = [
                 "email": "guy@darwindomain.onmicrosoft.com"
             }
         ]
+    },
+    # Cases of no UPN have been observed and will cause database integrity error.
+    # We use it as username -- and to have an account, that is the bare minimum.
+    # Hence, if missing, we should not try to create the account.
+    {
+        "uuid": "78111cda-2c4c-4k32-b5a2-01cea0be1337",
+        "name": "Group where user has no UPN",
+        "members": [
+            {
+                "type": "user",
+                "uuid": "1111c11d-1111-1111-1f11-1111111111a1",
+                "givenName": "Cousin",
+                "surname": "Guf",
+                "userPrincipalName": None,
+            }
+        ]
     }
 ]
 
@@ -115,7 +131,7 @@ class MSGraphImportTest(TestCase):
         all_uuids = set()
         for ou in TEST_CORP:
             for member in ou["members"]:
-                if member["type"] == "user":
+                if member["type"] == "user" and member.get("userPrincipalName") is not None:
                     all_uuids.add(member["uuid"])
 
         imported_ids = Account.objects.values("imported_id")
@@ -131,7 +147,7 @@ class MSGraphImportTest(TestCase):
         for ou in TEST_CORP:
             ou_uuid = ou["uuid"]
             for member in ou["members"]:
-                if member["type"] == "user":
+                if member["type"] == "user" and member.get("userPrincipalName") is not None:
                     ou_obj = OrganizationalUnit.objects.get(imported_id=ou_uuid)
                     acc_obj = Account.objects.get(imported_id=member["uuid"])
 
@@ -149,7 +165,7 @@ class MSGraphImportTest(TestCase):
 
         for ou in TEST_CORP:
             for member in ou["members"]:
-                if member["type"] == "user":
+                if member["type"] == "user" and member.get("userPrincipalName") is not None:
                     member_id = member["uuid"]
                     self.assertTrue(
                         Alias.objects.filter(
