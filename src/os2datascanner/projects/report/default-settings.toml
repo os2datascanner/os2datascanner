@@ -17,7 +17,7 @@ PROMETHEUS_EXPORT_MIGRATIONS = false
 # [mode]
 DEBUG = false
 KEYCLOAK_ENABLED = false
-SAML2_ENABLED = true
+SAML2_ENABLED = false
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
