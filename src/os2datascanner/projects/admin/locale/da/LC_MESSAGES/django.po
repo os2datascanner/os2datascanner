@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-11 12:30+0200\n"
+"POT-Creation-Date: 2022-08-18 15:29+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -658,8 +658,8 @@ msgid "Description"
 msgstr "Beskrivelse"
 
 #: adminapp/templates/os2datascanner/rules.html:60
-#: adminapp/views/rule_views.py:99 adminapp/views/rule_views.py:189
-#: adminapp/views/rule_views.py:196
+#: adminapp/views/rule_views.py:97 adminapp/views/rule_views.py:196
+#: adminapp/views/rule_views.py:203
 msgid "Expression"
 msgstr "Udtryk"
 
@@ -1309,7 +1309,7 @@ msgstr "Drevbogstav"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:317
+#: adminapp/views/scanner_views.py:312
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
