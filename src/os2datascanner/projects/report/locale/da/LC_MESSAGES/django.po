@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-17 09:35+0200\n"
+"POT-Creation-Date: 2022-08-18 13:38+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -245,9 +245,9 @@ msgid ""
 "files, that the reports are about. Please do not handle a report before "
 "action has been manually taken to the file."
 msgstr ""
-"Du er ved at håndtere de markerede rapporter. Denne handling ændrer ikke "
-"på filerne, som rapporterne handler om. Håndtér venligst ikke en rapport, "
-"før du manuelt har gjort noget ved filen."
+"Du er ved at håndtere de markerede rapporter. Denne handling ændrer ikke på "
+"filerne, som rapporterne handler om. Håndtér venligst ikke en rapport, før "
+"du manuelt har gjort noget ved filen."
 
 #: reportapp/templates/components/handle-match.html:28
 #: reportapp/templates/components/pagination.html:11
@@ -294,9 +294,9 @@ msgid ""
 "that the report is about. Please do not handle a report before action has "
 "been manually taken to the file."
 msgstr ""
-"Du er ved at håndtere den markerede rapport. Denne handling ændrer ikke "
-"på filen, som rapporten handler om. Håndtér venligst ikke en rapport, "
-"før du manuelt har gjort noget ved filen."
+"Du er ved at håndtere den markerede rapport. Denne handling ændrer ikke på "
+"filen, som rapporten handler om. Håndtér venligst ikke en rapport, før du "
+"manuelt har gjort noget ved filen."
 
 #: reportapp/templates/components/hit.html:105
 msgid "Show/hide matches"
@@ -319,36 +319,36 @@ msgstr "Sandsynlighed"
 msgid "Results"
 msgstr "Resultater"
 
-#: reportapp/templates/components/hits.html:19
+#: reportapp/templates/components/hits.html:21
 msgid "Show match probability"
 msgstr "Vis sandsynlighed"
 
-#: reportapp/templates/components/hits.html:20
+#: reportapp/templates/components/hits.html:22
 msgid "Show/hide all matches"
 msgstr "Vis/skjul alle matches"
 
-#: reportapp/templates/components/hits.html:29
+#: reportapp/templates/components/hits.html:31
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: reportapp/templates/components/hits.html:34
+#: reportapp/templates/components/hits.html:36
 #: reportapp/templates/user_content.html:22
 msgid "Name"
 msgstr "Navn"
 
-#: reportapp/templates/components/hits.html:37
+#: reportapp/templates/components/hits.html:39
 msgid "Matches"
 msgstr "Matches"
 
-#: reportapp/templates/components/hits.html:49
+#: reportapp/templates/components/hits.html:51
 msgid "Source"
 msgstr "Kilde"
 
-#: reportapp/templates/components/hits.html:52
+#: reportapp/templates/components/hits.html:54
 msgid "Path"
 msgstr "Sti"
 
-#: reportapp/templates/components/hits.html:67
+#: reportapp/templates/components/hits.html:69
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -546,7 +546,7 @@ msgstr "rapportmodulet"
 msgid "Username"
 msgstr "Brugernavn"
 
-#: reportapp/templates/login.html:22 reportapp/templates/user_content.html:107
+#: reportapp/templates/login.html:22 reportapp/templates/user_content.html:111
 msgid "Password"
 msgstr "Adgangskode"
 
@@ -686,53 +686,51 @@ msgstr "E-mail"
 msgid "Organization"
 msgstr "Organisation"
 
-#: reportapp/templates/user_content.html:40
+#: reportapp/templates/user_content.html:44
 msgid "User Rights"
 msgstr "Rettigheder"
 
-#: reportapp/templates/user_content.html:44
+#: reportapp/templates/user_content.html:48
 msgid "Roles"
 msgstr "Roller"
 
-#: reportapp/templates/user_content.html:54
+#: reportapp/templates/user_content.html:58
 msgid "Active"
 msgstr "Aktiv"
 
-#: reportapp/templates/user_content.html:58
-#: reportapp/templates/user_content.html:70
-#: reportapp/templates/user_content.html:82
+#: reportapp/templates/user_content.html:62
+#: reportapp/templates/user_content.html:74
+#: reportapp/templates/user_content.html:86
 msgid "Yes"
 msgstr "Ja"
 
-#: reportapp/templates/user_content.html:61
-#: reportapp/templates/user_content.html:73
-#: reportapp/templates/user_content.html:85
+#: reportapp/templates/user_content.html:65
+#: reportapp/templates/user_content.html:77
+#: reportapp/templates/user_content.html:89
 msgid "No"
 msgstr "Nej"
 
-#: reportapp/templates/user_content.html:66
+#: reportapp/templates/user_content.html:70
 msgid "Staff"
 msgstr "Adgangsbevilget"
 
-#: reportapp/templates/user_content.html:78
+#: reportapp/templates/user_content.html:82
 msgid "Superuser"
 msgstr "Superbruger"
 
-#: reportapp/templates/user_content.html:90
+#: reportapp/templates/user_content.html:94
 msgid "Aliases"
 msgstr "Aliasser"
 
-#: reportapp/templates/user_content.html:102
-#, fuzzy
-#| msgid "Thank you for using OS2datascanner."
-msgid "Login to OS2datascanner"
-msgstr "Tak fordi du brugte OS2datascanner."
+#: reportapp/templates/user_content.html:106
+msgid "Login Information"
+msgstr "Login Information"
 
-#: reportapp/templates/user_content.html:110
+#: reportapp/templates/user_content.html:114
 msgid "Change"
 msgstr "Skift"
 
-#: reportapp/templates/user_content.html:116
+#: reportapp/templates/user_content.html:120
 msgid "User since"
 msgstr "Bruger siden"
 
