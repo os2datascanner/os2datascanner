@@ -1,5 +1,27 @@
 # Changelog
 
+## Version 3.15.6, 18th August 2022
+
+"The Second Favourite Child"
+
+### New in this version
+
+- The user page in the report module has a new improved look.
+
+- Distributing withheld matches can now be done for one or more chosen scannerjobs.
+
+- Users now have to confirm their choice, when handling a match for the first time in two days.
+
+### Bugfixes
+
+- Now passing all user information to the dropdown menu logic.
+
+- Grey-out functionality extended to rules.
+
+- Matches on mail objects with no folder information now displayed correctly in report module.
+
+- Importing an invalid user no longer stops the import job. The user is skipped instead.
+
 ## Version 3.15.5, 11th August 2022
 
 "Here Comes the Drop!"
