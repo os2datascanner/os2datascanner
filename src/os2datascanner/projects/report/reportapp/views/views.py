@@ -96,23 +96,34 @@ class MainPageView(LoginRequiredMixin, ListView):
     scannerjob_filters = None
     paginate_by_options = [10, 20, 50, 100, 250]
 
-    def get_queryset(self):
+    def get_queryset(self):  # noqa CCR001
         user = self.request.user
         roles = Role.get_user_roles_or_default(user)
         # If called from a "distribute-matches"-button, remove all
         # `only_notify_superadmin`-flags from reports.
-        if self.request.headers.get(
-                    "Hx-Trigger-Name") and self.request.headers.get("Hx-Trigger-Name") \
-                == "distribute-matches":
-            update_pks = self.request.GET.getlist('distribute-to')
-            DocumentReport.objects.filter(
-                scanner_job_pk__in=update_pks).update(
-                only_notify_superadmin=False)
-        # If called from a "open-button"-htmx link, update the last_opened_time value.
-        if self.request.headers.get(
-                    "Hx-Trigger-Name") and self.request.headers.get("Hx-Trigger-Name") \
-                == "open-button":
-            DocumentReport.objects.get(pk=self.request.GET.get('pk')).update_opened()
+        is_htmx = self.request.headers.get("HX-Request") == "true"
+        if is_htmx:
+            htmx_trigger = self.request.headers.get("HX-Trigger-Name")
+            if htmx_trigger == "distribute-matches":
+                update_pks = self.request.GET.getlist('distribute-to')
+                DocumentReport.objects.filter(
+                    scanner_job_pk__in=update_pks).update(
+                    only_notify_superadmin=False)
+
+            # If called from a "open-button"-htmx link, update the last_opened_time value.
+            elif htmx_trigger == "open-button":
+                DocumentReport.objects.get(pk=self.request.GET.get('pk')).update_opened()
+            elif htmx_trigger == "handle-match":
+                if user.profile:
+                    user.profile.update_last_handle()
+                self.document_reports.filter(
+                    pk=self.request.GET.get('pk')).update(
+                    resolution_status=0)
+            elif htmx_trigger == "handle-matches":
+                if user.profile:
+                    user.profile.update_last_handle()
+                DocumentReport.objects.filter(pk__in=self.request.GET.getlist(
+                    'match-checkbox')).update(resolution_status=0)
 
         # Handles filtering by role + org and sets datasource_last_modified if non existing
         self.user_reports = filter_inapplicable_matches(user, self.document_reports, roles)

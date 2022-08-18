@@ -196,76 +196,76 @@ function hideTooltip(event) {
   removeClass(targ, "cursor-help");
 }
 
-function getCookie(name) {
-  var cookieValue = null;
-  if (document.cookie && document.cookie !== "") {
-    var cookies = document.cookie.split(";");
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i].trim();
-      // Does this cookie string begin with the name we want?
-      if (cookie.substring(0, name.length + 1) === (name + "=")) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
+// function getCookie(name) {
+//   var cookieValue = null;
+//   if (document.cookie && document.cookie !== "") {
+//     var cookies = document.cookie.split(";");
+//     for (var i = 0; i < cookies.length; i++) {
+//       var cookie = cookies[i].trim();
+//       // Does this cookie string begin with the name we want?
+//       if (cookie.substring(0, name.length + 1) === (name + "=")) {
+//         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+//         break;
+//       }
+//     }
+//   }
+//   return cookieValue;
+// }
 
-// Handle matches
-function handleMatches(pks, buttonEl) {
-  if (pks.length > 0) {
-    $(".datatable").addClass("disabled");
-    // let user know that we're processing the action by mutating the button
-    // of the selected row(s)
-    updateButtons(pks, buttonEl, 'sync', 'data-label-processing');
+// // Handle matches
+// function handleMatches(pks, buttonEl) {
+//   if (pks.length > 0) {
+//     $(".datatable").addClass("disabled");
+//     // let user know that we're processing the action by mutating the button
+//     // of the selected row(s)
+//     updateButtons(pks, buttonEl, 'sync', 'data-label-processing');
 
-    $.ajax({
-      url: "/api",
-      method: "POST",
-      data: JSON.stringify({
-        "action": "set-status-2",
-        "report_id": pks,
-        "new_status": 0
-      }),
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      beforeSend: function (xhr) {
-        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-      }
-    }).done(function (body) {
-      if (body.status === "ok") {
-        // let user know that we succeeded the action by mutating the button(s) again
-        updateButtons(pks, buttonEl, 'done', 'data-label-done', 'text-ok-dark', 'text-secondary');
-      } else if (body.status === "fail") {
-        $(".datatable").removeClass("disabled");
+//     $.ajax({
+//       url: "/api",
+//       method: "POST",
+//       data: JSON.stringify({
+//         "action": "set-status-2",
+//         "report_id": pks,
+//         "new_status": 0
+//       }),
+//       contentType: "application/json; charset=utf-8",
+//       dataType: "json",
+//       beforeSend: function (xhr) {
+//         xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+//       }
+//     }).done(function (body) {
+//       if (body.status === "ok") {
+//         // let user know that we succeeded the action by mutating the button(s) again
+//         updateButtons(pks, buttonEl, 'done', 'data-label-done', 'text-ok-dark', 'text-secondary');
+//       } else if (body.status === "fail") {
+//         $(".datatable").removeClass("disabled");
 
-        // revert the button(s)
-        updateButtons(pks, buttonEl, 'archive', 'data-label-default');
-        console.log(
-          "Attempt to call set-status-2 failed: "
-          + body.message);
-      }
-    });
-  }
-}
+//         // revert the button(s)
+//         updateButtons(pks, buttonEl, 'archive', 'data-label-default');
+//         console.log(
+//           "Attempt to call set-status-2 failed: "
+//           + body.message);
+//       }
+//     });
+//   }
+// }
 
 htmx.onLoad(function (content) {
 
   if (hasClass(content, 'page') || hasClass(content, 'datatable-wrapper')) {
 
-    $(".handle-match__action").click(function () {
-      // get pks from checked checkboxes
-      var pks = $.map($("input[name='match-checkbox']:checked"), function (e) {
-        return $(e).attr("data-report-pk");
-      });
-      handleMatches(pks, $(this));
-    });
+    // $(".handle-match__action").click(function () {
+    //   // get pks from checked checkboxes
+    //   var pks = $.map($("input[name='match-checkbox']:checked"), function (e) {
+    //     return $(e).attr("data-report-pk");
+    //   });
+    //   handleMatches(pks, $(this));
+    // });
 
-    $(".matches-handle").click(function () {
-      var pk = $(this).attr("data-report-pk");
-      handleMatches([pk]);
-    });
+    // $(".matches-handle").click(function () {
+    //   var pk = $(this).attr("data-report-pk");
+    //   handleMatches([pk]);
+    // });
 
     // Listen for click on toggle checkbox
     $("#select-all").change(function () {
@@ -290,29 +290,29 @@ htmx.onLoad(function (content) {
 
 });
 
-function updateButtons(pks, buttonEl, icon, attr, addClasses, removeClasses) {
-  var buttonSelectors = pks.map(function (pk) {
-    return "button[data-report-pk='" + pk + "']";
-  }).join(",");
+// function updateButtons(pks, buttonEl, icon, attr, addClasses, removeClasses) {
+//   var buttonSelectors = pks.map(function (pk) {
+//     return "button[data-report-pk='" + pk + "']";
+//   }).join(",");
 
-  var buttons = $(buttonSelectors);
+//   var buttons = $(buttonSelectors);
 
-  // use buttonEl to target extra button(s) that are not targeted by
-  // using the data-report-pk property.
-  if (buttonEl) {
-    if (buttonEl instanceof jQuery) {
-      buttons = buttons.add(buttonEl);
-    } else if (buttonEl instanceof String) {
-      buttons = buttons.add($(buttonEl));
-    }
-  }
+//   // use buttonEl to target extra button(s) that are not targeted by
+//   // using the data-report-pk property.
+//   if (buttonEl) {
+//     if (buttonEl instanceof jQuery) {
+//       buttons = buttons.add(buttonEl);
+//     } else if (buttonEl instanceof String) {
+//       buttons = buttons.add($(buttonEl));
+//     }
+//   }
 
-  buttons.each(function () {
-    var button = $(this);
-    button.find('.material-icons').text(icon).addClass(addClasses).removeClass(removeClasses);
-    var label = button.attr(attr);
-    if (label) {
-      button.find('span').text(label);
-    }
-  });
-}
+//   buttons.each(function () {
+//     var button = $(this);
+//     button.find('.material-icons').text(icon).addClass(addClasses).removeClass(removeClasses);
+//     var label = button.attr(attr);
+//     if (label) {
+//       button.find('span').text(label);
+//     }
+//   });
+// }
