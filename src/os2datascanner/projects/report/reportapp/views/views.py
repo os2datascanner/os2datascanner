@@ -114,13 +114,13 @@ class MainPageView(LoginRequiredMixin, ListView):
             elif htmx_trigger == "open-button":
                 DocumentReport.objects.get(pk=self.request.GET.get('pk')).update_opened()
             elif htmx_trigger == "handle-match":
-                if user.profile:
+                if UserProfile.objects.filter(user=user).exists():
                     user.profile.update_last_handle()
                 self.document_reports.filter(
                     pk=self.request.GET.get('pk')).update(
                     resolution_status=0)
             elif htmx_trigger == "handle-matches":
-                if user.profile:
+                if UserProfile.objects.filter(user=user).exists():
                     user.profile.update_last_handle()
                 DocumentReport.objects.filter(pk__in=self.request.GET.getlist(
                     'match-checkbox')).update(resolution_status=0)
