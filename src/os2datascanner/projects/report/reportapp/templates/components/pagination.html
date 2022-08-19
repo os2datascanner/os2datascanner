@@ -13,7 +13,10 @@
         {% if is_paginated %}
         <div class="pages">
           {% if page_obj.previous_page_number != 0 %}
-            <a class="link link--pre flex" href="?{% param_replace page=page_obj.previous_page_number %}">
+            <a class="link link--pre flex" href="#" name="page-button"
+               hx-target=".content" hx-get="{% url "index" %}" hx-swap="innerHTML" hx-trigger="click" 
+               hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ page_obj.previous_page_number }}"}'
+            >
               <i id="chevron_left" class="material-icons">chevron_left</i>
               {% trans "Previous" %}
             </a>
@@ -28,7 +31,10 @@
             {% for n in paginator.page_range %}
               {% if page_obj.number|add:'-2' == n %} <!-- If current page -2 = 1 (n)  -->
                 {# First page #}
-                <a class="page" href="?{% param_replace page=1 %}">1</a>
+                <a class="page" href="#" name="page-button"
+                hx-target=".content" hx-get="{% url "index" %}" hx-swap="innerHTML" hx-trigger="click" 
+                hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "1"}'
+                >1</a>
                 {% if n != 1 %}
                   <span class="page--dot">...</span>
                 {% endif %}
@@ -37,19 +43,28 @@
                 <a class="page page--active" href="#">{{ n }}</a>
                   {# Set how many pages on each side of current page #}
               {% elif page_obj.number|add:'-2' < n and n < page_obj.number|add:'2' %} {# Pages around current page #}
-                  <a class="page" href="?{% param_replace page=n %}">{{ n }}</a>
+                  <a class="page" href="#" name="page-button"
+                  hx-target=".content" hx-get="{% url "index" %}" hx-swap="innerHTML" hx-trigger="click" 
+                  hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ n }}"}'
+                  >{{ n }}</a>
               {% elif page_obj.number|add:'2' == n %}
                 {# Last page #}
                 {% if page_obj.number != paginator.num_pages %}
                   <span class="page--dot">...</span>
                 {% endif %}
-                  <a class="page" href="?{% param_replace page=paginator.num_pages %}">{{ paginator.num_pages }}</a>
+                  <a class="page" href="#" name="page-button"
+                  hx-target=".content" hx-get="{% url "index" %}" hx-swap="innerHTML" hx-trigger="click" 
+                  hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ paginator.num_pages }}"}'
+                  >{{ paginator.num_pages }}</a>
               {% endif %}
             {% endfor %}
           {% endif %}
 
           {% if page_obj.number != page_obj.paginator.num_pages %}
-          <a class="link link--next flex" href="?{% param_replace page=page_obj.next_page_number %}">
+          <a class="link link--next flex" href="#" name="page-button"
+             hx-target=".content" hx-get="{% url "index" %}" hx-swap="innerHTML" hx-trigger="click" 
+             hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ page_obj.next_page_number }}"}'
+          >
             {% trans "Next" %}
             <i id="chevron_right" class="material-icons">chevron_right</i>
           </a>
@@ -65,7 +80,10 @@
             {% trans "Go to page" %}
           </label>
           <input id="page" type="number" name="page" min="1" max="{{ paginator.num_pages|unlocalize }}" onkeyup=imposeMinMax(this)>
-          <button class="button button--submit" type="submit" id="form-button">
+          <button class="button button--submit" type="button" id="form-button" name="form-button"
+                  hx-trigger="click" hx-target=".content" hx-swap="innerHTML" hx-get="{% url "index" %}" 
+                  hx-include='[id="page"], [id="dropdown_options"], [id="filter_form"]'
+          >
             {% trans "Go" %}
           </button>
         </form>

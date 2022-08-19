@@ -14,9 +14,7 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
               hx-swap="innerHTML"
               hx-trigger="click"
               hx-target=".content"
-              {% comment %} This is a consequence of our choice to use HTMX, while using URL kwargs. This should be structured in a more intelligent way. {% endcomment %}
-              hx-vals='{"paginate_by":"{{ paginate_by }}", "order_by":"{{ order_by }}", "order":"{{ order }}", "scannerjob":"{{ scannerjobs|last }}", "sensitivities":"{{ sensitivities|last }}"}'
-              hx-include="#match_checkboxes"
+              hx-include="[id='match_checkboxes'], [id='dropdown_options'], [id='filter_form']"
               {% if request.user.profile.time_since_last_handle > 172800 %}
                 hx-confirm="{% trans 'You are about to handle the marked results. This action does not change the files, that the results are about. Please do not handle a result before action has been manually taken to the file.' %}"
               {% endif %}
