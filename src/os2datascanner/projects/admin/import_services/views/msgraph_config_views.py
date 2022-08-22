@@ -19,7 +19,6 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 
 from os2datascanner.projects.admin.grants.models.graphgrant import GraphGrant
-from os2datascanner.projects.admin.utilities import UserWrapper
 from os2datascanner.projects.admin.organizations.models import Organization
 from ..models.msgraph_configuration import MSGraphConfiguration
 from os2datascanner.projects.admin.import_services.utils import start_msgraph_import
@@ -133,13 +132,16 @@ class _MSGraphPermissionRequest(LoginRequiredMixin, TemplateView):
     redirect_kwargs = None
 
     def get_context_data(self, **kwargs):
+        # Be aware that this currently support import jobs for multiple organizations,
+        # but we only actually support storing MSGraph credentials for one azure application, which
+        # makes it purposeless to set up multiple import jobs.
         return dict(**super().get_context_data(**kwargs), **{
             "service_name": "Microsoft Online",
             "auth_endpoint": make_consent_url(
                     state={
                         "red": self.redirect_token,
                         "rdk": self.redirect_kwargs,
-                        "org": str(UserWrapper(self.request.user).get_org().pk)
+                        "org": str(self.kwargs["org_id"])
                     }),
             "error": self.request.GET.get("error"),
             "error_description": self.request.GET.get("error_description")
