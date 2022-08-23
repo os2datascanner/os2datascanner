@@ -56,6 +56,22 @@ def netloc_normalize(hostname: Union[str, None]) -> str:
     return ""
 
 
+def make_head_fallback(context):
+    """Returns a function equivalent to context.head -- unless the resulting
+    HEAD request fails with HTTP/1.1 405 Method Not Supported, in which case
+    it converts the request to a GET."""
+    def _make_head_fallback(url, **kwargs):
+        r = context.head(url, **kwargs)
+        if r.status_code == 405:
+            logger.warning(
+                    f"HTTP HEAD method not available for {url},"
+                    " trying GET instead")
+            r = context.get(url, **kwargs)
+        return r
+
+    return _make_head_fallback
+
+
 class WebSource(Source):
     type_label = "web"
     eq_properties = ("_url", "_sitemap",)
@@ -93,7 +109,7 @@ class WebSource(Source):
 
         # Assign session HTTP methods to variables, wrapped to constrain requests per second
         throttled_session_get = rate_limit(session.get)
-        throttled_session_head = rate_limit(session.head)
+        throttled_session_head = rate_limit(make_head_fallback(session))
 
         # initial check that url can be reached. After this point, continue
         # exploration at all cost
@@ -250,7 +266,8 @@ class WebResource(FileResource):
         yield from super()._generate_metadata()
 
     def _get_head_raw(self):
-        throttled_session_head = rate_limit(self._get_cookie().head)
+        throttled_session_head = rate_limit(
+                make_head_fallback(self._get_cookie()))
         return throttled_session_head(
             self.handle.presentation_url, timeout=TIMEOUT)
 
