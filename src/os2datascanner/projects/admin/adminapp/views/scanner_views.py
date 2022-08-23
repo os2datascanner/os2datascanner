@@ -174,7 +174,24 @@ class UserErrorLogView(RestrictedListView):
 
     def get_queryset(self):
         """Order errors by most recent scan."""
-        return super().get_queryset().order_by('-scan_status__scan_tag__time')
+        return super().get_queryset().filter(is_removed=False
+                                             ).order_by('-scan_status__scan_tag__time')
+
+    def post(self, request, *args, **kwargs):
+        is_htmx = self.request.headers.get("HX-Request", False) == "true"
+        htmx_trigger = self.request.headers.get('HX-Trigger-Name')
+
+        self.object_list = self.get_queryset()
+        context = self.get_context_data()
+
+        if is_htmx:
+            if htmx_trigger == "delete_errorlog":
+                delete_pk = self.request.POST.get('pk')
+                self.object_list.filter(pk=delete_pk).update(is_removed=True)
+            elif htmx_trigger == "delete_all":
+                self.object_list.update(is_removed=True)
+
+        return self.render_to_response(context)
 
 
 class ScannerList(RestrictedListView):

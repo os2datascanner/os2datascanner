@@ -1,4 +1,3 @@
-import argparse
 import logging
 import os
 import random
@@ -6,6 +5,7 @@ import signal
 import sys
 import traceback
 import pstats
+import click
 from collections import deque
 
 from prometheus_client import Info, Summary, start_http_server
@@ -140,64 +140,42 @@ class GenericRunner(PikaPipelineThread):
 restarting = False
 
 
-def main():
+@click.command()
+@click.option('--log', 'log_level',
+              type=click.Choice(_loglevels.keys()),
+              default='info', envvar='LOG_LEVEL',
+              help='change the level at which log messages will be printed')
+@click.option('--profile/--no-profile', 'enable_profiling',
+              default=False, envvar='ENABLE_PROFILING',
+              is_flag=True, help='record and print profiling output')
+@click.option('--enable-metrics/--disable-metrics', 'enable_metrics',
+              default=False, envvar='EXPORT_METRICS',
+              help='enable exporting of metrics')
+@click.option('--prometheus-port', default=9091,
+              type=int, envvar='PROMETHEUS_PORT',
+              help='the port to serve OpenMetrics data.')
+@click.option('--width', default=3,
+              type=int, envvar='WIDTH',
+              help='allow each source to have at most SIZE simultaneous open sub-sources')
+@click.option('--single-cpu', type=int,
+              envvar='SCHEDULE_ON_CPU',
+              help='instruct the scheduler to run this stage, and its'
+                   ' subprocesses, on the CPU with the given (wrapped)'
+                   ' index')
+@click.option('--restart-after', default=None,
+              envvar='RESTART_AFTER', type=int,
+              help='re-execute this stage after it has handled COUNT messages (default: None)')
+@click.argument('stage',
+                type=click.Choice(["explorer",
+                                   "processor",
+                                   "matcher",
+                                   "tagger",
+                                   "exporter",
+                                   "worker"]))
+def main(log_level, enable_profiling, enable_metrics,
+         prometheus_port, width, single_cpu, restart_after, stage):
     signal.signal(signal.SIGUSR1, backtrace)
-
-    parser = argparse.ArgumentParser(
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description="Runs an OS2datascanner pipeline stage.")
-    parser.add_argument(
-            "--log",
-            default="info",
-            help="change the level at which log messages will be printed",
-            choices=_loglevels.keys()
-        )
-    parser.add_argument(
-            "--profile",
-            action="store_true",
-            help="record and print profiling output"
-        )
-    parser.add_argument(
-            "stage",
-            choices=("explorer", "processor", "matcher",
-                     "tagger", "exporter", "worker",))
-
-    monitoring = parser.add_argument_group("monitoring")
-    monitoring.add_argument(
-            "--enable-metrics",
-            action="store_true",
-            help="enable exporting of metrics")
-    monitoring.add_argument(
-            "--prometheus-port",
-            metavar="PORT",
-            help="the port to serve OpenMetrics data.",
-            default=9091)
-
-    configuration = parser.add_argument_group("configuration")
-    configuration.add_argument(
-            "--width",
-            type=int,
-            metavar="SIZE",
-            help="allow each source to have at most %(metavar) "
-                    "simultaneous open sub-sources",
-            default=3)
-    configuration.add_argument(
-            "--single-cpu",
-            action="store_true",
-            help="instruct the scheduler to run this stage, and its"
-                 " subprocesses, on a single CPU, either picked at random"
-                 " or based on the SCHEDULE_ON_CPU environment variable")
-    configuration.add_argument(
-            "--restart-after",
-            metavar="COUNT",
-            dest="limit",
-            type=int,
-            default=None,
-            help="re-execute this stage after it has handled %(metavar)s"
-                    " messages")
-
-    args = parser.parse_args()
-    module = _module_mapping[args.stage]
+    module = _module_mapping[stage]
 
     # leave all loggers from external libraries at default(WARNING) level.
     # change formatting to include datestamp
@@ -205,18 +183,17 @@ def main():
     logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
     # set level for root logger
     root_logger = logging.getLogger("os2datascanner")
-    root_logger.setLevel(_loglevels[args.log])
-    root_logger.info("starting pipeline {0}".format(args.stage))
+    root_logger.setLevel(_loglevels[log_level])
+    root_logger.info("starting pipeline {0}".format(stage))
 
-    if args.enable_metrics:
-        i = Info(f"os2datascanner_pipeline_{args.stage}", "version number")
+    if enable_metrics:
+        i = Info(f"os2datascanner_pipeline_{stage}", "version number")
         i.info({"version": __version__})
-        start_http_server(args.prometheus_port)
+        start_http_server(prometheus_port)
 
-    if args.single_cpu:
+    if single_cpu:
         available_cpus = sorted(os.sched_getaffinity(0))
-        cpu = None
-        if (seq_id := os.getenv("SCHEDULE_ON_CPU", None)):
+        if seq_id := single_cpu:
             # If we've been assigned to a specific processor, then use that
             # (modulo the number of actually available CPUs, so we can safely
             # use an instance counter as a processor selector)
@@ -227,20 +204,20 @@ def main():
         root_logger.info(f"executing only on CPU {cpu}")
         os.sched_setaffinity(0, {cpu})
 
-    if args.profile:
+    if enable_profiling:
         root_logger.info("enabling profiling")
         profiling.enable_profiling()
 
     try:
-        with SourceManager(width=args.width) as source_manager:
+        with SourceManager(width=width) as source_manager:
             GenericRunner(
                     source_manager,
-                    stage=args.stage,
+                    stage=stage,
                     module=module,
-                    limit=args.limit).run_consumer()
+                    limit=restart_after).run_consumer()
 
         if restarting:
-            root_logger.info(f"restarting after {args.limit} messages")
+            root_logger.info(f"restarting after {restart_after} messages")
             restart_process()
     finally:
         profiling.print_stats(pstats.SortKey.CUMULATIVE, silent=True)
