@@ -1,10 +1,39 @@
-{%  load i18n %}
+{% load i18n %}
+{% load l10n %}
+{% load static %}
+
+<script src="{% static "js/options.js" %}"></script>
+
 <div class="content">
   {% if request.path == '/statistics/leader/' %}
   <h1 class="page-title">{% trans "Leader statistics" %}</h1>
   {% elif request.path == '/statistics/dpo/' %}
   <h1 class="page-title">{% trans "DPO statistics" %}</h1>
   {% endif %}
+
+  <!-- Scannerjob chart data selection -->
+  <form action="{% url 'statistics' %}" method="GET">
+    <div class="dropdown stats_dropdown">
+      <select name="scannerjob" id="scannerjobs" data-autosubmit data-compareto="all">
+        <option value="all"
+                {% if scannerjobs|last == "all" %}
+                    selected="selected"
+                {% endif %} >
+                {% trans "All scannerjobs" %}
+        </option>
+          {% for scan in scannerjobs|first %}
+              <option value="{{ scan.scanner_job_pk|unlocalize }}"
+                      {% if scannerjobs|last == scan.scanner_job_pk|stringformat:"i" %}
+                        selected="selected"
+                      {% endif %} >
+              {{ scan.scanner_job_name }}
+            </option>
+          {% endfor %}
+      </select>
+    </div>
+  </form>
+  <br>
+
   <div class="statistic_wrapper">
 
     <!-- Line chart -->
@@ -186,4 +215,8 @@
   // To fixed decimal point
   handledPercentageFixed = handledPercentage.toFixed(1);
 
+  //autosubmit function
+  setDropdownEvent();
+
 </script>
+

@@ -296,10 +296,18 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         resolution_status__isnull=False)
     unhandled_matches = matches.filter(
         resolution_status__isnull=True)
+    scannerjob_filters = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = timezone.now()
+        if (scannerjob := self.request.GET.get('scannerjob')) and scannerjob != 'all':
+            self.matches = self.matches.filter(
+                scanner_job_pk=scannerjob)
+            self.handled_matches = self.handled_matches.filter(
+                scanner_job_pk=scannerjob)
+            self.unhandled_matches = self.unhandled_matches.filter(
+                scanner_job_pk=scannerjob)
 
         # Contexts are done as lists of tuples
         context['sensitivities'], context['total_matches'] = \
@@ -313,6 +321,15 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         context['new_matches_by_month'] = self.count_new_matches_by_month(today)
 
         context['unhandled_matches_by_month'] = self.count_unhandled_matches_by_month(today)
+
+        if self.scannerjob_filters is None:
+            # Create select options
+            self.scannerjob_filters = DocumentReport.objects.order_by(
+                    'scanner_job_pk').values(
+                        "scanner_job_name", "scanner_job_pk").distinct()
+
+        context['scannerjobs'] = (self.scannerjob_filters,
+                                  self.request.GET.get('scannerjob', 'all'))
 
         return context
 
