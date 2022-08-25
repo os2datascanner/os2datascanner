@@ -27,7 +27,8 @@ class ModelFactory:
     def model(self):
         return self._model
 
-    def create(self, *objects, just_notify=False, **bulk_create_kwargs):
+    def create(self,
+               objects, just_notify=False, **bulk_create_kwargs):
         if not just_notify:
             self.model.objects.bulk_create(objects, **bulk_create_kwargs)
         for callback in self._on_create:
@@ -65,7 +66,7 @@ class ModelFactory:
                    sender, instance, created, raw, using, update_fields, **kwargs):
         if isinstance(instance, self.model):
             if created:
-                self.create(instance, just_notify=True)
+                self.create([instance], just_notify=True)
             else:
                 self.update([instance], update_fields, just_notify=True)
 

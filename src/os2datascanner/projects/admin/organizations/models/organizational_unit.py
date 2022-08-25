@@ -12,13 +12,25 @@
 # sector open source network <https://os2.eu/>.
 #
 
+from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.projects.admin.import_services.models import Imported
 from os2datascanner.core_organizational_structure.models import \
     OrganizationalUnit as Core_OrganizationalUnit
-from .broadcasted_mixin import Broadcasted
+from .broadcasted_mixin import Broadcasted, post_save_broadcast
 
 
 class OrganizationalUnit(Core_OrganizationalUnit, Broadcasted, Imported):
     """ Core logic lives in the core_organizational_structure app.
-      Additional logic can be implemented here, but currently, none needed, hence we pass. """
+        Additional specific logic can be implemented here. """
+    factory = None
     pass
+
+
+OrganizationalUnit.factory = ModelFactory(OrganizationalUnit)
+
+
+@OrganizationalUnit.factory.on_create
+@OrganizationalUnit.factory.on_update
+def on_organizational_unit_created_updated(objects):
+    for ou in objects:
+        post_save_broadcast(None, ou)

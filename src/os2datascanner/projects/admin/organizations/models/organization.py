@@ -21,7 +21,8 @@ from os2datascanner.core_organizational_structure.models import Organization as 
 
 class Organization(Core_Organization, Broadcasted):
     """ Core logic lives in the core_organizational_structure app.
-      Additional logic can be implemented here, but currently, none needed, hence we pass. """
+        Additional specific logic can be implemented here. """
+
     client = models.ForeignKey(
         'core.Client',
         on_delete=models.CASCADE,

@@ -12,12 +12,24 @@
 # sector open source network <https://os2.eu/>.
 #
 
+from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.projects.admin.import_services.models import Imported
 from os2datascanner.core_organizational_structure.models import Position as Core_Position
-from .broadcasted_mixin import Broadcasted
+from .broadcasted_mixin import Broadcasted, post_save_broadcast
 
 
 class Position(Core_Position, Imported, Broadcasted):
     """ Core logic lives in the core_organizational_structure app.
-      Additional logic can be implemented here, but currently, none needed, hence we pass. """
+        Additional specific logic can be implemented here. """
+    factory = None
     pass
+
+
+Position.factory = ModelFactory(Position)
+
+
+@Position.factory.on_create
+@Position.factory.on_update
+def on_account_created_updated(objects):
+    for pos in objects:
+        post_save_broadcast(None, pos)
