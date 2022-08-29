@@ -368,8 +368,13 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
             properties = set()
             for _, props in instances:
                 properties |= set(props)
-            manager.bulk_update(
-                    (obj for obj, _ in instances), properties)
+
+            if hasattr(manager, "factory"):
+                manager.model.factory.update((obj for obj, _ in instances), properties)
+            else:
+                logger.warning(f"{manager} has no 'factory' implementation; "
+                               "change notifications will not be sent")
+                manager.bulk_update((obj for obj, _ in instances), properties)
 
         for manager, instances in group_into(
                 to_add, OrganizationalUnit, Account, Position, Alias):
@@ -378,7 +383,13 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
                 o.last_import = now
                 o.last_import_requested = now
 
-            manager.bulk_create(instances)
+            if hasattr(manager.model, "factory"):
+                manager.model.factory.create(instances)
+            else:
+                logger.warning(f"{manager} has no 'factory' implementation; "
+                               "change notifications will not be sent")
+                manager.bulk_create(instances)
+
             if hasattr(manager, "rebuild"):
                 manager.rebuild()
 

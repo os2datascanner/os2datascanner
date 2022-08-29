@@ -12,13 +12,25 @@
 # sector open source network <https://os2.eu/>.
 #
 
+from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.core_organizational_structure.models import Alias as Core_Alias
 from os2datascanner.core_organizational_structure.models.aliases import AliasType  # noqa
 from os2datascanner.projects.admin.import_services.models import Imported
-from .broadcasted_mixin import Broadcasted
+from .broadcasted_mixin import Broadcasted, post_save_broadcast
 
 
 class Alias(Core_Alias, Imported, Broadcasted):
     """ Core logic lives in the core_organizational_structure app.
-    Additional logic can be implemented here, but currently, none needed, hence we pass. """
+        Additional specific logic can be implemented here. """
+    factory = None
     pass
+
+
+Alias.factory = ModelFactory(Alias)
+
+
+@Alias.factory.on_create
+@Alias.factory.on_update
+def on_alias_created_updated(objects):
+    for alias in objects:
+        post_save_broadcast(None, alias)
