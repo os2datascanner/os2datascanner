@@ -97,8 +97,15 @@ class UserErrorLogAdmin(admin.ModelAdmin):
         'user_friendly_error_message',
         'error_message',
         'scan_status',
-        'organization')
-    fields = ('path', 'user_friendly_error_message', 'error_message', 'scan_status', 'organization')
+        'organization',
+        'is_removed')
+    fields = (
+        'path',
+        'user_friendly_error_message',
+        'error_message',
+        'scan_status',
+        'organization',
+        'is_removed')
 
 
 @admin.register(ScanStatus)

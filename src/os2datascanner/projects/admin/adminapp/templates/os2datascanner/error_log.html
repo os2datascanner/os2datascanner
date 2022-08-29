@@ -4,11 +4,13 @@
 {% load tz %}
 
 {% block body %}
+{% if not request.headers.hx_request %}
 {% include "partials/header.html" %}
 <main class="wrapper">
     {% include "partials/main.html" with active_tab="status" %}
+    {% endif %}
 
-    <div class="content">
+    <div class="content" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
         {% include "os2datascanner/scanner_tabs.html" with page="scan-status" %}
 
@@ -25,7 +27,8 @@
               <col class="datatable__column--name">
               <col class="datatable__column--automatic">
               <col class="datatable__column--path">
-              <col class="datatable__column--automatic"
+              <col class="datatable__column--automatic">
+              <col class="datatable__column--automatic">
             </colgroup>
             <thead>
               <tr>
@@ -40,6 +43,14 @@
                 </th>
                 <th class="datatable__column--automatic">
                   {% trans "Scan" %}
+                </th>
+                <th>
+                  <button type="button" class="button" name="delete_all"
+                          hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content"
+                          hx-confirm="{% trans "You are about to delete all error log messages. This action cannot be reverted. Are you sure?" %}"
+                          >
+                          {% trans "Delete all" %}
+                        </button>
                 </th>
               </tr>
             </thead>
@@ -60,6 +71,13 @@
                         <td class="datatable__column--automatic">
                             {{ error_log.scan_status.scanner.name }}
                         </td>
+                        <td>
+                          <button type="button" class="button" name="delete_errorlog"
+                          hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content" hx-vals='{"pk": "{{ error_log.pk|unlocalize }}"}'
+                          >
+                            {% trans "Delete" %}
+                          </button>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -69,10 +87,12 @@
 
       {% else %}
         <p>
-          {% trans "no errors found"|capfirst %}
+          {% trans "no errors found."|capfirst %}
         </p>
         {% endif %}
     </div>
+{% if not request.headers.hx_request %}
 </main>
+{% endif %}
 {% endblock %}
 

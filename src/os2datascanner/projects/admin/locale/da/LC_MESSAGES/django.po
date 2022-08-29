@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-18 15:29+0200\n"
+"POT-Creation-Date: 2022-08-23 13:45+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -204,7 +204,7 @@ msgstr ""
 "tog for lang tid at skanne."
 
 #: adminapp/models/usererrorlog.py:29
-#: adminapp/templates/os2datascanner/error_log.html:39
+#: adminapp/templates/os2datascanner/error_log.html:42
 msgid "Path"
 msgstr "Sti"
 
@@ -518,29 +518,38 @@ msgstr "Ønsker du virkelig at slette?"
 msgid "No"
 msgstr "Nej"
 
-#: adminapp/templates/os2datascanner/error_log.html:17
-#: adminapp/templates/os2datascanner/error_log.html:22
+#: adminapp/templates/os2datascanner/error_log.html:19
+#: adminapp/templates/os2datascanner/error_log.html:24
 #: adminapp/templates/os2datascanner/scanner_tabs.html:72
 msgid "Error Log"
 msgstr "Fejlbeskeder"
 
-#: adminapp/templates/os2datascanner/error_log.html:33
+#: adminapp/templates/os2datascanner/error_log.html:36
 msgid "Error"
 msgstr "Fejl"
 
-#: adminapp/templates/os2datascanner/error_log.html:36
+#: adminapp/templates/os2datascanner/error_log.html:39
 #: adminapp/templates/os2datascanner/scan_completed.html:36
 msgid "Started"
 msgstr "Startet"
 
-#: adminapp/templates/os2datascanner/error_log.html:42
+#: adminapp/templates/os2datascanner/error_log.html:45
 msgid "Scan"
 msgstr "Scan"
 
-#: adminapp/templates/os2datascanner/error_log.html:72
-msgid "no errors found"
-msgstr "ingen fejl fundet"
+#: adminapp/templates/os2datascanner/error_log.html:50
+msgid ""
+"You are about to delete all error log messages. This action cannot be "
+"reverted. Are you sure?"
+msgstr ""
+"Du er ved at slette alle fejlbeskeder. Denne handling kan ikke "
+"fortrydes. Er du sikker?"
 
+#: adminapp/templates/os2datascanner/error_log.html:52
+msgid "Delete all"
+msgstr "Slet alle"
+
+#: adminapp/templates/os2datascanner/error_log.html:78
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:114
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
@@ -548,6 +557,10 @@ msgstr "ingen fejl fundet"
 #: adminapp/templates/os2datascanner/scanners.html:166
 msgid "Delete"
 msgstr "Slet"
+
+#: adminapp/templates/os2datascanner/error_log.html:90
+msgid "no errors found."
+msgstr "ingen fejl fundet."
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:12
 msgid ""
@@ -1308,7 +1321,7 @@ msgstr "Drevbogstav"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:312
+#: adminapp/views/scanner_views.py:332
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
