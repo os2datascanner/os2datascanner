@@ -1,4 +1,5 @@
 import enum
+from functools import cached_property
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -89,21 +90,21 @@ class DocumentReport(models.Model):
     def _str_(self):
         return self.path
 
-    @property
+    @cached_property
     def scan_tag(self):
         return ScanTagFragment.from_json_object(self.raw_scan_tag)
 
-    @property
+    @cached_property
     def matches(self):
         return (MatchesMessage.from_json_object(self.raw_matches)
                 if self.raw_matches else None)
 
-    @property
+    @cached_property
     def problem(self):
         return (ProblemMessage.from_json_object(self.raw_problem)
                 if self.raw_problem else None)
 
-    @property
+    @cached_property
     def metadata(self):
         return (MetadataMessage.from_json_object(self.raw_metadata)
                 if self.raw_metadata else None)

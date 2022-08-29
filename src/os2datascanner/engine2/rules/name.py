@@ -62,20 +62,9 @@ class NameRule(SimpleRule):
         super().__init__(**super_kwargs)
 
         # Convert list of str to upper case and to sets for efficient lookup
-        m = set(map(str.upper,
-                common_loader.load_dataset(
-                        "names", "da_20140101_dst_fornavne-mænd")))
-        k = set(map(str.upper,
-                common_loader.load_dataset(
-                        "names", "da_20140101_dst_fornavne-kvinder")))
-        e = set(map(str.upper,
-                common_loader.load_dataset(
-                        "names", "da_20140101_dst_efternavne")))
-        f = m.union(k)
-
-        self.last_names = e
-        self.first_names = f
-        self.all_names = f.union(e)
+        self.last_names = None
+        self.first_names = None
+        self.all_names = None
 
         self._whitelist = frozenset(n.upper() for n in (whitelist or []))
         self._blacklist = frozenset(n.upper() for n in (blacklist or []))
@@ -84,7 +73,27 @@ class NameRule(SimpleRule):
     def presentation_raw(self):
         return "personal name"
 
+    def _load_datasets(self):
+        if self.all_names is None:
+            # Convert list of str to upper case and to sets for efficient
+            # lookup
+            m = set(map(str.upper,
+                    common_loader.load_dataset(
+                            "names", "da_20140101_dst_fornavne-mænd")))
+            k = set(map(str.upper,
+                    common_loader.load_dataset(
+                            "names", "da_20140101_dst_fornavne-kvinder")))
+            e = set(map(str.upper,
+                    common_loader.load_dataset(
+                            "names", "da_20140101_dst_efternavne")))
+            f = m.union(k)
+
+            self.last_names = e
+            self.first_names = f
+            self.all_names = f.union(e)
+
     def match(self, text):  # noqa: CCR001, too high cognitive complexity
+        self._load_datasets()
         unmatched_text = text
 
         def is_name_fragment(fragment, candidates, use_blacklist=True):
