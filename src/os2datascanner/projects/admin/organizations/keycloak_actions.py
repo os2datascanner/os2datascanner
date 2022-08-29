@@ -372,8 +372,8 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
             if hasattr(manager, "factory"):
                 manager.model.factory.update((obj for obj, _ in instances), properties)
             else:
-                logger.info(f"Be aware that {manager} has no 'factory' implementation. "
-                            f"Signals wont be sent.")
+                logger.warning(f"{manager} has no 'factory' implementation; "
+                               "change notifications will not be sent")
                 manager.bulk_update((obj for obj, _ in instances), properties)
 
         for manager, instances in group_into(
@@ -386,8 +386,8 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
             if hasattr(manager.model, "factory"):
                 manager.model.factory.create(instances)
             else:
-                logger.info(f"Be aware that {manager} has no 'factory' implementation. "
-                            f"Signals wont be sent.")
+                logger.warning(f"{manager} has no 'factory' implementation; "
+                               "change notifications will not be sent")
                 manager.bulk_create(instances)
 
             if hasattr(manager, "rebuild"):
