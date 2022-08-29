@@ -4,6 +4,7 @@ from ..conversions.types import OutputType
 from .rule import Rule, SimpleRule, Sensitivity
 from .datasets.loader import common as common_loader
 
+
 # see https://regex101.com/r/zJBsXw/9 for examples of matches
 # \p{Lu} match a upper case unicode letter, see
 # https://www.regular-expressions.info/unicode.html#category
@@ -13,6 +14,7 @@ from .datasets.loader import common as common_loader
 _whitespace = r"[^\S\n\r]+"
 _optional_comma = r",?"
 _optional_whitespace = r"[^\S\n\r]?"
+
 
 # match a number prepended to a street name, like '10.' or '10-'
 _prepend_number = r"\d*[\.-]"
@@ -81,19 +83,25 @@ class AddressRule(SimpleRule):
     def __init__(self, whitelist=None, blacklist=None, **super_kwargs):
         super().__init__(**super_kwargs)
 
-        # Convert list of str to upper case and to sets for efficient lookup
-        self.street_names = set(map(str.upper,
-                                    common_loader.load_dataset(
-                                        "addresses", "da_addresses")))
+        self.street_names = None
 
         self._whitelist = frozenset(n.upper() for n in (whitelist or []))
         self._blacklist = frozenset(n.upper() for n in (blacklist or []))
+
+    def _load_datasets(self):
+        if self.street_names is None:
+            # Convert list of str to upper case and to sets for efficient
+            # lookup
+            self.street_names = set(map(str.upper,
+                                        common_loader.load_dataset(
+                                            "addresses", "da_addresses")))
 
     @property
     def presentation_raw(self):
         return "personal address"
 
     def match(self, text):
+        self._load_datasets()
 
         def is_address_fragment(fragment, candidates):
             fragment = fragment.upper()
