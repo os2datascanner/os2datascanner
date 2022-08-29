@@ -161,7 +161,9 @@ services:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-    command: explorer --enable-metrics
+    env_file:
+      - ./dev-environment/engine/dev-settings.env
+    command: explorer
     init: true
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
@@ -173,8 +175,10 @@ services:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-    command: worker --enable-metrics --single-cpu
+    command: worker
     init: true
+    env_file:
+      - ./dev-environment/engine/dev-settings.env
     environment:
       - SCHEDULE_ON_CPU=0
     volumes:
@@ -187,7 +191,9 @@ services:
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
-    command: exporter --enable-metrics
+    command: exporter
+    env_file:
+      - ./dev-environment/engine/dev-settings.env
     init: true
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
