@@ -838,7 +838,6 @@ msgstr "Rediger scannerjob"
 #: adminapp/templates/os2datascanner/scanner_form.html:121
 #: adminapp/templates/os2datascanner/scanner_no_client_credentials.html:15
 #: adminapp/templates/partials/breadcrumb.html:46
-#: grants/templates/grants/grant_start.html:15
 msgid "Create new scannerjob"
 msgstr "Opret nyt scannerjob"
 
@@ -1531,13 +1530,16 @@ msgstr "{value} er ikke en gyldig værdi for {class_name}"
 msgid "grants"
 msgstr "bevillinger"
 
+#: grants/templates/grants/grant_start.html:15
+msgid "Configure Microsoft Graph"
+msgstr "Konfigurér Microsoft Graph"
+
 #: grants/templates/grants/grant_start.html:20
 msgid ""
-"The data source of this scannerjob is in the cloud and an external service "
-"must allow OS2datascanner to access it's content."
+"To use this service, you must allow OS2datascanner access to its content."
 msgstr ""
-"Dette scannerjobs datakilde ligger i skyen, og en eksterne tjeneste skal "
-"tillade OS2datascanner adgang til dens indhold."
+"For at benytte denne tjeneste skal du tillade OS2datascanner adgang til "
+"tjenestens indhold."
 
 #: grants/templates/grants/grant_start.html:24
 #: import_services/templates/import_services/msgraph_oauth.html:19
@@ -1851,7 +1853,7 @@ msgstr "Microsoft Graph konfiguration"
 #: import_services/templates/import_services/msgraph_edit.html:11
 #: import_services/templates/import_services/msgraph_oauth.html:11
 msgid "configure Microsoft Graph"
-msgstr "konfigurer Microsoft Graph"
+msgstr "konfigurér Microsoft Graph"
 
 #: import_services/templates/import_services/msgraph_edit.html:31
 msgid "save Microsoft Graph configuration"
