@@ -29,6 +29,29 @@ function setCheckEvent() { // jshint ignore:line
   document.getElementById('30-days-toggle').addEventListener('click', checkedBox);
 }
 
+function disableDistributeButton() {
+  const distributeSelect = document.getElementById('distribute-to');
+  let chosenOptions = [];
+  for (const option of distributeSelect.options) {
+    if (option.selected) {
+      chosenOptions.push(option);
+    }
+  }
+  const distributeButton = document.getElementById('distribute-matches');
+  if (chosenOptions.length > 0) {
+    distributeButton.disabled = false;
+  } else {
+    distributeButton.disabled = true;
+  }
+}
+
+function setDistributeSelectEvent() {
+  const distributeSelect = document.getElementById('distribute-to');
+  distributeSelect.addEventListener('click', disableDistributeButton);
+  disableDistributeButton();
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   setDropdownEvent();
+  setDistributeSelectEvent();
 });

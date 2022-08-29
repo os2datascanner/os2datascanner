@@ -19,6 +19,7 @@
     background-color: rgba(0, 0, 0, 0.2);
     text-decoration: none;
   }
+
   &--has-icon {
     .material-icons {
       line-height: 1rem;
@@ -64,6 +65,11 @@
       .con-text {
         margin-left: .25rem;
       }
+    }
+
+    &:disabled {
+      background-color: rgba(0, 0, 0, 0.2);
+      cursor: not-allowed;
     }
 
   }
@@ -222,9 +228,9 @@
   vertical-align: bottom;
 }
 
-.button svg + span,
-.button span + svg {
-    margin-left: 0.5rem;
+.button svg+span,
+.button span+svg {
+  margin-left: 0.5rem;
 }
 
 .last-btn {
@@ -242,6 +248,7 @@
   line-height: 1;
   padding: .5em .5em .5em 3.5em;
   border-radius: var(--border-radius-button);
+
   &::before,
   &::after {
     position: absolute;
@@ -251,12 +258,14 @@
     border-radius: .5em;
     transition: var(--transition-default);
   }
+
   &:hover::before,
   &:hover::after,
   &:focus::before,
   &:focus::after {
     box-shadow: 0 0 0 3px var(--color-primary);
   }
+
   &::before {
     color: #aaa;
     font-weight: bold;
@@ -264,12 +273,14 @@
     width: 2.25em;
     height: 1em;
   }
+
   &::after {
     background-color: #fff;
     content: "";
     width: 1em;
     height: 1em;
   }
+
   &[aria-pressed=false] {
     &::before {
       content: "clear";
@@ -278,6 +289,7 @@
       padding-left: 1em;
     }
   }
+
   &[aria-pressed=true] {
     &::before {
       content: "done";
@@ -285,6 +297,7 @@
       background-color: #cbf7e3;
       padding-right: calc(1em + 3px);
     }
+
     &::after {
       transform: translate(1.25em);
     }
