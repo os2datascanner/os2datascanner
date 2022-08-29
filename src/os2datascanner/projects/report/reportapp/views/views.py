@@ -153,7 +153,7 @@ class MainPageView(LoginRequiredMixin, ListView):
 
         return self.document_reports
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):  # noqa CCR001
         context = super().get_context_data(**kwargs)
         context["renderable_rules"] = RENDERABLE_RULES
 
@@ -211,26 +211,32 @@ class MainPageView(LoginRequiredMixin, ListView):
         context['order_by'] = self.request.GET.get('order_by', 'sort_key')
         context['order'] = self.request.GET.get('order', 'ascending')
 
-        # Serve the match fragment of the document report, that the user requested
-        # more matches from. This could probably use a refactor.
-        if self.request.headers.get(
-                    'HX-Request') == "true" and \
-                self.request.headers.get('HX-Trigger-Name') == 'show-more-matches':
+        is_htmx = self.request.headers.get('HX-Request') == "true"
 
-            # Increase number of shown matches
-            last_index = int(self.request.GET.get('last_match') or 10)
-            interval = [last_index, last_index + 10]
-            context['interval'] = interval
+        if is_htmx:
+            htmx_trigger = self.request.GET.get('HX-Trigger-Name')
+            if htmx_trigger == 'open-button':
 
-            # Serve the fragments associated with the document report
-            frags = self.document_reports.get(
-                pk=self.request.GET.get('dr_pk')).matches.matches
-            for frag in frags:
-                if frag.rule.type_label in RENDERABLE_RULES:
-                    context['frag'] = frag
+                context['last_open_pk'] = self.request.GET.get('pk')
 
-            # Serve the document report key
-            context['pk'] = self.request.GET.get('dr_pk')
+            # Serve the match fragment of the document report, that the user requested
+            # more matches from. This could probably use a refactor.
+            elif htmx_trigger == 'show-more-matches':
+
+                # Increase number of shown matches
+                last_index = int(self.request.GET.get('last_match') or 10)
+                interval = [last_index, last_index + 10]
+                context['interval'] = interval
+
+                # Serve the fragments associated with the document report
+                frags = self.document_reports.get(
+                    pk=self.request.GET.get('dr_pk')).matches.matches
+                for frag in frags:
+                    if frag.rule.type_label in RENDERABLE_RULES:
+                        context['frag'] = frag
+
+                # Serve the document report key
+                context['pk'] = self.request.GET.get('dr_pk')
 
         return context
 

@@ -6,7 +6,11 @@
 {% with type=document_report.matches.handle|find_type_label %}
   {% for frag in document_report.matches.matches %}
     {% if frag.rule.type_label in renderable_rules and frag.matches %}
-      <tr data-type="{{ type }}">
+      <tr data-type="{{ type }}"
+      {% if last_open_pk and last_open_pk == document_report.pk|unlocalize %}
+      class="highlighted"
+      {% endif %}
+      >
         <td class="datatable__column--handle">
           <div class="ds-checkbox">
             <input type="checkbox" 
