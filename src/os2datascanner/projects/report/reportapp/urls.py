@@ -67,3 +67,24 @@ else:
                                template_name='password_change_done.html',
                            ),
                            name='password_change_done'))
+    urlpatterns.append(url(r'^accounts/password_reset/$',
+                           django.contrib.auth.views.PasswordResetView.as_view(
+                               template_name='password_reset_form.html',
+                           ),
+                           name='password_reset'))
+    urlpatterns.append(url(r'^accounts/password_reset/done/',
+                           django.contrib.auth.views.PasswordResetDoneView.as_view(
+                               template_name='password_reset_done.html',
+                           ),
+                           name='password_reset_done'))
+    urlpatterns.append(url(r'^accounts/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/' +
+                           '(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]*)/',
+                           django.contrib.auth.views.PasswordResetConfirmView.as_view(
+                               template_name='password_reset_confirm.html',
+                           ),
+                           name='password_reset_confirm'))
+    urlpatterns.append(url(r'^accounts/reset/complete',
+                           django.contrib.auth.views.PasswordResetCompleteView.as_view(
+                               template_name='password_reset_complete.html',
+                           ),
+                           name='password_reset_complete'))
