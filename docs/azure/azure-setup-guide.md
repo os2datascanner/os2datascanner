@@ -1,24 +1,30 @@
 # Scanning af Office 365 med Microsoft Azure
 
-Denne dokumentation beskriver, hvorledes *OS2datascanner* kan anvendes til at scanne filer og mails fra Microsoft Office 365.
-Først beskrives den påkrævede opsætning af Applikationsregistrering i  Microsoft Azure's portal.
-Herefter demonstreres der, hvorledes et scan af mails fra Office 365 oprettes i *OS2datascanner*.
+Denne dokumentation beskriver, hvorledes *OS2datascanner* kan anvendes til at
+scanne filer og mails fra Microsoft Office 365.
+Først beskrives den påkrævede opsætning af Applikationsregistrering i Microsoft
+Azure's portal.
+Herefter demonstreres der, hvorledes et scan af mails fra Office 365 oprettes i
+*OS2datascanner*.
 
 Gennem denne guide anvendes Vejstrand Kommune som eksempel. 
-Udskift derfor tekster, såsom "Vejstrand" og "<DIN_KOMMUNES_NAVN>", med navnet på den pågældende kommune.
+Udskift derfor tekster, såsom "Vejstrand" og `DIN_ORGANISATIONS_NAVN`, med
+navnet på jeres organisation.
 
 ## Del 1: Opsætning af Applikation i Azure
 
-For at kunne scanne filer og mails fra Office 365 med *OS2datascanner*, så skal der først registreres en Azure Applikation
-for at give tilladelse til at hente data fra Office 365. Denne del af vejledningen viser, hvordan man, trin-for-trin, registrerer
-en Azure Applikation.
+For at kunne scanne filer og mails fra Office 365 med *OS2datascanner*, så skal
+der først registreres en Azure Applikation for at give tilladelse til at hente
+data fra Office 365. Denne del af vejledningen viser, hvordan man,
+trin-for-trin, registrerer en Azure Applikation.
 
 *Step 1:* Log ind på Microsoft Azure's portal via. [https://portal.azure.com/#home](https://portal.azure.com/#home).
 	Vælg nu: "Azure Active Directory".
 
 ![](step1.png)
 
-*Step 2:* Fra Azure Active Directory menuen i venstre side skal du vælge "App Registration".
+*Step 2:* Fra Azure Active Directory menuen i venstre side skal du vælge "App
+Registration".
 
 ![](step2.png)
 
@@ -27,31 +33,20 @@ en Azure Applikation.
 ![](img-004.jpg)
 
 *Step 4:* Indtast et sigende navn for applikationen i inputfeltet "Name". 
-	Et sigende navn kunne eksempelvis være "OS2datascanner for <DIN_KOMMUNES_NAVN> kommune".
+	Et sigende navn kunne eksempelvis være "OS2datascanner for `DIN_ORGANISATIONS_NAVN`".
 	Vælg nu "Accounts in this organizational directory only (Single tenant)" under "Supported account types".
-	Indtast følgende i inputfeltet for "Redirect URI": `https://<DIN_KOMMUNES_NAVN>-admin.os2datascanner.dk/msgraph-mailscanners/add/`
+	Indtast følgende i inputfeltet for "Redirect URI": `https://DIN_ORGANISATIONS_NAVN-admin.os2datascanner.dk/grants/msgraph/receive/`
 
 ![](img-006.png)
 
 *Step 5:* Når ovenstående er udfyldt, så skal du klikke på "Register".
 	Nu har du registreret en ny app, og du skulle gerne se en oversigt over den nye app.
 
-*Step 5½ (Valgfri):* Hvis der også ønskes at anvende flere typer af scannerjob for Office365 
-	eller importere organisationer fra Office365 skal der tilføjes flere Redirect URI'er.
-	Det gøres ved at klikke på menu punktet i venstre side kaldet "Authentication".
-	Klik herefter på "Add URI" og indsæt følgende redirect URI'er: 
-	`https://<DIN_KOMMUNES_NAVN>-admin.os2datascanner.dk/msgraph-filescanners/add/`,
-	`https://<DIN_KOMMUNES_NAVN>-admin.os2datascanner.dk/msgraph-calendarscanners/add/` og
-	`https://<DIN_KOMMUNES_NAVN>-admin.os2datascanner.dk/organizations/`.
-	Tryk på "Save".
-
 ![](img-008.png)
 
-Klik nu på "Overview" i menuen til venstre for at komme tilbage til oversigten for applikationen.
-
-![](img-010.jpg)
-
 *Step 6:* Kopiér nu "Application (client) ID" og send dette til Magenta ApS.
+
+![](img-008b.png)
 
 *Step 7:* For at OS2datascanner kan scanne emails og filer i Azure via. den oprettede Applikation, så skal der genereres en Client secret. 
 	Det gøres via. menupunktet "Certificates & secrets" i menuen til venstre.
@@ -82,6 +77,10 @@ Klik nu på "Overview" i menuen til venstre for at komme tilbage til oversigten 
 ![](img-018.png)
 
 *Step 12:* Klik på menupunktet "Application permissions".
+
+(Læg mærke til, at OS2datascanner ikke kan bruge _delegated permissions_, hvor
+en tredjepartsapplikation kan handle på vegne af én bestemt bruger - systemet
+skal i stedet have sin egen adgang på tværs af alle brugere.)
 
 ![](img-020.png)
 
@@ -120,12 +119,17 @@ Fremgangsmåden for "Office 365 mailscanner" og "Office 365 OneDrive filscanner"
 
 ![](img-026.png)
 
-*Step 2:* Hvis der ikke er oprettet andre Office 365 scannerjobs skal du via Microsoft Online (Office 365) give OS2datascanner lov til at tilgå organisationens data. Dette gøres ved at klikke på "Fortsæt til Microsoft Online" knappen.
+*Step 2:* Hvis OS2datascanner ikke allerede har de nødvendige rettigheder, skal
+du nu logge ind som organisatorisk administrator via Microsoft Online (Office
+365) for at give OS2datascanner lov til at tilgå organisationens data. Dette
+gøres ved at klikke på "Fortsæt til Microsoft Online" knappen.
 
 ![](img-028.png)
 
-*Step 3:* Du vil nu blive bedt om at logge ind via Microsoft online. Hvis ikke din Microsoft bruger
-allerede er logget ind vil du blive om at indtaste password. Brugeren, som du logger ind med, skal have de fornødne rettigheder til [den pågældende Microsoft Azure Applikation](https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/what-is-application-management).
+*Step 3:* Du vil nu blive bedt om at logge ind via Microsoft online. Hvis ikke
+din Microsoft bruger allerede er logget ind vil du blive om at indtaste
+password. Den bruger, som du logger ind med, skal [kunne uddelegere de fornødne
+rettigheder på organisationens vegne](https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/consent-and-permissions-overview#admin-consent).
 
 ![](img-030.jpg)
 
@@ -133,6 +137,8 @@ allerede er logget ind vil du blive om at indtaste password. Brugeren, som du lo
 
 ![](img-032.jpg)
 
-Herefter vil du blive ført tilbage til *OS2datascanner*s administrationsmodul, hvor du nu kan færdiggøre oprettelsen af dit scannerjob (Se venligst implementeringshåndbogen).
+*Step 5:* Du bliver ført tilbage til *OS2datascanner*s administrationsmodul,
+hvor du nu kan færdiggøre oprettelsen af dit scannerjob (Se venligst
+implementeringshåndbogen).
 
 Du har nu gennemført del 2 af denne guide til oprettelse af et "Office 365 mailscanner"-job i *OS2datascanner*.
