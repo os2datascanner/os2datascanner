@@ -286,7 +286,6 @@ class MainPageView(LoginRequiredMixin, ListView):
 
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
-    template_name = 'statistics.html'
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
     users = UserProfile.objects.all()
@@ -297,6 +296,13 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
     unhandled_matches = matches.filter(
         resolution_status__isnull=True)
     scannerjob_filters = None
+
+    def get_template_names(self):
+        is_htmx = self.request.headers.get('HX-Request') == 'true'
+        if is_htmx:
+            return "components/statistics-template.html"
+        else:
+            return "statistics.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -324,9 +330,9 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         if self.scannerjob_filters is None:
             # Create select options
-            self.scannerjob_filters = DocumentReport.objects.order_by(
-                    'scanner_job_pk').values(
-                        "scanner_job_name", "scanner_job_pk").distinct()
+            self.scannerjob_filters = DocumentReport.objects.filter(
+                raw_matches__matched=True).order_by('scanner_job_pk').values(
+                "scanner_job_name", "scanner_job_pk").distinct()
 
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))

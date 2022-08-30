@@ -1,10 +1,7 @@
-{% load i18n %}
-{% load l10n %}
-{% load static %}
-
-<script src="{% static "js/options.js" %}"></script>
-
-<div class="content">
+<div class="content" hx-push-url="true">
+  {% load i18n %}
+  {% load l10n %}
+  {% load static %}
   {% if request.path == '/statistics/leader/' %}
   <h1 class="page-title">{% trans "Leader statistics" %}</h1>
   {% elif request.path == '/statistics/dpo/' %}
@@ -12,9 +9,9 @@
   {% endif %}
 
   <!-- Scannerjob chart data selection -->
-  <form action="{% url 'statistics' %}" method="GET">
+  <form name="stat_form" hx-get="{% url "statistics" %}" hx-target=".content" hx-swap="outerHTML" hx-trigger="change">
     <div class="dropdown stats_dropdown">
-      <select name="scannerjob" id="scannerjobs" data-autosubmit data-compareto="all">
+      <select name="scannerjob" id="scannerjobs" data-compareto="all">
         <option value="all"
                 {% if scannerjobs|last == "all" %}
                     selected="selected"
@@ -54,10 +51,10 @@
         </div>
       </div>
       <div class="chart_container" data-chartid="development-new-results">
-        <canvas id="line_chart_new_matches_by_month"></canvas>
+        <canvas class="line_chart" id="line_chart_new_matches_by_month"></canvas>
       </div>
       <div class="hidden chart_container" data-chartid="development-unhandled-results">
-        <canvas id="line_chart_unhandled_matches"></canvas>
+        <canvas class="line_chart" id="line_chart_unhandled_matches"></canvas>
       </div>
     </div>
 
@@ -72,7 +69,7 @@
         <div class="statistic_header_nav">
           <div class="dropdown">
             <select>
-              <option value="distribution-sensitivities">{% trans "Sensitivities" %}</option>
+              <option value="distribution-sensitivities">{% trans "Sensitivity" %}</option>
               <option value="distribution-data-sources">{% trans "Data sources" %}</option>
             </select>
           </div>
@@ -187,36 +184,4 @@
 {{ handled_matches|json_script:"handled_matches" }}
 {{ new_matches_by_month|json_script:"new_matches_by_month" }}
 {{ unhandled_matches_by_month|json_script:"unhandled_matches_by_month" }}
-<script>
-  // json_script solution - Safe from in-page script execution
-
-  var sensitivities = JSON.parse(document.getElementById('sensitivities').textContent);
-
-  var handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
-
-  var sourceTypes = JSON.parse(document.getElementById('source_types').textContent);
-
-  var newMatchesByMonth = JSON.parse(document.getElementById('new_matches_by_month').textContent);
-
-  var unhandledMatchesByMonth = JSON.parse(document.getElementById('unhandled_matches_by_month').textContent);
-
-  // Finds the total number matches in the array
-  totalArrayValue = function(array, index){
-    let number = 0;
-    for (let i = 0; i < array.length; i++) {
-      number += array[i][index];
-    }
-    return number;
-  };
-  // Calculates the percentage for 'Håndterede matches -> Alle matches'
-  var totalMatches = totalArrayValue(sensitivities, 1)
-  var totalHandledMatches = totalArrayValue(handledMatches, 1)
-  var handledPercentage = totalHandledMatches / totalMatches  * 100;
-  // To fixed decimal point
-  handledPercentageFixed = handledPercentage.toFixed(1);
-
-  //autosubmit function
-  setDropdownEvent();
-
-</script>
 
