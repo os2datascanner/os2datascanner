@@ -38,6 +38,20 @@
           {% endif %}
         </td>
       </tr>
+      {% if is_dpo %}
+      <tr>
+        <td>{% trans "Contact Person" %}</td>
+        <td class="ds-checkbox">
+          <input type="checkbox" name="contact_check" id="contact_check" value="checked"
+                 hx-post="" hx-trigger="change" hx-swap="afterend" 
+                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' 
+                 hx-include='#contact_check'
+                 {% if is_contact_person %}checked{% endif %}
+                 >
+          <label for="contact_check" title="{% trans "By checking this box, users will be presented with your email address for DPO-related questions." %}"></label>
+        </td>
+      </tr>
+      {% endif %}
     </tbody>
   </table>
 
@@ -87,6 +101,7 @@
         </td>
       </tr>
       {% endif %}
+      {% if aliases %}
       <tr>
         <td>{% trans "Aliases" %}</td>
         <td>
@@ -97,6 +112,7 @@
           </ul>
         </td>
       </tr>
+      {% endif %}
     </tbody>
   </table>
 

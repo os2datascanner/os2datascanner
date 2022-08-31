@@ -1,0 +1,62 @@
+{%  load i18n %}
+{% load static %}
+
+{% if settings.SUPPORT_BUTTON %}
+<div class="service">
+
+  <div tabindex="-1" class="service_button">
+    ?
+  </div>
+
+  <div class="popup overview">
+
+    <ul>
+      <a href="{% url "guide" %}" target="_blank">
+        <li title="{% trans "Consult the manual to find instructions for using OS2datascanner." %}">
+        {% trans "Manual" %}
+        </li>
+      </a>
+      <a href="{% url "guide" %}#FAQ" target="_blank">
+        <li title="{% trans "Consult the FAQ to read answers to the most frequently asked questions asked by other users." %}">
+          {% trans "FAQ" %}
+        </li>
+      </a>
+      {% if settings.ALLOW_CONTACT_DPO %}
+      {% if dpo_contacts %}
+      <li class="dpo_button"
+          title="{% trans "Do you have a question about some of your matches or which actions you should take to handle them? You can contact one of your DPOs by clicking this button." %}">
+        {% trans "Contact DPO" %}
+        <div class="popup dpo_overview" title="">
+          <ul>
+            {% for contact in dpo_contacts %}
+            <a href="mailto:{{ contact.user.email }}?subject={% trans "Question to OS2datascanner" %}">
+              {% if contact.user.first_name %}
+              <li>{{ contact.user.first_name }} {{ contact.user.last_name }}</li>
+              {% elif contact.user.account.first_name %}
+              <li>{{ contact.user.account.first_name }} {{ contact.user.account.last_name }}</li>
+              {% else %}
+              <li>{{ contact.user.username }}</li>
+              {% endif %}
+            </a>
+            {% endfor %}
+          </ul>
+        </div>
+      </li>
+      {% endif %}
+      {% endif %}
+      {% if settings.ALLOW_CONTACT_IT %}
+      <a href="mailto:{{ request.user.account.organization.contact_email }}?subject={% trans "Issue with OS2datascanner" %}" target="_blank">
+        <li title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact your IT department by clicking this button." %}">
+          {% trans "Contact IT" %}
+        </li>
+      </a>
+      {% endif %}
+      {% if request.user.is_superuser or settings.ALLOW_CONTACT_MAGENTA %}
+      <a href="mailto:OS2datascannersupport@magenta.dk?subject=[{% now "y/m/d H:i:s" %}] {{ request.user.profile.organization }}: {{ request.user.get_short_name }}&body={{ email_body }}">
+        <li title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact Magenta ApS by clicking this button." %}">{% trans "Contact Magenta" %}</li>
+      </a>
+      {% endif %}
+    </ul>
+  </div>
+</div>
+{% endif %}

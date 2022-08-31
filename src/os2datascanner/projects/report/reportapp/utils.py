@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Q
 from mozilla_django_oidc import auth
+from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.engine2.pipeline import messages
 from .models.documentreport import DocumentReport
@@ -16,6 +17,15 @@ from os2datascanner.projects.report.organizations.models import (
     Alias, AliasType, Organization, Account)
 
 logger = structlog.get_logger()
+
+
+def convert_context_to_email_body(context, user):
+    body = _("%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A")
+    for key in context:
+        body += f"{key}: {context[key]}%0D%0A"
+    body += f"user: {user.username}%0D%0A"
+
+    return body
 
 
 def relate_matches_to_user(user, value, alias_type):

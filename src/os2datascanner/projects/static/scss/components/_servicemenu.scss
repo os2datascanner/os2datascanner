@@ -1,0 +1,104 @@
+:root {
+  --service-button-size: 100px;
+  --service-button-gap: 10px;
+}
+
+.service {
+  position: fixed;
+  width: 200px;
+  right: 20px;
+  bottom: calc(20px + var(--service-button-gap) + var(--service-button-size));
+  z-index: 10;
+
+  >.service_button {
+    margin-left: auto;
+    height: var(--service-button-size);
+    width: var(--service-button-size);
+    border-radius: calc(var(--service-button-size)/2);
+    background-color: var(--color-body-bg);
+    font-size: calc(0.64 * var(--service-button-size));
+    color: var(--color-main);
+    line-height: var(--service-button-size);
+    text-align: center;
+    cursor: pointer;
+    box-shadow: var(--box-shadow-widget);
+    transition: all 200ms ease-in-out;
+    position: absolute;
+    right: 0px;
+    bottom: calc(0px - var(--service-button-gap) - var(--service-button-size));
+
+    &:hover {
+      color: var(--color-body-bg);
+      background-color: var(--color-main);
+    }
+
+    &:focus {
+      color: var(--color-body-bg);
+      background-color: var(--color-main);
+
+      +.popup {
+        display: block;
+      }
+    }
+  }
+
+  .dpo_button:hover>.popup {
+    display: block;
+  }
+
+  .popup {
+    display: none;
+    background-color: var(--color-widget-bg);
+    box-shadow: var(--box-shadow-widget);
+    border-radius: var(--border-radius-widget);
+    color: var(--color-main);
+    position: relative;
+
+    &:hover {
+      display: block;
+    }
+
+    &.overview {
+      top: 0px;
+    }
+
+    &.dpo_overview {
+      width: 300px;
+      position: absolute;
+      right: 160px;
+      bottom: 0px;
+    }
+
+    >ul {
+      list-style: none;
+      padding: 1rem;
+      margin: 0;
+
+      a,
+      button {
+        text-decoration: none;
+        width: 100%;
+        height: 100%;
+        color: inherit;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: inherit;
+      }
+
+      li {
+        padding: 0.8rem;
+        margin: 0.2rem;
+        transition: all 200ms ease-in-out;
+        cursor: pointer;
+        border-radius: 10px;
+
+        &:hover {
+          background-color: var(--color-main);
+          color: var(--color-widget-bg)
+        }
+
+      }
+    }
+  }
+}
