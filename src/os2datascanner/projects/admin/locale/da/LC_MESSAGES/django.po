@@ -70,7 +70,7 @@ msgid "Login method"
 msgstr "Login metode"
 
 #: adminapp/models/rules/rule.py:40 core/models/client.py:73
-#: organizations/templates/organizations/org_table.html:38
+#: organizations/templates/organizations/org_table.html:41
 msgid "name"
 msgstr "navn"
 
@@ -623,6 +623,7 @@ msgstr "Ny"
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status_table.html:83
 #: adminapp/templates/os2datascanner/scanners.html:166
+#: organizations/templates/organizations/org_table.html:200
 msgid "Delete"
 msgstr "Slet"
 
@@ -774,6 +775,7 @@ msgstr "Vil du slette denne regel?"
 
 #: adminapp/templates/os2datascanner/rules.html:113
 #: adminapp/templates/os2datascanner/scanners.html:165
+#: organizations/templates/organizations/org_table.html:199
 msgid "The action cannot be reversed"
 msgstr "Handlingen kan ikke fortrydes."
 
@@ -1357,7 +1359,10 @@ msgstr ""
 "indtastet er den rigtige, og tjekke din spam mappe."
 
 #: adminapp/templates/password_reset_email.html:3
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "You're receiving this email because you requested a password reset for "
+#| "your user account at %(site_name)s."
 msgid ""
 "\n"
 "  You're receiving this email because you requested a password reset for "
@@ -1380,7 +1385,8 @@ msgid "Thanks for using our site!"
 msgstr "Tak, fordi du brugte vores side!"
 
 #: adminapp/templates/password_reset_email.html:18
-#, python-format
+#, fuzzy, python-format
+#| msgid "The %(site_name)s team"
 msgid ""
 "\n"
 "  The %(site_name)s team\n"
@@ -1718,7 +1724,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_table.html:42
+#: organizations/templates/organizations/org_table.html:45
 msgid "import service"
 msgstr "importservice"
 
@@ -2011,31 +2017,39 @@ msgstr "organisationer for"
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_table.html:39
+#: organizations/templates/organizations/org_table.html:42
 msgid "email"
 msgstr "e-mail"
 
-#: organizations/templates/organizations/org_table.html:40
+#: organizations/templates/organizations/org_table.html:43
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_table.html:44
+#: organizations/templates/organizations/org_table.html:47
 msgid "Import service (Microsoft Graph)"
 msgstr "Importservice (Microsoft Graph)"
 
-#: organizations/templates/organizations/org_table.html:82
-#: organizations/templates/organizations/org_table.html:90
-#: organizations/templates/organizations/org_table.html:151
-#: organizations/templates/organizations/org_table.html:158
+#: organizations/templates/organizations/org_table.html:49
+msgid "action"
+msgstr "handling"
+
+#: organizations/templates/organizations/org_table.html:86
+#: organizations/templates/organizations/org_table.html:94
+#: organizations/templates/organizations/org_table.html:155
+#: organizations/templates/organizations/org_table.html:162
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_table.html:106
-#: organizations/templates/organizations/org_table.html:174
+#: organizations/templates/organizations/org_table.html:110
+#: organizations/templates/organizations/org_table.html:178
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_table.html:221
+#: organizations/templates/organizations/org_table.html:199
+msgid "Do you really want to delete this organization?"
+msgstr "Er du sikker på, at du vil slette denne organisation?"
+
+#: organizations/templates/organizations/org_table.html:240
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
@@ -2047,7 +2061,7 @@ msgstr "organisatorisk struktur"
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
 
-#: organizations/views/org_views.py:78
+#: organizations/views/org_views.py:79
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 

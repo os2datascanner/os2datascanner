@@ -226,6 +226,18 @@
       }
     }
 
+    &--delete {
+      width: 8rem;
+
+      .button {
+        margin: .25rem 0 0 .25rem;
+      }
+
+      >* {
+        flex: 0 1 auto; // be explicit for IE11s sake
+      }
+    }
+
     &--info {
       width: 20rem;
     }

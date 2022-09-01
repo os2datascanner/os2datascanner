@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.utils.translation import ugettext_lazy as _
+from os2datascanner.projects.admin.adminapp.views.views import RestrictedDeleteView
 
 from os2datascanner.projects.admin.core.models import Client, Feature
 from ..models import Organization
@@ -92,3 +93,9 @@ class UpdateOrganizationView(LoginRequiredMixin, UpdateView):
         form.required_css_class = 'required-form'
         # form.error_css_class = # TODO: add if relevant?
         return form
+
+
+class DeleteOrganizationView(RestrictedDeleteView):
+    """Delete an ogranization view."""
+    model = Organization
+    success_url = '/organizations/'

@@ -31,7 +31,10 @@
             <col class="datatable__column--info">
             {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
                 <col class="datatable__column--btn">
+            {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+                <col class="datatable__column--btn">
             {% endif %}
+            <col class="datatable__column--delete">
         </colgroup>
         <thead>
             <tr>
@@ -40,9 +43,10 @@
                 <th class="datatable__column--info">{% trans "phone"|capfirst %}</th>
                 {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
                     <th class="datatable__column--btn">{% trans "import service"|capfirst %}</th>
-        {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
-        <th class="datatable__column--btn">{% trans "Import service (Microsoft Graph)" %}</th>
-        {% endif %}
+                {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+                    <th class="datatable__column--btn">{% trans "Import service (Microsoft Graph)" %}</th>
+                {% endif %}
+                <th class="datatable__column--delete">{% trans "action"|capfirst %}</th>
             </tr>
         </thead>
         {% if client.organizations.all %}
@@ -185,6 +189,21 @@
                     </div>
                 </td>
                 {% endif %}
+                <td class="datatable__column--delete">
+                    <form action="{% url 'delete-organization' slug=organization.slug %}" method="post" style="display: inline-block;">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button
+                    type="submit"
+                    class="button button--small button--grey"
+                    onclick="return confirm('{% trans "Do you really want to delete this organization?" %}\n\n{{organization.name}}\n\n{% trans "The action cannot be reversed" %}')"
+                    title="{% trans 'Delete' %}">
+                    <svg class="icon">
+                      <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                    </svg>
+                  </button>
+                  </form>
+                </td>
             </tr>
             {% with organization|get_orgunit_list as orgunit_list %}
             {% if orgunit_list %}
