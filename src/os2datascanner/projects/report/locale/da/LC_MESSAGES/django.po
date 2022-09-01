@@ -241,12 +241,12 @@ msgstr "Markér som håndterede"
 
 #: reportapp/templates/components/handle-match.html:22
 msgid ""
-"You are about to handle the marked reports. This action does not change the "
-"files, that the reports are about. Please do not handle a report before "
+"You are about to handle the marked results. This action does not change the "
+"files, that the results are about. Please do not handle a result before "
 "action has been manually taken to the file."
 msgstr ""
-"Du er ved at håndtere de markerede rapporter. Denne handling ændrer ikke på "
-"filerne, som rapporterne handler om. Håndtér venligst ikke en rapport, før "
+"Du er ved at håndtere de markerede resultater. Denne handling ændrer ikke på "
+"filerne, som resultaterne handler om. Håndtér venligst ikke et resultat, før "
 "du manuelt har gjort noget ved filen."
 
 #: reportapp/templates/components/handle-match.html:28
@@ -290,12 +290,12 @@ msgstr "Håndtér"
 
 #: reportapp/templates/components/hit.html:101
 msgid ""
-"You are about to handle this report. This action does not change the file, "
-"that the report is about. Please do not handle a report before action has "
+"You are about to handle this result. This action does not change the file, "
+"that the result is about. Please do not handle a result before action has "
 "been manually taken to the file."
 msgstr ""
-"Du er ved at håndtere den markerede rapport. Denne handling ændrer ikke på "
-"filen, som rapporten handler om. Håndtér venligst ikke en rapport, før du "
+"Du er ved at håndtere det markerede resultat. Denne handling ændrer ikke på "
+"filen, som resultatet handler om. Håndtér venligst ikke et resultat, før du "
 "manuelt har gjort noget ved filen."
 
 #: reportapp/templates/components/hit.html:105
