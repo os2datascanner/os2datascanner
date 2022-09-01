@@ -1048,44 +1048,48 @@ msgstr ""
 "OS2datascanner. Disse credentials findes på nuværende tidspunkt ikke i "
 "systemet."
 
-#: adminapp/templates/os2datascanner/scanner_run.html:23
+#: adminapp/templates/os2datascanner/scanner_run.html:24
 msgid "Success"
 msgstr "Succes"
 
-#: adminapp/templates/os2datascanner/scanner_run.html:27
+#: adminapp/templates/os2datascanner/scanner_run.html:28
 msgid "Scan details have been sent to the scanner engine, and"
 msgstr "Scan-detaljer er blevet sendt til scannermotoren, og"
 
-#: adminapp/templates/os2datascanner/scanner_run.html:28
+#: adminapp/templates/os2datascanner/scanner_run.html:29
 msgid "scan will be performed as soon as possible."
 msgstr "scan bliver udført snarest muligt."
 
-#: adminapp/templates/os2datascanner/scanner_run.html:42
-#: adminapp/templates/os2datascanner/scanner_run.html:76
-#: adminapp/templates/os2datascanner/scanner_run.html:111
+#: adminapp/templates/os2datascanner/scanner_run.html:32
+msgid "Take me to scanner status"
+msgstr "Vis mig scanner status"
+
+#: adminapp/templates/os2datascanner/scanner_run.html:44
+#: adminapp/templates/os2datascanner/scanner_run.html:78
+#: adminapp/templates/os2datascanner/scanner_run.html:113
 msgid "Technical details"
 msgstr "Tekniske detaljer"
 
-#: adminapp/templates/os2datascanner/scanner_run.html:59
-#: adminapp/templates/os2datascanner/scanner_run.html:94
+#: adminapp/templates/os2datascanner/scanner_run.html:61
+#: adminapp/templates/os2datascanner/scanner_run.html:96
 msgid "Oops, an error occurred"
 msgstr "Hov, der opstod en fejl"
 
-#: adminapp/templates/os2datascanner/scanner_run.html:63
-#: adminapp/templates/os2datascanner/scanner_run.html:98
+#: adminapp/templates/os2datascanner/scanner_run.html:65
+#: adminapp/templates/os2datascanner/scanner_run.html:100
 msgid "Scan details could not be sent to the scanner engine."
 msgstr "Scan-detaljer kunne ikke sendes til scannermotoren."
 
-#: adminapp/templates/os2datascanner/scanner_run.html:64
-#: adminapp/templates/os2datascanner/scanner_run.html:99
+#: adminapp/templates/os2datascanner/scanner_run.html:66
+#: adminapp/templates/os2datascanner/scanner_run.html:101
 msgid "See technical details for more information"
 msgstr "Se tekniske detaljer for mere information"
 
-#: adminapp/templates/os2datascanner/scanner_run.html:81
+#: adminapp/templates/os2datascanner/scanner_run.html:83
 msgid "Could not open data source:"
 msgstr "Kunne ikke åbne datakilden:"
 
-#: adminapp/templates/os2datascanner/scanner_run.html:116
+#: adminapp/templates/os2datascanner/scanner_run.html:118
 msgid "Could not communicate with the scanner engine:"
 msgstr "Kunne ikke kommunikere med scannermotoren:"
 
