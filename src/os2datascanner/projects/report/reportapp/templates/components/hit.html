@@ -6,6 +6,7 @@
 {% with type=document_report.matches.handle|find_type_label %}
   {% for frag in document_report.matches.matches %}
     {% if frag.rule.type_label in renderable_rules and frag.matches %}
+    
       <tr data-type="{{ type }}"
       {% if last_open_pk and last_open_pk == document_report.pk|unlocalize %}
       class="highlighted"
@@ -65,9 +66,9 @@
         <td class="datatable__column--matchcount">
           {{ frag.matches|length }}
         </td>
-
+                
         <td class="datatable__column--source">
-          <span class="icon-filetype icon-filetype--{{ type }}">
+          <span class="icon-filetype icon-filetype--{{ type }}" title="{% find_scan_type type %}">
           {% with svg_icon=type|find_svg_icon %}
             {% include svg_icon %}
           {% endwith %}
