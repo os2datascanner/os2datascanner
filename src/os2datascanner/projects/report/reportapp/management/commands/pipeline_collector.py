@@ -159,7 +159,8 @@ def handle_metadata_message(path, scan_tag, result):
                 "datasource_last_modified": lm,
                 "scanner_job_name": scan_tag.scanner.name,
                 "only_notify_superadmin": scan_tag.scanner.test,
-                "resolution_status": None
+                "resolution_status": None,
+                "organization": get_org_from_scantag(scan_tag)
             })
     create_aliases(dr)
     return dr
@@ -268,7 +269,8 @@ def handle_match_message(path, scan_tag, result):  # noqa: CCR001, E501 too high
                             sort_matches_by_probability(result)),
                     "scanner_job_name": scan_tag.scanner.name,
                     "only_notify_superadmin": scan_tag.scanner.test,
-                    "resolution_status": None
+                    "resolution_status": None,
+                    "organization": get_org_from_scantag(scan_tag)
                 })
 
         logger.debug("matches, saved DocReport", report=dr)
@@ -342,7 +344,8 @@ def handle_problem_message(path, scan_tag, result):
                     "raw_problem": prepare_json_object(result),
                     "scanner_job_name": scan_tag.scanner.name,
                     "only_notify_superadmin": scan_tag.scanner.test,
-                    "resolution_status": None
+                    "resolution_status": None,
+                    "organization": get_org_from_scantag(scan_tag)
                 })
 
         logger.debug(
@@ -365,6 +368,10 @@ def _identify_message(result):
         return result["scan_spec"].get("scan_tag"), "matches"
     else:
         return None, None
+
+
+def get_org_from_scantag(scan_tag):
+    return Organization.objects.filter(uuid=scan_tag.organisation.uuid).first()
 
 
 def handle_event(event_type, instance, cls, cls_serializer):  # noqa: CCR001, C901, E501 too high cognitive complexity

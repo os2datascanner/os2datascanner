@@ -20,20 +20,24 @@ from .generate_test_data import record_match, record_problem
 time0 = "2020-10-28T13:51:49+01:00"
 time1 = "2020-10-28T14:21:27+01:00"
 time2 = "2020-10-28T14:36:20+01:00"
+
+org_frag = messages.OrganisationFragment(
+    name="test_org", uuid="d92ff0c9-f066-40dc-a57e-541721b6c23e")
+
 scan_tag0 = messages.ScanTagFragment(
     scanner=messages.ScannerFragment(
             pk=22, name="Dummy test scanner"),
     time=parse_datetime(time0),
-    user=None, organisation=None)
+    user=None, organisation=org_frag)
 scan_tag1 = messages.ScanTagFragment(
     scanner=messages.ScannerFragment(
             pk=22, name="Dummy test scanner"),
     time=parse_datetime(time1),
-    user=None, organisation=None)
+    user=None, organisation=org_frag)
 scan_tag2 = messages.ScanTagFragment(
     scanner=messages.ScannerFragment(
             pk=22, name="Dummy test scanner"),
-    time=parse_datetime(time2), user=None, organisation=None)
+    time=parse_datetime(time2), user=None, organisation=org_frag)
 
 common_handle = FilesystemHandle(
         FilesystemSource("/mnt/fs01.magenta.dk/brugere/af"),

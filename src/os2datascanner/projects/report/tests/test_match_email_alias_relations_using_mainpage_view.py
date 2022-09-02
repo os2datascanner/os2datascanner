@@ -40,18 +40,21 @@ time_29_days = time_now() - timedelta(days=29)
 # time0 and time1 do not follow correct time format for above to occur
 time_400_days = time_now() - timedelta(days=400)
 
+org_frag = messages.OrganisationFragment(
+    name="test_org", uuid="d92ff0c9-f066-40dc-a57e-541721b6c23e")
+
 scan_tag0 = messages.ScanTagFragment(
     time=time_400_days,
     scanner=messages.ScannerFragment(pk=14, name="Dummy test scanner"),
-    user=None, organisation=None)
+    user=None, organisation=org_frag)
 scan_tag1 = messages.ScanTagFragment(
     time=time1,
     scanner=messages.ScannerFragment(pk=11, name="Dummy test scanner2"),
-    user=None, organisation=None)
+    user=None, organisation=org_frag)
 scan_tag2 = messages.ScanTagFragment(
     time=time0,
     scanner=messages.ScannerFragment(pk=11, name="Dummy test scanner2"),
-    user=None, organisation=None)
+    user=None, organisation=org_frag)
 
 common_rule = RegexRule(
     expression="Vores hemmelige adgangskode er",

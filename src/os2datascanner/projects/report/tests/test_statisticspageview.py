@@ -29,20 +29,23 @@ time0 = "2020-11-11T11:11:59+02:00"
 time1 = "2020-10-28T14:21:27+01:00"
 time2 = "2020-09-22T04:07:12+03:00"
 
+org_frag = messages.OrganisationFragment(
+    name="test_org", uuid="d92ff0c9-f066-40dc-a57e-541721b6c23e")
+
 scan_tag0 = messages.ScanTagFragment(
         time=parse_datetime(time0),
         scanner=messages.ScannerFragment(pk=14, name="Dummy test scanner"),
-        user=None, organisation=None)
+        user=None, organisation=org_frag)
 
 scan_tag1 = messages.ScanTagFragment(
         time=parse_datetime(time1),
         scanner=messages.ScannerFragment(pk=11, name="Dummy test scanner2"),
-        user=None, organisation=None)
+        user=None, organisation=org_frag)
 
 scan_tag2 = messages.ScanTagFragment(
         time=parse_datetime(time2),
         scanner=messages.ScannerFragment(pk=17, name="Dummy test scanner3"),
-        user=None, organisation=None)
+        user=None, organisation=org_frag)
 
 common_rule = RegexRule(
     expression="Vores hemmelige adgangskode er",
