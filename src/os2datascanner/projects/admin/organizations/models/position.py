@@ -30,6 +30,6 @@ Position.factory = ModelFactory(Position)
 
 @Position.factory.on_create
 @Position.factory.on_update
-def on_account_created_updated(objects):
+def on_account_created_updated(objects, fields=None):
     for pos in objects:
         post_save_broadcast(None, pos)

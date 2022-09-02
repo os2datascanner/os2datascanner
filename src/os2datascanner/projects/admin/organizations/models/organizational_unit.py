@@ -31,6 +31,6 @@ OrganizationalUnit.factory = ModelFactory(OrganizationalUnit)
 
 @OrganizationalUnit.factory.on_create
 @OrganizationalUnit.factory.on_update
-def on_organizational_unit_created_updated(objects):
+def on_organizational_unit_created_updated(objects, fields=None):
     for ou in objects:
         post_save_broadcast(None, ou)
