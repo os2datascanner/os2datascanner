@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-23 13:45+0200\n"
+"POT-Creation-Date: 2022-09-05 09:36+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -271,15 +271,15 @@ msgstr "Scanner status"
 #: adminapp/templates/components/navigation.html:20
 #: adminapp/templates/os2datascanner/scan_completed.html:33
 #: adminapp/templates/os2datascanner/scan_status_table.html:22
-#: adminapp/templates/os2datascanner/scanners.html:21
-#: adminapp/templates/os2datascanner/scanners.html:40
+#: adminapp/templates/os2datascanner/scanners.html:22
+#: adminapp/templates/os2datascanner/scanners.html:41
 #: adminapp/templates/partials/breadcrumb.html:5
 msgid "Scannerjob"
 msgstr "Scannerjob"
 
 #: adminapp/templates/components/navigation.html:28
-#: adminapp/templates/os2datascanner/rules.html:19
-#: adminapp/templates/os2datascanner/rules.html:38
+#: adminapp/templates/os2datascanner/rules.html:20
+#: adminapp/templates/os2datascanner/rules.html:39
 #: adminapp/templates/partials/breadcrumb.html:51
 msgid "Rules"
 msgstr "Regler"
@@ -512,9 +512,9 @@ msgstr "Ønsker du virkelig at slette?"
 
 #: adminapp/templates/os2datascanner/cprrule_confirm_delete.html:19
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:23
-#: adminapp/templates/os2datascanner/rules.html:231
+#: adminapp/templates/os2datascanner/rules.html:232
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:18
-#: adminapp/templates/os2datascanner/scanners.html:117
+#: adminapp/templates/os2datascanner/scanners.html:118
 msgid "No"
 msgstr "Nej"
 
@@ -542,8 +542,8 @@ msgid ""
 "You are about to delete all error log messages. This action cannot be "
 "reverted. Are you sure?"
 msgstr ""
-"Du er ved at slette alle fejlbeskeder. Denne handling kan ikke "
-"fortrydes. Er du sikker?"
+"Du er ved at slette alle fejlbeskeder. Denne handling kan ikke fortrydes. Er "
+"du sikker?"
 
 #: adminapp/templates/os2datascanner/error_log.html:52
 msgid "Delete all"
@@ -551,10 +551,10 @@ msgstr "Slet alle"
 
 #: adminapp/templates/os2datascanner/error_log.html:78
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/rules.html:114
+#: adminapp/templates/os2datascanner/rules.html:115
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status_table.html:83
-#: adminapp/templates/os2datascanner/scanners.html:166
+#: adminapp/templates/os2datascanner/scanners.html:167
 msgid "Delete"
 msgstr "Slet"
 
@@ -569,17 +569,17 @@ msgstr ""
 "Ønsker du virkelig at slette denne regel? Handlingen kan ikke fortrydes."
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:15
-#: adminapp/templates/os2datascanner/rules.html:220
+#: adminapp/templates/os2datascanner/rules.html:221
 msgid "Please note that this rule is currently included in"
 msgstr "Bemærk venligst at denne regel i øjeblikket indgår i"
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:16
-#: adminapp/templates/os2datascanner/rules.html:222
+#: adminapp/templates/os2datascanner/rules.html:223
 msgid "scannerjob and"
 msgstr "scannerjob og"
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:17
-#: adminapp/templates/os2datascanner/rules.html:223
+#: adminapp/templates/os2datascanner/rules.html:224
 msgid "reports."
 msgstr "rapporter."
 
@@ -649,77 +649,86 @@ msgstr "Beskrivelse af regel"
 msgid "Save changes"
 msgstr "Gem ændringer"
 
-#: adminapp/templates/os2datascanner/rules.html:26
-#: adminapp/templates/os2datascanner/rules.html:31
+#: adminapp/templates/os2datascanner/rules.html:27
+#: adminapp/templates/os2datascanner/rules.html:32
 msgid "Add rule"
 msgstr "Tilføj regel"
 
-#: adminapp/templates/os2datascanner/rules.html:51
-#: adminapp/templates/os2datascanner/rules.html:160
+#: adminapp/templates/os2datascanner/rules.html:52
+#: adminapp/templates/os2datascanner/rules.html:161
 msgid "Name"
 msgstr "Navn"
 
-#: adminapp/templates/os2datascanner/rules.html:54
-#: adminapp/templates/os2datascanner/rules.html:163
-#: adminapp/templates/os2datascanner/scanners.html:61
+#: adminapp/templates/os2datascanner/rules.html:55
+#: adminapp/templates/os2datascanner/rules.html:164
+#: adminapp/templates/os2datascanner/scanners.html:62
 msgid "Organization"
 msgstr "Organisation"
 
-#: adminapp/templates/os2datascanner/rules.html:57
-#: adminapp/templates/os2datascanner/rules.html:166
+#: adminapp/templates/os2datascanner/rules.html:58
+#: adminapp/templates/os2datascanner/rules.html:167
 msgid "Description"
 msgstr "Beskrivelse"
 
-#: adminapp/templates/os2datascanner/rules.html:60
+#: adminapp/templates/os2datascanner/rules.html:61
 #: adminapp/views/rule_views.py:97 adminapp/views/rule_views.py:196
 #: adminapp/views/rule_views.py:203
 msgid "Expression"
 msgstr "Udtryk"
 
-#: adminapp/templates/os2datascanner/rules.html:63
-#: adminapp/templates/os2datascanner/rules.html:169
+#: adminapp/templates/os2datascanner/rules.html:64
+#: adminapp/templates/os2datascanner/rules.html:170
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: adminapp/templates/os2datascanner/rules.html:66
-#: adminapp/templates/os2datascanner/scanners.html:76
+#: adminapp/templates/os2datascanner/rules.html:67
+#: adminapp/templates/os2datascanner/scanners.html:77
 msgid "Action"
 msgstr "Handling"
 
-#: adminapp/templates/os2datascanner/rules.html:82
-#: adminapp/templates/os2datascanner/rules.html:84
+#: adminapp/templates/os2datascanner/rules.html:83
+#: adminapp/templates/os2datascanner/rules.html:85
 msgid "Show expression"
 msgstr "Vis udtryk"
 
-#: adminapp/templates/os2datascanner/rules.html:101
-#: adminapp/templates/os2datascanner/scanners.html:143
+#: adminapp/templates/os2datascanner/rules.html:102
+#: adminapp/templates/os2datascanner/scanners.html:144
 msgid "Edit"
 msgstr "Redigér"
 
-#: adminapp/templates/os2datascanner/rules.html:140
+#: adminapp/templates/os2datascanner/rules.html:114
+msgid "Do you really want to delete this rule?"
+msgstr "Vil du slette denne regel?"
+
+#: adminapp/templates/os2datascanner/rules.html:114
+#: adminapp/templates/os2datascanner/scanners.html:166
+msgid "The action cannot be reversed"
+msgstr "Handlingen kan ikke fortrydes."
+
+#: adminapp/templates/os2datascanner/rules.html:141
 msgid "No rules added yet"
 msgstr "Der er endnu ikke tilføjet nogen regler"
 
-#: adminapp/templates/os2datascanner/rules.html:145
-#: adminapp/templates/os2datascanner/rules.html:149
+#: adminapp/templates/os2datascanner/rules.html:146
+#: adminapp/templates/os2datascanner/rules.html:150
 msgid "System rules"
 msgstr "Systemregler"
 
-#: adminapp/templates/os2datascanner/rules.html:200
-#: adminapp/templates/os2datascanner/rules.html:207
+#: adminapp/templates/os2datascanner/rules.html:201
+#: adminapp/templates/os2datascanner/rules.html:208
 msgid "Delete rule"
 msgstr "Slet regel"
 
-#: adminapp/templates/os2datascanner/rules.html:216
+#: adminapp/templates/os2datascanner/rules.html:217
 msgid "Do you want to delete"
 msgstr "Ønsker du at slette"
 
-#: adminapp/templates/os2datascanner/rules.html:217
+#: adminapp/templates/os2datascanner/rules.html:218
 msgid "This action cannot be undone."
 msgstr "Handlingen kan ikke fortrydes."
 
-#: adminapp/templates/os2datascanner/rules.html:228
-#: adminapp/templates/os2datascanner/scanners.html:108
+#: adminapp/templates/os2datascanner/rules.html:229
+#: adminapp/templates/os2datascanner/scanners.html:109
 msgid "Yes"
 msgstr "Ja"
 
@@ -1127,40 +1136,44 @@ msgstr "Gmailscanner"
 msgid "Sbsysscanner"
 msgstr "Sbsysscanner"
 
-#: adminapp/templates/os2datascanner/scanners.html:28
-#: adminapp/templates/os2datascanner/scanners.html:33
+#: adminapp/templates/os2datascanner/scanners.html:29
+#: adminapp/templates/os2datascanner/scanners.html:34
 msgid "Add scannerjob"
 msgstr "Tilføj scannerjob"
 
-#: adminapp/templates/os2datascanner/scanners.html:57
+#: adminapp/templates/os2datascanner/scanners.html:58
 msgid "Name/URL"
 msgstr "Navn/URL"
 
-#: adminapp/templates/os2datascanner/scanners.html:66
+#: adminapp/templates/os2datascanner/scanners.html:67
 msgid "Drive"
 msgstr "Drev"
 
-#: adminapp/templates/os2datascanner/scanners.html:70
+#: adminapp/templates/os2datascanner/scanners.html:71
 msgid "Approved"
 msgstr "Godkendt"
 
-#: adminapp/templates/os2datascanner/scanners.html:73
+#: adminapp/templates/os2datascanner/scanners.html:74
 msgid "Automatic"
 msgstr "Automatisk"
 
-#: adminapp/templates/os2datascanner/scanners.html:105
+#: adminapp/templates/os2datascanner/scanners.html:106
 msgid "Is approved"
 msgstr "Er godkendt"
 
-#: adminapp/templates/os2datascanner/scanners.html:114
+#: adminapp/templates/os2datascanner/scanners.html:115
 msgid "Is not approved"
 msgstr "Er ikke godkendt"
 
-#: adminapp/templates/os2datascanner/scanners.html:134
+#: adminapp/templates/os2datascanner/scanners.html:135
 msgid "Run"
 msgstr "Kør"
 
-#: adminapp/templates/os2datascanner/scanners.html:183
+#: adminapp/templates/os2datascanner/scanners.html:166
+msgid "Do you really want to delete this scanner?"
+msgstr "Er du sikker på, at du vil slette denne scanner?"
+
+#: adminapp/templates/os2datascanner/scanners.html:184
 msgid "No scannerjob added"
 msgstr "Der er ikke tilføjet nogen scannerjob"
 
@@ -1321,7 +1334,7 @@ msgstr "Drevbogstav"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:332
+#: adminapp/views/scanner_views.py:329
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
@@ -1403,7 +1416,7 @@ msgid "user"
 msgstr "bruger"
 
 #: core/models/administrator.py:37 core/models/client.py:113
-#: organizations/models/organization.py:29
+#: organizations/models/organization.py:30
 msgid "client"
 msgstr "kunde"
 
@@ -1543,38 +1556,38 @@ msgstr "{value} er ikke en gyldig værdi for {class_name}"
 msgid "grants"
 msgstr "bevillinger"
 
-#: grants/templates/grants/grant_start.html:15
+#: grants/templates/grants/grant_start.html:24
 msgid "Configure Microsoft Graph"
 msgstr "Konfigurér Microsoft Graph"
 
-#: grants/templates/grants/grant_start.html:20
+#: grants/templates/grants/grant_start.html:29
 msgid ""
 "To use this service, you must allow OS2datascanner access to its content."
 msgstr ""
 "For at benytte denne tjeneste skal du tillade OS2datascanner adgang til "
 "tjenestens indhold."
 
-#: grants/templates/grants/grant_start.html:24
+#: grants/templates/grants/grant_start.html:33
 #: import_services/templates/import_services/msgraph_oauth.html:19
 msgid "The service refused to grant OS2datascanner the necessary rights:"
 msgstr "Tjenesten nægtede at give OS2datascanner de nødvendige rettigheder:"
 
-#: grants/templates/grants/grant_start.html:27
+#: grants/templates/grants/grant_start.html:36
 #: import_services/templates/import_services/msgraph_oauth.html:22
 msgid "Click the button below to try again."
 msgstr "Klik på knappen nedenfor for at prøve igen."
 
-#: grants/templates/grants/grant_start.html:29
+#: grants/templates/grants/grant_start.html:38
 #: import_services/templates/import_services/msgraph_oauth.html:24
 msgid "Click the button below to forward to this service."
 msgstr "Klik på knappen nedenfor for at blive videresendt til denne tjeneste."
 
-#: grants/templates/grants/grant_start.html:36
+#: grants/templates/grants/grant_start.html:45
 #: import_services/templates/import_services/msgraph_oauth.html:31
 msgid "Continue to"
 msgstr "Fortsæt til"
 
-#: grants/templates/grants/grant_start.html:40
+#: grants/templates/grants/grant_start.html:49
 #: import_services/templates/import_services/msgraph_oauth.html:35
 msgid ""
 "You will be forwarded to the creation form after the service has issued the "
@@ -1583,7 +1596,7 @@ msgstr ""
 "Du bliver videresendt til oprettelsesformularen, efter tjenesten har udstedt "
 "de nødvendige rettigheder."
 
-#: grants/templates/grants/grant_start.html:44
+#: grants/templates/grants/grant_start.html:53
 #: import_services/templates/import_services/msgraph_oauth.html:39
 msgid ""
 "The information pointing to the OS2datascanner system for this service is "
@@ -1880,7 +1893,7 @@ msgstr ""
 "Denne organisationsstruktur ligger i skyen, og en eksterne tjeneste skal "
 "tillade OS2datascanner adgang til dens indhold."
 
-#: organizations/models/organization.py:35
+#: organizations/models/organization.py:36
 msgid "slug"
 msgstr "slug"
 
