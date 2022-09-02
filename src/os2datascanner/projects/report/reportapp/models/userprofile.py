@@ -23,8 +23,8 @@ class UserProfile(models.Model):
                                 on_delete=models.PROTECT)
     last_handle = models.DateTimeField(verbose_name='Sidste håndtering',
                                        null=True, blank=True)
-    image = models.ImageField(upload_to="media/images/",
-                              default=None, null=True, verbose_name=_('image'))
+    _image = models.ImageField(upload_to="media/images/",
+                               default=None, null=True, blank=True, verbose_name=_('image'))
 
     def __str__(self):
         """Return the user's username."""
@@ -37,6 +37,10 @@ class UserProfile(models.Model):
     @property
     def time_since_last_handle(self):
         return (time_now() - self.last_handle).total_seconds() if self.last_handle else 60*60*24*3
+
+    @property
+    def image(self):
+        return self._image.url if self._image else None
 
 
 @receiver(post_save, sender=UserProfile)

@@ -5,13 +5,13 @@
 <h1 class="userprofile-text"> {% trans "Account" %} </h1>
 
 <div class="userprofile-content-wrapper user-image">
-  {% if user.profile.image %}
-    <img class="userprofile-image" src="{{ user.profile.image }}">
-  {% else %}
     <span class="user__avatar_verybig">
-      <i id="account_circle" class="material-icons">account_circle</i>
+      {% if request.user.profile.image %}
+        <img class="userprofile-image" src="{{ request.user.profile.image }}">
+      {% else %}
+        <i id="account_circle" class="material-icons">account_circle</i>
+      {% endif %}
     </span>
-  {% endif %}
 </div>
 
 <div class="userprofile-content-wrapper user-tables">
