@@ -110,7 +110,7 @@
                   <button
                     type="submit"
                     class="button button--small button--grey"
-                    onclick="return confirm('Ønsker du virkelig at slette denne regel?\n{{ rule.name }}\n\nHandlingen kan ikke fortrydes.')"
+                    onclick="return confirm('{% trans "Do you really want to delete this rule?" %}\n\n{{rule.name}}\n\n{% trans "The action cannot be reversed" %}')"
                           title="{% trans 'Delete' %}">
                     <svg class="icon">
                       <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
