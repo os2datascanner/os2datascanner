@@ -31,6 +31,6 @@ Alias.factory = ModelFactory(Alias)
 
 @Alias.factory.on_create
 @Alias.factory.on_update
-def on_alias_created_updated(objects):
+def on_alias_created_updated(objects, fields=None):
     for alias in objects:
         post_save_broadcast(None, alias)
