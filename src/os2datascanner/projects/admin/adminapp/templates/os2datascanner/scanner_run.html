@@ -6,6 +6,7 @@
 {% block topnav %}{% endblock %}
 
 {% block scripts %}
+  <script src="{% static 'js/redirectFromModal.js' %}"></script>
   <script src="{% static 'js/toggleDetails.js' %}"></script>
 {% endblock %}
 
@@ -28,6 +29,7 @@
       <br> {% trans "scan will be performed as soon as possible." %}
     </h3>
 
+    <button onclick="redirectFromModal('/status')" class="button button--cta button--large">{% trans "Take me to scanner status" %}</button>
   </div>
 
   <div class="detail-content">
