@@ -61,7 +61,7 @@ class AddOrganizationView(LoginRequiredMixin, CreateView):
     model = Organization
     template_name = 'organizations/org_add.html'
     success_url = reverse_lazy('organization-list')
-    fields = ['name', 'contact_email', 'contact_phone']
+    fields = ['name', 'contact_email', 'contact_phone', 'email_notification_schedule']
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -85,7 +85,7 @@ class UpdateOrganizationView(LoginRequiredMixin, UpdateView):
     model = Organization
     template_name = 'organizations/org_update.html'
     success_url = reverse_lazy('organization-list')
-    fields = ['name', 'contact_email', 'contact_phone']
+    fields = ['name', 'contact_email', 'contact_phone', 'email_notification_schedule']
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
