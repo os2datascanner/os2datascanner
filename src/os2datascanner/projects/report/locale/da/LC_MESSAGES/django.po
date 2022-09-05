@@ -754,6 +754,7 @@ msgstr ""
 msgid "Reset my password"
 msgstr "Nulstil min adgangskode"
 
+
 #: reportapp/templates/user_content.html:5
 msgid "Account"
 msgstr "Konto"
@@ -842,8 +843,11 @@ msgstr "Mailscan"
 msgid "Not assigned"
 msgstr "Ikke tildelt"
 
+msgid "Email notification interval"
+msgstr "Mailudsendelse interval"
+
 #~ msgid "Sensitivities"
-#~ msgstr "Følsomheder"
+#~ msgstr "Følsomhed"
 
 #~ msgid "The username or password is incorrect"
 #~ msgstr "Fejl i brugernavn eller password"

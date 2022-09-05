@@ -103,6 +103,8 @@ django-mptt==0.13.4
     # via -r requirements-django.in
 django-prometheus==2.1.0
     # via -r requirements-django.in
+django-recurrence==1.11.1
+    # via -r requirements-django.in
 django-rest-auth==0.9.5
     # via django-saml2-auth
 git+https://github.com/magenta-aps/django-saml2-auth.git@2.3.0
@@ -120,6 +122,7 @@ django==3.2.11
     #   django-debug-toolbar
     #   django-js-asset
     #   django-model-utils
+    #   django-recurrence
     #   django-rest-auth
     #   django-settings-export
     #   django-storages
@@ -350,6 +353,7 @@ pytest==6.2.4
 python-dateutil==2.8.1
     # via
     #   -c requirements-engine.txt
+    #   django-recurrence
     #   exchangelib
     #   faker
     #   pysaml2

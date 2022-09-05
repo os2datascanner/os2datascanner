@@ -1,7 +1,6 @@
 -r requirements-django.in
 -c requirements-engine.txt
 
-django-recurrence
 pycryptodome
 pytest-django
 python-dateutil

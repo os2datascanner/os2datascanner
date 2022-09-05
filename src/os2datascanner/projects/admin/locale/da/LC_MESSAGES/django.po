@@ -1955,6 +1955,9 @@ msgstr "organisatorisk struktur for"
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 
+msgid "Email notification interval"
+msgstr "Mailudsendelse interval"
+
 #, python-format
 #~ msgid ""
 #~ "\n"
