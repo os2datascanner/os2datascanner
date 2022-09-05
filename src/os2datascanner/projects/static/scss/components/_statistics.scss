@@ -1,4 +1,4 @@
-.stats_dropdown{
+.stats_dropdown {
 	width: 15rem;
 }
 
@@ -30,7 +30,7 @@
 			margin-bottom: 0;
 		}
 
-		> div {
+		>div {
 			margin: .5rem;
 			flex: 0 1 auto; // make explicit for IE11's sake
 		}
@@ -41,6 +41,7 @@
 		font-size: 1rem;
 		color: var(--color-text-secondary);
 	}
+
 	// Overwriting predefined a-tag from "_typography.css"
 	// because the color from the prototype is different
 	a {
@@ -54,6 +55,11 @@
 
 .chart_container {
 	max-width: 32rem;
+	max-height: 32rem;
+
+	canvas.line_chart {
+		height: 256px;
+	}
 
 	// use the approach below to visually hide charts from the screen.
 	// if using display: none;, ChartJS can't determine the proper dimensions
@@ -84,13 +90,14 @@
 	-ms-grid-rows: minmax(0, 1fr);
 	grid-template-rows: minmax(0, 1fr);
 
-	> div {
+	>div {
 		display: flex;
 		align-items: center;
 	}
 
 	div:nth-child(2) {
 		-ms-grid-column: 2;
+		grid-column: 2;
 	}
 }
 
@@ -100,7 +107,7 @@
 	margin: 0 0 0 1rem;
 }
 
-li > span {
+li>span {
 	color: var(--color-text-secondary);
 	font-family: Arial, Helvetica, sans-serif;
 	vertical-align: middle;
@@ -108,7 +115,8 @@ li > span {
 }
 
 .bullet {
-	content: "\2022 "; /* Add content: \2022 is the CSS Code/unicode for a bullet */
+	content: "\2022 ";
+	/* Add content: \2022 is the CSS Code/unicode for a bullet */
 	font-weight: bold;
 	padding-right: .5rem;
 	font-size: 2rem;
@@ -121,7 +129,8 @@ li > span {
 	display: flex;
 	flex-wrap: wrap;
 	max-width: none;
-	> .doughnut_chart_container {
+
+	>.doughnut_chart_container {
 		flex: 1 1 100%;
 		max-width: 19rem;
 	}
@@ -147,6 +156,7 @@ li > span {
 		line-height: 1;
 		margin-left: 1rem;
 		-ms-grid-column: 2;
+		grid-column: 2;
 		-ms-grid-row-align: center;
 	}
 }

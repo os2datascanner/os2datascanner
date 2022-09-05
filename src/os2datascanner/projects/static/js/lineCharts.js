@@ -1,4 +1,6 @@
-window.addEventListener('load', function () {
+/* exported drawLines */
+
+function drawLines(newMatchesByMonth, unhandledMatchesByMonth) {
 	// Line chart
 	// //
 	// //
@@ -11,25 +13,25 @@ window.addEventListener('load', function () {
 		// This works to color the background
 		beforeDraw: function (chart) {
 
-		if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
-			var ctx = chart.chart.ctx;
-			var chartArea = chart.chartArea;
+			if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
+				var ctx = chart.chart.ctx;
+				var chartArea = chart.chartArea;
 
-			var meta = chart.getDatasetMeta(0);
+				var meta = chart.getDatasetMeta(0);
 
-			// half the width of a 'bar'
-			var margin = (meta.data[1]._model.x-meta.data[0]._model.x)/2;
+				// half the width of a 'bar'
+				var margin = (meta.data[1]._model.x - meta.data[0]._model.x) / 2;
 
-			// Position at index 2 - margin (index 0 is null)
-			var start = meta.data[1]._model.x-margin;
+				// Position at index 2 - margin (index 0 is null)
+				var start = meta.data[1]._model.x - margin;
 
-			var stop  = meta.data[meta.data.length-1]._model.x-margin;
+				var stop = meta.data[meta.data.length - 1]._model.x - margin;
 
-			ctx.save();
-			ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
+				ctx.save();
+				ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
 
-			ctx.fillRect(start, chartArea.top, stop - start, chartArea.bottom - chartArea.top);
-			ctx.restore();
+				ctx.fillRect(start, chartArea.top, stop - start, chartArea.bottom - chartArea.top);
+				ctx.restore();
 			}
 		}
 	});
@@ -37,7 +39,7 @@ window.addEventListener('load', function () {
 	var newMatchesLineChartLabels = [];
 	var newMatchesLineChartValues = [];
 
-	for(var i = 0; i<newMatchesByMonth.length;i++) {
+	for (var i = 0; i < newMatchesByMonth.length; i++) {
 		newMatchesLineChartLabels.push(newMatchesByMonth[i][0].toUpperCase());
 		newMatchesLineChartValues.push(newMatchesByMonth[i][1]);
 	}
@@ -49,10 +51,10 @@ window.addEventListener('load', function () {
 	newMatchesLineChartValues.push(null);
 
 	var newMatchesLineChartCtx = document.querySelector("#line_chart_new_matches_by_month").getContext('2d');
-	new Chart(newMatchesLineChartCtx, {
+	charts.push(new Chart(newMatchesLineChartCtx, {
 		type: 'line',
 		data: {
-			labels:newMatchesLineChartLabels,
+			labels: newMatchesLineChartLabels,
 			datasets: [{
 				data: newMatchesLineChartValues,
 				fill: 0,
@@ -71,7 +73,7 @@ window.addEventListener('load', function () {
 				// Disable the on-canvas tooltip
 				enabled: false,
 
-				custom: function(tooltipModel) {
+				custom: function (tooltipModel) {
 					// Tooltip Element
 					var tooltipEl = document.getElementById('line-chart-new-matches-tooltip');
 
@@ -108,12 +110,12 @@ window.addEventListener('load', function () {
 
 						var innerHtml = '<thead>';
 
-						titleLines.forEach(function(title) {
+						titleLines.forEach(function (title) {
 							innerHtml += '<tr><th>' + title + '</th></tr>';
 						});
 						innerHtml += '</thead><tbody>';
 
-						bodyLines.forEach(function(body, i) {
+						bodyLines.forEach(function (body, i) {
 							var colors = tooltipModel.labelColors[i];
 							var style = 'background:' + colors.backgroundColor;
 							style += '; border-color:' + colors.borderColor;
@@ -151,7 +153,7 @@ window.addEventListener('load', function () {
 			},
 			legend: false,
 			responsive: true,
-			maintainAspectRatio: true,
+			maintainAspectRatio: false,
 			elements: {
 				line: {
 					borderJoinStyle: 'round'
@@ -184,12 +186,12 @@ window.addEventListener('load', function () {
 				}]
 			},
 		}
-	});
+	}));
 
 	var unhandledMatchesLineChartLabels = [];
 	var unhandledMatchesLineChartValues = [];
 
-	for(var j = 0; j<unhandledMatchesByMonth.length;j++) {
+	for (var j = 0; j < unhandledMatchesByMonth.length; j++) {
 		unhandledMatchesLineChartLabels.push(unhandledMatchesByMonth[j][0].toUpperCase());
 		unhandledMatchesLineChartValues.push(unhandledMatchesByMonth[j][1]);
 	}
@@ -201,10 +203,10 @@ window.addEventListener('load', function () {
 	unhandledMatchesLineChartValues.push(null);
 
 	var unhandledMatchesLineChartCtx = document.querySelector("#line_chart_unhandled_matches").getContext('2d');
-	new Chart(unhandledMatchesLineChartCtx, {
+	charts.push(new Chart(unhandledMatchesLineChartCtx, {
 		type: 'line',
 		data: {
-			labels:unhandledMatchesLineChartLabels,
+			labels: unhandledMatchesLineChartLabels,
 			datasets: [{
 				data: unhandledMatchesLineChartValues,
 				fill: 0,
@@ -223,7 +225,7 @@ window.addEventListener('load', function () {
 				// Disable the on-canvas tooltip
 				enabled: false,
 
-				custom: function(tooltipModel) {
+				custom: function (tooltipModel) {
 					// Tooltip Element
 					var tooltipEl = document.getElementById('line-chart-new-matches-tooltip');
 
@@ -260,12 +262,12 @@ window.addEventListener('load', function () {
 
 						var innerHtml = '<thead>';
 
-						titleLines.forEach(function(title) {
+						titleLines.forEach(function (title) {
 							innerHtml += '<tr><th>' + title + '</th></tr>';
 						});
 						innerHtml += '</thead><tbody>';
 
-						bodyLines.forEach(function(body, i) {
+						bodyLines.forEach(function (body, i) {
 							var colors = tooltipModel.labelColors[i];
 							var style = 'background:' + colors.backgroundColor;
 							style += '; border-color:' + colors.borderColor;
@@ -303,7 +305,7 @@ window.addEventListener('load', function () {
 			},
 			legend: false,
 			responsive: true,
-			maintainAspectRatio: true,
+			maintainAspectRatio: false,
 			elements: {
 				line: {
 					borderJoinStyle: 'round'
@@ -336,7 +338,5 @@ window.addEventListener('load', function () {
 				}]
 			},
 		}
-	});
-
-
-});
+	}));
+}

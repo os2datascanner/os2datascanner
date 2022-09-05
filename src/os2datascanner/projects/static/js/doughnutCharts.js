@@ -1,4 +1,6 @@
-window.addEventListener('load', function () {
+/* exported drawDoughnuts */
+
+function drawDoughnuts(sensitivities, totalHandledMatches, totalMatches, handledPercentage) {
 	// Doughnut chart
 	// //
 	// //
@@ -44,8 +46,8 @@ window.addEventListener('load', function () {
 
 	// function for moving label to center of chart
 	Chart.pluginService.register({
-		beforeDraw: function(chart) {
-			if(chart.config.type === 'doughnut') {
+		beforeDraw: function (chart) {
+			if (chart.config.type === 'doughnut') {
 				var ctx, centerConfig, fontStyle, txt, weight, color, maxFontSize, sidePadding, sidePaddingCalculated;
 				if (chart.config.options.elements.center) {
 					// Get ctx from string
@@ -61,7 +63,7 @@ window.addEventListener('load', function () {
 					sidePadding = centerConfig.sidePadding || 20;
 					sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2);
 					// Start with a base font of 30px
-					ctx.font = weight +" 30px " + fontStyle;
+					ctx.font = weight + " 30px " + fontStyle;
 				}
 
 				// Get the width of the string and also the width of the element minus 10 to give it 5px side padding
@@ -131,16 +133,15 @@ window.addEventListener('load', function () {
 		}
 	});
 	var handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
-	// console.log(document.getElementById('handled_matches').textContent);
 	var criticalHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_critical").getContext('2d');
-	new Chart(criticalHandledDoughnutChartCtx, {
+	charts.push(new Chart(criticalHandledDoughnutChartCtx, {
 		type: 'doughnut',
 		data: {
 			datasets: [{
 				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
 				// This is so that the secondary color will fill the whole graph
 				// this could be prettier, if we 'pre-calculated' the %
-				data: [handledMatches[0][1], ((!sensitivities[0][1]) && (!handledMatches[0][1])) ? 100 : sensitivities[0][1]-handledMatches[0][1]],
+				data: [handledMatches[0][1], ((!sensitivities[0][1]) && (!handledMatches[0][1])) ? 100 : sensitivities[0][1] - handledMatches[0][1]],
 				backgroundColor: ['#e24e4e', '#f5f5f5'],
 				borderWidth: 0
 			}]
@@ -165,21 +166,21 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
-      responsive: true,
-      aspectRatio: 1,
-      maintainAspectRatio: true
+			responsive: true,
+			aspectRatio: 1,
+			maintainAspectRatio: false
 		}
-	});
+	}));
 
 	var problemHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_problem").getContext('2d');
-	new Chart(problemHandledDoughnutChartCtx, {
+	charts.push(new Chart(problemHandledDoughnutChartCtx, {
 		type: 'doughnut',
 		data: {
 			datasets: [{
 				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
 				// This is so that the secondary color will fill the whole graph
 				// this could be prettier, if we 'pre-calculated' the %
-				data: [handledMatches[1][1], ((!sensitivities[1][1]) && (!handledMatches[1][1])) ? 100 : sensitivities[1][1]-handledMatches[1][1]],
+				data: [handledMatches[1][1], ((!sensitivities[1][1]) && (!handledMatches[1][1])) ? 100 : sensitivities[1][1] - handledMatches[1][1]],
 				backgroundColor: ['#ffab00', '#f5f5f5'],
 				borderWidth: 0
 			}]
@@ -204,21 +205,21 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
-      responsive: true,
-      aspectRatio: 1,
-      maintainAspectRatio: true
+			responsive: true,
+			aspectRatio: 1,
+			maintainAspectRatio: false
 		}
-	});
+	}));
 
 	var warningHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_warning").getContext('2d');
-	new Chart(warningHandledDoughnutChartCtx, {
+	charts.push(new Chart(warningHandledDoughnutChartCtx, {
 		type: 'doughnut',
 		data: {
 			datasets: [{
 				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
 				// This is so that the secondary color will fill the whole graph
 				// this could be prettier, if we 'pre-calculated' the %
-				data: [handledMatches[2][1], ((!sensitivities[2][1]) && (!handledMatches[2][1])) ? 100 : sensitivities[2][1]-handledMatches[2][1]],
+				data: [handledMatches[2][1], ((!sensitivities[2][1]) && (!handledMatches[2][1])) ? 100 : sensitivities[2][1] - handledMatches[2][1]],
 				backgroundColor: ['#fed149', '#f5f5f5'],
 				borderWidth: 0
 			}]
@@ -243,21 +244,21 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
-      responsive: true,
-      aspectRatio: 1,
-      maintainAspectRatio: true
+			responsive: true,
+			aspectRatio: 1,
+			maintainAspectRatio: false
 		}
-	});
+	}));
 
 	var notificationHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_notification").getContext('2d');
-	new Chart(notificationHandledDoughnutChartCtx, {
+	charts.push(new Chart(notificationHandledDoughnutChartCtx, {
 		type: 'doughnut',
 		data: {
 			datasets: [{
 				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
 				// This is so that the secondary color will fill the whole graph
 				// this could be prettier, if we 'pre-calculated' the %
-				data: [handledMatches[3][1], ((!sensitivities[3][1]) && (!handledMatches[3][1])) ? 100 : sensitivities[3][1]-handledMatches[3][1]],
+				data: [handledMatches[3][1], ((!sensitivities[3][1]) && (!handledMatches[3][1])) ? 100 : sensitivities[3][1] - handledMatches[3][1]],
 				backgroundColor: ['#21759c', '#f5f5f5'],
 				borderWidth: 0
 			}]
@@ -281,17 +282,18 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
-      responsive: true,
-      aspectRatio: 1,
-      maintainAspectRatio: true
+			responsive: true,
+			aspectRatio: 1,
+			maintainAspectRatio: false
 		}
-	});
+	}));
+
 	var totalHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_total").getContext('2d');
-	new Chart(totalHandledDoughnutChartCtx, {
+	charts.push(new Chart(totalHandledDoughnutChartCtx, {
 		type: 'doughnut',
 		data: {
 			datasets: [{
-				data: [totalHandledMatches, (totalMatches-totalHandledMatches)],
+				data: [totalHandledMatches, (totalMatches - totalHandledMatches)],
 				backgroundColor: ['#21759c', '#f5f5f5'],
 				borderWidth: 0
 			}]
@@ -315,9 +317,9 @@ window.addEventListener('load', function () {
 				},
 			},
 			events: [],
-      responsive: true,
-      aspectRatio: 1,
-      maintainAspectRatio: true
+			responsive: true,
+			aspectRatio: 1,
+			maintainAspectRatio: false
 		}
-	});
-});
+	}));
+}

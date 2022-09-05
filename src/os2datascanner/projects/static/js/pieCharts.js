@@ -1,4 +1,6 @@
-window.addEventListener('load', function () {
+/* exported drawPies */
+
+function drawPies(sensitivities, sourceTypes) {
   //
   // Pie Chart start
   //
@@ -14,21 +16,21 @@ window.addEventListener('load', function () {
   var sensitivitiesPieChart = new Chart(sensitivitiesPieChartCtx, {
     type: 'pie',
     data: {
-      labels:[sensitivities[0][0],sensitivities[1][0],sensitivities[2][0],sensitivities[3][0]],
+      labels: [sensitivities[0][0], sensitivities[1][0], sensitivities[2][0], sensitivities[3][0]],
       datasets: [{
-        data: [sensitivities[0][1],sensitivities[1][1],sensitivities[2][1],sensitivities[3][1]],
+        data: [sensitivities[0][1], sensitivities[1][1], sensitivities[2][1], sensitivities[3][1]],
         backgroundColor: ['#e24e4e', '#ffab00', '#fed149', '#21759c'],
         borderColor: ['#e24e4e', '#ffab00', '#fed149', '#21759c'],
         borderAlign: 'center',
         //Put hoverBorderWidth on - this gives the canvas a small margin, so it doesn't 'cut off' when our 'click-highlight' function
         // (sensitivityLegendClickCallback) is called. (the hover is not used, as the option: events is set to 0 ( events: [] ))
-        hoverBorderWidth: [20,20,20,20]
+        hoverBorderWidth: [20, 20, 20, 20]
       }]
 
     },
     options: {
       legend: {
-        position:'top',
+        position: 'top',
         align: 'end',
         display: false,
 
@@ -46,17 +48,19 @@ window.addEventListener('load', function () {
             size: 16,
             weight: 'bold'
           },
-          position:'top',
-          align:'center',
+          position: 'top',
+          align: 'center',
           formatter: displayAsPercentage,
           color: '#fff',
         }
       },
       responsive: true,
       aspectRatio: 1,
-      maintainAspectRatio: true
+      maintainAspectRatio: false
     }
   });
+
+  charts.push(sensitivitiesPieChart);
 
   $("#pie_legend_sensitivity").html(sensitivitiesPieChart.generateLegend());
 
@@ -71,7 +75,7 @@ window.addEventListener('load', function () {
     var target = event.target || event.srcElement;
 
     while (target.nodeName !== 'LI') {
-        target = target.parentElement;
+      target = target.parentElement;
     }
 
     var parent = target.parentElement;
@@ -93,20 +97,20 @@ window.addEventListener('load', function () {
   var dataSourcesPieChart = new Chart(dataSourcesPieChartCtx, {
     type: 'pie',
     data: {
-      labels:[sourceTypes[0][0],sourceTypes[1][0],sourceTypes[2][0],sourceTypes[3][0]],
+      labels: [sourceTypes[0][0], sourceTypes[1][0], sourceTypes[2][0], sourceTypes[3][0]],
       datasets: [{
-        data: [sourceTypes[0][1],sourceTypes[1][1],sourceTypes[2][1],sourceTypes[3][1]],
+        data: [sourceTypes[0][1], sourceTypes[1][1], sourceTypes[2][1], sourceTypes[3][1]],
         backgroundColor: ['#fed149', '#5ca4cd', '#21759c', '#00496e'],
         borderColor: ['#fed149', '#5ca4cd', '#21759c', '#00496e'],
         borderAlign: 'center',
         //Put hoverBorderWidth on - this gives the canvas a small margin, so it doesn't 'cut off' when our 'click-highlight' function
         // (sensitivityLegendClickCallback) is called. (the hover is not used, as the option: events is set to 0 ( events: [] ))
-        hoverBorderWidth: [20,20,20,20]
+        hoverBorderWidth: [20, 20, 20, 20]
       }]
     },
     options: {
       legend: {
-        position:'top',
+        position: 'top',
         align: 'end',
         display: false,
       },
@@ -123,21 +127,23 @@ window.addEventListener('load', function () {
             size: 16,
             weight: 'bold'
           },
-          position:'top',
-          align:'center',
+          position: 'top',
+          align: 'center',
           formatter: displayAsPercentage,
           color: '#fff',
         }
       },
       responsive: true,
       aspectRatio: 1,
-      maintainAspectRatio: true
+      maintainAspectRatio: false
       // If we want the animation to start from the center - set to true
       // animation: {
       //     animateScale: true,
       // }
     }
   });
+
+  charts.push(dataSourcesPieChart);
 
   $("#pie_legend_datasources").html(dataSourcesPieChart.generateLegend());
 
@@ -152,7 +158,7 @@ window.addEventListener('load', function () {
     var target = event.target || event.srcElement;
 
     while (target.nodeName !== 'LI') {
-        target = target.parentElement;
+      target = target.parentElement;
     }
 
     var parent = target.parentElement;
@@ -168,14 +174,14 @@ window.addEventListener('load', function () {
     item._model.outerRadius += 5;
   }
 
-  function displayAsPercentage (value, ctx) {
+  function displayAsPercentage(value, ctx) {
     let dataArr = ctx.chart.data.datasets[0].data;
     let sum = dataArr.reduce(function (total, frac) { return total + frac; });
     var percentage = Math.round(value * 100 / sum) + "%";
     return value ? percentage : '';
   }
 
-  function unorderedListLegend (chart) {
+  function unorderedListLegend(chart) {
     var text = [];
     text.push('<ul id="' + chart.id + '" class="pie_legend_list">');
     for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
@@ -188,4 +194,4 @@ window.addEventListener('load', function () {
     text.push('</ul>');
     return text.join("");
   }
-});
+}
