@@ -100,7 +100,7 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
                     {% comment %} This is a consequence of our choice to use HTMX, while using URL kwargs. This should be structured in a more intelligent way. {% endcomment %}
                     hx-vals='{"pk":"{{ document_report.pk|unlocalize }}", "paginate_by":"{{ paginate_by }}", "order_by":"{{ order_by }}", "order":"{{ order }}", "scannerjob":"{{ scannerjobs|last }}", "sensitivities":"{{ sensitivities|last }}"}'
                     {% if request.user.profile.time_since_last_handle > 172800 %}
-                      hx-confirm="{% trans 'You are about to handle this report. This action does not change the file, that the report is about. Please do not handle a report before action has been manually taken to the file.' %}"
+                      hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}"
                     {% endif %}
                     name="handle-match">
                 <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Handle" %}</span></button>
