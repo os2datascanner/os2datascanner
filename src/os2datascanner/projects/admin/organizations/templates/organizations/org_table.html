@@ -34,7 +34,9 @@
             {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
                 <col class="datatable__column--btn">
             {% endif %}
+            {% if request.user.is_superuser %}
             <col class="datatable__column--delete">
+            {% endif %}
         </colgroup>
         <thead>
             <tr>
@@ -46,7 +48,9 @@
                 {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
                     <th class="datatable__column--btn">{% trans "Import service (Microsoft Graph)" %}</th>
                 {% endif %}
-                <th class="datatable__column--delete">{% trans "action"|capfirst %}</th>
+                {% if request.user.is_superuser %}
+                <th class="datatable__column--delete">{% trans "Delete" %}</th>
+                {% endif %}
             </tr>
         </thead>
         {% if client.organizations.all %}
@@ -189,6 +193,7 @@
                     </div>
                 </td>
                 {% endif %}
+                {% if request.user.is_superuser %}
                 <td class="datatable__column--delete">
                     <form action="{% url 'delete-organization' slug=organization.slug %}" method="post" style="display: inline-block;">
                     {% csrf_token %}
@@ -196,7 +201,7 @@
                     <button
                     type="submit"
                     class="button button--small button--grey"
-                    onclick="return confirm('{% trans "Do you really want to delete this organization?" %}\n\n{{organization.name}}\n\n{% trans "The action cannot be reversed" %}')"
+                    onclick="return confirm('{% trans "Do you really want to delete this organization?" %}\n\n{{organization.name}}\n\n{% trans "This will delete all associated import- and scannerjobs. The action cannot be reversed" %}')"
                     title="{% trans 'Delete' %}">
                     <svg class="icon">
                       <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
@@ -204,6 +209,7 @@
                   </button>
                   </form>
                 </td>
+                {% endif %}
             </tr>
             {% with organization|get_orgunit_list as orgunit_list %}
             {% if orgunit_list %}

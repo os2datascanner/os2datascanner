@@ -5,6 +5,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.utils.translation import ugettext_lazy as _
 from os2datascanner.projects.admin.adminapp.views.views import RestrictedDeleteView
+from django.core.exceptions import PermissionDenied
 
 from os2datascanner.projects.admin.core.models import Client, Feature
 from ..models import Organization
@@ -99,3 +100,11 @@ class DeleteOrganizationView(RestrictedDeleteView):
     """Delete an ogranization view."""
     model = Organization
     success_url = '/organizations/'
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            # Imposter! Keep out!.
+            raise PermissionDenied
+
+        # User is OK. Proceed.
+        return super().post(request, *args, **kwargs)

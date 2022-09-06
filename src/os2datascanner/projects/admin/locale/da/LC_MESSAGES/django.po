@@ -70,7 +70,7 @@ msgid "Login method"
 msgstr "Login metode"
 
 #: adminapp/models/rules/rule.py:40 core/models/client.py:73
-#: organizations/templates/organizations/org_table.html:41
+#: organizations/templates/organizations/org_table.html:43
 msgid "name"
 msgstr "navn"
 
@@ -623,7 +623,8 @@ msgstr "Ny"
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status_table.html:83
 #: adminapp/templates/os2datascanner/scanners.html:166
-#: organizations/templates/organizations/org_table.html:200
+#: organizations/templates/organizations/org_table.html:52
+#: organizations/templates/organizations/org_table.html:205
 msgid "Delete"
 msgstr "Slet"
 
@@ -775,7 +776,6 @@ msgstr "Vil du slette denne regel?"
 
 #: adminapp/templates/os2datascanner/rules.html:113
 #: adminapp/templates/os2datascanner/scanners.html:165
-#: organizations/templates/organizations/org_table.html:199
 msgid "The action cannot be reversed"
 msgstr "Handlingen kan ikke fortrydes."
 
@@ -1281,6 +1281,8 @@ msgid "Office 365 OneDrive filescanner"
 msgstr "Office 365 OneDrive filscanner"
 
 #: adminapp/templates/partials/breadcrumb.html:30
+#, fuzzy
+#| msgid "Office 365 kalenderscanner"
 msgid "Office 365 calendarscanner"
 msgstr "Office 365 kalenderscanner"
 
@@ -1331,7 +1333,7 @@ msgid ""
 "correctly."
 msgstr ""
 "Indtast din nye adgangskode to gange, så vi kan bekræfte, at du har skrevet "
-"den korrekt."
+"det korrekt."
 
 #: adminapp/templates/password_reset_confirm.html:52
 msgid ""
@@ -1339,24 +1341,24 @@ msgid ""
 "used. Please request a new password reset."
 msgstr ""
 "Linket til nulstilling af adgangskode er ugyldigt, muligvis fordi det "
-"allerede har været brugt. Bed om en ny nulstilling af adgangskoden."
+"allerede har været brugt. Bed om nulstilling af en ny adgangskode."
 
 #: adminapp/templates/password_reset_done.html:19
 msgid ""
 "We've emailed you instructions for setting your password, if an account "
 "exists with the email you entered. You should receive them shortly."
 msgstr ""
-"Vi har sendt dig instruktioner til hvordan du nulstiller din adgangskode, "
-"hvis en konto eksisterer tilknyttet den indtastede e-mail. Du bør modtage "
-"instruktionerne snarest."
+"Vi har sendt dig instruktioner til, hvordan du indstiller din adgangskode. "
+"Hvis du har en kontoeksisterer den e-mail du har indtastet. Du vil snart "
+"modtage den."
 
 #: adminapp/templates/password_reset_done.html:23
 msgid ""
 "If you don't receive an email, please make sure you've entered the address "
 "you registered with, and check your spam folder."
 msgstr ""
-"Hvis du ikke modtager en e-mail, skal du sørge for, at e-mailadressen du har "
-"indtastet er den rigtige, og tjekke din spam mappe."
+"Hvis du ikke modtager en e-mail, skal du sørge for at have indtastet "
+"adressendu er registreret hos, og tjekke din spam mappe."
 
 #: adminapp/templates/password_reset_email.html:3
 #, fuzzy, python-format
@@ -1368,9 +1370,8 @@ msgid ""
 "  You're receiving this email because you requested a password reset for "
 "your user account at %(site_name)s.\n"
 msgstr ""
-"\n"
-"  Du modtager denne e-mail, fordi du har anmodet om nulstilling af din "
-"adgangskode til din bruger på %(site_name)s.\n"
+"Du modtager denne e-mail, fordi du har anmodet om nulstilling af adgangskode "
+"til dinbrugerkonto på %(site_name)s."
 
 #: adminapp/templates/password_reset_email.html:7
 msgid "Please go to the following page and choose a new password:"
@@ -1390,9 +1391,7 @@ msgstr "Tak, fordi du brugte vores side!"
 msgid ""
 "\n"
 "  The %(site_name)s team\n"
-msgstr ""
-"\n"
-"  %(site_name)s team\n"
+msgstr "%(site_name)s team"
 
 #: adminapp/templates/password_reset_form.html:21
 msgid ""
@@ -1724,7 +1723,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_table.html:45
+#: organizations/templates/organizations/org_table.html:47
 msgid "import service"
 msgstr "importservice"
 
@@ -2017,39 +2016,43 @@ msgstr "organisationer for"
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_table.html:42
+#: organizations/templates/organizations/org_table.html:44
 msgid "email"
 msgstr "e-mail"
 
-#: organizations/templates/organizations/org_table.html:43
+#: organizations/templates/organizations/org_table.html:45
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_table.html:47
+#: organizations/templates/organizations/org_table.html:49
 msgid "Import service (Microsoft Graph)"
 msgstr "Importservice (Microsoft Graph)"
 
-#: organizations/templates/organizations/org_table.html:49
-msgid "action"
-msgstr "handling"
-
-#: organizations/templates/organizations/org_table.html:86
-#: organizations/templates/organizations/org_table.html:94
-#: organizations/templates/organizations/org_table.html:155
-#: organizations/templates/organizations/org_table.html:162
+#: organizations/templates/organizations/org_table.html:90
+#: organizations/templates/organizations/org_table.html:98
+#: organizations/templates/organizations/org_table.html:159
+#: organizations/templates/organizations/org_table.html:166
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_table.html:110
-#: organizations/templates/organizations/org_table.html:178
+#: organizations/templates/organizations/org_table.html:114
+#: organizations/templates/organizations/org_table.html:182
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_table.html:199
+#: organizations/templates/organizations/org_table.html:204
 msgid "Do you really want to delete this organization?"
 msgstr "Er du sikker på, at du vil slette denne organisation?"
 
-#: organizations/templates/organizations/org_table.html:240
+#: organizations/templates/organizations/org_table.html:204
+msgid ""
+"This will delete all associated import- and scannerjobs. The action cannot "
+"be reversed"
+msgstr ""
+"Dette vil også slette import- og scannerjobs der tilhører organisationen. "
+"Handlingen kan ikke fortrydes."
+
+#: organizations/templates/organizations/org_table.html:246
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
@@ -2061,10 +2064,11 @@ msgstr "organisatorisk struktur"
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
 
-#: organizations/views/org_views.py:79
+#: organizations/views/org_views.py:80
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 
+<<<<<<< HEAD
 #~ msgid "Changed "
 #~ msgstr "Ændrede "
 
@@ -2089,6 +2093,10 @@ msgstr "Navnet er allerede i brug."
 
 #~ msgid "This cannot be reversed"
 #~ msgstr "Handlingen kan ikke fortrydes."
+=======
+#~ msgid "action"
+#~ msgstr "handling"
+>>>>>>> 9d94ce7c ([#47290] Only superusers can delete organizations)
 
 #, python-format
 #~ msgid ""
