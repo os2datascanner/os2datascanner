@@ -84,6 +84,18 @@ def find_svg_icon(type_label):
         f"{svg_dir}/icon-default.svg"
 
 
+@register.simple_tag
+def find_scan_type(type_label):
+    if type_label in ("smbc", "dropbox", "googledrive", "msgraph-file"):
+        return "File"
+    elif type_label in ("gmail", "ews", "msgraph-mail"):
+        return "Mail"
+    elif type_label == "web":
+        return "Web"
+    else:
+        return "Unrecognized file type"
+
+
 @register.filter
 def find_file_folder(handle, force=False):
     """Removes the filename of a match and then returns it (the folder where
