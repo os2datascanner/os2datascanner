@@ -300,7 +300,7 @@ class WebResource(FileResource):
         return self._mr
 
     def get_size(self):
-        return self.unpack_header(check=True).get("content-length", 0).map(int)
+        return int(self.unpack_header(check=True).get("content-length", 0))
 
     def get_last_modified(self):
         lm_hint = self.handle.last_modified_hint
