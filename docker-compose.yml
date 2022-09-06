@@ -409,6 +409,7 @@ x-disabled:
     command: supercronic /code/docker/crontab
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
+      - TZ=Europe/Copenhagen
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -424,6 +425,7 @@ x-disabled:
     command: supercronic /code/docker/crontab
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
+      - TZ=Europe/Copenhagen
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
