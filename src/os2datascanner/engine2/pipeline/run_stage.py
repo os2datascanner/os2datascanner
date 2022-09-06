@@ -11,6 +11,7 @@ from collections import deque
 from prometheus_client import Info, Summary, start_http_server
 
 from os2datascanner.utils import profiling
+from os2datascanner.utils.log_levels import log_levels
 from ... import __version__
 from ..model.core import SourceManager
 from . import explorer, exporter, matcher, messages, processor, tagger, worker
@@ -34,16 +35,6 @@ _module_mapping = {
     "tagger": tagger,
     "exporter": exporter,
     "worker": worker
-}
-
-
-_loglevels = {
-    'critical': logging.CRITICAL,
-    'error': logging.ERROR,
-    'warn': logging.WARNING,
-    'warning': logging.WARNING,
-    'info': logging.INFO,
-    'debug': logging.DEBUG
 }
 
 
@@ -142,7 +133,7 @@ restarting = False
 
 @click.command()
 @click.option('--log', 'log_level',
-              type=click.Choice(_loglevels.keys()),
+              type=click.Choice(log_levels.keys()),
               default='info', envvar='LOG_LEVEL',
               help='change the level at which log messages will be printed')
 @click.option('--profile/--no-profile', 'enable_profiling',
@@ -183,7 +174,7 @@ def main(log_level, enable_profiling, enable_metrics,
     logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
     # set level for root logger
     root_logger = logging.getLogger("os2datascanner")
-    root_logger.setLevel(_loglevels[log_level])
+    root_logger.setLevel(log_levels[log_level])
     root_logger.info("starting pipeline {0}".format(stage))
 
     if enable_metrics:

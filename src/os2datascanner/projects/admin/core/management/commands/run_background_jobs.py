@@ -12,7 +12,7 @@ from prometheus_client import CollectorRegistry, Enum, push_to_gateway
 from django.conf import settings
 
 from ...models.background_job import JobState, BackgroundJob
-from os2datascanner.engine2.pipeline.run_stage import _loglevels
+from os2datascanner.utils.log_levels import log_levels
 
 import time
 import logging
@@ -108,7 +108,7 @@ class Command(BaseCommand):
                 "--log",
                 default="info",
                 help="change the level at which log messages will be printed",
-                choices=_loglevels.keys()
+                choices=log_levels.keys()
         )
 
     def handle(self, *, wait, single, log, **kwargs):  # noqa: CCR001
@@ -118,7 +118,7 @@ class Command(BaseCommand):
         logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
         # set level for root logger
         root_logger = logging.getLogger("os2datascanner")
-        root_logger.setLevel(_loglevels[log])
+        root_logger.setLevel(log_levels[log])
 
         running = True
 

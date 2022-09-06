@@ -3,8 +3,8 @@ import argparse
 from django.core.management.base import BaseCommand
 
 from ...models.scannerjobs.scanner import Scanner, ScanStatus
+from os2datascanner.utils.log_levels import log_levels
 from os2datascanner.engine2.pipeline import messages
-from os2datascanner.engine2.pipeline.run_stage import _loglevels
 from os2datascanner.engine2.pipeline.utilities import pika
 
 import logging
@@ -51,8 +51,7 @@ class Command(BaseCommand):
                 default=None)
         group.add_argument(
                 "--log-level",
-                choices=("critical", "error", "warn",
-                         "warning", "info", "debug",),
+                choices=log_levels.keys(),
                 metavar="LEVEL",
                 help="the new log level for pipeline components",
                 default=None)
@@ -74,7 +73,7 @@ class Command(BaseCommand):
 
         msg = messages.CommandMessage(
                 abort=abort_scantag,
-                log_level=_loglevels.get(log_level) if log_level else None,
+                log_level=log_levels.get(log_level) if log_level else None,
                 profiling=profile)
         logging.info(msg)
 

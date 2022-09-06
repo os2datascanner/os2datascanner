@@ -20,10 +20,10 @@ import structlog
 from django.db import transaction
 from django.core.management.base import BaseCommand
 
+from os2datascanner.utils.log_levels import log_levels
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.model.core import Handle, Source
 from os2datascanner.engine2.pipeline import messages
-from os2datascanner.engine2.pipeline.run_stage import _loglevels
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 
@@ -348,14 +348,14 @@ class Command(BaseCommand):
                 "--log",
                 default="info",
                 help="change the level at which log messages will be printed",
-                choices=_loglevels.keys())
+                choices=log_levels.keys())
 
     def handle(self, *args, log, **options):
         # change formatting to include datestamp
         fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
         # set level for root logger
-        logging.getLogger("os2datascanner").setLevel(_loglevels[log])
+        logging.getLogger("os2datascanner").setLevel(log_levels[log])
 
         ResultCollectorRunner(
                 read=["os2ds_results"],
