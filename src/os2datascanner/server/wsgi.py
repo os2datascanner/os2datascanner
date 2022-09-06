@@ -111,8 +111,12 @@ def scan_1(body):  # noqa: CCR001
         }
         return
 
-    source = Source.from_json_object(body["source"])
-    top_type = _get_top(source).type_label
+    try:
+        source = Source.from_json_object(body["source"])
+        top_type = _get_top(source).type_label
+    except Exception:
+        source = None
+
     if not source:
         yield "400 Bad Request"
         yield {
@@ -130,7 +134,11 @@ def scan_1(body):  # noqa: CCR001
         }
         return
 
-    rule = Rule.from_json_object(body["rule"])
+    try:
+        rule = Rule.from_json_object(body["rule"])
+    except Exception:
+        rule = None
+
     if not rule:
         yield "400 Bad Request"
         yield {
@@ -153,6 +161,7 @@ def scan_1(body):  # noqa: CCR001
                             uuid=uuid4())),
             source=source,
             rule=rule,
+            filter_rule=None,
             configuration=body.get("configuration", {}),
             progress=None).to_json_object()
 
