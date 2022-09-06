@@ -216,7 +216,7 @@ class MainPageView(LoginRequiredMixin, ListView):
         is_htmx = self.request.headers.get('HX-Request') == "true"
 
         if is_htmx:
-            htmx_trigger = self.request.GET.get('HX-Trigger-Name')
+            htmx_trigger = self.request.headers.get('HX-Trigger-Name')
             if htmx_trigger == 'open-button':
 
                 context['last_open_pk'] = self.request.GET.get('pk')
