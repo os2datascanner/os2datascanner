@@ -23,15 +23,19 @@ from ..reportapp.utils import hash_handle
 from ..reportapp.management.commands import pipeline_collector
 
 time = "2020-11-11T11:11:59+02:00"
+
+org_frag = messages.OrganisationFragment(
+    name="test_org", uuid="d92ff0c9-f066-40dc-a57e-541721b6c23e")
+
 scan_tag = messages.ScanTagFragment(
         time=parse_datetime(time),
         scanner=messages.ScannerFragment(pk=14, name="Dummy test scanner"),
-        user=None, organisation=None)
+        user=None, organisation=org_frag)
 
 scan_tag_1 = messages.ScanTagFragment(
         time=time_now(),
         scanner=messages.ScannerFragment(pk=15, name="Dummy test scanner 1"),
-        user=None, organisation=None)
+        user=None, organisation=org_frag)
 
 common_rule = RegexRule(
     expression="Vores hemmelige adgangskode er",

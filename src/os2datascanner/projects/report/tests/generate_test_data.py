@@ -17,10 +17,10 @@ def get_different_scan_tag():
     number = random.randint(0, 10)
     return messages.ScanTagFragment(
         scanner=messages.ScannerFragment(
-                pk=number,
-                name="Dummy test scanner {0}".format(number)),
-        time=randomtimestamp(start_year=2020, text=False).replace(tzinfo=gettz()),
-        user=None, organisation=None)
+            pk=number, name="Dummy test scanner {0}".format(number)), time=randomtimestamp(
+            start_year=2020, text=False).replace(
+                tzinfo=gettz()), user=None, organisation=messages.OrganisationFragment(
+                    name="test_org", uuid="d92ff0c9-f066-40dc-a57e-541721b6c23e"))
 
 
 def get_different_filesystemhandle(file_ending, folder_level):
