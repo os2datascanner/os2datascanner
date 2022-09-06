@@ -39,7 +39,6 @@ from os2datascanner.engine2.rules.address import AddressRule
 from os2datascanner.engine2.rules.links_follow import LinksFollowRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
-from os2datascanner.projects.report.organizations.models import Organization
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
 from ..utils import user_is
@@ -608,22 +607,21 @@ class AboutPageView(TemplateView):
 
 
 # Logic separated to function to allow usability in send_notifications.py
-def filter_inapplicable_matches(user, matches, roles):
+def filter_inapplicable_matches(user, matches, roles, account=None):
     """ Filters matches by organization
     and role. """
 
     # Filter by organization
     try:
         user_organization = user.profile.organization
-        # Include matches without organization (backwards compatibility)
         if user_organization:
-            matches = matches.filter(Q(organization=None) | Q(organization=user_organization))
+            matches = matches.filter(organization=user_organization)
     except UserProfile.DoesNotExist:
         # No UserProfile has been set on the request user
-        # Default action depends on how many organization objects we have
-        # If more than one exist, limit matches to ones without an organization (safety measure)
-        if Organization.objects.count() > 1:
-            matches = matches.filter(organization=None)
+        # Check if we have received an account as arg (from send_notifications.py) and use
+        # its organization to locate matches.
+        if account:
+            matches = matches.filter(organization=account.organization)
 
     if user_is_superadmin(user):
         hidden_matches = matches.filter(only_notify_superadmin=True)
