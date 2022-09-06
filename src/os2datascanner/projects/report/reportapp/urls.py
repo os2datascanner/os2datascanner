@@ -3,6 +3,7 @@ import django.contrib.auth.views
 from django.conf.urls import url
 from django.http import HttpResponse
 from django.urls import include
+from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path
 from os2datascanner import __version__
@@ -27,7 +28,7 @@ urlpatterns = [
     url('about',    AboutPageView.as_view(),    name="about"),
     url(r'^health/', lambda r: HttpResponse()),
     url(r'^version/?$', lambda r: HttpResponse(__version__)),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.SAML2_ENABLED:
     urlpatterns.append(url(r"^saml2_auth/", include("django_saml2_auth.urls")))

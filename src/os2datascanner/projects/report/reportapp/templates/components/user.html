@@ -7,9 +7,15 @@
 {% endblock %}
 
   <div class="user">
+    
     <span class="user__avatar">
-      <i id="account_circle" class="material-icons">account_circle</i>
+      {% if request.user.profile.image %}
+        <img src="{{ request.user.profile.image }}">
+      {% else %}
+        <i id="account_circle" class="material-icons">account_circle</i>
+      {% endif %}
     </span>
+    
 
     <div class="user_menu">
       <button class="dropbtn" onclick="dropMenu()">
@@ -21,7 +27,11 @@
       <div class="user-content" id="userMenu">
         <div>
           <span class="user__avatar_big">
-            <i id="account_circle" class="material-icons">account_circle</i>
+            {% if request.user.profile.image %}
+              <img src="{{ request.user.profile.image }}">
+            {% else %}
+              <i id="account_circle" class="material-icons">account_circle</i>
+            {% endif %}
           </span>
           <span class="user__name--bold">{{ request.user }}</span>
         </div>
