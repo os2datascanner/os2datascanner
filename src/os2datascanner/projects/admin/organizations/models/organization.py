@@ -12,8 +12,11 @@
 # sector open source network <https://os2.eu/>.
 #
 
+from functools import reduce
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import ScanStatus, Scanner
 from .broadcasted_mixin import Broadcasted
 
 from os2datascanner.core_organizational_structure.models import Organization as Core_Organization
@@ -38,3 +41,17 @@ class Organization(Core_Organization, Broadcasted):
 
     def natural_key(self):
         return (self.uuid, self.name)
+
+    @property
+    def scanners_not_running(self) -> bool:
+        def not_running(scanner):
+            all_statuses = ScanStatus.objects.filter(scanner=scanner)
+            latest = all_statuses.latest('last_modified') if all_statuses else None
+            return latest.is_not_running if latest else True
+
+        scanners = Scanner.objects.filter(organization=self)
+        if scanners:
+            return reduce(lambda a, b: a and b,
+                          [not_running(scanner) for scanner in scanners])
+        else:
+            return True

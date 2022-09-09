@@ -498,6 +498,10 @@ class AbstractScanStatus(models.Model):
         else:
             return None
 
+    @property
+    def is_not_running(self) -> bool:
+        return self.stage == ScanStage.EMPTY or self.finished
+
     class Meta:
         abstract = True
 

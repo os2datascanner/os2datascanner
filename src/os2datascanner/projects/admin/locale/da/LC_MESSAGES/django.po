@@ -9,7 +9,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2022-09-27 11:56+0200\n"
+=======
+"POT-Creation-Date: 2022-09-21 16:27+0200\n"
+>>>>>>> 671a5ce1 ([#47290] Popup redirecting to scanstatus if any scannerjobs are running at deletion)
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -70,7 +74,7 @@ msgid "Login method"
 msgstr "Login metode"
 
 #: adminapp/models/rules/rule.py:40 core/models/client.py:73
-#: organizations/templates/organizations/org_table.html:43
+#: organizations/templates/organizations/org_table.html:48
 msgid "name"
 msgstr "navn"
 
@@ -126,28 +130,33 @@ msgstr "scannede objekter"
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner.py:510
+#: adminapp/models/scannerjobs/scanner.py:514
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
 
-#: adminapp/models/scannerjobs/scanner.py:515
+#: adminapp/models/scannerjobs/scanner.py:519
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner.py:522
+#: adminapp/models/scannerjobs/scanner.py:526
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
+<<<<<<< HEAD
 #: adminapp/models/scannerjobs/scanner.py:527
 msgid "resolved"
 msgstr "løst"
 
 #: adminapp/models/scannerjobs/scanner.py:556
+=======
+#: adminapp/models/scannerjobs/scanner.py:555
+>>>>>>> 671a5ce1 ([#47290] Popup redirecting to scanstatus if any scannerjobs are running at deletion)
 #: adminapp/models/usererrorlog.py:25
 msgid "scan status"
 msgstr "scanstatus"
 
+<<<<<<< HEAD
 #: adminapp/models/scannerjobs/scanner.py:557
 msgid "scan statuses"
 msgstr "scanstatusser"
@@ -161,6 +170,21 @@ msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
 #: adminapp/models/scannerjobs/scanner.py:602
+=======
+#: adminapp/models/scannerjobs/scanner.py:556
+msgid "scan statuses"
+msgstr "scanstatusser"
+
+#: adminapp/models/scannerjobs/scanner.py:595
+msgid "timestamp"
+msgstr ""
+
+#: adminapp/models/scannerjobs/scanner.py:600
+msgid "scan status snapshot"
+msgstr "scanstatus snapshot"
+
+#: adminapp/models/scannerjobs/scanner.py:601
+>>>>>>> 671a5ce1 ([#47290] Popup redirecting to scanstatus if any scannerjobs are running at deletion)
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
@@ -623,8 +647,9 @@ msgstr "Ny"
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status_table.html:83
 #: adminapp/templates/os2datascanner/scanners.html:166
-#: organizations/templates/organizations/org_table.html:52
-#: organizations/templates/organizations/org_table.html:205
+#: organizations/templates/organizations/org_table.html:57
+#: organizations/templates/organizations/org_table.html:211
+#: organizations/templates/organizations/org_table.html:223
 msgid "Delete"
 msgstr "Slet"
 
@@ -1521,7 +1546,7 @@ msgid "user"
 msgstr "bruger"
 
 #: core/models/administrator.py:37 core/models/client.py:113
-#: organizations/models/organization.py:30
+#: organizations/models/organization.py:33
 msgid "client"
 msgstr "kunde"
 
@@ -1723,7 +1748,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_table.html:47
+#: organizations/templates/organizations/org_table.html:52
 msgid "import service"
 msgstr "importservice"
 
@@ -1998,7 +2023,7 @@ msgstr ""
 "Denne organisationsstruktur ligger i skyen, og en eksterne tjeneste skal "
 "tillade OS2datascanner adgang til dens indhold."
 
-#: organizations/models/organization.py:36
+#: organizations/models/organization.py:39
 msgid "slug"
 msgstr "slug"
 
@@ -2007,44 +2032,60 @@ msgstr "slug"
 msgid "create new organization"
 msgstr "opret ny organisation"
 
-#: organizations/templates/organizations/org_table.html:9
+#: organizations/templates/organizations/org_delete_blocked.html:19
+msgid "Deletion blocked"
+msgstr "Sletning ikke mulig"
+
+#: organizations/templates/organizations/org_delete_blocked.html:22
+msgid ""
+"The organization could not be deleted because scannerjobs are still running. "
+"Delete running jobs before proceding. "
+msgstr ""
+"Organisationen kan ikke slettes fordi der stadig kører mindst et scannerjob. "
+"Afbryd alle scannerjobs der kører for at fortsætte sletningen."
+
+#: organizations/templates/organizations/org_delete_blocked.html:27
+msgid "Go to scanner status"
+msgstr "Gå til scanner status"
+
+#: organizations/templates/organizations/org_table.html:14
 msgid "organizations for"
 msgstr "organisationer for"
 
-#: organizations/templates/organizations/org_table.html:15
 #: organizations/templates/organizations/org_table.html:20
+#: organizations/templates/organizations/org_table.html:25
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_table.html:44
+#: organizations/templates/organizations/org_table.html:49
 msgid "email"
 msgstr "e-mail"
 
-#: organizations/templates/organizations/org_table.html:45
+#: organizations/templates/organizations/org_table.html:50
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_table.html:49
+#: organizations/templates/organizations/org_table.html:54
 msgid "Import service (Microsoft Graph)"
 msgstr "Importservice (Microsoft Graph)"
 
-#: organizations/templates/organizations/org_table.html:90
-#: organizations/templates/organizations/org_table.html:98
-#: organizations/templates/organizations/org_table.html:159
-#: organizations/templates/organizations/org_table.html:166
+#: organizations/templates/organizations/org_table.html:95
+#: organizations/templates/organizations/org_table.html:103
+#: organizations/templates/organizations/org_table.html:164
+#: organizations/templates/organizations/org_table.html:171
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_table.html:114
-#: organizations/templates/organizations/org_table.html:182
+#: organizations/templates/organizations/org_table.html:119
+#: organizations/templates/organizations/org_table.html:187
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_table.html:204
+#: organizations/templates/organizations/org_table.html:210
 msgid "Do you really want to delete this organization?"
 msgstr "Er du sikker på, at du vil slette denne organisation?"
 
-#: organizations/templates/organizations/org_table.html:204
+#: organizations/templates/organizations/org_table.html:210
 msgid ""
 "This will delete all associated import- and scannerjobs. The action cannot "
 "be reversed"
@@ -2052,7 +2093,7 @@ msgstr ""
 "Dette vil også slette import- og scannerjobs der tilhører organisationen. "
 "Handlingen kan ikke fortrydes."
 
-#: organizations/templates/organizations/org_table.html:246
+#: organizations/templates/organizations/org_table.html:264
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
@@ -2064,7 +2105,7 @@ msgstr "organisatorisk struktur"
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
 
-#: organizations/views/org_views.py:80
+#: organizations/views/org_views.py:82
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 

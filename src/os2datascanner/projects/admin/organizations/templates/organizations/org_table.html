@@ -3,6 +3,11 @@
 {% load mptt_tags %}
 {% load get_orgunit_list %}
 
+{% block scripts %}
+  <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
+  <script src="{% static "js/index.js" %}"></script>
+{% endblock %}
+
 {%  for client in client_list %}
     <div class="aside">
         <h1 class="page-title">
@@ -195,19 +200,32 @@
                 {% endif %}
                 {% if request.user.is_superuser %}
                 <td class="datatable__column--delete">
-                    <form action="{% url 'delete-organization' slug=organization.slug %}" method="post" style="display: inline-block;">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button
-                    type="submit"
-                    class="button button--small button--grey"
-                    onclick="return confirm('{% trans "Do you really want to delete this organization?" %}\n\n{{organization.name}}\n\n{% trans "This will delete all associated import- and scannerjobs. The action cannot be reversed" %}')"
-                    title="{% trans 'Delete' %}">
-                    <svg class="icon">
-                      <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
-                    </svg>
-                  </button>
-                  </form>
+                    {% if organization.scanners_not_running %}
+                        <form action="{% url 'delete-organization' slug=organization.slug %}" method="post" style="display: inline-block;">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button
+                        type="submit"
+                        class="button button--small button--grey"
+                        onclick="return confirm('{% trans "Do you really want to delete this organization?" %}\n\n{{organization.name}}\n\n{% trans "This will delete all associated import- and scannerjobs. The action cannot be reversed" %}')"
+                        title="{% trans 'Delete' %}">
+                        <svg class="icon">
+                        <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                        </svg>
+                        </button>
+                        </form>
+                    {% else %}
+                        <a
+                        href="#delete-org-blocked"
+                        data-modal="modal:open"
+                        data-src="{% url 'org_delete_block' slug=organization.slug %}"
+                        class="button button--small button--grey"
+                        title="{% trans 'Delete' %}">
+                        <svg class="icon">
+                            <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                        </svg>
+                        </a>
+                  {% endif %}
                 </td>
                 {% endif %}
             </tr>
@@ -246,5 +264,11 @@
         {% trans "no organization added"|capfirst %}
     </p>
 {% endif %}
+
+{% block modal %}
+<div class="modal" id="delete-org-blocked" tabindex="-1" role="dialog" aria-labelledby="delete-org-blocked-title" aria-hidden="true" data-href="{% url 'add-organization-for' client_id=client.pk %}">
+  <iframe src="about:blank" frameborder="0"></iframe>
+</div>
+{% endblock %}
 
 {% endfor %}

@@ -1,10 +1,12 @@
+from typing import Any, Dict
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.utils.translation import ugettext_lazy as _
-from os2datascanner.projects.admin.adminapp.views.views import RestrictedDeleteView
+from os2datascanner.projects.admin.adminapp.views.views import (
+     RestrictedDeleteView, RestrictedDetailView)
 from django.core.exceptions import PermissionDenied
 
 from os2datascanner.projects.admin.core.models import Client, Feature
@@ -108,3 +110,13 @@ class DeleteOrganizationView(RestrictedDeleteView):
 
         # User is OK. Proceed.
         return super().post(request, *args, **kwargs)
+
+
+class OrganizationDeletionBlocked(RestrictedDetailView):
+    """Prompt when user is trying to delete organization with running scannerjob"""
+    model = Organization
+    fields = []
+    template_name = "organizations/org_delete_blocked.html"
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        return super().get_context_data(**kwargs)

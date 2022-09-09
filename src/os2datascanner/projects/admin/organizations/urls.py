@@ -12,4 +12,7 @@ urlpatterns = [
     path('<slug:slug>/edit', views.UpdateOrganizationView.as_view(), name='edit-organization'),
     path('<slug:org_slug>/units', views.OrganizationalUnitListView.as_view(), name='orgunit-list'),
     path('<slug:slug>/delete', views.DeleteOrganizationView.as_view(), name='delete-organization'),
+    path('<slug:slug>/org_delete_blocked',
+         views.OrganizationDeletionBlocked.as_view(),
+         name='org_delete_block'),
 ]
