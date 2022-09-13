@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load tz %}
 
-<div class="scan-status-table"
+<div class="scan-status-table" name="status_table_poll"
         hx-get="{% url 'status' %}" 
         hx-target=".scan-status-table" 
         hx-swap="outerHTML" 

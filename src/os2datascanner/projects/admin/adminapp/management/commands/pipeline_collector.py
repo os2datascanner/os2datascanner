@@ -150,7 +150,8 @@ def problem_message_recieved_raw(body):
             scan_status=scan_status,
             error_message=error_message,
             path=path,
-            organization=scanner.organization
+            organization=scanner.organization,
+            is_new=True
         )
 
     yield from []

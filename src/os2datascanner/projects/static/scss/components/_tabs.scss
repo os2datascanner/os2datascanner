@@ -5,7 +5,7 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   white-space: nowrap;
   margin-bottom: 1.5rem;
-  position:relative;
+  position: relative;
 
   &__control {
     display: inline-block;
@@ -51,6 +51,7 @@
 }
 
 .scrollbar-content {
+
   // scrollbar
   ::-webkit-scrollbar {
     width: 0;
@@ -64,5 +65,24 @@
 
   .scroll-width-none {
     scrollbar-width: none;
+  }
+}
+
+.bubble {
+  position: relative;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  padding: 2px 5px 2px 6px;
+  border-radius: 12px;
+  color: white;
+  background-color: var(--color-primary-light);
+  box-shadow: 1px 1px 1px gray;
+  text-transform: uppercase;
+  cursor: default;
+
+  &.offset {
+    left: -10px;
+    bottom: -10px;
   }
 }
