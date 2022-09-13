@@ -345,6 +345,8 @@
 }
 
 .datatable .column-headings {
+  z-index: 1;
+
   th {
     font-size: 1rem;
     font-weight: bold;

@@ -129,38 +129,17 @@ class DocumentReport(models.Model):
         self.save()
 
     @enum.unique
-    class ResolutionChoices(enum.Enum):
-        # Future simplification note: the behaviour of the enumeration values
-        # of this class is modelled on Django 3's model.Choices
-        OTHER = 0, "Andet"
-        EDITED = 1, "Redigeret"
-        MOVED = 2, "Flyttet"
-        REMOVED = 3, "Slettet"
-        NO_ACTION = 4, "Intet foretaget"
-
-        def __new__(cls, *args):
-            obj = object.__new__(cls)
-            # models.Choices compatibility: the last element of the enum value
-            # tuple, if there is one, is a human-readable label
-            obj._value_ = args[0] if len(args) < 3 else args[:-1]
-            return obj
-
-        def __init__(self, *args):
-            self.label = args[-1] if len(args) > 1 else self.name
-
-        # This is a class *property* in model.Choices, but that would require
-        # sinister metaclass sorcery
-        @classmethod
-        def choices(cls):
-            return [(k.value, k.label) for k in cls]
-
-        def __repr__(self):
-            return f"<{self.__class__.__name__}.{self.name}>"
+    class ResolutionChoices(models.IntegerChoices):
+        OTHER = 0, _("Other")
+        EDITED = 1, _("Edited")
+        MOVED = 2, _("Deleted and journalized")
+        REMOVED = 3, _("Deleted")
+        FALSE_POSITIVE = 4, _("False positive")
 
     number_of_matches = models.IntegerField(default=0,
                                             verbose_name=_("number of matches"))
 
-    resolution_status = models.IntegerField(choices=ResolutionChoices.choices(),
+    resolution_status = models.IntegerField(choices=ResolutionChoices.choices,
                                             null=True, blank=True, db_index=True,
                                             verbose_name=_("resolution status"))
 
