@@ -9,6 +9,12 @@
         <span class="width">{% trans "Front page" %}</span>
       </a>
     </li>
+    <li>
+      <a href="/archive" class="{% if request.path == '/archive' %}active{% endif %}">
+        {% include "components/svg-icons/icon-smbc.svg" %}
+        <span class="width">{% trans "Archive" %}</span>
+      </a>
+    </li>
 
   {% for role in roles %}
     <li>

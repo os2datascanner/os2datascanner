@@ -4,13 +4,12 @@
 <div class="datatable-wrapper card" role="region" 
      tabindex="0" aria-label="{% trans 'Results' %}"
      name="handle-matches-get"
-     hx-get="{% url "index" %}"
+     hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
      hx-swap="innerHTML"
-     hx-trigger="reload-htmx from:body"
+     hx-trigger="reload-htmx from:body, click from:.order-by delay:100ms"
      hx-target=".content"
      hx-include="[id='dropdown_options'], [id='filter_form']"
 >
-  
   <form id="table_checkboxes">
   <table class="datatable">
     <colgroup>
@@ -19,11 +18,14 @@
       <col class="datatable__column--matchcount">
       <col class="datatable__column--source">
       <col class="datatable__column--path">
+      {% if request.path == "/archive" %}
+      <col class="datatable__column--shortinfo">
+      {% endif %}
       <col class="datatable__column--actions">
     </colgroup>
     <thead>
       <tr class="table-topbar topbar-stick sticky">
-        <th colspan="6">
+        <th colspan="{% if request.path == "/" %}6{% elif request.path == "/archive" %}7{% endif %}">
           {% include "components/handle-match.html" %}
           <div class="view-options">
             <button class="toggle probability-toggle" type="button" aria-pressed="false">{% trans 'Show match probability' %}</button>
@@ -70,8 +72,20 @@
               <i class="material-icons" aria-hidden="true">expand_more</i>
             </button>
         </th>
+        {% if request.path == "/archive" %}
+        <th class="datatable__column--shortinfo">
+          {% trans "Status" %}
+          <button
+              type="button"
+              name="resolution_status"
+              class="order-by button button-caret button--has-icon{% if order_by == 'resolution_status' and order == 'descending' %} up{% endif %}"
+              value="{% if order_by == 'resolution_status' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+              <i class="material-icons" aria-hidden="true">expand_more</i>
+            </button>
+        </th>
+        {% endif %}
         <th class="datatable__column--actions">
-            <span class="screen-reader-only">{% trans "Actions" %}</span>
+          <span class="screen-reader-only">{% trans "Actions" %}</span>
         </th>
       </tr>
     </thead>

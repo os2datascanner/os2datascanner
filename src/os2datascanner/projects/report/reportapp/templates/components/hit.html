@@ -83,11 +83,12 @@
             </div>
           </div>
         </td>
-        
+
+        {% if request.path == "/" %}
         <td class="datatable__column--actions">
-          {% if settings.HANDLE_DROPDOWN %}
           <div class="button-group text-align-right">
-            <button class="matches-handle button button--has-icon" type="button"
+          {% if settings.HANDLE_DROPDOWN %}
+            <button class="matches-handle expand button button--has-icon" type="button"
                     title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned.
 Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}">
                 <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Handle" %}</span></button>
@@ -95,19 +96,17 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
                   <ul hx-swap="outerHTML"
                       hx-indicator="closest tr"
                       hx-target="closest tr"
-                      {% if request.user.account.time_since_last_handle > 172800 %}
+                      {% if request.user.profile.time_since_last_handle > 172800 %}
                         hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}"
                       {% endif %}
                       >
                       {% for choice in document_report.ResolutionChoices.choices %}
-                      <li class="handle-option button" hx-post="{% url "index" %}" hx-trigger="click" name="handle-match"
-                          hx-push-url="false"
+                      <li class="handle-option button" hx-post="{% url "index" %}" hx-trigger="click" name="handle-match" hx-push-url="false"
                           hx-vals='{"pk":"{{ document_report.pk|unlocalize }}", "action":"{{ choice|first }}"}'>{{ choice|last }}</li>
                       {% endfor %}
                   </ul>
                 </div>
           {% else %}
-          <div class="button-group text-align-right">
             <button class="matches-handle button button--has-icon" type="button"
                     title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned.
 Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}"
@@ -117,7 +116,6 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
                     hx-indicator="closest tr"
                     hx-trigger="click"
                     hx-push-url="false"
-                    hx-sync=".datatable-wrapper:replace"
                     hx-vals='{"pk":"{{ document_report.pk|unlocalize }}"}'
                     {% if request.user.account.time_since_last_handle > 172800 %}
                       hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}"
@@ -128,9 +126,53 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
                 <button class="matches-expand button button-caret button--has-icon" title="{% trans 'Show/hide matches' %}" type="button"><i class="material-icons" aria-hidden="true">expand_more</i></button>
           </div>
         </td>
+        {% elif request.path == "/archive" %}
+        <td class="datatable__column--shortinfo">
+          {{ document_report.get_resolution_status_display }}
+        </td>
+        <td class="datatable__column--actions">
+          <div class="button-group text-align-right">
+            {% if settings.HANDLE_DROPDOWN %}
+            <button class="revert-handle expand button button--has-icon" type="button"
+                    title="revert">
+              <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Edit" %}</span></button>
+              <div class="handle-dropdown">
+                <ul hx-swap="outerHTML"
+                    hx-indicator="closest tr"
+                    hx-target="closest tr"
+                    >
+                    <li class="revert-option button" hx-post="{% url "archive" %}" hx-trigger="click" name="revert-match" hx-push-url="false"
+                        hx-vals='{"pk":"{{ document_report.pk|unlocalize }}"}'>{% trans "Revert" %}</li>
+                    {% for choice in document_report.ResolutionChoices.choices %}
+                    {% if document_report.resolution_status != choice|first %}
+                    <li class="revert-option button" hx-post="{% url "archive" %}" hx-trigger="click" name="revert-match" hx-push-url="false"
+                        hx-indicator="this" hx-swap="none"
+                        hx-vals='{"pk":"{{ document_report.pk|unlocalize }}", "action":"{{ choice|first }}"}'>{{ choice|last }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+              </div>
+            {% else %}
+            <button class="revert-handle button button--has-icon" type="button"
+              title="Here is a title."
+              {% comment %} TODO: Replace this with a POST-request. {% endcomment %}
+              hx-post={% url "archive" %}
+              hx-swap="outerHTML"
+              hx-trigger="click"
+              hx-indicator="closest tr"
+              hx-target="closest tr"
+              hx-push-url="false"
+              hx-vals='{"pk":"{{ document_report.pk|unlocalize }}"}'
+              name="revert-match">
+              <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Revert" %}</span></button>
+            {% endif %}
+            <button class="matches-expand button button-caret button--has-icon" title="{% trans 'Show/hide matches' %}" type="button"><i class="material-icons" aria-hidden="true">expand_more</i></button>
+          </div>
+        </td>
+        {% endif %}
       </tr>
       <tr class="matches-list" hidden>
-        <td colspan="6">
+        <td colspan="{% if request.path == "/" %}6{% elif request.path == "/archive" %}7{% endif %}">
           <table class="smaller datatable compressed">
             <colgroup>
               <col class="matches-list__column--match">

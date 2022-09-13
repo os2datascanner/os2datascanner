@@ -2,8 +2,10 @@
 {% load l10n %}
 
 <form id="filter_form" name='filter_form'
-      hx-target=".content" hx-get="{% url "index" %}" hx-swap="innerHTML" 
-      hx-trigger="click from:.order-by delay:100ms, change" 
+      hx-target=".content" 
+      hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}" 
+      hx-swap="innerHTML" 
+      hx-trigger="change" 
       hx-include="[id='dropdown_options']"
 >
   <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
@@ -13,7 +15,7 @@
       <div>
           <button type="button" class="match_filtering_clear_button" name="clear_scannerjob"
                   hx-trigger="click"
-                  hx-get="{% url "index" %}"
+                  hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}" 
                   hx-swap="innerHTML"
                   hx-target=".content"
                   hx-include="[id='filter_form'], [id='dropdown_options']"
@@ -50,7 +52,7 @@
       <div>
           <button type="button" class="match_filtering_clear_button" name="clear_sensitivities"
           hx-trigger="click"
-          hx-get="{% url "index" %}"
+          hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}" 
           hx-swap="innerHTML"
           hx-target=".content"
           hx-include="[id='filter_form'], [id='dropdown_options']"
@@ -83,6 +85,46 @@
           </select>
       </div>
   </div>
+
+  {% if request.path == "/archive" %}
+  <div class="match_filtering_wrapper">
+      <div>
+          <button type="button" class="match_filtering_clear_button" name="clear_resolution_status"
+          hx-trigger="click"
+          hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}" 
+          hx-swap="innerHTML"
+          hx-target=".content"
+          hx-include="[id='filter_form'], [id='dropdown_options']"
+          hx-params="not resolution_status"
+  >
+            {% trans "Clear" %}
+          </button>
+          <label for="resolution_status" class="match_filtering_label">
+            {% trans "Resolution Status" %}
+          </label>
+      </div>
+      <div class="match_filtering dropdown">
+          <select name="resolution_status" id="resolution_status" autocomplete="off"
+          >
+            <option value="all"
+                    {% if resolution_status|last == "all" %}
+                        selected="selected"
+                    {% endif %} >
+              {% trans "All resolution statuses" %}
+            </option>
+              {% for method in resolution_status|first %}
+                  <option value="{{ method.resolution_status|stringformat:"i" }}"
+                        {% if resolution_status|last == method.resolution_status|stringformat:"i" %}
+                            selected="selected"
+                        {% endif %} >
+                        {{ method.resolution_label }} ({{ method.total }})
+                  </option>
+              {% endfor %}
+          </select>
+      </div>
+  </div>
+  {% endif %}
+
 
   <div class="checkbox_wrapper">
     <div class="checkbox-group">
