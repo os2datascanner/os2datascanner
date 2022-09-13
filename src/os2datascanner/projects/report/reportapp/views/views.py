@@ -608,7 +608,8 @@ def filter_inapplicable_matches(user, matches, roles):
     try:
         user_organization = user.profile.organization
         # Include matches without organization (backwards compatibility)
-        matches = matches.filter(Q(organization=None) | Q(organization=user_organization))
+        if user_organization:
+            matches = matches.filter(Q(organization=None) | Q(organization=user_organization))
     except UserProfile.DoesNotExist:
         # No UserProfile has been set on the request user
         # Default action depends on how many organization objects we have
