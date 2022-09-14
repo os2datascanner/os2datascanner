@@ -3,6 +3,7 @@ version: '3.9'
 services:
   db:
     image: postgres:12
+    shm_size: '256mb'
     env_file:
       - dev-environment/db.env
     volumes:
