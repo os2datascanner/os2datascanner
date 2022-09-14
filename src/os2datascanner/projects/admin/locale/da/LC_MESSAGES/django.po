@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-14 08:16+0200\n"
+"POT-Creation-Date: 2022-09-14 11:29+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -280,15 +280,15 @@ msgstr "Scannerjob"
 #: adminapp/templates/components/navigation.html:28
 #: adminapp/templates/os2datascanner/rules.html:19
 #: adminapp/templates/os2datascanner/rules.html:38
-#: adminapp/templates/partials/breadcrumb.html:51
+#: adminapp/templates/partials/breadcrumb.html:55
 msgid "Rules"
 msgstr "Regler"
 
 #: adminapp/templates/components/navigation.html:36
-#: adminapp/templates/partials/breadcrumb.html:65
-#: adminapp/templates/partials/breadcrumb.html:73
-#: adminapp/templates/partials/breadcrumb.html:81
-#: adminapp/templates/partials/breadcrumb.html:93 organizations/apps.py:8
+#: adminapp/templates/partials/breadcrumb.html:69
+#: adminapp/templates/partials/breadcrumb.html:77
+#: adminapp/templates/partials/breadcrumb.html:85
+#: adminapp/templates/partials/breadcrumb.html:97 organizations/apps.py:8
 #: organizations/templates/organizations/org_list.html:6
 msgid "organizations"
 msgstr "organisationer"
@@ -584,12 +584,12 @@ msgid "reports."
 msgstr "rapporter."
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:91
-#: adminapp/templates/partials/breadcrumb.html:56
+#: adminapp/templates/partials/breadcrumb.html:60
 msgid "Edit rule"
 msgstr "Rediger regel"
 
 #: adminapp/templates/os2datascanner/regexrule_form.html:97
-#: adminapp/templates/partials/breadcrumb.html:60
+#: adminapp/templates/partials/breadcrumb.html:64
 msgid "Create new rule"
 msgstr "Opret ny regel"
 
@@ -853,13 +853,13 @@ msgid "Waiting..."
 msgstr "Afventer..."
 
 #: adminapp/templates/os2datascanner/scanner_form.html:115
-#: adminapp/templates/partials/breadcrumb.html:44
+#: adminapp/templates/partials/breadcrumb.html:48
 msgid "Edit scannerjob"
 msgstr "Rediger scannerjob"
 
 #: adminapp/templates/os2datascanner/scanner_form.html:121
 #: adminapp/templates/os2datascanner/scanner_no_client_credentials.html:15
-#: adminapp/templates/partials/breadcrumb.html:46
+#: adminapp/templates/partials/breadcrumb.html:50
 msgid "Create new scannerjob"
 msgstr "Opret nyt scannerjob"
 
@@ -1126,17 +1126,17 @@ msgid "Office 365 kalenderscanner"
 msgstr "Office 365 kalenderscanner"
 
 #: adminapp/templates/os2datascanner/scanner_tabs.html:44
-#: adminapp/templates/partials/breadcrumb.html:30
+#: adminapp/templates/partials/breadcrumb.html:34
 msgid "Google Drive scanner"
 msgstr "Google Drive scanner"
 
 #: adminapp/templates/os2datascanner/scanner_tabs.html:49
-#: adminapp/templates/partials/breadcrumb.html:34
+#: adminapp/templates/partials/breadcrumb.html:38
 msgid "Gmailscanner"
 msgstr "Gmailscanner"
 
 #: adminapp/templates/os2datascanner/scanner_tabs.html:54
-#: adminapp/templates/partials/breadcrumb.html:38
+#: adminapp/templates/partials/breadcrumb.html:42
 msgid "Sbsysscanner"
 msgstr "Sbsysscanner"
 
@@ -1185,31 +1185,35 @@ msgstr "Der er ikke tilføjet nogen scannerjob"
 msgid "Office 365 OneDrive filescanner"
 msgstr "Office 365 OneDrive filscanner"
 
-#: adminapp/templates/partials/breadcrumb.html:69
+#: adminapp/templates/partials/breadcrumb.html:30
+msgid "Office 365 calendarscanner"
+msgstr "Office 365 kalenderscanner"
+
+#: adminapp/templates/partials/breadcrumb.html:73
 #: organizations/templates/organizations/org_add.html:4
 #: organizations/templates/organizations/org_add.html:10
 msgid "add organization"
 msgstr "tilføj organisation"
 
-#: adminapp/templates/partials/breadcrumb.html:77
+#: adminapp/templates/partials/breadcrumb.html:81
 #: organizations/templates/organizations/org_update.html:4
 #: organizations/templates/organizations/org_update.html:19
 msgid "update organization"
 msgstr "opdatér organisation"
 
-#: adminapp/templates/partials/breadcrumb.html:86
+#: adminapp/templates/partials/breadcrumb.html:90
 msgid "add LDAP configuration"
 msgstr "tilføj LDAP-konfiguration"
 
-#: adminapp/templates/partials/breadcrumb.html:88
+#: adminapp/templates/partials/breadcrumb.html:92
 msgid "update LDAP configuration"
 msgstr "opdatér LDAP-konfiguration"
 
-#: adminapp/templates/partials/breadcrumb.html:98
+#: adminapp/templates/partials/breadcrumb.html:102
 msgid "add MS Graph configuration"
 msgstr "Tilføj Microsoft Graph konfiguration"
 
-#: adminapp/templates/partials/breadcrumb.html:100
+#: adminapp/templates/partials/breadcrumb.html:104
 msgid "update MS Graph configuration"
 msgstr "opdatér Microsoft Graph konfiguration"
 
