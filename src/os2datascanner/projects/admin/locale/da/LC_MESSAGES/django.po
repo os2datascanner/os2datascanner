@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-05 09:36+0200\n"
+"POT-Creation-Date: 2022-09-14 08:16+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -271,15 +271,15 @@ msgstr "Scanner status"
 #: adminapp/templates/components/navigation.html:20
 #: adminapp/templates/os2datascanner/scan_completed.html:33
 #: adminapp/templates/os2datascanner/scan_status_table.html:22
-#: adminapp/templates/os2datascanner/scanners.html:22
-#: adminapp/templates/os2datascanner/scanners.html:41
+#: adminapp/templates/os2datascanner/scanners.html:21
+#: adminapp/templates/os2datascanner/scanners.html:40
 #: adminapp/templates/partials/breadcrumb.html:5
 msgid "Scannerjob"
 msgstr "Scannerjob"
 
 #: adminapp/templates/components/navigation.html:28
-#: adminapp/templates/os2datascanner/rules.html:20
-#: adminapp/templates/os2datascanner/rules.html:39
+#: adminapp/templates/os2datascanner/rules.html:19
+#: adminapp/templates/os2datascanner/rules.html:38
 #: adminapp/templates/partials/breadcrumb.html:51
 msgid "Rules"
 msgstr "Regler"
@@ -512,9 +512,9 @@ msgstr "Ønsker du virkelig at slette?"
 
 #: adminapp/templates/os2datascanner/cprrule_confirm_delete.html:19
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:23
-#: adminapp/templates/os2datascanner/rules.html:232
+#: adminapp/templates/os2datascanner/rules.html:231
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:18
-#: adminapp/templates/os2datascanner/scanners.html:118
+#: adminapp/templates/os2datascanner/scanners.html:117
 msgid "No"
 msgstr "Nej"
 
@@ -551,10 +551,10 @@ msgstr "Slet alle"
 
 #: adminapp/templates/os2datascanner/error_log.html:78
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/rules.html:115
+#: adminapp/templates/os2datascanner/rules.html:114
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status_table.html:83
-#: adminapp/templates/os2datascanner/scanners.html:167
+#: adminapp/templates/os2datascanner/scanners.html:166
 msgid "Delete"
 msgstr "Slet"
 
@@ -569,17 +569,17 @@ msgstr ""
 "Ønsker du virkelig at slette denne regel? Handlingen kan ikke fortrydes."
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:15
-#: adminapp/templates/os2datascanner/rules.html:221
+#: adminapp/templates/os2datascanner/rules.html:220
 msgid "Please note that this rule is currently included in"
 msgstr "Bemærk venligst at denne regel i øjeblikket indgår i"
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:16
-#: adminapp/templates/os2datascanner/rules.html:223
+#: adminapp/templates/os2datascanner/rules.html:222
 msgid "scannerjob and"
 msgstr "scannerjob og"
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:17
-#: adminapp/templates/os2datascanner/rules.html:224
+#: adminapp/templates/os2datascanner/rules.html:223
 msgid "reports."
 msgstr "rapporter."
 
@@ -649,86 +649,86 @@ msgstr "Beskrivelse af regel"
 msgid "Save changes"
 msgstr "Gem ændringer"
 
-#: adminapp/templates/os2datascanner/rules.html:27
-#: adminapp/templates/os2datascanner/rules.html:32
+#: adminapp/templates/os2datascanner/rules.html:26
+#: adminapp/templates/os2datascanner/rules.html:31
 msgid "Add rule"
 msgstr "Tilføj regel"
 
-#: adminapp/templates/os2datascanner/rules.html:52
-#: adminapp/templates/os2datascanner/rules.html:161
+#: adminapp/templates/os2datascanner/rules.html:51
+#: adminapp/templates/os2datascanner/rules.html:160
 msgid "Name"
 msgstr "Navn"
 
-#: adminapp/templates/os2datascanner/rules.html:55
-#: adminapp/templates/os2datascanner/rules.html:164
-#: adminapp/templates/os2datascanner/scanners.html:62
+#: adminapp/templates/os2datascanner/rules.html:54
+#: adminapp/templates/os2datascanner/rules.html:163
+#: adminapp/templates/os2datascanner/scanners.html:61
 msgid "Organization"
 msgstr "Organisation"
 
-#: adminapp/templates/os2datascanner/rules.html:58
-#: adminapp/templates/os2datascanner/rules.html:167
+#: adminapp/templates/os2datascanner/rules.html:57
+#: adminapp/templates/os2datascanner/rules.html:166
 msgid "Description"
 msgstr "Beskrivelse"
 
-#: adminapp/templates/os2datascanner/rules.html:61
+#: adminapp/templates/os2datascanner/rules.html:60
 #: adminapp/views/rule_views.py:97 adminapp/views/rule_views.py:196
 #: adminapp/views/rule_views.py:203
 msgid "Expression"
 msgstr "Udtryk"
 
-#: adminapp/templates/os2datascanner/rules.html:64
-#: adminapp/templates/os2datascanner/rules.html:170
+#: adminapp/templates/os2datascanner/rules.html:63
+#: adminapp/templates/os2datascanner/rules.html:169
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: adminapp/templates/os2datascanner/rules.html:67
-#: adminapp/templates/os2datascanner/scanners.html:77
+#: adminapp/templates/os2datascanner/rules.html:66
+#: adminapp/templates/os2datascanner/scanners.html:76
 msgid "Action"
 msgstr "Handling"
 
-#: adminapp/templates/os2datascanner/rules.html:83
-#: adminapp/templates/os2datascanner/rules.html:85
+#: adminapp/templates/os2datascanner/rules.html:82
+#: adminapp/templates/os2datascanner/rules.html:84
 msgid "Show expression"
 msgstr "Vis udtryk"
 
-#: adminapp/templates/os2datascanner/rules.html:102
-#: adminapp/templates/os2datascanner/scanners.html:144
+#: adminapp/templates/os2datascanner/rules.html:101
+#: adminapp/templates/os2datascanner/scanners.html:143
 msgid "Edit"
 msgstr "Redigér"
 
-#: adminapp/templates/os2datascanner/rules.html:114
+#: adminapp/templates/os2datascanner/rules.html:113
 msgid "Do you really want to delete this rule?"
 msgstr "Vil du slette denne regel?"
 
-#: adminapp/templates/os2datascanner/rules.html:114
-#: adminapp/templates/os2datascanner/scanners.html:166
+#: adminapp/templates/os2datascanner/rules.html:113
+#: adminapp/templates/os2datascanner/scanners.html:165
 msgid "The action cannot be reversed"
 msgstr "Handlingen kan ikke fortrydes."
 
-#: adminapp/templates/os2datascanner/rules.html:141
+#: adminapp/templates/os2datascanner/rules.html:140
 msgid "No rules added yet"
 msgstr "Der er endnu ikke tilføjet nogen regler"
 
-#: adminapp/templates/os2datascanner/rules.html:146
-#: adminapp/templates/os2datascanner/rules.html:150
+#: adminapp/templates/os2datascanner/rules.html:145
+#: adminapp/templates/os2datascanner/rules.html:149
 msgid "System rules"
 msgstr "Systemregler"
 
-#: adminapp/templates/os2datascanner/rules.html:201
-#: adminapp/templates/os2datascanner/rules.html:208
+#: adminapp/templates/os2datascanner/rules.html:200
+#: adminapp/templates/os2datascanner/rules.html:207
 msgid "Delete rule"
 msgstr "Slet regel"
 
-#: adminapp/templates/os2datascanner/rules.html:217
+#: adminapp/templates/os2datascanner/rules.html:216
 msgid "Do you want to delete"
 msgstr "Ønsker du at slette"
 
-#: adminapp/templates/os2datascanner/rules.html:218
+#: adminapp/templates/os2datascanner/rules.html:217
 msgid "This action cannot be undone."
 msgstr "Handlingen kan ikke fortrydes."
 
-#: adminapp/templates/os2datascanner/rules.html:229
-#: adminapp/templates/os2datascanner/scanners.html:109
+#: adminapp/templates/os2datascanner/rules.html:228
+#: adminapp/templates/os2datascanner/scanners.html:108
 msgid "Yes"
 msgstr "Ja"
 
@@ -1140,44 +1140,44 @@ msgstr "Gmailscanner"
 msgid "Sbsysscanner"
 msgstr "Sbsysscanner"
 
-#: adminapp/templates/os2datascanner/scanners.html:29
-#: adminapp/templates/os2datascanner/scanners.html:34
+#: adminapp/templates/os2datascanner/scanners.html:28
+#: adminapp/templates/os2datascanner/scanners.html:33
 msgid "Add scannerjob"
 msgstr "Tilføj scannerjob"
 
-#: adminapp/templates/os2datascanner/scanners.html:58
+#: adminapp/templates/os2datascanner/scanners.html:57
 msgid "Name/URL"
 msgstr "Navn/URL"
 
-#: adminapp/templates/os2datascanner/scanners.html:67
+#: adminapp/templates/os2datascanner/scanners.html:66
 msgid "Drive"
 msgstr "Drev"
 
-#: adminapp/templates/os2datascanner/scanners.html:71
+#: adminapp/templates/os2datascanner/scanners.html:70
 msgid "Approved"
 msgstr "Godkendt"
 
-#: adminapp/templates/os2datascanner/scanners.html:74
+#: adminapp/templates/os2datascanner/scanners.html:73
 msgid "Automatic"
 msgstr "Automatisk"
 
-#: adminapp/templates/os2datascanner/scanners.html:106
+#: adminapp/templates/os2datascanner/scanners.html:105
 msgid "Is approved"
 msgstr "Er godkendt"
 
-#: adminapp/templates/os2datascanner/scanners.html:115
+#: adminapp/templates/os2datascanner/scanners.html:114
 msgid "Is not approved"
 msgstr "Er ikke godkendt"
 
-#: adminapp/templates/os2datascanner/scanners.html:135
+#: adminapp/templates/os2datascanner/scanners.html:134
 msgid "Run"
 msgstr "Kør"
 
-#: adminapp/templates/os2datascanner/scanners.html:166
+#: adminapp/templates/os2datascanner/scanners.html:165
 msgid "Do you really want to delete this scanner?"
 msgstr "Er du sikker på, at du vil slette denne scanner?"
 
-#: adminapp/templates/os2datascanner/scanners.html:184
+#: adminapp/templates/os2datascanner/scanners.html:183
 msgid "No scannerjob added"
 msgstr "Der er ikke tilføjet nogen scannerjob"
 
@@ -1232,7 +1232,7 @@ msgid ""
 "correctly."
 msgstr ""
 "Indtast din nye adgangskode to gange, så vi kan bekræfte, at du har skrevet "
-"det korrekt."
+"den korrekt."
 
 #: adminapp/templates/password_reset_confirm.html:52
 msgid ""
@@ -1240,37 +1240,33 @@ msgid ""
 "used. Please request a new password reset."
 msgstr ""
 "Linket til nulstilling af adgangskode er ugyldigt, muligvis fordi det "
-"allerede har været brugt. Bed om nulstilling af en ny adgangskode."
+"allerede har været brugt. Bed om en ny nulstilling af adgangskoden."
 
 #: adminapp/templates/password_reset_done.html:19
 msgid ""
 "We've emailed you instructions for setting your password, if an account "
 "exists with the email you entered. You should receive them shortly."
 msgstr ""
-"Vi har sendt dig instruktioner til, hvordan du indstiller din adgangskode. "
-"Hvis du har en kontoeksisterer den e-mail du har indtastet. Du vil snart "
-"modtage den."
+"Vi har sendt dig instruktioner til hvordan du nulstiller din adgangskode, "
+"hvis en konto eksisterer tilknyttet den indtastede e-mail. Du bør modtage instruktionerne snarest."
 
 #: adminapp/templates/password_reset_done.html:23
 msgid ""
 "If you don't receive an email, please make sure you've entered the address "
 "you registered with, and check your spam folder."
 msgstr ""
-"Hvis du ikke modtager en e-mail, skal du sørge for at have indtastet "
-"adressendu er registreret hos, og tjekke din spam mappe."
+"Hvis du ikke modtager en e-mail, skal du sørge for, at e-mailadressen "
+"du har indtastet er den rigtige, og tjekke din spam mappe."
 
 #: adminapp/templates/password_reset_email.html:3
-#, fuzzy, python-format
-#| msgid ""
-#| "You're receiving this email because you requested a password reset for "
-#| "your user account at %(site_name)s."
 msgid ""
 "\n"
 "  You're receiving this email because you requested a password reset for "
 "your user account at %(site_name)s.\n"
 msgstr ""
-"Du modtager denne e-mail, fordi du har anmodet om nulstilling af adgangskode "
-"til dinbrugerkonto på %(site_name)s."
+"\n"
+"  Du modtager denne e-mail, fordi du har anmodet om nulstilling af din adgangskode "
+"til din bruger på %(site_name)s.\n"
 
 #: adminapp/templates/password_reset_email.html:7
 msgid "Please go to the following page and choose a new password:"
@@ -1285,12 +1281,12 @@ msgid "Thanks for using our site!"
 msgstr "Tak, fordi du brugte vores side!"
 
 #: adminapp/templates/password_reset_email.html:18
-#, fuzzy, python-format
-#| msgid "The %(site_name)s team"
 msgid ""
 "\n"
 "  The %(site_name)s team\n"
-msgstr "%(site_name)s team"
+msgstr ""
+"\n"
+"  %(site_name)s team\n"
 
 #: adminapp/templates/password_reset_form.html:21
 msgid ""

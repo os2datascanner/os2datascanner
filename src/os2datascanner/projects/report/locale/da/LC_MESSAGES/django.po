@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-18 15:29+0200\n"
+"POT-Creation-Date: 2022-09-14 08:16+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -35,69 +35,69 @@ msgstr "Personlig information"
 msgid "Important dates"
 msgstr "Vigtige datoer"
 
-#: reportapp/models/documentreport.py:29
+#: reportapp/models/documentreport.py:30
 #, fuzzy
 #| msgid "Match relation"
 msgid "Alias relation"
 msgstr "Match relation"
 
-#: reportapp/models/documentreport.py:34
+#: reportapp/models/documentreport.py:35
 msgid "scan time"
 msgstr "scanningstid"
 
-#: reportapp/models/documentreport.py:37
+#: reportapp/models/documentreport.py:38
 msgid "created timestamp"
 msgstr "oprettet tidsstempel"
 
-#: reportapp/models/documentreport.py:39
+#: reportapp/models/documentreport.py:40
 msgid "time last opened"
 msgstr "tidspunkt åbnet"
 
-#: reportapp/models/documentreport.py:43
+#: reportapp/models/documentreport.py:44
 msgid "organization"
 msgstr "organisation"
 
-#: reportapp/models/documentreport.py:46
+#: reportapp/models/documentreport.py:47
 msgid "path"
 msgstr "sti"
 
-#: reportapp/models/documentreport.py:56
+#: reportapp/models/documentreport.py:57
 msgid "sort key"
 msgstr "sortér efter"
 
-#: reportapp/models/documentreport.py:61
+#: reportapp/models/documentreport.py:62
 msgid "name"
 msgstr "navn"
 
-#: reportapp/models/documentreport.py:64
+#: reportapp/models/documentreport.py:65
 msgid "source type"
 msgstr "kildetype"
 
-#: reportapp/models/documentreport.py:66
+#: reportapp/models/documentreport.py:67
 msgid "sensitivity"
 msgstr "følsomhed"
 
-#: reportapp/models/documentreport.py:68
+#: reportapp/models/documentreport.py:69
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport.py:160
+#: reportapp/models/documentreport.py:161
 msgid "number of matches"
 msgstr "antal matches"
 
-#: reportapp/models/documentreport.py:164
+#: reportapp/models/documentreport.py:165
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport.py:167
+#: reportapp/models/documentreport.py:168
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport.py:170
+#: reportapp/models/documentreport.py:171
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport.py:225
+#: reportapp/models/documentreport.py:226
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -136,6 +136,10 @@ msgstr "oprydder"
 #: reportapp/models/roles/remediator.py:34
 msgid "remediators"
 msgstr "opryddere"
+
+#: reportapp/models/userprofile.py:27
+msgid "image"
+msgstr ""
 
 #: reportapp/templates/403.html:6 reportapp/templates/404.html:6
 msgid "Page not found"
@@ -199,11 +203,13 @@ msgid "Scan"
 msgstr "Scan"
 
 #: reportapp/templates/components/filters.html:30
+#: reportapp/templates/components/statistics-template.html:19
 msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
 
 #: reportapp/templates/components/filters.html:50
-#: reportapp/templates/components/statistics-template.html:77
+#: reportapp/templates/components/statistics-template.html:72
+#: reportapp/templates/components/statistics-template.html:103
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
@@ -216,7 +222,7 @@ msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
 #: reportapp/templates/components/handle-match.html:8
-#: reportapp/templates/components/hit.html:86
+#: reportapp/templates/components/hit.html:91
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned.\n"
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -225,12 +231,12 @@ msgstr ""
 "Resultatet markeres udelukkende som håndteret i OS2datascanner."
 
 #: reportapp/templates/components/handle-match.html:10
-#: reportapp/templates/components/hit.html:88
+#: reportapp/templates/components/hit.html:93
 msgid "Working"
 msgstr "Arbejder"
 
 #: reportapp/templates/components/handle-match.html:11
-#: reportapp/templates/components/hit.html:89
+#: reportapp/templates/components/hit.html:94
 msgid "Handled"
 msgstr "Håndteret"
 
@@ -251,11 +257,11 @@ msgstr ""
 
 #: reportapp/templates/components/handle-match.html:28
 #: reportapp/templates/components/pagination.html:11
-#: reportapp/templates/components/statistics-template.html:92
-#: reportapp/templates/components/statistics-template.html:101
-#: reportapp/templates/components/statistics-template.html:110
-#: reportapp/templates/components/statistics-template.html:119
-#: reportapp/templates/components/statistics-template.html:130
+#: reportapp/templates/components/statistics-template.html:118
+#: reportapp/templates/components/statistics-template.html:127
+#: reportapp/templates/components/statistics-template.html:136
+#: reportapp/templates/components/statistics-template.html:145
+#: reportapp/templates/components/statistics-template.html:156
 msgid "of"
 msgstr "af"
 
@@ -263,32 +269,32 @@ msgstr "af"
 msgid "selected"
 msgstr "valgt"
 
-#: reportapp/templates/components/hit.html:19
+#: reportapp/templates/components/hit.html:24
 msgid "Select result"
 msgstr "Vælg resultat"
 
-#: reportapp/templates/components/hit.html:37
+#: reportapp/templates/components/hit.html:42
 msgid "Open"
 msgstr "Åbn"
 
-#: reportapp/templates/components/hit.html:42
+#: reportapp/templates/components/hit.html:47
 msgid "Copy"
 msgstr "Kopiér"
 
-#: reportapp/templates/components/hit.html:46
+#: reportapp/templates/components/hit.html:51
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:54
+#: reportapp/templates/components/hit.html:59
 msgid "Opened"
 msgstr "Åbnet: "
 
-#: reportapp/templates/components/hit.html:90
-#: reportapp/templates/components/hit.html:104
+#: reportapp/templates/components/hit.html:95
+#: reportapp/templates/components/hit.html:109
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:101
+#: reportapp/templates/components/hit.html:106
 msgid ""
 "You are about to handle this result. This action does not change the file, "
 "that the result is about. Please do not handle a result before action has "
@@ -298,19 +304,19 @@ msgstr ""
 "filen, som resultatet handler om. Håndtér venligst ikke et resultat, før du "
 "manuelt har gjort noget ved filen."
 
-#: reportapp/templates/components/hit.html:105
+#: reportapp/templates/components/hit.html:110
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:118
+#: reportapp/templates/components/hit.html:123
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:119
+#: reportapp/templates/components/hit.html:124
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:120
+#: reportapp/templates/components/hit.html:125
 msgid "Probability"
 msgstr "Sandsynlighed"
 
@@ -366,7 +372,7 @@ msgid "Front page"
 msgstr "Forside"
 
 #: reportapp/templates/components/navigation.html:26
-#: reportapp/templates/components/user.html:41
+#: reportapp/templates/components/user.html:51
 msgid "Logout"
 msgstr "Log ud"
 
@@ -397,91 +403,87 @@ msgid "Sensitivity legend"
 msgstr "Følsomhedsoversigt"
 
 #: reportapp/templates/components/sensitivity-chart.html:8
-#: reportapp/templates/components/statistics-template.html:91
+#: reportapp/templates/components/statistics-template.html:117
 msgid "Critical"
 msgstr "Kritisk"
 
 #: reportapp/templates/components/sensitivity-chart.html:12
-#: reportapp/templates/components/statistics-template.html:100
+#: reportapp/templates/components/statistics-template.html:126
 msgid "Problem"
 msgstr "Problem"
 
 #: reportapp/templates/components/sensitivity-chart.html:16
-#: reportapp/templates/components/statistics-template.html:109
+#: reportapp/templates/components/statistics-template.html:135
 msgid "Warning"
 msgstr "Advarsel"
 
 #: reportapp/templates/components/sensitivity-chart.html:20
-#: reportapp/templates/components/statistics-template.html:118
+#: reportapp/templates/components/statistics-template.html:144
 msgid "Notification"
 msgstr "Notifikation"
 
-#: reportapp/templates/components/statistics-template.html:4
+#: reportapp/templates/components/statistics-template.html:6
 msgid "Leader statistics"
 msgstr "Lederstatistik"
 
-#: reportapp/templates/components/statistics-template.html:6
+#: reportapp/templates/components/statistics-template.html:8
 msgid "DPO statistics"
 msgstr "DPO statistik"
 
-#: reportapp/templates/components/statistics-template.html:14
+#: reportapp/templates/components/statistics-template.html:40
 msgid "Development overview"
 msgstr "Udviklingsoverblik"
 
-#: reportapp/templates/components/statistics-template.html:15
+#: reportapp/templates/components/statistics-template.html:41
 msgid "New results by month"
 msgstr "Antal nye resultater per måned"
 
-#: reportapp/templates/components/statistics-template.html:16
+#: reportapp/templates/components/statistics-template.html:42
 msgid "Unhandled results by month"
 msgstr "Antal uhåndterede resultater per måned"
 
-#: reportapp/templates/components/statistics-template.html:21
+#: reportapp/templates/components/statistics-template.html:47
 msgid "New results"
 msgstr "Nye resultater"
 
-#: reportapp/templates/components/statistics-template.html:22
+#: reportapp/templates/components/statistics-template.html:48
 msgid "Unhandled results"
 msgstr "Uhåndterede resultater"
 
-#: reportapp/templates/components/statistics-template.html:39
+#: reportapp/templates/components/statistics-template.html:65
 msgid "Distribution of results"
 msgstr "Fordeling af resultater"
 
-#: reportapp/templates/components/statistics-template.html:40
+#: reportapp/templates/components/statistics-template.html:66
 msgid "Results distributed by sensitivities"
 msgstr "Resultater fordelt på følsomheder"
 
-#: reportapp/templates/components/statistics-template.html:41
+#: reportapp/templates/components/statistics-template.html:67
 msgid "Results distributed by data sources"
 msgstr "Resultater fordelt på datakilder"
 
-#: reportapp/templates/components/statistics-template.html:46
-msgid "Sensitivities"
-msgstr "Følsomhed"
-
-#: reportapp/templates/components/statistics-template.html:47
+#: reportapp/templates/components/statistics-template.html:73
 msgid "Data sources"
 msgstr "Datakilder"
 
-#: reportapp/templates/components/statistics-template.html:70
-#: reportapp/templates/components/statistics-template.html:129
+#: reportapp/templates/components/statistics-template.html:96
+#: reportapp/templates/components/statistics-template.html:155
 msgid "Handled results"
 msgstr "Håndterede resultater"
 
-#: reportapp/templates/components/statistics-template.html:71
+#: reportapp/templates/components/statistics-template.html:97
 msgid "Percentage of handled results distributed by sensitivity"
 msgstr "Procentvis andel af håndterede resultater fordelt på følsomhed"
 
-#: reportapp/templates/components/statistics-template.html:72
+#: reportapp/templates/components/statistics-template.html:98
 msgid "The department's percentage of handled results"
 msgstr "Afdelingens procentvise andel af håndterede resultater"
 
-#: reportapp/templates/components/statistics-template.html:78
+#: reportapp/templates/components/statistics-template.html:104
 msgid "All results"
 msgstr "Alle resultater"
 
-#: reportapp/templates/components/user.html:38
+#: reportapp/templates/components/user.html:48
 msgid "Show Account"
 msgstr "Vis konto"
 
@@ -535,6 +537,7 @@ msgstr "Du er nu logget ud."
 
 #: reportapp/templates/login.html:8 reportapp/templates/logout.html:8
 #: reportapp/templates/password_change_done.html:23
+#: reportapp/templates/password_reset_complete.html:25
 msgid "Log in"
 msgstr "Log ind på"
 
@@ -658,6 +661,7 @@ msgstr ""
 #: reportapp/templates/password_change.html:6
 #: reportapp/templates/password_change.html:16
 #: reportapp/templates/password_change.html:43
+#: reportapp/templates/password_reset_confirm.html:42
 msgid "Change password"
 msgstr "Skift adgangskode"
 
@@ -669,6 +673,86 @@ msgstr "Skift adgangskode lykkedes"
 #: reportapp/templates/password_change_done.html:18
 msgid "Your password was changed."
 msgstr "Din adgangskode blev ændret."
+
+#: reportapp/templates/password_reset_complete.html:20
+msgid "Your password has been set. You may go ahead and log in now."
+msgstr "Din adgangskode er ændret. Du kan nu gå videre og logge ind."
+
+#: reportapp/templates/password_reset_confirm.html:20
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"Indtast din nye adgangskode to gange, så vi kan bekræfte, at du har skrevet "
+"den korrekt."
+
+#: reportapp/templates/password_reset_confirm.html:52
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a new password reset."
+msgstr ""
+"Linket til nulstilling af adgangskode er ugyldigt, muligvis fordi det "
+"allerede har været brugt. Bed om en ny nulstilling af adgangskoden."
+
+#: reportapp/templates/password_reset_done.html:19
+msgid ""
+"We've emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+"Vi har sendt dig instruktioner til hvordan du nulstiller din adgangskode, "
+"hvis en konto eksisterer tilknyttet den indtastede e-mail. Du bør modtage instruktionerne snarest."
+
+#: reportapp/templates/password_reset_done.html:23
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+"Hvis du ikke modtager en e-mail, skal du sørge for, at e-mailadressen "
+"du har indtastet er den rigtige, og tjekke din spam mappe."
+
+#: reportapp/templates/password_reset_email.html:3
+#, python-format
+msgid ""
+"\n"
+"  You're receiving this email because you requested a password reset for "
+"your user account at %(site_name)s.\n"
+msgstr ""
+"\n"
+"  Du modtager denne e-mail, fordi du har anmodet om nulstilling af din adgangskode "
+"til din bruger på %(site_name)s.\n"
+
+#: reportapp/templates/password_reset_email.html:7
+msgid "Please go to the following page and choose a new password:"
+msgstr "Gå venligst til følgende side og vælg en ny adgangskode:"
+
+#: reportapp/templates/password_reset_email.html:13
+msgid "Your username, in case you've forgotten:"
+msgstr "Dit brugernavn er følgende, hvis du har glemt det:"
+
+#: reportapp/templates/password_reset_email.html:16
+msgid "Thanks for using our site!"
+msgstr "Tak, fordi du brugte vores side!"
+
+#: reportapp/templates/password_reset_email.html:18
+#, python-format
+msgid ""
+"\n"
+"  The %(site_name)s team\n"
+msgstr ""
+"\n"
+"  %(site_name)s team\n"
+
+#: reportapp/templates/password_reset_form.html:21
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll email "
+"instructions for setting a new one."
+msgstr ""
+"Har du glemt din adgangskode? Skriv din e-mail-adresse herunder, så sender "
+"vi dig instruktioner i at vælge en ny adgangskode."
+
+#: reportapp/templates/password_reset_form.html:34
+msgid "Reset my password"
+msgstr "Nulstil min adgangskode"
 
 #: reportapp/templates/user_content.html:5
 msgid "Account"
@@ -734,29 +818,32 @@ msgstr "Skift"
 msgid "User since"
 msgstr "Bruger siden"
 
-#: reportapp/views/views.py:84
+#: reportapp/views/views.py:86
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:376
+#: reportapp/views/views.py:407
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:377
+#: reportapp/views/views.py:408
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:378
+#: reportapp/views/views.py:409
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:379
+#: reportapp/views/views.py:410
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:530
+#: reportapp/views/views.py:561
 msgid "Not assigned"
 msgstr "Ikke tildelt"
+
+#~ msgid "Sensitivities"
+#~ msgstr "Følsomheder"
 
 #~ msgid "The username or password is incorrect"
 #~ msgstr "Fejl i brugernavn eller password"
