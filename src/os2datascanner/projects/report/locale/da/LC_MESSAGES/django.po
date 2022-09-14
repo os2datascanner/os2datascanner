@@ -699,9 +699,8 @@ msgid ""
 "We've emailed you instructions for setting your password, if an account "
 "exists with the email you entered. You should receive them shortly."
 msgstr ""
-"Vi har sendt dig instruktioner til, hvordan du indstiller din adgangskode, "
-"hvis en konto eksisterer tilknyttet den e-mail du har indtastet. Du vil snart "
-"modtage den."
+"Vi har sendt dig instruktioner til hvordan du nulstiller din adgangskode, "
+"hvis en konto eksisterer tilknyttet den indtastede e-mail. Du bør modtage instruktionerne snarest."
 
 #: reportapp/templates/password_reset_done.html:23
 msgid ""
