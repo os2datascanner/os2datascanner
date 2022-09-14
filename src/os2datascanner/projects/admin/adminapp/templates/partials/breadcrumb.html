@@ -26,6 +26,10 @@
         <a href="/msgraph-filescanners/" class="link-color">{% trans "Office 365 OneDrive filescanner" %}</a>
         {% endif %}
 
+        {% if request.path == '/msgraph-calendarscanners/add/' %}
+        <a href="/msgraph-calendarscanners/" class="link-color">{% trans "Office 365 calendarscanner" %}</a>
+        {% endif %}
+
         {% if form.service_account_file %}
         <a href="/googledrivescanners/" class="link-color">{% trans "Google Drive scanner" %}</a>
         {% endif %}
