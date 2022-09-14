@@ -23,7 +23,6 @@ function checkedBox() {
   } else {
     thirtyDays.value = 'false';
   }
-  document.getElementById("filter_form").submit();
 }
 function setCheckEvent() { // jshint ignore:line
   document.getElementById('30-days-toggle').addEventListener('click', checkedBox);
@@ -53,5 +52,13 @@ function setDistributeSelectEvent() {
 
 document.addEventListener('DOMContentLoaded', function () {
   setDropdownEvent();
+  setCheckEvent();
+  setDistributeSelectEvent();
+});
+
+htmx.onLoad(function () {
+  // When content is loaded with HTMX, reinstantiate dropdown and checkbox code
+  setDropdownEvent();
+  setCheckEvent();
   setDistributeSelectEvent();
 });

@@ -1,13 +1,11 @@
 {% load i18n %}
 {% load l10n %}
 
-<form method="GET" action="{% url 'index' %}" id="filter_form">  
-  {% comment %}
-      Hidden input fields store the pagination and sort options so that they
-      "survive" when the user changes filter options.
-  {% endcomment %}
-  
-  <input type="hidden" name="paginate_by" id="paginate_by" value="{{ paginate_by }}">
+<form id="filter_form" name='filter_form'
+      hx-target=".content" hx-get="{% url "index" %}" hx-swap="innerHTML" 
+      hx-trigger="click from:.order-by delay:100ms, change" 
+      hx-include="[id='dropdown_options']"
+>
   <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
   <input type="hidden" name="order" id="order" value="{{ order }}">
 
@@ -21,7 +19,8 @@
           </label>
       </div>
       <div class="match_filtering dropdown">
-          <select name="scannerjob" id="scannerjobs" data-autosubmit data-compareto="all">
+          <select name="scannerjob" id="scannerjobs" data-compareto="all"
+          >
             <option value="all"
                     {% if scannerjobs|last == "all" %}
                         selected="selected"
@@ -50,7 +49,8 @@
           </label>
       </div>
       <div class="match_filtering dropdown">
-          <select name="sensitivities" id="sensitivities" data-autosubmit data-compareto="all">
+          <select name="sensitivities" id="sensitivities" data-compareto="all"
+          >
             <option value="all"
                     {% if sensitivities|last == "all" %}
                         selected="selected"
@@ -70,17 +70,15 @@
       </div>
   </div>
 
-  {% comment %}
-      We use the hidden input field below to track whether 30-days is enabled or not.
-      If we used the checkbox, unticking it would make it disappear from the form's GET action
-  {% endcomment %}
-
-  <input type="hidden" name="30-days" id="30-days" value="{{ 30_days }}">
   <div class="checkbox_wrapper">
     <div class="checkbox-group">
       <div class="ds-checkbox">
-        <input type="checkbox" id="30-days-toggle"
-        {% if 30_days == "true" %}checked{% endif %}>
+        {% comment %}
+          We use the hidden input field below to track whether 30-days is enabled or not.
+          If we used the checkbox, unticking it would make it disappear from the form's GET action
+        {% endcomment %}
+        <input type="hidden" id="30-days" name="30-days" value="{{ 30_days }}">
+        <input type="checkbox" id="30-days-toggle" class="30-days-toggle" {% if 30_days == "true" %}checked{% endif %}>
         <label for="30-days-toggle">
           {% trans "Include results, that are less than 30 days old" %}
         </label>

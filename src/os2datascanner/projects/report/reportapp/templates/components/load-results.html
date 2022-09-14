@@ -1,18 +1,23 @@
 {%  load i18n %}
 
-<form class="dropdown">
-  {% comment %}
-      Hidden input fields store the filter and sort options so that they
-      "survive" when the user changes page size.
-  {% endcomment %}
-  
-  <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
-  <input type="hidden" name="order" id="order" value="{{ order }}">
-  <input type="hidden" name="scannerjob" id="scannerjob" value="{{ scannerjobs|last }}">
-  <input type="hidden" name="sensitivities" id="sensitivities" value="{{ sensitivities|last }}">
-  <input type="hidden" name="30-days" id="30-days" value="{{ 30_days }}">
+{% comment %}
+  This dummy form is needed, because HTML does not like forms inside tables.
+  If this form is ommitted, the .dropdown form below will also be dropped from the
+  template by the parser. Feel free to try to find a better solution, but know
+  that a considerable amount of hours has already been spent trying to solve this.
+{% endcomment %}
+<form></form>
+<form class="dropdown" id="dropdown_options" name="dropdown_options"
+        hx-trigger="change"
+        hx-target=".content"
+        hx-swap="innerHTML"
+        hx-get="{% url "index" %}"
+        hx-include='[id="filter_form"]'
+>
 
-  <select name="paginate_by" id="paginate_by" data-autosubmit>
+  <input type="hidden" name="page" id="page" value={{ page_obj.number }}>
+
+  <select name="paginate_by" id="paginate_by">
         {% for option in paginate_by_options %}
             <option value="{{ option }}"
             {% if option == paginate_by %} selected="selected"{% endif %}>
