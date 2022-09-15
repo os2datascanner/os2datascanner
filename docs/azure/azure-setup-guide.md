@@ -48,7 +48,7 @@ Registration".
 
 ![](img-008b.png)
 
-*Step 7:* For at OS2datascanner kan scanne emails og filer i Azure via. den oprettede Applikation, så skal der genereres en Client secret. 
+*Step 7:* For at OS2datascanner kan scanne emails og filer i Azure via den oprettede Applikation, så skal der genereres en Client secret. 
 	Det gøres via. menupunktet "Certificates & secrets" i menuen til venstre.
 
 ![](img-012.jpg)
@@ -109,12 +109,8 @@ Du har nu gennemført del 1 af denne guide til opsætning af Microsoft Azure til
 
 I del 2 tages der udgangspunkt i oprettelsen af et scannerjob med *OS2datascanner*s "Office 365 mailscanner".
 Dette forudsætter, at der er opsat en Azure Applikation som beskrevet i del 1 i denne guide.
-Det er også muligt at oprette et scan af filer fra Office 365 OneDrive. 
-Fremgangsmåden for "Office 365 mailscanner" og "Office 365 OneDrive filscanner" er identiske.
 
-*OS2datascanner* gør det bl.a. muligt at scanne mails i Office 365 email konti. Hvis fanen "Office 365 mailscanner" er synlig, er det muligt at tilføje et nyt scannerjob.
-
-*Step 1:* Klik på "Office 365 mailscanner" fanebladet.
+*Step 1*: Klik på fanebladet for den ønskede Office 365-scannertype (nedenstående billede viser et mailscannerjob).
 	Klik herefter på "Tilføj scannerjob" knappen.
 
 ![](img-026.png)
@@ -127,7 +123,7 @@ gøres ved at klikke på "Fortsæt til Microsoft Online" knappen.
 ![](img-028.png)
 
 *Step 3:* Du vil nu blive bedt om at logge ind via Microsoft online. Hvis ikke
-din Microsoft bruger allerede er logget ind vil du blive om at indtaste
+din Microsoft bruger allerede er logget ind vil du blive bedt om at indtaste
 password. Den bruger, som du logger ind med, skal [kunne uddelegere de fornødne
 rettigheder på organisationens vegne](https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/consent-and-permissions-overview#admin-consent).
 
