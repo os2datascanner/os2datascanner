@@ -11,7 +11,14 @@
 
   <div class="match_filtering_wrapper">
       <div>
-          <button type="button" onclick="clearFilter('scannerjobs')" class="match_filtering_clear_button">
+          <button type="button" class="match_filtering_clear_button" name="clear_scannerjob"
+                  hx-trigger="click"
+                  hx-get="{% url "index" %}"
+                  hx-swap="innerHTML"
+                  hx-target=".content"
+                  hx-include="[id='filter_form'], [id='dropdown_options']"
+                  hx-params="not scannerjob"
+          >
             {% trans "Clear" %}
           </button>
           <label for="scannerjobs" class="match_filtering_label">
@@ -19,7 +26,7 @@
           </label>
       </div>
       <div class="match_filtering dropdown">
-          <select name="scannerjob" id="scannerjobs" data-compareto="all"
+          <select name="scannerjob" id="scannerjobs" autocomplete="off"
           >
             <option value="all"
                     {% if scannerjobs|last == "all" %}
@@ -29,7 +36,7 @@
             </option>
               {% for scan in scannerjobs|first %}
                   <option value="{{ scan.scanner_job_pk|unlocalize }}"
-                          {% if scannerjobs|last == scan.scanner_job_pk|stringformat:"i" %}
+                          {% if request.GET.scannerjob == scan.scanner_job_pk|stringformat:"i" %}
                             selected="selected"
                           {% endif %} >
                       {{ scan.scanner_job_name }} ({{ scan.total }})
@@ -41,7 +48,14 @@
 
   <div class="match_filtering_wrapper">
       <div>
-          <button type="button" onclick="clearFilter('sensitivities')" class="match_filtering_clear_button">
+          <button type="button" class="match_filtering_clear_button" name="clear_sensitivities"
+          hx-trigger="click"
+          hx-get="{% url "index" %}"
+          hx-swap="innerHTML"
+          hx-target=".content"
+          hx-include="[id='filter_form'], [id='dropdown_options']"
+          hx-params="not sensitivities"
+  >
             {% trans "Clear" %}
           </button>
           <label for="sensitivities" class="match_filtering_label">
@@ -49,7 +63,7 @@
           </label>
       </div>
       <div class="match_filtering dropdown">
-          <select name="sensitivities" id="sensitivities" data-compareto="all"
+          <select name="sensitivities" id="sensitivities" autocomplete="off"
           >
             <option value="all"
                     {% if sensitivities|last == "all" %}
