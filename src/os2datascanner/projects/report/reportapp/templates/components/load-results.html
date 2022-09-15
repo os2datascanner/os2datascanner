@@ -15,7 +15,7 @@
         hx-include='[id="filter_form"]'
 >
 
-  <input type="hidden" name="page" id="page" value={{ page }}>
+  <input type="hidden" name="page" id="page" value={{ page_obj.number }}>
 
   <select name="paginate_by" id="paginate_by">
         {% for option in paginate_by_options %}
