@@ -283,7 +283,9 @@ class MainPageView(LoginRequiredMixin, ListView):
                     'form-button',
                     'page-button',
                     'filter_form',
-                    'dropdown_options']:
+                    'dropdown_options',
+                    'clear_scannerjob',
+                    'clear_sensitivities']:
                 return 'content.html'
             elif htmx_trigger in ['show-more-matches']:
                 return 'components/matches_table.html'
