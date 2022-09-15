@@ -46,8 +46,10 @@ function disableDistributeButton() {
 
 function setDistributeSelectEvent() {
   const distributeSelect = document.getElementById('distribute-to');
-  distributeSelect.addEventListener('click', disableDistributeButton);
-  disableDistributeButton();
+  if (distributeSelect) {
+    distributeSelect.addEventListener('click', disableDistributeButton);
+    disableDistributeButton();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
