@@ -14,6 +14,7 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+import datetime
 from datetime import timedelta
 from os.path import basename
 from email.mime.image import MIMEImage
@@ -31,6 +32,7 @@ from ...models.documentreport import DocumentReport
 from ...models.roles.defaultrole import DefaultRole
 from ....organizations.models.account import Account
 from ....organizations.models.aliases import Alias, AliasType
+from ....organizations.models import Organization
 
 
 class Command(BaseCommand):
@@ -52,76 +54,98 @@ class Command(BaseCommand):
             action="store_true",
             help="Allows result under 30 days old to be sent")
 
-    def handle(self, **options):
-        self.txt_mail_template = loader.get_template("mail/overview.txt")
-        self.html_mail_template = loader.get_template("mail/overview.html")
-        self.debug_message = {}
+    def handle(self, **options):  # noqa CCR001
+        for org in Organization.objects.all():
+            if not org.email_notification_schedule:
+                # Org doesn't have mail notifications scheduled/have disabled it.
+                print(f"Organization {org.name} has no email schedule.")
+                pass
+            else:
+                # Recurrence field datetime is naive, which means we can't use an aware
+                # datetime object.
+                scheduled_next_date = org.email_notification_schedule.after(
+                    datetime.datetime.now().replace(second=0)).date()
+                # We can when we're only concerned with the date.
+                today_date = time_now().date()
+                if not scheduled_next_date == today_date:
+                    print(f"Not performing email send-out for {org.name}. "
+                          f"Next scheduled date is: {scheduled_next_date}")
 
-        image_name = None
-        image_content = None
-        if options["header_banner"]:
-            with open(options["header_banner"], "rb") as fp:
-                image_content = fp.read()
-            image_name = basename(options["header_banner"])
+                elif scheduled_next_date == today_date:
+                    print(f"Performing email send-out for {org.name}")
+                    self.txt_mail_template = loader.get_template("mail/overview.txt")
+                    self.html_mail_template = loader.get_template("mail/overview.html")
+                    self.debug_message = {}
 
-        self.shared_context = {
-            "image_name": image_name,
-            "report_login_url": settings.SITE_URL,
-            "institution": settings.NOTIFICATION_INSTITUTION
-        }
+                    image_name = None
+                    image_content = None
+                    if options["header_banner"]:
+                        with open(options["header_banner"], "rb") as fp:
+                            image_content = fp.read()
+                        image_name = basename(options["header_banner"])
 
-        # filter all document reports objects that are matched and is not resoluted.
-        document_reports = DocumentReport.objects.only(
-            'organization', 'raw_matches', 'resolution_status'
-            ).filter(
-            raw_matches__matched=True
-            ).filter(
-            resolution_status__isnull=True)
+                    self.shared_context = {
+                        "image_name": image_name,
+                        "report_login_url": settings.SITE_URL,
+                        "institution": settings.NOTIFICATION_INSTITUTION
+                    }
 
-        self.debug_message['estimated_amount_of_users'] = 0
-        self.debug_message['successful_amount_of_users'] = 0
-        self.debug_message['unsuccessful_users'] = []
-        self.debug_message['successful_users'] = []
+                    # Filter all document reports objects that are matched and not resoluted.
+                    document_reports = DocumentReport.objects.only(
+                        'organization', 'raw_matches', 'resolution_status'
+                        ).filter(
+                        organization=org,
+                        raw_matches__matched=True,
+                        resolution_status__isnull=True
+                        )
 
-        for user in User.objects.all():
-            context = self.shared_context.copy()
-            context["full_name"] = user.get_full_name() or user.username
+                    self.debug_message['estimated_amount_of_users'] = 0
+                    self.debug_message['successful_amount_of_users'] = 0
+                    self.debug_message['unsuccessful_users'] = []
+                    self.debug_message['successful_users'] = []
 
-            if not (data_results := self.get_filtered_results(
-                    user, document_reports, options['all_results'])
-                    ).exists():
-                print("Nothing for user {0}".format(user.username))
-                continue
+                    for user in User.objects.all():
+                        context = self.shared_context.copy()
+                        context["full_name"] = user.get_full_name() or user.username
 
-            self.debug_message['estimated_amount_of_users'] += 1
+                        # Assign if user has a corresponding account object. Account or None.
+                        acc = Account.objects.filter(username=user.username).first()
 
-            context = self.count_matches_in_batches(context, data_results)
-            msg = self.create_msg(image_name, image_content, context, user)
-            self.send_to_user(user, msg, options["dry_run"])
+                        if not (data_results := self.get_filtered_results(
+                                user, document_reports, acc, options['all_results'])
+                                ).exists():
+                            print("Nothing for user {0}".format(user.username))
+                            continue
 
-        _ = self.debug_message
-        if not _["unsuccessful_users"]:
-            debug = self.style.SUCCESS(
-                f'successfully sent {_["successful_amount_of_users"]} Email to following users'
-                f': {_["successful_users"]}'
-            )
-        else:
-            debug = self.style.ERROR(
-                f'successfully sent to {_["successful_amount_of_users"]} '
-                f'out of {_["estimated_amount_of_users"]} \n'
-                f'successful users: {_["successful_users"]} \n'
-                f'unsuccessful users: {_["unsuccessful_users"]}'
-            )
+                        self.debug_message['estimated_amount_of_users'] += 1
 
-        self.stdout.write(debug)
+                        context = self.count_matches_in_batches(context, data_results)
+                        msg = self.create_msg(image_name, image_content, context, user)
+                        self.send_to_user(user, msg, options["dry_run"])
 
-    def get_filtered_results(self, user, matches, all_results=True):
+                    _ = self.debug_message
+                    if not _["unsuccessful_users"]:
+                        debug = self.style.SUCCESS(
+                            f'successfully sent {_["successful_amount_of_users"]} '
+                            f'Email to following users'
+                            f': {_["successful_users"]}')
+                    else:
+                        debug = self.style.ERROR(
+                            f'successfully sent to {_["successful_amount_of_users"]} '
+                            f'out of {_["estimated_amount_of_users"]} \n'
+                            f'successful users: {_["successful_users"]} \n'
+                            f'unsuccessful users: {_["unsuccessful_users"]}'
+                        )
+
+                    self.stdout.write(debug)
+
+    def get_filtered_results(self, user, matches, account, all_results=True):
         """ Finds results based on the users role and organization
         NOTE: do not iterate over the queryset unless in batches, as
         it will cache all the items and might lead to too high ram usage.
         """
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
-        data_results = views.filter_inapplicable_matches(user, matches, roles)
+        data_results = views.filter_inapplicable_matches(user, matches, roles, account)
         if not all_results:
             # Exactly 30 days is deemed to be "older than 30 days"
             # and will therefore be shown.

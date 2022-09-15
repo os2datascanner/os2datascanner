@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'mozilla_django_oidc',
     'django_extensions',
     'django_prometheus',
+    'recurrence',
     'channels',
     'channels_redis',
     'os2datascanner.core_organizational_structure.apps.CoreOrganizationalStructureConfig',

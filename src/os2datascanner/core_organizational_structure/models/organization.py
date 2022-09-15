@@ -11,7 +11,7 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-
+from recurrence.fields import RecurrenceField
 from uuid import uuid4
 
 from django.db import models
@@ -53,6 +53,14 @@ class Organization(models.Model):
         blank=True,
         null=True,
         verbose_name=_('phone number'),
+    )
+
+    email_notification_schedule = RecurrenceField(
+        max_length=1024,
+        null=True,
+        blank=True,
+        default="RRULE:FREQ=WEEKLY;BYDAY=FR",
+        verbose_name=_('Email notification interval')
     )
 
     class Meta:

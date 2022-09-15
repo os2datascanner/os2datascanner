@@ -27,6 +27,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 
     fields = ('name', 'slug', 'client',
               'contact_email', 'contact_phone',
+              'email_notification_schedule',
               )
     list_display = ('name', 'client', 'contact_email',
                     'contact_phone',

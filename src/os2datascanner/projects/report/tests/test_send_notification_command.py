@@ -217,17 +217,17 @@ class EmailNotificationTest(TestCase):
         """
         # remidator should have 1 report as the other one is already assigned
         new_document_reports = self.Command.get_filtered_results(
-            self.user, self.document_reports, True)
+            self.user, self.document_reports, None, True)
         self.assertEqual(new_document_reports.count(), 1)
 
         # .. however, it should not have 1 when the time limit is on:
         new_document_reports = self.Command.get_filtered_results(
-            self.user, self.document_reports, False)
+            self.user, self.document_reports, None, False)
         self.assertEqual(new_document_reports.count(), 0)
 
         # user 2 should have 1 doc report connected through alias
         new_document_reports = self.Command.get_filtered_results(
-            self.user_2, self.document_reports, True)
+            self.user_2, self.document_reports, None, True)
         self.assertEqual(new_document_reports.count(), 1)
 
 
