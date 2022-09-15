@@ -1,5 +1,47 @@
 # Changelog
 
+## Version 3.16.0, 15th September 2022
+
+"The Changing of the Guard"
+
+### New in this version
+
+- Opened matches are now highlighted in the report module for easier identification when returning.
+- Error logs can now be removed from the UI.
+- LDAP based organizational imports now also trigger synchronization of data to the report module.
+- Manager and DPO statistics can now be filtered by scannerjob.
+- Run scanner modal now includes a direct link to scan status enabling a more fluid user flow.
+- Support for user profile images.
+- Email notification interval can now be configured on an organizational level in the admin module.
+
+### General Improvements
+
+- 'Distribute' button is now disabled when no scannerjob is selected.
+- Sidebar and top navigation path properly display location in the admin module, when configuring MSGraph related functionality.
+- Manager and DPO statistics dropdown menu now use HTMX for dynamic page updates.
+- 'Clear' buttons in the report module are now dynamic.
+- Sorted out broken links in project documentation.
+- Engine containers can now be configured with environment variables.
+- Reworded help-text in popup upon handling matches for more consistent terminology.
+- MSGraph related documentation updated.
+- The PostgreSQL container now has 256MB of shared memory, as recommended by upstream.
+- Icons for match sources now display a text when hovering for easier identification.
+- DocumentReport's organization field is now properly filled.
+- Matches now properly rely on DocumentReport's organization field in the match assignment process.
+
+### Bugfixes
+
+- In cases where HTTP HEAD requests are not supported, a fallback of HTTP GET is now in place.
+- Checked boxes no longer stick around in the report module upon page refresh.
+- Password reset links now work correctly in the report module.
+- Address- and Name-rule matches can now be displayed in the report module again.
+- API server kept up-to-date, by including previously missing filter_rule.
+- HTMX related triggers are now properly retrieved through headers.
+- WebResource's get_size method is again functional.
+- Corrected behind-the-scenes JavaScript error occurring when a user had no matches.
+- Superusers can now create multiple importjobs when multiple organizations exist.
+- Faulty translations corrected.
+
 ## Version 3.15.6, 18th August 2022
 
 "The Second Favourite Child"
