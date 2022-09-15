@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-14 08:16+0200\n"
+"POT-Creation-Date: 2022-09-15 14:13+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -193,31 +193,31 @@ msgstr "I mellemtiden kan du forsøge at genindlæse siden eller"
 msgid "go to the front page"
 msgstr "gå til forsiden"
 
-#: reportapp/templates/components/filters.html:18
-#: reportapp/templates/components/filters.html:47
+#: reportapp/templates/components/filters.html:22
+#: reportapp/templates/components/filters.html:59
 msgid "Clear"
 msgstr "Ryd"
 
-#: reportapp/templates/components/filters.html:21
+#: reportapp/templates/components/filters.html:25
 msgid "Scan"
 msgstr "Scan"
 
-#: reportapp/templates/components/filters.html:30
+#: reportapp/templates/components/filters.html:35
 #: reportapp/templates/components/statistics-template.html:19
 msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
 
-#: reportapp/templates/components/filters.html:50
+#: reportapp/templates/components/filters.html:62
 #: reportapp/templates/components/statistics-template.html:72
 #: reportapp/templates/components/statistics-template.html:103
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: reportapp/templates/components/filters.html:59
+#: reportapp/templates/components/filters.html:72
 msgid "All sensitivities"
 msgstr "Alle følsomheder"
 
-#: reportapp/templates/components/filters.html:87
+#: reportapp/templates/components/filters.html:98
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
@@ -241,11 +241,11 @@ msgid "Handled"
 msgstr "Håndteret"
 
 #: reportapp/templates/components/handle-match.html:12
-#: reportapp/templates/components/handle-match.html:25
+#: reportapp/templates/components/handle-match.html:22
 msgid "Mark as handled"
 msgstr "Markér som håndterede"
 
-#: reportapp/templates/components/handle-match.html:22
+#: reportapp/templates/components/handle-match.html:19
 msgid ""
 "You are about to handle the marked results. This action does not change the "
 "files, that the results are about. Please do not handle a result before "
@@ -255,7 +255,7 @@ msgstr ""
 "filerne, som resultaterne handler om. Håndtér venligst ikke et resultat, før "
 "du manuelt har gjort noget ved filen."
 
-#: reportapp/templates/components/handle-match.html:28
+#: reportapp/templates/components/handle-match.html:25
 #: reportapp/templates/components/pagination.html:11
 #: reportapp/templates/components/statistics-template.html:118
 #: reportapp/templates/components/statistics-template.html:127
@@ -265,7 +265,7 @@ msgstr ""
 msgid "of"
 msgstr "af"
 
-#: reportapp/templates/components/handle-match.html:28
+#: reportapp/templates/components/handle-match.html:25
 msgid "selected"
 msgstr "valgt"
 
@@ -290,11 +290,11 @@ msgid "Opened"
 msgstr "Åbnet: "
 
 #: reportapp/templates/components/hit.html:95
-#: reportapp/templates/components/hit.html:109
+#: reportapp/templates/components/hit.html:108
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:106
+#: reportapp/templates/components/hit.html:105
 msgid ""
 "You are about to handle this result. This action does not change the file, "
 "that the result is about. Please do not handle a result before action has "
@@ -304,19 +304,19 @@ msgstr ""
 "filen, som resultatet handler om. Håndtér venligst ikke et resultat, før du "
 "manuelt har gjort noget ved filen."
 
-#: reportapp/templates/components/hit.html:110
+#: reportapp/templates/components/hit.html:109
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:123
+#: reportapp/templates/components/hit.html:122
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:124
+#: reportapp/templates/components/hit.html:123
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:125
+#: reportapp/templates/components/hit.html:124
 msgid "Probability"
 msgstr "Sandsynlighed"
 
@@ -342,23 +342,23 @@ msgstr "Vælg alle resultater"
 msgid "Name"
 msgstr "Navn"
 
-#: reportapp/templates/components/hits.html:39
+#: reportapp/templates/components/hits.html:40
 msgid "Matches"
 msgstr "Matches"
 
-#: reportapp/templates/components/hits.html:51
+#: reportapp/templates/components/hits.html:50
 msgid "Source"
 msgstr "Kilde"
 
-#: reportapp/templates/components/hits.html:54
+#: reportapp/templates/components/hits.html:53
 msgid "Path"
 msgstr "Sti"
 
-#: reportapp/templates/components/hits.html:69
+#: reportapp/templates/components/hits.html:67
 msgid "Actions"
 msgstr "Handlinger"
 
-#: reportapp/templates/components/load-results.html:20
+#: reportapp/templates/components/load-results.html:24
 msgid "per page"
 msgstr "pr. side"
 
@@ -380,21 +380,21 @@ msgstr "Log ud"
 msgid "matches"
 msgstr "matches"
 
-#: reportapp/templates/components/pagination.html:18
-#: reportapp/templates/components/pagination.html:23
+#: reportapp/templates/components/pagination.html:21
+#: reportapp/templates/components/pagination.html:26
 msgid "Previous"
 msgstr "Forrige"
 
-#: reportapp/templates/components/pagination.html:53
-#: reportapp/templates/components/pagination.html:58
+#: reportapp/templates/components/pagination.html:68
+#: reportapp/templates/components/pagination.html:73
 msgid "Next"
 msgstr "Næste"
 
-#: reportapp/templates/components/pagination.html:65
+#: reportapp/templates/components/pagination.html:80
 msgid "Go to page"
 msgstr "Gå til side"
 
-#: reportapp/templates/components/pagination.html:69
+#: reportapp/templates/components/pagination.html:87
 msgid "Go"
 msgstr "Gå"
 
@@ -700,15 +700,16 @@ msgid ""
 "exists with the email you entered. You should receive them shortly."
 msgstr ""
 "Vi har sendt dig instruktioner til hvordan du nulstiller din adgangskode, "
-"hvis en konto eksisterer tilknyttet den indtastede e-mail. Du bør modtage instruktionerne snarest."
+"hvis en konto eksisterer tilknyttet den indtastede e-mail. Du bør modtage "
+"instruktionerne snarest."
 
 #: reportapp/templates/password_reset_done.html:23
 msgid ""
 "If you don't receive an email, please make sure you've entered the address "
 "you registered with, and check your spam folder."
 msgstr ""
-"Hvis du ikke modtager en e-mail, skal du sørge for, at e-mailadressen "
-"du har indtastet er den rigtige, og tjekke din spam mappe."
+"Hvis du ikke modtager en e-mail, skal du sørge for, at e-mailadressen du har "
+"indtastet er den rigtige, og tjekke din spam mappe."
 
 #: reportapp/templates/password_reset_email.html:3
 #, python-format
@@ -718,8 +719,8 @@ msgid ""
 "your user account at %(site_name)s.\n"
 msgstr ""
 "\n"
-"  Du modtager denne e-mail, fordi du har anmodet om nulstilling af din adgangskode "
-"til din bruger på %(site_name)s.\n"
+"  Du modtager denne e-mail, fordi du har anmodet om nulstilling af din "
+"adgangskode til din bruger på %(site_name)s.\n"
 
 #: reportapp/templates/password_reset_email.html:7
 msgid "Please go to the following page and choose a new password:"
@@ -753,7 +754,6 @@ msgstr ""
 #: reportapp/templates/password_reset_form.html:34
 msgid "Reset my password"
 msgstr "Nulstil min adgangskode"
-
 
 #: reportapp/templates/user_content.html:5
 msgid "Account"
@@ -819,32 +819,32 @@ msgstr "Skift"
 msgid "User since"
 msgstr "Bruger siden"
 
-#: reportapp/views/views.py:86
+#: reportapp/views/views.py:85
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:407
+#: reportapp/views/views.py:414
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/views/views.py:408
+#: reportapp/views/views.py:415
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:409
+#: reportapp/views/views.py:416
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:410
+#: reportapp/views/views.py:417
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:561
+#: reportapp/views/views.py:568
 msgid "Not assigned"
 msgstr "Ikke tildelt"
 
-msgid "Email notification interval"
-msgstr "Mailudsendelse interval"
+#~ msgid "Email notification interval"
+#~ msgstr "Mailudsendelse interval"
 
 #~ msgid "Sensitivities"
 #~ msgstr "Følsomhed"

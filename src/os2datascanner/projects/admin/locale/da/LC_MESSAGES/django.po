@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-14 11:29+0200\n"
+"POT-Creation-Date: 2022-09-15 14:13+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -1197,7 +1197,7 @@ msgstr "tilføj organisation"
 
 #: adminapp/templates/partials/breadcrumb.html:81
 #: organizations/templates/organizations/org_update.html:4
-#: organizations/templates/organizations/org_update.html:19
+#: organizations/templates/organizations/org_update.html:22
 msgid "update organization"
 msgstr "opdatér organisation"
 
@@ -1252,25 +1252,27 @@ msgid ""
 "exists with the email you entered. You should receive them shortly."
 msgstr ""
 "Vi har sendt dig instruktioner til hvordan du nulstiller din adgangskode, "
-"hvis en konto eksisterer tilknyttet den indtastede e-mail. Du bør modtage instruktionerne snarest."
+"hvis en konto eksisterer tilknyttet den indtastede e-mail. Du bør modtage "
+"instruktionerne snarest."
 
 #: adminapp/templates/password_reset_done.html:23
 msgid ""
 "If you don't receive an email, please make sure you've entered the address "
 "you registered with, and check your spam folder."
 msgstr ""
-"Hvis du ikke modtager en e-mail, skal du sørge for, at e-mailadressen "
-"du har indtastet er den rigtige, og tjekke din spam mappe."
+"Hvis du ikke modtager en e-mail, skal du sørge for, at e-mailadressen du har "
+"indtastet er den rigtige, og tjekke din spam mappe."
 
 #: adminapp/templates/password_reset_email.html:3
+#, python-format
 msgid ""
 "\n"
 "  You're receiving this email because you requested a password reset for "
 "your user account at %(site_name)s.\n"
 msgstr ""
 "\n"
-"  Du modtager denne e-mail, fordi du har anmodet om nulstilling af din adgangskode "
-"til din bruger på %(site_name)s.\n"
+"  Du modtager denne e-mail, fordi du har anmodet om nulstilling af din "
+"adgangskode til din bruger på %(site_name)s.\n"
 
 #: adminapp/templates/password_reset_email.html:7
 msgid "Please go to the following page and choose a new password:"
@@ -1285,6 +1287,7 @@ msgid "Thanks for using our site!"
 msgstr "Tak, fordi du brugte vores side!"
 
 #: adminapp/templates/password_reset_email.html:18
+#, python-format
 msgid ""
 "\n"
 "  The %(site_name)s team\n"
@@ -1955,8 +1958,8 @@ msgstr "organisatorisk struktur for"
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 
-msgid "Email notification interval"
-msgstr "Mailudsendelse interval"
+#~ msgid "Email notification interval"
+#~ msgstr "Mailudsendelse interval"
 
 #, python-format
 #~ msgid ""
