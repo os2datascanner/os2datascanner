@@ -3,7 +3,7 @@
 :root {
   --transition-property: all;
   --transition-timing: 0.2s;
-  --transition-timing-function: cubic-bezier(.86,0,.07,1);
+  --transition-timing-function: cubic-bezier(.86, 0, .07, 1);
   --transition-delay: 0s;
   --transition-default: var(--transition-property) var(--transition-timing) var(--transition-timing-function) var(--transition-delay);
 
@@ -21,6 +21,7 @@
   --color-primary-light: #5ca4cd;
   --color-primary-lightest: #d4efff;
   --color-primary-dark: #00496e;
+  --color-checkmark: #4a9d86;
 
   //text colors
   --color-text-main: #222;
@@ -44,10 +45,10 @@
 
   --color-notification: #00496e;
 
-	--color-office365: #d83b01;
+  --color-office365: #d83b01;
 
-	// icon arrow color
-	--color-icon: #777777;
+  // icon arrow color
+  --color-icon: #777777;
 
   --color-critical: #222;
   --color-critical-dark: #111;
@@ -62,15 +63,15 @@
   --border-radius-default: 0.625rem;
   --border-radius-small: 0.125rem;
   --border-radius-widget: 1.25rem;
-	--border-radius-filter: 0.625rem;
-	--border-radius-sensitivity: 20px 0px 0px 20px;
+  --border-radius-filter: 0.625rem;
+  --border-radius-sensitivity: 20px 0px 0px 20px;
 
   //box-shadow
   --box-shadow: 10px 10px 30px #0000001A;
   --box-shadow-large: 0 0 2rem rgba(0, 0, 0, 0.2);
   --box-shadow-widget: 0px 0px 40px #22222229;
   --box-shadow-default: 0px 0px 5px #22222229;
-	--box-shadow-filter: 0px 0px 5px #22222229;
+  --box-shadow-filter: 0px 0px 5px #22222229;
   --box-shadow-login: 0px 0px 40px #00496E80;
 
   //z-index

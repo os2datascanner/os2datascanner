@@ -82,26 +82,20 @@ h1.userprofile-text {
 
   td {
     padding: 0.8rem 1rem;
+  }
 
-    div {
-      height: 1rem;
-      width: 1rem;
+  span.checkmark {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 
-      border: 2px solid black;
-      border-radius: 50%;
-
-      display: inline-block;
-
-      margin-right: 0.2rem;
+    .width {
+      margin-left: 0.5rem;
     }
-  }
 
-  .checkmark_true {
-    background-color: green;
-  }
-
-  .checkmark_false {
-    background-color: red;
+    &.true>svg {
+      fill: var(--color-checkmark);
+    }
   }
 }
 
