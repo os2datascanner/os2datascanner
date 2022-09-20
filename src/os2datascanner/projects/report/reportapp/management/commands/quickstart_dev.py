@@ -8,6 +8,8 @@ from django.db import transaction
 from os2datascanner.projects.report.reportapp.models.roles.remediator import (
     Remediator,
 )
+from os2datascanner.projects.report.reportapp.models.userprofile import UserProfile
+from os2datascanner.projects.report.organizations.models import Organization
 
 
 class Command(BaseCommand):
@@ -43,6 +45,10 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS("Superuser dev/dev created successfully!"))
         else:
             self.stdout.write("Superuser dev/dev already exists!")
+
+        self.stdout.write("Creating a user profile!")
+        profile, created = UserProfile.objects.get_or_create(
+            user=user, organization=Organization.objects.first())
 
         self.stdout.write(self.style.SUCCESS(
             "Done! Remember to run the same cmd in the Admin module"))
