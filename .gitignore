@@ -19,6 +19,7 @@ db.sqlite3
 node_modules
 src/os2datascanner/projects/static/dist
 src/os2datascanner/projects/uploads/
+src/os2datascanner/projects/report/media/images/*
 .vscode
 
 # Translations
