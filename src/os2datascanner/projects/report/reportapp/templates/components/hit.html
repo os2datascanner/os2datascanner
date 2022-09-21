@@ -100,7 +100,7 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
                     hx-target=".content"
                     hx-vals='{"pk":"{{ document_report.pk|unlocalize }}"}'
                     hx-include="[id='filter_form'], [id='dropdown_options']"
-                    {% if request.user.profile.time_since_last_handle > 172800 %}
+                    {% if request.user.account.time_since_last_handle > 172800 %}
                       hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}"
                     {% endif %}
                     name="handle-match">
