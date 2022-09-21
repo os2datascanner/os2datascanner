@@ -93,7 +93,7 @@ class MainPageView(LoginRequiredMixin, ListView):
     model = DocumentReport
     document_reports = DocumentReport.objects.filter(
         raw_matches__matched=True).filter(
-        resolution_status__isnull=True).order_by("sort_key")
+        resolution_status__isnull=True).order_by("sort_key", "pk")
     scannerjob_filters = None
     paginate_by_options = [10, 20, 50, 100, 250]
 
@@ -268,7 +268,7 @@ class MainPageView(LoginRequiredMixin, ListView):
 
             if order != 'ascending':
                 sort_key = '-'+sort_key
-            self.document_reports = self.document_reports.order_by(sort_key)
+            self.document_reports = self.document_reports.order_by(sort_key, 'pk')
 
     def get_template_names(self):
         is_htmx = self.request.headers.get('HX-Request') == "true"
