@@ -404,11 +404,16 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                     " instead")
 
         running = True
+        old_handler = None
 
         def _handler(signum, frame):
-            nonlocal running
+            nonlocal running, old_handler
             running = False
             self.enqueue_stop()
+
+            if callable(old_handler):
+                old_handler(signum, frame)
+
         old_handler = signal.signal(signal.SIGTERM, _handler)
 
         self.start()
