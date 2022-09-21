@@ -377,7 +377,13 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                 # Using our channel or connection objects is no longer safe.
                 # Clear them so we don't try to reuse their state
                 self.clear()
-            self._shutdown_exception = ex
+
+            if threading.main_thread() == threading.current_thread():
+                raise
+            else:
+                # Store the exception for now -- run_consumer will yield it
+                # when the background thread stops
+                self._shutdown_exception = ex
         finally:
             if self.has_channel:
                 self._basic_cancel(consumer_tags)
