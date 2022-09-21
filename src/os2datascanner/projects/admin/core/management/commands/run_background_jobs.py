@@ -126,6 +126,8 @@ class Command(BaseCommand):
             nonlocal running
             running = False
 
+            raise BackgroundJob.MustStop()
+
         signal.signal(signal.SIGTERM, _handler)
         signal.signal(signal.SIGUSR1, backtrace)
 
@@ -158,6 +160,17 @@ class Command(BaseCommand):
                             job.run()
                             logger.info(f"finished job {job}")
                             count += 1
+                        except BackgroundJob.MustStop:
+                            job.exec_state = JobState.FAILED
+                            job.status = "Interrupted by environment"
+                            job.save()
+                            JOB_STATE.labels(
+                                    JobLabel=job_label, OrgSlug=org_slug,
+                                    OrgId=org_id).state('failed')
+                            push_to_gateway(
+                                    gateway=PUSHGATEWAY_HOST,
+                                    job='pushgateway', registry=REGISTRY)
+                            errors += 1
                         except Exception:
                             job.exec_state = JobState.FAILED
                             job.save()

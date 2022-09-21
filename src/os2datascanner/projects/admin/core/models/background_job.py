@@ -33,6 +33,15 @@ class BackgroundJob(models.Model):
     communication and status updates on the task's execution; its subclasses
     implement specific tasks."""
 
+    class MustStop(BaseException):
+        """If the execution environment for a BackgroundJob is informed that
+        its execution must soon stop, a BackgroundJob.MustStop exception will
+        be raised. Handlers for this exception should complete quickly, as the
+        execution environment is likely to be forcibly terminated within a few
+        seconds.
+
+        There are no values associated with MustStop exceptions."""
+
     objects = InheritanceManager()
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
