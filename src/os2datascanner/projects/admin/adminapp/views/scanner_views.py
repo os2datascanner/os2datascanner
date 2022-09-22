@@ -156,6 +156,7 @@ class StatusCompleted(StatusBase):
     paginator_class = EmptyPagePaginator
     template_name = "os2datascanner/scan_completed.html"
     model = ScanStatus
+    paginate_by_options = [10, 20, 50, 100, 250]
 
     def get_queryset(self):
         """Returns a queryset of Scannerjobs that are finished.
@@ -165,9 +166,42 @@ class StatusCompleted(StatusBase):
 
         return (
             super().get_queryset()
-            .filter(completed_scans)
+            .filter(completed_scans, resolved=False)
             .order_by('-scan_tag__time')
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
+        context['paginate_by_options'] = self.paginate_by_options
+
+        context['order_by'] = self.request.GET.get('order_by', 'sort_key')
+        context['order'] = self.request.GET.get('order', 'ascending')
+
+        return context
+
+    def get_paginate_by(self, queryset):
+        # Overrides get_paginate_by to allow changing it in the template
+        # as url param paginate_by=xx
+        return self.request.GET.get('paginate_by', self.paginate_by)
+
+    def post(self, request, *args, **kwargs):
+        is_htmx = self.request.headers.get("HX-Request", False) == "true"
+        htmx_trigger = self.request.headers.get('HX-Trigger-Name')
+        self.object_list = self.get_queryset()
+
+        if is_htmx:
+            if htmx_trigger == "status-resolved":
+                resolve_pk = self.request.POST.get('pk')
+                self.object_list.filter(pk=resolve_pk).update(resolved=True)
+            elif htmx_trigger == "status-resolved-selected":
+                self.object_list.filter(pk__in=self.request.POST.getlist(
+                    'table-checkbox')).update(resolved=True)
+            elif htmx_trigger == "status-resolved-all":
+                self.object_list.update(resolved=True)
+
+        return self.render_to_response(self.get_context_data())
 
 
 class StatusDelete(RestrictedDeleteView):
@@ -197,6 +231,7 @@ class UserErrorLogView(RestrictedListView):
     model = UserErrorLog
     paginate_by = 10
     paginator_class = EmptyPagePaginator
+    paginate_by_options = [10, 20, 50, 100, 250]
 
     def get_queryset(self):
         """Order errors by most recent scan."""
@@ -205,8 +240,19 @@ class UserErrorLogView(RestrictedListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["new_error_logs"] = count_new_errors(self.request.user)
+
+        context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
+        context['paginate_by_options'] = self.paginate_by_options
+
+        context['order_by'] = self.request.GET.get('order_by', 'sort_key')
+        context['order'] = self.request.GET.get('order', 'ascending')
+
         return context
+
+    def get_paginate_by(self, queryset):
+        # Overrides get_paginate_by to allow changing it in the template
+        # as url param paginate_by=xx
+        return self.request.GET.get('paginate_by', self.paginate_by)
 
     def post(self, request, *args, **kwargs):
         is_htmx = self.request.headers.get("HX-Request", False) == "true"

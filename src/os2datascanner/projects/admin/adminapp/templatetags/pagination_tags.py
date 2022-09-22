@@ -27,3 +27,13 @@ def param_replace(context, **kwargs):
     for key in [k for k, v in d.items() if not v]:
         del d[key]
     return d.urlencode()
+
+
+@register.simple_tag
+def object_interval(object_list, page_obj, paginate_by):
+    """Used for displaying which scan status are being shown."""
+    curr_page = int(page_obj.number)
+    pag_by = int(paginate_by)
+    first_object = pag_by * curr_page - (pag_by - 1)
+    last_object = first_object + object_list.count() - 1
+    return f"{first_object} - {last_object}"

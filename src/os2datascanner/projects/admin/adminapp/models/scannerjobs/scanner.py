@@ -523,6 +523,11 @@ class ScanStatus(AbstractScanStatus):
         on_delete=models.CASCADE,
     )
 
+    resolved = models.BooleanField(
+        verbose_name=_("resolved"),
+        default=False
+    )
+
     @property
     def estimated_completion_time(self) -> datetime.datetime:
         """Returns the linearly interpolated completion time of this scan

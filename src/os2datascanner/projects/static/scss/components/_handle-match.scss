@@ -32,7 +32,7 @@ tr.htmx-request {
   transition: all 300ms linear;
 }
 
-.handle-match-wrapper {
+.checkbox-button-wrapper {
   display: flex;
   align-items: center;
   float: left;
@@ -87,5 +87,9 @@ tr.htmx-request {
 }
 
 .matches-handle {
+  min-width: 7.8rem;
+}
+
+.status-resolve {
   min-width: 7.8rem;
 }

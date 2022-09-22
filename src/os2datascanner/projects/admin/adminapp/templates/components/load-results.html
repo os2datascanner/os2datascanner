@@ -1,0 +1,27 @@
+{%  load i18n %}
+
+{% comment %}
+  This dummy form is needed, because HTML does not like forms inside tables.
+  If this form is ommitted, the .dropdown form below will also be dropped from the
+  template by the parser. Feel free to try to find a better solution, but know
+  that a considerable amount of hours has already been spent trying to solve this.
+{% endcomment %}
+<form></form>
+<form class="dropdown" id="dropdown_options" name="dropdown_options"
+        hx-trigger="change"
+        hx-target=".content"
+        hx-swap="outerHTML"
+        hx-get=""
+>
+
+  <input type="hidden" name="page" id="page" value={{ page_obj.number }}>
+
+  <select name="paginate_by" id="paginate_by">
+        {% for option in paginate_by_options %}
+            <option value="{{ option }}"
+            {% if option == paginate_by %} selected="selected"{% endif %}>
+                {{ option }} {% trans "per page" %}
+            </option>
+        {% endfor %}
+  </select>
+</form>
