@@ -143,14 +143,16 @@ class Handle(TypePropertyEquality, JSONSerialisable):
 
     @property
     def base_handle(self) -> "Handle":
-        """Returns this Handle's base Handle or self, if this object does not
-        originate from a derived Source"""
+        """Returns this Handle's top-most handle, which does not yield
+        independent sources."""
         h = self
         while h:
-            if h.source.handle:
-                h = h.source.handle
-            else:
-                break
+            if (parent_handle := h.source.handle):
+                # Check to make sure that we aren't going too far up the hierarchy
+                if not parent_handle.source.yields_independent_sources:
+                    h = parent_handle
+                    continue
+            break
         return h
 
     @abstractmethod
