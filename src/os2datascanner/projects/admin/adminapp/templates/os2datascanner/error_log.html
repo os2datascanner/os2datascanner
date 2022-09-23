@@ -28,7 +28,7 @@
               <col class="datatable__column--automatic">
               <col class="datatable__column--path">
               <col class="datatable__column--automatic">
-              <col class="datatable__column--automatic">
+              <col class="datatable__column--actions">
             </colgroup>
             <thead>
               <tr>
@@ -44,22 +44,37 @@
                 <th class="datatable__column--automatic">
                   {% trans "Scan" %}
                 </th>
-                <th>
+                <th class="datatable__column--actions">
                   <button type="button" class="button" name="delete_all"
                           hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content"
                           hx-confirm="{% trans "You are about to delete all error log messages. This action cannot be reverted. Are you sure?" %}"
                           >
                           {% trans "Delete all" %}
                         </button>
+                  {% if new_error_logs > 0 %}
+                  <button type="button" class="button" name="see_all"
+                        hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content"
+                        hx-confirm="{% trans "You are about to mark all error log messages as seen. This action cannot be reverted. Are you sure?" %}"
+                        >
+                        {% trans "Mark all as seen" %}
+                  </button>
+                  {% endif %}
                 </th>
               </tr>
             </thead>
 
             <tbody>
                 {% for error_log in object_list %}
-                    <tr>
+                    <tr
+                    {% if error_log.is_new %}
+                    class="highlighted"
+                    {% endif %}
+                    >
                         <td class="datatable__column--name">
                             {{ error_log.user_friendly_error_message }}
+                            {% if error_log.is_new %} 
+                            <span class="bubble">{% trans "New" %}</span>
+                            {% endif %}
                         </td>
                         <td class="datatable__column--automatic">
                             {% timezone "Europe/Copenhagen" %}
@@ -71,12 +86,19 @@
                         <td class="datatable__column--automatic">
                             {{ error_log.scan_status.scanner.name }}
                         </td>
-                        <td>
+                        <td class="datatable__column--actions">
                           <button type="button" class="button" name="delete_errorlog"
                           hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content" hx-vals='{"pk": "{{ error_log.pk|unlocalize }}"}'
                           >
                             {% trans "Delete" %}
                           </button>
+                          {% if error_log.is_new %}
+                          <button type="button" class="button" name="see_errorlog"
+                          hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content" hx-vals='{"pk": "{{ error_log.pk|unlocalize }}"}'
+                          >
+                            {% trans "Mark as seen" %}
+                          </button>
+                          {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

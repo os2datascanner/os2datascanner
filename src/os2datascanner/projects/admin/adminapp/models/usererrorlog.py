@@ -40,6 +40,7 @@ class UserErrorLog(models.Model):
         verbose_name=_('organization'),
         null=True
     )
+    is_new = models.BooleanField(default=False)
     is_removed = models.BooleanField(default=False)
 
     @property

@@ -97,15 +97,23 @@ class UserErrorLogAdmin(admin.ModelAdmin):
         'user_friendly_error_message',
         'error_message',
         'scan_status',
-        'organization',
-        'is_removed')
+        'organization',)
     fields = (
         'path',
         'user_friendly_error_message',
         'error_message',
         'scan_status',
         'organization',
+        'is_new',
         'is_removed')
+
+    actions = ('mark_new', 'mark_not_removed',)
+
+    def mark_new(self, request, queryset):
+        queryset.update(is_new=True)
+
+    def mark_not_removed(self, request, queryset):
+        queryset.update(is_removed=False)
 
 
 @admin.register(ScanStatus)

@@ -61,7 +61,12 @@
 {% endif %}
 
 {% if page == 'scan-status' %}
-<div class="tabs">
+<div class="tabs" name="status_tabs_poll"
+     hx-get="{% url "status" %}"
+     hx-swap="outerHTML"
+     hx-target="this"
+     hx-trigger="{{ delay }}"
+>
     <a id="scan-status" class="tabs__control" href="/status/">
         {% trans "Scans in progress" %}
     </a>
@@ -71,6 +76,7 @@
     <a id="error-log" class="tabs__control" href="/error-log/">
         {% trans "Error Log" %}
     </a>
+    {% if new_error_logs > 0 %}<span class="bubble offset">{{ new_error_logs }}</span>{% endif %}
     <!-- <a id="upcoming" class="tabs__control" href="#">Kommende scanninger</a> -->
 </div>
 {% endif %}

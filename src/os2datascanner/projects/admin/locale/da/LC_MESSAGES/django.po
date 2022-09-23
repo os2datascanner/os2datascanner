@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-15 14:13+0200\n"
+"POT-Creation-Date: 2022-09-21 11:12+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -520,7 +520,7 @@ msgstr "Nej"
 
 #: adminapp/templates/os2datascanner/error_log.html:19
 #: adminapp/templates/os2datascanner/error_log.html:24
-#: adminapp/templates/os2datascanner/scanner_tabs.html:72
+#: adminapp/templates/os2datascanner/scanner_tabs.html:77
 msgid "Error Log"
 msgstr "Fejlbeskeder"
 
@@ -549,7 +549,23 @@ msgstr ""
 msgid "Delete all"
 msgstr "Slet alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:78
+#: adminapp/templates/os2datascanner/error_log.html:57
+msgid ""
+"You are about to mark all error log messages as seen. This action cannot be "
+"reverted. Are you sure?"
+msgstr ""
+"Du er ved at markere alle fejlbeskeder som set. Denne handling kan ikke "
+"fortrydes. Er du sikker?"
+
+#: adminapp/templates/os2datascanner/error_log.html:59
+msgid "Mark all as seen"
+msgstr "Markér alle som set"
+
+#: adminapp/templates/os2datascanner/error_log.html:76
+msgid "New"
+msgstr "Ny"
+
+#: adminapp/templates/os2datascanner/error_log.html:93
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:114
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
@@ -558,7 +574,11 @@ msgstr "Slet alle"
 msgid "Delete"
 msgstr "Slet"
 
-#: adminapp/templates/os2datascanner/error_log.html:90
+#: adminapp/templates/os2datascanner/error_log.html:99
+msgid "Mark as seen"
+msgstr "Markér som set"
+
+#: adminapp/templates/os2datascanner/error_log.html:112
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
@@ -734,7 +754,7 @@ msgstr "Ja"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:17
 #: adminapp/templates/os2datascanner/scan_completed.html:22
-#: adminapp/templates/os2datascanner/scanner_tabs.html:69
+#: adminapp/templates/os2datascanner/scanner_tabs.html:74
 msgid "Completed scans"
 msgstr "Udførte scanninger"
 
@@ -767,7 +787,7 @@ msgstr ""
 
 #: adminapp/templates/os2datascanner/scan_status.html:22
 #: adminapp/templates/os2datascanner/scan_status_table.html:11
-#: adminapp/templates/os2datascanner/scanner_tabs.html:66
+#: adminapp/templates/os2datascanner/scanner_tabs.html:71
 msgid "Scans in progress"
 msgstr "Igangværende scanninger"
 
@@ -1337,11 +1357,11 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
-#: adminapp/views/scanner_views.py:50
+#: adminapp/views/scanner_views.py:61
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:329
+#: adminapp/views/scanner_views.py:366
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
