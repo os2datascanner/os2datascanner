@@ -47,8 +47,9 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
 from mptt.models import TreeManyToManyField
 
-from ..authentication import Authentication
 from ..rules.rule import Rule
+from ..authentication import Authentication
+
 
 logger = structlog.get_logger(__name__)
 base_dir = os.path.dirname(
@@ -227,28 +228,31 @@ class Scanner(models.Model):
         """
         return []
 
-    def run(self, user=None):  # noqa: CCR001
-        """Schedules a scan to be run by the pipeline. Returns the scan tag of
-        the resulting scan on success.
+    def _construct_scan_tag(self, user=None):
+        """Builds a scan tag fragment that describes a scan (started now) under
+        this scanner."""
+        return messages.ScanTagFragment(
+                time=time_now(),
+                user=user.username if user else None,
+                scanner=messages.ScannerFragment(
+                        pk=self.pk,
+                        name=self.name,
+                        test=self.only_notify_superadmin),
+                organisation=messages.OrganisationFragment(
+                        name=self.organization.name,
+                        uuid=self.organization.uuid))
 
-        An exception will be raised if the underlying source is not available,
-        and a pika.exceptions.AMQPError (or a subclass) will be raised if it
-        was not possible to communicate with the pipeline."""
-        now = time_now()
+    def _construct_configuration(self):
+        """Builds a configuration dictionary based on the parameters of this
+        scanner."""
+        return {} if self.do_ocr else {"skip_mime_types": ["image/*"]}
 
-        # Create a new engine2 scan specification
+    def _construct_rule(self) -> Rule:
+        """Builds an object that represents the rules configured for this
+        scanner."""
         rule = OrRule.make(
                 *[r.make_engine2_rule()
                   for r in self.rules.all().select_subclasses()])
-
-        try:
-            filter_rule = OrRule.make(
-                *[er.make_engine2_rule()
-                  for er in self.exclusion_rules.all().select_subclasses()])
-        except ValueError:
-            filter_rule = None
-
-        configuration = {}
 
         prerules = []
         if self.do_last_modified_check:
@@ -257,8 +261,8 @@ class Scanner(models.Model):
                 prerules.append(LastModifiedRule(last))
 
         if self.do_ocr:
-            # If we are doing OCR, then filter out any images smaller than
-            # 128x32 (or 32x128)...
+            # If we're doing OCR, then filter out any images smaller than
+            # 128x32 (or 32x128)
             cr = make_if(
                     HasConversionRule(OutputType.ImageDimensions),
                     DimensionsRule(
@@ -267,9 +271,6 @@ class Scanner(models.Model):
                             min_dim=128),
                     True)
             prerules.append(cr)
-        else:
-            # ... and, if we're not, then skip all of the image files
-            configuration["skip_mime_types"] = ["image/*"]
 
         # append any model-specific rules. Order matters!
         # AllRule will evaluate all rules, no matter the outcome of current rule
@@ -280,45 +281,63 @@ class Scanner(models.Model):
         rule = AndRule.make(*self.local_and_rules(), rule)
 
         # prerules includes: do_ocr, LastModifiedRule
-        rule = AndRule.make(*prerules, rule)
+        return AndRule.make(*prerules, rule)
 
-        scan_tag = messages.ScanTagFragment(
-                time=now,
-                user=user.username if user else None,
-                scanner=messages.ScannerFragment(
-                        pk=self.pk,
-                        name=self.name,
-                        test=self.only_notify_superadmin),
-                organisation=messages.OrganisationFragment(
-                        name=self.organization.name,
-                        uuid=self.organization.uuid))
+    def _construct_filter_rule(self) -> Rule:
+        try:
+            return OrRule.make(
+                *[er.make_engine2_rule()
+                  for er in self.exclusion_rules.all().select_subclasses()])
+        except ValueError:
+            pass
+        return None
 
-        # Build ScanSpecMessages for all Sources
-        message_template = messages.ScanSpecMessage(
-            scan_tag=scan_tag, rule=rule, configuration=configuration,
-            filter_rule=filter_rule, source=None, progress=None)
-        outbox = []
+    def _construct_scan_spec_template(self, user=None) -> (
+            messages.ScanSpecMessage):
+        """Builds a scan specification template for this scanner. This template
+        has no associated Source, so make sure you put one in with the _replace
+        or _deep_replace methods before trying to scan with it."""
+        rule = self._construct_rule()
+        filter_rule = self._construct_filter_rule()
+        scan_tag = self._construct_scan_tag(user)
+        configuration = self._construct_configuration()
+
+        return messages.ScanSpecMessage(
+                scan_tag=scan_tag, rule=rule, configuration=configuration,
+                filter_rule=filter_rule, source=None, progress=None)
+
+    def _add_sources(
+            self, spec_template: messages.ScanSpecMessage,
+            outbox: list) -> int:
+        """Creates scan specifications, based on the provided scan
+        specification template, for every Source covered by this scanner, and
+        puts them into the provided outbox list. Returns the number of sources
+        added."""
         source_count = 0
-        uncensor_map = {}
         for source in self.generate_sources():
-            uncensor_map[source.censor()] = source
             outbox.append((
                 settings.AMQP_PIPELINE_TARGET,
-                message_template._replace(source=source)))
+                spec_template._replace(source=source)))
             source_count += 1
+        return source_count
 
-        if source_count == 0:
-            raise ValueError(f"{self} produced 0 explorable sources")
+    def _add_checkups(
+            self, spec_template: messages.ScanSpecMessage,
+            outbox: list) -> int:
+        """Creates instructions to rescan every object covered by this
+        scanner's ScheduledCheckup objects (in the process deleting objects no
+        longer covered by one of this scanner's Sources), and puts them into
+        the provided outbox list. Returns the number of checkups added."""
+        uncensor_map = {
+                source.censor(): source for source in self.generate_sources()}
 
-        # Also build ConversionMessages for the objects that we should try to
-        # scan again (our pipeline_collector is responsible for eventually
-        # deleting these reminders)
-        message_template = messages.ConversionMessage(
-                scan_spec=message_template,
+        conv_template = messages.ConversionMessage(
+                scan_spec=spec_template,
                 handle=None,
                 progress=messages.ProgressFragment(
                     rule=None,
                     matches=[]))
+        checkup_count = 0
         for reminder in self.checkups.iterator():
             rh = reminder.handle
             if rh.base_handle.source not in uncensor_map:
@@ -334,24 +353,52 @@ class Scanner(models.Model):
             ib = reminder.interested_before
             rule_here = AndRule.make(
                     LastModifiedRule(ib) if ib else True,
-                    rule)
+                    spec_template.rule)
             outbox.append((settings.AMQP_CONVERSION_TARGET,
-                           message_template._deep_replace(
+                           conv_template._deep_replace(
                                scan_spec__source=rh.source,
                                handle=rh,
                                progress__rule=rule_here)))
+            checkup_count += 1
+        return checkup_count
+
+    def run(self, user=None, explore=True, checkup=True):  # noqa: CCR001
+        """Schedules a scan to be run by the pipeline. Returns the scan tag of
+        the resulting scan on success.
+
+        An exception will be raised if the underlying source is not available,
+        and a pika.exceptions.AMQPError (or a subclass) will be raised if it
+        was not possible to communicate with the pipeline."""
+
+        spec_template = self._construct_scan_spec_template(user)
+        scan_tag = spec_template.scan_tag
+
+        outbox = []
+
+        source_count = 0
+        if explore:
+            source_count = self._add_sources(spec_template, outbox)
+
+            if source_count == 0:
+                raise ValueError(f"{self} produced 0 explorable sources")
+
+        checkup_count = 0
+        if checkup:
+            checkup_count = self._add_checkups(spec_template, outbox)
+
+        if source_count == 0 and checkup_count == 0:
+            raise ValueError(f"nothing to do for {self}")
 
         self.e2_last_run_at = self.get_last_successful_run_at()
         self.save()
 
-        # OK, we're committed now! Create a model object to track the status of
-        # this scan...
+        # Create a model object to track the status of this scan...
         ScanStatus.objects.create(
                 scanner=self, scan_tag=scan_tag.to_json_object(),
-                last_modified=timezone.now(), total_sources=source_count,
-                total_objects=self.checkups.count())
+                last_modified=scan_tag.time, total_sources=source_count,
+                total_objects=checkup_count)
 
-        # ... and dispatch the scan specifications to the pipeline
+        # ... and dispatch the scan specifications to the pipeline!
         with PikaPipelineThread(
                 write={queue for queue, _ in outbox}) as sender:
             for queue, message in outbox:
@@ -366,7 +413,7 @@ class Scanner(models.Model):
             pk=self.pk,
             scan_type=self.get_type(),
             organization=self.organization,
-            rules=rule.presentation,
+            rules=spec_template.rule.presentation,
         )
         return scan_tag.to_json_object()
 
