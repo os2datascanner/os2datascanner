@@ -44,8 +44,8 @@ from os2datascanner.projects.report.reportapp.models.roles.role import Role
 from ..utils import user_is
 from ..models.documentreport import DocumentReport
 from ..models.roles.defaultrole import DefaultRole
-from ..models.userprofile import UserProfile
 from ..models.roles.remediator import Remediator
+from ...organizations.models.account import Account
 
 # For permissions
 from ..models.roles.dpo import DataProtectionOfficer
@@ -115,14 +115,14 @@ class MainPageView(LoginRequiredMixin, ListView):
             elif htmx_trigger == "open-button":
                 DocumentReport.objects.get(pk=self.request.GET.get('pk')).update_opened()
             elif htmx_trigger == "handle-match":
-                if UserProfile.objects.filter(user=user).exists():
-                    user.profile.update_last_handle()
+                if Account.objects.filter(user=user).exists():
+                    user.account.update_last_handle()
                 self.document_reports.filter(
                     pk=self.request.GET.get('pk')).update(
                     resolution_status=0)
             elif htmx_trigger == "handle-matches":
-                if UserProfile.objects.filter(user=user).exists():
-                    user.profile.update_last_handle()
+                if Account.objects.filter(user=user).exists():
+                    user.account.update_last_handle()
                 DocumentReport.objects.filter(pk__in=self.request.GET.getlist(
                     'match-checkbox')).update(resolution_status=0)
 
@@ -295,7 +295,7 @@ class MainPageView(LoginRequiredMixin, ListView):
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
     context_object_name = "matches"  # object_list renamed to something more relevant
     model = DocumentReport
-    users = UserProfile.objects.all()
+    users = Account.objects.all()
     matches = DocumentReport.objects.filter(
         raw_matches__matched=True)
     handled_matches = matches.filter(
@@ -613,11 +613,11 @@ def filter_inapplicable_matches(user, matches, roles, account=None):
 
     # Filter by organization
     try:
-        user_organization = user.profile.organization
+        user_organization = user.account.organization
         if user_organization:
             matches = matches.filter(organization=user_organization)
-    except UserProfile.DoesNotExist:
-        # No UserProfile has been set on the request user
+    except Account.DoesNotExist:
+        # No Account has been set on the request user
         # Check if we have received an account as arg (from send_notifications.py) and use
         # its organization to locate matches.
         if account:

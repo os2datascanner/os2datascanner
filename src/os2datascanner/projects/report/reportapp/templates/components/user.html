@@ -9,8 +9,8 @@
   <div class="user">
     
     <span class="user__avatar">
-      {% if request.user.profile.image %}
-        <img src="{{ request.user.profile.image }}">
+      {% if request.user.account.image %}
+        <img src="{{ request.user.account.image }}">
       {% else %}
         <i id="account_circle" class="material-icons">account_circle</i>
       {% endif %}
@@ -27,8 +27,8 @@
       <div class="user-content" id="userMenu">
         <div>
           <span class="user__avatar_big">
-            {% if request.user.profile.image %}
-              <img src="{{ request.user.profile.image }}">
+            {% if request.user.account.image %}
+              <img src="{{ request.user.account.image }}">
             {% else %}
               <i id="account_circle" class="material-icons">account_circle</i>
             {% endif %}

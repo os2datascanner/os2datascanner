@@ -10,9 +10,9 @@ from mozilla_django_oidc import auth
 
 from os2datascanner.engine2.pipeline import messages
 from .models.documentreport import DocumentReport
-from .models.userprofile import UserProfile
 
-from os2datascanner.projects.report.organizations.models import Alias, AliasType, Organization
+from os2datascanner.projects.report.organizations.models import (
+    Alias, AliasType, Organization, Account)
 
 logger = structlog.get_logger()
 
@@ -63,12 +63,18 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
     sid = get_user_data(saml_attr.get('sid'), user_data)
     user = User.objects.get(username=username)
 
-    # Create a user profile for the user, when they sign on with SSO.
+    # Create an account for the user, when they sign on with SSO.
     if Organization.objects.count() == 1:
         related_org = Organization.objects.first()
     else:
         related_org = None
-    UserProfile.objects.update_or_create(user=user, defaults={'organization': related_org})
+    Account.objects.update_or_create(
+        user=user,
+        defaults={
+            'organization': related_org,
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name})
 
     if email:
         relate_matches_to_user(user, email, AliasType.EMAIL)

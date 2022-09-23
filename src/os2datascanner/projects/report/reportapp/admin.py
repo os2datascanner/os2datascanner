@@ -7,9 +7,8 @@ from .models.roles.leader import Leader
 from .models.roles.dpo import DataProtectionOfficer
 from .models.roles.defaultrole import DefaultRole
 from .models.documentreport import DocumentReport
-from .models.userprofile import UserProfile
 
-from os2datascanner.projects.report.organizations.models import Organization
+from os2datascanner.projects.report.organizations.models import Organization, Account
 # Register your models here.
 
 admin.site.register(DocumentReport)
@@ -54,9 +53,9 @@ class DataProtectionOfficerAdmin(admin.ModelAdmin):
 
 class ProfileInline(admin.TabularInline):
 
-    """Inline class for user profiles."""
+    """Inline class for user accounts."""
 
-    model = UserProfile
+    model = Account
     extra = 1
     can_delete = False
 
@@ -66,7 +65,7 @@ class ProfileInline(admin.TabularInline):
         if db_field.name == 'organization':
             if not request.user.is_superuser:
                 field.queryset = Organization.objects.filter(
-                    name=request.user.profile.organization.name
+                    name=request.user.account.organization.name
                 )
                 field.empty_label = None
 
@@ -102,7 +101,7 @@ class MyUserAdmin(UserAdmin):
         if request.user.is_superuser:
             return qs
         return qs.filter(
-            profile__organization=request.user.profile.organization
+            account__organization=request.user.account.organization
         )
 
 
