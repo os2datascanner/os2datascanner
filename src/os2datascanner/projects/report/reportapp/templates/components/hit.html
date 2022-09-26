@@ -89,17 +89,14 @@
             <button class="matches-handle button button--has-icon" type="button"
                     title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned.
 Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}"
-                    data-label-processing="{% trans 'Working' %} &hellip;"
-                    data-label-done="{% trans 'Handled' %}!"
-                    data-label-default="{% trans 'Handle' %}"
-                    data-report-pk="{{ document_report.pk|unlocalize }}"
-                    hx-get="{% url "content" %}"
-                    hx-swap="innerHTML"
-                    hx-trigger="click"
+                    hx-post="{% url "content" %}"
+                    hx-swap="outerHTML"
+                    hx-target="closest tr"
                     hx-indicator="closest tr"
-                    hx-target=".content"
+                    hx-trigger="click"
+                    hx-push-url="false"
+                    hx-sync=".datatable-wrapper:replace"
                     hx-vals='{"pk":"{{ document_report.pk|unlocalize }}"}'
-                    hx-include="[id='filter_form'], [id='dropdown_options']"
                     {% if request.user.account.time_since_last_handle > 172800 %}
                       hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}"
                     {% endif %}

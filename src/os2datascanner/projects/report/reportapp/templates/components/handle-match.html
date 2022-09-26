@@ -7,15 +7,12 @@
               disabled
               title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned.
 Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}"
-              data-label-processing="{% trans 'Working' %} &hellip;"
-              data-label-done="{% trans 'Handled' %}!"
-              data-label-default="{% trans 'Mark as handled' %}"
-              hx-get="{% url "content" %}"
-              hx-swap="innerHTML"
+              hx-post="{% url "content" %}"
+              hx-target="this"
+              hx-swap="afterend"
               hx-trigger="click"
-              hx-target=".content"
-              hx-include="[id='table_checkboxes'], [id='dropdown_options'], [id='filter_form']"
-              {% if request.user.profile.time_since_last_handle > 172800 %}
+              hx-push-url="false"
+              {% if request.user.account.time_since_last_handle > 172800 %}
                 hx-confirm="{% trans 'You are about to handle the marked results. This action does not change the files, that the results are about. Please do not handle a result before action has been manually taken to the file.' %}"
               {% endif %}
               name="handle-matches">
