@@ -533,6 +533,10 @@ class AbstractScanStatus(models.Model):
         explored, or None if this is not yet computable."""
         if self.total_sources > 0:
             return (self.explored_sources or 0) / self.total_sources
+        elif self.explored_sources == 0 and self.total_objects != 0:
+            # We've explored zero of zero sources, but there are some objects?
+            # This scan must consist only of checkups
+            return 1.0
         else:
             return None
 

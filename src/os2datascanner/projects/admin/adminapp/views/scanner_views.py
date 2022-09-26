@@ -83,8 +83,7 @@ class StatusBase(RestrictedListView):
 # ScanStatus.finished, then a second query with a filter based on
 # the list).
 completed_scans = (
-    Q(total_sources__gt=0)
-    & Q(total_objects__gt=0)
+    Q(total_objects__gt=0)
     & Q(explored_sources=F('total_sources'))
     & Q(scanned_objects__gte=F('total_objects')))
 

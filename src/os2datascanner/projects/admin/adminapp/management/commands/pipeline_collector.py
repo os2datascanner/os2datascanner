@@ -42,6 +42,18 @@ SUMMARY = Summary("os2datascanner_pipeline_collector_admin",
                   "Messages through admin collector")
 
 
+def check_if_scan_completed(scan_status):
+    if scan_status.finished:
+        # Update last_modified for scanner (but only if we actually did
+        # explore some sources...)
+        if scan_status.total_sources != 0:
+            scan_status.scanner.e2_last_run_at = scan_status.last_modified
+            scan_status.scanner.save()
+        # Send email upon scannerjob completion
+        logger.info("Sending notification mail for finished scannerjob.")
+        send_mail_upon_completion(scan_status.scanner, scan_status)
+
+
 def status_message_received_raw(body):
     """A status message for a scannerjob is created in Scanner.run().
     Therefore this method can focus merely on updating the ScanStatus object."""
@@ -104,13 +116,7 @@ def status_message_received_raw(body):
                     scanned_size=scan_status.scanned_size,
                 )
 
-        if scan_status.finished:
-            # Update last_modified for scanner
-            scanner.e2_last_run_at = scan_status.last_modified
-            scanner.save()
-            # Send email upon scannerjob completion
-            logger.info("Sending notification mail for finished scannerjob.")
-            send_mail_upon_completion(scanner, scan_status)
+        check_if_scan_completed(scan_status)
 
     yield from []
 
