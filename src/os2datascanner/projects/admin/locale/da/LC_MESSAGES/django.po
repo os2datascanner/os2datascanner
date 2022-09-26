@@ -9,11 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-<<<<<<< HEAD
 "POT-Creation-Date: 2022-09-27 11:56+0200\n"
-=======
-"POT-Creation-Date: 2022-09-21 16:27+0200\n"
->>>>>>> 671a5ce1 ([#47290] Popup redirecting to scanstatus if any scannerjobs are running at deletion)
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -143,20 +139,16 @@ msgstr "scan tag"
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-<<<<<<< HEAD
 #: adminapp/models/scannerjobs/scanner.py:527
 msgid "resolved"
 msgstr "løst"
 
 #: adminapp/models/scannerjobs/scanner.py:556
-=======
 #: adminapp/models/scannerjobs/scanner.py:555
->>>>>>> 671a5ce1 ([#47290] Popup redirecting to scanstatus if any scannerjobs are running at deletion)
 #: adminapp/models/usererrorlog.py:25
 msgid "scan status"
 msgstr "scanstatus"
 
-<<<<<<< HEAD
 #: adminapp/models/scannerjobs/scanner.py:557
 msgid "scan statuses"
 msgstr "scanstatusser"
@@ -170,21 +162,6 @@ msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
 #: adminapp/models/scannerjobs/scanner.py:602
-=======
-#: adminapp/models/scannerjobs/scanner.py:556
-msgid "scan statuses"
-msgstr "scanstatusser"
-
-#: adminapp/models/scannerjobs/scanner.py:595
-msgid "timestamp"
-msgstr ""
-
-#: adminapp/models/scannerjobs/scanner.py:600
-msgid "scan status snapshot"
-msgstr "scanstatus snapshot"
-
-#: adminapp/models/scannerjobs/scanner.py:601
->>>>>>> 671a5ce1 ([#47290] Popup redirecting to scanstatus if any scannerjobs are running at deletion)
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
@@ -1306,8 +1283,6 @@ msgid "Office 365 OneDrive filescanner"
 msgstr "Office 365 OneDrive filscanner"
 
 #: adminapp/templates/partials/breadcrumb.html:30
-#, fuzzy
-#| msgid "Office 365 kalenderscanner"
 msgid "Office 365 calendarscanner"
 msgstr "Office 365 kalenderscanner"
 
@@ -1358,7 +1333,7 @@ msgid ""
 "correctly."
 msgstr ""
 "Indtast din nye adgangskode to gange, så vi kan bekræfte, at du har skrevet "
-"det korrekt."
+"den korrekt."
 
 #: adminapp/templates/password_reset_confirm.html:52
 msgid ""
@@ -1366,37 +1341,34 @@ msgid ""
 "used. Please request a new password reset."
 msgstr ""
 "Linket til nulstilling af adgangskode er ugyldigt, muligvis fordi det "
-"allerede har været brugt. Bed om nulstilling af en ny adgangskode."
+"allerede har været brugt. Bed om en ny nulstilling af adgangskoden."
 
 #: adminapp/templates/password_reset_done.html:19
 msgid ""
 "We've emailed you instructions for setting your password, if an account "
 "exists with the email you entered. You should receive them shortly."
 msgstr ""
-"Vi har sendt dig instruktioner til, hvordan du indstiller din adgangskode. "
-"Hvis du har en kontoeksisterer den e-mail du har indtastet. Du vil snart "
-"modtage den."
+"Vi har sendt dig instruktioner til hvordan du nulstiller din adgangskode, "
+"hvis en konto eksisterer tilknyttet den indtastede e-mail. Du bør modtage "
+"instruktionerne snarest."
 
 #: adminapp/templates/password_reset_done.html:23
 msgid ""
 "If you don't receive an email, please make sure you've entered the address "
 "you registered with, and check your spam folder."
 msgstr ""
-"Hvis du ikke modtager en e-mail, skal du sørge for at have indtastet "
-"adressendu er registreret hos, og tjekke din spam mappe."
+"Hvis du ikke modtager en e-mail, skal du sørge for, at e-mailadressen du har "
+"indtastet er den rigtige, og tjekke din spam mappe."
 
 #: adminapp/templates/password_reset_email.html:3
-#, fuzzy, python-format
-#| msgid ""
-#| "You're receiving this email because you requested a password reset for "
-#| "your user account at %(site_name)s."
 msgid ""
 "\n"
 "  You're receiving this email because you requested a password reset for "
 "your user account at %(site_name)s.\n"
 msgstr ""
-"Du modtager denne e-mail, fordi du har anmodet om nulstilling af adgangskode "
-"til dinbrugerkonto på %(site_name)s."
+"\n"
+"  Du modtager denne e-mail, fordi du har anmodet om nulstilling af din "
+"adgangskode til din bruger på %(site_name)s.\n"
 
 #: adminapp/templates/password_reset_email.html:7
 msgid "Please go to the following page and choose a new password:"
@@ -1411,12 +1383,13 @@ msgid "Thanks for using our site!"
 msgstr "Tak, fordi du brugte vores side!"
 
 #: adminapp/templates/password_reset_email.html:18
-#, fuzzy, python-format
-#| msgid "The %(site_name)s team"
 msgid ""
 "\n"
 "  The %(site_name)s team\n"
-msgstr "%(site_name)s team"
+msgstr ""
+"\n"
+"  %(site_name)s team\n"
+
 
 #: adminapp/templates/password_reset_form.html:21
 msgid ""
@@ -2109,35 +2082,6 @@ msgstr "organisatorisk struktur for"
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 
-<<<<<<< HEAD
-#~ msgid "Changed "
-#~ msgstr "Ændrede "
-
-#~ msgid " of "
-#~ msgstr " af "
-
-#, fuzzy
-#~| msgid "scan status"
-#~ msgid "scans"
-#~ msgstr "scanstatus"
-
-#, fuzzy
-#~| msgid "Go to the front page"
-#~ msgid "Go to page"
-#~ msgstr "Gå til forsiden"
-
-#~ msgid "Scans page "
-#~ msgstr "Scanninger side "
-
-#~ msgid "Are you sure you want to delete this scanjob data?"
-#~ msgstr "Ønsker du virkelig at slette dette scanjob data?"
-
-#~ msgid "This cannot be reversed"
-#~ msgstr "Handlingen kan ikke fortrydes."
-=======
-#~ msgid "action"
-#~ msgstr "handling"
->>>>>>> 9d94ce7c ([#47290] Only superusers can delete organizations)
 
 #, python-format
 #~ msgid ""

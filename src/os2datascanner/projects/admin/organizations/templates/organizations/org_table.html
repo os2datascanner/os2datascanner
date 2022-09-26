@@ -200,8 +200,19 @@
                 {% endif %}
                 {% if request.user.is_superuser %}
                 <td class="datatable__column--delete">
-                    {% if organization.scanners_not_running %}
-                        <form action="{% url 'delete-organization' slug=organization.slug %}" method="post" style="display: inline-block;">
+                    {% if organization.scanners_running %}
+                        <a
+                        href="#delete-org-blocked"
+                        data-modal="modal:open"
+                        data-src="{% url 'org_delete_block' slug=organization.slug %}"
+                        class="button button--small button--grey"
+                        title="{% trans 'Delete' %}">
+                        <svg class="icon">
+                            <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                        </svg>
+                        </a>
+                    {% else %}
+                    <form action="{% url 'delete-organization' slug=organization.slug %}" method="post" style="display: inline-block;">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <button
@@ -213,18 +224,7 @@
                         <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
                         </svg>
                         </button>
-                        </form>
-                    {% else %}
-                        <a
-                        href="#delete-org-blocked"
-                        data-modal="modal:open"
-                        data-src="{% url 'org_delete_block' slug=organization.slug %}"
-                        class="button button--small button--grey"
-                        title="{% trans 'Delete' %}">
-                        <svg class="icon">
-                            <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
-                        </svg>
-                        </a>
+                    </form>
                   {% endif %}
                 </td>
                 {% endif %}

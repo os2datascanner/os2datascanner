@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.views.generic.edit import CreateView, UpdateView
@@ -104,7 +105,8 @@ class DeleteOrganizationView(RestrictedDeleteView):
     success_url = '/organizations/'
 
     def post(self, request, *args, **kwargs):
-        if not request.user.is_superuser:
+        username = request.user.username
+        if not User.objects.get(username=username).has_perm("organizations.delete_organization"):
             # Imposter! Keep out!.
             raise PermissionDenied
 

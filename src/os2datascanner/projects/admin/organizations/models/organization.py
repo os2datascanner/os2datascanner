@@ -11,15 +11,20 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-
-from functools import reduce
 from django.db import models
+from django.db.models import Q, F
 from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import ScanStatus, Scanner
 from .broadcasted_mixin import Broadcasted
 
 from os2datascanner.core_organizational_structure.models import Organization as Core_Organization
+
+completed_scans = (
+    Q(total_sources__gt=0)
+    & Q(total_objects__gt=0)
+    & Q(explored_sources=F('total_sources'))
+    & Q(scanned_objects__gte=F('total_objects')))
 
 
 class Organization(Core_Organization, Broadcasted):
@@ -43,15 +48,7 @@ class Organization(Core_Organization, Broadcasted):
         return (self.uuid, self.name)
 
     @property
-    def scanners_not_running(self) -> bool:
-        def not_running(scanner):
-            all_statuses = ScanStatus.objects.filter(scanner=scanner)
-            latest = all_statuses.latest('last_modified') if all_statuses else None
-            return latest.is_not_running if latest else True
-
-        scanners = Scanner.objects.filter(organization=self)
-        if scanners:
-            return reduce(lambda a, b: a and b,
-                          [not_running(scanner) for scanner in scanners])
-        else:
-            return True
+    def scanners_running(self) -> bool:
+        org_scanners = Scanner.objects.filter(organization=self.uuid)
+        scanners_running = ScanStatus.objects.filter(~completed_scans, scanner_id__in=org_scanners)
+        return scanners_running.exists()
