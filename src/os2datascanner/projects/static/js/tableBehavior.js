@@ -1,6 +1,6 @@
 // Remove rounds corners of table when stuck on top of screen.
 function handleTableCorners() {
-  const stickyElm = document.querySelector('.handle-matches');
+  const stickyElm = document.querySelector('.table-topbar');
 
   const observer = new IntersectionObserver(
     ([e]) => e.target.classList.toggle('stuck', e.intersectionRatio < 1),
@@ -12,12 +12,12 @@ function handleTableCorners() {
 
 // Handle checkboxes
 function handleChecked() {
-  var numChecked = $("input[name='match-checkbox']:checked").length;
+  var numChecked = $("input[name='table-checkbox']:checked").length;
   $(".selected-cb .num-selected").text(numChecked);
-  $(".handle-match__action").prop("disabled", !Boolean(numChecked));
+  $(".table-checkbox__action").prop("disabled", !Boolean(numChecked));
 
-  $("input[name='match-checkbox']:not(:checked)").closest("tr").removeClass("highlighted");
-  $("input[name='match-checkbox']:checked").closest("tr").addClass("highlighted");
+  $("input[name='table-checkbox']:not(:checked)").closest("tr").removeClass("highlighted");
+  $("input[name='table-checkbox']:checked").closest("tr").addClass("highlighted");
 }
 
 // attach click handler to document to be prepared for the scenario
@@ -77,9 +77,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Uncheck checkboxes on load.
-  $("input[name='match-checkbox']").prop("checked", false);
+  $("input[name='table-checkbox']").prop("checked", false);
   $("#select-all").prop("checked", false);
-  $(".handle-match__action").prop("disabled", true);
+  $(".table-checkbox__action").prop("disabled", true);
 
   // if user prefers to see probability, do that.
   var prefersProbability = window.localStorage.getItem("os2ds-prefers-probability");
@@ -212,18 +212,17 @@ htmx.onLoad(function (content) {
 
     // Listen for click on toggle checkbox
     $("#select-all").change(function () {
-      $("input[name='match-checkbox']").prop("checked", $(this).prop("checked"));
+      $("input[name='table-checkbox']").prop("checked", $(this).prop("checked"));
       handleChecked();
     });
 
     // Iterate each checkbox
-    $("input[name='match-checkbox']").change(handleChecked);
+    $("input[name='table-checkbox']").change(handleChecked);
 
     // Copy Path function
     if (typeof ClipboardJS !== 'undefined') {
       new ClipboardJS(document.querySelectorAll('[data-clipboard-text]'));
     }
-
   }
 
 });

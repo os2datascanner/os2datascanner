@@ -1,13 +1,20 @@
 {% extends 'partials/base.html' %}
+{% load static %}
 {% load l10n %}
 {% load i18n %}
 {% load tz %}
 
-{% block body %}
-{% include "partials/header.html" %}
-<main class="wrapper">
-    {% include "partials/main.html" with active_tab="status" %}
+{% block scripts %}
+<script src="{% static '3rdparty/htmx.min.js' %}"></script>
+<script src="{% static 'js/tableBehavior.js' %}"></script>
+{% endblock %}
 
+{% block body %}
+{% if not request.headers.hx_request %}
+{% include "partials/header.html" %}
+<main class="wrapper" hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'>
+    {% include "partials/main.html" with active_tab="status" %}
+    {% endif %}
     <div class="content">
 
         {% include "os2datascanner/scanner_tabs.html" with page="scan-status"  %}
@@ -19,60 +26,122 @@
         </div>
 
         {% if object_list  %}
-        <div class="datatable-wrapper card lg" role="region" tabindex="0" aria-label="{% trans 'Completed scans' %}">
-          <table class="datatable">
-            <colgroup>
-              <col class="datatable__column--name">
-              <col class="datatable__column--org">
-              <col class="datatable__column--info">
-              <col class="datatable__column--actions">
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="datatable__column--name">
-                  {% trans "Scannerjob" %}
-                </th>
-                <th class="datatable__column--org">
-                  {% trans "Started" %}
-                </th>
-                <th class="datatable__column--info">
-                  {% trans "Objects" %}
-                </th>
-                <th class="datatable__column--actions">
-                  {% trans "Status" %}
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {% for status in object_list %}
-                {% if status.finished == True %}
-                  <tr>
-                    <td class="datatable__column--name">
-                        {{ status.scanner.name }}
-                    </td>
-                    <td class="datatable__column--org">
-                      {% timezone "Europe/Copenhagen" %}
-                      {{ status.start_time }}
-                      {% endtimezone %}
-                    </td>
-                    <td class="datatable__column--automatic">
-                      {{ status.total_objects }} {% trans "objects explored" %}
-                    </td>
-                    <td class="datatable__column--actions">
-                      <span class="completed_icon">
-                        {% include "components/svg-icons/check_circle_full.svg" %}
-                        <span class="width">
-                          {% trans "Done" %}
-                        </span>
-                      </span>
-                    </td>
-                  </tr>
+        <div class="datatable-wrapper card" role="region" tabindex="0" aria-label="{% trans 'Completed scans' %}">
+          <form id="table_checkboxes">
+            <table class="datatable">
+              <colgroup>
+                <col class="datatable__column--checkbox">
+                <col class="datatable__column--name">
+                <col class="datatable__column--org">
+                <col class="datatable__column--info">
+                <col class="datatable__column--status">
+                {% if user.is_superuser %}
+                <col class="datatable__column--actions">
                 {% endif %}
-              {% endfor %}
-            </tbody>
-              {% include "components/pagination.html" %}
-          </table>
+              </colgroup>
+              <thead>
+                {% if user.is_superuser %}
+                <tr class="table-topbar topbar-stick sticky">
+                  <th colspan="6">
+                    {% include "components/resolve-status.html" %}
+                    <div class="view-options">
+                      <button type="button" class="button button--has-icon" name="status-resolved-all"
+                              hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content"
+                              hx-confirm="{% trans "You are about to delete" %} {{ page_obj.paginator.count }}{% trans " scan status data. This action cannot be reverted. Are you sure?" %}"
+                      >
+                        <svg class="icon">
+                          <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                        </svg>
+                        <span>{% trans "Delete all" %}</span>
+                      </button>
+                    </div>
+                  </th>
+                </tr>
+                {% endif %}
+                <tr class="column-headings sticky">
+                  <th class="datatable__column--checkbox">
+                    <div class="ds-checkbox">
+                      <input id="select-all" type="checkbox">
+                      <label for="select-all" title="{% trans "Select all" %}">
+                        <span class="screen-reader-only">{% trans 'Select all results' %}</span>
+                      </label>
+                    </div>
+                  </th>
+                  <th class="datatable__column--name">
+                      {% trans "Scannerjob" %}
+                  </th>
+                  <th class="datatable__column--org">
+                      {% trans "Started" %}
+                  </th>
+                  <th class="datatable__column--info">
+                      {% trans "Objects" %}
+                  </th>
+                  <th class="datatable__column--status">
+                      {% trans "Status" %}
+                  </th>
+                  {% if user.is_superuser %}
+                  <th class="datatable__column--actions">
+                      {% trans "Actions" %}
+                  </th>
+                  {% endif %}
+                </tr>
+              </thead>
+  
+              <tbody>
+                {% for status in object_list %}
+                  {% if status.finished == True %}
+                    <tr>
+                      <td class="datatable__column--checkbox">
+                        <div class="ds-checkbox">
+                          <input type="checkbox" 
+                                 id="table-checkbox-{{ status.pk|unlocalize }}" 
+                                 value="{{ status.pk|unlocalize }}" 
+                                 name="table-checkbox" 
+                                 class="datatable-checkbox" 
+                                 data-report-pk="{{ status.pk|unlocalize }}">
+                          <label for="table-checkbox-{{ status.pk|unlocalize }}">
+                            <span class="screen-reader-only">{% trans "Select result" %}</span>
+                          </label>
+                        </div>
+                      </td>
+                      <td class="datatable__column--name">
+                          {{ status.scanner.name }}
+                      </td>
+                      <td class="datatable__column--org">
+                        {% timezone "Europe/Copenhagen" %}
+                        {{ status.start_time }}
+                        {% endtimezone %}
+                      </td>
+                      <td class="datatable__column--automatic">
+                        {{ status.total_objects }} {% trans "objects explored" %}
+                      </td>
+                      <td class="datatable__column--actions">
+                        <span class="completed_icon">
+                          {% include "components/svg-icons/check_circle_full.svg" %}
+                          <span class="width">
+                            {% trans "Done" %}
+                          </span>
+                        </span>
+                      </td>
+                      {% if user.is_superuser %}
+                      <td class="datatable__column--actions">
+                        <div class="action-wrapper">
+                          <button type="button" class="button" name="status-resolved"
+                            hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content" hx-vals='{"pk": "{{ status.pk|unlocalize }}"}' hx-indicator="closest tr">
+                            <svg class="icon">
+                              <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                      {% endif %}
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+              </tbody>
+                {% include "components/pagination.html" %}
+            </table>
+          </form>
         </div>
 
         {% else %}
@@ -81,5 +150,7 @@
         </p>
         {% endif %}
     </div>
+    {% if not request.headers.hx_request %}
 </main>
+{% endif %}
 {% endblock %}

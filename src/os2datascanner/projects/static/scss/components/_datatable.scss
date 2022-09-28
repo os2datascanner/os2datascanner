@@ -157,7 +157,7 @@
   }
 
   &__column {
-    &--handle {
+    &--checkbox {
       width: 4.2rem;
     }
 
@@ -202,6 +202,10 @@
 
     &--path {
       width: 100%;
+    }
+
+    &--status {
+      width: 14rem;
     }
 
     &--actions {
@@ -324,7 +328,7 @@
 }
 
 .datatable .column-headings th,
-.datatable .handle-matches th {
+.datatable .topbar-stick th {
   position: static; // override aggressive position: relative; on * in _base.scss
 }
 
@@ -354,7 +358,7 @@
   }
 }
 
-.datatable .handle-matches {
+.datatable .topbar-stick {
   th {
     background-color: #fff;
     z-index: 2;

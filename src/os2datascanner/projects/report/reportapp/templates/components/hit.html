@@ -12,15 +12,15 @@
       class="highlighted"
       {% endif %}
       >
-        <td class="datatable__column--handle">
+        <td class="datatable__column--checkbox">
           <div class="ds-checkbox">
             <input type="checkbox" 
-                   id="match-checkbox-{{ document_report.pk|unlocalize }}" 
+                   id="table-checkbox-{{ document_report.pk|unlocalize }}" 
                    value="{{ document_report.pk|unlocalize }}" 
-                   name="match-checkbox" 
+                   name="table-checkbox" 
                    class="datatable-checkbox" 
                    data-report-pk="{{ document_report.pk|unlocalize }}">
-            <label for="match-checkbox-{{ document_report.pk|unlocalize }}">
+            <label for="table-checkbox-{{ document_report.pk|unlocalize }}">
               <span class="screen-reader-only">{% trans "Select result" %}</span>
             </label>
           </div>

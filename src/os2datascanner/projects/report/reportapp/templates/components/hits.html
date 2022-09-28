@@ -1,12 +1,12 @@
 {% load handle_extras %}
-{%  load i18n %}
+{% load i18n %}
 
 <div class="datatable-wrapper card" role="region" tabindex="0" aria-label="{% trans 'Results' %}">
   
-  <form id="match_checkboxes">
+  <form id="table_checkboxes">
   <table class="datatable">
     <colgroup>
-      <col class="datatable__column--handle">
+      <col class="datatable__column--checkbox">
       <col class="datatable__column--name">
       <col class="datatable__column--matchcount">
       <col class="datatable__column--source">
@@ -14,7 +14,7 @@
       <col class="datatable__column--actions">
     </colgroup>
     <thead>
-      <tr class="handle-matches sticky">
+      <tr class="table-topbar topbar-stick sticky">
         <th colspan="6">
           {% include "components/handle-match.html" %}
           <div class="view-options">
@@ -24,7 +24,7 @@
         </th>
       </tr>
       <tr class="column-headings sticky">
-        <th class="datatable__column--handle">
+        <th class="datatable__column--checkbox">
           <div class="ds-checkbox">
             <input id="select-all" type="checkbox">
             <label for="select-all">

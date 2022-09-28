@@ -14,7 +14,9 @@
 """Admin form configuration."""
 
 from django.contrib import admin
+from django.contrib import messages
 from django.contrib.auth.models import Group
+from django.utils.translation import ugettext_lazy as _
 
 from .models.authentication import Authentication
 from .models.apikey import APIKey
@@ -116,15 +118,38 @@ class UserErrorLogAdmin(admin.ModelAdmin):
         queryset.update(is_removed=False)
 
 
+@admin.action(description=_('Change marked resolved=False'))
+def change_resolvestatus_false(self, request, query_set):
+    query_set.update(resolved=False)
+    messages.add_message(
+        request,
+        messages.INFO,
+        _("Changed {qs_count} elements resolved-status to False").format(qs_count=query_set.count())
+    )
+
+
+@admin.action(description=_('Change marked resolved=True'))
+def change_resolvestatus_true(self, request, query_set):
+    query_set.update(resolved=True)
+    messages.add_message(
+        request,
+        messages.INFO,
+        _("Changed {qs_count} elements resolved-status to True").format(qs_count=query_set.count())
+    )
+
+
 @admin.register(ScanStatus)
 class ScanStatusAdmin(admin.ModelAdmin):
+    list_display = ('scanner', 'pk', 'start_time', 'resolved')
+    list_display_links = ('scanner', 'pk', 'start_time')
     model = ScanStatus
     readonly_fields = ('fraction_explored', 'fraction_scanned',
-                       'estimated_completion_time', 'last_modified',)
+                       'estimated_completion_time', 'start_time', 'last_modified',)
     fields = ('scan_tag', 'scanner', 'total_sources', 'explored_sources',
               'fraction_explored', 'total_objects', 'scanned_objects',
               'fraction_scanned', 'scanned_size', 'estimated_completion_time',
-              'last_modified',)
+              'start_time', 'last_modified', 'resolved',)
+    actions = [change_resolvestatus_false, change_resolvestatus_true]
 
 
 @admin.register(ScanStatusSnapshot)

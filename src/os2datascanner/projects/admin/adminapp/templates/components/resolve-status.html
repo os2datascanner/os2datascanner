@@ -1,0 +1,20 @@
+{% load l10n %}
+{% load i18n %}
+
+  <div class="checkbox-button-wrapper">
+      <button type="button" class="button table-checkbox__action button--has-icon"
+              disabled
+              title="{% blocktrans %}Remove selected scan data{% endblocktrans %}"
+              hx-post=""
+              hx-swap="outerHTML"
+              hx-trigger="click"
+              hx-target=".content"
+              hx-include="[id='table_checkboxes']"
+              hx-confirm="{% trans 'You are about to remove the selected data. This action cannot be reverted. Are you sure?' %}"
+              name="status-resolved-selected">
+          <i class="material-icons text-secondary" aria-hidden="true">close</i> <span>{% trans "Remove selected" %}</span>
+      </button>
+      <span class="selected-cb">
+        <span class="num-selected">0</span> {% trans "of" %} {{ object_list|length }} {% trans "selected" %}
+      </span>
+  </div>

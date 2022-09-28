@@ -1,8 +1,8 @@
 {% load l10n %}
 {%  load i18n %}
 
-  <div class="handle-match-wrapper">
-      <button type="button" class="button handle-match__action button--has-icon"
+  <div class="checkbox-button-wrapper">
+      <button type="button" class="button table-checkbox__action button--has-icon"
               data-status="match-handle"
               disabled
               title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned.
@@ -14,8 +14,8 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
               hx-swap="innerHTML"
               hx-trigger="click"
               hx-target=".content"
-              hx-include="[id='match_checkboxes'], [id='dropdown_options'], [id='filter_form']"
-              {% if request.user.account.time_since_last_handle > 172800 %}
+              hx-include="[id='table_checkboxes'], [id='dropdown_options'], [id='filter_form']"
+              {% if request.user.profile.time_since_last_handle > 172800 %}
                 hx-confirm="{% trans 'You are about to handle the marked results. This action does not change the files, that the results are about. Please do not handle a result before action has been manually taken to the file.' %}"
               {% endif %}
               name="handle-matches">

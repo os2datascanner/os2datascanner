@@ -124,7 +124,7 @@ class MainPageView(LoginRequiredMixin, ListView):
                 if Account.objects.filter(user=user).exists():
                     user.account.update_last_handle()
                 DocumentReport.objects.filter(pk__in=self.request.GET.getlist(
-                    'match-checkbox')).update(resolution_status=0)
+                    'table-checkbox')).update(resolution_status=0)
 
         # Handles filtering by role + org and sets datasource_last_modified if non existing
         self.user_reports = filter_inapplicable_matches(user, self.document_reports, roles)
