@@ -1,0 +1,30 @@
+
+{% extends 'partials/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block topnav %}{% endblock %}
+{% block rendertype %}iframe-modal{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/redirectFromModal.js' %}"></script>
+<script src="{% static "3rdparty/jquery.modal.js" %} "></script>
+<script src="{% static "js/index.js" %}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="runner-container">
+      <div class="runner-content">
+        <h1>
+          {% trans "Deletion blocked" %}
+        </h1>
+        <h3>
+          {% trans "The organization could not be deleted because scannerjobs are still running. Delete running jobs before proceding. " %}
+        </h3>
+        <span class="icon">
+          {% include "components/svg-icons/scan_warning.svg" %}
+        </span>
+        <button onclick="redirectFromModal('/status')" class="button button--cta button--large">{% trans "Go to scanner status" %}</button>
+      </div>
+    </div>
+{% endblock %}

@@ -11,12 +11,20 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-
 from django.db import models
+from django.db.models import Q, F
 from django.utils.translation import ugettext_lazy as _
+
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import ScanStatus, Scanner
 from .broadcasted_mixin import Broadcasted
 
 from os2datascanner.core_organizational_structure.models import Organization as Core_Organization
+
+completed_scans = (
+    Q(total_sources__gt=0)
+    & Q(total_objects__gt=0)
+    & Q(explored_sources=F('total_sources'))
+    & Q(scanned_objects__gte=F('total_objects')))
 
 
 class Organization(Core_Organization, Broadcasted):
@@ -38,3 +46,9 @@ class Organization(Core_Organization, Broadcasted):
 
     def natural_key(self):
         return (self.uuid, self.name)
+
+    @property
+    def scanners_running(self) -> bool:
+        org_scanners = Scanner.objects.filter(organization=self.uuid)
+        scanners_running = ScanStatus.objects.filter(~completed_scans, scanner_id__in=org_scanners)
+        return scanners_running.exists()

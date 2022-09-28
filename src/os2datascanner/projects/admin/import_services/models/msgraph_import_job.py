@@ -23,7 +23,7 @@ class MSGraphImportJob(BackgroundJob):
 
     organization = models.ForeignKey(
         'organizations.Organization',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         verbose_name=_('organization'),
         related_name='msimport'
     )

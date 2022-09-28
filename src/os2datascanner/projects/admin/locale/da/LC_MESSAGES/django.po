@@ -70,7 +70,7 @@ msgid "Login method"
 msgstr "Login metode"
 
 #: adminapp/models/rules/rule.py:40 core/models/client.py:73
-#: organizations/templates/organizations/org_table.html:38
+#: organizations/templates/organizations/org_table.html:48
 msgid "name"
 msgstr "navn"
 
@@ -126,16 +126,16 @@ msgstr "scannede objekter"
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner.py:510
+#: adminapp/models/scannerjobs/scanner.py:514
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
 
-#: adminapp/models/scannerjobs/scanner.py:515
+#: adminapp/models/scannerjobs/scanner.py:519
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner.py:522
+#: adminapp/models/scannerjobs/scanner.py:526
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
@@ -144,6 +144,7 @@ msgid "resolved"
 msgstr "løst"
 
 #: adminapp/models/scannerjobs/scanner.py:556
+#: adminapp/models/scannerjobs/scanner.py:555
 #: adminapp/models/usererrorlog.py:25
 msgid "scan status"
 msgstr "scanstatus"
@@ -623,6 +624,9 @@ msgstr "Ny"
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status_table.html:83
 #: adminapp/templates/os2datascanner/scanners.html:166
+#: organizations/templates/organizations/org_table.html:57
+#: organizations/templates/organizations/org_table.html:211
+#: organizations/templates/organizations/org_table.html:223
 msgid "Delete"
 msgstr "Slet"
 
@@ -1357,7 +1361,6 @@ msgstr ""
 "indtastet er den rigtige, og tjekke din spam mappe."
 
 #: adminapp/templates/password_reset_email.html:3
-#, python-format
 msgid ""
 "\n"
 "  You're receiving this email because you requested a password reset for "
@@ -1380,13 +1383,13 @@ msgid "Thanks for using our site!"
 msgstr "Tak, fordi du brugte vores side!"
 
 #: adminapp/templates/password_reset_email.html:18
-#, python-format
 msgid ""
 "\n"
 "  The %(site_name)s team\n"
 msgstr ""
 "\n"
 "  %(site_name)s team\n"
+
 
 #: adminapp/templates/password_reset_form.html:21
 msgid ""
@@ -1516,7 +1519,7 @@ msgid "user"
 msgstr "bruger"
 
 #: core/models/administrator.py:37 core/models/client.py:113
-#: organizations/models/organization.py:30
+#: organizations/models/organization.py:33
 msgid "client"
 msgstr "kunde"
 
@@ -1718,7 +1721,7 @@ msgid "organization UUID"
 msgstr "UUID for organisation"
 
 #: import_services/models/import_service.py:43
-#: organizations/templates/organizations/org_table.html:42
+#: organizations/templates/organizations/org_table.html:52
 msgid "import service"
 msgstr "importservice"
 
@@ -1993,7 +1996,7 @@ msgstr ""
 "Denne organisationsstruktur ligger i skyen, og en eksterne tjeneste skal "
 "tillade OS2datascanner adgang til dens indhold."
 
-#: organizations/models/organization.py:36
+#: organizations/models/organization.py:39
 msgid "slug"
 msgstr "slug"
 
@@ -2002,40 +2005,68 @@ msgstr "slug"
 msgid "create new organization"
 msgstr "opret ny organisation"
 
-#: organizations/templates/organizations/org_table.html:9
+#: organizations/templates/organizations/org_delete_blocked.html:19
+msgid "Deletion blocked"
+msgstr "Sletning ikke mulig"
+
+#: organizations/templates/organizations/org_delete_blocked.html:22
+msgid ""
+"The organization could not be deleted because scannerjobs are still running. "
+"Delete running jobs before proceding. "
+msgstr ""
+"Organisationen kan ikke slettes fordi der stadig kører mindst et scannerjob. "
+"Afbryd alle scannerjobs der kører for at fortsætte sletningen."
+
+#: organizations/templates/organizations/org_delete_blocked.html:27
+msgid "Go to scanner status"
+msgstr "Gå til scanner status"
+
+#: organizations/templates/organizations/org_table.html:14
 msgid "organizations for"
 msgstr "organisationer for"
 
-#: organizations/templates/organizations/org_table.html:15
 #: organizations/templates/organizations/org_table.html:20
+#: organizations/templates/organizations/org_table.html:25
 msgid "Add new organization"
 msgstr "Tilføj ny organisation"
 
-#: organizations/templates/organizations/org_table.html:39
+#: organizations/templates/organizations/org_table.html:49
 msgid "email"
 msgstr "e-mail"
 
-#: organizations/templates/organizations/org_table.html:40
+#: organizations/templates/organizations/org_table.html:50
 msgid "phone"
 msgstr "telefon"
 
-#: organizations/templates/organizations/org_table.html:44
+#: organizations/templates/organizations/org_table.html:54
 msgid "Import service (Microsoft Graph)"
 msgstr "Importservice (Microsoft Graph)"
 
-#: organizations/templates/organizations/org_table.html:82
-#: organizations/templates/organizations/org_table.html:90
-#: organizations/templates/organizations/org_table.html:151
-#: organizations/templates/organizations/org_table.html:158
+#: organizations/templates/organizations/org_table.html:95
+#: organizations/templates/organizations/org_table.html:103
+#: organizations/templates/organizations/org_table.html:164
+#: organizations/templates/organizations/org_table.html:171
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_table.html:106
-#: organizations/templates/organizations/org_table.html:174
+#: organizations/templates/organizations/org_table.html:119
+#: organizations/templates/organizations/org_table.html:187
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_table.html:221
+#: organizations/templates/organizations/org_table.html:210
+msgid "Do you really want to delete this organization?"
+msgstr "Er du sikker på, at du vil slette denne organisation?"
+
+#: organizations/templates/organizations/org_table.html:210
+msgid ""
+"This will delete all associated import- and scannerjobs. The action cannot "
+"be reversed"
+msgstr ""
+"Dette vil også slette import- og scannerjobs der tilhører organisationen. "
+"Handlingen kan ikke fortrydes."
+
+#: organizations/templates/organizations/org_table.html:264
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
@@ -2047,34 +2078,10 @@ msgstr "organisatorisk struktur"
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
 
-#: organizations/views/org_views.py:78
+#: organizations/views/org_views.py:82
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 
-#~ msgid "Changed "
-#~ msgstr "Ændrede "
-
-#~ msgid " of "
-#~ msgstr " af "
-
-#, fuzzy
-#~| msgid "scan status"
-#~ msgid "scans"
-#~ msgstr "scanstatus"
-
-#, fuzzy
-#~| msgid "Go to the front page"
-#~ msgid "Go to page"
-#~ msgstr "Gå til forsiden"
-
-#~ msgid "Scans page "
-#~ msgstr "Scanninger side "
-
-#~ msgid "Are you sure you want to delete this scanjob data?"
-#~ msgstr "Ønsker du virkelig at slette dette scanjob data?"
-
-#~ msgid "This cannot be reversed"
-#~ msgstr "Handlingen kan ikke fortrydes."
 
 #, python-format
 #~ msgid ""

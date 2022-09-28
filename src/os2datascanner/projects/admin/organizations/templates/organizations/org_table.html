@@ -3,6 +3,11 @@
 {% load mptt_tags %}
 {% load get_orgunit_list %}
 
+{% block scripts %}
+  <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
+  <script src="{% static "js/index.js" %}"></script>
+{% endblock %}
+
 {%  for client in client_list %}
     <div class="aside">
         <h1 class="page-title">
@@ -31,6 +36,11 @@
             <col class="datatable__column--info">
             {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
                 <col class="datatable__column--btn">
+            {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+                <col class="datatable__column--btn">
+            {% endif %}
+            {% if request.user.is_superuser %}
+            <col class="datatable__column--delete">
             {% endif %}
         </colgroup>
         <thead>
@@ -40,9 +50,12 @@
                 <th class="datatable__column--info">{% trans "phone"|capfirst %}</th>
                 {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
                     <th class="datatable__column--btn">{% trans "import service"|capfirst %}</th>
-        {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
-        <th class="datatable__column--btn">{% trans "Import service (Microsoft Graph)" %}</th>
-        {% endif %}
+                {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+                    <th class="datatable__column--btn">{% trans "Import service (Microsoft Graph)" %}</th>
+                {% endif %}
+                {% if request.user.is_superuser %}
+                <th class="datatable__column--delete">{% trans "Delete" %}</th>
+                {% endif %}
             </tr>
         </thead>
         {% if client.organizations.all %}
@@ -185,6 +198,36 @@
                     </div>
                 </td>
                 {% endif %}
+                {% if request.user.is_superuser %}
+                <td class="datatable__column--delete">
+                    {% if organization.scanners_running %}
+                        <a
+                        href="#delete-org-blocked"
+                        data-modal="modal:open"
+                        data-src="{% url 'org_delete_block' slug=organization.slug %}"
+                        class="button button--small button--grey"
+                        title="{% trans 'Delete' %}">
+                        <svg class="icon">
+                            <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                        </svg>
+                        </a>
+                    {% else %}
+                    <form action="{% url 'delete-organization' slug=organization.slug %}" method="post" style="display: inline-block;">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button
+                        type="submit"
+                        class="button button--small button--grey"
+                        onclick="return confirm('{% trans "Do you really want to delete this organization?" %}\n\n{{organization.name}}\n\n{% trans "This will delete all associated import- and scannerjobs. The action cannot be reversed" %}')"
+                        title="{% trans 'Delete' %}">
+                        <svg class="icon">
+                        <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                        </svg>
+                        </button>
+                    </form>
+                  {% endif %}
+                </td>
+                {% endif %}
             </tr>
             {% with organization|get_orgunit_list as orgunit_list %}
             {% if orgunit_list %}
@@ -221,5 +264,11 @@
         {% trans "no organization added"|capfirst %}
     </p>
 {% endif %}
+
+{% block modal %}
+<div class="modal" id="delete-org-blocked" tabindex="-1" role="dialog" aria-labelledby="delete-org-blocked-title" aria-hidden="true" data-href="{% url 'add-organization-for' client_id=client.pk %}">
+  <iframe src="about:blank" frameborder="0"></iframe>
+</div>
+{% endblock %}
 
 {% endfor %}

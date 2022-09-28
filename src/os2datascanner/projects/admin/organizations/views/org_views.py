@@ -1,9 +1,14 @@
+from typing import Any, Dict
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.utils.translation import ugettext_lazy as _
+from os2datascanner.projects.admin.adminapp.views.views import (
+     RestrictedDeleteView, RestrictedDetailView)
+from django.core.exceptions import PermissionDenied
 
 from os2datascanner.projects.admin.core.models import Client, Feature
 from ..models import Organization
@@ -92,3 +97,28 @@ class UpdateOrganizationView(LoginRequiredMixin, UpdateView):
         form.required_css_class = 'required-form'
         # form.error_css_class = # TODO: add if relevant?
         return form
+
+
+class DeleteOrganizationView(RestrictedDeleteView):
+    """Delete an ogranization view."""
+    model = Organization
+    success_url = '/organizations/'
+
+    def post(self, request, *args, **kwargs):
+        username = request.user.username
+        if not User.objects.get(username=username).has_perm("organizations.delete_organization"):
+            # Imposter! Keep out!.
+            raise PermissionDenied
+
+        # User is OK. Proceed.
+        return super().post(request, *args, **kwargs)
+
+
+class OrganizationDeletionBlocked(RestrictedDetailView):
+    """Prompt when user is trying to delete organization with running scannerjob"""
+    model = Organization
+    fields = []
+    template_name = "organizations/org_delete_blocked.html"
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        return super().get_context_data(**kwargs)
