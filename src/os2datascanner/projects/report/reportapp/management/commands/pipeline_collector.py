@@ -19,6 +19,7 @@ import json
 import logging
 import structlog
 
+from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.core.exceptions import FieldError
 from django.core.management.base import BaseCommand
@@ -43,7 +44,7 @@ from os2datascanner.utils.system_utilities import time_now
 from prometheus_client import Summary, start_http_server
 
 from ...models.documentreport import DocumentReport
-from ...utils import hash_handle, prepare_json_object
+from ...utils import hash_handle, prepare_json_object, create_alias_and_match_relations
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_pipeline_collector_report",
@@ -517,7 +518,17 @@ def handle_event(event_type, instance, cls, cls_serializer):  # noqa: CCR001, C9
             return
 
         # Perform save operation through serializer
-        serialized_obj.save()
+        try:
+            serialized_obj.save()
+        except IntegrityError:
+            logger.warning(f"Integrity error on save for {cn}-type object, "
+                           f"PK: {instance_pk}. Doing nothing.")
+            pass
+
+        if cn == "Alias":
+            # One more thing... We have to make sure alias-match relations are in order.
+            create_alias_and_match_relations(Alias.objects.get(uuid=instance_pk))
+
         logger.debug(f"handle_event: created {cn} {instance_pk}")
 
     except FieldError as e:

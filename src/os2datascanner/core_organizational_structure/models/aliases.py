@@ -95,6 +95,12 @@ class Alias(models.Model):
         verbose_name = _('alias')
         verbose_name_plural = _('aliases')
 
+        # Disallow duplicated aliases for account.
+        constraints = [
+            models.UniqueConstraint(fields=['account', '_alias_type', '_value'],
+                                    name='%(app_label)s_alias_account_unique_constraint')
+        ]
+
     def __str__(self):
         format_string = _('Alias ({type}) for {account_user}: {value}')
         return format_string.format(
