@@ -2,11 +2,25 @@
 {% load i18n %}
 {% load tz %}
 
-<div class="scan-status-table" name="status_table_poll"
-        hx-get="{% url 'status' %}" 
-        hx-target=".scan-status-table" 
-        hx-swap="outerHTML" 
-        hx-trigger="{{ delay }}">
+<div class="scan-status-table">
+
+    {% comment %} 
+    This element is responsible for polling the django view for updates on the status of the scans.
+    If the number of scans change, the whole table will be updates, else, only this span will.
+    The progress bar and scan-state columns, as well as the error message row
+    are all responsible for their own DOM swaps through HTMX "out-of-band"-swaps.
+    This element cannot be hidden, as hidden HTMX elements will not trigger.
+    {% endcomment %}
+    <span name="status_table_poll" id="status_table_poll"
+          hx-get="{% url "status" %}"
+          hx-target="{{reload}}"
+          hx-select="{{reload}}"
+          hx-swap="outerHTML"
+          hx-trigger="{{ delay }}"
+          hx-vals='{"scans":"{{ object_list|length }}", "reload":"{{ reload }}"}'
+          hx-sync="#status_tabs_poll:queue"
+    ></span>
+
 {% if object_list %}
             <div class="datatable-wrapper card lg" role="region" tabindex="0" aria-label="{% trans 'Scans in progress' %}">
                 <table class="datatable middle">
@@ -39,7 +53,10 @@
                                 <td class="datatable__column--name">
                                     {{ status.scanner.name }}
                                 </td>
-                                <td class="scan-stage stage-{{ status.stage.value }} datatable__column--org">
+                                <td class="scan-stage stage-{{ status.stage.value }} datatable__column--org"
+                                    id="scan-stage__{{ status.pk|unlocalize }}"
+                                    {% if request.GET.reload == "#status_table_poll" %}hx-swap-oob="true"{% endif %}
+                                >
                                     {% if status.stage.value == 0 %}
                                         {% trans "Indexing data ..." %}
                                     {% elif status.stage.value == 1 %}
@@ -50,7 +67,9 @@
 					                    {% trans "No objects to scan" %}
                                     {% endif %}
                                 </td>
-                                <td class="datatable__column--info">
+                                <td class="datatable__column--info" id="status_column__{{ status.pk }}"
+                                    {% if request.GET.reload == "#status_table_poll" %}hx-swap-oob="true"{% endif %}
+                                >
                                     {% if status.stage.value == 0 %}
                                         {% trans "Building index" %}
                                     {% elif status.stage.value == 1 %}
@@ -89,13 +108,13 @@
                                     </div>
                                 </td>
                             </tr>
-                            {% if status.message and status.status_is_error %}
-                              <tr class="error">
+                              <tr class="error" id="status_message__{{ status.pk|unlocalize }}" {% if request.GET.reload == "#status_table_poll" %}hx-swap-oob="true"{% endif %}>
+                                {% if status.message and status.status_is_error %}
                                 <td colspan="4">
                                   {{ status.message }}
                                 </td>
+                                {% endif %}
                               </tr>
-                            {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
@@ -108,4 +127,3 @@
          style="width:50%"></div>
 </div> {% endcomment %}
 </div>
-

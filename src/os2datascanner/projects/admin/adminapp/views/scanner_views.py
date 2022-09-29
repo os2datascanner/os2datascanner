@@ -117,7 +117,17 @@ class StatusOverview(StatusBase):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["delay"] = "load"
+
+        # Tell the poll element to reload the entire table when a scan starts or finishes.
+        old_scans_length = int(self.request.GET.get("scans", self.object_list.count()))
+        print(old_scans_length)
+        reload_table = self.object_list.count() == 0 or self.object_list.count() != old_scans_length
+        print(reload_table)
+        context["reload"] = ".scan-status-table" if reload_table else "#status_table_poll"
+
+        context['delay'] = "every 1s" if self.object_list.exists(
+            ) or self.object_list.count() != old_scans_length else "every 5s"
+
         is_htmx = self.request.headers.get("HX-Request", False) == 'true'
         if is_htmx:
             htmx_trigger = self.request.headers.get("HX-Trigger-Name")
@@ -135,20 +145,6 @@ class StatusOverview(StatusBase):
                 return "os2datascanner/scan_status_table.html"
         else:
             return"os2datascanner/scan_status.html"
-
-    def get(self, request, *args, **kwargs):
-        if request.headers.get('HX_REQUEST') == "true":
-            queryset = self.get_queryset()
-            if queryset.exists():
-                delay = "every 500ms"
-            else:
-                delay = "every 10s"
-            context = self.get_context_data(object_list=queryset)
-            context['delay'] = delay
-            context['object_list'] = queryset
-            return self.render_to_response(context)
-        else:
-            return super().get(request, *args, **kwargs)
 
 
 class StatusCompleted(StatusBase):
@@ -246,6 +242,8 @@ class UserErrorLogView(RestrictedListView):
 
         context['order_by'] = self.request.GET.get('order_by', 'sort_key')
         context['order'] = self.request.GET.get('order', 'ascending')
+
+        context["new_error_logs"] = count_new_errors(self.request.user)
 
         return context
 
