@@ -7,7 +7,7 @@
       {% include "partials/sidemenu.html" with active_tab="home" %}
 
       <meta name="htmx-config" content='{"historyEnabled": "false", "historyCacheSize": "0"}'>
-      <div class="content" hx-push-url="true">
+      <div class="content" hx-push-url="true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         
 
         {% include "content.html" %}

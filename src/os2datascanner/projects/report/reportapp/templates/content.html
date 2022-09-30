@@ -5,7 +5,10 @@
 
         {{ page_obj.paginator.count }} {% trans "results" %}
         {% if distributable_matches %}
-        <div id="distribute-container" class="distribute dropdown">
+        <div id="distribute-container" class="distribute dropdown" name="distribute-container"
+             hx-get="" hx-trigger="reload-htmx from:body" 
+             hx-swap="innerHTML" hx-target=".content"
+        >
           <label class="block-label" for="distribute-to">{% trans "Distribute matches to users from" %}</label>
           <select id="distribute-to" name="distribute-to" multiple>
             {% for scan in undistributed_scannerjobs %}
@@ -15,9 +18,11 @@
               </option>
                {% endfor %}
           </select>
-          <button class="button button--cta" id="distribute-matches" name="distribute-matches" disabled
-          hx-confirm="{% trans "Are you sure you want to distribute matches to the users? This action cannot be reverted." %}"
-          hx-target=".content" hx-trigger="click" hx-swap="innerHTML" hx-get="" hx-include="[name='distribute-to']"
+          <button class="button button--cta" id="distribute-matches" 
+                  name="distribute-matches" disabled
+                  hx-confirm="{% trans "Are you sure you want to distribute matches to the users? This action cannot be reverted." %}"
+                  hx-target="this" hx-trigger="click" hx-swap="afterend" 
+                  hx-post="" hx-include="[name='distribute-to']"
           > {% trans "Distribute" %} </button>
         </div>
         {% endif %}

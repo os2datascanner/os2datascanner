@@ -1,7 +1,15 @@
 {% load handle_extras %}
 {% load i18n %}
 
-<div class="datatable-wrapper card" role="region" tabindex="0" aria-label="{% trans 'Results' %}">
+<div class="datatable-wrapper card" role="region" 
+     tabindex="0" aria-label="{% trans 'Results' %}"
+     name="handle-matches-get"
+     hx-get="{% url "content" %}"
+     hx-swap="innerHTML"
+     hx-trigger="reload-htmx from:body"
+     hx-target=".content"
+     hx-include="[id='dropdown_options'], [id='filter_form']"
+>
   
   <form id="table_checkboxes">
   <table class="datatable">
