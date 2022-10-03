@@ -13,10 +13,13 @@
 #
 """Admin form configuration."""
 
+from django import forms
 from django.contrib import admin
 from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
+
+from os2datascanner.engine2.rules.rule import Rule
 
 from .models.authentication import Authentication
 from .models.apikey import APIKey
@@ -49,11 +52,57 @@ class AuthenticationAdmin(admin.ModelAdmin):
 @admin.register(CPRRule)
 @admin.register(NameRule)
 @admin.register(RegexRule)
-@admin.register(CustomRule)
 @admin.register(AddressRule)
 class RuleAdmin(admin.ModelAdmin):
     list_filter = ('sensitivity',)
     list_display = ('name', 'organization', 'sensitivity')
+
+
+# Used to create custom field for customrule in django-changeform
+class CustomRuleWidget(forms.widgets.Widget):
+    template_name = "components/admin-widgets/rule-builder.html"
+
+    class Media:
+        # Css is only caught when using --force-recreate on admin
+        css = {
+            'all': ('admin/css/custom-widgets/rule-builder.css',)
+        }
+
+
+class CustomRuleForm(forms.ModelForm):
+    list_filter = ('sensitivity',)
+    list_display = ('name', 'organization', 'sensitivity')
+
+    class Meta:
+        model = CustomRule
+        exclude = ()
+        fields = ("__all__")
+        widgets = {
+            '_rule': CustomRuleWidget(),
+        }
+
+    # Check that POST-response is valid using clean_<field_name>
+    def clean__rule(self):
+        try:
+            Rule.from_json_object(self.cleaned_data["_rule"])
+        except Exception:
+            raise forms.ValidationError(
+                _("Rule cannot be compiled by scanner"))
+
+        if str(self.cleaned_data["_rule"]).count("'type': 'cpr'") > 1:
+            raise forms.ValidationError(
+                _("CPR rule should not be used more than once"))
+
+        if str(self.cleaned_data["_rule"]).count("'type': 'ordered-wordlist'") > 1:
+            raise forms.ValidationError(
+                _("Health-information rule should not be used more than once"))
+
+        return self.cleaned_data["_rule"]
+
+
+@admin.register(CustomRule)
+class CustomRuleAdmin(admin.ModelAdmin):
+    form = CustomRuleForm
 
 
 @admin.register(RegexPattern)
