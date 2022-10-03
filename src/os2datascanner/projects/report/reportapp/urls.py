@@ -9,6 +9,7 @@ from django.urls import path
 from os2datascanner import __version__
 
 from .views.api import JSONAPIView
+from .views.saml import metadata
 from .views.views import (
     MainPageView, LeaderStatisticsPageView,
     DPOStatisticsPageView, ApprovalPageView,
@@ -31,6 +32,7 @@ urlpatterns = [
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.SAML2_ENABLED:
+    urlpatterns.append(url(r"^saml2_auth/metadata.xml$", metadata, name="saml_metadata"))
     urlpatterns.append(url(r"^saml2_auth/", include("django_saml2_auth.urls")))
     urlpatterns.append(url(r"^accounts/login/$", django_saml2_auth.views.signin))
     urlpatterns.append(url(r'^accounts/logout/$', django_saml2_auth.views.signout))
