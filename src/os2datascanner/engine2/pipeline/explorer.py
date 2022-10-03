@@ -66,6 +66,11 @@ def message_received_raw(body, channel, source_manager):  # noqa
     source_count = None
     exception_message = ""
 
+    # Update the configuration of the source manager.
+    # Yes, this is dreaded mutable state... Just don't go change it
+    # somewhere else.
+    source_manager.configuration = scan_spec.configuration
+
     it = scan_spec.source.handles(source_manager)
 
     tr = TimeoutRetrier(
