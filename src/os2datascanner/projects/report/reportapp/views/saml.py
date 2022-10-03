@@ -11,6 +11,7 @@ def metadata(request):
     client = dsa_views._get_saml_client(
             dsa_views.get_current_domain(request))
     config = client.config
+    am = settings.SAML2_AUTH["ATTRIBUTES_MAP"]
 
     config.load({
         "name": "OS2datascanner for {ni}".format(
@@ -25,34 +26,29 @@ def metadata(request):
                 "optional_attributes": [
                     factory(
                         saml.Attribute,
-                        name="http://schemas.xmlsoap.org/ws/2005/05/identity"
-                             "/claims/objectSID",
+                        name=am["sid"],
                         friendly_name="sid"
                     ),
                 ],
                 "required_attributes": [
                     factory(
                         saml.Attribute,
-                        name="http://schemas.xmlsoap.org/ws/2005/05/identity"
-                             "/claims/emailaddress",
+                        name=am["email"],
                         friendly_name="email"
                     ),
                     factory(
                         saml.Attribute,
-                        name="http://schemas.xmlsoap.org/ws/2005/05/identity"
-                             "/claims/emailaddress",
+                        name=am["username"],
                         friendly_name="username"
                     ),
                     factory(
                         saml.Attribute,
-                        name="http://schemas.xmlsoap.org/ws/2005/05/identity"
-                             "/claims/givenname",
+                        name=am["first_name"],
                         friendly_name="first_name"
                     ),
                     factory(
                         saml.Attribute,
-                        name="http://schemas.xmlsoap.org/ws/2005/05/identity"
-                             "/claims/surname",
+                        name=am["last_name"],
                         friendly_name="last_name"
                     ),
                 ],
