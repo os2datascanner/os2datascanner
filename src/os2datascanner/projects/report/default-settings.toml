@@ -19,6 +19,9 @@ DEBUG = false
 KEYCLOAK_ENABLED = false
 SAML2_ENABLED = false
 
+# [functionality]
+HANDLE_DROPDOWN = false
+
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
 # OAuth 2.0 services. (This value should end with a forward slash.)
@@ -105,6 +108,7 @@ MIDDLEWARE = [
 
 SETTINGS_EXPORT = [
     'DEBUG',
+    'HANDLE_DROPDOWN',
 ]
 
 # [internationalization]

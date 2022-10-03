@@ -288,14 +288,15 @@ class MainPageView(LoginRequiredMixin, ListView):
                 if Account.objects.filter(user=request.user).exists():
                     request.user.account.update_last_handle()
                 DocumentReport.objects.filter(pk__in=self.request.POST.getlist(
-                    'table-checkbox')).update(resolution_status=0)
+                    'table-checkbox')).update(resolution_status=self.request.POST.get('action', 0))
             elif htmx_trigger == "handle-match":
                 if Account.objects.filter(user=request.user).exists():
                     request.user.account.update_last_handle()
                 self.document_reports.filter(
                     pk=self.request.POST.get('pk')).update(
-                    resolution_status=0)
+                    resolution_status=self.request.POST.get('action', 0))
 
+        # Add a header value to the response before returning to initiate reload of some elements.
         response = HttpResponse()
         response.headers["HX-Trigger"] = "reload-htmx"
 
