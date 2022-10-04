@@ -79,10 +79,10 @@
           <label for="page">
             {% trans "Go to page" %}
           </label>
-          <input id="page" type="number" name="page" min="1" max="{{ paginator.num_pages|unlocalize }}" onkeyup=imposeMinMax(this)>
+          <input id="page_field" type="number" name="page" min="1" max="{{ paginator.num_pages|unlocalize }}" onkeyup=imposeMinMax(this)>
           <button class="button button--submit" type="button" id="form-button" name="form-button"
                   hx-trigger="click" hx-target=".content" hx-swap="innerHTML" hx-get="{% url "index" %}" 
-                  hx-include='[id="page"], [id="dropdown_options"], [id="filter_form"]'
+                  hx-include='[id="page_field"], [id="paginate_by"], [id="filter_form"]'
           >
             {% trans "Go" %}
           </button>
