@@ -17,7 +17,6 @@ class DocumentReportAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'number_of_matches',
-        'alias_relation',
         'organization',
         'resolution_status',
         'resolution_time', 'only_notify_superadmin')
