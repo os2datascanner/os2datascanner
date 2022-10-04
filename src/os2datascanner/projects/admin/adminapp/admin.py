@@ -42,7 +42,8 @@ from .models.scannerjobs.gmail import GmailScanner
 
 @admin.register(Authentication)
 class AuthenticationAdmin(admin.ModelAdmin):
-    list_display = ('username', 'domain')
+    list_display = ('pk', 'username', 'domain')
+    list_display_links = ('pk', 'username')
 
 
 @admin.register(CPRRule)
@@ -94,6 +95,15 @@ for _cls in [APIKey, ScheduledCheckup]:
 @admin.register(UserErrorLog)
 class UserErrorLogAdmin(admin.ModelAdmin):
     model = UserErrorLog
+    list_display = (
+        'user_friendly_error_message',
+        'path',
+        'scan_status',
+        'organization')
+    list_display_links = (
+        'user_friendly_error_message',
+        'path'
+    )
     readonly_fields = (
         'path',
         'user_friendly_error_message',
@@ -155,6 +165,8 @@ class ScanStatusAdmin(admin.ModelAdmin):
 @admin.register(ScanStatusSnapshot)
 class ScanStatusSnapshotAdmin(admin.ModelAdmin):
     model = ScanStatusSnapshot
+    list_display = ('pk', 'scan_status', 'time_stamp', 'fraction_scanned')
+    list_display_links = ('pk', 'scan_status')
     readonly_fields = ('scan_status', 'time_stamp', 'total_sources',
                        'explored_sources', 'fraction_explored', 'total_objects',
                        'scanned_objects', 'fraction_scanned', 'scanned_size')

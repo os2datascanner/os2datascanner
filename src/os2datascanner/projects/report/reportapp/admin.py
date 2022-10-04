@@ -11,7 +11,15 @@ from .models.documentreport import DocumentReport
 from os2datascanner.projects.report.organizations.models import Organization, Account
 # Register your models here.
 
-admin.site.register(DocumentReport)
+
+@admin.register(DocumentReport)
+class DocumentReportAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'number_of_matches',
+        'organization',
+        'resolution_status',
+        'resolution_time', 'only_notify_superadmin')
 
 
 # Solution for avoiding m2m relations to get cleared

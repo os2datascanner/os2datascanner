@@ -562,6 +562,9 @@ class ScanStatus(AbstractScanStatus):
                     name="ss_pc_lookup"),
         ]
 
+    def __str__(self):
+        return f"{self.scanner}: {self.start_time}"
+
 
 @receiver(post_delete)
 def post_delete_callback(sender, instance, using, **kwargs):
