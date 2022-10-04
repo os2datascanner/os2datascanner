@@ -551,6 +551,7 @@ class ScanStatus(AbstractScanStatus):
     def start_time(self) -> datetime.datetime:
         """Returns the start time of this scan."""
         return messages.ScanTagFragment.from_json_object(self.scan_tag).time
+    start_time.fget.short_description = _('Start time')
 
     class Meta:
         verbose_name = _("scan status")
