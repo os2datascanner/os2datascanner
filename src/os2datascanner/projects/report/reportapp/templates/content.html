@@ -23,6 +23,7 @@
                   hx-confirm="{% trans "Are you sure you want to distribute matches to the users? This action cannot be reverted." %}"
                   hx-target="this" hx-trigger="click" hx-swap="afterend" 
                   hx-post="" hx-include="[name='distribute-to']"
+                  hx-push-url="false"
           > {% trans "Distribute" %} </button>
         </div>
         {% endif %}
