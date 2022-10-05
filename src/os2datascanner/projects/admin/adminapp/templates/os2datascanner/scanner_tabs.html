@@ -1,7 +1,6 @@
 {% load i18n %}
 {% if page == 'scannerjob' %}
-    {% if user.is_authenticated %}
-        {% if not user.profile.is_upload_only %}
+{% if user.is_authenticated %}
 <div class="scrollbar-content">
     <div class="tabs">
         {% if settings.ENABLE_WEBSCAN %}
@@ -56,8 +55,7 @@
         {% endif %}
     </div>
 </div>
-        {% endif %}
-    {% endif %}
+{% endif %}
 {% endif %}
 
 {% if page == 'scan-status' %}

@@ -13,13 +13,13 @@
                   <ul hx-swap="afterend"
                       hx-target="this"
                       hx-indicator="#mass_handle_button"
-                      {% if request.user.profile.time_since_last_handle > 172800 %}
+                      {% if request.user.account.time_since_last_handle > 172800 %}
                         hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}"
                       {% endif %}>
                       {% with document_reports|first as document_report %}
                       {% for choice in document_report.ResolutionChoices.choices %}
-                        <li class="handle-option button" hx-post="{% url "content" %}" 
-                        hx-trigger="click" name="handle-matches"
+                        <li class="handle-option button" hx-post="{% url "index" %}" 
+                        hx-trigger="click" name="handle-matches" hx-push-url="false"
                         hx-vals='{"action":"{{ choice|first }}"}'>{{ choice|last }}</li>
                       {% endfor %}
                       {% endwith %}
@@ -32,7 +32,7 @@
               disabled
               title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned.
 Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}"
-              hx-post="{% url "content" %}"
+              hx-post="{% url "index" %}"
               hx-target="this"
               hx-swap="afterend"
               hx-trigger="click"

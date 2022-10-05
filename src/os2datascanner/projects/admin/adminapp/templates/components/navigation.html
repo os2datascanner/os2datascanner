@@ -4,65 +4,63 @@
 <nav class="navi">
   <ul>
     {% if user.is_authenticated %}
-      {% if not user.profile.is_upload_only %}
+      <li>
+        <a href="/status" class="{% if active_tab == 'status' %}active{% endif %}">
+          {% include "components/svg-icons/scan_status.svg" %}
+          <span class="width">
+            {% trans "Scanner status" %}
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="/" class="{% if active_tab == 'home' %}active{% endif %}">
+          {% include "components/svg-icons/work.svg" %}
+          <span class="width">
+            {% trans "Scannerjob" %}
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="/rules" class="{% if active_tab == 'rules' %}active{% endif %}">
+          {% include "components/svg-icons/rule.svg" %}
+          <span class="width">
+            {% trans "Rules" %}
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="/organizations" class="{% if active_tab == 'organizations' %}active{% endif %}">
+          {% include "components/svg-icons/org.svg" %}
+          <span class="width">
+            {% trans 'organizations'|capfirst %}
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="{% report_module_url %}" target="_blank">
+          {% include "components/svg-icons/assignment.svg" %}
+          <span class="width">
+            {% trans "Report module" %}
+          </span>
+        </a>
+      </li>
+      {% if user.is_superuser %}
         <li>
-          <a href="/status" class="{% if active_tab == 'status' %}active{% endif %}">
-            {% include "components/svg-icons/scan_status.svg" %}
+          <a href="/admin/" target="_NEW">
+            {% include "components/svg-icons/admin_panel.svg" %}
             <span class="width">
-              {% trans "Scanner status" %}
+              {% trans "Administration" %}
             </span>
           </a>
         </li>
         <li>
-          <a href="/" class="{% if active_tab == 'home' %}active{% endif %}">
-            {% include "components/svg-icons/work.svg" %}
+          <a href="/help/guide/" class="{% if active_tab == 'guide' %}active{% endif %}">
+            {% include "components/svg-icons/help.svg" %}
             <span class="width">
-              {% trans "Scannerjob" %}
+              {% trans "Guide" %}
             </span>
           </a>
         </li>
-        <li>
-          <a href="/rules" class="{% if active_tab == 'rules' %}active{% endif %}">
-            {% include "components/svg-icons/rule.svg" %}
-            <span class="width">
-              {% trans "Rules" %}
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="/organizations" class="{% if active_tab == 'organizations' %}active{% endif %}">
-            {% include "components/svg-icons/org.svg" %}
-            <span class="width">
-              {% trans 'organizations'|capfirst %}
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="{% report_module_url %}" target="_blank">
-            {% include "components/svg-icons/assignment.svg" %}
-            <span class="width">
-              {% trans "Report module" %}
-            </span>
-          </a>
-        </li>
-        {% if user.is_superuser %}
-          <li>
-            <a href="/admin/" target="_NEW">
-              {% include "components/svg-icons/admin_panel.svg" %}
-              <span class="width">
-                {% trans "Administration" %}
-              </span>
-            </a>
-          </li>
-          <li>
-            <a href="/help/guide/" class="{% if active_tab == 'guide' %}active{% endif %}">
-              {% include "components/svg-icons/help.svg" %}
-              <span class="width">
-                {% trans "Guide" %}
-              </span>
-            </a>
-          </li>
-        {% endif %}
       {% endif %}
     {% endif %}
     {% if request.user.is_authenticated %}
