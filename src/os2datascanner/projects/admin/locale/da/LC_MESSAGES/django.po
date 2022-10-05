@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-27 11:56+0200\n"
+"POT-Creation-Date: 2022-10-05 09:34+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -19,21 +19,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: adminapp/admin.py:121
+#: adminapp/admin.py:131
 msgid "Change marked resolved=False"
 msgstr "Gør markerede løst=False"
 
-#: adminapp/admin.py:127
-#| msgid " elements resolved-status to False"
+#: adminapp/admin.py:137
+#, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to False"
 msgstr "Ændrede {qs_count} elementers løst-status til False"
 
-#: adminapp/admin.py:131
+#: adminapp/admin.py:141
 msgid "Change marked resolved=True"
 msgstr "Gør markerede løst=True"
 
-#: adminapp/admin.py:137
-#| msgid " elements resolved-status to True"
+#: adminapp/admin.py:147
+#, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to True"
 msgstr "Ændrede {qs_count} elementers løst-status til True"
 
@@ -126,16 +126,16 @@ msgstr "scannede objekter"
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner.py:514
+#: adminapp/models/scannerjobs/scanner.py:510
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
 
-#: adminapp/models/scannerjobs/scanner.py:519
+#: adminapp/models/scannerjobs/scanner.py:515
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner.py:526
+#: adminapp/models/scannerjobs/scanner.py:522
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
@@ -143,25 +143,28 @@ msgstr "tilknyttet scannerjob"
 msgid "resolved"
 msgstr "løst"
 
-#: adminapp/models/scannerjobs/scanner.py:556
-#: adminapp/models/scannerjobs/scanner.py:555
+#: adminapp/models/scannerjobs/scanner.py:554
+msgid "Start time"
+msgstr "Startet"
+
+#: adminapp/models/scannerjobs/scanner.py:557
 #: adminapp/models/usererrorlog.py:25
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner.py:557
+#: adminapp/models/scannerjobs/scanner.py:558
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/scanner.py:596
+#: adminapp/models/scannerjobs/scanner.py:600
 msgid "timestamp"
 msgstr ""
 
-#: adminapp/models/scannerjobs/scanner.py:601
+#: adminapp/models/scannerjobs/scanner.py:605
 msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/scanner.py:602
+#: adminapp/models/scannerjobs/scanner.py:606
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
@@ -625,8 +628,8 @@ msgstr "Ny"
 #: adminapp/templates/os2datascanner/scan_status_table.html:83
 #: adminapp/templates/os2datascanner/scanners.html:166
 #: organizations/templates/organizations/org_table.html:57
-#: organizations/templates/organizations/org_table.html:211
-#: organizations/templates/organizations/org_table.html:223
+#: organizations/templates/organizations/org_table.html:209
+#: organizations/templates/organizations/org_table.html:222
 msgid "Delete"
 msgstr "Slet"
 
@@ -1361,6 +1364,7 @@ msgstr ""
 "indtastet er den rigtige, og tjekke din spam mappe."
 
 #: adminapp/templates/password_reset_email.html:3
+#, python-format
 msgid ""
 "\n"
 "  You're receiving this email because you requested a password reset for "
@@ -1383,13 +1387,13 @@ msgid "Thanks for using our site!"
 msgstr "Tak, fordi du brugte vores side!"
 
 #: adminapp/templates/password_reset_email.html:18
+#, python-format
 msgid ""
 "\n"
 "  The %(site_name)s team\n"
 msgstr ""
 "\n"
 "  %(site_name)s team\n"
-
 
 #: adminapp/templates/password_reset_form.html:21
 msgid ""
@@ -1519,7 +1523,7 @@ msgid "user"
 msgstr "bruger"
 
 #: core/models/administrator.py:37 core/models/client.py:113
-#: organizations/models/organization.py:33
+#: organizations/models/organization.py:38
 msgid "client"
 msgstr "kunde"
 
@@ -1996,7 +2000,7 @@ msgstr ""
 "Denne organisationsstruktur ligger i skyen, og en eksterne tjeneste skal "
 "tillade OS2datascanner adgang til dens indhold."
 
-#: organizations/models/organization.py:39
+#: organizations/models/organization.py:44
 msgid "slug"
 msgstr "slug"
 
@@ -2054,11 +2058,11 @@ msgstr "synkroniser"
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_table.html:210
+#: organizations/templates/organizations/org_table.html:221
 msgid "Do you really want to delete this organization?"
 msgstr "Er du sikker på, at du vil slette denne organisation?"
 
-#: organizations/templates/organizations/org_table.html:210
+#: organizations/templates/organizations/org_table.html:221
 msgid ""
 "This will delete all associated import- and scannerjobs. The action cannot "
 "be reversed"
@@ -2078,10 +2082,9 @@ msgstr "organisatorisk struktur"
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
 
-#: organizations/views/org_views.py:82
+#: organizations/views/org_views.py:83
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
-
 
 #, python-format
 #~ msgid ""
