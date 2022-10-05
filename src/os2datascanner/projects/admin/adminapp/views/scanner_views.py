@@ -236,7 +236,7 @@ class UserErrorLogView(RestrictedListView):
     def get_queryset(self):
         """Order errors by most recent scan."""
         return super().get_queryset().filter(is_removed=False
-                                             ).order_by('-scan_status__scan_tag__time')
+                                             ).order_by('-scan_status__scan_tag__time', 'pk')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
