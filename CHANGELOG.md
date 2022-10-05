@@ -1,5 +1,35 @@
 # Changelog
 
+## Version 3.16.1, 5th October 2022
+
+"Just Read the Instructions"
+
+### New in this version
+
+- The "Error messages"-tab in the "Scanner status"-tab now shows the number of new messages in a notification bubble.
+  - New messages in the "error messages"-tab are also highlighted, and has an adjacent bubble with the text "NEW".
+- "Handle"-buttons can now be changed to dropdowns with a number of choices for the method of handling used.
+- Previous scans in the "Completed scans"-tab can now be removed.
+- The report module now presents a SAML metadata file for easy setup of SSO access.
+
+### General Improvements
+
+- Prettier checkmarks added to user page.
+- Running the `quickstart_dev`-command now gives the dev-user an account-object and assigns an organization.
+- Results in the report module are now sorted by sort_key _and_ primary key.
+- All functionality from UserProfile-objects have now been moved to Account-objects.
+- More information is presented in some django-admin tables.
+- Error log messages are now sorted by scan time _and_ primary key.
+
+### Bugfixes
+
+- Images in media/images-folder are now ignored by git.
+- Import jobs which are suddenly stopped now correctly have their state changed to "FAILED".
+- The sort_key for MSGraph mail handles are now set correctly, and includes folder and subject field.
+- Duplicate aliases are now routinely cleaned up, and cannot be created.
+- Some HTMX elements now correctly send POST-requests instead of GET-requests.
+- The "Go to" button in the report module now works again.
+
 ## Version 3.16.0, 15th September 2022
 
 "The Changing of the Guard"

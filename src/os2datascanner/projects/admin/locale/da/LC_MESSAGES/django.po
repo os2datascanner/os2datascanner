@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-05 09:34+0200\n"
+"POT-Creation-Date: 2022-10-05 13:30+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -294,11 +294,11 @@ msgstr "gå til forsiden"
 msgid "per page"
 msgstr "pr. side"
 
-#: adminapp/templates/components/navigation.html:12
+#: adminapp/templates/components/navigation.html:11
 msgid "Scanner status"
 msgstr "Scanner status"
 
-#: adminapp/templates/components/navigation.html:20
+#: adminapp/templates/components/navigation.html:19
 #: adminapp/templates/os2datascanner/scan_completed.html:71
 #: adminapp/templates/os2datascanner/scan_status_table.html:22
 #: adminapp/templates/os2datascanner/scanners.html:21
@@ -307,14 +307,14 @@ msgstr "Scanner status"
 msgid "Scannerjob"
 msgstr "Scannerjob"
 
-#: adminapp/templates/components/navigation.html:28
+#: adminapp/templates/components/navigation.html:27
 #: adminapp/templates/os2datascanner/rules.html:19
 #: adminapp/templates/os2datascanner/rules.html:38
 #: adminapp/templates/partials/breadcrumb.html:55
 msgid "Rules"
 msgstr "Regler"
 
-#: adminapp/templates/components/navigation.html:36
+#: adminapp/templates/components/navigation.html:35
 #: adminapp/templates/partials/breadcrumb.html:69
 #: adminapp/templates/partials/breadcrumb.html:77
 #: adminapp/templates/partials/breadcrumb.html:85
@@ -323,19 +323,19 @@ msgstr "Regler"
 msgid "organizations"
 msgstr "organisationer"
 
-#: adminapp/templates/components/navigation.html:44
+#: adminapp/templates/components/navigation.html:43
 msgid "Report module"
 msgstr "Rapport modul"
 
-#: adminapp/templates/components/navigation.html:53
+#: adminapp/templates/components/navigation.html:52
 msgid "Administration"
 msgstr "Administration"
 
-#: adminapp/templates/components/navigation.html:61
+#: adminapp/templates/components/navigation.html:60
 msgid "Guide"
 msgstr "Håndbog"
 
-#: adminapp/templates/components/navigation.html:73
+#: adminapp/templates/components/navigation.html:71
 #: adminapp/templates/components/user.html:32 adminapp/templates/logout.html:7
 msgid "Logout"
 msgstr "Log ud"
@@ -575,7 +575,7 @@ msgstr "Nej"
 
 #: adminapp/templates/os2datascanner/error_log.html:19
 #: adminapp/templates/os2datascanner/error_log.html:24
-#: adminapp/templates/os2datascanner/scanner_tabs.html:77
+#: adminapp/templates/os2datascanner/scanner_tabs.html:75
 msgid "Error Log"
 msgstr "Fejlbeskeder"
 
@@ -813,7 +813,7 @@ msgstr "Ja"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:24
 #: adminapp/templates/os2datascanner/scan_completed.html:29
-#: adminapp/templates/os2datascanner/scanner_tabs.html:74
+#: adminapp/templates/os2datascanner/scanner_tabs.html:72
 msgid "Completed scans"
 msgstr "Udførte scanninger"
 
@@ -871,7 +871,7 @@ msgstr ""
 
 #: adminapp/templates/os2datascanner/scan_status.html:22
 #: adminapp/templates/os2datascanner/scan_status_table.html:11
-#: adminapp/templates/os2datascanner/scanner_tabs.html:71
+#: adminapp/templates/os2datascanner/scanner_tabs.html:69
 msgid "Scans in progress"
 msgstr "Igangværende scanninger"
 
@@ -1193,49 +1193,49 @@ msgstr "Kunne ikke åbne datakilden:"
 msgid "Could not communicate with the scanner engine:"
 msgstr "Kunne ikke kommunikere med scannermotoren:"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:9
+#: adminapp/templates/os2datascanner/scanner_tabs.html:8
 #: adminapp/templates/partials/breadcrumb.html:10
 msgid "Webscanner"
 msgstr "Webscanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:14
+#: adminapp/templates/os2datascanner/scanner_tabs.html:13
 #: adminapp/templates/partials/breadcrumb.html:14
 msgid "Filescanner"
 msgstr "Filscanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:19
+#: adminapp/templates/os2datascanner/scanner_tabs.html:18
 #: adminapp/templates/partials/breadcrumb.html:18
 msgid "Exchangescanner"
 msgstr "Exchangescanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:24
+#: adminapp/templates/os2datascanner/scanner_tabs.html:23
 msgid "Dropboxscanner"
 msgstr "Dropboxscanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:29
+#: adminapp/templates/os2datascanner/scanner_tabs.html:28
 #: adminapp/templates/partials/breadcrumb.html:22
 msgid "Office 365 mailscanner"
 msgstr "Office 365 mailscanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:34
+#: adminapp/templates/os2datascanner/scanner_tabs.html:33
 msgid "Office 365 OneDrive filscanner"
 msgstr "Office 365 OneDrive filscanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:39
+#: adminapp/templates/os2datascanner/scanner_tabs.html:38
 msgid "Office 365 kalenderscanner"
 msgstr "Office 365 kalenderscanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:44
+#: adminapp/templates/os2datascanner/scanner_tabs.html:43
 #: adminapp/templates/partials/breadcrumb.html:34
 msgid "Google Drive scanner"
 msgstr "Google Drive scanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:49
+#: adminapp/templates/os2datascanner/scanner_tabs.html:48
 #: adminapp/templates/partials/breadcrumb.html:38
 msgid "Gmailscanner"
 msgstr "Gmailscanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:54
+#: adminapp/templates/os2datascanner/scanner_tabs.html:53
 #: adminapp/templates/partials/breadcrumb.html:42
 msgid "Sbsysscanner"
 msgstr "Sbsysscanner"
