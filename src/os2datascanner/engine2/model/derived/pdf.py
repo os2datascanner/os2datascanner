@@ -1,4 +1,7 @@
+import os
+
 from os import listdir, remove
+from pathlib import Path
 from hashlib import md5
 import PyPDF2
 import string
@@ -44,7 +47,7 @@ def _filter_duplicate_images(directory_str):
     """Removes duplicate images if their md5sum matches."""
     hash_stack = []
 
-    for image in listdir(directory_str):
+    for image in listdir(directory_str + "/image"):
         checksum = calculate_md5(image)
 
         if checksum not in hash_stack:
@@ -53,18 +56,23 @@ def _filter_duplicate_images(directory_str):
             remove(image)
 
 
-def _extract_and_filter_images(path, sm):
+def _extract_and_filter_images(path):
     """Extracts all images for a pdf
     and puts it in a temporary output directory."""
-    with TemporaryDirectory() as outputdir:
-        run_custom(
-            ["pdfimages", "-q", "-png", "-j", path, f"{outputdir}/image"],
-            timeout=engine2_settings.subprocess["timeout"],
-            check=True, isolate_tmp=True)
+    parent = Path(path).parent.absolute
+    outdir = parent + '/image'
 
-        _filter_duplicate_images(outputdir)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
 
-        yield outputdir
+    run_custom(
+        ["pdfimages", "-q", "-png", "-j", path, f"{outdir}"],
+        timeout=engine2_settings.subprocess["timeout"],
+        check=True, isolate_tmp=True)
+
+    _filter_duplicate_images(outdir)
+
+    return outdir
 
 
 @Source.mime_handler("application/pdf")
@@ -75,8 +83,9 @@ class PDFSource(DerivedSource):
         with self.handle.follow(sm).make_path() as p:
             # Explicitly download the file here for the sake of PDFPageSource,
             # which needs a local filesystem path to pass to pdftohtml
-            print(f"Path for PDF: {p}")
-            yield _extract_and_filter_images(p, sm)
+            print(f"Path for PDF: {p} has type: {type(p)}")
+            outdir = _extract_and_filter_images(p)
+            yield outdir
             yield p
 
     def handles(self, sm):
