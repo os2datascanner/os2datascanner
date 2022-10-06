@@ -25,7 +25,10 @@ function checkedBox() {
   }
 }
 function setCheckEvent() { // jshint ignore:line
-  document.getElementById('30-days-toggle').addEventListener('click', checkedBox);
+  var toggle = document.getElementById('30-days-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', checkedBox);
+  }
 }
 
 function disableDistributeButton() {

@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-07 11:53+0200\n"
+"POT-Creation-Date: 2022-10-10 11:53+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -91,7 +91,7 @@ msgstr "følsomhed"
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport.py:133 reportapp/views/views.py:487
+#: reportapp/models/documentreport.py:133 reportapp/views/views.py:522
 msgid "Other"
 msgstr "Andet"
 
@@ -235,8 +235,8 @@ msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
 
 #: reportapp/templates/components/filters.html:64
-#: reportapp/templates/components/statistics-template.html:72
-#: reportapp/templates/components/statistics-template.html:103
+#: reportapp/templates/components/statistics-template.html:73
+#: reportapp/templates/components/statistics-template.html:113
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
@@ -310,11 +310,11 @@ msgstr "Fortryd markerede"
 
 #: reportapp/templates/components/handle-match.html:87
 #: reportapp/templates/components/pagination.html:11
-#: reportapp/templates/components/statistics-template.html:118
-#: reportapp/templates/components/statistics-template.html:127
-#: reportapp/templates/components/statistics-template.html:136
-#: reportapp/templates/components/statistics-template.html:145
-#: reportapp/templates/components/statistics-template.html:156
+#: reportapp/templates/components/statistics-template.html:128
+#: reportapp/templates/components/statistics-template.html:137
+#: reportapp/templates/components/statistics-template.html:146
+#: reportapp/templates/components/statistics-template.html:155
+#: reportapp/templates/components/statistics-template.html:166
 msgid "of"
 msgstr "af"
 
@@ -468,22 +468,22 @@ msgid "Sensitivity legend"
 msgstr "Følsomhedsoversigt"
 
 #: reportapp/templates/components/sensitivity-chart.html:8
-#: reportapp/templates/components/statistics-template.html:117
+#: reportapp/templates/components/statistics-template.html:127
 msgid "Critical"
 msgstr "Kritisk"
 
 #: reportapp/templates/components/sensitivity-chart.html:12
-#: reportapp/templates/components/statistics-template.html:126
+#: reportapp/templates/components/statistics-template.html:136
 msgid "Problem"
 msgstr "Problem"
 
 #: reportapp/templates/components/sensitivity-chart.html:16
-#: reportapp/templates/components/statistics-template.html:135
+#: reportapp/templates/components/statistics-template.html:145
 msgid "Warning"
 msgstr "Advarsel"
 
 #: reportapp/templates/components/sensitivity-chart.html:20
-#: reportapp/templates/components/statistics-template.html:144
+#: reportapp/templates/components/statistics-template.html:154
 msgid "Notification"
 msgstr "Notifikation"
 
@@ -527,24 +527,32 @@ msgstr "Resultater fordelt på følsomheder"
 msgid "Results distributed by data sources"
 msgstr "Resultater fordelt på datakilder"
 
-#: reportapp/templates/components/statistics-template.html:73
+#: reportapp/templates/components/statistics-template.html:68
+msgid "Results distributed by resolution statuses"
+msgstr "Resultater fordelt på håndteringsstatusser"
+
+#: reportapp/templates/components/statistics-template.html:74
 msgid "Data sources"
 msgstr "Datakilder"
 
-#: reportapp/templates/components/statistics-template.html:96
-#: reportapp/templates/components/statistics-template.html:155
+#: reportapp/templates/components/statistics-template.html:76
+msgid "Resolution statuses"
+msgstr "Håndteringsstatusser"
+
+#: reportapp/templates/components/statistics-template.html:106
+#: reportapp/templates/components/statistics-template.html:165
 msgid "Handled results"
 msgstr "Håndterede resultater"
 
-#: reportapp/templates/components/statistics-template.html:97
+#: reportapp/templates/components/statistics-template.html:107
 msgid "Percentage of handled results distributed by sensitivity"
 msgstr "Procentvis andel af håndterede resultater fordelt på følsomhed"
 
-#: reportapp/templates/components/statistics-template.html:98
+#: reportapp/templates/components/statistics-template.html:108
 msgid "The department's percentage of handled results"
 msgstr "Afdelingens procentvise andel af håndterede resultater"
 
-#: reportapp/templates/components/statistics-template.html:104
+#: reportapp/templates/components/statistics-template.html:114
 msgid "All results"
 msgstr "Alle resultater"
 
@@ -882,19 +890,19 @@ msgstr "Bruger siden"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:488
+#: reportapp/views/views.py:523
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:489
+#: reportapp/views/views.py:524
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:490
+#: reportapp/views/views.py:525
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:641
+#: reportapp/views/views.py:676
 msgid "Not assigned"
 msgstr "Ikke tildelt"
 

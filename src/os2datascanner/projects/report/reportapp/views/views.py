@@ -408,6 +408,9 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         context['unhandled_matches_by_month'] = self.count_unhandled_matches_by_month(today)
 
+        context['handled_matches_status'] = \
+            self.count_handles_matches_grouped_by_resolution_status()
+
         if self.scannerjob_filters is None:
             # Create select options
             self.scannerjob_filters = DocumentReport.objects.filter(
@@ -443,6 +446,18 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         return self.create_sensitivity_list(sensitivities)
 
+    def count_handles_matches_grouped_by_resolution_status(self):
+        """Counts the distribution of handled matches grouped by resolution_status"""
+        handled_matches = self.handled_matches.order_by(
+            'resolution_status').values(
+            'resolution_status').annotate(
+            total=Count('resolution_status')
+            ).values(
+                'resolution_status', 'total'
+            )
+
+        return self.create_resolution_status_list(handled_matches)
+
     def create_sensitivity_list(self, matches):
         """Helper method which groups the totals by sensitivities
         and also takes the sum of the totals"""
@@ -469,6 +484,26 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             total += match[1]
 
         return sensitivity_list, total
+
+    def create_resolution_status_list(self, matches):
+        """Helper method which groups the totals by resolution_status
+        and also takes the sum of the totals."""
+        resolution_list = [
+            [choice[0], choice[1], 0] for choice in DocumentReport.ResolutionChoices.choices
+        ]
+
+        for match in matches:
+            for status in resolution_list:
+                if match['resolution_status'] == status[0]:
+                    status[2] = match['total']
+                    break
+
+        # Sum of the totals
+        total = 0
+        for match in resolution_list:
+            total += match[2]
+
+        return resolution_list, total
 
     def count_by_source_types(self):
         """Counts all matches grouped by source types"""
