@@ -114,27 +114,8 @@ class MainPageView(LoginRequiredMixin, ListView):
         self.user_reports = filter_inapplicable_matches(user, self.document_reports, roles)
         self.document_reports = self.user_reports
 
-        # Filters by datasource_last_modified.
-        # lte mean less than or equal to.
-        # A check whether something is more recent than a month
-        # is done by subtracting 30 days from now and then comparing if
-        # the saved time is "bigger" than that
-        # and vice versa/smaller for older than.
-        # By default true and we show all document_reports. If false we only show
-        # document_reports older than 30 days
-        if self.request.GET.get('30-days') == 'false':
-            older_than_30 = time_now() - timedelta(days=30)
-            self.document_reports = self.document_reports.filter(
-                datasource_last_modified__lte=older_than_30)
-
-        if (scannerjob := self.request.GET.get('scannerjob')) and scannerjob != 'all':
-            self.document_reports = self.document_reports.filter(
-                scanner_job_pk=int(scannerjob))
-
-        if (sensitivity := self.request.GET.get('sensitivities')) and sensitivity != 'all':
-            self.document_reports = self.document_reports.filter(sensitivity=int(sensitivity))
-
-        self.order_queryset_by_property()
+        # Apply filters to the queryset based on options chosen by the user.
+        self.apply_filters()
 
         return self.document_reports
 
@@ -156,45 +137,8 @@ class MainPageView(LoginRequiredMixin, ListView):
                     'scanner_job_name', 'total', 'scanner_job_pk', 'scan_time'
                 ).order_by('-scan_time')
 
-        sensitivity_filter = Q(sensitivity=self.request.GET.get('sensitivities')
-                               ) if self.request.GET.get('sensitivities') not in \
-            ['all', None] else None
-        scannerjob_filter = Q(scanner_job_pk=self.request.GET.get('scannerjob')
-                              ) if self.request.GET.get('scannerjob') not in \
-            ['all', None] else None
-
-        if self.scannerjob_filters is None:
-            # Create select options
-            self.scannerjob_filters = self.user_reports.order_by(
-                'scanner_job_pk').values(
-                'scanner_job_pk').annotate(
-                total=Count('scanner_job_pk', filter=sensitivity_filter)
-                ).values(
-                    'scanner_job_name', 'total', 'scanner_job_pk'
-                )
-
-        context['scannerjobs'] = (self.scannerjob_filters,
-                                  self.request.GET.get('scannerjob', 'all'))
-
-        context['30_days'] = self.request.GET.get('30-days', 'true')
-
-        sensitivities = self.user_reports.order_by(
-            '-sensitivity').values(
-            'sensitivity').annotate(
-            total=Count('sensitivity', filter=scannerjob_filter)
-        ).values(
-            'sensitivity', 'total'
-        )
-
-        context['sensitivities'] = (((Sensitivity(s["sensitivity"]),
-                                    s["total"]) for s in sensitivities),
-                                    self.request.GET.get('sensitivities', 'all'))
-
-        context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
-        context['paginate_by_options'] = self.paginate_by_options
-
-        context['order_by'] = self.request.GET.get('order_by', 'sort_key')
-        context['order'] = self.request.GET.get('order', 'ascending')
+        # Add context for populating the filter options.
+        self.add_form_context(context)
 
         is_htmx = self.request.headers.get('HX-Request') == "true"
 
@@ -243,7 +187,7 @@ class MainPageView(LoginRequiredMixin, ListView):
 
     def order_queryset_by_property(self):
         """Checks if a sort key is allowed and orders the queryset"""
-        allowed_sorting_properties = ['sort_key', 'number_of_matches']
+        allowed_sorting_properties = ['sort_key', 'number_of_matches', 'resolution_status']
         if (sort_key := self.request.GET.get('order_by')) and (
                 order := self.request.GET.get('order')):
 
@@ -253,6 +197,92 @@ class MainPageView(LoginRequiredMixin, ListView):
             if order != 'ascending':
                 sort_key = '-'+sort_key
             self.document_reports = self.document_reports.order_by(sort_key, 'pk')
+
+    def add_form_context(self, context):
+        sensitivity_filter = Q(sensitivity=self.request.GET.get('sensitivities')
+                               ) if self.request.GET.get('sensitivities') not in \
+            ['all', None] else Q()
+        scannerjob_filter = Q(scanner_job_pk=self.request.GET.get('scannerjob')
+                              ) if self.request.GET.get('scannerjob') not in \
+            ['all', None] else Q()
+        resolution_status_filter = Q(resolution_status=self.request.GET.get(
+            'resolution_status')) if self.request.GET.get('resolution_status') not in \
+            ['all', None] else Q()
+
+        if self.scannerjob_filters is None:
+            # Create select options
+            self.scannerjob_filters = self.user_reports.order_by(
+                'scanner_job_pk').values(
+                'scanner_job_pk').annotate(
+                total=Count('scanner_job_pk', filter=sensitivity_filter & resolution_status_filter)
+                ).values(
+                    'scanner_job_name', 'total', 'scanner_job_pk'
+                )
+
+        context['scannerjobs'] = (self.scannerjob_filters,
+                                  self.request.GET.get('scannerjob', 'all'))
+
+        context['30_days'] = self.request.GET.get('30-days', 'true')
+
+        sensitivities = self.user_reports.order_by(
+                '-sensitivity').values(
+                'sensitivity').annotate(
+                total=Count('sensitivity', filter=scannerjob_filter & resolution_status_filter)
+            ).values(
+                'sensitivity', 'total'
+            )
+
+        context['sensitivities'] = (((Sensitivity(s["sensitivity"]),
+                                    s["total"]) for s in sensitivities),
+                                    self.request.GET.get('sensitivities', 'all'))
+
+        resolution_status = self.user_reports.order_by(
+                'resolution_status').values(
+                'resolution_status').annotate(
+                total=Count('resolution_status', filter=sensitivity_filter & scannerjob_filter),
+                ).values('resolution_status', 'total',
+                         )
+
+        for method in resolution_status:
+            method['resolution_label'] = DocumentReport.ResolutionChoices(
+                method['resolution_status']).label if method['resolution_status'] \
+                or method['resolution_status'] == 0 else None
+
+        context['resolution_status'] = (
+            resolution_status, self.request.GET.get(
+                'resolution_status', 'all'))
+
+        context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
+        context['paginate_by_options'] = self.paginate_by_options
+
+        context['order_by'] = self.request.GET.get('order_by', 'sort_key')
+        context['order'] = self.request.GET.get('order', 'ascending')
+
+    def apply_filters(self):
+        # Filters by datasource_last_modified.
+        # lte mean less than or equal to.
+        # A check whether something is more recent than a month
+        # is done by subtracting 30 days from now and then comparing if
+        # the saved time is "bigger" than that
+        # and vice versa/smaller for older than.
+        # By default true and we show all document_reports. If false we only show
+        # document_reports older than 30 days
+        if self.request.GET.get('30-days') == 'false':
+            older_than_30 = time_now() - timedelta(days=30)
+            self.document_reports = self.document_reports.filter(
+                datasource_last_modified__lte=older_than_30)
+
+        if (scannerjob := self.request.GET.get('scannerjob')) and scannerjob != 'all':
+            self.document_reports = self.document_reports.filter(
+                scanner_job_pk=int(scannerjob))
+
+        if (sensitivity := self.request.GET.get('sensitivities')) and sensitivity != 'all':
+            self.document_reports = self.document_reports.filter(sensitivity=int(sensitivity))
+
+        if (method := self.request.GET.get('resolution_status')) and method != 'all':
+            self.document_reports = self.document_reports.filter(resolution_status=int(method))
+
+        self.order_queryset_by_property()
 
     def get_template_names(self):
         is_htmx = self.request.headers.get('HX-Request') == "true"
@@ -267,7 +297,10 @@ class MainPageView(LoginRequiredMixin, ListView):
                     'filter_form',
                     'dropdown_options',
                     'clear_scannerjob',
-                    'clear_sensitivities']:
+                    'clear_sensitivities',
+                    'clear_resolution_status',
+                    'revert-match',
+                    'revert-matches']:
                 return 'content.html'
             elif htmx_trigger in ['show-more-matches']:
                 return 'components/matches_table.html'
@@ -295,6 +328,35 @@ class MainPageView(LoginRequiredMixin, ListView):
                 self.document_reports.filter(
                     pk=self.request.POST.get('pk')).update(
                     resolution_status=self.request.POST.get('action', 0))
+
+        # Add a header value to the response before returning to initiate reload of some elements.
+        response = HttpResponse()
+        response.headers["HX-Trigger"] = "reload-htmx"
+
+        return response
+
+
+class ArchiveView(MainPageView):
+    document_reports = DocumentReport.objects.filter(
+        raw_matches__matched=True).filter(
+        resolution_status__isnull=False).order_by("sort_key", "pk")
+
+    def post(self, request, *args, **kwargs):
+
+        is_htmx = self.request.headers.get("HX-Request")
+        if is_htmx:
+            htmx_trigger = self.request.headers.get("HX-Trigger-Name")
+            if htmx_trigger == "revert-match":
+                revert_pk = self.request.POST.get("pk")
+                DocumentReport.objects.filter(
+                    pk=revert_pk).update(
+                    resolution_status=self.request.POST.get(
+                        'action', None))
+            elif htmx_trigger == "revert-matches":
+                DocumentReport.objects.filter(pk__in=self.request.POST.getlist(
+                    'table-checkbox')).update(
+                    resolution_status=self.request.POST.get(
+                        'action', None))
 
         # Add a header value to the response before returning to initiate reload of some elements.
         response = HttpResponse()

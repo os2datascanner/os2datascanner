@@ -13,11 +13,12 @@ from .views.saml import metadata
 from .views.views import (
     MainPageView, LeaderStatisticsPageView,
     DPOStatisticsPageView, ApprovalPageView,
-    StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
+    StatsPageView, SettingsPageView, AboutPageView, LogoutPageView, ArchiveView)
 from .views.user_views import UserView
 
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),
+    url(r'^archive', ArchiveView.as_view(), name="archive"),
     url('api$',     JSONAPIView.as_view(),     name="json-api"),
     url(r'^user/', UserView.as_view(), name="user"),
     url(r'^statistics/leader/$', LeaderStatisticsPageView.as_view(), name='statistics'),

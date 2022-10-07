@@ -8,11 +8,11 @@
 {% endcomment %}
 <form></form>
 <form class="dropdown" id="dropdown_options" name="dropdown_options"
-        hx-trigger="change"
-        hx-target=".content"
-        hx-swap="innerHTML"
-        hx-get="{% url "index" %}"
-        hx-include='[id="filter_form"]'
+      hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
+      hx-trigger="change"
+      hx-target=".content"
+      hx-swap="innerHTML"
+      hx-include='[id="filter_form"]'
 >
 
   <input type="hidden" name="page" id="page" value={{ page_obj.number }}>

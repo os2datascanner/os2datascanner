@@ -86,14 +86,18 @@ label+.dropdown {
   }
 }
 
-.matches-handle {
+.matches-handle,
+.revert-handle {
 
-  &+.handle-dropdown {
-    left: -4rem;
-  }
+  &.expand {
 
-  &:hover+.handle-dropdown {
-    display: block;
+    &+.handle-dropdown {
+      left: -4rem;
+    }
+
+    &:hover+.handle-dropdown {
+      display: block;
+    }
   }
 }
 
