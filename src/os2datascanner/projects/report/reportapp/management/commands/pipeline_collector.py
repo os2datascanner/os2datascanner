@@ -522,8 +522,8 @@ def handle_event(event_type, instance, cls, cls_serializer):  # noqa: CCR001, C9
             serialized_obj.save()
         except IntegrityError:
             logger.warning(f"Integrity error on save for {cn}-type object, "
-                           f"PK: {instance_pk}. Doing nothing.")
-            pass
+                           f"PK: {instance_pk}. Doing nothing.", exc_info=True)
+            return
 
         if cn == "Alias":
             # One more thing... We have to make sure alias-match relations are in order.
