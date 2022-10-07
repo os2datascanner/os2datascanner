@@ -6,7 +6,7 @@ import os
 
 from structlog.stdlib import LoggerFactory
 
-__version__ = "3.16.1"
+__version__ = "3.16.1.5"
 __commit__ = os.getenv("COMMIT_SHA", "")
 __tag__ = os.getenv("COMMIT_TAG", __version__)
 __branch__ = os.getenv("CURRENT_BRANCH", "main")

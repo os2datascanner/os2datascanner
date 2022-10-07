@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 3.16.1.5, 7th October 2022
+
+"You Shall Not Pass"
+
+### Bugfixes
+
+- The "Scanner Status"-tab no longer breaks when accessed by a non-superuser.
+- The report_collector process will no longer crash when encountering an IntegrityError.
+
 ## Version 3.16.1, 5th October 2022
 
 "Just Read the Instructions"
