@@ -45,7 +45,7 @@ def count_new_errors(user) -> int:
     if user.is_superuser:
         usererrorlog = UserErrorLog.objects.all()
     else:
-        user_orgs = user.administrator_for.client.organizations
+        user_orgs = user.administrator_for.client.organizations.all()
         usererrorlog = UserErrorLog.objects.filter(organization__in=user_orgs)
     return usererrorlog.filter(is_new=True).count()
 
