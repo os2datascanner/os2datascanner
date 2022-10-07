@@ -164,6 +164,7 @@
     &--name {
       width: 100%;
       max-width: 15rem;
+      word-wrap: break-word;
     }
 
     &--matchcount {
@@ -172,7 +173,8 @@
     }
 
     &--org {
-      width: 15rem;
+      width: 100%;
+      word-wrap: break-word;
     }
 
     &--expression {
@@ -192,7 +194,9 @@
     }
 
     &--automatic {
-      width: 8rem;
+      width: 100%;
+      max-width: 15rem;
+      word-wrap: break-word;
     }
 
     &--source {
@@ -204,15 +208,26 @@
       width: 100%;
     }
 
+    &--scan {
+      width: 8rem;
+      word-wrap: break-word;
+    }
+
+    &--starttime {
+      width: 8rem;
+    }
+
     &--status {
-      width: 14rem;
+      width: 100%;
+      word-wrap: break-word;
     }
 
     &--actions {
       width: 14rem;
+      word-wrap: break-word;
 
       .action-wrapper {
-        display: flex;
+        display: inline;
         flex-wrap: wrap;
         margin: -.25rem 0 0 -.25rem;
 
