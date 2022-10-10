@@ -39,6 +39,8 @@ function drawCharts() {
 
   var unhandledMatchesByMonth = JSON.parse(document.getElementById('unhandled_matches_by_month').textContent);
 
+  var handledMatchesStatus = JSON.parse(document.getElementById('handled_matches_status').textContent);
+
   // Finds the total number matches in the array
   totalArrayValue = function (array, index) {
     let number = 0;
@@ -56,7 +58,7 @@ function drawCharts() {
   handledPercentageFixed = handledPercentage.toFixed(1);
 
   drawDoughnuts(sensitivities, totalHandledMatches, totalMatches, handledPercentage);
-  drawPies(sensitivities, sourceTypes);
+  drawPies(sensitivities, sourceTypes, handledMatchesStatus[0]);
   drawLines(newMatchesByMonth, unhandledMatchesByMonth);
 }
 

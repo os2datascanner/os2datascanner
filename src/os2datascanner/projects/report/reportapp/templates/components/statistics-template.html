@@ -65,12 +65,16 @@
           <h1 class="page-title__sub">{% trans "Distribution of results" %}</h1>
           <p class="chart_description" data-chartid="distribution-sensitivities">{% trans "Results distributed by sensitivities" %}</p>
           <p class="hidden chart_description" data-chartid="distribution-data-sources">{% trans "Results distributed by data sources" %}</p>
+          <p class="hidden chart_description" data-chartid="distribution-resolution-status">{% trans "Results distributed by resolution statuses" %}</p>
         </div>
         <div class="statistic_header_nav">
           <div class="dropdown">
             <select>
               <option value="distribution-sensitivities">{% trans "Sensitivity" %}</option>
               <option value="distribution-data-sources">{% trans "Data sources" %}</option>
+              {% if handled_matches_status|last > 0 %}
+              <option value="distribution-resolution-status">{% trans "Resolution statuses" %}</option>
+              {% endif %}
             </select>
           </div>
         </div>
@@ -86,6 +90,12 @@
           <canvas id="pie_chart_datasources"></canvas>
         </div>
         <div id="pie_legend_datasources"></div>
+      </div>
+      <div class="hidden pie_chart_container chart_container" data-chartid="distribution-resolution-status">
+        <div>
+          <canvas id="pie_chart_resolution_status"></canvas>
+        </div>
+        <div id="pie_legend_resolution_status"></div>
       </div>
     </div>
 
@@ -184,4 +194,5 @@
 {{ handled_matches|json_script:"handled_matches" }}
 {{ new_matches_by_month|json_script:"new_matches_by_month" }}
 {{ unhandled_matches_by_month|json_script:"unhandled_matches_by_month" }}
+{{ handled_matches_status|json_script:"handled_matches_status"}}
 
