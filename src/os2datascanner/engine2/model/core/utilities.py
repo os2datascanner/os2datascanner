@@ -154,9 +154,14 @@ class SourceManager:
 
     @property
     def configuration(self) -> dict:
-        """Getter for configuration."""
+        """Returns the configuration dictionary, if there is one. Configuration
+        dictionaries contain parameters that Sources can use to adjust their
+        behaviour."""
         return self._configuration
 
     @configuration.setter
     def configuration(self, value: dict):
+        """Sets the configuration dictionary. (SourceManager instantiators
+        should make sure that an appropriate configuration dictionary is in
+        place before calling methods on a Source.)"""
         self._configuration = value
