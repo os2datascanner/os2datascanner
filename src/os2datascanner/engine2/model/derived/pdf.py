@@ -11,7 +11,7 @@ from ..file import FilesystemResource
 from .derived import DerivedSource
 from .image import ImageHandle
 from .utilities.extraction import (should_skip_images,
-                                   ImageFilter)
+                                   PDFImageFilter)
 
 
 PAGE_TYPE = "application/x.os2datascanner.pdf-page"
@@ -39,18 +39,17 @@ class PDFSource(DerivedSource):
             # Explicitly download the file here for the sake of PDFPageSource,
             # which needs a local filesystem path to pass to pdftohtml
 
+            yield p
+
             if not should_skip_images(sm.configuration):
-                outdir = ImageFilter(sm).apply(p)
+                outdir = PDFImageFilter(sm).apply(p)
                 for image in listdir(outdir):
                     if image.endswith(".png"):
                         img = outdir + "/" + image
                         yield img
 
-            yield p
-
     def handles(self, sm):
         cookie = sm.open(self)
-        print(f"cookie: {cookie} has type: {type(cookie)}")
 
         if cookie.endswith(".png"):
             yield ImageHandle(self, cookie)

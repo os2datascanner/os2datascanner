@@ -32,9 +32,9 @@ def _calculate_md5(filename):
     return md5sum.hexdigest()
 
 
-class ImageFilter:
+class PDFImageFilter:
     '''Filter for removing duplicates and images that are too
-    small to contain any text.'''
+    small to contain any text in PDF files.'''
     dimensions: (int, int) = (8, 8)
     checksum = _calculate_md5
 
