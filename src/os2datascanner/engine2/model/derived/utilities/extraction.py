@@ -1,6 +1,7 @@
 """Utilities for extraction based on configuration dictionaries."""
 
 import os
+import shutil
 from os import listdir, remove
 from pathlib import Path
 from hashlib import md5
@@ -53,13 +54,11 @@ class ImageFilter:
         if value is not None:
             self._source_manager = value
 
-    def extract_and_filter(self, path) -> str:
+    def apply(self, path) -> str:
         """Extracts all images for a pdf
         and puts it in a temporary output directory."""
         parent = str(Path(path).parent)
-        print(f"parent: {parent}")
-        outdir = parent + '/image'
-        print(f"outdir: {outdir}")
+        outdir = parent + "/image"
 
         if not os.path.exists(outdir):
             os.makedirs(outdir)
@@ -70,19 +69,27 @@ class ImageFilter:
             check=True, isolate_tmp=True)
 
         self.__filter(outdir)
+        self.__move_images(outdir, parent)
 
-        return outdir
+        return parent
+
+    def __move_images(self, outdir, parent):
+        for image in listdir(outdir):
+            shutil.move(outdir + "/" + image, parent + "/" + image)
+
+        shutil.rmtree(outdir)
 
     def __filter(self, path) -> str:
         """Removes duplicate images if their md5sum matches."""
         hash_stack = []
 
         for image in listdir(path):
-            checksum = _calculate_md5(image)
+            if image.endswith(".png"):
+                checksum = _calculate_md5(path + "/" + image)
 
-            if checksum not in hash_stack:
-                hash_stack.append(checksum)
-            else:
-                remove(image)
+                if checksum not in hash_stack:
+                    hash_stack.append(checksum)
+                else:
+                    remove(image)
 
         print(f"hash_stack: {hash_stack}")

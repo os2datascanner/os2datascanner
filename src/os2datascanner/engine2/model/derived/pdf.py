@@ -9,7 +9,9 @@ from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource
 from ..file import FilesystemResource
 from .derived import DerivedSource
-from .utilities.extraction import should_skip_images, ImageFilter
+from .image import ImageHandle
+from .utilities.extraction import (should_skip_images,
+                                   ImageFilter)
 
 
 PAGE_TYPE = "application/x.os2datascanner.pdf-page"
@@ -38,15 +40,24 @@ class PDFSource(DerivedSource):
             # which needs a local filesystem path to pass to pdftohtml
 
             if not should_skip_images(sm.configuration):
-                yield ImageFilter(sm).extract_and_filter(p)
-                print("Image filtering complete.")
+                outdir = ImageFilter(sm).apply(p)
+                for image in listdir(outdir):
+                    if image.endswith(".png"):
+                        img = outdir + "/" + image
+                        yield img
 
             yield p
 
     def handles(self, sm):
-        reader = _open_pdf_wrapped(sm.open(self))
-        for i in range(1, reader.getNumPages() + 1 if reader else 0):
-            yield PDFPageHandle(self, str(i))
+        cookie = sm.open(self)
+        print(f"cookie: {cookie} has type: {type(cookie)}")
+
+        if cookie.endswith(".png"):
+            yield ImageHandle(self, cookie)
+        else:
+            reader = _open_pdf_wrapped(sm.open(self))
+            for i in range(1, reader.getNumPages() + 1 if reader else 0):
+                yield PDFPageHandle(self, str(i))
 
 
 class PDFPageResource(Resource):
