@@ -1,8 +1,4 @@
-import os
-
-from os import listdir, remove
-from pathlib import Path
-from hashlib import md5
+from os import listdir
 import PyPDF2
 import string
 import datetime
@@ -13,7 +9,7 @@ from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource
 from ..file import FilesystemResource
 from .derived import DerivedSource
-from .utilities.extraction import should_skip_images
+from .utilities.extraction import should_skip_images, ImageFilter
 
 
 PAGE_TYPE = "application/x.os2datascanner.pdf-page"
@@ -32,49 +28,6 @@ def _open_pdf_wrapped(obj):
     return reader
 
 
-def calculate_md5(filename):
-    """Calculates the md5 sum of a file 4kb at a time."""
-    md5sum = md5()
-
-    with open(filename, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            md5sum.update(chunk)
-
-    return md5sum.hexdigest()
-
-
-def _filter_duplicate_images(directory_str):
-    """Removes duplicate images if their md5sum matches."""
-    hash_stack = []
-
-    for image in listdir(directory_str + "/image"):
-        checksum = calculate_md5(image)
-
-        if checksum not in hash_stack:
-            hash_stack.append(checksum)
-        else:
-            remove(image)
-
-
-def _extract_and_filter_images(path):
-    """Extracts all images for a pdf
-    and puts it in a temporary output directory."""
-    parent = Path(path).parent.absolute
-    outdir = parent + '/image'
-
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
-
-    run_custom(
-        ["pdfimages", "-q", "-png", "-j", path, f"{outdir}"],
-        timeout=engine2_settings.subprocess["timeout"],
-        check=True, isolate_tmp=True)
-
-    _filter_duplicate_images(outdir)
-
-    return outdir
-
-
 @Source.mime_handler("application/pdf")
 class PDFSource(DerivedSource):
     type_label = "pdf"
@@ -83,9 +36,11 @@ class PDFSource(DerivedSource):
         with self.handle.follow(sm).make_path() as p:
             # Explicitly download the file here for the sake of PDFPageSource,
             # which needs a local filesystem path to pass to pdftohtml
-            print(f"Path for PDF: {p} has type: {type(p)}")
-            outdir = _extract_and_filter_images(p)
-            yield outdir
+
+            if not should_skip_images(sm.configuration):
+                yield ImageFilter(sm).extract_and_filter(p)
+                print("Image filtering complete.")
+
             yield p
 
     def handles(self, sm):
@@ -170,15 +125,6 @@ class PDFPageSource(DerivedSource):
                             "pdftotext", "-q", "-nopgbrk", "-eol", "unix",
                             "-f", page, "-l", page, path,
                             "{0}/page.txt".format(outputdir)
-                    ],
-                    timeout=engine2_settings.subprocess["timeout"],
-                    check=True, isolate_tmp=True)
-
-            if not should_skip_images(sm.configuration):
-                run_custom(
-                    [
-                            "pdfimages", "-q", "-png", "-j", "-f", page, "-l", page,
-                            path, "{0}/image".format(outputdir)
                     ],
                     timeout=engine2_settings.subprocess["timeout"],
                     check=True, isolate_tmp=True)
