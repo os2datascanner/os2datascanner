@@ -33,7 +33,8 @@ class SourceManager:
 
     SourceManagers track arbitrary state objects and so are not usefully
     serialisable or shareable."""
-    def __init__(self, *, width=3):
+
+    def __init__(self, *, width=3, configuration: dict = None):
         """Initialises this SourceManager."""
         self._width = width
 
@@ -43,6 +44,9 @@ class SourceManager:
         # A synthetic _SourceDescriptor used as the parent for top-level
         # objects
         self._top = _SourceDescriptor(source=None)
+
+        # Configuration obtained from a ScanSpec
+        self.configuration = configuration
 
     def _make_descriptor(self, source):
         return self._opened.setdefault(
@@ -147,3 +151,17 @@ class SourceManager:
         this SourceManager."""
         for child in self._top.children.copy():
             self.close(child.source)
+
+    @property
+    def configuration(self) -> dict:
+        """Returns the configuration dictionary, if there is one. Configuration
+        dictionaries contain parameters that Sources can use to adjust their
+        behaviour."""
+        return self._configuration
+
+    @configuration.setter
+    def configuration(self, value: dict):
+        """Sets the configuration dictionary. (SourceManager instantiators
+        should make sure that an appropriate configuration dictionary is in
+        place before calling methods on a Source.)"""
+        self._configuration = value
