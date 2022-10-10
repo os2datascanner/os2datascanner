@@ -5,6 +5,7 @@ import shutil
 from os import listdir, remove
 from pathlib import Path
 from hashlib import md5
+from PIL import Image
 
 from ...core.utilities import SourceManager
 from .....utils.system_utilities import run_custom
@@ -79,17 +80,20 @@ class PDFImageFilter:
 
         shutil.rmtree(outdir)
 
+    def __image_too_small(self, image):
+        return Image.open(image).size <= self.dimensions
+
     def __filter(self, path) -> str:
-        """Removes duplicate images if their md5sum matches."""
+        """Removes duplicate images if their md5sum matches.
+        Also removes images that are too small to contain readable text."""
         hash_stack = []
 
-        for image in listdir(path):
-            if image.endswith(".png"):
-                checksum = _calculate_md5(path + "/" + image)
+        for item in listdir(path):
+            if item.endswith(".png"):
+                image = path + "/" + item
+                checksum = _calculate_md5(image)
 
-                if checksum not in hash_stack:
-                    hash_stack.append(checksum)
-                else:
+                if checksum in hash_stack or self.__image_too_small(image):
                     remove(image)
-
-        print(f"hash_stack: {hash_stack}")
+                else:
+                    hash_stack.append(checksum)
