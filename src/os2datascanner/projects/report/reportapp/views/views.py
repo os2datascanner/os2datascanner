@@ -466,7 +466,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             [Sensitivity.CRITICAL.presentation, 0],
             [Sensitivity.PROBLEM.presentation, 0],
             [Sensitivity.WARNING.presentation, 0],
-            [Sensitivity.NOTICE.presentation, 0],
+            [Sensitivity.NOTICE.presentation, 0]
         ]
         for match in matches:
             if (match['sensitivity']) == Sensitivity.CRITICAL.value:

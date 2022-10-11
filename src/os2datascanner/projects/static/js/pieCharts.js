@@ -15,15 +15,15 @@ function drawPies(sensitivities, sourceTypes, handledMatchesStatus) {
   var sensitivitiesPieChart = new Chart(sensitivitiesPieChartCtx, {
     type: 'pie',
     data: {
-      labels: [sensitivities[0][0], sensitivities[1][0], sensitivities[2][0], sensitivities[3][0]],
+      labels: getDatasetLabels(sensitivities, 0, 1),
       datasets: [{
-        data: [sensitivities[0][1], sensitivities[1][1], sensitivities[2][1], sensitivities[3][1]],
-        backgroundColor: ['#e24e4e', '#ffab00', '#fed149', '#21759c'],
-        borderColor: ['#e24e4e', '#ffab00', '#fed149', '#21759c'],
+        data: getDatasetData(sensitivities, 1),
+        backgroundColor: colorData(sensitivities, 1, ['#e24e4e', '#ffab00', '#fed149', '#21759c']),
+        borderWidth: 0,
         borderAlign: 'center',
         //Put hoverBorderWidth on - this gives the canvas a small margin, so it doesn't 'cut off' when our 'click-highlight' function
         // (sensitivityLegendClickCallback) is called. (the hover is not used, as the option: events is set to 0 ( events: [] ))
-        hoverBorderWidth: [20, 20, 20, 20]
+        hoverBorderWidth: 20
       }]
 
     },
@@ -74,15 +74,15 @@ function drawPies(sensitivities, sourceTypes, handledMatchesStatus) {
   var dataSourcesPieChart = new Chart(dataSourcesPieChartCtx, {
     type: 'pie',
     data: {
-      labels: [sourceTypes[0][0], sourceTypes[1][0], sourceTypes[2][0], sourceTypes[3][0]],
+      labels: getDatasetLabels(sourceTypes, 0, 1),
       datasets: [{
-        data: [sourceTypes[0][1], sourceTypes[1][1], sourceTypes[2][1], sourceTypes[3][1]],
-        backgroundColor: ['#fed149', '#5ca4cd', '#21759c', '#00496e'],
-        borderColor: ['#fed149', '#5ca4cd', '#21759c', '#00496e'],
+        data: getDatasetData(sourceTypes, 1),
+        backgroundColor: colorData(sourceTypes, 1, ['#fed149', '#5ca4cd', '#21759c', '#00496e']),
+        borderWidth: 0,
         borderAlign: 'center',
         //Put hoverBorderWidth on - this gives the canvas a small margin, so it doesn't 'cut off' when our 'click-highlight' function
         // (sensitivityLegendClickCallback) is called. (the hover is not used, as the option: events is set to 0 ( events: [] ))
-        hoverBorderWidth: [20, 20, 20, 20]
+        hoverBorderWidth: 20
       }]
     },
     options: {
@@ -132,18 +132,21 @@ function drawPies(sensitivities, sourceTypes, handledMatchesStatus) {
   // Creating resolution_status pie chart
   var resolutionStatusPieChartCtx = document.querySelector("#pie_chart_resolution_status").getContext('2d');
 
+  // sort the handledMatchesStatus the way we like it!
+  handledMatchesStatus = [3, 2, 1, 4, 0].map(i => handledMatchesStatus[i]);
+
   var resolutionStatusPieChart = new Chart(resolutionStatusPieChartCtx, {
     type: 'pie',
     data: {
-      labels: [handledMatchesStatus[3][1], handledMatchesStatus[2][1], handledMatchesStatus[1][1], handledMatchesStatus[4][1], handledMatchesStatus[0][1]],
+      labels: getDatasetLabels(handledMatchesStatus, 1, 2),
       datasets: [{
-        data: [handledMatchesStatus[3][2], handledMatchesStatus[2][2], handledMatchesStatus[1][2], handledMatchesStatus[4][2], handledMatchesStatus[0][2]],
-        backgroundColor: ['#80ab82', '#a2e774', '#35bd57', '#1b512d', '#7e4672'],
-        borderColor: ['#80ab82', '#a2e774', '#35bd57', '#1b512d', '#7e4672'],
+        data: getDatasetData(handledMatchesStatus, 2),
+        backgroundColor: colorData(handledMatchesStatus, 2, ['#80ab82', '#a2e774', '#35bd57', '#1b512d', '#7e4672']),
+        borderWidth: 0,
         borderAlign: 'center',
         //Put hoverBorderWidth on - this gives the canvas a small margin, so it doesn't 'cut off' when our 'click-highlight' function
         // (sensitivityLegendClickCallback) is called. (the hover is not used, as the option: events is set to 0 ( events: [] ))
-        hoverBorderWidth: [20, 20, 20, 20, 20]
+        hoverBorderWidth: 20
       }]
     },
     options: {
@@ -232,4 +235,37 @@ function drawPies(sensitivities, sourceTypes, handledMatchesStatus) {
     text.push('</ul>');
     return text.join("");
   }
+
+  function colorData(dataset, dataIndex, colorList) {
+    return findRelevantData(dataset, dataIndex).map(i => colorList[i]);
+  }
+
+  function getDatasetLabels(dataset, labelIndex, dataIndex) {
+    let relevantIndices = findRelevantData(dataset, dataIndex);
+    let relevantLabels = [];
+    for (let index of relevantIndices) {
+      relevantLabels.push(dataset[index][labelIndex]);
+    }
+    return relevantLabels;
+  }
+
+  function getDatasetData(dataset, dataIndex) {
+    let relevantIndices = findRelevantData(dataset, dataIndex);
+    let relevantData = [];
+    for (let index of relevantIndices) {
+      relevantData.push(dataset[index][dataIndex]);
+    }
+    return relevantData;
+  }
+
+  function findRelevantData(dataset, dataIndex) {
+    let relevantIndices = [];
+    for (let i = 0; i < dataset.length; i++) {
+      if (dataset[i][dataIndex] > 0) {
+        relevantIndices.push(i);
+      }
+    }
+    return relevantIndices;
+  }
+
 }
