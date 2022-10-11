@@ -522,10 +522,19 @@
   text-align: right;
 }
 
+.dont-break-out {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  -ms-word-break: break-all;
+  word-break: break-all;
+}
+
+
 .matches-list {
   &__column {
     &--match {
-      width: 12rem;
+      width: auto;
     }
 
     &--context {
@@ -533,7 +542,7 @@
     }
 
     &--probability {
-      width: 8rem;
+      width: 10%;
     }
   }
 }
