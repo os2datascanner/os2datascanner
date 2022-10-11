@@ -17,6 +17,7 @@
                hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
                hx-target=".content" hx-swap="innerHTML" hx-trigger="click" 
                hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ page_obj.previous_page_number }}"}'
+               hx-indicator="#report-page-indicator"
             >
               <i id="chevron_left" class="material-icons">chevron_left</i>
               {% trans "Previous" %}
@@ -36,6 +37,7 @@
                    hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
                    hx-target=".content" hx-swap="innerHTML" hx-trigger="click" 
                    hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "1"}'
+                   hx-indicator="#report-page-indicator"
                 >1</a>
                 {% if n != 1 %}
                   <span class="page--dot">...</span>
@@ -49,6 +51,7 @@
                      hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
                      hx-target=".content" hx-swap="innerHTML" hx-trigger="click" 
                      hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ n }}"}'
+                     hx-indicator="#report-page-indicator"
                   >{{ n }}</a>
               {% elif page_obj.number|add:'2' == n %}
                 {# Last page #}
@@ -59,6 +62,7 @@
                      hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
                      hx-target=".content" hx-swap="innerHTML" hx-trigger="click" 
                      hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ paginator.num_pages }}"}'
+                     hx-indicator="#report-page-indicator"
                   >{{ paginator.num_pages }}</a>
               {% endif %}
             {% endfor %}
@@ -69,6 +73,7 @@
              hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
              hx-target=".content" hx-swap="innerHTML" hx-trigger="click" 
              hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ page_obj.next_page_number }}"}'
+             hx-indicator="#report-page-indicator"
           >
             {% trans "Next" %}
             <i id="chevron_right" class="material-icons">chevron_right</i>
@@ -89,6 +94,7 @@
                   hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
                   hx-trigger="click" hx-target=".content" hx-swap="innerHTML"
                   hx-include='[id="page_field"], [id="paginate_by"], [id="filter_form"]'
+                  hx-indicator="#report-page-indicator"
           >
             {% trans "Go" %}
           </button>

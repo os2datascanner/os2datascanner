@@ -7,6 +7,7 @@
       hx-swap="innerHTML" 
       hx-trigger="change" 
       hx-include="[id='dropdown_options']"
+      hx-indicator="#report-page-indicator"
 >
   <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
   <input type="hidden" name="order" id="order" value="{{ order }}">
@@ -20,6 +21,7 @@
                   hx-target=".content"
                   hx-include="[id='filter_form'], [id='dropdown_options']"
                   hx-params="not scannerjob"
+                  hx-indicator="#report-page-indicator"
           >
             {% trans "Clear" %}
           </button>
@@ -57,6 +59,7 @@
           hx-target=".content"
           hx-include="[id='filter_form'], [id='dropdown_options']"
           hx-params="not sensitivities"
+          hx-indicator="#report-page-indicator"
   >
             {% trans "Clear" %}
           </button>
@@ -96,6 +99,7 @@
           hx-target=".content"
           hx-include="[id='filter_form'], [id='dropdown_options']"
           hx-params="not resolution_status"
+          hx-indicator="#report-page-indicator"
   >
             {% trans "Clear" %}
           </button>

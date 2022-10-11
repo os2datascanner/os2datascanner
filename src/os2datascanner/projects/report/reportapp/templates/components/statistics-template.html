@@ -8,8 +8,17 @@
   <h1 class="page-title">{% trans "DPO statistics" %}</h1>
   {% endif %}
 
+  <svg class="page-indicator" id="report-page-indicator" viewbox="0 0 100 100">
+    <circle id="circle" cx="50" cy="50" r="45"></circle>
+  </svg>
+
   <!-- Scannerjob chart data selection -->
-  <form name="stat_form" hx-get="{% url "statistics" %}" hx-target=".content" hx-swap="outerHTML" hx-trigger="change">
+  <form name="stat_form" 
+        hx-get="{% url "statistics" %}" 
+        hx-target=".content" 
+        hx-swap="outerHTML" 
+        hx-trigger="change"
+        hx-indicator="#report-page-indicator">
     <div class="dropdown stats_dropdown">
       <select name="scannerjob" id="scannerjobs" data-compareto="all">
         <option value="all"
