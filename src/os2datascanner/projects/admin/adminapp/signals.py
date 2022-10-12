@@ -12,6 +12,22 @@ from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 logger = logging.getLogger(__name__)
 
 
+ppt = None
+
+
+def get_pika_thread() -> PikaPipelineThread:
+    """Returns a persistent PikaPipelineThread instance to be used when sending
+    event broadcasts, creating (or recreating) one if necessary."""
+    global ppt
+    if (not ppt  # first call
+            or not ppt.ident  # thread never started(?)
+            or not ppt.is_alive()):  # thread finished
+        ppt = PikaPipelineThread(write=[settings.AMQP_EVENTS_TARGET])
+        ppt.daemon = True
+        ppt.start()
+    return ppt
+
+
 class ModelChangeEvent():
     publisher = "admin"
 
@@ -53,13 +69,10 @@ def publish_events(events):
             return
 
         queue = settings.AMQP_EVENTS_TARGET
-        with PikaPipelineThread(write=[queue]) as ppt:
-            for event in events:
-                json_event = event.to_json_object()
-                logger.debug("Published to {0}: {1}".format(queue, json_event))
-                ppt.enqueue_message(queue, json_event)
-            ppt.enqueue_stop()
-            ppt.run()
+        for event in events:
+            json_event = event.to_json_object()
+            logger.debug("Published to {0}: {1}".format(queue, json_event))
+            get_pika_thread().enqueue_message(queue, json_event)
     except Exception as e:
         # log the error
         logger.error("Could not publish event. Error: " + format(e))
