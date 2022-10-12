@@ -377,8 +377,9 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
             for _, props in instances:
                 properties |= set(props)
 
-            if hasattr(manager, "factory"):
-                manager.model.factory.update((obj for obj, _ in instances), properties)
+            if hasattr(manager.model, "factory"):
+                manager.model.factory.update(
+                        (obj for obj, _ in instances), properties)
             else:
                 logger.warning(f"{manager} has no 'factory' implementation; "
                                "change notifications will not be sent")
