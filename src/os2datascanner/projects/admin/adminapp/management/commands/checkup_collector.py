@@ -221,4 +221,4 @@ class Command(BaseCommand):
         from .collector_utils.collector_runner import CollectorRunner
         CollectorRunner(
                 read=["os2ds_checkups", "os2ds_problems"],
-                prefetch_count=8).run_consumer()
+                prefetch_count=512).run_consumer()

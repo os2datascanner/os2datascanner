@@ -117,4 +117,4 @@ class Command(BaseCommand):
         from .collector_utils.collector_runner import CollectorRunner
         CollectorRunner(
                 read=["os2ds_status"],
-                prefetch_count=8).run_consumer()
+                prefetch_count=1024).run_consumer()
