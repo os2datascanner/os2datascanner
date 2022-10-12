@@ -69,27 +69,6 @@ document.addEventListener("click", function (e) {
 
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-  // if user prefers to have all rows expanded, do that.
-  var prefersExpanded = window.localStorage.getItem("os2ds-prefers-expanded-results");
-  if (prefersExpanded && prefersExpanded === "expanded") {
-    document.querySelector(".matches-expand-all").click();
-  }
-
-  // Uncheck checkboxes on load.
-  $("input[name='table-checkbox']").prop("checked", false);
-  $("#select-all").prop("checked", false);
-  $(".table-checkbox__action").prop("disabled", true);
-
-  // if user prefers to see probability, do that.
-  var prefersProbability = window.localStorage.getItem("os2ds-prefers-probability");
-  if (prefersProbability && prefersProbability === "show") {
-    document.querySelector(".probability-toggle").click();
-  }
-
-  handleTableCorners();
-});
-
 Array.prototype.forEach.call(document.querySelectorAll(".tooltip"), function (element) {
   element.addEventListener("mouseenter", showTooltip);
   element.addEventListener("mouseleave", hideTooltip);
@@ -208,12 +187,32 @@ function hideTooltip(event) {
   removeClass(targ, "cursor-help");
 }
 
+function prepareTable() {
+  // if user prefers to have all rows expanded, do that.
+  const prefersExpanded = window.localStorage.getItem("os2ds-prefers-expanded-results");
+  if (prefersExpanded && prefersExpanded === "expanded") {
+    document.querySelector(".matches-expand-all").click();
+  }
+
+  // Uncheck checkboxes on load.
+  $("input[name='table-checkbox']").prop("checked", false);
+  $("#select-all").prop("checked", false);
+  $(".table-checkbox__action").prop("disabled", true);
+
+  // if user prefers to see probability, do that.
+  const prefersProbability = window.localStorage.getItem("os2ds-prefers-probability");
+  if (prefersProbability && prefersProbability === "show") {
+    document.querySelector(".probability-toggle").click();
+  }
+
+  handleTableCorners();
+}
+
 htmx.onLoad(function (content) {
 
   if (hasClass(content, 'page') || hasClass(content, 'datatable-wrapper')) {
 
-    // Listen for the table header becoming sticky, then change corners to cover table.
-    handleTableCorners();
+    prepareTable();
 
     // Listen for click on toggle checkbox
     $("#select-all").change(function () {
@@ -230,4 +229,8 @@ htmx.onLoad(function (content) {
     }
   }
 
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  prepareTable();
 });
