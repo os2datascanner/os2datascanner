@@ -229,6 +229,8 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
             accounts[account_id] = account
         return account
 
+    logger.info("Building remote hierarchy")
+
     # Make sure that we have an OrganizationalUnit hierarchy that reflects the
     # remote one
     iids_to_preserve = set()
@@ -248,10 +250,14 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
                 " are correct?")
         return 0, 0, 0
 
+    logger.info("Constructing raw diff")
+
     diff = list(local_hierarchy.diff(remote_hierarchy))
     progress_callback("diff_computed", len(diff))
 
     changed_accounts = {}
+
+    logger.info("Building database operations")
 
     # See what's changed
     for path, l, r in diff:
@@ -336,6 +342,8 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
     # remote hierarchy
     to_delete = [t for t in to_delete if t.imported_id not in iids_to_preserve]
 
+    logger.info("Applying database operations")
+
     with transaction.atomic():
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("Summarising LDAP transaction:")
@@ -369,8 +377,9 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
             for _, props in instances:
                 properties |= set(props)
 
-            if hasattr(manager, "factory"):
-                manager.model.factory.update((obj for obj, _ in instances), properties)
+            if hasattr(manager.model, "factory"):
+                manager.model.factory.update(
+                        (obj for obj, _ in instances), properties)
             else:
                 logger.warning(f"{manager} has no 'factory' implementation; "
                                "change notifications will not be sent")
@@ -392,5 +401,7 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
 
             if hasattr(manager, "rebuild"):
                 manager.rebuild()
+
+    logger.info("Database operations complete")
 
     return len(to_add), len(to_update), len(to_delete)
