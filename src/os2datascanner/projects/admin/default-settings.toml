@@ -44,7 +44,7 @@ KEYCLOAK_ADMIN_SECRET = ""
 # [msgraph]
 # The GUID of the registered Azure application corresponding to this
 # OS2datascanner installation, used when requesting Microsoft Graph access:
-MSGRAPH_APP_ID = "da5ae7df-dc68-4c02-87ea-8bdbb00857d8"
+MSGRAPH_APP_ID = ""
 # The client secret used to demonstrate to Microsoft Graph that this
 # OS2datascanner installation corresponds to a registered Azure application
 # (client private keys are not yet supported):

@@ -2,7 +2,7 @@
 
 from django.db import migrations
 
-from ..management.commands.pipeline_collector\
+from ..management.commands.result_collector\
     import sort_matches_by_probability
 
 

@@ -12,7 +12,7 @@ from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 
 from ..reportapp.models.documentreport import DocumentReport
-from ..reportapp.management.commands import pipeline_collector
+from ..reportapp.management.commands import result_collector
 
 from .generate_test_data import record_match, record_problem
 
@@ -272,6 +272,6 @@ class PipelineCollectorTests(TestCase):
                     matches=[{"match": [2496, 3508]}])
             ])
 
-        self.assertEqual(pipeline_collector.sort_matches_by_probability(
+        self.assertEqual(result_collector.sort_matches_by_probability(
             positive_match_with_dimension_rule_probability_and_sensitivity.to_json_object()  # noqa E501
         )["matches"], match_to_match.to_json_object()["matches"])
