@@ -1,0 +1,43 @@
+{
+  "rabbit_version": "3.11.1",
+  "rabbitmq_version": "3.11.1",
+  "product_name": "RabbitMQ",
+  "product_version": "3.11.1",
+  "users": [
+    {
+      "name": "os2ds",
+      "password_hash": "yK/kc9YVc1f2bMnW/PViux2z+l7sZJ1757slgkX1CEThhkdh",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "os2ds",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "policies": [
+    {
+      "vhost": "/",
+      "name": "lazy_conversions",
+      "pattern": "os2ds_conversions",
+      "apply-to": "queues",
+      "definition": {
+        "queue-mode": "lazy"
+      },
+      "priority": 0
+    }
+  ]
+}
