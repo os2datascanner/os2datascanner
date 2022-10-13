@@ -38,10 +38,15 @@ scrape_configs:
     static_configs:
       - targets: ['report_collector:9091']
 
-  - job_name: 'admin_collector'
+  - job_name: 'admin_checkup_collector'
     scrape_interval: 5s
     static_configs:
-      - targets: ['admin_collector:9091']
+      - targets: ['admin_checkup_collector:9091']
+
+  - job_name: 'admin_status_collector'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['admin_status_collector:9091']
 
   - job_name: 'rabbitMQ'
     scrape_interval: 5s

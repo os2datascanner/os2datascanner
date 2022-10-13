@@ -15,16 +15,20 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 
-from django.core.management.base import BaseCommand
 import logging
 import structlog
+
+from django.db import transaction
+from django.db.utils import DataError
+from django.core.management.base import BaseCommand
+
+from prometheus_client import Summary, start_http_server
 
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.run_stage import _loglevels
-from prometheus_client import Summary
-
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
+
 from ...models.scannerjobs.scanner import (
     Scanner, ScanStatus, ScheduledCheckup)
 from ...models.usererrorlog import UserErrorLog
@@ -199,6 +203,34 @@ def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # n
                 handle=handle.presentation)
 
 
+class CheckupCollectorRunner(PikaPipelineThread):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        start_http_server(9091)
+
+    def handle_message(self, routing_key, body):
+        with SUMMARY.time():
+            logger.debug(
+                "Checkup collector received a raw message",
+                routing_key=routing_key,
+                body=body
+            )
+            try:
+                with transaction.atomic():
+                    if routing_key == "os2ds_checkups":
+                        yield from checkup_message_received_raw(body)
+                    elif routing_key == "os2ds_problems":
+                        yield from problem_message_recieved_raw(body)
+            except DataError as de:
+                # DataError occurs when something went wrong trying to select
+                # or create/update data in the database. Often regarding
+                # ScheduledCheckups it is related to the json data. For now, we
+                # only log the error message.
+                logger.error(
+                    "Could not get or create object, due to DataError",
+                    error=de)
+
+
 class Command(BaseCommand):
     """Command for starting a pipeline collector process."""
     help = __doc__
@@ -217,8 +249,6 @@ class Command(BaseCommand):
         # Set level for root logger
         logging.getLogger("os2datascanner").setLevel(_loglevels[log])
 
-        # Import the CollectorRunner now we need it. Avoids circular imports.
-        from .collector_utils.collector_runner import CollectorRunner
-        CollectorRunner(
+        CheckupCollectorRunner(
                 read=["os2ds_checkups", "os2ds_problems"],
                 prefetch_count=512).run_consumer()

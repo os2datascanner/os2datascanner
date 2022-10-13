@@ -3,14 +3,17 @@ import logging
 import structlog
 
 from django.conf import settings
+from django.db import transaction
 from django.utils import timezone
 from django.db.models import F
+from django.db.utils import DataError
 from django.core.management.base import BaseCommand
 
-from prometheus_client import Summary
+from prometheus_client import Summary, start_http_server
 
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.run_stage import _loglevels
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 
 
 from ...models.scannerjobs.scanner import (
@@ -95,6 +98,32 @@ def status_message_received_raw(body):
     yield from []
 
 
+class StatusCollectorRunner(PikaPipelineThread):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        start_http_server(9091)
+
+    def handle_message(self, routing_key, body):
+        with SUMMARY.time():
+            logger.debug(
+                "Status collector received a raw message",
+                routing_key=routing_key,
+                body=body
+            )
+            try:
+                with transaction.atomic():
+                    if routing_key == "os2ds_status":
+                        yield from status_message_received_raw(body)
+
+            except DataError as de:
+                # DataError occurs when something went wrong trying to select
+                # or create/update data in the database. For now, we
+                # only log the error message.
+                logger.error(
+                    "Could not get or create object, due to DataError",
+                    error=de)
+
+
 class Command(BaseCommand):
     """Command for starting a ScanStatus collector process."""
     help = __doc__
@@ -113,8 +142,6 @@ class Command(BaseCommand):
         # Set level for root logger
         logging.getLogger("os2datascanner").setLevel(_loglevels[log])
 
-        # Import the CollectorRunner now we need it. Avoids circular imports.
-        from .collector_utils.collector_runner import CollectorRunner
-        CollectorRunner(
+        StatusCollectorRunner(
                 read=["os2ds_status"],
                 prefetch_count=1024).run_consumer()
