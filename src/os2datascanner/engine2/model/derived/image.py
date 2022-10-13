@@ -1,6 +1,9 @@
+from tempfile import TemporaryDirectory
 from ..core import Source, Handle
 from .derived import DerivedSource
 from ..file import FilesystemResource
+from ...conversions.text.ocr import tesseract
+
 
 IMAGE_TYPE = "image/png"
 
@@ -10,15 +13,18 @@ class ImageSource(DerivedSource):
     type_label = "image"
 
     def _generate_state(self, sm):
-        print("Got an image")
-        yield ""
+        with self.handle.follow(sm).make_path() as p:
+            with TemporaryDirectory() as outdir:
+                dest = outdir + p.replace('.png', '.txt').split('/').pop()
+                print(f"dest: {dest}")
+                tesseract(p, dest)
+                yield dest
 
     def handles(self, sm):
-        print("Generating handles from image source.")
-        return ""
+        yield ImageTextHandle(self, sm.open(self))
 
 
-class ImageResource(FilesystemResource):
+class ImageTextResource(FilesystemResource):
     def _generate_metadata(self):
         yield from ()
 
@@ -27,9 +33,9 @@ class ImageResource(FilesystemResource):
 
 
 @Handle.stock_json_handler("image")
-class ImageHandle(Handle):
+class ImageTextHandle(Handle):
     type_label = "image"
-    resource_type = ImageResource
+    resource_type = ImageTextResource
 
     @property
     def presentation_name(self):
@@ -40,7 +46,7 @@ class ImageHandle(Handle):
         return str(self.source.handle)
 
     def censor(self):
-        return ImageHandle(self.source.censor(), self.relative_path)
+        return ImageTextHandle(self.source.censor(), self.relative_path)
 
     def __str__(self):
         return self.presentation_name

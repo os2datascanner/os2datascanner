@@ -9,7 +9,7 @@ from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource
 from ..file import FilesystemResource
 from .derived import DerivedSource
-from .image import ImageHandle
+from .image import ImageTextHandle
 from .utilities.extraction import (should_skip_images,
                                    PDFImageFilter)
 
@@ -42,21 +42,24 @@ class PDFSource(DerivedSource):
             yield p
 
             if not should_skip_images(sm.configuration):
+                print("Applying image filter.")
                 outdir = PDFImageFilter(sm).apply(p)
                 for image in listdir(outdir):
                     if image.endswith(".png"):
                         img = outdir + "/" + image
+                        print(f"Moving image: {image} to {img}")
                         yield img
 
     def handles(self, sm):
-        cookie = sm.open(self)
+        for item in self._generate_state(sm):
+            print(f"Got item: {item}")
 
-        if cookie.endswith(".png"):
-            yield ImageHandle(self, cookie)
-        else:
-            reader = _open_pdf_wrapped(sm.open(self))
-            for i in range(1, reader.getNumPages() + 1 if reader else 0):
-                yield PDFPageHandle(self, str(i))
+            if item.endswith(".png"):
+                yield ImageTextHandle(self, item)
+            else:
+                reader = _open_pdf_wrapped(item)
+                for i in range(1, reader.getNumPages() + 1 if reader else 0):
+                    yield PDFPageHandle(self, str(i))
 
 
 class PDFPageResource(Resource):

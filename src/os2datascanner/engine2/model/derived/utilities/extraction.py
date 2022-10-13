@@ -1,10 +1,10 @@
 """Utilities for extraction based on configuration dictionaries."""
 
-import os
 import shutil
 from os import listdir, remove
 from pathlib import Path
 from hashlib import md5
+from tempfile import TemporaryDirectory
 from PIL import Image
 
 from ...core.utilities import SourceManager
@@ -22,22 +22,13 @@ def should_skip_images(configuration: dict) -> bool:
     return False
 
 
-def _calculate_md5(filename):
-    """Calculates the md5 sum of a file 4kb at a time."""
-    md5sum = md5()
-
-    with open(filename, "rb") as filehandle:
-        for chunk in iter(lambda: filehandle.read(4096), b""):
-            md5sum.update(chunk)
-
-    return md5sum.hexdigest()
-
-
 class PDFImageFilter:
     '''Filter for removing duplicates and images that are too
     small to contain any text in PDF files.'''
     dimensions: (int, int) = (8, 8)
-    checksum = _calculate_md5
+
+    def checksum(self, filename):
+        return md5(open(filename, "rb")).hexdigest()
 
     def __init__(self, source_manager, x_dim=8, y_dim=8):
         self.dimensions = (x_dim, y_dim)
@@ -59,26 +50,27 @@ class PDFImageFilter:
         """Extracts all images for a pdf
         and puts it in a temporary output directory."""
         parent = str(Path(path).parent)
-        outdir = parent + "/image"
+        prefix = path.removesuffix('.pdf').split("/")[-1]
+        print(f"path: {path}\nparent: {parent}\nprefix: {prefix}")
 
-        if not os.path.exists(outdir):
-            os.makedirs(outdir)
+        with TemporaryDirectory() as outdir:
+            run_custom(
+                ["pdfimages", "-q", "-png", "-j", "-p", path, f"{outdir}/{prefix}"],
+                timeout=engine2_settings.subprocess["timeout"],
+                check=True, isolate_tmp=True)
 
-        run_custom(
-            ["pdfimages", "-q", "-png", "-j", path, f"{outdir}"],
-            timeout=engine2_settings.subprocess["timeout"],
-            check=True, isolate_tmp=True)
+            self.__filter(outdir)
 
-        self.__filter(outdir)
-        self.__move_images(outdir, parent)
-
-        return parent
+            return outdir
 
     def __move_images(self, outdir, parent):
         for image in listdir(outdir):
-            shutil.move(outdir + "/" + image, parent + "/" + image)
+            imagename = outdir.split('/').last()
+            dest = parent + "/" + imagename
+            print(f"dest: {dest}")
+            shutil.move(outdir + "/" + image, dest)
 
-        shutil.rmtree(outdir)
+        shutil.rmtree(outdir, ignore_errors=True)
 
     def __image_too_small(self, image):
         return Image.open(image).size <= self.dimensions
@@ -91,9 +83,12 @@ class PDFImageFilter:
         for item in listdir(path):
             if item.endswith(".png"):
                 image = path + "/" + item
-                checksum = _calculate_md5(image)
+                checksum = self.checksum(image)
 
-                if checksum in hash_stack or self.__image_too_small(image):
+                if checksum in hash_stack:  # or self.__image_too_small(image):
+                    print(f"removing: {image}")
                     remove(image)
                 else:
                     hash_stack.append(checksum)
+
+        print(f"hash_stack: {hash_stack}")
