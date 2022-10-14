@@ -74,13 +74,28 @@ services:
       - frontend
       - queue
 
-  admin_collector:
+  admin_checkup_collector:
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
-    command: python manage.py pipeline_collector
+    command: python manage.py checkup_collector
+    volumes:
+      - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      - db
+      - admin
+      - queue
+
+  admin_status_collector:
+    build:
+      context: .
+      dockerfile: docker/admin/Dockerfile
+    environment:
+      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
+    command: python manage.py status_collector
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner

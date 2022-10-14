@@ -10,13 +10,13 @@ from os2datascanner.projects.admin.organizations.models.organization import Orga
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import (
         Scanner, ScanStatus)
 
-from os2datascanner.projects.admin.adminapp.management.commands import pipeline_collector
+from os2datascanner.projects.admin.adminapp.management.commands import status_collector
 
 
 def record_status(status):
     """Records a status message to the database as though it were received by
     the administration system's pipeline collector."""
-    return list(pipeline_collector.status_message_received_raw(
+    return list(status_collector.status_message_received_raw(
             status.to_json_object()))
 
 

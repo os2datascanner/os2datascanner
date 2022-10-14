@@ -10,9 +10,9 @@ from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 
-from ..adminapp.management.commands import pipeline_collector
-from ..adminapp.management.commands.pipeline_collector import \
-    status_message_received_raw, problem_message_recieved_raw
+from ..adminapp.management.commands import checkup_collector
+from ..adminapp.management.commands.checkup_collector import problem_message_recieved_raw
+from ..adminapp.management.commands.status_collector import status_message_received_raw
 from ..adminapp.models.usererrorlog import UserErrorLog, translation_table
 from ..adminapp.models.scannerjobs.scanner import ScheduledCheckup, ScanStatus, \
     Scanner
@@ -152,7 +152,7 @@ class PipelineCollectorTests(TestCase):
         """
         try:
             with transaction.atomic():
-                pipeline_collector.update_scheduled_checkup(
+                checkup_collector.update_scheduled_checkup(
                         handle=positive_match_corrupt.handle,
                         matches=positive_match_corrupt,
                         problem=None,
