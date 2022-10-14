@@ -158,13 +158,13 @@ services:
     # Channel layer backend
     image: redis:latest
 
-  report_collector:
+  report_event_collector:
     build:
       context: .
       dockerfile: docker/report/Dockerfile
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
-    command: python manage.py pipeline_collector
+    command: python manage.py event_collector
     volumes:
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
@@ -172,6 +172,22 @@ services:
       - db
       - report
       - queue
+
+  report_result_collector:
+    build:
+      context: .
+      dockerfile: docker/report/Dockerfile
+    environment:
+      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
+    command: python manage.py result_collector
+    volumes:
+      - ./dev-environment/report/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      - db
+      - report
+      - queue
+
 
   explorer:
     build:

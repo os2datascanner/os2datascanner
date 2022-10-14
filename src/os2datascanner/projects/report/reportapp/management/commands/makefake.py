@@ -43,7 +43,7 @@ from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities import pika
-from .pipeline_collector import result_message_received_raw
+from .result_collector import result_message_received_raw
 
 
 def emit_to_collector(queue, m):

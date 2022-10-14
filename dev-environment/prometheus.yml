@@ -33,10 +33,15 @@ scrape_configs:
     static_configs:
       - targets: ['pushgateway:9091']
 
-  - job_name: 'report_collector'
+  - job_name: 'report_event_collector'
     scrape_interval: 5s
     static_configs:
-      - targets: ['report_collector:9091']
+      - targets: [ 'report_event_collector:9091' ]
+
+  - job_name: 'report_result_collector'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['report_result_collector:9091']
 
   - job_name: 'admin_checkup_collector'
     scrape_interval: 5s

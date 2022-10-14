@@ -17,7 +17,7 @@
 
 import argparse
 from django.core.management.base import BaseCommand
-from .pipeline_collector import _restructure_and_save_result
+from .result_collector import _restructure_and_save_result
 
 
 class Command(BaseCommand):

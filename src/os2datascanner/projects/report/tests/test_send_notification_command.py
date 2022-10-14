@@ -20,7 +20,7 @@ from os2datascanner.projects.report.tests.generate_test_data import \
     record_match
 from os2datascanner.utils.system_utilities import time_now
 from ..reportapp.utils import hash_handle
-from ..reportapp.management.commands import pipeline_collector
+from ..reportapp.management.commands import result_collector
 
 time = "2020-11-11T11:11:59+02:00"
 
@@ -232,7 +232,7 @@ class EmailNotificationTest(TestCase):
 
 
 def record_metadata(metadata):
-    return pipeline_collector.handle_metadata_message(
+    return result_collector.handle_metadata_message(
             hash_handle(metadata.handle.to_json_object()),
             metadata.scan_tag,
             metadata.to_json_object())

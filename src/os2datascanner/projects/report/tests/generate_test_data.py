@@ -9,7 +9,7 @@ from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
-from ..reportapp.management.commands import pipeline_collector
+from ..reportapp.management.commands import result_collector
 from ..reportapp.utils import hash_handle
 
 
@@ -83,7 +83,7 @@ def get_dimension_rule_match():
 def record_match(match):
     """Records a match message to the database as though it were received by
     the report module's pipeline collector."""
-    return pipeline_collector.handle_match_message(
+    return result_collector.handle_match_message(
             hash_handle(match.handle.to_json_object()),
             match.scan_spec.scan_tag,
             match.to_json_object())
@@ -93,7 +93,7 @@ def record_metadata(metadata):
     """Records a metadata message to the database as though it were received by
     the report module's pipeline collector, in the process also creating Alias
     relations."""
-    return pipeline_collector.handle_metadata_message(
+    return result_collector.handle_metadata_message(
             hash_handle(metadata.handle.to_json_object()),
             metadata.scan_tag,
             metadata.to_json_object())
@@ -106,5 +106,5 @@ def record_problem(problem):
     path = hash_handle(
             problem.handle.to_json_object()
             if problem.handle else problem.source.to_json_object())
-    return pipeline_collector.handle_problem_message(
+    return result_collector.handle_problem_message(
             path, problem.scan_tag, problem.to_json_object())
