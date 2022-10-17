@@ -19,6 +19,10 @@ class UserErrorLog(models.Model):
 
     """Model for logging errors relevant for the user."""
 
+    class Meta:
+        verbose_name = _('error log')
+        verbose_name_plural = _('error logs')
+
     scan_status = models.ForeignKey(
         ScanStatus,
         on_delete=models.CASCADE,
@@ -40,8 +44,14 @@ class UserErrorLog(models.Model):
         verbose_name=_('organization'),
         null=True
     )
-    is_new = models.BooleanField(default=False)
-    is_removed = models.BooleanField(default=False)
+    is_new = models.BooleanField(
+        default=False,
+        verbose_name=_('Is new')
+    )
+    is_removed = models.BooleanField(
+        default=False,
+        verbose_name=_('Is removed')
+    )
 
     @property
     def user_friendly_error_message(self):
@@ -51,3 +61,4 @@ class UserErrorLog(models.Model):
             return translation_table[self.error_message]
         else:
             return self.error_message
+    user_friendly_error_message.fget.short_description = _('User friendly error message')

@@ -17,12 +17,12 @@
     {% endif %}
     <div class="content">
 
-        {% include "os2datascanner/scanner_tabs.html" with page="scan-status"  %}
+      {% include "os2datascanner/scanner_tabs.html" with page="scan-status" %}
 
         <div class="aside">
-            <h1 class="page-title">
-              {% trans "Completed scans" %}
-            </h1>
+          <h1 class="page-title">
+            {% trans "Completed scans" %}
+          </h1>
         </div>
 
         {% if object_list  %}
@@ -32,7 +32,7 @@
               <colgroup>
                 <col class="datatable__column--checkbox">
                 <col class="datatable__column--name">
-                <col class="datatable__column--org">
+                <col class="datatable__column--starttime">
                 <col class="datatable__column--info">
                 <col class="datatable__column--status">
                 {% if user.is_superuser %}
@@ -68,20 +68,20 @@
                     </div>
                   </th>
                   <th class="datatable__column--name">
-                      {% trans "Scannerjob" %}
+                    {% trans "Scannerjob" %}
                   </th>
-                  <th class="datatable__column--org">
-                      {% trans "Started" %}
+                  <th class="datatable__column--starttime">
+                    {% trans "Started" %}
                   </th>
                   <th class="datatable__column--info">
-                      {% trans "Objects" %}
+                    {% trans "Objects" %}
                   </th>
                   <th class="datatable__column--status">
-                      {% trans "Status" %}
+                    {% trans "Status" %}
                   </th>
                   {% if user.is_superuser %}
                   <th class="datatable__column--actions">
-                      {% trans "Actions" %}
+                    {% trans "Actions" %}
                   </th>
                   {% endif %}
                 </tr>
@@ -98,7 +98,8 @@
                                  value="{{ status.pk|unlocalize }}" 
                                  name="table-checkbox" 
                                  class="datatable-checkbox" 
-                                 data-report-pk="{{ status.pk|unlocalize }}">
+                                 data-report-pk="{{ status.pk|unlocalize }}"
+                          >
                           <label for="table-checkbox-{{ status.pk|unlocalize }}">
                             <span class="screen-reader-only">{% trans "Select result" %}</span>
                           </label>
@@ -127,7 +128,10 @@
                       <td class="datatable__column--actions">
                         <div class="action-wrapper">
                           <button type="button" class="button" name="status-resolved"
-                            hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content" hx-vals='{"pk": "{{ status.pk|unlocalize }}"}' hx-indicator="closest tr">
+                                  hx-post="" hx-swap="outerHTML" hx-trigger="click" 
+                                  hx-target=".content" hx-vals='{"pk": "{{ status.pk|unlocalize }}"}' 
+                                  hx-indicator="closest tr"
+                          >
                             <svg class="icon">
                               <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
                             </svg>
@@ -150,7 +154,7 @@
         </p>
         {% endif %}
     </div>
-    {% if not request.headers.hx_request %}
+  {% if not request.headers.hx_request %}
 </main>
 {% endif %}
 {% endblock %}

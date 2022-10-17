@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-10 08:56+0200\n"
+"POT-Creation-Date: 2022-10-17 13:10+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -19,22 +19,29 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: adminapp/admin.py:131
-msgid "Change marked resolved=False"
-msgstr "Gør markerede løst=False"
-
-#: adminapp/admin.py:137
+#: adminapp/admin.py:132
 #, python-brace-format
-msgid "Changed {qs_count} elements resolved-status to False"
-msgstr "Ændrede {qs_count} elementers løst-status til False"
+msgid "Changed {qs_count} elements new-status to True"
+msgstr "Ændrede {qs_count} elementers ny-status til True"
 
-#: adminapp/admin.py:141
-msgid "Change marked resolved=True"
-msgstr "Gør markerede løst=True"
+#: adminapp/admin.py:138
+#, python-brace-format
+msgid "Changed {qs_count} elements removed-status to True"
+msgstr "Ændrede {qs_count} elementers fjernet-status til True"
 
-#: adminapp/admin.py:147
+#: adminapp/admin.py:144
+#, python-brace-format
+msgid "Changed {qs_count} elements removed-status to False"
+msgstr "Ændrede {qs_count} elementers fjernet-status til True"
+
+#: adminapp/admin.py:165
 #, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to True"
+msgstr "Ændrede {qs_count} elementers løst-status til True"
+
+#: adminapp/admin.py:171
+#, python-brace-format
+msgid "Changed {qs_count} elements resolved-status to False"
 msgstr "Ændrede {qs_count} elementers løst-status til True"
 
 #: adminapp/management/commands/start_scan.py:19
@@ -51,7 +58,7 @@ msgid "no scanner job exists with id {id}"
 msgstr "intet scannerjob findes med id {id}"
 
 #: adminapp/models/apikey.py:16 adminapp/models/rules/rule.py:47
-#: adminapp/models/scannerjobs/scanner.py:78 adminapp/models/usererrorlog.py:40
+#: adminapp/models/scannerjobs/scanner.py:78 adminapp/models/usererrorlog.py:44
 #: import_services/models/msgraph_import_job.py:27
 #: import_services/models/realm.py:29
 msgid "organization"
@@ -161,7 +168,7 @@ msgid "Start time"
 msgstr "Startet"
 
 #: adminapp/models/scannerjobs/scanner.py:608
-#: adminapp/models/usererrorlog.py:25
+#: adminapp/models/usererrorlog.py:29
 msgid "scan status"
 msgstr "scanstatus"
 
@@ -242,14 +249,34 @@ msgstr ""
 "Et objekt blev sprunget over enten fordi det ikke kunne åbnes eller at det "
 "tog for lang tid at skanne."
 
-#: adminapp/models/usererrorlog.py:29
-#: adminapp/templates/os2datascanner/error_log.html:42
+#: adminapp/models/usererrorlog.py:23
+msgid "error log"
+msgstr "fejlbesked"
+
+#: adminapp/models/usererrorlog.py:24
+msgid "error logs"
+msgstr "fejlbeskeder"
+
+#: adminapp/models/usererrorlog.py:33
+#: adminapp/templates/os2datascanner/error_log.html:82
 msgid "Path"
 msgstr "Sti"
 
-#: adminapp/models/usererrorlog.py:34
+#: adminapp/models/usererrorlog.py:38
 msgid "Error message"
 msgstr "Fejlbesked"
+
+#: adminapp/models/usererrorlog.py:49
+msgid "Is new"
+msgstr "Er ny"
+
+#: adminapp/models/usererrorlog.py:53
+msgid "Is removed"
+msgstr "Er fjernet"
+
+#: adminapp/models/usererrorlog.py:64
+msgid "User friendly error message"
+msgstr "Brugervenlig fejlbesked"
 
 #: adminapp/templates/403.html:6 adminapp/templates/404.html:6
 msgid "Page not found"
@@ -313,7 +340,7 @@ msgstr "Scanner status"
 
 #: adminapp/templates/components/navigation.html:19
 #: adminapp/templates/os2datascanner/scan_completed.html:71
-#: adminapp/templates/os2datascanner/scan_status_table.html:22
+#: adminapp/templates/os2datascanner/scan_status_table.html:37
 #: adminapp/templates/os2datascanner/scanners.html:21
 #: adminapp/templates/os2datascanner/scanners.html:40
 #: adminapp/templates/partials/breadcrumb.html:5
@@ -354,6 +381,7 @@ msgid "Logout"
 msgstr "Log ud"
 
 #: adminapp/templates/components/pagination.html:11
+#: adminapp/templates/components/remove-error.html:18
 #: adminapp/templates/components/resolve-status.html:18
 msgid "of"
 msgstr "af"
@@ -368,9 +396,28 @@ msgstr "Forrige"
 msgid "Next"
 msgstr "Næste"
 
+#: adminapp/templates/components/remove-error.html:7
 #: adminapp/templates/components/resolve-status.html:7
 msgid "Remove selected scan data"
 msgstr "Fjern valgte scan data"
+
+#: adminapp/templates/components/remove-error.html:13
+msgid ""
+"You are about to remove the selected logs. This action cannot be reverted. "
+"Are you sure?"
+msgstr ""
+"Du er ved at slette de valgte fejlbeskeder. Denne handling kan ikke "
+"fortrydes. Er du sikker?"
+
+#: adminapp/templates/components/remove-error.html:15
+#: adminapp/templates/components/resolve-status.html:15
+msgid "Remove selected"
+msgstr "Fjern valgte"
+
+#: adminapp/templates/components/remove-error.html:18
+#: adminapp/templates/components/resolve-status.html:18
+msgid "selected"
+msgstr "valgt"
 
 #: adminapp/templates/components/resolve-status.html:13
 msgid ""
@@ -379,14 +426,6 @@ msgid ""
 msgstr ""
 "Du er ved at slette den valgte data. Denne handling kan ikke fortrydes. Er "
 "du sikker?"
-
-#: adminapp/templates/components/resolve-status.html:15
-msgid "Remove selected"
-msgstr "Fjern valgte"
-
-#: adminapp/templates/components/resolve-status.html:18
-msgid "selected"
-msgstr "valgt"
 
 #: adminapp/templates/components/user.html:29
 #: adminapp/templates/password_change.html:6
@@ -586,39 +625,13 @@ msgstr "Ønsker du virkelig at slette?"
 msgid "No"
 msgstr "Nej"
 
-#: adminapp/templates/os2datascanner/error_log.html:19
-#: adminapp/templates/os2datascanner/error_log.html:24
-#: adminapp/templates/os2datascanner/scanner_tabs.html:75
+#: adminapp/templates/os2datascanner/error_log.html:25
+#: adminapp/templates/os2datascanner/error_log.html:30
+#: adminapp/templates/os2datascanner/scanner_tabs.html:76
 msgid "Error Log"
 msgstr "Fejlbeskeder"
 
-#: adminapp/templates/os2datascanner/error_log.html:36
-msgid "Error"
-msgstr "Fejl"
-
-#: adminapp/templates/os2datascanner/error_log.html:39
-#: adminapp/templates/os2datascanner/scan_completed.html:74
-msgid "Started"
-msgstr "Startet"
-
-#: adminapp/templates/os2datascanner/error_log.html:45
-msgid "Scan"
-msgstr "Scan"
-
-#: adminapp/templates/os2datascanner/error_log.html:50
-msgid ""
-"You are about to delete all error log messages. This action cannot be "
-"reverted. Are you sure?"
-msgstr ""
-"Du er ved at slette alle fejlbeskeder. Denne handling kan ikke fortrydes. Er "
-"du sikker?"
-
-#: adminapp/templates/os2datascanner/error_log.html:52
-#: adminapp/templates/os2datascanner/scan_completed.html:55
-msgid "Delete all"
-msgstr "Slet alle"
-
-#: adminapp/templates/os2datascanner/error_log.html:57
+#: adminapp/templates/os2datascanner/error_log.html:49
 msgid ""
 "You are about to mark all error log messages as seen. This action cannot be "
 "reverted. Are you sure?"
@@ -626,33 +639,81 @@ msgstr ""
 "Du er ved at markere alle fejlbeskeder som set. Denne handling kan ikke "
 "fortrydes. Er du sikker?"
 
-#: adminapp/templates/os2datascanner/error_log.html:59
+#: adminapp/templates/os2datascanner/error_log.html:51
 msgid "Mark all as seen"
 msgstr "Markér alle som set"
 
+#: adminapp/templates/os2datascanner/error_log.html:56
+msgid "You are about to remove"
+msgstr "Du er ved at slette"
+
+#: adminapp/templates/os2datascanner/error_log.html:56
+#, fuzzy
+#| msgid " scan status data. This action cannot be reverted. Are you sure?"
+msgid " error logs. This action cannot be reverted. Are you sure?"
+msgstr " fejlbeskeder. Denne handling kan ikke fortrydes. Er du sikker?"
+
+#: adminapp/templates/os2datascanner/error_log.html:61
+#, fuzzy
+#| msgid "Remove"
+msgid "Remove all"
+msgstr "Fjern all"
+
+#: adminapp/templates/os2datascanner/error_log.html:70
+#: adminapp/templates/os2datascanner/scan_completed.html:65
+msgid "Select all"
+msgstr "Vælg alle"
+
+#: adminapp/templates/os2datascanner/error_log.html:71
+#: adminapp/templates/os2datascanner/scan_completed.html:66
+msgid "Select all results"
+msgstr "Vælg alle resultater"
+
 #: adminapp/templates/os2datascanner/error_log.html:76
+msgid "Error"
+msgstr "Fejl"
+
+#: adminapp/templates/os2datascanner/error_log.html:79
+#: adminapp/templates/os2datascanner/scan_completed.html:74
+msgid "Started"
+msgstr "Startet"
+
+#: adminapp/templates/os2datascanner/error_log.html:85
+msgid "Scan"
+msgstr "Scan"
+
+#: adminapp/templates/os2datascanner/error_log.html:88
+#: adminapp/templates/os2datascanner/scan_completed.html:84
+#: adminapp/templates/os2datascanner/scan_status_table.html:46
+msgid "Actions"
+msgstr "Handlinger"
+
+#: adminapp/templates/os2datascanner/error_log.html:106
+msgid "Select results"
+msgstr "Vælg resultater"
+
+#: adminapp/templates/os2datascanner/error_log.html:113
 msgid "New"
 msgstr "Ny"
 
-#: adminapp/templates/os2datascanner/error_log.html:93
+#: adminapp/templates/os2datascanner/error_log.html:143
+msgid "Mark as seen"
+msgstr "Markér som set"
+
+#: adminapp/templates/os2datascanner/error_log.html:155
+msgid "no errors found."
+msgstr "ingen fejl fundet."
+
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:114
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/scan_status_table.html:83
+#: adminapp/templates/os2datascanner/scan_status_table.html:103
 #: adminapp/templates/os2datascanner/scanners.html:166
 #: organizations/templates/organizations/org_table.html:57
 #: organizations/templates/organizations/org_table.html:209
 #: organizations/templates/organizations/org_table.html:222
 msgid "Delete"
 msgstr "Slet"
-
-#: adminapp/templates/os2datascanner/error_log.html:99
-msgid "Mark as seen"
-msgstr "Markér som set"
-
-#: adminapp/templates/os2datascanner/error_log.html:112
-msgid "no errors found."
-msgstr "ingen fejl fundet."
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:12
 msgid ""
@@ -826,7 +887,7 @@ msgstr "Ja"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:24
 #: adminapp/templates/os2datascanner/scan_completed.html:29
-#: adminapp/templates/os2datascanner/scanner_tabs.html:72
+#: adminapp/templates/os2datascanner/scanner_tabs.html:73
 msgid "Completed scans"
 msgstr "Udførte scanninger"
 
@@ -838,41 +899,32 @@ msgstr "Du er ved at slette"
 msgid " scan status data. This action cannot be reverted. Are you sure?"
 msgstr " datascanninger. Denne handling kan ikke fortrydes. Er du sikker?"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:65
-msgid "Select all"
-msgstr "Vælg alle"
-
-#: adminapp/templates/os2datascanner/scan_completed.html:66
-msgid "Select all results"
-msgstr "Vælg alle resultater"
+#: adminapp/templates/os2datascanner/scan_completed.html:55
+msgid "Delete all"
+msgstr "Slet alle"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:77
 msgid "Objects"
 msgstr "Objekter"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:80
-#: adminapp/templates/os2datascanner/scan_status_table.html:28
+#: adminapp/templates/os2datascanner/scan_status_table.html:43
 msgid "Status"
 msgstr "Status"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:84
-#: adminapp/templates/os2datascanner/scan_status_table.html:31
-msgid "Actions"
-msgstr "Handlinger"
-
-#: adminapp/templates/os2datascanner/scan_completed.html:103
+#: adminapp/templates/os2datascanner/scan_completed.html:104
 msgid "Select result"
 msgstr "Vælg resultater"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:116
+#: adminapp/templates/os2datascanner/scan_completed.html:117
 msgid "objects explored"
 msgstr "objekter udforsket"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:122
+#: adminapp/templates/os2datascanner/scan_completed.html:123
 msgid "Done"
 msgstr "Udført"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:149
+#: adminapp/templates/os2datascanner/scan_completed.html:153
 msgid "no scans done"
 msgstr "der er ingen udførte scanninger"
 
@@ -883,51 +935,51 @@ msgstr ""
 "Ønsker du virkelig at slette denne rapport? Handlingen kan ikke fortrydes."
 
 #: adminapp/templates/os2datascanner/scan_status.html:22
-#: adminapp/templates/os2datascanner/scan_status_table.html:11
-#: adminapp/templates/os2datascanner/scanner_tabs.html:69
+#: adminapp/templates/os2datascanner/scan_status_table.html:26
+#: adminapp/templates/os2datascanner/scanner_tabs.html:70
 msgid "Scans in progress"
 msgstr "Igangværende scanninger"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:25
+#: adminapp/templates/os2datascanner/scan_status_table.html:40
 msgid "Phase"
 msgstr "Fase"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:44
+#: adminapp/templates/os2datascanner/scan_status_table.html:62
 msgid "Indexing data ..."
 msgstr "Indekserer data ..."
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:46
+#: adminapp/templates/os2datascanner/scan_status_table.html:64
 msgid "Scanning data (still indexing) ..."
 msgstr "Scanner data (indekserer fortsat) ..."
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:48
+#: adminapp/templates/os2datascanner/scan_status_table.html:66
 msgid "Scanning data ..."
 msgstr "Scanner data ..."
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:50
+#: adminapp/templates/os2datascanner/scan_status_table.html:68
 msgid "No objects to scan"
 msgstr "Ingen objekter at scanne"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:55
+#: adminapp/templates/os2datascanner/scan_status_table.html:75
 msgid "Building index"
 msgstr "Opbygger indeks"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:57
+#: adminapp/templates/os2datascanner/scan_status_table.html:77
 #, python-format
 msgid "%(obj)s objects scanned"
 msgstr "%(obj)s objekter scannet"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:59
+#: adminapp/templates/os2datascanner/scan_status_table.html:79
 #, fuzzy, python-format
 #| msgid "%(obj)s out of %(total)s objects scanned"
 msgid "%(obj)s out of %(total)s objects scanned "
 msgstr "%(obj)s ud af %(total)s objekter scannet"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:67
+#: adminapp/templates/os2datascanner/scan_status_table.html:87
 msgid "The sources do not contain any scannable objects"
 msgstr "Datakilden indeholder ikke nogle objekter"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:78
+#: adminapp/templates/os2datascanner/scan_status_table.html:98
 #, python-format
 msgid ""
 "Do you really want to delete the status object for scanner "
@@ -935,7 +987,7 @@ msgid ""
 msgstr ""
 "Er du sikker på, at du vil slette status for scanner »%%(scanner_name)s«?"
 
-#: adminapp/templates/os2datascanner/scan_status_table.html:104
+#: adminapp/templates/os2datascanner/scan_status_table.html:124
 msgid "no ongoing scans"
 msgstr "der er ingen igangværende scanninger"
 
@@ -1454,7 +1506,7 @@ msgstr "Drevbogstav"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:411
+#: adminapp/views/scanner_views.py:412
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 

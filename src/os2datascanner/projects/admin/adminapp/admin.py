@@ -99,7 +99,10 @@ class UserErrorLogAdmin(admin.ModelAdmin):
         'user_friendly_error_message',
         'path',
         'scan_status',
-        'organization')
+        'organization',
+        'is_removed',
+        'is_new'
+    )
     list_display_links = (
         'user_friendly_error_message',
         'path'
@@ -109,7 +112,8 @@ class UserErrorLogAdmin(admin.ModelAdmin):
         'user_friendly_error_message',
         'error_message',
         'scan_status',
-        'organization',)
+        'organization',
+    )
     fields = (
         'path',
         'user_friendly_error_message',
@@ -117,35 +121,28 @@ class UserErrorLogAdmin(admin.ModelAdmin):
         'scan_status',
         'organization',
         'is_new',
-        'is_removed')
-
-    actions = ('mark_new', 'mark_not_removed',)
-
-    def mark_new(self, request, queryset):
-        queryset.update(is_new=True)
-
-    def mark_not_removed(self, request, queryset):
-        queryset.update(is_removed=False)
-
-
-@admin.action(description=_('Change marked resolved=False'))
-def change_resolvestatus_false(self, request, query_set):
-    query_set.update(resolved=False)
-    messages.add_message(
-        request,
-        messages.INFO,
-        _("Changed {qs_count} elements resolved-status to False").format(qs_count=query_set.count())
+        'is_removed'
     )
 
+    actions = ('mark_new', 'mark_removed', 'mark_not_removed',)
 
-@admin.action(description=_('Change marked resolved=True'))
-def change_resolvestatus_true(self, request, query_set):
-    query_set.update(resolved=True)
-    messages.add_message(
-        request,
-        messages.INFO,
-        _("Changed {qs_count} elements resolved-status to True").format(qs_count=query_set.count())
-    )
+    def mark_new(self, request, query_set):
+        query_set.update(is_new=True)
+        messages.add_message(request, messages.INFO, _(
+            "Changed {qs_count} elements new-status to True")
+                .format(qs_count=query_set.count()))
+
+    def mark_removed(self, request, query_set):
+        query_set.update(is_removed=True)
+        messages.add_message(request, messages.INFO, _(
+            "Changed {qs_count} elements removed-status to True")
+                .format(qs_count=query_set.count()))
+
+    def mark_not_removed(self, request, query_set):
+        query_set.update(is_removed=False)
+        messages.add_message(request, messages.INFO, _(
+            "Changed {qs_count} elements removed-status to False")
+                .format(qs_count=query_set.count()))
 
 
 @admin.register(ScanStatus)
@@ -159,7 +156,20 @@ class ScanStatusAdmin(admin.ModelAdmin):
               'fraction_explored', 'total_objects', 'scanned_objects',
               'fraction_scanned', 'scanned_size', 'estimated_completion_time',
               'start_time', 'last_modified', 'resolved',)
-    actions = [change_resolvestatus_false, change_resolvestatus_true]
+
+    actions = ('change_resolvestatus_false', 'change_resolvestatus_true')
+
+    def change_resolvestatus_true(self, request, query_set):
+        query_set.update(resolved=True)
+        messages.add_message(request, messages.INFO, _(
+            "Changed {qs_count} elements resolved-status to True")
+                .format(qs_count=query_set.count()))
+
+    def change_resolvestatus_false(self, request, query_set):
+        query_set.update(resolved=False)
+        messages.add_message(request, messages.INFO, _(
+            "Changed {qs_count} elements resolved-status to False")
+                .format(qs_count=query_set.count()))
 
 
 @admin.register(ScanStatusSnapshot)

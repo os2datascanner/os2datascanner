@@ -231,7 +231,7 @@ class UserErrorLogView(RestrictedListView):
     def get_queryset(self):
         """Order errors by most recent scan."""
         return super().get_queryset().filter(is_removed=False
-                                             ).order_by('-scan_status__scan_tag__time', 'pk')
+                                             ).order_by('-scan_status__scan_tag__time', '-pk')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -258,10 +258,13 @@ class UserErrorLogView(RestrictedListView):
         self.object_list = self.get_queryset()
 
         if is_htmx:
-            if htmx_trigger == "delete_errorlog":
+            if htmx_trigger == "remove_errorlog":
                 delete_pk = self.request.POST.get('pk')
                 self.object_list.filter(pk=delete_pk).update(is_removed=True, is_new=False)
-            elif htmx_trigger == "delete_all":
+            elif htmx_trigger == "remove_selected":
+                self.object_list.filter(pk__in=self.request.POST.getlist(
+                    'table-checkbox')).update(is_removed=True, is_new=False)
+            elif htmx_trigger == "remove_all":
                 self.object_list.update(is_removed=True, is_new=False)
             elif htmx_trigger == "see_errorlog":
                 seen_pk = self.request.POST.get('pk')
