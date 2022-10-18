@@ -12,7 +12,12 @@ from ...utilities.backoff import ExponentialBackoffRetrier
 from ....utils.system_utilities import json_utf8_decode
 from os2datascanner.utils import pika_settings
 
+
 logger = logging.getLogger(__name__)
+
+
+def trace(*args, **kwargs):
+    return logger.log(logging.TRACE, *args, **kwargs)
 
 
 def go_bang(k):
@@ -232,8 +237,8 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         number of action-specific parameters. This is an implementation detail:
         clients should use the enqueue_* methods instead."""
         with self._condition:
-            logger.debug(f"PikaPipelineThread - Thread TID: {self.native_id} "
-                         "acquired conditional and enqueued outgoing message.")
+            trace(f"PikaPipelineThread - Thread TID: {self.native_id} "
+                  "acquired conditional and enqueued outgoing message.")
             self._outgoing.append((label, *args))
 
     def enqueue_ack(self, delivery_tag: int):
@@ -285,8 +290,8 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
 
             def waiter():
                 return not self._live or len(self._incoming) > 0
-            logger.debug(f"PikaPipelineThread - Thread TID: {self.native_id}"
-                         " awaiting message: releasing lock and going to sleep...")
+            trace(f"PikaPipelineThread - Thread TID: {self.native_id}"
+                  " awaiting message: releasing lock and going to sleep...")
             rv = self._condition.wait_for(waiter, timeout)
             if rv and self._live:
                 method, properties, body = self._incoming.pop(0)
@@ -297,8 +302,8 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
             # regarded as unencoded
             properties.content_encoding = None
 
-        logger.debug(f"PikaPipelineThread - Thread TID: {self.native_id}"
-                     " done sleeping. Got a message.")
+        trace(f"PikaPipelineThread - Thread TID: {self.native_id}"
+              " done sleeping. Got a message.")
         return method, properties, body
 
     def handle_message(self, routing_key, body):
@@ -320,8 +325,8 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         retrieval by the main thread."""
         with self._condition:
             self._incoming.add((method, properties, body,))
-            logger.debug(f"PikaPipelineThread - Thread TID: {self.native_id}"
-                         " handled incoming message. Notifying other threads.")
+            trace(f"PikaPipelineThread - Thread TID: {self.native_id}"
+                  " handled incoming message. Notifying other threads.")
             self._condition.notify()
 
     def run(self):  # noqa: CCR001, too high cognitive complexity
@@ -343,8 +348,9 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                     while self._outgoing:
                         head = self._outgoing.pop(0)
                         label = head[0]
-                        logger.debug(f"PikaPipelineThread - Thread TID: {self.native_id}"
-                                     f" got the conditional. Processing outgoing message.")
+                        trace("PikaPipelineThread - Thread TID:"
+                              f" {self.native_id} got the conditional."
+                              " Processing outgoing message.")
                         if label == "msg":
                             queue, body, exchange, properties = head[1:]
                             self.channel.basic_publish(
@@ -441,8 +447,8 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
             # lock for consistency's sake, but we are the only thread at this
             # point)
             with self._condition:
-                logger.debug(
-                    f"PikaPipelineThread - Thread TID: {self.native_id} clearing incoming queue.")
+                trace(f"PikaPipelineThread - Thread TID: {self.native_id}"
+                      " clearing incoming queue.")
                 self._incoming.clear()
 
         if self._shutdown_exception:
