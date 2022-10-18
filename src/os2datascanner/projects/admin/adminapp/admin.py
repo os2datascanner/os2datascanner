@@ -126,18 +126,21 @@ class UserErrorLogAdmin(admin.ModelAdmin):
 
     actions = ('mark_new', 'mark_removed', 'mark_not_removed',)
 
+    @admin.action(description=_("Change new-status to True"))
     def mark_new(self, request, query_set):
         query_set.update(is_new=True)
         messages.add_message(request, messages.INFO, _(
             "Changed {qs_count} elements new-status to True")
                 .format(qs_count=query_set.count()))
 
+    @admin.action(description=_("Change removed-status to True"))
     def mark_removed(self, request, query_set):
         query_set.update(is_removed=True)
         messages.add_message(request, messages.INFO, _(
             "Changed {qs_count} elements removed-status to True")
                 .format(qs_count=query_set.count()))
 
+    @admin.action(description=_("Change removed-status to False"))
     def mark_not_removed(self, request, query_set):
         query_set.update(is_removed=False)
         messages.add_message(request, messages.INFO, _(
@@ -159,12 +162,14 @@ class ScanStatusAdmin(admin.ModelAdmin):
 
     actions = ('change_resolvestatus_false', 'change_resolvestatus_true')
 
+    @admin.action(description=_("Change resolved-status to True"))
     def change_resolvestatus_true(self, request, query_set):
         query_set.update(resolved=True)
         messages.add_message(request, messages.INFO, _(
             "Changed {qs_count} elements resolved-status to True")
                 .format(qs_count=query_set.count()))
 
+    @admin.action(description=_("Change resolved-status to False"))
     def change_resolvestatus_false(self, request, query_set):
         query_set.update(resolved=False)
         messages.add_message(request, messages.INFO, _(

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 13:10+0200\n"
+"POT-Creation-Date: 2022-10-17 15:43+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -19,27 +19,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: adminapp/admin.py:132
+#: adminapp/admin.py:129
+msgid "Change new-status to True"
+msgstr "Sæt ny-status til True"
+
+#: adminapp/admin.py:133
 #, python-brace-format
 msgid "Changed {qs_count} elements new-status to True"
 msgstr "Ændrede {qs_count} elementers ny-status til True"
 
-#: adminapp/admin.py:138
+#: adminapp/admin.py:136
+msgid "Change removed-status to True"
+msgstr "Sæt fjernet-status til True"
+
+#: adminapp/admin.py:140
 #, python-brace-format
 msgid "Changed {qs_count} elements removed-status to True"
 msgstr "Ændrede {qs_count} elementers fjernet-status til True"
 
-#: adminapp/admin.py:144
+#: adminapp/admin.py:143
+msgid "Change removed-status to False"
+msgstr "Sæt fjernet-status til False"
+
+#: adminapp/admin.py:147
 #, python-brace-format
 msgid "Changed {qs_count} elements removed-status to False"
 msgstr "Ændrede {qs_count} elementers fjernet-status til True"
 
 #: adminapp/admin.py:165
+msgid "Change resolved-status to True"
+msgstr "Sæt løst-status til True"
+
+#: adminapp/admin.py:169
 #, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to True"
 msgstr "Ændrede {qs_count} elementers løst-status til True"
 
-#: adminapp/admin.py:171
+#: adminapp/admin.py:172
+msgid "Change resolved-status to False"
+msgstr "Sæt løst-status til True"
+
+#: adminapp/admin.py:176
 #, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to False"
 msgstr "Ændrede {qs_count} elementers løst-status til True"
@@ -696,11 +716,11 @@ msgstr "Vælg resultater"
 msgid "New"
 msgstr "Ny"
 
-#: adminapp/templates/os2datascanner/error_log.html:143
+#: adminapp/templates/os2datascanner/error_log.html:144
 msgid "Mark as seen"
 msgstr "Markér som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:155
+#: adminapp/templates/os2datascanner/error_log.html:158
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
@@ -2150,6 +2170,10 @@ msgstr "organisatorisk struktur for"
 #: organizations/views/org_views.py:83
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
+
+#, python-brace-format
+#~ msgid "Changed {qs_count} elements removed to False"
+#~ msgstr "Ændrede {qs_count} elementers fjernet-status til False"
 
 #, python-format
 #~ msgid ""
