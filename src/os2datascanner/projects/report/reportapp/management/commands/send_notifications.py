@@ -190,7 +190,7 @@ class Command(BaseCommand):
         print(f"user email detected: {email}")
 
         msg = EmailMultiAlternatives(
-            "Der ligger uhåndterede matches i OS2datascanner",
+            "Der ligger uhåndterede resultater i OS2datascanner",
             self.txt_mail_template.render(context),
             settings.DEFAULT_FROM_EMAIL,
             [email])
