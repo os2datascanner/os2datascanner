@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-10 11:53+0200\n"
+"POT-Creation-Date: 2022-10-19 14:00+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -273,8 +273,8 @@ msgstr "Markér som håndterede"
 
 #: reportapp/templates/components/handle-match.html:18
 #: reportapp/templates/components/handle-match.html:60
-#: reportapp/templates/components/hit.html:101
-#: reportapp/templates/components/hit.html:122
+#: reportapp/templates/components/hit.html:106
+#: reportapp/templates/components/hit.html:127
 msgid ""
 "You are about to handle this result. This action does not change the file, "
 "that the result is about. Please do not handle a result before action has "
@@ -299,8 +299,8 @@ msgid "Edit marked"
 msgstr "Rediger markerede"
 
 #: reportapp/templates/components/handle-match.html:64
-#: reportapp/templates/components/hit.html:146
-#: reportapp/templates/components/hit.html:169
+#: reportapp/templates/components/hit.html:151
+#: reportapp/templates/components/hit.html:174
 msgid "Revert"
 msgstr "Fortryd"
 
@@ -338,12 +338,16 @@ msgstr "Kopiér"
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:59
+#: reportapp/templates/components/hit.html:57
+msgid "Copy folder"
+msgstr "Kopiér mappe"
+
+#: reportapp/templates/components/hit.html:64
 msgid "Opened"
 msgstr "Åbnet: "
 
-#: reportapp/templates/components/hit.html:93
-#: reportapp/templates/components/hit.html:112
+#: reportapp/templates/components/hit.html:98
+#: reportapp/templates/components/hit.html:117
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned.\n"
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -351,29 +355,29 @@ msgstr ""
 "OS2datascanner sletter ikke resultater fra systemet der blev scannet.\n"
 "Resultatet markeres udelukkende som håndteret i OS2datascanner."
 
-#: reportapp/templates/components/hit.html:95
-#: reportapp/templates/components/hit.html:125
+#: reportapp/templates/components/hit.html:100
+#: reportapp/templates/components/hit.html:130
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:127
-#: reportapp/templates/components/hit.html:171
+#: reportapp/templates/components/hit.html:132
+#: reportapp/templates/components/hit.html:176
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:139
+#: reportapp/templates/components/hit.html:144
 msgid "Edit"
 msgstr "Redigér"
 
-#: reportapp/templates/components/hit.html:185
+#: reportapp/templates/components/hit.html:190
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:186
+#: reportapp/templates/components/hit.html:191
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:187
+#: reportapp/templates/components/hit.html:192
 msgid "Probability"
 msgstr "Sandsynlighed"
 
@@ -905,6 +909,9 @@ msgstr "Mailscan"
 #: reportapp/views/views.py:676
 msgid "Not assigned"
 msgstr "Ikke tildelt"
+
+#~ msgid "Open file"
+#~ msgstr "Åbn fil"
 
 #~ msgid "Change marked"
 #~ msgstr "Ændr markerede"

@@ -53,6 +53,11 @@
                   </a>
                 {% endif %}
               {% endif %}
+              {% if type == 'smbc' %}
+                <button type="button" class="button btn-{{ document_report.pk|unlocalize }}" data-clipboard-text="{{ document_report.matches.handle|find_parent:type|present_folder}}">
+                  {% trans "Copy folder" %}
+                </button>
+              {% endif %}
             </div>
             {% if document_report.last_opened_time %}
               {% with document_report.last_opened_time|naturaltime as time_since %}
