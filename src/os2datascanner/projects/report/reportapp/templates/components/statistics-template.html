@@ -13,12 +13,17 @@
   </svg>
 
   <!-- Scannerjob chart data selection -->
-  <form name="stat_form" 
-        hx-get="{% url "statistics" %}" 
-        hx-target=".content" 
-        hx-swap="outerHTML" 
-        hx-trigger="change"
-        hx-indicator="#report-page-indicator">
+  
+    <form name="stat_form"
+    {% if  request.path == '/statistics/leader/' %}
+          hx-get="{% url "statistics-leader" %}"
+    {% elif request.path == '/statistics/dpo/' %}
+          hx-get="{% url "statistics-dpo" %}"
+    {% endif %}
+          hx-target=".content" 
+          hx-swap="outerHTML" 
+          hx-trigger="change"
+          hx-indicator="#report-page-indicator">
     <div class="dropdown stats_dropdown">
       <select name="scannerjob" id="scannerjobs" data-compareto="all">
         <option value="all"
