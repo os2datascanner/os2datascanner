@@ -777,12 +777,12 @@ msgid "Remove all"
 msgstr "Slet alle"
 
 #: adminapp/templates/os2datascanner/error_log.html:70
-#: adminapp/templates/os2datascanner/scan_completed.html:66
+#: adminapp/templates/os2datascanner/scan_completed.html:70
 msgid "Select all"
 msgstr "Vælg alle"
 
 #: adminapp/templates/os2datascanner/error_log.html:71
-#: adminapp/templates/os2datascanner/scan_completed.html:67
+#: adminapp/templates/os2datascanner/scan_completed.html:71
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
@@ -791,7 +791,7 @@ msgid "Error"
 msgstr "Fejl"
 
 #: adminapp/templates/os2datascanner/error_log.html:79
-#: adminapp/templates/os2datascanner/scan_completed.html:75
+#: adminapp/templates/os2datascanner/scan_completed.html:79
 msgid "Started"
 msgstr "Startet"
 
@@ -800,7 +800,7 @@ msgid "Scan"
 msgstr "Scan"
 
 #: adminapp/templates/os2datascanner/error_log.html:88
-#: adminapp/templates/os2datascanner/scan_completed.html:88
+#: adminapp/templates/os2datascanner/scan_completed.html:89
 #: adminapp/templates/os2datascanner/scan_status_table.html:46
 msgid "Actions"
 msgstr "Handlinger"
@@ -998,8 +998,8 @@ msgstr "Handlingen kan ikke fortrydes."
 msgid "Yes"
 msgstr "Ja"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:24
 #: adminapp/templates/os2datascanner/scan_completed.html:29
+#: adminapp/templates/os2datascanner/scan_completed.html:34
 #: adminapp/templates/os2datascanner/scanner_tabs.html:73
 msgid "Completed scans"
 msgstr "Udførte scanninger"
@@ -1600,6 +1600,46 @@ msgstr ""
 #: adminapp/templates/password_reset_form.html:34
 msgid "Reset my password"
 msgstr "Nulstil min adgangskode"
+
+#: adminapp/templatetags/utility_tags.py:20
+msgid "day"
+msgstr "dag"
+
+#: adminapp/templatetags/utility_tags.py:21
+msgid "days"
+msgstr "dage"
+
+#: adminapp/templatetags/utility_tags.py:25
+msgid "hour"
+msgstr "time"
+
+#: adminapp/templatetags/utility_tags.py:26
+msgid "hours"
+msgstr "timer"
+
+#: adminapp/templatetags/utility_tags.py:30
+msgid "minute"
+msgstr "minut"
+
+#: adminapp/templatetags/utility_tags.py:31
+msgid "minutes"
+msgstr "minutter"
+
+#: adminapp/templatetags/utility_tags.py:35
+msgid "second"
+msgstr "sekund"
+
+#: adminapp/templatetags/utility_tags.py:36
+msgid "seconds"
+msgstr "sekunder"
+
+#: adminapp/templatetags/utility_tags.py:40
+msgid "millisecond"
+msgstr "millisekund"
+
+#: adminapp/templatetags/utility_tags.py:41
+msgid "milliseconds"
+msgstr "millisekunder"
 
 #: adminapp/views/exchangescanner_views.py:202
 msgid "No organizational units has been selected"

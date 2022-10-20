@@ -3,10 +3,15 @@
 {% load l10n %}
 {% load i18n %}
 {% load tz %}
+{% load utility_tags %}
 
 {% block scripts %}
+<script src="{% url "jsi18n" %}"></script>
 <script src="{% static '3rdparty/htmx.min.js' %}"></script>
 <script src="{% static 'js/tableBehavior.js' %}"></script>
+<script src="{% static "3rdparty/chart-2.9.4.min.js" %}"></script>
+<script src="{% static "3rdparty/chartjs-plugin-datalabels.js" %}"></script>
+<script src="{% static "js/statusTimelines.js" %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -94,7 +99,7 @@
               <tbody>
                 {% for status in object_list %}
                   {% if status.finished == True %}
-                    <tr>
+                    <tr data-type="scan-status">
                       <td class="datatable__column--checkbox">
                         <div class="ds-checkbox">
                           <input type="checkbox" 
@@ -136,7 +141,7 @@
                         <span class="completed_icon">
                           {% include "components/svg-icons/check_circle_full.svg" %}
                           <span class="width">
-                            {% trans "Done" %}
+                            {% trans "Finished in" %} {% with total_scan_times|get_item:status.pk as scan_time %}{{ scan_time|format_timespan }}{% endwith %}
                           </span>
                         </span>
                       </td>
@@ -152,9 +157,39 @@
                               <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
                             </svg>
                           </button>
+                          <button class="timelines-expand button button-caret button--has-icon" title="{% trans 'Show/hide timeline' %}" type="button"><i class="material-icons" aria-hidden="true">expand_more</i></button>
                         </div>
                       </td>
                       {% endif %}
+                    </tr>
+                    <tr class="statistic_row" hidden>
+                      <td colspan="7">
+                        <div class="more-info_container">
+                          {% comment %} TODO: Maybe put this info inside the hidden row? {% endcomment %}
+                          {% comment %} <ul>
+                            <li>{{ status.total_objects }} {% trans "objects explored" %}</li>
+                            {% if status.matches_found is not None%}
+                            <li>
+                              {{status.matches_found}} 
+                              {% if status.matches_found == 1%}
+                                {% trans "result"%}
+                              {% else %}
+                                {% trans "results" %}
+                              {% endif %}
+                            </li>
+                            {% endif %}
+                          </ul> {% endcomment %}
+                        </div>
+                        <div class="statistic_header">
+                          <div>
+                            <h1 class="page-title_sub">{% trans "Timeline" %}</h1>
+                          </div>
+                        </div>
+                        <div class="chart_container status-timeline" data-chartid="timeline_status__{{ status.pk }}">
+                          <canvas class="line_chart" id="line_chart_status__{{ status.pk }}" height="100" width="500"></canvas>
+                        </div>
+                      </div>
+                      </td>
                     </tr>
                   {% endif %}
                 {% endfor %}
@@ -173,4 +208,8 @@
   {% if not request.headers.hx_request %}
 </main>
 {% endif %}
+
+
+{{ snapshots|json_script:"snapshots" }}
+
 {% endblock %}

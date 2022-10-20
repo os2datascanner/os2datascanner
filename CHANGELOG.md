@@ -8,6 +8,8 @@
 
 - The side menu in the report module has been removed, and the menu items have instead been moved to the header. For small screens, the functionality is unchanged.
 
+- A timeline of a completed scan can now be seen on the "Completed scans"-tab.
+
 ### General Improvements
 
 - Release notes are now written gradually, instead of in batches during release procedures.

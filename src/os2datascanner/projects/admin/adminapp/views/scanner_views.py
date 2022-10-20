@@ -29,7 +29,7 @@ from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
 from ..models.authentication import Authentication
 from ..models.rules.rule import Rule
-from ..models.scannerjobs.scanner import Scanner, ScanStatus
+from ..models.scannerjobs.scanner import Scanner, ScanStatus, ScanStatusSnapshot
 from ..models.usererrorlog import UserErrorLog
 from django.utils.translation import ugettext_lazy as _
 
@@ -171,6 +171,23 @@ class StatusCompleted(StatusBase):
 
         context['order_by'] = self.request.GET.get('order_by', 'sort_key')
         context['order'] = self.request.GET.get('order', 'ascending')
+
+        snapshots = {}
+        total_scan_times = {}
+
+        for status in context['object_list']:
+            snapshot_data = []
+            for snapshot in ScanStatusSnapshot.objects.filter(scan_status=status).iterator():
+                seconds_since_start = (snapshot.time_stamp - status.start_time).total_seconds()
+                # Calculating a new fraction, due to early versions of
+                # snapshots not knowing the total number of objects.
+                fraction_scanned = snapshot.scanned_objects/status.total_objects
+                snapshot_data.append({"x": seconds_since_start, "y": fraction_scanned*100})
+            snapshots[status.pk] = snapshot_data
+            total_scan_times[status.pk] = snapshot_data[-1]["x"]
+
+        context['snapshots'] = snapshots
+        context['total_scan_times'] = total_scan_times
 
         return context
 
