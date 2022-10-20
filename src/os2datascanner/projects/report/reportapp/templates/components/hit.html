@@ -36,6 +36,7 @@
             <div class="button-group" name='open-button'
             hx-vals='{"pk": "{{ document_report.pk|unlocalize }}"}' 
             hx-get="" hx-swap="innerHTML" hx-target=".content" hx-trigger="click target:.btn-{{ document_report.pk|unlocalize }}"
+            hx-indicator="#report-page-indicator"
             >
               {% if document_report.matches.handle|present_url %}
                 <a href="{{ document_report.matches.handle|present_url }}" class="button btn-{{ document_report.pk|unlocalize }}" target="_blank" rel="noopener">

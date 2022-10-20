@@ -1,0 +1,42 @@
+.page-indicator {
+  display: none;
+  width: 100px;
+  height: 100px;
+  position: fixed;
+  top: calc(50% - 50px);
+  left: calc(50% - 50px);
+  animation: spin 1s linear infinite;
+  z-index: 30;
+
+  &.htmx-request {
+    display: block;
+  }
+}
+
+#circle {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-linecap: round;
+  stroke-width: 8;
+  animation: draw 3s ease-in-out infinite;
+}
+
+@keyframes draw {
+  0% {
+    stroke-dasharray: 20, 282.6;
+  }
+
+  50% {
+    stroke-dasharray: 200, 282.6;
+  }
+
+  100% {
+    stroke-dasharray: 20, 282.6;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

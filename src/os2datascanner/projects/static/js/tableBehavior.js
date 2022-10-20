@@ -166,7 +166,12 @@ function removeClass(elm, className) {
 
 // IE11 way of doing elm.classList.contains
 function hasClass(elm, className) {
-  var classList = elm.className ? elm.className.split(" ") : [];
+  classList = [];
+  if (typeof (elm.className) === "string") {
+    classList = elm.className ? elm.className.split(" ") : [];
+  } else {
+    classList = Array.from(elm.classList);
+  }
   return classList.indexOf(className) > -1;
 }
 
