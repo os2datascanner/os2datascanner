@@ -116,6 +116,20 @@ def find_file_folder(handle, force=False):
 
 
 @register.filter
+def present_folder(handle):
+    """Removes the filename from the path and returns
+    the folderpath for copying
+    """
+    if isinstance(handle, (SMBHandle, SMBCHandle)):
+        if present(handle):
+            file_path = present(handle)
+            file_path = file_path[:file_path.rfind('\\')]
+            return file_path
+        else:
+            return None
+
+
+@register.filter
 def between(lst, interval):
     if interval is None:
         interval = (0, 10)
