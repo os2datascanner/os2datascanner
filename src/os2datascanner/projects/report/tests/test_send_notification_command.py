@@ -183,7 +183,7 @@ class EmailNotificationTest(TestCase):
             self.user)
 
         excpected_msg = EmailMultiAlternatives(
-            subject="Der ligger uhåndterede matches i OS2datascanner",
+            subject="Der ligger uhåndterede resultater i OS2datascanner",
             body=loader.get_template("mail/overview.txt").render(self.context),
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[self.user.email],
