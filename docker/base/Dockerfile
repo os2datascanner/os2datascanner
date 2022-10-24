@@ -8,6 +8,23 @@
 # Need to specify this at the top or else Docker will be confused
 ARG BASE_IMAGE=base
 
+FROM node:15 AS frontend
+
+WORKDIR /code/src/os2datascanner/projects
+
+COPY --chown=node:node src/os2datascanner/projects/static ./static
+RUN npm ci --prefix static; \
+
+# Build production bundle
+# NB! Doesn't start a webserver, only bundles files!
+    npm run prod --prefix static
+
+USER node
+
+# Build development bundle
+# NB! Watches for changes, so no automatic exit!
+CMD ["npm", "run", "dev", "--prefix", "static"]
+
 FROM python:3.9.7 AS base
 
 # Force the stdout and stderr streams from python to be unbuffered. See
@@ -49,24 +66,11 @@ RUN set -ex \
   && pip install --no-cache-dir -r python-requirements/requirements-all.txt \
   && apt-get -y autoremove
 
+# Copy frontend dist folder to static
+WORKDIR /code/src/os2datascanner/projects/static
+COPY --from=frontend /code/src/os2datascanner/projects/static/dist ./dist
+
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
-
-FROM node:15 AS frontend
-
-WORKDIR /code/src/os2datascanner/projects
-
-COPY --chown=node:node src/os2datascanner/projects/static ./static
-RUN npm ci --prefix static; \
-
-# Build production bundle
-# NB! Doesn't start a webserver, only bundles files!
-    npm run prod --prefix static
-
-USER node
-
-# Build development bundle
-# NB! Watches for changes, so no automatic exit!
-CMD ["npm", "run", "dev", "--prefix", "static"]
 
 # Base image always has a default (see ARG BASE_IMAGE)
 ARG BASE_IMAGE=base
@@ -168,10 +172,6 @@ COPY docker/gunicorn-settings.py ./gunicorn-settings.py
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/ ./
 
-# Copy frontend dist folder to static
-WORKDIR /code/src/os2datascanner/projects/static
-COPY --from=frontend /code/src/os2datascanner/projects/static/dist ./dist
-
 # Run the server as the os2ds_admin user on port 5000
 WORKDIR /code/src/os2datascanner/projects/admin
 
@@ -233,10 +233,6 @@ COPY docker/gunicorn-settings.py ./gunicorn-settings.py
 # Copy code
 WORKDIR /code/src/os2datascanner
 COPY src/os2datascanner/ ./
-
-# Copy frontend dist folder to static
-WORKDIR /code/src/os2datascanner/projects/static
-COPY --from=frontend /code/src/os2datascanner/projects/static/dist ./dist
 
 # Run the server as the os2ds_report user on port 5000
 WORKDIR /code/src/os2datascanner/projects/report
