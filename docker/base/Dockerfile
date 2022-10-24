@@ -5,6 +5,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+# Need to specify this at the top or else Docker will be confused
+ARG BASE_IMAGE=base
+
 FROM python:3.9.7 AS base
 
 # Force the stdout and stderr streams from python to be unbuffered. See
@@ -46,10 +49,6 @@ RUN set -ex \
   && pip install --no-cache-dir -r python-requirements/requirements-all.txt \
   && apt-get -y autoremove
 
-# Copy code
-WORKDIR /code/src/os2datascanner
-COPY src/os2datascanner/ ./
-
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
 
 FROM node:15 AS frontend
@@ -69,7 +68,10 @@ USER node
 # NB! Watches for changes, so no automatic exit!
 CMD ["npm", "run", "dev", "--prefix", "static"]
 
-FROM base AS engine
+# Base image always has a default (see ARG BASE_IMAGE)
+ARG BASE_IMAGE=base
+# hadolint ignore=DL3006
+FROM ${BASE_IMAGE} AS engine
 
 LABEL org.opencontainers.image.title="OS2datascanner - Engine" \
       org.opencontainers.image.vendor="Magenta ApS" \
@@ -87,13 +89,20 @@ RUN groupadd -g 73030 -r os2ds_engine \
 COPY docker/engine/docker-settings.toml /code/docker/docker-settings.toml
 COPY docker/engine/docker-entrypoint.sh /code/docker/docker-entrypoint.sh
 
+# Copy code
+WORKDIR /code/src/os2datascanner
+COPY src/os2datascanner/ ./
+
 # Set up to run given command as the new user
 USER os2ds_engine:os2ds_engine
 
 EXPOSE 9091
 CMD ["explorer", "--help"]
 
-FROM base AS api
+# Base image always has a default (see ARG BASE_IMAGE)
+ARG BASE_IMAGE=base
+# hadolint ignore=DL3006
+FROM ${BASE_IMAGE} AS api
 
 LABEL org.opencontainers.image.title="OS2datascanner - API" \
       org.opencontainers.image.vendor="Magenta ApS" \
@@ -108,8 +117,13 @@ ENV OS2DS_SERVER_SYSTEM_CONFIG_PATH=/code/docker/docker-settings.toml \
 RUN groupadd -g 73050 -r os2ds_api\
   && useradd -u 73050 --no-log-init -r -g os2ds_api os2ds_api
 
+WORKDIR /code/docker
 COPY docker/api/docker-settings.toml ./docker-settings.toml
 COPY docker/api/gunicorn-settings.py ./gunicorn-settings.py
+
+# Copy code
+WORKDIR /code/src/os2datascanner
+COPY src/os2datascanner/ ./
 
 WORKDIR /code/src/os2datascanner/server
 USER os2ds_api:os2ds_api
@@ -120,7 +134,10 @@ CMD ["gunicorn", \
      "--config", "/code/docker/gunicorn-settings.py", \
      "os2datascanner.server.wsgi"]
 
-FROM base AS admin
+# Base image always has a default (see ARG BASE_IMAGE)
+ARG BASE_IMAGE=base
+# hadolint ignore=DL3006
+FROM ${BASE_IMAGE} AS admin
 
 LABEL org.opencontainers.image.title="OS2datascanner - Administration" \
       org.opencontainers.image.vendor="Magenta ApS" \
@@ -146,6 +163,10 @@ COPY docker/admin/docker-settings.toml ./docker-settings.toml
 COPY docker/insecure-settings.toml ./insecure-settings.toml
 COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
 COPY docker/gunicorn-settings.py ./gunicorn-settings.py
+
+# Copy code
+WORKDIR /code/src/os2datascanner
+COPY src/os2datascanner/ ./
 
 # Copy frontend dist folder to static
 WORKDIR /code/src/os2datascanner/projects/static
@@ -180,7 +201,10 @@ ENV COMMIT_TAG=${COMMIT_TAG} \
     COMMIT_SHA=${COMMIT_SHA} \
     CURRENT_BRANCH=${CURRENT_BRANCH}
 
-FROM base AS report
+# Base image always has a default (see ARG BASE_IMAGE)
+ARG BASE_IMAGE=base
+# hadolint ignore=DL3006
+FROM ${BASE_IMAGE} AS report
 
 LABEL org.opencontainers.image.title="OS2datascanner - Report" \
       org.opencontainers.image.vendor="Magenta ApS" \
@@ -205,6 +229,10 @@ COPY docker/report/docker-settings.toml ./docker-settings.toml
 COPY docker/insecure-settings.toml ./insecure-settings.toml
 COPY docker/docker-entrypoint-django.sh ./docker-entrypoint.sh
 COPY docker/gunicorn-settings.py ./gunicorn-settings.py
+
+# Copy code
+WORKDIR /code/src/os2datascanner
+COPY src/os2datascanner/ ./
 
 # Copy frontend dist folder to static
 WORKDIR /code/src/os2datascanner/projects/static

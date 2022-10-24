@@ -17,6 +17,7 @@ include:
 
 stages:
   - lint
+  - pre-build
   - build
   - test
   - release
@@ -31,6 +32,7 @@ variables:
   RELEASE_ENGINE_IMAGE: index.docker.io/magentaaps/os2datascanner-engine
   RELEASE_API_IMAGE: index.docker.io/magentaaps/os2datascanner-api
 
+  BASE_IMAGE: ${CI_REGISTRY_IMAGE}/base:${CI_COMMIT_SHA}
   REPORT_IMAGE: ${CI_REGISTRY_IMAGE}/report:${CI_COMMIT_SHA}
   ADMIN_IMAGE: ${CI_REGISTRY_IMAGE}/admin:${CI_COMMIT_SHA}
   ENGINE_IMAGE: ${CI_REGISTRY_IMAGE}/engine:${CI_COMMIT_SHA}
@@ -92,41 +94,58 @@ Lint js scripts:
       --config .jshintrc
       --exclude-path .jshintignore
 
+# Pre-build stage
+Build base image:
+  extends:
+    - .build-docker
+  stage: pre-build
+  variables:
+    CI_IMAGE: ${BASE_IMAGE}
+    DOCKERFILE: ${CI_PROJECT_DIR}/docker/base/Dockerfile
+    TARGET: base
 
 # Build stage
 ##############
+.build-default: &build-default
+  extends:
+    - .build-docker
+  needs: ["Build base image"]
 
 Build Report Application:
   extends:
-    - .build-docker
+    - .build-default
   variables:
     CI_IMAGE: ${REPORT_IMAGE}
     DOCKERFILE: ${CI_PROJECT_DIR}/docker/base/Dockerfile
     TARGET: report
+    BUILD_DOCKER_EXTRA_FLAGS: --build-arg=BASE_IMAGE=${BASE_IMAGE}
 
 Build Admin Application:
   extends:
-    - .build-docker
+    - .build-default
   variables:
     CI_IMAGE: ${ADMIN_IMAGE}
     DOCKERFILE: ${CI_PROJECT_DIR}/docker/base/Dockerfile
     TARGET: admin
+    BUILD_DOCKER_EXTRA_FLAGS: --build-arg=BASE_IMAGE=${BASE_IMAGE}
 
 Build Engine:
   extends:
-    - .build-docker
+    - .build-default
   variables:
     CI_IMAGE: ${ENGINE_IMAGE}
     DOCKERFILE: ${CI_PROJECT_DIR}/docker/base/Dockerfile
     TARGET: engine
+    BUILD_DOCKER_EXTRA_FLAGS: --build-arg=BASE_IMAGE=${BASE_IMAGE}
 
 Build API:
   extends:
-    - .build-docker
+    - .build-default
   variables:
     CI_IMAGE: ${API_IMAGE}
     DOCKERFILE: ${CI_PROJECT_DIR}/docker/base/Dockerfile
     TARGET: api
+    BUILD_DOCKER_EXTRA_FLAGS: --build-arg=BASE_IMAGE=${BASE_IMAGE}
 
 # Test stage
 #############
