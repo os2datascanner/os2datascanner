@@ -1,6 +1,5 @@
 from .core import Source, Handle, FileResource
 import os.path
-from urllib.parse import quote, unquote, urlsplit, urlunsplit
 from pathlib import Path
 from datetime import datetime
 from dateutil.tz import gettz
@@ -10,6 +9,7 @@ from ..conversions.types import OutputType
 from ..conversions.utilities.navigable import make_values_navigable
 
 
+@Source.url_handler("file")
 class FilesystemSource(Source):
     type_label = "file"
 
@@ -43,16 +43,6 @@ class FilesystemSource(Source):
 
     def censor(self):
         return self
-
-    def to_url(self):
-        return urlunsplit(('file', '', quote(str(self.path)), None, None))
-
-    @staticmethod
-    @Source.url_handler("file")
-    def from_url(url):
-        scheme, netloc, path, _, _ = urlsplit(url)
-        assert not netloc
-        return FilesystemSource(unquote(path) if path else None)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), path=self.path)

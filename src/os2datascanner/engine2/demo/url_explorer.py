@@ -14,6 +14,7 @@ from os2datascanner.engine2 import settings as engine2_settings
 from os2datascanner.engine2.model.core import Source, SourceManager
 from os2datascanner.engine2.model.core import FileResource
 from os2datascanner.engine2.model.core import UnknownSchemeError
+from .utils import DemoSourceWrapper
 
 
 def do_nothing(*args, **kwargs):
@@ -180,7 +181,7 @@ def main():  # noqa: C901, CCR001
     with SourceManager() as sm:
         for i in args.urls:
             try:
-                s = Source.from_url(i)
+                s = DemoSourceWrapper.from_url(i)
                 if not s:
                     print("{0}: URL parsing failure".format(i), file=stderr)
                 else:

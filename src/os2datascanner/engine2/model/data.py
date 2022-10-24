@@ -9,6 +9,7 @@ from typing import Tuple
 from .core import Source, Handle, FileResource
 
 
+@Source.url_handler('data')
 class DataSource(Source):
     type_label = "data"
 
@@ -36,17 +37,6 @@ class DataSource(Source):
 
     def censor(self):
         return DataSource(None, self._mime, self._name)
-
-    def to_url(self):
-        return "data:{0};base64,{1}".format(
-            self.mime,
-            b64encode(self._content).decode(encoding='ascii'))
-
-    @staticmethod
-    @Source.url_handler("data")
-    def from_url(url):
-        mime, content = unpack_data_url(url)
-        return DataSource(content, mime)
 
     def to_json_object(self):
         return dict(

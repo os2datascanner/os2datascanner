@@ -72,6 +72,7 @@ def make_head_fallback(context):
     return _make_head_fallback
 
 
+@Source.url_handler('http', 'https')
 class WebSource(Source):
     type_label = "web"
     eq_properties = ("_url", "_sitemap",)
@@ -225,13 +226,13 @@ class WebSource(Source):
                              exc_info=True)
             yield here
 
-    def to_url(self):
+    @property
+    def url(self):
+        '''
+        This method simply returns the _url property.
+        Many of the tests and WebHandle.presentation_url depend on this.
+        '''
         return self._url
-
-    @staticmethod
-    @Source.url_handler("http", "https")
-    def from_url(url):
-        return WebSource(url)
 
     def to_json_object(self):
         return dict(
@@ -261,7 +262,7 @@ class WebResource(FileResource):
         self._mr = None
 
     def _generate_metadata(self):
-        _, netloc, _, _, _ = urlsplit(self.handle.source.to_url())
+        _, netloc, _, _, _ = urlsplit(self.handle.source.url)
         yield "web-domain", netloc
         yield from super()._generate_metadata()
 
@@ -367,7 +368,7 @@ class WebHandle(Handle):
         if path and not path.startswith("/"):
             path = "/" + path
         # .removesuffix is probably unnecessary, as it is already done on source._url
-        return self.source.to_url().removesuffix("/") + path
+        return self.source.url.removesuffix("/") + path
 
     @property
     def sort_key(self):

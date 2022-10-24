@@ -3,7 +3,7 @@ from .file import FilesystemResource
 
 from os import rmdir
 from regex import compile
-from urllib.parse import quote, unquote, urlsplit, urlunsplit
+from urllib.parse import quote, urlunsplit
 from pathlib import Path, PureWindowsPath
 from tempfile import mkdtemp
 from subprocess import run
@@ -34,6 +34,7 @@ def compute_domain(unc):
         return remainder
 
 
+@Source.url_handler('smb')
 class SMBSource(Source):
     type_label = "smb"
     eq_properties = ("_unc", "_user", "_password", "_domain",)
@@ -105,25 +106,8 @@ class SMBSource(Source):
             except PermissionError:
                 pass
 
-    def to_url(self):
-        return make_smb_url(
-                "smb", self._unc, self._user, self._domain, self._password)
-
     netloc_regex = compile(
         r"^(((?P<domain>\w+);)?(?P<username>\w+)(:(?P<password>\w+))?@)?(?P<unc>[\w.-]+)$")
-
-    @staticmethod
-    @Source.url_handler("smb")
-    def from_url(url):
-        scheme, netloc, path, _, _ = urlsplit(url.replace("\\", "/"))
-        match = SMBSource.netloc_regex.match(netloc)
-        if match:
-            return SMBSource(
-                "//" + match.group("unc") + unquote(path),
-                match.group("username"), match.group("password"),
-                match.group("domain"))
-        else:
-            return None
 
     def to_json_object(self):
         return dict(

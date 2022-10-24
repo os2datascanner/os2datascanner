@@ -3,7 +3,7 @@ from typing import Mapping, Iterator
 
 from ...utilities.json import JSONSerialisable
 from ...utilities.equality import TypePropertyEquality
-from .errors import UnknownSchemeError
+# from .errors import UnknownSchemeError
 from .import handle as mhandle
 from .utilities import SourceManager
 
@@ -99,20 +99,6 @@ class Source(TypePropertyEquality, JSONSerialisable):
             return func
         return _url_handler
 
-    @staticmethod
-    def from_url(url):
-        """Parses the given URL to produce a new Source."""
-        try:
-            scheme, _ = url.split(':', maxsplit=1)
-            if scheme not in Source.__url_handlers:
-                raise UnknownSchemeError(scheme)
-            return Source.__url_handlers[scheme](url)
-        except ValueError:
-            raise UnknownSchemeError()
-    # There is no general requirement that subclasses implement a to_url
-    # method (what's the URL of a file in a deeply-nested archive?), but many
-    # of them do. If a Source provides a to_url method, it is a requirement
-    # that Source.from_url(Source.to_url(src)) == src.
     __mime_handlers = {}
 
     @staticmethod

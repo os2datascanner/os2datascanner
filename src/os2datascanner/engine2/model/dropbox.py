@@ -1,8 +1,6 @@
 from contextlib import contextmanager
 from io import BytesIO
 
-from urllib.parse import urlsplit
-
 import dropbox
 from dropbox.files import GetMetadataError
 from dropbox.dropbox import create_session
@@ -10,6 +8,7 @@ from dropbox.exceptions import ApiError
 from .core import Source, Handle, FileResource
 
 
+@Source.url_handler('dropbox')
 class DropboxSource(Source):
     """See https://dropbox-sdk-python.readthedocs.io/en/latest/
     for implementation details for the dropbox api.
@@ -53,15 +52,6 @@ class DropboxSource(Source):
                 if isinstance(entry, dropbox.files.FileMetadata):
                     yield DropboxHandle(self, entry.path_lower,
                                         user_account.email)
-
-    @staticmethod
-    @Source.url_handler("dropbox")
-    def from_url(url):
-        scheme, token, _, _, _ = urlsplit(url)
-        return DropboxSource(token=token)
-
-    def to_url(self):
-        return "dropbox://{0}".format(self._token)
 
     def to_json_object(self):
         return dict(**super().to_json_object(), token=self._token)
