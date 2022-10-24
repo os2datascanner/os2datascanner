@@ -253,6 +253,23 @@ class PipelineCollectorTests(TestCase):
                 None,
                 "resolution status changed(?!)")
 
+    def test_decycler(self):
+        """Receiving a failed match for an object that already had matches
+        should blank out those matches, as they are no longer readable."""
+        saved_match = record_match(positive_match)
+        new = record_problem(transient_handle_error)
+
+        self.assertEqual(
+                new,
+                saved_match,
+                "object with matches not reused for problem")
+        self.assertIsNone(
+                new.raw_matches,
+                "matches incorrectly reused for problem")
+        self.assertIsNone(
+                new.raw_metadata,
+                "metadata incorrectly reused for problem")
+
     def test_filter_internal_rules_matches(self):
         match_to_match = messages.MatchesMessage(
             scan_spec=common_scan_spec._replace(scan_tag=scan_tag0),
