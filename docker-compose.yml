@@ -17,12 +17,17 @@ services:
     # Normally, we expect the `rabbitmq` image. The -management images come
     # with a set of management plugins installed and enabled by default. They
     # can be accessed through a web interface. The credentials are os2ds/os2ds.
-    image: rabbitmq:3.8-management-alpine
+    image: rabbitmq:3.11.1-management-alpine
     hostname: os2datascanner_msg_broker
-    env_file:
-      - dev-environment/rabbitmq.env
+    environment:
+      - RABBITMQ_CONFIG_FILE=/etc/rabbitmq/rabbitmq.conf
+      - RABBITMQ_ADVANCED_CONFIG_FILE=/etc/rabbitmq/advanced.config
     ports:
       - "8030:15672"  # management port
+    volumes:
+      - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./docker/rabbitmq/advanced.config:/etc/rabbitmq/advanced.config:ro
+      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
 
   frontend:
     build:
