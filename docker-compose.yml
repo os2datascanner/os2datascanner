@@ -45,7 +45,7 @@ services:
     build:
       context: .
       # we could also use docker/report/Dockerfile as our dockerfile
-      dockerfile: docker/admin/Dockerfile
+      dockerfile: docker/base/Dockerfile
       target: frontend
     volumes:
       # "create" the folder node_modules in the container as otherwise it will
@@ -60,7 +60,8 @@ services:
     image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
-      dockerfile: docker/admin/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: admin
       args:
        COMMIT_SHA: "${OS2DS_COMMIT_SHA}"
        COMMIT_TAG: "${OS2DS_COMMIT_TAG}"
@@ -99,7 +100,8 @@ services:
     image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
-      dockerfile: docker/admin/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: admin
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py checkup_collector
@@ -115,7 +117,8 @@ services:
     image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
-      dockerfile: docker/admin/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: admin
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py status_collector
@@ -132,7 +135,8 @@ services:
     image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
-      dockerfile: docker/admin/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: admin
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py run_background_jobs
@@ -152,7 +156,8 @@ services:
     image: magentaaps/os2datascanner-report:dev
     build:
       context: .
-      dockerfile: docker/report/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: report
     command: [
       # In production, we use gunicorn with the worker class
       # "uvicorn.workers.UvicornWorker", but that does not work with --reload,
@@ -190,7 +195,8 @@ services:
     image: magentaaps/os2datascanner-report:dev
     build:
       context: .
-      dockerfile: docker/report/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: report
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py event_collector
@@ -206,7 +212,8 @@ services:
     image: magentaaps/os2datascanner-report:dev
     build:
       context: .
-      dockerfile: docker/report/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: report
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
     command: python manage.py result_collector
@@ -223,7 +230,8 @@ services:
     image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
-      dockerfile: docker/engine/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: engine
     env_file:
       - ./dev-environment/engine/dev-settings.env
     command: explorer
@@ -238,7 +246,8 @@ services:
     image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
-      dockerfile: docker/engine/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: engine
     command: worker
     init: true
     env_file:
@@ -255,7 +264,8 @@ services:
     image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
-      dockerfile: docker/engine/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: engine
     command: exporter
     env_file:
       - ./dev-environment/engine/dev-settings.env
@@ -278,7 +288,8 @@ services:
     image: magentaaps/os2datascanner-api:dev
     build:
       context: .
-      dockerfile: docker/api/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: api
     command: [
         "gunicorn",
         "--config", "/code/docker/gunicorn-settings.py",
@@ -471,7 +482,8 @@ x-disabled:
     image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
-      dockerfile: docker/admin/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: admin
     command: supercronic /code/docker/crontab
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
@@ -488,7 +500,8 @@ x-disabled:
     image: magentaaps/os2datascanner-report:dev
     build:
       context: .
-      dockerfile: docker/report/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: report
     command: supercronic /code/docker/crontab
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
@@ -505,7 +518,8 @@ x-disabled:
     image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
-      dockerfile: docker/engine/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: engine
     command: processor --enable-metrics
     init: true
     volumes:
@@ -518,7 +532,8 @@ x-disabled:
     image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
-      dockerfile: docker/engine/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: engine
     command: matcher --enable-metrics
     init: true
     restart: unless-stopped
@@ -532,7 +547,8 @@ x-disabled:
     image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
-      dockerfile: docker/engine/Dockerfile
+      dockerfile: docker/base/Dockerfile
+      target: engine
     command: tagger --enable-metrics
     init: true
     volumes:

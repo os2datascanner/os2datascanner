@@ -1,0 +1,28 @@
+# Pillow
+zlib1g-dev
+libjpeg-turbo-progs
+libjpeg62-turbo-dev
+libmagic1
+
+# lxml
+libxml2-dev
+libxslt-dev
+
+# xmlsec
+libxmlsec1-dev
+xmlsec1
+
+# Django
+libpq-dev
+gettext
+
+# Engine
+tesseract-ocr
+tesseract-ocr-dan
+pdftohtml
+imagemagick
+cifs-utils
+libsmbclient-dev
+
+# Report
+openssl
