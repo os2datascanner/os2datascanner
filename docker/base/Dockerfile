@@ -83,8 +83,8 @@ LABEL org.opencontainers.image.title="OS2datascanner - Engine" \
 ENV OS2DS_ENGINE_SYSTEM_CONFIG_PATH=/code/docker/docker-settings.toml \
   OS2DS_ENGINE_USER_CONFIG_PATH=/user-settings.toml
 
-RUN groupadd -g 73030 -r os2ds_engine \
-  && useradd -u 73030 --no-log-init -r -g os2ds_engine os2ds_engine
+RUN groupadd -g 63030 -r os2ds_engine \
+  && useradd -u 63030 --no-log-init -r -g os2ds_engine os2ds_engine
 
 COPY docker/engine/docker-settings.toml /code/docker/docker-settings.toml
 COPY docker/engine/docker-entrypoint.sh /code/docker/docker-entrypoint.sh
@@ -114,8 +114,8 @@ LABEL org.opencontainers.image.title="OS2datascanner - API" \
 ENV OS2DS_SERVER_SYSTEM_CONFIG_PATH=/code/docker/docker-settings.toml \
   OS2DS_SERVER_USER_CONFIG_PATH=/user-settings.toml
 
-RUN groupadd -g 73050 -r os2ds_api\
-  && useradd -u 73050 --no-log-init -r -g os2ds_api os2ds_api
+RUN groupadd -g 63050 -r os2ds_api\
+  && useradd -u 63050 --no-log-init -r -g os2ds_api os2ds_api
 
 WORKDIR /code/docker
 COPY docker/api/docker-settings.toml ./docker-settings.toml
@@ -150,8 +150,8 @@ ENV OS2DS_ADMIN_SYSTEM_CONFIG_PATH=/code/docker/docker-settings.toml \
   OS2DS_ADMIN_USER_CONFIG_PATH=/user-settings.toml \
   DJANGO_SETTINGS_MODULE=os2datascanner.projects.admin.settings
 
-RUN groupadd -g 73020 -r os2ds_admin \
-  && useradd -u 73020 --no-log-init -r -g os2ds_admin os2ds_admin \
+RUN groupadd -g 63020 -r os2ds_admin \
+  && useradd -u 63020 --no-log-init -r -g os2ds_admin os2ds_admin \
   && install -o os2ds_admin -g os2ds_admin -d /code/uploads/admin \
   && install -o os2ds_admin -g os2ds_admin -d /code/static \
   && install -o os2ds_admin -g os2ds_admin -d /code/build \
@@ -217,8 +217,8 @@ ENV OS2DS_REPORT_SYSTEM_CONFIG_PATH=/code/docker/docker-settings.toml \
   OS2DS_REPORT_USER_CONFIG_PATH=/user-settings.toml \
   DJANGO_SETTINGS_MODULE=os2datascanner.projects.report.settings
 
-RUN groupadd -g 73040 -r os2ds_report\
-  && useradd -u 73040 --no-log-init -r -g os2ds_report os2ds_report \
+RUN groupadd -g 63040 -r os2ds_report\
+  && useradd -u 63040 --no-log-init -r -g os2ds_report os2ds_report \
   && install -o os2ds_report -g os2ds_report -d /code/build \
   && install -o os2ds_report -g os2ds_report -d /code/static \
   && install -o os2ds_report -g os2ds_report -d /code/var
