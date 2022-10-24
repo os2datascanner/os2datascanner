@@ -220,7 +220,13 @@ def handle_match_message(path, scan_tag, result):  # noqa: CCR001, E501 too high
                     "scanner_job_name": scan_tag.scanner.name,
                     "only_notify_superadmin": scan_tag.scanner.test,
                     "resolution_status": None,
-                    "organization": get_org_from_scantag(scan_tag)
+                    "organization": get_org_from_scantag(scan_tag),
+
+                    # Explicitly blank out this field, in case it was set, to
+                    # avoid creating confusing hybrid objects (I can think of
+                    # no circumstances in which it would be, but better safe
+                    # than sorry, eh?)
+                    "raw_problem": None,
                 })
 
         logger.debug("matches, saved DocReport", report=dr)
@@ -295,7 +301,14 @@ def handle_problem_message(path, scan_tag, result):
                     "scanner_job_name": scan_tag.scanner.name,
                     "only_notify_superadmin": scan_tag.scanner.test,
                     "resolution_status": None,
-                    "organization": get_org_from_scantag(scan_tag)
+                    "organization": get_org_from_scantag(scan_tag),
+
+                    # Explicitly blank out these fields, in case they were set,
+                    # to avoid creating confusing hybrid objects. If there were
+                    # matches here, they're no longer readable and so no longer
+                    # relevant
+                    "raw_matches": None,
+                    "raw_metadata": None,
                 })
 
         logger.debug(
