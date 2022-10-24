@@ -45,6 +45,7 @@ services:
       - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
 
   admin:
+    image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
@@ -80,6 +81,7 @@ services:
       - queue
 
   admin_checkup_collector:
+    image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
@@ -95,6 +97,7 @@ services:
       - queue
 
   admin_status_collector:
+    image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
@@ -111,6 +114,7 @@ services:
 
   admin_job_runner:
     restart: unless-stopped
+    image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
@@ -127,6 +131,7 @@ services:
     stop_grace_period: 1m30s
 
   report:
+    image: magentaaps/os2datascanner-report:dev
     build:
       context: .
       dockerfile: docker/report/Dockerfile
@@ -148,7 +153,7 @@ services:
       - /code/src/os2datascanner/core_organizational_structure/
       - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
-      - ./src/os2datascanner/projects/report/:/code/src/os2datascanner/projects/report/
+      - ./src/os2datascanner:/code/src/os2datascanner
       # used for assertion signage see dev-environment/report/dev-settings.toml
       #- ./ssl/signing.crt:/etc/ssl/certs/signing.crt:ro
       #- ./ssl/signing.key:/etc/ssl/certs/signing.key:ro
@@ -164,6 +169,7 @@ services:
     image: redis:latest
 
   report_event_collector:
+    image: magentaaps/os2datascanner-report:dev
     build:
       context: .
       dockerfile: docker/report/Dockerfile
@@ -179,6 +185,7 @@ services:
       - queue
 
   report_result_collector:
+    image: magentaaps/os2datascanner-report:dev
     build:
       context: .
       dockerfile: docker/report/Dockerfile
@@ -195,6 +202,7 @@ services:
 
 
   explorer:
+    image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
@@ -209,6 +217,7 @@ services:
       - queue
 
   worker:
+    image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
@@ -225,6 +234,7 @@ services:
       - queue
 
   exporter:
+    image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
@@ -247,6 +257,7 @@ services:
       - "9000:8000"
 
   api_server:
+    image: magentaaps/os2datascanner-api:dev
     build:
       context: .
       dockerfile: docker/api/Dockerfile
@@ -439,6 +450,7 @@ services:
 
 x-disabled:
   admin_cron:
+    image: magentaaps/os2datascanner-admin:dev
     build:
       context: .
       dockerfile: docker/admin/Dockerfile
@@ -455,6 +467,7 @@ x-disabled:
       - queue
 
   report_cron:
+    image: magentaaps/os2datascanner-report:dev
     build:
       context: .
       dockerfile: docker/report/Dockerfile
@@ -471,6 +484,7 @@ x-disabled:
       - queue
 
   processor:
+    image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
@@ -483,6 +497,7 @@ x-disabled:
       - queue
 
   matcher:
+    image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
@@ -496,6 +511,7 @@ x-disabled:
       - queue
 
   tagger:
+    image: magentaaps/os2datascanner-engine:dev
     build:
       context: .
       dockerfile: docker/engine/Dockerfile
