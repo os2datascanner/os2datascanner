@@ -6,6 +6,7 @@ import structlog
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db.models import Q
 from mozilla_django_oidc import auth
 
 from os2datascanner.engine2.pipeline import messages
@@ -203,8 +204,10 @@ def create_alias_and_match_relations(sub_alias):
     # is case sensitive, the real world disagrees..
 
     if sub_alias.alias_type == AliasType.EMAIL:
-        reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
-                        "email-account": sub_alias.value.lower()})
+        reports = DocumentReport.objects.filter(
+            Q(raw_metadata__metadata__contains={"email-account": sub_alias.value.lower()}) |
+            Q(raw_metadata__metadata__contains={"msgraph-owner-account": sub_alias.value.lower()})
+        )
     elif sub_alias.alias_type == AliasType.SID:
         reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
                         "filesystem-owner-sid": sub_alias.value})

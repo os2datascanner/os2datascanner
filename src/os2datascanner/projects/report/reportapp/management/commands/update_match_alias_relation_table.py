@@ -34,8 +34,14 @@ def update_match_alias_relations():
 
             if Alias.objects.filter(pk=alias.pk, _alias_type=AliasType.EMAIL):
                 sub_alias = Alias.objects.get(pk=alias.pk)
-                reports = matches.filter(raw_metadata__metadata__contains={
-                    str('email-account'): str(sub_alias.value)})
+                reports = matches.filter(
+                    Q(raw_metadata__metadata__contains={
+                        "email-account": sub_alias.value.lower()})
+                    |
+                    Q(raw_metadata__metadata__contains={
+                        "msgraph-owner-account": sub_alias.value.lower()})
+                )
+
                 tm.objects.bulk_create(
                     [tm(documentreport_id=r.pk, alias_id=alias.pk) for r in
                      reports], ignore_conflicts=True)

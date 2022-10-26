@@ -123,7 +123,8 @@ def create_aliases(obj):
     if not metadata:
         return
 
-    if (email := metadata.metadata.get("email-account")):
+    if (email := metadata.metadata.get("email-account")
+            or metadata.metadata.get("msgraph-owner-account")):
         email_alias = Alias.objects.filter(_alias_type="email", _value__iexact=email)
         add_new_relations(email_alias, new_objects, obj, tm)
     if (adsid := metadata.metadata.get("filesystem-owner-sid")):
