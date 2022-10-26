@@ -6,21 +6,21 @@ function dropMenu() {
 }
 
 // Close the dropdown if the user clicks outside of it
-window.onclick = function(e) {
+window.onclick = function (e) {
   if (!e.target.matches('.dropbtn, .user__name, .material-icons')) {
     var dropdown = document.getElementById("userMenu");
-      if (dropdown.classList.contains('show')) {
-        dropdown.classList.remove('show');
-      }
+    if (dropdown.classList.contains('show')) {
+      dropdown.classList.remove('show');
+    }
   }
 };
 
 // Toggle side navigation on small display sizes
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById("navigation-toggle").addEventListener("click", function (e) {
-    var menu = document.getElementById("sidemenu");
-    var toggle = e.target;
-    var isHidden = !toggle.hasAttribute("aria-expanded") || toggle.getAttribute("aria-expanded") === "false";
+    const menu = document.getElementById("sidemenu") || document.getElementById('banner_menu');
+    let toggle = e.target;
+    let isHidden = !toggle.hasAttribute("aria-expanded") || toggle.getAttribute("aria-expanded") === "false";
     if (isHidden) {
       menu.style.display = "block";
       toggle.setAttribute("aria-expanded", "");

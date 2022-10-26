@@ -5,8 +5,8 @@
   <ul>
     <li>
       <a href="/" class="{% if request.path == '/' %}active{% endif %}">
-        {% include "components/svg-icons/home.svg" %}
-        <span class="width">{% trans "Front page" %}</span>
+        {% include "components/svg-icons/assignment.svg" %}
+        <span class="width">{% trans "Report" %}</span>
       </a>
     </li>
     <li>
@@ -18,16 +18,22 @@
 
   {% for role in roles %}
     <li>
-      <a href="{{ role.url }}" class={% if request.path == role.url %}active{% endif %}>
+      <a href="{{ role.url }}" class="{% if request.path == role.url %}active{% endif %}">
         {% include "components/svg-icons/bar_chart.svg" %}
         <span class="width">{{ role.description }}</span>
       </a>
     </li>
   {% endfor %}
+    <li class="profile">
+      <a href="{% url "user" %}" class="{% if request.path == "/user/" %}active{% endif %}">
+        {% include "components/svg-icons/account_circle.svg" %}
+        <span class="width">{% trans "User profile" %}</span>
+      </a>
+    </li>
   {% if request.user.is_authenticated %}
     <li class="logout">
       <a href="/accounts/logout">
-        {% include "components/svg-icons/account_circle.svg" %}
+        {% include "components/svg-icons/logout.svg" %}
         <span class="width">
           {% trans "Logout" %}
         </span>

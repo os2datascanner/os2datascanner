@@ -1,5 +1,10 @@
 <header class="banner" role="banner">
   {% include "components/logo.html" %}
+
+  <section class="banner_menu" id="banner_menu" aria-labelledby="navigation-toggle">
+    {% include "components/navigation.html" %}
+  </section>
+
   {% if request.user.is_authenticated %}
   {% include "components/user.html" %}
   {% endif %}

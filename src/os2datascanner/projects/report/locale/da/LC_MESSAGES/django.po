@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:28+0100\n"
+"POT-Creation-Date: 2022-10-31 13:08+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -433,14 +433,18 @@ msgid "Show more matches..."
 msgstr "Vis flere matches..."
 
 #: reportapp/templates/components/navigation.html:9
-msgid "Front page"
-msgstr "Forside"
+msgid "Report"
+msgstr "Rapport"
 
 #: reportapp/templates/components/navigation.html:15
 msgid "Archive"
 msgstr "Arkiv"
 
-#: reportapp/templates/components/navigation.html:32
+#: reportapp/templates/components/navigation.html:30
+msgid "User profile"
+msgstr "Brugerprofil"
+
+#: reportapp/templates/components/navigation.html:38
 #: reportapp/templates/components/user.html:51
 msgid "Logout"
 msgstr "Log ud"
@@ -909,6 +913,9 @@ msgstr "Mailscan"
 #: reportapp/views/views.py:676
 msgid "Not assigned"
 msgstr "Ikke tildelt"
+
+#~ msgid "Front page"
+#~ msgstr "Forside"
 
 #~ msgid "Open file"
 #~ msgstr "Åbn fil"
