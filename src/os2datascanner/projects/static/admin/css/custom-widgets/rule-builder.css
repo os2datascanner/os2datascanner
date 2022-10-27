@@ -1,0 +1,22 @@
+/*
+Filetype is css, due to django only registering specific types as media
+*/
+
+.rule-container {
+    margin-left: 6.1rem;
+}
+
+.cpr-rule {
+    display: inline;
+}
+
+.cpr-rule-specs {
+    display: inline !important;
+    float: none !important;
+}
+
+.watcher {
+    margin-left: 6.1rem;
+    width: 38.2rem;
+    display: block;
+}

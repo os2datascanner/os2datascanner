@@ -17,6 +17,7 @@
 # source municipalities ( http://www.os2web.dk/ )
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.engine2.rules.rule import Rule as E2Rule
 from .rule import Rule
@@ -26,7 +27,8 @@ class CustomRule(Rule):
     """CustomRule is an escape hatch that allows for the JSON representation of
     an arbitrary engine2 rule to be stored in the administration system's
     database."""
-    _rule = models.JSONField()
+
+    _rule = models.JSONField(verbose_name=_('Rule'))
 
     @property
     def rule(self):
