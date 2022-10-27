@@ -141,9 +141,18 @@ for _cls in [APIKey, ScheduledCheckup]:
     admin.site.register(_cls)
 
 
+class UserErrorLogForm(forms.ModelForm):
+    def clean(self):
+        if self.cleaned_data["is_new"] and self.cleaned_data["is_removed"]:
+            raise forms.ValidationError(_("An errorlog cannot both be new and removed"))
+
+        return self.cleaned_data
+
+
 @admin.register(UserErrorLog)
 class UserErrorLogAdmin(admin.ModelAdmin):
     model = UserErrorLog
+    form = UserErrorLogForm
     list_display = (
         'user_friendly_error_message',
         'path',
@@ -173,18 +182,27 @@ class UserErrorLogAdmin(admin.ModelAdmin):
         'is_removed'
     )
 
-    actions = ('mark_new', 'mark_removed', 'mark_not_removed',)
+    actions = ('mark_new', 'mark_not_new', 'mark_removed', 'mark_not_removed',)
 
     @admin.action(description=_("Change new-status to True"))
     def mark_new(self, request, query_set):
-        query_set.update(is_new=True)
+        query_set.filter(is_removed=False).update(is_new=True)
         messages.add_message(request, messages.INFO, _(
-            "Changed {qs_count} elements new-status to True")
+            "Changed {qs_count} elements new-status to True. "
+            "Note: if the element has its is_removed attribute set to True, "
+            "it has not been changed.")
+                .format(qs_count=query_set.count()))
+
+    @admin.action(description=_("Change new-status to False"))
+    def mark_not_new(self, request, query_set):
+        query_set.update(is_new=False)
+        messages.add_message(request, messages.INFO, _(
+            "Changed {qs_count} elements new-status to False")
                 .format(qs_count=query_set.count()))
 
     @admin.action(description=_("Change removed-status to True"))
     def mark_removed(self, request, query_set):
-        query_set.update(is_removed=True)
+        query_set.update(is_removed=True, is_new=False)
         messages.add_message(request, messages.INFO, _(
             "Changed {qs_count} elements removed-status to True")
                 .format(qs_count=query_set.count()))
