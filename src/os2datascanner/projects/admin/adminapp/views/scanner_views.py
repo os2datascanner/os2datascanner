@@ -119,9 +119,7 @@ class StatusOverview(StatusBase):
 
         # Tell the poll element to reload the entire table when a scan starts or finishes.
         old_scans_length = int(self.request.GET.get("scans", self.object_list.count()))
-        print(old_scans_length)
         reload_table = self.object_list.count() == 0 or self.object_list.count() != old_scans_length
-        print(reload_table)
         context["reload"] = ".scan-status-table" if reload_table else "#status_table_poll"
 
         context['delay'] = "every 1s" if self.object_list.exists(
