@@ -11,7 +11,7 @@ from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 
 from ..adminapp.management.commands import checkup_collector
-from ..adminapp.management.commands.checkup_collector import problem_message_recieved_raw
+from ..adminapp.management.commands.checkup_collector import create_usererrorlog
 from ..adminapp.management.commands.status_collector import status_message_received_raw
 from ..adminapp.models.usererrorlog import UserErrorLog, translation_table
 from ..adminapp.models.scannerjobs.scanner import ScheduledCheckup, ScanStatus, \
@@ -177,8 +177,7 @@ class PipelineCollectorTests(TestCase):
         problem_message = messages.ProblemMessage(
             scan_tag=scan_tag, source=scan_spec.source, handle=handle,
             message=error_message)
-        body = problem_message.to_json_object()
-        yield from problem_message_recieved_raw(body)
+        yield from create_usererrorlog(problem_message)
 
         self.assertTrue(UserErrorLog.objects.all().exists())
         self.assertEqual(

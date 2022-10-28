@@ -38,9 +38,8 @@ SUMMARY = Summary("os2datascanner_checkup_collector_admin",
                   "Messages through checkup collector")
 
 
-def problem_message_recieved_raw(body):
-    """Send the error message on to the UserErrorLog object."""
-    message = messages.ProblemMessage.from_json_object(body)
+def create_usererrorlog(message: messages.ProblemMessage):
+    """Create a UserErrorLog object from a problem message."""
 
     try:
         scanner = Scanner.objects.get(pk=message.scan_tag.scanner.pk)
@@ -64,7 +63,9 @@ def problem_message_recieved_raw(body):
     # Determine related ScanStatus object
     scan_status = ScanStatus.objects.filter(  # Uses the "ss_pc_lookup" index
             scanner=scanner,
-            scan_tag=body["scan_tag"]).first()
+            scan_tag=message.scan_tag.to_json_object()).first()
+    # The ScanTagFragment is converted to json ↑ again.
+    # Consider better solution.
 
     if scan_status:
         logger.info(
@@ -76,8 +77,6 @@ def problem_message_recieved_raw(body):
             organization=scanner.organization,
             is_new=True
         )
-
-    yield from []
 
 
 def checkup_message_received_raw(body):
@@ -197,6 +196,10 @@ def update_scheduled_checkup(handle, matches, problem, scan_time, scanner):  # n
                 defaults={
                     "interested_before": scan_time
                 })
+        if problem and not problem.missing:
+            # For problems, we also create a UserErrorLog object to alert
+            # the user that something did not go as expected.
+            create_usererrorlog(problem)
     else:
         logger.debug(
                 "Not interesting, doing nothing",
@@ -219,8 +222,6 @@ class CheckupCollectorRunner(PikaPipelineThread):
                 with transaction.atomic():
                     if routing_key == "os2ds_checkups":
                         yield from checkup_message_received_raw(body)
-                    elif routing_key == "os2ds_problems":
-                        yield from problem_message_recieved_raw(body)
             except DataError as de:
                 # DataError occurs when something went wrong trying to select
                 # or create/update data in the database. Often regarding
@@ -250,5 +251,5 @@ class Command(BaseCommand):
         logging.getLogger("os2datascanner").setLevel(log_levels[log])
 
         CheckupCollectorRunner(
-                read=["os2ds_checkups", "os2ds_problems"],
+                read=["os2ds_checkups"],
                 prefetch_count=512).run_consumer()
