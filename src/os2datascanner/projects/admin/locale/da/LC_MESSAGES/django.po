@@ -769,10 +769,8 @@ msgid " error logs. This action cannot be reverted. Are you sure?"
 msgstr " fejlbeskeder. Denne handling kan ikke fortrydes. Er du sikker?"
 
 #: adminapp/templates/os2datascanner/error_log.html:61
-#, fuzzy
-#| msgid "Remove"
 msgid "Remove all"
-msgstr "Fjern all"
+msgstr "Slet alle"
 
 #: adminapp/templates/os2datascanner/error_log.html:70
 #: adminapp/templates/os2datascanner/scan_completed.html:65
