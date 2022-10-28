@@ -651,7 +651,7 @@ Deploy test:
     - Release API Candidate
   variables:
     SALTBERT_ORCHESTRATION: os2ds.service-test
-    SALTBERT_URL: https://ctrldev1.magenta-aps.dk
+    SALTBERT_URL: https://saltmaster.os2ds.magentahosted.dk
     SALTBERT_PASSWORD: $SALTBERT_PASSWORD
   environment:
     name: test
