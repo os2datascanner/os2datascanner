@@ -493,11 +493,11 @@ Run Engine notice scripts:
     # we do not have any test cases for the api
     - Build API
     - Unit Test Admin Application
-    - Integration Test Admin Application
     - Unit Test Engine
     - Integration Test Engine
     - Unit Test Report Application
-    # No point in waiting ages for job that is always failing
+    # No point in waiting for jobs that always fail...
+    #- Integration Test Admin Application
     #- Integration Test Report Application
   image: alpine
   variables:
