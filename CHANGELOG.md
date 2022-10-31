@@ -1,5 +1,74 @@
 # Changelog
 
+## Version 3.17.0, 31st October 2022
+
+"Refreshed Rabbit"
+
+### New in this version
+
+- Back-end support for running a checkup-only scan:
+
+  - Administrators with command-line access to OS2datascanner can now ask for
+    all objects containing matches from a previous scan to be re-examined. (A
+    user interface for this functionality will be introduced in an upcoming
+    release.)
+
+- Initial support for creating custom rules:
+
+  - Superusers can now create advanced rules using boolean expressions in the
+    Django administration pages of the administration system. (This
+    functionality will be exposed to other users in an upcoming release.)
+
+- OS2datascanner now uses RabbitMQ v3.11 where available, bringing enhanced
+  performance and more features.
+
+### General improvements
+
+- RabbitMQ now saves messages to disk as soon as possible, reducing its memory
+  requirements for large queues and improving reliability.
+
+- The error log view now supports the same functionality as the scan status
+  view.
+
+- The report module now displays an indicator when waiting for a response from
+  the web server.
+
+- Both the full path and the path to the containing folder can now be copied
+  for matches in shared network drives.
+
+- The collector processes used to receive information from the scanner engine
+  have been split up and simplified, improving performance.
+
+- Transmitting imported organisational information from the administration
+  system to the report module is now approximately a hundred times faster.
+
+- Managers and DPOs can now also see an overview of the resolution status of
+  matches.
+
+- Images will no longer be extracted from PDF files and ignored when running a
+  scan with the OCR function disabled.
+
+### Bugfixes
+
+- Statistical overviews no longer show data sources for which no data was
+  scanned.
+
+- Deleting a scan status object is no longer extremely time-sensitive.
+
+- URLs are now presented more usably by the report module.
+
+- Handling a match in the report module no longer resets the chosen display
+  properties.
+
+- The report module no longer treats the manager and DPO overviews as being
+  equivalent in some circumstances.
+
+- OneDrive and SharePoint files are now correctly assigned to the users who own
+  them.
+
+- Marking a file that contains matches as unreadable no longer makes those
+  matches "sticky" in the report module.
+
 ## Version 3.16.1.5, 7th October 2022
 
 "You Shall Not Pass"

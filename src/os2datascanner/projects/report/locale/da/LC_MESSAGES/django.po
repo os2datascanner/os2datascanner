@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-19 14:00+0200\n"
+"POT-Creation-Date: 2022-10-31 12:28+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -219,40 +219,40 @@ msgstr "I mellemtiden kan du forsøge at genindlæse siden eller"
 msgid "go to the front page"
 msgstr "gå til forsiden"
 
-#: reportapp/templates/components/filters.html:24
-#: reportapp/templates/components/filters.html:61
-#: reportapp/templates/components/filters.html:100
+#: reportapp/templates/components/filters.html:26
+#: reportapp/templates/components/filters.html:64
+#: reportapp/templates/components/filters.html:104
 msgid "Clear"
 msgstr "Ryd"
 
-#: reportapp/templates/components/filters.html:27
+#: reportapp/templates/components/filters.html:29
 msgid "Scan"
 msgstr "Scan"
 
-#: reportapp/templates/components/filters.html:37
-#: reportapp/templates/components/statistics-template.html:19
+#: reportapp/templates/components/filters.html:39
+#: reportapp/templates/components/statistics-template.html:33
 msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
 
-#: reportapp/templates/components/filters.html:64
-#: reportapp/templates/components/statistics-template.html:73
-#: reportapp/templates/components/statistics-template.html:113
+#: reportapp/templates/components/filters.html:67
+#: reportapp/templates/components/statistics-template.html:87
+#: reportapp/templates/components/statistics-template.html:127
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: reportapp/templates/components/filters.html:74
+#: reportapp/templates/components/filters.html:77
 msgid "All sensitivities"
 msgstr "Alle følsomheder"
 
-#: reportapp/templates/components/filters.html:103
+#: reportapp/templates/components/filters.html:107
 msgid "Resolution Status"
 msgstr "Håndteringsstatus"
 
-#: reportapp/templates/components/filters.html:113
+#: reportapp/templates/components/filters.html:117
 msgid "All resolution statuses"
 msgstr "Alle håndteringsstatusser"
 
-#: reportapp/templates/components/filters.html:140
+#: reportapp/templates/components/filters.html:144
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
@@ -273,8 +273,8 @@ msgstr "Markér som håndterede"
 
 #: reportapp/templates/components/handle-match.html:18
 #: reportapp/templates/components/handle-match.html:60
-#: reportapp/templates/components/hit.html:106
-#: reportapp/templates/components/hit.html:127
+#: reportapp/templates/components/hit.html:107
+#: reportapp/templates/components/hit.html:128
 msgid ""
 "You are about to handle this result. This action does not change the file, "
 "that the result is about. Please do not handle a result before action has "
@@ -299,8 +299,8 @@ msgid "Edit marked"
 msgstr "Rediger markerede"
 
 #: reportapp/templates/components/handle-match.html:64
-#: reportapp/templates/components/hit.html:151
-#: reportapp/templates/components/hit.html:174
+#: reportapp/templates/components/hit.html:152
+#: reportapp/templates/components/hit.html:175
 msgid "Revert"
 msgstr "Fortryd"
 
@@ -310,11 +310,11 @@ msgstr "Fortryd markerede"
 
 #: reportapp/templates/components/handle-match.html:87
 #: reportapp/templates/components/pagination.html:11
-#: reportapp/templates/components/statistics-template.html:128
-#: reportapp/templates/components/statistics-template.html:137
-#: reportapp/templates/components/statistics-template.html:146
-#: reportapp/templates/components/statistics-template.html:155
-#: reportapp/templates/components/statistics-template.html:166
+#: reportapp/templates/components/statistics-template.html:142
+#: reportapp/templates/components/statistics-template.html:151
+#: reportapp/templates/components/statistics-template.html:160
+#: reportapp/templates/components/statistics-template.html:169
+#: reportapp/templates/components/statistics-template.html:180
 msgid "of"
 msgstr "af"
 
@@ -326,28 +326,28 @@ msgstr "valgt"
 msgid "Select result"
 msgstr "Vælg resultat"
 
-#: reportapp/templates/components/hit.html:42
+#: reportapp/templates/components/hit.html:43
 msgid "Open"
 msgstr "Åbn"
 
-#: reportapp/templates/components/hit.html:47
+#: reportapp/templates/components/hit.html:48
 msgid "Copy"
 msgstr "Kopiér"
 
-#: reportapp/templates/components/hit.html:51
+#: reportapp/templates/components/hit.html:52
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:57
+#: reportapp/templates/components/hit.html:58
 msgid "Copy folder"
 msgstr "Kopiér mappe"
 
-#: reportapp/templates/components/hit.html:64
+#: reportapp/templates/components/hit.html:65
 msgid "Opened"
 msgstr "Åbnet: "
 
-#: reportapp/templates/components/hit.html:98
-#: reportapp/templates/components/hit.html:117
+#: reportapp/templates/components/hit.html:99
+#: reportapp/templates/components/hit.html:118
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned.\n"
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -355,29 +355,29 @@ msgstr ""
 "OS2datascanner sletter ikke resultater fra systemet der blev scannet.\n"
 "Resultatet markeres udelukkende som håndteret i OS2datascanner."
 
-#: reportapp/templates/components/hit.html:100
-#: reportapp/templates/components/hit.html:130
+#: reportapp/templates/components/hit.html:101
+#: reportapp/templates/components/hit.html:131
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:132
-#: reportapp/templates/components/hit.html:176
+#: reportapp/templates/components/hit.html:133
+#: reportapp/templates/components/hit.html:177
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:144
+#: reportapp/templates/components/hit.html:145
 msgid "Edit"
 msgstr "Redigér"
 
-#: reportapp/templates/components/hit.html:190
+#: reportapp/templates/components/hit.html:191
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:191
+#: reportapp/templates/components/hit.html:192
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:192
+#: reportapp/templates/components/hit.html:193
 msgid "Probability"
 msgstr "Sandsynlighed"
 
@@ -386,49 +386,49 @@ msgstr "Sandsynlighed"
 msgid "Results"
 msgstr "Resultater"
 
-#: reportapp/templates/components/hits.html:31
+#: reportapp/templates/components/hits.html:32
 msgid "Show match probability"
 msgstr "Vis sandsynlighed"
 
-#: reportapp/templates/components/hits.html:32
+#: reportapp/templates/components/hits.html:33
 msgid "Show/hide all matches"
 msgstr "Vis/skjul alle matches"
 
-#: reportapp/templates/components/hits.html:41
+#: reportapp/templates/components/hits.html:42
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: reportapp/templates/components/hits.html:46
+#: reportapp/templates/components/hits.html:47
 #: reportapp/templates/user_content.html:22
 msgid "Name"
 msgstr "Navn"
 
-#: reportapp/templates/components/hits.html:50
+#: reportapp/templates/components/hits.html:51
 msgid "Matches"
 msgstr "Matches"
 
-#: reportapp/templates/components/hits.html:60
+#: reportapp/templates/components/hits.html:61
 msgid "Source"
 msgstr "Kilde"
 
-#: reportapp/templates/components/hits.html:63
+#: reportapp/templates/components/hits.html:64
 msgid "Path"
 msgstr "Sti"
 
-#: reportapp/templates/components/hits.html:78
+#: reportapp/templates/components/hits.html:79
 msgid "Status"
 msgstr "Status"
 
-#: reportapp/templates/components/hits.html:89
+#: reportapp/templates/components/hits.html:90
 msgid "Actions"
 msgstr "Handlinger"
 
-#: reportapp/templates/components/load-results.html:24
+#: reportapp/templates/components/load-results.html:25
 msgid "per page"
 msgstr "pr. side"
 
 #: reportapp/templates/components/matches_table.html:20
-#: reportapp/templates/components/matches_table.html:25
+#: reportapp/templates/components/matches_table.html:26
 msgid "Show more matches..."
 msgstr "Vis flere matches..."
 
@@ -449,21 +449,21 @@ msgstr "Log ud"
 msgid "matches"
 msgstr "matches"
 
-#: reportapp/templates/components/pagination.html:22
-#: reportapp/templates/components/pagination.html:27
+#: reportapp/templates/components/pagination.html:23
+#: reportapp/templates/components/pagination.html:28
 msgid "Previous"
 msgstr "Forrige"
 
-#: reportapp/templates/components/pagination.html:73
 #: reportapp/templates/components/pagination.html:78
+#: reportapp/templates/components/pagination.html:83
 msgid "Next"
 msgstr "Næste"
 
-#: reportapp/templates/components/pagination.html:85
+#: reportapp/templates/components/pagination.html:90
 msgid "Go to page"
 msgstr "Gå til side"
 
-#: reportapp/templates/components/pagination.html:93
+#: reportapp/templates/components/pagination.html:99
 msgid "Go"
 msgstr "Gå"
 
@@ -472,22 +472,22 @@ msgid "Sensitivity legend"
 msgstr "Følsomhedsoversigt"
 
 #: reportapp/templates/components/sensitivity-chart.html:8
-#: reportapp/templates/components/statistics-template.html:127
+#: reportapp/templates/components/statistics-template.html:141
 msgid "Critical"
 msgstr "Kritisk"
 
 #: reportapp/templates/components/sensitivity-chart.html:12
-#: reportapp/templates/components/statistics-template.html:136
+#: reportapp/templates/components/statistics-template.html:150
 msgid "Problem"
 msgstr "Problem"
 
 #: reportapp/templates/components/sensitivity-chart.html:16
-#: reportapp/templates/components/statistics-template.html:145
+#: reportapp/templates/components/statistics-template.html:159
 msgid "Warning"
 msgstr "Advarsel"
 
 #: reportapp/templates/components/sensitivity-chart.html:20
-#: reportapp/templates/components/statistics-template.html:154
+#: reportapp/templates/components/statistics-template.html:168
 msgid "Notification"
 msgstr "Notifikation"
 
@@ -499,64 +499,64 @@ msgstr "Lederstatistik"
 msgid "DPO statistics"
 msgstr "DPO statistik"
 
-#: reportapp/templates/components/statistics-template.html:40
+#: reportapp/templates/components/statistics-template.html:54
 msgid "Development overview"
 msgstr "Udviklingsoverblik"
 
-#: reportapp/templates/components/statistics-template.html:41
+#: reportapp/templates/components/statistics-template.html:55
 msgid "New results by month"
 msgstr "Antal nye resultater per måned"
 
-#: reportapp/templates/components/statistics-template.html:42
+#: reportapp/templates/components/statistics-template.html:56
 msgid "Unhandled results by month"
 msgstr "Antal uhåndterede resultater per måned"
 
-#: reportapp/templates/components/statistics-template.html:47
+#: reportapp/templates/components/statistics-template.html:61
 msgid "New results"
 msgstr "Nye resultater"
 
-#: reportapp/templates/components/statistics-template.html:48
+#: reportapp/templates/components/statistics-template.html:62
 msgid "Unhandled results"
 msgstr "Uhåndterede resultater"
 
-#: reportapp/templates/components/statistics-template.html:65
+#: reportapp/templates/components/statistics-template.html:79
 msgid "Distribution of results"
 msgstr "Fordeling af resultater"
 
-#: reportapp/templates/components/statistics-template.html:66
+#: reportapp/templates/components/statistics-template.html:80
 msgid "Results distributed by sensitivities"
 msgstr "Resultater fordelt på følsomheder"
 
-#: reportapp/templates/components/statistics-template.html:67
+#: reportapp/templates/components/statistics-template.html:81
 msgid "Results distributed by data sources"
 msgstr "Resultater fordelt på datakilder"
 
-#: reportapp/templates/components/statistics-template.html:68
+#: reportapp/templates/components/statistics-template.html:82
 msgid "Results distributed by resolution statuses"
 msgstr "Resultater fordelt på håndteringsstatusser"
 
-#: reportapp/templates/components/statistics-template.html:74
+#: reportapp/templates/components/statistics-template.html:88
 msgid "Data sources"
 msgstr "Datakilder"
 
-#: reportapp/templates/components/statistics-template.html:76
+#: reportapp/templates/components/statistics-template.html:90
 msgid "Resolution statuses"
 msgstr "Håndteringsstatusser"
 
-#: reportapp/templates/components/statistics-template.html:106
-#: reportapp/templates/components/statistics-template.html:165
+#: reportapp/templates/components/statistics-template.html:120
+#: reportapp/templates/components/statistics-template.html:179
 msgid "Handled results"
 msgstr "Håndterede resultater"
 
-#: reportapp/templates/components/statistics-template.html:107
+#: reportapp/templates/components/statistics-template.html:121
 msgid "Percentage of handled results distributed by sensitivity"
 msgstr "Procentvis andel af håndterede resultater fordelt på følsomhed"
 
-#: reportapp/templates/components/statistics-template.html:108
+#: reportapp/templates/components/statistics-template.html:122
 msgid "The department's percentage of handled results"
 msgstr "Afdelingens procentvise andel af håndterede resultater"
 
-#: reportapp/templates/components/statistics-template.html:114
+#: reportapp/templates/components/statistics-template.html:128
 msgid "All results"
 msgstr "Alle resultater"
 
@@ -564,15 +564,15 @@ msgstr "Alle resultater"
 msgid "Show Account"
 msgstr "Vis konto"
 
-#: reportapp/templates/content.html:6
+#: reportapp/templates/content.html:10
 msgid "results"
 msgstr "resultater"
 
-#: reportapp/templates/content.html:12
+#: reportapp/templates/content.html:17
 msgid "Distribute matches to users from"
 msgstr "Uddel matches til brugere fra"
 
-#: reportapp/templates/content.html:24
+#: reportapp/templates/content.html:29
 msgid ""
 "Are you sure you want to distribute matches to the users? This action cannot "
 "be reverted."
@@ -580,11 +580,11 @@ msgstr ""
 "Er du sikker på, at du vil dele matches ud til brugerne? Denne handling kan "
 "ikke fortrydes."
 
-#: reportapp/templates/content.html:28
+#: reportapp/templates/content.html:33
 msgid "Distribute"
 msgstr "Uddel"
 
-#: reportapp/templates/content.html:36
+#: reportapp/templates/content.html:41
 msgid "No results were found"
 msgstr "Der er ingen resultater"
 
