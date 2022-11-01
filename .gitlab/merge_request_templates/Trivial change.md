@@ -11,9 +11,9 @@ Examples:
 /label ~trivial
 
 <!-- Other recommended quick actions (remove # to apply):
-#/request_review @af @jkh @tha @jdk
+#/request_review @af @jkh @tha @jdk @sn @rkk
 #/label ~bug
-#/label ~enhancement
+#/label ~feature
 -->
 
 
@@ -27,6 +27,7 @@ Checkboxes can be pre-filled before submitting the MR by replacing
     - [ ] The change is contained within *not more than three commits* which reference the ticket ID (eg. `[#12345] Implement featureX in Y`)
     - [ ] The MR contains a single minor bugfix, documentation correction or trivial feature
     - [ ] Screenshots of any UI changes have been added to the MR description
+    - [ ] The CHANGELOG.md file has been updated to reflect the change made in this MR
 - [ ] Workflow:
     - [ ] The title of this MR contains the relevant ticket no., formatted like `[#12345]`
     - [ ] The corresponding Redmine ticket has been set to `Needs review`, assigned to the principal reviewer and contains a link to MR
