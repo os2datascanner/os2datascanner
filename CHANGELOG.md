@@ -18,6 +18,8 @@
 
 - Added string representations to some models without for easier debugging.
 
+- Functions for drawing charts and graphs refactored.
+
 ### Bugfixes
 
 - Adjusted media root to support profile images uploaded by the user.
