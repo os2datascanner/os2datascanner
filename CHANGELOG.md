@@ -8,6 +8,8 @@
 
 - Release notes are now written gradually, instead of in batches during release procedures.
 
+- When handling a result in the report module, the animation will now get to finish before the DOM content is swapped.
+
 ## Version 3.17.0, 31st October 2022
 
 "Refreshed Rabbit"

@@ -6,7 +6,7 @@
      name="handle-matches-get"
      hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
      hx-swap="innerHTML"
-     hx-trigger="reload-htmx from:body, click from:.order-by delay:100ms"
+     hx-trigger="reload-htmx from:body delay:300ms, click from:.order-by delay:100ms"
      hx-target=".content"
      hx-include="[id='dropdown_options'], [id='filter_form']"
      hx-indicator="#report-page-indicator"
