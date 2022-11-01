@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 3.17.1, 
+
+"Catchy Title"
+
+## General Improvements
+
+- Release notes are now written gradually, instead of in batches during release procedures.
+
 ## Version 3.17.0, 31st October 2022
 
 "Refreshed Rabbit"

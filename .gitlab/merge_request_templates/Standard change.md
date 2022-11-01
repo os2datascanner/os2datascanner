@@ -10,9 +10,9 @@ If any UI changes have been made, please include screenshots.
 /assign me
 
 <!-- Other recommended quick actions (remove # to apply):
-#/request_review @af @jkh @tha @jdk
+#/request_review @af @jkh @tha @jdk @rkk @sn
 #/label ~bug
-#/label ~enhancement
+#/label ~feature
 -->
 
 ## Author's checklist
@@ -40,6 +40,7 @@ Checkboxes can be pre-filled before submitting the MR by replacing
     - [ ] I have tested the feature/bugfix manually
     - [ ] I have added/updated and verified translations where relevant
     - [ ] I have run any new migrations on a non-empty database
+    - [ ] I have updated the CHANGELOG.md file to reflect the changes made
 
 ## Review checklist
 
