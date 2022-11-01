@@ -99,7 +99,7 @@
 Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}">
                 <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Handle" %}</span></button>
                 <div class="handle-dropdown">
-                  <ul hx-swap="outerHTML"
+                  <ul hx-swap="outerHTML swap:300ms"
                       hx-indicator="closest tr"
                       hx-target="closest tr"
                       {% if request.user.profile.time_since_last_handle > 172800 %}
@@ -117,7 +117,7 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
                     title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned.
 Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}"
                     hx-post="{% url "index" %}"
-                    hx-swap="outerHTML"
+                    hx-swap="outerHTML swap:300ms"
                     hx-target="closest tr"
                     hx-indicator="closest tr"
                     hx-trigger="click"
@@ -143,7 +143,7 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
                     title="revert">
               <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Edit" %}</span></button>
               <div class="handle-dropdown">
-                <ul hx-swap="outerHTML"
+                <ul hx-swap="outerHTML swap:300ms"
                     hx-indicator="closest tr"
                     hx-target="closest tr"
                     >
@@ -163,7 +163,7 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
               title="Here is a title."
               {% comment %} TODO: Replace this with a POST-request. {% endcomment %}
               hx-post={% url "archive" %}
-              hx-swap="outerHTML"
+              hx-swap="outerHTML swap:300ms"
               hx-trigger="click"
               hx-indicator="closest tr"
               hx-target="closest tr"
