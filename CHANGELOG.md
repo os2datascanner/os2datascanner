@@ -4,6 +4,10 @@
 
 "Catchy Title"
 
+## New in this version
+
+- The side menu in the report module has been removed, and the menu items have instead been moved to the header. For small screens, the functionality is unchanged.
+
 ## General Improvements
 
 - Release notes are now written gradually, instead of in batches during release procedures.
