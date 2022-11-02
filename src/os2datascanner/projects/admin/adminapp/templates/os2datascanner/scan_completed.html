@@ -26,6 +26,9 @@
         </div>
 
         {% if object_list  %}
+        {% for status in object_list %}
+        <p> {{status.scanner.pk}} </p>
+        {%endfor%}
         <div class="datatable-wrapper card" role="region" tabindex="0" aria-label="{% trans 'Completed scans' %}">
           <form id="table_checkboxes">
             <table class="datatable">
@@ -33,6 +36,7 @@
                 <col class="datatable__column--checkbox">
                 <col class="datatable__column--name">
                 <col class="datatable__column--starttime">
+                <col class="datatable__column--info">
                 <col class="datatable__column--info">
                 <col class="datatable__column--status">
                 {% if user.is_superuser %}
@@ -42,7 +46,7 @@
               <thead>
                 {% if user.is_superuser %}
                 <tr class="table-topbar topbar-stick sticky">
-                  <th colspan="6">
+                  <th colspan="7">
                     {% include "components/resolve-status.html" %}
                     <div class="view-options">
                       <button type="button" class="button button--has-icon" name="status-resolved-all"
@@ -75,6 +79,9 @@
                   </th>
                   <th class="datatable__column--info">
                     {% trans "Objects" %}
+                  </th>
+                  <th class="datatable__column--info">
+                    {% trans "Results" %}
                   </th>
                   <th class="datatable__column--status">
                     {% trans "Status" %}
@@ -115,6 +122,9 @@
                       </td>
                       <td class="datatable__column--automatic">
                         {{ status.total_objects }} {% trans "objects explored" %}
+                      </td>
+                      <td class="datatable__column--automatic">
+                        10 {% trans "results" %}
                       </td>
                       <td class="datatable__column--actions">
                         <span class="completed_icon">
