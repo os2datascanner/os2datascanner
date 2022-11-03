@@ -579,6 +579,13 @@ class ScanStatus(AbstractScanStatus):
         default=False
     )
 
+    matches_found = models.IntegerField(
+        verbose_name=_("matches found"),
+        default=None,
+        blank=True,
+        null=True
+    )
+
     @property
     def estimated_completion_time(self) -> datetime.datetime:
         """Returns the linearly interpolated completion time of this scan
