@@ -30,7 +30,9 @@ def process_exploration_error(scan_spec, handle_candidate, ex):
             scan_tag=scan_spec.scan_tag, source=scan_spec.source,
             handle=handle_candidate, message=exception_message)
     yield ("os2ds_problems", problem_message.to_json_object())
-    logger.info(f"Sent problem message for handle: {handle_candidate}.")
+    logger.info(
+            "found problem",
+            scan_tag=scan_spec.scan_tag, handle=handle_candidate)
 
 
 def message_received_raw(body, channel, source_manager):  # noqa
@@ -77,6 +79,8 @@ def message_received_raw(body, channel, source_manager):  # noqa
             seconds=settings.pipeline["op_timeout"],
             max_tries=settings.pipeline["op_tries"])
 
+    log = logger.bind(scan_tag=scan_tag)
+
     try:
         while (handle := tr.run(next, it)):
             if isinstance(handle, tuple) and handle[1]:
@@ -101,15 +105,14 @@ def message_received_raw(body, channel, source_manager):  # noqa
                         source=new_source).to_json_object())
                     source_count = (source_count or 0) + 1
                 else:
-                    logger.info(f"A handle matched the exclusion rules: {handle}")
+                    log.info("handle excluded", handle=handle)
 
-        logger.info(
-                "Finished exploration successfully",
-                handle_count=handle_count, source_count=source_count,
-                scan_tag=scan_tag)
+        log.warning("stopped unexpectedly")
     except StopIteration:
         # Exploration is complete
-        pass
+        log.info(
+                "finished",
+                handle_count=handle_count, source_count=source_count)
     except Exception as e:
         exception_message = "Exploration error. {0}: ".format(type(e).__name__)
         exception_message += ", ".join([str(a) for a in e.args])
@@ -117,10 +120,10 @@ def message_received_raw(body, channel, source_manager):  # noqa
             scan_tag=scan_tag, source=scan_spec.source, handle=None,
             message=exception_message)
         yield ("os2ds_problems", problem_message.to_json_object())
-        logger.warning(
-                "Finished exploration unsuccessfully",
+        log.warning(
+                "finished unsuccessfully",
                 handle_count=handle_count, source_count=source_count,
-                scan_tag=scan_tag, exc_info=e)
+                exc_info=e)
     finally:
         if hasattr(it, "close"):
             it.close()
