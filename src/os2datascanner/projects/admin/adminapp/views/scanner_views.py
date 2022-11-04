@@ -266,11 +266,6 @@ class UserErrorLogView(RestrictedListView):
         # as url param paginate_by=xx
         return self.request.GET.get('paginate_by', self.paginate_by)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["new_error_logs"] = count_new_errors(self.request.user)
-        return context
-
     def post(self, request, *args, **kwargs):
         is_htmx = self.request.headers.get("HX-Request", False) == "true"
         htmx_trigger = self.request.headers.get('HX-Trigger-Name')

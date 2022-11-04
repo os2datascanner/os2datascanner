@@ -5,6 +5,10 @@
     {% include "components/navigation.html" %}
   </section>
 
+  <section class="service_menu" id="service_menu">
+    {% include "components/service.html" %}
+  </section>
+
   {% if request.user.is_authenticated %}
   {% include "components/user.html" %}
   {% endif %}

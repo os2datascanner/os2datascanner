@@ -30,7 +30,7 @@ urlpatterns = [
     url('about',    AboutPageView.as_view(),    name="about"),
     url(r'^health/', lambda r: HttpResponse()),
     url(r'^version/?$', lambda r: HttpResponse(__version__)),
-    url(r'^help/$', MainPageView.as_view(), name="guide")
+    url(r'^help/$', ManualMainView.as_view(), name="guide")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.SAML2_ENABLED:

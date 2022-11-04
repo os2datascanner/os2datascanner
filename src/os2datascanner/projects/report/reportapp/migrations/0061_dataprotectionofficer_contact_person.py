@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner_report', '0059_delete_userprofile'),
+        ('os2datascanner_report', '0060_alter_documentreport_resolution_status'),
     ]
 
     operations = [

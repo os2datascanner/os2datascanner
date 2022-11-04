@@ -426,7 +426,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
 
-        context["email_body"] = convert_context_to_email_body(context)
+        context["email_body"] = convert_context_to_email_body(context, self.request.user)
 
         return context
 

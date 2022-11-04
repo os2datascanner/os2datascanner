@@ -120,6 +120,11 @@ module.exports = {
           from: 'svg',
           to: 'svg',
           noErrorOnMissing: true
+        },
+        {
+          from: 'manualimages',
+          to: 'manualimages',
+          noErrorOnMissing: true
         }
       ]
     })

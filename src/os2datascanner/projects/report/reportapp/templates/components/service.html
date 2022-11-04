@@ -11,6 +11,7 @@
   <div class="popup overview">
 
     <ul>
+      {% if request.path != "/help/" %}
       <a href="{% url "guide" %}" target="_blank">
         <li title="{% trans "Consult the manual to find instructions for using OS2datascanner." %}">
         {% trans "Manual" %}
@@ -21,6 +22,7 @@
           {% trans "FAQ" %}
         </li>
       </a>
+      {% endif %}
       {% if settings.ALLOW_CONTACT_DPO %}
       {% if dpo_contacts %}
       <li class="dpo_button"
@@ -29,7 +31,7 @@
         <div class="popup dpo_overview" title="">
           <ul>
             {% for contact in dpo_contacts %}
-            <a href="mailto:{{ contact.user.email }}?subject={% trans "Question to OS2datascanner" %}">
+            <a href="mailto:{{ contact.user.email }}?subject={% trans "Question about OS2datascanner" %}">
               {% if contact.user.first_name %}
               <li>{{ contact.user.first_name }} {{ contact.user.last_name }}</li>
               {% elif contact.user.account.first_name %}
@@ -52,7 +54,7 @@
       </a>
       {% endif %}
       {% if request.user.is_superuser or settings.ALLOW_CONTACT_MAGENTA %}
-      <a href="mailto:OS2datascannersupport@magenta.dk?subject=[{% now "y/m/d H:i:s" %}] {{ request.user.profile.organization }}: {{ request.user.get_short_name }}&body={{ email_body }}">
+      <a href="mailto:OS2datascannersupport@magenta.dk?subject=[{% now "y/m/d H:i:s" %}] {{ request.user.account.organization }}: {{ request.user.get_short_name }}&body={{ email_body }}">
         <li title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact Magenta ApS by clicking this button." %}">{% trans "Contact Magenta" %}</li>
       </a>
       {% endif %}
