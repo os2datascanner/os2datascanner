@@ -1,5 +1,7 @@
 SECRET_KEY = "DUMMYKEY(for development)DUMMYKEY(for development)"
 
+MEDIA_ROOT = ["*"," src", "os2datascanner", "projects", "report"]
+
 # [mode]
 DEBUG = true
 
