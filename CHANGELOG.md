@@ -20,6 +20,8 @@
 
 - Path is shown corretly when editing Office 365 scannerjobs 
 
+- "Completed scans" table now has a column showing number of results found in associated scan
+
 ## Version 3.17.0, 31st October 2022
 
 "Refreshed Rabbit"
