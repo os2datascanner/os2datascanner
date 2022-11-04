@@ -76,6 +76,7 @@ RUN set -ex \
   && echo "${SUPERCRONIC_SHA1SUM}  /usr/local/bin/supercronic" | sha1sum -c - \
   && chmod +x /usr/local/bin/supercronic \
   # create folders for output from django
+  && install -o os2ds_report -g os2ds_report -d /code/uploads/report \
   && install -o os2ds_report -g os2ds_report -d /code/build \
   && install -o os2ds_report -g os2ds_report -d /code/static \
   && install -o os2ds_report -g os2ds_report -d /code/var

@@ -11,8 +11,11 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
+import os
+
 from PIL import Image
 
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -59,7 +62,7 @@ class Account(Core_Account):
 
     @property
     def image(self):
-        return self._image.url if self._image else None
+        return os.path.join(settings.MEDIA_ROOT, self._image.url) if self._image else None
 
 
 @receiver(post_save, sender=Account)
