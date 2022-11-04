@@ -858,22 +858,6 @@ msgstr "Markér som set"
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
-#: adminapp/templates/os2datascanner/error_log.html:57
-msgid ""
-"You are about to mark all error log messages as seen. This action cannot be "
-"reverted. Are you sure?"
-msgstr ""
-"Du er ved at markere alle fejlbeskeder som set. Denne handling kan ikke "
-"fortrydes. Er du sikker?"
-
-#: adminapp/templates/os2datascanner/error_log.html:59
-msgid "Mark all as seen"
-msgstr "Markér alle som set"
-
-#: adminapp/templates/os2datascanner/error_log.html:76
-msgid "New"
-msgstr "Ny"
-
 #: adminapp/templates/os2datascanner/error_log.html:93
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:114
@@ -885,14 +869,6 @@ msgstr "Ny"
 #: organizations/templates/organizations/org_table.html:222
 msgid "Delete"
 msgstr "Slet"
-
-#: adminapp/templates/os2datascanner/error_log.html:99
-msgid "Mark as seen"
-msgstr "Markér som set"
-
-#: adminapp/templates/os2datascanner/error_log.html:112
-msgid "no errors found."
-msgstr "ingen fejl fundet."
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:12
 msgid ""

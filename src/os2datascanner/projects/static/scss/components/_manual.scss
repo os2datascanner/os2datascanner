@@ -12,7 +12,7 @@
     @media (min-width: $break-sm) {
       display: block;
       position: fixed;
-      top: 10rem;
+      top: 7rem;
       right: -1rem;
     }
 
@@ -32,9 +32,26 @@
       margin-bottom: 0.3rem;
     }
 
+    li,
+    h3 {
+      padding: 0.8rem;
+      transition: all 200ms ease-in-out;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+
     a {
       text-decoration: none;
-      color: var(--color-primary);
+      color: var(--color-main);
+
+      &:hover {
+        color: var(--color-widget-bg);
+
+        >li,
+        >h3 {
+          background-color: var(--color-main);
+        }
+      }
     }
   }
 

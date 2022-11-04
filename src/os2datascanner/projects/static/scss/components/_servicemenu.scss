@@ -42,8 +42,21 @@
     }
   }
 
-  .dpo_button:hover>.popup {
+  .open_popup:hover .popup,
+  .open_popup:hover .popup-container {
     display: block;
+  }
+
+  .popup-container {
+    display: none;
+    width: 300px;
+    position: absolute;
+    right: 160px;
+    bottom: -18px;
+
+    &:hover {
+      display: block;
+    }
   }
 
   .popup {
@@ -62,11 +75,8 @@
       top: 0px;
     }
 
-    &.dpo_overview {
-      width: 300px;
-      position: absolute;
-      right: 160px;
-      bottom: 0px;
+    &.popup_overview {
+      right: 40px;
     }
 
     >ul {

@@ -1,5 +1,6 @@
 {%  load i18n %}
 {% load static %}
+{% include "partials/scripts.html" %}
 {% include "partials/header.html" %}
 {% include "components/banner.html" %}
 
@@ -10,16 +11,14 @@
       <div class="table-of-content">
         <a href="#manual"><h3>{% trans "Manual" %}</h3></a>
         <ul>
-          <li><a href="#gennemgang">Gennemgang af brugergrænsefladen</a></li>
-          <li><a href="#log-ind">Sådan logger man ind</a></li>
-          <li><a href="#håndtering">Håndtering af matches</a></li>
-          <li><a href="#arkiv">Arkiv</a></li>
-          <li><a href="#filtrering">Filtreringsmulighed</a></li>
+          <a href="#gennemgang"><li>Gennemgang af brugergrænsefladen</li></a>
+          <a href="#log-ind"><li>Sådan logger man ind</li></a>
+          <a href="#håndtering"><li>Håndtering af matches</li></a>
+          <a href="#arkiv"><li>Arkiv</li></a>
+          <a href="#filtrering"><li>Filtreringsmulighed</li></a>
         </ul>
         <a href="#FAQ"><h3>{% trans "Frequently Asked Questions" %}</h3></a>
-        <ul>
-          <li><a href="#handle_delete">{% trans "Why doesn't 'handle' delete my file or email?" %}</a></li>
-        </ul>
+        {% include "components/faq_toc.html" %}
       </div>
       
       <div class="content">
@@ -70,7 +69,7 @@
             <p>Hvis filen/mailen er blevet slettet og en ny scanning køres, vil dataen håndteres automatisk.</p>
 
           <h2 id="arkiv">Arkiv</h2>
-            <p>I “arkiv”-fanen kan du tilgå tidligere håndterede matches. her kan status af hvert resultat også redigeres, f.ek.s. i tilfælde af fejlagtigt håndterede matches.</p>
+            <p>I “arkiv”-fanen kan du tilgå tidligere håndterede matches. Her kan status af hvert resultat også redigeres, f.ek.s. i tilfælde af fejlagtigt håndterede matches.</p>
             <div id="figure-24" class="figure-container">
               <a href="{% static 'manualimages/figur24.png' %}">
                 <img src="{% static 'manualimages/figur24.png' %}">
@@ -89,6 +88,12 @@
           <h2 id="handle_delete">{% trans "Why doesn't 'handle' delete my file or email?" %}</h2>
             <p>{% trans "For security reasons, OS2datascanner cannot interact with your files or emails in any way. For this reason, you must manually delete or handle the matched file. Pressing the 'handle'-button in OS2datascanner only removes the match from the overview." %}</p>
             <p>{% trans "You can manually access the file or email by pressing the 'copy'- or 'open'-buttons below the name of the match." %}
+
+          <h2 id="open_file">{% trans "Why can't I open file scan matches?" %}</h2>
+            <p>{% trans "OS2datascanner is not located on your computer, but on an external server. You are accessing that server through your browser." %}</p>
+            <p>{% trans "For security reasons, modern browsers are not allowed to open a file on your computer. This also prevents OS2datascanner from doing the same." %}</p>
+            <p>{% trans "To find the file, which a match has been found in, click the 'Copy Folder' button on the match, then open your pathfinder on your computer, and paste in the content of your clipboard." %}
+          
 
       </div>
 

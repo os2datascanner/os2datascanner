@@ -36,13 +36,15 @@ class UserView(TemplateView, LoginRequiredMixin):
         context = super().get_context_data(**kwargs)
         roles_qs = Role.get_user_roles_or_default(self.request.user)
         user_roles = [role._meta.verbose_name for role in roles_qs]
-        is_dpo = "DPO" in user_roles
-        is_contact_person = roles_qs.filter(dataprotectionofficer__contact_person=True).exists()
-        context["is_dpo"] = is_dpo
-        context["is_contact_person"] = is_contact_person
+
+        context["is_dpo"] = "DPO" in user_roles
+        context["is_contact_person"] = roles_qs.filter(
+            dataprotectionofficer__contact_person=True).exists()
         context["user_roles"] = user_roles
         context["aliases"] = User.objects.get(username=self.request.user).aliases.all()
-        context["email_body"] = convert_context_to_email_body(context, self.request.user)
+
+        # TODO: This information is only for the support button: Move it to its own view!
+        context["email_body"] = convert_context_to_email_body(context, self.request)
         context["dpo_contacts"] = DataProtectionOfficer.objects.filter(contact_person=True)
         return context
 

@@ -213,14 +213,6 @@ class UserErrorLogAdmin(admin.ModelAdmin):
             "Changed {qs_count} elements removed-status to False")
                 .format(qs_count=query_set.count()))
 
-    actions = ('mark_new', 'mark_not_removed',)
-
-    def mark_new(self, request, queryset):
-        queryset.update(is_new=True)
-
-    def mark_not_removed(self, request, queryset):
-        queryset.update(is_removed=False)
-
 
 @admin.register(ScanStatus)
 class ScanStatusAdmin(admin.ModelAdmin):

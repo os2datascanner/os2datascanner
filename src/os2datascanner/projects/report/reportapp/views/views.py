@@ -167,7 +167,8 @@ class MainPageView(LoginRequiredMixin, ListView):
                 # Serve the document report key
                 context['pk'] = self.request.GET.get('dr_pk')
 
-        context["email_body"] = convert_context_to_email_body(context, self.request.user)
+        # TODO: This information is only for the support button: Move it to its own view!
+        context["email_body"] = convert_context_to_email_body(context, self.request)
         context["dpo_contacts"] = DataProtectionOfficer.objects.filter(contact_person=True)
 
         return context
@@ -426,7 +427,9 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
 
-        context["email_body"] = convert_context_to_email_body(context, self.request.user)
+        # TODO: This information is only for the support button: Move it to its own view!
+        context["email_body"] = convert_context_to_email_body(context, self.request)
+        context["dpo_contacts"] = DataProtectionOfficer.objects.filter(contact_person=True)
 
         return context
 
