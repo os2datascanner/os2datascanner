@@ -4,15 +4,19 @@
 
 "Catchy Title"
 
-## New in this version
+### New in this version
 
 - The side menu in the report module has been removed, and the menu items have instead been moved to the header. For small screens, the functionality is unchanged.
 
-## General Improvements
+### General Improvements
 
 - Release notes are now written gradually, instead of in batches during release procedures.
 
 - When handling a result in the report module, the animation will now get to finish before the DOM content is swapped.
+
+### Bugfixes
+
+- Adjusted media root to support profile images uploaded by the user.
 
 ## Version 3.17.0, 31st October 2022
 
