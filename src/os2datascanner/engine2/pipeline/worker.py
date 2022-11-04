@@ -76,6 +76,8 @@ def tag(sm, msg):
 
 
 def message_received_raw(body, channel, source_manager):  # noqa: CCR001, E501 too high cognitive complexity
+    global total_matches
+    total_matches = 0
     try:
         for channel, message in process(source_manager, body):
             if channel in WRITES_QUEUES:

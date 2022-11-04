@@ -65,8 +65,8 @@ def status_message_received_raw(body):
                 scanned_size=F('scanned_size') + message.object_size,
                 scanned_objects=F('scanned_objects') + 1)
 
-    if isinstance(message.matches_found, int):
-        locked_qs.update(matches_found=message.matches_found)
+    if message.matches_found is not None:
+        locked_qs.update(matches_found=F('matches_found') + message.matches_found)
 
     # Get the frequency setting and decide whether to create a snapshot
     snapshot_param = settings.SNAPSHOT_PARAMETER
