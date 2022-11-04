@@ -12,6 +12,7 @@
 # sector open source network <https://os2.eu/>.
 #
 import os
+import logging
 
 from PIL import Image
 
@@ -27,6 +28,8 @@ from os2datascanner.utils.system_utilities import time_now
 from rest_framework import serializers
 
 from ..serializer import BaseSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class Account(Core_Account):
@@ -72,8 +75,8 @@ def resize_image(sender, **kwargs):
         with Image.open(kwargs["instance"]._image.path) as image:
             image.thumbnail(size, Image.ANTIALIAS)
             image.save(kwargs["instance"]._image.path, optimize=True)
-    except ValueError as e:
-        print(e)
+    except ValueError:
+        logger.debug("image resize failed", exc_info=True)
 
 
 class AccountSerializer(BaseSerializer):

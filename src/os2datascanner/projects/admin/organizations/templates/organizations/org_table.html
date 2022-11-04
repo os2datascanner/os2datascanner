@@ -34,13 +34,13 @@
             <col class="datatable__column--name">
             <col class="datatable__column--info">
             <col class="datatable__column--info">
-            {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
-                <col class="datatable__column--btn">
-            {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+            {% with client.enabled_features as feature %}
+            {% if FEATURES.IMPORT_SERVICES in feature or FEATURES.IMPORT_SERVICES_MS_GRAPH in feature or FEATURES.IMPORT_SERVICES_OS2MO in feature %}
                 <col class="datatable__column--btn">
             {% endif %}
+            {% endwith %}
             {% if request.user.is_superuser %}
-            <col class="datatable__column--delete">
+                <col class="datatable__column--delete">
             {% endif %}
         </colgroup>
         <thead>
@@ -51,7 +51,9 @@
                 {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
                     <th class="datatable__column--btn">{% trans "import service"|capfirst %}</th>
                 {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
-                    <th class="datatable__column--btn">{% trans "Import service (Microsoft Graph)" %}</th>
+                    <th class="datatable__column--btn">{% trans "import service (Microsoft Graph)"|capfirst %}</th>
+                {% elif FEATURES.IMPORT_SERVICES_OS2MO in client.enabled_features %}
+                    <th class="datatable__column--btn">{% trans "import service (OS2mo)"|capfirst %}</th>
                 {% endif %}
                 {% if request.user.is_superuser %}
                 <th class="datatable__column--delete">{% trans "Delete" %}</th>
@@ -78,16 +80,18 @@
                             href="{% url 'add-ldap' org_id=organization.pk %}"
                             id="button-add-configuration"
                             type="button"
-                            class="button button--transparent">
-                            <i id="library_add" title="Tilføj LDAP konfiguration" class="material-icons">library_add</i>
+                            class="button button--transparent"
+                        >
+                            <i id="library_add" title={% trans "Add LDAP configuration" %} class="material-icons">library_add</i>
                         </a>
                         {% else %}
                         <a
                             href="{% url 'edit-ldap' pk=organization.pk %}"
                             id="button-add-configuration"
                             type="button"
-                            class="button button--transparent">
-                            <i id="library_add_check" title="Redigér LDAP konfiguration" class="material-icons">library_add_check</i>
+                            class="button button--transparent"
+                        >
+                            <i id="library_add_check" title={% trans "Edit LDAP configuration" %} class="material-icons">library_add_check</i>
                         </a>
                         <a
                             href="{% url 'import-ldap' pk=organization.pk %}"
@@ -99,7 +103,7 @@
                             hx-trigger="keyup"
                             hx-target=".org-table"
                             hx-swap="innerHTML"
-                            >
+                        >
                             {% trans "sync"|capfirst %}
                         </a>
                         <div class="flex">
@@ -129,97 +133,156 @@
                         {% endif %}
                     </div>
                 </td>
-        {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+                {% elif FEATURES.IMPORT_SERVICES_OS2MO in client.enabled_features %}
                 <td class="datatable__column--btn">
                     <div class="flex flex--icon">
                         {% if not organization.importservice %}
-            {% if not tenant_id %}
-                <a
-                href="{% url 'add-msgraph' org_id=organization.pk %}"
-                id="button-add-msgraph-configuration"
-                      type="button"
-                      class="button button--transparent">
-                <i id="library_add" title="Tilføj Microsoft Graph konfiguration" class="material-icons">library_add</i>
-                </a>
-            {% else %}
-                <a
-                href="{% url 'add-msgraph' org_id=organization.pk tenant_id=tenant_id %}"
-                id="button-add-msgraph-configuration"
-                type="button"
-                class="button button--transparent">
-                <i id="library_add" title="Tilføj Microsoft Graph konfiguration" class="material-icons">library_add</i>
-                </a>
-            {% endif %}
-        {% else %}
-            <a
-            href="{% url 'edit-msgraph' pk=organization.pk %}"
-                            id="button-add-msgraph-configuration"
-                            type="button"
-                            class="button button--transparent">
-                            <i id="library_add_check" title="Redigér Microsoft Graph konfiguration" class="material-icons">library_add_check</i>
-            </a>
-                <a
-                    href="{% url 'import-msgraph' pk=organization.pk %}"
-                    type="button"
-                    title="{% trans 'sync'|capfirst %}"
-                    class="button button--transparent button--transparent--text btn-text"
-                    data-sync-for="{{ organization.pk }}"
-                    hx-get=""
-                    hx-trigger="keyup"
-                    hx-target=".org-table"
-                    hx-swap="innerHTML">
-                    {% trans "sync"|capfirst %}
-                </a>
-                <div class="flex">
-                    <div class="response">
-                        {% if organization.msimport %}
-                            {% with exec_state_value=organization.msimport.first.exec_state.value %}
-                                {% if exec_state_value == "finished" %}
-                                    <span class="response-icon response-icon--success" data-sync-for="{{ organization.pk }}"><i class="material-icons">check</i></span>
-                                {% elif exec_state_value == "failed" %}
-                                    <span class="response-icon response-icon--error" data-sync-for="{{ organization.pk }}"><i class="material-icons">error</i></span>
-                                {% elif exec_state_value == "waiting" or exec_state_value == "running" %}
-                                    <span class="response-icon response-icon--waiting" data-sync-for="{{ organization.pk }}"
-                                    hx-get="" hx-trigger="every 1s" hx-swap="innerHTML" hx-target=".org-table"><i class="material-icons">hourglass_top</i></span>
-                                {% endif %}
-                                <span class="response-text" data-sync-for="{{ organization.pk }}">
-                                    {% if exec_state_value == "finished" %}
-                                        {% trans 'last updated'|capfirst %},
-                                    {% elif organization.msimport.first.exec_state.label %}
-                                        {{ organization.msimport.first.exec_state.label|capfirst  }},
+                            <a
+                                href="{% url 'add-os2mo' org_id=organization.pk %}"
+                                id="button-add-os2mo-configuration"
+                                type="button"
+                                class="button button--transparent"
+                            >
+                                <i id="library_add" title={% trans "Add OS2mo configuration" %} class="material-icons">library_add</i>
+                            </a>
+                        {% else %}
+                            <a
+                                href="{% url 'import-os2mo' pk=organization.pk %}"
+                                type="button"
+                                title="{% trans 'sync'|capfirst %}"
+                                class="button button--transparent button--transparent--text btn-text"
+                                data-sync-for="{{ organization.pk }}"
+                                hx-get=""
+                                hx-trigger="keyup"
+                                hx-target=".org-table"
+                                hx-swap="innerHTML"
+                            >
+                                {% trans "sync"|capfirst %}
+                            </a>
+                            <div class="flex">
+                                <div class="response">
+                                    {% if organization.os2moimport %}
+                                        {% with exec_state_value=organization.os2moimport.first.exec_state.value %}
+                                            {% if exec_state_value == "finished" %}
+                                                <span class="response-icon response-icon--success" data-sync-for="{{ organization.pk }}"><i class="material-icons">check</i></span>
+                                            {% elif exec_state_value == "failed" %}
+                                                <span class="response-icon response-icon--error" data-sync-for="{{ organization.pk }}"><i class="material-icons">error</i></span>
+                                            {% elif exec_state_value == "waiting" or exec_state_value == "running" %}
+                                                <span class="response-icon response-icon--waiting" data-sync-for="{{ organization.pk }}"
+                                                hx-get="" hx-trigger="every 1s" hx-swap="innerHTML" hx-target=".org-table"><i class="material-icons">hourglass_top</i></span>
+                                            {% endif %}
+                                            <span class="response-text" data-sync-for="{{ organization.pk }}">
+                                                {% if exec_state_value == "finished" %}
+                                                    {% trans 'last updated'|capfirst %},
+                                                {% elif organization.os2moimport.first.exec_state.label %}
+                                                    {{ organization.os2moimport.first.exec_state.label|capfirst  }},
+                                                {% endif %}
+                                                {{ organization.os2moimport.first.changed_at|date:'d-m-Y H:i'}}
+                                            </span>
+                                        {% endwith %}
                                     {% endif %}
-                                    {{ organization.msimport.first.changed_at|date:'d-m-Y H:i'}}
-                                </span>
-                            {% endwith %}
+                                </div>
+                            </div>
                         {% endif %}
                     </div>
-                </div>
-    {% endif %}
+                </td>
+                {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
+                <td class="datatable__column--btn">
+                    <div class="flex flex--icon">
+                        {% if not organization.importservice %}
+                            {% if not tenant_id %}
+                                <a
+                                    href="{% url 'add-msgraph' org_id=organization.pk %}"
+                                    id="button-add-msgraph-configuration"
+                                    type="button"
+                                    class="button button--transparent"
+                                >
+                                    <i id="library_add" title={% trans "Add Microsoft Graph configuration" %} class="material-icons">library_add</i>
+                                </a>
+                            {% else %}
+                                <a
+                                    href="{% url 'add-msgraph' org_id=organization.pk tenant_id=tenant_id %}"
+                                    id="button-add-msgraph-configuration"
+                                    type="button"
+                                    class="button button--transparent"
+                                >
+                                    <i id="library_add" title={% trans "Add Microsoft Graph configuration" %} class="material-icons">library_add</i>
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <a
+                                href="{% url 'edit-msgraph' pk=organization.pk %}"
+                                id="button-add-msgraph-configuration"
+                                type="button"
+                                class="button button--transparent"
+                            >
+                                <i id="library_add_check" title={% trans "Edit Microsoft Graph configuration" %} class="material-icons">library_add_check</i>
+                            </a>
+                            <a
+                                href="{% url 'import-msgraph' pk=organization.pk %}"
+                                type="button"
+                                title="{% trans 'sync'|capfirst %}"
+                                class="button button--transparent button--transparent--text btn-text"
+                                data-sync-for="{{ organization.pk }}"
+                                hx-get=""
+                                hx-trigger="keyup"
+                                hx-target=".org-table"
+                                hx-swap="innerHTML"
+                            >
+                                {% trans "sync"|capfirst %}
+                            </a>
+                            <div class="flex">
+                                <div class="response">
+                                    {% if organization.msimport %}
+                                        {% with exec_state_value=organization.msimport.first.exec_state.value %}
+                                            {% if exec_state_value == "finished" %}
+                                                <span class="response-icon response-icon--success" data-sync-for="{{ organization.pk }}"><i class="material-icons">check</i></span>
+                                            {% elif exec_state_value == "failed" %}
+                                                <span class="response-icon response-icon--error" data-sync-for="{{ organization.pk }}"><i class="material-icons">error</i></span>
+                                            {% elif exec_state_value == "waiting" or exec_state_value == "running" %}
+                                                <span class="response-icon response-icon--waiting" data-sync-for="{{ organization.pk }}"
+                                                hx-get="" hx-trigger="every 1s" hx-swap="innerHTML" hx-target=".org-table"><i class="material-icons">hourglass_top</i></span>
+                                            {% endif %}
+                                            <span class="response-text" data-sync-for="{{ organization.pk }}">
+                                                {% if exec_state_value == "finished" %}
+                                                    {% trans 'last updated'|capfirst %},
+                                                {% elif organization.msimport.first.exec_state.label %}
+                                                    {{ organization.msimport.first.exec_state.label|capfirst  }},
+                                                {% endif %}
+                                                {{ organization.msimport.first.changed_at|date:'d-m-Y H:i'}}
+                                            </span>
+                                        {% endwith %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
                 </td>
                 {% endif %}
-                {% if request.user.is_superuser %}
+            {% if request.user.is_superuser %}
                 <td class="datatable__column--delete">
                     {% if organization.scanners_running %}
                         <a
-                        href="#delete-org-blocked"
-                        data-modal="modal:open"
-                        data-src="{% url 'org_delete_block' slug=organization.slug %}"
-                        class="button button--small button--grey"
-                        title="{% trans 'Delete' %}">
-                        <svg class="icon">
-                            <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
-                        </svg>
+                            href="#delete-org-blocked"
+                            data-modal="modal:open"
+                            data-src="{% url 'org_delete_block' slug=organization.slug %}"
+                            class="button button--small button--grey"
+                            title="{% trans 'Delete' %}"
+                        >
+                            <svg class="icon">
+                                <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                            </svg>
                         </a>
                     {% else %}
                     <form action="{% url 'delete-organization' slug=organization.slug %}" method="post" style="display: inline-block;">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <button
-                        type="submit"
-                        class="button button--small button--grey"
-                        onclick="return confirm('{% trans "Do you really want to delete this organization?" %}\n\n{{organization.name}}\n\n{% trans "This will delete all associated import- and scannerjobs. The action cannot be reversed" %}')"
-                        title="{% trans 'Delete' %}">
+                            type="submit"
+                            class="button button--small button--grey"
+                            onclick="return confirm('{% trans "Do you really want to delete this organization?" %}\n\n{{organization.name}}\n\n{% trans "This will delete all associated import- and scannerjobs. The action cannot be reversed" %}')"
+                            title="{% trans 'Delete' %}"
+                        >
                         <svg class="icon">
                         <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
                         </svg>
@@ -234,22 +297,19 @@
             <tr>
                 <td class="datatable__column--name" colspan="12">
                     <div class="orgunits" url={% url 'org-units-listing' %}>
-                            
-                            <ul class="root">
-                                {% recursetree orgunit_list %}
-                                    <li>
-                                        {{ node.name }}
-                                        {% if not node.is_leaf_node %}
-                                            <ul class="children">
-                                                {{ children }}
-                                            </ul>
-                                        {% endif %}
-                                    </li>
-                                {% endrecursetree %}
-                            
-                            </ul>
+                        <ul class="root">
+                            {% recursetree orgunit_list %}
+                                <li>
+                                    {{ node.name }}
+                                    {% if not node.is_leaf_node %}
+                                        <ul class="children">
+                                            {{ children }}
+                                        </ul>
+                                    {% endif %}
+                                </li>
+                            {% endrecursetree %}
+                        </ul>
                     </div>
-                    
                 </td>
             </tr>
             {% endif %}

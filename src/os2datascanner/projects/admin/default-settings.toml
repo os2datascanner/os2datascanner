@@ -51,6 +51,12 @@ MSGRAPH_APP_ID = ""
 # (client private keys are not yet supported):
 MSGRAPH_CLIENT_SECRET = ""
 
+# [os2mo]
+OS2MO_TOKEN_URL = "http://localhost:5001/auth/realms/mo/protocol/openid-connect/token"
+OS2MO_ENDPOINT_URL = "http://mo/graphql/v2"
+OS2MO_CLIENT_ID = ""
+OS2MO_CLIENT_SECRET = ""
+
 # [sbsys]
 # Using oauth with grant type client_credentials.
 # These settings must be provided to later retrieve a token

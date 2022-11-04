@@ -1,5 +1,17 @@
 version: '3.9'
 
+networks:
+  # This allows OS2datascanners admin and admin_runner containers access 
+  # to both the default network in OS2datascanner, and in the OS2mo-project,
+  # if available. Else, they will only use os2datascanner_default.
+  os2mo_default:
+    name:
+      os2mo_default
+  os2datascanner_default:
+    external:
+      name:
+        os2datascanner_default
+
 services:
   db:
     image: postgres:12
@@ -79,6 +91,9 @@ services:
       - db
       - frontend
       - queue
+    networks:
+      - os2datascanner_default
+      - os2mo_default
 
   admin_checkup_collector:
     image: magentaaps/os2datascanner-admin:dev
@@ -129,6 +144,9 @@ services:
       - admin
       - queue
     stop_grace_period: 1m30s
+    networks:
+      - os2datascanner_default
+      - os2mo_default
 
   report:
     image: magentaaps/os2datascanner-report:dev

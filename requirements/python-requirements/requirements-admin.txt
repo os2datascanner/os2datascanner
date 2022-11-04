@@ -123,11 +123,14 @@ djangorestframework==3.12.4
 dnspython==1.16.0
     # via
     #   -c requirements-engine.txt
+    #   email-validator
     #   exchangelib
 dropbox==10.3.0
     # via
     #   -c requirements-engine.txt
     #   -r requirements-django.in
+email-validator==1.3.0
+    # via -r requirements-django.in
 exchangelib==3.1.1
     # via
     #   -c requirements-engine.txt
@@ -185,6 +188,7 @@ hyperlink==21.0.0
 idna==2.9
     # via
     #   -c requirements-engine.txt
+    #   email-validator
     #   hyperlink
     #   requests
     #   twisted

@@ -14,6 +14,7 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+
 import structlog
 
 from django.shortcuts import get_object_or_404
@@ -22,8 +23,10 @@ from os2datascanner.projects.admin.core.models.background_job import JobState
 from os2datascanner.projects.admin.import_services.models import (LDAPConfig,
                                                                   Realm,
                                                                   LDAPImportJob,
-                                                                  MSGraphImportJob)
+                                                                  MSGraphImportJob,
+                                                                  OS2moImportJob)
 from .models.msgraph_configuration import MSGraphConfiguration
+from .models.os2mo_configuration import OS2moConfiguration
 
 logger = structlog.get_logger(__name__)
 
@@ -80,3 +83,31 @@ def start_msgraph_import(msgraph_conf: MSGraphConfiguration):
             organization=msgraph_conf.organization,
         )
         logger.info(f"Import job created for MSGraphConfiguration {msgraph_conf.pk}")
+
+
+def start_os2mo_import(os2mo_conf: OS2moConfiguration):
+    """
+    OS2mo Import Job start utility. OS2mo Import Jobs can only be
+    created if no other jobs are running.
+    """
+
+    try:
+        latest_importjob = OS2moImportJob.objects.filter(
+            organization=os2mo_conf.organization
+        ).latest('created_at')
+
+        if latest_importjob.exec_state == JobState.RUNNING or \
+                latest_importjob.exec_state == JobState.WAITING:
+            logger.info("OS2mo import is not possible right now for "
+                        f"OS2mo import {os2mo_conf.pk}")
+        else:
+            OS2moImportJob.objects.create(
+                organization=os2mo_conf.organization,
+            )
+            logger.info(f"Import job created for OS2moConfiguration {os2mo_conf.pk}")
+
+    except OS2moImportJob.DoesNotExist:
+        OS2moImportJob.objects.create(
+            organization=os2mo_conf.organization,
+        )
+        logger.info(f"Import job created for OS2moConfiguration {os2mo_conf.pk}")

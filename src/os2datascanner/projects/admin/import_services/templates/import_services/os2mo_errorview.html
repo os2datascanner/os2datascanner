@@ -1,0 +1,32 @@
+{% extends 'partials/base.html' %}
+{% load i18n %}
+
+{% block body %}
+{% include "partials/header.html" %}
+<div class="wrapper">
+
+    {% include "partials/main.html" with active_tab="organizations" %}
+
+    <div class="content">
+    {% include "partials/breadcrumb.html" with page="os2mo" %}
+        <section>
+            <div class="aside">
+                <h1 class="page-title">
+                    {% trans "Configure OS2mo" %}
+                </h1>
+            </div>
+            <p>
+                {% trans "An error occurred while trying to connect to OS2mo" %}
+            </p>
+            <p>
+                {% trans "You need the right Client ID- and Secret to import from OS2mo" %}
+            </p>
+        </section>
+
+        <a class="link-color" href="/organizations">
+            {% trans "return to organizations page"|capfirst %}
+        </a>
+        
+    </div>
+</div>
+{% endblock %}

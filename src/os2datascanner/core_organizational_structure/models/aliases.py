@@ -14,7 +14,10 @@
 
 from uuid import uuid4
 
-from django.core.validators import validate_email, RegexValidator
+from email_validator import validate_email, EmailNotValidError
+
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -26,7 +29,10 @@ def validate_aliastype_value(kind, value):
     if kind == AliasType.SID:
         validate_regex_SID(value)
     if kind == AliasType.EMAIL:
-        validate_email(value)
+        try:
+            validate_email(value)
+        except EmailNotValidError as ex:
+            raise ValidationError(_("Email address is not valid")) from ex
     if kind == AliasType.GENERIC:
         # Generic/unspecified; always passes
         pass

@@ -38,7 +38,7 @@ class Position(models.Model):
     unit = TreeForeignKey(
         'OrganizationalUnit',
         on_delete=models.CASCADE,
-        verbose_name='organizational unit',
+        verbose_name=_('organizational unit'),
     )
     role = models.CharField(
         max_length=30,

@@ -2,6 +2,14 @@
 
 ## Version 3.17.3,
 
+"Dear Leader"
+
+### New in this version
+
+- The user can now create organizational importjobs for OS2mo
+
+## Version 3.17.3,
+
 "Mo' Money, Mo' Problems"
 
 ### Bugfixes

@@ -104,4 +104,16 @@
             <span class="text-grey">{% trans 'update MS Graph configuration'|capfirst %}</span>
         {% endif %}
     {% endif %}
+
+    {% if page == 'os2mo' %}
+        <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+        <i id="chevron_right" class="material-icons">chevron_right</i>
+
+        {% if is_new %}
+            <span class="text-grey">{% trans 'add OS2mo configuration'|capfirst %}</span>
+            {% else %}
+            <span class="text-grey">{% trans 'update OS2mo configuration'|capfirst %}</span>
+        {% endif %}
+    {% endif %}
 </div>
