@@ -39,9 +39,14 @@
 
   &.card {
     box-shadow: var(--box-shadow-widget);
-    border-radius: var(--border-radius-widget);
-    margin-bottom: calc(2 * var(--datatable-cell-padding));
+    border-radius: none;
+    margin-bottom: 0;
     background-color: var(--color-widget-bg);
+
+    @media (min-width: break-lg) {
+      margin-bottom: calc(2 * var(--datatable-cell-padding));
+      border-radius: var(--border-radius-widget);
+    }
   }
 
   &.sm.card,
@@ -165,6 +170,7 @@
       width: 100%;
       max-width: 15rem;
       word-wrap: break-word;
+      white-space: none;
     }
 
     &--matchcount {
@@ -338,9 +344,13 @@
   vertical-align: middle;
 
   .overflow-ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+
+    // Only show ellipsis on pc-screens.
+    @media (min-width: $break-lg) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
   &:first-child {
