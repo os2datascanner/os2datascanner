@@ -18,6 +18,8 @@
 
 - Adjusted media root to support profile images uploaded by the user.
 
+- Path is shown corretly when editing Office 365 scannerjobs 
+
 ## Version 3.17.0, 31st October 2022
 
 "Refreshed Rabbit"

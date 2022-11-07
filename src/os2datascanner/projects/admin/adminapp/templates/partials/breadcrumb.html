@@ -18,15 +18,15 @@
         <a href="/exchangescanners/" class="link-color">{% trans "Exchangescanner" %}</a>
         {% endif %}
 
-        {% if request.path == '/msgraph-mailscanners/add/' %}
+        {% if '/msgraph-mailscanners/' in request.path %}
         <a href="/msgraph-mailscanners/" class="link-color">{% trans "Office 365 mailscanner" %}</a>
         {% endif %}
 
-        {% if request.path == '/msgraph-filescanners/add/' %}
+        {% if '/msgraph-filescanners/' in request.path %}
         <a href="/msgraph-filescanners/" class="link-color">{% trans "Office 365 OneDrive filescanner" %}</a>
         {% endif %}
 
-        {% if request.path == '/msgraph-calendarscanners/add/' %}
+        {% if '/msgraph-calendarscanners/' in request.path %}
         <a href="/msgraph-calendarscanners/" class="link-color">{% trans "Office 365 calendarscanner" %}</a>
         {% endif %}
 
