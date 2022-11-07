@@ -24,6 +24,8 @@
 
 - "Completed scans" table now has a column showing number of results found in associated scan
 
+- Pagination options now work in the admin module.
+
 ## Version 3.17.0, 31st October 2022
 
 "Refreshed Rabbit"
