@@ -95,6 +95,10 @@
   table-layout: fixed;
   width: 100%;
 
+  label {
+    cursor: pointer;
+  }
+
   .last-opened {
     opacity: .6;
   }
@@ -168,14 +172,41 @@
 
     &--name {
       width: 100%;
-      max-width: 15rem;
       word-wrap: break-word;
       white-space: none;
+
+      &>div {
+        min-width: 12rem;
+      }
     }
 
     &--matchcount {
-      width: 7.5rem;
+      width: 3.5rem;
       display: none;
+
+      label {
+        &::after {
+          content: "#";
+        }
+
+        span {
+          display: none;
+        }
+      }
+
+      @media (min-width: $break-lg) {
+        width: 7.5rem;
+
+        label {
+          &::after {
+            content: none;
+          }
+
+          span {
+            display: inline;
+          }
+        }
+      }
     }
 
     &--org {
@@ -206,7 +237,7 @@
     }
 
     &--source {
-      width: 6.5rem;
+      width: 4.5rem;
       display: none;
     }
 

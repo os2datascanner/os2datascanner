@@ -48,10 +48,10 @@
         </th>
 
         <th class="datatable__column--matchcount">
-            {% trans "Matches" %}
+            <label for="matches-caret"><span>{% trans "Matches" %}</span></label>
             <button
               type="button"
-              name="number_of_matches"
+              name="number_of_matches" id="matches-caret"
               class="order-by button button-caret button--has-icon{% if order_by == 'number_of_matches' and order == 'descending' %} up{% endif %}"
               value="{% if order_by == 'number_of_matches' and order == 'descending' %}ascending{% else %}descending{% endif %}">
               <i class="material-icons" aria-hidden="true">expand_more</i>
@@ -61,13 +61,13 @@
             {% trans "Source" %}
         </th>
         <th class="datatable__column--path">
-            {% trans "Path" %}
+            <label for="path-caret">{% trans "Path" %}</label>
             {% comment %}We use a click event handler on this button to
             submit the <form> defined in filters.html{% endcomment %}
 
             <button
               type="button"
-              name="sort_key"
+              name="sort_key" id="path-caret"
               class="order-by button button-caret button--has-icon{% if order_by == 'sort_key' and order == 'descending' %} up{% endif %}"
               value="{% if order_by == 'sort_key' and order == 'descending' %}ascending{% else %}descending{% endif %}">
               <i class="material-icons" aria-hidden="true">expand_more</i>

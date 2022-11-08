@@ -7,7 +7,7 @@
   display: inline-block;
   font-size: 1rem;
   line-height: 1;
-  padding: 0.5em;
+  padding: 1rem 0.5rem;
   text-decoration: none;
   transition: var(--transition-default);
   transition-property: background-color;
@@ -214,6 +214,10 @@
     &:hover {
       color: var(--color-text-main);
     }
+  }
+
+  @media (min-width: $break-lg) {
+    padding: 0.5em;
   }
 }
 

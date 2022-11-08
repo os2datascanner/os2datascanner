@@ -81,7 +81,8 @@ label+.dropdown {
     font-weight: normal;
   }
 
-  &:hover {
+  &:hover,
+  &:active {
     display: block;
   }
 }
@@ -95,8 +96,14 @@ label+.dropdown {
       left: -4rem;
     }
 
-    &:hover+.handle-dropdown {
+    &:focus+.handle-dropdown {
       display: block;
+    }
+
+    @media (min-width: $break-lg) {
+      &:hover+.handle-dropdown {
+        display: block;
+      }
     }
   }
 }
