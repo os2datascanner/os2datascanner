@@ -71,4 +71,4 @@ def check(link: Link) -> tuple[bool, int]:
         r.raise_for_status()
         return True, r.status_code
     except RequestException:
-        return False, r.status_code
+        return r.status_code not in (404, 410, 421, 423, 451), r.status_code

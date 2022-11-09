@@ -557,7 +557,7 @@ class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
         with self.assertRaises(TypeError) as context:
             _get_url_data(url_fancy_compressor)
 
-        self.assertTrue(type(context.exception) is TypeError,
+        self.assertTrue(isinstance(context.exception, TypeError),
                         "wrong exceptionType")
 
 
