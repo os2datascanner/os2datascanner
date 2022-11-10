@@ -119,4 +119,4 @@ class Client(models.Model):
 
     def __repr__(self):
         """Return the id and name of the client"""
-        return f"{self.uuid}: {self.name}"
+        return f"<{self.__class__.__name__}: {self.name} ({self.uuid})>"

@@ -43,13 +43,7 @@ class Administrator(models.Model):
         verbose_name_plural = _('administrators')
 
     def __str__(self):
-        format_string = _('Administrator: {user} (for {client})')
-        user = self.user.username
-        client = self.client.name
-        return format_string.format(user=user, client=client)
+        return f"Administrator: {self.user} (for {self.client})"
 
     def __repr__(self):
-        format_string = _('<Administrator: {uid} (User) for {cid} (Client)>')
-        user = self.user_id
-        client = self.client_id
-        return format_string.format(uid=user, cid=client)
+        return f"<{self.__class__.__name__}: {self.user} (User) for {self.client} (Client)>"
