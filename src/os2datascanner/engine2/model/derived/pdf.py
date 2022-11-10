@@ -9,7 +9,8 @@ from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource
 from ..file import FilesystemResource
 from .derived import DerivedSource
-from .utilities.extraction import should_skip_images
+from .utilities.extraction import (should_skip_images,
+                                   PDFImageFilter)
 
 
 PAGE_TYPE = "application/x.os2datascanner.pdf-page"
@@ -36,6 +37,7 @@ class PDFSource(DerivedSource):
         with self.handle.follow(sm).make_path() as p:
             # Explicitly download the file here for the sake of PDFPageSource,
             # which needs a local filesystem path to pass to pdftohtml
+
             yield p
 
     def handles(self, sm):
@@ -132,6 +134,8 @@ class PDFPageSource(DerivedSource):
                     ],
                     timeout=engine2_settings.subprocess["timeout"],
                     check=True, isolate_tmp=True)
+
+            outputdir = PDFImageFilter().apply(outputdir)
 
             yield outputdir
 
