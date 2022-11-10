@@ -1,20 +1,15 @@
 """Utilities for extraction based on configuration dictionaries."""
 
-import shutil
-from os import listdir, remove
 from pathlib import Path
 from hashlib import md5
-from tempfile import TemporaryDirectory
 from PIL import Image
-
-from ...core.utilities import SourceManager
-from .....utils.system_utilities import run_custom
-from .... import settings as engine2_settings
 
 
 def should_skip_images(configuration: dict) -> bool:
-    """Checks if the 'image/*' mime type is in 'skip_mime_types' for a
-    configuration dict."""
+    """
+    Checks if the 'image/*' mime type is in 'skip_mime_types' for a
+    configuration dict.
+    """
 
     if configuration and configuration["skip_mime_types"]:
         return "image/*" in configuration["skip_mime_types"]
@@ -23,72 +18,56 @@ def should_skip_images(configuration: dict) -> bool:
 
 
 class PDFImageFilter:
-    '''Filter for removing duplicates and images that are too
-    small to contain any text in PDF files.'''
+    '''
+    Filter for removing duplicates and images that are too
+    small to contain any text in PDF files.
+    '''
     dimensions: (int, int) = (8, 8)
 
-    def checksum(self, filename):
-        return md5(open(filename, "rb")).hexdigest()
+    def get_hash(self, filename):
+        """
+        Opens and calculates hash value for a file using
+        the _checksum() function.
+        """
+        with open(filename, "rb") as fp:
+            checksum = self._checksum(fp.read())
+            return checksum.hexdigest()
 
-    def __init__(self, source_manager, x_dim=8, y_dim=8):
+    def __init__(self, checksum=md5, x_dim=8, y_dim=8):
         self.dimensions = (x_dim, y_dim)
-        self._source_manager = source_manager
+        self._checksum = checksum
 
-    @property
-    def source_manager(self):
-        '''Getter for _source_manager property.'''
-        return self._source_manager
-
-    @source_manager.setter
-    def source_manager(self, value: SourceManager):
-        '''Setter for _source_manager property. Does not allow
-        None values.'''
-        if value is not None:
-            self._source_manager = value
-
-    def apply(self, path) -> str:
-        """Extracts all images for a pdf
-        and puts it in a temporary output directory."""
-        parent = str(Path(path).parent)
-        prefix = path.removesuffix('.pdf').split("/")[-1]
-        print(f"path: {path}\nparent: {parent}\nprefix: {prefix}")
-
-        with TemporaryDirectory() as outdir:
-            run_custom(
-                ["pdfimages", "-q", "-png", "-j", "-p", path, f"{outdir}/{prefix}"],
-                timeout=engine2_settings.subprocess["timeout"],
-                check=True, isolate_tmp=True)
-
-            self.__filter(outdir)
-
-            return outdir
-
-    def __move_images(self, outdir, parent):
-        for image in listdir(outdir):
-            imagename = outdir.split('/').last()
-            dest = parent + "/" + imagename
-            print(f"dest: {dest}")
-            shutil.move(outdir + "/" + image, dest)
-
-        shutil.rmtree(outdir, ignore_errors=True)
-
-    def __image_too_small(self, image):
+    def _image_too_small(self, image):
+        """
+        Checks whether an image is too small to contain
+        any (OCR) readable text using dimensions specified
+        in constructor.
+        """
         return Image.open(image).size <= self.dimensions
 
-    def __filter(self, path) -> str:
-        """Removes duplicate images if their md5sum matches.
-        Also removes images that are too small to contain readable text."""
-        hash_stack = []
+    def _deduplicate(self, folder):
+        """
+        Traverses a folder and returns a dictionary of all
+        duplicate files using their hash values.
+        """
+        hashes = {}
+        for filename in Path(folder).glob("*"):
+            hash_val = self.get_hash(filename)
+            hashes.setdefault(hash_val, []).append(filename)
 
-        for item in listdir(path):
-            if item.endswith(".png"):
-                image = path + "/" + item
-                checksum = self.checksum(image)
+        return hashes
 
-                if checksum in hash_stack:  # or self.__image_too_small(image):
-                    print(f"removing: {image}")
-                    remove(image)
-                else:
-                    hash_stack.append(checksum)
+    def apply(self, tmpdir):
+        """
+        Removes duplicate images if their hash values match.
+        Also removes images that are too small to contain (OCR) readable text.
+        """
+        for paths in self._deduplicate(tmpdir).values():
+            for dup in paths[1:]:
+                dup.unlink()
 
-        print(f"hash_stack: {hash_stack}")
+        for image in Path(tmpdir).glob("*.png"):
+            if self._image_too_small(image):
+                image.unlink()
+
+        return tmpdir
