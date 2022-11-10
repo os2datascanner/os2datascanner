@@ -223,7 +223,7 @@ class ScanStatusAdmin(admin.ModelAdmin):
     readonly_fields = ('fraction_explored', 'fraction_scanned',
                        'estimated_completion_time', 'start_time', 'last_modified',)
     fields = ('scan_tag', 'scanner', 'total_sources', 'explored_sources',
-              'fraction_explored', 'total_objects', 'scanned_objects',
+              'fraction_explored', 'total_objects', 'scanned_objects', 'matches_found',
               'fraction_scanned', 'scanned_size', 'estimated_completion_time',
               'start_time', 'last_modified', 'resolved',)
 

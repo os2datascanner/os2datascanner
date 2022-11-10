@@ -505,6 +505,13 @@ class AbstractScanStatus(models.Model):
         default=False,
     )
 
+    matches_found = models.IntegerField(
+        verbose_name=_("matches found"),
+        default=0,
+        null=True,
+        blank=True
+    )
+
     @property
     def stage(self) -> int:
         # Workers have not begun scanning any objects yet

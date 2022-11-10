@@ -56,9 +56,14 @@ def process(sm, msg, *, check=True):
             yield channel, message
 
 
+total_matches = 0
+
+
 def match(sm, msg, *, check=True):
     for channel, message in matcher_handler(msg, "os2ds_representations", sm):
         if channel == "os2ds_handles":
+            global total_matches
+            total_matches += 1
             yield from tag(sm, message)
         elif channel == "os2ds_conversions":
             yield from process(sm, message, check=check)
@@ -71,6 +76,8 @@ def tag(sm, msg):
 
 
 def message_received_raw(body, channel, source_manager):  # noqa: CCR001, E501 too high cognitive complexity
+    global total_matches
+    total_matches = 0
     try:
         for channel, message in process(source_manager, body):
             if channel in WRITES_QUEUES:
@@ -91,7 +98,8 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001, E501 t
                 scan_tag=message.scan_spec.scan_tag,
                 message="", status_is_error=False,
                 object_size=object_size,
-                object_type=object_type).to_json_object())
+                object_type=object_type,
+                matches_found=total_matches).to_json_object())
 
 
 if __name__ == "__main__":

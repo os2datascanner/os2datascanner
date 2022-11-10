@@ -33,16 +33,17 @@
                 <col class="datatable__column--checkbox">
                 <col class="datatable__column--name">
                 <col class="datatable__column--starttime">
-                <col class="datatable__column--info">
+                <col class="datatable__column--objects">
+                <col class="datatable__column--validated">
                 <col class="datatable__column--status">
                 {% if user.is_superuser %}
-                <col class="datatable__column--actions">
+                <col class="datatable__column--delete">
                 {% endif %}
               </colgroup>
               <thead>
                 {% if user.is_superuser %}
                 <tr class="table-topbar topbar-stick sticky">
-                  <th colspan="6">
+                  <th colspan="7">
                     {% include "components/resolve-status.html" %}
                     <div class="view-options">
                       <button type="button" class="button button--has-icon" name="status-resolved-all"
@@ -73,14 +74,17 @@
                   <th class="datatable__column--starttime">
                     {% trans "Started" %}
                   </th>
-                  <th class="datatable__column--info">
+                  <th class="datatable__column--objects">
                     {% trans "Objects" %}
+                  </th>
+                  <th class="datatable__column--validated">
+                    {% trans "Results" %}
                   </th>
                   <th class="datatable__column--status">
                     {% trans "Status" %}
                   </th>
                   {% if user.is_superuser %}
-                  <th class="datatable__column--actions">
+                  <th class="datatable__column--delete">
                     {% trans "Actions" %}
                   </th>
                   {% endif %}
@@ -108,15 +112,27 @@
                       <td class="datatable__column--name">
                           {{ status.scanner.name }}
                       </td>
-                      <td class="datatable__column--org">
+                      <td class="datatable__column--starttime">
                         {% timezone "Europe/Copenhagen" %}
                         {{ status.start_time }}
                         {% endtimezone %}
                       </td>
-                      <td class="datatable__column--automatic">
+                      <td class="datatable__column--objects">
                         {{ status.total_objects }} {% trans "objects explored" %}
                       </td>
-                      <td class="datatable__column--actions">
+                      <td class="datatable__column--validated"> 
+                        {% if status.matches_found is None%}
+                          {% trans "Not available" %}
+                        {% else %}
+                          {{status.matches_found}} 
+                          {% if status.matches_found == 1%}
+                            {% trans "result"%}
+                          {% else %}
+                            {% trans "results" %}
+                          {% endif %}
+                        {% endif %}
+                      </td>
+                      <td class="datatable__column--status">
                         <span class="completed_icon">
                           {% include "components/svg-icons/check_circle_full.svg" %}
                           <span class="width">
@@ -125,7 +141,7 @@
                         </span>
                       </td>
                       {% if user.is_superuser %}
-                      <td class="datatable__column--actions">
+                      <td class="datatable__column--delete">
                         <div class="action-wrapper">
                           <button type="button" class="button" name="status-resolved"
                                   hx-post="" hx-swap="outerHTML" hx-trigger="click" 
