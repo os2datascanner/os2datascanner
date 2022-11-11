@@ -19,6 +19,7 @@ from django.http import HttpResponse
 from django.views.i18n import JavaScriptCatalog
 from django.views.generic.base import TemplateView
 from os2datascanner import __version__, __commit__, __tag__, __branch__
+from os2datascanner.projects.admin.adminapp.views.analysis_views import AnalysisPageView
 
 from .models.scannerjobs.dropboxscanner import DropboxScanner
 from .models.scannerjobs.exchangescanner import ExchangeScanner
@@ -93,6 +94,7 @@ urlpatterns = [
         template_name="openapi.yaml", content_type="application/yaml"),
         name="json-api"),
     url(r'^api/(?P<path>.*)$', JSONAPIView.as_view(), name="json-api"),
+    url(r'^analysis/$',  AnalysisPageView.as_view(), name='analysis'),
 
     # App URLs
     url(r'^status/$', StatusOverview.as_view(), name='status'),

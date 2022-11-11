@@ -20,6 +20,16 @@
           </span>
         </a>
       </li>
+      {% if settings.ANALYSIS_PAGE %}
+        <li>
+          <a href="/analysis" class="{% if active_tab == 'analysis' %}active{% endif %}">
+            {% include "components/svg-icons/analysis.svg" %}
+            <span class="width">
+              {% trans "Analysis" %}
+            </span>
+          </a>
+        </li>
+      {% endif %}
       <li>
         <a href="/rules" class="{% if active_tab == 'rules' %}active{% endif %}">
           {% include "components/svg-icons/rule.svg" %}

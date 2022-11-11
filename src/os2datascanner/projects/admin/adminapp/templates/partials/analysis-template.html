@@ -1,0 +1,121 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block body %}
+{% include "partials/header.html" %}
+
+<main class="wrapper">
+  {% include "partials/main.html" with active_tab="analysis" %}
+
+  <div class="content" hx-push-url="true">
+
+    {% include "os2datascanner/scanner_tabs.html" with page="analysis"  %}
+
+    <div class="aside">
+      <h1 class="page-title">
+        {% trans "Analysis" %}
+      </h1>
+    </div>
+
+    {% if scanners %}
+      <form name="analysis_page"
+            hx-get ="{% url "analysis" %}"
+            hx-target=".content" 
+            hx-select=".content"
+            hx-swap="outerHTML" 
+            hx-trigger="change">
+        <div class="dropdown stats_dropdown">
+          <select name="scannerjob" id="scannerjobs" data-compareto="all">
+            <option value="all"
+                    {% if scanners|last == "all" %}
+                        selected="selected"
+                    {% endif %} >
+                      -  
+            </option> 
+            {% for scanner in scanners|first %}
+              <option value="{{ scanner.pk }}"
+                      {% if scanners|last == scanner.pk %}
+                        selected="selected"
+                      {% endif %}>
+              {{ scanner.name|capfirst }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>  
+      </form>
+
+      <div class="flex">
+        <div class="response">
+          <span class="response-icon response-icon--success" data-sync-for="{{ scannerjob.pk }}"><i class="material-icons">check</i></span>
+          <span class="response-text" data-sync-for="{{ scannerjob.pk }}">
+            {% trans 'last updated'|capfirst %},
+            {% comment %} {{scanners|first}} {% endcomment %}
+          </span>
+        </div>
+      </div>
+
+      <a
+        href="#run-analysis-scan" {# This needs creation, backend not ready #}
+        {% comment %} data-modal="modal:open"
+        data-src="/{{ view.type }}scanners/{{scanner.pk}}/askrun/" {% endcomment %}
+        class="button button--small button--grey"
+        title="{% trans 'Run analysis scan' %}">
+          <svg class="icon">
+            <use xlink:href="/static/svg/symbol-defs.svg#icon-play"></use>
+          </svg>
+          {% trans 'Run analysis scan' %}
+      </a>
+
+      <div class="charts-container-box"> 
+        <h2 class="page-title__sub">{% trans "Storage" %}</h2>
+        <p class="chart_description">{% trans "Overview of storage for different filetypes" %}</p>
+        
+        <div class="pie-charts-container">
+          {% for i in pie_list%}
+            <div class="chart-container">
+              <div class="pie-chart-content">
+                <div class="chart-legend" id="pie{{forloop.counter}}_legend">
+                </div>
+                <div class="chart-canvas">
+                  <canvas id="pie{{forloop.counter}}"> </canvas>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        
+        </div>
+          <div class="charts-container-box"> 
+            <h2 class="page-title__sub">{% trans "File size distribution" %}</h2>
+            <p class="chart_description">{% trans "Overview of number of files " %}</p>
+            
+            <div class="bar-charts-container">
+              {% for i in bar_list%}
+                <div class="chart-container">
+                  <div class="bar-chart-content">
+                    <div class="chart-canvas">
+                      <canvas id="bar{{forloop.counter}}"> </canvas>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+    {% endif %}
+  </div>
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+  {% comment %} <script src="{% static "3rdparty/jquery-3.6.0.min.js" %} "></script> {% endcomment %}
+  <script src="{% static "3rdparty/chart-3.9.1.min.js" %}"></script>
+  {% comment %} <script src="{% static "3rdparty/chartjs-plugin-datalabels.js" %}"></script> {% endcomment %}
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.1.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
+  <script src="{% static "js/analysisBar-ChartJS3.js" %}"></script>
+  <script src="{% static "js/analysisPie-ChartJS3.js" %}"></script>
+  <script src="{% static "3rdparty/htmx.min.js" %}"></script>
+  <script src="{% static "js/index.js" %}"></script>
+{% endblock %}
