@@ -10,7 +10,8 @@ from ..core import Handle, Source, Resource
 from ..file import FilesystemResource
 from .derived import DerivedSource
 from .utilities.extraction import (should_skip_images,
-                                   PDFImageFilter)
+                                   MD5DeduplicationFilter,
+                                   TinyImageFilter)
 
 
 PAGE_TYPE = "application/x.os2datascanner.pdf-page"
@@ -135,9 +136,8 @@ class PDFPageSource(DerivedSource):
                     timeout=engine2_settings.subprocess["timeout"],
                     check=True, isolate_tmp=True)
 
-            outputdir = PDFImageFilter().apply(outputdir)
-
-            yield outputdir
+            yield TinyImageFilter.apply(
+                    MD5DeduplicationFilter.apply(outputdir))
 
     def handles(self, sm):
         for p in listdir(sm.open(self)):

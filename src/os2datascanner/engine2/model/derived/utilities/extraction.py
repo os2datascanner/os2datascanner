@@ -1,5 +1,6 @@
 """Utilities for extraction based on configuration dictionaries."""
 
+from abc import ABC, abstractmethod
 from pathlib import Path
 from hashlib import md5
 from PIL import Image
@@ -17,12 +18,19 @@ def should_skip_images(configuration: dict) -> bool:
     return False
 
 
-class PDFImageFilter:
-    '''
-    Filter for removing duplicates and images that are too
-    small to contain any text in PDF files.
-    '''
-    dimensions: (int, int) = (8, 8)
+class Filter(ABC):
+    """A Filter postprocesses the output directory of an external tool to make
+    it more suitable for OS2datascanner."""
+
+    @abstractmethod
+    def apply(self, tmpdir: str) -> str:
+        """Filters the content of the specified temporary folder before
+        returning it."""
+        pass
+
+
+class DeduplicationFilter(Filter):
+    """A filter for removing duplicate output files."""
 
     def get_hash(self, filename):
         """
@@ -33,17 +41,8 @@ class PDFImageFilter:
             checksum = self._checksum(fp.read())
             return checksum.hexdigest()
 
-    def __init__(self, checksum=md5, x_dim=8, y_dim=8):
-        self.dimensions = (x_dim, y_dim)
+    def __init__(self, checksum):
         self._checksum = checksum
-
-    def _image_too_small(self, image):
-        """
-        Checks whether an image is too small to contain
-        any (OCR) readable text using dimensions specified
-        in constructor.
-        """
-        return Image.open(image).size <= self.dimensions
 
     def _deduplicate(self, folder):
         """
@@ -60,14 +59,40 @@ class PDFImageFilter:
     def apply(self, tmpdir):
         """
         Removes duplicate images if their hash values match.
-        Also removes images that are too small to contain (OCR) readable text.
         """
         for paths in self._deduplicate(tmpdir).values():
             for dup in paths[1:]:
                 dup.unlink()
+
+        return tmpdir
+
+
+MD5DeduplicationFilter = DeduplicationFilter(checksum=md5)
+
+
+class ImageSizeFilter(Filter):
+    """A filter for removing images that are too small to contain any text."""
+    def __init__(self, x_dim, y_dim):
+        self.dimensions = (x_dim, y_dim)
+
+    def _image_too_small(self, image):
+        """
+        Checks whether an image is too small to contain
+        any (OCR) readable text using dimensions specified
+        in constructor.
+        """
+        return Image.open(image).size <= self.dimensions
+
+    def apply(self, tmpdir):
+        """
+        Removes images that are too small to contain (OCR) readable text.
+        """
 
         for image in Path(tmpdir).glob("*.png"):
             if self._image_too_small(image):
                 image.unlink()
 
         return tmpdir
+
+
+TinyImageFilter = ImageSizeFilter(8, 8)
