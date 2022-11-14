@@ -214,10 +214,8 @@ Integration Test Admin Application:
     - docker
     - network-per-build
   stage: test
-  only:
-    refs:
-      - main
-      - tags
+  rules:
+    - when: never  # until 53346 is fixed 
   services:
     - name: egnmagenta/os2datasynth:v0.2.5
       alias: datasynth
@@ -346,9 +344,8 @@ Performance Test:
     - docker
     - network-per-build
     - high-mem
-  only:
-    refs:
-      - main
+  rules:
+    - when: never # until 53346 is fixed
   services:
     - name: egnmagenta/os2datasynth:v0.2.5
       alias: datasynth
@@ -432,10 +429,8 @@ Integration Test Report Application:
     name: ${REPORT_IMAGE}
     entrypoint: [""]
   stage: test
-  only:
-    refs:
-      - main
-      - tags
+  rules:
+    - when: never # until 53346 is fixed
   allow_failure: true # until 48725 has been fixed
   tags:
     - docker
