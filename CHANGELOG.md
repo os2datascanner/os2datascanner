@@ -74,6 +74,8 @@
 
 - CPR number-like strings are now pruned more aggressively from all match contexts.
 
+- Automatic match handling is now enabled again for LibreOffice and PDF documents.
+
 ## Version 3.17.0, 31st October 2022
 
 "Refreshed Rabbit"
