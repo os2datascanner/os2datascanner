@@ -14,7 +14,9 @@
         <div class="pages">
           {% if page_obj.previous_page_number != 0 %}
             <a class="link link--pre flex" href="#" name="page-button"
-              hx-target=".content" hx-get="" hx-swap="outerHTML" hx-trigger="click" 
+              hx-target=".content" hx-get="{% url "status-completed" %}" 
+              hx-swap="outerHTML" hx-trigger="click" 
+              hx-include="#dropdown_options"
               hx-vals='{"page": "{{ page_obj.previous_page_number }}"}'
             >
               <i id="chevron_left" class="material-icons">chevron_left</i>
@@ -32,7 +34,9 @@
               {% if page_obj.number|add:'-2' == n %} <!-- If current page -2 = 1 (n)  -->
                 {# First page #}
                 <a class="page" href="#" name="page-button"
-                  hx-target=".content" hx-get="" hx-swap="outerHTML" hx-trigger="click" 
+                  hx-target=".content" hx-get="{% url "status-completed" %}" 
+                  hx-swap="outerHTML" hx-trigger="click" 
+                  hx-include="#dropdown_options"
                   hx-vals='{"page": "1"}'
                 >1</a>
                 {% if n != 1 %}
@@ -44,7 +48,9 @@
                   {# Set how many pages on each side of current page #}
               {% elif page_obj.number|add:'-2' < n and n < page_obj.number|add:'2' %} {# Pages around current page #}
                   <a class="page" href="#" name="page-button"
-                    hx-target=".content" hx-get="" hx-swap="outerHTML" hx-trigger="click" 
+                    hx-target=".content" hx-get="{% url "status-completed" %}" 
+                    hx-swap="outerHTML" hx-trigger="click" 
+                    hx-include="#dropdown_options"
                     hx-vals='{"page": "{{ n }}"}'
                   >{{ n }}</a>
               {% elif page_obj.number|add:'2' == n %}
@@ -53,7 +59,9 @@
                   <span class="page--dot">...</span>
                 {% endif %}
                   <a class="page" href="#" name="page-button"
-                    hx-target=".content" hx-get="" hx-swap="outerHTML" hx-trigger="click" 
+                    hx-target=".content" hx-get="{% url "status-completed" %}" 
+                    hx-swap="outerHTML" hx-trigger="click" 
+                    hx-include="#dropdown_options"
                     hx-vals='{"page": "{{ paginator.num_pages }}"}'
                   >{{ paginator.num_pages }}</a>
               {% endif %}
@@ -62,7 +70,9 @@
 
           {% if page_obj.number != page_obj.paginator.num_pages %}
           <a class="link link--next flex" href="#" name="page-button"
-            hx-target=".content" hx-get="" hx-swap="outerHTML" hx-trigger="click" 
+            hx-target=".content" hx-get="{% url "status-completed" %}" 
+            hx-swap="outerHTML" hx-trigger="click" 
+            hx-include="#dropdown_options"
             hx-vals='{"page": "{{ page_obj.next_page_number }}"}'
           >
             {% trans "Next" %}
