@@ -11,6 +11,7 @@ from ..core import Handle, Source
 from ..file import FilesystemResource
 from .derived import DerivedSource
 from .utilities import office_metadata
+from .utilities.extraction import TinyImageFilter
 
 logger = logging.getLogger(__name__)
 
@@ -151,7 +152,7 @@ class LibreOfficeSource(DerivedSource):
                 if backup_filter:
                     _replace_large_html(
                             filter_name, p, backup_filter, outputdir)
-                yield outputdir
+                yield TinyImageFilter.apply(outputdir)
 
     def handles(self, sm):
         for name in listdir(sm.open(self)):
