@@ -363,7 +363,7 @@ urlpatterns = [
 
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(
         packages=('os2datascanner.projects.admin.adminapp', 'recurrence'),
-    )),
+    ), name="jsi18n"),
 
     url(r'^health/', lambda r: HttpResponse()),
     url(r'^version/?$', lambda r: HttpResponse(

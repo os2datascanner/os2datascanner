@@ -495,3 +495,9 @@ msgstr "om morgenen"
 #: adminapp/static/js/recurrence.js:1082
 msgid "PM"
 msgstr "om eftermiddagen"
+
+msgid "Seconds since start of scan"
+msgstr "Sekunder siden scannet blev startet"
+
+msgid "% scanned"
+msgstr "% scannet"
