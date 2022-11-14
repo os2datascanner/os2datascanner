@@ -99,19 +99,21 @@
                     title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned.
 Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}">
                 <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Handle" %}</span></button>
-                <div class="handle-dropdown">
-                  <ul hx-swap="outerHTML swap:300ms"
-                      hx-indicator="closest tr"
-                      hx-target="closest tr"
-                      {% if request.user.profile.time_since_last_handle > 172800 %}
-                        hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}"
-                      {% endif %}
-                      >
-                      {% for choice in document_report.ResolutionChoices.choices %}
-                      <li class="handle-option button" hx-post="{% url "index" %}" hx-trigger="click" name="handle-match" hx-push-url="false"
-                          hx-vals='{"pk":"{{ document_report.pk|unlocalize }}", "action":"{{ choice|first }}"}'>{{ choice|last }}</li>
-                      {% endfor %}
-                  </ul>
+                <div class="dropdown-container">
+                  <div class="handle-dropdown">
+                    <ul hx-swap="outerHTML swap:300ms"
+                        hx-indicator="closest tr"
+                        hx-target="closest tr"
+                        {% if request.user.profile.time_since_last_handle > 172800 %}
+                          hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}"
+                        {% endif %}
+                        >
+                        {% for choice in document_report.ResolutionChoices.choices %}
+                        <li class="handle-option button" hx-post="{% url "index" %}" hx-trigger="click" name="handle-match" hx-push-url="false"
+                            hx-vals='{"pk":"{{ document_report.pk|unlocalize }}", "action":"{{ choice|first }}"}'>{{ choice|last }}</li>
+                        {% endfor %}
+                    </ul>
+                  </div>
                 </div>
           {% else %}
             <button class="matches-handle button button--has-icon" type="button"
@@ -143,21 +145,23 @@ Marking a result as handled will only remove the result from OS2datascanner.{% e
             <button class="revert-handle expand button button--has-icon" type="button"
                     title="revert">
               <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Edit" %}</span></button>
-              <div class="handle-dropdown">
-                <ul hx-swap="outerHTML swap:300ms"
-                    hx-indicator="closest tr"
-                    hx-target="closest tr"
-                    >
-                    <li class="revert-option button" hx-post="{% url "archive" %}" hx-trigger="click" name="revert-match" hx-push-url="false"
-                        hx-vals='{"pk":"{{ document_report.pk|unlocalize }}"}'>{% trans "Revert" %}</li>
-                    {% for choice in document_report.ResolutionChoices.choices %}
-                    {% if document_report.resolution_status != choice|first %}
-                    <li class="revert-option button" hx-post="{% url "archive" %}" hx-trigger="click" name="revert-match" hx-push-url="false"
-                        hx-indicator="this" hx-swap="none"
-                        hx-vals='{"pk":"{{ document_report.pk|unlocalize }}", "action":"{{ choice|first }}"}'>{{ choice|last }}</li>
-                    {% endif %}
-                    {% endfor %}
-                </ul>
+              <div class="dropdown-container">
+                <div class="handle-dropdown">
+                  <ul hx-swap="outerHTML swap:300ms"
+                      hx-indicator="closest tr"
+                      hx-target="closest tr"
+                      >
+                      <li class="revert-option button" hx-post="{% url "archive" %}" hx-trigger="click" name="revert-match" hx-push-url="false"
+                          hx-vals='{"pk":"{{ document_report.pk|unlocalize }}"}'>{% trans "Revert" %}</li>
+                      {% for choice in document_report.ResolutionChoices.choices %}
+                      {% if document_report.resolution_status != choice|first %}
+                      <li class="revert-option button" hx-post="{% url "archive" %}" hx-trigger="click" name="revert-match" hx-push-url="false"
+                          hx-indicator="this" hx-swap="none"
+                          hx-vals='{"pk":"{{ document_report.pk|unlocalize }}", "action":"{{ choice|first }}"}'>{{ choice|last }}</li>
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                </div>
               </div>
             {% else %}
             <button class="revert-handle button button--has-icon" type="button"

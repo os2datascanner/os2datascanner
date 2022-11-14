@@ -43,7 +43,7 @@
     margin-bottom: 0;
     background-color: var(--color-widget-bg);
 
-    @media (min-width: break-lg) {
+    @media (min-width: $break-lg) {
       margin-bottom: calc(2 * var(--datatable-cell-padding));
       border-radius: var(--border-radius-widget);
     }
