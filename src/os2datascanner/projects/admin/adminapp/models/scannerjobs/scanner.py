@@ -458,6 +458,12 @@ class ScheduledCheckup(models.Model):
     def handle(self):
         return Handle.from_json_object(self.handle_representation)
 
+    def __str__(self):
+        return f"{self.scanner}: {self.handle} ({self.pk})"
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.handle} ({self.pk}) from {self.scanner}>"
+
 
 class ScanStage(Enum):
     INDEXING = 0
@@ -658,6 +664,9 @@ class ScanStatusSnapshot(AbstractScanStatus):
         verbose_name=_("timestamp"),
         default=timezone.now,
     )
+
+    def __str__(self):
+        return f"{self.scan_status.scanner}: {self.time_stamp}"
 
     class Meta:
         verbose_name = _("scan status snapshot")

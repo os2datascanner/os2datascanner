@@ -87,8 +87,11 @@ class DocumentReport(models.Model):
         verbose_name='Underret kun superadmin',
     )
 
-    def _str_(self):
-        return self.path
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.name} ({self.pk})>"
 
     @cached_property
     def scan_tag(self):

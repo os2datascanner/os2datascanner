@@ -16,6 +16,8 @@
 
 - When handling a result in the report module, the animation will now get to finish before the DOM content is swapped.
 
+- Added string representations to some models without for easier debugging.
+
 ### Bugfixes
 
 - Adjusted media root to support profile images uploaded by the user.

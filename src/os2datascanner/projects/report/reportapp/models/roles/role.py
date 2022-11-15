@@ -26,6 +26,9 @@ class Role(models.Model):
     user = models.ForeignKey(User, null=False, verbose_name="Bruger",
                              related_name="roles", on_delete=models.CASCADE)
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.user}>"
+
     @abstractmethod
     def filter(self, document_reports):
         """Filters the given QuerySet of document reports in accordance with
