@@ -104,6 +104,9 @@ class SourceManager:
                 except BaseException:
                     self.close(source)
                     raise
+            logger.debug(
+                    "SourceManager.open",
+                    self=self, source=source, cookie=desc.cookie)
             return desc.cookie
         finally:
             self._opening = self._opening[:-1]
@@ -111,6 +114,10 @@ class SourceManager:
     def close(self, source):
         """Closes a Source opened in this SourceManager, in the process closing
         all other open Sources that depend upon it."""
+        logger.debug(
+                "SourceManager.close",
+                self=self,
+                source=source)
         if source in self._opened:
             desc = self._opened[source]
 
@@ -128,9 +135,9 @@ class SourceManager:
                     desc.generator.close()
                 except Exception:
                     logger.warning(
-                        "Bug! Closing _generate_state failed.",
-                        source=type(source).__name__,
-                    )
+                            "Bug! Closing _generate_state failed.",
+                            source=type(source).__name__,
+                            exc_info=True)
 
             if desc.parent:
                 # Detach this Source from its parent

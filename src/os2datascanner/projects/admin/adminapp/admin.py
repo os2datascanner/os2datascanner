@@ -137,7 +137,12 @@ class ScannerAdmin(admin.ModelAdmin):
         return super().get_fields(request, obj=obj)
 
 
-for _cls in [APIKey, ScheduledCheckup]:
+@admin.register(ScheduledCheckup)
+class ScheduledCheckupAdmin(admin.ModelAdmin):
+    list_filter = ('scanner',)
+
+
+for _cls in (APIKey,):
     admin.site.register(_cls)
 
 
