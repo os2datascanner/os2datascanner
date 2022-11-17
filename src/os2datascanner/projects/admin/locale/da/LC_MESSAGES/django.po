@@ -449,9 +449,45 @@ msgstr "kontekstcheck"
 msgid "Regular expression"
 msgstr "Regulært udtryk"
 
+<<<<<<< HEAD
 #: adminapp/templates/components/admin-widgets/rule-builder.html:98
 msgid "expanded matching"
 msgstr "udvidet søgning"
+=======
+#: adminapp/templates/components/analysis-template.html:10
+#: adminapp/templates/components/navigation.html:28
+msgid "Analysis"
+msgstr "Analyse"
+
+#: adminapp/templates/components/analysis-template.html:46
+msgid "Last updated"
+msgstr "Sidst opdateret"
+
+#: adminapp/templates/components/analysis-template.html:57
+#: adminapp/templates/components/analysis-template.html:61
+msgid "Run analysis scan"
+msgstr "Kør analyse-scan"
+
+#: adminapp/templates/components/analysis-template.html:65
+msgid "Storage"
+msgstr "Opbevaringsplads"
+
+#: adminapp/templates/components/analysis-template.html:66
+msgid "Overview of storage for different filetypes"
+msgstr "Overblik over opbevaringsplads for de forskellige filtyper"
+
+#: adminapp/templates/components/analysis-template.html:84
+msgid "File size distribution"
+msgstr "Distribution af filstørrelser"
+
+#: adminapp/templates/components/analysis-template.html:85
+msgid "Overview of number of files "
+msgstr "Overblik over antallet af filer"
+
+#: adminapp/templates/components/analysis-template.html:101
+msgid "Choose a scannerjob to start a new scan or view analysis"
+msgstr "Vælg et scannerjob for at starte et analyse-scan eller se analyse"
+>>>>>>> 92cb41c1 ([#53497] Restructure templates and add translation)
 
 #: adminapp/templates/components/load-results.html:23
 msgid "per page"
@@ -470,14 +506,14 @@ msgstr "Scanner status"
 msgid "Scannerjob"
 msgstr "Scannerjob"
 
-#: adminapp/templates/components/navigation.html:27
+#: adminapp/templates/components/navigation.html:37
 #: adminapp/templates/os2datascanner/rules.html:19
 #: adminapp/templates/os2datascanner/rules.html:38
 #: adminapp/templates/partials/breadcrumb.html:55
 msgid "Rules"
 msgstr "Regler"
 
-#: adminapp/templates/components/navigation.html:35
+#: adminapp/templates/components/navigation.html:45
 #: adminapp/templates/partials/breadcrumb.html:69
 #: adminapp/templates/partials/breadcrumb.html:77
 #: adminapp/templates/partials/breadcrumb.html:85
@@ -486,19 +522,19 @@ msgstr "Regler"
 msgid "organizations"
 msgstr "organisationer"
 
-#: adminapp/templates/components/navigation.html:43
+#: adminapp/templates/components/navigation.html:53
 msgid "Report module"
 msgstr "Rapport modul"
 
-#: adminapp/templates/components/navigation.html:52
+#: adminapp/templates/components/navigation.html:62
 msgid "Administration"
 msgstr "Administration"
 
-#: adminapp/templates/components/navigation.html:60
+#: adminapp/templates/components/navigation.html:70
 msgid "Guide"
 msgstr "Håndbog"
 
-#: adminapp/templates/components/navigation.html:71
+#: adminapp/templates/components/navigation.html:81
 #: adminapp/templates/components/user.html:32 adminapp/templates/logout.html:7
 msgid "Logout"
 msgstr "Log ud"

@@ -59,7 +59,7 @@ function displayLabelUnit(index, chartObject) {
 let dataset = chartObject.datasets[0];
 let labelName = chartObject.labels[index];
 if (dataset.name === "nfiles"){
-    return `${labelName}: ${formatNumber(dataset.data[index])} files`;
+    return labelName.concat(": ", formatNumber(dataset.data[index]).toString(), " ", gettext("files"));
 }
 else if (dataset.name === "storage"){
     return `${labelName}: ${bytesToSize(dataset.data[index])}`;
@@ -170,26 +170,14 @@ function createPie(data, htmlElements, colors){
                         }
                         else if (name === "nfiles"){
                             if (val === 1){
-                                return `${label}: ${val} file`;
+                                return label.concat(": ", val.toString(), " ", gettext("file"));
                             }   
                             else {
-                                return `${label}: ${val} files`;
+                                return label.concat(": ", val.toString(), " ", gettext("files"));
                             }
                         }
-                        
-                    //   let start = parseInt(tooltipItem.label) - (binSize/2);
-                    //   let end = parseInt(tooltipItem.label) + (binSize/2);
-                    //     return `${start}-${end} KB`;},
-                    // title:(tooltipItem) =>{
-                    //   let val = tooltipItem[0].formattedValue;
-                    //   if (val === '1'){
-                    //     return `${val} file`;
-                    //   }
-                    //   else {
-                    //     return `${val} files`;
-                    //   }
                     }
-                  }
+                }
             },
             },
         responsive: true,
@@ -206,8 +194,8 @@ var ctx2 = document.getElementById("pie2");
 let types = Data.map(object => object.type);
 let nFiles = Data.map(object => object.n_files); // jshint ignore:line
 let totalSize = Data.map(object => object.total_size); // jshint ignore:line
-let pie1Data = {labels: types, data: nFiles, name: "nfiles", title: "Number of files"};
-let pie2Data = {labels: types, data: totalSize, name: "storage", title: "Storage space"};
+let pie1Data = {labels: types, data: nFiles, name: "nfiles", title: gettext("Number of files")};
+let pie2Data = {labels: types, data: totalSize, name: "storage", title: gettext("Storage space")};
 createPie(pie1Data, [ctx1, "pie1"], colors);
 createPie(pie2Data, [ctx2, "pie2"], colors);
 
@@ -225,4 +213,13 @@ let colorList = ["rgba(84, 71, 140)",
                 "rgba(239, 234, 90)",
                 "rgba(241, 196, 83)"];
 
-drawPies(Data, colorList);
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    drawPies(Data, colorList);
+});
+    
+htmx.onLoad(function () {
+    drawPies(Data, colorList);
+});
+                  

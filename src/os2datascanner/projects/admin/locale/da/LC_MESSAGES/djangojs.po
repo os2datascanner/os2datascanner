@@ -501,3 +501,21 @@ msgstr "Sekunder siden scannet blev startet"
 
 msgid "% scanned"
 msgstr "% scannet"
+#: adminapp/static/js/analysisPie-ChartJS3.js:197
+#: adminapp/static/js/analysisBar-ChartJS3.js:135
+msgid "Number of files"
+msgstr "Antal filer"
+
+#: adminapp/static/js/analysisPie-ChartJS3.js:198
+msgid "Storage space"
+msgstr "Plads"
+
+#: adminapp/static/js/analysisBar-ChartJS3.js:189
+#: adminapp/static/js/analysisPie-ChartJS3.js:173
+msgid "file"
+msgstr "fil"
+
+#: adminapp/static/js/analysisBar-ChartJS3.js:192
+#: adminapp/static/js/analysisPie-ChartJS3.js:176
+msgid "files"
+msgstr "filer"

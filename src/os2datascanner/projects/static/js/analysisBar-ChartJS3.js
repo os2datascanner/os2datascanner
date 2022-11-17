@@ -132,7 +132,7 @@ function createBars(data, ctx, titleText, binSize){
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Number of files',
+              text: gettext('Number of files'),
               font: {
                   size: 16
               },
@@ -186,10 +186,10 @@ function createBars(data, ctx, titleText, binSize){
             title:(tooltipItem) =>{
               let val = tooltipItem[0].formattedValue;
               if (val === '1'){
-                return `${val} file`;
+                return val.toString().concat(" ", gettext("file"));
               }
               else {
-                return `${val} files`;
+                return val.toString().concat(" ", gettext("files"));
               }
             }
           }
@@ -203,4 +203,10 @@ function createBars(data, ctx, titleText, binSize){
   
 }
 
-drawBars(jsonData);
+document.addEventListener('DOMContentLoaded', function () {
+  drawBars(jsonData);
+});
+
+htmx.onLoad(function () {
+  drawBars(jsonData);
+});

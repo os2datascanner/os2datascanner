@@ -8,15 +8,24 @@ class AnalysisPageView(LoginRequiredMixin, TemplateView):
     scanners = None
 
     def get_template_names(self):
-        return "partials/analysis-template.html"
+        is_htmx = self.request.headers.get('HX-Request') == 'true'
+        if is_htmx:
+            return "components/analysis-template.html"
+        else:
+            return "components/analysis.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.scanners is None:
             self.scanners = Scanner.objects.all()
 
-        context["scanners"] = (self.scanners, self.request.GET.get('scannerjob', 'all'))
-        # is_htmx = self.request.headers.get('HX-Request') == "true"
+        context["scanners"] = (self.scanners, self.request.GET.get('scannerjob', 'none'))
+
+        pk = context["scanners"][1]
+        if pk == 'none':
+            context["selected_scanner"] = None
+        else:
+            context["selected_scanner"] = self.scanners.filter(pk=int(pk))
 
         context["bar_list"] = ["x", "y", "z"]
         context["pie_list"] = ["a", "b"]
