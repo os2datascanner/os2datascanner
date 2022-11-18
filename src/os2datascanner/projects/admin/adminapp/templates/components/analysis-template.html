@@ -41,17 +41,16 @@
       {% if selected_scanner %}
         <div class="flex">
           <div class="response">
-            <span class="response-icon response-icon--success" data-sync-for="{{ scannerjob.pk }}"><i class="material-icons">check</i></span>
-            <span class="response-text" data-sync-for="{{ scannerjob.pk }}">
+            <span class="response-icon response-icon--success" data-sync-for="{{selected_scanner.first.pk}}"><i class="material-icons">check</i></span>
+            <span class="response-text" data-sync-for="{{selected_scanner.first.pk}}">
               {% trans 'Last updated' %} 14-11-2022, 13:22
             </span>
           </div>
         </div>
-
         <a
-          href="#run-analysis-scan" {# This needs creation, backend not ready #}
-          {% comment %} data-modal="modal:open"
-          data-src="/{{ view.type }}scanners/{{scanner.pk}}/askrun/" {% endcomment %}
+          href="#run-analysis-modal" {# This needs creation, backend not ready #}
+          data-modal="modal:open"
+          data-src="/webscanners/{{selected_scanner.first.pk}}/askrun/"
           class="button button--small button--grey"
           title="{% trans 'Run analysis scan' %}">
             <svg class="icon">
@@ -101,3 +100,10 @@
       {% endif %}
     {% endif %}
   </div>
+
+
+{% block modal %}
+<div class="modal" id="run-analysis-modal" tabindex="-1" role="dialog" aria-labelledby="run-analysis-modal-title" aria-hidden="true" data-href="/webscanners/add/">
+  <iframe src="about:blank" frameborder="0"></iframe>
+</div>
+{% endblock %}

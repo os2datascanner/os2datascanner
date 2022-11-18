@@ -2,18 +2,15 @@
 {% load static %}
 {% load i18n %}
 {% block scripts %}
-  {% comment %} <script src="{% static "3rdparty/jquery-3.6.0.min.js" %} "></script> {% endcomment %}
   <script src="{% static "3rdparty/chart-3.9.1.min.js" %}"></script>
-  {% comment %} <script src="{% static "3rdparty/chartjs-plugin-datalabels.js" %}"></script> {% endcomment %}
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.1.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script type="text/javascript" src="/jsi18n/"></script>
   <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
   <script src="{% static "3rdparty/htmx.min.js" %}"></script>
+  <script src="{% static "js/analysisChartWrapper.js" %}"></script>
   <script src="{% static "js/analysisBar-ChartJS3.js" %}"></script>
   <script src="{% static "js/analysisPie-ChartJS3.js" %}"></script>
   <script src="{% static "js/index.js" %}"></script>
-  {% comment %} <script src="{% url 'javascript-catalog' %}"></script> {% endcomment %}
-  {% comment %} <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script> {% endcomment %}
 {% endblock %}
 
 {% block body %}
