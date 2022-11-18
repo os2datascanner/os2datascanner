@@ -10,6 +10,8 @@
 
 - A timeline of a completed scan can now be seen on the "Completed scans"-tab.
 
+- UI for analysis tool included as a new page and new feature in the admin module. The feature is disabled by deafult
+
 ### General Improvements
 
 - Release notes are now written gradually, instead of in batches during release procedures.
