@@ -27,6 +27,6 @@ class AnalysisPageView(LoginRequiredMixin, TemplateView):
         else:
             context["selected_scanner"] = self.scanners.filter(pk=int(pk))
 
-        context["bar_list"] = ["x", "y", "z"]
+        context["bar_list"] = ["PNG", "JPEG", "PDF", "XLS", "TXT"]
         context["pie_list"] = ["a", "b"]
         return context
