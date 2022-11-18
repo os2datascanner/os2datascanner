@@ -32,6 +32,8 @@
 
 - Pagination options now work in the admin module.
 
+- Time stamps are now correctly set when resolving a match result.
+
 ## Version 3.17.0, 31st October 2022
 
 "Refreshed Rabbit"
