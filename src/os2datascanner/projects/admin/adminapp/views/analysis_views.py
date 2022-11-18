@@ -6,13 +6,7 @@ from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import Sc
 class AnalysisPageView(LoginRequiredMixin, TemplateView):
     context_object_name = 'scanner_list'
     scanners = None
-
-    def get_template_names(self):
-        is_htmx = self.request.headers.get('HX-Request') == 'true'
-        if is_htmx:
-            return "components/analysis-template.html"
-        else:
-            return "components/analysis.html"
+    template_name = "components/analysis.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
