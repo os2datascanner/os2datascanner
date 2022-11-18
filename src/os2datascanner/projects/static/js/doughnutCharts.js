@@ -1,5 +1,43 @@
 /* exported drawDoughnuts */
 
+function makeDoughnutChart(text, data, colors, chartElement) {
+	const doughnutChart = new Chart(chartElement, {
+		type: 'doughnut',
+		data: {
+			datasets: [{
+				data: data,
+				backgroundColor: colors,
+				borderWidth: 0
+			}]
+		},
+		options: {
+			cutoutPercentage: 75,
+			elements: {
+				arc: {
+					roundedCornersFor: 0
+				},
+				center: {
+					minFontSize: 20,
+					maxFontSize: 20,
+					weight: 'bold',
+					text: text,
+				}
+			},
+			plugins: {
+				datalabels: {
+					display: false
+				},
+			},
+			events: [],
+			responsive: true,
+			aspectRatio: 1,
+			maintainAspectRatio: false
+		}
+	});
+
+	return doughnutChart;
+}
+
 function drawDoughnuts(sensitivities, totalHandledMatches, totalMatches, handledPercentage) {
 	// Doughnut chart
 	// //
@@ -134,192 +172,60 @@ function drawDoughnuts(sensitivities, totalHandledMatches, totalMatches, handled
 	});
 	var handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
 	var criticalHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_critical").getContext('2d');
-	charts.push(new Chart(criticalHandledDoughnutChartCtx, {
-		type: 'doughnut',
-		data: {
-			datasets: [{
-				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
-				// This is so that the secondary color will fill the whole graph
-				// this could be prettier, if we 'pre-calculated' the %
-				data: [handledMatches[0][1], ((!sensitivities[0][1]) && (!handledMatches[0][1])) ? 100 : sensitivities[0][1] - handledMatches[0][1]],
-				backgroundColor: ['#e24e4e', '#f5f5f5'],
-				borderWidth: 0
-			}]
-		},
-		options: {
-			cutoutPercentage: 75,
-			elements: {
-				arc: {
-					roundedCornersFor: 0
-				},
-				center: {
-					minFontSize: 20,
-					maxFontSize: 20,
-					weight: 'bold',
-					// logic to avoid 0 divided by 0 being NaN
-					text: avoidZero(handledMatches[0][1], sensitivities[0][1]),
-				}
-			},
-			plugins: {
-				datalabels: {
-					display: false
-				},
-			},
-			events: [],
-			responsive: true,
-			aspectRatio: 1,
-			maintainAspectRatio: false
-		}
-	}));
+	charts.push(makeDoughnutChart(
+		// logic to avoid 0 divided by 0 being NaN
+		avoidZero(handledMatches[0][1], sensitivities[0][1]),
+		// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
+		// This is so that the secondary color will fill the whole graph
+		// this could be prettier, if we 'pre-calculated' the %
+		[handledMatches[0][1], ((!sensitivities[0][1]) && (!handledMatches[0][1])) ? 100 : sensitivities[0][1] - handledMatches[0][1]],
+		['#e24e4e', '#f5f5f5'],
+		criticalHandledDoughnutChartCtx
+	));
 
 	var problemHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_problem").getContext('2d');
-	charts.push(new Chart(problemHandledDoughnutChartCtx, {
-		type: 'doughnut',
-		data: {
-			datasets: [{
-				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
-				// This is so that the secondary color will fill the whole graph
-				// this could be prettier, if we 'pre-calculated' the %
-				data: [handledMatches[1][1], ((!sensitivities[1][1]) && (!handledMatches[1][1])) ? 100 : sensitivities[1][1] - handledMatches[1][1]],
-				backgroundColor: ['#ffab00', '#f5f5f5'],
-				borderWidth: 0
-			}]
-		},
-		options: {
-			cutoutPercentage: 75,
-			elements: {
-				arc: {
-					roundedCornersFor: 0
-				},
-				center: {
-					minFontSize: 20,
-					maxFontSize: 20,
-					weight: 'bold',
-					// logic to avoid 0 divided by 0 being NaN
-					text: avoidZero(handledMatches[1][1], sensitivities[1][1]),
-				}
-			},
-			plugins: {
-				datalabels: {
-					display: false
-				},
-			},
-			events: [],
-			responsive: true,
-			aspectRatio: 1,
-			maintainAspectRatio: false
-		}
-	}));
+	charts.push(makeDoughnutChart(
+		// logic to avoid 0 divided by 0 being NaN
+		avoidZero(handledMatches[1][1], sensitivities[1][1]),
+		// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
+		// This is so that the secondary color will fill the whole graph
+		// this could be prettier, if we 'pre-calculated' the %
+		[handledMatches[1][1], ((!sensitivities[1][1]) && (!handledMatches[1][1])) ? 100 : sensitivities[1][1] - handledMatches[1][1]],
+		['#ffab00', '#f5f5f5'],
+		problemHandledDoughnutChartCtx
+	));
 
 	var warningHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_warning").getContext('2d');
-	charts.push(new Chart(warningHandledDoughnutChartCtx, {
-		type: 'doughnut',
-		data: {
-			datasets: [{
-				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
-				// This is so that the secondary color will fill the whole graph
-				// this could be prettier, if we 'pre-calculated' the %
-				data: [handledMatches[2][1], ((!sensitivities[2][1]) && (!handledMatches[2][1])) ? 100 : sensitivities[2][1] - handledMatches[2][1]],
-				backgroundColor: ['#fed149', '#f5f5f5'],
-				borderWidth: 0
-			}]
-		},
-		options: {
-			cutoutPercentage: 75,
-			elements: {
-				arc: {
-					roundedCornersFor: 0
-				},
-				center: {
-					minFontSize: 20,
-					maxFontSize: 20,
-					weight: 'bold',
-					// logic to avoid 0 divided by 0 being NaN
-					text: avoidZero(handledMatches[2][1], sensitivities[2][1]),
-				}
-			},
-			plugins: {
-				datalabels: {
-					display: false
-				},
-			},
-			events: [],
-			responsive: true,
-			aspectRatio: 1,
-			maintainAspectRatio: false
-		}
-	}));
+	charts.push(makeDoughnutChart(
+		// logic to avoid 0 divided by 0 being NaN
+		avoidZero(handledMatches[2][1], sensitivities[2][1]),
+		// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
+		// This is so that the secondary color will fill the whole graph
+		// this could be prettier, if we 'pre-calculated' the %
+		[handledMatches[2][1], ((!sensitivities[2][1]) && (!handledMatches[2][1])) ? 100 : sensitivities[2][1] - handledMatches[2][1]],
+		['#fed149', '#f5f5f5'],
+		warningHandledDoughnutChartCtx
+	));
 
 	var notificationHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_notification").getContext('2d');
-	charts.push(new Chart(notificationHandledDoughnutChartCtx, {
-		type: 'doughnut',
-		data: {
-			datasets: [{
-				// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
-				// This is so that the secondary color will fill the whole graph
-				// this could be prettier, if we 'pre-calculated' the %
-				data: [handledMatches[3][1], ((!sensitivities[3][1]) && (!handledMatches[3][1])) ? 100 : sensitivities[3][1] - handledMatches[3][1]],
-				backgroundColor: ['#21759c', '#f5f5f5'],
-				borderWidth: 0
-			}]
-		},
-		options: {
-			cutoutPercentage: 75,
-			elements: {
-				arc: {
-					roundedCornersFor: 0
-				},
-				center: {
-					minFontSize: 20,
-					maxFontSize: 20,
-					weight: 'bold',
-					text: avoidZero(handledMatches[3][1], sensitivities[3][1]),
-				}
-			},
-			plugins: {
-				datalabels: {
-					display: false
-				},
-			},
-			events: [],
-			responsive: true,
-			aspectRatio: 1,
-			maintainAspectRatio: false
-		}
-	}));
+	charts.push(makeDoughnutChart(
+		// logic to avoid 0 divided by 0 being NaN
+		avoidZero(handledMatches[3][1], sensitivities[3][1]),
+		// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
+		// This is so that the secondary color will fill the whole graph
+		// this could be prettier, if we 'pre-calculated' the %
+		[handledMatches[3][1], ((!sensitivities[3][1]) && (!handledMatches[3][1])) ? 100 : sensitivities[3][1] - handledMatches[3][1]],
+		['#21759c', '#f5f5f5'],
+		notificationHandledDoughnutChartCtx
+	));
 
 	var totalHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_total").getContext('2d');
-	charts.push(new Chart(totalHandledDoughnutChartCtx, {
-		type: 'doughnut',
-		data: {
-			datasets: [{
-				data: [totalHandledMatches, (totalMatches - totalHandledMatches)],
-				backgroundColor: ['#21759c', '#f5f5f5'],
-				borderWidth: 0
-			}]
-		},
-		options: {
-			cutoutPercentage: 75,
-			elements: {
-				arc: {
-					roundedCornersFor: 0
-				},
-				center: {
-					minFontSize: 20,
-					maxFontSize: 20,
-					weight: 'bold',
-					text: isNaN(handledPercentage) ? 0 : handledPercentage.toFixed(0) + '%',
-				}
-			},
-			plugins: {
-				datalabels: {
-					display: false
-				},
-			},
-			events: [],
-			responsive: true,
-			aspectRatio: 1,
-			maintainAspectRatio: false
-		}
-	}));
+	charts.push(makeDoughnutChart(
+		// logic to avoid 0 divided by 0 being NaN
+		isNaN(handledPercentage) ? 0 : handledPercentage.toFixed(0) + '%',
+		[totalHandledMatches, (totalMatches - totalHandledMatches)],
+		['#21759c', '#f5f5f5'],
+		totalHandledDoughnutChartCtx
+	));
+
 }
