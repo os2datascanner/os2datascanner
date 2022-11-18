@@ -5,7 +5,7 @@
 }
 
 .match_filtering_wrapper {
-  float:left;
+  float: left;
   margin-top: 1rem;
   max-width: 100%;
 }
@@ -20,10 +20,10 @@
 }
 
 .match_filtering_clear_button {
-  cursor:pointer;
-  float:right;
+  cursor: pointer;
+  float: right;
   margin-right: 2rem;
-  border:none;
+  border: none;
   background: none;
   color: var(--color-primary-dark);
   font-size: small;
@@ -32,7 +32,7 @@
 .match_filtering_label {
   display: block;
   font-weight: bold;
-  float:left;
+  float: left;
 }
 
 .match_filtering {
@@ -40,4 +40,34 @@
   margin-right: 2rem;
   margin-top: 2rem;
   font-size: .9rem;
+}
+
+.org_filtering {
+  width: 20rem;
+  margin-right: 2rem;
+  margin-top: 2rem;
+  font-size: .9rem;
+}
+
+.org_filtering_wrapper {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.search_field_wrapper {
+  float: right;
+  width: 20rem;
+
+  input[type=search] {
+    background-color: var(--color-widget-bg);
+    border: none !important;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    outline: none;
+    padding: .75rem 2.25rem .75rem .75rem;
+    transition: var(--transition-default);
+    width: 100%;
+  }
 }

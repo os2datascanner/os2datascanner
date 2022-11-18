@@ -1,0 +1,107 @@
+<div class="content" hx-push-url="true">
+  {% load i18n %}
+  {% load l10n %}
+  {% load static %}
+  {% load handle_extras %}
+  <h1 class="page-title">{% trans "Leader overview for:" %} <span class="org-unit-text">{{ org_unit }}</span></h1>
+
+  <svg class="page-indicator" id="report-page-indicator" viewbox="0 0 100 100">
+    <circle id="circle" cx="50" cy="50" r="45"></circle>
+  </svg>
+
+  <p class="employee-count-text">{{ org_unit.positions.count }} {% trans "employees" %}</p>
+
+  <form name="leader_overview_form"
+        hx-get="{% url "statistics-leader" %}"
+        hx-target=".content"
+        hx-select=".content"
+        hx-swap="outerHTML"
+        hx-trigger="change"
+        hx-indicator="#report-page-indicator">
+    <div class="org_filtering_wrapper">
+      <div>
+        <div>
+          <label for="org_units" class="match_filtering_label">
+            {% trans "Organizational units" %}
+          </label>
+        </div>
+        <div class="org_filtering dropdown">
+          <select name="org_unit" id="org_units" autocomplete="off">
+            {% for unit in user_units %}
+            <option value="{{ unit.uuid }}"
+              {% if unit == org_unit %}
+              selected="selected"
+              {% endif %}>
+              {{ unit.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="search_field_wrapper">
+        <input class="form-control" type="search" 
+              name="search_field" id="search_field" 
+              placeholder="{% trans "Search for employee" %}"
+              value="{{ request.GET.search_field }}">
+      </div>
+    </div>
+  </form>
+
+  <div class="datatable-wrapper card">
+  <table class="datatable">
+    <colgroup>
+      <col class="datatable__column--name">
+      <col class="datatable__column--matchcount">
+      <col class="datatable__column--status">
+      <col class="datatable__column--actions">
+    </colgroup>
+    <thead>
+      <tr class="table-topbar topbar-stick sticky">
+        <th class="datatable__column--name">
+          {% trans "Employee" %}
+        </th>
+        <th class="datatable__column--matchcount">
+          {% trans "Matches" %}
+        </th>
+        <th class="datatable__column--status">
+          {% trans "Status" %}
+        </th>
+        <th class="datatable__column--actions">
+          <span class="screen-reader-only">{% trans "Actions" %}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if employees %}
+      {% for employee in employees %}
+        <tr>
+          <td class="datatable__column--name">
+            <div class="tooltip">
+              <div class="overflow-ellipsis">
+                <strong>{{ employee.account.get_full_name }}</strong>
+              </div>
+            </div>
+          </td>
+          <td class="datatable__column--matchcount">
+            {{ employee.account.matchcount }}
+          </td>
+          <td class="datatable__column--status">
+            OK
+          </td>
+          <td class="datatable__column--actions">
+            <a class="button" href="mailto:{{ employee.account.email }}?body=Matches: {{ employee.account.matchcount }}">{% trans "Send notification" %}</a>
+          </td>
+        </tr>
+      {% endfor %}
+      {% else %}
+        <tr>
+          <td class="datatable__column--nodata" colspan="6">
+            {% trans "No employees found." %}
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </div>
+
+</div>

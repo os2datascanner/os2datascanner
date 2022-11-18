@@ -265,6 +265,11 @@
       word-wrap: break-word;
     }
 
+    &--nodata {
+      text-align: center;
+      font-style: italic;
+    }
+
     &--actions {
       width: 15rem;
       word-wrap: break-word;

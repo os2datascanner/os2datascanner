@@ -8,6 +8,11 @@
 	flex-wrap: wrap;
 }
 
+.org-unit-text,
+.employee-count-text {
+	color: var(--color-text-secondary);
+}
+
 .statistic {
 	background-color: var(--color-widget-bg);
 	-webkit-box-shadow: var(--box-shadow-widget);

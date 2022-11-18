@@ -6,13 +6,19 @@
 <script src="{% static "js/options.js" %}"></script>
 
 <main class="wrapper">
-  {% include "components/statistics-template.html" %}
+  {% if request.path == "/statistics/dpo/" %}
+    {% include "components/dpo-statistics-template.html" %}
+  {% elif request.path == "/statistics/leader/" %}
+    {% include "components/leader-statistics-template.html" %}
+  {% endif %}
 </main>
 {% block scripts %}
 <script src="{% static "3rdparty/jquery-3.6.0.min.js" %} "></script>
 <script src="{% static "3rdparty/chart-2.9.4.min.js" %}"></script>
 <script src="{% static "3rdparty/chartjs-plugin-datalabels.js" %}"></script>
+{% if request.path == "/statistics/dpo/" %}
 <script src="{% static "js/chartHelpers.js" %}"></script>
+{% endif %}
 <script src="{% static "js/pieCharts.js" %}"></script>
 <script src="{% static "js/doughnutCharts.js" %}"></script>
 <script src="{% static "js/lineCharts.js" %}"></script>

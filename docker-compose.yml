@@ -81,7 +81,7 @@ services:
     volumes:
       # First line below is needed in dev, because we copy all our live code in, which replaces
       # the built-in code from Dockerfile (this is for watchdog reasons)
-      - /code/src/os2datascanner/core_organizational_structure/
+      # - /code/src/os2datascanner/core_organizational_structure/
       - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./dev-environment/admin/.secret:/code/.secret
@@ -173,7 +173,7 @@ services:
     volumes:
       # First line below is needed in dev, because we copy all our live code in, which replaces
       # the built-in code from Dockerfile (this is for watchdog reasons)
-      - /code/src/os2datascanner/core_organizational_structure/
+      # - /code/src/os2datascanner/core_organizational_structure/
       - frontend-bundles:/code/src/os2datascanner/projects/static/dist/
       - ./dev-environment/report/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner

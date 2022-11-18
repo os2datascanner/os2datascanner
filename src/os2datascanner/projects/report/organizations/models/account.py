@@ -52,6 +52,12 @@ class Account(Core_Account):
         null=True,
         blank=True,
         verbose_name=_('image'))
+    matchcount = models.IntegerField(
+        default=0,
+        null=True,
+        blank=True,
+        verbose_name=_("Number of matches")
+    )
 
     def update_last_handle(self):
         self.last_handle = time_now()
@@ -66,6 +72,14 @@ class Account(Core_Account):
     @property
     def image(self):
         return os.path.join(settings.MEDIA_ROOT, self._image.url) if self._image else None
+
+    def count_matches(self):
+        count = 0
+        for alias in self.aliases.all():
+            count += alias.match_relation.filter(resolution_status__isnull=True,
+                                                 raw_matches__matched=True).count()
+        self.matchcount = count
+        self.save()
 
 
 @receiver(post_save, sender=Account)
