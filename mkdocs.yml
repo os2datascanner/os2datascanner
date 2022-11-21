@@ -13,6 +13,7 @@ nav:
   - Frontend Architecture: architecture/frontend.md
   - Scan API: api.md
   - Extending OS2Datascanner: engine2.md
+  - Accessing the Microsoft Graph API with graphiti: graphiti.md
   - Deployment:
     - Installation: installation.md
     - Docker: docker.md
