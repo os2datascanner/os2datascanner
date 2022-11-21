@@ -743,7 +743,7 @@ msgstr "Tak fordi du brugte OS2datascanner."
 msgid "again"
 msgstr "igen"
 
-#: reportapp/templates/mail/overview.html:57
+#: reportapp/templates/mail/overview.html:36
 #: reportapp/templates/mail/overview.txt:3
 #, python-format
 msgid ""
@@ -753,18 +753,40 @@ msgstr ""
 "\n"
 "Hej %(full_name)s,\n"
 
-#: reportapp/templates/mail/overview.html:62
+
 #, python-format
 msgid ""
 "\n"
-"Currently, <strong>%(match_count)s</strong> results in\n"
-"the OS2datascanner system require your attention:\n"
+"    Currently, <strong>%(user_alias_bound_results)s</strong> results in\n"
+"    the OS2datascanner system have you as the owner and require your "
+"attention.\n"
 msgstr ""
 "\n"
-"Der ligger i øjeblikket <strong>%(match_count)s</strong> resultater i\n"
-"OS2datascanner-systemet, der kræver handling fra din side:\n"
+"Der ligger i øjeblikket <strong>%(user_alias_bound_results)s</strong> resultater i\n"
+"OS2datascanner-systemet med direkte tilknytning til dig, der kræver din opmærksomhed.\n"
 
-#: reportapp/templates/mail/overview.html:83
+#: reportapp/templates/mail/overview.html:50
+#: reportapp/templates/mail/overview.txt:13
+msgid ""
+"Additional results are tied to you because of your roles within the system:"
+msgstr "Yderligere resultater er tildelt til dig på baggrund af dine roller i systemet:"
+
+#: reportapp/templates/mail/overview.html:56
+#: reportapp/templates/mail/overview.txt:15
+msgid "Super-admin delegated results: "
+msgstr "Tildelt pga. super-admin rolle: "
+
+#: reportapp/templates/mail/overview.html:64
+#: reportapp/templates/mail/overview.txt:18
+msgid "Remediator delegated results: "
+msgstr "Tildelt pga. oprydder rolle: "
+
+#: reportapp/templates/mail/overview.html:72
+#: reportapp/templates/mail/overview.txt:22
+msgid "Total viewable results for you: "
+msgstr "I alt synlige resultater for dig: "
+
+#: reportapp/templates/mail/overview.html:76
 #, python-format
 msgid ""
 "\n"
@@ -775,7 +797,7 @@ msgstr ""
 "<a href=\"%(report_login_url)s\">Log på OS2datascanner med din\n"
 "organisationskonto</a> for at se flere detaljer.\n"
 
-#: reportapp/templates/mail/overview.html:89
+#: reportapp/templates/mail/overview.html:83
 msgid ""
 "\n"
 "Kind regards,<br>\n"
@@ -785,8 +807,8 @@ msgstr ""
 "Med venlig hilsen<br>\n"
 "OS2datascanner-systemet\n"
 
-#: reportapp/templates/mail/overview.html:94
-#: reportapp/templates/mail/overview.txt:25
+#: reportapp/templates/mail/overview.html:88
+#: reportapp/templates/mail/overview.txt:35
 #, python-format
 msgid ""
 "\n"
@@ -799,14 +821,14 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"Currently, %(match_count)s results in\n"
-"the OS2datascanner system require your attention:\n"
+"Currently, %(user_alias_bound_results)s results in\n"
+"the OS2datascanner system have you as the owner and require your attention.\n"
 msgstr ""
 "\n"
-"Der ligger i øjeblikket %(match_count)s resultater i\n"
-"OS2datascanner-systemet, der kræver handling fra din side:\n"
+"Der ligger i øjeblikket <strong>%(user_alias_bound_results)s</strong> resultater i\n"
+"OS2datascanner-systemet med direkte tilknytning til dig, der kræver din opmærksomhed.\n"
 
-#: reportapp/templates/mail/overview.txt:14
+#: reportapp/templates/mail/overview.txt:24
 msgid ""
 "\n"
 "Log into OS2datascanner with your organisation account for further details.\n"
@@ -814,7 +836,7 @@ msgstr ""
 "\n"
 "Log på OS2datascanner med din organisationskonto for at se flere detaljer.\n"
 
-#: reportapp/templates/mail/overview.txt:20
+#: reportapp/templates/mail/overview.txt:30
 msgid ""
 "\n"
 "Kind regards,\n"

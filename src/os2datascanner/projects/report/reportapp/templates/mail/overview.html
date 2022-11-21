@@ -11,22 +11,6 @@
     padding-right: 1em;
   }
 
-  td.sensitivity0 {
-    color: #0036b2;
-  }
-
-  td.sensitivity1 {
-    color: #eabb00;
-  }
-
-  td.sensitivity2 {
-    color: #f55c25;
-  }
-
-  td.sensitivity3 {
-    color: #b20021;
-  }
-
   .flex {
     display: flex;
     flex-flow: row nowrap;
@@ -37,11 +21,6 @@
     margin-top: .5rem;
     margin-right: 1rem;
     height: 1.2rem;
-    width: auto;
-  }
-
-  svg {
-    height: 100%;
     width: auto;
   }
 
@@ -60,31 +39,46 @@ Dear {{ full_name }},
 </p>
 <p>
 {% blocktrans %}
-Currently, <strong>{{ match_count }}</strong> results in
-the OS2datascanner system require your attention:
+    Currently, <strong>{{ user_alias_bound_results }}</strong> results in
+    the OS2datascanner system have you as the owner and require your attention.
 {% endblocktrans %}
 </p>
+
 <table>
-  {% for caption, count in matches %}
-  <tr>
-    <td class="sensitivity{{ forloop.counter0 }}">
-        <span class="flex">
-          <span class="flex width">{% include "mail/sensitivity-icon.html" %}</span>
-          <span class="flex width">{{ caption }}</span>
-        </span>
-    </td>
-    <td>
-        <span class="flex width">{{ count }}</span>
-    </td>
-  </tr>
-  {% endfor %}
+    {% if superadmin_bound_results or remediator_bound_results %}
+        <thead>
+        {% trans "Additional results are tied to you because of your roles within the system:" %}
+        </thead>
+
+        {% if superadmin_bound_results %}
+            <tr class="flex">
+                <td class="width">
+                    {% trans "Super-admin delegated results: "%} <strong>{{ superadmin_bound_results }}</strong>
+                </td>
+            </tr>
+        {% endif %}
+
+        {% if remediator_bound_results %}
+            <tr class="flex">
+                <td class="width">
+                    {% trans "Remediator delegated results: "%} <strong>{{ remediator_bound_results }}</strong>
+                </td>
+            </tr>
+        {% endif %}
+    {% endif %}
 </table>
+
+<p>
+    {% trans "Total viewable results for you: "%} <strong>{{ total_result_count }}</strong>
+</p>
+
 <p>
 {% blocktrans %}
 <a href="{{ report_login_url }}">Log into OS2datascanner with your
 organisation account</a> for further details.
 {% endblocktrans %}
 </p>
+
 <p>
 {% blocktrans %}
 Kind regards,<br>
