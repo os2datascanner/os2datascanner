@@ -32,6 +32,12 @@ from ..serializer import BaseSerializer
 logger = logging.getLogger(__name__)
 
 
+class StatusChoices(models.IntegerChoices):
+    GOOD = 0, _("Completed")
+    OK = 1, _("Accepted")
+    BAD = 2, _("Not accepted")
+
+
 class Account(Core_Account):
     """ Core logic lives in the core_organizational_structure app.
     Additional logic can be implemented here, but currently, none needed, hence we pass. """
@@ -52,12 +58,16 @@ class Account(Core_Account):
         null=True,
         blank=True,
         verbose_name=_('image'))
-    matchcount = models.IntegerField(
+    match_count = models.IntegerField(
         default=0,
         null=True,
         blank=True,
-        verbose_name=_("Number of matches")
-    )
+        verbose_name=_("Number of matches"))
+    match_status = models.IntegerField(
+        choices=StatusChoices.choices,
+        default=1,
+        null=True,
+        blank=True)
 
     def update_last_handle(self):
         self.last_handle = time_now()
@@ -73,12 +83,25 @@ class Account(Core_Account):
     def image(self):
         return os.path.join(settings.MEDIA_ROOT, self._image.url) if self._image else None
 
+    @property
+    def status(self):
+        return StatusChoices(self.match_status).label
+
     def count_matches(self):
         count = 0
         for alias in self.aliases.all():
             count += alias.match_relation.filter(resolution_status__isnull=True,
                                                  raw_matches__matched=True).count()
-        self.matchcount = count
+        self.match_count = count
+        self.save()
+
+    def calculate_status(self):
+        if self.match_count == 0:
+            self.match_status = StatusChoices.GOOD
+        elif self.match_count < 10:
+            self.match_status = StatusChoices.OK
+        else:
+            self.match_status = StatusChoices.BAD
         self.save()
 
 

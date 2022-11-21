@@ -18,6 +18,9 @@
 <script src="{% static "3rdparty/chartjs-plugin-datalabels.js" %}"></script>
 {% if request.path == "/statistics/dpo/" %}
 <script src="{% static "js/chartHelpers.js" %}"></script>
+{% elif request.path == "/statistics/leader/" %}
+<script src="{% static "js/tableBehavior.js" %}"></script>
+<script src="{% static "js/leaderOverview.js" %}"></script>
 {% endif %}
 <script src="{% static "js/pieCharts.js" %}"></script>
 <script src="{% static "js/doughnutCharts.js" %}"></script>

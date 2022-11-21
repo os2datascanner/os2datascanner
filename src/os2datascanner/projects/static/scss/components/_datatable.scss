@@ -265,6 +265,10 @@
       word-wrap: break-word;
     }
 
+    &--matchstatus {
+      width: 10rem;
+    }
+
     &--nodata {
       text-align: center;
       font-style: italic;
@@ -287,6 +291,10 @@
           flex: 0 1 auto; // be explicit for IE11s sake
         }
       }
+    }
+
+    &--leader-actions {
+      width: 16rem;
     }
 
     &--delete {

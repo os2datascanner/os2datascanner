@@ -16,8 +16,10 @@
         hx-target=".content"
         hx-select=".content"
         hx-swap="outerHTML"
-        hx-trigger="change"
+        hx-trigger="change, click from:.order-by delay:100ms"
         hx-indicator="#report-page-indicator">
+    <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
+    <input type="hidden" name="order" id="order" value="{{ order }}">
     <div class="org_filtering_wrapper">
       <div>
         <div>
@@ -53,21 +55,42 @@
     <colgroup>
       <col class="datatable__column--name">
       <col class="datatable__column--matchcount">
-      <col class="datatable__column--status">
-      <col class="datatable__column--actions">
+      <col class="datatable__column--matchstatus">
+      <col class="datatable__column--leader-actions">
     </colgroup>
     <thead>
       <tr class="table-topbar topbar-stick sticky">
         <th class="datatable__column--name">
           {% trans "Employee" %}
+          <button
+              type="button"
+              name="account__first_name"
+              class="order-by button button-caret button--has-icon{% if order_by == 'account__first_name' and order == 'descending' %} up{% endif %}"
+              value="{% if order_by == 'account__first_name' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+              <i class="material-icons" aria-hidden="true">expand_more</i>
+          </button>
         </th>
         <th class="datatable__column--matchcount">
           {% trans "Matches" %}
+          <button
+              type="button"
+              name="account__match_count"
+              class="order-by button button-caret button--has-icon{% if order_by == 'account__match_count' and order == 'descending' %} up{% endif %}"
+              value="{% if order_by == 'account__match_count' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+              <i class="material-icons" aria-hidden="true">expand_more</i>
+          </button>
         </th>
-        <th class="datatable__column--status">
+        <th class="datatable__column--matchstatus">
           {% trans "Status" %}
+          <button
+              type="button"
+              name="account__match_status"
+              class="order-by button button-caret button--has-icon{% if order_by == 'account__match_status' and order == 'descending' %} up{% endif %}"
+              value="{% if order_by == 'account__match_status' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+              <i class="material-icons" aria-hidden="true">expand_more</i>
+            </button>
         </th>
-        <th class="datatable__column--actions">
+        <th class="datatable__column--leader-actions">
           <span class="screen-reader-only">{% trans "Actions" %}</span>
         </th>
       </tr>
@@ -84,13 +107,32 @@
             </div>
           </td>
           <td class="datatable__column--matchcount">
-            {{ employee.account.matchcount }}
+            {{ employee.account.match_count }}
           </td>
-          <td class="datatable__column--status">
-            OK
+          <td class="datatable__column--matchstatus">
+            <div class="status_wrapper" data-status="{{ employee.account.match_status }}">
+              {{ employee.account.status }}
+            </div>
           </td>
-          <td class="datatable__column--actions">
-            <a class="button" href="mailto:{{ employee.account.email }}?body=Matches: {{ employee.account.matchcount }}">{% trans "Send notification" %}</a>
+          <td class="datatable__column--leader-actions">
+            <div class="action_wrapper">
+              <a class="button" href="mailto:{{ employee.account.email }}?body=Matches: {{ employee.account.matchcount }}">{% trans "Send notification" %}</a>
+              <button class="overview-expand button button-caret button--has-icon" title="{% trans 'Show/hide overview' %}" type="button"><i class="material-icons" aria-hidden="true">expand_more</i></button>
+            </div>
+          </td>
+        </tr>
+        <tr class="user-overview">
+          <td colspan="4">
+            <div class="overview_wrapper" 
+                 hx-get={% url "statistics-user" %}
+                 hx-trigger="intersect"
+                 hx-swap="outerHTML"
+                 hx-target="this"
+                 hx-vals='{"account":"{{ employee.account.uuid }}"}'
+                 hx-push-url="false"
+                 >
+              <div class="loading">{% trans "LOADING ..." %}</div>
+            </div>
           </td>
         </tr>
       {% endfor %}
