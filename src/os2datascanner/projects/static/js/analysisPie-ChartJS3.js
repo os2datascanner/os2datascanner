@@ -110,25 +110,30 @@ function createPie(data, htmlElements, colors){ // jshint ignore:line
                 backgroundColor: 'white',
                 borderWidth: 1,
                 titleAlign: 'center',
+                bodyAlign: 'center',
                 bodyColor: 'black',
+                titleColor: 'black',
                 displayColors: false,
                 callbacks: {
                     label:(tooltipItem)=>{
                         const name = tooltipItem.dataset.name;
                         const val = tooltipItem.raw;
-                        const label = tooltipItem.label;
                         if (name === "storage"){
-                            return `${label}: ${bytesToSize(val)}`;
+                            return bytesToSize(val);
                         }
                         else if (name === "nfiles"){
                             if (val === 1){
-                                return label.concat(": ", val.toString(), " ", gettext("file"));
+                                return val.toString().concat(" ", gettext("file"));
                             }   
                             else {
-                                return label.concat(": ", val.toString(), " ", gettext("files"));
+                                return val.toString().concat(" ", gettext("files"));
                             }
                         }
-                    }
+                    },
+                    title:(tooltipItem)=>{
+                        const label = tooltipItem[0].label;
+                        return `${label}:`;
+                    },
                 }
             },
             },
