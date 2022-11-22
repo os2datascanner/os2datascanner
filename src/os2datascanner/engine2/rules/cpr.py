@@ -8,13 +8,20 @@ import structlog
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .logical import oxford_comma
-from .utilities.context import make_context
+from .utilities.context import make_context, add_context_filter
 from .utilities.cpr_probability import modulus11_check, CprProbabilityCalculator
 
 logger = structlog.get_logger(__name__)
 
 cpr_regex = r"\b(\d{2}[ ]?\d{2}[ ]?\d{2})(?:[ \-/\.\t]|[ ]\-[ ])?(\d{4})\b"
 calculator = CprProbabilityCalculator()
+
+
+# Attempt to filter CPR number-like strings out of all contexts
+add_context_filter(
+        partial(
+                re.compile(cpr_regex).sub,
+                "XXXXXX-XXXX"))
 
 
 # if the sourronding context contains some of these, we get suspicious.
@@ -129,11 +136,7 @@ class CPRRule(RegexRule):
                 yield {
                     "match": cpr,
 
-                    **make_context(
-                            m, content,
-                            partial(
-                                    self._compiled_expression.sub,
-                                    "XXXXXX-XXXX")),
+                    **make_context(m, content),
 
                     "sensitivity": (
                         self.sensitivity.value
