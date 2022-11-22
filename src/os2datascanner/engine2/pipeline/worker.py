@@ -101,6 +101,9 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001, E501 t
                 object_type=object_type,
                 matches_found=total_matches).to_json_object())
 
+        # Clean up after temporary files, but leave connections open
+        source_manager.clear_dependents()
+
 
 if __name__ == "__main__":
     from .run_stage import _compatibility_main  # noqa

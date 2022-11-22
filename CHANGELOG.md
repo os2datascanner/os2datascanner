@@ -56,6 +56,8 @@
 
 - When scanning for dead links in webscans, links will only be matched if they return either a 404, 410, 421, 423 or 451 status code.
 
+- Worker processes clean up their temporary files more aggressively.
+
 ### Bugfixes
 
 - Adjusted media root to support profile images uploaded by the user.
