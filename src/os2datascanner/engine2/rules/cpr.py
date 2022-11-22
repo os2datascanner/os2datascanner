@@ -1,5 +1,6 @@
 from typing import Iterator, List, Match, Optional, Tuple, Dict
 import re
+from functools import partial
 from itertools import chain
 from enum import Enum, unique
 import structlog
@@ -7,6 +8,7 @@ import structlog
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .logical import oxford_comma
+from .utilities.context import make_context
 from .utilities.cpr_probability import modulus11_check, CprProbabilityCalculator
 
 logger = structlog.get_logger(__name__)
@@ -122,19 +124,17 @@ class CPRRule(RegexRule):
                 logger.debug(f"{cpr} with probability {probability} from context "
                              f"due to {ctype}")
 
-            # Extract context, remove newlines and tabs for better representation
-            match_context = content[max(low - 50, 0): high + 50]
-            match_context = " ".join(self._compiled_expression.sub(
-                "XXXXXX-XXXX", match_context
-            ).split())
-
             if probability:
                 imatch += 1
                 yield {
-                    "offset": m.start(),
                     "match": cpr,
-                    "context": match_context,
-                    "context_offset": m.start() - low,
+
+                    **make_context(
+                            m, content,
+                            partial(
+                                    self._compiled_expression.sub,
+                                    "XXXXXX-XXXX")),
+
                     "sensitivity": (
                         self.sensitivity.value
                         if self.sensitivity
