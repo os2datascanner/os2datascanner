@@ -4,17 +4,35 @@ from ..conversions.types import OutputType
 from .rule import Rule, SimpleRule, Sensitivity
 from .datasets.loader import common as common_loader
 
-# see https://regex101.com/r/7AI9vn/2 for examples of matches
-# \p{Lu} match a upper case unicode letter, see
-# https://www.regular-expressions.info/unicode.html#category
-# Match whitespace except newlines
-_whitespace = r"[^\S\n\r]+"
-_simple_name = r"\p{Lu}(?:\p{L}+|\.?)"
-_name = r"{0}(?:-{0})?".format(_simple_name)
+_whitespace = (
+        r"[^\S\n\r]+"  # One or more of every whitespace character (apart from
+                       # new lines)
+)
+
+_simple_name = (
+        r"\p{Lu}"          # One upper-case letter...
+        r"(?:\p{L}+|\.?)"  # followed by one or more letters, a full stop, or
+                           # nothing
+)
+# (for example, "Joe", "Bloggs", "Bulwer", "K.", "J", or "Edward")
+
+_name = (
+        rf"{_simple_name}"        # A simple_name...
+        rf"(?:-{_simple_name})?"  # optionally hyphenated with another one
+)
+# (for example, "Jens", "Bulwer-Lytton", "You", "United", or "B.-L.")
+
 full_name_regex = regex.compile(  # noqa: ECE001, expression is too complex
-    r"\b(?P<first>" + _name + r")" +
-    r"(?P<middle>(" + _whitespace + _name + r"){0,3})" +
-    r"(?P<last>" + _whitespace + _name + r")\b", regex.UNICODE)
+    rf"\b(?P<first>{_name})"               # A name at the start of a word...
+    rf"(?P<middle>({_whitespace}{_name})"
+    r"{0,3})"                              # followed by zero to three more
+                                           # whitespace-separated names...
+    rf"(?P<last>{_whitespace}{_name})\b"   # followed by another name and the
+                                           # end of the word
+)
+# (for example, "Joe Bloggs", "Josef K.", "L. Frank Baum", "Edward George Earle
+# Lytton Bulwer-Lytton", "Jens J-J. Jens-Jens Jens Jensen", "United Kingdom",
+# or "You Are A Winner")
 
 
 def match_full_name(text):
