@@ -129,6 +129,35 @@ class Engine2SourceManagerTest(unittest.TestCase):
                     tracker2.count,
                     0)
 
+    def test_dependent_clearing(self, width=None):
+        tracker1 = Tracker()
+        tracker1a = Dependent(tracker1)
+        tracker2 = Tracker()
+        tracker3 = Tracker()
+        tracker3a = Dependent(tracker3)
+        tracker3aa = Dependent(tracker3a)
+        with SourceManager(width=width) as sm:
+            sm.open(tracker1a)
+            sm.open(tracker2)
+            sm.open(tracker3aa)
+
+            sm.clear_dependents()
+            for indie in (tracker1, tracker2, tracker3,):
+                self.assertEqual(
+                        indie.count,
+                        1,
+                        f"independent Source {indie} was closed")
+            for dependent in (tracker1a, tracker3a, tracker3aa,):
+                self.assertEqual(
+                        dependent.count,
+                        0,
+                        f"dependent Source {dependent} was not closed")
+
+    # XXX: revisit this!
+    @unittest.skip("SourceManager.width bug")
+    def test_width_with_depth(self):
+        self.test_dependent_clearing(width=3)
+
     def test_generator_exception(self):
         source = BrokenSource()
         with SourceManager() as sm:

@@ -106,7 +106,7 @@ class SourceManager:
                     raise
             logger.debug(
                     "SourceManager.open",
-                    self=self, source=source, cookie=desc.cookie)
+                    source=source, cookie=desc.cookie)
             return desc.cookie
         finally:
             self._opening = self._opening[:-1]
@@ -116,7 +116,6 @@ class SourceManager:
         all other open Sources that depend upon it."""
         logger.debug(
                 "SourceManager.close",
-                self=self,
                 source=source)
         if source in self._opened:
             desc = self._opened[source]
@@ -154,10 +153,18 @@ class SourceManager:
         return item in self._opened
 
     def clear(self):
-        """Closes all of the cookies returned by Sources that were opened in
-        this SourceManager."""
+        """Closes all of the Sources presently open in this SourceManager."""
+        logger.debug("SourceManager.clear")
         for child in self._top.children.copy():
             self.close(child.source)
+
+    def clear_dependents(self):
+        """Closes all of the dependent Sources presently open in this
+        SourceManager."""
+        logger.debug("SourceManager.clear_dependents")
+        for child in self._top.children:
+            for subchild in child.children.copy():
+                self.close(subchild.source)
 
     @property
     def configuration(self) -> dict:
