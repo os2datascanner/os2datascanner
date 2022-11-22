@@ -58,31 +58,26 @@ def match_full_name(text):
 
 
 class NameRule(SimpleRule):
-    """Represents a rule which scans for Full Names in text.
-
-    The rule loads a list of names from first and last name files and matches
-    names against them to determine the sensitivity level of the matches.
-    Matches against full, capitalized, names with up to three middle names.
-    A name in this context, is a capitalized Word.
-
-    Last, the text is checked for any standalone names, ie. single capitalized
-    Words
-
-    Note that name matches internally are stored as a `set`, thus matches are
-    not returned in order.
-
-    """
+    """A NameRule looks for strings of text that resemble Danish names. It
+    couples a regular expression-driven scan for name-like tokens with a
+    dataset used to determine if those tokens are plausible names."""
     operates_on = OutputType.Text
     type_label = "name"
     eq_properties = ("_whitelist", "_blacklist",)
 
-    def __init__(self, whitelist=None, blacklist=None, **super_kwargs):
+    def __init__(
+            self,
+            expansive=None,  # Also find name-like strings not in the dataset?
+            whitelist=None,
+            blacklist=None,
+            **super_kwargs):
         super().__init__(**super_kwargs)
 
         # Convert list of str to upper case and to sets for efficient lookup
         self.last_names = None
         self.first_names = None
 
+        self._expansive = expansive
         self._whitelist = frozenset(n.upper() for n in (whitelist or []))
         self._blacklist = frozenset(n.upper() for n in (blacklist or []))
 
@@ -186,8 +181,10 @@ class NameRule(SimpleRule):
             else:
                 continue
 
-            # Update remaining, i.e. unmatched text
-            unmatched_text = unmatched_text.replace(matched_text, "", 1)
+            # If we have to do a second pass, cut this matched name out to
+            # avoid duplicates
+            if self._expansive:
+                unmatched_text = unmatched_text.replace(matched_text, "", 1)
 
             yield {
                 "match": matched_text,
@@ -196,28 +193,30 @@ class NameRule(SimpleRule):
                     self.sensitivity.value if self.sensitivity else None
                 ),
             }
-        # Full name match done. Now check if there's any standalone names in
-        # the remaining, i.e. so far unmatched string.
-        name_regex = regex.compile(_name)
-        it = name_regex.finditer(unmatched_text, overlapped=False)
-        for m in it:
-            matched = m.group(0)
-            if is_name_component(
-                    matched.upper(), self.first_names, self.last_names):
-                yield {
-                    "match": matched,
-                    "probability": 0.1,
-                    "sensitivity": (
-                        self.sensitivity.value
-                        if self.sensitivity else None
-                    ),
-                }
+        if self._expansive:
+            # Full name match done. Now check if there's any standalone names
+            # in the remaining, i.e. so far unmatched string.
+            name_regex = regex.compile(_name)
+            it = name_regex.finditer(unmatched_text, overlapped=False)
+            for m in it:
+                matched = m.group(0)
+                if is_name_component(
+                        matched.upper(), self.first_names, self.last_names):
+                    yield {
+                        "match": matched,
+                        "probability": 0.1,
+                        "sensitivity": (
+                            self.sensitivity.value
+                            if self.sensitivity else None
+                        ),
+                    }
 
     def to_json_object(self):
         return dict(
             **super().to_json_object(),
             whitelist=list(self._whitelist),
             blacklist=list(self._blacklist),
+            expansive=self._expansive
         )
 
     @staticmethod
@@ -226,4 +225,5 @@ class NameRule(SimpleRule):
         return NameRule(
                 whitelist=frozenset(obj["whitelist"]),
                 blacklist=frozenset(obj["blacklist"]),
+                expansive=obj.get("expansive", None),
                 sensitivity=Sensitivity.make_from_dict(obj))
