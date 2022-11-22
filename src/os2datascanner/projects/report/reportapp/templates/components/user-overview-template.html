@@ -1,8 +1,9 @@
 {% load i18n %}
+{% load static %}
 
 <div class="overview_wrapper">
   <div class="overview-timeline">
-  <h1>{% trans "Development overview for" %} {{ account.get_full_name }}</h1>
+  <h1>{% trans "Development overview for" %} {% if account.get_full_name %}{{ account.get_full_name }}{% else %}{{ account.username }}{% endif %}</h1>
     <div class="statistic">
       <div class="statistic_header">
         <div>
@@ -46,7 +47,9 @@
       </div>
     </div>
     <div class="chart_container" data-chartid="development-all-matches">
-      <canvas class="line_chart" id="line_chart_all_matches_development"></canvas>
+      <canvas class="line_chart" id="line_chart_all_matches_development__{{ account.uuid }}"></canvas>
     </div>
   </div>
+  {{ matches_by_week|json_script:"matches_by_week" }}
+  {{ account.uuid|json_script:"uuid" }}
 </div>

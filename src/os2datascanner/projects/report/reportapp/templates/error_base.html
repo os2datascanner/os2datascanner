@@ -1,11 +1,9 @@
 {% load i18n %}
+{% load static %}
 {% include "partials/header.html" %}
 {% include "components/banner.html" %}
 
 <main class="wrapper error-page">
-  {% if request.user.is_authenticated %}
-    {% include "partials/main.html" %}
-  {% endif %}
   <div class="content">
 
     <img src="{% static 'svg/errorpage.svg' %}" alt="" class="error-splash">

@@ -187,7 +187,7 @@
     }
 
     &--matchcount {
-      width: 3.5rem;
+      width: 5.5rem;
       display: none;
 
       label {
@@ -201,7 +201,7 @@
       }
 
       @media (min-width: $break-lg) {
-        width: 7.5rem;
+        width: 9rem;
 
         label {
           &::after {
@@ -481,6 +481,8 @@
 }
 
 .datatable .stuck th {
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 
   &:first-child {
     border-top-left-radius: 0;

@@ -357,17 +357,6 @@ msgstr "Ryd"
 msgid "Scan"
 msgstr "Scan"
 
-#: reportapp/templates/components/filters.html:39
-#: reportapp/templates/components/statistics-template.html:34
-msgid "All scannerjobs"
-msgstr "Alle scannerjobs"
-
-#: reportapp/templates/components/filters.html:67
-#: reportapp/templates/components/statistics-template.html:89
-#: reportapp/templates/components/statistics-template.html:129
-msgid "Sensitivity"
-msgstr "Følsomhed"
-
 #: reportapp/templates/components/filters.html:77
 msgid "All sensitivities"
 msgstr "Alle følsomheder"
@@ -435,16 +424,6 @@ msgstr "Fortryd"
 #: reportapp/templates/components/handle-match.html:86
 msgid "Revert marked"
 msgstr "Fortryd markerede"
-
-#: reportapp/templates/components/handle-match.html:91
-#: reportapp/templates/components/pagination.html:11
-#: reportapp/templates/components/statistics-template.html:144
-#: reportapp/templates/components/statistics-template.html:153
-#: reportapp/templates/components/statistics-template.html:162
-#: reportapp/templates/components/statistics-template.html:171
-#: reportapp/templates/components/statistics-template.html:182
-msgid "of"
-msgstr "af"
 
 #: reportapp/templates/components/handle-match.html:91
 msgid "selected"
@@ -634,26 +613,6 @@ msgstr "Gå"
 msgid "Sensitivity legend"
 msgstr "Følsomhedsoversigt"
 
-#: reportapp/templates/components/sensitivity-chart.html:8
-#: reportapp/templates/components/statistics-template.html:143
-msgid "Critical"
-msgstr "Kritisk"
-
-#: reportapp/templates/components/sensitivity-chart.html:12
-#: reportapp/templates/components/statistics-template.html:152
-msgid "Problem"
-msgstr "Problem"
-
-#: reportapp/templates/components/sensitivity-chart.html:16
-#: reportapp/templates/components/statistics-template.html:161
-msgid "Warning"
-msgstr "Advarsel"
-
-#: reportapp/templates/components/sensitivity-chart.html:20
-#: reportapp/templates/components/statistics-template.html:170
-msgid "Notification"
-msgstr "Notifikation"
-
 #: reportapp/templates/components/service.html:16
 msgid ""
 "Are you experiencing issues with OS2datascanner, and have no luck resolving "
@@ -728,71 +687,6 @@ msgstr "FAQ"
 #: reportapp/templates/components/statistics-template.html:8
 msgid "Leader statistics"
 msgstr "Lederstatistik"
-
-#: reportapp/templates/components/statistics-template.html:10
-msgid "DPO statistics"
-msgstr "DPO statistik"
-
-#: reportapp/templates/components/statistics-template.html:56
-msgid "Development overview"
-msgstr "Udviklingsoverblik"
-
-#: reportapp/templates/components/statistics-template.html:57
-msgid "New results by month"
-msgstr "Antal nye resultater per måned"
-
-#: reportapp/templates/components/statistics-template.html:58
-msgid "Unhandled results by month"
-msgstr "Antal uhåndterede resultater per måned"
-
-#: reportapp/templates/components/statistics-template.html:63
-msgid "New results"
-msgstr "Nye resultater"
-
-#: reportapp/templates/components/statistics-template.html:64
-msgid "Unhandled results"
-msgstr "Uhåndterede resultater"
-
-#: reportapp/templates/components/statistics-template.html:81
-msgid "Distribution of results"
-msgstr "Fordeling af resultater"
-
-#: reportapp/templates/components/statistics-template.html:82
-msgid "Results distributed by sensitivities"
-msgstr "Resultater fordelt på følsomheder"
-
-#: reportapp/templates/components/statistics-template.html:83
-msgid "Results distributed by data sources"
-msgstr "Resultater fordelt på datakilder"
-
-#: reportapp/templates/components/statistics-template.html:84
-msgid "Results distributed by resolution statuses"
-msgstr "Resultater fordelt på håndteringsstatusser"
-
-#: reportapp/templates/components/statistics-template.html:90
-msgid "Data sources"
-msgstr "Datakilder"
-
-#: reportapp/templates/components/statistics-template.html:92
-msgid "Resolution statuses"
-msgstr "Håndteringsstatusser"
-
-#: reportapp/templates/components/statistics-template.html:122
-#: reportapp/templates/components/statistics-template.html:181
-msgid "Handled results"
-msgstr "Håndterede resultater"
-
-#: reportapp/templates/components/statistics-template.html:123
-msgid "Percentage of handled results distributed by sensitivity"
-msgstr "Procentvis andel af håndterede resultater fordelt på følsomhed"
-
-#: reportapp/templates/components/statistics-template.html:124
-msgid "The department's percentage of handled results"
-msgstr "Afdelingens procentvise andel af håndterede resultater"
-
-#: reportapp/templates/components/statistics-template.html:130
-msgid "All results"
-msgstr "Alle resultater"
 
 #: reportapp/templates/components/user.html:48
 msgid "Show Account"

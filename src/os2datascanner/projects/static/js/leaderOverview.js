@@ -1,5 +1,5 @@
 function showOverview(row, toggleButton) {
-  console.log("HIT");
+
   let overviewRow = row.nextElementSibling;
   toggleClass(toggleButton, "up");
   let buttonOpen = hasClass(toggleButton, "up");

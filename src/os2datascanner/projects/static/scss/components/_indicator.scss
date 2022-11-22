@@ -11,6 +11,11 @@
   &.htmx-request {
     display: block;
   }
+
+  &.relative {
+    position: relative;
+    display: block;
+  }
 }
 
 #circle {

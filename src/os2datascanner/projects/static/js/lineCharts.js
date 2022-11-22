@@ -211,3 +211,11 @@ function drawLines(newMatchesByMonth, unhandledMatchesByMonth) {
 	var unhandledMatchesLineChartCtx = document.querySelector("#line_chart_unhandled_matches").getContext('2d');
 	charts.push(makeLineChart(unhandledMatchesLineChartLabels, unhandledMatchesLineChartValues, unhandledMatchesLineChartCtx));
 }
+
+// Step size function
+// Array = values
+// steps = how many steps on y-axis ( 0 doesn't count)
+var stepSizeFunction = function (array, steps) {
+	"use strict";
+	return (Math.ceil(Math.max.apply(null, array) / 100) * 100) / steps;
+};

@@ -19,6 +19,7 @@ from PIL import Image
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
+from django.db.models.query_utils import Q
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
@@ -90,18 +91,30 @@ class Account(Core_Account):
     def count_matches(self):
         count = 0
         for alias in self.aliases.all():
-            count += alias.match_relation.filter(resolution_status__isnull=True,
-                                                 raw_matches__matched=True).count()
+            count += alias.match_relation.filter(
+                resolution_status__isnull=True,
+                raw_matches__matched=True,
+                only_notify_superadmin=False).count()
         self.match_count = count
         self.save()
 
     def calculate_status(self):
         if self.match_count == 0:
             self.match_status = StatusChoices.GOOD
-        elif self.match_count < 10:
-            self.match_status = StatusChoices.OK
         else:
-            self.match_status = StatusChoices.BAD
+            match_query = Q(
+                resolution_status__isnull=True,
+                raw_matches__matched=True,
+                only_notify_superadmin=False)
+            matches = None
+            for alias in self.aliases.all():
+                matches = matches | alias.match_relation.filter(
+                    match_query) if matches else alias.match_relation.filter(match_query)
+
+            if matches.count() > 10:
+                self.match_status = StatusChoices.BAD
+            else:
+                self.match_status = StatusChoices.OK
         self.save()
 
 

@@ -3,6 +3,9 @@
   {% load l10n %}
   {% load static %}
   {% load handle_extras %}
+  
+  {% if user_units %}
+  <div class="content-header">
   <h1 class="page-title">{% trans "Leader overview for:" %} <span class="org-unit-text">{{ org_unit }}</span></h1>
 
   <svg class="page-indicator" id="report-page-indicator" viewbox="0 0 100 100">
@@ -50,6 +53,8 @@
     </div>
   </form>
 
+  </div>
+
   <div class="datatable-wrapper card">
   <table class="datatable">
     <colgroup>
@@ -61,30 +66,33 @@
     <thead>
       <tr class="table-topbar topbar-stick sticky">
         <th class="datatable__column--name">
-          {% trans "Employee" %}
+          <label for="name-caret">{% trans "Employee" %}
           <button
               type="button"
               name="account__first_name"
+              id="name-caret"
               class="order-by button button-caret button--has-icon{% if order_by == 'account__first_name' and order == 'descending' %} up{% endif %}"
               value="{% if order_by == 'account__first_name' and order == 'descending' %}ascending{% else %}descending{% endif %}">
               <i class="material-icons" aria-hidden="true">expand_more</i>
           </button>
         </th>
         <th class="datatable__column--matchcount">
-          {% trans "Matches" %}
+          <label for="matches-caret"><span>{% trans "Matches" %}</span></label>
           <button
               type="button"
               name="account__match_count"
+              id="matches-caret"
               class="order-by button button-caret button--has-icon{% if order_by == 'account__match_count' and order == 'descending' %} up{% endif %}"
               value="{% if order_by == 'account__match_count' and order == 'descending' %}ascending{% else %}descending{% endif %}">
               <i class="material-icons" aria-hidden="true">expand_more</i>
           </button>
         </th>
         <th class="datatable__column--matchstatus">
-          {% trans "Status" %}
+          <label for="status-caret">{% trans "Status" %}</label>
           <button
               type="button"
               name="account__match_status"
+              id="status-caret"
               class="order-by button button-caret button--has-icon{% if order_by == 'account__match_status' and order == 'descending' %} up{% endif %}"
               value="{% if order_by == 'account__match_status' and order == 'descending' %}ascending{% else %}descending{% endif %}">
               <i class="material-icons" aria-hidden="true">expand_more</i>
@@ -100,10 +108,14 @@
       {% for employee in employees %}
         <tr>
           <td class="datatable__column--name">
-            <div class="tooltip">
-              <div class="overflow-ellipsis">
-                <strong>{{ employee.account.get_full_name }}</strong>
-              </div>
+            <div class="overflow-ellipsis">
+              <strong>
+                {% if employee.account.get_full_name %}
+                  {{ employee.account.get_full_name }}
+                {% else %}
+                  {{ employee.account.username }}
+                {% endif %}
+              </strong>
             </div>
           </td>
           <td class="datatable__column--matchcount">
@@ -121,7 +133,7 @@
             </div>
           </td>
         </tr>
-        <tr class="user-overview">
+        <tr class="user-overview" hidden>
           <td colspan="4">
             <div class="overview_wrapper" 
                  hx-get={% url "statistics-user" %}
@@ -131,7 +143,9 @@
                  hx-vals='{"account":"{{ employee.account.uuid }}"}'
                  hx-push-url="false"
                  >
-              <div class="loading">{% trans "LOADING ..." %}</div>
+              <div class="loading"><svg class="relative page-indicator" id="report-page-indicator" viewbox="0 0 100 100">
+                <circle id="circle" cx="50" cy="50" r="45"></circle>
+              </svg></div>
             </div>
           </td>
         </tr>
@@ -145,5 +159,7 @@
       {% endif %}
     </tbody>
   </div>
-
+  {% else %}
+    {% include "components/no-units-error.html" %}
+  {% endif %}
 </div>

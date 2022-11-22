@@ -666,24 +666,27 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
             org_unit = user_units.first() or None
         context["org_unit"] = org_unit
 
-        if search_field := self.request.GET.get('search_field', None):
-            self.employees = org_unit.positions.filter(
-                Q(account__first_name__icontains=search_field) |
-                Q(account__last_name__icontains=search_field) |
-                Q(account__username__istartswith=search_field))
+        if org_unit:
+            if search_field := self.request.GET.get('search_field', None):
+                self.employees = org_unit.positions.filter(
+                    Q(account__first_name__icontains=search_field) |
+                    Q(account__last_name__icontains=search_field) |
+                    Q(account__username__istartswith=search_field))
+            else:
+                self.employees = org_unit.positions.all().select_related('account')
+            self.order_employees()
         else:
-            self.employees = org_unit.positions.all().select_related('account')
-        self.order_employees()
+            self.employees = None
         context["employees"] = self.employees
 
         # This operation should NOT be done here. The whole point of having the
         # match_count in a db field is to increase performance. Move this to
         # somehwere it makes sense.
-        for employee in self.employees:
-            employee.account.count_matches()
-            employee.account.calculate_status()
+        # for employee in self.employees:
+        #     employee.account.count_matches()
+        #     employee.account.calculate_status()
 
-        context['order_by'] = self.request.GET.get('order_by', 'employee_name')
+        context['order_by'] = self.request.GET.get('order_by', 'account__first_name')
         context['order'] = self.request.GET.get('order', 'ascending')
 
         return context
@@ -697,8 +700,9 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
         if (sort_key := self.request.GET.get('order_by')) and (
                 order := self.request.GET.get('order')):
 
+            print(sort_key, order)
+
             if sort_key not in allowed_sorting_properties:
-                print("NOT ALLOWED")
                 return
 
             if order != 'ascending':
@@ -731,6 +735,8 @@ class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         account = Account.objects.get(uuid=self.request.GET.get("account"))
+        account.count_matches()
+        account.calculate_status()
         context["account"] = account
         matches_by_week = count_matches_by_week(account)
         context["matches_by_week"] = matches_by_week
@@ -787,10 +793,11 @@ def filter_inapplicable_matches(user, matches, roles, account=None):
     return matches
 
 
-def count_matches_by_week(account):
-    all_matches = DocumentReport.objects.filter(
+def count_matches_by_week(account):  # noqa CCR001
+    all_matches = list(DocumentReport.objects.filter(
         raw_matches__matched=True,
-        alias_relation__account=account)
+        alias_relation__account=account,
+        only_notify_superadmin=False))
 
     next_monday = timezone.now() + timedelta(weeks=1) - timedelta(
             days=timezone.now().weekday(),
@@ -798,23 +805,25 @@ def count_matches_by_week(account):
             minutes=timezone.now().minute,
             seconds=timezone.now().second)
 
-    print(next_monday.isocalendar().week)
-
     matches_by_week = []
+
     i = 0
-    while len(matches_by_week) < 7:
+    while len(matches_by_week) < 52:
         begin_monday = next_monday - timedelta(weeks=i+1)
         end_monday = next_monday - timedelta(weeks=i)
 
-        matches_by_end = all_matches.filter(
-            Q(created_timestamp__lte=end_monday, resolution_time__gte=end_monday) |
-            Q(created_timestamp__lte=end_monday, resolution_status__isnull=True)).count()
-        new_matches = all_matches.filter(Q(
-            created_timestamp__lte=end_monday) &
-            Q(created_timestamp__gte=begin_monday)).count()
-        handled_matches = all_matches.filter(
-            Q(resolution_time__lte=end_monday) &
-            Q(resolution_time__gte=begin_monday)).count()
+        matches_by_end = 0
+        new_matches = 0
+        handled_matches = 0
+        for match in all_matches:
+            if match.created_timestamp <= end_monday and (
+                    match.resolution_status is None or match.resolution_time >= end_monday):
+                matches_by_end += 1
+            if match.created_timestamp <= end_monday and match.created_timestamp >= begin_monday:
+                new_matches += 1
+            if match.resolution_status and match.resolution_time <= end_monday \
+                    and match.resolution_time >= begin_monday:
+                handled_matches += 1
 
         matches_by_week.append({
             "weeknum": begin_monday.isocalendar().week,
