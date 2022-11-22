@@ -3,6 +3,7 @@ import regex
 from ..conversions.types import OutputType
 from .rule import Rule, SimpleRule, Sensitivity
 from .datasets.loader import common as common_loader
+from .utilities.context import make_context
 
 _whitespace = (
         r"[^\S\n\r]+"  # One or more of every whitespace character (apart from
@@ -53,7 +54,7 @@ def match_full_name(text):
             middle_split = ()
         last = strip_or_empty(m.group("last"))
         matched_text = m.group(0)
-        matches.add((first, middle_split, last, matched_text))
+        matches.add((m, first, middle_split, last, matched_text))
     return matches
 
 
@@ -120,15 +121,11 @@ class NameRule(SimpleRule):
 
         # First, check for whole names, i.e. at least Firstname + Lastname
         names = match_full_name(text)
-        for name in names:
+        for match, first_name, middle_names, last_name, matched_text in names:
+            middle_names = list(middle_names)
+            last_name = last_name or ""
+
             # Match each name against the list of first and last names
-            first_name = name[0]
-            middle_names = [n for n in name[1]]
-            last_name = name[2] if name[2] else ""
-
-            # Store the original matching text
-            matched_text = name[3]
-
             first_match = is_name_component(first_name, self.first_names)
             last_match = is_name_component(last_name, self.last_names)
             middle_match = any(
@@ -189,6 +186,9 @@ class NameRule(SimpleRule):
             yield {
                 "match": matched_text,
                 "probability": probability,
+
+                **make_context(match, text),
+
                 "sensitivity": (
                     self.sensitivity.value if self.sensitivity else None
                 ),
@@ -205,6 +205,11 @@ class NameRule(SimpleRule):
                     yield {
                         "match": matched,
                         "probability": 0.1,
+
+                        # XXX: are the offsets here useful? (unmatched_text is
+                        # something we've produced internally...)
+                        **make_context(m, unmatched_text),
+
                         "sensitivity": (
                             self.sensitivity.value
                             if self.sensitivity else None
