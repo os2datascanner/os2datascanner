@@ -12,12 +12,16 @@
 	background-color: var(--color-widget-bg);
 	-webkit-box-shadow: var(--box-shadow-widget);
 	box-shadow: var(--box-shadow-widget);
-	border-radius: var(--border-radius-widget);
+	border-radius: none;
 	padding: 2rem;
 	margin: 1.75rem;
 	flex: 1 1 auto;
 	min-width: 0;
 	max-width: 100%;
+
+	@media (min-width: $break-lg) {
+		border-radius: var(--border-radius-widget);
+	}
 
 	.statistic_header {
 		display: flex;

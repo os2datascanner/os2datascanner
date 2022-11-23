@@ -1,7 +1,9 @@
+{% load i18n %}
+{% load l10n %}
+{% load static %}
+
 <div class="content" hx-push-url="true">
-  {% load i18n %}
-  {% load l10n %}
-  {% load static %}
+  <div class="content-header">
   {% if request.path == '/statistics/leader/' %}
   <h1 class="page-title">{% trans "Leader statistics" %}</h1>
   {% elif request.path == '/statistics/dpo/' %}
@@ -13,7 +15,6 @@
   </svg>
 
   <!-- Scannerjob chart data selection -->
-  
     <form name="stat_form"
     {% if  request.path == '/statistics/leader/' %}
           hx-get="{% url "statistics-leader" %}"
@@ -43,6 +44,7 @@
       </select>
     </div>
   </form>
+</div>
   <br>
 
   <div class="statistic_wrapper">

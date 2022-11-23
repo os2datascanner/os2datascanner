@@ -39,9 +39,14 @@
 
   &.card {
     box-shadow: var(--box-shadow-widget);
-    border-radius: var(--border-radius-widget);
-    margin-bottom: calc(2 * var(--datatable-cell-padding));
+    border-radius: none;
+    margin-bottom: 0;
     background-color: var(--color-widget-bg);
+
+    @media (min-width: $break-lg) {
+      margin-bottom: calc(2 * var(--datatable-cell-padding));
+      border-radius: var(--border-radius-widget);
+    }
   }
 
   &.sm.card,
@@ -89,6 +94,10 @@
   border-spacing: 0;
   table-layout: fixed;
   width: 100%;
+
+  label {
+    cursor: pointer;
+  }
 
   .last-opened {
     opacity: .6;
@@ -163,13 +172,41 @@
 
     &--name {
       width: 100%;
-      max-width: 15rem;
       word-wrap: break-word;
+      white-space: none;
+
+      &>div {
+        min-width: 12rem;
+      }
     }
 
     &--matchcount {
-      width: 7.5rem;
+      width: 3.5rem;
       display: none;
+
+      label {
+        &::after {
+          content: "#";
+        }
+
+        span {
+          display: none;
+        }
+      }
+
+      @media (min-width: $break-lg) {
+        width: 7.5rem;
+
+        label {
+          &::after {
+            content: none;
+          }
+
+          span {
+            display: inline;
+          }
+        }
+      }
     }
 
     &--org {
@@ -200,7 +237,7 @@
     }
 
     &--source {
-      width: 6.5rem;
+      width: 4.5rem;
       display: none;
     }
 
@@ -338,9 +375,13 @@
   vertical-align: middle;
 
   .overflow-ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+
+    // Only show ellipsis on pc-screens.
+    @media (min-width: $break-lg) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
   &:first-child {

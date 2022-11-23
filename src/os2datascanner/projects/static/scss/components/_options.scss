@@ -55,17 +55,27 @@ label+.dropdown {
   top: 7px;
 }
 
-.handle-dropdown {
-  position: absolute;
+.dropdown-container {
   display: none;
+  position: absolute;
+  top: 1rem;
+
+  &:hover {
+    display: block;
+  }
+}
+
+.handle-dropdown {
+  position: relative;
   width: 16rem;
-  top: 2rem;
   z-index: 1;
+  top: 1.5rem;
+  padding: 0.5rem;
   border-radius: var(--border-radius-default);
   background-color: var(--color-widget-bg);
   box-shadow: var(--box-shadow-widget);
 
-  >ul {
+  ul {
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -75,13 +85,14 @@ label+.dropdown {
     margin: 1rem auto;
   }
 
-  >ul>li {
+  ul>li {
     width: 100%;
     text-align: center;
     font-weight: normal;
   }
 
-  &:hover {
+  &:hover,
+  &:active {
     display: block;
   }
 }
@@ -91,27 +102,34 @@ label+.dropdown {
 
   &.expand {
 
-    &+.handle-dropdown {
+    &+.dropdown-container {
       left: -4rem;
     }
 
-    &:hover+.handle-dropdown {
+    &:focus+.dropdown-container {
       display: block;
+    }
+
+    @media (min-width: $break-lg) {
+
+      &:hover+.dropdown-container {
+        display: block;
+      }
     }
   }
 }
 
 .table-checkbox__action {
 
-  &+.handle-dropdown {
+  &+.dropdown-container {
     left: -1rem;
   }
 
-  &:not(:disabled):hover+.handle-dropdown {
+  &:not(:disabled):hover+.dropdown-container {
     display: block;
   }
 
-  &.htmx-request+.handle-dropdown {
+  &.htmx-request+.dropdown-container {
     display: none;
   }
 }
