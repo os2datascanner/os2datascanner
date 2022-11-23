@@ -119,17 +119,21 @@ class Command(BaseCommand):
                     # Ensure provided user exists
                     try:
                         user = User.objects.get(pk=context_for_user or notify_user)
-                        if context_for_user:
-                            self.count_user_results(all_results, dry_run, image_content,
-                                                    image_name, results, user, context_for_user)
-                        elif notify_user:
-                            self.stdout.write(msg=f"Notifying user...\n"
-                                                  f" Username: {user.username}\n"
-                                                  f" PK: {notify_user} \n"
-                                                  f" dry_run: {dry_run}",
-                                              style_func=self.style.SUCCESS)
-                            self.count_user_results(all_results, dry_run, image_content,
-                                                    image_name, results, user)
+                        if results_context := self.count_user_results(all_results, results, user):
+                            if context_for_user:
+                                self.stdout.write(
+                                    msg=f"Printing context for user: \n {results_context}",
+                                    style_func=self.style.SUCCESS)
+                            elif notify_user:
+                                self.stdout.write(msg=f"Notifying user...\n"
+                                                      f" Username: {user.username}\n"
+                                                      f" PK: {notify_user} \n"
+                                                      f" dry_run: {dry_run}",
+                                                  style_func=self.style.SUCCESS)
+                                email_message = self.create_email_message(image_name, image_content,
+                                                                          results_context, user)
+                                self.send_to_user(user, email_message, dry_run)
+
                     except User.DoesNotExist:
                         self.stdout.write(msg=f"User with pk {context_for_user} does not exist!",
                                           style_func=self.style.ERROR)
@@ -137,8 +141,10 @@ class Command(BaseCommand):
                 # The "normal" behaviour. I.e. what happens when send-out occurs.
                 else:
                     for user in User.objects.filter(account__organization=org):
-                        self.count_user_results(all_results, dry_run, image_content,
-                                                image_name, results, user)
+                        if results_context := self.count_user_results(all_results, results, user):
+                            email_message = self.create_email_message(image_name, image_content,
+                                                                      results_context, user)
+                            self.send_to_user(user, email_message, dry_run)
 
                     _ = self.debug_message
                     if not _["unsuccessful_users"] and _["successful_amount_of_users"] != 0:
@@ -186,11 +192,10 @@ class Command(BaseCommand):
                 # Bingo, today we must send mails.
                 return True
 
-    def count_user_results(self, all_results, dry_run, image_content,
-                           image_name, results, user, context_for_user=None):
+    def count_user_results(self, all_results, results, user):
         """
             Counts results for a user and populates context used in email templates.
-            Triggers email send-out unless otherwise instructed.
+            Returns populated context or an empty dict if no results.
         """
 
         context = self.shared_context.copy()
@@ -209,7 +214,7 @@ class Command(BaseCommand):
         if not user_results.exists():
             self.stdout.write(f"Nothing for user (username : {user.username}, pk : {user.pk})",
                               style_func=self.style.WARNING)
-            return
+            return {}
 
         self.debug_message['estimated_amount_of_users'] += 1
 
@@ -238,15 +243,8 @@ class Command(BaseCommand):
             total_result_count += remediator_bound_results
 
         context["total_result_count"] = total_result_count
-        email_message = self.create_email_message(image_name, image_content,
-                                                  context, user)
 
-        if context_for_user:
-            self.stdout.write(msg=f"Printing context for user: \n {context}",
-                              style_func=self.style.SUCCESS)
-
-        else:
-            self.send_to_user(user, email_message, dry_run)
+        return context
 
     def create_email_message(self, image_name, image_content, context, user):
         """ Creates an email message ready to send to a user.
