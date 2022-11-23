@@ -20,6 +20,7 @@ from os2datascanner.engine2.model.utilities.sitemap import (
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 from os2datascanner.engine2.conversions.types import Link, OutputType
 from os2datascanner.engine2.conversions.registry import convert
+from os2datascanner.engine2.rules.links_follow import check
 from os2datascanner.engine2 import settings as engine2_settings
 
 here_path = os.path.dirname(__file__)
@@ -147,6 +148,20 @@ links_from_handle = {
 infinite_links_site = {
     "source": WebSource("http://localhost:64346/redirect")
 }
+dead_links = {
+    "404": Link("http://localhost:64346/not_found"),
+    "410": Link("http://localhost:64346/gone"),
+    "421": Link("http://localhost:64346/misdirected_request"),
+    "423": Link("http://localhost:64346/locked"),
+    "451": Link("http://localhost:64346/unavailable_for_legal_reasons")
+}
+alive_links = {
+    "200": Link("http://localhost:64346/"),
+    "403": Link("http://localhost:64346/forbidden"),
+    "500": Link("http://localhost:64346/internal_server_error")
+}
+
+
 source_with_path_site = {
     "source": WebSource("http://localhost:64346/undermappe"),
     "handles": [
@@ -219,7 +234,7 @@ def resolve_any_to_localhost():
     connection.create_connection = _orig_create_connection
 
 
-class custom_http_server(http.server.SimpleHTTPRequestHandler):
+class HTTPTestRequestHandler(http.server.SimpleHTTPRequestHandler):
     """Redirect all *.localhost to localhost"""
 
     def _normal_response(self):
@@ -259,12 +274,54 @@ class custom_http_server(http.server.SimpleHTTPRequestHandler):
         self.send_header("Content-Length", "0")
         self.end_headers()
 
+    def _forbidden_response(self):
+        self.send_response(403)
+        self.end_headers()
+
+    def _not_found_response(self):
+        self.send_response(404)
+        self.end_headers()
+
+    def _gone_response(self):
+        self.send_response(410)
+        self.end_headers()
+
+    def _misdirected_request_response(self):
+        self.send_response(421)
+        self.end_headers()
+
+    def _locked_response(self):
+        self.send_response(423)
+        self.end_headers()
+
+    def _unavailable_for_legal_reasons_response(self):
+        self.send_response(451)
+        self.end_headers()
+
+    def _internal_server_error_response(self):
+        self.send_response(500)
+        self.end_headers()
+
     def do_GET(self):
         host = self.headers.get("host")
         if not host.startswith("localhost"):
             self._redirect_response()
         elif self.path.startswith("/redirect"):
             self._infinite_redirects()
+        elif self.path.startswith("/not_found"):
+            self._not_found_response()
+        elif self.path.startswith("/gone"):
+            self._gone_response()
+        elif self.path.startswith("/misdirected_request"):
+            self._misdirected_request_response()
+        elif self.path.startswith("/locked"):
+            self._locked_response()
+        elif self.path.startswith("/unavailable_for_legal_reasons"):
+            self._unavailable_for_legal_reasons_response()
+        elif self.path.startswith("/forbidden"):
+            self._forbidden_response()
+        elif self.path.startswith("/internal_server_error"):
+            self._internal_server_error_response()
         else:
             super().do_GET()
 
@@ -282,7 +339,7 @@ def run_web_server(started):
     cwd = os.getcwd()
     try:
         os.chdir(test_data_path)
-        server = http.server.HTTPServer(("", 64346), custom_http_server)
+        server = http.server.HTTPServer(("", 64346), HTTPTestRequestHandler)
 
         # The web server is started and listening; let the test runner know
         started.acquire()
@@ -763,6 +820,19 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                         content, "http://localhost:64346/broken.html")],
                 ["http://localhost:64346/kontakt.html"],
                 "expected one link to be found in broken document")
+
+    def test_links_follow_check(self):
+        """Make sure that links which respond with 404, 410, 421, 423, or 451
+        status codes are correctly identified by the "check"-function, and that
+        other status codes are not."""
+        self.assertEqual(check(dead_links['404']), (False, 404))
+        self.assertEqual(check(dead_links['410']), (False, 410))
+        self.assertEqual(check(dead_links['421']), (False, 421))
+        self.assertEqual(check(dead_links['423']), (False, 423))
+        self.assertEqual(check(dead_links['451']), (False, 451))
+        self.assertEqual(check(alive_links['200']), (True, 200))
+        self.assertEqual(check(alive_links['403']), (True, 403))
+        self.assertEqual(check(alive_links['500']), (True, 500))
 
 
 class Engine2HTTPConversionTests(Engine2HTTPSetup, unittest.TestCase):
