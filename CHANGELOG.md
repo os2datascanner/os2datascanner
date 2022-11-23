@@ -20,6 +20,8 @@
 
 - Functions for drawing charts and graphs refactored.
 
+- Better UI for the report module when browsing from large tablets.
+
 ### Bugfixes
 
 - Adjusted media root to support profile images uploaded by the user.
