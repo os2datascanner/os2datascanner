@@ -9,7 +9,6 @@ from typing import Tuple
 from .core import Source, Handle, FileResource
 
 
-@Source.url_handler('data')
 class DataSource(Source):
     type_label = "data"
 

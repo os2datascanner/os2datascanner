@@ -8,7 +8,6 @@ from dropbox.exceptions import ApiError
 from .core import Source, Handle, FileResource
 
 
-@Source.url_handler('dropbox')
 class DropboxSource(Source):
     """See https://dropbox-sdk-python.readthedocs.io/en/latest/
     for implementation details for the dropbox api.

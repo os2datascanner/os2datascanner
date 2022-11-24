@@ -75,7 +75,6 @@ class Mode(enum.IntFlag):
 ModeMask = reduce(operator.or_, Mode, Mode.NONE)
 
 
-@Source.url_handler('smbc')
 class SMBCSource(Source):
     type_label = "smbc"
     eq_properties = (

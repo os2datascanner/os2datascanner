@@ -149,7 +149,6 @@ class EWSAccountSource(Source):
         )
 
     @staticmethod
-    @Source.url_handler("test-ews365")
     def from_url(url):
         scheme, netloc, path, _, _ = urlsplit(url)
         auth, domain = netloc.split("@", maxsplit=1)

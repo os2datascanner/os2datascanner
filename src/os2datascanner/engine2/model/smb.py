@@ -34,7 +34,6 @@ def compute_domain(unc):
         return remainder
 
 
-@Source.url_handler('smb')
 class SMBSource(Source):
     type_label = "smb"
     eq_properties = ("_unc", "_user", "_password", "_domain",)

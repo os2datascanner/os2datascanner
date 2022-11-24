@@ -79,26 +79,6 @@ class Source(TypePropertyEquality, JSONSerialisable):
         finds."""
         return False
 
-    __url_handlers = {}
-
-    @staticmethod
-    def url_handler(*schemes):
-        """Decorator: registers the decorated function as the handler for the
-        URL schemes given as arguments. This handler will be called by from_url
-        when it finds one of these schemes.
-
-        Subclasses should use this decorator to register their from_url factory
-        methods."""
-        def _url_handler(func):
-            for scheme in schemes:
-                if scheme in Source.__url_handlers:
-                    raise ValueError(
-                            "BUG: can't register two handlers" +
-                            " for the same URL scheme!", scheme)
-                Source.__url_handlers[scheme] = func
-            return func
-        return _url_handler
-
     __mime_handlers = {}
 
     @staticmethod

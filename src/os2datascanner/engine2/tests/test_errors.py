@@ -11,12 +11,6 @@ class Engine2TestErrors(unittest.TestCase):
         with self.assertRaises(ValueError):
             FilesystemSource("../../projects/admin/tests/data/")
 
-    def test_double_scheme_registration(self):
-        with self.assertRaises(ValueError):
-            @Source.url_handler("file")
-            class Dummy:
-                pass
-
     def test_double_mime_registration(self):
         with self.assertRaises(ValueError):
             @Source.mime_handler("application/zip")

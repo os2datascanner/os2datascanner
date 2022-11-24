@@ -72,7 +72,6 @@ def make_head_fallback(context):
     return _make_head_fallback
 
 
-@Source.url_handler('http', 'https')
 class WebSource(Source):
     type_label = "web"
     eq_properties = ("_url", "_sitemap",)

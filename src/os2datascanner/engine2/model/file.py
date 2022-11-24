@@ -9,7 +9,6 @@ from ..conversions.types import OutputType
 from ..conversions.utilities.navigable import make_values_navigable
 
 
-@Source.url_handler("file")
 class FilesystemSource(Source):
     type_label = "file"
 
