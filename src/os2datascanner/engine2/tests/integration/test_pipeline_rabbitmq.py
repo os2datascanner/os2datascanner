@@ -1,5 +1,5 @@
 import unittest
-from os2datascanner.engine2.demo.utils import DemoSourceWrapper as TestSourceWrapper
+from os2datascanner.engine2.demo.utils import DemoSourceUtility as TestSourceUtility
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from .test_pipeline import (handle_message, data_url, rule, expected_matches)
 
@@ -36,7 +36,7 @@ class Engine2PipelineTests(unittest.TestCase):
         self.runner.clear()
 
     def test_simple_regex_match(self):
-        jsonobj = TestSourceWrapper.from_url(data_url).to_json_object()
+        jsonobj = TestSourceUtility.from_url(data_url).to_json_object()
         print(jsonobj)
         obj = {
             "scan_tag": {

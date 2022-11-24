@@ -2,7 +2,7 @@ import os.path
 from datetime import datetime
 import unittest
 
-from os2datascanner.engine2.demo.utils import DemoSourceWrapper as TestSourceWrapper
+from os2datascanner.engine2.demo.utils import DemoSourceUtility as TestSourceUtility
 from os2datascanner.engine2.model.core import (Source, SourceManager)
 from os2datascanner.engine2.model.file import (
         FilesystemSource, FilesystemHandle)
@@ -35,7 +35,7 @@ class Engine2ContainerTest(unittest.TestCase):
             elif handle.name == "url":
                 with handle.follow(sm).make_stream() as fp:
                     url = fp.read().decode("utf-8")
-                self.process(TestSourceWrapper.from_url(url), sm, depth + 1)
+                self.process(TestSourceUtility.from_url(url), sm, depth + 1)
 
             elif handle.name == "test-vector" or isinstance(
                     source, DataSource):
@@ -88,12 +88,12 @@ class Engine2ContainerTest(unittest.TestCase):
 
     def test_local_url(self):
         with SourceManager() as sm:
-            self.process(TestSourceWrapper.from_url(
+            self.process(TestSourceUtility.from_url(
                 "file://" + test_data_path), sm)
 
     def test_smbc_url(self):
         with SourceManager() as sm:
-            source = TestSourceWrapper.from_url(
+            source = TestSourceUtility.from_url(
                     "smbc://os2:12345_rosebud_password_admin@samba/general")
             self.process(source, sm)
 

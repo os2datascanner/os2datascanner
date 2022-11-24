@@ -3,7 +3,7 @@ import contextlib
 
 from os2datascanner.engine2.model.core import Source, SourceManager
 from os2datascanner.engine2.model.file import FilesystemSource
-from os2datascanner.engine2.demo.utils import DemoSourceWrapper as TestSourceWrapper
+from os2datascanner.engine2.demo.utils import DemoSourceUtility as TestSourceUtility
 
 
 class Engine2TestErrors(unittest.TestCase):
@@ -25,9 +25,9 @@ class Engine2TestErrors(unittest.TestCase):
 
     def test_handles_failure(self):
         with self.assertRaises(Exception) as e, SourceManager() as sm:
-            source = TestSourceWrapper.from_url("http://example.invalid./")
+            source = TestSourceUtility.from_url("http://example.invalid./")
             with contextlib.closing(source.handles(sm)) as handles:
                 next(handles)
         exception = e.exception
         if exception:
-            print(f"got expected exception for {TestSourceWrapper.to_url(source)}\n{exception}")
+            print(f"got expected exception for {TestSourceUtility.to_url(source)}\n{exception}")

@@ -5,7 +5,7 @@ import base64
 from zipfile import ZipFile
 import unittest
 
-from os2datascanner.engine2.demo.utils import DemoSourceWrapper as TestSourceWrapper
+from os2datascanner.engine2.demo.utils import DemoSourceUtility as TestSourceUtility
 from os2datascanner.engine2.model.core import SourceManager
 from os2datascanner.engine2.model.file import FilesystemSource
 from os2datascanner.engine2.rules.rule import Sensitivity
@@ -80,7 +80,7 @@ raw_scan_spec = {
         "organisation": "Vejstrand Kommune",
         "time": "2020-01-01T00:00:00+00:00"
     },
-    "source": TestSourceWrapper.from_url(
+    "source": TestSourceUtility.from_url(
         data_url).to_json_object(),
     "rule": rule.to_json_object()
 }
@@ -262,7 +262,7 @@ class Engine2PipelineTests(unittest.TestCase):
         bio.seek(0)
 
         content = base64.encodebytes(bio.read())
-        obj["source"] = TestSourceWrapper.from_url(
+        obj["source"] = TestSourceUtility.from_url(
                 "data:application/zip;base64," + content.decode("ascii")
         ).to_json_object()
 

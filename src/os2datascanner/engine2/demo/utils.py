@@ -11,9 +11,9 @@ from os2datascanner.engine2.model.file import FilesystemSource
 from os2datascanner.engine2.model.http import WebSource
 
 
-class DemoSourceWrapper:
+class DemoSourceUtility:
     '''
-    Wrapper for Sources that extends the sources capabilities
+    Utility for Sources that extends the sources capabilities
     just for use in the demo app.
     '''
 
@@ -22,7 +22,7 @@ class DemoSourceWrapper:
         '''
         Takes a URL and a Source Type and converts the URL
         to a Source of the type provided if supported.
-        The Source is then wrapped as a DemoSourceWrapper
+        The Source is then wrapped as a DemoSourceUtility
         and returned as such.
 
         Supported Types:
