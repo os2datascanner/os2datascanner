@@ -1,38 +1,26 @@
 {% load i18n %}
 
-{% blocktrans %}
 Dear {{ full_name }},
-{% endblocktrans %}
 
-{% blocktrans %}
 Currently, {{ user_alias_bound_results }} results in
 the OS2datascanner system have you as the owner and require your attention.
-{% endblocktrans %}
 
 {% if superadmin_bound_results or remediator_bound_results %}
-    {% trans "Additional results are tied to you because of your roles within the system:" %}
+    Additional results are tied to you because of your roles within the system:
         {% if superadmin_bound_results %}
-            {% trans "Super-admin delegated results: "%} {{ superadmin_bound_results }}
+            Super-admin delegated results: {{ superadmin_bound_results }}
         {% endif %}
         {% if remediator_bound_results %}
-                    {% trans "Remediator delegated results: "%} {{ remediator_bound_results }}
+            Remediator delegated results: {{ remediator_bound_results }}
         {% endif %}
 {% endif %}
 
-{% trans "Total viewable results for you: "%} {{ total_result_count }}
+Total viewable results for you: {{ total_result_count }}
 
-{% blocktrans %}
 Log into OS2datascanner with your organisation account for further details.
-{% endblocktrans %}
-
     {{ report_login_url }}
-
-{% blocktrans %}
 Kind regards,
 the OS2datascanner system
-{% endblocktrans %}
 {% if institution %}
-{% blocktrans %}
 (on behalf of {{ institution }})
-{% endblocktrans %}
 {% endif %}

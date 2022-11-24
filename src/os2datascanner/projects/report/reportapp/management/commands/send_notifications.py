@@ -25,6 +25,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.template import loader
 
+from os2datascanner.utils.template_utilities import get_localised_template_names
 from os2datascanner.utils.system_utilities import time_now
 
 from ...models.roles.remediator import Remediator
@@ -86,8 +87,10 @@ class Command(BaseCommand):
 
             if scheduled_today:
                 self.stdout.write(f"Performing email send-out for {org.name}")
-                self.txt_mail_template = loader.get_template("mail/overview.txt")
-                self.html_mail_template = loader.get_template("mail/overview.html")
+                self.txt_mail_template = loader.select_template(
+                    get_localised_template_names(["mail/overview.txt"]))
+                self.html_mail_template = loader.select_template(
+                    get_localised_template_names(["mail/overview.html"]))
                 # Debug messages
                 self.debug_message = {}
                 self.debug_message["estimated_amount_of_users"] = 0
