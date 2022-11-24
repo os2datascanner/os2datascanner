@@ -37,8 +37,8 @@ expected_matches = [
     {
         "rule": {
             "type": "regex",
-            "name": "Check for ill-advised kings",
             "sensitivity": None,
+            "name": "Check for ill-advised kings",
             "expression": "Æthelred the Unready"
         },
         "matches": None
@@ -46,17 +46,22 @@ expected_matches = [
     {
         "rule": {
             "type": "regex",
-            "name": None,
             "sensitivity": Sensitivity.CRITICAL.value,
+            "name": None,
             "expression": "Scyld S(.*)g"
         },
         "matches": [
             {
-                "offset": 98,
                 "match": "Scyld Scēfing",
+
+                "offset": 98,
                 # context is 50 char before and after the match(13 char)
-                "context": data[98-50:98+13+50],
-                "context_offset": 98-50,
+                "context":
+                    "m gefrūnon, hū ðā æþeling as ell en fremedon. Oft Scyld"
+                    " Scēfing sceaþena þrēatum, monegum mǣgþum meodo-setla"
+                    " oftē",
+                "context_offset": 50,
+                "sensitivity": Sensitivity.CRITICAL.value,
             }
         ]
     }

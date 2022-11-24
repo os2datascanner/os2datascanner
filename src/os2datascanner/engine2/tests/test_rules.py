@@ -24,6 +24,9 @@ from os2datascanner.engine2.conversions.types import OutputType
 
 
 class RuleTests(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+
     def test_simplerule_matches(self):
         candidates = [
             (
@@ -299,12 +302,12 @@ more!""",
                     CPRRule(),
                     "deserialisation of old CPR rule failed")
 
-    def test_name_address_rule_matches(self):
+    def test_name_rule_matches(self):
         candidates = [
             (
-                # sensitivity is for standalone matches
-                NameRule(whitelist=["Joakim"], blacklist=["Malkeko"],
-                         sensitivity=Sensitivity.INFORMATION.value),
+                NameRule(
+                        expansive=True,
+                        whitelist=["Joakim"], blacklist=["Malkeko"]),
                 (
                     "Anders\n"           # match standalone name.
                     "Anders and\n"       # match standalone name
@@ -323,17 +326,33 @@ more!""",
                     "Nora Malkeko\n"     # In blacklist
                 ),
                 [    # expected matches
-                    ["Anders", Sensitivity.INFORMATION.value],
-                    ["Anders", Sensitivity.INFORMATION.value],
-                    ["Anders And", Sensitivity.PROBLEM.value],
-                    ["Anders      And", Sensitivity.PROBLEM.value],
-                    ["Joakim Nielsen", Sensitivity.PROBLEM.value],
-                    ["Andrea V. And", Sensitivity.PROBLEM.value],
-                    ["Anders Andersine Mickey Per Nielsen",
-                     Sensitivity.CRITICAL.value],
-                    ["Nora Malkeko", Sensitivity.CRITICAL.value],
+                    ["Anders", 0.1],
+                    ["Anders", 0.1],
+                    ["Anders And", 0.5],
+                    ["Anders      And", 0.5],
+                    ["Joakim Nielsen", 0.5],
+                    ["Andrea V. And", 0.5],
+                    ["Anders Andersine Mickey Per Nielsen", 1.0],
+                    ["Nora Malkeko", 1.0],
                 ]
             ),
+        ]
+
+        for rule, in_value, expected in candidates:
+            with self.subTest(rule):
+                json = rule.to_json_object()
+                back_again = rule.from_json_object(json)
+                self.assertEqual(rule, back_again)
+
+            with self.subTest(rule):
+                matches = rule.match(in_value)
+                # matches ARE NOT returned in order. They are stored as a set
+                self.assertCountEqual(
+                    [[match["match"], match['probability']] for match in matches],
+                    expected)
+
+    def test_address_rule_matches(self):
+        candidates = [
             (
                 # user supplied sensitivity is not used
                 AddressRule(whitelist=["Tagensvej"], blacklist=["PilÆstræde"]),
