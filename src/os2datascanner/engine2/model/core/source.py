@@ -76,10 +76,7 @@ class Source(TypePropertyEquality, JSONSerialisable):
         represent top-level Sources that should be processed independently.
         This might be the case, for example, for a Source that queries a
         directory server and returns a Handle for each relevant account that it
-        finds.
-
-        (This method is just an optimisation hint intended for use when working
-        out how best to distribute work across many nodes.)"""
+        finds."""
         return False
 
     __url_handlers = {}

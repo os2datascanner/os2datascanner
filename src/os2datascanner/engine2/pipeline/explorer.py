@@ -1,6 +1,6 @@
 from .. import settings
 from ..model.core import Source, UnknownSchemeError, DeserialisationError
-from ..utilities.backoff import TimeoutRetrier
+from ..utilities.backoff import DummyRetrier, TimeoutRetrier
 from . import messages
 from .utilities.filtering import is_handle_relevant
 
@@ -75,14 +75,20 @@ def message_received_raw(body, channel, source_manager):  # noqa
 
     it = scan_spec.source.handles(source_manager)
 
-    tr = TimeoutRetrier(
-            seconds=settings.pipeline["op_timeout"],
-            max_tries=settings.pipeline["op_tries"])
+    if scan_spec.source.yields_independent_sources:
+        # As a special case, we allow meta-Sources to run without timeout
+        # enforcement. This is chiefly so that we don't interrupt the
+        # exploration in the middle of a backoff request-induced sleep()
+        retrier = DummyRetrier()
+    else:
+        retrier = TimeoutRetrier(
+                seconds=settings.pipeline["op_timeout"],
+                max_tries=settings.pipeline["op_tries"])
 
     log = logger.bind(scan_tag=scan_tag)
 
     try:
-        while (handle := tr.run(next, it)):
+        while (handle := retrier.run(next, it)):
             if isinstance(handle, tuple) and handle[1]:
                 # We were able to construct a Handle for something that
                 # exists, but then something unexpected (that we can tie to
