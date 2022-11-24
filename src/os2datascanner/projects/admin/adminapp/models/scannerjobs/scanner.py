@@ -145,8 +145,6 @@ class Scanner(models.Model):
                                              verbose_name='Udelukkelsesregler',
                                              related_name='scanners_ex_rules')
 
-    e2_last_run_at = models.DateTimeField(null=True)
-
     def verify(self) -> bool:
         """Method documentation"""
         raise NotImplementedError("Scanner.verify")
@@ -256,7 +254,7 @@ class Scanner(models.Model):
 
         prerules = []
         if self.do_last_modified_check:
-            last = self.e2_last_run_at
+            last = self.get_last_successful_run_at()
             if last:
                 prerules.append(LastModifiedRule(last))
 
@@ -389,7 +387,6 @@ class Scanner(models.Model):
         if source_count == 0 and checkup_count == 0:
             raise ValueError(f"nothing to do for {self}")
 
-        self.e2_last_run_at = self.get_last_successful_run_at()
         self.save()
 
         # Create a model object to track the status of this scan...
@@ -419,9 +416,9 @@ class Scanner(models.Model):
 
     def get_last_successful_run_at(self) -> datetime:
         query = ScanStatus.objects.filter(scanner=self)
-        finished = (e for e in query if e.finished)
-        last = max(finished, key=lambda e: e.last_modified, default=None)
-        return last.last_modified if last else None
+        finished = (status for status in query if status.finished)
+        last = max(finished, key=lambda status: status.start_time, default=None)
+        return last.start_time if last else None
 
     def generate_sources(self) -> Iterator[Source]:
         """Yields one or more engine2 Sources corresponding to the target of
