@@ -13,9 +13,9 @@ function binAndCount(array, binVal){
   // divides array into bins with a range of approx {binVal} % of total range
   // counts number of instances in each bin
 
-  let max = Math.max.apply(Math, array);
+  const max = Math.max.apply(Math, array);
   let binSize = Math.round(max*(binVal/100));
-  let roundNumber = Math.pow(10, getDigitLength(binSize)-1);
+  const roundNumber = Math.pow(10, getDigitLength(binSize)-1);
   binSize = Math.round(binSize/roundNumber)*roundNumber;
   let nBins = Math.ceil(max/binSize);
   if (Number.isInteger(max/binSize)){
@@ -24,7 +24,7 @@ function binAndCount(array, binVal){
 
   let counts = Array(nBins).fill(0);
   for (let i = 0; i < array.length; i++ ){
-    let index = Math.floor(array[i]/binSize);
+    const index = Math.floor(array[i]/binSize);
     counts[index]++;
   }
   return [counts, binSize];
@@ -42,9 +42,9 @@ function getData(dataArray, granularity=5){ // jshint ignore:line
   });
 
   const converted = dataArray.map(byte => bytesToKB(byte));
-  var [counts, binSize] = binAndCount(converted, granularity);
-  var nLarge = counts.filter((val)=>val>converted.length*0.05).length;
-  var nSmall = counts.filter((val)=>val<=0).length;
+  let [counts, binSize] = binAndCount(converted, granularity);
+  let nLarge = counts.filter((val)=>val>converted.length*0.05).length;
+  let nSmall = counts.filter((val)=>val<=0).length;
 
   // If there are too many bins with much data in it, make granularity finer
   let i=0.5;

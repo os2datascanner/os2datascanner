@@ -1,8 +1,8 @@
 
 function displayAsPercentage(value, ctx) {
-    let dataArr = ctx.chart.data.datasets[0].data;
-    let sum = dataArr.reduce(function (total, frac) { return total + frac; });
-    var percentage = Math.round(value * 100 / sum) + "%";
+    const dataArr = ctx.chart.data.datasets[0].data;
+    const sum = dataArr.reduce(function (total, frac) { return total + frac; });
+    const percentage = Math.round(value * 100 / sum) + "%";
     return value ? percentage : '';
 }
   
@@ -22,9 +22,9 @@ else {
 }
 
 function bytesToSize(bytes) {
-var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 if (bytes === 0) {return 'n/a';}
-var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
 if (i === 0) {return `${bytes} ${sizes[i]}`;}
 return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
 }

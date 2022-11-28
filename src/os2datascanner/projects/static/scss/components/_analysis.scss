@@ -1,7 +1,7 @@
 .charts-container-box {
   margin-top: 3rem;
   margin-bottom: 3rem;
-  width: 80%;
+  width: 100%;
   align-items: left;
   background-color: white;
   -webkit-box-shadow: 0px 0px 40px #22222229;
@@ -23,7 +23,7 @@
   grid-template-columns: 1fr 1fr;
   grid-template-rows: minmax(0, auto);
   column-gap: 2rem;
-  row-gap: 5rem;
+  row-gap: 2rem;
 }
 
 .chart-container {

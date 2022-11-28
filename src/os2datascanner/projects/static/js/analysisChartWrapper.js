@@ -75,13 +75,13 @@ function drawBars(jsonData){
 }
 
 function drawPies(Data, colors) {
-  var ctx1 = document.getElementById("pie1");
-  var ctx2 = document.getElementById("pie2");
-  let types = Data.map(object => object.type);
-  let nFiles = Data.map(object => object.n_files); // jshint ignore:line
-  let totalSize = Data.map(object => object.total_size); // jshint ignore:line
-  let pie1Data = {labels: types, data: nFiles, name: "nfiles", title: gettext("Number of files")};
-  let pie2Data = {labels: types, data: totalSize, name: "storage", title: gettext("Storage space")};
+  const ctx1 = document.getElementById("pie1");
+  const ctx2 = document.getElementById("pie2");
+  const types = Data.map(object => object.type);
+  const nFiles = Data.map(object => object.n_files); // jshint ignore:line
+  const totalSize = Data.map(object => object.total_size); // jshint ignore:line
+  const pie1Data = {labels: types, data: nFiles, name: "nfiles", title: gettext("Number of files")};
+  const pie2Data = {labels: types, data: totalSize, name: "storage", title: gettext("Storage space")};
   charts.push(createPie(pie1Data, [ctx1, "pie1"], colors));
   charts.push(createPie(pie2Data, [ctx2, "pie2"], colors));
 }

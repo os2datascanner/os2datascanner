@@ -449,11 +449,9 @@ msgstr "kontekstcheck"
 msgid "Regular expression"
 msgstr "Regulært udtryk"
 
-<<<<<<< HEAD
 #: adminapp/templates/components/admin-widgets/rule-builder.html:98
 msgid "expanded matching"
 msgstr "udvidet søgning"
-=======
 #: adminapp/templates/components/analysis-template.html:10
 #: adminapp/templates/components/navigation.html:28
 msgid "Analysis"
@@ -487,7 +485,6 @@ msgstr "Overblik over antallet af filer"
 #: adminapp/templates/components/analysis-template.html:101
 msgid "Choose a scannerjob to start a new scan or view analysis"
 msgstr "Vælg et scannerjob for at starte et analyse-scan eller se analyse"
->>>>>>> 92cb41c1 ([#53497] Restructure templates and add translation)
 
 #: adminapp/templates/components/load-results.html:23
 msgid "per page"
