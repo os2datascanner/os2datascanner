@@ -119,10 +119,12 @@ function makeRule(elem) {
         };
 
       case "CustomRule_Name":
+        tickboxes = elem.querySelectorAll("input[type='checkbox']");
         return {
           "type": "name",
           "whitelist": [],
-          "blacklist": []
+          "blacklist": [],
+          "expansive": tickboxes[0].checked,
         };
 
       case "CustomRule_Address":

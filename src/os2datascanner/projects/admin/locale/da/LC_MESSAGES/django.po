@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-04 11:59+0100\n"
+"POT-Creation-Date: 2022-11-22 10:31+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -448,6 +448,10 @@ msgstr "kontekstcheck"
 #: adminapp/templates/components/admin-widgets/rule-builder.html:88
 msgid "Regular expression"
 msgstr "Regulært udtryk"
+
+#: adminapp/templates/components/admin-widgets/rule-builder.html:98
+msgid "expanded matching"
+msgstr "udvidet søgning"
 
 #: adminapp/templates/components/load-results.html:23
 msgid "per page"

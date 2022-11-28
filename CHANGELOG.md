@@ -24,6 +24,8 @@
 
 - More info on document reports in django admin added.
 
+- The name rule can be made less aggressive, reducing false positives.
+
 ### Bugfixes
 
 - Adjusted media root to support profile images uploaded by the user.
@@ -35,6 +37,12 @@
 - Pagination options now work in the admin module.
 
 - Time stamps are now correctly set when resolving a match result.
+
+- Sensitivity values are once more displayed for name, address and regular expression rules.
+
+- Contexts are now also shown for name and address rule matches.
+
+- CPR number-like strings are now pruned more aggressively from all match contexts.
 
 ## Version 3.17.0, 31st October 2022
 

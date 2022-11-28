@@ -36,6 +36,7 @@ class CPRRule(Rule):
                 modulus_11=self.do_modulus11,
                 ignore_irrelevant=self.ignore_irrelevant,
                 examine_context=self.examine_context,
+                name=self.name,
                 sensitivity=self.make_engine2_sensitivity())
 
     whitelist = models.TextField(blank=True,

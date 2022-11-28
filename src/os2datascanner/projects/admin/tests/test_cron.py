@@ -88,7 +88,7 @@ obj = {
         url="https://www.magenta.dk/", sitemap=None, exclude=[]
     ).to_json_object(),
     "rule": TwegexRule(
-        "fællesskaber", name=None, sensitivity=Twensitivity.NOTICE
+        "fællesskaber", name="MagentaTestRule1", sensitivity=Twensitivity.NOTICE
     ).to_json_object(),
     "configuration": {"skip_mime_types": ["image/*"]},
     "filter_rule": None,

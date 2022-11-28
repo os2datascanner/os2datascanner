@@ -3,18 +3,37 @@ import regex
 from ..conversions.types import OutputType
 from .rule import Rule, SimpleRule, Sensitivity
 from .datasets.loader import common as common_loader
+from .utilities.context import make_context
 
-# see https://regex101.com/r/7AI9vn/2 for examples of matches
-# \p{Lu} match a upper case unicode letter, see
-# https://www.regular-expressions.info/unicode.html#category
-# Match whitespace except newlines
-_whitespace = r"[^\S\n\r]+"
-_simple_name = r"\p{Lu}(?:\p{L}+|\.?)"
-_name = r"{0}(?:-{0})?".format(_simple_name)
+_whitespace = (
+        r"[^\S\n\r]+"  # One or more of every whitespace character (apart from
+                       # new lines)
+)
+
+_simple_name = (
+        r"\p{Lu}"          # One upper-case letter...
+        r"(?:\p{L}+|\.?)"  # followed by one or more letters, a full stop, or
+                           # nothing
+)
+# (for example, "Joe", "Bloggs", "Bulwer", "K.", "J", or "Edward")
+
+_name = (
+        rf"{_simple_name}"        # A simple_name...
+        rf"(?:-{_simple_name})?"  # optionally hyphenated with another one
+)
+# (for example, "Jens", "Bulwer-Lytton", "You", "United", or "B.-L.")
+
 full_name_regex = regex.compile(  # noqa: ECE001, expression is too complex
-    r"\b(?P<first>" + _name + r")" +
-    r"(?P<middle>(" + _whitespace + _name + r"){0,3})" +
-    r"(?P<last>" + _whitespace + _name + r")\b", regex.UNICODE)
+    rf"\b(?P<first>{_name})"               # A name at the start of a word...
+    rf"(?P<middle>({_whitespace}{_name})"
+    r"{0,3})"                              # followed by zero to three more
+                                           # whitespace-separated names...
+    rf"(?P<last>{_whitespace}{_name})\b"   # followed by another name and the
+                                           # end of the word
+)
+# (for example, "Joe Bloggs", "Josef K.", "L. Frank Baum", "Edward George Earle
+# Lytton Bulwer-Lytton", "Jens J-J. Jens-Jens Jens Jensen", "United Kingdom",
+# or "You Are A Winner")
 
 
 def match_full_name(text):
@@ -35,37 +54,31 @@ def match_full_name(text):
             middle_split = ()
         last = strip_or_empty(m.group("last"))
         matched_text = m.group(0)
-        matches.add((first, middle_split, last, matched_text))
+        matches.add((m, first, middle_split, last, matched_text))
     return matches
 
 
 class NameRule(SimpleRule):
-    """Represents a rule which scans for Full Names in text.
-
-    The rule loads a list of names from first and last name files and matches
-    names against them to determine the sensitivity level of the matches.
-    Matches against full, capitalized, names with up to three middle names.
-    A name in this context, is a capitalized Word.
-
-    Last, the text is checked for any standalone names, ie. single capitalized
-    Words
-
-    Note that name matches internally are stored as a `set`, thus matches are
-    not returned in order.
-
-    """
+    """A NameRule looks for strings of text that resemble Danish names. It
+    couples a regular expression-driven scan for name-like tokens with a
+    dataset used to determine if those tokens are plausible names."""
     operates_on = OutputType.Text
     type_label = "name"
     eq_properties = ("_whitelist", "_blacklist",)
 
-    def __init__(self, whitelist=None, blacklist=None, **super_kwargs):
+    def __init__(
+            self,
+            expansive=None,  # Also find name-like strings not in the dataset?
+            whitelist=None,
+            blacklist=None,
+            **super_kwargs):
         super().__init__(**super_kwargs)
 
         # Convert list of str to upper case and to sets for efficient lookup
         self.last_names = None
         self.first_names = None
-        self.all_names = None
 
+        self._expansive = expansive
         self._whitelist = frozenset(n.upper() for n in (whitelist or []))
         self._blacklist = frozenset(n.upper() for n in (blacklist or []))
 
@@ -74,7 +87,7 @@ class NameRule(SimpleRule):
         return "personal name"
 
     def _load_datasets(self):
-        if self.all_names is None:
+        if self.first_names is None:
             # Convert list of str to upper case and to sets for efficient
             # lookup
             m = set(map(str.upper,
@@ -90,43 +103,43 @@ class NameRule(SimpleRule):
 
             self.last_names = e
             self.first_names = f
-            self.all_names = f.union(e)
 
     def match(self, text):  # noqa: CCR001, too high cognitive complexity
         self._load_datasets()
         unmatched_text = text
 
-        def is_name_fragment(fragment, candidates, use_blacklist=True):
-            fragment = fragment.upper()
-            if use_blacklist and fragment in self._blacklist:
+        def is_name_component(
+                component: str,
+                *candidate_sets: set[str]):
+            component = component.upper()
+            if component in self._blacklist:
                 return True
+            elif component in self._whitelist:
+                return False
             else:
-                return (fragment in candidates
-                        and fragment not in self._whitelist)
+                return any(component in cs for cs in candidate_sets)
 
         # First, check for whole names, i.e. at least Firstname + Lastname
         names = match_full_name(text)
-        for name in names:
+        for match, first_name, middle_names, last_name, matched_text in names:
+            middle_names = list(middle_names)
+            last_name = last_name or ""
+
             # Match each name against the list of first and last names
-            first_name = name[0]
-            middle_names = [n for n in name[1]]
-            last_name = name[2] if name[2] else ""
-
-            # Store the original matching text
-            matched_text = name[3]
-
-            first_match = is_name_fragment(first_name, self.first_names)
-            last_match = is_name_fragment(last_name, self.last_names)
+            first_match = is_name_component(first_name, self.first_names)
+            last_match = is_name_component(last_name, self.last_names)
             middle_match = any(
-                [is_name_fragment(n, self.all_names) for n in middle_names]
+                is_name_component(n, self.first_names, self.last_names)
+                for n in middle_names
             )
             # But what if the name is Word Firstname Lastname?
             while middle_match and not first_match:
                 old_name = first_name
                 first_name = middle_names.pop(0)
-                first_match = is_name_fragment(first_name, self.first_names)
+                first_match = is_name_component(first_name, self.first_names)
                 middle_match = any(
-                    [is_name_fragment(n, self.all_names) for n in middle_names]
+                    is_name_component(n, self.first_names, self.last_names)
+                    for n in middle_names
                 )
                 matched_text = matched_text.lstrip(old_name)
                 matched_text = matched_text.lstrip()
@@ -134,9 +147,10 @@ class NameRule(SimpleRule):
             while middle_match and not last_match:
                 old_name = last_name
                 last_name = middle_names.pop()
-                last_match = is_name_fragment(last_name, self.last_names)
+                last_match = is_name_component(last_name, self.last_names)
                 middle_match = any(
-                    [is_name_fragment(n, self.all_names) for n in middle_names]
+                    is_name_component(n, self.first_names, self.last_names)
+                    for n in middle_names
                 )
                 matched_text = matched_text.rstrip(old_name)
                 matched_text = matched_text.rstrip()
@@ -152,42 +166,62 @@ class NameRule(SimpleRule):
             # Check if name is blacklisted.
             # The name is blacklisted if there exists a string in the
             # blacklist which is contained as a substring of the name.
-            is_blacklisted = any([b in full_name_up for b in self._blacklist])
-            # Name match is always high sensitivity
+            is_blacklisted = any(b in full_name_up for b in self._blacklist)
+            # Name match is always high probability
             # and occurs only when first and last name are in the name lists
-            # Set sensitivity according to how many of the names were found
+            # Set probability according to how many of the names were found
             # in the names lists
             if (first_match and last_match) or is_blacklisted:
-                sensitivity = Sensitivity.CRITICAL
+                probability = 1.0
             elif first_match or last_match or middle_match:
-                sensitivity = Sensitivity.PROBLEM
+                probability = 0.5
             else:
                 continue
 
-            # Update remaining, i.e. unmatched text
-            unmatched_text = unmatched_text.replace(matched_text, "", 1)
+            # If we have to do a second pass, cut this matched name out to
+            # avoid duplicates
+            if self._expansive:
+                unmatched_text = unmatched_text.replace(matched_text, "", 1)
 
             yield {
                 "match": matched_text,
-                "sensitivity": sensitivity.value
+                "probability": probability,
+
+                **make_context(match, text),
+
+                "sensitivity": (
+                    self.sensitivity.value if self.sensitivity else None
+                ),
             }
-        # Full name match done. Now check if there's any standalone names in
-        # the remaining, i.e. so far unmatched string.
-        name_regex = regex.compile(_name)
-        it = name_regex.finditer(unmatched_text, overlapped=False)
-        for m in it:
-            matched = m.group(0)
-            if is_name_fragment(matched.upper(), self.all_names):
-                yield {
-                    "match": matched,
-                    "sensitivity": self.sensitivity
-                }
+        if self._expansive:
+            # Full name match done. Now check if there's any standalone names
+            # in the remaining, i.e. so far unmatched string.
+            name_regex = regex.compile(_name)
+            it = name_regex.finditer(unmatched_text, overlapped=False)
+            for m in it:
+                matched = m.group(0)
+                if is_name_component(
+                        matched.upper(), self.first_names, self.last_names):
+                    yield {
+                        "match": matched,
+                        "probability": 0.1,
+
+                        # XXX: are the offsets here useful? (unmatched_text is
+                        # something we've produced internally...)
+                        **make_context(m, unmatched_text),
+
+                        "sensitivity": (
+                            self.sensitivity.value
+                            if self.sensitivity else None
+                        ),
+                    }
 
     def to_json_object(self):
         return dict(
             **super().to_json_object(),
             whitelist=list(self._whitelist),
             blacklist=list(self._blacklist),
+            expansive=self._expansive
         )
 
     @staticmethod
@@ -196,4 +230,5 @@ class NameRule(SimpleRule):
         return NameRule(
                 whitelist=frozenset(obj["whitelist"]),
                 blacklist=frozenset(obj["blacklist"]),
+                expansive=obj.get("expansive", None),
                 sensitivity=Sensitivity.make_from_dict(obj))

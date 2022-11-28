@@ -28,6 +28,7 @@ class RegexRule(Rule):
         # compound expression
         return RegexTwule(
                 compund_rules(self),
+                name=self.name,
                 sensitivity=self.make_engine2_sensitivity())
 
 

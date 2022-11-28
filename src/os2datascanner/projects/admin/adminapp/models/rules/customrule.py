@@ -19,7 +19,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from os2datascanner.engine2.rules.rule import Rule as E2Rule
+from os2datascanner.engine2.rules.rule import Rule as E2Rule, Sensitivity
 from .rule import Rule
 
 
@@ -32,7 +32,16 @@ class CustomRule(Rule):
 
     @property
     def rule(self):
-        return E2Rule.from_json_object(self._rule)
+        r = E2Rule.from_json_object(self._rule)
+        if not r._name:
+            r._name = self.name
+        r._sensitivity = Sensitivity(max(
+                # Technically speaking Sensitivity.INFORMATION is the lowest
+                # value, but it's not possible to specify that in the UI
+                r._sensitivity.value
+                if r._sensitivity else Sensitivity.NOTICE.value,
+                self.make_engine2_sensitivity().value))
+        return r
 
     @rule.setter
     def set_rule(self, r: E2Rule):
