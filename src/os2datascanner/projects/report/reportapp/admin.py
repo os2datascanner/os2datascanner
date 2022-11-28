@@ -18,8 +18,18 @@ class DocumentReportAdmin(admin.ModelAdmin):
         'name',
         'number_of_matches',
         'organization',
+        'scanner_job_name',
+        'aliases',
         'resolution_status',
         'resolution_time', 'only_notify_superadmin')
+
+    def aliases(self, dr):
+        return ", ".join([alias_relation.account.username
+                          for alias_relation in dr.alias_relation.all()])
+
+    def get_queryset(self, request):
+        return super(DocumentReportAdmin, self).get_queryset(request).select_related(
+            'organization').prefetch_related('alias_relation')
 
 
 # Solution for avoiding m2m relations to get cleared

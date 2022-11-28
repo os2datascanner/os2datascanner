@@ -22,6 +22,8 @@
 
 - Better UI for the report module when browsing from large tablets.
 
+- More info on document reports in django admin added.
+
 ### Bugfixes
 
 - Adjusted media root to support profile images uploaded by the user.
