@@ -68,12 +68,16 @@ label+.dropdown {
 .handle-dropdown {
   position: relative;
   width: 16rem;
-  z-index: 1;
-  top: 1.5rem;
+  z-index: 100;
+  top: 2.5rem;
   padding: 0.5rem;
   border-radius: var(--border-radius-default);
   background-color: var(--color-widget-bg);
   box-shadow: var(--box-shadow-widget);
+
+  @media (min-width: $break-lg) {
+    top: 1.5rem;
+  }
 
   ul {
     padding: 0;
@@ -106,15 +110,9 @@ label+.dropdown {
       left: -4rem;
     }
 
-    &:focus+.dropdown-container {
+    &:focus+.dropdown-container,
+    &:hover+.dropdown-container {
       display: block;
-    }
-
-    @media (min-width: $break-lg) {
-
-      &:hover+.dropdown-container {
-        display: block;
-      }
     }
   }
 }
