@@ -25,6 +25,7 @@ PRODUCTION = false
 
 # [functionality]
 EXCLUSION_RULES = false
+ANALYSIS_PAGE = false
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
@@ -143,7 +144,8 @@ SETTINGS_EXPORT = [
     'ENABLE_SBSYSSCAN',
     'ICON_SPRITE_URL',
     'ESTIMATE_AFTER',
-    'EXCLUSION_RULES'
+    'EXCLUSION_RULES',
+    'ANALYSIS_PAGE'
 ]
 
 # [internationalization]
