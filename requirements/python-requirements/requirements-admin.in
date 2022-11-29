@@ -1,6 +1,0 @@
--r requirements-django.in
--c requirements-engine.txt
-
-pycryptodome
-pytest-django
-python-dateutil

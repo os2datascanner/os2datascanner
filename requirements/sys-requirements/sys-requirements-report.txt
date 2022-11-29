@@ -1,9 +1,0 @@
-###############################################################
-#                                                             #
-#    All system requirements specific to the report module    #
-#                                                             #
-###############################################################
-
-openssl
-libxmlsec1-dev
-xmlsec1
