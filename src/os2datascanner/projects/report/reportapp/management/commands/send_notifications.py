@@ -205,7 +205,7 @@ class Command(BaseCommand):
         context["full_name"] = user.get_full_name() or user.username
 
         roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
-        user_results = views.filter_inapplicable_matches(user, results, roles)  # account)
+        user_results = views.filter_inapplicable_matches(user, results, roles)
 
         if not all_results:
             # If not provided, results that are newer than 30 days are not included.
@@ -227,7 +227,8 @@ class Command(BaseCommand):
 
         for alias in user.aliases.all():
             user_alias_bound_results += user_results.filter(
-                alias_relation=alias.pk).count()
+                alias_relation=alias.pk,
+                only_notify_superadmin=False).count()
         context["user_alias_bound_results"] = user_alias_bound_results
         total_result_count += user_alias_bound_results
 
@@ -235,8 +236,7 @@ class Command(BaseCommand):
         # let the user know how many of these results stem from that.
         if views.user_is_superadmin(user):
             superadmin_bound_results = context["superadmin_bound_results"] = user_results.filter(
-                only_notify_superadmin=True,
-                alias_relation__isnull=True).count()
+                only_notify_superadmin=True).count()
             total_result_count += superadmin_bound_results
 
         if views.user_is(roles, Remediator):

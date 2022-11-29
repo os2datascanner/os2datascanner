@@ -3,7 +3,7 @@
 Hej {{ full_name }},
 
 Der ligger i øjeblikket {{ user_alias_bound_results }} resultater i
-    OS2datascanner-systemet med direkte tilknytning til dig, der kræver din opmærksomhed
+    OS2datascanner-systemet med direkte tilknytning til dig, der kræver din opmærksomhed.
 
 {% if superadmin_bound_results or remediator_bound_results %}
     Yderligere resultater er tildelt til dig på baggrund af dine roller i systemet:
@@ -15,7 +15,7 @@ Der ligger i øjeblikket {{ user_alias_bound_results }} resultater i
         {% endif %}
 {% endif %}
 
-I alt synlige resultater for dig: {{ total_result_count }}
+Resultater i alt: {{ total_result_count }}
 
 Log på OS2datascanner med din organisationskonto for at se flere detaljer.
 

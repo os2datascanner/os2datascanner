@@ -36,8 +36,8 @@
 Hej {{ full_name }},
 </p>
 <p>
-    Der ligger i øjeblikket <strong>{{ user_alias_bound_results }}</strong>resultater i
-    OS2datascanner-systemet med direkte tilknytning til dig, der kræver din opmærksomhed
+    Der ligger i øjeblikket <strong>{{ user_alias_bound_results }}</strong> resultater i
+    OS2datascanner-systemet med direkte tilknytning til dig, der kræver din opmærksomhed.
 </p>
 
 <table>
@@ -49,7 +49,7 @@ Hej {{ full_name }},
         {% if superadmin_bound_results %}
             <tr class="flex">
                 <td class="width">
-                    Tildelt pga. super-admin rolle:   <strong>{{ superadmin_bound_results }}</strong>
+                    Tildelt pga. super-admin rolle: <strong>{{ superadmin_bound_results }}</strong>
                 </td>
             </tr>
         {% endif %}
@@ -65,7 +65,7 @@ Hej {{ full_name }},
 </table>
 
 <p>
-    I alt synlige resultater for dig: <strong>{{ total_result_count }}</strong>
+    Resultater i alt: <strong>{{ total_result_count }}</strong>
 </p>
 
 <p>
