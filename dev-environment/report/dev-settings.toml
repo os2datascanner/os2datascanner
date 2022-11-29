@@ -7,6 +7,10 @@ DEBUG = true
 
 # [functionality]
 HANDLE_DROPDOWN = true
+SUPPORT_BUTTON = true
+ALLOW_CONTACT_DPO = true
+ALLOW_CONTACT_IT = true
+ALLOW_CONTACT_MAGENTA = true
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for

@@ -41,7 +41,7 @@ from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
-from ..utils import user_is
+from ..utils import user_is, convert_context_to_email_body
 from ..models.documentreport import DocumentReport
 from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
@@ -166,6 +166,10 @@ class MainPageView(LoginRequiredMixin, ListView):
 
                 # Serve the document report key
                 context['pk'] = self.request.GET.get('dr_pk')
+
+        # TODO: This information is only for the support button: Move it to its own view!
+        context["email_body"] = convert_context_to_email_body(context, self.request)
+        context["dpo_contacts"] = DataProtectionOfficer.objects.filter(contact_person=True)
 
         return context
 
@@ -422,6 +426,10 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
+
+        # TODO: This information is only for the support button: Move it to its own view!
+        context["email_body"] = convert_context_to_email_body(context, self.request)
+        context["dpo_contacts"] = DataProtectionOfficer.objects.filter(contact_person=True)
 
         return context
 

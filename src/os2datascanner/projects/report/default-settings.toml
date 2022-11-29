@@ -21,6 +21,10 @@ SAML2_ENABLED = false
 
 # [functionality]
 HANDLE_DROPDOWN = false
+SUPPORT_BUTTON = false
+ALLOW_CONTACT_DPO = false
+ALLOW_CONTACT_IT = false
+ALLOW_CONTACT_MAGENTA = false
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
@@ -109,6 +113,10 @@ MIDDLEWARE = [
 SETTINGS_EXPORT = [
     'DEBUG',
     'HANDLE_DROPDOWN',
+    'SUPPORT_BUTTON',
+    'ALLOW_CONTACT_DPO',
+    'ALLOW_CONTACT_IT',
+    'ALLOW_CONTACT_MAGENTA',
 ]
 
 # [internationalization]

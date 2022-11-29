@@ -12,6 +12,32 @@
 
 - UI for analysis tool included as a new page and new feature in the admin module. The feature is disabled by deafult
 
+- A manual can now be found in the report module under /help.
+
+- A service button has now been implemented in the report module:
+
+  - A large button with a "?"-symbol is always placed in the lower right corner
+    of the report module. This feature is off by default.
+
+  - Clicking the button will show up to five options:
+
+    - "Manual", a link to the manual page.
+    
+    - "FAQ", a link to the FAQ part of the manual page. Hovering will also
+      display links to the specific questions.
+    
+    - "Contact DPO", hovering will display a list of users with the DPO role,
+      which have the "contact person" option enabled on their profile. Clicking
+      one of the users will open the user's preferred mail client with contact 
+      info on the DPO.
+    
+    - "Contact IT", opens the user's preferred mail client with contact 
+      info on the user's organization.
+    
+    - "Contact Magenta", opens the user's preferred mail client with contact 
+      info on Magenta ApS's support line with prepopulated data from the user's 
+      current view.
+
 ### General Improvements
 
 - Release notes are now written gradually, instead of in batches during release procedures.

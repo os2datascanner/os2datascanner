@@ -170,8 +170,7 @@ class UserErrorLogAdmin(admin.ModelAdmin):
         'user_friendly_error_message',
         'error_message',
         'scan_status',
-        'organization',
-    )
+        'organization',)
     fields = (
         'path',
         'user_friendly_error_message',

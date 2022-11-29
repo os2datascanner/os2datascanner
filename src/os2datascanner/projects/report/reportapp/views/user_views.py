@@ -17,6 +17,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView
+from django.http import HttpResponse
+
+from ..utils import convert_context_to_email_body
+from ..models.roles.role import Role
+from ..models.roles.dpo import DataProtectionOfficer
 
 
 class UserView(TemplateView, LoginRequiredMixin):
@@ -29,7 +34,24 @@ class UserView(TemplateView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["user_roles"] = [role._meta.verbose_name for role in User.objects.get(
-            username=self.request.user).roles.select_subclasses().all()]
+        roles_qs = Role.get_user_roles_or_default(self.request.user)
+        user_roles = [role._meta.verbose_name for role in roles_qs]
+
+        context["is_dpo"] = "DPO" in user_roles
+        context["is_contact_person"] = roles_qs.filter(
+            dataprotectionofficer__contact_person=True).exists()
+        context["user_roles"] = user_roles
         context["aliases"] = User.objects.get(username=self.request.user).aliases.all()
+
+        # TODO: This information is only for the support button: Move it to its own view!
+        context["email_body"] = convert_context_to_email_body(context, self.request)
+        context["dpo_contacts"] = DataProtectionOfficer.objects.filter(contact_person=True)
         return context
+
+    def post(self, request, *args, **kwargs):
+        bool_field_status = request.POST.get("contact_check", False) == "checked"
+        DataProtectionOfficer.objects.filter(
+            user=self.request.user).update(
+            contact_person=bool_field_status)
+
+        return HttpResponse()
