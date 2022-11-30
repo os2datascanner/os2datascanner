@@ -56,6 +56,8 @@
 
 - When scanning for dead links in webscans, links will only be matched if they return either a 404, 410, 421, 423 or 451 status code.
 
+- Worker processes clean up their temporary files more aggressively.
+
 ### Bugfixes
 
 - Adjusted media root to support profile images uploaded by the user.
@@ -73,6 +75,8 @@
 - Contexts are now also shown for name and address rule matches.
 
 - CPR number-like strings are now pruned more aggressively from all match contexts.
+
+- Automatic match handling is now enabled again for LibreOffice and PDF documents.
 
 ## Version 3.17.0, 31st October 2022
 

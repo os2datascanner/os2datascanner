@@ -7,13 +7,6 @@ from ...rules.rule import Rule
 
 logger = structlog.get_logger(__name__)
 
-# A set of type_labels with which to ignore false matches
-MATCHER_FILTER_TYPES = (
-    "lo-object",
-    "pdf-object",
-    "pdf-page",
-    )
-
 
 def is_handle_relevant(handle: Handle, filter_rule: Rule) -> bool:
     """Checks whether a handle should be skipped based on the exclusion rule

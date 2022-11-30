@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
@@ -12,6 +13,26 @@ from os2datascanner.projects.report.organizations.models import Organization, Ac
 # Register your models here.
 
 
+class ScannerJobFilter(admin.SimpleListFilter):
+    title = _("scanner job")
+
+    parameter_name = "scanner"
+
+    def lookups(self, request, model_admin):
+        # Get all (scanner job name, scanner primary key) tuples
+        objects = DocumentReport.objects.order_by("-scanner_job_pk").only(
+                "scanner_job_name", "scanner_job_pk").distinct(
+                "scanner_job_name", "scanner_job_pk")
+        return (
+            (o.scanner_job_pk, o.scanner_job_name) for o in objects
+        )
+
+    def queryset(self, request, queryset):
+        v = self.value()
+        if v is not None:
+            return queryset.filter(scanner_job_pk=v)
+
+
 @admin.register(DocumentReport)
 class DocumentReportAdmin(admin.ModelAdmin):
     list_display = (
@@ -22,6 +43,10 @@ class DocumentReportAdmin(admin.ModelAdmin):
         'aliases',
         'resolution_status',
         'resolution_time', 'only_notify_superadmin')
+
+    list_filter = (
+        'organization',
+        ScannerJobFilter,)
 
     def aliases(self, dr):
         return ", ".join([alias_relation.account.username
