@@ -58,6 +58,8 @@
 
 - Worker processes clean up their temporary files more aggressively.
 
+- Email notification logic refactored. Command now has more flags available for testing purposes and email text now gives recipient more details.S
+
 ### Bugfixes
 
 - Adjusted media root to support profile images uploaded by the user.
