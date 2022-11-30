@@ -83,6 +83,21 @@ class Retrier:
         return _bind
 
 
+class DummyRetrier(Retrier):
+    """A DummyRetrier is a Retrier with an empty exception set. There are no
+    circumstances in which it will actually run an operation more than once,
+    and any exceptions produced by the run() function will be raised
+    immediately.
+
+    (This is chiefly useful when you want to disable retrier functionality in
+    some circumstances without having to refactor the code that uses it.)"""
+    def __init__(self):
+        super().__init__()
+
+    def _should_retry(self, ex):
+        return False
+
+
 class CountingRetrier(Retrier):
     """A CountingRetrier tracks the number of attempts made to call an
     operation, and gives up after a certain number."""
