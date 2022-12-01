@@ -426,10 +426,6 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
                 form.add_error("password",
                                _("Password must be updated, when changing username or url."))
                 return super().form_invalid(form)
-        # Compare the previous set of rules with new selection of rules
-        if not set(self.old_rules) == set(form.cleaned_data["rules"]):
-            # Reset last scanner-run timestamp if the rule sets differ
-            self.object.e2_last_run_at = None
         return super().form_valid(form)
 
 
