@@ -64,7 +64,7 @@
 
 - Adjusted media root to support profile images uploaded by the user.
 
-- Path is shown corretly when editing Office 365 scannerjobs 
+- Path is shown correctly when editing Office 365 scannerjobs 
 
 - "Completed scans" table now has a column showing number of results found in associated scan
 
@@ -81,6 +81,8 @@
 - Automatic match handling is now enabled again for LibreOffice and PDF documents.
 
 - Certain sensitive internal operations are now exempted from timeout control.
+
+- Scannerjob timestamp for last modified is now based on last successful run's start time for better accuracy.
 
 ## Version 3.17.0, 31st October 2022
 
