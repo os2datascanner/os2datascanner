@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-01 09:32+0100\n"
+"POT-Creation-Date: 2022-12-01 13:48+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -228,12 +228,12 @@ msgid "go to the front page"
 msgstr "gå til forsiden"
 
 #: reportapp/templates/components/faq_toc.html:7
-#: reportapp/templates/manual.html:88
+#: reportapp/templates/manual.html:90
 msgid "Why doesn't 'handle' delete my file or email?"
 msgstr "Hvorfor sletter 'Håndtér'-knappen ikke min fil eller e-mail?"
 
 #: reportapp/templates/components/faq_toc.html:13
-#: reportapp/templates/manual.html:92
+#: reportapp/templates/manual.html:94
 msgid "Why can't I open file scan matches?"
 msgstr "Hvorfor kan jeg ikke åbne matches fra filscan?"
 
@@ -747,11 +747,11 @@ msgstr "Tak fordi du brugte OS2datascanner."
 msgid "again"
 msgstr "igen"
 
-#: reportapp/templates/manual.html:20 reportapp/templates/manual.html:85
+#: reportapp/templates/manual.html:20 reportapp/templates/manual.html:87
 msgid "Frequently Asked Questions"
 msgstr "Ofte stillede spørgsmål"
 
-#: reportapp/templates/manual.html:86
+#: reportapp/templates/manual.html:88
 msgid ""
 "Here you can find answers to questions frequently asked by other users of "
 "OS2datascanner."
@@ -759,7 +759,7 @@ msgstr ""
 "Her kan du finde svar på de oftest stillede spørgsmål af andre brugere af "
 "OS2datascanner."
 
-#: reportapp/templates/manual.html:89
+#: reportapp/templates/manual.html:91
 msgid ""
 "For security reasons, OS2datascanner cannot interact with your files or "
 "emails in any way. For this reason, you must manually delete or handle the "
@@ -771,7 +771,7 @@ msgstr ""
 "eller på anden måde håndtere den matchede fil. Tryk på 'Håndtér'-knappen i "
 "OS2datascanner fjerner kun matchet fra oversigten."
 
-#: reportapp/templates/manual.html:90
+#: reportapp/templates/manual.html:92
 msgid ""
 "You can manually access the file or email by pressing the 'copy'- or 'open'-"
 "buttons below the name of the match."
@@ -779,7 +779,7 @@ msgstr ""
 "Du kan manuelt tilgå filen eller e-mailen ved at trykke på 'kopier'- eller "
 "'åben'-knapperne under navnet på matchet."
 
-#: reportapp/templates/manual.html:93
+#: reportapp/templates/manual.html:95
 msgid ""
 "OS2datascanner is not located on your computer, but on an external server. "
 "You are accessing that server through your browser."
@@ -787,7 +787,7 @@ msgstr ""
 "OS2datascanner befinder sig ikke på din computer, men på en ekstern server. "
 "Du tilgår denne server gennem din browser."
 
-#: reportapp/templates/manual.html:94
+#: reportapp/templates/manual.html:96
 msgid ""
 "For security reasons, modern browsers are not allowed to open a file on your "
 "computer. This also prevents OS2datascanner from doing the same."
@@ -795,7 +795,7 @@ msgstr ""
 "Af sikkerhedsårsager har moderne browsere ikke adgang til, at åbne filer på "
 "din computer. Dette forhindrer også OS2datascanner i det samme."
 
-#: reportapp/templates/manual.html:95
+#: reportapp/templates/manual.html:97
 msgid ""
 "To find the file, which a match has been found in, click the 'Copy Folder' "
 "button on the match, then open your pathfinder on your computer, and paste "

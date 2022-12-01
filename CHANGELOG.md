@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.17.1, 
+## Version 3.17.1, 1st December 2022
 
 "Catchy Title"
 
