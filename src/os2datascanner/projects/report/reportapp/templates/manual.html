@@ -53,7 +53,7 @@
               </a>
               <p>Figur 22: Login - Rapportmodul</p>
             </div>
-            <p>Logger brugeren ind, vil vedkommende altså, baseret på sin bruger i organisationen, se de matches, som vedkommende har ansvaret for at håndtere. Fra rapportmodulet kan man så åbne de relevante filer for at undersøge matchene. Vær opmærksom på at ved åbning af filer fra et netværksdrev kan denne funktionalitet kræve ekstra opsætning, se bilag: <a href="#åben-filscan">Åbning af matches...</a></p>
+            <p>Logger brugeren ind, vil vedkommende altså, baseret på sin bruger i organisationen, se de matches, som vedkommende har ansvaret for at håndtere. Fra rapportmodulet kan man så åbne de relevante filer for at undersøge matchene. Vær opmærksom på at ved åbning af filer fra et netværksdrev kan denne funktionalitet kræve ekstra opsætning. {%comment%}se bilag: <a href="#åben-filscan">Åbning af matches...</a>{%endcomment%}</p>
 
           <h2 id="håndtering">Håndtering af matches</h2>
             <div id="figure-23" class="figure-container">
@@ -62,14 +62,14 @@
               </a>
               <p>Figur 23: Rapportmodul - Forside</p>
             </div>
-            <p>Herfra kan man enten åbne den relevante fil eller mail direkte fra rapportmodulet ved at trykke “Åbn”, eller man kan vælge “Kopiér” for at kopiere stien ind i sin browser. Skal man kunne åbne matches direkte fra systemet, skal systemet have tilladelse til dette. Der findes en beskrivelse af, hvordan dette opsættes i <a href="#">Teknisk implementering og opsætning af OS2datascanner</a>.</p>
+            <p>Herfra kan man enten åbne den relevante fil eller mail direkte fra rapportmodulet ved at trykke “Åbn”, eller man kan vælge “Kopiér” for at kopiere stien ind i sin browser. Skal man kunne åbne matches direkte fra systemet, skal systemet have tilladelse til dette. {% comment %}Der findes en beskrivelse af, hvordan dette opsættes i <a href="#">Teknisk implementering og opsætning af OS2datascanner</a>.{%endcomment%}</p>
             <p>Når brugerne har fundet det match, som skal håndteres, skal man manuelt fjerne eller redigere det relevante match.</p>
             <p>Eksempel: Hvis man har en fil, som giver et match, skal man åbne filen og fjerne eller redigere den del, som OS2datascanner har reageret på. Det samme gør sig gældende ved både mails og websites.</p>
             <p>Når man manuelt har fjernet eller redigeret det pågældende match, skal dette markeres som håndteret i rapportmodulet. Det gøres ved at vælge “Håndtér”.</p>
             <p>Hvis filen/mailen er blevet slettet og en ny scanning køres, vil dataen håndteres automatisk.</p>
 
           <h2 id="arkiv">Arkiv</h2>
-            <p>I “arkiv”-fanen kan du tilgå tidligere håndterede matches. Her kan status af hvert resultat også redigeres, f.ek.s. i tilfælde af fejlagtigt håndterede matches.</p>
+            <p>I “arkiv”-fanen kan du tilgå tidligere håndterede matches. Her kan status af hvert resultat også redigeres, f.eks. i tilfælde af fejlagtigt håndterede matches.</p>
             <div id="figure-24" class="figure-container">
               <a href="{% static 'manualimages/figur24.png' %}">
                 <img src="{% static 'manualimages/figur24.png' %}">
