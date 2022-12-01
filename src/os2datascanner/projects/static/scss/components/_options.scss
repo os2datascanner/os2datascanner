@@ -111,6 +111,8 @@ label+.dropdown {
 
   &.expand {
 
+    cursor: default;
+
     &+.dropdown-container {
       left: -4rem;
     }
