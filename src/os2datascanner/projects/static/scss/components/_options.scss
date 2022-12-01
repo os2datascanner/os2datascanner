@@ -75,6 +75,9 @@ label+.dropdown {
   background-color: var(--color-widget-bg);
   box-shadow: var(--box-shadow-widget);
 
+  // Apply this to make z-index work on iPad OS
+  -webkit-transform: translate3d(0, 0, 0);
+
   @media (min-width: $break-lg) {
     top: 1.5rem;
   }
