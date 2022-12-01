@@ -12,6 +12,8 @@
 include:
   - project: 'labs/salt-automation'
     file: '/gitlab-ci-templates/common/saltbert.v1.yml'
+  - project: 'labs/salt-automation'
+    file: 'gitlab-ci-templates/common/docker-buildkit-meta.v1.yml'
 
 stages:
   - lint
@@ -35,6 +37,7 @@ variables:
   ADMIN_IMAGE: ${CI_REGISTRY_IMAGE}/admin:${CI_COMMIT_SHA}
   ENGINE_IMAGE: ${CI_REGISTRY_IMAGE}/engine:${CI_COMMIT_SHA}
   API_IMAGE: ${CI_REGISTRY_IMAGE}/api:${CI_COMMIT_SHA}
+  DOCKERFILE_DIR: ${CI_PROJECT_DIR}/docker/base
 
 
 # Lint stage
@@ -92,81 +95,52 @@ Lint js scripts:
       --config .jshintrc
       --exclude-path .jshintignore
 
-.build-buildkit: &build-buildkit
-  stage: build
-  needs: []
-  tags:
-    - buildkit
-  image:
-    name: moby/buildkit:rootless
-    entrypoint: ["sh", "-c"]
-  variables:
-    BUILDKITD_FLAGS: --oci-worker-no-process-sandbox
-    BUILDKIT_PROGRESS: plain
-  script:
-    - export DOCKERFILE_DIR=${CI_PROJECT_DIR}/docker/base
-    - export DOCKER_CONTEXT=${CI_PROJECT_DIR}
-    - |
-      mkdir ~/.docker
-      ci_auth=$(echo -n "$CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD" | base64)
-      echo "{\"auths\": {\"$CI_REGISTRY\": {\"auth\": \"$ci_auth\"}}}" > ~/.docker/config.json
-      buildctl-daemonless.sh build \
-          --frontend=dockerfile.v0 \
-          --local context=$DOCKER_CONTEXT \
-          --local dockerfile=$DOCKERFILE_DIR \
-          --import-cache type=registry,ref=$IMAGE_CACHE_REGISTRY \
-          --export-cache type=registry,ref=$IMAGE_CACHE_REGISTRY \
-          --output type=image,name=$IMAGE_NAME,push=true \
-          $EXTRA_BUILD_OPTS
-
 # Pre-build stage
 Build base image:
-  extends:
-    - .build-buildkit
+  extends: .build-buildkit
   stage: pre-build
-  before_script:
-    - export IMAGE_NAME=${BASE_IMAGE}
-    - export IMAGE_CACHE_REGISTRY=${CI_REGISTRY_IMAGE}/cache-base
-    - export EXTRA_BUILD_OPTS="--opt target=base"
+  variables:
+    CI_IMAGE: ${BASE_IMAGE}
+    IMAGE_CACHE_REGISTRY: ${CI_REGISTRY_IMAGE}/cache-base
+    TARGET: base
 
 # Build stage
 ##############
 .build-default: &build-default
-  extends:
-    - .build-buildkit
+  extends: .build-buildkit
   needs: ["Build base image"]
+  variables:
+    # All images need to set the BASE_IMAGE arg to ensure that the base image
+    # used is the one we just built
+    EXTRA_BUILD_OPTS: --opt build-arg:BASE_IMAGE=${BASE_IMAGE}
 
 Build Report Application:
-  extends:
-    - .build-default
-  before_script:
-    - export IMAGE_NAME=${REPORT_IMAGE}
-    - export IMAGE_CACHE_REGISTRY=${CI_REGISTRY_IMAGE}/cache-report
-    - export EXTRA_BUILD_OPTS="--opt build-arg:BASE_IMAGE=${BASE_IMAGE} --opt target=report"
+  extends: .build-default
+  variables:
+    CI_IMAGE: ${REPORT_IMAGE}
+    IMAGE_CACHE_REGISTRY: ${CI_REGISTRY_IMAGE}/cache-report
+    TARGET: report
 
 Build Admin Application:
-  extends:
-    - .build-default
-  before_script:
-    - export IMAGE_NAME=${ADMIN_IMAGE}
-    - export IMAGE_CACHE_REGISTRY=${CI_REGISTRY_IMAGE}/cache-admin
-    - export EXTRA_BUILD_OPTS="--opt build-arg:BASE_IMAGE=${BASE_IMAGE} --opt target=admin"
+  extends: .build-default
+  variables:
+    CI_IMAGE: ${ADMIN_IMAGE}
+    IMAGE_CACHE_REGISTRY: ${CI_REGISTRY_IMAGE}/cache-admin
+    TARGET: admin
 
 Build Engine:
-  extends:
-    - .build-default
-  before_script:
-    - export IMAGE_NAME=${ENGINE_IMAGE}
-    - export IMAGE_CACHE_REGISTRY=${CI_REGISTRY_IMAGE}/cache-engine
-    - export EXTRA_BUILD_OPTS="--opt build-arg:BASE_IMAGE=${BASE_IMAGE} --opt target=engine"
+  extends: .build-default
+  variables:
+    CI_IMAGE: ${ENGINE_IMAGE}
+    IMAGE_CACHE_REGISTRY: ${CI_REGISTRY_IMAGE}/cache-engine
+    TARGET: engine
 
 Build API:
-  extends:
-    - .build-default
-  before_script:
-    - export IMAGE_NAME=${API_IMAGE}
-    - export IMAGE_CACHE_REGISTRY=${CI_REGISTRY_IMAGE}/cache-api
-    - export EXTRA_BUILD_OPTS="--opt build-arg:BASE_IMAGE=${BASE_IMAGE} --opt target=api"
+  extends: .build-default
+  variables:
+    CI_IMAGE: ${API_IMAGE}
+    IMAGE_CACHE_REGISTRY: ${CI_REGISTRY_IMAGE}/cache-api
+    TARGET: api
 
 # Test stage
 #############
