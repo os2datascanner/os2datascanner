@@ -260,7 +260,7 @@
     }
 
     &--actions {
-      width: 14rem;
+      width: 15rem;
       word-wrap: break-word;
 
       .action-wrapper {
@@ -416,7 +416,7 @@
     font-weight: bold;
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
-    z-index: 2;
+    z-index: 1;
     border-top: 1px solid rgba(0, 0, 0, 0.2);
     background-color: #f4f4f4;
     white-space: nowrap;
