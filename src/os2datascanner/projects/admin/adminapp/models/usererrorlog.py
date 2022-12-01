@@ -62,3 +62,7 @@ class UserErrorLog(models.Model):
         else:
             return self.error_message
     user_friendly_error_message.fget.short_description = _('User friendly error message')
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.path} | "\
+            f"{self.error_message} ({self.organization})>"

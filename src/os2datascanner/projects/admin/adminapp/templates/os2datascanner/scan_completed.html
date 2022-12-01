@@ -52,7 +52,7 @@
                     {% include "components/resolve-status.html" %}
                     <div class="view-options">
                       <button type="button" class="button button--has-icon" name="status-resolved-all"
-                              hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content"
+                              hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content" hx-select=".content"
                               hx-confirm="{% trans "You are about to delete" %} {{ page_obj.paginator.count }}{% trans " scan status data. This action cannot be reverted. Are you sure?" %}"
                       >
                         <svg class="icon">
@@ -151,7 +151,7 @@
                           <button type="button" class="button" name="status-resolved"
                                   hx-post="" hx-swap="outerHTML" hx-trigger="click" 
                                   hx-target=".content" hx-vals='{"pk": "{{ status.pk|unlocalize }}"}' 
-                                  hx-indicator="closest tr"
+                                  hx-indicator="closest tr" hx-select=".content"
                           >
                             <svg class="icon">
                               <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>

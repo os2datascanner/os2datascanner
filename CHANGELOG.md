@@ -84,6 +84,8 @@
 
 - Scannerjob timestamp for last modified is now based on last successful run's start time for better accuracy.
 
+- The explorer process is now correctly logged.
+
 ## Version 3.17.0, 31st October 2022
 
 "Refreshed Rabbit"
