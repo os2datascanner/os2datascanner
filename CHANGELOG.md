@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 3.17.2,
+
+"Bugs Bunny"
+
+### Bugfixes
+
+- /status-completed no longer crashes, if some ScanStatus objects do not have Snapshots.
+
 ## Version 3.17.1, 1st December 2022
 
 "Catchy Title"

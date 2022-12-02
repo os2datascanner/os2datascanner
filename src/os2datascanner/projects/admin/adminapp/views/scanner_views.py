@@ -184,7 +184,7 @@ class StatusCompleted(StatusBase):
                 fraction_scanned = snapshot.scanned_objects/status.total_objects
                 snapshot_data.append({"x": seconds_since_start, "y": fraction_scanned*100})
             snapshots[status.pk] = snapshot_data
-            total_scan_times[status.pk] = snapshot_data[-1]["x"]
+            total_scan_times[status.pk] = snapshot_data[-1]["x"] if snapshot_data else None
 
         context['snapshots'] = snapshots
         context['total_scan_times'] = total_scan_times

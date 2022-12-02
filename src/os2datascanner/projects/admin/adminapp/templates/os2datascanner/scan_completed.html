@@ -141,7 +141,13 @@
                         <span class="completed_icon">
                           {% include "components/svg-icons/check_circle_full.svg" %}
                           <span class="width">
-                            {% trans "Finished in" %} {% with total_scan_times|get_item:status.pk as scan_time %}{{ scan_time|format_timespan }}{% endwith %}
+                            {% with total_scan_times|get_item:status.pk as scan_time %}
+                            {% if scan_time %}
+                              {% trans "Finished in" %} {{ scan_time|format_timespan }}
+                            {% else %}
+                              {% trans "Finished" %}
+                            {% endif %}
+                            {% endwith %}
                           </span>
                         </span>
                       </td>
