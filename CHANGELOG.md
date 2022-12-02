@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.17.2,
+## Version 3.17.2, 2nd December 2022
 
 "Bugs Bunny"
 
