@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-01 13:48+0100\n"
+"POT-Creation-Date: 2022-12-02 08:58+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -1089,19 +1089,23 @@ msgstr "resultat"
 msgid "results"
 msgstr "resultater"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:144
+#: adminapp/templates/os2datascanner/scan_completed.html:146
 msgid "Finished in"
 msgstr "Afsluttet på"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:160
+#: adminapp/templates/os2datascanner/scan_completed.html:148
+msgid "Finished"
+msgstr "Afsluttet"
+
+#: adminapp/templates/os2datascanner/scan_completed.html:166
 msgid "Show/hide timeline"
 msgstr "Vis/skjul tidslinje"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:187
+#: adminapp/templates/os2datascanner/scan_completed.html:193
 msgid "Timeline"
 msgstr "Tidslinje"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:206
+#: adminapp/templates/os2datascanner/scan_completed.html:212
 msgid "no scans done"
 msgstr "der er ingen udførte scanninger"
 
