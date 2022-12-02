@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 3.17.3,
+
+"Mo' Money, Mo' Problems"
+
+### Bugfixes
+
+- "Completed scans" now correctly display charts after the first 1000 scans.
+
 ## Version 3.17.2, 2nd December 2022
 
 "Bugs Bunny"
