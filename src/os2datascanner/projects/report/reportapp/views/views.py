@@ -682,9 +682,8 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
         # This operation should NOT be done here. The whole point of having the
         # match_count in a db field is to increase performance. Move this to
         # somehwere it makes sense.
-        # for employee in self.employees:
-        #     employee.account.count_matches()
-        #     employee.account.calculate_status()
+        for employee in self.employees:
+            employee.account.save()
 
         context['order_by'] = self.request.GET.get('order_by', 'account__first_name')
         context['order'] = self.request.GET.get('order', 'ascending')
@@ -735,8 +734,6 @@ class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         account = Account.objects.get(uuid=self.request.GET.get("account"))
-        account.count_matches()
-        account.calculate_status()
         context["account"] = account
         matches_by_week = count_matches_by_week(account)
         context["matches_by_week"] = matches_by_week

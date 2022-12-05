@@ -67,6 +67,7 @@ Single-colored icons can be modified like so:
 .level-label--3 {
   border-left-color: var(--color-critical);
 }
+
 /* datatable severity icons, stop */
 
 
@@ -76,14 +77,14 @@ Single-colored icons can be modified like so:
   height: 2rem;
   width: 2rem;
 
-  > svg {
+  >svg {
     display: block;
     height: 100%;
     fill: #50565d;
     width: 100%;
   }
 
-  &--msgraph-files svg{
+  &--msgraph-files svg {
     fill: var(--color-main);
   }
 
@@ -91,9 +92,21 @@ Single-colored icons can be modified like so:
     fill: var(--color-main);
   }
 
-  &--ews svg{
+  &--ews svg {
     fill: #EEB441;
   }
 
 }
+
 /* file type icons, stop */
+
+.help-tooltip {
+
+  svg {
+    fill: var(--color-text-secondary);
+    height: 1em;
+    width: 1em;
+
+    vertical-align: text-top;
+  }
+}

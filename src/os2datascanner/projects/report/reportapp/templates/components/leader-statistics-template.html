@@ -88,7 +88,7 @@
           </button>
         </th>
         <th class="datatable__column--matchstatus">
-          <label for="status-caret">{% trans "Status" %}</label>
+          <label for="status-caret">{% trans "Status" %} <span class="help-tooltip" title="{% trans "The status of each user is determined by how many matches that user has, and how often they have handled their matches recently. A user with a “Completed” status has no matches." %}">{% include "components/svg-icons/help.svg" %}</span></label>
           <button
               type="button"
               name="account__match_status"

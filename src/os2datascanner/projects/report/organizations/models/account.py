@@ -88,7 +88,8 @@ class Account(Core_Account):
     def status(self):
         return StatusChoices(self.match_status).label
 
-    def count_matches(self):
+    def _count_matches(self):
+        """Counts the number of matches associated with the account."""
         count = 0
         for alias in self.aliases.all():
             count += alias.match_relation.filter(
@@ -96,9 +97,12 @@ class Account(Core_Account):
                 raw_matches__matched=True,
                 only_notify_superadmin=False).count()
         self.match_count = count
-        self.save()
 
-    def calculate_status(self):
+    def _calculate_status(self):
+        """Calculate the status of the user. The user can have one of three
+        statuses: GOOD, OK and BAD. The status is calulated on the basis of
+        the number of matches associated with the user, and how often the user
+        has handled matches recently."""
         if self.match_count == 0:
             self.match_status = StatusChoices.GOOD
         else:
@@ -115,7 +119,13 @@ class Account(Core_Account):
                 self.match_status = StatusChoices.BAD
             else:
                 self.match_status = StatusChoices.OK
-        self.save()
+
+    def save(self, *args, **kwargs):
+
+        self._count_matches()
+        self._calculate_status()
+
+        super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=Account)
