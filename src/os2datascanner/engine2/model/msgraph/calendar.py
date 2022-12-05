@@ -5,7 +5,7 @@ from dateutil.parser import isoparse
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
-from .utilities import MSGraphSource, ignore_responses
+from .utilities import MSGraphSource, warn_on_httperror
 
 
 class MSGraphCalendarSource(MSGraphSource):
@@ -20,7 +20,7 @@ class MSGraphCalendarSource(MSGraphSource):
             for user in self._list_users(sm):
                 pn = user["userPrincipalName"]
 
-                with ignore_responses(404):
+                with warn_on_httperror(f"calendar check for {pn}"):
                     any_events = sm.open(self).get(
                         "users/{0}/events?$select=id&$top=1".format(pn))
                     if not any_events["value"]:
@@ -29,7 +29,7 @@ class MSGraphCalendarSource(MSGraphSource):
                     yield MSGraphCalendarAccountHandle(self, pn)
         else:
             for pn in self._userlist:
-                with ignore_responses(404):
+                with warn_on_httperror(f"calendar check for {pn}"):
                     any_events = sm.open(self).get(
                         "users/{0}/events?$select=id&$top=1".format(pn))
                     if any_events["value"]:
