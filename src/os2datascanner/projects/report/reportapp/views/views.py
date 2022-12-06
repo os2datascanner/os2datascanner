@@ -657,7 +657,9 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        user_units = OrganizationalUnit.objects.filter(positions__account=self.request.user.account)
+        user_units = OrganizationalUnit.objects.filter(
+            Q(positions__account=self.request.user.account) & Q(positions__role="manager"))
+        print(user_units)
         context['user_units'] = user_units
 
         if unit_uuid := self.request.GET.get('org_unit', None):
@@ -675,13 +677,12 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
             else:
                 self.employees = org_unit.positions.all().select_related('account')
             self.order_employees()
+            # This operation should NOT be done here. Move this to somehwere it makes sense.
+            for employee in self.employees:
+                employee.account.save()
         else:
             self.employees = None
         context["employees"] = self.employees
-
-        # This operation should NOT be done here. Move this to somehwere it makes sense.
-        for employee in self.employees:
-            employee.account.save()
 
         context['order_by'] = self.request.GET.get('order_by', 'account__first_name')
         context['order'] = self.request.GET.get('order', 'ascending')

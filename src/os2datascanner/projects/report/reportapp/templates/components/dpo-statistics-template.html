@@ -4,9 +4,6 @@
 
 <div class="content" hx-push-url="true">
   <div class="content-header">
-  {% if request.path == '/statistics/leader/' %}
-  <h1 class="page-title">{% trans "Leader statistics" %}</h1>
-  {% elif request.path == '/statistics/dpo/' %}
   <h1 class="page-title">{% trans "DPO statistics" %}</h1>
 
   <svg class="page-indicator" id="report-page-indicator" viewbox="0 0 100 100">
@@ -17,7 +14,7 @@
     <form name="stat_form"
           hx-get="{% url "statistics-dpo" %}"
           hx-target=".content" 
-          hx-target=".content" 
+          hx-select=".content" 
           hx-swap="outerHTML" 
           hx-trigger="change"
           hx-indicator="#report-page-indicator">

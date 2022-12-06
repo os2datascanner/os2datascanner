@@ -213,7 +213,7 @@ li>span {
 		font-size: medium;
 	}
 
-	.statistic {
+	.statistic:not(:first-of-type) {
 		margin-top: 0px;
 	}
 
@@ -259,8 +259,9 @@ li>span {
 		color: var(--color-error);
 		font-size: 1rem;
 		position: absolute;
-		right: -25px;
+		left: 100%;
 		top: 0px;
+		font-family: monospace;
 
 		&::before {
 			content: "+";
@@ -271,8 +272,9 @@ li>span {
 		color: var(--color-checkmark);
 		font-size: 1rem;
 		position: absolute;
-		right: -25px;
+		left: 100%;
 		bottom: 0px;
+		font-family: monospace;
 
 		&::before {
 			content: "-";

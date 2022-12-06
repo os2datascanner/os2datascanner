@@ -7,17 +7,21 @@ function showOverview(row, toggleButton) {
   overviewRow.hidden = !buttonOpen;
 }
 
-htmx.onLoad(function (content) {
-  if (hasClass(content, "content") || hasClass(content, "page")) {
+document.addEventListener("DOMContentLoaded",
+  () => {
+    htmx.onLoad(function (content) {
+      if (hasClass(content, "content") || hasClass(content, "page")) {
 
-    expandButtons = document.querySelectorAll(".overview-expand");
+        let expandButtons = document.querySelectorAll(".overview-expand");
 
-    expandButtons.forEach(element => {
-      element.addEventListener("click", function (e) {
-        targ = e.target;
-        let row = closestElement(targ, "tr");
-        showOverview(row, targ);
-      });
+        expandButtons.forEach(element => {
+          element.addEventListener("click", function (e) {
+            targ = e.target;
+            let row = closestElement(targ, "tr");
+            showOverview(row, targ);
+          });
+        });
+      }
     });
   }
-});
+);

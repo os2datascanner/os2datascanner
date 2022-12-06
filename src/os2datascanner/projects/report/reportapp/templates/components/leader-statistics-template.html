@@ -1,8 +1,9 @@
+{% load i18n %}
+{% load l10n %}
+{% load static %}
+{% load handle_extras %}
+
 <div class="content" hx-push-url="true">
-  {% load i18n %}
-  {% load l10n %}
-  {% load static %}
-  {% load handle_extras %}
   
   {% if user_units %}
   <div class="content-header">
@@ -110,11 +111,7 @@
           <td class="datatable__column--name">
             <div class="overflow-ellipsis">
               <strong>
-                {% if employee.account.get_full_name %}
-                  {{ employee.account.get_full_name }}
-                {% else %}
-                  {{ employee.account.username }}
-                {% endif %}
+                {{ employee.account.get_full_name }}
               </strong>
             </div>
           </td>

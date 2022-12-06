@@ -12,13 +12,16 @@
 
   - Total unresolved matches.
 
-  - Different statuses depending on the user's resolution pattern. (TBA)
+  - Different statuses depending on the user's resolution pattern.
 
     - "Finished" for users with no current matches.
 
-    - "Accepted" for users with ???
+    - "Accepted" for users who have handled at least 75% of the amount of new 
+      matches they received in the last 3 weeks.
 
-    - "Not accepted" for users with ???
+    - "Not accepted" for users with who have either not handled any matches in 
+      the last 3 weeks, or have handled less than 75% of the amount of matches 
+      they received in the last 3 weeks.
 
   - Chart of user's resolution pattern for the past year.
 
@@ -45,7 +48,6 @@
   - Only one import type can be active at a time.
 
   - Instructions for setup can be found in the dev-environment.md file.
-
 
 ### Bugfixes
 
