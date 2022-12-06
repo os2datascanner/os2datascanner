@@ -16,6 +16,10 @@
 
   - Instructions for setup can be found in the dev-environment.md file.
 
+### General Improvements
+
+- The entire button can now be clicked in the header menu in the report module.
+
 ### Bugfixes
 
 - "Completed scans" now correctly display charts after the first 1000 scans.

@@ -90,7 +90,9 @@
       }
 
       a {
-        height: 30px;
+        height: 62px;
+        margin-top: -16px;
+        margin-bottom: -16px;
 
         color: var(--color-primary-dark);
 
@@ -112,7 +114,7 @@
           &::after {
             content: "";
             position: absolute;
-            top: 42px;
+            top: 58px;
             left: 10px;
             height: 4px;
             width: inherit;
