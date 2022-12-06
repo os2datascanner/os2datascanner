@@ -16,6 +16,8 @@
 
 - "Completed scans" now correctly display charts after the first 1000 scans.
 
+- Microsoft Graph account discovery is now more robust against unexpected states.
+
 ## Version 3.17.2, 2nd December 2022
 
 "Bugs Bunny"

@@ -138,14 +138,15 @@ class MSGraphSource(Source):
 
 
 @contextmanager
-def ignore_responses(*status_codes):
+def warn_on_httperror(label):
+    """Logs a warning and continues execution if a HTTPError is raised during
+    the life of this context."""
     try:
         yield
     except requests.exceptions.HTTPError as ex:
-        if ex.response.status_code in status_codes:
-            pass
-        else:
-            raise
+        logger.warning(
+                f"{label}: unexpected HTTP {ex.response.status_code}",
+                exc_info=True)
 
 
 class MailFSBuilder:

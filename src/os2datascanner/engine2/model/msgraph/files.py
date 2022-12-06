@@ -4,7 +4,7 @@ from dateutil.parser import isoparse
 
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
-from .utilities import MSGraphSource, ignore_responses
+from .utilities import MSGraphSource, warn_on_httperror
 
 
 class MSGraphFilesSource(MSGraphSource):
@@ -28,7 +28,7 @@ class MSGraphFilesSource(MSGraphSource):
 
     def handles(self, sm):  # noqa
         if self._site_drives:
-            with ignore_responses(404):
+            with warn_on_httperror("SharePoint drive check"):
                 drives = sm.open(self).get("sites/root/drives")
                 for drive in drives["value"]:
                     yield self._make_drive_handle(drive)
@@ -36,13 +36,13 @@ class MSGraphFilesSource(MSGraphSource):
             if self._userlist is None:
                 for user in self._list_users(sm):
                     pn = user["userPrincipalName"]
-                    with ignore_responses(404):
+                    with warn_on_httperror(f"drive check for {pn}"):
                         drive = sm.open(self).get("users/{0}/drive".format(pn))
                         yield self._make_drive_handle(drive)
 
             else:
                 for pn in self._userlist:
-                    with ignore_responses(404):
+                    with warn_on_httperror(f"drive check for {pn}"):
                         drive = sm.open(self).get(f"users/{pn}/drive")
                         yield self._make_drive_handle(drive)
 

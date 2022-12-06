@@ -6,7 +6,7 @@ from dateutil.parser import isoparse
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
-from .utilities import MSGraphSource, ignore_responses, MailFSBuilder
+from .utilities import MSGraphSource, warn_on_httperror, MailFSBuilder
 
 
 class MSGraphMailSource(MSGraphSource):
@@ -22,7 +22,7 @@ class MSGraphMailSource(MSGraphSource):
                 pn = user["userPrincipalName"]  # e.g. dan@contoso.onmicrosoft.com
                 # Getting a HTTP 404 response from the /messages endpoint means
                 # that this user doesn't have a mail account at all
-                with ignore_responses(404):
+                with warn_on_httperror(f"mail check for {pn}"):
                     any_mails = sm.open(self).get(
                         "users/{0}/messages?$select=id&$top=1".format(pn))
                     if not any_mails["value"]:
@@ -33,7 +33,7 @@ class MSGraphMailSource(MSGraphSource):
 
         else:
             for pn in self._userlist:
-                with ignore_responses(404):
+                with warn_on_httperror(f"mail check for {pn}"):
                     any_mails = sm.open(self).get(
                         "users/{0}/messages?$select=id&$top=1".format(pn))
                     if any_mails["value"]:
