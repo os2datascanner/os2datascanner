@@ -24,7 +24,7 @@
 
   - Button for easily sending reminders to the user.
 
-- A modelclass for storing sizes of files now exists
+- A modelclass for storing sizes of files now exist
 
 ### General Improvements
 

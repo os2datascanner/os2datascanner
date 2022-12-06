@@ -102,11 +102,17 @@ Single-colored icons can be modified like so:
 
 .help-tooltip {
 
+  display: none;
+
   svg {
     fill: var(--color-text-secondary);
     height: 1em;
     width: 1em;
 
     vertical-align: text-top;
+  }
+
+  @media (min-width: $break-lg) {
+    display: inline;
   }
 }

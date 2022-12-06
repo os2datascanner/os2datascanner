@@ -15,13 +15,14 @@ import os
 import logging
 
 from PIL import Image
+from datetime import timedelta
 
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
-from django.db.models.query_utils import Q
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 from os2datascanner.core_organizational_structure.models import Account as Core_Account
@@ -103,22 +104,67 @@ class Account(Core_Account):
         statuses: GOOD, OK and BAD. The status is calulated on the basis of
         the number of matches associated with the user, and how often the user
         has handled matches recently."""
-        if self.match_count == 0:
-            self.match_status = StatusChoices.GOOD
-        else:
-            match_query = Q(
-                resolution_status__isnull=True,
-                raw_matches__matched=True,
-                only_notify_superadmin=False)
-            matches = None
-            for alias in self.aliases.all():
-                matches = matches | alias.match_relation.filter(
-                    match_query) if matches else alias.match_relation.filter(match_query)
 
-            if matches.count() > 10:
-                self.match_status = StatusChoices.BAD
-            else:
-                self.match_status = StatusChoices.OK
+        matches_by_week = self.count_matches_by_week(weeks=3)
+
+        total_new = 0
+        total_handled = 0
+        for week_obj in matches_by_week:
+            total_new += week_obj["new"]
+            total_handled += week_obj["handled"]
+
+        if matches_by_week[0]["matches"] == 0:
+            self.match_status = StatusChoices.GOOD
+        elif total_handled == 0 or total_handled/total_new < 0.75:
+            self.match_status = StatusChoices.BAD
+        else:
+            self.match_status = StatusChoices.OK
+
+    def count_matches_by_week(self, weeks: int = 52):  # noqa CCR001
+
+        # This is placed here to avoid circular import
+        from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
+
+        all_matches = list(DocumentReport.objects.filter(
+            raw_matches__matched=True,
+            alias_relation__account=self,
+            only_notify_superadmin=False))
+
+        next_monday = timezone.now() + timedelta(weeks=1) - timedelta(
+                days=timezone.now().weekday(),
+                hours=timezone.now().hour,
+                minutes=timezone.now().minute,
+                seconds=timezone.now().second)
+
+        matches_by_week = []
+
+        for i in range(weeks):
+            begin_monday = next_monday - timedelta(weeks=i+1)
+            end_monday = next_monday - timedelta(weeks=i)
+
+            matches_by_end = 0
+            new_matches = 0
+            handled_matches = 0
+            for match in all_matches:
+                if match.created_timestamp <= end_monday and (
+                            match.resolution_status is None
+                        or match.resolution_time >= end_monday):
+                    matches_by_end += 1
+                if match.created_timestamp <= end_monday \
+                        and match.created_timestamp >= begin_monday:
+                    new_matches += 1
+                if match.resolution_status and match.resolution_time <= end_monday \
+                        and match.resolution_time >= begin_monday:
+                    handled_matches += 1
+
+            matches_by_week.append({
+                "weeknum": begin_monday.isocalendar().week,
+                "matches": matches_by_end,
+                "new": new_matches,
+                "handled": handled_matches,
+            })
+
+        return matches_by_week
 
     def save(self, *args, **kwargs):
 
