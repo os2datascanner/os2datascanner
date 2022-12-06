@@ -20,8 +20,9 @@ from django.core.management import BaseCommand
 from os2datascanner.projects.admin.import_services.models import ImportService
 from os2datascanner.projects.admin.import_services.models import LDAPConfig
 from os2datascanner.projects.admin.import_services.models import MSGraphConfiguration
+from os2datascanner.projects.admin.import_services.models import OS2moConfiguration
 from os2datascanner.projects.admin.import_services.utils import start_ldap_import, \
-    start_msgraph_import
+    start_msgraph_import, start_os2mo_import
 
 """
     This command should be run by a cron job at the desired time
@@ -41,5 +42,7 @@ class Command(BaseCommand):
                 start_ldap_import(conf)
             elif isinstance(conf, MSGraphConfiguration):
                 start_msgraph_import(conf)
+            elif isinstance(conf, OS2moConfiguration):
+                start_os2mo_import(conf)
             else:
                 logger.warning(f"ignoring unknown import service {type(conf).__name__}")

@@ -62,10 +62,11 @@ class ClientAdminForm(forms.ModelForm):
         # TODO: Refactor this to a more maintainable and less hacky.
         selected_sum = sum([int(x) for x in selected])
 
-        if _check_is_both_features_enabled(
+        if _count_enabled_features(
                 selected_sum,
                 Feature.IMPORT_SERVICES,
-                Feature.IMPORT_SERVICES_MS_GRAPH):
+                Feature.IMPORT_SERVICES_MS_GRAPH,
+                Feature.IMPORT_SERVICES_OS2MO) > 1:
             raise ValidationError(_("Only one type of import service can be active at a time."))
 
         # Clean old import services if settings have changed
@@ -92,6 +93,11 @@ class ClientAdminForm(forms.ModelForm):
                 new_settings, old_settings, Feature.IMPORT_SERVICES_MS_GRAPH):
             return
 
+        # If OS2mo import services is still on, don't clean
+        if _check_is_feature_still_enabled(
+                new_settings, old_settings, Feature.IMPORT_SERVICES_OS2MO):
+            return
+
         # Otherwise clear all import_services if features have changed
         client = self.instance
         clear_import_services(client)
@@ -106,8 +112,11 @@ def _check_is_feature_still_enabled(new_settings, old_settings, feature):
     return _is_feature_enabled(new_settings, feature) and _is_feature_enabled(old_settings, feature)
 
 
-def _check_is_both_features_enabled(selected_sum, f1, f2):
-    return _is_feature_enabled(selected_sum, f1) and _is_feature_enabled(selected_sum, f2)
+def _count_enabled_features(selected_sum, *features):
+    enabledFeatures = 0
+    for feature in features:
+        enabledFeatures += _is_feature_enabled(selected_sum, feature)
+    return enabledFeatures
 
 
 def _is_feature_enabled(selected_sum, feature):

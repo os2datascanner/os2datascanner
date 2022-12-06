@@ -17,6 +17,7 @@ djangorestframework
 channels
 channels_redis
 cryptography>=3.2
+email-validator
 
 # At the moment only used during development:
 django_extensions

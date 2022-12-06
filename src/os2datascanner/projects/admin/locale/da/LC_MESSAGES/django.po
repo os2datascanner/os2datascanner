@@ -109,6 +109,7 @@ msgstr "intet scannerjob findes med id {id}"
 #: adminapp/models/apikey.py:16 adminapp/models/rules/rule.py:47
 #: adminapp/models/scannerjobs/scanner.py:78 adminapp/models/usererrorlog.py:44
 #: import_services/models/msgraph_import_job.py:27
+#: import_services/models/os2mo_import_job.py:18
 #: import_services/models/realm.py:29
 msgid "organization"
 msgstr "organisation"
@@ -143,7 +144,7 @@ msgstr "Login metode"
 msgid "Rule"
 msgstr "Regel"
 
-#: adminapp/models/rules/rule.py:40 core/models/client.py:73
+#: adminapp/models/rules/rule.py:40 core/models/client.py:74
 #: organizations/templates/organizations/org_table.html:48
 msgid "name"
 msgstr "navn"
@@ -517,7 +518,8 @@ msgstr "Regler"
 #: adminapp/templates/partials/breadcrumb.html:69
 #: adminapp/templates/partials/breadcrumb.html:77
 #: adminapp/templates/partials/breadcrumb.html:85
-#: adminapp/templates/partials/breadcrumb.html:97 organizations/apps.py:8
+#: adminapp/templates/partials/breadcrumb.html:97
+#: adminapp/templates/partials/breadcrumb.html:109 organizations/apps.py:8
 #: organizations/templates/organizations/org_list.html:6
 msgid "organizations"
 msgstr "organisationer"
@@ -866,9 +868,9 @@ msgstr "ingen fejl fundet."
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status_table.html:103
 #: adminapp/templates/os2datascanner/scanners.html:166
-#: organizations/templates/organizations/org_table.html:57
-#: organizations/templates/organizations/org_table.html:209
-#: organizations/templates/organizations/org_table.html:222
+#: organizations/templates/organizations/org_table.html:59
+#: organizations/templates/organizations/org_table.html:270
+#: organizations/templates/organizations/org_table.html:284
 msgid "Delete"
 msgstr "Slet"
 
@@ -1563,6 +1565,14 @@ msgstr "Tilføj Microsoft Graph konfiguration"
 msgid "update MS Graph configuration"
 msgstr "opdatér Microsoft Graph konfiguration"
 
+#: adminapp/templates/partials/breadcrumb.html:114
+msgid "add OS2mo configuration"
+msgstr "tilføj OS2mo-konfiguration"
+
+#: adminapp/templates/partials/breadcrumb.html:116
+msgid "update OS2mo configuration"
+msgstr "opdatér OS2mo-konfiguration"
+
 #: adminapp/templates/password_change_done.html:6
 #: adminapp/templates/password_change_done.html:12
 msgid "Password change successful"
@@ -1764,7 +1774,7 @@ msgctxt "Verbose name for core app"
 msgid "Management"
 msgstr "Administration"
 
-#: core/forms.py:32 core/models/client.py:87
+#: core/forms.py:32 core/models/client.py:88
 msgid "enabled features"
 msgstr "aktiverede features"
 
@@ -1772,7 +1782,7 @@ msgstr "aktiverede features"
 msgid "Select a feature to enable it for this client."
 msgstr "Vælg en feature for at aktivere den for denne kunde."
 
-#: core/forms.py:40 core/models/client.py:93
+#: core/forms.py:40 core/models/client.py:94
 msgid "activated scan types"
 msgstr "tilgængelige scannertyper"
 
@@ -1780,7 +1790,7 @@ msgstr "tilgængelige scannertyper"
 msgid "Select a scan type to activate it for this client."
 msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 
-#: core/forms.py:69
+#: core/forms.py:70
 msgid "Only one type of import service can be active at a time."
 msgstr "Kun en type af importservice kan være aktiveret."
 
@@ -1808,7 +1818,7 @@ msgstr "{0} fejlede job(s)."
 msgid "user"
 msgstr "bruger"
 
-#: core/models/administrator.py:37 core/models/client.py:113
+#: core/models/administrator.py:37 core/models/client.py:114
 #: organizations/models/organization.py:38
 msgid "client"
 msgstr "kunde"
@@ -1859,7 +1869,7 @@ msgstr "kørselsstatus"
 
 #: core/models/background_job.py:62
 msgid "last status message"
-msgstr "sidst status-besked"
+msgstr "sidste status-besked"
 
 #: core/models/client.py:26
 msgid "web scan"
@@ -1908,25 +1918,29 @@ msgstr "understøttelse af strukturerede organisationer"
 #: core/models/client.py:49 import_services/apps.py:8
 #: import_services/models/import_service.py:44
 msgid "import services"
-msgstr "importservicer"
+msgstr "importtjenester"
 
 #: core/models/client.py:50
 msgid "import services (MS Graph)"
-msgstr "importservices (MS Graph)"
+msgstr "importtjenester (MS Graph)"
 
-#: core/models/client.py:68
+#: core/models/client.py:51
+msgid "import services (OS2mo)"
+msgstr "importtjenester (OS2mo)"
+
+#: core/models/client.py:69
 msgid "client ID"
 msgstr "kunde-ID"
 
-#: core/models/client.py:77
+#: core/models/client.py:78
 msgid "e-mail"
 msgstr "e-mail"
 
-#: core/models/client.py:81
+#: core/models/client.py:82
 msgid "phone number"
 msgstr "telefonnummer"
 
-#: core/models/client.py:114
+#: core/models/client.py:115
 msgid "clients"
 msgstr "kunder"
 
@@ -2201,6 +2215,23 @@ msgstr "LDAP-konfiguration"
 msgid "LDAP configurations"
 msgstr "LDAP-konfigurationer"
 
+#: import_services/models/msgraph_configuration.py:13
+msgid "MSGraph configuration"
+msgstr "MSGraph-konfiguration"
+
+#: import_services/models/msgraph_configuration.py:14
+msgid "MSGraph configurations"
+msgstr "MSGraph-konfigurationer"
+
+#: import_services/models/os2mo_configuration.py:9
+#: import_services/templates/import_services/os2mo_edit.html:5
+msgid "OS2mo configuration"
+msgstr "OS2mo-konfiguration"
+
+#: import_services/models/os2mo_configuration.py:10
+msgid "OS2mo configurations"
+msgstr "OS2mo-konfigurationer"
+
 #: import_services/models/realm.py:24
 msgid "realm id"
 msgstr "realm id"
@@ -2276,6 +2307,35 @@ msgstr ""
 "Denne organisationsstruktur ligger i skyen, og en eksterne tjeneste skal "
 "tillade OS2datascanner adgang til dens indhold."
 
+#: import_services/templates/import_services/os2mo_edit.html:13
+msgid "connect to OS2mo"
+msgstr "opret forbindelse til OS2mo"
+
+#: import_services/templates/import_services/os2mo_edit.html:15
+msgid "Add OS2mo configuration for organization:"
+msgstr "Tilføj OS2mo-konfiguration til organisationen:"
+
+#: import_services/templates/import_services/os2mo_edit.html:25
+msgid "save OS2mo configuration"
+msgstr "tilføj OS2mo-konfiguration"
+
+#: import_services/templates/import_services/os2mo_errorview.html:15
+msgid "Configure OS2mo"
+msgstr "Konfigurér OS2mo"
+
+#: import_services/templates/import_services/os2mo_errorview.html:19
+msgid "An error occurred while trying to connect to OS2mo"
+msgstr "Der skete en fejl ved forsøget på at forbinde til OS2mo"
+
+#: import_services/templates/import_services/os2mo_errorview.html:22
+msgid "You need the right Client ID- and Secret to import from OS2mo"
+msgstr ""
+"Du har brug for den korrekte Client ID- og Secret for at importere fra OS2mo"
+
+#: import_services/templates/import_services/os2mo_errorview.html:27
+msgid "return to organizations page"
+msgstr "vend tilbage til organisationer-siden"
+
 #: organizations/models/organization.py:44
 msgid "slug"
 msgstr "slug"
@@ -2319,26 +2379,54 @@ msgid "phone"
 msgstr "telefon"
 
 #: organizations/templates/organizations/org_table.html:54
-msgid "Import service (Microsoft Graph)"
+msgid "import service (Microsoft Graph)"
 msgstr "Importservice (Microsoft Graph)"
 
-#: organizations/templates/organizations/org_table.html:95
-#: organizations/templates/organizations/org_table.html:103
+#: organizations/templates/organizations/org_table.html:56
+msgid "import service (OS2mo)"
+msgstr "importtjenester (OS2mo)"
+
+#: organizations/templates/organizations/org_table.html:85
+msgid "Add LDAP configuration"
+msgstr "Tilføj LDAP-konfiguration"
+
+#: organizations/templates/organizations/org_table.html:94
+msgid "Edit LDAP configuration"
+msgstr "Redigér LDAP-konfiguration"
+
+#: organizations/templates/organizations/org_table.html:99
+#: organizations/templates/organizations/org_table.html:107
+#: organizations/templates/organizations/org_table.html:152
 #: organizations/templates/organizations/org_table.html:164
-#: organizations/templates/organizations/org_table.html:171
+#: organizations/templates/organizations/org_table.html:224
+#: organizations/templates/organizations/org_table.html:232
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_table.html:119
-#: organizations/templates/organizations/org_table.html:187
+#: organizations/templates/organizations/org_table.html:123
+#: organizations/templates/organizations/org_table.html:176
+#: organizations/templates/organizations/org_table.html:248
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_table.html:221
+#: organizations/templates/organizations/org_table.html:146
+msgid "Add OS2mo configuration"
+msgstr "Tilføj OS2mo-konfiguration"
+
+#: organizations/templates/organizations/org_table.html:200
+#: organizations/templates/organizations/org_table.html:209
+msgid "Add Microsoft Graph configuration"
+msgstr "Tilføj Microsoft Graph-konfiguration"
+
+#: organizations/templates/organizations/org_table.html:219
+msgid "Edit Microsoft Graph configuration"
+msgstr "Redigér Microsoft Graph-konfiguration"
+
+#: organizations/templates/organizations/org_table.html:283
 msgid "Do you really want to delete this organization?"
 msgstr "Er du sikker på, at du vil slette denne organisation?"
 
-#: organizations/templates/organizations/org_table.html:221
+#: organizations/templates/organizations/org_table.html:283
 msgid ""
 "This will delete all associated import- and scannerjobs. The action cannot "
 "be reversed"
@@ -2346,7 +2434,7 @@ msgstr ""
 "Dette vil også slette import- og scannerjobs der tilhører organisationen. "
 "Handlingen kan ikke fortrydes."
 
-#: organizations/templates/organizations/org_table.html:264
+#: organizations/templates/organizations/org_table.html:324
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 

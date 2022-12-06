@@ -48,6 +48,7 @@ class Feature(ModelChoiceFlag):
     ORG_STRUCTURE = (1 << 1, _('structured organization support'))
     IMPORT_SERVICES = (1 << 2, _('import services'))
     IMPORT_SERVICES_MS_GRAPH = (1 << 3, _('import services (MS Graph)'))
+    IMPORT_SERVICES_OS2MO = (1 << 4, _('import services (OS2mo)'))
 
 
 class Client(models.Model):

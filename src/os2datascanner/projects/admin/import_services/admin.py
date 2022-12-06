@@ -1,6 +1,5 @@
 from django.contrib import admin
-
-from .models import LDAPConfig, MSGraphConfiguration, Realm
+from .models import LDAPConfig, MSGraphConfiguration, OS2moConfiguration, Realm
 
 
 # Register your models here.
@@ -19,6 +18,9 @@ class LDAPConfigAdmin(admin.ModelAdmin):
 
 
 admin.site.register(MSGraphConfiguration)
+
+
+admin.site.register(OS2moConfiguration)
 
 
 @admin.register(Realm)

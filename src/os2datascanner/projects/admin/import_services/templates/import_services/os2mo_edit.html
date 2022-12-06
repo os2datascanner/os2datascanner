@@ -1,0 +1,29 @@
+{% extends 'organizations/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "OS2mo configuration" %}{% endblock %}
+
+{% block content %}
+    {% include "partials/breadcrumb.html" with page="os2mo"  %}
+
+    <form class="form" method="post">{% csrf_token %}
+        <section class="data-form">
+            <h3>
+                {% trans "connect to OS2mo"|capfirst %}
+            </h3>
+            {% trans "Add OS2mo configuration for organization:" %} {{ organization.name }}
+            <div>
+                <br>
+                <p>UUID:</p>
+                {{ form.organization }}
+            </div>
+        </section>
+
+        <div class="form__group last-btn">
+            <button type="submit" class="button button--cta" name="save">
+                {% trans "save OS2mo configuration"|capfirst %}
+            </button>
+        </div>
+    </form>
+{% endblock %}
