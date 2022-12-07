@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 3.17.4,
+
+"Stay Frosty"
+
+### General Improvements
+
+- The entire button can now be clicked in the header menu in the report module.
+
 ## Version 3.17.3, 7th December 2022
 
 "Mo' Managers, No Problems"
@@ -15,10 +23,6 @@
   - Only one import type can be active at a time.
 
   - Instructions for setup can be found in the dev-environment.md file.
-
-### General Improvements
-
-- The entire button can now be clicked in the header menu in the report module.
 
 ### Bugfixes
 
