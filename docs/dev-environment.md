@@ -391,23 +391,23 @@ OS2datascanner's development environment incorporates OS2mo organisational impor
 functionality. To test functionality, it is required to clone the Git-repository.
 
 1. Clone the repo and start the OS2mo-project
-```
+    ```
     git clone https://github.com/OS2mo/os2mo.git
     cd os2mo
     docker-compose up
-```
+    ```
 2. Go to http://localhost:5000/auth/admin/master/console/#/realms/mo/clients
 3. Enter username and password "admin"
 4. Select the client "dipex"
 5. Go to tab "Credentials"
 6. Copy the "Secret". You can regenerate a new secret here as well
-7. Open the dev-settings.env file in the OS2datascanner-project and scroll down to "[os2mo]"  
+7. Open the dev-settings.toml file in the OS2datascanner-project and scroll down to "[os2mo]"  
 8. Change OS2MO_CLIENT_ID to "dipex" and OS2MO _CLIENT_SECRET to the secret
 9. Start the OS2datascanner-project. Use the "--build" flag to let the updated 
 dev-settings.toml-file take effect.
-```
+    ```
     docker-compose up --build
-```
+    ```
 
 10. Go to http://localhost:8020/admin/core/client/
 11. Change your "client"-object in the Django-admin page to both allow "support of 
