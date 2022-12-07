@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-02 08:58+0100\n"
+"POT-Creation-Date: 2022-12-07 11:07+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -2397,7 +2397,7 @@ msgstr "Redigér LDAP-konfiguration"
 #: organizations/templates/organizations/org_table.html:99
 #: organizations/templates/organizations/org_table.html:107
 #: organizations/templates/organizations/org_table.html:152
-#: organizations/templates/organizations/org_table.html:164
+#: organizations/templates/organizations/org_table.html:160
 #: organizations/templates/organizations/org_table.html:224
 #: organizations/templates/organizations/org_table.html:232
 msgid "sync"
