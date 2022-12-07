@@ -2,15 +2,20 @@
 
 ## Version 3.17.3,
 
-"Dear Leader"
+"Mo' Money, Mo' Problems"
 
 ### New in this version
 
-- The user can now create organizational importjobs for OS2mo
+- It is now possible to import organizational structure from OS2mo.
 
-## Version 3.17.3,
+  - This import type functions like other import types in OS2datascanner (LDAP,    MSGraph), and populates the database with organizational units, accounts and aliases.
 
-"Mo' Money, Mo' Problems"
+  - In addition, this import is also able to import the _position_ of each imported user, which is set in the "position" through-table.
+
+  - Only one import type can be active at a time.
+
+  - Instructions for setup can be found in the dev-environment.md file.
+
 
 ### Bugfixes
 
