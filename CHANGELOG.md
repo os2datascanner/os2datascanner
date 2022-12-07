@@ -1,8 +1,8 @@
 # Changelog
 
-## Version 3.17.3,
+## Version 3.17.3, 7th December 2022
 
-"Mo' Money, Mo' Problems"
+"Mo' Managers, No Problems"
 
 ### New in this version
 
@@ -15,7 +15,6 @@
   - Only one import type can be active at a time.
 
   - Instructions for setup can be found in the dev-environment.md file.
-
 
 ### Bugfixes
 

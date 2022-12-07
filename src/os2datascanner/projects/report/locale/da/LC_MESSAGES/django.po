@@ -8,22 +8,22 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-02 08:58+0100\n"
+"POT-Creation-Date: 2022-12-07 11:07+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: organizations/models/account.py:40
+#: organizations/models/account.py:43
 msgid "User"
 msgstr "Bruger"
 
-#: organizations/models/account.py:43
+#: organizations/models/account.py:46
 msgid "Last handle"
 msgstr "Sidste håndtering"
 
-#: organizations/models/account.py:51
+#: organizations/models/account.py:54
 msgid "image"
 msgstr "billede"
 
