@@ -1,0 +1,81 @@
+# Admin
+pycryptodome
+pytest-django
+python-dateutil
+
+# API
+gunicorn
+gunicorn[gevent]
+
+# Common
+colorama
+click
+google-api-python-client
+oauth2client
+parameterized
+pika==1.2.0
+sortedcontainers
+structlog
+toml
+
+# Engine
+chardet
+defusedxml
+dropbox==10.3.0
+exchangelib
+lxml
+olefile
+Pillow
+prometheus_client
+PyPDF2
+pysmbc
+pytest
+pytest-xdist
+pytest-benchmark
+python-dateutil
+python-magic
+regex
+requests
+xattr
+click
+
+# Lint
+pycodestyle
+
+# Report
+mozilla-django-oidc
+faker
+git+https://github.com/magenta-aps/django-saml2-auth.git@2.3.0
+psutil
+pytest-django
+pysaml2>=5.3.0,<6.0.0
+python3-saml
+randomtimestamp
+
+# Test
+coverage
+unittest-xml-reporting
+
+# Django
+ipython
+Django==3.2.11
+django-model-utils
+django-mptt
+django-prometheus
+django-recurrence
+django-settings-export
+django-storages[google]
+django-structlog
+gunicorn
+uvicorn[standard]
+psycopg2-binary
+whitenoise
+djangorestframework
+channels
+channels_redis
+cryptography>=3.2
+email-validator
+
+# At the moment only used during development:
+django_extensions
+django-debug-toolbar

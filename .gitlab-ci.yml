@@ -11,11 +11,13 @@
 # Saltbert, used for automatic deployment of our test server
 include:
   - project: 'labs/salt-automation'
-    file:
-      - '/gitlab-ci-templates/common/saltbert.v1.yml'
+    file: '/gitlab-ci-templates/common/saltbert.v1.yml'
+  - project: 'labs/salt-automation'
+    file: 'gitlab-ci-templates/common/docker-buildkit-meta.v1.yml'
 
 stages:
   - lint
+  - pre-build
   - build
   - test
   - release
@@ -30,10 +32,12 @@ variables:
   RELEASE_ENGINE_IMAGE: index.docker.io/magentaaps/os2datascanner-engine
   RELEASE_API_IMAGE: index.docker.io/magentaaps/os2datascanner-api
 
+  BASE_IMAGE: ${CI_REGISTRY_IMAGE}/base:${CI_COMMIT_SHA}
   REPORT_IMAGE: ${CI_REGISTRY_IMAGE}/report:${CI_COMMIT_SHA}
   ADMIN_IMAGE: ${CI_REGISTRY_IMAGE}/admin:${CI_COMMIT_SHA}
   ENGINE_IMAGE: ${CI_REGISTRY_IMAGE}/engine:${CI_COMMIT_SHA}
   API_IMAGE: ${CI_REGISTRY_IMAGE}/api:${CI_COMMIT_SHA}
+  DOCKERFILE_DIR: ${CI_PROJECT_DIR}/docker/base
 
 
 # Lint stage
@@ -91,61 +95,52 @@ Lint js scripts:
       --config .jshintrc
       --exclude-path .jshintignore
 
+# Pre-build stage
+Build base image:
+  extends: .build-buildkit
+  stage: pre-build
+  variables:
+    CI_IMAGE: ${BASE_IMAGE}
+    IMAGE_CACHE_REGISTRY: ${CI_REGISTRY_IMAGE}/cache-base
+    TARGET: base
 
 # Build stage
 ##############
-
 .build-default: &build-default
-  stage: build
-  needs: []
-  services: []
-  image:
-    name: gcr.io/kaniko-project/executor:v1.6.0-debug
-    entrypoint: [""]
-  tags:
-    - docker
+  extends: .build-buildkit
+  needs: ["Build base image"]
+  variables:
+    # All images need to set the BASE_IMAGE arg to ensure that the base image
+    # used is the one we just built
+    EXTRA_BUILD_OPTS: --opt build-arg:BASE_IMAGE=${BASE_IMAGE}
 
 Build Report Application:
-  <<: *build-default
-  script:
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor
-      --cache
-      --context=$CI_PROJECT_DIR
-      --dockerfile=$CI_PROJECT_DIR/docker/report/Dockerfile
-      --destination=${REPORT_IMAGE}
-
+  extends: .build-default
+  variables:
+    CI_IMAGE: ${REPORT_IMAGE}
+    IMAGE_CACHE_REGISTRY: ${CI_REGISTRY_IMAGE}/cache-report
+    TARGET: report
 
 Build Admin Application:
-  <<: *build-default
-  script:
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor
-      --cache
-      --context=$CI_PROJECT_DIR
-      --dockerfile=$CI_PROJECT_DIR/docker/admin/Dockerfile
-      --destination=${ADMIN_IMAGE}
+  extends: .build-default
+  variables:
+    CI_IMAGE: ${ADMIN_IMAGE}
+    IMAGE_CACHE_REGISTRY: ${CI_REGISTRY_IMAGE}/cache-admin
+    TARGET: admin
 
 Build Engine:
-  <<: *build-default
-  script:
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor
-      --cache
-      --context=$CI_PROJECT_DIR
-      --dockerfile=$CI_PROJECT_DIR/docker/engine/Dockerfile
-      --destination=${ENGINE_IMAGE}
+  extends: .build-default
+  variables:
+    CI_IMAGE: ${ENGINE_IMAGE}
+    IMAGE_CACHE_REGISTRY: ${CI_REGISTRY_IMAGE}/cache-engine
+    TARGET: engine
 
 Build API:
-  <<: *build-default
-  script:
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor
-      --cache
-      --context=$CI_PROJECT_DIR
-      --dockerfile=$CI_PROJECT_DIR/docker/api/Dockerfile
-      --destination=${API_IMAGE}
-
+  extends: .build-default
+  variables:
+    CI_IMAGE: ${API_IMAGE}
+    IMAGE_CACHE_REGISTRY: ${CI_REGISTRY_IMAGE}/cache-api
+    TARGET: api
 
 # Test stage
 #############

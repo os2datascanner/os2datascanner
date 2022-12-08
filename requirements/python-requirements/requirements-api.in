@@ -1,6 +1,0 @@
--r requirements-common.in
--r requirements-engine.in
--c requirements-engine.txt
-
-gunicorn
-gunicorn[gevent]

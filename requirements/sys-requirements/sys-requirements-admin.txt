@@ -1,7 +1,0 @@
-#######################################################################
-#                                                                     #
-#    All system requirements specific to the administration module    #
-#                                                                     #
-#######################################################################
-
-# Intentionally left empty
