@@ -70,8 +70,10 @@
 
   @media (min-width: $break-lg) {
     display: flex;
+    align-items: center;
     width: 70%;
     position: relative;
+    height: 100%;
     top: 0;
     background: None;
     box-shadow: None;
@@ -79,18 +81,24 @@
     .navi {
       margin-top: 0;
       margin-bottom: 0;
+      height: 100%;
 
       ul {
+        padding-left: 0.5rem;
         display: flex;
+        height: 100%;
+        align-items: center;
       }
 
       li {
         display: inline-block;
         text-decoration: none;
+        height: 100%;
       }
 
       a {
-        height: 30px;
+        height: 100%;
+        padding: 0rem 0.5rem;
 
         color: var(--color-primary-dark);
 
@@ -112,9 +120,9 @@
           &::after {
             content: "";
             position: absolute;
-            top: 42px;
-            left: 10px;
+            top: 58px;
             height: 4px;
+            left: 0;
             width: inherit;
             background-color: var(--color-primary);
           }
