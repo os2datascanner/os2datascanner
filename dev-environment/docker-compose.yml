@@ -6,7 +6,7 @@ services:
       dockerfile: ./dev-environment/Dockerfile
     command: >
       sh -c "set -ex &&
-             pip-compile requirements-all.in"
+             pip-compile --allow-unsafe requirements-all.in"
 
     volumes:
       - ../requirements/python-requirements:/requirements/python-requirements
