@@ -24,6 +24,8 @@
 
   - Instructions for setup can be found in the dev-environment.md file.
 
+- A modelclass for storing sizes of files now exists
+
 ### Bugfixes
 
 - "Completed scans" now correctly display charts after the first 1000 scans.
