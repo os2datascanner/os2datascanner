@@ -214,6 +214,29 @@ class StatusCompleted(StatusBase):
         return self.render_to_response(self.get_context_data())
 
 
+class StatusTimeline(RestrictedDetailView):
+    model = ScanStatus
+    template_name = "components/status-timeline.html"
+    context_object_name = "status"
+    fields = "__all__"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        status = context['status']
+        snapshot_data = []
+        for snapshot in ScanStatusSnapshot.objects.filter(scan_status=status).iterator():
+            seconds_since_start = (snapshot.time_stamp - status.start_time).total_seconds()
+            # Calculating a new fraction, due to early versions of
+            # snapshots not knowing the total number of objects.
+            fraction_scanned = snapshot.scanned_objects/status.total_objects
+            snapshot_data.append({"x": seconds_since_start, "y": fraction_scanned*100})
+
+        context['snapshot_data'] = snapshot_data
+
+        return context
+
+
 class StatusDelete(RestrictedDeleteView):
     model = ScanStatus
     fields = []
