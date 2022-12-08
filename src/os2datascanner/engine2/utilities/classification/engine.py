@@ -174,3 +174,15 @@ class ClassificationEngine:
                  for ident, weight in rv.items()),
                 key=lambda item: item[1],
                 reverse=True)
+
+
+class BonusClassificationEngine(ClassificationEngine):
+    def __init__(self, bonus=10):
+        super().__init__()
+        self._bonus = bonus
+
+    def register_result(self, results: dict, ident: str, weight: int):
+        if not results:
+            # Give the first classification a bonus to its weight
+            weight += self._bonus
+        results[ident] = results.get(ident, 0) + weight
