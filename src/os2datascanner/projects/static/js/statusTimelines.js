@@ -65,22 +65,24 @@ function showTimeline(row, toggleButton) {
   timelinesRow.hidden = !buttonOpen;
 }
 
-htmx.onLoad(function (content) {
-  if (hasClass(content, 'page') || hasClass(content, 'content')) {
+document.addEventListener("DOMContentLoaded", () => {
+  htmx.onLoad(function (content) {
+    if (hasClass(content, 'page') || hasClass(content, 'content')) {
 
-    expandButtons = document.querySelectorAll(".timelines-expand");
+      const expandButtons = document.querySelectorAll(".timelines-expand");
 
-    expandButtons.forEach(element => {
-      element.addEventListener("click", function (e) {
-        targ = e.target;
-        let row = closestElement(targ, "tr");
-        showTimeline(row, targ);
+      expandButtons.forEach(element => {
+        element.addEventListener("click", function (e) {
+          targ = e.target;
+          let row = closestElement(targ, "tr");
+          showTimeline(row, targ);
+        });
       });
-    });
-  } else if (hasClass(content, 'timeline')) {
-    let snapshotData = JSON.parse(content.querySelector('#snapshot_data').textContent);
-    let pk = JSON.parse(content.querySelector('#status_pk').textContent);
+    } else if (hasClass(content, 'timeline')) {
+      let snapshotData = JSON.parse(content.querySelector('#snapshot_data').textContent);
+      let pk = JSON.parse(content.querySelector('#status_pk').textContent);
 
-    drawTimelines(snapshotData, pk);
-  }
+      drawTimelines(snapshotData, pk);
+    }
+  });
 });
