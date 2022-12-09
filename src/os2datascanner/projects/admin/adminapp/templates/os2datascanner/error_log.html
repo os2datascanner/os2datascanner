@@ -12,7 +12,7 @@
 {% block body %}
 {% if not request.headers.hx_request %}
 {% include "partials/header.html" %}
-<main class="wrapper" hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'>
+<main class="wrapper" hx-headers='{"X-CSRFToken": "{{csrf_token}}"}' hx-push-url="true">
     {% include "partials/main.html" with active_tab="status" %}
     {% endif %}
 

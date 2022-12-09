@@ -35,6 +35,12 @@
 
 - The use of "results" and "matches" in the report module is now more consistent.
 
+### Bugfixes
+
+- Pagination options on the "error log"-tab now correctly lead to pages on the same tab.
+
+- Marking an error log as seen is now more smooth, and does not move the entry around.
+
 ## Version 3.17.3, 7th December 2022
 
 "Mo' Managers, No Problems"

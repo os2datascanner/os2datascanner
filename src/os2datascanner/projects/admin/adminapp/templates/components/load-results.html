@@ -11,7 +11,7 @@
         hx-trigger="change"
         hx-target=".content"
         hx-swap="outerHTML"
-        hx-get="{% url "status-completed" %}"
+        hx-get="{{ request.path }}"
 >
 
   <input type="hidden" name="page" id="page" value={{ page_obj.number }}>
