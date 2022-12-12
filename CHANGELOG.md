@@ -33,6 +33,8 @@
 
 - The entire button can now be clicked in the header menu in the report module.
 
+- The use of "results" and "matches" in the report module is now more consistent.
+
 ## Version 3.17.3, 7th December 2022
 
 "Mo' Managers, No Problems"
