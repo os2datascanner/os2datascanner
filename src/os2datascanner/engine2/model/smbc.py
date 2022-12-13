@@ -19,8 +19,10 @@ from .smb import (
     SMBSource, make_smb_url, compute_domain,
     make_full_windows_path, make_presentation_url)
 from .core import Source, Handle, FileResource
+from .core.errors import UncontactableError
 from .file import stat_attributes
 
+import errno
 
 logger = logging.getLogger(__name__)
 
@@ -185,7 +187,15 @@ class SMBCSource(Source):
             elif entity.smbc_type == smbc.FILE:
                 yield SMBCHandle(self, path)
 
-        obj = context.opendir(url)
+        try:
+            obj = context.opendir(url)
+        except ValueError as ex:
+            code = ex.args[0]
+            if code == errno.EINVAL:
+                raise UncontactableError(self._unc) from ex
+            else:
+                raise ex
+
         for dent in obj.getdents():
             yield from handle_dirent([], dent)
 

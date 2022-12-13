@@ -37,6 +37,14 @@ class UserErrorLog(models.Model):
         max_length=1024,
         verbose_name=_('Error message')
     )
+    engine_error = models.JSONField(
+        blank=True,
+        null=True
+    )
+    # {
+    #     "type": "UnavailableError",
+    #     "args": ["www.example.invalid.doesnotexist"]
+    # }
     organization = models.ForeignKey(
         Organization,
         on_delete=models.CASCADE,
@@ -57,6 +65,11 @@ class UserErrorLog(models.Model):
     def user_friendly_error_message(self):
         """Translates an error message into a meaningful instruction
         for the user, if one is available."""
+        if self.engine_error:
+            args = self.engine_error.get("args")
+            if self.engine_error.get("type") == "UnavailableError":
+                return _("Could not open a connection to {0}".format(args[0]))
+
         if self.error_message in translation_table.keys():
             return translation_table[self.error_message]
         else:
