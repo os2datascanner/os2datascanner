@@ -74,7 +74,7 @@ class ExchangeScannerCreate(ExchangeScannerBase, ScannerCreate):
     """Create a exchange scanner view."""
 
     model = ExchangeScanner
-    fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
+    fields = ['name', 'domain', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist', 'only_notify_superadmin',
               'service_endpoint', 'organization', 'org_unit']
     type = 'exchange'
@@ -101,7 +101,7 @@ class ExchangeScannerCopy(ExchangeScannerBase, ScannerCopy):
     """Create a new copy of an existing ExchangeScanner"""
 
     model = ExchangeScanner
-    fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
+    fields = ['name', 'domain', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist', 'only_notify_superadmin',
               'service_endpoint', 'organization', 'org_unit']
     type = 'exchange'
@@ -131,7 +131,7 @@ class ExchangeScannerUpdate(ExchangeScannerBase, ScannerUpdate):
     """Update a scanner view."""
 
     model = ExchangeScanner
-    fields = ['name', 'url', 'schedule', 'exclusion_rules', 'do_ocr',
+    fields = ['name', 'domain', 'schedule', 'exclusion_rules', 'do_ocr',
               'do_last_modified_check', 'rules', 'userlist', 'only_notify_superadmin',
               'service_endpoint', 'organization', 'org_unit']
     type = 'exchange'
@@ -208,7 +208,7 @@ def initialize_form(form):
     """Initializes the form fields for username and password
     as they are not part of the exchange scanner model."""
 
-    form.fields['url'].widget.attrs['placeholder'] = _('e.g. @example.com')
+    form.fields['domain'].widget.attrs['placeholder'] = _('e.g. @example.com')
     form.fields['username'] = forms.CharField(
         max_length=1024,
         required=False,

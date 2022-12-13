@@ -84,7 +84,7 @@ class ExchangeScanner(Scanner):
                     else:
                         for alias in addresses:
                             address = alias.value
-                            if address.endswith(self.url):
+                            if address.endswith(self.domain):
                                 user_list.add(address.split("@", maxsplit=1)[0])
 
         for u in user_list:
