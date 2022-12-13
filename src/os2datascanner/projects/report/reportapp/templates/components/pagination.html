@@ -8,7 +8,7 @@
     <td colspan="{% if request.path == "/" %}6{% elif request.path == "/archive" %}7{% endif %}">
       <div class="flex">
         <span class="page_of_pages">
-          {% trans "matches"|capfirst %} {% match_interval document_reports page_obj paginate_by %} {% trans "of" %} {{ page_obj.paginator.count }}
+          {% trans "results"|capfirst %} {% match_interval document_reports page_obj paginate_by %} {% trans "of" %} {{ page_obj.paginator.count }}
         </span>
         {% if is_paginated %}
         <div class="pages">
