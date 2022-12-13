@@ -39,6 +39,7 @@ class Position(models.Model):
         'OrganizationalUnit',
         on_delete=models.CASCADE,
         verbose_name=_('organizational unit'),
+        related_name='positions',
     )
     role = models.CharField(
         max_length=30,

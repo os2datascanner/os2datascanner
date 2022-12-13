@@ -55,6 +55,9 @@ class OrganizationalUnit(MPTTModel):
         blank=False,
     )
 
+    def get_managers(self):
+        return self.positions.filter(role="manager").select_related("account")
+
     class Meta:
         abstract = True
         verbose_name = _('organizational unit')

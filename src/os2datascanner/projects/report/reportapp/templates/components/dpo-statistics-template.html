@@ -4,11 +4,7 @@
 
 <div class="content" hx-push-url="true">
   <div class="content-header">
-  {% if request.path == '/statistics/leader/' %}
-  <h1 class="page-title">{% trans "Leader statistics" %}</h1>
-  {% elif request.path == '/statistics/dpo/' %}
   <h1 class="page-title">{% trans "DPO statistics" %}</h1>
-  {% endif %}
 
   <svg class="page-indicator" id="report-page-indicator" viewbox="0 0 100 100">
     <circle id="circle" cx="50" cy="50" r="45"></circle>
@@ -16,12 +12,9 @@
 
   <!-- Scannerjob chart data selection -->
     <form name="stat_form"
-    {% if  request.path == '/statistics/leader/' %}
-          hx-get="{% url "statistics-leader" %}"
-    {% elif request.path == '/statistics/dpo/' %}
           hx-get="{% url "statistics-dpo" %}"
-    {% endif %}
           hx-target=".content" 
+          hx-select=".content" 
           hx-swap="outerHTML" 
           hx-trigger="change"
           hx-indicator="#report-page-indicator">

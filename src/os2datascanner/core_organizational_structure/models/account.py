@@ -62,6 +62,9 @@ class Account(models.Model):
         through='Position',
     )
 
+    def get_managed_units(self):
+        return self.positions.filter(role="manager").select_related("unit")
+
     class Meta:
         abstract = True
         verbose_name = _('account')
@@ -79,4 +82,6 @@ class Account(models.Model):
         return email_aliases.first().value if email_aliases else None
 
     def get_full_name(self):
-        return f"{self.first_name} {self.last_name}" if self.last_name else self.first_name
+        return f"{self.first_name} {self.last_name}" if self.last_name \
+            else self.first_name if self.first_name \
+            else self.username

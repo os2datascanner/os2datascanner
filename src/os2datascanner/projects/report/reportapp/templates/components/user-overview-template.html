@@ -1,0 +1,55 @@
+{% load i18n %}
+{% load static %}
+
+<div class="overview_wrapper">
+  <div class="overview-timeline">
+  <h1>{% trans "Development overview for" %} {% if account.get_full_name %}{{ account.get_full_name }}{% else %}{{ account.username }}{% endif %}</h1>
+    <div class="statistic">
+      <div class="statistic_header">
+        <div>
+          <h2 class="page-title__sub">{% trans "Number of matches per week" %}</h2>
+          <p class="chart_description">{% trans "Week" %} {{ matches_by_week.2.weeknum }} - {{ matches_by_week.0.weeknum }}</p>
+          <table class="week-overview">
+            <tbody>
+              <tr>
+                <td>
+                  <span class="weeknum">{% trans "Week" %} {{ matches_by_week.2.weeknum }}</span>
+                  <div class="matches">{{ matches_by_week.2.matches }}
+                    <div class="new">{{ matches_by_week.2.new }}</div>
+                    <div class="handled">{{ matches_by_week.2.handled }}</div>
+                  </div>
+                </td>
+                <td>
+                  <span class="weeknum">{% trans "Week" %} {{ matches_by_week.1.weeknum }}</span>
+                  <div class="matches">{{ matches_by_week.1.matches }}
+                    <div class="new">{{ matches_by_week.1.new }}</div>
+                    <div class="handled">{{ matches_by_week.1.handled }}</div>
+                  </div>
+                </td>
+                <td>
+                  <span class="weeknum">{% trans "Week" %} {{ matches_by_week.0.weeknum }}</span>
+                  <div class="matches">{{ matches_by_week.0.matches }}
+                    <div class="new">{{ matches_by_week.0.new }}</div>
+                    <div class="handled">{{ matches_by_week.0.handled }}</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="statistic_header">
+      <div>
+        <h2 class="page-title__sub">{% trans "Development chart" %}</h2>
+      </div>
+    </div>
+    <div class="chart_container" data-chartid="development-all-matches">
+      <canvas class="line_chart" id="line_chart_all_matches_development__{{ account.uuid }}"></canvas>
+    </div>
+  </div>
+  {{ matches_by_week|json_script:"matches_by_week" }}
+  {{ account.uuid|json_script:"uuid" }}
+</div>

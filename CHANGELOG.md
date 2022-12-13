@@ -4,6 +4,31 @@
 
 "Stay Frosty"
 
+### New in this version
+
+- The leader overview is no longer the same as the DPO overview; Instead, the 
+  leader overview now contains an overview of all employees in the leader's
+  organizational units, showing useful information:
+
+  - Total unresolved matches.
+
+  - Different statuses depending on the user's resolution pattern.
+
+    - "Finished" for users with no current matches.
+
+    - "Accepted" for users who have handled at least 75% of the amount of new 
+      matches they received in the last 3 weeks.
+
+    - "Not accepted" for users with who have either not handled any matches in 
+      the last 3 weeks, or have handled less than 75% of the amount of matches 
+      they received in the last 3 weeks.
+
+  - Chart of user's resolution pattern for the past year.
+
+  - Button for easily sending reminders to the user.
+
+- A modelclass for storing sizes of files now exist
+
 ### General Improvements
 
 - The entire button can now be clicked in the header menu in the report module.
@@ -23,8 +48,6 @@
   - Only one import type can be active at a time.
 
   - Instructions for setup can be found in the dev-environment.md file.
-
-- A modelclass for storing sizes of files now exists
 
 ### Bugfixes
 

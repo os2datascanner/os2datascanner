@@ -9,6 +9,11 @@ from os2datascanner.engine2.model.core import Handle
 from os2datascanner.engine2.model.smb import SMBHandle
 from os2datascanner.engine2.model.smbc import SMBCHandle
 
+from ..models.documentreport import DocumentReport
+from ..models.roles.defaultrole import DefaultRole
+from ..models.roles.remediator import Remediator
+from ..utils import user_is
+
 
 register = template.Library()
 
@@ -134,3 +139,15 @@ def between(lst, interval):
     if interval is None:
         interval = (0, 10)
     return lst[interval[0]:interval[1]]
+
+
+@register.filter
+def get_matchcount(account):
+    all_matches = DocumentReport.objects.filter(
+        resolution_status__isnull=True,
+        raw_matches__matched=True, organization=account.organization)
+    matches = DefaultRole(user=account.user).filter(all_matches)
+    if user_is(account.user.roles.all(), Remediator):
+        matches = matches | Remediator(user=account.user).filter(all_matches)
+
+    return matches.count()

@@ -12,12 +12,9 @@ from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 
-from ..organizations.models.aliases import Alias
-from ..organizations.models.aliases import AliasType
 from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.models.roles.leader import Leader
 from ..reportapp.models.roles.dpo import DataProtectionOfficer
-from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.views import StatisticsPageView, LeaderStatisticsPageView
 from ..reportapp.utils import iterate_queryset_in_batches
 
@@ -445,41 +442,6 @@ class StatisticsPageViewTest(TestCase):
         # Reset to old values
         reset_timestamps(original_timestamps)
         dpo.delete()
-
-    def test_statisticspage_five_most_unhandled_employees(self):
-        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
-        view = self.get_leader_statisticspage_object()
-        kjeld_emailalias, created = Alias.objects.get_or_create(
-            user=self.kjeld,
-            _value='kjeld@jensen.com',
-            _alias_type=AliasType.EMAIL)
-        yvonne_emailalias, created = Alias.objects.get_or_create(
-            user=self.yvonne,
-            _value='yvonne@jensen.com',
-            _alias_type=AliasType.EMAIL)
-        egon_emailalias, created = Alias.objects.get_or_create(
-            user=self.egon,
-            _value='egon@olsen.com',
-            _alias_type=AliasType.EMAIL)
-        benny_emailalias, created = Alias.objects.get_or_create(
-            user=self.benny,
-            _value='benny@frandsen.com',
-            _alias_type=AliasType.EMAIL)
-
-        create_alias_and_match_relations(kjeld_emailalias)
-        create_alias_and_match_relations(yvonne_emailalias)
-        create_alias_and_match_relations(egon_emailalias)
-        create_alias_and_match_relations(benny_emailalias)
-
-        self.assertListEqual(view.five_most_unhandled_employees(),
-                             [['Benny', 2, True], ['Egon', 2, True],
-                              ['Kjeld', 2, True], ['Yvonne', 1, True]])
-
-        dpo.delete()
-        kjeld_emailalias.delete()
-        yvonne_emailalias.delete()
-        egon_emailalias.delete()
-        benny_emailalias.delete()
 
     def test_statisticspage_count_unhandled_matches_by_month(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)

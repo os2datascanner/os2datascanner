@@ -41,11 +41,12 @@ from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
-from ..utils import user_is, convert_context_to_email_body
+from ..utils import user_is, convert_context_to_email_body, user_is_superadmin
 from ..models.documentreport import DocumentReport
 from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
 from ...organizations.models.account import Account
+from ...organizations.models.organizational_unit import OrganizationalUnit
 
 # For permissions
 from ..models.roles.dpo import DataProtectionOfficer
@@ -60,14 +61,6 @@ RENDERABLE_RULES = (
     CPRRule.type_label, RegexRule.type_label, LinksFollowRule.type_label,
     OrderedWordlistRule.type_label, NameRule.type_label, AddressRule.type_label
 )
-
-
-def user_is_superadmin(user):
-    """Relevant users to notify if matches exist with
-    the `only_notify_superuser`-flag."""
-    roles = Role.get_user_roles_or_default(user)
-    return (user_is(roles, DataProtectionOfficer)
-            or user_is(roles, Leader) or user.is_superuser)
 
 
 class LogoutPageView(TemplateView, View):
@@ -374,6 +367,7 @@ class ArchiveView(MainPageView):
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
     context_object_name = "matches"  # object_list renamed to something more relevant
+    template_name = "statistics.html"
     model = DocumentReport
     users = Account.objects.all()
     matches = DocumentReport.objects.filter(
@@ -383,13 +377,6 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
     unhandled_matches = matches.filter(
         resolution_status__isnull=True)
     scannerjob_filters = None
-
-    def get_template_names(self):
-        is_htmx = self.request.headers.get('HX-Request') == 'true'
-        if is_htmx:
-            return "components/statistics-template.html"
-        else:
-            return "statistics.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -664,30 +651,61 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         return list(deque_of_months)
 
 
-class LeaderStatisticsPageView(StatisticsPageView):
+class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
+    template_name = "statistics.html"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['most_unhandled_employees'] = self.five_most_unhandled_employees()
+        user_units = OrganizationalUnit.objects.filter(
+            Q(positions__account=self.request.user.account) & Q(positions__role="manager"))
+        print(user_units)
+        context['user_units'] = user_units
+
+        if unit_uuid := self.request.GET.get('org_unit', None):
+            org_unit = user_units.get(uuid=unit_uuid)
+        else:
+            org_unit = user_units.first() or None
+        context["org_unit"] = org_unit
+
+        if org_unit:
+            if search_field := self.request.GET.get('search_field', None):
+                self.employees = org_unit.positions.filter(
+                    Q(account__first_name__icontains=search_field) |
+                    Q(account__last_name__icontains=search_field) |
+                    Q(account__username__istartswith=search_field))
+            else:
+                self.employees = org_unit.positions.all().select_related('account')
+            self.order_employees()
+            # This operation should NOT be done here. Move this to somehwere it makes sense.
+            for employee in self.employees:
+                employee.account.save()
+        else:
+            self.employees = None
+        context["employees"] = self.employees
+
+        context['order_by'] = self.request.GET.get('order_by', 'account__first_name')
+        context['order'] = self.request.GET.get('order', 'ascending')
 
         return context
 
-    def five_most_unhandled_employees(self):
-        counted_unhandled_matches_alias = self.unhandled_matches.values(
-            'alias_relation__user__id').annotate(
-            total=Count('raw_matches')).values(
-                'alias_relation__user__first_name', 'total'
-            ).order_by('-total')
+    def order_employees(self):
+        """Checks if a sort key is allowed and orders the employees queryset"""
+        allowed_sorting_properties = [
+            'account__first_name',
+            'account__match_count',
+            'account__match_status']
+        if (sort_key := self.request.GET.get('order_by')) and (
+                order := self.request.GET.get('order')):
 
-        top_five = [[c['alias_relation__user__first_name'], c['total'], True]
-                    for c in counted_unhandled_matches_alias][:5]
+            print(sort_key, order)
 
-        for t in top_five:  # Finds and replaces 'None' with translated 'Not assigned'
-            if t[0] is None:
-                t[0], t[2] = _('Not assigned'), False
+            if sort_key not in allowed_sorting_properties:
+                return
 
-        # Sorted by counts, then alphabetically to make tests stable
-        return sorted(top_five, key=lambda x: (-x[1], x[0]))
+            if order != 'ascending':
+                sort_key = '-'+sort_key
+            self.employees = self.employees.order_by(sort_key, 'pk')
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -707,6 +725,18 @@ class DPOStatisticsPageView(StatisticsPageView):
                 return HttpResponseForbidden()
         return super(DPOStatisticsPageView, self).dispatch(
             request, *args, **kwargs)
+
+
+class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
+    template_name = "components/user-overview-template.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        account = Account.objects.get(uuid=self.request.GET.get("account"))
+        context["account"] = account
+        matches_by_week = account.count_matches_by_week()
+        context["matches_by_week"] = matches_by_week
+        return context
 
 
 class ApprovalPageView(TemplateView):

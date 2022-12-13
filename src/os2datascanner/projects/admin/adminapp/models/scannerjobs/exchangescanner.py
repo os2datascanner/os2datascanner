@@ -70,7 +70,7 @@ class ExchangeScanner(Scanner):
             user_list = set()
             # loop over all units incl children
             for organizational_unit in self.org_unit.all():
-                for position in organizational_unit.position_set.all():
+                for position in organizational_unit.positions.all():
                     addresses = position.account.aliases.filter(
                         _alias_type=AliasType.EMAIL.value
                     )

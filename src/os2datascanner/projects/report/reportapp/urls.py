@@ -12,7 +12,7 @@ from .views.api import JSONAPIView
 from .views.saml import metadata
 from .views.views import (
     MainPageView, LeaderStatisticsPageView,
-    DPOStatisticsPageView, ApprovalPageView,
+    DPOStatisticsPageView, UserStatisticsPageView, ApprovalPageView,
     StatsPageView, SettingsPageView, AboutPageView, LogoutPageView, ArchiveView)
 from .views.user_views import UserView
 from .views.manual_views import ManualMainView
@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^user/', UserView.as_view(), name="user"),
     url(r'^statistics/leader/$', LeaderStatisticsPageView.as_view(), name='statistics-leader'),
     url(r'^statistics/dpo/$', DPOStatisticsPageView.as_view(), name='statistics-dpo'),
+    url(r'^statistics/user/$', UserStatisticsPageView.as_view(), name='statistics-user'),
     url('approval', ApprovalPageView.as_view(), name="about"),
     url('stats',    StatsPageView.as_view(),    name="about"),
     url('settings', SettingsPageView.as_view(), name="settings"),
