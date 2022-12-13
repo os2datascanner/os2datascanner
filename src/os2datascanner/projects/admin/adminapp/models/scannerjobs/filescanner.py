@@ -30,6 +30,7 @@ class FileScanner(Scanner):
 
     """File scanner for scanning network drives and folders"""
 
+    unc = models.CharField(max_length=2048, blank=False, verbose_name='UNC')
     alias = models.CharField(
         max_length=64,
         verbose_name=_("drive letter"),
@@ -44,12 +45,12 @@ class FileScanner(Scanner):
     @property
     def root_url(self):
         """Return the root url of the domain."""
-        url = self.url.replace('*.', '')
+        url = self.unc.replace('*.', '')
         return url
 
     def __str__(self):
         """Return the URL for the scanner."""
-        return self.url
+        return self.unc
 
     def get_type(self):
         return 'file'
@@ -60,7 +61,7 @@ class FileScanner(Scanner):
 
     def generate_sources(self):
         yield SMBCSource(
-                self.url,
+                self.unc,
                 user=self.authentication.username,
                 password=self.authentication.get_password(),
                 domain=self.authentication.domain,
@@ -69,6 +70,6 @@ class FileScanner(Scanner):
 
     def clean(self):
         # Backslashes (\) are an escaped character and therefore '\\\\' = '\\'
-        if not self.url.startswith(('//', '\\\\')) or any(x in self.url for x in ['\\\\\\', '///']):
-            error = _("URL must follow the UNC format")
-            raise ValidationError({"url": error})
+        if not self.unc.startswith(('//', '\\\\')) or any(x in self.unc for x in ['\\\\\\', '///']):
+            error = _("UNC must follow the UNC format")
+            raise ValidationError({"unc": error})

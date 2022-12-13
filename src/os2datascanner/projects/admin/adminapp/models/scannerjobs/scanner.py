@@ -128,8 +128,6 @@ class Scanner(models.Model):
         (VALID, "Gyldig"),
     )
 
-    url = models.CharField(max_length=2048, blank=False, verbose_name='URL')
-
     authentication = models.OneToOneField(Authentication,
                                           null=True,
                                           related_name='%(app_label)s_%(class)s_authentication',

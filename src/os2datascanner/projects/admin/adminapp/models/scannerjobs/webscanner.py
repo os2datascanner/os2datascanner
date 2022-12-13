@@ -33,6 +33,8 @@ logger = structlog.get_logger(__name__)
 class WebScanner(Scanner):
     """Web scanner for scanning websites."""
 
+    url = models.CharField(max_length=2048, blank=False, verbose_name='URL')
+
     linkable = True
 
     do_link_check = models.BooleanField(

@@ -38,6 +38,8 @@
 
 - The use of "results" and "matches" in the report module is now more consistent.
 
+- The URL field in the Exchangescanner and Filescanner forms are now correctly marked "domain" and "unc" instead.
+
 ### Bugfixes
 
 - Pagination options on the "error log"-tab now correctly lead to pages on the same tab.

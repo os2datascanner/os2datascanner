@@ -120,7 +120,7 @@ class RegexPatternAdmin(admin.ModelAdmin):
 @admin.register(GoogleDriveScanner)
 @admin.register(GmailScanner)
 class ScannerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url', 'validation_status')
+    list_display = ('name', 'validation_status')
 
     # For excluding orgunits.
     include_orgunit_scanners = [ExchangeScanner,
