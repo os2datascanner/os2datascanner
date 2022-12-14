@@ -10,16 +10,18 @@
     {% include "components/dpo-statistics-template.html" %}
   {% elif request.path == "/statistics/leader/" %}
     {% include "components/leader-statistics-template.html" %}
+  {% elif "/statistics/user/" in request.path %}
+    {% include "components/user-overview-template.html" %}
   {% endif %}
 </main>
 {% block scripts %}
 <script src="{% static "3rdparty/jquery-3.6.0.min.js" %} "></script>
 <script src="{% static "3rdparty/chart-2.9.4.min.js" %}"></script>
 <script src="{% static "3rdparty/chartjs-plugin-datalabels.js" %}"></script>
+<script src="{% static "js/tableBehavior.js" %}"></script>
 {% if request.path == "/statistics/dpo/" %}
 <script src="{% static "js/chartHelpers.js" %}"></script>
 {% elif request.path == "/statistics/leader/" %}
-<script src="{% static "js/tableBehavior.js" %}"></script>
 <script src="{% static "js/leaderOverview.js" %}"></script>
 {% endif %}
 <script src="{% static "js/pieCharts.js" %}"></script>

@@ -105,6 +105,12 @@ a bona fide genius, and excelled at advanced math even as a child.
 
 "Stream a Fire Pit on your Favourite Streaming Service"
 
+### New in this version
+
+- A page has been added for a personalized overview of the user's resolution
+  pattern. This overview is identical to the one accessible in the leader
+  overview. This page can be accessed through a button in the header menu.
+
 ### General Improvements
 
 - The URL field in the Exchangescanner and Filescanner forms are now correctly 

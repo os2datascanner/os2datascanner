@@ -166,6 +166,10 @@ class Account(Core_Account):
 
         return matches_by_week
 
+    def managed_by(self, account):
+        units = self.units.all() & account.get_managed_units()
+        return units.exists()
+
     def save(self, *args, **kwargs):
 
         self._count_matches()

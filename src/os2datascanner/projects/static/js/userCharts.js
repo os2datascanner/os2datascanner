@@ -14,13 +14,13 @@ function drawUserChart(content) {
 
   const UserChartCtx = document.querySelector("#line_chart_all_matches_development__" + accountUuid).getContext('2d');
 
-  makeLineChart(weeknums, matches, UserChartCtx);
+  makeLineChart(weeknums, matches, UserChartCtx, xLabel = "Uge", yLabel = "Uhåndterede resultater");
 
 
 }
 
 htmx.onLoad((content) => {
-  if (hasClass(content, 'overview_wrapper')) {
+  if (hasClass(content, 'overview_wrapper') || hasClass(content, 'page')) {
     drawUserChart(content);
   }
 });

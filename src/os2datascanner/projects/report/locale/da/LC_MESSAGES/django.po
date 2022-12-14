@@ -584,7 +584,7 @@ msgstr "Send påmindelse"
 msgid "Show/hide overview"
 msgstr "Vis/skjul overblik"
 
-#: reportapp/templates/components/leader-statistics-template.html:153
+#: reportapp/templates/components/leader-statistics-template.html:154
 msgid "No employees found."
 msgstr "Ingen medarbejdere fundet."
 
@@ -605,11 +605,15 @@ msgstr "Rapport"
 msgid "Archive"
 msgstr "Arkiv"
 
-#: reportapp/templates/components/navigation.html:30
+#: reportapp/templates/components/navigation.html:31
+msgid "My Overview"
+msgstr "Mit overblik"
+
+#: reportapp/templates/components/navigation.html:37
 msgid "User profile"
 msgstr "Brugerprofil"
 
-#: reportapp/templates/components/navigation.html:38
+#: reportapp/templates/components/navigation.html:45
 #: reportapp/templates/components/user.html:51
 msgid "Logout"
 msgstr "Log ud"

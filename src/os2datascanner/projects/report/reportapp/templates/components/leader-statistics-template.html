@@ -133,11 +133,11 @@
         <tr class="user-overview" hidden>
           <td colspan="4">
             <div class="overview_wrapper" 
-                 hx-get={% url "statistics-user" %}
+                 hx-get="{% url "statistics-user" employee.account.uuid %}"
                  hx-trigger="intersect"
                  hx-swap="outerHTML"
                  hx-target="this"
-                 hx-vals='{"account":"{{ employee.account.uuid }}"}'
+                 hx-select=".overview_wrapper"
                  hx-push-url="false"
                  >
               <div class="loading"><svg class="relative page-indicator" id="report-page-indicator" viewbox="0 0 100 100">

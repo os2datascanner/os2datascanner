@@ -29,7 +29,7 @@ from django.db.models.functions import TruncMonth
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-from django.views.generic import View, TemplateView, ListView
+from django.views.generic import View, TemplateView, ListView, DetailView
 
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.rules.cpr import CPRRule
@@ -730,13 +730,15 @@ class DPOStatisticsPageView(StatisticsPageView):
             request, *args, **kwargs)
 
 
-class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
-    template_name = "components/user-overview-template.html"
+class UserStatisticsPageView(LoginRequiredMixin, DetailView):
+    template_name = "statistics.html"
+    model = Account
+    context_object_name = "account"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        account = Account.objects.get(uuid=self.request.GET.get("account"))
-        context["account"] = account
+
+        account = context["account"]
         matches_by_week = account.count_matches_by_week()
         context["matches_by_week"] = matches_by_week
         scannerjobs = filter_inapplicable_matches(
@@ -788,6 +790,15 @@ class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
 
         response.headers["HX-Trigger"] = "reload-htmx"
         return response
+
+    def dispatch(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        this_is_me = request.user.account.pk == pk
+        if request.user.is_superuser or this_is_me or Account.objects.get(
+                pk=pk).managed_by(request.user.account):
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden()
 
 
 class ApprovalPageView(TemplateView):
