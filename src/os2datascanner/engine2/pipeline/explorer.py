@@ -1,5 +1,9 @@
 from .. import settings
 from ..model.core import Source, UnknownSchemeError, DeserialisationError
+from ..model.core.errors import (ModelException,
+                                 UncontactableError,
+                                 UnauthorisedError,
+                                 UnavailableError)
 from ..utilities.backoff import DummyRetrier, TimeoutRetrier
 from . import messages
 from .utilities.filtering import is_handle_relevant
@@ -120,8 +124,20 @@ def message_received_raw(body, channel, source_manager):  # noqa
                 "finished",
                 handle_count=handle_count, source_count=source_count)
     except Exception as e:
-        exception_message = "Exploration error. {0}: ".format(type(e).__name__)
-        exception_message += ", ".join([str(a) for a in e.args])
+        if isinstance(e, ModelException):
+            if isinstance(e, UncontactableError):
+                exception_message = ("Exploration error: could not communicate with the server "
+                                     "at {e.server}")
+            if isinstance(e, UnauthorisedError):
+                exception_message = ("Exploration error: server won't receive authentication "
+                                     "at {e.server}")
+            if isinstance(e, UnavailableError):
+                exception_message = ("Exploration error: server receives and authenticates, "
+                                     "but desired source not found at {e.server}")
+        else:
+            exception_message = "Exploration error. {0}: ".format(type(e).__name__)
+            exception_message += ", ".join([str(a) for a in e.args])
+
         problem_message = messages.ProblemMessage(
             scan_tag=scan_tag, source=scan_spec.source, handle=None,
             message=exception_message)
