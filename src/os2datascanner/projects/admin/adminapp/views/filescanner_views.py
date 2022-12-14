@@ -71,7 +71,7 @@ class FileScannerUpdate(ScannerUpdate):
     fields = [
         'name',
         'schedule',
-        'url',
+        'unc',
         'exclusion_rules',
         'alias',
         'do_ocr',
@@ -129,7 +129,7 @@ class FileScannerCopy(ScannerCopy):
     fields = [
         'name',
         'schedule',
-        'url',
+        'unc',
         'exclusion_rules',
         'alias',
         'do_ocr',

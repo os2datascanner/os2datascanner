@@ -10,7 +10,7 @@ def move_urls_to_new_fields(apps, schema_editor):
     WebScanner = apps.get_model("os2datascanner", "WebScanner")
 
     for es in ExchangeScanner.objects.iterator():
-        es.domain=es.old_url
+        es.mail_domain=es.old_url
         es.save()
 
     for fs in FileScanner.objects.iterator():
@@ -22,13 +22,13 @@ def move_urls_to_new_fields(apps, schema_editor):
         ws.save()
 
 def move_new_fields_to_url(apps, schema_editor):
-    Scanner = apps.get_model("os2datascanner_admin", "Scanner")
-    ExchangeScanner = apps.get_model("os2datascanner_admin", "ExchangeScanner")
-    FileScanner = apps.get_model("os2datascanner_admin", "FileScanner")
-    WebScanner = apps.get_model("os2datascanner_admin", "WebScanner")
+    Scanner = apps.get_model("os2datascanner", "Scanner")
+    ExchangeScanner = apps.get_model("os2datascanner", "ExchangeScanner")
+    FileScanner = apps.get_model("os2datascanner", "FileScanner")
+    WebScanner = apps.get_model("os2datascanner", "WebScanner")
 
     for es in ExchangeScanner.objects.iterator():
-        es.old_url=es.domain
+        es.old_url=es.mail_domain
         es.save()
 
     for fs in FileScanner.objects.iterator():
@@ -42,7 +42,7 @@ def move_new_fields_to_url(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner', '0095_analysisjob_typestats'),
+        ('os2datascanner', '0096_usererrorlog_engine_error'),
     ]
 
     operations = [
@@ -51,9 +51,14 @@ class Migration(migrations.Migration):
             old_name='url', 
             new_name='old_url'
         ),
+        migrations.AlterField(
+            model_name='scanner',
+            name='old_url',
+            field=models.CharField(default='', max_length=2048, verbose_name='URL', null=True),
+        ),
         migrations.AddField(
             model_name='exchangescanner',
-            name='domain',
+            name='mail_domain',
             field=models.CharField(default='', max_length=2048, verbose_name='Domain'),
             preserve_default=False,
         ),

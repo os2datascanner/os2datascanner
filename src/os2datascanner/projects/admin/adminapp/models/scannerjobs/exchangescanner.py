@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 class ExchangeScanner(Scanner):
     """Scanner for Exchange Web Services accounts"""
 
-    domain = models.CharField(max_length=2048, blank=False, verbose_name='Domain')
+    mail_domain = models.CharField(max_length=2048, blank=False, verbose_name='Domain')
 
     userlist = models.FileField(
         null=True,
@@ -84,13 +84,13 @@ class ExchangeScanner(Scanner):
                     else:
                         for alias in addresses:
                             address = alias.value
-                            if address.endswith(self.domain):
+                            if address.endswith(self.mail_domain):
                                 user_list.add(address.split("@", maxsplit=1)[0])
 
         for u in user_list:
             logger.info(f"submitting scan for user {u}")
             yield EWSAccountSource(
-                domain=self.domain.lstrip("@"),
+                domain=self.mail_domain.lstrip("@"),
                 server=self.service_endpoint or None,
                 admin_user=self.authentication.username,
                 admin_password=self.authentication.get_password(),

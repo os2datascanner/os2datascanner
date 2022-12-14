@@ -152,8 +152,8 @@
             {% include "os2datascanner/scanner_form_input_field.html" with field=form.unc required="True" placeholder=form.unc.field.widget.attrs.placeholder %}
           {% endif %}
 
-          {% if form.domain %}
-            {% include "os2datascanner/scanner_form_input_field.html" with field=form.domain required="True" placeholder=form.domain.field.widget.attrs.placeholder %}
+          {% if form.mail_domain %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.mail_domain required="True" placeholder=form.mail_domain.field.widget.attrs.placeholder %}
           {% endif %}
 
           {% if form.service_endpoint %}
