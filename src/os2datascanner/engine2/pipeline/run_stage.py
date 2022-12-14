@@ -8,7 +8,7 @@ import pstats
 import click
 from collections import deque
 
-from prometheus_client import Info, Summary, start_http_server
+from prometheus_client import Info, Summary, start_http_server, CollectorRegistry
 
 from os2datascanner.utils import profiling
 from os2datascanner.utils.log_levels import log_levels
@@ -62,9 +62,11 @@ class GenericRunner(PikaPipelineThread):
                 write=module.WRITES_QUEUES,
                 prefetch_count=module.PREFETCH_COUNT)
         self._module = module
+        self._registry = CollectorRegistry()
         self._summary = Summary(
                 f"os2datascanner_pipeline_{stage}",
-                self._module.PROMETHEUS_DESCRIPTION)
+                self._module.PROMETHEUS_DESCRIPTION,
+                registry=self._registry)
         self._source_manager = source_manager
 
         self._cancelled = deque()
