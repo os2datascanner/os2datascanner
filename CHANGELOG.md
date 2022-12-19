@@ -2,7 +2,7 @@
 
 ## Version 3.17.4,
 
-"Stay Frosty"
+"Cinnamon; 'Tis the Seasoning"
 
 ### New in this version
 
@@ -30,6 +30,9 @@
 - A modelclass for storing sizes of files now exist
 
 ### General Improvements
+
+- Status timeline charts are now only drawn when needed, considerably boosting
+  performance while viewing completed scans.
 
 - The entire button can now be clicked in the header menu in the report module.
 

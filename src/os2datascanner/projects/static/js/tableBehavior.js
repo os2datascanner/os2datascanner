@@ -210,29 +210,29 @@ function prepareTable() {
   handleTableCorners();
 }
 
-htmx.onLoad(function (content) {
-
-  if (hasClass(content, 'page') || hasClass(content, 'datatable-wrapper')) {
-
-    prepareTable();
-
-    // Listen for click on toggle checkbox
-    $("#select-all").change(function () {
-      $("input[name='table-checkbox']").prop("checked", $(this).prop("checked"));
-      handleChecked();
-    });
-
-    // Iterate each checkbox
-    $("input[name='table-checkbox']").change(handleChecked);
-
-    // Copy Path function
-    if (typeof ClipboardJS !== 'undefined') {
-      new ClipboardJS(document.querySelectorAll('[data-clipboard-text]'));
-    }
-  }
-
-});
-
 document.addEventListener("DOMContentLoaded", function () {
   prepareTable();
+
+  htmx.onLoad(function (content) {
+
+    if (hasClass(content, 'page') || hasClass(content, 'datatable-wrapper') || hasClass(content, 'content')) {
+
+      prepareTable();
+
+      // Listen for click on toggle checkbox
+      $("#select-all").change(function () {
+        $("input[name='table-checkbox']").prop("checked", $(this).prop("checked"));
+        handleChecked();
+      });
+
+      // Iterate each checkbox
+      $("input[name='table-checkbox']").change(handleChecked);
+
+      // Copy Path function
+      if (typeof ClipboardJS !== 'undefined') {
+        new ClipboardJS(document.querySelectorAll('[data-clipboard-text]'));
+      }
+    }
+
+  });
 });

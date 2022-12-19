@@ -1,0 +1,33 @@
+{% load i18n %}
+{% load l10n %}
+
+<td colspan="7" class="timeline">
+  <div class="more-info_container">
+    {% comment %} TODO: Maybe put this info inside the hidden row? {% endcomment %}
+    {% comment %} <ul>
+      <li>{{ status.total_objects }} {% trans "objects explored" %}</li>
+      {% if status.matches_found is not None%}
+      <li>
+        {{status.matches_found}} 
+        {% if status.matches_found == 1%}
+          {% trans "result"%}
+        {% else %}
+          {% trans "results" %}
+        {% endif %}
+      </li>
+      {% endif %}
+    </ul> {% endcomment %}
+  </div>
+  <div class="statistic_header">
+    <div>
+      <h1 class="page-title_sub">{% trans "Timeline" %}</h1>
+    </div>
+  </div>
+  <div class="chart_container status-timeline" data-chartid="timeline_status__{{ status.pk|unlocalize }}">
+    <canvas class="line_chart" id="line_chart_status__{{ status.pk|unlocalize }}" height="100" width="500"></canvas>
+  </div>
+</div>
+{{ snapshot_data|json_script:"snapshot_data" }}
+{{ status.pk|json_script:"status_pk"}}
+</td>
+
