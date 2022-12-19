@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.17.4,
+## Version 3.17.4, 19th December 2022
 
 "Cinnamon; 'Tis the Seasoning"
 

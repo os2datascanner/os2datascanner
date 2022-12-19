@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 11:07+0100\n"
+"POT-Creation-Date: 2022-12-19 14:13+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -107,7 +107,7 @@ msgid "no scanner job exists with id {id}"
 msgstr "intet scannerjob findes med id {id}"
 
 #: adminapp/models/apikey.py:16 adminapp/models/rules/rule.py:47
-#: adminapp/models/scannerjobs/scanner.py:78 adminapp/models/usererrorlog.py:44
+#: adminapp/models/scannerjobs/scanner.py:78 adminapp/models/usererrorlog.py:52
 #: import_services/models/msgraph_import_job.py:27
 #: import_services/models/os2mo_import_job.py:18
 #: import_services/models/realm.py:29
@@ -156,6 +156,10 @@ msgstr "Beskrivelse"
 #: adminapp/models/rules/rule.py:59
 msgid "sensitivity"
 msgstr "Følsomhed"
+
+#: adminapp/models/scannerjobs/analysisscanner.py:63
+msgid "Mime type"
+msgstr "Filformat"
 
 #: adminapp/models/scannerjobs/filescanner.py:35
 msgid "drive letter"
@@ -325,15 +329,20 @@ msgstr "Sti"
 msgid "Error message"
 msgstr "Fejlbesked"
 
-#: adminapp/models/usererrorlog.py:49
+#: adminapp/models/usererrorlog.py:57
 msgid "Is new"
 msgstr "Er ny"
 
-#: adminapp/models/usererrorlog.py:53
+#: adminapp/models/usererrorlog.py:61
 msgid "Is removed"
 msgstr "Er fjernet"
 
-#: adminapp/models/usererrorlog.py:64
+#: adminapp/models/usererrorlog.py:71
+#, python-brace-format
+msgid "Could not open a connection to {0}"
+msgstr "Kunne ikke åbne en forbindelse til {0}"
+
+#: adminapp/models/usererrorlog.py:77
 msgid "User friendly error message"
 msgstr "Brugervenlig fejlbesked"
 
@@ -547,13 +556,13 @@ msgstr "Log ud"
 msgid "of"
 msgstr "af"
 
-#: adminapp/templates/components/pagination.html:23
-#: adminapp/templates/components/pagination.html:28
+#: adminapp/templates/components/pagination.html:24
+#: adminapp/templates/components/pagination.html:29
 msgid "Previous"
 msgstr "Forrige"
 
-#: adminapp/templates/components/pagination.html:78
 #: adminapp/templates/components/pagination.html:83
+#: adminapp/templates/components/pagination.html:88
 msgid "Next"
 msgstr "Næste"
 
@@ -587,6 +596,10 @@ msgid ""
 msgstr ""
 "Du er ved at slette den valgte data. Denne handling kan ikke fortrydes. Er "
 "du sikker?"
+
+#: adminapp/templates/components/status-timeline.html:25
+msgid "Timeline"
+msgstr "Tidslinje"
 
 #: adminapp/templates/components/user.html:29
 #: adminapp/templates/password_change.html:6
@@ -1103,11 +1116,7 @@ msgstr "Afsluttet"
 msgid "Show/hide timeline"
 msgstr "Vis/skjul tidslinje"
 
-#: adminapp/templates/os2datascanner/scan_completed.html:193
-msgid "Timeline"
-msgstr "Tidslinje"
-
-#: adminapp/templates/os2datascanner/scan_completed.html:212
+#: adminapp/templates/os2datascanner/scan_completed.html:194
 msgid "no scans done"
 msgstr "der er ingen udførte scanninger"
 
@@ -1737,7 +1746,7 @@ msgstr "Drevbogstav"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:427
+#: adminapp/views/scanner_views.py:450
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
@@ -2516,9 +2525,6 @@ msgstr "Navnet er allerede i brug."
 
 #~ msgid "alias ID"
 #~ msgstr "alias ID"
-
-#~ msgid "alias type"
-#~ msgstr "aliastype"
 
 #~ msgid "value"
 #~ msgstr "værdi"
