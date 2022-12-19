@@ -48,6 +48,13 @@ class ExchangeScanner(Scanner):
         default=""
     )
 
+    @property
+    def needs_revalidation(self):
+        try:
+            return self.objects.get(pk=self.pk).mail_domain != self.mail_domain
+        except ExchangeScanner.DoesNotExist:
+            return False
+
     def get_userlist_file_path(self):
         return os.path.join(settings.MEDIA_ROOT, self.userlist.name)
 

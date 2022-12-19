@@ -117,6 +117,13 @@ class WebScanner(Scanner):
     def default_sitemap_path(self):
         return "/sitemap.xml"
 
+    @property
+    def needs_revalidation(self):
+        try:
+            return self.objects.get(pk=self.pk).url != self.url
+        except WebScanner.DoesNotExist:
+            return False
+
     def get_sitemap_url(self):
         """Get the URL of the sitemap.xml file.
 

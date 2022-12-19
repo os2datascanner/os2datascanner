@@ -423,6 +423,10 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
         self.object = self.get_object()
         if hasattr(self.object, "url"):
             self.old_url = self.object.url
+        elif hasattr(self.object, "mail_domain"):
+            self.old_url = self.object.mail_domain
+        elif hasattr(self.object, "unc"):
+            self.old_url = self.object.unc
         if (hasattr(self.object, "authentication")
                 and hasattr(self.object.authentication, "username")):
             self.old_user = self.object.authentication.username
@@ -436,14 +440,17 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
 
     def form_valid(self, form):
         """Validate the submitted form."""
-        if self.old_url != self.object.url:
+        if self.object.invalid_form:
             self.object.validation_status = Scanner.INVALID
 
         def is_in_cleaned(entry, comparable):
             data = form.cleaned_data
             return entry in data and data[entry] != comparable
 
-        if is_in_cleaned("url", self.old_url) or is_in_cleaned("username", self.old_user):
+        if is_in_cleaned("url", self.old_url) \
+                or is_in_cleaned("mail_domain", self.old_url) \
+                or is_in_cleaned("unc", self.old_url) \
+                or is_in_cleaned("username", self.old_user):
             # No password supplied for new username or URL, displaying error to user.
             if 'password' in form.cleaned_data and form.cleaned_data["password"] == "":
                 form.add_error("password",

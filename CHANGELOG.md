@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 3.17.5,
+
+"Stream a Fire Pit on your Favourite Streaming Service"
+
+### General Improvements
+
+- The URL field in the Exchangescanner and Filescanner forms are now correctly marked "domain" and "unc" instead.
+
 ## Version 3.17.4, 19th December 2022
 
 "Cinnamon; 'Tis the Seasoning"
@@ -37,8 +45,6 @@
 - The entire button can now be clicked in the header menu in the report module.
 
 - The use of "results" and "matches" in the report module is now more consistent.
-
-- The URL field in the Exchangescanner and Filescanner forms are now correctly marked "domain" and "unc" instead.
 
 ### Bugfixes
 

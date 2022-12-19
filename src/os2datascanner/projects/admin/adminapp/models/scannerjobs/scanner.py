@@ -148,6 +148,12 @@ class Scanner(models.Model):
         raise NotImplementedError("Scanner.verify")
 
     @property
+    def needs_revalidation(self) -> bool:
+        """Used to check if the url on a form object differs from the
+        corresponding field on the model object."""
+        return False
+
+    @property
     def schedule_description(self):
         """A lambda for creating schedule description strings."""
         if any(self.schedule.occurrences()):
