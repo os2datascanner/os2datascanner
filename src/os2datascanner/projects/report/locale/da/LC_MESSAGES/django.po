@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-07 08:47+0100\n"
+"POT-Creation-Date: 2022-12-19 14:14+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -244,112 +244,108 @@ msgstr "I mellemtiden kan du forsøge at genindlæse siden eller"
 msgid "go to the front page"
 msgstr "gå til forsiden"
 
-#: reportapp/templates/components/dpo-statistics-template.html:8
-msgid "Leader statistics"
-msgstr "Lederstatistik"
-
-#: reportapp/templates/components/dpo-statistics-template.html:10
+#: reportapp/templates/components/dpo-statistics-template.html:7
 msgid "DPO statistics"
 msgstr "DPO statistik"
 
-#: reportapp/templates/components/dpo-statistics-template.html:30
+#: reportapp/templates/components/dpo-statistics-template.html:27
 #: reportapp/templates/components/filters.html:39
 msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
 
-#: reportapp/templates/components/dpo-statistics-template.html:52
+#: reportapp/templates/components/dpo-statistics-template.html:49
 msgid "Development overview"
 msgstr "Udviklingsoverblik"
 
-#: reportapp/templates/components/dpo-statistics-template.html:53
+#: reportapp/templates/components/dpo-statistics-template.html:50
 msgid "New results by month"
 msgstr "Antal nye resultater per måned"
 
-#: reportapp/templates/components/dpo-statistics-template.html:54
+#: reportapp/templates/components/dpo-statistics-template.html:51
 msgid "Unhandled results by month"
 msgstr "Antal uhåndterede resultater per måned"
 
-#: reportapp/templates/components/dpo-statistics-template.html:59
+#: reportapp/templates/components/dpo-statistics-template.html:56
 msgid "New results"
 msgstr "Nye resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:60
+#: reportapp/templates/components/dpo-statistics-template.html:57
 msgid "Unhandled results"
 msgstr "Uhåndterede resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:77
+#: reportapp/templates/components/dpo-statistics-template.html:74
 msgid "Distribution of results"
 msgstr "Fordeling af resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:78
+#: reportapp/templates/components/dpo-statistics-template.html:75
 msgid "Results distributed by sensitivities"
 msgstr "Resultater fordelt på følsomheder"
 
-#: reportapp/templates/components/dpo-statistics-template.html:79
+#: reportapp/templates/components/dpo-statistics-template.html:76
 msgid "Results distributed by data sources"
 msgstr "Resultater fordelt på datakilder"
 
-#: reportapp/templates/components/dpo-statistics-template.html:80
+#: reportapp/templates/components/dpo-statistics-template.html:77
 msgid "Results distributed by resolution statuses"
 msgstr "Resultater fordelt på håndteringsstatusser"
 
-#: reportapp/templates/components/dpo-statistics-template.html:85
-#: reportapp/templates/components/dpo-statistics-template.html:125
+#: reportapp/templates/components/dpo-statistics-template.html:82
+#: reportapp/templates/components/dpo-statistics-template.html:122
 #: reportapp/templates/components/filters.html:67
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: reportapp/templates/components/dpo-statistics-template.html:86
+#: reportapp/templates/components/dpo-statistics-template.html:83
 msgid "Data sources"
 msgstr "Datakilder"
 
-#: reportapp/templates/components/dpo-statistics-template.html:88
+#: reportapp/templates/components/dpo-statistics-template.html:85
 msgid "Resolution statuses"
 msgstr "Håndteringsstatusser"
 
-#: reportapp/templates/components/dpo-statistics-template.html:118
-#: reportapp/templates/components/dpo-statistics-template.html:177
+#: reportapp/templates/components/dpo-statistics-template.html:115
+#: reportapp/templates/components/dpo-statistics-template.html:174
 msgid "Handled results"
 msgstr "Håndterede resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:119
+#: reportapp/templates/components/dpo-statistics-template.html:116
 msgid "Percentage of handled results distributed by sensitivity"
 msgstr "Procentvis andel af håndterede resultater fordelt på følsomhed"
 
-#: reportapp/templates/components/dpo-statistics-template.html:120
+#: reportapp/templates/components/dpo-statistics-template.html:117
 msgid "The department's percentage of handled results"
 msgstr "Afdelingens procentvise andel af håndterede resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:126
+#: reportapp/templates/components/dpo-statistics-template.html:123
 msgid "All results"
 msgstr "Alle resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:139
+#: reportapp/templates/components/dpo-statistics-template.html:136
 #: reportapp/templates/components/sensitivity-chart.html:8
 msgid "Critical"
 msgstr "Kritisk"
 
-#: reportapp/templates/components/dpo-statistics-template.html:140
-#: reportapp/templates/components/dpo-statistics-template.html:149
-#: reportapp/templates/components/dpo-statistics-template.html:158
-#: reportapp/templates/components/dpo-statistics-template.html:167
-#: reportapp/templates/components/dpo-statistics-template.html:178
+#: reportapp/templates/components/dpo-statistics-template.html:137
+#: reportapp/templates/components/dpo-statistics-template.html:146
+#: reportapp/templates/components/dpo-statistics-template.html:155
+#: reportapp/templates/components/dpo-statistics-template.html:164
+#: reportapp/templates/components/dpo-statistics-template.html:175
 #: reportapp/templates/components/handle-match.html:91
 #: reportapp/templates/components/pagination.html:11
 msgid "of"
 msgstr "af"
 
-#: reportapp/templates/components/dpo-statistics-template.html:148
+#: reportapp/templates/components/dpo-statistics-template.html:145
 #: reportapp/templates/components/sensitivity-chart.html:12
 msgid "Problem"
 msgstr "Problem"
 
-#: reportapp/templates/components/dpo-statistics-template.html:157
+#: reportapp/templates/components/dpo-statistics-template.html:154
 #: reportapp/templates/components/sensitivity-chart.html:16
 msgid "Warning"
 msgstr "Advarsel"
 
-#: reportapp/templates/components/dpo-statistics-template.html:166
+#: reportapp/templates/components/dpo-statistics-template.html:163
 #: reportapp/templates/components/sensitivity-chart.html:20
 msgid "Notification"
 msgstr "Notifikation"
@@ -528,7 +524,7 @@ msgid "Name"
 msgstr "Navn"
 
 #: reportapp/templates/components/hits.html:51
-#: reportapp/templates/components/leader-statistics-template.html:80
+#: reportapp/templates/components/leader-statistics-template.html:81
 msgid "Matches"
 msgstr "Matches"
 
@@ -541,36 +537,36 @@ msgid "Path"
 msgstr "Sti"
 
 #: reportapp/templates/components/hits.html:79
-#: reportapp/templates/components/leader-statistics-template.html:91
+#: reportapp/templates/components/leader-statistics-template.html:92
 msgid "Status"
 msgstr "Status"
 
 #: reportapp/templates/components/hits.html:90
-#: reportapp/templates/components/leader-statistics-template.html:102
+#: reportapp/templates/components/leader-statistics-template.html:103
 msgid "Actions"
 msgstr "Handlinger"
 
-#: reportapp/templates/components/leader-statistics-template.html:9
+#: reportapp/templates/components/leader-statistics-template.html:10
 msgid "Leader overview for:"
 msgstr "Lederoverblik for:"
 
-#: reportapp/templates/components/leader-statistics-template.html:15
+#: reportapp/templates/components/leader-statistics-template.html:16
 msgid "employees"
 msgstr "medarbejdere"
 
-#: reportapp/templates/components/leader-statistics-template.html:30
+#: reportapp/templates/components/leader-statistics-template.html:31
 msgid "Organizational units"
 msgstr "Organisatoriske enheder"
 
-#: reportapp/templates/components/leader-statistics-template.html:50
+#: reportapp/templates/components/leader-statistics-template.html:51
 msgid "Search for employee"
 msgstr "Søg efter medarbejder"
 
-#: reportapp/templates/components/leader-statistics-template.html:69
+#: reportapp/templates/components/leader-statistics-template.html:70
 msgid "Employee"
 msgstr "Medarbejder"
 
-#: reportapp/templates/components/leader-statistics-template.html:91
+#: reportapp/templates/components/leader-statistics-template.html:92
 #, python-format
 msgid ""
 "The status of each user is determined by how many matches that user has, and "
@@ -583,15 +579,15 @@ msgstr ""
 "“Færdig”-statussen har ingen resultater. En bruger med “Accepteret” har "
 "håndteret mindst 75%% af sine seneste resultater."
 
-#: reportapp/templates/components/leader-statistics-template.html:127
+#: reportapp/templates/components/leader-statistics-template.html:128
 msgid "Send notification"
 msgstr "Send påmindelse"
 
-#: reportapp/templates/components/leader-statistics-template.html:128
+#: reportapp/templates/components/leader-statistics-template.html:129
 msgid "Show/hide overview"
 msgstr "Vis/skjul overblik"
 
-#: reportapp/templates/components/leader-statistics-template.html:152
+#: reportapp/templates/components/leader-statistics-template.html:153
 msgid "No employees found."
 msgstr "Ingen medarbejdere fundet."
 
@@ -630,8 +626,9 @@ msgid "There are no organizational units associated with"
 msgstr "Der er ikke nogle organisatoriske enheder forbundet med"
 
 #: reportapp/templates/components/pagination.html:11
-msgid "matches"
-msgstr "matches"
+#: reportapp/templates/content.html:13
+msgid "results"
+msgstr "resultater"
 
 #: reportapp/templates/components/pagination.html:23
 #: reportapp/templates/components/pagination.html:28
@@ -748,10 +745,6 @@ msgstr "Udviklingsgraf"
 #: reportapp/templates/components/user.html:48
 msgid "Show Account"
 msgstr "Vis konto"
-
-#: reportapp/templates/content.html:13
-msgid "results"
-msgstr "resultater"
 
 #: reportapp/templates/content.html:20
 msgid "Distribute matches to users from"
@@ -1079,6 +1072,12 @@ msgstr "Filscan"
 #: reportapp/views/views.py:523
 msgid "Mailscan"
 msgstr "Mailscan"
+
+#~ msgid "Leader statistics"
+#~ msgstr "Lederstatistik"
+
+#~ msgid "matches"
+#~ msgstr "matches"
 
 #~ msgid "Not assigned"
 #~ msgstr "Ikke tildelt"
