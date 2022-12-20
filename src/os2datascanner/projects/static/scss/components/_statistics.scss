@@ -311,29 +311,33 @@ table .overview_wrapper {
 		margin-top: 0.3rem;
 	}
 
-	.new {
-		color: var(--color-error);
+	.annotation {
 		font-size: 1rem;
 		position: absolute;
 		left: 100%;
-		top: 0px;
 		font-family: monospace;
 
-		&::before {
-			content: "+";
+		&.new {
+			color: var(--color-error);
+			top: 0px;
+
+
+			&::before {
+				content: "+";
+			}
 		}
-	}
 
-	.handled {
-		color: var(--color-checkmark);
-		font-size: 1rem;
-		position: absolute;
-		left: 100%;
-		bottom: 0px;
-		font-family: monospace;
+		&.handled {
+			color: var(--color-checkmark);
+			bottom: 0px;
 
-		&::before {
-			content: "-";
+			&::before {
+				content: "-";
+			}
+		}
+
+		&.zero {
+			color: var(--color-text-main);
 		}
 	}
 }

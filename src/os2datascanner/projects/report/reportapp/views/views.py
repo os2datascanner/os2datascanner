@@ -793,9 +793,8 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
-        this_is_me = request.user.account.pk == pk
-        if request.user.is_superuser or this_is_me or Account.objects.get(
-                pk=pk).managed_by(request.user.account):
+        associated = Account.objects.filter(pk=pk, user=request.user)
+        if associated or Account.objects.get(pk=pk).managed_by(request.user.account):
             return super().dispatch(request, *args, **kwargs)
         else:
             return HttpResponseForbidden()

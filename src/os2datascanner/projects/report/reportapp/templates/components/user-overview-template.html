@@ -19,22 +19,22 @@
                   <td>
                     <span class="weeknum">{% trans "Week" %} {{ matches_by_week.2.weeknum }}</span>
                     <div class="matches">{{ matches_by_week.2.matches }}
-                      <div class="new">{{ matches_by_week.2.new }}</div>
-                      <div class="handled">{{ matches_by_week.2.handled }}</div>
+                      <div class="annotation new {% if matches_by_week.2.new == 0 %}zero{% endif %}">{{ matches_by_week.2.new }}</div>
+                      <div class="annotation handled {% if matches_by_week.2.handled == 0 %}zero{% endif %}">{{ matches_by_week.2.handled }}</div>
                     </div>
                   </td>
                   <td>
                     <span class="weeknum">{% trans "Week" %} {{ matches_by_week.1.weeknum }}</span>
                     <div class="matches">{{ matches_by_week.1.matches }}
-                      <div class="new">{{ matches_by_week.1.new }}</div>
-                      <div class="handled">{{ matches_by_week.1.handled }}</div>
+                      <div class="annotation new {% if matches_by_week.1.new == 0 %}zero{% endif %}">{{ matches_by_week.1.new }}</div>
+                      <div class="annotation handled {% if matches_by_week.1.handled == 0 %}zero{% endif %}">{{ matches_by_week.1.handled }}</div>
                     </div>
                   </td>
                   <td>
                     <span class="weeknum">{% trans "Week" %} {{ matches_by_week.0.weeknum }}</span>
                     <div class="matches">{{ matches_by_week.0.matches }}
-                      <div class="new">{{ matches_by_week.0.new }}</div>
-                      <div class="handled">{{ matches_by_week.0.handled }}</div>
+                      <div class="annotation new {% if matches_by_week.0.new == 0 %}zero{% endif %}">{{ matches_by_week.0.new }}</div>
+                      <div class="annotation handled {% if matches_by_week.0.handled == 0 %}zero{% endif %}">{{ matches_by_week.0.handled }}</div>
                     </div>
                   </td>
                 </tr>
