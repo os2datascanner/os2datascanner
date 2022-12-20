@@ -147,13 +147,13 @@ class Account(Core_Account):
             handled_matches = 0
             for match in all_matches:
                 if match.created_timestamp <= end_monday and (
-                            match.resolution_status is None
+                            match.resolution_time is None
                         or match.resolution_time >= end_monday):
                     matches_by_end += 1
                 if match.created_timestamp <= end_monday \
                         and match.created_timestamp >= begin_monday:
                     new_matches += 1
-                if match.resolution_status and match.resolution_time <= end_monday \
+                if match.resolution_time and match.resolution_time <= end_monday \
                         and match.resolution_time >= begin_monday:
                     handled_matches += 1
 
