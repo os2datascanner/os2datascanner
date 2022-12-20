@@ -24,6 +24,7 @@ from django.conf import settings
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, EmptyPage
+from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponseForbidden, Http404, HttpResponse
@@ -798,6 +799,7 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
             return super().dispatch(request, *args, **kwargs)
         else:
             return HttpResponseForbidden()
+            raise PermissionDenied
 
 
 class ApprovalPageView(TemplateView):
