@@ -768,7 +768,7 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
 
         scannerjob_pk = request.POST.get("pk")
         scannerjob_name = request.POST.get("name")
-        account = Account.objects.get(pk=request.POST.get("account"))
+        account = Account.objects.get(pk=kwargs.get("pk"))
 
         reports = filter_inapplicable_matches(
             account.user,
@@ -795,10 +795,10 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
     def dispatch(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
         associated = Account.objects.filter(pk=pk, user=request.user)
-        if associated or Account.objects.get(pk=pk).managed_by(request.user.account):
+        if request.user.is_superuser or associated or Account.objects.get(
+                pk=pk).managed_by(request.user.account):
             return super().dispatch(request, *args, **kwargs)
         else:
-            return HttpResponseForbidden()
             raise PermissionDenied
 
 

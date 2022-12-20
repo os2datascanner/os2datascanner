@@ -18,23 +18,23 @@
                 <tr>
                   <td>
                     <span class="weeknum">{% trans "Week" %} {{ matches_by_week.2.weeknum }}</span>
-                    <div class="matches">{{ matches_by_week.2.matches }}
-                      <div class="annotation new {% if matches_by_week.2.new == 0 %}zero{% endif %}">{{ matches_by_week.2.new }}</div>
-                      <div class="annotation handled {% if matches_by_week.2.handled == 0 %}zero{% endif %}">{{ matches_by_week.2.handled }}</div>
+                    <div class="matches" aria-label="{% trans "Unhandled matches at the end of week" %} {{ matches_by_week.2.weeknum }}">{{ matches_by_week.2.matches }}
+                      <div class="annotation new {% if matches_by_week.2.new == 0 %}zero{% endif %}" aria-label="{% trans "New matches during week" %} {{ matches_by_week.2.weeknum }}">{{ matches_by_week.2.new }}</div>
+                      <div class="annotation handled {% if matches_by_week.2.handled == 0 %}zero{% endif %}" aria-label="{% trans "Matches handled during week" %} {{ matches_by_week.2.weeknum }}">{{ matches_by_week.2.handled }}</div>
                     </div>
                   </td>
                   <td>
                     <span class="weeknum">{% trans "Week" %} {{ matches_by_week.1.weeknum }}</span>
-                    <div class="matches">{{ matches_by_week.1.matches }}
-                      <div class="annotation new {% if matches_by_week.1.new == 0 %}zero{% endif %}">{{ matches_by_week.1.new }}</div>
-                      <div class="annotation handled {% if matches_by_week.1.handled == 0 %}zero{% endif %}">{{ matches_by_week.1.handled }}</div>
+                    <div class="matches" aria-label="{% trans "Unhandled matches at the end of week" %} {{ matches_by_week.1.weeknum }}">{{ matches_by_week.1.matches }}
+                      <div class="annotation new {% if matches_by_week.1.new == 0 %}zero{% endif %}" aria-label="{% trans "New matches during week" %} {{ matches_by_week.1.weeknum }}">{{ matches_by_week.1.new }}</div>
+                      <div class="annotation handled {% if matches_by_week.1.handled == 0 %}zero{% endif %}" aria-label="{% trans "Matches handled during week" %} {{ matches_by_week.1.weeknum }}">{{ matches_by_week.1.handled }}</div>
                     </div>
                   </td>
                   <td>
                     <span class="weeknum">{% trans "Week" %} {{ matches_by_week.0.weeknum }}</span>
-                    <div class="matches">{{ matches_by_week.0.matches }}
-                      <div class="annotation new {% if matches_by_week.0.new == 0 %}zero{% endif %}">{{ matches_by_week.0.new }}</div>
-                      <div class="annotation handled {% if matches_by_week.0.handled == 0 %}zero{% endif %}">{{ matches_by_week.0.handled }}</div>
+                    <div class="matches" aria-label="{% trans "Unhandled matches at the end of week" %} {{ matches_by_week.0.weeknum }}">{{ matches_by_week.0.matches }}
+                      <div class="annotation new {% if matches_by_week.0.new == 0 %}zero{% endif %}" aria-label="{% trans "New matches during week" %} {{ matches_by_week.0.weeknum }}">{{ matches_by_week.0.new }}</div>
+                      <div class="annotation handled {% if matches_by_week.0.handled == 0 %}zero{% endif %}" aria-label="{% trans "Matches handled during week" %} {{ matches_by_week.0.weeknum }}">{{ matches_by_week.0.handled }}</div>
                     </div>
                   </td>
                 </tr>
@@ -42,9 +42,7 @@
             </table>
           </div>
         </div>
-      </div>
       {% if request.user.is_superuser and scannerjobs %}
-      <div class="statistic">
         <div class="statistic_header">
           <div>
             <h2 class="page-title__sub">{% trans "Number of unhandled results per scanner job" %}</h2>
@@ -53,11 +51,11 @@
               <li id="scannerjob-li__{{scannerjob.scanner_job_pk|unlocalize}}">
                 <button type="button" class="button"
                         name="delete_from_scannerjob"
-                        hx-post="{% url "statistics-user" %}"
+                        hx-post="{% url "statistics-user" account.uuid %}"
                         hx-trigger="click"
                         hx-target="#scannerjob-li__{{scannerjob.scanner_job_pk|unlocalize}}"
                         hx-swap="outerHTML"
-                        hx-vals='{"pk": "{{ scannerjob.scanner_job_pk }}", "name": "{{ scannerjob.scanner_job_name }}", "account": "{{ account.pk }}"}'
+                        hx-vals='{"pk": "{{ scannerjob.scanner_job_pk }}", "name": "{{ scannerjob.scanner_job_name }}"}'
                         hx-confirm="{% trans "You are about to delete all results from the scannerjob" %} &quot;{{ scannerjob.scanner_job_name }}&quot; {% trans "associated with the user" %} &quot;{{ account.get_full_name }}&quot; ({% trans "Username" %}: &quot;{{ account.username }}&quot;). {% trans "Are you sure? This action cannot be reversed." %}">
                   <i class="material-icons">delete_forever</i>
                 </button>
@@ -67,15 +65,15 @@
             </ul>
           </div>
         </div>
-      </div>
       {% endif %}
+      </div>
       <div class="statistic">
         <div class="statistic_header">
           <div>
             <h2 class="page-title__sub">{% trans "Development chart" %}</h2>
           </div>
         </div>
-        <div class="chart_container" data-chartid="development-all-matches">
+        <div class="chart_container" data-chartid="development-all-matches" aria-label="{% trans "Chart of the change in the amount of the user's unhandled matches over the past year on a weekly basis." %}">
           <canvas class="line_chart" id="line_chart_all_matches_development__{{ account.uuid }}"></canvas>
           </div>
         </div>
