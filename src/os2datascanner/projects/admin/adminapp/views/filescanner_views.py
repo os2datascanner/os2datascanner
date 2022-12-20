@@ -39,7 +39,7 @@ class FileScannerCreate(ScannerCreate):
     fields = [
         'name',
         'schedule',
-        'url',
+        'unc',
         'exclusion_rules',
         'alias',
         'do_ocr',
@@ -71,7 +71,7 @@ class FileScannerUpdate(ScannerUpdate):
     fields = [
         'name',
         'schedule',
-        'url',
+        'unc',
         'exclusion_rules',
         'alias',
         'do_ocr',
@@ -129,7 +129,7 @@ class FileScannerCopy(ScannerCopy):
     fields = [
         'name',
         'schedule',
-        'url',
+        'unc',
         'exclusion_rules',
         'alias',
         'do_ocr',
@@ -167,7 +167,7 @@ def initialize_form(form):
     """Initializes the form fields for username and password
     as they are not part of the file scanner model."""
 
-    form.fields['url'].widget.attrs['placeholder'] = _('e.g. //network-domain/top-folder')
+    form.fields['unc'].widget.attrs['placeholder'] = _('e.g. //network-domain/top-folder')
     form.fields['username'] = forms.CharField(max_length=1024, required=False, label=_('Username'))
     form.fields['password'] = forms.CharField(max_length=50, required=False, label=_('Password'))
     form.fields['domain'] = forms.CharField(max_length=2024, required=False, label=_('User domain'))

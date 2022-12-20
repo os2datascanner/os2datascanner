@@ -33,6 +33,8 @@ logger = logging.getLogger(__name__)
 class ExchangeScanner(Scanner):
     """Scanner for Exchange Web Services accounts"""
 
+    mail_domain = models.CharField(max_length=2048, blank=False, verbose_name='Domain')
+
     userlist = models.FileField(
         null=True,
         blank=True,
@@ -45,6 +47,13 @@ class ExchangeScanner(Scanner):
         blank=True,
         default=""
     )
+
+    @property
+    def needs_revalidation(self):
+        try:
+            return self.objects.get(pk=self.pk).mail_domain != self.mail_domain
+        except ExchangeScanner.DoesNotExist:
+            return False
 
     def get_userlist_file_path(self):
         return os.path.join(settings.MEDIA_ROOT, self.userlist.name)
@@ -82,13 +91,13 @@ class ExchangeScanner(Scanner):
                     else:
                         for alias in addresses:
                             address = alias.value
-                            if address.endswith(self.url):
+                            if address.endswith(self.mail_domain):
                                 user_list.add(address.split("@", maxsplit=1)[0])
 
         for u in user_list:
             logger.info(f"submitting scan for user {u}")
             yield EWSAccountSource(
-                domain=self.url.lstrip("@"),
+                domain=self.mail_domain.lstrip("@"),
                 server=self.service_endpoint or None,
                 admin_user=self.authentication.username,
                 admin_password=self.authentication.get_password(),

@@ -33,6 +33,8 @@ logger = structlog.get_logger(__name__)
 class WebScanner(Scanner):
     """Web scanner for scanning websites."""
 
+    url = models.CharField(max_length=2048, blank=False, verbose_name='URL')
+
     linkable = True
 
     do_link_check = models.BooleanField(
@@ -114,6 +116,13 @@ class WebScanner(Scanner):
     @property
     def default_sitemap_path(self):
         return "/sitemap.xml"
+
+    @property
+    def needs_revalidation(self):
+        try:
+            return self.objects.get(pk=self.pk).url != self.url
+        except WebScanner.DoesNotExist:
+            return False
 
     def get_sitemap_url(self):
         """Get the URL of the sitemap.xml file.

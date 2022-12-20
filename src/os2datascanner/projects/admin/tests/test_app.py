@@ -92,7 +92,7 @@ class ScannerTest(TestCase):
         authentication = Authentication(username="jens")
         authentication.set_password("rigtig heste batteri haefteklamme")
         scanner = FileScanner(
-                url="//ORG/SIKKERSRV",
+                unc="//ORG/SIKKERSRV",
                 organization=self.magenta,
                 authentication=authentication,
                 alias="K")

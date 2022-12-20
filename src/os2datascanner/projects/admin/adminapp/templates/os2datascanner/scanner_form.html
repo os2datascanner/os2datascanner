@@ -148,6 +148,14 @@
             {% include "os2datascanner/scanner_form_input_field.html" with field=form.url required="True" placeholder=form.url.field.widget.attrs.placeholder %}
           {% endif %}
 
+          {% if form.unc %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.unc required="True" placeholder=form.unc.field.widget.attrs.placeholder %}
+          {% endif %}
+
+          {% if form.mail_domain %}
+            {% include "os2datascanner/scanner_form_input_field.html" with field=form.mail_domain required="True" placeholder=form.mail_domain.field.widget.attrs.placeholder %}
+          {% endif %}
+
           {% if form.service_endpoint %}
             {% include "os2datascanner/scanner_form_input_field.html" with field=form.service_endpoint placeholder="f.eks. https://example.com/EWS/Exchange.asmx" %}
           {% endif %}

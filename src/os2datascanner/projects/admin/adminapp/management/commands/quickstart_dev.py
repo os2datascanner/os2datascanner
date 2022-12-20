@@ -45,7 +45,7 @@ class Command(BaseCommand):
         smb_user = "os2"
         smb_password = "swordfish"
         smb_name = "Lille Samba"
-        smb_url = "//samba/e2test"
+        smb_unc = "//samba/e2test"
         web_name = "Local nginx"
         web_url = "http://nginx/"
 
@@ -68,7 +68,7 @@ class Command(BaseCommand):
         recurrence = Recurrence()
         share, created = FileScanner.objects.get_or_create(
             name=smb_name,
-            url=smb_url,
+            unc=smb_unc,
             do_ocr=True,
             validation_status=True,
             do_last_modified_check=False,
