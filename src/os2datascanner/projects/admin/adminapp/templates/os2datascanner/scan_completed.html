@@ -141,9 +141,9 @@
                         <span class="completed_icon">
                           {% include "components/svg-icons/check_circle_full.svg" %}
                           <span class="width">
-                            {% with total_scan_times|get_item:status.pk|unlocalize as scan_time %}
-                            {% if scan_time %}
-                              {% trans "Finished in" %} {{ scan_time|format_timespan }}
+                            {% with total_scan_times|get_item:status.pk as scan_time_item %}
+                            {% if scan_time_item %}
+                              {% trans "Finished in" %} {{ scan_time_item|unlocalize|format_timespan }}
                             {% else %}
                               {% trans "Finished" %}
                             {% endif %}

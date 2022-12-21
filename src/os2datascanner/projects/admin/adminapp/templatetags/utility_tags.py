@@ -13,7 +13,11 @@ def get_item(dictionary, key):
 def format_timespan(seconds):
     """Return a string of the two largest time units of the time span given in seconds."""
 
-    seconds = float(seconds)
+    try:
+        seconds = float(seconds)
+    except ValueError as e:
+        print(e)
+        return seconds
 
     time_formats = {
         "days": {
