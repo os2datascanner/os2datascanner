@@ -1,5 +1,6 @@
 import unittest
 
+from os2datascanner.engine2.demo.utils import DemoSourceUtility as TestSourceUtility
 from os2datascanner.engine2.model.data import DataSource
 from os2datascanner.engine2.model.file import FilesystemSource
 from os2datascanner.engine2.model.http import SecureWebSource, WebSource
@@ -96,5 +97,5 @@ class URLTests(unittest.TestCase):
 
         for source, url in sources_and_urls:
             with self.subTest(url):
-                generated_url = source.to_url()
+                generated_url = TestSourceUtility.to_url(source)
                 self.assertEqual(url, generated_url)

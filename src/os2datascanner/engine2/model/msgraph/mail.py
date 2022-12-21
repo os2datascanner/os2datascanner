@@ -130,7 +130,6 @@ class MSGraphMailAccountSource(DerivedSource):
             weblink=message["webLink"], folder=folder)
 
     @staticmethod
-    @Source.url_handler("test-msgraph")
     def from_url(url):
         scheme, netloc, path, _, _ = urlsplit(url)
         auth, tenant_id = netloc.split("@", maxsplit=1)

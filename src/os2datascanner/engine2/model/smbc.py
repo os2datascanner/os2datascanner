@@ -4,7 +4,7 @@ import enum
 import logging
 import smbc
 from typing import Optional
-from urllib.parse import quote, unquote, urlsplit
+from urllib.parse import quote
 from pathlib import PureWindowsPath
 from datetime import datetime
 import operator
@@ -16,7 +16,7 @@ from ..utilities.backoff import DefaultRetrier
 from ..conversions.types import OutputType
 from ..conversions.utilities.navigable import make_values_navigable
 from .smb import (
-    SMBSource, make_smb_url, compute_domain,
+    make_smb_url, compute_domain,
     make_full_windows_path, make_presentation_url)
 from .core import Source, Handle, FileResource
 from .core.errors import UncontactableError
@@ -199,28 +199,11 @@ class SMBCSource(Source):
         for dent in obj.getdents():
             yield from handle_dirent([], dent)
 
-    def to_url(self):
-        return make_smb_url(
-                "smbc", self._unc, self._user, self._domain, self._password)
-
     # For our own purposes, we need to be able to make a "smb://" URL to give
     # to pysmbc. That URL doesn't need to contain authentication details,
     # though, as our __auth_handler function takes care of that
     def _to_url(self):
         return make_smb_url("smb", self._unc, None, None, None)
-
-    @staticmethod
-    @Source.url_handler("smbc")
-    def from_url(url):
-        scheme, netloc, path, _, _ = urlsplit(url)
-        match = SMBSource.netloc_regex.match(netloc)
-        if match:
-            return SMBCSource(
-                "//" + match.group("unc") + unquote(path),
-                match.group("username"), match.group("password"),
-                match.group("domain"))
-        else:
-            return None
 
     def to_json_object(self):
         return dict(

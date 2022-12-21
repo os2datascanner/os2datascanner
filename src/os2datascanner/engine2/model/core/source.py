@@ -3,7 +3,7 @@ from typing import Mapping, Iterator
 
 from ...utilities.json import JSONSerialisable
 from ...utilities.equality import TypePropertyEquality
-from .errors import UnknownSchemeError
+# from .errors import UnknownSchemeError
 from .import handle as mhandle
 from .utilities import SourceManager
 
@@ -79,40 +79,6 @@ class Source(TypePropertyEquality, JSONSerialisable):
         finds."""
         return False
 
-    __url_handlers = {}
-
-    @staticmethod
-    def url_handler(*schemes):
-        """Decorator: registers the decorated function as the handler for the
-        URL schemes given as arguments. This handler will be called by from_url
-        when it finds one of these schemes.
-
-        Subclasses should use this decorator to register their from_url factory
-        methods."""
-        def _url_handler(func):
-            for scheme in schemes:
-                if scheme in Source.__url_handlers:
-                    raise ValueError(
-                            "BUG: can't register two handlers" +
-                            " for the same URL scheme!", scheme)
-                Source.__url_handlers[scheme] = func
-            return func
-        return _url_handler
-
-    @staticmethod
-    def from_url(url):
-        """Parses the given URL to produce a new Source."""
-        try:
-            scheme, _ = url.split(':', maxsplit=1)
-            if scheme not in Source.__url_handlers:
-                raise UnknownSchemeError(scheme)
-            return Source.__url_handlers[scheme](url)
-        except ValueError:
-            raise UnknownSchemeError()
-    # There is no general requirement that subclasses implement a to_url
-    # method (what's the URL of a file in a deeply-nested archive?), but many
-    # of them do. If a Source provides a to_url method, it is a requirement
-    # that Source.from_url(Source.to_url(src)) == src.
     __mime_handlers = {}
 
     @staticmethod
