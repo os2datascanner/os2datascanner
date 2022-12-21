@@ -13,6 +13,12 @@
   folder path" instead, and have been moved to below the path instead of below
   the name of the report.
 
+
+### Bugfixes
+
+- The completed scan overview no longer breaks, when it encounters ScanStatus
+  objects with no ScanStatusSnapshots.
+
 ## Version 3.17.4, 19th December 2022
 
 "Cinnamon; 'Tis the Seasoning"
