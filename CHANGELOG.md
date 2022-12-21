@@ -6,7 +6,12 @@
 
 ### General Improvements
 
-- The URL field in the Exchangescanner and Filescanner forms are now correctly marked "domain" and "unc" instead.
+- The URL field in the Exchangescanner and Filescanner forms are now correctly 
+  marked "domain" and "unc" instead.
+
+- The "copy" and "copy folder" buttons now have the text "copy path" and "copy 
+  folder path" instead, and have been moved to below the path instead of below
+  the name of the report.
 
 ## Version 3.17.4, 19th December 2022
 
