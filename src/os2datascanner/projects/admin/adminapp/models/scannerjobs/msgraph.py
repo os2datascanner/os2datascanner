@@ -29,7 +29,7 @@ from .scanner import Scanner
 logger = logging.getLogger(__name__)
 
 
-def _create_user_list(org_unit, url):  # noqa
+def _create_user_list(org_unit):  # noqa
     """
     Creates a user list from selected organization units.
     """
@@ -48,8 +48,7 @@ def _create_user_list(org_unit, url):  # noqa
             else:
                 for alias in addresses:
                     address = alias.value
-                    if address.endswith(url):
-                        user_list.add(address)
+                    user_list.add(address)
 
     logger.info(f"submitting scan for accounts {', '.join(user_list)}")
 
@@ -88,7 +87,7 @@ class MSGraphMailScanner(MSGraphScanner):
                 client_id=settings.MSGRAPH_APP_ID,
                 tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
-                userlist=_create_user_list(self.org_unit, self.url),
+                userlist=_create_user_list(self.org_unit),
             )
 
 
@@ -125,7 +124,7 @@ class MSGraphFileScanner(MSGraphScanner):
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
                 site_drives=self.scan_site_drives,
                 user_drives=self.scan_user_drives,
-                userlist=_create_user_list(self.org_unit, self.url),
+                userlist=_create_user_list(self.org_unit),
             )
 
 
@@ -155,5 +154,5 @@ class MSGraphCalendarScanner(MSGraphScanner):
                 client_id=settings.MSGRAPH_APP_ID,
                 tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
-                userlist=_create_user_list(self.org_unit, self.url)
+                userlist=_create_user_list(self.org_unit)
             )

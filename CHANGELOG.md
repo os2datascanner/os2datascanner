@@ -9,10 +9,11 @@
 - The URL field in the Exchangescanner and Filescanner forms are now correctly 
   marked "domain" and "unc" instead.
 
+  - Some unused calls to empty URL fields have been removed.
+
 - The "copy" and "copy folder" buttons now have the text "copy path" and "copy 
   folder path" instead, and have been moved to below the path instead of below
   the name of the report.
-
 
 ### Bugfixes
 
