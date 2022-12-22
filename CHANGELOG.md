@@ -15,6 +15,8 @@
   folder path" instead, and have been moved to below the path instead of below
   the name of the report.
 
+- Light grey text is now slightly darker for higher contrast and readability.
+
 ### Bugfixes
 
 - The completed scan overview no longer breaks, when it encounters ScanStatus
