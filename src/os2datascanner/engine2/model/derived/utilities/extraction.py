@@ -11,9 +11,9 @@ def should_skip_images(configuration: dict) -> bool:
     Checks if the 'image/*' mime type is in 'skip_mime_types' for a
     configuration dict.
     """
-
-    if configuration and configuration["skip_mime_types"]:
-        return "image/*" in configuration["skip_mime_types"]
+    if configuration:
+        if skip_types := configuration.get("skip_mime_types"):
+            return "image/*" in skip_types
 
     return False
 
@@ -72,6 +72,7 @@ MD5DeduplicationFilter = DeduplicationFilter(checksum=md5)
 
 class ImageSizeFilter(Filter):
     """A filter for removing images that are too small to contain any text."""
+
     def __init__(self, x_dim, y_dim):
         self.dimensions = (x_dim, y_dim)
 

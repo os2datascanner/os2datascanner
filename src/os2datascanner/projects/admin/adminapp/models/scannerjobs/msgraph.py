@@ -17,6 +17,7 @@ import logging
 
 from django.db import models
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.engine2.model.msgraph.mail import MSGraphMailSource
 from os2datascanner.engine2.model.msgraph.files import MSGraphFilesSource
@@ -63,6 +64,12 @@ class MSGraphScanner(Scanner):
 
 
 class MSGraphMailScanner(MSGraphScanner):
+    scan_deleted_items_folder = models.BooleanField(
+        default=False,
+        verbose_name=_('Scan deleted items folder'),
+        help_text=_("Include emails in the deleted post folder"),
+
+    )
 
     def get_type(self):
         return 'msgraph-mail'
@@ -78,7 +85,8 @@ class MSGraphMailScanner(MSGraphScanner):
             yield MSGraphMailSource(
                 client_id=settings.MSGRAPH_APP_ID,
                 tenant_id=str(self.grant.tenant_id),
-                client_secret=settings.MSGRAPH_CLIENT_SECRET
+                client_secret=settings.MSGRAPH_CLIENT_SECRET,
+                scan_deleted_items_folder=self.scan_deleted_items_folder
             )
         else:
             # Otherwise yield a source for every user
@@ -88,6 +96,7 @@ class MSGraphMailScanner(MSGraphScanner):
                 tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
                 userlist=_create_user_list(self.org_unit),
+                scan_deleted_items_folder=self.scan_deleted_items_folder
             )
 
 

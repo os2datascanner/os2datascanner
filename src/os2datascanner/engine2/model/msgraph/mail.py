@@ -12,9 +12,16 @@ from .utilities import MSGraphSource, warn_on_httperror, MailFSBuilder
 class MSGraphMailSource(MSGraphSource):
     type_label = "msgraph-mail"
 
-    def __init__(self, client_id, tenant_id, client_secret, userlist=None):
+    def __init__(
+            self,
+            client_id,
+            tenant_id,
+            client_secret,
+            scan_deleted_items_folder,
+            userlist=None):
         super().__init__(client_id, tenant_id, client_secret)
         self._userlist = userlist
+        self._scan_deleted_items_folder = scan_deleted_items_folder
 
     def handles(self, sm):  # noqa
         if self._userlist is None:
@@ -42,7 +49,8 @@ class MSGraphMailSource(MSGraphSource):
     def to_json_object(self):
         return dict(
                 **super().to_json_object(),
-                userlist=list(self._userlist) if self._userlist is not None else None)
+                userlist=list(self._userlist) if self._userlist is not None else None,
+                scan_deleted_items_folder=self.scan_deleted_items_folder)
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -52,7 +60,16 @@ class MSGraphMailSource(MSGraphSource):
                 client_id=obj["client_id"],
                 tenant_id=obj["tenant_id"],
                 client_secret=obj["client_secret"],
-                userlist=frozenset(userlist) if userlist is not None else None)
+                userlist=frozenset(userlist) if userlist is not None else None,
+                scan_deleted_items_folder=obj["scan_deleted_items_folder"])
+
+    def censor(self):
+        return type(self)(self._client_id, self._tenant_id, None,
+                          scan_deleted_items_folder=self.scan_deleted_items_folder)
+
+    @property
+    def scan_deleted_items_folder(self):
+        return self._scan_deleted_items_folder
 
 
 DUMMY_MIME = "application/vnd.os2.datascanner.graphmailaccount"
@@ -110,9 +127,19 @@ class MSGraphMailAccountSource(DerivedSource):
         pn = self.handle.relative_path
         ps = engine2_settings.model["msgraph"]["page_size"]
         builder = MailFSBuilder(self, sm, pn)
+        query = f"users/{pn}/messages?$select=id,subject,webLink,parentFolderId&$top={ps}"
 
-        result = sm.open(self).get(
-            f"users/{pn}/messages?$select=id,subject,webLink,parentFolderId&$top={ps}")
+        if self.handle.source.scan_deleted_items_folder:
+            result = sm.open(self).get(query)
+
+        else:
+            # Find folder id of deleted post for given mail account
+            del_post_folder_id = sm.open(self).get(
+                f"users/{pn}/mailFolders/deleteditems?$select=id").get("id")
+
+            # Exclude deleted post by issuing a 'not equal to' (ne) filter query
+            result = sm.open(self).get(
+                f"{query}&$filter=parentFolderId ne '{del_post_folder_id}'")
 
         yield from (self._wrap(msg, builder) for msg in result["value"])
         # We want to get all emails for given account

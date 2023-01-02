@@ -108,7 +108,7 @@ class _MSGraphMailCreate(ScannerCreate):
     type = 'msgraph-mail'
     fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
-              'do_last_modified_check', 'rules', 'organization', ]
+              'do_last_modified_check', 'scan_deleted_items_folder', 'rules', 'organization', ]
 
     def get_form(self, form_class=None):
         return patch_form(self, super().get_form(form_class))
@@ -125,7 +125,7 @@ class MSGraphMailUpdate(ScannerUpdate):
     type = 'msgraph-mailscanners'
     fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
-              'do_last_modified_check', 'rules', 'organization', ]
+              'do_last_modified_check', 'scan_deleted_items_folder', 'rules', 'organization', ]
 
     def get_form(self, form_class=None):
         return patch_form(self, super().get_form(form_class))
@@ -147,7 +147,7 @@ class MSGraphMailCopy(ScannerCopy):
     type = 'msgraph-mail'
     fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
               'do_ocr', 'org_unit', 'exclusion_rules',
-              'do_last_modified_check', 'rules', 'organization', ]
+              'do_last_modified_check', 'scan_deleted_items_folder', 'rules', 'organization', ]
 
 
 class MSGraphMailAskRun(ScannerAskRun):
