@@ -440,7 +440,7 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
 
     def form_valid(self, form):
         """Validate the submitted form."""
-        if self.object.invalid_form:
+        if self.object.needs_revalidation:
             self.object.validation_status = Scanner.INVALID
 
         def is_in_cleaned(entry, comparable):
