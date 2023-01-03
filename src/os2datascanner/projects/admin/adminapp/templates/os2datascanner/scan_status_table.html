@@ -67,7 +67,7 @@
 					                    {% trans "No objects to scan" %}
                                     {% endif %}
                                 </td>
-                                <td class="datatable__column--info" id="status_column__{{ status.pk }}"
+                                <td class="datatable__column--info" id="status_column__{{ status.pk|unlocalize }}"
                                     {% if request.GET.reload == "#status_table_poll" %}hx-swap-oob="true"{% endif %}
                                 >
                                     {% if status.stage.value == 0 %}
