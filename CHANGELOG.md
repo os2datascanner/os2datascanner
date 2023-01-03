@@ -19,6 +19,9 @@
 
 ### Bugfixes
 
+- Trying to import users with deprecated emails no longer breaks the import 
+  job.
+
 - The completed scan overview no longer breaks, when it encounters ScanStatus
   objects with no ScanStatusSnapshots.
 
