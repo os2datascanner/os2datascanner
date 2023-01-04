@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.17.5,
+## Version 3.17.5, 4th January 2023
 
 "Stream a Fire Pit on your Favourite Streaming Service"
 
