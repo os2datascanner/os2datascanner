@@ -7,7 +7,7 @@
   display: inline-block;
   font-size: 1rem;
   line-height: 1;
-  padding: 1rem 0.5rem;
+  padding: 0.5rem;
   text-decoration: none;
   transition: var(--transition-default);
   transition-property: background-color;
@@ -309,5 +309,11 @@
     margin: 0 .2rem .2rem 0;
     vertical-align: middle;
     display: inline-block;
+    padding: 1rem 0.5rem;
+
+    @media (min-width: $break-lg) {
+      padding: 0.5em;
+    }
+
   }
 }
