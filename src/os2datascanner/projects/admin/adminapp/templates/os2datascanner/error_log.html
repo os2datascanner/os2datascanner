@@ -42,7 +42,7 @@
                 <tr class="table-topbar topbar-stick sticky">
                   <th colspan="6">
                     {% include "components/remove-error.html" %}
-                    <div class="view-options">
+                    <div class="view-options button-group">
                       {% if new_error_logs > 0 %}
                       <button type="button" class="button" name="see_all"
                               hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content"

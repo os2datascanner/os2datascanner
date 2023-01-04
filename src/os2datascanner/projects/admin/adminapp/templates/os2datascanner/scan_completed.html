@@ -50,7 +50,7 @@
                 <tr class="table-topbar topbar-stick sticky">
                   <th colspan="7">
                     {% include "components/resolve-status.html" %}
-                    <div class="view-options">
+                    <div class="view-options button-group">
                       <button type="button" class="button button--has-icon" name="status-resolved-all"
                               hx-post="" hx-swap="outerHTML" hx-trigger="click" hx-target=".content" hx-select=".content"
                               hx-confirm="{% trans "You are about to delete" %} {{ page_obj.paginator.count }}{% trans " scan status data. This action cannot be reverted. Are you sure?" %}"
