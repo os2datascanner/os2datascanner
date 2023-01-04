@@ -30,6 +30,8 @@
 
 - A localized primary key in the HTML has been correctly *unlocalized*.
 
+- Fixed the sizes of some responsive buttons.
+
 ## Version 3.17.4, 19th December 2022
 
 "Cinnamon; 'Tis the Seasoning"
