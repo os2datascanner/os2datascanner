@@ -55,6 +55,12 @@ class Position(models.Model):
         verbose_name = _('position')
         verbose_name_plural = _('positions')
 
+        # Do not allow duplicate positions.
+        constraints = [
+            models.UniqueConstraint(fields=['account', 'unit', 'role'],
+                                    name='%(app_label)s_position_unique_constraint')
+        ]
+
     def __str__(self):
         format_str = _("{cls}: {account} ({role}) at {unit}")
         cls = _(self.__class__.__name__.lower()).capitalize()
