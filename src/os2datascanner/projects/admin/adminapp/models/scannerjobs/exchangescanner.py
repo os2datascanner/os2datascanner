@@ -51,7 +51,8 @@ class ExchangeScanner(Scanner):
     @property
     def needs_revalidation(self):
         try:
-            return self.objects.get(pk=self.pk).mail_domain != self.mail_domain
+            return ExchangeScanner.objects.get(
+                    pk=self.pk).mail_domain != self.mail_domain
         except ExchangeScanner.DoesNotExist:
             return False
 

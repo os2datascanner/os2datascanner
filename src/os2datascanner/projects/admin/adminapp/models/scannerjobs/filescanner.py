@@ -51,7 +51,7 @@ class FileScanner(Scanner):
     @property
     def needs_revalidation(self):
         try:
-            return self.objects.get(pk=self.pk).unc != self.unc
+            return FileScanner.objects.get(pk=self.pk).unc != self.unc
         except FileScanner.DoesNotExist:
             return False
 
