@@ -115,7 +115,7 @@ class Account(Core_Account):
 
         if matches_by_week[0]["matches"] == 0:
             self.match_status = StatusChoices.GOOD
-        elif total_handled == 0 or total_handled/total_new < 0.75:
+        elif total_handled == 0 or total_new != 0 and total_handled/total_new < 0.75:
             self.match_status = StatusChoices.BAD
         else:
             self.match_status = StatusChoices.OK

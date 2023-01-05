@@ -1,5 +1,18 @@
 # Changelog
 
+## Version 3.17.6,
+
+"Einstein Failed Math"
+
+### Bugfixes
+
+- A method on the Account object will no longer divide by zero.
+
+### Other notes
+
+It is a common misconception, that Einstein failed at math. In reality, he was
+a bona fide genius, and excelled at advanced math even as a child.
+
 ## Version 3.17.5, 4th January 2023
 
 "Stream a Fire Pit on your Favourite Streaming Service"
