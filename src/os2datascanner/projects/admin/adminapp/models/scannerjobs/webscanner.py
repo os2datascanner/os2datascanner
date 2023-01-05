@@ -120,7 +120,7 @@ class WebScanner(Scanner):
     @property
     def needs_revalidation(self):
         try:
-            return self.objects.get(pk=self.pk).url != self.url
+            return WebScanner.objects.get(pk=self.pk).url != self.url
         except WebScanner.DoesNotExist:
             return False
 

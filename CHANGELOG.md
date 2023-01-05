@@ -8,6 +8,8 @@
 
 - A method on the Account object will no longer divide by zero.
 
+- Editing file, web and Exchange scanners works properly again.
+
 ### Other notes
 
 It is a common misconception, that Einstein failed at math. In reality, he was
