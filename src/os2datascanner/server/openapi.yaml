@@ -211,7 +211,7 @@ components:
                         type: string
                         description:
                             A MIME type. (The last character can be the
-                            wildcard "*"; for example, "image/*".)
+                            wildcard "&ast;"; for example, "image/&ast;".)
 paths:
     /dummy/1:
         post:
@@ -247,7 +247,7 @@ paths:
                                 source:
                                     $ref: "#/components/schemas/source"
                                 configuration:
-                                    $ref: "#/components/schema/configuration"
+                                    $ref: "#/components/schemas/configuration"
             responses:
                 "200":
                     description: a number of pipeline output messages
