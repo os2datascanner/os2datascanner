@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.17.6,
+## Version 3.17.6, 6th January 2023
 
 "Einstein Failed Math"
 
