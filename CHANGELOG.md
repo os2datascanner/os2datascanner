@@ -4,6 +4,10 @@
 
 "Einstein Failed Math"
 
+### New in this version
+
+- Support for API scans of individual objects.
+
 ### Bugfixes
 
 - A method on the Account object will no longer divide by zero.

@@ -3,7 +3,7 @@ from uuid import uuid4
 from pathlib import Path
 
 from os2datascanner.utils.system_utilities import time_now
-from os2datascanner.engine2.model.core import Source, SourceManager
+from os2datascanner.engine2.model.core import Handle, Source, SourceManager
 from os2datascanner.engine2.rules.rule import Rule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.explorer import (
@@ -129,8 +129,7 @@ def scan_1(body):  # noqa: CCR001
         yield "400 Bad Request"
         yield {
             "status": "fail",
-            "message": "cannot scan Sources "
-                       "of type \"{0}\"".format(source.type_label)
+            "message": "cannot scan Sources of type \"{0}\"".format(top_type)
         }
         return
 
@@ -174,6 +173,88 @@ def scan_1(body):  # noqa: CCR001
                         yield from (m3 for _, m3 in exporter_mrr(m2, c2, sm))
             elif c1 in ("os2ds_problems",):
                 yield from (m2 for _, m2 in exporter_mrr(m1, c1, sm))
+
+
+@api_endpoint
+def scan_handle_1(body):  # noqa: CCR001
+    if not body:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "parameters missing"
+        }
+        return
+
+    if "handle" not in body or "rule" not in body:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "either \"handle\" or \"rule\" was missing"
+        }
+        return
+
+    try:
+        handle = Handle.from_json_object(body["handle"])
+        top_type = _get_top(handle.source).type_label
+    except Exception:
+        handle = None
+
+    if not handle:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "\"handle\" could not be understood as a Handle"
+        }
+        return
+    elif (settings.server["permitted_sources"]
+            and top_type not in settings.server["permitted_sources"]):
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "cannot scan Sources of type \"{0}\"".format(top_type)
+        }
+        return
+
+    try:
+        rule = Rule.from_json_object(body["rule"])
+    except Exception:
+        rule = None
+
+    if not rule:
+        yield "400 Bad Request"
+        yield {
+            "status": "fail",
+            "message": "\"rule\" could not be understood as a Rule"
+        }
+        return
+
+    yield "200 OK"
+
+    message = messages.ConversionMessage(
+            scan_spec=messages.ScanSpecMessage(
+                    scan_tag=messages.ScanTagFragment(
+                            time=time_now(),
+                            user=None,
+                            scanner=messages.ScannerFragment(
+                                    pk=0,
+                                    name="API server demand scan"),
+                            organisation=messages.OrganisationFragment(
+                                    name="API server",
+                                    uuid=uuid4())),
+                    source=handle.source,
+                    rule=rule,
+                    filter_rule=None,
+                    configuration=body.get("configuration", {}),
+                    progress=None),
+            handle=handle,
+            progress=messages.ProgressFragment(
+                    rule=rule,
+                    matches=[])).to_json_object()
+
+    with SourceManager() as sm:
+        for c, m in worker_mrr(message, "os2ds_conversions", sm):
+            if c in ("os2ds_matches", "os2ds_metadata", "os2ds_problems",):
+                yield from (m2 for _, m2 in exporter_mrr(m, c, sm))
 
 
 @api_endpoint
@@ -249,6 +330,10 @@ endpoints = {
     "/scan/1": {
         "POST": scan_1,
         "OPTIONS": option_endpoint("/scan/1")
+    },
+    "/scan-handle/1": {
+        "POST": scan_handle_1,
+        "OPTIONS": option_endpoint("/scan-handle/1")
     },
     "/parse-url/1": {
         "POST": parse_url_1,
