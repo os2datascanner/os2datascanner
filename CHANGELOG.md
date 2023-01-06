@@ -10,6 +10,9 @@
 
 - Editing file, web and Exchange scanners works properly again.
 
+- Fixed a migration's assumption that the `scan_time`-field would always
+  exist on DocumentReport objects.
+
 ### Other notes
 
 It is a common misconception, that Einstein failed at math. In reality, he was

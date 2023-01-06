@@ -18,8 +18,11 @@ def populate_resolution_time(apps, schema_editor):
                                        Q(resolution_status__isnull=False, resolution_time=temp_date))
 
     for report in dr.iterator():
-        new_date = report.scan_time + timezone.timedelta(days=7)
-        report.resolution_time = min([new_date, now])
+        if report.scan_time:
+            new_date = report.scan_time + timezone.timedelta(days=7)
+            report.resolution_time = min([new_date, now])
+        else:
+            report.resolution_time = now
         report.save()
 
 
