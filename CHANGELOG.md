@@ -2,7 +2,13 @@
 
 ## Version 3.17.7,
 
-"OS2datasauron (don't run with this one)"
+"A Wizard is Never Late ... Nor is he Early."
+
+### New in this release
+
+- Scannerjobs now start at 19:00 and later, instead of 18:00.
+
+- Ad import jobs now start at 17:00 instead of 00:00.
 
 ### General Improvements
 

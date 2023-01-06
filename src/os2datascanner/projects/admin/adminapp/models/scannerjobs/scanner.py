@@ -176,14 +176,14 @@ class Scanner(models.Model):
     )
 
     # First possible start time
-    FIRST_START_TIME = datetime.time(hour=18, minute=0)
+    FIRST_START_TIME = datetime.time(hour=19, minute=0)
     # Amount of quarter-hours that can be added to the start time
-    STARTTIME_QUARTERS = 6 * 4
+    STARTTIME_QUARTERS = 5 * 4
 
     def get_start_time(self):
         """The time of day the Scanner should be automatically started."""
         # add (minutes|hours) in intervals of 15m depending on `pk`, so each
-        # scheduled job start at different times after 18h00m
+        # scheduled job start at different times after 19h00m
         added_minutes = 15 * (self.pk % self.STARTTIME_QUARTERS)
         added_hours = int(added_minutes / 60)
         added_minutes -= added_hours * 60
