@@ -10,7 +10,7 @@ info:
     license:
         name: Mozilla Public License, v. 2.0
         url: https://mozilla.org/MPL/2.0/
-    version: 1.2.0
+    version: 1.3.0
 components:
     securitySchemes:
         bpsk:
@@ -192,6 +192,42 @@ components:
             oneOf:
                 - $ref: "#/components/schemas/data-source"
                 - $ref: "#/components/schemas/web-source"
+        web-handle:
+            type: object
+            description: >
+                A "web" Handle represents a specific resource found on a
+                website: a web page, an image, or a linked file.
+
+                <p>(This Handle corresponds to a HTTP or HTTPS URL, consisting
+                of the parent Source's URL concatenated with the path fragment
+                of this object.)
+            required: ["source", "path"]
+            properties:
+                type:
+                    type: string
+                    enum: ["web"]
+                source:
+                    $ref: "#/components/schemas/web-source"
+                path:
+                    type: string
+                    description:
+                        A path fragment identifying a given resource under the
+                        parent Source.
+                    example: "path/to/resource.pdf"
+        handle:
+            description: >
+                A Handle is a reference to a specific object under a Source.
+
+                <p>Handles are always evaluated relative to a Source, and your
+                system administrator may have restricted the set of Sources
+                available to the API host. Contact your system administrator
+                for more information.
+
+                <p>This document describes only a limited subset of
+                OS2datascanner's Handles. See the OS2datascanner code for more
+                information.
+            oneOf:
+                - $ref: "#/components/schemas/web-handle"
         configuration:
             type: object
             description: >
@@ -211,7 +247,7 @@ components:
                         type: string
                         description:
                             A MIME type. (The last character can be the
-                            wildcard "*"; for example, "image/*".)
+                            wildcard "&ast;"; for example, "image/&ast;".)
 paths:
     /dummy/1:
         post:
@@ -247,7 +283,41 @@ paths:
                                 source:
                                     $ref: "#/components/schemas/source"
                                 configuration:
-                                    $ref: "#/components/schema/configuration"
+                                    $ref: "#/components/schemas/configuration"
+            responses:
+                "200":
+                    description: a number of pipeline output messages
+                    content:
+                        application/jsonl:
+                            example: >
+                                {"scan_spec": {"scan_tag": "395c1473-0868-443b-bff4-ff058a52a81e", "source": {"type": "data", "content": "VGhpcyBpcyBvbmx5IGEgdGVzdA==", "mime": "text/plain"}, "rule": {"type": "regex", "sensitivity": null, "name": null, "expression": "[Tt]est"}, "configuration": {}, "progress": null}, "handle": {"type": "data", "source": {"type": "data", "content": None, "mime": "text/plain", "name": "test.txt"}, "path": "test.txt"}, "matched": true, "matches": [{"rule": {"type": "regex", "sensitivity": null, "name": null, "expression": "[Tt]est"}, "matches": [{"offset": 15, "match": "test"}]}], "origin": "os2ds_matches"}
+                                {"scan_tag": "395c1473-0868-443b-bff4-ff058a52a81e", "handle": {"type": "data", "source": {"type": "data", "content": None, "mime": "text/plain", "name": "test.txt"}, "path": "test.txt"}, "metadata": {}, "origin": "os2ds_metadata"}
+    /scan-handle/1:
+        post:
+            operationId: scan-handle-1
+            summary: Runs a scan on a single file and yields the results
+            description: >
+                This operation causes the OS2datascanner scan pipeline to
+                scan a specific Handle for matches of a given Rule.
+
+                <p>When the file you wish to scan is visible to the API host
+                (for example, when you know its URL on a web server or cloud
+                storage system), using this endpoint is likely to have better
+                performance than Base64-encoding the file into a
+                <code>data</code> Source.
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: ["handle", "rule"]
+                            properties:
+                                rule:
+                                    $ref: "#/components/schemas/rule"
+                                handle:
+                                    $ref: "#/components/schemas/handle"
+                                configuration:
+                                    $ref: "#/components/schemas/configuration"
             responses:
                 "200":
                     description: a number of pipeline output messages

@@ -22,11 +22,8 @@ def _open_pdf_wrapped(obj):
     reader = PyPDF2.PdfFileReader(obj)
     if reader.getIsEncrypted():
         # Some PDFs are "encrypted" with an empty password: give that a shot...
-        try:
-            if reader.decrypt("") == 0:  # the document has a real password
-                reader = None
-        except NotImplementedError:  # unsupported encryption algorithm
-            reader = None
+        if reader.decrypt("") == 0:  # the document has a real password
+            raise PyPDF2.utils.PdfReadError("File cannot be decrypted")
     return reader
 
 
