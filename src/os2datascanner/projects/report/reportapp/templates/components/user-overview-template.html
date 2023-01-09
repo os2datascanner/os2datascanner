@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load static %}
 
-<div class="overview_wrapper">
+<div class="overview_wrapper" hx-headers='{"X-CSRFToken": "{{csrf_token}}"}' hx-push-url="false">
   <div class="overview-timeline">
   <h1>{% trans "Development overview for" %} {% if account.get_full_name %}{{ account.get_full_name }}{% else %}{{ account.username }}{% endif %}</h1>
     <div class="statistic">
@@ -39,6 +39,32 @@
         </div>
       </div>
     </div>
+    {% if request.user.is_superuser %}
+    <div class="statistic">
+      <div class="statistic_header">
+        <div>
+          <h2 class="page-title__sub">{% trans "Number of matches per scanner job" %}</h2>
+          <ul>
+          {% for scannerjob in scannerjobs %}
+            <li id="scannerjob-li__{{scannerjob.scanner_job_pk}}">
+              {{ scannerjob.scanner_job_name }}: {{ scannerjob.total }}
+              <button type="button" 
+                      name="delete_from_scannerjob"
+                      hx-post="{% url "statistics-user" %}"
+                      hx-trigger="click"
+                      hx-target="#scannerjob-li__{{scannerjob.scanner_job_pk}}"
+                      hx-swap="outerHTML"
+                      hx-vals='{"pk": "{{ scannerjob.scanner_job_pk }}", "name": "{{ scannerjob.scanner_job_name }}", "account": "{{ account.pk }}"}'
+                      hx-confirm="{% trans "You are about to delete all results from the scannerjob" %} &quot;{{ scannerjob.scanner_job_name }}&quot; {% trans "associated with the user" %} &quot;{{ account.get_full_name }}&quot; ({% trans "Username" %}: &quot;{{ account.username }}&quot;). {% trans "Are you sure? This action cannot be reversed." %}">
+                {% trans "Delete" %}
+              </button>
+            </li>
+          {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </div>
   <div class="statistic">
     <div class="statistic_header">
