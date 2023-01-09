@@ -96,7 +96,8 @@ class Engine2PipelineTests(unittest.TestCase):
                 # Randomly-generated UUIDs
                 "995c7bff-022b-45b3-b43f-a87877d5b051",
                 "1864a889-df0d-4b96-a438-92871096e089",
-                client_secret="SECRETVALUE")
+                client_secret="SECRETVALUE",
+                scan_deleted_items_folder=True)
         secret_handle = msgraph.MSGraphMailAccountHandle(
                 secret_source, "t.estsen@placeholder.invalid")
 

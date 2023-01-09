@@ -157,7 +157,8 @@ class MSGraphMailAccountSource(DerivedSource):
             weblink=message["webLink"], folder=folder)
 
     @staticmethod
-    def from_url(url):
+    def from_url(url):  # TODO: Question, is this method even used? I see no good way of getting
+        # scan_deleted_items here.
         scheme, netloc, path, _, _ = urlsplit(url)
         auth, tenant_id = netloc.split("@", maxsplit=1)
         client_id, client_secret = auth.split(":", maxsplit=1)
