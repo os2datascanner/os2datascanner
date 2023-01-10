@@ -15,6 +15,8 @@
 - Superusers in the report module can now access all organizational units in
   the leader overview.
 
+- Duplicate position-objects are no longer allowed.
+
 ### Bugfixes
 
 - Mail content can once again be reliably retrieved using the Exchange Web
