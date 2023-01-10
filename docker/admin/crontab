@@ -11,4 +11,4 @@
 ################################################################################
 
 */15 * * * * ./manage.py cron
-0 0 * * * ./manage.py synchronize_organization
+0 17 * * * ./manage.py synchronize_organization
