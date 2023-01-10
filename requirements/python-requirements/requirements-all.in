@@ -22,7 +22,7 @@ toml
 chardet
 defusedxml
 dropbox==10.3.0
-exchangelib
+exchangelib==4.8.0  # Brittle API; do /not/ bump without checking for changes!
 lxml
 olefile
 Pillow

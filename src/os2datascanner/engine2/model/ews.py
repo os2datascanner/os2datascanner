@@ -2,7 +2,7 @@ from io import BytesIO
 from urllib.parse import urlsplit, quote
 from contextlib import contextmanager
 from exchangelib import (
-    Account, Message, Credentials, IMPERSONATION,
+    Folder, Account, Message, Credentials, IMPERSONATION,
     Configuration, ExtendedProperty)
 from exchangelib.errors import (ErrorServerBusy, ErrorItemNotFound)
 from exchangelib.protocol import BaseProtocol
@@ -184,8 +184,12 @@ class EWSMailResource(FileResource):
         account = self._get_cookie()
 
         def _retrieve_message():
+            # exchangelib>=4.0.0 requires that you pass a Folder object to the
+            # function that... returns a Folder object?... okay, fine, let's do
+            # that...
+            folder_object = Folder(id=folder_id)
             return account.root.get_folder(
-                    folder_id).all().only("message_id").get(id=mail_id)
+                    folder_object).all().only("message_id").get(id=mail_id)
 
         m = DefaultRetrier(ErrorServerBusy).run(_retrieve_message)
         return not isinstance(m, ErrorItemNotFound)
@@ -196,7 +200,8 @@ class EWSMailResource(FileResource):
             account = self._get_cookie()
 
             def _retrieve_message():
-                return account.root.get_folder(folder_id).get(id=mail_id)
+                folder_object = Folder(id=folder_id)
+                return account.root.get_folder(folder_object).get(id=mail_id)
             self._message = DefaultRetrier(
                     ErrorServerBusy, fuzz=0.25).run(_retrieve_message)
         return self._message
