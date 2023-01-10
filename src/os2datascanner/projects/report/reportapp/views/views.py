@@ -742,7 +742,8 @@ class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
         scannerjobs = filter_inapplicable_matches(
             account.user,
             DocumentReport.objects.filter(
-                raw_matches__matched=True),
+                raw_matches__matched=True,
+                resolution_status__isnull=True),
             Role.get_user_roles_or_default(
                 account.user)).order_by("scanner_job_pk").values(
                 "scanner_job_pk",
@@ -763,17 +764,18 @@ class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
         reports = filter_inapplicable_matches(
             account.user,
             DocumentReport.objects.filter(
+                scanner_job_pk=scannerjob_pk,
                 resolution_status__isnull=True,
                 raw_matches__matched=True),
             Role.get_user_roles_or_default(
                 account.user))
 
-        reports.filter(scanner_job_pk=scannerjob_pk).delete()
+        reports.delete()
 
         response = HttpResponse(
             "<li>" +
-            _(f"You deleted all {account.first_name or account.username}\'s"
-              f" results from {scannerjob_name}.") +
+            _('You deleted all {0}\'s results from {1}.'.format(
+                account.get_full_name(), scannerjob_name)) +
             "</li>")
 
         response.headers["HX-Trigger"] = "reload-htmx"
