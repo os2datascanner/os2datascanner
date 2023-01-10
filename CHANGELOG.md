@@ -15,6 +15,18 @@
 - Superusers in the report module can now access all organizational units in
   the leader overview.
 
+### Bugfixes
+
+- Mail content can once again be reliably retrieved using the Exchange Web
+  Services protocol.
+
+### Other notes
+
+From the 31st of December 2022, Exchange scanners cannot be used to scan
+Exchange Online, as Microsoft has deprecated the legacy authentication
+mechanism used by OS2datascanner. For now, we recommend the use of a Microsoft
+Graph scanner instead. (On-premises customers are not affected by this change.)
+
 ## Version 3.17.6, 6th January 2023
 
 "Einstein Failed Math"
