@@ -657,9 +657,12 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        user_units = OrganizationalUnit.objects.filter(
-            Q(positions__account=self.request.user.account) & Q(positions__role="manager"))
-        print(user_units)
+        if self.request.user.is_superuser:
+            user_units = OrganizationalUnit.objects.all()
+        else:
+            user_units = OrganizationalUnit.objects.filter(
+                Q(positions__account=self.request.user.account) & Q(positions__role="manager"))
+
         context['user_units'] = user_units
 
         if unit_uuid := self.request.GET.get('org_unit', None):

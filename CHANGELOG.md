@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 3.17.7,
+
+"OS2datasauron (don't run with this one)"
+
+### General Improvements
+
+- Superusers in the report module can now access all organizational units in
+  the leader overview.
+
 ## Version 3.17.6, 6th January 2023
 
 "Einstein Failed Math"
