@@ -17,7 +17,7 @@ class MSGraphMailSource(MSGraphSource):
             client_id,
             tenant_id,
             client_secret,
-            scan_deleted_items_folder,
+            scan_deleted_items_folder=True,
             userlist=None):
         super().__init__(client_id, tenant_id, client_secret)
         self._userlist = userlist
@@ -61,7 +61,7 @@ class MSGraphMailSource(MSGraphSource):
                 tenant_id=obj["tenant_id"],
                 client_secret=obj["client_secret"],
                 userlist=frozenset(userlist) if userlist is not None else None,
-                scan_deleted_items_folder=obj["scan_deleted_items_folder"])
+                scan_deleted_items_folder=obj.get("scan_deleted_items_folder", True))
 
     def censor(self):
         return type(self)(self._client_id, self._tenant_id, None,
