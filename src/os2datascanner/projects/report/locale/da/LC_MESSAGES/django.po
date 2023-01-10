@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-06 13:12+0100\n"
+"POT-Creation-Date: 2023-01-10 08:42+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -736,6 +736,27 @@ msgid "Week"
 msgstr "Uge"
 
 #: reportapp/templates/components/user-overview-template.html:46
+msgid "Number of matches per scanner job"
+msgstr "Antal matches pr. scannerjob"
+
+#: reportapp/templates/components/user-overview-template.html:57
+msgid "You are about to delete all results from the scannerjob"
+msgstr "Du er ved at slette alle resultater fra scannerjobbet"
+
+#: reportapp/templates/components/user-overview-template.html:57
+msgid "associated with the user"
+msgstr "tilknyttet brugeren"
+
+#: reportapp/templates/components/user-overview-template.html:57
+#: reportapp/templates/login.html:14 reportapp/templates/user_content.html:26
+msgid "Username"
+msgstr "Brugernavn"
+
+#: reportapp/templates/components/user-overview-template.html:57
+msgid "Are you sure? This action cannot be reversed."
+msgstr "Er du sikker? Denne handling kan ikke fortrydes."
+
+#: reportapp/templates/components/user-overview-template.html:72
 msgid "Development chart"
 msgstr "Udviklingsgraf"
 
@@ -796,10 +817,6 @@ msgstr "Log ind på"
 #: reportapp/templates/login.html:8
 msgid "report module"
 msgstr "rapportmodulet"
-
-#: reportapp/templates/login.html:14 reportapp/templates/user_content.html:26
-msgid "Username"
-msgstr "Brugernavn"
 
 #: reportapp/templates/login.html:22 reportapp/templates/user_content.html:122
 msgid "Password"
@@ -1069,6 +1086,12 @@ msgstr "Filscan"
 #: reportapp/views/views.py:523
 msgid "Mailscan"
 msgstr "Mailscan"
+
+#: reportapp/views/views.py:772
+msgid "You deleted all {account.first_name or account.username}'s"
+msgstr ""
+"Du har slettet alle {account.first_name or account.username}s resultater fra "
+"{scannerjob_name}."
 
 #~ msgid ""
 #~ "OS2datascanner will not delete results from the system that was scanned.\n"

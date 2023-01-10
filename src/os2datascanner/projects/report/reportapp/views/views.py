@@ -772,8 +772,8 @@ class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
 
         response = HttpResponse(
             "<li>" +
-            _(f"You deleted all {account.first_name or account.username}\'s "
-              f"results from {scannerjob_name}.") +
+            _(f"You deleted all {account.first_name or account.username}\'s"
+              f" results from {scannerjob_name}.") +
             "</li>")
 
         response.headers["HX-Trigger"] = "reload-htmx"

@@ -23,6 +23,7 @@
 	flex: 1 1 auto;
 	min-width: 0;
 	max-width: 100%;
+	height: fit-content;
 
 	@media (min-width: $break-lg) {
 		border-radius: var(--border-radius-widget);
@@ -43,6 +44,7 @@
 			margin: .5rem;
 			flex: 0 1 auto; // make explicit for IE11's sake
 		}
+
 	}
 
 	p {
@@ -59,6 +61,19 @@
 		-ms-grid-column-align: end;
 		justify-self: end;
 		height: 0;
+	}
+}
+
+.scannerjob-list {
+
+	li {
+		display: flex;
+		align-items: center;
+		margin: 1rem;
+
+		.button {
+			margin-right: 1rem;
+		}
 	}
 }
 
