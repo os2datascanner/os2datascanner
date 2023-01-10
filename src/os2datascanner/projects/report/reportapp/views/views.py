@@ -776,12 +776,14 @@ class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
             Role.get_user_roles_or_default(
                 account.user))
 
+        response_string = _('You deleted all results from {0} associated with {1}.'.format(
+                scannerjob_name, account.get_full_name()))
+
         reports.delete()
 
         response = HttpResponse(
             "<li>" +
-            _('You deleted all {0}\'s results from {1}.'.format(
-                account.get_full_name(), scannerjob_name)) +
+            response_string +
             "</li>")
 
         response.headers["HX-Trigger"] = "reload-htmx"
