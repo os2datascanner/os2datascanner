@@ -743,15 +743,21 @@ class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
             account.user,
             DocumentReport.objects.filter(
                 raw_matches__matched=True,
-                resolution_status__isnull=True),
-            Role.get_user_roles_or_default(
-                account.user)).order_by("scanner_job_pk").values(
+                resolution_status__isnull=True
+            ),
+            Role.get_user_roles_or_default(account.user)
+            ).order_by(
+                "scanner_job_pk"
+            ).values(
                 "scanner_job_pk",
-                "scanner_job_name").annotate(
-                    total=Count("scanner_job_pk")).values(
-                        "scanner_job_pk",
-                        "scanner_job_name",
-            "total")
+                "scanner_job_name"
+            ).annotate(
+                total=Count("scanner_job_pk")
+            ).values(
+                "scanner_job_pk",
+                "scanner_job_name",
+                "total"
+            )
         context["scannerjobs"] = scannerjobs
         return context
 
