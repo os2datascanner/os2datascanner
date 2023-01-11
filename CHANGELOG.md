@@ -10,6 +10,9 @@
 
 - Ad import jobs now start at 17:00 instead of 00:00.
 
+- A superuser can now, in the leader overview, delete all results stemming from
+  a specific scannerjob for individual users.
+
 ### General Improvements
 
 - Superusers in the report module can now access all organizational units in

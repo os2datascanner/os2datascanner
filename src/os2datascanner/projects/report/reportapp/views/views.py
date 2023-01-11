@@ -739,7 +739,55 @@ class UserStatisticsPageView(LoginRequiredMixin, TemplateView):
         context["account"] = account
         matches_by_week = account.count_matches_by_week()
         context["matches_by_week"] = matches_by_week
+        scannerjobs = filter_inapplicable_matches(
+            account.user,
+            DocumentReport.objects.filter(
+                raw_matches__matched=True,
+                resolution_status__isnull=True
+            ),
+            Role.get_user_roles_or_default(account.user)
+            ).order_by(
+                "scanner_job_pk"
+            ).values(
+                "scanner_job_pk",
+                "scanner_job_name"
+            ).annotate(
+                total=Count("scanner_job_pk")
+            ).values(
+                "scanner_job_pk",
+                "scanner_job_name",
+                "total"
+            )
+        context["scannerjobs"] = scannerjobs
         return context
+
+    def post(self, request, *args, **kwargs):
+
+        scannerjob_pk = request.POST.get("pk")
+        scannerjob_name = request.POST.get("name")
+        account = Account.objects.get(pk=request.POST.get("account"))
+
+        reports = filter_inapplicable_matches(
+            account.user,
+            DocumentReport.objects.filter(
+                scanner_job_pk=scannerjob_pk,
+                resolution_status__isnull=True,
+                raw_matches__matched=True),
+            Role.get_user_roles_or_default(
+                account.user))
+
+        response_string = _('You deleted all results from {0} associated with {1}.'.format(
+                scannerjob_name, account.get_full_name()))
+
+        reports.delete()
+
+        response = HttpResponse(
+            "<li>" +
+            response_string +
+            "</li>")
+
+        response.headers["HX-Trigger"] = "reload-htmx"
+        return response
 
 
 class ApprovalPageView(TemplateView):
