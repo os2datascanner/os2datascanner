@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.17.7,
+## Version 3.17.7, 11th January 2023
 
 "A Wizard is Never Late ... Nor is he Early."
 
