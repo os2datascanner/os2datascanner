@@ -13,6 +13,9 @@
 - A superuser can now, in the leader overview, delete all results stemming from
   a specific scannerjob for individual users.
 
+- By default, Office 365 mail scans will no longer scan users deleted post folder. Inclusion of
+  deleted post folder can be turned on in the scanner settings.
+
 ### General Improvements
 
 - Superusers in the report module can now access all organizational units in
