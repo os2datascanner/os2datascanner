@@ -1,4 +1,5 @@
 import re
+from copy import deepcopy
 import json
 import hashlib
 import warnings
@@ -59,13 +60,21 @@ def relate_matches_to_user(user, value, alias_type):
         create_alias_and_match_relations(alias)
 
 
-def hash_handle(handle):
+def hash_handle(handle: dict) -> str:
     """
     Creates a SHA-512 hash value from the handle string
     and returns the hex value.
     :param handle: handle as json object
     :return: SHA-512 hex value
     """
+    handle = deepcopy(handle)
+
+    source = handle.get("source")
+    while source:
+        if "scan_deleted_items_folder" in source:
+            del source["scan_deleted_items_folder"]
+        source = source.get("handle", {}).get("source")
+
     return hashlib.sha512(json.dumps(handle).encode()).hexdigest()
 
 
