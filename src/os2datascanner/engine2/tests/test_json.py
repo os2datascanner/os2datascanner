@@ -108,7 +108,8 @@ example_handles = [
                             MSGraphMailSource(
                                     "Not a real client ID value",
                                     "Not a real tenant ID value",
-                                    "Not a very secret client secret"),
+                                    "Not a very secret client secret",
+                                    True),
                             "testuser@example.invalid")),
             "bWVzc2FnZQo=",
             "Re: Re: Re: Copy of FINAL (2) (EDITED).doc.docx",

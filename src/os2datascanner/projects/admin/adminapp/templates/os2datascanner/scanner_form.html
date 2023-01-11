@@ -661,6 +661,13 @@
                   {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.only_notify_superadmin %}
                 </div>
 	      {% endif %}
+
+      {% if form.scan_deleted_items_folder %}
+		<div class="checkbox-group">
+          {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.scan_deleted_items_folder %}
+        </div>
+      {% endif %}
+
 		
               {% if form.skip_super_hidden %}
               <div class="checkbox-group">
