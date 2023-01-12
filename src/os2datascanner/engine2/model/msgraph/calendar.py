@@ -176,14 +176,17 @@ class MSGraphCalendarEventHandle(Handle):
 
     @property
     def start(self):
-        date = timezone.datetime.strptime(self._start["dateTime"], "%Y-%m-%dT%H:%M:%S.%f0")
-        tz = timezone.pytz.timezone(self._start["timeZone"])
-        tz.localize(date)
-        return date
+        if self._start:
+            date = timezone.datetime.strptime(self._start["dateTime"], "%Y-%m-%dT%H:%M:%S.%f0")
+            tz = timezone.pytz.timezone(self._start["timeZone"])
+            tz.localize(date)
+            return date.strftime('%H:%M %-d/%-m/%y')
+        else:
+            return "Date NaN"
 
     @property
     def presentation_name(self):
-        return f"[{self.start.strftime('%H:%M %-d/%-m/%y')}] {self._event_subject}"
+        return f"[{self.start}] {self._event_subject}"
 
     @property
     def presentation_place(self):
