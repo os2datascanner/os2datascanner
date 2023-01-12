@@ -214,4 +214,4 @@ class MSGraphCalendarEventHandle(Handle):
     def from_json_object(obj):
         return MSGraphCalendarEventHandle(
             Source.from_json_object(obj["source"]),
-            obj["path"], obj["event_subject"], obj["weblink"], obj["start"])
+            obj["path"], obj["event_subject"], obj["weblink"], obj.get("start", None))
