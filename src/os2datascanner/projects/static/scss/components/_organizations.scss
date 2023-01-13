@@ -38,7 +38,7 @@
     margin-top: -.75rem;
   }
 
-  .response-icon  {
+  .response-icon {
     display: flex;
     margin: 0 .25rem .75rem 1rem;
     font-size: .8rem;
@@ -46,6 +46,7 @@
     &--error {
       color: var(--color-error);
     }
+
     &--success {
       color: var(--color-ok-dark);
     }
@@ -54,7 +55,36 @@
 
 .userObjClass {
 
-  .user-class-input + .user-class-input,  button + .user-class-input {
+  .user-class-input+.user-class-input,
+  button+.user-class-input {
     margin-top: 1rem;
+  }
+}
+
+.orgunit-list {
+
+  .root {
+
+    ul {
+      margin-bottom: 0;
+    }
+
+    li {
+      padding: 0.5rem 0;
+
+      &:last-of-type {
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .orgunit_name {
+    display: inline-block;
+    width: 30%;
+  }
+
+  .orgunit_members {
+    font-style: italic;
   }
 }

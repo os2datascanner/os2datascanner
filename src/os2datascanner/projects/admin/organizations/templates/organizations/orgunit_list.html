@@ -6,12 +6,39 @@
 
 {% block content %}
 {% if orgunit_list.exists %}
-    <h1>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h1>
+<div class="orgunit-list">
+
+    <h2>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h2>
+    <form name="orgunit_filters"
+          class="orgunit_filtering_wrapper"
+          onsubmit="return false"
+          hx-get="{% url "orgunit-list" organization.slug %}"
+          hx-trigger="change"
+          hx-swap="outerHTML"
+          hx-select=".root"
+          hx-target=".root"
+            >
+        <div class="orgunit_input_wrapper search_field_wrapper">
+            <input type="search" 
+                    name="search_field" 
+                    id="search_field" 
+                    placeholder="{% trans "Search for organizational unit" %}" 
+                    value="{{ request.GET.search_field }}"/>
+        </div>
+        <div class="orgunit_input_wrapper">
+            <input type="checkbox"
+                name="show_empty"
+                id="show_empty"
+                value="on"/>
+            <label for="show_empty">{% trans "Show empty units" %}</label>
+        </div>
+    </form>
     <ul class="root">
         {% recursetree orgunit_list %}
             <li>
-                {{ node.name }}
-                {% if not node.is_leaf_node %}
+                <span class="orgunit_name">{{ node.name }}</span>
+                <span class="orgunit_members">({{ node.members }} {% trans "accounts associated." %})</span>
+                {% if not node.is_leaf_node and children %}
                     <ul class="children">
                         {{ children }}
                     </ul>
@@ -19,7 +46,8 @@
             </li>
         {% endrecursetree %}
     </ul>
+</div>
 {% else %}
-    <span class="root">{% trans "No organizational units."%}</span>
+<span class="root orgunit-list">{% trans "No organizational units."%}</span>
 {% endif %}
 {% endblock %}

@@ -13,11 +13,15 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
     # Filter queryset based on organization:
     def get_queryset(self):
         org = self.kwargs['org']
-        top_unit = OrganizationalUnit.objects.filter(organization=org, parent=None)
-        if not top_unit:
-            return OrganizationalUnit.objects.none()
-        else:
-            return top_unit.get_descendants(include_self=True)
+        search_field = self.request.GET.get("search_field", "")
+        units = OrganizationalUnit.objects.filter(
+            organization=org, name__icontains=search_field).prefetch_related("positions")
+
+        show_empty = self.request.GET.get("show_empty", "off") == "on"
+        if not show_empty:
+            units = units.exclude(positions=None)
+
+        return units
 
     def setup(self, request, *args, **kwargs):
         org = get_object_or_404(Organization, slug=kwargs['org_slug'])

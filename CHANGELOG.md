@@ -10,7 +10,11 @@
   pattern. This overview is identical to the one accessible in the leader
   overview. This page can be accessed through a button in the header menu.
 
-### General Improvements
+- Organizational units in the organizations-tab can now be filtered through a 
+  search field, and units with no associated accounts are now hidden by
+  default.
+
+### General improvements
 
 - The documentation for the scanner engine has been updated.
 
@@ -58,6 +62,8 @@
   in the report module.
 
 - Profile page in report module can now be accessed by users with no roles.
+
+- Organizational units in the organizations-tab are now sorted alphabetically.
 
 ## Version 3.17.9, 23rd January 2023
 

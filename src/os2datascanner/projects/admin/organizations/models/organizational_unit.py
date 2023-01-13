@@ -12,6 +12,8 @@
 # sector open source network <https://os2.eu/>.
 #
 
+from django.db.models import Count
+
 from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.projects.admin.import_services.models import Imported
 from os2datascanner.core_organizational_structure.models import \
@@ -23,7 +25,11 @@ class OrganizationalUnit(Core_OrganizationalUnit, Broadcasted, Imported):
     """ Core logic lives in the core_organizational_structure app.
         Additional specific logic can be implemented here. """
     factory = None
-    pass
+
+    @property
+    def members(self):
+        return self.positions.values("account").annotate(
+            count=Count("account")).values("account").count()
 
 
 OrganizationalUnit.factory = ModelFactory(OrganizationalUnit)
