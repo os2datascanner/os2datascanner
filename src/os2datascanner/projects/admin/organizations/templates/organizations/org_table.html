@@ -1,7 +1,6 @@
 {% load static %}
 {% load i18n %}
 {% load mptt_tags %}
-{% load get_orgunit_list %}
 
 {% block scripts %}
   <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
@@ -292,28 +291,21 @@
                 </td>
                 {% endif %}
             </tr>
-            {% with organization|get_orgunit_list as orgunit_list %}
-            {% if orgunit_list %}
             <tr>
                 <td class="datatable__column--name" colspan="12">
                     <div class="orgunits" url={% url 'org-units-listing' %}>
-                        <ul class="root">
-                            {% recursetree orgunit_list %}
-                                <li>
-                                    {{ node.name }}
-                                    {% if not node.is_leaf_node %}
-                                        <ul class="children">
-                                            {{ children }}
-                                        </ul>
-                                    {% endif %}
-                                </li>
-                            {% endrecursetree %}
-                        </ul>
+                        <div hx-get="{% url "orgunit-list" organization.slug %}"
+                             hx-trigger="intersect"
+                             hx-swap="outerHTML"
+                             hx-target="this"
+                             hx-select=".root">
+                             <div class="loading"><svg class="relative page-indicator" id="orgunit-page-indicator" viewbox="0 0 100 100">
+                                <circle id="circle" cx="50" cy="50" r="45"></circle>
+                              </svg></div>
+                        </div>
                     </div>
                 </td>
             </tr>
-            {% endif %}
-            {% endwith %}
             {% endfor %}
         </tbody>
         {% endif %}

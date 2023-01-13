@@ -12,7 +12,8 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
 
     # Filter queryset based on organization:
     def get_queryset(self):
-        top_unit = self.kwargs['org'].top_unit
+        org = self.kwargs['org']
+        top_unit = OrganizationalUnit.objects.filter(organization=org, parent=None)
         if not top_unit:
             return OrganizationalUnit.objects.none()
         else:

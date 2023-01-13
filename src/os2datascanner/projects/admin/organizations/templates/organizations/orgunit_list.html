@@ -4,8 +4,8 @@
 
 {% block title %}{% trans "organizational hierarchy"|capfirst %}{% endblock %}
 
-
 {% block content %}
+{% if orgunit_list.exists %}
     <h1>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h1>
     <ul class="root">
         {% recursetree orgunit_list %}
@@ -19,4 +19,7 @@
             </li>
         {% endrecursetree %}
     </ul>
+{% else %}
+    <span class="root">{% trans "No organizational units."%}</span>
+{% endif %}
 {% endblock %}
