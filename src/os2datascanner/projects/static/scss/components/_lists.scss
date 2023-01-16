@@ -1,0 +1,18 @@
+.orgunit-list {
+  .orgunit-list-element {
+    &.has_children {
+      list-style: none;
+      cursor: pointer;
+
+      &::before {
+        content: "▾";
+        position: absolute;
+        left: -1rem;
+      }
+
+      &.up::before {
+        content: "▴";
+      }
+    }
+  }
+}

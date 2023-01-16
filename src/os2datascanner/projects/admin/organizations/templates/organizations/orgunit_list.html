@@ -35,11 +35,11 @@
     </form>
     <ul class="root">
         {% recursetree orgunit_list %}
-            <li>
+            <li class="orgunit-list-element {% if not node.is_leaf_node and children %}has_children{% endif %}">
                 <span class="orgunit_name">{{ node.name }}</span>
                 <span class="orgunit_members">({{ node.members }} {% trans "accounts associated." %})</span>
                 {% if not node.is_leaf_node and children %}
-                    <ul class="children">
+                    <ul class="children" hidden>
                         {{ children }}
                     </ul>
                 {% endif %}
