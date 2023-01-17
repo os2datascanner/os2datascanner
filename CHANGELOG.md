@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 3.17.8, 17th January 2023
+
+"What Time Is It?"
+
+### Bugfixes
+
+- Corrected for the introduction of EWSDateTime in exchangelib. Such object can now be made
+ navigable.
+
 ## Version 3.17.7, 11th January 2023
 
 "A Wizard is Never Late ... Nor is he Early."
