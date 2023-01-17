@@ -19,6 +19,8 @@ you only asked for one, why not make it possible to get the other nineteen too?
 
 import datetime
 
+import exchangelib
+
 
 class _NavigableBase:
     @classmethod
@@ -89,12 +91,13 @@ for t in (bool, range, memoryview,):
 _navigable_types[type(None)] = lambda v: None
 
 
-make_navigable_type(
-        datetime.datetime,
-        adaptor=lambda dt: (
-                dt.year, dt.month, dt.day,
-                dt.hour, dt.minute, dt.second, dt.microsecond,
-                dt.tzinfo))
+for klass in (datetime.datetime, exchangelib.EWSDateTime):
+    make_navigable_type(
+            klass,
+            adaptor=lambda dt: (
+                    dt.year, dt.month, dt.day,
+                    dt.hour, dt.minute, dt.second, dt.microsecond,
+                    dt.tzinfo))
 
 
 def make_navigable(v, *, parent=None):
