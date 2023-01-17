@@ -79,7 +79,9 @@ Lint Python:
   script:
     # Flake8 5.0.0 introduced a bug: module 'flake8.options.config' has no attribute 'ConfigFileFinder'
     # pinning to flake8 version 4.0.1, until a fix by either flake8 or pflake8 is released.
-    - pip install flake8==4.0.1 pyproject-flake8 flake8-bugbear flake8-cognitive-complexity flake8-expression-complexity --quiet
+    # Pinning to flake8-bugbear version 22.12.6, because this project has
+    # repeatedly introduced false positives that get in the way of deployment
+    - pip install flake8==4.0.1 pyproject-flake8 flake8-bugbear==22.12.6 flake8-cognitive-complexity flake8-expression-complexity --quiet
     - pflake8 src
 
 Lint js scripts:
