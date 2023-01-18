@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic.list import ListView
 
-from ..models import OrganizationalUnit, Organization
+from ..models import OrganizationalUnit, Organization, Account, Position
 
 
 class OrganizationalUnitListView(LoginRequiredMixin, ListView):
@@ -31,4 +31,16 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['organization'] = self.kwargs['org']
+        context['accounts'] = Account.objects.filter(organization=self.kwargs['org'])
         return context
+
+    def post(self, request, *args, **kwargs):
+
+        if new_manager_uuid := request.POST.get("add-manager", None):
+            orgunit = OrganizationalUnit.objects.get(pk=request.POST.get("orgunit"))
+            new_manager = Account.objects.get(uuid=new_manager_uuid)
+            _ = Position.objects.get_or_create(account=new_manager, unit=orgunit, role="manager")
+
+        response = self.get(request, *args, **kwargs)
+
+        return response

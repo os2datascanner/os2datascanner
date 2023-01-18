@@ -15,7 +15,20 @@ function setExpandButtons(buttons) {
   });
 }
 
+function setAddButtons(buttons) {
+  buttons.forEach(element => {
+    element.addEventListener("click", function (e) {
+      let targ = e.target;
+      let selectField = targ.parentNode.querySelector(".select_manager");
+      targ.style.display = "none";
+      selectField.hidden = false;
+    });
+  });
+}
+
 htmx.onLoad(function () {
   let expandButtons = document.querySelectorAll(".has_children");
+  let addButtons = document.querySelectorAll(".add_manager_button");
   setExpandButtons(expandButtons);
+  setAddButtons(addButtons);
 });
