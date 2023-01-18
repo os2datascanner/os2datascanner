@@ -37,7 +37,21 @@
         {% recursetree orgunit_list %}
             <li class="orgunit-list-element {% if not node.is_leaf_node and children %}has_children{% endif %}">
                 <span class="orgunit_name">{{ node.name }}</span>
-                <span class="orgunit_members">({{ node.members }} {% trans "accounts associated." %})</span>
+                <span class="orgunit_members">{{ node.members_associated }} {% trans "accounts associated." %}</span>
+                <span class="orgunit_managers">{% trans "Managers" %}:
+                    <ul>
+                        {% for manager_pos in node.managers %}
+                        <li>{{ manager_pos.account.get_full_name }}</li>
+                        {% endfor %}
+                        <li class="add_manager">
+                            <button type="button" class="button button--small">
+                                <svg class="icon">
+                                    <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
+                                </svg>
+                            </button>
+                        </li>
+                    </ul>
+                </span>
                 {% if not node.is_leaf_node and children %}
                     <ul class="children" hidden>
                         {{ children }}

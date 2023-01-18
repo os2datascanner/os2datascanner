@@ -2,11 +2,19 @@
   .orgunit-list-element {
     &.has_children {
       list-style: none;
-      cursor: pointer;
+      position: relative;
+
+      >.orgunit_name {
+        cursor: pointer;
+      }
 
       &::before {
         content: "▾";
         position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 2rem;
         left: -1rem;
       }
 

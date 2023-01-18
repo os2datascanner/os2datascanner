@@ -27,9 +27,13 @@ class OrganizationalUnit(Core_OrganizationalUnit, Broadcasted, Imported):
     factory = None
 
     @property
-    def members(self):
+    def members_associated(self):
         return self.positions.values("account").annotate(
             count=Count("account")).values("account").count()
+
+    @property
+    def managers(self):
+        return self.positions.filter(role="manager").prefetch_related("account")
 
 
 OrganizationalUnit.factory = ModelFactory(OrganizationalUnit)

@@ -82,9 +82,34 @@
   .orgunit_name {
     display: inline-block;
     width: 30%;
+    min-width: fit-content;
   }
 
   .orgunit_members {
     font-style: italic;
+    display: inline-block;
+    width: 15%;
+    min-width: fit-content;
+  }
+
+  .orgunit_managers {
+    display: inline-block;
+    width: 20%;
+    min-width: fit-content;
+
+    ul {
+      list-style: none;
+      display: inline;
+
+      li {
+        display: inline;
+        margin: 0;
+
+        &:not(:last-of-type)::after {
+          content: ", "
+        }
+      }
+    }
+
   }
 }
