@@ -41,7 +41,16 @@
                 <span class="orgunit_managers">{% trans "Managers" %}:
                     <ul id="managers__{{ node.pk }}">
                         {% for manager_pos in node.managers %}
-                        <li>{{ manager_pos.account.get_full_name }}</li>
+                        <li class="manager_li"
+                            hx-post="{% url "orgunit-list" organization.slug %}"
+                            hx-swap="outerHTML"
+                            hx-target="#managers__{{ node.pk }}"
+                            hx-select="#managers__{{ node.pk }}"
+                            hx-trigger="click"
+                            hx-vals='{"orgunit": "{{ node.pk }}", "rem-manager": "{{ manager_pos.account.uuid }}"}'
+                            hx-confirm="{% trans "Are you sure you want to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ node }}?">
+                            {{ manager_pos.account.get_full_name }}
+                        </li>
                         {% endfor %}
                         <li class="add_manager">
                             <button type="button" class="add_manager_button button button--small">

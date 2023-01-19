@@ -106,7 +106,7 @@
         margin: 0;
 
         &:not(:last-of-type)::after {
-          content: ", "
+          content: ", ";
         }
       }
     }
@@ -116,6 +116,15 @@
       width: 15rem;
       font-size: inherit;
       font-weight: inherit;
+    }
+
+    .manager_li {
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: line-through;
+
+      }
     }
 
   }

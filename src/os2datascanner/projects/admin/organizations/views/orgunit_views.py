@@ -39,7 +39,15 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
         if new_manager_uuid := request.POST.get("add-manager", None):
             orgunit = OrganizationalUnit.objects.get(pk=request.POST.get("orgunit"))
             new_manager = Account.objects.get(uuid=new_manager_uuid)
-            _ = Position.objects.get_or_create(account=new_manager, unit=orgunit, role="manager")
+            Position.objects.get_or_create(account=new_manager, unit=orgunit, role="manager")
+
+        elif rem_manager_uuid := request.POST.get("rem-manager", None):
+            print("HIT")
+            orgunit = OrganizationalUnit.objects.get(pk=request.POST.get("orgunit"))
+            rem_manager = Account.objects.get(uuid=rem_manager_uuid)
+            Position.objects.filter(account=rem_manager, unit=orgunit, role="manager").delete()
+
+        print(request.POST)
 
         response = self.get(request, *args, **kwargs)
 

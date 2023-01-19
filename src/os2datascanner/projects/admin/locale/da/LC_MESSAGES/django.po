@@ -2475,7 +2475,23 @@ msgstr "Vis tomme enheder"
 msgid "accounts associated."
 msgstr "konti tilknyttet"
 
+#: organizations/templates/organizations/orgunit_list.html:41
+msgid "Managers"
+msgstr "Ledere"
+
 #: organizations/templates/organizations/orgunit_list.html:51
+msgid "Are you sure you want to remove"
+msgstr "Er du sikker på, at du vil fjerne"
+
+#: organizations/templates/organizations/orgunit_list.html:51
+msgid "as manager of"
+msgstr "som leder af"
+
+#: organizations/templates/organizations/orgunit_list.html:68
+msgid "Choose new manager"
+msgstr "Vælg ny leder"
+
+#: organizations/templates/organizations/orgunit_list.html:86
 msgid "No organizational units."
 msgstr "Ingen organisatoriske enheder"
 
@@ -2568,9 +2584,6 @@ msgstr "Navnet er allerede i brug."
 
 #~ msgid "employee"
 #~ msgstr "medarbejder"
-
-#~ msgid "manager"
-#~ msgstr "leder"
 
 #~ msgid "data protection officer"
 #~ msgstr "data protection officer"
