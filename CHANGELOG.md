@@ -14,6 +14,9 @@
   search field, and units with no associated accounts are now hidden by
   default.
 
+- Users are now able to add and remove managers to and from their 
+  organizational units on the "organizations"-tab in the admin-module.
+
 ### General improvements
 
 - The documentation for the scanner engine has been updated.

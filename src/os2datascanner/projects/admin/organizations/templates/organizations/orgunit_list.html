@@ -10,10 +10,11 @@
 
     <h2>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h2>
     <form name="orgunit_filters"
+          id="orgunit_filters"
           class="orgunit_filtering_wrapper"
           onsubmit="return false"
           hx-get="{% url "orgunit-list" organization.slug %}"
-          hx-trigger="change"
+          hx-trigger="change, keyup delay:200ms from:#search_field"
           hx-swap="outerHTML"
           hx-select=".root"
           hx-target=".root"
@@ -42,12 +43,14 @@
                     <ul id="managers__{{ node.pk }}">
                         {% for manager_pos in node.managers %}
                         <li class="manager_li"
+                            title="{% trans "Click to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ node }}."
                             hx-post="{% url "orgunit-list" organization.slug %}"
                             hx-swap="outerHTML"
                             hx-target="#managers__{{ node.pk }}"
                             hx-select="#managers__{{ node.pk }}"
                             hx-trigger="click"
                             hx-vals='{"orgunit": "{{ node.pk }}", "rem-manager": "{{ manager_pos.account.uuid }}"}'
+                            hx-include='#orgunit_filters'
                             hx-confirm="{% trans "Are you sure you want to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ node }}?">
                             {{ manager_pos.account.get_full_name }}
                         </li>
@@ -64,7 +67,8 @@
                                     hx-target="#managers__{{ node.pk }}"
                                     hx-select="#managers__{{ node.pk }}"
                                     hx-trigger="change"
-                                    hx-vals='{"orgunit": "{{ node.pk }}"}'>
+                                    hx-vals='{"orgunit": "{{ node.pk }}"}'
+                                    hx-include='#orgunit_filters'>
                                 <option value="">{% trans "Choose new manager" %}</option>
                                 {% for account in accounts %}
                                 <option value="{{ account.uuid }}">{{ account.get_full_name }}</option>

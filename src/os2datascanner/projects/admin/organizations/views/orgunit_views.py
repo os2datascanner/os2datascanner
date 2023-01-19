@@ -41,13 +41,12 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
             new_manager = Account.objects.get(uuid=new_manager_uuid)
             Position.objects.get_or_create(account=new_manager, unit=orgunit, role="manager")
 
-        elif rem_manager_uuid := request.POST.get("rem-manager", None):
-            print("HIT")
+        if rem_manager_uuid := request.POST.get("rem-manager", None):
             orgunit = OrganizationalUnit.objects.get(pk=request.POST.get("orgunit"))
             rem_manager = Account.objects.get(uuid=rem_manager_uuid)
             Position.objects.filter(account=rem_manager, unit=orgunit, role="manager").delete()
 
-        print(request.POST)
+        request.GET = request.POST
 
         response = self.get(request, *args, **kwargs)
 

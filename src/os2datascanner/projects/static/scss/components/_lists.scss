@@ -9,7 +9,7 @@
       }
 
       &::before {
-        content: "▾";
+        content: "▸";
         position: absolute;
         display: flex;
         align-items: center;
@@ -19,7 +19,7 @@
       }
 
       &.up::before {
-        content: "▴";
+        content: "▾";
       }
     }
   }
