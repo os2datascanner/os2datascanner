@@ -1,6 +1,9 @@
 # Pipeline architecture
 
-The `os2datascanner.engine2.pipeline` module contains the `engine2` pipeline.
+The `os2datascanner.engine2.pipeline` module contains the `engine2` pipeline,
+also known as the _scanner engine_.
+
+![Image of the interactions of os2datascanner components](pipeline-architecture.svg)
 
 ## What components make up the pipeline?
 
@@ -20,7 +23,12 @@ The pipeline implementation consists of five stages:
 * the Exporter, which consumes *match*, *problem* and *metadata* messages and
   produces *result* messages suitable for the outside world.
 
-A "message" is an AMQP message containing a JSON object.
+![Overview of the data carried by OS2datascanner messages](pipeline-messages.svg)
+
+To improve cache efficiency, and to reduce the amount of potentially sensitive
+information transmitted over the underlying RabbitMQ message bus, the
+Processor, Matcher and Tagger stages are customarily bundled into a single
+process known as the _worker_.
 
 ## What are the pipeline's design principles?
 
@@ -78,3 +86,7 @@ A "message" is an AMQP message containing a JSON object.
   appropriate work, and then write JSON-formatted messages to AMQP queues. No
   stage should maintain any internal (apart from trivial caching) or external
   state.
+
+  In particular, this means that pipeline stages should not communicate with a
+  database: their tasks should be precisely and exclusively specified by their
+  input.

@@ -1,14 +1,11 @@
 # OS2Datascanner
 
-Welcome to the **technical documentation** for
-[OS2Datascanner](https://os2datascanner.magenta.dk/en/). For more about the
-product, please visit
-[https://os2datascanner.dk](https://os2datascanner.magenta.dk/en/).
-
+Welcome to the **technical documentation** for the
+[OS2datascanner](https://os2datascanner.dk/) system.
 
 ## System overview
 
-An OS2Datascanner installation consists of three components: the
+An OS2datascanner installation consists of three components: the
 *administration interface* (a Django app), the *scanner engine* (a set of
 system services), and the *report interface* (another Django app).
 
@@ -27,5 +24,3 @@ The report interface displays the results of the scanner engine. It shows
 matched objects and details of why they were matched, and allows users to flag
 certain results as irrelevant. It's intended for use by all of an
 organisation's employees.
-
-![Image of the interactions of os2datascanner components](architecture/pipeline-architecture.svg)
