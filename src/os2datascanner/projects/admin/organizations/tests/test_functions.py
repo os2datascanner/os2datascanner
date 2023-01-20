@@ -1,7 +1,7 @@
 from django.test import TestCase
 from parameterized import parameterized
 
-from ..views.orgviews import replace_nordics
+from ..views.org_views import replace_nordics
 
 
 class ReplaceSpecialCharactersTest(TestCase):

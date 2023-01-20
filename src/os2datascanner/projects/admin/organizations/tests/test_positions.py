@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.utils import translation
 
-from ..models.position import Role
+from os2datascanner.core_organizational_structure.models.position import Role
 
 
 class RoleTest(TestCase):
@@ -13,8 +13,8 @@ class RoleTest(TestCase):
     def test_choices(self):
         """The choices method returns the expected format."""
         expected = [
-            ('employee', 'Employee'),
-            ('manager', 'Manager'),
-            ('dpo', 'Data protection officer')
+            ('employee', 'employee'),
+            ('manager', 'manager'),
+            ('dpo', 'data protection officer')
         ]
-        self.assertEqual(expected, Role.choices())
+        self.assertEqual(expected, Role.choices)

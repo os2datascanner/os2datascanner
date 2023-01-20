@@ -187,7 +187,7 @@ Unit Test Admin Application:
     - cd /code/src/os2datascanner/projects/admin
     # check migrations
     - python manage.py makemigrations --check --dry-run
-    - coverage run -m pytest tests
+    - coverage run -m pytest tests organizations/tests
       --ignore=/code/src/os2datascanner/projects/admin/tests/integration
       --junitxml $CI_PROJECT_DIR/admin_unit_tests-junit.xml
       -p no:cacheprovider
