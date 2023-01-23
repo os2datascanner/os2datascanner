@@ -1,5 +1,14 @@
 # Changelog
 
+## Next release
+
+"Card Catalogue"
+
+### Bugfixes
+
+- An optimised database index has been added for the checkup collector
+  component of the administration system, greatly improving its performance.
+
 ## Version 3.17.8, 17th January 2023
 
 "What Time Is It?"
