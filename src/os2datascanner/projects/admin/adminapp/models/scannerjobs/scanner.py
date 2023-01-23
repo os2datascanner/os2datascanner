@@ -33,6 +33,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from django.utils import timezone
 
+from django.contrib.postgres.indexes import HashIndex
+
 from model_utils.managers import InheritanceManager
 from recurrence.fields import RecurrenceField
 
@@ -464,6 +466,13 @@ class ScheduledCheckup(models.Model):
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.handle} ({self.pk}) from {self.scanner}>"
+
+    class Meta:
+        indexes = (
+            HashIndex(
+                    fields=("handle_representation",),
+                    name="sc_cc_lookup"),
+        )
 
 
 class ScanStage(Enum):
