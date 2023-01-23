@@ -85,6 +85,13 @@ class AddOrganizationView(LoginRequiredMixin, CreateView):
         else:
             return super().form_valid(form)
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_superuser \
+                or request.user.administrator_for.client_id == self.kwargs['client_id']:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
 
 class UpdateOrganizationView(LoginRequiredMixin, UpdateView):
     model = Organization
@@ -97,6 +104,14 @@ class UpdateOrganizationView(LoginRequiredMixin, UpdateView):
         form.required_css_class = 'required-form'
         # form.error_css_class = # TODO: add if relevant?
         return form
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_superuser or \
+            request.user.administrator_for.client == Organization.objects.get(
+                slug=self.kwargs['slug']).client:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
 
 class DeleteOrganizationView(RestrictedDeleteView):
