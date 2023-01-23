@@ -1,5 +1,12 @@
 # Changelog
 
+## Next release
+
+### General improvements
+
+- The documentation now describes more of OS2datascanner's supported data
+  sources.
+
 ## Version 3.17.9, 23rd January 2023
 
 "4.3 Billion Index Cards"
