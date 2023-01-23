@@ -1,8 +1,8 @@
 # Changelog
 
-## Next release
+## Version 3.17.9, 23rd January 2023
 
-"Card Catalogue"
+"4.3 Billion Index Cards"
 
 ### General Improvements
 
