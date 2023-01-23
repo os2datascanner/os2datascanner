@@ -191,7 +191,7 @@ class MSGraphMailMessageResource(FileResource):
     def get_message_metadata(self):
         if not self._message:
             self._message = self._get_cookie().get(
-                    self.make_object_path() + "?$select=lastModifiedDateTime")
+                    self.make_object_path() + "?$select=lastModifiedDateTime,sentDateTime,isDraft")
         return self._message
 
     @contextmanager
@@ -207,7 +207,16 @@ class MSGraphMailMessageResource(FileResource):
         return 1024
 
     def get_last_modified(self):
-        timestamp = self.get_message_metadata().get("lastModifiedDateTime")
+        metadata = self.get_message_metadata()
+        # Many outlook events (such as flagging or moving) will change lastModifiedDateTime, but
+        # these operations aren't relevant for us, as we're only concerned with content, which
+        # won't change
+        # Hence, unless the email is a Draft, it makes the most sense to look at its sentDateTime.
+        if metadata.get("isDraft"):
+            timestamp = metadata.get("lastModifiedDateTime")
+        else:
+            timestamp = metadata.get("sentDateTime")
+
         return isoparse(timestamp) if timestamp else None
 
     def compute_type(self):
