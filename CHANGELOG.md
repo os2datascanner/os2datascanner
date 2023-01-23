@@ -4,6 +4,8 @@
 
 ### General improvements
 
+- The documentation for the scanner engine has been updated.
+
 - The documentation now describes more of OS2datascanner's supported data
   sources.
 
