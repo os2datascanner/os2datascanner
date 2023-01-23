@@ -4,6 +4,10 @@
 
 "Card Catalogue"
 
+### General Improvements
+
+- Office 365 mail scans now evaluate last modified dates by sent time, except for draft emails.
+
 ### Bugfixes
 
 - An optimised database index has been added for the checkup collector
