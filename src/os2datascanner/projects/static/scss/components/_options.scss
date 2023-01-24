@@ -58,8 +58,12 @@ label+.dropdown {
 .dropdown-container {
   display: none;
   position: absolute;
-  top: 1rem;
+  top: 3rem;
   z-index: 100;
+
+  @media (min-width: $break-lg) {
+    top: 2rem;
+  }
 
   // Apply this to make z-index work on iPad OS
   transform: translate3d(0, 0, 0);
@@ -74,15 +78,11 @@ label+.dropdown {
   position: relative;
   width: 16rem;
   z-index: 100;
-  top: 2.5rem;
+  top: 0.5rem;
   padding: 0.5rem;
   border-radius: var(--border-radius-default);
   background-color: var(--color-widget-bg);
   box-shadow: var(--box-shadow-widget);
-
-  @media (min-width: $break-lg) {
-    top: 1.5rem;
-  }
 
   ul {
     padding: 0;

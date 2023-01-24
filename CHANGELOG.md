@@ -2,12 +2,19 @@
 
 ## Next release
 
-### General improvements
+"Naturwissenschaften"
+
+### General Improvements
 
 - The documentation for the scanner engine has been updated.
 
 - The documentation now describes more of OS2datascanner's supported data
   sources.
+
+### Bugfixes
+
+- Hovering over the handle button will no longer obscure it with an invisible
+  element.
 
 ## Version 3.17.9, 23rd January 2023
 
