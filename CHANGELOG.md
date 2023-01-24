@@ -26,6 +26,9 @@
 - The start time matched calendar event is now shown on the report module for
   MSGraph Calendar scans.
 
+- RabbitMQ clients that do not actually react to dynamic instructions from
+  the administration system no longer register themselves to receive them.
+
 ### Bugfixes
 
 - Hovering over the handle button will no longer obscure it with an invisible

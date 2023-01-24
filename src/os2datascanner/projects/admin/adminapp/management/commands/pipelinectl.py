@@ -78,6 +78,7 @@ class Command(BaseCommand):
         logging.info(msg)
 
         with pika.PikaPipelineThread() as p:
+            pika.make_broadcast_queue(p)
             p.enqueue_message(
                     pika.ANON_QUEUE, msg.to_json_object(),
                     "broadcast", priority=10)

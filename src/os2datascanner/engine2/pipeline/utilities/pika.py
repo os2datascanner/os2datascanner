@@ -133,31 +133,11 @@ class PikaPipelineRunner(PikaConnectionHolder):
         channel.basic_qos(prefetch_count=self._prefetch_count)
         for q in self._read.union(self._write):
             channel.queue_declare(
-                q,
-                passive=False,
-                durable=True,
-                exclusive=False,
-                auto_delete=False)
-
-        # RabbitMQ handles broadcast messages in a slightly convoluted way:
-        # we must first declare a special "fanout" message exchange, and then
-        # each client must declare a separate anonymous queue and bind it to
-        # the exchange in order to receive broadcasts
-        channel.exchange_declare(
-            "broadcast",
-            pika.spec.ExchangeType.fanout,
-            passive=False,
-            durable=True,
-            auto_delete=False,
-            internal=False)
-        anon_queue = channel.queue_declare(
-            ANON_QUEUE,
-            passive=False,
-            durable=False,
-            exclusive=False,
-            auto_delete=True,
-            arguments={"x-max-priority": 10})
-        channel.queue_bind(exchange="broadcast", queue=anon_queue.method.queue)
+                    q,
+                    passive=False,
+                    durable=True,
+                    exclusive=False,
+                    auto_delete=False)
 
         return channel
 
@@ -171,14 +151,16 @@ class PikaPipelineRunner(PikaConnectionHolder):
     def _basic_consume(self, *, exclusive=False):
         """Registers this PikaPipelineRunner to receive messages directed to
         its read queues. (Be sure to call _basic_cancel with the return value
-        of this function to cancel this registration.)"""
+        of this function to cancel this registration later.)
+
+        Subclasses can override this function to subscribe to additional
+        queues, but should usually begin by calling the superclass
+        implementation."""
         consumer_tags = []
         for queue in self._read:
             consumer_tags.append(self.channel.basic_consume(
                     queue, self.handle_message_raw,
                     exclusive=exclusive))
-        consumer_tags.append(self.channel.basic_consume(
-                ANON_QUEUE, self.handle_message_raw, exclusive=False))
         return consumer_tags
 
     def _basic_cancel(self, consumer_tags):
@@ -455,3 +437,23 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         if self._shutdown_exception:
             raise Exception("Worker thread died unexpectedly") from (
                     self._shutdown_exception)
+
+
+def make_broadcast_queue(pch: PikaConnectionHolder):
+    """Declares a broadcast fanout exchange and an anonymous priority queue
+    bound to it through the given PikaConnectionHolder. Returns the queue
+    object, although you may prefer just to refer to it as ANON_QUEUE (provided
+    that you don't need to register other anonymous queues)."""
+
+    pch.channel.exchange_declare(
+            "broadcast", pika.spec.ExchangeType.fanout,
+            passive=False, durable=True, auto_delete=False, internal=False)
+    anon_queue = pch.channel.queue_declare(
+            ANON_QUEUE,
+            passive=False, durable=False, exclusive=False, auto_delete=True,
+            arguments={"x-max-priority": 10})
+    pch.channel.queue_bind(
+            exchange="broadcast",
+            queue=anon_queue.method.queue)
+
+    return anon_queue
