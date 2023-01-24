@@ -219,6 +219,10 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         number of action-specific parameters. This is an implementation detail:
         clients should use the enqueue_* methods instead."""
         with self._condition:
+            if self.ident is not None and not self.is_alive():
+                raise RuntimeError(
+                        "attempted to enqueue a request on a completed"
+                        " PikaPipelineThread")
             trace(f"PikaPipelineThread - Thread TID: {self.native_id} "
                   "acquired conditional and enqueued outgoing message.")
             self._outgoing.append((label, *args))
@@ -258,6 +262,30 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
             body = encoder(body)
         return self._enqueue(
                 "msg", routing_key, body, exchange, basic_properties)
+
+    def _enqueue_pause(self, duration: float = 5.0):
+        """Requests that the background thread wait for the specified duration.
+        (This is chiefly useful for testing.)"""
+        return self._enqueue("zzz", duration)
+
+    def synchronise(self):
+        """Blocks the current thread after requesting a wakeup from the
+        background thread. The underlying communication mechanism is a
+        threading.Event.
+
+        As requests sent to the background thread are executed in the order in
+        which they were made, this function can be used to establish that the
+        background thread has reached a certain point in the request queue.
+
+        It is usually a bad idea to call this function without starting the
+        background thread first, unless there's a third thread around to do
+        that."""
+        ev = threading.Event()
+        self._enqueue("syn", ev)
+        # The Python docs don't guarantee that spurious wakeups won't happen.
+        # Protect against the possibility of them by using a loop
+        while ev.wait() is not True:
+            pass
 
     def await_message(self, timeout: float = None):
         """Returns a message collected by the background thread; the return
@@ -352,6 +380,12 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                         elif label == "fin":
                             running = False
                             break
+                        elif label == "syn":
+                            ev = head[1]
+                            ev.set()
+                        elif label == "zzz":
+                            duration = head[1]
+                            time.sleep(duration)
 
                 # Dispatch any waiting timer (heartbeats) and channel (calls to
                 # our handle_message_raw method) callbacks...
