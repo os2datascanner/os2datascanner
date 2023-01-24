@@ -43,6 +43,9 @@
 - Fixed an issue where any user was able to add and edit organizations for any 
   client.
 
+- The administration system's signal handlers now pause until their event
+  broadcasts are acknowledged, making these broadcasts much more robust.
+
 ## Version 3.17.9, 23rd January 2023
 
 "4.3 Billion Index Cards"

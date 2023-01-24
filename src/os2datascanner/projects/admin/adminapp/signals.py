@@ -69,10 +69,14 @@ def publish_events(events):
             return
 
         queue = settings.AMQP_EVENTS_TARGET
+        ppt = get_pika_thread()
+
         for event in events:
             json_event = event.to_json_object()
+            ppt.enqueue_message(queue, json_event)
             logger.debug("Published to {0}: {1}".format(queue, json_event))
-            get_pika_thread().enqueue_message(queue, json_event)
+
+        ppt.synchronise()
     except Exception as e:
         # log the error
         logger.error("Could not publish event. Error: " + format(e))
