@@ -259,7 +259,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         return self._enqueue("fin")
 
     def enqueue_message(self,
-                        queue: str,
+                        routing_key: str,
                         body: bytes,
                         exchange: str = "",
                         **basic_properties):
@@ -274,7 +274,8 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         if (encoding := basic_properties.get("content_encoding")):
             encoder, _ = _coders[encoding]
             body = encoder(body)
-        return self._enqueue("msg", queue, body, exchange, basic_properties)
+        return self._enqueue(
+                "msg", routing_key, body, exchange, basic_properties)
 
     def await_message(self, timeout: float = None):
         """Returns a message collected by the background thread; the return
@@ -307,7 +308,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         return method, properties, body
 
     def handle_message(self, routing_key, body):
-        """Handles an AMQP message by yielding zero or more (queue name,
+        """Handles an AMQP message by yielding zero or more (routing key,
         JSON-serialisable object) pairs to be sent as new messages.
 
         The default implementation of this method does nothing."""
@@ -352,10 +353,10 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                               f" {self.native_id} got the conditional."
                               " Processing outgoing message.")
                         if label == "msg":
-                            queue, body, exchange, properties = head[1:]
+                            routing_key, body, exchange, properties = head[1:]
                             self.channel.basic_publish(
                                     exchange=exchange,
-                                    routing_key=queue,
+                                    routing_key=routing_key,
                                     properties=pika.BasicProperties(
                                             **properties),
                                     body=body)
