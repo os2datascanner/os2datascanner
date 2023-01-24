@@ -74,7 +74,7 @@ def make_head_fallback(context):
 
 class WebSource(Source):
     type_label = "web"
-    eq_properties = ("_url", "_sitemap",)
+    eq_properties = ("_url",)
 
     def __init__(self, url: str, sitemap: str = "", exclude=None):
 

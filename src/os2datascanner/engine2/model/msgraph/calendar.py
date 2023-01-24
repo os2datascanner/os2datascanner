@@ -11,6 +11,9 @@ from .utilities import MSGraphSource, warn_on_httperror
 class MSGraphCalendarSource(MSGraphSource):
     type_label = "msgraph-calendar"
 
+    # This does not seems right...
+    eq_properties = ("_userlist",)
+
     def __init__(self, client_id, tenant_id, client_secret, userlist=None):
         super().__init__(client_id, tenant_id, client_secret)
         self._userlist = userlist

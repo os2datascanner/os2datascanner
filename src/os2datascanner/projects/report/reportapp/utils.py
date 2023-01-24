@@ -17,6 +17,7 @@ from .models.roles.role import Role
 from .models.roles.dpo import DataProtectionOfficer
 from .models.roles.leader import Leader
 
+from os2datascanner.engine2.utilities.equality import TypePropertyEquality
 from os2datascanner.projects.report.organizations.models import (
     Alias, AliasType, Organization, Account)
 
@@ -76,6 +77,27 @@ def hash_handle(handle: dict) -> str:
         source = source.get("handle", {}).get("source")
 
     return hashlib.sha512(json.dumps(handle).encode()).hexdigest()
+
+
+def crunch(t: TypePropertyEquality):
+    """Returns a string summary of all of the characteristic properties of an
+    object that descends from TypePropertyEquality."""
+    fragments = []
+
+    for prop in TypePropertyEquality.get_state(t):
+        raw_value = getattr(t, prop)
+        if raw_value is None:
+            continue
+
+        fragment = f"{prop}="
+        if isinstance(raw_value, TypePropertyEquality):
+            fragment += f"({crunch(raw_value)})"
+        else:
+            fragment += str(raw_value)
+
+        fragments.append(fragment)
+
+    return ";".join(fragments)
 
 
 def get_or_create_user_aliases(user_data):  # noqa: D401

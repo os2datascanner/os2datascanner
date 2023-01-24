@@ -67,6 +67,8 @@ class InsensitiveDict(dict):
 class EWSAccountSource(Source):
     type_label = "ews"
 
+    eq_properties = ("_domain", "_server", "_user")
+
     def __init__(self, domain, server, admin_user, admin_password, user):
         self._domain = domain
         self._server = server

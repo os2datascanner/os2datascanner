@@ -15,8 +15,12 @@ class TypePropertyEquality:
         else:
             return obj.__dict__
 
+    # Is this sane?
+    def get_state(self):
+        return self.__get_state(self)
+
     def __eq__(self, other):
-        return (type(self) == type(other) and
+        return (isinstance(self, type(other)) and
                 self.__get_state(self) == self.__get_state(other))
 
     def __hash__(self):
