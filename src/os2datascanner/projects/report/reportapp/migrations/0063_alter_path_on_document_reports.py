@@ -18,13 +18,13 @@ def alter_path_field_on_document_reports(apps, _):
         else:
             parent_object = None
 
-        path = crunch(parent_object.handle)
+        path = crunch(parent_object.handle if parent_object.handle else parent_object.source)
 
         if DocumentReport.objects.filter(scanner_job_pk=dr.scanner_job_pk, path=path).exists():
             dr.delete()
         else:
-          dr.path = path
-          dr.save()
+            dr.path = path
+            dr.save()
 
 class Migration(migrations.Migration):
 

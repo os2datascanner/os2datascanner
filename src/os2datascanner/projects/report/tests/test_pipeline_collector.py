@@ -170,7 +170,6 @@ class PipelineCollectorTests(TestCase):
     def test_acceptance(self, _, match, expected):
         """Successful match messages should be stored in the database."""
         new = record_match(match)
-        print(new)
         self.assertNotEqual(
                 new.pk,
                 expected[0],

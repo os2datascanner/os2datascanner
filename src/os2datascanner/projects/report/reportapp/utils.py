@@ -97,7 +97,7 @@ def crunch(t: TypePropertyEquality):
 
         fragments.append(fragment)
 
-    return type(t).__name__ + "(" + ";".join(fragments) + ")"
+    return repr(type(t).__name__ + "(" + ";".join(fragments) + ")")
 
 
 def get_or_create_user_aliases(user_data):  # noqa: D401

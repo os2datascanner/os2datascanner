@@ -259,7 +259,7 @@ def sort_matches_by_probability(body):
 def handle_problem_message(scan_tag, result):
     locked_qs = DocumentReport.objects.select_for_update(of=('self',))
     problem = messages.ProblemMessage.from_json_object(result)
-    path = crunch(problem.handle)
+    path = crunch(problem.handle if problem.handle else problem.source)
     # Queryset is evaluated and locked here.
     previous_report = (locked_qs.filter(
             path=path, scanner_job_pk=scan_tag.scanner.pk).
