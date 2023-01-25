@@ -20,7 +20,8 @@ class MailSource(DerivedSource):
 
     def _generate_state(self, sm):
         with self.handle.follow(sm).make_stream() as fp:
-            yield email.message_from_bytes(fp.read())
+            yield email.message_from_bytes(
+                    fp.read(), policy=email.policy.default)
 
     def handles(self, sm):
         def _process_message(path, part):
