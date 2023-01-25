@@ -59,6 +59,11 @@ class Engine2MailTest(TestCase):
                     self.assertIsInstance(
                             h,
                             MailPartHandle)
+                    r = h.follow(sm)
+                    self.assertEqual(
+                            h.guess_type(),
+                            r.compute_type(),
+                            "declared MIME type does not match computed type")
 
     def test_alternative_trimming(self):
         alternative_source = MailSource(
