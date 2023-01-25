@@ -17,7 +17,7 @@ from .models.roles.role import Role
 from .models.roles.dpo import DataProtectionOfficer
 from .models.roles.leader import Leader
 
-from os2datascanner.engine2.utilities.equality import TypePropertyEquality
+from os2datascanner.engine2.utilities.equality import TypePropertyEquality, get_state
 from os2datascanner.projects.report.organizations.models import (
     Alias, AliasType, Organization, Account)
 
@@ -84,7 +84,7 @@ def crunch(t: TypePropertyEquality):
     object that descends from TypePropertyEquality."""
     fragments = []
 
-    for prop in TypePropertyEquality.get_state(t):
+    for prop in get_state(t):
         raw_value = getattr(t, prop)
         if raw_value is None:
             continue
@@ -97,7 +97,7 @@ def crunch(t: TypePropertyEquality):
 
         fragments.append(fragment)
 
-    return ";".join(fragments)
+    return type(t).__name__ + "(" + ";".join(fragments) + ")"
 
 
 def get_or_create_user_aliases(user_data):  # noqa: D401

@@ -36,7 +36,7 @@ def compute_domain(unc):
 
 class SMBSource(Source):
     type_label = "smb"
-    eq_properties = ("_unc",)
+    eq_properties = ("_unc", "_user", "_password", "_domain")
 
     def __init__(self, unc, user=None, password=None, domain=None,
                  driveletter=None):
