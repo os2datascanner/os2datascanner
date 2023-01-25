@@ -19,6 +19,9 @@
 - On small screens, the buttons on the sidemenu in the admin module are no
   longer overflowing off-screen.
 
+- Email attachments which declare URLs or relative paths to be their filename
+  are now handled correctly.
+
 ## Version 3.17.9, 23rd January 2023
 
 "4.3 Billion Index Cards"

@@ -1,3 +1,4 @@
+from typing import Optional
 from email.header import decode_header
 
 
@@ -20,3 +21,18 @@ def decode_encoded_words(k: str) -> str:
         if segment_str:
             result += segment_str
     return result
+
+
+def get_safe_filename(k: Optional[str]) -> str:
+    """Converts a MIME part's filename into a name usable in the local
+    filesystem."""
+
+    if not k:
+        return "file"
+
+    # Emails seen in the wild occasionally use full URLs as MIME part filenames
+    # (what?!), so drop everything before the last "/"
+    if "/" in k:
+        k = k.rsplit("/", maxsplit=1)[-1]
+
+    return k

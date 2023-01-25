@@ -4,7 +4,7 @@ import email
 from contextlib import contextmanager
 
 from ..core import Source, Handle, FileResource
-from ..utilities.mail import decode_encoded_words
+from ..utilities.mail import get_safe_filename, decode_encoded_words
 from .derived import DerivedSource
 
 
@@ -23,10 +23,10 @@ class MailSource(DerivedSource):
             yield email.message_from_bytes(
                     fp.read(), policy=email.policy.default)
 
-    def handles(self, sm):
+    def handles(self, sm):  # noqa: CCR001
         def _process_message(path, part):
-            ct, st = part.get_content_maintype(), part.get_content_subtype()
-            if ct == "multipart":
+            if part.is_multipart():
+                st = part.get_content_subtype()
                 parts = part.get_payload()
                 # XXX: this is a slightly hacky implementation of multipart/
                 # alternative, but we don't know what task we're being asked to
@@ -38,6 +38,8 @@ class MailSource(DerivedSource):
                         yield from _process_message(path + [str(idx)], part)
             else:
                 filename = part.get_filename()
+                if part.is_attachment():
+                    filename = get_safe_filename(filename)
                 full_path = "/".join(path + [filename or ''])
                 yield MailPartHandle(self, full_path, part.get_content_type())
         yield from _process_message([], sm.open(self))
