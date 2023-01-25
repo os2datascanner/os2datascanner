@@ -39,6 +39,12 @@ variables:
   API_IMAGE: ${CI_REGISTRY_IMAGE}/api:${CI_COMMIT_SHA}
   DOCKERFILE_DIR: ${CI_PROJECT_DIR}/docker/base
 
+default:
+  # TODO: Opt in to running on kubernetes runners. Remove this when kubernetes
+  # is the default runners. https://redmine.magenta-aps.dk/issues/42309
+  tags:
+    - kubernetes
+
 
 # Lint stage
 #############
@@ -47,8 +53,6 @@ variables:
   stage: lint
   needs: []
   services: []
-  tags:
-    - docker
 
 Lint Dockerfiles:
   <<: *lint-default
@@ -149,9 +153,6 @@ Build API:
 
 .test-default: &test-default
   stage: test
-  tags:
-    - docker
-    - network-per-build
   services:
     - name: egnmagenta/os2datasynth:v0.2.5
       alias: datasynth
@@ -207,9 +208,6 @@ Integration Test Admin Application:
   image:
     name: ${ADMIN_IMAGE}
     entrypoint: [""]
-  tags:
-    - docker
-    - network-per-build
   stage: test
   rules:
     - when: never  # until 53346 is fixed 
@@ -285,8 +283,6 @@ Integration Test Engine:
 Unit Test Engine:
   extends: .test-default
   stage: test
-  tags:
-    - docker
   image:
     name: ${ENGINE_IMAGE}
   variables:
@@ -314,8 +310,6 @@ Unit Test Engine:
 
 Benchmark Test Engine:
   stage: test
-  tags:
-    - docker
   image:
     name: ${ENGINE_IMAGE}
   needs:
@@ -337,10 +331,6 @@ Performance Test:
   image:
     name: ${ADMIN_IMAGE}
     entrypoint: [""]
-  tags:
-    - docker
-    - network-per-build
-    - high-mem
   rules:
     - when: never # until 53346 is fixed
   services:
@@ -429,9 +419,6 @@ Integration Test Report Application:
   rules:
     - when: never # until 53346 is fixed
   allow_failure: true # until 48725 has been fixed
-  tags:
-    - docker
-    - network-per-build
   services:
     - name: egnmagenta/os2datasynth:v0.2.5
       alias: datasynth
@@ -460,8 +447,6 @@ Integration Test Report Application:
 
 Run Engine notice scripts:
   stage: test
-  tags:
-    - docker
   services: []
   image: ${ENGINE_IMAGE}
   needs:
@@ -494,8 +479,6 @@ Run Engine notice scripts:
   image: alpine
   variables:
     GIT_STRATEGY: none # We do not need the source code
-  tags:
-    - docker
 
 # Rolling rc release:
 # NOTICE: We are optimizing for the 99% case here by releasing a new image as soon as
