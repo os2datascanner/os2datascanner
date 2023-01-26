@@ -17,6 +17,10 @@
 - The documentation now describes more of OS2datascanner's supported data
   sources.
 
+- The uniqueness identification method has been refactored to allow a higher
+  degree of control, and to prevent creation of duplicate DocumentReports
+  in the report module.
+
 ### Bugfixes
 
 - Hovering over the handle button will no longer obscure it with an invisible

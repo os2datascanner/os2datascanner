@@ -1,4 +1,9 @@
 def get_state(obj):
+    """Gets the uniqueness identifiers for the given object, allowing
+    comparisons in eg. queries. Be warned! If you add another field to the
+    `eq_properties` of an object, either that field must be None by default,
+    or a migration may have to be made to update certain equality fields on
+    existing objects (take DocumentReport.path as an example)."""
     if hasattr(obj, 'eq_properties'):
         return {k: getattr(obj, k) for k in getattr(obj, 'eq_properties')}
     elif hasattr(obj, '__getstate__'):

@@ -81,7 +81,11 @@ def hash_handle(handle: dict) -> str:
 
 def crunch(t: TypePropertyEquality):
     """Returns a string summary of all of the characteristic properties of an
-    object that descends from TypePropertyEquality."""
+    object that descends from TypePropertyEquality. Be warned! If you add
+    another field to the `eq_properties` of an object, either that field must
+    be None by default, or a migration may have to be made to update certain
+    equality fields on existing objects (take DocumentReport.path as an
+    example)."""
     fragments = []
 
     for prop in get_state(t):
@@ -97,7 +101,11 @@ def crunch(t: TypePropertyEquality):
 
         fragments.append(fragment)
 
-    return repr(type(t).__name__ + "(" + ";".join(fragments) + ")")
+    # The format of this string is something like:
+    # Handle(_source=(Source(_unc=//path/to/somewhere));_relpath=some_file.txt)
+    return_string = type(t).__name__ + "(" + ";".join(fragments) + ")"
+
+    return return_string.encode("unicode_escape").decode()
 
 
 def get_or_create_user_aliases(user_data):  # noqa: D401
