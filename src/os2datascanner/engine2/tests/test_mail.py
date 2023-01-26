@@ -1,11 +1,12 @@
 import os.path
 from unittest import TestCase
+from parameterized import parameterized
 
 from os2datascanner.engine2.model.core import Source, SourceManager
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
 from os2datascanner.engine2.model.derived.mail import (
-        MailSource, MailPartHandle)
+        MailSource, MailPartHandle, sanitise_path)
 
 from os2datascanner.engine2.model.utilities.mail import decode_encoded_words
 
@@ -92,3 +93,24 @@ class Engine2MailTest(TestCase):
                         expected,
                         decode_encoded_words(value),
                         f"fallback decoding of {sort} failed")
+
+    @parameterized.expand([
+            "1/2/1/",
+            "/1/2/1/",
+            "//1/2/1/"])
+    def test_mail_path_sanitation(self, odd_path):
+        self.assertEqual(
+                sanitise_path(odd_path),
+                "1/2/1/",
+                "mail path sanitation failed")
+
+    @parameterized.expand([
+            "1/2/1/https://www.example.com/resources/U1F928.PDF",
+            "1/2/1/files/U1F928.PDF",
+            "/1/2/1/C:/Users/af/Downloads/U1F928.PDF",
+            "//1/2/1///SHARE/Home/af/Files/U1F928.PDF"])
+    def test_attachment_path_sanitation(self, odd_path):
+        self.assertEqual(
+                sanitise_path(odd_path),
+                "1/2/1/U1F928.PDF",
+                "attachment path sanitation failed")

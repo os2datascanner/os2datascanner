@@ -39,6 +39,10 @@ class MailSource(DerivedSource):
             else:
                 filename = part.get_filename()
                 if part.is_attachment():
+                    # "Why don't we just use sanitise_path here?", I hear you
+                    # ask. The answer: because we actually know which bit is
+                    # the filename and which bit is the MIME tree walk at this
+                    # point, and that's the hard bit of the process
                     filename = get_safe_filename(filename)
                 full_path = "/".join(path + [filename or ''])
                 yield MailPartHandle(self, full_path, part.get_content_type())
@@ -80,6 +84,30 @@ class MailPartResource(FileResource):
     @contextmanager
     def make_stream(self):
         yield BytesIO(self._get_fragment().get_payload(decode=True))
+
+
+def sanitise_path(p: str) -> str:
+    """Sanitises the path value associated with a MailPartHandle, which should
+    consist of one or more indexed steps on a MIME tree walk followed by an
+    optional filename. (The return value will definitely consist of that.)"""
+    out = []
+    components = p.lstrip("/").split("/")
+    while components:
+        head, tail = components[0], components[1:]
+        try:
+            int(head)
+            # OK, this path component is a valid integer, and so is presumably
+            # part of our MIME tree walk. Preserve it and move on
+            out.append(head)
+        except ValueError:
+            # We've met a path component that isn't part of the walk. At this
+            # point we bail out: the last remaining component is a filename and
+            # everything else is irrelevant
+            filename = components[-1]
+            out.append(filename)
+            break
+        components = tail
+    return "/".join(out)
 
 
 class MailPartHandle(Handle):
@@ -136,4 +164,6 @@ class MailPartHandle(Handle):
     @Handle.json_handler(type_label)
     def from_json_object(obj):
         return MailPartHandle(
-            Source.from_json_object(obj["source"]), obj["path"], obj["mime"])
+                Source.from_json_object(obj["source"]),
+                sanitise_path(obj["path"]),
+                obj["mime"])
