@@ -16,19 +16,20 @@
 
     .navi {
       margin-left: 1rem;
-      margin-top: 5rem;
+      margin-top: 2rem;
       position: fixed;
       top: 2rem;
     }
 
     .navi li {
-      margin-top: 1.8rem;
+      margin-top: 0;
       margin-right: 0;
 
     }
 
     .navi a {
       width: 13rem;
+      height: 3rem;
     }
 
     .navi a.active {
@@ -53,6 +54,30 @@
 
       &::after {
         bottom: -10px;
+      }
+    }
+
+    @media (min-height: 650px) {
+      .navi {
+        margin-top: 3rem;
+      }
+
+      .navi li {
+        margin-top: 0.5rem;
+      }
+
+      .navi a {
+        height: 3.9rem;
+      }
+    }
+
+    @media (min-height: 820px) {
+      .navi {
+        margin-top: 5rem;
+      }
+
+      .navi li {
+        margin-top: 1.5rem;
       }
     }
   }

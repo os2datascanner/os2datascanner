@@ -15,6 +15,9 @@
 
 - Hovering over the handle button will no longer obscure it with an invisible
   element.
+  
+- On small screens, the buttons on the sidemenu in the admin module are no
+  longer overflowing off-screen.
 
 ## Version 3.17.9, 23rd January 2023
 
