@@ -10,9 +10,11 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.utilities.datetime import parse_datetime
+from os2datascanner.engine2.model.smb import SMBSource, SMBHandle
 
 from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.management.commands import result_collector
+from ..reportapp.utils import crunch
 
 from .generate_test_data import record_match, record_problem
 
@@ -147,6 +149,44 @@ late_negative_match = messages.MatchesMessage(
                 rule=late_rule,
                 matches=[])])
 
+smb_source_1 = SMBSource('//some/path', user='egon_olsen', driveletter='Q')
+smb_source_2 = SMBSource('//some/path', user='dynamit_harry', driveletter='Q')
+smb_source_3 = SMBSource('//some/path', user='egon_olsen', driveletter='W')
+smb_handle_1 = SMBHandle(smb_source_1, 'filename.file')
+smb_handle_2 = SMBHandle(smb_source_2, 'filename.file')
+smb_handle_3 = SMBHandle(smb_source_3, 'filename.file')
+
+smb_match_1 = messages.MatchesMessage(
+    scan_spec=common_scan_spec._replace(scan_tag=scan_tag0),
+    handle=smb_handle_1,
+    matched=True,
+    matches=[
+        messages.MatchFragment(
+            rule=common_rule,
+            matches=[{"dummy": "match object"}])
+    ]
+)
+smb_match_2 = messages.MatchesMessage(
+    scan_spec=common_scan_spec._replace(scan_tag=scan_tag1),
+    handle=smb_handle_2,
+    matched=True,
+    matches=[
+        messages.MatchFragment(
+            rule=common_rule,
+            matches=[{"dummy": "match object"}])
+    ]
+)
+smb_match_3 = messages.MatchesMessage(
+    scan_spec=common_scan_spec._replace(scan_tag=scan_tag2),
+    handle=smb_handle_3,
+    matched=True,
+    matches=[
+        messages.MatchFragment(
+            rule=common_rule,
+            matches=[{"dummy": "match object"}])
+    ]
+)
+
 
 class PipelineCollectorTests(TestCase):
     def test_rejection(self):
@@ -192,7 +232,6 @@ class PipelineCollectorTests(TestCase):
         """Removing matches from a file should update the status of the
         previous match message."""
         saved_match = record_match(positive_match)
-        print(saved_match)
         self.test_rejection()
         saved_match.refresh_from_db()
         self.assertEqual(
@@ -291,3 +330,61 @@ class PipelineCollectorTests(TestCase):
         self.assertEqual(result_collector.sort_matches_by_probability(
             positive_match_with_dimension_rule_probability_and_sensitivity.to_json_object()  # noqa E501
         )["matches"], match_to_match.to_json_object()["matches"])
+
+    def test_path_format_of_matches(self):
+        """Check that recording the matches correctly crunches the handles
+        to the `path`-field."""
+        pos_match = record_match(positive_match)
+        cor_match = record_match(positive_match_corrupt)
+        dps_match = record_match(positive_match_with_dimension_rule_probability_and_sensitivity)
+
+        self.assertEqual(
+            pos_match.path,
+            r"FilesystemHandle(_source=(FilesystemSource(_path=/mnt/fs01.magenta.dk/brugere/af));_relpath=OS2datascanner/Dokumenter/Verdensherred\xf8mme - plan.txt)",  # noqa E501
+            "MatchMessage was not crunched correctly.")
+        self.assertEqual(
+            cor_match.path,
+            r"FilesystemHandle(_source=(FilesystemSource(_path=/mnt/fs01.magenta.dk/brugere/af));_relpath=/logo/Flag/Gr\udce6kenland.jpg)",  # noqa E501
+            "MatchMessage was not crunched correctly.")
+        self.assertEqual(
+            dps_match.path,
+            r"FilesystemHandle(_source=(FilesystemSource(_path=/mnt/fs01.magenta.dk/brugere/af));_relpath=OS2datascanner/Dokumenter/Verdensherred\xf8mme - plan.txt)",  # noqa E501
+            "MatchMessage was not crunched correctly.")
+
+    def test_crunching_handles(self):
+        """Check that handles are crunched correctly."""
+        smb_crunched_1 = crunch(smb_handle_1)
+        smb_crunched_2 = crunch(smb_handle_2)
+        smb_crunched_3 = crunch(smb_handle_3)
+
+        self.assertEqual(
+            smb_crunched_1,
+            "SMBHandle(_source=(SMBSource(_unc=//some/path;_user=egon_olsen));_relpath=filename.file)",  # noqa E501
+            "SMBHandle was not crunched correctly.")
+        self.assertEqual(
+            smb_crunched_2,
+            "SMBHandle(_source=(SMBSource(_unc=//some/path;_user=dynamit_harry));_relpath=filename.file)",  # noqa E501
+            "SMBHandle was not crunched correctly.")
+        self.assertEqual(
+            smb_crunched_3,
+            "SMBHandle(_source=(SMBSource(_unc=//some/path;_user=egon_olsen));_relpath=filename.file)",  # noqa E501
+            "SMBHandle was not crunched correctly.")
+
+    def test_same_path_updates_document_report(self):
+        """Ensure that recording matches with handles, where only the _user or
+        _driveletter differs, updates the existing report, instead of creating
+        a new one."""
+
+        smb_dr_1 = record_match(smb_match_1._replace(handle=smb_match_1.handle.censor()))
+
+        self.assertEqual(DocumentReport.objects.count(), 1)
+
+        smb_dr_2 = record_match(smb_match_2._replace(handle=smb_match_2.handle.censor()))
+
+        self.assertEqual(DocumentReport.objects.count(), 1)
+        self.assertEqual(smb_dr_1, smb_dr_2)
+
+        smb_dr_3 = record_match(smb_match_3._replace(handle=smb_match_3.handle.censor()))
+
+        self.assertEqual(DocumentReport.objects.count(), 1)
+        self.assertEqual(smb_dr_1.path, smb_dr_3.path)
