@@ -9,12 +9,12 @@ Examples:
 <!-- sets current user as assignee -->
 /assign me
 /label ~trivial
-
+/milestone %"Next release"
 <!-- Other recommended quick actions (remove # to apply):
 #/request_review @af @jkh @tha @jdk @rkk @anj
 #/label ~bug
 #/label ~feature
-#/milestone %"Next release"
+
 -->
 
 
