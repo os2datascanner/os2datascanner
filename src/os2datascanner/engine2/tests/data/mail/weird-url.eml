@@ -1,0 +1,25 @@
+To: OS2datascanner test user <test@os2datascanner.invalid>
+From: OS2datascanner test user <test@os2datascanner.invalid>
+Subject: Weird attached file
+Message-ID: <394f983c-82cf-4345-84fa-e546d2c026bf@os2datascanner.invalid>
+Date: Wed, 25 Jan 2023 14:07:00 +02:00
+MIME-Version: 1.0
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary=cuthere
+
+--cuthere
+Content-Type: text/plain; name="https://os2datascanner.invalid/resources/data.txt"
+Content-Disposition: attachment; filename="https://os2datascanner.invalid/resources/data.txt"
+
+Attached file.
+--cuthere
+Content-Type: text/plain
+Content-Disposition: attachment
+
+Attached anonymous file.
+--cuthere
+Content-Type: text/plain
+
+To the extent that this email has a body, I suppose this is it?
+--cuthere--
