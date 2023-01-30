@@ -1,14 +1,14 @@
 {% extends 'organizations/base.html' %}
 {% load i18n %}
-{% load mptt_tags %}
 
 {% block title %}{% trans "organizational hierarchy"|capfirst %}{% endblock %}
 
 {% block content %}
-{% if orgunit_list.exists %}
-<div class="orgunit-list" hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'>
+<div class="orgunit-list content-header" hx-headers='{"X-CSRFToken": "{{csrf_token}}"}' hx-push-url='true'>
 
-    <h2>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h2>
+    <a class="button" href="{% url "organization-list" %}">← {% trans "Return to organization overview"%}</a>
+    {% if orgunit_list.exists %}
+    <h1>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h1>
     <form name="orgunit_filters"
           id="orgunit_filters"
           class="orgunit_filtering_wrapper"
@@ -35,58 +35,29 @@
         </div>
     </form>
     <ul class="root">
-        {% recursetree orgunit_list %}
-            <li class="orgunit-list-element {% if not node.is_leaf_node and children %}has_children{% endif %}">
-                <span class="orgunit_name">{{ node.name }}</span>
-                <span class="orgunit_members">{{ node.members_associated }} {% trans "accounts associated." %}</span>
-                <span class="orgunit_managers">{% trans "Managers" %}:
-                    <ul id="managers__{{ node.pk }}">
-                        {% for manager_pos in node.managers %}
-                        <li class="manager_li"
-                            title="{% trans "Click to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ node }}."
-                            hx-post="{% url "orgunit-list" organization.slug %}"
-                            hx-swap="outerHTML"
-                            hx-target="#managers__{{ node.pk }}"
-                            hx-select="#managers__{{ node.pk }}"
-                            hx-trigger="click"
-                            hx-vals='{"orgunit": "{{ node.pk }}", "rem-manager": "{{ manager_pos.account.uuid }}"}'
-                            hx-include='#orgunit_filters'
-                            hx-confirm="{% trans "Are you sure you want to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ node }}?">
-                            {{ manager_pos.account.get_full_name }}
-                        </li>
-                        {% endfor %}
-                        <li class="add_manager">
-                            <button type="button" class="add_manager_button button button--small">
-                                <svg class="icon">
-                                    <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
-                                </svg>
-                            </button>
-                            <select class="select_manager" name="add-manager" hidden
-                                    hx-post="{% url "orgunit-list" organization.slug %}"
-                                    hx-swap="outerHTML"
-                                    hx-target="#managers__{{ node.pk }}"
-                                    hx-select="#managers__{{ node.pk }}"
-                                    hx-trigger="change"
-                                    hx-vals='{"orgunit": "{{ node.pk }}"}'
-                                    hx-include='#orgunit_filters'>
-                                <option value="">{% trans "Choose new manager" %}</option>
-                                {% for account in accounts %}
-                                <option value="{{ account.uuid }}">{{ account.get_full_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </li>
-                    </ul>
-                </span>
-                {% if not node.is_leaf_node and children %}
-                    <ul class="children" hidden>
-                        {{ children }}
-                    </ul>
-                {% endif %}
-            </li>
-        {% endrecursetree %}
+        {% for node in orgunit_list %}
+            {% include "organizations/orgunit_element.html" %}
+        {% endfor %}
     </ul>
+    <div class="pagination_options">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; {% trans "First" %}</a>
+                <a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
+            {% endif %}
+    
+            <span class="current">
+                {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}.
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">{% trans "Last" %} &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    {% else %}
+    <div class="root">{% trans "No organizational units."%}</div>
+    {% endif %}
 </div>
-{% else %}
-<span class="root orgunit-list">{% trans "No organizational units."%}</span>
-{% endif %}
 {% endblock %}

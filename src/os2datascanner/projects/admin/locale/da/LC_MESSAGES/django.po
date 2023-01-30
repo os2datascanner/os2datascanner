@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-23 13:29+0100\n"
+"POT-Creation-Date: 2023-01-30 10:19+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -561,16 +561,19 @@ msgstr "Log ud"
 #: adminapp/templates/components/pagination.html:11
 #: adminapp/templates/components/remove-error.html:18
 #: adminapp/templates/components/resolve-status.html:18
+#: organizations/templates/organizations/orgunit_list.html:50
 msgid "of"
 msgstr "af"
 
 #: adminapp/templates/components/pagination.html:24
 #: adminapp/templates/components/pagination.html:29
+#: organizations/templates/organizations/orgunit_list.html:46
 msgid "Previous"
 msgstr "Forrige"
 
 #: adminapp/templates/components/pagination.html:83
 #: adminapp/templates/components/pagination.html:88
+#: organizations/templates/organizations/orgunit_list.html:54
 msgid "Next"
 msgstr "Næste"
 
@@ -2451,47 +2454,74 @@ msgstr ""
 "Dette vil også slette import- og scannerjobs der tilhører organisationen. "
 "Handlingen kan ikke fortrydes."
 
-#: organizations/templates/organizations/org_table.html:316
+#: organizations/templates/organizations/org_table.html:297
+#, fuzzy
+#| msgid "organizational units"
+msgid "View organizational units for"
+msgstr "organisatoriske enheder"
+
+#: organizations/templates/organizations/org_table.html:308
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
-#: organizations/templates/organizations/orgunit_list.html:5
+#: organizations/templates/organizations/orgunit_element.html:5
+msgid "accounts associated."
+msgstr "konti tilknyttet"
+
+#: organizations/templates/organizations/orgunit_element.html:6
+msgid "Managers"
+msgstr "Ledere"
+
+#: organizations/templates/organizations/orgunit_element.html:10
+msgid "Click to remove"
+msgstr "Klik for at fjerne"
+
+#: organizations/templates/organizations/orgunit_element.html:10
+#: organizations/templates/organizations/orgunit_element.html:17
+msgid "as manager of"
+msgstr "som leder af"
+
+#: organizations/templates/organizations/orgunit_element.html:17
+msgid "Are you sure you want to remove"
+msgstr "Er du sikker på, at du vil fjerne"
+
+#: organizations/templates/organizations/orgunit_element.html:34
+msgid "Choose new manager"
+msgstr "Vælg ny leder"
+
+#: organizations/templates/organizations/orgunit_list.html:4
 msgid "organizational hierarchy"
 msgstr "organisatorisk struktur"
+
+#: organizations/templates/organizations/orgunit_list.html:9
+msgid "Return to organization overview"
+msgstr "Tilbage til organisationer"
 
 #: organizations/templates/organizations/orgunit_list.html:11
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
 
-#: organizations/templates/organizations/orgunit_list.html:25
+#: organizations/templates/organizations/orgunit_list.html:26
 msgid "Search for organizational unit"
 msgstr "Søg efter organisatorisk enhed"
 
-#: organizations/templates/organizations/orgunit_list.html:33
+#: organizations/templates/organizations/orgunit_list.html:34
 msgid "Show empty units"
 msgstr "Vis tomme enheder"
 
-#: organizations/templates/organizations/orgunit_list.html:40
-msgid "accounts associated."
-msgstr "konti tilknyttet"
+#: organizations/templates/organizations/orgunit_list.html:45
+msgid "First"
+msgstr "Første"
 
-#: organizations/templates/organizations/orgunit_list.html:41
-msgid "Managers"
-msgstr "Ledere"
+#: organizations/templates/organizations/orgunit_list.html:50
+msgid "Page"
+msgstr "Side"
 
-#: organizations/templates/organizations/orgunit_list.html:51
-msgid "Are you sure you want to remove"
-msgstr "Er du sikker på, at du vil fjerne"
+#: organizations/templates/organizations/orgunit_list.html:55
+msgid "Last"
+msgstr "Sidste"
 
-#: organizations/templates/organizations/orgunit_list.html:51
-msgid "as manager of"
-msgstr "som leder af"
-
-#: organizations/templates/organizations/orgunit_list.html:68
-msgid "Choose new manager"
-msgstr "Vælg ny leder"
-
-#: organizations/templates/organizations/orgunit_list.html:86
+#: organizations/templates/organizations/orgunit_list.html:60
 msgid "No organizational units."
 msgstr "Ingen organisatoriske enheder"
 

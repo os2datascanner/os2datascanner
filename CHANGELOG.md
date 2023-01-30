@@ -10,12 +10,20 @@
   pattern. This overview is identical to the one accessible in the leader
   overview. This page can be accessed through a button in the header menu.
 
-- Organizational units in the organizations-tab can now be filtered through a 
-  search field, and units with no associated accounts are now hidden by
-  default.
+- Major changes to the way organizational units are presented:
 
-- Users are now able to add and remove managers to and from their 
-  organizational units on the "organizations"-tab in the admin-module.
+  - Units are no longer shown on the "organizations"-tab, but rather on their
+    own page, which is accessed through the "organizations"-tab.
+
+  - Units can now be filtered through a search field, and root units with
+    no associated accounts are hidden by default.
+
+  - Users are now able to add and remove managers to and from their 
+    organizational units.
+
+  - Units are now paginated for increased performance.
+
+  - Units are now sorted alphabetically.
 
 ### General improvements
 
@@ -67,6 +75,10 @@
 - Profile page in report module can now be accessed by users with no roles.
 
 - Organizational units in the organizations-tab are now sorted alphabetically.
+
+- While importing organizational structure on the "organizations"-tab, only the
+  relevant table column is now updated dynamically by poll, instead of the
+  entire table.
 
 ## Version 3.17.9, 23rd January 2023
 

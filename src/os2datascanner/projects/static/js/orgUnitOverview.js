@@ -26,9 +26,12 @@ function setAddButtons(buttons) {
   });
 }
 
-htmx.onLoad(function () {
-  let expandButtons = document.querySelectorAll(".has_children");
-  let addButtons = document.querySelectorAll(".add_manager_button");
+htmx.onLoad(function (content) {
+  let expandButtons = content.querySelectorAll(".has_children");
+  if (content.classList.contains("has_children")) {
+    expandButtons = [content];
+  }
+  let addButtons = content.querySelectorAll(".add_manager_button");
   setExpandButtons(expandButtons);
   setAddButtons(addButtons);
 });

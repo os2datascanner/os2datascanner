@@ -7,7 +7,7 @@
     <script src="{% static "js/index.js" %}"></script>
     <script src="{% static 'js/options.js' %}"></script>
     <link href="{% static 'recurrence/css/recurrence.css' %}" rel="stylesheet" />
-    <script type="text/javascript" src="/jsi18n/"></script>>
+    <script type="text/javascript" src="/jsi18n/"></script>
     <script type="text/javascript" src="/admin/jsi18n/"></script>
     <script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
     <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
@@ -23,6 +23,7 @@
     {% block header %}
         {% include 'partials/header.html' %}
     {% endblock %}
+    <meta name="htmx-config" content='{"historyEnabled": "false", "historyCacheSize": "0"}'>
     <main class="wrapper">
         <!-- override with empty block to remove sidebar navigation -->
         {% block sidenav %}

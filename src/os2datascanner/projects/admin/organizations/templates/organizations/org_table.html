@@ -71,7 +71,7 @@
                     {{ organization.contact_phone|default_if_none:"-" }}
                 </td>
                 {% if FEATURES.IMPORT_SERVICES in client.enabled_features %}
-                <td class="datatable__column--btn">
+                <td id="import_column__{{ organization.slug }}" class="datatable__column--btn">
                     <div class="flex flex--icon">
                         <!-- NB: importservice is in one word because a reverse name was not specified on the ImportService model's relation to Organization and this is the default -->
                         {% if not organization.importservice %}
@@ -115,7 +115,12 @@
                                             <span class="response-icon response-icon--error" data-sync-for="{{ organization.pk }}"><i class="material-icons">error</i></span>
                                         {% elif exec_state_value == "waiting" or exec_state_value == "running" %}
                                             <span class="response-icon response-icon--waiting" data-sync-for="{{ organization.pk }}"
-                                            hx-get="" hx-trigger="every 1s" hx-swap="innerHTML" hx-target=".org-table"><i class="material-icons">hourglass_top</i></span>
+                                            hx-get=""  
+                                            hx-trigger="every 1s" 
+                                            hx-swap="outerHTML" 
+                                            hx-target="#import_column__{{ organization.slug }}" 
+                                            hx-select="#import_column__{{ organization.slug }}">
+                                            <i class="material-icons">hourglass_top</i></span>
                                         {% endif %}
                                         <span class="response-text" data-sync-for="{{ organization.pk }}">
                                             {% if exec_state_value == "finished" %}
@@ -133,7 +138,7 @@
                     </div>
                 </td>
                 {% elif FEATURES.IMPORT_SERVICES_OS2MO in client.enabled_features %}
-                <td class="datatable__column--btn">
+                <td id="import_column__{{ organization.slug }}" class="datatable__column--btn">
                     <div class="flex flex--icon">
                         {% if not organization.importservice %}
                             <a
@@ -168,7 +173,12 @@
                                                 <span class="response-icon response-icon--error" data-sync-for="{{ organization.pk }}"><i class="material-icons">error</i></span>
                                             {% elif exec_state_value == "waiting" or exec_state_value == "running" %}
                                                 <span class="response-icon response-icon--waiting" data-sync-for="{{ organization.pk }}"
-                                                hx-get="" hx-trigger="every 1s" hx-swap="innerHTML" hx-target=".org-table"><i class="material-icons">hourglass_top</i></span>
+                                                hx-get="" 
+                                                hx-trigger="every 1s" 
+                                                hx-swap="outerHTML" 
+                                                hx-target="#import_column__{{ organization.slug }}" 
+                                                hx-select="#import_column__{{ organization.slug }}">
+                                                    <i class="material-icons">hourglass_top</i></span>
                                             {% endif %}
                                             <span class="response-text" data-sync-for="{{ organization.pk }}">
                                                 {% if exec_state_value == "finished" %}
@@ -186,7 +196,7 @@
                     </div>
                 </td>
                 {% elif FEATURES.IMPORT_SERVICES_MS_GRAPH in client.enabled_features %}
-                <td class="datatable__column--btn">
+                <td id="import_column__{{ organization.slug }}" class="datatable__column--btn">
                     <div class="flex flex--icon">
                         {% if not organization.importservice %}
                             {% if not tenant_id %}
@@ -240,7 +250,12 @@
                                                 <span class="response-icon response-icon--error" data-sync-for="{{ organization.pk }}"><i class="material-icons">error</i></span>
                                             {% elif exec_state_value == "waiting" or exec_state_value == "running" %}
                                                 <span class="response-icon response-icon--waiting" data-sync-for="{{ organization.pk }}"
-                                                hx-get="" hx-trigger="every 1s" hx-swap="innerHTML" hx-target=".org-table"><i class="material-icons">hourglass_top</i></span>
+                                                hx-get=""  
+                                                hx-trigger="every 1s" 
+                                                hx-swap="outerHTML" 
+                                                hx-target="#import_column__{{ organization.slug }}" 
+                                                hx-select="#import_column__{{ organization.slug }}">
+                                                <i class="material-icons">hourglass_top</i></span>
                                             {% endif %}
                                             <span class="response-text" data-sync-for="{{ organization.pk }}">
                                                 {% if exec_state_value == "finished" %}
@@ -294,15 +309,7 @@
             <tr>
                 <td class="datatable__column--name" colspan="12">
                     <div class="orgunits" url={% url 'org-units-listing' %}>
-                        <div hx-get="{% url "orgunit-list" organization.slug %}"
-                             hx-trigger="intersect"
-                             hx-swap="outerHTML"
-                             hx-target="this"
-                             hx-select=".orgunit-list">
-                             <div class="loading"><svg class="relative page-indicator" id="orgunit-page-indicator" viewbox="0 0 100 100">
-                                <circle id="circle" cx="50" cy="50" r="45"></circle>
-                              </svg></div>
-                        </div>
+                        <a class="button" href="{% url "orgunit-list" organization.slug %}">{% trans "View organizational units for" %} {{ organization.name }}</a>
                     </div>
                 </td>
             </tr>
