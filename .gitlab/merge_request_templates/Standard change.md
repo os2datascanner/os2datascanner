@@ -10,9 +10,10 @@ If any UI changes have been made, please include screenshots.
 /assign me
 
 <!-- Other recommended quick actions (remove # to apply):
-#/request_review @af @jkh @tha @jdk @rkk @sn
+#/request_review @af @jkh @tha @jdk @rkk @anj
 #/label ~bug
 #/label ~feature
+#/milestone %"Next release"
 -->
 
 ## Author's checklist
@@ -25,7 +26,6 @@ Checkboxes can be pre-filled before submitting the MR by replacing
     - [ ] The title of this MR contains the relevant ticket no., formatted like `[#12345]`
     - [ ] The corresponding Redmine ticket has been set to `Needs review`, assigned to the principal reviewer and contains a link to MR
     - [ ] The MR has been labelled with either ~bug (if it is a bugfix) or ~enhancement (if it is a feature)
-    - [ ] Milestone has been set
 - [ ] Maintainability:
     - [ ] I have rebased/squashed the code into a minimal amount of atomic commits that reference the ticket ID (eg. `[#12345] Implement featureX in Y`)
     - [ ] I have ensured the MR does not introduce indentation or charset issues
@@ -36,6 +36,7 @@ Checkboxes can be pre-filled before submitting the MR by replacing
     - [ ] I have tested all UI changes in:
         - [ ] Firefox
         - [ ] Chrome
+        - [ ] Safari
 - [ ] QA:
     - [ ] I have tested the feature/bugfix manually
     - [ ] I have added/updated and verified translations where relevant
