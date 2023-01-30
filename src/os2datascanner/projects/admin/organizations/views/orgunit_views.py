@@ -4,6 +4,7 @@ from django.views.generic.list import ListView
 from django.db.models import Q
 
 from ..models import OrganizationalUnit, Organization, Account, Position
+from ...core.models.client import Feature
 
 
 class OrganizationalUnitListView(LoginRequiredMixin, ListView):
@@ -16,7 +17,7 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         org = self.kwargs['org']
 
-        parent_query = Q(parent__isnull=True)
+        parent_query = Q(parent__isnull=True, organization=org)
 
         is_htmx = self.request.headers.get("HX-Request", False)
         if is_htmx:
@@ -27,7 +28,7 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
         search_field = self.request.GET.get("search_field", "")
 
         units = OrganizationalUnit.objects.filter(
-            Q(organization=org) & parent_query &
+            parent_query &
             Q(
                 Q(name__icontains=search_field) |
                 Q(children__name__icontains=search_field) |
@@ -50,6 +51,7 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['organization'] = self.kwargs['org']
         context['accounts'] = Account.objects.filter(organization=self.kwargs['org'])
+        context['FEATURES'] = Feature.__members__
         return context
 
     def post(self, request, *args, **kwargs):

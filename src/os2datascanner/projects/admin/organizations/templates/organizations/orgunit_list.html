@@ -7,7 +7,7 @@
 <div class="orgunit-list content-header" hx-headers='{"X-CSRFToken": "{{csrf_token}}"}' hx-push-url='true'>
 
     <a class="button" href="{% url "organization-list" %}">← {% trans "Return to organization overview"%}</a>
-    {% if orgunit_list.exists %}
+    {% if FEATURES.ORG_STRUCTURE in organization.client.enabled_features and orgunit_list.exists %}
     <h1>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h1>
     <form name="orgunit_filters"
           id="orgunit_filters"
