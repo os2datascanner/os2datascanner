@@ -33,12 +33,12 @@ class UserView(TemplateView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        roles_qs = Role.get_user_roles_or_default(self.request.user)
-        user_roles = [role._meta.verbose_name for role in roles_qs]
+        roles = Role.get_user_roles_or_default(self.request.user)
+        user_roles = [role._meta.verbose_name for role in roles]
 
         context["is_dpo"] = "DPO" in user_roles
-        context["is_contact_person"] = roles_qs.filter(
-            dataprotectionofficer__contact_person=True).exists()
+        context["is_contact_person"] = any(
+            role.contact_person for role in roles if isinstance(role, DataProtectionOfficer))
         context["user_roles"] = user_roles
         context["aliases"] = User.objects.get(username=self.request.user).aliases.all()
 

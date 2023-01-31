@@ -57,6 +57,8 @@
 - URL kwargs are no longer appended when using the "Open" and "Copy" buttons
   in the report module.
 
+- Profile page in report module can now be accessed by users with no roles.
+
 ## Version 3.17.9, 23rd January 2023
 
 "4.3 Billion Index Cards"
