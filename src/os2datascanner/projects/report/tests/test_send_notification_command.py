@@ -1,3 +1,4 @@
+import datetime
 from io import StringIO
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -231,7 +232,10 @@ class EmailNotificationTest(TestCase):
             name="Saftevand Inc",
             email_notification_schedule="RRULE:FREQ=DAILY"
         )
-        self.assertTrue(self.Command.schedule_check(org))
+        self.assertTrue(
+            self.Command.schedule_check(org),
+            f'The naive datetime.now() date is: {datetime.datetime.now()}' +
+            f'and the aware time_now date is: {time_now()}')
 
         # Check that a not scheduled day will return False.
         # weekday returns 0 indexed mon-sun day count, we use this to make test consistent.
