@@ -111,7 +111,7 @@ msgstr "følsomhed"
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport.py:136 reportapp/views/views.py:520
+#: reportapp/models/documentreport.py:136 reportapp/views/views.py:521
 msgid "Other"
 msgstr "Andet"
 
@@ -605,11 +605,15 @@ msgstr "Rapport"
 msgid "Archive"
 msgstr "Arkiv"
 
-#: reportapp/templates/components/navigation.html:30
+#: reportapp/templates/components/navigation.html:31
+msgid "My Overview"
+msgstr "Mit overblik"
+
+#: reportapp/templates/components/navigation.html:37
 msgid "User profile"
 msgstr "Brugerprofil"
 
-#: reportapp/templates/components/navigation.html:38
+#: reportapp/templates/components/navigation.html:45
 #: reportapp/templates/components/user.html:51
 msgid "Logout"
 msgstr "Log ud"
@@ -724,14 +728,14 @@ msgstr "FAQ"
 msgid "Development overview for"
 msgstr "Udviklingsoverblik for"
 
-#: reportapp/templates/components/user-overview-template.html:11
+#: reportapp/templates/components/user-overview-template.html:13
 msgid "Number of matches per week"
 msgstr "Antal matches pr. uge"
 
-#: reportapp/templates/components/user-overview-template.html:12
-#: reportapp/templates/components/user-overview-template.html:17
-#: reportapp/templates/components/user-overview-template.html:24
-#: reportapp/templates/components/user-overview-template.html:31
+#: reportapp/templates/components/user-overview-template.html:14
+#: reportapp/templates/components/user-overview-template.html:19
+#: reportapp/templates/components/user-overview-template.html:26
+#: reportapp/templates/components/user-overview-template.html:33
 msgid "Week"
 msgstr "Uge"
 
@@ -757,8 +761,35 @@ msgid "Are you sure? This action cannot be reversed."
 msgstr "Er du sikker? Denne handling kan ikke fortrydes."
 
 #: reportapp/templates/components/user-overview-template.html:73
+#: reportapp/templates/components/user-overview-template.html:20
+#: reportapp/templates/components/user-overview-template.html:27
+#: reportapp/templates/components/user-overview-template.html:34
+msgid "Unhandled matches at the end of week"
+msgstr "Uhåndterede resultater i slutningen af uge"
+
+#: reportapp/templates/components/user-overview-template.html:21
+#: reportapp/templates/components/user-overview-template.html:28
+#: reportapp/templates/components/user-overview-template.html:35
+msgid "New matches during week"
+msgstr "Nye resultater i løbet af uge"
+
+#: reportapp/templates/components/user-overview-template.html:22
+#: reportapp/templates/components/user-overview-template.html:29
+#: reportapp/templates/components/user-overview-template.html:36
+msgid "Matches handled during week"
+msgstr "Resultater håndteret i løbet af uge"
+
+#: reportapp/templates/components/user-overview-template.html:48
 msgid "Development chart"
 msgstr "Udviklingsgraf"
+
+#: reportapp/templates/components/user-overview-template.html:51
+msgid ""
+"Chart of the change in the amount of the user's unhandled matches over the "
+"past year on a weekly basis."
+msgstr ""
+"Graf over udviklingen af antallet af brugerens uhåndterede resultater i "
+"løbet af det sidste år på ugentlig basis."
 
 #: reportapp/templates/components/user.html:48
 msgid "Show Account"
@@ -1071,19 +1102,19 @@ msgstr "Bruger siden"
 msgid "%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A"
 msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 
-#: reportapp/views/views.py:78
+#: reportapp/views/views.py:79
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:521
+#: reportapp/views/views.py:522
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:522
+#: reportapp/views/views.py:523
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:523
+#: reportapp/views/views.py:524
 msgid "Mailscan"
 msgstr "Mailscan"
 

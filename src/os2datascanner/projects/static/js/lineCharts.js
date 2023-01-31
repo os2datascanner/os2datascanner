@@ -1,6 +1,6 @@
 /* exported drawLines */
 
-function makeLineChart(xdata, ydata, chartElement) {
+function makeLineChart(xdata, ydata, chartElement, xLabel = "", yLabel = "") {
 	const lineChart = new Chart(chartElement, {
 		type: 'line',
 		data: {
@@ -122,7 +122,12 @@ function makeLineChart(xdata, ydata, chartElement) {
 					},
 					ticks: {
 						fontSize: 16,
-					}
+					},
+					scaleLabel: {
+						display: xLabel !== "",
+						labelString: xLabel,
+						fontSize: 16,
+					},
 				}],
 				yAxes: [{
 					gridLines: {
@@ -132,7 +137,12 @@ function makeLineChart(xdata, ydata, chartElement) {
 						beginAtZero: true,
 						fontSize: 14,
 						stepSize: stepSizeFunction(ydata, 2),
-					}
+					},
+					scaleLabel: {
+						display: yLabel !== "",
+						labelString: yLabel,
+						fontSize: 14,
+					},
 				}]
 			},
 		}

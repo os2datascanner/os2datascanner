@@ -24,6 +24,13 @@
       </a>
     </li>
   {% endfor %}
+    <li class="user-overview">
+      <a href="{% url "statistics-user" request.user.account.uuid %}"
+         class="{% if '/statistics/user/' in request.path %}active{% endif %}">
+        {% include "components/svg-icons/bar_chart.svg" %}
+        <span class="width">{% trans "My Overview" %}</span>
+      </a>
+    </li>
     <li class="profile">
       <a href="{% url "user" %}" class="{% if request.path == "/user/" %}active{% endif %}">
         {% include "components/svg-icons/account_circle.svg" %}

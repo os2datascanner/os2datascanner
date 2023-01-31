@@ -212,30 +212,71 @@ li>span {
 	}
 }
 
-.overview_wrapper {
+.statistic_wrapper.user-overview {
 	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: column;
+
+	.statistic {
+		margin: 0;
+		height: fit-content;
+	}
+
+	.chart_container {
+		max-width: 100%;
+	}
+
+	@media (min-width: $break-lg) {
+		flex-direction: row;
+
+		.statistic {
+			width: 50%;
+			margin: 1.75rem;
+		}
+	}
+}
+
+table .statistic_wrapper {
 
 	.loading {
 		width: 100%;
 		text-align: center;
 	}
 
-	h1 {
-		font-size: medium;
-	}
-
 	h2 {
 		font-size: medium;
 	}
 
-	.statistic:not(:first-of-type) {
-		margin-top: 0px;
+	.statistic {
+		width: 100%;
+		height: fit-content;
+		margin: 0;
 	}
 
-	.overview-timeline {
-		width: 50%;
+	.chart_container {
+		max-width: 100%;
 	}
 
+	@media (min-width: $break-lg) {
+		flex-direction: row;
+
+		.statistic {
+			width: 50%;
+			margin: 1.75rem;
+		}
+
+		.statistic:not(:first-of-type) {
+			margin-top: 0px;
+		}
+	}
+
+}
+
+table .overview_wrapper {
+
+	h1 {
+		font-size: medium;
+	}
 }
 
 .week-overview {
@@ -270,29 +311,33 @@ li>span {
 		margin-top: 0.3rem;
 	}
 
-	.new {
-		color: var(--color-error);
+	.annotation {
 		font-size: 1rem;
 		position: absolute;
 		left: 100%;
-		top: 0px;
 		font-family: monospace;
 
-		&::before {
-			content: "+";
+		&.new {
+			color: var(--color-error);
+			top: 0px;
+
+
+			&::before {
+				content: "+";
+			}
 		}
-	}
 
-	.handled {
-		color: var(--color-checkmark);
-		font-size: 1rem;
-		position: absolute;
-		left: 100%;
-		bottom: 0px;
-		font-family: monospace;
+		&.handled {
+			color: var(--color-checkmark);
+			bottom: 0px;
 
-		&::before {
-			content: "-";
+			&::before {
+				content: "-";
+			}
+		}
+
+		&.zero {
+			color: var(--color-text-main);
 		}
 	}
 }
