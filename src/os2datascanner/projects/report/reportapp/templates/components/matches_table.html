@@ -18,7 +18,7 @@
 <tr id="replaceRow__{{ pk }}">
     <td colspan="2">
             <button class="button" title="{% trans 'Show more matches...' %}" type="button" name='show-more-matches'
-            hx-get="" 
+            hx-get="{{ request.path }}" 
             {% if interval %} hx-vals='{"last_match": "{{ interval|last }}", "dr_pk": "{{ pk }}"}' {% else %} 
             hx-vals='{"dr_pk": "{{ pk }}"}' {% endif %} 
             hx-target="#replaceRow__{{ pk }}" hx-swap="outerHTML" hx-trigger="click"

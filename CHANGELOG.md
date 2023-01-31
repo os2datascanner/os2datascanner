@@ -49,6 +49,9 @@
 
 - The administration system's signal handlers now pause until their event
   broadcasts are acknowledged, making these broadcasts much more robust.
+  
+- URL kwargs are no longer appended when using the "Open" and "Copy" buttons
+  in the report module.
 
 ## Version 3.17.9, 23rd January 2023
 
