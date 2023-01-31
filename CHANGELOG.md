@@ -27,6 +27,9 @@
 
 - Email attachments which declare URLs or relative paths to be their filename
   are now handled correctly.
+  
+- Fixed an issue where any user was able to add and edit organizations for any 
+  client.
 
 ## Version 3.17.9, 23rd January 2023
 

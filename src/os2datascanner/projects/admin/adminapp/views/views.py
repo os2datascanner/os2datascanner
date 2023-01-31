@@ -48,10 +48,14 @@ def _hide_csrf_token_and_password(d):
 
 
 class RestrictedListView(LoginRequiredMixin, ListView):
-    def get_queryset(self):
+    def get_queryset(self, **kwargs):
         """Restrict to the organization of the logged-in user."""
         return self.model.objects.filter(
-                UserWrapper(self.request.user).make_org_Q())
+            UserWrapper(
+                self.request.user).make_org_Q(
+                org_path=kwargs.get(
+                    "org_path",
+                    "organization")))
 
 
 class GuideView(TemplateView):
@@ -104,10 +108,12 @@ class OrgRestrictedMixin(LoginRequiredMixin, ModelFormMixin):
 
         return fields
 
-    def get_queryset(self):
+    def get_queryset(self, **kwargs):
         """Get queryset filtered by user's organization."""
         return super().get_queryset().filter(
-                UserWrapper(self.request.user).make_org_Q())
+                UserWrapper(self.request.user).make_org_Q(org_path=kwargs.get(
+                    "org_path",
+                    "organization")))
 
 
 class RestrictedUpdateView(UpdateView, OrgRestrictedMixin):

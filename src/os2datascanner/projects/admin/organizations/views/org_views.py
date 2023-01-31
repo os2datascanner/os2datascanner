@@ -1,13 +1,14 @@
 from typing import Any, Dict
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.utils.text import slugify
-from django.views.generic.edit import CreateView, UpdateView
-from django.views.generic.list import ListView
 from django.utils.translation import ugettext_lazy as _
 from os2datascanner.projects.admin.adminapp.views.views import (
-     RestrictedDeleteView, RestrictedDetailView)
+    RestrictedDeleteView,
+    RestrictedDetailView,
+    RestrictedCreateView,
+    RestrictedListView,
+    RestrictedUpdateView)
 from django.core.exceptions import PermissionDenied
 
 from os2datascanner.projects.admin.core.models import Client, Feature
@@ -36,7 +37,7 @@ def replace_nordics(name: str):
     return name
 
 
-class OrganizationListView(LoginRequiredMixin, ListView):
+class OrganizationListView(RestrictedListView):
     model = Organization
     paginate_by = 10  # TODO: reasonable number? Possibly irrelevant?
     context_object_name = 'client_list'
@@ -44,7 +45,7 @@ class OrganizationListView(LoginRequiredMixin, ListView):
     # filter list based on user
     def get_queryset(self):
         user = self.request.user
-        queryset = Organization.objects.none()
+        queryset = super().get_queryset(org_path="uuid")
         if hasattr(user, 'administrator_for'):
             client_id = user.administrator_for.client_id
             queryset = Client.objects.filter(pk=client_id)
@@ -62,7 +63,7 @@ class OrganizationListView(LoginRequiredMixin, ListView):
         return 'organizations/org_table.html' if is_htmx else "organizations/org_list.html"
 
 
-class AddOrganizationView(LoginRequiredMixin, CreateView):
+class AddOrganizationView(RestrictedCreateView):
     model = Organization
     template_name = 'organizations/org_add.html'
     success_url = reverse_lazy('organization-list')
@@ -85,8 +86,11 @@ class AddOrganizationView(LoginRequiredMixin, CreateView):
         else:
             return super().form_valid(form)
 
+    def get_queryset(self):
+        return super().get_queryset(org_path="uuid")
 
-class UpdateOrganizationView(LoginRequiredMixin, UpdateView):
+
+class UpdateOrganizationView(RestrictedUpdateView):
     model = Organization
     template_name = 'organizations/org_update.html'
     success_url = reverse_lazy('organization-list')
@@ -97,6 +101,9 @@ class UpdateOrganizationView(LoginRequiredMixin, UpdateView):
         form.required_css_class = 'required-form'
         # form.error_css_class = # TODO: add if relevant?
         return form
+
+    def get_queryset(self):
+        return super().get_queryset(org_path="uuid")
 
 
 class DeleteOrganizationView(RestrictedDeleteView):
@@ -112,6 +119,9 @@ class DeleteOrganizationView(RestrictedDeleteView):
 
         # User is OK. Proceed.
         return super().post(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return super().get_queryset(org_path="uuid")
 
 
 class OrganizationDeletionBlocked(RestrictedDetailView):
