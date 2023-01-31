@@ -273,7 +273,7 @@ class KeycloakImportTest(TestCase):
             self.org, TEST_CORP_TWO,
             keycloak_actions.keycloak_group_dn_selector)
 
-        ursula_aliases = Alias.objects.filter(value="ursulas@brevdue.dk")
+        ursula_aliases = Alias.objects.filter(_value="ursulas@brevdue.dk")
 
         self.assertEqual(ursula_aliases.count(), 1,
                          msg="Either duplicate or no email aliases for user created")

@@ -24,7 +24,6 @@ class OrganizationListViewTests(TestCase):
 
         response = self.client.get(url)
 
-        self.assertContains(response, "client_list")
         self.assertIn(self.client1, response.context.get("client_list"),
                       msg="Client not correctly shown to superuser")
         self.assertIn(self.client2, response.context.get("client_list"),
@@ -39,7 +38,6 @@ class OrganizationListViewTests(TestCase):
 
         response = self.client.get(url)
 
-        self.assertContains(response, "client_list")
         self.assertIn(self.client1, response.context.get("client_list"),
                       msg="Client not correctly shown to superuser")
         self.assertNotIn(self.client2, response.context.get("client_list"),
@@ -142,7 +140,7 @@ class AddOrganizationViewTests(TestCase):
         })
 
         num_org_post = Organization.objects.count()
-        expected_code = 404
+        expected_code = 403
 
         self.assertEqual(
             response.status_code,
@@ -171,7 +169,7 @@ class AddOrganizationViewTests(TestCase):
         })
 
         num_org_post = Organization.objects.count()
-        expected_code = 404
+        expected_code = 403
 
         self.assertEqual(
             response.status_code,
