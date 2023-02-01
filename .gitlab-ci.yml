@@ -101,6 +101,19 @@ Lint js scripts:
       --config .jshintrc
       --exclude-path .jshintignore
 
+Lint django templates:
+  <<: *lint-default
+  image: python:3.9
+  stage: lint
+  script:
+    # Install djlint in this docker container
+    - pip install djlint
+
+    # Run djlint
+    - djlint ./src/os2datascanner/projects 
+      --reformat --indent 2 
+      --preserve-blank-lines
+
 # Pre-build stage
 Build base image:
   extends: .build-buildkit

@@ -13,3 +13,10 @@ repos:
     rev: 'v2.13.0'
     hooks:
     -   id: jshint
+-   repo: https://github.com/Riverside-Healthcare/djLint
+    rev: 'v1.19.8'
+    hooks:
+    -   id: djlint-django
+        name: djlint
+        entry: djlint --reformat --quiet
+        files: src/os2datascanner/projects/

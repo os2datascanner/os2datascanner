@@ -19,3 +19,7 @@ extend-exclude = "**/**/migrations/**"
 ignore = "B009, B017, W503, E126, W504, E226, E121, E241, E123, B008"
 statistics = "true"
 doctests = "true"
+
+[tool.djlint]
+indent = 2
+preserve_blank_lines = true
