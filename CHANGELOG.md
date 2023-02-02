@@ -21,6 +21,8 @@
   degree of control, and to prevent creation of duplicate DocumentReports
   in the report module.
 
+- Increased efficiency of certain database queries made from the report module, improving page load time.
+
 ### Bugfixes
 
 - Hovering over the handle button will no longer obscure it with an invisible
