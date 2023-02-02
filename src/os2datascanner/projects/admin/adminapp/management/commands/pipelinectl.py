@@ -29,7 +29,7 @@ class Command(BaseCommand):
     help = __doc__
 
     def add_arguments(self, parser):
-        group = parser.add_mutually_exclusive_group(required=True)
+        group = parser.add_mutually_exclusive_group(required=False)
         group.add_argument(
                 "--abort-scantag",
                 type=scan_tag,
@@ -49,13 +49,14 @@ class Command(BaseCommand):
                 metavar="PK",
                 help="the primary key of a ScanStatus object whose scan should be stopped",
                 default=None)
-        group.add_argument(
+
+        parser.add_argument(
                 "--log-level",
                 choices=log_levels.keys(),
                 metavar="LEVEL",
                 help="the new log level for pipeline components",
                 default=None)
-        group.add_argument(
+        parser.add_argument(
                 "--profile",
                 action=argparse.BooleanOptionalAction,
                 help="whether to enable or disable profiling",
