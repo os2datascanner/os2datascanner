@@ -17,90 +17,105 @@
       <div class="aside">
         <h1 class="page-title">{% trans "Rules" %}</h1>
 
-        <div class="btn">
-          <a class="button button--cta"
-             href="/rules/regex/add/"
-             title="{% trans 'Add rule' %}">
-            <svg class="icon icon--white">
-              <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
-            </svg>
-            <span>{% trans "Add rule" %}</span>
-          </a>
-        </div>
-      </div>
+    <div class="btn">
+      <a
+        class="button button--cta"
+        href="{% url "customrule_add" %}"
+        title="{% trans 'Add rule' %}">
+        <svg class="icon icon--white">
+          <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
+        </svg>
+        <span>
+          {% trans "Add rule" %}
+        </span>
+      </a>
+    </div>
+  </div>
 
-      {% if regexrule_list %}
-        <div class="datatable-wrapper card xl"
-             role="region"
-             tabindex="0"
-             aria-label="{% trans 'Rules' %}">
-          <table class="datatable">
-            <colgroup>
-              <col class="datatable__column--name">
-              <col class="datatable__column--org">
-              <col class="datatable__column--info">
-              <col class="datatable__column--expression">
-              <col class="datatable__column--sensitivity">
-              <col class="datatable__column--actions">
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="datatable__column--name">{% trans "Name" %}</th>
-                <th class="datatable__column--org">{% trans "Organization" %}</th>
-                <th class="datatable__column--info">{% trans "Description" %}</th>
-                <th class="datatable__column--expression">{% trans "Expression" %}</th>
-                <th class="datatable__column--sensitivity">{% trans "Sensitivity" %}</th>
-                <th class="datatable__column--actions">{% trans "Action" %}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for rule in regexrule_list %}
-                <tr tabindex="0">
-                  <td class="datatable__column--name">{{ rule.name }}</td>
-                  <td class="datatable__column--org">{{ rule.organization }}</td>
-                  <td class="datatable__column--info">{{ rule.description }}</td>
+  {% if rules %}
+    <div class="datatable-wrapper card xl" role="region" tabindex="0" aria-label="{% trans 'Rules' %}">
+      <table class="datatable">
+        <colgroup>
+          <col class="datatable__column--name">
+          <col class="datatable__column--org">
+          <col class="datatable__column--info">
+          <col class="datatable__column--expression">
+          <col class="datatable__column--sensitivity">
+          <col class="datatable__column--actions">
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="datatable__column--name">
+              {% trans "Name" %}
+            </th>
+            <th class="datatable__column--org">
+              {% trans "Organization" %}
+            </th>
+            <th class="datatable__column--info">
+              {% trans "Description" %}
+            </th>
+            <th class="datatable__column--expression">
+              {% trans "Expression" %}
+            </th>
+            <th class="datatable__column--sensitivity">
+              {% trans "Sensitivity" %}
+            </th>
+            <th class="datatable__column--actions">
+              {% trans "Action" %}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rule in object_list %}
+          <tr tabindex="0">
+            <td class="datatable__column--name">{{ rule.name }}</td>
+            <td class="datatable__column--org">{{ rule.organization }}</td>
+            <td class="datatable__column--info">{{ rule.description }}</td>
 
-                  <td class="datatable__column--expression">
-                    {% if rule.regexrule.patterns.all|length > 0 %}
-                      <button type="button"
-                              class="button button--grey button--small"
-                              title="{% trans 'Show expression' %}"
-                              data-toggle="#show-patterns-{{ forloop.counter }}">
-                        {% trans "Show expression" %}
-                      </button>
-                    {% endif %}
-                  </td>
-                  <td class="datatable__column--sensitivity">
-                    <span class="flex">
-                      <span class="flex--width">{% include "components/sensitivity-icon.html" %}</span>
-                      <span>{{ rule.get_sensitivity_display }}</span>
-                    </span>
-                  </td>
-                  <td class="datatable__column--actions">
-                    <div class="action-wrapper">
-                      <a href="/rules/regex/{{ rule.pk }}"
-                         class="button button--small button--grey"
-                         title="{% trans 'Edit' %}">
-                        <svg class="icon">
-                          <use xlink:href="/static/svg/symbol-defs.svg#icon-pencil"></use>
-                        </svg>
-                      </a>
+            <td class="datatable__column--expression">
+              {% if rule.regexrule.patterns.all|length > 0 %}
+              <button
+                type="button"
+                class="button button--grey button--small"
+                title="{% trans 'Show expression' %}"
+                data-toggle="#show-patterns-{{ forloop.counter }}">
+                {% trans "Show expression" %}
+              </button>
+              {% endif %}
+            </td>
+            <td class="datatable__column--sensitivity">
+              <span class="flex">
+                <span class="flex--width">
+                  {% include "components/sensitivity-icon.html" %}
+                </span>
+                <span>{{ rule.get_sensitivity_display }}</span>
+              </span>
+            </td>
+            <td class="datatable__column--actions">
+              <div class="action-wrapper">
+                <a
+                  href="{% url "customrule_update" rule.pk %}"
+                  class="button button--small button--grey"
+                  title="{% trans 'Edit' %}">
+                  <svg class="icon">
+                    <use xlink:href="/static/svg/symbol-defs.svg#icon-pencil"></use>
+                  </svg>
+                </a>
 
-                      <form action="/{{ view.type }}rules/regex/{{ rule.pk }}/delete/"
-                            method="post"
-                            style="display: inline-block">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit"
-                                class="button button--small button--grey"
-                                onclick="return confirm('{% trans "Do you really want to delete this rule?" %}\n\n{{ rule.name }}\n\n{% trans "The action cannot be reversed" %}')"
-                                title="{% trans 'Delete' %}">
-                          <svg class="icon">
-                            <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
-                          </svg>
-                        </button>
-                      </form>
-                    </div>
+                <form action="{% url "customrule_delete" rule.pk %}" method="post" style="display: inline-block;">
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                  <button
+                    type="submit"
+                    class="button button--small button--grey"
+                    onclick="return confirm('{% trans "Do you really want to delete this rule?" %}\n\n{{rule.name}}\n\n{% trans "The action cannot be reversed" %}')"
+                          title="{% trans 'Delete' %}">
+                    <svg class="icon">
+                      <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                    </svg>
+                  </button>
+                </form>
+              </div>
 
                   </td>
                 </tr>
@@ -127,50 +142,8 @@
           </p>
         {% endif %}
 
-        <div class="aside">
-          <h1 class="page-title">{% trans "System rules" %}</h1>
-        </div>
-
-        <div class="datatable-wrapper card lg"
-             role="region"
-             tabindex="0"
-             aria-label="{% trans 'System rules' %}">
-          <table class="datatable">
-            <colgroup>
-              <col class="datatable__column--name">
-              <col class="datatable__column--org">
-              <col class="datatable__column--info">
-              <col class="datatable__column--sensitivity">
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="datatable__column--name">{% trans "Name" %}</th>
-                <th class="datatable__column--org">{% trans "Organization" %}</th>
-                <th class="datatable__column--info">{% trans "Description" %}</th>
-                <th class="datatable__column--sensitivity">{% trans "Sensitivity" %}</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {% for rule in systemrule_list %}
-                <tr tabindex="0">
-                  <td class="datatable__column--name">{{ rule.name }}</td>
-                  <td class="datatable__column--org">{{ rule.organization }}</td>
-                  <td class="datatable__column--info">{{ rule.description }}</td>
-                  <td class="datatable__column--sensitivity">
-                    <span class="flex">
-                      <span class="flex--width">{% include "components/sensitivity-icon.html" %}</span>
-                      <span>{{ rule.get_sensitivity_display }}</span>
-                    </span>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
-  {% endblock %}
+</main>
+{% endblock %}
 
   {% block modal %}
     <div class="modal modal--small"

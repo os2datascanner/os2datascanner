@@ -65,7 +65,8 @@ from .views.sbsysscanner_views import (SbsysScannerCreate, SbsysScannerList,
 from .views.rule_views import (RuleList, CPRRuleCreate,
                                CPRRuleUpdate, CPRRuleDelete,
                                RegexRuleCreate, RegexRuleUpdate,
-                               RegexRuleDelete)
+                               RegexRuleDelete, CustomRuleCreate,
+                               CustomRuleUpdate, CustomRuleDelete)
 
 from .views.scanner_views import (StatusOverview, StatusCompleted,
                                   StatusDelete, StatusTimeline, UserErrorLogView)
@@ -96,7 +97,7 @@ urlpatterns = [
     re_path(r'^api/(?P<path>.*)$', JSONAPIView.as_view(), name="json-api"),
     re_path(r'^analysis/$',  AnalysisPageView.as_view(), name='analysis'),
 
-    # App RE_PATHs
+    # App URLs
     re_path(r'^status/$', StatusOverview.as_view(), name='status'),
     re_path(r'^status-completed/$', StatusCompleted.as_view(), name='status-completed'),
     re_path(r'^status-completed/timeline/(?P<pk>\d+)/$',
@@ -124,7 +125,7 @@ urlpatterns = [
     re_path(r'^exchangescanners/(?P<pk>\d+)/copy/$', ExchangeScannerCopy.as_view(),
             name='exchangescanner_copy'),
 
-    # Webscanner RE_PATH's
+    # Webscanner URLs
     re_path(r'^webscanners/$', WebScannerList.as_view(), name='webscanners'),
     re_path(r'^webscanners/add/$', WebScannerCreate.as_view(), name='webscanner_add'),
     re_path(r'^webscanners/(?P<pk>\d+)/delete/$', WebScannerDelete.as_view(),
@@ -142,7 +143,7 @@ urlpatterns = [
             name='webscanner_update'),
     re_path(r'^webscanners/(?P<pk>\d+)/copy/$', WebScannerCopy.as_view(), name='webscanner_copy'),
 
-    # Filescanner RE_PATH's
+    # Filescanner URLs
     re_path(r'^filescanners/$', FileScannerList.as_view(), name='filescanners'),
     re_path(r'^filescanners/add/$', FileScannerCreate.as_view(), name='filescanner_add'),
     re_path(r'^filescanners/(?P<pk>\d+)/$', FileScannerUpdate.as_view(),
@@ -160,7 +161,7 @@ urlpatterns = [
             FileScannerCopy.as_view(),
             name='filescanner_copy'),
 
-    # Dropbox scanner RE_PATH's
+    # Dropbox scanner URLs
     re_path(r'^dropboxscanners/$', DropboxScannerList.as_view(), name='dropboxscanners'),
     re_path(r'^dropboxscanners/add/$', DropboxScannerCreate.as_view(), name='dropboxscanner_add'),
     re_path(r'^dropboxscanners/(?P<pk>\d+)/$', DropboxScannerUpdate.as_view(),
@@ -175,7 +176,7 @@ urlpatterns = [
                 model=DropboxScanner),
             name='dropboxscanner_askrun'),
 
-    # Google Drive scanner RE_PATH's
+    # Google Drive scanner URLs
     re_path(r'^googledrivescanners/$', GoogleDriveScannerList.as_view(),
             name='googledrivescanners'),
     re_path(r'^googledrivescanners/add/$', GoogleDriveScannerCreate.as_view(),
@@ -194,7 +195,7 @@ urlpatterns = [
     re_path(r'^googledrivescanners/(?P<pk>\d+)/copy/$', GoogleDriveScannerCopy.as_view(),
             name='googledrivescanner_copy'),
 
-    # Gmail scanner RE_PATH's
+    # Gmail scanner URLs
     re_path(r'^gmailscanners/$', GmailScannerList.as_view(), name='gmailscanners'),
     re_path(r'^gmailscanners/add/$', GmailScannerCreate.as_view(), name='gmailscanner_add'),
     re_path(r'^gmailscanners/(?P<pk>\d+)/$', GmailScannerUpdate.as_view(),
@@ -212,7 +213,7 @@ urlpatterns = [
             GmailScannerCopy.as_view(),
             name='gmailscanner_copy'),
 
-    # Sbsys scanner RE_PATH's
+    # Sbsys scanner URLs
     re_path(r'^sbsysscanners/$', SbsysScannerList.as_view(), name='sbsysscanners'),
     re_path(r'^sbsysscanners/add/$', SbsysScannerCreate.as_view(), name='sbsysscanner_add'),
     re_path(r'^sbsysscanners/(?P<pk>\d+)/$', SbsysScannerUpdate.as_view(),
@@ -304,14 +305,19 @@ urlpatterns = [
     re_path(r'^rules/$', RuleList.as_view(), name='rules'),
     re_path(r'^rules/cpr/add/$', CPRRuleCreate.as_view(), name='cprrule_add'),
     re_path(r'^rules/cpr/(?P<pk>\d+)/$', CPRRuleUpdate.as_view(),
-            name='rule_update'),
+        name='cprrule_update'),
     re_path(r'^rules/cpr/(?P<pk>\d+)/delete/$', CPRRuleDelete.as_view(),
-            name='rule_delete'),
+        name='cprrule_delete'),
     re_path(r'^rules/regex/add/$', RegexRuleCreate.as_view(), name='regexrule_add'),
     re_path(r'^rules/regex/(?P<pk>\d+)/$', RegexRuleUpdate.as_view(),
-            name='rule_update'),
+        name='rule_update'),
     re_path(r'^rules/regex/(?P<pk>\d+)/delete/$', RegexRuleDelete.as_view(),
-            name='rule_delete'),
+        name='rule_delete'),
+    re_path(r'^rules/custom/add/$', CustomRuleCreate.as_view(), name='customrule_add'),
+    re_path(r'^rules/custom/(?P<pk>\d+)/$', CustomRuleUpdate.as_view(),
+        name='customrule_update'),
+    re_path(r'^rules/custom/(?P<pk>\d+)/delete/$', CustomRuleDelete.as_view(),
+        name='customrule_delete'),
     # Login/logout stuff
     re_path(r'^accounts/login/',
             django.contrib.auth.views.LoginView.as_view(
