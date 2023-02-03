@@ -77,8 +77,7 @@ ModeMask = reduce(operator.or_, Mode, Mode.NONE)
 
 class SMBCSource(Source):
     type_label = "smbc"
-    eq_properties = (
-            "_unc", "_user", "_password", "_domain", "_skip_super_hidden")
+    eq_properties = ("_unc", "_user", "_password", "_domain")
 
     def __init__(self, unc, user=None, password=None, domain=None,
                  driveletter=None, *, skip_super_hidden: bool = False):

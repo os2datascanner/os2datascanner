@@ -17,6 +17,7 @@ from .models.roles.role import Role
 from .models.roles.dpo import DataProtectionOfficer
 from .models.roles.leader import Leader
 
+from os2datascanner.engine2.utilities.equality import TypePropertyEquality, get_state
 from os2datascanner.projects.report.organizations.models import (
     Alias, AliasType, Organization, Account)
 
@@ -76,6 +77,35 @@ def hash_handle(handle: dict) -> str:
         source = source.get("handle", {}).get("source")
 
     return hashlib.sha512(json.dumps(handle).encode()).hexdigest()
+
+
+def crunch(t: TypePropertyEquality):
+    """Returns a string summary of all of the characteristic properties of an
+    object that descends from TypePropertyEquality. Be warned! If you add
+    another field to the `eq_properties` of an object, either that field must
+    be None by default, or a migration may have to be made to update certain
+    equality fields on existing objects (take DocumentReport.path as an
+    example)."""
+    fragments = []
+
+    for prop in get_state(t):
+        raw_value = getattr(t, prop)
+        if raw_value is None:
+            continue
+
+        fragment = f"{prop}="
+        if isinstance(raw_value, TypePropertyEquality):
+            fragment += f"({crunch(raw_value)})"
+        else:
+            fragment += str(raw_value)
+
+        fragments.append(fragment)
+
+    # The format of this string is something like:
+    # Handle(_source=(Source(_unc=//path/to/somewhere));_relpath=some_file.txt)
+    return_string = type(t).__name__ + "(" + ";".join(fragments) + ")"
+
+    return return_string.encode("unicode_escape").decode()
 
 
 def get_or_create_user_aliases(user_data):  # noqa: D401

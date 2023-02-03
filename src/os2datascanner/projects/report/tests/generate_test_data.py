@@ -10,7 +10,6 @@ from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
 from ..reportapp.management.commands import result_collector
-from ..reportapp.utils import hash_handle
 
 
 def get_different_scan_tag():
@@ -84,7 +83,6 @@ def record_match(match):
     """Records a match message to the database as though it were received by
     the report module's pipeline collector."""
     return result_collector.handle_match_message(
-            hash_handle(match.handle.to_json_object()),
             match.scan_spec.scan_tag,
             match.to_json_object())
 
@@ -94,7 +92,6 @@ def record_metadata(metadata):
     the report module's pipeline collector, in the process also creating Alias
     relations."""
     return result_collector.handle_metadata_message(
-            hash_handle(metadata.handle.to_json_object()),
             metadata.scan_tag,
             metadata.to_json_object())
 
@@ -103,8 +100,5 @@ def record_problem(problem):
     """Records a problem message to the database as though it were received by
     the report module's pipeline collector. Both Handle- and Source-related
     problems are supported."""
-    path = hash_handle(
-            problem.handle.to_json_object()
-            if problem.handle else problem.source.to_json_object())
     return result_collector.handle_problem_message(
-            path, problem.scan_tag, problem.to_json_object())
+            problem.scan_tag, problem.to_json_object())

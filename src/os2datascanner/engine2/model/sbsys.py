@@ -10,6 +10,8 @@ from .core import Source, Handle, FileResource
 class SbsysSource(Source):
     type_label = "sbsys"
 
+    eq_properties = ("_token_url",)
+
     def __init__(self, client_id, client_secret, token_url, api_url):
         self._client_id = client_id
         self._client_secret = client_secret

@@ -26,6 +26,8 @@ class GmailSource(Source):
 
     type_label = "gmail"
 
+    eq_properties = ("_user_email_gmail",)
+
     def __init__(self, service_account_file_gmail, user_email_gmail):
         self._service_account_file_gmail = service_account_file_gmail
         self._user_email_gmail = user_email_gmail

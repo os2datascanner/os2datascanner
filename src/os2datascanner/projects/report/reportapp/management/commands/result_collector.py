@@ -33,7 +33,7 @@ from os2datascanner.utils.system_utilities import time_now
 from prometheus_client import Summary, start_http_server
 
 from ...models.documentreport import DocumentReport
-from ...utils import hash_handle, prepare_json_object
+from ...utils import prepare_json_object, crunch
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_result_collector_report",
@@ -47,7 +47,6 @@ def result_message_received_raw(body):
     {'scan_tag': {...}, 'matches': null, 'metadata': null, 'problem': null}
     """
     reference = body.get("handle") or body.get("source")
-    path = hash_handle(reference)
     tag, queue = _identify_message(body)
     if not reference or not tag or not queue:
         return
@@ -66,25 +65,26 @@ def result_message_received_raw(body):
     )
 
     if queue == "matches":
-        handle_match_message(path, tag, body)
+        handle_match_message(tag, body)
     elif queue == "problem":
-        handle_problem_message(path, tag, body)
+        handle_problem_message(tag, body)
     elif queue == "metadata":
-        handle_metadata_message(path, tag, body)
+        handle_metadata_message(tag, body)
 
     yield from []
 
 
-def handle_metadata_message(path, scan_tag, result):
+def handle_metadata_message(scan_tag, result):
     # Evaluate the queryset that is updated later to lock it.
+    message = messages.MetadataMessage.from_json_object(result)
+    path = crunch(message.handle)
+
     DocumentReport.objects.select_for_update(
         of=('self',)
     ).filter(
         path=path,
         scanner_job_pk=scan_tag.scanner.pk
     ).first()
-
-    message = messages.MetadataMessage.from_json_object(result)
 
     lm = None
     if "last-modified" in message.metadata:
@@ -146,9 +146,10 @@ def add_new_relations(adsid_alias, new_objects, obj, tm):
             tm(documentreport_id=obj.pk, alias_id=alias.pk))
 
 
-def handle_match_message(path, scan_tag, result):  # noqa: CCR001, E501 too high cognitive complexity
+def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cognitive complexity
     locked_qs = DocumentReport.objects.select_for_update(of=('self',))
     new_matches = messages.MatchesMessage.from_json_object(result)
+    path = crunch(new_matches.handle)
     # The queryset is evaluated and locked here.
     previous_report = (locked_qs.filter(
             path=path, scanner_job_pk=scan_tag.scanner.pk).
@@ -255,9 +256,10 @@ def sort_matches_by_probability(body):
     return body
 
 
-def handle_problem_message(path, scan_tag, result):
+def handle_problem_message(scan_tag, result):
     locked_qs = DocumentReport.objects.select_for_update(of=('self',))
     problem = messages.ProblemMessage.from_json_object(result)
+    path = crunch(problem.handle if problem.handle else problem.source)
     # Queryset is evaluated and locked here.
     previous_report = (locked_qs.filter(
             path=path, scanner_job_pk=scan_tag.scanner.pk).

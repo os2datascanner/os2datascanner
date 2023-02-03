@@ -12,6 +12,8 @@ from .utilities import MSGraphSource, warn_on_httperror, MailFSBuilder
 class MSGraphMailSource(MSGraphSource):
     type_label = "msgraph-mail"
 
+    eq_properties = ("_userlist", "_tenant_id")
+
     def __init__(
             self,
             client_id,
