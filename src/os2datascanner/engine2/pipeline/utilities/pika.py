@@ -192,6 +192,11 @@ _coders = {
 }
 
 
+class SynchronisationTimeoutError(RuntimeError):
+    """When the PikaPipelineThread.synchronise method fails due to a timeout,
+    the SynchronisationTimeoutError exception is raised."""
+
+
 class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
     """Runs a Pika session in a background thread."""
 
@@ -268,10 +273,11 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         (This is chiefly useful for testing.)"""
         return self._enqueue("zzz", duration)
 
-    def synchronise(self):
+    def synchronise(self, timeout=None):
         """Blocks the current thread after requesting a wakeup from the
         background thread. The underlying communication mechanism is a
-        threading.Event.
+        threading.Event (although, unlike that class, a RuntimeError will be
+        raised in the event of the given timeout elapsing).
 
         As requests sent to the background thread are executed in the order in
         which they were made, this function can be used to establish that the
@@ -282,10 +288,12 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         that."""
         ev = threading.Event()
         self._enqueue("syn", ev)
-        # The Python docs don't guarantee that spurious wakeups won't happen.
-        # Protect against the possibility of them by using a loop
-        while ev.wait() is not True:
-            pass
+        # I *think* spurious wakeups on events are impossible, as there's only
+        # a simple flag and all waiters are released once it's set
+        if ev.wait(timeout) is not True and timeout is not None:
+            raise SynchronisationTimeoutError(
+                    "PikaPipelineThread.synchronise timed out"
+                    f" after {timeout} seconds")
 
     def await_message(self, timeout: float = None):
         """Returns a message collected by the background thread; the return
