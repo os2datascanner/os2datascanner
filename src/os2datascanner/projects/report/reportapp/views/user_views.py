@@ -19,7 +19,6 @@ from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from django.http import HttpResponse
 
-from ..utils import convert_context_to_email_body
 from ..models.roles.role import Role
 from ..models.roles.dpo import DataProtectionOfficer
 
@@ -43,9 +42,6 @@ class UserView(TemplateView, LoginRequiredMixin):
         context["user_roles"] = user_roles
         context["aliases"] = User.objects.get(username=self.request.user).aliases.all()
 
-        # TODO: This information is only for the support button: Move it to its own view!
-        context["email_body"] = convert_context_to_email_body(context, self.request)
-        context["dpo_contacts"] = DataProtectionOfficer.objects.filter(contact_person=True)
         return context
 
     def post(self, request, *args, **kwargs):

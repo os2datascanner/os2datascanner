@@ -16,6 +16,7 @@ from .views.views import (
     StatsPageView, SettingsPageView, AboutPageView, LogoutPageView, ArchiveView)
 from .views.user_views import UserView
 from .views.manual_views import ManualMainView
+from .views.support_views import SupportButtonView
 
 urlpatterns = [
     url(r'^$',      MainPageView.as_view(),     name="index"),
@@ -32,7 +33,8 @@ urlpatterns = [
     url('about',    AboutPageView.as_view(),    name="about"),
     url(r'^health/', lambda r: HttpResponse()),
     url(r'^version/?$', lambda r: HttpResponse(__version__)),
-    url(r'^help/$', ManualMainView.as_view(), name="guide")
+    url(r'^help/$', ManualMainView.as_view(), name="guide"),
+    url(r'^support/$', SupportButtonView.as_view(), name="support_button")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.SAML2_ENABLED:
