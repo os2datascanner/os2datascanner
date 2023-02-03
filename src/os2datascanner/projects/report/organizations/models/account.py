@@ -95,7 +95,7 @@ class Account(Core_Account):
         for alias in self.aliases.all():
             count += alias.match_relation.filter(
                 resolution_status__isnull=True,
-                raw_matches__matched=True,
+                number_of_matches__gte=1,
                 only_notify_superadmin=False).count()
         self.match_count = count
 
@@ -126,7 +126,7 @@ class Account(Core_Account):
         from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
 
         all_matches = list(DocumentReport.objects.filter(
-            raw_matches__matched=True,
+            number_of_matches__gte=1,
             alias_relation__account=self,
             only_notify_superadmin=False))
 

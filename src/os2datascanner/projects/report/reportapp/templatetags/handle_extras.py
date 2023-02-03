@@ -145,7 +145,7 @@ def between(lst, interval):
 def get_matchcount(account):
     all_matches = DocumentReport.objects.filter(
         resolution_status__isnull=True,
-        raw_matches__matched=True, organization=account.organization)
+        number_of_matches__gte=1, organization=account.organization)
     matches = DefaultRole(user=account.user).filter(all_matches)
     if user_is(account.user.roles.all(), Remediator):
         matches = matches | Remediator(user=account.user).filter(all_matches)

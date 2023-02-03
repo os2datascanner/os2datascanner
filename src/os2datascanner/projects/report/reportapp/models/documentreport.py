@@ -140,7 +140,8 @@ class DocumentReport(models.Model):
         FALSE_POSITIVE = 4, _("False positive")
 
     number_of_matches = models.IntegerField(default=0,
-                                            verbose_name=_("number of matches"))
+                                            verbose_name=_("number of matches"),
+                                            db_index=True,)
 
     resolution_status = models.IntegerField(choices=ResolutionChoices.choices,
                                             null=True, blank=True, db_index=True,
@@ -207,6 +208,8 @@ class DocumentReport(models.Model):
     class Meta:
         verbose_name_plural = _("document reports")
         ordering = ['-sensitivity', '-probability', 'pk']
+        # TODO: Consider if raw_matches__matched index should be removed
+        # it's more performant to use number_of_matches
         indexes = [
             models.Index(
                 "raw_matches__matched",

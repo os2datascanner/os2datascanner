@@ -86,7 +86,7 @@ class MainPageView(LoginRequiredMixin, ListView):
     context_object_name = "document_reports"  # object_list renamed to something more relevant
     model = DocumentReport
     document_reports = DocumentReport.objects.filter(
-        raw_matches__matched=True).filter(
+        number_of_matches__gte=1).filter(
         resolution_status__isnull=True).order_by("sort_key", "pk")
     scannerjob_filters = None
     paginate_by_options = [10, 20, 50, 100, 250]
@@ -162,6 +162,7 @@ class MainPageView(LoginRequiredMixin, ListView):
                 context['pk'] = self.request.GET.get('dr_pk')
 
         # TODO: This information is only for the support button: Move it to its own view!
+        # ... and only execute if support button is enabled
         context["email_body"] = convert_context_to_email_body(context, self.request)
         context["dpo_contacts"] = DataProtectionOfficer.objects.filter(contact_person=True)
 
@@ -339,7 +340,7 @@ class MainPageView(LoginRequiredMixin, ListView):
 
 class ArchiveView(MainPageView):
     document_reports = DocumentReport.objects.filter(
-        raw_matches__matched=True).filter(
+        number_of_matches__gte=1).filter(
         resolution_status__isnull=False).order_by("sort_key", "pk")
 
     def post(self, request, *args, **kwargs):
@@ -372,7 +373,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
     model = DocumentReport
     users = Account.objects.all()
     matches = DocumentReport.objects.filter(
-        raw_matches__matched=True)
+        number_of_matches__gte=1)
     handled_matches = matches.filter(
         resolution_status__isnull=False)
     unhandled_matches = matches.filter(
@@ -409,7 +410,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         if self.scannerjob_filters is None:
             # Create select options
             self.scannerjob_filters = DocumentReport.objects.filter(
-                raw_matches__matched=True).order_by('scanner_job_pk').values(
+                number_of_matches__gte=1).order_by('scanner_job_pk').values(
                 "scanner_job_name", "scanner_job_pk").distinct()
 
         context['scannerjobs'] = (self.scannerjob_filters,
@@ -745,7 +746,7 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
         scannerjobs = filter_inapplicable_matches(
             account.user,
             DocumentReport.objects.filter(
-                raw_matches__matched=True,
+                number_of_matches__gte=1,
                 resolution_status__isnull=True
             ),
             Role.get_user_roles_or_default(account.user)
@@ -775,7 +776,7 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
             DocumentReport.objects.filter(
                 scanner_job_pk=scannerjob_pk,
                 resolution_status__isnull=True,
-                raw_matches__matched=True),
+                number_of_matches__gte=1),
             Role.get_user_roles_or_default(
                 account.user))
 
