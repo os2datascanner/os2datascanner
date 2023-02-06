@@ -23,6 +23,9 @@
 
 - Increased efficiency of certain database queries made from the report module, improving page load time.
 
+- The start time matched calendar event is now shown on the report module for
+  MSGraph Calendar scans.
+
 ### Bugfixes
 
 - Hovering over the handle button will no longer obscure it with an invisible

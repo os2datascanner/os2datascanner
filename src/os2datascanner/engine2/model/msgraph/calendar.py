@@ -1,6 +1,7 @@
 from io import BytesIO
 from contextlib import contextmanager
 from dateutil.parser import isoparse
+from django.utils import timezone
 
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
@@ -98,7 +99,7 @@ class MSGraphCalendarAccountSource(DerivedSource):
     def handles(self, sm):
         pn = self.handle.relative_path
         result = sm.open(self).get(
-            "users/{}/events?$select=id,subject,webLink&$top={}".format(
+            "users/{}/events?$select=id,subject,webLink,start&$top={}".format(
                 pn, engine2_settings.model["msgraph"]["page_size"]))
 
         yield from (self._wrap(msg) for msg in result["value"])
@@ -109,7 +110,7 @@ class MSGraphCalendarAccountSource(DerivedSource):
 
     def _wrap(self, event):
         return MSGraphCalendarEventHandle(
-            self, event["id"], event["subject"], event["webLink"])
+            self, event["id"], event["subject"], event["webLink"], event["start"])
 
 
 class MSGraphCalendarEventResource(FileResource):
@@ -167,14 +168,25 @@ class MSGraphCalendarEventHandle(Handle):
     resource_type = MSGraphCalendarEventResource
     eq_properties = Handle.BASE_PROPERTIES
 
-    def __init__(self, source, path, event_subject, weblink):
+    def __init__(self, source, path, event_subject, weblink, start):
         super().__init__(source, path)
         self._event_subject = event_subject
         self._weblink = weblink
+        self._start = start
+
+    @property
+    def start(self):
+        if self._start:
+            date = timezone.datetime.strptime(self._start["dateTime"], "%Y-%m-%dT%H:%M:%S.%f0")
+            tz = timezone.pytz.timezone(self._start["timeZone"])
+            tz.localize(date)
+            return date.strftime('%H:%M %-d/%-m/%y')
+        else:
+            return "Date NaN"
 
     @property
     def presentation_name(self):
-        return self._event_subject
+        return f"[{self.start}] {self._event_subject}"
 
     @property
     def presentation_place(self):
@@ -187,13 +199,14 @@ class MSGraphCalendarEventHandle(Handle):
     def censor(self):
         return MSGraphCalendarEventHandle(
             self.source.censor(), self.relative_path,
-            self._event_subject, self._weblink)
+            self._event_subject, self._weblink, self._start)
 
     def to_json_object(self):
         return dict(
             **super().to_json_object(),
             event_subject=self._event_subject,
             weblink=self._weblink,
+            start=self._start
         )
 
     @staticmethod
@@ -201,4 +214,4 @@ class MSGraphCalendarEventHandle(Handle):
     def from_json_object(obj):
         return MSGraphCalendarEventHandle(
             Source.from_json_object(obj["source"]),
-            obj["path"], obj["event_subject"], obj["weblink"])
+            obj["path"], obj["event_subject"], obj["weblink"], obj.get("start", None))
