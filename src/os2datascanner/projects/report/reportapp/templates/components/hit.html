@@ -96,11 +96,11 @@
                   {% trans "Copy folder path" %}
                 </button>
               {% endif %}
-              {% if type == 'smbc' or type == 'web' or type == 'msgraph-files' or type == 'msgraph-drive'  %}
+              {% if type == 'smbc' or type == 'web'%}
                 <button type="button"
                         class="button btn-{{ document_report.pk|unlocalize }}"
                         data-clipboard-text="{{ document_report.matches.handle|find_parent:type|present }}">
-                  {% if type == 'smbc' or type == 'msgraph-files' or type == 'msgraph-drive' %}
+                  {% if type == 'smbc' %}
                     {% trans "Copy path" %}
                   {% elif type == 'web' %}
                     {% trans "Copy link" %}

@@ -29,6 +29,8 @@
 - RabbitMQ clients that do not actually react to dynamic instructions from
   the administration system no longer register themselves to receive them.
 
+- Results from MSGraph based file scans can now be opened with the open-button. 
+
 ### Bugfixes
 
 - Hovering over the handle button will no longer obscure it with an invisible
