@@ -69,13 +69,18 @@ def publish_events(events):
             return
 
         queue = settings.AMQP_EVENTS_TARGET
+        ppt = get_pika_thread()
+
         for event in events:
             json_event = event.to_json_object()
+            ppt.enqueue_message(queue, json_event)
             logger.debug("Published to {0}: {1}".format(queue, json_event))
-            get_pika_thread().enqueue_message(queue, json_event)
-    except Exception as e:
-        # log the error
-        logger.error("Could not publish event. Error: " + format(e))
+
+        # Synchronise on the PikaPipelineThread event queue to make sure that
+        # the daemon thread doesn't stop before actually /sending/ any messages
+        ppt.synchronise(300.0)
+    except Exception:
+        logger.error("event publication failed", exc_info=True)
 
 
 def event_broadcast_enabled(obj):

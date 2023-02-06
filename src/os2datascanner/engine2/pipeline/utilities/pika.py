@@ -133,31 +133,11 @@ class PikaPipelineRunner(PikaConnectionHolder):
         channel.basic_qos(prefetch_count=self._prefetch_count)
         for q in self._read.union(self._write):
             channel.queue_declare(
-                q,
-                passive=False,
-                durable=True,
-                exclusive=False,
-                auto_delete=False)
-
-        # RabbitMQ handles broadcast messages in a slightly convoluted way:
-        # we must first declare a special "fanout" message exchange, and then
-        # each client must declare a separate anonymous queue and bind it to
-        # the exchange in order to receive broadcasts
-        channel.exchange_declare(
-            "broadcast",
-            pika.spec.ExchangeType.fanout,
-            passive=False,
-            durable=True,
-            auto_delete=False,
-            internal=False)
-        anon_queue = channel.queue_declare(
-            ANON_QUEUE,
-            passive=False,
-            durable=False,
-            exclusive=False,
-            auto_delete=True,
-            arguments={"x-max-priority": 10})
-        channel.queue_bind(exchange="broadcast", queue=anon_queue.method.queue)
+                    q,
+                    passive=False,
+                    durable=True,
+                    exclusive=False,
+                    auto_delete=False)
 
         return channel
 
@@ -171,14 +151,16 @@ class PikaPipelineRunner(PikaConnectionHolder):
     def _basic_consume(self, *, exclusive=False):
         """Registers this PikaPipelineRunner to receive messages directed to
         its read queues. (Be sure to call _basic_cancel with the return value
-        of this function to cancel this registration.)"""
+        of this function to cancel this registration later.)
+
+        Subclasses can override this function to subscribe to additional
+        queues, but should usually begin by calling the superclass
+        implementation."""
         consumer_tags = []
         for queue in self._read:
             consumer_tags.append(self.channel.basic_consume(
                     queue, self.handle_message_raw,
                     exclusive=exclusive))
-        consumer_tags.append(self.channel.basic_consume(
-                ANON_QUEUE, self.handle_message_raw, exclusive=False))
         return consumer_tags
 
     def _basic_cancel(self, consumer_tags):
@@ -210,6 +192,11 @@ _coders = {
 }
 
 
+class SynchronisationTimeoutError(RuntimeError):
+    """When the PikaPipelineThread.synchronise method fails due to a timeout,
+    the SynchronisationTimeoutError exception is raised."""
+
+
 class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
     """Runs a Pika session in a background thread."""
 
@@ -237,6 +224,10 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         number of action-specific parameters. This is an implementation detail:
         clients should use the enqueue_* methods instead."""
         with self._condition:
+            if self.ident is not None and not self.is_alive():
+                raise RuntimeError(
+                        "attempted to enqueue a request on a completed"
+                        " PikaPipelineThread")
             trace(f"PikaPipelineThread - Thread TID: {self.native_id} "
                   "acquired conditional and enqueued outgoing message.")
             self._outgoing.append((label, *args))
@@ -259,7 +250,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         return self._enqueue("fin")
 
     def enqueue_message(self,
-                        queue: str,
+                        routing_key: str,
                         body: bytes,
                         exchange: str = "",
                         **basic_properties):
@@ -274,7 +265,35 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         if (encoding := basic_properties.get("content_encoding")):
             encoder, _ = _coders[encoding]
             body = encoder(body)
-        return self._enqueue("msg", queue, body, exchange, basic_properties)
+        return self._enqueue(
+                "msg", routing_key, body, exchange, basic_properties)
+
+    def _enqueue_pause(self, duration: float = 5.0):
+        """Requests that the background thread wait for the specified duration.
+        (This is chiefly useful for testing.)"""
+        return self._enqueue("zzz", duration)
+
+    def synchronise(self, timeout=None):
+        """Blocks the current thread after requesting a wakeup from the
+        background thread. The underlying communication mechanism is a
+        threading.Event (although, unlike that class, a RuntimeError will be
+        raised in the event of the given timeout elapsing).
+
+        As requests sent to the background thread are executed in the order in
+        which they were made, this function can be used to establish that the
+        background thread has reached a certain point in the request queue.
+
+        It is usually a bad idea to call this function without starting the
+        background thread first, unless there's a third thread around to do
+        that."""
+        ev = threading.Event()
+        self._enqueue("syn", ev)
+        # I *think* spurious wakeups on events are impossible, as there's only
+        # a simple flag and all waiters are released once it's set
+        if ev.wait(timeout) is not True and timeout is not None:
+            raise SynchronisationTimeoutError(
+                    "PikaPipelineThread.synchronise timed out"
+                    f" after {timeout} seconds")
 
     def await_message(self, timeout: float = None):
         """Returns a message collected by the background thread; the return
@@ -307,7 +326,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         return method, properties, body
 
     def handle_message(self, routing_key, body):
-        """Handles an AMQP message by yielding zero or more (queue name,
+        """Handles an AMQP message by yielding zero or more (routing key,
         JSON-serialisable object) pairs to be sent as new messages.
 
         The default implementation of this method does nothing."""
@@ -352,10 +371,10 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                               f" {self.native_id} got the conditional."
                               " Processing outgoing message.")
                         if label == "msg":
-                            queue, body, exchange, properties = head[1:]
+                            routing_key, body, exchange, properties = head[1:]
                             self.channel.basic_publish(
                                     exchange=exchange,
-                                    routing_key=queue,
+                                    routing_key=routing_key,
                                     properties=pika.BasicProperties(
                                             **properties),
                                     body=body)
@@ -369,6 +388,12 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                         elif label == "fin":
                             running = False
                             break
+                        elif label == "syn":
+                            ev = head[1]
+                            ev.set()
+                        elif label == "zzz":
+                            duration = head[1]
+                            time.sleep(duration)
 
                 # Dispatch any waiting timer (heartbeats) and channel (calls to
                 # our handle_message_raw method) callbacks...
@@ -454,3 +479,23 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         if self._shutdown_exception:
             raise Exception("Worker thread died unexpectedly") from (
                     self._shutdown_exception)
+
+
+def make_broadcast_queue(pch: PikaConnectionHolder):
+    """Declares a broadcast fanout exchange and an anonymous priority queue
+    bound to it through the given PikaConnectionHolder. Returns the queue
+    object, although you may prefer just to refer to it as ANON_QUEUE (provided
+    that you don't need to register other anonymous queues)."""
+
+    pch.channel.exchange_declare(
+            "broadcast", pika.spec.ExchangeType.fanout,
+            passive=False, durable=True, auto_delete=False, internal=False)
+    anon_queue = pch.channel.queue_declare(
+            ANON_QUEUE,
+            passive=False, durable=False, exclusive=False, auto_delete=True,
+            arguments={"x-max-priority": 10})
+    pch.channel.queue_bind(
+            exchange="broadcast",
+            queue=anon_queue.method.queue)
+
+    return anon_queue

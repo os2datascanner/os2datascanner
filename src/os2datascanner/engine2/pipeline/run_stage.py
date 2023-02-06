@@ -1,11 +1,11 @@
-import logging
 import os
+import sys
+import click
+import pstats
 import random
 import signal
-import sys
+import logging
 import traceback
-import pstats
-import click
 from collections import deque
 
 from prometheus_client import Info, Summary, start_http_server, CollectorRegistry
@@ -15,7 +15,8 @@ from os2datascanner.utils.log_levels import log_levels
 from ... import __version__
 from ..model.core import SourceManager
 from . import explorer, exporter, matcher, messages, processor, tagger, worker
-from .utilities.pika import PikaPipelineThread, RejectMessage
+from .utilities.pika import (
+        ANON_QUEUE, RejectMessage, PikaPipelineThread, make_broadcast_queue)
 
 
 # __name__ is "__main__" in this context, which isn't quite what we want for
@@ -73,6 +74,16 @@ class GenericRunner(PikaPipelineThread):
 
         self._limit = limit
         self._count = 0
+
+        # GenericRunners need to be able to react to broadcast messages, so
+        # let's register for them as early as possible
+        make_broadcast_queue(self)
+
+    def _basic_consume(self, *, exclusive=False):
+        consumer_tags = super()._basic_consume(exclusive=exclusive)
+        consumer_tags.append(self.channel.basic_consume(
+                ANON_QUEUE, self.handle_message_raw, exclusive=False))
+        return consumer_tags
 
     def _handle_command(self, routing_key, body):
         command = messages.CommandMessage.from_json_object(body)

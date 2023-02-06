@@ -27,7 +27,8 @@ from prometheus_client import Summary, start_http_server
 from os2datascanner.utils.log_levels import log_levels
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
-from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
+from os2datascanner.engine2.pipeline.utilities.pika import (
+        PikaPipelineThread, make_broadcast_queue)
 
 from ...models.scannerjobs.scanner import (
     Scanner, ScanStatus, ScheduledCheckup)
@@ -109,9 +110,10 @@ def checkup_message_received_raw(body):
             abort=messages.ScanTagFragment.from_json_object(
                 scan_tag.to_json_object()))
         with PikaPipelineThread() as p:
+            make_broadcast_queue(p)
             p.enqueue_message(
-                "", msg.to_json_object(),
-                "broadcast", priority=10)
+                    "", msg.to_json_object(),
+                    "broadcast", priority=10)
             p.enqueue_stop()
             p.run()
         return
