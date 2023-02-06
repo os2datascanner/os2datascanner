@@ -139,8 +139,9 @@ class MSGraphDriveSource(DerivedSource):
             for obj in folder:
                 name = obj["name"]
                 if "file" in obj:
+                    web_url = obj.get("webUrl", None)
                     yield MSGraphFileHandle(
-                            self, "/".join([] + components + [name]))
+                            self, "/".join([] + components + [name]), weblink=web_url)
                 elif "folder" in obj:
                     subfolder = sm.open(self).get(
                             "/drives/{0}/items/{1}/children".format(
@@ -197,18 +198,37 @@ class MSGraphFileResource(FileResource):
             yield fp
 
 
-@Handle.stock_json_handler("msgraph-drive-file")
 class MSGraphFileHandle(Handle):
     type_label = "msgraph-drive-file"
     resource_type = MSGraphFileResource
+
+    def __init__(self, source, path, weblink=None):
+        super().__init__(source, path)
+        self._weblink = weblink
 
     @property
     def presentation_name(self):
         return self.relative_path
 
     @property
+    def presentation_url(self):
+        return self._weblink
+
+    @property
     def presentation_place(self):
         return str(self.source.handle)
 
     def censor(self):
-        return MSGraphFileHandle(self.source.censor(), self.relative_path)
+        return MSGraphFileHandle(self.source.censor(), self.relative_path, self._weblink)
+
+    def to_json_object(self):
+        return dict(
+            **super().to_json_object(),
+            weblink=self._weblink)
+
+    @staticmethod
+    @Handle.json_handler(type_label)
+    def from_json_object(obj):
+        return MSGraphFileHandle(
+            Source.from_json_object(obj["source"]),
+            obj["path"], obj.get("weblink"))
