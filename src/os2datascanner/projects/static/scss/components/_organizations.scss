@@ -38,7 +38,7 @@
     margin-top: -.75rem;
   }
 
-  .response-icon  {
+  .response-icon {
     display: flex;
     margin: 0 .25rem .75rem 1rem;
     font-size: .8rem;
@@ -46,6 +46,7 @@
     &--error {
       color: var(--color-error);
     }
+
     &--success {
       color: var(--color-ok-dark);
     }
@@ -54,7 +55,82 @@
 
 .userObjClass {
 
-  .user-class-input + .user-class-input,  button + .user-class-input {
+  .user-class-input+.user-class-input,
+  button+.user-class-input {
     margin-top: 1rem;
   }
+}
+
+.orgunit-list {
+
+  .root {
+
+    ul {
+      margin-bottom: 0;
+    }
+
+    li {
+      margin-top: 0.5rem;
+
+      &:last-of-type {
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .orgunit_name {
+    display: inline-block;
+    width: 30%;
+    min-width: fit-content;
+  }
+
+  .orgunit_members {
+    font-style: italic;
+    display: inline-block;
+    width: 15%;
+    min-width: fit-content;
+  }
+
+  .orgunit_managers {
+    display: inline-block;
+    width: 20%;
+    min-width: fit-content;
+
+    ul {
+      list-style: none;
+      display: inline;
+
+      li {
+        display: inline;
+        margin: 0;
+
+        &:not(:last-of-type)::after {
+          content: ", ";
+        }
+      }
+    }
+
+    .select_manager {
+      height: 2rem;
+      width: 15rem;
+      font-size: inherit;
+      font-weight: inherit;
+    }
+
+    .manager_li {
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: line-through;
+
+      }
+    }
+
+  }
+}
+
+.orgunits {
+  display: flex;
+  justify-content: center;
 }

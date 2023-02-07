@@ -63,6 +63,9 @@ class OrganizationalUnit(MPTTModel):
         verbose_name = _('organizational unit')
         verbose_name_plural = _('organizational units')
 
+    class MPTTMeta:
+        order_insertion_by = ["name"]
+
     def __str__(self):
         return self.name
 

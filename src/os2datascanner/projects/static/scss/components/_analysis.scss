@@ -37,51 +37,53 @@
 }
 
 
-.pie-chart-content{ 
+.pie-chart-content {
   display: -ms-grid;
-	display: grid;
-	// -ms-grid-columns: 1fr;
-	// grid-template-columns: minmax(0, 1fr);
+  display: grid;
+  // -ms-grid-columns: 1fr;
+  // grid-template-columns: minmax(0, 1fr);
   -ms-grid-columns: 1fr 1fr;
-	grid-template-columns:  repeat(2, minmax(0, 1fr));
-	-ms-grid-rows: minmax(0, 1fr);
-	grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  -ms-grid-rows: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   align-items: center;
   -webkit-box-align: center;
-	-ms-grid-row-align: center;
+  -ms-grid-row-align: center;
   grid-template-areas:
     "chrt lgnd"
   ;
 }
 
-.bar-chart-content{ 
+.bar-chart-content {
   display: -ms-grid;
-	display: grid;
-	-ms-grid-columns: 1fr ;
-	grid-template-columns: minmax(0, 1fr);
-	-ms-grid-rows: minmax(0, 1fr);
-	grid-template-rows: minmax(0, 1fr);
+  display: grid;
+  -ms-grid-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  -ms-grid-rows: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   align-items: center;
   -webkit-box-align: center;
-	-ms-grid-row-align: center;
+  -ms-grid-row-align: center;
   grid-template-areas:
     "ttl"
     "chrt"
   ;
 }
 
-.chart-legend{
+.chart-legend {
   list-style: none;
   vertical-align: middle;
-	bottom: 0;
-	margin: 0 0 0 0rem;
+  bottom: 0;
+  margin: 0 0 0 0rem;
   grid-area: lgnd;
+
+  li>span {
+    vertical-align: middle;
+    cursor: pointer;
+  }
 }
 
-li>span {
-	vertical-align: middle;
-	cursor: pointer;
-}
+
 
 .charts-title {
   text-align: left;
@@ -91,10 +93,10 @@ li>span {
 }
 
 .bullet {
-	content: "\2022 ";
-	/* Add content: \2022 is the CSS Code/unicode for a bullet */
-	font-weight: bold;
-	padding-right: .2rem;
-	font-size: 2rem;
-	line-height: 1;
+  content: "\2022 ";
+  /* Add content: \2022 is the CSS Code/unicode for a bullet */
+  font-weight: bold;
+  padding-right: .2rem;
+  font-size: 2rem;
+  line-height: 1;
 }
