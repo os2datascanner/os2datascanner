@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from os2datascanner.projects.admin.organizations.models.aliases import AliasType
+from os2datascanner.core_organizational_structure.models.aliases import validate_aliastype_value
 
 
 class AliasTypeTest(TestCase):
@@ -18,8 +19,8 @@ class AliasTypeTest(TestCase):
 
     def test_member_creation(self):
         for member in AliasType:
+            print("Member: »", member)
             self.assertIsInstance(member, AliasType)
-            self.assertTrue(hasattr(member, 'validator'))
 
     @parameterized.expand([
         ('Valid email', AliasType.EMAIL, 'valid_email'),
@@ -29,7 +30,7 @@ class AliasTypeTest(TestCase):
     ])
     def test_validators_pass(self, _, alias_type, value_key):
         value = self.test_values[value_key]
-        self.assertIsNone(alias_type.check(value))
+        self.assertIsNone(validate_aliastype_value(alias_type, value))
 
     @parameterized.expand([
         ('Invalid email', AliasType.EMAIL, 'invalid_email'),
@@ -38,4 +39,4 @@ class AliasTypeTest(TestCase):
     def test_validators_fail(self, _, alias_type, value_key):
         value = self.test_values[value_key]
         with self.assertRaises(ValidationError):
-            alias_type.check(value)
+            validate_aliastype_value(alias_type, value)

@@ -17,6 +17,7 @@ from uuid import uuid4
 from email_validator import validate_email
 
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -31,7 +32,10 @@ def validate_aliastype_value(kind, value):
         # Do NOT check deliverability! This uses DNS lookups, and does not reflect
         # a real world issue. We do not want to break the import when encountering
         # deprecated email addresses.
-        validate_email(value, check_deliverability=False)
+        try:
+            validate_email(value, check_deliverability=False)
+        except Exception as e:
+            raise ValidationError(e)
     if kind == AliasType.GENERIC:
         # Generic/unspecified; always passes
         pass

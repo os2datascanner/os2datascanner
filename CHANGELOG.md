@@ -31,6 +31,8 @@
 
 - Results from MSGraph based file scans can now be opened with the open-button. 
 
+- Added tests for organization views.
+
 ### Bugfixes
 
 - Hovering over the handle button will no longer obscure it with an invisible

@@ -11,7 +11,7 @@ from os2datascanner.projects.admin.adminapp.views.views import (
     RestrictedUpdateView)
 from django.core.exceptions import PermissionDenied
 
-from os2datascanner.projects.admin.core.models import Client, Feature
+from os2datascanner.projects.admin.core.models import Client, Feature, Administrator
 from ..models import Organization
 
 import logging
@@ -88,6 +88,14 @@ class AddOrganizationView(RestrictedCreateView):
 
     def get_queryset(self):
         return super().get_queryset(org_path="uuid")
+
+    def dispatch(self, request, *args, **kwargs):
+        client_id = self.kwargs['client_id']
+        if request.user.is_superuser or \
+                Administrator.objects.filter(user=request.user, client=client_id).exists():
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
 
 class UpdateOrganizationView(RestrictedUpdateView):
