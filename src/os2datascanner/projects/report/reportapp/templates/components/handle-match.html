@@ -18,13 +18,11 @@
                         {% if request.user.account.time_since_last_handle > 172800 %}
                           hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}"
                         {% endif %}>
-                        {% with document_reports|first as document_report %}
-                        {% for choice in document_report.ResolutionChoices.choices %}
+                        {% for choice in resolution_choices %}
                           <li class="handle-option button" hx-post="{% url "index" %}" 
                           hx-trigger="click" name="handle-matches" hx-push-url="false"
                           hx-vals='{"action":"{{ choice|first }}"}'>{{ choice|last }}</li>
                         {% endfor %}
-                        {% endwith %}
                     </ul>
                   </div>
                 </div>
@@ -62,15 +60,13 @@
                         {% if request.user.profile.time_since_last_handle > 172800 %}
                           hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}"
                         {% endif %}>
-                        {% with document_reports|first as document_report %}
                         <li class="revert-option button" hx-post="{% url "archive" %}" hx-trigger="click" 
                             name="revert-matches" hx-push-url="false">{% trans "Revert" %}</li>
-                        {% for choice in document_report.ResolutionChoices.choices %}
+                        {% for choice in resolution_choices %}
                           <li class="handle-option button" hx-post="{% url "archive" %}" 
                           hx-trigger="click" name="revert-matches"
                           hx-vals='{"action":"{{ choice|first }}"}'>{{ choice|last }}</li>
                         {% endfor %}
-                        {% endwith %}
                     </ul>
                   </div>
                 </div>

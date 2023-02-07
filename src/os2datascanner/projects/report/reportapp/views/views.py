@@ -116,6 +116,7 @@ class MainPageView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):  # noqa CCR001
         context = super().get_context_data(**kwargs)
         context["renderable_rules"] = RENDERABLE_RULES
+        context["resolution_choices"] = DocumentReport.ResolutionChoices.choices
 
         # Tell template if "distribute"-button should be visible
         context["distributable_matches"] = user_is_superadmin(
