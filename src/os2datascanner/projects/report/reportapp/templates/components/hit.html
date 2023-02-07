@@ -32,7 +32,7 @@
               <div class="button-group"
                    name='open-button'
                    hx-vals='{"pk": "{{ document_report.pk|unlocalize }}"}'
-                   hx-get=""
+                   hx-get="{{ request.path }}"
                    hx-swap="innerHTML"
                    hx-target=".content"
                    hx-trigger="click target:.btn-{{ document_report.pk|unlocalize }}"
@@ -84,7 +84,7 @@
             <div class="button-group"
                  name='open-button'
                  hx-vals='{"pk": "{{ document_report.pk|unlocalize }}"}'
-                 hx-get=""
+                 hx-get="{{ request.path }}"
                  hx-swap="innerHTML"
                  hx-target=".content"
                  hx-trigger="click target:.btn-{{ document_report.pk|unlocalize }}"
