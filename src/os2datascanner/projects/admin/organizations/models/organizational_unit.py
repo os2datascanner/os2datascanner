@@ -35,6 +35,12 @@ class OrganizationalUnit(Core_OrganizationalUnit, Broadcasted, Imported):
     def managers(self):
         return self.positions.filter(role="manager").prefetch_related("account")
 
+    def get_root(self):
+        if self.parent is None:
+            return self
+        else:
+            return self.parent.get_root()
+
 
 OrganizationalUnit.factory = ModelFactory(OrganizationalUnit)
 

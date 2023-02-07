@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<li id="orgunit__{{ node.pk }}" class="orgunit-list-element {% if node.children.exists %}has_children{% endif %}">
+<li id="orgunit__{{ node.pk }}" class="orgunit-list-element {% if node.children.exists %}has_children{% endif %} {% if node.pk in search_targets %}highlighted{% endif %}">
   <span class="orgunit_name">{{ node.name }}</span>
   <span class="orgunit_members">{{ node.members_associated }} {% trans "accounts associated." %}</span>
   <span class="orgunit_managers">{% trans "Managers" %}:
@@ -39,9 +39,10 @@
           </li>
       </ul>
   </span>
+
+  <ul class="children" hidden>
   {% for node in node.children.all %}
-    <ul class="children" hidden>
       {% include "organizations/orgunit_element.html" %}
-    </ul>
   {% endfor %}
+  </ul>
 </li>

@@ -22,5 +22,9 @@
         content: "▾";
       }
     }
+
+    &.highlighted {
+      background-color: var(--color-primary-lightest);
+    }
   }
 }

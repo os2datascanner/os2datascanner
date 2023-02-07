@@ -1,5 +1,6 @@
 {% extends 'organizations/base.html' %}
 {% load i18n %}
+{% load orgunit_tags %}
 
 {% block title %}{% trans "organizational hierarchy"|capfirst %}{% endblock %}
 
@@ -35,8 +36,8 @@
         </div>
     </form>
     <ul class="root">
-        {% for node in orgunit_list %}
-            {% include "organizations/orgunit_element.html" %}
+        {% for node in orgunit_list|unique_roots %}
+            {% include "organizations/orgunit_element.html" with node=node.get_root %}
         {% endfor %}
     </ul>
     <div class="pagination_options">

@@ -23,18 +23,12 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
         if is_htmx:
             htmx_trigger = self.request.headers.get("HX-Trigger-Name", None)
             if htmx_trigger == "children":
-                parent_query = Q(parent__pk=self.request.GET.get("parent"))
+                parent_query = Q(parent__pk=self.request.GET.get("parent"), organization=org)
 
-        search_field = self.request.GET.get("search_field", "")
+        if search_field := self.request.GET.get("search_field", ""):
+            parent_query = Q(name__icontains=search_field, organization=org)
 
-        units = OrganizationalUnit.objects.filter(
-            parent_query &
-            Q(
-                Q(name__icontains=search_field) |
-                Q(children__name__icontains=search_field) |
-                Q(children__children__name__icontains=search_field) |
-                Q(children__children__children__name__icontains=search_field)
-            )).prefetch_related("positions")
+        units = OrganizationalUnit.objects.filter(parent_query)
 
         show_empty = self.request.GET.get("show_empty", "off") == "on"
         if not show_empty:
@@ -52,6 +46,9 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
         context['organization'] = self.kwargs['org']
         context['accounts'] = Account.objects.filter(organization=self.kwargs['org'])
         context['FEATURES'] = Feature.__members__
+        context['search_targets'] = [
+            unit.uuid for unit in self.object_list] if self.request.GET.get(
+            "search_field", None) else []
         return context
 
     def post(self, request, *args, **kwargs):

@@ -5,6 +5,23 @@ function showChildren(ul, toggleButton) {
   ul.hidden = !buttonOpen;
 }
 
+function showParent(el) {
+  if (!el.parentNode.classList.contains("root")) {
+    const parentUl = el.parentNode;
+    parentUl.hidden = false;
+    const parentLi = parentUl.parentNode;
+    parentLi.classList.add("up");
+    showParent(parentLi);
+  }
+}
+
+function revealHighlighted(content) {
+  const highlighted = content.querySelectorAll(".highlighted");
+  for (let el of highlighted) {
+    showParent(el);
+  }
+}
+
 function setExpandButtons(buttons) {
   buttons.forEach(element => {
     element.querySelector(".orgunit_name").addEventListener("click", function (e) {
@@ -34,4 +51,6 @@ htmx.onLoad(function (content) {
   let addButtons = content.querySelectorAll(".add_manager_button");
   setExpandButtons(expandButtons);
   setAddButtons(addButtons);
+
+  revealHighlighted(content);
 });
