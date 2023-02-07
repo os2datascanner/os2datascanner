@@ -1,13 +1,14 @@
 :root {
   --service-button-size: 100px;
   --service-button-gap: 10px;
+  --service-widget-gap: 20px;
 }
 
 .service {
   position: fixed;
   width: 200px;
   right: 20px;
-  bottom: calc(20px + var(--service-button-gap) + var(--service-button-size));
+  bottom: var(--service-widget-gap);
   z-index: 10;
 
   >.service_button {
@@ -25,14 +26,9 @@
     transition: all 200ms ease-in-out;
     position: absolute;
     right: 0px;
-    bottom: calc(0px - var(--service-button-gap) - var(--service-button-size));
+    bottom: 0px;
 
     &:hover {
-      color: var(--color-body-bg);
-      background-color: var(--color-main);
-    }
-
-    &:focus {
       color: var(--color-body-bg);
       background-color: var(--color-main);
 
@@ -57,6 +53,14 @@
     &:hover {
       display: block;
     }
+  }
+
+  &:hover>.popup {
+    display: block;
+  }
+
+  >.popup {
+    margin-bottom: calc(var(--service-button-size) + var(--service-button-gap));
   }
 
   .popup {
@@ -102,6 +106,10 @@
         transition: all 200ms ease-in-out;
         cursor: pointer;
         border-radius: 10px;
+
+        .popup-container {
+          cursor: default;
+        }
 
         &:hover {
           background-color: var(--color-main);

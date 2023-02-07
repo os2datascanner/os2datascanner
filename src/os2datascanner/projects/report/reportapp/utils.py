@@ -24,17 +24,8 @@ from os2datascanner.projects.report.organizations.models import (
 logger = structlog.get_logger()
 
 
-def convert_context_to_email_body(context, request):
+def convert_context_to_email_body(request):
     body = _("%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A")
-    body += "# CONTEXT DATA%0D%0A"
-    for key in context:
-        body += f"{key}: {context.get(key)}%0D%0A"
-    body += "# REQUEST KWARGS%0D%0A"
-    for key in request.GET:
-        body += f"{key}: {request.GET.get(key)}%0D%0A"
-
-    body += "# OTHER INFO%0D%0A"
-    body += f"Path: {request.path}%0D%0A"
     body += f"User: {request.user.username}%0D%0A"
 
     return body

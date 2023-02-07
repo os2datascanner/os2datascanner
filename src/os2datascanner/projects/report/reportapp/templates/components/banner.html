@@ -5,9 +5,20 @@
     {% include "components/navigation.html" %}
   </section>
 
+  {% if settings.SUPPORT_BUTTON %}
   <section class="service_menu" id="service_menu">
-    {% include "components/service.html" %}
+    <div class="service">
+      <div tabindex="-1" class="service_button">
+        ?
+      </div>
+      <div hx-get="{% url "support_button" %}"
+           hx-swap="outerHTML"
+           hx-trigger="focusin,mouseover from:#service_menu"
+           hx-target="this">
+      </div>
+    </div>
   </section>
+  {% endif %}
 
   {% if request.user.is_authenticated %}
   {% include "components/user.html" %}

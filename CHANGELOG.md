@@ -33,6 +33,10 @@
 
 - Added tests for organization views.
 
+- Refactor of the support button to slightly improve performance.
+
+- Support button now opens on hover instead of focus.
+
 ### Bugfixes
 
 - Hovering over the handle button will no longer obscure it with an invisible
