@@ -17,6 +17,9 @@
 
 - Fixed overlapping numbers in the user overview.
 
+- When handling matches while the distribution element is on the page in the
+  report module, the handling animation now gets to finish.
+
 ## Version 3.18.2, 15th February 2023
 
 "Quick Fact Check"
