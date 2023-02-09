@@ -1,13 +1,13 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
-from django.views.generic.list import ListView
 from django.db.models import Q
+from django.http import Http404
 
+from ...adminapp.views.views import RestrictedListView
 from ..models import OrganizationalUnit, Organization, Account, Position
-from ...core.models.client import Feature
+from ...core.models import Feature, Administrator
 
 
-class OrganizationalUnitListView(LoginRequiredMixin, ListView):
+class OrganizationalUnitListView(RestrictedListView):
     model = OrganizationalUnit
     context_object_name = 'orgunit_list'
     template_name = 'organizations/orgunit_list.html'
@@ -15,6 +15,8 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
 
     # Filter queryset based on organization:
     def get_queryset(self):
+        base_qs = super().get_queryset()
+
         org = self.kwargs['org']
 
         parent_query = Q(parent__isnull=True, organization=org)
@@ -28,7 +30,7 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
         if search_field := self.request.GET.get("search_field", ""):
             parent_query = Q(name__icontains=search_field, organization=org)
 
-        units = OrganizationalUnit.objects.filter(parent_query)
+        units = base_qs.filter(parent_query)
 
         show_empty = self.request.GET.get("show_empty", "off") == "on"
         if not show_empty:
@@ -39,7 +41,13 @@ class OrganizationalUnitListView(LoginRequiredMixin, ListView):
     def setup(self, request, *args, **kwargs):
         org = get_object_or_404(Organization, slug=kwargs['org_slug'])
         kwargs['org'] = org
-        return super().setup(request, *args, **kwargs)
+        if request.user.is_superuser or Administrator.objects.filter(
+                user=request.user, client=org.client).exists():
+            return super().setup(request, *args, **kwargs)
+        else:
+            raise Http404(
+                "Organization not found."
+                )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
