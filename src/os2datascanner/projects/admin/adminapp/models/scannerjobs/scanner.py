@@ -45,8 +45,7 @@ from os2datascanner.engine2.rules.logical import OrRule, AndRule, AllRule, make_
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
-from os2datascanner.engine2.pipeline.utilities.pika import (
-        PikaPipelineThread, make_broadcast_queue)
+from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
 from mptt.models import TreeManyToManyField
 
@@ -653,7 +652,6 @@ def post_delete_callback(sender, instance, using, **kwargs):
             abort=messages.ScanTagFragment.from_json_object(
                     instance.scan_tag))
     with PikaPipelineThread() as p:
-        make_broadcast_queue(p)
         p.enqueue_message(
                 "", msg.to_json_object(),
                 "broadcast", priority=10)

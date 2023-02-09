@@ -15,8 +15,7 @@ from os2datascanner.utils.log_levels import log_levels
 from ... import __version__
 from ..model.core import SourceManager
 from . import explorer, exporter, matcher, messages, processor, tagger, worker
-from .utilities.pika import (
-        ANON_QUEUE, RejectMessage, PikaPipelineThread, make_broadcast_queue)
+from .utilities.pika import (ANON_QUEUE, RejectMessage, PikaPipelineThread)
 
 
 # __name__ is "__main__" in this context, which isn't quite what we want for
@@ -75,9 +74,19 @@ class GenericRunner(PikaPipelineThread):
         self._limit = limit
         self._count = 0
 
-        # GenericRunners need to be able to react to broadcast messages, so
-        # let's register for them as early as possible
-        make_broadcast_queue(self)
+    def make_channel(self):
+        channel = super().make_channel()
+
+        # Declare an anonymous queue and bind it to the fanout exchange; we
+        # use this to receive command messages
+        anon_queue = channel.queue_declare(
+                ANON_QUEUE,
+                passive=False, durable=False, exclusive=False,
+                auto_delete=True, arguments={"x-max-priority": 10})
+        channel.queue_bind(
+                exchange="broadcast", queue=anon_queue.method.queue)
+
+        return channel
 
     def _basic_consume(self, *, exclusive=False):
         consumer_tags = super()._basic_consume(exclusive=exclusive)

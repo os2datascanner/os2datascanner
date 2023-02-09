@@ -128,7 +128,11 @@ class PikaPipelineRunner(PikaConnectionHolder):
 
     def make_channel(self):
         """As PikaConnectionHolder.make_channel, but automatically declares all
-        of the read and write queues used by this pipeline stage."""
+        of the read and write queues used by this pipeline stage.
+
+        This method also declares a durable fanout exchange called "broadcast"
+        used by some OS2datascanner components to send and receive global
+        messages."""
         channel = super().make_channel()
         channel.basic_qos(prefetch_count=self._prefetch_count)
         for q in self._read.union(self._write):
@@ -138,6 +142,10 @@ class PikaPipelineRunner(PikaConnectionHolder):
                     durable=True,
                     exclusive=False,
                     auto_delete=False)
+
+        channel.exchange_declare(
+                "broadcast", pika.spec.ExchangeType.fanout,
+                passive=False, durable=True, auto_delete=False, internal=False)
 
         return channel
 
@@ -479,23 +487,3 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         if self._shutdown_exception:
             raise Exception("Worker thread died unexpectedly") from (
                     self._shutdown_exception)
-
-
-def make_broadcast_queue(pch: PikaConnectionHolder):
-    """Declares a broadcast fanout exchange and an anonymous priority queue
-    bound to it through the given PikaConnectionHolder. Returns the queue
-    object, although you may prefer just to refer to it as ANON_QUEUE (provided
-    that you don't need to register other anonymous queues)."""
-
-    pch.channel.exchange_declare(
-            "broadcast", pika.spec.ExchangeType.fanout,
-            passive=False, durable=True, auto_delete=False, internal=False)
-    anon_queue = pch.channel.queue_declare(
-            ANON_QUEUE,
-            passive=False, durable=False, exclusive=False, auto_delete=True,
-            arguments={"x-max-priority": 10})
-    pch.channel.queue_bind(
-            exchange="broadcast",
-            queue=anon_queue.method.queue)
-
-    return anon_queue
