@@ -125,7 +125,7 @@
                         hx-indicator="closest tr"
                         hx-target="closest tr"
                         {% if request.user.profile.time_since_last_handle > 172800 %} hx-confirm="{% trans "You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file." %}" {% endif %}>
-                      {% for choice in document_report.ResolutionChoices.choices %}
+                      {% for choice in resolution_choices %}
                         <li class="handle-option button"
                             hx-post="{% url "index" %}"
                             hx-trigger="click"
@@ -184,7 +184,7 @@
                           hx-vals='{"pk":"{{ document_report.pk|unlocalize }}"}'>
                         {% trans "Revert" %}
                       </li>
-                      {% for choice in document_report.ResolutionChoices.choices %}
+                      {% for choice in resolution_choices %}
                         {% if document_report.resolution_status != choice|first %}
                           <li class="revert-option button"
                               hx-post="{% url "archive" %}"
