@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.http import Http404
 
 from ...adminapp.views.views import RestrictedListView
 from ..models import OrganizationalUnit, Organization, Account, Position
-from ...core.models.client import Feature
+from ...core.models import Feature, Administrator
 
 
 class OrganizationalUnitListView(RestrictedListView):
@@ -40,7 +41,13 @@ class OrganizationalUnitListView(RestrictedListView):
     def setup(self, request, *args, **kwargs):
         org = get_object_or_404(Organization, slug=kwargs['org_slug'])
         kwargs['org'] = org
-        return super().setup(request, *args, **kwargs)
+        if request.user.is_superuser or Administrator.objects.filter(
+                user=request.user, client=org.client).exists():
+            return super().setup(request, *args, **kwargs)
+        else:
+            raise Http404(
+                "Organization not found."
+                )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

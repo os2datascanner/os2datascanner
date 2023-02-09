@@ -493,13 +493,11 @@ class OrganizationalUnitListViewTest(TestCase):
         # This response should yield two units, including one empty
         response3 = self.client.get(url2, {"show_empty": "on"})
 
-        self.assertNotIn(self.unit1, response1.context.get("orgunit_list"))
-        self.assertNotIn(self.unit2, response1.context.get("orgunit_list"))
         self.assertIn(self.unit3, response2.context.get("orgunit_list"))
         self.assertNotIn(self.unit4, response2.context.get("orgunit_list"))
         self.assertIn(self.unit3, response3.context.get("orgunit_list"))
         self.assertIn(self.unit4, response3.context.get("orgunit_list"))
-        self.assertEqual(response1.status_code, 200)
+        self.assertEqual(response1.status_code, 404)
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(response3.status_code, 200)
 
@@ -518,12 +516,6 @@ class OrganizationalUnitListViewTest(TestCase):
         # This response should yield two units, including one empty
         response3 = self.client.get(url2, {"show_empty": "on"})
 
-        self.assertNotIn(self.unit1, response1.context.get("orgunit_list"))
-        self.assertNotIn(self.unit2, response1.context.get("orgunit_list"))
-        self.assertNotIn(self.unit3, response2.context.get("orgunit_list"))
-        self.assertNotIn(self.unit4, response2.context.get("orgunit_list"))
-        self.assertNotIn(self.unit3, response3.context.get("orgunit_list"))
-        self.assertNotIn(self.unit4, response3.context.get("orgunit_list"))
-        self.assertEqual(response1.status_code, 200)
-        self.assertEqual(response2.status_code, 200)
-        self.assertEqual(response3.status_code, 200)
+        self.assertEqual(response1.status_code, 404)
+        self.assertEqual(response2.status_code, 404)
+        self.assertEqual(response3.status_code, 404)
