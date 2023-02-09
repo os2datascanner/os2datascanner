@@ -37,10 +37,10 @@
             {% if FEATURES.IMPORT_SERVICES in feature or FEATURES.IMPORT_SERVICES_MS_GRAPH in feature or FEATURES.IMPORT_SERVICES_OS2MO in feature %}
                 <col class="datatable__column--btn">
             {% endif %}
-            {% endwith %}
-            {% if request.user.is_superuser %}
+            {% if request.user.is_superuser or FEATURES.ORG_STRUCTURE in feature %}
                 <col class="datatable__column--delete">
             {% endif %}
+            {% endwith %}
         </colgroup>
         <thead>
             <tr>
@@ -54,7 +54,7 @@
                 {% elif FEATURES.IMPORT_SERVICES_OS2MO in client.enabled_features %}
                     <th class="datatable__column--btn">{% trans "import service (OS2mo)"|capfirst %}</th>
                 {% endif %}
-                {% if request.user.is_superuser %}
+                {% if request.user.is_superuser or FEATURES.ORG_STRUCTURE in client.enabled_features %}
                 <th class="datatable__column--actions">{% trans "Actions" %}</th>
                 {% endif %}
             </tr>
@@ -274,6 +274,13 @@
               </td>
               {% endif %}
               <td class="datatable__column--actions">
+                  {% if FEATURES.ORG_STRUCTURE in client.enabled_features %}
+                  <a href="{% url "orgunit-list" organization.slug %}" class="button button--small button--grey">
+                    <svg class="icon">
+                        <use xlink:href="/static/svg/symbol-defs.svg#icon-info"></use>
+                    </svg>
+                  </a>
+                  {% endif %}
                   {% if request.user.is_superuser %}
                   {% if organization.scanners_running %}
                       <a
@@ -303,13 +310,6 @@
                       </button>
                   </form>
                 {% endif %}
-                {% endif %}
-                {% if FEATURES.ORG_STRUCTURE in client.enabled_features %}
-                <a href="{% url "orgunit-list" organization.slug %}" class="button button--small button--grey">
-                  <svg class="icon">
-                      <use xlink:href="/static/svg/symbol-defs.svg#icon-info"></use>
-                  </svg>
-                </a>
                 {% endif %}
               </td>
             </tr>
