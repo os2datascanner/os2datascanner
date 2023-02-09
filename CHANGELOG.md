@@ -1,6 +1,6 @@
 # Changelog
 
-## Next release
+## Version 3.18.0, 9th February 2023
 
 "Naturwissenschaften"
 
@@ -73,8 +73,6 @@
   in the report module.
 
 - Profile page in report module can now be accessed by users with no roles.
-
-- Organizational units in the organizations-tab are now sorted alphabetically.
 
 - While importing organizational structure on the "organizations"-tab, only the
   relevant table column is now updated dynamically by poll, instead of the

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-30 10:19+0100\n"
+"POT-Creation-Date: 2023-02-09 11:35+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -561,19 +561,19 @@ msgstr "Log ud"
 #: adminapp/templates/components/pagination.html:11
 #: adminapp/templates/components/remove-error.html:18
 #: adminapp/templates/components/resolve-status.html:18
-#: organizations/templates/organizations/orgunit_list.html:50
+#: organizations/templates/organizations/orgunit_list.html:51
 msgid "of"
 msgstr "af"
 
 #: adminapp/templates/components/pagination.html:24
 #: adminapp/templates/components/pagination.html:29
-#: organizations/templates/organizations/orgunit_list.html:46
+#: organizations/templates/organizations/orgunit_list.html:47
 msgid "Previous"
 msgstr "Forrige"
 
 #: adminapp/templates/components/pagination.html:83
 #: adminapp/templates/components/pagination.html:88
-#: organizations/templates/organizations/orgunit_list.html:54
+#: organizations/templates/organizations/orgunit_list.html:55
 msgid "Next"
 msgstr "Næste"
 
@@ -868,6 +868,7 @@ msgstr "Scan"
 #: adminapp/templates/os2datascanner/error_log.html:88
 #: adminapp/templates/os2datascanner/scan_completed.html:93
 #: adminapp/templates/os2datascanner/scan_status_table.html:46
+#: organizations/templates/organizations/org_table.html:58
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -892,9 +893,8 @@ msgstr "ingen fejl fundet."
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status_table.html:103
 #: adminapp/templates/os2datascanner/scanners.html:166
-#: organizations/templates/organizations/org_table.html:58
-#: organizations/templates/organizations/org_table.html:269
-#: organizations/templates/organizations/org_table.html:283
+#: organizations/templates/organizations/org_table.html:291
+#: organizations/templates/organizations/org_table.html:305
 msgid "Delete"
 msgstr "Slet"
 
@@ -1761,11 +1761,11 @@ msgstr "Siden findes ikke"
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
-#: adminapp/views/views.py:194 import_services/models/exported_mixin.py:31
+#: adminapp/views/views.py:200 import_services/models/exported_mixin.py:31
 msgid "created"
 msgstr "oprettet"
 
-#: adminapp/views/views.py:194
+#: adminapp/views/views.py:200
 msgid "saved"
 msgstr "gemt"
 
@@ -2416,37 +2416,37 @@ msgstr "Redigér LDAP-konfiguration"
 
 #: organizations/templates/organizations/org_table.html:98
 #: organizations/templates/organizations/org_table.html:106
-#: organizations/templates/organizations/org_table.html:151
-#: organizations/templates/organizations/org_table.html:159
-#: organizations/templates/organizations/org_table.html:223
-#: organizations/templates/organizations/org_table.html:231
+#: organizations/templates/organizations/org_table.html:156
+#: organizations/templates/organizations/org_table.html:164
+#: organizations/templates/organizations/org_table.html:233
+#: organizations/templates/organizations/org_table.html:241
 msgid "sync"
 msgstr "synkroniser"
 
-#: organizations/templates/organizations/org_table.html:122
-#: organizations/templates/organizations/org_table.html:175
-#: organizations/templates/organizations/org_table.html:247
+#: organizations/templates/organizations/org_table.html:127
+#: organizations/templates/organizations/org_table.html:185
+#: organizations/templates/organizations/org_table.html:262
 msgid "last updated"
 msgstr "sidst opdateret"
 
-#: organizations/templates/organizations/org_table.html:145
+#: organizations/templates/organizations/org_table.html:150
 msgid "Add OS2mo configuration"
 msgstr "Tilføj OS2mo-konfiguration"
 
-#: organizations/templates/organizations/org_table.html:199
-#: organizations/templates/organizations/org_table.html:208
+#: organizations/templates/organizations/org_table.html:209
+#: organizations/templates/organizations/org_table.html:218
 msgid "Add Microsoft Graph configuration"
 msgstr "Tilføj Microsoft Graph-konfiguration"
 
-#: organizations/templates/organizations/org_table.html:218
+#: organizations/templates/organizations/org_table.html:228
 msgid "Edit Microsoft Graph configuration"
 msgstr "Redigér Microsoft Graph-konfiguration"
 
-#: organizations/templates/organizations/org_table.html:282
+#: organizations/templates/organizations/org_table.html:304
 msgid "Do you really want to delete this organization?"
 msgstr "Er du sikker på, at du vil slette denne organisation?"
 
-#: organizations/templates/organizations/org_table.html:282
+#: organizations/templates/organizations/org_table.html:304
 msgid ""
 "This will delete all associated import- and scannerjobs. The action cannot "
 "be reversed"
@@ -2454,13 +2454,7 @@ msgstr ""
 "Dette vil også slette import- og scannerjobs der tilhører organisationen. "
 "Handlingen kan ikke fortrydes."
 
-#: organizations/templates/organizations/org_table.html:297
-#, fuzzy
-#| msgid "organizational units"
-msgid "View organizational units for"
-msgstr "organisatoriske enheder"
-
-#: organizations/templates/organizations/org_table.html:308
+#: organizations/templates/organizations/org_table.html:323
 msgid "no organization added"
 msgstr "der er ikke tilføjet nogen organisationer"
 
@@ -2489,43 +2483,44 @@ msgstr "Er du sikker på, at du vil fjerne"
 msgid "Choose new manager"
 msgstr "Vælg ny leder"
 
-#: organizations/templates/organizations/orgunit_list.html:4
+#: organizations/templates/organizations/orgunit_list.html:5
 msgid "organizational hierarchy"
 msgstr "organisatorisk struktur"
 
-#: organizations/templates/organizations/orgunit_list.html:9
+#: organizations/templates/organizations/orgunit_list.html:10
 msgid "Return to organization overview"
 msgstr "Tilbage til organisationer"
 
-#: organizations/templates/organizations/orgunit_list.html:11
+#: organizations/templates/organizations/orgunit_list.html:12
 msgid "organizational hierarchy for"
 msgstr "organisatorisk struktur for"
 
-#: organizations/templates/organizations/orgunit_list.html:26
+#: organizations/templates/organizations/orgunit_list.html:27
 msgid "Search for organizational unit"
 msgstr "Søg efter organisatorisk enhed"
 
-#: organizations/templates/organizations/orgunit_list.html:34
+#: organizations/templates/organizations/orgunit_list.html:35
 msgid "Show empty units"
 msgstr "Vis tomme enheder"
 
-#: organizations/templates/organizations/orgunit_list.html:45
+#: organizations/templates/organizations/orgunit_list.html:46
 msgid "First"
 msgstr "Første"
 
-#: organizations/templates/organizations/orgunit_list.html:50
+#: organizations/templates/organizations/orgunit_list.html:51
 msgid "Page"
 msgstr "Side"
 
-#: organizations/templates/organizations/orgunit_list.html:55
+#: organizations/templates/organizations/orgunit_list.html:56
 msgid "Last"
 msgstr "Sidste"
 
-#: organizations/templates/organizations/orgunit_list.html:60
+#: organizations/templates/organizations/orgunit_list.html:61
 msgid "No organizational units."
 msgstr "Ingen organisatoriske enheder"
 
-#: organizations/views/org_views.py:83
+#: organizations/tests/test_org_views.py:124
+#: organizations/views/org_views.py:84
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 
