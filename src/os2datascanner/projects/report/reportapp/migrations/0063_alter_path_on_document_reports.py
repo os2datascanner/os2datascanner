@@ -1,4 +1,4 @@
-from django.db import migrations
+from django.db import migrations, models
 from ..utils import crunch
 from os2datascanner.engine2.pipeline.messages import MatchesMessage, ProblemMessage, MetadataMessage
 
@@ -31,5 +31,10 @@ class Migration(migrations.Migration):
   dependencies = [("os2datascanner_report", "0062_populate_missing_resolution_time_fields")]
 
   operations = [
+    migrations.AlterField(
+            model_name='documentreport',
+            name='path',
+            field=models.CharField(db_index=True, max_length=5000, verbose_name='path'),
+        ),
     migrations.RunPython(alter_path_field_on_document_reports, reverse_code=migrations.RunPython.noop)
   ]

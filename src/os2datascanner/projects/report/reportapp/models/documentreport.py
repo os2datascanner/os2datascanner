@@ -5,6 +5,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.postgres.indexes import HashIndex
 
 from os2datascanner.projects.report.organizations.models import Organization
 from os2datascanner.utils.model_helpers import ModelFactory
@@ -44,8 +45,7 @@ class DocumentReport(models.Model):
                                      verbose_name=_('organization'),
                                      on_delete=models.PROTECT)
 
-    path = models.CharField(max_length=2000, verbose_name=_("path"),
-                            db_index=True)
+    path = models.TextField(verbose_name=_("path"))
 
     raw_scan_tag = JSONField(null=True)
     raw_matches = JSONField(null=True)
@@ -214,8 +214,8 @@ class DocumentReport(models.Model):
             models.Index(
                 "raw_matches__matched",
                 name="documentreport_matched"),
-            models.Index(
-                fields=("scanner_job_pk", "path",),
+            HashIndex(
+                fields=("path",),
                 name="pc_update_query"),
         ]
         constraints = [
