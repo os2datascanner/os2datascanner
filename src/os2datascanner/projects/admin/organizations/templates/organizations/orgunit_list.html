@@ -2,63 +2,63 @@
 {% load i18n %}
 {% load orgunit_tags %}
 
-{% block title %}{% trans "organizational hierarchy"|capfirst %}{% endblock %}
+{% block title %}
+  {% trans "organizational hierarchy"|capfirst %}
+{% endblock %}
 
 {% block content %}
-<div class="orgunit-list content-header" hx-headers='{"X-CSRFToken": "{{csrf_token}}"}' hx-push-url='true'>
+  <div class="orgunit-list content-header"
+       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+       hx-push-url='true'>
 
-    <a class="button" href="{% url "organization-list" %}">← {% trans "Return to organization overview"%}</a>
+    <a class="button" href="{% url "organization-list" %}">← {% trans "Return to organization overview" %}</a>
     {% if FEATURES.ORG_STRUCTURE in organization.client.enabled_features and orgunit_list.exists %}
-    <h1>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h1>
-    <form name="orgunit_filters"
-          id="orgunit_filters"
-          class="orgunit_filtering_wrapper"
-          onsubmit="return false"
-          hx-get="{% url "orgunit-list" organization.slug %}"
-          hx-trigger="change, keyup delay:200ms from:#search_field"
-          hx-swap="outerHTML"
-          hx-select=".root"
-          hx-target=".root"
-            >
+      <h1>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h1>
+      <form name="orgunit_filters"
+            id="orgunit_filters"
+            class="orgunit_filtering_wrapper"
+            onsubmit="return false"
+            hx-get="{% url "orgunit-list" organization.slug %}"
+            hx-trigger="change, keyup delay:200ms from:#search_field"
+            hx-swap="outerHTML"
+            hx-select=".root"
+            hx-target=".root">
         <div class="orgunit_input_wrapper search_field_wrapper">
-            <input type="search" 
-                    name="search_field" 
-                    id="search_field" 
-                    placeholder="{% trans "Search for organizational unit" %}" 
-                    value="{{ request.GET.search_field }}"/>
+          <input type="search"
+                 name="search_field"
+                 id="search_field"
+                 placeholder="{% trans "Search for organizational unit" %}"
+                 value="{{ request.GET.search_field }}"/>
         </div>
         <div class="orgunit_input_wrapper">
-            <input type="checkbox"
-                name="show_empty"
-                id="show_empty"
-                value="on"/>
-            <label for="show_empty">{% trans "Show empty units" %}</label>
+          <input type="checkbox" name="show_empty" id="show_empty" value="on"/>
+          <label for="show_empty">{% trans "Show empty units" %}</label>
         </div>
-    </form>
-    <ul class="root">
+      </form>
+      <ul class="root">
         {% for node in orgunit_list|unique_roots %}
-            {% include "organizations/orgunit_element.html" with node=node.get_root %}
+          {% include "organizations/orgunit_element.html" with node=node.get_root %}
         {% endfor %}
-    </ul>
-    <div class="pagination_options">
+      </ul>
+      <div class="pagination_options">
         <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; {% trans "First" %}</a>
-                <a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
-            {% endif %}
-    
-            <span class="current">
-                {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}.
-            </span>
-    
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">{% trans "Last" %} &raquo;</a>
-            {% endif %}
+          {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; {% trans "First" %}</a>
+            <a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
+          {% endif %}
+ 
+          <span class="current">
+            {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}.
+          </span>
+ 
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">{% trans "Last" %} &raquo;</a>
+          {% endif %}
         </span>
-    </div>
+      </div>
     {% else %}
-    <div class="root">{% trans "No organizational units."%}</div>
+      <div class="root">{% trans "No organizational units." %}</div>
     {% endif %}
-</div>
+  </div>
 {% endblock %}

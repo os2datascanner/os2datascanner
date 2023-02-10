@@ -4,126 +4,119 @@
 
 <div class="scan-status-table">
 
-    {% comment %} 
+  {% comment %}
     This element is responsible for polling the django view for updates on the status of the scans.
     If the number of scans change, the whole table will be updates, else, only this span will.
     The progress bar and scan-state columns, as well as the error message row
     are all responsible for their own DOM swaps through HTMX "out-of-band"-swaps.
     This element cannot be hidden, as hidden HTMX elements will not trigger.
-    {% endcomment %}
-    <span name="status_table_poll" id="status_table_poll"
-          hx-get="{% url "status" %}"
-          hx-target="{{reload}}"
-          hx-select="{{reload}}"
-          hx-swap="outerHTML"
-          hx-trigger="{{ delay }}"
-          hx-vals='{"scans":"{{ object_list|length }}", "reload":"{{ reload }}"}'
-          hx-sync="#status_tabs_poll:queue"
-    ></span>
+  {% endcomment %}
+  <span name="status_table_poll"
+        id="status_table_poll"
+        hx-get="{% url "status" %}"
+        hx-target="{{ reload }}"
+        hx-select="{{ reload }}"
+        hx-swap="outerHTML"
+        hx-trigger="{{ delay }}"
+        hx-vals='{"scans":"{{ object_list|length }}", "reload":"{{ reload }}"}'
+        hx-sync="#status_tabs_poll:queue"></span>
 
-{% if object_list %}
-            <div class="datatable-wrapper card lg" role="region" tabindex="0" aria-label="{% trans 'Scans in progress' %}">
-                <table class="datatable middle">
-                    <colgroup>
-                        <col class="datatable__column--name">
-                        <col class="datatable__column--org">
-                        <col class="datatable__column--info">
-                        <col class="datatable__column--actions">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th class="datatable__column--name">
-                                {% trans "Scannerjob" %}
-                            </th>
-                            <th class="datatable__column--org">
-                                {% trans "Phase" %}
-                            </th>
-                            <th class="datatable__column--info">
-                                {% trans "Status" %}
-                            </th>
-                            <th class="datatable__column--actions">
-                                {% trans "Actions" %}
-                            </th>
-                        </tr>
-                    </thead>
+  {% if object_list %}
+    <div class="datatable-wrapper card lg"
+         role="region"
+         tabindex="0"
+         aria-label="{% trans 'Scans in progress' %}">
+      <table class="datatable middle">
+        <colgroup>
+          <col class="datatable__column--name">
+          <col class="datatable__column--org">
+          <col class="datatable__column--info">
+          <col class="datatable__column--actions">
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="datatable__column--name">{% trans "Scannerjob" %}</th>
+            <th class="datatable__column--org">{% trans "Phase" %}</th>
+            <th class="datatable__column--info">{% trans "Status" %}</th>
+            <th class="datatable__column--actions">{% trans "Actions" %}</th>
+          </tr>
+        </thead>
 
-                    <tbody>
-                        {% for status in object_list %}
-                            <tr>
-                                <td class="datatable__column--name">
-                                    {{ status.scanner.name }}
-                                </td>
-                                <td class="scan-stage stage-{{ status.stage.value }} datatable__column--org"
-                                    id="scan-stage__{{ status.pk|unlocalize }}"
-                                    {% if request.GET.reload == "#status_table_poll" %}hx-swap-oob="true"{% endif %}
-                                >
-                                    {% if status.stage.value == 0 %}
-                                        {% trans "Indexing data ..." %}
-                                    {% elif status.stage.value == 1 %}
-                                        {% trans "Scanning data (still indexing) ..." %}
-                                    {% elif status.stage.value == 2 %}
-                                        {% trans "Scanning data ..." %}
-				                    {% elif status.stage.value == 3 %}
-					                    {% trans "No objects to scan" %}
-                                    {% endif %}
-                                </td>
-                                <td class="datatable__column--info" id="status_column__{{ status.pk|unlocalize }}"
-                                    {% if request.GET.reload == "#status_table_poll" %}hx-swap-oob="true"{% endif %}
-                                >
-                                    {% if status.stage.value == 0 %}
-                                        {% trans "Building index" %}
-                                    {% elif status.stage.value == 1 %}
-                                        {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned{% endblocktranslate %}
-                                    {% elif status.stage.value == 2 %}
-                                        {% blocktranslate with obj=status.scanned_objects total=status.total_objects %}{{ obj }} out of {{ total }} objects scanned {% endblocktranslate %}
-                                        {% with frac=status.fraction_scanned %}
-                                        <div class="progressbar-container">
-                                            <div class="progressbar" id="pb__{{ status.pk }}"
-                                                 style="width:{% widthratio frac 1 100 %}%"></div>
-                                        </div>
-                                        {% endwith %}
-				                    {% elif status.stage.value == 3 %}
-					                    {% trans "The sources do not contain any scannable objects" %}
-                                    {% endif %}
+        <tbody>
+          {% for status in object_list %}
+            <tr>
+              <td class="datatable__column--name">{{ status.scanner.name }}</td>
+              <td class="scan-stage stage-{{ status.stage.value }} datatable__column--org"
+                  id="scan-stage__{{ status.pk|unlocalize }}"
+                  {% if request.GET.reload == "#status_table_poll" %}hx-swap-oob="true"{% endif %}>
+                {% if status.stage.value == 0 %}
+                  {% trans "Indexing data ..." %}
+                {% elif status.stage.value == 1 %}
+                  {% trans "Scanning data (still indexing) ..." %}
+                {% elif status.stage.value == 2 %}
+                  {% trans "Scanning data ..." %}
+ 
+                {% elif status.stage.value == 3 %}
+                  {% trans "No objects to scan" %}
+                {% endif %}
+              </td>
+              <td class="datatable__column--info"
+                  id="status_column__{{ status.pk|unlocalize }}"
+                  {% if request.GET.reload == "#status_table_poll" %}hx-swap-oob="true"{% endif %}>
+                {% if status.stage.value == 0 %}
+                  {% trans "Building index" %}
+                {% elif status.stage.value == 1 %}
+                  {% blocktranslate with obj=status.scanned_objects %}{{ obj }} objects scanned{% endblocktranslate %}
+                {% elif status.stage.value == 2 %}
+                  {% blocktranslate with obj=status.scanned_objects total=status.total_objects %}{{ obj }} out of {{ total }} objects scanned {% endblocktranslate %}
+                  {% with frac=status.fraction_scanned %}
+                    <div class="progressbar-container">
+                      <div class="progressbar"
+                           id="pb__{{ status.pk }}"
+                           style="width:{% widthratio frac 1 100 %}%"></div>
+                    </div>
+                  {% endwith %}
+ 
+                {% elif status.stage.value == 3 %}
+                  {% trans "The sources do not contain any scannable objects" %}
+                {% endif %}
 
-                                    {# don't show number of bytes scanned as it's not very useful #}
-                                    {# don't show estimated time as it's very imprecise #}
-                                    {# don't show a progress bar to represent status, as "100%" can vary #}
-                                </td>
-                                <td class="datatable__column--actions">
-                                    <div class="action-wrapper">
-                                        <form action="/status/{{status.pk|unlocalize}}/delete/" method="post" class="status-delete">
-                                            {% csrf_token %}
-                                            {% trans "Do you really want to delete the status object for scanner '%(scanner_name)s'?" as r_u_sure %}
-                                            <button
-                                                type="submit"
-                                                class="button button--small button--grey"
-                                                onclick="return confirm(interpolate('{{ r_u_sure|escapejs }}', {'scanner_name': '{{ status.scanner.name|escapejs }}'}, true))"
-                                                title="{% trans 'Delete' %}">
-                                                <svg class="icon">
-                                                    <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                              <tr class="error" id="status_message__{{ status.pk|unlocalize }}" {% if request.GET.reload == "#status_table_poll" %}hx-swap-oob="true"{% endif %}>
-                                {% if status.message and status.status_is_error %}
-                                <td colspan="4">
-                                  {{ status.message }}
-                                </td>
-                                {% endif %}
-                              </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-{% else %}
+                {# don't show number of bytes scanned as it's not very useful #}
+                {# don't show estimated time as it's very imprecise #}
+                {# don't show a progress bar to represent status, as "100%" can vary #}
+              </td>
+              <td class="datatable__column--actions">
+                <div class="action-wrapper">
+                  <form action="/status/{{ status.pk|unlocalize }}/delete/"
+                        method="post"
+                        class="status-delete">
+                    {% csrf_token %}
+                    {% trans "Do you really want to delete the status object for scanner '%(scanner_name)s'?" as r_u_sure %}
+                    <button type="submit"
+                            class="button button--small button--grey"
+                            onclick="return confirm(interpolate('{{ r_u_sure|escapejs }}', {'scanner_name': '{{ status.scanner.name|escapejs }}'}, true))"
+                            title="{% trans 'Delete' %}">
+                      <svg class="icon">
+                        <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                      </svg>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <tr class="error"
+                id="status_message__{{ status.pk|unlocalize }}"
+                {% if request.GET.reload == "#status_table_poll" %}hx-swap-oob="true"{% endif %}>
+              {% if status.message and status.status_is_error %}<td colspan="4">{{ status.message }}</td>{% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
     <p>{% trans "no ongoing scans"|capfirst %}</p>
-{% endif %}
-{% comment %} <div class="progressbar-container">
-    <div id="scanstatus-progressbar" class="progressbar" 
-         style="width:50%"></div>
-</div> {% endcomment %}
+  {% endif %}
+  {% comment %} <div class="progressbar-container">
+    <div id="scanstatus-progressbar" class="progressbar" style="width:50%"></div>
+  </div> {% endcomment %}
 </div>

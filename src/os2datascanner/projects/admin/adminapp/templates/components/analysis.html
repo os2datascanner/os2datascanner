@@ -14,11 +14,10 @@
 {% endblock %}
 
 {% block body %}
-{% include "partials/header.html" %}
+  {% include "partials/header.html" %}
 
-<main class="wrapper">
-  {% include "partials/main.html" with active_tab="analysis" %}
-  {% include "components/analysis-template.html"%}
-</div>
+  <main class="wrapper">
+    {% include "partials/main.html" with active_tab="analysis" %}
+    {% include "components/analysis-template.html" %}
+  </div>
 {% endblock %}
-

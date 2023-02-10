@@ -12,115 +12,103 @@
 
 {% block body %}
 
-<div class="runner-container">
-{% if scan_tag %}
+  <div class="runner-container">
+    {% if scan_tag %}
 
-  <div class="runner-content">
-    <span class="icon">
-      {% include "components/svg-icons/scan_succes.svg" %}
-    </span>
+      <div class="runner-content">
+        <span class="icon">{% include "components/svg-icons/scan_succes.svg" %}</span>
 
-    <h1>
-      {% trans "Success" %}
-    </h1>
+        <h1>{% trans "Success" %}</h1>
 
-    <h3>
-      {% trans "Scan details have been sent to the scanner engine, and" %}
-      <br> {% trans "scan will be performed as soon as possible." %}
-    </h3>
+        <h3>
+          {% trans "Scan details have been sent to the scanner engine, and" %}
+          <br>
+          {% trans "scan will be performed as soon as possible." %}
+        </h3>
 
-    <button onclick="redirectFromModal('/status')" class="button button--cta button--large">{% trans "Take me to scanner status" %}</button>
-  </div>
-
-  <div class="detail-content">
-    <div class="detail-toggle" onclick="toggleDetails()">
-      <div class="flex">
-        <span>
-          <i id="chevron_right" class="material-icons">chevron_right</i>
-          <i id="expand_more" class="material-icons" style="display: none;">expand_more</i>
-        </span>
-
-        <span class="text">
-          {% trans "Technical details" %}
-        </span>
+        <button onclick="redirectFromModal('/status')"
+                class="button button--cta button--large">
+          {% trans "Take me to scanner status" %}
+        </button>
       </div>
 
-      <pre id="scan-details" style="display: none;">
+      <div class="detail-content">
+        <div class="detail-toggle" onclick="toggleDetails()">
+          <div class="flex">
+            <span>
+              <i id="chevron_right" class="material-icons">chevron_right</i>
+              <i id="expand_more" class="material-icons" style="display: none;">expand_more</i>
+            </span>
+
+            <span class="text">{% trans "Technical details" %}</span>
+          </div>
+
+          <pre id="scan-details" style="display: none;">
         {{ scan_tag }}
       </pre>
-    </div>
-  </div>
-
-  {% elif engine2_error %}
-  <div class="runner-content">
-    <span class="icon">
-      {% include "components/svg-icons/scan_error.svg" %}
-    </span>
-
-    <h1>
-      {% trans "Oops, an error occurred" %}
-    </h1>
-
-    <h3>
-      {% trans "Scan details could not be sent to the scanner engine." %}
-      <br>{% trans "See technical details for more information" %}
-    </h3>
-
-    <div class="detail-content">
-      <div class="detail-toggle" onclick="toggleDetails()">
-        <div class="flex">
-          <span>
-            <i id="chevron_right" class="material-icons">chevron_right</i>
-            <i id="expand_more" class="material-icons" style="display: none;">expand_more</i>
-          </span>
-
-          <span class="text">
-            {% trans "Technical details" %}
-          </span>
         </div>
+      </div>
 
-        <pre id="scan-details" style="display: none;">
+    {% elif engine2_error %}
+      <div class="runner-content">
+        <span class="icon">{% include "components/svg-icons/scan_error.svg" %}</span>
+
+        <h1>{% trans "Oops, an error occurred" %}</h1>
+
+        <h3>
+          {% trans "Scan details could not be sent to the scanner engine." %}
+          <br>
+          {% trans "See technical details for more information" %}
+        </h3>
+
+        <div class="detail-content">
+          <div class="detail-toggle" onclick="toggleDetails()">
+            <div class="flex">
+              <span>
+                <i id="chevron_right" class="material-icons">chevron_right</i>
+                <i id="expand_more" class="material-icons" style="display: none;">expand_more</i>
+              </span>
+
+              <span class="text">{% trans "Technical details" %}</span>
+            </div>
+
+            <pre id="scan-details" style="display: none;">
           {% trans "Could not open data source:" %} {{ engine2_error }}
         </pre>
-      </div>
-    </div>
-  </div>
-
-  {% elif pika_error %}
-  <div class="runner-content">
-    <span class="icon">
-      {% include "components/svg-icons/scan_error.svg" %}
-    </span>
-
-    <h1>
-      {% trans "Oops, an error occurred" %}
-    </h1>
-
-    <h3>
-      {% trans "Scan details could not be sent to the scanner engine." %}
-      <br>{% trans "See technical details for more information" %}
-    </h3>
-
-    <div class="detail-content">
-      <div class="detail-toggle" onclick="toggleDetails()">
-        <div class="flex">
-          <span>
-            <i id="chevron_right" class="material-icons">chevron_right</i>
-            <i id="expand_more" class="material-icons" style="display: none;">expand_more</i>
-          </span>
-
-          <span class="text">
-            {% trans "Technical details" %}
-          </span>
+          </div>
         </div>
+      </div>
 
-        <pre id="scan-details" style="display: none;">
+    {% elif pika_error %}
+      <div class="runner-content">
+        <span class="icon">{% include "components/svg-icons/scan_error.svg" %}</span>
+
+        <h1>{% trans "Oops, an error occurred" %}</h1>
+
+        <h3>
+          {% trans "Scan details could not be sent to the scanner engine." %}
+          <br>
+          {% trans "See technical details for more information" %}
+        </h3>
+
+        <div class="detail-content">
+          <div class="detail-toggle" onclick="toggleDetails()">
+            <div class="flex">
+              <span>
+                <i id="chevron_right" class="material-icons">chevron_right</i>
+                <i id="expand_more" class="material-icons" style="display: none;">expand_more</i>
+              </span>
+
+              <span class="text">{% trans "Technical details" %}</span>
+            </div>
+
+            <pre id="scan-details" style="display: none;">
           {% trans "Could not communicate with the scanner engine:" %} {{ pika_error }}
         </pre>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-{% endif %}
-</div>
+    {% endif %}
+  </div>
 {% endblock %}

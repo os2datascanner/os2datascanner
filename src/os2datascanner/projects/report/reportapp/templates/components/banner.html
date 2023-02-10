@@ -1,27 +1,29 @@
 <header class="banner" role="banner">
   {% include "components/logo.html" %}
 
-  <section class="banner_menu" id="banner_menu" aria-labelledby="navigation-toggle">
+  <section class="banner_menu"
+           id="banner_menu"
+           aria-labelledby="navigation-toggle">
     {% include "components/navigation.html" %}
   </section>
 
   {% if settings.SUPPORT_BUTTON %}
-  <section class="service_menu" id="service_menu">
-    <div class="service">
-      <div tabindex="-1" class="service_button">
-        ?
+    <section class="service_menu" id="service_menu">
+      <div class="service">
+        <div tabindex="-1" class="service_button">?</div>
+        <div hx-get="{% url "support_button" %}"
+             hx-swap="outerHTML"
+             hx-trigger="focusin,mouseover from:#service_menu"
+             hx-target="this">
+        </div>
       </div>
-      <div hx-get="{% url "support_button" %}"
-           hx-swap="outerHTML"
-           hx-trigger="focusin,mouseover from:#service_menu"
-           hx-target="this">
-      </div>
-    </div>
-  </section>
+    </section>
   {% endif %}
 
   {% if request.user.is_authenticated %}
-  {% include "components/user.html" %}
+    {% include "components/user.html" %}
   {% endif %}
-  <button id="navigation-toggle" aria-haspopup="true" aria-controls="sidemenu"><span class="screen-reader-only">Menu</span></button>
+  <button id="navigation-toggle" aria-haspopup="true" aria-controls="sidemenu">
+    <span class="screen-reader-only">Menu</span>
+  </button>
 </header>

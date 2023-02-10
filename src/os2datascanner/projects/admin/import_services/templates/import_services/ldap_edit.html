@@ -2,142 +2,138 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% trans "LDAP configuration" %}{% endblock %}
+{% block title %}
+  {% trans "LDAP configuration" %}
+{% endblock %}
 
 {% block scripts %}
-    {{ block.super }}
-    <script type="text/javascript" src="/jsi18n/"></script>
-    <script type="text/javascript" src="/admin/jsi18n/"></script>
-    <script src="{% static 'js/addInput.js' %}"></script>
-    <script>
+  {{ block.super }}
+  <script type="text/javascript" src="/jsi18n/"></script>
+  <script type="text/javascript" src="/admin/jsi18n/"></script>
+  <script src="{% static 'js/addInput.js' %}"></script>
+  <script>
         var urlConnection = "{% url 'test-ldap-connection' %}"
         var urlAuth = "{% url 'test-ldap-authentication' %}"
-    </script>
-    <script src="{% static 'js/ldapConfig.js' %}"></script>
+  </script>
+  <script src="{% static 'js/ldapConfig.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-    {% include "partials/breadcrumb.html" with page="ldap"  %}
+  {% include "partials/breadcrumb.html" with page="ldap"  %}
 
-    <div class="aside">
-        <h1>
-            {% if is_new %}
-                {% trans 'add'|capfirst %}
-            {% else %}
-                {% trans 'update'|capfirst %}
-            {% endif %}
-            {% trans 'LDAP configuration for'|capfirst %} {{ organization }}
-        </h1>
-    </div>
+  <div class="aside">
+    <h1>
+      {% if is_new %}
+        {% trans 'add'|capfirst %}
+      {% else %}
+        {% trans 'update'|capfirst %}
+      {% endif %}
+      {% trans 'LDAP configuration for'|capfirst %} {{ organization }}
+    </h1>
+  </div>
 
-    {% for field in form.connection_fields %}
-    {% endfor %}
+  {% for field in form.connection_fields %}{% endfor %}
 
-    <form class="form" method="post">{% csrf_token %}
-        <section class="data-form">
-            <h3>
-                {% trans "connect to LDAP"|capfirst %}
-            </h3>
-            <div class="flex">
-                {% with form.connection_protocol as field %}
-                <div class="flex-dropdown">
-                    {% include 'import_services/ldap_field_snippet.html' %}
-                </div>
-                <span class="flex--character">://</span>
-                {% endwith %}
-                {% with form.connection_url as field %}
-                <div class="flex-input">
-                    {% include 'import_services/ldap_field_snippet.html' %}
-                </div>
-                {% endwith %}
-            </div>
-            <div class="flex">
-                <a
-                    type="button"
-                    id="button-connection"
-                    class="flex button button--cta button--cta--connection"
-                    name="button-connection">
-                    <i id="sync" class="material-icons">sync</i>
-                    <span class="con-text">{% trans "test connection"|capfirst %}</span>
-                </a>
-                <div class="response">
-                    <span class="response-icon response-icon--success" style="display: none;" id="responseSuccessCon"><i id="check" class="material-icons">check</i></span>
-                    <span class="response-icon response-icon--error" style="display: none;" id="responseErrorCon"><i id="error" class="material-icons">error</i></span>
-                    <span class="response-text" id="responseConnection"></span>
-                </div>
-            </div>
-            {% for field in form %}
-                {% if field.name in form.connection_fields %}
-                    {% include 'import_services/ldap_field_snippet.html' %}
-                {% endif %}
-            {% endfor %}
-            <div class="flex">
-                <a
-                    type="button"
-                    id="button-auth"
-                    class="flex button button--cta button--cta--connection"
-                    name="button-auth">
-                    <i id="sync" class="material-icons">sync</i>
-                    <span class="con-text">{% trans "test authentication"|capfirst %}</span>
-                </a>
-                <div class="response">
-                    <span class="response-icon response-icon--success" style="display: none;" id="responseSuccessAuth"><i id="check" class="material-icons">check</i></span>
-                    <span class="response-icon response-icon--error" style="display: none;" id="responseErrorAuth"><i id="error" class="material-icons">error</i></span>
-                    <span class="response-text" id="responseAuth"></span>
-                </div>
-            </div>
-        </section>
-
-        <section class="data-form">
-            <h3>
-                {% trans "General" %}
-            </h3>
-            {% for field in form %}
-                {% if field.name in form.general_fields %}
-                    {% include 'import_services/ldap_field_snippet.html' %}
-                {% endif %}
-            {% endfor %}
-        </section>
-
-        <section class="data-form">
-            <h3>
-                {% trans "search specification"|capfirst %}
-            </h3>
-            <div class="userObjClass" id="userObjClass">
-            {% for field in form %}
-                {% if field.name in form.user_location_fields %}
-                    {% include 'import_services/ldap_field_snippet.html' %}
-                {% endif %}
-            {% endfor %}
-                <input class="user-class-input" id="userClass" type="text" name="userClass" />
-            </div>
-            <button id="btnUserClass" type="button" class="flex button button--small button--grey button--grey--icon button--grey--transparent">
-                <span class="items">
-                    <span>
-                    <i id="add" title="{% trans 'user attributes'|capfirst %}" class="material-icons">add</i>
-                    </span>
-                    <span class="text">
-                    {% trans "add user attributes"|capfirst %}
-                    </span>
-                </span>
-            </button>
-        </section>
-
-        <section class="data-form">
-            <h3>
-                {% trans "user attributes"|capfirst %}
-            </h3>
-            {% for field in form %}
-                {% if field.name in form.user_attribute_fields %}
-                    {% include 'import_services/ldap_field_snippet.html' %}
-                {% endif %}
-            {% endfor %}
-        </section>
-
-        <div class="form__group last-btn">
-            <button type="submit" class="button button--cta" name="save">
-                {% trans "save LDAP configuration"|capfirst %}
-            </button>
+  <form class="form" method="post">
+    {% csrf_token %}
+    <section class="data-form">
+      <h3>{% trans "connect to LDAP"|capfirst %}</h3>
+      <div class="flex">
+        {% with form.connection_protocol as field %}
+          <div class="flex-dropdown">{% include 'import_services/ldap_field_snippet.html' %}</div>
+          <span class="flex--character">://</span>
+        {% endwith %}
+        {% with form.connection_url as field %}
+          <div class="flex-input">{% include 'import_services/ldap_field_snippet.html' %}</div>
+        {% endwith %}
+      </div>
+      <div class="flex">
+        <a type="button"
+           id="button-connection"
+           class="flex button button--cta button--cta--connection"
+           name="button-connection">
+          <i id="sync" class="material-icons">sync</i>
+          <span class="con-text">{% trans "test connection"|capfirst %}</span>
+        </a>
+        <div class="response">
+          <span class="response-icon response-icon--success"
+                style="display: none"
+                id="responseSuccessCon"><i id="check" class="material-icons">check</i></span>
+          <span class="response-icon response-icon--error"
+                style="display: none"
+                id="responseErrorCon"><i id="error" class="material-icons">error</i></span>
+          <span class="response-text" id="responseConnection"></span>
         </div>
-    </form>
+      </div>
+      {% for field in form %}
+        {% if field.name in form.connection_fields %}
+          {% include 'import_services/ldap_field_snippet.html' %}
+        {% endif %}
+      {% endfor %}
+      <div class="flex">
+        <a type="button"
+           id="button-auth"
+           class="flex button button--cta button--cta--connection"
+           name="button-auth">
+          <i id="sync" class="material-icons">sync</i>
+          <span class="con-text">{% trans "test authentication"|capfirst %}</span>
+        </a>
+        <div class="response">
+          <span class="response-icon response-icon--success"
+                style="display: none"
+                id="responseSuccessAuth"><i id="check" class="material-icons">check</i></span>
+          <span class="response-icon response-icon--error"
+                style="display: none"
+                id="responseErrorAuth"><i id="error" class="material-icons">error</i></span>
+          <span class="response-text" id="responseAuth"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="data-form">
+      <h3>{% trans "General" %}</h3>
+      {% for field in form %}
+        {% if field.name in form.general_fields %}
+          {% include 'import_services/ldap_field_snippet.html' %}
+        {% endif %}
+      {% endfor %}
+    </section>
+
+    <section class="data-form">
+      <h3>{% trans "search specification"|capfirst %}</h3>
+      <div class="userObjClass" id="userObjClass">
+        {% for field in form %}
+          {% if field.name in form.user_location_fields %}
+            {% include 'import_services/ldap_field_snippet.html' %}
+          {% endif %}
+        {% endfor %}
+        <input class="user-class-input" id="userClass" type="text" name="userClass" />
+      </div>
+      <button id="btnUserClass"
+              type="button"
+              class="flex button button--small button--grey button--grey--icon button--grey--transparent">
+        <span class="items">
+          <span>
+            <i id="add"
+               title="{% trans 'user attributes'|capfirst %}"
+               class="material-icons">add</i>
+          </span>
+          <span class="text">{% trans "add user attributes"|capfirst %}</span>
+        </span>
+      </button>
+    </section>
+
+    <section class="data-form">
+      <h3>{% trans "user attributes"|capfirst %}</h3>
+      {% for field in form %}
+        {% if field.name in form.user_attribute_fields %}
+          {% include 'import_services/ldap_field_snippet.html' %}
+        {% endif %}
+      {% endfor %}
+    </section>
+
+    <div class="form__group last-btn">
+      <button type="submit" class="button button--cta" name="save">{% trans "save LDAP configuration"|capfirst %}</button>
+    </div>
+  </form>
 {% endblock %}

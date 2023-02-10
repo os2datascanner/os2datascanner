@@ -471,6 +471,11 @@ Linting can be checked locally by installing:
 and the running:
 `pflake8 src`
 
+
+Templates : Template linting is done with djLint and will fail hard if not being complied with.
+check https://www.djlint.com/docs/getting-started/ for a list of all options/rules djLint 
+uses. 
+
 ### Git hooks
 
 developers can install the precommit framework to run automated pre-commit test to tell them 

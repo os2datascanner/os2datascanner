@@ -2,16 +2,16 @@
 {% load get_settings_tag %}
 {% settings_value "SAML2_ENABLED" as saml2_enabled %}
 
-<h1 class="userprofile-text"> {% trans "Account" %} </h1>
+<h1 class="userprofile-text">{% trans "Account" %}</h1>
 
 <div class="userprofile-content-wrapper user-image">
-    <span class="user__avatar_verybig">
-      {% if request.user.account.image %}
-        <img class="userprofile-image" src="{{ request.user.account.image }}">
-      {% else %}
-        <i id="account_circle" class="material-icons">account_circle</i>
-      {% endif %}
-    </span>
+  <span class="user__avatar_verybig">
+    {% if request.user.account.image %}
+      <img class="userprofile-image" src="{{ request.user.account.image }}">
+    {% else %}
+      <i id="account_circle" class="material-icons">account_circle</i>
+    {% endif %}
+  </span>
 </div>
 
 <div class="userprofile-content-wrapper user-tables">
@@ -33,24 +33,28 @@
       <tr>
         <td>{% trans "Organization" %}</td>
         <td>
-          {% if user.account.organization %}
-            {{ user.account.organization }}
-          {% endif %}
+          {% if user.account.organization %}{{ user.account.organization }}{% endif %}
         </td>
       </tr>
       {% if is_dpo %}
-      <tr>
-        <td>{% trans "Contact Person" %}</td>
-        <td class="ds-checkbox">
-          <input type="checkbox" name="contact_check" id="contact_check" value="checked"
-                 hx-post="" hx-trigger="change" hx-swap="afterend" 
-                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' 
-                 hx-include='#contact_check'
-                 {% if is_contact_person %}checked{% endif %}
-                 >
-          <label for="contact_check" title="{% trans "By checking this box, users will be presented with your email address for DPO-related questions." %}"></label>
-        </td>
-      </tr>
+        <tr>
+          <td>{% trans "Contact Person" %}</td>
+          <td class="ds-checkbox">
+            <input type="checkbox"
+                   name="contact_check"
+                   id="contact_check"
+                   value="checked"
+                   hx-post=""
+                   hx-trigger="change"
+                   hx-swap="afterend"
+                   hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                   hx-include='#contact_check'
+                   {% if is_contact_person %}checked{% endif %}>
+            <label for="contact_check"
+                   title="{% trans "By checking this box, users will be presented with your email address for DPO-related questions." %}">
+            </label>
+          </td>
+        </tr>
       {% endif %}
     </tbody>
   </table>
@@ -62,52 +66,48 @@
         <td>{% trans "Roles" %}</td>
         <td>
           <ul>
-            {% for role in user_roles %}
-              <li>{{ role|capfirst }}</li>
-            {% endfor %}
+            {% for role in user_roles %}<li>{{ role|capfirst }}</li>{% endfor %}
           </ul>
         </td>
       </tr>
       {% if user.is_active %}
-      <tr>
-        <td>{% trans "Active" %}</td>
-        <td>
+        <tr>
+          <td>{% trans "Active" %}</td>
+          <td>
             <span class="checkmark true">
               {% include "components/svg-icons/check_circle_full.svg" %}
               <span class="width">{% trans "Yes" %}</span>
             </span>
-        </td>
-      </tr>
+          </td>
+        </tr>
       {% endif %}
       {% if user.is_staff %}
-      <tr>
-        <td>{% trans "Staff" %}</td>
-        <td>
+        <tr>
+          <td>{% trans "Staff" %}</td>
+          <td>
             <span class="checkmark true">
               {% include "components/svg-icons/check_circle_full.svg" %}
               <span class="width">{% trans "Yes" %}</span>
             </span>
-        </td>
-      </tr>
+          </td>
+        </tr>
       {% endif %}
       {% if user.is_superuser %}
-      <tr>
-        <td>{% trans "Superuser" %}</td>
-        <td>
+        <tr>
+          <td>{% trans "Superuser" %}</td>
+          <td>
             <span class="checkmark true">
               {% include "components/svg-icons/check_circle_full.svg" %}
               <span class="width">{% trans "Yes" %}</span>
             </span>
-        </td>
-      </tr>
+          </td>
+        </tr>
       {% endif %}
       <tr>
         <td>{% trans "Aliases" %}</td>
         <td>
           <ul>
-            {% for alias in aliases %}
-              <li>{{ alias.value }} ({{ alias.alias_type }})</li>
-            {% endfor %}
+            {% for alias in aliases %}<li>{{ alias.value }} ({{ alias.alias_type }})</li>{% endfor %}
           </ul>
         </td>
       </tr>
@@ -121,15 +121,15 @@
         <tr>
           <td>{% trans "Password" %}</td>
           <td>
-            <a class="password-change" href="/accounts/password_change">
-              {% trans "Change" %}
-            </a>
+            <a class="password-change" href="/accounts/password_change">{% trans "Change" %}</a>
           </td>
         </tr>
       {% endif %}
       <tr>
         <td>{% trans "User since" %}</td>
-        <td>{{ user.date_joined }}</td>
+        <td>
+          {{ user.date_joined }}
+        </td>
       </tr>
     </tbody>
   </table>

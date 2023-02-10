@@ -1,20 +1,13 @@
-  <div class="ds-checkbox">
-    <input
-      type="checkbox"
-      id="id_{{ field.name }}"
-      name="{{ field.name }}"
-      value="{{ field.name }}"
-      {% if field.field.disabled %}
-      disabled
-      {% endif %}
-      {% if field.value %}
-      checked="checked"
-      {% endif %}>
-    <label for="id_{{ field.name }}"
-        {% if field.help_text %}
-        title="{{ field.help_text }}"
-        style="cursor: help"
-        {% endif %} >
-      {{ field.label }}
-    </label>
-  </div>
+ 
+<div class="ds-checkbox">
+  <input type="checkbox"
+         id="id_{{ field.name }}"
+         name="{{ field.name }}"
+         value="{{ field.name }}"
+         {% if field.field.disabled %} disabled{% endif %}
+         {% if field.value %} checked="checked"{% endif %}>
+  <label for="id_{{ field.name }}"
+         {% if field.help_text %} title="{{ field.help_text }}" style="cursor: help"{% endif %}>
+    {{ field.label }}
+  </label>
+</div>

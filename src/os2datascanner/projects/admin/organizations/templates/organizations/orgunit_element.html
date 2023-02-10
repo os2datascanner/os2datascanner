@@ -1,48 +1,55 @@
 {% load i18n %}
 
-<li id="orgunit__{{ node.pk }}" class="orgunit-list-element {% if node.children.exists %}has_children{% endif %} {% if node.pk in search_targets %}highlighted{% endif %}">
+<li id="orgunit__{{ node.pk }}"
+    class="orgunit-list-element {% if node.children.exists %}has_children{% endif %} {% if node.pk in search_targets %}highlighted{% endif %}">
   <span class="orgunit_name">{{ node.name }}</span>
   <span class="orgunit_members">{{ node.members_associated }} {% trans "accounts associated." %}</span>
   <span class="orgunit_managers">{% trans "Managers" %}:
-      <ul>
-          {% for manager_pos in node.managers %}
-          <li class="manager_li"
-              title="{% trans "Click to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ node }}."
-              hx-post=""
-              hx-swap="outerHTML"
-              hx-target="#orgunit__{{ node.pk }}"
-              hx-select="#orgunit__{{ node.pk }}"
-              hx-trigger="click"
-              hx-vals='{"orgunit": "{{ node.pk }}", "rem-manager": "{{ manager_pos.account.uuid }}"}'
-              hx-confirm="{% trans "Are you sure you want to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ node }}?">
-              {{ manager_pos.account.get_full_name }}
-          </li>
+    <ul>
+      {% for manager_pos in node.managers %}
+        <li class="manager_li"
+            title="{% trans "Click to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ node }}."
+            hx-post=""
+            hx-swap="outerHTML"
+            hx-target="#orgunit__{{ node.pk }}"
+            hx-select="#orgunit__{{ node.pk }}"
+            hx-trigger="click"
+            hx-vals='{"orgunit": "{{ node.pk }}", "rem-manager": "{{ manager_pos.account.uuid }}"}'
+            hx-confirm="{% trans "Are you sure you want to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ node }}?">
+          {{ manager_pos.account.get_full_name }}
+        </li>
+      {% endfor %}
+      <li class="add_manager">
+        <button type="button" class="add_manager_button button button--small">
+          <svg class="icon">
+            <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
+          </svg>
+        </button>
+        <select class="select_manager"
+                name="add-manager"
+                hidden
+                hx-post=""
+                hx-swap="outerHTML"
+                hx-target="#orgunit__{{ node.pk }}"
+                hx-select="#orgunit__{{ node.pk }}"
+                hx-trigger="change"
+                hx-vals='{"orgunit": "{{ node.pk }}"}'>
+          <option value="">
+            {% trans "Choose new manager" %}
+          </option>
+          {% for account in accounts %}
+            <option value="{{ account.uuid }}">
+              {{ account.get_full_name }}
+            </option>
           {% endfor %}
-          <li class="add_manager">
-              <button type="button" class="add_manager_button button button--small">
-                  <svg class="icon">
-                      <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
-                  </svg>
-              </button>
-              <select class="select_manager" name="add-manager" hidden
-                      hx-post=""
-                      hx-swap="outerHTML"
-                      hx-target="#orgunit__{{ node.pk }}"
-                      hx-select="#orgunit__{{ node.pk }}"
-                      hx-trigger="change"
-                      hx-vals='{"orgunit": "{{ node.pk }}"}'>
-                  <option value="">{% trans "Choose new manager" %}</option>
-                  {% for account in accounts %}
-                  <option value="{{ account.uuid }}">{{ account.get_full_name }}</option>
-                  {% endfor %}
-              </select>
-          </li>
-      </ul>
+        </select>
+      </li>
+    </ul>
   </span>
 
   <ul class="children" hidden>
-  {% for node in node.children.all %}
+    {% for node in node.children.all %}
       {% include "organizations/orgunit_element.html" %}
-  {% endfor %}
+    {% endfor %}
   </ul>
 </li>

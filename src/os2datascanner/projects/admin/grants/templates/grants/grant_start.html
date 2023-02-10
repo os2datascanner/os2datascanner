@@ -2,57 +2,51 @@
 {% load i18n %}
 
 {% block body %}
-{% include "partials/header.html" %}
-<div class="wrapper">
+  {% include "partials/header.html" %}
+  <div class="wrapper">
     {% if request.resolver_match.url_name == 'msgraphmailscanner_add' %}
-        {% include "partials/main.html" with active_tab="home" %}
+      {% include "partials/main.html" with active_tab="home" %}
     {% else %}
-        {% include "partials/main.html" with active_tab="organizations" %}
+      {% include "partials/main.html" with active_tab="organizations" %}
     {% endif %}
 
-  <div class="content">
+    <div class="content">
 
-    {% if request.resolver_match.url_name == 'msgraphmailscanner_add' %}
+      {% if request.resolver_match.url_name == 'msgraphmailscanner_add' %}
         {% include "partials/breadcrumb.html" with page="scannerjob"  %}
 
-    {% else %}
+      {% else %}
         {% include "partials/breadcrumb.html" with page="msgraph" %}
-    {% endif %}
+      {% endif %}
 
-    <div class="aside">
-      <h1 class="page-title">
-        {% trans "Configure Microsoft Graph" %}
-      </h1>
-    </div>
+      <div class="aside">
+        <h1 class="page-title">{% trans "Configure Microsoft Graph" %}</h1>
+      </div>
 
-    <p>
-      {% trans "To use this service, you must allow OS2datascanner access to its content." %}
-      {% if auth_endpoint %}
-      {% if error %}
-    <p>
-      {% trans "The service refused to grant OS2datascanner the necessary rights:" %}
-    <pre class="alert alert--danger">{{ error_description }}</pre>
-    <p>
-      {% trans "Click the button below to try again." %}
-    {% else %}
-      {% trans "Click the button below to forward to this service." %}
-    {% endif %}
-    <p>
-      <a href="{{ auth_endpoint }}"
-          id="button-authenticate"
-          type="button"
-          class="button button--cta button--small btn btn-default">
-          {% trans "Continue to" %} {{ service_name }}
-      </a>
-    </p>
-    <p>
-      {% trans "You will be forwarded to the creation form after the service has issued the necessary rights." %}
-    </p>
-    {% else %}
-    <p>
-      {% trans "The information pointing to the OS2datascanner system for this service is missing." %}
-    </p>
-    {% endif %}
-  </div>
-</div>
-{% endblock %}
+      <p>
+        {% trans "To use this service, you must allow OS2datascanner access to its content." %}
+        {% if auth_endpoint %}
+          {% if error %}
+            <p>
+              {% trans "The service refused to grant OS2datascanner the necessary rights:" %}
+              <pre class="alert alert--danger">{{ error_description }}</pre>
+              <p>
+                {% trans "Click the button below to try again." %}
+              {% else %}
+                {% trans "Click the button below to forward to this service." %}
+              {% endif %}
+              <p>
+                <a href="{{ auth_endpoint }}"
+                   id="button-authenticate"
+                   type="button"
+                   class="button button--cta button--small btn btn-default">
+                  {% trans "Continue to" %} {{ service_name }}
+                </a>
+              </p>
+              <p>{% trans "You will be forwarded to the creation form after the service has issued the necessary rights." %}</p>
+            {% else %}
+              <p>{% trans "The information pointing to the OS2datascanner system for this service is missing." %}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endblock %}

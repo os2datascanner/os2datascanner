@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block jquery_script %}
-<script type="text/javascript">
+  <script type="text/javascript">
   (function ($) {
 
     // adding a new expression
@@ -72,205 +72,188 @@
     }
   })(jQuery);
 
-</script>
-<script src="{% static 'js/options.js' %}"></script>
+  </script>
+  <script src="{% static 'js/options.js' %}"></script>
 {% endblock %}
 
 {% block body %}
-{% include "partials/header.html" %}
-<div class="wrapper">
-  {% include "partials/main.html" with active_tab="rules" %}
+  {% include "partials/header.html" %}
+  <div class="wrapper">
+    {% include "partials/main.html" with active_tab="rules" %}
 
-  <div class="content">
+    <div class="content">
 
-    {% include "partials/breadcrumb.html" with page="rule_views" %}
+      {% include "partials/breadcrumb.html" with page="rule_views" %}
 
-    <div class="aside">
-      {% if view.edit %}
-      <h1 class="page-title">
-        {% trans "Edit rule" %}
-      </h1>
+      <div class="aside">
+        {% if view.edit %}
+          <h1 class="page-title">{% trans "Edit rule" %}</h1>
+        {% endif %}
+
+        {% if not view.edit %}
+          <h1 class="page-title">{% trans "Create new rule" %}</h1>
+        {% endif %}
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="alert" role="alert">
+          <ul>
+            {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+        </div>
       {% endif %}
 
-      {% if not view.edit %}
-      <h1 class="page-title">
-        {% trans "Create new rule" %}
-      </h1>
-      {% endif %}
-    </div>
+      <form class="form" role="form" method="post">
+        {% csrf_token %}
 
-    {% if form.non_field_errors %}
-    <div class="alert" role="alert">
-      <ul>
-        {% for error in form.non_field_errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% endif %}
+        <section class="data-form">
+          <fieldset class="form__fieldset">
+            <h3>{% trans "General" %}</h3>
+            <p class="description">{% trans "Name the rule and choose which organization the rule should belong to" %}</p>
 
-    <form class="form" role="form" method="post">
-      {% csrf_token %}
+            <div class="form__group{% if form.name.errors %} has-error{% endif %}">
+              <label class="required-form" for="id_{{ form.name.name }}">{{ form.name.label }}</label>
+              <input autofocus="autofocus"
+                     type="text"
+                     class="form-control"
+                     name="{{ form.name.name }}"
+                     id="id_{{ form.name.name }}"
+                     placeholder="{% trans 'Name of rule' %}"
+                     {% if form.name.value %}value="{{ form.name.value }}"{% endif %}>
+              {% if form.name.help_text %}<span class="form__help-text">{{ form.name.help_text }}</span>{% endif %}
+              {% if form.name.errors %}{{ form.name.errors }}{% endif %}
+            </div>
 
-      <section class="data-form">
-        <fieldset class="form__fieldset">
-          <h3>
-            {% trans "General" %}
-          </h3>
-          <p class="description">
-            {% trans "Name the rule and choose which organization the rule should belong to" %}
-          </p>
-
-          <div class="form__group{% if form.name.errors %} has-error{% endif %}">
-            <label class="required-form" for="id_{{ form.name.name }}">{{ form.name.label }}</label>
-            <input
-              autofocus="autofocus"
-              type="text"
-              class="form-control"
-              name="{{ form.name.name }}"
-              id="id_{{ form.name.name }}"
-              placeholder="{% trans 'Name of rule' %}"
-              {% if form.name.value %}value="{{ form.name.value }}" {% endif %}>
-            {% if form.name.help_text %}
-            <span class="form__help-text">{{ form.name.help_text }}</span>
+            {% if form.organization %}
+              {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.organization required="True" %}
             {% endif %}
-            {% if form.name.errors %}{{ form.name.errors }}{% endif %}
-          </div>
+          </fieldset>
+        </section>
 
-          {% if form.organization %}
-           {% include "os2datascanner/scanner_form_select_option_field.html" with field=form.organization required="True" %}
-          {% endif %}
-        </fieldset>
-      </section>
+        <section class="data-form">
+          <fieldset class="form__fieldset">
+            <h3>{% trans "Rule" %}</h3>
+            <p class="description">
+              {% trans "A rule consists one or more regular expressions and defines which text strings are searched in a scannerjob" %}
+            </p>
 
-      <section class="data-form">
-        <fieldset class="form__fieldset">
-          <h3>
-            {% trans "Rule" %}
-          </h3>
-          <p class="description">
-            {% trans "A rule consists one or more regular expressions and defines which text strings are searched in a scannerjob" %}
-          </p>
+            <div id="{{ form.pattern_0.auto_id }}_container"
+                 class="form__group {% if form.pattern_0.errors %} has-error{% endif %}">
 
-          <div id="{{ form.pattern_0.auto_id }}_container" class="form__group {% if form.pattern_0.errors %} has-error{% endif %}">
-
-            {% for pattern_name, pattern_value in view.get_pattern_fields %}
-            <div class="form__group form-group">
-              <label class="required-form" for="id_{{ pattern_name }}">
-                {% trans "Regular Expression" %} {{ forloop.counter }}
-              </label>
-                {% if forloop.counter > 1 %}
-                <div class="input-group">
-                  {% endif %}
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="{{ pattern_name }}"
-                    id="id_{{ pattern_name }}"
-                    placeholder="{% trans 'e.g. organization' %}"
-                    {% if pattern_value %}value="{{ pattern_value }}" {% endif %}>
+              {% for pattern_name, pattern_value in view.get_pattern_fields %}
+                <div class="form__group form-group">
+                  <label class="required-form" for="id_{{ pattern_name }}">{% trans "Regular Expression" %} {{ forloop.counter }}</label>
+                  {% if forloop.counter > 1 %}<div class="input-group">{% endif %}
+                  <input type="text"
+                         class="form-control"
+                         name="{{ pattern_name }}"
+                         id="id_{{ pattern_name }}"
+                         placeholder="{% trans 'e.g. organization' %}"
+                         {% if pattern_value %}value="{{ pattern_value }}"{% endif %}>
                   {# required state of pattern_0 is variable #}
 
                   {% if forloop.counter > 1 %}
-                  <span class="input-group-btn">
-                    <button class="button-remove-expression button button--danger" type="button">
-                      {% trans "Remove expression" %}
-                    </button>
-                  </span>
+                    <span class="input-group-btn">
+                      <button class="button-remove-expression button button--danger" type="button">{% trans "Remove expression" %}</button>
+                    </span>
                   {% endif %}
 
-                  {% if form.pattern_0.help_text %}
-                  <span class="form__help-text">{{ form.pattern_0.help_text }}</span>
-                  {% endif %}
+                  {% if form.pattern_0.help_text %}<span class="form__help-text">{{ form.pattern_0.help_text }}</span>{% endif %}
 
                   {% if form.pattern_0.errors %}{{ form.pattern_0.errors }}{% endif %}
-                  {% if forloop.counter > 1 %}
+                  {% if forloop.counter > 1 %}</div>{% endif %}
                 </div>
-                {% endif %}
-            </div>
-            {% endfor %}
+              {% endfor %}
 
-            <div class="row form__group">
-              <div class="col-sm-offset-2 col-sm-10">
-                <button id="button-add-expression" type="button" class="flex button button--grey button--grey--icon button--small">
-                  <span class="items">
-                    <span>
-                      <i id="add" title="{% trans 'Add another regular expression' %}" class="material-icons">add</i>
+              <div class="row form__group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button id="button-add-expression"
+                          type="button"
+                          class="flex button button--grey button--grey--icon button--small">
+                    <span class="items">
+                      <span>
+                        <i id="add"
+                           title="{% trans 'Add another regular expression' %}"
+                           class="material-icons">add</i>
+                      </span>
+                      <span class="text">{% trans "Add another regular expression" %}</span>
                     </span>
-                    <span class="text">
-                      {% trans "Add another regular expression" %}
-                    </span>
-                  </span>
-                </button>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </fieldset>
-      </section>
+          </fieldset>
+        </section>
 
-      <section class="data-form">
-        <fieldset class="form__fieldset">
-          <h3 class="required-form" for="id_{{ form.sensitivity.name }}">{{ form.sensitivity.label }}</h3>
-          <p class="description">
-            {% trans "Assess the sensitivity of the rule" %}
-          </p>
-            <div id="{{ form.sensitivity.auto_id }}_container" class="form__group col-sm-12{% if form.sensitivity.errors %} has-error{% endif %}">
+        <section class="data-form">
+          <fieldset class="form__fieldset">
+            <h3 class="required-form" for="id_{{ form.sensitivity.name }}">{{ form.sensitivity.label }}</h3>
+            <p class="description">{% trans "Assess the sensitivity of the rule" %}</p>
+            <div id="{{ form.sensitivity.auto_id }}_container"
+                 class="form__group col-sm-12{% if form.sensitivity.errors %} has-error{% endif %}">
 
-              {% if form.sensitivity.help_text %}
-              <span class="form__help-text">{{ form.sensitivity.help_text }}</span>
-              {% endif %}
+              {% if form.sensitivity.help_text %}<span class="form__help-text">{{ form.sensitivity.help_text }}</span>{% endif %}
 
               <div class="radio-content">
                 {% for value, tag in form.sensitivity.field.choices %}
-                <label class="radio radio-before">
-                  <span class="radio__input">
-                  {% if value|add:'0' == form.sensitivity.value|add:'0' %}
-                        <input type="radio" name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" value="{{ value }}" checked="checked">
-                  {% else %}
-                        <input type="radio" name="{{ form.sensitivity.name }}" id="id_{{ form.sensitivity.name }}" value="{{ value }}" >
-                  {% endif %}
-                        {% if value == 0 %}
-                          <span class="radio__control radio__control--notify"></span>
-                        {% elif value == 1 %}
-                          <span class="radio__control radio__control--warning"></span>
-                        {% elif value == 2 %}
-                          <span class="radio__control radio__control--problem"></span>
-                        {% elif value == 3 %}
-                          <span class="radio__control radio__control--critical"></span>
-                        {% endif %}
-                  </span>
+                  <label class="radio radio-before">
+                    <span class="radio__input">
+                      {% if value|add:'0' == form.sensitivity.value|add:'0' %}
+                        <input type="radio"
+                               name="{{ form.sensitivity.name }}"
+                               id="id_{{ form.sensitivity.name }}"
+                               value="{{ value }}"
+                               checked="checked">
+                      {% else %}
+                        <input type="radio"
+                               name="{{ form.sensitivity.name }}"
+                               id="id_{{ form.sensitivity.name }}"
+                               value="{{ value }}">
+                      {% endif %}
+                      {% if value == 0 %}
+                        <span class="radio__control radio__control--notify"></span>
+                      {% elif value == 1 %}
+                        <span class="radio__control radio__control--warning"></span>
+                      {% elif value == 2 %}
+                        <span class="radio__control radio__control--problem"></span>
+                      {% elif value == 3 %}
+                        <span class="radio__control radio__control--critical"></span>
+                      {% endif %}
+                    </span>
 
-                  <span class="radio__label">{{ tag }}</span>
-                </label>
+                    <span class="radio__label">{{ tag }}</span>
+                  </label>
                 {% endfor %}
               </div>
 
               {% if form.sensitivity.errors %}{{ form.sensitivity.errors }}{% endif %}
             </div>
-        </fieldset>
-      </section>
+          </fieldset>
+        </section>
 
-      <section class="data-form">
-        <fieldset class="form__fieldset">
-          <h3 class="required-form" for="id_{{ form.description.name }}">{{ form.description.label }}</h3>
-            <div id="{{ form.description.auto_id }}_container" class="form__group col-sm-12{% if form.description.errors %} has-error{% endif %}">
-                  <textarea name="{{ form.description.name }}" id="id_{{ form.description.name }}" placeholder="{% trans 'Description of rule' %}" rows="3">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
-                  {% if form.description.help_text %}
-                  <p>
-                    <small>{{ form.description.help_text }}</small>
-                  </p>
-                  {% endif %}
-                  {% if form.description.errors %}{{ form.description.errors }}{% endif %}
+        <section class="data-form">
+          <fieldset class="form__fieldset">
+            <h3 class="required-form" for="id_{{ form.description.name }}">{{ form.description.label }}</h3>
+            <div id="{{ form.description.auto_id }}_container"
+                 class="form__group col-sm-12{% if form.description.errors %} has-error{% endif %}">
+              <textarea name="{{ form.description.name }}"
+                        id="id_{{ form.description.name }}"
+                        placeholder="{% trans 'Description of rule' %}"
+                        rows="3">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
+              {% if form.description.help_text %}
+                <p>
+                  <small>{{ form.description.help_text }}</small>
+                </p>
+              {% endif %}
+              {% if form.description.errors %}{{ form.description.errors }}{% endif %}
             </div>
-        </fieldset>
-      </section>
+          </fieldset>
+        </section>
 
-      <div class="form__group last-btn">
-        <button type="submit" class="button button--cta" name="save">
-          {% trans "Save changes" %}
-        </button>
-      </div>
-    </form>
+        <div class="form__group last-btn">
+          <button type="submit" class="button button--cta" name="save">{% trans "Save changes" %}</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 {% endblock %}

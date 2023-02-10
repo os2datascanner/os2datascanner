@@ -10,20 +10,22 @@
       </a>
     </li>
     <li>
-      <a href="/archive" class="{% if request.path == '/archive' %}active{% endif %}">
+      <a href="/archive"
+         class="{% if request.path == '/archive' %}active{% endif %}">
         {% include "components/svg-icons/icon-smbc.svg" %}
         <span class="width">{% trans "Archive" %}</span>
       </a>
     </li>
 
-  {% for role in roles %}
-    <li>
-      <a href="{{ role.url }}" class="{% if request.path == role.url %}active{% endif %}">
-        {% include "components/svg-icons/bar_chart.svg" %}
-        <span class="width">{{ role.description }}</span>
-      </a>
-    </li>
-  {% endfor %}
+    {% for role in roles %}
+      <li>
+        <a href="{{ role.url }}"
+           class="{% if request.path == role.url %}active{% endif %}">
+          {% include "components/svg-icons/bar_chart.svg" %}
+          <span class="width">{{ role.description }}</span>
+        </a>
+      </li>
+    {% endfor %}
     <li class="user-overview">
       <a href="{% url "statistics-user" request.user.account.uuid %}"
          class="{% if '/statistics/user/' in request.path %}active{% endif %}">
@@ -32,20 +34,19 @@
       </a>
     </li>
     <li class="profile">
-      <a href="{% url "user" %}" class="{% if request.path == "/user/" %}active{% endif %}">
+      <a href="{% url "user" %}"
+         class="{% if request.path == "/user/" %}active{% endif %}">
         {% include "components/svg-icons/account_circle.svg" %}
         <span class="width">{% trans "User profile" %}</span>
       </a>
     </li>
-  {% if request.user.is_authenticated %}
-    <li class="logout">
-      <a href="/accounts/logout">
-        {% include "components/svg-icons/logout.svg" %}
-        <span class="width">
-          {% trans "Logout" %}
-        </span>
-      </a>
-    </li>
-  {% endif %}
+    {% if request.user.is_authenticated %}
+      <li class="logout">
+        <a href="/accounts/logout">
+          {% include "components/svg-icons/logout.svg" %}
+          <span class="width">{% trans "Logout" %}</span>
+        </a>
+      </li>
+    {% endif %}
   </ul>
 </nav>

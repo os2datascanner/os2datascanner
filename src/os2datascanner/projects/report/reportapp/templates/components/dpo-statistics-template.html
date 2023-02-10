@@ -4,40 +4,38 @@
 
 <div class="content" hx-push-url="true">
   <div class="content-header">
-  <h1 class="page-title">{% trans "DPO statistics" %}</h1>
+    <h1 class="page-title">{% trans "DPO statistics" %}</h1>
 
-  <svg class="page-indicator" id="report-page-indicator" viewbox="0 0 100 100">
-    <circle id="circle" cx="50" cy="50" r="45"></circle>
-  </svg>
+    <svg class="page-indicator"
+         id="report-page-indicator"
+         viewbox="0 0 100 100">
+      <circle id="circle" cx="50" cy="50" r="45"></circle>
+    </svg>
 
-  <!-- Scannerjob chart data selection -->
+    <!-- Scannerjob chart data selection -->
     <form name="stat_form"
           hx-get="{% url "statistics-dpo" %}"
-          hx-target=".content" 
-          hx-select=".content" 
-          hx-swap="outerHTML" 
+          hx-target=".content"
+          hx-select=".content"
+          hx-swap="outerHTML"
           hx-trigger="change"
           hx-indicator="#report-page-indicator">
-    <div class="dropdown stats_dropdown">
-      <select name="scannerjob" id="scannerjobs" data-compareto="all">
-        <option value="all"
-                {% if scannerjobs|last == "all" %}
-                    selected="selected"
-                {% endif %} >
-                {% trans "All scannerjobs" %}
-        </option>
+      <div class="dropdown stats_dropdown">
+        <select name="scannerjob" id="scannerjobs" data-compareto="all">
+          <option value="all"
+                  {% if scannerjobs|last == "all" %} selected="selected"{% endif %}>
+            {% trans "All scannerjobs" %}
+          </option>
           {% for scan in scannerjobs|first %}
-              <option value="{{ scan.scanner_job_pk|unlocalize }}"
-                      {% if scannerjobs|last == scan.scanner_job_pk|stringformat:"i" %}
-                        selected="selected"
-                      {% endif %} >
+            <option value="{{ scan.scanner_job_pk|unlocalize }}"
+                    {% if scannerjobs|last == scan.scanner_job_pk|stringformat:"i" %} selected="selected" {% endif %}>
               {{ scan.scanner_job_name }}
             </option>
           {% endfor %}
-      </select>
-    </div>
-  </form>
-</div>
+        </select>
+      </div>
+    </form>
+  </div>
   <br>
 
   <div class="statistic_wrapper">
@@ -48,13 +46,20 @@
         <div>
           <h1 class="page-title__sub">{% trans "Development overview" %}</h1>
           <p class="chart_description" data-chartid="development-new-results">{% trans "New results by month" %}</p>
-          <p class="hidden chart_description" data-chartid="development-unhandled-results">{% trans "Unhandled results by month" %}</p>
+          <p class="hidden chart_description"
+             data-chartid="development-unhandled-results">
+            {% trans "Unhandled results by month" %}
+          </p>
         </div>
         <div class="statistic_header_nav">
           <div class="dropdown">
             <select>
-              <option value="development-new-results">{% trans "New results" %}</option>
-              <option value="development-unhandled-results">{% trans "Unhandled results" %}</option>
+              <option value="development-new-results">
+                {% trans "New results" %}
+              </option>
+              <option value="development-unhandled-results">
+                {% trans "Unhandled results" %}
+              </option>
             </select>
           </div>
         </div>
@@ -62,7 +67,8 @@
       <div class="chart_container" data-chartid="development-new-results">
         <canvas class="line_chart" id="line_chart_new_matches_by_month"></canvas>
       </div>
-      <div class="hidden chart_container" data-chartid="development-unhandled-results">
+      <div class="hidden chart_container"
+           data-chartid="development-unhandled-results">
         <canvas class="line_chart" id="line_chart_unhandled_matches"></canvas>
       </div>
     </div>
@@ -72,35 +78,52 @@
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">{% trans "Distribution of results" %}</h1>
-          <p class="chart_description" data-chartid="distribution-sensitivities">{% trans "Results distributed by sensitivities" %}</p>
-          <p class="hidden chart_description" data-chartid="distribution-data-sources">{% trans "Results distributed by data sources" %}</p>
-          <p class="hidden chart_description" data-chartid="distribution-resolution-status">{% trans "Results distributed by resolution statuses" %}</p>
+          <p class="chart_description" data-chartid="distribution-sensitivities">
+            {% trans "Results distributed by sensitivities" %}
+          </p>
+          <p class="hidden chart_description"
+             data-chartid="distribution-data-sources">
+            {% trans "Results distributed by data sources" %}
+          </p>
+          <p class="hidden chart_description"
+             data-chartid="distribution-resolution-status">
+            {% trans "Results distributed by resolution statuses" %}
+          </p>
         </div>
         <div class="statistic_header_nav">
           <div class="dropdown">
             <select>
-              <option value="distribution-sensitivities">{% trans "Sensitivity" %}</option>
-              <option value="distribution-data-sources">{% trans "Data sources" %}</option>
+              <option value="distribution-sensitivities">
+                {% trans "Sensitivity" %}
+              </option>
+              <option value="distribution-data-sources">
+                {% trans "Data sources" %}
+              </option>
               {% if handled_matches_status|last > 0 %}
-              <option value="distribution-resolution-status">{% trans "Resolution statuses" %}</option>
+                <option value="distribution-resolution-status">
+                  {% trans "Resolution statuses" %}
+                </option>
               {% endif %}
             </select>
           </div>
         </div>
       </div>
-      <div class="pie_chart_container chart_container" data-chartid="distribution-sensitivities">
+      <div class="pie_chart_container chart_container"
+           data-chartid="distribution-sensitivities">
         <div>
           <canvas id="pie_chart_sensitivity"></canvas>
         </div>
         <div id="pie_legend_sensitivity"></div>
       </div>
-      <div class="hidden pie_chart_container chart_container" data-chartid="distribution-data-sources">
+      <div class="hidden pie_chart_container chart_container"
+           data-chartid="distribution-data-sources">
         <div>
           <canvas id="pie_chart_datasources"></canvas>
         </div>
         <div id="pie_legend_datasources"></div>
       </div>
-      <div class="hidden pie_chart_container chart_container" data-chartid="distribution-resolution-status">
+      <div class="hidden pie_chart_container chart_container"
+           data-chartid="distribution-resolution-status">
         <div>
           <canvas id="pie_chart_resolution_status"></canvas>
         </div>
@@ -113,19 +136,28 @@
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">{% trans "Handled results" %}</h1>
-          <p class="chart_description" data-chartid="handling-sensitivity">{% trans "Percentage of handled results distributed by sensitivity" %}</p>
-          <p class="hidden chart_description" data-chartid="handling-all-results">{% trans "The department's percentage of handled results" %}</p>
+          <p class="chart_description" data-chartid="handling-sensitivity">
+            {% trans "Percentage of handled results distributed by sensitivity" %}
+          </p>
+          <p class="hidden chart_description" data-chartid="handling-all-results">
+            {% trans "The department's percentage of handled results" %}
+          </p>
         </div>
         <div class="statistic_header_nav">
           <div class="dropdown">
             <select>
-              <option value="handling-sensitivity">{% trans "Sensitivity" %}</option>
-              <option value="handling-all-results">{% trans "All results" %}</option>
+              <option value="handling-sensitivity">
+                {% trans "Sensitivity" %}
+              </option>
+              <option value="handling-all-results">
+                {% trans "All results" %}
+              </option>
             </select>
           </div>
         </div>
       </div>
-      <div class="doughnut_charts_container chart_container" data-chartid="handling-sensitivity">
+      <div class="doughnut_charts_container chart_container"
+           data-chartid="handling-sensitivity">
         <!-- Could be rewritten as for loop instead? -->
         <!-- TODO -->
         <div class="doughnut_chart_container">
@@ -134,7 +166,7 @@
           </div>
           <div class="doughnut_info_box">
             <h4>{% trans "Critical" %}</h4>
-            <p>{{handled_matches.0.1}} {% trans "of" %} {{sensitivities.0.1}}</p>
+            <p>{{ handled_matches.0.1 }} {% trans "of" %} {{ sensitivities.0.1 }}</p>
           </div>
         </div>
         <div class="doughnut_chart_container">
@@ -143,7 +175,7 @@
           </div>
           <div class="doughnut_info_box">
             <h4>{% trans "Problem" %}</h4>
-            <p>{{handled_matches.1.1}} {% trans "of" %} {{sensitivities.1.1}}</p>
+            <p>{{ handled_matches.1.1 }} {% trans "of" %} {{ sensitivities.1.1 }}</p>
           </div>
         </div>
         <div class="doughnut_chart_container">
@@ -152,7 +184,7 @@
           </div>
           <div class="doughnut_info_box">
             <h4>{% trans "Warning" %}</h4>
-            <p>{{handled_matches.2.1}} {% trans "of" %} {{sensitivities.2.1}}</p>
+            <p>{{ handled_matches.2.1 }} {% trans "of" %} {{ sensitivities.2.1 }}</p>
           </div>
         </div>
         <div class="doughnut_chart_container">
@@ -161,7 +193,7 @@
           </div>
           <div class="doughnut_info_box">
             <h4>{% trans "Notification" %}</h4>
-            <p>{{handled_matches.3.1}} {% trans "of" %} {{sensitivities.3.1}}</p>
+            <p>{{ handled_matches.3.1 }} {% trans "of" %} {{ sensitivities.3.1 }}</p>
           </div>
         </div>
       </div>
@@ -172,7 +204,7 @@
           </div>
           <div class="doughnut_info_box">
             <h4>{% trans "Handled results" %}</h4>
-            <p>{{total_handled_matches}} {% trans "of" %} {{total_matches}}</p>
+            <p>{{ total_handled_matches }} {% trans "of" %} {{ total_matches }}</p>
           </div>
         </div>
 
@@ -203,5 +235,4 @@
 {{ handled_matches|json_script:"handled_matches" }}
 {{ new_matches_by_month|json_script:"new_matches_by_month" }}
 {{ unhandled_matches_by_month|json_script:"unhandled_matches_by_month" }}
-{{ handled_matches_status|json_script:"handled_matches_status"}}
-
+{{ handled_matches_status|json_script:"handled_matches_status" }}

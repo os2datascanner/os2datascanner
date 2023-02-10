@@ -2,36 +2,48 @@
 {% load i18n %}
 <!DOCTYPE html>
 {% language 'da' %}
-<html lang="da" class="{% block rendertype %}{% endblock %}">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="generator" content="OS2datascanner {{ version }}">
-  <meta name="author" content="">
+  <html lang="da" class="{% block rendertype %}{% endblock %}">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="generator" content="OS2datascanner {{ version }}">
+      <meta name="author" content="">
 
-  <title>{% block title %}{% endblock %} | OS2datascanner</title>
+      <title>
+        {% block title %}{% endblock %}
+      | OS2datascanner</title>
 
-  {% block styling %}
-    <link href="{% static 'css/master.css' %}" rel="stylesheet">
-  {% endblock %}
+      {% block styling %}
+        <link href="{% static 'css/master.css' %}" rel="stylesheet">
+      {% endblock %}
 
-  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
-  <meta name="theme-color" content="#4DBA87">
-  <meta name="apple-mobile-web-app-capable" content="no">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="apple-touch-icon" href="{% static 'favicons/apple-touch-icon.png' %}">
-  <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#4DBA87">
-  <meta name="msapplication-TileImage" content="{% static 'favicons/msapplication-icon-144x144.png' %}">
-  <meta name="msapplication-TileColor" content="#000000">
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="{% static 'favicons/favicon-32x32.png' %}">
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="{% static 'favicons/favicon-16x16.png' %}">
+      <meta name="theme-color" content="#4DBA87">
+      <meta name="apple-mobile-web-app-capable" content="no">
+      <meta name="apple-mobile-web-app-status-bar-style" content="default">
+      <link rel="apple-touch-icon"
+            href="{% static 'favicons/apple-touch-icon.png' %}">
+      <link rel="mask-icon"
+            href="{% static 'favicons/safari-pinned-tab.svg' %}"
+            color="#4DBA87">
+      <meta name="msapplication-TileImage"
+            content="{% static 'favicons/msapplication-icon-144x144.png' %}">
+      <meta name="msapplication-TileColor" content="#000000">
 
-  {% block extra_head_html %}{% endblock %}
+      {% block extra_head_html %}{% endblock %}
 
-  <!-- TODO: The following document.write action will try to write a Django template string literally on the client. This will not work in browsers. -->
-  <script>window.MSInputMethodContext && document.documentMode && document.write('<script src="{% static "3rdparty/ie11CustomProperties.js" %}"><\x2fscript>');</script>
+      <!-- TODO: The following document.write action will try to write a Django template string literally on the client. This will not work in browsers. -->
+      <script>window.MSInputMethodContext && document.documentMode && document.write('<script src="{% static "3rdparty/ie11CustomProperties.js" %}"><\x2fscript>');</script>
 
-  <!-- TODO: This is only necessary for IE8 and older browsers. Are we supporting IE8- ? -->
-  <script>
+      <!-- TODO: This is only necessary for IE8 and older browsers. Are we supporting IE8- ? -->
+      <script>
     document.createElement('header');
     document.createElement('section');
     document.createElement('main');
@@ -39,55 +51,52 @@
     document.createElement('aside');
     document.createElement('nav');
     document.createElement('footer');
-  </script>
+      </script>
 
-  <!-- Support IE for svgxuse -->
-  <!-- TODO: Is is still needed? IE11 should have support for this: https://caniuse.com/mdn-svg_elements_use -->
-  <script src="{% static 'js/svgxuse.js' %}" defer></script>
+      <!-- Support IE for svgxuse -->
+      <!-- TODO: Is is still needed? IE11 should have support for this: https://caniuse.com/mdn-svg_elements_use -->
+      <script src="{% static 'js/svgxuse.js' %}" defer></script>
 
-</head>
-<body class="{% block body_class %}{% endblock %} page">
+    </head>
+    <body class="{% block body_class %}{% endblock %} page">
 
-  {% block additional_styles %}
-  {% endblock %}
+      {% block additional_styles %}{% endblock %}
 
-  {% block body %}
-  {% endblock %}
+      {% block body %}{% endblock %}
 
-  <div>
-    <!-- Modal dialog -->
-    {% block modal %}
-    {% endblock %}
-    <!-- End modal dialog -->
-  </div>
+      <div>
+        <!-- Modal dialog -->
+        {% block modal %}{% endblock %}
+        <!-- End modal dialog -->
+      </div>
 
-  <script src="{% static '3rdparty/jquery-3.6.0.min.js' %} "></script>
+      <script src="{% static '3rdparty/jquery-3.6.0.min.js' %} "></script>
 
-  {% block scripts %}
+      {% block scripts %}
 
-    <!-- TODO: Since the following scripts are in a 'scripts' block, are they supposed to be overwritten by templates? -->
-    <script src="{% static '3rdparty/htmx.min.js' %}"></script>
+        <!-- TODO: Since the following scripts are in a 'scripts' block, are they supposed to be overwritten by templates? -->
+        <script src="{% static '3rdparty/htmx.min.js' %}"></script>
 
 
-    {% if not settings.DEBUG %}
+        {% if not settings.DEBUG %}
 
-      <!-- TODO: Is jquery.modal not used in development? -->
-      <!-- ANSWER: Yes, sometimes in some templates (ex. os2datascanner/rules.html). This setup potentially loads jquery.modal twice, though. -->
-      <script src="{% static '3rdparty/jquery.modal.min.js' %} "></script>
+          <!-- TODO: Is jquery.modal not used in development? -->
+          <!-- ANSWER: Yes, sometimes in some templates (ex. os2datascanner/rules.html). This setup potentially loads jquery.modal twice, though. -->
+          <script src="{% static '3rdparty/jquery.modal.min.js' %} "></script>
 
-      <script src="{% static '3rdparty/bootstrap.min.js' %}"></script>
+          <script src="{% static '3rdparty/bootstrap.min.js' %}"></script>
 
-    {% else %}
+        {% else %}
 
-      <script src="{% static '3rdparty/bootstrap.js' %}"></script>
+          <script src="{% static '3rdparty/bootstrap.js' %}"></script>
 
-    {% endif %}
-    <script src="{% static 'js/main.js' %}"></script>
-  {% endblock %}
+        {% endif %}
+        <script src="{% static 'js/main.js' %}"></script>
+      {% endblock %}
 
-  <!-- TODO: Do 'scripts' and 'jquery_script' need to be separate blocks? -->
-  {% block jquery_script %}{% endblock %}
+      <!-- TODO: Do 'scripts' and 'jquery_script' need to be separate blocks? -->
+      {% block jquery_script %}{% endblock %}
 
-</body>
-</html>
+    </body>
+  </html>
 {% endlanguage %}

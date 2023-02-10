@@ -4,47 +4,55 @@
 
 <div class="content-header">
 
-<h1 class="page-title">{% trans "Results" %}</h1>
+  <h1 class="page-title">{% trans "Results" %}</h1>
 
-<svg class="page-indicator" id="report-page-indicator" viewbox="0 0 100 100">
-  <circle id="circle" cx="50" cy="50" r="45"></circle>
-</svg>
+  <svg class="page-indicator"
+       id="report-page-indicator"
+       viewbox="0 0 100 100">
+    <circle id="circle" cx="50" cy="50" r="45"></circle>
+  </svg>
 
-{{ page_obj.paginator.count }} {% trans "results" %}
-{% if distributable_matches %}
-<div id="distribute-container" class="distribute dropdown" name="distribute-container"
-      hx-get="{% url "index" %}" hx-trigger="reload-htmx from:body" 
-      hx-swap="innerHTML" hx-target=".content"
-      hx-indicator="#report-page-indicator"
->
-  <label class="block-label" for="distribute-to">{% trans "Distribute matches to users from" %}</label>
-  <select id="distribute-to" name="distribute-to" multiple>
-    {% for scan in undistributed_scannerjobs %}
-    {% comment %} Check here for scannerjobs with the "only notify superadmin"-setting {% endcomment %}
-      <option value="{{ scan.scanner_job_pk|unlocalize }}">
-          {{ scan.scanner_job_name }} ({{ scan.total }})
-      </option>
+  {{ page_obj.paginator.count }} {% trans "results" %}
+  {% if distributable_matches %}
+    <div id="distribute-container"
+         class="distribute dropdown"
+         name="distribute-container"
+         hx-get="{% url "index" %}"
+         hx-trigger="reload-htmx from:body"
+         hx-swap="innerHTML"
+         hx-target=".content"
+         hx-indicator="#report-page-indicator">
+      <label class="block-label" for="distribute-to">{% trans "Distribute matches to users from" %}</label>
+      <select id="distribute-to" name="distribute-to" multiple>
+        {% for scan in undistributed_scannerjobs %}
+          {% comment %} Check here for scannerjobs with the "only notify superadmin"-setting {% endcomment %}
+          <option value="{{ scan.scanner_job_pk|unlocalize }}">
+            {{ scan.scanner_job_name }} ({{ scan.total }})
+          </option>
         {% endfor %}
-  </select>
-  <button class="button button--cta" id="distribute-matches" 
-          name="distribute-matches" disabled
-          hx-confirm="{% trans "Are you sure you want to distribute matches to the users? This action cannot be reverted." %}"
-          hx-target="this" hx-trigger="click" hx-swap="afterend" 
-          hx-post="" hx-include="[name='distribute-to']"
-          hx-push-url="false"
-  >{% trans "Distribute" %}</button>
-</div>
-{% endif %}
+      </select>
+      <button class="button button--cta"
+              id="distribute-matches"
+              name="distribute-matches"
+              disabled
+              hx-confirm="{% trans "Are you sure you want to distribute matches to the users? This action cannot be reverted." %}"
+              hx-target="this"
+              hx-trigger="click"
+              hx-swap="afterend"
+              hx-post=""
+              hx-include="[name='distribute-to']"
+              hx-push-url="false">
+        {% trans "Distribute" %}
+      </button>
+    </div>
+  {% endif %}
 
-{% include "components/filters.html" %}
+  {% include "components/filters.html" %}
 
 </div>
 
 {% if page_obj.paginator.count == 0 %}
-  <p class="no-results">
-    {% trans "No results were found" %}
-  </p>
+  <p class="no-results">{% trans "No results were found" %}</p>
 {% else %}
   {% include "components/hits.html" %}
 {% endif %}
-

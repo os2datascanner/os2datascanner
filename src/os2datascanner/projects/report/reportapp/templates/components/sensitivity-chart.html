@@ -1,23 +1,25 @@
 {% load i18n %}
 
 <div class="sensitivity-chart">
-    <legend>{% trans "Sensitivity legend" %}</legend>
-    <ul>
-      <li>
-        <span class="sensitivity-chart--width">{% include "components/svg-icons/critical.svg" %}</span>
-        <span>{% trans "Critical" %}</span>
-      </li>
-      <li>
-        <span class="sensitivity-chart--width">{% include "components/svg-icons/problem.svg" %}</span>
-        <span>{% trans "Problem" %}</span>
-      </li>
-      <li>
-        <span class="sensitivity-chart--width">{% include "components/svg-icons/warning.svg" %}</span>
-        <span>{% trans "Warning" %}</span>
-      </li>
-      <li>
-        <span class="sensitivity-chart--width">{% include "components/svg-icons/notification.svg" %}</span>
-        <span>{% trans "Notification" %}</span>
-      </li>
-    </ul>
-  </div>
+  <legend>
+    {% trans "Sensitivity legend" %}
+  </legend>
+  <ul>
+    <li>
+      <span class="sensitivity-chart--width">{% include "components/svg-icons/critical.svg" %}</span>
+      <span>{% trans "Critical" %}</span>
+    </li>
+    <li>
+      <span class="sensitivity-chart--width">{% include "components/svg-icons/problem.svg" %}</span>
+      <span>{% trans "Problem" %}</span>
+    </li>
+    <li>
+      <span class="sensitivity-chart--width">{% include "components/svg-icons/warning.svg" %}</span>
+      <span>{% trans "Warning" %}</span>
+    </li>
+    <li>
+      <span class="sensitivity-chart--width">{% include "components/svg-icons/notification.svg" %}</span>
+      <span>{% trans "Notification" %}</span>
+    </li>
+  </ul>
+</div>

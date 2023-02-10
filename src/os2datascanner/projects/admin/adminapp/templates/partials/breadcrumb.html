@@ -1,119 +1,119 @@
 {% load i18n %}
 
 <div class="breadcrumb">
-    {% if page == 'scannerjob' %}
-        <a href="/" class="link-color">{% trans "Scannerjob" %}</a>
+  {% if page == 'scannerjob' %}
+    <a href="/" class="link-color">{% trans "Scannerjob" %}</a>
 
-        <i id="chevron_right" class="material-icons">chevron_right</i>
+    <i id="chevron_right" class="material-icons">chevron_right</i>
 
-        {% if form.sitemap %}
-        <a href="/webscanners/" class="link-color">{% trans "Webscanner" %}</a>
-        {% endif %}
-
-        {% if form.domain %}
-        <a href="/filescanners/" class="link-color">{% trans "Filescanner" %}</a>
-        {% endif %}
-
-        {% if form.userlist %}
-        <a href="/exchangescanners/" class="link-color">{% trans "Exchangescanner" %}</a>
-        {% endif %}
-
-        {% if '/msgraph-mailscanners/' in request.path %}
-        <a href="/msgraph-mailscanners/" class="link-color">{% trans "Office 365 mailscanner" %}</a>
-        {% endif %}
-
-        {% if '/msgraph-filescanners/' in request.path %}
-        <a href="/msgraph-filescanners/" class="link-color">{% trans "Office 365 OneDrive filescanner" %}</a>
-        {% endif %}
-
-        {% if '/msgraph-calendarscanners/' in request.path %}
-        <a href="/msgraph-calendarscanners/" class="link-color">{% trans "Office 365 calendarscanner" %}</a>
-        {% endif %}
-
-        {% if form.service_account_file %}
-        <a href="/googledrivescanners/" class="link-color">{% trans "Google Drive scanner" %}</a>
-        {% endif %}
-
-        {% if form.service_account_file_gmail %}
-        <a href="/gmailscanners/" class="link-color">{% trans "Gmailscanner" %}</a>
-        {% endif %}
-
-        {% if request.path == '/sbsysscanners/add/' %}
-        <a href="/sbsysscanners/" class="link-color">{% trans "Sbsysscanner" %}</a>
-        {% endif %}
-
-        <i id="chevron_right" class="material-icons">chevron_right</i>
-
-        {% if view.edit %}
-        <span class="text-grey">{% trans "Edit scannerjob" %}</span>
-        {% else %}
-        <span class="text-grey">{% trans "Create new scannerjob" %}</span>
-        {% endif %}
+    {% if form.sitemap %}
+      <a href="/webscanners/" class="link-color">{% trans "Webscanner" %}</a>
     {% endif %}
 
-    {% if page == 'rule_views' %}
-        <a href="/rules/" class="link-color">{% trans "Rules" %}</a>
-
-        <i id="chevron_right" class="material-icons">chevron_right</i>
-
-        {% if view.edit %}
-        <span class="text-grey">{% trans "Edit rule" %}</span>
-        {% endif %}
-
-        {% if not view.edit %}
-        <span class="text-grey">{% trans "Create new rule" %}</span>
-        {% endif %}
+    {% if form.domain %}
+      <a href="/filescanners/" class="link-color">{% trans "Filescanner" %}</a>
     {% endif %}
 
-    {% if page == 'organization' %}
-        <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
-
-        <i id="chevron_right" class="material-icons">chevron_right</i>
-
-        <span class="text-grey">{% trans "add organization"|capfirst %}</span>
+    {% if form.userlist %}
+      <a href="/exchangescanners/" class="link-color">{% trans "Exchangescanner" %}</a>
     {% endif %}
 
-    {% if page == 'organization_update' %}
-        <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
-
-        <i id="chevron_right" class="material-icons">chevron_right</i>
-
-        <span class="text-grey">{% trans "update organization"|capfirst %}</span>
+    {% if '/msgraph-mailscanners/' in request.path %}
+      <a href="/msgraph-mailscanners/" class="link-color">{% trans "Office 365 mailscanner" %}</a>
     {% endif %}
 
-    {% if page == 'ldap' %}
-        <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
-
-        <i id="chevron_right" class="material-icons">chevron_right</i>
-
-        {% if is_new %}
-            <span class="text-grey">{% trans 'add LDAP configuration'|capfirst %}</span>
-            {% else %}
-            <span class="text-grey">{% trans 'update LDAP configuration'|capfirst %}</span>
-        {% endif %}
+    {% if '/msgraph-filescanners/' in request.path %}
+      <a href="/msgraph-filescanners/" class="link-color">{% trans "Office 365 OneDrive filescanner" %}</a>
     {% endif %}
 
-    {% if page == 'msgraph' %}
-        <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
-
-        <i id="chevron_right" class="material-icons">chevron_right</i>
-
-        {% if is_new %}
-            <span class="text-grey">{% trans 'add MS Graph configuration'|capfirst %}</span>
-            {% else %}
-            <span class="text-grey">{% trans 'update MS Graph configuration'|capfirst %}</span>
-        {% endif %}
+    {% if '/msgraph-calendarscanners/' in request.path %}
+      <a href="/msgraph-calendarscanners/" class="link-color">{% trans "Office 365 calendarscanner" %}</a>
     {% endif %}
 
-    {% if page == 'os2mo' %}
-        <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
-
-        <i id="chevron_right" class="material-icons">chevron_right</i>
-
-        {% if is_new %}
-            <span class="text-grey">{% trans 'add OS2mo configuration'|capfirst %}</span>
-            {% else %}
-            <span class="text-grey">{% trans 'update OS2mo configuration'|capfirst %}</span>
-        {% endif %}
+    {% if form.service_account_file %}
+      <a href="/googledrivescanners/" class="link-color">{% trans "Google Drive scanner" %}</a>
     {% endif %}
+
+    {% if form.service_account_file_gmail %}
+      <a href="/gmailscanners/" class="link-color">{% trans "Gmailscanner" %}</a>
+    {% endif %}
+
+    {% if request.path == '/sbsysscanners/add/' %}
+      <a href="/sbsysscanners/" class="link-color">{% trans "Sbsysscanner" %}</a>
+    {% endif %}
+
+    <i id="chevron_right" class="material-icons">chevron_right</i>
+
+    {% if view.edit %}
+      <span class="text-grey">{% trans "Edit scannerjob" %}</span>
+    {% else %}
+      <span class="text-grey">{% trans "Create new scannerjob" %}</span>
+    {% endif %}
+  {% endif %}
+
+  {% if page == 'rule_views' %}
+    <a href="/rules/" class="link-color">{% trans "Rules" %}</a>
+
+    <i id="chevron_right" class="material-icons">chevron_right</i>
+
+    {% if view.edit %}
+      <span class="text-grey">{% trans "Edit rule" %}</span>
+    {% endif %}
+
+    {% if not view.edit %}
+      <span class="text-grey">{% trans "Create new rule" %}</span>
+    {% endif %}
+  {% endif %}
+
+  {% if page == 'organization' %}
+    <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+    <i id="chevron_right" class="material-icons">chevron_right</i>
+
+    <span class="text-grey">{% trans "add organization"|capfirst %}</span>
+  {% endif %}
+
+  {% if page == 'organization_update' %}
+    <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+    <i id="chevron_right" class="material-icons">chevron_right</i>
+
+    <span class="text-grey">{% trans "update organization"|capfirst %}</span>
+  {% endif %}
+
+  {% if page == 'ldap' %}
+    <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+    <i id="chevron_right" class="material-icons">chevron_right</i>
+
+    {% if is_new %}
+      <span class="text-grey">{% trans 'add LDAP configuration'|capfirst %}</span>
+    {% else %}
+      <span class="text-grey">{% trans 'update LDAP configuration'|capfirst %}</span>
+    {% endif %}
+  {% endif %}
+
+  {% if page == 'msgraph' %}
+    <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+    <i id="chevron_right" class="material-icons">chevron_right</i>
+
+    {% if is_new %}
+      <span class="text-grey">{% trans 'add MS Graph configuration'|capfirst %}</span>
+    {% else %}
+      <span class="text-grey">{% trans 'update MS Graph configuration'|capfirst %}</span>
+    {% endif %}
+  {% endif %}
+
+  {% if page == 'os2mo' %}
+    <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+    <i id="chevron_right" class="material-icons">chevron_right</i>
+
+    {% if is_new %}
+      <span class="text-grey">{% trans 'add OS2mo configuration'|capfirst %}</span>
+    {% else %}
+      <span class="text-grey">{% trans 'update OS2mo configuration'|capfirst %}</span>
+    {% endif %}
+  {% endif %}
 </div>
