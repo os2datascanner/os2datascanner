@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 3.18.1, 10th February 2023
+
+### Bugfixes
+
+- Fixed an issue where the `crunch`-function would return strings too long for
+  the `path`-field in DocumentReport objects.
+
+  - The `path`-field now accepts strings of arbitrary length.
+
 ## Version 3.18.0, 9th February 2023
 
 "Naturwissenschaften"
