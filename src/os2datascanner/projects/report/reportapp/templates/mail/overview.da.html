@@ -2,8 +2,8 @@
 
 <!doctype html>
 <html>
-<head>
-<style>
+  <head>
+    <style>
 
   td {
     text-align: right;
@@ -24,61 +24,58 @@
     width: auto;
   }
 
-</style>
-</head>
-<body>
-{% if image_name %}
-<p>
-  <img src="{{ image_name }}">
-</p>
-{% endif %}
-<p>
-Hej {{ full_name }},
-</p>
-<p>
-    Der ligger i øjeblikket <strong>{{ user_alias_bound_results }}</strong> resultater i
-    OS2datascanner-systemet med direkte tilknytning til dig, der kræver din opmærksomhed.
-</p>
+    </style>
+  </head>
+  <body>
+    {% if image_name %}
+      <p>
+        <img src="{{ image_name }}">
+      </p>
+    {% endif %}
+    <p>Hej {{ full_name }},</p>
+    <p>
+      Der ligger i øjeblikket <strong>{{ user_alias_bound_results }}</strong> resultater i
+      OS2datascanner-systemet med direkte tilknytning til dig, der kræver din opmærksomhed.
+    </p>
 
-<table>
-    {% if superadmin_bound_results or remediator_bound_results %}
+    <table>
+      {% if superadmin_bound_results or remediator_bound_results %}
         <thead>
-        Yderligere resultater er tildelt til dig på baggrund af dine roller i systemet:
+          Yderligere resultater er tildelt til dig på baggrund af dine roller i systemet:
         </thead>
 
         {% if superadmin_bound_results %}
-            <tr class="flex">
-                <td class="width">
-                    Tildelt pga. super-admin rolle: <strong>{{ superadmin_bound_results }}</strong>
-                </td>
-            </tr>
+          <tr class="flex">
+            <td class="width">
+              Tildelt pga. super-admin rolle: <strong>{{ superadmin_bound_results }}</strong>
+            </td>
+          </tr>
         {% endif %}
 
         {% if remediator_bound_results %}
-            <tr class="flex">
-                <td class="width">
-                    Tildelt pga. oprydder rolle: <strong>{{ remediator_bound_results }}</strong>
-                </td>
-            </tr>
+          <tr class="flex">
+            <td class="width">
+              Tildelt pga. oprydder rolle: <strong>{{ remediator_bound_results }}</strong>
+            </td>
+          </tr>
         {% endif %}
-    {% endif %}
-</table>
+      {% endif %}
+    </table>
 
-<p>
-    Resultater i alt: <strong>{{ total_result_count }}</strong>
-</p>
+    <p>
+      Resultater i alt: <strong>{{ total_result_count }}</strong>
+    </p>
 
-<p>
-<a href="{{ report_login_url }}">Log på OS2datascanner med din
-organisationskonto</a> for at se flere detaljer.
-</p>
+    <p>
+      <a href="{{ report_login_url }}">Log på OS2datascanner med din
+        organisationskonto</a> for at se flere detaljer.
+      </p>
 
-<p>
-Med venlig hilsen,<br>
-OS2datascanner-systemet
-{% if institution %}
-(på vegne af {{ institution }})
-{% endif %}
-</p>
-</body>
-</html>
+      <p>
+        Med venlig hilsen,
+        <br>
+        OS2datascanner-systemet
+        {% if institution %}(på vegne af {{ institution }}){% endif %}
+      </p>
+    </body>
+  </html>

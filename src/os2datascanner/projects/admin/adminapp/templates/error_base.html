@@ -2,25 +2,23 @@
 {% load static %}
 {% load i18n %}
 
-{% block error_page_title %}
-{% endblock %}
+{% block error_page_title %}{% endblock %}
 
 {% block body %}
-{% include "partials/header.html" %}
-<main class="wrapper error-page">
-  {% if request.user.is_authenticated %}
-    {% include "partials/main.html" %}
-  {% endif %}
-  <div class="content">
+  {% include "partials/header.html" %}
+  <main class="wrapper error-page">
+    {% if request.user.is_authenticated %}
+      {% include "partials/main.html" %}
+    {% endif %}
+    <div class="content">
 
-    <img src="{% static 'svg/errorpage.svg' %}" alt="" class="error-splash">
+      <img src="{% static 'svg/errorpage.svg' %}" alt="" class="error-splash">
 
-    <h1 class="page-title">
-      {% block error_heading %}{% endblock %}
-    </h1>
+      <h1 class="page-title">
+        {% block error_heading %}{% endblock %}
+      </h1>
 
-    {% block error_content %}
-    {% endblock %}
-  </div>
-</main>
+      {% block error_content %}{% endblock %}
+    </div>
+  </main>
 {% endblock %}

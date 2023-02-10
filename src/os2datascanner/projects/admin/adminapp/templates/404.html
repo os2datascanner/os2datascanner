@@ -11,6 +11,10 @@
 {% endblock %}
 
 {% block error_content %}
-  <p>{% trans "Unfortunately, we could not find the page" %} <code>{{ request_path }}</code>.</p>
-  <p><a href="/">{% trans "Go to the front page" %}</a>.</p>
+  <p>
+    {% trans "Unfortunately, we could not find the page" %} <code>{{ request_path }}</code>.
+  </p>
+  <p>
+    <a href="/">{% trans "Go to the front page" %}</a>.
+  </p>
 {% endblock %}

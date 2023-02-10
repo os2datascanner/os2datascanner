@@ -2,8 +2,8 @@
 
 <!doctype html>
 <html>
-<head>
-<style>
+  <head>
+    <style>
 
   td {
     text-align: right;
@@ -24,61 +24,58 @@
     width: auto;
   }
 
-</style>
-</head>
-<body>
-{% if image_name %}
-<p>
-  <img src="{{ image_name }}">
-</p>
-{% endif %}
-<p>
-Dear {{ full_name }},
-</p>
-<p>
-    There are currently <strong>{{ user_alias_bound_results }}</strong> results in
-    the OS2datascanner system which are associated with you and require your attention.
-</p>
+    </style>
+  </head>
+  <body>
+    {% if image_name %}
+      <p>
+        <img src="{{ image_name }}">
+      </p>
+    {% endif %}
+    <p>Dear {{ full_name }},</p>
+    <p>
+      There are currently <strong>{{ user_alias_bound_results }}</strong> results in
+      the OS2datascanner system which are associated with you and require your attention.
+    </p>
 
-<table>
-    {% if superadmin_bound_results or remediator_bound_results %}
+    <table>
+      {% if superadmin_bound_results or remediator_bound_results %}
         <thead>
-        Additional results are tied to you because of your roles within the system:
+          Additional results are tied to you because of your roles within the system:
         </thead>
 
         {% if superadmin_bound_results %}
-            <tr class="flex">
-                <td class="width">
-                    Super-admin delegated results:  <strong>{{ superadmin_bound_results }}</strong>
-                </td>
-            </tr>
+          <tr class="flex">
+            <td class="width">
+              Super-admin delegated results:  <strong>{{ superadmin_bound_results }}</strong>
+            </td>
+          </tr>
         {% endif %}
 
         {% if remediator_bound_results %}
-            <tr class="flex">
-                <td class="width">
-                    Remediator delegated results: <strong>{{ remediator_bound_results }}</strong>
-                </td>
-            </tr>
+          <tr class="flex">
+            <td class="width">
+              Remediator delegated results: <strong>{{ remediator_bound_results }}</strong>
+            </td>
+          </tr>
         {% endif %}
-    {% endif %}
-</table>
+      {% endif %}
+    </table>
 
-<p>
-    Total viewable results for you: <strong>{{ total_result_count }}</strong>
-</p>
+    <p>
+      Total viewable results for you: <strong>{{ total_result_count }}</strong>
+    </p>
 
-<p>
-<a href="{{ report_login_url }}">Log into OS2datascanner with your
-organisation account</a> for further details.
-</p>
+    <p>
+      <a href="{{ report_login_url }}">Log into OS2datascanner with your
+        organisation account</a> for further details.
+      </p>
 
-<p>
-Kind regards,<br>
-the OS2datascanner system
-{% if institution %}
-(on behalf of {{ institution }})
-{% endif %}
-</p>
-</body>
-</html>
+      <p>
+        Kind regards,
+        <br>
+        the OS2datascanner system
+        {% if institution %}(on behalf of {{ institution }}){% endif %}
+      </p>
+    </body>
+  </html>

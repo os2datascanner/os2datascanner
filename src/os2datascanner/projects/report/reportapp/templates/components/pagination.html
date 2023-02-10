@@ -11,95 +11,121 @@
           {% trans "results"|capfirst %} {% match_interval document_reports page_obj paginate_by %} {% trans "of" %} {{ page_obj.paginator.count }}
         </span>
         {% if is_paginated %}
-        <div class="pages">
-          {% if page_obj.previous_page_number != 0 %}
-            <a class="link link--pre flex" href="#" name="page-button"
-               hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
-               hx-target=".content" hx-swap="innerHTML" hx-trigger="click" 
-               hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ page_obj.previous_page_number }}"}'
-               hx-indicator="#report-page-indicator"
-            >
-              <i id="chevron_left" class="material-icons">chevron_left</i>
-              {% trans "Previous" %}
-            </a>
-          {% else %}
-            <a class="link--pre disabled flex">
-              <i id="chevron_left" class="material-icons">chevron_left</i>
-              {% trans "Previous" %}
-            </a>
-          {% endif %}
+          <div class="pages">
+            {% if page_obj.previous_page_number != 0 %}
+              <a class="link link--pre flex"
+                 href="#"
+                 name="page-button"
+                 hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
+                 hx-target=".content"
+                 hx-swap="innerHTML"
+                 hx-trigger="click"
+                 hx-include='[id="dropdown_options"], [id="filter_form"]'
+                 hx-vals='{"page": "{{ page_obj.previous_page_number }}"}'
+                 hx-indicator="#report-page-indicator">
+                <i id="chevron_left" class="material-icons">chevron_left</i>
+                {% trans "Previous" %}
+              </a>
+            {% else %}
+              <a class="link--pre disabled flex">
+                <i id="chevron_left" class="material-icons">chevron_left</i>
+                {% trans "Previous" %}
+              </a>
+            {% endif %}
 
-          {% if paginator.num_pages > 1 %}
-            {% for n in paginator.page_range %}
-              {% if page_obj.number|add:'-2' == n %} <!-- If current page -2 = 1 (n)  -->
-                {# First page #}
-                <a class="page" href="#" name="page-button"
-                   hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
-                   hx-target=".content" hx-swap="innerHTML" hx-trigger="click" 
-                   hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "1"}'
-                   hx-indicator="#report-page-indicator"
-                >1</a>
-                {% if n != 1 %}
-                  <span class="page--dot">...</span>
-                {% endif %}
-              {% elif page_obj.number == n %}
-                {# Current page #}
-                <a class="page page--active" href="#">{{ n }}</a>
+            {% if paginator.num_pages > 1 %}
+              {% for n in paginator.page_range %}
+                {% if page_obj.number|add:'-2' == n %}
+                  <!-- If current page -2 = 1 (n)  -->
+                  {# First page #}
+                  <a class="page"
+                     href="#"
+                     name="page-button"
+                     hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
+                     hx-target=".content"
+                     hx-swap="innerHTML"
+                     hx-trigger="click"
+                     hx-include='[id="dropdown_options"], [id="filter_form"]'
+                     hx-vals='{"page": "1"}'
+                     hx-indicator="#report-page-indicator">1</a>
+                  {% if n != 1 %}<span class="page--dot">...</span>{% endif %}
+                {% elif page_obj.number == n %}
+                  {# Current page #}
+                  <a class="page page--active" href="#">{{ n }}</a>
                   {# Set how many pages on each side of current page #}
-              {% elif page_obj.number|add:'-2' < n and n < page_obj.number|add:'2' %} {# Pages around current page #}
-                  <a class="page" href="#" name="page-button"
+                {% elif page_obj.number|add:'-2' < n and n < page_obj.number|add:'2' %}
+                  {# Pages around current page #}
+                  <a class="page"
+                     href="#"
+                     name="page-button"
                      hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
-                     hx-target=".content" hx-swap="innerHTML" hx-trigger="click" 
-                     hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ n }}"}'
-                     hx-indicator="#report-page-indicator"
-                  >{{ n }}</a>
-              {% elif page_obj.number|add:'2' == n %}
-                {# Last page #}
-                {% if page_obj.number != paginator.num_pages %}
-                  <span class="page--dot">...</span>
+                     hx-target=".content"
+                     hx-swap="innerHTML"
+                     hx-trigger="click"
+                     hx-include='[id="dropdown_options"], [id="filter_form"]'
+                     hx-vals='{"page": "{{ n }}"}'
+                     hx-indicator="#report-page-indicator">{{ n }}</a>
+                {% elif page_obj.number|add:'2' == n %}
+                  {# Last page #}
+                  {% if page_obj.number != paginator.num_pages %}<span class="page--dot">...</span>{% endif %}
+                  <a class="page"
+                     href="#"
+                     name="page-button"
+                     hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
+                     hx-target=".content"
+                     hx-swap="innerHTML"
+                     hx-trigger="click"
+                     hx-include='[id="dropdown_options"], [id="filter_form"]'
+                     hx-vals='{"page": "{{ paginator.num_pages }}"}'
+                     hx-indicator="#report-page-indicator">{{ paginator.num_pages }}</a>
                 {% endif %}
-                  <a class="page" href="#" name="page-button"
-                     hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
-                     hx-target=".content" hx-swap="innerHTML" hx-trigger="click" 
-                     hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ paginator.num_pages }}"}'
-                     hx-indicator="#report-page-indicator"
-                  >{{ paginator.num_pages }}</a>
-              {% endif %}
-            {% endfor %}
-          {% endif %}
+              {% endfor %}
+            {% endif %}
 
-          {% if page_obj.number != page_obj.paginator.num_pages %}
-          <a class="link link--next flex" href="#" name="page-button"
-             hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
-             hx-target=".content" hx-swap="innerHTML" hx-trigger="click" 
-             hx-include='[id="dropdown_options"], [id="filter_form"]' hx-vals='{"page": "{{ page_obj.next_page_number }}"}'
-             hx-indicator="#report-page-indicator"
-          >
-            {% trans "Next" %}
-            <i id="chevron_right" class="material-icons">chevron_right</i>
-          </a>
-          {% else %}
-          <a class="link--next disabled flex">
-            {% trans "Next" %}
-            <i id="chevron_right" class="material-icons">chevron_right</i>
-          </a>
-          {% endif %}
-        </div>
-        <form action="" class="flex">
-          <label for="page">
-            {% trans "Go to page" %}
-          </label>
-          <input id="page_field" type="number" name="page" min="1" max="{{ paginator.num_pages|unlocalize }}" onkeyup=imposeMinMax(this)>
-          <button class="button button--submit" type="button" id="form-button" name="form-button"
-                  hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
-                  hx-trigger="click" hx-target=".content" hx-swap="innerHTML"
-                  hx-include='[id="page_field"], [id="paginate_by"], [id="filter_form"]'
-                  hx-indicator="#report-page-indicator"
-          >
-            {% trans "Go" %}
-          </button>
-        </form>
-        <script>
+            {% if page_obj.number != page_obj.paginator.num_pages %}
+              <a class="link link--next flex"
+                 href="#"
+                 name="page-button"
+                 hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
+                 hx-target=".content"
+                 hx-swap="innerHTML"
+                 hx-trigger="click"
+                 hx-include='[id="dropdown_options"], [id="filter_form"]'
+                 hx-vals='{"page": "{{ page_obj.next_page_number }}"}'
+                 hx-indicator="#report-page-indicator">
+                {% trans "Next" %}
+                <i id="chevron_right" class="material-icons">chevron_right</i>
+              </a>
+            {% else %}
+              <a class="link--next disabled flex">
+                {% trans "Next" %}
+                <i id="chevron_right" class="material-icons">chevron_right</i>
+              </a>
+            {% endif %}
+          </div>
+          <form action="" class="flex">
+            <label for="page">{% trans "Go to page" %}</label>
+            <input id="page_field"
+                   type="number"
+                   name="page"
+                   min="1"
+                   max="{{ paginator.num_pages|unlocalize }}"
+                   onkeyup="imposeMinMax"
+                   this>
+            <button class="button button--submit"
+                    type="button"
+                    id="form-button"
+                    name="form-button"
+                    hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
+                    hx-trigger="click"
+                    hx-target=".content"
+                    hx-swap="innerHTML"
+                    hx-include='[id="page_field"], [id="paginate_by"], [id="filter_form"]'
+                    hx-indicator="#report-page-indicator">
+              {% trans "Go" %}
+            </button>
+          </form>
+          <script>
         function imposeMinMax(el){
           if(el.value != ""){
             if(parseInt(el.value) < parseInt(el.min)){
@@ -110,7 +136,7 @@
             }
           }
         }
-        </script>
+          </script>
         {% endif %}
 
         {% include "components/load-results.html" %}

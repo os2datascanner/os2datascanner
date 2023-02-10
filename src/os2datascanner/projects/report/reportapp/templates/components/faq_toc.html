@@ -1,15 +1,11 @@
 {% load i18n %}
 <ul>
-  <a href="{% url "guide" %}#handle_delete" 
-    {% if request.path != "/help/" %}
-    target="_blank"
-    {% endif %}><li>
-    {% trans "Why doesn't 'handle' delete my file or email?" %}
-  </li></a>
-  <a href="{% url "guide" %}#open_file" 
-    {% if request.path != "/help/" %}
-    target="_blank"
-    {% endif %}><li>
-    {% trans "Why can't I open file scan matches?" %}
-  </li></a>
+  <a href="{% url "guide" %}#handle_delete"
+     {% if request.path != "/help/" %} target="_blank"{% endif %}>
+    <li>{% trans "Why doesn't 'handle' delete my file or email?" %}</li>
+  </a>
+  <a href="{% url "guide" %}#open_file"
+     {% if request.path != "/help/" %} target="_blank"{% endif %}>
+    <li>{% trans "Why can't I open file scan matches?" %}</li>
+  </a>
 </ul>

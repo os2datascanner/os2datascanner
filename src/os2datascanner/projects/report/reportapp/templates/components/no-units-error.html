@@ -6,12 +6,14 @@
 
     <img src="{% static 'svg/errorpage.svg' %}" alt="" class="error-splash">
 
-    <h1 class="page-title">
-      {% trans "No organizational units associated with account" %}
-    </h1>
+    <h1 class="page-title">{% trans "No organizational units associated with account" %}</h1>
 
-    <p><i>{% trans "There are no organizational units associated with" %} {{ request.user.account.get_full_name }}.</i></p>
-    <p><a href="/">{% trans "Go to the front page" %}</a>.</p>
+    <p>
+      <i>{% trans "There are no organizational units associated with" %} {{ request.user.account.get_full_name }}.</i>
+    </p>
+    <p>
+      <a href="/">{% trans "Go to the front page" %}</a>.
+    </p>
   </div>
 </main>
 

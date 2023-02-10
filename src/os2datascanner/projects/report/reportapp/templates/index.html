@@ -3,17 +3,20 @@
 {% include "partials/header.html" %}
 {% include "components/banner.html" %}
 
-    <main class="wrapper">
+<main class="wrapper">
 
-      <meta name="htmx-config" content='{"historyEnabled": "false", "historyCacheSize": "0"}'>
-      <div class="content" hx-push-url="true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <meta name="htmx-config"
+        content='{"historyEnabled": "false", "historyCacheSize": "0"}'>
+  <div class="content"
+       hx-push-url="true"
+       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
-        {% include "content.html" %}
+    {% include "content.html" %}
 
-      </div>
+  </div>
 
-    </main>
+</main>
 
-    {% include "partials/scripts.html" %}
+{% include "partials/scripts.html" %}
 </body>
 </html>

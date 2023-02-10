@@ -9,15 +9,12 @@
 
 {% block body %}
   <div class="container">
-    <p>
-      {% trans "Are you sure you want to delete?" %}
-    </p>
-    <form action="" method="post">{% csrf_token %}
+    <p>{% trans "Are you sure you want to delete?" %}</p>
+    <form action="" method="post">
+      {% csrf_token %}
       {{ form.as_p }}
       <input class="btn btn-primary" type="submit" value="Ja" />
-      <a class="btn btn-default" href="javascript:history.go(-1)">
-        {% trans "No" %}
-      </a>
+      <a class="btn btn-default" href="javascript:history.go(-1)">{% trans "No" %}</a>
     </form>
   </div>
 {% endblock %}

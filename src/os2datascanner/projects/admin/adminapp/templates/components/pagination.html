@@ -11,85 +11,98 @@
           {% object_interval object_list page_obj paginate_by %} {% trans "of" %} {{ page_obj.paginator.count }}
         </span>
         {% if is_paginated %}
-        <div class="pages">
-          {% if page_obj.previous_page_number != 0 %}
-            <a class="link link--pre flex" href="#" name="page-button"
-              hx-get="{{ request.path }}" 
-              hx-target=".content" hx-select=".content"
-              hx-swap="outerHTML" hx-trigger="click" 
-              hx-include="#dropdown_options"
-              hx-vals='{"page": "{{ page_obj.previous_page_number }}"}'
-            >
-              <i id="chevron_left" class="material-icons">chevron_left</i>
-              {% trans "Previous" %}
-            </a>
-          {% else %}
-            <a class="link--pre disabled flex">
-              <i id="chevron_left" class="material-icons">chevron_left</i>
-              {% trans "Previous" %}
-            </a>
-          {% endif %}
+          <div class="pages">
+            {% if page_obj.previous_page_number != 0 %}
+              <a class="link link--pre flex"
+                 href="#"
+                 name="page-button"
+                 hx-get="{{ request.path }}"
+                 hx-target=".content"
+                 hx-select=".content"
+                 hx-swap="outerHTML"
+                 hx-trigger="click"
+                 hx-include="#dropdown_options"
+                 hx-vals='{"page": "{{ page_obj.previous_page_number }}"}'>
+                <i id="chevron_left" class="material-icons">chevron_left</i>
+                {% trans "Previous" %}
+              </a>
+            {% else %}
+              <a class="link--pre disabled flex">
+                <i id="chevron_left" class="material-icons">chevron_left</i>
+                {% trans "Previous" %}
+              </a>
+            {% endif %}
 
-          {% if paginator.num_pages > 1 %}
-            {% for n in paginator.page_range %}
-              {% if page_obj.number|add:'-2' == n %} <!-- If current page -2 = 1 (n)  -->
-                {# First page #}
-                <a class="page" href="#" name="page-button"
-                  hx-get="{{ request.path }}" 
-                  hx-target=".content" hx-select=".content"
-                  hx-swap="outerHTML" hx-trigger="click" 
-                  hx-include="#dropdown_options"
-                  hx-vals='{"page": "1"}'
-                >1</a>
-                {% if n != 1 %}
-                  <span class="page--dot">...</span>
-                {% endif %}
-              {% elif page_obj.number == n %}
-                {# Current page #}
-                <a class="page page--active" href="#">{{ n }}</a>
+            {% if paginator.num_pages > 1 %}
+              {% for n in paginator.page_range %}
+                {% if page_obj.number|add:'-2' == n %}
+                  <!-- If current page -2 = 1 (n)  -->
+                  {# First page #}
+                  <a class="page"
+                     href="#"
+                     name="page-button"
+                     hx-get="{{ request.path }}"
+                     hx-target=".content"
+                     hx-select=".content"
+                     hx-swap="outerHTML"
+                     hx-trigger="click"
+                     hx-include="#dropdown_options"
+                     hx-vals='{"page": "1"}'>1</a>
+                  {% if n != 1 %}<span class="page--dot">...</span>{% endif %}
+                {% elif page_obj.number == n %}
+                  {# Current page #}
+                  <a class="page page--active" href="#">{{ n }}</a>
                   {# Set how many pages on each side of current page #}
-              {% elif page_obj.number|add:'-2' < n and n < page_obj.number|add:'2' %} {# Pages around current page #}
-                  <a class="page" href="#" name="page-button"
-                    hx-get="{{ request.path }}" 
-                    hx-target=".content" hx-select=".content"
-                    hx-swap="outerHTML" hx-trigger="click" 
-                    hx-include="#dropdown_options"
-                    hx-vals='{"page": "{{ n }}"}'
-                  >{{ n }}</a>
-              {% elif page_obj.number|add:'2' == n %}
-                {# Last page #}
-                {% if page_obj.number != paginator.num_pages %}
-                  <span class="page--dot">...</span>
+                {% elif page_obj.number|add:'-2' < n and n < page_obj.number|add:'2' %}
+                  {# Pages around current page #}
+                  <a class="page"
+                     href="#"
+                     name="page-button"
+                     hx-get="{{ request.path }}"
+                     hx-target=".content"
+                     hx-select=".content"
+                     hx-swap="outerHTML"
+                     hx-trigger="click"
+                     hx-include="#dropdown_options"
+                     hx-vals='{"page": "{{ n }}"}'>{{ n }}</a>
+                {% elif page_obj.number|add:'2' == n %}
+                  {# Last page #}
+                  {% if page_obj.number != paginator.num_pages %}<span class="page--dot">...</span>{% endif %}
+                  <a class="page"
+                     href="#"
+                     name="page-button"
+                     hx-get="{{ request.path }}"
+                     hx-target=".content"
+                     hx-select=".content"
+                     hx-swap="outerHTML"
+                     hx-trigger="click"
+                     hx-include="#dropdown_options"
+                     hx-vals='{"page": "{{ paginator.num_pages }}"}'>{{ paginator.num_pages }}</a>
                 {% endif %}
-                  <a class="page" href="#" name="page-button"
-                    hx-get="{{ request.path }}" 
-                    hx-target=".content" hx-select=".content"
-                    hx-swap="outerHTML" hx-trigger="click" 
-                    hx-include="#dropdown_options"
-                    hx-vals='{"page": "{{ paginator.num_pages }}"}'
-                  >{{ paginator.num_pages }}</a>
-              {% endif %}
-            {% endfor %}
-          {% endif %}
+              {% endfor %}
+            {% endif %}
 
-          {% if page_obj.number != page_obj.paginator.num_pages %}
-          <a class="link link--next flex" href="#" name="page-button"
-            hx-get="{{ request.path }}" 
-            hx-target=".content" hx-select=".content"
-            hx-swap="outerHTML" hx-trigger="click" 
-            hx-include="#dropdown_options"
-            hx-vals='{"page": "{{ page_obj.next_page_number }}"}'
-          >
-            {% trans "Next" %}
-            <i id="chevron_right" class="material-icons">chevron_right</i>
-          </a>
-          {% else %}
-          <a class="link--next disabled flex">
-            {% trans "Next" %}
-            <i id="chevron_right" class="material-icons">chevron_right</i>
-          </a>
-          {% endif %}
-        </div>
+            {% if page_obj.number != page_obj.paginator.num_pages %}
+              <a class="link link--next flex"
+                 href="#"
+                 name="page-button"
+                 hx-get="{{ request.path }}"
+                 hx-target=".content"
+                 hx-select=".content"
+                 hx-swap="outerHTML"
+                 hx-trigger="click"
+                 hx-include="#dropdown_options"
+                 hx-vals='{"page": "{{ page_obj.next_page_number }}"}'>
+                {% trans "Next" %}
+                <i id="chevron_right" class="material-icons">chevron_right</i>
+              </a>
+            {% else %}
+              <a class="link--next disabled flex">
+                {% trans "Next" %}
+                <i id="chevron_right" class="material-icons">chevron_right</i>
+              </a>
+            {% endif %}
+          </div>
         {% endif %}
 
         {% include "components/load-results.html" %}

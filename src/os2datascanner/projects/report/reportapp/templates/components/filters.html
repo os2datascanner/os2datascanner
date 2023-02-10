@@ -1,132 +1,114 @@
 {% load i18n %}
 {% load l10n %}
 
-<form id="filter_form" name='filter_form'
-      hx-target=".content" 
-      hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}" 
-      hx-swap="innerHTML" 
-      hx-trigger="change" 
+<form id="filter_form"
+      name='filter_form'
+      hx-target=".content"
+      hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
+      hx-swap="innerHTML"
+      hx-trigger="change"
       hx-include="[id='dropdown_options']"
-      hx-indicator="#report-page-indicator"
->
+      hx-indicator="#report-page-indicator">
   <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
   <input type="hidden" name="order" id="order" value="{{ order }}">
 
   <div class="match_filtering_wrapper">
-      <div>
-          <button type="button" class="match_filtering_clear_button" name="clear_scannerjob"
-                  hx-trigger="click"
-                  hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}" 
-                  hx-swap="innerHTML"
-                  hx-target=".content"
-                  hx-include="[id='filter_form'], [id='dropdown_options']"
-                  hx-params="not scannerjob"
-                  hx-indicator="#report-page-indicator"
-          >
-            {% trans "Clear" %}
-          </button>
-          <label for="scannerjobs" class="match_filtering_label">
-            {% trans "Scan" %}
-          </label>
-      </div>
-      <div class="match_filtering dropdown">
-          <select name="scannerjob" id="scannerjobs" autocomplete="off"
-          >
-            <option value="all"
-                    {% if scannerjobs|last == "all" %}
-                        selected="selected"
-                    {% endif %} >
-                    {% trans "All scannerjobs" %}
-            </option>
-              {% for scan in scannerjobs|first %}
-                  <option value="{{ scan.scanner_job_pk|unlocalize }}"
-                          {% if request.GET.scannerjob == scan.scanner_job_pk|stringformat:"i" %}
-                            selected="selected"
-                          {% endif %} >
-                      {{ scan.scanner_job_name }} ({{ scan.total }})
-                  </option>
-               {% endfor %}
-          </select>
-      </div>
+    <div>
+      <button type="button"
+              class="match_filtering_clear_button"
+              name="clear_scannerjob"
+              hx-trigger="click"
+              hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
+              hx-swap="innerHTML"
+              hx-target=".content"
+              hx-include="[id='filter_form'], [id='dropdown_options']"
+              hx-params="not scannerjob"
+              hx-indicator="#report-page-indicator">
+        {% trans "Clear" %}
+      </button>
+      <label for="scannerjobs" class="match_filtering_label">{% trans "Scan" %}</label>
+    </div>
+    <div class="match_filtering dropdown">
+      <select name="scannerjob" id="scannerjobs" autocomplete="off">
+        <option value="all"
+                {% if scannerjobs|last == "all" %} selected="selected"{% endif %}>
+          {% trans "All scannerjobs" %}
+        </option>
+        {% for scan in scannerjobs|first %}
+          <option value="{{ scan.scanner_job_pk|unlocalize }}"
+                  {% if request.GET.scannerjob == scan.scanner_job_pk|stringformat:"i" %} selected="selected" {% endif %}>
+            {{ scan.scanner_job_name }} ({{ scan.total }})
+          </option>
+        {% endfor %}
+      </select>
+    </div>
   </div>
 
   <div class="match_filtering_wrapper">
-      <div>
-          <button type="button" class="match_filtering_clear_button" name="clear_sensitivities"
-          hx-trigger="click"
-          hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}" 
-          hx-swap="innerHTML"
-          hx-target=".content"
-          hx-include="[id='filter_form'], [id='dropdown_options']"
-          hx-params="not sensitivities"
-          hx-indicator="#report-page-indicator"
-  >
-            {% trans "Clear" %}
-          </button>
-          <label for="sensitivities" class="match_filtering_label">
-            {% trans "Sensitivity" %}
-          </label>
-      </div>
-      <div class="match_filtering dropdown">
-          <select name="sensitivities" id="sensitivities" autocomplete="off"
-          >
-            <option value="all"
-                    {% if sensitivities|last == "all" %}
-                        selected="selected"
-                    {% endif %} >
-              {% trans "All sensitivities" %}
-            </option>
-              {% for sensitivity in sensitivities|first %}
-                  <option value="{{ sensitivity.0.value|stringformat:"i" }}"
-                        {% if sensitivities|last == sensitivity.0.value|stringformat:"i" %}
-                            selected="selected"
-                        {% endif %} >
-                        {{ sensitivity.0.presentation }}
-                        ({{ sensitivity.1 }})
-                  </option>
-               {% endfor %}
-          </select>
-      </div>
+    <div>
+      <button type="button"
+              class="match_filtering_clear_button"
+              name="clear_sensitivities"
+              hx-trigger="click"
+              hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
+              hx-swap="innerHTML"
+              hx-target=".content"
+              hx-include="[id='filter_form'], [id='dropdown_options']"
+              hx-params="not sensitivities"
+              hx-indicator="#report-page-indicator">
+        {% trans "Clear" %}
+      </button>
+      <label for="sensitivities" class="match_filtering_label">{% trans "Sensitivity" %}</label>
+    </div>
+    <div class="match_filtering dropdown">
+      <select name="sensitivities" id="sensitivities" autocomplete="off">
+        <option value="all"
+                {% if sensitivities|last == "all" %} selected="selected"{% endif %}>
+          {% trans "All sensitivities" %}
+        </option>
+        {% for sensitivity in sensitivities|first %}
+          <option value="{{ sensitivity.0.value|stringformat:"i" }}"
+                  {% if sensitivities|last == sensitivity.0.value|stringformat:"i" %} selected="selected" {% endif %}>
+            {{ sensitivity.0.presentation }}
+            ({{ sensitivity.1 }})
+          </option>
+        {% endfor %}
+      </select>
+    </div>
   </div>
 
   {% if request.path == "/archive" %}
-  <div class="match_filtering_wrapper">
+    <div class="match_filtering_wrapper">
       <div>
-          <button type="button" class="match_filtering_clear_button" name="clear_resolution_status"
-          hx-trigger="click"
-          hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}" 
-          hx-swap="innerHTML"
-          hx-target=".content"
-          hx-include="[id='filter_form'], [id='dropdown_options']"
-          hx-params="not resolution_status"
-          hx-indicator="#report-page-indicator"
-  >
-            {% trans "Clear" %}
-          </button>
-          <label for="resolution_status" class="match_filtering_label">
-            {% trans "Resolution Status" %}
-          </label>
+        <button type="button"
+                class="match_filtering_clear_button"
+                name="clear_resolution_status"
+                hx-trigger="click"
+                hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
+                hx-swap="innerHTML"
+                hx-target=".content"
+                hx-include="[id='filter_form'], [id='dropdown_options']"
+                hx-params="not resolution_status"
+                hx-indicator="#report-page-indicator">
+          {% trans "Clear" %}
+        </button>
+        <label for="resolution_status" class="match_filtering_label">{% trans "Resolution Status" %}</label>
       </div>
       <div class="match_filtering dropdown">
-          <select name="resolution_status" id="resolution_status" autocomplete="off"
-          >
-            <option value="all"
-                    {% if resolution_status|last == "all" %}
-                        selected="selected"
-                    {% endif %} >
-              {% trans "All resolution statuses" %}
+        <select name="resolution_status" id="resolution_status" autocomplete="off">
+          <option value="all"
+                  {% if resolution_status|last == "all" %} selected="selected"{% endif %}>
+            {% trans "All resolution statuses" %}
+          </option>
+          {% for method in resolution_status|first %}
+            <option value="{{ method.resolution_status|stringformat:"i" }}"
+                    {% if resolution_status|last == method.resolution_status|stringformat:"i" %} selected="selected" {% endif %}>
+              {{ method.resolution_label }} ({{ method.total }})
             </option>
-              {% for method in resolution_status|first %}
-                  <option value="{{ method.resolution_status|stringformat:"i" }}"
-                        {% if resolution_status|last == method.resolution_status|stringformat:"i" %}
-                            selected="selected"
-                        {% endif %} >
-                        {{ method.resolution_label }} ({{ method.total }})
-                  </option>
-              {% endfor %}
-          </select>
+          {% endfor %}
+        </select>
       </div>
-  </div>
+    </div>
   {% endif %}
 
 
@@ -138,10 +120,11 @@
           If we used the checkbox, unticking it would make it disappear from the form's GET action
         {% endcomment %}
         <input type="hidden" id="30-days" name="30-days" value="{{ 30_days }}">
-        <input type="checkbox" id="30-days-toggle" class="30-days-toggle" {% if 30_days == "true" %}checked{% endif %}>
-        <label for="30-days-toggle">
-          {% trans "Include results, that are less than 30 days old" %}
-        </label>
+        <input type="checkbox"
+               id="30-days-toggle"
+               class="30-days-toggle"
+               {% if 30_days == "true" %}checked{% endif %}>
+        <label for="30-days-toggle">{% trans "Include results, that are less than 30 days old" %}</label>
       </div>
     </div>
   </div>

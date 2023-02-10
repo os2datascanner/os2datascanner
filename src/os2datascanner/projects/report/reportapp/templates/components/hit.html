@@ -96,7 +96,7 @@
                   {% trans "Copy folder path" %}
                 </button>
               {% endif %}
-              {% if type == 'smbc' or type == 'web'%}
+              {% if type == 'smbc' or type == 'web' %}
                 <button type="button"
                         class="button btn-{{ document_report.pk|unlocalize }}"
                         data-clipboard-text="{{ document_report.matches.handle|find_parent:type|present }}">

@@ -3,28 +3,51 @@
 {% load i18n %}
 
 {% block scripts %}
-<script src="{% static 'js/rule-builder.js' %}"></script>
+  <script src="{% static 'js/rule-builder.js' %}"></script>
 {% endblock %}
 
 <div class="rule-container">
   <div data-template="rule_selector" id="select_slot"></div>
 </div>
 
-<textArea id="id_rule" class="watcher" data-selector="#select_slot" data-function="stringifyRule" name="{{ widget.name }}" readonly>{{ widget.value }}</textArea>
+<textArea id="id_rule"
+          class="watcher"
+          data-selector="#select_slot"
+          data-function="stringifyRule"
+          name="{{ widget.name }}"
+          readonly>{{ widget.value }}</textArea>
 
 <div id="__templates" style="display: none">
   <span id="blank"></span>
   <span id="rule_selector">
     <select class="rule_selector">
-      <option value="" selected>--</option>
-      <option value="AndRule">{% trans "all of" %}</option>
-      <option value="OrRule">{% trans "one of" %}</option>
-      <option value="NotRule">{% trans "not" %}</option>
-      <option value="CPRRule">{% trans "CPR-nr." %}</option>
-      <option value="RegexRule">{% trans "regular expression" %}</option>
-      <option value="CustomRule_Health">{% trans "health information" %}</option>
-      <option value="CustomRule_Name">{% trans "names" %}</option>
-      <option value="CustomRule_Address">{% trans "address" %}</option>
+      <option value="" selected>
+        --
+      </option>
+      <option value="AndRule">
+        {% trans "all of" %}
+      </option>
+      <option value="OrRule">
+        {% trans "one of" %}
+      </option>
+      <option value="NotRule">
+        {% trans "not" %}
+      </option>
+      <option value="CPRRule">
+        {% trans "CPR-nr." %}
+      </option>
+      <option value="RegexRule">
+        {% trans "regular expression" %}
+      </option>
+      <option value="CustomRule_Health">
+        {% trans "health information" %}
+      </option>
+      <option value="CustomRule_Name">
+        {% trans "names" %}
+      </option>
+      <option value="CustomRule_Address">
+        {% trans "address" %}
+      </option>
     </select>
     <span></span>
   </span>
@@ -38,7 +61,11 @@
   <span id="AndRule">
     <br>
     (<span data-template="rule_selector"></span>
-    <input class="prepender" data-template-name="and_fragment" type="button" value="+">)
+    <input class="prepender"
+           data-template-name="and_fragment"
+           type="button"
+           value="+">
+    )
   </span>
 
   <span id="or_fragment">
@@ -50,7 +77,11 @@
   <span id="OrRule">
     <br>
     (<span data-template="rule_selector"></span>
-    <input class="prepender" data-template-name="or_fragment" type="button" value="+">)
+    <input class="prepender"
+           data-template-name="or_fragment"
+           type="button"
+           value="+">
+    )
   </span>
 
   <span id="NotRule">
@@ -58,10 +89,10 @@
   </span>
 
   <span id="CPRRule" class="cpr-rule">
-    
+ 
     (
 
-    {% trans "with" %} 
+    {% trans "with" %}
 
     <label class="cpr-rule-specs">
       <input type="checkbox" checked>
@@ -78,8 +109,8 @@
     <label class="cpr-rule-specs">
       <input type="checkbox" checked>
       {% trans "contextcheck" %}
-    </label> 
-    
+    </label>
+ 
     )
 
   </span>

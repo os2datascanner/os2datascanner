@@ -8,15 +8,12 @@
 
 {% block body %}
   <div class="container">
-    <p>
-      {% trans "This action cannot be undone. Are you sure you want to delete this report?" %}
-    </p>
-    <form action="" method="post">{% csrf_token %}
+    <p>{% trans "This action cannot be undone. Are you sure you want to delete this report?" %}</p>
+    <form action="" method="post">
+      {% csrf_token %}
       {{ form.as_p }}
       <input class="btn btn-primary" type="submit" value="Ja" />
-      <a class="btn btn-default" href="javascript:history.go(-1)">
-        {% trans "No" %}
-      </a>
+      <a class="btn btn-default" href="javascript:history.go(-1)">{% trans "No" %}</a>
     </form>
   </div>
 {% endblock %}

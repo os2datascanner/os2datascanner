@@ -6,22 +6,24 @@
   template by the parser. Feel free to try to find a better solution, but know
   that a considerable amount of hours has already been spent trying to solve this.
 {% endcomment %}
-<form></form>
-<form class="dropdown" id="dropdown_options" name="dropdown_options"
-        hx-trigger="change"
-        hx-target=".content"
-        hx-swap="outerHTML"
-        hx-get="{{ request.path }}"
->
+<form>
+</form>
+<form class="dropdown"
+      id="dropdown_options"
+      name="dropdown_options"
+      hx-trigger="change"
+      hx-target=".content"
+      hx-swap="outerHTML"
+      hx-get="{{ request.path }}">
 
   <input type="hidden" name="page" id="page" value={{ page_obj.number }}>
 
   <select name="paginate_by" id="paginate_by">
-        {% for option in paginate_by_options %}
-            <option value="{{ option }}"
-            {% if option == paginate_by %} selected="selected"{% endif %}>
-                {{ option }} {% trans "per page" %}
-            </option>
-        {% endfor %}
+    {% for option in paginate_by_options %}
+      <option value="{{ option }}"
+              {% if option == paginate_by %} selected="selected"{% endif %}>
+        {{ option }} {% trans "per page" %}
+      </option>
+    {% endfor %}
   </select>
 </form>

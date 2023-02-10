@@ -1,83 +1,66 @@
 {% load i18n %}
 {% if page == 'scannerjob' %}
-{% if user.is_authenticated %}
-<div class="scrollbar-content">
-    <div class="tabs">
+  {% if user.is_authenticated %}
+    <div class="scrollbar-content">
+      <div class="tabs">
         {% if settings.ENABLE_WEBSCAN %}
-        <a id="web" class="tabs__control" href="/webscanners/">
-            {% trans "Webscanner" %}
-        </a>
+          <a id="web" class="tabs__control" href="/webscanners/">{% trans "Webscanner" %}</a>
         {% endif %}
         {% if settings.ENABLE_FILESCAN %}
-        <a id="file" class="tabs__control" href="/filescanners/">
-            {% trans "Filescanner" %}
-        </a>
+          <a id="file" class="tabs__control" href="/filescanners/">{% trans "Filescanner" %}</a>
         {% endif %}
         {% if settings.ENABLE_EXCHANGESCAN %}
-        <a id="exchange" class="tabs__control" href="/exchangescanners/">
-            {% trans "Exchangescanner" %}
-        </a>
+          <a id="exchange" class="tabs__control" href="/exchangescanners/">{% trans "Exchangescanner" %}</a>
         {% endif %}
         {% if settings.ENABLE_DROPBOXSCAN %}
-        <a id="dropbox" class="tabs__control" href="/dropboxscanners/">
-            {% trans "Dropboxscanner" %}
-        </a>
+          <a id="dropbox" class="tabs__control" href="/dropboxscanners/">{% trans "Dropboxscanner" %}</a>
         {% endif %}
         {% if settings.ENABLE_MSGRAPH_MAILSCAN %}
-        <a id="msgraph-mail" class="tabs__control" href="/msgraph-mailscanners/">
-            {% trans "Office 365 mailscanner" %}
-        </a>
+          <a id="msgraph-mail" class="tabs__control" href="/msgraph-mailscanners/">{% trans "Office 365 mailscanner" %}</a>
         {% endif %}
         {% if settings.ENABLE_MSGRAPH_FILESCAN %}
-        <a id="msgraph-file" class="tabs__control" href="/msgraph-filescanners/">
+          <a id="msgraph-file" class="tabs__control" href="/msgraph-filescanners/">
             {% trans "Office 365 OneDrive filscanner" %}
-        </a>
+          </a>
         {% endif %}
         {% if settings.ENABLE_MSGRAPH_CALENDARSCAN %}
-        <a id="msgraph-calendar" class="tabs__control" href="/msgraph-calendarscanners/">
+          <a id="msgraph-calendar"
+             class="tabs__control"
+             href="/msgraph-calendarscanners/">
             {% trans "Office 365 kalenderscanner" %}
-        </a>
+          </a>
         {% endif %}
         {% if settings.ENABLE_GOOGLEDRIVESCAN %}
-        <a id="googledrive" class="tabs__control" href="/googledrivescanners/">
-            {% trans "Google Drive scanner" %}
-        </a>
+          <a id="googledrive" class="tabs__control" href="/googledrivescanners/">{% trans "Google Drive scanner" %}</a>
         {% endif %}
         {%  if settings.ENABLE_GMAILSCAN %}
-        <a id="gmail" class="tabs__control" href="/gmailscanners/">
-            {% trans "Gmailscanner" %}
-        </a>
+          <a id="gmail" class="tabs__control" href="/gmailscanners/">{% trans "Gmailscanner" %}</a>
         {% endif %}
         {%  if settings.ENABLE_SBSYSSCAN %}
-        <a id="sbsys" class="tabs__control" href="/sbsysscanners/">
-            {% trans "Sbsysscanner" %}
-        </a>
+          <a id="sbsys" class="tabs__control" href="/sbsysscanners/">{% trans "Sbsysscanner" %}</a>
         {% endif %}
+      </div>
     </div>
-</div>
-{% endif %}
+  {% endif %}
 {% endif %}
 
 {% if page == 'scan-status' %}
-<div class="tabs" name="status_tabs_poll" id="status_tabs_poll"
-     hx-get="{% url "status" %}"
-     hx-swap="outerHTML"
-     hx-target="#new_errors"
-     hx-trigger="{{ delay }}"
-     hx-select="#new_errors"
->
-    <a id="scan-status" class="tabs__control" href="/status/">
-        {% trans "Scans in progress" %}
-    </a>
-    <a id="completed" class="tabs__control" href="/status-completed/">
-        {% trans "Completed scans" %}
-    </a>
-    <a id="error-log" class="tabs__control" href="/error-log/">
-        {% trans "Error Log" %}
-    </a>
-    <span id="new_errors">{% if new_error_logs > 0 %}<span class="bubble offset">{{ new_error_logs }}</span>{% endif %}</span>
+  <div class="tabs"
+       name="status_tabs_poll"
+       id="status_tabs_poll"
+       hx-get="{% url "status" %}"
+       hx-swap="outerHTML"
+       hx-target="#new_errors"
+       hx-trigger="{{ delay }}"
+       hx-select="#new_errors">
+    <a id="scan-status" class="tabs__control" href="/status/">{% trans "Scans in progress" %}</a>
+    <a id="completed" class="tabs__control" href="/status-completed/">{% trans "Completed scans" %}</a>
+    <a id="error-log" class="tabs__control" href="/error-log/">{% trans "Error Log" %}</a>
+    <span id="new_errors">
+      {% if new_error_logs > 0 %}<span class="bubble offset">{{ new_error_logs }}</span>{% endif %}
+    </span>
     <!-- <a id="upcoming" class="tabs__control" href="#">Kommende scanninger</a> -->
-</div>
+  </div>
 {% endif %}
 
 <script>

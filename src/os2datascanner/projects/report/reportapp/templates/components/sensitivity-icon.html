@@ -1,11 +1,11 @@
 {% load handle_extras %}
 
 {% if sensitivity.value == 250 %}
-    {% include "components/svg-icons/notification.svg" %}
-    {% elif sensitivity.value == 500 %}
-    {% include "components/svg-icons/warning.svg" %}
-    {% elif sensitivity.value == 750 %}
-    {% include "components/svg-icons/problem.svg" %}
-    {% elif sensitivity.value == 1000 %}
-    {% include "components/svg-icons/critical.svg" %}
+  {% include "components/svg-icons/notification.svg" %}
+{% elif sensitivity.value == 500 %}
+  {% include "components/svg-icons/warning.svg" %}
+{% elif sensitivity.value == 750 %}
+  {% include "components/svg-icons/problem.svg" %}
+{% elif sensitivity.value == 1000 %}
+  {% include "components/svg-icons/critical.svg" %}
 {% endif %}

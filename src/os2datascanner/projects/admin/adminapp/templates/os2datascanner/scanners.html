@@ -8,187 +8,172 @@
 {% endblock %}
 
 {% block body %}
-{% include "partials/header.html" %}
-<main class="wrapper">
-  {% include "partials/main.html" with active_tab="home" %}
+  {% include "partials/header.html" %}
+  <main class="wrapper">
+    {% include "partials/main.html" with active_tab="home" %}
 
-  <div class="content">
+    <div class="content">
 
-    {% include "os2datascanner/scanner_tabs.html" with page="scannerjob"  %}
+      {% include "os2datascanner/scanner_tabs.html" with page="scannerjob"  %}
 
-    <div class="aside">
-      <h1 class="page-title">
-        {% trans "Scannerjob" %}
-      </h1>
+      <div class="aside">
+        <h1 class="page-title">{% trans "Scannerjob" %}</h1>
 
-      <div class="btn">
-        <a
-        class="button button--cta"
-        href="/{{ view.type }}scanners/add/"
-        title="{% trans 'Add scannerjob' %}">
-        <svg class="icon icon--white">
-          <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
-        </svg>
-          <span>
-            {% trans "Add scannerjob" %}
-          </span>
-        </a>
+        <div class="btn">
+          <a class="button button--cta"
+             href="/{{ view.type }}scanners/add/"
+             title="{% trans 'Add scannerjob' %}">
+            <svg class="icon icon--white">
+              <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
+            </svg>
+            <span>{% trans "Add scannerjob" %}</span>
+          </a>
+        </div>
       </div>
-    </div>
 
-    {% if scanner_list %}
-    <div class="datatable-wrapper card {% if view.type == 'file' and user.is_superuser %}xl{% else %}lg{% endif %}" role="region" tabindex="0" aria-label="{% trans 'Scannerjob' %}">
-      <table class="datatable">
-        <colgroup>
-          <col class="datatable__column--name">
-          {% if user.is_superuser %}
-          <col class="datatable__column--org">
-          {% endif %}
-          {% if view.type == 'file' %}
-          <col class="datatable__column--drive">
-          {% endif %}
-          <col class="datatable__column--validated">
-          <col class="datatable__column--automatic">
-          <col class="datatable__column--actions">
-        </colgroup>
-        <thead>
-          <tr>
-            <th class="datatable__column--name">
-              {% trans "Name/URL" %}
-            </th>
-            {% if user.is_superuser %}
-            <th class="datatable__column--org">
-              {% trans "Organization" %}
-            </th>
-            {% endif %}
-            {% if view.type == 'file' %}
-            <th class="datatable__column--drive">
-              {% trans "Drive" %}
-            </th>
-            {% endif %}
-            <th class="datatable__column--validated">
-              {% trans "Approved" %}
-            </th>
-            <th class="datatable__column--automatic">
-              {% trans "Automatic" %}
-            </th>
-            <th class="datatable__column--actions">
-              {% trans "Action" %}
-            </th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {% for scanner in scanner_list %}
-          <tr tabindex="0">
-
-            <td class="domain-url datatable__column--name">
-              <div>{{scanner.name}}</div>
-              <div style="margin-top: 0.5rem;"><small>{{scanner.url}}</small></div>
-            </td>
-            {% if user.is_superuser %}
-            <td class="scanner-organization datatable__column--org">{{scanner.organization}}</td>
-            {% endif %}
-
-            {% if view.type == 'file' %}
-            <td class="domain-letter datatable__column--drive">
-              {% if scanner.alias %}
-              {{ scanner.alias }}{% if ":" not in scanner.alias %}:{% endif %}
-              {% endif %}
-            </td>
-            {% endif %}
-
-            <td class="domain-validation datatable__column--validated">
-              {% if scanner.validation_status %}
-              <span class="flex flex--icon">
-                <span class="flex--width flex--width--icon">
-                  <i id="done" title="{% trans 'Is approved' %}" class="material-icons">done</i>
-                </span>
-                <span>
-                  {% trans "Yes" %}
-                </span>
-              </span>
-              {% else %}
-              <span class="flex flex--icon">
-                <span class="flex--width flex--width--icon">
-                  <i id="clear" title="{% trans 'Is not approved' %}" class="material-icons">clear</i>
-                </span>
-                <span>
-                  {% trans "No" %}
-                </span>
-              </span>
-              {% endif %}
-            </td>
-
-            <td class="scanner-runtime datatable__column--automatic">
-              {{ scanner.schedule_description|truncatechars:20 }}
-            </td>
-
-            <td class="scanner-actions datatable__column--actions">
-              <div class="action-wrapper">
-                <a
-                href="#run-scanner-modal"
-                data-modal="modal:open"
-                data-src="/{{ view.type }}scanners/{{scanner.pk}}/askrun/"
-                class="button button--small button--grey"
-                title="{% trans 'Run' %}">
-                  <svg class="icon">
-                    <use xlink:href="/static/svg/symbol-defs.svg#icon-play"></use>
-                  </svg>
-                </a>
-
-                <a
-                href="/{{ view.type }}scanners/{{scanner.pk}}"
-                class="button button--small button--grey"
-                title="{% trans 'Edit' %}">
-                  <svg class="icon">
-                    <use xlink:href="/static/svg/symbol-defs.svg#icon-pencil"></use>
-                  </svg>
-                </a>
-
-               <a
-                href="/{{ view.type }}scanners/{{scanner.pk}}/copy"
-                class="button button--small button--grey"
-                title="Kopiér">
-                  <svg class="icon">
-                    <use xlink:href="/static/svg/symbol-defs.svg#icon-copy"></use>
-                  </svg>
-                </a>
-
-                {% if not scanner.scans %}
-                <form action="/{{ view.type }}scanners/{{scanner.pk}}/delete/" method="post" style="display: inline-block;">
-                  {% csrf_token %}
-                  {{ form.as_p }}
-                  <button
-                  type="submit"
-                  class="button button--small button--grey"
-                  onclick="return confirm('{% trans "Do you really want to delete this scanner?" %}\n\n{{scanner.name}}\n\n{% trans "The action cannot be reversed" %}')"
-                  title="{% trans 'Delete' %}">
-                  <svg class="icon">
-                    <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
-                  </svg>
-                </button>
-                </form>
+      {% if scanner_list %}
+        <div class="datatable-wrapper card {% if view.type == 'file' and user.is_superuser %}xl{% else %}lg{% endif %}"
+             role="region"
+             tabindex="0"
+             aria-label="{% trans 'Scannerjob' %}">
+          <table class="datatable">
+            <colgroup>
+              <col class="datatable__column--name">
+              {% if user.is_superuser %}<col class="datatable__column--org">{% endif %}
+              {% if view.type == 'file' %}<col class="datatable__column--drive">{% endif %}
+              <col class="datatable__column--validated">
+              <col class="datatable__column--automatic">
+              <col class="datatable__column--actions">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="datatable__column--name">{% trans "Name/URL" %}</th>
+                {% if user.is_superuser %}
+                  <th class="datatable__column--org">{% trans "Organization" %}</th>
                 {% endif %}
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+                {% if view.type == 'file' %}
+                  <th class="datatable__column--drive">{% trans "Drive" %}</th>
+                {% endif %}
+                <th class="datatable__column--validated">{% trans "Approved" %}</th>
+                <th class="datatable__column--automatic">{% trans "Automatic" %}</th>
+                <th class="datatable__column--actions">{% trans "Action" %}</th>
+              </tr>
+            </thead>
 
-    {% else %}
-    <p>
-      {% trans "No scannerjob added" %}
-    </p>
-    {% endif %}
-  </div>
-</main>
+            <tbody>
+              {% for scanner in scanner_list %}
+                <tr tabindex="0">
+
+                  <td class="domain-url datatable__column--name">
+                    <div>{{ scanner.name }}</div>
+                    <div style="margin-top: 0.5rem;">
+                      <small>{{ scanner.url }}</small>
+                    </div>
+                  </td>
+                  {% if user.is_superuser %}
+                    <td class="scanner-organization datatable__column--org">{{ scanner.organization }}</td>
+                  {% endif %}
+
+                  {% if view.type == 'file' %}
+                    <td class="domain-letter datatable__column--drive">
+                      {% if scanner.alias %}
+                        {{ scanner.alias }}
+                        {% if ":" not in scanner.alias %}
+                          :
+                        {% endif %}
+                      {% endif %}
+                    </td>
+                  {% endif %}
+
+                  <td class="domain-validation datatable__column--validated">
+                    {% if scanner.validation_status %}
+                      <span class="flex flex--icon">
+                        <span class="flex--width flex--width--icon">
+                          <i id="done" title="{% trans 'Is approved' %}" class="material-icons">done</i>
+                        </span>
+                        <span>{% trans "Yes" %}</span>
+                      </span>
+                    {% else %}
+                      <span class="flex flex--icon">
+                        <span class="flex--width flex--width--icon">
+                          <i id="clear"
+                             title="{% trans 'Is not approved' %}"
+                             class="material-icons">clear</i>
+                        </span>
+                        <span>{% trans "No" %}</span>
+                      </span>
+                    {% endif %}
+                  </td>
+
+                  <td class="scanner-runtime datatable__column--automatic">{{ scanner.schedule_description|truncatechars:20 }}</td>
+
+                  <td class="scanner-actions datatable__column--actions">
+                    <div class="action-wrapper">
+                      <a href="#run-scanner-modal"
+                         data-modal="modal:open"
+                         data-src="/{{ view.type }}scanners/{{ scanner.pk }}/askrun/"
+                         class="button button--small button--grey"
+                         title="{% trans 'Run' %}">
+                        <svg class="icon">
+                          <use xlink:href="/static/svg/symbol-defs.svg#icon-play"></use>
+                        </svg>
+                      </a>
+
+                      <a href="/{{ view.type }}scanners/{{ scanner.pk }}"
+                         class="button button--small button--grey"
+                         title="{% trans 'Edit' %}">
+                        <svg class="icon">
+                          <use xlink:href="/static/svg/symbol-defs.svg#icon-pencil"></use>
+                        </svg>
+                      </a>
+
+                      <a href="/{{ view.type }}scanners/{{ scanner.pk }}/copy"
+                         class="button button--small button--grey"
+                         title="Kopiér">
+                        <svg class="icon">
+                          <use xlink:href="/static/svg/symbol-defs.svg#icon-copy"></use>
+                        </svg>
+                      </a>
+
+                      {% if not scanner.scans %}
+                        <form action="/{{ view.type }}scanners/{{ scanner.pk }}/delete/"
+                              method="post"
+                              style="display: inline-block">
+                          {% csrf_token %}
+                          {{ form.as_p }}
+                          <button type="submit"
+                                  class="button button--small button--grey"
+                                  onclick="return confirm('{% trans "Do you really want to delete this scanner?" %}\n\n{{ scanner.name }}\n\n{% trans "The action cannot be reversed" %}')"
+                                  title="{% trans 'Delete' %}">
+                            <svg class="icon">
+                              <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                            </svg>
+                          </button>
+                        </form>
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      {% else %}
+        <p>{% trans "No scannerjob added" %}</p>
+      {% endif %}
+    </div>
+  </main>
 {% endblock %}
 
 {% block modal %}
-<div class="modal" id="run-scanner-modal" tabindex="-1" role="dialog" aria-labelledby="run-scanner-modal-title" aria-hidden="true" data-href="/{{ view.type }}scanners/add/">
-  <iframe src="about:blank" frameborder="0"></iframe>
-</div>
+  <div class="modal"
+       id="run-scanner-modal"
+       tabindex="-1"
+       role="dialog"
+       aria-labelledby="run-scanner-modal-title"
+       aria-hidden="true"
+       data-href="/{{ view.type }}scanners/add/">
+    <iframe src="about:blank" frameborder="0"></iframe>
+  </div>
 {% endblock %}
