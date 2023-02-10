@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 11:34+0100\n"
+"POT-Creation-Date: 2023-02-10 10:31+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -67,27 +67,27 @@ msgstr "Personlig information"
 msgid "Important dates"
 msgstr "Vigtige datoer"
 
-#: reportapp/models/documentreport.py:30
+#: reportapp/models/documentreport.py:31
 msgid "Alias relation"
 msgstr "Alias relation"
 
-#: reportapp/models/documentreport.py:35
+#: reportapp/models/documentreport.py:36
 msgid "scan time"
 msgstr "scanningstid"
 
-#: reportapp/models/documentreport.py:38
+#: reportapp/models/documentreport.py:39
 msgid "created timestamp"
 msgstr "oprettet tidsstempel"
 
-#: reportapp/models/documentreport.py:40
+#: reportapp/models/documentreport.py:41
 msgid "time last opened"
 msgstr "tidspunkt åbnet"
 
-#: reportapp/models/documentreport.py:44
+#: reportapp/models/documentreport.py:45
 msgid "organization"
 msgstr "organisation"
 
-#: reportapp/models/documentreport.py:47
+#: reportapp/models/documentreport.py:48
 msgid "path"
 msgstr "sti"
 
