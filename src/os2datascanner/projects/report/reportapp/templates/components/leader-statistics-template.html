@@ -140,7 +140,7 @@
               <tr class="user-overview" hidden>
                 <td colspan="4">
                   <div class="overview_wrapper"
-                       hx-get="{% url "statistics-user" employee.account.uuid %}"
+                       hx-get="{% url "statistics-user-id" employee.account.uuid %}"
                        hx-trigger="intersect"
                        hx-swap="outerHTML"
                        hx-target="this"

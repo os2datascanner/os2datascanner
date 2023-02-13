@@ -33,7 +33,7 @@
       the User/Account merger!)
       {% endcomment %}
       <li class="user-overview">
-        <a href="{% url "statistics-user" request.user.account.uuid %}"
+        <a href="{% url "statistics-user-me" %}"
            class="{% if '/statistics/user/' in request.path %}active{% endif %}">
           {% include "components/svg-icons/bar_chart.svg" %}
           <span class="width">{% trans "My Overview" %}</span>

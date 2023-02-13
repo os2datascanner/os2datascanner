@@ -729,6 +729,14 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
     model = Account
     context_object_name = "account"
 
+    def get_object(self, queryset=None):
+        if self.kwargs.get(self.pk_url_kwarg) is None:
+            try:
+                self.kwargs[self.pk_url_kwarg] = self.request.user.account.uuid
+            except Account.DoesNotExist:
+                raise Http404()
+        return super().get_object(queryset)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -787,9 +795,19 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
-        associated = Account.objects.filter(pk=pk, user=request.user)
-        if request.user.is_superuser or associated or Account.objects.get(
-                pk=pk).managed_by(request.user.account):
+        account = Account.objects.filter(pk=pk).first()
+        try:
+            user_account = request.user.account
+        except Account.DoesNotExist:
+            user_account = None
+
+        if account:
+            owned = account.user == request.user
+            managed = user_account and account.managed_by(user_account)
+        else:
+            owned = managed = False
+
+        if request.user.is_superuser or owned or managed:
             return super().dispatch(request, *args, **kwargs)
         else:
             raise PermissionDenied
