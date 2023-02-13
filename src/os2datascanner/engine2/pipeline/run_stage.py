@@ -3,14 +3,12 @@ import sys
 import click
 import pstats
 import random
-import signal
 import logging
-import traceback
 from collections import deque
 
 from prometheus_client import Info, Summary, start_http_server, CollectorRegistry
 
-from os2datascanner.utils import profiling
+from os2datascanner.utils import debug, profiling
 from os2datascanner.utils.log_levels import log_levels
 from ... import __version__
 from ..model.core import SourceManager
@@ -21,11 +19,6 @@ from .utilities.pika import (ANON_QUEUE, RejectMessage, PikaPipelineThread)
 # __name__ is "__main__" in this context, which isn't quite what we want for
 # our position in the logging hierarchy
 logger = logging.getLogger("os2datascanner.engine2.pipeline.run_stage")
-
-
-def backtrace(signal, frame):
-    print("Got SIGUSR1, printing stacktrace:", file=sys.stderr)
-    traceback.print_stack()
 
 
 _module_mapping = {
@@ -187,7 +180,7 @@ restarting = False
                                    "worker"]))
 def main(log_level, enable_profiling, enable_metrics,
          prometheus_port, width, single_cpu, restart_after, stage):
-    signal.signal(signal.SIGUSR1, backtrace)
+    debug.register_backtrace_signal()
     module = _module_mapping[stage]
 
     # leave all loggers from external libraries at default(WARNING) level.
