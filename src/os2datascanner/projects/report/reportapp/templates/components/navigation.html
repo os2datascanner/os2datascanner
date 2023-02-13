@@ -26,13 +26,20 @@
         </a>
       </li>
     {% endfor %}
-    <li class="user-overview">
-      <a href="{% url "statistics-user" request.user.account.uuid %}"
-         class="{% if '/statistics/user/' in request.path %}active{% endif %}">
-        {% include "components/svg-icons/bar_chart.svg" %}
-        <span class="width">{% trans "My Overview" %}</span>
-      </a>
-    </li>
+    {% if request.user.account %}
+      {% comment %}
+      We can't display anything in the statistics overview without an Account,
+      so we shouldn't even mention it. (XXX: obviously this should go after
+      the User/Account merger!)
+      {% endcomment %}
+      <li class="user-overview">
+        <a href="{% url "statistics-user" request.user.account.uuid %}"
+           class="{% if '/statistics/user/' in request.path %}active{% endif %}">
+          {% include "components/svg-icons/bar_chart.svg" %}
+          <span class="width">{% trans "My Overview" %}</span>
+        </a>
+      </li>
+    {% endif %}
     <li class="profile">
       <a href="{% url "user" %}"
          class="{% if request.path == "/user/" %}active{% endif %}">
