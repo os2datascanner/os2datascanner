@@ -9,6 +9,9 @@
 - DocumentReport's now store "owner" in a separate, indexed, text field. 
   Thus allowing for faster database lookups, greatly improving page-load performance when result-relations are evaluated.
 
+- The four varieties of collector process now also support the `SIGUSR1`
+  signal, printing a backtrace when they receive it.
+
 ### Bugfixes
 
 - Users without an associated `Account` object can once more log into the

@@ -1,9 +1,7 @@
 """Runs background jobs."""
 
-import sys
 import signal
 from typing import Optional
-import traceback
 
 from django.db import transaction
 from django.core.management.base import BaseCommand

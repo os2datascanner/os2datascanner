@@ -11,6 +11,7 @@ from django.core.management.base import BaseCommand
 
 from prometheus_client import Summary, start_http_server
 
+from os2datascanner.utils import debug
 from os2datascanner.utils.log_levels import log_levels
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
@@ -136,6 +137,8 @@ class Command(BaseCommand):
                 choices=log_levels.keys())
 
     def handle(self, *args, log, **options):
+        debug.register_backtrace_signal()
+
         # Change formatting to include datestamp
         fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
