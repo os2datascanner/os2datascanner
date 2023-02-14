@@ -39,12 +39,6 @@ variables:
   API_IMAGE: ${CI_REGISTRY_IMAGE}/api:${CI_COMMIT_SHA}
   DOCKERFILE_DIR: ${CI_PROJECT_DIR}/docker/base
 
-default:
-  # TODO: Opt in to running on kubernetes runners. Remove this when kubernetes
-  # is the default runners. https://redmine.magenta-aps.dk/issues/42309
-  tags:
-    - kubernetes
-
 
 # Lint stage
 #############
