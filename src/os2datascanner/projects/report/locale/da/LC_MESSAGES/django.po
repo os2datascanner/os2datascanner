@@ -161,7 +161,7 @@ msgstr "Kontaktperson"
 
 #: reportapp/models/roles/dpo.py:17
 msgid "DPO overview"
-msgstr "DPO overblik"
+msgstr "DPO-overblik"
 
 #: reportapp/models/roles/dpo.py:23
 msgid "DPO"
@@ -173,7 +173,7 @@ msgstr "DPO'er"
 
 #: reportapp/models/roles/leader.py:14
 msgid "Leader overview"
-msgstr "Leder overblik"
+msgstr "Lederoverblik"
 
 #: reportapp/models/roles/leader.py:20
 msgid "leader"
@@ -246,7 +246,7 @@ msgstr "gå til forsiden"
 
 #: reportapp/templates/components/dpo-statistics-template.html:7
 msgid "DPO statistics"
-msgstr "DPO statistik"
+msgstr "DPO-statistik"
 
 #: reportapp/templates/components/dpo-statistics-template.html:27
 #: reportapp/templates/components/filters.html:39
@@ -828,7 +828,7 @@ msgid ""
 "system administrator."
 msgstr ""
 "Kontakt din systemadministrator, hvis du mener du bør have adgang til "
-"denneapplikation."
+"denne applikation."
 
 #: reportapp/templates/django_saml2_auth/signout.html:6
 msgid "Signed out"
@@ -897,7 +897,7 @@ msgid ""
 msgstr ""
 "Af sikkerhedsårsager kan OS2datascanner ikke interagere med dine filer eller "
 "e-mails på nogen måde. Af denne grund er det nødvendigt manuelt at slette "
-"eller på anden måde håndtere den matchede fil. Tryk på 'Håndtér'-knappen i "
+"eller på anden måde håndtere den matchede fil. 'Håndtér'-knappen i "
 "OS2datascanner fjerner kun matchet fra oversigten."
 
 #: reportapp/templates/manual.html:92

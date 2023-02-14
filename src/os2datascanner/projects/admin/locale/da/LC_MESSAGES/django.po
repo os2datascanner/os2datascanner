@@ -513,7 +513,7 @@ msgstr "pr. side"
 
 #: adminapp/templates/components/navigation.html:11
 msgid "Scanner status"
-msgstr "Scanner status"
+msgstr "Scannerstatus"
 
 #: adminapp/templates/components/navigation.html:19
 #: adminapp/templates/os2datascanner/scan_completed.html:77
@@ -543,7 +543,7 @@ msgstr "organisationer"
 
 #: adminapp/templates/components/navigation.html:53
 msgid "Report module"
-msgstr "Rapport modul"
+msgstr "Rapportmodul"
 
 #: adminapp/templates/components/navigation.html:62
 msgid "Administration"
