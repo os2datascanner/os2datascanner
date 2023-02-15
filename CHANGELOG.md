@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.18.2, <DATE>
+## Version 3.18.2, 15th February 2023
 
 "Quick Fact Check"
 
