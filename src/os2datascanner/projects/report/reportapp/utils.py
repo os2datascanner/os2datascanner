@@ -7,7 +7,6 @@ import structlog
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models import Q
 from mozilla_django_oidc import auth
 from django.utils.translation import ugettext_lazy as _
 
@@ -260,20 +259,11 @@ def create_alias_and_match_relations(sub_alias):
     # Although RFC 5321 says that the local part of an email address
     # -- the bit to the left of the @ --
     # is case sensitive, the real world disagrees..
-
     if sub_alias.alias_type == AliasType.EMAIL:
-        reports = DocumentReport.objects.filter(
-            Q(raw_metadata__metadata__contains={"email-account": sub_alias.value.lower()}) |
-            Q(raw_metadata__metadata__contains={"msgraph-owner-account": sub_alias.value.lower()})
-        )
-    elif sub_alias.alias_type == AliasType.SID:
-        reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
-                        "filesystem-owner-sid": sub_alias.value})
-    # TODO: web-domain should have its own AliasType, not use GENERIC
-    # TODO: Perhaps Alias should have a field with these key strings instead as well.
-    elif sub_alias.alias_type == AliasType.GENERIC:
-        reports = DocumentReport.objects.filter(raw_metadata__metadata__contains={
-                        "web-domain": sub_alias.value})
+        reports = DocumentReport.objects.filter(owner=sub_alias.value.lower())
+    else:
+        reports = DocumentReport.objects.filter(owner=sub_alias.value)
+
     tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk)
                             for r in reports], ignore_conflicts=True)
 

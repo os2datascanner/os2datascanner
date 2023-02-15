@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 3.18.2, <DATE>
+
+"Quick Fact Check"
+
+### General improvements
+
+- DocumentReport's now store "owner" in a separate, indexed, text field. 
+  Thus allowing for faster database lookups, greatly improving page-load performance when result-relations are evaluated.
+
 ## Version 3.18.1, 10th February 2023
 
 ### Bugfixes
