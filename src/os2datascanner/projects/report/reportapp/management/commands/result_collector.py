@@ -74,10 +74,24 @@ def result_message_received_raw(body):
     yield from []
 
 
+def owner_from_metadata(message: messages.MetadataMessage) -> str:
+    owner = ""
+    if (email := message.metadata.get("email-account")
+            or message.metadata.get("msgraph-owner-account")):
+        owner = email
+    if adsid := message.metadata.get("filesystem-owner-sid"):
+        owner = adsid
+    if web_domain := message.metadata.get("web-domain"):
+        owner = web_domain
+
+    return owner
+
+
 def handle_metadata_message(scan_tag, result):
     # Evaluate the queryset that is updated later to lock it.
     message = messages.MetadataMessage.from_json_object(result)
     path = crunch(message.handle)
+    owner = owner_from_metadata(message)
 
     DocumentReport.objects.select_for_update(
         of=('self',)
@@ -109,7 +123,8 @@ def handle_metadata_message(scan_tag, result):
                 "scanner_job_name": scan_tag.scanner.name,
                 "only_notify_superadmin": scan_tag.scanner.test,
                 "resolution_status": None,
-                "organization": get_org_from_scantag(scan_tag)
+                "organization": get_org_from_scantag(scan_tag),
+                "owner": owner,
             })
     create_aliases(dr)
     return dr
@@ -123,6 +138,7 @@ def create_aliases(obj):
     if not metadata:
         return
 
+    # TODO: Could use DR's "owner" field too, might be a small benefit.
     if (email := metadata.metadata.get("email-account")
             or metadata.metadata.get("msgraph-owner-account")):
         email_alias = Alias.objects.filter(_alias_type="email", _value__iexact=email)

@@ -87,6 +87,12 @@ class DocumentReport(models.Model):
         verbose_name='Underret kun superadmin',
     )
 
+    owner = models.TextField(
+        blank=True,
+        null=True,
+        db_index=True
+    )
+
     def __str__(self):
         return self.name
 
