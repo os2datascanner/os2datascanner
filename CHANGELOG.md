@@ -9,6 +9,11 @@
 - DocumentReport's now store "owner" in a separate, indexed, text field. 
   Thus allowing for faster database lookups, greatly improving page-load performance when result-relations are evaluated.
 
+### Bugfixes
+
+- Users without an associated `Account` object can once more log into the
+  report module.
+
 ## Version 3.18.1, 10th February 2023
 
 ### Bugfixes
