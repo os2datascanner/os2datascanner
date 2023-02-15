@@ -1,9 +1,7 @@
 """Runs background jobs."""
 
-import sys
 import signal
 from typing import Optional
-import traceback
 
 from django.db import transaction
 from django.core.management.base import BaseCommand
@@ -12,6 +10,7 @@ from prometheus_client import CollectorRegistry, Enum, push_to_gateway
 from django.conf import settings
 
 from ...models.background_job import JobState, BackgroundJob
+from os2datascanner.utils import debug
 from os2datascanner.utils.log_levels import log_levels
 
 import time
@@ -80,11 +79,6 @@ def _get_org(j: BackgroundJob):
         return None
 
 
-def backtrace(signal, frame):
-    print("Got SIGUSR1, printing stacktrace:", file=sys.stderr)
-    traceback.print_stack()
-
-
 class Command(BaseCommand):
     help = __doc__
 
@@ -129,7 +123,7 @@ class Command(BaseCommand):
             raise BackgroundJob.MustStop()
 
         signal.signal(signal.SIGTERM, _handler)
-        signal.signal(signal.SIGUSR1, backtrace)
+        debug.register_backtrace_signal()
 
         count = 0
         errors = 0
