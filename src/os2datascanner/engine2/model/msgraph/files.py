@@ -1,7 +1,6 @@
 from io import BytesIO
 from contextlib import contextmanager
 from dateutil.parser import isoparse
-
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
 from .utilities import MSGraphSource, warn_on_httperror
@@ -205,10 +204,15 @@ class MSGraphFileHandle(Handle):
     def __init__(self, source, path, weblink=None):
         super().__init__(source, path)
         self._weblink = weblink
+        self._path = path
+
+    @property
+    def path(self):
+        return self._path
 
     @property
     def presentation_name(self):
-        return self.relative_path
+        return str(self.name)
 
     @property
     def presentation_url(self):
@@ -216,7 +220,7 @@ class MSGraphFileHandle(Handle):
 
     @property
     def presentation_place(self):
-        return str(self.source.handle)
+        return f"{str(self.path.removesuffix(self.name))} of {str(self.source.handle)}"
 
     def censor(self):
         return MSGraphFileHandle(self.source.censor(), self.relative_path, self._weblink)
