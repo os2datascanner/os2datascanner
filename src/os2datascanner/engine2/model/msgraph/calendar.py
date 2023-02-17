@@ -1,7 +1,8 @@
 from io import BytesIO
+import pytz
 from contextlib import contextmanager
+import datetime
 from dateutil.parser import isoparse
-from django.utils import timezone
 
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
@@ -177,8 +178,8 @@ class MSGraphCalendarEventHandle(Handle):
     @property
     def start(self):
         if self._start:
-            date = timezone.datetime.strptime(self._start["dateTime"], "%Y-%m-%dT%H:%M:%S.%f0")
-            tz = timezone.pytz.timezone(self._start["timeZone"])
+            date = datetime.strptime(self._start["dateTime"], "%Y-%m-%dT%H:%M:%S.%f0")
+            tz = pytz.timezone(self._start["timeZone"])
             tz.localize(date)
             return date.strftime('%H:%M %-d/%-m/%y')
         else:
