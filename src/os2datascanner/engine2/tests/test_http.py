@@ -397,7 +397,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "scrape links without using sitemap"
 
         with SourceManager() as sm:
-            presentation = [h.presentation for h in site["source"].handles(sm)]
+            presentation = [str(h) for h in site["source"].handles(sm)]
         self.assertCountEqual(
             presentation,
             site["handles"],
@@ -408,7 +408,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "Use sitemap and no scraping"
 
         with SourceManager() as sm:
-            presentation = [h.presentation for h in mapped_site["source"].handles(sm)]
+            presentation = [str(h) for h in mapped_site["source"].handles(sm)]
         self.assertCountEqual(
             presentation,
             mapped_site["handles"],
@@ -419,7 +419,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "Testing for a subdomain that is not part of the _equiv_domains in http.py "
 
         with resolve_any_to_localhost(), SourceManager() as sm:
-            presentation = [h.presentation for h in no_equivalent_mapped_site["source"].handles(sm)]
+            presentation = [str(h) for h in no_equivalent_mapped_site["source"].handles(sm)]
         self.assertCountEqual(
             presentation,
             no_equivalent_mapped_site["handles"],
@@ -430,7 +430,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "Redirect http://www.localhost to http://localhost"
 
         with resolve_any_to_localhost(), SourceManager() as sm:
-            presentation = [h.presentation for h in equivalent_mapped_site["source"].handles(sm)]
+            presentation = [str(h) for h in equivalent_mapped_site["source"].handles(sm)]
         self.assertCountEqual(
             presentation,
             equivalent_mapped_site["handles"],
@@ -442,7 +442,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
 
         with SourceManager() as sm:
             presentation = [
-                h.presentation for h in embedded_mapped_site["source"].handles(sm)
+                str(h) for h in embedded_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
             presentation,
@@ -455,7 +455,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
 
         with SourceManager() as sm:
             presentation = [
-                h.presentation for h in indexed_mapped_site["source"].handles(sm)
+                str(h) for h in indexed_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
             presentation,
@@ -471,7 +471,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         # > 'Content-type': 'application/gzip', 'Content-Length': '157'
         with SourceManager() as sm:
             presentation = [
-                h.presentation for h in compressed_mapped_site["source"].handles(sm)
+                str(h) for h in compressed_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
             presentation,
@@ -484,7 +484,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
 
         with SourceManager() as sm:
             presentation = [
-                h.presentation for h in excluded_mapped_site["source"].handles(sm)
+                str(h) for h in excluded_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
             presentation,
@@ -497,7 +497,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
 
         with SourceManager() as sm:
             presentation = [
-                h.presentation for h in external_links_mapped_site["source"].handles(sm)
+                str(h) for h in external_links_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
             presentation,
@@ -522,7 +522,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "Test that new handles are created correctly if the source contains a path"
         with SourceManager() as sm:
             presentation = [
-                h.presentation for h in source_with_path_site["source"].handles(sm)
+                str(h) for h in source_with_path_site["source"].handles(sm)
             ]
         self.assertCountEqual(
             presentation,
@@ -533,7 +533,7 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "Test that new handles are created correctly if the source contains a path"
         with SourceManager() as sm:
             presentation = [
-                h.presentation for h in source_with_path_mapped_site["source"].handles(sm)
+                str(h) for h in source_with_path_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
             presentation,
@@ -698,13 +698,13 @@ class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
             for h in external_links_mapped_site["source"].handles(sm):
                 try:
                     if h.follow(sm).check():
-                        follow.append(h.presentation)
+                        follow.append(str(h))
                     else:
-                        nfollow.append(h.presentation)
+                        nfollow.append(str(h))
                 except RequestException as e:
                     print(
-                        f"got an expected exception for {h.presentation}:\n{e}")
-                    nerror.append(h.presentation)
+                        f"got an expected exception for {str(h)}:\n{e}")
+                    nerror.append(str(h))
 
         # We could use unittest internal Exception handling
         # with self.assertRaises(RequestException) as e:
