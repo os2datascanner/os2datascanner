@@ -3,7 +3,7 @@ from lxml.etree import ParserError
 
 from .types import OutputType
 from .registry import conversion
-from ..model.http import make_outlinks
+from ..model.utilities.crawler import make_outlinks
 
 logger = logging.getLogger(__name__)
 

@@ -1,4 +1,15 @@
+import re
 from abc import ABC, abstractmethod
+from lxml.html import document_fromstring
+from lxml.etree import ParserError
+from urllib.parse import urlsplit, urlunsplit, SplitResult
+import logging
+import requests
+
+from os2datascanner.engine2.conversions.types import Link
+from ...utilities.backoff import WebRetrier
+
+logger = logging.getLogger(__name__)
 
 
 class Crawler(ABC):
@@ -21,9 +32,9 @@ class Crawler(ABC):
     def add(self, obj, ttl: int = None, **hints):
         """Adds an object to be visited.
 
-        Subclasses should err on the side of calling this function too often
-        than not often enough: Crawler.visit will take care of the details of
-        filtering repeated objects out.
+        Once an object has been added, there is an expectation that it will
+        eventually be yielded by Crawler.visit. To avoid that, subclasses can
+        override this method to add additional checks.
 
         Any keyword arguments passed to this function will be passed on (in a
         dict) to the Crawler.visit_one function."""
@@ -45,16 +56,139 @@ class Crawler(ABC):
         yield from ()
 
     def visit(self):
-        """Visits all of the objects added to this Crawler, and recursively
-        visits """
+        """Recursively visits all of the objects added to this Crawler."""
         while self.to_visit:
             (head, ttl, hints), *self.to_visit = self.to_visit
             self._visiting = head
             try:
                 adapted = self._adapt(head)
                 if ttl > 0 and adapted not in self.visited:
-                    print("***", head, ttl, hints)
                     yield from self.visit_one(head, ttl, hints)
                     self.visited.add(adapted)
             finally:
                 self._visiting = None
+
+
+def make_outlinks(
+        content: str,  # HTML page content
+        where: str):  # URL of page
+    try:
+        doc = document_fromstring(content)
+        doc.make_links_absolute(where, resolve_base_href=True)
+        for element, _attr, link, _pos in doc.iterlinks():
+            if (element.tag in ("a", "img",)
+                    and element.get("rel") != "nofollow"):
+                yield Link(link, link_text=element.text)
+    except ParserError:
+        # Silently drop ParserErrors, but only for empty documents
+        if content and not content.isspace():
+            logger.error("{0}: unexpected ParserError".format(where),
+                         exc_info=True)
+
+
+_equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
+# match whole words (\bWORD1\b | \bWORD2\b) and escape to handle metachars.
+# It is important to match whole words; www.magenta.dk should be .magenta.dk, not
+# .agta.dk
+_equiv_domains_re = re.compile(
+    r"\b" + r"\b|\b".join(map(re.escape, _equiv_domains)) + r"\b"
+)
+
+
+def netloc_normalize(netloc: str) -> str:
+    return _equiv_domains_re.sub("", netloc).strip(".")
+
+
+def simplify_mime_type(mime):
+    return mime.split(';', maxsplit=1)[0]
+
+
+class WebCrawler(Crawler):
+    def __init__(
+            self, url: str, session: requests.Session, timeout: float = None,
+            *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._url = url
+        self._split_url = urlsplit(url)
+        self._session = session
+        self._timeout = timeout
+        self._retrier = WebRetrier()
+        self.exclusions = set()
+
+    def get(self, *args, **kwargs):
+        return self._retrier.run(self._session.get, *args, **kwargs)
+
+    def head(self, *args, **kwargs):
+        return self._retrier.run(self._session.head, *args, **kwargs)
+
+    def exclude(self, *exclusions):
+        self.exclusions.update(exclusions)
+
+    def _adapt(self, url: str):
+        url_s = urlsplit(url)
+        return urlunsplit(
+                SplitResult(
+                        url_s.scheme,
+                        url_s.netloc,
+                        url_s.path or "/",
+                        url_s.query,
+                        ""))  # Drop the fragment -- we don't care about it
+
+    def add(self, url: str, ttl: int = None, **hints):
+        # Unconditionally drop URL fragments whereever we find them
+        if (hp := url.find("#")) != -1:
+            url = url[:hp]
+
+        if (any(url.startswith(f"{scheme}:") for scheme in ("http", "https",))
+                and not any(url.startswith(excl) for excl in self.exclusions)):
+            return super().add(url, ttl, **hints)
+
+    def is_local(self, url: str):
+        """Indicates whether or not the given URL belongs to the same domain
+        as the base URL of this WebCrawler (or a sufficiently similar one)."""
+        url_s = urlsplit(url)
+        surl_s = self._split_url
+        return (
+            url_s.scheme in ("http", "https")
+            and (url_s.scheme == surl_s.scheme
+                 or (surl_s.scheme == "http" and url_s.scheme == "https"))
+            and netloc_normalize(
+                    url_s.netloc) == netloc_normalize(surl_s.netloc))
+
+    def is_crawlable(self, url: str):
+        """Indicates whether or not the given URL is potentially a target for
+        recursive exploration by this WebCrawler."""
+        url_s = urlsplit(url)
+        surl_s = self._split_url
+        return (
+            self.is_local(url)
+            and (not surl_s.path
+                 or url_s.path.startswith(surl_s.path)))
+
+    def visit_one(self, url: str, ttl: int, hints):  # noqa CCR001
+        if ttl > 0 and self.is_crawlable(url) and not self._frozen:
+            response = self.head(url, timeout=self._timeout)
+
+            if response.status_code == 405:
+                # The server doesn't support HEAD requests? That's odd. Oh,
+                # well, let's use GET instead
+                response = self.get(url, timeout=self._timeout)
+
+            if response.status_code == 200:
+                ct = response.headers.get(
+                        "Content-Type", "application/octet-stream")
+                if simplify_mime_type(ct).lower() == "text/html":
+                    if not response.content:
+                        response = self.get(url, timeout=self._timeout)
+                    for link in make_outlinks(response.content, url):
+                        # We only emit local links *covered by this crawler*
+                        # (and remote links, so they can be checked)
+                        if (self.is_crawlable(link.url)
+                                or not self.is_local(link.url)):
+                            self.add(link.url, ttl - 1)
+            elif response.is_redirect and response.next:
+                # Redirects cost a TTL point *and* don't produce anything
+                self.add(response.next.url, ttl - 1)
+                return
+
+        yield (hints, url)
