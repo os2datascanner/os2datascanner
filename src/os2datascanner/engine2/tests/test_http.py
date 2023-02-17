@@ -13,8 +13,8 @@ from urllib3.util import connection
 
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import Handle, SourceManager
-from os2datascanner.engine2.model.http import (
-        WebSource, WebHandle, make_outlinks)
+from os2datascanner.engine2.model.http import (WebSource, WebHandle)
+from os2datascanner.engine2.model.utilities.crawler import make_outlinks
 from os2datascanner.engine2.model.utilities.sitemap import (
     process_sitemap_url, _get_url_data)
 from os2datascanner.engine2.utilities.datetime import parse_datetime
@@ -177,6 +177,13 @@ source_with_path_mapped_site = {
     "handles": [
         "http://localhost:64346/undermappe/",
         "http://localhost:64346/undermappe/index.html",
+    ]
+}
+source_with_anchors = {
+    "source": WebSource("http://localhost:64346/anchors"),
+    "handles": [
+        "http://localhost:64346/anchors/",
+        "http://localhost:64346/anchors/index2.html",
     ]
 }
 
@@ -540,6 +547,16 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
             source_with_path_mapped_site["handles"],
             "mapped Source with path should produce 2 handles")
 
+    def test_page_with_anchor_links(self):
+        with SourceManager() as sm:
+            presentation = [
+                str(h) for h in source_with_anchors["source"].handles(sm)
+            ]
+        self.assertCountEqual(
+            presentation,
+            source_with_anchors["handles"],
+            "links identical but for their anchors should be unified")
+
 
 class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
     def test_sitemap_lm(self):
@@ -747,20 +764,22 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 first_thing = next(handles)
                 second_thing = next(handles)
 
-            self.assertTrue(
-                first_thing.referrer is None,
+            self.assertIsNone(
+                first_thing.referrer,
                 "{0}: base url without sitemap have a referrer".format(
                     first_thing))
             self.assertTrue(
                 second_thing.referrer,
                 "{0}: followed link doesn't have a referrer".format(
                     second_thing))
-            self.assertTrue(
-                second_thing.referrer is first_thing,
+            self.assertEqual(
+                second_thing.referrer,
+                first_thing,
                 "{0}: followed link doesn't have base url as referrer".format(
                     second_thing))
-            self.assertTrue(
-                second_thing.base_referrer is first_thing,
+            self.assertEqual(
+                second_thing.base_referrer,
+                first_thing,
                 "{0}: followed link doesn't have base url as base_referrer".format(
                     second_thing))
 
