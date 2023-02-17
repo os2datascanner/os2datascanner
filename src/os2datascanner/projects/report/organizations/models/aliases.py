@@ -11,7 +11,6 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-from uuid import uuid4
 from django.db import models
 from django.contrib.auth.models import User
 from rest_framework import serializers
@@ -26,17 +25,6 @@ from ..serializer import BaseSerializer
 
 class Alias(Core_Alias):
     """ Core logic lives in the core_organizational_structure app. """
-
-    # For historical reasons we overwrite this field and set it to not be PK.
-    # In the admin module (and core_org), it is the PK of aliases. We need it for synchronization
-    # purposes - but since reportapp's previous implementation of aliases had an Integer PK,
-    # and thus all its relations to documentreports containing that, we keep the PK an int here.
-    uuid = models.UUIDField(
-        default=uuid4,
-        primary_key=False,
-        editable=False,
-        verbose_name=_('alias ID'),
-    )
 
     user = models.ForeignKey(User, null=False, verbose_name=_('user'),
                              on_delete=models.CASCADE, related_name="aliases")
