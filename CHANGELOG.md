@@ -2,6 +2,12 @@
 
 ## Next release
 
+"Beep boop"
+
+### General improvements
+
+- All scanners are now always sorted alphabetically in the scanner lists.
+
 ### Bugfixes
 
 - Background jobs now only request confirmation from RabbitMQ once they're
