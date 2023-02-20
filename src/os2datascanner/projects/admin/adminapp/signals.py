@@ -15,11 +15,12 @@ logger = logging.getLogger(__name__)
 ppt = None
 
 
-def get_pika_thread() -> PikaPipelineThread:
+def get_pika_thread(init=True) -> PikaPipelineThread:
     """Returns a persistent PikaPipelineThread instance to be used when sending
     event broadcasts, creating (or recreating) one if necessary."""
     global ppt
-    if (not ppt  # first call
+    if init and (
+            not ppt  # first call
             or not ppt.ident  # thread never started(?)
             or not ppt.is_alive()):  # thread finished
         ppt = PikaPipelineThread(write=[settings.AMQP_EVENTS_TARGET])
@@ -76,9 +77,11 @@ def publish_events(events):
             ppt.enqueue_message(queue, json_event)
             logger.debug("Published to {0}: {1}".format(queue, json_event))
 
-        # Synchronise on the PikaPipelineThread event queue to make sure that
-        # the daemon thread doesn't stop before actually /sending/ any messages
-        ppt.synchronise(300.0)
+        if settings.AMQP_BROADCAST_SYNC is True:  # required due to #52325
+            # Synchronise on the PikaPipelineThread event queue to make sure
+            # that the daemon thread doesn't stop before actually /sending/ any
+            # messages
+            ppt.synchronise(300.0)
     except Exception:
         logger.error("event publication failed", exc_info=True)
 

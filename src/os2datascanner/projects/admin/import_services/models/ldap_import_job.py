@@ -2,6 +2,7 @@ from django.db import models
 
 from os2datascanner.utils.ldap import RDN
 
+from os2datascanner.projects.admin.adminapp.signals import get_pika_thread
 from ...core.models.background_job import BackgroundJob
 from .realm import Realm
 
@@ -49,3 +50,7 @@ class LDAPImportJob(BackgroundJob):
                 self.save()
 
         perform_import(self.realm, progress_callback=_callback)
+
+    def finish(self):
+        if (pe := get_pika_thread(init=False)):
+            pe.synchronise(600.0)

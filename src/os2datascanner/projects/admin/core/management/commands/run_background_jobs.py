@@ -205,6 +205,7 @@ class Command(BaseCommand):
                             push_to_gateway(
                                     gateway=PUSHGATEWAY_HOST,
                                     job='pushgateway', registry=REGISTRY)
+                        job.finish()
                 elif not single:
                     # We have no job to do and we're running in a loop. Sleep
                     # to avoid a busy-wait

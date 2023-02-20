@@ -200,6 +200,9 @@ AMQP_PIPELINE_TARGET = "os2ds_scan_specs"
 AMQP_CONVERSION_TARGET = "os2ds_conversions"
 AMQP_EVENTS_TARGET = "os2ds_events"
 
+# Automatically wait for RabbitMQ confirmation when sending broadcast messages?
+AMQP_BROADCAST_SYNC = true
+
 # [stats]
 SNAPSHOT_PARAMETER = 1.02
 
