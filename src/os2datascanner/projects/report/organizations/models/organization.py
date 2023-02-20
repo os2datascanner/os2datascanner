@@ -11,9 +11,7 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-from uuid import uuid4
 from rest_framework import serializers
-from django.db import models
 from os2datascanner.core_organizational_structure.models import Organization as Core_Organization
 
 from ..serializer import BaseSerializer
@@ -21,13 +19,6 @@ from ..serializer import BaseSerializer
 
 class Organization(Core_Organization):
     """ Core logic lives in the core_organizational_structure app. """
-
-    uuid = models.UUIDField(
-        primary_key=False,
-        default=uuid4,
-        editable=False,
-        verbose_name='UUID',
-    )
 
     @classmethod
     def from_json_object(cls, obj):
