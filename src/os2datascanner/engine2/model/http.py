@@ -106,7 +106,9 @@ class WebSource(Source):
     type_label = "web"
     eq_properties = ("_url",)
 
-    def __init__(self, url: str, sitemap: str = "", exclude=None):
+    def __init__(
+            self, url: str, sitemap: str = "", exclude=None,
+            sitemap_trusted=False):
 
         if exclude is None:
             exclude = []
@@ -115,6 +117,8 @@ class WebSource(Source):
         self._url = url.removesuffix("/")
         self._sitemap = sitemap
         self._exclude = exclude
+
+        self._sitemap_trusted = sitemap_trusted
 
     def _generate_state(self, sm):
         from ... import __version__
@@ -148,11 +152,19 @@ class WebSource(Source):
 
         for hints, url in wc.visit():
             referrer = hints.get("referrer")
+            r = WebHandle.make_handle(
+                    referrer, self._url) if referrer else None
+
             lm_hint = hints.get("lm_hint")
             r = WebHandle.make_handle(
                     referrer, self._url) if referrer else None
-            yield WebHandle.make_handle(
+            h = WebHandle.make_handle(
                     url, self._url, referrer=r, last_modified_hint=lm_hint)
+            # make_handle doesn't copy properties other than the URL into the
+            # new WebSource object, so fix up the references manually
+            if h.source == self:
+                h._source = self
+            yield h
 
     @property
     def url(self):
@@ -168,6 +180,7 @@ class WebSource(Source):
             url=self._url,
             sitemap=self._sitemap,
             exclude=self._exclude,
+            sitemap_trusted=self._sitemap_trusted
         )
 
     @staticmethod
@@ -177,7 +190,12 @@ class WebSource(Source):
             url=obj["url"],
             sitemap=obj.get("sitemap"),
             exclude=obj.get("exclude"),
+            sitemap_trusted=obj.get("sitemap_trusted", False)
         )
+
+    @property
+    def has_trusted_sitemap(self):
+        return self._sitemap and self._sitemap_trusted
 
 
 SecureWebSource = WebSource
@@ -201,6 +219,9 @@ class WebResource(FileResource):
             self.handle.presentation_url, timeout=TIMEOUT)
 
     def check(self) -> bool:
+        if self.handle.source.has_trusted_sitemap:
+            return True
+
         # This might raise an RequestsException, fx.
         # [Errno -2] Name or service not known' (dns)
         # [Errno 110] Connection timed out'     (no response)
@@ -229,6 +250,9 @@ class WebResource(FileResource):
         return self._mr
 
     def get_size(self):
+        if self.handle.source.has_trusted_sitemap:
+            return 0
+
         return int(self.unpack_header(check=True).get("content-length", 0))
 
     def get_last_modified(self):
