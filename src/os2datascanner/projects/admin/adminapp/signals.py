@@ -76,9 +76,11 @@ def publish_events(events):
             ppt.enqueue_message(queue, json_event)
             logger.debug("Published to {0}: {1}".format(queue, json_event))
 
-        # Synchronise on the PikaPipelineThread event queue to make sure that
-        # the daemon thread doesn't stop before actually /sending/ any messages
-        ppt.synchronise(300.0)
+        if settings.AMQP_BROADCAST_SYNC is True:  # required due to #52325
+            # Synchronise on the PikaPipelineThread event queue to make sure
+            # that the daemon thread doesn't stop before actually /sending/ any
+            # messages
+            ppt.synchronise(300.0)
     except Exception:
         logger.error("event publication failed", exc_info=True)
 
