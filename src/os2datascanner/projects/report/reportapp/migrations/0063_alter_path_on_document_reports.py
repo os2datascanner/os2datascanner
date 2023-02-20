@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
     migrations.AlterField(
             model_name='documentreport',
             name='path',
-            field=models.CharField(db_index=True, max_length=5000, verbose_name='path'),
+            field=models.CharField(db_index=True, max_length=20000, verbose_name='path'),
         ),
     migrations.RunPython(alter_path_field_on_document_reports, reverse_code=migrations.RunPython.noop)
   ]
