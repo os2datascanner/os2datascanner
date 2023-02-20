@@ -15,11 +15,12 @@ logger = logging.getLogger(__name__)
 ppt = None
 
 
-def get_pika_thread() -> PikaPipelineThread:
+def get_pika_thread(init=True) -> PikaPipelineThread:
     """Returns a persistent PikaPipelineThread instance to be used when sending
     event broadcasts, creating (or recreating) one if necessary."""
     global ppt
-    if (not ppt  # first call
+    if init and (
+            not ppt  # first call
             or not ppt.ident  # thread never started(?)
             or not ppt.is_alive()):  # thread finished
         ppt = PikaPipelineThread(write=[settings.AMQP_EVENTS_TARGET])

@@ -139,6 +139,7 @@ services:
       target: admin
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
+      - AMQP_BROADCAST_SYNC=false
     command: python manage.py run_background_jobs
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml

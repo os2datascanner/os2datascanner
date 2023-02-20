@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from os2datascanner.projects.admin.adminapp.signals import get_pika_thread
 from ...core.models.background_job import BackgroundJob
 
 logger = logging.getLogger(__name__)
@@ -106,3 +107,7 @@ class OS2moImportJob(BackgroundJob):
             logger.info("Received data from OS2mo. Processing.. \n")
 
             perform_os2mo_import(res, self.organization, progress_callback=_callback)
+
+    def finish(self):
+        if (pe := get_pika_thread(init=False)):
+            pe.synchronise(600.0)
