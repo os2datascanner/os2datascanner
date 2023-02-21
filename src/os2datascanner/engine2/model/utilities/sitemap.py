@@ -1,13 +1,11 @@
 from io import BytesIO
 from lxml import etree
 from typing import Tuple, Iterable, Optional, List
-from datetime import datetime
 import structlog
 import requests
 from os2datascanner.engine2.model.data import unpack_data_url
 
 from ... import settings as engine2_settings
-from ...utilities.datetime import parse_datetime
 from .utilities import convert_data_to_text
 
 # disable xml vulnerabilities, as described here
@@ -53,11 +51,12 @@ def _get_url_data(url: str, context=requests) -> Optional[bytes]:
         return None
 
 
-def process_sitemap_url(url: str, *, context=requests,  # noqa: CCR001, E501 too high cognitive complexity
-                        allow_sitemap: bool = True) -> Iterable[Tuple[str, Optional[datetime]]]:
+def process_sitemap_url(  # noqa: CCR001, E501 too high cognitive complexity
+        url: str, *, context=requests,
+        allow_sitemap: bool = True) -> Iterable[Tuple[str, dict]]:
 
     """Retrieves and parses the sitemap or sitemap index at the given URL and
-    yields zero or more (URL, last-modified) tuples.
+    yields zero or more (URL, hint dictionary) tuples.
 
     The given URL can use the "http", "https" or "data" schemes."""
 
@@ -82,10 +81,13 @@ def process_sitemap_url(url: str, *, context=requests,  # noqa: CCR001, E501 too
                     _xp(root, "/sitemap:urlset/sitemap:url[sitemap:loc]"),
                     start=1):
                 loc = _xp(url, "sitemap:loc/text()")[0].strip()
-                lm = None
+
+                hints = {}
+
                 for lastmod in _xp(url, "sitemap:lastmod/text()"):
-                    lm = parse_datetime(lastmod.strip())
-                yield (loc, lm)
+                    hints["last_modified"] = lastmod.strip()
+
+                yield (loc, hints)
             logger.debug("done processing", lines=_i, sitemap=base_url)
         elif _xp(root, "/sitemap:sitemapindex") and allow_sitemap:
             # This appears to be a sitemap index: iterate over all of the valid

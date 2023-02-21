@@ -4,7 +4,6 @@ import structlog
 from requests.sessions import Session
 from contextlib import contextmanager
 from typing import Optional, Union
-from datetime import datetime
 import re
 
 from .. import settings as engine2_settings
@@ -145,9 +144,9 @@ class WebSource(Source):
         wc.add(self._url)
 
         if self._sitemap:
-            for (address, last_modified) in process_sitemap_url(self._sitemap):
+            for (address, hints) in process_sitemap_url(self._sitemap):
                 if wc.is_crawlable(address):
-                    wc.add(address, lm_hint=last_modified)
+                    wc.add(address, **hints)
             wc.freeze()
 
         for hints, url in wc.visit():
@@ -155,11 +154,13 @@ class WebSource(Source):
             r = WebHandle.make_handle(
                     referrer, self._url) if referrer else None
 
-            lm_hint = hints.get("lm_hint")
+            new_hints = {
+                    k: v for k, v in hints.items()
+                    if k in ("last_modified",)}
             r = WebHandle.make_handle(
                     referrer, self._url) if referrer else None
             h = WebHandle.make_handle(
-                    url, self._url, referrer=r, last_modified_hint=lm_hint)
+                    url, self._url, referrer=r, hints=new_hints or None)
             # make_handle doesn't copy properties other than the URL into the
             # new WebSource object, so fix up the references manually
             if h.source == self:
@@ -256,12 +257,11 @@ class WebResource(FileResource):
         return int(self.unpack_header(check=True).get("content-length", 0))
 
     def get_last_modified(self):
-        lm_hint = self.handle.last_modified_hint
-        if not lm_hint:
+        if not (lm_hint := self.handle.hint("last_modified")):
             return self.unpack_header(check=True).setdefault(
                     OutputType.LastModified, super().get_last_modified())
         else:
-            return lm_hint
+            return OutputType.LastModified.decode_json_object(lm_hint)
 
     def compute_type(self):
         # At least for now, strip off any extra parameters the media type might
@@ -286,21 +286,16 @@ class WebHandle(Handle):
 
     eq_properties = Handle.BASE_PROPERTIES
 
-    def __init__(self, source: WebSource, path: str,
-                 referrer: Optional["WebHandle"] = None,
-                 last_modified_hint: Optional[datetime] = None):
+    def __init__(
+            self, source: WebSource, path: str,
+            referrer: Optional["WebHandle"] = None, hints=None):
         # path = path if path.startswith("/") else ("/" + path if path else "")
         path = path if path.startswith("/") else "/" + path
         super().__init__(source, path, referrer)
-        self._lm_hint = last_modified_hint
+        self._hints = hints
 
-    @property
-    def last_modified_hint(self) -> Optional[datetime]:
-        return self._lm_hint
-
-    @last_modified_hint.setter
-    def last_modified_hint(self, lm_hint: datetime):
-        self._lm_hint = lm_hint
+    def hint(self, key: str, default=None):
+        return self._hints.get(key, default) if self._hints else default
 
     @property
     def presentation_name(self):
@@ -329,22 +324,28 @@ class WebHandle(Handle):
         return self.presentation
 
     def censor(self):
-        return WebHandle(source=self.source.censor(), path=self.relative_path,
-                         referrer=self.referrer,
-                         last_modified_hint=self.last_modified_hint)
+        return WebHandle(
+                source=self.source.censor(), path=self.relative_path,
+                referrer=self.referrer, hints=self._hints)
 
     def to_json_object(self):
-        return dict(**super().to_json_object(), **{
-            "last_modified": OutputType.LastModified.encode_json_object(
-                    self.last_modified_hint),
-        })
+        return super().to_json_object() | {
+            "hints": self._hints,
+        }
 
     @staticmethod
     @Handle.json_handler(type_label)
     def from_json_object(obj):
-        lm_hint = obj.get("last_modified", None)
-        if lm_hint:
-            lm_hint = OutputType.LastModified.decode_json_object(lm_hint)
+        hints = None
+        if "hints" in obj:
+            hints = obj["hints"]
+        elif "last_modified" in obj:
+            # Prior to 2023-02-21, WebHandles only supported one hint, which
+            # had special treatment. Translate it to the new format
+            hints = {
+                "last_modified": obj["last_modified"]
+            }
+
         referrer = obj.get("referrer", None)
         if referrer:
             if isinstance(referrer, list):
@@ -364,9 +365,10 @@ class WebHandle(Handle):
                 referrer = WebHandle(WebSource(source_url), handle_path)
             else:
                 referrer = WebHandle.from_json_object(referrer)
+
         return WebHandle(
                 Source.from_json_object(obj["source"]), obj["path"],
-                referrer=referrer, last_modified_hint=lm_hint)
+                referrer=referrer, hints=hints)
 
     @classmethod
     def make_handle(

@@ -17,7 +17,6 @@ from os2datascanner.engine2.model.http import (WebSource, WebHandle)
 from os2datascanner.engine2.model.utilities.crawler import make_outlinks
 from os2datascanner.engine2.model.utilities.sitemap import (
     process_sitemap_url, _get_url_data)
-from os2datascanner.engine2.utilities.datetime import parse_datetime
 from os2datascanner.engine2.conversions.types import Link, OutputType
 from os2datascanner.engine2.conversions.registry import convert
 from os2datascanner.engine2.rules.links_follow import check
@@ -599,8 +598,8 @@ class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
 
         sitemap = "http://localhost:64346/sitemap_xxe.xml"
         self.assertEqual(
-            list(process_sitemap_url(sitemap)),
-            [('http://localhost:64346/?', None)],
+            [url for url, _ in process_sitemap_url(sitemap)],
+            ['http://localhost:64346/?'],
             "sitemap xml-parser is vulnerable to XXE(XML External Entity) injection."
             "Make sure to disable `resolve_entities` in the xml parser"
         )
@@ -811,14 +810,16 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
         h = WebHandle(
             source=WebSource("http://localhost:64346"),
             path="/hemmeligheder2.html",
-            last_modified_hint=parse_datetime("2011-12-01"))
+            hints={
+                "last_modified": "2011-12-01T00:00:00+00:00"
+            })
 
         h2 = Handle.from_json_object(h.to_json_object())
         # WebHandle equality doesn't include the referrer map or the
         # Last-Modified hint, so explicitly check that here
         self.assertEqual(
-                h.last_modified_hint,
-                h2.last_modified_hint,
+                h.hint("last_modified"),
+                h2.hint("last_modified"),
                 "Last-Modified hint didn't survive serialisation")
 
     def test_empty_page_handling(self):
