@@ -13,6 +13,8 @@
 - Background jobs now only request confirmation from RabbitMQ once they're
   finished and not after every message.
 
+- Resolution time for previously handled document reports now gets removed if the document report gets reverted.
+
 ## Version 3.18.2, 15th February 2023
 
 "Quick Fact Check"

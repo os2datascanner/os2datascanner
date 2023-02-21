@@ -346,15 +346,26 @@ class ArchiveView(MainPageView):
             htmx_trigger = self.request.headers.get("HX-Trigger-Name")
             if htmx_trigger == "revert-match":
                 revert_pk = self.request.POST.get("pk")
-                DocumentReport.objects.filter(
-                    pk=revert_pk).update(
-                    resolution_status=self.request.POST.get(
-                        'action', None))
+                dr = DocumentReport.objects.filter(pk=revert_pk)
+
+                res_status = self.request.POST.get('action')
+                updates = {
+                    'resolution_status': res_status
+                }
+                if res_status is None:
+                    updates['resolution_time'] = None
+                dr.update(**updates)
+
             elif htmx_trigger == "revert-matches":
-                DocumentReport.objects.filter(pk__in=self.request.POST.getlist(
-                    'table-checkbox')).update(
-                    resolution_status=self.request.POST.get(
-                        'action', None))
+                dr = DocumentReport.objects.filter(pk__in=self.request.POST.getlist(
+                    'table-checkbox'))
+                res_status = self.request.POST.get('action')
+                updates = {
+                    'resolution_status': res_status
+                }
+                if res_status is None:
+                    updates['resolution_time'] = None
+                dr.update(**updates)
 
         # Add a header value to the response before returning to initiate reload of some elements.
         response = HttpResponse()
