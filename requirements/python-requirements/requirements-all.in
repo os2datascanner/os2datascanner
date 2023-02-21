@@ -34,6 +34,7 @@ pytest-xdist
 pytest-benchmark
 python-dateutil
 python-magic
+pytz
 regex
 requests
 xattr
