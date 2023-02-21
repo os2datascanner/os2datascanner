@@ -17,7 +17,7 @@
           name="{{ widget.name }}"
           readonly>{{ widget.value }}</textArea>
 
-<div id="__templates" style="display: none">
+<div id="__templates">
   <span id="blank"></span>
   <span id="rule_selector">
     <select class="rule_selector">
@@ -49,38 +49,38 @@
         {% trans "address" %}
       </option>
     </select>
-    <span></span>
+    <span class="empty"></span>
   </span>
 
   <span id="and_fragment">
-    <br>
+    <br/>
     {% trans "and" %} <span data-template="rule_selector"></span>
-    <input class="destroyer" type="button" value="-">
+    <input class="destroyer" type="button" value="-"/>
   </span>
 
   <span id="AndRule">
-    <br>
+    <br/>
     (<span data-template="rule_selector"></span>
     <input class="prepender"
            data-template-name="and_fragment"
            type="button"
-           value="+">
+           value="+"/>
     )
   </span>
 
   <span id="or_fragment">
-    <br>
+    <br/>
     {% trans "or" %} <span data-template="rule_selector"></span>
-    <input class="destroyer" type="button" value="-">
+    <input class="destroyer" type="button" value="-"/>
   </span>
 
   <span id="OrRule">
-    <br>
+    <br/>
     (<span data-template="rule_selector"></span>
     <input class="prepender"
            data-template-name="or_fragment"
            type="button"
-           value="+">
+           value="+"/>
     )
   </span>
 
@@ -95,19 +95,19 @@
     {% trans "with" %}
 
     <label class="cpr-rule-specs">
-      <input type="checkbox" checked>
+      <input type="checkbox" checked/>
       {% trans "modulus 11-," %}
     </label>
 
     <label class="cpr-rule-specs">
-      <input type="checkbox" checked>
+      <input type="checkbox" checked/>
       {% trans "probability-," %}
     </label>
 
     {% trans "and" %}
 
     <label class="cpr-rule-specs">
-      <input type="checkbox" checked>
+      <input type="checkbox" checked/>
       {% trans "contextcheck" %}
     </label>
  
@@ -116,7 +116,7 @@
   </span>
 
   <span id="RegexRule">
-    <input type="text" placeholder="{% trans "Regular expression" %}">
+    <input type="text" placeholder="{% trans "Regular expression" %}"/>
   </span>
 
   <span id="CustomRule_Health"></span>
@@ -125,7 +125,7 @@
 
     {% trans "with" %}
     <label class="cpr-rule-specs">
-      <input type="checkbox">
+      <input type="checkbox"/>
       {% trans "expanded matching" %}
     </label>
 

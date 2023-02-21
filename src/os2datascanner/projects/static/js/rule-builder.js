@@ -5,81 +5,72 @@
  * variable may lead to confusing semantics. 
 */
 
-function selectOptions(obj, selector) {
-  // This function has it all! Imbedded switch cases and recursion!
-  for (let [key, value] of Object.entries(obj)) {
-    const selectElem = selector.querySelector(".rule_selector");
-    switch (key) {
-      case "type":
-        switch (value) {
-          case "and":
-            selectElem.value = "AndRule";
-            break;
-          case "or":
-            selectElem.value = "OrRule";
-            break;
-          case "not":
-            selectElem.value = "NotRule";
-            break;
-          case "cpr":
-            selectElem.value = "CPRRule";
-            break;
-          case "regex":
-            selectElem.value = "RegexRule";
-            break;
-          case "ordered-wordlist":
-            selectElem.value = "CustomRule_Health";
-            break;
-          case "name":
-            selectElem.value = "CustomRule_Name";
-            break;
-          case "address":
-            selectElem.value = "CustomRule_Address";
-            break;
-        }
-        const event = new Event("input");
-        selectElem.dispatchEvent(event);
-        break;
-      case "components":
-        value.forEach((el, index) => {
-          const sel = selector.querySelector("span").querySelectorAll("select")[index].parentNode;
-          selectOptions(el, sel);
-          if (index < value.length - 1) {
-            const prepender = selector.querySelector(".prepender");
-            const click = new Event("click");
-            prepender.dispatchEvent(click);
-          }
-        });
-        break;
-      case "expression":
-        selector.querySelector("input").value = value;
-        break;
-      case "expansive":
-        selector.querySelector("input").setAttribute("checked", value);
-        break;
-      case "modulus_11":
-        if (value) {
-          selector.querySelectorAll("input")[0].setAttribute("checked", value);
-        } else {
-          selector.querySelectorAll("input")[0].removeAttribute("checked");
-        }
-        break;
-      case "ignore_irrelevant":
-        if (value) {
-          selector.querySelectorAll("input")[1].setAttribute("checked", value);
-        } else {
-          selector.querySelectorAll("input")[1].removeAttribute("checked");
-        }
-        break;
-      case "examine_context":
-        if (value) {
-          selector.querySelectorAll("input")[2].setAttribute("checked", value);
-        } else {
-          selector.querySelectorAll("input")[2].removeAttribute("checked");
-        }
-        break;
-    }
+function getSelectorAndSelect(element, index, selector) {
+  const sels = selector.querySelectorAll('[data-template-instance="rule_selector"]');
+  const sel = sels[sels.length - 1];
+  selectOptions(element, sel);
+}
+
+function setCheckbox(index, value, selector) {
+  if (value) {
+    selector.querySelectorAll("input")[index].setAttribute("checked", value);
+  } else {
+    selector.querySelectorAll("input")[index].removeAttribute("checked");
   }
+}
+
+function selectOptions(obj, selector) {
+  /*jshint camelcase: false */
+
+  // This function recursively builds the array of select elements in the UI
+  // based on the content of the JSON field.
+
+  const type = obj.type;
+  const selectElem = selector.querySelector(".rule_selector");
+
+  valueMap = {
+    "and": "AndRule",
+    "or": "OrRule",
+    "not": "NotRule",
+    "cpr": "CPRRule",
+    "regex": "RegexRule",
+    "ordered-wordlist": "CustomRule_Health",
+    "name": "CustomRule_Name",
+    "address": "CustomRule_Address"
+  };
+
+  selectElem.value = valueMap[type];
+  const event = new Event("input");
+  selectElem.dispatchEvent(event);
+
+  if (["and", "or"].includes(type)) {
+    let components = obj.components;
+    components.forEach((element, index) => {
+      getSelectorAndSelect(element, index, selector);
+      if (index < components.length - 1) {
+        const prependers = selector.querySelectorAll(".prepender");
+        const click = new Event("click");
+        prependers[prependers.length - 1].dispatchEvent(click);
+      }
+    });
+  } else if (type === "not") {
+    let rule = obj.rule;
+    getSelectorAndSelect(rule, index = 0, selector);
+  }
+
+  switch (type) {
+    case "cpr":
+      setCheckbox(0, obj.modulus_11, selector);
+      setCheckbox(1, obj.ignore_irrelevant, selector);
+      setCheckbox(2, obj.examine_context, selector);
+      break;
+    case "name":
+      setCheckbox(0, obj.expansive, selector);
+      break;
+    case "regex":
+      selector.querySelector("input").value = obj.expression;
+  }
+
 }
 
 function instantiateTemplate(templateName) {
@@ -241,7 +232,9 @@ document.addEventListener("DOMContentLoaded", _ => {
     target.addEventListener("change", _ => {
       watcher.textContent = functionEvent(target);
     });
-
-    selectOptions(JSON.parse(watcher.textContent), target);
+    const jsonField = JSON.parse(watcher.textContent);
+    if (jsonField) {
+      selectOptions(jsonField, target);
+    }
   }
 });

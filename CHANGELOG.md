@@ -191,6 +191,18 @@ compound document formats with the new home folder flag set
     (This provides a better experience when using a proxy server to scan an
     external system's content.)
 
+### New in this release
+
+- Users can now create "rulesets" instead of regex rules in the "Rules"-tab
+  in the admin module.
+
+  - Rulesets are a more flexible way of combining rules, allowing for AND, OR
+    and NOT operators between them.
+
+  - This change allows combining preexisting rules and custom regex rules,
+    for example, it is now possible to create a rule that matches a file if it
+    contains both a CPR number *and* a name.
+
 ### General improvements
 
 - The documentation for the web scanner has been greatly expanded.

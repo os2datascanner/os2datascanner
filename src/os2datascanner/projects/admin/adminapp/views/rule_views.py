@@ -30,7 +30,7 @@ from ...utilities import UserWrapper
 class RuleList(RestrictedListView):
     """Displays list of scanners."""
 
-    model = CustomRule
+    model = Rule
     context_object_name = 'rules'
     template_name = 'os2datascanner/rules.html'
 
@@ -38,6 +38,8 @@ class RuleList(RestrictedListView):
         context = super().get_context_data()
 
         context["sensitivity"] = Sensitivity
+        context["systemrule_list"] = self.get_queryset().filter(customrule__isnull=True)
+        context["customrule_list"] = self.get_queryset().filter(customrule__isnull=False)
 
         return context
 
