@@ -76,6 +76,14 @@ class WebScanner(Scanner):
         verbose_name=_("download Sitemap from server")
     )
 
+    reduce_communication = models.BooleanField(
+        default=False,
+        verbose_name=_("reduce communication"),
+        help_text=_(
+                "reduce the number of HTTP requests made to the server by"
+                " unconditionally trusting the content of the sitemap")
+    )
+
     exclude_urls = models.CharField(
         max_length=2048,
         blank=True,
@@ -155,4 +163,5 @@ class WebScanner(Scanner):
 
     def generate_sources(self):
         yield WebSource(self.root_url, sitemap=self.get_sitemap_url(),
-                        exclude=self.get_excluded_urls())
+                        exclude=self.get_excluded_urls(),
+                        sitemap_trusted=self.reduce_communication)
