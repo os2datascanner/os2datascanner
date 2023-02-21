@@ -1,13 +1,90 @@
 /* jshint -W098 */ //disable check is used ( called from html )
-/* jshint -W083 */ 
+/* jshint -W083 */
 /** disable lintcheck for: 
  * Functions declared within loops referencing an outer scoped 
  * variable may lead to confusing semantics. 
 */
 
+function selectOptions(obj, selector) {
+  // This function has it all! Imbedded switch cases and recursion!
+  for (let [key, value] of Object.entries(obj)) {
+    const selectElem = selector.querySelector(".rule_selector");
+    switch (key) {
+      case "type":
+        switch (value) {
+          case "and":
+            selectElem.value = "AndRule";
+            break;
+          case "or":
+            selectElem.value = "OrRule";
+            break;
+          case "not":
+            selectElem.value = "NotRule";
+            break;
+          case "cpr":
+            selectElem.value = "CPRRule";
+            break;
+          case "regex":
+            selectElem.value = "RegexRule";
+            break;
+          case "ordered-wordlist":
+            selectElem.value = "CustomRule_Health";
+            break;
+          case "name":
+            selectElem.value = "CustomRule_Name";
+            break;
+          case "address":
+            selectElem.value = "CustomRule_Address";
+            break;
+        }
+        const event = new Event("input");
+        selectElem.dispatchEvent(event);
+        break;
+      case "components":
+        value.forEach((el, index) => {
+          const sel = selector.querySelector("span").querySelectorAll("select")[index].parentNode;
+          selectOptions(el, sel);
+          if (index < value.length - 1) {
+            const prepender = selector.querySelector(".prepender");
+            const click = new Event("click");
+            prepender.dispatchEvent(click);
+          }
+        });
+        break;
+      case "expression":
+        selector.querySelector("input").value = value;
+        break;
+      case "expansive":
+        selector.querySelector("input").setAttribute("checked", value);
+        break;
+      case "modulus_11":
+        if (value) {
+          selector.querySelectorAll("input")[0].setAttribute("checked", value);
+        } else {
+          selector.querySelectorAll("input")[0].removeAttribute("checked");
+        }
+        break;
+      case "ignore_irrelevant":
+        if (value) {
+          selector.querySelectorAll("input")[1].setAttribute("checked", value);
+        } else {
+          selector.querySelectorAll("input")[1].removeAttribute("checked");
+        }
+        break;
+      case "examine_context":
+        if (value) {
+          selector.querySelectorAll("input")[2].setAttribute("checked", value);
+        } else {
+          selector.querySelectorAll("input")[2].removeAttribute("checked");
+        }
+        break;
+    }
+  }
+}
+
 function instantiateTemplate(templateName) {
   let template = document.getElementById(
-      templateName ? templateName : "blank").cloneNode(true);
+    templateName ? templateName : "blank").cloneNode(true);
 
   template.removeAttribute("id");
 
@@ -20,7 +97,7 @@ function instantiateTemplate(templateName) {
 
 
 function switchOut(elem, templateName) {
-  
+
   let template = instantiateTemplate(templateName);
 
   // Copy the id value, if there is one, from our template target to the new
@@ -40,17 +117,17 @@ function switchOut(elem, templateName) {
 function patchHierarchy(h) {
 
   for (let elem
-      of h.getElementsByClassName("rule_selector")) {
-        elem.addEventListener(
-          "input", _ => switchOut(elem.nextElementSibling, elem.value));
+    of h.getElementsByClassName("rule_selector")) {
+    elem.addEventListener(
+      "input", _ => switchOut(elem.nextElementSibling, elem.value));
   }
 
   for (let elem of h.getElementsByClassName("prepender")) {
-    elem.addEventListener("click", function(_) {
+    elem.addEventListener("click", function (_) {
       let templateName = elem.getAttribute("data-template-name");
 
       elem.insertAdjacentElement(
-          "beforebegin", instantiateTemplate(templateName));
+        "beforebegin", instantiateTemplate(templateName));
     });
   }
 
@@ -69,11 +146,11 @@ function patchHierarchy(h) {
 document.addEventListener("DOMContentLoaded", _ => patchHierarchy(document));
 
 function makeRule(elem) {
-  if(elem){
+  if (elem) {
     let type = elem.getAttribute("data-template-instance");
 
     let children = Array.from(elem.children).filter(
-        e => e.hasAttribute("data-template-instance"));
+      e => e.hasAttribute("data-template-instance"));
 
     switch (type) {
 
@@ -157,12 +234,14 @@ document.addEventListener("DOMContentLoaded", _ => {
   for (let watcher of document.getElementsByClassName("watcher")) {
 
     let selector = watcher.getAttribute("data-selector"),
-    target = document.querySelector(selector),
-    functionId = watcher.getAttribute("data-function"),
-    functionEvent = window[functionId];
+      target = document.querySelector(selector),
+      functionId = watcher.getAttribute("data-function"),
+      functionEvent = window[functionId];
 
     target.addEventListener("change", _ => {
       watcher.textContent = functionEvent(target);
     });
+
+    selectOptions(JSON.parse(watcher.textContent), target);
   }
 });
