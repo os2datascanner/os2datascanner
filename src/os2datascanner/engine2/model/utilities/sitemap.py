@@ -28,10 +28,12 @@ def _xp(e, path: str) -> List[str]:
     root2.xpath("/sitemap:sitemapindex", namespaces=ns)
 
     """
-    return e.xpath(path,
-                   namespaces={
-                       "sitemap": "http://www.sitemaps.org/schemas/sitemap/0.9"
-                   })
+    return e.xpath(
+            path,
+            namespaces={
+               "sitemap": "http://www.sitemaps.org/schemas/sitemap/0.9",
+               "hints": "https://ns.magenta.dk/schemas/sitemap-hints/0.1"
+            })
 
 
 def _get_url_data(url: str, context=requests) -> Optional[bytes]:
@@ -86,6 +88,9 @@ def process_sitemap_url(  # noqa: CCR001, E501 too high cognitive complexity
 
                 for lastmod in _xp(url, "sitemap:lastmod/text()"):
                     hints["last_modified"] = lastmod.strip()
+
+                for content_type in _xp(url, "hints:hints/@content-type"):
+                    hints["content_type"] = content_type.strip()
 
                 yield (loc, hints)
             logger.debug("done processing", lines=_i, sitemap=base_url)
