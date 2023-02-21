@@ -156,7 +156,7 @@ class WebSource(Source):
 
             new_hints = {
                     k: v for k, v in hints.items()
-                    if k in ("last_modified",)}
+                    if k in ("last_modified", "content_type",)}
             r = WebHandle.make_handle(
                     referrer, self._url) if referrer else None
             h = WebHandle.make_handle(
@@ -266,8 +266,13 @@ class WebResource(FileResource):
     def compute_type(self):
         # At least for now, strip off any extra parameters the media type might
         # specify
-        return self.unpack_header(check=True).get(
-            "content-type", "application/octet-stream").split(";", maxsplit=1)[0]
+        ct = None
+        if not (ct_hint := self.handle.hint("content_type")):
+            ct = self.unpack_header(check=True).get(
+                    "content-type", "application/octet-stream")
+        else:
+            ct = ct_hint
+        return simplify_mime_type(ct)
 
     @contextmanager
     def make_stream(self):

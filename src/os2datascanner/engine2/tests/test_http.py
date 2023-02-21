@@ -130,6 +130,12 @@ excluded_mapped_site = {
         "http://localhost:64346/hemmeligheder.html",
     ],
 }
+extended_mapped_site = {
+    "source": WebSource(
+        "http://localhost:64346/",
+        sitemap="http://localhost:64346/sitemap_ext_ct.xml"
+    ),
+}
 links_from_handle = {
     "handle": WebHandle(
         WebSource("http://localhost:64346"), path="/external_links.html"
@@ -569,6 +575,22 @@ class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
                             (lm.year, lm.month, lm.day),
                             (2011, 12, 1),
                             "secret file's modification date is too late")
+                    break
+            else:
+                self.fail("secret file missing")
+
+    def test_sitemap_ct(self):
+        """Content-Type hints can also be extracted from sitemap files, when
+        these are present."""
+
+        with SourceManager() as sm:
+            for h in extended_mapped_site["source"].handles(sm):
+                if h.relative_path == "/doc2.pdf":
+                    ct = h.follow(sm).compute_type()
+                    self.assertEqual(
+                            ct,
+                            "application/vnd.os2.datascanner.unguessable",
+                            "secret file's MIME type is not correct")
                     break
             else:
                 self.fail("secret file missing")

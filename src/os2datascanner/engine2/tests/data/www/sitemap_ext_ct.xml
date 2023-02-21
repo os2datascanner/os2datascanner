@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:h="https://ns.magenta.dk/schemas/sitemap-hints/0.1">
+    <url>
+        <loc>
+            http://localhost:64346/doc2.pdf
+        </loc>
+        <h:hints
+                content-type="application/vnd.os2.datascanner.unguessable" />
+    </url>
+</urlset>
