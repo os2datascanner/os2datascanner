@@ -61,6 +61,7 @@ class MSGraphScanner(Scanner):
 
     class Meta:
         abstract = True
+        ordering = ['name']
 
 
 class MSGraphMailScanner(MSGraphScanner):
