@@ -72,23 +72,30 @@ def make_head_fallback(context):
     return _make_head_fallback
 
 
-def fix(new_url, base_url):
-    nurls = urlsplit(new_url)
+def try_make_relative(base_url, new_url):
+    """Given a newly discovered absolute URL and the base URL of a WebSource,
+    returns a (base URL, relative path) pair that can be used to construct a
+    WebHandle (or None, if new_url isn't under base_url at all).
+
+    Note that the returned base URL may not necessarily be the provided one. In
+    particular, the domain of the base URL may be taken from the newly
+    discovered one if they're judged to be equivalent."""
+    new_url_split = urlsplit(new_url)
     url_split = urlsplit(base_url)
 
-    # ensure hostnames and optionally path(if the source were created with a
-    # nonempty path) matches
-    if (nurls.hostname == url_split.hostname and
-            nurls.path.startswith(url_split.path)):
-        # exactly same hostname and same path
+    if (new_url_split.hostname == url_split.hostname and
+            new_url_split.path.startswith(url_split.path)):
+        # The two URLs have the same hostname, and the new URL's path starts
+        # with the base URL's. This is the easiest possible case
         return (base_url, new_url.removeprefix(base_url))
-    elif (netloc_normalize(nurls.hostname) == url_split.hostname and
-            nurls.path.startswith(url_split.path)):
-        # hostnames and are equivalent. Create new Source from "new" hostname but
-        # retain original path, if present
-        base_url = urlunsplit(
-            (nurls.scheme, nurls.netloc, url_split.path, "", "")
-        )
+    elif (netloc_normalize(new_url_split.hostname) == url_split.hostname and
+            new_url_split.path.startswith(url_split.path)):
+        # The two URLs have different, but equivalent, hostnames, and the new
+        # URL's path starts wth the base URL's. Create a new base URL that
+        # combines the domain of the new URL with the path of the old base
+        base_url = urlunsplit((
+                new_url_split.scheme, new_url_split.netloc,
+                url_split.path, "", ""))
         return (base_url, new_url.removeprefix(base_url))
     else:
         logger.debug("hostname outside current source", url=new_url)
@@ -342,7 +349,7 @@ class WebHandle(Handle):
             cls, url: str, base_url: str = None, **kwargs) -> "WebHandle":
         su = sp = None
         if base_url:
-            fv = fix(url, base_url)
+            fv = try_make_relative(base_url, url)
             if fv:
                 su, sp = fv
         if su is None and sp is None:
