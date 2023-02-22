@@ -84,7 +84,7 @@ def process_sitemap_url(  # noqa: CCR001, E501 too high cognitive complexity
                     start=1):
                 loc = _xp(url, "sitemap:loc/text()")[0].strip()
 
-                hints = {}
+                hints = {"fresh": True}
 
                 for lastmod in _xp(url, "sitemap:lastmod/text()"):
                     hints["last_modified"] = lastmod.strip()

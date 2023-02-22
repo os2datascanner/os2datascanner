@@ -156,7 +156,7 @@ class WebSource(Source):
 
             new_hints = {
                     k: v for k, v in hints.items()
-                    if k in ("last_modified", "content_type",)}
+                    if k in ("last_modified", "content_type", "fresh",)}
             r = WebHandle.make_handle(
                     referrer, self._url) if referrer else None
             h = WebHandle.make_handle(
@@ -220,7 +220,8 @@ class WebResource(FileResource):
             self.handle.presentation_url, timeout=TIMEOUT)
 
     def check(self) -> bool:
-        if self.handle.source.has_trusted_sitemap:
+        if (self.handle.source.has_trusted_sitemap
+                and self.handle.hint("fresh")):
             return True
 
         # This might raise an RequestsException, fx.
@@ -251,7 +252,8 @@ class WebResource(FileResource):
         return self._mr
 
     def get_size(self):
-        if self.handle.source.has_trusted_sitemap:
+        if (self.handle.source.has_trusted_sitemap
+                and self.handle.hint("fresh")):
             return 0
 
         return int(self.unpack_header(check=True).get("content-length", 0))
