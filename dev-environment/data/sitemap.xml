@@ -1,88 +1,106 @@
 <?xml version="1.0"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:hints="https://ns.magenta.dk/schemas/sitemap-hints/0.1">
     <url>
         <loc>
             http://nginx/file-sample_150kB.pdf
         </loc>
+        <hints:hints content-type="application/pdf" />
     </url>
     <url>
         <loc>
             http://nginx/1111111118.docx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
     </url>
     <url>
         <loc>
             http://nginx/index.html
         </loc>
+        <hints:hints content-type="text/html" />
     </url>
     <url>
         <loc>
             http://nginx/Forskellige kolonner .xlsx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
     </url>
     <url>
         <loc>
             http://nginx/file_example_XLS_10.xls
         </loc>
+        <hints:hints content-type="application/vnd.ms-excel" />
     </url>
     <url>
         <loc>
             http://nginx/sundhedstermer.xlsx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
     </url>
     <url>
         <loc>
             http://nginx/Book3.xlsx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
     </url>
     <url>
         <loc>
             http://nginx/P.xlsx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
     </url>
     <url>
         <loc>
             http://nginx/file_example_XLSX_100.xlsx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
     </url>
     <url>
         <loc>
             http://nginx/Book5.xlsx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
     </url>
     <url>
         <loc>
             http://nginx/Flere sider.docx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
     </url>
     <url>
         <loc>
             http://nginx/file-sample_100kB.doc
         </loc>
+        <hints:hints content-type="application/msword" />
     </url>
     <url>
         <loc>
             http://nginx/file-sample_100kB.docx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
     </url>
     <url>
         <loc>
             http://nginx/User_Download_26102020_092519.csv
         </loc>
+        <hints:hints content-type="text/plain" />
     </url>
     <url>
         <loc>
             http://nginx/1111111118.pdf
         </loc>
+        <hints:hints content-type="application/pdf" />
     </url>
     <url>
         <loc>
             http://nginx/file_example_XLSX_10.xlsx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
     </url>
     <url>
         <loc>
             http://nginx/file_example_XLSX_50.xlsx
         </loc>
+        <hints:hints content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
     </url>
 </urlset>

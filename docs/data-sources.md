@@ -10,7 +10,7 @@ to connect more to the system. This document gives a brief overview of them.
 OS2datascanner can connect to a Microsoft Exchange installation, either locally
 or in the cloud, using the
 [Exchange Web Services](https://docs.microsoft.com/en-us/exchange/client-developer/exchange-web-services/explore-the-ews-managed-api-ews-and-web-services-in-exchange)
-API. (OS2datascanner uses the [`exchangelib`])(https://github.com/ecederstrand/exchangelib)
+API. (OS2datascanner uses the [`exchangelib`](https://github.com/ecederstrand/exchangelib)
 package as its implementation of the API.)
 
 ### Try it out
@@ -79,6 +79,38 @@ of the underlying `python-requests` library:
 
 Be aware of this if you need to whitelist the user agent; in particular, make
 sure that a blacklist rule for `python-requests` doesn't take priority.
+
+### Notes on sitemaps
+
+OS2datascanner trusts the hints provided by a sitemap over the information
+provided by HTTP headers: if the `<lastmod />` element contains a last
+modification date for a URL, then its `Last-Modified` header value won't even
+be fetched. (This header is often overridden by a proxy server or web cache, so
+its value can be less reliable.)
+
+OS2datascanner also implements a sitemap extension, the `<hints />` element,
+that can be used to give the same behaviour for the `Content-Type` header:
+
+```xml
+    <url>
+        <loc>
+            https://www.example.com/resources/2023/STD-2023-0001.PDF
+        </loc>
+        <lastmod>
+            2023-01-19
+        </lastmod>
+        <hints xmlns="https://ns.magenta.dk/schemas/sitemap-hints/0.1"
+                content-type="application/pdf" />
+    </url>
+```
+
+Using these two elements properly can greatly reduce the number of HTTP
+requests OS2datascanner must make.
+
+Note that hints are only valid for the scan in which they were found: if
+OS2datascanner finds a match in a file whose MIME type was specified by the
+sitemap, then subsequent checkups for that file _will_ retrieve the
+`Content-Type` header.
 
 ### Try it out
 
