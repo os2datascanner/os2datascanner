@@ -82,7 +82,7 @@
 
   - Units are now sorted alphabetically.
 
-  - Users are able to see folder struture and owner for Msgraph-file scans
+  - Users are able to see folder structure and owner for Msgraph-file scans.
 
 ### General improvements
 
