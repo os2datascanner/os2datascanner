@@ -128,7 +128,7 @@ def checkup_message_received_raw(body):
     while here:
         if isinstance(here, WebHandle) and here._hints:
             here._hints.clear()
-        here = handle.source.handle
+        here = here.source.handle
 
     update_scheduled_checkup(
             handle.censor(), matches, problem, scan_time, scanner)
