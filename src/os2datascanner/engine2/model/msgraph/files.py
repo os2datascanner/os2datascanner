@@ -216,7 +216,12 @@ class MSGraphFileHandle(Handle):
 
     @property
     def presentation_place(self):
-        return f"{str(self.relative_path.removesuffix(self.name))} of {str(self.source.handle)}"
+        folder = self.relative_path.removesuffix(self.name)
+        parent = str(self.source.handle)
+        if folder:
+            return f"{folder} (in {parent})"
+        else:
+            return parent
 
     def censor(self):
         return MSGraphFileHandle(self.source.censor(), self.relative_path, self._weblink)
