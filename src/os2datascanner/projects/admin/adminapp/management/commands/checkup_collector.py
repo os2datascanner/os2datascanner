@@ -126,7 +126,7 @@ def checkup_message_received_raw(body):
     # the next scan, so we need to clear it before storing it
     here = handle
     while here:
-        if isinstance(here, WebHandle):
+        if isinstance(here, WebHandle) and here._hints:
             here._hints.clear()
         here = handle.source.handle
 
