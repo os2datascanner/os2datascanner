@@ -19,11 +19,12 @@ import json
 import logging
 import structlog
 
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.contrib.auth.models import User
 from django.core.exceptions import FieldError
 from django.core.management.base import BaseCommand
 from django.db.models.deletion import ProtectedError
+from django.db.transaction import TransactionManagementError
 
 from os2datascanner.utils import debug
 from os2datascanner.utils.log_levels import log_levels
@@ -46,7 +47,7 @@ SUMMARY = Summary("os2datascanner_event_collector_report",
                   "Messages through event collector report")
 
 
-def event_message_received_raw(body):
+def event_message_received_raw(body):  # noqa: CCR001
     event_type = body.get("type")
     model_class = body.get("model_class")
     instance = body.get("instance")
@@ -63,30 +64,89 @@ def event_message_received_raw(body):
                                        'Position': (Position, PositionSerializer),
                                        }
 
-    if not event_type or not model_class or not instance:
+    if event_type == "object_broadcast_create":
+        # OBS: This list must be updated if new org-structure models are added,
+        # or if the order of which creation is possible changes.
+        order_of_creation = ["OrganizationalUnit", "Account", "Alias", "Position"]
+
+        with transaction.atomic():
+            logger.info("Initiating broadcast create transaction...")
+            for model in order_of_creation:
+                model_cls, cls_serializer = org_struct_model_and_serializer.get(model)
+                for model_instance in json.loads(instance[0].get(model)):
+                    if model_cls in (Account, Alias):
+                        # TODO: Out-phase User in favor of Account
+                        # This is because User and Account co-exist, but a User doesn't have any
+                        # unique identifier that makes sense from an Account..
+                        # This means that we risk creating multiple User objects,
+                        # if users username attribute changes.
+                        # But its the best we can do for now, until we out-phase User objects
+                        # entirely
+                        if model_cls is Account:
+                            user_obj, created = User.objects.update_or_create(
+                                username=model_instance["fields"]["username"],
+                                defaults={
+                                    "username": model_instance["fields"]["username"],
+                                    "first_name": model_instance["fields"]["first_name"] or '',
+                                    "last_name": model_instance["fields"]["last_name"] or ''
+                                })
+
+                        if model_cls is Alias:
+                            # This will fail hard if no such user is present, but that is desired.
+                            # We're running in a transaction and want everything to go smoothly,
+                            # or roll back and be notified that something's off.
+                            user_obj = User.objects.get(
+                                account__pk=model_instance["fields"]["account"])
+
+                        # Save created/found user as a field in the JSON, to allow serialized_obj
+                        # save.
+                        model_instance["fields"]["user"] = user_obj.pk
+
+                    serialized_obj = cls_serializer(data=model_instance["fields"])
+
+                    try:
+                        if not serialized_obj.is_valid(raise_exception=False):
+                            logger.warning(f"Error in serialized object!: {model_cls}: \n "
+                                           f"{serialized_obj.errors}")
+
+                        serialized_obj.save(pk=model_instance["pk"])
+                    except TransactionManagementError:
+                        logger.warning("Transaction Management Error! \n"
+                                       "You'll likely need to purge before retrying!")
+                        return
+                    except IntegrityError:
+                        logger.warning("Integrity Error, some objects probably already exist! \n"
+                                       "You'll likely need to purge before retrying!")
+                        return
+
+            logger.info("Successfully ran broadcast create!")
+            return
+
+    if event_type == "object_broadcast_purge":
+        # OBS: This list must be updated if new org-structure models are added,
+        # or if the order of which deletion is possible changes.
+        order_of_deletion = ["Alias", "Position", "Account", "OrganizationalUnit"]
+        with transaction.atomic():
+            for model in order_of_deletion:
+                if model in instance:
+                    # TODO: Special-case Account-User?
+                    # I.e. should the "User" of Account (if any, it's nullable) also be deleted?
+                    model_cls, _ = org_struct_model_and_serializer.get(model)
+                    logger.info(f"Deleting all {model} objects {model_cls.objects.all().delete()}")
+
+            return
+
+    if not all((event_type, model_class, instance,
+                org_struct_model_and_serializer.get(model_class))):
+        logger.warning(f"Unrecognizable type of message received or no serializer available: \n"
+                       f"{event_type}, {model_class}, {instance}")
         return
 
-    # Version 3.9.0 switched to using django.core.serializers for
-    # ModelChangeEvent messages and so has a completely different wire format.
-    # Rather than attempting to handle both, we detect messages from older
-    # versions and drop them on the floor
-    if not (isinstance(instance, str)
-            and instance.startswith("[") and instance.endswith("]")):
-        logger.warning("Ignoring old-style ModelChangeEvent")
-        return
-    else:
-        instance = json.loads(instance)[0]
-
-    if model_class in org_struct_model_and_serializer:
-        handle_event(event_type=event_type,
-                     instance=instance,
-                     cls=org_struct_model_and_serializer.get(model_class)[0],
-                     cls_serializer=org_struct_model_and_serializer.get(model_class)[1]
-                     )
-    else:
-        logger.debug("event_message_received_raw:"
-                     f" unknown model_class {model_class} in event")
-        return
+    # We receive a list with one element, take index 0.
+    instance = json.loads(instance)[0]
+    cls, cls_serializer = org_struct_model_and_serializer.get(model_class)
+    handle_event(event_type=event_type, instance=instance,
+                 cls=cls, cls_serializer=cls_serializer)
 
     yield from []
 

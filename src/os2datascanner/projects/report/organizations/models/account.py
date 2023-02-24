@@ -28,7 +28,6 @@ from django.contrib.auth.models import User
 
 from os2datascanner.core_organizational_structure.models import Account as Core_Account
 from os2datascanner.utils.system_utilities import time_now
-from rest_framework import serializers
 
 from ..serializer import BaseSerializer
 
@@ -211,6 +210,3 @@ class AccountSerializer(BaseSerializer):
     class Meta:
         model = Account
         fields = '__all__'
-
-    # This field has to be redefined here, cause it is read-only on model.
-    uuid = serializers.UUIDField()
