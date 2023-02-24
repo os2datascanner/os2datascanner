@@ -283,6 +283,31 @@
                 </div>
               {% endif %}
 
+              {% if form.reduce_communication %}
+                <div id="{{ form.reduce_communication.auto_id }}_container"
+                     class="form__group{% if form.reduce_communication.errors %} has-error{% endif %}">
+                  <div class="ds-checkbox">
+                    <input type="checkbox"
+                           class="checkbox"
+                           id="id_{{ form.reduce_communication.name }}"
+                           name="{{ form.reduce_communication.name }}"
+                           value="{{ form.reduce_communication.name }}"
+                           {% if form.reduce_communication.value %} checked="checked"{% endif %}/>
+                    <label for="id_{{ form.reduce_communication.name }}">
+                      {{ form.reduce_communication.label }}
+                    </label>
+                  </div>
+
+                  {% if form.reduce_communication.help_text %}
+                    <span class="form__help-text">
+                      {{ form.reduce_communication.help_text|capfirst }}
+                    </span>
+                  {% endif %}
+
+                  {% if form.reduce_communication.errors %}{{ form.reduce_communication.errors }}{% endif %}
+                </div>
+              {% endif %}
+
               {% if form.service_account_file_gmail %}
                 <div class="form__group form__group--flex">
                   <label for="id_{{ form.service_account_file_gmail.name }}" class="block">

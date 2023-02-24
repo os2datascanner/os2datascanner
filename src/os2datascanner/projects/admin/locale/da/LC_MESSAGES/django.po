@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-15 14:27+0100\n"
+"POT-Creation-Date: 2023-02-21 15:38+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -108,8 +108,8 @@ msgstr "intet scannerjob findes med id {id}"
 
 #: adminapp/models/apikey.py:16 adminapp/models/rules/rule.py:47
 #: adminapp/models/scannerjobs/scanner.py:80 adminapp/models/usererrorlog.py:52
-#: import_services/models/msgraph_import_job.py:27
-#: import_services/models/os2mo_import_job.py:18
+#: import_services/models/msgraph_import_job.py:28
+#: import_services/models/os2mo_import_job.py:19
 #: import_services/models/realm.py:29
 msgid "organization"
 msgstr "organisation"
@@ -181,11 +181,11 @@ msgstr ""
 msgid "UNC must follow the UNC format"
 msgstr "UNC skal følge UNC-format"
 
-#: adminapp/models/scannerjobs/msgraph.py:69
+#: adminapp/models/scannerjobs/msgraph.py:70
 msgid "Scan deleted items folder"
 msgstr "Scan slettet post mappe"
 
-#: adminapp/models/scannerjobs/msgraph.py:70
+#: adminapp/models/scannerjobs/msgraph.py:71
 msgid "Include emails in the deleted post folder"
 msgstr "Inkludér emails i slettet post mappe"
 
@@ -279,11 +279,23 @@ msgstr "sitemap url"
 msgid "download Sitemap from server"
 msgstr "hent Sitemap fra serveren"
 
+#: adminapp/models/scannerjobs/webscanner.py:81
+msgid "reduce communication"
+msgstr "formindsk kommunikation"
+
 #: adminapp/models/scannerjobs/webscanner.py:83
+msgid ""
+"reduce the number of HTTP requests made to the server by unconditionally "
+"trusting the content of the sitemap"
+msgstr ""
+"formindsk antallet af HTTP-anmodninger til serveren ved at stole ubetinget "
+"på sitemap-filens indhold"
+
+#: adminapp/models/scannerjobs/webscanner.py:91
 msgid "comma-separated list of urls to exclude"
 msgstr "Kommasepareret liste af URLs der skal eksluderes"
 
-#: adminapp/models/scannerjobs/webscanner.py:85
+#: adminapp/models/scannerjobs/webscanner.py:93
 msgid ""
 "Be sure to include a trailing '/'to enforce path matching, i.e. https://"
 "example.com/images/ instead of https://example.com/images"
@@ -1824,12 +1836,12 @@ msgstr "vent %(METAVAR)s sekunder hvis der ikke var nogle jobs til afvikling"
 msgid "do not loop: run a single job and then exit"
 msgstr "kør ikke i løkke: kør et enkelt job og gå derefter ud"
 
-#: core/management/commands/run_background_jobs.py:216
+#: core/management/commands/run_background_jobs.py:217
 #, python-brace-format
 msgid "{0} job(s) completed."
 msgstr "{0} færdige job(s)."
 
-#: core/management/commands/run_background_jobs.py:217
+#: core/management/commands/run_background_jobs.py:218
 #, python-brace-format
 msgid "{0} job(s) failed."
 msgstr "{0} fejlede job(s)."

@@ -26,6 +26,7 @@ from prometheus_client import Summary, start_http_server
 
 from os2datascanner.utils import debug
 from os2datascanner.utils.log_levels import log_levels
+from os2datascanner.engine2.model.http import WebHandle
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
@@ -118,6 +119,16 @@ def checkup_message_received_raw(body):
         return
 
     scan_time = scan_tag.time
+
+    # Uniquely, WebHandles carry a dict of hints: pieces of extra information
+    # uncovered during exploration that can be used to speed WebResource
+    # functions up. But this information may be stale if we hold onto it until
+    # the next scan, so we need to clear it before storing it
+    here = handle
+    while here:
+        if isinstance(here, WebHandle):
+            here._hints.clear()
+        here = handle.source.handle
 
     update_scheduled_checkup(
             handle.censor(), matches, problem, scan_time, scanner)

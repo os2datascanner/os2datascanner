@@ -87,18 +87,18 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001, E501 t
     finally:
         message = messages.ConversionMessage.from_json_object(body)
         object_size = 0
-        object_type = "application/octet-stream"
         try:
             resource = message.handle.follow(source_manager)
             object_size = resource.get_size()
-            object_type = resource.compute_type()
         except Exception:
             pass
         yield ("os2ds_status", messages.StatusMessage(
                 scan_tag=message.scan_spec.scan_tag,
                 message="", status_is_error=False,
                 object_size=object_size,
-                object_type=object_type,
+                # Computing the MIME type is unnecessary -- we don't use it for
+                # anything, we just need it to be present(?)
+                object_type="application/octet-stream",
                 matches_found=total_matches).to_json_object())
 
         # Clean up after temporary files, but leave connections open

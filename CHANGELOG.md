@@ -4,6 +4,17 @@
 
 "Beep boop"
 
+### New in this release
+
+- Support for reducing HTTP communication:
+
+  - Web scanners can now be configured to aggressively reduce the number of
+    HTTP calls they make to the server.
+
+  - OS2datascanner now supports a sitemap extension that declares the content
+    type of each URL, reducing the number of HTTP calls needed under the
+    conversion process.
+
 ### General improvements
 
 - All scanners are now always sorted alphabetically in the scanner lists.

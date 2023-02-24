@@ -5,6 +5,8 @@ from django.test import TestCase
 
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
+from os2datascanner.engine2.model.http import (
+        WebHandle, WebSource)
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.rule import Sensitivity
@@ -100,6 +102,38 @@ object_size_scan_status = messages.StatusMessage(
     object_size=100)
 
 
+web_scan_tag = messages.ScanTagFragment.make_dummy()
+
+web_handle = WebHandle(
+    WebSource(
+            "https://www.example.com",
+            sitemap="https://www.example.com/sitemap.xml",
+            sitemap_trusted=True),
+    "/path/to/resources.html",
+    hints={
+        "fresh": True,
+        "last_modified": "2016-01-09T15:10:09-05:00"
+    })
+
+web_scan_spec = messages.ScanSpecMessage(
+    scan_tag=web_scan_tag,
+    source=web_handle.source,
+    rule=common_rule,
+    configuration={},
+    filter_rule=None,
+    progress=None)
+
+web_matches = messages.MatchesMessage(
+    scan_spec=web_scan_spec,
+    handle=web_handle,
+    matched=True,
+    matches=[
+        messages.MatchFragment(
+            rule=common_rule,
+            matches=[{"dummy": "match object"}])
+    ])
+
+
 class PipelineCollectorTests(TestCase):
 
     @parameterized.expand([
@@ -184,3 +218,25 @@ class PipelineCollectorTests(TestCase):
             UserErrorLog.objects.first().user_friendly_error_message,
             translation_table[error_message]
         )
+
+    def test_hints_removed(self):
+        """Hints should be removed from a WebHandle when one is received by the
+        checkup collector."""
+        scanner = Scanner.objects.create(name="Dummy test web scanner")
+        wmo = web_matches._deep_replace(
+                scan_spec__scan_tag__scanner__pk=scanner.pk)
+
+        ScanStatus.objects.create(
+                scanner=scanner,
+                scan_tag=wmo.scan_spec.scan_tag.to_json_object(),
+                total_sources=1,
+                total_objects=1)
+
+        [s for s in checkup_collector.checkup_message_received_raw(
+                wmo.to_json_object())]
+
+        sc = ScheduledCheckup.objects.get(scanner=scanner)
+        self.assertEqual(
+                sc.handle._hints,
+                {},
+                "hints not cleared by checkup collector")
