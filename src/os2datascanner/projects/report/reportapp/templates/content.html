@@ -1,7 +1,6 @@
 {%  load i18n %}
 {% load l10n %}
 
-
 <div class="content-header">
 
   <h1 class="page-title">{% trans "Results" %}</h1>
@@ -16,12 +15,7 @@
   {% if distributable_matches %}
     <div id="distribute-container"
          class="distribute dropdown"
-         name="distribute-container"
-         hx-get="{% url "index" %}"
-         hx-trigger="reload-htmx from:body"
-         hx-swap="innerHTML"
-         hx-target=".content"
-         hx-indicator="#report-page-indicator">
+         name="distribute-container">
       <label class="block-label" for="distribute-to">{% trans "Distribute matches to users from" %}</label>
       <select id="distribute-to" name="distribute-to" multiple>
         {% for scan in undistributed_scannerjobs %}
