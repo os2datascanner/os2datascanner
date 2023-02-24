@@ -1,8 +1,8 @@
 # Changelog
 
-## Next release
+## Version 3.18.3, 24th February 2023
 
-"Beep boop"
+"Idle Chitchat"
 
 ### New in this release
 
