@@ -23,14 +23,10 @@
                     <div class="matches"
                          aria-label="{% trans "Unhandled matches at the end of week" %} {{ matches_by_week.2.weeknum }}">
                       {{ matches_by_week.2.matches }}
-                      <div class="annotation new {% if matches_by_week.2.new == 0 %}zero{% endif %}"
-                           aria-label="{% trans "New matches during week" %} {{ matches_by_week.2.weeknum }}">
-                        {{ matches_by_week.2.new }}
-                      </div>
-                      <div class="annotation handled {% if matches_by_week.2.handled == 0 %}zero{% endif %}"
-                           aria-label="{% trans "Matches handled during week" %} {{ matches_by_week.2.weeknum }}">
-                        {{ matches_by_week.2.handled }}
-                      </div>
+                      <span class="annotation new {% if matches_by_week.2.new == 0 %}zero{% endif %}"
+                            aria-label="{% trans "New matches during week" %} {{ matches_by_week.2.weeknum }}">{{ matches_by_week.2.new }}</span>
+                      <span class="annotation handled {% if matches_by_week.2.handled == 0 %}zero{% endif %}"
+                            aria-label="{% trans "Matches handled during week" %} {{ matches_by_week.2.weeknum }}">{{ matches_by_week.2.handled }}</span>
                     </div>
                   </td>
                   <td>
@@ -38,14 +34,10 @@
                     <div class="matches"
                          aria-label="{% trans "Unhandled matches at the end of week" %} {{ matches_by_week.1.weeknum }}">
                       {{ matches_by_week.1.matches }}
-                      <div class="annotation new {% if matches_by_week.1.new == 0 %}zero{% endif %}"
-                           aria-label="{% trans "New matches during week" %} {{ matches_by_week.1.weeknum }}">
-                        {{ matches_by_week.1.new }}
-                      </div>
-                      <div class="annotation handled {% if matches_by_week.1.handled == 0 %}zero{% endif %}"
-                           aria-label="{% trans "Matches handled during week" %} {{ matches_by_week.1.weeknum }}">
-                        {{ matches_by_week.1.handled }}
-                      </div>
+                      <span class="annotation new {% if matches_by_week.1.new == 0 %}zero{% endif %}"
+                            aria-label="{% trans "New matches during week" %} {{ matches_by_week.1.weeknum }}">{{ matches_by_week.1.new }}</span>
+                      <span class="annotation handled {% if matches_by_week.1.handled == 0 %}zero{% endif %}"
+                            aria-label="{% trans "Matches handled during week" %} {{ matches_by_week.1.weeknum }}">{{ matches_by_week.1.handled }}</span>
                     </div>
                   </td>
                   <td>
@@ -53,14 +45,10 @@
                     <div class="matches"
                          aria-label="{% trans "Unhandled matches at the end of week" %} {{ matches_by_week.0.weeknum }}">
                       {{ matches_by_week.0.matches }}
-                      <div class="annotation new {% if matches_by_week.0.new == 0 %}zero{% endif %}"
-                           aria-label="{% trans "New matches during week" %} {{ matches_by_week.0.weeknum }}">
-                        {{ matches_by_week.0.new }}
-                      </div>
-                      <div class="annotation handled {% if matches_by_week.0.handled == 0 %}zero{% endif %}"
-                           aria-label="{% trans "Matches handled during week" %} {{ matches_by_week.0.weeknum }}">
-                        {{ matches_by_week.0.handled }}
-                      </div>
+                      <span class="annotation new {% if matches_by_week.0.new == 0 %}zero{% endif %}"
+                            aria-label="{% trans "New matches during week" %} {{ matches_by_week.0.weeknum }}">{{ matches_by_week.0.new }}</span>
+                      <span class="annotation handled {% if matches_by_week.0.handled == 0 %}zero{% endif %}"
+                            aria-label="{% trans "Matches handled during week" %} {{ matches_by_week.0.weeknum }}">{{ matches_by_week.0.handled }}</span>
                     </div>
                   </td>
                 </tr>
@@ -109,5 +97,4 @@
     {{ matches_by_week|json_script:"matches_by_week" }}
     {{ account.uuid|json_script:"uuid" }}
   </div>
-</div>
 </div>

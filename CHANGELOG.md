@@ -15,6 +15,8 @@
 
 - Resolution time for previously handled document reports now gets removed if the document report gets reverted.
 
+- Fixed overlapping numbers in the user overview.
+
 ## Version 3.18.2, 15th February 2023
 
 "Quick Fact Check"
