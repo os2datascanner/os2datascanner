@@ -208,7 +208,7 @@ class MSGraphFileHandle(Handle):
 
     @property
     def presentation_name(self):
-        return self.relative_path
+        return self.name
 
     @property
     def presentation_url(self):
@@ -216,7 +216,7 @@ class MSGraphFileHandle(Handle):
 
     @property
     def presentation_place(self):
-        return str(self.source.handle)
+        return f"{str(self.relative_path.removesuffix(self.name))} of {str(self.source.handle)}"
 
     def censor(self):
         return MSGraphFileHandle(self.source.censor(), self.relative_path, self._weblink)
