@@ -805,18 +805,32 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
         return response
 
     def dispatch(self, request, *args, **kwargs):
-        pk = kwargs.get("pk")
-        account = Account.objects.filter(pk=pk).first()
+        try:
+            # If the URL has specified a primary key for the Account whose
+            # statistics we want to see, then use that
+            pk = kwargs.get("pk")
+            if pk is None:
+                # If not, use the primary key of the Account associated with
+                # the active user
+                pk = request.user.account.pk
+
+            target_account = Account.objects.get(pk=pk)
+        except Account.DoesNotExist:
+            # Either the URL's primary key isn't a valid Account, or the active
+            # user doesn't have an Account. In either case this view is not
+            # relevant
+            raise Http404()
+        # target_account is guaranteed to be an Account from this point
+
         try:
             user_account = request.user.account
         except Account.DoesNotExist:
             user_account = None
 
-        if account:
-            owned = account.user == request.user
-            managed = user_account and account.managed_by(user_account)
-        else:
-            owned = managed = False
+        # (Note that accessing Account.user can't raise a DoesNotExist in the
+        # way that User.account can, so we don't need to wrap this line)
+        owned = target_account.user == request.user
+        managed = user_account and target_account.managed_by(user_account)
 
         if request.user.is_superuser or owned or managed:
             return super().dispatch(request, *args, **kwargs)
