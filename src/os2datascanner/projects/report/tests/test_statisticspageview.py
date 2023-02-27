@@ -2,9 +2,10 @@ import dateutil.parser
 from datetime import datetime, timedelta
 from typing import List, Tuple
 
+from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase
-from django.contrib.auth.models import User
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 from os2datascanner.engine2.model.ews import (
         EWSMailHandle, EWSAccountSource)
@@ -12,10 +13,12 @@ from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 
+from ...report.organizations.models import Account, Organization
 from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.models.roles.leader import Leader
 from ..reportapp.models.roles.dpo import DataProtectionOfficer
-from ..reportapp.views.views import StatisticsPageView, LeaderStatisticsPageView
+from ..reportapp.views.views import (
+        StatisticsPageView, UserStatisticsPageView, LeaderStatisticsPageView)
 from ..reportapp.utils import iterate_queryset_in_batches
 
 from .generate_test_data import record_match, record_metadata
@@ -331,6 +334,8 @@ class StatisticsPageViewTest(TestCase):
         record_metadata(benny_metadata_1)
 
     def setUp(self):
+        org = Organization.objects.create(name="Statistics Test Corp.")
+
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
         self.kjeld = User.objects.create_user(
@@ -342,9 +347,32 @@ class StatisticsPageViewTest(TestCase):
         self.yvonne = User.objects.create_user(
             first_name='Yvonne', username='yvonne',
             email='yvonne@jensen.com', password='top_secret')
+        self.yvonne_account = Account.objects.create(
+                user=self.yvonne,
+                username="yvonne",
+                organization=org)
         self.benny = User.objects.create_user(
             first_name='Benny', username='benny',
             email='benny@frandsen.com', password='top_secret')
+        self.benny_account = Account.objects.create(
+                user=self.benny,
+                username="benny",
+                organization=org)
+
+    def test_own_userstatisticspage_without_privileges(self):
+        """A User with an Account can see their personal statistics."""
+        response = self.get_user_statisticspage_response(user=self.benny)
+        self.assertEqual(
+                response.status_code,
+                200,
+                "normal user cannot access own statistics")
+
+    def test_other_userstatisticspage_without_privileges(self):
+        """A User with an Account can't see the statistics of an unrelated
+        user."""
+        with self.assertRaises(PermissionDenied):
+            self.get_user_statisticspage_response(
+                    user=self.benny, pk=self.yvonne_account.pk)
 
     # Tests are done as Kjeld
     # count_all_matches_grouped_by_sensitivity()
@@ -466,15 +494,22 @@ class StatisticsPageViewTest(TestCase):
 
     # StatisticsPageView()
     def get_statisticspage_object(self):
-        request = self.factory.get('/statistics')
-        request.user = self.kjeld
+        # XXX: we don't use request for anything! Is this deliberate?
+        # request = self.factory.get('/statistics')
+        # request.user = self.kjeld
         view = StatisticsPageView()
         return view
 
+    def get_user_statisticspage_response(self, user, **kwargs):
+        request = self.factory.get('/statistics/view/')
+        request.user = user
+        return UserStatisticsPageView.as_view()(request, **kwargs)
+
     # StatisticsPageView()
     def get_leader_statisticspage_object(self):
-        request = self.factory.get('/statistics/leader')
-        request.user = self.kjeld
+        # XXX: we don't use request for anything! Is this deliberate?
+        # request = self.factory.get('/statistics/leader')
+        # request.user = self.kjeld
         view = LeaderStatisticsPageView()
         return view
 
