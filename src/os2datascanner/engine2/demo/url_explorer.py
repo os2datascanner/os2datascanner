@@ -30,7 +30,8 @@ def format_d(depth, fmt, *args, **kwargs):
 
 def print_source(  # noqa
         manager, *source_path,
-        guess=False, summarise=False, metadata=False, max_depth=None):  # noqa
+        guess=False, summarise=False, metadata=False, max_depth=None,
+        hints=False):  # noqa
     base_source = source_path[0]
 
     source = source_path[-1]
@@ -38,6 +39,12 @@ def print_source(  # noqa
     try:
         for handle in source.handles(manager):
             printfunc(format_d(depth, "{0}", handle))
+            if hints and hasattr(handle, "_hints"):
+                for k, v in (handle._hints or {}).items():
+                    printfunc(format_d(depth + 1, "hint:{0} {1}", k, v))
+                # This is a hint of sorts, but isn't stored in _hints
+                printfunc(format_d(
+                        depth + 1, "hint:referrer {0}", handle.referrer))
 
             if handle not in base_source:
                 printfunc(format_d(depth + 1, "(foreign Handle)"))
@@ -67,7 +74,8 @@ def print_source(  # noqa
                     print_source(
                             manager, *source_path, derived_source,
                             guess=guess, summarise=summarise,
-                            metadata=metadata, max_depth=max_depth)
+                            metadata=metadata, max_depth=max_depth,
+                            hints=hints)
     except Exception:
         print(
                 format_d(depth, f"{type(source).__name__}: unexpected error:"),
@@ -105,6 +113,10 @@ def add_control_arguments(parser):
             metavar="DEPTH",
             type=int,
             help="Don't recurse deeper than %(metavar)s levels.")
+    parser.add_argument(
+            "--hints",
+            action="store_true",
+            help="Print the hints associated with each file.")
     parser.add_argument(
             "--setting",
             metavar=("KEY", "VALUE"),
@@ -199,7 +211,8 @@ def main():  # noqa: C901, CCR001
                             guess=args.guess,
                             summarise=args.summarise,
                             metadata=args.metadata,
-                            max_depth=args.max_depth)
+                            max_depth=args.max_depth,
+                            hints=args.hints)
                     if args.stop:
                         signal.raise_signal(signal.SIGSTOP)
             except UnknownSchemeError:
