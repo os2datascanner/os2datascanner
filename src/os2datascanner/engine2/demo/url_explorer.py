@@ -29,11 +29,20 @@ def format_d(depth, fmt, *args, **kwargs):
 
 
 def print_source(  # noqa
-        manager, source, depth=0, *,
+        manager, *source_path,
         guess=False, summarise=False, metadata=False, max_depth=None):  # noqa
+    base_source = source_path[0]
+
+    source = source_path[-1]
+    depth = len(source_path)
     try:
         for handle in source.handles(manager):
             printfunc(format_d(depth, "{0}", handle))
+
+            if handle not in base_source:
+                printfunc(format_d(depth + 1, "(foreign Handle)"))
+                continue
+
             if summarise:
                 resource = handle.follow(manager)
                 try:
@@ -56,7 +65,7 @@ def print_source(  # noqa
                         handle, manager if not guess else None)
                 if derived_source:
                     print_source(
-                            manager, derived_source, depth + 1,
+                            manager, *source_path, derived_source,
                             guess=guess, summarise=summarise,
                             metadata=metadata, max_depth=max_depth)
     except Exception:
