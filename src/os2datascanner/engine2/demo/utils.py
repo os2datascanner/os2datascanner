@@ -63,7 +63,7 @@ class DemoSourceUtility:
             return FilesystemSource(unquote(path) if path else None)
 
         elif scheme in ("http", "https"):
-            return WebSource(url)
+            return WebSource(url, extended_hints=True)
 
         raise UnknownSchemeError()
 

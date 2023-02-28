@@ -109,13 +109,14 @@ def simplify_mime_type(mime):
 class WebCrawler(Crawler):
     def __init__(
             self, url: str, session: requests.Session, timeout: float = None,
-            *args, **kwargs):
+            *args, allow_element_hints=False, **kwargs):
         super().__init__(*args, **kwargs)
         self._url = url
         self._split_url = urlsplit(url)
         self._session = session
         self._timeout = timeout
         self._retrier = WebRetrier()
+        self._allow_element_hints = allow_element_hints
         self.exclusions = set()
 
     def get(self, *args, **kwargs):
@@ -168,6 +169,18 @@ class WebCrawler(Crawler):
             and (not surl_s.path
                  or url_s.path.startswith(surl_s.path)))
 
+    def _handle_outlink(self, new_ttl, element, link):
+        # We only care about local links *covered by this crawler* (and remote
+        # links, so they can be checked)
+        if self.is_crawlable(link.url) or not self.is_local(link.url):
+            extra_hints = {}
+            if self._allow_element_hints:
+                if (title := element.get("data-title")):
+                    extra_hints["title"] = title
+                if (true_url := element.get("data-true-url")):
+                    extra_hints["true_url"] = true_url
+            self.add(link.url, new_ttl, **extra_hints)
+
     def visit_one(self, url: str, ttl: int, hints):  # noqa CCR001
         if ttl > 0 and self.is_crawlable(url) and not self._frozen:
             response = self.head(url, timeout=self._timeout)
@@ -195,11 +208,7 @@ class WebCrawler(Crawler):
                                 hints["title"] = title
 
                     for element, link in make_outlinks(doc):
-                        # We only emit local links *covered by this crawler*
-                        # (and remote links, so they can be checked)
-                        if (self.is_crawlable(link.url)
-                                or not self.is_local(link.url)):
-                            self.add(link.url, ttl - 1)
+                        self._handle_outlink(ttl - 1, element, link)
             elif response.is_redirect and response.next:
                 # Redirects cost a TTL point *and* don't produce anything
                 self.add(response.next.url, ttl - 1)

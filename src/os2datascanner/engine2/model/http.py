@@ -107,7 +107,8 @@ class WebSource(Source):
 
     def __init__(
             self, url: str, sitemap: str = "", exclude=None,
-            sitemap_trusted=False):
+            sitemap_trusted=False,
+            extended_hints=False):
 
         if exclude is None:
             exclude = []
@@ -118,6 +119,7 @@ class WebSource(Source):
         self._exclude = exclude
 
         self._sitemap_trusted = sitemap_trusted
+        self._extended_hints = extended_hints
 
     def _generate_state(self, sm):
         from ... import __version__
@@ -137,7 +139,8 @@ class WebSource(Source):
     def handles(self, sm):
         session = sm.open(self)
         wc = crawler.WebCrawler(
-                self._url, session=session, timeout=TIMEOUT, ttl=TTL)
+                self._url, session=session, timeout=TIMEOUT, ttl=TTL,
+                allow_element_hints=self._extended_hints)
         if self._exclude:
             wc.exclude(*self._exclude)
 
@@ -177,13 +180,13 @@ class WebSource(Source):
         return self._url
 
     def to_json_object(self):
-        return dict(
-            **super().to_json_object(),
-            url=self._url,
-            sitemap=self._sitemap,
-            exclude=self._exclude,
-            sitemap_trusted=self._sitemap_trusted
-        )
+        return super().to_json_object() | {
+            "url": self._url,
+            "sitemap": self._sitemap,
+            "exclude": self._exclude,
+            "sitemap_trusted": self._sitemap_trusted,
+            "extended_hints": self._extended_hints,
+        }
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -192,7 +195,8 @@ class WebSource(Source):
             url=obj["url"],
             sitemap=obj.get("sitemap"),
             exclude=obj.get("exclude"),
-            sitemap_trusted=obj.get("sitemap_trusted", False)
+            sitemap_trusted=obj.get("sitemap_trusted", False),
+            extended_hints=obj.get("extended_hints", False),
         )
 
     @property
