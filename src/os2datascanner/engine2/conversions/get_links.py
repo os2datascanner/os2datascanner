@@ -3,7 +3,7 @@ from lxml.etree import ParserError
 
 from .types import OutputType
 from .registry import conversion
-from ..model.utilities.crawler import make_outlinks
+from ..model.utilities.crawler import (parse_html, make_outlinks)
 
 logger = logging.getLogger(__name__)
 
@@ -14,8 +14,9 @@ def links_processor(r, **kwargs):
     with r.make_stream() as fp:
         try:
             content = fp.read().decode()
+            html = parse_html(content, str(r.handle))
             return [
-                    link for link in make_outlinks(content, str(r.handle))
+                    link for _, link in make_outlinks(html)
                     if link.url.startswith("http")]
         except ParserError:
             logger.error("Conversion error while extracting links",

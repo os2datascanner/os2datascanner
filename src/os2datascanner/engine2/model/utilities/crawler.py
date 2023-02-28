@@ -1,6 +1,6 @@
 import re
 from abc import ABC, abstractmethod
-from lxml.html import document_fromstring
+from lxml.html import HtmlElement, document_fromstring
 from lxml.etree import ParserError
 from urllib.parse import urlsplit, urlunsplit, SplitResult
 import logging
@@ -69,21 +69,24 @@ class Crawler(ABC):
                 self._visiting = None
 
 
-def make_outlinks(
-        content: str,  # HTML page content
-        where: str):  # URL of page
+def parse_html(content: str, where: str) -> HtmlElement:
     try:
         doc = document_fromstring(content)
         doc.make_links_absolute(where, resolve_base_href=True)
-        for element, _attr, link, _pos in doc.iterlinks():
-            if (element.tag in ("a", "img",)
-                    and element.get("rel") != "nofollow"):
-                yield Link(link, link_text=element.text)
+        return doc
     except ParserError:
         # Silently drop ParserErrors, but only for empty documents
         if content and not content.isspace():
             logger.error("{0}: unexpected ParserError".format(where),
                          exc_info=True)
+
+
+def make_outlinks(root: HtmlElement):
+    if root is not None:
+        for element, _attr, link, _pos in root.iterlinks():
+            if (element.tag in ("a", "img",)
+                    and element.get("rel") != "nofollow"):
+                yield (element, Link(link, link_text=element.text))
 
 
 _equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
@@ -180,7 +183,9 @@ class WebCrawler(Crawler):
                 if simplify_mime_type(ct).lower() == "text/html":
                     if not response.content:
                         response = self.get(url, timeout=self._timeout)
-                    for link in make_outlinks(response.content, url):
+                    doc = parse_html(response.content, url)
+
+                    for element, link in make_outlinks(doc):
                         # We only emit local links *covered by this crawler*
                         # (and remote links, so they can be checked)
                         if (self.is_crawlable(link.url)

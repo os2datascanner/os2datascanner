@@ -14,7 +14,8 @@ from urllib3.util import connection
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.core import Handle, SourceManager
 from os2datascanner.engine2.model.http import (WebSource, WebHandle)
-from os2datascanner.engine2.model.utilities.crawler import make_outlinks
+from os2datascanner.engine2.model.utilities.crawler import (
+        parse_html, make_outlinks)
 from os2datascanner.engine2.model.utilities.sitemap import (
     process_sitemap_url, _get_url_data)
 from os2datascanner.engine2.conversions.types import Link, OutputType
@@ -845,8 +846,10 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 "Last-Modified hint didn't survive serialisation")
 
     def test_empty_page_handling(self):
+        link_generator = make_outlinks(
+                parse_html("", "http://localhost:64346/empty.html"))
         self.assertEqual(
-                list(make_outlinks("", "http://localhost:64346/empty.html")),
+                list(link_generator),
                 [],
                 "empty page with non-empty list of outgoing links")
 
@@ -856,10 +859,10 @@ class Engine2HTTPTest(Engine2HTTPSetup, unittest.TestCase):
                 "/broken.html")
         with SourceManager() as sm, h.follow(sm).make_stream() as fp:
             content = fp.read().decode()
+        html = parse_html(content, "http://localhost:64346/broken.html")
 
         self.assertEqual(
-                [link.url for link in make_outlinks(
-                        content, "http://localhost:64346/broken.html")],
+                [link.url for _, link in make_outlinks(html)],
                 ["http://localhost:64346/kontakt.html"],
                 "expected one link to be found in broken document")
 
