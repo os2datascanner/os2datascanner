@@ -156,7 +156,8 @@ class WebSource(Source):
 
             new_hints = {
                     k: v for k, v in hints.items()
-                    if k in ("last_modified", "content_type", "fresh",)}
+                    if k in ("last_modified", "content_type", "true_url",
+                             "title", "fresh",)}
             r = WebHandle.make_handle(
                     referrer, self._url) if referrer else None
             h = WebHandle.make_handle(
@@ -216,8 +217,7 @@ class WebResource(FileResource):
     def _get_head_raw(self):
         throttled_session_head = rate_limit(
                 make_head_fallback(self._get_cookie()))
-        return throttled_session_head(
-            self.handle.presentation_url, timeout=TIMEOUT)
+        return throttled_session_head(self.handle._url, timeout=TIMEOUT)
 
     def check(self) -> bool:
         if (self.handle.source.has_trusted_sitemap
@@ -280,8 +280,7 @@ class WebResource(FileResource):
     def make_stream(self):
         # Assign session HTTP methods to variables, wrapped to constrain requests per second
         throttled_session_get = rate_limit(self._get_cookie().get)
-        response = throttled_session_get(
-            self.handle.presentation_url, timeout=TIMEOUT)
+        response = throttled_session_get(self.handle._url, timeout=TIMEOUT)
         response.raise_for_status()
         with BytesIO(response.content) as s:
             yield s
@@ -306,6 +305,8 @@ class WebHandle(Handle):
 
     @property
     def presentation_name(self):
+        if (title := self.hint("title")):
+            return title
         return self.presentation_url
 
     @property
@@ -314,10 +315,17 @@ class WebHandle(Handle):
         return split.hostname
 
     def __str__(self):
-        return self.presentation_url
+        return self.presentation_name
 
     @property
     def presentation_url(self) -> str:
+        if (true_url := self.hint("true_url")):
+            return true_url
+        else:
+            return self._url
+
+    @property
+    def _url(self) -> str:
         path = self.relative_path
         if path and not path.startswith("/"):
             path = "/" + path
@@ -328,7 +336,7 @@ class WebHandle(Handle):
     def sort_key(self):
         """ Returns a string to sort by.
         For a website the URL makes sense"""
-        return self.presentation
+        return self.presentation_url
 
     def censor(self):
         return WebHandle(
