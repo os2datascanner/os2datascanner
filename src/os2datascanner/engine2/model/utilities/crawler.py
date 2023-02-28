@@ -185,6 +185,15 @@ class WebCrawler(Crawler):
                         response = self.get(url, timeout=self._timeout)
                     doc = parse_html(response.content, url)
 
+                    if not hints.get("title"):
+                        # We have to download the page anyway to crawl its
+                        # links, so let's extract the title while we're here,
+                        # eh?
+                        for title in doc.xpath("/html/head/title/text()"):
+                            title = title.strip()
+                            if title:
+                                hints["title"] = title
+
                     for element, link in make_outlinks(doc):
                         # We only emit local links *covered by this crawler*
                         # (and remote links, so they can be checked)
