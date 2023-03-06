@@ -31,10 +31,14 @@ class Migration(migrations.Migration):
   dependencies = [("os2datascanner_report", "0062_populate_missing_resolution_time_fields")]
 
   operations = [
-    migrations.AlterField(
+      migrations.RemoveIndex(
+          model_name='documentreport',
+          name='pc_update_query',
+      ),
+      migrations.AlterField(
             model_name='documentreport',
             name='path',
-            field=models.CharField(db_index=True, max_length=20000, verbose_name='path'),
+            field=models.CharField(max_length=20000, verbose_name='path'),
         ),
     migrations.RunPython(alter_path_field_on_document_reports, reverse_code=migrations.RunPython.noop)
   ]

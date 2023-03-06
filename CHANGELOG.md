@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 3.18.4, 6th March 2023
+
+"Index Schmindex"
+
+### Bugfix
+
+- Corrects an issue with a database index on DocumentReport path-field for some installations.
+
 ## Version 3.18.3, 24th February 2023
 
 "Idle Chitchat"

@@ -11,10 +11,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveIndex(
-            model_name='documentreport',
-            name='pc_update_query',
-        ),
         migrations.AlterField(
             model_name='documentreport',
             name='path',
