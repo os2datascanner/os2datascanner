@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 3.18.5, 
+
+"Hash Browns"
+
+### Bugfixes
+
+- The "path"-field on DocumentReport objects are now hashed, so the unique-
+  constraint index does not throw an error on too large strings. The field
+  is changed to a character field once again.
+
 ## Version 3.18.4, 6th March 2023
 
 "Index Schmindex"

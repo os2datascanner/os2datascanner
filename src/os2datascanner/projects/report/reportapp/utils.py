@@ -69,9 +69,19 @@ def hash_handle(handle: dict) -> str:
     return hashlib.sha512(json.dumps(handle).encode()).hexdigest()
 
 
+def crunch_hash(t: TypePropertyEquality):
+    """
+    Hash the output received from the 'crunch'-function.
+    """
+
+    crunched_handle = crunch(t)
+
+    return hashlib.sha512(crunched_handle.encode("unicode_escape")).hexdigest()
+
+
 def crunch(t: TypePropertyEquality):
-    """Returns a string summary of all of the characteristic properties of an
-    object that descends from TypePropertyEquality. Be warned! If you add
+    """Returns a hashed string summary of all of the characteristic properties
+    of an object that descends from TypePropertyEquality. Be warned! If you add
     another field to the `eq_properties` of an object, either that field must
     be None by default, or a migration may have to be made to update certain
     equality fields on existing objects (take DocumentReport.path as an
@@ -95,7 +105,7 @@ def crunch(t: TypePropertyEquality):
     # Handle(_source=(Source(_unc=//path/to/somewhere));_relpath=some_file.txt)
     return_string = type(t).__name__ + "(" + ";".join(fragments) + ")"
 
-    return return_string.encode("unicode_escape").decode()
+    return return_string
 
 
 def get_or_create_user_aliases(user_data):  # noqa: D401

@@ -1,3 +1,5 @@
+import hashlib
+
 from django.test import TestCase
 from parameterized import parameterized
 
@@ -14,7 +16,7 @@ from os2datascanner.engine2.model.smb import SMBSource, SMBHandle
 
 from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.management.commands import result_collector
-from ..reportapp.utils import crunch
+from ..reportapp.utils import crunch_hash
 
 from .generate_test_data import record_match, record_problem
 
@@ -340,34 +342,34 @@ class PipelineCollectorTests(TestCase):
 
         self.assertEqual(
             pos_match.path,
-            r"FilesystemHandle(_source=(FilesystemSource(_path=/mnt/fs01.magenta.dk/brugere/af));_relpath=OS2datascanner/Dokumenter/Verdensherred\xf8mme - plan.txt)",  # noqa E501
+            hashlib.sha512("FilesystemHandle(_source=(FilesystemSource(_path=/mnt/fs01.magenta.dk/brugere/af));_relpath=OS2datascanner/Dokumenter/Verdensherred\xf8mme - plan.txt)".encode("unicode_escape")).hexdigest(),  # noqa E501
             "MatchMessage was not crunched correctly.")
         self.assertEqual(
             cor_match.path,
-            r"FilesystemHandle(_source=(FilesystemSource(_path=/mnt/fs01.magenta.dk/brugere/af));_relpath=/logo/Flag/Gr\udce6kenland.jpg)",  # noqa E501
+            hashlib.sha512("FilesystemHandle(_source=(FilesystemSource(_path=/mnt/fs01.magenta.dk/brugere/af));_relpath=/logo/Flag/Gr\udce6kenland.jpg)".encode("unicode_escape")).hexdigest(),  # noqa E501
             "MatchMessage was not crunched correctly.")
         self.assertEqual(
             dps_match.path,
-            r"FilesystemHandle(_source=(FilesystemSource(_path=/mnt/fs01.magenta.dk/brugere/af));_relpath=OS2datascanner/Dokumenter/Verdensherred\xf8mme - plan.txt)",  # noqa E501
+            hashlib.sha512("FilesystemHandle(_source=(FilesystemSource(_path=/mnt/fs01.magenta.dk/brugere/af));_relpath=OS2datascanner/Dokumenter/Verdensherred\xf8mme - plan.txt)".encode("unicode_escape")).hexdigest(),  # noqa E501
             "MatchMessage was not crunched correctly.")
 
     def test_crunching_handles(self):
         """Check that handles are crunched correctly."""
-        smb_crunched_1 = crunch(smb_handle_1)
-        smb_crunched_2 = crunch(smb_handle_2)
-        smb_crunched_3 = crunch(smb_handle_3)
+        smb_crunched_1 = crunch_hash(smb_handle_1)
+        smb_crunched_2 = crunch_hash(smb_handle_2)
+        smb_crunched_3 = crunch_hash(smb_handle_3)
 
         self.assertEqual(
             smb_crunched_1,
-            "SMBHandle(_source=(SMBSource(_unc=//some/path;_user=egon_olsen));_relpath=filename.file)",  # noqa E501
+            hashlib.sha512("SMBHandle(_source=(SMBSource(_unc=//some/path;_user=egon_olsen));_relpath=filename.file)".encode("unicode_escape")).hexdigest(),  # noqa E501
             "SMBHandle was not crunched correctly.")
         self.assertEqual(
             smb_crunched_2,
-            "SMBHandle(_source=(SMBSource(_unc=//some/path;_user=dynamit_harry));_relpath=filename.file)",  # noqa E501
+            hashlib.sha512("SMBHandle(_source=(SMBSource(_unc=//some/path;_user=dynamit_harry));_relpath=filename.file)".encode("unicode_escape")).hexdigest(),  # noqa E501
             "SMBHandle was not crunched correctly.")
         self.assertEqual(
             smb_crunched_3,
-            "SMBHandle(_source=(SMBSource(_unc=//some/path;_user=egon_olsen));_relpath=filename.file)",  # noqa E501
+            hashlib.sha512("SMBHandle(_source=(SMBSource(_unc=//some/path;_user=egon_olsen));_relpath=filename.file)".encode("unicode_escape")).hexdigest(),  # noqa E501
             "SMBHandle was not crunched correctly.")
 
     def test_same_path_updates_document_report(self):
