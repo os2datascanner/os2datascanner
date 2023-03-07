@@ -34,7 +34,7 @@ from os2datascanner.utils.system_utilities import time_now
 from prometheus_client import Summary, start_http_server
 
 from ...models.documentreport import DocumentReport
-from ...utils import prepare_json_object, crunch
+from ...utils import prepare_json_object, crunch_hash
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_result_collector_report",
@@ -91,7 +91,7 @@ def owner_from_metadata(message: messages.MetadataMessage) -> str:
 def handle_metadata_message(scan_tag, result):
     # Evaluate the queryset that is updated later to lock it.
     message = messages.MetadataMessage.from_json_object(result)
-    path = crunch(message.handle)
+    path = crunch_hash(message.handle)
     owner = owner_from_metadata(message)
 
     DocumentReport.objects.select_for_update(
@@ -166,7 +166,7 @@ def add_new_relations(adsid_alias, new_objects, obj, tm):
 def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cognitive complexity
     locked_qs = DocumentReport.objects.select_for_update(of=('self',))
     new_matches = messages.MatchesMessage.from_json_object(result)
-    path = crunch(new_matches.handle)
+    path = crunch_hash(new_matches.handle)
     # The queryset is evaluated and locked here.
     previous_report = (locked_qs.filter(
             path=path, scanner_job_pk=scan_tag.scanner.pk).
@@ -276,7 +276,7 @@ def sort_matches_by_probability(body):
 def handle_problem_message(scan_tag, result):
     locked_qs = DocumentReport.objects.select_for_update(of=('self',))
     problem = messages.ProblemMessage.from_json_object(result)
-    path = crunch(problem.handle if problem.handle else problem.source)
+    path = crunch_hash(problem.handle if problem.handle else problem.source)
     # Queryset is evaluated and locked here.
     previous_report = (locked_qs.filter(
             path=path, scanner_job_pk=scan_tag.scanner.pk).
