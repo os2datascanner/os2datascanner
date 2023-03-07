@@ -72,6 +72,7 @@ def hash_handle(handle: dict) -> str:
 def crunch_hash(t: TypePropertyEquality):
     """
     Hash the output received from the 'crunch'-function.
+    OBS: function used in reportapp migration 0063, 0068
     """
 
     crunched_handle = crunch(t)
