@@ -8,6 +8,8 @@
 
 - An issue where scanning calendar events would not work properly has been fixed.
 
+- Reigned in a migration, that could accidentally delete document reports.
+
 ## Version 3.18.6, 8th March 2023
 
 "Iterative Bugfixing"
