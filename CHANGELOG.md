@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 3.18.6, 8th March 2023
+
+"Iterative Bugfixing"
+
+### Bugfixes
+
+- The "path"-field of the DocumentReport is now altered in a separate
+  transaction to the rehashing population function.
+
 ## Version 3.18.5, 7th March 2023
 
 "Hash Browns"
