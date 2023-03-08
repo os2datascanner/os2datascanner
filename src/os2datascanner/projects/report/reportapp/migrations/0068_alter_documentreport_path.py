@@ -34,18 +34,4 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(re_crunch, reverse_code=migrations.RunPython.noop),
-
-        migrations.AlterField(
-            model_name='documentreport',
-            name='path',
-            field=models.CharField(max_length=256, verbose_name='path'),
-        ),
-        migrations.RemoveIndex(
-            model_name='documentreport',
-            name='pc_update_query',
-        ),
-        migrations.AddIndex(
-            model_name='documentreport',
-            index=models.Index(fields=['path'], name='pc_update_query'),
-        ),
     ]
