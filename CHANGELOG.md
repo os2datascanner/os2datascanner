@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.18.7,
+## Version 3.18.7, 13th March 2023
 
 "Island Troubles"
 
