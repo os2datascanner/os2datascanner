@@ -1,5 +1,11 @@
 # Changelog
 
+## Next release
+
+### General improvements
+
+- The documentation for the web scanner has been greatly expanded.
+
 ## Version 3.18.7, 13th March 2023
 
 "Island Troubles"

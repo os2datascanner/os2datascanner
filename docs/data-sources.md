@@ -80,7 +80,62 @@ of the underlying `python-requests` library:
 Be aware of this if you need to whitelist the user agent; in particular, make
 sure that a blacklist rule for `python-requests` doesn't take priority.
 
+### Notes on the crawler
+
+The crawler implements a simple depth-first search of a website. Given a
+website with the following links:
+
+| `index.html` | `a.html` | `b.html` |
+| ------------ | -------- | -------- |
+| `a.html`<br>`b.html`<br>`c.html` | `a1.html`<br>`a2.png` | `b1.html`<br>`b2.jpg`<br>`b3.html` |
+
+... a crawl starting at `index.html` would emit links in the following order:
+
+* `index.html`;
+* the links from `index.html`: `a.html`, `b.html` and `c.html`;
+* the links from `a.html`: `a1.html` and `a2.png`;
+* the links from `b.html`: `b1.html`, `b2.jpg` and `b3.html`;
+* the links from `a1.html`, if there were any;
+* etc.
+
+Only links of the form `<a href="" />` (where `rel="nofollow"` is not set) and
+`<img src="" />` are treated as candidates for crawling. To avoid infinite
+recursion, links are only crawled to a certain depth, configurable for each
+installation.
+
+Links are only crawled when they're to a "similar enough" domain. Links to
+other domains will be emitted, to enable dead link detection, but not otherwise
+explored or processed by the rest of the pipeline. The precise definition of
+"similar enough" may vary between releases, but as of version 3.18.7 a scan of
+`example.com` would be permitted to explore links under all of the following
+domains:
+
+* `www.example.com`
+* `www2.example.com`
+* `m.example.com`
+* `ww1.example.com`
+* `ww2.example.com`
+* `en.example.com`
+* `da.example.com`
+* `secure.example.com`
+
+Upgrading the security of a connection is treated as "similar enough", but
+downgrading it is not. (A scan of `http://example.com/` is allowed to explore
+links under `https://example.com/`, but not vice-versa.)
+
+If the crawler is configured to search a prefix, then links belonging to the
+domain but _not_ under that prefix will not be emitted at all. That is, while
+scanning `https://example.com/subtree/`, no link to
+`https://example.com/index.html` would be emitted, even if one was found.
+
 ### Notes on sitemaps
+
+When using a sitemap, OS2datascanner will emit the specified root page and the
+files enumerated in the sitemap, _and nothing else_. Crawling is disabled when
+using a sitemap, which can provide better performance.
+
+OS2datascanner does not yet support [Google's image extensions](https://developers.google.com/search/docs/crawling-indexing/sitemaps/image-sitemaps)
+to the sitemap schema: only those links present in a `<loc />` tag are emitted.
 
 OS2datascanner trusts the hints provided by a sitemap over the information
 provided by HTTP headers: if the `<lastmod />` element contains a last
