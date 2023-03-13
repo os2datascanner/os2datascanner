@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 3.18.7,
+
+"Island Troubles"
+
+### Bugfixes
+
+- An issue where scanning calendar events would not work properly has been fixed.
+
 ## Version 3.18.6, 8th March 2023
 
 "Iterative Bugfixing"

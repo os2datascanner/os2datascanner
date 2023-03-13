@@ -178,7 +178,7 @@ class MSGraphCalendarEventHandle(Handle):
     @property
     def start(self):
         if self._start:
-            date = datetime.strptime(self._start["dateTime"], "%Y-%m-%dT%H:%M:%S.%f0")
+            date = datetime.datetime.strptime(self._start["dateTime"], "%Y-%m-%dT%H:%M:%S.%f0")
             tz = pytz.timezone(self._start["timeZone"])
             tz.localize(date)
             return date.strftime('%H:%M %-d/%-m/%y')
