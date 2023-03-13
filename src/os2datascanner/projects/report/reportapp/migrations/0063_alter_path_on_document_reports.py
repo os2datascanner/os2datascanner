@@ -20,9 +20,11 @@ def alter_path_field_on_document_reports(apps, _):
 
         path = crunch_hash(parent_object.handle if parent_object.handle else parent_object.source)
 
-        if DocumentReport.objects.filter(scanner_job_pk=dr.scanner_job_pk, path=path).exists():
+        if DocumentReport.objects.filter(scanner_job_pk=dr.scanner_job_pk, path=path).exclude(pk=dr.pk).exists():
+            # Another DocumentReport _which is not this one_ already exists with this path and scannerjob pk. Keep that one, and throw this one away.
             dr.delete()
         else:
+            # No other DocumentReport with this path and scannerjob pk exists. Set the path, then save.
             dr.path = path
             dr.save()
 
