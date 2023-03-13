@@ -10,6 +10,9 @@
 
 - Reigned in a migration, that could accidentally delete document reports.
 
+- The personal statistics view in the report module now works correctly for
+  all users, not just those with explicitly defined roles.
+
 ## Version 3.18.6, 8th March 2023
 
 "Iterative Bugfixing"
