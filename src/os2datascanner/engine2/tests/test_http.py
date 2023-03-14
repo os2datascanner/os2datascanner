@@ -137,6 +137,22 @@ extended_mapped_site = {
         sitemap="http://localhost:64346/sitemap_ext_ct.xml"
     ),
 }
+hint_site = {
+    "source": WebSource(
+        "http://localhost:64346/inline-hints/",
+        extended_hints=True
+    ),
+    "urls": [
+        "http://localhost:64346/inline-hints/",
+        "https://example.com.443.ezproxy.example.org/index.html",
+        "https://example.com.443.ezproxy.example.org/resources/ns.html",
+    ],
+    "presentation_urls": [
+        "http://localhost:64346/inline-hints/",
+        "https://example.com/index.html",
+        "https://example.com/resources/ns.html"
+    ]
+}
 links_from_handle = {
     "handle": WebHandle(
         WebSource("http://localhost:64346"), path="/external_links.html"
@@ -410,9 +426,10 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "scrape links without using sitemap"
 
         with SourceManager() as sm:
-            presentation = [str(h) for h in site["source"].handles(sm)]
+            presentation_urls = [
+                    h.presentation_url for h in site["source"].handles(sm)]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             site["handles"],
             "embedded site without sitemap should have 3 handles",
         )
@@ -421,9 +438,10 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "Use sitemap and no scraping"
 
         with SourceManager() as sm:
-            presentation = [str(h) for h in mapped_site["source"].handles(sm)]
+            presentation_urls = [
+                    h.presentation_url for h in mapped_site["source"].handles(sm)]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             mapped_site["handles"],
             "embedded site with sitemap should have 3 handles",
         )
@@ -432,9 +450,10 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "Testing for a subdomain that is not part of the _equiv_domains in http.py "
 
         with resolve_any_to_localhost(), SourceManager() as sm:
-            presentation = [str(h) for h in no_equivalent_mapped_site["source"].handles(sm)]
+            presentation_urls = [
+                    h.presentation_url for h in no_equivalent_mapped_site["source"].handles(sm)]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             no_equivalent_mapped_site["handles"],
             "embedded a.www.localhost site with sitemap should have 1 handles",
         )
@@ -443,9 +462,10 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "Redirect http://www.localhost to http://localhost"
 
         with resolve_any_to_localhost(), SourceManager() as sm:
-            presentation = [str(h) for h in equivalent_mapped_site["source"].handles(sm)]
+            presentation_urls = [
+                    h.presentation_url for h in equivalent_mapped_site["source"].handles(sm)]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             equivalent_mapped_site["handles"],
             "embedded redirect site with sitemap should have 4 handles",
         )
@@ -454,11 +474,11 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "use a data-sitemap"
 
         with SourceManager() as sm:
-            presentation = [
-                str(h) for h in embedded_mapped_site["source"].handles(sm)
+            presentation_urls = [
+                    h.presentation_url for h in embedded_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             embedded_mapped_site["handles"],
             "embedded site with data: sitemap should have 2 handles"
         )
@@ -467,11 +487,11 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "use a sitemap that links to other sitemaps"
 
         with SourceManager() as sm:
-            presentation = [
-                str(h) for h in indexed_mapped_site["source"].handles(sm)
+            presentation_urls = [
+                    h.presentation_url for h in indexed_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             indexed_mapped_site["handles"],
             "embedded site with sitemap index should have 4 handles",
         )
@@ -483,11 +503,11 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         # requests.get("http://localhost:64346/compressed_sitemap.xml.gz").headers
         # > 'Content-type': 'application/gzip', 'Content-Length': '157'
         with SourceManager() as sm:
-            presentation = [
-                str(h) for h in compressed_mapped_site["source"].handles(sm)
+            presentation_urls = [
+                    h.presentation_url for h in compressed_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             compressed_mapped_site["handles"],
             "embedded site with compressed sitemap index should have 4 handles",
         )
@@ -496,11 +516,11 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "Source with excluded site and path"
 
         with SourceManager() as sm:
-            presentation = [
-                str(h) for h in excluded_mapped_site["source"].handles(sm)
+            presentation_urls = [
+                    h.presentation_url for h in excluded_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             excluded_mapped_site["handles"],
             "WebSource with excluded sites should have 2 handles"
         )
@@ -509,11 +529,11 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
         "site mixed with external-, unresponsive- and non-http links"
 
         with SourceManager() as sm:
-            presentation = [
-                str(h) for h in external_links_mapped_site["source"].handles(sm)
+            presentation_urls = [
+                    h.presentation_url for h in external_links_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             external_links_mapped_site["handles"],
             "site with mixed internal, external and non-http links should have 3 "
             "handles that does not produce an exception")
@@ -534,32 +554,32 @@ class Engine2HTTPExplorationTest(Engine2HTTPSetup, unittest.TestCase):
     def test_source_with_path(self):
         "Test that new handles are created correctly if the source contains a path"
         with SourceManager() as sm:
-            presentation = [
-                str(h) for h in source_with_path_site["source"].handles(sm)
+            presentation_urls = [
+                    h.presentation_url for h in source_with_path_site["source"].handles(sm)
             ]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             source_with_path_site["handles"],
             "Source with path should produce 3 handles")
 
     def test_source_with_path_sitemap(self):
         "Test that new handles are created correctly if the source contains a path"
         with SourceManager() as sm:
-            presentation = [
-                str(h) for h in source_with_path_mapped_site["source"].handles(sm)
+            presentation_urls = [
+                    h.presentation_url for h in source_with_path_mapped_site["source"].handles(sm)
             ]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             source_with_path_mapped_site["handles"],
             "mapped Source with path should produce 2 handles")
 
     def test_page_with_anchor_links(self):
         with SourceManager() as sm:
-            presentation = [
-                str(h) for h in source_with_anchors["source"].handles(sm)
+            presentation_urls = [
+                    h.presentation_url for h in source_with_anchors["source"].handles(sm)
             ]
         self.assertCountEqual(
-            presentation,
+            presentation_urls,
             source_with_anchors["handles"],
             "links identical but for their anchors should be unified")
 
@@ -595,6 +615,40 @@ class Engine2HTTPSitemapTest(Engine2HTTPSetup, unittest.TestCase):
                     break
             else:
                 self.fail("secret file missing")
+
+    def test_url_hints(self):
+        """Proxy servers can give hints for true URLs."""
+
+        with SourceManager() as sm:
+            handles = list(hint_site["source"].handles(sm))
+
+        true_urls = [h._url for h in handles]
+        presentation_urls = [h.presentation_url for h in handles]
+
+        print(presentation_urls)
+
+        self.assertCountEqual(
+                hint_site["urls"],
+                true_urls,
+                "didn't find expected links")
+        self.assertCountEqual(
+                hint_site["presentation_urls"],
+                presentation_urls,
+                "URL link hints not respected")
+
+    def test_title_extraction(self):
+        """HTML <title />s are extracted from visited pages and used for
+        presentation purposes."""
+        with SourceManager() as sm:
+            handles = list(hint_site["source"].handles(sm))
+
+        for h in handles:
+            if h.relative_path == "/":
+                self.assertEqual(
+                        str(h),
+                        "Metadata test page",
+                        "title extraction failed")
+                break
 
     def test_sitemap_error(self):
         "Ensure there's an exception if the sitemap doesn't exist or is malformed"
