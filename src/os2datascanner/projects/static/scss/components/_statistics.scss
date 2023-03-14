@@ -80,7 +80,10 @@
 
 .chart_container {
 	max-height: 32rem;
-	max-width: 32rem;
+
+	@media (min-width: $break-lg) {
+		max-width: 32rem;
+	}
 
 	&.status-timeline {
 		max-width: 100%;
