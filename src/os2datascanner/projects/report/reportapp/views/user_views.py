@@ -23,7 +23,7 @@ from ..models.roles.role import Role
 from ..models.roles.dpo import DataProtectionOfficer
 
 
-class UserView(TemplateView, LoginRequiredMixin):
+class UserView(LoginRequiredMixin, TemplateView):
     template_name = "user.html"
     context_object_name = "user"
     model = User
