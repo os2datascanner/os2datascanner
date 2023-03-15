@@ -30,11 +30,36 @@ class Account(Core_Account, Imported, Broadcasted):
                 self.organization.uuid, self.organization.name,
                 )
 
-    def get_covering_scannerjobs(self):
+    def get_dropped_scanners(self):
+        """Returns all scanners, which do not cover the account, but still
+        contains the account in its 'covered_accounts'-field."""
+
         # Avoid circular import
         from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import Scanner
-        scanners = Scanner.objects.filter(org_unit__in=self.units.all())
-        return scanners
+        dropped_scanners = Scanner.objects.filter(
+            covered_accounts=self).exclude(
+            org_unit__in=self.units.all())
+        return dropped_scanners
+
+    def get_new_covering_scanners(self):
+        """Returns all scanners, which cover the account, but does not contain
+        the account in its 'covered_accounts'-field."""
+        # Avoid circular import
+        from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import Scanner
+        new_scanners = Scanner.objects.filter(
+            org_unit__in=self.units.all()).exclude(
+            covered_accounts=self)
+        return new_scanners
+
+    def sync_covering_scanners(self):
+        """Removes self from covered_accounts field of dropped scanners,
+        then adds self to newly covering scanners."""
+
+        for scanner in self.get_dropped_scanners():
+            scanner.covered_accounts.remove(self)
+
+        for scanner in self.get_new_covering_scanners():
+            scanner.covered_accounts.add(self)
 
 
 Account.factory = ModelFactory(Account)

@@ -148,7 +148,7 @@ class Scanner(models.Model):
 
     covered_accounts = models.ManyToManyField(Account,
                                               blank=True,
-                                              verbose_name='Dækkede konti',
+                                              verbose_name=_('covered accounts'),
                                               related_name='covered_by_scanner')
 
     def verify(self) -> bool:

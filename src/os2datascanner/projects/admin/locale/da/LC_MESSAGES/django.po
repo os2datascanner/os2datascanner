@@ -107,9 +107,9 @@ msgid "no scanner job exists with id {id}"
 msgstr "intet scannerjob findes med id {id}"
 
 #: adminapp/models/apikey.py:16 adminapp/models/rules/rule.py:47
-#: adminapp/models/scannerjobs/scanner.py:80 adminapp/models/usererrorlog.py:52
-#: import_services/models/msgraph_import_job.py:28
-#: import_services/models/os2mo_import_job.py:18
+#: adminapp/models/scannerjobs/scanner.py:81 adminapp/models/usererrorlog.py:52
+#: import_services/models/msgraph_import_job.py:29
+#: import_services/models/os2mo_import_job.py:20
 #: import_services/models/realm.py:29
 msgid "organization"
 msgstr "organisation"
@@ -190,7 +190,7 @@ msgstr "Scan slettet post mappe"
 msgid "Include emails in the deleted post folder"
 msgstr "Inkludér emails i slettet post mappe"
 
-#: adminapp/models/scannerjobs/scanner.py:89
+#: adminapp/models/scannerjobs/scanner.py:90
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
 

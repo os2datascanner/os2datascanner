@@ -37,3 +37,15 @@ def upload_path_gdrive_service_account(instance, filename):
 
 def upload_path_gdrive_users(instance, filename):
     return "organisation/%s" % instance.organization.slug + "/googledrive/users/%s" % filename
+
+
+def sync_all_accounts_and_scanners():
+    """To be run after each organizational import job. Synchronizes the
+    'covered_accounts' field on scanners to the accounts currently in the
+    database."""
+    # Avoid circular import
+
+    from os2datascanner.projects.admin.organizations.models import Account
+
+    for account in Account.objects.iterator():
+        account.sync_covering_scanners()

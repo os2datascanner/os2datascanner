@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.projects.admin.adminapp.signals import get_pika_thread
+from os2datascanner.projects.admin.adminapp.utils import sync_all_accounts_and_scanners
 from ...core.models.background_job import BackgroundJob
 
 logger = logging.getLogger(__name__)
@@ -142,6 +143,8 @@ class OS2moImportJob(BackgroundJob):
                 self.save()
 
         perform_os2mo_import(org_unit_list, self.organization, progress_callback=_callback)
+
+            sync_all_accounts_and_scanners()
 
     def finish(self):
         if (pe := get_pika_thread(init=False)):

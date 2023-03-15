@@ -36,6 +36,10 @@
 
 - Sizes of the widgets in the DPO statistics overview fit their content better.
 
+- Scanner objects now contain information about which accounts they cover,
+  which can be used to identify when an account is no longer covered by a
+  scannerjob.
+
 ### Bugfixes
 
 - Choosing a scannerjob in the DPO statistics overview now loads the correct
