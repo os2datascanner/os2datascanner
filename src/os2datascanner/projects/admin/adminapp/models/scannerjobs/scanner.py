@@ -47,6 +47,7 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
+from os2datascanner.projects.admin.organizations.models import Account
 from mptt.models import TreeManyToManyField
 
 from ..rules.rule import Rule
@@ -144,6 +145,11 @@ class Scanner(models.Model):
                                              blank=True,
                                              verbose_name=_('exclusion rules'),
                                              related_name='scanners_ex_rules')
+
+    covered_accounts = models.ManyToManyField(Account,
+                                              blank=True,
+                                              verbose_name='Dækkede konti',
+                                              related_name='covered_by_scanner')
 
     def verify(self) -> bool:
         """Method documentation"""

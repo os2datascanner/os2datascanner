@@ -30,6 +30,12 @@ class Account(Core_Account, Imported, Broadcasted):
                 self.organization.uuid, self.organization.name,
                 )
 
+    def get_covering_scannerjobs(self):
+        # Avoid circular import
+        from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import Scanner
+        scanners = Scanner.objects.filter(org_unit__in=self.units.all())
+        return scanners
+
 
 Account.factory = ModelFactory(Account)
 
