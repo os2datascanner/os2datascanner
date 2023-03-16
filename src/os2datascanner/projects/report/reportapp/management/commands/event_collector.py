@@ -121,6 +121,9 @@ def handle_event(event_type, instance, cls, cls_serializer):  # noqa: CCR001, C9
 
         instance_fields["user"] = user_obj.pk
 
+        if instance_fields["manager"]:
+            instance_fields["manager"] = instance_fields["manager"][0]
+
     elif cn == "Alias":
         org, created = Organization.objects.get_or_create(uuid=instance_fields["account"][2],
                                                           defaults={

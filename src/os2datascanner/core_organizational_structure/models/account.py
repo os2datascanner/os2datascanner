@@ -61,6 +61,13 @@ class Account(models.Model):
         'OrganizationalUnit',
         through='Position',
     )
+    manager = models.ForeignKey(
+        'account',
+        models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="managed_accounts",
+    )
 
     def get_managed_units(self):
         return self.units.filter(pk__in=self.positions.filter(

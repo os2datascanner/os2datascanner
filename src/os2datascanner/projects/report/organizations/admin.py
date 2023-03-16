@@ -32,8 +32,8 @@ class AliasAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
 
 @admin.register(Account)
 class AccountAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
-    list_display = ('username', 'first_name', 'last_name', 'organization', 'uuid')
-    readonly_fields = ('username', 'first_name', 'last_name', 'organization', 'uuid')
+    list_display = ('username', 'first_name', 'last_name', 'organization', 'manager', 'uuid')
+    readonly_fields = ('username', 'first_name', 'last_name', 'organization', 'manager', 'uuid')
 
 
 @admin.register(Organization)
