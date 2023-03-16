@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-13 10:28+0100\n"
+"POT-Creation-Date: 2023-03-16 09:45+0100\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -111,7 +111,7 @@ msgstr "følsomhed"
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport.py:141 reportapp/views/views.py:525
+#: reportapp/models/documentreport.py:141 reportapp/views/views.py:532
 msgid "Other"
 msgstr "Andet"
 
@@ -601,19 +601,19 @@ msgstr "Vis flere matches..."
 msgid "Report"
 msgstr "Rapport"
 
-#: reportapp/templates/components/navigation.html:16
+#: reportapp/templates/components/navigation.html:17
 msgid "Archive"
 msgstr "Arkiv"
 
-#: reportapp/templates/components/navigation.html:40
+#: reportapp/templates/components/navigation.html:42
 msgid "My Overview"
 msgstr "Mit overblik"
 
-#: reportapp/templates/components/navigation.html:48
+#: reportapp/templates/components/navigation.html:50
 msgid "User profile"
 msgstr "Brugerprofil"
 
-#: reportapp/templates/components/navigation.html:55
+#: reportapp/templates/components/navigation.html:57
 #: reportapp/templates/components/user.html:48
 msgid "Logout"
 msgstr "Log ud"
@@ -1105,19 +1105,23 @@ msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:526
+#: reportapp/views/views.py:381
+msgid "The archive page has been deactivated for this distribution."
+msgstr "Arkivfanen er deaktiveret for denne opsætning."
+
+#: reportapp/views/views.py:533
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:527
+#: reportapp/views/views.py:534
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:528
+#: reportapp/views/views.py:535
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:794
+#: reportapp/views/views.py:801
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."

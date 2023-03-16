@@ -25,6 +25,7 @@ SUPPORT_BUTTON = false
 ALLOW_CONTACT_DPO = false
 ALLOW_CONTACT_IT = false
 ALLOW_CONTACT_MAGENTA = false
+ARCHIVE_TAB = true
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
@@ -117,6 +118,7 @@ SETTINGS_EXPORT = [
     'ALLOW_CONTACT_DPO',
     'ALLOW_CONTACT_IT',
     'ALLOW_CONTACT_MAGENTA',
+    'ARCHIVE_TAB',
 ]
 
 # [internationalization]
