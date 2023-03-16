@@ -6,6 +6,8 @@
 
 - The documentation for the web scanner has been greatly expanded.
 
+- It is now possible to hide the archive-tab through a configuration variable.
+
 ## Version 3.18.7, 13th March 2023
 
 "Island Troubles"

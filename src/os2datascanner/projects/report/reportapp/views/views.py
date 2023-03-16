@@ -373,6 +373,13 @@ class ArchiveView(MainPageView):
 
         return response
 
+    def dispatch(self, request, *args, **kwargs):
+        if settings.ARCHIVE_TAB:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied(
+                _("The archive page has been deactivated for this distribution."))
+
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
     context_object_name = "matches"  # object_list renamed to something more relevant
