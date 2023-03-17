@@ -4,7 +4,6 @@
 
 .statistic_wrapper {
 	display: flex;
-	margin: -1.75rem;
 	flex-wrap: wrap;
 }
 
@@ -19,14 +18,16 @@
 	box-shadow: var(--box-shadow-widget);
 	border-radius: none;
 	padding: 2rem;
-	margin: 1.75rem;
 	flex: 1 1 auto;
 	min-width: 0;
-	max-width: 100%;
+	width: 100%;
 	height: fit-content;
+	max-width: none;
 
 	@media (min-width: $break-lg) {
 		border-radius: var(--border-radius-widget);
+		margin: 1.75rem;
+		max-width: fit-content;
 	}
 
 	.statistic_header {
@@ -78,8 +79,11 @@
 }
 
 .chart_container {
-	max-width: 32rem;
 	max-height: 32rem;
+
+	@media (min-width: $break-lg) {
+		max-width: 32rem;
+	}
 
 	&.status-timeline {
 		max-width: 100%;

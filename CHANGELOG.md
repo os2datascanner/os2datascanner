@@ -8,6 +8,13 @@
 
 - It is now possible to hide the archive-tab through a configuration variable.
 
+- Sizes of the widgets in the DPO statistics overview fit their content better.
+
+### Bugfixes
+
+- Choosing a scannerjob in the DPO statistics overview now loads the correct
+  figures.
+
 ## Version 3.18.7, 13th March 2023
 
 "Island Troubles"
