@@ -336,6 +336,8 @@ class SMBCResource(FileResource):
     def get_owner_sid(self):
         """Returns the Windows security identifier of the owner of this file,
         which libsmbclient exposes as an extended attribute."""
+        if (owner_sid := self.handle.hint("owner_sid")):
+            return owner_sid
         return self.get_xattr(smbc.XATTR_OWNER)
 
     @contextmanager
