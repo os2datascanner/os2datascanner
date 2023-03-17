@@ -94,6 +94,14 @@ class WebScanner(Scanner):
             "https://example.com/images/ instead of https://example.com/images"),
     )
 
+    extended_hints = models.BooleanField(
+        default=False,
+        verbose_name=_("extended hint support"),
+        help_text=_(
+                "present pages by their HTML titles and allow the "
+                "presentation of links to be overridden")
+    )
+
     def local_all_rules(self) -> list:
         if self.do_link_check:
             rule = LinksFollowRule(sensitivity=Sensitivity.INFORMATION)
@@ -164,4 +172,5 @@ class WebScanner(Scanner):
     def generate_sources(self):
         yield WebSource(self.root_url, sitemap=self.get_sitemap_url(),
                         exclude=self.get_excluded_urls(),
-                        sitemap_trusted=self.reduce_communication)
+                        sitemap_trusted=self.reduce_communication,
+                        extended_hints=self.extended_hints)
