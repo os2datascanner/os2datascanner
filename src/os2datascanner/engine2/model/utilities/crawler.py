@@ -198,7 +198,7 @@ class WebCrawler(Crawler):
                         response = self.get(url, timeout=self._timeout)
                     doc = parse_html(response.content, url)
 
-                    if not hints.get("title"):
+                    if self._allow_element_hints and not hints.get("title"):
                         # We have to download the page anyway to crawl its
                         # links, so let's extract the title while we're here,
                         # eh?
