@@ -95,16 +95,17 @@
                         data-clipboard-text="{{ document_report.matches.handle|find_parent:type|present_folder }}">
                   {% trans "Copy folder path" %}
                 </button>
-              {% endif %}
-              {% if type == 'smbc' or type == 'web' %}
                 <button type="button"
                         class="button btn-{{ document_report.pk|unlocalize }}"
                         data-clipboard-text="{{ document_report.matches.handle|find_parent:type|present }}">
-                  {% if type == 'smbc' %}
-                    {% trans "Copy path" %}
-                  {% elif type == 'web' %}
-                    {% trans "Copy link" %}
-                  {% endif %}
+                  {% trans "Copy path" %}
+                </button>
+              {% endif %}
+              {% if type == 'web' %}
+                <button type="button"
+                        class="button btn-{{ document_report.pk|unlocalize }}"
+                        data-clipboard-text="{{ document_report.matches.handle|find_parent:type|present_url }}">
+                  {% trans "Copy link" %}
                 </button>
               {% endif %}
             </div>

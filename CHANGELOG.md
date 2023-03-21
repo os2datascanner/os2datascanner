@@ -2,6 +2,18 @@
 
 ## Next release
 
+### New in this version
+
+- Experimental support for extra hints in web scans:
+
+  - OS2datascanner can now extract `<title />`s from web pages and can use
+    these when presenting matches.
+
+  - Websites can now indicate that their links correspond to some other URL.
+    When this is used, the report module will display that other URL instead.
+    (This provides a better experience when using a proxy server to scan an
+    external system's content.)
+
 ### General improvements
 
 - The documentation for the web scanner has been greatly expanded.

@@ -1,6 +1,6 @@
 import re
 from abc import ABC, abstractmethod
-from lxml.html import document_fromstring
+from lxml.html import HtmlElement, document_fromstring
 from lxml.etree import ParserError
 from urllib.parse import urlsplit, urlunsplit, SplitResult
 import logging
@@ -69,21 +69,24 @@ class Crawler(ABC):
                 self._visiting = None
 
 
-def make_outlinks(
-        content: str,  # HTML page content
-        where: str):  # URL of page
+def parse_html(content: str, where: str) -> HtmlElement:
     try:
         doc = document_fromstring(content)
         doc.make_links_absolute(where, resolve_base_href=True)
-        for element, _attr, link, _pos in doc.iterlinks():
-            if (element.tag in ("a", "img",)
-                    and element.get("rel") != "nofollow"):
-                yield Link(link, link_text=element.text)
+        return doc
     except ParserError:
         # Silently drop ParserErrors, but only for empty documents
         if content and not content.isspace():
             logger.error("{0}: unexpected ParserError".format(where),
                          exc_info=True)
+
+
+def make_outlinks(root: HtmlElement):
+    if root is not None:
+        for element, _attr, link, _pos in root.iterlinks():
+            if (element.tag in ("a", "img",)
+                    and element.get("rel") != "nofollow"):
+                yield (element, Link(link, link_text=element.text))
 
 
 _equiv_domains = set({"www", "www2", "m", "ww1", "ww2", "en", "da", "secure"})
@@ -106,13 +109,14 @@ def simplify_mime_type(mime):
 class WebCrawler(Crawler):
     def __init__(
             self, url: str, session: requests.Session, timeout: float = None,
-            *args, **kwargs):
+            *args, allow_element_hints=False, **kwargs):
         super().__init__(*args, **kwargs)
         self._url = url
         self._split_url = urlsplit(url)
         self._session = session
         self._timeout = timeout
         self._retrier = WebRetrier()
+        self._allow_element_hints = allow_element_hints
         self.exclusions = set()
 
     def get(self, *args, **kwargs):
@@ -165,6 +169,18 @@ class WebCrawler(Crawler):
             and (not surl_s.path
                  or url_s.path.startswith(surl_s.path)))
 
+    def _handle_outlink(self, new_ttl, element, link):
+        # We only care about local links *covered by this crawler* (and remote
+        # links, so they can be checked)
+        if self.is_crawlable(link.url) or not self.is_local(link.url):
+            extra_hints = {}
+            if self._allow_element_hints:
+                if (title := element.get("data-title")):
+                    extra_hints["title"] = title
+                if (true_url := element.get("data-true-url")):
+                    extra_hints["true_url"] = true_url
+            self.add(link.url, new_ttl, **extra_hints)
+
     def visit_one(self, url: str, ttl: int, hints):  # noqa CCR001
         if ttl > 0 and self.is_crawlable(url) and not self._frozen:
             response = self.head(url, timeout=self._timeout)
@@ -180,12 +196,19 @@ class WebCrawler(Crawler):
                 if simplify_mime_type(ct).lower() == "text/html":
                     if not response.content:
                         response = self.get(url, timeout=self._timeout)
-                    for link in make_outlinks(response.content, url):
-                        # We only emit local links *covered by this crawler*
-                        # (and remote links, so they can be checked)
-                        if (self.is_crawlable(link.url)
-                                or not self.is_local(link.url)):
-                            self.add(link.url, ttl - 1)
+                    doc = parse_html(response.content, url)
+
+                    if self._allow_element_hints and not hints.get("title"):
+                        # We have to download the page anyway to crawl its
+                        # links, so let's extract the title while we're here,
+                        # eh?
+                        for title in doc.xpath("/html/head/title/text()"):
+                            title = title.strip()
+                            if title:
+                                hints["title"] = title
+
+                    for element, link in make_outlinks(doc):
+                        self._handle_outlink(ttl - 1, element, link)
             elif response.is_redirect and response.next:
                 # Redirects cost a TTL point *and* don't produce anything
                 self.add(response.next.url, ttl - 1)
