@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-17 11:30+0100\n"
+"POT-Creation-Date: 2023-03-21 14:51+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -109,7 +109,7 @@ msgstr "intet scannerjob findes med id {id}"
 #: adminapp/models/apikey.py:16 adminapp/models/rules/rule.py:47
 #: adminapp/models/scannerjobs/scanner.py:80 adminapp/models/usererrorlog.py:52
 #: import_services/models/msgraph_import_job.py:28
-#: import_services/models/os2mo_import_job.py:19
+#: import_services/models/os2mo_import_job.py:18
 #: import_services/models/realm.py:29
 msgid "organization"
 msgstr "organisation"
@@ -312,8 +312,8 @@ msgid ""
 "present pages by their HTML titles and allow the presentation of links to be "
 "overridden"
 msgstr ""
-"navngiv sider efter HTML-overskrift og tillad specificering af alternative"
-" visningsformer for URL'er"
+"navngiv sider efter HTML-overskrift og tillad specificering af alternative "
+"visningsformer for URL'er"
 
 #: adminapp/models/sensitivity_level.py:33
 msgid "Critical"

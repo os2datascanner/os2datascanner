@@ -1,6 +1,8 @@
 # Changelog
 
-## Next release
+## Version 3.18.8, 21th March 2023
+
+"Shaka brah! 🤙"
 
 ### New in this version
 
@@ -27,7 +29,8 @@
 - Choosing a scannerjob in the DPO statistics overview now loads the correct
   figures.
 
-- OS2mo-import no longer cancels import-job due to the size of the organization it pulls from
+- OS2mo-import no longer cancels import-job due to the size of the organization
+  it pulls from.
 
 ## Version 3.18.7, 13th March 2023
 
