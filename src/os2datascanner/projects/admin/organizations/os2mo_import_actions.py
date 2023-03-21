@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 # TODO: Try to bring down complexity.
 @transaction.atomic
-def perform_os2mo_import(data: list,  # noqa: CCR001, too high cognitive complexity
+def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, too high cognitive complexity
                          organization: Organization,
                          progress_callback=_dummy_pc):
 
@@ -28,7 +28,7 @@ def perform_os2mo_import(data: list,  # noqa: CCR001, too high cognitive complex
     Position.objects.filter(imported=True).delete()
     Alias.objects.filter(imported=True).delete()
 
-    progress_callback("org_unit_count", len(data))
+    progress_callback("org_unit_count", len(org_unit_list))
 
     def add_unit(employees: dict, org_unit_obj: OrganizationalUnit, role: string):
         account_obj, created = Account.objects.update_or_create(
@@ -46,8 +46,10 @@ def perform_os2mo_import(data: list,  # noqa: CCR001, too high cognitive complex
         logger.info(f'  Account {account_obj.username}, '
                     f'Created: {created if created else "Up-to-date"}')
 
-        if not employees.get("employee")[0].get("addresses")[0].get("name"):
-            logger.info(f'No Email for account {account_obj.username}')
+        try:
+            customer_email = employees.get("employee")[0].get("addresses")[0].get("name")
+        except BaseException:
+            logger.info(f'    No Email for account {account_obj.username}')
         else:
             # Position and alias objects are deleted every time we import
             # which means that doing update or create will always be a "create", so it
@@ -61,79 +63,81 @@ def perform_os2mo_import(data: list,  # noqa: CCR001, too high cognitive complex
                 defaults={
                     "last_import": now,
                     "last_import_requested": now,
-                    "value": employees.get("employee")[0].get("addresses")[0].get("name")
+                    "value": customer_email
                 }
             )
-            logger.info(f'    Alias for account {alias_obj.account.username} '
+            logger.info(f'    Email-alias for account {alias_obj.account.username} '
                         f'Created: {created if created else "Up-to-date"}')
 
-            position_obj, created = Position.objects.update_or_create(
-                imported=True,
-                account=account_obj,
-                unit=org_unit_obj,
-                role=role,
-                defaults={
-                    "last_import": now,
-                    "last_import_requested": now
-                }
-            )
-            logger.info(
-                f'    Position for {role.capitalize()} account {position_obj.account.username} '
-                f'in {position_obj.unit.name}, '
-                f'Created: {created if created else "Up-to-date"}')
+        position_obj, created = Position.objects.update_or_create(
+            imported=True,
+            account=account_obj,
+            unit=org_unit_obj,
+            role=role,
+            defaults={
+                "last_import": now,
+                "last_import_requested": now
+            }
+        )
+        logger.info(
+            f'    Position for {role.capitalize()} account {position_obj.account.username} '
+            f'in {position_obj.unit.name}, '
+            f'Created: {created if created else "Up-to-date"}')
 
         all_uuids.add(employees.get("employee")[0].get("uuid"))
 
-    for object in data.get("data").get("org_units"):
-        for org_unit in object.get("objects"):
-            if org_unit.get("parent") is not None:
-                parent, created = OrganizationalUnit.objects.update_or_create(
-                    imported_id=org_unit.get("parent").get("uuid"),
-                    imported=True,
-                    organization=organization,
-                    defaults={
-                        "last_import": now,
-                        "last_import_requested": now,
-                        "name": org_unit.get("parent").get("name")
-                    }
-                )
-                logger.info(
-                    f'Parent {parent.name}, '
-                    f'for {org_unit.get("name")}, Created: {created if created else "Up-to-date"}')
-                org_unit_obj, created = OrganizationalUnit.objects.update_or_create(
-                    imported_id=org_unit.get("uuid"),
-                    imported=True,
-                    organization=organization,
-                    defaults={
-                        "parent": parent,
-                        "last_import": now,
-                        "last_import_requested": now,
-                        "name": org_unit.get("name")
-                    }
-                )
-            else:
-                org_unit_obj, created = OrganizationalUnit.objects.update_or_create(
-                    imported_id=org_unit.get("uuid"),
-                    imported=True,
-                    organization=organization,
-                    defaults={
-                        "last_import": now,
-                        "last_import_requested": now,
-                        "name": org_unit.get("name")
-                    }
-                )
-            logger.info(f'Org Unit {org_unit_obj.name}, '
-                        f'Created: {created if created else "Up-to-date"}')
+    for data in org_unit_list:
+        for org_unit_objects in data.get("data").get("org_units"):
+            for org_unit in org_unit_objects.get("objects"):
+                if org_unit.get("parent") is not None:
+                    parent, created = OrganizationalUnit.objects.update_or_create(
+                        imported_id=org_unit.get("parent").get("uuid"),
+                        imported=True,
+                        organization=organization,
+                        defaults={
+                            "last_import": now,
+                            "last_import_requested": now,
+                            "name": org_unit.get("parent").get("name")
+                        }
+                    )
+                    logger.info(
+                        f'Parent {parent.name}, '
+                        f'for {org_unit.get("name")}, \
+                            Created: {created if created else "Up-to-date"}')
+                    org_unit_obj, created = OrganizationalUnit.objects.update_or_create(
+                        imported_id=org_unit.get("uuid"),
+                        imported=True,
+                        organization=organization,
+                        defaults={
+                            "parent": parent,
+                            "last_import": now,
+                            "last_import_requested": now,
+                            "name": org_unit.get("name")
+                        }
+                    )
+                else:
+                    org_unit_obj, created = OrganizationalUnit.objects.update_or_create(
+                        imported_id=org_unit.get("uuid"),
+                        imported=True,
+                        organization=organization,
+                        defaults={
+                            "last_import": now,
+                            "last_import_requested": now,
+                            "name": org_unit.get("name")
+                        }
+                    )
+                logger.info(f'Org Unit {org_unit_obj.name}, '
+                            f'Created: {created if created else "Up-to-date"}')
 
-            progress_callback("org_unit_handled", org_unit_obj.name)
+                progress_callback("org_unit_handled", org_unit_obj.name)
 
-            all_uuids.add(org_unit.get("uuid"))
+                all_uuids.add(org_unit.get("uuid"))
 
-            for managers in org_unit.get("managers"):
-                add_unit(managers, org_unit_obj, "manager")
+                for managers in org_unit.get("managers"):
+                    add_unit(managers, org_unit_obj, "manager")
 
-            for employees in org_unit.get("associations"):
-                add_unit(employees, org_unit_obj, "employee")
+                for employees in org_unit.get("associations"):
+                    add_unit(employees, org_unit_obj, "employee")
 
     # Deleting local objects no longer present remotely.
     Account.objects.exclude(imported_id__in=all_uuids).exclude(imported=False).delete()
