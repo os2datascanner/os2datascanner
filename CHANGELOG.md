@@ -7,6 +7,8 @@
 - On top of the already-existing organisational unit manager role, Accounts can
   now declare that a specific person is their line manager. (This information
   is presently only available when importing data from Microsoft Graph.)
+
+- The next scheduled scanjob of a scanner is now shown on the "scanners"-page in the admin-module.
   
 ### General improvements
 

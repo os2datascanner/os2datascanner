@@ -1,6 +1,7 @@
 {% extends 'partials/base.html' %}
 {% load static %}
 {% load i18n %}
+{% load humanize %}
 
 {% block scripts %}
   <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
@@ -105,7 +106,16 @@
                     {% endif %}
                   </td>
 
-                  <td class="scanner-runtime datatable__column--automatic">{{ scanner.schedule_description|truncatechars:20 }}</td>
+                  {% if scanner.schedule_time %}
+                    <td class="scanner-runtime datatable__column--automatic">
+                      {% trans "Next scan: " %}
+                      <br>
+                      {{ scanner.schedule_date|naturalday:"l j. F Y"|capfirst }}, {{ scanner.schedule_time }}
+                    </td>
+                  {% else %}
+                    <td class="scanner-runtime datatable__column--automatic">{% trans "No" %}</td>
+                  {% endif %}
+ 
 
                   <td class="scanner-actions datatable__column--actions">
                     <div class="action-wrapper">
