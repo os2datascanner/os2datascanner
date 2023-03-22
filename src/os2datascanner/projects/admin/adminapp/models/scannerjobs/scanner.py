@@ -447,8 +447,8 @@ class Scanner(models.Model):
         return Account.objects.filter(units__in=self.org_unit.all())
 
     def sync_covered_accounts(self):
-        """Add all accounts, which would be scanned by this scannerjob to the
-        'covered_accounts'-fields."""
+        """Clears the set of accounts covered by this scanner job and
+        repopulates it based on the organisational units to be scanned."""
         self.covered_accounts.clear()
         self.covered_accounts.add(*self.get_covered_accounts())
 

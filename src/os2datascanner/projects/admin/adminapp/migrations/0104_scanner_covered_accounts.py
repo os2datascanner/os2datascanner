@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('organizations', '0014_position_organizations_position_unique_constraint'),
-        ('os2datascanner', '0102_webscanner_extended_hints'),
+        ('os2datascanner', '0103_change_language_of_verbose_names'),
     ]
 
     operations = [
