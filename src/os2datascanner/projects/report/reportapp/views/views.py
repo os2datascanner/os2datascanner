@@ -684,22 +684,23 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
         context["org_unit"] = org_unit
 
         if org_unit:
+            accounts = Account.objects.filter(units=org_unit)
             if search_field := self.request.GET.get('search_field', None):
-                self.employees = org_unit.positions.filter(
-                    Q(account__first_name__icontains=search_field) |
-                    Q(account__last_name__icontains=search_field) |
-                    Q(account__username__istartswith=search_field))
+                self.employees = accounts.filter(
+                    Q(first_name__icontains=search_field) |
+                    Q(last_name__icontains=search_field) |
+                    Q(username__istartswith=search_field))
             else:
-                self.employees = org_unit.positions.all().select_related('account')
+                self.employees = accounts
             self.order_employees()
             # This operation should NOT be done here. Move this to somehwere it makes sense.
             for employee in self.employees:
-                employee.account.save()
+                employee.save()
         else:
             self.employees = None
-        context["employees"] = self.employees
+        context["employees"] = set(self.employees)
 
-        context['order_by'] = self.request.GET.get('order_by', 'account__first_name')
+        context['order_by'] = self.request.GET.get('order_by', 'first_name')
         context['order'] = self.request.GET.get('order', 'ascending')
 
         return context
@@ -707,13 +708,11 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
     def order_employees(self):
         """Checks if a sort key is allowed and orders the employees queryset"""
         allowed_sorting_properties = [
-            'account__first_name',
-            'account__match_count',
-            'account__match_status']
+            'first_name',
+            'match_count',
+            'match_status']
         if (sort_key := self.request.GET.get('order_by')) and (
                 order := self.request.GET.get('order')):
-
-            print(sort_key, order)
 
             if sort_key not in allowed_sorting_properties:
                 return
