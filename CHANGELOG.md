@@ -8,6 +8,12 @@
   now declare that a specific person is their line manager. (This information
   is presently only available when importing data from Microsoft Graph.)
   
+### General improvements
+
+- Scanner objects now contain information about which accounts they cover,
+  which can be used to identify when an account is no longer covered by a
+  scannerjob.
+
 ### Bugfixes
 
 - Danish translations are no longer hardcoded in scanner model fields.
@@ -35,10 +41,6 @@
 - It is now possible to hide the archive-tab through a configuration variable.
 
 - Sizes of the widgets in the DPO statistics overview fit their content better.
-
-- Scanner objects now contain information about which accounts they cover,
-  which can be used to identify when an account is no longer covered by a
-  scannerjob.
 
 ### Bugfixes
 

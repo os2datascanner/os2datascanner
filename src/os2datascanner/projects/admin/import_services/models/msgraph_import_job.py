@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from ...core.models.background_job import BackgroundJob
 from ...grants.models import GraphGrant
 from os2datascanner.projects.admin.adminapp.signals import get_pika_thread
-from os2datascanner.projects.admin.adminapp.utils import sync_all_accounts_and_scanners
 from os2datascanner.engine2.model.msgraph.utilities import (
         make_token, MSGraphSource)
 
@@ -141,8 +140,6 @@ class MSGraphImportJob(BackgroundJob):
         self.save()
         perform_msgraph_import(hierarchy, self.organization,
                                progress_callback=_callback)
-
-        sync_all_accounts_and_scanners()
 
     def finish(self):
         if (pe := get_pika_thread(init=False)):

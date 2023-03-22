@@ -396,6 +396,10 @@ class Scanner(models.Model):
         if source_count == 0 and checkup_count == 0:
             raise ValueError(f"nothing to do for {self}")
 
+        # Synchronize the 'covered_accounts'-field with accounts, which are
+        # about to be scanned.
+        self.sync_covered_accounts()
+
         self.save()
 
         # Create a model object to track the status of this scan...
@@ -436,6 +440,17 @@ class Scanner(models.Model):
         # conflicts with Django, but subclasses should override this method!)
         raise NotImplementedError("Scanner.generate_sources")
         yield from []
+
+    def get_covered_accounts(self):
+        """Return all accounts which would be scanned by this scannerjob, if
+        run at this moment."""
+        return Account.objects.filter(units__in=self.org_unit.all())
+
+    def sync_covered_accounts(self):
+        """Add all accounts, which would be scanned by this scannerjob to the
+        'covered_accounts'-fields."""
+        self.covered_accounts.clear()
+        self.covered_accounts.add(*self.get_covered_accounts())
 
     class Meta:
         abstract = False
