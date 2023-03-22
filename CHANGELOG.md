@@ -4,6 +4,12 @@
 
 "Hairstylist of the Year"
 
+### New in this release
+
+- Access to the manager overview is now granted dynamically based on
+  organisational information and not on the static `Leader` role, which
+  has been removed.
+
 ### General improvements
 
 - Navigating to a section in the manual now highlights the header of that 

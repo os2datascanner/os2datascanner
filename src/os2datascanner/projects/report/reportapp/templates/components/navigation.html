@@ -18,7 +18,15 @@
         </a>
       </li>
     {% endif %}
-
+    {% if user.is_superuser or user.account.is_manager %}
+      <li>
+        <a href="{% url "statistics-leader" %}"
+           class="{% if request.path == '/statistics/leader' %}active{% endif %}">
+          {% include "components/svg-icons/bar_chart.svg" %}
+          <span class="width">{% trans "Leader overview" %}</span>
+        </a>
+      </li>
+    {% endif %}
     {% for role in roles %}
       <li>
         <a href="{{ role.url }}"

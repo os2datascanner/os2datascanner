@@ -171,15 +171,11 @@ msgstr "DPO"
 msgid "DPOs"
 msgstr "DPO'er"
 
-#: reportapp/models/roles/leader.py:14
-msgid "Leader overview"
-msgstr "Lederoverblik"
-
-#: reportapp/models/roles/leader.py:20
+#: reportapp/models/roles/leader.py:12
 msgid "leader"
 msgstr "leder"
 
-#: reportapp/models/roles/leader.py:21
+#: reportapp/models/roles/leader.py:13
 msgid "leaders"
 msgstr "ledere"
 
@@ -611,15 +607,19 @@ msgstr "Rapport"
 msgid "Archive"
 msgstr "Arkiv"
 
-#: reportapp/templates/components/navigation.html:42
+#: reportapp/templates/components/navigation.html:26
+msgid "Leader overview"
+msgstr "Lederoverblik"
+
+#: reportapp/templates/components/navigation.html:50
 msgid "My Overview"
 msgstr "Mit overblik"
 
-#: reportapp/templates/components/navigation.html:50
+#: reportapp/templates/components/navigation.html:58
 msgid "User profile"
 msgstr "Brugerprofil"
 
-#: reportapp/templates/components/navigation.html:57
+#: reportapp/templates/components/navigation.html:65
 #: reportapp/templates/components/user.html:48
 msgid "Logout"
 msgstr "Log ud"

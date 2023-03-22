@@ -5,14 +5,6 @@ from .role import Role
 
 class Leader(Role):
 
-    @property
-    def url(self):
-        return '/statistics/leader/'
-
-    @property
-    def description(self):
-        return _("Leader overview")
-
     def filter(self, document_reports):
         return document_reports
 
