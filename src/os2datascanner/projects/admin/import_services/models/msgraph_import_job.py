@@ -93,6 +93,10 @@ class MSGraphImportJob(BackgroundJob):
                             })
 
                         if member['@odata.type'] == data_type_user:
+                            member_id = member.get("id")
+                            userinfo = gc.get(
+                                f'/users/{member_id}/?$expand=manager($select=id, '
+                                f'givenName, surname ,userPrincipalName)')
                             group_members.append({
                                 "type": "user",
                                 "uuid": member.get("id"),
@@ -101,7 +105,8 @@ class MSGraphImportJob(BackgroundJob):
                                 "email": member.get("mail"),
                                 "sid": member.get("onPremisesSecurityIdentifier"),
                                 "userPrincipalName": member.get(
-                                        "userPrincipalName")
+                                        "userPrincipalName"),
+                                "manager": userinfo.get("manager"),
                             })
                         else:
                             # Not an object of interest. Pass.

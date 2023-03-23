@@ -53,6 +53,17 @@ def perform_msgraph_import(data: list,  # noqa: CCR001, too high cognitive compl
                     pass
 
                 else:
+                    manager_info = member.get("manager")
+                    manager = None
+
+                    if manager_info:
+                        manager, _ = Account.objects.update_or_create(
+                            imported=True, organization=organization,
+                            imported_id=manager_info.get("id"),
+                            defaults={
+                                    "username": manager_info.get(
+                                        "userPrincipalName")})
+
                     account_obj, created = Account.objects.update_or_create(
                         imported_id=member.get("uuid"),
                         imported=True,
@@ -62,7 +73,8 @@ def perform_msgraph_import(data: list,  # noqa: CCR001, too high cognitive compl
                             "last_import_requested": now,
                             "username": member.get("userPrincipalName"),
                             "first_name": member.get("givenName"),
-                            "last_name": member.get("surname")
+                            "last_name": member.get("surname"),
+                            "manager": manager
                         }
                     )
                     logger.info(f' Member {account_obj.username}, '

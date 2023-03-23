@@ -43,7 +43,7 @@ class AccountAdmin(ImportedAdmin):
     # TODO: Consider if 'units' is needed here?
     #  At the time of writing units does not work
     fields = ('username', 'first_name', 'last_name',
-              'organization', 'imported_id', 'last_import',
+              'organization', 'manager', 'imported_id', 'last_import',
               )
     list_display = ('username', 'first_name', 'last_name',
                     'organization', 'last_import',
