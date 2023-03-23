@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-21 14:51+0100\n"
+"POT-Creation-Date: 2023-03-23 16:28+0100\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -178,7 +178,20 @@ msgstr ""
 "lad være med at scanne filer med både HIDDEN- og SYSTEM-attributter sat, "
 "samt filer med HIDDEN-attribut sat og et navn med tilde-tegn foran"
 
-#: adminapp/models/scannerjobs/filescanner.py:81
+#: adminapp/models/scannerjobs/filescanner.py:45
+msgid "UNC is home root"
+msgstr "UNC er brugermappernes rod"
+
+#: adminapp/models/scannerjobs/filescanner.py:46
+msgid ""
+"all folders under the given UNC are user home folders; their owners have "
+"responsibility for everything they contain regardless of other filesystem "
+"metadata"
+msgstr ""
+"alle mapper under det givne UNC er brugernes hjemmemapper: deres ejere har "
+"ansvar for alt, der ligger derinde, uanset hvad filsystemet ellers må sige"
+
+#: adminapp/models/scannerjobs/filescanner.py:87
 msgid "UNC must follow the UNC format"
 msgstr "UNC skal følge UNC-format"
 

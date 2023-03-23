@@ -46,6 +46,7 @@ class FileScannerCreate(ScannerCreate):
         'do_last_modified_check',
         'only_notify_superadmin',
         'skip_super_hidden',
+        'unc_is_home_root',
         'rules',
         'organization',
         ]
@@ -78,6 +79,7 @@ class FileScannerUpdate(ScannerUpdate):
         'do_last_modified_check',
         'only_notify_superadmin',
         'skip_super_hidden',
+        'unc_is_home_root',
         'rules',
         'organization',
         ]
@@ -136,6 +138,7 @@ class FileScannerCopy(ScannerCopy):
         'do_last_modified_check',
         'only_notify_superadmin',
         'skip_super_hidden',
+        'unc_is_home_root',
         'rules',
         'organization',
         ]

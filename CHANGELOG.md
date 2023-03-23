@@ -4,6 +4,14 @@
 
 ### New in this release
 
+- Special support for scanning home folders:
+
+  - Traditional file scans now have a flag that indicates that the folder to be
+    scanned is the parent of users' home folders.
+
+  - When this flag is set, the owner of a home folder is given responsibility
+    for everything in it, even files that they do not technically own.
+
 - On top of the already-existing organisational unit manager role, Accounts can
   now declare that a specific person is their line manager. (This information
   is presently only available when importing data from Microsoft Graph.)

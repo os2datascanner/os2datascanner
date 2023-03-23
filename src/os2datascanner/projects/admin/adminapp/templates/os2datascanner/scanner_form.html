@@ -729,6 +729,12 @@
                   </div>
                 {% endif %}
 
+                {% if form.unc_is_home_root %}
+                  <div class="checkbox-group">
+                    {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.unc_is_home_root %}
+                  </div>
+                {% endif %}
+
                 {% if form.do_link_check %}
                   <div class="checkbox-group">
                     {% include "os2datascanner/scanner_form_checkbox_field.html" with field=form.do_link_check %}
