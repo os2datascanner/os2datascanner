@@ -70,7 +70,7 @@ class Scanner(models.Model):
         unique=True,
         null=False,
         db_index=True,
-        verbose_name='Navn'
+        verbose_name=_('name')
     )
 
     organization = models.ForeignKey(
@@ -93,22 +93,22 @@ class Scanner(models.Model):
         max_length=1024,
         null=True,
         blank=True,
-        verbose_name='Planlagt afvikling'
+        verbose_name=_('planned execution')
     )
 
     do_ocr = models.BooleanField(
         default=False,
-        verbose_name='Scan billeder'
+        verbose_name=_('scan images')
     )
 
     do_last_modified_check = models.BooleanField(
         default=True,
-        verbose_name='Tjek dato for sidste ændring',
+        verbose_name=_('check date of last modification'),
     )
 
     only_notify_superadmin = models.BooleanField(
         default=False,
-        verbose_name='Underret kun superadmin',
+        verbose_name=_('only notify superadmin'),
     )
 
     columns = models.CharField(validators=[validate_comma_separated_integer_list],
@@ -119,30 +119,30 @@ class Scanner(models.Model):
 
     rules = models.ManyToManyField(Rule,
                                    blank=True,
-                                   verbose_name='Regler',
+                                   verbose_name=_('rules'),
                                    related_name='scanners')
 
     VALID = 1
     INVALID = 0
 
     validation_choices = (
-        (INVALID, "Ugyldig"),
-        (VALID, "Gyldig"),
+        (INVALID, _('Unverified')),
+        (VALID, _('Verified')),
     )
 
     authentication = models.OneToOneField(Authentication,
                                           null=True,
                                           related_name='%(app_label)s_%(class)s_authentication',
-                                          verbose_name='Brugernavn',
+                                          verbose_name=_('username'),
                                           on_delete=models.SET_NULL)
 
     validation_status = models.IntegerField(choices=validation_choices,
                                             default=INVALID,
-                                            verbose_name='Valideringsstatus')
+                                            verbose_name=_('validation status'))
 
     exclusion_rules = models.ManyToManyField(Rule,
                                              blank=True,
-                                             verbose_name='Udelukkelsesregler',
+                                             verbose_name=_('exclusion rules'),
                                              related_name='scanners_ex_rules')
 
     def verify(self) -> bool:
@@ -165,16 +165,13 @@ class Scanner(models.Model):
 
     # Run error messages
     HAS_NO_RULES = (
-        "Scannerjobbet kunne ikke startes," +
-        " fordi det ingen tilknyttede regler har."
+        _("The scanner job could not be started because it has no assigned rules.")
     )
     NOT_VALIDATED = (
-        "Scannerjobbet kunne ikke startes," +
-        " fordi det ikke er blevet valideret."
+        _("The scanner job could not be started because it is not validated.")
     )
     ALREADY_RUNNING = (
-        "Scannerjobbet kunne ikke startes," +
-        " da dette scan er igang."
+        _("The scanner job could not be started because it is already running.")
     )
 
     # First possible start time
@@ -453,7 +450,7 @@ class ScheduledCheckup(models.Model):
     interested_before = models.DateTimeField(null=True)
     # The Last-Modified cutoff date to attach to the test.
     scanner = models.ForeignKey(Scanner, related_name="checkups",
-                                verbose_name="Tilknyttet scannerjob",
+                                verbose_name=_('connected scanner job'),
                                 on_delete=models.CASCADE)
     # The scanner job that produced this handle.
 
@@ -514,7 +511,7 @@ class AbstractScanStatus(models.Model):
 
     message = models.TextField(
         blank=True,
-        verbose_name='message',
+        verbose_name=_('message'),
     )
 
     status_is_error = models.BooleanField(
