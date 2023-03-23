@@ -13,17 +13,60 @@
 #
 from os2datascanner.core_organizational_structure.models import \
     OrganizationalUnit as Core_OrganizationalUnit
+from os2datascanner.core_organizational_structure.models import \
+    OrganizationalUnitSerializer as Core_OrganizationalUnitSerializer
 
-from ..serializer import BaseSerializer
+from rest_framework import serializers
+from rest_framework.fields import UUIDField
+from ..seralizer import BaseBulkSerializer
 
 
 class OrganizationalUnit(Core_OrganizationalUnit):
     """ Core logic lives in the core_organizational_structure app.
       Additional logic can be implemented here, but currently, none needed, hence we pass. """
-    pass
+    serializer_class = None
 
 
-class OrganizationalUnitSerializer(BaseSerializer):
+class OrganizationalUnitBulkSerializer(BaseBulkSerializer):
+    """ Bulk create & update logic lives in BaseBulkSerializer """
     class Meta:
         model = OrganizationalUnit
-        fields = '__all__'
+
+
+class ParentRelatedField(serializers.RelatedField):
+    def display_value(self, instance):
+        return instance
+
+    def to_representation(self, value):
+        return str(value)
+
+    def to_internal_value(self, data):
+        model = self.queryset.model
+        return model(pk=data)
+
+
+class OrganizationalUnitSerializer(Core_OrganizationalUnitSerializer):
+    pk = serializers.UUIDField(read_only=False)
+    lft = serializers.IntegerField(read_only=False)
+    rght = serializers.IntegerField(read_only=False)
+    tree_id = serializers.IntegerField(read_only=False)
+    level = serializers.IntegerField(read_only=False)
+
+    parent = ParentRelatedField(queryset=OrganizationalUnit.objects.all(), many=False,
+                                allow_null=True)
+
+    from ..models.organization import Organization
+    organization = serializers.PrimaryKeyRelatedField(
+        queryset=Organization.objects.all(),
+        required=True,
+        allow_null=False,
+        # This will properly serialize uuid.UUID to str:
+        pk_field=UUIDField(format='hex_verbose'),
+    )
+
+    class Meta(Core_OrganizationalUnitSerializer.Meta):
+        model = OrganizationalUnit
+        list_serializer_class = OrganizationalUnitBulkSerializer
+
+
+OrganizationalUnit.serializer_class = OrganizationalUnitSerializer

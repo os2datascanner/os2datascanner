@@ -1,3 +1,4 @@
+from os import environ
 import importlib
 
 
@@ -10,6 +11,12 @@ def in_test_environment():
     warning if they use it to alter their behaviour. It should normally only be
     used if performing an operation in the test enironment would have undesired
     side effects on external systems."""
+
+    # Check whether pytest's (documented) environment variable is set
+    try:
+        return environ.get("PYTEST_CURRENT_TEST", None)
+    except KeyError:
+        pass
 
     # Check whether or not django.test.utils.setup_test_environment has been
     # called by checking whether its state stash object exists. This is an

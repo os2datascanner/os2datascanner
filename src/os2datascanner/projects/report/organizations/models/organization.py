@@ -11,25 +11,31 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
+from rest_framework import serializers
 from os2datascanner.core_organizational_structure.models import Organization as Core_Organization
-
-from ..serializer import BaseSerializer
+from os2datascanner.core_organizational_structure.models import \
+    OrganizationSerializer as Core_OrganizationSerializer
+from ..seralizer import BaseBulkSerializer
 
 
 class Organization(Core_Organization):
     """ Core logic lives in the core_organizational_structure app. """
-
-    @classmethod
-    def from_json_object(cls, obj):
-        return Organization(
-            name=obj["name"],
-            uuid=obj["uuid"]
-        )
+    serializer_class = None
 
 
-class OrganizationSerializer(BaseSerializer):
+class OrganizationBulkSerializer(BaseBulkSerializer):
+    """ Bulk create & update logic lives in BaseBulkSerializer """
+
     class Meta:
         model = Organization
-        fields = '__all__'
 
-    # TODO: should the concept of a "Client" also exist in the report module?
+
+class OrganizationSerializer(Core_OrganizationSerializer):
+    pk = serializers.UUIDField(read_only=False)
+
+    class Meta(Core_OrganizationSerializer.Meta):
+        model = Organization
+        list_serializer_class = OrganizationBulkSerializer
+
+
+Organization.serializer_class = OrganizationSerializer

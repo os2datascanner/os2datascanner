@@ -11,10 +11,10 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from mptt.models import TreeForeignKey
+from ..serializer import BaseSerializer
 
 
 class Role(models.TextChoices):
@@ -29,6 +29,8 @@ class Role(models.TextChoices):
 
 
 class Position(models.Model):
+    serializer_class = None
+
     account = models.ForeignKey(
         'Account',
         on_delete=models.CASCADE,
@@ -75,3 +77,8 @@ class Position(models.Model):
         role = self.role
         unit = self.unit
         return f"<{cls}: {account} (account) is {role} at {unit} (unit)>"
+
+
+class PositionSerializer(BaseSerializer):
+    class Meta:
+        fields = ["pk", "account", "unit", "role"]

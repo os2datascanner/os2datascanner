@@ -11,11 +11,11 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-
 from uuid import uuid4
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from rest_framework import serializers
 
 
 class Account(models.Model):
@@ -28,6 +28,8 @@ class Account(models.Model):
     and as such does not give its corresponding entity access to the
     OS2datascanner administration system.
     """
+
+    serializer_class = None
 
     uuid = models.UUIDField(
         primary_key=True,
@@ -94,3 +96,8 @@ class Account(models.Model):
         return f"{self.first_name} {self.last_name}" if self.last_name \
             else self.first_name if self.first_name \
             else self.username
+
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ["pk", "username", "first_name", "last_name", "organization"]

@@ -2,9 +2,13 @@ from typing import Tuple, Sequence
 from django.db import transaction
 import logging
 
+from os2datascanner.core_organizational_structure.utils import get_serializer
 from os2datascanner.utils.ldap import RDN, LDAPNode
 from os2datascanner.utils.system_utilities import time_now
 
+from ..organizations.broadcast_bulk_events import (BulkCreateEvent, BulkUpdateEvent,
+                                                   BulkDeleteEvent)
+from ..organizations.publish import publish_events
 from ..import_services.models.realm import Realm
 from ..import_services import keycloak_services
 from .models import (Alias, Account, Position,
@@ -276,6 +280,7 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
 
         if l and not r:
             # A local object with no remote counterpart
+            logger.debug(f"l: {l}, r: {r}, deleting")
             try:
                 to_delete.append(Account.objects.get(imported_id=iid))
             except Account.DoesNotExist:
@@ -284,6 +289,7 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
         elif not (r or l).children:
             # A remote user exists...
             if not l:
+                logger.debug(f"l: {l}, r: {r}, creating")
                 # ... and it has no local counterpart. Create one
                 try:
                     account = node_to_account(org, r)
@@ -293,6 +299,7 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
                     continue
             else:
                 # ... and it has a local counterpart. Retrieve it
+                logger.debug(f"l: {l}, r: {r}, updating (maybe)")
                 try:
                     account = Account.objects.get(imported_id=iid)
                 except Account.DoesNotExist:
@@ -365,25 +372,31 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
                 logger.debug(f"{manager.model.__name__}:"
                              f" add [{', '.join(str(i) for i in instances)}]")
 
+        delete_dict = {}
+
         for manager, instances in group_into(
                 to_delete, Alias, Position, Account, OrganizationalUnit):
-            manager.filter(pk__in=[i.pk for i in instances]).delete()
+            model_name = manager.model.__name__
+            deletion_pks = [str(i.pk) for i in instances]
+            manager.filter(pk__in=deletion_pks).delete()
+            delete_dict[model_name] = deletion_pks
 
+        update_dict = {}
         for manager, instances in group_into(
                 to_update, Alias, Position, Account, OrganizationalUnit,
                 key=lambda k: k[0]):
             properties = set()
+            model_name = manager.model.__name__
+            serializer = get_serializer(manager.model)
             for _, props in instances:
                 properties |= set(props)
 
-            if hasattr(manager.model, "factory"):
-                manager.model.factory.update(
-                        (obj for obj, _ in instances), properties)
-            else:
-                logger.warning(f"{manager} has no 'factory' implementation; "
-                               "change notifications will not be sent")
-                manager.bulk_update((obj for obj, _ in instances), properties)
+            # We'll only want to send one update instruction pr. object.
+            unique_instances = set(obj for obj, _ in instances)
+            manager.bulk_update(unique_instances, properties)
+            update_dict[model_name] = serializer(unique_instances, many=True).data
 
+        creation_dict = {}
         for manager, instances in group_into(
                 to_add, OrganizationalUnit, Account, Position, Alias):
             for o in instances:
@@ -391,16 +404,18 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
                 o.last_import = now
                 o.last_import_requested = now
 
-            if hasattr(manager.model, "factory"):
-                manager.model.factory.create(instances)
-            else:
-                logger.warning(f"{manager} has no 'factory' implementation; "
-                               "change notifications will not be sent")
-                manager.bulk_create(instances)
+            model_name = manager.model.__name__
+            serializer = get_serializer(manager.model)
 
+            manager.bulk_create(instances)
+            # .data gives JSON serializable data, instead of the ListSerializer instance.
+            creation_dict[model_name] = serializer(instances, many=True).data
             if hasattr(manager, "rebuild"):
                 manager.rebuild()
 
-    logger.info("Database operations complete")
+        event = [BulkDeleteEvent(delete_dict), BulkCreateEvent(creation_dict),
+                 BulkUpdateEvent(update_dict), ]
+        logger.info("Database operations complete")
+        publish_events(event)
 
     return len(to_add), len(to_update), len(to_delete)

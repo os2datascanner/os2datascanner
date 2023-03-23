@@ -19,6 +19,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from ..serializer import BaseSerializer
+
 
 class OrganizationalUnit(MPTTModel):
     """Represents a fragment of an organizational hierarchy.
@@ -27,6 +29,8 @@ class OrganizationalUnit(MPTTModel):
     The hierarchy is built through the parent reference, and represents the
     organizational structure of a given organization.
     """
+
+    serializer_class = None
 
     uuid = models.UUIDField(
         primary_key=True,
@@ -71,3 +75,8 @@ class OrganizationalUnit(MPTTModel):
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.name} ({self.uuid})>"
+
+
+class OrganizationalUnitSerializer(BaseSerializer):
+    class Meta:
+        fields = ["pk", "name", "parent", "organization", "lft", "rght", "tree_id", "level"]

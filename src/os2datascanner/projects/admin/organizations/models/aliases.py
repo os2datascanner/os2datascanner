@@ -12,25 +12,32 @@
 # sector open source network <https://os2.eu/>.
 #
 
-from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.core_organizational_structure.models import Alias as Core_Alias
+from os2datascanner.core_organizational_structure.models import \
+    AliasSerializer as Core_AliasSerializer
 from os2datascanner.core_organizational_structure.models.aliases import AliasType  # noqa
 from os2datascanner.projects.admin.import_services.models import Imported
-from .broadcasted_mixin import Broadcasted, post_save_broadcast
+from .broadcasted_mixin import Broadcasted
 
 
 class Alias(Core_Alias, Imported, Broadcasted):
     """ Core logic lives in the core_organizational_structure app.
         Additional specific logic can be implemented here. """
-    factory = None
-    pass
 
 
-Alias.factory = ModelFactory(Alias)
+class AliasSerializer(Core_AliasSerializer):
+    from rest_framework import serializers
+    from rest_framework.fields import UUIDField
+    from ..models.account import Account
+    account = serializers.PrimaryKeyRelatedField(
+        queryset=Account.objects.all(),
+        required=True,
+        allow_null=False,
+        # This will properly serialize uuid.UUID to str:
+        pk_field=UUIDField(format='hex_verbose'))
+
+    class Meta(Core_AliasSerializer.Meta):
+        model = Alias
 
 
-@Alias.factory.on_create
-@Alias.factory.on_update
-def on_alias_created_updated(objects, fields=None):
-    for alias in objects:
-        post_save_broadcast(None, alias)
+Alias.serializer_class = AliasSerializer

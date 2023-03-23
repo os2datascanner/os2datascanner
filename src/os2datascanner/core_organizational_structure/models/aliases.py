@@ -21,6 +21,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from ..serializer import BaseSerializer
+
 # Instance of regex validator, using regex to validate a SID
 validate_regex_SID = RegexValidator(regex=r'^S-1-\d+(-\d+){0,15}$')
 
@@ -58,6 +60,8 @@ class Alias(models.Model):
 
     An Account may have several Aliases of the same type.
     """
+    serializer_class = None
+
     uuid = models.UUIDField(
         default=uuid4,
         primary_key=True,
@@ -127,3 +131,8 @@ class Alias(models.Model):
             value=self.value,
             uuid=self.uuid,
         )
+
+
+class AliasSerializer(BaseSerializer):
+    class Meta:
+        fields = ["pk", "account", "_value", "_alias_type"]

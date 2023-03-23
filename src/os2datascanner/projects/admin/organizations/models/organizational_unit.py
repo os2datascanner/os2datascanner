@@ -13,18 +13,20 @@
 #
 
 from django.db.models import Count
+from rest_framework import serializers
+from rest_framework.fields import UUIDField
 
-from os2datascanner.utils.model_helpers import ModelFactory
 from os2datascanner.projects.admin.import_services.models import Imported
 from os2datascanner.core_organizational_structure.models import \
     OrganizationalUnit as Core_OrganizationalUnit
-from .broadcasted_mixin import Broadcasted, post_save_broadcast
+from os2datascanner.core_organizational_structure.models import \
+    OrganizationalUnitSerializer as Core_OrganizationalUnitSerializer
+from .broadcasted_mixin import Broadcasted
 
 
 class OrganizationalUnit(Core_OrganizationalUnit, Broadcasted, Imported):
     """ Core logic lives in the core_organizational_structure app.
         Additional specific logic can be implemented here. """
-    factory = None
 
     @property
     def members_associated(self):
@@ -42,11 +44,25 @@ class OrganizationalUnit(Core_OrganizationalUnit, Broadcasted, Imported):
             return self.parent.get_root()
 
 
-OrganizationalUnit.factory = ModelFactory(OrganizationalUnit)
+class OrganizationalUnitSerializer(Core_OrganizationalUnitSerializer):
+    from ..models.organization import Organization
+
+    organization = serializers.PrimaryKeyRelatedField(
+        queryset=Organization.objects.all(),
+        required=True,
+        allow_null=False,
+        # This will properly serialize uuid.UUID to str:
+        pk_field=UUIDField(format='hex_verbose'))
+
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=OrganizationalUnit.objects.all(),
+        required=False,
+        allow_null=True,
+        # This will properly serialize uuid.UUID to str:
+        pk_field=UUIDField(format='hex_verbose'))
+
+    class Meta(Core_OrganizationalUnitSerializer.Meta):
+        model = OrganizationalUnit
 
 
-@OrganizationalUnit.factory.on_create
-@OrganizationalUnit.factory.on_update
-def on_organizational_unit_created_updated(objects, fields=None):
-    for ou in objects:
-        post_save_broadcast(None, ou)
+OrganizationalUnit.serializer_class = OrganizationalUnitSerializer

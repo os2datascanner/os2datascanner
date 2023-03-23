@@ -11,55 +11,52 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-
-from enum import Enum
-
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from os2datascanner.utils.test_helpers import in_test_environment
+from ..broadcast_bulk_events import BulkCreateEvent, BulkUpdateEvent, BulkDeleteEvent
+from ..publish import publish_events
 
-from django.core.serializers import serialize
-
-from os2datascanner.projects.admin.adminapp.signals import ModelChangeEvent
-from os2datascanner.projects.admin.adminapp.signals import publish_events
+from os2datascanner.core_organizational_structure.utils import get_serializer
 
 
 class Broadcasted:
-    """Abstract base class for objects for which changes should be broadcasted.
-
-    Implements a default JSON-serializer to ensure all implementing classes can
-    be serialized to JSON format.
-    """
-
+    """Abstract base class for objects for which changes should be broadcasted."""
     class Meta:
         abstract = True
 
-    def to_json_object(self):
-        """Return object serialized to JSON format."""
-        return serialize('json', [self], use_natural_foreign_keys=True)
-
-
-# TODO: consider expanding with publication functionality when moving away from signals
-class EventType(Enum):
-    OBJ_CREATE = 'object_create'
-    OBJ_UPDATE = 'object_update'
-    OBJ_DELETE = 'object_delete'
-
 
 # TODO: change to avoid using save/delete-signals as they are not called on bulk actions
-# Initial implementation using existing functionality:
 @receiver(post_save)
-def post_save_broadcast(sender, instance, **kwargs):
-    if not isinstance(instance, Broadcasted):
+def post_save_broadcast(sender, instance, created, **kwargs):
+    # We cannot support get_serializer() when we're encountering __fake__objects,
+    # i.e. when trying to modify data in "Broadcast" child-objects in f.e. migrations.
+    # This is an implementation detail of Django, only being aware of the model definition and
+    # not class attributes, such as serializer_class. There isn't really any good way
+    # of disabling signals in migrations.
+    if (in_test_environment()
+            or not isinstance(instance, Broadcasted)
+            or type(instance).__module__ == "__fake__"):
         return
-    event_type = (EventType.OBJ_CREATE if kwargs.get('created', None)
-                  else EventType.OBJ_UPDATE)
-    event = ModelChangeEvent(event_type.value, sender, instance)
+    serializer = get_serializer(sender)
+    serialized_data = serializer(instance).data
+    broadcastable_dict = {sender.__name__: [serialized_data]}
+
+    if created:
+        event = BulkCreateEvent(broadcastable_dict)
+    else:
+        event = BulkUpdateEvent(broadcastable_dict)
+
     publish_events([event])
 
 
 @receiver(post_delete)
 def post_delete_broadcast(sender, instance, **kwargs):
-    if not isinstance(instance, Broadcasted):
+    if (in_test_environment()
+            or not isinstance(instance, Broadcasted)
+            or type(instance).__module__ == "__fake__"):
         return
-    event = ModelChangeEvent(EventType.OBJ_DELETE.value, sender, instance)
+
+    broadcastable_dict = {sender.__name__: [str(instance.pk)]}
+    event = BulkDeleteEvent(broadcastable_dict)
     publish_events([event])
