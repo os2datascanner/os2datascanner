@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 from os2datascanner.engine2.model.ews import (
         EWSMailHandle, EWSAccountSource)
@@ -13,7 +14,7 @@ from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 
-from ...report.organizations.models import Account, Organization
+from ...report.organizations.models import Account, Organization, OrganizationalUnit, Position
 from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.models.roles.leader import Leader
 from ..reportapp.models.roles.dpo import DataProtectionOfficer
@@ -374,6 +375,40 @@ class StatisticsPageViewTest(TestCase):
             self.get_user_statisticspage_response(
                     user=self.benny, pk=self.yvonne_account.pk)
 
+    def test_leader_statisticspage_as_manager(self):
+        """A user with a 'manager'-position to an organizational unit should
+        be able to access the leader overview page."""
+        olsen_banden = OrganizationalUnit.objects.create(
+            name="Olsen Banden", organization=Organization.objects.first())
+        Position.objects.create(account=self.yvonne_account, unit=olsen_banden, role="manager")
+
+        response = self.get_leader_statisticspage_response(self.yvonne)
+
+        self.assertEqual(
+            response.status_code,
+            200,
+            "A user with a manager-position cannot access the leader overview.")
+
+    def test_leader_statisticspage_as_superuser(self):
+        """A superuser should be able to access the leader overview page."""
+        self.egon.is_superuser = True
+        self.egon.save()
+
+        response = self.get_leader_statisticspage_response(self.egon)
+
+        self.assertEqual(
+            response.status_code,
+            200,
+            "A superuser cannot access the leader overview.")
+
+    def test_leader_statisticspage_with_no_privileges(self):
+        """A user with no privileges should not be able to access the leader
+        overview page."""
+
+        response = self.get_leader_statisticspage_response(self.benny)
+
+        self.assertEqual(response.status_code, 403)
+
     # Tests are done as Kjeld
     # count_all_matches_grouped_by_sensitivity()
     def test_statisticspage_count_all_matches_grouped_by_sensitivity_as_leader(self):
@@ -512,6 +547,11 @@ class StatisticsPageViewTest(TestCase):
         # request.user = self.kjeld
         view = LeaderStatisticsPageView()
         return view
+
+    def get_leader_statisticspage_response(self, user, **kwargs):
+        request = self.factory.get(reverse('statistics-leader'))
+        request.user = user
+        return LeaderStatisticsPageView.as_view()(request, **kwargs)
 
 
 # Helper functions
