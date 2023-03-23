@@ -7,6 +7,10 @@
 - On top of the already-existing organisational unit manager role, Accounts can
   now declare that a specific person is their line manager. (This information
   is presently only available when importing data from Microsoft Graph.)
+  
+### Bugfixes
+
+- Danish translations are no longer hardcoded in scanner model fields.
 
 ## Version 3.18.8, 21th March 2023
 
