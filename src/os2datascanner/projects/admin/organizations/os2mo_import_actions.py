@@ -102,8 +102,8 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, too high cognitiv
                     )
                     logger.info(
                         f'Parent {parent.name}, '
-                        f'for {org_unit.get("name")}, \
-                            Created: {created if created else "Up-to-date"}')
+                        f'for {org_unit.get("name")}, '
+                        f'Created: {created if created else "Up-to-date"}')
                     org_unit_obj, created = OrganizationalUnit.objects.update_or_create(
                         imported_id=org_unit.get("uuid"),
                         imported=True,
@@ -134,10 +134,12 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, too high cognitiv
                 all_uuids.add(org_unit.get("uuid"))
 
                 for managers in org_unit.get("managers"):
-                    add_unit(managers, org_unit_obj, "manager")
+                    if managers.get("employee"):
+                        add_unit(managers, org_unit_obj, "manager")
 
                 for employees in org_unit.get("associations"):
-                    add_unit(employees, org_unit_obj, "employee")
+                    if employees.get("employee"):
+                        add_unit(employees, org_unit_obj, "employee")
 
     # Deleting local objects no longer present remotely.
     Account.objects.exclude(imported_id__in=all_uuids).exclude(imported=False).delete()

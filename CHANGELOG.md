@@ -18,6 +18,11 @@
 
 - Danish translations are no longer hardcoded in scanner model fields.
 
+### Bugfixes
+
+- OS2mo import jobs will now ignore empty manager-objects in the imported 
+  structure.
+
 ## Version 3.18.8, 21th March 2023
 
 "Shaka brah! 🤙"
