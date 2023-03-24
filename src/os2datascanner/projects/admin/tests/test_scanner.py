@@ -5,10 +5,16 @@ from django.utils.text import slugify
 from os2datascanner.projects.admin.core.models.client import Client
 from os2datascanner.projects.admin.organizations.models.organization \
     import Organization
+from os2datascanner.projects.admin.organizations.models.organizational_unit \
+    import OrganizationalUnit
+from os2datascanner.projects.admin.organizations.models.account \
+    import Account
 from os2datascanner.projects.admin.adminapp.models.rules.regexrule \
     import RegexRule, RegexPattern
 from os2datascanner.projects.admin.adminapp.models.sensitivity_level \
     import Sensitivity
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner \
+    import Scanner
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner \
     import WebScanner
 from os2datascanner.projects.admin.adminapp.views.webscanner_views \
@@ -120,6 +126,24 @@ class ScannerTest(TestCase):
             msg="User not superuser but validation_status"
             "field present in WebscannerUpdate get_form_fields"
         )
+
+    def test_synchronize_covered_accounts(self):
+        """Make sure that synchronizing covered accounts on the Scanner works
+        correctly."""
+        # Creating some test objects...
+        scanner = Scanner.objects.create(name="Scanner", organization=Organization.objects.first())
+        unit = OrganizationalUnit.objects.create(
+            name="Unit", organization=Organization.objects.first())
+        hansi = Account.objects.create(username="Hansi", organization=Organization.objects.first())
+        hansi.units.add(unit)
+        scanner.org_unit.add(unit)
+        Account.objects.create(username="Günther", organization=Organization.objects.first())
+        Account.objects.create(username="Fritz", organization=Organization.objects.first())
+
+        scanner.sync_covered_accounts()
+
+        self.assertEqual(scanner.covered_accounts.count(), 1)
+        self.assertEqual(scanner.covered_accounts.first(), hansi)
 
     def get_webscannerupdate_view(self):
         request = self.factory.get('/')

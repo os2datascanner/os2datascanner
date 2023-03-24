@@ -47,6 +47,7 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
+from os2datascanner.projects.admin.organizations.models import Account
 from mptt.models import TreeManyToManyField
 
 from ..rules.rule import Rule
@@ -144,6 +145,11 @@ class Scanner(models.Model):
                                              blank=True,
                                              verbose_name=_('exclusion rules'),
                                              related_name='scanners_ex_rules')
+
+    covered_accounts = models.ManyToManyField(Account,
+                                              blank=True,
+                                              verbose_name=_('covered accounts'),
+                                              related_name='covered_by_scanner')
 
     def verify(self) -> bool:
         """Method documentation"""
@@ -390,6 +396,10 @@ class Scanner(models.Model):
         if source_count == 0 and checkup_count == 0:
             raise ValueError(f"nothing to do for {self}")
 
+        # Synchronize the 'covered_accounts'-field with accounts, which are
+        # about to be scanned.
+        self.sync_covered_accounts()
+
         self.save()
 
         # Create a model object to track the status of this scan...
@@ -430,6 +440,17 @@ class Scanner(models.Model):
         # conflicts with Django, but subclasses should override this method!)
         raise NotImplementedError("Scanner.generate_sources")
         yield from []
+
+    def get_covered_accounts(self):
+        """Return all accounts which would be scanned by this scannerjob, if
+        run at this moment."""
+        return Account.objects.filter(units__in=self.org_unit.all())
+
+    def sync_covered_accounts(self):
+        """Clears the set of accounts covered by this scanner job and
+        repopulates it based on the organisational units to be scanned."""
+        self.covered_accounts.clear()
+        self.covered_accounts.add(*self.get_covered_accounts())
 
     class Meta:
         abstract = False

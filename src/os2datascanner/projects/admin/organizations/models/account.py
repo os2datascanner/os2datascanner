@@ -30,6 +30,17 @@ class Account(Core_Account, Imported, Broadcasted):
                 self.organization.uuid, self.organization.name,
                 )
 
+    def get_stale_scanners(self):
+        """Returns all scanners, which do not cover the account, but still
+        contains the account in its 'covered_accounts'-field."""
+
+        # Avoid circular import
+        from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import Scanner
+        stale_scanners = Scanner.objects.filter(
+            covered_accounts=self).exclude(
+            org_unit__in=self.units.all())
+        return stale_scanners
+
 
 Account.factory = ModelFactory(Account)
 

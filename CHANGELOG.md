@@ -8,6 +8,12 @@
   now declare that a specific person is their line manager. (This information
   is presently only available when importing data from Microsoft Graph.)
   
+### General improvements
+
+- Scanner objects now contain information about which accounts they cover,
+  which can be used to identify when an account is no longer covered by a
+  scannerjob.
+
 ### Bugfixes
 
 - Danish translations are no longer hardcoded in scanner model fields.
