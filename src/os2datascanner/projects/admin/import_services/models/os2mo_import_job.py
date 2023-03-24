@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class OS2moImportJob(BackgroundJob):
-
     organization = models.ForeignKey(
         'organizations.Organization',
         on_delete=models.CASCADE,
@@ -65,25 +64,45 @@ class OS2moImportJob(BackgroundJob):
         """ % org_unit_uuid
         # Address_types has an email-adresses uuid, which means only employee emails will be shown
         # Org_units inherit managers from their parents
+        try:
+            token = None
+            res = session.post(url=settings.OS2MO_TOKEN_URL, data=self._make_token())
 
-        res = session.post(url=settings.OS2MO_TOKEN_URL, data=self._make_token())
-        token = res.json().get("access_token")
-        headers = {
-            "content-type": "application/json; charset=UTF-8",
-            'Authorization': f'Bearer {token}'}
+            # Raise an exception if statuscode isn't in 2xx range
+            res.raise_for_status()
+            if res.status_code != 204:  # 204 No Content
+                token = res.json().get("access_token")
 
-        res = session.post(
-            settings.OS2MO_ENDPOINT_URL,
-            json={
-                "query": query_org_accounts},
-            headers=headers)
-        return res.json()
+            if not token:
+                logger.warning("No token available!")
+                return None
+
+            headers = {
+                "content-type": "application/json; charset=UTF-8",
+                'Authorization': f'Bearer {token}'}
+
+            res = session.post(
+                settings.OS2MO_ENDPOINT_URL,
+                json={
+                    "query": query_org_accounts},
+                headers=headers)
+
+            # Raise an exception if statuscode isn't in 2xx range
+            res.raise_for_status()
+            if res.status_code != 204:  # 204 No Content
+                return res.json()
+
+        except requests.exceptions.JSONDecodeError:
+            logger.exception("Unable to decode JSON")
+        except requests.exceptions.HTTPError:
+            logger.exception(f"HTTP exception thrown! \n"
+                             f"Cannot process org unit with id: {org_unit_uuid}")
 
     @property
     def job_label(self) -> str:
         return "OS2mo Import Job"
 
-    def run(self):
+    def run(self):  # noqa CCR001
         query_org_units = """
         query MyQuery {
           org_units {
@@ -99,33 +118,47 @@ class OS2moImportJob(BackgroundJob):
             self.save()
 
             res = session.post(url=settings.OS2MO_TOKEN_URL, data=self._make_token())
-            token = res.json().get("access_token")
-            headers = {
-                "content-type": "application/json; charset=UTF-8",
-                'Authorization': f'Bearer {token}'}
+            try:
+                token = res.json().get("access_token")
+                headers = {
+                    "content-type": "application/json; charset=UTF-8",
+                    'Authorization': f'Bearer {token}'}
 
-            res = session.post(
-                settings.OS2MO_ENDPOINT_URL,
-                json={
-                    "query": query_org_units},
-                headers=headers)
-            res = res.json()
+                res = session.post(
+                    settings.OS2MO_ENDPOINT_URL,
+                    json={
+                        "query": query_org_units},
+                    headers=headers)
+                res.raise_for_status()
 
-        self.status = "OK.. Data received, requesting org_units..."
-        logger.info("Received data from OS2mo. Sending queries.. \n")
+                if res.status_code != 204:
+                    res = res.json()
+                else:
+                    res = {}
 
-        from ...organizations.os2mo_import_actions import perform_os2mo_import
+            except requests.exceptions.JSONDecodeError:
+                logger.exception("Unable to decode JSON")
+            except requests.exceptions.HTTPError:
+                logger.exception("HTTP exception thrown!")
 
-        org_unit_uuids = []
-        for org_unit_objects in res.get("data").get("org_units"):
-            for org_unit in org_unit_objects.get("objects"):
-                org_unit_uuids.append(org_unit.get("uuid"))
+        if res:
+            self.status = "OK.. Data received, requesting org_units..."
+            logger.info("Received data from OS2mo. Sending queries.. \n")
 
-        org_unit_list = []
-        for uuid in org_unit_uuids:
-            with requests.Session() as session:
-                logger.info(f"Querying for org_unit with uuid: {uuid}")
-                org_unit_list.append(self.request_org_unit_accounts(uuid, session))
+            org_unit_uuids = []
+            for org_unit_objects in res.get("data").get("org_units"):
+                for org_unit in org_unit_objects.get("objects"):
+                    org_unit_uuids.append(org_unit.get("uuid"))
+
+            org_unit_list = []
+            for uuid in org_unit_uuids:
+                with requests.Session() as session:
+                    logger.info(f"Querying for org_unit with uuid: {uuid}")
+                    org_unit_list.append(self.request_org_unit_accounts(uuid, session))
+        else:
+            self.status = "No data received!"
+            # Raising exception to mark job as failed
+            raise ValueError("No data received! Nothing will be imported, job status failed.")
 
         def _callback(action, *args):
             self.refresh_from_db()
@@ -141,6 +174,7 @@ class OS2moImportJob(BackgroundJob):
                               f"Last org_unit handled: {org_unit_name}"
                 self.save()
 
+        from ...organizations.os2mo_import_actions import perform_os2mo_import
         perform_os2mo_import(org_unit_list, self.organization, progress_callback=_callback)
 
     def finish(self):
