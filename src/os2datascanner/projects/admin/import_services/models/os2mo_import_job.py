@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class OS2moImportJob(BackgroundJob):
-
     organization = models.ForeignKey(
         'organizations.Organization',
         on_delete=models.CASCADE,
@@ -76,7 +75,7 @@ class OS2moImportJob(BackgroundJob):
 
             if not token:
                 logger.warning("No token available!")
-                return
+                return None
 
             headers = {
                 "content-type": "application/json; charset=UTF-8",
@@ -93,17 +92,17 @@ class OS2moImportJob(BackgroundJob):
             if res.status_code != 204:  # 204 No Content
                 return res.json()
 
-        except requests.exceptions.JSONDecodeError as ex:
-            logger.warning(f"Unable to decode JSON: {ex}")
-        except requests.exceptions.HTTPError as ex:
-            logger.warning(f"HTTP exception thrown!: {ex}"
-                           f"Cannot process org unit with id: {org_unit_uuid}")
+        except requests.exceptions.JSONDecodeError:
+            logger.exception("Unable to decode JSON")
+        except requests.exceptions.HTTPError:
+            logger.exception(f"HTTP exception thrown! \n"
+                             f"Cannot process org unit with id: {org_unit_uuid}")
 
     @property
     def job_label(self) -> str:
         return "OS2mo Import Job"
 
-    def run(self):
+    def run(self):  # noqa CCR001
         query_org_units = """
         query MyQuery {
           org_units {
@@ -134,27 +133,32 @@ class OS2moImportJob(BackgroundJob):
 
                 if res.status_code != 204:
                     res = res.json()
+                else:
+                    res = {}
 
-            except requests.exceptions.JSONDecodeError as ex:
-                logger.warning(f"Unable to decode JSON: {ex}")
-            except requests.exceptions.HTTPError as ex:
-                logger.warning(f"HTTP exception thrown!: {ex}")
+            except requests.exceptions.JSONDecodeError:
+                logger.exception("Unable to decode JSON")
+            except requests.exceptions.HTTPError:
+                logger.exception("HTTP exception thrown!")
 
-        self.status = "OK.. Data received, requesting org_units..."
-        logger.info("Received data from OS2mo. Sending queries.. \n")
+        if res:
+            self.status = "OK.. Data received, requesting org_units..."
+            logger.info("Received data from OS2mo. Sending queries.. \n")
 
-        from ...organizations.os2mo_import_actions import perform_os2mo_import
+            org_unit_uuids = []
+            for org_unit_objects in res.get("data").get("org_units"):
+                for org_unit in org_unit_objects.get("objects"):
+                    org_unit_uuids.append(org_unit.get("uuid"))
 
-        org_unit_uuids = []
-        for org_unit_objects in res.get("data").get("org_units"):
-            for org_unit in org_unit_objects.get("objects"):
-                org_unit_uuids.append(org_unit.get("uuid"))
-
-        org_unit_list = []
-        for uuid in org_unit_uuids:
-            with requests.Session() as session:
-                logger.info(f"Querying for org_unit with uuid: {uuid}")
-                org_unit_list.append(self.request_org_unit_accounts(uuid, session))
+            org_unit_list = []
+            for uuid in org_unit_uuids:
+                with requests.Session() as session:
+                    logger.info(f"Querying for org_unit with uuid: {uuid}")
+                    org_unit_list.append(self.request_org_unit_accounts(uuid, session))
+        else:
+            self.status = "No data received!"
+            # Raising exception to mark job as failed
+            raise ValueError("No data received! Nothing will be imported, job status failed.")
 
         def _callback(action, *args):
             self.refresh_from_db()
@@ -170,6 +174,7 @@ class OS2moImportJob(BackgroundJob):
                               f"Last org_unit handled: {org_unit_name}"
                 self.save()
 
+        from ...organizations.os2mo_import_actions import perform_os2mo_import
         perform_os2mo_import(org_unit_list, self.organization, progress_callback=_callback)
 
     def finish(self):
