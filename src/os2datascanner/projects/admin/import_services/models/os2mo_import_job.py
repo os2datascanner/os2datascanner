@@ -42,18 +42,18 @@ class OS2moImportJob(BackgroundJob):
                   surname
                   user_key
                   uuid
-                  addresses(address_types: "f376deb8-4743-4ca6-a047-3241de8fe9d2") {
+                  addresses(address_types: "%s") {
                     name
                   }
                 }
               }
-              associations {
+              engagements {
                 employee {
                   givenname
                   surname
                   user_key
                   uuid
-                  addresses(address_types: "f376deb8-4743-4ca6-a047-3241de8fe9d2") {
+                  addresses(address_types: "%s") {
                     name
                   }
                 }
@@ -61,7 +61,7 @@ class OS2moImportJob(BackgroundJob):
             }
           }
         }
-        """ % org_unit_uuid
+        """ % (org_unit_uuid, settings.OS2MO_EMAIL_ADDRESS_TYPE, settings.OS2MO_EMAIL_ADDRESS_TYPE)
         # Address_types has an email-adresses uuid, which means only employee emails will be shown
         # Org_units inherit managers from their parents
         try:
@@ -103,6 +103,8 @@ class OS2moImportJob(BackgroundJob):
         return "OS2mo Import Job"
 
     def run(self):  # noqa CCR001
+        # TODO: We don't need to have "objects" in the query here, when we're only concerned
+        # with UUID's. It will however change the response structure a little.
         query_org_units = """
         query MyQuery {
           org_units {

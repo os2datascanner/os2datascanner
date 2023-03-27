@@ -52,10 +52,13 @@ MSGRAPH_APP_ID = ""
 MSGRAPH_CLIENT_SECRET = ""
 
 # [os2mo]
-OS2MO_TOKEN_URL = "http://localhost:5001/auth/realms/mo/protocol/openid-connect/token"
-OS2MO_ENDPOINT_URL = "http://mo/graphql/v2"
+OS2MO_TOKEN_URL = ""
+OS2MO_ENDPOINT_URL = ""
 OS2MO_CLIENT_ID = ""
 OS2MO_CLIENT_SECRET = ""
+# UUID of Mo-address type that holds employee emailaddress
+OS2MO_EMAIL_ADDRESS_TYPE = ""
+
 
 # [sbsys]
 # Using oauth with grant type client_credentials.
