@@ -97,15 +97,23 @@ def handle_clean_message(body):
     account_uuid = body.get("account_uuid")
     scanner_pk = body.get("scanner_pk")
 
-    related_reports = DocumentReport.objects.filter(
-        alias_relation__account=account_uuid,
-        scanner_job_pk=scanner_pk)
+    account = Account.objects.filter(uuid=account_uuid).first()
 
-    logger.info(
-        f"deleted {related_reports.count()} document reports belonging "
-        f"to {Account.objects.filter(uuid=account_uuid).first().get_full_name()}.")
+    if account:
+        related_reports = DocumentReport.objects.filter(
+            alias_relation__account=account_uuid,
+            scanner_job_pk=scanner_pk)
 
-    related_reports.delete()
+        _, deleted_reports_dict = related_reports.delete()
+        deleted_reports = deleted_reports_dict.get("os2datascanner_report.DocumentReport", 0)
+
+        logger.info(
+            f"deleted {deleted_reports} document reports belonging "
+            f"to {account.get_full_name()}.")
+    else:
+        logger.info(
+            f"Account with UUID {account_uuid} not found."
+        )
 
 
 def handle_event(event_type, instance, cls, cls_serializer):  # noqa: CCR001, C901, E501 too high cognitive complexity
