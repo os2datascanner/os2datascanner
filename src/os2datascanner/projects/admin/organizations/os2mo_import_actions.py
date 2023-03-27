@@ -137,7 +137,7 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, too high cognitiv
                     if managers.get("employee"):
                         add_unit(managers, org_unit_obj, "manager")
 
-                for employees in org_unit.get("associations"):
+                for employees in org_unit.get("engagements"):
                     if employees.get("employee"):
                         add_unit(employees, org_unit_obj, "employee")
 
