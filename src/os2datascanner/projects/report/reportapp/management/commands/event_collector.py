@@ -35,6 +35,7 @@ from os2datascanner.projects.report.organizations.models import \
     Organization, OrganizationSerializer,\
     OrganizationalUnit, OrganizationalUnitSerializer, \
     Position, PositionSerializer
+from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
 
 from prometheus_client import Summary, start_http_server
 
@@ -49,6 +50,10 @@ def event_message_received_raw(body):
     event_type = body.get("type")
     model_class = body.get("model_class")
     instance = body.get("instance")
+
+    if event_type == "clean_document_reports":
+        handle_clean_message(body)
+        return
 
     org_struct_model_and_serializer = {'Account': (Account, AccountSerializer),
                                        'Alias': (Alias, AliasSerializer),
@@ -84,6 +89,23 @@ def event_message_received_raw(body):
         return
 
     yield from []
+
+
+def handle_clean_message(body):
+    """Accepts a CleanMessage JSON-object, and deletes all document reports
+    related to the given account and scanner job."""
+    account_uuid = body.get("account_uuid")
+    scanner_pk = body.get("scanner_pk")
+
+    related_reports = DocumentReport.objects.filter(
+        alias_relation__account=account_uuid,
+        scanner_job_pk=scanner_pk)
+
+    logger.info(
+        f"deleted {related_reports.count()} document reports belonging "
+        f"to {Account.objects.filter(uuid=account_uuid).first().get_full_name()}.")
+
+    related_reports.delete()
 
 
 def handle_event(event_type, instance, cls, cls_serializer):  # noqa: CCR001, C901, E501 too high cognitive complexity

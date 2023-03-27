@@ -523,3 +523,26 @@ class CommandMessage(NamedTuple):
                 profiling=obj.get("profiling"))
 
     _deep_replace = _deep_replace
+
+
+class CleanMessage(NamedTuple):
+    """A CleanMessage conveys a command from the admin module to the report
+    module, that DocumentReport objects related to the given account UUID and
+    scanner pk are to be deleted."""
+    account_uuid: str = None
+    scanner_pk: int = None
+    event_type = "clean_document_reports"
+
+    def to_json_object(self):
+        return {
+            "account_uuid": self.account_uuid,
+            "scanner_pk": self.scanner_pk,
+            "type": self.event_type
+        }
+
+    @staticmethod
+    def from_json_object(obj):
+        return CleanMessage(
+            account_uuid=obj.get("account_uuid"),
+            scanner_pk=obj.get("scanner_pk"),
+            event_type=obj.get("type"))
