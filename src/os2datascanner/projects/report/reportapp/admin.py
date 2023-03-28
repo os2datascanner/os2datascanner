@@ -4,7 +4,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
 from .models.roles.remediator import Remediator
-from .models.roles.leader import Leader
 from .models.roles.dpo import DataProtectionOfficer
 from .models.roles.defaultrole import DefaultRole
 from .models.documentreport import DocumentReport
@@ -81,11 +80,6 @@ class DefaultRoleAdmin(admin.ModelAdmin):
 
 @admin.register(Remediator)
 class RemediatorAdmin(admin.ModelAdmin):
-    list_display = ('user', )
-
-
-@admin.register(Leader)
-class LeaderAdmin(admin.ModelAdmin):
     list_display = ('user', )
 
 

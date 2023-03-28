@@ -14,7 +14,6 @@ from os2datascanner.engine2.pipeline import messages
 from .models.documentreport import DocumentReport
 from .models.roles.role import Role
 from .models.roles.dpo import DataProtectionOfficer
-from .models.roles.leader import Leader
 
 from os2datascanner.engine2.utilities.equality import TypePropertyEquality, get_state
 from os2datascanner.projects.report.organizations.models import (
@@ -155,7 +154,7 @@ def user_is_superadmin(user):
     the `only_notify_superuser`-flag."""
     roles = Role.get_user_roles_or_default(user)
     return (user_is(roles, DataProtectionOfficer)
-            or user_is(roles, Leader) or user.is_superuser)
+            or user.is_superuser)
 
 
 class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):

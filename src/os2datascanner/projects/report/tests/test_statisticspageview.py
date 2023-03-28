@@ -16,7 +16,6 @@ from os2datascanner.engine2.utilities.datetime import parse_datetime
 
 from ...report.organizations.models import Account, Organization, OrganizationalUnit, Position
 from ..reportapp.models.documentreport import DocumentReport
-from ..reportapp.models.roles.leader import Leader
 from ..reportapp.models.roles.dpo import DataProtectionOfficer
 from ..reportapp.views.views import (
         StatisticsPageView, UserStatisticsPageView, LeaderStatisticsPageView)
@@ -409,18 +408,6 @@ class StatisticsPageViewTest(TestCase):
 
         self.assertEqual(response.status_code, 403)
 
-    # Tests are done as Kjeld
-    # count_all_matches_grouped_by_sensitivity()
-    def test_statisticspage_count_all_matches_grouped_by_sensitivity_as_leader(self):
-        leader = Leader.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        sens_list, total = view.count_all_matches_grouped_by_sensitivity()
-        self.assertListEqual(sens_list,
-                             [['Kritisk', 4], ['Problem', 2],
-                              ['Advarsel', 1], ['Notifikation', 0]])
-        self.assertEquals(total, 7)
-        leader.delete()
-
     def test_statisticspage_count_all_matches_grouped_by_sensitivity_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
@@ -439,17 +426,6 @@ class StatisticsPageViewTest(TestCase):
                              [['Andet', 0], ['Webscan', 0],
                               ['Filscan', 0], ['Mailscan', 7]])
         dpo.delete()
-
-    # count_handled_matches_grouped_by_sensitivity()
-    def test_statisticspage_count_handled_matches_grouped_by_sensitivity_as_leader(self):
-        leader = Leader.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        sens_list, total = view.count_handled_matches_grouped_by_sensitivity()
-        self.assertListEqual(sens_list,
-                             [['Kritisk', 0], ['Problem', 0],
-                              ['Advarsel', 0], ['Notifikation', 0]])
-        self.assertEquals(total, 0)
-        leader.delete()
 
     def test_statisticspage_count_handled_matches_grouped_by_sensitivity_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
