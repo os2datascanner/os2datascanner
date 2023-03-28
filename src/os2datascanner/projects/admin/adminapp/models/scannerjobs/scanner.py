@@ -162,12 +162,16 @@ class Scanner(models.Model):
         return False
 
     @property
-    def schedule_description(self):
-        """A lambda for creating schedule description strings."""
+    def schedule_date(self):
+        """Find date of next scheduled scanjob"""
         if any(self.schedule.occurrences()):
-            return u"Ja"
-        else:
-            return u"Nej"
+            return self.schedule.occurrences()[0]
+
+    @property
+    def schedule_time(self):
+        """Find time of next scheduled scanjob"""
+        if any(self.schedule.occurrences()):
+            return self.get_start_time()
 
     # Run error messages
     HAS_NO_RULES = (
