@@ -57,6 +57,8 @@
 - OS2mo-import no longer cancels import-job due to the size of the organization
   it pulls from.
 
+- Removed duplicates caused by both having an employee- and manager-role in the same Org_unit.
+
 ## Version 3.18.7, 13th March 2023
 
 "Island Troubles"

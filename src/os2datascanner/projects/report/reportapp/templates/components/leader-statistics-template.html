@@ -117,18 +117,17 @@
               <tr>
                 <td class="datatable__column--name">
                   <div class="overflow-ellipsis">
-                    <strong>{{ employee.account.get_full_name }}</strong>
+                    <strong>{{ employee.get_full_name }}</strong>
                   </div>
                 </td>
-                <td class="datatable__column--matchcount">{{ employee.account.match_count }}</td>
+                <td class="datatable__column--matchcount">{{ employee.match_count }}</td>
                 <td class="datatable__column--matchstatus">
-                  <div class="status_wrapper"
-                       data-status="{{ employee.account.match_status }}">{{ employee.account.status }}</div>
+                  <div class="status_wrapper" data-status="{{ employee.match_status }}">{{ employee.status }}</div>
                 </td>
                 <td class="datatable__column--leader-actions">
                   <div class="action_wrapper">
                     <a class="button"
-                       href="mailto:{{ employee.account.email }}?body=Matches: {{ employee.account.matchcount }}">{% trans "Send notification" %}</a>
+                       href="mailto:{{ employee.email }}?body=Matches: {{ employee.matchcount }}">{% trans "Send notification" %}</a>
                     <button class="overview-expand button button-caret button--has-icon"
                             title="{% trans 'Show/hide overview' %}"
                             type="button">
@@ -140,7 +139,7 @@
               <tr class="user-overview" hidden>
                 <td colspan="4">
                   <div class="overview_wrapper"
-                       hx-get="{% url "statistics-user-id" employee.account.uuid %}"
+                       hx-get="{% url "statistics-user-id" employee.uuid %}"
                        hx-trigger="intersect"
                        hx-swap="outerHTML"
                        hx-target="this"
