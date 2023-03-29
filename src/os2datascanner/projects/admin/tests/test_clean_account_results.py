@@ -22,26 +22,36 @@ class CleanAccountResultsTests(TestCase):
         return out.getvalue()
 
     def test_invalid_account(self):
-        """Calling the command with an invalid username should write a
-        specific stdout."""
+        """Calling the command with an invalid username should raise a
+        CommandError."""
 
         scanner = Scanner.objects.create(name="SomeScanner")
 
-        self.assertRaises(CommandError, lambda: self.call_command("invalidAccount", scanner.pk))
+        self.assertRaises(
+            CommandError,
+            lambda: self.call_command(
+                accounts=["invalidAccount"],
+                scanners=[
+                    scanner.pk]))
 
     def test_invalid_scanner(self):
-        """Calling the command with an invalid scanner pk should write a
-        specific stdout."""
+        """Calling the command with an invalid scanner pk should raise a
+        CommandError."""
 
         account = Account.objects.create(
             username="Bøffen",
             organization=Organization.objects.first())
 
-        self.assertRaises(CommandError, lambda: self.call_command(account.username, 100))
+        self.assertRaises(
+            CommandError,
+            lambda: self.call_command(
+                accounts=[
+                    account.username],
+                scanners=[100]))
 
     def test_running_scanner(self):
-        """Calling the command specifying a running scanner should write a
-        specific stdout."""
+        """Calling the command specifying a running scanner should write
+        something to stderr."""
         account = Account.objects.create(
             username="Bøffen",
             organization=Organization.objects.first())
@@ -50,5 +60,9 @@ class CleanAccountResultsTests(TestCase):
             organization=Organization.objects.first())
         ScanStatus.objects.create(scanner=scanner,
                                   scan_tag=scanner._construct_scan_tag().to_json_object())
+        stderr = self.call_command(
+                accounts=[
+                    account.username], scanners=[
+                    scanner.pk])
 
-        self.assertRaises(CommandError, lambda: self.call_command(account.username, scanner.pk))
+        self.assertTrue(len(stderr) > 0)
