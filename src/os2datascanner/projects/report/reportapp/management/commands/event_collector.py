@@ -96,10 +96,10 @@ def handle_clean_message(body):
     related to the given account and scanner job."""
     logger.info(f"CleanMessage published by {body.get('publisher')}.")
 
-    account_uuids = body.get("account_uuid", [])
+    accounts = body.get("accounts", [])
     scanner_pks = body.get("scanner_pk", [])
 
-    for account_uuid in account_uuids:
+    for account_uuid, account_username in accounts:
         account = Account.objects.filter(uuid=account_uuid).first()
 
         if account:
@@ -112,10 +112,10 @@ def handle_clean_message(body):
 
             logger.info(
                 f"Deleted {deleted_reports} document reports belonging "
-                f"to {account.get_full_name()}.")
+                f"to {account_username} ({account_uuid}).")
         else:
             logger.info(
-                f"Account with UUID {account_uuid} not found."
+                f"Account  '{account_username}' ({account_uuid}) not found."
             )
 
 

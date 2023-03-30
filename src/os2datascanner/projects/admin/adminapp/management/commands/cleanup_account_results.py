@@ -1,10 +1,13 @@
 """Remove the document reports associated with the given account and
 scanner job, if the job is not currently running."""
 
+import argparse
+
 from uuid import UUID
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
+from django.utils import timezone
 
 from ....organizations.models import Account
 from ...models.scannerjobs.scanner import Scanner
@@ -33,8 +36,7 @@ class Command(BaseCommand):
             help="the primary keys of the scanners to clean up", nargs="+", type=int)
         parser.add_argument(
             "--publisher",
-            help="the publisher of this command. Only intended to be called by "
-            "automatic processes.",
+            help=argparse.SUPPRESS,
             type=str)
 
     def handle(self, *args, **options):
@@ -73,9 +75,15 @@ class Command(BaseCommand):
                 scanners = scanners.exclude(pk=scanner.pk)
 
         if scanners.exists():
-            message = CleanMessage(account_uuids=[str(account.uuid)
-                                                  for account in accounts], scanner_pk=[
-                                scanner.pk for scanner in scanners], publisher=publisher)
+            message = CleanMessage(
+                accounts=[
+                    (str(
+                        account.uuid),
+                        account.username) for account in accounts],
+                scanner_pk=[
+                    scanner.pk for scanner in scanners],
+                publisher=publisher,
+                time=timezone.now())
             publish_events([message])
         else:
             raise CommandError("All scanners are currently running! Doing nothing.")

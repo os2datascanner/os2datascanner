@@ -15,8 +15,6 @@
 
 from typing import NamedTuple
 
-from django.utils import timezone
-
 
 def upload_path_webscan_sitemap(instance, filename):
     return "organisation/%s" % instance.organization.slug + "/sitemaps/%s" % filename
@@ -47,9 +45,9 @@ class CleanMessage(NamedTuple):
     """A CleanMessage conveys a command from the admin module to the report
     module, that DocumentReport objects related to the given account UUID and
     scanner pk are to be deleted."""
-    time = timezone.now()
+    time = None
     publisher: str = None
-    account_uuids: list[str] = []
+    accounts: list[tuple] = []
     scanner_pk: list[int] = []
     event_type = "clean_document_reports"
 
@@ -57,7 +55,9 @@ class CleanMessage(NamedTuple):
         return {
             "account_uuid": self.account_uuid,
             "scanner_pk": self.scanner_pk,
-            "type": self.event_type
+            "type": self.event_type,
+            "time": self.time,
+            "publisher": self.publisher
         }
 
     @staticmethod
@@ -65,4 +65,6 @@ class CleanMessage(NamedTuple):
         return CleanMessage(
             account_uuid=obj.get("account_uuid"),
             scanner_pk=obj.get("scanner_pk"),
-            event_type=obj.get("type"))
+            event_type=obj.get("type"),
+            time=obj.get("time"),
+            publisher=obj.get("publisher"))
