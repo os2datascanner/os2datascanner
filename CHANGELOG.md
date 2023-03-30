@@ -9,6 +9,8 @@
   is presently only available when importing data from Microsoft Graph.)
 
 - The next scheduled scanjob of a scanner is now shown on the "scanners"-page in the admin-module.
+
+- In the report module a superuser can search for a scan job to distribute.
   
 ### General improvements
 
