@@ -67,6 +67,13 @@
 
 .search_field_wrapper {
 
+  width: 20rem;
+  max-width: 100%;
+
+  &.wide {
+    width: 30rem;
+  }
+
   &.right {
     float: right;
   }
@@ -83,4 +90,9 @@
     transition: var(--transition-default);
     width: 100%;
   }
+
+    & + select#distribute-to {
+      margin-top: -1px;
+  }
+
 }
