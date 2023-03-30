@@ -11,15 +11,16 @@ from ..organizations.models import Account, Organization
 class CleanAccountResultsTests(TestCase):
 
     def call_command(self, *args, **kwargs):
-        out = StringIO()
+        err = StringIO()
         call_command(
             "cleanup_account_results",
             *args,
             stdout=StringIO(),
-            stderr=out,
+            stderr=err,
             **kwargs
         )
-        return out.getvalue()
+
+        return err.getvalue()
 
     def test_invalid_account(self):
         """Calling the command with an invalid username should raise a
@@ -60,9 +61,8 @@ class CleanAccountResultsTests(TestCase):
             organization=Organization.objects.first())
         ScanStatus.objects.create(scanner=scanner,
                                   scan_tag=scanner._construct_scan_tag().to_json_object())
-        stderr = self.call_command(
+
+        self.assertRaises(CommandError, lambda: self.call_command(
                 accounts=[
                     account.username], scanners=[
-                    scanner.pk])
-
-        self.assertTrue(len(stderr) > 0)
+                    scanner.pk]))

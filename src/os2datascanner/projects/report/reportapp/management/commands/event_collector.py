@@ -94,26 +94,29 @@ def event_message_received_raw(body):
 def handle_clean_message(body):
     """Accepts a CleanMessage JSON-object, and deletes all document reports
     related to the given account and scanner job."""
-    account_uuid = body.get("account_uuid")
-    scanner_pk = body.get("scanner_pk")
+    logger.info(f"CleanMessage published by {body.get('publisher')}.")
 
-    account = Account.objects.filter(uuid=account_uuid).first()
+    account_uuids = body.get("account_uuid", [])
+    scanner_pks = body.get("scanner_pk", [])
 
-    if account:
-        related_reports = DocumentReport.objects.filter(
-            alias_relation__account=account_uuid,
-            scanner_job_pk=scanner_pk)
+    for account_uuid in account_uuids:
+        account = Account.objects.filter(uuid=account_uuid).first()
 
-        _, deleted_reports_dict = related_reports.delete()
-        deleted_reports = deleted_reports_dict.get("os2datascanner_report.DocumentReport", 0)
+        if account:
+            related_reports = DocumentReport.objects.filter(
+                alias_relation__account=account_uuid,
+                scanner_job_pk__in=scanner_pks)
 
-        logger.info(
-            f"deleted {deleted_reports} document reports belonging "
-            f"to {account.get_full_name()}.")
-    else:
-        logger.info(
-            f"Account with UUID {account_uuid} not found."
-        )
+            _, deleted_reports_dict = related_reports.delete()
+            deleted_reports = deleted_reports_dict.get("os2datascanner_report.DocumentReport", 0)
+
+            logger.info(
+                f"Deleted {deleted_reports} document reports belonging "
+                f"to {account.get_full_name()}.")
+        else:
+            logger.info(
+                f"Account with UUID {account_uuid} not found."
+            )
 
 
 def handle_event(event_type, instance, cls, cls_serializer):  # noqa: CCR001, C901, E501 too high cognitive complexity

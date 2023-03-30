@@ -20,14 +20,6 @@ def is_valid_uuid(string: str):
         return False
 
 
-def send_clean_message(account, scanner):
-    if scanner.statuses.last() and not scanner.statuses.last().finished:
-        raise CommandError(f"Scanner “{scanner.name}” is currently running. Doing nothing.")
-    else:
-        message = CleanMessage(account_uuid=str(account.uuid), scanner_pk=scanner.pk)
-        publish_events([message])
-
-
 class Command(BaseCommand):
 
     help = __doc__
@@ -39,6 +31,11 @@ class Command(BaseCommand):
         parser.add_argument(
             "--scanners",
             help="the primary keys of the scanners to clean up", nargs="+", type=int)
+        parser.add_argument(
+            "--publisher",
+            help="the publisher of this command. Only intended to be called by "
+            "automatic processes.",
+            type=str)
 
     def handle(self, *args, **options):
         account_uuids = [arg for arg in options.get("accounts", []) if is_valid_uuid(arg)]
@@ -62,9 +59,23 @@ class Command(BaseCommand):
             if not scanner_objs.exists():
                 raise CommandError("No scanners with the given primary keys found.")
 
-        for account in account_objs:
-            for scanner in scanner_objs:
-                try:
-                    send_clean_message(account, scanner)
-                except CommandError as e:
-                    self.stderr.write(str(e))
+        self.send_clean_message(
+            account_objs,
+            scanner_objs,
+            publisher=options.get(
+                "publisher",
+                "manual"))
+
+    def send_clean_message(self, accounts, scanners, publisher=None):
+        for scanner in scanners:
+            if scanner.statuses.last() and not scanner.statuses.last().finished:
+                self.stderr.write(f"Scanner “{scanner.name}” is currently running.")
+                scanners = scanners.exclude(pk=scanner.pk)
+
+        if scanners.exists():
+            message = CleanMessage(account_uuids=[str(account.uuid)
+                                                  for account in accounts], scanner_pk=[
+                                scanner.pk for scanner in scanners], publisher=publisher)
+            publish_events([message])
+        else:
+            raise CommandError("All scanners are currently running! Doing nothing.")

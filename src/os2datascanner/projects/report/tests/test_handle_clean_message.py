@@ -204,8 +204,11 @@ class HandleCleanMessageTest(TestCase):
     def setUp(self):
         org = Organization.objects.create(name="TestOrg")
         bøffen_user = get_user_model().objects.create(username="bøffen")
+        egon_user = get_user_model().objects.create(username="egon")
         self.bøffen = Account.objects.create(
             username="Bøffen", organization=org, user=bøffen_user)
+        self.egon = Account.objects.create(
+            username="egon", organization=org, user=egon_user)
         for i in range(10):
             DocumentReport.objects.create(
                 name=f"Report-{i}",
@@ -239,21 +242,27 @@ class HandleCleanMessageTest(TestCase):
             user=self.bøffen.user,
             _alias_type=AliasType.GENERIC,
             _value="bøffen")
+        egon_alias = Alias.objects.create(
+            account=self.egon,
+            user=self.egon.user,
+            _alias_type=AliasType.GENERIC,
+            _value="egon olsen")
 
         create_alias_and_match_relations(bøffen_alias)
+        create_alias_and_match_relations(egon_alias)
 
-        self.message = {
-            "account_uuid": str(
-                self.bøffen.uuid),
-            "scanner_pk": 1,
-            "type": "clean_document_reports"}
-
-    def test_cleaning_document_reports(self):
+    def test_cleaning_document_reports_single_account_and_scanner(self):
         """Giving a CleanMessage to the event_message_received_raw-function
         should delete all DocumentReport-objects associated with the given
         account and scanner."""
 
-        handle_clean_message(self.message)
+        message = {
+            "account_uuid": [str(
+                self.bøffen.uuid)],
+            "scanner_pk": [1],
+            "type": "clean_document_reports"}
+
+        handle_clean_message(message)
 
         self.assertEqual(DocumentReport.objects.count(), 30)
         self.assertEqual(
@@ -267,6 +276,121 @@ class HandleCleanMessageTest(TestCase):
                 ).exclude(scanner_job_pk=1).count(),
             10)
         self.assertEqual(
-            DocumentReport.objects.exclude(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.egon).count(),
+            20)
+
+    def test_cleaning_document_reports_with_no_scanners(self):
+        """Giving a CleanMessage to the event_message_received_raw-function
+        should not delete any DocumentReport-objects."""
+        message = {
+            "account_uuid": [str(
+                self.bøffen.uuid)],
+            "type": "clean_document_reports"}
+
+        handle_clean_message(message)
+        self.assertEqual(DocumentReport.objects.count(), 40)
+        self.assertEqual(
+            DocumentReport.objects.filter(
                 alias_relation__account=self.bøffen).count(),
             20)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.egon).count(),
+            20)
+
+    def test_cleaning_document_reports_multiple_accounts_single_scanner(self):
+        """Giving a CleanMessage to the event_message_received_raw-function
+        should delete all DocumentReport-objects associated with the given
+        accounts and scanner."""
+        message = {
+            "account_uuid": [str(
+                self.bøffen.uuid), str(self.egon.uuid)],
+            "scanner_pk": [1],
+            "type": "clean_document_reports"}
+
+        handle_clean_message(message)
+
+        self.assertEqual(DocumentReport.objects.count(), 20)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.bøffen,
+                scanner_job_pk=1).count(),
+            0)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.bøffen,
+                ).exclude(scanner_job_pk=1).count(),
+            10)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.egon,
+                scanner_job_pk=1).count(),
+            0)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.egon,
+                ).exclude(scanner_job_pk=1).count(),
+            10)
+
+    def test_cleaning_document_reports_single_account_multiple_scanners(self):
+        """Giving a CleanMessage to the event_message_received_raw-function
+        should delete all DocumentReport-objects associated with the given
+        account and scanners."""
+        message = {
+            "account_uuid": [str(
+                self.bøffen.uuid)],
+            "scanner_pk": [1, 2],
+            "type": "clean_document_reports"}
+
+        handle_clean_message(message)
+
+        self.assertEqual(DocumentReport.objects.count(), 20)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.bøffen,
+                scanner_job_pk__in=[1, 2]).count(),
+            0)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.bøffen,
+                ).exclude(scanner_job_pk__in=[1, 2]).count(),
+            0)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.egon,
+                ).count(),
+            20)
+
+    def test_cleaning_document_reports_multiple_accounts_and_scanners(self):
+        """Giving a CleanMessage to the event_message_received_raw-function
+        should delete all DocumentReport-objects associated with the given
+        accounts and scanners."""
+        message = {
+            "account_uuid": [str(
+                self.bøffen.uuid), str(self.egon.uuid)],
+            "scanner_pk": [1, 2],
+            "type": "clean_document_reports"}
+
+        handle_clean_message(message)
+
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.bøffen,
+                scanner_job_pk=1).count(),
+            0)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.bøffen,
+                scanner_job_pk=2).count(),
+            0)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.egon,
+                scanner_job_pk=1).count(),
+            0)
+        self.assertEqual(
+            DocumentReport.objects.filter(
+                alias_relation__account=self.egon,
+                scanner_job_pk=2).count(),
+            0)

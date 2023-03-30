@@ -49,8 +49,8 @@ class CleanMessage(NamedTuple):
     scanner pk are to be deleted."""
     time = timezone.now()
     publisher: str = None
-    account_uuid: str = None
-    scanner_pk: int = None
+    account_uuids: list[str] = []
+    scanner_pk: list[int] = []
     event_type = "clean_document_reports"
 
     def to_json_object(self):
