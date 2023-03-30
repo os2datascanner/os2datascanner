@@ -34,12 +34,17 @@
   - The process will delete all DocumentReport-objects associated with
     accounts, which are no longer covered by the scanner jobs they were found
     by.
+
+- Usernames of employees are now displayed in the leader overview, and it is
+  possible to sort by usernames.
   
 ### General improvements
 
 - Scanner objects now contain information about which accounts they cover,
   which can be used to identify when an account is no longer covered by a
   scannerjob.
+
+- Employees in the leader overview are now sorted by first name by default.
 
 ### Bugfixes
 
