@@ -1,5 +1,14 @@
 # Changelog
 
+## Next release
+
+"Hairstylist of the Year"
+
+### General improvements
+
+- Navigating to a section in the manual now highlights the header of that 
+  section.
+
 ## Version 3.19.1, 12th April 2023
 
 This minor release fixes a potential crash triggered by scanning certain
