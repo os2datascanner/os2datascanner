@@ -7,11 +7,9 @@ from uuid import UUID
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
-from django.utils import timezone
 
 from ....organizations.models import Account
 from ...models.scannerjobs.scanner import Scanner
-from ...signals import publish_events
 from ...utils import CleanMessage
 
 
@@ -55,35 +53,30 @@ class Command(BaseCommand):
                               " and scanners " +
                               ", ".join([scanner.name for scanner in scanner_objs]) +
                               "\n")
+
+            scanners_accounts_dict = self.construct_dict(account_objs, scanner_objs)
+
+            if scanners_accounts_dict:
+                CleanMessage.send(
+                    scanners_accounts_dict=scanners_accounts_dict,
+                    publisher="cleanup_account_results")
+            else:
+                raise CommandError("All scanners are currently running! Doing nothing.")
+
         else:
             if not account_objs.exists():
                 raise CommandError("No accounts with the given usernames or UUIDs found.")
             if not scanner_objs.exists():
                 raise CommandError("No scanners with the given primary keys found.")
 
-        self.send_clean_message(
-            account_objs,
-            scanner_objs,
-            publisher=options.get(
-                "publisher",
-                "manual"))
-
-    def send_clean_message(self, accounts, scanners, publisher=None):
+    def construct_dict(self, accounts, scanners):
+        struct = {}
         for scanner in scanners:
             if scanner.statuses.last() and not scanner.statuses.last().finished:
                 self.stderr.write(f"Scanner “{scanner.name}” is currently running.")
-                scanners = scanners.exclude(pk=scanner.pk)
-
-        if scanners.exists():
-            message = CleanMessage(
-                accounts=[
-                    (str(
-                        account.uuid),
-                        account.username) for account in accounts],
-                scanner_pk=[
-                    scanner.pk for scanner in scanners],
-                publisher=publisher,
-                time=timezone.now())
-            publish_events([message])
-        else:
-            raise CommandError("All scanners are currently running! Doing nothing.")
+            else:
+                struct[scanner.pk] = {
+                    "uuids": [str(account.uuid) for account in accounts],
+                    "usernames": [account.username for account in accounts]
+                }
+        return struct

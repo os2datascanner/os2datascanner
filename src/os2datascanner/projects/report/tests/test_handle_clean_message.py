@@ -257,9 +257,12 @@ class HandleCleanMessageTest(TestCase):
         account and scanner."""
 
         message = {
-            "accounts": [(str(
-                self.bøffen.uuid), self.bøffen.username)],
-            "scanner_pk": [1],
+            "scanners_accounts_dict": {
+              1: {
+                "uuids": [self.bøffen.uuid],
+                "usernames": [self.bøffen.username]
+              }
+            },
             "type": "clean_document_reports"}
 
         handle_clean_message(message)
@@ -282,10 +285,9 @@ class HandleCleanMessageTest(TestCase):
 
     def test_cleaning_document_reports_with_no_scanners(self):
         """Giving a CleanMessage to the event_message_received_raw-function
-        should not delete any DocumentReport-objects."""
+        without a scanner_job_pk should not delete any DocumentReport-objects."""
         message = {
-            "accounts": [(str(
-                self.bøffen.uuid), self.bøffen.username)],
+            "scanners_accounts_dict": {},
             "type": "clean_document_reports"}
 
         handle_clean_message(message)
@@ -304,14 +306,12 @@ class HandleCleanMessageTest(TestCase):
         should delete all DocumentReport-objects associated with the given
         accounts and scanner."""
         message = {
-            "accounts": [
-                (str(
-                    self.bøffen.uuid),
-                    self.bøffen.username),
-                (str(
-                    self.egon.uuid),
-                    self.egon.username)],
-            "scanner_pk": [1],
+            "scanners_accounts_dict": {
+              1: {
+                "uuids": [str(self.bøffen.uuid), str(self.egon.uuid)],
+                "usernames": [self.bøffen.username, self.egon.username]
+              }
+            },
             "type": "clean_document_reports"}
 
         handle_clean_message(message)
@@ -343,9 +343,16 @@ class HandleCleanMessageTest(TestCase):
         should delete all DocumentReport-objects associated with the given
         account and scanners."""
         message = {
-            "accounts": [(str(
-                self.bøffen.uuid), self.bøffen.username)],
-            "scanner_pk": [1, 2],
+            "scanners_accounts_dict": {
+              1: {
+                "uuids": [str(self.bøffen.uuid)],
+                "usernames": [self.bøffen.username]
+              },
+              2: {
+                "uuids": [str(self.bøffen.uuid)],
+                "usernames": [self.bøffen.username]
+              }
+            },
             "type": "clean_document_reports"}
 
         handle_clean_message(message)
@@ -372,11 +379,17 @@ class HandleCleanMessageTest(TestCase):
         should delete all DocumentReport-objects associated with the given
         accounts and scanners."""
         message = {
-            "accounts": [
-                (str(
-                    self.bøffen.uuid), self.bøffen.username), (str(
-                        self.egon.uuid), self.egon.username)], "scanner_pk": [
-                    1, 2], "type": "clean_document_reports"}
+            "scanners_accounts_dict": {
+              1: {
+                "uuids": [str(self.bøffen.uuid), str(self.egon.uuid)],
+                "usernames": [self.bøffen.username, self.egon.username]
+              },
+              2: {
+                "uuids": [str(self.bøffen.uuid), str(self.egon.uuid)],
+                "usernames": [self.bøffen.username, self.egon.username]
+              }
+            },
+            "type": "clean_document_reports"}
 
         handle_clean_message(message)
 
