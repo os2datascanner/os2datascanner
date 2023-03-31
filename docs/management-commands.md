@@ -58,6 +58,20 @@ Currently, the command can be used to abort running scans, to change the log
 log level of the live system, and to obtain profiling information from live
 processes.
 
+
+### `cleanup_account_results`
+
+This command is used to delete all document reports of a specified account
+and scanner job. The command is primarily intended for programmatic use, but
+can be called manually.
+
+The command must include the following options:
+
+* `--accounts` followed by space-separated UUIDs or usernames of existing 
+  accounts.
+
+* `--scanners` followed by space-separated primary keys of existing scanners.
+
 #### Abort a scan
 
 To abort a scan, use **one** of the following flags:

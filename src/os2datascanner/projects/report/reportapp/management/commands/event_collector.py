@@ -35,6 +35,7 @@ from os2datascanner.projects.report.organizations.models import \
     Organization, OrganizationSerializer,\
     OrganizationalUnit, OrganizationalUnitSerializer, \
     Position, PositionSerializer
+from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
 
 from prometheus_client import Summary, start_http_server
 
@@ -49,6 +50,10 @@ def event_message_received_raw(body):
     event_type = body.get("type")
     model_class = body.get("model_class")
     instance = body.get("instance")
+
+    if event_type == "clean_document_reports":
+        handle_clean_message(body)
+        return
 
     org_struct_model_and_serializer = {'Account': (Account, AccountSerializer),
                                        'Alias': (Alias, AliasSerializer),
@@ -84,6 +89,28 @@ def event_message_received_raw(body):
         return
 
     yield from []
+
+
+def handle_clean_message(body):
+    """Accepts a CleanMessage JSON-object, and deletes all document reports
+    related to the given account and scanner job."""
+    logger.info(f"CleanMessage published by {body.get('publisher')} at {body.get('time')}.")
+
+    data_struct = body.get("scanners_accounts_dict", {})
+
+    for scanner_pk, account_dict in data_struct.items():
+        account_uuids = account_dict.get("uuids")
+        account_usernames = account_dict.get("usernames")
+
+        related_reports = DocumentReport.objects.filter(
+            alias_relation__account__in=account_uuids, scanner_job_pk=scanner_pk)
+
+        _, deleted_reports_dict = related_reports.delete()
+        deleted_reports = deleted_reports_dict.get("os2datascanner_report.DocumentReport", 0)
+
+        logger.info(
+            f"Deleted {deleted_reports} DocumentReport objects associated with "
+            f"scanner_job_pk: {scanner_pk} and accounts: {', '.join(account_usernames)}.")
 
 
 def handle_event(event_type, instance, cls, cls_serializer):  # noqa: CCR001, C901, E501 too high cognitive complexity
