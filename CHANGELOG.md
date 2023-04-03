@@ -10,11 +10,8 @@
 
 - The next scheduled scanjob of a scanner is now shown on the "scanners"-page in the admin-module.
 
-- In the report module a superuser can search for a scan job to distribute.
-
-- Management command "cleanup_account_results" for deleting all document
-  reports associated with a given account and scanner job from the admin 
-  module.
+- In the report module a superuser can search for a scan job to distribute if there is more 
+  than 10 undistributed scanner jobs.
   
 ### General improvements
 

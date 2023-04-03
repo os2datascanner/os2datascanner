@@ -17,11 +17,13 @@
          class="distribute dropdown"
          name="distribute-container">
       <label class="block-label" for="distribute-to">{% trans "Distribute matches to users from" %}</label>
-      <div class="search_field_wrapper wide">
-        <input type="search"
-               id="search-bar"
-               placeholder="{% trans "Search Scannerjob" %}">
-      </div>
+      {% if undistributed_scannerjobs.count >= 10 %}
+        <div class="search_field_wrapper wide">
+          <input type="search"
+                 id="search-bar"
+                 placeholder="{% trans "Search Scannerjob" %}">
+        </div>
+      {% endif %}
       <select id="distribute-to" name="distribute-to" multiple>
         {% for scan in undistributed_scannerjobs %}
           {% comment %} Check here for scannerjobs with the "only notify superadmin"-setting {% endcomment %}
