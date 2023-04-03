@@ -8,6 +8,7 @@ from uuid import UUID
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
+from django.conf import settings
 
 from ....organizations.models import Account
 from ...models.scannerjobs.scanner import Scanner
@@ -86,29 +87,34 @@ class Command(BaseCommand):
 
 
 def post_import_cleanup() -> None:
-    all_scanners = Scanner.objects.all()
-    scanners_accounts_dict = {}
+    """If the AUTOMATIC_IMPORT_CLEANUP-setting is enabled, this function
+    initiates cleanup of all accounts, which will no longer be covered by
+    future scans, but have been in the past."""
 
-    logger.info("Performing post import cleanup...")
+    if settings.AUTOMATIC_IMPORT_CLEANUP:
+        all_scanners = Scanner.objects.all()
+        scanners_accounts_dict = {}
 
-    for scanner in all_scanners:
-        if scanner.statuses.last() and not scanner.statuses.last().finished:
-            logger.info(f"Scanner “{scanner.name}” is currently running.")
-        else:
-            stale_accounts = scanner.get_stale_accounts()
+        logger.info("Performing post import cleanup...")
 
-            if stale_accounts:
+        for scanner in all_scanners:
+            if scanner.statuses.last() and not scanner.statuses.last().finished:
+                logger.info(f"Scanner “{scanner.name}” is currently running.")
+            else:
+                stale_accounts = scanner.get_stale_accounts()
 
-                usernames = [account.username for account in stale_accounts]
+                if stale_accounts:
 
-                logger.info(
-                    f"Cleaning up accounts: {', '.join(usernames)} for scanner: {scanner}.")
+                    usernames = [account.username for account in stale_accounts]
 
-                scanners_accounts_dict[scanner.pk] = {
-                    "uuids": [str(account.uuid) for account in stale_accounts],
-                    "usernames": usernames
-                }
+                    logger.info(
+                        f"Cleaning up accounts: {', '.join(usernames)} for scanner: {scanner}.")
 
-    CleanMessage.send(scanners_accounts_dict, publisher="post_import")
+                    scanners_accounts_dict[scanner.pk] = {
+                        "uuids": [str(account.uuid) for account in stale_accounts],
+                        "usernames": usernames
+                    }
 
-    logger.info("Post import cleanup message sent to report module!")
+        CleanMessage.send(scanners_accounts_dict, publisher="post_import")
+
+        logger.info("Post import cleanup message sent to report module!")
