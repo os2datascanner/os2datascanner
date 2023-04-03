@@ -18,6 +18,7 @@
 import structlog
 
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 
 from os2datascanner.projects.admin.core.models.background_job import JobState
 from os2datascanner.projects.admin.import_services.models import (LDAPConfig,
@@ -25,8 +26,11 @@ from os2datascanner.projects.admin.import_services.models import (LDAPConfig,
                                                                   LDAPImportJob,
                                                                   MSGraphImportJob,
                                                                   OS2moImportJob)
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import Scanner
+from os2datascanner.projects.admin.adminapp.utils import CleanMessage
 from .models.msgraph_configuration import MSGraphConfiguration
 from .models.os2mo_configuration import OS2moConfiguration
+
 
 logger = structlog.get_logger(__name__)
 
@@ -111,3 +115,69 @@ def start_os2mo_import(os2mo_conf: OS2moConfiguration):
             organization=os2mo_conf.organization,
         )
         logger.info(f"Import job created for OS2moConfiguration {os2mo_conf.pk}")
+
+
+def construct_dict_from_scanners_stale_accounts() -> dict:
+    """Returns a dict in the correct configuration for packaging in a
+    CleanMessage:
+    {
+        <scanner_pk_1>: {
+            uuids: [
+                <uuid_1>,
+                <uuid_2>
+            ],
+            usernames: [
+                <username_1>,
+                <username_2>
+            ]
+        },
+        <scanner_pk_2>: {
+            uuids: [
+                <uuid_1>,
+                <uuid_3>
+            ],
+            usernames: [
+                <username_1>,
+                <username_3>
+            ]
+        }
+    }
+    """
+    all_scanners = Scanner.objects.all()
+    scanners_accounts_dict = {}
+
+    for scanner in all_scanners:
+        if scanner.statuses.last() and not scanner.statuses.last().finished:
+            logger.info(f"Scanner “{scanner.name}” is currently running.")
+        else:
+            stale_accounts = scanner.get_stale_accounts()
+
+            if stale_accounts:
+
+                usernames = [account.username for account in stale_accounts]
+
+                logger.info(
+                    f"Cleaning up accounts: {', '.join(usernames)} for scanner: {scanner}.")
+
+                scanners_accounts_dict[scanner.pk] = {
+                    "uuids": [str(account.uuid) for account in stale_accounts],
+                    "usernames": usernames
+                }
+
+    return scanners_accounts_dict
+
+
+def post_import_cleanup() -> None:
+    """If the AUTOMATIC_IMPORT_CLEANUP-setting is enabled, this function
+    initiates cleanup of all accounts, which will no longer be covered by
+    future scans, but have been in the past."""
+
+    if settings.AUTOMATIC_IMPORT_CLEANUP:
+
+        logger.info("Performing post import cleanup...")
+
+        scanners_accounts_dict = construct_dict_from_scanners_stale_accounts()
+
+        CleanMessage.send(scanners_accounts_dict, publisher="post_import")
+
+        logger.info("Post import cleanup message sent to report module!")

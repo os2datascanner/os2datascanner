@@ -156,8 +156,7 @@ SETTINGS_EXPORT = [
     'ICON_SPRITE_URL',
     'ESTIMATE_AFTER',
     'EXCLUSION_RULES',
-    'ANALYSIS_PAGE',
-    'AUTOMATIC_IMPORT_CLEANUP'
+    'ANALYSIS_PAGE'
 ]
 
 # [internationalization]

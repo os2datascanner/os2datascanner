@@ -179,8 +179,7 @@ class OS2moImportJob(BackgroundJob):
         from ...organizations.os2mo_import_actions import perform_os2mo_import
         perform_os2mo_import(org_unit_list, self.organization, progress_callback=_callback)
 
-        from os2datascanner.projects.admin.adminapp.management.commands.cleanup_account_results\
-            import post_import_cleanup
+        from ..utils import post_import_cleanup
         post_import_cleanup()
 
     def finish(self):
