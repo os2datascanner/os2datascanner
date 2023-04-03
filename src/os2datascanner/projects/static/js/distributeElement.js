@@ -4,9 +4,9 @@ function searchFunctionality(){
 
 searchBar.addEventListener('input', function () {
     const query = searchBar.value.toLowerCase();
+
     for (const scannerJob of scannerJobList.children){
       const scannerJobName = scannerJob.innerHTML.toLowerCase();
-
       if (scannerJobName.includes(query)){
           scannerJob.style.display = 'block';
       } else {
@@ -14,5 +14,6 @@ searchBar.addEventListener('input', function () {
       }
     }
 });
+
 }
 document.addEventListener('DOMContentLoaded', () => { searchFunctionality(); });
