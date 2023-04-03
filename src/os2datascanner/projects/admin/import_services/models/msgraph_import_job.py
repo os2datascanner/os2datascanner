@@ -141,6 +141,10 @@ class MSGraphImportJob(BackgroundJob):
         perform_msgraph_import(hierarchy, self.organization,
                                progress_callback=_callback)
 
+        from os2datascanner.projects.admin.adminapp.management.commands.cleanup_account_results\
+            import post_import_cleanup
+        post_import_cleanup()
+
     def finish(self):
         if (pe := get_pika_thread(init=False)):
             pe.synchronise(600.0)

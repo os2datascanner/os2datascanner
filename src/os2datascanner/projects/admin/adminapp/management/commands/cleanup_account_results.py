@@ -2,6 +2,7 @@
 scanner job, if the job is not currently running."""
 
 import argparse
+import logging
 
 from uuid import UUID
 
@@ -11,6 +12,8 @@ from django.db.models import Q
 from ....organizations.models import Account
 from ...models.scannerjobs.scanner import Scanner
 from ...utils import CleanMessage
+
+logger = logging.getLogger(__name__)
 
 
 def is_valid_uuid(string: str):
@@ -80,3 +83,32 @@ class Command(BaseCommand):
                     "usernames": [account.username for account in accounts]
                 }
         return struct
+
+
+def post_import_cleanup() -> None:
+    all_scanners = Scanner.objects.all()
+    scanners_accounts_dict = {}
+
+    logger.info("Performing post import cleanup...")
+
+    for scanner in all_scanners:
+        if scanner.statuses.last() and not scanner.statuses.last().finished:
+            logger.info(f"Scanner “{scanner.name}” is currently running.")
+        else:
+            stale_accounts = scanner.get_stale_accounts()
+
+            if stale_accounts:
+
+                usernames = [account.username for account in stale_accounts]
+
+                logger.info(
+                    f"Cleaning up accounts: {', '.join(usernames)} for scanner: {scanner}.")
+
+                scanners_accounts_dict[scanner.pk] = {
+                    "uuids": [str(account.uuid) for account in stale_accounts],
+                    "usernames": usernames
+                }
+
+    CleanMessage.send(scanners_accounts_dict, publisher="post_import")
+
+    logger.info("Post import cleanup message sent to report module!")
