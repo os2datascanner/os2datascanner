@@ -448,13 +448,22 @@ class Scanner(models.Model):
     def get_covered_accounts(self):
         """Return all accounts which would be scanned by this scannerjob, if
         run at this moment."""
-        return Account.objects.filter(units__in=self.org_unit.all())
+        if self.org_unit.exists():
+            return Account.objects.filter(units__in=self.org_unit.all())
+        else:
+            return Account.objects.all()
 
     def sync_covered_accounts(self):
         """Clears the set of accounts covered by this scanner job and
         repopulates it based on the organisational units to be scanned."""
         self.covered_accounts.clear()
         self.covered_accounts.add(*self.get_covered_accounts())
+
+    def get_stale_accounts(self):
+        """Return all accounts, which are included in the scanner's
+        'covered_accounts' field, but are not associated with any org units
+        linked to the scanner."""
+        return self.covered_accounts.difference(self.get_covered_accounts())
 
     class Meta:
         abstract = False

@@ -7,6 +7,7 @@ DEBUG = true
 # [functionality]
 EXCLUSION_RULES = true
 ANALYSIS_PAGE = true
+AUTOMATIC_IMPORT_CLEANUP = true
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for

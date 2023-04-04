@@ -13,6 +13,20 @@
 - In the report module a superuser can search for a scan job to distribute if there is more 
   than 10 undistributed scanner jobs.
   
+- In the report module a superuser can search for a scan job to distribute.
+
+- Management command "cleanup_account_results" for deleting all document
+  reports associated with a given account and scanner job from the admin 
+  module.
+
+- It is now possible to configure the admin module to automatically initiate a
+  cleanup of DocumentReport-objects in the report module after each succesful
+  import job.
+
+  - The process will delete all DocumentReport-objects associated with
+    accounts, which are no longer covered by the scanner jobs they were found
+    by.
+  
 ### General improvements
 
 - Scanner objects now contain information about which accounts they cover,

@@ -26,6 +26,7 @@ PRODUCTION = false
 # [functionality]
 EXCLUSION_RULES = false
 ANALYSIS_PAGE = false
+AUTOMATIC_IMPORT_CLEANUP = false
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for

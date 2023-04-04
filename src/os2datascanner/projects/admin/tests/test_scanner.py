@@ -145,6 +145,29 @@ class ScannerTest(TestCase):
         self.assertEqual(scanner.covered_accounts.count(), 1)
         self.assertEqual(scanner.covered_accounts.first(), hansi)
 
+    def test_get_stale_accounts(self):
+        """The get_stale_account-method should return all accounts, which are
+        in the 'covered_accounts'-field of the scanner, but are not in any
+        of the organizational units on the scanner."""
+        # Creating some test objects...
+        scanner = Scanner.objects.create(name="Scanner", organization=Organization.objects.first())
+        unit = OrganizationalUnit.objects.create(
+            name="Unit", organization=Organization.objects.first())
+        hansi = Account.objects.create(username="Hansi", organization=Organization.objects.first())
+        günther = Account.objects.create(
+            username="Günther",
+            organization=Organization.objects.first())
+        fritz = Account.objects.create(username="Fritz", organization=Organization.objects.first())
+        hansi.units.add(unit)
+        scanner.org_unit.add(unit)
+        scanner.covered_accounts.add(hansi, günther, fritz)
+
+        stale_accounts = scanner.get_stale_accounts()
+
+        self.assertEqual(stale_accounts.count(), 2)
+        self.assertIn(günther, stale_accounts)
+        self.assertIn(fritz, stale_accounts)
+
     def get_webscannerupdate_view(self):
         request = self.factory.get('/')
         request.user = self.user

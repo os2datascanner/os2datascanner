@@ -51,6 +51,9 @@ class LDAPImportJob(BackgroundJob):
 
         perform_import(self.realm, progress_callback=_callback)
 
+        from ..utils import post_import_cleanup
+        post_import_cleanup()
+
     def finish(self):
         if (pe := get_pika_thread(init=False)):
             pe.synchronise(600.0)
