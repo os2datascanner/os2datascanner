@@ -37,6 +37,9 @@
 
 - Danish translations are no longer hardcoded in scanner model fields.
 
+- Paths in the administration system's error log can no longer overflow their
+  table cell and make neighbouring content hard to read.
+
 ### Bugfixes
 
 - OS2mo import jobs will now ignore empty manager-objects in the imported 
