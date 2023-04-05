@@ -1,6 +1,8 @@
 # Changelog
 
-## Next release
+## Version 3.19.0, 4th April 2023
+
+"Automatic Egg Roller"
 
 ### New in this release
 
@@ -53,12 +55,8 @@
 - Paths in the administration system's error log can no longer overflow their
   table cell and make neighbouring content hard to read.
 
-### Bugfixes
-
 - OS2mo import jobs will now ignore empty manager-objects in the imported 
   structure.
-
-### Bugfixes
 
 - When importing from LDAP, Alias and Positions objects are no longer deleted when created manually.
 
