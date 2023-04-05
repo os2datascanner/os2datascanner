@@ -1,11 +1,9 @@
 from typing import Tuple, Sequence
 from django.db import transaction
 import logging
-
-from os2datascanner.core_organizational_structure.utils import get_serializer
 from os2datascanner.utils.ldap import RDN, LDAPNode
-from os2datascanner.utils.system_utilities import time_now
-
+from .utils import group_into, set_imported_fields, save_and_serializer, update_and_serialize, \
+    delete_and_listify
 from ..organizations.broadcast_bulk_events import (BulkCreateEvent, BulkUpdateEvent,
                                                    BulkDeleteEvent)
 from ..organizations.publish import publish_events
@@ -17,6 +15,8 @@ from .models.aliases import AliasType
 
 
 logger = logging.getLogger(__name__)
+# TODO: Place somewhere reusable, or find a smarter way to ID aliases imported_id..
+EMAIL_ALIAS_IMPORTED_ID_SUFFIX = "/email"
 
 
 def keycloak_dn_selector(d):
@@ -126,23 +126,6 @@ def _node_to_iid(path: Sequence[RDN], node: LDAPNode) -> str:
         return node.properties["attributes"]["LDAP_ENTRY_DN"][0]
 
 
-def group_into(collection, *models, key=lambda o: o):
-    """Collects a heterogeneous sequence of Django model objects into subsets
-    of the same type, and yields each model manager and (non-empty) collection
-    in the model order specified.
-
-    The input collection does not need to contain Django model objects, as long
-    as an appropriate key function is provided to select such an object from
-    each item in the collection."""
-    if collection:
-        for subset in models:
-            manager = subset.objects
-
-            instances = [k for k in collection if isinstance(key(k), subset)]
-            if instances:
-                yield (manager, instances)
-
-
 def perform_import_raw(  # noqa: C901, CCR001 too complex
         org: Organization,
         remote,
@@ -156,8 +139,6 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
 
     Returns a tuple of counts of objects that were added, updated, and
     removed."""
-
-    now = time_now()
 
     # XXX: is this correct? It seems to presuppose the existence of a top unit,
     # which the database doesn't actually specify or require
@@ -328,7 +309,9 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
         if mail_address:
             alias_object = Alias(account=account,
                                  alias_type=AliasType.EMAIL,
-                                 value=mail_address)
+                                 value=mail_address,
+                                 imported_id=f"{account.imported_id}"
+                                             f"{EMAIL_ALIAS_IMPORTED_ID_SUFFIX}")
             if alias_object not in to_add:
                 to_add.append(alias_object)
 
@@ -372,46 +355,33 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
                 logger.debug(f"{manager.model.__name__}:"
                              f" add [{', '.join(str(i) for i in instances)}]")
 
+        # Deletes
         delete_dict = {}
-
         for manager, instances in group_into(
                 to_delete, Alias, Position, Account, OrganizationalUnit):
-            model_name = manager.model.__name__
-            deletion_pks = [str(i.pk) for i in instances]
-            manager.filter(pk__in=deletion_pks).delete()
-            delete_dict[model_name] = deletion_pks
 
+            model_name = manager.model.__name__
+            delete_dict[model_name] = delete_and_listify(manager, instances)
+
+        # Updates
+        # TODO: We're not actually updating "Imported" fields/timestamps. Should we?
         update_dict = {}
         for manager, instances in group_into(
                 to_update, Alias, Position, Account, OrganizationalUnit,
                 key=lambda k: k[0]):
-            properties = set()
+
             model_name = manager.model.__name__
-            serializer = get_serializer(manager.model)
-            for _, props in instances:
-                properties |= set(props)
+            update_dict[model_name] = update_and_serialize(manager, instances)
 
-            # We'll only want to send one update instruction pr. object.
-            unique_instances = set(obj for obj, _ in instances)
-            manager.bulk_update(unique_instances, properties)
-            update_dict[model_name] = serializer(unique_instances, many=True).data
-
+        # Creates
+        # TODO: Place the order of which objects should be created/updated somewhere reusabled
+        set_imported_fields(to_add)  # Updates imported_time etc.
         creation_dict = {}
         for manager, instances in group_into(
                 to_add, OrganizationalUnit, Account, Position, Alias):
-            for o in instances:
-                o.imported = True
-                o.last_import = now
-                o.last_import_requested = now
 
             model_name = manager.model.__name__
-            serializer = get_serializer(manager.model)
-
-            manager.bulk_create(instances)
-            # .data gives JSON serializable data, instead of the ListSerializer instance.
-            creation_dict[model_name] = serializer(instances, many=True).data
-            if hasattr(manager, "rebuild"):
-                manager.rebuild()
+            creation_dict[model_name] = save_and_serializer(manager, instances)
 
         event = [BulkDeleteEvent(delete_dict), BulkCreateEvent(creation_dict),
                  BulkUpdateEvent(update_dict), ]

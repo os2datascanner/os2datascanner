@@ -100,4 +100,4 @@ class Account(models.Model):
 
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ["pk", "username", "first_name", "last_name", "organization"]
+        fields = ["pk", "username", "first_name", "last_name", "organization", "manager"]

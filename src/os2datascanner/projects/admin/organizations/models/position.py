@@ -23,7 +23,6 @@ from .broadcasted_mixin import Broadcasted
 class Position(Core_Position, Imported, Broadcasted):
     """ Core logic lives in the core_organizational_structure app.
         Additional specific logic can be implemented here. """
-    pass
 
 
 class PositionSerializer(Core_PositionSerializer):

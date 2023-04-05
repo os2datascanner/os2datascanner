@@ -45,6 +45,12 @@ class AccountSerializer(Core_AccountSerializer):
         allow_null=False,
         pk_field=UUIDField(format='hex_verbose')
     )
+    manager = serializers.PrimaryKeyRelatedField(
+        queryset=Account.objects.all(),
+        required=False,
+        allow_null=True,
+        pk_field=UUIDField(format='hex_verbose')
+    )
 
     class Meta(Core_AccountSerializer.Meta):
         model = Account

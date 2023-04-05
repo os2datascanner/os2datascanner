@@ -18,7 +18,7 @@ from os2datascanner.core_organizational_structure.models import \
 
 from rest_framework import serializers
 from rest_framework.fields import UUIDField
-from ..seralizer import BaseBulkSerializer
+from ..seralizer import BaseBulkSerializer, SelfRelatingField
 
 
 class OrganizationalUnit(Core_OrganizationalUnit):
@@ -33,18 +33,6 @@ class OrganizationalUnitBulkSerializer(BaseBulkSerializer):
         model = OrganizationalUnit
 
 
-class ParentRelatedField(serializers.RelatedField):
-    def display_value(self, instance):
-        return instance
-
-    def to_representation(self, value):
-        return str(value)
-
-    def to_internal_value(self, data):
-        model = self.queryset.model
-        return model(pk=data)
-
-
 class OrganizationalUnitSerializer(Core_OrganizationalUnitSerializer):
     pk = serializers.UUIDField(read_only=False)
     lft = serializers.IntegerField(read_only=False)
@@ -52,8 +40,8 @@ class OrganizationalUnitSerializer(Core_OrganizationalUnitSerializer):
     tree_id = serializers.IntegerField(read_only=False)
     level = serializers.IntegerField(read_only=False)
 
-    parent = ParentRelatedField(queryset=OrganizationalUnit.objects.all(), many=False,
-                                allow_null=True)
+    parent = SelfRelatingField(queryset=OrganizationalUnit.objects.all(), many=False,
+                               allow_null=True)
 
     from ..models.organization import Organization
     organization = serializers.PrimaryKeyRelatedField(

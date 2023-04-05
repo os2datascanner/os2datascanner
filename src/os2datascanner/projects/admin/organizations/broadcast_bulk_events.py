@@ -1,7 +1,7 @@
 from os2datascanner.utils.system_utilities import time_now
 
 
-class BulkBroadCastEvent:
+class BulkBroadcastEvent:
     publisher = "admin"
 
     def __init__(self, event_type: str):
@@ -16,7 +16,7 @@ class BulkBroadCastEvent:
         }
 
 
-class BulkCreateEvent(BulkBroadCastEvent):
+class BulkCreateEvent(BulkBroadcastEvent):
     """
     Class for constructing create event messages that can be published through RabbitMQ.
     Provided dict will be used as "classes" and should conform to below structure.
@@ -44,7 +44,7 @@ class BulkCreateEvent(BulkBroadCastEvent):
         }
 
 
-class BulkUpdateEvent(BulkBroadCastEvent):
+class BulkUpdateEvent(BulkBroadcastEvent):
     """
     Class for constructing update event messages that can be published through RabbitMQ.
     Provided dict will be used as "classes" and should conform to below structure.
@@ -72,7 +72,7 @@ class BulkUpdateEvent(BulkBroadCastEvent):
         }
 
 
-class BulkDeleteEvent(BulkBroadCastEvent):
+class BulkDeleteEvent(BulkBroadcastEvent):
     """
     Class for constructing delete event messages that can be published through RabbitMQ.
     Provided dict will be used as "classes" and should conform to below structure.

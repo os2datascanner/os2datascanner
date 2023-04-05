@@ -19,8 +19,8 @@ from datetime import timedelta
 from rest_framework import serializers
 from rest_framework.fields import UUIDField
 from django.conf import settings
-from django.db import models
 from django.db.models import Count
+from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -33,7 +33,7 @@ from os2datascanner.core_organizational_structure.models import \
     AccountSerializer as Core_AccountSerializer
 from os2datascanner.utils.system_utilities import time_now
 
-from ..seralizer import BaseBulkSerializer
+from ..seralizer import BaseBulkSerializer, SelfRelatingField
 
 logger = logging.getLogger(__name__)
 
@@ -271,6 +271,7 @@ class AccountBulkSerializer(BaseBulkSerializer):
 
 
 class AccountSerializer(Core_AccountSerializer):
+
     pk = serializers.UUIDField(read_only=False)
     from ..models.organization import Organization
     organization = serializers.PrimaryKeyRelatedField(
@@ -278,6 +279,15 @@ class AccountSerializer(Core_AccountSerializer):
         required=True,
         allow_null=False,
         pk_field=UUIDField(format='hex_verbose')
+    )
+    # Note that this is a PrimaryKeyRelatedField in the admin module.
+    # Since manager is a self-referencing foreign-key however, we can't use that here, as we
+    # cannot guarantee the manager Account exists in the database when doing bulk creates.
+    manager = SelfRelatingField(
+        queryset=Account.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
     )
 
     class Meta(Core_AccountSerializer.Meta):

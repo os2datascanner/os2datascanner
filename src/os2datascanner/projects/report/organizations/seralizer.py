@@ -24,3 +24,18 @@ class BaseBulkSerializer(serializers.ListSerializer):
 
         model.objects.bulk_update(instances, fields)
         return instances
+
+
+class SelfRelatingField(serializers.RelatedField):
+    """ Usable for serializers for models which contain a self-relating foreign key.
+    I.e. Account-Manager, or OrganizationalUnit-Parent"""
+
+    def display_value(self, instance):
+        return instance
+
+    def to_representation(self, value):
+        return str(value)
+
+    def to_internal_value(self, data):
+        model = self.queryset.model
+        return model(pk=data)
