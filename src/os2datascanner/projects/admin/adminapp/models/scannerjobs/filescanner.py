@@ -41,6 +41,12 @@ class FileScanner(Scanner):
                     " set, or files with the HIDDEN bit set whose name"
                     " starts with a tilde"),
         default=False)
+    unc_is_home_root = models.BooleanField(
+        verbose_name=_("UNC is home root"),
+        help_text=_("all folders under the given UNC are user home folders;"
+                    " their owners have responsibility for everything they"
+                    " contain regardless of other filesystem metadata"),
+        default=False)
 
     @property
     def root_url(self):
@@ -73,7 +79,8 @@ class FileScanner(Scanner):
                 password=self.authentication.get_password(),
                 domain=self.authentication.domain,
                 driveletter=self.alias,
-                skip_super_hidden=self.skip_super_hidden)
+                skip_super_hidden=self.skip_super_hidden,
+                unc_is_home_root=self.unc_is_home_root)
 
     def clean(self):
         # Backslashes (\) are an escaped character and therefore '\\\\' = '\\'

@@ -301,11 +301,7 @@ class WebHandle(Handle):
             referrer: Optional["WebHandle"] = None, hints=None):
         # path = path if path.startswith("/") else ("/" + path if path else "")
         path = path if path.startswith("/") else "/" + path
-        super().__init__(source, path, referrer)
-        self._hints = hints
-
-    def hint(self, key: str, default=None):
-        return self._hints.get(key, default) if self._hints else default
+        super().__init__(source, path, referrer, hints)
 
     @property
     def presentation_name(self):

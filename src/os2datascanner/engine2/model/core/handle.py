@@ -1,6 +1,6 @@
 import os.path
 from abc import abstractmethod
-from copy import copy
+from copy import copy, deepcopy
 from typing import Mapping, Optional
 import warnings
 from mimetypes import guess_type
@@ -41,10 +41,33 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         """The subclass of Resource produced when this Handle is followed."""
 
     def __init__(self, source: "msource.Source", relpath: str,
-                 referrer: "Handle" = None):
+                 referrer: "Handle" = None,
+                 hints: Optional[dict] = None):
         self._source = source
         self._relpath = relpath
         self._referrer = referrer
+        self._hints = deepcopy(hints) if hints else None
+
+    def hint(self, key: str, default=None):
+        """Retrieves a named hint from this Handle.
+
+        Hints are pieces of metadata retrieved during the exploration of a
+        Source. Handle and Resource methods may use them to provide special
+        behaviour or improved performance.
+
+        Note that hints can easily become stale, especially when Handles are
+        serialised and reimported, which can lead to inconsistent behaviour. Be
+        sure to call Handle.clear_hints before reusing an old object in a new
+        scan."""
+        return (self._hints or {}).get(key, default)
+
+    def clear_hints(self) -> "Handle":
+        """Deletes all of the hints attached to this Handle, if there were any,
+        and (for convenience) returns a reference to this Handle."""
+        if self._hints is not None:
+            self._hints.clear()
+            self._hints = None
+        return self
 
     @property
     def source(self) -> "msource.Source":
@@ -188,6 +211,7 @@ class Handle(TypePropertyEquality, JSONSerialisable):
             # only insert referrer key:val, if value is not None
             **({"referrer": self.referrer.to_json_object()}
                if self.referrer else {}),
+            "hints": self._hints,
         }
 
     @staticmethod
@@ -200,7 +224,8 @@ class Handle(TypePropertyEquality, JSONSerialisable):
             def _invoke_constructor(obj):
                 return cls(
                         msource.Source.from_json_object(obj["source"]),
-                        obj["path"])
+                        obj["path"],
+                        hints=obj.get("hints"),)
             return cls
         return _stock_json_handler
 

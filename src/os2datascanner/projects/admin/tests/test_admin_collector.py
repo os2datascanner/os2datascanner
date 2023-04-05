@@ -236,7 +236,8 @@ class PipelineCollectorTests(TestCase):
                 wmo.to_json_object())]
 
         sc = ScheduledCheckup.objects.get(scanner=scanner)
-        self.assertEqual(
-                sc.handle._hints,
-                {},
-                "hints not cleared by checkup collector")
+        for hint in ("fresh", "last_modified",):
+            self.assertEqual(
+                    sc.handle.hint(hint),
+                    None,
+                    f"hint {hint} not cleared by checkup collector")

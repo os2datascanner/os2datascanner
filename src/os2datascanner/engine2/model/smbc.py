@@ -79,15 +79,22 @@ class SMBCSource(Source):
     type_label = "smbc"
     eq_properties = ("_unc", "_user", "_password", "_domain")
 
-    def __init__(self, unc, user=None, password=None, domain=None,
-                 driveletter=None, *, skip_super_hidden: bool = False):
+    def __init__(
+            self, unc: str,
+            user: Optional[str] = None, password: Optional[str] = None,
+            domain: Optional[str] = None, driveletter: Optional[str] = None,
+            *,
+            skip_super_hidden: bool = False,
+            unc_is_home_root: bool = False):
         self._unc = unc.replace('\\', '/')
         self._user = user
         self._password = password
         self._domain = domain if domain is not None else compute_domain(unc)
         self._driveletter = (
                 driveletter.replace('\\', '/') if driveletter else None)
+
         self._skip_super_hidden = skip_super_hidden
+        self._unc_is_home_root = unc_is_home_root
 
     @property
     def unc(self):
@@ -153,10 +160,14 @@ class SMBCSource(Source):
 
         return False
 
-    def handles(self, sm):  # noqa: CCR001, E501 too high cognitive complexity
+    def _get_owner_for(self, url, context, dent_name):
+        return DefaultRetrier(smbc.TimedOutError).run(
+                context.getxattr, url + "/" + dent_name, smbc.XATTR_OWNER)
+
+    def handles(self, sm):  # noqa: C901,E501,CCR001
         url, context = sm.open(self)
 
-        def handle_dirent(parents, entity):
+        def handle_dirent(parents, entity, owner_sid: str = None):
             name = entity.name
 
             here = parents + [entity]
@@ -168,6 +179,11 @@ class SMBCSource(Source):
                             context, url_here, path, name)):
                 return
 
+            hints = {}
+            if owner_sid:
+                hints["owner_sid"] = owner_sid
+
+            handle_here = SMBCHandle(self, path, hints=hints)
             if entity.smbc_type == smbc.DIR and name not in (".", ".."):
                 try:
                     try:
@@ -177,14 +193,14 @@ class SMBCSource(Source):
                         # deprecated encoding. Skip the path and keep going!
                         logger.warning(
                             f"Skipping handle with memory error at {url_here}")
-                        yield (SMBCHandle(self, path), e)
+                        yield (handle_here, e)
                         return
                     for dent in obj.getdents():
-                        yield from handle_dirent(here, dent)
+                        yield from handle_dirent(here, dent, owner_sid)
                 except (ValueError, *IGNORABLE_SMBC_EXCEPTIONS):
                     pass
             elif entity.smbc_type == smbc.FILE:
-                yield SMBCHandle(self, path)
+                yield handle_here
 
         try:
             obj = context.opendir(url)
@@ -195,8 +211,18 @@ class SMBCSource(Source):
             else:
                 raise ex
 
+        # Iterate over every folder lying directly under the provided UNC
         for dent in obj.getdents():
-            yield from handle_dirent([], dent)
+            if dent.name not in (".", "..",):
+                # If we know that the provided UNC is a folder containing user
+                # home folders, then compute the owner of each folder here.
+                # handle_dirent can use this as a hint so SMBCResource doesn't
+                # have to retrieve ownership metadata for individual files
+                if self._unc_is_home_root:
+                    owner = self._get_owner_for(url, context, dent.name)
+                else:
+                    owner = None
+                yield from handle_dirent([], dent, owner)
 
     # For our own purposes, we need to be able to make a "smb://" URL to give
     # to pysmbc. That URL doesn't need to contain authentication details,
@@ -205,15 +231,15 @@ class SMBCSource(Source):
         return make_smb_url("smb", self._unc, None, None, None)
 
     def to_json_object(self):
-        return dict(
-            **super().to_json_object(),
-            unc=self._unc,
-            user=self._user,
-            password=self._password,
-            domain=self._domain,
-            driveletter=self._driveletter,
-            skip_super_hidden=self._skip_super_hidden,
-        )
+        return super().to_json_object() | {
+            "unc": self._unc,
+            "user": self._user,
+            "password": self._password,
+            "domain": self._domain,
+            "driveletter": self._driveletter,
+            "skip_super_hidden": self._skip_super_hidden,
+            "unc_is_home_root": self._unc_is_home_root
+        }
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -221,7 +247,9 @@ class SMBCSource(Source):
         return SMBCSource(
                 obj["unc"], obj["user"], obj["password"], obj["domain"],
                 obj["driveletter"],
-                skip_super_hidden=obj.get("skip_super_hidden", False))
+
+                skip_super_hidden=obj.get("skip_super_hidden", False),
+                unc_is_home_root=obj.get("unc_is_home_root", False))
 
 
 class _SMBCFile(io.RawIOBase):
@@ -336,6 +364,8 @@ class SMBCResource(FileResource):
     def get_owner_sid(self):
         """Returns the Windows security identifier of the owner of this file,
         which libsmbclient exposes as an extended attribute."""
+        if (owner_sid := self.handle.hint("owner_sid")):
+            return owner_sid
         return self.get_xattr(smbc.XATTR_OWNER)
 
     @contextmanager
