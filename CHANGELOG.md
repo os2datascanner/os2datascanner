@@ -58,6 +58,10 @@
 - OS2mo import jobs will now ignore empty manager-objects in the imported 
   structure.
 
+### Bugfixes
+
+- When importing from LDAP, Alias and Positions objects are no longer deleted when created manually.
+
 ## Version 3.18.8, 21th March 2023
 
 "Shaka brah! 🤙"
