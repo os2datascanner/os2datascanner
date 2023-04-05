@@ -315,9 +315,8 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
     for iid, (remote_node, account) in changed_accounts.items():
         # Delete all Aliases and Positions for this account and create them
         # anew
-        to_delete.extend(Alias.objects.filter(account=account))
-        to_delete.extend(Position.objects.filter(account=account))
-
+        to_delete.extend(Alias.objects.filter(account=account, imported=True))
+        to_delete.extend(Position.objects.filter(account=account, imported=True))
         mail_address = remote_node.properties.get("email")
         if mail_address:
             alias_object = Alias(account=account,
