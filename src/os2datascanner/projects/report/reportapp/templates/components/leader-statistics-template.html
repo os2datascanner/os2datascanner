@@ -26,8 +26,8 @@
             hx-swap="outerHTML"
             hx-trigger="change, click from:.order-by delay:100ms"
             hx-indicator="#report-page-indicator">
-        <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
-        <input type="hidden" name="order" id="order" value="{{ order }}">
+        <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}"/>
+        <input type="hidden" name="order" id="order" value="{{ order }}"/>
         <div class="org_filtering_wrapper">
           <div>
             <div>
@@ -51,7 +51,7 @@
                    name="search_field"
                    id="search_field"
                    placeholder="{% trans "Search for employee" %}"
-                   value="{{ request.GET.search_field }}">
+                   value="{{ request.GET.search_field }}"/>
           </div>
         </div>
       </form>
@@ -61,109 +61,121 @@
     <div class="datatable-wrapper card">
       <table class="datatable">
         <colgroup>
-          <col class="datatable__column--name">
-          <col class="datatable__column--matchcount">
-          <col class="datatable__column--matchstatus">
-          <col class="datatable__column--leader-actions">
+          <col class="datatable__column--name"/>
+          <col class="datatable__column--username"/>
+          <col class="datatable__column--matchcount"/>
+          <col class="datatable__column--matchstatus"/>
+          <col class="datatable__column--leader-actions"/>
         </colgroup>
         <thead>
           <tr class="table-topbar topbar-stick sticky">
             <th class="datatable__column--name">
-              <label for="name-caret">
-                {% trans "Employee" %}
-                <button type="button"
-                        name="account__first_name"
-                        id="name-caret"
-                        class="order-by button button-caret button--has-icon{% if order_by == 'account__first_name' and order == 'descending' %} up{% endif %}"
-                        value="{% if order_by == 'account__first_name' and order == 'descending' %}ascending{% else %}descending{% endif %}">
-                  <i class="material-icons" aria-hidden="true">expand_more</i>
-                </button>
-              </th>
-              <th class="datatable__column--matchcount">
-                <label for="matches-caret">
-                  <span>{% trans "Matches" %}</span>
-                </label>
-                <button type="button"
-                        name="account__match_count"
-                        id="matches-caret"
-                        class="order-by button button-caret button--has-icon{% if order_by == 'account__match_count' and order == 'descending' %} up{% endif %}"
-                        value="{% if order_by == 'account__match_count' and order == 'descending' %}ascending{% else %}descending{% endif %}">
-                  <i class="material-icons" aria-hidden="true">expand_more</i>
-                </button>
-              </th>
-              <th class="datatable__column--matchstatus">
-                <label for="status-caret">
-                  {% trans "Status" %} <span class="help-tooltip"
-       title="{% trans "The status of each user is determined by how many matches that user has, and how often they have handled their matches recently. A user with a “Completed” status has no matches. A user with a “Accepted” status has handled at least 75% of their recent matches." %}">
-                  {% include "components/svg-icons/help.svg" %}
-                </span>
-              </label>
+              <label for="name-caret">{% trans "Employee" %}</label>
               <button type="button"
-                      name="account__match_status"
-                      id="status-caret"
-                      class="order-by button button-caret button--has-icon{% if order_by == 'account__match_status' and order == 'descending' %} up{% endif %}"
-                      value="{% if order_by == 'account__match_status' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+                      name="first_name"
+                      id="name-caret"
+                      class="order-by button button-caret button--has-icon {% if order_by == 'first_name' and order == 'descending' %}up{% endif %}"
+                      value="{% if order_by == 'first_name' and order == 'descending' %}ascending{% else %}descending{% endif %}">
                 <i class="material-icons" aria-hidden="true">expand_more</i>
               </button>
             </th>
-            <th class="datatable__column--leader-actions">
-              <span class="screen-reader-only">{% trans "Actions" %}</span>
+            <th class="datatable__column--username">
+              <label for="username-caret">{% trans "Username" %}</label>
+              <button type="button"
+                      name="username"
+                      id="username-caret"
+                      class="order-by button button-caret button--has-icon {% if order_by == 'username' and order == 'descending' %}up{% endif %}"
+                      value="{% if order_by == 'username' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+                <i class="material-icons" aria-hidden="true">expand_more</i>
+              </button>
             </th>
-          </tr>
-        </thead>
-        <tbody>
-          {% if employees %}
-            {% for employee in employees %}
-              <tr>
-                <td class="datatable__column--name">
-                  <div class="overflow-ellipsis">
-                    <strong>{{ employee.get_full_name }}</strong>
-                  </div>
-                </td>
-                <td class="datatable__column--matchcount">{{ employee.match_count }}</td>
-                <td class="datatable__column--matchstatus">
-                  <div class="status_wrapper" data-status="{{ employee.match_status }}">{{ employee.status }}</div>
-                </td>
-                <td class="datatable__column--leader-actions">
-                  <div class="action_wrapper">
-                    <a class="button"
-                       href="mailto:{{ employee.email }}?body=Matches: {{ employee.matchcount }}">{% trans "Send notification" %}</a>
-                    <button class="overview-expand button button-caret button--has-icon"
-                            title="{% trans 'Show/hide overview' %}"
-                            type="button">
-                      <i class="material-icons" aria-hidden="true">expand_more</i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr class="user-overview" hidden>
-                <td colspan="4">
-                  <div class="overview_wrapper"
-                       hx-get="{% url "statistics-user-id" employee.uuid %}"
-                       hx-trigger="intersect"
-                       hx-swap="outerHTML"
-                       hx-target="this"
-                       hx-select=".overview_wrapper"
-                       hx-push-url="false">
-                    <div class="loading">
-                      <svg class="relative page-indicator"
-                           id="report-page-indicator"
-                           viewbox="0 0 100 100">
-                        <circle id="circle" cx="50" cy="50" r="45"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            {% endfor %}
-          {% else %}
+            <th class="datatable__column--matchcount">
+              <label for="matches-caret">
+                <span>{% trans "Matches" %}</span>
+              </label>
+              <button type="button"
+                      name="match_count"
+                      id="matches-caret"
+                      class="order-by button button-caret button--has-icon{% if order_by == 'match_count' and order == 'descending' %} up{% endif %}"
+                      value="{% if order_by == 'match_count' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+                <i class="material-icons" aria-hidden="true">expand_more</i>
+              </button>
+            </th>
+            <th class="datatable__column--matchstatus">
+              <label for="status-caret">
+                {% trans "Status" %} <span class="help-tooltip"
+       title="{% trans "The status of each user is determined by how many matches that user has, and how often they have handled their matches recently. A user with a “Completed” status has no matches. A user with a “Accepted” status has handled at least 75% of their recent matches." %}">
+                {% include "components/svg-icons/help.svg" %}
+              </span>
+            </label>
+            <button type="button"
+                    name="match_status"
+                    id="status-caret"
+                    class="order-by button button-caret button--has-icon{% if order_by == 'match_status' and order == 'descending' %} up{% endif %}"
+                    value="{% if order_by == 'match_status' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+              <i class="material-icons" aria-hidden="true">expand_more</i>
+            </button>
+          </th>
+          <th class="datatable__column--leader-actions">
+            <span class="screen-reader-only">{% trans "Actions" %}</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if employees %}
+          {% for employee in employees %}
             <tr>
-              <td class="datatable__column--nodata" colspan="6">{% trans "No employees found." %}</td>
+              <td class="datatable__column--name">
+                <div class="overflow-ellipsis">
+                  <strong>{{ employee.get_full_name }}</strong>
+                </div>
+              </td>
+              <td class="datatable__column--username">{{ employee.username }}</td>
+              <td class="datatable__column--matchcount">{{ employee.match_count }}</td>
+              <td class="datatable__column--matchstatus">
+                <div class="status_wrapper" data-status="{{ employee.match_status }}">{{ employee.status }}</div>
+              </td>
+              <td class="datatable__column--leader-actions">
+                <div class="action_wrapper">
+                  <a class="button"
+                     href="mailto:{{ employee.email }}?body=Matches: {{ employee.match_count }}">{% trans "Send notification" %}</a>
+                  <button class="overview-expand button button-caret button--has-icon"
+                          title="{% trans 'Show/hide overview' %}"
+                          type="button">
+                    <i class="material-icons" aria-hidden="true">expand_more</i>
+                  </button>
+                </div>
+              </td>
             </tr>
-          {% endif %}
-        </tbody>
-      </div>
-    {% else %}
-      {% include "components/no-units-error.html" %}
-    {% endif %}
+            <tr class="user-overview" hidden>
+              <td colspan="4">
+                <div class="overview_wrapper"
+                     hx-get="{% url "statistics-user-id" employee.uuid %}"
+                     hx-trigger="intersect"
+                     hx-swap="outerHTML"
+                     hx-target="this"
+                     hx-select=".overview_wrapper"
+                     hx-push-url="false">
+                  <div class="loading">
+                    <svg class="relative page-indicator"
+                         id="report-page-indicator"
+                         viewbox="0 0 100 100">
+                      <circle id="circle" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td class="datatable__column--nodata" colspan="6">{% trans "No employees found." %}</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
   </div>
+{% else %}
+  {% include "components/no-units-error.html" %}
+{% endif %}
+</div>

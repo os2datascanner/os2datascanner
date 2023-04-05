@@ -698,7 +698,7 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
                 employee.save()
         else:
             self.employees = None
-        context["employees"] = set(self.employees)
+        context["employees"] = self.employees
 
         context['order_by'] = self.request.GET.get('order_by', 'first_name')
         context['order'] = self.request.GET.get('order', 'ascending')
@@ -710,16 +710,18 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
         allowed_sorting_properties = [
             'first_name',
             'match_count',
-            'match_status']
-        if (sort_key := self.request.GET.get('order_by')) and (
-                order := self.request.GET.get('order')):
+            'match_status',
+            'username']
+        if (sort_key := self.request.GET.get('order_by', 'first_name')) and (
+                order := self.request.GET.get('order', 'ascending')):
 
             if sort_key not in allowed_sorting_properties:
                 return
 
             if order != 'ascending':
                 sort_key = '-'+sort_key
-            self.employees = self.employees.order_by(sort_key, 'pk')
+            self.employees = self.employees.order_by(sort_key, 'pk').distinct(
+                sort_key if sort_key[0] != "-" else sort_key[1:], "pk")
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
