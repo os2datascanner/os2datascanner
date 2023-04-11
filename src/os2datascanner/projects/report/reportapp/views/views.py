@@ -709,8 +709,7 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
         allowed_sorting_properties = [
             'first_name',
             'match_count',
-            'match_status',
-            'username']
+            'match_status']
         if (sort_key := self.request.GET.get('order_by', 'first_name')) and (
                 order := self.request.GET.get('order', 'ascending')):
 

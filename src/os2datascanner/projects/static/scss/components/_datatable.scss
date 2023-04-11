@@ -180,10 +180,6 @@
       }
     }
 
-    &--username {
-      width: 80%;
-    }
-
     &--matchcount {
       width: 5.5rem;
       display: none;
@@ -199,7 +195,7 @@
       }
 
       @media (min-width: $break-lg) {
-        width: 9rem;
+        width: 15rem;
 
         label {
           &::after {
@@ -265,7 +261,7 @@
     }
 
     &--matchstatus {
-      width: 10rem;
+      width: 12rem;
     }
 
     &--nodata {
@@ -393,6 +389,16 @@
   vertical-align: middle;
 
   .overflow-ellipsis {
+
+    .employee__fullname {
+      font-weight: bold;
+    }
+
+    .employee__username {
+      content: "";
+      display: block;
+      margin-top: 10px;
+    }
 
     // Only show ellipsis on pc-screens.
     @media (min-width: $break-lg) {
