@@ -68,8 +68,6 @@ compound document formats with the new home folder flag set.
 
 - Employees in the leader overview are now sorted by first name by default.
 
-- The Leader role has been removed.
-
 ### Bugfixes
 
 - Danish translations are no longer hardcoded in scanner model fields.
