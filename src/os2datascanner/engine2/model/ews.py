@@ -233,10 +233,6 @@ class EWSMailHandle(Handle):
     type_label = "ews"
     resource_type = EWSMailResource
 
-    # The mail subject and folder name are useful for presentation purposes,
-    # but not important when computing equality
-    eq_properties = Handle.BASE_PROPERTIES
-
     def __init__(
         self,
         source: EWSAccountSource,
