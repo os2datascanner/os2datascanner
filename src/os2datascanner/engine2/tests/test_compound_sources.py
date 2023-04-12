@@ -99,6 +99,17 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                                 "libreoffice/test.ods")),
                 offset=8)
 
+    def test_ods_with_hint(self):
+        self.run_rule_on_handle(
+                FilesystemHandle.make_handle(
+                        os.path.join(
+                                test_data_path,
+                                "libreoffice/test.ods"),
+                        hints={
+                            "some-hint": ["a", "b", "c"]
+                        }),
+                offset=8)
+
     def test_xls(self):
         self.run_rule_on_handle(
                 FilesystemHandle.make_handle(

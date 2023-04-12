@@ -161,8 +161,13 @@ class SMBCSource(Source):
         return False
 
     def _get_owner_for(self, url, context, dent_name):
-        return DefaultRetrier(smbc.TimedOutError).run(
-                context.getxattr, url + "/" + dent_name, smbc.XATTR_OWNER)
+        try:
+            return DefaultRetrier(smbc.TimedOutError).run(
+                    context.getxattr, url + "/" + dent_name, smbc.XATTR_OWNER)
+        except MemoryError:
+            # The path is using deprecated encoding, so we can't retrieve its
+            # owner
+            return None
 
     def handles(self, sm):  # noqa: C901,E501,CCR001
         url, context = sm.open(self)

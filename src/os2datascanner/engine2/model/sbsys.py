@@ -114,7 +114,6 @@ class SbsysResource(FileResource):
 class SbsysHandle(Handle):
     type_label = "sbsys"
     resource_type = SbsysResource
-    eq_properties = Handle.BASE_PROPERTIES
 
     def __init__(self, source, path):
         super().__init__(source, path)
@@ -172,7 +171,6 @@ class SbsysCaseResource(FileResource):
 class SbsysCaseHandle(Handle):
     type_label = "sbsys-case"
     resource_type = SbsysCaseResource
-    eq_properties = Handle.BASE_PROPERTIES
 
     @property
     def presentation_name(self):

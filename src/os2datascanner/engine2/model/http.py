@@ -294,8 +294,6 @@ class WebHandle(Handle):
     type_label = "web"
     resource_type = WebResource
 
-    eq_properties = Handle.BASE_PROPERTIES
-
     def __init__(
             self, source: WebSource, path: str,
             referrer: Optional["WebHandle"] = None, hints=None):

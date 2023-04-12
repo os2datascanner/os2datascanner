@@ -228,7 +228,6 @@ class MSGraphMailMessageResource(FileResource):
 class MSGraphMailMessageHandle(Handle):
     type_label = "msgraph-mail-message"
     resource_type = MSGraphMailMessageResource
-    eq_properties = Handle.BASE_PROPERTIES
 
     def __init__(self, source, path,  # noqa: R0913
                  mail_subject, weblink,

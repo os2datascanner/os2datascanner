@@ -167,7 +167,6 @@ class MSGraphCalendarEventResource(FileResource):
 class MSGraphCalendarEventHandle(Handle):
     type_label = "msgraph-calendar-event"
     resource_type = MSGraphCalendarEventResource
-    eq_properties = Handle.BASE_PROPERTIES
 
     def __init__(self, source, path, event_subject, weblink, start):
         super().__init__(source, path)

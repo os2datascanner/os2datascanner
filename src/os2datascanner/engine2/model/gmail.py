@@ -137,7 +137,6 @@ class GmailResource(FileResource):
 class GmailHandle(Handle):
     type_label = "gmail"
     resource_type = GmailResource
-    eq_properties = Handle.BASE_PROPERTIES
 
     def __init__(self, source, relpath, mail_subject):
         super().__init__(source, relpath)

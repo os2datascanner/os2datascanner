@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 3.19.1, 12th April 2023
+
+This minor release fixes a potential crash triggered by scanning certain
+compound document formats with the new home folder flag set.
+
 ## Version 3.19.0, 4th April 2023
 
 "Automatic Egg Roller"

@@ -30,6 +30,10 @@ class Handle(TypePropertyEquality, JSONSerialisable):
     Handles are serialisable and persistent, and two different Handles with the
     same type and properties compare equal."""
 
+    # By default, two Handles are equal if they have the same Source and the
+    # same path
+    eq_properties = ('_source', '_relpath',)
+
     @property
     @abstractmethod
     def type_label(self) -> str:
@@ -192,12 +196,6 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         """Follows this Handle using the state in the StateManager @sm,
         returning a concrete Resource."""
         return self.resource_type(self, sm)
-
-    BASE_PROPERTIES = ('_source', '_relpath',)
-    # The properties defined by Handle. (If a subclass defines other
-    # properties, but wants those properties to be ignored when comparing
-    # objects, it should set the 'eq_properties' class attribute to this
-    # value.)
 
     _json_handlers = {}
 
