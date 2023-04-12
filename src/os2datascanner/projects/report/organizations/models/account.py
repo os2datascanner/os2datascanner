@@ -196,7 +196,7 @@ class Account(Core_Account):
         else:
             self.match_status = StatusChoices.OK
 
-    def count_matches_by_week(self, weeks: int = 52):  # noqa CCR001
+    def count_matches_by_week(self, weeks: int = 52):  # noqa: CCR001
 
         # This is placed here to avoid circular import
         from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
@@ -212,32 +212,38 @@ class Account(Core_Account):
                 minutes=timezone.now().minute,
                 seconds=timezone.now().second)
 
-        matches_by_week = []
+        matches_by_week = [
+            {
+                "begin_monday": next_monday - timedelta(weeks=i+1),
+                "end_monday": next_monday - timedelta(weeks=i),
+                "weeknum": (next_monday - timedelta(weeks=i+1)).isocalendar().week,
+                "matches": 0,
+                "new": 0,
+                "handled": 0
+            } for i in range(weeks)
+        ]
 
-        for i in range(weeks):
-            begin_monday = next_monday - timedelta(weeks=i+1)
-            end_monday = next_monday - timedelta(weeks=i)
+        for report in all_matches:
+            # Set temporary timestamps if missing
+            if report.get("created_timestamp") is None:
+                report["created_timestamp"] = timezone.make_aware(timezone.datetime(1970, 1, 1))
 
-            matches_by_end = 0
-            new_matches = 0
-            handled_matches = 0
-            for match in all_matches:
-                if (match.get('created_timestamp') <= end_monday and (
-                            match.get('resolution_time') is None
-                        or match.get('resolution_time') >= end_monday)):
-                    matches_by_end += 1
-                if begin_monday <= match.get('created_timestamp') <= end_monday:
-                    new_matches += 1
-                if match.get('resolution_time') and (begin_monday <= match.get(
-                        'resolution_time') <= end_monday):
-                    handled_matches += 1
-
-            matches_by_week.append({
-                "weeknum": begin_monday.isocalendar().week,
-                "matches": matches_by_end,
-                "new": new_matches,
-                "handled": handled_matches,
-            })
+            for week in matches_by_week:
+                # Only look at reports, that currently exist
+                if report.get("created_timestamp") < week["end_monday"]:
+                    # If the report was created this week, count "new".
+                    if report.get("created_timestamp") >= week["begin_monday"]:
+                        week["new"] += 1
+                    # If the report is not handled, or is handled in the future, count "matches".
+                    if report.get("resolution_time") is None \
+                            or report.get("resolution_time") > week["end_monday"]:
+                        week["matches"] += 1
+                    # If the report was handled in the past, don't count it.
+                    elif report.get("resolution_time") < week["begin_monday"]:
+                        continue
+                    # If the report was handled this week, only count "handled".
+                    elif report.get("resolution_time") < week["end_monday"]:
+                        week["handled"] += 1
 
         return matches_by_week
 
