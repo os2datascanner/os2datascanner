@@ -105,4 +105,20 @@
       }
     }
   }
+
+  h2.highlighted,
+  h1.highlighted {
+    &::before {
+      display: block;
+      position: absolute;
+      background-color: var(--color-primary-lightest);
+      border-radius: 1rem;
+      content: "";
+      height: calc(100% + 2rem);
+      width: calc(100% + 2rem);
+      z-index: -1;
+      top: -1rem;
+      left: -1rem;
+    }
+  }
 }
