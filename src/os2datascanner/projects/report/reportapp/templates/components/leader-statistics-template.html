@@ -62,7 +62,6 @@
       <table class="datatable">
         <colgroup>
           <col class="datatable__column--name"/>
-          <col class="datatable__column--username"/>
           <col class="datatable__column--matchcount"/>
           <col class="datatable__column--matchstatus"/>
           <col class="datatable__column--leader-actions"/>
@@ -76,16 +75,6 @@
                       id="name-caret"
                       class="order-by button button-caret button--has-icon {% if order_by == 'first_name' and order == 'descending' %}up{% endif %}"
                       value="{% if order_by == 'first_name' and order == 'descending' %}ascending{% else %}descending{% endif %}">
-                <i class="material-icons" aria-hidden="true">expand_more</i>
-              </button>
-            </th>
-            <th class="datatable__column--username">
-              <label for="username-caret">{% trans "Username" %}</label>
-              <button type="button"
-                      name="username"
-                      id="username-caret"
-                      class="order-by button button-caret button--has-icon {% if order_by == 'username' and order == 'descending' %}up{% endif %}"
-                      value="{% if order_by == 'username' and order == 'descending' %}ascending{% else %}descending{% endif %}">
                 <i class="material-icons" aria-hidden="true">expand_more</i>
               </button>
             </th>
@@ -127,10 +116,10 @@
             <tr>
               <td class="datatable__column--name">
                 <div class="overflow-ellipsis">
-                  <strong>{{ employee.get_full_name }}</strong>
+                  <div class="employee__fullname">{{ employee.get_full_name }}</div>
+                  <div class="employee__username">{{ employee.username }}</div>
                 </div>
               </td>
-              <td class="datatable__column--username">{{ employee.username }}</td>
               <td class="datatable__column--matchcount">{{ employee.match_count }}</td>
               <td class="datatable__column--matchstatus">
                 <div class="status_wrapper" data-status="{{ employee.match_status }}">{{ employee.status }}</div>

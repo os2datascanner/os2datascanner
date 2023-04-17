@@ -15,10 +15,13 @@
 - Navigating to a section in the manual now highlights the header of that 
   section.
 
+- In the leader overview, usernames are now shown below employees names.
+
+
 ## Version 3.19.1, 12th April 2023
 
 This minor release fixes a potential crash triggered by scanning certain
-compound document formats with the new home folder flag set.
+compound document formats with the new home folder flag set
 
 ## Version 3.19.0, 4th April 2023
 
