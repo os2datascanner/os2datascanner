@@ -357,3 +357,31 @@ class AccountTest(TestCase):
             self.benny_acc.match_status,
             f"Expected match_status to be 'BAD', but found "
             f"{self.egon_acc.match_status.label} instead.")
+
+    def test_count_matches_by_week_format(self):
+        """The count_matches_by_week-method should return a list of dicts with
+        the following structure:
+        [
+            {
+                "weeknum": <int>,
+                "matches": <int>,
+                "new": <int>,
+                "handled": <int>
+            },
+            { ... }
+        ]
+        """
+
+        egon_weekly_matches = self.egon_acc.count_matches_by_week(weeks=10)
+        kjeld_weekly_matches = self.kjeld_acc.count_matches_by_week(weeks=104)
+        # When no number of weeks are specified, the default is 52.
+        benny_weekly_matches = self.benny_acc.count_matches_by_week()
+
+        self.assertEqual(len(egon_weekly_matches), 10)
+        self.assertEqual(len(kjeld_weekly_matches), 104)
+        self.assertEqual(len(benny_weekly_matches), 52)
+
+        self.assertIn("weeknum", egon_weekly_matches[0].keys())
+        self.assertIn("matches", egon_weekly_matches[0].keys())
+        self.assertIn("new", egon_weekly_matches[0].keys())
+        self.assertIn("handled", egon_weekly_matches[0].keys())

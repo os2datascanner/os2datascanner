@@ -90,9 +90,12 @@ class Account(Core_Account):
         return StatusChoices(self.match_status).label
 
     def _count_matches(self):
-        """Counts the number of matches associated with the account."""
+        """Counts the number of unhandled matches associated with the account."""
         from ...reportapp.models.documentreport import DocumentReport
-        count = DocumentReport.objects.filter(alias_relation__account=self).count()
+        count = DocumentReport.objects.filter(
+            alias_relation__account=self,
+            number_of_matches__gte=1,
+            resolution_status__isnull=True).count()
 
         self.match_count = count
 
@@ -143,15 +146,14 @@ class Account(Core_Account):
             new_matches = 0
             handled_matches = 0
             for match in all_matches:
-                if match.get('created_timestamp') <= end_monday and (
+                if (match.get('created_timestamp') <= end_monday and (
                             match.get('resolution_time') is None
-                        or match.get('resolution_time') >= end_monday):
+                        or match.get('resolution_time') >= end_monday)):
                     matches_by_end += 1
-                if match.get('created_timestamp') <= end_monday \
-                        and match.get('created_timestamp') >= begin_monday:
+                if begin_monday <= match.get('created_timestamp') <= end_monday:
                     new_matches += 1
-                if match.get('resolution_time') and match.get('resolution_time') <= end_monday \
-                        and match.get('resolution_time') >= begin_monday:
+                if match.get('resolution_time') and (begin_monday <= match.get(
+                        'resolution_time') <= end_monday):
                     handled_matches += 1
 
             matches_by_week.append({
