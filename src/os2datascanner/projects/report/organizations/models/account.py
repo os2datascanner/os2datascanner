@@ -170,6 +170,10 @@ class Account(Core_Account):
         units = self.units.all() & account.get_managed_units()
         return units.exists()
 
+    @property
+    def is_manager(self):
+        return self.get_managed_units().exists()
+
     def save(self, *args, **kwargs):
 
         self._count_matches()

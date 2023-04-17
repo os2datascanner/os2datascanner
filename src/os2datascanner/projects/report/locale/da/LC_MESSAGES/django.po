@@ -55,15 +55,15 @@ msgstr "bruger"
 msgid "account"
 msgstr "konto"
 
-#: reportapp/admin.py:17
+#: reportapp/admin.py:16
 msgid "scanner job"
 msgstr "scannerjob"
 
-#: reportapp/admin.py:130
+#: reportapp/admin.py:124
 msgid "Personal info"
 msgstr "Personlig information"
 
-#: reportapp/admin.py:132
+#: reportapp/admin.py:126
 msgid "Important dates"
 msgstr "Vigtige datoer"
 
@@ -111,7 +111,7 @@ msgstr "følsomhed"
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport.py:141 reportapp/views/views.py:532
+#: reportapp/models/documentreport.py:141 reportapp/views/views.py:531
 msgid "Other"
 msgstr "Andet"
 
@@ -170,18 +170,6 @@ msgstr "DPO"
 #: reportapp/models/roles/dpo.py:24
 msgid "DPOs"
 msgstr "DPO'er"
-
-#: reportapp/models/roles/leader.py:14
-msgid "Leader overview"
-msgstr "Lederoverblik"
-
-#: reportapp/models/roles/leader.py:20
-msgid "leader"
-msgstr "leder"
-
-#: reportapp/models/roles/leader.py:21
-msgid "leaders"
-msgstr "ledere"
 
 #: reportapp/models/roles/remediator.py:33
 msgid "remediator"
@@ -611,15 +599,19 @@ msgstr "Rapport"
 msgid "Archive"
 msgstr "Arkiv"
 
-#: reportapp/templates/components/navigation.html:42
+#: reportapp/templates/components/navigation.html:26
+msgid "Leader overview"
+msgstr "Lederoverblik"
+
+#: reportapp/templates/components/navigation.html:50
 msgid "My Overview"
 msgstr "Mit overblik"
 
-#: reportapp/templates/components/navigation.html:50
+#: reportapp/templates/components/navigation.html:58
 msgid "User profile"
 msgstr "Brugerprofil"
 
-#: reportapp/templates/components/navigation.html:57
+#: reportapp/templates/components/navigation.html:65
 #: reportapp/templates/components/user.html:48
 msgid "Logout"
 msgstr "Log ud"
@@ -1102,27 +1094,27 @@ msgstr "Skift"
 msgid "User since"
 msgstr "Bruger siden"
 
-#: reportapp/utils.py:27
+#: reportapp/utils.py:26
 msgid "%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A"
 msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 
-#: reportapp/views/views.py:79
+#: reportapp/views/views.py:78
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:381
+#: reportapp/views/views.py:380
 msgid "The archive page has been deactivated for this distribution."
 msgstr "Arkivfanen er deaktiveret for denne opsætning."
 
-#: reportapp/views/views.py:533
+#: reportapp/views/views.py:532
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:534
+#: reportapp/views/views.py:533
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:535
+#: reportapp/views/views.py:534
 msgid "Mailscan"
 msgstr "Mailscan"
 

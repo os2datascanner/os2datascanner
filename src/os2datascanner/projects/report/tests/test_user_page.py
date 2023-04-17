@@ -3,7 +3,6 @@ from django.urls.base import reverse
 from django.contrib.auth.models import User, AnonymousUser
 
 from os2datascanner.projects.report.reportapp.models.roles.dpo import DataProtectionOfficer
-from os2datascanner.projects.report.reportapp.models.roles.leader import Leader
 from os2datascanner.projects.report.organizations.models import Alias, AliasType
 from ..reportapp.views.user_views import UserView
 
@@ -34,25 +33,6 @@ class TestUserProfile(TestCase):
         self.assertEqual(view.status_code, 200, "DPO user did not correctly enter user page")
         self.assertInHTML('<li>DPO</li>', view.rendered_content, 1,
                           "The DPO role is not displayed to the user")
-
-    @override_settings(LANGUAGE_CODE='en-US', LANGUAGES=(('en', 'English'),))
-    def test_user_page_as_leader_user(self):
-        Leader.objects.create(user=self.user)
-        view = self.get_userpage_object()
-        self.assertEqual(view.status_code, 200, "Leader user did not correctly enter user page")
-        self.assertInHTML('<li>Leader</li>', view.rendered_content, 1,
-                          "The Leader role is not displayed to the user")
-
-    @override_settings(LANGUAGE_CODE='en-US', LANGUAGES=(('en', 'English'),))
-    def test_user_page_as_dpo_leader_user(self):
-        DataProtectionOfficer.objects.create(user=self.user)
-        Leader.objects.create(user=self.user)
-        view = self.get_userpage_object()
-        self.assertEqual(view.status_code, 200, "Leader user did not correctly enter user page")
-        self.assertInHTML('<li>DPO</li>', view.rendered_content, 1,
-                          "The DPO role is not displayed to the user")
-        self.assertInHTML('<li>Leader</li>', view.rendered_content, 1,
-                          "The Leader role is not displayed to the user")
 
     def test_anonymous_user_redirect(self):
         request = self.factory.get('/user')

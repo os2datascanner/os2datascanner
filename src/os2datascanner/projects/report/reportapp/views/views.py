@@ -51,7 +51,6 @@ from ...organizations.models.organizational_unit import OrganizationalUnit
 
 # For permissions
 from ..models.roles.dpo import DataProtectionOfficer
-from ..models.roles.leader import Leader
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -725,9 +724,9 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            if not user_is(Role.get_user_roles_or_default(request.user),
-                           Leader):
-                return HttpResponseForbidden()
+            if not request.user.is_superuser and not request.user.account.is_manager:
+                return HttpResponseForbidden(
+                    "Only managers and superusers have access to this page.")
         return super(LeaderStatisticsPageView, self).dispatch(
             request, *args, **kwargs)
 
