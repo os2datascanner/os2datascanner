@@ -230,6 +230,12 @@
     for example, it is now possible to create a rule that matches a file if it
     contains both a CPR number *and* a name.
 
+- Scanners now display a warning when some accounts have gone stale for that
+  account.
+
+  - This warning acts as a button, which leads to a modal, which can be used
+    to issue a cleanup of results associated with the stale accounts.
+
 ### General improvements
 
 - The `SIGUSR1` backtrace function is now extensible, allowing components to

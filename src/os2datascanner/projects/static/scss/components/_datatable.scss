@@ -194,6 +194,13 @@
       &>div {
         min-width: 12rem;
       }
+
+      .stale-accounts {
+        span {
+          font-size: 1em;
+          color: var(--color-text-main);
+        }
+      }
     }
 
     &--matchcount {
@@ -380,6 +387,11 @@
   .domain-url {
     text-overflow: ellipsis;
     word-break: break-all;
+  }
+
+  .scanner-url {
+    margin-top: 0.5rem;
+    font-size: small;
   }
 
   a:not(.button) {

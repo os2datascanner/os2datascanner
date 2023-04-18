@@ -688,9 +688,9 @@ msgstr "Scannerstatus"
 
 #: adminapp/templates/components/navigation.html:17
 #: adminapp/templates/os2datascanner/scan_completed.html:82
-#: adminapp/templates/os2datascanner/scan_status_table.html:40
-#: adminapp/templates/os2datascanner/scanners.html:21
-#: adminapp/templates/os2datascanner/scanners.html:39
+#: adminapp/templates/os2datascanner/scan_status_table.html:39
+#: adminapp/templates/os2datascanner/scanners.html:22
+#: adminapp/templates/os2datascanner/scanners.html:40
 #: adminapp/templates/partials/breadcrumb.html:5
 msgid "Scannerjob"
 msgstr "Scannerjob"
@@ -1010,8 +1010,8 @@ msgstr "Ønsker du virkelig at slette?"
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:21
 #: adminapp/templates/os2datascanner/rules.html:206
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:16
-#: adminapp/templates/os2datascanner/scanners.html:104
-#: adminapp/templates/os2datascanner/scanners.html:116
+#: adminapp/templates/os2datascanner/scanners.html:112
+#: adminapp/templates/os2datascanner/scanners.html:124
 msgid "No"
 msgstr "Nej"
 
@@ -1197,10 +1197,10 @@ msgstr "(endnu ingen)"
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:82
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/scan_status_table.html:106
-#: adminapp/templates/os2datascanner/scanners.html:157
-#: organizations/templates/organizations/org_table.html:283
-#: organizations/templates/organizations/org_table.html:296
+#: adminapp/templates/os2datascanner/scan_status_table.html:99
+#: adminapp/templates/os2datascanner/scanners.html:165
+#: organizations/templates/organizations/org_table.html:290
+#: organizations/templates/organizations/org_table.html:304
 msgid "Delete"
 msgstr "Slet"
 
@@ -1474,7 +1474,29 @@ msgstr "Ja, kør"
 msgid "Waiting..."
 msgstr "Afventer..."
 
-#: adminapp/templates/os2datascanner/scanner_form.html:119
+#: adminapp/templates/os2datascanner/scanner_cleanup_stale_accounts.html:18
+msgid "Clean up stale accounts"
+msgstr "Ryd op i frakoblede konti"
+
+#: adminapp/templates/os2datascanner/scanner_cleanup_stale_accounts.html:20
+msgid ""
+"OS2datascanner has registered, that some users, which were previously "
+"scanned with this scanner job, are no longer covered. These accounts will no "
+"longer be scanned by the scanner job."
+msgstr ""
+"OS2datascanner har registreret, at nogle brugere, som tidligere er blevet "
+"scannet af dette scannerjob, ikke længere er tilknyttet scannerjobbet. Disse "
+"konti vil ikke længere blive scannet af dette scannerjob."
+
+#: adminapp/templates/os2datascanner/scanner_cleanup_stale_accounts.html:22
+msgid "Delete the report results for the following users:"
+msgstr "Slet resultaterne for følgende brugere:"
+
+#: adminapp/templates/os2datascanner/scanner_cleanup_stale_accounts.html:37
+msgid "Clean"
+msgstr "Ryd op"
+
+#: adminapp/templates/os2datascanner/scanner_form.html:121
 #: adminapp/templates/partials/breadcrumb.html:48
 msgid "Edit scannerjob"
 msgstr "Rediger scannerjob"
@@ -1768,44 +1790,60 @@ msgstr "Gmailscanner"
 msgid "Sbsysscanner"
 msgstr "Sbsysscanner"
 
-#: adminapp/templates/os2datascanner/scanners.html:26
-#: adminapp/templates/os2datascanner/scanners.html:30
+#: adminapp/templates/os2datascanner/scanners.html:27
+#: adminapp/templates/os2datascanner/scanners.html:31
 msgid "Add scannerjob"
 msgstr "Tilføj scannerjob"
 
-#: adminapp/templates/os2datascanner/scanners.html:51
+#: adminapp/templates/os2datascanner/scanners.html:52
 msgid "Name/URL"
 msgstr "Navn/URL"
 
-#: adminapp/templates/os2datascanner/scanners.html:56
+#: adminapp/templates/os2datascanner/scanners.html:57
 msgid "Drive"
 msgstr "Drev"
 
-#: adminapp/templates/os2datascanner/scanners.html:58
+#: adminapp/templates/os2datascanner/scanners.html:59
 msgid "Approved"
 msgstr "Godkendt"
 
-#: adminapp/templates/os2datascanner/scanners.html:59
+#: adminapp/templates/os2datascanner/scanners.html:60
 msgid "Automatic"
 msgstr "Automatisk"
 
-#: adminapp/templates/os2datascanner/scanners.html:93
+#: adminapp/templates/os2datascanner/scanners.html:77
+msgid ""
+"The following users are no longer covered by this scannerjob, but have been "
+"scanned previously:"
+msgstr ""
+"Følgende brugere er ikke længere tilknyttet scannerjobbet, men er tidligere "
+"blevet scannet:"
+
+#: adminapp/templates/os2datascanner/scanners.html:78
+msgid "Stale accounts"
+msgstr "Frakoblede konti"
+
+#: adminapp/templates/os2datascanner/scanners.html:101
 msgid "Is approved"
 msgstr "Er godkendt"
 
-#: adminapp/templates/os2datascanner/scanners.html:101
+#: adminapp/templates/os2datascanner/scanners.html:109
 msgid "Is not approved"
 msgstr "Er ikke godkendt"
 
-#: adminapp/templates/os2datascanner/scanners.html:111
+#: adminapp/templates/os2datascanner/scanners.html:119
 msgid "Next scan: "
 msgstr "Næste scan: "
 
-#: adminapp/templates/os2datascanner/scanners.html:156
+#: adminapp/templates/os2datascanner/scanners.html:134
+msgid "Run"
+msgstr "Kør"
+
+#: adminapp/templates/os2datascanner/scanners.html:164
 msgid "Do you really want to delete this scanner?"
 msgstr "Er du sikker på, at du vil slette denne scanner?"
 
-#: adminapp/templates/os2datascanner/scanners.html:173
+#: adminapp/templates/os2datascanner/scanners.html:181
 msgid "No scannerjob added"
 msgstr "Der er ikke tilføjet nogen scannerjob"
 
@@ -1998,24 +2036,24 @@ msgstr "millisekund"
 msgid "milliseconds"
 msgstr "millisekunder"
 
-#: adminapp/views/exchangescanner_views.py:202
+#: adminapp/views/exchangescanner_views.py:203
 msgid "No organizational units has been selected"
 msgstr "Der er ikke valgt nogen organisatoriske enheder"
 
-#: adminapp/views/exchangescanner_views.py:203
+#: adminapp/views/exchangescanner_views.py:204
 msgid "No userlist has been selected"
 msgstr "Der er ikke valgt nogen brugerliste"
 
-#: adminapp/views/exchangescanner_views.py:211
+#: adminapp/views/exchangescanner_views.py:212
 msgid "e.g. @example.com"
 msgstr "f.eks. @example.com"
 
-#: adminapp/views/exchangescanner_views.py:215
+#: adminapp/views/exchangescanner_views.py:216
 #: adminapp/views/filescanner_views.py:174
 msgid "Username"
 msgstr "Brugernavn"
 
-#: adminapp/views/exchangescanner_views.py:220
+#: adminapp/views/exchangescanner_views.py:221
 #: adminapp/views/filescanner_views.py:175
 msgid "Password"
 msgstr "Adgangskode"
@@ -2037,7 +2075,7 @@ msgstr "Udtryk"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:455
+#: adminapp/views/scanner_views.py:458
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
@@ -2845,6 +2883,9 @@ msgstr "Navnet er allerede i brug."
 
 #~ msgid "last name"
 #~ msgstr "efternavn"
+
+#~ msgid "account"
+#~ msgstr "brugerkonto"
 
 #, python-format
 #~ msgid "%(value)s is not a valid SID"

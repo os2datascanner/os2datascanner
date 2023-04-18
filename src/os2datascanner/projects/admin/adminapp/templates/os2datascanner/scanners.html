@@ -2,6 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load humanize %}
+{% load utility_tags %}
 
 {% block scripts %}
   <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
@@ -39,12 +40,12 @@
              aria-label="{% trans 'Scannerjob' %}">
           <table class="datatable">
             <colgroup>
-              <col class="datatable__column--name">
-              {% if user.is_superuser %}<col class="datatable__column--org">{% endif %}
-              {% if view.type == 'file' %}<col class="datatable__column--drive">{% endif %}
-              <col class="datatable__column--validated">
-              <col class="datatable__column--automatic">
-              <col class="datatable__column--actions">
+              <col class="datatable__column--name"/>
+              {% if user.is_superuser %}<col class="datatable__column--org"/>{% endif %}
+              {% if view.type == 'file' %}<col class="datatable__column--drive"/>{% endif %}
+              <col class="datatable__column--validated"/>
+              <col class="datatable__column--automatic"/>
+              <col class="datatable__column--actions"/>
             </colgroup>
             <thead>
               <tr>
@@ -67,9 +68,16 @@
 
                   <td class="domain-url datatable__column--name">
                     <div>{{ scanner.name }}</div>
-                    <div style="margin-top: 0.5rem;">
-                      <small>{{ scanner.url }}</small>
-                    </div>
+                    <div class="scanner-url">{{ scanner.url }}</div>
+                    {% if scanner.get_stale_accounts.exists %}
+                      <a class="button button--grey stale-accounts"
+                         href="#cleanup-accounts-modal"
+                         data-modal="modal:open"
+                         data-src="/{{ view.type }}scanners/{{ scanner.pk }}/cleanup_stale_accounts/"
+                         title="{% trans "The following users are no longer covered by this scannerjob, but have been scanned previously:" %} {{ scanner.get_stale_accounts|comma_separated_list }}">
+                        <span class="material-icons">error</span> {% trans "Stale accounts" %}
+                      </a>
+                    {% endif %}
                   </td>
                   {% if user.is_superuser %}
                     <td class="scanner-organization datatable__column--org">{{ scanner.organization }}</td>
@@ -109,7 +117,7 @@
                   {% if scanner.schedule_time %}
                     <td class="scanner-runtime datatable__column--automatic">
                       {% trans "Next scan: " %}
-                      <br>
+                      <br/>
                       {{ scanner.schedule_date|naturalday:"l j. F Y"|capfirst }}, {{ scanner.schedule_time }}
                     </td>
                   {% else %}
@@ -184,6 +192,16 @@
        aria-labelledby="run-scanner-modal-title"
        aria-hidden="true"
        data-href="/{{ view.type }}scanners/add/">
+    <iframe src="about:blank" frameborder="0"></iframe>
+  </div>
+
+  <div class="cleanup modal"
+       id="cleanup-accounts-modal"
+       tabindex="-1"
+       role="dialog"
+       aria-labelledby="cleanup-accounts-modal-title"
+       aria-hidden="true"
+       data-href="/{{ view.type }}scanners/cleanup-stale-accounts/">
     <iframe src="about:blank" frameborder="0"></iframe>
   </div>
 {% endblock %}

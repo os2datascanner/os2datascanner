@@ -28,7 +28,7 @@ from ..models.scannerjobs.msgraph import MSGraphTeamsFileScanner
 from .views import LoginRequiredMixin
 from .scanner_views import (
         ScannerRun, ScannerList, ScannerAskRun, ScannerCreate, ScannerDelete,
-        ScannerUpdate, ScannerCopy)
+        ScannerUpdate, ScannerCopy, ScannerCleanupStaleAccounts)
 
 
 def make_consent_url(state):
@@ -196,6 +196,13 @@ class MSGraphMailRun(ScannerRun):
     model = MSGraphMailScanner
 
 
+class MSGraphMailCleanupStaleAccounts(ScannerCleanupStaleAccounts):
+    """Prompts the user for confirmation before deleting document reports
+    belonging to accounts, which have gone stale for this scanner."""
+    model = MSGraphMailScanner
+    type = "msgraph-mail"
+
+
 class MSGraphFileList(ScannerList):
     """Displays the list of all Microsoft Graph file scanner jobs."""
     model = MSGraphFileScanner
@@ -277,6 +284,13 @@ class MSGraphFileRun(ScannerRun):
     """Runs a Microsoft Graph file scanner job, displaying the new scan tag on
     success and error details on failure."""
     model = MSGraphFileScanner
+
+
+class MSGraphFileCleanupStaleAccounts(ScannerCleanupStaleAccounts):
+    """Prompts the user for confirmation before deleting document reports
+    belonging to accounts, which have gone stale for this scanner."""
+    model = MSGraphFileScanner
+    type = "msgraph-file"
 
 
 class MSGraphCalendarList(ScannerList):
@@ -442,3 +456,10 @@ class MSGraphTeamsFileRun(ScannerRun):
     """Runs a Microsoft Graph file scanner job, displaying the new scan tag on
     success and error details on failure."""
     model = MSGraphTeamsFileScanner
+
+
+class MSGraphCalendarCleanupStaleAccounts(ScannerCleanupStaleAccounts):
+    """Prompts the user for confirmation before deleting document reports
+    belonging to accounts, which have gone stale for this scanner."""
+    model = MSGraphCalendarScanner
+    type = 'msgraph-calendar'

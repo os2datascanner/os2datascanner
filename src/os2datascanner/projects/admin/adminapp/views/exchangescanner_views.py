@@ -24,7 +24,8 @@ from .scanner_views import (
     ScannerUpdate,
     ScannerCopy,
     ScannerCreate,
-    ScannerList)
+    ScannerList,
+    ScannerCleanupStaleAccounts)
 from ..serializers import OrganizationalUnitSerializer
 from ..models.scannerjobs.exchangescanner import ExchangeScanner
 from ...core.models import Feature
@@ -221,3 +222,10 @@ def initialize_form(form):
     )
 
     return form
+
+
+class ExchangeCleanupStaleAccounts(ScannerCleanupStaleAccounts):
+    """Prompts the user for confirmation before deleting document reports
+    belonging to accounts, which have gone stale for this scanner."""
+    model = ExchangeScanner
+    type = "exchange"

@@ -15,7 +15,7 @@ from json import dumps
 
 from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from pika.exceptions import AMQPError
 import structlog
 
@@ -30,6 +30,7 @@ from ..models.authentication import Authentication
 from ..models.rules.rule import Rule
 from ..models.scannerjobs.scanner import Scanner, ScanStatus, ScanStatusSnapshot
 from ..models.usererrorlog import UserErrorLog
+from ..utils import CleanMessage
 from django.utils.translation import gettext_lazy as _
 
 from channels.layers import get_channel_layer
@@ -548,3 +549,28 @@ class ScannerRun(RestrictedDetailView):
                 context['engine2_error'] += ", ".join([str(e) for e in ex.args])
 
         return self.render_to_response(context)
+
+
+class ScannerCleanupStaleAccounts(RestrictedDetailView):
+    """Base class for view that handles cleaning up stale accounts
+    associated with a scanner."""
+
+    fields = []
+    template_name = 'os2datascanner/scanner_cleanup_stale_accounts.html'
+    model = Scanner
+    context_object_name = 'scanner'
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        is_htmx = request.headers.get('HX-Request') == "true"
+        if is_htmx:
+            if request.headers.get('HX-Trigger-Name') == "cleanup-button":
+                stale_accounts = self.object.get_stale_accounts()
+                clean_dict = {self.object.pk: {
+                    "uuids": [str(acc.uuid) for acc in stale_accounts],
+                    "usernames": [acc.username for acc in stale_accounts]
+                }}
+                CleanMessage.send(clean_dict, publisher="UI-manual")
+                self.object.remove_stale_accounts()
+
+        return HttpResponse(f"<button class='button button--cta' disabled>{_('Cleaned!')}</button>")

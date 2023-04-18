@@ -522,6 +522,11 @@ class Scanner(models.Model):
         linked to the scanner."""
         return self.covered_accounts.difference(self.get_covered_accounts())
 
+    def remove_stale_accounts(self):
+        """Removes all stale accounts from the object's 'covered_accounts'
+        relation."""
+        self.covered_accounts.remove(*[acc.uuid for acc in self.get_stale_accounts()])
+
     class Meta:
         abstract = False
         ordering = ['name']
