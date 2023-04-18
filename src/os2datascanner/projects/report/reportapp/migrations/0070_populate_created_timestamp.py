@@ -1,4 +1,5 @@
 from django.db import migrations, models
+from django.db.models import F, Q
 from django.utils import timezone
 
 def populate_created_timestamp(apps, schema_editor):
@@ -10,14 +11,11 @@ def populate_created_timestamp(apps, schema_editor):
 
     DocumentReport = apps.get_model("os2datascanner_report", "DocumentReport")
 
-    interesting_vals = [timezone.make_aware(timezone.datetime(2015, 1, 1, 0, 0)), None]
+    drs = DocumentReport.objects.filter(
+        Q(created_timestamp=timezone.make_aware(timezone.datetime(2015, 1, 1, 0, 0)))|
+        Q(created_timestamp__isnull=True))
 
-    drs = DocumentReport.objects.filter(created_timestamp__in=interesting_vals)
-
-    for dr in drs.iterator():
-        scan_time = dr.scan_tag.time
-        dr.created_timestamp = scan_time
-        dr.save()
+    drs.update(created_timestamp=F("scan_time"))
 
 class Migration(migrations.Migration):
     dependencies = [
