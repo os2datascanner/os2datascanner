@@ -19,6 +19,11 @@
 
 - Major performance improvements in the leader overview.
 
+### Bugfixes
+
+- DocumentReport objects with missing `created_timestamp` values have had that
+  value set equal to its `scan_time` value.
+
 ## Version 3.19.1, 12th April 2023
 
 This minor release fixes a potential crash triggered by scanning certain
