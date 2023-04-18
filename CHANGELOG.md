@@ -17,6 +17,7 @@
 
 - In the leader overview, usernames are now shown below employees names.
 
+- Major performance improvements in the leader overview.
 
 ## Version 3.19.1, 12th April 2023
 

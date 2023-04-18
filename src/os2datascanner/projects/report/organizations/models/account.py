@@ -90,13 +90,13 @@ class Account(Core_Account):
         return StatusChoices(self.match_status).label
 
     def _count_matches(self):
-        """Counts the number of matches associated with the account."""
-        count = 0
-        for alias in self.aliases.all():
-            count += alias.match_relation.filter(
-                resolution_status__isnull=True,
-                number_of_matches__gte=1,
-                only_notify_superadmin=False).count()
+        """Counts the number of unhandled matches associated with the account."""
+        from ...reportapp.models.documentreport import DocumentReport
+        count = DocumentReport.objects.filter(
+            alias_relation__account=self,
+            number_of_matches__gte=1,
+            resolution_status__isnull=True).count()
+
         self.match_count = count
 
     def _calculate_status(self):
@@ -125,10 +125,10 @@ class Account(Core_Account):
         # This is placed here to avoid circular import
         from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
 
-        all_matches = list(DocumentReport.objects.filter(
-            number_of_matches__gte=1,
-            alias_relation__account=self,
-            only_notify_superadmin=False))
+        all_matches = DocumentReport.objects.filter(
+                number_of_matches__gte=1,
+                alias_relation__account=self,
+                only_notify_superadmin=False).values("created_timestamp", "resolution_time")
 
         next_monday = timezone.now() + timedelta(weeks=1) - timedelta(
                 days=timezone.now().weekday(),
@@ -146,15 +146,14 @@ class Account(Core_Account):
             new_matches = 0
             handled_matches = 0
             for match in all_matches:
-                if match.created_timestamp <= end_monday and (
-                            match.resolution_time is None
-                        or match.resolution_time >= end_monday):
+                if (match.get('created_timestamp') <= end_monday and (
+                            match.get('resolution_time') is None
+                        or match.get('resolution_time') >= end_monday)):
                     matches_by_end += 1
-                if match.created_timestamp <= end_monday \
-                        and match.created_timestamp >= begin_monday:
+                if begin_monday <= match.get('created_timestamp') <= end_monday:
                     new_matches += 1
-                if match.resolution_time and match.resolution_time <= end_monday \
-                        and match.resolution_time >= begin_monday:
+                if match.get('resolution_time') and (begin_monday <= match.get(
+                        'resolution_time') <= end_monday):
                     handled_matches += 1
 
             matches_by_week.append({

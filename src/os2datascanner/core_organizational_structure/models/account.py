@@ -87,7 +87,8 @@ class Account(models.Model):
     @property
     def email(self):
         email_aliases = self.aliases.filter(_alias_type="email")
-        return email_aliases.first().value if email_aliases else None
+        email_alias = email_aliases.first()
+        return email_alias.value if email_alias else None
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}" if self.last_name \
