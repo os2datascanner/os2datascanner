@@ -8,40 +8,44 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-05 14:32+0200\n"
+"POT-Creation-Date: 2023-04-18 13:25+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: organizations/models/account.py:38
+#: organizations/models/account.py:39
 msgid "Completed"
 msgstr "Færdig"
 
-#: organizations/models/account.py:39
+#: organizations/models/account.py:40
 msgid "Accepted"
 msgstr "Accepteret"
 
-#: organizations/models/account.py:40
+#: organizations/models/account.py:41
 msgid "Not accepted"
 msgstr "Ikke accepteret"
 
-#: organizations/models/account.py:51
+#: organizations/models/account.py:52
 msgid "User"
 msgstr "Bruger"
 
-#: organizations/models/account.py:54
+#: organizations/models/account.py:55
 msgid "Last handle"
 msgstr "Sidste håndtering"
 
-#: organizations/models/account.py:62
+#: organizations/models/account.py:63
 msgid "image"
 msgstr "billede"
 
-#: organizations/models/account.py:67
+#: organizations/models/account.py:68
 msgid "Number of matches"
 msgstr "Antal matches"
+
+#: organizations/models/account.py:73
+msgid "Number of detained matches"
+msgstr "Antal tilbageholdte matches"
 
 #: organizations/models/aliases.py:38
 msgid "alias ID"
@@ -339,12 +343,12 @@ msgid "Notification"
 msgstr "Notifikation"
 
 #: reportapp/templates/components/faq_toc.html:5
-#: reportapp/templates/manual.html:145
+#: reportapp/templates/manual.html:151
 msgid "Why doesn't 'handle' delete my file or email?"
 msgstr "Hvorfor sletter 'Håndtér'-knappen ikke min fil eller e-mail?"
 
 #: reportapp/templates/components/faq_toc.html:9
-#: reportapp/templates/manual.html:154
+#: reportapp/templates/manual.html:161
 msgid "Why can't I open file scan matches?"
 msgstr "Hvorfor kan jeg ikke åbne matches fra filscan?"
 
@@ -509,7 +513,7 @@ msgid "Name"
 msgstr "Navn"
 
 #: reportapp/templates/components/hits.html:54
-#: reportapp/templates/components/leader-statistics-template.html:94
+#: reportapp/templates/components/leader-statistics-template.html:83
 msgid "Matches"
 msgstr "Matches"
 
@@ -522,12 +526,12 @@ msgid "Path"
 msgstr "Sti"
 
 #: reportapp/templates/components/hits.html:81
-#: reportapp/templates/components/leader-statistics-template.html:106
+#: reportapp/templates/components/leader-statistics-template.html:95
 msgid "Status"
 msgstr "Status"
 
 #: reportapp/templates/components/hits.html:91
-#: reportapp/templates/components/leader-statistics-template.html:120
+#: reportapp/templates/components/leader-statistics-template.html:109
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -547,17 +551,11 @@ msgstr "Organisatoriske enheder"
 msgid "Search for employee"
 msgstr "Søg efter medarbejder"
 
-#: reportapp/templates/components/leader-statistics-template.html:73
+#: reportapp/templates/components/leader-statistics-template.html:72
 msgid "Employee"
 msgstr "Medarbejder"
 
-#: reportapp/templates/components/leader-statistics-template.html:83
-#: reportapp/templates/components/user-overview-template.html:74
-#: reportapp/templates/login.html:15 reportapp/templates/user_content.html:26
-msgid "Username"
-msgstr "Brugernavn"
-
-#: reportapp/templates/components/leader-statistics-template.html:107
+#: reportapp/templates/components/leader-statistics-template.html:96
 #, python-format
 msgid ""
 "The status of each user is determined by how many matches that user has, and "
@@ -570,15 +568,31 @@ msgstr ""
 "“Færdig”-statussen har ingen resultater. En bruger med “Accepteret” har "
 "håndteret mindst 75%% af sine seneste resultater."
 
-#: reportapp/templates/components/leader-statistics-template.html:141
+#: reportapp/templates/components/leader-statistics-template.html:127
+msgid "The user has"
+msgstr "Brugeren har"
+
+#: reportapp/templates/components/leader-statistics-template.html:127
+msgid ""
+"matches, which have not been distributed to the user yet. This can be done "
+"by a superuser in the report module."
+msgstr ""
+"resultater, som ikke er blevet uddelt til brugeren endnu. Dette kan gøres "
+"af en superbruger i rapportmodulet."
+
+#: reportapp/templates/components/leader-statistics-template.html:128
+msgid "detained"
+msgstr "tilbageholdt"
+
+#: reportapp/templates/components/leader-statistics-template.html:138
 msgid "Send notification"
 msgstr "Send påmindelse"
 
-#: reportapp/templates/components/leader-statistics-template.html:143
+#: reportapp/templates/components/leader-statistics-template.html:140
 msgid "Show/hide overview"
 msgstr "Vis/skjul overblik"
 
-#: reportapp/templates/components/leader-statistics-template.html:172
+#: reportapp/templates/components/leader-statistics-template.html:169
 msgid "No employees found."
 msgstr "Ingen medarbejdere fundet."
 
@@ -706,7 +720,7 @@ msgid "Consult the manual to find instructions for using OS2datascanner."
 msgstr "Læs håndbogen for at finde instruktioner til brugen af OS2datascanner."
 
 #: reportapp/templates/components/service.html:54
-#: reportapp/templates/manual.html:13 reportapp/templates/manual.html:40
+#: reportapp/templates/manual.html:15 reportapp/templates/manual.html:44
 msgid "Manual"
 msgstr "Håndbog"
 
@@ -766,6 +780,11 @@ msgstr "Du er ved at slette alle resultater fra scannerjobbet"
 #: reportapp/templates/components/user-overview-template.html:74
 msgid "associated with the user"
 msgstr "tilknyttet brugeren"
+
+#: reportapp/templates/components/user-overview-template.html:74
+#: reportapp/templates/login.html:15 reportapp/templates/user_content.html:26
+msgid "Username"
+msgstr "Brugernavn"
 
 #: reportapp/templates/components/user-overview-template.html:74
 msgid "Are you sure? This action cannot be reversed."
@@ -873,11 +892,11 @@ msgstr "Tak fordi du brugte OS2datascanner."
 msgid "again"
 msgstr "igen"
 
-#: reportapp/templates/manual.html:33 reportapp/templates/manual.html:138
+#: reportapp/templates/manual.html:37 reportapp/templates/manual.html:144
 msgid "Frequently Asked Questions"
 msgstr "Ofte stillede spørgsmål"
 
-#: reportapp/templates/manual.html:141
+#: reportapp/templates/manual.html:147
 msgid ""
 "Here you can find answers to questions frequently asked by other users of "
 "OS2datascanner."
@@ -885,7 +904,7 @@ msgstr ""
 "Her kan du finde svar på de oftest stillede spørgsmål af andre brugere af "
 "OS2datascanner."
 
-#: reportapp/templates/manual.html:148
+#: reportapp/templates/manual.html:154
 msgid ""
 "For security reasons, OS2datascanner cannot interact with your files or "
 "emails in any way. For this reason, you must manually delete or handle the "
@@ -897,7 +916,7 @@ msgstr ""
 "eller på anden måde håndtere den matchede fil. 'Håndtér'-knappen i "
 "OS2datascanner fjerner kun matchet fra oversigten."
 
-#: reportapp/templates/manual.html:151
+#: reportapp/templates/manual.html:157
 msgid ""
 "You can manually access the file or email by pressing the 'copy'- or 'open'-"
 "buttons below the name of the match."
@@ -905,7 +924,7 @@ msgstr ""
 "Du kan manuelt tilgå filen eller e-mailen ved at trykke på 'kopier'- eller "
 "'åben'-knapperne under navnet på matchet."
 
-#: reportapp/templates/manual.html:157
+#: reportapp/templates/manual.html:164
 msgid ""
 "OS2datascanner is not located on your computer, but on an external server. "
 "You are accessing that server through your browser."
@@ -913,7 +932,7 @@ msgstr ""
 "OS2datascanner befinder sig ikke på din computer, men på en ekstern server. "
 "Du tilgår denne server gennem din browser."
 
-#: reportapp/templates/manual.html:160
+#: reportapp/templates/manual.html:167
 msgid ""
 "For security reasons, modern browsers are not allowed to open a file on your "
 "computer. This also prevents OS2datascanner from doing the same."
@@ -921,7 +940,7 @@ msgstr ""
 "Af sikkerhedsårsager har moderne browsere ikke adgang til, at åbne filer på "
 "din computer. Dette forhindrer også OS2datascanner i det samme."
 
-#: reportapp/templates/manual.html:163
+#: reportapp/templates/manual.html:170
 msgid ""
 "To find the file, which a match has been found in, click the 'Copy Folder' "
 "button on the match, then open your pathfinder on your computer, and paste "
@@ -1118,7 +1137,7 @@ msgstr "Filscan"
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:802
+#: reportapp/views/views.py:800
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."

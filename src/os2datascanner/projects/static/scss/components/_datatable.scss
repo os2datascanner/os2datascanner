@@ -194,6 +194,23 @@
         }
       }
 
+      .detained-matches {
+        color: var(--color-text-secondary);
+        margin-top: 0.5rem;
+
+        &::after {
+          content: ")"
+        }
+
+        &::before {
+          content: "("
+        }
+
+        span {
+          display: none;
+        }
+      }
+
       @media (min-width: $break-lg) {
         width: 15rem;
 
@@ -202,6 +219,12 @@
             content: none;
           }
 
+          span {
+            display: inline;
+          }
+        }
+
+        .detained-matches {
           span {
             display: inline;
           }

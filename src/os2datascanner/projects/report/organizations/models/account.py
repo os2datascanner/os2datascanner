@@ -19,6 +19,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Count
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -65,6 +66,11 @@ class Account(Core_Account):
         null=True,
         blank=True,
         verbose_name=_("Number of matches"))
+    detained_matches = models.IntegerField(
+        default=0,
+        null=True,
+        blank=True,
+        verbose_name=_("Number of detained matches"))
     match_status = models.IntegerField(
         choices=StatusChoices.choices,
         default=1,
@@ -92,12 +98,22 @@ class Account(Core_Account):
     def _count_matches(self):
         """Counts the number of unhandled matches associated with the account."""
         from ...reportapp.models.documentreport import DocumentReport
-        count = DocumentReport.objects.filter(
+        reports = DocumentReport.objects.filter(
             alias_relation__account=self,
             number_of_matches__gte=1,
-            resolution_status__isnull=True).count()
+            resolution_status__isnull=True).values(
+                "only_notify_superadmin").order_by(
+                    "only_notify_superadmin").annotate(
+            count=Count("only_notify_superadmin")).values(
+            "only_notify_superadmin",
+            "count")
 
-        self.match_count = count
+        for obj in reports:
+            print(obj.get("only_notify_superadmin"))
+            if obj.get("only_notify_superadmin"):
+                self.detained_matches = obj.get("count")
+            else:
+                self.match_count = obj.get("count")
 
     def _calculate_status(self):
         """Calculate the status of the user. The user can have one of three

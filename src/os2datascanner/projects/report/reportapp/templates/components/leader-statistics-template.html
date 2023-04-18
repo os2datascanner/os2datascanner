@@ -120,7 +120,15 @@
                   <div class="employee__username">{{ employee.username }}</div>
                 </div>
               </td>
-              <td class="datatable__column--matchcount">{{ employee.match_count }}</td>
+              <td class="datatable__column--matchcount">
+                {{ employee.match_count }}
+                {% if employee.detained_matches > 0 %}
+                  <div class="detained-matches"
+                       title="{% trans "The user has" %} {{ employee.detained_matches }} {% trans "matches, which have not been distributed to the user yet. This can be done by a superuser in the report module." %}">
+                    {{ employee.detained_matches }} <span>{% trans "detained" %}</span>
+                  </div>
+                {% endif %}
+              </td>
               <td class="datatable__column--matchstatus">
                 <div class="status_wrapper" data-status="{{ employee.match_status }}">{{ employee.status }}</div>
               </td>
