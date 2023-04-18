@@ -10,6 +10,9 @@
   organisational information and not on the static `Leader` role, which
   has been removed.
 
+- The number of matches marked with "only_notify_superadmin" are now shown
+  separately in the leader overview for each user.
+
 ### General improvements
 
 - Navigating to a section in the manual now highlights the header of that 
