@@ -19,7 +19,7 @@ def populate_created_timestamp(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("os2datascanner_report", "0069_alter_path_field_new_transaction"),
+        ("os2datascanner_report", "0070_delete_leader"),
     ]
 
     operations = [
