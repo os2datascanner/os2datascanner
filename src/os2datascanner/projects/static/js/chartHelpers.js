@@ -23,8 +23,8 @@ var avoidZero = function (a, b) {
 };
 
 // Set default animation duration on charts - this can be changed for each chart if needed.
-Chart.defaults.global.animation.easing = 'easeOutQuad';
-Chart.defaults.global.animation.duration = 1700;
+Chart.defaults.animation.easing = 'easeOutQuad';
+Chart.defaults.animation.duration = 1700;
 
 function drawCharts() {
   // json_script solution - Safe from in-page script execution
@@ -57,7 +57,7 @@ function drawCharts() {
   // To fixed decimal point
   handledPercentageFixed = handledPercentage.toFixed(1);
 
-  drawDoughnuts(sensitivities, totalHandledMatches, totalMatches, handledPercentage);
+  drawDoughnuts(totalHandledMatches, totalMatches, handledPercentage);
   drawPies(sensitivities, sourceTypes, handledMatchesStatus[0]);
   drawLines(newMatchesByMonth, unhandledMatchesByMonth);
 }

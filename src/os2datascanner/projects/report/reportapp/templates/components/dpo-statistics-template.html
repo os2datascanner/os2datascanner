@@ -129,74 +129,18 @@
         <div id="pie_legend_resolution_status"></div>
       </div>
     </div>
-
+ 
     <!-- Doughnut chart -->
     <div class="statistic">
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">{% trans "Handled results" %}</h1>
-          <p class="chart_description" data-chartid="handling-sensitivity">
-            {% trans "Percentage of handled results distributed by sensitivity" %}
-          </p>
-          <p class="hidden chart_description" data-chartid="handling-all-results">
+          <p class="chart_description" data-chartid="handling-all-results">
             {% trans "The department's percentage of handled results" %}
           </p>
         </div>
-        <div class="statistic_header_nav">
-          <div class="dropdown">
-            <select>
-              <option value="handling-sensitivity">
-                {% trans "Sensitivity" %}
-              </option>
-              <option value="handling-all-results">
-                {% trans "All results" %}
-              </option>
-            </select>
-          </div>
-        </div>
       </div>
-      <div class="doughnut_charts_container chart_container"
-           data-chartid="handling-sensitivity">
-        <!-- Could be rewritten as for loop instead? -->
-        <!-- TODO -->
-        <div class="doughnut_chart_container">
-          <div>
-            <canvas id="doughnut_chart_critical"></canvas>
-          </div>
-          <div class="doughnut_info_box">
-            <h4>{% trans "Critical" %}</h4>
-            <p>{{ handled_matches.0.1 }} {% trans "of" %} {{ sensitivities.0.1 }}</p>
-          </div>
-        </div>
-        <div class="doughnut_chart_container">
-          <div>
-            <canvas id="doughnut_chart_problem"></canvas>
-          </div>
-          <div class="doughnut_info_box">
-            <h4>{% trans "Problem" %}</h4>
-            <p>{{ handled_matches.1.1 }} {% trans "of" %} {{ sensitivities.1.1 }}</p>
-          </div>
-        </div>
-        <div class="doughnut_chart_container">
-          <div>
-            <canvas id="doughnut_chart_warning"></canvas>
-          </div>
-          <div class="doughnut_info_box">
-            <h4>{% trans "Warning" %}</h4>
-            <p>{{ handled_matches.2.1 }} {% trans "of" %} {{ sensitivities.2.1 }}</p>
-          </div>
-        </div>
-        <div class="doughnut_chart_container">
-          <div>
-            <canvas id="doughnut_chart_notification"></canvas>
-          </div>
-          <div class="doughnut_info_box">
-            <h4>{% trans "Notification" %}</h4>
-            <p>{{ handled_matches.3.1 }} {% trans "of" %} {{ sensitivities.3.1 }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="hidden chart_container" data-chartid="handling-all-results">
+      <div class="chart_container" data-chartid="handling-all-results">
         <div class="doughnut_chart_container">
           <div>
             <canvas id="doughnut_chart_total"></canvas>
@@ -218,8 +162,7 @@
           <p class="chart_description">{% trans "Overview for department with most unhandled results" %}</p>
           <p class="hidden chart_description">{% trans "Overview for departments with the oldest results" %}</p>
         </div>
-        <div class="statistic_header_nav">
-        </div>
+        <div class="statistic_header_nav"></div>
       </div>
       <div>
         <h1 class="page-title__sub">{% trans "Comming soon" %}</h1>

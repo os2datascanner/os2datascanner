@@ -79,7 +79,7 @@ function createPie(data, htmlElements, colors){ // jshint ignore:line
                 size: 16,
                 family: 'Arial'
                 },
-                position: 'top',
+                position: 'right',
                 align: 'end',
                 offset: 1.2,
                 formatter: displayAsPercentage,

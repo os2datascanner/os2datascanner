@@ -17,14 +17,6 @@ function makePieChart(labels, data, colors, chartElement) {
 
     },
     options: {
-      legend: {
-        position: 'top',
-        align: 'end',
-        display: false,
-
-      },
-      // Callback for placing legends inside of <ul>
-      legendCallback: unorderedListLegend,
       tooltips: {
         enabled: false,
       },
@@ -38,21 +30,32 @@ function makePieChart(labels, data, colors, chartElement) {
           },
           position: 'top',
           align: 'center',
-          formatter: displayAsPercentage,
+          formatter: function (value, ctx) {
+            let dataArr = ctx.chart.data.datasets[0].data;
+            let sum = dataArr.reduce(function (total, frac) { return total + frac; });
+            var percentage = Math.round(value * 100 / sum) + "%";
+            return value ? percentage : '';
+          },
           color: '#fff',
-        }
+        },
+        legend: {
+          position: 'top',
+          align: 'end',
+          display: false,
+  
+        },
       },
       responsive: true,
       aspectRatio: 1,
       maintainAspectRatio: false
-    }
+    },
+    plugins: [ChartDataLabels]
   });
 
   return pieChart;
 }
 
 function drawPies(sensitivities, sourceTypes, handledMatchesStatus) {
-  //
   // Pie Chart start
   //
   //
@@ -72,7 +75,7 @@ function drawPies(sensitivities, sourceTypes, handledMatchesStatus) {
 
   charts.push(sensitivitiesPieChart);
 
-  $("#pie_legend_sensitivity").html(sensitivitiesPieChart.generateLegend());
+  $("#pie_legend_sensitivity").html(unorderedListLegend(sensitivitiesPieChart));
 
   var sensitivityLegendItems = document.querySelector("#pie_legend_sensitivity").getElementsByTagName('li');
   for (var i = 0; i < sensitivityLegendItems.length; i += 1) {
@@ -91,7 +94,7 @@ function drawPies(sensitivities, sourceTypes, handledMatchesStatus) {
 
   charts.push(dataSourcesPieChart);
 
-  $("#pie_legend_datasources").html(dataSourcesPieChart.generateLegend());
+  $("#pie_legend_datasources").html(unorderedListLegend(dataSourcesPieChart));
 
   var datasourcesLegendItems = document.querySelector("#pie_legend_datasources").getElementsByTagName('li');
   for (var j = 0; j < datasourcesLegendItems.length; j += 1) {
@@ -113,7 +116,7 @@ function drawPies(sensitivities, sourceTypes, handledMatchesStatus) {
 
   charts.push(resolutionStatusPieChart);
 
-  $("#pie_legend_resolution_status").html(resolutionStatusPieChart.generateLegend());
+  $("#pie_legend_resolution_status").html(unorderedListLegend(resolutionStatusPieChart));
 
   var resolutionStatusLegendItems = document.querySelector("#pie_legend_resolution_status").getElementsByTagName('li');
   for (var k = 0; k < resolutionStatusLegendItems.length; k += 1) {
@@ -173,15 +176,6 @@ function drawPies(sensitivities, sourceTypes, handledMatchesStatus) {
     }
     return relevantIndices;
   }
-
-}
-
-
-function displayAsPercentage(value, ctx) {
-  let dataArr = ctx.chart.data.datasets[0].data;
-  let sum = dataArr.reduce(function (total, frac) { return total + frac; });
-  var percentage = Math.round(value * 100 / sum) + "%";
-  return value ? percentage : '';
 }
 
 function unorderedListLegend(chart) {

@@ -5,9 +5,9 @@
 // //
 // //
 // Function for creating gradient background for each bar size.
-Chart.pluginService.register({
+Chart.register({
 	afterUpdate: function(chart) {
-		if (chart.config.type === 'bar'){
+		if (chart.type === 'bar'){
 
 			// For every dataset ...
 			for (var i = 0; i < chart.config.data.datasets.length; i++) {
@@ -331,11 +331,11 @@ Chart.elements.Rectangle.prototype.draw = function() {
 };
 
 // Function for 'average-line'
-Chart.pluginService.register({
+Chart.register({
 	beforeDraw: function(chart) {
 		if (typeof chart.config.options.lineAt !== 'undefined') {
 			var lineAt = chart.config.options.lineAt;
-			var ctxPlugin = chart.chart.ctx;
+			var ctxPlugin = chart.ctx;
 			var xAxe = chart.scales[chart.config.options.scales.xAxes[0].id];
 			var yAxe = chart.scales[chart.config.options.scales.yAxes[0].id];
 			ctxPlugin.strokeStyle = colorFunction('--color-grey-dark');
@@ -393,19 +393,19 @@ new Chart(unhandledBarChartCtx, {
 			mode: null
 		},
 		plugins: {
-		// chartjs-plugin-datalabels.js
+		// chartjs-plugin-datalabels.min.js
 			datalabels: {
 				display: false
 			}
 		},
 		scales: {
-			xAxes: [{
+			x: {
 				gridLines: {
 					display: false,
 					// drawOnChartArea:false
 				}
-			}],
-			yAxes: [{
+			},
+			y: {
 				gridLines: {
 						display: false,
 						// drawOnChartArea:false
@@ -414,7 +414,7 @@ new Chart(unhandledBarChartCtx, {
 					beginAtZero: true,
 					stepSize: stepSizeFunction(unhandledBarChartValues, 3),
 				}
-			}]
+			}
 		},
 		lineAt: unhandledMatchesAverage, // Average line value
 		responsive:true
@@ -464,19 +464,19 @@ new Chart(oldestBarChartCtx, {
       mode: null
     },
     plugins: {
-    // chartjs-plugin-datalabels.js
+    // chartjs-plugin-datalabels.min.js
       datalabels: {
         display: false
       }
     },
     scales: {
-      xAxes: [{
+      x: {
         gridLines: {
           display: false,
           // drawOnChartArea:false
         }
-      }],
-      yAxes: [{
+      },
+      y: {
         gridLines: {
             display: false,
             // drawOnChartArea:false
@@ -488,7 +488,7 @@ new Chart(oldestBarChartCtx, {
             return label + ' dage';
           }
         }
-      }]
+      }
     },
     lineAt: oldestMatchesAverage, // Average line value
     responsive:true

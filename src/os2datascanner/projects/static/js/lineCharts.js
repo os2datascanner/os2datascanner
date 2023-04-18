@@ -99,9 +99,9 @@ function makeLineChart(xdata, ydata, chartElement, xLabel = "", yLabel = "") {
 			plugins: {
 				datalabels: {
 					display: false
-				}
+				},
+				legend: false,
 			},
-			legend: false,
 			responsive: true,
 			maintainAspectRatio: false,
 			elements: {
@@ -113,7 +113,14 @@ function makeLineChart(xdata, ydata, chartElement, xLabel = "", yLabel = "") {
 				backgroundColor: "#f5f5f5"
 			},
 			scales: {
-				xAxes: [{
+				x: {
+					title: {
+						
+						display: xLabel !== "",
+						text: xLabel,
+						labelString: xLabel,
+						fontSize: 16,
+					},
 					gridLines: {
 						offsetGridLines: true,
 						display: true,
@@ -123,13 +130,14 @@ function makeLineChart(xdata, ydata, chartElement, xLabel = "", yLabel = "") {
 					ticks: {
 						fontSize: 16,
 					},
-					scaleLabel: {
-						display: xLabel !== "",
-						labelString: xLabel,
-						fontSize: 16,
+	
+				},
+				y: {
+					title: {
+						display: yLabel !== "",
+						text: yLabel,
+						fontSize: 14,
 					},
-				}],
-				yAxes: [{
 					gridLines: {
 						display: false
 					},
@@ -138,12 +146,7 @@ function makeLineChart(xdata, ydata, chartElement, xLabel = "", yLabel = "") {
 						fontSize: 14,
 						stepSize: stepSizeFunction(ydata, 2),
 					},
-					scaleLabel: {
-						display: yLabel !== "",
-						labelString: yLabel,
-						fontSize: 14,
-					},
-				}]
+				}
 			},
 		}
 	});
@@ -160,12 +163,13 @@ function drawLines(newMatchesByMonth, unhandledMatchesByMonth) {
 	// //
 	// Creating xx line chart
 
-	Chart.pluginService.register({
+	Chart.register({
+		id: "chartID",
 		// This works to color the background
 		beforeDraw: function (chart) {
 
 			if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
-				var ctx = chart.chart.ctx;
+				var ctx = chart.ctx;
 				var chartArea = chart.chartArea;
 
 				var meta = chart.getDatasetMeta(0);

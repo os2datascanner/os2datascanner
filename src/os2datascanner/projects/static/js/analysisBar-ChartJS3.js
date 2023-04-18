@@ -138,11 +138,11 @@ function createBars(data, ctx, titleText, binSize){ // jshint ignore:line
           align: "center"
         },
         scales: {
-          xAxes: [{
+          x: {
             ticks: {
               fontSize: 12,
               weight: 'bold'}
-          }]
+          }
         },
         datalabels: {
           display: false

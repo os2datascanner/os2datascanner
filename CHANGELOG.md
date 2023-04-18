@@ -22,6 +22,8 @@
 
 - Major performance improvements in the leader overview.
 
+- Updated chartjs to newer version
+
 ### Bugfixes
 
 - DocumentReport objects with missing `created_timestamp` values have had that

@@ -38,19 +38,19 @@ function drawTimelines(snapshotData, pk) {
           }
         },
         scales: {
-          xAxes: [{
+          x: {
             type: 'linear',
             scaleLabel: {
               display: true,
               labelString: gettext('Seconds since start of scan')
             }
-          }],
-          yAxes: [{
+          },
+          y: {
             scaleLabel: {
               display: true,
               labelString: gettext('% scanned')
             }
-          }]
+          }
         }
       }
     });
