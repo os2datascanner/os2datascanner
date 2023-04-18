@@ -9,13 +9,7 @@
         content='{"historyEnabled": "false", "historyCacheSize": "0"}'>
   <div class="content"
        hx-push-url="true"
-       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-
-    {% include "components/index_navigation.html" %}
-
-    {% include "content.html" %}
-
-  </div>
+       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>{% include "content.html" %}</div>
 
 </main>
 

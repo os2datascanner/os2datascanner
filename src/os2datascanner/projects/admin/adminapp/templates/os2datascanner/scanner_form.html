@@ -20,10 +20,10 @@
   <script type="text/javascript" src="{% static 'admin/js/SelectBox.js' %}"></script>
   <link rel="stylesheet"
         type="text/css"
-        href="{% static 'admin/css/widgets.css' %}"/>
+        href="{% static 'admin/css/widgets.css' %}" />
   <link rel="stylesheet"
         type="text/css"
-        href="{% static 'admin/css/forms.css' %}"/>
+        href="{% static 'admin/css/forms.css' %}" />
   <!-- END   Admin scripts and CSS to render filter_horizontal -->
 {% endblock %}
 
@@ -32,9 +32,7 @@
   (function ($) {
     $(document).ready(function () {
       // set up selected rules based on the form values
-      {% for val in form.rules.value %}
-      $("#available_rules li[data-rule-id=\"{{ val }}\"").trigger("click");
-      {% endfor %}
+      {% for val in form.rules.value %}$("#available_rules li[data-rule-id=\"{{ val }}\"").trigger("click");{% endfor %}
 
       {% for val in form.exclusion_rules.value %}
       $("#available_exclusion_rules li[data-rule-id=\"{{ val }}\"").trigger("click");
@@ -225,7 +223,7 @@
                            id="id_{{ form.scan_site_drives.name }}"
                            name="{{ form.scan_site_drives.name }}"
                            value="{{ form.scan_site_drives.name }}"
-                           {% if form.scan_site_drives.value %} checked="checked"{% endif %}/>
+                           {% if form.scan_site_drives.value %}checked="checked"{% endif %} />
                     <label for="id_{{ form.scan_site_drives.name }}" tabindex="0">{{ form.scan_site_drives.label }}</label>
                   </div>
 
@@ -246,10 +244,8 @@
                            id="id_{{ form.scan_user_drives.name }}"
                            name="{{ form.scan_user_drives.name }}"
                            value="{{ form.scan_user_drives.name }}"
-                           {% if form.scan_user_drives.value %} checked="checked"{% endif %}/>
-                    <label for="id_{{ form.scan_user_drives.name }}" tabindex="0">
-                      {{ form.scan_user_drives.label }}
-                    </label>
+                           {% if form.scan_user_drives.value %}checked="checked"{% endif %} />
+                    <label for="id_{{ form.scan_user_drives.name }}" tabindex="0">{{ form.scan_user_drives.label }}</label>
                   </div>
 
                   {% if form.scan_user_drives.help_text %}
@@ -269,10 +265,8 @@
                            id="id_{{ form.download_sitemap.name }}"
                            name="{{ form.download_sitemap.name }}"
                            value="{{ form.download_sitemap.name }}"
-                           {% if form.download_sitemap.value %} checked="checked"{% endif %}/>
-                    <label for="id_{{ form.download_sitemap.name }}">
-                      {{ form.download_sitemap.label }}
-                    </label>
+                           {% if form.download_sitemap.value %}checked="checked"{% endif %} />
+                    <label for="id_{{ form.download_sitemap.name }}">{{ form.download_sitemap.label }}</label>
                   </div>
 
                   {% if form.download_sitemap.help_text %}
@@ -292,16 +286,12 @@
                            id="id_{{ form.reduce_communication.name }}"
                            name="{{ form.reduce_communication.name }}"
                            value="{{ form.reduce_communication.name }}"
-                           {% if form.reduce_communication.value %} checked="checked"{% endif %}/>
-                    <label for="id_{{ form.reduce_communication.name }}">
-                      {{ form.reduce_communication.label }}
-                    </label>
+                           {% if form.reduce_communication.value %}checked="checked"{% endif %} />
+                    <label for="id_{{ form.reduce_communication.name }}">{{ form.reduce_communication.label }}</label>
                   </div>
 
                   {% if form.reduce_communication.help_text %}
-                    <span class="form__help-text">
-                      {{ form.reduce_communication.help_text|capfirst }}
-                    </span>
+                    <span class="form__help-text">{{ form.reduce_communication.help_text|capfirst }}</span>
                   {% endif %}
 
                   {% if form.reduce_communication.errors %}{{ form.reduce_communication.errors }}{% endif %}
@@ -316,17 +306,15 @@
                   <input id="upload-file-service"
                          placeholder="{% trans 'Select a file' %}"
                          disabled="disabled"
-                         class="grow"/>
+                         class="grow" />
                   <div class="fileUpload button button--grey button--upload">
-                    <span>
-                      {% trans "Upload" %}
-                    </span>
+                    <span>{% trans "Upload" %}</span>
                     <input class="upload"
                            id="id_{{ form.service_account_file_gmail.name }}"
                            name="{{ form.service_account_file_gmail.name }}"
                            type="file"
                            data-filename-placement="inside"
-                           title="{% trans 'Click here to upload service account credentials (JSON FORMAT)' %}"/>
+                           title="{% trans 'Click here to upload service account credentials (JSON FORMAT)' %}" />
                   </div>
 
                   {% if form.service_account_file_gmail.help_text %}
@@ -340,32 +328,26 @@
               {% if form.service_account_file_gmail.value %}
                 <div id="{{ form.service_account_file_gmail.auto_id }}_container"
                      class="form__group{% if form.service_account_file_gmail.errors %} has-error{% endif %}">
-                  <label for="id_{{ form.service_account_file_gmail.name }}">
-                    {% trans "Service account" %}
-                  </label>
+                  <label for="id_{{ form.service_account_file_gmail.name }}">{% trans "Service account" %}</label>
                   {% trans "Current file:" %} <code>{{ form.service_account_file_gmail.value }}</code>
                 </div>
               {% endif %}
 
               {% if form.user_emails_gmail %}
                 <div class="form__group form__group--flex">
-                  <label for="id_{{ form.user_emails_gmail.name }}" class="block">
-                    {% trans "Upload list of accounts" %} (.csv) *
-                  </label>
+                  <label for="id_{{ form.user_emails_gmail.name }}" class="block">{% trans "Upload list of accounts" %} (.csv) *</label>
                   <input id="upload-file-email"
                          placeholder="{% trans 'Select a file' %}"
                          disabled="disabled"
-                         class="grow"/>
+                         class="grow" />
                   <div class="fileUpload button button--grey button--upload">
-                    <span>
-                      {% trans "Upload" %}
-                    </span>
+                    <span>{% trans "Upload" %}</span>
                     <input class="upload"
                            id="id_{{ form.user_emails_gmail.name }}"
                            name="{{ form.user_emails_gmail.name }}"
                            type="file"
                            data-filename-placement="inside"
-                           title="{% trans 'Click here to upload list of accounts (CSV FORMAT)' %}"/>
+                           title="{% trans 'Click here to upload list of accounts (CSV FORMAT)' %}" />
                   </div>
 
                   {% if form.user_emails_gmail.help_text %}
@@ -379,9 +361,7 @@
               {% if form.user_emails_gmail.value %}
                 <div id="{{ form.user_emails_gmail.auto_id }}_container"
                      class="form__group{% if form.user_emails_gmail.errors %} has-error{% endif %}">
-                  <label for="id_{{ form.user_emails_gmail.name }}">
-                    {% trans "List of accounts" %}
-                  </label>
+                  <label for="id_{{ form.user_emails_gmail.name }}">{% trans "List of accounts" %}</label>
                   {% trans "Current file:" %} <code>{{ form.user_emails_gmail.value }}</code>
                 </div>
               {% endif %}
@@ -390,14 +370,12 @@
               {% if form.sitemap_url %}
                 <div id="{{ form.sitemap_url.auto_id }}_container"
                      class="form__group{% if form.sitemap_url.errors %} has-error{% endif %}">
-                  <label for="id_{{ form.sitemap_url.name }}">
-                    {{ form.sitemap_url.label }}
-                  </label>
+                  <label for="id_{{ form.sitemap_url.name }}">{{ form.sitemap_url.label }}</label>
                   <input type="text"
                          name="{{ form.sitemap_url.name }}"
                          id="id_{{ form.sitemap_url.name }}"
                          placeholder="{% trans 'e.g. /sitemap.xml' %}"
-                         {% if form.sitemap_url.value %} value="{{ form.sitemap_url.value }}"{% endif %}>
+                         {% if form.sitemap_url.value %}value="{{ form.sitemap_url.value }}"{% endif %}>
 
                   {% if form.sitemap_url.help_text %}<span class="form__help-text">{{ form.sitemap_url.help_text }}</span>{% endif %}
 
@@ -408,40 +386,32 @@
               {% if form.sitemap.value %}
                 <div id="{{ form.sitemap.auto_id }}_container"
                      class="form__group{% if form.sitemap.errors %} has-error{% endif %}">
-                  <label for="id_{{ form.sitemap.name }}">
-                    {% trans "Sitemap" %}
-                  </label>
+                  <label for="id_{{ form.sitemap.name }}">{% trans "Sitemap" %}</label>
                   {% trans "Current:" %} <code>{{ form.sitemap.value }}</code>
                   <div class="ds-checkbox">
                     <input id="{{ form.sitemap.name }}-clear_id"
                            name="{{ form.sitemap.name }}-clear"
-                           type="checkbox"/>
-                    <label for="{{ form.sitemap.name }}-clear_id">
-                      {% trans "Remove" %}
-                    </label>
+                           type="checkbox" />
+                    <label for="{{ form.sitemap.name }}-clear_id">{% trans "Remove" %}</label>
                   </div>
                 </div>
               {% endif %}
 
               {% if form.sitemap %}
                 <div class="form__group form__group--flex">
-                  <label for="id_{{ form.sitemap.name }}" class="block">
-                    {% trans "Upload sitemap" %}
-                  </label>
+                  <label for="id_{{ form.sitemap.name }}" class="block">{% trans "Upload sitemap" %}</label>
                   <input id="upload-file"
                          placeholder="{% trans 'Select a file' %}"
                          disabled="disabled"
-                         class="grow"/>
+                         class="grow" />
                   <div class="fileUpload button button--grey button--upload">
-                    <span>
-                      {% trans "Upload" %}
-                    </span>
+                    <span>{% trans "Upload" %}</span>
                     <input class="upload"
                            id="id_{{ form.sitemap.name }}"
                            name="{{ form.sitemap.name }}"
                            type="file"
                            data-filename-placement="inside"
-                           title="{% trans 'Click here to upload sitemap.xml' %}"/>
+                           title="{% trans 'Click here to upload sitemap.xml' %}" />
                   </div>
 
                   {% if form.sitemap.help_text %}<span class="form__help-text">{{ form.sitemap.help_text }}</span>{% endif %}
@@ -458,17 +428,15 @@
                   <input id="upload-file-service"
                          placeholder="{% trans 'Select a file' %}"
                          disabled="disabled"
-                         class="grow"/>
+                         class="grow" />
                   <div class="fileUpload button button--grey button--upload">
-                    <span>
-                      {% trans "Upload" %}
-                    </span>
+                    <span>{% trans "Upload" %}</span>
                     <input class="upload"
                            id="id_{{ form.service_account_file.name }}"
                            name="{{ form.service_account_file.name }}"
                            type="file"
                            data-filename-placement="inside"
-                           title="{% trans 'Click here to upload service account credentials (JSON FORMAT)' %}"/>
+                           title="{% trans 'Click here to upload service account credentials (JSON FORMAT)' %}" />
                   </div>
 
                   {% if form.service_account_file.help_text %}
@@ -482,32 +450,26 @@
               {% if form.service_account_file.value %}
                 <div id="{{ form.service_account_file.auto_id }}_container"
                      class="form__group{% if form.service_account_file.errors %} has-error{% endif %}">
-                  <label for="id_{{ form.service_account_file.name }}">
-                    {% trans "Service account" %}
-                  </label>
+                  <label for="id_{{ form.service_account_file.name }}">{% trans "Service account" %}</label>
                   {% trans "Current file:" %} <code>{{ form.service_account_file.value }}</code>
                 </div>
               {% endif %}
 
               {% if form.user_emails %}
                 <div class="form__group form__group--flex">
-                  <label for="id_{{ form.user_emails.name }}" class="block">
-                    {% trans "Upload list of accounts" %} (.csv) *
-                  </label>
+                  <label for="id_{{ form.user_emails.name }}" class="block">{% trans "Upload list of accounts" %} (.csv) *</label>
                   <input id="upload-file-email"
                          placeholder="{% trans 'Select a file' %}"
                          disabled="disabled"
-                         class="grow"/>
+                         class="grow" />
                   <div class="fileUpload button button--grey button--upload">
-                    <span>
-                      {% trans "Upload" %}
-                    </span>
+                    <span>{% trans "Upload" %}</span>
                     <input class="upload"
                            id="id_{{ form.user_emails.name }}"
                            name="{{ form.user_emails.name }}"
                            type="file"
                            data-filename-placement="inside"
-                           title="{% trans 'Click here to upload list of accounts (CSV FORMAT)' %}"/>
+                           title="{% trans 'Click here to upload list of accounts (CSV FORMAT)' %}" />
                   </div>
 
                   {% if form.user_emails.help_text %}<span class="form__help-text">{{ form.user_emails.help_text }}</span>{% endif %}
@@ -519,9 +481,7 @@
               {% if form.user_emails.value %}
                 <div id="{{ form.user_emails.auto_id }}_container"
                      class="form__group{% if form.user_emails.errors %} has-error{% endif %}">
-                  <label for="id_{{ form.user_emails.name }}">
-                    {% trans "List of accounts" %}
-                  </label>
+                  <label for="id_{{ form.user_emails.name }}">{% trans "List of accounts" %}</label>
                   {% trans "Current file:" %} <code>{{ form.user_emails.value }}</code>
                 </div>
               {% endif %}
@@ -532,58 +492,43 @@
         {% if form.userlist %}
           <section class="data-form">
             <fieldset class="form__fieldset">
-              <h3 class="required-form">
-                {% trans "add users"|capfirst %}
-              </h3>
+              <h3 class="required-form">{% trans "add users"|capfirst %}</h3>
               {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features and FEATURES.ORG_STRUCTURE in client.enabled_features %}
-                <p class="information">
-                  {% trans "select users from"|capfirst %}
-                </p>
-                <div class="form__group {% if form.org_unit.errors %} has-error{% endif %}">
+                <p class="information">{% trans "select users from"|capfirst %}</p>
+                <div class="form__group {% if form.org_unit.errors %}has-error{% endif %}">
                   <label class="treeview-label {% if required %}required-form{% endif %}"
-                         for="{{ form.org_unit.name }}">
-                    {% trans "organizational units"|capfirst %}
-                  </label>
+                         for="{{ form.org_unit.name }}">{% trans "organizational units"|capfirst %}</label>
                   <select class="treeview"
                           id="sel_1"
                           name="{{ form.org_unit.name }}"
                           multiple
                           size="10"
-                          url="{% url 'org-units-listing' %}">
-                  </select>
+                          url="{% url 'org-units-listing' %}"></select>
                   {% if form.org_unit.errors %}{{ form.org_unit.errors }}{% endif %}
                 </div>
 
-                <p class="information">
-                  {% trans "or upload"|capfirst %}
-                </p>
+                <p class="information">{% trans "or upload"|capfirst %}</p>
               {% endif %}
 
               {% if form.userlist %}
                 <div id="{{ form.userlist.auto_id }}_container"
                      class="form__group form__group--flex{% if form.userlist.errors %} has-error{% endif %}">
-                  <label class="control-label block" for="id_{{ form.userlist.name }}">
-                    {% trans "List of mail users" %}
-                  </label>
+                  <label class="control-label block" for="id_{{ form.userlist.name }}">{% trans "List of mail users" %}</label>
                   <input id="upload-file"
                          placeholder="{% trans 'Select a file' %}"
                          disabled="disabled"
-                         class="grow"/>
+                         class="grow" />
                   <div id="fileUpload" class="fileUpload button button--grey button--upload">
-                    <span>
-                      {% trans "Upload" %}
-                    </span>
+                    <span>{% trans "Upload" %}</span>
                     <input type="file"
                            class="upload"
                            name="{{ form.userlist.name }}"
                            id="id_{{ form.userlist.name }}"
-                           {% if form.userlist.value %} value="{{ form.userlist.value }}"{% endif %}>
+                           {% if form.userlist.value %}value="{{ form.userlist.value }}"{% endif %}>
                   </div>
                   {% if form.userlist.value %}
                     <p>
-                      <small>
-                        {% trans "Existing file:" %} {{ form.userlist.value }}
-                      </small>
+                      <small>{% trans "Existing file:" %} {{ form.userlist.value }}</small>
                     </p>
                   {% endif %}
 
@@ -600,9 +545,7 @@
             <div class="select-employees">
 
               <ul id="available_employees" class="select-employees__available">
-                <div class="select-employees-title">
-                  {% trans "Available employees" %}
-                </div>
+                <div class="select-employees-title">{% trans "Available employees" %}</div>
 
                 <input type="text" class="employee-filter" id="employee-filter" placeholder="Søg">
 
@@ -616,9 +559,7 @@
               <i id="chevron_right" class="material-icons">chevron_right</i>
 
               <div id="selected_employees" class="select-employees__selected">
-                <div class="select-employees-title">
-                  {% trans "Selected employees" %}
-                </div>
+                <div class="select-employees-title">{% trans "Selected employees" %}</div>
                 <div id="employees_list"></div>
               </div>
 
@@ -631,51 +572,38 @@
         {% if not form.userlist and form.org_unit %}
           <section class="data-form">
             <fieldset class="form__fieldset">
-              <h3 class="required-form">
-                {% trans "add users"|capfirst %}
-              </h3>
+              <h3 class="required-form">{% trans "add users"|capfirst %}</h3>
               {% if form.org_unit and request.user.is_superuser or FEATURES.IMPORT_SERVICES in client.enabled_features and FEATURES.ORG_STRUCTURE in client.enabled_features %}
  
-                <label for="entire-org">
-                  {% trans "all users in this organization"|capfirst %}
- 
-                </label>
+                <label for="entire-org">{% trans "all users in this organization"|capfirst %}</label>
  
                 <input type="radio"
                        name="show-org-units"
                        value="hide-org-units"
                        onclick="hideOrgUnits();"
                        id="entire-org"
-                       checked/>
+                       checked />
  
-                <label for="select-org-units">
-                  {% trans "select users from organizational units"|capfirst %}
- 
-                </label>
+                <label for="select-org-units">{% trans "select users from organizational units"|capfirst %}</label>
  
                 <input type="radio"
                        name="show-org-units"
                        value="show-org-units"
                        onclick="showOrgUnits();"
-                       id="select-org-units"/>
+                       id="select-org-units" />
 
-                <p class="information" id="org-unit-info">
-                  {% trans "select users from"|capfirst %}
-                </p>
-                <div class="form__group {% if form.org_unit.errors %} has-error{% endif %}"
+                <p class="information" id="org-unit-info">{% trans "select users from"|capfirst %}</p>
+                <div class="form__group {% if form.org_unit.errors %}has-error{% endif %}"
                      id="org-units">
                   <label class="treeview-label {% if required %}required-form{% endif %}"
-                         for="{{ form.org_unit.name }}">
-                    {% trans "organizational units"|capfirst %}
-                  </label>
+                         for="{{ form.org_unit.name }}">{% trans "organizational units"|capfirst %}</label>
                   <select class="treeview"
                           id="sel_1"
                           name="{{ form.org_unit.name }}"
                           multiple
                           size="10"
                           url="{% url 'org-units-listing' %}"
-                          disabled>
-                  </select>
+                          disabled></select>
                   {% if form.org_unit.errors %}{{ form.org_unit.errors }}{% endif %}
                 </div>
               {% endif %}
@@ -689,9 +617,7 @@
 
         <section class="data-form">
           <fieldset class="form__fieldset">
-            <h3>
-              {% trans "Scanner settings" %}
-            </h3>
+            <h3>{% trans "Scanner settings" %}</h3>
             <div class="form__group">
               <div id="select_scan_rules_container">
 
@@ -754,17 +680,13 @@
 
         <section class="data-form">
           <fieldset class="form__fieldset">
-            <h3 class="required-form">
-              {% trans "Add rules" %}
-            </h3>
+            <h3 class="required-form">{% trans "Add rules" %}</h3>
             <div id="{% if view.edit %}messageColorId{% endif %}"
                  class="form__group{% if form.rules.errors %} has-error{% endif %}">
               <div class="select-rules">
 
                 <ul id="available_rules" class="select-rules__available">
-                  <div class="select-rules-title">
-                    {% trans "Available rules" %}
-                  </div>
+                  <div class="select-rules-title">{% trans "Available rules" %}</div>
                   {% for value, tag in form.rules.field.choices %}
                     <li class="inclusion rule" data-rule-id="{{ value }}">
                       <a href="javascript:void(0);"
@@ -778,11 +700,8 @@
                 <i id="chevron_right" class="material-icons">chevron_right</i>
 
                 <div id="selected_rules" class="select-rules__selected">
-                  <div class="select-rules-title">
-                    {% trans "Selected rules" %}
-                  </div>
-                  <div id="rules_list">
-                  </div>
+                  <div class="select-rules-title">{% trans "Selected rules" %}</div>
+                  <div id="rules_list"></div>
                 </div>
 
                 {% if view.edit %}
@@ -800,17 +719,13 @@
         {% if settings.EXCLUSION_RULES %}
           <section class="data-form">
             <fieldset class="form__fieldset">
-              <h3>
-                {% trans "Add exclusion rules" %}
-              </h3>
+              <h3>{% trans "Add exclusion rules" %}</h3>
               <div id="{% if view.edit %}messageColorId_exclusion{% endif %}"
                    class="form__group{% if form.exclusion_rules.errors %} has-error{% endif %}">
                 <div class="select-rules">
 
                   <ul id="available_exclusion_rules" class="select-rules__available">
-                    <div class="select-rules-title">
-                      {% trans "Available exclusion rules" %}
-                    </div>
+                    <div class="select-rules-title">{% trans "Available exclusion rules" %}</div>
                     {% for value, tag in form.exclusion_rules.field.choices %}
                       <li class="exclusion rule" data-rule-id="{{ value }}">
                         <a href="javascript:void(0);"
@@ -824,11 +739,8 @@
                   <i id="chevron_right" class="material-icons">chevron_right</i>
 
                   <div id="selected_rules" class="select-rules__selected">
-                    <div class="select-rules-title">
-                      {% trans "Selected exclusion rules" %}
-                    </div>
-                    <div id="exclusion_rules_list">
-                    </div>
+                    <div class="select-rules-title">{% trans "Selected exclusion rules" %}</div>
+                    <div id="exclusion_rules_list"></div>
                   </div>
 
                   {% if view.edit %}
@@ -846,24 +758,18 @@
 
         <section class="data-form">
           <fieldset class="form__fieldset">
-            <h3>
-              {% trans "Schedule scan" %}
-            </h3>
+            <h3>{% trans "Schedule scan" %}</h3>
 
             <div class="form__group">
               <div id="container">
 
                 {% if form.schedule.help_text %}<span class="form__help-text">{{ form.schedule.help_text }}</span>{% endif %}
 
-                <p>
-                  {% trans "Schedule your scan by creating a fixed interval or adding a date to complete the scannerjob." %}
-                </p>
+                <p>{% trans "Schedule your scan by creating a fixed interval or adding a date to complete the scannerjob." %}</p>
 
                 {{ form.schedule }}
 
-                <div id="{{ form.schedule.auto_id }}_errors">
-                  {{ form.schedule.errors }}
-                </div>
+                <div id="{{ form.schedule.auto_id }}_errors">{{ form.schedule.errors }}</div>
               </div>
 
             </div>
@@ -881,9 +787,7 @@
         </section>
 
         <div class="form__group last-btn">
-          <button type="submit" class="button button--cta" name="save">
-            {% trans "Save changes" %}
-          </button>
+          <button type="submit" class="button button--cta" name="save">{% trans "Save changes" %}</button>
         </div>
       </form>
     </div>

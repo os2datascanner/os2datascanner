@@ -21,14 +21,11 @@
               type="button"
               name='show-more-matches'
               hx-get="{% url "show-more-matches" pk %}"
-              {% if interval %} hx-vals='{"last_match": "{{ interval|last }}"}'{% endif %}
+              {% if interval %}hx-vals='{"last_match": "{{ interval|last }}"}'{% endif %}
               hx-target="#replaceRow__{{ pk|unlocalize }}"
               hx-swap="outerHTML"
               hx-trigger="click"
-              hx-push-url="false"
-              hx-indicator="#report-page-indicator">
-        {% trans "Show more matches..." %}
-      </button>
+              hx-indicator="#report-page-indicator">{% trans "Show more matches..." %}</button>
  
     </td>
   </tr>

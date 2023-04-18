@@ -1,15 +1,15 @@
  
 <div id="{{ field.auto_id }}_container"
      class="form__group{% if field.errors %} has-error{% endif %}">
-  <label {% if required %} class="required-form"{% endif %}
+  <label {% if required %}class="required-form"{% endif %}
          for="id_{{ field.name }}">{{ field.label }}</label>
   <input {% if password %} type="password" {% else %} type="text" {% endif %}
          class="form-control"
          name="{{ field.name }}"
          id="id_{{ field.name }}"
-         {% if field.value and not password %} value="{{ field.value }}"{% endif %}
-         {% if not password or field.value %} placeholder="{{ placeholder }}"{% endif %}
-         {% if autofocus %} autofocus{% endif %}>
+         {% if field.value and not password %}value="{{ field.value }}"{% endif %}
+         {% if not password or field.value %}placeholder="{{ placeholder }}"{% endif %}
+         {% if autofocus %}autofocus{% endif %}>
   {% if field.help_text %}<span class="form__help-text">{{ field.help_text }}</span>{% endif %}
 
   {% if field.errors %}{{ field.errors }}{% endif %}

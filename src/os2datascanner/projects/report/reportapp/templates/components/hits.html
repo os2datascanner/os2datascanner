@@ -1,18 +1,7 @@
 {% load handle_extras %}
 {% load i18n %}
 
-<div class="datatable-wrapper card"
-     role="region"
-     tabindex="0"
-     aria-label="{% trans 'Results' %}"
-     name="handle-matches-get"
-     hx-get="{{ request.path }}"
-     hx-swap="outerHTML"
-     hx-trigger="reload-htmx from:body delay:300ms, click from:.order-by delay:100ms"
-     hx-target=".content"
-     hx-select=".content"
-     hx-include="[id='dropdown_options'], [id='filter_form']"
-     hx-indicator="#report-page-indicator">
+<div class="datatable-wrapper card" role="region" tabindex="0" aria-label="{% trans 'Results' %}" name="handle-matches-get" hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}" hx-swap="innerHTML" hx-trigger="reload-htmx from:body delay:300ms, click from:.order-by delay:100ms" hx-target=".content" hx-include="[id='dropdown_options'], [id='filter_form']" hx-indicator="#report-page-indicator">
   <form id="table_checkboxes">
     <table class="datatable reports">
       <colgroup>

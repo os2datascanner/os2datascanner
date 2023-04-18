@@ -36,12 +36,12 @@
              aria-label="{% trans 'Rules' %}">
           <table class="datatable">
             <colgroup>
-              <col class="datatable__column--name"/>
-              <col class="datatable__column--org"/>
-              <col class="datatable__column--info"/>
-              <col class="datatable__column--expression"/>
-              <col class="datatable__column--sensitivity"/>
-              <col class="datatable__column--actions"/>
+              <col class="datatable__column--name" />
+              <col class="datatable__column--org" />
+              <col class="datatable__column--info" />
+              <col class="datatable__column--expression" />
+              <col class="datatable__column--sensitivity" />
+              <col class="datatable__column--actions" />
             </colgroup>
             <thead>
               <tr>
@@ -65,9 +65,7 @@
                       <button type="button"
                               class="button button--grey button--small"
                               title="{% trans 'Show expression' %}"
-                              data-toggle="#show-patterns-{{ forloop.counter }}">
-                        {% trans "Show expression" %}
-                      </button>
+                              data-toggle="#show-patterns-{{ forloop.counter }}">{% trans "Show expression" %}</button>
                     {% endif %}
                   </td>
                   <td class="datatable__column--sensitivity">
@@ -111,7 +109,9 @@
                       <td colspan="5">
                       {% endif %}
                       {% if rule.regexrule.patterns.all|length > 0 %}
-                        {% for pattern in rule.regexrule.patterns.all %}<code class="code-grey">{{ pattern.pattern_string }}</code>{% endfor %}
+                        {% for pattern in rule.regexrule.patterns.all %}
+                          <code class="code-grey">{{ pattern.pattern_string }}</code>
+                        {% endfor %}
                       {% endif %}
                     </td>
                   </td>
@@ -130,103 +130,104 @@
         <h1 class="page-title">{% trans "System rules" %}</h1>
       </div>
 
-      <div class="datatable-wrapper card lg"
-           role="region"
-           tabindex="0"
-           aria-label="{% trans 'System rules' %}">
-        <table class="datatable">
-          <colgroup>
-            <col class="datatable__column--name"/>
-            <col class="datatable__column--org"/>
-            <col class="datatable__column--info"/>
-            <col class="datatable__column--sensitivity"/>
-          </colgroup>
-          <thead>
-            <tr>
-              <th class="datatable__column--name">{% trans "Name" %}</th>
-              <th class="datatable__column--org">{% trans "Organization" %}</th>
-              <th class="datatable__column--info">{% trans "Description" %}</th>
-              <th class="datatable__column--sensitivity">{% trans "Sensitivity" %}</th>
-            </tr>
-          </thead>
+      {% block modal %}
+        <div class="modal modal--small"
+             id="delete-rule-modal"
+             tabindex="-1"
+             role="dialog"
+             aria-labelledby="delete-rule-modal-title"
+             aria-hidden="true"
+             hidden>
+          <h4 class="modal__heading" id="delete-rule-modal-title">{% trans "Delete rule" %}</h4>
+          <iframe src="about:blank" frameborder="0"></iframe>
+        </div>
 
-          <tbody>
-            {% for rule in systemrule_list %}
-              <tr tabindex="0">
-                <td class="datatable__column--name">{{ rule.name }}</td>
-                <td class="datatable__column--org">{{ rule.organization }}</td>
-                <td class="datatable__column--info">{{ rule.description }}</td>
-                <td class="datatable__column--sensitivity">
-                  <span class="flex">
-                    <span class="flex--width">{% include "components/sensitivity-icon.html" %}</span>
-                    <span>{{ rule.get_sensitivity_display }}</span>
-                  </span>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="modal modal--small"
+             id="delete-rule-modal"
+             tabindex="-1"
+             role="dialog"
+             aria-labelledby="delete-rule-modal-title"
+             aria-hidden="true"
+             hidden>
+          <h4 class="modal__heading" id="delete-rule-modal-title">{% trans "Delete rule" %}</h4>
+
+          <div class="modal__content">
+            <form action="" method="post">
+              {% csrf_token %}
+              {{ form.as_p }}
+
+              <p>
+                {% trans "Do you want to delete" %} <em>{{ object }}</em>?
+                {% trans "This action cannot be undone." %}
+              </p>
+              <p>
+                {% trans "Please note that this rule is currently included in" %}
+                <em>{{ object.scanners.all.count }}</em>
+                {% trans "scannerjob and" %} <em>{{ object.scans.all.count }}</em>
+                {% trans "reports." %}
+              </p>
+
+              <div class="form__group">
+                <button class="button button--cta button--small btn btn-default"
+                        type="submit">{% trans "Yes" %}</button>
+                <button class="button button--cta button--small btn btn-default"
+                        type="button"
+                        data-modal="modal:close">{% trans "No" %}</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </main>
+    {% endblock %}
+
+    {% block modal %}
+      <div class="modal modal--small"
+           id="delete-rule-modal"
+           tabindex="-1"
+           role="dialog"
+           aria-labelledby="delete-rule-modal-title"
+           aria-hidden="true"
+           hidden>
+        <h4 class="modal__heading" id="delete-rule-modal-title">{% trans "Delete rule" %}</h4>
+        <iframe src="about:blank" frameborder="0"></iframe>
       </div>
 
-    </div>
-  </main>
-{% endblock %}
+      <div class="modal modal--small"
+           id="delete-rule-modal"
+           tabindex="-1"
+           role="dialog"
+           aria-labelledby="delete-rule-modal-title"
+           aria-hidden="true"
+           hidden>
+        <h4 class="modal__heading" id="delete-rule-modal-title">{% trans "Delete rule" %}</h4>
 
-{% block modal %}
-  <div class="modal modal--small"
-       id="delete-rule-modal"
-       tabindex="-1"
-       role="dialog"
-       aria-labelledby="delete-rule-modal-title"
-       aria-hidden="true"
-       hidden>
-    <h4 class="modal__heading" id="delete-rule-modal-title">
-      {% trans "Delete rule" %}
-    </h4>
-    <iframe src="about:blank" frameborder="0"></iframe>
-  </div>
+        <div class="modal__content">
+          <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-  <div class="modal modal--small"
-       id="delete-rule-modal"
-       tabindex="-1"
-       role="dialog"
-       aria-labelledby="delete-rule-modal-title"
-       aria-hidden="true"
-       hidden>
-    <h4 class="modal__heading" id="delete-rule-modal-title">
-      {% trans "Delete rule" %}
-    </h4>
+            <p>
+              {% trans "Do you want to delete" %} <em>{{ object }}</em>?
+              {% trans "This action cannot be undone." %}
+            </p>
+            <p>
+              {% trans "Please note that this rule is currently included in" %}
+              <em>{{ object.scanners.all.count }}</em>
+              {% trans "scannerjob and" %} <em>{{ object.scans.all.count }}</em>
+              {% trans "reports." %}
+            </p>
 
-    <div class="modal__content">
-      <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-
-        <p>
-          {% trans "Do you want to delete" %} <em>{{ object }}</em>?
-          {% trans "This action cannot be undone." %}
-        </p>
-        <p>
-          {% trans "Please note that this rule is currently included in" %}
-          <em>{{ object.scanners.all.count }}</em>
-          {% trans "scannerjob and" %} <em>{{ object.scans.all.count }}</em>
-          {% trans "reports." %}
-        </p>
-
-        <div class="form__group">
-          <button class="button button--cta button--small btn btn-default"
-                  type="submit">
-            {% trans "Yes" %}
-          </button>
-          <button class="button button--cta button--small btn btn-default"
-                  type="button"
-                  data-modal="modal:close">
-            {% trans "No" %}
-          </button>
+            <div class="form__group">
+              <button class="button button--cta button--small btn btn-default"
+                      type="submit">{% trans "Yes" %}</button>
+              <button class="button button--cta button--small btn btn-default"
+                      type="button"
+                      data-modal="modal:close">{% trans "No" %}</button>
+            </div>
+          </form>
         </div>
-      </form>
-    </div>
-  </div>
-{% endblock %}
+      </div>
+    {% endblock %}
 
-{% block rules_active %}class="active"{% endblock %}
+    {% block rules_active %}class="active"{% endblock %}
