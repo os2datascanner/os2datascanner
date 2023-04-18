@@ -157,6 +157,14 @@ class Handle(TypePropertyEquality, JSONSerialisable):
         """Returns this Handle's referrer or None, if there is no referrer"""
         return self._referrer
 
+    def walk_up(self):
+        """Walks backwards up the hierarchy from this point, yielding first
+        this Handle, then the Handle backing the parent Source (if there is
+        one), and so on."""
+        yield self
+        if self.source.handle:
+            yield from self.source.handle.walk_up()
+
     @property
     def base_referrer(self) -> "Handle":
         """Returns this Handle's base referrer or self, if there is no referrer"""
@@ -172,6 +180,10 @@ class Handle(TypePropertyEquality, JSONSerialisable):
     def base_handle(self) -> "Handle":
         """Returns this Handle's top-most handle, which does not yield
         independent sources."""
+        warnings.warn(
+                "Handle.base_handle is deprecated;"
+                " rewrite this code to use Handle.walk_up instead",
+                DeprecationWarning, stacklevel=2)
         h = self
         while h:
             if (parent_handle := h.source.handle):
