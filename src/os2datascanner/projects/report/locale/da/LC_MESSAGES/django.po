@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 13:25+0200\n"
+"POT-Creation-Date: 2023-04-19 10:55+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -44,7 +44,7 @@ msgid "Number of matches"
 msgstr "Antal matches"
 
 #: organizations/models/account.py:73
-msgid "Number of detained matches"
+msgid "Number of withheld matches"
 msgstr "Antal tilbageholdte matches"
 
 #: organizations/models/aliases.py:38
@@ -569,19 +569,16 @@ msgstr ""
 "håndteret mindst 75%% af sine seneste resultater."
 
 #: reportapp/templates/components/leader-statistics-template.html:127
-msgid "The user has"
-msgstr "Brugeren har"
-
-#: reportapp/templates/components/leader-statistics-template.html:127
 msgid ""
-"matches, which have not been distributed to the user yet. This can be done "
-"by a superuser in the report module."
+"The user has %(employee.withheld_matches) matches, which have not been "
+"distributed to the user yet. This can be done by a superuser in the report "
+"module."
 msgstr ""
-"resultater, som ikke er blevet uddelt til brugeren endnu. Dette kan gøres "
-"af en superbruger i rapportmodulet."
+"Brugeren har %(employee.withheld_matches) resultater, som ikke er blevet "
+"uddelt til brugeren endnu. Dette kan gøres af en superbruger i rapportmodulet."
 
 #: reportapp/templates/components/leader-statistics-template.html:128
-msgid "detained"
+msgid "withheld"
 msgstr "tilbageholdt"
 
 #: reportapp/templates/components/leader-statistics-template.html:138

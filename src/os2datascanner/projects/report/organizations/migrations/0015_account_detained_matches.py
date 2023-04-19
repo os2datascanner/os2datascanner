@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='account',
-            name='detained_matches',
-            field=models.IntegerField(blank=True, default=0, null=True, verbose_name='Number of detained matches'),
+            name='withheld_matches',
+            field=models.IntegerField(blank=True, default=0, null=True, verbose_name='Number of withheld matches'),
         ),
     ]

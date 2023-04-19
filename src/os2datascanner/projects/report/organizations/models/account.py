@@ -66,11 +66,11 @@ class Account(Core_Account):
         null=True,
         blank=True,
         verbose_name=_("Number of matches"))
-    detained_matches = models.IntegerField(
+    withheld_matches = models.IntegerField(
         default=0,
         null=True,
         blank=True,
-        verbose_name=_("Number of detained matches"))
+        verbose_name=_("Number of withheld matches"))
     match_status = models.IntegerField(
         choices=StatusChoices.choices,
         default=1,
@@ -111,7 +111,7 @@ class Account(Core_Account):
         for obj in reports:
             print(obj.get("only_notify_superadmin"))
             if obj.get("only_notify_superadmin"):
-                self.detained_matches = obj.get("count")
+                self.withheld_matches = obj.get("count")
             else:
                 self.match_count = obj.get("count")
 
