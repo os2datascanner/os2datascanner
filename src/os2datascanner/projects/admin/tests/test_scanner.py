@@ -177,6 +177,30 @@ class ScannerTest(TestCase):
         self.assertIn(günther, stale_accounts)
         self.assertIn(fritz, stale_accounts)
 
+    def test_remove_stale_accounts(self):
+        """The 'remove_stale_accounts'-method should remove all accounts from
+        the 'covered_accounts'-field, which are no longer associated with the
+        scanner through an organizational unit."""
+        # Creating some test objects...
+        scanner = Scanner.objects.create(name="Scanner", organization=Organization.objects.first())
+        unit = OrganizationalUnit.objects.create(
+            name="Unit", organization=Organization.objects.first())
+        hansi = Account.objects.create(username="Hansi", organization=Organization.objects.first())
+        günther = Account.objects.create(
+            username="Günther",
+            organization=Organization.objects.first())
+        fritz = Account.objects.create(username="Fritz", organization=Organization.objects.first())
+        hansi.units.add(unit)
+        scanner.org_unit.add(unit)
+        scanner.covered_accounts.add(hansi, günther, fritz)
+
+        scanner.remove_stale_accounts()
+
+        self.assertEqual(scanner.get_stale_accounts().count(), 0)
+        self.assertNotIn(günther, scanner.covered_accounts.all())
+        self.assertNotIn(fritz, scanner.covered_accounts.all())
+        self.assertIn(hansi, scanner.covered_accounts.all())
+
     def get_webscannerupdate_view(self):
         request = self.factory.get('/')
         request.user = self.user
