@@ -351,14 +351,23 @@ class Scanner(models.Model):
         checkup_count = 0
         for reminder in self.checkups.iterator():
             rh = reminder.handle
-            if rh.base_handle.source not in uncensor_map:
+
+            # for/else is one of the more obscure Python loop constructs, but
+            # it is precisely what we want here: the else clause is executed
+            # only when the for loop *isn't* stopped by a break statement
+            for handle in rh.walk_up():
+                if handle.source in uncensor_map:
+                    # One of the Sources that contains this checkup's Handle is
+                    # still relevant for us. Abort the walk up the tree
+                    break
+            else:
                 # This checkup refers to a Source that we no longer care about
                 # (for example, an account that's been removed from the scan).
                 # Delete it
                 reminder.delete()
                 continue
-            else:
-                rh = rh.remap(uncensor_map)
+
+            rh = rh.remap(uncensor_map)
 
             # XXX: we could be adding LastModifiedRule twice
             ib = reminder.interested_before

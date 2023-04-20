@@ -1,24 +1,33 @@
-from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from django.utils.text import slugify
+from django.contrib.auth import get_user_model
+
+from os2datascanner.engine2.model.derived import mail
+from os2datascanner.engine2.model.msgraph import mail as graph_mail
 
 from os2datascanner.projects.admin.core.models.client import Client
+from os2datascanner.projects.admin.grants.models import GraphGrant
+from os2datascanner.projects.admin.adminapp.views.webscanner_views \
+    import WebScannerUpdate
+from os2datascanner.projects.admin.adminapp.models.rules.cprrule \
+    import CPRRule
+from os2datascanner.projects.admin.adminapp.models.rules.regexrule \
+    import RegexRule, RegexPattern
+from os2datascanner.projects.admin.adminapp.models.sensitivity_level \
+    import Sensitivity
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner \
+    import Scanner, ScheduledCheckup
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner \
+    import WebScanner
+from os2datascanner.projects.admin.adminapp.models.scannerjobs.msgraph \
+    import MSGraphMailScanner
 from os2datascanner.projects.admin.organizations.models.organization \
     import Organization
 from os2datascanner.projects.admin.organizations.models.organizational_unit \
     import OrganizationalUnit
 from os2datascanner.projects.admin.organizations.models.account \
     import Account
-from os2datascanner.projects.admin.adminapp.models.rules.regexrule \
-    import RegexRule, RegexPattern
-from os2datascanner.projects.admin.adminapp.models.sensitivity_level \
-    import Sensitivity
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner \
-    import Scanner
-from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner \
-    import WebScanner
-from os2datascanner.projects.admin.adminapp.views.webscanner_views \
-    import WebScannerUpdate
+
 
 User = get_user_model()
 
@@ -174,3 +183,38 @@ class ScannerTest(TestCase):
         view = WebScannerUpdate()
         view.setup(request)
         return view
+
+    def test_scheduled_checkup_cleanup_bug(self):
+        """ScheduledCheckups for Microsoft Graph mails are not erroneously
+        deleted during RabbitMQ message preparation."""
+        client = Client.objects.create(name="Test Industries smba")
+        org = Organization.objects.create(
+                client=client, name="Test Industries smba")
+        grant = GraphGrant.objects.create(organization=org)
+        scanner = MSGraphMailScanner.objects.create(
+                organization=org,
+                name="Test Department",
+                grant=grant)
+        cpr_rule = CPRRule.objects.create()
+        scanner.rules.add(cpr_rule)
+
+        top_source = list(scanner.generate_sources())[0]
+        account_handle = graph_mail.MSGraphMailAccountHandle(
+                top_source, "honcho@testind.example")
+        account_source = graph_mail.MSGraphMailAccountSource(account_handle)
+        mail_handle = graph_mail.MSGraphMailMessageHandle(
+                account_source, "idfieldscancontainanythingiftheyrefake",
+                "Re: Re: Re: You may already have WONE!!!",
+                "gopher://testind.example/cgi-bin/getMail.exe?idfi..fake")
+        mail_source = mail.MailSource(mail_handle)
+        mail_body_handle = mail.MailPartHandle(mail_source, "0/", "text/plain")
+
+        sc = ScheduledCheckup.objects.create(
+                handle_representation=mail_body_handle.to_json_object(),
+                scanner=scanner)
+
+        sst = scanner._construct_scan_spec_template()
+        scanner._add_checkups(sst, [])
+
+        self.assertEqual(ScheduledCheckup.objects.count(), 1)
+        self.assertEqual(ScheduledCheckup.objects.first(), sc)

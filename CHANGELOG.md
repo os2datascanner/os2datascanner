@@ -24,6 +24,8 @@
 - DocumentReport objects with missing `created_timestamp` values have had that
   value set equal to its `scan_time` value.
 
+- Revisiting Microsoft Graph emails with matches now works reliably again.
+
 ## Version 3.19.1, 12th April 2023
 
 This minor release fixes a potential crash triggered by scanning certain
