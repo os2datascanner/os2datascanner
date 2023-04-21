@@ -1,6 +1,6 @@
 # Changelog
 
-## Next release
+## Version 3.19.2, 21st April 2023
 
 "Hairstylist of the Year"
 
