@@ -23,6 +23,7 @@ from enum import Enum
 import os
 from typing import Iterator
 import structlog
+from statistics import mean
 
 from django.db import models
 from django.conf import settings
@@ -617,6 +618,30 @@ class AbstractScanStatus(models.Model):
         abstract = True
 
 
+def inv_linear_func(y, a, b):
+    return (y - b)/a if a != 0 else None
+
+
+def linear_fit(x_vals: list, y_vals: list):
+    """Returns the two function coefficients for the best linear fit to the
+    input data. Direct implementation to avoid importing numpy.
+    Note that this functionality can be replaced by the built-in
+    statistics.linear_regression function in python 3.10."""
+    n = len(x_vals)
+
+    mean_x = mean(x_vals)
+    mean_y = mean(y_vals)
+
+    ss_xy = sum([x_vals[i] * y_vals[i] for i in range(n)]
+                ) - n * mean_x * mean_y
+    ss_xx = sum([x**2 for x in x_vals]) - n * mean_x**2
+
+    a = ss_xy / ss_xx if ss_xx > 0 else 0
+    b = mean_y - a * mean_x
+
+    return a, b
+
+
 class ScanStatus(AbstractScanStatus):
     """A ScanStatus object collects the status messages received from the
     pipeline for a given scan."""
@@ -645,20 +670,37 @@ class ScanStatus(AbstractScanStatus):
 
     @property
     def estimated_completion_time(self) -> datetime.datetime:
-        """Returns the linearly interpolated completion time of this scan
-        based on the return value of ScannerStatus.fraction_scanned (or None,
-        if that function returns None).
+        """Returns an estimate of the completion time of the scan, based on a
+        linear fit to the last 20% of the existing ScanStatusSnapshot objects."""
 
-        Note that the return value of this function is only meaningful if
-        fraction_scanned is less than 1.0: at that point, it always returns the
-        current time."""
-        fraction_scanned = self.fraction_scanned
-        if (fraction_scanned is not None
-                and fraction_scanned >= settings.ESTIMATE_AFTER):
-            start = self.start_time
-            so_far = time_now() - start
-            total_duration = so_far / fraction_scanned
-            return start + total_duration
+        if (self.fraction_scanned is not None
+                and self.fraction_scanned >= settings.ESTIMATE_AFTER):
+            snapshots = list(ScanStatusSnapshot.objects.filter(
+                scan_status=self, total_objects__isnull=False).values(
+                "time_stamp", "scanned_objects", "total_objects").order_by("time_stamp"))
+
+            width = 0.2  # Percentage of all data points
+
+            # The window function needs to include at least two points.
+            window = max([int(len(snapshots)*width), 2])
+
+            time_data = [(obj.get("time_stamp") - self.start_time).seconds
+                         for obj in snapshots[-window:]]
+            frac_scanned = [obj.get("scanned_objects")/obj.get("total_objects")
+                            for obj in snapshots[-window:]]
+
+            a, b = linear_fit(time_data, frac_scanned)
+
+            try:
+                end_time_guess = timezone.timedelta(
+                    seconds=inv_linear_func(
+                        1.0, a, b)) + self.start_time
+            except Exception as e:
+                logger.exception(
+                    f'Exception while calculating end time for scan {self.scanner}: {e}')
+                return None
+
+            return end_time_guess
         else:
             return None
 
