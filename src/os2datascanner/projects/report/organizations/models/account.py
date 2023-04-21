@@ -109,7 +109,6 @@ class Account(Core_Account):
             "count")
 
         for obj in reports:
-            print(obj.get("only_notify_superadmin"))
             if obj.get("only_notify_superadmin"):
                 self.withheld_matches = obj.get("count")
             else:

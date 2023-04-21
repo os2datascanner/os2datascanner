@@ -124,7 +124,7 @@
                 {{ employee.match_count }}
                 {% if employee.withheld_matches > 0 %}
                   <div class="withheld-matches"
-                       title="{% blocktranslate %}The user has {{ employee.withheld_matches }} matches, which have not been distributed to the user yet. This can be done by a superuser in the report module.{% endblocktranslate %} %}">
+                       title="{% blocktranslate with withheld=employee.withheld_matches %}The user has {{ withheld }} matches, which have not been distributed to the user yet. This can be done by a superuser in the report module.{% endblocktranslate %}">
                     {{ employee.withheld_matches }} <span>{% trans "withheld" %}</span>
                   </div>
                 {% endif %}
