@@ -1,22 +1,14 @@
 import logging
-from itertools import chain
-
-from django.db import transaction
 from .keycloak_actions import _dummy_pc
 from .models import (Account, Alias, Position,
                      Organization, OrganizationalUnit)
 from .models.aliases import AliasType
-from .utils import get_broadcasted_models
-from .utils import (group_into, set_imported_fields,
-                    save_and_serializer, update_and_serialize,
-                    delete_and_listify)
-from ..organizations.broadcast_bulk_events import (BulkCreateEvent, BulkUpdateEvent,
-                                                   BulkDeleteEvent)
-from ..organizations.publish import publish_events
+from .utils import prepare_and_publish
 from os2datascanner.utils.system_utilities import time_now
 
 logger = logging.getLogger(__name__)
 
+# TODO: Place somewhere reusable, or find a smarter way to ID aliases imported_id..
 EMAIL_ALIAS_IMPORTED_ID_SUFFIX = "/email"
 SID_ALIAS_IMPORTED_ID_SUFFIX = "/sid"
 
@@ -53,7 +45,7 @@ def perform_msgraph_import(data: list,  # noqa: C901, CCR001
             ):
                 if getattr(org_unit, attr_name) != expected:
                     setattr(org_unit, attr_name, expected)
-                    to_update.append((unit, (attr_name,)))
+                    to_update.append((org_unit, (attr_name,)))
 
         except OrganizationalUnit.DoesNotExist:
             org_unit = OrganizationalUnit(
@@ -196,44 +188,4 @@ def perform_msgraph_import(data: list,  # noqa: C901, CCR001
         else:
             continue
 
-    with transaction.atomic():
-        # Deletes
-        delete_dict = {}
-        for model in get_broadcasted_models():
-            if not model == Position:  # Position doesn't have any meaningful imported id
-                # TODO: This isn't safe in a multi-tenant environment.
-                # Technically there's a miniscule risk that two objects of different model types
-                # share UUID, which could mean an object that should be deleted, won't be.
-                to_delete.append(model.objects.exclude(imported_id__in=all_uuids,
-                                                       imported=True))
-
-        # Look in Position
-        to_delete = list(chain(*to_delete))
-        for manager, instances in group_into(
-                to_delete, Alias, Position, Account, OrganizationalUnit):
-            model_name = manager.model.__name__
-            delete_dict[model_name] = delete_and_listify(manager, instances)
-
-        # Creates
-        # TODO: Place the order of which objects should be created/updated somewhere reusabled
-        set_imported_fields(to_add)  # Updates imported_time etc.
-        creation_dict = {}
-        for manager, instances in group_into(
-                to_add, OrganizationalUnit, Account, Position, Alias):
-            model_name = manager.model.__name__
-            creation_dict[model_name] = save_and_serializer(manager, instances)
-
-        # Updates
-        # TODO: We're not actually updating "Imported" fields/timestamps. Should we?
-        update_dict = {}
-        for manager, instances in group_into(
-                to_update, Alias, Position, Account, OrganizationalUnit,
-                key=lambda k: k[0]):
-            model_name = manager.model.__name__
-            update_dict[model_name] = update_and_serialize(manager, instances)
-
-        event = [BulkDeleteEvent(delete_dict), BulkCreateEvent(creation_dict),
-                 BulkUpdateEvent(update_dict), ]
-        logger.info("Database operations complete")
-
-        publish_events(event)
+    prepare_and_publish(all_uuids, to_add, to_delete, to_update)
