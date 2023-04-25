@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.contrib.auth.models import User
 
 from os2datascanner.engine2.model.file import (
         FilesystemSource, FilesystemHandle)
@@ -61,22 +60,16 @@ WIJO,Wilhelm,Johannsen,WIJO@vstkom.dk"""
 def create_botanists(org: Organization):
     for r in raw_botanists.splitlines():
         username, first_name, last_name, email = r.split(",")
-
-        user = User.objects.create(
-                username=username,
-                first_name=first_name,
-                last_name=last_name)
         account = Account.objects.create(
                 username=username,
                 first_name=first_name,
                 last_name=last_name,
-                organization=org,
-                user=user)
+                organization=org)
         alias = Alias.objects.create(
                 _alias_type="email",
                 _value=email,
                 account=account,
-                user=user)
+                user=account.user)
         create_alias_and_match_relations(alias)
 
 

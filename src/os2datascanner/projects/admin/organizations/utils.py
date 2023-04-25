@@ -5,6 +5,7 @@ from django.db import transaction
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.core_organizational_structure.utils import get_serializer
 from .models import (Account, Alias, Position, OrganizationalUnit)
+from ..import_services.models.imported_mixin import Imported
 from ..organizations.models.broadcasted_mixin import Broadcasted
 from ..organizations.models.organization import Organization
 from ..organizations.broadcast_bulk_events import (BulkCreateEvent, BulkUpdateEvent,
@@ -15,13 +16,16 @@ logger = logging.getLogger(__name__)
 
 
 def get_broadcasted_models():
-    """Returns a list of all models (except Organization) that inherit from Broadcasted."""
+    """Returns a list of all models (except Organization & DummyBroadCastedModel)
+    that inherit from Broadcasted and Imported."""
     models = []
     for model in apps.get_models():
         # We'll only want Organization included in create.
         # Deleting an Org from the report module potentially destroys too much.
         # (Document reports)
-        if issubclass(model, Broadcasted) and model is not Organization:
+        if (issubclass(model, Broadcasted)
+                and issubclass(model, Imported)
+                and model is not Organization):
             models.append(model)
     return models
 

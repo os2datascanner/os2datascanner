@@ -1,7 +1,6 @@
 import json
 
 from django.test import TestCase
-from django.contrib.auth import get_user_model
 
 from ..reportapp.management.commands.event_collector import handle_clean_message
 from ..reportapp.utils import create_alias_and_match_relations
@@ -203,12 +202,10 @@ class HandleCleanMessageTest(TestCase):
 
     def setUp(self):
         org = Organization.objects.create(name="TestOrg")
-        bøffen_user = get_user_model().objects.create(username="bøffen")
-        egon_user = get_user_model().objects.create(username="egon")
         self.bøffen = Account.objects.create(
-            username="Bøffen", organization=org, user=bøffen_user)
+            username="Bøffen", organization=org)
         self.egon = Account.objects.create(
-            username="egon", organization=org, user=egon_user)
+            username="egon", organization=org)
         for i in range(10):
             DocumentReport.objects.create(
                 name=f"Report-{i}",

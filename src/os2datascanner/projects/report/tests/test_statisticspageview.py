@@ -338,26 +338,25 @@ class StatisticsPageViewTest(TestCase):
 
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
-        self.kjeld = User.objects.create_user(
-            first_name='Kjeld', username='kjeld',
-            email='kjeld@jensen.com', password='top_secret')
-        self.egon = User.objects.create_user(
-            first_name='Egon', username='egon',
-            email='egon@olsen.com', password='top_secret')
-        self.yvonne = User.objects.create_user(
-            first_name='Yvonne', username='yvonne',
-            email='yvonne@jensen.com', password='top_secret')
+        self.kjeld_account = Account.objects.create(
+                username="kjeld",
+                organization=org)
+        self.egon_account = Account.objects.create(
+                username="egon",
+                organization=org)
         self.yvonne_account = Account.objects.create(
-                user=self.yvonne,
                 username="yvonne",
                 organization=org)
-        self.benny = User.objects.create_user(
-            first_name='Benny', username='benny',
-            email='benny@frandsen.com', password='top_secret')
         self.benny_account = Account.objects.create(
-                user=self.benny,
                 username="benny",
                 organization=org)
+
+        # AccountManager (above) takes care of creating corresponding User objects.
+        # Assign them for use later here.
+        self.kjeld = User.objects.get(username="kjeld")
+        self.egon = User.objects.get(username="egon")
+        self.yvonne = User.objects.get(username="yvonne")
+        self.benny = User.objects.get(username="benny")
 
     def test_own_userstatisticspage_without_privileges(self):
         """A User with an Account can see their personal statistics."""
