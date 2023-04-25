@@ -270,9 +270,9 @@ def make_fake_scan_type(organization, scan_name):
     return scan_specification
 
 
-def make_fake_match(scan_spec, handle, matches_per_scan: int = None):
+def make_fake_match(scan_spec, handle):
     """Make a fake match object with the cpr rule"""
-    num_matches = matches_per_scan or random.randint(1, 10)
+    num_matches = random.randint(1, 10)
     fake = Faker()
     match_here = messages.MatchesMessage(
         scan_spec=scan_spec, handle=handle, matched=num_matches, matches=[]
