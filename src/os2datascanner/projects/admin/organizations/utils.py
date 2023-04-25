@@ -79,12 +79,7 @@ def update_and_serialize(manager, instances):
 
 def delete_and_listify(manager, instances):
     deletion_pks = [str(i.pk) for i in instances]
-    qs = manager.filter(pk__in=deletion_pks)
-    # It seems like there is no good way to avoid signals to be sent for every deleted object.
-    # A slightly hacky workaround is to use raw_delete, but this CAN potentially break, as it is
-    # using the private API.
-    # Old ongoing ticket: https://code.djangoproject.com/ticket/9519
-    qs._raw_delete(qs.db)
+    manager.filter(pk__in=deletion_pks).delete()
     return deletion_pks
 
 

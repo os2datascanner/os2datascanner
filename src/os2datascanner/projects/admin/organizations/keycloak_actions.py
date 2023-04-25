@@ -6,6 +6,7 @@ from .utils import group_into, set_imported_fields, save_and_serializer, update_
     delete_and_listify
 from ..organizations.broadcast_bulk_events import (BulkCreateEvent, BulkUpdateEvent,
                                                    BulkDeleteEvent)
+from ..adminapp.signals_utils import suppress_signals
 from ..organizations.publish import publish_events
 from ..import_services.models.realm import Realm
 from ..import_services import keycloak_services
@@ -126,6 +127,7 @@ def _node_to_iid(path: Sequence[RDN], node: LDAPNode) -> str:
         return node.properties["attributes"]["LDAP_ENTRY_DN"][0]
 
 
+@suppress_signals.wrap
 def perform_import_raw(  # noqa: C901, CCR001 too complex
         org: Organization,
         remote,

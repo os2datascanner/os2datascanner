@@ -1,5 +1,4 @@
 import logging
-from django.db import transaction
 from .keycloak_actions import _dummy_pc
 
 from .models import (Account, Alias, Position,
@@ -7,6 +6,7 @@ from .models import (Account, Alias, Position,
 from .models.aliases import AliasType
 from os2datascanner.utils.system_utilities import time_now
 from .utils import prepare_and_publish
+from ..adminapp.signals_utils import suppress_signals
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 EMAIL_ALIAS_IMPORTED_ID_SUFFIX = "/email"
 
 
-@transaction.atomic
+@suppress_signals.wrap
 def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, C901 too high cognitive complexity
                          organization: Organization,
                          progress_callback=_dummy_pc):
