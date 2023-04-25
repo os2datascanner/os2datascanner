@@ -5,7 +5,8 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from recurrence import Recurrence
-
+from ....organizations.broadcast_bulk_events import BulkCreateEvent
+from ....organizations.publish import publish_events
 from os2datascanner.projects.admin.adminapp.models.authentication import (
     Authentication,
 )
@@ -19,7 +20,7 @@ from os2datascanner.projects.admin.adminapp.models.rules.cprrule import (
     CPRRule,
 )
 from os2datascanner.projects.admin.organizations.models.organization import (
-    Organization,
+    Organization, OrganizationSerializer
 )
 
 
@@ -63,8 +64,16 @@ class Command(BaseCommand):
         else:
             self.stdout.write("Superuser dev/dev already exists!")
 
-        self.stdout.write("Creating file scanner for samba share")
+        self.stdout.write("Synchronizing Organization to Report module")
         org = Organization.objects.first()
+        creation_dict = {"Organization": OrganizationSerializer(
+            Organization.objects.all(), many=True).data}
+        event = BulkCreateEvent(creation_dict)
+        publish_events([event])
+        self.stdout.write(self.style.SUCCESS(f"Sent Organization create message!:"
+                                             f" \n {creation_dict}"))
+
+        self.stdout.write("Creating file scanner for samba share")
         recurrence = Recurrence()
         share, created = FileScanner.objects.get_or_create(
             name=smb_name,
