@@ -31,6 +31,7 @@ from django.db.models.signals import post_delete
 from os2datascanner.core_organizational_structure.models import Account as Core_Account
 from os2datascanner.core_organizational_structure.models import \
     AccountSerializer as Core_AccountSerializer
+from os2datascanner.core_organizational_structure.models.organization import LeaderPageConfigChoices
 from os2datascanner.utils.system_utilities import time_now
 
 from ..seralizer import BaseBulkSerializer, SelfRelatingField
@@ -247,6 +248,17 @@ class Account(Core_Account):
     @property
     def is_manager(self):
         return self.get_managed_units().exists()
+
+    @property
+    def leadertab_access(self) -> bool:
+        if (self.organization.leadertab_access == LeaderPageConfigChoices.MANAGERS
+                and self.is_manager or self.user.is_superuser):
+            return True
+        elif (self.organization.leadertab_access == LeaderPageConfigChoices.SUPERUSERS
+                and self.user.is_superuser):
+            return True
+        else:
+            return False
 
     def save(self, *args, **kwargs):
         self._count_matches()

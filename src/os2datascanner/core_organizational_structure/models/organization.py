@@ -20,6 +20,12 @@ from django.utils.translation import gettext_lazy as _
 from ..serializer import BaseSerializer
 
 
+class LeaderPageConfigChoices(models.TextChoices):
+    MANAGERS = "M", "Managers"
+    SUPERUSERS = "S", "Superusers"
+    NONE = "N", "None"
+
+
 class Organization(models.Model):
     """Stores data for a specific organization.
 
@@ -65,6 +71,12 @@ class Organization(models.Model):
         blank=True,
         default="RRULE:FREQ=WEEKLY;BYDAY=FR",
         verbose_name=_('Email notification interval')
+    )
+
+    leadertab_access = models.CharField(
+        max_length=1,
+        choices=LeaderPageConfigChoices.choices,
+        default=LeaderPageConfigChoices.MANAGERS,
     )
 
     class Meta:
