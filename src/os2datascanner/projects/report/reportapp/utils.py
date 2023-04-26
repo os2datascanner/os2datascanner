@@ -270,7 +270,7 @@ def create_alias_and_match_relations(sub_alias):
     # -- the bit to the left of the @ --
     # is case sensitive, the real world disagrees..
     if sub_alias.alias_type == AliasType.EMAIL:
-        reports = DocumentReport.objects.filter(owner=sub_alias.value.lower())
+        reports = DocumentReport.objects.filter(owner__iexact=sub_alias.value)
     else:
         reports = DocumentReport.objects.filter(owner=sub_alias.value)
 
