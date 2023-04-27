@@ -16,7 +16,7 @@
 
     <div class="content">
 
-      {% include "os2datascanner/scanner_tabs.html" with page="scannerjob"  %}
+      {% include "os2datascanner/scanner_tabs.html" with page="scannerjob" %}
 
       <div class="aside">
         <h1 class="page-title">{% trans "Scannerjob" %}</h1>
@@ -40,12 +40,12 @@
              aria-label="{% trans 'Scannerjob' %}">
           <table class="datatable">
             <colgroup>
-              <col class="datatable__column--name"/>
-              {% if user.is_superuser %}<col class="datatable__column--org"/>{% endif %}
-              {% if view.type == 'file' %}<col class="datatable__column--drive"/>{% endif %}
-              <col class="datatable__column--validated"/>
-              <col class="datatable__column--automatic"/>
-              <col class="datatable__column--actions"/>
+              <col class="datatable__column--name">
+              {% if user.is_superuser %}<col class="datatable__column--org">{% endif %}
+              {% if view.type == 'file' %}<col class="datatable__column--drive">{% endif %}
+              <col class="datatable__column--validated">
+              <col class="datatable__column--automatic">
+              <col class="datatable__column--actions">
             </colgroup>
             <thead>
               <tr>
@@ -75,7 +75,7 @@
                          data-modal="modal:open"
                          data-src="/{{ view.type }}scanners/{{ scanner.pk }}/cleanup_stale_accounts/"
                          title="{% trans "The following users are no longer covered by this scannerjob, but have been scanned previously:" %} {{ scanner.get_stale_accounts|comma_separated_list }}">
-                        <span class="material-icons">error</span> {% trans "Stale accounts" %}
+                        <span class="icon">{% include "components/svg-icons/scan_warning.svg" %}</span> {% trans "Stale accounts" %}
                       </a>
                     {% endif %}
                   </td>
@@ -117,7 +117,7 @@
                   {% if scanner.schedule_time %}
                     <td class="scanner-runtime datatable__column--automatic">
                       {% trans "Next scan: " %}
-                      <br/>
+                      <br />
                       {{ scanner.schedule_date|naturalday:"l j. F Y"|capfirst }}, {{ scanner.schedule_time }}
                     </td>
                   {% else %}

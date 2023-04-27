@@ -66,6 +66,5 @@ class CleanupScannerViewTests(TestCase):
     def get_cleanup_view(self):
         request = self.factory.get('/')
         request.user = self.user
-        print("pk", self.scanner.pk, Scanner.objects.get(pk=self.scanner.pk))
         response = ScannerCleanupStaleAccounts.as_view()(request, pk=self.scanner.pk)
         return response

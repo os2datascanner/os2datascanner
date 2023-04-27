@@ -510,22 +510,27 @@ class Scanner(models.Model):
         else:
             return Account.objects.all()
 
+    def get_new_covered_accounts(self):
+        """Return all accounts, which will be scanned by this scannerjob on the
+        next scan, but are not present in the 'covered_accounts'-field."""
+        return self.get_covered_accounts().difference(self.covered_accounts.all())
+
     def sync_covered_accounts(self):
-        """Clears the set of accounts covered by this scanner job and
-        repopulates it based on the organisational units to be scanned."""
-        self.covered_accounts.clear()
-        self.covered_accounts.add(*self.get_covered_accounts())
+        """Adds the accounts, which have not previously been scanned by this
+        scanner, but will be scanned if run now, to the 'covered_accounts'-
+        field."""
+        return self.covered_accounts.add(*self.get_new_covered_accounts())
 
     def get_stale_accounts(self):
         """Return all accounts, which are included in the scanner's
         'covered_accounts' field, but are not associated with any org units
         linked to the scanner."""
-        return self.covered_accounts.difference(self.get_covered_accounts())
+        return self.covered_accounts.all().difference(self.get_covered_accounts())
 
     def remove_stale_accounts(self):
         """Removes all stale accounts from the object's 'covered_accounts'
         relation."""
-        self.covered_accounts.remove(*[acc.uuid for acc in self.get_stale_accounts()])
+        self.covered_accounts.remove(*self.get_stale_accounts())
 
     class Meta:
         abstract = False

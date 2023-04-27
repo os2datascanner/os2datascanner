@@ -33,9 +33,8 @@
                 hx-post="/{{ view.type }}scanners/{{ scanner.pk }}/cleanup_stale_accounts/"
                 hx-trigger="click"
                 hx-swap="outerHTML"
-                hx-target="this">
-          {% trans "Clean" %}
-        </button>
+                hx-target=".cleanup-container"
+                hx-select=".cleanup-container">{% trans "Clean" %}</button>
       </div>
     </div>
   </div>

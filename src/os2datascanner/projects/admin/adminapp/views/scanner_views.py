@@ -15,7 +15,8 @@ from json import dumps
 
 from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage
-from django.http import Http404, HttpResponse
+from django.http import Http404
+from django.shortcuts import render
 from pika.exceptions import AMQPError
 import structlog
 
@@ -562,9 +563,13 @@ class ScannerCleanupStaleAccounts(RestrictedDetailView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        is_htmx = request.headers.get('HX-Request') == "true"
-        if is_htmx:
-            if request.headers.get('HX-Trigger-Name') == "cleanup-button":
+        self.is_htmx = request.headers.get('HX-Request') == "true"
+        if not self.is_htmx:
+            return
+
+        if request.headers.get('HX-Trigger-Name') == "cleanup-button":
+
+            if not self.object.statuses.last() or self.object.statuses.last().finished:
                 stale_accounts = self.object.get_stale_accounts()
                 clean_dict = {self.object.pk: {
                     "uuids": [str(acc.uuid) for acc in stale_accounts],
@@ -573,4 +578,13 @@ class ScannerCleanupStaleAccounts(RestrictedDetailView):
                 CleanMessage.send(clean_dict, publisher="UI-manual")
                 self.object.remove_stale_accounts()
 
-        return HttpResponse(f"<button class='button button--cta' disabled>{_('Cleaned!')}</button>")
+            return render(
+                request,
+                "os2datascanner/scanner_cleanup_response.html",
+                context=self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["running"] = (self.object.statuses.last()
+                              and not self.object.statuses.last().finished)
+        return context
