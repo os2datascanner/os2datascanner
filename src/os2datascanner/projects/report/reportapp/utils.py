@@ -261,7 +261,7 @@ def get_max_sens_prop_value(doc_report_obj, key):
                 doc_report_obj.data["matches"]), key)
 
 
-def create_alias_and_match_relations(sub_alias):
+def create_alias_and_match_relations(sub_alias: Alias) -> int:
     """Method for creating match_relations for a given alias
     with all the matching DocumentReports"""
     tm = Alias.match_relation.through
@@ -270,12 +270,13 @@ def create_alias_and_match_relations(sub_alias):
     # -- the bit to the left of the @ --
     # is case sensitive, the real world disagrees..
     if sub_alias.alias_type == AliasType.EMAIL:
-        reports = DocumentReport.objects.filter(owner=sub_alias.value.lower())
+        reports = DocumentReport.objects.filter(owner__iexact=sub_alias.value)
     else:
         reports = DocumentReport.objects.filter(owner=sub_alias.value)
 
     tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk)
                             for r in reports], ignore_conflicts=True)
+    return reports.count()
 
 
 def get_msg(query):

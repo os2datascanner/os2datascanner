@@ -14,62 +14,28 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
-from django.core.management.base import BaseCommand
-from django.db.models import Q
 
+from django.core.management.base import BaseCommand
+
+from ...utils import create_alias_and_match_relations
 from os2datascanner.projects.report.organizations.models import Alias
-from os2datascanner.projects.report.organizations.models import AliasType
-from ...models.documentreport import DocumentReport
 
 
 def update_match_alias_relations():
-    matches = DocumentReport.objects.filter(
-        Q(raw_matches__matched=True))
-    print("Found {0} matches.".format(matches.count()))
     aliases = Alias.objects.all()
     print("Found {0} aliases.".format(aliases.count()))
+
+    approximate_count = 0
+
     for alias in aliases:
-        try:
-            tm = Alias.match_relation.through
+        ac = create_alias_and_match_relations(alias)
+        if ac != 0:
+            print(f"{alias}: approx. {ac}")
+        approximate_count += ac
 
-            if Alias.objects.filter(pk=alias.pk, _alias_type=AliasType.EMAIL):
-                sub_alias = Alias.objects.get(pk=alias.pk)
-                reports = matches.filter(
-                    Q(raw_metadata__metadata__contains={
-                        "email-account": sub_alias.value.lower()})
-                    |
-                    Q(raw_metadata__metadata__contains={
-                        "msgraph-owner-account": sub_alias.value.lower()})
-                )
-
-                tm.objects.bulk_create(
-                    [tm(documentreport_id=r.pk, alias_id=alias.pk) for r in
-                     reports], ignore_conflicts=True)
-
-                print(f"Approx. {len(reports)} EmailAlias' relation created.")
-
-            elif Alias.objects.filter(pk=alias.pk, _alias_type=AliasType.GENERIC):
-                sub_alias = Alias.objects.get(pk=alias.pk)
-                reports = matches.filter(raw_metadata__metadata__contains={
-                    str('web-domain'): str(sub_alias.value)})
-                tm.objects.bulk_create(
-                    [tm(documentreport_id=r.pk, alias_id=alias.pk) for r in
-                     reports], ignore_conflicts=True)
-
-                print(f"Approx. {len(reports)} WebDomainAlias' relation created.")
-
-            elif Alias.objects.filter(pk=alias.pk, _alias_type=AliasType.SID):
-                sub_alias = Alias.objects.get(pk=alias.pk)
-                reports = matches.filter(raw_metadata__metadata__contains={
-                    str('filesystem-owner-sid'): str(sub_alias.value)})
-                tm.objects.bulk_create(
-                    [tm(documentreport_id=r.pk, alias_id=alias.pk) for r in
-                     reports], ignore_conflicts=True)
-
-                print(f"Approx. {len(reports)} ADSIDAlias' relation created.")
-
-        except Exception:
-            print("no subAlias")
+    print(
+            f"Approximately {approximate_count}"
+            " DocumentReport/Alias relations created.")
 
 
 class Command(BaseCommand):
