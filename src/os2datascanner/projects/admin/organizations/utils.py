@@ -58,7 +58,7 @@ def set_imported_fields(model_objects: list):
         o.last_import_requested = now
 
 
-def save_and_serializer(manager, instances):
+def create_and_serialize(manager, instances):
     """Provided a model manager and a list of serialized instances,
      bulk creates and returns instances in a serialized fashion."""
     serializer = get_serializer(manager.model)
@@ -115,7 +115,7 @@ def prepare_and_publish(all_uuids, to_add, to_delete, to_update):
         for manager, instances in group_into(
                 to_add, OrganizationalUnit, Account, Position, Alias):
             model_name = manager.model.__name__
-            creation_dict[model_name] = save_and_serializer(manager, instances)
+            creation_dict[model_name] = create_and_serialize(manager, instances)
 
         # Updates
         # TODO: We're not actually updating "Imported" fields/timestamps. Should we?

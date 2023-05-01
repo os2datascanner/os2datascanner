@@ -149,7 +149,7 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, C901 too high cog
             logger.info(f'No email in: {employee_elm[0]}')
         return empl_email
 
-    def position_to_add(acc: Account, unit: OrganizationalUnit, role: str):
+    def positions_to_add(acc: Account, unit: OrganizationalUnit, role: str):
         """ Helper function that appends positions to to_add if not present locally """
         try:
             Position.objects.get(account=acc, unit=unit, role=role)
@@ -210,7 +210,7 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, C901 too high cog
                     if employee_email:
                         evaluate_aliases(account=acc, email=employee_email)
 
-                    position_to_add(acc=acc, unit=unit, role="employee")
+                    positions_to_add(acc=acc, unit=unit, role="employee")
 
             for managers in org_unit_raw.get("managers"):
                 manager = managers.get("employee", None)
@@ -227,7 +227,7 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, C901 too high cog
                     if manager_email:
                         evaluate_aliases(account=acc, email=manager_email)
 
-                    position_to_add(acc=acc, unit=unit, role="manager")
+                    positions_to_add(acc=acc, unit=unit, role="manager")
 
     # Sort out OU-parent relations
     for ou, parent_id in ou_parent_relations.items():

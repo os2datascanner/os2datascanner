@@ -2,7 +2,7 @@ from typing import Tuple, Sequence
 from django.db import transaction
 import logging
 from os2datascanner.utils.ldap import RDN, LDAPNode
-from .utils import group_into, set_imported_fields, save_and_serializer, update_and_serialize, \
+from .utils import group_into, set_imported_fields, create_and_serialize, update_and_serialize, \
     delete_and_listify
 from ..organizations.broadcast_bulk_events import (BulkCreateEvent, BulkUpdateEvent,
                                                    BulkDeleteEvent)
@@ -383,7 +383,7 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
                 to_add, OrganizationalUnit, Account, Position, Alias):
 
             model_name = manager.model.__name__
-            creation_dict[model_name] = save_and_serializer(manager, instances)
+            creation_dict[model_name] = create_and_serialize(manager, instances)
 
         event = [BulkDeleteEvent(delete_dict), BulkCreateEvent(creation_dict),
                  BulkUpdateEvent(update_dict), ]

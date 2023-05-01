@@ -35,18 +35,22 @@ class Command(BaseCommand):
             "-p", "--purge",
             default=False,
             action="store_true",
-            help="Purge all data that stem from an import-job in the report module"
+            help="Purge data that stem from an import-job in the report module"
+                 "OBS: Does not delete Organization objects!"
+        )
+        parser.add_argument(
+            "--no-org",
+            default=False,
+            action="store_true",
+            help="Exclude Organization in create message"
         )
 
-    def handle(self, *args, purge, **options):
+    def handle(self, *args, purge, no_org, **options):
         broadcasted_models = get_broadcasted_models()
 
         if purge:  # Delete
-            deletion_list = []
-            for broadcastable_model in broadcasted_models:
-                if not broadcastable_model == Organization:
-                    deletion_list.append(broadcastable_model.__name__)
-
+            deletion_list = [broadcastable_model.__name__ for broadcastable_model in
+                             broadcasted_models if not broadcastable_model == Organization]
             # Publishes a structure of:
             # {
             #     "time": "<>",
@@ -69,8 +73,9 @@ class Command(BaseCommand):
                 serialized_imported = serializer(broadcastable_model.objects.all(), many=True).data
                 creation_dict[broadcastable_model.__name__] = serialized_imported
 
-            creation_dict["Organization"] = OrganizationSerializer(
-                Organization.objects.all(), many=True).data
+            if not no_org:
+                creation_dict["Organization"] = OrganizationSerializer(
+                    Organization.objects.all(), many=True).data
 
             print(f"Publishing creation instructions:\n {creation_dict}")
             # Publishes a structure of:
