@@ -38,58 +38,22 @@ function makeDoughnutChart(text, data, colors, chartElement) {
 	return doughnutChart;
 }
 
-function drawDoughnuts(sensitivities, totalHandledMatches, totalMatches, handledPercentage) {
+function drawDoughnuts(totalHandledMatches, totalMatches, handledPercentage) {
 	// Doughnut chart
 	// //
 	// //
 	// //
 	// //
 	// //
-	// function for rounded corners
-	Chart.pluginService.register({
-		afterUpdate: function (chart) {
-			if (chart.config.options.elements.arc.roundedCornersFor !== undefined) {
-				var arc = chart.getDatasetMeta(0).data[chart.config.options.elements.arc.roundedCornersFor];
-				arc.round = {
-					x: (chart.chartArea.left + chart.chartArea.right) / 2,
-					y: (chart.chartArea.top + chart.chartArea.bottom) / 2,
-					radius: (chart.outerRadius + chart.innerRadius) / 2,
-					thickness: (chart.outerRadius - chart.innerRadius) / 2 - 1,
-					backgroundColor: arc._model.backgroundColor
-				};
-			}
-		},
-
-		afterDraw: function (chart) {
-			if (chart.config.options.elements.arc.roundedCornersFor !== undefined) {
-				var ctx = chart.chart.ctx;
-				var arc = chart.getDatasetMeta(0).data[chart.config.options.elements.arc.roundedCornersFor];
-				var startAngle = Math.PI / 2 - arc._view.startAngle;
-				var endAngle = Math.PI / 2 - arc._view.endAngle;
-
-				ctx.save();
-				ctx.translate(arc.round.x, arc.round.y);
-				ctx.fillStyle = arc.round.backgroundColor;
-				ctx.beginPath();
-				ctx.arc(arc.round.radius * Math.sin(startAngle), arc.round.radius * Math.cos(startAngle), arc.round.thickness, 0, 2 * Math.PI);
-				ctx.arc(arc.round.radius * Math.sin(endAngle), arc.round.radius * Math.cos(endAngle), arc.round.thickness, 0, 2 * Math.PI);
-				ctx.closePath();
-				ctx.fill();
-				ctx.restore();
-			}
-		},
-	});
-
-	// http://jsfiddle.net/kdvuxbtj/
-
 	// function for moving label to center of chart
-	Chart.pluginService.register({
+	Chart.register({
+		id: "chartID",
 		beforeDraw: function (chart) {
 			if (chart.config.type === 'doughnut') {
 				var ctx, centerConfig, fontStyle, txt, weight, color, maxFontSize, sidePadding, sidePaddingCalculated;
 				if (chart.config.options.elements.center) {
 					// Get ctx from string
-					ctx = chart.chart.ctx;
+					ctx = chart.ctx;
 
 					// Get options from the center object in options
 					centerConfig = chart.config.options.elements.center;
@@ -167,57 +131,45 @@ function drawDoughnuts(sensitivities, totalHandledMatches, totalMatches, handled
 				}
 				//Draw text in center
 				ctx.fillText(line, centerX, centerY);
-			}
+			} 
 		}
 	});
-	var handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
-	var criticalHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_critical").getContext('2d');
-	charts.push(makeDoughnutChart(
-		// logic to avoid 0 divided by 0 being NaN
-		avoidZero(handledMatches[0][1], sensitivities[0][1]),
-		// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
-		// This is so that the secondary color will fill the whole graph
-		// this could be prettier, if we 'pre-calculated' the %
-		[handledMatches[0][1], ((!sensitivities[0][1]) && (!handledMatches[0][1])) ? 100 : sensitivities[0][1] - handledMatches[0][1]],
-		['#e24e4e', '#f5f5f5'],
-		criticalHandledDoughnutChartCtx
-	));
 
-	var problemHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_problem").getContext('2d');
-	charts.push(makeDoughnutChart(
-		// logic to avoid 0 divided by 0 being NaN
-		avoidZero(handledMatches[1][1], sensitivities[1][1]),
-		// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
-		// This is so that the secondary color will fill the whole graph
-		// this could be prettier, if we 'pre-calculated' the %
-		[handledMatches[1][1], ((!sensitivities[1][1]) && (!handledMatches[1][1])) ? 100 : sensitivities[1][1] - handledMatches[1][1]],
-		['#ffab00', '#f5f5f5'],
-		problemHandledDoughnutChartCtx
-	));
+	// function for rounded corners
+	Chart.register({
+		id:"chartID",
+		afterUpdate: function (chart) {
+			if (chart.config.options.elements.arc.roundedCornersFor !== undefined) {
+				var arc = chart.getDatasetMeta(0).data[chart.config.options.elements.arc.roundedCornersFor];
+				arc.round = {
+					x: (chart.chartArea.left + chart.chartArea.right) / 2,
+					y: (chart.chartArea.top + chart.chartArea.bottom) / 2,
+					radius: (chart.outerRadius + chart.innerRadius) / 2,
+					thickness: (chart.outerRadius - chart.innerRadius) / 2 - 1,
+					backgroundColor: arc.backgroundColor
+				};
+			}
+		},
 
-	var warningHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_warning").getContext('2d');
-	charts.push(makeDoughnutChart(
-		// logic to avoid 0 divided by 0 being NaN
-		avoidZero(handledMatches[2][1], sensitivities[2][1]),
-		// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
-		// This is so that the secondary color will fill the whole graph
-		// this could be prettier, if we 'pre-calculated' the %
-		[handledMatches[2][1], ((!sensitivities[2][1]) && (!handledMatches[2][1])) ? 100 : sensitivities[2][1] - handledMatches[2][1]],
-		['#fed149', '#f5f5f5'],
-		warningHandledDoughnutChartCtx
-	));
+		afterDraw: function (chart) {
+			if (chart.config.options.elements.arc.roundedCornersFor !== undefined) {
+				var ctx = chart.ctx;
+				var arc = chart.getDatasetMeta(0).data[chart.config.options.elements.arc.roundedCornersFor];
+				var startAngle = Math.PI / 2 - arc.startAngle;
+				var endAngle = Math.PI / 2 - arc.endAngle;
 
-	var notificationHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_notification").getContext('2d');
-	charts.push(makeDoughnutChart(
-		// logic to avoid 0 divided by 0 being NaN
-		avoidZero(handledMatches[3][1], sensitivities[3][1]),
-		// Terrible logic - makes sure that if both numbers are 0, 2nd number in the array will be 100.
-		// This is so that the secondary color will fill the whole graph
-		// this could be prettier, if we 'pre-calculated' the %
-		[handledMatches[3][1], ((!sensitivities[3][1]) && (!handledMatches[3][1])) ? 100 : sensitivities[3][1] - handledMatches[3][1]],
-		['#21759c', '#f5f5f5'],
-		notificationHandledDoughnutChartCtx
-	));
+				ctx.save();
+				ctx.translate(arc.round.x, arc.round.y);
+				ctx.fillStyle = arc.round.backgroundColor;
+				ctx.beginPath();
+				ctx.arc(arc.round.radius * Math.sin(startAngle), arc.round.radius * Math.cos(startAngle), arc.round.thickness, 0, 2 * Math.PI);
+				ctx.arc(arc.round.radius * Math.sin(endAngle), arc.round.radius * Math.cos(endAngle), arc.round.thickness, 0, 2 * Math.PI);
+				ctx.closePath();
+				ctx.fill();
+				ctx.restore();
+			}
+		},
+	});
 
 	var totalHandledDoughnutChartCtx = document.querySelector("#doughnut_chart_total").getContext('2d');
 	charts.push(makeDoughnutChart(
