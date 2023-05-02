@@ -58,7 +58,7 @@ function drawCharts() {
   handledPercentageFixed = handledPercentage.toFixed(1);
 
   drawDoughnuts(totalHandledMatches, totalMatches, handledPercentage);
-  drawPies(sensitivities, sourceTypes, handledMatchesStatus[0]);
+  drawPies(sourceTypes, handledMatchesStatus[0]);
   drawLines(newMatchesByMonth, unhandledMatchesByMonth);
 }
 

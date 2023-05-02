@@ -17,9 +17,6 @@ function makePieChart(labels, data, colors, chartElement) {
 
     },
     options: {
-      tooltips: {
-        enabled: false,
-      },
       events: [],
       plugins: {
         // Fomat label to be shown as "x%"
@@ -44,6 +41,9 @@ function makePieChart(labels, data, colors, chartElement) {
           display: false,
   
         },
+        tooltip: {
+          enabled: true
+        },
       },
       responsive: true,
       aspectRatio: 1,
@@ -55,33 +55,13 @@ function makePieChart(labels, data, colors, chartElement) {
   return pieChart;
 }
 
-function drawPies(sensitivities, sourceTypes, handledMatchesStatus) {
+function drawPies(sourceTypes, handledMatchesStatus) {
   // Pie Chart start
   //
   //
   //
   //
   //
-  // Creating sensitivites pie chart
-
-  var sensitivitiesPieChartCtx = document.querySelector("#pie_chart_sensitivity").getContext('2d');
-
-  const sensitivitiesPieChart = makePieChart(
-    getDatasetLabels(sensitivities, 0, 1),
-    getDatasetData(sensitivities, 1),
-    colorData(sensitivities, 1, ['#e24e4e', '#ffab00', '#fed149', '#21759c']),
-    sensitivitiesPieChartCtx
-  );
-
-  charts.push(sensitivitiesPieChart);
-
-  $("#pie_legend_sensitivity").html(unorderedListLegend(sensitivitiesPieChart));
-
-  var sensitivityLegendItems = document.querySelector("#pie_legend_sensitivity").getElementsByTagName('li');
-  for (var i = 0; i < sensitivityLegendItems.length; i += 1) {
-    sensitivityLegendItems[i].addEventListener("click", pieChartLegendClickCallback, false);
-  }
-
   // Creating datasources pie chart
   var dataSourcesPieChartCtx = document.querySelector("#pie_chart_datasources").getContext('2d');
 

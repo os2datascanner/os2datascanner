@@ -77,11 +77,7 @@
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">{% trans "Distribution of results" %}</h1>
-          <p class="chart_description" data-chartid="distribution-sensitivities">
-            {% trans "Results distributed by sensitivities" %}
-          </p>
-          <p class="hidden chart_description"
-             data-chartid="distribution-data-sources">
+          <p class="chart_description" data-chartid="distribution-data-sources">
             {% trans "Results distributed by data sources" %}
           </p>
           <p class="hidden chart_description"
@@ -92,9 +88,6 @@
         <div class="statistic_header_nav">
           <div class="dropdown">
             <select>
-              <option value="distribution-sensitivities">
-                {% trans "Sensitivity" %}
-              </option>
               <option value="distribution-data-sources">
                 {% trans "Data sources" %}
               </option>
@@ -108,13 +101,6 @@
         </div>
       </div>
       <div class="pie_chart_container chart_container"
-           data-chartid="distribution-sensitivities">
-        <div>
-          <canvas id="pie_chart_sensitivity"></canvas>
-        </div>
-        <div id="pie_legend_sensitivity"></div>
-      </div>
-      <div class="hidden pie_chart_container chart_container"
            data-chartid="distribution-data-sources">
         <div>
           <canvas id="pie_chart_datasources"></canvas>
