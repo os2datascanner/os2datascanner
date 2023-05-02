@@ -1,3 +1,6 @@
+import hashlib
+
+
 def get_state(obj):
     """Gets the uniqueness identifiers for the given object, allowing
     comparisons in eg. queries. Be warned! If you add another field to the
@@ -34,3 +37,37 @@ class TypePropertyEquality:
         except Exception as ex:
             raise TypeError(
                     f"{type(self)!s}.__hash__()") from ex
+
+    def crunch(self, *, hash=None) -> str:
+        """Returns a (not very human readable) string summary of all of the
+        relevant properties of this TypePropertyEquality object. This value is
+        useful as a primary key for this object in database systems.
+
+        (Note that properties with a value of None will not appear in the
+        summary. Consider using this as a default value for relevant properties
+        to avoid having to recompute primary keys.)"""
+        fragments = []
+
+        for prop, raw_value in get_state(self).items():
+            if raw_value is None:
+                continue
+
+            fragment = f"{prop}="
+            if isinstance(raw_value, TypePropertyEquality):
+                fragment += f"({raw_value.crunch()})"
+            else:
+                fragment += str(raw_value)
+
+            fragments.append(fragment)
+
+        # The format of this string is something like:
+        # Handle(_source=(Source(_unc=//path/to/somewhere));_relpath=some_file.txt)
+        rv = type(self).__name__ + "(" + ";".join(fragments) + ")"
+
+        if hash is not None:
+            if hash in (True, "sha512"):
+                return hashlib.sha512(rv.encode("unicode_escape")).hexdigest()
+            else:
+                raise ValueError(f"Unrecognised crunch hash '{hash}'")
+        else:
+            return rv
