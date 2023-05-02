@@ -298,8 +298,12 @@ def handle_problem_message(scan_tag, result):
         DocumentReport.objects.filter(pk=previous_report.pk).update(resolution_status=(
                 DocumentReport.ResolutionChoices.REMOVED.value))
         return None
-    else:
 
+    elif problem.missing:
+        logger.debug("Problem message of no relevance. Throwing away.")
+        return None
+
+    else:
         # Collect and store the top-level type label from the failing object
         source = problem.handle.source if problem.handle else problem.source
         while source.handle:
