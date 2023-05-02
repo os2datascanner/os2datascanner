@@ -224,6 +224,8 @@ GS_BUCKET_NAME = ""
 # that they never will (early estimates are always less accurate)
 ESTIMATE_AFTER = 0.05
 
+SHELL_PLUS_IMPORTS = ["from os2datascanner._interactive import *"]
+
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module
 AMQP_HOST = "localhost"
