@@ -16,7 +16,6 @@ from os2datascanner.engine2.model.smb import SMBSource, SMBHandle
 
 from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.management.commands import result_collector
-from ..reportapp.utils import crunch_hash
 
 from .generate_test_data import record_match, record_problem
 
@@ -355,9 +354,9 @@ class PipelineCollectorTests(TestCase):
 
     def test_crunching_handles(self):
         """Check that handles are crunched correctly."""
-        smb_crunched_1 = crunch_hash(smb_handle_1)
-        smb_crunched_2 = crunch_hash(smb_handle_2)
-        smb_crunched_3 = crunch_hash(smb_handle_3)
+        smb_crunched_1 = smb_handle_1.crunch(hash=True)
+        smb_crunched_2 = smb_handle_2.crunch(hash=True)
+        smb_crunched_3 = smb_handle_3.crunch(hash=True)
 
         self.assertEqual(
             smb_crunched_1,
