@@ -11,20 +11,25 @@ from os2datascanner import __version__
 from .views.api import JSONAPIView
 from .views.saml import metadata
 from .views.views import (
-    MainPageView, LeaderStatisticsPageView,
-    DPOStatisticsPageView, UserStatisticsPageView, ApprovalPageView,
-    StatsPageView, SettingsPageView, AboutPageView, LogoutPageView, ArchiveView)
+    ApprovalPageView, StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
+from .views.statistics_views import (
+    LeaderStatisticsPageView, DPOStatisticsPageView, UserStatisticsPageView)
+from .views.report_views import (
+    UserReportView, ArchiveView, RemediatorView, UndistributedView)
 from .views.user_views import UserView
 from .views.manual_views import ManualMainView
 from .views.support_views import SupportButtonView
 
 urlpatterns = [
-    re_path(r'^$',      MainPageView.as_view(),     name="index"),
-    re_path(r'^archive', ArchiveView.as_view(), name="archive"),
-    re_path('api$',     JSONAPIView.as_view(),     name="json-api"),
-    re_path(r'^user/', UserView.as_view(), name="user"),
-    re_path(r'^statistics/leader/$', LeaderStatisticsPageView.as_view(), name='statistics-leader'),
-    re_path(r'^statistics/dpo/$', DPOStatisticsPageView.as_view(), name='statistics-dpo'),
+    url(r'^$',      UserReportView.as_view(),     name="index"),
+    url(r'^reports$', UserReportView.as_view(), name="reports"),
+    url(r'^remediator$', RemediatorView.as_view(), name="remediator"),
+    url(r'^undistributed$', UndistributedView.as_view(), name="undistributed"),
+    url(r'^archive', ArchiveView.as_view(), name="archive"),
+    url('api$',     JSONAPIView.as_view(),     name="json-api"),
+    url(r'^user/', UserView.as_view(), name="user"),
+    url(r'^statistics/leader/$', LeaderStatisticsPageView.as_view(), name='statistics-leader'),
+    url(r'^statistics/dpo/$', DPOStatisticsPageView.as_view(), name='statistics-dpo'),
     path('statistics/user/', UserStatisticsPageView.as_view(),
          name='statistics-user-me'),
     path('statistics/user/<uuid:pk>', UserStatisticsPageView.as_view(),
