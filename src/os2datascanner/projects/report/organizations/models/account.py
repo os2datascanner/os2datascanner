@@ -16,21 +16,24 @@ import logging
 
 from PIL import Image
 from datetime import timedelta
-
+from rest_framework import serializers
+from rest_framework.fields import UUIDField
 from django.conf import settings
-from django.db import models
 from django.db.models import Count
+from django.db import models
 from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 
 from os2datascanner.core_organizational_structure.models import Account as Core_Account
+from os2datascanner.core_organizational_structure.models import \
+    AccountSerializer as Core_AccountSerializer
 from os2datascanner.utils.system_utilities import time_now
-from rest_framework import serializers
 
-from ..serializer import BaseSerializer
+from ..seralizer import BaseBulkSerializer, SelfRelatingField
 
 logger = logging.getLogger(__name__)
 
@@ -41,13 +44,67 @@ class StatusChoices(models.IntegerChoices):
     BAD = 2, _("Not accepted")
 
 
+class AccountManager(models.Manager):
+    """ Account and User models come as a pair. AccountManager takes on the responsibility
+    of creating User objects when Accounts are created.
+    Unique to the report module.
+    """
+
+    # TODO: Out-phase User in favor of Account
+    # This is because User and Account co-exist, but a User doesn't have any unique identifier
+    # that makes sense from an Account..
+    # This means that we risk creating multiple User objects, if users username attribute changes.
+    # It's the best we can do for now, until we out-phase User objects entirely
+    def create(self, **kwargs):
+        user_obj, created = User.objects.update_or_create(
+            username=kwargs.get("username"),
+            defaults={
+                "first_name": kwargs.get("first_name") or '',
+                "last_name": kwargs.get("last_name") or ''
+            })
+        account = Account(**kwargs, user=user_obj)
+        account.save()
+
+        return account
+
+    # We must also delete the User object.
+    def delete(self, *args, **kwargs):
+        self.user.delete()
+        return super().delete(*args, **kwargs)
+
+    def bulk_create(self, objs, **kwargs):
+        for account in objs:
+            user_obj, created = User.objects.update_or_create(
+                username=account.username,
+                defaults={
+                    "first_name": account.first_name or '',
+                    "last_name": account.last_name or ''
+                })
+            account.user = user_obj
+        return super().bulk_create(objs, **kwargs)
+
+    def bulk_update(self, objs, fields, **kwargs):
+        if any(field in ("username", "first_name", "last_name",) for field in fields):
+            for account in objs:
+                user: User = account.user
+                user.username = account.username
+                user.first_name = account.first_name or ''
+                user.last_name = account.last_name or ''
+                user.save()
+        return super().bulk_update(objs, fields, **kwargs)
+
+
 class Account(Core_Account):
     """ Core logic lives in the core_organizational_structure app.
-    Additional logic can be implemented here, but currently, none needed, hence we pass. """
+    Additional logic can be implemented here """
+
+    serializer_class = None
+    # Sets objects manager for Account
+    objects = AccountManager()
 
     user = models.OneToOneField(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='account',
         verbose_name=_('User'),
         null=True, blank=True)
@@ -207,10 +264,41 @@ def resize_image(sender, **kwargs):
         logger.debug("image resize failed", exc_info=True)
 
 
-class AccountSerializer(BaseSerializer):
+class AccountBulkSerializer(BaseBulkSerializer):
+    """ Bulk create & update logic lives in BaseBulkSerializer """
     class Meta:
         model = Account
-        fields = '__all__'
 
-    # This field has to be redefined here, cause it is read-only on model.
-    uuid = serializers.UUIDField()
+
+class AccountSerializer(Core_AccountSerializer):
+
+    pk = serializers.UUIDField(read_only=False)
+    from ..models.organization import Organization
+    organization = serializers.PrimaryKeyRelatedField(
+        queryset=Organization.objects.all(),
+        required=True,
+        allow_null=False,
+        pk_field=UUIDField(format='hex_verbose')
+    )
+    # Note that this is a PrimaryKeyRelatedField in the admin module.
+    # Since manager is a self-referencing foreign-key however, we can't use that here, as we
+    # cannot guarantee the manager Account exists in the database when doing bulk creates.
+    manager = SelfRelatingField(
+        queryset=Account.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+    )
+
+    class Meta(Core_AccountSerializer.Meta):
+        model = Account
+        list_serializer_class = AccountBulkSerializer
+
+
+Account.serializer_class = AccountSerializer
+
+
+@receiver(post_delete, sender=Account)
+def post_delete_user(sender, instance, *args, **kwargs):
+    if instance.user:
+        instance.user.delete()

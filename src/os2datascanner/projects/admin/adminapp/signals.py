@@ -1,6 +1,7 @@
 import logging
 import warnings
 
+from .signals_utils import suppress_signals
 from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
@@ -98,7 +99,7 @@ def event_broadcast_enabled(obj):
 @receiver(post_save)
 def post_save_callback(**kwargs):
     """Signal receiver for post_save - publishes events when objects are saved"""
-    if not event_broadcast_enabled(kwargs.get('instance')):
+    if suppress_signals or not event_broadcast_enabled(kwargs.get('instance')):
         return
 
     event = ModelChangeEvent('object_create' if kwargs.get("created") else 'object_update',
@@ -110,7 +111,7 @@ def post_save_callback(**kwargs):
 @receiver(post_delete)
 def post_delete_callback(**kwargs):
     """Signal receiver for post_delete - publishes events when objects are deleted"""
-    if not event_broadcast_enabled(kwargs.get('instance')):
+    if suppress_signals or not event_broadcast_enabled(kwargs.get('instance')):
         return
 
     event = ModelChangeEvent('object_delete', kwargs.get('sender'), kwargs.get('instance'))

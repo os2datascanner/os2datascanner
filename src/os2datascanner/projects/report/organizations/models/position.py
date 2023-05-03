@@ -12,21 +12,46 @@
 # sector open source network <https://os2.eu/>.
 #
 from rest_framework import serializers
+from rest_framework.fields import UUIDField
 from os2datascanner.core_organizational_structure.models import Position as Core_Position
-
-from ..serializer import BaseSerializer
+from os2datascanner.core_organizational_structure.models import \
+    PositionSerializer as Core_PositionSerializer
+from ..seralizer import BaseBulkSerializer
 
 
 class Position(Core_Position):
     """ Core logic lives in the core_organizational_structure app.
       Additional logic can be implemented here, but currently, none needed, hence we pass. """
-    pass
+    serializer_class = None
 
 
-class PositionSerializer(BaseSerializer):
+class PositionBulkSerializer(BaseBulkSerializer):
+    """ Bulk create & update logic lives in BaseBulkSerializer """
     class Meta:
         model = Position
-        fields = '__all__'
 
-    # This field has to be redefined here, because it is read-only on model.
-    pk = serializers.IntegerField()
+
+class PositionSerializer(Core_PositionSerializer):
+    from ..models.account import Account
+    from ..models.organizational_unit import OrganizationalUnit
+    pk = serializers.IntegerField(read_only=False)
+    account = serializers.PrimaryKeyRelatedField(
+        queryset=Account.objects.all(),
+        required=True,
+        allow_null=False,
+        # This will properly serialize uuid.UUID to str:
+        pk_field=UUIDField(format='hex_verbose'))
+
+    unit = serializers.PrimaryKeyRelatedField(
+        queryset=OrganizationalUnit.objects.all(),
+        required=True,
+        allow_null=False,
+        # This will properly serialize uuid.UUID to str:
+        pk_field=UUIDField(format='hex_verbose'))
+
+    class Meta(Core_PositionSerializer.Meta):
+        model = Position
+        list_serializer_class = PositionBulkSerializer
+
+
+Position.serializer_class = PositionSerializer

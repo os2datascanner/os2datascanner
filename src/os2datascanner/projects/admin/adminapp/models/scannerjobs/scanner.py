@@ -47,7 +47,6 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
-from os2datascanner.projects.admin.organizations.models import Account
 from mptt.models import TreeManyToManyField
 
 from ..rules.rule import Rule
@@ -146,7 +145,7 @@ class Scanner(models.Model):
                                              verbose_name=_('exclusion rules'),
                                              related_name='scanners_ex_rules')
 
-    covered_accounts = models.ManyToManyField(Account,
+    covered_accounts = models.ManyToManyField('organizations.Account',
                                               blank=True,
                                               verbose_name=_('covered accounts'),
                                               related_name='covered_by_scanner')
@@ -457,6 +456,8 @@ class Scanner(models.Model):
     def get_covered_accounts(self):
         """Return all accounts which would be scanned by this scannerjob, if
         run at this moment."""
+        # Avoid circular import
+        from os2datascanner.projects.admin.organizations.models import Account
         if self.org_unit.exists():
             return Account.objects.filter(units__in=self.org_unit.all())
         else:

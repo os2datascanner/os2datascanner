@@ -11,24 +11,19 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-
-from os2datascanner.utils.model_helpers import ModelFactory
+from rest_framework import serializers
+from rest_framework.fields import UUIDField
 from os2datascanner.core_organizational_structure.models import Account as Core_Account
+from os2datascanner.core_organizational_structure.models import \
+    AccountSerializer as Core_AccountSerializer
 from os2datascanner.projects.admin.import_services.models import Imported
 
-from .broadcasted_mixin import Broadcasted, post_save_broadcast
+from .broadcasted_mixin import Broadcasted
 
 
 class Account(Core_Account, Imported, Broadcasted):
     """ Core logic lives in the core_organizational_structure app.
         Additional specific logic can be implemented here. """
-
-    factory = None
-
-    def natural_key(self):
-        return (self.pk, self.username,
-                self.organization.uuid, self.organization.name,
-                )
 
     def get_stale_scanners(self):
         """Returns all scanners, which do not cover the account, but still
@@ -42,11 +37,23 @@ class Account(Core_Account, Imported, Broadcasted):
         return stale_scanners
 
 
-Account.factory = ModelFactory(Account)
+class AccountSerializer(Core_AccountSerializer):
+    from ..models.organization import Organization
+    organization = serializers.PrimaryKeyRelatedField(
+        queryset=Organization.objects.all(),
+        required=True,
+        allow_null=False,
+        pk_field=UUIDField(format='hex_verbose')
+    )
+    manager = serializers.PrimaryKeyRelatedField(
+        queryset=Account.objects.all(),
+        required=False,
+        allow_null=True,
+        pk_field=UUIDField(format='hex_verbose')
+    )
+
+    class Meta(Core_AccountSerializer.Meta):
+        model = Account
 
 
-@Account.factory.on_create
-@Account.factory.on_update
-def on_account_created_updated(objects, fields=None):
-    for acc in objects:
-        post_save_broadcast(None, acc)
+Account.serializer_class = AccountSerializer

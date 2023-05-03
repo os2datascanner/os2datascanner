@@ -15,80 +15,117 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 
-import json
 import logging
 import structlog
-
-from django.db import IntegrityError
-from django.contrib.auth.models import User
-from django.core.exceptions import FieldError
+from django.db import IntegrityError, transaction
 from django.core.management.base import BaseCommand
-from django.db.models.deletion import ProtectedError
-
+from django.db.transaction import TransactionManagementError
+from rest_framework.serializers import ValidationError
 from os2datascanner.utils import debug
 from os2datascanner.utils.log_levels import log_levels
+from os2datascanner.core_organizational_structure.utils import get_serializer
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
-
-from os2datascanner.projects.report.organizations.models import \
-    Account, AccountSerializer,\
-    Alias, AliasSerializer, \
-    Organization, OrganizationSerializer,\
-    OrganizationalUnit, OrganizationalUnitSerializer, \
-    Position, PositionSerializer
+from os2datascanner.projects.report.organizations.models import (Account, Alias, Organization,
+                                                                 OrganizationalUnit, Position)
 from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
-
 from prometheus_client import Summary, start_http_server
-
 from ...utils import create_alias_and_match_relations
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_event_collector_report",
                   "Messages through event collector report")
 
+# OBS: Must be updated if new org-structure models are added,
+# or if the order of which creation/deletion is possible changes.
+ORDER_OF_CREATION = (Organization, OrganizationalUnit, Account, Alias, Position)
+ORDER_OF_DELETION = list(reversed(ORDER_OF_CREATION))
 
-def event_message_received_raw(body):
+
+def event_message_received_raw(body):  # noqa: CCR001 C901
     event_type = body.get("type")
-    model_class = body.get("model_class")
-    instance = body.get("instance")
+    classes = body.get("classes")
+    try:
+        with transaction.atomic():
+            if event_type == "bulk_event_create":
+                logger.info("Initiating broadcast create transaction...")
+                for model in ORDER_OF_CREATION:
+                    serializer = get_serializer(model)
+                    if raw_model_data := classes.get(model.__name__):
+                        serialized_objects = serializer(data=raw_model_data, many=True)
+                        logger.info(f"Serializing and attempting to create objects of type:"
+                                    f" {model.__name__}")
 
-    if event_type == "clean_document_reports":
-        handle_clean_message(body)
-        return
+                        # Exception raised from is_valid will be a rest_framework ValidationError,
+                        # we catch that below and return to abort transaction if one is raised.
+                        serialized_objects.is_valid(raise_exception=True)
+                        serialized_objects.save()
 
-    org_struct_model_and_serializer = {'Account': (Account, AccountSerializer),
-                                       'Alias': (Alias, AliasSerializer),
-                                       'Organization': (Organization, OrganizationSerializer),
-                                       'OrganizationalUnit': (OrganizationalUnit,
-                                                              OrganizationalUnitSerializer),
-                                       'Position': (Position, PositionSerializer),
-                                       }
+                        if model == Alias:
+                            for alias_obj in serialized_objects.validated_data:
+                                create_alias_and_match_relations(
+                                    Alias.objects.get(pk=alias_obj.get("pk")))
 
-    if not event_type or not model_class or not instance:
-        return
+                        logger.info("Successfully ran broadcast create!")
 
-    # Version 3.9.0 switched to using django.core.serializers for
-    # ModelChangeEvent messages and so has a completely different wire format.
-    # Rather than attempting to handle both, we detect messages from older
-    # versions and drop them on the floor
-    if not (isinstance(instance, str)
-            and instance.startswith("[") and instance.endswith("]")):
-        logger.warning("Ignoring old-style ModelChangeEvent")
-        return
-    else:
-        instance = json.loads(instance)[0]
+                    else:
+                        logger.info(f"No objects to create of type {model.__name__}")
 
-    if model_class in org_struct_model_and_serializer:
-        handle_event(event_type=event_type,
-                     instance=instance,
-                     cls=org_struct_model_and_serializer.get(model_class)[0],
-                     cls_serializer=org_struct_model_and_serializer.get(model_class)[1]
-                     )
-    else:
-        logger.debug("event_message_received_raw:"
-                     f" unknown model_class {model_class} in event")
-        return
+            elif event_type == "bulk_event_update":
+                logger.info("Initiating broadcast update transaction...")
+                for model in ORDER_OF_CREATION:
+                    pk_list = []
+                    serializer = get_serializer(model)
+                    if raw_model_data := classes.get(model.__name__):
+                        logger.info(f"Received instructions to bulk update objects"
+                                    f" of type {model.__name__}")
 
-    yield from []
+                        for instance in raw_model_data:
+                            pk_list.append(instance.get("pk"))
+
+                        serialized_objects = serializer(model.objects.filter(pk__in=pk_list),
+                                                        data=raw_model_data, many=True)
+
+                        serialized_objects.is_valid(raise_exception=True)
+                        serialized_objects.save()
+
+                        if model == Alias:
+                            for alias_obj in serialized_objects.validated_data:
+                                create_alias_and_match_relations(
+                                    Alias.objects.get(pk=alias_obj.get("pk")))
+
+                        logger.info("Successfully ran broadcast update!")
+                    else:
+                        logger.info(f"Nothing to update for {model.__name__}")
+
+            elif event_type == "bulk_event_delete":
+                for model in ORDER_OF_DELETION:
+                    if model.__name__ in classes:
+                        model.objects.filter(pk__in=classes.get(model.__name__)).delete()
+                        logger.info(f"Deleted {len(classes.get(model.__name__))}"
+                                    f" instances of {model.__name__}")
+
+            elif event_type == "bulk_event_purge":
+                for model in ORDER_OF_DELETION:
+                    if model.__name__ in classes:
+                        deleted = model.objects.all().delete()
+                        logger.info(f"Deleting all {model.__name__} objects {deleted}")
+
+            elif event_type == "clean_document_reports":
+                handle_clean_message(body)
+
+            yield from []
+
+    except ValidationError:
+        logger.warning(f"Error in serialized object!: {model.__name__}: \n "
+                       f"{serialized_objects.errors}")
+
+    except TransactionManagementError:
+        logger.exception("Transaction Management Error! \n"
+                         "You'll likely need to purge before retrying!")
+    except IntegrityError:
+        logger.exception("Integrity Error! \n "
+                         "Some objects probably already exist! \n"
+                         "You'll likely need to purge before retrying!")
 
 
 def handle_clean_message(body):
@@ -111,174 +148,6 @@ def handle_clean_message(body):
         logger.info(
             f"Deleted {deleted_reports} DocumentReport objects associated with "
             f"scanner_job_pk: {scanner_pk} and accounts: {', '.join(account_usernames)}.")
-
-
-def handle_event(event_type, instance, cls, cls_serializer):  # noqa: CCR001, C901, E501 too high cognitive complexity
-    cn = cls.__name__
-
-    # We go through objects received and handle special quirks and relations first.
-    # Then, we use rest_framework.serializers to perform create and update actions.
-    # Each model has implemented its own serializer, which we receive as a parameter.
-
-    # Copy over just the fields of model received
-    instance_fields = instance['fields']
-    # The primary key is stored in its own key originally, save it as a variable, sometimes needed.
-    # This is because there is a difference between PK's for certain models, some using a
-    # UUID as PK in the admin module and an Integer PK in the report module.
-    instance_pk = instance['pk']
-
-    if cn == "Account":
-        # Organization has an integer PK in the report module and a UUID PK in the admin module.
-        # Being explicit here, to check on the UUID field.
-        org, created = Organization.objects.get_or_create(uuid=instance_fields["organization"][0])
-        instance_fields["organization"] = org.pk
-
-        # TODO: Out-phase User in favor of Account
-        # This is because User and Account co-exist, but a User doesn't have any
-        # unique identifier that makes sense from an Account.. This means that we risk
-        # creating multiple User objects, if attributes change.
-        # But its the best we can do for now, until we out-phase User objects entirely
-        user_obj, created = User.objects.update_or_create(
-            username=instance_fields["username"],
-            defaults={
-                "username": instance_fields["username"],
-                "first_name": instance_fields["first_name"] or '',
-                "last_name": instance_fields["last_name"] or ''
-            })
-
-        instance_fields["user"] = user_obj.pk
-
-        if instance_fields["manager"]:
-            instance_fields["manager"] = instance_fields["manager"][0]
-
-    elif cn == "Alias":
-        org, created = Organization.objects.get_or_create(uuid=instance_fields["account"][2],
-                                                          defaults={
-                                                              "name": instance_fields["account"][3]
-                                                          })
-        # TODO: Preferably objects should have the same datatype of primary key
-        account, created = Account.objects.get_or_create(uuid=instance_fields["account"][0],
-                                                         defaults={
-                                                             "username":
-                                                                 instance_fields["account"][1],
-                                                             "organization": org
-                                                         })
-        instance_fields["account"] = account.pk
-
-        user_obj, created = User.objects.update_or_create(username=account.username,
-                                                          defaults={
-                                                              "is_staff": True
-                                                          })
-        instance_fields["user"] = user_obj.pk
-
-    elif cn == "OrganizationalUnit":
-        # TODO: Preferably objects should have the same datatype of primary key
-        org, created = Organization.objects.get_or_create(uuid=instance_fields["organization"][0],
-                                                          defaults={
-                                                              "name":
-                                                                  instance_fields["organization"][1]
-                                                          })
-        instance_fields["organization"] = org.pk
-
-    elif cn == "Position":
-        instance_fields["pk"] = instance_pk
-
-        org, created = Organization.objects.get_or_create(uuid=instance_fields["account"][2],
-                                                          defaults={
-                                                              "name": instance_fields["account"][3]
-                                                          })
-        acc, created = Account.objects.get_or_create(uuid=instance_fields["account"][0],
-                                                     defaults={
-                                                         "organization": org
-                                                     })
-
-        instance_fields["account"] = acc.pk
-
-    try:
-        if hasattr(cls, "uuid"):
-            instance_fields["uuid"] = instance_pk
-            existing = cls.objects.get(uuid=instance_pk)
-
-        else:
-            existing = cls.objects.get(pk=instance_pk)
-
-        # If we get this far, the object existed
-        # go ahead and update or delete
-        if event_type == "object_delete":
-            # TODO: This check on "User" when deleting an account should become out-phased when
-            # we switch to Account as being the "User".
-            if cls == Account:
-                User.objects.filter(username=existing.username).delete()
-
-            logger.debug(f"handle_event: deleted {cn} {existing}")
-            existing.delete()
-
-        elif event_type == "object_update":
-            existing_serialized_obj = cls_serializer(existing, data=instance_fields)
-
-            # TODO: This check on "User" when deleting an account should become out-phased when
-            # we switch to Account as being the "User".
-            if cls == Account:
-                existing_user = User.objects.filter(username=existing.username)
-                # This is a quirk, because User model allows blank=True, but has null=False
-                # Instance fields explicitly returns a "null" value, which can't be inserted in db.
-                # Hence, checking for it and making it an empty string before trying to update.
-                fn = instance_fields.get("first_name") or ""
-                ln = instance_fields.get("last_name") or ""
-
-                existing_user.update(first_name=fn, last_name=ln)
-
-            # TODO: this wont raise an exception if data is invalid. Is that desired?
-            if not existing_serialized_obj.is_valid(raise_exception=False):
-                logger.warning(f"Error in serialized object! {existing_serialized_obj.errors}")
-                return
-
-            existing_serialized_obj.save()
-            logger.debug(f"handle_event: updated {cn} {existing}")
-
-        else:
-            logger.warning("handle_event: unexpected event_type"
-                           f" {event_type} for {cn} {existing}")
-
-    except cls.DoesNotExist:
-        if event_type == "object_delete":
-            # Take no action if we're being asked to delete an object that
-            # already doesn't exist
-            logger.debug(f"handle_event: not creating deleted {cn}")
-            return
-
-        # The object didn't exist -- save it. Note that we might also end up
-        # here with an update event if the initial create event didn't get
-        # propagated over to the report module
-
-        # Use provided class serializer to create a new record.
-        serialized_obj = cls_serializer(data=instance_fields)
-
-        if not serialized_obj.is_valid(raise_exception=False):
-            logger.warning(f"Error in serialized object! {serialized_obj.errors}")
-            return
-
-        # Perform save operation through serializer
-        try:
-            serialized_obj.save()
-        except IntegrityError:
-            logger.warning(f"Integrity error on save for {cn}-type object, "
-                           f"PK: {instance_pk}. Doing nothing.", exc_info=True)
-            return
-
-        if cn == "Alias":
-            # One more thing... We have to make sure alias-match relations are in order.
-            create_alias_and_match_relations(Alias.objects.get(uuid=instance_pk))
-
-        logger.debug(f"handle_event: created {cn} {instance_pk}")
-
-    except FieldError as e:
-        logger.debug(f"handle_event: FieldError when handling {instance_pk}: {e}")
-    except AttributeError as e:
-        logger.debug(f"handle_event: AttributeError when handling {instance_pk}: {e}")
-    except ProtectedError as e:
-        logger.debug(
-                f"handle_event: couldn't delete {cn} {instance_pk}: {e}")
 
 
 class EventCollectorRunner(PikaPipelineThread):

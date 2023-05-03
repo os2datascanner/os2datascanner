@@ -16,6 +16,8 @@ from django.db.models import Q, F
 from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import ScanStatus, Scanner
+from os2datascanner.core_organizational_structure.models import \
+    OrganizationSerializer as Core_OrganizationSerializer
 from .broadcasted_mixin import Broadcasted
 
 from os2datascanner.core_organizational_structure.models import Organization as Core_Organization
@@ -44,11 +46,16 @@ class Organization(Core_Organization, Broadcasted):
         verbose_name=_('slug'),
     )
 
-    def natural_key(self):
-        return (self.uuid, self.name)
-
     @property
     def scanners_running(self) -> bool:
         org_scanners = Scanner.objects.filter(organization=self.uuid)
         scanners_running = ScanStatus.objects.filter(~completed_scans, scanner_id__in=org_scanners)
         return scanners_running.exists()
+
+
+class OrganizationSerializer(Core_OrganizationSerializer):
+    class Meta(Core_OrganizationSerializer.Meta):
+        model = Organization
+
+
+Organization.serializer_class = OrganizationSerializer

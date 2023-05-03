@@ -11,25 +11,40 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-
-from os2datascanner.utils.model_helpers import ModelFactory
+from rest_framework import serializers
+from rest_framework.fields import UUIDField
 from os2datascanner.projects.admin.import_services.models import Imported
 from os2datascanner.core_organizational_structure.models import Position as Core_Position
-from .broadcasted_mixin import Broadcasted, post_save_broadcast
+from os2datascanner.core_organizational_structure.models import \
+    PositionSerializer as Core_PositionSerializer
+from .broadcasted_mixin import Broadcasted
 
 
 class Position(Core_Position, Imported, Broadcasted):
     """ Core logic lives in the core_organizational_structure app.
         Additional specific logic can be implemented here. """
-    factory = None
-    pass
 
 
-Position.factory = ModelFactory(Position)
+class PositionSerializer(Core_PositionSerializer):
+    from ..models.account import Account
+    from ..models.organizational_unit import OrganizationalUnit
+
+    account = serializers.PrimaryKeyRelatedField(
+        queryset=Account.objects.all(),
+        required=True,
+        allow_null=False,
+        # This will properly serialize uuid.UUID to str:
+        pk_field=UUIDField(format='hex_verbose'))
+
+    unit = serializers.PrimaryKeyRelatedField(
+        queryset=OrganizationalUnit.objects.all(),
+        required=True,
+        allow_null=False,
+        # This will properly serialize uuid.UUID to str:
+        pk_field=UUIDField(format='hex_verbose'))
+
+    class Meta(Core_PositionSerializer.Meta):
+        model = Position
 
 
-@Position.factory.on_create
-@Position.factory.on_update
-def on_position_created_updated(objects, fields=None):
-    for pos in objects:
-        post_save_broadcast(None, pos)
+Position.serializer_class = PositionSerializer

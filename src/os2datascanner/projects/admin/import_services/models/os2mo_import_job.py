@@ -103,14 +103,10 @@ class OS2moImportJob(BackgroundJob):
         return "OS2mo Import Job"
 
     def run(self):  # noqa CCR001
-        # TODO: We don't need to have "objects" in the query here, when we're only concerned
-        # with UUID's. It will however change the response structure a little.
         query_org_units = """
         query MyQuery {
           org_units {
-            objects {
-              uuid
-            }
+            uuid
           }
         }
         """
@@ -148,15 +144,18 @@ class OS2moImportJob(BackgroundJob):
             logger.info("Received data from OS2mo. Sending queries.. \n")
 
             org_unit_uuids = []
-            for org_unit_objects in res.get("data").get("org_units"):
-                for org_unit in org_unit_objects.get("objects"):
-                    org_unit_uuids.append(org_unit.get("uuid"))
+            for org_unit_object in res.get("data").get("org_units"):
+                org_unit_uuids.append(org_unit_object.get("uuid"))
 
+            # Requests one OU at a time, to ensure we don't hit a time-out in Mo.
             org_unit_list = []
             for uuid in org_unit_uuids:
                 with requests.Session() as session:
                     logger.info(f"Querying for org_unit with uuid: {uuid}")
-                    org_unit_list.append(self.request_org_unit_accounts(uuid, session))
+                    raw_unit_data = self.request_org_unit_accounts(uuid, session)
+                    # Cut off a couple of layers to make iterating easier later
+                    for ou_data in raw_unit_data.get("data").get("org_units"):
+                        org_unit_list.append(ou_data)
         else:
             self.status = "No data received!"
             # Raising exception to mark job as failed

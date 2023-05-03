@@ -17,6 +17,8 @@ from uuid import uuid4
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from ..serializer import BaseSerializer
+
 
 class Organization(models.Model):
     """Stores data for a specific organization.
@@ -31,6 +33,8 @@ class Organization(models.Model):
 
     All Organizations are related to exactly one Client.
     """
+
+    serializer_class = None
 
     uuid = models.UUIDField(
         primary_key=True,
@@ -73,3 +77,8 @@ class Organization(models.Model):
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.name} ({self.uuid})>"
+
+
+class OrganizationSerializer(BaseSerializer):
+    class Meta:
+        fields = ['pk', 'name', 'contact_email', 'contact_phone', 'email_notification_schedule']

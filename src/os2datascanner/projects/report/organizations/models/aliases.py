@@ -11,33 +11,24 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
-from uuid import uuid4
-from django.db import models
-from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.fields import UUIDField
+from django.db import models, transaction
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from os2datascanner.core_organizational_structure.models import Alias as Core_Alias
+from os2datascanner.core_organizational_structure.models import \
+    AliasSerializer as Core_AliasSerializer
 from os2datascanner.core_organizational_structure.models.aliases import AliasType, \
     validate_regex_SID  # noqa
-
-from ..serializer import BaseSerializer
+from ..seralizer import BaseBulkSerializer
 
 
 class Alias(Core_Alias):
     """ Core logic lives in the core_organizational_structure app. """
 
-    # For historical reasons we overwrite this field and set it to not be PK.
-    # In the admin module (and core_org), it is the PK of aliases. We need it for synchronization
-    # purposes - but since reportapp's previous implementation of aliases had an Integer PK,
-    # and thus all its relations to documentreports containing that, we keep the PK an int here.
-    uuid = models.UUIDField(
-        default=uuid4,
-        primary_key=False,
-        editable=False,
-        verbose_name=_('alias ID'),
-    )
-
+    serializer_class = None
     user = models.ForeignKey(User, null=False, verbose_name=_('user'),
                              on_delete=models.CASCADE, related_name="aliases")
 
@@ -64,10 +55,34 @@ class Alias(Core_Alias):
         )
 
 
-class AliasSerializer(BaseSerializer):
+class AliasBulkSerializer(BaseBulkSerializer):
     class Meta:
         model = Alias
-        fields = '__all__'
 
-    # This field has to be redefined here, because it is read-only on model.
-    uuid = serializers.UUIDField()
+    @transaction.atomic
+    def create(self, validated_data):
+        aliases = [Alias(**alias_attrs) for alias_attrs in validated_data]
+        for alias in aliases:
+            # TODO: Fishy; correct when User/Acc merged.
+            user_obj = User.objects.get(username=alias.account.username)
+            alias.user = user_obj
+
+        return Alias.objects.bulk_create(aliases)
+
+
+class AliasSerializer(Core_AliasSerializer):
+    pk = serializers.UUIDField(read_only=False)
+    from ..models.account import Account
+    account = serializers.PrimaryKeyRelatedField(
+        queryset=Account.objects.all(),
+        required=True,
+        allow_null=False,
+        # This will properly serialize uuid.UUID to str:
+        pk_field=UUIDField(format='hex_verbose'))
+
+    class Meta(Core_AliasSerializer.Meta):
+        model = Alias
+        list_serializer_class = AliasBulkSerializer
+
+
+Alias.serializer_class = AliasSerializer
