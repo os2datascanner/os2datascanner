@@ -15,6 +15,20 @@
 - Slight improvement to performance in the report module by only querying for
   the fields which are needed.
 
+- Models inheriting from "core_organizational_structure" now conform to use the same datatype
+  for their primary key in the Admin & Report modules.
+
+- Serialization logic has been refactored, for better maintainability and
+  support for bulk serialization.
+
+- LDAP-, MSGraph- and OS2Mo-ImportJobs now share more infrastructure and 
+  all support bulk operations.
+
+- "event_collector" has been reworked to support bulk operations, and refactored to significantly reduce
+  its complexity and responsibilities.
+
+- "Account" now has a manager-class, responsible for corresponding User objects.
+
 ## Version 3.19.2, 21st April 2023
 
 "Hairstylist of the Year"
