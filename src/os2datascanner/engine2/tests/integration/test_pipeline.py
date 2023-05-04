@@ -5,7 +5,7 @@ import base64
 from zipfile import ZipFile
 import unittest
 
-from os2datascanner.engine2.demo.utils import DemoSourceUtility as TestSourceUtility
+from os2datascanner.engine2.commands.utils import DemoSourceUtility as TestSourceUtility
 from os2datascanner.engine2.model.core import SourceManager
 from os2datascanner.engine2.model.file import FilesystemSource
 from os2datascanner.engine2.rules.rule import Sensitivity

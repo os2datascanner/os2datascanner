@@ -1,2 +1,2 @@
-from . import demo  # noqa
 from . import model  # noqa
+from . import commands  # noqa

@@ -2,7 +2,7 @@ import sys
 import unittest
 import subprocess
 
-from os2datascanner.engine2.demo.utils import DemoSourceUtility as TestSourceUtility
+from os2datascanner.engine2.commands.utils import DemoSourceUtility as TestSourceUtility
 from os2datascanner.engine2.pipeline.utilities import pika
 from .test_pipeline import (data_url, rule, expected_matches)
 from .test_pipeline_rabbitmq import (StopHandling, PipelineTestRunner)
