@@ -1,3 +1,7 @@
+# A unique secret for this OS2datascanner engine installation, used in key
+# derivation for cryptographic primitives
+secret_value = ""
+
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module
 AMQP_HOST = "localhost"
@@ -39,6 +43,7 @@ limit = 2
 timeout = 45
 # Maximum allowed depth of related links while crawling a domain
 ttl = 25
+
 [model.msgraph]
 # The maximum number of items to retrieve in each API call to the server
 page_size = 100

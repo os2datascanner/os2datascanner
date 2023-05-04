@@ -1,3 +1,5 @@
+secret_value = "THIS VALUE IS NOT SECRET"
+
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module
 AMQP_HOST = "queue"
