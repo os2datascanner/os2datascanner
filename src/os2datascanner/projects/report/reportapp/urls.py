@@ -34,14 +34,15 @@ urlpatterns = [
          name='statistics-user-me'),
     path('statistics/user/<uuid:pk>', UserStatisticsPageView.as_view(),
          name='statistics-user-id'),
-    re_path('approval', ApprovalPageView.as_view(), name="about"),
-    re_path('stats',    StatsPageView.as_view(),    name="about"),
-    re_path('settings', SettingsPageView.as_view(), name="settings"),
-    re_path('about',    AboutPageView.as_view(),    name="about"),
-    re_path(r'^health/', lambda r: HttpResponse()),
-    re_path(r'^version/?$', lambda r: HttpResponse(__version__)),
-    re_path(r'^help/$', ManualMainView.as_view(), name="guide"),
-    re_path(r'^support/$', SupportButtonView.as_view(), name="support_button")
+    url('approval', ApprovalPageView.as_view(), name="about"),
+    url('stats',    StatsPageView.as_view(),    name="about"),
+    url('settings', SettingsPageView.as_view(), name="settings"),
+    url('about',    AboutPageView.as_view(),    name="about"),
+    url(r'^health/', lambda r: HttpResponse()),
+    url(r'^version/?$', lambda r: HttpResponse(__version__)),
+    url(r'^help/$', ManualMainView.as_view(), name="guide"),
+    url(r'^support/$', SupportButtonView.as_view(), name="support_button"),
+    path('htmx_endpoints/', include('os2datascanner.projects.report.reportapp.htmx_endpoints_urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.SAML2_ENABLED:

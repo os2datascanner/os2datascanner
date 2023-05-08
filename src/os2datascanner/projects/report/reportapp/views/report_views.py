@@ -28,7 +28,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import View, ListView
+from django.views.generic import View, ListView, DetailView
 
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.rules.cpr import CPRRule
@@ -259,7 +259,10 @@ class UndistributedView(ReportView):
             return redirect(reverse_lazy('index'))
 
 
-class ReportEndpointView(LoginRequiredMixin, View):
+class HTMXEndpointView(LoginRequiredMixin, View):
+    """A view for sending POST-requests via HTMX to the backend."""
+
+    model = DocumentReport
 
     def post(self, request, *args, **kwargs):
 
@@ -270,8 +273,79 @@ class ReportEndpointView(LoginRequiredMixin, View):
         return response
 
     def dispatch(self, request, *args, **kwargs):
-        is_htmx = request.headers.get('HX-Request') == "true"
-        if is_htmx:
+        self.is_htmx = request.headers.get('HX-Request')
+        if self.is_htmx == "true":
             return super().dispatch(request, *args, **kwargs)
         else:
             raise PermissionDenied("... How?")
+
+
+class HandleMatchView(HTMXEndpointView, DetailView):
+    """Endpoint for handling matches via HTMX."""
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        report = self.get_object()
+        action = request.POST.get('action')
+        self.handle_report(report, action)
+
+        return response
+
+    def handle_report(self, report, action):
+        try:
+            self.request.user.account.update_last_handle()
+        except Exception as e:
+            logger.warning("Exception raised while trying to update last_handle field "
+                           f"of account belonging to user {self.request.user}:", e)
+
+        report.resolution_status = action
+        report.save()
+        logger.info(f"Successfully handled DocumentReport {report} with "
+                    f"resolution_status {action}.")
+
+
+class MassHandleView(HTMXEndpointView, ListView):
+    """Endpoint for mass handling matches via HTMX."""
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        pks = self.request.POST.getlist("table-checkbox", [])
+        reports = qs.filter(pk__in=pks)
+        return reports
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        reports = self.get_queryset()
+        action = request.POST.get('action')
+        self.handle_reports(reports, action)
+
+        return response
+
+    def handle_reports(self, reports, action):
+        try:
+            self.request.user.account.update_last_handle()
+        except Exception as e:
+            logger.warning("Exception raised while trying to update last_handle field "
+                           f"of account belonging to user {self.request.user}:", e)
+
+        for report in reports:
+            report.resolution_status = action
+            report.save()
+        logger.info(
+            f"Successfully handled DocumentReports "
+            f"{', '.join([str(report) for report in reports])} with "
+            f"resolution_status {action}.")
+
+
+class OpenMatchView(HTMXEndpointView, DetailView):
+    """Endpoint for marking matches as opened."""
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        report = self.get_object()
+
+        report.update_opened()
+
+        request.session["last_opened"] = report.pk
+
+        return response
