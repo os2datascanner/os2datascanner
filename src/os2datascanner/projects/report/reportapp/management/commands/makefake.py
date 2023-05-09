@@ -116,9 +116,14 @@ class Command(BaseCommand):
             default='collector',
             help="send the produced messages to a specific component",
         )
+        parser.add_argument(
+            "--owner",
+            default=False,
+            help="provide a value of the 'owner'-field in the generated reports."
+        )
 
     def handle(  # noqa: CCR001, too high cognitive complexity
-            self, *, handles, scan_count, scan_type, seed, summarise, dry_run,
+            self, *, handles, scan_count, scan_type, seed, summarise, dry_run, owner,
             destination, **options):
         if not settings.DEBUG:
             self.stdout.write(self.style.NOTICE(
@@ -207,7 +212,9 @@ class Command(BaseCommand):
                         messages.MetadataMessage(
                             scan_tag=scan_spec.scan_tag,
                             handle=handle,
-                            metadata={"is it a fake scan": "yes it is"},
+                            metadata={"is it a fake scan": "yes it is",
+                                      "email-account": owner if owner else None
+                                      },
                         ),
                     )
                 if not dry_run:
@@ -256,6 +263,7 @@ def make_fake_scan_type(organization, scan_name):
         scan_tag=scan_tag,
         source=None,
         rule=make_fake_rule(),
+        filter_rule=make_fake_rule(),
         configuration={},
         progress=None,
     )

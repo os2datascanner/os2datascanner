@@ -65,12 +65,13 @@ def result_message_received_raw(body):
         if not body.get("handle") else None,
     )
 
-    if queue == "matches":
-        handle_match_message(tag, body)
-    elif queue == "problem":
-        handle_problem_message(tag, body)
-    elif queue == "metadata":
-        handle_metadata_message(tag, body)
+    with transaction.atomic():
+        if queue == "matches":
+            handle_match_message(tag, body)
+        elif queue == "problem":
+            handle_problem_message(tag, body)
+        elif queue == "metadata":
+            handle_metadata_message(tag, body)
 
     yield from []
 

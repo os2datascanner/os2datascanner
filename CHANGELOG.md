@@ -1,5 +1,15 @@
 # Changelog
 
+## Next release
+
+"Pepperoni 🍕"
+
+## New in this release
+
+- The `makefake` management command now works once more, and it is now
+  possible to set the "owner"-field of the generated reports through a
+  command option.
+
 ## Version 3.19.2, 21st April 2023
 
 "Hairstylist of the Year"
