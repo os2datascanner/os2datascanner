@@ -10,6 +10,11 @@
   possible to set the "owner"-field of the generated reports through a
   command option.
 
+### General improvements
+
+- Slight improvement to performance in the report module by only querying for
+  the fields which are needed.
+
 ## Version 3.19.2, 21st April 2023
 
 "Hairstylist of the Year"

@@ -110,7 +110,12 @@ class MainPageView(LoginRequiredMixin, ListView):
         # Apply filters to the queryset based on options chosen by the user.
         self.apply_filters()
 
-        return self.document_reports
+        return self.document_reports.only(
+            "name",
+            "resolution_status",
+            "resolution_time",
+            "last_opened_time",
+            "raw_matches")
 
     def get_context_data(self, **kwargs):  # noqa CCR001
         context = super().get_context_data(**kwargs)
