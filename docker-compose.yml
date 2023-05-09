@@ -444,7 +444,7 @@ services:
       - ldap
 
   samba:
-    image: magentalabs/samba-test:1.1
+    image: magentaaps/samba-test:master
     volumes:
       - ./dev-environment/data:/mnt
     ports:
