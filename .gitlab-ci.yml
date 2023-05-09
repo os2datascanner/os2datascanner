@@ -168,7 +168,7 @@ Build API:
         DATASYNTH_HOST: "datasynth"
     - postgres:12
     - rabbitmq:3.8-alpine
-    - name: magentalabs/samba-test:1.1
+    - name: magentaaps/samba-test:master
       alias: samba
   variables:
     SMB_USER: os2
@@ -226,7 +226,7 @@ Integration Test Admin Application:
        DATASYNTH_HOST: "datasynth"
     - rabbitmq:3.8-alpine
     - postgres:12
-    - name: magentalabs/samba-test:1.1
+    - name: magentaaps/samba-test:master
       alias: samba
     - name: ${ENGINE_IMAGE}
       alias: worker
@@ -348,7 +348,7 @@ Performance Test:
        DATASYNTH_HOST: "datasynth"
     - rabbitmq:3.8-alpine
     - postgres:12
-    - name: magentalabs/samba-test:1.1
+    - name: magentaaps/samba-test:master
       alias: samba
     - name: ${ENGINE_IMAGE}
       alias: worker
