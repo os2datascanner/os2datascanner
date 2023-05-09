@@ -29,6 +29,10 @@
 
 - "Account" now has a manager-class, responsible for corresponding User objects.
 
+#### Bugfixes
+
+- No longer are DocumentReports created for missing objects of no relevance.
+
 ## Version 3.19.2, 21st April 2023
 
 "Hairstylist of the Year"

@@ -390,3 +390,11 @@ class PipelineCollectorTests(TestCase):
 
         self.assertEqual(DocumentReport.objects.count(), 1)
         self.assertEqual(smb_dr_1.path, smb_dr_3.path)
+
+    def test_missing_file_with_no_previous_report(self):
+        """ A problem message containing information about a missing file, with
+        no unresolved or resolution_status=0 DocumentReport,
+        has no relevance, should be thrown away and not create a new DR."""
+        record_problem(deletion)
+        self.assertEqual(DocumentReport.objects.count(), 0,
+                         "A DocumentReport representing a deleted file was created anyways!")
