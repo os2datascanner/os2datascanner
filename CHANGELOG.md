@@ -29,6 +29,9 @@
 
 - "Account" now has a manager-class, responsible for corresponding User objects.
 
+- The pie chart showing distribution of sensitivities has been removed from the
+  DPO overview.
+
 #### Bugfixes
 
 - No longer are DocumentReports created for missing objects of no relevance.
@@ -54,8 +57,6 @@
 - In the leader overview, usernames are now shown below employees names.
 
 - Major performance improvements in the leader overview.
-
-- Updated chartjs to newer version
 
 ### Bugfixes
 
