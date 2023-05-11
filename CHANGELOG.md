@@ -1,8 +1,8 @@
 # Changelog
 
-## Next release
+## Version 3.19.3, 12th May 2023
 
-"Pepperoni 🍕"
+"Bulking Agent"
 
 ## New in this release
 

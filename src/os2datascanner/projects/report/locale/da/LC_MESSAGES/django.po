@@ -8,54 +8,50 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-21 15:17+0200\n"
+"POT-Creation-Date: 2023-05-11 12:49+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: organizations/models/account.py:39
+#: organizations/models/account.py:42
 msgid "Completed"
 msgstr "Færdig"
 
-#: organizations/models/account.py:40
+#: organizations/models/account.py:43
 msgid "Accepted"
 msgstr "Accepteret"
 
-#: organizations/models/account.py:41
+#: organizations/models/account.py:44
 msgid "Not accepted"
 msgstr "Ikke accepteret"
 
-#: organizations/models/account.py:52
+#: organizations/models/account.py:109
 msgid "User"
 msgstr "Bruger"
 
-#: organizations/models/account.py:55
+#: organizations/models/account.py:112
 msgid "Last handle"
 msgstr "Sidste håndtering"
 
-#: organizations/models/account.py:63
+#: organizations/models/account.py:120
 msgid "image"
 msgstr "billede"
 
-#: organizations/models/account.py:68
+#: organizations/models/account.py:125
 msgid "Number of matches"
 msgstr "Antal matches"
 
-#: organizations/models/account.py:73
+#: organizations/models/account.py:130
 msgid "Number of withheld matches"
 msgstr "Antal tilbageholdte matches"
 
-#: organizations/models/aliases.py:38
-msgid "alias ID"
-msgstr "alias ID"
-
-#: organizations/models/aliases.py:41
+#: organizations/models/aliases.py:32
 msgid "user"
 msgstr "bruger"
 
-#: organizations/models/aliases.py:50
+#: organizations/models/aliases.py:41
 msgid "account"
 msgstr "konto"
 
@@ -71,87 +67,87 @@ msgstr "Personlig information"
 msgid "Important dates"
 msgstr "Vigtige datoer"
 
-#: reportapp/models/documentreport.py:30
+#: reportapp/models/documentreport.py:29
 msgid "Alias relation"
 msgstr "Alias relation"
 
-#: reportapp/models/documentreport.py:35
+#: reportapp/models/documentreport.py:34
 msgid "scan time"
 msgstr "scanningstid"
 
-#: reportapp/models/documentreport.py:38
+#: reportapp/models/documentreport.py:37
 msgid "created timestamp"
 msgstr "oprettet tidsstempel"
 
-#: reportapp/models/documentreport.py:40
+#: reportapp/models/documentreport.py:39
 msgid "time last opened"
 msgstr "tidspunkt åbnet"
 
-#: reportapp/models/documentreport.py:44
+#: reportapp/models/documentreport.py:43
 msgid "organization"
 msgstr "organisation"
 
-#: reportapp/models/documentreport.py:47
+#: reportapp/models/documentreport.py:46
 msgid "path"
 msgstr "sti"
 
-#: reportapp/models/documentreport.py:56
+#: reportapp/models/documentreport.py:55
 msgid "sort key"
 msgstr "sortér efter"
 
-#: reportapp/models/documentreport.py:61
+#: reportapp/models/documentreport.py:60
 msgid "name"
 msgstr "navn"
 
-#: reportapp/models/documentreport.py:64
+#: reportapp/models/documentreport.py:63
 msgid "source type"
 msgstr "kildetype"
 
-#: reportapp/models/documentreport.py:66
+#: reportapp/models/documentreport.py:65
 msgid "sensitivity"
 msgstr "følsomhed"
 
-#: reportapp/models/documentreport.py:68
+#: reportapp/models/documentreport.py:67
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport.py:141 reportapp/views/views.py:531
+#: reportapp/models/documentreport.py:140 reportapp/views/views.py:536
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/models/documentreport.py:142
+#: reportapp/models/documentreport.py:141
 msgid "Edited"
 msgstr "Redigeret"
 
-#: reportapp/models/documentreport.py:143
+#: reportapp/models/documentreport.py:142
 msgid "Deleted and journalized"
 msgstr "Slettet og journaliseret"
 
-#: reportapp/models/documentreport.py:144
+#: reportapp/models/documentreport.py:143
 msgid "Deleted"
 msgstr "Slettet"
 
-#: reportapp/models/documentreport.py:145
+#: reportapp/models/documentreport.py:144
 msgid "False positive"
 msgstr "Falsk positiv"
 
-#: reportapp/models/documentreport.py:148
+#: reportapp/models/documentreport.py:147
 msgid "number of matches"
 msgstr "antal matches"
 
-#: reportapp/models/documentreport.py:153
+#: reportapp/models/documentreport.py:152
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport.py:156
+#: reportapp/models/documentreport.py:155
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport.py:159
+#: reportapp/models/documentreport.py:158
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport.py:214
+#: reportapp/models/documentreport.py:213
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -270,77 +266,35 @@ msgid "Distribution of results"
 msgstr "Fordeling af resultater"
 
 #: reportapp/templates/components/dpo-statistics-template.html:81
-msgid "Results distributed by sensitivities"
-msgstr "Resultater fordelt på følsomheder"
-
-#: reportapp/templates/components/dpo-statistics-template.html:85
 msgid "Results distributed by data sources"
 msgstr "Resultater fordelt på datakilder"
 
-#: reportapp/templates/components/dpo-statistics-template.html:89
+#: reportapp/templates/components/dpo-statistics-template.html:85
 msgid "Results distributed by resolution statuses"
 msgstr "Resultater fordelt på håndteringsstatusser"
 
-#: reportapp/templates/components/dpo-statistics-template.html:96
-#: reportapp/templates/components/dpo-statistics-template.html:149
-#: reportapp/templates/components/filters.html:61
-msgid "Sensitivity"
-msgstr "Følsomhed"
-
-#: reportapp/templates/components/dpo-statistics-template.html:99
+#: reportapp/templates/components/dpo-statistics-template.html:92
 msgid "Data sources"
 msgstr "Datakilder"
 
-#: reportapp/templates/components/dpo-statistics-template.html:103
+#: reportapp/templates/components/dpo-statistics-template.html:96
 msgid "Resolution statuses"
 msgstr "Håndteringsstatusser"
 
-#: reportapp/templates/components/dpo-statistics-template.html:137
-#: reportapp/templates/components/dpo-statistics-template.html:205
+#: reportapp/templates/components/dpo-statistics-template.html:123
+#: reportapp/templates/components/dpo-statistics-template.html:135
 msgid "Handled results"
 msgstr "Håndterede resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:139
-msgid "Percentage of handled results distributed by sensitivity"
-msgstr "Procentvis andel af håndterede resultater fordelt på følsomhed"
-
-#: reportapp/templates/components/dpo-statistics-template.html:142
+#: reportapp/templates/components/dpo-statistics-template.html:125
 msgid "The department's percentage of handled results"
 msgstr "Afdelingens procentvise andel af håndterede resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:152
-msgid "All results"
-msgstr "Alle resultater"
-
-#: reportapp/templates/components/dpo-statistics-template.html:167
-#: reportapp/templates/components/sensitivity-chart.html:10
-msgid "Critical"
-msgstr "Kritisk"
-
-#: reportapp/templates/components/dpo-statistics-template.html:168
-#: reportapp/templates/components/dpo-statistics-template.html:177
-#: reportapp/templates/components/dpo-statistics-template.html:186
-#: reportapp/templates/components/dpo-statistics-template.html:195
-#: reportapp/templates/components/dpo-statistics-template.html:206
+#: reportapp/templates/components/dpo-statistics-template.html:136
 #: reportapp/templates/components/handle-match.html:99
 #: reportapp/templates/components/pagination.html:11
 msgid "of"
 msgstr "af"
-
-#: reportapp/templates/components/dpo-statistics-template.html:176
-#: reportapp/templates/components/sensitivity-chart.html:14
-msgid "Problem"
-msgstr "Problem"
-
-#: reportapp/templates/components/dpo-statistics-template.html:185
-#: reportapp/templates/components/sensitivity-chart.html:18
-msgid "Warning"
-msgstr "Advarsel"
-
-#: reportapp/templates/components/dpo-statistics-template.html:194
-#: reportapp/templates/components/sensitivity-chart.html:22
-msgid "Notification"
-msgstr "Notifikation"
 
 #: reportapp/templates/components/faq_toc.html:5
 #: reportapp/templates/manual.html:151
@@ -361,6 +315,10 @@ msgstr "Ryd"
 #: reportapp/templates/components/filters.html:29
 msgid "Scan"
 msgstr "Scan"
+
+#: reportapp/templates/components/filters.html:61
+msgid "Sensitivity"
+msgstr "Følsomhed"
 
 #: reportapp/templates/components/filters.html:67
 msgid "All sensitivities"
@@ -661,6 +619,22 @@ msgstr "Gå"
 #: reportapp/templates/components/sensitivity-chart.html:5
 msgid "Sensitivity legend"
 msgstr "Følsomhedsoversigt"
+
+#: reportapp/templates/components/sensitivity-chart.html:10
+msgid "Critical"
+msgstr "Kritisk"
+
+#: reportapp/templates/components/sensitivity-chart.html:14
+msgid "Problem"
+msgstr "Problem"
+
+#: reportapp/templates/components/sensitivity-chart.html:18
+msgid "Warning"
+msgstr "Advarsel"
+
+#: reportapp/templates/components/sensitivity-chart.html:22
+msgid "Notification"
+msgstr "Notifikation"
 
 #: reportapp/templates/components/service.html:10
 msgid ""
@@ -1118,26 +1092,38 @@ msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:380
+#: reportapp/views/views.py:385
 msgid "The archive page has been deactivated for this distribution."
 msgstr "Arkivfanen er deaktiveret for denne opsætning."
 
-#: reportapp/views/views.py:532
+#: reportapp/views/views.py:537
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:533
+#: reportapp/views/views.py:538
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:534
+#: reportapp/views/views.py:539
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:800
+#: reportapp/views/views.py:805
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."
+
+#~ msgid "alias ID"
+#~ msgstr "alias ID"
+
+#~ msgid "Results distributed by sensitivities"
+#~ msgstr "Resultater fordelt på følsomheder"
+
+#~ msgid "Percentage of handled results distributed by sensitivity"
+#~ msgstr "Procentvis andel af håndterede resultater fordelt på følsomhed"
+
+#~ msgid "All results"
+#~ msgstr "Alle resultater"
 
 #~ msgid ""
 #~ "You deleted all {account.first_name or account.username}'s results from "
