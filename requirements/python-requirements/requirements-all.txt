@@ -208,6 +208,8 @@ oauthlib==3.2.2
     #   requests-oauthlib
 olefile==0.46
     # via -r requirements-all.in
+os2ds-rules==0.0.8
+    # via -r requirements-all.in
 packaging==21.3
     # via
     #   pytest

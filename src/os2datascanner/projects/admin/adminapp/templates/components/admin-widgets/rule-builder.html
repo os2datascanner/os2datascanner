@@ -48,6 +48,11 @@
       <option value="CustomRule_Address">
         {% trans "address" %}
       </option>
+      <optgroup label="{% trans "Experimental" %}">
+        <option value="TurboCPRRule">
+          {% trans "CPR-nr. (Turbo)" %}
+        </option>
+      </optgroup>
     </select>
     <span class="empty"></span>
   </span>
@@ -114,4 +119,17 @@
     )
   </span>
   <span id="CustomRule_Address"></span>
+  <span id="TurboCPRRule">
+    ({% trans "with" %}
+    <label>
+      <input type="checkbox" checked />
+      {% trans "modulus 11-," %}
+    </label>
+    {% trans "and" %}
+    <label>
+      <input type="checkbox" checked />
+      {% trans "context check" %}
+    </label>
+    )
+  </span>
 </div>

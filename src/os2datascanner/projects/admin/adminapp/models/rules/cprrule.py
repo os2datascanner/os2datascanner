@@ -20,6 +20,7 @@ from django.db import models
 
 
 from os2datascanner.engine2.rules.cpr import CPRRule as CPRTwule
+from os2datascanner.engine2.rules.experimental.cpr import TurboCPRRule as TurboCPRTwule
 from .rule import Rule
 
 
@@ -42,3 +43,17 @@ class CPRRule(Rule):
     whitelist = models.TextField(blank=True,
                                  default="",
                                  verbose_name='Godkendte CPR-numre')
+
+
+class TurboCPRRule(Rule):
+    do_modulus11 = models.BooleanField(
+            default=False, verbose_name='Tjek modulus-11')
+    examine_context = models.BooleanField(
+            default=False, verbose_name='Tjek kontekst omkring match')
+
+    def make_engine2_rule(self):
+        return TurboCPRTwule(
+            modulus_11=self.do_modulus11,
+            examine_context=self.examine_context,
+            name=self.name,
+            sensitivity=self.make_engine2_sensitivity())

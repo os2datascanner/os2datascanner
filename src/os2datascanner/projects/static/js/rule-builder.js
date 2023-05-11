@@ -36,7 +36,8 @@ function selectOptions(obj, selector) {
     "regex": "RegexRule",
     "ordered-wordlist": "CustomRule_Health",
     "name": "CustomRule_Name",
-    "address": "CustomRule_Address"
+    "address": "CustomRule_Address",
+    "cpr_turbo": "TurboCPRRule"
   };
 
   selectElem.value = valueMap[type];
@@ -66,6 +67,10 @@ function selectOptions(obj, selector) {
       break;
     case "name":
       setCheckbox(0, obj.expansive, selector);
+      break;
+    case "cpr_turbo":
+      setCheckbox(0, obj.modulus_11, selector);
+      setCheckbox(1, obj.examine_context, selector);
       break;
     case "regex":
       selector.querySelector("input").value = obj.expression;
@@ -196,6 +201,13 @@ function makeRule(elem) {
         "type": "address",
         "whitelist": [],
         "blacklist": [],
+      };
+    case "TurboCPRRule":
+      tickboxes = elem.querySelectorAll("input[type='checkbox']");
+      return {
+        "type": "cpr_turbo",
+        "modulus_11": tickboxes[0].checked,
+        "examine_context": tickboxes[1].checked,
       };
 
     /* Glue template fragments to consume */

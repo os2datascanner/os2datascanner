@@ -24,7 +24,7 @@ from os2datascanner.engine2.rules.rule import Rule
 from .models.authentication import Authentication
 from .models.apikey import APIKey
 from .models.usererrorlog import UserErrorLog
-from .models.rules.cprrule import CPRRule
+from .models.rules.cprrule import CPRRule, TurboCPRRule
 from .models.rules.namerule import NameRule
 from .models.rules.regexrule import RegexRule, RegexPattern
 from .models.rules.customrule import CustomRule
@@ -50,6 +50,7 @@ class AuthenticationAdmin(admin.ModelAdmin):
 
 
 @admin.register(CPRRule)
+@admin.register(TurboCPRRule)
 @admin.register(NameRule)
 @admin.register(RegexRule)
 @admin.register(AddressRule)
