@@ -237,7 +237,7 @@ msgid "DPO statistics"
 msgstr "DPO-statistik"
 
 #: reportapp/templates/components/dpo-statistics-template.html:27
-#: reportapp/templates/components/filters.html:35
+#: reportapp/templates/components/filters.html:37
 msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
 
@@ -306,13 +306,13 @@ msgstr "Hvorfor sletter 'Håndtér'-knappen ikke min fil eller e-mail?"
 msgid "Why can't I open file scan matches?"
 msgstr "Hvorfor kan jeg ikke åbne matches fra filscan?"
 
-#: reportapp/templates/components/filters.html:27
-#: reportapp/templates/components/filters.html:59
-#: reportapp/templates/components/filters.html:93
+#: reportapp/templates/components/filters.html:29
+#: reportapp/templates/components/filters.html:62
+#: reportapp/templates/components/filters.html:97
 msgid "Clear"
 msgstr "Ryd"
 
-#: reportapp/templates/components/filters.html:29
+#: reportapp/templates/components/filters.html:31
 msgid "Scan"
 msgstr "Scan"
 
@@ -324,23 +324,22 @@ msgstr "Følsomhed"
 msgid "All sensitivities"
 msgstr "Alle følsomheder"
 
-#: reportapp/templates/components/filters.html:95
+#: reportapp/templates/components/filters.html:99
 msgid "Resolution Status"
 msgstr "Håndteringsstatus"
 
-#: reportapp/templates/components/filters.html:101
+#: reportapp/templates/components/filters.html:105
 msgid "All resolution statuses"
 msgstr "Alle håndteringsstatusser"
 
-#: reportapp/templates/components/filters.html:128
+#: reportapp/templates/components/filters.html:132
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
-#: reportapp/templates/components/handle-match.html:11
-#: reportapp/templates/components/handle-match.html:39
-#: reportapp/templates/components/handle-match.html:56
+#: reportapp/templates/components/handle-match.html:10
+#: reportapp/templates/components/handle-match.html:47
 #: reportapp/templates/components/hit.html:122
-#: reportapp/templates/components/hit.html:147
+#: reportapp/templates/components/hit.html:172
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned. "
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -348,15 +347,14 @@ msgstr ""
 "OS2datascanner sletter ikke resultater fra systemet der blev scannet.\n"
 "Resultatet markeres udelukkende som håndteret i OS2datascanner."
 
-#: reportapp/templates/components/handle-match.html:12
-#: reportapp/templates/components/handle-match.html:46
+#: reportapp/templates/components/handle-match.html:11
+#: reportapp/templates/components/handle-match.html:55
 msgid "Mark as handled"
 msgstr "Markér som håndterede"
 
-#: reportapp/templates/components/handle-match.html:19
-#: reportapp/templates/components/handle-match.html:64
-#: reportapp/templates/components/hit.html:130
-#: reportapp/templates/components/hit.html:155
+#: reportapp/templates/components/handle-match.html:18
+#: reportapp/templates/components/hit.html:131
+#: reportapp/templates/components/hit.html:180
 msgid ""
 "You are about to handle this result. This action does not change the file, "
 "that the result is about. Please do not handle a result before action has "
@@ -366,7 +364,13 @@ msgstr ""
 "filen, som resultatet handler om. Håndtér venligst ikke et resultat, før du "
 "manuelt har gjort noget ved filen."
 
-#: reportapp/templates/components/handle-match.html:44
+#: reportapp/templates/components/handle-match.html:26
+#: reportapp/templates/components/hit.html:138
+#: reportapp/templates/components/hit.html:167
+msgid "Revert"
+msgstr "Fortryd"
+
+#: reportapp/templates/components/handle-match.html:53
 msgid ""
 "You are about to handle the marked results. This action does not change the "
 "files, that the results are about. Please do not handle a result before "
@@ -376,21 +380,7 @@ msgstr ""
 "filerne, som resultaterne handler om. Håndtér venligst ikke et resultat, før "
 "du manuelt har gjort noget ved filen."
 
-#: reportapp/templates/components/handle-match.html:57
-msgid "Edit marked"
-msgstr "Rediger markerede"
-
-#: reportapp/templates/components/handle-match.html:70
-#: reportapp/templates/components/hit.html:188
-#: reportapp/templates/components/hit.html:228
-msgid "Revert"
-msgstr "Fortryd"
-
-#: reportapp/templates/components/handle-match.html:94
-msgid "Revert marked"
-msgstr "Fortryd markerede"
-
-#: reportapp/templates/components/handle-match.html:99
+#: reportapp/templates/components/handle-match.html:59
 msgid "selected"
 msgstr "valgt"
 
@@ -398,53 +388,48 @@ msgstr "valgt"
 msgid "Select result"
 msgstr "Vælg resultat"
 
-#: reportapp/templates/components/hit.html:46
+#: reportapp/templates/components/hit.html:45
 msgid "Open"
 msgstr "Åbn"
 
-#: reportapp/templates/components/hit.html:55
+#: reportapp/templates/components/hit.html:54
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:62
+#: reportapp/templates/components/hit.html:61
 msgid "Opened"
 msgstr "Åbnet: "
 
-#: reportapp/templates/components/hit.html:98
+#: reportapp/templates/components/hit.html:96
 msgid "Copy folder path"
 msgstr "Kopiér sti til mappe"
 
-#: reportapp/templates/components/hit.html:103
+#: reportapp/templates/components/hit.html:101
 msgid "Copy path"
 msgstr "Kopiér sti"
 
-#: reportapp/templates/components/hit.html:110
+#: reportapp/templates/components/hit.html:108
 msgid "Copy link"
 msgstr "Kopiér link"
 
 #: reportapp/templates/components/hit.html:123
-#: reportapp/templates/components/hit.html:157
+#: reportapp/templates/components/hit.html:182
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:161
-#: reportapp/templates/components/hit.html:232
+#: reportapp/templates/components/hit.html:187
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:175
-msgid "Edit"
-msgstr "Redigér"
-
-#: reportapp/templates/components/hit.html:249
+#: reportapp/templates/components/hit.html:203
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:250
+#: reportapp/templates/components/hit.html:204
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:251
+#: reportapp/templates/components/hit.html:205
 msgid "Probability"
 msgstr "Sandsynlighed"
 
@@ -453,45 +438,61 @@ msgstr "Sandsynlighed"
 msgid "Results"
 msgstr "Resultater"
 
-#: reportapp/templates/components/hits.html:32
+#: reportapp/templates/components/hits.html:33
 msgid "Show match probability"
 msgstr "Vis sandsynlighed"
 
-#: reportapp/templates/components/hits.html:36
+#: reportapp/templates/components/hits.html:37
 msgid "Show/hide all matches"
 msgstr "Vis/skjul alle matches"
 
-#: reportapp/templates/components/hits.html:46
+#: reportapp/templates/components/hits.html:47
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: reportapp/templates/components/hits.html:50
+#: reportapp/templates/components/hits.html:51
 #: reportapp/templates/user_content.html:22
 msgid "Name"
 msgstr "Navn"
 
-#: reportapp/templates/components/hits.html:54
+#: reportapp/templates/components/hits.html:55
 #: reportapp/templates/components/leader-statistics-template.html:83
 msgid "Matches"
 msgstr "Matches"
 
-#: reportapp/templates/components/hits.html:64
+#: reportapp/templates/components/hits.html:65
 msgid "Source"
 msgstr "Kilde"
 
-#: reportapp/templates/components/hits.html:66
+#: reportapp/templates/components/hits.html:67
 msgid "Path"
 msgstr "Sti"
 
-#: reportapp/templates/components/hits.html:81
+#: reportapp/templates/components/hits.html:82
 #: reportapp/templates/components/leader-statistics-template.html:95
 msgid "Status"
 msgstr "Status"
 
-#: reportapp/templates/components/hits.html:91
+#: reportapp/templates/components/hits.html:92
 #: reportapp/templates/components/leader-statistics-template.html:109
 msgid "Actions"
 msgstr "Handlinger"
+
+#: reportapp/templates/components/index_navigation.html:7
+msgid "Personal"
+msgstr "Personlige"
+
+#: reportapp/templates/components/index_navigation.html:11
+msgid "Archive"
+msgstr "Arkiv"
+
+#: reportapp/templates/components/index_navigation.html:16
+msgid "Remediator"
+msgstr "Oprydder"
+
+#: reportapp/templates/components/index_navigation.html:21
+msgid "Undistributed"
+msgstr "Uuddelte"
 
 #: reportapp/templates/components/leader-statistics-template.html:11
 msgid "Leader overview for:"
@@ -551,7 +552,7 @@ msgstr "Vis/skjul overblik"
 msgid "No employees found."
 msgstr "Ingen medarbejdere fundet."
 
-#: reportapp/templates/components/load-results.html:27
+#: reportapp/templates/components/load-results.html:32
 msgid "per page"
 msgstr "pr. side"
 
@@ -560,27 +561,23 @@ msgstr "pr. side"
 msgid "Show more matches..."
 msgstr "Vis flere matches..."
 
-#: reportapp/templates/components/navigation.html:9
+#: reportapp/templates/components/navigation.html:10
 msgid "Report"
 msgstr "Rapport"
 
-#: reportapp/templates/components/navigation.html:17
-msgid "Archive"
-msgstr "Arkiv"
-
-#: reportapp/templates/components/navigation.html:26
+#: reportapp/templates/components/navigation.html:18
 msgid "Leader overview"
 msgstr "Lederoverblik"
 
-#: reportapp/templates/components/navigation.html:50
+#: reportapp/templates/components/navigation.html:42
 msgid "My Overview"
 msgstr "Mit overblik"
 
-#: reportapp/templates/components/navigation.html:58
+#: reportapp/templates/components/navigation.html:50
 msgid "User profile"
 msgstr "Brugerprofil"
 
-#: reportapp/templates/components/navigation.html:65
+#: reportapp/templates/components/navigation.html:57
 #: reportapp/templates/components/user.html:48
 msgid "Logout"
 msgstr "Log ud"
@@ -593,7 +590,7 @@ msgstr "Ingen organisatoriske enheder er forbundet til brugeren"
 msgid "There are no organizational units associated with"
 msgstr "Der er ikke nogle organisatoriske enheder forbundet med"
 
-#: reportapp/templates/components/pagination.html:11
+#: reportapp/templates/components/pagination.html:10
 #: reportapp/templates/content.html:14
 msgid "results"
 msgstr "resultater"
@@ -603,16 +600,16 @@ msgstr "resultater"
 msgid "Previous"
 msgstr "Forrige"
 
-#: reportapp/templates/components/pagination.html:96
-#: reportapp/templates/components/pagination.html:101
+#: reportapp/templates/components/pagination.html:100
+#: reportapp/templates/components/pagination.html:105
 msgid "Next"
 msgstr "Næste"
 
-#: reportapp/templates/components/pagination.html:107
+#: reportapp/templates/components/pagination.html:111
 msgid "Go to page"
 msgstr "Gå til side"
 
-#: reportapp/templates/components/pagination.html:125
+#: reportapp/templates/components/pagination.html:130
 msgid "Go"
 msgstr "Gå"
 
@@ -1088,7 +1085,7 @@ msgstr "Bruger siden"
 msgid "%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A"
 msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 
-#: reportapp/views/views.py:78
+#: reportapp/views/report_views.py:65 reportapp/views/views.py:72
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 

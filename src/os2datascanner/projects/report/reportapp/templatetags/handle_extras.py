@@ -151,3 +151,8 @@ def get_matchcount(account):
         matches = matches | Remediator(user=account.user).filter(all_matches)
 
     return matches.count()
+
+
+@register.filter
+def is_remediator(user):
+    return Remediator.objects.filter(user=user).exists()

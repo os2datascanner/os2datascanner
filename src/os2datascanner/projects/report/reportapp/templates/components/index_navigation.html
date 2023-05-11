@@ -1,0 +1,23 @@
+{% load i18n %}
+{% load handle_extras %}
+
+<div class="tabs">
+  <a id="report"
+     class="tabs__control{% if request.path == '/' or request.path == '/reports' %} active{% endif %}"
+     href="{% url "reports" %}">{% trans "Personal" %}</a>
+  {% if settings.ARCHIVE_TAB %}
+    <a id="archive"
+       class="tabs__control{% if request.path == '/archive' %} active{% endif %}"
+       href="{% url "archive" %}">{% trans "Archive" %}</a>
+  {% endif %}
+  {% if user|is_remediator %}
+    <a id="remediator"
+       class="tabs__control{% if request.path == '/remediator' %} active{% endif %}"
+       href="{% url "remediator" %}">{% trans "Remediator" %}</a>
+  {% endif %}
+  {% if request.user.is_superuser %}
+    <a id="undistributed"
+       class="tabs__control{% if request.path == '/undistributed' %} active{% endif %}"
+       href="{% url "undistributed" %}">{% trans "Undistributed" %}</a>
+  {% endif %}
+</div>
