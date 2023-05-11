@@ -12,7 +12,7 @@
   </svg>
 
   {{ page_obj.paginator.count }} {% trans "results" %}
-  {% if distributable_matches %}
+  {% if request.path == "/undistributed" %}
     <div id="distribute-container"
          class="distribute dropdown"
          name="distribute-container">

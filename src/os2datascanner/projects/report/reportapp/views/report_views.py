@@ -24,7 +24,6 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, EmptyPage
-from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
@@ -87,7 +86,12 @@ class ReportView(LoginRequiredMixin, ListView):
         self.apply_filters()
         self.order_queryset_by_property()
 
-        return self.document_reports
+        return self.document_reports.only(
+            "name",
+            "resolution_status",
+            "resolution_time",
+            "last_opened_time",
+            "raw_matches")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -252,6 +256,16 @@ class UndistributedView(ReportView):
         reports = reports.filter(only_notify_superadmin=True)
         return reports
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['undistributed_scannerjobs'] = self.all_reports.order_by(
+            'scanner_job_pk').values(
+            'scanner_job_pk').annotate(
+            total=Count('scanner_job_pk')).values(
+            'scanner_job_name', 'scanner_job_pk', 'total', 'scan_time'
+            ).order_by('-scan_time')
+        return context
+
     def dispatch(self, request, *args, **kwargs):
         if user_is_superadmin(request.user) or request.user.is_superuser:
             return super().dispatch(request, *args, **kwargs)
@@ -277,7 +291,7 @@ class HTMXEndpointView(LoginRequiredMixin, View):
         if self.is_htmx == "true":
             return super().dispatch(request, *args, **kwargs)
         else:
-            raise PermissionDenied("... How?")
+            return Http404()
 
 
 class HandleMatchView(HTMXEndpointView, DetailView):
@@ -349,3 +363,27 @@ class OpenMatchView(HTMXEndpointView, DetailView):
         request.session["last_opened"] = report.pk
 
         return response
+
+
+class ShowMoreMatchesView(HTMXEndpointView, DetailView):
+    template_name = "components/matches_table.html"
+    model = DocumentReport
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Increase number of shown matches
+        last_index = int(self.request.GET.get('last_match', '10'))
+        interval = [last_index, last_index + 10]
+        context['interval'] = interval
+
+        # Serve the fragments associated with the document report
+        frags = self.object.matches.matches
+        for frag in frags:
+            if frag.rule.type_label in RENDERABLE_RULES:
+                context['frag'] = frag
+
+        # Serve the document report key
+        context['pk'] = self.object.pk
+
+        return context

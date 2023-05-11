@@ -155,7 +155,7 @@
                 <button class="revert-handle button button--has-icon"
                         type="button"
                         title="Here is a title."
-                        hx-post="{% url "handle-match" document_report.pk %}"
+                        hx-post="{% url "handle-match" document_report.pk|unlocalize %}"
                         hx-swap="outerHTML swap:300ms"
                         hx-trigger="click"
                         hx-indicator="closest tr"

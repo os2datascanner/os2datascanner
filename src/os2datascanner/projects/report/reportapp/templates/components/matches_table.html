@@ -13,17 +13,18 @@
 {% endwith %}
 
 {% if not interval and frag.matches|length > 10 or interval|last < frag.matches|length %}
-  <tr id="replaceRow__{{ pk }}">
+  <tr id="replaceRow__{{ pk|unlocalize }}">
     <td colspan="2">
       <button class="button"
               title="{% trans 'Show more matches...' %}"
               type="button"
               name='show-more-matches'
-              hx-get="{{ request.path }}"
-              {% if interval %} hx-vals='{"last_match": "{{ interval|last }}", "dr_pk": "{{ pk }}"}' {% else %} hx-vals='{"dr_pk": "{{ pk }}"}' {% endif %}
-              hx-target="#replaceRow__{{ pk }}"
+              hx-get="{% url "show-more-matches" pk %}"
+              {% if interval %} hx-vals='{"last_match": "{{ interval|last }}"}'{% endif %}
+              hx-target="#replaceRow__{{ pk|unlocalize }}"
               hx-swap="outerHTML"
               hx-trigger="click"
+              hx-push-url="false"
               hx-indicator="#report-page-indicator">
         {% trans "Show more matches..." %}
       </button>
