@@ -126,7 +126,7 @@ class FilesystemHandle(Handle):
     def make_handle(cls, path, hints=None):
         """Given a local filesystem path, returns a FilesystemHandle pointing
         at it."""
-        head, tail = os.path.split(path)
+        head, tail = os.path.split(os.path.abspath(path))
         if not tail:
             raise ValueError("FilesystemHandles must have a non-empty Path")
         return FilesystemHandle(FilesystemSource(head), tail, hints=hints)
