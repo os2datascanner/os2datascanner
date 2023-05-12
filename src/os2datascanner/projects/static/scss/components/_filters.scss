@@ -65,6 +65,15 @@
   }
 }
 
+.errorlog_filtering_wrapper {
+  display: flex;
+  align-items: center;
+
+  >div {
+    margin: 1rem;
+  }
+}
+
 .search_field_wrapper {
 
   width: 20rem;
@@ -91,8 +100,12 @@
     width: 100%;
   }
 
-    & + select#distribute-to {
-      margin-top: -1px;
+  &+select#distribute-to {
+    margin-top: -1px;
   }
 
+}
+
+span.text-highlight {
+  background-color: var(--color-primary-light);
 }

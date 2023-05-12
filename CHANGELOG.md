@@ -8,6 +8,12 @@
 
 - More robust datetime parsing for calendar matches.
 
+### New in this release
+
+- It is now possible to search for substrings in the error message and path of
+  user error log objects in the usr interface. Matched substrings are also
+  highlighted for ease of reading.
+
 ## Version 3.19.3, 12th May 2023
 
 "Bulking Agent"
