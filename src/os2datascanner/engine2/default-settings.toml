@@ -30,6 +30,11 @@ op_timeout = 60
 # The number of times to try one of the above pipeline operations
 op_tries = 2
 
+[conversions.cache]
+# The directory in which to store cached representations of objects, if
+# applicable
+directory = ""
+
 [model.libreoffice]
 # The size at which LibreOffice-generated HTML should be thrown away and
 # replaced by a new plaintext conversion (in bytes)
