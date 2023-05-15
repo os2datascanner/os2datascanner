@@ -181,7 +181,7 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, C901 too high cog
         for man_acc in account_manager_positions:
             manager_positions_to_delete = Position.objects.filter(
                 account=man_acc, imported=True, role="manager").exclude(
-                unit__in=account_employee_positions[man_acc])
+                unit__in=account_manager_positions[man_acc])
             if positions_to_delete:
                 to_delete.append(manager_positions_to_delete)
             else:
