@@ -71,20 +71,15 @@ def perform_import(
             realm.realm_id, realm.organization.pk, token, timeout=1800)
     sync_message.raise_for_status()
 
-    # Retrieve a count on the amount of users in given Keycloak realm
-    keycloak_user_count = keycloak_services.get_user_count_in_realm(
-        realm.realm_id, token, timeout=1800)
-
     # TODO: In the future this kind of logic should be reimplemented using
     # websockets.
     # Gets all users in the given realm
     # Timeout set to 30 minutes
-    user_message = keycloak_services.get_users(
-        realm.realm_id, token, timeout=1800, max_users=keycloak_user_count)
-    user_message.raise_for_status()
-    remote = user_message.json()
+    all_users = list(
+            keycloak_services.iter_users(
+                    realm.realm_id, token, timeout=1800, page_size=1000))
 
-    return perform_import_raw(org, remote, name_selector, progress_callback)
+    return perform_import_raw(org, all_users, name_selector, progress_callback)
 
 
 def _account_to_node(a: Account) -> LDAPNode:

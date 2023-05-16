@@ -186,6 +186,22 @@ def get_users(realm, token, timeout=5, max_users=500, start_with_user=0):
     return requests.get(url, headers=headers, timeout=timeout)
 
 
+def iter_users(realm, token, timeout=5, page_size=500):
+    """Yields all users known to Keycloak under the given realm, making as
+    many API calls as necessary given the specified page size."""
+    offset = 0
+
+    while (rq := get_users(realm, token, timeout, page_size, offset)):
+        rq.raise_for_status()
+
+        users = rq.json()
+        if not users:  # No more users to fetch
+            break
+        else:
+            yield from users
+            offset += len(users)
+
+
 def create_member_of_attribute_mapper(realm, token, provider_id):
 
     url = (settings.KEYCLOAK_BASE_URL +
