@@ -159,8 +159,14 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, C901 too high cog
                 account=acc,
                 unit=unit,
                 role=role,)
-            to_add.append(position)
 
+            # There's a chance we've already added this position to the list,
+            # due to how the data we receive looks.
+            if position not in to_add:
+                to_add.append(position)
+
+        # TODO: Comment above also means we're potentially appending the same unit n times,
+        # which has no functionality breaking consequences, but is waste of space.
         if role == "employee":
             account_employee_positions[acc].append(unit)
         if role == "manager":
