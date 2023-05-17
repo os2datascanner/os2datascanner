@@ -26,7 +26,10 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, C901 too high cog
     ou_parent_relations = {}
 
     now = time_now()
+
     to_add = []
+    position_hashes = set()
+
     to_update = []
     to_delete = []
 
@@ -159,11 +162,13 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, C901 too high cog
                 account=acc,
                 unit=unit,
                 role=role,)
+            position_hash = hash(str(acc.uuid) + str(unit.uuid) + role)
 
             # There's a chance we've already added this position to the list,
             # due to how the data we receive looks.
-            if position not in to_add:
+            if position_hash not in position_hashes:
                 to_add.append(position)
+                position_hashes.add(position_hash)
 
         # TODO: Comment above also means we're potentially appending the same unit n times,
         # which has no functionality breaking consequences, but is waste of space.
