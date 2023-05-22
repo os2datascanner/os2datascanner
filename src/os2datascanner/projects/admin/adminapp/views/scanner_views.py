@@ -31,7 +31,7 @@ from ..models.authentication import Authentication
 from ..models.rules.rule import Rule
 from ..models.scannerjobs.scanner import Scanner, ScanStatus, ScanStatusSnapshot
 from ..models.usererrorlog import UserErrorLog
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync

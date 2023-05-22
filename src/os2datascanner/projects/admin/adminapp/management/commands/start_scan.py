@@ -1,7 +1,7 @@
 import sys
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import ugettext, gettext_lazy as _
 
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import (
         Scanner)

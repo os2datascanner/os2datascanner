@@ -22,7 +22,7 @@ from .scanner_views import (
     ScannerCreate,
     ScannerList)
 from ..models.scannerjobs.webscanner import WebScanner
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 def url_contains_spaces(form):

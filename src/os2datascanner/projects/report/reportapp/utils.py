@@ -8,7 +8,7 @@ import structlog
 from django.conf import settings
 from django.contrib.auth.models import User
 from mozilla_django_oidc import auth
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.engine2.pipeline import messages
 from .models.documentreport import DocumentReport

@@ -29,7 +29,7 @@ from django.conf import settings
 from django.core.validators import validate_comma_separated_integer_list
 from django.db.models import JSONField
 from django.db.models.signals import post_delete
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.dispatch import receiver
 from django.utils import timezone
 

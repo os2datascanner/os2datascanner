@@ -2,7 +2,7 @@ import logging
 import requests
 from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.projects.admin.adminapp.signals import get_pika_thread
 from ...core.models.background_job import BackgroundJob
