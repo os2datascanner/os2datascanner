@@ -6,7 +6,7 @@
   {% for frag in document_report.matches.matches %}
     {% if frag.rule.type_label in renderable_rules and frag.matches %}
       <tr data-type="{{ type }}"
-          {% if request.session.last_opened == document_report.pk %} class="highlighted"{% endif %}>
+          {% if request.session.last_opened == document_report.pk|unlocalize %} class="highlighted"{% endif %}>
         <td class="datatable__column--checkbox">
           <div class="ds-checkbox">
             <input type="checkbox"

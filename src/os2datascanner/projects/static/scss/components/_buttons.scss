@@ -14,6 +14,11 @@
   border-radius: var(--border-radius-button);
   word-break: normal;
 
+  &:disabled {
+    color: var(--color-grey-dark);
+    cursor: not-allowed;
+  }
+
   &:focus:not([disabled]),
   &:hover:not([disabled]) {
     background-color: rgba(0, 0, 0, 0.2);
@@ -69,7 +74,6 @@
 
     &:disabled {
       background-color: rgba(0, 0, 0, 0.2);
-      cursor: not-allowed;
     }
 
   }

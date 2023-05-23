@@ -43,6 +43,7 @@ from ..utils import user_is, user_is_superadmin
 from ..models.documentreport import DocumentReport
 from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
+from ...organizations.models.account import Account
 
 
 logger = structlog.get_logger()
@@ -102,9 +103,15 @@ class ReportView(LoginRequiredMixin, ListView):
 
     def base_match_filter(self, reports):
         """Base filtering of document reports. Extended in children views."""
-        if user_org := self.request.user.account.organization:
-            reports = reports.filter(organization=user_org)
-        else:
+        try:
+            if user_org := self.request.user.account.organization:
+                reports = reports.filter(organization=user_org)
+            else:
+                reports = DocumentReport.objects.none()
+        except Account.DoesNotExist as e:
+            logger.warning(f"While trying to apply base match filter for user "
+                           f"{self.request.user}, the following error occurred: {e}. "
+                           "Returning no document reports for user.")
             reports = DocumentReport.objects.none()
 
         return reports

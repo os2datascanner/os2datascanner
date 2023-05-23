@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, AnonymousUser
 from django.test import RequestFactory, TestCase
 
-from ..reportapp.views.views import MainPageView
+from ..reportapp.views.report_views import UserReportView
 
 
 class TestLoginRequired(TestCase):
@@ -15,7 +15,7 @@ class TestLoginRequired(TestCase):
         # Tries to hit path "/" with no login
         request = self.factory.get('/')
         request.user = AnonymousUser()
-        response = MainPageView.as_view()(request)
+        response = UserReportView.as_view()(request)
         self.assertEqual(response.status_code, 302)
 
     def test_index_as_user(self):
@@ -23,9 +23,9 @@ class TestLoginRequired(TestCase):
         request = self.factory.get('/')
         user = self.user
         request.user = user
-        response = MainPageView.as_view()(request)
+        response = UserReportView.as_view()(request)
 
         # Should get status code 200 OK and index.html template
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.template_name, "index.html")
+        self.assertIn("index.html", response.template_name)
         user.delete()

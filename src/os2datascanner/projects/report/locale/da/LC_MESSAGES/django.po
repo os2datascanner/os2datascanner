@@ -492,7 +492,7 @@ msgstr "Oprydder"
 
 #: reportapp/templates/components/index_navigation.html:21
 msgid "Undistributed"
-msgstr "Uuddelte"
+msgstr "Tilbageholdte"
 
 #: reportapp/templates/components/leader-statistics-template.html:11
 msgid "Leader overview for:"
