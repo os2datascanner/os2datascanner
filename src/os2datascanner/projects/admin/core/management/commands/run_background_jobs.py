@@ -123,7 +123,7 @@ class Command(BaseCommand):
             raise BackgroundJob.MustStop()
 
         signal.signal(signal.SIGTERM, _handler)
-        debug.register_backtrace_signal()
+        debug.register_debug_signal()
 
         count = 0
         errors = 0

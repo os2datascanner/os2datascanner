@@ -177,7 +177,7 @@ class Command(BaseCommand):
                 choices=log_levels.keys())
 
     def handle(self, *args, log, **options):
-        debug.register_backtrace_signal()
+        debug.register_debug_signal()
 
         # change formatting to include datestamp
         fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
