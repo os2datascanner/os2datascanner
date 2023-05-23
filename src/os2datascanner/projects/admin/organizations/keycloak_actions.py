@@ -159,6 +159,7 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
 
     units = {}
     accounts = {}
+    account_positions = {}
 
     def path_to_unit(
             o: Organization,
@@ -293,24 +294,50 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
                 changed_accounts[iid] = (r, account)
 
             unit = path_to_unit(org, path[:-1])
-            to_add.append(Position(account=account, unit=unit))
 
+            if account not in account_positions:
+                account_positions[account] = []
+
+            try:
+                Position.objects.get(account=account, unit=unit)
+            except Position.DoesNotExist:
+                position = Position(
+                    imported=True,
+                    account=account,
+                    unit=unit)
+                to_add.append(position)
+
+            account_positions[account].append(unit)
             progress_callback("diff_handled", path)
 
     for iid, (remote_node, account) in changed_accounts.items():
-        # Delete all Aliases and Positions for this account and create them
-        # anew
-        to_delete.extend(Alias.objects.filter(account=account, imported=True))
-        to_delete.extend(Position.objects.filter(account=account, imported=True))
         mail_address = remote_node.properties.get("email")
+        imported_id = f"{account.imported_id}{EMAIL_ALIAS_IMPORTED_ID_SUFFIX}"
+        # The user has an email. Create or update if necessary
         if mail_address:
-            alias_object = Alias(account=account,
-                                 alias_type=AliasType.EMAIL,
-                                 value=mail_address,
-                                 imported_id=f"{account.imported_id}"
-                                             f"{EMAIL_ALIAS_IMPORTED_ID_SUFFIX}")
-            if alias_object not in to_add:
-                to_add.append(alias_object)
+            try:
+                alias = Alias.objects.get(
+                    imported_id=imported_id,
+                    account=account,
+                    _alias_type=AliasType.EMAIL)
+                for attr_name, expected in (("_value", mail_address),):
+                    if getattr(alias, attr_name) != expected:
+                        setattr(alias, attr_name, expected)
+                        to_update.append((alias, (attr_name,)))
+            except Alias.DoesNotExist:
+                alias = Alias(
+                    imported_id=imported_id,
+                    account=account,
+                    _alias_type=AliasType.EMAIL,
+                    _value=mail_address
+                )
+                if alias not in to_add:
+                    to_add.append(alias)
+        elif not mail_address:
+            # The user no longer has an email - delete previously imported ones
+            to_delete.extend(Alias.objects.filter(account=account,
+                                                  imported=True,
+                                                  _alias_type=AliasType.EMAIL))
 
         # Update the other properties of the account
         for attr_name, expected in (
@@ -327,6 +354,13 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
     # Make sure we don't try to delete objects that are still referenced in the
     # remote hierarchy
     to_delete = [t for t in to_delete if t.imported_id not in iids_to_preserve]
+    # Figure out which positions to delete for each user.
+    for acc in account_positions:
+        positions_to_delete = Position.objects.filter(
+            account=acc, imported=True).exclude(
+            unit__in=account_positions[acc])
+        if positions_to_delete:
+            to_delete.extend(positions_to_delete)
 
     logger.info("Applying database operations")
 

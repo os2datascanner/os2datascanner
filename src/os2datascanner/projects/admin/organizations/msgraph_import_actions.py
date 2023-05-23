@@ -187,7 +187,5 @@ def perform_msgraph_import(data: list,  # noqa: C901, CCR001
             unit__in=account_positions[acc])
         if positions_to_delete:
             to_delete.append(positions_to_delete)
-        else:
-            continue
 
     prepare_and_publish(all_uuids, to_add, to_delete, to_update)
