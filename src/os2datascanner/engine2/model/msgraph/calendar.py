@@ -1,8 +1,7 @@
 from io import BytesIO
 import pytz
 from contextlib import contextmanager
-import datetime
-from dateutil.parser import isoparse
+from dateutil.parser import isoparse, parse
 
 from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
@@ -177,7 +176,7 @@ class MSGraphCalendarEventHandle(Handle):
     @property
     def start(self):
         if self._start:
-            date = datetime.datetime.strptime(self._start["dateTime"], "%Y-%m-%dT%H:%M:%S.%f0")
+            date = parse(self._start["dateTime"])
             tz = pytz.timezone(self._start["timeZone"])
             tz.localize(date)
             return date.strftime('%H:%M %-d/%-m/%y')

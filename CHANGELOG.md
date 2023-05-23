@@ -1,10 +1,18 @@
 # Changelog
 
+## Next Release
+
+"Pet Rock"
+
+### Bugfixes
+
+- More robust datetime parsing for calendar matches.
+
 ## Version 3.19.3, 12th May 2023
 
 "Bulking Agent"
 
-## New in this release
+### New in this release
 
 - The `makefake` management command now works once more, and it is now
   possible to set the "owner"-field of the generated reports through a
