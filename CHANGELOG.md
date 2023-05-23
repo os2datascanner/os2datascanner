@@ -15,6 +15,9 @@
 - The `SIGUSR1` backtrace function is now extensible, allowing components to
   provide more information about what they're doing.
 
+- The background job runner process now also shows information about the
+  current job when it receives the `SIGUSR1` signal.
+
 ### Bugfixes
 
 - More robust datetime parsing for calendar matches.
