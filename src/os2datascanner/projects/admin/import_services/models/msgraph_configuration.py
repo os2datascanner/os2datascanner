@@ -3,7 +3,7 @@ from django.db import models
 from ...grants.models import GraphGrant
 from .import_service import ImportService
 from .exported_mixin import Exported
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class MSGraphConfiguration(Exported, ImportService):

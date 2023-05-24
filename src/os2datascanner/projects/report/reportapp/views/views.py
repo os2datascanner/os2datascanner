@@ -28,7 +28,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponseForbidden, Http404, HttpResponse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.views.generic import View, TemplateView, ListView, DetailView
 

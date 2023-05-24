@@ -15,7 +15,7 @@ from rest_framework import serializers
 from rest_framework.fields import UUIDField
 from django.db import models, transaction
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.core_organizational_structure.models import Alias as Core_Alias
 from os2datascanner.core_organizational_structure.models import \

@@ -12,7 +12,7 @@
 # sector open source network <https://os2.eu/>.
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .exported_mixin import Exported
 

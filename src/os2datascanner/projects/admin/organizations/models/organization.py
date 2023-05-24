@@ -13,7 +13,7 @@
 #
 from django.db import models
 from django.db.models import Q, F
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import ScanStatus, Scanner
 from os2datascanner.core_organizational_structure.models import \

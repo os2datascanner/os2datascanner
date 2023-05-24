@@ -21,7 +21,7 @@ from .scanner_views import (
     ScannerCreate,
     ScannerList)
 from ..models.scannerjobs.filescanner import FileScanner
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class FileScannerList(ScannerList):

@@ -15,12 +15,12 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.conf.urls import include, url
+from django.conf.urls import include, re_path
 from django.urls import path
 
 urlpatterns = [
-    url('', include('os2datascanner.projects.report.reportapp.urls')),
-    url('^admin/', admin.site.urls),
+    re_path('', include('os2datascanner.projects.report.reportapp.urls')),
+    re_path('^admin/', admin.site.urls),
 ]
 
 if (hasattr(settings, "OPTIONAL_APPS") and "debug_toolbar" in settings.OPTIONAL_APPS):
