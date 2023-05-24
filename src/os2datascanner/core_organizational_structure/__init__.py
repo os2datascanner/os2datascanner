@@ -1,1 +1,7 @@
-default_app_config = 'organizations.apps.OrganizationsConfig'
+import django
+
+
+if django.VERSION >= (3, 2):
+    pass
+else:
+    default_app_config = 'organizations.apps.OrganizationsConfig'

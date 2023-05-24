@@ -6,3 +6,4 @@ class GrantsConfig(AppConfig):
     name = 'os2datascanner.projects.admin.grants'
     label = 'grants'
     verbose_name = _('grants')
+    default = True

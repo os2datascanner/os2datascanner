@@ -6,3 +6,4 @@ class ImportServicesConfig(AppConfig):
     name = 'os2datascanner.projects.admin.import_services'
     label = 'import_services'
     verbose_name = _('import services')
+    default = True

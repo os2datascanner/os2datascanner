@@ -6,3 +6,4 @@ class OrganizationsConfig(AppConfig):
     name = 'os2datascanner.projects.admin.organizations'
     label = 'organizations'
     verbose_name = _('organizations')
+    default = True

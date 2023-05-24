@@ -6,3 +6,4 @@ class CoreOrganizationalStructureConfig(AppConfig):
     name = 'os2datascanner.core_organizational_structure'
     label = 'core_organizational_structure'
     verbose_name = _('core_organizational_structure')
+    default = True
