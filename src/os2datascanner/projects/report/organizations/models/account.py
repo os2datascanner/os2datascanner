@@ -165,11 +165,14 @@ class Account(Core_Account):
             "only_notify_superadmin",
             "count")
 
-        for obj in reports:
-            if obj.get("only_notify_superadmin"):
-                self.withheld_matches = obj.get("count")
-            else:
-                self.match_count = obj.get("count")
+        if not reports:
+            self.match_count = 0
+        else:
+            for obj in reports:
+                if obj.get("only_notify_superadmin"):
+                    self.withheld_matches = obj.get("count")
+                else:
+                    self.match_count = obj.get("count")
 
     def _calculate_status(self):
         """Calculate the status of the user. The user can have one of three
@@ -246,7 +249,6 @@ class Account(Core_Account):
         return self.get_managed_units().exists()
 
     def save(self, *args, **kwargs):
-
         self._count_matches()
         self._calculate_status()
 
