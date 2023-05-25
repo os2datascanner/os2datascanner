@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-11 12:49+0200\n"
+"POT-Creation-Date: 2023-05-15 08:56+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -432,7 +432,7 @@ msgid "error logs"
 msgstr "fejlbeskeder"
 
 #: adminapp/models/usererrorlog.py:33
-#: adminapp/templates/os2datascanner/error_log.html:88
+#: adminapp/templates/os2datascanner/error_log.html:105
 msgid "Path"
 msgstr "Sti"
 
@@ -914,13 +914,17 @@ msgstr "Ønsker du virkelig at slette?"
 msgid "No"
 msgstr "Nej"
 
-#: adminapp/templates/os2datascanner/error_log.html:26
-#: adminapp/templates/os2datascanner/error_log.html:33
+#: adminapp/templates/os2datascanner/error_log.html:25
+#: adminapp/templates/os2datascanner/error_log.html:50
 #: adminapp/templates/os2datascanner/scanner_tabs.html:58
 msgid "Error Log"
 msgstr "Fejlbeskeder"
 
-#: adminapp/templates/os2datascanner/error_log.html:57
+#: adminapp/templates/os2datascanner/error_log.html:41
+msgid "Search for error message"
+msgstr "Søg efter fejlbesked"
+
+#: adminapp/templates/os2datascanner/error_log.html:74
 msgid ""
 "You are about to mark all error log messages as seen. This action cannot be "
 "reverted. Are you sure?"
@@ -928,65 +932,65 @@ msgstr ""
 "Du er ved at markere alle fejlbeskeder som set. Denne handling kan ikke "
 "fortrydes. Er du sikker?"
 
-#: adminapp/templates/os2datascanner/error_log.html:58
+#: adminapp/templates/os2datascanner/error_log.html:75
 msgid "Mark all as seen"
 msgstr "Markér alle som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:68
+#: adminapp/templates/os2datascanner/error_log.html:85
 msgid "You are about to remove"
 msgstr "Du er ved at slette"
 
-#: adminapp/templates/os2datascanner/error_log.html:68
+#: adminapp/templates/os2datascanner/error_log.html:85
 msgid " error logs. This action cannot be reverted. Are you sure?"
 msgstr " fejlbeskeder. Denne handling kan ikke fortrydes. Er du sikker?"
 
-#: adminapp/templates/os2datascanner/error_log.html:72
+#: adminapp/templates/os2datascanner/error_log.html:89
 msgid "Remove all"
 msgstr "Slet alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:81
+#: adminapp/templates/os2datascanner/error_log.html:98
 #: adminapp/templates/os2datascanner/scan_completed.html:77
 msgid "Select all"
 msgstr "Vælg alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:82
+#: adminapp/templates/os2datascanner/error_log.html:99
 #: adminapp/templates/os2datascanner/scan_completed.html:78
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: adminapp/templates/os2datascanner/error_log.html:86
+#: adminapp/templates/os2datascanner/error_log.html:103
 msgid "Error"
 msgstr "Fejl"
 
-#: adminapp/templates/os2datascanner/error_log.html:87
+#: adminapp/templates/os2datascanner/error_log.html:104
 #: adminapp/templates/os2datascanner/scan_completed.html:83
 msgid "Started"
 msgstr "Startet"
 
-#: adminapp/templates/os2datascanner/error_log.html:89
+#: adminapp/templates/os2datascanner/error_log.html:106
 msgid "Scan"
 msgstr "Scan"
 
-#: adminapp/templates/os2datascanner/error_log.html:90
+#: adminapp/templates/os2datascanner/error_log.html:107
 #: adminapp/templates/os2datascanner/scan_completed.html:88
 #: adminapp/templates/os2datascanner/scan_status_table.html:42
 #: organizations/templates/organizations/org_table.html:53
 msgid "Actions"
 msgstr "Handlinger"
 
-#: adminapp/templates/os2datascanner/error_log.html:106
+#: adminapp/templates/os2datascanner/error_log.html:123
 msgid "Select results"
 msgstr "Vælg resultater"
 
-#: adminapp/templates/os2datascanner/error_log.html:114
+#: adminapp/templates/os2datascanner/error_log.html:131
 msgid "New"
 msgstr "Ny"
 
-#: adminapp/templates/os2datascanner/error_log.html:148
+#: adminapp/templates/os2datascanner/error_log.html:166
 msgid "Mark as seen"
 msgstr "Markér som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:161
+#: adminapp/templates/os2datascanner/error_log.html:179
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
@@ -1862,7 +1866,7 @@ msgstr "Drevbogstav"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:457
+#: adminapp/views/scanner_views.py:460
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 

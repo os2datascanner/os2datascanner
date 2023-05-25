@@ -7,16 +7,15 @@
 {% block scripts %}
   <script src="{% static '3rdparty/htmx.min.js' %}"></script>
   <script src="{% static 'js/tableBehavior.js' %}"></script>
+  <script src="{% static 'js/highlightSearch.js' %}"></script>
 {% endblock %}
 
 {% block body %}
-  {% if not request.headers.hx_request %}
-    {% include "partials/header.html" %}
-    <main class="wrapper"
-          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-          hx-push-url="true">
-      {% include "partials/main.html" with active_tab="status" %}
-    {% endif %}
+  {% include "partials/header.html" %}
+  <main class="wrapper"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        hx-push-url="true">
+    {% include "partials/main.html" with active_tab="status" %}
 
     <div class="content">
 
@@ -26,8 +25,26 @@
         <h1 class="page-title">{% trans "Error Log" %}</h1>
       </div>
 
+      <form name="errorlog_filters"
+            id="errorlog_filters"
+            class="errorlog_filtering_wrapper"
+            onsubmit="return false"
+            hx-get="{% url "error-log" %}"
+            hx-trigger="change, keyup delay:200ms from:#search_field"
+            hx-swap="outerHTML"
+            hx-target=".error_content"
+            hx-select=".error_content">
+        <div class="search_field_wrapper">
+          <input type="search"
+                 name="search_field"
+                 id="search_field"
+                 placeholder="{% trans "Search for error message" %}"
+                 value="{{ request.GET.search_field }}"/>
+        </div>
+      </form>
+
       {% if object_list  %}
-        <div class="datatable-wrapper card"
+        <div class="datatable-wrapper card error_content"
              role="region"
              tabindex="0"
              aria-label="{% trans 'Error Log' %}">
@@ -118,50 +135,50 @@
                       {% timezone "Europe/Copenhagen" %}
                       {{ error_log.scan_status.start_time }}
                     {% endtimezone %}
-                    <td class="datatable__column--path">{{ error_log.path }}</td>
-                    <td class="datatable__column--automatic">{{ error_log.scan_status.scanner.name }}</td>
-                    <td class="datatable__column--actions">
-                      <div class="action-wrapper">
+                  </td>
+                  <td class="datatable__column--path">{{ error_log.path }}</td>
+                  <td class="datatable__column--automatic">{{ error_log.scan_status.scanner.name }}</td>
+                  <td class="datatable__column--actions">
+                    <div class="action-wrapper">
+                      <button type="button"
+                              class="button"
+                              name="remove_errorlog"
+                              hx-post=""
+                              hx-swap="outerHTML"
+                              hx-trigger="click"
+                              hx-target=".content"
+                              hx-vals='{"pk": "{{ error_log.pk|unlocalize }}"}'
+                              hx-indicator="closest tr">
+                        <svg class="icon">
+                          <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
+                        </svg>
+                      </button>
+                      {% if error_log.is_new %}
                         <button type="button"
                                 class="button"
-                                name="remove_errorlog"
+                                name="see_errorlog"
                                 hx-post=""
                                 hx-swap="outerHTML"
                                 hx-trigger="click"
-                                hx-target=".content"
+                                hx-target="#usererrorlog_entry__{{ error_log.pk|unlocalize }}"
                                 hx-vals='{"pk": "{{ error_log.pk|unlocalize }}"}'
-                                hx-indicator="closest tr">
-                          <svg class="icon">
-                            <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
-                          </svg>
+                                hx-select="#usererrorlog_entry__{{ error_log.pk|unlocalize }}">
+                          {% trans "Mark as seen" %}
                         </button>
-                        {% if error_log.is_new %}
-                          <button type="button"
-                                  class="button"
-                                  name="see_errorlog"
-                                  hx-post=""
-                                  hx-swap="outerHTML"
-                                  hx-trigger="click"
-                                  hx-target="#usererrorlog_entry__{{ error_log.pk|unlocalize }}"
-                                  hx-vals='{"pk": "{{ error_log.pk|unlocalize }}"}'
-                                  hx-select="#usererrorlog_entry__{{ error_log.pk|unlocalize }}">
-                            {% trans "Mark as seen" %}
-                          </button>
-                        {% endif %}
-                      </div>
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-              {% include "components/pagination.html" %}
-            </table>
-          </form>
-        </div>
-      {% else %}
-        <p>{% trans "no errors found."|capfirst %}</p>
-      {% endif %}
-    </div>
-
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            {% include "components/pagination.html" %}
+          </table>
+        </form>
+      </div>
+    {% else %}
+      <p class="error_content">{% trans "no errors found."|capfirst %}</p>
+    {% endif %}
   </div>
-  {% if not request.headers.hx_request %}</main>{% endif %}
+
+</main>
 {% endblock %}
