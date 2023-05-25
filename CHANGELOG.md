@@ -21,6 +21,8 @@
 - It is now possible to search for substrings in the error message and path of
   user error log objects in the usr interface. Matched substrings are also
   highlighted for ease of reading.
+  
+- Error logs can now be sorted by name, start time and path.
 
 ### General improvements
 

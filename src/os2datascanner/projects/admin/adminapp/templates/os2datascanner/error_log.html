@@ -8,6 +8,7 @@
   <script src="{% static '3rdparty/htmx.min.js' %}"></script>
   <script src="{% static 'js/tableBehavior.js' %}"></script>
   <script src="{% static 'js/highlightSearch.js' %}"></script>
+  <script src="{% static 'js/sortByHandlers.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -40,6 +41,8 @@
                  id="search_field"
                  placeholder="{% trans "Search for error message" %}"
                  value="{{ request.GET.search_field }}"/>
+          <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
+          <input type="hidden" name="order" id="order" value="{{ order }}">
         </div>
       </form>
 
@@ -100,10 +103,48 @@
                       </label>
                     </div>
                   </th>
-                  <th class="datatable__column--automatic">{% trans "Error" %}</th>
-                  <th class="datatable__column--starttime">{% trans "Started" %}</th>
-                  <th class="datatable__column--path">{% trans "Path" %}</th>
-                  <th class="datatable__column--scan">{% trans "Scan" %}</th>
+                  <th class="datatable__column--automatic">
+                    <label for="error-caret">
+                      <span>{% trans "Error" %}</span>
+                    </label>
+                    <button type="button"
+                            name="error_message"
+                            id="error-caret"
+                            onclick="sortByErrorMessage()"
+                            class="order-by button button-caret button--has-icon{% if order_by == 'error_message' and order == 'descending' %} up{% endif %}"
+                            value="{% if order_by == 'error_message' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+                      <i class="material-icons" aria-hidden="true">expand_more</i>
+                    </button>
+                  </th>
+                  <th class="datatable__column--starttime">
+                    {% trans "Started" %}
+                    <button type="button"
+                            name="scan_status"
+                            id="scan-caret"
+                            onclick="sortByScanStatus()"
+                            class="order-by button button-caret button--has-icon{% if order_by == 'scan_status' and order == 'descending' %} up{% endif %}"
+                            value="{% if order_by == 'scan_status' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+                      <i class="material-icons" aria-hidden="true">expand_more</i>
+                    </button>
+                  </th>
+                  <th class="datatable__column--path">
+                    <label for="path-caret">
+                      <span>{% trans "Path" %}</span>
+                    </label>
+                    <button type="button"
+                            name="path"
+                            id="path-caret"
+                            onclick="sortByPath()"
+                            class="order-by button button-caret button--has-icon{% if order_by == 'path' and order == 'descending' %} up{% endif %}"
+                            value="{% if order_by == 'path' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+                      <i class="material-icons" aria-hidden="true">expand_more</i>
+                    </button>
+                  </th>
+                  <th class="datatable__column--scan">
+                    <label for="scan-caret">
+                      <span>{% trans "Scan" %}</span>
+                    </label>
+                  </th>
                   <th class="datatable__column--actions">{% trans "Actions" %}</th>
                 </tr>
               </thead>

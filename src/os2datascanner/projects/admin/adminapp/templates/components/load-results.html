@@ -12,8 +12,9 @@
       id="dropdown_options"
       name="dropdown_options"
       hx-trigger="change"
-      hx-target=".content"
-      hx-swap="outerHTML"
+      hx-target=".error_content"
+      hx-select=".error_content"
+      hx-swap="innerHTML"
       hx-get="{{ request.path }}">
 
   <input type="hidden" name="page" id="page" value={{ page_obj.number }}>
