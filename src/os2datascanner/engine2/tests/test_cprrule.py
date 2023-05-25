@@ -45,6 +45,8 @@ Følgende symboler undersøges
 - unær operatører "+", "-"
 - parenteser "(", "[", "{", "<", "<?", "<%", "/*"
 - symboler "!", "#", "%"
+
+@ godtages ikke pga. udgyldig opdeling Anders And 06 06 80-0002
 """  # noqa: E501
 
 
