@@ -10,7 +10,7 @@ from os2datascanner import __version__
 
 from .views.api import JSONAPIView
 from .views.saml import metadata
-from .views.views import (
+from .views.misc_views import (
     ApprovalPageView, StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
 from .views.statistics_views import (
     LeaderStatisticsPageView, DPOStatisticsPageView, UserStatisticsPageView)

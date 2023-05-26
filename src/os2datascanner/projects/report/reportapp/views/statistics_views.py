@@ -33,11 +33,12 @@ from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
-from .views import filter_inapplicable_matches
-from ..utils import user_is
 from ..models.documentreport import DocumentReport
 from ...organizations.models.account import Account
 from ...organizations.models.organizational_unit import OrganizationalUnit
+from ..utils import user_is, user_is_superadmin
+from ..models.roles.defaultrole import DefaultRole
+from ..models.roles.remediator import Remediator
 
 # For permissions
 from ..models.roles.dpo import DataProtectionOfficer
@@ -507,3 +508,38 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
             return super().dispatch(request, *args, **kwargs)
         else:
             raise PermissionDenied
+
+# Logic separated to function to allow usability in send_notifications.py
+
+
+def filter_inapplicable_matches(user, matches, roles, account=None):
+    """ Filters matches by organization
+    and role. """
+
+    # Filter by organization
+    try:
+        user_organization = user.account.organization
+        if user_organization:
+            matches = matches.filter(organization=user_organization)
+    except Account.DoesNotExist:
+        # No Account has been set on the request user
+        # Check if we have received an account as arg (from send_notifications.py) and use
+        # its organization to locate matches.
+        if account:
+            matches = matches.filter(organization=account.organization)
+
+    if user_is_superadmin(user):
+        hidden_matches = matches.filter(only_notify_superadmin=True)
+        user_matches = DefaultRole(user=user).filter(matches)
+        matches_all = hidden_matches | user_matches
+    else:
+        matches_all = DefaultRole(user=user).filter(matches)
+        matches_all = matches_all.filter(only_notify_superadmin=False)
+
+    if user_is(roles, Remediator):
+        unassigned_matches = Remediator(user=user).filter(matches)
+        matches = unassigned_matches | matches_all
+    else:
+        matches = matches_all
+
+    return matches

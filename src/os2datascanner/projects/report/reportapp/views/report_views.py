@@ -249,11 +249,15 @@ class RemediatorView(ReportView):
         return reports
 
     def dispatch(self, request, *args, **kwargs):
-        roles = Role.get_user_roles_or_default(request.user)
-        if user_is(roles, Remediator) or request.user.is_superuser:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            return redirect(reverse_lazy('index'))
+        response = super().dispatch(request, *args, **kwargs)
+        try:
+            roles = Role.get_user_roles_or_default(request.user)
+            if user_is(roles, Remediator) or request.user.is_superuser:
+                return response
+        except Exception as e:
+            logger.warning("Exception raised while trying to dispatch to user "
+                           f"{request.user}: {e}")
+        return redirect(reverse_lazy('index'))
 
 
 class UndistributedView(ReportView):
@@ -274,10 +278,14 @@ class UndistributedView(ReportView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        if user_is_superadmin(request.user) or request.user.is_superuser:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            return redirect(reverse_lazy('index'))
+        response = super().dispatch(request, *args, **kwargs)
+        try:
+            if user_is_superadmin(request.user) or request.user.is_superuser:
+                return response
+        except Exception as e:
+            logger.warning("Exception raised while trying to dispatch to user "
+                           f"{request.user}: {e}")
+        return redirect(reverse_lazy('index'))
 
 
 class HTMXEndpointView(LoginRequiredMixin, View):
