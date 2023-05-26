@@ -28,27 +28,26 @@ function drawTimelines(snapshotData, pk) {
         }]
       },
       options: {
-        legend: false,
         responsive: true,
         maintainAspectRatio: true, // If false, the charts will not be drawn properly in hidden elements!
         tooltips: false,
         plugins: {
-          datalabels: {
+          legend: {
             display: false
           }
         },
         scales: {
           x: {
             type: 'linear',
-            scaleLabel: {
+            title: {
               display: true,
-              labelString: gettext('Seconds since start of scan')
+              text: gettext('Seconds since start of scan')
             }
           },
           y: {
-            scaleLabel: {
+            title: {
               display: true,
-              labelString: gettext('% scanned')
+              text: gettext('% scanned')
             }
           }
         }
