@@ -1,5 +1,6 @@
 """Runs background jobs."""
 
+import sys
 import signal
 from typing import Optional
 
@@ -79,6 +80,20 @@ def _get_org(j: BackgroundJob):
         return None
 
 
+def publish_job_state(job: BackgroundJob):
+    org = _get_org(job)
+    org_slug = org.slug if org else "unknown"
+    org_id = org.pk if org else "N/A"
+
+    JOB_STATE.labels(
+            JobLabel=job.job_label,
+            OrgSlug=org_slug,
+            OrgId=org_id).state(job.exec_state.value)
+    push_to_gateway(
+            gateway=PUSHGATEWAY_HOST,
+            job='pushgateway', registry=REGISTRY)
+
+
 class Command(BaseCommand):
     help = __doc__
 
@@ -123,96 +138,71 @@ class Command(BaseCommand):
             raise BackgroundJob.MustStop()
 
         signal.signal(signal.SIGTERM, _handler)
-        debug.register_backtrace_signal()
+        debug.register_debug_signal()
 
         count = 0
         errors = 0
         try:
-            while running:
-                job = acquire_job()
+            job = None
 
+            def _print_job_information(signum, frame):
+                job_info = None
                 if job:
-                    job_label = job.job_label
-                    org = _get_org(job)
-                    org_slug = org.slug if org else "unknown"
-                    org_id = org.pk if org else "N/A"
+                    job_info = (
+                            BackgroundJob.objects.select_subclasses()
+                            .filter(pk=job.pk).values().first())
+                print("Current job:", file=sys.stderr)
+                print(f"\t{job_info}")
 
-                    JOB_STATE.labels(
-                            JobLabel=job_label,
-                            OrgSlug=org_slug,
-                            OrgId=org_id).state('running')
-                    push_to_gateway(
-                            gateway=PUSHGATEWAY_HOST,
-                            job='pushgateway', registry=REGISTRY)
+            with debug.debug_helper(_print_job_information):
+                while running:
+                    job = acquire_job()
 
-                    try:
-                        if (job.exec_state == JobState.CANCELLING
-                                or job.progress == 1.0):
-                            continue
+                    if job:
+                        publish_job_state(job)
                         try:
-                            logger.info(f"starting job {job}")
-                            job.run()
-                            logger.info(f"finished job {job}")
-                            count += 1
-                        except BackgroundJob.MustStop:
-                            job.exec_state = JobState.FAILED
-                            job.status = "Interrupted by environment"
-                            job.save()
-                            JOB_STATE.labels(
-                                    JobLabel=job_label, OrgSlug=org_slug,
-                                    OrgId=org_id).state('failed')
-                            push_to_gateway(
-                                    gateway=PUSHGATEWAY_HOST,
-                                    job='pushgateway', registry=REGISTRY)
-                            errors += 1
-                        except Exception:
-                            job.exec_state = JobState.FAILED
-                            job.save()
-                            JOB_STATE.labels(
-                                    JobLabel=job_label, OrgSlug=org_slug,
-                                    OrgId=org_id).state('failed')
-                            push_to_gateway(
-                                    gateway=PUSHGATEWAY_HOST,
-                                    job='pushgateway', registry=REGISTRY)
-                            logger.exception("ignoring unexpected error")
-                            errors += 1
-                    except KeyboardInterrupt:
-                        job.exec_state = JobState.CANCELLING
-                        JOB_STATE.labels(
-                                JobLabel=job_label, OrgSlug=org_slug,
-                                OrgId=org_id).state('cancelling')
-                        push_to_gateway(
-                                gateway=PUSHGATEWAY_HOST,
-                                job='pushgateway', registry=REGISTRY)
-                    finally:
-                        if job.exec_state == JobState.CANCELLING:
-                            job.exec_state = JobState.CANCELLED
-                            job.save()
-                            JOB_STATE.labels(
-                                    JobLabel=job_label, OrgSlug=org_slug,
-                                    OrgId=org_id).state('cancelled')
-                            push_to_gateway(
-                                    gateway=PUSHGATEWAY_HOST,
-                                    job='pushgateway', registry=REGISTRY)
-                        elif job.exec_state not in (
-                                JobState.FAILED,
-                                JobState.CANCELLED):
-                            job.exec_state = JobState.FINISHED
-                            job.save()
-                            JOB_STATE.labels(
-                                    JobLabel=job_label, OrgSlug=org_slug,
-                                    OrgId=org_id).state('finished')
-                            push_to_gateway(
-                                    gateway=PUSHGATEWAY_HOST,
-                                    job='pushgateway', registry=REGISTRY)
-                        job.finish()
-                elif not single:
-                    # We have no job to do and we're running in a loop. Sleep
-                    # to avoid a busy-wait
-                    time.sleep(wait)
+                            if (job.exec_state == JobState.CANCELLING
+                                    or job.progress == 1.0):
+                                continue
+                            try:
+                                logger.info(f"starting job {job}")
+                                job.run()
+                                logger.info(f"finished job {job}")
+                                count += 1
+                            except BackgroundJob.MustStop:
+                                job.exec_state = JobState.FAILED
+                                job.status = "Interrupted by environment"
+                                job.save()
+                                publish_job_state(job)
+                                errors += 1
+                            except Exception:
+                                job.exec_state = JobState.FAILED
+                                job.save()
+                                publish_job_state(job)
+                                logger.exception("ignoring unexpected error")
+                                errors += 1
+                        except KeyboardInterrupt:
+                            job.exec_state = JobState.CANCELLING
+                            publish_job_state(job)
+                        finally:
+                            if job.exec_state == JobState.CANCELLING:
+                                job.exec_state = JobState.CANCELLED
+                                job.save()
+                            elif job.exec_state not in (
+                                    JobState.FAILED,
+                                    JobState.CANCELLED):
+                                job.exec_state = JobState.FINISHED
+                                job.save()
+                            publish_job_state(job)
+                            job.finish()
+                            job = None
+                    elif not single:
+                        # We have no job to do and we're running in a loop.
+                        # Sleep to avoid a busy-wait
+                        time.sleep(wait)
 
-                if single:
-                    running = False
+                    if single:
+                        running = False
         finally:
             print(_("{0} job(s) completed.").format(count))
             print(_("{0} job(s) failed.").format(errors))

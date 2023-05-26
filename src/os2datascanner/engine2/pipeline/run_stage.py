@@ -180,7 +180,7 @@ restarting = False
                                    "worker"]))
 def main(log_level, enable_profiling, enable_metrics,
          prometheus_port, width, single_cpu, restart_after, stage):
-    debug.register_backtrace_signal()
+    debug.register_debug_signal()
     module = _module_mapping[stage]
 
     # leave all loggers from external libraries at default(WARNING) level.

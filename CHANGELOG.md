@@ -10,6 +10,14 @@
   user error log objects in the usr interface. Matched substrings are also
   highlighted for ease of reading.
 
+### General improvements
+
+- The `SIGUSR1` backtrace function is now extensible, allowing components to
+  provide more information about what they're doing.
+
+- The background job runner process now also shows information about the
+  current job when it receives the `SIGUSR1` signal.
+
 ### Bugfixes
 
 - More robust datetime parsing for calendar matches.
