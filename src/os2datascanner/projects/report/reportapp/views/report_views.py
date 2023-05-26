@@ -402,3 +402,24 @@ class ShowMoreMatchesView(HTMXEndpointView, DetailView):
         context['pk'] = self.object.pk
 
         return context
+
+
+class DistributeMatchesView(HTMXEndpointView, ListView):
+    model = DocumentReport
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        scanner_job_pk = self.request.POST.get('distribute-to')
+        print(scanner_job_pk)
+        qs = qs.filter(scanner_job_pk=scanner_job_pk)
+        return qs
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        object_list = self.get_queryset()
+
+        update_output = object_list.update(only_notify_superadmin=False)
+
+        logger.info(f"Updated DocumetReport objects: {update_output}")
+
+        return response
