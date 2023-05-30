@@ -4,6 +4,7 @@ from functools import cached_property
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField
+from django.db.models.functions import Upper
 from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.projects.report.organizations.models import Organization
@@ -221,6 +222,13 @@ class DocumentReport(models.Model):
             models.Index(
                 fields=("path",),
                 name="pc_update_query"),
+            # Django implements __iexact, which we use when handling mail
+            # aliases, by doing UPPER() on both sides of the expression. Make
+            # sure we have an index of that -- otherwise we'll need to
+            # recompute it once for every DocumentReport /for every Alias!/
+            models.Index(
+                Upper("owner"),
+                name="alias_creation_query_idx"),
         ]
         constraints = [
             models.UniqueConstraint(

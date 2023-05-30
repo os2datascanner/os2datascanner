@@ -18,6 +18,9 @@
 - The background job runner process now also shows information about the
   current job when it receives the `SIGUSR1` signal.
 
+- Associating email aliases with matches is now several orders of magnitude
+  faster.
+
 ### Bugfixes
 
 - More robust datetime parsing for calendar matches.
