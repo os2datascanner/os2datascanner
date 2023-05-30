@@ -165,14 +165,14 @@ class Account(Core_Account):
             "only_notify_superadmin",
             "count")
 
-        if not reports:
-            self.match_count = 0
-        else:
-            for obj in reports:
-                if obj.get("only_notify_superadmin"):
-                    self.withheld_matches = obj.get("count")
-                else:
-                    self.match_count = obj.get("count")
+        # TODO: Revisit logic below (and its tests, organizations/tests/test_accounts.py)
+        self.match_count = 0
+        self.withheld_matches = 0
+        for obj in reports:
+            if obj.get("only_notify_superadmin"):
+                self.withheld_matches = obj.get("count")
+            else:
+                self.match_count = obj.get("count")
 
     def _calculate_status(self):
         """Calculate the status of the user. The user can have one of three
