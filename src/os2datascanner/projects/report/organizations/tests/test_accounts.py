@@ -2,7 +2,6 @@ import datetime
 import json
 
 from django.test import TestCase
-from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from ..models import Account, Organization, Alias
@@ -216,29 +215,23 @@ class AccountTest(TestCase):
     def setUp(self) -> None:
         olsenbanden = Organization.objects.create(name='Olsenbanden')
 
-        egon = get_user_model().objects.create(username="egon")
-        benny = get_user_model().objects.create(username="benny")
-        kjeld = get_user_model().objects.create(username="kjeld")
-
-        self.egon_acc = Account.objects.create(user=egon, username='egon', organization=olsenbanden)
-        self.benny_acc = Account.objects.create(
-            user=benny, username='benny', organization=olsenbanden)
-        self.kjeld_acc = Account.objects.create(
-            user=kjeld, username='kjeld', organization=olsenbanden)
+        self.egon_acc = Account.objects.create(username='egon', organization=olsenbanden)
+        self.benny_acc = Account.objects.create(username='benny', organization=olsenbanden)
+        self.kjeld_acc = Account.objects.create(username='kjeld', organization=olsenbanden)
 
         # Aliases, so the accounts can have documentreports associated
         self.egon_alias = Alias.objects.create(
-            user=egon,
+            user=self.egon_acc.user,
             account=self.egon_acc,
             _alias_type="email",
             _value="egon@olsenbanden.com")
         self.benny_alias = Alias.objects.create(
-            user=benny,
+            user=self.benny_acc.user,
             account=self.benny_acc,
             _alias_type="SID",
             _value="this_is_a_SID")
         self.kjeld_alias = Alias.objects.create(
-            user=kjeld,
+            user=self.kjeld_acc.user,
             account=self.kjeld_acc,
             _alias_type="generic")
 
@@ -385,3 +378,77 @@ class AccountTest(TestCase):
         self.assertIn("matches", egon_weekly_matches[0].keys())
         self.assertIn("new", egon_weekly_matches[0].keys())
         self.assertIn("handled", egon_weekly_matches[0].keys())
+
+    def test_account_count_matches_from_ten_to_one_to_zero(self):
+        all_matches = 10
+        handled = 0
+        make_matched_document_reports_for(self.kjeld_alias, handled=handled, amount=all_matches)
+
+        # Refresh match count.
+        self.kjeld_acc._count_matches()
+        # Assert
+        self.assertEqual(self.kjeld_acc.match_count, all_matches,
+                         "Incorrect match_count on account object!")
+
+        # Handle 9/10
+        DocumentReport.objects.filter(alias_relation=self.kjeld_alias).update(resolution_status=0)
+        dr = DocumentReport.objects.filter(alias_relation=self.kjeld_alias).first()
+        dr.resolution_status = None
+        dr.save()
+        # Refresh match count
+        self.kjeld_acc._count_matches()
+        # Assert
+        self.assertEqual(self.kjeld_acc.match_count, 1,
+                         "Incorrect match_count on account object! All but one should be handled.")
+
+        # Handle all matches
+        DocumentReport.objects.filter(alias_relation=self.kjeld_alias).update(resolution_status=0)
+        # Refresh match count
+        self.kjeld_acc._count_matches()
+        # Assert
+        self.assertEqual(self.kjeld_acc.match_count, 0,
+                         "Incorrect match_count on account object! All should be handled.")
+
+    def test_account_withheld_matches_from_ten_to_one_to_zero(self):
+        all_matches = 10
+        handled = 0
+        make_matched_document_reports_for(self.kjeld_alias, handled=handled, amount=all_matches)
+
+        # Mark Kjeld's matches as withheld
+        DocumentReport.objects.filter(alias_relation=self.kjeld_alias).update(
+            only_notify_superadmin=True)
+
+        # Refresh count
+        self.kjeld_acc._count_matches()
+        # Assert
+        self.assertEqual(self.kjeld_acc.withheld_matches, 10,
+                         "Matches that should be withheld aren't counted as withheld!")
+        self.assertEqual(self.kjeld_acc.match_count, 0,
+                         "Match count is not updated!")
+
+        # Distribute 9 of  Kjeld's matches
+        DocumentReport.objects.filter(alias_relation=self.kjeld_alias).update(
+            only_notify_superadmin=False)
+        dr = DocumentReport.objects.filter(alias_relation=self.kjeld_alias).first()
+        dr.only_notify_superadmin = True
+        dr.save()
+
+        # Refresh count
+        self.kjeld_acc._count_matches()
+        # Assert
+        self.assertEqual(self.kjeld_acc.withheld_matches, 1,
+                         "Matches that shouldn't be withheld are counted as withheld!")
+        self.assertEqual(self.kjeld_acc.match_count, 9,
+                         "Match count is not updated!")
+
+        # Distribute last one
+        DocumentReport.objects.filter(alias_relation=self.kjeld_alias,
+                                      only_notify_superadmin=True).update(
+            only_notify_superadmin=False)
+        # Refresh count
+        self.kjeld_acc._count_matches()
+        # Assert, nothing should be withheld
+        self.assertEqual(self.kjeld_acc.withheld_matches, 0,
+                         "Matches that shouldn't be withheld are counted as withheld!")
+        self.assertEqual(self.kjeld_acc.match_count, 10,
+                         "Match count is not updated!")

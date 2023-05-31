@@ -165,6 +165,9 @@ class Account(Core_Account):
             "only_notify_superadmin",
             "count")
 
+        # TODO: Revisit logic below (and its tests, organizations/tests/test_accounts.py)
+        self.match_count = 0
+        self.withheld_matches = 0
         for obj in reports:
             if obj.get("only_notify_superadmin"):
                 self.withheld_matches = obj.get("count")
@@ -246,7 +249,6 @@ class Account(Core_Account):
         return self.get_managed_units().exists()
 
     def save(self, *args, **kwargs):
-
         self._count_matches()
         self._calculate_status()
 

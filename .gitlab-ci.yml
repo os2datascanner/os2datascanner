@@ -402,9 +402,9 @@ Unit Test Report Application:
     # check migrations
     - python manage.py makemigrations --check --dry-run
     - coverage run -m pytest tests
+      --pyargs organizations reportapp
       --ignore=/code/src/os2datascanner/projects/report/tests/integration
       --junitxml $CI_PROJECT_DIR/report-junit.xml
-      --ignore=/code/src/os2datascanner/projects/report/tests/integration
       -p no:cacheprovider
       --color=yes
     - coverage report
