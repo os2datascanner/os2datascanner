@@ -4,24 +4,16 @@
 <nav class="navi">
   <ul>
     <li>
-      <a href="/" class="{% if request.path == '/' %}active{% endif %}">
+      <a href="/"
+         class="{% if request.path in '/reports/archive/undistributed/remediator' %}active{% endif %}">
         {% include "components/svg-icons/assignment.svg" %}
         <span class="width">{% trans "Report" %}</span>
       </a>
     </li>
-    {% if settings.ARCHIVE_TAB %}
-      <li>
-        <a href="/archive"
-           class="{% if request.path == '/archive' %}active{% endif %}">
-          {% include "components/svg-icons/icon-smbc.svg" %}
-          <span class="width">{% trans "Archive" %}</span>
-        </a>
-      </li>
-    {% endif %}
     {% if user.is_superuser or user.account.is_manager %}
       <li>
         <a href="{% url "statistics-leader" %}"
-           class="{% if request.path == '/statistics/leader' %}active{% endif %}">
+           class="{% if request.path == '/statistics/leader/' %}active{% endif %}">
           {% include "components/svg-icons/bar_chart.svg" %}
           <span class="width">{% trans "Leader overview" %}</span>
         </a>

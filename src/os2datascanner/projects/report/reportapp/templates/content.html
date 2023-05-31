@@ -12,7 +12,7 @@
   </svg>
 
   {{ page_obj.paginator.count }} {% trans "results" %}
-  {% if distributable_matches %}
+  {% if request.path == "/undistributed" %}
     <div id="distribute-container"
          class="distribute dropdown"
          name="distribute-container">
@@ -40,7 +40,7 @@
               hx-target="this"
               hx-trigger="click"
               hx-swap="afterend"
-              hx-post=""
+              hx-post="{% url "distribute" %}"
               hx-include="[name='distribute-to']"
               hx-push-url="false">
         {% trans "Distribute" %}

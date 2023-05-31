@@ -4,13 +4,14 @@
 <form id="filter_form"
       name='filter_form'
       hx-target=".content"
-      hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
-      hx-swap="innerHTML"
+      hx-select=".content"
+      hx-get="{{ request.path }}"
+      hx-swap="outerHTML"
       hx-trigger="change"
       hx-include="[id='dropdown_options']"
       hx-indicator="#report-page-indicator">
-  <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
-  <input type="hidden" name="order" id="order" value="{{ order }}">
+  <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}"/>
+  <input type="hidden" name="order" id="order" value="{{ order }}"/>
 
   <div class="match_filtering_wrapper">
     <div>
@@ -18,9 +19,10 @@
               class="match_filtering_clear_button"
               name="clear_scannerjob"
               hx-trigger="click"
-              hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
-              hx-swap="innerHTML"
+              hx-get="{{ request.path }}"
+              hx-swap="outerHTML"
               hx-target=".content"
+              hx-select=".content"
               hx-include="[id='filter_form'], [id='dropdown_options']"
               hx-params="not scannerjob"
               hx-indicator="#report-page-indicator">
@@ -50,9 +52,10 @@
               class="match_filtering_clear_button"
               name="clear_sensitivities"
               hx-trigger="click"
-              hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
-              hx-swap="innerHTML"
+              hx-get="{{ request.path }}"
+              hx-swap="outerHTML"
               hx-target=".content"
+              hx-select=".content"
               hx-include="[id='filter_form'], [id='dropdown_options']"
               hx-params="not sensitivities"
               hx-indicator="#report-page-indicator">
@@ -84,9 +87,10 @@
                 class="match_filtering_clear_button"
                 name="clear_resolution_status"
                 hx-trigger="click"
-                hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}"
-                hx-swap="innerHTML"
+                hx-get="{{ request.path }}"
+                hx-swap="outerHTML"
                 hx-target=".content"
+                hx-select=".content"
                 hx-include="[id='filter_form'], [id='dropdown_options']"
                 hx-params="not resolution_status"
                 hx-indicator="#report-page-indicator">

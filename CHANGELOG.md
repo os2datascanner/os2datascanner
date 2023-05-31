@@ -2,7 +2,19 @@
 
 ## Next Release
 
-"Pet Rock"
+"~/home/morten/Documents/new_release/CHANGELOG.md"
+
+### New in this release
+
+* The report module views have been refactored
+
+  * Reports are now presented in their own subpage, depending on their origin;
+    Individual reports, remediator reports and undistributed reports.
+
+  * The button to access the archive has been moved to a submenu in the report
+    module main page.
+
+  * The report module is now approximately 20 times faster.
 
 ### New in this release
 

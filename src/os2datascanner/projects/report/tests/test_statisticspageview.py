@@ -17,7 +17,7 @@ from os2datascanner.engine2.utilities.datetime import parse_datetime
 from ...report.organizations.models import Account, Organization, OrganizationalUnit, Position
 from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.models.roles.dpo import DataProtectionOfficer
-from ..reportapp.views.views import (
+from ..reportapp.views.statistics_views import (
         StatisticsPageView, UserStatisticsPageView, LeaderStatisticsPageView)
 from ..reportapp.utils import iterate_queryset_in_batches
 
