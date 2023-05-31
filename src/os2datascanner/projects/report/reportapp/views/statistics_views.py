@@ -28,6 +28,7 @@ from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.views.generic import TemplateView, DetailView
+from django.shortcuts import get_object_or_404
 
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.rules.rule import Sensitivity
@@ -450,9 +451,12 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
 
+        pk = kwargs.get("pk")
+        self.verify_access(request.user, pk)
+
         scannerjob_pk = request.POST.get("pk")
         scannerjob_name = request.POST.get("name")
-        account = Account.objects.get(pk=kwargs.get("pk"))
+        account = Account.objects.get(pk=pk)
 
         reports = filter_inapplicable_matches(
             account.user,
@@ -476,36 +480,32 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
         response.headers["HX-Trigger"] = "reload-htmx"
         return response
 
-    def dispatch(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         try:
             # If the URL has specified a primary key for the Account whose
             # statistics we want to see, then use that
-            pk = kwargs.get("pk")
-            if pk is None:
-                # If not, use the primary key of the Account associated with
-                # the active user
-                pk = request.user.account.pk
-
-            target_account = Account.objects.get(pk=pk)
+            pk = kwargs.get("pk") or request.user.account.pk
         except Account.DoesNotExist:
-            # Either the URL's primary key isn't a valid Account, or the active
-            # user doesn't have an Account. In either case this view is not
-            # relevant
             raise Http404()
-        # target_account is guaranteed to be an Account from this point
 
+        self.verify_access(request.user, pk)
+
+        return super().get(request, *args, **kwargs)
+
+    def verify_access(self, user, pk):
+        target_account = get_object_or_404(Account, pk=pk)
         try:
-            user_account = request.user.account
+            user_account = user.account
         except Account.DoesNotExist:
             user_account = None
 
         # (Note that accessing Account.user can't raise a DoesNotExist in the
         # way that User.account can, so we don't need to wrap this line)
-        owned = target_account.user == request.user
+        owned = target_account.user == user
         managed = user_account and target_account.managed_by(user_account)
 
-        if request.user.is_superuser or owned or managed:
-            return super().dispatch(request, *args, **kwargs)
+        if user.is_superuser or owned or managed:
+            return
         else:
             raise PermissionDenied
 
