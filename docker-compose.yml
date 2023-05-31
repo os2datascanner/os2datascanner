@@ -347,7 +347,7 @@ services:
       - metric
 
   idp:
-    image: magentalabs/simplesamlphp:2.0.1
+    image: magentaaps/simplesamlphp:master
     environment:
       - SIMPLESAMLPHP_BASEURLPATH=http://localhost:8080/simplesaml/
       - SIMPLESAMLPHP_SP_ENTITY_ID=http://localhost:8040/saml2_auth/acs/
