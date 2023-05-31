@@ -17,7 +17,7 @@
           name="{{ widget.name }}"
           readonly>{{ widget.value }}</textArea>
 
-<div id="__templates">
+<div id="__templates" style="display: none">
   <span id="blank"></span>
   <span id="rule_selector">
     <select class="rule_selector">
@@ -51,84 +51,66 @@
     </select>
     <span class="empty"></span>
   </span>
-
-  <span id="and_fragment">
-    <br/>
+  <span id="and_fragment" class="logical-rule">
+    <input class="destroyer" type="button" value="-">
     {% trans "and" %} <span data-template="rule_selector"></span>
-    <input class="destroyer" type="button" value="-"/>
   </span>
-
   <span id="AndRule">
-    <br/>
-    (<span data-template="rule_selector"></span>
-    <input class="prepender"
+    <input class="inserter"
            data-template-name="and_fragment"
+           data-template-insert="before-sibling .target"
            type="button"
            value="+"/>
-    )
+    <span class="logical-rule">
+      <span data-template="rule_selector"></span>
+    </span>
+    <span class="target"></span>
   </span>
-
-  <span id="or_fragment">
-    <br/>
+  <span id="or_fragment" class="logical-rule">
+    <input class="destroyer" type="button" value="-" />
     {% trans "or" %} <span data-template="rule_selector"></span>
-    <input class="destroyer" type="button" value="-"/>
   </span>
-
   <span id="OrRule">
-    <br/>
-    (<span data-template="rule_selector"></span>
-    <input class="prepender"
+    <input class="inserter"
            data-template-name="or_fragment"
+           data-template-insert="before-sibling .target"
            type="button"
            value="+"/>
-    )
+    <span class="logical-rule">
+      <span data-template="rule_selector"></span>
+    </span>
+    <span class="target"></span>
   </span>
-
   <span id="NotRule">
-    (<span data-template="rule_selector"></span>)
+    <span data-template="rule_selector"></span>
   </span>
-
-  <span id="CPRRule" class="cpr-rule">
- 
-    (
-
-    {% trans "with" %}
-
-    <label class="cpr-rule-specs">
-      <input type="checkbox" checked/>
+  <span id="CPRRule">
+    ({% trans "with" %}
+    <label>
+      <input type="checkbox" checked />
       {% trans "modulus 11-," %}
     </label>
-
-    <label class="cpr-rule-specs">
-      <input type="checkbox" checked/>
-      {% trans "probability-," %}
+    <label>
+      <input type="checkbox" checked />
+      {% trans "probability,-" %}
     </label>
-
     {% trans "and" %}
-
-    <label class="cpr-rule-specs">
-      <input type="checkbox" checked/>
-      {% trans "contextcheck" %}
+    <label>
+      <input type="checkbox" checked />
+      {% trans "context check" %}
     </label>
- 
     )
-
   </span>
-
   <span id="RegexRule">
-    <input type="text" placeholder="{% trans "Regular expression" %}"/>
+    <input type="text" placeholder="{% trans "Regular expression" %}" />
   </span>
-
   <span id="CustomRule_Health"></span>
   <span id="CustomRule_Name">
-    (
-
-    {% trans "with" %}
+    ({% trans "with" %}
     <label class="cpr-rule-specs">
       <input type="checkbox"/>
       {% trans "expanded matching" %}
     </label>
-
     )
   </span>
   <span id="CustomRule_Address"></span>

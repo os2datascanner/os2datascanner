@@ -18,23 +18,23 @@
     background-size: 0.75rem auto, 100%;
   }
 
-  span {
-    display: inline-block;
-
-
-    &[data-template-instance="AndRule"],
-    &[data-template-instance="NotRule"],
-    &[data-template-instance="OrRule"] {
-      margin-left: 1rem;
-    }
-  }
-
   label {
     display: inline;
+    font-size: var(--size-base-font-size) / 1.3;
+  }
+
+  input[type="text"] {
+    width: auto;
+  }
+
+  span.logical-rule {
+    display: block;
+    padding-left: 2rem;
+    margin-top: 0.2rem;
   }
 
   .destroyer,
-  .prepender {
+  .inserter {
     text-align: center;
     vertical-align: center;
     height: 2rem;

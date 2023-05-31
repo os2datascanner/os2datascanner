@@ -57,7 +57,6 @@ class RuleCreate(RestrictedCreateView):
         rule.sensitivity = form.cleaned_data['sensitivity']
         rule.description = form.cleaned_data['description']
         if crule := form.cleaned_data.get('rule'):
-            print("crule:", crule)
             rule._rule = crule
         rule.save()
         return rule
