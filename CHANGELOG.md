@@ -41,6 +41,8 @@
 
 - The timeline chart in the completed scans tab now correctly show axis labels
   and do not show an irrelevant legend.
+  
+- The leader tab now shows the correct number of employees for a manager.
 
 ## Version 3.19.3, 12th May 2023
 
