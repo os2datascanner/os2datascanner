@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-01 08:38+0200\n"
+"POT-Creation-Date: 2023-06-01 13:17+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -19,27 +19,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: adminapp/admin.py:90
+#: adminapp/admin.py:91
 msgid "Rule cannot be compiled by scanner"
 msgstr "Reglen kan ikke kompileres af scanneren"
 
-#: adminapp/admin.py:94
+#: adminapp/admin.py:95
 msgid "CPR rule should not be used more than once"
 msgstr "CPR-reglen kan ikke bruges mere end én gang"
 
-#: adminapp/admin.py:98
+#: adminapp/admin.py:99
 msgid "Health-information rule should not be used more than once"
 msgstr "Helbredsinformations-reglen kan ikke bruges mere end én gang"
 
-#: adminapp/admin.py:152
+#: adminapp/admin.py:153
 msgid "An errorlog cannot both be new and removed"
 msgstr "En fejlbesked kan ikke både være ny og fjernet"
 
-#: adminapp/admin.py:191
+#: adminapp/admin.py:192
 msgid "Change new-status to True"
 msgstr "Sæt ny-status til True"
 
-#: adminapp/admin.py:195
+#: adminapp/admin.py:196
 #, python-brace-format
 msgid ""
 "Changed {qs_count} elements new-status to True. Note: if the element has its "
@@ -48,47 +48,47 @@ msgstr ""
 "Ændrede {qs_count} elementers ny-status til True. Bemærk: hvis et element "
 "har er_fjernet attributtet sat til True, så er den ikke blevet ændret"
 
-#: adminapp/admin.py:200
+#: adminapp/admin.py:201
 msgid "Change new-status to False"
 msgstr "Sæt ny-status til False"
 
-#: adminapp/admin.py:204
+#: adminapp/admin.py:205
 #, python-brace-format
 msgid "Changed {qs_count} elements new-status to False"
 msgstr "Ændrede {qs_count} elementers ny-status til False"
 
-#: adminapp/admin.py:207
+#: adminapp/admin.py:208
 msgid "Change removed-status to True"
 msgstr "Sæt fjernet-status til True"
 
-#: adminapp/admin.py:211
+#: adminapp/admin.py:212
 #, python-brace-format
 msgid "Changed {qs_count} elements removed-status to True"
 msgstr "Ændrede {qs_count} elementers fjernet-status til True"
 
-#: adminapp/admin.py:214
+#: adminapp/admin.py:215
 msgid "Change removed-status to False"
 msgstr "Sæt fjernet-status til False"
 
-#: adminapp/admin.py:218
+#: adminapp/admin.py:219
 #, python-brace-format
 msgid "Changed {qs_count} elements removed-status to False"
 msgstr "Ændrede {qs_count} elementers fjernet-status til True"
 
-#: adminapp/admin.py:236
+#: adminapp/admin.py:237
 msgid "Change resolved-status to True"
 msgstr "Sæt løst-status til True"
 
-#: adminapp/admin.py:240
+#: adminapp/admin.py:241
 #, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to True"
 msgstr "Ændrede {qs_count} elementers løst-status til True"
 
-#: adminapp/admin.py:243
+#: adminapp/admin.py:244
 msgid "Change resolved-status to False"
 msgstr "Sæt løst-status til False"
 
-#: adminapp/admin.py:247
+#: adminapp/admin.py:248
 #, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to False"
 msgstr "Ændrede {qs_count} elementers løst-status til True"
@@ -140,6 +140,7 @@ msgid "Login method"
 msgstr "Login metode"
 
 #: adminapp/models/rules/customrule.py:31
+#: adminapp/templates/os2datascanner/customrule_form.html:65
 #: adminapp/templates/os2datascanner/regexrule_form.html:135
 msgid "Rule"
 msgstr "Regel"
@@ -432,7 +433,7 @@ msgid "error logs"
 msgstr "fejlbeskeder"
 
 #: adminapp/models/usererrorlog.py:33
-#: adminapp/templates/os2datascanner/error_log.html:124
+#: adminapp/templates/os2datascanner/error_log.html:132
 msgid "Path"
 msgstr "Sti"
 
@@ -541,38 +542,50 @@ msgstr "personnavne"
 msgid "address"
 msgstr "adresse"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:57
-#: adminapp/templates/components/admin-widgets/rule-builder.html:107
+#: adminapp/templates/components/admin-widgets/rule-builder.html:51
+msgid "Experimental"
+msgstr "Eksperimentel"
+
+#: adminapp/templates/components/admin-widgets/rule-builder.html:53
+msgid "CPR-nr. (Turbo)"
+msgstr "CPR-nr. (Turbo)"
+
+#: adminapp/templates/components/admin-widgets/rule-builder.html:61
+#: adminapp/templates/components/admin-widgets/rule-builder.html:102
+#: adminapp/templates/components/admin-widgets/rule-builder.html:128
 #: adminapp/templatetags/utility_tags.py:62
 msgid "and"
 msgstr "og"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:73
+#: adminapp/templates/components/admin-widgets/rule-builder.html:76
 msgid "or"
 msgstr "eller"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:95
-#: adminapp/templates/components/admin-widgets/rule-builder.html:126
+#: adminapp/templates/components/admin-widgets/rule-builder.html:93
+#: adminapp/templates/components/admin-widgets/rule-builder.html:114
+#: adminapp/templates/components/admin-widgets/rule-builder.html:123
 msgid "with"
 msgstr "med"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:99
+#: adminapp/templates/components/admin-widgets/rule-builder.html:96
+#: adminapp/templates/components/admin-widgets/rule-builder.html:126
 msgid "modulus 11-,"
 msgstr "modulus 11-,"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:104
-msgid "probability-,"
+#: adminapp/templates/components/admin-widgets/rule-builder.html:100
+msgid "probability,-"
 msgstr "sandsynligheds-,"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:111
+#: adminapp/templates/components/admin-widgets/rule-builder.html:105
+#: adminapp/templates/components/admin-widgets/rule-builder.html:131
 msgid "context check"
 msgstr "konteksttjek"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:119
+#: adminapp/templates/components/admin-widgets/rule-builder.html:110
 msgid "Regular expression"
 msgstr "Regulært udtryk"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:129
+#: adminapp/templates/components/admin-widgets/rule-builder.html:117
 msgid "expanded matching"
 msgstr "udvidet søgning"
 
@@ -610,7 +623,7 @@ msgstr "Overblik over antallet af filer"
 msgid "Choose a scannerjob to start a new scan or view analysis"
 msgstr "Vælg et scannerjob for at starte et analyse-scan eller se analyse"
 
-#: adminapp/templates/components/load-results.html:25
+#: adminapp/templates/components/load-results.html:26
 msgid "per page"
 msgstr "pr. side"
 
@@ -914,17 +927,71 @@ msgstr "Ønsker du virkelig at slette?"
 msgid "No"
 msgstr "Nej"
 
-#: adminapp/templates/os2datascanner/error_log.html:25
-#: adminapp/templates/os2datascanner/error_log.html:50
+#: adminapp/templates/os2datascanner/customrule_form.html:20
+#: adminapp/templates/os2datascanner/regexrule_form.html:90
+#: adminapp/templates/partials/breadcrumb.html:60
+msgid "Edit rule"
+msgstr "Rediger regel"
+
+#: adminapp/templates/os2datascanner/customrule_form.html:24
+#: adminapp/templates/os2datascanner/regexrule_form.html:94
+#: adminapp/templates/partials/breadcrumb.html:64
+msgid "Create new rule"
+msgstr "Opret ny regel"
+
+#: adminapp/templates/os2datascanner/customrule_form.html:41
+#: adminapp/templates/os2datascanner/regexrule_form.html:111
+#: adminapp/templates/os2datascanner/scanner_form.html:142
+#: import_services/templates/import_services/ldap_edit.html:94
+msgid "General"
+msgstr "Generelt"
+
+#: adminapp/templates/os2datascanner/customrule_form.html:42
+#: adminapp/templates/os2datascanner/regexrule_form.html:112
+msgid "Name the rule and choose which organization the rule should belong to"
+msgstr "Navngiv reglen og vælg hvilken organisation reglen skal tilhøre"
+
+#: adminapp/templates/os2datascanner/customrule_form.html:51
+#: adminapp/templates/os2datascanner/regexrule_form.html:121
+msgid "Name of rule"
+msgstr "Navn på regel"
+
+#: adminapp/templates/os2datascanner/customrule_form.html:67
+#: adminapp/templates/os2datascanner/regexrule_form.html:137
+msgid ""
+"A rule consists one or more regular expressions and defines which text "
+"strings are searched in a scannerjob"
+msgstr ""
+"En regel består af et eller flere regulære udtryk og definerer hvilke "
+"tekststrenge der søges efter i et scannerjob"
+
+#: adminapp/templates/os2datascanner/customrule_form.html:83
+#: adminapp/templates/os2datascanner/regexrule_form.html:191
+msgid "Assess the sensitivity of the rule"
+msgstr "Vurder reglens følsomhed"
+
+#: adminapp/templates/os2datascanner/customrule_form.html:133
+#: adminapp/templates/os2datascanner/regexrule_form.html:241
+msgid "Description of rule"
+msgstr "Beskrivelse af regel"
+
+#: adminapp/templates/os2datascanner/customrule_form.html:146
+#: adminapp/templates/os2datascanner/regexrule_form.html:254
+#: adminapp/templates/os2datascanner/scanner_form.html:885
+msgid "Save changes"
+msgstr "Gem ændringer"
+
+#: adminapp/templates/os2datascanner/error_log.html:26
+#: adminapp/templates/os2datascanner/error_log.html:53
 #: adminapp/templates/os2datascanner/scanner_tabs.html:58
 msgid "Error Log"
 msgstr "Fejlbeskeder"
 
-#: adminapp/templates/os2datascanner/error_log.html:41
+#: adminapp/templates/os2datascanner/error_log.html:42
 msgid "Search for error message"
 msgstr "Søg efter fejlbesked"
 
-#: adminapp/templates/os2datascanner/error_log.html:80
+#: adminapp/templates/os2datascanner/error_log.html:77
 msgid ""
 "You are about to mark all error log messages as seen. This action cannot be "
 "reverted. Are you sure?"
@@ -932,70 +999,70 @@ msgstr ""
 "Du er ved at markere alle fejlbeskeder som set. Denne handling kan ikke "
 "fortrydes. Er du sikker?"
 
-#: adminapp/templates/os2datascanner/error_log.html:81
+#: adminapp/templates/os2datascanner/error_log.html:78
 msgid "Mark all as seen"
 msgstr "Markér alle som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:91
+#: adminapp/templates/os2datascanner/error_log.html:88
 msgid "You are about to remove"
 msgstr "Du er ved at slette"
 
-#: adminapp/templates/os2datascanner/error_log.html:91
+#: adminapp/templates/os2datascanner/error_log.html:88
 msgid " error logs. This action cannot be reverted. Are you sure?"
 msgstr " fejlbeskeder. Denne handling kan ikke fortrydes. Er du sikker?"
 
-#: adminapp/templates/os2datascanner/error_log.html:95
+#: adminapp/templates/os2datascanner/error_log.html:92
 msgid "Remove all"
 msgstr "Slet alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:104
+#: adminapp/templates/os2datascanner/error_log.html:101
 #: adminapp/templates/os2datascanner/scan_completed.html:77
 msgid "Select all"
 msgstr "Vælg alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:105
+#: adminapp/templates/os2datascanner/error_log.html:102
 #: adminapp/templates/os2datascanner/scan_completed.html:78
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: adminapp/templates/os2datascanner/error_log.html:111
+#: adminapp/templates/os2datascanner/error_log.html:108
 msgid "Error"
 msgstr "Fejl"
 
-#: adminapp/templates/os2datascanner/error_log.html:121
+#: adminapp/templates/os2datascanner/error_log.html:120
 #: adminapp/templates/os2datascanner/scan_completed.html:83
 msgid "Started"
 msgstr "Startet"
 
-#: adminapp/templates/os2datascanner/error_log.html:136
+#: adminapp/templates/os2datascanner/error_log.html:145
 msgid "Scan"
 msgstr "Scan"
 
-#: adminapp/templates/os2datascanner/error_log.html:146
+#: adminapp/templates/os2datascanner/error_log.html:148
 #: adminapp/templates/os2datascanner/scan_completed.html:88
 #: adminapp/templates/os2datascanner/scan_status_table.html:43
 #: organizations/templates/organizations/org_table.html:53
 msgid "Actions"
 msgstr "Handlinger"
 
-#: adminapp/templates/os2datascanner/error_log.html:162
+#: adminapp/templates/os2datascanner/error_log.html:164
 msgid "Select results"
 msgstr "Vælg resultater"
 
-#: adminapp/templates/os2datascanner/error_log.html:170
+#: adminapp/templates/os2datascanner/error_log.html:172
 msgid "New"
 msgstr "Ny"
 
-#: adminapp/templates/os2datascanner/error_log.html:205
+#: adminapp/templates/os2datascanner/error_log.html:207
 msgid "Mark as seen"
 msgstr "Markér som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:218
+#: adminapp/templates/os2datascanner/error_log.html:220
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/rules.html:97
+#: adminapp/templates/os2datascanner/rules.html:95
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status_table.html:106
 #: adminapp/templates/os2datascanner/scanners.html:157
@@ -1025,38 +1092,6 @@ msgstr "scannerjob og"
 msgid "reports."
 msgstr "rapporter."
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:90
-#: adminapp/templates/partials/breadcrumb.html:60
-msgid "Edit rule"
-msgstr "Rediger regel"
-
-#: adminapp/templates/os2datascanner/regexrule_form.html:94
-#: adminapp/templates/partials/breadcrumb.html:64
-msgid "Create new rule"
-msgstr "Opret ny regel"
-
-#: adminapp/templates/os2datascanner/regexrule_form.html:111
-#: adminapp/templates/os2datascanner/scanner_form.html:142
-#: import_services/templates/import_services/ldap_edit.html:94
-msgid "General"
-msgstr "Generelt"
-
-#: adminapp/templates/os2datascanner/regexrule_form.html:112
-msgid "Name the rule and choose which organization the rule should belong to"
-msgstr "Navngiv reglen og vælg hvilken organisation reglen skal tilhøre"
-
-#: adminapp/templates/os2datascanner/regexrule_form.html:121
-msgid "Name of rule"
-msgstr "Navn på regel"
-
-#: adminapp/templates/os2datascanner/regexrule_form.html:137
-msgid ""
-"A rule consists one or more regular expressions and defines which text "
-"strings are searched in a scannerjob"
-msgstr ""
-"En regel består af et eller flere regulære udtryk og definerer hvilke "
-"tekststrenge der søges efter i et scannerjob"
-
 #: adminapp/templates/os2datascanner/regexrule_form.html:145
 msgid "Regular Expression"
 msgstr "Regulært Udtryk"
@@ -1074,48 +1109,35 @@ msgstr "Fjern udtryk"
 msgid "Add another regular expression"
 msgstr "Tilføj endnu et regulært udtryk"
 
-#: adminapp/templates/os2datascanner/regexrule_form.html:191
-msgid "Assess the sensitivity of the rule"
-msgstr "Vurder reglens følsomhed"
-
-#: adminapp/templates/os2datascanner/regexrule_form.html:241
-msgid "Description of rule"
-msgstr "Beskrivelse af regel"
-
-#: adminapp/templates/os2datascanner/regexrule_form.html:254
-#: adminapp/templates/os2datascanner/scanner_form.html:885
-msgid "Save changes"
-msgstr "Gem ændringer"
-
 #: adminapp/templates/os2datascanner/rules.html:23
 #: adminapp/templates/os2datascanner/rules.html:27
 msgid "Add rule"
 msgstr "Tilføj regel"
 
 #: adminapp/templates/os2datascanner/rules.html:48
-#: adminapp/templates/os2datascanner/rules.html:147
+#: adminapp/templates/os2datascanner/rules.html:146
 msgid "Name"
 msgstr "Navn"
 
 #: adminapp/templates/os2datascanner/rules.html:49
-#: adminapp/templates/os2datascanner/rules.html:148
+#: adminapp/templates/os2datascanner/rules.html:147
 #: adminapp/templates/os2datascanner/scanners.html:53
 msgid "Organization"
 msgstr "Organisation"
 
 #: adminapp/templates/os2datascanner/rules.html:50
-#: adminapp/templates/os2datascanner/rules.html:149
+#: adminapp/templates/os2datascanner/rules.html:148
 msgid "Description"
 msgstr "Beskrivelse"
 
 #: adminapp/templates/os2datascanner/rules.html:51
-#: adminapp/views/rule_views.py:97 adminapp/views/rule_views.py:196
-#: adminapp/views/rule_views.py:203
+#: adminapp/views/rule_views.py:112 adminapp/views/rule_views.py:222
+#: adminapp/views/rule_views.py:229
 msgid "Expression"
 msgstr "Udtryk"
 
 #: adminapp/templates/os2datascanner/rules.html:52
-#: adminapp/templates/os2datascanner/rules.html:150
+#: adminapp/templates/os2datascanner/rules.html:149
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
@@ -1134,21 +1156,21 @@ msgstr "Vis udtryk"
 msgid "Edit"
 msgstr "Redigér"
 
-#: adminapp/templates/os2datascanner/rules.html:96
+#: adminapp/templates/os2datascanner/rules.html:94
 msgid "Do you really want to delete this rule?"
 msgstr "Vil du slette denne regel?"
 
-#: adminapp/templates/os2datascanner/rules.html:96
+#: adminapp/templates/os2datascanner/rules.html:94
 #: adminapp/templates/os2datascanner/scanners.html:156
 msgid "The action cannot be reversed"
 msgstr "Handlingen kan ikke fortrydes."
 
-#: adminapp/templates/os2datascanner/rules.html:126
+#: adminapp/templates/os2datascanner/rules.html:125
 msgid "No rules added yet"
 msgstr "Der er endnu ikke tilføjet nogen regler"
 
-#: adminapp/templates/os2datascanner/rules.html:131
-#: adminapp/templates/os2datascanner/rules.html:137
+#: adminapp/templates/os2datascanner/rules.html:130
+#: adminapp/templates/os2datascanner/rules.html:136
 msgid "System rules"
 msgstr "Systemregler"
 
@@ -1927,21 +1949,21 @@ msgstr "Vælg en scannertype for at gøre den tilgængelig for denne kunde."
 msgid "Only one type of import service can be active at a time."
 msgstr "Kun en type af importservice kan være aktiveret."
 
-#: core/management/commands/run_background_jobs.py:92
+#: core/management/commands/run_background_jobs.py:107
 #, python-format
 msgid "sleep for %(metavar)s seconds if there were no jobs to run"
 msgstr "vent %(metavar)s sekunder hvis der ikke var nogle jobs til afvikling"
 
-#: core/management/commands/run_background_jobs.py:99
+#: core/management/commands/run_background_jobs.py:114
 msgid "do not loop: run a single job and then exit"
 msgstr "kør ikke i løkke: kør et enkelt job og gå derefter ud"
 
-#: core/management/commands/run_background_jobs.py:217
+#: core/management/commands/run_background_jobs.py:207
 #, python-brace-format
 msgid "{0} job(s) completed."
 msgstr "{0} færdige job(s)."
 
-#: core/management/commands/run_background_jobs.py:218
+#: core/management/commands/run_background_jobs.py:208
 #, python-brace-format
 msgid "{0} job(s) failed."
 msgstr "{0} fejlede job(s)."
