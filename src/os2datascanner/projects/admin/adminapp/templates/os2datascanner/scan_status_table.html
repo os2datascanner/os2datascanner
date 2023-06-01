@@ -1,6 +1,7 @@
 {% load l10n %}
 {% load i18n %}
 {% load tz %}
+{% load humanize %}
 
 <div class="scan-status-table">
 
@@ -28,10 +29,10 @@
          aria-label="{% trans 'Scans in progress' %}">
       <table class="datatable middle">
         <colgroup>
-          <col class="datatable__column--name">
-          <col class="datatable__column--org">
-          <col class="datatable__column--info">
-          <col class="datatable__column--actions">
+          <col class="datatable__column--name"/>
+          <col class="datatable__column--org"/>
+          <col class="datatable__column--info"/>
+          <col class="datatable__column--actions"/>
         </colgroup>
         <thead>
           <tr>
@@ -77,6 +78,12 @@
                     </div>
                   {% endwith %}
  
+                  {% with completion_time=status.estimated_completion_time %}
+                    {% if completion_time %}
+                      {% trans "Estimated finished" %} {{ completion_time|naturaltime }}
+                    {% endif %}
+                  {% endwith %}
+
                 {% elif status.stage.value == 3 %}
                   {% trans "The sources do not contain any scannable objects" %}
                 {% endif %}

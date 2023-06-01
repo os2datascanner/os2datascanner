@@ -6,17 +6,15 @@
 
 ### New in this release
 
-* The report module views have been refactored
+- The report module views have been refactored
 
-  * Reports are now presented in their own subpage, depending on their origin;
+  - Reports are now presented in their own subpage, depending on their origin;
     Individual reports, remediator reports and undistributed reports.
 
-  * The button to access the archive has been moved to a submenu in the report
+  - The button to access the archive has been moved to a submenu in the report
     module main page.
 
-  * The report module is now approximately 20 times faster.
-
-### New in this release
+  - The report module is now approximately 20 times faster.
 
 - It is now possible to search for substrings in the error message and path of
   user error log objects in the usr interface. Matched substrings are also
@@ -34,6 +32,9 @@
 
 - Associating email aliases with matches is now several orders of magnitude
   faster.
+
+- While scanning, a more qualified guess for the runtime of the scan is now
+  displayed on the "scanner status"-tab.
 
 ### Bugfixes
 
