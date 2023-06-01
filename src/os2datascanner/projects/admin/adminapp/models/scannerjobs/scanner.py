@@ -681,10 +681,12 @@ class ScanStatus(AbstractScanStatus):
 
             width = 0.2  # Percentage of all data points
 
-            # The window function needs to include at least two points.
-            window = max([int(len(snapshots)*width), 2])
+            # The window function needs to include at least two points, but it's
+            # better to include at least ten, to iron out the worst local
+            # phenomena.
+            window = max([int(len(snapshots)*width), 10])
 
-            time_data = [(obj.get("time_stamp") - self.start_time).seconds
+            time_data = [(obj.get("time_stamp") - self.start_time).total_seconds()
                          for obj in snapshots[-window:]]
             frac_scanned = [obj.get("scanned_objects")/obj.get("total_objects")
                             for obj in snapshots[-window:]]
