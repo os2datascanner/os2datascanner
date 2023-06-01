@@ -10,7 +10,7 @@
         <span class="width">{% trans "Report" %}</span>
       </a>
     </li>
-    {% if user.is_superuser or user.account.is_manager %}
+    {% if user.account.leadertab_access %}
       <li>
         <a href="{% url "statistics-leader" %}"
            class="{% if request.path == '/statistics/leader/' %}active{% endif %}">

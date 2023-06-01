@@ -36,6 +36,9 @@
 - While scanning, a more qualified guess for the runtime of the scan is now
   displayed on the "scanner status"-tab.
 
+- Access to the leader overview tab can now be configured on the Organization
+  model.
+
 ### Bugfixes
 
 - More robust datetime parsing for calendar matches.

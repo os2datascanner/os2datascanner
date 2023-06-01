@@ -27,10 +27,10 @@ class OrganizationAdmin(admin.ModelAdmin):
 
     fields = ('name', 'slug', 'client',
               'contact_email', 'contact_phone',
-              'email_notification_schedule',
+              'email_notification_schedule', 'leadertab_access',
               )
     list_display = ('name', 'client', 'contact_email',
-                    'contact_phone',
+                    'contact_phone', 'leadertab_access',
                     )
     search_fields = ('name', 'client__name',)
 
