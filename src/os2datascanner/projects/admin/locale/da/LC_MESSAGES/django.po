@@ -565,8 +565,8 @@ msgid "probability-,"
 msgstr "sandsynligheds-,"
 
 #: adminapp/templates/components/admin-widgets/rule-builder.html:111
-msgid "contextcheck"
-msgstr "kontekstcheck"
+msgid "context check"
+msgstr "konteksttjek"
 
 #: adminapp/templates/components/admin-widgets/rule-builder.html:119
 msgid "Regular expression"

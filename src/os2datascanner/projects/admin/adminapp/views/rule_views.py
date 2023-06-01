@@ -23,6 +23,7 @@ from ..models.sensitivity_level import Sensitivity
 from ..models.rules.rule import Rule
 from ..models.rules.cprrule import CPRRule
 from ..models.rules.regexrule import RegexRule, RegexPattern
+from ..models.rules.customrule import CustomRule
 from ...utilities import UserWrapper
 
 
@@ -30,14 +31,15 @@ class RuleList(RestrictedListView):
     """Displays list of scanners."""
 
     model = Rule
+    context_object_name = 'rules'
     template_name = 'os2datascanner/rules.html'
 
     def get_context_data(self):
         context = super().get_context_data()
 
-        context["systemrule_list"] = self.get_queryset().filter(regexrule__isnull=True)
-        context["regexrule_list"] = self.get_queryset().filter(regexrule__isnull=False)
         context["sensitivity"] = Sensitivity
+        context["systemrule_list"] = self.get_queryset().filter(customrule__isnull=True)
+        context["customrule_list"] = self.get_queryset().filter(customrule__isnull=False)
 
         return context
 
@@ -54,6 +56,8 @@ class RuleCreate(RestrictedCreateView):
         rule.name = form.cleaned_data['name']
         rule.sensitivity = form.cleaned_data['sensitivity']
         rule.description = form.cleaned_data['description']
+        if crule := form.cleaned_data.get('rule'):
+            rule._rule = crule
         rule.save()
         return rule
 
@@ -78,6 +82,17 @@ class RuleCreate(RestrictedCreateView):
                 return super().form_valid(form)
         except Exception:
             return super().form_invalid(form)
+
+
+class CustomRuleCreate(RuleCreate):
+    model = CustomRule
+    fields = ['name', 'description', 'sensitivity', 'organization']
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['rule'] = forms.JSONField()
+
+        return form
 
 
 class RegexRuleCreate(RuleCreate):
@@ -172,6 +187,17 @@ class RuleUpdate(RestrictedUpdateView):
             return super().form_invalid(form)
 
 
+class CustomRuleUpdate(RuleUpdate):
+    model = CustomRule
+    fields = ['name', 'description', 'sensitivity', 'organization']
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['rule'] = forms.JSONField(initial=self.object._rule)
+
+        return form
+
+
 class RegexRuleUpdate(RuleUpdate):
     model = RegexRule
 
@@ -263,6 +289,10 @@ class RuleDelete(RestrictedDeleteView):
     """Delete a rule view."""
     model = Rule
     success_url = '/rules/'
+
+
+class CustomRuleDelete(RuleDelete):
+    model = CustomRule
 
 
 class RegexRuleDelete(RuleDelete):

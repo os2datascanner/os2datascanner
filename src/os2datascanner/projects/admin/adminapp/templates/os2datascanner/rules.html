@@ -19,7 +19,7 @@
 
         <div class="btn">
           <a class="button button--cta"
-             href="/rules/regex/add/"
+             href="{% url "customrule_add" %}"
              title="{% trans 'Add rule' %}">
             <svg class="icon icon--white">
               <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
@@ -29,19 +29,19 @@
         </div>
       </div>
 
-      {% if regexrule_list %}
+      {% if rules %}
         <div class="datatable-wrapper card xl"
              role="region"
              tabindex="0"
              aria-label="{% trans 'Rules' %}">
           <table class="datatable">
             <colgroup>
-              <col class="datatable__column--name">
-              <col class="datatable__column--org">
-              <col class="datatable__column--info">
-              <col class="datatable__column--expression">
-              <col class="datatable__column--sensitivity">
-              <col class="datatable__column--actions">
+              <col class="datatable__column--name"/>
+              <col class="datatable__column--org"/>
+              <col class="datatable__column--info"/>
+              <col class="datatable__column--expression"/>
+              <col class="datatable__column--sensitivity"/>
+              <col class="datatable__column--actions"/>
             </colgroup>
             <thead>
               <tr>
@@ -54,7 +54,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for rule in regexrule_list %}
+              {% for rule in customrule_list %}
                 <tr tabindex="0">
                   <td class="datatable__column--name">{{ rule.name }}</td>
                   <td class="datatable__column--org">{{ rule.organization }}</td>
@@ -78,7 +78,7 @@
                   </td>
                   <td class="datatable__column--actions">
                     <div class="action-wrapper">
-                      <a href="/rules/regex/{{ rule.pk }}"
+                      <a href="{% url "customrule_update" rule.pk %}"
                          class="button button--small button--grey"
                          title="{% trans 'Edit' %}">
                         <svg class="icon">
@@ -86,9 +86,7 @@
                         </svg>
                       </a>
 
-                      <form action="/{{ view.type }}rules/regex/{{ rule.pk }}/delete/"
-                            method="post"
-                            style="display: inline-block">
+                      <form action="{% url "customrule_delete" rule.pk %}" method="post">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <button type="submit"
@@ -116,117 +114,119 @@
                         {% for pattern in rule.regexrule.patterns.all %}<code class="code-grey">{{ pattern.pattern_string }}</code>{% endfor %}
                       {% endif %}
                     </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% else %}
-          <p>
-            <em>{% trans "No rules added yet" %}</em>
-          </p>
-        {% endif %}
-
-        <div class="aside">
-          <h1 class="page-title">{% trans "System rules" %}</h1>
-        </div>
-
-        <div class="datatable-wrapper card lg"
-             role="region"
-             tabindex="0"
-             aria-label="{% trans 'System rules' %}">
-          <table class="datatable">
-            <colgroup>
-              <col class="datatable__column--name">
-              <col class="datatable__column--org">
-              <col class="datatable__column--info">
-              <col class="datatable__column--sensitivity">
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="datatable__column--name">{% trans "Name" %}</th>
-                <th class="datatable__column--org">{% trans "Organization" %}</th>
-                <th class="datatable__column--info">{% trans "Description" %}</th>
-                <th class="datatable__column--sensitivity">{% trans "Sensitivity" %}</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {% for rule in systemrule_list %}
-                <tr tabindex="0">
-                  <td class="datatable__column--name">{{ rule.name }}</td>
-                  <td class="datatable__column--org">{{ rule.organization }}</td>
-                  <td class="datatable__column--info">{{ rule.description }}</td>
-                  <td class="datatable__column--sensitivity">
-                    <span class="flex">
-                      <span class="flex--width">{% include "components/sensitivity-icon.html" %}</span>
-                      <span>{{ rule.get_sensitivity_display }}</span>
-                    </span>
                   </td>
                 </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
+      {% else %}
+        <p>
+          <em>{% trans "No rules added yet" %}</em>
+        </p>
+      {% endif %}
+
+      <div class="aside">
+        <h1 class="page-title">{% trans "System rules" %}</h1>
       </div>
-    </main>
-  {% endblock %}
 
-  {% block modal %}
-    <div class="modal modal--small"
-         id="delete-rule-modal"
-         tabindex="-1"
-         role="dialog"
-         aria-labelledby="delete-rule-modal-title"
-         aria-hidden="true"
-         hidden>
-      <h4 class="modal__heading" id="delete-rule-modal-title">
-        {% trans "Delete rule" %}
-      </h4>
-      <iframe src="about:blank" frameborder="0"></iframe>
-    </div>
+      <div class="datatable-wrapper card lg"
+           role="region"
+           tabindex="0"
+           aria-label="{% trans 'System rules' %}">
+        <table class="datatable">
+          <colgroup>
+            <col class="datatable__column--name"/>
+            <col class="datatable__column--org"/>
+            <col class="datatable__column--info"/>
+            <col class="datatable__column--sensitivity"/>
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="datatable__column--name">{% trans "Name" %}</th>
+              <th class="datatable__column--org">{% trans "Organization" %}</th>
+              <th class="datatable__column--info">{% trans "Description" %}</th>
+              <th class="datatable__column--sensitivity">{% trans "Sensitivity" %}</th>
+            </tr>
+          </thead>
 
-    <div class="modal modal--small"
-         id="delete-rule-modal"
-         tabindex="-1"
-         role="dialog"
-         aria-labelledby="delete-rule-modal-title"
-         aria-hidden="true"
-         hidden>
-      <h4 class="modal__heading" id="delete-rule-modal-title">
-        {% trans "Delete rule" %}
-      </h4>
-
-      <div class="modal__content">
-        <form action="" method="post">
-          {% csrf_token %}
-          {{ form.as_p }}
-
-          <p>
-            {% trans "Do you want to delete" %} <em>{{ object }}</em>?
-            {% trans "This action cannot be undone." %}
-          </p>
-          <p>
-            {% trans "Please note that this rule is currently included in" %}
-            <em>{{ object.scanners.all.count }}</em>
-            {% trans "scannerjob and" %} <em>{{ object.scans.all.count }}</em>
-            {% trans "reports." %}
-          </p>
-
-          <div class="form__group">
-            <button class="button button--cta button--small btn btn-default"
-                    type="submit">
-              {% trans "Yes" %}
-            </button>
-            <button class="button button--cta button--small btn btn-default"
-                    type="button"
-                    data-modal="modal:close">
-              {% trans "No" %}
-            </button>
-          </div>
-        </form>
+          <tbody>
+            {% for rule in systemrule_list %}
+              <tr tabindex="0">
+                <td class="datatable__column--name">{{ rule.name }}</td>
+                <td class="datatable__column--org">{{ rule.organization }}</td>
+                <td class="datatable__column--info">{{ rule.description }}</td>
+                <td class="datatable__column--sensitivity">
+                  <span class="flex">
+                    <span class="flex--width">{% include "components/sensitivity-icon.html" %}</span>
+                    <span>{{ rule.get_sensitivity_display }}</span>
+                  </span>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
-    </div>
-  {% endblock %}
 
-  {% block rules_active %}class="active"{% endblock %}
+    </div>
+  </main>
+{% endblock %}
+
+{% block modal %}
+  <div class="modal modal--small"
+       id="delete-rule-modal"
+       tabindex="-1"
+       role="dialog"
+       aria-labelledby="delete-rule-modal-title"
+       aria-hidden="true"
+       hidden>
+    <h4 class="modal__heading" id="delete-rule-modal-title">
+      {% trans "Delete rule" %}
+    </h4>
+    <iframe src="about:blank" frameborder="0"></iframe>
+  </div>
+
+  <div class="modal modal--small"
+       id="delete-rule-modal"
+       tabindex="-1"
+       role="dialog"
+       aria-labelledby="delete-rule-modal-title"
+       aria-hidden="true"
+       hidden>
+    <h4 class="modal__heading" id="delete-rule-modal-title">
+      {% trans "Delete rule" %}
+    </h4>
+
+    <div class="modal__content">
+      <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <p>
+          {% trans "Do you want to delete" %} <em>{{ object }}</em>?
+          {% trans "This action cannot be undone." %}
+        </p>
+        <p>
+          {% trans "Please note that this rule is currently included in" %}
+          <em>{{ object.scanners.all.count }}</em>
+          {% trans "scannerjob and" %} <em>{{ object.scans.all.count }}</em>
+          {% trans "reports." %}
+        </p>
+
+        <div class="form__group">
+          <button class="button button--cta button--small btn btn-default"
+                  type="submit">
+            {% trans "Yes" %}
+          </button>
+          <button class="button button--cta button--small btn btn-default"
+                  type="button"
+                  data-modal="modal:close">
+            {% trans "No" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block rules_active %}class="active"{% endblock %}

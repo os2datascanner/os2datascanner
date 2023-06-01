@@ -296,6 +296,10 @@
       width: 15rem;
       word-wrap: break-word;
 
+      form {
+        display: inline-block;
+      }
+
       .action-wrapper {
         display: inline;
         flex-wrap: wrap;
