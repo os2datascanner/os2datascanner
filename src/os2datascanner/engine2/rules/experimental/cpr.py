@@ -69,7 +69,7 @@ class TurboCPRRule(SimpleRule):
                 "sensitivity": (
                     self.sensitivity.value
                     if self.sensitivity
-                    else Sensitivity.CRITICAL
+                    else Sensitivity.CRITICAL.value
                    ),
                 "probability": 1.0,
                 }
