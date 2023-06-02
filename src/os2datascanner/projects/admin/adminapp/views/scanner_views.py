@@ -269,7 +269,7 @@ class UserErrorLogView(RestrictedListView):
     def get_queryset(self):
         """Order errors by most recent scan."""
         qs = super().get_queryset().filter(is_removed=False)
-        allowed_sorting_properties = {'error_message', 'path', 'scan_status'}
+        allowed_sorting_properties = {'error_message', 'path', 'scan_status', 'pk'}
 
         if (sort_key := self.request.GET.get('order_by')) and (
                 order := self.request.GET.get('order')):
@@ -295,7 +295,7 @@ class UserErrorLogView(RestrictedListView):
         context['paginate_by'] = int(self.request.GET.get('paginate_by', self.paginate_by))
         context['paginate_by_options'] = self.paginate_by_options
 
-        context['order_by'] = self.request.GET.get('order_by', 'sort_key')
+        context['order_by'] = self.request.GET.get('order_by', 'pk')
         context['order'] = self.request.GET.get('order', 'ascending')
 
         context["new_error_logs"] = count_new_errors(self.request.user)
