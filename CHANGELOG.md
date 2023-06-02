@@ -1,8 +1,8 @@
 # Changelog
 
-## Next Release
+## Version 3.20.0, 2nd June 2023
 
-"~/home/morten/Documents/new_release/CHANGELOG.md"
+"Quick Brown Fox"
 
 ### New in this release
 

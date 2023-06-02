@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-01 13:17+0200\n"
+"POT-Creation-Date: 2023-06-02 15:33+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -314,28 +314,28 @@ msgstr "tilknyttet scannerjob"
 msgid "resolved"
 msgstr "løst"
 
-#: adminapp/models/scannerjobs/scanner.py:711
+#: adminapp/models/scannerjobs/scanner.py:713
 msgid "Start time"
 msgstr "Startet"
 
-#: adminapp/models/scannerjobs/scanner.py:714
+#: adminapp/models/scannerjobs/scanner.py:716
 #: adminapp/models/usererrorlog.py:29
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner.py:715
+#: adminapp/models/scannerjobs/scanner.py:717
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/scanner.py:757
+#: adminapp/models/scannerjobs/scanner.py:759
 msgid "timestamp"
 msgstr "tidsstempel"
 
-#: adminapp/models/scannerjobs/scanner.py:765
+#: adminapp/models/scannerjobs/scanner.py:767
 msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/scanner.py:766
+#: adminapp/models/scannerjobs/scanner.py:768
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
@@ -542,50 +542,42 @@ msgstr "personnavne"
 msgid "address"
 msgstr "adresse"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:51
-msgid "Experimental"
-msgstr "Eksperimentel"
-
-#: adminapp/templates/components/admin-widgets/rule-builder.html:53
-msgid "CPR-nr. (Turbo)"
-msgstr "CPR-nr. (Turbo)"
-
-#: adminapp/templates/components/admin-widgets/rule-builder.html:61
-#: adminapp/templates/components/admin-widgets/rule-builder.html:102
-#: adminapp/templates/components/admin-widgets/rule-builder.html:128
+#: adminapp/templates/components/admin-widgets/rule-builder.html:62
+#: adminapp/templates/components/admin-widgets/rule-builder.html:103
+#: adminapp/templates/components/admin-widgets/rule-builder.html:129
 #: adminapp/templatetags/utility_tags.py:62
 msgid "and"
 msgstr "og"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:76
+#: adminapp/templates/components/admin-widgets/rule-builder.html:77
 msgid "or"
 msgstr "eller"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:93
-#: adminapp/templates/components/admin-widgets/rule-builder.html:114
-#: adminapp/templates/components/admin-widgets/rule-builder.html:123
+#: adminapp/templates/components/admin-widgets/rule-builder.html:94
+#: adminapp/templates/components/admin-widgets/rule-builder.html:115
+#: adminapp/templates/components/admin-widgets/rule-builder.html:124
 msgid "with"
 msgstr "med"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:96
-#: adminapp/templates/components/admin-widgets/rule-builder.html:126
+#: adminapp/templates/components/admin-widgets/rule-builder.html:97
+#: adminapp/templates/components/admin-widgets/rule-builder.html:127
 msgid "modulus 11-,"
 msgstr "modulus 11-,"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:100
+#: adminapp/templates/components/admin-widgets/rule-builder.html:101
 msgid "probability,-"
 msgstr "sandsynligheds-,"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:105
-#: adminapp/templates/components/admin-widgets/rule-builder.html:131
+#: adminapp/templates/components/admin-widgets/rule-builder.html:106
+#: adminapp/templates/components/admin-widgets/rule-builder.html:132
 msgid "context check"
 msgstr "konteksttjek"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:110
+#: adminapp/templates/components/admin-widgets/rule-builder.html:111
 msgid "Regular expression"
 msgstr "Regulært udtryk"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:117
+#: adminapp/templates/components/admin-widgets/rule-builder.html:118
 msgid "expanded matching"
 msgstr "udvidet søgning"
 
@@ -2657,6 +2649,12 @@ msgstr "Ingen organisatoriske enheder"
 #: organizations/views/org_views.py:84
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
+
+#~ msgid "Experimental"
+#~ msgstr "Eksperimentel"
+
+#~ msgid "CPR-nr. (Turbo)"
+#~ msgstr "CPR-nr. (Turbo)"
 
 #~ msgid "Done"
 #~ msgstr "Udført"
