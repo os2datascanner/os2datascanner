@@ -13,7 +13,7 @@ from ..models.documentreport import DocumentReport
 from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
 from ..utils import user_is
-
+from ..views.report_views import RENDERABLE_RULES
 
 register = template.Library()
 
@@ -156,3 +156,26 @@ def get_matchcount(account):
 @register.filter
 def is_remediator(user):
     return Remediator.objects.filter(user=user).exists()
+
+
+@register.filter
+def merge_renderable_match_fragments(match_fragments: list):
+    """ Provided a list of MatchFragment objects, verifies
+    that these contain matches of renderable rules.
+    Merges together matches to one result if there are multiple MatchFragments objects."""
+
+    # TODO: Refactor hit.html and this. It is a bit hacky and fragile.
+    match_fragments = [frag for frag in match_fragments
+                       if frag.rule.type_label in RENDERABLE_RULES
+                       and frag.matches]
+
+    if len(match_fragments) >= 2:
+        merged_fragment = match_fragments[0]
+        merged_fragment.matches.extend(
+            match
+            for fragment in match_fragments[1:]
+            for match in fragment.matches
+        )
+        return merged_fragment
+    else:
+        return match_fragments[0]
