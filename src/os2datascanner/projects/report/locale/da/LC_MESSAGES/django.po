@@ -8,42 +8,42 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-11 12:49+0200\n"
+"POT-Creation-Date: 2023-06-02 15:33+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: organizations/models/account.py:42
+#: organizations/models/account.py:43
 msgid "Completed"
 msgstr "Færdig"
 
-#: organizations/models/account.py:43
+#: organizations/models/account.py:44
 msgid "Accepted"
 msgstr "Accepteret"
 
-#: organizations/models/account.py:44
+#: organizations/models/account.py:45
 msgid "Not accepted"
 msgstr "Ikke accepteret"
 
-#: organizations/models/account.py:109
+#: organizations/models/account.py:110
 msgid "User"
 msgstr "Bruger"
 
-#: organizations/models/account.py:112
+#: organizations/models/account.py:113
 msgid "Last handle"
 msgstr "Sidste håndtering"
 
-#: organizations/models/account.py:120
+#: organizations/models/account.py:121
 msgid "image"
 msgstr "billede"
 
-#: organizations/models/account.py:125
+#: organizations/models/account.py:126
 msgid "Number of matches"
 msgstr "Antal matches"
 
-#: organizations/models/account.py:130
+#: organizations/models/account.py:131
 msgid "Number of withheld matches"
 msgstr "Antal tilbageholdte matches"
 
@@ -67,87 +67,88 @@ msgstr "Personlig information"
 msgid "Important dates"
 msgstr "Vigtige datoer"
 
-#: reportapp/models/documentreport.py:29
+#: reportapp/models/documentreport.py:30
 msgid "Alias relation"
 msgstr "Alias relation"
 
-#: reportapp/models/documentreport.py:34
+#: reportapp/models/documentreport.py:35
 msgid "scan time"
 msgstr "scanningstid"
 
-#: reportapp/models/documentreport.py:37
+#: reportapp/models/documentreport.py:38
 msgid "created timestamp"
 msgstr "oprettet tidsstempel"
 
-#: reportapp/models/documentreport.py:39
+#: reportapp/models/documentreport.py:40
 msgid "time last opened"
 msgstr "tidspunkt åbnet"
 
-#: reportapp/models/documentreport.py:43
+#: reportapp/models/documentreport.py:44
 msgid "organization"
 msgstr "organisation"
 
-#: reportapp/models/documentreport.py:46
+#: reportapp/models/documentreport.py:47
 msgid "path"
 msgstr "sti"
 
-#: reportapp/models/documentreport.py:55
+#: reportapp/models/documentreport.py:56
 msgid "sort key"
 msgstr "sortér efter"
 
-#: reportapp/models/documentreport.py:60
+#: reportapp/models/documentreport.py:61
 msgid "name"
 msgstr "navn"
 
-#: reportapp/models/documentreport.py:63
+#: reportapp/models/documentreport.py:64
 msgid "source type"
 msgstr "kildetype"
 
-#: reportapp/models/documentreport.py:65
+#: reportapp/models/documentreport.py:66
 msgid "sensitivity"
 msgstr "følsomhed"
 
-#: reportapp/models/documentreport.py:67
+#: reportapp/models/documentreport.py:68
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport.py:140 reportapp/views/views.py:536
+#: reportapp/models/documentreport.py:141
+#: reportapp/views/statistics_views.py:198
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/models/documentreport.py:141
+#: reportapp/models/documentreport.py:142
 msgid "Edited"
 msgstr "Redigeret"
 
-#: reportapp/models/documentreport.py:142
+#: reportapp/models/documentreport.py:143
 msgid "Deleted and journalized"
 msgstr "Slettet og journaliseret"
 
-#: reportapp/models/documentreport.py:143
+#: reportapp/models/documentreport.py:144
 msgid "Deleted"
 msgstr "Slettet"
 
-#: reportapp/models/documentreport.py:144
+#: reportapp/models/documentreport.py:145
 msgid "False positive"
 msgstr "Falsk positiv"
 
-#: reportapp/models/documentreport.py:147
+#: reportapp/models/documentreport.py:148
 msgid "number of matches"
 msgstr "antal matches"
 
-#: reportapp/models/documentreport.py:152
+#: reportapp/models/documentreport.py:153
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport.py:155
+#: reportapp/models/documentreport.py:156
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport.py:158
+#: reportapp/models/documentreport.py:159
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport.py:213
+#: reportapp/models/documentreport.py:214
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -291,8 +292,8 @@ msgid "The department's percentage of handled results"
 msgstr "Afdelingens procentvise andel af håndterede resultater"
 
 #: reportapp/templates/components/dpo-statistics-template.html:136
-#: reportapp/templates/components/handle-match.html:99
-#: reportapp/templates/components/pagination.html:11
+#: reportapp/templates/components/handle-match.html:59
+#: reportapp/templates/components/pagination.html:10
 msgid "of"
 msgstr "af"
 
@@ -316,11 +317,11 @@ msgstr "Ryd"
 msgid "Scan"
 msgstr "Scan"
 
-#: reportapp/templates/components/filters.html:61
+#: reportapp/templates/components/filters.html:64
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: reportapp/templates/components/filters.html:67
+#: reportapp/templates/components/filters.html:70
 msgid "All sensitivities"
 msgstr "Alle følsomheder"
 
@@ -338,8 +339,8 @@ msgstr "Inkludér resultater, der er under 30 dage gamle"
 
 #: reportapp/templates/components/handle-match.html:10
 #: reportapp/templates/components/handle-match.html:47
-#: reportapp/templates/components/hit.html:122
-#: reportapp/templates/components/hit.html:172
+#: reportapp/templates/components/hit.html:121
+#: reportapp/templates/components/hit.html:171
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned. "
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -353,8 +354,8 @@ msgid "Mark as handled"
 msgstr "Markér som håndterede"
 
 #: reportapp/templates/components/handle-match.html:18
-#: reportapp/templates/components/hit.html:131
-#: reportapp/templates/components/hit.html:180
+#: reportapp/templates/components/hit.html:130
+#: reportapp/templates/components/hit.html:179
 msgid ""
 "You are about to handle this result. This action does not change the file, "
 "that the result is about. Please do not handle a result before action has "
@@ -365,8 +366,8 @@ msgstr ""
 "manuelt har gjort noget ved filen."
 
 #: reportapp/templates/components/handle-match.html:26
-#: reportapp/templates/components/hit.html:138
-#: reportapp/templates/components/hit.html:167
+#: reportapp/templates/components/hit.html:137
+#: reportapp/templates/components/hit.html:166
 msgid "Revert"
 msgstr "Fortryd"
 
@@ -384,52 +385,52 @@ msgstr ""
 msgid "selected"
 msgstr "valgt"
 
-#: reportapp/templates/components/hit.html:19
+#: reportapp/templates/components/hit.html:18
 msgid "Select result"
 msgstr "Vælg resultat"
 
-#: reportapp/templates/components/hit.html:45
+#: reportapp/templates/components/hit.html:44
 msgid "Open"
 msgstr "Åbn"
 
-#: reportapp/templates/components/hit.html:54
+#: reportapp/templates/components/hit.html:53
 msgid "Open folder"
 msgstr "Åbn mappe"
 
-#: reportapp/templates/components/hit.html:61
+#: reportapp/templates/components/hit.html:60
 msgid "Opened"
 msgstr "Åbnet: "
 
-#: reportapp/templates/components/hit.html:96
+#: reportapp/templates/components/hit.html:95
 msgid "Copy folder path"
 msgstr "Kopiér sti til mappe"
 
-#: reportapp/templates/components/hit.html:101
+#: reportapp/templates/components/hit.html:100
 msgid "Copy path"
 msgstr "Kopiér sti"
 
-#: reportapp/templates/components/hit.html:108
+#: reportapp/templates/components/hit.html:107
 msgid "Copy link"
 msgstr "Kopiér link"
 
-#: reportapp/templates/components/hit.html:123
-#: reportapp/templates/components/hit.html:182
+#: reportapp/templates/components/hit.html:122
+#: reportapp/templates/components/hit.html:181
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:187
+#: reportapp/templates/components/hit.html:186
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:203
+#: reportapp/templates/components/hit.html:202
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:204
+#: reportapp/templates/components/hit.html:203
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:205
+#: reportapp/templates/components/hit.html:204
 msgid "Probability"
 msgstr "Sandsynlighed"
 
@@ -456,7 +457,7 @@ msgid "Name"
 msgstr "Navn"
 
 #: reportapp/templates/components/hits.html:55
-#: reportapp/templates/components/leader-statistics-template.html:83
+#: reportapp/templates/components/leader-statistics-template.html:90
 msgid "Matches"
 msgstr "Matches"
 
@@ -469,12 +470,12 @@ msgid "Path"
 msgstr "Sti"
 
 #: reportapp/templates/components/hits.html:82
-#: reportapp/templates/components/leader-statistics-template.html:95
+#: reportapp/templates/components/leader-statistics-template.html:102
 msgid "Status"
 msgstr "Status"
 
 #: reportapp/templates/components/hits.html:92
-#: reportapp/templates/components/leader-statistics-template.html:109
+#: reportapp/templates/components/leader-statistics-template.html:116
 msgid "Actions"
 msgstr "Handlinger"
 
@@ -498,23 +499,23 @@ msgstr "Tilbageholdte"
 msgid "Leader overview for:"
 msgstr "Lederoverblik for:"
 
-#: reportapp/templates/components/leader-statistics-template.html:20
+#: reportapp/templates/components/leader-statistics-template.html:26
 msgid "employees"
 msgstr "medarbejdere"
 
-#: reportapp/templates/components/leader-statistics-template.html:34
+#: reportapp/templates/components/leader-statistics-template.html:41
 msgid "Organizational units"
 msgstr "Organisatoriske enheder"
 
-#: reportapp/templates/components/leader-statistics-template.html:53
+#: reportapp/templates/components/leader-statistics-template.html:60
 msgid "Search for employee"
 msgstr "Søg efter medarbejder"
 
-#: reportapp/templates/components/leader-statistics-template.html:72
+#: reportapp/templates/components/leader-statistics-template.html:79
 msgid "Employee"
 msgstr "Medarbejder"
 
-#: reportapp/templates/components/leader-statistics-template.html:96
+#: reportapp/templates/components/leader-statistics-template.html:103
 #, python-format
 msgid ""
 "The status of each user is determined by how many matches that user has, and "
@@ -527,7 +528,7 @@ msgstr ""
 "“Færdig”-statussen har ingen resultater. En bruger med “Accepteret” har "
 "håndteret mindst 75%% af sine seneste resultater."
 
-#: reportapp/templates/components/leader-statistics-template.html:127
+#: reportapp/templates/components/leader-statistics-template.html:134
 #, python-format
 msgid ""
 "The user has %(withheld)s matches, which have not been distributed to the "
@@ -536,19 +537,19 @@ msgstr ""
 "Brugeren har %(withheld)s resultater, som ikke er blevet uddelt til brugeren "
 "endnu. Dette kan gøres af en superbruger i rapportmodulet."
 
-#: reportapp/templates/components/leader-statistics-template.html:128
+#: reportapp/templates/components/leader-statistics-template.html:135
 msgid "withheld"
 msgstr "tilbageholdt"
 
-#: reportapp/templates/components/leader-statistics-template.html:138
+#: reportapp/templates/components/leader-statistics-template.html:145
 msgid "Send notification"
 msgstr "Send påmindelse"
 
-#: reportapp/templates/components/leader-statistics-template.html:140
+#: reportapp/templates/components/leader-statistics-template.html:147
 msgid "Show/hide overview"
 msgstr "Vis/skjul overblik"
 
-#: reportapp/templates/components/leader-statistics-template.html:169
+#: reportapp/templates/components/leader-statistics-template.html:176
 msgid "No employees found."
 msgstr "Ingen medarbejdere fundet."
 
@@ -556,8 +557,8 @@ msgstr "Ingen medarbejdere fundet."
 msgid "per page"
 msgstr "pr. side"
 
-#: reportapp/templates/components/matches_table.html:19
-#: reportapp/templates/components/matches_table.html:28
+#: reportapp/templates/components/matches_table.html:20
+#: reportapp/templates/components/matches_table.html:30
 msgid "Show more matches..."
 msgstr "Vis flere matches..."
 
@@ -1085,30 +1086,29 @@ msgstr "Bruger siden"
 msgid "%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A"
 msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 
-#: reportapp/views/report_views.py:65 reportapp/views/views.py:72
+#: reportapp/views/report_views.py:67
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/views.py:385
-msgid "The archive page has been deactivated for this distribution."
-msgstr "Arkivfanen er deaktiveret for denne opsætning."
-
-#: reportapp/views/views.py:537
+#: reportapp/views/statistics_views.py:199
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/views.py:538
+#: reportapp/views/statistics_views.py:200
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/views.py:539
+#: reportapp/views/statistics_views.py:201
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/views.py:805
+#: reportapp/views/statistics_views.py:470
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."
+
+#~ msgid "The archive page has been deactivated for this distribution."
+#~ msgstr "Arkivfanen er deaktiveret for denne opsætning."
 
 #~ msgid "alias ID"
 #~ msgstr "alias ID"
