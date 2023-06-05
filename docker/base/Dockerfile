@@ -25,7 +25,7 @@ USER node
 # NB! Watches for changes, so no automatic exit!
 CMD ["npm", "run", "dev", "--prefix", "static"]
 
-FROM python:3.9.7 AS base
+FROM python:3.11.3 AS base
 
 # Force the stdout and stderr streams from python to be unbuffered. See
 # https://docs.python.org/3/using/cmdline.html#cmdoption-u

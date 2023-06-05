@@ -72,7 +72,7 @@ Lint shell scripts:
 
 Lint Python:
   <<: *lint-default
-  image: python:3.9
+  image: python:3.11.3
   stage: lint
   script:
     # Flake8 5.0.0 introduced a bug: module 'flake8.options.config' has no attribute 'ConfigFileFinder'
@@ -97,7 +97,7 @@ Lint js scripts:
 
 Lint django templates:
   <<: *lint-default
-  image: python:3.9
+  image: python:3.11.3
   stage: lint
   script:
     # Install djlint in this docker container
