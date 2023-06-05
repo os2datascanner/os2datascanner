@@ -1,4 +1,4 @@
-FROM python:3.9.7
+FROM python:3.11.3
 
 WORKDIR /requirements/sys-requirements
 COPY requirements/sys-requirements .
@@ -16,7 +16,7 @@ RUN set -ex \
   && apt-get clean && rm -rf "/var/lib/apt/lists/*" "/tmp/*" "/var/tmp/*" "/usr/share/man/??" "/usr/share/man/??_*"
 
 WORKDIR /requirements/python-requirements
-RUN pip install --no-cache-dir pip-tools==5.5.0
+RUN pip install --no-cache-dir pip-tools==6.13.0
 COPY requirements/python-requirements .
 
 # ADD COMMAND FOR COMPILING ALL requirement-*.txt FILES!
