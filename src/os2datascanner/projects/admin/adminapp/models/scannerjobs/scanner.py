@@ -23,7 +23,7 @@ from enum import Enum
 import os
 from typing import Iterator
 import structlog
-from statistics import mean, linear_regression
+from statistics import linear_regression
 
 from django.db import models
 from django.conf import settings
@@ -620,26 +620,6 @@ class AbstractScanStatus(models.Model):
 
 def inv_linear_func(y, a, b):
     return (y - b)/a if a != 0 else None
-
-
-def linear_fit(x_vals: list, y_vals: list):
-    """Returns the two function coefficients for the best linear fit to the
-    input data. Direct implementation to avoid importing numpy.
-    Note that this functionality can be replaced by the built-in
-    statistics.linear_regression function in python 3.10."""
-    n = len(x_vals)
-
-    mean_x = mean(x_vals)
-    mean_y = mean(y_vals)
-
-    ss_xy = sum([x_vals[i] * y_vals[i] for i in range(n)]
-                ) - n * mean_x * mean_y
-    ss_xx = sum([x**2 for x in x_vals]) - n * mean_x**2
-
-    a = ss_xy / ss_xx if ss_xx > 0 else 0
-    b = mean_y - a * mean_x
-
-    return a, b
 
 
 class ScanStatus(AbstractScanStatus):
