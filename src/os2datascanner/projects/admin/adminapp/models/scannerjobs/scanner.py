@@ -23,7 +23,7 @@ from enum import Enum
 import os
 from typing import Iterator
 import structlog
-from statistics import mean
+from statistics import mean, linear_regression
 
 from django.db import models
 from django.conf import settings
@@ -673,8 +673,10 @@ class ScanStatus(AbstractScanStatus):
         """Returns an estimate of the completion time of the scan, based on a
         linear fit to the last 20% of the existing ScanStatusSnapshot objects."""
 
-        if (self.fraction_scanned is not None
+        if not (self.fraction_scanned is not None
                 and self.fraction_scanned >= settings.ESTIMATE_AFTER):
+            return None
+        else:
             snapshots = list(ScanStatusSnapshot.objects.filter(
                 scan_status=self, total_objects__isnull=False).values(
                 "time_stamp", "scanned_objects", "total_objects").order_by("time_stamp"))
@@ -691,7 +693,7 @@ class ScanStatus(AbstractScanStatus):
             frac_scanned = [obj.get("scanned_objects")/obj.get("total_objects")
                             for obj in snapshots[-window:]]
 
-            a, b = linear_fit(time_data, frac_scanned)
+            a, b = linear_regression(time_data, frac_scanned)
 
             try:
                 end_time_guess = timezone.timedelta(
@@ -702,9 +704,10 @@ class ScanStatus(AbstractScanStatus):
                     f'Exception while calculating end time for scan {self.scanner}: {e}')
                 return None
 
-            return end_time_guess
-        else:
-            return None
+            if end_time_guess > time_now():
+                return end_time_guess
+            else:
+                return None
 
     @property
     def start_time(self) -> datetime.datetime:
