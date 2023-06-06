@@ -1,6 +1,6 @@
 import django_saml2_auth.views
 import django.contrib.auth.views
-from django.conf.urls import re_path
+from django.urls import re_path
 from django.http import HttpResponse
 from django.urls import include
 from django.conf.urls.static import static
