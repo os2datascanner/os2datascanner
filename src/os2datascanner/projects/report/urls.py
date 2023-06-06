@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.conf.urls import include, re_path
+from django.urls import include, re_path
 from django.urls import path
 
 urlpatterns = [

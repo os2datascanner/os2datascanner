@@ -14,7 +14,7 @@
 """URL mappings."""
 
 import django.contrib.auth.views
-from django.conf.urls import re_path
+from django.urls import re_path
 from django.http import HttpResponse
 from django.views.i18n import JavaScriptCatalog
 from django.views.generic.base import TemplateView
