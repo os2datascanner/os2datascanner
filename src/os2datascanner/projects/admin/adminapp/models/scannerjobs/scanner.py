@@ -593,7 +593,7 @@ class AbstractScanStatus(models.Model):
         return self.fraction_explored == 1.0 and self.fraction_scanned == 1.0
 
     @property
-    def fraction_explored(self) -> float:
+    def fraction_explored(self) -> float | None:
         """Returns the fraction of the sources in this scan that has been
         explored, or None if this is not yet computable."""
         if self.total_sources > 0:
@@ -606,7 +606,7 @@ class AbstractScanStatus(models.Model):
             return None
 
     @property
-    def fraction_scanned(self) -> float:
+    def fraction_scanned(self) -> float | None:
         """Returns the fraction of this scan that has been scanned, or None if
         this is not yet computable."""
         if self.fraction_explored == 1.0 and self.total_objects > 0:
@@ -649,12 +649,12 @@ class ScanStatus(AbstractScanStatus):
     )
 
     @property
-    def estimated_completion_time(self) -> datetime.datetime:
+    def estimated_completion_time(self) -> datetime.datetime | None:
         """Returns an estimate of the completion time of the scan, based on a
         linear fit to the last 20% of the existing ScanStatusSnapshot objects."""
 
-        if not (self.fraction_scanned is not None
-                and self.fraction_scanned >= settings.ESTIMATE_AFTER):
+        if (self.fraction_scanned is None
+                or self.fraction_scanned < settings.ESTIMATE_AFTER):
             return None
         else:
             snapshots = list(ScanStatusSnapshot.objects.filter(
