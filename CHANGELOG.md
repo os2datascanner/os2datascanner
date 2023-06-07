@@ -1,5 +1,9 @@
 # Changelog
 
+### New in this release
+
+- A new experimental, high-performance rule for CPR detection: `TurboCPRRule`.
+
 ## Version 3.20.0, 2nd June 2023
 
 "Quick Brown Fox"

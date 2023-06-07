@@ -48,12 +48,11 @@
       <option value="CustomRule_Address">
         {% trans "address" %}
       </option>
-      {#        TODO: Incomment when TurboCPRRule supports censoring its matches.#}
-      {#      <optgroup label="{% trans "Experimental" %}">#}
-      {#        <option value="TurboCPRRule">#}
-      {#          {% trans "CPR-nr. (Turbo)" %}#}
-      {#        </option>#}
-      {#      </optgroup>#}
+      <optgroup label="{% trans "Experimental" %}">
+        <option value="TurboCPRRule">
+          {% trans "CPR-nr. (Turbo)" %}
+        </option>
+      </optgroup>
     </select>
     <span class="empty"></span>
   </span>

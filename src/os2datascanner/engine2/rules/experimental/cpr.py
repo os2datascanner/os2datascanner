@@ -10,11 +10,16 @@ from ..logical import oxford_comma
 logger = structlog.get_logger(__name__)
 
 
+def censor(text, cpr):
+    censored_cpr = cpr[0:4] + "XXXXXX"
+    return text.replace(cpr, censored_cpr)
+
+
 def make_context(m, text):
     low, high = m['start'], m['end']
     ctx_low, ctx_high = max(low - 50, 0), min(high + 50, len(text))
     # Extract context, remove newlines and tabs for better representation
-    match_context = " ".join(text[ctx_low:ctx_high].split())
+    match_context = censor(" ".join(text[ctx_low:ctx_high].split()), m['match'])
 
     return {
         "offset": low,
@@ -64,7 +69,7 @@ class TurboCPRRule(SimpleRule):
         for cpr in self._rule.find_matches(content):
             itot += 1
             yield {
-                "match": cpr["match"],
+                "match": censor(cpr["match"], cpr["match"]),
                 **make_context(cpr, content),
                 "sensitivity": (
                     self.sensitivity.value
