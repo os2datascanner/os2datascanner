@@ -12,6 +12,7 @@
 
 <textarea id="id_rule"
           class="watcher"
+          {% if hidden %}hidden{% endif %}
           data-selector="#select_slot"
           data-function="stringifyRule"
           name="{{ widget.name|default:"rule" }}"
