@@ -14,7 +14,7 @@
           class="watcher"
           data-selector="#select_slot"
           data-function="stringifyRule"
-          name="{{ widget.name }}"
+          name="{{ widget.name|default:"rule" }}"
           readonly>{{ widget.value }}</textarea>
 
 <div id="__templates" style="display: none">
