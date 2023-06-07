@@ -45,3 +45,21 @@
     transform: rotate(360deg);
   }
 }
+
+div.spinner {
+  position: fixed;
+  z-index: 255;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  background-color: white;
+  cursor: wait;
+
+  display: none;
+}
+
+div.spinner.htmx-request {
+  display: block;
+}

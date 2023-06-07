@@ -17,6 +17,15 @@
           <span class="width">{% trans "Scannerjob" %}</span>
         </a>
       </li>
+      {% if settings.ENABLE_MINISCAN %}
+        <li>
+          <a href="/miniscan"
+             class="{% if active_tab == 'miniscan' %}active{% endif %}">
+            {% include "components/svg-icons/search.svg" %}
+            <span class="width">{% trans "Mini-scanner" %}</span>
+          </a>
+        </li>
+      {% endif %}
       {% if settings.ANALYSIS_PAGE %}
         <li>
           <a href="/analysis"

@@ -1,0 +1,42 @@
+{% load i18n %}
+
+{% if not file_obj %}
+  <div id="response" class="error">{% translate "No file uploaded." %}</div>
+{% elif file_obj.size > settings.MINISCAN_FILE_SIZE_LIMIT %}
+  <div id="response" class="error">
+    {% blocktranslate trimmed %}
+    File too big ({file_obj.size} bytes > {settings.MINISCAN_FILE_SIZE_LIMIT} bytes).
+    {% endblocktranslate %}
+  </div>
+{% elif not halfbaked_rule %}
+  <div id="response" class="error">{% translate "No rule specified." %}</div>
+{% else %}
+  <table class="datatable" id="response">
+    <thead>
+      <tr>
+        <th>{% translate "Location" %}</th>
+        <th>{% translate "Match" %}</th>
+        <th>{% translate "Match context" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if replies %}
+        {% for message in replies %}
+          {% for fragment in message.matches %}
+            {% for match in fragment.matches %}
+              <tr>
+                <td>{{ message.handle.presentation }}</td>
+                <td>{{ match.match }}</td>
+                <td>{{ match.context }}</td>
+              </tr>
+            {% endfor %}
+          {% endfor %}
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="3" style="text-align: center">{% translate "No matches found" %}</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+{% endif %}

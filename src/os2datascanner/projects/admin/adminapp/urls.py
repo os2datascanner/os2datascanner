@@ -21,6 +21,8 @@ from django.views.generic.base import TemplateView
 from os2datascanner import __version__, __commit__, __tag__, __branch__
 from os2datascanner.projects.admin.adminapp.views.analysis_views import AnalysisPageView
 
+from os2datascanner.projects.admin import settings
+
 from .models.scannerjobs.dropboxscanner import DropboxScanner
 from .models.scannerjobs.exchangescanner import ExchangeScanner
 from .models.scannerjobs.filescanner import FileScanner
@@ -87,6 +89,8 @@ from .views.msgraph_views import (MSGraphMailList, MSGraphMailDelete,
                                   MSGraphCalendarCreate, MSGraphCalendarUpdate,
                                   MSGraphCalendarRun, MSGraphCalendarAskRun,
                                   MSGraphCalendarCopy)
+
+from .views.miniscanner_views import MiniScanner, execute_mini_scan
 
 urlpatterns = [
     # App URLs
@@ -385,3 +389,9 @@ urlpatterns = [
         Branch:    {__branch__}
         """)),
 ]
+
+if settings.ENABLE_MINISCAN:
+    urlpatterns.extend([
+        re_path(r"^miniscan/$", MiniScanner.as_view(), name="miniscan"),
+        re_path(r"^miniscan/run/$", execute_mini_scan, name="miniscan_run"),
+    ])

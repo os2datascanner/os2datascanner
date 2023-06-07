@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-14 12:58+0200\n"
+"POT-Creation-Date: 2023-06-15 14:54+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -510,87 +510,87 @@ msgstr "I mellemtiden kan du forsøge at genindlæse siden eller"
 msgid "go to the front page"
 msgstr "gå til forsiden"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:25
+#: adminapp/templates/components/admin-widgets/rule-builder.html:26
 msgid "all of"
 msgstr "alle fra"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:26
+#: adminapp/templates/components/admin-widgets/rule-builder.html:27
 msgid "one of"
 msgstr "én fra"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:27
+#: adminapp/templates/components/admin-widgets/rule-builder.html:28
 msgid "not"
 msgstr "ikke"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:28
+#: adminapp/templates/components/admin-widgets/rule-builder.html:29
 msgid "CPR-nr."
 msgstr "CPR-nr."
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:29
+#: adminapp/templates/components/admin-widgets/rule-builder.html:30
 msgid "regular expression"
 msgstr "regulært udtryk"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:30
+#: adminapp/templates/components/admin-widgets/rule-builder.html:31
 msgid "health information"
 msgstr "helbredsinformation"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:31
+#: adminapp/templates/components/admin-widgets/rule-builder.html:32
 msgid "names"
 msgstr "personnavne"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:32
+#: adminapp/templates/components/admin-widgets/rule-builder.html:33
 msgid "address"
 msgstr "adresse"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:33
+#: adminapp/templates/components/admin-widgets/rule-builder.html:34
 msgid "Experimental"
 msgstr "Eksperimentel"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:34
+#: adminapp/templates/components/admin-widgets/rule-builder.html:35
 msgid "CPR-nr. (Turbo)"
 msgstr "CPR-nr. (Turbo)"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:41
-#: adminapp/templates/components/admin-widgets/rule-builder.html:82
-#: adminapp/templates/components/admin-widgets/rule-builder.html:108
+#: adminapp/templates/components/admin-widgets/rule-builder.html:42
+#: adminapp/templates/components/admin-widgets/rule-builder.html:83
+#: adminapp/templates/components/admin-widgets/rule-builder.html:109
 #: adminapp/templatetags/utility_tags.py:62
 msgid "and"
 msgstr "og"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:56
+#: adminapp/templates/components/admin-widgets/rule-builder.html:57
 msgid "or"
 msgstr "eller"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:73
-#: adminapp/templates/components/admin-widgets/rule-builder.html:94
-#: adminapp/templates/components/admin-widgets/rule-builder.html:103
+#: adminapp/templates/components/admin-widgets/rule-builder.html:74
+#: adminapp/templates/components/admin-widgets/rule-builder.html:95
+#: adminapp/templates/components/admin-widgets/rule-builder.html:104
 msgid "with"
 msgstr "med"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:76
-#: adminapp/templates/components/admin-widgets/rule-builder.html:106
+#: adminapp/templates/components/admin-widgets/rule-builder.html:77
+#: adminapp/templates/components/admin-widgets/rule-builder.html:107
 msgid "modulus 11-,"
 msgstr "modulus 11-,"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:80
+#: adminapp/templates/components/admin-widgets/rule-builder.html:81
 msgid "probability,-"
 msgstr "sandsynligheds-,"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:85
-#: adminapp/templates/components/admin-widgets/rule-builder.html:111
+#: adminapp/templates/components/admin-widgets/rule-builder.html:86
+#: adminapp/templates/components/admin-widgets/rule-builder.html:112
 msgid "context check"
 msgstr "konteksttjek"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:90
+#: adminapp/templates/components/admin-widgets/rule-builder.html:91
 msgid "Regular expression"
 msgstr "Regulært udtryk"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:97
+#: adminapp/templates/components/admin-widgets/rule-builder.html:98
 msgid "expanded matching"
 msgstr "udvidet søgning"
 
 #: adminapp/templates/components/analysis-template.html:9
-#: adminapp/templates/components/navigation.html:25
+#: adminapp/templates/components/navigation.html:33
 msgid "Analysis"
 msgstr "Analyse"
 
@@ -623,9 +623,44 @@ msgstr "Overblik over antallet af filer"
 msgid "Choose a scannerjob to start a new scan or view analysis"
 msgstr "Vælg et scannerjob for at starte et analyse-scan eller se analyse"
 
-#: adminapp/templates/components/load-results.html:26
+#: adminapp/templates/components/load-results.html:25
 msgid "per page"
 msgstr "pr. side"
+
+#: adminapp/templates/components/miniscan-results.html:4
+#, fuzzy
+#| msgid "or upload"
+msgid "No file uploaded."
+msgstr "Ingen fil var uploadet."
+
+#: adminapp/templates/components/miniscan-results.html:7
+#, python-brace-format
+msgid ""
+"File too big ({file_obj.size} bytes > {settings.MINISCAN_FILE_SIZE_LIMIT} "
+"bytes)."
+msgstr ""
+"Fil var for stor ({file_obj.size} byte > {settings.MINISCAN_FILE_SIZE_LIMIT} "
+"byte)."
+
+#: adminapp/templates/components/miniscan-results.html:12
+msgid "No rule specified."
+msgstr "Ingen regel var givet."
+
+#: adminapp/templates/components/miniscan-results.html:17
+msgid "Location"
+msgstr "Lokation"
+
+#: adminapp/templates/components/miniscan-results.html:18
+msgid "Match"
+msgstr "Match"
+
+#: adminapp/templates/components/miniscan-results.html:19
+msgid "Match context"
+msgstr "Kontekst for match"
+
+#: adminapp/templates/components/miniscan-results.html:37
+msgid "No matches found"
+msgstr "Ingen resultater fundet"
 
 #: adminapp/templates/components/navigation.html:11
 msgid "Scanner status"
@@ -640,14 +675,18 @@ msgstr "Scannerstatus"
 msgid "Scannerjob"
 msgstr "Scannerjob"
 
-#: adminapp/templates/components/navigation.html:32
+#: adminapp/templates/components/navigation.html:24
+msgid "Mini-scanner"
+msgstr "Miniscanner"
+
+#: adminapp/templates/components/navigation.html:40
 #: adminapp/templates/os2datascanner/rules.html:18
 #: adminapp/templates/os2datascanner/rules.html:36
 #: adminapp/templates/partials/breadcrumb.html:55
 msgid "Rules"
 msgstr "Regler"
 
-#: adminapp/templates/components/navigation.html:39
+#: adminapp/templates/components/navigation.html:47
 #: adminapp/templates/partials/breadcrumb.html:69
 #: adminapp/templates/partials/breadcrumb.html:77
 #: adminapp/templates/partials/breadcrumb.html:85
@@ -657,19 +696,19 @@ msgstr "Regler"
 msgid "organizations"
 msgstr "organisationer"
 
-#: adminapp/templates/components/navigation.html:45
+#: adminapp/templates/components/navigation.html:53
 msgid "Report module"
 msgstr "Rapportmodul"
 
-#: adminapp/templates/components/navigation.html:52
+#: adminapp/templates/components/navigation.html:60
 msgid "Administration"
 msgstr "Administration"
 
-#: adminapp/templates/components/navigation.html:59
+#: adminapp/templates/components/navigation.html:67
 msgid "Guide"
 msgstr "Håndbog"
 
-#: adminapp/templates/components/navigation.html:68
+#: adminapp/templates/components/navigation.html:76
 #: adminapp/templates/components/user.html:29 adminapp/templates/logout.html:7
 msgid "Logout"
 msgstr "Log ud"
@@ -1091,6 +1130,39 @@ msgstr "Markér som set"
 #: adminapp/templates/os2datascanner/error_log.html:220
 msgid "no errors found."
 msgstr "ingen fejl fundet."
+
+#: adminapp/templates/os2datascanner/miniscan.html:12
+msgid "OS2datascanner mini-scanner"
+msgstr "OS2datascanner miniscanner"
+
+#: adminapp/templates/os2datascanner/miniscan.html:14
+msgid ""
+"The mini-scanner lets you execute any OS2datascanner rule on a single file, "
+"and returns the results directly to this page."
+msgstr ""
+"Med miniscanneren kan man afvikle en arbitrær OS2datascanner-regel på én "
+"enkel fil. Resultaterne vises umiddelbart på denne side."
+
+#: adminapp/templates/os2datascanner/miniscan.html:26
+msgid "File to scan"
+msgstr "Upload fil"
+
+#: adminapp/templates/os2datascanner/miniscan.html:28
+msgid "Rule to execute"
+msgstr "Definér regel"
+
+#: adminapp/templates/os2datascanner/miniscan.html:30
+#: adminapp/templates/os2datascanner/scanners.html:126
+msgid "Run"
+msgstr "Kør"
+
+#: adminapp/templates/os2datascanner/miniscan.html:31
+msgid "Scan result"
+msgstr "Scanresultat"
+
+#: adminapp/templates/os2datascanner/miniscan.html:32
+msgid "(none yet)"
+msgstr "(endnu ingen)"
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/rules.html:93
@@ -1702,10 +1774,6 @@ msgstr "Er ikke godkendt"
 #: adminapp/templates/os2datascanner/scanners.html:111
 msgid "Next scan: "
 msgstr "Næste scan: "
-
-#: adminapp/templates/os2datascanner/scanners.html:126
-msgid "Run"
-msgstr "Kør"
 
 #: adminapp/templates/os2datascanner/scanners.html:156
 msgid "Do you really want to delete this scanner?"
