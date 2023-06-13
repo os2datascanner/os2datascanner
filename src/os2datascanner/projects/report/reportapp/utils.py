@@ -63,6 +63,8 @@ def hash_handle(handle: dict) -> str:
     while source:
         if "scan_deleted_items_folder" in source:
             del source["scan_deleted_items_folder"]
+        if "scan_syncissues_folder" in source:
+            del source["scan_syncissues_folder"]
         source = source.get("handle", {}).get("source")
 
     return hashlib.sha512(json.dumps(handle).encode()).hexdigest()

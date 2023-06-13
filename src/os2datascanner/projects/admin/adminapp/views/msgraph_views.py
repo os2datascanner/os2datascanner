@@ -106,9 +106,20 @@ class _MSGraphMailCreate(ScannerCreate):
     """Creates a new Microsoft Graph mail scanner job."""
     model = MSGraphMailScanner
     type = 'msgraph-mail'
-    fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
-              'do_ocr', 'org_unit', 'exclusion_rules',
-              'do_last_modified_check', 'scan_deleted_items_folder', 'rules', 'organization', ]
+    fields = [
+        'name',
+        'schedule',
+        'grant',
+        'only_notify_superadmin',
+        'do_ocr',
+        'org_unit',
+        'exclusion_rules',
+        'do_last_modified_check',
+        'scan_deleted_items_folder',
+        'scan_syncissues_folder',
+        'rules',
+        'organization',
+     ]
 
     def get_form(self, form_class=None):
         return patch_form(self, super().get_form(form_class))
@@ -123,9 +134,20 @@ class MSGraphMailUpdate(ScannerUpdate):
     for modification."""
     model = MSGraphMailScanner
     type = 'msgraph-mailscanners'
-    fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
-              'do_ocr', 'org_unit', 'exclusion_rules',
-              'do_last_modified_check', 'scan_deleted_items_folder', 'rules', 'organization', ]
+    fields = [
+        'name',
+        'schedule',
+        'grant',
+        'only_notify_superadmin',
+        'do_ocr',
+        'org_unit',
+        'exclusion_rules',
+        'do_last_modified_check',
+        'scan_deleted_items_folder',
+        'scan_syncissues_folder',
+        'rules',
+        'organization',
+     ]
 
     def get_form(self, form_class=None):
         return patch_form(self, super().get_form(form_class))
@@ -145,9 +167,20 @@ class MSGraphMailCopy(ScannerCopy):
     """Creates a copy of an existing Microsoft Graph mail scanner job."""
     model = MSGraphMailScanner
     type = 'msgraph-mail'
-    fields = ['name', 'schedule', 'grant', 'only_notify_superadmin',
-              'do_ocr', 'org_unit', 'exclusion_rules',
-              'do_last_modified_check', 'scan_deleted_items_folder', 'rules', 'organization', ]
+    fields = [
+        'name',
+        'schedule',
+        'grant',
+        'only_notify_superadmin',
+        'do_ocr',
+        'org_unit',
+        'exclusion_rules',
+        'do_last_modified_check',
+        'scan_deleted_items_folder',
+        'scan_syncissues_folder',
+        'rules',
+        'organization',
+     ]
 
 
 class MSGraphMailAskRun(ScannerAskRun):

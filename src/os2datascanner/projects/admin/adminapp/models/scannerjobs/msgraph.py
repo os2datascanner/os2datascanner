@@ -69,7 +69,12 @@ class MSGraphMailScanner(MSGraphScanner):
         default=False,
         verbose_name=_('Scan deleted items folder'),
         help_text=_("Include emails in the deleted post folder"),
+    )
 
+    scan_syncissues_folder = models.BooleanField(
+        default=True,
+        verbose_name=_('Scan syncissues folder'),
+        help_text=_("Include emails in the syncissues folder"),
     )
 
     def get_type(self):
@@ -87,7 +92,8 @@ class MSGraphMailScanner(MSGraphScanner):
                 client_id=settings.MSGRAPH_APP_ID,
                 tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
-                scan_deleted_items_folder=self.scan_deleted_items_folder
+                scan_deleted_items_folder=self.scan_deleted_items_folder,
+                scan_syncissues_folder=self.scan_syncissues_folder
             )
         else:
             # Otherwise yield a source for every user
@@ -97,7 +103,8 @@ class MSGraphMailScanner(MSGraphScanner):
                 tenant_id=str(self.grant.tenant_id),
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
                 userlist=_create_user_list(self.org_unit),
-                scan_deleted_items_folder=self.scan_deleted_items_folder
+                scan_deleted_items_folder=self.scan_deleted_items_folder,
+                scan_syncissues_folder=self.scan_syncissues_folder
             )
 
 

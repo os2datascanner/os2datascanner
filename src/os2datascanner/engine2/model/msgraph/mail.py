@@ -1,3 +1,5 @@
+import logging
+
 from io import BytesIO
 from urllib.parse import urlsplit
 from contextlib import contextmanager
@@ -7,6 +9,8 @@ from ... import settings as engine2_settings
 from ..core import Handle, Source, Resource, FileResource
 from ..derived.derived import DerivedSource
 from .utilities import MSGraphSource, warn_on_httperror, MailFSBuilder
+
+logger = logging.getLogger(__name__)
 
 
 class MSGraphMailSource(MSGraphSource):
@@ -20,10 +24,12 @@ class MSGraphMailSource(MSGraphSource):
             tenant_id,
             client_secret,
             scan_deleted_items_folder=True,
+            scan_syncissues_folder=True,
             userlist=None):
         super().__init__(client_id, tenant_id, client_secret)
         self._userlist = userlist
         self._scan_deleted_items_folder = scan_deleted_items_folder
+        self._scan_syncissues_folder = scan_syncissues_folder
 
     def handles(self, sm):  # noqa
         if self._userlist is None:
@@ -52,7 +58,8 @@ class MSGraphMailSource(MSGraphSource):
         return dict(
                 **super().to_json_object(),
                 userlist=list(self._userlist) if self._userlist is not None else None,
-                scan_deleted_items_folder=self.scan_deleted_items_folder)
+                scan_deleted_items_folder=self.scan_deleted_items_folder,
+                scan_syncissues_folder=self.scan_syncissues_folder)
 
     @staticmethod
     @Source.json_handler(type_label)
@@ -63,15 +70,21 @@ class MSGraphMailSource(MSGraphSource):
                 tenant_id=obj["tenant_id"],
                 client_secret=obj["client_secret"],
                 userlist=frozenset(userlist) if userlist is not None else None,
-                scan_deleted_items_folder=obj.get("scan_deleted_items_folder", True))
+                scan_deleted_items_folder=obj.get("scan_deleted_items_folder", True),
+                scan_syncissues_folder=obj.get("scan_syncissues_folder", True))
 
     def censor(self):
         return type(self)(self._client_id, self._tenant_id, None,
-                          scan_deleted_items_folder=self.scan_deleted_items_folder)
+                          scan_deleted_items_folder=self.scan_deleted_items_folder,
+                          scan_syncissues_folder=self.scan_syncissues_folder)
 
     @property
     def scan_deleted_items_folder(self):
         return self._scan_deleted_items_folder
+
+    @property
+    def scan_syncissues_folder(self):
+        return self._scan_syncissues_folder
 
 
 DUMMY_MIME = "application/vnd.os2.datascanner.graphmailaccount"
@@ -130,18 +143,41 @@ class MSGraphMailAccountSource(DerivedSource):
         ps = engine2_settings.model["msgraph"]["page_size"]
         builder = MailFSBuilder(self, sm, pn)
         query = f"users/{pn}/messages?$select=id,subject,webLink,parentFolderId&$top={ps}"
+        filters = []
 
-        if self.handle.source.scan_deleted_items_folder:
-            result = sm.open(self).get(query)
-
-        else:
+        # The base query gets everything, including the deleted and syncissues folders,
+        # but don't always want this.
+        # That's why we filter them away from the base query,
+        # meaning we check whether or not to filter away a folder,
+        # not whether or not to include a folder.
+        # The following logic is therefore reversed, and skips the steps if they are set to
+        # true in the user-frontend
+        if not self.handle.source.scan_deleted_items_folder:
             # Find folder id of deleted post for given mail account
+
             del_post_folder_id = sm.open(self).get(
                 f"users/{pn}/mailFolders/deleteditems?$select=id").get("id")
 
             # Exclude deleted post by issuing a 'not equal to' (ne) filter query
-            result = sm.open(self).get(
-                f"{query}&$filter=parentFolderId ne '{del_post_folder_id}'")
+            filters.append(f"parentFolderId ne '{del_post_folder_id}'")
+
+        if not self.handle.source.scan_syncissues_folder:
+            # Find folder id of syncissues for given mail account
+            # The syncissues folder is not guaranteed to be present, and requires a check
+            try:
+                sync_issue_folder_id = sm.open(self).get(
+                    f"users/{pn}/mailFolders/syncissues?$select=id").get("id")
+
+                filters.append(f"parentFolderId ne '{sync_issue_folder_id}'")
+            except BaseException:
+                logger.warning("Syncissues folder does not exist")
+
+        if filters:
+            query += f"&$filter={' and '.join(filters)}"
+
+        # If there is no syncissues folder, and we do want the deleted mail folder,
+        # we can potentially hit filters without having declared the result variable.
+        result = sm.open(self).get(query)
 
         yield from (self._wrap(msg, builder) for msg in result["value"])
         # We want to get all emails for given account
