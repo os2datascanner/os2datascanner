@@ -1,8 +1,16 @@
 # Changelog
 
+## Next Release
+
+"Artificial CEO"
+
 ### New in this release
 
 - A new experimental, high-performance rule for CPR detection: `TurboCPRRule`.
+
+### General improvements
+
+- Guesses for the end time of running scannerjobs can no longer be in the past.
 
 ## Version 3.20.0, 2nd June 2023
 
