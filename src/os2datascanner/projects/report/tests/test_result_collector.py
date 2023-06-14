@@ -3,6 +3,7 @@ import hashlib
 from django.test import TestCase
 from parameterized import parameterized
 
+from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.model.file import (
         FilesystemHandle, FilesystemSource)
 from os2datascanner.engine2.rules.regex import RegexRule
@@ -231,27 +232,39 @@ class PipelineCollectorTests(TestCase):
 
     def test_edit(self):
         """Removing matches from a file should update the status of the
-        previous match message."""
+        previous match message, and should set the resolution time."""
+        start = time_now()
+
         saved_match = record_match(positive_match)
         self.test_rejection()
         saved_match.refresh_from_db()
+
         self.assertEqual(
                 saved_match.resolution_status,
                 DocumentReport.ResolutionChoices.EDITED.value,
                 "resolution status not correctly updated")
+        self.assertGreaterEqual(
+                saved_match.resolution_time,
+                start,
+                "resolution time not correctly updated")
 
     def test_removal(self):
         """Deleting a file should update the status of the previous match
-        message."""
+        message, and should set the resolution time."""
+        start = time_now()
+
         saved_match = record_match(positive_match)
-
         record_problem(deletion)
-
         saved_match.refresh_from_db()
+
         self.assertEqual(
                 saved_match.resolution_status,
                 DocumentReport.ResolutionChoices.REMOVED.value,
                 "resolution status not correctly updated")
+        self.assertGreaterEqual(
+                saved_match.resolution_time,
+                start,
+                "resolution time not correctly updated")
 
     def test_transient_handle_errors(self):
         """Source types should be correctly extracted from Handle errors."""
