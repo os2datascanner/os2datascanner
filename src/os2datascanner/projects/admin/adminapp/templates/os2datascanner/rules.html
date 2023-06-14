@@ -36,12 +36,12 @@
              aria-label="{% trans 'Rules' %}">
           <table class="datatable">
             <colgroup>
-              <col class="datatable__column--name"/>
-              <col class="datatable__column--org"/>
-              <col class="datatable__column--info"/>
-              <col class="datatable__column--expression"/>
-              <col class="datatable__column--sensitivity"/>
-              <col class="datatable__column--actions"/>
+              <col class="datatable__column--name" />
+              <col class="datatable__column--org" />
+              <col class="datatable__column--info" />
+              <col class="datatable__column--expression" />
+              <col class="datatable__column--sensitivity" />
+              <col class="datatable__column--actions" />
             </colgroup>
             <thead>
               <tr>
@@ -65,9 +65,7 @@
                       <button type="button"
                               class="button button--grey button--small"
                               title="{% trans 'Show expression' %}"
-                              data-toggle="#show-patterns-{{ forloop.counter }}">
-                        {% trans "Show expression" %}
-                      </button>
+                              data-toggle="#show-patterns-{{ forloop.counter }}">{% trans "Show expression" %}</button>
                     {% endif %}
                   </td>
                   <td class="datatable__column--sensitivity">
@@ -111,7 +109,9 @@
                       <td colspan="5">
                       {% endif %}
                       {% if rule.regexrule.patterns.all|length > 0 %}
-                        {% for pattern in rule.regexrule.patterns.all %}<code class="code-grey">{{ pattern.pattern_string }}</code>{% endfor %}
+                        {% for pattern in rule.regexrule.patterns.all %}
+                          <code class="code-grey">{{ pattern.pattern_string }}</code>
+                        {% endfor %}
                       {% endif %}
                     </td>
                   </td>
@@ -136,10 +136,10 @@
            aria-label="{% trans 'System rules' %}">
         <table class="datatable">
           <colgroup>
-            <col class="datatable__column--name"/>
-            <col class="datatable__column--org"/>
-            <col class="datatable__column--info"/>
-            <col class="datatable__column--sensitivity"/>
+            <col class="datatable__column--name" />
+            <col class="datatable__column--org" />
+            <col class="datatable__column--info" />
+            <col class="datatable__column--sensitivity" />
           </colgroup>
           <thead>
             <tr>
@@ -180,9 +180,7 @@
        aria-labelledby="delete-rule-modal-title"
        aria-hidden="true"
        hidden>
-    <h4 class="modal__heading" id="delete-rule-modal-title">
-      {% trans "Delete rule" %}
-    </h4>
+    <h4 class="modal__heading" id="delete-rule-modal-title">{% trans "Delete rule" %}</h4>
     <iframe src="about:blank" frameborder="0"></iframe>
   </div>
 
@@ -193,9 +191,7 @@
        aria-labelledby="delete-rule-modal-title"
        aria-hidden="true"
        hidden>
-    <h4 class="modal__heading" id="delete-rule-modal-title">
-      {% trans "Delete rule" %}
-    </h4>
+    <h4 class="modal__heading" id="delete-rule-modal-title">{% trans "Delete rule" %}</h4>
 
     <div class="modal__content">
       <form action="" method="post">
@@ -215,14 +211,10 @@
 
         <div class="form__group">
           <button class="button button--cta button--small btn btn-default"
-                  type="submit">
-            {% trans "Yes" %}
-          </button>
+                  type="submit">{% trans "Yes" %}</button>
           <button class="button button--cta button--small btn btn-default"
                   type="button"
-                  data-modal="modal:close">
-            {% trans "No" %}
-          </button>
+                  data-modal="modal:close">{% trans "No" %}</button>
         </div>
       </form>
     </div>

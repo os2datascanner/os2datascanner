@@ -5,7 +5,7 @@
 {% with type=document_report.matches.handle|find_type_label %}
   {% with frag=document_report.matches.matches|merge_renderable_match_fragments %}
     <tr data-type="{{ type }}"
-        {% if request.session.last_opened == document_report.pk|unlocalize %} class="highlighted"{% endif %}>
+        {% if request.session.last_opened == document_report.pk|unlocalize %}class="highlighted"{% endif %}>
       <td class="datatable__column--checkbox">
         <div class="ds-checkbox">
           <input type="checkbox"
@@ -13,7 +13,7 @@
                  value="{{ document_report.pk|unlocalize }}"
                  name="table-checkbox"
                  class="datatable-checkbox"
-                 data-report-pk="{{ document_report.pk|unlocalize }}"/>
+                 data-report-pk="{{ document_report.pk|unlocalize }}" />
           <label for="table-checkbox-{{ document_report.pk|unlocalize }}">
             <span class="screen-reader-only">{% trans "Select result" %}</span>
           </label>
@@ -39,18 +39,14 @@
                 <a href="{{ document_report.matches.handle|present_url }}"
                    class="button btn-{{ document_report.pk|unlocalize }}"
                    target="_blank"
-                   rel="noopener">
-                  {% trans "Open" %}
-                </a>
+                   rel="noopener">{% trans "Open" %}</a>
               {% endif %}
               {% if type != 'ews' and type != 'msgraph-mail-account' %}
                 {% if document_report.matches.handle|find_parent:type|find_file_folder %}
                   <a href="{{ document_report.matches.handle|find_parent:type|find_file_folder }}"
                      class="button btn-{{ document_report.pk|unlocalize }}"
                      target="_blank"
-                     rel="noopener">
-                    {% trans "Open folder" %}
-                  </a>
+                     rel="noopener">{% trans "Open folder" %}</a>
                 {% endif %}
               {% endif %}
             </div>
@@ -121,19 +117,13 @@
             </button>
             <div class="dropdown-container">
               <div class="handle-dropdown">
-                <ul hx-swap="{% if request.path == "/archive" %}none{% else %}outerHTML swap:300ms{% endif %}"
-                    hx-target="closest tr"
-                    hx-indicator="closest tr"
-                    hx-push-url="false"
-                    {% if request.user.profile.time_since_last_handle > 172800 %} hx-confirm="{% trans "You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file." %}" {% endif %}>
+                <ul hx-swap="{% if request.path == "/archive" %}none{% else %}outerHTML swap:300ms{% endif %}" hx-target="closest tr" hx-indicator="closest tr" hx-push-url="false" {% if request.user.profile.time_since_last_handle > 172800 %} hx-confirm="{% trans "You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file." %}" {% endif %}>
                   {% if request.path == "/archive" %}
                     <li class="revert-option button"
                         hx-trigger="click"
                         name="revert-match"
                         hx-swap="outerHTML swap:300ms"
-                        hx-post="{% url "handle-match" document_report.pk|unlocalize %}">
-                      {% trans "Revert" %}
-                    </li>
+                        hx-post="{% url "handle-match" document_report.pk|unlocalize %}">{% trans "Revert" %}</li>
                   {% endif %}
                   {% for choice in resolution_choices %}
                     {% if choice|first != document_report.resolution_status %}
@@ -141,9 +131,7 @@
                           hx-trigger="click"
                           hx-vals='{"action":"{{ choice|first }}"}'
                           name="handle-match"
-                          hx-post="{% url "handle-match" document_report.pk|unlocalize %}">
-                        {{ choice|last }}
-                      </li>
+                          hx-post="{% url "handle-match" document_report.pk|unlocalize %}">{{ choice|last }}</li>
                     {% endif %}
                   {% endfor %}
                 </ul>
@@ -180,9 +168,7 @@
               </button>
             {% endif %}
           {% endif %}
-          <button class="matches-expand button button-caret button--has-icon"
-                  title="{% trans "Show/hide matches" %}"
-                  type="button">
+          <button class="matches-expand button button-caret button--has-icon" title="{% trans "Show/hide matches" %}" type="button">
             <i class="material-icons" aria-hidden="true">expand_more</i>
           </button>
         </div>
@@ -192,9 +178,9 @@
       <td colspan="{% if request.path == "/archive" %}7{% else %}6{% endif %}">
         <table class="smaller datatable compressed">
           <colgroup>
-            <col class="matches-list__column--match dont-break-out"/>
-            <col class="matches-list__column--context"/>
-            <col class="matches-list__column--probability" hidden/>
+            <col class="matches-list__column--match dont-break-out" />
+            <col class="matches-list__column--context" />
+            <col class="matches-list__column--probability" hidden />
           </colgroup>
           <thead>
             <th>{% trans "Anonymized match" %}</th>
