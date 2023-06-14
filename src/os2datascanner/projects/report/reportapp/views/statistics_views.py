@@ -22,7 +22,7 @@ from collections import deque
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, Q
+from django.db.models import Q, Count, DateField
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
@@ -260,43 +260,48 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         new_matches_by_month = self.matches.filter(
             created_timestamp__range=(a_year_ago, current_date)).annotate(
-            month=TruncMonth('created_timestamp')).values(
+            month=TruncMonth(
+                    'created_timestamp', output_field=DateField())).values(
             'month').annotate(
             total=Count('raw_matches')
         ).order_by('month')
 
         resolved_matches_by_month = self.handled_matches.filter(
             created_timestamp__range=(a_year_ago, current_date)).annotate(
-            month=TruncMonth('resolution_time')).values(
+            month=TruncMonth(
+                    'resolution_time', output_field=DateField())).values(
             'month').annotate(
             total=Count('raw_matches')
         ).order_by('month')
 
         # Generators with months as integers and the counts
-        new_matches_by_month_gen = ((int(m['month'].strftime('%m')), m['total'])
+        new_matches_by_month_gen = ((m['month'].month, m['total'])
                                     for m in new_matches_by_month)
 
-        resolved_matches_by_month_gen = ((int(m['month'].strftime('%m')), m['total'])
+        resolved_matches_by_month_gen = ((m['month'].month, m['total'])
                                          for m in resolved_matches_by_month if m['month'])
 
-        # Double-ended queue with all months abbreviated and a starting value
-        full_year_of_months = deque([[month_abbr[x + 1], 0] for x in range(12)])
+        values_by_month = [0] * 12
 
-        for n in new_matches_by_month_gen:
-            full_year_of_months[n[0] - 1][1] = n[1]  # Inserts the counted new matches
+        for month_id, total in new_matches_by_month_gen:
+            values_by_month[month_id - 1] += total
 
-        for r in resolved_matches_by_month_gen:
-            full_year_of_months[r[0] - 1][1] -= r[1]  # Subtracts the counted resolves
+        for month_id, total in resolved_matches_by_month_gen:
+            values_by_month[month_id - 1] -= total
 
+        # month_abbr[0] is the empty string, which makes it possible to do
+        # month_abbr(dt.month) without thinking about indexes -- but that's
+        # slightly inconvenient for us
+        labelled_values_by_month = deque(
+                list(k) for k in zip(month_abbr[1:], values_by_month))
         # Rotate the current month to index 11
-        current_month = int(current_date.strftime('%m'))
-        full_year_of_months.rotate(-current_month)
+        labelled_values_by_month.rotate(-current_date.month)
 
         # Running total
         for i in range(11):  # Take value from current index and add it to the next
-            full_year_of_months[i + 1][1] += full_year_of_months[i][1]
+            labelled_values_by_month[i + 1][1] += labelled_values_by_month[i][1]
 
-        return list(full_year_of_months)
+        return list(labelled_values_by_month)
 
     def count_new_matches_by_month(self, current_date):
         """Counts matches by months for the last year
@@ -306,27 +311,29 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         # Truncates months with their match counts
         matches_by_month = self.matches.filter(
             created_timestamp__range=(a_year_ago, current_date)).annotate(
-            month=TruncMonth('created_timestamp')).values(
+            month=TruncMonth(
+                    'created_timestamp', output_field=DateField())).values(
             'month').annotate(
             total=Count('raw_matches')
         ).order_by('month')
+        # A QuerySet of objects, one for each month, of the form
+        # {'month': datetime.date(2023, 1, 1), 'total': 11117}
 
         # Generator with the months as integers and the total
-        matches_by_month_gen = ((int(m['month'].strftime('%m')), m['total'])
+        matches_by_month_gen = ((m['month'].month, m['total'])
                                 for m in matches_by_month)
 
-        # Double-ended queue with all months abbreviated and a starting value
-        deque_of_months = deque([[month_abbr[x + 1], 0] for x in range(12)])
+        values_by_month = [0] * 12
 
-        # Places totals from Generator to the correct months
-        for m in matches_by_month_gen:
-            deque_of_months[m[0] - 1][1] = m[1]
+        for month_id, total in matches_by_month_gen:
+            values_by_month[month_id - 1] += total
 
+        labelled_values_by_month = deque(
+                list(k) for k in zip(month_abbr[1:], values_by_month))
         # Rotates the current month to index 11
-        current_month = int(current_date.strftime('%m'))
-        deque_of_months.rotate(-current_month)
+        labelled_values_by_month.rotate(-current_date.month)
 
-        return list(deque_of_months)
+        return list(labelled_values_by_month)
 
 
 class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
