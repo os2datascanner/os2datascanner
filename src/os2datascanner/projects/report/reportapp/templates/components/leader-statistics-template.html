@@ -33,8 +33,8 @@
             hx-swap="outerHTML"
             hx-trigger="change, click from:.order-by delay:100ms"
             hx-indicator="#report-page-indicator">
-        <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}" />
-        <input type="hidden" name="order" id="order" value="{{ order }}" />
+        <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}"/>
+        <input type="hidden" name="order" id="order" value="{{ order }}"/>
         <div class="org_filtering_wrapper">
           <div>
             <div>
@@ -44,7 +44,9 @@
               <select name="org_unit" id="org_units" autocomplete="off">
                 {% for unit in user_units %}
                   <option value="{{ unit.uuid }}"
-                          {% if unit == org_unit %}selected="selected"{% endif %}>{{ unit.name }}</option>
+                          {% if unit == org_unit %} selected="selected"{% endif %}>
+                    {{ unit.name }}
+                  </option>
                 {% endfor %}
               </select>
             </div>
@@ -56,7 +58,7 @@
                    name="search_field"
                    id="search_field"
                    placeholder="{% trans "Search for employee" %}"
-                   value="{{ request.GET.search_field }}" />
+                   value="{{ request.GET.search_field }}"/>
           </div>
         </div>
       </form>
@@ -66,10 +68,10 @@
     <div class="datatable-wrapper card">
       <table class="datatable">
         <colgroup>
-          <col class="datatable__column--name" />
-          <col class="datatable__column--matchcount" />
-          <col class="datatable__column--matchstatus" />
-          <col class="datatable__column--leader-actions" />
+          <col class="datatable__column--name"/>
+          <col class="datatable__column--matchcount"/>
+          <col class="datatable__column--matchstatus"/>
+          <col class="datatable__column--leader-actions"/>
         </colgroup>
         <thead>
           <tr class="table-topbar topbar-stick sticky">

@@ -22,7 +22,9 @@
   <select name="paginate_by" id="paginate_by">
     {% for option in paginate_by_options %}
       <option value="{{ option }}"
-              {% if option == paginate_by %}selected="selected"{% endif %}>{{ option }} {% trans "per page" %}</option>
+              {% if option == paginate_by %} selected="selected"{% endif %}>
+        {{ option }} {% trans "per page" %}
+      </option>
     {% endfor %}
   </select>
 </form>

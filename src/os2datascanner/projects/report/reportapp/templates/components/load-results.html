@@ -9,17 +9,28 @@
 {% endcomment %}
 <form>
 </form>
-<form class="dropdown" id="dropdown_options" name="dropdown_options" hx-get="{% if request.path == "/" %}{% url "index" %}{% elif request.path == "/archive" %}{% url "archive" %}{% endif %}" hx-trigger="change" hx-target=".content" hx-swap="innerHTML" hx-include='[id="filter_form"]' hx-indicator="#report-page-indicator">
+<form class="dropdown"
+      id="dropdown_options"
+      name="dropdown_options"
+      hx-get="{{ request.path }}"
+      hx-trigger="change"
+      hx-target=".content"
+      hx-select=".content"
+      hx-swap="outerHTML"
+      hx-include='[id="filter_form"]'
+      hx-indicator="#report-page-indicator">
 
   <input type="hidden"
          name="page"
          id="page"
-         value="{{ page_obj.number|unlocalize }}" />
+         value="{{ page_obj.number|unlocalize }}"/>
 
   <select name="paginate_by" id="paginate_by">
     {% for option in paginate_by_options %}
       <option value="{{ option }}"
-              {% if option == paginate_by %}selected="selected"{% endif %}>{{ option }} {% trans "per page" %}</option>
+              {% if option == paginate_by %} selected="selected"{% endif %}>
+        {{ option }} {% trans "per page" %}
+      </option>
     {% endfor %}
   </select>
 </form>
