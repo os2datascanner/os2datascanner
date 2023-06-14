@@ -308,6 +308,28 @@
   }
 }
 
+.sorting-options {
+  height: 2.605rem;
+  width: 5rem;
+  background-color: var(--color-white);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--color-dropdown);
+  border-radius: 0%;
+  font-family: inherit;
+  font-weight: normal;
+  font-size: 0.90rem;
+
+  &:hover:not(:disabled) {
+    cursor: pointer;
+  }
+
+  &:disabled {
+    color: var(--color-text-main);
+    background-color: var(--color-primary-lightest);
+  }
+}
+
 .button-group {
   .button {
     margin: 0 .2rem .2rem 0;

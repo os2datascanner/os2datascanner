@@ -59,6 +59,9 @@
         {% endif %}
       </td>
       <td class="datatable__column--matchcount">{{ frag.matches|length }}</td>
+      <td class="datatable__column--datasource_last_modified">
+        {{ document_report.datasource_last_modified|naturalday:"j. F Y"|capfirst }}
+      </td>
       <td class="datatable__column--source">
         <span class="icon-filetype icon-filetype--{{ type }}"
               title="{% find_scan_type type %}">
@@ -175,7 +178,7 @@
       </td>
     </tr>
     <tr class="matches-list" hidden>
-      <td colspan="{% if request.path == "/archive" %}7{% else %}6{% endif %}">
+      <td colspan="{% if request.path == "/archive" %}8{% else %}7{% endif %}">
         <table class="smaller datatable compressed">
           <colgroup>
             <col class="matches-list__column--match dont-break-out" />
