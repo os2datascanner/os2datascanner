@@ -36,9 +36,12 @@ from prometheus_client import Summary, start_http_server
 from ...models.documentreport import DocumentReport
 from ...utils import prepare_json_object
 
+
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_result_collector_report",
                   "Messages through result collector report")
+
+ResolutionChoices = DocumentReport.ResolutionChoices
 
 
 def result_message_received_raw(body):
@@ -202,17 +205,16 @@ def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cogni
                 logger.debug("Resource changed: no matches, status is EDITED",
                              report=previous_report)
                 DocumentReport.objects.filter(pk=previous_report.pk).update(
-                        resolution_status=(
-                                DocumentReport.ResolutionChoices.
-                                EDITED.value))
+                        resolution_status=ResolutionChoices.EDITED.value,
+                        resolution_time=time_now())
         else:
             # The file has been edited, but matches are still present.
             # Resolve the previous ones
             logger.debug("matches still present, status is EDITED",
                          report=previous_report)
             DocumentReport.objects.filter(pk=previous_report.pk).update(
-                    resolution_status=(
-                            DocumentReport.ResolutionChoices.EDITED.value))
+                    resolution_status=ResolutionChoices.EDITED.value,
+                    resolution_time=time_now())
 
     if new_matches.matched:
         # Collect and store the top-level type label from the matched object
@@ -297,8 +299,9 @@ def handle_problem_message(scan_tag, result):
             handle=presentation,
             msgtype="problem",
         )
-        DocumentReport.objects.filter(pk=previous_report.pk).update(resolution_status=(
-                DocumentReport.ResolutionChoices.REMOVED.value))
+        DocumentReport.objects.filter(pk=previous_report.pk).update(
+                resolution_status=ResolutionChoices.REMOVED.value,
+                resolution_time=time_now())
         return None
 
     elif problem.missing:
