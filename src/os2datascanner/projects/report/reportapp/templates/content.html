@@ -27,9 +27,7 @@
       <select id="distribute-to" name="distribute-to" multiple>
         {% for scan in undistributed_scannerjobs %}
           {% comment %} Check here for scannerjobs with the "only notify superadmin"-setting {% endcomment %}
-          <option value="{{ scan.scanner_job_pk|unlocalize }}">
-            {{ scan.scanner_job_name }} ({{ scan.total }})
-          </option>
+          <option value="{{ scan.scanner_job_pk|unlocalize }}">{{ scan.scanner_job_name }} ({{ scan.total }})</option>
         {% endfor %}
       </select>
       <button class="button button--cta"
@@ -42,9 +40,7 @@
               hx-swap="afterend"
               hx-post="{% url "distribute" %}"
               hx-include="[name='distribute-to']"
-              hx-push-url="false">
-        {% trans "Distribute" %}
-      </button>
+              hx-push-url="false">{% trans "Distribute" %}</button>
     </div>
   {% endif %}
 

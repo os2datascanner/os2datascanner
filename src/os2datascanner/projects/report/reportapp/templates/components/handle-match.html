@@ -22,9 +22,7 @@
                 hx-trigger="click"
                 name="handle-matches"
                 hx-push-url="false"
-                hx-vals='{"action":None}'>
-              {% trans "Revert" %}
-            </li>
+                hx-vals='{"action":None}'>{% trans "Revert" %}</li>
           {% endif %}
           {% for choice in resolution_choices %}
             <li class="handle-option button"
@@ -32,9 +30,7 @@
                 hx-trigger="click"
                 name="handle-matches"
                 hx-push-url="false"
-                hx-vals='{"action":"{{ choice|first }}"}'>
-              {{ choice|last }}
-            </li>
+                hx-vals='{"action":"{{ choice|first }}"}'>{{ choice|last }}</li>
           {% endfor %}
         </ul>
       </div>
