@@ -107,7 +107,7 @@
           </div>
         </div>
       </td>
-      {% if request.path == "/archive" %}
+      {% if "/archive/" in request.path %}
         <td class="datatable__column--shortinfo">{{ document_report.get_resolution_status_display }}</td>
       {% endif %}
       <td class="datatable__column--actions">
@@ -141,7 +141,7 @@
               </div>
             </div>
           {% else %}
-            {% if request.path == "/archive" %}
+            {% if "/archive/" in request.path %}
               <button class="revert-handle button button--has-icon"
                       type="button"
                       title="Here is a title."

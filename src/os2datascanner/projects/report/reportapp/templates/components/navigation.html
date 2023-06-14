@@ -1,15 +1,24 @@
-{%  load i18n %}
+{% load i18n %}
 {% load get_settings_tag %}
 
 <nav class="navi">
   <ul>
     <li>
       <a href="/"
-         class="{% if request.path in '/reports/archive/undistributed/remediator' %}active{% endif %}">
+         class="{% if request.path in '/reports/undistributed/remediator' %}active{% endif %}">
         {% include "components/svg-icons/assignment.svg" %}
         <span class="width">{% trans "Report" %}</span>
       </a>
     </li>
+    {% if settings.ARCHIVE_TAB %}
+      <li>
+        <a href="{% url "reports-archive" %}"
+           class="{% if "/archive/" in request.path %}active{% endif %}">
+          {% include "components/svg-icons/assignment.svg" %}
+          <span class="width">{% trans "Archive" %}</span>
+        </a>
+      </li>
+    {% endif %}
     {% if user.account.leadertab_access %}
       <li>
         <a href="{% url "statistics-leader" %}"

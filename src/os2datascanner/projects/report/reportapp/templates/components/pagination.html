@@ -4,7 +4,7 @@
 
 <tbody class="pagination">
   <tr>
-    <td colspan="{% if request.path == "/archive" %}7{% else %}6{% endif %}">
+    <td colspan="{% if "/archive/" in request.path %}7{% else %}6{% endif %}">
       <div class="flex">
         <span class="page_of_pages">
           {% trans "results"|capfirst %} {% match_interval document_reports page_obj paginate_by %} {% trans "of" %} {{ page_obj.paginator.count }}

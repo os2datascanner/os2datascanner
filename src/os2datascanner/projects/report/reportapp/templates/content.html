@@ -1,4 +1,4 @@
-{%  load i18n %}
+{% load i18n %}
 {% load l10n %}
 
 <div class="content-header">
@@ -12,7 +12,7 @@
   </svg>
 
   {{ page_obj.paginator.count }} {% trans "results" %}
-  {% if request.path == "/undistributed" %}
+  {% if "/undistributed" in request.path %}
     <div id="distribute-container"
          class="distribute dropdown"
          name="distribute-container">
