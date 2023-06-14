@@ -10,26 +10,49 @@
   <div data-template="rule_selector" id="select_slot"></div>
 </div>
 
-<textarea id="id_rule"
+<textArea id="id_rule"
           class="watcher"
           data-selector="#select_slot"
           data-function="stringifyRule"
           name="{{ widget.name }}"
-          readonly>{{ widget.value }}</textarea>
+          readonly>{{ widget.value }}</textArea>
 
 <div id="__templates" style="display: none">
   <span id="blank"></span>
   <span id="rule_selector">
     <select class="rule_selector">
-      <option value="" selected>--</option>
-      <option value="AndRule">{% trans "all of" %}</option>
-      <option value="OrRule">{% trans "one of" %}</option>
-      <option value="NotRule">{% trans "not" %}</option>
-      <option value="CPRRule">{% trans "CPR-nr." %}</option>
-      <option value="RegexRule">{% trans "regular expression" %}</option>
-      <option value="CustomRule_Health">{% trans "health information" %}</option>
-      <option value="CustomRule_Name">{% trans "names" %}</option>
-      <option value="CustomRule_Address">{% trans "address" %}</option>
+      <option value="" selected>
+        --
+      </option>
+      <option value="AndRule">
+        {% trans "all of" %}
+      </option>
+      <option value="OrRule">
+        {% trans "one of" %}
+      </option>
+      <option value="NotRule">
+        {% trans "not" %}
+      </option>
+      <option value="CPRRule">
+        {% trans "CPR-nr." %}
+      </option>
+      <option value="RegexRule">
+        {% trans "regular expression" %}
+      </option>
+      <option value="CustomRule_Health">
+        {% trans "health information" %}
+      </option>
+      <option value="CustomRule_Name">
+        {% trans "names" %}
+      </option>
+      <option value="CustomRule_Address">
+        {% trans "address" %}
+      </option>
+      <optgroup label="{% trans "Experimental" %}">
+        <option value="TurboCPRRule">
+          {% trans "CPR-nr. (Turbo)" %}
+        </option>
+      </optgroup>
     </select>
     <span class="empty"></span>
   </span>
@@ -42,7 +65,7 @@
            data-template-name="and_fragment"
            data-template-insert="before-sibling .target"
            type="button"
-           value="+" />
+           value="+"/>
     <span class="logical-rule">
       <span data-template="rule_selector"></span>
     </span>
@@ -57,7 +80,7 @@
            data-template-name="or_fragment"
            data-template-insert="before-sibling .target"
            type="button"
-           value="+" />
+           value="+"/>
     <span class="logical-rule">
       <span data-template="rule_selector"></span>
     </span>
@@ -90,7 +113,7 @@
   <span id="CustomRule_Name">
     ({% trans "with" %}
     <label class="cpr-rule-specs">
-      <input type="checkbox" />
+      <input type="checkbox"/>
       {% trans "expanded matching" %}
     </label>
     )

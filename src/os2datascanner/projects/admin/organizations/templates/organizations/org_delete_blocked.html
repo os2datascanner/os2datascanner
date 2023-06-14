@@ -21,7 +21,9 @@
       </h3>
       <span class="icon">{% include "components/svg-icons/scan_warning.svg" %}</span>
       <button onclick="redirectFromModal('/status')"
-              class="button button--cta button--large">{% trans "Go to scanner status" %}</button>
+              class="button button--cta button--large">
+        {% trans "Go to scanner status" %}
+      </button>
     </div>
   </div>
 {% endblock %}

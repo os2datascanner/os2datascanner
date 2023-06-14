@@ -21,9 +21,9 @@
       labelClone.text("Regulært Udtryk" + " " + (numInput + 1)); // plus one because the numInput is 0-indexed, and label should be 1-indexed
       inputClone.attr("name", newInputName).attr("id", "id_" + newInputName).val("").attr("value", "");
       if (!containerClone.find(".button-remove-expression").length) { // if we haven't already cloned a button for removal...
-        inputClone.after($("<span />", { // ... add the button to remove expression
+        inputClone.after($("<span/>", { // ... add the button to remove expression
           class: "input-group-btn",
-          html: $("<button />", {
+          html: $("<button/>", {
             class: "button-remove-expression button button--danger",
             type: "button",
             text: "Fjern udtryk"
@@ -138,30 +138,30 @@
             </p>
 
             <div id="{{ form.pattern_0.auto_id }}_container"
-                 class="form__group {% if form.pattern_0.errors %}has-error{% endif %}">
+                 class="form__group {% if form.pattern_0.errors %} has-error{% endif %}">
 
               {% for pattern_name, pattern_value in view.get_pattern_fields %}
                 <div class="form__group form-group">
                   <label class="required-form" for="id_{{ pattern_name }}">{% trans "Regular Expression" %} {{ forloop.counter }}</label>
                   {% if forloop.counter > 1 %}<div class="input-group">{% endif %}
-                    <input type="text"
-                           class="form-control"
-                           name="{{ pattern_name }}"
-                           id="id_{{ pattern_name }}"
-                           placeholder="{% trans 'e.g. organization' %}"
-                           {% if pattern_value %}value="{{ pattern_value }}"{% endif %}>
-                    {# required state of pattern_0 is variable #}
+                  <input type="text"
+                         class="form-control"
+                         name="{{ pattern_name }}"
+                         id="id_{{ pattern_name }}"
+                         placeholder="{% trans 'e.g. organization' %}"
+                         {% if pattern_value %}value="{{ pattern_value }}"{% endif %}>
+                  {# required state of pattern_0 is variable #}
 
-                    {% if forloop.counter > 1 %}
-                      <span class="input-group-btn">
-                        <button class="button-remove-expression button button--danger" type="button">{% trans "Remove expression" %}</button>
-                      </span>
-                    {% endif %}
+                  {% if forloop.counter > 1 %}
+                    <span class="input-group-btn">
+                      <button class="button-remove-expression button button--danger" type="button">{% trans "Remove expression" %}</button>
+                    </span>
+                  {% endif %}
 
-                    {% if form.pattern_0.help_text %}<span class="form__help-text">{{ form.pattern_0.help_text }}</span>{% endif %}
+                  {% if form.pattern_0.help_text %}<span class="form__help-text">{{ form.pattern_0.help_text }}</span>{% endif %}
 
-                    {% if form.pattern_0.errors %}{{ form.pattern_0.errors }}{% endif %}
-                    {% if forloop.counter > 1 %}</div>{% endif %}
+                  {% if form.pattern_0.errors %}{{ form.pattern_0.errors }}{% endif %}
+                  {% if forloop.counter > 1 %}</div>{% endif %}
                 </div>
               {% endfor %}
 

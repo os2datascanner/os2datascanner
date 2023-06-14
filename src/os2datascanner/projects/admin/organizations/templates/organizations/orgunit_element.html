@@ -34,8 +34,14 @@
                 hx-select="#orgunit__{{ node.pk }}"
                 hx-trigger="change"
                 hx-vals='{"orgunit": "{{ node.pk }}"}'>
-          <option value="">{% trans "Choose new manager" %}</option>
-          {% for account in accounts %}<option value="{{ account.uuid }}">{{ account.get_full_name }}</option>{% endfor %}
+          <option value="">
+            {% trans "Choose new manager" %}
+          </option>
+          {% for account in accounts %}
+            <option value="{{ account.uuid }}">
+              {{ account.get_full_name }}
+            </option>
+          {% endfor %}
         </select>
       </li>
     </ul>

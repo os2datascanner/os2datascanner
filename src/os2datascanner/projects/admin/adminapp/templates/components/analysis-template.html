@@ -19,7 +19,9 @@
       <div class="dropdown stats_dropdown">
         <select name="scannerjob" id="scannerjobs" data-compareto="none">
           <option value="none"
-                  {% if scanners|last == "none" %}selected="selected"{% endif %}>-</option>
+                  {% if scanners|last == "none" %} selected="selected"{% endif %}>
+            -
+          </option>
           {% for scanner in scanners|first %}
             <option value="{{ scanner.pk }}"
                     {% if scanners|last == scanner.pk|stringformat:"i" %} selected="selected" {% endif %}>

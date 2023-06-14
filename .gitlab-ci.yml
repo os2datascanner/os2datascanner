@@ -101,7 +101,8 @@ Lint django templates:
   stage: lint
   script:
     # Install djlint in this docker container
-    - pip install djlint==1.25.0
+    # (version pinned to match .pre-commit-config.yaml)
+    - pip install djlint==1.19.8
 
     # Run djlint
     - djlint ./src/os2datascanner/projects 

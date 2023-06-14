@@ -3,91 +3,28 @@
 
 <div class="checkbox-button-wrapper button-group">
   {% if settings.HANDLE_DROPDOWN %}
-    <div class="checkbox-button-wrapper button-group">
-      <button class="button table-checkbox__action button--has-icon"
-              type="button"
-              disabled
-              id="mass_handle_button"
-              title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned. Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}">
-        <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Mark as handled" %}</span>
-      </button>
-      <div class="dropdown-container">
-        <div class="handle-dropdown">
-          <ul hx-swap="afterend"
-              hx-target="this"
-              hx-indicator="#mass_handle_button"
-              {% if request.user.account.time_since_last_handle > 172800 %} hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}" {% endif %}>
-            {% for choice in resolution_choices %}
-              <li class="handle-option button"
-                  hx-post="{% url "index" %}"
-                  hx-trigger="click"
-                  name="handle-matches"
-                  hx-push-url="false"
-                  hx-vals='{"action":"{{ choice|first }}"}'>{{ choice|last }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    {% else %}
-      <div class="checkbox-button-wrapper">
-        <button type="button"
-                class="button table-checkbox__action button--has-icon"
-                data-status="match-handle"
-                disabled
-                title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned. Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}"
-                hx-post="{% url "index" %}"
-                hx-swap="none"
+    <button class="button table-checkbox__action button--has-icon"
+            type="button"
+            disabled
+            id="mass_handle_button"
+            title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned. Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}">
+      <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Mark as handled" %}</span>
+    </button>
+    <div class="dropdown-container">
+      <div class="handle-dropdown">
+        <ul hx-swap="afterend"
+            hx-target="this"
+            hx-indicator="#mass_handle_button"
+            {% if request.user.account.time_since_last_handle > 172800 %} hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}" {% endif %}>
+          {% if request.path == "/archive" %}
+            <li class="handle-option button"
+                hx-post="{% url "mass-handle" %}"
                 hx-trigger="click"
                 name="handle-matches"
                 hx-push-url="false"
-                {% if request.user.account.time_since_last_handle > 172800 %} hx-confirm="{% trans 'You are about to handle the marked results. This action does not change the files, that the results are about. Please do not handle a result before action has been manually taken to the file.' %}" {% endif %}
-                name="handle-matches">
-          <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Mark as handled" %}</span>
-        </button>
-      {% endif %}
-    {% elif request.path == "/archive" %}
-      {% if settings.HANDLE_DROPDOWN %}
-        <div class="checkbox-button-wrapper button-group">
-          <button class="button table-checkbox__action button--has-icon"
-                  type="button"
-                  disabled
-                  id="mass_handle_button"
-                  title="{% blocktrans %}OS2datascanner will not delete results from the system that was scanned. Marking a result as handled will only remove the result from OS2datascanner.{% endblocktrans %}">
-            <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Edit marked" %}</span>
-          </button>
-          <div class="dropdown-container">
-            <div class="handle-dropdown">
-              <ul hx-swap="afterend"
-                  hx-target="this"
-                  hx-indicator="#mass_handle_button"
-                  {% if request.user.profile.time_since_last_handle > 172800 %} hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}" {% endif %}>
-                <li class="revert-option button"
-                    hx-post="{% url "archive" %}"
-                    hx-trigger="click"
-                    name="revert-matches"
-                    hx-push-url="false">{% trans "Revert" %}</li>
-                {% for choice in resolution_choices %}
-                  <li class="handle-option button"
-                      hx-post="{% url "archive" %}"
-                      hx-trigger="click"
-                      name="revert-matches"
-                      hx-vals='{"action":"{{ choice|first }}"}'>{{ choice|last }}</li>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-        {% else %}
-          <div class="checkbox-button-wrapper">
-            <button type="button"
-                    class="button table-checkbox__action button--has-icon"
-                    disabled
-                    title=""
-                    hx-post="{% url "archive" %}"
-                    hx-swap="none"
-                    hx-trigger="click"
-                    name="revert-matches">
-              <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Revert marked" %}</span>
-            </button>
+                hx-vals='{"action":None}'>
+              {% trans "Revert" %}
+            </li>
           {% endif %}
           {% for choice in resolution_choices %}
             <li class="handle-option button"
@@ -95,7 +32,9 @@
                 hx-trigger="click"
                 name="handle-matches"
                 hx-push-url="false"
-                hx-vals='{"action":"{{ choice|first }}"}'>{{ choice|last }}</li>
+                hx-vals='{"action":"{{ choice|first }}"}'>
+              {{ choice|last }}
+            </li>
           {% endfor %}
         </ul>
       </div>
