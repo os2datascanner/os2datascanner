@@ -107,6 +107,25 @@
     </div>
   {% endif %}
 
+  <div class="match_filtering_wrapper datasource_last_modified-button">
+    <div>
+      <label for="datasource_last_modified" class="match_filtering_label">{% trans "Resource age" %}</label>
+    </div>
+    <div class="match_filtering">
+      <button type="button"
+              name="datasource_last_modified"
+              id="datasource_last_modified-button"
+              class="order-by sorting-options"
+              {% if order_by == 'datasource_last_modified' and order == 'ascending' %}disabled{% endif %}
+              value="ascending">{% trans "Oldest" %}</button>
+      <button type="button"
+              name="datasource_last_modified"
+              id="datasource_last_modified-button"
+              class="order-by sorting-options"
+              {% if order_by == 'datasource_last_modified' and order == 'descending' %}disabled{% endif %}
+              value="descending">{% trans "Newest" %}</button>
+    </div>
+  </div>
 
   <div class="checkbox_wrapper">
     <div class="checkbox-group">

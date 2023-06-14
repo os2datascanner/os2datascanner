@@ -136,7 +136,11 @@ class ReportView(LoginRequiredMixin, ListView):
 
     def order_queryset_by_property(self):
         """Checks if a sort key is allowed and orders the queryset"""
-        allowed_sorting_properties = ['sort_key', 'number_of_matches', 'resolution_status']
+        allowed_sorting_properties = [
+            'sort_key',
+            'number_of_matches',
+            'resolution_status',
+            'datasource_last_modified']
         if (sort_key := self.request.GET.get('order_by')) and (
                 order := self.request.GET.get('order')):
 
