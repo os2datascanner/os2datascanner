@@ -23,7 +23,7 @@ from collections import deque
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q, Count, DateField
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import Coalesce, TruncMonth
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -269,7 +269,11 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         resolved_matches_by_month = self.handled_matches.filter(
             created_timestamp__range=(a_year_ago, current_date)).annotate(
             month=TruncMonth(
-                    'resolution_time', output_field=DateField())).values(
+                    # If resolution_time isn't set on a report that has been
+                    # handled, then assume it was handled in the same month it
+                    # was created
+                    Coalesce('resolution_time', 'created_timestamp'),
+                    output_field=DateField())).values(
             'month').annotate(
             total=Count('raw_matches')
         ).order_by('month')
@@ -279,7 +283,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
                                     for m in new_matches_by_month)
 
         resolved_matches_by_month_gen = ((m['month'].month, m['total'])
-                                         for m in resolved_matches_by_month if m['month'])
+                                         for m in resolved_matches_by_month)
 
         values_by_month = [0] * 12
 
