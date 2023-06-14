@@ -1,5 +1,7 @@
 import logging
 import requests
+from tenacity import Retrying, stop_after_attempt, wait_exponential
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -96,7 +98,18 @@ class OS2moImportJob(BackgroundJob):
             self.status = "Initializing OS2mo Import..."
             self.save()
 
-            token_response = session.post(url=settings.OS2MO_TOKEN_URL, data=self._make_token())
+            retry = Retrying(
+                reraise=True,
+                wait=wait_exponential(
+                    multiplier=1,
+                    min=4,
+                    max=10),
+                stop=stop_after_attempt(10))
+
+            token_response = retry(
+                session.post,
+                url=settings.OS2MO_TOKEN_URL,
+                data=self._make_token())
             try:
                 token = token_response.json().get("access_token")
                 logger.info("Fetched access token..")
@@ -104,15 +117,17 @@ class OS2moImportJob(BackgroundJob):
                 headers = {
                     "content-type": "application/json; charset=UTF-8",
                     'Authorization': f'Bearer {token}'}
-                query_response = session.post(
-                    settings.OS2MO_ENDPOINT_URL,
-                    json={
-                        "query": self.QueryOrgUnitsManagersEmployees,
-                        "variables": {
-                            "limit": settings.OS2MO_PAGE_SIZE,
-                            "email_type": settings.OS2MO_EMAIL_ADDRESS_TYPE
-                        }},
-                    headers=headers)
+
+                query_response = retry(session.post,
+                                       settings.OS2MO_ENDPOINT_URL,
+                                       json={
+                                           "query": self.QueryOrgUnitsManagersEmployees,
+                                           "variables": {
+                                               "limit": settings.OS2MO_PAGE_SIZE,
+                                               "email_type": settings.OS2MO_EMAIL_ADDRESS_TYPE
+                                               }},
+                                       headers=headers)
+
                 query_response.raise_for_status()
 
                 if query_response.status_code != 204:
@@ -140,15 +155,15 @@ class OS2moImportJob(BackgroundJob):
                 logger.info("Received a paginated response. Continuing..")
                 with requests.Session() as session:
                     while next_cursor:
-                        paginated_query_response = session.post(
+                        paginated_query_response = retry(
+                            session.post,
                             settings.OS2MO_ENDPOINT_URL,
                             json={
                                 "query": self.QueryOrgUnitsManagersEmployees,
                                 "variables": {
                                     "cursor": next_cursor,
                                     "limit": settings.OS2MO_PAGE_SIZE,
-                                    "email_type": settings.OS2MO_EMAIL_ADDRESS_TYPE
-                                }},
+                                    "email_type": settings.OS2MO_EMAIL_ADDRESS_TYPE}},
                             headers=headers)
 
                         paginated_query_response.raise_for_status()
