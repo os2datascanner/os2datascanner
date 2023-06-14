@@ -46,13 +46,13 @@
       <h2 id="walkthrough">Gennemgang af brugergrænsefladen</h2>
       <div id="figure-20" class="figure-container">
         <a href="{% static 'manualimages/figur20.png' %}">
-          <img src="{% static 'manualimages/figur20.png' %}"/>
+          <img src="{% static 'manualimages/figur20.png' %}" />
         </a>
         <p>Figur 20: Funktionsoversigt 1 - Rapportmodul</p>
       </div>
       <div id="figure-21" class="figure-container">
         <a href="{% static 'manualimages/figur21.png' %}">
-          <img src="{% static 'manualimages/figur21.png' %}"/>
+          <img src="{% static 'manualimages/figur21.png' %}" />
         </a>
         <p>Figur 21: Funktionsoversigt 2 - Rapportmodul</p>
       </div>
@@ -77,7 +77,7 @@
       </p>
       <div id="figure-22" class="figure-container">
         <a href="{% static 'manualimages/figur22.png' %}">
-          <img src="{% static 'manualimages/figur22.png' %}"/>
+          <img src="{% static 'manualimages/figur22.png' %}" />
         </a>
         <p>Figur 22: Login - Rapportmodul</p>
       </div>
@@ -88,7 +88,7 @@
       <h2 id="handling">Håndtering af matches</h2>
       <div id="figure-23" class="figure-container">
         <a href="{% static 'manualimages/figur23.png' %}">
-          <img src="{% static 'manualimages/figur23.png' %}"/>
+          <img src="{% static 'manualimages/figur23.png' %}" />
         </a>
         <p>Figur 23: Rapportmodul - Forside</p>
       </div>
@@ -104,33 +104,25 @@
       <p>
         Når man manuelt har fjernet eller redigeret det pågældende match, skal dette markeres som håndteret i rapportmodulet. Det gøres ved at vælge “Håndtér”.
       </p>
-      <p>
-        Hvis filen/mailen er blevet slettet og en ny scanning køres, vil dataen håndteres automatisk.
-      </p>
+      <p>Hvis filen/mailen er blevet slettet og en ny scanning køres, vil dataen håndteres automatisk.</p>
 
       {% if settings.ARCHIVE_TAB %}
-        <h2 id="archive">
-          Arkiv
-        </h2>
+        <h2 id="archive">Arkiv</h2>
         <p>
           I “arkiv”-fanen kan du tilgå tidligere håndterede matches. Her kan status af hvert resultat også redigeres, f.eks. i tilfælde af fejlagtigt håndterede matches.
         </p>
         <div id="figure-24" class="figure-container">
           <a href="{% static 'manualimages/figur24.png' %}">
-            <img src="{% static 'manualimages/figur24.png' %}"/>
+            <img src="{% static 'manualimages/figur24.png' %}" />
           </a>
-          <p>
-            Figur 24: Rapportmodul - Arkiv
-          </p>
+          <p>Figur 24: Rapportmodul - Arkiv</p>
         </div>
         <p>
           Du skal være opmærksom på, at OS2datascanner løbende sender ny resultater til dig, mens scanneren kører, så det kan være en gode idé at holde øje med om der er tikket nye resultater ind.
         </p>
       {% endif %}
 
-      <h2 id="filtering">
-        Filtreringsmulighed
-      </h2>
+      <h2 id="filtering">Filtreringsmulighed</h2>
       <p>
         I rapportmodulet er der også mulighed for at filtrere efter følsomheden på et match. Tryk på alle følsomheder og vælg den følsomhed, man gerne vil have vist.
       </p>
@@ -138,16 +130,10 @@
         Du skal være opmærksom på, at OS2datascanner løbende sender ny resultater til dig, mens scanneren kører, så det kan være en gode idé at holde øje med om der er tikket nye resultater ind.
       </p>
 
-      <h1 id="FAQ">
-        {% trans "Frequently Asked Questions" %}
-      </h1>
-      <p>
-        {% trans "Here you can find answers to questions frequently asked by other users of OS2datascanner." %}
-      </p>
+      <h1 id="FAQ">{% trans "Frequently Asked Questions" %}</h1>
+      <p>{% trans "Here you can find answers to questions frequently asked by other users of OS2datascanner." %}</p>
 
-      <h2 id="handle_delete">
-        {% trans "Why doesn't 'handle' delete my file or email?" %}
-      </h2>
+      <h2 id="handle_delete">{% trans "Why doesn't 'handle' delete my file or email?" %}</h2>
       <p>
         {% trans "For security reasons, OS2datascanner cannot interact with your files or emails in any way. For this reason, you must manually delete or handle the matched file. Pressing the 'handle'-button in OS2datascanner only removes the match from the overview." %}
       </p>
@@ -155,9 +141,7 @@
         {% trans "You can manually access the file or email by pressing the 'copy'- or 'open'-buttons below the name of the match." %}
       </p>
 
-      <h2 id="open_file">
-        {% trans "Why can't I open file scan matches?" %}
-      </h2>
+      <h2 id="open_file">{% trans "Why can't I open file scan matches?" %}</h2>
       <p>
         {% trans "OS2datascanner is not located on your computer, but on an external server. You are accessing that server through your browser." %}
       </p>

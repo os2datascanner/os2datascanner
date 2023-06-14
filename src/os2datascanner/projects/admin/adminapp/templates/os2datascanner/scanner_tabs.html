@@ -26,9 +26,7 @@
         {% if settings.ENABLE_MSGRAPH_CALENDARSCAN %}
           <a id="msgraph-calendar"
              class="tabs__control"
-             href="/msgraph-calendarscanners/">
-            {% trans "Office 365 kalenderscanner" %}
-          </a>
+             href="/msgraph-calendarscanners/">{% trans "Office 365 kalenderscanner" %}</a>
         {% endif %}
         {% if settings.ENABLE_GOOGLEDRIVESCAN %}
           <a id="googledrive" class="tabs__control" href="/googledrivescanners/">{% trans "Google Drive scanner" %}</a>

@@ -23,7 +23,7 @@
       <div class="dropdown stats_dropdown">
         <select name="scannerjob" id="scannerjobs" data-compareto="all">
           <option value="all"
-                  {% if scannerjobs|last == "all" %} selected="selected"{% endif %}>
+                  {% if scannerjobs|last == "all" %}selected="selected"{% endif %}>
             {% trans "All scannerjobs" %}
           </option>
           {% for scan in scannerjobs|first %}
@@ -46,19 +46,13 @@
           <h1 class="page-title__sub">{% trans "Development overview" %}</h1>
           <p class="chart_description" data-chartid="development-new-results">{% trans "New results by month" %}</p>
           <p class="hidden chart_description"
-             data-chartid="development-unhandled-results">
-            {% trans "Unhandled results by month" %}
-          </p>
+             data-chartid="development-unhandled-results">{% trans "Unhandled results by month" %}</p>
         </div>
         <div class="statistic_header_nav">
           <div class="dropdown">
             <select>
-              <option value="development-new-results">
-                {% trans "New results" %}
-              </option>
-              <option value="development-unhandled-results">
-                {% trans "Unhandled results" %}
-              </option>
+              <option value="development-new-results">{% trans "New results" %}</option>
+              <option value="development-unhandled-results">{% trans "Unhandled results" %}</option>
             </select>
           </div>
         </div>
@@ -77,24 +71,21 @@
       <div class="statistic_header">
         <div>
           <h1 class="page-title__sub">{% trans "Distribution of results" %}</h1>
-          <p class="chart_description" data-chartid="distribution-data-sources">
-            {% trans "Results distributed by data sources" %}
+          <p class="chart_description" data-chartid="distribution-sensitivities">
+            {% trans "Results distributed by sensitivities" %}
           </p>
           <p class="hidden chart_description"
-             data-chartid="distribution-resolution-status">
-            {% trans "Results distributed by resolution statuses" %}
-          </p>
+             data-chartid="distribution-data-sources">{% trans "Results distributed by data sources" %}</p>
+          <p class="hidden chart_description"
+             data-chartid="distribution-resolution-status">{% trans "Results distributed by resolution statuses" %}</p>
         </div>
         <div class="statistic_header_nav">
           <div class="dropdown">
             <select>
-              <option value="distribution-data-sources">
-                {% trans "Data sources" %}
-              </option>
+              <option value="distribution-sensitivities">{% trans "Sensitivity" %}</option>
+              <option value="distribution-data-sources">{% trans "Data sources" %}</option>
               {% if handled_matches_status|last > 0 %}
-                <option value="distribution-resolution-status">
-                  {% trans "Resolution statuses" %}
-                </option>
+                <option value="distribution-resolution-status">{% trans "Resolution statuses" %}</option>
               {% endif %}
             </select>
           </div>
@@ -124,6 +115,14 @@
           <p class="chart_description" data-chartid="handling-all-results">
             {% trans "The department's percentage of handled results" %}
           </p>
+        </div>
+        <div class="statistic_header_nav">
+          <div class="dropdown">
+            <select>
+              <option value="handling-sensitivity">{% trans "Sensitivity" %}</option>
+              <option value="handling-all-results">{% trans "All results" %}</option>
+            </select>
+          </div>
         </div>
       </div>
       <div class="chart_container" data-chartid="handling-all-results">

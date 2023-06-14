@@ -1,12 +1,12 @@
 
 <div id="{{ field.auto_id }}_container"
      class="dropdown-group form__group{% if field.errors %} has-error{% endif %}">
-  <label {% if required %} class="required-form"{% endif %}
+  <label {% if required %}class="required-form"{% endif %}
          for="id_{{ field.name }}">{{ field.label }}</label>
   <div class="dropdown">
     <select name="{{ field.name }}"
             id="id_{{ field.name }}"
-            {% if field.field.choices|length <= 1 %} disabled="disabled"{% endif %}>
+            {% if field.field.choices|length <= 1 %}disabled="disabled"{% endif %}>
 
       {% for value, tag in field.field.choices %}
         <option value="{{ value }}"
