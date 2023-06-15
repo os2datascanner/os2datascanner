@@ -10,6 +10,13 @@
 
 - It is now possible to view and sort reports by the age of the scanned resource. When the screen is wide, it remains a caret, but on smaller screens (i.e. smartscreens) the sort options becomes two buttons at the top of the page. 
 
+- Support for simple scans in the administration system:
+
+  - It is now possible to upload individual files to the administration
+    system and to view the results of executing a rule on them.
+
+  - This feature is useful for rapidly prototyping rules prior to running a
+    full-scale scan.
 
 ### General improvements
 

@@ -2,8 +2,10 @@
 Module containing utilities for managing code execution timeouts.
 """
 import signal
-import contextlib
 import logging
+import warnings
+import threading
+import contextlib
 
 from os2datascanner.engine2 import settings as engine2_settings
 
@@ -51,15 +53,33 @@ def run_with_default_timeout(fn, *args, **kwargs):
     return run_with_timeout(engine2_settings.subprocess["timeout"], fn, *args, **kwargs)
 
 
+_SIGNAL_FORBIDDEN = object()
+
+
 def _timeout_start(seconds: float):
-    handler = signal.signal(signal.SIGALRM, _signal_timeout_handler)
-    signal.setitimer(signal.ITIMER_REAL, seconds)
-    return handler
+    """Arranges for a SignalAlarmException to be raised on the main thread at
+    a certain number of seconds in the future. Every call to _timeout_start
+    should be coupled with an eventual call to _timeout_stop to reset the
+    signal handler to its previous state.
+
+    Note that this function does nothing but print a warning if it's run on
+    any thread other than the main one."""
+    if threading.main_thread() == threading.current_thread():
+        handler = signal.signal(signal.SIGALRM, _signal_timeout_handler)
+        signal.setitimer(signal.ITIMER_REAL, seconds)
+        return handler
+    else:
+        warnings.warn(
+                "ignoring _timeout_start call on a background thread; the "
+                "requested timeout will not be enforced",
+                UserWarning, stacklevel=2)
+        return _SIGNAL_FORBIDDEN
 
 
 def _timeout_stop(handler):
-    signal.setitimer(signal.ITIMER_REAL, 0)
-    signal.signal(signal.SIGALRM, handler)
+    if handler != _SIGNAL_FORBIDDEN:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, handler)
 
 
 def _compute_next(seconds, iterable):

@@ -153,10 +153,12 @@ SETTINGS_EXPORT = [
     'ENABLE_GOOGLEDRIVESCAN',
     'ENABLE_GMAILSCAN',
     'ENABLE_SBSYSSCAN',
+    'ENABLE_MINISCAN',
     'ICON_SPRITE_URL',
     'ESTIMATE_AFTER',
     'EXCLUSION_RULES',
-    'ANALYSIS_PAGE'
+    'ANALYSIS_PAGE',
+    'MINISCAN_FILE_SIZE_LIMIT',
 ]
 
 # [internationalization]
@@ -225,6 +227,13 @@ GS_BUCKET_NAME = ""
 ESTIMATE_AFTER = 0.05
 
 SHELL_PLUS_IMPORTS = ["from os2datascanner._interactive import *"]
+
+# Should the mini-scanner at /miniscan/ be enabled?
+ENABLE_MINISCAN = false
+# Should the mini-scanner require the user to be logged in?
+MINISCAN_REQUIRES_LOGIN = true
+# The largest file size the mini-scanner should accept (in bytes)
+MINISCAN_FILE_SIZE_LIMIT = 1048576
 
 [amqp]
 # Nested amqp settings are picked up by the common amqp utility module

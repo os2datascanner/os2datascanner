@@ -54,6 +54,9 @@ ENABLE_MSGRAPH_FILESCAN = true
 ENABLE_MSGRAPH_CALENDARSCAN = true
 ENABLE_SBSYSSCAN = true
 
+ENABLE_MINISCAN = true
+MINISCAN_REQUIRES_LOGIN = false
+
 # [email]
 DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"
 ADMIN_EMAIL = "os2datascanner@magenta.dk"
