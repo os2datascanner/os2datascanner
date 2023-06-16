@@ -27,7 +27,7 @@
       </colgroup>
       <thead>
         <tr class="table-topbar topbar-stick sticky">
-          <th colspan="{% if request.path == "/archive" %}8{% else %}7{% endif %}">
+          <th colspan="{% if "/archive" in request.path %}8{% else %}7{% endif %}">
             {% include "components/handle-match.html" %}
             <div class="view-options">
               <button class="toggle probability-toggle" type="button" aria-pressed="false">
