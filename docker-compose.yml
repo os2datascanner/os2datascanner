@@ -1,5 +1,3 @@
-version: '3.9'
-
 networks:
   # This allows OS2datascanners admin and admin_runner containers access 
   # to both the default network in OS2datascanner, and in the OS2mo-project,
@@ -8,9 +6,7 @@ networks:
     name:
       os2mo_default
   os2datascanner_default:
-    external:
-      name:
-        os2datascanner_default
+    name: os2datascanner_default
 
 services:
   db:
