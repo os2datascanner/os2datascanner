@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-15 14:54+0200\n"
+"POT-Creation-Date: 2023-06-16 13:48+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -590,7 +590,7 @@ msgid "expanded matching"
 msgstr "udvidet søgning"
 
 #: adminapp/templates/components/analysis-template.html:9
-#: adminapp/templates/components/navigation.html:33
+#: adminapp/templates/components/navigation.html:34
 msgid "Analysis"
 msgstr "Analyse"
 
@@ -634,13 +634,9 @@ msgid "No file uploaded."
 msgstr "Ingen fil var uploadet."
 
 #: adminapp/templates/components/miniscan-results.html:7
-#, python-brace-format
-msgid ""
-"File too big ({file_obj.size} bytes > {settings.MINISCAN_FILE_SIZE_LIMIT} "
-"bytes)."
-msgstr ""
-"Fil var for stor ({file_obj.size} byte > {settings.MINISCAN_FILE_SIZE_LIMIT} "
-"byte)."
+#, python-format
+msgid "File too big (%(size)s bytes > %(limit)s bytes)."
+msgstr "Fil var for stor (%(size)s byte > %(limit)s byte)."
 
 #: adminapp/templates/components/miniscan-results.html:12
 msgid "No rule specified."
@@ -675,18 +671,18 @@ msgstr "Scannerstatus"
 msgid "Scannerjob"
 msgstr "Scannerjob"
 
-#: adminapp/templates/components/navigation.html:24
+#: adminapp/templates/components/navigation.html:25
 msgid "Mini-scanner"
 msgstr "Miniscanner"
 
-#: adminapp/templates/components/navigation.html:40
+#: adminapp/templates/components/navigation.html:41
 #: adminapp/templates/os2datascanner/rules.html:18
 #: adminapp/templates/os2datascanner/rules.html:36
 #: adminapp/templates/partials/breadcrumb.html:55
 msgid "Rules"
 msgstr "Regler"
 
-#: adminapp/templates/components/navigation.html:47
+#: adminapp/templates/components/navigation.html:48
 #: adminapp/templates/partials/breadcrumb.html:69
 #: adminapp/templates/partials/breadcrumb.html:77
 #: adminapp/templates/partials/breadcrumb.html:85
@@ -696,19 +692,19 @@ msgstr "Regler"
 msgid "organizations"
 msgstr "organisationer"
 
-#: adminapp/templates/components/navigation.html:53
+#: adminapp/templates/components/navigation.html:54
 msgid "Report module"
 msgstr "Rapportmodul"
 
-#: adminapp/templates/components/navigation.html:60
+#: adminapp/templates/components/navigation.html:61
 msgid "Administration"
 msgstr "Administration"
 
-#: adminapp/templates/components/navigation.html:67
+#: adminapp/templates/components/navigation.html:68
 msgid "Guide"
 msgstr "Håndbog"
 
-#: adminapp/templates/components/navigation.html:76
+#: adminapp/templates/components/navigation.html:77
 #: adminapp/templates/components/user.html:29 adminapp/templates/logout.html:7
 msgid "Logout"
 msgstr "Log ud"
