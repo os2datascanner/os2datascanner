@@ -25,137 +25,142 @@ class OS2moImportJob(BackgroundJob):
             "client_secret": settings.OS2MO_CLIENT_SECRET
         }
 
-    def request_org_unit_accounts(self, org_unit_uuid: str, session: requests.Session()):
-        query_org_accounts = """
-        query MyQuery {
-          org_units(uuids: "%s"){
-            objects {
-              name
+    def _get_next_cursor(self, json_query_response: dict) -> str:
+        """Given a JSON response of a OS2mo GraphQL query for org_units,
+           returns the next_cursor value."""
+        logger.info("Fetching next_cursor...")
+        return json_query_response["data"][
+                                    "org_units"][
+                                        "page_info"][
+                                            "next_cursor"]
+
+    def _get_org_unit_data(self, json_query_response: dict) -> list:
+        """ Given a JSON response of a OS2mo GraphQL query for org_units,
+            returns a list of objects."""
+        logger.info("Fetching org_unit objects for iteration...")
+        return json_query_response["data"][
+                                    "org_units"][
+                                        "objects"]
+
+    # Query for Org units, their parent, managers, Employees in form of Engagements and their
+    # email. Using cursor pagination (cursor and limit variables), and takes email_type as a
+    # variable as well.
+    QueryOrgUnitsManagersEmployees = """
+    query QueryOrgUnitsManagersEmployees($cursor: Cursor, $limit: int, $email_type: [UUID!]) {
+      org_units(limit: $limit, cursor: $cursor) {
+        objects {
+          objects {
+            uuid
+            name
+            parent {
               uuid
-              parent {
-                name
+              name
+            }
+            managers(inherit: true) {
+              employee {
                 uuid
-              }
-              managers(inherit: true) {
-                employee {
-                  givenname
-                  surname
-                  user_key
-                  uuid
-                  addresses(address_types: "%s") {
-                    name
-                  }
+                givenname
+                surname
+                user_key
+                addresses(address_types: $email_type) {
+                  name
                 }
               }
-              engagements {
-                employee {
-                  givenname
-                  surname
-                  user_key
-                  uuid
-                  addresses(address_types: "%s") {
-                    name
-                  }
+            }
+            engagements {
+              employee {
+                uuid
+                givenname
+                surname
+                user_key
+                addresses(address_types: $email_type) {
+                  name
                 }
               }
             }
           }
         }
-        """ % (org_unit_uuid, settings.OS2MO_EMAIL_ADDRESS_TYPE, settings.OS2MO_EMAIL_ADDRESS_TYPE)
-        # Address_types has an email-adresses uuid, which means only employee emails will be shown
-        # Org_units inherit managers from their parents
-        try:
-            token = None
-            res = session.post(url=settings.OS2MO_TOKEN_URL, data=self._make_token())
-
-            # Raise an exception if statuscode isn't in 2xx range
-            res.raise_for_status()
-            if res.status_code != 204:  # 204 No Content
-                token = res.json().get("access_token")
-
-            if not token:
-                logger.warning("No token available!")
-                return None
-
-            headers = {
-                "content-type": "application/json; charset=UTF-8",
-                'Authorization': f'Bearer {token}'}
-
-            res = session.post(
-                settings.OS2MO_ENDPOINT_URL,
-                json={
-                    "query": query_org_accounts},
-                headers=headers)
-
-            # Raise an exception if statuscode isn't in 2xx range
-            res.raise_for_status()
-            if res.status_code != 204:  # 204 No Content
-                return res.json()
-
-        except requests.exceptions.JSONDecodeError:
-            logger.exception("Unable to decode JSON")
-        except requests.exceptions.HTTPError:
-            logger.exception(f"HTTP exception thrown! \n"
-                             f"Cannot process org unit with id: {org_unit_uuid}")
+        page_info {
+            next_cursor
+        }
+      }
+    }
+    """
 
     @property
     def job_label(self) -> str:
         return "OS2mo Import Job"
 
     def run(self):  # noqa CCR001
-        query_org_units = """
-        query MyQuery {
-          org_units {
-            uuid
-          }
-        }
-        """
-
         with requests.Session() as session:
             self.status = "Initializing OS2mo Import..."
             self.save()
 
-            res = session.post(url=settings.OS2MO_TOKEN_URL, data=self._make_token())
+            token_response = session.post(url=settings.OS2MO_TOKEN_URL, data=self._make_token())
             try:
-                token = res.json().get("access_token")
+                token = token_response.json().get("access_token")
+                logger.info("Fetched access token..")
+
                 headers = {
                     "content-type": "application/json; charset=UTF-8",
                     'Authorization': f'Bearer {token}'}
-
-                res = session.post(
+                query_response = session.post(
                     settings.OS2MO_ENDPOINT_URL,
                     json={
-                        "query": query_org_units},
+                        "query": self.QueryOrgUnitsManagersEmployees,
+                        "variables": {
+                            "limit": settings.OS2MO_PAGE_SIZE,
+                            "email_type": settings.OS2MO_EMAIL_ADDRESS_TYPE
+                        }},
                     headers=headers)
-                res.raise_for_status()
+                query_response.raise_for_status()
 
-                if res.status_code != 204:
-                    res = res.json()
+                if query_response.status_code != 204:
+                    json_query_response = query_response.json()
                 else:
-                    res = {}
+                    json_query_response = {}
 
             except requests.exceptions.JSONDecodeError:
                 logger.exception("Unable to decode JSON")
             except requests.exceptions.HTTPError:
                 logger.exception("HTTP exception thrown!")
 
-        if res:
-            self.status = "OK.. Data received, requesting org_units..."
-            logger.info("Received data from OS2mo. Sending queries.. \n")
+        if json_query_response:
+            self.status = "First query successful. Continuing.."
+            logger.info("Successfully received query response from OS2mo. Continuing.. \n")
 
-            org_unit_uuids = []
-            for org_unit_object in res.get("data").get("org_units"):
-                org_unit_uuids.append(org_unit_object.get("uuid"))
-
-            # Requests one OU at a time, to ensure we don't hit a time-out in Mo.
             org_unit_list = []
-            for uuid in org_unit_uuids:
+            next_cursor = self._get_next_cursor(json_query_response)
+
+            for ou_data in self._get_org_unit_data(json_query_response):
+                logger.info("Appending OU data to internal list")
+                org_unit_list.append(ou_data)
+
+            if next_cursor:
+                logger.info("Received a paginated response. Continuing..")
                 with requests.Session() as session:
-                    logger.info(f"Querying for org_unit with uuid: {uuid}")
-                    raw_unit_data = self.request_org_unit_accounts(uuid, session)
-                    # Cut off a couple of layers to make iterating easier later
-                    for ou_data in raw_unit_data.get("data").get("org_units"):
-                        org_unit_list.append(ou_data)
+                    while next_cursor:
+                        paginated_query_response = session.post(
+                            settings.OS2MO_ENDPOINT_URL,
+                            json={
+                                "query": self.QueryOrgUnitsManagersEmployees,
+                                "variables": {
+                                    "cursor": next_cursor,
+                                    "limit": settings.OS2MO_PAGE_SIZE,
+                                    "email_type": settings.OS2MO_EMAIL_ADDRESS_TYPE
+                                }},
+                            headers=headers)
+
+                        paginated_query_response.raise_for_status()
+
+                        if paginated_query_response.status_code != 204:
+                            json_paginated_query_response = paginated_query_response.json()
+                            next_cursor = self._get_next_cursor(json_paginated_query_response)
+
+                        for ou_data in self._get_org_unit_data(json_paginated_query_response):
+                            org_unit_list.append(ou_data)
+
+                    logger.info("Reached last page!")
         else:
             self.status = "No data received!"
             # Raising exception to mark job as failed

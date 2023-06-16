@@ -37,7 +37,7 @@ MSGRAPH_CLIENT_SECRET = ""
 
 # [os2mo]
 OS2MO_TOKEN_URL = "http://keycloak:8080/auth/realms/mo/protocol/openid-connect/token"  
-OS2MO_ENDPOINT_URL = "http://mo/graphql/v3"
+OS2MO_ENDPOINT_URL = "http://mo/graphql/v7"
 OS2MO_CLIENT_ID = ""
 OS2MO_CLIENT_SECRET = ""
 # UUID of Mo-address type that holds employee emailaddress(can differ, this is from Kolding fixture)

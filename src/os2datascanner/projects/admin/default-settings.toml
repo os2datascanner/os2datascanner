@@ -59,6 +59,8 @@ OS2MO_CLIENT_ID = ""
 OS2MO_CLIENT_SECRET = ""
 # UUID of Mo-address type that holds employee emailaddress
 OS2MO_EMAIL_ADDRESS_TYPE = ""
+# Pagination size/limit of results pr. query
+OS2MO_PAGE_SIZE = 1
 
 
 # [sbsys]
