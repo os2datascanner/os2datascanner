@@ -27,6 +27,8 @@
 
 - Guesses for the end time of running scannerjobs can no longer be in the past.
 
+- OS2mo import job now use graphql API endpoint v7 and has configurable pagination size.
+
 ## Version 3.20.0, 2nd June 2023
 
 "Quick Brown Fox"
