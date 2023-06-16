@@ -4,8 +4,8 @@
   <div id="response" class="error">{% translate "No file uploaded." %}</div>
 {% elif file_obj.size > settings.MINISCAN_FILE_SIZE_LIMIT %}
   <div id="response" class="error">
-    {% blocktranslate trimmed %}
-    File too big ({file_obj.size} bytes > {settings.MINISCAN_FILE_SIZE_LIMIT} bytes).
+    {% blocktranslate trimmed with size=file_obj.size limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
+        File too big ({{ size }} bytes > {{ limit }} bytes).
     {% endblocktranslate %}
   </div>
 {% elif not halfbaked_rule %}
