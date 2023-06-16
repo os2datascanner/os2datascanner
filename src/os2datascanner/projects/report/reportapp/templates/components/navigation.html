@@ -12,8 +12,7 @@
     </li>
     {% if settings.ARCHIVE_TAB %}
       <li>
-        <a href="{% url "reports-archive" %}"
-           class="{% if "/archive/" in request.path %}active{% endif %}">
+        <a href="{% url "reports-archive" %}" class="{% if "/archive/" in request.path %}active{% endif %}">
           {% include "components/svg-icons/icon-smbc.svg" %}
           <span class="width">{% trans "Archive" %}</span>
         </a>
