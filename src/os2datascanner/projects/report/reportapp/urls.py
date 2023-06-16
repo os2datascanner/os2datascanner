@@ -15,7 +15,8 @@ from .views.misc_views import (
 from .views.statistics_views import (
     LeaderStatisticsPageView, DPOStatisticsPageView, UserStatisticsPageView)
 from .views.report_views import (
-    UserReportView, ArchiveView, RemediatorView, UndistributedView)
+    UserReportView, UserArchiveView, RemediatorView, RemediatorArchiveView,
+    UndistributedView, UndistributedArchiveView)
 from .views.user_views import UserView
 from .views.manual_views import ManualMainView
 from .views.support_views import SupportButtonView
@@ -25,7 +26,10 @@ urlpatterns = [
     re_path(r'^reports$', UserReportView.as_view(), name="reports"),
     re_path(r'^remediator$', RemediatorView.as_view(), name="remediator"),
     re_path(r'^undistributed$', UndistributedView.as_view(), name="undistributed"),
-    re_path(r'^archive', ArchiveView.as_view(), name="archive"),
+    re_path(r'^archive/reports', UserArchiveView.as_view(), name="reports-archive"),
+    re_path(r'^archive/remediator', RemediatorArchiveView.as_view(), name="remediator-archive"),
+    re_path(r'^archive/undistributed', UndistributedArchiveView.as_view(),
+            name="undistributed-archive"),
     re_path('api$',     JSONAPIView.as_view(),     name="json-api"),
     re_path(r'^user/', UserView.as_view(), name="user"),
     re_path(r'^statistics/leader/$', LeaderStatisticsPageView.as_view(), name='statistics-leader'),

@@ -218,35 +218,17 @@ class ReportView(LoginRequiredMixin, ListView):
 
 
 class UserReportView(ReportView):
+    """Presents the user with their personal unhandled results."""
 
     def base_match_filter(self, reports):
         reports = super().base_match_filter(reports)
         reports = DefaultRole(user=self.request.user).filter(reports)
         reports = reports.filter(only_notify_superadmin=False)
         return reports
-
-
-class ArchiveView(ReportView):
-    document_reports = DocumentReport.objects.filter(
-            number_of_matches__gte=1,
-            resolution_status__isnull=False).order_by(
-            'sort_key',
-            'pk')
-
-    def base_match_filter(self, reports):
-        reports = super().base_match_filter(reports)
-        reports = DefaultRole(user=self.request.user).filter(reports)
-        reports = reports.filter(only_notify_superadmin=False)
-        return reports
-
-    def dispatch(self, request, *args, **kwargs):
-        if settings.ARCHIVE_TAB:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            return redirect(reverse_lazy('index'))
 
 
 class RemediatorView(ReportView):
+    """Presents a remediator with relevant unhandled results."""
 
     def base_match_filter(self, reports):
         reports = super().base_match_filter(reports)
@@ -267,6 +249,7 @@ class RemediatorView(ReportView):
 
 
 class UndistributedView(ReportView):
+    """Presents a superuser with all undistributed unhandled results."""
 
     def base_match_filter(self, reports):
         reports = super().base_match_filter(reports)
@@ -292,6 +275,36 @@ class UndistributedView(ReportView):
             logger.warning("Exception raised while trying to dispatch to user "
                            f"{request.user}: {e}")
         return redirect(reverse_lazy('index'))
+
+
+class ArchiveMixin:
+    """This mixin is able to overwrite some logic on children of the ReportView-
+    class, most notably changing the queryset to query for handled results
+    instead of unhandled results."""
+
+    document_reports = DocumentReport.objects.filter(
+            number_of_matches__gte=1,
+            resolution_status__isnull=False).order_by(
+            'sort_key',
+            'pk')
+
+    def dispatch(self, request, *args, **kwargs):
+        if settings.ARCHIVE_TAB:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            return redirect(reverse_lazy('index'))
+
+
+class UserArchiveView(ArchiveMixin, UserReportView):
+    """Presents the user with their personal handled results."""
+
+
+class RemediatorArchiveView(ArchiveMixin, RemediatorView):
+    """Presents the remediator with all relevant handled results."""
+
+
+class UndistributedArchiveView(ArchiveMixin, UndistributedView):
+    """Presents a superuser with all undistributed handled results."""
 
 
 class HTMXEndpointView(LoginRequiredMixin, View):

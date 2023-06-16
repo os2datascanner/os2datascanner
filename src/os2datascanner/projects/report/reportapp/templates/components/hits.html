@@ -22,12 +22,12 @@
         <col class="datatable__column--datasource_last_modified">
         <col class="datatable__column--source">
         <col class="datatable__column--path">
-        {% if request.path == "/archive" %}<col class="datatable__column--shortinfo">{% endif %}
+        {% if "/archive/" in request.path %}<col class="datatable__column--shortinfo">{% endif %}
         <col class="datatable__column--actions">
       </colgroup>
       <thead>
         <tr class="table-topbar topbar-stick sticky">
-          <th colspan="{% if request.path == "/archive" %}8{% else %}7{% endif %}">
+          <th colspan="{% if "/archive" in request.path %}8{% else %}7{% endif %}">
             {% include "components/handle-match.html" %}
             <div class="view-options">
               <button class="toggle probability-toggle" type="button" aria-pressed="false">
@@ -89,7 +89,7 @@
               <i class="material-icons" aria-hidden="true">expand_more</i>
             </button>
           </th>
-          {% if request.path == "/archive" %}
+          {% if "/archive/" in request.path %}
             <th class="datatable__column--shortinfo">
               {% trans "Status" %}
               <button type="button"

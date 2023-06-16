@@ -17,6 +17,11 @@
 
   - This feature is useful for rapidly prototyping rules prior to running a
     full-scale scan.
+    
+- The "Archive"-tab returns!
+
+  - This tab has three sub-tabs for personal, remediator and undistributed
+    results.
 
 ### General improvements
 

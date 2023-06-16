@@ -34,7 +34,7 @@
                 {% if scannerjobs|last == "all" %}selected="selected"{% endif %}>{% trans "All scannerjobs" %}</option>
         {% for scan in scannerjobs|first %}
           <option value="{{ scan.scanner_job_pk|unlocalize }}"
-                  {% if request.GET.scannerjob == scan.scanner_job_pk|stringformat:"i" %} selected="selected" {% endif %}>
+                  {% if request.GET.scannerjob == scan.scanner_job_pk|stringformat:"i" %}selected="selected"{% endif %}>
             {{ scan.scanner_job_name }} ({{ scan.total }})
           </option>
         {% endfor %}
@@ -65,7 +65,7 @@
         </option>
         {% for sensitivity in sensitivities|first %}
           <option value="{{ sensitivity.0.value|stringformat:"i" }}"
-                  {% if sensitivities|last == sensitivity.0.value|stringformat:"i" %} selected="selected" {% endif %}>
+                  {% if sensitivities|last == sensitivity.0.value|stringformat:"i" %}selected="selected"{% endif %}>
             {{ sensitivity.0.presentation }}
             ({{ sensitivity.1 }})
           </option>
@@ -74,7 +74,7 @@
     </div>
   </div>
 
-  {% if request.path == "/archive" %}
+  {% if "/archive"  in request.path %}
     <div class="match_filtering_wrapper">
       <div>
         <button type="button"
@@ -98,7 +98,7 @@
           </option>
           {% for method in resolution_status|first %}
             <option value="{{ method.resolution_status|stringformat:"i" }}"
-                    {% if resolution_status|last == method.resolution_status|stringformat:"i" %} selected="selected" {% endif %}>
+                    {% if resolution_status|last == method.resolution_status|stringformat:"i" %}selected="selected"{% endif %}>
               {{ method.resolution_label }} ({{ method.total }})
             </option>
           {% endfor %}

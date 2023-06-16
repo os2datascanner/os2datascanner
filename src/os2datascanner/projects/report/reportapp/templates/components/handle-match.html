@@ -1,5 +1,5 @@
 {% load l10n %}
-{%  load i18n %}
+{% load i18n %}
 
 <div class="checkbox-button-wrapper button-group">
   {% if settings.HANDLE_DROPDOWN %}
@@ -16,7 +16,7 @@
             hx-target="this"
             hx-indicator="#mass_handle_button"
             {% if request.user.account.time_since_last_handle > 172800 %} hx-confirm="{% trans 'You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file.' %}" {% endif %}>
-          {% if request.path == "/archive" %}
+          {% if "/archive" in request.path %}
             <li class="handle-option button"
                 hx-post="{% url "mass-handle" %}"
                 hx-trigger="click"
@@ -45,10 +45,16 @@
             hx-swap="none"
             hx-trigger="click"
             hx-push-url="false"
-            {% if request.path == "/archive" %} hx-vals='{"action":None}' {% else %} hx-vals='{"action":"0"}' {% endif %}
+            {% if "/archive" in request.path %} hx-vals='{"action":None}' {% else %} hx-vals='{"action":"0"}' {% endif %}
             {% if request.user.account.time_since_last_handle > 172800 %} hx-confirm="{% trans 'You are about to handle the marked results. This action does not change the files, that the results are about. Please do not handle a result before action has been manually taken to the file.' %}" {% endif %}
             name="handle-matches">
-      <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Mark as handled" %}</span>
+      <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>
+        {% if "/archive/" in request.path %}
+          {% trans "Mark as unhandled" %}
+        {% else %}
+          {% trans "Mark as handled" %}
+        {% endif %}
+      </span>
     </button>
   {% endif %}
   <span class="selected-cb">

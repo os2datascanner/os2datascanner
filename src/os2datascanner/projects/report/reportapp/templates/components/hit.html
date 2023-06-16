@@ -107,7 +107,7 @@
           </div>
         </div>
       </td>
-      {% if request.path == "/archive" %}
+      {% if "/archive/" in request.path %}
         <td class="datatable__column--shortinfo">{{ document_report.get_resolution_status_display }}</td>
       {% endif %}
       <td class="datatable__column--actions">
@@ -120,8 +120,8 @@
             </button>
             <div class="dropdown-container">
               <div class="handle-dropdown">
-                <ul hx-swap="{% if request.path == "/archive" %}none{% else %}outerHTML swap:300ms{% endif %}" hx-target="closest tr" hx-indicator="closest tr" hx-push-url="false" {% if request.user.profile.time_since_last_handle > 172800 %} hx-confirm="{% trans "You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file." %}" {% endif %}>
-                  {% if request.path == "/archive" %}
+                <ul hx-swap="{% if "/archive" in request.path %}none{% else %}outerHTML swap:300ms{% endif %}" hx-target="closest tr" hx-indicator="closest tr" hx-push-url="false" {% if request.user.profile.time_since_last_handle > 172800 %} hx-confirm="{% trans "You are about to handle this result. This action does not change the file, that the result is about. Please do not handle a result before action has been manually taken to the file." %}" {% endif %}>
+                  {% if "/archive" in request.path %}
                     <li class="revert-option button"
                         hx-trigger="click"
                         name="revert-match"
@@ -141,7 +141,7 @@
               </div>
             </div>
           {% else %}
-            {% if request.path == "/archive" %}
+            {% if "/archive/" in request.path %}
               <button class="revert-handle button button--has-icon"
                       type="button"
                       title="Here is a title."
@@ -178,7 +178,7 @@
       </td>
     </tr>
     <tr class="matches-list" hidden>
-      <td colspan="{% if request.path == "/archive" %}8{% else %}7{% endif %}">
+      <td colspan="{% if "/archive" in request.path %}8{% else %}7{% endif %}">
         <table class="smaller datatable compressed">
           <colgroup>
             <col class="matches-list__column--match dont-break-out" />
