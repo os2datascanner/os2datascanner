@@ -13,6 +13,7 @@
 #
 from django.db import models
 from django.db.models import Q, F
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner import ScanStatus, Scanner
@@ -27,6 +28,24 @@ completed_scans = (
     & Q(total_objects__gt=0)
     & Q(explored_sources=F('total_sources'))
     & Q(scanned_objects__gte=F('total_objects')))
+
+# Codes sourced from https://www.thesauruslex.com/typo/eng/enghtml.htm
+char_dict = {
+        "Æ": "&AElig;",
+        "Ø": "&Oslash;",
+        "Å": "&Aring;",
+        "æ": "&aelig;",
+        "ø": "&oslash;",
+        "å": "&aring;",
+        }
+
+
+def replace_nordics(name: str):
+    """ Replaces 'æ', 'ø' and 'å' with 'ae', 'oe' and 'aa'. """
+    global char_dict
+    for char in char_dict:
+        name = name.replace(char, char_dict[char])
+    return name
 
 
 class Organization(Core_Organization, Broadcasted):
@@ -45,6 +64,11 @@ class Organization(Core_Organization, Broadcasted):
         unique=True,
         verbose_name=_('slug'),
     )
+
+    def save(self, *args, **kwargs):
+        encoded_name = replace_nordics(self.name)
+        self.slug = slugify(encoded_name, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     @property
     def scanners_running(self) -> bool:

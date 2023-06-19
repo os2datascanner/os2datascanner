@@ -1,7 +1,6 @@
 from typing import Any, Dict
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from os2datascanner.projects.admin.adminapp.views.views import (
     RestrictedDeleteView,
@@ -17,24 +16,6 @@ from ..models import Organization
 import logging
 
 logger = logging.getLogger("admin")
-
-# Codes sourced from https://www.thesauruslex.com/typo/eng/enghtml.htm
-char_dict = {
-        "Æ": "&AElig;",
-        "Ø": "&Oslash;",
-        "Å": "&Aring;",
-        "æ": "&aelig;",
-        "ø": "&oslash;",
-        "å": "&aring;",
-        }
-
-
-def replace_nordics(name: str):
-    """ Replaces 'æ', 'ø' and 'å' with 'ae', 'oe' and 'aa'. """
-    global char_dict
-    for char in char_dict:
-        name = name.replace(char, char_dict[char])
-    return name
 
 
 class OrganizationListView(RestrictedListView):
@@ -78,8 +59,6 @@ class AddOrganizationView(RestrictedCreateView):
     def form_valid(self, form):
         client_id = self.kwargs['client_id']
         form.instance.client = Client.objects.get(pk=client_id)
-        encoded_name = replace_nordics(form.instance.name)
-        form.instance.slug = slugify(encoded_name, allow_unicode=True)
         if Organization.objects.filter(slug=form.instance.slug).exists():
             form.add_error('name', _('That name is already taken.'))
             return self.form_invalid(form)
