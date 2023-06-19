@@ -44,6 +44,9 @@
 
 - Matches handled more than a year ago are no longer erroneously ignored by the
   DPO overview's trend graphs.
+  
+- Deleting or marking an error message in the admin module as "seen" now
+  correctly refreshes the table of error messages.
 
 ## Version 3.20.0, 2nd June 2023
 
