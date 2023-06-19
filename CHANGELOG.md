@@ -31,6 +31,13 @@
 
 - New retry logic for OS2mo import.
 
+- Python upgraded to version 3.11.3
+
+- `urls.py` import statements have been further prepared for Django 4.2.
+
+- New management command added: `setup_org`, to ease the process of setting up new installations.
+
+
 ### Bugfixes
 
 - Resolution timestamps are now correctly set whenever a result is automatically
