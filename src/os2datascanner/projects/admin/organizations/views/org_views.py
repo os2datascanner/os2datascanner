@@ -59,7 +59,7 @@ class AddOrganizationView(RestrictedCreateView):
     def form_valid(self, form):
         client_id = self.kwargs['client_id']
         form.instance.client = Client.objects.get(pk=client_id)
-        if Organization.objects.filter(slug=form.instance.slug).exists():
+        if Organization.objects.filter(name=form.instance.name).exists():
             form.add_error('name', _('That name is already taken.'))
             return self.form_invalid(form)
         else:
