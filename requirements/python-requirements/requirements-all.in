@@ -2,6 +2,7 @@
 pycryptodome
 pytest-django
 python-dateutil
+tenacity
 
 # API
 gunicorn

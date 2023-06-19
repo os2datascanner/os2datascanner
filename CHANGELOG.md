@@ -29,6 +29,8 @@
 
 - OS2mo import job now use graphql API endpoint v7 and has configurable pagination size.
 
+- New retry logic for OS2mo import.
+
 ### Bugfixes
 
 - Resolution timestamps are now correctly set whenever a result is automatically
