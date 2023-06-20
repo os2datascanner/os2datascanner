@@ -4,10 +4,14 @@ function highlightText(content, query, className) {
   let nodes = content.querySelectorAll("td." + className);
   nodes.forEach(element => {
     const queryRe = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "ig");
-    let newText = element.innerHTML;
-    for (const match of element.innerHTML.matchAll(queryRe)) {
-      newText = element.innerHTML.replace(match[0], "<span class='text-highlight'>" + match[0] + "</span>");
+    let newText = "";
+    let = previ = 0;
+    for (const match of element.textContent.matchAll(queryRe)) {
+      newText = newText + element.innerHTML.slice(previ, match.index) + "<span class='text-highlight'>" + match[0] + "</span>";
+      previ = match.index + match[0].length;
     }
+
+    newText = newText + element.innerHTML.slice(previ, element.innerHTML.length);
 
     if (newText.length > element.innerHTML.length) {
       element.innerHTML = newText;
