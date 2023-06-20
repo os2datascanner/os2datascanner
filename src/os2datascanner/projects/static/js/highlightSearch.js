@@ -5,7 +5,7 @@ function highlightText(content, query, className) {
   nodes.forEach(element => {
     const queryRe = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "ig");
     let newText = "";
-    let = previ = 0;
+    let previ = 0;
     for (const match of element.textContent.matchAll(queryRe)) {
       newText = newText + element.innerHTML.slice(previ, match.index) + "<span class='text-highlight'>" + match[0] + "</span>";
       previ = match.index + match[0].length;
@@ -20,7 +20,7 @@ function highlightText(content, query, className) {
 }
 
 
-htmx.onLoad(content => {
+htmx.onLoad((content) => {
   let query = document.querySelector('#search_field').value;
   if (query !== "") {
     // Only do the highligh search on the content, which was just loaded in.

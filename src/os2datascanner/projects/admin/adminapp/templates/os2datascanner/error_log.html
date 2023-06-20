@@ -33,6 +33,7 @@
             hx-get="{% url "error-log" %}"
             hx-trigger="change, keyup delay:200ms from:#search_field"
             hx-swap="outerHTML"
+            hx-include="[id='dropdown_options']"
             hx-target=".error_content"
             hx-select=".error_content">
         <div class="search_field_wrapper">
