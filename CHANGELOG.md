@@ -37,11 +37,13 @@
 
 - New management command added: `setup_org`, to ease the process of setting up new installations.
 
-
 ### Bugfixes
 
 - Resolution timestamps are now correctly set whenever a result is automatically
   handled.
+
+- Matches handled more than a year ago are no longer erroneously ignored by the
+  DPO overview's trend graphs.
 
 ## Version 3.20.0, 2nd June 2023
 

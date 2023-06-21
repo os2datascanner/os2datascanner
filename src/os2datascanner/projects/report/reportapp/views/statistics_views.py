@@ -16,7 +16,8 @@
 # source municipalities ( https://os2.eu/ )
 import structlog
 
-from datetime import timedelta
+from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 from calendar import month_abbr
 from collections import deque
 
@@ -44,7 +45,18 @@ from ..models.roles.remediator import Remediator
 # For permissions
 from ..models.roles.dpo import DataProtectionOfficer
 
+
 logger = structlog.get_logger()
+
+
+def month_delta(series_start: date, here: date):
+    """Returns the (zero-based) month index of @here relative to
+    @series_start."""
+
+    def _months(date: date):
+        return date.year * 12 + date.month
+
+    return _months(here) - _months(series_start)
 
 
 class StatisticsPageView(LoginRequiredMixin, TemplateView):
@@ -256,18 +268,17 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         """Counts new matches and resolved matches by month for the last year,
         rotates the current month to the end of the list, inserts and subtracts using the counts
         and then makes a running total"""
-        a_year_ago = current_date - timedelta(days=365)
+        a_year_ago: date = (
+                current_date - timedelta(days=365)).date().replace(day=1)
 
-        new_matches_by_month = self.matches.filter(
-            created_timestamp__range=(a_year_ago, current_date)).annotate(
+        new_matches_by_month = self.matches.annotate(
             month=TruncMonth(
                     'created_timestamp', output_field=DateField())).values(
             'month').annotate(
             total=Count('raw_matches')
         ).order_by('month')
 
-        resolved_matches_by_month = self.handled_matches.filter(
-            created_timestamp__range=(a_year_ago, current_date)).annotate(
+        resolved_matches_by_month = self.handled_matches.annotate(
             month=TruncMonth(
                     # If resolution_time isn't set on a report that has been
                     # handled, then assume it was handled in the same month it
@@ -278,34 +289,36 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             total=Count('raw_matches')
         ).order_by('month')
 
-        # Generators with months as integers and the counts
-        new_matches_by_month_gen = ((m['month'].month, m['total'])
-                                    for m in new_matches_by_month)
+        if self.matches.exists():
+            earliest_month = min(
+                    dr["month"]
+                    for dr in new_matches_by_month | resolved_matches_by_month)
+            # The range of the graph should be at least a year
+            earliest_month = min(earliest_month, a_year_ago)
+        else:
+            # ... even if we don't have /any/ data at all
+            earliest_month = a_year_ago
+        number_of_months = 1 + month_delta(earliest_month, current_date)
 
-        resolved_matches_by_month_gen = ((m['month'].month, m['total'])
-                                         for m in resolved_matches_by_month)
+        # This series needs to have a slot for every month, not just those in
+        # which something actually happened
+        delta_by_month: dict[date, int] = {
+                earliest_month + relativedelta(months=k): 0
+                for k in range(number_of_months)}
 
-        values_by_month = [0] * 12
+        for drv in new_matches_by_month:
+            delta_by_month[drv["month"]] += drv["total"]
+        for drv in resolved_matches_by_month:
+            delta_by_month[drv["month"]] -= drv["total"]
 
-        for month_id, total in new_matches_by_month_gen:
-            values_by_month[month_id - 1] += total
+        def _make_running_total():
+            total = 0
+            for month_start, delta in delta_by_month.items():
+                total += delta
+                yield month_start, total
 
-        for month_id, total in resolved_matches_by_month_gen:
-            values_by_month[month_id - 1] -= total
-
-        # month_abbr[0] is the empty string, which makes it possible to do
-        # month_abbr(dt.month) without thinking about indexes -- but that's
-        # slightly inconvenient for us
-        labelled_values_by_month = deque(
-                list(k) for k in zip(month_abbr[1:], values_by_month))
-        # Rotate the current month to index 11
-        labelled_values_by_month.rotate(-current_date.month)
-
-        # Running total
-        for i in range(11):  # Take value from current index and add it to the next
-            labelled_values_by_month[i + 1][1] += labelled_values_by_month[i][1]
-
-        return list(labelled_values_by_month)
+        return [[month_abbr[month_start.month], total]
+                for month_start, total in list(_make_running_total())[-12:]]
 
     def count_new_matches_by_month(self, current_date):
         """Counts matches by months for the last year
