@@ -6,8 +6,6 @@
 
 ### New in this release
 
-- A new experimental, high-performance rule for CPR detection: `TurboCPRRule`.
-
 - It is now possible to view and sort reports by the age of the scanned resource. When the screen is wide, it remains a caret, but on smaller screens (i.e. smartscreens) the sort options becomes two buttons at the top of the page. 
 
 - Support for simple scans in the administration system:
