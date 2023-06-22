@@ -33,6 +33,7 @@
             hx-get="{% url "error-log" %}"
             hx-trigger="change, keyup delay:200ms from:#search_field"
             hx-swap="outerHTML"
+            hx-include="[id='dropdown_options']"
             hx-target=".error_content"
             hx-select=".error_content">
         <div class="search_field_wrapper">
@@ -46,7 +47,7 @@
         </div>
       </form>
 
-      {% if object_list  %}
+      {% if object_list %}
         <div class="datatable-wrapper card error_content"
              role="region"
              tabindex="0"
@@ -74,6 +75,7 @@
                                 hx-swap="outerHTML"
                                 hx-trigger="click"
                                 hx-target=".content"
+                                hx-select=".content"
                                 hx-confirm="{% trans "You are about to mark all error log messages as seen. This action cannot be reverted. Are you sure?" %}">
                           <span>{% trans "Mark all as seen" %}</span>
                         </button>
@@ -85,6 +87,7 @@
                               hx-swap="outerHTML"
                               hx-trigger="click"
                               hx-target=".content"
+                              hx-select=".content"
                               hx-confirm="{% trans "You are about to remove" %} {{ page_obj.paginator.count }}{% trans " error logs. This action cannot be reverted. Are you sure?" %}">
                         <svg class="icon">
                           <use xlink:href="/static/svg/symbol-defs.svg#icon-cross"></use>
@@ -188,6 +191,7 @@
                               hx-swap="outerHTML"
                               hx-trigger="click"
                               hx-target=".content"
+                              hx-select=".content"
                               hx-vals='{"pk": "{{ error_log.pk|unlocalize }}"}'
                               hx-indicator="closest tr">
                         <svg class="icon">

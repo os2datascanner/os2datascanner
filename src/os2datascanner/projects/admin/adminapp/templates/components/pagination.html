@@ -21,7 +21,7 @@
                  hx-select=".content"
                  hx-swap="outerHTML"
                  hx-trigger="click"
-                 hx-include="#dropdown_options"
+                 hx-include="[id='dropdown_options'], [id='errorlog_filters']"
                  hx-vals='{"page": "{{ page_obj.previous_page_number }}"}'>
                 <i id="chevron_left" class="material-icons">chevron_left</i>
                 {% trans "Previous" %}
@@ -46,7 +46,7 @@
                      hx-select=".content"
                      hx-swap="outerHTML"
                      hx-trigger="click"
-                     hx-include="#dropdown_options"
+                     hx-include="[id='dropdown_options'], [id='errorlog_filters']"
                      hx-vals='{"page": "1"}'>1</a>
                   {% if n != 1 %}<span class="page--dot">...</span>{% endif %}
                 {% elif page_obj.number == n %}
@@ -63,7 +63,7 @@
                      hx-select=".content"
                      hx-swap="outerHTML"
                      hx-trigger="click"
-                     hx-include="#dropdown_options"
+                     hx-include="[id='dropdown_options'], [id='errorlog_filters']"
                      hx-vals='{"page": "{{ n }}"}'>{{ n }}</a>
                 {% elif page_obj.number|add:'2' == n %}
                   {# Last page #}
@@ -76,7 +76,7 @@
                      hx-select=".content"
                      hx-swap="outerHTML"
                      hx-trigger="click"
-                     hx-include="#dropdown_options"
+                     hx-include="[id='dropdown_options'], [id='errorlog_filters']"
                      hx-vals='{"page": "{{ paginator.num_pages }}"}'>{{ paginator.num_pages }}</a>
                 {% endif %}
               {% endfor %}
@@ -91,7 +91,7 @@
                  hx-select=".content"
                  hx-swap="outerHTML"
                  hx-trigger="click"
-                 hx-include="#dropdown_options"
+                 hx-include="[id='dropdown_options'], [id='errorlog_filters']"
                  hx-vals='{"page": "{{ page_obj.next_page_number }}"}'>
                 {% trans "Next" %}
                 <i id="chevron_right" class="material-icons">chevron_right</i>

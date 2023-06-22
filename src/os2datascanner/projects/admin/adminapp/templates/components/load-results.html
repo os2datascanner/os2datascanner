@@ -1,4 +1,4 @@
-{%  load i18n %}
+{% load i18n %}
 
 {% comment %}
   This dummy form is needed, because HTML does not like forms inside tables.
@@ -15,6 +15,7 @@
       hx-target=".error_content"
       hx-select=".error_content"
       hx-swap="innerHTML"
+      hx-include="[id='errorlog_filters']"
       hx-get="{{ request.path }}">
 
   <input type="hidden" name="page" id="page" value={{ page_obj.number }}>
