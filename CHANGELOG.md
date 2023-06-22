@@ -1,6 +1,6 @@
 # Changelog
 
-## Next Release
+## Version 3.20.1, 22nd June 2023
 
 "Artificial CEO"
 
