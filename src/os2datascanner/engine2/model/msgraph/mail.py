@@ -169,8 +169,8 @@ class MSGraphMailAccountSource(DerivedSource):
                     f"users/{pn}/mailFolders/syncissues?$select=id").get("id")
 
                 filters.append(f"parentFolderId ne '{sync_issue_folder_id}'")
-            except BaseException:
-                logger.warning("Syncissues folder does not exist")
+            except Exception:
+                logger.warning("Syncissues folder does not exist", exc_info=True)
 
         if filters:
             query += f"&$filter={' and '.join(filters)}"
