@@ -377,34 +377,29 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                     # Process all of the enqueued actions
                     while self._outgoing:
                         head = self._outgoing.pop(0)
-                        label = head[0]
                         trace("PikaPipelineThread - Thread TID:"
                               f" {self.native_id} got the conditional."
                               " Processing outgoing message.")
-                        if label == "msg":
-                            routing_key, body, exchange, properties = head[1:]
-                            self.channel.basic_publish(
-                                    exchange=exchange,
-                                    routing_key=routing_key,
-                                    properties=pika.BasicProperties(
-                                            **properties),
-                                    body=body)
-                        elif label == "ack":
-                            delivery_tag = head[1]
-                            self.channel.basic_ack(delivery_tag)
-                        elif label == "rej":
-                            delivery_tag, requeue = head[1:]
-                            self.channel.basic_reject(
-                                    delivery_tag, requeue=requeue)
-                        elif label == "fin":
-                            running = False
-                            break
-                        elif label == "syn":
-                            ev = head[1]
-                            ev.set()
-                        elif label == "zzz":
-                            duration = head[1]
-                            time.sleep(duration)
+                        match head:
+                            case ("msg", routing_key, body, exchange, props):
+                                self.channel.basic_publish(
+                                        exchange=exchange,
+                                        routing_key=routing_key,
+                                        properties=pika.BasicProperties(
+                                                **props),
+                                        body=body)
+                            case ("ack", delivery_tag):
+                                self.channel.basic_ack(delivery_tag)
+                            case ("rej", delivery_tag, requeue):
+                                self.channel.basic_reject(
+                                        delivery_tag, requeue=requeue)
+                            case ("fin",):
+                                running = False
+                                break
+                            case ("syn", ev):
+                                ev.set()
+                            case ("zzz", duration):
+                                time.sleep(duration)
 
                 # Dispatch any waiting timer (heartbeats) and channel (calls to
                 # our handle_message_raw method) callbacks...
