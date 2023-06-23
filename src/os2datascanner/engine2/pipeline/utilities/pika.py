@@ -225,14 +225,15 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
 
         self._shutdown_exception = None
 
-    def _enqueue(self, label: str, *args):
-        """Enqueues a request for the background thread.
+    def _enqueue(self, label: str, *args, check_live=True):
+        """Enqueues a request for the background thread, optionally checking
+        whether or not it's already finished.
 
         Requests consist of a label that specifies the desired action and a
         number of action-specific parameters. This is an implementation detail:
         clients should use the enqueue_* methods instead."""
         with self._condition:
-            if self.ident is not None and not self.is_alive():
+            if check_live and self.ident is not None and not self.is_alive():
                 raise RuntimeError(
                         "attempted to enqueue a request on a completed"
                         " PikaPipelineThread")
@@ -251,11 +252,13 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         return self._enqueue("rej", delivery_tag, requeue)
 
     def enqueue_stop(self):
-        """Requests that the background thread stop running.
+        """Requests that the background thread stop running. (This is the only
+        request that can be enqueued without producing an error if the
+        background thread has already stopped.)
 
         Note that the background thread is *not* a daemon thread: the host
         process will not terminate if this method is never called."""
-        return self._enqueue("fin")
+        return self._enqueue("fin", check_live=False)
 
     def enqueue_message(self,
                         routing_key: str,
