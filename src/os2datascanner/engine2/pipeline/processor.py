@@ -1,4 +1,5 @@
 import logging
+from urllib.error import HTTPError
 from .. import settings
 from ..model.core import Source
 from ..utilities.backoff import TimeoutRetrier
@@ -37,6 +38,22 @@ def check(source_manager, handle):
     except Exception as e:
         logger.debug("check of {0} failed: {1}".format(handle.presentation, e))
         return False
+
+
+def format_exception_message(ex: Exception, conversion: messages.ConversionMessage) -> str:
+    '''Utility function for formating exception messages depending on the exception type.'''
+    exception_message = "Processing error. {0}: ".format(type(ex).__name__)
+
+    path = str(conversion.handle)
+
+    if ex is HTTPError and ex.code == 400:
+        # We have a special case for HTTP 400: Bad Request.
+        exception_message += f"Found broken URL: {str(ex.url)} while scanning: {path}"
+    else:
+        # This just formats generic errors.
+        exception_message += ", ".join([str(a) for a in ex.args])
+
+    return exception_message
 
 
 def message_received_raw(body, channel, source_manager, *, _check=True):  # noqa: CCR001,E501,C901
@@ -125,9 +142,9 @@ def message_received_raw(body, channel, source_manager, *, _check=True):  # noqa
         exception = e
 
     if exception:
-        exception_message = "Processing error. {0}: ".format(type(exception).__name__)
-        exception_message += ", ".join([str(a) for a in exception.args])
+        exception_message = format_exception_message(exception, conversion)
         logger.warning(exception_message)
+
         for problems_q in ("os2ds_problems", "os2ds_checkups",):
             yield (problems_q, messages.ProblemMessage(
                     scan_tag=conversion.scan_spec.scan_tag,
