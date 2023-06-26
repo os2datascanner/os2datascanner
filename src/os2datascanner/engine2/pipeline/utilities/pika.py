@@ -225,14 +225,15 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
 
         self._shutdown_exception = None
 
-    def _enqueue(self, label: str, *args):
-        """Enqueues a request for the background thread.
+    def _enqueue(self, label: str, *args, check_live=True):
+        """Enqueues a request for the background thread, optionally checking
+        whether or not it's already finished.
 
         Requests consist of a label that specifies the desired action and a
         number of action-specific parameters. This is an implementation detail:
         clients should use the enqueue_* methods instead."""
         with self._condition:
-            if self.ident is not None and not self.is_alive():
+            if check_live and self.ident is not None and not self.is_alive():
                 raise RuntimeError(
                         "attempted to enqueue a request on a completed"
                         " PikaPipelineThread")
@@ -251,11 +252,13 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         return self._enqueue("rej", delivery_tag, requeue)
 
     def enqueue_stop(self):
-        """Requests that the background thread stop running.
+        """Requests that the background thread stop running. (This is the only
+        request that can be enqueued without producing an error if the
+        background thread has already stopped.)
 
         Note that the background thread is *not* a daemon thread: the host
         process will not terminate if this method is never called."""
-        return self._enqueue("fin")
+        return self._enqueue("fin", check_live=False)
 
     def enqueue_message(self,
                         routing_key: str,
@@ -374,34 +377,29 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                     # Process all of the enqueued actions
                     while self._outgoing:
                         head = self._outgoing.pop(0)
-                        label = head[0]
                         trace("PikaPipelineThread - Thread TID:"
                               f" {self.native_id} got the conditional."
                               " Processing outgoing message.")
-                        if label == "msg":
-                            routing_key, body, exchange, properties = head[1:]
-                            self.channel.basic_publish(
-                                    exchange=exchange,
-                                    routing_key=routing_key,
-                                    properties=pika.BasicProperties(
-                                            **properties),
-                                    body=body)
-                        elif label == "ack":
-                            delivery_tag = head[1]
-                            self.channel.basic_ack(delivery_tag)
-                        elif label == "rej":
-                            delivery_tag, requeue = head[1:]
-                            self.channel.basic_reject(
-                                    delivery_tag, requeue=requeue)
-                        elif label == "fin":
-                            running = False
-                            break
-                        elif label == "syn":
-                            ev = head[1]
-                            ev.set()
-                        elif label == "zzz":
-                            duration = head[1]
-                            time.sleep(duration)
+                        match head:
+                            case ("msg", routing_key, body, exchange, props):
+                                self.channel.basic_publish(
+                                        exchange=exchange,
+                                        routing_key=routing_key,
+                                        properties=pika.BasicProperties(
+                                                **props),
+                                        body=body)
+                            case ("ack", delivery_tag):
+                                self.channel.basic_ack(delivery_tag)
+                            case ("rej", delivery_tag, requeue):
+                                self.channel.basic_reject(
+                                        delivery_tag, requeue=requeue)
+                            case ("fin",):
+                                running = False
+                                break
+                            case ("syn", ev):
+                                ev.set()
+                            case ("zzz", duration):
+                                time.sleep(duration)
 
                 # Dispatch any waiting timer (heartbeats) and channel (calls to
                 # our handle_message_raw method) callbacks...

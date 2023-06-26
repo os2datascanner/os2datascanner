@@ -1,5 +1,12 @@
 # Changelog
 
+## Next release
+
+### Bugfixes
+
+- Gracefully stopping the RabbitMQ communication background thread no longer
+  prints an alarming error message.
+
 ## Version 3.20.1, 22nd June 2023
 
 "Artificial CEO"
