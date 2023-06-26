@@ -19,6 +19,32 @@ logger = logging.getLogger(__name__)
 message_buffer = deque(maxlen=5)
 
 
+def walk_mo_json_response(response: dict, *path):
+    here, steps = response, path
+    try:
+        while steps:
+            head, *steps = steps
+            here = here[head]
+            if steps and not isinstance(here, dict):
+                # We still have dictionary keys left, but the object we have
+                # here isn't a dictionary. Something has gone wrong
+                raise TypeError(
+                        f"for key \"{head}\": expected dict,"
+                        f" got {type(here).__name__}")
+        return here
+    except (KeyError, TypeError) as ex:
+        errors = response.get("errors")
+        error_texts = []
+        if errors:
+            for error in errors:
+                message = error.get("message")
+                if message:
+                    error_texts.append(message)
+        raise ValueError(
+                f"couldn't walk JSON path {path}",
+                error_texts or None) from ex
+
+
 class OS2moImportJob(BackgroundJob):
     organization = models.ForeignKey(
         'organizations.Organization',
@@ -38,18 +64,17 @@ class OS2moImportJob(BackgroundJob):
         """Given a JSON response of a OS2mo GraphQL query for org_units,
            returns the next_cursor value."""
         logger.info("Fetching next_cursor...")
-        return json_query_response["data"][
-                                    "org_units"][
-                                        "page_info"][
-                                            "next_cursor"]
+        return walk_mo_json_response(
+                json_query_response,
+                "data", "org_units", "page_info", "next_cursor")
 
     def _get_org_unit_data(self, json_query_response: dict) -> list:
         """ Given a JSON response of a OS2mo GraphQL query for org_units,
             returns a list of objects."""
         logger.info("Fetching org_unit objects for iteration...")
-        return json_query_response["data"][
-                                    "org_units"][
-                                        "objects"]
+        return walk_mo_json_response(
+                json_query_response,
+                "data", "org_units", "objects")
 
     # Query for Org units, their parent, managers, Employees in form of Engagements and their
     # email. Using cursor pagination (cursor and limit variables), and takes email_type as a
