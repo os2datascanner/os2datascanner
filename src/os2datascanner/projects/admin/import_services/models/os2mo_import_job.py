@@ -1,15 +1,22 @@
+from sys import stderr
+import json
 import logging
 import requests
 from tenacity import Retrying, stop_after_attempt, wait_exponential
+from collections import deque
 
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.projects.admin.adminapp.signals import get_pika_thread
-from ...core.models.background_job import BackgroundJob
+from ...core.models.background_job import JobState, BackgroundJob
+
 
 logger = logging.getLogger(__name__)
+
+
+message_buffer = deque(maxlen=5)
 
 
 class OS2moImportJob(BackgroundJob):
@@ -94,6 +101,10 @@ class OS2moImportJob(BackgroundJob):
         return "OS2mo Import Job"
 
     def run(self):  # noqa CCR001
+        message_buffer.clear()
+
+        json_query_response = {}
+
         # To ensure graphql version consistency with os2mo-endpoint
         os2mo_url_endpoint = settings.OS2MO_ENDPOINT_BASE + "v7"
 
@@ -135,8 +146,7 @@ class OS2moImportJob(BackgroundJob):
 
                 if query_response.status_code != 204:
                     json_query_response = query_response.json()
-                else:
-                    json_query_response = {}
+                message_buffer.append(json_query_response)
 
             except requests.exceptions.JSONDecodeError:
                 logger.exception("Unable to decode JSON")
@@ -173,6 +183,8 @@ class OS2moImportJob(BackgroundJob):
 
                         if paginated_query_response.status_code != 204:
                             json_paginated_query_response = paginated_query_response.json()
+                            message_buffer.append(
+                                    json_paginated_query_response)
                             next_cursor = self._get_next_cursor(json_paginated_query_response)
 
                         for ou_data in self._get_org_unit_data(json_paginated_query_response):
@@ -205,5 +217,16 @@ class OS2moImportJob(BackgroundJob):
         post_import_cleanup()
 
     def finish(self):
+        if self.exec_state == JobState.FAILED and message_buffer:
+            print(
+                    "OS2moImportJob failed,"
+                    f" printing last {len(message_buffer)} JSON responses:",
+                    file=stderr)
+            for msg in message_buffer:
+                for line in json.dumps(msg, indent=True).split("\n"):
+                    print(f"\t{line}", file=stderr)
+                print("--", file=stderr)
+        message_buffer.clear()
+
         if (pe := get_pika_thread(init=False)):
             pe.synchronise(600.0)
