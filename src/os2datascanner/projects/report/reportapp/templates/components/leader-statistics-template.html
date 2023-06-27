@@ -119,11 +119,11 @@
         {% if employees %}
           {% for employee in employees %}
             <tr hx-get="{% url 'employee' employee.uuid %}"
-                hx-swap="outerHTML"
+                hx-swap="outerHTML swap:200ms"
                 hx-target="this"
                 hx-trigger="revealed"
                 hx-push-url="false">
-              <td colspan="4" class="loading">{% trans "Loading account ..." %}</td>
+              <td colspan="4" class="loading">{% trans "Loading employee ..." %}</td>
             </tr>
           {% endfor %}
         {% else %}

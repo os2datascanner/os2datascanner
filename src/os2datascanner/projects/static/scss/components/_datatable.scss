@@ -140,6 +140,19 @@
     background-color: rgba(0, 0, 0, .07);
   }
 
+
+  tr {
+
+    td {
+      transition: opacity 200ms ease-in-out;
+    }
+
+    &.htmx-swapping td,
+    &.htmx-settling td {
+      opacity: 0;
+    }
+  }
+
   .matches-list>td,
   .matches-list>th {
     background-color: rgba(0, 0, 0, .035);

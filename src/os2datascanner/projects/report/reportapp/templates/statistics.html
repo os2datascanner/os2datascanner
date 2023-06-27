@@ -1,37 +1,33 @@
 {% load static %}
 
-<body>
+{% include "partials/header.html" %}
+{% include "components/banner.html" %}
 
-  {% include "partials/header.html" %}
-  {% include "components/banner.html" %}
+<main class="wrapper">
+  {% if request.path == "/statistics/dpo/" %}
+    {% include "components/dpo-statistics-template.html" %}
+  {% elif request.path == "/statistics/leader/" %}
+    {% include "components/leader-statistics-template.html" %}
+  {% elif "/statistics/user/" in request.path %}
+    {% include "components/user-overview-template.html" %}
+  {% endif %}
+</main>
 
-  <main class="wrapper">
-    {% if request.path == "/statistics/dpo/" %}
-      {% include "components/dpo-statistics-template.html" %}
-    {% elif request.path == "/statistics/leader/" %}
-      {% include "components/leader-statistics-template.html" %}
-    {% elif "/statistics/user/" in request.path %}
-      {% include "components/user-overview-template.html" %}
-    {% endif %}
-  </main>
+{% block scripts %}
+  <script src="{% static "3rdparty/htmx.min.js" %}"></script>
+  <script src="{% static "js/options.js" %}"></script>
+  <script src="{% static "3rdparty/jquery-3.6.0.min.js" %} "></script>
+  <script src="{% static "3rdparty/chart-4.0.1.min.js" %}"></script>
+  <script src="{% static "3rdparty/chartjs-plugin-datalabels.min.js" %}"></script>
+  <script src="{% static "js/tableBehavior.js" %}"></script>
+  {% if request.path == "/statistics/dpo/" %}
+    <script src="{% static "js/chartHelpers.js" %}"></script>
+  {% elif request.path == "/statistics/leader/" %}
+    <script src="{% static "js/leaderOverview.js" %}"></script>
+  {% endif %}
+  <script src="{% static "js/pieCharts.js" %}"></script>
+  <script src="{% static "js/doughnutCharts.js" %}"></script>
+  <script src="{% static "js/lineCharts.js" %}"></script>
+  <script src="{% static 'js/userCharts.js' %}"></script>
 
-  {% block scripts %}
-    <script src="{% static "3rdparty/htmx.min.js" %}"></script>
-    <script src="{% static "js/options.js" %}"></script>
-    <script src="{% static "3rdparty/jquery-3.6.0.min.js" %} "></script>
-    <script src="{% static "3rdparty/chart-4.0.1.min.js" %}"></script>
-    <script src="{% static "3rdparty/chartjs-plugin-datalabels.min.js" %}"></script>
-    <script src="{% static "js/tableBehavior.js" %}"></script>
-    {% if request.path == "/statistics/dpo/" %}
-      <script src="{% static "js/chartHelpers.js" %}"></script>
-    {% elif request.path == "/statistics/leader/" %}
-      <script src="{% static "js/leaderOverview.js" %}"></script>
-    {% endif %}
-    <script src="{% static "js/pieCharts.js" %}"></script>
-    <script src="{% static "js/doughnutCharts.js" %}"></script>
-    <script src="{% static "js/lineCharts.js" %}"></script>
-    <script src="{% static 'js/userCharts.js' %}"></script>
-
-  {% endblock %}
-
-</body>
+{% endblock %}
