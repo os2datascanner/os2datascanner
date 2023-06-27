@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
 
+from os2datascanner.engine2.model.core.handle import Handle
 from os2datascanner.engine2.utilities.datetime import (
         parse_datetime, unparse_datetime)
 
@@ -34,6 +35,7 @@ class OutputType(Enum):
     LastModified = "last-modified"  # datetime.datetime
     ImageDimensions = "image-dimensions"  # (int, int)
     Links = "links"  # list[Link]
+    Manifest = "manifest"  # list[Handle]
 
     AlwaysTrue = "fallback"  # True
     NoConversions = "dummy"
@@ -55,6 +57,8 @@ class OutputType(Enum):
             return (v.url, v.link_text)
         elif self == OutputType.AlwaysTrue:
             return True
+        elif self == OutputType.Manifest:
+            return [h.to_json_object() for h in v]
         else:
             raise TypeError(self.value)
 
@@ -73,6 +77,8 @@ class OutputType(Enum):
             return [Link(url, link_text) for url, link_text in v]
         elif self == OutputType.AlwaysTrue:
             return True
+        elif self == OutputType.Manifest:
+            return [Handle.from_json_object(h) for h in v]
         else:
             raise TypeError(self.value)
 
