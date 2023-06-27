@@ -1150,15 +1150,15 @@ msgstr "Upload fil"
 
 #: adminapp/templates/os2datascanner/miniscan.html:40
 msgid "The selected file is too big!"
-msgstr ""
+msgstr "Den valgte fil er for stor!"
 
 #: adminapp/templates/os2datascanner/miniscan.html:42
 msgid "Maximum allowed file size is: "
-msgstr ""
+msgstr "Den maksimalt tilladte filstørrelse er: "
 
 #: adminapp/templates/os2datascanner/miniscan.html:44
 msgid "Please, select another (smaller) file to scan."
-msgstr ""
+msgstr "Vælg venligst at scanne en anden (mindre) fil."
 
 #: adminapp/templates/os2datascanner/miniscan.html:47
 msgid "Rule to execute"
