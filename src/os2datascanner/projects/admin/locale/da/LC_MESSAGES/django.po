@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-27 12:55+0200\n"
+"POT-Creation-Date: 2023-06-27 13:12+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -636,12 +636,10 @@ msgid "per page"
 msgstr "pr. side"
 
 #: adminapp/templates/components/miniscan-results.html:4
-#| msgid "or upload"
 msgid "No file uploaded."
 msgstr "Ingen fil uploadet."
 
 #: adminapp/templates/components/miniscan-results.html:8
-#| msgid "File to scan"
 msgid "File too big"
 msgstr "Valgte fil er for stor"
 
