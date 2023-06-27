@@ -94,6 +94,9 @@ class OS2moImportJob(BackgroundJob):
         return "OS2mo Import Job"
 
     def run(self):  # noqa CCR001
+        # To ensure graphql version consistency with os2mo-endpoint
+        os2mo_url_endpoint = settings.OS2MO_ENDPOINT_BASE + "v7"
+
         with requests.Session() as session:
             self.status = "Initializing OS2mo Import..."
             self.save()
@@ -119,7 +122,7 @@ class OS2moImportJob(BackgroundJob):
                     'Authorization': f'Bearer {token}'}
 
                 query_response = retry(session.post,
-                                       settings.OS2MO_ENDPOINT_URL,
+                                       os2mo_url_endpoint,
                                        json={
                                            "query": self.QueryOrgUnitsManagersEmployees,
                                            "variables": {
@@ -157,7 +160,7 @@ class OS2moImportJob(BackgroundJob):
                     while next_cursor:
                         paginated_query_response = retry(
                             session.post,
-                            settings.OS2MO_ENDPOINT_URL,
+                            os2mo_url_endpoint,
                             json={
                                 "query": self.QueryOrgUnitsManagersEmployees,
                                 "variables": {
