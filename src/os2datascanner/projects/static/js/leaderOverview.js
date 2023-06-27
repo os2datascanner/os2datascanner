@@ -10,9 +10,9 @@ function showOverview(row, toggleButton) {
 document.addEventListener("DOMContentLoaded",
   () => {
     htmx.onLoad(function (content) {
-      if (hasClass(content, "content") || hasClass(content, "page")) {
+      if (hasClass(content, "content") || hasClass(content, "page") || hasClass(content, "employee_row")) {
 
-        let expandButtons = document.querySelectorAll(".overview-expand");
+        let expandButtons = content.querySelectorAll(".overview-expand");
 
         expandButtons.forEach(element => {
           element.addEventListener("click", function (e) {

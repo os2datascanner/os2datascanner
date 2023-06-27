@@ -393,7 +393,8 @@
 }
 
 @media (max-width: $break-lg) {
-  col.datatable__column--datasource_last_modified, 
+
+  col.datatable__column--datasource_last_modified,
   td.datatable__column--datasource_last_modified,
   th.datatable__column--datasource_last_modified {
     display: none;
@@ -440,6 +441,11 @@
   line-height: normal; // prevent y-overflow
   padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
   vertical-align: middle;
+
+  &.loading {
+    text-align: center;
+    font-style: italic;
+  }
 
   .overflow-ellipsis {
 

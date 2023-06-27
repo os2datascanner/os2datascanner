@@ -28,7 +28,7 @@ from django.db.models.functions import Coalesce, TruncMonth
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, ListView
 from django.shortcuts import get_object_or_404
 
 from os2datascanner.utils.system_utilities import time_now
@@ -41,6 +41,7 @@ from ...organizations.models.organizational_unit import OrganizationalUnit
 from ..utils import user_is, user_is_superadmin
 from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
+from .report_views import EmptyPagePaginator
 
 # For permissions
 from ..models.roles.dpo import DataProtectionOfficer
@@ -353,49 +354,48 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         return list(labelled_values_by_month)
 
 
-class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
+class LeaderStatisticsPageView(LoginRequiredMixin, ListView):
     template_name = "statistics.html"
+    paginator_class = EmptyPagePaginator
+    paginate_by = 200
+    model = Account
+    context_object_name = "employees"
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        if self.org_unit:
+            qs = qs.filter(units=self.org_unit)
+        else:
+            qs = Account.objects.none()
+
+        self.employee_count = qs.count()
+
+        if search_field := self.request.GET.get('search_field', None):
+            qs = qs.filter(
+                Q(first_name__icontains=search_field) |
+                Q(last_name__icontains=search_field) |
+                Q(username__istartswith=search_field))
+
+        qs = self.order_employees(qs)
+
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if self.request.user.is_superuser:
-            user_units = OrganizationalUnit.objects.all()
-        else:
-            user_units = OrganizationalUnit.objects.filter(
-                Q(positions__account=self.request.user.account) & Q(positions__role="manager"))
+        context['user_units'] = self.user_units
 
-        context['user_units'] = user_units
+        context["org_unit"] = self.org_unit
 
-        if unit_uuid := self.request.GET.get('org_unit', None):
-            org_unit = user_units.get(uuid=unit_uuid)
-        else:
-            org_unit = user_units.first() or None
-        context["org_unit"] = org_unit
-
-        if org_unit:
-            accounts = Account.objects.filter(units=org_unit)
-            if search_field := self.request.GET.get('search_field', None):
-                self.employees = accounts.filter(
-                    Q(first_name__icontains=search_field) |
-                    Q(last_name__icontains=search_field) |
-                    Q(username__istartswith=search_field))
-            else:
-                self.employees = accounts
-            self.order_employees()
-            # This operation should NOT be done here. Move this to somehwere it makes sense.
-            for employee in self.employees:
-                employee.save()
-        else:
-            self.employees = None
-        context["employees"] = self.employees
+        context["employee_count"] = self.employee_count
 
         context['order_by'] = self.request.GET.get('order_by', 'first_name')
         context['order'] = self.request.GET.get('order', 'ascending')
 
         return context
 
-    def order_employees(self):
+    def order_employees(self, qs):
         """Checks if a sort key is allowed and orders the employees queryset"""
         allowed_sorting_properties = [
             'first_name',
@@ -409,8 +409,26 @@ class LeaderStatisticsPageView(LoginRequiredMixin, TemplateView):
 
             if order != 'ascending':
                 sort_key = '-'+sort_key
-            self.employees = self.employees.order_by(sort_key, 'pk').distinct(
+            qs = qs.order_by(sort_key, 'pk').distinct(
                 sort_key if sort_key[0] != "-" else sort_key[1:], "pk")
+
+        return qs
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            self.user_units = OrganizationalUnit.objects.all()
+        else:
+            self.user_units = OrganizationalUnit.objects.filter(
+                Q(positions__account=self.request.user.account) & Q(positions__role="manager"))
+
+        if unit_uuid := request.GET.get('org_unit', None):
+            self.org_unit = self.user_units.get(uuid=unit_uuid)
+        else:
+            self.org_unit = self.user_units.first() or None
+
+        response = super().get(request, *args, **kwargs)
+
+        return response
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -532,6 +550,17 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
             return
         else:
             raise PermissionDenied
+
+
+class EmployeeView(LoginRequiredMixin, DetailView):
+    model = Account
+    context_object_name = "employee"
+    template_name = "components/employee_template.html"
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        self.object.save()
+        return response
 
 # Logic separated to function to allow usability in send_notifications.py
 
