@@ -11,6 +11,9 @@
 
 - Improved the test suite by adding tests for the rule-related views.
 
+- OS2mo import jobs now print more debug information to the log if they receive
+  an invalid response.
+
 ## Version 3.20.1, 22nd June 2023
 
 "Artificial CEO"

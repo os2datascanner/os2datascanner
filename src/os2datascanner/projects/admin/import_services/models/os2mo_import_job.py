@@ -1,15 +1,48 @@
+from sys import stderr
+import json
 import logging
 import requests
 from tenacity import Retrying, stop_after_attempt, wait_exponential
+from collections import deque
 
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.projects.admin.adminapp.signals import get_pika_thread
-from ...core.models.background_job import BackgroundJob
+from ...core.models.background_job import JobState, BackgroundJob
+
 
 logger = logging.getLogger(__name__)
+
+
+message_buffer = deque(maxlen=5)
+
+
+def walk_mo_json_response(response: dict, *path):
+    here, steps = response, path
+    try:
+        while steps:
+            head, *steps = steps
+            here = here[head]
+            if steps and not isinstance(here, dict):
+                # We still have dictionary keys left, but the object we have
+                # here isn't a dictionary. Something has gone wrong
+                raise TypeError(
+                        f"for key \"{head}\": expected dict,"
+                        f" got {type(here).__name__}")
+        return here
+    except (KeyError, TypeError) as ex:
+        errors = response.get("errors")
+        error_texts = []
+        if errors:
+            for error in errors:
+                message = error.get("message")
+                if message:
+                    error_texts.append(message)
+        raise ValueError(
+                f"couldn't walk JSON path {path}",
+                error_texts or None) from ex
 
 
 class OS2moImportJob(BackgroundJob):
@@ -31,18 +64,17 @@ class OS2moImportJob(BackgroundJob):
         """Given a JSON response of a OS2mo GraphQL query for org_units,
            returns the next_cursor value."""
         logger.info("Fetching next_cursor...")
-        return json_query_response["data"][
-                                    "org_units"][
-                                        "page_info"][
-                                            "next_cursor"]
+        return walk_mo_json_response(
+                json_query_response,
+                "data", "org_units", "page_info", "next_cursor")
 
     def _get_org_unit_data(self, json_query_response: dict) -> list:
         """ Given a JSON response of a OS2mo GraphQL query for org_units,
             returns a list of objects."""
         logger.info("Fetching org_unit objects for iteration...")
-        return json_query_response["data"][
-                                    "org_units"][
-                                        "objects"]
+        return walk_mo_json_response(
+                json_query_response,
+                "data", "org_units", "objects")
 
     # Query for Org units, their parent, managers, Employees in form of Engagements and their
     # email. Using cursor pagination (cursor and limit variables), and takes email_type as a
@@ -94,6 +126,10 @@ class OS2moImportJob(BackgroundJob):
         return "OS2mo Import Job"
 
     def run(self):  # noqa CCR001
+        message_buffer.clear()
+
+        json_query_response = {}
+
         # To ensure graphql version consistency with os2mo-endpoint
         os2mo_url_endpoint = settings.OS2MO_ENDPOINT_BASE + "v7"
 
@@ -135,8 +171,7 @@ class OS2moImportJob(BackgroundJob):
 
                 if query_response.status_code != 204:
                     json_query_response = query_response.json()
-                else:
-                    json_query_response = {}
+                message_buffer.append(json_query_response)
 
             except requests.exceptions.JSONDecodeError:
                 logger.exception("Unable to decode JSON")
@@ -173,6 +208,8 @@ class OS2moImportJob(BackgroundJob):
 
                         if paginated_query_response.status_code != 204:
                             json_paginated_query_response = paginated_query_response.json()
+                            message_buffer.append(
+                                    json_paginated_query_response)
                             next_cursor = self._get_next_cursor(json_paginated_query_response)
 
                         for ou_data in self._get_org_unit_data(json_paginated_query_response):
@@ -205,5 +242,16 @@ class OS2moImportJob(BackgroundJob):
         post_import_cleanup()
 
     def finish(self):
+        if self.exec_state == JobState.FAILED and message_buffer:
+            print(
+                    "OS2moImportJob failed,"
+                    f" printing last {len(message_buffer)} JSON responses:",
+                    file=stderr)
+            for msg in message_buffer:
+                for line in json.dumps(msg, indent=True).split("\n"):
+                    print(f"\t{line}", file=stderr)
+                print("--", file=stderr)
+        message_buffer.clear()
+
         if (pe := get_pika_thread(init=False)):
             pe.synchronise(600.0)

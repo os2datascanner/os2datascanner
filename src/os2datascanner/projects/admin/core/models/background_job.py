@@ -105,9 +105,12 @@ class BackgroundJob(models.Model):
                 " call this method on a subclass")
 
     def finish(self):
-        """Called by the job runner when execution of the job finishes
-        (successfully or unsuccessfully). The default implementation of this
-        function does nothing."""
+        """Called by the job runner when execution of the job finishes. The
+        job runner will have finalised the status of the job before calling
+        this method, so implementations can check the exec_state field to see
+        whether or not their execution was successful.
+
+        The default implementation of this function does nothing."""
 
     class Meta:
         ordering = ['-changed_at']
