@@ -54,7 +54,9 @@ MSGRAPH_CLIENT_SECRET = ""
 
 # [os2mo]
 OS2MO_TOKEN_URL = ""
-OS2MO_ENDPOINT_URL = ""
+# The base URL for the GraphQL endpoints of an OS2mo installation; for example,
+# "https://os2mo.vstkom.dk/graphql/". Note that the trailing slash is required
+OS2MO_ENDPOINT_BASE = ""
 OS2MO_CLIENT_ID = ""
 OS2MO_CLIENT_SECRET = ""
 # UUID of Mo-address type that holds employee emailaddress
