@@ -1,11 +1,10 @@
 // jshint unused:false
 function checkFileSize(inputElement, maxSizeStr) {
     let runButton = document.getElementById("run-miniscan-btn");
-    let errorElement = document.getElementById("file-upload-response");
+    let errorText = document.getElementById("file-upload-error-response").innerText;
 
     if (inputElement.files.length !== 1) {
         runButton.disabled = true;
-        errorElement.style.visibility = "hidden";
         return;
     }
 
@@ -18,10 +17,9 @@ function checkFileSize(inputElement, maxSizeStr) {
     } else if (file.size > maxSize) {
         console.log("This is too big");
         runButton.disabled = true;
-        errorElement.style.visibility = "visible";
+        window.alert(errorText);
     } else {
         console.log("This is good");
-        errorElement.style.visibility = "hidden";
         runButton.disabled = false;
     }
 }

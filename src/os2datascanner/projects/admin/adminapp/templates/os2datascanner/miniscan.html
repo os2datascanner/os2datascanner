@@ -36,10 +36,12 @@
                  class="upload"
                  onchange="checkFileSize(this, '{{ limit }}' )" />
 
-          <div style="visibility: hidden;" id="file-upload-response" class="error">
-            {% with size=file_obj.size limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
-              {% trans "File too big" %} ({{ size|filesizeformat }} > {{ limit|filesizeformat }})
-            {% endwith %}
+          <div hidden id="file-upload-error-response">
+            {% trans "The selected file is too big!" %}
+            <br />
+            {% trans "Maximum allowed file size is: " %} {{ limit|filesizeformat }}
+            <br />
+            {% trans "Please, select another (smaller) file to scan." %}
           </div>
 
           <h2>{% trans "Rule to execute" %}</h2>
