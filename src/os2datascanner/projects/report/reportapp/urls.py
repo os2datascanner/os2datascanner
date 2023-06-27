@@ -13,7 +13,8 @@ from .views.saml import metadata
 from .views.misc_views import (
     ApprovalPageView, StatsPageView, SettingsPageView, AboutPageView, LogoutPageView)
 from .views.statistics_views import (
-    LeaderStatisticsPageView, DPOStatisticsPageView, UserStatisticsPageView)
+    LeaderStatisticsPageView, DPOStatisticsPageView, UserStatisticsPageView,
+    EmployeeView)
 from .views.report_views import (
     UserReportView, UserArchiveView, RemediatorView, RemediatorArchiveView,
     UndistributedView, UndistributedArchiveView)
@@ -38,6 +39,7 @@ urlpatterns = [
          name='statistics-user-me'),
     path('statistics/user/<uuid:pk>', UserStatisticsPageView.as_view(),
          name='statistics-user-id'),
+    path('statistics/employee/<uuid:pk>', EmployeeView.as_view(), name='employee'),
     re_path('approval', ApprovalPageView.as_view(), name="about"),
     re_path('stats',    StatsPageView.as_view(),    name="about"),
     re_path('settings', SettingsPageView.as_view(), name="settings"),

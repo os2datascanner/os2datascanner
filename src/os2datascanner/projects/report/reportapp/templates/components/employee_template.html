@@ -1,0 +1,52 @@
+{% load i18n %}
+
+<tr class="employee_row">
+  <td class="datatable__column--name">
+    <div class="overflow-ellipsis">
+      <div class="employee__fullname">{{ employee.get_full_name }}</div>
+      <div class="employee__username">{{ employee.username }}</div>
+    </div>
+  </td>
+  <td class="datatable__column--matchcount">
+    {{ employee.match_count }}
+    {% if employee.withheld_matches > 0 %}
+      <div class="withheld-matches"
+           title="{% blocktranslate with withheld=employee.withheld_matches %}The user has {{ withheld }} matches, which have not been distributed to the user yet. This can be done by a superuser in the report module.{% endblocktranslate %}">
+        {{ employee.withheld_matches }} <span>{% trans "withheld" %}</span>
+      </div>
+    {% endif %}
+  </td>
+  <td class="datatable__column--matchstatus">
+    <div class="status_wrapper" data-status="{{ employee.match_status }}">{{ employee.status }}</div>
+  </td>
+  <td class="datatable__column--leader-actions">
+    <div class="action_wrapper">
+      <a class="button"
+         href="mailto:{{ employee.email }}?body=Matches: {{ employee.match_count }}">{% trans "Send notification" %}</a>
+      <button class="overview-expand button button-caret button--has-icon"
+              title="{% trans 'Show/hide overview' %}"
+              type="button">
+        <i class="material-icons" aria-hidden="true">expand_more</i>
+      </button>
+    </div>
+  </td>
+</tr>
+<tr class="user-overview" hidden>
+  <td colspan="4">
+    <div class="overview_wrapper"
+         hx-get="{% url "statistics-user-id" employee.uuid %}"
+         hx-trigger="intersect"
+         hx-swap="outerHTML"
+         hx-target="this"
+         hx-select=".overview_wrapper"
+         hx-push-url="false">
+      <div class="loading">
+        <svg class="relative page-indicator"
+             id="report-page-indicator"
+             viewbox="0 0 100 100">
+          <circle id="circle" cx="50" cy="50" r="45"></circle>
+        </svg>
+      </div>
+    </div>
+  </td>
+</tr>

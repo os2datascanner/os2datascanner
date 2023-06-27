@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-22 15:43+0200\n"
+"POT-Creation-Date: 2023-06-27 10:26+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -112,7 +112,7 @@ msgid "probability"
 msgstr "sandsynlighed"
 
 #: reportapp/models/documentreport.py:141
-#: reportapp/views/statistics_views.py:210
+#: reportapp/views/statistics_views.py:211
 msgid "Other"
 msgstr "Andet"
 
@@ -296,6 +296,27 @@ msgstr "Afdelingens procentvise andel af håndterede resultater"
 #: reportapp/templates/components/pagination.html:10
 msgid "of"
 msgstr "af"
+
+#: reportapp/templates/components/employee_template.html:14
+#, python-format
+msgid ""
+"The user has %(withheld)s matches, which have not been distributed to the "
+"user yet. This can be done by a superuser in the report module."
+msgstr ""
+"Brugeren har %(withheld)s resultater, som ikke er blevet uddelt til brugeren "
+"endnu. Dette kan gøres af en superbruger i rapportmodulet."
+
+#: reportapp/templates/components/employee_template.html:15
+msgid "withheld"
+msgstr "tilbageholdt"
+
+#: reportapp/templates/components/employee_template.html:25
+msgid "Send notification"
+msgstr "Send påmindelse"
+
+#: reportapp/templates/components/employee_template.html:27
+msgid "Show/hide overview"
+msgstr "Vis/skjul overblik"
 
 #: reportapp/templates/components/faq_toc.html:5
 #: reportapp/templates/manual.html:138
@@ -541,28 +562,11 @@ msgstr ""
 "“Færdig”-statussen har ingen resultater. En bruger med “Accepteret” har "
 "håndteret mindst 75%% af sine seneste resultater."
 
-#: reportapp/templates/components/leader-statistics-template.html:132
-#, python-format
-msgid ""
-"The user has %(withheld)s matches, which have not been distributed to the "
-"user yet. This can be done by a superuser in the report module."
-msgstr ""
-"Brugeren har %(withheld)s resultater, som ikke er blevet uddelt til brugeren "
-"endnu. Dette kan gøres af en superbruger i rapportmodulet."
+#: reportapp/templates/components/leader-statistics-template.html:126
+msgid "Loading employee ..."
+msgstr "Indlæser medarbejder ..."
 
-#: reportapp/templates/components/leader-statistics-template.html:133
-msgid "withheld"
-msgstr "tilbageholdt"
-
-#: reportapp/templates/components/leader-statistics-template.html:143
-msgid "Send notification"
-msgstr "Send påmindelse"
-
-#: reportapp/templates/components/leader-statistics-template.html:145
-msgid "Show/hide overview"
-msgstr "Vis/skjul overblik"
-
-#: reportapp/templates/components/leader-statistics-template.html:174
+#: reportapp/templates/components/leader-statistics-template.html:131
 msgid "No employees found."
 msgstr "Ingen medarbejdere fundet."
 
@@ -1116,19 +1120,19 @@ msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/statistics_views.py:211
+#: reportapp/views/statistics_views.py:212
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/statistics_views.py:212
+#: reportapp/views/statistics_views.py:213
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/statistics_views.py:213
+#: reportapp/views/statistics_views.py:214
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/statistics_views.py:494
+#: reportapp/views/statistics_views.py:512
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."

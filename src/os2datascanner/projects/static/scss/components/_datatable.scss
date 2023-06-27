@@ -140,6 +140,19 @@
     background-color: rgba(0, 0, 0, .07);
   }
 
+
+  tr {
+
+    td {
+      transition: opacity 200ms ease-in-out;
+    }
+
+    &.htmx-swapping td,
+    &.htmx-settling td {
+      opacity: 0;
+    }
+  }
+
   .matches-list>td,
   .matches-list>th {
     background-color: rgba(0, 0, 0, .035);
@@ -393,7 +406,8 @@
 }
 
 @media (max-width: $break-lg) {
-  col.datatable__column--datasource_last_modified, 
+
+  col.datatable__column--datasource_last_modified,
   td.datatable__column--datasource_last_modified,
   th.datatable__column--datasource_last_modified {
     display: none;
@@ -440,6 +454,11 @@
   line-height: normal; // prevent y-overflow
   padding: var(--datatable-cell-padding) calc(var(--datatable-cell-padding) / 2);
   vertical-align: middle;
+
+  &.loading {
+    text-align: center;
+    font-style: italic;
+  }
 
   .overflow-ellipsis {
 
