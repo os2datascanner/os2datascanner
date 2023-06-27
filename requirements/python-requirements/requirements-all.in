@@ -26,7 +26,7 @@ dropbox==10.3.0
 exchangelib==4.8.0  # Brittle API; do /not/ bump without checking for changes!
 lxml
 olefile
-os2ds-rules==0.0.8
+os2ds-rules==0.0.9
 Pillow
 prometheus_client
 PyPDF2
