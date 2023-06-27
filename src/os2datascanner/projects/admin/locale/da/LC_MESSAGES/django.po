@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-22 15:42+0200\n"
+"POT-Creation-Date: 2023-06-27 13:12+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -550,42 +550,50 @@ msgstr "personnavne"
 msgid "address"
 msgstr "adresse"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:45
-#: adminapp/templates/components/admin-widgets/rule-builder.html:86
-#: adminapp/templates/components/admin-widgets/rule-builder.html:112
+#: adminapp/templates/components/admin-widgets/rule-builder.html:34
+msgid "Experimental"
+msgstr "Eksperimentel"
+
+#: adminapp/templates/components/admin-widgets/rule-builder.html:35
+msgid "CPR-nr. (Turbo)"
+msgstr "CPR-nr. (Turbo)"
+
+#: adminapp/templates/components/admin-widgets/rule-builder.html:42
+#: adminapp/templates/components/admin-widgets/rule-builder.html:83
+#: adminapp/templates/components/admin-widgets/rule-builder.html:109
 #: adminapp/templatetags/utility_tags.py:62
 msgid "and"
 msgstr "og"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:60
+#: adminapp/templates/components/admin-widgets/rule-builder.html:57
 msgid "or"
 msgstr "eller"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:77
-#: adminapp/templates/components/admin-widgets/rule-builder.html:98
-#: adminapp/templates/components/admin-widgets/rule-builder.html:107
+#: adminapp/templates/components/admin-widgets/rule-builder.html:74
+#: adminapp/templates/components/admin-widgets/rule-builder.html:95
+#: adminapp/templates/components/admin-widgets/rule-builder.html:104
 msgid "with"
 msgstr "med"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:80
-#: adminapp/templates/components/admin-widgets/rule-builder.html:110
+#: adminapp/templates/components/admin-widgets/rule-builder.html:77
+#: adminapp/templates/components/admin-widgets/rule-builder.html:107
 msgid "modulus 11-,"
 msgstr "modulus 11-,"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:84
+#: adminapp/templates/components/admin-widgets/rule-builder.html:81
 msgid "probability,-"
 msgstr "sandsynligheds-,"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:89
-#: adminapp/templates/components/admin-widgets/rule-builder.html:115
+#: adminapp/templates/components/admin-widgets/rule-builder.html:86
+#: adminapp/templates/components/admin-widgets/rule-builder.html:112
 msgid "context check"
 msgstr "konteksttjek"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:94
+#: adminapp/templates/components/admin-widgets/rule-builder.html:91
 msgid "Regular expression"
 msgstr "Regulært udtryk"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:101
+#: adminapp/templates/components/admin-widgets/rule-builder.html:98
 msgid "expanded matching"
 msgstr "udvidet søgning"
 
@@ -628,15 +636,12 @@ msgid "per page"
 msgstr "pr. side"
 
 #: adminapp/templates/components/miniscan-results.html:4
-#, fuzzy
-#| msgid "or upload"
 msgid "No file uploaded."
-msgstr "Ingen fil var uploadet."
+msgstr "Ingen fil uploadet."
 
-#: adminapp/templates/components/miniscan-results.html:7
-#, python-format
-msgid "File too big (%(size)s bytes > %(limit)s bytes)."
-msgstr "Fil var for stor (%(size)s byte > %(limit)s byte)."
+#: adminapp/templates/components/miniscan-results.html:8
+msgid "File too big"
+msgstr "Valgte fil er for stor"
 
 #: adminapp/templates/components/miniscan-results.html:12
 msgid "No rule specified."
@@ -1127,11 +1132,11 @@ msgstr "Markér som set"
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
-#: adminapp/templates/os2datascanner/miniscan.html:12
+#: adminapp/templates/os2datascanner/miniscan.html:17
 msgid "OS2datascanner mini-scanner"
 msgstr "OS2datascanner miniscanner"
 
-#: adminapp/templates/os2datascanner/miniscan.html:14
+#: adminapp/templates/os2datascanner/miniscan.html:19
 msgid ""
 "The mini-scanner lets you execute any OS2datascanner rule on a single file, "
 "and returns the results directly to this page."
@@ -1139,24 +1144,36 @@ msgstr ""
 "Med miniscanneren kan man afvikle en arbitrær OS2datascanner-regel på én "
 "enkel fil. Resultaterne vises umiddelbart på denne side."
 
-#: adminapp/templates/os2datascanner/miniscan.html:26
+#: adminapp/templates/os2datascanner/miniscan.html:31
 msgid "File to scan"
 msgstr "Upload fil"
 
-#: adminapp/templates/os2datascanner/miniscan.html:28
+#: adminapp/templates/os2datascanner/miniscan.html:40
+msgid "The selected file is too big!"
+msgstr "Den valgte fil er for stor!"
+
+#: adminapp/templates/os2datascanner/miniscan.html:42
+msgid "Maximum allowed file size is: "
+msgstr "Den maksimalt tilladte filstørrelse er: "
+
+#: adminapp/templates/os2datascanner/miniscan.html:44
+msgid "Please, select another (smaller) file to scan."
+msgstr "Vælg venligst at scanne en anden (mindre) fil."
+
+#: adminapp/templates/os2datascanner/miniscan.html:47
 msgid "Rule to execute"
 msgstr "Definér regel"
 
-#: adminapp/templates/os2datascanner/miniscan.html:30
+#: adminapp/templates/os2datascanner/miniscan.html:53
 #: adminapp/templates/os2datascanner/scanners.html:126
 msgid "Run"
 msgstr "Kør"
 
-#: adminapp/templates/os2datascanner/miniscan.html:31
+#: adminapp/templates/os2datascanner/miniscan.html:55
 msgid "Scan result"
 msgstr "Scanresultat"
 
-#: adminapp/templates/os2datascanner/miniscan.html:32
+#: adminapp/templates/os2datascanner/miniscan.html:56
 msgid "(none yet)"
 msgstr "(endnu ingen)"
 
@@ -2762,11 +2779,9 @@ msgstr "Ingen organisatoriske enheder"
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
 
-#~ msgid "Experimental"
-#~ msgstr "Eksperimentel"
-
-#~ msgid "CPR-nr. (Turbo)"
-#~ msgstr "CPR-nr. (Turbo)"
+#, python-format
+#~ msgid "File too big (%(size)s bytes > %(limit)s bytes)."
+#~ msgstr "Fil var for stor (%(size)s byte > %(limit)s byte)."
 
 #~ msgid "Done"
 #~ msgstr "Udført"
