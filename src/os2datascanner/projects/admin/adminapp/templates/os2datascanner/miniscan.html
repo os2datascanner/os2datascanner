@@ -1,8 +1,13 @@
 {% extends "partials/base.html" %}
 
+{% load static %}
 {% load i18n %}
 
 {% block rendertype %}regular{% endblock %}
+
+{% block scripts %}
+  <script defer src="{% static 'js/validateFileSize.js' %}"></script>
+{% endblock %}
 
 {% block body %}
   {% include "partials/header.html" %}
@@ -24,10 +29,27 @@
             hx-encoding="multipart/form-data"
             hx-indicator="div.spinner">
         <h2>{% trans "File to scan" %}</h2>
-        <input name="file" type="file" class="upload" />
-        <h2>{% trans "Rule to execute" %}</h2>
+        {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
+          <input name="file"
+                 id="upload-file"
+                 type="file"
+                 class="upload"
+                 onchange="checkFileSize(this, '{{ limit }}' )" />
+
+          <div style="visibility: hidden;" id="file-upload-response" class="error">
+            {% with size=file_obj.size limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
+              {% trans "File too big" %} ({{ size|filesizeformat }} > {{ limit|filesizeformat }})
+            {% endwith %}
+          </div>
+
+          <h2>{% trans "Rule to execute" %}</h2>
+        {% endwith %}
         {% include "components/admin-widgets/rule-builder.html" with hidden=True %}
-        <button class="button button--cta" type="submit" style="margin-top: 1em">{% trans "Run" %}</button>
+        <button id="run-miniscan-btn"
+                class="button button--cta"
+                type="submit"
+                style="margin-top: 1em">{% trans "Run" %}</button>
+
         <h3>{% trans "Scan result" %}</h3>
         <div id="response">{% trans "(none yet)" %}</div>
       </form>
