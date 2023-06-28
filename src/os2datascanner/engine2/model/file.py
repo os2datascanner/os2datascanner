@@ -3,6 +3,7 @@ import os.path
 from pathlib import Path
 from datetime import datetime
 from dateutil.tz import gettz
+from functools import cached_property
 from contextlib import contextmanager
 
 from ..conversions.types import OutputType
@@ -61,9 +62,12 @@ stat_attributes = (
 class FilesystemResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
-        self._full_path = os.path.join(
-                self._get_cookie(), self.handle.relative_path)
         self._mr = None
+
+    @cached_property
+    def _full_path(self):
+        return os.path.join(
+                self._get_cookie(), self.handle.relative_path)
 
     def _generate_metadata(self):
         yield from super()._generate_metadata()

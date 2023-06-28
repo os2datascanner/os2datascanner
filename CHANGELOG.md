@@ -39,6 +39,9 @@
 - The second and subsequent scans of a PDF file no longer unconditionally
   download the file to check its authoring timestamp.
 
+- The second and subsequent scans of an office file no longer perform
+  unnecessary conversion tasks to compute filenames.
+
 ## Version 3.20.1, 22nd June 2023
 
 "Artificial CEO"
