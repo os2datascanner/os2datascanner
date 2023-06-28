@@ -63,39 +63,16 @@
 
 .orgunit-list {
 
-  .root {
-
-    ul {
-      margin-bottom: 0;
-    }
-
-    li {
-      margin-top: 0.5rem;
-
-      &:last-of-type {
-        padding-bottom: 0;
-        margin-bottom: 0;
-      }
-    }
-  }
-
-  .orgunit_name {
-    display: inline-block;
-    width: 30%;
-    min-width: fit-content;
+  .orgunit_name .parent {
+    color: var(--color-text-secondary);
+    font-style: italic;
   }
 
   .orgunit_members {
     font-style: italic;
-    display: inline-block;
-    width: 15%;
-    min-width: fit-content;
   }
 
   .orgunit_managers {
-    display: inline-block;
-    width: 20%;
-    min-width: fit-content;
 
     ul {
       list-style: none;
@@ -127,6 +104,11 @@
       }
     }
 
+  }
+
+  .no_units {
+    text-align: center;
+    font-style: italic;
   }
 }
 

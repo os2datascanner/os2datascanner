@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
 from django.http import Http404
 
 from ...adminapp.views.views import RestrictedListView
@@ -15,28 +14,20 @@ class OrganizationalUnitListView(RestrictedListView):
 
     # Filter queryset based on organization:
     def get_queryset(self):
-        base_qs = super().get_queryset()
+        qs = super().get_queryset()
 
         org = self.kwargs['org']
 
-        parent_query = Q(parent__isnull=True, organization=org)
-
-        is_htmx = self.request.headers.get("HX-Request", False)
-        if is_htmx:
-            htmx_trigger = self.request.headers.get("HX-Trigger-Name", None)
-            if htmx_trigger == "children":
-                parent_query = Q(parent__pk=self.request.GET.get("parent"), organization=org)
+        qs = qs.filter(organization=org)
 
         if search_field := self.request.GET.get("search_field", ""):
-            parent_query = Q(name__icontains=search_field, organization=org)
-
-        units = base_qs.filter(parent_query)
+            qs = qs.filter(name__icontains=search_field)
 
         show_empty = self.request.GET.get("show_empty", "off") == "on"
         if not show_empty:
-            units = units.exclude(positions=None)
+            qs = qs.exclude(positions=None)
 
-        return units
+        return qs
 
     def setup(self, request, *args, **kwargs):
         org = get_object_or_404(Organization, slug=kwargs['org_slug'])
@@ -57,6 +48,7 @@ class OrganizationalUnitListView(RestrictedListView):
         context['search_targets'] = [
             unit.uuid for unit in self.object_list] if self.request.GET.get(
             "search_field", None) else []
+        context['show_empty'] = self.request.GET.get('show_empty', 'off') == 'on'
         return context
 
     def post(self, request, *args, **kwargs):

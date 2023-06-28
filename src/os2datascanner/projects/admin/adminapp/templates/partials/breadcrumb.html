@@ -81,6 +81,14 @@
     <span class="text-grey">{% trans "update organization"|capfirst %}</span>
   {% endif %}
 
+  {% if page == 'orgunit_list' %}
+    <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
+
+    <i id="chevron_right" class="material-icons">chevron_right</i>
+
+    <span class="text-grey">{% trans "organizational hierarchy"|capfirst %}</span>
+  {% endif %}
+
   {% if page == 'ldap' %}
     <a href="/organizations/" class="link-color">{% trans "organizations"|capfirst %}</a>
 

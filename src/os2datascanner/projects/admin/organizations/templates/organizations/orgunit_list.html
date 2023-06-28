@@ -11,8 +11,9 @@
        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
        hx-push-url='true'>
 
-    <a class="button" href="{% url "organization-list" %}">← {% trans "Return to organization overview" %}</a>
-    {% if FEATURES.ORG_STRUCTURE in organization.client.enabled_features and orgunit_list.exists %}
+    {% include "partials/breadcrumb.html" with page="orgunit_list" %}
+
+    {% if FEATURES.ORG_STRUCTURE in organization.client.enabled_features %}
       <h1>{% trans "organizational hierarchy for"|capfirst %} {{ organization }}</h1>
       <form name="orgunit_filters"
             id="orgunit_filters"
@@ -21,8 +22,8 @@
             hx-get="{% url "orgunit-list" organization.slug %}"
             hx-trigger="change, keyup delay:200ms from:#search_field"
             hx-swap="outerHTML"
-            hx-select=".root"
-            hx-target=".root">
+            hx-select=".content"
+            hx-target=".content">
         <div class="orgunit_input_wrapper search_field_wrapper">
           <input type="search"
                  name="search_field"
@@ -31,34 +32,117 @@
                  value="{{ request.GET.search_field }}" />
         </div>
         <div class="orgunit_input_wrapper">
-          <input type="checkbox" name="show_empty" id="show_empty" value="on" />
+          <input type="checkbox"
+                 name="show_empty"
+                 id="show_empty"
+                 value="on"
+                 autocomplete="off"
+                 {% if show_empty %}checked{% endif %} />
           <label for="show_empty">{% trans "Show empty units" %}</label>
         </div>
       </form>
-      <ul class="root">
-        {% for node in orgunit_list|unique_roots %}
-          {% include "organizations/orgunit_element.html" with node=node.get_root %}
-        {% endfor %}
-      </ul>
-      <div class="pagination_options">
-        <span class="step-links">
-          {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; {% trans "First" %}</a>
-            <a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
-          {% endif %}
- 
-          <span class="current">
-            {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}.
-          </span>
- 
-          {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">{% trans "Last" %} &raquo;</a>
-          {% endif %}
-        </span>
-      </div>
-    {% else %}
-      <div class="root">{% trans "No organizational units." %}</div>
     {% endif %}
   </div>
+  {% if FEATURES.ORG_STRUCTURE in organization.client.enabled_features %}
+    <div class="datatable-wrapper card orgunit-list"
+         role="region"
+         tabindex="0"
+         aria-label="{% trans 'Organizational units' %}"
+         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+         hx-push-url='true'>
+      <table class="datatable">
+        <colgroup>
+          <col class="datatable__column--name">
+          <col class="datatable__column--info">
+          <col class="datatable__column--managers">
+        </colgroup>
+        <thead>
+          <tr class="table-topbar topbar-stick sticky">
+            <th class="datatable__column--name">{% trans "Name" %}</th>
+            <th class="datatable__column--info">{% trans "Accounts" %}</th>
+            <th class="datatable__column--managers">{% trans "Managers" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if orgunit_list.exists %}
+            {% for orgunit in orgunit_list %}
+              <tr id="orgunit__{{ orgunit.pk }}">
+                <td class="datatable__column--name orgunit_name">
+                  <div>{{ orgunit.name }}</div>
+                  {% if orgunit.parent %}<div class="parent">({{ orgunit.parent.name }})</div>{% endif %}
+                </td>
+                <td class="datatable__column--info orgunit_members">
+                  {{ orgunit.members_associated }} {% trans "accounts associated." %}
+                </td>
+                <td class="datatable__column--managers orgunit_managers">
+                  <ul>
+                    {% for manager_pos in orgunit.managers %}
+                      <li class="manager_li"
+                          title="{% trans "Click to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ orgunit }}."
+                          hx-post=""
+                          hx-swap="outerHTML"
+                          hx-target="#orgunit__{{ orgunit.pk }}"
+                          hx-select="#orgunit__{{ orgunit.pk }}"
+                          hx-trigger="click"
+                          hx-vals='{"orgunit": "{{ orgunit.pk }}", "rem-manager": "{{ manager_pos.account.uuid }}"}'
+                          hx-confirm="{% trans "Are you sure you want to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ orgunit }}?">
+                        {{ manager_pos.account.get_full_name }}
+                      </li>
+                    {% endfor %}
+                    <li class="add_manager">
+                      <button type="button" class="add_manager_button button button--small">
+                        <svg class="icon">
+                          <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
+                        </svg>
+                      </button>
+                      <select class="select_manager"
+                              name="add-manager"
+                              hidden
+                              hx-post=""
+                              hx-swap="outerHTML"
+                              hx-target="#orgunit__{{ orgunit.pk }}"
+                              hx-select="#orgunit__{{ orgunit.pk }}"
+                              hx-trigger="change"
+                              hx-vals='{"orgunit": "{{ orgunit.pk }}"}'>
+                        <option value="">{% trans "Choose new manager" %}</option>
+                        {% for account in accounts %}<option value="{{ account.uuid }}">{{ account.get_full_name }}</option>{% endfor %}
+                      </select>
+                    </li>
+
+                  </ul>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td class="no_units" colspan="3">{% trans "No organizational units found ..." %}</td>
+            </tr>
+          {% endif %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="pagination_options">
+              <span class="step-links">
+                {% if page_obj.has_previous %}
+                  <a href="?page=1">«{% trans "First" %}</a>
+                  <a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
+                {% endif %}
+ 
+                <span class="current">
+                  {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}.
+                </span>
+ 
+                {% if page_obj.has_next %}
+                  <a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
+                  <a href="?page={{ page_obj.paginator.num_pages }}">{% trans "Last" %}»</a>
+                {% endif %}
+              </span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  {% else %}
+    <div class="root">{% trans "No organizational units." %}</div>
+  {% endif %}
 {% endblock %}

@@ -7,7 +7,7 @@
   <script src="{% static "js/index.js" %}"></script>
 {% endblock %}
 
-{%  for client in client_list %}
+{% for client in client_list %}
   <div class="aside">
     <h1 class="page-title">{% trans 'organizations for'|capfirst %} {{ client }}</h1>
     <div class="btn">
@@ -119,7 +119,7 @@
                                 {% if exec_state_value == "finished" %}
                                   {% trans 'last updated'|capfirst %},
                                 {% else %}
-                                  {{ organization.realm.importjob.first.exec_state.label|capfirst  }},
+                                  {{ organization.realm.importjob.first.exec_state.label|capfirst }},
                                 {% endif %}
                                 {{ organization.realm.importjob.first.changed_at|date:'d-m-Y H:i' }}
                               </span>
@@ -177,7 +177,7 @@
                                 {% if exec_state_value == "finished" %}
                                   {% trans 'last updated'|capfirst %},
                                 {% elif organization.os2moimport.first.exec_state.label %}
-                                  {{ organization.os2moimport.first.exec_state.label|capfirst  }},
+                                  {{ organization.os2moimport.first.exec_state.label|capfirst }},
                                 {% endif %}
                                 {{ organization.os2moimport.first.changed_at|date:'d-m-Y H:i' }}
                               </span>
@@ -254,7 +254,7 @@
                                 {% if exec_state_value == "finished" %}
                                   {% trans 'last updated'|capfirst %},
                                 {% elif organization.msimport.first.exec_state.label %}
-                                  {{ organization.msimport.first.exec_state.label|capfirst  }},
+                                  {{ organization.msimport.first.exec_state.label|capfirst }},
                                 {% endif %}
                                 {{ organization.msimport.first.changed_at|date:'d-m-Y H:i' }}
                               </span>
@@ -269,10 +269,9 @@
               <td class="datatable__column--actions">
                 {% if FEATURES.ORG_STRUCTURE in client.enabled_features %}
                   <a href="{% url "orgunit-list" organization.slug %}"
-                     class="button button--small button--grey">
-                    <svg class="icon">
-                      <use xlink:href="/static/svg/symbol-defs.svg#icon-info"></use>
-                    </svg>
+                     class="button button--small button--grey"
+                     title="{% trans "View organizational units." %}">
+                    {% include "../components/svg-icons/org.svg" %}
                   </a>
                 {% endif %}
                 {% if request.user.is_superuser %}
@@ -288,8 +287,7 @@
                     </a>
                   {% else %}
                     <form action="{% url 'delete-organization' slug=organization.slug %}"
-                          method="post"
-                          style="display: inline-block">
+                          method="post">
                       {% csrf_token %}
                       {{ form.as_p }}
                       <button type="submit"
