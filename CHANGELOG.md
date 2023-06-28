@@ -2,6 +2,10 @@
 
 ## Next release
 
+### New in this release
+
+- The organizational unit overview is now cleaner and prettier in a table.
+
 ### General improvements
 
 - Rows in the leader overview are now loaded dynamically as the user scrolls.

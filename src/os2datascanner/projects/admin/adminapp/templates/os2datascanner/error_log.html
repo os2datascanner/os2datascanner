@@ -41,7 +41,8 @@
                  name="search_field"
                  id="search_field"
                  placeholder="{% trans "Search for error message" %}"
-                 value="{{ request.GET.search_field }}" />
+                 value="{{ request.GET.search_field }}"
+                 autocomplete="off" />
           <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
           <input type="hidden" name="order" id="order" value="{{ order }}">
         </div>
