@@ -36,6 +36,9 @@
 - OS2mo import jobs now print more debug information to the log if they receive
   an invalid response.
 
+- The second and subsequent scans of a PDF file no longer unconditionally
+  download the file to check its authoring timestamp.
+
 ## Version 3.20.1, 22nd June 2023
 
 "Artificial CEO"
