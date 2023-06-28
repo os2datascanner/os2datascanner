@@ -45,6 +45,9 @@
           {% elif msgraphcalendarscanner.pk %}
             <a href="/msgraph-calendarscanners/{{ msgraphcalendarscanner.pk }}/run/"
                class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
+          {% elif msgraphteamsfilescanner.pk %}
+            <a href="/msgraph-teams-filescanners/{{ msgraphteamsfilescanner.pk }}/run/"
+               class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>
           {% elif googledrivescanner.pk %}
             <a href="/googledrivescanners/{{ googledrivescanner.pk }}/run/"
                class="button button--cta button--large run-scan-button">{% trans "Let's go!" %}</a>

@@ -32,6 +32,7 @@ class Scan(ModelChoiceFlag):
     MSGRAPH_FILESCAN = (1 << 6, _('Microsoft Graph - file scan'))
     GOOGLE_DRIVESCAN = (1 << 7, _('Google - drive scan'))
     GOOGLE_MAILSCAN = (1 << 8, _('Google - mail scan'))
+    MSGRAPH_TEAMS_FILESCAN = (1 << 9, _('Microsoft Graph - Teams file scan'))
     # NB! Int value must not exceed 2,147,483,647 (limited by the db field)
     # Thus a maximum of 31 scan types in one Flag class
 

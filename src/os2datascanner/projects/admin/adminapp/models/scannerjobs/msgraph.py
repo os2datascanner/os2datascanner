@@ -22,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 from os2datascanner.engine2.model.msgraph.mail import MSGraphMailSource
 from os2datascanner.engine2.model.msgraph.files import MSGraphFilesSource
 from os2datascanner.engine2.model.msgraph.calendar import MSGraphCalendarSource
+from os2datascanner.engine2.model.msgraph.teams import MSGraphTeamsFilesSource
 
 from ....organizations.models.aliases import AliasType
 from ....grants.models import GraphGrant
@@ -173,3 +174,28 @@ class MSGraphCalendarScanner(MSGraphScanner):
                 client_secret=settings.MSGRAPH_CLIENT_SECRET,
                 userlist=_create_user_list(self.org_unit)
             )
+
+
+class MSGraphTeamsFileScanner(MSGraphScanner):
+
+    linkable = True
+
+    do_link_check = models.BooleanField(
+        default=False,
+        verbose_name=_("check dead links")
+    )
+
+    def get_type(self):
+        return 'msgraph-teams-file'
+
+    def get_absolute_url(self):
+        """Get the absolute URL for scanners."""
+        return '/msgraph-teams-filescanners/'
+
+    def generate_sources(self):
+
+        yield MSGraphTeamsFilesSource(
+            client_id=settings.MSGRAPH_APP_ID,
+            tenant_id=str(self.grant.tenant_id),
+            client_secret=settings.MSGRAPH_CLIENT_SECRET,
+        )

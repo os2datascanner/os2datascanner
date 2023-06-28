@@ -24,6 +24,7 @@ from os2datascanner.projects.admin.utilities import UserWrapper
 from ..models.scannerjobs.msgraph import MSGraphMailScanner
 from ..models.scannerjobs.msgraph import MSGraphFileScanner
 from ..models.scannerjobs.msgraph import MSGraphCalendarScanner
+from ..models.scannerjobs.msgraph import MSGraphTeamsFileScanner
 from .views import LoginRequiredMixin
 from .scanner_views import (
         ScannerRun, ScannerList, ScannerAskRun, ScannerCreate, ScannerDelete,
@@ -359,3 +360,85 @@ class MSGraphCalendarRun(ScannerRun):
     success and error details on failure."""
     model = MSGraphCalendarScanner
     type = 'msgraph-calendar'
+
+
+class MSGraphTeamsFileList(ScannerList):
+    """Displays the list of all Microsoft Graph file scanner jobs."""
+    model = MSGraphTeamsFileScanner
+    type = 'msgraph-teams-file'
+
+
+class MSGraphTeamsFileCreate(View):
+    """Creates a new Microsoft Graph Teams file scanner job. (See MSGraphMailCreate
+    for more details.)"""
+
+    def dispatch(self, request, *args, **kwargs):
+        user = UserWrapper(request.user)
+        if GraphGrant.objects.filter(user.make_org_Q()).exists():
+            handler = _MSGraphTeamsFileCreate.as_view()
+        else:
+            handler = _MSGraphPermissionRequest.as_view(
+                    redirect_token="msgraphteamsfilescanner_add")
+        return handler(request, *args, **kwargs)
+
+
+class _MSGraphTeamsFileCreate(ScannerCreate):
+    """Creates a new Microsoft Graph file scanner job."""
+    model = MSGraphTeamsFileScanner
+    type = 'msgraph-teams-file'
+    fields = ['name', 'schedule', 'grant',
+              'exclusion_rules', 'only_notify_superadmin',
+              'do_ocr', 'do_last_modified_check', 'rules',
+              'organization', ]
+
+    def get_form(self, form_class=None):
+        return patch_form(self, super().get_form(form_class))
+
+    def get_success_url(self):
+        """The URL to redirect to after successful creation."""
+        return '/msgraph-teams-filescanners/%s/created/' % self.object.pk
+
+
+class MSGraphTeamsFileUpdate(ScannerUpdate):
+    """Displays the parameters of an existing Microsoft Graph file scanner job
+    for modification."""
+    model = MSGraphTeamsFileScanner
+    type = 'msgraph-teams-filescanners'
+    fields = ['name', 'schedule', 'grant', 'org_unit',
+              'do_ocr', 'only_notify_superadmin', 'exclusion_rules',
+              'do_last_modified_check', 'rules', 'organization', ]
+
+    def get_form(self, form_class=None):
+        return patch_form(self, super().get_form(form_class))
+
+    def get_success_url(self):
+        return '/msgraph-teams-filescanners/%s/saved/' % self.object.pk
+
+
+class MSGraphTeamsFileDelete(ScannerDelete):
+    """Deletes a Microsoft Graph file scanner job."""
+    model = MSGraphTeamsFileScanner
+    fields = []
+    success_url = '/msgraph-teams-filescanners/'
+
+
+class MSGraphTeamsFileCopy(ScannerCopy):
+    """Creates a copy of an existing Microsoft Graph mail scanner job."""
+    model = MSGraphTeamsFileScanner
+    type = 'msgraph-teams-file'
+    fields = ['name', 'schedule', 'grant',
+              'org_unit', 'exclusion_rules', 'only_notify_superadmin',
+              'do_ocr', 'do_last_modified_check', 'rules',
+              'organization', ]
+
+
+class MSGraphTeamsFileAskRun(ScannerAskRun):
+    """Prompts the user for confirmation before running a Microsoft Graph file
+    scanner job."""
+    model = MSGraphTeamsFileScanner
+
+
+class MSGraphTeamsFileRun(ScannerRun):
+    """Runs a Microsoft Graph file scanner job, displaying the new scan tag on
+    success and error details on failure."""
+    model = MSGraphTeamsFileScanner
