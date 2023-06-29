@@ -56,7 +56,7 @@
     <div class="datatable-wrapper card orgunit-list"
          role="region"
          tabindex="0"
-         aria-label="{% trans 'Organizational units' %}"
+         aria-label="{% trans 'organizational units'|capfirst %}"
          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
          hx-push-url='true'>
       <table class="datatable">
@@ -67,9 +67,9 @@
         </colgroup>
         <thead>
           <tr class="table-topbar topbar-stick sticky">
-            <th class="datatable__column--name">{% trans "Name" %}</th>
-            <th class="datatable__column--info">{% trans "Accounts" %}</th>
-            <th class="datatable__column--managers">{% trans "Managers" %}</th>
+            <th class="datatable__column--name">{% trans "name"|capfirst %}</th>
+            <th class="datatable__column--info">{% trans "accounts"|capfirst %}</th>
+            <th class="datatable__column--managers">{% trans "managers"|capfirst %}</th>
           </tr>
         </thead>
         <tbody>

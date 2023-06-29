@@ -147,8 +147,8 @@
       transition: opacity 200ms ease-in-out;
     }
 
-    &.htmx-swapping td,
-    &.htmx-settling td {
+    &.soft-load.htmx-swapping td,
+    &.soft-load.htmx-settling td {
       opacity: 0;
     }
   }

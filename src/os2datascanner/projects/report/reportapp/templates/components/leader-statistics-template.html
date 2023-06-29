@@ -118,7 +118,8 @@
       <tbody>
         {% if employees %}
           {% for employee in employees %}
-            <tr hx-get="{% url 'employee' employee.uuid %}"
+            <tr class="soft-load"
+                hx-get="{% url 'employee' employee.uuid %}"
                 hx-swap="outerHTML swap:200ms"
                 hx-target="this"
                 hx-trigger="revealed"
