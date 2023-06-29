@@ -1,7 +1,6 @@
 from os import listdir
 import PyPDF2
 import string
-import datetime
 from tempfile import TemporaryDirectory
 
 from ....utils.system_utilities import run_custom
@@ -148,21 +147,10 @@ class PDFObjectResource(FilesystemResource):
         yield from ()
 
     def get_last_modified(self):
-        # This is a generated, embedded file, so the last_modified_date should
-        # be taken from the parent container.
-        last_modified = None
-        # Get the top-level handle and follow it.
-        parent_handle = self.handle.source.handle.source.handle
-        with parent_handle.follow(self._sm).make_stream() as fp:
-            reader = _open_pdf_wrapped(fp)
-            info = reader.getDocumentInfo()
-            # Extract the modification date time and format it properly.
-            mod_date = info.get("/ModDate")
-            # Check that the mod_date is a string-like object.
-            if isinstance(mod_date, PyPDF2.generic.TextStringObject):
-                mod_date = mod_date.strip(WHITESPACE_PLUS).replace("'", "")[2:]
-                last_modified = datetime.datetime.strptime(mod_date, "%Y%m%d%H%M%S%z")
-        return last_modified
+        page_source: PDFPageSource = self.handle.source
+        document_source: PDFSource = page_source.handle.source
+        res = document_source.handle.follow(self._sm)
+        return res.get_last_modified()
 
 
 @Handle.stock_json_handler("pdf-object")

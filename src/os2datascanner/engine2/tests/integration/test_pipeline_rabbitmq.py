@@ -1,5 +1,5 @@
 import unittest
-from os2datascanner.engine2.demo.utils import DemoSourceUtility as TestSourceUtility
+from os2datascanner.engine2.commands.utils import DemoSourceUtility as TestSourceUtility
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from .test_pipeline import (handle_message, data_url, rule, expected_matches)
 

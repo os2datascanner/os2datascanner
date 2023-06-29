@@ -6,6 +6,18 @@
 
 - The organizational unit overview is now cleaner and prettier in a table.
 
+- Initial support for caching:
+
+  - OS2datascanner can now maintain a disk cache of the results of its
+    conversion operations.
+
+  - Converted forms can be retrieved from the cache almost instantaneously,
+    making it much easier to iteratively test and improve rules.
+
+  - Cached representations are compressed and encrypted: a 13 megabyte PDF
+    file with many embedded images, for example, uses approximately 50
+    kilobytes of cache space.
+
 ### General improvements
 
 - Rows in the leader overview are now loaded dynamically as the user scrolls.
@@ -19,8 +31,16 @@
 
 - Dead URLs are now presented in the error messages.
 
+- Improved the test suite by adding tests for the rule-related views.
+
 - OS2mo import jobs now print more debug information to the log if they receive
   an invalid response.
+
+- The second and subsequent scans of a PDF file no longer unconditionally
+  download the file to check its authoring timestamp.
+
+- The second and subsequent scans of an office file no longer perform
+  unnecessary conversion tasks to compute filenames.
 
 ## Version 3.20.1, 22nd June 2023
 

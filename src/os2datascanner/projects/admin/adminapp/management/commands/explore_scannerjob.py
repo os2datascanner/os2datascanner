@@ -2,7 +2,7 @@
 
 from django.core.management.base import BaseCommand
 
-from os2datascanner.engine2.demo import url_explorer
+from os2datascanner.engine2.commands import url_explorer
 from os2datascanner.engine2.model.core import SourceManager
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.scanner \
         import Scanner

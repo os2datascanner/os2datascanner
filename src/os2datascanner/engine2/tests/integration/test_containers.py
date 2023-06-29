@@ -2,7 +2,7 @@ import os.path
 from datetime import datetime
 import unittest
 
-from os2datascanner.engine2.demo.utils import DemoSourceUtility as TestSourceUtility
+from os2datascanner.engine2.commands.utils import DemoSourceUtility as TestSourceUtility
 from os2datascanner.engine2.model.core import (Source, SourceManager)
 from os2datascanner.engine2.model.file import (
         FilesystemSource, FilesystemHandle)

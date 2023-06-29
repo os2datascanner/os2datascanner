@@ -29,6 +29,7 @@ olefile
 os2ds-rules==0.0.9
 Pillow
 prometheus_client
+PyNaCl
 PyPDF2
 pysmbc
 pytest
