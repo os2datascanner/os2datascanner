@@ -12,15 +12,15 @@
       id="dropdown_options"
       name="dropdown_options"
       hx-trigger="change"
-      hx-target=".error_content"
-      hx-select=".error_content"
-      hx-swap="innerHTML"
-      hx-include="[id='errorlog_filters']"
+      hx-target=".content"
+      hx-select=".content"
+      hx-swap="outerHTML"
+      hx-include="[id='errorlog_filters'], [id='orgunit_filters']"
       hx-get="{{ request.path }}">
 
   <input type="hidden" name="page" id="page" value={{ page_obj.number }}>
 
-  <select name="paginate_by" id="paginate_by">
+  <select name="paginate_by" id="paginate_by" autocomplete="off">
     {% for option in paginate_by_options %}
       <option value="{{ option }}"
               {% if option == paginate_by %}selected="selected"{% endif %}>{{ option }} {% trans "per page" %}</option>

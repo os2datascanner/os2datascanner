@@ -149,7 +149,7 @@ class StatusCompleted(StatusBase):
     paginator_class = EmptyPagePaginator
     template_name = "os2datascanner/scan_completed.html"
     model = ScanStatus
-    paginate_by_options = [2, 10, 20, 50, 100, 250]
+    paginate_by_options = [10, 20, 50, 100, 250]
 
     def get_queryset(self):
         """Returns a queryset of Scannerjobs that are finished.

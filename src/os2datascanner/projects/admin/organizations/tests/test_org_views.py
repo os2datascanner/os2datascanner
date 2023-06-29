@@ -468,12 +468,12 @@ class OrganizationalUnitListViewTest(TestCase):
         self.assertEqual(response1.status_code, 200)
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(response3.status_code, 200)
-        self.assertIn(self.unit1, response1.context.get("orgunit_list"))
-        self.assertIn(self.unit2, response1.context.get("orgunit_list"))
-        self.assertIn(self.unit3, response2.context.get("orgunit_list"))
-        self.assertNotIn(self.unit4, response2.context.get("orgunit_list"))
-        self.assertIn(self.unit3, response3.context.get("orgunit_list"))
-        self.assertIn(self.unit4, response3.context.get("orgunit_list"))
+        self.assertIn(self.unit1, response1.context.get("object_list"))
+        self.assertIn(self.unit2, response1.context.get("object_list"))
+        self.assertIn(self.unit3, response2.context.get("object_list"))
+        self.assertNotIn(self.unit4, response2.context.get("object_list"))
+        self.assertIn(self.unit3, response3.context.get("object_list"))
+        self.assertIn(self.unit4, response3.context.get("object_list"))
 
     def test_administrator_for_list(self):
         """Administrators should be able to see the units belonging to
@@ -496,10 +496,10 @@ class OrganizationalUnitListViewTest(TestCase):
         self.assertEqual(response1.status_code, 404)
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(response3.status_code, 200)
-        self.assertIn(self.unit3, response2.context.get("orgunit_list"))
-        self.assertNotIn(self.unit4, response2.context.get("orgunit_list"))
-        self.assertIn(self.unit3, response3.context.get("orgunit_list"))
-        self.assertIn(self.unit4, response3.context.get("orgunit_list"))
+        self.assertIn(self.unit3, response2.context.get("object_list"))
+        self.assertNotIn(self.unit4, response2.context.get("object_list"))
+        self.assertIn(self.unit3, response3.context.get("object_list"))
+        self.assertIn(self.unit4, response3.context.get("object_list"))
 
     def test_regular_user_list(self):
         """Users with no priviliges should not be able to see any units."""
