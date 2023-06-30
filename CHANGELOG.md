@@ -42,6 +42,9 @@
 - The second and subsequent scans of an office file no longer perform
   unnecessary conversion tasks to compute filenames.
 
+- Hovering over a data point in a line chart once again displays its value in a
+  tooltip.
+
 ## Version 3.20.1, 22nd June 2023
 
 "Artificial CEO"
