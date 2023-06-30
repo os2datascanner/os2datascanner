@@ -14,12 +14,14 @@ from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 
-from ...report.organizations.models import Account, Organization, OrganizationalUnit, Position
+from ...report.organizations.models import (
+    Account, Organization, OrganizationalUnit, Position, Alias)
 from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.models.roles.dpo import DataProtectionOfficer
 from ..reportapp.views.statistics_views import (
-        StatisticsPageView, UserStatisticsPageView, LeaderStatisticsPageView)
-from ..reportapp.utils import iterate_queryset_in_batches
+        StatisticsPageView, UserStatisticsPageView, LeaderStatisticsPageView,
+        DPOStatisticsPageView)
+from ..reportapp.utils import iterate_queryset_in_batches, create_alias_and_match_relations
 
 from .generate_test_data import record_match, record_metadata
 
@@ -334,22 +336,22 @@ class StatisticsPageViewTest(TestCase):
         record_metadata(benny_metadata_1)
 
     def setUp(self):
-        org = Organization.objects.create(name="Statistics Test Corp.")
+        self.org = Organization.objects.create(name="Statistics Test Corp.")
 
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
         self.kjeld_account = Account.objects.create(
                 username="kjeld",
-                organization=org)
+                organization=self.org)
         self.egon_account = Account.objects.create(
                 username="egon",
-                organization=org)
+                organization=self.org)
         self.yvonne_account = Account.objects.create(
                 username="yvonne",
-                organization=org)
+                organization=self.org)
         self.benny_account = Account.objects.create(
                 username="benny",
-                organization=org)
+                organization=self.org)
 
         # AccountManager (above) takes care of creating corresponding User objects.
         # Assign them for use later here.
@@ -357,6 +359,33 @@ class StatisticsPageViewTest(TestCase):
         self.egon = User.objects.get(username="egon")
         self.yvonne = User.objects.get(username="yvonne")
         self.benny = User.objects.get(username="benny")
+
+        # Create aliases for the accounts
+        self.kjeld_alias = Alias.objects.create(
+            user=self.kjeld,
+            account=self.kjeld_account,
+            _alias_type='email',
+            _value='kjeld@jensen.com')
+        self.egon_alias = Alias.objects.create(
+            user=self.egon,
+            account=self.egon_account,
+            _alias_type='email',
+            _value='egon@olsen.com')
+        self.yvonne_alias = Alias.objects.create(
+            user=self.yvonne,
+            account=self.yvonne_account,
+            _alias_type='email',
+            _value='yvonne@jensen.com')
+        self.benny_alias = Alias.objects.create(
+            user=self.benny,
+            account=self.benny_account,
+            _alias_type='email',
+            _value='benny@frandsen.com')
+
+        create_alias_and_match_relations(self.kjeld_alias)
+        create_alias_and_match_relations(self.egon_alias)
+        create_alias_and_match_relations(self.yvonne_alias)
+        create_alias_and_match_relations(self.benny_alias)
 
     def test_own_userstatisticspage_without_privileges(self):
         """A User with an Account can see their personal statistics."""
@@ -502,6 +531,57 @@ class StatisticsPageViewTest(TestCase):
 
         dpo.delete()
 
+    def test_filter_by_scannerjob(self):
+        """Filtering by scannerjob should only return the reports associated
+        with a specific scannerjob."""
+        DataProtectionOfficer.objects.create(user=self.egon)
+        response11 = self.get_dpo_statisticspage_response(self.egon, params='?scannerjob=11')
+        response14 = self.get_dpo_statisticspage_response(self.egon, params='?scannerjob=14')
+        response17 = self.get_dpo_statisticspage_response(self.egon, params='?scannerjob=17')
+
+        # There are 2 reports from scanner job 11
+        self.assertEqual(response11.context_data.get('scannerjobs')[-1], "11")
+        self.assertEqual(response11.context_data.get('total_matches'), 2)
+
+        # There are 4 reports from scanner job 14
+        self.assertEqual(response14.context_data.get('scannerjobs')[-1], "14")
+        self.assertEqual(response14.context_data.get('total_matches'), 4)
+
+        # There are 1 reports from scanner job 17
+        self.assertEqual(response17.context_data.get('scannerjobs')[-1], "17")
+        self.assertEqual(response17.context_data.get('total_matches'), 1)
+
+    def test_filter_by_orgunit(self):
+        """Filtering by organizational units should only return results from
+        users with positions in that unit."""
+        DataProtectionOfficer.objects.create(user=self.egon)
+        olsenbanden = OrganizationalUnit.objects.create(
+            name='Olsen Banden',
+            uuid='1b8f4a41-f615-47b2-a341-23eff609f8f0',
+            organization=self.org)
+        kun_egon = OrganizationalUnit.objects.create(
+            name='Kun Egon',
+            uuid='b0dbf7d7-b528-4c58-a7ff-c8875719eb6b',
+            organization=self.org)
+
+        # Add accounts to the OUs
+        self.egon_account.units.add(olsenbanden, kun_egon)
+        self.benny_account.units.add(olsenbanden)
+        self.kjeld_account.units.add(olsenbanden)
+
+        response_ob = self.get_dpo_statisticspage_response(
+            self.egon, params='?orgunit=1b8f4a41-f615-47b2-a341-23eff609f8f0')
+        response_ke = self.get_dpo_statisticspage_response(
+            self.egon, params='?orgunit=b0dbf7d7-b528-4c58-a7ff-c8875719eb6b')
+
+        self.assertEqual(response_ob.context_data.get('orgunits')
+                         [-1], '1b8f4a41-f615-47b2-a341-23eff609f8f0')
+        self.assertEqual(response_ob.context_data.get('total_matches'), 6)
+
+        self.assertEqual(response_ke.context_data.get('orgunits')
+                         [-1], 'b0dbf7d7-b528-4c58-a7ff-c8875719eb6b')
+        self.assertEqual(response_ke.context_data.get('total_matches'), 2)
+
     # StatisticsPageView()
     def get_statisticspage_object(self):
         # XXX: we don't use request for anything! Is this deliberate?
@@ -527,6 +607,11 @@ class StatisticsPageViewTest(TestCase):
         request = self.factory.get(reverse('statistics-leader'))
         request.user = user
         return LeaderStatisticsPageView.as_view()(request, **kwargs)
+
+    def get_dpo_statisticspage_response(self, user, params, **kwargs):
+        request = self.factory.get(reverse('statistics-dpo') + params)
+        request.user = user
+        return DPOStatisticsPageView.as_view()(request, **kwargs)
 
 
 # Helper functions
