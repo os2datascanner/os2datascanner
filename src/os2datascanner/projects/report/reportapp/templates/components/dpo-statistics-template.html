@@ -14,6 +14,7 @@
 
     <!-- Scannerjob chart data selection -->
     <form name="stat_form"
+          class="stat_form"
           hx-get="{% url "statistics-dpo" %}"
           hx-target=".content"
           hx-select=".content"
@@ -21,15 +22,34 @@
           hx-trigger="change"
           hx-indicator="#report-page-indicator">
       <div class="dropdown stats_dropdown">
-        <select name="scannerjob" id="scannerjobs" data-compareto="all">
+        <label for="scannerjobs">{% trans "scanner job"|capfirst %}</label>
+        <select name="scannerjob"
+                id="scannerjobs"
+                data-compareto="all"
+                autocomplete="off">
           <option value="all"
                   {% if scannerjobs|last == "all" %}selected="selected"{% endif %}>
             {% trans "All scannerjobs" %}
           </option>
           {% for scan in scannerjobs|first %}
             <option value="{{ scan.scanner_job_pk|unlocalize }}"
-                    {% if scannerjobs|last == scan.scanner_job_pk|stringformat:"i" %} selected="selected" {% endif %}>
+                    {% if scannerjobs|last == scan.scanner_job_pk|stringformat:"i" %}selected="selected"{% endif %}>
               {{ scan.scanner_job_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="dropdown stats_dropdown">
+        <label for="orgunits">{% trans "organizational unit"|capfirst %}</label>
+        <select name="orgunit" id="orgunits" data-compareto="all" autocomplete="off">
+          <option value="all"
+                  {% if orgunits|last == "all" %}selected="selected"{% endif %}>
+            {% trans "All organizational units" %}
+          </option>
+          {% for unit in orgunits|first %}
+            <option value="{{ unit.uuid }}"
+                    {% if orgunits|last == unit.uuid|stringformat:"s" %}selected="selected"{% endif %}>
+              {{ unit.name }}
             </option>
           {% endfor %}
         </select>

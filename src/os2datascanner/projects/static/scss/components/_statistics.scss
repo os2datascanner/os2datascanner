@@ -1,3 +1,15 @@
+.stat_form {
+	display: flex;
+
+	div {
+		margin: 0 1rem;
+	}
+
+	label {
+		font-weight: bold;
+	}
+}
+
 .stats_dropdown {
 	width: 15rem;
 }

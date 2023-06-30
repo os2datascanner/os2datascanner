@@ -18,6 +18,8 @@
     file with many embedded images, for example, uses approximately 50
     kilobytes of cache space.
 
+- Support for filtering by organizational units in the DPO overview.
+
 ### General improvements
 
 - Rows in the leader overview are now loaded dynamically as the user scrolls.

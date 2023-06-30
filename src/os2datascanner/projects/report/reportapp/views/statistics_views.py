@@ -84,6 +84,14 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             self.unhandled_matches = self.unhandled_matches.filter(
                 scanner_job_pk=scannerjob)
 
+        if (orgunit := self.request.GET.get('orgunit')) and orgunit != 'all':
+            self.matches = self.matches.filter(
+                alias_relation__account__units=orgunit)
+            self.handled_matches = self.handled_matches.filter(
+                alias_relation__account__units=orgunit)
+            self.unhandled_matches = self.unhandled_matches.filter(
+                alias_relation__account__units=orgunit)
+
         # Contexts are done as lists of tuples
         context['sensitivities'], context['total_matches'] = \
             self.count_all_matches_grouped_by_sensitivity()
@@ -108,6 +116,12 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
 
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
+
+        allowed_orgunits = OrganizationalUnit.objects.all() if self.request.user.is_superuser \
+            else OrganizationalUnit.objects.filter(
+                    organization=self.request.user.account.organization)
+        context['orgunits'] = (allowed_orgunits.values("name", "uuid"),
+                               self.request.GET.get('orgunit', 'all'))
 
         return context
 

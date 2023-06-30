@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-27 10:26+0200\n"
+"POT-Creation-Date: 2023-06-30 10:51+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -56,6 +56,7 @@ msgid "account"
 msgstr "konto"
 
 #: reportapp/admin.py:16
+#: reportapp/templates/components/dpo-statistics-template.html:25
 msgid "scanner job"
 msgstr "scannerjob"
 
@@ -112,7 +113,7 @@ msgid "probability"
 msgstr "sandsynlighed"
 
 #: reportapp/models/documentreport.py:141
-#: reportapp/views/statistics_views.py:211
+#: reportapp/views/statistics_views.py:222
 msgid "Other"
 msgstr "Andet"
 
@@ -237,61 +238,69 @@ msgstr "gå til forsiden"
 msgid "DPO statistics"
 msgstr "DPO-statistik"
 
-#: reportapp/templates/components/dpo-statistics-template.html:27
+#: reportapp/templates/components/dpo-statistics-template.html:32
 #: reportapp/templates/components/filters.html:34
 msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
 
-#: reportapp/templates/components/dpo-statistics-template.html:46
+#: reportapp/templates/components/dpo-statistics-template.html:43
+msgid "organizational unit"
+msgstr "Organisatorisk enhed"
+
+#: reportapp/templates/components/dpo-statistics-template.html:47
+msgid "All organizational units"
+msgstr "Alle organisatoriske enheder"
+
+#: reportapp/templates/components/dpo-statistics-template.html:66
 msgid "Development overview"
 msgstr "Udviklingsoverblik"
 
-#: reportapp/templates/components/dpo-statistics-template.html:47
+#: reportapp/templates/components/dpo-statistics-template.html:67
 msgid "New results by month"
 msgstr "Antal nye resultater per måned"
 
-#: reportapp/templates/components/dpo-statistics-template.html:49
+#: reportapp/templates/components/dpo-statistics-template.html:69
 msgid "Unhandled results by month"
 msgstr "Antal uhåndterede resultater per måned"
 
-#: reportapp/templates/components/dpo-statistics-template.html:54
+#: reportapp/templates/components/dpo-statistics-template.html:74
 msgid "New results"
 msgstr "Nye resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:55
+#: reportapp/templates/components/dpo-statistics-template.html:75
 msgid "Unhandled results"
 msgstr "Uhåndterede resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:73
+#: reportapp/templates/components/dpo-statistics-template.html:93
 msgid "Distribution of results"
 msgstr "Fordeling af resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:75
+#: reportapp/templates/components/dpo-statistics-template.html:95
 msgid "Results distributed by data sources"
 msgstr "Resultater fordelt på datakilder"
 
-#: reportapp/templates/components/dpo-statistics-template.html:78
+#: reportapp/templates/components/dpo-statistics-template.html:98
 msgid "Results distributed by resolution statuses"
 msgstr "Resultater fordelt på håndteringsstatusser"
 
-#: reportapp/templates/components/dpo-statistics-template.html:83
+#: reportapp/templates/components/dpo-statistics-template.html:103
 msgid "Data sources"
 msgstr "Datakilder"
 
-#: reportapp/templates/components/dpo-statistics-template.html:85
+#: reportapp/templates/components/dpo-statistics-template.html:105
 msgid "Resolution statuses"
 msgstr "Håndteringsstatusser"
 
-#: reportapp/templates/components/dpo-statistics-template.html:111
-#: reportapp/templates/components/dpo-statistics-template.html:123
+#: reportapp/templates/components/dpo-statistics-template.html:131
+#: reportapp/templates/components/dpo-statistics-template.html:143
 msgid "Handled results"
 msgstr "Håndterede resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:113
+#: reportapp/templates/components/dpo-statistics-template.html:133
 msgid "The department's percentage of handled results"
 msgstr "Afdelingens procentvise andel af håndterede resultater"
 
-#: reportapp/templates/components/dpo-statistics-template.html:124
+#: reportapp/templates/components/dpo-statistics-template.html:144
 #: reportapp/templates/components/handle-match.html:61
 #: reportapp/templates/components/pagination.html:10
 msgid "of"
@@ -562,11 +571,11 @@ msgstr ""
 "“Færdig”-statussen har ingen resultater. En bruger med “Accepteret” har "
 "håndteret mindst 75%% af sine seneste resultater."
 
-#: reportapp/templates/components/leader-statistics-template.html:126
+#: reportapp/templates/components/leader-statistics-template.html:127
 msgid "Loading employee ..."
 msgstr "Indlæser medarbejder ..."
 
-#: reportapp/templates/components/leader-statistics-template.html:131
+#: reportapp/templates/components/leader-statistics-template.html:132
 msgid "No employees found."
 msgstr "Ingen medarbejdere fundet."
 
@@ -1120,19 +1129,19 @@ msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/statistics_views.py:212
+#: reportapp/views/statistics_views.py:223
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/statistics_views.py:213
+#: reportapp/views/statistics_views.py:224
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/statistics_views.py:214
+#: reportapp/views/statistics_views.py:225
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/statistics_views.py:512
+#: reportapp/views/statistics_views.py:523
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."
