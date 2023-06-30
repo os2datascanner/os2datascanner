@@ -41,11 +41,9 @@
       </div>
       <div class="dropdown stats_dropdown">
         <label for="orgunits">{% trans "organizational unit"|capfirst %}</label>
-        <select name="orgunit" id="orgunits" data-compareto="all" autocomplete="off">
-          <option value="all"
-                  {% if orgunits|last == "all" %}selected="selected"{% endif %}>
-            {% trans "All organizational units" %}
-          </option>
+        <select name="orgunit" id="orgunits" data-compareto="--" autocomplete="off">
+          <option value="--"
+                  {% if orgunits|last == "--" %}selected="selected"{% endif %}>{% trans "--" %}</option>
           {% for unit in orgunits|first %}
             <option value="{{ unit.uuid }}"
                     {% if orgunits|last == unit.uuid|stringformat:"s" %}selected="selected"{% endif %}>

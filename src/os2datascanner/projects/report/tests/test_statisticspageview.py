@@ -32,7 +32,7 @@ time1 = "2020-10-28T14:21:27+01:00"
 time2 = "2020-09-22T04:07:12+03:00"
 
 org_frag = messages.OrganisationFragment(
-    name="test_org", uuid="d92ff0c9-f066-40dc-a57e-541721b6c23e")
+    name="Statistics Test Corp.", uuid="d92ff0c9-f066-40dc-a57e-541721b6c23e")
 
 scan_tag0 = messages.ScanTagFragment(
         time=parse_datetime(time0),
@@ -301,6 +301,9 @@ yvonne_metadata = messages.MetadataMessage(
 class StatisticsPageViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        Organization.objects.create(
+            name="Statistics Test Corp.",
+            uuid='d92ff0c9-f066-40dc-a57e-541721b6c23e')
         cls.generate_kjeld_data()
         cls.generate_egon_data()
         cls.generate_yvonne_data()
@@ -336,7 +339,9 @@ class StatisticsPageViewTest(TestCase):
         record_metadata(benny_metadata_1)
 
     def setUp(self):
-        self.org = Organization.objects.create(name="Statistics Test Corp.")
+        self.org = Organization.objects.get(
+            name="Statistics Test Corp.",
+            uuid='d92ff0c9-f066-40dc-a57e-541721b6c23e')
 
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
@@ -582,6 +587,21 @@ class StatisticsPageViewTest(TestCase):
                          [-1], 'b0dbf7d7-b528-4c58-a7ff-c8875719eb6b')
         self.assertEqual(response_ke.context_data.get('total_matches'), 2)
 
+    def test_access_from_different_organization(self):
+        """A user should only be able to see results from their own organization."""
+        marvel = Organization.objects.create(name="Marvel Cinematic Universe")
+        Account.objects.create(
+            username='the_hulk',
+            first_name='Bruce',
+            last_name='Banner',
+            organization=marvel)
+        hulk = User.objects.get(username='the_hulk')
+        DataProtectionOfficer.objects.create(user=hulk)
+
+        response = self.get_dpo_statisticspage_response(hulk)
+
+        self.assertEqual(response.context_data.get('total_matches'), 0)
+
     # StatisticsPageView()
     def get_statisticspage_object(self):
         # XXX: we don't use request for anything! Is this deliberate?
@@ -608,7 +628,7 @@ class StatisticsPageViewTest(TestCase):
         request.user = user
         return LeaderStatisticsPageView.as_view()(request, **kwargs)
 
-    def get_dpo_statisticspage_response(self, user, params, **kwargs):
+    def get_dpo_statisticspage_response(self, user, params='', **kwargs):
         request = self.factory.get(reverse('statistics-dpo') + params)
         request.user = user
         return DPOStatisticsPageView.as_view()(request, **kwargs)

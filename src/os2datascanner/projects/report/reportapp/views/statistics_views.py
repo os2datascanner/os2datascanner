@@ -84,7 +84,7 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
             self.unhandled_matches = self.unhandled_matches.filter(
                 scanner_job_pk=scannerjob)
 
-        if (orgunit := self.request.GET.get('orgunit')) and orgunit != 'all':
+        if (orgunit := self.request.GET.get('orgunit')) and orgunit != '--':
             self.matches = self.matches.filter(
                 alias_relation__account__units=orgunit)
             self.handled_matches = self.handled_matches.filter(
@@ -124,6 +124,16 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
                                self.request.GET.get('orgunit', 'all'))
 
         return context
+
+    def dispatch(self, request, *args, **kwargs):
+        # Only allow the user to see reports from their own organization
+        if not request.user.is_superuser:
+            org = request.user.account.organization
+            self.matches = self.matches.filter(organization=org)
+            self.handled_matches = self.handled_matches.filter(organization=org)
+            self.unhandled_matches = self.unhandled_matches.filter(organization=org)
+
+        return super().dispatch(request, *args, **kwargs)
 
     def count_handled_matches_grouped_by_sensitivity(self):
         """Counts the distribution of handled matches grouped by sensitivity"""
