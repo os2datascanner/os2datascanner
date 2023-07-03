@@ -6,6 +6,7 @@
 {% block rendertype %}regular{% endblock %}
 
 {% block scripts %}
+  {{ block.super }}
   <script defer src="{% static 'js/validateFileSize.js' %}"></script>
 {% endblock %}
 
