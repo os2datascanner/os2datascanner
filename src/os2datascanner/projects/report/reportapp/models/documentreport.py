@@ -61,7 +61,7 @@ class DocumentReport(models.Model):
     name = models.CharField(max_length=256, verbose_name=_("name"), default="")
 
     source_type = models.CharField(max_length=2000,
-                                   verbose_name=_("source type"))
+                                   verbose_name=_("source type"), db_index=True)
 
     sensitivity = models.IntegerField(null=True, verbose_name=_("sensitivity"))
 

@@ -2,16 +2,17 @@
 
 {% include "partials/header.html" %}
 {% include "components/banner.html" %}
-
-<main class="wrapper">
-  {% if request.path == "/statistics/dpo/" %}
-    {% include "components/dpo-statistics-template.html" %}
-  {% elif request.path == "/statistics/leader/" %}
-    {% include "components/leader-statistics-template.html" %}
-  {% elif "/statistics/user/" in request.path %}
-    {% include "components/user-overview-template.html" %}
-  {% endif %}
-</main>
+<body>
+  <main class="wrapper">
+    {% if request.path == "/statistics/dpo/" %}
+      {% include "components/dpo-statistics-template.html" %}
+    {% elif request.path == "/statistics/leader/" %}
+      {% include "components/leader-statistics-template.html" %}
+    {% elif "/statistics/user/" in request.path %}
+      {% include "components/user-overview-template.html" %}
+    {% endif %}
+  </main>
+</body>
 
 {% block scripts %}
   <script src="{% static "3rdparty/htmx.min.js" %}"></script>

@@ -1,4 +1,4 @@
-/* exported drawLines */
+/* exported drawLine */
 
 function makeLineChart(xdata, ydata, chartElement, xLabel = "", yLabel = "") {
 	const lineChart = new Chart(chartElement, {
@@ -80,7 +80,7 @@ function makeLineChart(xdata, ydata, chartElement, xLabel = "", yLabel = "") {
 	return lineChart;
 }
 
-function drawLines(newMatchesByMonth, unhandledMatchesByMonth) {
+function drawLine(data, ctxName) {
 	// Line chart
 	// //
 	// //
@@ -117,39 +117,22 @@ function drawLines(newMatchesByMonth, unhandledMatchesByMonth) {
 		}
 	});
 
-	var newMatchesLineChartLabels = [];
-	var newMatchesLineChartValues = [];
+	var lineChartLabels = [];
+	var lineChartValues = [];
 
-	for (var i = 0; i < newMatchesByMonth.length; i++) {
-		newMatchesLineChartLabels.push(newMatchesByMonth[i][0].toUpperCase());
-		newMatchesLineChartValues.push(newMatchesByMonth[i][1]);
+	for (var i = 0; i < data.length; i++) {
+		lineChartLabels.push(data[i][0].toUpperCase());
+		lineChartValues.push(data[i][1]);
 	}
 
 	// Adds empty values in front of both arrays (for styling purposes)
-	newMatchesLineChartLabels.unshift("");
-	newMatchesLineChartLabels.push("");
-	newMatchesLineChartValues.unshift(null);
-	newMatchesLineChartValues.push(null);
+	lineChartLabels.unshift("");
+	lineChartLabels.push("");
+	lineChartValues.unshift(null);
+	lineChartValues.push(null);
 
-	var newMatchesLineChartCtx = document.querySelector("#line_chart_new_matches_by_month").getContext('2d');
-	charts.push(makeLineChart(newMatchesLineChartLabels, newMatchesLineChartValues, newMatchesLineChartCtx));
-
-	var unhandledMatchesLineChartLabels = [];
-	var unhandledMatchesLineChartValues = [];
-
-	for (var j = 0; j < unhandledMatchesByMonth.length; j++) {
-		unhandledMatchesLineChartLabels.push(unhandledMatchesByMonth[j][0].toUpperCase());
-		unhandledMatchesLineChartValues.push(unhandledMatchesByMonth[j][1]);
-	}
-
-	// Adds empty values in front of both arrays (for styling purposes)
-	unhandledMatchesLineChartLabels.unshift("");
-	unhandledMatchesLineChartLabels.push("");
-	unhandledMatchesLineChartValues.unshift(null);
-	unhandledMatchesLineChartValues.push(null);
-
-	var unhandledMatchesLineChartCtx = document.querySelector("#line_chart_unhandled_matches").getContext('2d');
-	charts.push(makeLineChart(unhandledMatchesLineChartLabels, unhandledMatchesLineChartValues, unhandledMatchesLineChartCtx));
+	var lineChartCtx = document.querySelector("#line_chart_" + ctxName).getContext('2d');
+	charts.push(makeLineChart(lineChartLabels, lineChartValues, lineChartCtx));
 }
 
 // Step size function
