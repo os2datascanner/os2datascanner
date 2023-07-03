@@ -20,6 +20,11 @@
 - The `start_scan` management command has a new convenience parameter for
   starting (partial or complete) scans that do not enforce the last
   modification date check.
+  
+- The Pipeline has received an overhaul with respect to the use of RabbitMQ,
+  such that workers can be assigned to serve a dedicated organisation.
+  Thus, for a system we multiple workers and organisations, it is possible
+  to run multiple scanner jobs in parallel.
 
 - The manual in the admin module is now hidden by default. The visibility of
   this page can be configured in the pillar settings.
@@ -37,7 +42,7 @@
   reporting themselves to be more than 100% complete.
 
 - Manually created Position objects for users in units they are already members of, can now
-coexist with imported ones.
+  coexist with imported ones.
 
 ## Version 3.20.2, 11th July 2023
 

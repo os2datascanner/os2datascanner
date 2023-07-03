@@ -13,8 +13,11 @@ from os2datascanner.utils.log_levels import log_levels
 from ... import __version__
 from ..model.core import SourceManager
 from . import explorer, exporter, matcher, messages, processor, tagger, worker
-from .utilities.pika import (ANON_QUEUE, RejectMessage, PikaPipelineThread)
-
+from .utilities.pika import (ANON_QUEUE,
+                             RejectMessage,
+                             PikaPipelineThread,
+                             HandleMessageType)
+from .headers import get_headers, get_queues, get_exchange
 
 # __name__ is "__main__" in this context, which isn't quite what we want for
 # our position in the logging hierarchy
@@ -48,11 +51,13 @@ def restart_process():
 class GenericRunner(PikaPipelineThread):
     def __init__(self,
                  source_manager: SourceManager, *args,
-                 stage: str, module, limit, **kwargs):
+                 stage: str, module, queue_suffix, limit,
+                 read, write, **kwargs):
         super().__init__(
                 *args, **kwargs,
-                read=module.READS_QUEUES,
-                write=module.WRITES_QUEUES,
+                read=read,
+                write=write,
+                queue_suffix=queue_suffix,
                 prefetch_count=module.PREFETCH_COUNT)
         self._module = module
         self._registry = CollectorRegistry()
@@ -61,6 +66,9 @@ class GenericRunner(PikaPipelineThread):
                 self._module.PROMETHEUS_DESCRIPTION,
                 registry=self._registry)
         self._source_manager = source_manager
+
+        self._queue_suffix = queue_suffix
+        self._stage = stage
 
         self._cancelled = deque()
 
@@ -126,13 +134,22 @@ class GenericRunner(PikaPipelineThread):
         yield from self._module.message_received_raw(
                 body, routing_key, self._source_manager)
 
-    def handle_message(self, routing_key, body):
+    def handle_message(self, routing_key, body) -> HandleMessageType:
+        # If the routing_key points to the default exchange, then
+        # we interpret the message as a command and yield a 2-tuple
+        # with a routing_key and a message.
+        # Otherwise, we interpret the message as carrying content and
+        # yield a 4-tuple with routing_key, message, exchange and headers.
         with self._summary.time():
             logger.debug(f"{routing_key}: {str(body)}")
             if routing_key == "":
                 yield from self._handle_command(routing_key, body)
             else:
-                yield from self._handle_content(routing_key, body)
+                # Note: change exchange and headers here.
+                qs = self._queue_suffix
+                stage = self._stage
+                for rk, msg in self._handle_content(routing_key, body):
+                    yield rk, msg, get_exchange(stage, qs, msg, rk), get_headers(stage, qs, msg, rk)
 
     def after_message(self, routing_key, body):
         # Check to see if we've met our quota and should restart
@@ -171,6 +188,9 @@ restarting = False
 @click.option('--restart-after', default=None,
               envvar='RESTART_AFTER', type=int,
               help='re-execute this stage after it has handled COUNT messages (default: None)')
+@click.option('--queue-suffix', default=None,
+              envvar='QUEUE_SUFFIX', type=str,
+              help='suffix for queue(s) for the engine stage to read from/write to')
 @click.argument('stage',
                 type=click.Choice(["explorer",
                                    "processor",
@@ -179,7 +199,7 @@ restarting = False
                                    "exporter",
                                    "worker"]))
 def main(log_level, enable_profiling, enable_metrics,
-         prometheus_port, width, single_cpu, restart_after, stage):
+         prometheus_port, width, single_cpu, restart_after, queue_suffix, stage):
     debug.register_debug_signal()
     module = _module_mapping[stage]
 
@@ -214,13 +234,20 @@ def main(log_level, enable_profiling, enable_metrics,
         root_logger.info("enabling profiling")
         profiling.enable_profiling()
 
+    if queue_suffix:
+        root_logger.info(f"Using dedicated queues with suffix: '{queue_suffix}'")
+
     try:
         with SourceManager(width=width) as source_manager:
             GenericRunner(
-                    source_manager,
-                    stage=stage,
-                    module=module,
-                    limit=restart_after).run_consumer()
+                source_manager,
+                stage=stage,
+                module=module,
+                limit=restart_after,
+                queue_suffix=queue_suffix,
+                read=get_queues(module.READS_QUEUES, queue_suffix),
+                write=get_queues(module.WRITES_QUEUES, queue_suffix),
+                ).run_consumer()
 
         if restarting:
             root_logger.info(f"restarting after {restart_after} messages")

@@ -251,6 +251,7 @@ services:
       - ./dev-environment/engine/dev-settings.env
     environment:
       - SCHEDULE_ON_CPU=0
+      - QUEUE_SUFFIX
     volumes:
       - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
