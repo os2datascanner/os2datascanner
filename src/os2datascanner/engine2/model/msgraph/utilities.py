@@ -3,8 +3,9 @@ from contextlib import contextmanager
 import logging
 import requests
 
-from os2datascanner.engine2.utilities.backoff import WebRetrier
+from os2datascanner.utils.oauth2 import mint_cc_token
 from os2datascanner.engine2 import settings as engine2_settings
+from os2datascanner.engine2.utilities.backoff import WebRetrier
 
 from ..core import Source
 
@@ -13,18 +14,12 @@ logger = logging.getLogger(__name__)
 
 
 def make_token(client_id, tenant_id, client_secret):
-    response = WebRetrier().run(
-            requests.post,
+    return mint_cc_token(
             f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
-            {
-                "client_id": client_id,
-                "scope": "https://graph.microsoft.com/.default",
-                "client_secret": client_secret,
-                "grant_type": "client_credentials"
-            })
-    response.raise_for_status()
-    logger.info("Collected new token")
-    return response.json()["access_token"]
+            client_id, client_secret,
+            scope="https://graph.microsoft.com/.default",
+
+            wrapper=WebRetrier().run)
 
 
 class MSGraphSource(Source):
