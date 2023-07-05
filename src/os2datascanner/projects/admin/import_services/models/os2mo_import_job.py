@@ -9,6 +9,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from os2datascanner.utils.oauth2 import mint_cc_token
 from os2datascanner.projects.admin.adminapp.signals import get_pika_thread
 from ...core.models.background_job import JobState, BackgroundJob
 
@@ -45,6 +46,18 @@ def walk_mo_json_response(response: dict, *path):
                 error_texts or None) from ex
 
 
+retry = Retrying(
+        reraise=True,
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        stop=stop_after_attempt(10))
+
+
+def make_token():
+    return mint_cc_token(
+            settings.OS2MO_TOKEN_URL, settings.OS2MO_CLIENT_ID,
+            settings.OS2MO_CLIENT_SECRET, wrapper=retry)
+
+
 class OS2moImportJob(BackgroundJob):
     organization = models.ForeignKey(
         'organizations.Organization',
@@ -53,25 +66,16 @@ class OS2moImportJob(BackgroundJob):
         related_name='os2moimport'
     )
 
-    def _make_token(self):
-        return {
-            "grant_type": "client_credentials",
-            "client_id": settings.OS2MO_CLIENT_ID,
-            "client_secret": settings.OS2MO_CLIENT_SECRET
-        }
-
     def _get_next_cursor(self, json_query_response: dict) -> str:
         """Given a JSON response of a OS2mo GraphQL query for org_units,
-           returns the next_cursor value."""
-        logger.info("Fetching next_cursor...")
+        returns the next_cursor value."""
         return walk_mo_json_response(
                 json_query_response,
                 "data", "org_units", "page_info", "next_cursor")
 
     def _get_org_unit_data(self, json_query_response: dict) -> list:
-        """ Given a JSON response of a OS2mo GraphQL query for org_units,
-            returns a list of objects."""
-        logger.info("Fetching org_unit objects for iteration...")
+        """Given a JSON response of a OS2mo GraphQL query for org_units,
+        returns a list of objects."""
         return walk_mo_json_response(
                 json_query_response,
                 "data", "org_units", "objects")
@@ -128,72 +132,21 @@ class OS2moImportJob(BackgroundJob):
     def run(self):  # noqa CCR001
         message_buffer.clear()
 
-        json_query_response = {}
-
         # To ensure graphql version consistency with os2mo-endpoint
         os2mo_url_endpoint = settings.OS2MO_ENDPOINT_BASE + "v7"
+
+        count = 0
+        org_unit_list = []
 
         with requests.Session() as session:
             self.status = "Initializing OS2mo Import..."
             self.save()
 
-            retry = Retrying(
-                reraise=True,
-                wait=wait_exponential(
-                    multiplier=1,
-                    min=4,
-                    max=10),
-                stop=stop_after_attempt(10))
-
-            token_response = retry(
-                session.post,
-                url=settings.OS2MO_TOKEN_URL,
-                data=self._make_token())
+            token = make_token()
             try:
-                token = token_response.json().get("access_token")
-                logger.info("Fetched access token..")
-
-                headers = {
-                    "content-type": "application/json; charset=UTF-8",
-                    'Authorization': f'Bearer {token}'}
-
-                query_response = retry(session.post,
-                                       os2mo_url_endpoint,
-                                       json={
-                                           "query": self.QueryOrgUnitsManagersEmployees,
-                                           "variables": {
-                                               "limit": settings.OS2MO_PAGE_SIZE,
-                                               "email_type": settings.OS2MO_EMAIL_ADDRESS_TYPE
-                                               }},
-                                       headers=headers)
-
-                query_response.raise_for_status()
-
-                if query_response.status_code != 204:
-                    json_query_response = query_response.json()
-                message_buffer.append(json_query_response)
-
-            except requests.exceptions.JSONDecodeError:
-                logger.exception("Unable to decode JSON")
-            except requests.exceptions.HTTPError:
-                logger.exception("HTTP exception thrown!")
-
-        if json_query_response:
-            self.status = "First query successful. Continuing.."
-            logger.info("Successfully received query response from OS2mo. Continuing.. \n")
-
-            org_unit_list = []
-            next_cursor = self._get_next_cursor(json_query_response)
-
-            for ou_data in self._get_org_unit_data(json_query_response):
-                logger.info("Appending OU data to internal list")
-                org_unit_list.append(ou_data)
-
-            if next_cursor:
-                logger.info("Received a paginated response. Continuing..")
-                with requests.Session() as session:
-                    while next_cursor:
-                        paginated_query_response = retry(
+                next_cursor = None
+                while True:
+                    page_response = retry(
                             session.post,
                             os2mo_url_endpoint,
                             json={
@@ -201,25 +154,57 @@ class OS2moImportJob(BackgroundJob):
                                 "variables": {
                                     "cursor": next_cursor,
                                     "limit": settings.OS2MO_PAGE_SIZE,
-                                    "email_type": settings.OS2MO_EMAIL_ADDRESS_TYPE}},
-                            headers=headers)
+                                    "email_type": (
+                                            settings.OS2MO_EMAIL_ADDRESS_TYPE)
+                                 }
+                            },
+                            headers={
+                                "content-type": (
+                                        "application/json; charset=UTF-8"),
+                                "authorization": f"Bearer {token}"
+                            })
+                    page_response.raise_for_status()
+                    page_json = page_response.json()
+                    message_buffer.append(page_json)
 
-                        paginated_query_response.raise_for_status()
+                    if page_response.status_code == 204:
+                        # No more entries
+                        break
 
-                        if paginated_query_response.status_code != 204:
-                            json_paginated_query_response = paginated_query_response.json()
-                            message_buffer.append(
-                                    json_paginated_query_response)
-                            next_cursor = self._get_next_cursor(json_paginated_query_response)
+                    if (not page_json.get("data")
+                            and (errors := page_json.get("errors"))):
+                        # Unhelpfully, MO returns HTTP 200 and not 401 or 403
+                        # when our token runs out, so we need to do a string
+                        # comparison
+                        token_expired = any(
+                                "expired" in e.get("message") for e in errors)
+                        if token_expired:
+                            token = make_token()
+                            # Just run the current cursor again
+                            continue
+                        else:
+                            # _get_org_unit_data will fail with a vaguely
+                            # intelligible error message in this case
+                            pass
 
-                        for ou_data in self._get_org_unit_data(json_paginated_query_response):
-                            org_unit_list.append(ou_data)
+                    ou_data = self._get_org_unit_data(page_json)
+                    count += len(ou_data)
+                    for org_unit in ou_data:
+                        org_unit_list.append(org_unit)
 
-                    logger.info("Reached last page!")
-        else:
-            self.status = "No data received!"
-            # Raising exception to mark job as failed
-            raise ValueError("No data received! Nothing will be imported, job status failed.")
+                    logger.info(
+                            f"Got {len(ou_data)} org units,"
+                            f" new total {count}")
+
+                    if not (next_cursor := self._get_next_cursor(page_json)):
+                        # No more pages after this one
+                        break
+            except requests.exceptions.JSONDecodeError:
+                logger.exception("Unable to decode JSON")
+            except requests.exceptions.HTTPError:
+                logger.exception("HTTP exception thrown!")
+
+        logger.info(f"Done retrieving {count} org units, processing")
 
         def _callback(action, *args):
             self.refresh_from_db()

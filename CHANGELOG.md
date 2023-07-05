@@ -20,6 +20,8 @@
 
 - Support for filtering by organizational units in the DPO overview.
 
+- Support for automatically refreshing expired OS2mo access tokens.
+
 ### General improvements
 
 - Rows in the leader overview are now loaded dynamically as the user scrolls.
