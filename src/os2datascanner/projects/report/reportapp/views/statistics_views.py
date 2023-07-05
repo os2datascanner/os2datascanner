@@ -63,22 +63,24 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
     context_object_name = "matches"  # object_list renamed to something more relevant
     template_name = "statistics.html"
     model = DocumentReport
-    users = Account.objects.all()
-    matches = DocumentReport.objects.filter(
-        number_of_matches__gte=1).annotate(
-        created_month=TruncMonth('created_timestamp', output_field=DateField()),
-        resolved_month=TruncMonth(
-                    # If resolution_time isn't set on a report that has been
-                    # handled, then assume it was handled in the same month it
-                    # was created
-                    Coalesce('resolution_time', 'created_timestamp'),
-                    output_field=DateField())).values(
-                        'resolution_status',
-                        'source_type',
-                        'created_month',
-                        'resolved_month'
-                    ).annotate(count=Count('source_type')).order_by()
     scannerjob_filters = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.matches = DocumentReport.objects.filter(
+            number_of_matches__gte=1).annotate(
+            created_month=TruncMonth('created_timestamp', output_field=DateField()),
+            resolved_month=TruncMonth(
+                        # If resolution_time isn't set on a report that has been
+                        # handled, then assume it was handled in the same month it
+                        # was created
+                        Coalesce('resolution_time', 'created_timestamp'),
+                        output_field=DateField())).values(
+                            'resolution_status',
+                            'source_type',
+                            'created_month',
+                            'resolved_month'
+                        ).annotate(count=Count('source_type')).order_by()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -131,24 +133,18 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
             request, *args, **kwargs)
 
     def make_data_structures(self, matches):  # noqa C901, CCR001
+        """To avoid making multiple separate queries to the DocumentReport
+        table, we instead use the one call defined previously, then packages
+        data into separate structures, which can then be used for statistical
+        presentations."""
 
         match_data = {
             'handled': 0,
             'unhandled': 0
         }
 
-        resolution_status = {
-            DocumentReport.ResolutionChoices.OTHER.value:
-                {'count': 0, 'label': DocumentReport.ResolutionChoices.OTHER.label},
-            DocumentReport.ResolutionChoices.EDITED:
-                {'count': 0, 'label': DocumentReport.ResolutionChoices.EDITED.label},
-            DocumentReport.ResolutionChoices.MOVED:
-                {'count': 0, 'label': DocumentReport.ResolutionChoices.MOVED.label},
-            DocumentReport.ResolutionChoices.REMOVED:
-                {'count': 0, 'label': DocumentReport.ResolutionChoices.REMOVED.label},
-            DocumentReport.ResolutionChoices.FALSE_POSITIVE:
-                {'count': 0, 'label': DocumentReport.ResolutionChoices.FALSE_POSITIVE.label},
-        }
+        resolution_status = {choice.value: {"label": choice.label, "count": 0}
+                             for choice in DocumentReport.ResolutionChoices}
 
         source_type = {
             'other': {'count': 0, 'label': _('Other')},
@@ -162,41 +158,28 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         resolved_month = {}
 
         for obj in matches:
-            for key, val in obj.items():
-                if key == 'count':
-                    pass
+            match obj:
+                case {"source_type": "smb" | "smbc", "count": count}:
+                    source_type["filescan"]["count"] += count
+                case {"source_type": "web", "count": count}:
+                    source_type["webscan"]["count"] += count
+                case {"source_type": "ews" | "msgraph-mail", "count": count}:
+                    source_type["mailscan"]["count"] += count
+                case {"count": count}:
+                    source_type["other"]["count"] += count
 
-                elif key == 'source_type':
-                    if val in ['smbc', 'smb']:
-                        source_type['filescan']['count'] += obj['count']
-                    elif val in ['web']:
-                        source_type['webscan']['count'] += obj['count']
-                    elif val in ['ews', 'msgraph-mail']:
-                        source_type['mailscan']['count'] += obj['count']
-                    else:
-                        source_type['other']['count'] += obj['count']
+            match obj:
+                case {"resolution_status": None, "count": count}:
+                    match_data["unhandled"] += count
+                case {"resolution_status": val, "count": count}:
+                    match_data["handled"] += count
+                    resolution_status[val]["count"] += count
 
-                elif key == 'resolution_status':
-                    if val is None:
-                        match_data['unhandled'] += obj['count']
-                    else:
-                        match_data['handled'] += obj['count']
-                        for res_key in resolution_status:
-                            if val == res_key:
-                                resolution_status[res_key]['count'] += obj['count']
-
-                elif key == 'created_month':
-                    if val in created_month:
-                        created_month[val] += obj['count']
-                    else:
-                        created_month[val] = obj['count']
-
-                elif key == 'resolved_month':
-                    if obj['resolution_status'] is not None:
-                        if val in resolved_month:
-                            resolved_month[val] += obj['count']
-                        else:
-                            resolved_month[val] = obj['count']
+            created_month[obj["created_month"]] = created_month.get(
+                obj["created_month"], 0) + obj["count"]
+            if obj["resolution_status"] is not None:
+                resolved_month[obj["resolved_month"]] = resolved_month.get(
+                    obj["resolved_month"], 0) + obj["count"]
 
         return match_data, source_type, resolution_status, created_month, resolved_month
 
@@ -510,5 +493,4 @@ def filter_inapplicable_matches(user, matches, roles, account=None):
 
 
 def sort_by_keys(d: dict) -> dict:
-    keys = sorted(d.keys())
-    return {i: d[i] for i in keys}
+    return dict(sorted(d.items(), key=lambda t: t[0]))

@@ -459,10 +459,6 @@ class StatisticsPageViewTest(TestCase):
 
         view = self.get_statisticspage_object()
 
-        # The 'matches' queryset is cached -- we call '.all()' once to
-        # reevaluate with the new timestamps.
-        view.matches = view.matches.all()
-
         _, _, _, view.created_month, view.resolved_month = view.make_data_structures(view.matches)
         test_date = dateutil.parser.parse("2020-11-28T14:21:59+05:00")
 
@@ -483,10 +479,6 @@ class StatisticsPageViewTest(TestCase):
         original_timestamps = static_timestamps()
 
         view = self.get_statisticspage_object()
-
-        # The 'matches' queryset is cached -- we call '.all()' once to
-        # reevaluate with the new timestamps.
-        view.matches = view.matches.all()
 
         _, _, _, view.created_month, view.resolved_month = view.make_data_structures(view.matches)
         test_date = dateutil.parser.parse("2021-09-28T14:21:59+05:00")
@@ -509,10 +501,6 @@ class StatisticsPageViewTest(TestCase):
         original_resolution_time = static_timestamps('resolution_time')
 
         view = self.get_statisticspage_object()
-
-        # The 'matches' queryset is cached -- we call '.all()' once to
-        # reevaluate with the new timestamps.
-        view.matches = view.matches.all()
 
         _, _, _, view.created_month, view.resolved_month = view.make_data_structures(view.matches)
 
