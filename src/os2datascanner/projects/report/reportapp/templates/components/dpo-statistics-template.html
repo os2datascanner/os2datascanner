@@ -99,9 +99,7 @@
           <div class="dropdown">
             <select>
               <option value="distribution-data-sources">{% trans "Data sources" %}</option>
-              {% if handled_matches_status|last > 0 %}
-                <option value="distribution-resolution-status">{% trans "Resolution statuses" %}</option>
-              {% endif %}
+              <option value="distribution-resolution-status">{% trans "Resolution statuses" %}</option>
             </select>
           </div>
         </div>
@@ -139,7 +137,7 @@
           </div>
           <div class="doughnut_info_box">
             <h4>{% trans "Handled results" %}</h4>
-            <p>{{ total_handled_matches }} {% trans "of" %} {{ total_matches }}</p>
+            <p>{{ match_data.handled }} {% trans "of" %} {{ match_data.handled|add:match_data.unhandled }}</p>
           </div>
         </div>
 
@@ -162,10 +160,9 @@
     </div>
     {% endcomment %}
   </div>
-  {{ sensitivities|json_script:"sensitivities" }}
   {{ source_types|json_script:"source_types" }}
-  {{ handled_matches|json_script:"handled_matches" }}
   {{ new_matches_by_month|json_script:"new_matches_by_month" }}
   {{ unhandled_matches_by_month|json_script:"unhandled_matches_by_month" }}
-  {{ handled_matches_status|json_script:"handled_matches_status" }}
+  {{ resolution_status|json_script:"resolution_status" }}
+  {{ match_data|json_script:"match_data" }}
 </div>

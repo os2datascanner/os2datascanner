@@ -29,17 +29,15 @@ Chart.defaults.animation.duration = 1700;
 function drawCharts() {
   // json_script solution - Safe from in-page script execution
 
-  var sensitivities = JSON.parse(document.getElementById('sensitivities').textContent);
+  const sourceTypes = JSON.parse(document.getElementById('source_types').textContent);
 
-  var handledMatches = JSON.parse(document.getElementById('handled_matches').textContent);
+  const resolutionStatus = JSON.parse(document.getElementById('resolution_status').textContent);
 
-  var sourceTypes = JSON.parse(document.getElementById('source_types').textContent);
+  const matchData = JSON.parse(document.getElementById('match_data').textContent);
 
   var newMatchesByMonth = JSON.parse(document.getElementById('new_matches_by_month').textContent);
 
   var unhandledMatchesByMonth = JSON.parse(document.getElementById('unhandled_matches_by_month').textContent);
-
-  var handledMatchesStatus = JSON.parse(document.getElementById('handled_matches_status').textContent);
 
   // Finds the total number matches in the array
   totalArrayValue = function (array, index) {
@@ -50,16 +48,25 @@ function drawCharts() {
     return number;
   };
 
-  // Calculates the percentage for 'Håndterede matches -> Alle matches'
-  var totalMatches = totalArrayValue(sensitivities, 1);
-  var totalHandledMatches = totalArrayValue(handledMatches, 1);
+  // Prepare data for doughnut chart
+  const totalHandledMatches = matchData.handled;
+  const totalMatches = matchData.handled + matchData.unhandled;
   var handledPercentage = totalHandledMatches / totalMatches * 100;
-  // To fixed decimal point
-  handledPercentageFixed = handledPercentage.toFixed(1);
 
-  drawDoughnuts(totalHandledMatches, totalMatches, handledPercentage);
-  drawPies(sourceTypes, handledMatchesStatus[0]);
-  drawLines(newMatchesByMonth, unhandledMatchesByMonth);
+  drawDoughnut(totalHandledMatches, totalMatches, handledPercentage);
+  drawPie(
+    sourceTypes,
+    'datasources',
+    ['#fed149', '#5ca4cd', '#21759c', '#00496e']
+  );
+  drawPie(
+    // Change the order of the data structure
+    [3, 2, 1, 4, 0].map(i => resolutionStatus[i]),
+    'resolution_status',
+    ['#80ab82', '#a2e774', '#35bd57', '#1b512d', '#7e4672']
+  );
+  drawLine(unhandledMatchesByMonth, 'unhandled_matches');
+  drawLine(newMatchesByMonth, 'new_matches_by_month');
 }
 
 function setStatDropdownEvent() {

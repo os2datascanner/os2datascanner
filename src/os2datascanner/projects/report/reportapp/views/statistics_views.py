@@ -31,8 +31,7 @@ from django.utils import timezone
 from django.views.generic import TemplateView, DetailView, ListView
 from django.shortcuts import get_object_or_404
 
-from os2datascanner.utils.system_utilities import time_now
-from os2datascanner.engine2.rules.rule import Sensitivity
+# from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
 from ..models.documentreport import DocumentReport
@@ -60,18 +59,28 @@ def month_delta(series_start: date, here: date):
     return _months(here) - _months(series_start)
 
 
-class StatisticsPageView(LoginRequiredMixin, TemplateView):
+class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
     context_object_name = "matches"  # object_list renamed to something more relevant
     template_name = "statistics.html"
     model = DocumentReport
-    users = Account.objects.all()
-    matches = DocumentReport.objects.filter(
-        number_of_matches__gte=1)
-    handled_matches = matches.filter(
-        resolution_status__isnull=False)
-    unhandled_matches = matches.filter(
-        resolution_status__isnull=True)
     scannerjob_filters = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.matches = DocumentReport.objects.filter(
+            number_of_matches__gte=1).annotate(
+            created_month=TruncMonth('created_timestamp', output_field=DateField()),
+            resolved_month=TruncMonth(
+                        # If resolution_time isn't set on a report that has been
+                        # handled, then assume it was handled in the same month it
+                        # was created
+                        Coalesce('resolution_time', 'created_timestamp'),
+                        output_field=DateField())).values(
+                            'resolution_status',
+                            'source_type',
+                            'created_month',
+                            'resolved_month'
+                        ).annotate(count=Count('source_type')).order_by()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -79,40 +88,26 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         if (scannerjob := self.request.GET.get('scannerjob')) and scannerjob != 'all':
             self.matches = self.matches.filter(
                 scanner_job_pk=scannerjob)
-            self.handled_matches = self.handled_matches.filter(
-                scanner_job_pk=scannerjob)
-            self.unhandled_matches = self.unhandled_matches.filter(
-                scanner_job_pk=scannerjob)
 
         if (orgunit := self.request.GET.get('orgunit')) and orgunit != '--':
             self.matches = self.matches.filter(
                 alias_relation__account__units=orgunit)
-            self.handled_matches = self.handled_matches.filter(
-                alias_relation__account__units=orgunit)
-            self.unhandled_matches = self.unhandled_matches.filter(
-                alias_relation__account__units=orgunit)
-
-        # Contexts are done as lists of tuples
-        context['sensitivities'], context['total_matches'] = \
-            self.count_all_matches_grouped_by_sensitivity()
-
-        context['handled_matches'], context['total_handled_matches'] = \
-            self.count_handled_matches_grouped_by_sensitivity()
-
-        context['source_types'] = self.count_by_source_types()
-
-        context['new_matches_by_month'] = self.count_new_matches_by_month(today)
-
-        context['unhandled_matches_by_month'] = self.count_unhandled_matches_by_month(today)
-
-        context['handled_matches_status'] = \
-            self.count_handles_matches_grouped_by_resolution_status()
 
         if self.scannerjob_filters is None:
             # Create select options
             self.scannerjob_filters = DocumentReport.objects.filter(
                 number_of_matches__gte=1).order_by('scanner_job_pk').values(
                 "scanner_job_name", "scanner_job_pk").distinct()
+
+        (context['match_data'],
+         context['source_types'],
+         context['resolution_status'],
+         self.created_month,
+         self.resolved_month) = self.make_data_structures(self.matches)
+
+        context['unhandled_matches_by_month'] = self.count_unhandled_matches_by_month(today)
+
+        context['new_matches_by_month'] = self.count_new_matches_by_month(today)
 
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
@@ -126,168 +121,67 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        # Only allow the user to see reports from their own organization
-        if not request.user.is_superuser:
-            org = request.user.account.organization
-            self.matches = self.matches.filter(organization=org)
-            self.handled_matches = self.handled_matches.filter(organization=org)
-            self.unhandled_matches = self.unhandled_matches.filter(organization=org)
+        if request.user.is_authenticated:
+            if not user_is(Role.get_user_roles_or_default(request.user),
+                           DataProtectionOfficer):
+                return HttpResponseForbidden()
+            # Only allow the user to see reports from their own organization
+            if not request.user.is_superuser:
+                org = request.user.account.organization
+                self.matches = self.matches.filter(organization=org)
+        return super().dispatch(
+            request, *args, **kwargs)
 
-        return super().dispatch(request, *args, **kwargs)
+    def make_data_structures(self, matches):  # noqa C901, CCR001
+        """To avoid making multiple separate queries to the DocumentReport
+        table, we instead use the one call defined previously, then packages
+        data into separate structures, which can then be used for statistical
+        presentations."""
 
-    def count_handled_matches_grouped_by_sensitivity(self):
-        """Counts the distribution of handled matches grouped by sensitivity"""
-        handled_matches = self.handled_matches.order_by(
-            '-sensitivity').values(
-            'sensitivity').annotate(
-            total=Count('sensitivity')
-        ).values(
-            'sensitivity', 'total',
-        )
+        match_data = {
+            'handled': 0,
+            'unhandled': 0
+        }
 
-        return self.create_sensitivity_list(handled_matches)
+        resolution_status = {choice.value: {"label": choice.label, "count": 0}
+                             for choice in DocumentReport.ResolutionChoices}
 
-    def count_all_matches_grouped_by_sensitivity(self):
-        """Counts the distribution of matches grouped by sensitivity"""
-        sensitivities = self.matches.order_by(
-            '-sensitivity').values(
-            'sensitivity').annotate(
-            total=Count('sensitivity')
-        ).values(
-            'sensitivity', 'total'
-        )
+        source_type = {
+            'other': {'count': 0, 'label': _('Other')},
+            'webscan': {'count': 0, 'label': _('Webscan')},
+            'filescan': {'count': 0, 'label': _('Filescan')},
+            'mailscan': {'count': 0, 'label': _('Mailscan')}
+        }
 
-        return self.create_sensitivity_list(sensitivities)
+        created_month = {}
 
-    def count_handles_matches_grouped_by_resolution_status(self):
-        """Counts the distribution of handled matches grouped by resolution_status"""
-        handled_matches = self.handled_matches.order_by(
-            'resolution_status').values(
-            'resolution_status').annotate(
-            total=Count('resolution_status')
-            ).values(
-                'resolution_status', 'total'
-            )
+        resolved_month = {}
 
-        return self.create_resolution_status_list(handled_matches)
+        for obj in matches:
+            match obj:
+                case {"source_type": "smb" | "smbc", "count": count}:
+                    source_type["filescan"]["count"] += count
+                case {"source_type": "web", "count": count}:
+                    source_type["webscan"]["count"] += count
+                case {"source_type": "ews" | "msgraph-mail", "count": count}:
+                    source_type["mailscan"]["count"] += count
+                case {"count": count}:
+                    source_type["other"]["count"] += count
 
-    def create_sensitivity_list(self, matches):
-        """Helper method which groups the totals by sensitivities
-        and also takes the sum of the totals"""
-        # For handling having no values - List defaults to 0
-        sensitivity_list = [
-            [Sensitivity.CRITICAL.presentation, 0],
-            [Sensitivity.PROBLEM.presentation, 0],
-            [Sensitivity.WARNING.presentation, 0],
-            [Sensitivity.NOTICE.presentation, 0]
-        ]
-        for match in matches:
-            if (match['sensitivity']) == Sensitivity.CRITICAL.value:
-                sensitivity_list[0][1] = match['total']
-            elif (match['sensitivity']) == Sensitivity.PROBLEM.value:
-                sensitivity_list[1][1] = match['total']
-            elif (match['sensitivity']) == Sensitivity.WARNING.value:
-                sensitivity_list[2][1] = match['total']
-            elif (match['sensitivity']) == Sensitivity.NOTICE.value:
-                sensitivity_list[3][1] = match['total']
+            match obj:
+                case {"resolution_status": None, "count": count}:
+                    match_data["unhandled"] += count
+                case {"resolution_status": val, "count": count}:
+                    match_data["handled"] += count
+                    resolution_status[val]["count"] += count
 
-        # Sum of the totals
-        total = 0
-        for match in sensitivity_list:
-            total += match[1]
+            created_month[obj["created_month"]] = created_month.get(
+                obj["created_month"], 0) + obj["count"]
+            if obj["resolution_status"] is not None:
+                resolved_month[obj["resolved_month"]] = resolved_month.get(
+                    obj["resolved_month"], 0) + obj["count"]
 
-        return sensitivity_list, total
-
-    def create_resolution_status_list(self, matches):
-        """Helper method which groups the totals by resolution_status
-        and also takes the sum of the totals."""
-        resolution_list = [
-            [choice[0], choice[1], 0] for choice in DocumentReport.ResolutionChoices.choices
-        ]
-
-        for match in matches:
-            for status in resolution_list:
-                if match['resolution_status'] == status[0]:
-                    status[2] = match['total']
-                    break
-
-        # Sum of the totals
-        total = 0
-        for match in resolution_list:
-            total += match[2]
-
-        return resolution_list, total
-
-    def count_by_source_types(self):
-        """Counts all matches grouped by source types"""
-        matches_counted_by_sources = self.matches.order_by(
-            'source_type').values(
-            'source_type').annotate(
-            total=Count('source_type')
-        ).values(
-            'source_type', 'total'
-        )
-
-        source_count_gen = ((m['source_type'], m['total'])
-                            for m in matches_counted_by_sources)
-
-        formatted_counts = [
-            [_('Other'), 0],
-            [_('Webscan'), 0],
-            [_('Filescan'), 0],
-            [_('Mailscan'), 0],
-        ]
-
-        # Places source_types from generator to formatted_counts
-        for s in source_count_gen:
-            if s[0] == 'web':
-                formatted_counts[1][1] = s[1]
-            elif s[0] == 'smbc':
-                formatted_counts[2][1] = s[1]
-            elif s[0] == 'ews':
-                formatted_counts[3][1] = s[1]
-            else:
-                formatted_counts[0][1] += s[1]
-
-        return formatted_counts
-
-    def get_oldest_matches(self):
-        # TODO: Needs to be rewritten if a better 'time' is added(#41326)
-        # Gets days since oldest unhandled match for each user
-        oldest_matches = []
-        now = time_now
-
-        for org_user in self.users:
-            Role.get_user_roles_or_default(org_user)
-            earliest_date = now
-            for match in self.unhandled_matches:
-                if match.scan_time < earliest_date:
-                    earliest_date = match.scan_time
-                days_ago = now - earliest_date
-            tup = (org_user.first_name, days_ago.days)
-            oldest_matches.append(tup)
-
-        return oldest_matches
-
-    def count_unhandled_matches(self):
-        # Counts the amount of unhandled matches
-        # TODO: Optimize queries by reading from relational db
-        unhandled_matches = self.unhandled_matches.order_by(
-            'raw_metadata__metadata').values(
-            'raw_metadata__metadata').annotate(
-            total=Count('raw_metadata__metadata')
-        ).values(
-            'raw_metadata__metadata', 'total',
-        )
-
-        # TODO: Optimize queries by reading from relational db
-        employee_unhandled_list = []
-        for um in unhandled_matches:
-            dict_values = list(um['raw_metadata__metadata'].values())
-            first_value = dict_values[0]
-            employee_unhandled_list.append((first_value, um['total']))
-
-        return employee_unhandled_list
+        return match_data, source_type, resolution_status, created_month, resolved_month
 
     def count_unhandled_matches_by_month(self, current_date):
         """Counts new matches and resolved matches by month for the last year,
@@ -296,28 +190,14 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         a_year_ago: date = (
                 current_date - timedelta(days=365)).date().replace(day=1)
 
-        new_matches_by_month = self.matches.annotate(
-            month=TruncMonth(
-                    'created_timestamp', output_field=DateField())).values(
-            'month').annotate(
-            total=Count('raw_matches')
-        ).order_by('month')
+        new_matches_by_month = sort_by_keys(self.created_month)
 
-        resolved_matches_by_month = self.handled_matches.annotate(
-            month=TruncMonth(
-                    # If resolution_time isn't set on a report that has been
-                    # handled, then assume it was handled in the same month it
-                    # was created
-                    Coalesce('resolution_time', 'created_timestamp'),
-                    output_field=DateField())).values(
-            'month').annotate(
-            total=Count('raw_matches')
-        ).order_by('month')
+        resolved_matches_by_month = sort_by_keys(self.resolved_month)
 
         if self.matches.exists():
             earliest_month = min(
-                    dr["month"]
-                    for dr in new_matches_by_month | resolved_matches_by_month)
+                    key
+                    for key in new_matches_by_month.keys() | resolved_matches_by_month.keys())
             # The range of the graph should be at least a year
             earliest_month = min(earliest_month, a_year_ago)
         else:
@@ -331,10 +211,10 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
                 earliest_month + relativedelta(months=k): 0
                 for k in range(number_of_months)}
 
-        for drv in new_matches_by_month:
-            delta_by_month[drv["month"]] += drv["total"]
-        for drv in resolved_matches_by_month:
-            delta_by_month[drv["month"]] -= drv["total"]
+        for month, total in new_matches_by_month.items():
+            delta_by_month[month] += total
+        for month, total in resolved_matches_by_month.items():
+            delta_by_month[month] -= total
 
         def _make_running_total():
             total = 0
@@ -350,20 +230,21 @@ class StatisticsPageView(LoginRequiredMixin, TemplateView):
         and rotates them by the current month"""
         a_year_ago = current_date - timedelta(days=365)
 
-        # Truncates months with their match counts
-        matches_by_month = self.matches.filter(
-            created_timestamp__range=(a_year_ago, current_date)).annotate(
-            month=TruncMonth(
-                    'created_timestamp', output_field=DateField())).values(
-            'month').annotate(
-            total=Count('raw_matches')
-        ).order_by('month')
-        # A QuerySet of objects, one for each month, of the form
-        # {'month': datetime.date(2023, 1, 1), 'total': 11117}
+        matches_by_month = sort_by_keys(self.created_month)
+
+        # We only want data from the last 12 months
+        cutoff_day = timezone.make_aware(
+            timezone.datetime(
+                a_year_ago.year,
+                a_year_ago.month+1,
+                1)).date()
+        earlier_months = [month for month in matches_by_month.keys() if month < cutoff_day]
+        for month in earlier_months:
+            del matches_by_month[month]
 
         # Generator with the months as integers and the total
-        matches_by_month_gen = ((m['month'].month, m['total'])
-                                for m in matches_by_month)
+        matches_by_month_gen = ((month.month, total)
+                                for month, total in matches_by_month.items())
 
         values_by_month = [0] * 12
 
@@ -460,17 +341,6 @@ class LeaderStatisticsPageView(LoginRequiredMixin, ListView):
                 return HttpResponseForbidden(
                     "Only managers and superusers have access to this page.")
         return super(LeaderStatisticsPageView, self).dispatch(
-            request, *args, **kwargs)
-
-
-class DPOStatisticsPageView(StatisticsPageView):
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if not user_is(Role.get_user_roles_or_default(request.user),
-                           DataProtectionOfficer):
-                return HttpResponseForbidden()
-        return super(DPOStatisticsPageView, self).dispatch(
             request, *args, **kwargs)
 
 
@@ -620,3 +490,7 @@ def filter_inapplicable_matches(user, matches, roles, account=None):
         matches = matches_all
 
     return matches
+
+
+def sort_by_keys(d: dict) -> dict:
+    return dict(sorted(d.items(), key=lambda t: t[0]))

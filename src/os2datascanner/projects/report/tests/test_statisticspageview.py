@@ -19,8 +19,7 @@ from ...report.organizations.models import (
 from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.models.roles.dpo import DataProtectionOfficer
 from ..reportapp.views.statistics_views import (
-        StatisticsPageView, UserStatisticsPageView, LeaderStatisticsPageView,
-        DPOStatisticsPageView)
+        UserStatisticsPageView, LeaderStatisticsPageView, DPOStatisticsPageView)
 from ..reportapp.utils import iterate_queryset_in_batches, create_alias_and_match_relations
 
 from .generate_test_data import record_match, record_metadata
@@ -441,51 +440,27 @@ class StatisticsPageViewTest(TestCase):
 
         self.assertEqual(response.status_code, 403)
 
-    def test_statisticspage_count_all_matches_grouped_by_sensitivity_as_dpo(self):
-        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        sens_list, total = view.count_all_matches_grouped_by_sensitivity()
-        self.assertListEqual(sens_list,
-                             [['Kritisk', 4], ['Problem', 2],
-                              ['Advarsel', 1], ['Notifikation', 0]])
-        self.assertEquals(total, 7)
-        dpo.delete()
-
-    # count_by_source_types
-    def test_statisticspage_count_by_source_types_as_dpo(self):
-        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        self.assertListEqual(view.count_by_source_types(),
-                             [['Andet', 0], ['Webscan', 0],
-                              ['Filscan', 0], ['Mailscan', 7]])
-        dpo.delete()
-
-    def test_statisticspage_count_handled_matches_grouped_by_sensitivity_as_dpo(self):
-        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        sens_list, total = view.count_handled_matches_grouped_by_sensitivity()
-        self.assertListEqual(sens_list,
-                             [['Kritisk', 0], ['Problem', 0],
-                              ['Advarsel', 0], ['Notifikation', 0]])
-        dpo.delete()
-
     # created_timestamp
     def test_statisticspage_created_timestamp_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
         view = self.get_statisticspage_object()
-        created_timestamp = [m.created_timestamp.date() for m in view.matches][:2]
+        created_timestamp = view.matches[0].get('created_month')
+        now = timezone.now().date()
 
-        self.assertEquals(created_timestamp, [timezone.now().date(), timezone.now().date()])
+        self.assertEquals(created_timestamp, timezone.datetime(now.year, now.month, 1).date())
         dpo.delete()
 
     # count_new_matches_by_month()
     def test_statisticspage_count_new_matches_by_month_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        test_date = dateutil.parser.parse("2020-11-28T14:21:59+05:00")
 
         # Overrides timestamps static dates and saves the old ones
         original_timestamps = static_timestamps()
+
+        view = self.get_statisticspage_object()
+
+        _, _, _, view.created_month, view.resolved_month = view.make_data_structures(view.matches)
+        test_date = dateutil.parser.parse("2020-11-28T14:21:59+05:00")
 
         self.assertListEqual(view.count_new_matches_by_month(test_date),
                              [['Dec', 0], ['Jan', 0], ['Feb', 0],
@@ -499,11 +474,14 @@ class StatisticsPageViewTest(TestCase):
 
     def test_statisticspage_count_new_matches_by_month_old_matches_as_dpo(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        test_date = dateutil.parser.parse("2021-09-28T14:21:59+05:00")
 
         # Overrides timestamps static dates and saves the old ones
         original_timestamps = static_timestamps()
+
+        view = self.get_statisticspage_object()
+
+        _, _, _, view.created_month, view.resolved_month = view.make_data_structures(view.matches)
+        test_date = dateutil.parser.parse("2021-09-28T14:21:59+05:00")
 
         self.assertListEqual(view.count_new_matches_by_month(test_date),
                              [['Oct', 2], ['Nov', 4], ['Dec', 0],
@@ -517,12 +495,16 @@ class StatisticsPageViewTest(TestCase):
 
     def test_statisticspage_count_unhandled_matches_by_month(self):
         dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
-        view = self.get_statisticspage_object()
-        test_date = dateutil.parser.parse("2021-4-28T14:21:59+05:00")
 
         # Saves old timestamps and overrides
         original_created_timestamps = static_timestamps('created_timestamp')
         original_resolution_time = static_timestamps('resolution_time')
+
+        view = self.get_statisticspage_object()
+
+        _, _, _, view.created_month, view.resolved_month = view.make_data_structures(view.matches)
+
+        test_date = dateutil.parser.parse("2021-4-28T14:21:59+05:00")
 
         self.assertListEqual(view.count_unhandled_matches_by_month(test_date),
                              [['May', 0], ['Jun', 0], ['Jul', 0],
@@ -546,15 +528,15 @@ class StatisticsPageViewTest(TestCase):
 
         # There are 2 reports from scanner job 11
         self.assertEqual(response11.context_data.get('scannerjobs')[-1], "11")
-        self.assertEqual(response11.context_data.get('total_matches'), 2)
+        self.assertEqual(response11.context_data.get('match_data').get('unhandled'), 2)
 
         # There are 4 reports from scanner job 14
         self.assertEqual(response14.context_data.get('scannerjobs')[-1], "14")
-        self.assertEqual(response14.context_data.get('total_matches'), 4)
+        self.assertEqual(response14.context_data.get('match_data').get('unhandled'), 4)
 
         # There are 1 reports from scanner job 17
         self.assertEqual(response17.context_data.get('scannerjobs')[-1], "17")
-        self.assertEqual(response17.context_data.get('total_matches'), 1)
+        self.assertEqual(response17.context_data.get('match_data').get('unhandled'), 1)
 
     def test_filter_by_orgunit(self):
         """Filtering by organizational units should only return results from
@@ -581,11 +563,11 @@ class StatisticsPageViewTest(TestCase):
 
         self.assertEqual(response_ob.context_data.get('orgunits')
                          [-1], '1b8f4a41-f615-47b2-a341-23eff609f8f0')
-        self.assertEqual(response_ob.context_data.get('total_matches'), 6)
+        self.assertEqual(response_ob.context_data.get('match_data').get('unhandled'), 6)
 
         self.assertEqual(response_ke.context_data.get('orgunits')
                          [-1], 'b0dbf7d7-b528-4c58-a7ff-c8875719eb6b')
-        self.assertEqual(response_ke.context_data.get('total_matches'), 2)
+        self.assertEqual(response_ke.context_data.get('match_data').get('unhandled'), 2)
 
     def test_access_from_different_organization(self):
         """A user should only be able to see results from their own organization."""
@@ -600,14 +582,14 @@ class StatisticsPageViewTest(TestCase):
 
         response = self.get_dpo_statisticspage_response(hulk)
 
-        self.assertEqual(response.context_data.get('total_matches'), 0)
+        self.assertEqual(response.context_data.get('match_data').get('unhandled'), 0)
 
     # StatisticsPageView()
     def get_statisticspage_object(self):
         # XXX: we don't use request for anything! Is this deliberate?
         # request = self.factory.get('/statistics')
         # request.user = self.kjeld
-        view = StatisticsPageView()
+        view = DPOStatisticsPageView()
         return view
 
     def get_user_statisticspage_response(self, user, **kwargs):

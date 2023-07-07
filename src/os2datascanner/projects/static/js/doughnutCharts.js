@@ -1,4 +1,4 @@
-/* exported drawDoughnuts */
+/* exported drawDoughnut */
 
 function makeDoughnutChart(text, data, colors, chartElement) {
 	const doughnutChart = new Chart(chartElement, {
@@ -38,7 +38,7 @@ function makeDoughnutChart(text, data, colors, chartElement) {
 	return doughnutChart;
 }
 
-function drawDoughnuts(totalHandledMatches, totalMatches, handledPercentage) {
+function drawDoughnut(totalHandledMatches, totalMatches, handledPercentage) {
 	// Doughnut chart
 	// //
 	// //
@@ -131,13 +131,13 @@ function drawDoughnuts(totalHandledMatches, totalMatches, handledPercentage) {
 				}
 				//Draw text in center
 				ctx.fillText(line, centerX, centerY);
-			} 
+			}
 		}
 	});
 
 	// function for rounded corners
 	Chart.register({
-		id:"chartID",
+		id: "chartID",
 		afterUpdate: function (chart) {
 			if (chart.config.options.elements.arc.roundedCornersFor !== undefined) {
 				var arc = chart.getDatasetMeta(0).data[chart.config.options.elements.arc.roundedCornersFor];

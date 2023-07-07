@@ -2,6 +2,8 @@
 
 ## Next release
 
+"Blasting Off at the Speed of Light 🚀"
+
 ### New in this release
 
 - The organizational unit overview is now cleaner and prettier in a table.
@@ -23,6 +25,9 @@
 - Support for automatically refreshing expired OS2mo access tokens.
 
 ### General improvements
+
+- Considerable perfomance improvement in the DPO-overview (about 90% faster 
+  database interaction).
 
 - Rows in the leader overview are now loaded dynamically as the user scrolls.
 
