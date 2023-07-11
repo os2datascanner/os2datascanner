@@ -1,6 +1,6 @@
 # Changelog
 
-## Next release
+## Version 3.20.2, 11th July 2023
 
 "Blasting Off at the Speed of Light 🚀"
 

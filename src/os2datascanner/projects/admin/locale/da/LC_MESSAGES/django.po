@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-29 10:52+0200\n"
+"POT-Creation-Date: 2023-07-11 09:40+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -109,7 +109,7 @@ msgstr "intet scannerjob findes med id {id}"
 #: adminapp/models/apikey.py:16 adminapp/models/rules/rule.py:47
 #: adminapp/models/scannerjobs/scanner.py:81 adminapp/models/usererrorlog.py:52
 #: import_services/models/msgraph_import_job.py:28
-#: import_services/models/os2mo_import_job.py:52
+#: import_services/models/os2mo_import_job.py:65
 #: import_services/models/realm.py:29
 msgid "organization"
 msgstr "organisation"
@@ -1131,11 +1131,11 @@ msgstr "Markér som set"
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
-#: adminapp/templates/os2datascanner/miniscan.html:17
+#: adminapp/templates/os2datascanner/miniscan.html:18
 msgid "OS2datascanner mini-scanner"
 msgstr "OS2datascanner miniscanner"
 
-#: adminapp/templates/os2datascanner/miniscan.html:19
+#: adminapp/templates/os2datascanner/miniscan.html:20
 msgid ""
 "The mini-scanner lets you execute any OS2datascanner rule on a single file, "
 "and returns the results directly to this page."
@@ -1143,36 +1143,36 @@ msgstr ""
 "Med miniscanneren kan man afvikle en arbitrær OS2datascanner-regel på én "
 "enkel fil. Resultaterne vises umiddelbart på denne side."
 
-#: adminapp/templates/os2datascanner/miniscan.html:31
+#: adminapp/templates/os2datascanner/miniscan.html:32
 msgid "File to scan"
 msgstr "Upload fil"
 
-#: adminapp/templates/os2datascanner/miniscan.html:40
+#: adminapp/templates/os2datascanner/miniscan.html:41
 msgid "The selected file is too big!"
 msgstr "Den valgte fil er for stor!"
 
-#: adminapp/templates/os2datascanner/miniscan.html:42
+#: adminapp/templates/os2datascanner/miniscan.html:43
 msgid "Maximum allowed file size is: "
 msgstr "Den maksimalt tilladte filstørrelse er: "
 
-#: adminapp/templates/os2datascanner/miniscan.html:44
+#: adminapp/templates/os2datascanner/miniscan.html:45
 msgid "Please, select another (smaller) file to scan."
 msgstr "Vælg venligst at scanne en anden (mindre) fil."
 
-#: adminapp/templates/os2datascanner/miniscan.html:47
+#: adminapp/templates/os2datascanner/miniscan.html:48
 msgid "Rule to execute"
 msgstr "Definér regel"
 
-#: adminapp/templates/os2datascanner/miniscan.html:53
+#: adminapp/templates/os2datascanner/miniscan.html:54
 #: adminapp/templates/os2datascanner/scanners.html:126
 msgid "Run"
 msgstr "Kør"
 
-#: adminapp/templates/os2datascanner/miniscan.html:55
+#: adminapp/templates/os2datascanner/miniscan.html:56
 msgid "Scan result"
 msgstr "Scanresultat"
 
-#: adminapp/templates/os2datascanner/miniscan.html:56
+#: adminapp/templates/os2datascanner/miniscan.html:57
 msgid "(none yet)"
 msgstr "(endnu ingen)"
 
