@@ -43,7 +43,7 @@
         <label for="orgunits">{% trans "organizational unit"|capfirst %}</label>
         <select name="orgunit" id="orgunits" data-compareto="--" autocomplete="off">
           <option value="--"
-                  {% if orgunits|last == "--" %}selected="selected"{% endif %}>{% trans "--" %}</option>
+                  {% if orgunits|last == "--" %}selected="selected"{% endif %}>--</option>
           {% for unit in orgunits|first %}
             <option value="{{ unit.uuid }}"
                     {% if orgunits|last == unit.uuid|stringformat:"s" %}selected="selected"{% endif %}>
