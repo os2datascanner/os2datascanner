@@ -19,6 +19,7 @@ from os2datascanner.engine2.rules.name import NameRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.engine2.rules.rule import Sensitivity
+from os2datascanner.engine2.rules.dict_lookup import EmailHeaderRule
 
 from os2datascanner.engine2.conversions.types import OutputType
 
@@ -151,6 +152,26 @@ more!""",
                     min_dim=0,
                 ),
                 (32, 32),
+                [],
+            ),
+            (
+                # This rule will find a match since the dict has a "subject"
+                # property whos value matches the regex 'test'.
+                EmailHeaderRule(
+                    prop="subject",
+                    rule=RegexRule('test'),
+                ),
+                dict(subject="This is a test subject"),
+                ['test'],
+            ),
+            (
+                # This rule will not match since the dict does not
+                # have a "subject" property.
+                EmailHeaderRule(
+                    prop="subject",
+                    rule=RegexRule('test'),
+                ),
+                dict(field="This is a test subject"),
                 [],
             ),
         ]

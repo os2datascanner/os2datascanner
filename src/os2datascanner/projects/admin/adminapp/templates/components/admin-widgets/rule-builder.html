@@ -31,6 +31,7 @@
       <option value="CustomRule_Health">{% trans "health information" %}</option>
       <option value="CustomRule_Name">{% trans "names" %}</option>
       <option value="CustomRule_Address">{% trans "address" %}</option>
+      <option value="EmailHeader">{% trans "e-mail header" %}</option>
       <optgroup label="{% trans "Experimental" %}">
         <option value="TurboCPRRule">{% trans "CPR-nr. (Turbo)" %}</option>
       </optgroup>
@@ -100,6 +101,13 @@
     )
   </span>
   <span id="CustomRule_Address"></span>
+  <span id="EmailHeader">
+    <input type="text" placeholder="{% trans "field name" %}" />
+    <span class="logical-rule">
+      {% trans "matches" context "verb" %}
+      <span data-template="rule_selector"></span>
+    </span>
+  </span>
   <span id="TurboCPRRule">
     ({% trans "with" %}
     <label>
