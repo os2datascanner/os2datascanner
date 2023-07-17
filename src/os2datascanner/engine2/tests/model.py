@@ -42,7 +42,12 @@ class DummyResource(Resource):
         if self.handle not in counts:
             counts[self.handle] = 0
         counts[self.handle] += 1
-        return True
+
+        hint = self.handle.hint("exists", True)
+        if hint is None:
+            raise OSError("Transient error, try again later")
+        else:
+            return hint
 
     def compute_type(self):
         return DUMMY_MIME
