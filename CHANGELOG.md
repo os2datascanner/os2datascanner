@@ -1,5 +1,12 @@
 # Changelog
 
+## Next release
+
+### Bugfixes
+
+- Transient errors in retrieving object metadata will no longer cause the
+  pipeline to conclude that the object no longer exists.
+
 ## Version 3.20.2, 11th July 2023
 
 "Blasting Off at the Speed of Light 🚀"

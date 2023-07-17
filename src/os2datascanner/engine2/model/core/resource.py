@@ -35,13 +35,13 @@ class Resource(ABC):
     @abstractmethod
     def check(self) -> bool:
         """Checks that this Resource is available by interacting with it in an
-        unspecified, lightweight way. Returns True if the resource exists, and
-        False if it doesn't.
+        unspecified, lightweight way. Returns True if the resource is known to
+        exist, and False if it's known not to, but raises an (arbitrary)
+        exception if it was not possible to find a definite answer.
 
-        This method will only return False if the Resource cannot be accessed
-        and is not expected to be accessible in future. In particular,
-        transient issues like locked files or connectivity problems will not
-        cause False to be returned."""
+        Callers must not treat a raised exception as being equivalent to False;
+        a file that cannot be read now is not the same as a file that cannot be
+        read."""
 
     def _generate_metadata(self):
         """Yields zero or more (key, value) pairs of metadata properties. (Keys

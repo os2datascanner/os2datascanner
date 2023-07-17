@@ -33,11 +33,12 @@ def check(source_manager, handle):
             handle = handle.source.handle
         else:
             break
-    try:
-        return handle.follow(source_manager).check()
-    except Exception as e:
-        logger.debug("check of {0} failed: {1}".format(handle.presentation, e))
-        return False
+
+    # Resource.check() returns False if the object has been deleted, True if it
+    # still exists, and raises an exception if something unexpected happened.
+    # Instead of trying to interpret that exception, we should let it bubble up
+    # and be converted into a ProblemMessage
+    return handle.follow(source_manager).check()
 
 
 def format_exception_message(ex: Exception, conversion: messages.ConversionMessage) -> str:
