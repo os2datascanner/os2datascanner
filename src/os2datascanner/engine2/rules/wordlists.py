@@ -1,32 +1,10 @@
+import re
+
 from typing import Iterator, Optional
 
 from ..conversions.types import OutputType
 from .rule import Rule, SimpleRule, Sensitivity
 from .datasets.loader import common as common_loader
-
-
-def _match_wordlist(wordlist, content, folded_content):
-    slices = []
-    start_at = 0
-    end_at = len(folded_content)
-    for word in wordlist:
-        try:
-            index = folded_content[start_at:end_at].index(word.casefold())
-            true_index = start_at + index
-            start_at = true_index + len(word)
-            end_at = start_at + 32
-            slices.append(slice(true_index, start_at))
-        except ValueError:
-            return
-
-    starts_at = slices[0].start
-    yield {
-        "match": " ".join(wordlist),
-        "offset": slices[0].start,
-        "context": content[
-                slice(max(starts_at - 50, 0), slices[-1].stop + 50)],
-        "context_offset": min(starts_at, 50)
-    }
 
 
 class OrderedWordlistRule(SimpleRule):
@@ -46,18 +24,33 @@ class OrderedWordlistRule(SimpleRule):
                 wl
                 for wl in common_loader.load_dataset("wordlists", dataset)
                 if wl]
+        expression = "|".join(r"(\b" + ".{,32}".join(re.escape(frag) for frag in wl) + r"\b)"
+                              for wl in self._wordlists)
+
+        self._compiled_expr = re.compile(expression, re.IGNORECASE | re.DOTALL)
 
     @property
     def presentation_raw(self) -> str:
         return f"lists of words from dataset {self._dataset}"
 
-    def match(self, content: str) -> Optional[Iterator[dict]]:
+    def match(self, content: str) -> Optional[Iterator[dict]]:  # noqa
         if content is None:
             return
-        folded_content = content.casefold()
 
-        for wordlist in self._wordlists:
-            yield from _match_wordlist(wordlist, content, folded_content)
+        def _get_formatted_match(m):
+            index = m.lastindex - 1
+            return " ".join(self._wordlists[index])
+
+        for m in self._compiled_expr.finditer(content):
+            begin, end = m.span()
+            context_begin = max(begin - 50, 0)
+            context_end = min(end + 50, len(content))
+            yield {
+                "match": _get_formatted_match(m),
+                "offset": begin,
+                "context": content[context_begin:context_end],
+                "context_offset": min(begin, 50)
+                }
 
     def to_json_object(self) -> dict:
         return dict(**super().to_json_object(), dataset=self._dataset)

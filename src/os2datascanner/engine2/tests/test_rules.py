@@ -424,7 +424,12 @@ more!""",
             ),
             (
                 f"This is a good {'dog':>33}",
-                ()
+                ({
+                    "match": "GOOD DOG",
+                    "offset": 10,
+                    "context": f"This is a good{'':>31}dog",
+                    "context_offset": 10
+                },)
             ),
             (
                 f"This is a totally{'tubular':>32}{'tapir':>32}",
@@ -438,26 +443,64 @@ more!""",
             (
                 "This CRAZY cat's a good dog!",
                 ({
-                    "match": "GOOD DOG",
-                    "offset": 19,
-                    "context": "This CRAZY cat's a good dog!",
-                    "context_offset": 19
-                }, {
                     "match": "crazy cat",
                     "offset": 5,
                     "context": "This CRAZY cat's a good dog!",
                     "context_offset": 5
-                })
+                },
+                 {
+                    "match": "GOOD DOG",
+                    "offset": 19,
+                    "context": "This CRAZY cat's a good dog!",
+                    "context_offset": 19
+                },)
             ),
             (
-                "This is an awesomely amazing arachnid!",
+                "Der står en mand på gaden",
+                ()
+            ),
+            (
+                "En skole er en læringsanstalt",
+                ()
+            ),
+            (
+                "De måtte overnatte i en afleveringshal",
+                ()
+            ),
+            (
+                "Medlidenhed er ikke en sårbarhed",
+                ()
+            ),
+            (
+                "En konklusion skal være kort og konkret",
+                ()
+            ),
+            (
+                "Skraldemænd er eksperter i affaldsbehandling",
+                ()
+            ),
+            (
+                "Hjælpestoffer kan være harmløse",
+                ()
+            ),
+            (
+                "Din lever er lidt plettet idag",
                 ({
-                    "match": "awesome arachnid",
-                    "offset": 11,
-                    "context": "This is an awesomely amazing arachnid!",
-                    "context_offset": 11
+                    "match": "lever",
+                    "offset": 4,
+                    "context": "Din lever er lidt plettet idag",
+                    "context_offset": 4
                 },)
-            )
+            ),
+            (
+                "Kol er noget farligt noget",
+                ({
+                    "match": "kol",
+                    "offset": 0,
+                    "context": "Kol er noget farligt noget",
+                    "context_offset": 0
+                },)
+            ),
         )
         wrl = OrderedWordlistRule("en_20211018_unit_test_words")
         for in_value, expected in candidates:
@@ -490,13 +533,6 @@ speciellæger.""",
                                " patienten af akut arteriel insufficiens i"
                                " alle\nekstremiteterne. Han selv tilføjer,"
                                " at han har ondt i albuen. Der",
-                    "context_offset": 50
-                }, {
-                    "match": "albue",
-                    "offset": 300,
-                    "context": "remiteterne. Han selv tilføjer, at han har"
-                               " ondt i albuen. Der er også\nindledende tegn"
-                               " på AUTOIMMUNT POLYG",
                     "context_offset": 50
                 }, {
                     "match": "autoimmunt polyglandulært syndrom",
