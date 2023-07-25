@@ -43,6 +43,13 @@ document.addEventListener("click", function (e) {
     setStorage("os2ds-prefers-expanded-results", preferenceExpand);
   }
 
+  if (hasClass(targ, "toggle-next-row")) {
+    // toggle the matches of a single row
+    var row = closestElement(targ, "tr");
+    if (row)
+      toggleMatchesList([row], targ);
+  }
+
   if (hasClass(targ, "probability-toggle")) {
     var isPressed = targ.getAttribute("aria-pressed") === "true";
     if (isPressed) {

@@ -113,7 +113,7 @@
   }
 
   .button-caret {
-    background-color: transparent !important;
+    background-color: var(--color-widget-bg);
 
     .material-icons {
       pointer-events: none;
@@ -126,6 +126,9 @@
       .material-icons {
         color: var(--color-primary-dark);
       }
+
+      // Don't change the background of the caret button
+      background-color: var(--color-widget-bg);
     }
 
     &.up {
@@ -744,4 +747,18 @@
   white-space: nowrap;
   z-index: 9999;
   cursor: text;
+}
+
+.datatable tr.short td {
+  padding-top: calc(var(--datatable-cell-padding) / 2);
+  padding-bottom: calc(var(--datatable-cell-padding) / 2);
+}
+
+.datatable tr.warning {
+  background-color: var(--color-warning);
+}
+
+.datatable tr.problem textarea[readonly=true] {
+  width: 100%;
+  padding: 1em;
 }
