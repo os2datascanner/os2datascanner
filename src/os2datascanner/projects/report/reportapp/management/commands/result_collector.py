@@ -198,7 +198,10 @@ def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cogni
                 logger.debug("Resource not changed: updating scan timestamp",
                              report=previous_report)
                 DocumentReport.objects.filter(pk=previous_report.pk).update(
-                        scan_time=scan_tag.time)
+                        scan_time=scan_tag.time,
+                        # If there is a problem associated with this report, we
+                        # no longer care about it
+                        raw_problem=None)
             else:
                 # The file has been edited and the matches are no longer
                 # present
@@ -206,7 +209,8 @@ def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cogni
                              report=previous_report)
                 DocumentReport.objects.filter(pk=previous_report.pk).update(
                         resolution_status=ResolutionChoices.EDITED.value,
-                        resolution_time=time_now())
+                        resolution_time=time_now(),
+                        raw_problem=None)
         else:
             # The file has been edited, but matches are still present.
             # Resolve the previous ones
@@ -214,7 +218,8 @@ def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cogni
                          report=previous_report)
             DocumentReport.objects.filter(pk=previous_report.pk).update(
                     resolution_status=ResolutionChoices.EDITED.value,
-                    resolution_time=time_now())
+                    resolution_time=time_now(),
+                    raw_problem=None)
 
     if new_matches.matched:
         # Collect and store the top-level type label from the matched object
@@ -243,10 +248,6 @@ def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cogni
                     "resolution_status": None,
                     "organization": get_org_from_scantag(scan_tag),
 
-                    # Explicitly blank out this field, in case it was set, to
-                    # avoid creating confusing hybrid objects (I can think of
-                    # no circumstances in which it would be, but better safe
-                    # than sorry, eh?)
                     "raw_problem": None,
                 })
 
@@ -289,64 +290,72 @@ def handle_problem_message(scan_tag, result):
 
     handle = problem.handle if problem.handle else None
     presentation = str(handle) if handle else "(source)"
-    if (previous_report
-            and previous_report.resolution_status in [0, None]
-            and problem.missing):
-        # The file previously had matches, but is now removed.
-        logger.debug(
-            "Resource deleted, status is REMOVED",
-            report=previous_report,
-            handle=presentation,
-            msgtype="problem",
-        )
-        DocumentReport.objects.filter(pk=previous_report.pk).update(
+
+    match (previous_report, problem):
+        case (None, messages.ProblemMessage(missing=True)):
+            # We've received a report that a resource is missing, but we have
+            # nothing associated with it. Nothing to do
+            logger.debug("Problem message of no relevance. Throwing away.")
+            pass
+        case (prev, messages.ProblemMessage(missing=True)) \
+                if prev.resolution_status in [0, None]:
+            # A resource for which we have some unresolved reports has been
+            # deleted. Mark it as removed
+
+            logger.debug(
+                "Resource deleted, status is REMOVED",
+                report=previous_report,
+                handle=presentation,
+                msgtype="problem",
+            )
+            DocumentReport.objects.filter(pk=prev.pk).update(
                 resolution_status=ResolutionChoices.REMOVED.value,
                 resolution_time=time_now())
-        return None
+        case (prev, messages.ProblemMessage(missing=True)):
+            # A resource for which we have some reports has been deleted, but
+            # it's also been resolved. Nothing to do
+            pass
+        case (None, messages.ProblemMessage()):
+            # A resource not previously known to us has a problem. Store it
+            source = (
+                    problem.handle.source
+                    if problem.handle else problem.source)
+            while source.handle:
+                source = source.handle.source
 
-    elif problem.missing:
-        logger.debug("Problem message of no relevance. Throwing away.")
-        return None
+            dr = DocumentReport.objects.create(
+                    path=path,
+                    scanner_job_pk=scan_tag.scanner.pk,
 
-    else:
-        # Collect and store the top-level type label from the failing object
-        source = problem.handle.source if problem.handle else problem.source
-        while source.handle:
-            source = source.handle.source
-
-        dr, _ = DocumentReport.objects.update_or_create(
-                path=path, scanner_job_pk=scan_tag.scanner.pk,
-                defaults={
-                    "scan_time": scan_tag.time,
-                    "raw_scan_tag": prepare_json_object(
+                    scan_time=scan_tag.time,
+                    raw_scan_tag=prepare_json_object(
                             scan_tag.to_json_object()),
 
-                    "source_type": source.type_label,
-                    "name": prepare_json_object(
+                    source_type=source.type_label,
+                    name=prepare_json_object(
                             handle.presentation_name) if handle else "",
-                    "sort_key": prepare_json_object(
+                    sort_key=prepare_json_object(
                             handle.sort_key if handle else "(source)"),
-                    "raw_problem": prepare_json_object(result),
-                    "scanner_job_name": scan_tag.scanner.name,
-                    "only_notify_superadmin": scan_tag.scanner.test,
-                    "resolution_status": None,
-                    "organization": get_org_from_scantag(scan_tag),
+                    raw_problem=prepare_json_object(result),
+                    scanner_job_name=scan_tag.scanner.name,
+                    only_notify_superadmin=scan_tag.scanner.test,
+                    resolution_status=None,
+                    organization=get_org_from_scantag(scan_tag))
 
-                    # Explicitly blank out these fields, in case they were set,
-                    # to avoid creating confusing hybrid objects. If there were
-                    # matches here, they're no longer readable and so no longer
-                    # relevant
-                    "raw_matches": None,
-                    "raw_metadata": None,
-                })
-
-        logger.debug(
-            "Unresolved, saving new report",
-            report=dr,
-            handle=presentation,
-            msgtype="problem",
-        )
-        return dr
+            logger.debug(
+                "Unresolved, created new report",
+                report=dr,
+                handle=presentation,
+                msgtype="problem",
+            )
+            return dr
+        case (prev, messages.ProblemMessage()):
+            # A resource known to us (either because of its matches or because
+            # of a pre-existing problem) has a new problem, but we can't say
+            # for sure that it's been deleted. Put the new problem in the
+            # existing report
+            DocumentReport.objects.filter(pk=prev.pk).update(
+                    raw_problem=prepare_json_object(problem.to_json_object()))
 
 
 def _identify_message(result):
