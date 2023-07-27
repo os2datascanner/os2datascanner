@@ -26,6 +26,7 @@ import structlog
 from statistics import linear_regression
 
 from django.db import models
+from django.db.models import F, Q
 from django.conf import settings
 from django.core.validators import validate_comma_separated_integer_list
 from django.db.models import JSONField
@@ -625,6 +626,11 @@ def inv_linear_func(y, a, b):
 class ScanStatus(AbstractScanStatus):
     """A ScanStatus object collects the status messages received from the
     pipeline for a given scan."""
+
+    _completed_Q = (
+            Q(total_objects__gt=0)
+            & Q(explored_sources=F('total_sources'))
+            & Q(scanned_objects__gte=F('total_objects')))
 
     last_modified = models.DateTimeField(
         verbose_name=_("last modified"),
