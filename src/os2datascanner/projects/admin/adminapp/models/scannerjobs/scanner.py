@@ -19,6 +19,7 @@
 """Contains Django model for the scanner types."""
 
 import datetime
+from datetime import timedelta
 from enum import Enum
 import os
 from typing import Iterator
@@ -682,7 +683,7 @@ class ScanStatus(AbstractScanStatus):
             a, b = linear_regression(time_data, frac_scanned)
 
             try:
-                end_time_guess = timezone.timedelta(
+                end_time_guess = timedelta(
                     seconds=inv_linear_func(
                         1.0, a, b)) + self.start_time
             except Exception as e:
@@ -713,6 +714,35 @@ class ScanStatus(AbstractScanStatus):
 
     def __str__(self):
         return f"{self.scanner}: {self.start_time}"
+
+    @classmethod
+    def clean_defunct(cls) -> set['ScanStatus']:
+        """Updates all defunct ScanStatus objects to appear as though they
+        completed normally. (A defunct ScanStatus is one that's at least 99.5%
+        complete but that hasn't received any new status messages in the last
+        hour.)
+
+        Returns a set of all the ScanStatus objects modified by this
+        function."""
+        now = time_now()
+        rv = set()
+        for ss in cls.objects.exclude(
+                cls._completed_Q).filter(
+                last_modified__lte=now - timedelta(hours=1)).iterator():
+            if (ss.fraction_scanned is not None
+                    and ss.fraction_scanned >= 0.995):
+                # This ScanStatus is essentially complete but hasn't been
+                # updated in the last hour; a status message or two must have
+                # gone missing. Mark it as done to avoid cluttering the UI
+                logger.warning(
+                        "marking defunct ScanStatus as complete",
+                        scan_status=ss,
+                        total_objects=ss.total_objects,
+                        scanned_objects=ss.scanned_objects)
+                ss.scanned_objects = ss.total_objects
+                rv.add(ss)
+                ss.save()
+        return rv
 
 
 @receiver(post_delete)
