@@ -22,12 +22,17 @@ class Command(BaseCommand):
             "--checkups-only",
             help=_("only scan objects previously scheduled for a checkup"),
             action="store_true")
+        parser.add_argument(
+            "--force",
+            help=_("disable the last modification date check for everything"
+                   " in this scan"),
+            action="store_true")
 
-    def handle(self, id, *args, checkups_only, **options):
+    def handle(self, id, *args, checkups_only, force, **options):
         try:
             scanner = Scanner.objects.select_subclasses().get(pk=id)
         except ObjectDoesNotExist:
             print(_("no scanner job exists with id {id}").format(id=id))
             sys.exit(1)
 
-        print(scanner.run(explore=not checkups_only))
+        print(scanner.run(explore=not checkups_only, force=force))

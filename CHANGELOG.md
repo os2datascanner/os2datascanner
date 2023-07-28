@@ -6,6 +6,10 @@
 
 - Temporary errors produced when checking a match again are now displayed as a
   warning in the report module.
+  
+- The `start_scan` management command has a new convenience parameter for
+  starting (partial or complete) scans that do not enforce the last
+  modification date check.
 
 ### Bugfixes
 
