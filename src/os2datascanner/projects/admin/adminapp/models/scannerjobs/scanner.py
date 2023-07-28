@@ -260,7 +260,7 @@ class Scanner(models.Model):
         scanner."""
         return {} if self.do_ocr else {"skip_mime_types": ["image/*"]}
 
-    def _construct_rule(self) -> Rule:
+    def _construct_rule(self, force: bool) -> Rule:
         """Builds an object that represents the rules configured for this
         scanner."""
         rule = OrRule.make(
@@ -268,7 +268,7 @@ class Scanner(models.Model):
                   for r in self.rules.all().select_subclasses()])
 
         prerules = []
-        if self.do_last_modified_check:
+        if not force and self.do_last_modified_check:
             last = self.get_last_successful_run_at()
             if last:
                 prerules.append(LastModifiedRule(last))
@@ -305,12 +305,12 @@ class Scanner(models.Model):
             pass
         return None
 
-    def _construct_scan_spec_template(self, user=None) -> (
+    def _construct_scan_spec_template(self, user, force: bool) -> (
             messages.ScanSpecMessage):
         """Builds a scan specification template for this scanner. This template
         has no associated Source, so make sure you put one in with the _replace
         or _deep_replace methods before trying to scan with it."""
-        rule = self._construct_rule()
+        rule = self._construct_rule(force)
         filter_rule = self._construct_filter_rule()
         scan_tag = self._construct_scan_tag(user)
         configuration = self._construct_configuration()
@@ -336,7 +336,7 @@ class Scanner(models.Model):
 
     def _add_checkups(
             self, spec_template: messages.ScanSpecMessage,
-            outbox: list) -> int:
+            outbox: list, force: bool) -> int:
         """Creates instructions to rescan every object covered by this
         scanner's ScheduledCheckup objects (in the process deleting objects no
         longer covered by one of this scanner's Sources), and puts them into
@@ -374,7 +374,7 @@ class Scanner(models.Model):
             # XXX: we could be adding LastModifiedRule twice
             ib = reminder.interested_before
             rule_here = AndRule.make(
-                    LastModifiedRule(ib) if ib else True,
+                    LastModifiedRule(ib) if ib and not force else True,
                     spec_template.rule)
             outbox.append((settings.AMQP_CONVERSION_TARGET,
                            conv_template._deep_replace(
@@ -384,15 +384,28 @@ class Scanner(models.Model):
             checkup_count += 1
         return checkup_count
 
-    def run(self, user=None, explore=True, checkup=True):  # noqa: CCR001
+    def run(
+            self, user=None,
+            explore: bool = True,
+            checkup: bool = True,
+            force: bool = False):  # noqa: CCR001
         """Schedules a scan to be run by the pipeline. Returns the scan tag of
         the resulting scan on success.
+
+        If the @explore flag is False, no ScanSpecMessages will be emitted for
+        this Scanner's Sources. If the @checkup flag is False, no
+        ConversionMessages will be emitted for this Scanner's
+        ScheduledCheckups. (If both of these flags are False, then this method
+        will have nothing to do and will raise an exception.)
+
+        If the @force flag is True, then no Last-Modified checks will be
+        requested, not even for ScheduledCheckup objects.
 
         An exception will be raised if the underlying source is not available,
         and a pika.exceptions.AMQPError (or a subclass) will be raised if it
         was not possible to communicate with the pipeline."""
 
-        spec_template = self._construct_scan_spec_template(user)
+        spec_template = self._construct_scan_spec_template(user, force)
         scan_tag = spec_template.scan_tag
 
         outbox = []
@@ -406,7 +419,7 @@ class Scanner(models.Model):
 
         checkup_count = 0
         if checkup:
-            checkup_count = self._add_checkups(spec_template, outbox)
+            checkup_count = self._add_checkups(spec_template, outbox, force)
 
         if source_count == 0 and checkup_count == 0:
             raise ValueError(f"nothing to do for {self}")
