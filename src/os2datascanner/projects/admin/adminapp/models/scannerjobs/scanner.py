@@ -19,6 +19,7 @@
 """Contains Django model for the scanner types."""
 
 import datetime
+from datetime import timedelta
 from enum import Enum
 import os
 from typing import Iterator
@@ -26,6 +27,7 @@ import structlog
 from statistics import linear_regression
 
 from django.db import models
+from django.db.models import F, Q
 from django.conf import settings
 from django.core.validators import validate_comma_separated_integer_list
 from django.db.models import JSONField
@@ -595,9 +597,12 @@ class AbstractScanStatus(models.Model):
     @property
     def fraction_explored(self) -> float | None:
         """Returns the fraction of the sources in this scan that has been
-        explored, or None if this is not yet computable."""
+        explored, or None if this is not yet computable.
+
+        This value is clamped, and can never exceed 1.0."""
         if self.total_sources > 0:
-            return (self.explored_sources or 0) / self.total_sources
+            return min(
+                    (self.explored_sources or 0) / self.total_sources, 1.0)
         elif self.explored_sources == 0 and self.total_objects != 0:
             # We've explored zero of zero sources, but there are some objects?
             # This scan must consist only of checkups
@@ -608,9 +613,12 @@ class AbstractScanStatus(models.Model):
     @property
     def fraction_scanned(self) -> float | None:
         """Returns the fraction of this scan that has been scanned, or None if
-        this is not yet computable."""
+        this is not yet computable.
+
+        This value is clamped, and can never exceed 1.0."""
         if self.fraction_explored == 1.0 and self.total_objects > 0:
-            return (self.scanned_objects or 0) / self.total_objects
+            return min(
+                    (self.scanned_objects or 0) / self.total_objects, 1.0)
         else:
             return None
 
@@ -625,6 +633,11 @@ def inv_linear_func(y, a, b):
 class ScanStatus(AbstractScanStatus):
     """A ScanStatus object collects the status messages received from the
     pipeline for a given scan."""
+
+    _completed_Q = (
+            Q(total_objects__gt=0)
+            & Q(explored_sources=F('total_sources'))
+            & Q(scanned_objects__gte=F('total_objects')))
 
     last_modified = models.DateTimeField(
         verbose_name=_("last modified"),
@@ -676,7 +689,7 @@ class ScanStatus(AbstractScanStatus):
             a, b = linear_regression(time_data, frac_scanned)
 
             try:
-                end_time_guess = timezone.timedelta(
+                end_time_guess = timedelta(
                     seconds=inv_linear_func(
                         1.0, a, b)) + self.start_time
             except Exception as e:
@@ -707,6 +720,35 @@ class ScanStatus(AbstractScanStatus):
 
     def __str__(self):
         return f"{self.scanner}: {self.start_time}"
+
+    @classmethod
+    def clean_defunct(cls) -> set['ScanStatus']:
+        """Updates all defunct ScanStatus objects to appear as though they
+        completed normally. (A defunct ScanStatus is one that's at least 99.5%
+        complete but that hasn't received any new status messages in the last
+        hour.)
+
+        Returns a set of all the ScanStatus objects modified by this
+        function."""
+        now = time_now()
+        rv = set()
+        for ss in cls.objects.exclude(
+                cls._completed_Q).filter(
+                last_modified__lte=now - timedelta(hours=1)).iterator():
+            if (ss.fraction_scanned is not None
+                    and ss.fraction_scanned >= 0.995):
+                # This ScanStatus is essentially complete but hasn't been
+                # updated in the last hour; a status message or two must have
+                # gone missing. Mark it as done to avoid cluttering the UI
+                logger.warning(
+                        "marking defunct ScanStatus as complete",
+                        scan_status=ss,
+                        total_objects=ss.total_objects,
+                        scanned_objects=ss.scanned_objects)
+                ss.scanned_objects = ss.total_objects
+                rv.add(ss)
+                ss.save()
+        return rv
 
 
 @receiver(post_delete)

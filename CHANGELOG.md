@@ -7,6 +7,13 @@
 - Transient errors in retrieving object metadata will no longer cause the
   pipeline to conclude that the object no longer exists.
 
+- The administration system can now automatically resolve completed scan
+  statuses that have become stuck due to a small number of missing status
+  messages.
+
+- Scan statuses can no longer disappear from the list of completed scans by
+  reporting themselves to be more than 100% complete.
+
 ## Version 3.20.2, 11th July 2023
 
 "Blasting Off at the Speed of Light 🚀"

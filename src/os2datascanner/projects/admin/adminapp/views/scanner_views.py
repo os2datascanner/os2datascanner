@@ -14,7 +14,6 @@
 from json import dumps
 
 from django.db import transaction
-from django.db.models import F, Q
 from django.core.paginator import Paginator, EmptyPage
 from django.http import Http404
 from pika.exceptions import AMQPError
@@ -68,24 +67,11 @@ class StatusBase(RestrictedListView):
                 user.make_org_Q("scanner__organization"))
 
     def get_context_data(self, **kwargs):
+        ScanStatus.clean_defunct()
+
         context = super().get_context_data(**kwargs)
         context["new_error_logs"] = count_new_errors(self.request.user)
         return context
-
-
-# As we do not store the `finished` state of a ScanStatus
-# as a field in the DB, we need to infer that state by
-# looking at other fields. This is what the ScanStatus.finished
-# method does. We can't use that method as a QuerySet filter, though.
-# The filter below implements the same behavior without having
-# to do two queries, which was previously done (one for getting the
-# entire set, then construct a list of pks in Python based on
-# ScanStatus.finished, then a second query with a filter based on
-# the list).
-completed_scans = (
-    Q(total_objects__gt=0)
-    & Q(explored_sources=F('total_sources'))
-    & Q(scanned_objects__gte=F('total_objects')))
 
 
 class StatusOverview(StatusBase):
@@ -106,13 +92,10 @@ class StatusOverview(StatusBase):
     def get_queryset(self):
 
         # Only get ScanStatus objects that are not deemed "finished" (see
-        # completed_scans Q object above). That way we avoid manual
+        # ScanStatus._completed_Q object above). That way we avoid manual
         # filtering in the template and only get the data we intend to display.
 
-        # Use the same filter as for getting completed scans,
-        # but negate it (tilde)
-
-        return super().get_queryset().order_by("-pk").filter(~completed_scans)
+        return super().get_queryset().order_by("-pk").exclude(ScanStatus._completed_Q)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -156,12 +139,9 @@ class StatusCompleted(StatusBase):
 
         The queryset consists only of completed scans and is ordered by start time.
         """
-
-        return (
-            super().get_queryset()
-            .filter(completed_scans, resolved=False)
-            .order_by('-scan_tag__time')
-        )
+        return super().get_queryset().filter(
+                ScanStatus._completed_Q, resolved=False).order_by(
+                '-scan_tag__time')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

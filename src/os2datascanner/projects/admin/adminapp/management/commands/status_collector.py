@@ -115,7 +115,6 @@ class StatusCollectorRunner(PikaPipelineThread):
                 with transaction.atomic():
                     if routing_key == "os2ds_status":
                         yield from status_message_received_raw(body)
-
             except DataError as de:
                 # DataError occurs when something went wrong trying to select
                 # or create/update data in the database. For now, we
