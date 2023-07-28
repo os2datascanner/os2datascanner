@@ -11,6 +11,9 @@
   statuses that have become stuck due to a small number of missing status
   messages.
 
+- Scan statuses can no longer disappear from the list of completed scans by
+  reporting themselves to be more than 100% complete.
+
 ## Version 3.20.2, 11th July 2023
 
 "Blasting Off at the Speed of Light 🚀"

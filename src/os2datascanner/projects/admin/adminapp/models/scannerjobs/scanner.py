@@ -597,9 +597,12 @@ class AbstractScanStatus(models.Model):
     @property
     def fraction_explored(self) -> float | None:
         """Returns the fraction of the sources in this scan that has been
-        explored, or None if this is not yet computable."""
+        explored, or None if this is not yet computable.
+
+        This value is clamped, and can never exceed 1.0."""
         if self.total_sources > 0:
-            return (self.explored_sources or 0) / self.total_sources
+            return min(
+                    (self.explored_sources or 0) / self.total_sources, 1.0)
         elif self.explored_sources == 0 and self.total_objects != 0:
             # We've explored zero of zero sources, but there are some objects?
             # This scan must consist only of checkups
@@ -610,9 +613,12 @@ class AbstractScanStatus(models.Model):
     @property
     def fraction_scanned(self) -> float | None:
         """Returns the fraction of this scan that has been scanned, or None if
-        this is not yet computable."""
+        this is not yet computable.
+
+        This value is clamped, and can never exceed 1.0."""
         if self.fraction_explored == 1.0 and self.total_objects > 0:
-            return (self.scanned_objects or 0) / self.total_objects
+            return min(
+                    (self.scanned_objects or 0) / self.total_objects, 1.0)
         else:
             return None
 
