@@ -357,6 +357,7 @@ def handle_problem_message(scan_tag, result):
             # existing report
             DocumentReport.objects.filter(pk=prev.pk).update(
                     raw_problem=prepare_json_object(problem.to_json_object()))
+            return prev
 
 
 def _identify_message(result):

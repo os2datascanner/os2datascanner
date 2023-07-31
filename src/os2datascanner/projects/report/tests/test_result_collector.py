@@ -316,9 +316,6 @@ class PipelineCollectorTests(TestCase):
                 saved_match,
                 "object with matches not reused for problem")
         self.assertIsNone(
-                new.raw_matches,
-                "matches incorrectly reused for problem")
-        self.assertIsNone(
                 new.raw_metadata,
                 "metadata incorrectly reused for problem")
 
