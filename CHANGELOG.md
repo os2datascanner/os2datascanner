@@ -2,6 +2,11 @@
 
 ## Next release
 
+### General improvements
+
+- Temporary errors produced when checking a match again are now displayed as a
+  warning in the report module.
+
 ### Bugfixes
 
 - Transient errors in retrieving object metadata will no longer cause the

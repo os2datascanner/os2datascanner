@@ -347,6 +347,7 @@ class HandleMatchView(HTMXEndpointView, DetailView):
                            f"of account belonging to user {self.request.user}:", e)
 
         report.resolution_status = action
+        report.raw_problem = None
         report.save()
         logger.info(f"Successfully handled DocumentReport {report} with "
                     f"resolution_status {action}.")
@@ -378,6 +379,7 @@ class MassHandleView(HTMXEndpointView, ListView):
 
         for report in reports:
             report.resolution_status = action
+            report.raw_problem = None
             report.save()
         logger.info(
             f"Successfully handled DocumentReports "

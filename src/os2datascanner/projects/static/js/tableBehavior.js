@@ -25,11 +25,12 @@ function handleChecked() {
 // attach click handler to document to be prepared for the scenario
 // where we dynamically add more rows
 document.addEventListener("click", function (e) {
+  let row;
   var targ = e.target;
 
   if (hasClass(targ, "matches-expand")) {
     // toggle the matches of a single row
-    var row = closestElement(targ, "tr[data-type]");
+    row = closestElement(targ, "tr[data-type]");
     toggleMatchesList([row], targ);
   }
 
@@ -41,6 +42,14 @@ document.addEventListener("click", function (e) {
     // store the user's preference in window.localStorage
     var preferenceExpand = hasClass(targ, "up") ? "expanded" : "collapsed";
     setStorage("os2ds-prefers-expanded-results", preferenceExpand);
+  }
+
+  if (hasClass(targ, "toggle-next-row")) {
+    // toggle the matches of a single row
+    row = closestElement(targ, "tr");
+    if (row) {
+      toggleMatchesList([row], targ);
+    }
   }
 
   if (hasClass(targ, "probability-toggle")) {
