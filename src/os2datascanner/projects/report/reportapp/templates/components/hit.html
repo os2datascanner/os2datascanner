@@ -201,29 +201,30 @@
       </td>
     </tr>
     {% if document_report.problem %}
-    <tr class="warning short">
-      <td>
-        <i class="material-icons" aria-hidden="true">warning</i>
-      </td>
-      <td colspan="{% if "/archive" in request.path %}6{% else %}5{% endif %}">
-        <i>{% translate "A temporary error occurred during the latest check of this match" %}</i>
-        <br><small>{% translate "OS2datascanner will automatically check this match again as part of the next scan" %}</small>
-      </td>
-      <td class="datatable__column--actions">
-        <div class="button-group text-align-right">
-          <button class="toggle-next-row button button-caret button--has-icon" title="{% translate "Show/hide technical details of the error" %}" type="button">
-            <i class="material-icons" aria-hidden="true">expand_more</i>
-          </button>
-        </div>
-        <i>
-        </i>
-      </td>
-    </tr>
-    <tr class="warning narrow problem" hidden>
-      <td colspan="500">
-        <textarea readonly="true">{{ document_report.problem.message }}</textarea>
-      </td>
-    </tr>
+      <tr class="warning short">
+        <td>
+          <i class="material-icons" aria-hidden="true">warning</i>
+        </td>
+        <td colspan="{% if "/archive" in request.path %}6{% else %}5{% endif %}">
+          <i>{% translate "A temporary error occurred during the latest check of this match" %}</i>
+          <br>
+          <small>{% translate "OS2datascanner will automatically check this match again as part of the next scan" %}</small>
+        </td>
+        <td class="datatable__column--actions">
+          <div class="button-group text-align-right">
+            <button class="toggle-next-row button button-caret button--has-icon" title="{% translate "Show/hide technical details of the error" %}" type="button">
+              <i class="material-icons" aria-hidden="true">expand_more</i>
+            </button>
+          </div>
+          <i>
+          </i>
+        </td>
+      </tr>
+      <tr class="warning narrow problem" hidden>
+        <td colspan="500">
+          <textarea readonly="true">{{ document_report.problem.message }}</textarea>
+        </td>
+      </tr>
     {% endif %}
   {% endwith %}
 {% endwith %}

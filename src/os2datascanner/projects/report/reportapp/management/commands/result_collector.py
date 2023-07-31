@@ -300,7 +300,7 @@ def handle_problem_message(scan_tag, result):
         case (prev, messages.ProblemMessage(missing=True)) \
                 if prev.resolution_status in [0, None]:
             # A resource for which we have some unresolved reports has been
-            # deleted. Mark it as removed
+            # deleted. Mark it as removed and remove its raw_problem message.
 
             logger.debug(
                 "Resource deleted, status is REMOVED",
@@ -310,7 +310,8 @@ def handle_problem_message(scan_tag, result):
             )
             DocumentReport.objects.filter(pk=prev.pk).update(
                 resolution_status=ResolutionChoices.REMOVED.value,
-                resolution_time=time_now())
+                resolution_time=time_now(),
+                raw_problem=None)
         case (prev, messages.ProblemMessage(missing=True)):
             # A resource for which we have some reports has been deleted, but
             # it's also been resolved. Nothing to do

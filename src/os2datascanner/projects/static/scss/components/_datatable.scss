@@ -113,7 +113,7 @@
   }
 
   .button-caret {
-    background-color: var(--color-widget-bg);
+    background-color: transparent;
 
     .material-icons {
       pointer-events: none;
@@ -128,7 +128,7 @@
       }
 
       // Don't change the background of the caret button
-      background-color: var(--color-widget-bg);
+      background-color: transparent;
     }
 
     &.up {
