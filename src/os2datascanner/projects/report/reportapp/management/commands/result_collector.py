@@ -297,10 +297,12 @@ def handle_problem_message(scan_tag, result):
             # nothing associated with it. Nothing to do
             logger.debug("Problem message of no relevance. Throwing away.")
             pass
-        case (prev, messages.ProblemMessage(missing=True)) \
-                if prev.resolution_status in [0, None]:
+        case (DocumentReport() as prev, messages.ProblemMessage(missing=True)) \
+                if not prev.resolution_status:
             # A resource for which we have some unresolved reports has been
-            # deleted. Mark it as removed and remove its raw_problem message.
+            # deleted.
+            # If resolution status is "OTHER" or None: (I.e. 0 or None)
+            # Mark it as removed and remove its raw_problem message.
 
             logger.debug(
                 "Resource deleted, status is REMOVED",
@@ -312,7 +314,14 @@ def handle_problem_message(scan_tag, result):
                 resolution_status=ResolutionChoices.REMOVED.value,
                 resolution_time=time_now(),
                 raw_problem=None)
-        case (prev, messages.ProblemMessage(missing=True)):
+        case (DocumentReport() as prev,
+              messages.ProblemMessage(missing=False)) if prev.resolution_status:
+            # A known resource, which isn't missing, has a problem, but has already been resolved.
+            # Nothing to do, problem is not relevant anymore.
+            logger.debug("Resource already resolved. Problem message of no relevance. "
+                         "Throwing away.")
+        case (DocumentReport() as prev,
+              messages.ProblemMessage(missing=True)) if prev.resolution_status:
             # A resource for which we have some reports has been deleted, but
             # it's also been resolved. Nothing to do
             pass
@@ -350,7 +359,7 @@ def handle_problem_message(scan_tag, result):
                 msgtype="problem",
             )
             return dr
-        case (prev, messages.ProblemMessage()):
+        case (DocumentReport() as prev, messages.ProblemMessage()):
             # A resource known to us (either because of its matches or because
             # of a pre-existing problem) has a new problem, but we can't say
             # for sure that it's been deleted. Put the new problem in the
