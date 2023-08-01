@@ -479,7 +479,7 @@ msgstr "Sandsynlighed"
 
 #: reportapp/templates/components/hit.html:211
 msgid "A temporary error occurred during the latest check of this match"
-msgstr "Der opstod en midlertidig fejl under sidst tjek af dette match"
+msgstr "Der opstod en midlertidig fejl under sidste tjek af dette match"
 
 #: reportapp/templates/components/hit.html:212
 msgid ""
