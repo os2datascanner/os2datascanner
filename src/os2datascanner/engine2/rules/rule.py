@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from enum import Enum
+import json
 from typing import Union, Optional, Tuple, Iterator, Callable, Any
 
 from ..utilities.json import JSONSerialisable
@@ -139,6 +140,10 @@ class Rule(TypePropertyEquality, JSONSerialisable):
 
     def __str__(self):
         return self.presentation
+
+    def __repr__(self):
+        return (f"Rule.from_json_object("
+                f"{json.dumps(self.to_json_object())})")
 
 
 class SimpleRule(Rule):

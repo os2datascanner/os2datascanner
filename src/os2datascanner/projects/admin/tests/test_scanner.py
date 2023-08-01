@@ -213,8 +213,8 @@ class ScannerTest(TestCase):
                 handle_representation=mail_body_handle.to_json_object(),
                 scanner=scanner)
 
-        sst = scanner._construct_scan_spec_template()
-        scanner._add_checkups(sst, [])
+        sst = scanner._construct_scan_spec_template(user=None, force=False)
+        scanner._add_checkups(sst, [], force=False)
 
         self.assertEqual(ScheduledCheckup.objects.count(), 1)
         self.assertEqual(ScheduledCheckup.objects.first(), sc)
