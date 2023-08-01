@@ -37,7 +37,8 @@ function selectOptions(obj, selector) {
     "ordered-wordlist": "CustomRule_Health",
     "name": "CustomRule_Name",
     "address": "CustomRule_Address",
-    "cpr_turbo": "TurboCPRRule"
+    "cpr_turbo": "TurboCPRRule",
+    "email-header": "EmailHeader",
   };
 
   selectElem.value = valueMap[type];
@@ -54,11 +55,12 @@ function selectOptions(obj, selector) {
         inserters[inserters.length - 1].dispatchEvent(click);
       }
     });
-  } else if (type === "not") {
+  } else if (["not", "email-header"].includes(type)) {
     let rule = obj.rule;
     getSelectorAndSelect(rule, index = 0, selector);
   }
 
+  let inputs = Array.from(selector.querySelectorAll("input, select")).slice(1);
   switch (type) {
     case "cpr":
       setCheckbox(0, obj.modulus_11, selector);
@@ -73,7 +75,11 @@ function selectOptions(obj, selector) {
       setCheckbox(1, obj.examine_context, selector);
       break;
     case "regex":
-      selector.querySelector("input").value = obj.expression;
+      inputs[0].value = obj.expression;
+      break;
+    case "email-header":
+      inputs[0].value = obj.property;
+      break;
   }
 
 }
@@ -202,6 +208,14 @@ function makeRule(elem) {
         "whitelist": [],
         "blacklist": [],
       };
+    case "EmailHeader":
+      let inputs = elem.querySelectorAll("input");
+      return {
+        "type": "email-header",
+        "property": inputs[0].value,
+        "rule": children.map(makeRule).filter(c => c !== null)[0],
+      };
+
     case "TurboCPRRule":
       tickboxes = elem.querySelectorAll("input[type='checkbox']");
       return {

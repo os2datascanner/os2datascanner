@@ -1,3 +1,4 @@
+import json
 import click
 import traceback
 
@@ -58,16 +59,17 @@ def main(type_id, raw, files_to_convert) -> int:  # noqa:CCR001
         fh = FilesystemHandle.make_handle(f)
 
         for handle, form, cache in try_convert(sm, fh, output_type, mime):
-            encoded = str(output_type.encode_json_object(form))
+            encoded_form = (
+                    json.dumps(
+                            output_type.encode_json_object(form),
+                            indent=4 if not raw else None)
+                    if form else "no conversion possible")
             if not raw:
                 print(f"{handle}{' (from cache)' if cache else ''}")
-                if form is None:
-                    form = "no conversion possible"
                 print("\n".join(
-                        f"    {line}"
-                        for line in str(output_type.encode_json_object(form)).split("\n")))
+                        f"    {line}" for line in encoded_form.split("\n")))
             else:
-                print(encoded, end="")
+                print(encoded_form, end="")
 
 
 if __name__ == "__main__":

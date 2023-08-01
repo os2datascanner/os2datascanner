@@ -36,6 +36,7 @@ class OutputType(Enum):
     ImageDimensions = "image-dimensions"  # (int, int)
     Links = "links"  # list[Link]
     Manifest = "manifest"  # list[Handle]
+    EmailHeaders = "email-headers"  # dict[str, str]
 
     AlwaysTrue = "fallback"  # True
     NoConversions = "dummy"
@@ -55,10 +56,14 @@ class OutputType(Enum):
             if isinstance(v, list):
                 return [(link.url, link.link_text) for link in v]
             return (v.url, v.link_text)
-        elif self == OutputType.AlwaysTrue:
-            return True
         elif self == OutputType.Manifest:
             return [h.to_json_object() for h in v]
+        elif self == OutputType.EmailHeaders:
+            # v is already suitable for JSON serialisation
+            return v
+
+        elif self == OutputType.AlwaysTrue:
+            return True
         else:
             raise TypeError(self.value)
 
@@ -75,10 +80,14 @@ class OutputType(Enum):
             return int(v[0]), int(v[1])
         elif self == OutputType.Links:
             return [Link(url, link_text) for url, link_text in v]
-        elif self == OutputType.AlwaysTrue:
-            return True
         elif self == OutputType.Manifest:
             return [Handle.from_json_object(h) for h in v]
+        elif self == OutputType.EmailHeaders:
+            # Force all keys to be lower-case
+            return {k.lower(): v for k, v in v.items()}
+
+        elif self == OutputType.AlwaysTrue:
+            return True
         else:
             raise TypeError(self.value)
 
