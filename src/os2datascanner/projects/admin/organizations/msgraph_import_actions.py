@@ -164,7 +164,7 @@ def perform_msgraph_import(data: list,  # noqa: C901, CCR001
                                  sid=member.get("sid"))
 
                 try:
-                    Position.objects.get(account=acc, unit=unit)
+                    Position.objects.get(account=acc, unit=unit, imported=True)
                 except Position.DoesNotExist:
                     position = Position(
                         imported=True,
