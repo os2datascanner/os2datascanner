@@ -19,6 +19,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, TemplateView, DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
+from django.conf import settings
 
 from os2datascanner.projects.admin.utilities import UserWrapper
 from ..models.scannerjobs.dropboxscanner import DropboxScanner
@@ -60,6 +61,12 @@ class RestrictedListView(LoginRequiredMixin, ListView):
 
 class GuideView(TemplateView):
     template_name = "os2datascanner/guide.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if settings.MANUAL_PAGE:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            raise Http404()
 
 
 # Create/Update/Delete Views.
