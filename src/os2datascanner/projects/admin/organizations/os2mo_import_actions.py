@@ -155,7 +155,7 @@ def perform_os2mo_import(org_unit_list: list,  # noqa: CCR001, C901 too high cog
     def positions_to_add(acc: Account, unit: OrganizationalUnit, role: str):
         """ Helper function that appends positions to to_add if not present locally """
         try:
-            Position.objects.get(account=acc, unit=unit, role=role)
+            Position.objects.get(account=acc, unit=unit, role=role, imported=True)
         except Position.DoesNotExist:
             position = Position(
                 imported=True,

@@ -299,7 +299,7 @@ def perform_import_raw(  # noqa: C901, CCR001 too complex
                 account_positions[account] = []
 
             try:
-                Position.objects.get(account=account, unit=unit)
+                Position.objects.get(account=account, unit=unit, imported=True)
             except Position.DoesNotExist:
                 position = Position(
                     imported=True,

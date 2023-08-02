@@ -23,6 +23,9 @@
 - Scan statuses can no longer disappear from the list of completed scans by
   reporting themselves to be more than 100% complete.
 
+- Manually created Position objects for users in units they are already members of, can now
+coexist with imported ones.
+
 ## Version 3.20.2, 11th July 2023
 
 "Blasting Off at the Speed of Light 🚀"
