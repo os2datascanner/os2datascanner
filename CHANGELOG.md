@@ -11,6 +11,9 @@
   starting (partial or complete) scans that do not enforce the last
   modification date check.
 
+- The manual in the admin module is now hidden by default. The visibility of
+  this page can be configured in the pillar settings.
+
 ### Bugfixes
 
 - Transient errors in retrieving object metadata will no longer cause the

@@ -61,13 +61,15 @@
             <span class="width">{% trans "Administration" %}</span>
           </a>
         </li>
-        <li>
-          <a href="/help/guide/"
-             class="{% if active_tab == 'guide' %}active{% endif %}">
-            {% include "components/svg-icons/help.svg" %}
-            <span class="width">{% trans "Guide" %}</span>
-          </a>
-        </li>
+        {% if settings.MANUAL_PAGE %}
+          <li>
+            <a href="/help/guide/"
+               class="{% if active_tab == 'guide' %}active{% endif %}">
+              {% include "components/svg-icons/help.svg" %}
+              <span class="width">{% trans "Guide" %}</span>
+            </a>
+          </li>
+        {% endif %}
       {% endif %}
     {% endif %}
     {% if request.user.is_authenticated %}
