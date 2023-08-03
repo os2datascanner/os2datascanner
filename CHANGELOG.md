@@ -1,6 +1,8 @@
 # Changelog
 
-## Next release
+## 3.20.3, 3rd August 2023
+
+"Check My Scans"
 
 ### General improvements
 
