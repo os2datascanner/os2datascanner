@@ -315,7 +315,7 @@ def handle_problem_message(scan_tag, result):
                 resolution_time=time_now(),
                 raw_problem=None)
         case (DocumentReport() as prev,
-              messages.ProblemMessage(missing=False)) if prev.resolution_status:
+              messages.ProblemMessage(missing=False)) if prev.resolution_status is not None:
             # A known resource, which isn't missing, has a problem, but has already been resolved.
             # Nothing to do, problem is not relevant anymore.
             logger.debug("Resource already resolved. Problem message of no relevance. "
