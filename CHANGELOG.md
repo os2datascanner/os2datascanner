@@ -1,5 +1,13 @@
 # Changelog
 
+## Next Release
+
+"To Prevent Arthritis"
+
+### General improvements
+
+- Added a related name to the ScanStatusSnapshot model.
+
 ## 3.20.3, 3rd August 2023
 
 "Check My Scans"
