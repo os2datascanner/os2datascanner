@@ -790,7 +790,8 @@ class ScanStatusSnapshot(AbstractScanStatus):
 
     scan_status = models.ForeignKey(
         ScanStatus,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="snapshots"
     )
 
     time_stamp = models.DateTimeField(
