@@ -39,7 +39,6 @@
               <col class="datatable__column--name" />
               <col class="datatable__column--org" />
               <col class="datatable__column--info" />
-              <col class="datatable__column--expression" />
               <col class="datatable__column--sensitivity" />
               <col class="datatable__column--actions" />
             </colgroup>
@@ -48,7 +47,6 @@
                 <th class="datatable__column--name">{% trans "Name" %}</th>
                 <th class="datatable__column--org">{% trans "Organization" %}</th>
                 <th class="datatable__column--info">{% trans "Description" %}</th>
-                <th class="datatable__column--expression">{% trans "Expression" %}</th>
                 <th class="datatable__column--sensitivity">{% trans "Sensitivity" %}</th>
                 <th class="datatable__column--actions">{% trans "Action" %}</th>
               </tr>
@@ -59,15 +57,6 @@
                   <td class="datatable__column--name">{{ rule.name }}</td>
                   <td class="datatable__column--org">{{ rule.organization }}</td>
                   <td class="datatable__column--info">{{ rule.description }}</td>
-
-                  <td class="datatable__column--expression">
-                    {% if rule.regexrule.patterns.all|length > 0 %}
-                      <button type="button"
-                              class="button button--grey button--small"
-                              title="{% trans 'Show expression' %}"
-                              data-toggle="#show-patterns-{{ forloop.counter }}">{% trans "Show expression" %}</button>
-                    {% endif %}
-                  </td>
                   <td class="datatable__column--sensitivity">
                     <span class="flex">
                       <span class="flex--width">{% include "components/sensitivity-icon.html" %}</span>
