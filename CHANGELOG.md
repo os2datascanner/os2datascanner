@@ -31,6 +31,8 @@
   such that workers can be assigned to serve a dedicated organisation.
   Thus, for a system we multiple workers and organisations, it is possible
   to run multiple scanner jobs in parallel.
+  
+- It is possible to (globally) turn on GhostScript-compression for PDF-files.
 
 ### General improvements
 

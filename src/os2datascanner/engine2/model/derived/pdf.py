@@ -11,6 +11,7 @@ from .derived import DerivedSource
 from .utilities.extraction import (should_skip_images,
                                    MD5DeduplicationFilter,
                                    TinyImageFilter)
+from .utilities.ghostscript import gs_convert
 
 
 PAGE_TYPE = "application/x.os2datascanner.pdf-page"
@@ -18,8 +19,8 @@ WHITESPACE_PLUS = string.whitespace + "\0"
 
 
 def _open_pdf_wrapped(obj):
-    reader = PyPDF2.PdfFileReader(obj)
-    if reader.getIsEncrypted():
+    reader = PyPDF2.PdfReader(obj)
+    if reader.is_encrypted:
         # Some PDFs are "encrypted" with an empty password: give that a shot...
         if reader.decrypt("") == 0:  # the document has a real password
             raise PyPDF2.utils.PdfReadError("File cannot be decrypted")
@@ -31,15 +32,17 @@ class PDFSource(DerivedSource):
     type_label = "pdf"
 
     def _generate_state(self, sm):
-        with self.handle.follow(sm).make_path() as p:
+        with self.handle.follow(sm).make_path() as path:
             # Explicitly download the file here for the sake of PDFPageSource,
             # which needs a local filesystem path to pass to pdftohtml
-
-            yield p
+            if engine2_settings.ghostscript["enabled"]:
+                yield from gs_convert(path)
+            else:
+                yield path
 
     def handles(self, sm):
         reader = _open_pdf_wrapped(sm.open(self))
-        for i in range(1, reader.getNumPages() + 1 if reader else 0):
+        for i in range(1, len(reader.pages) + 1 if reader else 0):
             yield PDFPageHandle(self, str(i))
 
 

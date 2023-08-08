@@ -23,6 +23,7 @@ pdftohtml
 imagemagick
 cifs-utils
 libsmbclient-dev
+ghostscript
 
 # Report
 openssl
