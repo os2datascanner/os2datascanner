@@ -29,6 +29,8 @@
 - The manual in the admin module is now hidden by default. The visibility of
   this page can be configured in the pillar settings.
 
+- The unused "expression" column has been removed from the table on the rules page.
+
 ### Bugfixes
 
 - Transient errors in retrieving object metadata will no longer cause the
