@@ -26,6 +26,8 @@ def go_bang(k):
     signal.raise_signal(signal.SIGKILL)
 
 
+HandleMessageType = tuple[str, str, str, str] | tuple[str, str]
+
 # We register an exception hook to make sure the main thread does not hang
 # indefinitely should a problem arise in the rabbitmq-connection-thread.
 threading.excepthook = go_bang
@@ -120,11 +122,12 @@ given channel.)"""
 
 class PikaPipelineRunner(PikaConnectionHolder):
     def __init__(self, *,
-                 prefetch_count=1, read=None, write=None, **kwargs):
+                 prefetch_count=1, read=None, write=None, queue_suffix=None, **kwargs):
         super().__init__(**kwargs)
         self._read = set() if read is None else set(read)
         self._write = set() if write is None else set(write)
         self._prefetch_count = prefetch_count
+        self._queue_suffix = queue_suffix
 
     def make_channel(self):
         """As PikaConnectionHolder.make_channel, but automatically declares all
@@ -135,6 +138,11 @@ class PikaPipelineRunner(PikaConnectionHolder):
         messages."""
         channel = super().make_channel()
         channel.basic_qos(prefetch_count=self._prefetch_count)
+
+        # Declare the required exchanges
+        queue_suffix = self._queue_suffix
+        customer_exchange = setup_headers_exchange_routing(channel, queue_suffix)
+
         for q in self._read.union(self._write):
             channel.queue_declare(
                     q,
@@ -143,9 +151,16 @@ class PikaPipelineRunner(PikaConnectionHolder):
                     exclusive=False,
                     auto_delete=False)
 
+            if "os2ds_conversions" in q and q in self._read:
+                # Make sure to bind the conversions queue to
+                # the customer's exchange.
+                arguments = {"x-match": "all", "org": queue_suffix} if queue_suffix else dict()
+                channel.queue_bind(q, customer_exchange,
+                                   arguments=arguments)
+
         channel.exchange_declare(
-                "broadcast", pika.spec.ExchangeType.fanout,
-                passive=False, durable=True, auto_delete=False, internal=False)
+            "broadcast", pika.spec.ExchangeType.fanout,
+            passive=False, durable=True, auto_delete=False, internal=False)
 
         return channel
 
@@ -175,6 +190,48 @@ class PikaPipelineRunner(PikaConnectionHolder):
         """Cancels all of the provided consumer registrations."""
         for tag in consumer_tags:
             self.channel.basic_cancel(tag)
+
+
+def setup_headers_exchange_routing(channel, queue_suffix):
+    """
+    Sets up the headers exchange routing structure for an
+    AMQP channel with a 'root' exchange for
+    the conversions (worker) queues.
+    """
+
+    # Declare the 'root' exchange
+    root_exchange = "os2ds_root_conversions"
+    channel.exchange_declare(
+        exchange=root_exchange,
+        exchange_type=pika.spec.ExchangeType.headers,
+        passive=False,
+        durable=True,
+        auto_delete=False,
+        )
+
+    # Declare the 'customer' exchange based on the queue suffix.
+    customer_exchange = (f"os2ds_conversions_{queue_suffix}"
+                         if queue_suffix else "os2ds_conversions")
+
+    arguments = {"x-match": "all", "org": queue_suffix} if queue_suffix else dict()
+
+    channel.exchange_declare(
+        exchange=customer_exchange,
+        exchange_type=pika.spec.ExchangeType.headers,
+        passive=False,
+        durable=True,
+        auto_delete=False,
+        internal=True,
+        arguments=arguments
+        )
+
+    # Bind the 'customer' exchange to the 'root' exchange with
+    # routing based on the queue suffix (organization).
+    channel.exchange_bind(customer_exchange,
+                          root_exchange,
+                          arguments=arguments)
+
+    return customer_exchange
 
 
 class RejectMessage(BaseException):
@@ -208,20 +265,16 @@ class SynchronisationTimeoutError(RuntimeError):
 class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
     """Runs a Pika session in a background thread."""
 
-    def __init__(
-            self, *args, exclusive=False, default_basic_properties=None,
-            **kwargs):
+    def __init__(self, *args, exclusive=False, **kwargs):
         super().__init__()
         PikaPipelineRunner.__init__(self, *args, **kwargs)
+
         self._incoming = SortedList(key=lambda e: -(e[1].priority or 0))
         self._outgoing = []
         self._live = None
         self._condition = threading.Condition()
         self._exclusive = exclusive
-        if default_basic_properties is None:
-            default_basic_properties = dict(
-                    delivery_mode=2, content_encoding="gzip")
-        self._default_basic_properties = default_basic_properties
+        self._default_basic_properties = dict(delivery_mode=2, content_encoding="gzip")
 
         self._shutdown_exception = None
 
@@ -271,11 +324,13 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
         set, the message will be encoded accordingly -- on the calling thread,
         not the background one -- before it's enqueued."""
         basic_properties = self._default_basic_properties | basic_properties
+
         if not isinstance(body, bytes):
             body = json.dumps(body).encode()
         if (encoding := basic_properties.get("content_encoding")):
             encoder, _ = _coders[encoding]
             body = encoder(body)
+
         return self._enqueue(
                 "msg", routing_key, body, exchange, basic_properties)
 
@@ -336,7 +391,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
               " done sleeping. Got a message.")
         return method, properties, body
 
-    def handle_message(self, routing_key, body):
+    def handle_message(self, routing_key, body) -> HandleMessageType:
         """Handles an AMQP message by yielding zero or more (routing key,
         JSON-serialisable object) pairs to be sent as new messages.
 
@@ -385,8 +440,7 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                                 self.channel.basic_publish(
                                         exchange=exchange,
                                         routing_key=routing_key,
-                                        properties=pika.BasicProperties(
-                                                **props),
+                                        properties=pika.BasicProperties(**props),
                                         body=body)
                             case ("ack", delivery_tag):
                                 self.channel.basic_ack(delivery_tag)
@@ -463,8 +517,16 @@ class PikaPipelineThread(threading.Thread, PikaPipelineRunner):
                     key = method.routing_key
                     dbd = json_utf8_decode(body)
 
-                    for routing_key, message in self.handle_message(key, dbd):
-                        self.enqueue_message(routing_key, message)
+                    for msg in self.handle_message(key, dbd):
+                        match msg:
+                            case (routing_key, message, exchange, headers):
+                                self.enqueue_message(routing_key,
+                                                     message,
+                                                     exchange=exchange,
+                                                     **headers)
+                            case (routing_key, message):
+                                self.enqueue_message(routing_key, message)
+
                     self.enqueue_ack(method.delivery_tag)
                     self.after_message(key, dbd)
                 except RejectMessage as ex:

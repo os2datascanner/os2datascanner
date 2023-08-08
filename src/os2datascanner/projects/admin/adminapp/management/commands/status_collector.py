@@ -145,5 +145,5 @@ class Command(BaseCommand):
         logging.getLogger("os2datascanner").setLevel(log_levels[log])
 
         StatusCollectorRunner(
-                read=["os2ds_status"],
-                prefetch_count=1024).run_consumer()
+            read=["os2ds_status"],
+            prefetch_count=1024).run_consumer()

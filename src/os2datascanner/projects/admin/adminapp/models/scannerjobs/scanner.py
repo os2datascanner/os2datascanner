@@ -50,6 +50,7 @@ from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 import os2datascanner.engine2.pipeline.messages as messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.conversions.types import OutputType
+from os2datascanner.engine2.pipeline.headers import get_exchange, get_headers
 from mptt.models import TreeManyToManyField
 
 from ..rules.rule import Rule
@@ -336,7 +337,9 @@ class Scanner(models.Model):
 
     def _add_checkups(
             self, spec_template: messages.ScanSpecMessage,
-            outbox: list, force: bool) -> int:
+            outbox: list,
+            force: bool,
+            queue_suffix=None) -> int:
         """Creates instructions to rescan every object covered by this
         scanner's ScheduledCheckup objects (in the process deleting objects no
         longer covered by one of this scanner's Sources), and puts them into
@@ -380,7 +383,8 @@ class Scanner(models.Model):
                            conv_template._deep_replace(
                                scan_spec__source=rh.source,
                                handle=rh,
-                               progress__rule=rule_here)))
+                               progress__rule=rule_here),
+                           ),)
             checkup_count += 1
         return checkup_count
 
@@ -419,7 +423,11 @@ class Scanner(models.Model):
 
         checkup_count = 0
         if checkup:
-            checkup_count = self._add_checkups(spec_template, outbox, force)
+            checkup_count = self._add_checkups(
+                spec_template,
+                outbox,
+                force,
+                queue_suffix=self.organization.name)
 
         if source_count == 0 and checkup_count == 0:
             raise ValueError(f"nothing to do for {self}")
@@ -430,6 +438,10 @@ class Scanner(models.Model):
 
         self.save()
 
+        # Use the name of an appropriate organization as queue_suffix for
+        # headers-based routing.
+        queue_suffix = self.organization.name
+
         # Create a model object to track the status of this scan...
         ScanStatus.objects.create(
                 scanner=self, scan_tag=scan_tag.to_json_object(),
@@ -438,9 +450,14 @@ class Scanner(models.Model):
 
         # ... and dispatch the scan specifications to the pipeline!
         with PikaPipelineThread(
+                queue_suffix=queue_suffix,
                 write={queue for queue, _ in outbox}) as sender:
+
             for queue, message in outbox:
-                sender.enqueue_message(queue, message.to_json_object())
+                sender.enqueue_message(queue,
+                                       message.to_json_object(),
+                                       exchange=get_exchange(rk=queue),
+                                       **get_headers(organisation=queue_suffix))
             sender.enqueue_stop()
             sender.start()
             sender.join()

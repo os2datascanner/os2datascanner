@@ -26,8 +26,7 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
             for channel_name in (
                     "os2ds_scan_specs",
                     "os2ds_conversions",
-                    "os2ds_representations",
-                    "os2ds_matches", "os2ds_handles",
+                    "os2ds_matches",
                     "os2ds_metadata",
                     "os2ds_problems",
                     "os2ds_results",):
@@ -35,19 +34,14 @@ class Engine2SubprocessPipelineTests(unittest.TestCase):
 
         self.explorer = python(
                 "-m", "os2datascanner.engine2.pipeline.explorer")
-        self.processor = python(
-                "-m", "os2datascanner.engine2.pipeline.processor")
-        self.matcher = python(
-                "-m", "os2datascanner.engine2.pipeline.matcher")
-        self.tagger = python(
-                "-m", "os2datascanner.engine2.pipeline.tagger")
+        self.worker = python(
+            "-m", "os2datascanner.engine2.pipeline.worker")
         self.exporter = python(
                 "-m", "os2datascanner.engine2.pipeline.exporter")
 
     def tearDown(self):
         self.runner.clear()
-        for p in (self.explorer, self.processor, self.matcher, self.tagger,
-                  self.exporter):
+        for p in (self.explorer, self.worker, self.exporter):
             p.kill()
             p.wait()
 

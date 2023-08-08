@@ -186,5 +186,5 @@ class Command(BaseCommand):
         logging.getLogger("os2datascanner").setLevel(log_levels[log])
 
         EventCollectorRunner(
-                read=["os2ds_events"],
-                prefetch_count=8).run_consumer()
+            read=["os2ds_events"],
+            prefetch_count=8).run_consumer()

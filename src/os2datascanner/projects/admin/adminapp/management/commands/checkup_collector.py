@@ -264,5 +264,5 @@ class Command(BaseCommand):
         logging.getLogger("os2datascanner").setLevel(log_levels[log])
 
         CheckupCollectorRunner(
-                read=["os2ds_checkups"],
-                prefetch_count=512).run_consumer()
+            read=["os2ds_checkups"],
+            prefetch_count=512).run_consumer()
