@@ -9,3 +9,12 @@
 .footer p {
   margin: 0;
 }
+
+.subtle_footer {
+  position: fixed;
+  right: 5px;
+  bottom: 0;
+  font-size: x-small;
+  color: var(--color-text-secondary);
+  z-index: -1;
+}

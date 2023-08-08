@@ -1,6 +1,12 @@
+{% load i18n %}
+
 <section class="sidemenu" id="sidemenu" aria-labelledby="navigation-toggle">
   {% include "components/navigation.html" %}
 </section>
 
 <meta name="htmx-config"
       content='{"historyEnabled": "false", "historyCacheSize": "0"}'>
+
+<footer class="subtle_footer">
+  {% trans "OS2datascanner version" %} {{ version }}
+</footer>

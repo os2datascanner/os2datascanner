@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="da">
@@ -55,6 +56,11 @@
     </script>
 
   </head>
+
+
+  <footer class="subtle_footer">
+    {% trans "OS2datascanner version" %} {{ version }}
+  </footer>
 
   <body class="{{ body_class|default:'page' }}">
     <noscript>
