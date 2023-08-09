@@ -80,11 +80,6 @@ document.addEventListener("click", function (e) {
 
 });
 
-Array.prototype.forEach.call(document.querySelectorAll(".tooltip"), function (element) {
-  element.addEventListener("mouseenter", showTooltip);
-  element.addEventListener("mouseleave", hideTooltip);
-});
-
 // function to use localStorage
 function setStorage(item, value) {
   try {
@@ -219,6 +214,12 @@ function prepareTable() {
   handleTableCorners();
 }
 
+// Add tooltips
+function addTooltipListeners(element) {
+  element.addEventListener("mouseenter", showTooltip);
+  element.addEventListener("mouseleave", hideTooltip);
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   prepareTable();
 
@@ -227,6 +228,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (hasClass(content, 'page') || hasClass(content, 'datatable-wrapper') || hasClass(content, 'content')) {
 
       prepareTable();
+      
+      var tooltips = document.querySelectorAll(".tooltip");
+      tooltips.forEach(addTooltipListeners);
 
       // Listen for click on toggle checkbox
       $("#select-all").change(function () {
