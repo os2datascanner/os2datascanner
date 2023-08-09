@@ -8,7 +8,6 @@
   <script src="{% static '3rdparty/htmx.min.js' %}"></script>
   <script src="{% static 'js/tableBehavior.js' %}"></script>
   <script src="{% static 'js/highlightSearch.js' %}"></script>
-  <script src="{% static 'js/sortByHandlers.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -31,7 +30,7 @@
             class="errorlog_filtering_wrapper"
             onsubmit="return false"
             hx-get="{% url "error-log" %}"
-            hx-trigger="change, keyup delay:200ms from:#search_field"
+            hx-trigger="keyup delay:200ms from:#search_field"
             hx-swap="outerHTML"
             hx-include="[id='dropdown_options']"
             hx-target=".error_content"
@@ -114,9 +113,14 @@
                     <button type="button"
                             name="error_message"
                             id="error-caret"
-                            onclick="sortByErrorMessage()"
                             class="order-by button button-caret button--has-icon{% if order_by == 'error_message' and order == 'descending' %} up{% endif %}"
-                            value="{% if order_by == 'error_message' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+                            value="{% if order_by == 'error_message' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+                            hx-get="{% url "error-log" %}"
+                            hx-swap="outerHTML"
+                            hx-trigger="click delay:100ms"
+                            hx-include="[id='dropdown_options'], [id='errorlog_filters']"
+                            hx-target=".error_content"
+                            hx-select=".error_content">
                       <i class="material-icons" aria-hidden="true">expand_more</i>
                     </button>
                   </th>
@@ -125,9 +129,14 @@
                     <button type="button"
                             name="scan_status"
                             id="scan-caret"
-                            onclick="sortByScanStatus()"
                             class="order-by button button-caret button--has-icon{% if order_by == 'scan_status' and order == 'descending' %} up{% endif %}"
-                            value="{% if order_by == 'scan_status' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+                            value="{% if order_by == 'scan_status' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+                            hx-get="{% url "error-log" %}"
+                            hx-swap="outerHTML"
+                            hx-trigger="click delay:100ms"
+                            hx-include="[id='dropdown_options'], [id='errorlog_filters']"
+                            hx-target=".error_content"
+                            hx-select=".error_content">
                       <i class="material-icons" aria-hidden="true">expand_more</i>
                     </button>
                   </th>
@@ -138,10 +147,16 @@
                     <button type="button"
                             name="path"
                             id="path-caret"
-                            onclick="sortByPath()"
                             class="order-by button button-caret button--has-icon{% if order_by == 'path' and order == 'descending' %} up{% endif %}"
-                            value="{% if order_by == 'path' and order == 'descending' %}ascending{% else %}descending{% endif %}">
+                            value="{% if order_by == 'path' and order == 'descending' %}ascending{% else %}descending{% endif %}"
+                            hx-get="{% url "error-log" %}"
+                            hx-swap="outerHTML"
+                            hx-trigger="click delay:100ms"
+                            hx-include="[id='dropdown_options'], [id='errorlog_filters']"
+                            hx-target=".error_content"
+                            hx-select=".error_content">
                       <i class="material-icons" aria-hidden="true">expand_more</i>
+ 
                     </button>
                   </th>
                   <th class="datatable__column--scan">
