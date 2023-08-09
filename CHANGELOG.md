@@ -9,6 +9,8 @@
 - Added a related name to the ScanStatusSnapshot model.
 
 - Added footer with current version to admin and report modules.
+- Removed sortByHandlers.js and formatted caret buttons to use HTMX instead 
+  of hmtl + js.
 
 ## 3.20.3, 3rd August 2023
 
