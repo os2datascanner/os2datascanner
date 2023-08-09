@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-03 11:23+0200\n"
+"POT-Creation-Date: 2023-08-08 15:40+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -340,15 +340,15 @@ msgstr "scanstatus"
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/scanner.py:797
+#: adminapp/models/scannerjobs/scanner.py:798
 msgid "timestamp"
 msgstr "tidsstempel"
 
-#: adminapp/models/scannerjobs/scanner.py:805
+#: adminapp/models/scannerjobs/scanner.py:806
 msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/scanner.py:806
+#: adminapp/models/scannerjobs/scanner.py:807
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
@@ -1861,6 +1861,10 @@ msgstr "tilføj OS2mo-konfiguration"
 #: adminapp/templates/partials/breadcrumb.html:124
 msgid "update OS2mo configuration"
 msgstr "opdatér OS2mo-konfiguration"
+
+#: adminapp/templates/partials/main.html:11
+msgid "OS2datascanner version"
+msgstr "OS2datascanner version"
 
 #: adminapp/templates/password_change_done.html:6
 #: adminapp/templates/password_change_done.html:12

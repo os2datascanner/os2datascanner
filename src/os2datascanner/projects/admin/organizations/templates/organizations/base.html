@@ -1,5 +1,6 @@
 {% extends 'partials/base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block scripts %}
   <script src="{% static '3rdparty/htmx.min.js' %}"></script>
@@ -39,5 +40,9 @@
     <div class="content">
       {% block content %}{% endblock %}
     </div>
+
+    <footer class="subtle_footer">
+      {% trans "OS2datascanner version" %} {{ version }}
+    </footer>
   </main>
 {% endblock %}
