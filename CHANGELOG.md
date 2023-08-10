@@ -12,6 +12,12 @@
 - Removed sortByHandlers.js and formatted caret buttons to use HTMX instead 
   of hmtl + js.
 
+- The unused "expression" column has been removed from the table on the rules page.
+
+### Bugfixes
+
+- Tooltips for overflow titles in the report module are now correctly displayed.
+
 ## 3.20.3, 3rd August 2023
 
 "Check My Scans"
@@ -32,8 +38,6 @@
 
 - The manual in the admin module is now hidden by default. The visibility of
   this page can be configured in the pillar settings.
-
-- The unused "expression" column has been removed from the table on the rules page.
 
 ### Bugfixes
 
