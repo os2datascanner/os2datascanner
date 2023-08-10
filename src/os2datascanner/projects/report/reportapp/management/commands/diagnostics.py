@@ -1,0 +1,181 @@
+#!/usr/bin/env python
+# The contents of this file are subject to the Mozilla Public License
+# Version 2.0 (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+#    http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS"basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# OS2datascanner was developed by Magenta in collaboration with OS2 the
+# Danish community of open source municipalities (https://os2.eu/).
+#
+# The code is currently governed by OS2 the Danish community of open
+# source municipalities ( https://os2.eu/ )
+from django.core.management.base import BaseCommand
+from django.db.models import Count, F
+
+from ....organizations.models import Account, Alias, OrganizationalUnit, Organization
+from ...models.documentreport import DocumentReport
+
+
+class Command(BaseCommand):
+    """Run diagnostics on the report module."""
+
+    help = __doc__
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--only",
+            default=False,
+            choices=["accounts", "aliases", "problems", "reports", "units"],
+            help="Only run diagnostics on a specific part of the report module."
+        )
+
+    def diagnose_accounts(self):
+        print("\n\n>> Running diagnostics on accounts ...")
+        accounts = Account.objects.count()
+        accounts_without_username = Account.objects.filter(username="").values("pk")
+        username_counts = Account.objects.values("username").order_by().annotate(
+            count=Count("username")).order_by("-count").filter(count__gte=2)
+
+        print(f"Found a total of {accounts} accounts.")
+
+        if len(accounts_without_username):
+            print(f"Found {len(accounts_without_username)} accounts without a username:", ", ".join(
+                [d["pk"] for d in accounts_without_username]))
+
+        if len(username_counts):
+            print(f"Found {len(username_counts)} cases of duplicate usernames:", ", ".join(
+                [f"{d['username']} ({d['count']})" for d in username_counts]))
+
+    def diagnose_aliases(self):
+        print("\n\n>> Running diagnostics on aliases ...")
+        aliases = Alias.objects.count()
+        alias_types = Alias.objects.values(
+            "_alias_type").order_by().annotate(count=Count("_alias_type"))
+        aliases_with_no_user = Alias.objects.filter(user__isnull=True).values("pk")
+        aliases_with_no_account = Alias.objects.filter(account__isnull=True).values("pk")
+
+        nl = '\n  '
+        print(
+            f"Found a total of {aliases} aliases: \n  "
+            f"{nl.join([f'''{a['_alias_type']}: {a['count']}''' for a in alias_types])}")
+
+        if len(aliases_with_no_user):
+            print(f"Found {len(aliases_with_no_user)} aliases with no user:",
+                  ", ".join([d['pk'] for d in aliases_with_no_user]))
+
+        if len(aliases_with_no_account):
+            print(f"Found {len(aliases_with_no_account)} aliases with no account:",
+                  ", ".join([d['pk'] for d in aliases_with_no_account]))
+
+    def diagnose_problems(self):
+        print("\n\n>> Running diagnostics on problems ...")
+        all_problems = DocumentReport.objects.filter(raw_problem__isnull=False)
+        problems = all_problems.values("raw_problem__message").order_by().annotate(
+            count=Count("raw_problem__message")).order_by("-count")
+
+        if problems.exists():
+            print(
+                f"Found {problems.count()} different problems ({all_problems.count()} "
+                "problems in total). Now presenting the 5 most common:")
+
+            for message_dict in problems[:5]:
+                print(
+                    f"  ({message_dict['count']} counts) {message_dict['raw_problem__message']}")
+
+    def diagnose_reports(self):
+        print("\n\n>> Running diagnostics on reports ...")
+        reports = DocumentReport.objects.count()
+        matches = DocumentReport.objects.filter(number_of_matches__gte=1)
+        handled = matches.filter(
+            resolution_status__isnull=False).values("resolution_status").order_by().annotate(
+            count=Count("resolution_status")).order_by("-count")
+        unhandled = matches.filter(resolution_status__isnull=True)
+        scannerjobs = DocumentReport.objects.values(
+            "scanner_job_pk", "scanner_job_name").order_by().annotate(
+            count=Count("pk")).order_by("-count")
+
+        print(f"Found {reports} reports in total, {matches.count()} of which "
+              f"contain matches, {unhandled.count()} of which are unhandled.")
+
+        if len(handled):
+            print("Matches are handled in the following way:")
+            for res_dict in handled:
+                print(
+                    f"  {DocumentReport.ResolutionChoices(res_dict['resolution_status']).label}"
+                    f": {res_dict['count']} reports")
+
+        if reports:
+            print("Matches come from the following scannerjobs:")
+            for scannerjob in scannerjobs:
+                print(
+                    f"  {scannerjob['scanner_job_name']} ("
+                    f"{scannerjob['scanner_job_pk']}): {scannerjob['count']} reports")
+
+        # Check for timestamps
+        no_created_timestamp = DocumentReport.objects.filter(created_timestamp__isnull=True)
+        no_resolution_time = DocumentReport.objects.filter(
+            resolution_status__isnull=False, resolution_time__isnull=True)
+        no_both_timestamps = no_created_timestamp | no_resolution_time
+
+        if no_created_timestamp.count():
+            print(f"Found {no_created_timestamp.count()} reports without a 'created_timestamp'.")
+        if no_resolution_time.count():
+            print(f"Found {no_resolution_time.count()} handled reports without"
+                  f" a 'resolution_time'.")
+        if no_both_timestamps.count():
+            print(
+                f"Found {no_both_timestamps.count()} handled reports without "
+                f"both a 'created_timestamp' and a 'resolution_time'.")
+
+        # Check for reports handled before they were created
+        impossible_timestamps = DocumentReport.objects.filter(
+            resolution_status__isnull=False,
+            created_timestamp__gt=F("resolution_time"))
+
+        if impossible_timestamps.count():
+            print(
+                f"Found {impossible_timestamps.count()} handled reports, where"
+                f" the 'resolution_time' is earlier than the 'created_timestamp'.")
+
+    def diagnose_units(self):
+        print("\n\n>> Running diagnostics on units ...")
+        units = OrganizationalUnit.objects.count()
+
+        print(f"Found {units} units.")
+
+    def diagnose_organizations(self):
+        print("\n\n>> Running diagnostics on organizations ...")
+        orgs = Organization.objects.count()
+        os2 = Organization.objects.filter(name="OS2datascanner").first()
+
+        print(f"Found {orgs} organizations.")
+
+        if os2:
+            print(
+                f"The organization with UUID {os2.pk} is called 'OS2datascanner'."
+                " Should this be changed?'")
+
+    def handle(self, only, **options):
+
+        if only is False or only == "accounts":
+            self.diagnose_accounts()
+
+        if only is False or only == "aliases":
+            self.diagnose_aliases()
+
+        if only is False or only == "problems":
+            self.diagnose_problems()
+
+        if only is False or only == "reports":
+            self.diagnose_reports()
+
+        if only is False or only == "units":
+            self.diagnose_units()
+
+        if only is False or only == "organizations":
+            self.diagnose_organizations()
