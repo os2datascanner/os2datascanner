@@ -379,6 +379,14 @@ class AccountTest(TestCase):
         self.assertIn("new", egon_weekly_matches[0].keys())
         self.assertIn("handled", egon_weekly_matches[0].keys())
 
+    def test_account_count_matches_by_week_created_none(self):
+        """Test the Account.count_matches_by_week-method with a report without
+        a created timestamp, to make sure the method does not break."""
+        make_matched_document_reports_for(self.kjeld_alias, handled=0, amount=1, created=None)
+        kjeld_weekly_matches = self.kjeld_acc.count_matches_by_week(weeks=1)
+
+        self.assertEqual(kjeld_weekly_matches[0]["matches"], 1)
+
     def test_account_count_matches_from_ten_to_one_to_zero(self):
         all_matches = 10
         handled = 0
@@ -391,6 +399,7 @@ class AccountTest(TestCase):
                          "Incorrect match_count on account object!")
 
         # Handle 9/10
+
         DocumentReport.objects.filter(alias_relation=self.kjeld_alias).update(resolution_status=0)
         dr = DocumentReport.objects.filter(alias_relation=self.kjeld_alias).first()
         dr.resolution_status = None

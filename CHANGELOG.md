@@ -18,6 +18,12 @@
 
 - Tooltips for overflow titles in the report module are now correctly displayed.
 
+### Bugfixes
+
+- The `count_matches_by_week`-method on the `Account`-class has been 
+  refactored, and is more robust towards missing created_timestamp-values on
+  related DocumentReports.
+
 ## 3.20.3, 3rd August 2023
 
 "Check My Scans"
