@@ -226,6 +226,7 @@ class Account(Core_Account):
         for report in all_matches:
             # Set temporary timestamps if missing
             if report.get("created_timestamp") is None:
+                logger.warning("Encountered a DocumentReport object without a created_timestamp!")
                 report["created_timestamp"] = timezone.make_aware(timezone.datetime(1970, 1, 1))
 
             for week in matches_by_week:
