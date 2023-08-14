@@ -31,7 +31,6 @@ from django.utils import timezone
 from django.views.generic import TemplateView, DetailView, ListView
 from django.shortcuts import get_object_or_404
 
-# from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
 from ..models.documentreport import DocumentReport
@@ -312,6 +311,10 @@ class LeaderStatisticsPageView(LoginRequiredMixin, ListView):
 
             if sort_key not in allowed_sorting_properties:
                 return
+
+            if sort_key == "match_count":
+                for acc in qs:
+                    acc.save()
 
             if order != 'ascending':
                 sort_key = '-'+sort_key
