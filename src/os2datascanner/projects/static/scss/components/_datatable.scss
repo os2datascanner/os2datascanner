@@ -55,10 +55,10 @@
   &.xl.card {
     // use gradients to signify that the table is scrollable
     background-image:
-      linear-gradient(to right, white var(--datatable-cell-padding), transparent 100%),
-      linear-gradient(to right, #22222244, transparent 100%),
-      linear-gradient(to left, white var(--datatable-cell-padding), transparent 100%),
-      linear-gradient(to left, #22222244, transparent 100%);
+      linear-gradient(to right, white var(--datatable-cell-padding), rgba(255, 255, 255, 0)),
+      linear-gradient(to right, #22222244, rgba(255, 255, 255, 0)),
+      linear-gradient(to left, white var(--datatable-cell-padding), rgba(255, 255, 255, 0)),
+      linear-gradient(to left, #22222244, rgba(255, 255, 255, 0));
     background-repeat: no-repeat;
     background-position:
       left top,

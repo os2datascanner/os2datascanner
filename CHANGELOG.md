@@ -21,6 +21,8 @@
 - The estimated time of completion of scannerjobs no longer breaks, if the
   ScanStatus only has one snapshot.
 
+- Adjusted shadow effect for visualizing scrollability on tables in the admin module, ensuring compatibility with Safari browsers.
+
 ## 3.20.4, 16th August 2023
 
 "To Prevent Arthritis"
