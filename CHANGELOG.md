@@ -15,22 +15,21 @@
 - Added a related name to the ScanStatusSnapshot model.
 
 - Added footer with current version to admin and report modules.
+
 - Removed sortByHandlers.js and formatted caret buttons to use HTMX instead 
   of hmtl + js.
 
 - The unused "expression" column has been removed from the table on the rules page.
 
+- The DPO- & Leader-overview's OrganizationalUnit dropdown is now ordered alphabetically.
+
 ### Bugfixes
 
 - Tooltips for overflow titles in the report module are now correctly displayed.
 
-### Bugfixes
-
 - The `count_matches_by_week`-method on the `Account`-class has been 
   refactored, and is more robust towards missing created_timestamp-values on
   related DocumentReports.
-
-### Bugfixes
 
 - Logging in with SSO now works with more than one organizations in the 
   database, assuming the user's account has already been imported.
