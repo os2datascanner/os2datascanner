@@ -24,6 +24,11 @@
   refactored, and is more robust towards missing created_timestamp-values on
   related DocumentReports.
 
+### Bugfixes
+
+- Logging in with SSO now works with more than one organizations in the 
+  database, assuming the user's account has already been imported.
+
 ## 3.20.3, 3rd August 2023
 
 "Check My Scans"

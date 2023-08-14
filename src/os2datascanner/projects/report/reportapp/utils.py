@@ -103,18 +103,19 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
     sid = get_user_data(saml_attr.get('sid'), user_data)
     user = User.objects.get(username=username)
 
-    # Create an account for the user, when they sign on with SSO.
-    if Organization.objects.count() == 1:
-        related_org = Organization.objects.first()
-    else:
-        related_org = None
-    Account.objects.update_or_create(
-        user=user,
-        defaults={
-            'organization': related_org,
-            'username': user.username,
-            'first_name': user.first_name,
-            'last_name': user.last_name})
+    # When the user signs in with SSO, create an account if one does not exist.
+    # This only works if there is only one organization in the database.
+    account = Account.objects.filter(user=user)
+    if not account:
+        if Organization.objects.count() == 1:
+            related_org = Organization.objects.first()
+        else:
+            raise RuntimeError("Was not able to determine correct Organization for the user!")
+        Account.objects.create(
+                organization=related_org,
+                username=user.username,
+                first_name=user.first_name,
+                last_name=user.last_name)
 
     if email:
         relate_matches_to_user(user, email, AliasType.EMAIL)
