@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-08 15:40+0200\n"
+"POT-Creation-Date: 2023-07-11 08:55+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -19,27 +19,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: adminapp/admin.py:91
+#: adminapp/admin.py:92
 msgid "Rule cannot be compiled by scanner"
 msgstr "Reglen kan ikke kompileres af scanneren"
 
-#: adminapp/admin.py:95
+#: adminapp/admin.py:96
 msgid "CPR rule should not be used more than once"
 msgstr "CPR-reglen kan ikke bruges mere end én gang"
 
-#: adminapp/admin.py:99
+#: adminapp/admin.py:100
 msgid "Health-information rule should not be used more than once"
 msgstr "Helbredsinformations-reglen kan ikke bruges mere end én gang"
 
-#: adminapp/admin.py:153
+#: adminapp/admin.py:156
 msgid "An errorlog cannot both be new and removed"
 msgstr "En fejlbesked kan ikke både være ny og fjernet"
 
-#: adminapp/admin.py:192
+#: adminapp/admin.py:195
 msgid "Change new-status to True"
 msgstr "Sæt ny-status til True"
 
-#: adminapp/admin.py:196
+#: adminapp/admin.py:199
 #, python-brace-format
 msgid ""
 "Changed {qs_count} elements new-status to True. Note: if the element has its "
@@ -48,47 +48,47 @@ msgstr ""
 "Ændrede {qs_count} elementers ny-status til True. Bemærk: hvis et element "
 "har er_fjernet attributtet sat til True, så er den ikke blevet ændret"
 
-#: adminapp/admin.py:201
+#: adminapp/admin.py:204
 msgid "Change new-status to False"
 msgstr "Sæt ny-status til False"
 
-#: adminapp/admin.py:205
+#: adminapp/admin.py:208
 #, python-brace-format
 msgid "Changed {qs_count} elements new-status to False"
 msgstr "Ændrede {qs_count} elementers ny-status til False"
 
-#: adminapp/admin.py:208
+#: adminapp/admin.py:211
 msgid "Change removed-status to True"
 msgstr "Sæt fjernet-status til True"
 
-#: adminapp/admin.py:212
+#: adminapp/admin.py:215
 #, python-brace-format
 msgid "Changed {qs_count} elements removed-status to True"
 msgstr "Ændrede {qs_count} elementers fjernet-status til True"
 
-#: adminapp/admin.py:215
+#: adminapp/admin.py:218
 msgid "Change removed-status to False"
 msgstr "Sæt fjernet-status til False"
 
-#: adminapp/admin.py:219
+#: adminapp/admin.py:222
 #, python-brace-format
 msgid "Changed {qs_count} elements removed-status to False"
 msgstr "Ændrede {qs_count} elementers fjernet-status til True"
 
-#: adminapp/admin.py:237
+#: adminapp/admin.py:240
 msgid "Change resolved-status to True"
 msgstr "Sæt løst-status til True"
 
-#: adminapp/admin.py:241
+#: adminapp/admin.py:244
 #, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to True"
 msgstr "Ændrede {qs_count} elementers løst-status til True"
 
-#: adminapp/admin.py:244
+#: adminapp/admin.py:247
 msgid "Change resolved-status to False"
 msgstr "Sæt løst-status til False"
 
-#: adminapp/admin.py:248
+#: adminapp/admin.py:251
 #, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to False"
 msgstr "Ændrede {qs_count} elementers løst-status til True"
@@ -149,8 +149,8 @@ msgstr "Login metode"
 msgid "Rule"
 msgstr "Regel"
 
-#: adminapp/models/rules/rule.py:40 adminapp/models/scannerjobs/scanner.py:76
-#: core/models/client.py:74
+#: adminapp/models/rules/rule.py:40 adminapp/models/scannerjobs/scanner.py:74
+#: core/models/client.py:75
 #: organizations/templates/organizations/org_table.html:42
 #: organizations/templates/organizations/orgunit_list.html:70
 msgid "name"
@@ -201,23 +201,28 @@ msgstr ""
 msgid "UNC must follow the UNC format"
 msgstr "UNC skal følge UNC-format"
 
-#: adminapp/models/scannerjobs/msgraph.py:70
+#: adminapp/models/scannerjobs/msgraph.py:71
 msgid "Scan deleted items folder"
 msgstr "Scan slettet post mappe"
 
-#: adminapp/models/scannerjobs/msgraph.py:71
+#: adminapp/models/scannerjobs/msgraph.py:72
 msgid "Include emails in the deleted post folder"
 msgstr "Inkludér emails i slettet post mappe"
 
-#: adminapp/models/scannerjobs/msgraph.py:76
+#: adminapp/models/scannerjobs/msgraph.py:77
 msgid "Scan syncissues folder"
 msgstr "Scan synkroniseringsproblemer mappe"
 
-#: adminapp/models/scannerjobs/msgraph.py:77
+#: adminapp/models/scannerjobs/msgraph.py:78
 msgid "Include emails in the syncissues folder"
 msgstr "Inkludér emails i synkroniseringsproblemer mappe"
 
-#: adminapp/models/scannerjobs/scanner.py:92
+#: adminapp/models/scannerjobs/msgraph.py:185
+#: adminapp/models/scannerjobs/webscanner.py:42
+msgid "check dead links"
+msgstr "tjek døde links"
+
+#: adminapp/models/scannerjobs/scanner.py:90
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
 
@@ -351,10 +356,6 @@ msgstr "scanstatus snapshot"
 #: adminapp/models/scannerjobs/scanner.py:807
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
-
-#: adminapp/models/scannerjobs/webscanner.py:42
-msgid "check dead links"
-msgstr "tjek døde links"
 
 #: adminapp/models/scannerjobs/webscanner.py:58
 msgid "validation method"
@@ -1070,7 +1071,7 @@ msgstr "Gem ændringer"
 
 #: adminapp/templates/os2datascanner/error_log.html:26
 #: adminapp/templates/os2datascanner/error_log.html:55
-#: adminapp/templates/os2datascanner/scanner_tabs.html:56
+#: adminapp/templates/os2datascanner/scanner_tabs.html:61
 msgid "Error Log"
 msgstr "Fejlbeskeder"
 
@@ -1326,7 +1327,7 @@ msgstr "Ja"
 
 #: adminapp/templates/os2datascanner/scan_completed.html:30
 #: adminapp/templates/os2datascanner/scan_completed.html:37
-#: adminapp/templates/os2datascanner/scanner_tabs.html:55
+#: adminapp/templates/os2datascanner/scanner_tabs.html:60
 msgid "Completed scans"
 msgstr "Udførte scanninger"
 
@@ -1399,7 +1400,7 @@ msgstr ""
 
 #: adminapp/templates/os2datascanner/scan_status.html:21
 #: adminapp/templates/os2datascanner/scan_status_table.html:30
-#: adminapp/templates/os2datascanner/scanner_tabs.html:54
+#: adminapp/templates/os2datascanner/scanner_tabs.html:59
 msgid "Scans in progress"
 msgstr "Igangværende scanninger"
 
@@ -1458,7 +1459,7 @@ msgid "no ongoing scans"
 msgstr "der er ingen igangværende scanninger"
 
 #: adminapp/templates/os2datascanner/scanner_askrun.html:22
-#: adminapp/templates/os2datascanner/scanner_askrun.html:72
+#: adminapp/templates/os2datascanner/scanner_askrun.html:75
 msgid "Run scanner"
 msgstr "Kør scanner"
 
@@ -1476,10 +1477,11 @@ msgstr "Er du sikker på, at du vil starte scanneren?"
 #: adminapp/templates/os2datascanner/scanner_askrun.html:50
 #: adminapp/templates/os2datascanner/scanner_askrun.html:53
 #: adminapp/templates/os2datascanner/scanner_askrun.html:56
+#: adminapp/templates/os2datascanner/scanner_askrun.html:59
 msgid "Let's go!"
 msgstr "Ja, kør"
 
-#: adminapp/templates/os2datascanner/scanner_askrun.html:63
+#: adminapp/templates/os2datascanner/scanner_askrun.html:66
 msgid "Waiting..."
 msgstr "Afventer..."
 
@@ -1750,24 +1752,29 @@ msgid "Office 365 mailscanner"
 msgstr "Office 365 mailscanner"
 
 #: adminapp/templates/os2datascanner/scanner_tabs.html:23
-msgid "Office 365 OneDrive filscanner"
+#: adminapp/templates/partials/breadcrumb.html:26
+msgid "Office 365 OneDrive filescanner"
 msgstr "Office 365 OneDrive filscanner"
 
 #: adminapp/templates/os2datascanner/scanner_tabs.html:29
+msgid "Office 365 Teams filescanner"
+msgstr "Office 365 Teams filscanner"
+
+#: adminapp/templates/os2datascanner/scanner_tabs.html:34
 msgid "Office 365 kalenderscanner"
 msgstr "Office 365 kalenderscanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:32
+#: adminapp/templates/os2datascanner/scanner_tabs.html:37
 #: adminapp/templates/partials/breadcrumb.html:34
 msgid "Google Drive scanner"
 msgstr "Google Drive scanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:35
+#: adminapp/templates/os2datascanner/scanner_tabs.html:40
 #: adminapp/templates/partials/breadcrumb.html:38
 msgid "Gmailscanner"
 msgstr "Gmailscanner"
 
-#: adminapp/templates/os2datascanner/scanner_tabs.html:38
+#: adminapp/templates/os2datascanner/scanner_tabs.html:43
 #: adminapp/templates/partials/breadcrumb.html:42
 msgid "Sbsysscanner"
 msgstr "Sbsysscanner"
@@ -1812,10 +1819,6 @@ msgstr "Er du sikker på, at du vil slette denne scanner?"
 #: adminapp/templates/os2datascanner/scanners.html:173
 msgid "No scannerjob added"
 msgstr "Der er ikke tilføjet nogen scannerjob"
-
-#: adminapp/templates/partials/breadcrumb.html:26
-msgid "Office 365 OneDrive filescanner"
-msgstr "Office 365 OneDrive filscanner"
 
 #: adminapp/templates/partials/breadcrumb.html:30
 msgid "Office 365 calendarscanner"
@@ -2043,11 +2046,11 @@ msgstr "Siden findes ikke"
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
-#: adminapp/views/views.py:207 import_services/models/exported_mixin.py:31
+#: adminapp/views/views.py:201 import_services/models/exported_mixin.py:31
 msgid "created"
 msgstr "oprettet"
 
-#: adminapp/views/views.py:207
+#: adminapp/views/views.py:201
 msgid "saved"
 msgstr "gemt"
 
@@ -2076,7 +2079,7 @@ msgctxt "Verbose name for core app"
 msgid "Management"
 msgstr "Administration"
 
-#: core/forms.py:32 core/models/client.py:88
+#: core/forms.py:32 core/models/client.py:89
 msgid "enabled features"
 msgstr "aktiverede features"
 
@@ -2084,7 +2087,7 @@ msgstr "aktiverede features"
 msgid "Select a feature to enable it for this client."
 msgstr "Vælg en feature for at aktivere den for denne kunde."
 
-#: core/forms.py:40 core/models/client.py:94
+#: core/forms.py:40 core/models/client.py:95
 msgid "activated scan types"
 msgstr "tilgængelige scannertyper"
 
@@ -2119,8 +2122,8 @@ msgstr "{0} fejlede job(s)."
 msgid "user"
 msgstr "bruger"
 
-#: core/models/administrator.py:37 core/models/client.py:114
-#: organizations/models/organization.py:52
+#: core/models/administrator.py:37 core/models/client.py:115
+#: organizations/models/organization.py:59
 msgid "client"
 msgstr "kunde"
 
@@ -2201,47 +2204,51 @@ msgid "Microsoft Graph - file scan"
 msgstr "Microsoft Graph - filscan"
 
 #: core/models/client.py:33
+msgid "Microsoft Graph - Teams file scan"
+msgstr "Microsoft Graph - Teams filscan"
+
+#: core/models/client.py:34
 msgid "Google - drive scan"
 msgstr "Google - drevscan"
 
-#: core/models/client.py:34
+#: core/models/client.py:35
 msgid "Google - mail scan"
 msgstr "Google - mailscan"
 
-#: core/models/client.py:41
+#: core/models/client.py:42
 msgid "administration API"
 msgstr "administrations-API"
 
-#: core/models/client.py:48
+#: core/models/client.py:49
 msgid "structured organization support"
 msgstr "understøttelse af strukturerede organisationer"
 
-#: core/models/client.py:49 import_services/apps.py:8
+#: core/models/client.py:50 import_services/apps.py:8
 #: import_services/models/import_service.py:44
 msgid "import services"
 msgstr "importtjenester"
 
-#: core/models/client.py:50
+#: core/models/client.py:51
 msgid "import services (MS Graph)"
 msgstr "importtjenester (MS Graph)"
 
-#: core/models/client.py:51
+#: core/models/client.py:52
 msgid "import services (OS2mo)"
 msgstr "importtjenester (OS2mo)"
 
-#: core/models/client.py:69
+#: core/models/client.py:70
 msgid "client ID"
 msgstr "kunde-ID"
 
-#: core/models/client.py:78
+#: core/models/client.py:79
 msgid "e-mail"
 msgstr "e-mail"
 
-#: core/models/client.py:82
+#: core/models/client.py:83
 msgid "phone number"
 msgstr "telefonnummer"
 
-#: core/models/client.py:115
+#: core/models/client.py:116
 msgid "clients"
 msgstr "kunder"
 
@@ -2798,10 +2805,6 @@ msgstr "Ingen organisatoriske enheder"
 #: organizations/views/org_views.py:63
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
-
-#, python-format
-#~ msgid "File too big (%(size)s bytes > %(limit)s bytes)."
-#~ msgstr "Fil var for stor (%(size)s byte > %(limit)s byte)."
 
 #~ msgid "Done"
 #~ msgstr "Udført"

@@ -34,7 +34,8 @@ from .models.scannerjobs.scanner import (ScanStatus,
                                          ScanStatusSnapshot)
 from .models.scannerjobs.msgraph import (MSGraphMailScanner,
                                          MSGraphFileScanner,
-                                         MSGraphCalendarScanner)
+                                         MSGraphCalendarScanner,
+                                         MSGraphTeamsFileScanner)
 from .models.scannerjobs.webscanner import WebScanner
 from .models.scannerjobs.filescanner import FileScanner
 from .models.scannerjobs.exchangescanner import ExchangeScanner
@@ -118,6 +119,7 @@ class RegexPatternAdmin(admin.ModelAdmin):
 @admin.register(MSGraphMailScanner)
 @admin.register(MSGraphFileScanner)
 @admin.register(MSGraphCalendarScanner)
+@admin.register(MSGraphTeamsFileScanner)
 @admin.register(GoogleDriveScanner)
 @admin.register(GmailScanner)
 class ScannerAdmin(admin.ModelAdmin):
@@ -127,7 +129,8 @@ class ScannerAdmin(admin.ModelAdmin):
     include_orgunit_scanners = [ExchangeScanner,
                                 MSGraphMailScanner,
                                 MSGraphFileScanner,
-                                MSGraphCalendarScanner]
+                                MSGraphCalendarScanner,
+                                MSGraphTeamsFileScanner]
 
     def get_fields(self, request, obj=None):
         """Only show organizational units if relevant."""

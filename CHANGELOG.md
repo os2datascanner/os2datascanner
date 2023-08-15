@@ -4,6 +4,10 @@
 
 "To Prevent Arthritis"
 
+### New in this release
+
+- It is now possible to scan files shared through Microsoft Teams. 
+
 ### General improvements
 
 - Added a related name to the ScanStatusSnapshot model.

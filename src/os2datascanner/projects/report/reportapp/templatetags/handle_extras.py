@@ -91,14 +91,17 @@ def find_svg_icon(type_label):
 
 @register.simple_tag
 def find_scan_type(type_label):
-    if type_label in ("smbc", "dropbox", "googledrive", "msgraph-file"):
-        return "File"
-    elif type_label in ("gmail", "ews", "msgraph-mail"):
-        return "Mail"
-    elif type_label == "web":
-        return "Web"
-    else:
-        return "Unrecognized file type"
+    match type_label:
+        case "smbc" | "dropbox" | "googledrive" | "msgraph-file":
+            return "File"
+        case "msgraph-drive":
+            return "MS Teams file"
+        case "gmail" | "ews" | "msgraph-mail":
+            return "Mail"
+        case "web":
+            return "Web"
+        case _:
+            return "Unrecognized file type"
 
 
 @register.filter

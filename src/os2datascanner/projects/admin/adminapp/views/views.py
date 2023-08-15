@@ -30,7 +30,7 @@ from ..models.scannerjobs.sbsysscanner import SbsysScanner
 from ..models.rules.cprrule import CPRRule
 from ..models.rules.regexrule import RegexRule
 from ..models.scannerjobs.msgraph import (
-        MSGraphFileScanner, MSGraphMailScanner, MSGraphCalendarScanner)
+        MSGraphFileScanner, MSGraphMailScanner, MSGraphCalendarScanner, MSGraphTeamsFileScanner)
 from ..models.scannerjobs.webscanner import WebScanner
 from ..models.scannerjobs.googledrivescanner import GoogleDriveScanner
 
@@ -181,6 +181,7 @@ class DialogSuccess(TemplateView):
         'msgraph-filescanners': MSGraphFileScanner,
         'msgraph-mailscanners': MSGraphMailScanner,
         'msgraph-calendarscanners': MSGraphCalendarScanner,
+        'msgraph-teams-filescanners': MSGraphTeamsFileScanner,
         'googledrivescanners': GoogleDriveScanner,
         'gmailscanners': GmailScanner,
         'sbsysscanners': SbsysScanner,
