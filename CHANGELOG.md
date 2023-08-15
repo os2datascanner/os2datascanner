@@ -31,8 +31,10 @@
   refactored, and is more robust towards missing created_timestamp-values on
   related DocumentReports.
 
-- Logging in with SSO now works with more than one organizations in the 
-  database, assuming the user's account has already been imported.
+- Logging in with SSO now works with more than one organization in the
+
+- Ordering by match count in the leader overview now reevaluates match counts for all accounts,
+without having to scroll to the bottom of the page first.
 
 ## 3.20.3, 3rd August 2023
 
