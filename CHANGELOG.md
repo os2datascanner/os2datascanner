@@ -8,6 +8,8 @@
 
 - It is now possible to scan files shared through Microsoft Teams. 
 
+- Removed expressions, "generelt" and "diverse", from HealthRule.
+
 ### General improvements
 
 - Added a related name to the ScanStatusSnapshot model.
