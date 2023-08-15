@@ -313,6 +313,8 @@ class LeaderStatisticsPageView(LoginRequiredMixin, ListView):
                 return
 
             if sort_key == "match_count":
+                # Trigger recomputation of match_count by saving
+                # all the objects again. FIXME FIXME FIXME!!!
                 for acc in qs:
                     acc.save()
 
