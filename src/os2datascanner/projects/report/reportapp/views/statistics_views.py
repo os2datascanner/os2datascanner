@@ -115,7 +115,8 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         allowed_orgunits = OrganizationalUnit.objects.all() if self.request.user.is_superuser \
             else OrganizationalUnit.objects.filter(
                     organization=self.request.user.account.organization)
-        context['orgunits'] = (allowed_orgunits.values("name", "uuid"),
+
+        context['orgunits'] = (allowed_orgunits.order_by("name").values("name", "uuid"),
                                self.request.GET.get('orgunit', 'all'))
 
         return context
@@ -321,10 +322,11 @@ class LeaderStatisticsPageView(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         if self.request.user.is_superuser:
-            self.user_units = OrganizationalUnit.objects.all()
+            self.user_units = OrganizationalUnit.objects.all().order_by("name")
         else:
-            self.user_units = OrganizationalUnit.objects.filter(
+            self.user_units = (OrganizationalUnit.objects.filter(
                 Q(positions__account=self.request.user.account) & Q(positions__role="manager"))
+                .order_by("name"))
 
         if unit_uuid := request.GET.get('org_unit', None):
             self.org_unit = self.user_units.get(uuid=unit_uuid)
