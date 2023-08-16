@@ -404,7 +404,7 @@ class MSGraphTeamsFileUpdate(ScannerUpdate):
     for modification."""
     model = MSGraphTeamsFileScanner
     type = 'msgraph-teams-filescanners'
-    fields = ['name', 'schedule', 'grant', 'org_unit',
+    fields = ['name', 'schedule', 'grant',
               'do_ocr', 'only_notify_superadmin', 'exclusion_rules',
               'do_last_modified_check', 'rules', 'organization', ]
 
@@ -427,7 +427,7 @@ class MSGraphTeamsFileCopy(ScannerCopy):
     model = MSGraphTeamsFileScanner
     type = 'msgraph-teams-file'
     fields = ['name', 'schedule', 'grant',
-              'org_unit', 'exclusion_rules', 'only_notify_superadmin',
+              'exclusion_rules', 'only_notify_superadmin',
               'do_ocr', 'do_last_modified_check', 'rules',
               'organization', ]
 
