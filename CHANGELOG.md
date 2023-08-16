@@ -1,6 +1,6 @@
 # Changelog
 
-## Next Release
+## 3.20.4, 16th August 2023
 
 "To Prevent Arthritis"
 
@@ -9,6 +9,11 @@
 - It is now possible to scan files shared through Microsoft Teams. 
 
 - Removed expressions, "generelt" and "diverse", from HealthRule.
+
+- The Pipeline has received an overhaul with respect to the use of RabbitMQ,
+  such that workers can be assigned to serve a dedicated organisation.
+  Thus, for a system we multiple workers and organisations, it is possible
+  to run multiple scanner jobs in parallel.
 
 ### General improvements
 
@@ -31,10 +36,11 @@
   refactored, and is more robust towards missing created_timestamp-values on
   related DocumentReports.
 
-- Logging in with SSO now works with more than one organization in the
+- Logging in with SSO now works with more than one organization in the now
+  works, as long as the user's account already exists.
 
-- Ordering by match count in the leader overview now reevaluates match counts for all accounts,
-without having to scroll to the bottom of the page first.
+- Ordering by match count in the leader overview now reevaluates match counts 
+  for all accounts, without having to scroll to the bottom of the page first.
 
 ## 3.20.3, 3rd August 2023
 
@@ -48,11 +54,6 @@ without having to scroll to the bottom of the page first.
 - The `start_scan` management command has a new convenience parameter for
   starting (partial or complete) scans that do not enforce the last
   modification date check.
-  
-- The Pipeline has received an overhaul with respect to the use of RabbitMQ,
-  such that workers can be assigned to serve a dedicated organisation.
-  Thus, for a system we multiple workers and organisations, it is possible
-  to run multiple scanner jobs in parallel.
 
 - The manual in the admin module is now hidden by default. The visibility of
   this page can be configured in the pillar settings.

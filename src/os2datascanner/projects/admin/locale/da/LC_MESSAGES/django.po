@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-11 08:55+0200\n"
+"POT-Creation-Date: 2023-08-16 13:35+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -111,7 +111,7 @@ msgid "no scanner job exists with id {id}"
 msgstr "intet scannerjob findes med id {id}"
 
 #: adminapp/models/apikey.py:16 adminapp/models/rules/rule.py:47
-#: adminapp/models/scannerjobs/scanner.py:83 adminapp/models/usererrorlog.py:52
+#: adminapp/models/scannerjobs/scanner.py:84 adminapp/models/usererrorlog.py:52
 #: import_services/models/msgraph_import_job.py:28
 #: import_services/models/os2mo_import_job.py:65
 #: import_services/models/realm.py:29
@@ -149,7 +149,7 @@ msgstr "Login metode"
 msgid "Rule"
 msgstr "Regel"
 
-#: adminapp/models/rules/rule.py:40 adminapp/models/scannerjobs/scanner.py:74
+#: adminapp/models/rules/rule.py:40 adminapp/models/scannerjobs/scanner.py:77
 #: core/models/client.py:75
 #: organizations/templates/organizations/org_table.html:42
 #: organizations/templates/organizations/orgunit_list.html:70
@@ -222,138 +222,138 @@ msgstr "Inkludér emails i synkroniseringsproblemer mappe"
 msgid "check dead links"
 msgstr "tjek døde links"
 
-#: adminapp/models/scannerjobs/scanner.py:90
+#: adminapp/models/scannerjobs/scanner.py:93
 msgid "organizational unit"
 msgstr "organisatorisk enhed"
 
-#: adminapp/models/scannerjobs/scanner.py:99
+#: adminapp/models/scannerjobs/scanner.py:100
 msgid "planned execution"
 msgstr "planlagt afvikling"
 
-#: adminapp/models/scannerjobs/scanner.py:104
+#: adminapp/models/scannerjobs/scanner.py:105
 msgid "scan images"
 msgstr "scan billeder"
 
-#: adminapp/models/scannerjobs/scanner.py:109
+#: adminapp/models/scannerjobs/scanner.py:110
 msgid "check date of last modification"
 msgstr "tjek dato for sidste ændring"
 
-#: adminapp/models/scannerjobs/scanner.py:114
+#: adminapp/models/scannerjobs/scanner.py:115
 msgid "only notify superadmin"
 msgstr "underret kun superadmin"
 
-#: adminapp/models/scannerjobs/scanner.py:125
+#: adminapp/models/scannerjobs/scanner.py:126
 msgid "rules"
 msgstr "regler"
 
-#: adminapp/models/scannerjobs/scanner.py:132
+#: adminapp/models/scannerjobs/scanner.py:133
 msgid "Unverified"
 msgstr "Ugyldig"
 
-#: adminapp/models/scannerjobs/scanner.py:133
+#: adminapp/models/scannerjobs/scanner.py:134
 msgid "Verified"
 msgstr "Gyldig"
 
-#: adminapp/models/scannerjobs/scanner.py:139
+#: adminapp/models/scannerjobs/scanner.py:140
 msgid "username"
 msgstr "brugernavn"
 
-#: adminapp/models/scannerjobs/scanner.py:144
+#: adminapp/models/scannerjobs/scanner.py:145
 msgid "validation status"
 msgstr "valideringstatus"
 
-#: adminapp/models/scannerjobs/scanner.py:148
+#: adminapp/models/scannerjobs/scanner.py:149
 msgid "exclusion rules"
 msgstr "udelukkelsesregler"
 
-#: adminapp/models/scannerjobs/scanner.py:153
+#: adminapp/models/scannerjobs/scanner.py:154
 msgid "covered accounts"
 msgstr "dækkede konti"
 
-#: adminapp/models/scannerjobs/scanner.py:180
+#: adminapp/models/scannerjobs/scanner.py:181
 msgid "The scanner job could not be started because it has no assigned rules."
 msgstr ""
 "Scannerjobbet kunne ikke startes, da det ikke har nogle tilknyttede regler."
 
-#: adminapp/models/scannerjobs/scanner.py:183
+#: adminapp/models/scannerjobs/scanner.py:184
 msgid "The scanner job could not be started because it is not validated."
 msgstr "Scannerjobbet kunne ikke startes, da det ikke er valideret."
 
-#: adminapp/models/scannerjobs/scanner.py:186
+#: adminapp/models/scannerjobs/scanner.py:187
 msgid "The scanner job could not be started because it is already running."
 msgstr "Scannerjobbet kunne ikke startes, da det allerede er i gang."
 
-#: adminapp/models/scannerjobs/scanner.py:513
+#: adminapp/models/scannerjobs/scanner.py:530
 msgid "connected scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner.py:548
+#: adminapp/models/scannerjobs/scanner.py:565
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner.py:553
+#: adminapp/models/scannerjobs/scanner.py:570
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner.py:558
+#: adminapp/models/scannerjobs/scanner.py:575
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner.py:563
+#: adminapp/models/scannerjobs/scanner.py:580
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner.py:568
+#: adminapp/models/scannerjobs/scanner.py:585
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner.py:574
+#: adminapp/models/scannerjobs/scanner.py:591
 msgid "message"
 msgstr "Fejlbesked"
 
-#: adminapp/models/scannerjobs/scanner.py:582
+#: adminapp/models/scannerjobs/scanner.py:599
 msgid "matches found"
 msgstr "resultater fundet"
 
-#: adminapp/models/scannerjobs/scanner.py:656
+#: adminapp/models/scannerjobs/scanner.py:673
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
 
-#: adminapp/models/scannerjobs/scanner.py:661
+#: adminapp/models/scannerjobs/scanner.py:678
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner.py:668
+#: adminapp/models/scannerjobs/scanner.py:685
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner.py:673
+#: adminapp/models/scannerjobs/scanner.py:690
 msgid "resolved"
 msgstr "løst"
 
-#: adminapp/models/scannerjobs/scanner.py:722
+#: adminapp/models/scannerjobs/scanner.py:739
 msgid "Start time"
 msgstr "Startet"
 
-#: adminapp/models/scannerjobs/scanner.py:725
+#: adminapp/models/scannerjobs/scanner.py:742
 #: adminapp/models/usererrorlog.py:29
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner.py:726
+#: adminapp/models/scannerjobs/scanner.py:743
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/scanner.py:798
+#: adminapp/models/scannerjobs/scanner.py:815
 msgid "timestamp"
 msgstr "tidsstempel"
 
-#: adminapp/models/scannerjobs/scanner.py:806
+#: adminapp/models/scannerjobs/scanner.py:823
 msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/scanner.py:807
+#: adminapp/models/scannerjobs/scanner.py:824
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
@@ -447,7 +447,7 @@ msgid "error logs"
 msgstr "fejlbeskeder"
 
 #: adminapp/models/usererrorlog.py:33
-#: adminapp/templates/os2datascanner/error_log.html:136
+#: adminapp/templates/os2datascanner/error_log.html:145
 msgid "Path"
 msgstr "Sti"
 
@@ -1008,7 +1008,7 @@ msgstr "Ønsker du virkelig at slette?"
 
 #: adminapp/templates/os2datascanner/cprrule_confirm_delete.html:17
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:21
-#: adminapp/templates/os2datascanner/rules.html:217
+#: adminapp/templates/os2datascanner/rules.html:206
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:16
 #: adminapp/templates/os2datascanner/scanners.html:104
 #: adminapp/templates/os2datascanner/scanners.html:116
@@ -1069,17 +1069,17 @@ msgstr "Beskrivelse af regel"
 msgid "Save changes"
 msgstr "Gem ændringer"
 
-#: adminapp/templates/os2datascanner/error_log.html:26
-#: adminapp/templates/os2datascanner/error_log.html:55
+#: adminapp/templates/os2datascanner/error_log.html:25
+#: adminapp/templates/os2datascanner/error_log.html:54
 #: adminapp/templates/os2datascanner/scanner_tabs.html:61
 msgid "Error Log"
 msgstr "Fejlbeskeder"
 
-#: adminapp/templates/os2datascanner/error_log.html:43
+#: adminapp/templates/os2datascanner/error_log.html:42
 msgid "Search for error message"
 msgstr "Søg efter fejlbesked"
 
-#: adminapp/templates/os2datascanner/error_log.html:80
+#: adminapp/templates/os2datascanner/error_log.html:79
 msgid ""
 "You are about to mark all error log messages as seen. This action cannot be "
 "reverted. Are you sure?"
@@ -1087,65 +1087,65 @@ msgstr ""
 "Du er ved at markere alle fejlbeskeder som set. Denne handling kan ikke "
 "fortrydes. Er du sikker?"
 
-#: adminapp/templates/os2datascanner/error_log.html:81
+#: adminapp/templates/os2datascanner/error_log.html:80
 msgid "Mark all as seen"
 msgstr "Markér alle som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:92
+#: adminapp/templates/os2datascanner/error_log.html:91
 msgid "You are about to remove"
 msgstr "Du er ved at slette"
 
-#: adminapp/templates/os2datascanner/error_log.html:92
+#: adminapp/templates/os2datascanner/error_log.html:91
 msgid " error logs. This action cannot be reverted. Are you sure?"
 msgstr " fejlbeskeder. Denne handling kan ikke fortrydes. Er du sikker?"
 
-#: adminapp/templates/os2datascanner/error_log.html:96
+#: adminapp/templates/os2datascanner/error_log.html:95
 msgid "Remove all"
 msgstr "Slet alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:105
+#: adminapp/templates/os2datascanner/error_log.html:104
 #: adminapp/templates/os2datascanner/scan_completed.html:77
 msgid "Select all"
 msgstr "Vælg alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:106
+#: adminapp/templates/os2datascanner/error_log.html:105
 #: adminapp/templates/os2datascanner/scan_completed.html:78
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: adminapp/templates/os2datascanner/error_log.html:112
+#: adminapp/templates/os2datascanner/error_log.html:111
 msgid "Error"
 msgstr "Fejl"
 
-#: adminapp/templates/os2datascanner/error_log.html:124
+#: adminapp/templates/os2datascanner/error_log.html:128
 #: adminapp/templates/os2datascanner/scan_completed.html:83
 msgid "Started"
 msgstr "Startet"
 
-#: adminapp/templates/os2datascanner/error_log.html:149
+#: adminapp/templates/os2datascanner/error_log.html:164
 msgid "Scan"
 msgstr "Scan"
 
-#: adminapp/templates/os2datascanner/error_log.html:152
+#: adminapp/templates/os2datascanner/error_log.html:167
 #: adminapp/templates/os2datascanner/scan_completed.html:88
 #: adminapp/templates/os2datascanner/scan_status_table.html:43
 #: organizations/templates/organizations/org_table.html:53
 msgid "Actions"
 msgstr "Handlinger"
 
-#: adminapp/templates/os2datascanner/error_log.html:168
+#: adminapp/templates/os2datascanner/error_log.html:183
 msgid "Select results"
 msgstr "Vælg resultater"
 
-#: adminapp/templates/os2datascanner/error_log.html:176
+#: adminapp/templates/os2datascanner/error_log.html:191
 msgid "New"
 msgstr "Ny"
 
-#: adminapp/templates/os2datascanner/error_log.html:212
+#: adminapp/templates/os2datascanner/error_log.html:227
 msgid "Mark as seen"
 msgstr "Markér som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:225
+#: adminapp/templates/os2datascanner/error_log.html:240
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
@@ -1195,7 +1195,7 @@ msgid "(none yet)"
 msgstr "(endnu ingen)"
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:6
-#: adminapp/templates/os2datascanner/rules.html:93
+#: adminapp/templates/os2datascanner/rules.html:82
 #: adminapp/templates/os2datascanner/scan_confirm_delete.html:6
 #: adminapp/templates/os2datascanner/scan_status_table.html:106
 #: adminapp/templates/os2datascanner/scanners.html:157
@@ -1211,17 +1211,17 @@ msgstr ""
 "Ønsker du virkelig at slette denne regel? Handlingen kan ikke fortrydes."
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:13
-#: adminapp/templates/os2datascanner/rules.html:206
+#: adminapp/templates/os2datascanner/rules.html:195
 msgid "Please note that this rule is currently included in"
 msgstr "Bemærk venligst at denne regel i øjeblikket indgår i"
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:14
-#: adminapp/templates/os2datascanner/rules.html:208
+#: adminapp/templates/os2datascanner/rules.html:197
 msgid "scannerjob and"
 msgstr "scannerjob og"
 
 #: adminapp/templates/os2datascanner/regexrule_confirm_delete.html:15
-#: adminapp/templates/os2datascanner/rules.html:209
+#: adminapp/templates/os2datascanner/rules.html:198
 msgid "reports."
 msgstr "rapporter."
 
@@ -1247,80 +1247,69 @@ msgstr "Tilføj endnu et regulært udtryk"
 msgid "Add rule"
 msgstr "Tilføj regel"
 
-#: adminapp/templates/os2datascanner/rules.html:48
-#: adminapp/templates/os2datascanner/rules.html:146
+#: adminapp/templates/os2datascanner/rules.html:47
+#: adminapp/templates/os2datascanner/rules.html:135
 msgid "Name"
 msgstr "Navn"
 
-#: adminapp/templates/os2datascanner/rules.html:49
-#: adminapp/templates/os2datascanner/rules.html:147
+#: adminapp/templates/os2datascanner/rules.html:48
+#: adminapp/templates/os2datascanner/rules.html:136
 #: adminapp/templates/os2datascanner/scanners.html:53
 msgid "Organization"
 msgstr "Organisation"
 
-#: adminapp/templates/os2datascanner/rules.html:50
-#: adminapp/templates/os2datascanner/rules.html:148
+#: adminapp/templates/os2datascanner/rules.html:49
+#: adminapp/templates/os2datascanner/rules.html:137
 msgid "Description"
 msgstr "Beskrivelse"
 
-#: adminapp/templates/os2datascanner/rules.html:51
-#: adminapp/views/rule_views.py:112 adminapp/views/rule_views.py:222
-#: adminapp/views/rule_views.py:229
-msgid "Expression"
-msgstr "Udtryk"
-
-#: adminapp/templates/os2datascanner/rules.html:52
-#: adminapp/templates/os2datascanner/rules.html:149
+#: adminapp/templates/os2datascanner/rules.html:50
+#: adminapp/templates/os2datascanner/rules.html:138
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: adminapp/templates/os2datascanner/rules.html:53
+#: adminapp/templates/os2datascanner/rules.html:51
 #: adminapp/templates/os2datascanner/scanners.html:60
 msgid "Action"
 msgstr "Handling"
 
-#: adminapp/templates/os2datascanner/rules.html:67
-#: adminapp/templates/os2datascanner/rules.html:68
-msgid "Show expression"
-msgstr "Vis udtryk"
-
-#: adminapp/templates/os2datascanner/rules.html:81
+#: adminapp/templates/os2datascanner/rules.html:70
 #: adminapp/templates/os2datascanner/scanners.html:134
 msgid "Edit"
 msgstr "Redigér"
 
-#: adminapp/templates/os2datascanner/rules.html:92
+#: adminapp/templates/os2datascanner/rules.html:81
 msgid "Do you really want to delete this rule?"
 msgstr "Vil du slette denne regel?"
 
-#: adminapp/templates/os2datascanner/rules.html:92
+#: adminapp/templates/os2datascanner/rules.html:81
 #: adminapp/templates/os2datascanner/scanners.html:156
 msgid "The action cannot be reversed"
 msgstr "Handlingen kan ikke fortrydes."
 
-#: adminapp/templates/os2datascanner/rules.html:125
+#: adminapp/templates/os2datascanner/rules.html:114
 msgid "No rules added yet"
 msgstr "Der er endnu ikke tilføjet nogen regler"
 
-#: adminapp/templates/os2datascanner/rules.html:130
-#: adminapp/templates/os2datascanner/rules.html:136
+#: adminapp/templates/os2datascanner/rules.html:119
+#: adminapp/templates/os2datascanner/rules.html:125
 msgid "System rules"
 msgstr "Systemregler"
 
+#: adminapp/templates/os2datascanner/rules.html:172
 #: adminapp/templates/os2datascanner/rules.html:183
-#: adminapp/templates/os2datascanner/rules.html:194
 msgid "Delete rule"
 msgstr "Slet regel"
 
-#: adminapp/templates/os2datascanner/rules.html:202
+#: adminapp/templates/os2datascanner/rules.html:191
 msgid "Do you want to delete"
 msgstr "Ønsker du at slette"
 
-#: adminapp/templates/os2datascanner/rules.html:203
+#: adminapp/templates/os2datascanner/rules.html:192
 msgid "This action cannot be undone."
 msgstr "Handlingen kan ikke fortrydes."
 
-#: adminapp/templates/os2datascanner/rules.html:214
+#: adminapp/templates/os2datascanner/rules.html:203
 #: adminapp/templates/os2datascanner/scanners.html:95
 msgid "Yes"
 msgstr "Ja"
@@ -1866,6 +1855,7 @@ msgid "update OS2mo configuration"
 msgstr "opdatér OS2mo-konfiguration"
 
 #: adminapp/templates/partials/main.html:11
+#: organizations/templates/organizations/base.html:45
 msgid "OS2datascanner version"
 msgstr "OS2datascanner version"
 
@@ -2038,6 +2028,11 @@ msgstr "f.eks. //network-domain/top-folder"
 msgid "Drive letter"
 msgstr "Drevbogstav"
 
+#: adminapp/views/rule_views.py:112 adminapp/views/rule_views.py:222
+#: adminapp/views/rule_views.py:229
+msgid "Expression"
+msgstr "Udtryk"
+
 #: adminapp/views/scanner_views.py:60
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
@@ -2046,11 +2041,11 @@ msgstr "Siden findes ikke"
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
-#: adminapp/views/views.py:201 import_services/models/exported_mixin.py:31
+#: adminapp/views/views.py:208 import_services/models/exported_mixin.py:31
 msgid "created"
 msgstr "oprettet"
 
-#: adminapp/views/views.py:201
+#: adminapp/views/views.py:208
 msgid "saved"
 msgstr "gemt"
 
@@ -2123,7 +2118,7 @@ msgid "user"
 msgstr "bruger"
 
 #: core/models/administrator.py:37 core/models/client.py:115
-#: organizations/models/organization.py:59
+#: organizations/models/organization.py:52
 msgid "client"
 msgstr "kunde"
 
@@ -2204,16 +2199,16 @@ msgid "Microsoft Graph - file scan"
 msgstr "Microsoft Graph - filscan"
 
 #: core/models/client.py:33
-msgid "Microsoft Graph - Teams file scan"
-msgstr "Microsoft Graph - Teams filscan"
-
-#: core/models/client.py:34
 msgid "Google - drive scan"
 msgstr "Google - drevscan"
 
-#: core/models/client.py:35
+#: core/models/client.py:34
 msgid "Google - mail scan"
 msgstr "Google - mailscan"
+
+#: core/models/client.py:35
+msgid "Microsoft Graph - Teams file scan"
+msgstr "Microsoft Graph - Teams filscan"
 
 #: core/models/client.py:42
 msgid "administration API"
@@ -2805,6 +2800,9 @@ msgstr "Ingen organisatoriske enheder"
 #: organizations/views/org_views.py:63
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."
+
+#~ msgid "Show expression"
+#~ msgstr "Vis udtryk"
 
 #~ msgid "Done"
 #~ msgstr "Udført"
