@@ -704,6 +704,11 @@ class ScanStatus(AbstractScanStatus):
                 scan_status=self, total_objects__isnull=False).values(
                 "time_stamp", "scanned_objects", "total_objects").order_by("time_stamp"))
 
+            # To give an estimate of completion, the number of snapshots _must_
+            # be 2 or more.
+            if len(snapshots) < 2:
+                return None
+
             width = 0.2  # Percentage of all data points
 
             # The window function needs to include at least two points, but it's
