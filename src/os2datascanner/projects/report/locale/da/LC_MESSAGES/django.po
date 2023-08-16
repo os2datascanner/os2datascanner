@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-08 16:02+0200\n"
+"POT-Creation-Date: 2023-08-16 13:34+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -959,7 +959,7 @@ msgstr ""
 "mappe'-knappen ved matchet. Derefter åbner du stifinderen på din computer, "
 "og indsætter indholdet af din udklipsholder."
 
-#: reportapp/templates/partials/header.html:68
+#: reportapp/templates/partials/header.html:62
 msgid "OS2datascanner version"
 msgstr "OS2datascanner version"
 
@@ -1155,7 +1155,7 @@ msgstr "Filscan"
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/statistics_views.py:406
+#: reportapp/views/statistics_views.py:413
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."
