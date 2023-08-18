@@ -407,3 +407,25 @@ class PipelineCollectorTests(TestCase):
         record_problem(deletion)
         self.assertEqual(DocumentReport.objects.count(), 0,
                          "A DocumentReport representing a deleted file was created anyways!")
+
+    def test_requeued_problem_with_existing_report(self):
+        """ If exactly the same problem message enters the queue again,
+        it should not cause two reports nor crash. """
+
+        record_problem(transient_handle_error)
+        # Imagine a world, where the same message enters the queue again:
+        record_problem(transient_handle_error)
+
+        # Check that we've only got one DocumentReport
+        self.assertEqual(DocumentReport.objects.count(), 1,
+                         "Two DocumentReports created for the same handle!")
+
+    def test_requeued_match_with_existing_report(self):
+        """ If exactly the same match message enters the queue again,
+         it should not cause two reports nor crash. """
+
+        record_match(positive_match)
+        # Imagine a world, where the same message enters the queue again:
+        record_match(positive_match)
+        self.assertEqual(DocumentReport.objects.count(), 1,
+                         "Two DocumentReports created for the same handle!")
