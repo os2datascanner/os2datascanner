@@ -30,6 +30,11 @@ op_timeout = 60
 # The number of times to try one of the above pipeline operations
 op_tries = 2
 
+[pipeline.matcher]
+# The maximum number of match objects to return for each rule that matches
+# (must be at least 1)
+obj_limit = 10
+
 [conversions.cache]
 # The directory in which to store cached representations of objects, if
 # applicable

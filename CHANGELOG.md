@@ -4,6 +4,12 @@
 
 "Mo' Code Less Problems"
 
+### General improvements
+
+- The pipeline will stop execution of a rule component after it has produced
+  (by default) ten matches, reducing the memory usage and total message size
+  and improving performance.
+
 ### Bugfixes
 
 - Result collector is now more robust if encountering identical problem messages.
