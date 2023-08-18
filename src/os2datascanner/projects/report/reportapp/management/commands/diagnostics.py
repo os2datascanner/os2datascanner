@@ -16,6 +16,7 @@
 # source municipalities ( https://os2.eu/ )
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
+from django.db.models.functions import Lower
 
 from ....organizations.models import Account, Alias, OrganizationalUnit, Organization
 from ...models.documentreport import DocumentReport
@@ -26,49 +27,61 @@ class Command(BaseCommand):
 
     help = __doc__
 
+    choice_list = ["Account", "Alias", "DocumentReport", "OrganizationalUnit",
+                   "Organization", "problems"]
+
     def add_arguments(self, parser):
         parser.add_argument(
             "--only",
             default=False,
-            choices=["accounts", "aliases", "problems", "reports", "units"],
-            help="Only run diagnostics on a specific part of the report module."
-        )
+            choices=self.choice_list,
+            nargs="+",
+            help="Only run diagnostics on a specific part of the report module.")
 
     def diagnose_accounts(self):
         print("\n\n>> Running diagnostics on accounts ...")
-        accounts = Account.objects.count()
-        accounts_without_username = Account.objects.filter(username="").values("pk")
-        username_counts = Account.objects.values("username").order_by().annotate(
-            count=Count("username")).order_by("-count").filter(count__gte=2)
+        accounts = Account.objects.all()
+        accounts_without_username = accounts.filter(username="").values("pk")
+        accounts_without_user = accounts.filter(user__isnull=True).values("username", "pk")
+        username_counts = accounts.annotate(username_lower=Lower("username")
+                                            ).values("username_lower").order_by(
+        ).annotate(count=Count("username_lower")).order_by("-count").filter(count__gte=2)
 
-        print(f"Found a total of {accounts} accounts.")
+        print(f"Found a total of {accounts.count()} accounts.")
 
-        if len(accounts_without_username):
+        if accounts_without_username:
             print(f"Found {len(accounts_without_username)} accounts without a username:", ", ".join(
                 [d["pk"] for d in accounts_without_username]))
 
-        if len(username_counts):
-            print(f"Found {len(username_counts)} cases of duplicate usernames:", ", ".join(
-                [f"{d['username']} ({d['count']})" for d in username_counts]))
+        if accounts_without_user:
+            print(f"Found {len(accounts_without_user)} accounts without a user:", ", ".join(
+                [f'''{d['username']} ({d['pk']})''' for d in accounts_without_user]))
+
+        if username_counts:
+            print(f"Found {len(username_counts)} cases of duplicate usernames "
+                  "(disregarding case):", ", ".join(
+                      [f"{d['username_lower']} ({d['count']})" for d in username_counts]))
 
     def diagnose_aliases(self):
         print("\n\n>> Running diagnostics on aliases ...")
-        aliases = Alias.objects.count()
-        alias_types = Alias.objects.values(
+        aliases = Alias.objects.all()
+        alias_types = aliases.values(
             "_alias_type").order_by().annotate(count=Count("_alias_type"))
-        aliases_with_no_user = Alias.objects.filter(user__isnull=True).values("pk")
-        aliases_with_no_account = Alias.objects.filter(account__isnull=True).values("pk")
+        # We have to make new querysets here, as annotating with Count
+        # Will always give "0" if the counted field is null.
+        aliases_with_no_user = aliases.filter(user__isnull=True).values("pk")
+        aliases_with_no_account = aliases.filter(account__isnull=True).values("pk")
 
         nl = '\n  '
         print(
-            f"Found a total of {aliases} aliases: \n  "
+            f"Found a total of {aliases.count()} aliases: \n  "
             f"{nl.join([f'''{a['_alias_type']}: {a['count']}''' for a in alias_types])}")
 
-        if len(aliases_with_no_user):
+        if aliases_with_no_user:
             print(f"Found {len(aliases_with_no_user)} aliases with no user:",
                   ", ".join([d['pk'] for d in aliases_with_no_user]))
 
-        if len(aliases_with_no_account):
+        if aliases_with_no_account:
             print(f"Found {len(aliases_with_no_account)} aliases with no account:",
                   ", ".join([d['pk'] for d in aliases_with_no_account]))
 
@@ -150,32 +163,38 @@ class Command(BaseCommand):
 
     def diagnose_organizations(self):
         print("\n\n>> Running diagnostics on organizations ...")
-        orgs = Organization.objects.count()
-        os2 = Organization.objects.filter(name="OS2datascanner").first()
+        orgs = Organization.objects.values("pk", "name", "email_notification_schedule")
 
-        print(f"Found {orgs} organizations.")
+        print(f"Found {len(orgs)} organizations.")
 
-        if os2:
+        if os2 := orgs.filter(name="OS2datascanner").first():
             print(
-                f"The organization with UUID {os2.pk} is called 'OS2datascanner'."
+                f"The organization with UUID {os2['pk']} is called 'OS2datascanner'."
                 " Should this be changed?'")
+
+        for org in orgs:
+            print(
+                f"  Notification schedule for {org['name']}: {org['email_notification_schedule']}")
 
     def handle(self, only, **options):
 
-        if only is False or only == "accounts":
+        if not only:
+            only = self.choice_list
+
+        if "Account" in only:
             self.diagnose_accounts()
 
-        if only is False or only == "aliases":
+        if "Alias" in only:
             self.diagnose_aliases()
 
-        if only is False or only == "problems":
+        if "problems" in only:
             self.diagnose_problems()
 
-        if only is False or only == "reports":
+        if "DocumentReport" in only:
             self.diagnose_reports()
 
-        if only is False or only == "units":
+        if "OrganizationalUnit" in only:
             self.diagnose_units()
 
-        if only is False or only == "organizations":
+        if "Organization" in only:
             self.diagnose_organizations()
