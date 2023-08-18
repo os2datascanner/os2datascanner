@@ -286,7 +286,7 @@ def handle_problem_message(scan_tag, result):
     # Queryset is evaluated and locked here.
     previous_report = (locked_qs.filter(
             path=path, scanner_job_pk=scan_tag.scanner.pk).
-            exclude(scan_time=scan_tag.time).order_by("-scan_time").first())
+            order_by("-scan_time").first())
 
     handle = problem.handle if problem.handle else None
     presentation = str(handle) if handle else "(source)"
@@ -318,8 +318,15 @@ def handle_problem_message(scan_tag, result):
               messages.ProblemMessage(missing=False)) if prev.resolution_status is not None:
             # A known resource, which isn't missing, has a problem, but has already been resolved.
             # Nothing to do, problem is not relevant anymore.
-            logger.debug("Resource already resolved. Problem message of no relevance. "
-                         "Throwing away.")
+            if prev.scan_time == scan_tag.time:
+                logger.warning(
+                        "detected duplicated ProblemMessage for scan"
+                        f" {scan_tag}: has the system been restarted?")
+            else:
+                logger.debug(
+                        "Resource already resolved."
+                        " Problem message of no relevance. ")
+
         case (DocumentReport() as prev,
               messages.ProblemMessage(missing=True)) if prev.resolution_status:
             # A resource for which we have some reports has been deleted, but
