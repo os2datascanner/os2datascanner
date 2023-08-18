@@ -1,5 +1,13 @@
 # Changelog
 
+## Next Release
+
+"Mo' Code Less Problems"
+
+### Bugfixes
+
+- Result collector is now more robust if encountering identical problem messages.
+
 ## 3.20.4, 16th August 2023
 
 "To Prevent Arthritis"
