@@ -592,3 +592,22 @@ speciellæger.""",
                 rhu[0],
                 True,
                 "complex match failed")
+
+    def test_cutoff(self):
+        """The number of matches produced by Rule.try_match can be truncated
+        with the obj_limit parameter."""
+        rule = RegexRule(r"A")
+
+        for obj_limit, match_count in (
+                (None, 15),
+                (10, 10),):
+            conclusion, matches = rule.try_match({
+                OutputType.Text.value: "A0A1A2A3A4A5A6A7A8A9A10A11A12A13A14"
+            }, obj_limit=obj_limit)
+            self.assertTrue(
+                    conclusion,
+                    "unexpected match failure")
+            self.assertEqual(
+                    len(matches[0][1]),
+                    match_count,
+                    "unexpected match count")
