@@ -1,5 +1,6 @@
 """Runs background jobs."""
 
+from os import getenv
 import sys
 import signal
 from typing import Optional
@@ -115,17 +116,20 @@ class Command(BaseCommand):
         )
         parser.add_argument(
                 "--log",
-                default="info",
+                default=None,
                 help="change the level at which log messages will be printed",
                 choices=log_levels.keys()
         )
 
-    def handle(self, *, wait, single, log, **kwargs):  # noqa: CCR001
+    def handle(self, *, wait, single, log, **kwargs):  # noqa: CCR001, C901
         # leave all loggers from external libraries at default(WARNING) level.
         # change formatting to include datestamp
         fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         logging.basicConfig(format=fmt, datefmt='%Y-%m-%d %H:%M:%S')
+
         # set level for root logger
+        if log is None:
+            log = getenv("LOG_LEVEL", "info")
         root_logger = logging.getLogger("os2datascanner")
         root_logger.setLevel(log_levels[log])
 
