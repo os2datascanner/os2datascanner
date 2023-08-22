@@ -69,20 +69,26 @@ def create_and_serialize(manager, instances):
 
 
 def update_and_serialize(manager, instances):
+    logger.debug(f"update_and_serialize received {manager} with instances: "
+                 f"{instances}")
     properties = set()
     serializer = get_serializer(manager.model)
     for _, props in instances:
         properties |= set(props)
+    logger.debug(f"found properties: {properties}")
 
     # We'll only want to send one update instruction pr. object.
     unique_instances = set(obj for obj, _ in instances)
-    manager.bulk_update(unique_instances, properties)
+    logger.debug(f"unique_instances: {unique_instances}")
 
+    manager.bulk_update(unique_instances, properties)
     return serializer(unique_instances, many=True).data
 
 
 def delete_and_listify(manager, instances):
     deletion_pks = [str(i.pk) for i in instances]
+    logger.debug(f"delete_and_listify received instructions "
+                 f"to delete for: {manager} the following list of primary keys: {deletion_pks}")
     manager.filter(pk__in=deletion_pks).delete()
     return deletion_pks
 
@@ -91,6 +97,8 @@ def prepare_and_publish(all_uuids, to_add, to_delete, to_update):
     """ In a transaction, sorts out to_add, to_delete and to_update.
         Creates objects in the admin module and publishes broadcast events."""
     with transaction.atomic():
+        logger.debug(f"Entered prepare_and_publish with to_delete containing: \n"
+                     f"{to_delete}")
         # Deletes
         delete_dict = {}
         for model in get_broadcasted_models():
@@ -100,12 +108,16 @@ def prepare_and_publish(all_uuids, to_add, to_delete, to_update):
                 # share UUID, which could mean an object that should be deleted, won't be.
                 to_delete.append(model.objects.exclude(imported_id__in=all_uuids,
                                                        imported=True))
+                logger.debug(f"to_delete post append of {model}: {to_delete}")
 
         # Look in Position
         to_delete = list(chain(*to_delete))
         for manager, instances in group_into(
                 to_delete, Alias, Position, Account, OrganizationalUnit):
             model_name = manager.model.__name__
+
+            logger.debug(f"Processing to_delete for model {manager} "
+                         f" Instances: {instances}")
             delete_dict[model_name] = delete_and_listify(manager, instances)
 
         # Creates
@@ -120,9 +132,12 @@ def prepare_and_publish(all_uuids, to_add, to_delete, to_update):
         # Updates
         # TODO: We're not actually updating "Imported" fields/timestamps. Should we?
         update_dict = {}
+        logger.debug(f"Entered prepare_and_publish with to_update containing: \n"
+                     f"{to_update}")
         for manager, instances in group_into(
                 to_update, Alias, Position, Account, OrganizationalUnit,
                 key=lambda k: k[0]):
+            logger.debug(f"Iterating updates for manager {manager}")
             model_name = manager.model.__name__
             update_dict[model_name] = update_and_serialize(manager, instances)
 
