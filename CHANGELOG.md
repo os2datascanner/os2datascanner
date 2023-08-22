@@ -43,6 +43,12 @@
   will no longer cause multiple instances of the same scannerjob in the
   overview of undistributed scannerjobs in the report module.
 
+- Web scans now use heuristics to detect files that have been deleted but which
+  do not produce a `4xx` error code.
+
+  - Suggestions for further heuristics to add are welcome; this function is new
+    and by no means complete.
+
 ## 3.20.4, 16th August 2023
 
 "To Prevent Arthritis"
