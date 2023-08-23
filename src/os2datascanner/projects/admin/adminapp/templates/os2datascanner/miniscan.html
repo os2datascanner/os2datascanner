@@ -8,8 +8,9 @@
 {% block scripts %}
   {{ block.super }}
   <script defer src="{% static 'js/validateFileSize.js' %}"></script>
+  <script defer src="{% static 'js/ruleInput.js' %}"></script>
+  <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
 {% endblock %}
-
 {% block body %}
   {% include "partials/header.html" %}
   <main class="wrapper" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
@@ -49,18 +50,58 @@
             <br />
             {% trans "Please, select another (smaller) file to scan." %}
           </div>
-
-          <h2>{% trans "Rule to execute" %}</h2>
         {% endwith %}
-        {% include "components/admin-widgets/rule-builder.html" with hidden=True %}
+        <h2>{% trans "Rule to execute" %}</h2>
+        <h4>
+          {% trans "Selected rule: " %}
+          <span id="selectedRule">{% trans "None" %}</span>
+        </h4>
+        <p>
+          <a href="#show-rules-modal"
+             data-modal="modal:open"
+             class="button button"
+             title="{% trans 'Load rule' %}">{% trans "Load rule" %}</a>
+        </p>
+        <div id="ruleWidget">{% include "components/admin-widgets/rule-builder.html" with hidden=True %}</div>
         <button id="run-miniscan-btn"
                 class="button button--cta"
                 type="submit"
                 style="margin-top: 1em">{% trans "Run" %}</button>
-
+ 
+        <button onClick="window.location.reload();"
+                class="button--clear"
+                type="button">{% trans "Clear" %}</button>
         <h3>{% trans "Scan result" %}</h3>
         <div id="response">{% trans "(none yet)" %}</div>
       </form>
-      <div class="spinner" /></div>
-  </main>
+    </div>
+    <div class="spinner" /></div>
+</div>
+</main>
+{% endblock %}
+
+{% block modal %}
+  <div class="modal__content"
+       id="show-rules-modal"
+       tabindex="-1"
+       role="dialog"
+       aria-labelledby="show-rules-modal-title"
+       aria-hidden="true"
+       data-modal="modal:close">
+    <h1>{% trans "Upload a rule from the list" %}</h1>
+    <div class="datatable-wrapper">
+      <table class="datatable">
+        {% for rule in customrule_list %}
+          <tr id="ruleRow"
+              tabindex="-1"
+              title="{{ rule.description }}"
+              class="clickable"
+              onclick="saveName('{{ rule }}')">
+            <td>{{ rule.name }}{{ rule.rule_field|json_script:"json" }}</td>
+            <td>{{ rule.description|truncatewords:5 }}{{ rule.rule_field|json_script:"json" }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
 {% endblock %}

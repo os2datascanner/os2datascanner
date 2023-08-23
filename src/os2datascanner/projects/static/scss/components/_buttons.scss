@@ -226,6 +226,15 @@
       color: var(--color-text-main);
     }
   }
+
+  &--clear {
+    cursor: pointer;
+    padding: 1rem;
+    border: none;
+    background: none;
+    color: var(--color-primary-dark);
+    font-size: medium;
+  }
 }
 
 .calendar-button {
