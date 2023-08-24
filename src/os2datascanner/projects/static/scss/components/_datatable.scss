@@ -197,8 +197,11 @@
 
       .stale-accounts {
         span {
-          font-size: 1em;
+          display: inline-block;
+          margin: -1rem 0px;
+          font-size: 1.4em;
           color: var(--color-text-main);
+          bottom: -4px;
         }
       }
     }

@@ -561,22 +561,36 @@ class ScannerCleanupStaleAccounts(RestrictedDetailView):
     model = Scanner
     context_object_name = 'scanner'
 
+    @property
+    def scanner_running(self):
+        return (self.object.statuses.last() and not self.object.statuses.last().finished)
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.is_htmx = request.headers.get('HX-Request') == "true"
+        uuids_to_clean = request.POST.getlist('cleanup_account_uuid', [])
+
         if not self.is_htmx:
             return
 
         if request.headers.get('HX-Trigger-Name') == "cleanup-button":
 
-            if not self.object.statuses.last() or self.object.statuses.last().finished:
+            if not self.scanner_running:
                 stale_accounts = self.object.get_stale_accounts()
+
+                # Manually constructing this, since 'stale_accounts' can no
+                # longer be filtered, due to the 'difference' method already
+                # having been called on it.
+                accounts_to_clean = [
+                    acc for acc in stale_accounts if str(
+                        acc.uuid) in uuids_to_clean]
+
                 clean_dict = {self.object.pk: {
-                    "uuids": [str(acc.uuid) for acc in stale_accounts],
-                    "usernames": [acc.username for acc in stale_accounts]
+                    "uuids": [str(acc.uuid) for acc in accounts_to_clean],
+                    "usernames": [acc.username for acc in accounts_to_clean]
                 }}
                 CleanMessage.send(clean_dict, publisher="UI-manual")
-                self.object.remove_stale_accounts()
+                self.object.remove_stale_accounts(accounts_to_clean)
 
             return render(
                 request,
@@ -585,6 +599,5 @@ class ScannerCleanupStaleAccounts(RestrictedDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["running"] = (self.object.statuses.last()
-                              and not self.object.statuses.last().finished)
+        context["running"] = self.scanner_running
         return context

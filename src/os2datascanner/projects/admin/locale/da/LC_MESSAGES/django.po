@@ -1475,28 +1475,28 @@ msgid "Waiting..."
 msgstr "Afventer..."
 
 #: adminapp/templates/os2datascanner/scanner_cleanup_response.html:19
-#, fuzzy
-#| msgid "Scanner settings"
 msgid "Scannerjob is running!"
-msgstr "Scannerindstillinger"
+msgstr "Scannerjobbet er i gang!"
 
 #: adminapp/templates/os2datascanner/scanner_cleanup_response.html:22
 msgid ""
 "OS2datascanner was not able to delete the results from the stale accounts, "
 "since the scannerjob is currently running. Try again later."
 msgstr ""
+"OS2datascanner kunne ikke slette resultaterne tilhørende de frakoblede konti, "
+"da scannerjobbet i øjeblikket er i gang. Prøv igen senere."
 
 #: adminapp/templates/os2datascanner/scanner_cleanup_response.html:24
-#, fuzzy
-#| msgid "Stale accounts"
 msgid "Stale accounts cleaned!"
-msgstr "Frakoblede konti"
+msgstr "Frakoblede konti ryddet op!"
 
 #: adminapp/templates/os2datascanner/scanner_cleanup_response.html:27
 msgid ""
 "Success! All results belonging to the stale accounts from this scannerjobs "
 "have been deleted!"
 msgstr ""
+"Succes! Alle resultater tilhørende de frakoblede konti fra dette scannerjob "
+"er blevet slettet!"
 
 #: adminapp/templates/os2datascanner/scanner_cleanup_stale_accounts.html:18
 msgid "Clean up stale accounts"
@@ -2784,10 +2784,8 @@ msgid "Edit Microsoft Graph configuration"
 msgstr "Redigér Microsoft Graph-konfiguration"
 
 #: organizations/templates/organizations/org_table.html:273
-#, fuzzy
-#| msgid "No organizational units."
 msgid "View organizational units."
-msgstr "Ingen organisatoriske enheder"
+msgstr "Vis organisatoriske enheder"
 
 #: organizations/templates/organizations/org_table.html:295
 msgid "Do you really want to delete this organization?"

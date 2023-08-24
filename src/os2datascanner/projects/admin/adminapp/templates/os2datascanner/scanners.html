@@ -6,7 +6,9 @@
 
 {% block scripts %}
   <script src="{% static "3rdparty/jquery.modal.js" %} "></script>
+  <script src="{% static "3rdparty/htmx.min.js" %}"></script>
   <script src="{% static "js/index.js" %}"></script>
+  <script src="{% static "js/cleanupAccounts.js" %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -35,6 +37,11 @@
 
       {% if scanner_list %}
         <div class="datatable-wrapper card {% if view.type == 'file' and user.is_superuser %}xl{% else %}lg{% endif %}"
+             hx-get=""
+             hx-swap="outerHTML"
+             hx-target=".datatable-wrapper"
+             hx-select=".datatable-wrapper"
+             hx-trigger="modal-closed"
              role="region"
              tabindex="0"
              aria-label="{% trans 'Scannerjob' %}">
@@ -75,7 +82,7 @@
                          data-modal="modal:open"
                          data-src="/{{ view.type }}scanners/{{ scanner.pk }}/cleanup_stale_accounts/"
                          title="{% trans "The following users are no longer covered by this scannerjob, but have been scanned previously:" %} {{ scanner.get_stale_accounts|comma_separated_list }}">
-                        <span class="icon">{% include "components/svg-icons/scan_warning.svg" %}</span> {% trans "Stale accounts" %}
+                        <span class="material-icons">notification_important</span> {% trans "Stale accounts" %}
                       </a>
                     {% endif %}
                   </td>
@@ -190,8 +197,7 @@
        tabindex="-1"
        role="dialog"
        aria-labelledby="run-scanner-modal-title"
-       aria-hidden="true"
-       data-href="/{{ view.type }}scanners/add/">
+       aria-hidden="true">
     <iframe src="about:blank" frameborder="0"></iframe>
   </div>
 
@@ -200,8 +206,7 @@
        tabindex="-1"
        role="dialog"
        aria-labelledby="cleanup-accounts-modal-title"
-       aria-hidden="true"
-       data-href="/{{ view.type }}scanners/cleanup-stale-accounts/">
+       aria-hidden="true">
     <iframe src="about:blank" frameborder="0"></iframe>
   </div>
 {% endblock %}
