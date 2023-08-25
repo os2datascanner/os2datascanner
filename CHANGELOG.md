@@ -14,6 +14,9 @@
 
 - Result collector is now more robust if encountering identical problem messages.
 
+- The estimated time of completion of scannerjobs no longer breaks, if the
+  ScanStatus only has one snapshot.
+
 ## 3.20.4, 16th August 2023
 
 "To Prevent Arthritis"
