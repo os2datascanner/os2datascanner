@@ -32,6 +32,7 @@ from django.views.generic import TemplateView, DetailView, ListView
 from django.shortcuts import get_object_or_404
 
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
+from os2datascanner.core_organizational_structure.models.position import Role as PosRole
 
 from ..models.documentreport import DocumentReport
 from ...organizations.models.account import Account
@@ -80,6 +81,23 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
                             'created_month',
                             'resolved_month'
                         ).annotate(count=Count('source_type')).order_by()
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            self.user_units = OrganizationalUnit.objects.all().order_by("name")
+        else:
+            self.user_units = (OrganizationalUnit.objects.filter(
+                Q(positions__account=self.request.user.account) & Q(positions__role=PosRole.DPO))
+                .order_by("name"))
+
+        response = super().get(request, *args, **kwargs)
+
+        if unit_uuid := request.GET.get('org_unit', None):
+            self.org_unit = self.user_units.get(uuid=unit_uuid)
+        else:
+            self.org_unit = self.user_units.first() or None
+
+        return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -330,7 +348,8 @@ class LeaderStatisticsPageView(LoginRequiredMixin, ListView):
             self.user_units = OrganizationalUnit.objects.all().order_by("name")
         else:
             self.user_units = (OrganizationalUnit.objects.filter(
-                Q(positions__account=self.request.user.account) & Q(positions__role="manager"))
+                Q(positions__account=self.request.user.account)
+                & Q(positions__role=PosRole.MANAGER))
                 .order_by("name"))
 
         if unit_uuid := request.GET.get('org_unit', None):
