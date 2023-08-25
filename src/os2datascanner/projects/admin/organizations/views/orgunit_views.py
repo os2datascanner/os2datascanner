@@ -7,6 +7,8 @@ from ..models import OrganizationalUnit, Organization, Account, Position
 from ...core.models import Feature, Administrator
 from ...adminapp.views.scanner_views import EmptyPagePaginator
 
+from os2datascanner.core_organizational_structure.models.position import Role
+
 
 class OrganizationalUnitListView(RestrictedListView):
     model = OrganizationalUnit
@@ -67,12 +69,22 @@ class OrganizationalUnitListView(RestrictedListView):
         if new_manager_uuid := request.POST.get("add-manager", None):
             orgunit = OrganizationalUnit.objects.get(pk=request.POST.get("orgunit"))
             new_manager = Account.objects.get(uuid=new_manager_uuid)
-            Position.objects.get_or_create(account=new_manager, unit=orgunit, role="manager")
+            Position.objects.get_or_create(account=new_manager, unit=orgunit, role=Role.MANAGER)
 
         if rem_manager_uuid := request.POST.get("rem-manager", None):
             orgunit = OrganizationalUnit.objects.get(pk=request.POST.get("orgunit"))
             rem_manager = Account.objects.get(uuid=rem_manager_uuid)
-            Position.objects.filter(account=rem_manager, unit=orgunit, role="manager").delete()
+            Position.objects.filter(account=rem_manager, unit=orgunit, role=Role.MANAGER).delete()
+
+        if new_dpo_uuid := request.POST.get("add-dpo", None):
+            orgunit = OrganizationalUnit.objects.get(pk=request.POST.get("orgunit"))
+            new_dpo = Account.objects.get(uuid=new_dpo_uuid)
+            Position.objects.get_or_create(account=new_dpo, unit=orgunit, role=Role.DPO)
+
+        if rem_dpo_uuid := request.POST.get("rem-dpo", None):
+            orgunit = OrganizationalUnit.objects.get(pk=request.POST.get("orgunit"))
+            rem_dpo = Account.objects.get(uuid=rem_dpo_uuid)
+            Position.objects.filter(account=rem_dpo, unit=orgunit, role=Role.DPO).delete()
 
         response = self.get(request, *args, **kwargs)
 

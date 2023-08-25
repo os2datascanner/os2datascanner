@@ -12,8 +12,6 @@ from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.engine2.pipeline import messages
 from .models.documentreport import DocumentReport
-from .models.roles.role import Role
-from .models.roles.dpo import DataProtectionOfficer
 
 from os2datascanner.engine2.utilities.equality import TypePropertyEquality
 from os2datascanner.projects.report.organizations.models import (
@@ -133,9 +131,7 @@ def user_is(roles, role_cls):
 def user_is_superadmin(user):
     """Relevant users to notify if matches exist with
     the `only_notify_superuser`-flag."""
-    roles = Role.get_user_roles_or_default(user)
-    return (user_is(roles, DataProtectionOfficer)
-            or user.is_superuser)
+    return user.is_superuser
 
 
 class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):

@@ -135,6 +135,7 @@ class Account(Core_Account):
         default=1,
         null=True,
         blank=True)
+    contact_person = models.BooleanField(_("Contact person"), default=False)
 
     def update_last_handle(self):
         self.last_handle = time_now()

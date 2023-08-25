@@ -21,6 +21,7 @@ from os2datascanner.core_organizational_structure.models import \
     OrganizationalUnit as Core_OrganizationalUnit
 from os2datascanner.core_organizational_structure.models import \
     OrganizationalUnitSerializer as Core_OrganizationalUnitSerializer
+from os2datascanner.core_organizational_structure.models.position import Role
 from .broadcasted_mixin import Broadcasted
 
 
@@ -35,7 +36,11 @@ class OrganizationalUnit(Core_OrganizationalUnit, Broadcasted, Imported):
 
     @property
     def managers(self):
-        return self.positions.filter(role="manager").prefetch_related("account")
+        return self.positions.filter(role=Role.MANAGER).prefetch_related("account")
+
+    @property
+    def dpos(self):
+        return self.positions.filter(role=Role.DPO).prefetch_related("account")
 
     def get_root(self):
         if self.parent is None:
