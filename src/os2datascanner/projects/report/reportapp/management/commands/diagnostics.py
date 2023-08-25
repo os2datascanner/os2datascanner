@@ -91,9 +91,9 @@ class Command(BaseCommand):
         problems = all_problems.values("raw_problem__message").order_by().annotate(
             count=Count("raw_problem__message")).order_by("-count")
 
-        if problems.exists():
+        if problems:
             print(
-                f"Found {problems.count()} different problems ({all_problems.count()} "
+                f"Found {len(problems)} different problems ({all_problems.count()} "
                 "problems in total). Now presenting the 5 most common:")
 
             for message_dict in problems[:5]:
@@ -102,27 +102,27 @@ class Command(BaseCommand):
 
     def diagnose_reports(self):
         print("\n\n>> Running diagnostics on reports ...")
-        reports = DocumentReport.objects.count()
-        matches = DocumentReport.objects.filter(number_of_matches__gte=1)
+        reports = DocumentReport.objects.all()
+        matches = reports.filter(number_of_matches__gte=1)
         handled = matches.filter(
             resolution_status__isnull=False).values("resolution_status").order_by().annotate(
             count=Count("resolution_status")).order_by("-count")
         unhandled = matches.filter(resolution_status__isnull=True)
-        scannerjobs = DocumentReport.objects.values(
+        scannerjobs = matches.values(
             "scanner_job_pk", "scanner_job_name").order_by().annotate(
             count=Count("pk")).order_by("-count")
 
-        print(f"Found {reports} reports in total, {matches.count()} of which "
+        print(f"Found {reports.count()} reports in total, {matches.count()} of which "
               f"contain matches, {unhandled.count()} of which are unhandled.")
 
-        if len(handled):
+        if handled:
             print("Matches are handled in the following way:")
             for res_dict in handled:
                 print(
                     f"  {DocumentReport.ResolutionChoices(res_dict['resolution_status']).label}"
                     f": {res_dict['count']} reports")
 
-        if reports:
+        if matches:
             print("Matches come from the following scannerjobs:")
             for scannerjob in scannerjobs:
                 print(
@@ -130,10 +130,10 @@ class Command(BaseCommand):
                     f"{scannerjob['scanner_job_pk']}): {scannerjob['count']} reports")
 
         # Check for timestamps
-        no_created_timestamp = DocumentReport.objects.filter(created_timestamp__isnull=True)
-        no_resolution_time = DocumentReport.objects.filter(
+        no_created_timestamp = reports.filter(created_timestamp__isnull=True)
+        no_resolution_time = reports.filter(
             resolution_status__isnull=False, resolution_time__isnull=True)
-        no_both_timestamps = no_created_timestamp | no_resolution_time
+        no_both_timestamps = no_created_timestamp & no_resolution_time
 
         if no_created_timestamp.count():
             print(f"Found {no_created_timestamp.count()} reports without a 'created_timestamp'.")
@@ -146,7 +146,7 @@ class Command(BaseCommand):
                 f"both a 'created_timestamp' and a 'resolution_time'.")
 
         # Check for reports handled before they were created
-        impossible_timestamps = DocumentReport.objects.filter(
+        impossible_timestamps = reports.filter(
             resolution_status__isnull=False,
             created_timestamp__gt=F("resolution_time"))
 
@@ -154,6 +154,24 @@ class Command(BaseCommand):
             print(
                 f"Found {impossible_timestamps.count()} handled reports, where"
                 f" the 'resolution_time' is earlier than the 'created_timestamp'.")
+
+        # Check for remediator reports
+        remediator_matches = matches.filter(alias_relation__isnull=True)
+
+        if remediator_matches.count():
+            print(f"Found {remediator_matches.count()} matched reports "
+                  "delegated to a remediator.")
+
+        # Top five matched accounts
+        account_matches = matches.values("alias_relation__account__username").order_by(
+            ).annotate(count=Count("alias_relation__account__username")).order_by("-count")
+
+        if account_matches:
+            print("Presenting the five accounts with most matched reports:")
+            nl = '\n  '
+            print(" ", nl.join(
+                [f"{acc['alias_relation__account__username']}: {acc['count']} "
+                 "matched reports" for acc in account_matches[:5] if acc['count']]))
 
     def diagnose_units(self):
         print("\n\n>> Running diagnostics on units ...")
