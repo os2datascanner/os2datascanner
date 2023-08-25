@@ -27,15 +27,15 @@
         </a>
       </li>
     {% endif %}
-    {% for role in roles %}
+    {% if user.account.dpotab_access %}
       <li>
-        <a href="{{ role.url }}"
-           class="{% if request.path == role.url %}active{% endif %}">
+        <a href="{% url "statistics-dpo" %}"
+           class="{% if request.path == '/statistics/dpo/' %}active{% endif %}">
           {% include "components/svg-icons/bar_chart.svg" %}
-          <span class="width">{{ role.description }}</span>
+          <span class="width">{% trans "DPO Overview" %}</span>
         </a>
       </li>
-    {% endfor %}
+    {% endif %}
     {% if request.user.account %}
       {% comment %}
       We can't display anything in the statistics overview without an Account,

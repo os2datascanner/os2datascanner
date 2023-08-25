@@ -20,8 +20,9 @@ from django.utils.translation import gettext_lazy as _
 from ..serializer import BaseSerializer
 
 
-class LeaderPageConfigChoices(models.TextChoices):
+class StatisticsPageConfigChoices(models.TextChoices):
     MANAGERS = "M", "Managers"
+    DPOS = "D", "Data Protection Officers"
     SUPERUSERS = "S", "Superusers"
     NONE = "N", "None"
 
@@ -75,8 +76,14 @@ class Organization(models.Model):
 
     leadertab_access = models.CharField(
         max_length=1,
-        choices=LeaderPageConfigChoices.choices,
-        default=LeaderPageConfigChoices.MANAGERS,
+        choices=StatisticsPageConfigChoices.choices,
+        default=StatisticsPageConfigChoices.MANAGERS,
+    )
+
+    dpotab_access = models.CharField(
+        max_length=1,
+        choices=StatisticsPageConfigChoices.choices,
+        default=StatisticsPageConfigChoices.DPOS,
     )
 
     class Meta:

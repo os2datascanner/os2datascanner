@@ -42,9 +42,6 @@ from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
 from .report_views import EmptyPagePaginator
 
-# For permissions
-from ..models.roles.dpo import DataProtectionOfficer
-
 
 logger = structlog.get_logger()
 
@@ -139,16 +136,16 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if not user_is(Role.get_user_roles_or_default(request.user),
-                           DataProtectionOfficer):
-                return HttpResponseForbidden()
-            # Only allow the user to see reports from their own organization
-            if not request.user.is_superuser:
-                org = request.user.account.organization
-                self.matches = self.matches.filter(organization=org)
-        return super().dispatch(
-            request, *args, **kwargs)
+        # Only allow the user to see reports from their own organization
+        if not request.user.is_superuser:
+            org = request.user.account.organization
+            self.matches = self.matches.filter(organization=org)
+        if request.user.is_superuser or request.user.account.is_dpo:
+            return super().dispatch(
+                request, *args, **kwargs)
+        else:
+            raise HttpResponseForbidden(
+                _("Only DPOs and superusers have access to the DPO overview."))
 
     def make_data_structures(self, matches):  # noqa C901, CCR001
         """To avoid making multiple separate queries to the DocumentReport
