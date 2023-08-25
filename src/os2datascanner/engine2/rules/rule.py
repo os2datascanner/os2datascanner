@@ -2,6 +2,7 @@ from abc import abstractmethod
 from enum import Enum
 import json
 from typing import Union, Optional, Tuple, Iterator, Callable, Any
+from itertools import islice
 
 from ..utilities.json import JSONSerialisable
 from ..utilities.equality import TypePropertyEquality
@@ -99,12 +100,20 @@ class Rule(TypePropertyEquality, JSONSerialisable):
 
     def try_match(
             self,
-            get_representation: Union[Callable[[str], Optional[Any]], dict]):
+            get_representation: Union[Callable[[str], Optional[Any]], dict],
+            *, obj_limit=None):
         """Reduces this Rule as much as possible, given a helper function that
         can (attempt to) produce new representations when required. When the
         content of a representation is not available, the helper function
         should raise a KeyError. (For convenience, this function also accepts a
         dictionary; in this case it'll use its __getitem__ method.)
+
+        Returns the (possibly trivial) continuation left over, along with a
+        list of [(SimpleRule, list of match object)] pairs representing the
+        rules that were executed by this method and their results. (By default,
+        all of the match objects yielded by each SimpleRule will be collected;
+        if you don't care about getting them all, you can set a cut-off with
+        the obj_limit keyword argument to improve performance.)
 
         Note that this method can optimise the reduction of this Rule; the
         result of a SimpleRule might be cached and reused, for example."""
@@ -122,7 +131,8 @@ class Rule(TypePropertyEquality, JSONSerialisable):
                 # evaluating rules and return what we have to the caller
                 break
             if head not in matches:
-                matches[head] = list(head.match(required_form))
+                matches[head] = list(
+                        islice(head.match(required_form), obj_limit))
             here = pve if matches[head] else nve
         return (here, list(matches.items()))
 

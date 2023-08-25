@@ -1,6 +1,7 @@
 import logging
 from ..conversions.types import decode_dict
 from . import messages
+from .. import settings
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,9 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001,E501 to
     try:
         # Keep executing rules for as long as we can with the representations
         # we have
-        conclusion, new_matches = rule.try_match(lambda t: representations[t])
+        conclusion, new_matches = rule.try_match(
+                representations,
+                obj_limit=max(1, settings.pipeline["matcher"]["obj_limit"]))
     except Exception as e:
         exception_message = "Matching error"
         exception_message += ". {0}: ".format(type(e).__name__)
