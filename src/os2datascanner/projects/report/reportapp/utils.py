@@ -128,12 +128,6 @@ def user_is(roles, role_cls):
                for role in roles)
 
 
-def user_is_superadmin(user):
-    """Relevant users to notify if matches exist with
-    the `only_notify_superuser`-flag."""
-    return user.is_superuser
-
-
 class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
     def create_user(self, claims):
         user = super(OIDCAuthenticationBackend, self).create_user(claims)

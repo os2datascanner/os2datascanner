@@ -74,12 +74,10 @@ class Account(models.Model):
     )
 
     def get_managed_units(self):
-        return self.units.filter(pk__in=self.positions.filter(
-            role=Role.MANAGER).select_related("unit").values("unit__pk"))
+        return self.units.filter(positions__role=Role.MANAGER)
 
     def get_dpo_units(self):
-        return self.units.filter(pk__in=self.positions.filter(
-            role=Role.DPO).select_related("unit").values("unit__pk"))
+        return self.units.filter(positions__role=Role.DPO)
 
     class Meta:
         abstract = True

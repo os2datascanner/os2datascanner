@@ -65,8 +65,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django_settings_export.settings_export',
-                'os2datascanner.projects.report.reportapp.shared_context_processor'
-                + '.check_dpo_roles',
                 'os2datascanner.projects.utils.context_processors.version',
             ],
         },

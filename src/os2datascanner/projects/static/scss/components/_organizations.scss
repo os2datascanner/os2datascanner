@@ -82,8 +82,13 @@
         display: inline;
         margin: 0;
 
-        &:not(:last-of-type)::after {
+        &.manager_li:not(:nth-last-of-type(2))::after {
           content: ", ";
+        }
+
+        &.add_manager,
+        &.add_dpo {
+          margin-left: 0.3rem;
         }
       }
     }
