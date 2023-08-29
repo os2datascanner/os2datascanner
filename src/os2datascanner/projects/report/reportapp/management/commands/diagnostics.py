@@ -14,6 +14,8 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+import termplotlib as tpl
+
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
 from django.db.models.functions import Lower
@@ -28,7 +30,7 @@ class Command(BaseCommand):
     help = __doc__
 
     choice_list = ["Account", "Alias", "DocumentReport", "OrganizationalUnit",
-                   "Organization", "problems"]
+                   "Organization", "Problem"]
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -116,18 +118,27 @@ class Command(BaseCommand):
               f"contain matches, {unhandled.count()} of which are unhandled.")
 
         if handled:
-            print("Matches are handled in the following way:")
-            for res_dict in handled:
-                print(
-                    f"  {DocumentReport.ResolutionChoices(res_dict['resolution_status']).label}"
-                    f": {res_dict['count']} reports")
+            print("\nMatches are handled in the following way:")
+            labels = [
+                DocumentReport.ResolutionChoices(
+                    res_dict['resolution_status']).label for res_dict in handled]
+            counts = [res_dict['count'] for res_dict in handled]
+            # Create figure in the terminal
+            fig = tpl.figure()
+            fig.barh(counts, labels)
+            fig.show()
 
         if matches:
-            print("Matches come from the following scannerjobs:")
-            for scannerjob in scannerjobs:
-                print(
-                    f"  {scannerjob['scanner_job_name']} ("
-                    f"{scannerjob['scanner_job_pk']}): {scannerjob['count']} reports")
+            print("\nMatches come from the following scannerjobs:")
+            labels = [
+                f"{scannerjob['scanner_job_name']} ({scannerjob['scanner_job_pk']})"
+                for scannerjob in scannerjobs]
+            counts = [scannerjob['count'] for scannerjob in scannerjobs]
+
+            # Create figure in the terminal
+            fig = tpl.figure()
+            fig.barh(counts, labels)
+            fig.show()
 
         # Check for timestamps
         no_created_timestamp = reports.filter(created_timestamp__isnull=True)
@@ -167,7 +178,7 @@ class Command(BaseCommand):
             ).annotate(count=Count("alias_relation__account__username")).order_by("-count")
 
         if account_matches:
-            print("Presenting the five accounts with most matched reports:")
+            print("\nPresenting the five accounts with most matched reports:")
             nl = '\n  '
             print(" ", nl.join(
                 [f"{acc['alias_relation__account__username']}: {acc['count']} "
@@ -199,20 +210,17 @@ class Command(BaseCommand):
         if not only:
             only = self.choice_list
 
-        if "Account" in only:
-            self.diagnose_accounts()
-
-        if "Alias" in only:
-            self.diagnose_aliases()
-
-        if "problems" in only:
-            self.diagnose_problems()
-
-        if "DocumentReport" in only:
-            self.diagnose_reports()
-
-        if "OrganizationalUnit" in only:
-            self.diagnose_units()
-
-        if "Organization" in only:
-            self.diagnose_organizations()
+        for opt in only:
+            match opt:
+                case "Account":
+                    self.diagnose_accounts()
+                case "Alias":
+                    self.diagnose_aliases()
+                case "Problem":
+                    self.diagnose_errors()
+                case "DocumentReport":
+                    self.diagnose_reports()
+                case "OrganizationalUnit":
+                    self.diagnose_organizations()
+                case "Organization":
+                    self.diagnose_organizations()

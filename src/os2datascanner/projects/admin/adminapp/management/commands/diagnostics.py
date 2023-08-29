@@ -114,20 +114,17 @@ class Command(BaseCommand):
         if not only:
             only = self.choice_list
 
-        if "Account" in only:
-            self.diagnose_accounts()
-
-        if "Alias" in only:
-            self.diagnose_aliases()
-
-        if "UserErrorLog" in only:
-            self.diagnose_errors()
-
-        if "OrganizationalUnit" in only:
-            self.diagnose_units()
-
-        if "Organization" in only:
-            self.diagnose_organizations()
-
-        if "Rule" in only:
-            self.diagnose_rules()
+        for opt in only:
+            match opt:
+                case "Account":
+                    self.diagnose_accounts()
+                case "Alias":
+                    self.diagnose_aliases()
+                case "UserErrorLog":
+                    self.diagnose_errors()
+                case "OrganizationalUnit":
+                    self.diagnose_organizations()
+                case "Organization":
+                    self.diagnose_organizations()
+                case "Rule":
+                    self.diagnose_rules()
