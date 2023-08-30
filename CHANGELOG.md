@@ -10,6 +10,10 @@
   (by default) ten matches, reducing the memory usage and total message size
   and improving performance.
 
+- Scheduled execution of scans should be more robust, both in the user
+  interface and in the backend service (and, if the latter goes wrong in some
+  way, it can now print informative debugging information).
+
 ### Bugfixes
 
 - Result collector is now more robust if encountering identical problem messages.
