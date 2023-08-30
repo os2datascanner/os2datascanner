@@ -165,15 +165,23 @@ class Scanner(models.Model):
         return False
 
     @property
-    def schedule_date(self):
-        """Find date of next scheduled scanjob"""
-        if any(self.schedule.occurrences()):
-            return self.schedule.occurrences()[0]
+    def schedule_date(self) -> datetime.date | None:
+        """Returns the date for the next scheduled execution of this scanner,
+        if there is one."""
+        today = time_now().date()
+        for oc in self.schedule.occurrences():
+            # Check that the date is at least today -- otherwise we might pick
+            # an old one-off scan and declare that the next scan will have been
+            # yesterday
+            if (date := oc.date()) >= today:
+                return date
+        return None
 
     @property
     def schedule_time(self):
-        """Find time of next scheduled scanjob"""
-        if any(self.schedule.occurrences()):
+        """Returns the time for the next scheduled execution of this scanner,
+        if there is one."""
+        if self.schedule_date is not None:
             return self.get_start_time()
 
     # Run error messages
@@ -192,8 +200,14 @@ class Scanner(models.Model):
     # Amount of quarter-hours that can be added to the start time
     STARTTIME_QUARTERS = 5 * 4
 
-    def get_start_time(self):
-        """The time of day the Scanner should be automatically started."""
+    def get_start_time(self) -> datetime.time:
+        """Returns the time of day at which this scanner can be considered for
+        scheduled execution.
+
+        The current implementation of this method always returns a time between
+        7pm and midnight; this time is not configurable, but is derived from
+        the primary key of the scanner in an attempt to spread executions
+        out."""
         # add (minutes|hours) in intervals of 15m depending on `pk`, so each
         # scheduled job start at different times after 19h00m
         added_minutes = 15 * (self.pk % self.STARTTIME_QUARTERS)
