@@ -482,10 +482,11 @@ x-disabled:
       context: .
       dockerfile: docker/base/Dockerfile
       target: admin
-    command: supercronic /code/docker/crontab
+    command: supercronic /code/docker/crontab --now
     environment:
       - OS2DS_SKIP_DJANGO_MIGRATIONS=1
       - TZ=Europe/Copenhagen
+      - LOG_LEVEL=debug
     volumes:
       - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
       - ./src/os2datascanner:/code/src/os2datascanner
