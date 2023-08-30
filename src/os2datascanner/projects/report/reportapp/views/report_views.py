@@ -263,8 +263,7 @@ class UndistributedView(ReportView):
             'scanner_job_pk').values(
             'scanner_job_pk').annotate(
             total=Count('scanner_job_pk')).values(
-            'scanner_job_name', 'scanner_job_pk', 'total', 'scan_time'
-            ).order_by('-scan_time')
+            'scanner_job_name', 'scanner_job_pk', 'total')
         return context
 
     def dispatch(self, request, *args, **kwargs):

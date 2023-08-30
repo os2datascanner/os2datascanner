@@ -39,6 +39,10 @@
 
 - Adjusted shadow effect for visualizing scrollability on tables in the admin module, ensuring compatibility with Safari browsers.
 
+- Undistributed reports from the same scannerjob with differing scan_times
+  will no longer cause multiple instances of the same scannerjob in the
+  overview of undistributed scannerjobs in the report module.
+
 ## 3.20.4, 16th August 2023
 
 "To Prevent Arthritis"
