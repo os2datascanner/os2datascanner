@@ -13,12 +13,18 @@ def gs_convert(path):
     '''Convert to a compressed form using GhostScript (gs).'''
     with TemporaryDirectory() as outputdir:
         converted_path = "{0}/gs-temporary.pdf".format(outputdir)
-        run_custom(["gs", "-q",
-                    GS["_base_arguments"],
-                    f"-dPDFSETTINGS={GS['pdf_profile']}",
-                    GS["extra_args"],
-                    "-sOutputFile={0}".format(converted_path),
-                    path],
+        command = ["gs", "-q",
+                   *GS["_base_arguments"].split(),
+                   f"-dPDFSETTINGS={GS['pdf_profile']}",
+                   "-sOutputFile={0}".format(converted_path)]
+
+        extra_args = GS["extra_args"]
+        if extra_args:
+            command.append(extra_args)
+
+        command.append(path)
+
+        run_custom(command,
                    timeout=GS["timeout"],
                    check=True, isolate_tmp=True)
 
