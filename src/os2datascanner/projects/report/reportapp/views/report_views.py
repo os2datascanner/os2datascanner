@@ -42,6 +42,7 @@ from os2datascanner.engine2.rules.dict_lookup import EmailHeaderRule
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
 from ..utils import user_is
+from .view_utils import handle_report, delete_email, make_token
 from ..models.documentreport import DocumentReport
 from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
@@ -335,22 +336,9 @@ class HandleMatchView(HTMXEndpointView, DetailView):
         response = super().post(request, *args, **kwargs)
         report = self.get_object()
         action = request.POST.get('action')
-        self.handle_report(report, action)
+        handle_report(self.request.user, report, action)
 
         return response
-
-    def handle_report(self, report, action):
-        try:
-            self.request.user.account.update_last_handle()
-        except Exception as e:
-            logger.warning("Exception raised while trying to update last_handle field "
-                           f"of account belonging to user {self.request.user}:", e)
-
-        report.resolution_status = action
-        report.raw_problem = None
-        report.save()
-        logger.info(f"Successfully handled DocumentReport {report} with "
-                    f"resolution_status {action}.")
 
 
 class MassHandleView(HTMXEndpointView, ListView):
@@ -431,7 +419,6 @@ class DistributeMatchesView(HTMXEndpointView, ListView):
     def get_queryset(self):
         qs = super().get_queryset()
         scanner_job_pk = self.request.POST.get('distribute-to')
-        print(scanner_job_pk)
         qs = qs.filter(scanner_job_pk=scanner_job_pk)
         return qs
 
@@ -444,3 +431,39 @@ class DistributeMatchesView(HTMXEndpointView, ListView):
         logger.info(f"Updated DocumetReport objects: {update_output}")
 
         return response
+
+
+class DeleteMailView(HTMXEndpointView, DetailView):
+    # TODO: Write proper docstring
+    """ Deletes a little"""
+    model = DocumentReport
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        report = self.get_object()
+        delete_email(report, self.request.user)
+
+        return response
+
+
+class MassDeleteMailView(HTMXEndpointView, ListView):
+    # TODO: Write proper docstring
+    """ Deletes a lot """
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        reports = self.get_queryset()
+        self.delete_emails(reports)
+
+        return response
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        pks = self.request.POST.getlist("table-checkbox", [])
+        reports = qs.filter(pk__in=pks)
+        return reports
+
+    def delete_emails(self, document_reports):
+        access_token = make_token()
+        for document_report in document_reports:
+            delete_email(document_report, self.request.user, access_token)

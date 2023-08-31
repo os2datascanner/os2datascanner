@@ -140,6 +140,24 @@
                 </ul>
               </div>
             </div>
+            {# TODO: Write proper texts & translate              #}
+            {% if settings.MSGRAPH_ALLOW_DELETION and type == 'msgraph-mail-account' %}
+              <div class="delete-mail">
+                <button class="matches-handle button button--has-icon"
+                        name='delete-mail'
+                        title="{% blocktrans %} Deletes the email from your Outlook{% endblocktrans %}"
+                        hx-post="{% url 'delete-mail' document_report.pk|unlocalize %}"
+                        hx-push-url="false"
+                        hx-swap="none"
+                        hx-trigger="click"
+                        hx-indicator="closest tr"
+                        hx-confirm="{% blocktrans %} Are you sure? This action will permanently delete selected email from your mailbox. {% endblocktrans %}">
+                  <i class="material-icons">delete_forever</i>
+                  MSTrashcan
+                </button>
+              </div>
+            {%  endif %}
+
           {% else %}
             {% if "/archive/" in request.path %}
               <button class="revert-handle button button--has-icon"

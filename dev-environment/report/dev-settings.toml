@@ -31,6 +31,12 @@ OPTIONAL_MIDDLEWARE = [
 # The name of the institution, to be included in the notification signoff
 NOTIFICATION_INSTITUTION = 'MAGENTA APS'
 
+# [msgraph]
+MSGRAPH_ALLOW_DELETION = true
+MSGRAPH_APP_ID = ""
+MSGRAPH_CLIENT_SECRET = ""
+MSGRAPH_TENANT_ID = ""
+
 # KEYCLOAK
 OIDC_RP_CLIENT_ID = "os2datascanner"
 # endpoints
