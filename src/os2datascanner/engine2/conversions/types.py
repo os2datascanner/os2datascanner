@@ -46,50 +46,54 @@ class OutputType(Enum):
         a JSON-friendly representation."""
         if v is None:
             return None
-        elif self == OutputType.Text:
-            return str(v)
-        elif self == OutputType.LastModified:
-            return unparse_datetime(v)
-        elif self == OutputType.ImageDimensions:
-            return [int(v[0]), int(v[1])]
-        elif self == OutputType.Links:
-            if isinstance(v, list):
-                return [(link.url, link.link_text) for link in v]
-            return (v.url, v.link_text)
-        elif self == OutputType.Manifest:
-            return [h.to_json_object() for h in v]
-        elif self == OutputType.EmailHeaders:
-            # v is already suitable for JSON serialisation
-            return v
 
-        elif self == OutputType.AlwaysTrue:
-            return True
-        else:
-            raise TypeError(self.value)
+        match self:
+            case OutputType.Text:
+                return str(v)
+            case OutputType.LastModified:
+                return unparse_datetime(v)
+            case OutputType.ImageDimensions:
+                return [int(v[0]), int(v[1])]
+            case OutputType.Links:
+                if isinstance(v, list):
+                    return [(link.url, link.link_text) for link in v]
+                return (v.url, v.link_text)
+            case OutputType.Manifest:
+                return [h.to_json_object() for h in v]
+            case OutputType.EmailHeaders:
+                # v is already suitable for JSON serialisation
+                return v
+
+            case OutputType.AlwaysTrue:
+                return True
+            case _:
+                raise TypeError(self.value)
 
     def decode_json_object(self, v):
         """Constructs an object (of the appropriate type for this OutputType)
         from a JSON representation."""
         if v is None:
             return None
-        elif self == OutputType.Text:
-            return v
-        elif self == OutputType.LastModified:
-            return parse_datetime(v)
-        elif self == OutputType.ImageDimensions:
-            return int(v[0]), int(v[1])
-        elif self == OutputType.Links:
-            return [Link(url, link_text) for url, link_text in v]
-        elif self == OutputType.Manifest:
-            return [Handle.from_json_object(h) for h in v]
-        elif self == OutputType.EmailHeaders:
-            # Force all keys to be lower-case
-            return {k.lower(): v for k, v in v.items()}
 
-        elif self == OutputType.AlwaysTrue:
-            return True
-        else:
-            raise TypeError(self.value)
+        match self:
+            case OutputType.Text:
+                return v
+            case OutputType.LastModified:
+                return parse_datetime(v)
+            case OutputType.ImageDimensions:
+                return int(v[0]), int(v[1])
+            case OutputType.Links:
+                return [Link(url, link_text) for url, link_text in v]
+            case OutputType.Manifest:
+                return [Handle.from_json_object(h) for h in v]
+            case OutputType.EmailHeaders:
+                # Force all keys to be lower-case
+                return {k.lower(): v for k, v in v.items()}
+
+            case OutputType.AlwaysTrue:
+                return True
+            case _:
+                raise TypeError(self.value)
 
 
 def encode_dict(d):
