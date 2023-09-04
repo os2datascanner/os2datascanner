@@ -138,6 +138,9 @@ class ReportView(LoginRequiredMixin, ListView):
         if (method := self.request.GET.get('resolution_status')) and method != 'all':
             self.document_reports = self.document_reports.filter(resolution_status=int(method))
 
+        if (source_type := self.request.GET.get('source_type')) and source_type != 'all':
+            self.document_reports = self.document_reports.filter(source_type=source_type)
+
     def order_queryset_by_property(self):
         """Checks if a sort key is allowed and orders the queryset"""
         allowed_sorting_properties = [
@@ -194,6 +197,13 @@ class ReportView(LoginRequiredMixin, ListView):
         context['sensitivities'] = (((Sensitivity(s["sensitivity"]),
                                     s["total"]) for s in sensitivities),
                                     self.request.GET.get('sensitivities', 'all'))
+
+        context['source_types'] = (self.all_reports.order_by("source_type").values(
+            "source_type"
+        ).annotate(
+            total=Count("source_type", filter=sensitivity_filter & scannerjob_filter),
+        ).values("source_type", "total"),
+                                   self.request.GET.get('source_type', 'all'))
 
         resolution_status = self.all_reports.order_by(
                 'resolution_status').values(
@@ -434,8 +444,8 @@ class DistributeMatchesView(HTMXEndpointView, ListView):
 
 
 class DeleteMailView(HTMXEndpointView, DetailView):
-    # TODO: Write proper docstring
-    """ Deletes a little"""
+    """ View for sending a delete request for one email
+    through the MSGraph message API. """
     model = DocumentReport
 
     def post(self, request, *args, **kwargs):
@@ -447,8 +457,8 @@ class DeleteMailView(HTMXEndpointView, DetailView):
 
 
 class MassDeleteMailView(HTMXEndpointView, ListView):
-    # TODO: Write proper docstring
-    """ Deletes a lot """
+    """ View for sending delete requests for multiple emails
+     through the MSGraph message API. """
 
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)

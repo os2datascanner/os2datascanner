@@ -1,10 +1,14 @@
 import requests
+import structlog
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 
-from reportapp.models.documentreport import DocumentReport
-from reportapp.views.report_views import logger
+from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
 from os2datascanner.engine2.utilities.backoff import WebRetrier
 from os2datascanner.utils.oauth2 import mint_cc_token
+
+
+logger = structlog.get_logger()
 
 
 def is_owner(owner: str, user):
@@ -32,6 +36,9 @@ def handle_report(user, report, action):
 def delete_email(document_report: DocumentReport, user, access_token=None):
     """ Deletes an email through the MSGraph API and handles DocumentReport accordingly.
     Retrieves a new access token if not provided one."""
+    if not settings.MSGRAPH_ALLOW_DELETION:
+        logger.warning("System configuration does not allow MSGraph deletion.")
+        raise PermissionDenied
 
     if not access_token:
         access_token = make_token()

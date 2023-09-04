@@ -14,6 +14,7 @@ from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
 from ..utils import user_is
 from ..views.report_views import RENDERABLE_RULES
+from django.utils.translation import gettext_lazy as _
 
 register = template.Library()
 
@@ -93,15 +94,19 @@ def find_svg_icon(type_label):
 def find_scan_type(type_label):
     match type_label:
         case "smbc" | "dropbox" | "googledrive" | "msgraph-file":
-            return "File"
+            return _("File")
         case "msgraph-drive":
-            return "MS Teams file"
-        case "gmail" | "ews" | "msgraph-mail":
-            return "Mail"
+            return _("MS Teams file")
+        case "ews":
+            return _("Exchange Mail")
+        case "gmail":
+            return _("Gmail")
+        case "msgraph-mail" | "msgraph-mail-account":
+            return _("Office 365 Mail")
         case "web":
-            return "Web"
+            return _("Web")
         case _:
-            return "Unrecognized file type"
+            return _("Unrecognized file type")
 
 
 @register.filter

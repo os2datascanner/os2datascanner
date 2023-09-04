@@ -227,7 +227,7 @@ msgid "DPO statistics"
 msgstr "DPO-statistik"
 
 #: reportapp/templates/components/dpo-statistics-template.html:32
-#: reportapp/templates/components/filters.html:34
+#: reportapp/templates/components/filters.html:36
 msgid "All scannerjobs"
 msgstr "Alle scannerjobs"
 
@@ -285,7 +285,7 @@ msgid "The department's percentage of handled results"
 msgstr "Afdelingens procentvise andel af håndterede resultater"
 
 #: reportapp/templates/components/dpo-statistics-template.html:140
-#: reportapp/templates/components/handle-match.html:61
+#: reportapp/templates/components/handle-match.html:79
 #: reportapp/templates/components/pagination.html:10
 msgid "of"
 msgstr "af"
@@ -321,53 +321,62 @@ msgstr "Hvorfor sletter 'Håndtér'-knappen ikke min fil eller e-mail?"
 msgid "Why can't I open file scan matches?"
 msgstr "Hvorfor kan jeg ikke åbne matches fra filscan?"
 
-#: reportapp/templates/components/filters.html:28
-#: reportapp/templates/components/filters.html:57
-#: reportapp/templates/components/filters.html:90
+#: reportapp/templates/components/filters.html:30
+#: reportapp/templates/components/filters.html:59
+#: reportapp/templates/components/filters.html:91
+#: reportapp/templates/components/filters.html:126
 msgid "Clear"
 msgstr "Ryd"
 
-#: reportapp/templates/components/filters.html:29
+#: reportapp/templates/components/filters.html:31
 msgid "Scan"
 msgstr "Scan"
 
-#: reportapp/templates/components/filters.html:58
+#: reportapp/templates/components/filters.html:60
 msgid "Sensitivity"
 msgstr "Følsomhed"
 
-#: reportapp/templates/components/filters.html:64
+#: reportapp/templates/components/filters.html:66
 msgid "All sensitivities"
 msgstr "Alle følsomheder"
 
-#: reportapp/templates/components/filters.html:91
+#: reportapp/templates/components/filters.html:92
+msgid "Source Type"
+msgstr "Kildetype"
+
+#: reportapp/templates/components/filters.html:98
+msgid "All source types"
+msgstr "Alle kildetyper"
+
+#: reportapp/templates/components/filters.html:127
 msgid "Resolution Status"
 msgstr "Håndteringsstatus"
 
-#: reportapp/templates/components/filters.html:97
+#: reportapp/templates/components/filters.html:133
 msgid "All resolution statuses"
 msgstr "Alle håndteringsstatusser"
 
-#: reportapp/templates/components/filters.html:112
+#: reportapp/templates/components/filters.html:148
 #: reportapp/templates/components/hits.html:68
 msgid "Resource age"
 msgstr "Kildealder"
 
-#: reportapp/templates/components/filters.html:120
+#: reportapp/templates/components/filters.html:156
 msgid "Oldest"
 msgstr "Ældste"
 
-#: reportapp/templates/components/filters.html:126
+#: reportapp/templates/components/filters.html:162
 msgid "Newest"
 msgstr "Nyeste"
 
-#: reportapp/templates/components/filters.html:143
+#: reportapp/templates/components/filters.html:179
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
 #: reportapp/templates/components/handle-match.html:10
 #: reportapp/templates/components/handle-match.html:43
 #: reportapp/templates/components/hit.html:120
-#: reportapp/templates/components/hit.html:162
+#: reportapp/templates/components/hit.html:179
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned. "
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -382,7 +391,7 @@ msgstr "Markér som håndterede"
 
 #: reportapp/templates/components/handle-match.html:18
 #: reportapp/templates/components/hit.html:125
-#: reportapp/templates/components/hit.html:170
+#: reportapp/templates/components/hit.html:187
 msgid ""
 "You are about to handle this result. This action does not change the file, "
 "that the result is about. Please do not handle a result before action has "
@@ -394,7 +403,7 @@ msgstr ""
 
 #: reportapp/templates/components/handle-match.html:25
 #: reportapp/templates/components/hit.html:131
-#: reportapp/templates/components/hit.html:157
+#: reportapp/templates/components/hit.html:174
 msgid "Revert"
 msgstr "Fortryd"
 
@@ -412,7 +421,23 @@ msgstr ""
 msgid "Mark as unhandled"
 msgstr "Markér som uhåndterede"
 
-#: reportapp/templates/components/handle-match.html:61
+#: reportapp/templates/components/handle-match.html:65
+msgid "Deletes checked emails from your mailbox"
+msgstr "Sletter markede emails fra din mailboks"
+
+#: reportapp/templates/components/handle-match.html:70
+msgid ""
+"You are about to delete checked mails from your mailbox. OS2datascanner "
+"cannot reverse this action. Are you sure?"
+msgstr ""
+"Du er ved at slette markerede emails fra din mailboks. Denne handling kan "
+"ikke fortrydes i OS2datascanner. Er du sikker?"
+
+#: reportapp/templates/components/handle-match.html:73
+msgid "Delete marked emails"
+msgstr "Slet markerede emails"
+
+#: reportapp/templates/components/handle-match.html:79
 msgid "selected"
 msgstr "valgt"
 
@@ -445,37 +470,53 @@ msgid "Copy link"
 msgstr "Kopiér link"
 
 #: reportapp/templates/components/hit.html:121
-#: reportapp/templates/components/hit.html:172
+#: reportapp/templates/components/hit.html:189
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:176
+#: reportapp/templates/components/hit.html:149
+msgid "Deletes email from your mailbox"
+msgstr "Sletter email fra din mailboks"
+
+#: reportapp/templates/components/hit.html:155
+msgid ""
+"You are about to delete selected email from your mailbox. OS2datascanner "
+"cannot reverse this action. Are you sure?"
+msgstr ""
+"Du er ved at slette valgte email fra din mailboks. Denne handling kan "
+"ikke fortrydes i OS2datascanner. Er du sikker?"
+
+#: reportapp/templates/components/hit.html:157
+msgid "Delete"
+msgstr "Slet"
+
+#: reportapp/templates/components/hit.html:193
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:191
+#: reportapp/templates/components/hit.html:208
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:192
+#: reportapp/templates/components/hit.html:209
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:193
+#: reportapp/templates/components/hit.html:210
 msgid "Probability"
 msgstr "Sandsynlighed"
 
-#: reportapp/templates/components/hit.html:211
+#: reportapp/templates/components/hit.html:228
 msgid "A temporary error occurred during the latest check of this match"
 msgstr "Der opstod en midlertidig fejl under sidste tjek af dette match"
 
-#: reportapp/templates/components/hit.html:213
+#: reportapp/templates/components/hit.html:230
 msgid ""
 "OS2datascanner will automatically check this match again as part of the next "
 "scan"
 msgstr "OS2datascanner genbesøger dette match automatisk under næste scan"
 
-#: reportapp/templates/components/hit.html:217
+#: reportapp/templates/components/hit.html:234
 msgid "Show/hide technical details of the error"
 msgstr "Vis/skjul tekniske detaljer om fejlen"
 
@@ -1140,6 +1181,35 @@ msgid "User since"
 msgstr "Bruger siden"
 
 #: reportapp/utils.py:24
+#: reportapp/templatetags/handle_extras.py:97
+msgid "File"
+msgstr "Fil"
+
+#: reportapp/templatetags/handle_extras.py:99
+msgid "MS Teams file"
+msgstr "MS Teams fil"
+
+#: reportapp/templatetags/handle_extras.py:101
+msgid "Exchange Mail"
+msgstr "Exchange mail"
+
+#: reportapp/templatetags/handle_extras.py:103
+msgid "Gmail"
+msgstr "Gmail"
+
+#: reportapp/templatetags/handle_extras.py:105
+msgid "Office 365 Mail"
+msgstr "Office 365 Mail"
+
+#: reportapp/templatetags/handle_extras.py:107
+msgid "Web"
+msgstr "Hjemmeside"
+
+#: reportapp/templatetags/handle_extras.py:109
+msgid "Unrecognized file type"
+msgstr "Uidentificerbar filtype"
+
+#: reportapp/utils.py:26
 msgid "%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A"
 msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 
