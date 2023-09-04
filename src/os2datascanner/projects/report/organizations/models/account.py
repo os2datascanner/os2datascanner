@@ -293,8 +293,6 @@ class Account(Core_Account):
         self._count_matches()
         self._calculate_status()
 
-        print(self.slug, self.username)
-
         if not self.slug:
             self.slug = slugify(self.username)
 

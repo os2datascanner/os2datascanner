@@ -27,12 +27,13 @@ class AccountView(LoginRequiredMixin, DetailView):
     model = Account
 
     def get_object(self, queryset=None):
-        if slug := self.kwargs.get("slug") is None:
+        if self.kwargs.get("slug") is None:
             try:
                 self.kwargs["slug"] = self.request.user.account.slug
             except Account.DoesNotExist:
                 raise Http404()
-        elif not (self.request.user.is_superuser or slug == self.request.user.account.slug):
+        elif not (self.request.user.is_superuser or
+                  self.kwargs.get("slug") == self.request.user.account.slug):
             raise Http404()
         return super().get_object(queryset)
 
