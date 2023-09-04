@@ -23,10 +23,12 @@ from django.db.models import Count
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import slugify
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
+
 
 from os2datascanner.core_organizational_structure.models import Account as Core_Account
 from os2datascanner.core_organizational_structure.models import \
@@ -80,7 +82,8 @@ class AccountManager(models.Manager):
                 username=account.username,
                 defaults={
                     "first_name": account.first_name or '',
-                    "last_name": account.last_name or ''
+                    "last_name": account.last_name or '',
+                    "slug": slugify(account.username)
                 })
             account.user = user_obj
         return super().bulk_create(objs, **kwargs)
@@ -136,6 +139,7 @@ class Account(Core_Account):
         null=True,
         blank=True)
     contact_person = models.BooleanField(_("Contact person"), default=False)
+    slug = models.SlugField(null=True, blank=True)
 
     def update_last_handle(self):
         self.last_handle = time_now()
@@ -285,10 +289,16 @@ class Account(Core_Account):
             return False
 
     def save(self, *args, **kwargs):
+
         self._count_matches()
         self._calculate_status()
 
-        super().save(*args, **kwargs)
+        print(self.slug, self.username)
+
+        if not self.slug:
+            self.slug = slugify(self.username)
+
+        return super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=Account)
