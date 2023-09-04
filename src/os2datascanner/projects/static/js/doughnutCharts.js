@@ -11,6 +11,14 @@ function makeDoughnutChart(text, data, colors, chartElement) {
 			}]
 		},
 		options: {
+			layout: {
+				padding: {
+				  left: 8,
+				  right: 8,
+				  top: 8,
+				  bottom: 8
+				}
+			  },
 			cutoutPercentage: 75,
 			elements: {
 				arc: {

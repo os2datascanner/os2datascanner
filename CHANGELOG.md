@@ -9,6 +9,13 @@
 - Previously seen error messages in the user error log are now hidden by
   default. They can be shown by checking the checkbox at the top of the page.
 
+- General overhaul for Pie chart in DPO: 
+
+  - Display tooltip on hover, and relative percentages are displayed alongside chart legends. 
+
+  - Added and "empty" pie for empty datasets. 
+
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
