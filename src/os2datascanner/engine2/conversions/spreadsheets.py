@@ -2,18 +2,14 @@ from .types import OutputType
 from .registry import conversion
 from ..model.core import Resource
 
-ROW_TYPE = "application/x.os2datascanner.spreadsheet.row"
+# ROW_TYPE = "application/x.os2datascanner.spreadsheet.row"
+SHEET_TYPE = "application/x.os2datascanner.spreadsheet"
 
 
-@conversion(OutputType.Text, ROW_TYPE)
+@conversion(OutputType.Text, SHEET_TYPE)
 def pandas_dataframe_processor(r: Resource, **kwargs):
     """
-    Converts Rows from Excel-like files to text using efficient pandas.Dataframes.
+    Converts Sheets from Excel-like files to text using efficient pandas.Dataframes.
     """
-    df = r._sm.open(r.handle.source)
-    i = int(r.handle.relative_path)
-
-    if i == 0:
-        return df.columns.astype('string').str.cat(sep='\t', na_rep='\t')
-    else:
-        return df.iloc[i - 1].astype('string').str.cat(sep='\t', na_rep='\t')
+    sheet_name = r.handle.relative_path
+    return r._sm.open(r.handle.source).parse(sheet_name=sheet_name).to_string(na_rep='')
