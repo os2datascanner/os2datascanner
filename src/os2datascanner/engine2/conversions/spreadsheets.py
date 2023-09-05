@@ -12,4 +12,7 @@ def pandas_dataframe_processor(r: Resource, **kwargs):
     Converts Sheets from Excel-like files to text using efficient pandas.Dataframes.
     """
     sheet_name = r.handle.relative_path
-    return r._sm.open(r.handle.source).parse(sheet_name=sheet_name).to_string(na_rep='')
+    df = r._sm.open(r.handle.source).parse(sheet_name=sheet_name)
+    text = df.columns.astype('string').str.cat(sep='\t') + '\n'
+    return text + "\n".join(
+        row.astype('string').str.cat(sep='\t') for _, row in df.iterrows())
