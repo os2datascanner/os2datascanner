@@ -66,7 +66,7 @@ class AccountManager(models.Manager):
                 "first_name": kwargs.get("first_name") or '',
                 "last_name": kwargs.get("last_name") or ''
             })
-        account = Account(**kwargs, user=user_obj)
+        account = Account(**kwargs, user=user_obj, slug=slugify(kwargs.get("username")))
         account.save()
 
         return account
@@ -78,12 +78,12 @@ class AccountManager(models.Manager):
 
     def bulk_create(self, objs, **kwargs):
         for account in objs:
+            account.slug = slugify(account.username)
             user_obj, created = User.objects.update_or_create(
                 username=account.username,
                 defaults={
                     "first_name": account.first_name or '',
                     "last_name": account.last_name or '',
-                    "slug": slugify(account.username)
                 })
             account.user = user_obj
         return super().bulk_create(objs, **kwargs)

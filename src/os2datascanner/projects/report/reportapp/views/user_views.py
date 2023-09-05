@@ -19,6 +19,7 @@ from django.views.generic import DetailView
 from django.http import HttpResponse, Http404
 
 from ..models.roles.role import Role
+from ...organizations.models import Account
 
 
 class AccountView(LoginRequiredMixin, DetailView):
@@ -46,9 +47,6 @@ class AccountView(LoginRequiredMixin, DetailView):
         user_roles = [role._meta.verbose_name for role in roles]
 
         context["user"] = user
-        context["is_dpo"] = "DPO" in user_roles
-        # Dumb implementation. Awaiting major refactor.
-        context["is_contact_person"] = self.request.user.account.contact_person
         context["user_roles"] = user_roles
         context["aliases"] = self.object.aliases.all()
 
@@ -56,9 +54,9 @@ class AccountView(LoginRequiredMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         bool_field_status = request.POST.get("contact_check", False) == "checked"
-        # Temporarily bad functionality, since the DataProtectionOfficer-
-        # model has been removed. Will be reimplemented in #57334.
-        request.user.account.contact_person = bool_field_status
-        request.user.account.save()
+
+        account = self.get_object()
+        account.contact_person = bool_field_status
+        account.save()
 
         return HttpResponse()

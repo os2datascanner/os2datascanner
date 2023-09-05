@@ -46,7 +46,15 @@
           </td>
         </tr>
       {% endif %}
-      {% if is_dpo %}
+      {% if account.is_dpo %}
+        <tr>
+          <td>{% trans "DPO for" %}</td>
+          <td>
+            <ul>
+              {% for unit in account.get_dpo_units %}<li>{{ unit.name }}</li>{% endfor %}
+            </ul>
+          </td>
+        </tr>
         <tr>
           <td>{% trans "Contact Person" %}</td>
           <td class="ds-checkbox">
@@ -59,7 +67,7 @@
                    hx-swap="afterend"
                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                    hx-include='#contact_check'
-                   {% if is_contact_person %}checked{% endif %}>
+                   {% if account.contact_person %}checked{% endif %}>
             <label for="contact_check"
                    title="{% trans "By checking this box, users will be presented with your email address for DPO-related questions." %}">
             </label>

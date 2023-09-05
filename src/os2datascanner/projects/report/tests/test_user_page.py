@@ -9,11 +9,12 @@ from ..organizations.models import Position
 from ..reportapp.views.user_views import AccountView
 
 
-class TestUserProfile(TestCase):
+class TestAccountView(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
         org = Organization.objects.create(name='test_org')
+        self.ou = OrganizationalUnit.objects.create(name='test_ou', organization=org)
         self.account = Account.objects.create(username='name', organization=org)
         self.user = self.account.user
         self.other_account = Account.objects.create(username='someone else', organization=org)
