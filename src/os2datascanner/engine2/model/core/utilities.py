@@ -99,7 +99,7 @@ class SourceManager:
             desc = self._make_descriptor(source)
             # Some cookies cannot be coerced into a boolean value
             # so we have to make a somewhat quirky check, sorry.
-            if not hasattr(desc, "cookie") or desc.cookie is None:
+            if desc.cookie is None:
                 desc.generator = source._generate_state(self)
                 try:
                     desc.cookie = next(desc.generator)
