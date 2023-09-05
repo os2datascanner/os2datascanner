@@ -16,6 +16,7 @@ from json import dumps
 from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage
 from django.http import Http404
+from django.shortcuts import render
 from pika.exceptions import AMQPError
 import structlog
 
@@ -30,6 +31,7 @@ from ..models.authentication import Authentication
 from ..models.rules.rule import Rule
 from ..models.scannerjobs.scanner import Scanner, ScanStatus, ScanStatusSnapshot
 from ..models.usererrorlog import UserErrorLog
+from ..utils import CleanMessage
 from django.utils.translation import gettext_lazy as _
 
 from channels.layers import get_channel_layer
@@ -548,3 +550,54 @@ class ScannerRun(RestrictedDetailView):
                 context['engine2_error'] += ", ".join([str(e) for e in ex.args])
 
         return self.render_to_response(context)
+
+
+class ScannerCleanupStaleAccounts(RestrictedDetailView):
+    """Base class for view that handles cleaning up stale accounts
+    associated with a scanner."""
+
+    fields = []
+    template_name = 'os2datascanner/scanner_cleanup_stale_accounts.html'
+    model = Scanner
+    context_object_name = 'scanner'
+
+    @property
+    def scanner_running(self):
+        return (self.object.statuses.last() and not self.object.statuses.last().finished)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.is_htmx = request.headers.get('HX-Request') == "true"
+        uuids_to_clean = request.POST.getlist('cleanup_account_uuid', [])
+
+        if not self.is_htmx:
+            return
+
+        if request.headers.get('HX-Trigger-Name') == "cleanup-button":
+
+            if not self.scanner_running:
+                stale_accounts = self.object.get_stale_accounts()
+
+                # Manually constructing this, since 'stale_accounts' can no
+                # longer be filtered, due to the 'difference' method already
+                # having been called on it.
+                accounts_to_clean = [
+                    acc for acc in stale_accounts if str(
+                        acc.uuid) in uuids_to_clean]
+
+                clean_dict = {self.object.pk: {
+                    "uuids": [str(acc.uuid) for acc in accounts_to_clean],
+                    "usernames": [acc.username for acc in accounts_to_clean]
+                }}
+                CleanMessage.send(clean_dict, publisher="UI-manual")
+                self.object.remove_stale_accounts(accounts_to_clean)
+
+            return render(
+                request,
+                "os2datascanner/scanner_cleanup_response.html",
+                context=self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["running"] = self.scanner_running
+        return context

@@ -66,3 +66,9 @@ def format_timespan(seconds):
             if iteration == 2:
                 break
     return formatted_string
+
+
+@register.filter
+def comma_separated_list(qs):
+    lst = [acc.username for acc in qs]
+    return ", ".join(lst)

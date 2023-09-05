@@ -40,7 +40,8 @@ from .views.views import GuideView, DialogSuccess
 from .views.exchangescanner_views import (ExchangeScannerList, ExchangeScannerCreate,
                                           ExchangeScannerUpdate, ExchangeScannerDelete,
                                           ExchangeScannerRun, ExchangeScannerAskRun,
-                                          ExchangeScannerCopy, OrganizationalUnitListing)
+                                          ExchangeScannerCopy, ExchangeCleanupStaleAccounts,
+                                          OrganizationalUnitListing)
 
 from .views.filescanner_views import (FileScannerCreate, FileScannerRun,
                                       FileScannerAskRun, FileScannerUpdate,
@@ -92,7 +93,10 @@ from .views.msgraph_views import (MSGraphMailList, MSGraphMailDelete,
                                   MSGraphCalendarCopy, MSGraphTeamsFileList,
                                   MSGraphTeamsFileDelete, MSGraphTeamsFileCreate,
                                   MSGraphTeamsFileUpdate, MSGraphTeamsFileRun,
-                                  MSGraphTeamsFileAskRun, MSGraphTeamsFileCopy,)
+                                  MSGraphTeamsFileAskRun, MSGraphTeamsFileCopy,
+                                  MSGraphCalendarCleanupStaleAccounts,
+                                  MSGraphFileCleanupStaleAccounts,
+                                  MSGraphMailCleanupStaleAccounts)
 
 from .views.miniscanner_views import MiniScanner, execute_mini_scan
 
@@ -132,6 +136,8 @@ urlpatterns = [
             name='scanner_askrun'),
     re_path(r'^exchangescanners/(?P<pk>\d+)/copy/$', ExchangeScannerCopy.as_view(),
             name='exchangescanner_copy'),
+    re_path(r'^exchangescanners/(?P<pk>\d+)/cleanup_stale_accounts/$',
+            ExchangeCleanupStaleAccounts.as_view(), name='exchangescanner_cleanup'),
 
     # Webscanner URLs
     re_path(r'^webscanners/$', WebScannerList.as_view(), name='webscanners'),
@@ -262,7 +268,8 @@ urlpatterns = [
             name='msgraphcalendarscanner_askrun'),
     re_path(r'^(msgraph-calendarscanners)/(\d+)/(created|saved)/$',
             DialogSuccess.as_view()),
-
+    re_path(r'^msgraph-calendarscanners/(?P<pk>\d+)/cleanup_stale_accounts/$',
+            MSGraphCalendarCleanupStaleAccounts.as_view(), name='msgraphcalendarscanner_cleanup'),
     re_path(r'^msgraph-filescanners/$',
             MSGraphFileList.as_view(),
             name='msgraphfilescanner_list'),
@@ -272,6 +279,13 @@ urlpatterns = [
     re_path(r'^msgraph-filescanners/(?P<pk>\d+)/$',
             MSGraphFileUpdate.as_view(),
             name='msgraphfilescanner_update'),
+    re_path(r'^msgraph-mailscanners/(?P<pk>\d+)/$',
+            MSGraphMailUpdate.as_view(),
+            name='msgraphmailscanner_update'),
+    re_path(r'^msgraph-filescanners/(?P<pk>\d+)/cleanup_stale_accounts/$',
+            MSGraphFileCleanupStaleAccounts.as_view(), name='msgraphfilescanner_cleanup'),
+    re_path(r'^msgraph-mailscanners/(?P<pk>\d+)/cleanup_stale_accounts/$',
+            MSGraphMailCleanupStaleAccounts.as_view(), name='msgraphmailscanner_cleanup'),
     re_path(r'^msgraph-filescanners/(?P<pk>\d+)/delete/$',
             MSGraphFileDelete.as_view(),
             name='msgraphfilescanner_delete'),

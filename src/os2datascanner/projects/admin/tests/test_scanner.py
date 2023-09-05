@@ -114,6 +114,7 @@ class ScannerTest(TestCase):
             email='britney@spears.com',
             password='top_secret'
         )
+        self.org = Organization.objects.first()
 
     def test_superuser_can_validate_scannerjob(self):
         self.user.is_superuser = True
@@ -140,42 +141,91 @@ class ScannerTest(TestCase):
         """Make sure that synchronizing covered accounts on the Scanner works
         correctly."""
         # Creating some test objects...
-        scanner = Scanner.objects.create(name="Scanner", organization=Organization.objects.first())
+        scanner = Scanner.objects.create(name="Scanner", organization=self.org)
         unit = OrganizationalUnit.objects.create(
             name="Unit", organization=Organization.objects.first())
-        hansi = Account.objects.create(username="Hansi", organization=Organization.objects.first())
+        hansi = Account.objects.create(username="Hansi", organization=self.org)
         hansi.units.add(unit)
         scanner.org_unit.add(unit)
-        Account.objects.create(username="Günther", organization=Organization.objects.first())
-        Account.objects.create(username="Fritz", organization=Organization.objects.first())
+        Account.objects.create(username="Günther", organization=self.org)
+        Account.objects.create(username="Fritz", organization=self.org)
 
         scanner.sync_covered_accounts()
 
-        self.assertEqual(scanner.covered_accounts.count(), 1)
-        self.assertEqual(scanner.covered_accounts.first(), hansi)
+        self.assertEqual(
+            scanner.covered_accounts.count(),
+            1,
+            f"Found {scanner.covered_accounts.count()} accounts "
+            "in covered_accounts-field, but only expected 1.")
+        self.assertEqual(
+            scanner.covered_accounts.first(),
+            hansi,
+            "Wrong account found in covered_accounts! Found "
+            f"{scanner.covered_accounts.first} but expected {hansi}.")
 
     def test_get_stale_accounts(self):
         """The get_stale_account-method should return all accounts, which are
         in the 'covered_accounts'-field of the scanner, but are not in any
         of the organizational units on the scanner."""
         # Creating some test objects...
-        scanner = Scanner.objects.create(name="Scanner", organization=Organization.objects.first())
+        scanner = Scanner.objects.create(name="Scanner", organization=self.org)
         unit = OrganizationalUnit.objects.create(
-            name="Unit", organization=Organization.objects.first())
-        hansi = Account.objects.create(username="Hansi", organization=Organization.objects.first())
+            name="Unit", organization=self.org)
+        hansi = Account.objects.create(username="Hansi", organization=self.org)
         günther = Account.objects.create(
             username="Günther",
-            organization=Organization.objects.first())
-        fritz = Account.objects.create(username="Fritz", organization=Organization.objects.first())
+            organization=self.org)
+        fritz = Account.objects.create(username="Fritz", organization=self.org)
         hansi.units.add(unit)
         scanner.org_unit.add(unit)
         scanner.covered_accounts.add(hansi, günther, fritz)
 
         stale_accounts = scanner.get_stale_accounts()
 
-        self.assertEqual(stale_accounts.count(), 2)
-        self.assertIn(günther, stale_accounts)
-        self.assertIn(fritz, stale_accounts)
+        self.assertEqual(
+            stale_accounts.count(),
+            2,
+            f"Expected 2 stale accounts, but found {stale_accounts.count()}.")
+        self.assertIn(
+            günther,
+            stale_accounts,
+            f"Account: {günther} not found in get_stale_accounts as expected.")
+        self.assertIn(
+            fritz,
+            stale_accounts,
+            f"Account: {fritz} not found in get_stale_accounts as expected.")
+
+    def test_remove_stale_accounts(self):
+        """The 'remove_stale_accounts'-method should remove all accounts from
+        the 'covered_accounts'-field, which are no longer associated with the
+        scanner through an organizational unit."""
+        # Creating some test objects...
+        scanner = Scanner.objects.create(name="Scanner", organization=self.org)
+        unit = OrganizationalUnit.objects.create(
+            name="Unit", organization=self.org)
+        hansi = Account.objects.create(username="Hansi", organization=self.org)
+        günther = Account.objects.create(
+            username="Günther",
+            organization=self.org)
+        fritz = Account.objects.create(username="Fritz", organization=self.org)
+        hansi.units.add(unit)
+        scanner.org_unit.add(unit)
+        scanner.covered_accounts.add(hansi, günther, fritz)
+
+        scanner.remove_stale_accounts()
+
+        self.assertEqual(scanner.get_stale_accounts().count(), 0,
+                         "Found stale accounts, when none should be left after removal.")
+        self.assertNotIn(
+            günther,
+            scanner.covered_accounts.all(),
+            f"Account {günther} still present in covered_accounts, when it should be removed.")
+        self.assertNotIn(
+            fritz,
+            scanner.covered_accounts.all(),
+            f"Account {fritz} still present in covered_accounts, when it should be removed.")
+        self.assertIn(hansi, scanner.covered_accounts.all(),
+                      f"Account {hansi} not present in covered_accounts as expected.")
 
     def get_webscannerupdate_view(self):
         request = self.factory.get('/')

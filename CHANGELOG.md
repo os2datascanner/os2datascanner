@@ -4,6 +4,15 @@
 
 "Mo' Code Less Problems"
 
+### New in this release
+
+- Functionality for manually cleaning up stale accounts in the admin module.
+
+  - Scanners with stale accounts now display a warning in the UI.
+
+  - Users in the admin module can choose which stale accounts to clean up
+    reports for, and which to leave as is.
+
 ### General improvements
 
 - The pipeline will stop execution of a rule component after it has produced
