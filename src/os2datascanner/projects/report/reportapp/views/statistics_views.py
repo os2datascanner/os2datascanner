@@ -32,17 +32,15 @@ from django.views.generic import TemplateView, DetailView, ListView
 from django.shortcuts import get_object_or_404
 
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
+from os2datascanner.core_organizational_structure.models.position import Role as PosRole
 
 from ..models.documentreport import DocumentReport
 from ...organizations.models.account import Account
 from ...organizations.models.organizational_unit import OrganizationalUnit
-from ..utils import user_is, user_is_superadmin
+from ..utils import user_is
 from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
 from .report_views import EmptyPagePaginator
-
-# For permissions
-from ..models.roles.dpo import DataProtectionOfficer
 
 
 logger = structlog.get_logger()
@@ -81,6 +79,25 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
                             'resolved_month'
                         ).annotate(count=Count('source_type')).order_by()
 
+    def get(self, request, *args, **kwargs):
+        if self.request.user.account:
+            org_units = OrganizationalUnit.objects.filter(
+                organization=self.request.user.account.organization)
+        else:
+            raise Account.DoesNotExist(_("The user does not have an account."))
+
+        if self.request.user.is_superuser:
+            self.user_units = org_units.order_by("name")
+        else:
+            self.user_units = org_units.filter(
+                Q(positions__account=self.request.user.account)
+                & Q(positions__role=PosRole.DPO)
+            ).order_by("name")
+
+        response = super().get(request, *args, **kwargs)
+
+        return response
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = timezone.now()
@@ -89,8 +106,13 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
                 scanner_job_pk=scannerjob)
 
         if (orgunit := self.request.GET.get('orgunit')) and orgunit != '--':
-            self.matches = self.matches.filter(
-                alias_relation__account__units=orgunit)
+            confirmed_dpo = self.request.user.account.get_dpo_units().filter(uuid=orgunit).exists()
+            if self.request.user.is_superuser or confirmed_dpo:
+                self.matches = self.matches.filter(
+                    alias_relation__account__units=orgunit)
+            else:
+                raise OrganizationalUnit.DoesNotExist(
+                    _("An organizational unit with the UUID '{0}' was not found.".format(orgunit)))
 
         if self.scannerjob_filters is None:
             # Create select options
@@ -112,8 +134,7 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
                                   self.request.GET.get('scannerjob', 'all'))
 
         allowed_orgunits = OrganizationalUnit.objects.all() if self.request.user.is_superuser \
-            else OrganizationalUnit.objects.filter(
-                    organization=self.request.user.account.organization)
+            else self.request.user.account.get_dpo_units()
 
         context['orgunits'] = (allowed_orgunits.order_by("name").values("name", "uuid"),
                                self.request.GET.get('orgunit', 'all'))
@@ -121,16 +142,16 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if not user_is(Role.get_user_roles_or_default(request.user),
-                           DataProtectionOfficer):
-                return HttpResponseForbidden()
-            # Only allow the user to see reports from their own organization
-            if not request.user.is_superuser:
-                org = request.user.account.organization
-                self.matches = self.matches.filter(organization=org)
-        return super().dispatch(
-            request, *args, **kwargs)
+        # Only allow the user to see reports from their own organization
+        if not request.user.is_superuser:
+            org = request.user.account.organization
+            self.matches = self.matches.filter(organization=org)
+        if request.user.is_superuser or request.user.account.is_dpo:
+            return super().dispatch(
+                request, *args, **kwargs)
+        else:
+            raise HttpResponseForbidden(
+                _("Only DPOs and superusers have access to the DPO overview."))
 
     def make_data_structures(self, matches):  # noqa C901, CCR001
         """To avoid making multiple separate queries to the DocumentReport
@@ -330,7 +351,8 @@ class LeaderStatisticsPageView(LoginRequiredMixin, ListView):
             self.user_units = OrganizationalUnit.objects.all().order_by("name")
         else:
             self.user_units = (OrganizationalUnit.objects.filter(
-                Q(positions__account=self.request.user.account) & Q(positions__role="manager"))
+                Q(positions__account=self.request.user.account)
+                & Q(positions__role=PosRole.MANAGER))
                 .order_by("name"))
 
         if unit_uuid := request.GET.get('org_unit', None):
@@ -482,7 +504,7 @@ def filter_inapplicable_matches(user, matches, roles, account=None):
         if account:
             matches = matches.filter(organization=account.organization)
 
-    if user_is_superadmin(user):
+    if user.is_superuser:
         hidden_matches = matches.filter(only_notify_superadmin=True)
         user_matches = DefaultRole(user=user).filter(matches)
         matches_all = hidden_matches | user_matches

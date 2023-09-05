@@ -13,6 +13,10 @@
   - Users in the admin module can choose which stale accounts to clean up
     reports for, and which to leave as is.
 
+- Access to the DPO-overview in the report module is now based on Position-
+  objects with the "data protection officer"-role, instead of the DPO Role-
+  object, which has been removed.
+
 ### General improvements
 
 - The pipeline will stop execution of a rule component after it has produced

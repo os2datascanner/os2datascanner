@@ -13,11 +13,11 @@ from os2datascanner.engine2.model.ews import (
 from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.utilities.datetime import parse_datetime
+from os2datascanner.core_organizational_structure.models.position import Role
 
 from ...report.organizations.models import (
     Account, Organization, OrganizationalUnit, Position, Alias)
 from ..reportapp.models.documentreport import DocumentReport
-from ..reportapp.models.roles.dpo import DataProtectionOfficer
 from ..reportapp.views.statistics_views import (
         UserStatisticsPageView, LeaderStatisticsPageView, DPOStatisticsPageView)
 from ..reportapp.utils import iterate_queryset_in_batches, create_alias_and_match_relations
@@ -342,6 +342,9 @@ class StatisticsPageViewTest(TestCase):
             name="Statistics Test Corp.",
             uuid='d92ff0c9-f066-40dc-a57e-541721b6c23e')
 
+        self.olsen_banden = OrganizationalUnit.objects.create(
+            name="Olsen Banden", organization=Organization.objects.first())
+
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
         self.kjeld_account = Account.objects.create(
@@ -409,9 +412,8 @@ class StatisticsPageViewTest(TestCase):
     def test_leader_statisticspage_as_manager(self):
         """A user with a 'manager'-position to an organizational unit should
         be able to access the leader overview page."""
-        olsen_banden = OrganizationalUnit.objects.create(
-            name="Olsen Banden", organization=Organization.objects.first())
-        Position.objects.create(account=self.yvonne_account, unit=olsen_banden, role="manager")
+
+        Position.objects.create(account=self.yvonne_account, unit=self.olsen_banden, role="manager")
 
         response = self.get_leader_statisticspage_response(self.yvonne)
 
@@ -442,17 +444,16 @@ class StatisticsPageViewTest(TestCase):
 
     # created_timestamp
     def test_statisticspage_created_timestamp_as_dpo(self):
-        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+        Position.objects.create(account=self.kjeld_account, unit=self.olsen_banden, role=Role.DPO)
         view = self.get_statisticspage_object()
         created_timestamp = view.matches[0].get('created_month')
         now = timezone.now().date()
 
         self.assertEquals(created_timestamp, timezone.datetime(now.year, now.month, 1).date())
-        dpo.delete()
 
     # count_new_matches_by_month()
     def test_statisticspage_count_new_matches_by_month_as_dpo(self):
-        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+        Position.objects.create(account=self.kjeld_account, unit=self.olsen_banden, role=Role.DPO)
 
         # Overrides timestamps static dates and saves the old ones
         original_timestamps = static_timestamps()
@@ -470,10 +471,10 @@ class StatisticsPageViewTest(TestCase):
 
         # Reset to old values
         reset_timestamps(original_timestamps)
-        dpo.delete()
 
     def test_statisticspage_count_new_matches_by_month_old_matches_as_dpo(self):
-        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+
+        Position.objects.create(account=self.kjeld_account, unit=self.olsen_banden, role=Role.DPO)
 
         # Overrides timestamps static dates and saves the old ones
         original_timestamps = static_timestamps()
@@ -491,10 +492,9 @@ class StatisticsPageViewTest(TestCase):
 
         # Reset to old values
         reset_timestamps(original_timestamps)
-        dpo.delete()
 
     def test_statisticspage_count_unhandled_matches_by_month(self):
-        dpo = DataProtectionOfficer.objects.create(user=self.kjeld)
+        Position.objects.create(account=self.kjeld_account, unit=self.olsen_banden, role=Role.DPO)
 
         # Saves old timestamps and overrides
         original_created_timestamps = static_timestamps('created_timestamp')
@@ -516,12 +516,11 @@ class StatisticsPageViewTest(TestCase):
         reset_timestamps(original_created_timestamps, 'created_timestamp')
         reset_timestamps(original_resolution_time, 'resolution_time')
 
-        dpo.delete()
-
     def test_filter_by_scannerjob(self):
         """Filtering by scannerjob should only return the reports associated
         with a specific scannerjob."""
-        DataProtectionOfficer.objects.create(user=self.egon)
+        Position.objects.create(account=self.egon_account, unit=self.olsen_banden, role=Role.DPO)
+
         response11 = self.get_dpo_statisticspage_response(self.egon, params='?scannerjob=11')
         response14 = self.get_dpo_statisticspage_response(self.egon, params='?scannerjob=14')
         response17 = self.get_dpo_statisticspage_response(self.egon, params='?scannerjob=17')
@@ -541,44 +540,42 @@ class StatisticsPageViewTest(TestCase):
     def test_filter_by_orgunit(self):
         """Filtering by organizational units should only return results from
         users with positions in that unit."""
-        DataProtectionOfficer.objects.create(user=self.egon)
-        olsenbanden = OrganizationalUnit.objects.create(
-            name='Olsen Banden',
-            uuid='1b8f4a41-f615-47b2-a341-23eff609f8f0',
-            organization=self.org)
         kun_egon = OrganizationalUnit.objects.create(
             name='Kun Egon',
-            uuid='b0dbf7d7-b528-4c58-a7ff-c8875719eb6b',
             organization=self.org)
 
+        Position.objects.create(account=self.egon_account, unit=self.olsen_banden, role=Role.DPO)
+        Position.objects.create(account=self.egon_account, unit=kun_egon, role=Role.DPO)
+
         # Add accounts to the OUs
-        self.egon_account.units.add(olsenbanden, kun_egon)
-        self.benny_account.units.add(olsenbanden)
-        self.kjeld_account.units.add(olsenbanden)
+        self.egon_account.units.add(self.olsen_banden, kun_egon)
+        self.benny_account.units.add(self.olsen_banden)
+        self.kjeld_account.units.add(self.olsen_banden)
 
         response_ob = self.get_dpo_statisticspage_response(
-            self.egon, params='?orgunit=1b8f4a41-f615-47b2-a341-23eff609f8f0')
+            self.egon, params=f'?orgunit={str(self.olsen_banden.uuid)}')
         response_ke = self.get_dpo_statisticspage_response(
-            self.egon, params='?orgunit=b0dbf7d7-b528-4c58-a7ff-c8875719eb6b')
+            self.egon, params=f'?orgunit={str(kun_egon.uuid)}')
 
         self.assertEqual(response_ob.context_data.get('orgunits')
-                         [-1], '1b8f4a41-f615-47b2-a341-23eff609f8f0')
+                         [-1], str(self.olsen_banden.uuid))
         self.assertEqual(response_ob.context_data.get('match_data').get('unhandled'), 6)
 
         self.assertEqual(response_ke.context_data.get('orgunits')
-                         [-1], 'b0dbf7d7-b528-4c58-a7ff-c8875719eb6b')
+                         [-1], str(kun_egon.uuid))
         self.assertEqual(response_ke.context_data.get('match_data').get('unhandled'), 2)
 
     def test_access_from_different_organization(self):
         """A user should only be able to see results from their own organization."""
         marvel = Organization.objects.create(name="Marvel Cinematic Universe")
+        avengers = OrganizationalUnit.objects.create(name="The Avengers", organization=marvel)
         Account.objects.create(
             username='the_hulk',
             first_name='Bruce',
             last_name='Banner',
             organization=marvel)
         hulk = User.objects.get(username='the_hulk')
-        DataProtectionOfficer.objects.create(user=hulk)
+        Position.objects.create(account=hulk.account, unit=avengers, role=Role.DPO)
 
         response = self.get_dpo_statisticspage_response(hulk)
 

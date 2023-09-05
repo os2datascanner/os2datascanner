@@ -31,7 +31,8 @@ from django.db.models.signals import post_delete
 from os2datascanner.core_organizational_structure.models import Account as Core_Account
 from os2datascanner.core_organizational_structure.models import \
     AccountSerializer as Core_AccountSerializer
-from os2datascanner.core_organizational_structure.models.organization import LeaderPageConfigChoices
+from os2datascanner.core_organizational_structure.models.organization import \
+    StatisticsPageConfigChoices
 from os2datascanner.utils.system_utilities import time_now
 
 from ..seralizer import BaseBulkSerializer, SelfRelatingField
@@ -134,6 +135,7 @@ class Account(Core_Account):
         default=1,
         null=True,
         blank=True)
+    contact_person = models.BooleanField(_("Contact person"), default=False)
 
     def update_last_handle(self):
         self.last_handle = time_now()
@@ -257,11 +259,26 @@ class Account(Core_Account):
         return self.get_managed_units().exists()
 
     @property
+    def is_dpo(self):
+        return self.get_dpo_units().exists()
+
+    @property
     def leadertab_access(self) -> bool:
-        if (self.organization.leadertab_access == LeaderPageConfigChoices.MANAGERS
+        if (self.organization.leadertab_access == StatisticsPageConfigChoices.MANAGERS
                 and self.is_manager or self.user.is_superuser):
             return True
-        elif (self.organization.leadertab_access == LeaderPageConfigChoices.SUPERUSERS
+        elif (self.organization.leadertab_access == StatisticsPageConfigChoices.SUPERUSERS
+                and self.user.is_superuser):
+            return True
+        else:
+            return False
+
+    @property
+    def dpotab_access(self) -> bool:
+        if (self.organization.dpotab_access == StatisticsPageConfigChoices.DPOS
+                and self.is_dpo or self.user.is_superuser):
+            return True
+        elif (self.organization.dpotab_access == StatisticsPageConfigChoices.SUPERUSERS
                 and self.user.is_superuser):
             return True
         else:

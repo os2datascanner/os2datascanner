@@ -64,12 +64,14 @@
           <col class="datatable__column--name">
           <col class="datatable__column--info">
           <col class="datatable__column--managers">
+          <col class="datatable__column--dpos">
         </colgroup>
         <thead>
           <tr class="table-topbar topbar-stick sticky">
             <th class="datatable__column--name">{% trans "name"|capfirst %}</th>
             <th class="datatable__column--info">{% trans "accounts"|capfirst %}</th>
             <th class="datatable__column--managers">{% trans "managers"|capfirst %}</th>
+            <th class="datatable__column--dpos">{% trans "DPOs" %}</th>
           </tr>
         </thead>
         <tbody>
@@ -95,43 +97,82 @@
                           hx-trigger="click"
                           hx-vals='{"orgunit": "{{ orgunit.pk }}", "rem-manager": "{{ manager_pos.account.uuid }}"}'
                           hx-confirm="{% trans "Are you sure you want to remove" %} {{ manager_pos.account.get_full_name }} {% trans "as manager of" %} {{ orgunit }}?">
-                        {{ manager_pos.account.get_full_name }}
+                        <!-- Turning djlint off here, as it will otherwise insert unwanted whitespace -->
+                        <!-- djlint:off -->{{ manager_pos.account.get_full_name }}</li><!-- djlint:on -->
+                      {% endfor %}
+                      <li class="add_manager">
+                        <button type="button" class="add_manager_button button button--small">
+                          <svg class="icon">
+                            <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
+                          </svg>
+                        </button>
+                        <select class="select_manager"
+                                name="add-manager"
+                                hidden
+                                hx-post=""
+                                hx-swap="outerHTML"
+                                hx-target="#orgunit__{{ orgunit.pk }}"
+                                hx-select="#orgunit__{{ orgunit.pk }}"
+                                hx-trigger="change"
+                                hx-vals='{"orgunit": "{{ orgunit.pk }}"}'>
+                          <option value="">{% trans "Choose new manager" %}</option>
+                          {% for account in accounts %}<option value="{{ account.uuid }}">{{ account.get_full_name }}</option>{% endfor %}
+                        </select>
                       </li>
-                    {% endfor %}
-                    <li class="add_manager">
-                      <button type="button" class="add_manager_button button button--small">
-                        <svg class="icon">
-                          <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
-                        </svg>
-                      </button>
-                      <select class="select_manager"
-                              name="add-manager"
-                              hidden
-                              hx-post=""
-                              hx-swap="outerHTML"
-                              hx-target="#orgunit__{{ orgunit.pk }}"
-                              hx-select="#orgunit__{{ orgunit.pk }}"
-                              hx-trigger="change"
-                              hx-vals='{"orgunit": "{{ orgunit.pk }}"}'>
-                        <option value="">{% trans "Choose new manager" %}</option>
-                        {% for account in accounts %}<option value="{{ account.uuid }}">{{ account.get_full_name }}</option>{% endfor %}
-                      </select>
-                    </li>
 
-                  </ul>
-                </td>
+                    </ul>
+                  </td>
+
+                  <td class="datatable__column--dpos orgunit_managers">
+                    <ul>
+                      {% for dpo_pos in orgunit.dpos %}
+                        <li class="manager_li"
+                            title="{% trans "Click to remove" %} {{ dpo_pos.account.get_full_name }} {% trans "as manager of" %} {{ orgunit }}."
+                            hx-post=""
+                            hx-swap="outerHTML"
+                            hx-target="#orgunit__{{ orgunit.pk }}"
+                            hx-select="#orgunit__{{ orgunit.pk }}"
+                            hx-trigger="click"
+                            hx-vals='{"orgunit": "{{ orgunit.pk }}", "rem-dpo": "{{ dpo_pos.account.uuid }}"}'
+                            hx-confirm="{% trans "Are you sure you want to remove" %} {{ dpo_pos.account.get_full_name }} {% trans "as DPO of" %} {{ orgunit }}?">
+                          <!-- Turning djlint off here, as it will otherwise insert unwanted whitespace -->
+                          <!-- djlint:off -->{{ dpo_pos.account.get_full_name }}</li><!-- djlint:on -->
+                        </li>
+                      {% endfor %}
+                      <li class="add_dpo">
+                        <button type="button" class="add_manager_button button button--small">
+                          <svg class="icon">
+                            <use xlink:href="/static/svg/symbol-defs.svg#icon-plus"></use>
+                          </svg>
+                        </button>
+                        <select class="select_manager"
+                                name="add-dpo"
+                                hidden
+                                hx-post=""
+                                hx-swap="outerHTML"
+                                hx-target="#orgunit__{{ orgunit.pk }}"
+                                hx-select="#orgunit__{{ orgunit.pk }}"
+                                hx-trigger="change"
+                                hx-vals='{"orgunit": "{{ orgunit.pk }}"}'>
+                          <option value="">{% trans "Choose new DPO" %}</option>
+                          {% for account in accounts %}<option value="{{ account.uuid }}">{{ account.get_full_name }}</option>{% endfor %}
+                        </select>
+                      </li>
+
+                    </ul>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td class="no_units" colspan="4">{% trans "No organizational units found ..." %}</td>
               </tr>
-            {% endfor %}
-          {% else %}
-            <tr>
-              <td class="no_units" colspan="3">{% trans "No organizational units found ..." %}</td>
-            </tr>
-          {% endif %}
-        </tbody>
-        {% include "components/pagination.html" %}
-      </table>
-    </div>
-  {% else %}
-    <div class="root">{% trans "No organizational units." %}</div>
-  {% endif %}
-{% endblock %}
+            {% endif %}
+          </tbody>
+          {% include "components/pagination.html" %}
+        </table>
+      </div>
+    {% else %}
+      <div class="root">{% trans "No organizational units." %}</div>
+    {% endif %}
+  {% endblock %}

@@ -20,7 +20,6 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse
 
 from ..models.roles.role import Role
-from ..models.roles.dpo import DataProtectionOfficer
 
 
 class UserView(LoginRequiredMixin, TemplateView):
@@ -37,8 +36,8 @@ class UserView(LoginRequiredMixin, TemplateView):
         user_roles = [role._meta.verbose_name for role in roles]
 
         context["is_dpo"] = "DPO" in user_roles
-        context["is_contact_person"] = any(
-            role.contact_person for role in roles if isinstance(role, DataProtectionOfficer))
+        # Dumb implementation. Awaiting major refactor.
+        context["is_contact_person"] = self.request.user.account.contact_person
         context["user_roles"] = user_roles
         context["aliases"] = User.objects.get(username=self.request.user).aliases.all()
 
@@ -46,8 +45,9 @@ class UserView(LoginRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         bool_field_status = request.POST.get("contact_check", False) == "checked"
-        DataProtectionOfficer.objects.filter(
-            user=self.request.user).update(
-            contact_person=bool_field_status)
+        # Temporarily bad functionality, since the DataProtectionOfficer-
+        # model has been removed. Will be reimplemented in #57334.
+        request.user.account.contact_person = bool_field_status
+        request.user.account.save()
 
         return HttpResponse()

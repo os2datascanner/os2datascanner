@@ -8,44 +8,48 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-24 08:47+0200\n"
+"POT-Creation-Date: 2023-09-05 07:29+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: organizations/models/account.py:43
+#: organizations/models/account.py:44
 msgid "Completed"
 msgstr "Færdig"
 
-#: organizations/models/account.py:44
+#: organizations/models/account.py:45
 msgid "Accepted"
 msgstr "Accepteret"
 
-#: organizations/models/account.py:45
+#: organizations/models/account.py:46
 msgid "Not accepted"
 msgstr "Ikke accepteret"
 
-#: organizations/models/account.py:110
+#: organizations/models/account.py:111
 msgid "User"
 msgstr "Bruger"
 
-#: organizations/models/account.py:113
+#: organizations/models/account.py:114
 msgid "Last handle"
 msgstr "Sidste håndtering"
 
-#: organizations/models/account.py:121
+#: organizations/models/account.py:122
 msgid "image"
 msgstr "billede"
 
-#: organizations/models/account.py:126
+#: organizations/models/account.py:127
 msgid "Number of matches"
 msgstr "Antal matches"
 
-#: organizations/models/account.py:131
+#: organizations/models/account.py:132
 msgid "Number of withheld matches"
 msgstr "Antal tilbageholdte matches"
+
+#: organizations/models/account.py:138
+msgid "Contact person"
+msgstr "Kontaktperson"
 
 #: organizations/models/aliases.py:32
 msgid "user"
@@ -55,16 +59,16 @@ msgstr "bruger"
 msgid "account"
 msgstr "konto"
 
-#: reportapp/admin.py:16
+#: reportapp/admin.py:15
 #: reportapp/templates/components/dpo-statistics-template.html:25
 msgid "scanner job"
 msgstr "scannerjob"
 
-#: reportapp/admin.py:124
+#: reportapp/admin.py:118
 msgid "Personal info"
 msgstr "Personlig information"
 
-#: reportapp/admin.py:126
+#: reportapp/admin.py:120
 msgid "Important dates"
 msgstr "Vigtige datoer"
 
@@ -113,7 +117,7 @@ msgid "probability"
 msgstr "sandsynlighed"
 
 #: reportapp/models/documentreport.py:141
-#: reportapp/views/statistics_views.py:150
+#: reportapp/views/statistics_views.py:172
 msgid "Other"
 msgstr "Andet"
 
@@ -156,22 +160,6 @@ msgstr "dokument rapporter"
 #: reportapp/models/roles/defaultrole.py:41
 msgid "default role"
 msgstr "Standardrolle"
-
-#: reportapp/models/roles/dpo.py:9 reportapp/templates/user_content.html:41
-msgid "Contact Person"
-msgstr "Kontaktperson"
-
-#: reportapp/models/roles/dpo.py:17
-msgid "DPO overview"
-msgstr "DPO-overblik"
-
-#: reportapp/models/roles/dpo.py:23
-msgid "DPO"
-msgstr "DPO"
-
-#: reportapp/models/roles/dpo.py:24
-msgid "DPOs"
-msgstr "DPO'er"
 
 #: reportapp/models/roles/remediator.py:33
 msgid "remediator"
@@ -609,6 +597,10 @@ msgstr "Arkiv"
 #: reportapp/templates/components/navigation.html:26
 msgid "Leader overview"
 msgstr "Lederoverblik"
+
+#: reportapp/templates/components/navigation.html:35
+msgid "DPO Overview"
+msgstr "DPO-overblik"
 
 #: reportapp/templates/components/navigation.html:50
 msgid "My Overview"
@@ -1085,6 +1077,10 @@ msgstr "E-mail"
 msgid "Organization"
 msgstr "Organisation"
 
+#: reportapp/templates/user_content.html:41
+msgid "Contact Person"
+msgstr "Kontaktperson"
+
 #: reportapp/templates/user_content.html:54
 msgid ""
 "By checking this box, users will be presented with your email address for "
@@ -1135,7 +1131,7 @@ msgstr "Skift"
 msgid "User since"
 msgstr "Bruger siden"
 
-#: reportapp/utils.py:26
+#: reportapp/utils.py:24
 msgid "%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A"
 msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 
@@ -1143,22 +1139,41 @@ msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/statistics_views.py:151
+#: reportapp/views/statistics_views.py:87
+msgid "The user does not have an account."
+msgstr "Brugeren har ikke en konto."
+
+#: reportapp/views/statistics_views.py:116
+#, python-brace-format
+msgid "An organizational unit with the UUID '{0}' was not found."
+msgstr "En organisatorisk enhed med UUID'et '{0}' blev ikke fundet."
+
+#: reportapp/views/statistics_views.py:155
+msgid "Only DPOs and superusers have access to the DPO overview."
+msgstr "Kun DPOer og superbrugere har adgang til DPO-overblikket."
+
+#: reportapp/views/statistics_views.py:173
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/statistics_views.py:152
+#: reportapp/views/statistics_views.py:174
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/statistics_views.py:153
+#: reportapp/views/statistics_views.py:175
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/statistics_views.py:413
+#: reportapp/views/statistics_views.py:436
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."
+
+#~ msgid "DPO"
+#~ msgstr "DPO"
+
+#~ msgid "DPOs"
+#~ msgstr "DPO'er"
 
 #~ msgid "The archive page has been deactivated for this distribution."
 #~ msgstr "Arkivfanen er deaktiveret for denne opsætning."

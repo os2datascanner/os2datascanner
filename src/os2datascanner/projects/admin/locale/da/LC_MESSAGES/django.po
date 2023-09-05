@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-24 08:47+0200\n"
+"POT-Creation-Date: 2023-09-05 10:18+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -152,7 +152,7 @@ msgstr "Regel"
 #: adminapp/models/rules/rule.py:40 adminapp/models/scannerjobs/scanner.py:77
 #: core/models/client.py:75
 #: organizations/templates/organizations/org_table.html:42
-#: organizations/templates/organizations/orgunit_list.html:70
+#: organizations/templates/organizations/orgunit_list.html:71
 msgid "name"
 msgstr "navn"
 
@@ -332,28 +332,28 @@ msgstr "tilknyttet scannerjob"
 msgid "resolved"
 msgstr "løst"
 
-#: adminapp/models/scannerjobs/scanner.py:749
+#: adminapp/models/scannerjobs/scanner.py:744
 msgid "Start time"
 msgstr "Startet"
 
-#: adminapp/models/scannerjobs/scanner.py:752
+#: adminapp/models/scannerjobs/scanner.py:747
 #: adminapp/models/usererrorlog.py:29
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner.py:753
+#: adminapp/models/scannerjobs/scanner.py:748
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/scanner.py:825
+#: adminapp/models/scannerjobs/scanner.py:820
 msgid "timestamp"
 msgstr "tidsstempel"
 
-#: adminapp/models/scannerjobs/scanner.py:833
+#: adminapp/models/scannerjobs/scanner.py:828
 msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/scanner.py:834
+#: adminapp/models/scannerjobs/scanner.py:829
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
@@ -2815,40 +2815,55 @@ msgstr "Søg efter organisatorisk enhed"
 msgid "Show empty units"
 msgstr "Vis tomme enheder"
 
-#: organizations/templates/organizations/orgunit_list.html:71
+#: organizations/templates/organizations/orgunit_list.html:72
 msgid "accounts"
 msgstr "konti"
 
-#: organizations/templates/organizations/orgunit_list.html:72
+#: organizations/templates/organizations/orgunit_list.html:73
 msgid "managers"
 msgstr "ledere"
 
-#: organizations/templates/organizations/orgunit_list.html:84
+#: organizations/templates/organizations/orgunit_list.html:74
+msgid "DPOs"
+msgstr "DPOer"
+
+#: organizations/templates/organizations/orgunit_list.html:86
 msgid "accounts associated."
 msgstr "konti tilknyttet"
 
-#: organizations/templates/organizations/orgunit_list.html:90
+#: organizations/templates/organizations/orgunit_list.html:92
+#: organizations/templates/organizations/orgunit_list.html:130
 msgid "Click to remove"
 msgstr "Klik for at fjerne"
 
-#: organizations/templates/organizations/orgunit_list.html:90
-#: organizations/templates/organizations/orgunit_list.html:97
+#: organizations/templates/organizations/orgunit_list.html:92
+#: organizations/templates/organizations/orgunit_list.html:99
+#: organizations/templates/organizations/orgunit_list.html:130
 msgid "as manager of"
 msgstr "som leder af"
 
-#: organizations/templates/organizations/orgunit_list.html:97
+#: organizations/templates/organizations/orgunit_list.html:99
+#: organizations/templates/organizations/orgunit_list.html:137
 msgid "Are you sure you want to remove"
 msgstr "Er du sikker på, at du vil fjerne"
 
-#: organizations/templates/organizations/orgunit_list.html:116
+#: organizations/templates/organizations/orgunit_list.html:118
 msgid "Choose new manager"
 msgstr "Vælg ny leder"
 
-#: organizations/templates/organizations/orgunit_list.html:127
+#: organizations/templates/organizations/orgunit_list.html:137
+msgid "as DPO of"
+msgstr "som DPO af"
+
+#: organizations/templates/organizations/orgunit_list.html:157
+msgid "Choose new DPO"
+msgstr "Vælg ny DPO"
+
+#: organizations/templates/organizations/orgunit_list.html:168
 msgid "No organizational units found ..."
 msgstr "Ingen organisatoriske enheder fundet ..."
 
-#: organizations/templates/organizations/orgunit_list.html:135
+#: organizations/templates/organizations/orgunit_list.html:176
 msgid "No organizational units."
 msgstr "Ingen organisatoriske enheder"
 

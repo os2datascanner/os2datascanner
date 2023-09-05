@@ -17,6 +17,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
+from .position import Role
+
 
 class Account(models.Model):
     """Represents a known entity in an organizational hierarchy.
@@ -72,8 +74,10 @@ class Account(models.Model):
     )
 
     def get_managed_units(self):
-        return self.units.filter(pk__in=self.positions.filter(
-            role="manager").select_related("unit").values("unit__pk"))
+        return self.units.filter(positions__role=Role.MANAGER)
+
+    def get_dpo_units(self):
+        return self.units.filter(positions__role=Role.DPO)
 
     class Meta:
         abstract = True

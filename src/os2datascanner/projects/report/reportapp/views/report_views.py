@@ -41,7 +41,7 @@ from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.engine2.rules.dict_lookup import EmailHeaderRule
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
-from ..utils import user_is, user_is_superadmin
+from ..utils import user_is
 from ..models.documentreport import DocumentReport
 from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
@@ -270,7 +270,7 @@ class UndistributedView(ReportView):
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
         try:
-            if user_is_superadmin(request.user) or request.user.is_superuser:
+            if request.user.is_superuser:
                 return response
         except Exception as e:
             logger.warning("Exception raised while trying to dispatch to user "
