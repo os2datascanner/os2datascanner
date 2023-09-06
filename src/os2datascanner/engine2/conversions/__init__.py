@@ -8,3 +8,4 @@ from . import image_dimensions  # noqa
 from . import get_links  # noqa
 from . import manifest  # noqa
 from . import email_headers  # noqa
+from . import spreadsheets  # noqa

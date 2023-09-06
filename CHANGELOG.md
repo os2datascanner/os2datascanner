@@ -17,6 +17,9 @@
   objects with the "data protection officer"-role, instead of the DPO Role-
   object, which has been removed.
 
+- Excel and Spreadsheet-like files will now be processed with pandas.DataFrame
+  and present a match with a precise location including sheet and row.
+
 ### General improvements
 
 - The pipeline will stop execution of a rule component after it has produced

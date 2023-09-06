@@ -97,7 +97,9 @@ class SourceManager:
             # Calling _make_descriptor will add this source to the open list if
             # it's not already there
             desc = self._make_descriptor(source)
-            if not desc.cookie:
+            # Some cookies cannot be coerced into a boolean value
+            # so we have to make a somewhat quirky check, sorry.
+            if desc.cookie is None:
                 desc.generator = source._generate_state(self)
                 try:
                     desc.cookie = next(desc.generator)
@@ -127,7 +129,9 @@ class SourceManager:
                 desc.children.clear()
 
             # Clear up the state and the generator
-            if desc.cookie:
+            # Some cookies cannot be coerced into a boolean value
+            # so we have to make a somewhat quirky check, sorry.
+            if desc.cookie is not None:
                 desc.cookie = None
             if desc.generator:
                 try:

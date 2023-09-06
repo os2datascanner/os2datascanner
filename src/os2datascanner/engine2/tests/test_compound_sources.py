@@ -96,8 +96,7 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                 FilesystemHandle.make_handle(
                         os.path.join(
                                 test_data_path,
-                                "libreoffice/test.ods")),
-                offset=8)
+                                "libreoffice/test.ods")))
 
     def test_ods_with_hint(self):
         self.run_rule_on_handle(
@@ -107,24 +106,21 @@ class Engine2CompoundSourceTest(unittest.TestCase):
                                 "libreoffice/test.ods"),
                         hints={
                             "some-hint": ["a", "b", "c"]
-                        }),
-                offset=8)
+                        }))
 
     def test_xls(self):
         self.run_rule_on_handle(
                 FilesystemHandle.make_handle(
                         os.path.join(
                                 test_data_path,
-                                "msoffice/test.xls")),
-                offset=8)
+                                "msoffice/test.xls")))
 
     def test_xlsx(self):
         self.run_rule_on_handle(
                 FilesystemHandle.make_handle(
                         os.path.join(
                                 test_data_path,
-                                "msoffice/test.xlsx")),
-                offset=8)
+                                "msoffice/test.xlsx")))
 
     def test_corrupted_doc(self):
         corrupted_doc_handle = FilesystemHandle.make_handle(

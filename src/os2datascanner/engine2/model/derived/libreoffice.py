@@ -73,15 +73,11 @@ __csv = "csv:Text - txt - csv (StarCalc):9,34,76,UTF8,1,,0,false,true,false,fals
 _actually_supported_types = {
     "application/msword": ("MS Word 97", "txt"),
     "application/vnd.oasis.opendocument.text": ("writer8", "txt"),
-    "application/vnd.ms-excel": ("MS Excel 97", __csv),
-    "application/vnd.oasis.opendocument.spreadsheet": ("calc8", __csv),
 
     # XXX: libmagic usually can't detect OOXML files -- see the special
     # handling of these types in in LibreOfficeSource._generate_state
     "application/vnd.openxmlformats-officedocument"
     ".wordprocessingml.document": ("Office Open XML Text", "txt"),
-    "application/vnd.openxmlformats-officedocument"
-    ".spreadsheetml.sheet": ("Calc Office Open XML", __csv)
 }
 
 
@@ -167,7 +163,7 @@ class LibreOfficeObjectResource(FilesystemResource):
         # descriptor (which we can't guarantee) or a filesystem path
         with parent.make_path() as fp:
             mime = magic.from_file(fp, mime=True)
-            if mime in ("application/msword", "application/vnd.ms-excel",
+            if mime in ("application/msword",
                         "application/vnd.ms-powerpoint",):
                 yield from office_metadata.generate_ole_metadata(fp)
             elif mime.startswith("application/vnd.openxmlformats-officedocument."):
