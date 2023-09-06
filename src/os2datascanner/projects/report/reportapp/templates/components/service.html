@@ -1,4 +1,4 @@
-{%  load i18n %}
+{% load i18n %}
 {% load static %}
 
 
@@ -21,17 +21,15 @@
             <div class="popup popup_overview" title="">
               <ul>
                 {% for contact in dpo_contacts %}
-                  {% if contact.user.email %}
-                    <a href="mailto:{{ contact.user.email }}?subject={% trans "Question about OS2datascanner" %}">
+                  {% if contact.email %}
+                    <a href="mailto:{{ contact.email }}?subject={% trans "Question about OS2datascanner" %}">
                     {% else %}
-                      <a href="mailto:{{ contact.user.account.email }}">
+                      <a href="mailto:{{ contact.email }}">
                       {% endif %}
-                      {% if contact.user.first_name %}
-                        <li>{{ contact.user.get_full_name }}</li>
-                      {% elif contact.user.account.first_name %}
-                        <li>{{ contact.user.account.get_full_name }}</li>
+                      {% if contact.first_name %}
+                        <li>{{ contact.get_full_name }}</li>
                       {% else %}
-                        <li>{{ contact.user.username }}</li>
+                        <li>{{ contact.username }}</li>
                       {% endif %}
                     </a>
                   {% endfor %}
