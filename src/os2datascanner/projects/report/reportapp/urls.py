@@ -32,7 +32,7 @@ urlpatterns = [
     re_path(r'^archive/undistributed', UndistributedArchiveView.as_view(),
             name="undistributed-archive"),
     re_path('api$',     JSONAPIView.as_view(),     name="json-api"),
-    path('account/<str:slug>', AccountView.as_view(), name="account"),
+    path('account/<uuid:pk>', AccountView.as_view(), name="account"),
     path('account/', AccountView.as_view(), name="account-me"),
     re_path(r'^statistics/leader/$', LeaderStatisticsPageView.as_view(), name='statistics-leader'),
     re_path(r'^statistics/dpo/$', DPOStatisticsPageView.as_view(), name='statistics-dpo'),

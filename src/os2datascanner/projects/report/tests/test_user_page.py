@@ -112,7 +112,7 @@ class TestAccountView(TestCase):
     def test_access_other_user_account(self):
         """A user should not be able to access the page of another account."""
         self.client.force_login(self.user)
-        response = self.client.get(reverse('account', kwargs={'slug': self.other_account.slug}))
+        response = self.client.get(reverse('account', kwargs={'pk': self.other_account.pk}))
 
         self.assertEqual(response.status_code, 404,
                          "User was allowed to see other user's account.")
@@ -122,7 +122,7 @@ class TestAccountView(TestCase):
         self.user.is_superuser = True
         self.user.save()
         self.client.force_login(self.user)
-        response = self.client.get(reverse('account', kwargs={'slug': self.other_account.slug}))
+        response = self.client.get(reverse('account', kwargs={'pk': self.other_account.pk}))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['account'], self.other_account,

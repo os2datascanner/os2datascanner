@@ -23,7 +23,6 @@ from django.db.models import Count
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
-from django.utils.text import slugify
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.dispatch import receiver
@@ -66,7 +65,7 @@ class AccountManager(models.Manager):
                 "first_name": kwargs.get("first_name") or '',
                 "last_name": kwargs.get("last_name") or ''
             })
-        account = Account(**kwargs, user=user_obj, slug=slugify(kwargs.get("username")))
+        account = Account(**kwargs, user=user_obj)
         account.save()
 
         return account
@@ -78,7 +77,6 @@ class AccountManager(models.Manager):
 
     def bulk_create(self, objs, **kwargs):
         for account in objs:
-            account.slug = slugify(account.username)
             user_obj, created = User.objects.update_or_create(
                 username=account.username,
                 defaults={
@@ -139,7 +137,6 @@ class Account(Core_Account):
         null=True,
         blank=True)
     contact_person = models.BooleanField(_("Contact person"), default=False)
-    slug = models.SlugField(null=True, blank=True)
 
     def update_last_handle(self):
         self.last_handle = time_now()
@@ -292,9 +289,6 @@ class Account(Core_Account):
 
         self._count_matches()
         self._calculate_status()
-
-        if not self.slug:
-            self.slug = slugify(self.username)
 
         return super().save(*args, **kwargs)
 
