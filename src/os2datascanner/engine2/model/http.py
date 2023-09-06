@@ -207,6 +207,22 @@ class WebSource(Source):
 SecureWebSource = WebSource
 
 
+def wrap_session_send(send_m):
+    """Converts a bound requests.Session.send method into one that can
+    automatically react to the HTTP 405 Method Not Supported status code."""
+    def _session_send(request, *args, **kwargs):
+        response = send_m(request, *args, **kwargs)
+        if response.status_code == 405:
+            rq = response.request
+            logger.warning(
+                    f"got 405 Method Not Supported for {rq.method} {rq.url},"
+                    " trying again with GET")
+            response.request.method = "GET"
+            response = send_m(response.request, *args, **kwargs)
+        return response
+    return _session_send
+
+
 suspicious_terms = (
         "error", "fail", "fejl",
         "missing", "mangler", "not-found",
@@ -238,9 +254,10 @@ class WebResource(FileResource):
             return True
 
         context = self._get_cookie()
-        th_send = rate_limit(
-                context.send,
-                timeout=TIMEOUT, allow_redirects=False)
+        th_send = wrap_session_send(
+                rate_limit(
+                        context.send,
+                        timeout=TIMEOUT, allow_redirects=False))
 
         request = requests.Request(
                 method="HEAD", url=self.handle._url).prepare()

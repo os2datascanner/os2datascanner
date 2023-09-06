@@ -334,6 +334,11 @@ class HTTPTestRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(404)
         self.end_headers()
 
+    def _no_head_response(self):
+        self.send_response(405)
+        self.send_header("Allow", "GET")
+        self.end_headers()
+
     def _gone_response(self):
         self.send_response(410)
         self.end_headers()
@@ -362,6 +367,10 @@ class HTTPTestRequestHandler(http.server.SimpleHTTPRequestHandler):
             self._infinite_redirects()
         elif self.path.startswith("/trap_redirect"):
             self._trap_redirect_response()
+        elif self.path.startswith("/headless/true"):
+            self._normal_response()
+        elif self.path.startswith("/headless/false"):
+            self._not_found_response()
         elif self.path.startswith("/not_found"):
             self._not_found_response()
         elif self.path.startswith("/gone"):
@@ -393,6 +402,8 @@ class HTTPTestRequestHandler(http.server.SimpleHTTPRequestHandler):
             self._normal_response()
         elif self.path.startswith("/trap_redirect"):
             self._trap_redirect_response()
+        elif self.path.startswith("/headless"):
+            self._no_head_response()
         elif self.path.startswith("/eredirect"):
             self._error_redirect()
         elif self.path.startswith("/error"):
@@ -811,10 +822,25 @@ class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
     def test_check_redirect_loop(self):
         """The check() method bails out correctly in the event of a redirect
         loop."""
-        no_such_file = WebHandle(site["source"], "/trap_redirect")
+        dodgy_redirect = WebHandle(site["source"], "/trap_redirect")
         with SourceManager() as sm:
             with self.assertRaises(rexc.TooManyRedirects):
-                no_such_file.follow(sm).check()
+                dodgy_redirect.follow(sm).check()
+
+    def test_check_only_get(self):
+        """The check() method can handle URLs that don't implement the HEAD
+        method."""
+        exists = WebHandle(site["source"], "/headless/true")
+        doesn_t_exist = WebHandle(site["source"], "/headless/false")
+        with SourceManager() as sm:
+            self.assertEqual(
+                    exists.follow(sm).check(),
+                    True,
+                    "WebResource.check() didn't handle 405 correctly")
+            self.assertEqual(
+                    doesn_t_exist.follow(sm).check(),
+                    False,
+                    "WebResource.check() didn't handle 405 correctly")
 
     def test_missing_headers(self):
         with SourceManager() as sm:
