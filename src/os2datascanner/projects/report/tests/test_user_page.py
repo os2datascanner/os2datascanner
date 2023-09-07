@@ -110,11 +110,12 @@ class TestAccountView(TestCase):
             "The 'change password'-link is not displayed to the user")
 
     def test_access_other_user_account(self):
-        """A user should not be able to access the page of another account."""
+        """An unprivileged user should not be able to access the page of
+        another account."""
         self.client.force_login(self.user)
         response = self.client.get(reverse('account', kwargs={'pk': self.other_account.pk}))
 
-        self.assertEqual(response.status_code, 404,
+        self.assertEqual(response.status_code, 403,
                          "User was allowed to see other user's account.")
 
     def test_access_other_user_account_as_superuser(self):

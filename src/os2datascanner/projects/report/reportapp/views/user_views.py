@@ -14,9 +14,10 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, Http404
+from django.views.generic import DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ..models.roles.role import Role
 from ...organizations.models import Account
@@ -35,7 +36,7 @@ class AccountView(LoginRequiredMixin, DetailView):
                 raise Http404()
         elif not (self.request.user.is_superuser or
                   self.kwargs.get("pk") == self.request.user.account.pk):
-            raise Http404()
+            raise PermissionDenied
         return super().get_object(queryset)
 
     def get_context_data(self, **kwargs):
