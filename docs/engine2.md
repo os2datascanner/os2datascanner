@@ -1,7 +1,7 @@
 # Extending OS2Datascanner
 
-This document is a short guide to adding new objects to OS2Datascanner's
-scanner engine, `engine2`.
+This document is a short guide to adding new sources of data to
+OS2Datascanner's scanner engine, `engine2`.
 
 > `engine2` is so called because it's the second major version of the
 > OS2Datascanner engine. The first, used from 2014 to 2020, was built on the
@@ -18,7 +18,6 @@ scanner engine, `engine2`.
 
 At the heart of the scanner engine is its *model*. The model consists of three
 abstract base classes and a number of helper classes.
-
 
 ### `Source`
 
