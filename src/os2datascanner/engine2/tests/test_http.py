@@ -5,9 +5,10 @@ import unittest
 import contextlib
 import logging
 import time
+from random import choice
 from datetime import datetime
 from multiprocessing import Manager, Process
-from requests import RequestException
+from requests import exceptions as rexc
 from unittest import mock
 from urllib3.util import connection
 
@@ -303,12 +304,39 @@ class HTTPTestRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Content-Length", "0")
         self.end_headers()
 
+    def _trap_redirect_response(self):
+        self.send_response(302)
+        self.send_header(
+                "Location",
+                "http://localhost:64346/trap_redirect/" +
+                "".join(
+                        choice("abcdefghijklmnopqrstuvwxyz")
+                        for _ in range(0, 5)))
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def _error_redirect(self):
+        self.send_response(302)
+        self.send_header("Location", "http://localhost:64346/error/200")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def _error(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+
     def _forbidden_response(self):
         self.send_response(403)
         self.end_headers()
 
     def _not_found_response(self):
         self.send_response(404)
+        self.end_headers()
+
+    def _no_head_response(self):
+        self.send_response(405)
+        self.send_header("Allow", "GET")
         self.end_headers()
 
     def _gone_response(self):
@@ -337,6 +365,12 @@ class HTTPTestRequestHandler(http.server.SimpleHTTPRequestHandler):
             self._redirect_response()
         elif self.path.startswith("/redirect"):
             self._infinite_redirects()
+        elif self.path.startswith("/trap_redirect"):
+            self._trap_redirect_response()
+        elif self.path.startswith("/headless/true"):
+            self._normal_response()
+        elif self.path.startswith("/headless/false"):
+            self._not_found_response()
         elif self.path.startswith("/not_found"):
             self._not_found_response()
         elif self.path.startswith("/gone"):
@@ -351,6 +385,12 @@ class HTTPTestRequestHandler(http.server.SimpleHTTPRequestHandler):
             self._forbidden_response()
         elif self.path.startswith("/internal_server_error"):
             self._internal_server_error_response()
+
+        elif self.path.startswith("/eredirect"):
+            self._error_redirect()
+        elif self.path.startswith("/error"):
+            self._error()
+
         else:
             super().do_GET()
 
@@ -360,6 +400,14 @@ class HTTPTestRequestHandler(http.server.SimpleHTTPRequestHandler):
             self._redirect_response()
         elif self.path.startswith("/redirect"):
             self._normal_response()
+        elif self.path.startswith("/trap_redirect"):
+            self._trap_redirect_response()
+        elif self.path.startswith("/headless"):
+            self._no_head_response()
+        elif self.path.startswith("/eredirect"):
+            self._error_redirect()
+        elif self.path.startswith("/error"):
+            self._error()
         else:
             super().do_HEAD()
 
@@ -756,6 +804,44 @@ class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
                 with r.make_stream():
                     pass
 
+    def test_check_broken_code(self):
+        """OS2datascanner should be able to intuit when a redirect chain
+        indicates that a file has been removed."""
+
+        no_such_file = WebHandle(site["source"], "/eredirect")
+        with SourceManager() as sm:
+            r = no_such_file.follow(sm)
+            self.assertEqual(
+                    r.get_status(),
+                    200,
+                    "expected missing file to have wrong HTTP error status")
+            self.assertFalse(
+                    r.check(),
+                    "missing file with wrong HTTP error status not detected")
+
+    def test_check_redirect_loop(self):
+        """The check() method bails out correctly in the event of a redirect
+        loop."""
+        dodgy_redirect = WebHandle(site["source"], "/trap_redirect")
+        with SourceManager() as sm:
+            with self.assertRaises(rexc.TooManyRedirects):
+                dodgy_redirect.follow(sm).check()
+
+    def test_check_only_get(self):
+        """The check() method can handle URLs that don't implement the HEAD
+        method."""
+        exists = WebHandle(site["source"], "/headless/true")
+        doesn_t_exist = WebHandle(site["source"], "/headless/false")
+        with SourceManager() as sm:
+            self.assertEqual(
+                    exists.follow(sm).check(),
+                    True,
+                    "WebResource.check() didn't handle 405 correctly")
+            self.assertEqual(
+                    doesn_t_exist.follow(sm).check(),
+                    False,
+                    "WebResource.check() didn't handle 405 correctly")
+
     def test_missing_headers(self):
         with SourceManager() as sm:
             first_thing = None
@@ -794,7 +880,7 @@ class Engine2HTTPResourceTest(Engine2HTTPSetup, unittest.TestCase):
                         follow.append(str(h))
                     else:
                         nfollow.append(str(h))
-                except RequestException as e:
+                except rexc.RequestException as e:
                     print(
                         f"got an expected exception for {str(h)}:\n{e}")
                     nerror.append(str(h))

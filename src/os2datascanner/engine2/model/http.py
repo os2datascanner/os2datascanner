@@ -1,10 +1,10 @@
 from io import BytesIO
-from urllib.parse import urlsplit, urlunsplit
-import structlog
-from requests.sessions import Session
-from contextlib import contextmanager
-from typing import Optional, Union
 import re
+from typing import Optional, Union
+from urllib.parse import urlsplit, urlunsplit
+import requests
+import structlog
+from contextlib import contextmanager
 
 from .. import settings as engine2_settings
 from ..utilities.backoff import WebRetrier
@@ -30,14 +30,14 @@ _equiv_domains_re = re.compile(
 )
 
 
-def rate_limit(request_function):
+def rate_limit(request_function, *args, **kwargs):
     """ Wrapper function to force a proces to sleep by a requested amount,
     when a certain amount of requests are made by it """
-    def _rate_limit(*args, **kwargs):
+    def _rate_limit(*args2, **kwargs2):
         return WebRetrier().run(
             request_function,
-            *args,
-            **kwargs)
+            *args, *args2,
+            **kwargs, **kwargs2)
 
     return _rate_limit
 
@@ -123,7 +123,7 @@ class WebSource(Source):
 
     def _generate_state(self, sm):
         from ... import __version__
-        with Session() as session:
+        with requests.Session() as session:
             session.headers.update(
                 {"User-Agent": f"OS2datascanner/{__version__}"
                                f" ({session.headers['User-Agent']})"
@@ -207,6 +207,30 @@ class WebSource(Source):
 SecureWebSource = WebSource
 
 
+def wrap_session_send(send_m):
+    """Converts a bound requests.Session.send method into one that can
+    automatically react to the HTTP 405 Method Not Supported status code."""
+    def _session_send(request, *args, **kwargs):
+        response = send_m(request, *args, **kwargs)
+        if response.status_code == 405:
+            rq = response.request
+            logger.warning(
+                    f"got 405 Method Not Supported for {rq.method} {rq.url},"
+                    " trying again with GET")
+            response.request.method = "GET"
+            response = send_m(response.request, *args, **kwargs)
+        return response
+    return _session_send
+
+
+suspicious_terms = (
+        "error", "fail", "fejl",
+        "missing", "mangler", "not-found",
+        "404",)
+"""The terms that, if they appear in a redirect chain, OS2datascanner will take
+as an indication that the original object no longer exists."""
+
+
 class WebResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
@@ -221,18 +245,45 @@ class WebResource(FileResource):
     def _get_head_raw(self):
         throttled_session_head = rate_limit(
                 make_head_fallback(self._get_cookie()))
-        return throttled_session_head(self.handle._url, timeout=TIMEOUT)
+        return throttled_session_head(
+                self.handle._url, timeout=TIMEOUT, allow_redirects=True)
 
     def check(self) -> bool:
         if (self.handle.source.has_trusted_sitemap
                 and self.handle.hint("fresh")):
             return True
 
-        # This might raise an RequestsException, fx.
-        # [Errno -2] Name or service not known' (dns)
-        # [Errno 110] Connection timed out'     (no response)
-        response = self._get_head_raw()
-        return response.status_code not in (404, 410,)
+        context = self._get_cookie()
+        th_send = wrap_session_send(
+                rate_limit(
+                        context.send,
+                        timeout=TIMEOUT, allow_redirects=False))
+
+        request = requests.Request(
+                method="HEAD", url=self.handle._url).prepare()
+        response = th_send(request)
+        count = 0
+        while response.next and count < 10:
+            if (not any(t in response.url for t in suspicious_terms)
+                    and any(t in response.next.url for t in suspicious_terms)):
+                # A term that we consider suspicious has suddenly appeared
+                # in the URL between these two links in the redirect chain.
+                # This is a bad sign
+                logger.warning(
+                        "suspicious term appeared in redirect chain,"
+                        " assuming that URL is no longer valid",
+                        url_a=response.url, url_b=response.next.url)
+                return False
+            response = th_send(response.next)
+            count += 1
+
+        if response.next:
+            # There are still more links in the redirection chain, but we broke
+            # out of the loop because there were too many
+            raise requests.exceptions.TooManyRedirects(
+                    f"exceeded {count} redirects")
+        else:
+            return response.ok
 
     def get_status(self):
         self.unpack_header()
