@@ -14,40 +14,50 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse, Http404
+from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
-from django.views.generic import TemplateView
-from django.http import HttpResponse
 
 from ..models.roles.role import Role
+from ...organizations.models import Account
 
 
-class UserView(LoginRequiredMixin, TemplateView):
+class AccountView(LoginRequiredMixin, DetailView):
     template_name = "user.html"
-    context_object_name = "user"
-    model = User
+    context_object_name = "account"
+    model = Account
 
-    def get_queryset(self):
-        return User.objects.get(username=self.request.user)
+    def get_object(self, queryset=None):
+        if self.kwargs.get("pk") is None:
+            try:
+                self.kwargs["pk"] = self.request.user.account.pk
+            except Account.DoesNotExist:
+                raise Http404()
+        elif not (self.request.user.is_superuser or
+                  self.kwargs.get("pk") == self.request.user.account.pk):
+            raise PermissionDenied
+        return super().get_object(queryset)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        roles = Role.get_user_roles_or_default(self.request.user)
+
+        user = self.object.user
+
+        roles = Role.get_user_roles_or_default(user)
         user_roles = [role._meta.verbose_name for role in roles]
 
-        context["is_dpo"] = "DPO" in user_roles
-        # Dumb implementation. Awaiting major refactor.
-        context["is_contact_person"] = self.request.user.account.contact_person
+        context["user"] = user
         context["user_roles"] = user_roles
-        context["aliases"] = User.objects.get(username=self.request.user).aliases.all()
+        context["aliases"] = self.object.aliases.all()
 
         return context
 
     def post(self, request, *args, **kwargs):
         bool_field_status = request.POST.get("contact_check", False) == "checked"
-        # Temporarily bad functionality, since the DataProtectionOfficer-
-        # model has been removed. Will be reimplemented in #57334.
-        request.user.account.contact_person = bool_field_status
-        request.user.account.save()
+
+        account = self.get_object()
+        account.contact_person = bool_field_status
+        account.save()
 
         return HttpResponse()

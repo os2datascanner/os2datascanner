@@ -28,6 +28,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
 
+
 from os2datascanner.core_organizational_structure.models import Account as Core_Account
 from os2datascanner.core_organizational_structure.models import \
     AccountSerializer as Core_AccountSerializer
@@ -80,7 +81,7 @@ class AccountManager(models.Manager):
                 username=account.username,
                 defaults={
                     "first_name": account.first_name or '',
-                    "last_name": account.last_name or ''
+                    "last_name": account.last_name or '',
                 })
             account.user = user_obj
         return super().bulk_create(objs, **kwargs)
@@ -285,10 +286,11 @@ class Account(Core_Account):
             return False
 
     def save(self, *args, **kwargs):
+
         self._count_matches()
         self._calculate_status()
 
-        super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=Account)

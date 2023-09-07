@@ -5,25 +5,29 @@ from django.contrib.auth.models import AnonymousUser
 from os2datascanner.projects.report.organizations.models import (
     Alias, AliasType, Account, Organization, OrganizationalUnit)
 from os2datascanner.core_organizational_structure.models.position import Role
-from ..reportapp.views.user_views import UserView
 from ..organizations.models import Position
+from ..reportapp.views.user_views import AccountView
 
 
-class TestUserProfile(TestCase):
+class TestAccountView(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
-        self.org = Organization.objects.create(name='test org')
-        self.ou = OrganizationalUnit.objects.create(name='test ou', organization=self.org)
-        self.account = Account.objects.create(username='name', organization=self.org)
+        org = Organization.objects.create(name='test_org')
+        self.ou = OrganizationalUnit.objects.create(name='test_ou', organization=org)
+        self.account = Account.objects.create(username='name', organization=org)
         self.user = self.account.user
+        self.other_account = Account.objects.create(username='someone else', organization=org)
 
     def test_user_page_as_roleless_user(self):
+        """A user without a role should be able to see the page."""
         view = self.get_userpage_object()
         self.assertEqual(view.status_code, 200, "Roleless user did not correctly enter user page")
 
     def test_user_page_as_roleless_superuser(self):
+        """A superuser without a role should be able to see the page."""
         self.user.is_superuser = True
+        self.user.save()
         view = self.get_userpage_object()
         self.assertEqual(
             view.status_code,
@@ -34,6 +38,8 @@ class TestUserProfile(TestCase):
     def test_user_page_as_dpo_user(self):
         Position.objects.create(account=self.user.account, unit=self.ou, role=Role.DPO)
 
+        """A DPO should be able to see the page, and the DPO-role should be
+        displayed."""
         view = self.get_userpage_object()
         self.assertEqual(view.status_code, 200, "DPO user did not correctly enter user page")
         # This test needs a new assertion, when we know what we want to present
@@ -42,29 +48,31 @@ class TestUserProfile(TestCase):
         #                   "The DPO role is not displayed to the user")
 
     def test_anonymous_user_redirect(self):
-        request = self.factory.get('/user')
+        """A user who is not logged in should be redirected."""
+        request = self.factory.get('/account')
         request.user = AnonymousUser()
-        response = UserView.as_view()(request)
+        response = AccountView.as_view()(request)
         self.assertEqual(
             response.status_code,
             302,
             "Anonymous user was not correctly redirected to the login page")
 
     def test_user_aliases_are_sent_to_user_view_context(self):
-        aliases = []
-        alias_e = Alias.objects.create(
+        """The aliases connected to an account should be displayed on that
+        account's page."""
+        Alias.objects.create(
             user=self.user,
+            account=self.account,
             _value='name@service.com',
             _alias_type=AliasType.EMAIL
         )
-        alias_g = Alias.objects.create(
+        Alias.objects.create(
             user=self.user,
+            account=self.account,
             _value='name_alias',
             _alias_type=AliasType.GENERIC
         )
-        aliases.append(alias_e)
-        aliases.append(alias_g)
-        self.aliases = aliases
+
         view = self.get_userpage_object()
         self.assertIn('name@service.com',
                       str(view.context_data['aliases']),
@@ -75,19 +83,24 @@ class TestUserProfile(TestCase):
 
     @override_settings(LANGUAGE_CODE='en-US', LANGUAGES=(('en', 'English'),))
     def test_superuser_can_see_is_superuser_checkmark(self):
+        """A superuser should be able to see their superuser checkmark."""
         self.user.is_superuser = True
+        self.user.save()
         view = self.get_userpage_object()
         self.assertInHTML('<td>Superuser</td>', view.rendered_content, 1,
                           "The is_superuser attribute checkmark is not displayed to a superuser")
 
     @override_settings(LANGUAGE_CODE='en-US', LANGUAGES=(('en', 'English'),))
     def test_non_superuser_can_not_see_is_superuser_checkmark(self):
+        """A user, who is not a superuser, should not see a superuser
+        checkmark."""
         view = self.get_userpage_object()
         self.assertInHTML('<td>Superuser</td>', view.rendered_content, 0,
                           "The is_superuser attribute checkmark is displayed to a non-superuser")
 
     @override_settings(LANGUAGE_CODE='en-US', LANGUAGES=(('en', 'English'),))
     def test_user_can_see_link_to_password_change(self):
+        """Users should be able to see a link to password change."""
         view = self.get_userpage_object()
         url = '<a class="password-change" href="%s">Change</a>' % reverse('password_change')
         self.assertInHTML(
@@ -96,8 +109,28 @@ class TestUserProfile(TestCase):
             1,
             "The 'change password'-link is not displayed to the user")
 
+    def test_access_other_user_account(self):
+        """An unprivileged user should not be able to access the page of
+        another account."""
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('account', kwargs={'pk': self.other_account.pk}))
+
+        self.assertEqual(response.status_code, 403,
+                         "User was allowed to see other user's account.")
+
+    def test_access_other_user_account_as_superuser(self):
+        """A superuser should be able to access the page of another account."""
+        self.user.is_superuser = True
+        self.user.save()
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('account', kwargs={'pk': self.other_account.pk}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['account'], self.other_account,
+                         "The wrong account was shown!")
+
     def get_userpage_object(self):
-        request = self.factory.get('/user')
+        request = self.factory.get('/account')
         request.user = self.user
-        response = UserView.as_view()(request)
+        response = AccountView.as_view()(request)
         return response

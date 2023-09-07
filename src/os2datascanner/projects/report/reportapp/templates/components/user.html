@@ -44,7 +44,7 @@
              onclick="document.getElementById('logout').submit();">Log ud</a>
         </form>
       {% else %}
-        <a class="show-account" href="/user">{% trans "Show Account" %}</a>
+        <a class="show-account" href="{% url "account-me" %}">{% trans "Show Account" %}</a>
         <a class="logout" href="/accounts/logout">{% trans "Logout" %}</a>
       {% endif %}
     </div>

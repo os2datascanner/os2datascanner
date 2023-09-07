@@ -1,4 +1,4 @@
-{%  load i18n %}
+{% load i18n %}
 {% load get_settings_tag %}
 {% settings_value "SAML2_ENABLED" as saml2_enabled %}
 
@@ -6,8 +6,8 @@
 
 <div class="userprofile-content-wrapper user-image">
   <span class="user__avatar_verybig">
-    {% if request.user.account.image %}
-      <img class="userprofile-image" src="{{ request.user.account.image }}">
+    {% if account.image %}
+      <img class="userprofile-image" src="{{ account.image }}">
     {% else %}
       <i id="account_circle" class="material-icons">account_circle</i>
     {% endif %}
@@ -20,23 +20,41 @@
     <tbody>
       <tr>
         <td>{% trans "Name" %}</td>
-        <td>{{ user.get_full_name }}</td>
+        <td>{{ account.get_full_name }}</td>
       </tr>
       <tr>
         <td>{% trans "Username" %}</td>
-        <td>{{ user.username }}</td>
+        <td>{{ account.username }}</td>
       </tr>
       <tr>
         <td>{% trans "E-mail" %}</td>
-        <td>{{ user.email }}</td>
+        <td>{{ account.email }}</td>
       </tr>
       <tr>
         <td>{% trans "Organization" %}</td>
         <td>
-          {% if user.account.organization %}{{ user.account.organization }}{% endif %}
+          {% if account.organization %}{{ account.organization }}{% endif %}
         </td>
       </tr>
-      {% if is_dpo %}
+      {% if account.is_manager %}
+        <tr>
+          <td>{% trans "Manager for" %}</td>
+          <td>
+            <ul>
+              {% for unit in account.get_managed_units %}<li>{{ unit.name }}</li>{% endfor %}
+            </ul>
+          </td>
+        </tr>
+      {% endif %}
+      {% if account.is_dpo %}
+        <tr>
+          <td>{% trans "DPO for" %}</td>
+          <td>
+            <ul>
+              {% for unit in account.get_dpo_units %}<li>{{ unit.name }}</li>{% endfor %}
+            </ul>
+          </td>
+        </tr>
         <tr>
           <td>{% trans "Contact Person" %}</td>
           <td class="ds-checkbox">
@@ -49,7 +67,7 @@
                    hx-swap="afterend"
                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                    hx-include='#contact_check'
-                   {% if is_contact_person %}checked{% endif %}>
+                   {% if account.contact_person %}checked{% endif %}>
             <label for="contact_check"
                    title="{% trans "By checking this box, users will be presented with your email address for DPO-related questions." %}">
             </label>
@@ -117,7 +135,7 @@
   <h2>{% trans "Login Information" %}</h2>
   <table class="userprofile-table login-info">
     <tbody>
-      {% if not saml2_enabled %}
+      {% if not saml2_enabled and account == request.user.account %}
         <tr>
           <td>{% trans "Password" %}</td>
           <td>
