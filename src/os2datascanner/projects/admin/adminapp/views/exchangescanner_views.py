@@ -182,12 +182,6 @@ class ExchangeScannerAskRun(ScannerAskRun):
 
     model = ExchangeScanner
 
-    def get_context_data(self, **kwargs):
-        """Check that user is allowed to run this scanner."""
-        context = super().get_context_data(**kwargs)
-        context['ok'] = True
-        return context
-
 
 class ExchangeScannerRun(ScannerRun):
     """View that handles starting of a exchange scanner run."""
