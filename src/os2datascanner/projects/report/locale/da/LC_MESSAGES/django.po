@@ -8,46 +8,46 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-05 07:29+0200\n"
+"POT-Creation-Date: 2023-09-08 10:04+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: organizations/models/account.py:44
+#: organizations/models/account.py:45
 msgid "Completed"
 msgstr "Færdig"
 
-#: organizations/models/account.py:45
+#: organizations/models/account.py:46
 msgid "Accepted"
 msgstr "Accepteret"
 
-#: organizations/models/account.py:46
+#: organizations/models/account.py:47
 msgid "Not accepted"
 msgstr "Ikke accepteret"
 
-#: organizations/models/account.py:111
+#: organizations/models/account.py:112
 msgid "User"
 msgstr "Bruger"
 
-#: organizations/models/account.py:114
+#: organizations/models/account.py:115
 msgid "Last handle"
 msgstr "Sidste håndtering"
 
-#: organizations/models/account.py:122
+#: organizations/models/account.py:123
 msgid "image"
 msgstr "billede"
 
-#: organizations/models/account.py:127
+#: organizations/models/account.py:128
 msgid "Number of matches"
 msgstr "Antal matches"
 
-#: organizations/models/account.py:132
+#: organizations/models/account.py:133
 msgid "Number of withheld matches"
 msgstr "Antal tilbageholdte matches"
 
-#: organizations/models/account.py:138
+#: organizations/models/account.py:139
 msgid "Contact person"
 msgstr "Kontaktperson"
 
@@ -117,7 +117,7 @@ msgid "probability"
 msgstr "sandsynlighed"
 
 #: reportapp/models/documentreport.py:141
-#: reportapp/views/statistics_views.py:172
+#: reportapp/views/statistics_views.py:171
 msgid "Other"
 msgstr "Andet"
 
@@ -698,11 +698,11 @@ msgstr "Kontakt DPO"
 msgid "Question about OS2datascanner"
 msgstr "Spørgsmål angående OS2datascanner"
 
-#: reportapp/templates/components/service.html:45
+#: reportapp/templates/components/service.html:43
 msgid "Issue with OS2datascanner"
 msgstr "Problem med OS2datascanner."
 
-#: reportapp/templates/components/service.html:47
+#: reportapp/templates/components/service.html:45
 msgid ""
 "Are you experiencing issues with OS2datascanner, and have no luck resolving "
 "it by consulting the manual or FAQ? You can contact your IT department by "
@@ -712,20 +712,20 @@ msgstr ""
 "løse dem ved at læse håndbogen eller FAQ'en? Du kan kontakte din IT-afdeling "
 "ved at klikke her."
 
-#: reportapp/templates/components/service.html:48
+#: reportapp/templates/components/service.html:46
 msgid "Contact IT"
 msgstr "Kontakt IT"
 
-#: reportapp/templates/components/service.html:54
+#: reportapp/templates/components/service.html:52
 msgid "Consult the manual to find instructions for using OS2datascanner."
 msgstr "Læs håndbogen for at finde instruktioner til brugen af OS2datascanner."
 
-#: reportapp/templates/components/service.html:54
+#: reportapp/templates/components/service.html:52
 #: reportapp/templates/manual.html:15 reportapp/templates/manual.html:44
 msgid "Manual"
 msgstr "Håndbog"
 
-#: reportapp/templates/components/service.html:59
+#: reportapp/templates/components/service.html:57
 msgid ""
 "Consult the FAQ to read answers to the most frequently asked questions asked "
 "by other users."
@@ -733,7 +733,7 @@ msgstr ""
 "Læs FAQ'en for at se svar på de mest almindelige spørgsmål stillet af andre "
 "brugere."
 
-#: reportapp/templates/components/service.html:60
+#: reportapp/templates/components/service.html:58
 msgid "FAQ"
 msgstr "FAQ"
 
@@ -865,7 +865,7 @@ msgstr "Log ind på"
 msgid "report module"
 msgstr "rapportmodulet"
 
-#: reportapp/templates/login.html:26 reportapp/templates/user_content.html:122
+#: reportapp/templates/login.html:26 reportapp/templates/user_content.html:140
 msgid "Password"
 msgstr "Adgangskode"
 
@@ -1078,10 +1078,18 @@ msgid "Organization"
 msgstr "Organisation"
 
 #: reportapp/templates/user_content.html:41
+msgid "Manager for"
+msgstr "Leder for"
+
+#: reportapp/templates/user_content.html:51
+msgid "DPO for"
+msgstr "DPO for"
+
+#: reportapp/templates/user_content.html:59
 msgid "Contact Person"
 msgstr "Kontaktperson"
 
-#: reportapp/templates/user_content.html:54
+#: reportapp/templates/user_content.html:72
 msgid ""
 "By checking this box, users will be presented with your email address for "
 "DPO-related questions."
@@ -1089,45 +1097,45 @@ msgstr ""
 "Ved at markere dette felt vil brugere blive henvist til din e-mail adresse "
 "med DPO-relaterede spørgsmål."
 
-#: reportapp/templates/user_content.html:62
+#: reportapp/templates/user_content.html:80
 msgid "User Rights"
 msgstr "Rettigheder"
 
-#: reportapp/templates/user_content.html:66
+#: reportapp/templates/user_content.html:84
 msgid "Roles"
 msgstr "Roller"
 
-#: reportapp/templates/user_content.html:75
+#: reportapp/templates/user_content.html:93
 msgid "Active"
 msgstr "Aktiv"
 
-#: reportapp/templates/user_content.html:79
-#: reportapp/templates/user_content.html:90
-#: reportapp/templates/user_content.html:101
+#: reportapp/templates/user_content.html:97
+#: reportapp/templates/user_content.html:108
+#: reportapp/templates/user_content.html:119
 msgid "Yes"
 msgstr "Ja"
 
-#: reportapp/templates/user_content.html:86
+#: reportapp/templates/user_content.html:104
 msgid "Staff"
 msgstr "Adgangsbevilget"
 
-#: reportapp/templates/user_content.html:97
+#: reportapp/templates/user_content.html:115
 msgid "Superuser"
 msgstr "Superbruger"
 
-#: reportapp/templates/user_content.html:107
+#: reportapp/templates/user_content.html:125
 msgid "Aliases"
 msgstr "Aliasser"
 
-#: reportapp/templates/user_content.html:117
+#: reportapp/templates/user_content.html:135
 msgid "Login Information"
 msgstr "Login Information"
 
-#: reportapp/templates/user_content.html:124
+#: reportapp/templates/user_content.html:142
 msgid "Change"
 msgstr "Skift"
 
-#: reportapp/templates/user_content.html:129
+#: reportapp/templates/user_content.html:147
 msgid "User since"
 msgstr "Bruger siden"
 
@@ -1143,28 +1151,28 @@ msgstr "Siden eksisterer ikke"
 msgid "The user does not have an account."
 msgstr "Brugeren har ikke en konto."
 
-#: reportapp/views/statistics_views.py:116
+#: reportapp/views/statistics_views.py:115
 #, python-brace-format
 msgid "An organizational unit with the UUID '{0}' was not found."
 msgstr "En organisatorisk enhed med UUID'et '{0}' blev ikke fundet."
 
-#: reportapp/views/statistics_views.py:155
+#: reportapp/views/statistics_views.py:154
 msgid "Only DPOs and superusers have access to the DPO overview."
 msgstr "Kun DPOer og superbrugere har adgang til DPO-overblikket."
 
-#: reportapp/views/statistics_views.py:173
+#: reportapp/views/statistics_views.py:172
 msgid "Webscan"
 msgstr "Webscan"
 
-#: reportapp/views/statistics_views.py:174
+#: reportapp/views/statistics_views.py:173
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/statistics_views.py:175
+#: reportapp/views/statistics_views.py:174
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/statistics_views.py:436
+#: reportapp/views/statistics_views.py:435
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."
