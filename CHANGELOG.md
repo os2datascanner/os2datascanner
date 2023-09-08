@@ -1,5 +1,14 @@
 # Changelog
 
+## Next Release
+
+"Purple Orchid in my Windowsill"
+
+### General improvements
+
+- Users will now only ever be able to see data from their own organization
+  when accessing the DPO overview.
+
 ## 3.20.5, 11th September 2023
 
 "Mo' Code Less Problems"

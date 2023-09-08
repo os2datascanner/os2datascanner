@@ -81,8 +81,11 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         if self.request.user.account:
-            org_units = OrganizationalUnit.objects.filter(
-                organization=self.request.user.account.organization)
+            # Only allow the user to see reports and units from their own
+            # organization
+            org = request.user.account.organization
+            self.matches = self.matches.filter(organization=org)
+            org_units = OrganizationalUnit.objects.filter(organization=org)
         else:
             raise Account.DoesNotExist(_("The user does not have an account."))
 
@@ -142,10 +145,7 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        # Only allow the user to see reports from their own organization
-        if not request.user.is_superuser:
-            org = request.user.account.organization
-            self.matches = self.matches.filter(organization=org)
+
         if request.user.is_superuser or request.user.account.is_dpo:
             return super().dispatch(
                 request, *args, **kwargs)
