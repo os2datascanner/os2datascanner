@@ -1,6 +1,6 @@
 # Changelog
 
-## Next Release
+## 3.20.5, 11th September 2023
 
 "Mo' Code Less Problems"
 
@@ -37,7 +37,8 @@
 - The estimated time of completion of scannerjobs no longer breaks, if the
   ScanStatus only has one snapshot.
 
-- Adjusted shadow effect for visualizing scrollability on tables in the admin module, ensuring compatibility with Safari browsers.
+- Adjusted shadow effect for visualizing scrollability on tables in the admin 
+  module, ensuring compatibility with Safari browsers.
 
 - Undistributed reports from the same scannerjob with differing scan_times
   will no longer cause multiple instances of the same scannerjob in the
