@@ -72,6 +72,10 @@ class Account(models.Model):
         blank=True,
         related_name="managed_accounts",
     )
+    is_superuser = models.BooleanField(
+        verbose_name=_('superuser_status'),
+        default=False
+    )
 
     def get_managed_units(self):
         return self.units.filter(positions__role=Role.MANAGER)
@@ -104,4 +108,11 @@ class Account(models.Model):
 
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ["pk", "username", "first_name", "last_name", "organization", "manager"]
+        fields = [
+            "pk",
+            "username",
+            "first_name",
+            "last_name",
+            "organization",
+            "manager",
+            "is_superuser"]
