@@ -28,11 +28,8 @@ from django.template import loader
 from os2datascanner.utils.template_utilities import get_localised_template_names
 from os2datascanner.utils.system_utilities import time_now
 
-from ...models.roles.remediator import Remediator
 from ...views import statistics_views
-from ...utils import user_is
 from ...models.documentreport import DocumentReport
-from ...models.roles.defaultrole import DefaultRole
 from ....organizations.models.account import Account
 from ....organizations.models.aliases import Alias, AliasType
 from ....organizations.models import Organization
@@ -205,8 +202,7 @@ class Command(BaseCommand):
         context = self.shared_context.copy()
         context["full_name"] = user.get_full_name() or user.username
 
-        roles = user.roles.select_subclasses() or [DefaultRole(user=user)]
-        user_results = statistics_views.filter_inapplicable_matches(user, results, roles)
+        user_results = statistics_views.filter_inapplicable_matches(user=user, matches=results)
 
         if not all_results:
             # If not provided, results that are newer than 30 days are not included.
@@ -226,7 +222,7 @@ class Command(BaseCommand):
         user_alias_bound_results = 0
         total_result_count = 0
 
-        for alias in user.aliases.all():
+        for alias in user.aliases.exclude(_alias_type=AliasType.REMEDIATOR):
             user_alias_bound_results += user_results.filter(
                 alias_relation=alias.pk,
                 only_notify_superadmin=False).count()
@@ -240,9 +236,9 @@ class Command(BaseCommand):
                 only_notify_superadmin=True).count()
             total_result_count += superadmin_bound_results
 
-        if user_is(roles, Remediator):
+        for remediator_alias in user.aliases.filter(_alias_type=AliasType.REMEDIATOR):
             remediator_bound_results = context["remediator_bound_results"] = user_results.filter(
-                alias_relation__isnull=True).exclude(
+                alias_relation=remediator_alias.pk).exclude(
                 only_notify_superadmin=True).count()
             total_result_count += remediator_bound_results
 

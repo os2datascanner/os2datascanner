@@ -38,6 +38,9 @@ def validate_aliastype_value(kind, value):
             validate_email(value, check_deliverability=False)
         except Exception as e:
             raise ValidationError(e)
+    if kind == AliasType.REMEDIATOR:
+        if not isinstance(value, int):
+            raise ValidationError("Value must be an integer!")
     if kind == AliasType.GENERIC:
         # Generic/unspecified; always passes
         pass
@@ -47,6 +50,7 @@ class AliasType(models.TextChoices):
     """Enumeration of Alias types and their respective validators."""
     SID = 'SID', _('SID')
     EMAIL = 'email', _('email')
+    REMEDIATOR = 'remediator', _('remediator')
     # Generic is used for unspecified aliases
     GENERIC = 'generic', _('generic')
 

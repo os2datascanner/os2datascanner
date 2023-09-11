@@ -245,6 +245,12 @@ def create_alias_and_match_relations(sub_alias: Alias) -> int:
     else:
         reports = DocumentReport.objects.filter(owner=sub_alias.value)
 
+    # If we've found reports above, we should make sure no remediator alias exist
+    # for those.
+    if reports:
+        tm.objects.filter(documentreport_id__in=reports,
+                          alias___alias_type=AliasType.REMEDIATOR).delete()
+
     tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk)
                             for r in reports], ignore_conflicts=True)
     return reports.count()

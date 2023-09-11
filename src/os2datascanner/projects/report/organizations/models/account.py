@@ -268,6 +268,11 @@ class Account(Core_Account):
         return self.get_dpo_units().exists()
 
     @property
+    def is_remediator(self):
+        from .aliases import AliasType  # avoid circular import
+        return self.aliases.filter(_alias_type=AliasType.REMEDIATOR).exists()
+
+    @property
     def leadertab_access(self) -> bool:
         if (self.organization.leadertab_access == StatisticsPageConfigChoices.MANAGERS
                 and self.is_manager or self.user.is_superuser):

@@ -5,7 +5,7 @@
   <a id="report"
      class="tabs__control{% if request.path == '/' or '/reports' in request.path %} active{% endif %}"
      href="{% if '/archive' in request.path %}{% url "reports-archive" %}{% else %}{% url "reports" %}{% endif %}">{% trans "Personal" %}</a>
-  {% if user|is_remediator %}
+  {% if user.account.is_remediator %}
     <a id="remediator"
        class="tabs__control{% if '/remediator' in request.path %} active{% endif %}"
        href="{% if '/archive' in request.path %}{% url "remediator-archive" %}{% else %}{% url "remediator" %}{% endif %}">{% trans "Remediator" %}</a>

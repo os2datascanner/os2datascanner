@@ -19,6 +19,7 @@ import logging
 import structlog
 from django.db import transaction
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 
 from os2datascanner.utils import debug
 from os2datascanner.utils.log_levels import log_levels
@@ -28,7 +29,7 @@ from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 
-from os2datascanner.projects.report.organizations.models import Alias, Organization
+from os2datascanner.projects.report.organizations.models import Alias, AliasType, Organization
 
 from os2datascanner.utils.system_utilities import time_now
 from prometheus_client import Summary, start_http_server
@@ -135,36 +136,52 @@ def handle_metadata_message(scan_tag, result):
     return dr
 
 
-def create_aliases(obj):
+def create_aliases(dr: DocumentReport):
+    """ Given a DocumentReport, creates relevant alias-match relations.
+    Though in most cases there'll be a One-To-One, multiple users can have
+    identical aliases (think shared mailboxes or websites). Thus, relations are handled by
+    bulk operations.
+    """
     tm = Alias.match_relation.through
     new_objects = []
+    owner = dr.owner
+    metadata = dr.metadata
 
-    metadata = obj.metadata
+    # Return early scenarios: No metadata, no owner - nothing to do.
     if not metadata:
+        logger.warning(f"Create aliases invoked with a DocumentReport with no metadata: {dr}")
+        return
+    if not owner:
+        logger.warning(f"Create aliases invoked with a DocumentReport with an empty owner field: "
+                       f"{dr}")
         return
 
-    # TODO: Could use DR's "owner" field too, might be a small benefit.
-    if (email := metadata.metadata.get("email-account")
-            or metadata.metadata.get("msgraph-owner-account")):
-        email_alias = Alias.objects.filter(_alias_type="email", _value__iexact=email)
-        add_new_relations(email_alias, new_objects, obj, tm)
-    if (adsid := metadata.metadata.get("filesystem-owner-sid")):
-        adsid_alias = Alias.objects.filter(_alias_type="SID", _value=adsid)
-        add_new_relations(adsid_alias, new_objects, obj, tm)
-    if (web_domain := metadata.metadata.get("web-domain")):
-        web_domain_alias = Alias.objects.filter(_alias_type="generic", _value=web_domain)
-        add_new_relations(web_domain_alias, new_objects, obj, tm)
+    # Look for relevant alias(es) and append relation(s) to new_objects.
+    aliases = Alias.objects.filter(_value__iexact=owner)
+    # If there aren't any, we must look for remediators
+    if not aliases:
+        # Alias type must be remediator and value either 0 (all scannerjobs) or remediator
+        # for this specific scannerjob.
+        aliases = Alias.objects.filter(Q(_alias_type=AliasType.REMEDIATOR) &
+                                       (Q(_value=0) | Q(_value=dr.scanner_job_pk)))
+    else:
+        # This means we've found an alias that fits the owner - delete remediator relations if any.
+        tm.objects.filter(documentreport_id=dr.pk,
+                          alias___alias_type=AliasType.REMEDIATOR).delete()
+
+    add_new_relations(aliases, new_objects, dr, tm)
 
     try:
+        # Bulk create relations as there might be more than one.
         tm.objects.bulk_create(new_objects, ignore_conflicts=True)
     except Exception:
         logger.error("Failed to create match_relation", exc_info=True)
 
 
-def add_new_relations(adsid_alias, new_objects, obj, tm):
-    for alias in adsid_alias:
+def add_new_relations(aliases, new_objects, dr, tm):
+    for alias in aliases:
         new_objects.append(
-            tm(documentreport_id=obj.pk, alias_id=alias.pk))
+            tm(documentreport_id=dr.pk, alias_id=alias.pk))
 
 
 def handle_match_message(scan_tag, result):  # noqa: CCR001, E501 too high cognitive complexity

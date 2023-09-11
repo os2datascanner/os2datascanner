@@ -1,7 +1,6 @@
 import datetime
 from io import StringIO
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.mail.message import EmailMultiAlternatives
 from django.core.management import call_command
 from django.template import loader
@@ -15,12 +14,12 @@ from os2datascanner.projects.report.reportapp.management.commands.send_notificat
     Command
 from os2datascanner.projects.report.organizations.models.aliases import Alias, AliasType
 from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
-from os2datascanner.projects.report.reportapp.models.roles.remediator import Remediator
 from os2datascanner.projects.report.reportapp.utils import create_alias_and_match_relations
 from os2datascanner.projects.report.tests.generate_test_data import \
     record_match
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.projects.report.organizations.models.organization import Organization
+from os2datascanner.projects.report.organizations.models.account import Account
 
 from ..reportapp.management.commands import result_collector
 
@@ -109,6 +108,12 @@ metadata = messages.MetadataMessage(
     metadata={"email-account": "af@pink.com"}
 )
 
+metadata_1 = messages.MetadataMessage(
+    scan_tag=scan_tag_1,
+    handle=email_handle_1,
+    metadata={"email-account": "idont@exist.com"}
+)
+
 
 class EmailNotificationTest(TestCase):
 
@@ -138,21 +143,28 @@ class EmailNotificationTest(TestCase):
         self.Command.debug_message["unsuccessful_users"] = []
         self.Command.debug_message["successful_users"] = []
 
-        self.user, _ = User.objects.get_or_create(
-            username='trofast',
-            email='af@purple.com',
-            password='top_secret')
+        self.org = Organization.objects.create(
+            uuid="d92ff0c9-f066-40dc-a57e-541721b6c23e", name="test_org")
 
-        Remediator.objects.create(user=self.user)
+        account_1 = Account.objects.create(username="trofast",
+                                           first_name="Alexander",
+                                           organization=self.org)
 
-        self.user_2, _ = User.objects.get_or_create(
-            username='faithfull',
-            email='af@pink.com',
-            password='top_secret')
+        self.user = account_1.user
+
+        Alias.objects.create(user=self.user, account=account_1,
+                             _alias_type=AliasType.REMEDIATOR, _value=0)
+
+        account_2 = Account.objects.create(username="faithfull",
+                                           first_name="Alejandro",
+                                           organization=self.org)
+
+        self.user_2 = account_2.user
 
         alias = Alias.objects.create(
+            account=account_2,
             user=self.user_2,
-            _value=self.user_2.email,
+            _value="af@pink.com",
             _alias_type=AliasType.EMAIL
         )
         record_match(match)
@@ -160,6 +172,7 @@ class EmailNotificationTest(TestCase):
         create_alias_and_match_relations(alias)
 
         record_match(match_1)
+        record_metadata(metadata_1)
         # get only the reports that have matches, and which have not been resolved
         self.document_reports = DocumentReport.objects.only(
                     "organization", "number_of_matches", "resolution_status"
@@ -206,7 +219,7 @@ class EmailNotificationTest(TestCase):
             for a remediator
         """
 
-        # user has one match, through Remediator role.
+        # user has one match, through Remediator alias.
         result_user1 = self.Command.count_user_results(all_results=True,
                                                        results=self.document_reports,
                                                        user=self.user)
@@ -226,13 +239,12 @@ class EmailNotificationTest(TestCase):
         self.assertEqual(result_user2["total_result_count"], 1)
 
     def test_schedule_check(self):
+        self.org.email_notification_schedule = "RRULE:FREQ=DAILY"
+        self.org.save()
+
         # Check that a daily schedule will return True.
-        org = Organization.objects.create(
-            name="Saftevand Inc",
-            email_notification_schedule="RRULE:FREQ=DAILY"
-        )
         self.assertTrue(
-            self.Command.schedule_check(org),
+            self.Command.schedule_check(self.org),
             f'The naive datetime.now() date is: {datetime.datetime.now()}' +
             f'and the aware time_now date is: {time_now()}')
 
@@ -241,19 +253,17 @@ class EmailNotificationTest(TestCase):
         # i.e. this test won't "randomly" fail on mondays.
         today_day = time_now().weekday()
         if today_day != 0:
-            org.email_notification_schedule = "RRULE: FREQ = WEEKLY; BYDAY = MO"
+            self.org.email_notification_schedule = "RRULE: FREQ = WEEKLY; BYDAY = MO"
         else:
-            org.email_notification_schedule = "RRULE: FREQ = WEEKLY; BYDAY = TU"
+            self.org.email_notification_schedule = "RRULE: FREQ = WEEKLY; BYDAY = TU"
 
-        org.save()
-        self.assertFalse(self.Command.schedule_check(org))
+        self.org.save()
+        self.assertFalse(self.Command.schedule_check(self.org))
 
         # Check that no schedule means we return false.
-        org.email_notification_schedule = None
-        org.save()
-        self.assertFalse(self.Command.schedule_check(org))
-
-        org.delete()
+        self.org.email_notification_schedule = None
+        self.org.save()
+        self.assertFalse(self.Command.schedule_check(self.org))
 
 
 def record_metadata(metadata):

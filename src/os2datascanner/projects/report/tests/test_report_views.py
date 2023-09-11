@@ -10,7 +10,6 @@ from os2datascanner.engine2.rules.regex import RegexRule, Sensitivity
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.utilities.datetime import parse_datetime
 
-from ..reportapp.models.roles.remediator import Remediator
 from ..reportapp.models.documentreport import DocumentReport
 from ..reportapp.utils import create_alias_and_match_relations
 from ..reportapp.views.report_views import (
@@ -354,12 +353,18 @@ class RemediatorViewTest(TestCase):
         self.org = Organization.objects.create(
             name='test_org', uuid="d92ff0c9-f066-40dc-a57e-541721b6c23e")
         self.account = Account.objects.create(username='egon', organization=self.org)
+        # Create remediator Alias
+        Alias.objects.create(account=self.account, user=self.account.user,
+                             _alias_type=AliasType.REMEDIATOR, _value=0)
         self.generate_kjeld_data()
         self.generate_egon_data()
 
-    def test_remediatorview_as_default_role(self):
-        """Accessing the RemediatorView with no role should redirect the user
+    def test_remediatorview_as_non_remediator(self):
+        """Accessing the RemediatorView with no remediator alias should redirect the user
         to the main page."""
+        # Delete remediator Alias.
+        self.account.aliases.filter(_alias_type=AliasType.REMEDIATOR).delete()
+
         request = self.factory.get('/remediator/')
         request.user = self.account.user
         response = RemediatorView.as_view()(request)
@@ -368,7 +373,6 @@ class RemediatorViewTest(TestCase):
     def test_remediatorview_as_remediator(self):
         """Accessing the RemediatorView with a Remediator-role should show all
         reports with no alias relation."""
-        Remediator.objects.create(user=self.account.user)
 
         request = self.factory.get('/remediator/')
         request.user = self.account.user
@@ -376,27 +380,7 @@ class RemediatorViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         qs = self.remediator_get_queryset()
-        self.assertEqual(qs.count(), 3)
 
-        kjeld_alias, egon_alias = self.create_adsid_alias_kjeld_and_egon()
-        create_alias_and_match_relations(egon_alias)
-        self.assertEqual(qs.count(), 1)
-
-        create_alias_and_match_relations(kjeld_alias)
-        self.assertEqual(qs.count(), 0)
-
-    def test_remediatorview_as_superuser(self):
-        """Accessing the RemediatorView with as a superuser should show all
-        reports with no alias relation."""
-        self.account.user.is_superuser = True
-        self.account.user.save()
-
-        request = self.factory.get('/remediator/')
-        request.user = self.account.user
-        response = RemediatorView.as_view()(request)
-        self.assertEqual(response.status_code, 200)
-
-        qs = self.remediator_get_queryset()
         self.assertEqual(qs.count(), 3)
 
         kjeld_alias, egon_alias = self.create_adsid_alias_kjeld_and_egon()
@@ -579,6 +563,9 @@ class RemediatorArchiveViewTest(TestCase):
         self.org = Organization.objects.create(
             name='test_org', uuid="d92ff0c9-f066-40dc-a57e-541721b6c23e")
         self.account = Account.objects.create(username='egon', organization=self.org)
+        # Create remediator Alias
+        Alias.objects.create(account=self.account, user=self.account.user,
+                             _alias_type=AliasType.REMEDIATOR, _value=0)
         self.generate_kjeld_data()
         self.generate_egon_data()
 
@@ -586,16 +573,18 @@ class RemediatorArchiveViewTest(TestCase):
         """If the archive tab is not enabled in the configurations, the view
         should redirect the user, even if they are a remediator."""
         settings.ARCHIVE_TAB = False
-        Remediator.objects.create(user=self.account.user)
 
         request = self.factory.get('/archive/remediator/')
         request.user = self.account.user
         response = RemediatorArchiveView.as_view()(request)
         self.assertEqual(response.status_code, 302)
 
-    def test_remediatorarchiveview_as_default_role(self):
+    def test_remediatorarchiveview_as_non_remediator(self):
         """Accessing the RemediatorView with no role should redirect the user
         to the main page."""
+        # Delete remediator Alias.
+        self.account.aliases.filter(_alias_type=AliasType.REMEDIATOR).delete()
+
         request = self.factory.get('/archive/remediator/')
         request.user = self.account.user
         response = RemediatorArchiveView.as_view()(request)
@@ -604,33 +593,6 @@ class RemediatorArchiveViewTest(TestCase):
     def test_remediatorarchiveview_as_remediator(self):
         """Accessing the RemediatorView with a Remediator-role should show all
         reports with no alias relation."""
-        Remediator.objects.create(user=self.account.user)
-
-        request = self.factory.get('/archive/remediator/')
-        request.user = self.account.user
-        response = RemediatorArchiveView.as_view()(request)
-        self.assertEqual(response.status_code, 200)
-
-        qs = self.remediator_get_queryset()
-        self.assertEqual(qs.count(), 0)
-        DocumentReport.objects.update(resolution_status=0)
-
-        # No need to define the queryset again, as it is lazily evaluated.
-        self.assertEqual(qs.count(), 3)
-
-        kjeld_alias, egon_alias = self.create_adsid_alias_kjeld_and_egon()
-        create_alias_and_match_relations(egon_alias)
-        self.assertEqual(qs.count(), 1)
-
-        create_alias_and_match_relations(kjeld_alias)
-        self.assertEqual(qs.count(), 0)
-
-    def test_remediatorarchiveview_as_superuser(self):
-        """Accessing the RemediatorView with as a superuser should show all
-        reports with no alias relation."""
-        self.account.user.is_superuser = True
-        self.account.user.save()
-
         request = self.factory.get('/archive/remediator/')
         request.user = self.account.user
         response = RemediatorArchiveView.as_view()(request)
@@ -651,7 +613,6 @@ class RemediatorArchiveViewTest(TestCase):
         self.assertEqual(qs.count(), 0)
 
     # Helper functions
-
     def create_adsid_alias_kjeld_and_egon(self):
         kjeld_alias = Alias.objects.create(
             user=self.account.user,

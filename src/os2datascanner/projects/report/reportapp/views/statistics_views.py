@@ -31,15 +31,12 @@ from django.utils import timezone
 from django.views.generic import TemplateView, DetailView, ListView
 from django.shortcuts import get_object_or_404
 
-from os2datascanner.projects.report.reportapp.models.roles.role import Role
-from os2datascanner.core_organizational_structure.models.position import Role as PosRole
+from os2datascanner.core_organizational_structure.models.position import Role
 
 from ..models.documentreport import DocumentReport
 from ...organizations.models.account import Account
+from ...organizations.models.aliases import AliasType
 from ...organizations.models.organizational_unit import OrganizationalUnit
-from ..utils import user_is
-from ..models.roles.defaultrole import DefaultRole
-from ..models.roles.remediator import Remediator
 from .report_views import EmptyPagePaginator
 
 
@@ -94,7 +91,7 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         else:
             self.user_units = org_units.filter(
                 Q(positions__account=self.request.user.account)
-                & Q(positions__role=PosRole.DPO)
+                & Q(positions__role=Role.DPO)
             ).order_by("name")
 
         response = super().get(request, *args, **kwargs)
@@ -352,7 +349,7 @@ class LeaderStatisticsPageView(LoginRequiredMixin, ListView):
         else:
             self.user_units = (OrganizationalUnit.objects.filter(
                 Q(positions__account=self.request.user.account)
-                & Q(positions__role=PosRole.MANAGER))
+                & Q(positions__role=Role.MANAGER))
                 .order_by("name"))
 
         if unit_uuid := request.GET.get('org_unit', None):
@@ -392,14 +389,12 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
         account = context["account"]
         matches_by_week = account.count_matches_by_week()
         context["matches_by_week"] = matches_by_week
-        scannerjobs = filter_inapplicable_matches(
-            account.user,
-            DocumentReport.objects.filter(
-                number_of_matches__gte=1,
-                resolution_status__isnull=True
-            ),
-            Role.get_user_roles_or_default(account.user)
-            ).order_by(
+        scannerjobs = (
+            filter_inapplicable_matches(
+                user=account.user,
+                matches=DocumentReport.objects.filter(number_of_matches__gte=1,
+                                                      resolution_status__isnull=True))
+            .order_by(
                 "scanner_job_pk"
             ).values(
                 "scanner_job_pk",
@@ -410,7 +405,7 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
                 "scanner_job_pk",
                 "scanner_job_name",
                 "total"
-            )
+            ))
         context["scannerjobs"] = scannerjobs
         return context
 
@@ -424,13 +419,11 @@ class UserStatisticsPageView(LoginRequiredMixin, DetailView):
         account = Account.objects.get(pk=pk)
 
         reports = filter_inapplicable_matches(
-            account.user,
-            DocumentReport.objects.filter(
+            user=account.user,
+            matches=DocumentReport.objects.filter(
                 scanner_job_pk=scannerjob_pk,
                 resolution_status__isnull=True,
-                number_of_matches__gte=1),
-            Role.get_user_roles_or_default(
-                account.user))
+                number_of_matches__gte=1))
 
         response_string = _('You deleted all results from {0} associated with {1}.'.format(
                 scannerjob_name, account.get_full_name()))
@@ -488,7 +481,7 @@ class EmployeeView(LoginRequiredMixin, DetailView):
 # Logic separated to function to allow usability in send_notifications.py
 
 
-def filter_inapplicable_matches(user, matches, roles, account=None):
+def filter_inapplicable_matches(user, matches, account=None):
     """ Filters matches by organization
     and role. """
 
@@ -506,15 +499,20 @@ def filter_inapplicable_matches(user, matches, roles, account=None):
 
     if user.is_superuser:
         hidden_matches = matches.filter(only_notify_superadmin=True)
-        user_matches = DefaultRole(user=user).filter(matches)
+        user_matches = matches.filter(
+            alias_relation__in=user.aliases.exclude(_alias_type=AliasType.REMEDIATOR),
+            only_notify_superadmin=False)
+
         matches_all = hidden_matches | user_matches
     else:
-        matches_all = DefaultRole(user=user).filter(matches)
-        matches_all = matches_all.filter(only_notify_superadmin=False)
+        matches_all = matches.filter(
+            alias_relation__in=user.aliases.exclude(_alias_type=AliasType.REMEDIATOR),
+            only_notify_superadmin=False)
 
-    if user_is(roles, Remediator):
-        unassigned_matches = Remediator(user=user).filter(matches)
-        matches = unassigned_matches | matches_all
+    if user.account.is_remediator:
+        matches = matches.filter(
+            alias_relation__in=user.aliases.all(),
+            only_notify_superadmin=False)
     else:
         matches = matches_all
 

@@ -48,6 +48,29 @@ msgid "Number of withheld matches"
 msgstr "Antal tilbageholdte matches"
 
 #: organizations/models/account.py:143
+=======
+#: organizations/models/account.py:112
+msgid "User"
+msgstr "Bruger"
+
+#: organizations/models/account.py:115
+msgid "Last handle"
+msgstr "Sidste håndtering"
+
+#: organizations/models/account.py:123
+msgid "image"
+msgstr "billede"
+
+#: organizations/models/account.py:128
+msgid "Number of matches"
+msgstr "Antal matches"
+
+#: organizations/models/account.py:133
+msgid "Number of withheld matches"
+msgstr "Antal tilbageholdte matches"
+
+#: organizations/models/account.py:139
+>>>>>>> c92b57683 ([#55894] Remove roles and make remediator an alias)
 msgid "Contact person"
 msgstr "Kontaktperson"
 
@@ -59,16 +82,16 @@ msgstr "bruger"
 msgid "account"
 msgstr "konto"
 
-#: reportapp/admin.py:15
+#: reportapp/admin.py:13
 #: reportapp/templates/components/dpo-statistics-template.html:25
 msgid "scanner job"
 msgstr "scannerjob"
 
-#: reportapp/admin.py:118
+#: reportapp/admin.py:89
 msgid "Personal info"
 msgstr "Personlig information"
 
-#: reportapp/admin.py:120
+#: reportapp/admin.py:91
 msgid "Important dates"
 msgstr "Vigtige datoer"
 
@@ -156,18 +179,6 @@ msgstr "begrundelse"
 #: reportapp/models/documentreport.py:215
 msgid "document reports"
 msgstr "dokument rapporter"
-
-#: reportapp/models/roles/defaultrole.py:41
-msgid "default role"
-msgstr "Standardrolle"
-
-#: reportapp/models/roles/remediator.py:33
-msgid "remediator"
-msgstr "oprydder"
-
-#: reportapp/models/roles/remediator.py:34
-msgid "remediators"
-msgstr "opryddere"
 
 #: reportapp/templates/403.html:6 reportapp/templates/404.html:6
 msgid "Page not found"
@@ -570,6 +581,7 @@ msgid "Personal"
 msgstr "Personlige"
 
 #: reportapp/templates/components/index_navigation.html:11
+#: reportapp/views/user_views.py:47
 msgid "Remediator"
 msgstr "Oprydder"
 
@@ -762,7 +774,7 @@ msgid "Consult the manual to find instructions for using OS2datascanner."
 msgstr "Læs håndbogen for at finde instruktioner til brugen af OS2datascanner."
 
 #: reportapp/templates/components/service.html:52
-#: reportapp/templates/manual.html:15 reportapp/templates/manual.html:47
+#: reportapp/templates/manual.html:15 reportapp/templates/manual.html:44
 msgid "Manual"
 msgstr "Håndbog"
 
@@ -1221,7 +1233,6 @@ msgstr "Kunne ikke slette {pn}: {e}"
 msgid "The user does not have an account."
 msgstr "Brugeren har ikke en konto."
 
-#: reportapp/views/statistics_views.py:118
 #, python-brace-format
 msgid "An organizational unit with the UUID '{0}' was not found."
 msgstr "En organisatorisk enhed med UUID'et '{0}' blev ikke fundet."
@@ -1242,7 +1253,7 @@ msgstr "Filscan"
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/statistics_views.py:435
+#: reportapp/views/statistics_views.py:427
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."
