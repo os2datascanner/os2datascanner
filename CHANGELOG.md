@@ -8,6 +8,10 @@
 
 - Users will now only ever be able to see data from their own organization
   when accessing the DPO overview.
+  
+### Bugfixes
+
+- Scannerjobs for Exchangesscanner won't start until validation is confirmed
 
 ## 3.20.5, 11th September 2023
 
