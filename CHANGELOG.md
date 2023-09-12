@@ -13,6 +13,9 @@
 
 - Scannerjobs for Exchangesscanner won't start until validation is confirmed
 
+- Users in the report module can now be granted superuser status from the
+  admin module through their connected Account object.
+
 ## 3.20.5, 11th September 2023
 
 "Mo' Code Less Problems"

@@ -44,6 +44,7 @@ class AccountAdmin(ImportedAdmin):
     #  At the time of writing units does not work
     fields = ('username', 'first_name', 'last_name',
               'organization', 'manager', 'imported_id', 'last_import',
+              'is_superuser'
               )
     list_display = ('username', 'first_name', 'last_name',
                     'organization', 'last_import',

@@ -63,7 +63,8 @@ class AccountManager(models.Manager):
             username=kwargs.get("username"),
             defaults={
                 "first_name": kwargs.get("first_name") or '',
-                "last_name": kwargs.get("last_name") or ''
+                "last_name": kwargs.get("last_name") or '',
+                "is_superuser": kwargs.get("is_superuser", False)
             })
         account = Account(**kwargs, user=user_obj)
         account.save()
@@ -82,17 +83,20 @@ class AccountManager(models.Manager):
                 defaults={
                     "first_name": account.first_name or '',
                     "last_name": account.last_name or '',
+                    "is_superuser": kwargs.get("is_superuser", False)
                 })
             account.user = user_obj
         return super().bulk_create(objs, **kwargs)
 
     def bulk_update(self, objs, fields, **kwargs):
-        if any(field in ("username", "first_name", "last_name",) for field in fields):
+        if any(field in ("username", "first_name", "last_name", "is_superuser")
+               for field in fields):
             for account in objs:
                 user: User = account.user
                 user.username = account.username
                 user.first_name = account.first_name or ''
                 user.last_name = account.last_name or ''
+                user.is_superuser = account.is_superuser
                 user.save()
         return super().bulk_update(objs, fields, **kwargs)
 
