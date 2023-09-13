@@ -24,6 +24,9 @@
 
 - Users will now only ever be able to see data from their own organization
   when accessing the DPO overview.
+
+- The UserErrorLogView is now hidden by default. This can be toggled by a
+  configuration.
   
 ### Bugfixes
 
