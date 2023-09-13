@@ -4,6 +4,22 @@
 
 "Purple Orchid in my Windowsill"
 
+### New in this release
+
+- A new simple diagnostics tool, which can be called as a management command.
+
+  - Gives basic information about objects in the database.
+
+  - Separate commands for the admin and report module.
+
+  - Using the command in the report module gives information about the
+    following objects: Account, Alias, OrganizationalUnit, Organization,
+    DocumentReport, and problem messages on DocumentReports.
+
+  - Using the command in the admin module gives information about the
+    following objects: Account, Alias, OrganizationalUnit, Organization,
+    UserErrorLog, and Rule.
+
 ### General improvements
 
 - Users will now only ever be able to see data from their own organization

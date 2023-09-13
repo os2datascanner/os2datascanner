@@ -72,6 +72,24 @@ The command must include the following options:
 
 * `--scanners` followed by space-separated primary keys of existing scanners.
 
+### `diagnostics`
+
+This command is used to give basic information about some objects in the
+database. The tool will warn you about certain broken objects or known issues,
+such as Account objects with an empty string as a username. The intended use
+is an initial automatic analysis of the database, which hopefully leads to
+some useful information for further debugging.
+
+The command can be called with the `--only` option, followed by one or more
+of the following arguments:
+
+* "Account"
+* "Alias"
+* "OrganizationalUnit"
+* "Organization"
+* "UserErrorLog"
+* "Rule"
+
 #### Abort a scan
 
 To abort a scan, use **one** of the following flags:
@@ -164,3 +182,21 @@ To see the visualization: `snakeviz {report_location}/performance.prof`
 
 To execute this command run:
 `docker-compose exec -u 0 admin python manage.py performance_measurement`
+
+### `diagnostics`
+
+This command is used to give basic information about some objects in the
+database. The tool will warn you about certain broken objects or known issues,
+such as Account objects with an empty string as a username. The intended use
+is an initial automatic analysis of the database, which hopefully leads to
+some useful information for further debugging.
+
+The command can be called with the `--only` option, followed by one or more
+of the following arguments:
+
+* "Account"
+* "Alias"
+* "OrganizationalUnit"
+* "Organization"
+* "DocumentReport"
+* "Problem"
