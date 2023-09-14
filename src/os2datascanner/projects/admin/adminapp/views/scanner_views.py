@@ -269,6 +269,9 @@ class UserErrorLogView(RestrictedListView):
         if search := self.request.GET.get('search_field'):
             qs = qs.filter(path__icontains=search) | qs.filter(error_message__icontains=search)
 
+        # We often use the error_logs scan_status and scanner as well. Prefetch that!
+        qs = qs.prefetch_related("scan_status__scanner")
+
         return qs
 
     def get_context_data(self, **kwargs):
