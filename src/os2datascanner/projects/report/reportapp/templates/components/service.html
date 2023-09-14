@@ -5,61 +5,71 @@
 <div class="popup overview">
 
   <ul>
-    {% if request.user.is_superuser or settings.ALLOW_CONTACT_MAGENTA %}
+    {% if request.user.is_superuser and settings.ALLOW_CONTACT_MAGENTA %}
       <a href="mailto:OS2datascannersupport@magenta.dk?subject=[{% now "y/m/d H:i:s" %}] {{ request.user.account.organization }}: {{ request.user.get_short_name }}&body={{ email_body }}">
         <li title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact Magenta ApS by clicking this button." %}">
           {% trans "Contact Magenta" %}
         </li>
       </a>
     {% endif %}
-    {% if settings.ALLOW_CONTACT_DPO %}
-      {% if dpo_contacts %}
-        <li class="open_popup"
-            title="{% trans "Do you have a question about some of your matches or which actions you should take to handle them? You can contact one of your DPOs by clicking this button." %}">
-          {% trans "Contact DPO" %}
-          <div class="popup-container">
-            <div class="popup popup_overview" title="">
-              <ul>
-                {% for contact in dpo_contacts %}
-                  {% if contact.email %}
-                    <a href="mailto:{{ contact.email }}?subject={% trans "Question about OS2datascanner" %}">
+    {% if organization.dpo_contact_style == DPOContactStyles.UNIT_DPO and dpo_contacts %}
+      <li class="open_popup"
+          title="{% trans "Do you have a question about some of your matches or which actions you should take to handle them? You can contact one of your DPOs by clicking this button." %}">
+        {% trans "Contact DPO" %}
+        <div class="popup-container">
+          <div class="popup popup_overview" title="">
+            <ul>
+              {% for contact in dpo_contacts %}
+                {% if contact.email %}
+                  <a href="mailto:{{ contact.email }}?subject={% trans "Question about OS2datascanner" %}">
+ 
+                    {% if contact.first_name %}
+                      <li>{{ contact.get_full_name }}</li>
                     {% else %}
-                      <a href="mailto:{{ contact.email }}">
-                      {% endif %}
-                      {% if contact.first_name %}
-                        <li>{{ contact.get_full_name }}</li>
-                      {% else %}
-                        <li>{{ contact.username }}</li>
-                      {% endif %}
-                    </a>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-          </li>
-        {% endif %}
-      {% endif %}
-      {% if settings.ALLOW_CONTACT_IT %}
-        <a href="mailto:{{ request.user.account.organization.contact_email }}?subject={% trans "Issue with OS2datascanner" %}"
-           target="_blank">
-          <li title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact your IT department by clicking this button." %}">
-            {% trans "Contact IT" %}
-          </li>
-        </a>
-      {% endif %}
-      {% if request.path != "/help/" %}
-        <a href="{% url "guide" %}" target="_blank">
-          <li title="{% trans "Consult the manual to find instructions for using OS2datascanner." %}">{% trans "Manual" %}</li>
-        </a>
-      {% endif %}
-      <a href="{% url "guide" %}#FAQ" target="_blank">
-        <li class="open_popup"
-            title="{% trans "Consult the FAQ to read answers to the most frequently asked questions asked by other users." %}">
-          {% trans "FAQ" %}
-          <div class="popup-container">
-            <div class="popup popup_overview" title="">{% include "components/faq_toc.html" %}</div>
+                      <li>{{ contact.username }}</li>
+                    {% endif %}
+                  </a>
+                {% endif %}
+              {% endfor %}
+            </ul>
           </div>
+        </div>
+      </li>
+    {% elif organization.dpo_contact_style == DPOContactStyles.SINGLE_DPO %}
+      <a href="mailto:{{ organization.dpo_value }}?subject={% trans "Question about OS2datascanner" %}"
+         target="_blank">
+        <li title="{% trans "Do you have a question about some of your matches or which actions you should take to handle them? You can contact one of your DPOs by clicking this button." %}">
+          {% trans "Contact" %} {{ organization.dpo_name }}
         </li>
       </a>
-    </ul>
-  </div>
+    {% endif %}
+    {% if organization.support_contact_style == SupportContactStyles.EMAIL %}
+      <a href="mailto:{{ organization.support_value }}?subject={% trans "Issue with OS2datascanner" %}"
+         target="_blank">
+        <li title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact your IT department by clicking this button." %}">
+          {% trans "Contact" %} {{ organization.support_name }}
+        </li>
+      </a>
+    {% elif organization.support_contact_style == SupportContactStyles.WEBSITE %}
+      <a href="{{ organization.support_value }}" target="_blank">
+        <li title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact your IT department by clicking this button." %}">
+          {% trans "Contact" %} {{ organization.support_name }}
+        </li>
+      </a>
+    {% endif %}
+    {% if request.path != "/help/" %}
+      <a href="{% url "guide" %}" target="_blank">
+        <li title="{% trans "Consult the manual to find instructions for using OS2datascanner." %}">{% trans "Manual" %}</li>
+      </a>
+    {% endif %}
+    <a href="{% url "guide" %}#FAQ" target="_blank">
+      <li class="open_popup"
+          title="{% trans "Consult the FAQ to read answers to the most frequently asked questions asked by other users." %}">
+        {% trans "FAQ" %}
+        <div class="popup-container">
+          <div class="popup popup_overview" title="">{% include "components/faq_toc.html" %}</div>
+        </div>
+      </li>
+    </a>
+  </ul>
+</div>

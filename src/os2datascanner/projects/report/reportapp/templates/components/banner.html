@@ -7,7 +7,7 @@
     {% include "components/navigation.html" %}
   </section>
 
-  {% if settings.SUPPORT_BUTTON %}
+  {% if request.user.account.organization.show_support_button %}
     <section class="service_menu" id="service_menu">
       <div class="service">
         <div tabindex="-1" class="service_button">?</div>

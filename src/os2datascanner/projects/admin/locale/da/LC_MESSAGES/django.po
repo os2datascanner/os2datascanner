@@ -2631,6 +2631,14 @@ msgstr ""
 msgid "return to organizations page"
 msgstr "vend tilbage til organisationer-siden"
 
+#: organizations/admin.py:38
+msgid "Tab access"
+msgstr "Menu-adgang"
+
+#: organizations/admin.py:44
+msgid "Support button settings"
+msgstr "Supportknap indstillinger"
+
 #: organizations/models/organization.py:58
 msgid "slug"
 msgstr "slug"

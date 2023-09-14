@@ -81,7 +81,11 @@ class UpdateOrganizationView(RestrictedUpdateView):
     model = Organization
     template_name = 'organizations/org_update.html'
     success_url = reverse_lazy('organization-list')
-    fields = ['name', 'contact_email', 'contact_phone', 'email_notification_schedule']
+    fields = ['name', 'contact_email', 'contact_phone',
+              'leadertab_access', 'dpotab_access', 'show_support_button',
+              'support_contact_style', 'support_name', 'support_value',
+              'dpo_contact_style', 'dpo_name', 'dpo_value',
+              'email_notification_schedule']
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)

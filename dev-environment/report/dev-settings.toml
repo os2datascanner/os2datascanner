@@ -8,9 +8,6 @@ SAML2_ENABLED = false
 
 # [functionality]
 HANDLE_DROPDOWN = true
-SUPPORT_BUTTON = true
-ALLOW_CONTACT_DPO = true
-ALLOW_CONTACT_IT = true
 ALLOW_CONTACT_MAGENTA = true
 
 # [site]

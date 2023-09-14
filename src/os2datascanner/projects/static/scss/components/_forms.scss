@@ -9,6 +9,7 @@
   fieldset,
   &__fieldset {
     border: none;
+
     h3 {
       margin: 0 0 2em;
     }
@@ -20,23 +21,27 @@
 
   .form__group {
     display: block;
+
     &--flex {
       display: flex;
       flex-wrap: wrap;
       align-items: flex-end;
+
       .block {
         flex: 0 0 100%;
       }
+
       .grow {
         flex: 1 0 auto;
       }
+
       .shrink {
         flex: 0 1 auto;
       }
     }
   }
 
-  .form__group + .form__group {
+  .form__group+.form__group {
     margin-top: 1rem;
   }
 
@@ -55,22 +60,23 @@
     color: var(--color-text-main);
   }
 
-  label + input,
-  label + .input-group {
+  label+input,
+  label+.input-group {
     margin-top: 0.25rem;
   }
 
-  input + label {
+  input+label,
+  select+label {
     margin-top: 1rem;
   }
 
-  .form__group + .form__group,
-  .form__group + .form__error,
-  .form__error + .form__group {
+  .form__group+.form__group,
+  .form__group+.form__error,
+  .form__error+.form__group {
     margin-top: 1rem;
   }
 
-  input[type=checkbox] + label {
+  input[type=checkbox]+label {
     display: flex;
   }
 
@@ -92,6 +98,40 @@
   input[type=text]:focus,
   input[type=password]:focus {
     box-shadow: inset 0 0 0 4px #5ca4cd40;
+  }
+
+  select {
+    display: block;
+    font-size: 1em;
+    font-family: inherit;
+    font-weight: normal;
+    cursor: pointer;
+    color: var(--color-text-main);
+    padding: .75rem 2.25rem .75rem .75rem;
+    width: 100%;
+    max-width: 100%;
+    /* useful when width is set to anything other than 100% */
+    box-sizing: border-box;
+    margin: 0;
+    border: none !important;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1);
+    border-radius: 0;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: var(--color-widget-bg);
+    /* note: bg image below uses 2 urls. The first is an svg data uri for the arrow icon, and the second is the gradient. 
+  		for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
+  		
+  	*/
+    background-image: url('../svg/chevron-down.svg'),
+      linear-gradient(to bottom, var(--color-widget-bg) 0%, var(--color-widget-bg) 100%);
+    background-repeat: no-repeat, repeat;
+    /* arrow icon position (.75rem from the right, 50% vertical) , then gradient position*/
+    background-position: right .75rem top 50%, 0 0;
+    /* icon size, then gradient */
+    background-size: .75rem auto, 100%;
+    transition: var(--transition-default);
   }
 
   // date widget
@@ -164,17 +204,20 @@
       width: 0;
       height: 0;
 
-      &:focus + .radio__control {
+      &:focus+.radio__control {
 
         &--notify {
           box-shadow: 0 0 0 0.05em #fff, 0 0 0.15em 0.1rem var(--color-notification);
         }
-        &--critical{
+
+        &--critical {
           box-shadow: 0 0 0 0.05em #fff, 0 0 0.15em 0.1rem var(--color-error);
         }
+
         &--problem {
           box-shadow: 0 0 0 0.05em #fff, 0 0 0.15em 0.1rem var(--color-problem);
         }
+
         &--warning {
           box-shadow: 0 0 0 0.05em #fff, 0 0 0.15em 0.1rem var(--color-warning);
         }
@@ -188,7 +231,7 @@
       place-items: center;
     }
 
-    input + .radio__control--notify::before {
+    input+.radio__control--notify::before {
       content: "";
       width: .5rem;
       height: .5rem;
@@ -198,7 +241,7 @@
       transform: scale(0);
     }
 
-    input + .radio__control--warning::before {
+    input+.radio__control--warning::before {
       content: "";
       width: .5rem;
       height: .5rem;
@@ -208,7 +251,7 @@
       transform: scale(0);
     }
 
-    input + .radio__control--problem::before {
+    input+.radio__control--problem::before {
       content: "";
       width: .5rem;
       height: .5rem;
@@ -218,7 +261,7 @@
       transform: scale(0);
     }
 
-    input + .radio__control--critical::before {
+    input+.radio__control--critical::before {
       content: "";
       width: .5rem;
       height: .5rem;
@@ -228,7 +271,7 @@
       transform: scale(0);
     }
 
-    input:checked + .radio__control::before {
+    input:checked+.radio__control::before {
       transform: scale(1);
     }
   }
@@ -240,15 +283,18 @@
     border-radius: 50%;
     transform: translateY(-0.05em);
 
-    &--notify{
+    &--notify {
       border: 0.15rem solid var(--color-notification);
     }
-    &--critical{
+
+    &--critical {
       border: 0.15rem solid var(--color-error);
     }
+
     &--problem {
       border: 0.15rem solid var(--color-problem);
     }
+
     &--warning {
       border: 0.15rem solid var(--color-warning);
     }
@@ -259,6 +305,7 @@
     margin-left: .5rem;
     width: 1rem;
   }
+
   .help-icon {
     position: relative;
     display: inline-block;
@@ -302,9 +349,9 @@
   }
 }
 
-.required-form:after{
-    content: " *";
-    color: var(--color-text-main);
+.required-form:after {
+  content: " *";
+  color: var(--color-text-main);
 }
 
 // checkbox
@@ -318,19 +365,21 @@
   line-height: 1.3;
   font-size: 1.2em;
   margin-right: 3em;
+
   input[type="checkbox"] {
     opacity: 0;
     position: absolute;
     z-index: -1;
   }
 
-  input + label {
+  input+label {
     cursor: pointer;
     padding-left: 1.75em;
     margin-top: 0;
   }
 
-  input[type="checkbox"] + label {
+  input[type="checkbox"]+label {
+
     &::before,
     &::after {
       :root {
@@ -366,19 +415,19 @@
     }
   }
 
-  input[type=checkbox]:focus + label::before {
+  input[type=checkbox]:focus+label::before {
     border-color: #12496e;
   }
 
   &:hover {
-    input[type="checkbox"] + label {
+    input[type="checkbox"]+label {
       &::before {
         border-color: #12496e;
       }
     }
   }
 
-  input[type="checkbox"]:checked + label {
+  input[type="checkbox"]:checked+label {
     &::before {
       background-color: #12496e;
       border-color: transparent;
@@ -389,7 +438,7 @@
     }
   }
 
-  input[type="checkbox"]:disabled + label {
+  input[type="checkbox"]:disabled+label {
     opacity: 0.5;
 
     &::before {
@@ -423,11 +472,14 @@
     margin-left: 0;
   }
 }
+
 .changed_rules {
   display: none;
 }
 
-#upload-file, #upload-file-service, #upload-file-email {
+#upload-file,
+#upload-file-service,
+#upload-file-email {
   padding: .75rem;
   width: 50%;
   text-align: center;
@@ -451,7 +503,7 @@
   filter: alpha(opacity=0);
 }
 
-.fileUpload + * {
+.fileUpload+* {
   margin-left: .25rem;
 }
 

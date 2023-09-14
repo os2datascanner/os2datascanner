@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.projects.admin.import_services.admin import ImportedAdmin
 
@@ -25,13 +26,30 @@ class OrganizationAdmin(admin.ModelAdmin):
     """ Controls behaviour in Django Admin
          for the Organization model"""
 
-    fields = ('name', 'slug', 'client',
-              'contact_email', 'contact_phone',
-              'email_notification_schedule', 'leadertab_access',
-              )
-    list_display = ('name', 'client', 'contact_email',
-                    'contact_phone', 'leadertab_access',
-                    )
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": ('name', 'slug', 'client', 'contact_email',
+                           'contact_phone', 'email_notification_schedule',)
+            },
+        ),
+        (
+            _("Tab access"),
+            {
+                "fields": ('leadertab_access', 'dpotab_access')
+            },
+        ),
+        (
+            _("Support button settings"),
+            {
+                "fields": ('show_support_button', 'support_contact_style',
+                           'support_name', 'support_value', 'dpo_contact_style',
+                           'dpo_name', 'dpo_value')
+            }
+        )
+    ]
+    list_display = ('name', 'client', 'contact_email', 'contact_phone')
     search_fields = ('name', 'client__name',)
 
 

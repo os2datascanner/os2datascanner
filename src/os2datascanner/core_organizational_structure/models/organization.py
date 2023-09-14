@@ -27,6 +27,18 @@ class StatisticsPageConfigChoices(models.TextChoices):
     NONE = "N", "None"
 
 
+class SupportContactStyles(models.TextChoices):
+    NONE = "NO", _("None")
+    WEBSITE = "WS", _("Website")
+    EMAIL = "EM", _("Email")
+
+
+class DPOContactStyles(models.TextChoices):
+    NONE = "NO", _("None")
+    SINGLE_DPO = "SD", _("Single DPO")
+    UNIT_DPO = "UD", _("Unit DPO")
+
+
 class Organization(models.Model):
     """Stores data for a specific organization.
 
@@ -74,17 +86,45 @@ class Organization(models.Model):
         verbose_name=_('Email notification interval')
     )
 
+    # Access settings
     leadertab_access = models.CharField(
         max_length=1,
         choices=StatisticsPageConfigChoices.choices,
         default=StatisticsPageConfigChoices.MANAGERS,
     )
-
     dpotab_access = models.CharField(
         max_length=1,
         choices=StatisticsPageConfigChoices.choices,
         default=StatisticsPageConfigChoices.DPOS,
     )
+
+    # Support button settings
+    show_support_button = models.BooleanField(
+        default=False, verbose_name=_("show support button"))
+    support_contact_style = models.CharField(
+        max_length=2,
+        choices=SupportContactStyles.choices,
+        default=SupportContactStyles.NONE,
+        verbose_name=_("support contact style")
+    )
+    support_name = models.CharField(
+        max_length=100, default="IT",
+        blank=True, verbose_name=_("support name"))
+    support_value = models.CharField(
+        max_length=1000, default="",
+        blank=True, verbose_name=_("support value"))
+    dpo_contact_style = models.CharField(
+        max_length=2,
+        choices=DPOContactStyles.choices,
+        default=DPOContactStyles.NONE,
+        verbose_name=_("DPO contact style")
+    )
+    dpo_name = models.CharField(
+        max_length=100, default="",
+        blank=True, verbose_name=_("DPO name"))
+    dpo_value = models.CharField(
+        max_length=100, default="",
+        blank=True, verbose_name=_("DPO value"))
 
     class Meta:
         abstract = True
@@ -100,4 +140,7 @@ class Organization(models.Model):
 
 class OrganizationSerializer(BaseSerializer):
     class Meta:
-        fields = ['pk', 'name', 'contact_email', 'contact_phone', 'email_notification_schedule']
+        fields = ['pk', 'name', 'contact_email', 'contact_phone',
+                  'email_notification_schedule', 'leadertab_access', 'dpotab_access',
+                  'show_support_button', 'support_contact_style', 'support_name',
+                  'support_value', 'dpo_contact_style', 'dpo_name', 'dpo_value']
