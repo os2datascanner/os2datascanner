@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('os2datascanner_report', '0078_delete_dataprotectionofficer'),
+        ('os2datascanner_report', '0079_alter_documentreport_only_notify_superadmin'),
     ]
 
     operations = [

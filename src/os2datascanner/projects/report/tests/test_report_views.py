@@ -390,8 +390,33 @@ class RemediatorViewTest(TestCase):
         create_alias_and_match_relations(kjeld_alias)
         self.assertEqual(qs.count(), 0)
 
-    # Helper functions
+    def test_remediatorview_as_superuser_but_not_remediator(self):
+        """Accessing the RemediatorView as a superuser is allowed, but
+        will not show any results."""
 
+        # Assign superuser
+        self.account.user.is_superuser = True
+        self.account.user.save()
+
+        # Verify that there's something for the user
+        qs = self.remediator_get_queryset()
+        self.assertEqual(qs.count(), 3)
+
+        # Remove remediator alias.
+        self.account.aliases.all().delete()
+
+        request = self.factory.get('/remediator/')
+        request.user = self.account.user
+        response = RemediatorView.as_view()(request)
+
+        # Verify that there's now nothing for the user.
+        qs = self.remediator_get_queryset()
+        self.assertEqual(qs.count(), 0)
+
+        # Verify that the page can still be visited
+        self.assertEqual(response.status_code, 200)
+
+    # Helper functions
     def create_adsid_alias_kjeld_and_egon(self):
         kjeld_alias = Alias.objects.create(
             user=self.account.user,
@@ -610,6 +635,33 @@ class RemediatorArchiveViewTest(TestCase):
         self.assertEqual(qs.count(), 1)
 
         create_alias_and_match_relations(kjeld_alias)
+        self.assertEqual(qs.count(), 0)
+
+    def test_remediatorview_as_superuser_but_not_remediator(self):
+        """Accessing the RemediatorView as a superuser is allowed, but
+        will not show any results."""
+
+        # Assign superuser
+        self.account.user.is_superuser = True
+        self.account.user.save()
+        request = self.factory.get('/archive/remediator/')
+        request.user = self.account.user
+        response = RemediatorArchiveView.as_view()(request)
+
+        # Resolve reports
+        DocumentReport.objects.update(resolution_status=0)
+
+        # Verify that there's something for the user.
+        qs = self.remediator_get_queryset()
+        self.assertEqual(qs.count(), 3)
+
+        # Remove remediator alias.
+        self.account.aliases.all().delete()
+
+        # Verify that the page can still be visited
+        self.assertEqual(response.status_code, 200)
+
+        # Verify that there's now nothing
         self.assertEqual(qs.count(), 0)
 
     # Helper functions

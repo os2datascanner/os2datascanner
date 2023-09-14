@@ -1,0 +1,17 @@
+{% load i18n %}
+{% load static %}
+
+<main class="wrapper error-page">
+  <div class="content">
+    <h1 class="page-title">{% trans "You are not assigned as remediator!" %}</h1>
+    <img src="{% static 'svg/errorpage.svg' %}" alt="" class="error-splash">
+    <p>
+      <i>
+        {% blocktrans %}
+              You have access to this page due to being superadmin.
+              If you wish to gain remediator privileges you must configure this in the admin module.
+        {% endblocktrans %}
+      </i>
+    </p>
+  </div>
+</main>

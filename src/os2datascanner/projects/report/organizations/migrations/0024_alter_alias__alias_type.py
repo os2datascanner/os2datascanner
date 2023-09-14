@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organizations', '0017_organization_dpotab_access'),
+        ('organizations', '0023_account_is_superuser'),
     ]
 
     operations = [

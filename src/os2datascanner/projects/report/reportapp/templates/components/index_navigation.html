@@ -5,12 +5,12 @@
   <a id="report"
      class="tabs__control{% if request.path == '/' or '/reports' in request.path %} active{% endif %}"
      href="{% if '/archive' in request.path %}{% url "reports-archive" %}{% else %}{% url "reports" %}{% endif %}">{% trans "Personal" %}</a>
-  {% if user.account.is_remediator %}
+  {% if user.account.is_remediator or user.is_superuser %}
     <a id="remediator"
        class="tabs__control{% if '/remediator' in request.path %} active{% endif %}"
        href="{% if '/archive' in request.path %}{% url "remediator-archive" %}{% else %}{% url "remediator" %}{% endif %}">{% trans "Remediator" %}</a>
   {% endif %}
-  {% if request.user.is_superuser %}
+  {% if user.is_superuser %}
     <a id="undistributed"
        class="tabs__control{% if '/undistributed' in request.path %} active{% endif %}"
        href="{% if '/archive' in request.path %}{% url "undistributed-archive" %}{% else %}{% url "undistributed" %}{% endif %}">{% trans "Undistributed" %}</a>

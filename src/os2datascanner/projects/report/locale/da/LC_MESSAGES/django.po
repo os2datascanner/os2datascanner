@@ -47,30 +47,7 @@ msgstr "Antal matches"
 msgid "Number of withheld matches"
 msgstr "Antal tilbageholdte matches"
 
-#: organizations/models/account.py:143
-=======
-#: organizations/models/account.py:112
-msgid "User"
-msgstr "Bruger"
-
-#: organizations/models/account.py:115
-msgid "Last handle"
-msgstr "Sidste håndtering"
-
-#: organizations/models/account.py:123
-msgid "image"
-msgstr "billede"
-
-#: organizations/models/account.py:128
-msgid "Number of matches"
-msgstr "Antal matches"
-
-#: organizations/models/account.py:133
-msgid "Number of withheld matches"
-msgstr "Antal tilbageholdte matches"
-
 #: organizations/models/account.py:139
->>>>>>> c92b57683 ([#55894] Remove roles and make remediator an alias)
 msgid "Contact person"
 msgstr "Kontaktperson"
 
@@ -532,7 +509,7 @@ msgid "Show/hide technical details of the error"
 msgstr "Vis/skjul tekniske detaljer om fejlen"
 
 #: reportapp/templates/components/hits.html:7
-#: reportapp/templates/content.html:6
+#: reportapp/templates/content.html:9
 msgid "Results"
 msgstr "Resultater"
 
@@ -581,7 +558,7 @@ msgid "Personal"
 msgstr "Personlige"
 
 #: reportapp/templates/components/index_navigation.html:11
-#: reportapp/views/user_views.py:47
+#: reportapp/views/user_views.py:48
 msgid "Remediator"
 msgstr "Oprydder"
 
@@ -677,7 +654,7 @@ msgid "There are no organizational units associated with"
 msgstr "Der er ikke nogle organisatoriske enheder forbundet med"
 
 #: reportapp/templates/components/pagination.html:10
-#: reportapp/templates/content.html:14
+#: reportapp/templates/content.html:10
 msgid "results"
 msgstr "resultater"
 
@@ -698,6 +675,22 @@ msgstr "Gå til side"
 #: reportapp/templates/components/pagination.html:129
 msgid "Go"
 msgstr "Gå"
+
+#: reportapp/templates/components/remediator-error-page.html:6
+msgid "You are not assigned as remediator!"
+msgstr "Du er ikke tildelt oprydder!"
+
+#: reportapp/templates/components/remediator-error-page.html:10
+msgid ""
+"\n"
+"              You have access to this page due to being superadmin.\n"
+"              If you wish to gain remediator privileges you must configure "
+"this in the admin module.\n"
+"        "
+msgstr ""
+"\n"
+"Du har adgang til denne side, da du er superadmin. Hvis du ønsker oprydder "
+"privilegier, skal du konfigurere dette i admin modulet."
 
 #: reportapp/templates/components/sensitivity-chart.html:4
 msgid "Sensitivity legend"
@@ -860,15 +853,15 @@ msgstr ""
 msgid "Show Account"
 msgstr "Vis konto"
 
-#: reportapp/templates/content.html:19
+#: reportapp/templates/content.html:24
 msgid "Distribute matches to users from"
 msgstr "Uddel matches til brugere fra"
 
-#: reportapp/templates/content.html:24
+#: reportapp/templates/content.html:29
 msgid "Search Scannerjob"
 msgstr "Søg scannerjob"
 
-#: reportapp/templates/content.html:38
+#: reportapp/templates/content.html:43
 msgid ""
 "Are you sure you want to distribute matches to the users? This action cannot "
 "be reverted."
@@ -876,11 +869,11 @@ msgstr ""
 "Er du sikker på, at du vil dele matches ud til brugerne? Denne handling kan "
 "ikke fortrydes."
 
-#: reportapp/templates/content.html:44
+#: reportapp/templates/content.html:49
 msgid "Distribute"
 msgstr "Uddel"
 
-#: reportapp/templates/content.html:53
+#: reportapp/templates/content.html:59
 msgid "No results were found"
 msgstr "Der er ingen resultater"
 
@@ -1233,6 +1226,7 @@ msgstr "Kunne ikke slette {pn}: {e}"
 msgid "The user does not have an account."
 msgstr "Brugeren har ikke en konto."
 
+#: reportapp/views/statistics_views.py:112
 #, python-brace-format
 msgid "An organizational unit with the UUID '{0}' was not found."
 msgstr "En organisatorisk enhed med UUID'et '{0}' blev ikke fundet."
@@ -1249,11 +1243,11 @@ msgstr "Webscan"
 msgid "Filescan"
 msgstr "Filscan"
 
-#: reportapp/views/statistics_views.py:174
+#: reportapp/views/statistics_views.py:171
 msgid "Mailscan"
 msgstr "Mailscan"
 
-#: reportapp/views/statistics_views.py:427
+#: reportapp/views/statistics_views.py:428
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."

@@ -3,15 +3,20 @@
 
 <div class="content-header">
 
-  <h1 class="page-title">{% trans "Results" %}</h1>
+  {% if "/remediator" in request.path and not user.account.is_remediator %}
+    {#  Then we don't need any title or count.  #}
+  {% else %}
+    <h1 class="page-title">{% trans "Results" %}</h1>
+    {{ page_obj.paginator.count }} {% trans "results" %}
+  {% endif %}
 
+  {# the loading-circle #}
   <svg class="page-indicator"
        id="report-page-indicator"
        viewbox="0 0 100 100">
     <circle id="circle" cx="50" cy="50" r="45"></circle>
   </svg>
 
-  {{ page_obj.paginator.count }} {% trans "results" %}
   {% if "/undistributed" in request.path %}
     <div id="distribute-container"
          class="distribute dropdown"
@@ -43,15 +48,17 @@
               hx-push-url="false">{% trans "Distribute" %}</button>
     </div>
   {% endif %}
-
-  {% include "components/filters.html" %}
-
 </div>
 
-{% if page_obj.paginator.count == 0 %}
-  <p class="no-results">{% trans "No results were found" %}</p>
+{% if "/remediator" in request.path and not user.account.is_remediator %}
+  {% include "components/remediator-error-page.html" %}
 {% else %}
-  {% include "components/hits.html" %}
+  {% include "components/filters.html" %}
+  {% if page_obj.paginator.count == 0 %}
+    <p class="no-results">{% trans "No results were found" %}</p>
+  {% else %}
+    {% include "components/hits.html" %}
+  {% endif %}
 {% endif %}
 
 {# Snackbar for popup messages #}
