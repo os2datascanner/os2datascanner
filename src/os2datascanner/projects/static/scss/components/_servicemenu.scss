@@ -81,6 +81,8 @@
 
     &.popup_overview {
       right: 40px;
+      max-height: 70vh;
+      overflow-y: scroll;
     }
 
     >ul {
@@ -106,6 +108,10 @@
         transition: all 200ms ease-in-out;
         cursor: pointer;
         border-radius: 10px;
+
+        &.user-input {
+          overflow-x: hidden;
+        }
 
         .popup-container {
           cursor: default;

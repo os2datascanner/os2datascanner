@@ -16,6 +16,8 @@ from uuid import uuid4
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator, EmailValidator
 
 from ..serializer import BaseSerializer
 
@@ -27,13 +29,13 @@ class StatisticsPageConfigChoices(models.TextChoices):
     NONE = "N", "None"
 
 
-class SupportContactStyles(models.TextChoices):
+class SupportContactChoices(models.TextChoices):
     NONE = "NO", _("None")
     WEBSITE = "WS", _("Website")
     EMAIL = "EM", _("Email")
 
 
-class DPOContactStyles(models.TextChoices):
+class DPOContactChoices(models.TextChoices):
     NONE = "NO", _("None")
     SINGLE_DPO = "SD", _("Single DPO")
     UNIT_DPO = "UD", _("Unit DPO")
@@ -103,9 +105,10 @@ class Organization(models.Model):
         default=False, verbose_name=_("show support button"))
     support_contact_style = models.CharField(
         max_length=2,
-        choices=SupportContactStyles.choices,
-        default=SupportContactStyles.NONE,
-        verbose_name=_("support contact style")
+        choices=SupportContactChoices.choices,
+        default=SupportContactChoices.NONE,
+        verbose_name=_("support contact style"),
+        blank=True
     )
     support_name = models.CharField(
         max_length=100, default="IT",
@@ -115,9 +118,10 @@ class Organization(models.Model):
         blank=True, verbose_name=_("support value"))
     dpo_contact_style = models.CharField(
         max_length=2,
-        choices=DPOContactStyles.choices,
-        default=DPOContactStyles.NONE,
-        verbose_name=_("DPO contact style")
+        choices=DPOContactChoices.choices,
+        default=DPOContactChoices.NONE,
+        verbose_name=_("DPO contact style"),
+        blank=True
     )
     dpo_name = models.CharField(
         max_length=100, default="",
@@ -125,6 +129,42 @@ class Organization(models.Model):
     dpo_value = models.CharField(
         max_length=100, default="",
         blank=True, verbose_name=_("DPO value"))
+
+    def clean(self):
+        errors = {}
+
+        # Validate support contact value based on the type
+        if self.support_contact_style == SupportContactChoices.WEBSITE:
+            validator = URLValidator()
+        elif self.support_contact_style == SupportContactChoices.EMAIL:
+            validator = EmailValidator()
+        if self.support_contact_style in (
+                SupportContactChoices.EMAIL,
+                SupportContactChoices.WEBSITE):
+            if not self.support_name:
+                errors['support_name'] = _("Provide a name of the support contact.")
+            try:
+                validator(self.support_value)
+            except Exception as e:
+                errors['support_value'] = e
+
+        if self.dpo_contact_style == DPOContactChoices.SINGLE_DPO:
+            if not self.dpo_name:
+                errors['dpo_name'] = _("Provide a name of the DPO.")
+
+            try:
+                EmailValidator()(self.dpo_value)
+            except Exception as e:
+                errors['dpo_value'] = e
+
+        if errors:
+            raise ValidationError(errors)
+
+        return super().clean()
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        return super().save(*args, **kwargs)
 
     class Meta:
         abstract = True

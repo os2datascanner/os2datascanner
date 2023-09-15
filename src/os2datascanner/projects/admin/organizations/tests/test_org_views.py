@@ -6,6 +6,9 @@ from django.utils.translation import gettext_lazy as _
 from ..models import Organization, OrganizationalUnit, Account, Position
 from ...core.models import Client, Administrator
 
+from os2datascanner.core_organizational_structure.models.organization import (
+    StatisticsPageConfigChoices, DPOContactChoices, SupportContactChoices)
+
 
 class OrganizationListViewTests(TestCase):
 
@@ -262,6 +265,15 @@ class UpdateOrganizationViewTests(TestCase):
             'name': 'Updated Organization',
             'contact_email': 'something@else.com',
             'contact_phone': 'new phone, who dis?',
+            'leadertab_access': StatisticsPageConfigChoices.MANAGERS,
+            'dpotab_access': StatisticsPageConfigChoices.DPOS,
+            'show_support_button': False,
+            'support_contact_style': SupportContactChoices.NONE,
+            'support_name': 'IT',
+            'support_value': '',
+            'dpo_contact_style': DPOContactChoices.NONE,
+            'dpo_name': '',
+            'dpo_value': '',
         })
 
         success_url = reverse_lazy('organization-list')
@@ -321,6 +333,15 @@ class UpdateOrganizationViewTests(TestCase):
             'name': 'Updated Organization',
             'contact_email': 'something@else.com',
             'contact_phone': 'new phone, who dis?',
+            'leadertab_access': StatisticsPageConfigChoices.MANAGERS,
+            'dpotab_access': StatisticsPageConfigChoices.DPOS,
+            'show_support_button': False,
+            'support_contact_style': SupportContactChoices.NONE,
+            'support_name': 'IT',
+            'support_value': '',
+            'dpo_contact_style': DPOContactChoices.NONE,
+            'dpo_name': '',
+            'dpo_value': '',
         })
 
         success_url = reverse_lazy('organization-list')

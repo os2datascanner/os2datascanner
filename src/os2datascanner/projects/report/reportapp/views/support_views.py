@@ -6,7 +6,7 @@ from ..utils import convert_context_to_email_body
 from ...organizations.models import Account
 from os2datascanner.core_organizational_structure.models.position import Role
 from os2datascanner.core_organizational_structure.models.organization import (
-    SupportContactStyles, DPOContactStyles)
+    SupportContactChoices, DPOContactChoices)
 
 
 class SupportButtonView(TemplateView):
@@ -27,7 +27,7 @@ class SupportButtonView(TemplateView):
 
         # Send organization settings to the template
         context["organization"] = self.org
-        context["SupportContactStyles"] = SupportContactStyles
-        context["DPOContactStyles"] = DPOContactStyles
+        context["SupportContactChoices"] = SupportContactChoices
+        context["DPOContactChoices"] = DPOContactChoices
 
         return context

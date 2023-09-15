@@ -134,6 +134,11 @@
     transition: var(--transition-default);
   }
 
+  input:disabled:hover,
+  select:disabled:hover {
+    cursor: not-allowed;
+  }
+
   // date widget
   .date {
     margin-top: 1rem;

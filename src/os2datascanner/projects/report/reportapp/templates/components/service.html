@@ -12,7 +12,7 @@
         </li>
       </a>
     {% endif %}
-    {% if organization.dpo_contact_style == DPOContactStyles.UNIT_DPO and dpo_contacts %}
+    {% if organization.dpo_contact_style == DPOContactChoices.UNIT_DPO and dpo_contacts %}
       <li class="open_popup"
           title="{% trans "Do you have a question about some of your matches or which actions you should take to handle them? You can contact one of your DPOs by clicking this button." %}">
         {% trans "Contact DPO" %}
@@ -35,24 +35,27 @@
           </div>
         </div>
       </li>
-    {% elif organization.dpo_contact_style == DPOContactStyles.SINGLE_DPO %}
+    {% elif organization.dpo_contact_style == DPOContactChoices.SINGLE_DPO %}
       <a href="mailto:{{ organization.dpo_value }}?subject={% trans "Question about OS2datascanner" %}"
          target="_blank">
-        <li title="{% trans "Do you have a question about some of your matches or which actions you should take to handle them? You can contact one of your DPOs by clicking this button." %}">
+        <li class="user-input"
+            title="{% trans "Do you have a question about some of your matches or which actions you should take to handle them? You can contact one of your DPOs by clicking this button." %}">
           {% trans "Contact" %} {{ organization.dpo_name }}
         </li>
       </a>
     {% endif %}
-    {% if organization.support_contact_style == SupportContactStyles.EMAIL %}
+    {% if organization.support_contact_style == SupportContactChoices.EMAIL %}
       <a href="mailto:{{ organization.support_value }}?subject={% trans "Issue with OS2datascanner" %}"
          target="_blank">
-        <li title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact your IT department by clicking this button." %}">
+        <li class="user-input"
+            title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact your IT department by clicking this button." %}">
           {% trans "Contact" %} {{ organization.support_name }}
         </li>
       </a>
-    {% elif organization.support_contact_style == SupportContactStyles.WEBSITE %}
+    {% elif organization.support_contact_style == SupportContactChoices.WEBSITE %}
       <a href="{{ organization.support_value }}" target="_blank">
-        <li title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact your IT department by clicking this button." %}">
+        <li class="user-input"
+            title="{% trans "Are you experiencing issues with OS2datascanner, and have no luck resolving it by consulting the manual or FAQ? You can contact your IT department by clicking this button." %}">
           {% trans "Contact" %} {{ organization.support_name }}
         </li>
       </a>
