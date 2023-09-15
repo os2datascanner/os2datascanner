@@ -28,6 +28,7 @@ EXCLUSION_RULES = false
 ANALYSIS_PAGE = false
 AUTOMATIC_IMPORT_CLEANUP = false
 MANUAL_PAGE = false
+USERERRORLOG = false
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
@@ -165,7 +166,8 @@ SETTINGS_EXPORT = [
     'EXCLUSION_RULES',
     'ANALYSIS_PAGE',
     'MINISCAN_FILE_SIZE_LIMIT',
-    'MANUAL_PAGE'
+    'MANUAL_PAGE',
+    'USERERRORLOG'
 ]
 
 # [internationalization]

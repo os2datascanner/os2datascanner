@@ -17,6 +17,7 @@ from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage
 from django.http import Http404
 from django.shortcuts import render
+from django.conf import settings
 from pika.exceptions import AMQPError
 import structlog
 
@@ -291,6 +292,12 @@ class UserErrorLogView(RestrictedListView):
         # Overrides get_paginate_by to allow changing it in the template
         # as url param paginate_by=xx
         return self.request.GET.get('paginate_by', self.paginate_by)
+
+    def dispatch(self, request, *args, **kwargs):
+        if settings.USERERRORLOG:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            raise Http404()
 
     def post(self, request, *args, **kwargs):
         is_htmx = self.request.headers.get("HX-Request", False) == "true"
