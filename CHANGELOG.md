@@ -2,7 +2,7 @@
 
 ## Next release
 
-"I am Turning Now; Good Luck Everyone Else"
+"Folie à Tous"
 
 ### General improvements
 
@@ -14,6 +14,9 @@
   - Display tooltip on hover, and relative percentages are displayed alongside chart legends. 
 
   - Added and "empty" pie for empty datasets. 
+
+- The loading time of the "completed scans"-tab has been improved by
+  prefetching some related models in the queryset.
 
 ### Bugfixes
 

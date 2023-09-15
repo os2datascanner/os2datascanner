@@ -146,7 +146,7 @@ class StatusCompleted(StatusBase):
         """
         return super().get_queryset().filter(
                 ScanStatus._completed_Q, resolved=False).order_by(
-                '-scan_tag__time')
+                '-scan_tag__time').prefetch_related('scanner', 'snapshots')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -162,7 +162,7 @@ class StatusCompleted(StatusBase):
 
         for status in context['object_list']:
             snapshot_data = []
-            for snapshot in ScanStatusSnapshot.objects.filter(scan_status=status).iterator():
+            for snapshot in status.snapshots.all():
                 seconds_since_start = (snapshot.time_stamp - status.start_time).total_seconds()
                 # Calculating a new fraction, due to early versions of
                 # snapshots not knowing the total number of objects.
