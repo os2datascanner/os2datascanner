@@ -39,7 +39,34 @@
     min-width: 0; // to prevent grid blowout;
   }
 
-  .select-rules-title,
+  .select-rules-title {
+    width: 100%;
+    padding: .5rem;
+    background-color: var(--color-main);
+    color: var(--color-text-white);
+    font-weight: 600;
+    font-size: .9rem;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    border-radius: .25rem;
+    margin: 0;
+    padding: 0.5rem;
+    max-width: 100%;
+    min-width: 0; // to prevent grid blowout;
+  }
+
+  .select-rules-selector {
+    width: 100%;
+    padding: .5rem;
+    font-weight: 600;
+    font-size: .9rem;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    border-radius: .25rem;
+    margin: 0;
+    padding: 0.5rem;
+    max-width: 100%;
+    min-width: 0; // to prevent grid blowout;
+  }
+
   .select-employees-title {
     width: 100%;
     padding: .5rem;
