@@ -34,12 +34,10 @@ class OrganizationalUnit(Core_OrganizationalUnit, Broadcasted, Imported):
         return self.positions.values("account").annotate(
             count=Count("account")).values("account").count()
 
-    @property
-    def managers(self):
+    def get_managers(self):
         return self.positions.filter(role=Role.MANAGER).prefetch_related("account")
 
-    @property
-    def dpos(self):
+    def get_dpos(self):
         return self.positions.filter(role=Role.DPO).prefetch_related("account")
 
     def get_root(self):

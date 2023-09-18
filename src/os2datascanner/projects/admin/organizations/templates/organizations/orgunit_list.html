@@ -58,6 +58,7 @@
          tabindex="0"
          aria-label="{% trans 'organizational units'|capfirst %}"
          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+         hx-indicator="#orgunit-page-indicator"
          hx-push-url='true'>
       <table class="datatable">
         <colgroup>
@@ -83,7 +84,7 @@
                   {% if orgunit.parent %}<div class="parent">({{ orgunit.parent.name }})</div>{% endif %}
                 </td>
                 <td class="datatable__column--info orgunit_members">
-                  {{ orgunit.members_associated }} {% trans "accounts associated." %}
+                  {{ orgunit.associated_accounts }} {% trans "accounts associated." %}
                 </td>
                 <td class="datatable__column--managers orgunit_managers">
                   <ul>

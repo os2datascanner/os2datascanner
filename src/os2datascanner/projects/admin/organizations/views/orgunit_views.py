@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, Count, Prefetch
 from django.http import Http404
+
 
 from ...adminapp.views.views import RestrictedListView
 from ..models import OrganizationalUnit, Organization, Account, Position
@@ -32,6 +33,21 @@ class OrganizationalUnitListView(RestrictedListView):
         show_empty = self.request.GET.get("show_empty", "off") == "on"
         if not show_empty:
             qs = qs.exclude(positions=None)
+
+        # Prefetch related manager and dpo accounts, as well as number of
+        # associated accounts. Saves 3 queries per OU.
+        qs = qs.annotate(
+            associated_accounts=Count('positions__account')
+            ).prefetch_related(
+                Prefetch(
+                    'positions',
+                    queryset=Position.objects.filter(role=Role.MANAGER).select_related('account'),
+                    to_attr='managers'),
+                Prefetch(
+                    'positions',
+                    queryset=Position.objects.filter(role=Role.DPO).select_related('account'),
+                    to_attr='dpos')
+                )
 
         return qs
 
