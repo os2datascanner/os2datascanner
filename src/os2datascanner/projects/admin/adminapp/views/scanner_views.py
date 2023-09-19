@@ -272,6 +272,9 @@ class UserErrorLogView(RestrictedListView):
         if search := self.request.GET.get('search_field'):
             qs = qs.filter(path__icontains=search) | qs.filter(error_message__icontains=search)
 
+        if self.request.GET.get('show_seen', 'off') != 'on':
+            qs = qs.filter(is_new=True)
+
         # We often use the error_logs scan_status and scanner as well. Prefetch that!
         qs = qs.prefetch_related("scan_status__scanner")
 
@@ -285,6 +288,8 @@ class UserErrorLogView(RestrictedListView):
 
         context['order_by'] = self.request.GET.get('order_by', 'pk')
         context['order'] = self.request.GET.get('order', 'ascending')
+
+        context['show_seen'] = self.request.GET.get('show_seen', 'off') == 'on'
 
         context["new_error_logs"] = count_new_errors(self.request.user)
 
