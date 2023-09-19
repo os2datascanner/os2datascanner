@@ -31,6 +31,14 @@
 - The scan status tab in the admin module now issues no duplicate queries to
   the database, and prefetches related scanners.
   
+- Performance has been improved in the report module.
+
+  - The number of queries has been greatly reduced, and is now constant
+    regardless of the number of results.
+
+  - An index has been created on the "only_notify_superadmin"-field on the
+    DocumentReport model.
+  
 ### Bugfixes
 
 - Scannerjobs for Exchangesscanner won't start until validation is confirmed
