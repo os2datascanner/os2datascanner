@@ -98,14 +98,16 @@ class StatusOverview(StatusBase):
         # ScanStatus._completed_Q object above). That way we avoid manual
         # filtering in the template and only get the data we intend to display.
 
-        return super().get_queryset().order_by("-pk").exclude(ScanStatus._completed_Q)
+        return super().get_queryset().order_by("-pk").exclude(ScanStatus._completed_Q
+                                                              ).prefetch_related("scanner")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         # Tell the poll element to reload the entire table when a scan starts or finishes.
-        old_scans_length = int(self.request.GET.get("scans", self.object_list.count()))
-        reload_table = self.object_list.count() == 0 or self.object_list.count() != old_scans_length
+        running_jobs_count = self.object_list.count()
+        old_scans_length = int(self.request.GET.get("scans", running_jobs_count))
+        reload_table = running_jobs_count == 0 or running_jobs_count != old_scans_length
         context["reload"] = ".scan-status-table" if reload_table else "#status_table_poll"
 
         context['delay'] = "every 1s" if self.object_list.exists(

@@ -27,6 +27,9 @@
 
 - The UserErrorLogView is now hidden by default. This can be toggled by a
   configuration.
+
+- The scan status tab in the admin module now issues no duplicate queries to
+  the database, and prefetches related scanners.
   
 ### Bugfixes
 
