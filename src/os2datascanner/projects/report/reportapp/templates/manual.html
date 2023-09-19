@@ -29,6 +29,9 @@
             <li>Arkiv</li>
           </a>
         {% endif %}
+        <a href="#user_overview">
+          <li>Mit overblik</li>
+        </a>
         <a href="#filtering">
           <li>Filtreringsmulighed</li>
         </a>
@@ -58,7 +61,7 @@
       </div>
 
       <h2 id="login">Sådan logger man ind</h2>
-      <p>Åbn browseren (eksempelvis Internet Explorer, Chrome, Edge eller Firefox) og gå ind på:</p>
+      <p>Åbn browseren (eksempelvis Chrome, Edge eller Firefox) og gå ind på:</p>
       <p class="center-text">
         <span class="example-link">https://<span class="org-name">organisationensnavn</span>.os2datascanner.dk</span>
       </p>
@@ -93,7 +96,7 @@
         <p>Figur 23: Rapportmodul - Forside</p>
       </div>
       <p>
-        Herfra kan man enten åbne den relevante fil eller mail direkte fra rapportmodulet ved at trykke “Åbn”, eller man kan vælge “Kopiér” for at kopiere stien ind i sin browser. Skal man kunne åbne matches direkte fra systemet, skal systemet have tilladelse til dette. {% comment %}Der findes en beskrivelse af, hvordan dette opsættes i <a href="#">Teknisk implementering og opsætning af OS2datascanner</a>.{%endcomment%}
+        Herfra kan man åbne den relevante fil eller mail direkte fra rapportmodulet ved at trykke “Åbn”. Skal man kunne åbne matches direkte fra systemet, skal systemet have tilladelse til dette. {% comment %}Der findes en beskrivelse af, hvordan dette opsættes i <a href="#">Teknisk implementering og opsætning af OS2datascanner</a>.{%endcomment%}
       </p>
       <p>
         Når brugerne har fundet det match, som skal håndteres, skal man manuelt fjerne eller redigere det relevante match.
@@ -104,6 +107,20 @@
       <p>
         Når man manuelt har fjernet eller redigeret det pågældende match, skal dette markeres som håndteret i rapportmodulet. Det gøres ved at vælge “Håndtér”.
       </p>
+      <h3>Håndtering af flere matches</h3>
+      <p>Hvis man vil håndtere flere matches på en gang, skal man:</p>
+      <ol>
+        <li>
+          Markér afkrydsningsfelterne til venstre for resultaterne eller markér afkrydsningsfeltet  øverst til venstre for at vælge alle resultaterne på den aktuelle side.
+        </li>
+        <li>Klik på Markér som håndterede foroven.</li>
+      </ol>
+      <div id="figur-26" class="figure-container">
+        <a href="{% static 'manualimages/figur26.png' %}">
+          <img src="{% static 'manualimages/figur26.png' %}" />
+        </a>
+        <p>Figur 26: Rapportmodul - Forside</p>
+      </div>
       <p>Hvis filen/mailen er blevet slettet og en ny scanning køres, vil dataen håndteres automatisk.</p>
 
       {% if settings.ARCHIVE_TAB %}
@@ -117,10 +134,23 @@
           </a>
           <p>Figur 24: Rapportmodul - Arkiv</p>
         </div>
-        <p>
-          Du skal være opmærksom på, at OS2datascanner løbende sender ny resultater til dig, mens scanneren kører, så det kan være en gode idé at holde øje med om der er tikket nye resultater ind.
-        </p>
       {% endif %}
+
+      <h2 id="user_overview">Mit overblik</h2>
+      <p>På "Mit overblik" fanen, kan du se en oversigt over antallet af uhåndterede matches per uge.</p>
+      <p>
+        Det store tal, under hver uge, viser antallet af uhåndterede matches. Det røde tal indikere hvor mange matches der er blevet fundet i løbet af ugen og det grønne indikere hvor mange der er blevet håndteret.
+      </p>
+      <p>Grafen til højre viser udviklingen af uhåndterede matches i løbet af det seneste år.</p>
+      <div id="figur-25" class="figure-container">
+        <a href="{% static 'manualimages/figur25.png' %}">
+          <img src="{% static 'manualimages/figur25.png' %}" />
+        </a>
+        <p>Figur 25: Rapportmodul - Mit overblik</p>
+      </div>
+      <p>
+        Du skal være opmærksom på, at OS2datascanner løbende sender ny resultater til dig, mens scanneren kører, så det kan være en gode idé at holde øje med om der er tikket nye resultater ind.
+      </p>
 
       <h2 id="filtering">Filtreringsmulighed</h2>
       <p>
