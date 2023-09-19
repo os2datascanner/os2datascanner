@@ -12,6 +12,7 @@ from os2datascanner.engine2.model.utilities.temp_resource import (
         NamedTemporaryResource)
 from os2datascanner.engine2.pipeline import messages, worker
 from os2datascanner.projects.admin import settings
+from os2datascanner.engine2.utilities.timeout import run_with_default_timeout
 
 
 logger = structlog.get_logger(__name__)
@@ -49,30 +50,37 @@ def execute_mini_scan(request):  # noqa:CCR001
 
             if ntr.size() <= settings.MINISCAN_FILE_SIZE_LIMIT:
 
-                handle = FilesystemHandle.make_handle(ntr.get_path())
+                def _run_mini_pipeline():
+                    handle = FilesystemHandle.make_handle(ntr.get_path())
 
-                conv = messages.ConversionMessage(
-                    scan_spec=messages.ScanSpecMessage(
-                        scan_tag=messages.ScanTagFragment.make_dummy(),
-                        source=handle.source,
-                        rule=rule,
-                        filter_rule=None,
-                        configuration={},
-                        progress=None),
-                    handle=handle,
-                    progress=messages.ProgressFragment(
+                    conv = messages.ConversionMessage(
+                        scan_spec=messages.ScanSpecMessage(
+                            scan_tag=messages.ScanTagFragment.make_dummy(),
+                            source=handle.source,
                             rule=rule,
-                            matches=[])).to_json_object()
+                            filter_rule=None,
+                            configuration={},
+                            progress=None),
+                        handle=handle,
+                        progress=messages.ProgressFragment(
+                            rule=rule,
+                            matches=[]),
+                        ).to_json_object()
 
-                for channel, message_ in worker.process(SourceManager(), conv):
-                    if channel in ("os2ds_matches",):
-                        message = messages.MatchesMessage.from_json_object(
-                            message_)
+                    for channel, message_ in worker.process(SourceManager(), conv):
+                        if channel in ("os2ds_matches",):
+                            message = messages.MatchesMessage.from_json_object(
+                                message_)
 
-                        if not message.matched:
-                            continue
+                            if not message.matched:
+                                continue
 
-                        replies.append(message)
+                            replies.append(message)
+
+                finished, _ = run_with_default_timeout(_run_mini_pipeline)
+
+                if not finished:
+                    logger.warning("Miniscanner - Timeout encountered: scan took too long.")
             else:
                 logger.warning("Miniscanner - Rejected file that exceeded the size limit.")
 
