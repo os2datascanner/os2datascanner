@@ -84,6 +84,7 @@ class DocumentReport(models.Model):
     only_notify_superadmin = models.BooleanField(
         default=False,
         verbose_name='Underret kun superadmin',
+        db_index=True
     )
 
     owner = models.TextField(

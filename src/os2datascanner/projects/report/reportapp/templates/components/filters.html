@@ -35,7 +35,7 @@
         {% for scan in scannerjobs|first %}
           <option value="{{ scan.scanner_job_pk|unlocalize }}"
                   {% if request.GET.scannerjob == scan.scanner_job_pk|stringformat:"i" %}selected="selected"{% endif %}>
-            {{ scan.scanner_job_name }} ({{ scan.total }})
+            {{ scan.scanner_job_name }} ({{ scan.filtered_total }})
           </option>
         {% endfor %}
       </select>

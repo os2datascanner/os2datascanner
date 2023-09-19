@@ -95,7 +95,9 @@ class ReportView(LoginRequiredMixin, ListView):
             "resolution_status",
             "resolution_time",
             "last_opened_time",
-            "raw_matches")
+            "raw_matches",
+            "raw_problem",
+            "datasource_last_modified")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -168,9 +170,11 @@ class ReportView(LoginRequiredMixin, ListView):
             self.scannerjob_filters = self.all_reports.order_by(
                 'scanner_job_pk').values(
                 'scanner_job_pk').annotate(
-                total=Count('scanner_job_pk', filter=sensitivity_filter & resolution_status_filter)
+                filtered_total=Count('scanner_job_pk',
+                                     filter=sensitivity_filter & resolution_status_filter),
+                total=Count('scanner_job_pk')
                 ).values(
-                    'scanner_job_name', 'total', 'scanner_job_pk'
+                    'scanner_job_name', 'total', 'filtered_total', 'scanner_job_pk'
                 )
 
         context['scannerjobs'] = (self.scannerjob_filters,
@@ -259,11 +263,7 @@ class UndistributedView(ReportView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['undistributed_scannerjobs'] = self.all_reports.order_by(
-            'scanner_job_pk').values(
-            'scanner_job_pk').annotate(
-            total=Count('scanner_job_pk')).values(
-            'scanner_job_name', 'scanner_job_pk', 'total')
+        context['undistributed_scannerjobs'] = self.scannerjob_filters
         return context
 
     def dispatch(self, request, *args, **kwargs):
