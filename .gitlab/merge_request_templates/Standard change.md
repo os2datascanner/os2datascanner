@@ -10,7 +10,7 @@ If any UI changes have been made, please include screenshots.
 /assign me
 /milestone %"Next Release"
 <!-- Other recommended quick actions (remove # to apply):
-#/request_review @af @jkh @tha @jdk @rkk @nsn @sos
+#/request_review @af @jkh @tha @jdk @rkk @nsn @sos @asl
 #/label ~bug
 #/label ~feature
 
