@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-08 10:04+0200\n"
+"POT-Creation-Date: 2023-09-21 11:16+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -324,7 +324,7 @@ msgstr "Hvorfor kan jeg ikke åbne matches fra filscan?"
 #: reportapp/templates/components/filters.html:30
 #: reportapp/templates/components/filters.html:59
 #: reportapp/templates/components/filters.html:91
-#: reportapp/templates/components/filters.html:126
+#: reportapp/templates/components/filters.html:124
 msgid "Clear"
 msgstr "Ryd"
 
@@ -348,28 +348,28 @@ msgstr "Kildetype"
 msgid "All source types"
 msgstr "Alle kildetyper"
 
-#: reportapp/templates/components/filters.html:127
+#: reportapp/templates/components/filters.html:125
 msgid "Resolution Status"
 msgstr "Håndteringsstatus"
 
-#: reportapp/templates/components/filters.html:133
+#: reportapp/templates/components/filters.html:131
 msgid "All resolution statuses"
 msgstr "Alle håndteringsstatusser"
 
-#: reportapp/templates/components/filters.html:148
+#: reportapp/templates/components/filters.html:146
 #: reportapp/templates/components/hits.html:68
 msgid "Resource age"
 msgstr "Kildealder"
 
-#: reportapp/templates/components/filters.html:156
+#: reportapp/templates/components/filters.html:154
 msgid "Oldest"
 msgstr "Ældste"
 
-#: reportapp/templates/components/filters.html:162
+#: reportapp/templates/components/filters.html:160
 msgid "Newest"
 msgstr "Nyeste"
 
-#: reportapp/templates/components/filters.html:179
+#: reportapp/templates/components/filters.html:177
 msgid "Include results, that are less than 30 days old"
 msgstr "Inkludér resultater, der er under 30 dage gamle"
 
@@ -483,8 +483,8 @@ msgid ""
 "You are about to delete selected email from your mailbox. OS2datascanner "
 "cannot reverse this action. Are you sure?"
 msgstr ""
-"Du er ved at slette valgte email fra din mailboks. Denne handling kan "
-"ikke fortrydes i OS2datascanner. Er du sikker?"
+"Du er ved at slette valgte email fra din mailboks. Denne handling kan ikke "
+"fortrydes i OS2datascanner. Er du sikker?"
 
 #: reportapp/templates/components/hit.html:157
 msgid "Delete"
@@ -1206,14 +1206,14 @@ msgid "Web"
 msgstr "Hjemmeside"
 
 #: reportapp/templatetags/handle_extras.py:109
-msgid "Unrecognized file type"
-msgstr "Uidentificerbar filtype"
+msgid "Unrecognized scan type"
+msgstr "Uidentificerbar scan type"
 
 #: reportapp/utils.py:26
 msgid "%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A"
 msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 
-#: reportapp/views/report_views.py:68
+#: reportapp/views/report_views.py:69
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 

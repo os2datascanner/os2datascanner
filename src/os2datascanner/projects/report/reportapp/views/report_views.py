@@ -42,7 +42,7 @@ from os2datascanner.engine2.rules.dict_lookup import EmailHeaderRule
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
 from ..utils import user_is
-from .view_utils import handle_report, delete_email, make_token
+from .view_utils import handle_report, delete_email
 from ..models.documentreport import DocumentReport
 from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
@@ -346,7 +346,7 @@ class HandleMatchView(HTMXEndpointView, DetailView):
         response = super().post(request, *args, **kwargs)
         report = self.get_object()
         action = request.POST.get('action')
-        handle_report(self.request.user, report, action)
+        handle_report(self.request.user.account, report, action)
 
         return response
 
@@ -451,7 +451,7 @@ class DeleteMailView(HTMXEndpointView, DetailView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         report = self.get_object()
-        delete_email(report, self.request.user)
+        delete_email(report, self.request.user.account)
 
         return response
 
@@ -474,6 +474,5 @@ class MassDeleteMailView(HTMXEndpointView, ListView):
         return reports
 
     def delete_emails(self, document_reports):
-        access_token = make_token()
         for document_report in document_reports:
-            delete_email(document_report, self.request.user, access_token)
+            delete_email(document_report, self.request.user.account)

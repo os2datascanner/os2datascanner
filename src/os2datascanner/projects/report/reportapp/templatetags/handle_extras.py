@@ -106,7 +106,7 @@ def find_scan_type(type_label):
         case "web":
             return _("Web")
         case _:
-            return _("Unrecognized file type")
+            return _("Unrecognized scan type")
 
 
 @register.filter

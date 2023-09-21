@@ -31,7 +31,6 @@ ARCHIVE_TAB = true
 MSGRAPH_ALLOW_DELETION = false
 MSGRAPH_APP_ID = ""
 MSGRAPH_CLIENT_SECRET = ""
-MSGRAPH_TENANT_ID = ""
 
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
@@ -127,7 +126,6 @@ SETTINGS_EXPORT = [
     'ARCHIVE_TAB',
     'MSGRAPH_APP_ID',
     'MSGRAPH_CLIENT_SECRET',
-    'MSGRAPH_TENANT_ID',
     'MSGRAPH_ALLOW_DELETION',
 ]
 

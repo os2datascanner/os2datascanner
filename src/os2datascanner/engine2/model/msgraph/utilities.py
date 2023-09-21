@@ -111,6 +111,24 @@ class MSGraphSource(Source):
             self._token = self._token_creator()
             return self.head(tail, _retry=True)
 
+        def delete_message_raw(self, owner, msg_id):
+            return WebRetrier().run(
+                self._session.delete,
+                f"https://graph.microsoft.com/v1.0/users/{owner}/messages/{msg_id}",
+                headers=self._make_headers(),
+            )
+
+        def delete_message(self, owner, msg_id, _retry=False):
+            response = self.delete_message_raw(owner, msg_id)
+            try:
+                response.raise_for_status()
+                return response
+            except requests.exceptions.HTTPError as ex:
+                if ex.response.status_code != 401 or _retry:
+                    raise ex
+                self._token = self._token_creator()
+                return self.delete_message(owner, msg_id, _retry=True)
+
         def follow_next_link(self, next_page, _retry=False):
             response = WebRetrier().run(
                     self._session.get, next_page, headers=self._make_headers())
