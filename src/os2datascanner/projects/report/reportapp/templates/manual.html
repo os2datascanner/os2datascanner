@@ -93,10 +93,20 @@
         <a href="{% static 'manualimages/figur23.png' %}">
           <img src="{% static 'manualimages/figur23.png' %}" />
         </a>
-        <p>Figur 23: Rapportmodul - Forside</p>
+        <p>Figur 23: Rapportmodul - Office365 mailscan</p>
       </div>
       <p>
-        Herfra kan man åbne den relevante fil eller mail direkte fra rapportmodulet ved at trykke “Åbn”. Skal man kunne åbne matches direkte fra systemet, skal systemet have tilladelse til dette. {% comment %}Der findes en beskrivelse af, hvordan dette opsættes i <a href="#">Teknisk implementering og opsætning af OS2datascanner</a>.{%endcomment%}
+        Hvis man har oprettet et scannerjob på en cloud service, så som et webscan eller en form for Office 365 scan, kan man åbne den relevante fil eller mail direkte fra rapportmodulet ved at trykke “Åbn”.
+      </p>
+      <div id="figure-27" class="figure-container">
+        <a href="{% static 'manualimages/figur27.png' %}">
+          <img src="{% static 'manualimages/figur27.png' %}" />
+        </a>
+        <p>Figur 27: Rapportmodul - Filscan</p>
+      </div>
+      <p>
+        Hvis man derimod har oprettet et scannerjob på for eksempel et filscan eller exchangescan, skal systemet have tilladelse til at åbne filen/mailen. {% comment %}Der findes en beskrivelse af, hvordan dette opsættes i <a href="#">Teknisk implementering og opsætning af OS2datascanner</a>.{%endcomment%}
+        Hvis dette ikke er en mulighed kan man trykke på "Kopiér sti" knappen, for at kopiere stien ind i sin browser. Man kan også trykke på "kopiér sti til mappe" knappen, for at finde frem til mappen hvor matchet ligger i.
       </p>
       <p>
         Når brugerne har fundet det match, som skal håndteres, skal man manuelt fjerne eller redigere det relevante match.
