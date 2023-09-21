@@ -4,6 +4,7 @@ MEDIA_ROOT = ["*"," src", "os2datascanner", "projects", "report"]
 
 # [mode]
 DEBUG = true
+SAML2_ENABLED = false
 
 # [functionality]
 HANDLE_DROPDOWN = true
@@ -73,7 +74,7 @@ METADATA_AUTO_CONF_URL = 'http://idp:8080/simplesaml/saml2/idp/metadata.php'
 
 # Optional settings below
 DEFAULT_NEXT_URL = '/'  # Custom target redirect URL after the user get logged in. Default to /admin if not set. This setting will be overwritten if you have parameter ?next= specificed in the login URL.
-CREATE_USER = 'TRUE' # Create a new Django user when a new user logs in. Defaults to True.
+CREATE_USER = false # Create a new Django user when a new user logs in. Only set this to True, if you're not going to import organizational structure.
 ASSERTION_URL = 'http://localhost:8040' # Custom URL to validate incoming SAML requests against
 ENTITY_ID = 'http://localhost:8040/saml2_auth/acs/' # Populates the Issuer element in authn request
 NAME_ID_FORMAT = 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient' # Sets the Format property of authn NameIDPolicy element
