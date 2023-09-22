@@ -17,10 +17,15 @@
     <div class="content">
       <h1>{% trans "OS2datascanner mini-scanner" %}</h1>
       <p>
-        {% blocktranslate trimmed %}
+        {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
+          {% blocktranslate trimmed %}
           The mini-scanner lets you execute any OS2datascanner rule on a single
           file, and returns the results directly to this page.
-        {% endblocktranslate %}
+          {% endblocktranslate %}
+          <br />
+          <br />
+          {% trans "Maximum allowed file size is: " %} {{ limit|filesizeformat }}
+        {% endwith %}
       </p>
       <form class="form"
             role="form"
