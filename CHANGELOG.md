@@ -38,6 +38,8 @@
 
   - An index has been created on the "only_notify_superadmin"-field on the
     DocumentReport model.
+    
+- The OrganizationalUnit overview is now considerably faster.
   
 ### Bugfixes
 
