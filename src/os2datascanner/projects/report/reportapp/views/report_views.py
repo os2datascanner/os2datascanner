@@ -20,6 +20,7 @@ import structlog
 from datetime import timedelta
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -459,12 +460,13 @@ class DeleteMailView(HTMXEndpointView, DetailView):
 
         try:
             delete_email(report, request.user.account)
-        except Exception as e:
+        except PermissionDenied as e:
+            error_message = _("Failed to delete {pn}: {e}").format(
+                pn=report.matches.handle.presentation_name, e=e)
             messages.add_message(
                 request,
                 messages.WARNING,
-                f"Failed to delete report {report.matches.handle.presentation_name}: {e}")
-
+                error_message)
         return response
 
 
@@ -489,8 +491,10 @@ class MassDeleteMailView(HTMXEndpointView, ListView):
         for report in document_reports:
             try:
                 delete_email(report, self.request.user.account)
-            except Exception as e:
+            except PermissionDenied as e:
+                error_message = _("Failed to delete {pn}: {e}").format(
+                    pn=report.matches.handle.presentation_name, e=e)
                 messages.add_message(
                     self.request,
                     messages.WARNING,
-                    f"Failed to delete report {report.matches.handle.presentation_name}: {e}")
+                    error_message)

@@ -52,15 +52,21 @@ def delete_email(document_report: DocumentReport, account: Account):
 
     # Return early scenarios
     if not settings.MSGRAPH_ALLOW_DELETION:
-        allow_deletion_message = "System configuration does not allow MSGraph deletion."
+        allow_deletion_message = _("System configuration does not allow mail deletion.")
         logger.warning(allow_deletion_message)
-        raise PermissionDenied(_(allow_deletion_message))
+        raise PermissionDenied(allow_deletion_message)
+
+    if not settings.MSGRAPH_APP_ID or settings.MSGRAPH_CLIENT_SECRET:
+        msgraph_app_settings_message = _("System configuration is missing"
+                                         " Azure-application credentials. ")
+        logger.warning(msgraph_app_settings_message)
+        raise PermissionDenied(msgraph_app_settings_message)
 
     owner = document_report.owner
     if not is_owner(owner, account):
-        not_owner_message = f"User {account} tried to delete an email belonging to {owner}!"
-        logger.warning(not_owner_message)
-        raise PermissionDenied(_(not_owner_message))
+        logger.warning(f"User {account} tried to delete an email belonging to {owner}!")
+        not_owner_message = _(f"Not allowed! You tried to delete an email belonging to {owner}!")
+        raise PermissionDenied(not_owner_message)
 
     # tenant_id isn't censored in metadata, which means we can grab it from there.
     tenant_id = None
@@ -71,8 +77,8 @@ def delete_email(document_report: DocumentReport, account: Account):
             break
 
     if not tenant_id:
-        no_tenant_message = f"Could not retrieve any tenant id from {document_report}"
-        logger.warning(no_tenant_message)
+        logger.warning(f"Could not retrieve any tenant id from {document_report}")
+        no_tenant_message = _("Could not find your Microsoft tenant!")
         raise PermissionDenied(no_tenant_message)
 
     # Open a session and start doing stuff
@@ -98,6 +104,8 @@ def delete_email(document_report: DocumentReport, account: Account):
                           document_report=document_report,
                           action=DocumentReport.ResolutionChoices.REMOVED)
         else:
-            delete_failed_message = f"Couldn't delete email! Got response: {delete_response}"
-            logger.warning(delete_failed_message)
-            raise PermissionDenied(_(delete_failed_message))
+            delete_failed_message = _(f"Couldn't delete email! Code: {delete_response.status_code}")
+            logger.warning(f"Couldn't delete email! Got response: {delete_response}")
+            # PermissionDenied is a bit misleading here, as it may not represent what went wrong.
+            # But sticking to this exception, makes handling it in the view easier.
+            raise PermissionDenied(delete_failed_message)

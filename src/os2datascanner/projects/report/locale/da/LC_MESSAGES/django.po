@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-21 11:16+0200\n"
+"POT-Creation-Date: 2023-09-25 14:37+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,27 +27,27 @@ msgstr "Accepteret"
 msgid "Not accepted"
 msgstr "Ikke accepteret"
 
-#: organizations/models/account.py:112
+#: organizations/models/account.py:116
 msgid "User"
 msgstr "Bruger"
 
-#: organizations/models/account.py:115
+#: organizations/models/account.py:119
 msgid "Last handle"
 msgstr "Sidste håndtering"
 
-#: organizations/models/account.py:123
+#: organizations/models/account.py:127
 msgid "image"
 msgstr "billede"
 
-#: organizations/models/account.py:128
+#: organizations/models/account.py:132
 msgid "Number of matches"
 msgstr "Antal matches"
 
-#: organizations/models/account.py:133
+#: organizations/models/account.py:137
 msgid "Number of withheld matches"
 msgstr "Antal tilbageholdte matches"
 
-#: organizations/models/account.py:139
+#: organizations/models/account.py:143
 msgid "Contact person"
 msgstr "Kontaktperson"
 
@@ -116,44 +116,44 @@ msgstr "følsomhed"
 msgid "probability"
 msgstr "sandsynlighed"
 
-#: reportapp/models/documentreport.py:141
+#: reportapp/models/documentreport.py:142
 #: reportapp/views/statistics_views.py:171
 msgid "Other"
 msgstr "Andet"
 
-#: reportapp/models/documentreport.py:142
+#: reportapp/models/documentreport.py:143
 msgid "Edited"
 msgstr "Redigeret"
 
-#: reportapp/models/documentreport.py:143
+#: reportapp/models/documentreport.py:144
 msgid "Deleted and journalized"
 msgstr "Slettet og journaliseret"
 
-#: reportapp/models/documentreport.py:144
+#: reportapp/models/documentreport.py:145
 msgid "Deleted"
 msgstr "Slettet"
 
-#: reportapp/models/documentreport.py:145
+#: reportapp/models/documentreport.py:146
 msgid "False positive"
 msgstr "Falsk positiv"
 
-#: reportapp/models/documentreport.py:148
+#: reportapp/models/documentreport.py:149
 msgid "number of matches"
 msgstr "antal matches"
 
-#: reportapp/models/documentreport.py:153
+#: reportapp/models/documentreport.py:154
 msgid "resolution status"
 msgstr "håndteringsstatus"
 
-#: reportapp/models/documentreport.py:156
+#: reportapp/models/documentreport.py:157
 msgid "resolution time"
 msgstr "håndteringstid"
 
-#: reportapp/models/documentreport.py:159
+#: reportapp/models/documentreport.py:160
 msgid "justification"
 msgstr "begrundelse"
 
-#: reportapp/models/documentreport.py:214
+#: reportapp/models/documentreport.py:215
 msgid "document reports"
 msgstr "dokument rapporter"
 
@@ -376,7 +376,7 @@ msgstr "Inkludér resultater, der er under 30 dage gamle"
 #: reportapp/templates/components/handle-match.html:10
 #: reportapp/templates/components/handle-match.html:43
 #: reportapp/templates/components/hit.html:120
-#: reportapp/templates/components/hit.html:179
+#: reportapp/templates/components/hit.html:181
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned. "
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -391,7 +391,7 @@ msgstr "Markér som håndterede"
 
 #: reportapp/templates/components/handle-match.html:18
 #: reportapp/templates/components/hit.html:125
-#: reportapp/templates/components/hit.html:187
+#: reportapp/templates/components/hit.html:189
 msgid ""
 "You are about to handle this result. This action does not change the file, "
 "that the result is about. Please do not handle a result before action has "
@@ -403,7 +403,7 @@ msgstr ""
 
 #: reportapp/templates/components/handle-match.html:25
 #: reportapp/templates/components/hit.html:131
-#: reportapp/templates/components/hit.html:174
+#: reportapp/templates/components/hit.html:176
 msgid "Revert"
 msgstr "Fortryd"
 
@@ -470,15 +470,15 @@ msgid "Copy link"
 msgstr "Kopiér link"
 
 #: reportapp/templates/components/hit.html:121
-#: reportapp/templates/components/hit.html:189
+#: reportapp/templates/components/hit.html:191
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:149
+#: reportapp/templates/components/hit.html:151
 msgid "Deletes email from your mailbox"
 msgstr "Sletter email fra din mailboks"
 
-#: reportapp/templates/components/hit.html:155
+#: reportapp/templates/components/hit.html:157
 msgid ""
 "You are about to delete selected email from your mailbox. OS2datascanner "
 "cannot reverse this action. Are you sure?"
@@ -486,37 +486,37 @@ msgstr ""
 "Du er ved at slette valgte email fra din mailboks. Denne handling kan ikke "
 "fortrydes i OS2datascanner. Er du sikker?"
 
-#: reportapp/templates/components/hit.html:157
+#: reportapp/templates/components/hit.html:159
 msgid "Delete"
 msgstr "Slet"
 
-#: reportapp/templates/components/hit.html:193
+#: reportapp/templates/components/hit.html:195
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:208
+#: reportapp/templates/components/hit.html:210
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:209
+#: reportapp/templates/components/hit.html:211
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:210
+#: reportapp/templates/components/hit.html:212
 msgid "Probability"
 msgstr "Sandsynlighed"
 
-#: reportapp/templates/components/hit.html:228
+#: reportapp/templates/components/hit.html:230
 msgid "A temporary error occurred during the latest check of this match"
 msgstr "Der opstod en midlertidig fejl under sidste tjek af dette match"
 
-#: reportapp/templates/components/hit.html:230
+#: reportapp/templates/components/hit.html:232
 msgid ""
 "OS2datascanner will automatically check this match again as part of the next "
 "scan"
 msgstr "OS2datascanner genbesøger dette match automatisk under næste scan"
 
-#: reportapp/templates/components/hit.html:234
+#: reportapp/templates/components/hit.html:236
 msgid "Show/hide technical details of the error"
 msgstr "Vis/skjul tekniske detaljer om fejlen"
 
@@ -1180,7 +1180,6 @@ msgstr "Skift"
 msgid "User since"
 msgstr "Bruger siden"
 
-#: reportapp/utils.py:24
 #: reportapp/templatetags/handle_extras.py:97
 msgid "File"
 msgstr "Fil"
@@ -1209,19 +1208,24 @@ msgstr "Hjemmeside"
 msgid "Unrecognized scan type"
 msgstr "Uidentificerbar scan type"
 
-#: reportapp/utils.py:26
+#: reportapp/utils.py:24
 msgid "%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A"
 msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 
-#: reportapp/views/report_views.py:69
+#: reportapp/views/report_views.py:70
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/statistics_views.py:87
+#: reportapp/views/report_views.py:464 reportapp/views/report_views.py:495
+#, python-brace-format
+msgid "Failed to delete {pn}: {e}"
+msgstr "Kunne ikke slette {pn}: {e}"
+
+#: reportapp/views/statistics_views.py:90
 msgid "The user does not have an account."
 msgstr "Brugeren har ikke en konto."
 
-#: reportapp/views/statistics_views.py:115
+#: reportapp/views/statistics_views.py:118
 #, python-brace-format
 msgid "An organizational unit with the UUID '{0}' was not found."
 msgstr "En organisatorisk enhed med UUID'et '{0}' blev ikke fundet."
@@ -1246,6 +1250,28 @@ msgstr "Mailscan"
 #, python-brace-format
 msgid "You deleted all results from {0} associated with {1}."
 msgstr "Du har slettet alle resultater fra {0} tilknyttet {1}."
+
+#: reportapp/views/view_utils.py:55
+msgid "System configuration does not allow mail deletion."
+msgstr "Systemindstillingerne tillader ikke email sletning."
+
+#: reportapp/views/view_utils.py:60
+msgid "System configuration is missing Azure-application credentials. "
+msgstr "Systemindstillingerne mangler Azure-applikation oplysninger."
+
+#: reportapp/views/view_utils.py:68
+#, python-brace-format
+msgid "Not allowed! You tried to delete an email belonging to {owner}!"
+msgstr "Ikke tilladt! Du har forsøgt at slette en email tilhørende {owner}!"
+
+#: reportapp/views/view_utils.py:81
+msgid "Could not find your Microsoft tenant!"
+msgstr "Kunne ikke finde din Microsoft tenant!"
+
+#: reportapp/views/view_utils.py:107
+#, python-brace-format
+msgid "Couldn't delete email! Code: {delete_response.status_code}"
+msgstr "Kunne ikke slette email! Fejlkode: {delete_response.status_code}"
 
 #~ msgid "DPO"
 #~ msgstr "DPO"
