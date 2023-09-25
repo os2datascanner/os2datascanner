@@ -1,5 +1,7 @@
 import requests
 import structlog
+
+from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
@@ -50,14 +52,15 @@ def delete_email(document_report: DocumentReport, account: Account):
 
     # Return early scenarios
     if not settings.MSGRAPH_ALLOW_DELETION:
-        logger.warning("System configuration does not allow MSGraph deletion.")
-        raise PermissionDenied
+        allow_deletion_message = "System configuration does not allow MSGraph deletion."
+        logger.warning(allow_deletion_message)
+        raise PermissionDenied(_(allow_deletion_message))
 
     owner = document_report.owner
     if not is_owner(owner, account):
-        logger.warning(f"User {account} tried to delete an email belonging "
-                       f"to {owner}!")
-        return
+        not_owner_message = f"User {account} tried to delete an email belonging to {owner}!"
+        logger.warning(not_owner_message)
+        raise PermissionDenied(_(not_owner_message))
 
     # tenant_id isn't censored in metadata, which means we can grab it from there.
     tenant_id = None
@@ -68,8 +71,9 @@ def delete_email(document_report: DocumentReport, account: Account):
             break
 
     if not tenant_id:
-        logger.warning(f"Could not retrieve any tenant id from {document_report}")
-        return
+        no_tenant_message = f"Could not retrieve any tenant id from {document_report}"
+        logger.warning(no_tenant_message)
+        raise PermissionDenied(no_tenant_message)
 
     # Open a session and start doing stuff
     with requests.Session() as session:
@@ -94,5 +98,6 @@ def delete_email(document_report: DocumentReport, account: Account):
                           document_report=document_report,
                           action=DocumentReport.ResolutionChoices.REMOVED)
         else:
-            logger.warning(f"Couldn't delete email! "
-                           f"Got response: {delete_response}")
+            delete_failed_message = f"Couldn't delete email! Got response: {delete_response}"
+            logger.warning(delete_failed_message)
+            raise PermissionDenied(_(delete_failed_message))

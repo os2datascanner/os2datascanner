@@ -46,9 +46,6 @@
 
   {% include "components/filters.html" %}
 
-  {# Snackbar for popup messages #}
-  {% for message in messages %}<div class="message-popup ">{{ message }}</div>{% endfor %}
-
 </div>
 
 {% if page_obj.paginator.count == 0 %}
@@ -56,3 +53,8 @@
 {% else %}
   {% include "components/hits.html" %}
 {% endif %}
+
+{# Snackbar for popup messages #}
+<div class="message-popup-area">
+  {% for message in messages %}<div class="message-popup ">{{ message }}</div>{% endfor %}
+</div>

@@ -456,11 +456,14 @@ class DeleteMailView(HTMXEndpointView, DetailView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         report = self.get_object()
-        delete_email(report, self.request.user.account)
 
-        # TODO only populate when delete_email returns an error
-        #  (and figure out for mass delete too)
-        messages.add_message(request, messages.WARNING, f" cant delete {report.pk}")
+        try:
+            delete_email(report, request.user.account)
+        except Exception as e:
+            messages.add_message(
+                request,
+                messages.WARNING,
+                f"Failed to delete report {report.matches.handle.presentation_name}: {e}")
 
         return response
 
@@ -483,5 +486,11 @@ class MassDeleteMailView(HTMXEndpointView, ListView):
         return reports
 
     def delete_emails(self, document_reports):
-        for document_report in document_reports:
-            delete_email(document_report, self.request.user.account)
+        for report in document_reports:
+            try:
+                delete_email(report, self.request.user.account)
+            except Exception as e:
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    f"Failed to delete report {report.matches.handle.presentation_name}: {e}")
