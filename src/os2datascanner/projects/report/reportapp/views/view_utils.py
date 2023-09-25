@@ -87,7 +87,8 @@ def delete_email(document_report: DocumentReport, account: Account):
         delete_response = gc.delete_message(owner, msg_id)
 
         if delete_response.ok:
-            logger.info(f"Successfully deleted email on behalf of {account}!")
+            logger.info(f"Successfully deleted email on behalf of {account}! "
+                        f"Settings resolution status REMOVED")
 
             handle_report(account,
                           document_report=document_report,

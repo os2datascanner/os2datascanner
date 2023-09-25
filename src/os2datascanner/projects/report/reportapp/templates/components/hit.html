@@ -140,9 +140,11 @@
                 </ul>
               </div>
             </div>
-            {% if settings.MSGRAPH_ALLOW_DELETION and type == 'msgraph-mail-account' %}
+            {# personal is set True in UserReportView, as it must be this users results. #}
+            {% if personal and settings.MSGRAPH_ALLOW_DELETION and type == 'msgraph-mail-account' %}
               <div class="delete-mail">
                 <button class="matches-handle button button--has-icon"
+                        id="{{ document_report.pk }}"
                         name='delete-mail'
                         title="{% trans "Deletes email from your mailbox" %}"
                         hx-post="{% url 'delete-mail' document_report.pk|unlocalize %}"

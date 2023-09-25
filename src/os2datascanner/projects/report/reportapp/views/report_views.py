@@ -19,7 +19,7 @@ import structlog
 
 from datetime import timedelta
 from django.conf import settings
-
+from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -235,6 +235,11 @@ class ReportView(LoginRequiredMixin, ListView):
 
 class UserReportView(ReportView):
     """Presents the user with their personal unhandled results."""
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["personal"] = True
+        return context
 
     def base_match_filter(self, reports):
         reports = super().base_match_filter(reports)
@@ -452,6 +457,10 @@ class DeleteMailView(HTMXEndpointView, DetailView):
         response = super().post(request, *args, **kwargs)
         report = self.get_object()
         delete_email(report, self.request.user.account)
+
+        # TODO only populate when delete_email returns an error
+        #  (and figure out for mass delete too)
+        messages.add_message(request, messages.WARNING, f" cant delete {report.pk}")
 
         return response
 

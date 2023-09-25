@@ -46,6 +46,9 @@
 
   {% include "components/filters.html" %}
 
+  {# Snackbar for popup messages #}
+  {% for message in messages %}<div class="message-popup ">{{ message }}</div>{% endfor %}
+
 </div>
 
 {% if page_obj.paginator.count == 0 %}
