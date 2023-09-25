@@ -4,14 +4,15 @@ from os2datascanner.engine2.rules.experimental.health_rule import TurboHealthRul
 
 
 class TestTurboHealthRule(unittest.TestCase):
-    """
-
-    """
-
     def setUp(self):
         self.rule = TurboHealthRule()
 
     def test_health_term_in_content(self):
+        """
+        A basic unit test to make sure that TurboHealthRule finds
+        the same matches as the new OrderedWordListRule would with
+        the same dataset.
+        """
         # Arrange
         content = "Cancer er en grim sygdom."
         expected = ["cancer", "sygdom"]
