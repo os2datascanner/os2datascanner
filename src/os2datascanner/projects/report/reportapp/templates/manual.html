@@ -85,7 +85,7 @@
         <p>Figur 22: Login - Rapportmodul</p>
       </div>
       <p>
-        Logger brugeren ind, vil vedkommende altså, baseret på sin bruger i organisationen, se de matches, som vedkommende har ansvaret for at håndtere. Fra rapportmodulet kan man så åbne de relevante filer for at undersøge matchene. Vær opmærksom på at ved åbning af filer fra et netværksdrev kan denne funktionalitet kræve ekstra opsætning. {%comment%}se bilag: <a href="#åben-filscan">Åbning af matches...</a>{%endcomment%}
+        Logger brugeren ind, vil vedkommende se de matches, som de har ansvaret for at håndtere. Fra rapportmodulet kan man så åbne de relevante filer for at undersøge matchene. Vær opmærksom på at ved åbning af filer fra et netværksdrev kan denne funktionalitet kræve ekstra opsætning.
       </p>
 
       <h2 id="handling">Håndtering af matches</h2>
@@ -96,7 +96,7 @@
         <p>Figur 23: Rapportmodul - Office365 mailscan</p>
       </div>
       <p>
-        Hvis man har oprettet et scannerjob af en cloud service, såsom et Web- eller Office365-scan, kan man åbne den relevante fil eller mail direkte fra rapportmodulet ved at trykke “Åbn”.
+        Hvis der er blevet oprettet et scannerjob af en cloud service, såsom et Web- eller Office365-scan, kan man åbne den relevante fil eller mail direkte fra rapportmodulet ved at trykke “Åbn”.
       </p>
       <div id="figure-27" class="figure-container">
         <a href="{% static 'manualimages/figur27.png' %}">
@@ -105,8 +105,8 @@
         <p>Figur 27: Rapportmodul - Filscan</p>
       </div>
       <p>
-        Hvis man derimod har oprettet et scannerjob på for eksempel et filscan eller exchangescan, skal systemet have tilladelse til at åbne filen/mailen. {% comment %}Der findes en beskrivelse af, hvordan dette opsættes i <a href="#">Teknisk implementering og opsætning af OS2datascanner</a>.{%endcomment%}
-        Hvis dette ikke er en mulighed kan man trykke på "Kopiér sti" knappen, for at kopiere stien ind i sin browser. Man kan også trykke på "kopiér sti til mappe" knappen, for at finde frem til mappen hvor matchet ligger i.
+        Hvis der er oprettet et scannerjob hvor dataen ligger on-premise, såsom et fil- eller Exchange-scan, kræves der som tidligere nævnt ekstra opsætning før filen/mailen kan åbnes.
+        Hvis dette ikke er en mulighed kan man trykke på "Kopiér sti" eller "kopiér sti til mappe" knappen, som kopiere stien til den fil eller mappe matchet ligger i.
       </p>
       <p>
         Når brugerne har fundet det match, som skal håndteres, skal man manuelt fjerne eller redigere det relevante match.
