@@ -1,5 +1,6 @@
 import logging
 
+from ..utilities.backoff import TimeoutRetrier
 from .explorer import message_received_raw as explorer_handler
 from .processor import message_received_raw as processor_handler
 from .matcher import message_received_raw as matcher_handler
@@ -89,7 +90,16 @@ def message_received_raw(body, channel, source_manager):  # noqa: CCR001, E501 t
         object_size = 0
         try:
             resource = message.handle.follow(source_manager)
-            object_size = resource.get_size()
+            object_size = TimeoutRetrier(max_tries=3, seconds=10).run(
+                    resource.get_size)
+        except TimeoutError:
+            # FileResource.get_size has timed out. This method should (in
+            # principle) be lightweight, so there may be something wrong with
+            # our state object: we err on the side of caution and clear it
+            logger.warning(
+                    f"{message.handle}.follow(...).get_size()"
+                    " took too long, clearing SourceManager state")
+            source_manager.clear()
         except Exception:
             pass
         yield ("os2ds_status", messages.StatusMessage(
