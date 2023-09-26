@@ -21,7 +21,7 @@ from django.conf import settings
 from pika.exceptions import AMQPError
 import structlog
 
-from django.forms import ModelMultipleChoiceField
+from django.forms import ModelMultipleChoiceField, TypedChoiceField
 
 from os2datascanner.projects.admin.organizations.models import Organization
 
@@ -349,19 +349,19 @@ class ScannerBase(object):
         user = UserWrapper(self.request.user)
 
         form.fields['schedule'].required = False
-        form.fields['exclusion_rules'].required = False
         org_qs = Organization.objects.filter(user.make_org_Q("uuid"))
         form.fields['organization'].queryset = org_qs
         form.fields['organization'].empty_label = None
 
         form.fields["rules"] = ModelMultipleChoiceField(
             Rule.objects.all(),
-            validators=ModelMultipleChoiceField.default_validators)
-
-        form.fields["exclusion_rules"] = ModelMultipleChoiceField(
-            Rule.objects.all(),
             validators=ModelMultipleChoiceField.default_validators,
-            required=False)
+            )
+
+        form.fields["exclusion_rules"] = TypedChoiceField(
+            choices=((r.pk, r.name) for r in Rule.objects.all()),
+            required=False
+            )
 
         return form
 

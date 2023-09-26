@@ -31,13 +31,6 @@
   <script type="text/javascript">
   (function ($) {
     $(document).ready(function () {
-      // set up selected rules based on the form values
-      {% for val in form.rules.value %}$("#available_rules li[data-rule-id=\"{{ val }}\"").trigger("click");{% endfor %}
-
-      {% for val in form.exclusion_rules.value %}
-      $("#available_exclusion_rules li[data-rule-id=\"{{ val }}\"").trigger("click");
-      {% endfor %}
-
       $("#id_{{ form.download_sitemap.name }}").change(function() {
         if( $(this).is(':checked')) {
           $("#{{ form.sitemap_url.auto_id }}_container").show();
@@ -89,7 +82,6 @@
 
   <!-- Available Employees widget -->
   <!-- <script type="text/javascript" src="{% static 'js/employeeSelector.js' %}"></script> -->
-  <script type="text/javascript" src="{% static 'js/ruleselector.js' %}"></script>
   <script src="{% static 'js/options.js' %}"></script>
 
   <!-- Tree view widget -->
@@ -684,82 +676,12 @@
           </fieldset>
         </section>
 
-        <section class="data-form">
-          <fieldset class="form__fieldset">
-            <h3 class="required-form">{% trans "Add rules" %}</h3>
-            <div id="{% if view.edit %}messageColorId{% endif %}"
-                 class="form__group{% if form.rules.errors %} has-error{% endif %}">
-              <div class="select-rules">
-
-                <ul id="available_rules" class="select-rules__available">
-                  <div class="select-rules-title">{% trans "Available rules" %}</div>
-                  {% for value, tag in form.rules.field.choices %}
-                    <li class="inclusion rule" data-rule-id="{{ value }}">
-                      <a href="javascript:void(0);"
-                         class="add-rule-button"
-                         title="{{ description }}"
-                         role="button">{{ tag }}</a>
-                    </li>
-                  {% endfor %}
-                </ul>
-
-                <i id="chevron_right" class="material-icons">chevron_right</i>
-
-                <div id="selected_rules" class="select-rules__selected">
-                  <div class="select-rules-title">{% trans "Selected rules" %}</div>
-                  <div id="rules_list"></div>
-                </div>
-
-                {% if view.edit %}
-                  <div id="changed_rules" class="changed_rules">
-                    Bemærk, at ændringer i regelsættet betyder, at alle filer skal scannes på ny.
-                  </div>
-                {% endif %}
-
-                {% if form.rules.errors %}{{ form.rules.errors }}{% endif %}
-              </div>
-            </div>
-          </fieldset>
-        </section>
+        {% include "components/rule-selector.html" with rules=form.rules is_required=True selector_id="rules" component_title="Add rule" changed_id="changed_rules" %}
 
         {% if settings.EXCLUSION_RULES %}
-          <section class="data-form">
-            <fieldset class="form__fieldset">
-              <h3>{% trans "Add exclusion rules" %}</h3>
-              <div id="{% if view.edit %}messageColorId_exclusion{% endif %}"
-                   class="form__group{% if form.exclusion_rules.errors %} has-error{% endif %}">
-                <div class="select-rules">
 
-                  <ul id="available_exclusion_rules" class="select-rules__available">
-                    <div class="select-rules-title">{% trans "Available exclusion rules" %}</div>
-                    {% for value, tag in form.exclusion_rules.field.choices %}
-                      <li class="exclusion rule" data-rule-id="{{ value }}">
-                        <a href="javascript:void(0);"
-                           class="add-rule-button"
-                           title="{{ description }}"
-                           role="button">{{ tag }}</a>
-                      </li>
-                    {% endfor %}
-                  </ul>
+          {% include "components/rule-selector.html" with rules=form.exclusion_rules selector_id="exclusion_rules" component_title="Add exclusion rule" changed_id="changed_exclusion_rules" %}
 
-                  <i id="chevron_right" class="material-icons">chevron_right</i>
-
-                  <div id="selected_rules" class="select-rules__selected">
-                    <div class="select-rules-title">{% trans "Selected exclusion rules" %}</div>
-                    <div id="exclusion_rules_list"></div>
-                  </div>
-
-                  {% if view.edit %}
-                    <div id="changed_exclusion_rules" class="changed_rules">
-                      Bemærk, at ændringer i regelsættet betyder, at alle filer skal scannes på ny.
-                    </div>
-                  {% endif %}
-
-                  {% if form.exclusion_rules.errors %}{{ form.exclusion_rules.errors }}{% endif %}
-                </div>
-              </div>
-            </fieldset>
-          </section>
         {% endif %}
 
         <section class="data-form">

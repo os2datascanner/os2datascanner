@@ -19,6 +19,11 @@
   - Using the command in the admin module gives information about the
     following objects: Account, Alias, OrganizationalUnit, Organization,
     UserErrorLog, and Rule.
+    
+- From this point on, it is only allowed to select one rule per scanner job.
+  If one wishes to use combinations of rules, the rule builder should
+  be used to create a new rule from existing ones.
+    
 
 ### General improvements
 
