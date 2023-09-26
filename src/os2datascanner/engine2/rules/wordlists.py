@@ -43,27 +43,29 @@ class OrderedWordlistRule(SimpleRule):
     def __init__(self, dataset: str, **super_kwargs):
         super().__init__(**super_kwargs)
         self._dataset = dataset
-        self._wordlists = load_words(dataset)
-        expression = "|".join(r"(\b" + re.escape(w) + r"\b)" for w in self._wordlists)
-        self._compiled_expr = re.compile(expression, re.IGNORECASE | re.DOTALL)
+        self._wordlists = frozenset(load_words(dataset))
+        self._compiled_expr = re.compile(r"\w+", re.IGNORECASE | re.DOTALL)
 
     @property
     def presentation_raw(self) -> str:
         return f"lists of words from dataset {self._dataset}"
 
     def match(self, content: str) -> Optional[Iterator[dict]]:  # noqa
+
         if content is None:
             return
 
         for m in self._compiled_expr.finditer(content):
-            begin, end = m.span()
-            context_begin = max(begin - 50, 0)
-            context_end = min(end + 50, len(content))
-            yield {
-                "match": m.group(),
-                "offset": begin,
-                "context": content[context_begin:context_end],
-                "context_offset": min(begin, 50)
+            lowered = str(m.group()).lower()
+            if lowered in self._wordlists:
+                begin, end = m.span()
+                context_begin = max(begin - 50, 0)
+                context_end = min(end + 50, len(content))
+                yield {
+                    "match": m.group(),
+                    "offset": begin,
+                    "context": content[context_begin:context_end],
+                    "context_offset": min(begin, 50)
                 }
 
     def to_json_object(self) -> dict:
