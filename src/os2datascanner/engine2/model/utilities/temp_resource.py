@@ -12,6 +12,9 @@ class NamedTemporaryResource:
     def open(self, mode):
         return open(self.get_path(), mode)
 
+    def size(self):
+        return os.path.getsize(self.get_path())
+
     def get_path(self) -> str:
         if self._dir is None:
             self._dir = mkdtemp()
