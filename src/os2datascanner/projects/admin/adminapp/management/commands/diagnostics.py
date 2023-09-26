@@ -14,12 +14,14 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+import json
+
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 
 from ....organizations.models import Account, Alias, OrganizationalUnit, Organization
 from ...models.usererrorlog import UserErrorLog
-from ...models.rules.rule import Rule
+from ...models.rules.customrule import CustomRule
 
 
 class Command(BaseCommand):
@@ -103,11 +105,20 @@ class Command(BaseCommand):
 
     def diagnose_rules(self):
         print("\n\n>> Running diagnostics on rules ...")
-        rules = Rule.objects.all().select_related('customrule')
+        rules = CustomRule.objects.all()
 
-        print(f"Found {rules.count()} rules:")
+        print(f"Found {rules.count()} custom rules:")
         for rule in rules:
-            print(f"  {rule.name} ({rule.__class__})")
+            print(f"\n===={rule.name}====")
+            print(f"Description:\n\"{rule.description}\"")
+            if scanners := rule.scanners.all():
+                print("\nScanners:")
+                [print(f"· {scanner.name} ({scanner.pk})") for scanner in scanners]
+            else:
+                print("\nNo connected scanners.")
+            # We run this through a JSON-formatter to print it prettier.
+            print("\nRule JSON:")
+            print(json.dumps(rule._rule, indent=2))
 
     def handle(self, only, **options):
 
@@ -123,7 +134,7 @@ class Command(BaseCommand):
                 case "UserErrorLog":
                     self.diagnose_errors()
                 case "OrganizationalUnit":
-                    self.diagnose_organizations()
+                    self.diagnose_units()
                 case "Organization":
                     self.diagnose_organizations()
                 case "Rule":
