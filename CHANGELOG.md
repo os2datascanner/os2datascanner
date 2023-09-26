@@ -44,7 +44,7 @@
 
   - An index has been created on the "only_notify_superadmin"-field on the
     DocumentReport model.
-
+    
 - The OrganizationalUnit overview is now considerably faster.
 
 - The user manual for the report module, has been updated to match the current
