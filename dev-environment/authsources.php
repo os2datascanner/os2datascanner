@@ -1,10 +1,6 @@
 <?php
 /*
  This is used for local development only.
-
- In case of updates to this file, the authsources.php
- used for the test server should also be updated:
- https://git.magenta.dk/labs/salt-automation
 */
 $config = array(
 
@@ -14,32 +10,32 @@ $config = array(
 
     'example-userpass' => array(
         'exampleauth:UserPass',
-        'admin:admin' => array(
-            'email' => 'user2@example.com',
-            'username' => 'admin',
-            'first_name' => 'IT',
-            'last_name' => 'Guy',
+        'jkh@magenta43dk.onmicrosoft.com:admin' => array(
+            'email' => 'jkh@magenta43dk.onmicrosoft.com',
+            'username' => 'jkh@magenta43dk.onmicrosoft.com',
+            'first_name' => 'Jonas Kofoed',
+            'last_name' => 'Hansen',
             'sid' => 'S-DIG',
         ),
-        'familieleder:sagsbehandler' => array(
-            'email' => 'user3@example.com',
-            'username' => 'familieleder',
-            'first_name' => 'Familie',
-            'last_name' => 'Leder',
+        'af@magenta43dk.onmicrosoft.com:admin' => array(
+            'email' => 'af@magenta43dk.onmicrosoft.com',
+            'username' => 'af@magenta43dk.onmicrosoft.com',
+            'first_name' => 'Alexander "El Jefe"',
+            'last_name' => 'Faithfull',
             'sid' => 'Familierådgivning',
         ),
-        'familieraadgiver:sagsbehandler' => array(
-            'email' => 'user4@example.com',
-            'username' => 'familieraadgiver',
-            'first_name' => 'Familie',
-            'last_name' => 'Raadgiver',
+        'jdk@magenta43dk.onmicrosoft.com:admin' => array(
+            'email' => 'jdk@magenta43dk.onmicrosoft.com',
+            'username' => 'jdk@magenta43dk.onmicrosoft.com',
+            'first_name' => 'Jesper Dam',
+            'last_name' => 'Knudgaard',
             'sid' => 'Familierådgivning',
         ),
-        'ungeleder:sagsbehandler' => array(
-            'email' => 'user5@example.com',
-            'username' => 'ungeleder',
-            'first_name' => 'Unge',
-            'last_name' => 'Leder',
+        'datascanner-admin@magenta43dk.onmicrosoft.com:admin' => array(
+            'email' => 'datascanner-admin@magenta43dk.onmicrosoft.com',
+            'username' => 'datascanner-admin@magenta43dk.onmicrosoft.com',
+            'first_name' => 'admin',
+            'last_name' => 'datascanner',
             'sid' => 'Ungerådgivning',
         ),
         'ungeraadgiver:sagsbehandler' => array(
