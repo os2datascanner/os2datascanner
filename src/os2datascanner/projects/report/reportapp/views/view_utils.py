@@ -9,6 +9,7 @@ from os2datascanner.engine2.model.msgraph import MSGraphMailMessageHandle
 from os2datascanner.engine2.model.msgraph.utilities import make_token, MSGraphSource
 from os2datascanner.projects.report.organizations.models import Account
 from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
+from requests import HTTPError
 
 # Consider moving GraphCaller out of MSGraphSource.
 GraphCaller = MSGraphSource.GraphCaller
@@ -56,7 +57,7 @@ def delete_email(document_report: DocumentReport, account: Account):
         logger.warning(allow_deletion_message)
         raise PermissionDenied(allow_deletion_message)
 
-    if not settings.MSGRAPH_APP_ID or settings.MSGRAPH_CLIENT_SECRET:
+    if not settings.MSGRAPH_APP_ID or not settings.MSGRAPH_CLIENT_SECRET:
         msgraph_app_settings_message = _("System configuration is missing"
                                          " Azure-application credentials. ")
         logger.warning(msgraph_app_settings_message)
@@ -65,7 +66,8 @@ def delete_email(document_report: DocumentReport, account: Account):
     owner = document_report.owner
     if not is_owner(owner, account):
         logger.warning(f"User {account} tried to delete an email belonging to {owner}!")
-        not_owner_message = _(f"Not allowed! You tried to delete an email belonging to {owner}!")
+        not_owner_message = (_("Not allowed! You tried to delete an email belonging to {owner}!").
+                             format(owner=owner))
         raise PermissionDenied(not_owner_message)
 
     # tenant_id isn't censored in metadata, which means we can grab it from there.
@@ -94,18 +96,20 @@ def delete_email(document_report: DocumentReport, account: Account):
 
         msg_id = message_handle.relative_path if message_handle else None
 
-        delete_response = gc.delete_message(owner, msg_id)
+        try:
+            delete_response = gc.delete_message(owner, msg_id)
 
-        if delete_response.ok:
-            logger.info(f"Successfully deleted email on behalf of {account}! "
-                        f"Settings resolution status REMOVED")
+            if delete_response.ok:
+                logger.info(f"Successfully deleted email on behalf of {account}! "
+                            f"Settings resolution status REMOVED")
 
-            handle_report(account,
-                          document_report=document_report,
-                          action=DocumentReport.ResolutionChoices.REMOVED)
-        else:
-            delete_failed_message = _(f"Couldn't delete email! Code: {delete_response.status_code}")
-            logger.warning(f"Couldn't delete email! Got response: {delete_response}")
+                handle_report(account,
+                              document_report=document_report,
+                              action=DocumentReport.ResolutionChoices.REMOVED)
+        except HTTPError as ex:
+            delete_failed_message = _("Couldn't delete email! Code: {status_code}").format(
+                status_code=ex.response.status_code)
+            logger.warning(f"Couldn't delete email! Got response: {ex.response}")
             # PermissionDenied is a bit misleading here, as it may not represent what went wrong.
             # But sticking to this exception, makes handling it in the view easier.
             raise PermissionDenied(delete_failed_message)
