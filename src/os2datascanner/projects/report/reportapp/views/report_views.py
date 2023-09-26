@@ -19,7 +19,8 @@ import structlog
 
 from datetime import timedelta
 from django.conf import settings
-
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -42,6 +43,7 @@ from os2datascanner.engine2.rules.dict_lookup import EmailHeaderRule
 from os2datascanner.projects.report.reportapp.models.roles.role import Role
 
 from ..utils import user_is
+from .view_utils import handle_report, delete_email
 from ..models.documentreport import DocumentReport
 from ..models.roles.defaultrole import DefaultRole
 from ..models.roles.remediator import Remediator
@@ -137,6 +139,9 @@ class ReportView(LoginRequiredMixin, ListView):
         if (method := self.request.GET.get('resolution_status')) and method != 'all':
             self.document_reports = self.document_reports.filter(resolution_status=int(method))
 
+        if (source_type := self.request.GET.get('source_type')) and source_type != 'all':
+            self.document_reports = self.document_reports.filter(source_type=source_type)
+
     def order_queryset_by_property(self):
         """Checks if a sort key is allowed and orders the queryset"""
         allowed_sorting_properties = [
@@ -194,6 +199,13 @@ class ReportView(LoginRequiredMixin, ListView):
                                     s["total"]) for s in sensitivities),
                                     self.request.GET.get('sensitivities', 'all'))
 
+        context['source_types'] = (self.all_reports.order_by("source_type").values(
+            "source_type"
+        ).annotate(
+            total=Count("source_type", filter=sensitivity_filter & scannerjob_filter),
+        ).values("source_type", "total"),
+                                   self.request.GET.get('source_type', 'all'))
+
         resolution_status = self.all_reports.order_by(
                 'resolution_status').values(
                 'resolution_status').annotate(
@@ -224,6 +236,11 @@ class ReportView(LoginRequiredMixin, ListView):
 
 class UserReportView(ReportView):
     """Presents the user with their personal unhandled results."""
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["personal"] = True
+        return context
 
     def base_match_filter(self, reports):
         reports = super().base_match_filter(reports)
@@ -335,22 +352,9 @@ class HandleMatchView(HTMXEndpointView, DetailView):
         response = super().post(request, *args, **kwargs)
         report = self.get_object()
         action = request.POST.get('action')
-        self.handle_report(report, action)
+        handle_report(self.request.user.account, report, action)
 
         return response
-
-    def handle_report(self, report, action):
-        try:
-            self.request.user.account.update_last_handle()
-        except Exception as e:
-            logger.warning("Exception raised while trying to update last_handle field "
-                           f"of account belonging to user {self.request.user}:", e)
-
-        report.resolution_status = action
-        report.raw_problem = None
-        report.save()
-        logger.info(f"Successfully handled DocumentReport {report} with "
-                    f"resolution_status {action}.")
 
 
 class MassHandleView(HTMXEndpointView, ListView):
@@ -431,7 +435,6 @@ class DistributeMatchesView(HTMXEndpointView, ListView):
     def get_queryset(self):
         qs = super().get_queryset()
         scanner_job_pk = self.request.POST.get('distribute-to')
-        print(scanner_job_pk)
         qs = qs.filter(scanner_job_pk=scanner_job_pk)
         return qs
 
@@ -444,3 +447,54 @@ class DistributeMatchesView(HTMXEndpointView, ListView):
         logger.info(f"Updated DocumetReport objects: {update_output}")
 
         return response
+
+
+class DeleteMailView(HTMXEndpointView, DetailView):
+    """ View for sending a delete request for one email
+    through the MSGraph message API. """
+    model = DocumentReport
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        report = self.get_object()
+
+        try:
+            delete_email(report, request.user.account)
+        except PermissionDenied as e:
+            error_message = _("Failed to delete {pn}: {e}").format(
+                pn=report.matches.handle.presentation_name, e=e)
+            messages.add_message(
+                request,
+                messages.WARNING,
+                error_message)
+        return response
+
+
+class MassDeleteMailView(HTMXEndpointView, ListView):
+    """ View for sending delete requests for multiple emails
+     through the MSGraph message API. """
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        reports = self.get_queryset()
+        self.delete_emails(reports)
+
+        return response
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        pks = self.request.POST.getlist("table-checkbox", [])
+        reports = qs.filter(pk__in=pks)
+        return reports
+
+    def delete_emails(self, document_reports):
+        for report in document_reports:
+            try:
+                delete_email(report, self.request.user.account)
+            except PermissionDenied as e:
+                error_message = _("Failed to delete {pn}: {e}").format(
+                    pn=report.matches.handle.presentation_name, e=e)
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    error_message)

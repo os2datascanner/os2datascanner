@@ -24,6 +24,7 @@
   If one wishes to use combinations of rules, the rule builder should
   be used to create a new rule from existing ones.
     
+- Added support in the report module for deleting Office 365 emails belonging to logged-in user. 
 
 ### General improvements
 
@@ -48,7 +49,7 @@
   
 ### Bugfixes
 
-- Scannerjobs for Exchangesscanner won't start until validation is confirmed
+- Scannerjobs for Exchangescanner won't start until validation is confirmed
 
 - Users in the report module can now be granted superuser status from the
   admin module through their connected Account object.

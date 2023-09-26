@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load l10n %}
+{% load handle_extras %}
 
 <form id="filter_form"
       name='filter_form'
@@ -13,6 +14,7 @@
   <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}" />
   <input type="hidden" name="order" id="order" value="{{ order }}" />
 
+  <h1>{{ source_type }}</h1>
   <div class="match_filtering_wrapper">
     <div>
       <button type="button"
@@ -68,6 +70,38 @@
                   {% if sensitivities|last == sensitivity.0.value|stringformat:"i" %}selected="selected"{% endif %}>
             {{ sensitivity.0.presentation }}
             ({{ sensitivity.1 }})
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="match_filtering_wrapper">
+    <div>
+      <button type="button"
+              class="match_filtering_clear_button"
+              name="clear_source_type"
+              hx-trigger="click"
+              hx-get="{{ request.path }}"
+              hx-swap="outerHTML"
+              hx-target=".content"
+              hx-select=".content"
+              hx-include="[id='filter_form'], [id='dropdown_options']"
+              hx-params="not source_type"
+              hx-indicator="#report-page-indicator">{% trans "Clear" %}</button>
+      <label for="source-types" class="match_filtering_label">{% trans "Source Type" %}</label>
+    </div>
+    <div class="match_filtering dropdown">
+      <select name="source_type" id="source_type" autocomplete="off">
+        <option value="all"
+                {% if source_types|last == "all" %}selected="selected"{% endif %}>
+          {% trans "All source types" %}
+        </option>
+        {% for source_type in source_types|first %}
+          <option value="{{ source_type.source_type }}"
+                  {% if request.GET.source_type == source_type.source_type %}selected="selected"{% endif %}>
+            {% find_scan_type source_type.source_type %}
+            ({{ source_type.total }})
           </option>
         {% endfor %}
       </select>

@@ -27,6 +27,11 @@ ALLOW_CONTACT_IT = false
 ALLOW_CONTACT_MAGENTA = false
 ARCHIVE_TAB = true
 
+# [msgraph]
+MSGRAPH_ALLOW_DELETION = false
+MSGRAPH_APP_ID = ""
+MSGRAPH_CLIENT_SECRET = ""
+
 # [site]
 # The URL of this site, used in links in emails and in the redirect URL for
 # OAuth 2.0 services. (This value should end with a forward slash.)
@@ -119,6 +124,9 @@ SETTINGS_EXPORT = [
     'ALLOW_CONTACT_IT',
     'ALLOW_CONTACT_MAGENTA',
     'ARCHIVE_TAB',
+    'MSGRAPH_APP_ID',
+    'MSGRAPH_CLIENT_SECRET',
+    'MSGRAPH_ALLOW_DELETION',
 ]
 
 # [internationalization]

@@ -1,0 +1,18 @@
+.message-popup-area {
+  position: fixed;
+  width: 600px;
+  left: calc(50vw - 300px);
+  bottom: 0px;
+  z-index: 1000;
+  max-height: 100vh;
+  overflow-y: scroll;
+
+  .message-popup {
+    border-radius: var(--border-radius-widget);
+    box-shadow: var(--box-shadow-widget);
+    background-color: var(--color-widget-bg);
+    text-align: center;
+    padding: 2rem;
+    margin: 1rem 2rem;
+  }
+}
