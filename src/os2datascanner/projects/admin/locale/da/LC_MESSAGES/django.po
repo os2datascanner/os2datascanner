@@ -19,27 +19,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: adminapp/admin.py:92
+#: adminapp/admin.py:94
 msgid "Rule cannot be compiled by scanner"
 msgstr "Reglen kan ikke kompileres af scanneren"
 
-#: adminapp/admin.py:96
+#: adminapp/admin.py:98
 msgid "CPR rule should not be used more than once"
 msgstr "CPR-reglen kan ikke bruges mere end én gang"
 
-#: adminapp/admin.py:100
+#: adminapp/admin.py:102
 msgid "Health-information rule should not be used more than once"
 msgstr "Helbredsinformations-reglen kan ikke bruges mere end én gang"
 
-#: adminapp/admin.py:156
+#: adminapp/admin.py:158
 msgid "An errorlog cannot both be new and removed"
 msgstr "En fejlbesked kan ikke både være ny og fjernet"
 
-#: adminapp/admin.py:195
+#: adminapp/admin.py:197
 msgid "Change new-status to True"
 msgstr "Sæt ny-status til True"
 
-#: adminapp/admin.py:199
+#: adminapp/admin.py:201
 #, python-brace-format
 msgid ""
 "Changed {qs_count} elements new-status to True. Note: if the element has its "
@@ -48,47 +48,47 @@ msgstr ""
 "Ændrede {qs_count} elementers ny-status til True. Bemærk: hvis et element "
 "har er_fjernet attributtet sat til True, så er den ikke blevet ændret"
 
-#: adminapp/admin.py:204
+#: adminapp/admin.py:206
 msgid "Change new-status to False"
 msgstr "Sæt ny-status til False"
 
-#: adminapp/admin.py:208
+#: adminapp/admin.py:210
 #, python-brace-format
 msgid "Changed {qs_count} elements new-status to False"
 msgstr "Ændrede {qs_count} elementers ny-status til False"
 
-#: adminapp/admin.py:211
+#: adminapp/admin.py:213
 msgid "Change removed-status to True"
 msgstr "Sæt fjernet-status til True"
 
-#: adminapp/admin.py:215
+#: adminapp/admin.py:217
 #, python-brace-format
 msgid "Changed {qs_count} elements removed-status to True"
 msgstr "Ændrede {qs_count} elementers fjernet-status til True"
 
-#: adminapp/admin.py:218
+#: adminapp/admin.py:220
 msgid "Change removed-status to False"
 msgstr "Sæt fjernet-status til False"
 
-#: adminapp/admin.py:222
+#: adminapp/admin.py:224
 #, python-brace-format
 msgid "Changed {qs_count} elements removed-status to False"
 msgstr "Ændrede {qs_count} elementers fjernet-status til True"
 
-#: adminapp/admin.py:240
+#: adminapp/admin.py:242
 msgid "Change resolved-status to True"
 msgstr "Sæt løst-status til True"
 
-#: adminapp/admin.py:244
+#: adminapp/admin.py:246
 #, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to True"
 msgstr "Ændrede {qs_count} elementers løst-status til True"
 
-#: adminapp/admin.py:247
+#: adminapp/admin.py:249
 msgid "Change resolved-status to False"
 msgstr "Sæt løst-status til False"
 
-#: adminapp/admin.py:251
+#: adminapp/admin.py:253
 #, python-brace-format
 msgid "Changed {qs_count} elements resolved-status to False"
 msgstr "Ændrede {qs_count} elementers løst-status til True"
@@ -568,50 +568,54 @@ msgstr "Eksperimentel"
 msgid "CPR-nr. (Turbo)"
 msgstr "CPR-nr. (Turbo)"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:43
-#: adminapp/templates/components/admin-widgets/rule-builder.html:84
-#: adminapp/templates/components/admin-widgets/rule-builder.html:117
+#: adminapp/templates/components/admin-widgets/rule-builder.html:37
+msgid "health information (Turbo)"
+msgstr "helbredsinformation (Turbo)"
+
+#: adminapp/templates/components/admin-widgets/rule-builder.html:44
+#: adminapp/templates/components/admin-widgets/rule-builder.html:85
+#: adminapp/templates/components/admin-widgets/rule-builder.html:118
 #: adminapp/templatetags/utility_tags.py:62
 msgid "and"
 msgstr "og"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:58
+#: adminapp/templates/components/admin-widgets/rule-builder.html:59
 msgid "or"
 msgstr "eller"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:75
-#: adminapp/templates/components/admin-widgets/rule-builder.html:96
-#: adminapp/templates/components/admin-widgets/rule-builder.html:112
+#: adminapp/templates/components/admin-widgets/rule-builder.html:76
+#: adminapp/templates/components/admin-widgets/rule-builder.html:97
+#: adminapp/templates/components/admin-widgets/rule-builder.html:113
 msgid "with"
 msgstr "med"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:78
-#: adminapp/templates/components/admin-widgets/rule-builder.html:115
+#: adminapp/templates/components/admin-widgets/rule-builder.html:79
+#: adminapp/templates/components/admin-widgets/rule-builder.html:116
 msgid "modulus 11-,"
 msgstr "modulus 11-,"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:82
+#: adminapp/templates/components/admin-widgets/rule-builder.html:83
 msgid "probability,-"
 msgstr "sandsynligheds-,"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:87
-#: adminapp/templates/components/admin-widgets/rule-builder.html:120
+#: adminapp/templates/components/admin-widgets/rule-builder.html:88
+#: adminapp/templates/components/admin-widgets/rule-builder.html:121
 msgid "context check"
 msgstr "konteksttjek"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:92
+#: adminapp/templates/components/admin-widgets/rule-builder.html:93
 msgid "Regular expression"
 msgstr "Regulært udtryk"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:99
+#: adminapp/templates/components/admin-widgets/rule-builder.html:100
 msgid "expanded matching"
 msgstr "udvidet søgning"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:105
+#: adminapp/templates/components/admin-widgets/rule-builder.html:106
 msgid "field name"
 msgstr "navn på felt"
 
-#: adminapp/templates/components/admin-widgets/rule-builder.html:107
+#: adminapp/templates/components/admin-widgets/rule-builder.html:108
 msgctxt "verb"
 msgid "matches"
 msgstr "resultater fundet"

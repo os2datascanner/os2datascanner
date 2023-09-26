@@ -26,6 +26,9 @@
     
 - Added support in the report module for deleting Office 365 emails belonging to logged-in user. 
 
+- A new replacement for the Health Rule has been added.
+  This rule is simpler and promises far greater scanning speeds.
+
 ### General improvements
 
 - Users will now only ever be able to see data from their own organization
@@ -84,7 +87,7 @@
 
 - Excel and Spreadsheet-like files will now be processed with pandas.DataFrame
   and present a match with a precise location including sheet and row.
-
+  
 ### General improvements
 
 - The pipeline will stop execution of a rule component after it has produced

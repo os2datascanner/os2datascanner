@@ -33,6 +33,7 @@ from django.views.generic import View, ListView, DetailView
 from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.engine2.rules.cpr import CPRRule
 from os2datascanner.engine2.rules.experimental.cpr import TurboCPRRule
+from os2datascanner.engine2.rules.experimental.health_rule import TurboHealthRule
 from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.name import NameRule
 from os2datascanner.engine2.rules.address import AddressRule
@@ -55,7 +56,7 @@ logger = structlog.get_logger()
 RENDERABLE_RULES = (
     CPRRule.type_label, RegexRule.type_label, LinksFollowRule.type_label,
     OrderedWordlistRule.type_label, NameRule.type_label, AddressRule.type_label,
-    TurboCPRRule.type_label, EmailHeaderRule.type_label
+    TurboCPRRule.type_label, EmailHeaderRule.type_label, TurboHealthRule.type_label,
 )
 
 

@@ -29,6 +29,7 @@ from .models.rules.namerule import NameRule
 from .models.rules.regexrule import RegexRule, RegexPattern
 from .models.rules.customrule import CustomRule
 from .models.rules.addressrule import AddressRule
+from .models.rules.healthrule import TurboHealthRule
 from .models.scannerjobs.scanner import (ScanStatus,
                                          ScheduledCheckup,
                                          ScanStatusSnapshot)
@@ -52,6 +53,7 @@ class AuthenticationAdmin(admin.ModelAdmin):
 
 @admin.register(CPRRule)
 @admin.register(TurboCPRRule)
+@admin.register(TurboHealthRule)
 @admin.register(NameRule)
 @admin.register(RegexRule)
 @admin.register(AddressRule)
