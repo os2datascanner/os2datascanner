@@ -160,7 +160,15 @@ class SourceManager:
         """Closes all of the Sources presently open in this SourceManager."""
         logger.debug("SourceManager.clear")
         for child in self._top.children.copy():
-            self.close(child.source)
+            source = child.source
+            try:
+                self.close(source)
+            except Exception:
+                logger.error(
+                        "Bug - SourceManager.close tried to raise an"
+                        " exception!",
+                        source=type(source).__name__,
+                        exc_info=True)
 
     def clear_dependents(self):
         """Closes all of the dependent Sources presently open in this

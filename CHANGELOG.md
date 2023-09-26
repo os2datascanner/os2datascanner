@@ -62,6 +62,9 @@
   
 - The mini-scanner now enforces server-side validation of the file size restriction.
 
+- Workers no longer freeze during status message preparation if the object's
+  metadata is not available.
+
 ## 3.20.5, 11th September 2023
 
 "Mo' Code Less Problems"
