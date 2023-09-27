@@ -38,6 +38,7 @@ function selectOptions(obj, selector) {
     "name": "CustomRule_Name",
     "address": "CustomRule_Address",
     "cpr_turbo": "TurboCPRRule",
+    "health_turbo": "TurboHealthRule",
     "email-header": "EmailHeader",
   };
 
@@ -222,6 +223,11 @@ function makeRule(elem) {
         "type": "cpr_turbo",
         "modulus_11": tickboxes[0].checked,
         "examine_context": tickboxes[1].checked,
+      };
+    case "TurboHealthRule":
+      return {
+        "type": "health_turbo",
+        "dataset": "da_20211018_laegehaandbog_stikord"
       };
 
     /* Glue template fragments to consume */

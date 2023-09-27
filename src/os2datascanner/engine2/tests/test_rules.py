@@ -424,56 +424,68 @@ more!""",
             (
                 "This is a really good dog!",
                 ({
-                    "match": "GOOD DOG",
+                    "match": "good",
                     "offset": 17,
                     "context": "This is a really good dog!",
                     "context_offset": 17
+                }, {
+                    "match": "dog",
+                    "offset": 22,
+                    "context": "This is a really good dog!",
+                    "context_offset": 22
                 },)
             ),
             (
                 "This dog is really good!",
-                ()
+                ({
+                    "match": "dog",
+                    "offset": 5,
+                    "context": "This dog is really good!",
+                    "context_offset": 5
+                }, {
+                    "match": "good",
+                    "offset": 19,
+                    "context": "This dog is really good!",
+                    "context_offset": 19
+                },)
             ),
             (
                 f"This is a good{'dog':>32}",
                 ({
-                    "match": "GOOD DOG",
+                    "match": "good",
                     "offset": 10,
                     "context": f"This is a good{'':>29}dog",
                     "context_offset": 10
-                },)
-            ),
-            (
-                f"This is a good {'dog':>33}",
-                ({
-                    "match": "GOOD DOG",
-                    "offset": 10,
-                    "context": f"This is a good{'':>31}dog",
-                    "context_offset": 10
-                },)
-            ),
-            (
-                f"This is a totally{'tubular':>32}{'tapir':>32}",
-                ({
-                    "match": "totally tubular tapir",
-                    "offset": 10,
-                    "context": f"This is a totally{'':>25}tubular{'':>27}tapir",
-                    "context_offset": 10
+                }, {
+                    "match": "dog",
+                    "offset": 43,
+                    "context": f"This is a good{'':>29}dog",
+                    "context_offset": 43
                 },)
             ),
             (
                 "This CRAZY cat's a good dog!",
                 ({
-                    "match": "crazy cat",
+                    "match": "CRAZY",
                     "offset": 5,
                     "context": "This CRAZY cat's a good dog!",
                     "context_offset": 5
+                }, {
+                    "match": "cat",
+                    "offset": 11,
+                    "context": "This CRAZY cat's a good dog!",
+                    "context_offset": 11
                 },
                  {
-                    "match": "GOOD DOG",
+                    "match": "good",
                     "offset": 19,
                     "context": "This CRAZY cat's a good dog!",
                     "context_offset": 19
+                }, {
+                    "match": "dog",
+                    "offset": 24,
+                    "context": "This CRAZY cat's a good dog!",
+                    "context_offset": 24
                 },)
             ),
             (
@@ -516,7 +528,7 @@ more!""",
             (
                 "Kol er noget farligt noget",
                 ({
-                    "match": "kol",
+                    "match": "Kol",
                     "offset": 0,
                     "context": "Kol er noget farligt noget",
                     "context_offset": 0
@@ -548,21 +560,53 @@ ekstremiteterne. Han selv tilføjer, at han har ondt i albuen. Der er også
 indledende tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM. Henvist til
 speciellæger.""",
                 ({
-                    "match": "akut arteriel insufficiens ekstremiteterne",
+                    "match": "akut",
                     "offset": 212,
-                    "context": "0-18\n\nIfølge analyseresultater lider"
-                               " patienten af akut arteriel insufficiens i"
-                               " alle\nekstremiteterne. Han selv tilføjer,"
-                               " at han har ondt i albuen. Der",
+                    "context": (
+                        "0-18\n\n"
+                        "Ifølge analyseresultater lider patienten af akut arteriel "
+                        "insufficiens i alle\n"
+                        "ekstremiteterne. Han"
+                        ),
                     "context_offset": 50
                 }, {
-                    "match": "autoimmunt polyglandulært syndrom",
-                    "offset": 339,
-                    "context": "har ondt i albuen. Der er også\nindledende"
-                               " tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM."
-                               " Henvist til\nspeciellæger.",
+                    "match": "arteriel",
+                    "offset": 217,
+                    "context": (
+                        "\n"
+                        "Ifølge analyseresultater lider patienten af akut arteriel "
+                        "insufficiens i alle\n"
+                        "ekstremiteterne. Han selv til"
+                        ),
                     "context_offset": 50
-                })
+                }, {
+                    "match": "AUTOIMMUNT",
+                    "offset": 339,
+                    "context": (
+                        "har ondt i albuen. Der er også\n"
+                        "indledende tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM. Henvist til\n"
+                        "speciellæger."
+                    ),
+                    "context_offset": 50
+                }, {
+                    "match": "POLYGLANDULÆRT",
+                    "offset": 350,
+                    "context": (
+                        "albuen. Der er også\n"
+                        "indledende tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM. Henvist til\n"
+                        "speciellæger."
+                    ),
+                    "context_offset": 50
+                }, {
+                    "match": "SYNDROM",
+                    "offset": 365,
+                    "context": (
+                        "også\n"
+                        "indledende tegn på AUTOIMMUNT POLYGLANDULÆRT SYNDROM. Henvist til\n"
+                        "speciellæger."
+                        ),
+                    "context_offset": 50
+                },)
             ),
         )
         wrl = OrderedWordlistRule("da_20211018_laegehaandbog_stikord")
