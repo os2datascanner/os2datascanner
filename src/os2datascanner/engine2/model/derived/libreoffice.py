@@ -71,13 +71,17 @@ __csv = "csv:Text - txt - csv (StarCalc):9,34,76,UTF8,1,,0,false,true,false,fals
 # The dictionary's values specify the input filter name and a fallback output
 # filter to be used after HTML processing
 _actually_supported_types = {
-    "application/msword": ("MS Word 97", "txt"),
-    "application/vnd.oasis.opendocument.text": ("writer8", "txt"),
+    "application/msword": ("MS Word 97", "txt", True),
+    "application/vnd.oasis.opendocument.text": ("writer8", "txt", True),
+    "application/vnd.ms-excel": ("MS Excel 97", __csv, False),
+    "application/vnd.oasis.opendocument.spreadsheet": ("calc8", __csv, False),
 
     # XXX: libmagic usually can't detect OOXML files -- see the special
     # handling of these types in in LibreOfficeSource._generate_state
     "application/vnd.openxmlformats-officedocument"
-    ".wordprocessingml.document": ("Office Open XML Text", "txt"),
+    ".wordprocessingml.document": ("Office Open XML Text", "txt", True),
+    "application/vnd.openxmlformats-officedocument"
+    ".spreadsheetml.sheet": ("Calc Office Open XML", __csv, False)
 }
 
 
@@ -111,8 +115,16 @@ class UnrecognisedFormatError(LookupError):
     pass
 
 
-@Source.mime_handler("application/CDFV2",
-                     *_actually_supported_types.keys())
+@Source.mime_handler(
+        "application/CDFV2",
+        # LibreOffice is in the unusual position of supporting a few MIME types
+        # for which it's no longer responsible *and* of performing sanity
+        # checks to make sure that its input files' types are supported. To
+        # make the older references work, we need to distinguish between
+        # "supported and claimed" and "supported but not claimed"
+        *(k for k, (_, _, should_handle)
+          in _actually_supported_types.items()
+          if should_handle))
 class LibreOfficeSource(DerivedSource):
     type_label = "lo"
 
@@ -125,8 +137,8 @@ class LibreOfficeSource(DerivedSource):
             best_mime_guess = magic.from_file(p, mime=True)
             # ... and, just to be extra safe, we tell LibreOffice what sort of
             # file we're passing it so it can do its own sanity checks
-            filter_name, backup_filter = _actually_supported_types.get(
-                    best_mime_guess, (None, None))
+            filter_name, backup_filter, _ = _actually_supported_types.get(
+                    best_mime_guess, (None, None, None))
 
             # (... although, if that produced something totally generic, we
             # should have one last shot based on the name)
@@ -163,7 +175,7 @@ class LibreOfficeObjectResource(FilesystemResource):
         # descriptor (which we can't guarantee) or a filesystem path
         with parent.make_path() as fp:
             mime = magic.from_file(fp, mime=True)
-            if mime in ("application/msword",
+            if mime in ("application/msword", "application/vnd.ms-excel",
                         "application/vnd.ms-powerpoint",):
                 yield from office_metadata.generate_ole_metadata(fp)
             elif mime.startswith("application/vnd.openxmlformats-officedocument."):
