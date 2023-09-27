@@ -68,6 +68,9 @@
 - Workers no longer freeze during status message preparation if the object's
   metadata is not available.
 
+- Re-examining a spreadsheet scanned with version 3.20.4 or older of
+  OS2datascanner will no longer fail with an unsupported format error.
+
 ## 3.20.5, 11th September 2023
 
 "Mo' Code Less Problems"
