@@ -145,8 +145,8 @@ class LibreOfficeSource(DerivedSource):
             if (not filter_name and best_mime_guess in
                     ("application/octet-stream", "application/zip")):
                 mime_guess = self.handle.guess_type()
-                filter_name, backup_filter = _actually_supported_types.get(
-                        mime_guess, (None, None))
+                filter_name, backup_filter, _ = _actually_supported_types.get(
+                        mime_guess, (None, None, None))
 
             if filter_name is None:
                 raise UnrecognisedFormatError(

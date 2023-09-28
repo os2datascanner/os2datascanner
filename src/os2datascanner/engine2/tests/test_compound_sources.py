@@ -155,12 +155,15 @@ class Engine2CompoundSourceTest(unittest.TestCase):
     def test_libreoffice_spreadsheet_support(self):
         """LibreOffice can still handle spreadsheet references, even though we
         now prefer SpreadsheetSource."""
-        spreadsheet_file = FilesystemHandle.make_handle(
-                os.path.join(
-                        test_data_path,
-                        "libreoffice/test.ods"))
-        with SourceManager() as sm:
-            self.run_rule(
-                    libreoffice.LibreOfficeSource(spreadsheet_file),
-                    sm,
-                    offset=8)
+        for label, path in (
+                ("OpenDocument", "libreoffice/test.ods"),
+                ("OLE", "msoffice/test.xls"),
+                ("Office Open XML", "msoffice/test.xlsx")):
+            with self.subTest(label):
+                spreadsheet_file = FilesystemHandle.make_handle(
+                        os.path.join(test_data_path, path))
+                with SourceManager() as sm:
+                    self.run_rule(
+                            libreoffice.LibreOfficeSource(spreadsheet_file),
+                            sm,
+                            offset=8)
