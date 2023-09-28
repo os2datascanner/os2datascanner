@@ -267,7 +267,7 @@ class UserErrorLogView(RestrictedListView):
 
             qs = qs.order_by(sort_key)
         else:
-            qs = qs.order_by('-scan_status__scan_tag__time', '-pk')
+            qs = qs.order_by('-scan_status__scan_tag__time', 'pk')
 
         if search := self.request.GET.get('search_field'):
             qs = qs.filter(path__icontains=search) | qs.filter(error_message__icontains=search)
