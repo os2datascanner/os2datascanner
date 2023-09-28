@@ -21,7 +21,7 @@
                  hx-swap="outerHTML"
                  hx-trigger="click"
                  hx-include='[id="dropdown_options"], [id="filter_form"]'
-                 hx-vals='{"page": "{{ page_obj.previous_page_number }}"}'
+                 hx-vals='{"page": "{{ page_obj.previous_page_number|unlocalize }}"}'
                  hx-indicator="#report-page-indicator">
                 <i id="chevron_left" class="material-icons">chevron_left</i>
                 {% trans "Previous" %}

@@ -21,7 +21,7 @@
                  hx-swap="outerHTML"
                  hx-trigger="click"
                  hx-include="[id='dropdown_options'], [id='errorlog_filters'], [id='orgunit_filters']"
-                 hx-vals='{"page": "{{ page_obj.previous_page_number }}"}'>
+                 hx-vals='{"page": "{{ page_obj.previous_page_number|unlocalize }}"}'>
                 <i id="chevron_left" class="material-icons">chevron_left</i>
                 {% trans "Previous" %}
               </a>
@@ -63,7 +63,7 @@
                      hx-swap="outerHTML"
                      hx-trigger="click"
                      hx-include="[id='dropdown_options'], [id='errorlog_filters'], [id='orgunit_filters']"
-                     hx-vals='{"page": "{{ n }}"}'>{{ n }}</a>
+                     hx-vals='{"page": "{{ n|unlocalize }}"}'>{{ n }}</a>
                 {% elif page_obj.number|add:'2' == n %}
                   {# Last page #}
                   {% if page_obj.number != paginator.num_pages %}<span class="page--dot">...</span>{% endif %}
@@ -76,7 +76,7 @@
                      hx-swap="outerHTML"
                      hx-trigger="click"
                      hx-include="[id='dropdown_options'], [id='errorlog_filters'], [id='orgunit_filters']"
-                     hx-vals='{"page": "{{ paginator.num_pages }}"}'>{{ paginator.num_pages }}</a>
+                     hx-vals='{"page": "{{ paginator.num_pages|unlocalize }}"}'>{{ paginator.num_pages }}</a>
                 {% endif %}
               {% endfor %}
             {% endif %}
@@ -91,7 +91,7 @@
                  hx-swap="outerHTML"
                  hx-trigger="click"
                  hx-include="[id='dropdown_options'], [id='errorlog_filters'], [id='orgunit_filters']"
-                 hx-vals='{"page": "{{ page_obj.next_page_number }}"}'>
+                 hx-vals='{"page": "{{ page_obj.next_page_number|unlocalize }}"}'>
                 {% trans "Next" %}
                 <i id="chevron_right" class="material-icons">chevron_right</i>
               </a>
