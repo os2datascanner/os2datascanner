@@ -83,7 +83,7 @@ class AccountManager(models.Manager):
                 defaults={
                     "first_name": account.first_name or '',
                     "last_name": account.last_name or '',
-                    "is_superuser": kwargs.get("is_superuser", False)
+                    "is_superuser": account.is_superuser
                 })
             account.user = user_obj
         return super().bulk_create(objs, **kwargs)
