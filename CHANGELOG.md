@@ -71,6 +71,8 @@
 - Re-examining a spreadsheet scanned with version 3.20.4 or older of
   OS2datascanner will no longer fail with an unsupported format error.
 
+- UserErrorLog-objects no longer arbitrarily change sorting when changing page.
+
 ## 3.20.5, 11th September 2023
 
 "Mo' Code Less Problems"
