@@ -4,7 +4,8 @@ from contextlib import contextmanager
 from exchangelib import (
     Folder, Account, Message, Credentials, IMPERSONATION,
     Configuration, ExtendedProperty)
-from exchangelib.errors import (ErrorServerBusy, ErrorItemNotFound)
+from exchangelib.errors import (
+        ErrorServerBusy, ErrorItemNotFound, ErrorNonExistentMailbox)
 from exchangelib.protocol import BaseProtocol
 
 from ..utilities.backoff import DefaultRetrier
@@ -183,18 +184,25 @@ class EWSMailResource(FileResource):
 
     def check(self) -> bool:
         folder_id, mail_id = self._ids
-        account = self._get_cookie()
 
-        def _retrieve_message():
-            # exchangelib>=4.0.0 requires that you pass a Folder object to the
-            # function that... returns a Folder object?... okay, fine, let's do
-            # that...
-            folder_object = Folder(id=folder_id)
-            return account.root.get_folder(
-                    folder_object).all().only("message_id").get(id=mail_id)
+        try:
+            account = self._get_cookie()
 
-        m = DefaultRetrier(ErrorServerBusy).run(_retrieve_message)
-        return not isinstance(m, ErrorItemNotFound)
+            def _retrieve_message():
+                # exchangelib>=4.0.0 requires that you pass a Folder object to
+                # the function that... returns a Folder object?... okay, fine,
+                # let's do that...
+                folder_object = Folder(id=folder_id)
+                return account.root.get_folder(
+                        folder_object).all().only("message_id").get(id=mail_id)
+
+            m = DefaultRetrier(ErrorServerBusy).run(_retrieve_message)
+            # exchangelib is slightly inconsistent about whether it *returns*
+            # or *raises* exceptions, so we err on the side of caution here
+            return not isinstance(
+                    m, (ErrorItemNotFound, ErrorNonExistentMailbox,))
+        except (ErrorItemNotFound, ErrorNonExistentMailbox,):
+            return False
 
     def get_message_object(self):
         if not self._message:

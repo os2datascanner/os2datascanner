@@ -73,6 +73,9 @@
 
 - UserErrorLog-objects no longer arbitrarily change sorting when changing page.
 
+- Matches found in an Exchange mail account that is later deleted will now be
+  correctly treated as though they had been deleted.
+
 ## 3.20.5, 11th September 2023
 
 "Mo' Code Less Problems"
