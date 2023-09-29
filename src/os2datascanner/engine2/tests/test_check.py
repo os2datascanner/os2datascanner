@@ -1,6 +1,11 @@
 import unittest
+from unittest.mock import patch
+
+from exchangelib.errors import ErrorNonExistentMailbox
 
 from os2datascanner.engine2.model.core import SourceManager
+from os2datascanner.engine2.model.ews import (
+        EWSMailHandle, EWSAccountSource, OFFICE_365_ENDPOINT as CLOUD)
 from os2datascanner.engine2.rules.cpr import CPRRule
 
 from . import model as model
@@ -107,3 +112,27 @@ class CheckTests(unittest.TestCase):
                         self.fail(
                                 'expected an "os2ds_problems" message with'
                                 ' {"missing": False}, but got' f" {k}")
+
+    def test_ews_mailbox_gone(self):
+        """Check that a mail in a deleted EWS mailbox is itself correctly
+        treated as deleted."""
+        mail = EWSMailHandle(
+                EWSAccountSource(
+                        domain="cloudy.example",
+                        server=CLOUD,
+                        admin_user="cloudministrator",
+                        admin_password="littlefluffy",
+                        user="claude"),
+                "SW5ib3hJRA==.TWVzc2dJRA==",
+                "Re: Castles in the sky",
+                "Inbox", "0000012345")
+
+        def _failer(*args, **kwargs):
+            raise ErrorNonExistentMailbox("user@test.example")
+            yield from ()
+        with SourceManager() as sm, \
+                patch.object(mail.source, "_generate_state", _failer):
+            self.assertEqual(
+                    mail.follow(sm).check(),
+                    False,
+                    "mailbox shouldn't have existed")
