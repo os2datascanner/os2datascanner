@@ -217,10 +217,10 @@ class Command(BaseCommand):
                 case "Alias":
                     self.diagnose_aliases()
                 case "Problem":
-                    self.diagnose_errors()
+                    self.diagnose_problems()
                 case "DocumentReport":
                     self.diagnose_reports()
                 case "OrganizationalUnit":
-                    self.diagnose_organizations()
+                    self.diagnose_units()
                 case "Organization":
                     self.diagnose_organizations()
