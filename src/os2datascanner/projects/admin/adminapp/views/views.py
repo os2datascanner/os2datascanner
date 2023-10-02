@@ -11,9 +11,11 @@
 # OS2datascanner is developed by Magenta in collaboration with the OS2 public
 # sector open source network <https://os2.eu/>.
 #
+import csv
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import modelform_factory
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, TemplateView, DetailView
@@ -210,3 +212,37 @@ class DialogSuccess(TemplateView):
             model_type = self.reload_map[model_type]
         context['reload_url'] = '/' + model_type + '/'
         return context
+
+
+class CSVExportMixin:
+    paginator_class = None
+    exported_fields = []
+    exported_labels = []
+    exported_filename = "exported_file.csv"
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(
+            content_type="text/csv",
+            headers={
+                "Content-Disposition": f'attachment; filename="{self.exported_filename}"'},
+         )
+
+        queryset = self.get_queryset()
+
+        writer = csv.writer(response)
+        writer.writerow(self.get_exported_labels())
+
+        for obj in queryset.values(*self.exported_fields).iterator():
+            writer.writerow((obj[field] for field in self.exported_fields))
+
+        return response
+
+    def get_exported_labels(self):
+        if self.exported_labels:
+            if len(self.exported_labels) == len(self.exported_fields):
+                return self.exported_labels
+            else:
+                logger.warning("The number of labels and fields for the exported"
+                               " file are not the same. Defaulting to using field names.")
+
+        return self.exported_fields

@@ -12,12 +12,11 @@
 # sector open source network <https://os2.eu/>.
 #
 from json import dumps
-import csv
 
 from django.db import transaction
 from django.db.models import OuterRef, Subquery
 from django.core.paginator import Paginator, EmptyPage
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.shortcuts import render
 from django.conf import settings
 from pika.exceptions import AMQPError
@@ -29,7 +28,8 @@ from os2datascanner.projects.admin.organizations.models import Organization
 
 from os2datascanner.projects.admin.utilities import UserWrapper
 from .views import RestrictedListView, RestrictedCreateView, \
-    RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
+    RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView, \
+    CSVExportMixin
 from ..models.authentication import Authentication
 from ..models.rules.rule import Rule
 from ..models.scannerjobs.scanner import Scanner, ScanStatus, ScanStatusSnapshot
@@ -338,28 +338,11 @@ class UserErrorLogView(RestrictedListView):
         return self.render_to_response(context)
 
 
-class UserErrorLogCSVView(UserErrorLogView):
-    paginator_class = None
-
-    def get(self, request, *args, **kwargs):
-        response = HttpResponse(
-            content_type="text/csv",
-            headers={
-                "Content-Disposition": 'attachment; filename="os2datascanner_usererrorlogs.csv"'},
-         )
-
-        queryset = self.get_queryset()
-
-        writer = csv.writer(response)
-        writer.writerow((_("Date"), _("Error message"), _("Scanner job"), _("Path")))
-        for obj in queryset.iterator():
-            writer.writerow(
-                (obj.scan_status.scan_tag.get('time'),
-                 obj.error_message,
-                 obj.scan_status.scanner.name,
-                 obj.path))
-
-        return response
+class UserErrorLogCSVView(CSVExportMixin, UserErrorLogView):
+    exported_labels = (_("Date"), _("Error message"), _("Scanner job"), _("Path"))
+    exported_fields = ('scan_status__scan_tag__time', 'error_message',
+                       'scan_status__scanner__name', 'path')
+    exported_filename = 'os2datascanner_usererrorlogs.csv'
 
 
 class ScannerList(RestrictedListView):
