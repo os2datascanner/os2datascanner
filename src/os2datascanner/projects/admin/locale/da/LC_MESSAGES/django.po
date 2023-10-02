@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-22 12:50+0200\n"
+"POT-Creation-Date: 2023-10-02 11:28+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -152,7 +152,7 @@ msgstr "Regel"
 #: adminapp/models/rules/rule.py:40 adminapp/models/scannerjobs/scanner.py:77
 #: core/models/client.py:75
 #: organizations/templates/organizations/org_table.html:43
-#: organizations/templates/organizations/orgunit_list.html:71
+#: organizations/templates/organizations/orgunit_list.html:72
 msgid "name"
 msgstr "navn"
 
@@ -242,118 +242,118 @@ msgstr "tjek dato for sidste ændring"
 msgid "only notify superadmin"
 msgstr "underret kun superadmin"
 
-#: adminapp/models/scannerjobs/scanner.py:127
+#: adminapp/models/scannerjobs/scanner.py:126
 msgid "rules"
 msgstr "regler"
 
-#: adminapp/models/scannerjobs/scanner.py:135
+#: adminapp/models/scannerjobs/scanner.py:133
 msgid "Unverified"
 msgstr "Ugyldig"
 
-#: adminapp/models/scannerjobs/scanner.py:136
+#: adminapp/models/scannerjobs/scanner.py:134
 msgid "Verified"
 msgstr "Gyldig"
 
-#: adminapp/models/scannerjobs/scanner.py:142
+#: adminapp/models/scannerjobs/scanner.py:140
 msgid "username"
 msgstr "brugernavn"
 
-#: adminapp/models/scannerjobs/scanner.py:147
+#: adminapp/models/scannerjobs/scanner.py:145
 msgid "validation status"
 msgstr "valideringstatus"
 
-#: adminapp/models/scannerjobs/scanner.py:152
+#: adminapp/models/scannerjobs/scanner.py:149
 msgid "exclusion rules"
 msgstr "udelukkelsesregler"
 
-#: adminapp/models/scannerjobs/scanner.py:158
+#: adminapp/models/scannerjobs/scanner.py:154
 msgid "covered accounts"
 msgstr "dækkede konti"
 
-#: adminapp/models/scannerjobs/scanner.py:193
+#: adminapp/models/scannerjobs/scanner.py:189
 msgid "The scanner job could not be started because it has no assigned rules."
 msgstr ""
 "Scannerjobbet kunne ikke startes, da det ikke har nogle tilknyttede regler."
 
-#: adminapp/models/scannerjobs/scanner.py:196
+#: adminapp/models/scannerjobs/scanner.py:192
 msgid "The scanner job could not be started because it is not validated."
 msgstr "Scannerjobbet kunne ikke startes, da det ikke er valideret."
 
-#: adminapp/models/scannerjobs/scanner.py:199
+#: adminapp/models/scannerjobs/scanner.py:195
 msgid "The scanner job could not be started because it is already running."
 msgstr "Scannerjobbet kunne ikke startes, da det allerede er i gang."
 
-#: adminapp/models/scannerjobs/scanner.py:561
+#: adminapp/models/scannerjobs/scanner.py:557
 msgid "connected scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner.py:596
+#: adminapp/models/scannerjobs/scanner.py:592
 msgid "total sources"
 msgstr "antal kilder"
 
-#: adminapp/models/scannerjobs/scanner.py:601
+#: adminapp/models/scannerjobs/scanner.py:597
 msgid "explored sources"
 msgstr "udforskede kilder"
 
-#: adminapp/models/scannerjobs/scanner.py:606
+#: adminapp/models/scannerjobs/scanner.py:602
 msgid "total objects"
 msgstr "antal objekter"
 
-#: adminapp/models/scannerjobs/scanner.py:611
+#: adminapp/models/scannerjobs/scanner.py:607
 msgid "scanned objects"
 msgstr "scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner.py:616
+#: adminapp/models/scannerjobs/scanner.py:612
 msgid "size of scanned objects"
 msgstr "størrelse af scannede objekter"
 
-#: adminapp/models/scannerjobs/scanner.py:622
+#: adminapp/models/scannerjobs/scanner.py:618
 msgid "message"
 msgstr "Fejlbesked"
 
-#: adminapp/models/scannerjobs/scanner.py:630
+#: adminapp/models/scannerjobs/scanner.py:626
 msgid "matches found"
 msgstr "resultater fundet"
 
-#: adminapp/models/scannerjobs/scanner.py:704
+#: adminapp/models/scannerjobs/scanner.py:700
 #: import_services/models/exported_mixin.py:37
 msgid "last modified"
 msgstr "senest opdateret"
 
-#: adminapp/models/scannerjobs/scanner.py:709
+#: adminapp/models/scannerjobs/scanner.py:705
 msgid "scan tag"
 msgstr "scan tag"
 
-#: adminapp/models/scannerjobs/scanner.py:716
+#: adminapp/models/scannerjobs/scanner.py:712
 msgid "associated scanner job"
 msgstr "tilknyttet scannerjob"
 
-#: adminapp/models/scannerjobs/scanner.py:721
+#: adminapp/models/scannerjobs/scanner.py:717
 msgid "resolved"
 msgstr "løst"
 
-#: adminapp/models/scannerjobs/scanner.py:775
+#: adminapp/models/scannerjobs/scanner.py:771
 msgid "Start time"
 msgstr "Startet"
 
-#: adminapp/models/scannerjobs/scanner.py:778
+#: adminapp/models/scannerjobs/scanner.py:774
 #: adminapp/models/usererrorlog.py:29
 msgid "scan status"
 msgstr "scanstatus"
 
-#: adminapp/models/scannerjobs/scanner.py:779
+#: adminapp/models/scannerjobs/scanner.py:775
 msgid "scan statuses"
 msgstr "scanstatusser"
 
-#: adminapp/models/scannerjobs/scanner.py:851
+#: adminapp/models/scannerjobs/scanner.py:847
 msgid "timestamp"
 msgstr "tidsstempel"
 
-#: adminapp/models/scannerjobs/scanner.py:859
+#: adminapp/models/scannerjobs/scanner.py:855
 msgid "scan status snapshot"
 msgstr "scanstatus snapshot"
 
-#: adminapp/models/scannerjobs/scanner.py:860
+#: adminapp/models/scannerjobs/scanner.py:856
 msgid "scan status snapshots"
 msgstr "scanstatus snapshot"
 
@@ -2806,55 +2806,55 @@ msgstr "Søg efter organisatorisk enhed"
 msgid "Show empty units"
 msgstr "Vis tomme enheder"
 
-#: organizations/templates/organizations/orgunit_list.html:72
+#: organizations/templates/organizations/orgunit_list.html:73
 msgid "accounts"
 msgstr "konti"
 
-#: organizations/templates/organizations/orgunit_list.html:73
+#: organizations/templates/organizations/orgunit_list.html:74
 msgid "managers"
 msgstr "ledere"
 
-#: organizations/templates/organizations/orgunit_list.html:74
+#: organizations/templates/organizations/orgunit_list.html:75
 msgid "DPOs"
 msgstr "DPOer"
 
-#: organizations/templates/organizations/orgunit_list.html:86
+#: organizations/templates/organizations/orgunit_list.html:87
 msgid "accounts associated."
 msgstr "konti tilknyttet"
 
-#: organizations/templates/organizations/orgunit_list.html:92
-#: organizations/templates/organizations/orgunit_list.html:130
+#: organizations/templates/organizations/orgunit_list.html:93
+#: organizations/templates/organizations/orgunit_list.html:131
 msgid "Click to remove"
 msgstr "Klik for at fjerne"
 
-#: organizations/templates/organizations/orgunit_list.html:92
-#: organizations/templates/organizations/orgunit_list.html:99
-#: organizations/templates/organizations/orgunit_list.html:130
+#: organizations/templates/organizations/orgunit_list.html:93
+#: organizations/templates/organizations/orgunit_list.html:100
+#: organizations/templates/organizations/orgunit_list.html:131
 msgid "as manager of"
 msgstr "som leder af"
 
-#: organizations/templates/organizations/orgunit_list.html:99
-#: organizations/templates/organizations/orgunit_list.html:137
+#: organizations/templates/organizations/orgunit_list.html:100
+#: organizations/templates/organizations/orgunit_list.html:138
 msgid "Are you sure you want to remove"
 msgstr "Er du sikker på, at du vil fjerne"
 
-#: organizations/templates/organizations/orgunit_list.html:118
+#: organizations/templates/organizations/orgunit_list.html:119
 msgid "Choose new manager"
 msgstr "Vælg ny leder"
 
-#: organizations/templates/organizations/orgunit_list.html:137
+#: organizations/templates/organizations/orgunit_list.html:138
 msgid "as DPO of"
 msgstr "som DPO af"
 
-#: organizations/templates/organizations/orgunit_list.html:157
+#: organizations/templates/organizations/orgunit_list.html:158
 msgid "Choose new DPO"
 msgstr "Vælg ny DPO"
 
-#: organizations/templates/organizations/orgunit_list.html:168
+#: organizations/templates/organizations/orgunit_list.html:169
 msgid "No organizational units found ..."
 msgstr "Ingen organisatoriske enheder fundet ..."
 
-#: organizations/templates/organizations/orgunit_list.html:176
+#: organizations/templates/organizations/orgunit_list.html:177
 msgid "No organizational units."
 msgstr "Ingen organisatoriske enheder"
 
@@ -2872,8 +2872,8 @@ msgstr "Navnet er allerede i brug."
 #~ msgid "Selected rules"
 #~ msgstr "Valgte regler"
 
-msgid "Add exclusion rule"
-msgstr "Tilføj udelukkelsesregel"
+#~ msgid "Add exclusion rule"
+#~ msgstr "Tilføj udelukkelsesregel"
 
 #~ msgid "Available exclusion rules"
 #~ msgstr "Tilgængelige udelukkelsesregler"

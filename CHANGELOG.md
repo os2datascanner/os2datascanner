@@ -1,6 +1,6 @@
 # Changelog
 
-## Next Release
+## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
 
