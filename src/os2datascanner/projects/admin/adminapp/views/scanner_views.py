@@ -12,11 +12,12 @@
 # sector open source network <https://os2.eu/>.
 #
 from json import dumps
+import csv
 
 from django.db import transaction
 from django.db.models import OuterRef, Subquery
 from django.core.paginator import Paginator, EmptyPage
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
 from pika.exceptions import AMQPError
@@ -335,6 +336,30 @@ class UserErrorLogView(RestrictedListView):
         context = self.get_context_data()
 
         return self.render_to_response(context)
+
+
+class UserErrorLogCSVView(UserErrorLogView):
+    paginator_class = None
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(
+            content_type="text/csv",
+            headers={
+                "Content-Disposition": 'attachment; filename="os2datascanner_usererrorlogs.csv"'},
+         )
+
+        queryset = self.get_queryset()
+
+        writer = csv.writer(response)
+        writer.writerow((_("Date"), _("Error message"), _("Scanner job"), _("Path")))
+        for obj in queryset.iterator():
+            writer.writerow(
+                (obj.scan_status.scan_tag.get('time'),
+                 obj.error_message,
+                 obj.scan_status.scanner.name,
+                 obj.path))
+
+        return response
 
 
 class ScannerList(RestrictedListView):

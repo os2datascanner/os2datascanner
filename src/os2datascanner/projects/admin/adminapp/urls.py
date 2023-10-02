@@ -73,7 +73,8 @@ from .views.rule_views import (RuleList, CPRRuleCreate,
                                CustomRuleUpdate, CustomRuleDelete)
 
 from .views.scanner_views import (StatusOverview, StatusCompleted,
-                                  StatusDelete, StatusTimeline, UserErrorLogView)
+                                  StatusDelete, StatusTimeline, UserErrorLogView,
+                                  UserErrorLogCSVView)
 
 from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
                                      WebScannerDelete, WebScannerRun,
@@ -115,6 +116,7 @@ urlpatterns = [
     re_path(r'^status-completed/timeline/(?P<pk>\d+)/$',
             StatusTimeline.as_view(), name='status-timeline'),
     re_path(r'^error-log/$', UserErrorLogView.as_view(), name='error-log'),
+    re_path(r'^error-log/csv/$', UserErrorLogCSVView.as_view(), name='export-error-log'),
     re_path(r'^status/(?P<pk>\d+)/delete/$', StatusDelete.as_view(), name='status-delete'),
     re_path(r'^help/guide/$', GuideView.as_view(), name='guide'),
     # Exchangescanner RE_PATH's
