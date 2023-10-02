@@ -15,6 +15,10 @@
 
   - Added and "empty" pie for empty datasets. 
 
+### Bugfixes
+
+- When clearing the search bar on the user error log page, the table is now
+  refreshed.
 
 ## 3.20.6, 2nd October 2023
 

@@ -30,7 +30,7 @@
             class="errorlog_filtering_wrapper"
             onsubmit="return false"
             hx-get="{% url "error-log" %}"
-            hx-trigger="keyup delay:200ms from:#search_field, change from:#show_seen"
+            hx-trigger="keyup delay:200ms from:#search_field, search from:#search_field, change from:#show_seen"
             hx-swap="outerHTML"
             hx-include="[id='dropdown_options']"
             hx-target=".error_content"
