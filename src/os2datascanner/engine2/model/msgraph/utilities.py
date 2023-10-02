@@ -129,6 +129,47 @@ class MSGraphSource(Source):
                 self._token = self._token_creator()
                 return self.delete_message(owner, msg_id, _retry=True)
 
+        def create_outlook_category_raw(self, owner, category_name, category_colour):
+            json_params = {"displayName": f"{category_name}",
+                           "color": f"{category_colour}"}
+            return WebRetrier().run(
+                self._session.post,
+                f"https://graph.microsoft.com/v1.0/users/{owner}/outlook/masterCategories",
+                headers=self._make_headers(), json=json_params,
+            )
+
+        def create_outlook_category(self, owner, category_name, category_colour, _retry=False):
+            response = self.create_outlook_category_raw(owner, category_name, category_colour)
+            try:
+                response.raise_for_status()
+                return response
+            except requests.exceptions.HTTPError as ex:
+                if ex.response.status_code != 401 or _retry:
+                    raise ex
+                self._token = self._token_creator()
+                return self.create_outlook_category(owner, category_name,
+                                                    category_colour, _retry=True)
+
+        def categorize_mail_raw(self, owner, msg_id, category_name):
+            json_params = {"categories": [f"{category_name}"]}
+            return WebRetrier().run(
+                self._session.patch,
+                f"https://graph.microsoft.com/v1.0/users/{owner}/messages/{msg_id}",
+                headers=self._make_headers(), json=json_params,
+            )
+
+        def categorize_mail(self, owner, msg_id, category_name, _retry=False):
+            response = self.categorize_mail_raw(owner, msg_id, category_name)
+            try:
+                response.raise_for_status()
+                return response
+            except requests.exceptions.HTTPError as ex:
+                if ex.response.status_code != 401 or _retry:
+                    raise ex
+                self._token = self._token_creator()
+                return self.categorize_mail(owner, msg_id,
+                                            category_name, _retry=True)
+
         def follow_next_link(self, next_page, _retry=False):
             response = WebRetrier().run(
                     self._session.get, next_page, headers=self._make_headers())

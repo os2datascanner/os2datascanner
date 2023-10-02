@@ -41,7 +41,9 @@ from os2datascanner.engine2.rules.links_follow import LinksFollowRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.engine2.rules.dict_lookup import EmailHeaderRule
-from .view_utils import handle_report, delete_email
+
+from .utilities.document_report_utilities import handle_report
+from .utilities.msgraph_utilities import delete_email
 from ..models.documentreport import DocumentReport
 from ...organizations.models.account import Account
 from ...organizations.models.aliases import AliasType
