@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-26 09:31+0200\n"
+"POT-Creation-Date: 2023-10-02 11:28+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -312,12 +312,12 @@ msgid "Show/hide overview"
 msgstr "Vis/skjul overblik"
 
 #: reportapp/templates/components/faq_toc.html:5
-#: reportapp/templates/manual.html:138
+#: reportapp/templates/manual.html:176
 msgid "Why doesn't 'handle' delete my file or email?"
 msgstr "Hvorfor sletter 'Håndtér'-knappen ikke min fil eller e-mail?"
 
 #: reportapp/templates/components/faq_toc.html:9
-#: reportapp/templates/manual.html:146
+#: reportapp/templates/manual.html:184
 msgid "Why can't I open file scan matches?"
 msgstr "Hvorfor kan jeg ikke åbne matches fra filscan?"
 
@@ -762,7 +762,7 @@ msgid "Consult the manual to find instructions for using OS2datascanner."
 msgstr "Læs håndbogen for at finde instruktioner til brugen af OS2datascanner."
 
 #: reportapp/templates/components/service.html:52
-#: reportapp/templates/manual.html:15 reportapp/templates/manual.html:44
+#: reportapp/templates/manual.html:15 reportapp/templates/manual.html:47
 msgid "Manual"
 msgstr "Håndbog"
 
@@ -934,11 +934,11 @@ msgstr "Tak fordi du brugte OS2datascanner."
 msgid "again"
 msgstr "igen"
 
-#: reportapp/templates/manual.html:37 reportapp/templates/manual.html:135
+#: reportapp/templates/manual.html:40 reportapp/templates/manual.html:173
 msgid "Frequently Asked Questions"
 msgstr "Ofte stillede spørgsmål"
 
-#: reportapp/templates/manual.html:136
+#: reportapp/templates/manual.html:174
 msgid ""
 "Here you can find answers to questions frequently asked by other users of "
 "OS2datascanner."
@@ -946,7 +946,7 @@ msgstr ""
 "Her kan du finde svar på de oftest stillede spørgsmål af andre brugere af "
 "OS2datascanner."
 
-#: reportapp/templates/manual.html:140
+#: reportapp/templates/manual.html:178
 msgid ""
 "For security reasons, OS2datascanner cannot interact with your files or "
 "emails in any way. For this reason, you must manually delete or handle the "
@@ -958,7 +958,7 @@ msgstr ""
 "eller på anden måde håndtere den matchede fil. 'Håndtér'-knappen i "
 "OS2datascanner fjerner kun matchet fra oversigten."
 
-#: reportapp/templates/manual.html:143
+#: reportapp/templates/manual.html:181
 msgid ""
 "You can manually access the file or email by pressing the 'copy'- or 'open'-"
 "buttons below the name of the match."
@@ -966,7 +966,7 @@ msgstr ""
 "Du kan manuelt tilgå filen eller e-mailen ved at trykke på 'kopier'- eller "
 "'åben'-knapperne under navnet på matchet."
 
-#: reportapp/templates/manual.html:148
+#: reportapp/templates/manual.html:186
 msgid ""
 "OS2datascanner is not located on your computer, but on an external server. "
 "You are accessing that server through your browser."
@@ -974,7 +974,7 @@ msgstr ""
 "OS2datascanner befinder sig ikke på din computer, men på en ekstern server. "
 "Du tilgår denne server gennem din browser."
 
-#: reportapp/templates/manual.html:151
+#: reportapp/templates/manual.html:189
 msgid ""
 "For security reasons, modern browsers are not allowed to open a file on your "
 "computer. This also prevents OS2datascanner from doing the same."
@@ -982,7 +982,7 @@ msgstr ""
 "Af sikkerhedsårsager har moderne browsere ikke adgang til, at åbne filer på "
 "din computer. Dette forhindrer også OS2datascanner i det samme."
 
-#: reportapp/templates/manual.html:154
+#: reportapp/templates/manual.html:192
 msgid ""
 "To find the file, which a match has been found in, click the 'Copy Folder' "
 "button on the match, then open your pathfinder on your computer, and paste "
@@ -1050,11 +1050,6 @@ msgstr ""
 "indtastet er den rigtige, og tjekke din spam mappe."
 
 #: reportapp/templates/password_reset_email.html:4
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "  You're receiving this email because you requested a password reset for "
-#| "your user account at %(site_name)s.\n"
 msgid ""
 "\n"
 "  You're receiving this email because you requested a password reset for "
@@ -1064,6 +1059,7 @@ msgstr ""
 "\n"
 "  Du modtager denne e-mail, fordi du har anmodet om nulstilling af din "
 "adgangskode til din bruger på %(site_name)s.\n"
+"  "
 
 #: reportapp/templates/password_reset_email.html:8
 msgid "Please go to the following page and choose a new password:"
@@ -1212,11 +1208,11 @@ msgstr "Uidentificerbar scan type"
 msgid "%0D%0A%0D%0A--- Do not alter text below this line! ---%0D%0A"
 msgstr "%0D%0A%0D%0A--- Ændr ikke teksten under denne linje! ---%0D%0A"
 
-#: reportapp/views/report_views.py:70
+#: reportapp/views/report_views.py:71
 msgid "The page does not exist"
 msgstr "Siden eksisterer ikke"
 
-#: reportapp/views/report_views.py:464 reportapp/views/report_views.py:495
+#: reportapp/views/report_views.py:465 reportapp/views/report_views.py:496
 #, python-brace-format
 msgid "Failed to delete {pn}: {e}"
 msgstr "Kunne ikke slette {pn}: {e}"
@@ -1269,6 +1265,7 @@ msgid "Could not find your Microsoft tenant!"
 msgstr "Kunne ikke finde din Microsoft tenant!"
 
 #: reportapp/views/view_utils.py:110
+#, python-brace-format
 msgid "Couldn't delete email! Code: {status_code}"
 msgstr "Kunne ikke slette email! Fejlkode: {status_code}"
 
