@@ -214,6 +214,7 @@ class MSGraphMailMessageResource(FileResource):
 
     def _generate_metadata(self):
         yield "email-account", self.handle.source.handle.relative_path
+        yield "outlook-categories", self.get_message_metadata().get("categories", None)
         yield from super()._generate_metadata()
 
     def check(self) -> bool:
@@ -229,7 +230,8 @@ class MSGraphMailMessageResource(FileResource):
     def get_message_metadata(self):
         if not self._message:
             self._message = self._get_cookie().get(
-                    self.make_object_path() + "?$select=lastModifiedDateTime,sentDateTime,isDraft")
+                    self.make_object_path() + "?$select=lastModifiedDateTime,"
+                                              "sentDateTime,isDraft,categories")
         return self._message
 
     @contextmanager
