@@ -23,6 +23,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, DeleteView
 from django.conf import settings
 
+from os2datascanner.utils.system_utilities import time_now
 from os2datascanner.projects.admin.utilities import UserWrapper
 from ..models.scannerjobs.dropboxscanner import DropboxScanner
 from ..models.scannerjobs.exchangescanner import ExchangeScanner
@@ -224,7 +225,8 @@ class CSVExportMixin:
         response = HttpResponse(
             content_type="text/csv",
             headers={
-                "Content-Disposition": f'attachment; filename="{self.exported_filename}"'},
+                "Content-Disposition":
+                f'attachment; filename="{time_now()}-{self.exported_filename}"'},
          )
 
         queryset = self.get_queryset()

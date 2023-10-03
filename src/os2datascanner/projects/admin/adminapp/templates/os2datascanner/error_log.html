@@ -56,9 +56,6 @@
         <input type="hidden" name="order" id="order" value="{{ order }}">
  
       </form>
-      <div class="csv_export_wrapper">
-        <a class="button" href='{% url "export-error-log" %}'>{% trans "Export as CSV" %}</a>
-      </div>
  
       {% if object_list %}
         <div class="datatable-wrapper card error_content"
@@ -107,6 +104,9 @@
                         </svg>
                         <span>{% trans "Remove all" %}</span>
                       </button>
+                      <a class="button button--small button--has-icon"
+                         title="{% trans "Export to CSV" %}"
+                         href='{% url "export-error-log" %}'><span class="material-icons">file_download</span></a>
                     </div>
                   </th>
                 </tr>
