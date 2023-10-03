@@ -221,8 +221,7 @@ class CSVExportMixin:
     from the view, which normally delivers context to a template, and this
     mixin. It is important, that the new view inherits from this mixin first!"""
     paginator_class = None
-    exported_fields = []
-    exported_labels = []
+    exported_fields = {}
     exported_filename = "exported_file.csv"
 
     def get(self, request, *args, **kwargs):
@@ -236,19 +235,9 @@ class CSVExportMixin:
         queryset = self.get_queryset()
 
         writer = csv.writer(response)
-        writer.writerow(self.get_exported_labels())
+        writer.writerow(self.exported_fields.keys())
 
-        for obj in queryset.values(*self.exported_fields).iterator():
-            writer.writerow((obj[field] for field in self.exported_fields))
+        for obj in queryset.values(*self.exported_fields.values()).iterator():
+            writer.writerow(obj.values())
 
         return response
-
-    def get_exported_labels(self):
-        if self.exported_labels:
-            if len(self.exported_labels) == len(self.exported_fields):
-                return self.exported_labels
-            else:
-                logger.warning("The number of labels and fields for the exported"
-                               " file are not the same. Defaulting to using field names.")
-
-        return self.exported_fields

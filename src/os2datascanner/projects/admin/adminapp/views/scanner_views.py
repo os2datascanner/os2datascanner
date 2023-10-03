@@ -339,9 +339,12 @@ class UserErrorLogView(RestrictedListView):
 
 
 class UserErrorLogCSVView(CSVExportMixin, UserErrorLogView):
-    exported_labels = (_("Scan time"), _("Error message"), _("Scanner job"), _("Path"))
-    exported_fields = ('scan_status__scan_tag__time', 'error_message',
-                       'scan_status__scanner__name', 'path')
+    exported_fields = {
+        _("Scan time"): 'scan_status__scan_tag__time',
+        _("Path"): 'path',
+        _("Scanner job"): 'scan_status__scanner__name',
+        _("Error message"): 'error_message'
+    }
     exported_filename = 'os2datascanner_usererrorlogs.csv'
 
 
