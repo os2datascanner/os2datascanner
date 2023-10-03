@@ -101,6 +101,18 @@ class AccountManager(models.Manager):
         return super().bulk_update(objs, fields, **kwargs)
 
 
+def weekly_match(**timestamps):
+    """
+    Returns a dict representing a summary
+    of weekly matchs for a given week.
+    """
+    return {
+        "matches": 0,
+        "new": 0,
+        "handled": 0,
+        } | timestamps
+
+
 class Account(Core_Account):
     """ Core logic lives in the core_organizational_structure app.
     Additional logic can be implemented here """
@@ -204,14 +216,25 @@ class Account(Core_Account):
             self.match_status = StatusChoices.OK
 
     def count_matches_by_week(self, weeks: int = 52):  # noqa: CCR001
+        """
+        This method counts the number of (unhandled) matches, the number of
+        new matches and the number of handled matches on a weekly basis.
 
+        Keyword arguments:
+          week -- the number of weeks to count matches for.
+        """
         # This is placed here to avoid circular import
         from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
 
         all_matches = DocumentReport.objects.filter(
-                number_of_matches__gte=1,
-                alias_relation__account=self,
-                only_notify_superadmin=False).values("created_timestamp", "resolution_time")
+            number_of_matches__gte=1,
+            alias_relation__account=self,
+            only_notify_superadmin=False,
+        ).values(
+            "created_timestamp",
+            "resolution_time",
+            "resolution_status",
+        )
 
         next_monday = timezone.now() + timedelta(weeks=1) - timedelta(
                 days=timezone.now().weekday(),
@@ -219,39 +242,74 @@ class Account(Core_Account):
                 minutes=timezone.now().minute,
                 seconds=timezone.now().second)
 
+        def get_week(weeks: int):
+            return next_monday - timedelta(weeks=weeks)
+
         matches_by_week = [
-            {
-                "begin_monday": next_monday - timedelta(weeks=i+1),
-                "end_monday": next_monday - timedelta(weeks=i),
-                "weeknum": (next_monday - timedelta(weeks=i+1)).isocalendar().week,
-                "matches": 0,
-                "new": 0,
-                "handled": 0
-            } for i in range(weeks)
+            weekly_match(begin_monday=get_week(i+1),
+                         end_monday=get_week(i),
+                         weeknum=get_week(i+1).isocalendar().week)
+            for i in range(weeks)
         ]
 
-        for report in all_matches:
-            # Set temporary timestamps if missing
-            if report.get("created_timestamp") is None:
-                logger.warning("Encountered a DocumentReport object without a created_timestamp!")
-                report["created_timestamp"] = timezone.make_aware(timezone.datetime(1970, 1, 1))
+        def is_this_week(week: dict, report: dict):
+            """
+            Checks of a report is created before the end of the week.
+            """
+            ctime = report.get("created_timestamp", None)
+            return ctime and ctime < week["end_monday"]
 
-            for week in matches_by_week:
-                # Only look at reports, that currently exist
-                if report.get("created_timestamp") < week["end_monday"]:
-                    # If the report was created this week, count "new".
-                    if report.get("created_timestamp") >= week["begin_monday"]:
-                        week["new"] += 1
-                    # If the report is not handled, or is handled in the future, count "matches".
-                    if report.get("resolution_time") is None \
-                            or report.get("resolution_time") > week["end_monday"]:
-                        week["matches"] += 1
-                    # If the report was handled in the past, don't count it.
-                    elif report.get("resolution_time") < week["begin_monday"]:
-                        continue
-                    # If the report was handled this week, only count "handled".
-                    elif report.get("resolution_time") < week["end_monday"]:
-                        week["handled"] += 1
+        def is_unhandled(week: dict, report: dict):
+            """
+            Checks if a report is unhandled.
+
+            A report is unhandled if either the status is null
+            or the resolution time is either not set or in the future.
+            """
+            rtime = report.get("resolution_time", None)
+            status = report.get("resolution_status", None)
+            return status is None or not rtime or rtime > week["end_monday"]
+
+        def is_handled(week: dict, report: dict):
+            """
+            Checks if a report is handled.
+
+            A report is handled if the status is set and the resolution
+            time is within this week.
+            """
+            rtime = report.get("resolution_time", None)
+            status = report.get("resolution_status", None)
+            return status is not None and week["begin_monday"] <= rtime < week["end_monday"]
+
+        def is_new(week: dict, report: dict):
+            """
+            Check if a report is new.
+
+            A report is new if the created timestamp is within
+            this week.
+            """
+            ctime = report.get("created_timestamp", None)
+            return ctime and week["begin_monday"] <= ctime < week["end_monday"]
+
+        for week in matches_by_week:
+            for report in all_matches:
+                # set temporary timestamps if missing.
+                if not report.get("created_timestamp"):
+                    logger.warning(
+                        "Encountered a DocumentReport object without a created_timestamp!")
+                    report["created_timestamp"] = timezone.make_aware(timezone.datetime(1970, 1, 1))
+
+                # Skip reports that are not in this week
+                if not is_this_week(week, report):
+                    continue
+
+                if is_new(week, report):
+                    week["new"] += 1
+
+                if is_unhandled(week, report):
+                    week["matches"] += 1
+                elif is_handled(week, report):
+                    week["handled"] += 1
 
         return matches_by_week
 
