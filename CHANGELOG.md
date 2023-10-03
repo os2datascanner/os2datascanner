@@ -1,5 +1,14 @@
 # Changelog
 
+## Next release
+
+"I am Turning Now; Good Luck Everyone Else"
+
+### General improvements
+
+- Previously seen error messages in the user error log are now hidden by
+  default. They can be shown by checking the checkbox at the top of the page.
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"

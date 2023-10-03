@@ -30,7 +30,7 @@
             class="errorlog_filtering_wrapper"
             onsubmit="return false"
             hx-get="{% url "error-log" %}"
-            hx-trigger="keyup delay:200ms from:#search_field"
+            hx-trigger="keyup delay:200ms from:#search_field, change from:#show_seen"
             hx-swap="outerHTML"
             hx-include="[id='dropdown_options']"
             hx-target=".error_content"
@@ -42,9 +42,19 @@
                  placeholder="{% trans "Search for error message" %}"
                  value="{{ request.GET.search_field }}"
                  autocomplete="off" />
-          <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
-          <input type="hidden" name="order" id="order" value="{{ order }}">
         </div>
+        <div class="show_seen_wrapper">
+          <input type="checkbox"
+                 name="show_seen"
+                 id="show_seen"
+                 value="on"
+                 {% if show_seen %}checked{% endif %}
+                 autocomplete="off" />
+          <label for="show_seen">{% trans "Show seen error messages" %}</label>
+        </div>
+        <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}">
+        <input type="hidden" name="order" id="order" value="{{ order }}">
+ 
       </form>
 
       {% if object_list %}

@@ -447,7 +447,7 @@ msgid "error logs"
 msgstr "fejlbeskeder"
 
 #: adminapp/models/usererrorlog.py:33
-#: adminapp/templates/os2datascanner/error_log.html:145
+#: adminapp/templates/os2datascanner/error_log.html:155
 msgid "Path"
 msgstr "Sti"
 
@@ -1084,7 +1084,7 @@ msgid "Save changes"
 msgstr "Gem ændringer"
 
 #: adminapp/templates/os2datascanner/error_log.html:25
-#: adminapp/templates/os2datascanner/error_log.html:54
+#: adminapp/templates/os2datascanner/error_log.html:64
 #: adminapp/templates/os2datascanner/scanner_tabs.html:62
 msgid "Error Log"
 msgstr "Fejlbeskeder"
@@ -1093,7 +1093,11 @@ msgstr "Fejlbeskeder"
 msgid "Search for error message"
 msgstr "Søg efter fejlbesked"
 
-#: adminapp/templates/os2datascanner/error_log.html:79
+#: adminapp/templates/os2datascanner/error_log.html:53
+msgid "Show seen error messages"
+msgstr "Vis sete fejlbeskeder"
+
+#: adminapp/templates/os2datascanner/error_log.html:89
 msgid ""
 "You are about to mark all error log messages as seen. This action cannot be "
 "reverted. Are you sure?"
@@ -1101,65 +1105,65 @@ msgstr ""
 "Du er ved at markere alle fejlbeskeder som set. Denne handling kan ikke "
 "fortrydes. Er du sikker?"
 
-#: adminapp/templates/os2datascanner/error_log.html:80
+#: adminapp/templates/os2datascanner/error_log.html:90
 msgid "Mark all as seen"
 msgstr "Markér alle som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:91
+#: adminapp/templates/os2datascanner/error_log.html:101
 msgid "You are about to remove"
 msgstr "Du er ved at slette"
 
-#: adminapp/templates/os2datascanner/error_log.html:91
+#: adminapp/templates/os2datascanner/error_log.html:101
 msgid " error logs. This action cannot be reverted. Are you sure?"
 msgstr " fejlbeskeder. Denne handling kan ikke fortrydes. Er du sikker?"
 
-#: adminapp/templates/os2datascanner/error_log.html:95
+#: adminapp/templates/os2datascanner/error_log.html:105
 msgid "Remove all"
 msgstr "Slet alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:104
+#: adminapp/templates/os2datascanner/error_log.html:114
 #: adminapp/templates/os2datascanner/scan_completed.html:77
 msgid "Select all"
 msgstr "Vælg alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:105
+#: adminapp/templates/os2datascanner/error_log.html:115
 #: adminapp/templates/os2datascanner/scan_completed.html:78
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: adminapp/templates/os2datascanner/error_log.html:111
+#: adminapp/templates/os2datascanner/error_log.html:121
 msgid "Error"
 msgstr "Fejl"
 
-#: adminapp/templates/os2datascanner/error_log.html:128
+#: adminapp/templates/os2datascanner/error_log.html:138
 #: adminapp/templates/os2datascanner/scan_completed.html:83
 msgid "Started"
 msgstr "Startet"
 
-#: adminapp/templates/os2datascanner/error_log.html:164
+#: adminapp/templates/os2datascanner/error_log.html:174
 msgid "Scan"
 msgstr "Scan"
 
-#: adminapp/templates/os2datascanner/error_log.html:167
+#: adminapp/templates/os2datascanner/error_log.html:177
 #: adminapp/templates/os2datascanner/scan_completed.html:88
 #: adminapp/templates/os2datascanner/scan_status_table.html:43
 #: organizations/templates/organizations/org_table.html:54
 msgid "Actions"
 msgstr "Handlinger"
 
-#: adminapp/templates/os2datascanner/error_log.html:183
+#: adminapp/templates/os2datascanner/error_log.html:193
 msgid "Select results"
 msgstr "Vælg resultater"
 
-#: adminapp/templates/os2datascanner/error_log.html:191
+#: adminapp/templates/os2datascanner/error_log.html:201
 msgid "New"
 msgstr "Ny"
 
-#: adminapp/templates/os2datascanner/error_log.html:227
+#: adminapp/templates/os2datascanner/error_log.html:237
 msgid "Mark as seen"
 msgstr "Markér som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:240
+#: adminapp/templates/os2datascanner/error_log.html:250
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
@@ -2086,7 +2090,7 @@ msgstr "Udtryk"
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:469
+#: adminapp/views/scanner_views.py:474
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
