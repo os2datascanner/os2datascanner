@@ -36,7 +36,7 @@ from prometheus_client import Summary, start_http_server
 
 from ...models.documentreport import DocumentReport
 from ...utils import prepare_json_object
-
+from ...views.utilities.msgraph_utilities import OutlookCategoryName
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_result_collector_report",
@@ -106,6 +106,7 @@ def handle_metadata_message(scan_tag, result):
         scanner_job_pk=scan_tag.scanner.pk
     ).first()
 
+    resolution_status = None
     lm = None
     if "last-modified" in message.metadata:
         lm = OutputType.LastModified.decode_json_object(
@@ -116,6 +117,10 @@ def handle_metadata_message(scan_tag, result):
         # If no datasource_last_modified value is ever set, matches will not be
         # shown.
         lm = scan_tag.time or time_now()
+
+    # Specific to Outlook matches - if they have a "False Positive" category set, resolve them.
+    if OutlookCategoryName.FalsePositive.value in message.metadata.get("outlook-categories", []):
+        resolution_status = ResolutionChoices.FALSE_POSITIVE.value
 
     dr, _ = DocumentReport.objects.update_or_create(
             path=path, scanner_job_pk=scan_tag.scanner.pk,
@@ -128,7 +133,7 @@ def handle_metadata_message(scan_tag, result):
                 "datasource_last_modified": lm,
                 "scanner_job_name": scan_tag.scanner.name,
                 "only_notify_superadmin": scan_tag.scanner.test,
-                "resolution_status": None,
+                "resolution_status": resolution_status,
                 "organization": get_org_from_scantag(scan_tag),
                 "owner": owner,
             })
