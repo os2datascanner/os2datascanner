@@ -216,6 +216,10 @@ class DialogSuccess(TemplateView):
 
 
 class CSVExportMixin:
+    """View mixin for exporting a queryset normally delivered to a template
+    as a CSV-file instead. Intended use: Define a new view, which inherits
+    from the view, which normally delivers context to a template, and this
+    mixin. It is important, that the new view inherits from this mixin first!"""
     paginator_class = None
     exported_fields = []
     exported_labels = []
