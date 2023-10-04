@@ -260,6 +260,15 @@ class UserErrorLogView(RestrictedListView):
     def get_queryset(self):
         """Order errors by most recent scan."""
         qs = super().get_queryset().filter(is_removed=False)
+
+        qs = self.sort_queryset(qs)
+
+        # We often use the error_logs scan_status and scanner as well. Prefetch that!
+        qs = qs.prefetch_related("scan_status__scanner")
+
+        return qs
+
+    def sort_queryset(self, qs):
         allowed_sorting_properties = {'error_message', 'path', 'scan_status', 'pk'}
 
         if (sort_key := self.request.GET.get('order_by')) and (
@@ -280,9 +289,6 @@ class UserErrorLogView(RestrictedListView):
 
         if self.request.GET.get('show_seen', 'off') != 'on':
             qs = qs.filter(is_new=True)
-
-        # We often use the error_logs scan_status and scanner as well. Prefetch that!
-        qs = qs.prefetch_related("scan_status__scanner")
 
         return qs
 
@@ -346,6 +352,11 @@ class UserErrorLogCSVView(CSVExportMixin, UserErrorLogView):
         _("Error message"): 'error_message'
     }
     exported_filename = 'os2datascanner_usererrorlogs'
+
+    def sort_queryset(self, qs):
+        # Override the sorting method to make sure we get both seen and unseen
+        # UserErrorLog-objects.
+        return qs
 
 
 class ScannerList(RestrictedListView):

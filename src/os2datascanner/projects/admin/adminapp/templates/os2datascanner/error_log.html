@@ -104,9 +104,11 @@
                         </svg>
                         <span>{% trans "Remove all" %}</span>
                       </button>
-                      <a class="button button--small button--has-icon"
+                      <a class="button button--has-icon"
                          title="{% trans "Export to CSV" %}"
-                         href='{% url "export-error-log" %}'><span class="material-icons">file_download</span></a>
+                         href='{% url "export-error-log" %}'>
+                        <span class="material-icons">file_download</span>
+                      {% trans "Export to CSV" %}</a>
                     </div>
                   </th>
                 </tr>

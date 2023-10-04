@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-12 10:17+0200\n"
+"POT-Creation-Date: 2023-10-13 10:19+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -447,12 +447,12 @@ msgid "error logs"
 msgstr "fejlbeskeder"
 
 #: adminapp/models/usererrorlog.py:33
-#: adminapp/templates/os2datascanner/error_log.html:148
-#: adminapp/views/scanner_views.py:332
+#: adminapp/templates/os2datascanner/error_log.html:160
+#: adminapp/views/scanner_views.py:350
 msgid "Path"
 msgstr "Sti"
 
-#: adminapp/models/usererrorlog.py:38 adminapp/views/scanner_views.py:332
+#: adminapp/models/usererrorlog.py:38 adminapp/views/scanner_views.py:352
 msgid "Error message"
 msgstr "Fejlbesked"
 
@@ -1061,53 +1061,54 @@ msgstr " fejlbeskeder. Denne handling kan ikke fortrydes. Er du sikker?"
 msgid "Remove all"
 msgstr "Slet alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:98
+#: adminapp/templates/os2datascanner/error_log.html:108
+#: adminapp/templates/os2datascanner/error_log.html:111
 msgid "Export to CSV"
 msgstr "Eksportér til CSV"
 
-#: adminapp/templates/os2datascanner/error_log.html:107
+#: adminapp/templates/os2datascanner/error_log.html:119
 #: adminapp/templates/os2datascanner/scan_completed.html:77
 msgid "Select all"
 msgstr "Vælg alle"
 
-#: adminapp/templates/os2datascanner/error_log.html:108
+#: adminapp/templates/os2datascanner/error_log.html:120
 #: adminapp/templates/os2datascanner/scan_completed.html:78
 msgid "Select all results"
 msgstr "Vælg alle resultater"
 
-#: adminapp/templates/os2datascanner/error_log.html:114
+#: adminapp/templates/os2datascanner/error_log.html:126
 msgid "Error"
 msgstr "Fejl"
 
-#: adminapp/templates/os2datascanner/error_log.html:131
+#: adminapp/templates/os2datascanner/error_log.html:143
 #: adminapp/templates/os2datascanner/scan_completed.html:83
 msgid "Started"
 msgstr "Startet"
 
-#: adminapp/templates/os2datascanner/error_log.html:167
+#: adminapp/templates/os2datascanner/error_log.html:179
 msgid "Scan"
 msgstr "Scan"
 
-#: adminapp/templates/os2datascanner/error_log.html:170
+#: adminapp/templates/os2datascanner/error_log.html:182
 #: adminapp/templates/os2datascanner/scan_completed.html:88
 #: adminapp/templates/os2datascanner/scan_status_table.html:43
 #: organizations/templates/organizations/org_table.html:54
 msgid "Actions"
 msgstr "Handlinger"
 
-#: adminapp/templates/os2datascanner/error_log.html:186
+#: adminapp/templates/os2datascanner/error_log.html:198
 msgid "Select results"
 msgstr "Vælg resultater"
 
-#: adminapp/templates/os2datascanner/error_log.html:194
+#: adminapp/templates/os2datascanner/error_log.html:206
 msgid "New"
 msgstr "Ny"
 
-#: adminapp/templates/os2datascanner/error_log.html:230
+#: adminapp/templates/os2datascanner/error_log.html:242
 msgid "Mark as seen"
 msgstr "Markér som set"
 
-#: adminapp/templates/os2datascanner/error_log.html:243
+#: adminapp/templates/os2datascanner/error_log.html:255
 msgid "no errors found."
 msgstr "ingen fejl fundet."
 
@@ -2030,19 +2031,19 @@ msgstr "Drevbogstav"
 msgid "Expression"
 msgstr "Udtryk"
 
-#: adminapp/views/scanner_views.py:64
+#: adminapp/views/scanner_views.py:65
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:332
+#: adminapp/views/scanner_views.py:349
 msgid "Scan time"
 msgstr "Scan tidspunkt"
 
-#: adminapp/views/scanner_views.py:332
+#: adminapp/views/scanner_views.py:351
 msgid "Scanner job"
 msgstr "Scannerjob"
 
-#: adminapp/views/scanner_views.py:477
+#: adminapp/views/scanner_views.py:501
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 

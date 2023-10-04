@@ -13,6 +13,7 @@
   transition-property: background-color;
   border-radius: var(--border-radius-button);
   word-break: normal;
+  font-weight: normal;
 
   &:disabled {
     color: var(--color-grey-dark);
