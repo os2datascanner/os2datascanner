@@ -15,7 +15,7 @@ import csv
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import modelform_factory
-from django.http import Http404, HttpResponse
+from django.http import Http404, StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, TemplateView, DetailView
@@ -220,24 +220,36 @@ class CSVExportMixin:
     as a CSV-file instead. Intended use: Define a new view, which inherits
     from the view, which normally delivers context to a template, and this
     mixin. It is important, that the new view inherits from this mixin first!"""
-    paginator_class = None
-    exported_fields = {}
-    exported_filename = "exported_file.csv"
+    paginator_class = None  # We never want to paginate results
+    exported_fields = {}  # Structure: {"<label>": "<field_name>", ...}
+    exported_filename = "exported_file"
+
+    class CSVBuffer:
+        def write(self, value):
+            return value
+
+    def stream_queryset(self, queryset):
+        """Writes to a virtual buffer, so there is only ever one row of the CSV
+        in memory."""
+        pseudo_buffer = self.CSVBuffer()
+        writer = csv.writer(pseudo_buffer)
+
+        yield writer.writerow(self.exported_fields.keys())
+
+        for obj in queryset:
+            yield writer.writerow(obj.values())
 
     def get(self, request, *args, **kwargs):
-        response = HttpResponse(
+        # Since we are streaming, we need to select the entire queryset, and
+        # stream it from memory. We are not able to make further queries after
+        # streaming has begun.
+        queryset = list(self.get_queryset().values(*self.exported_fields.values()))
+
+        response = StreamingHttpResponse(
+            self.stream_queryset(queryset),
             content_type="text/csv",
             headers={
                 "Content-Disposition":
-                f'attachment; filename="{time_now()}-{self.exported_filename}"'},
-         )
-
-        queryset = self.get_queryset()
-
-        writer = csv.writer(response)
-        writer.writerow(self.exported_fields.keys())
-
-        for obj in queryset.values(*self.exported_fields.values()).iterator():
-            writer.writerow(obj.values())
+                f'attachment; filename="{time_now()}-{self.exported_filename}.csv"'})
 
         return response

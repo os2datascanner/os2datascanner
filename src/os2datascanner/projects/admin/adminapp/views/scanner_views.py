@@ -345,7 +345,7 @@ class UserErrorLogCSVView(CSVExportMixin, UserErrorLogView):
         _("Scanner job"): 'scan_status__scanner__name',
         _("Error message"): 'error_message'
     }
-    exported_filename = 'os2datascanner_usererrorlogs.csv'
+    exported_filename = 'os2datascanner_usererrorlogs'
 
 
 class ScannerList(RestrictedListView):
