@@ -10,7 +10,7 @@ For your information, your OS2datascanner-scan @ {{ scanner_name }} has just fin
 
 {{ total_objects }}{% trans " objects were scanned - " %}{{ object_size|filesizeformat }}{% trans " in total - in " %}{{ completion_time }}.
 
-{% if usererrorlogs > 0 %}
+{% if settings.USERERRORLOG and usererrorlogs > 0 %}
 {% blocktrans %}
 {{ usererrorlogs }} errors occured during the scan.
 {% endblocktrans %}
