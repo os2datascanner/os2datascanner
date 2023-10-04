@@ -22,6 +22,9 @@
 
 - Admins can now add users to Exchange- and Office365-scans.
 
+- When the "Open" or "Copy" -buttons on the reportmodule are clicked, the last opened match
+  will once again be highlighted. 
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"

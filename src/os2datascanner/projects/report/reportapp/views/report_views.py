@@ -401,7 +401,7 @@ class OpenMatchView(HTMXEndpointView, DetailView):
 
         report.update_opened()
 
-        request.session["last_opened"] = report.pk
+        request.session["last_opened"] = str(report.pk)
 
         return response
 
