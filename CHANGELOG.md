@@ -20,6 +20,8 @@
 - When clearing the search bar on the user error log page, the table is now
   refreshed.
 
+- Admins can now add users to Exchange- and Office365-scans.
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
