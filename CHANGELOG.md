@@ -15,8 +15,8 @@
 
   - Added and "empty" pie for empty datasets. 
 
-- The loading time of the "completed scans"-tab has been improved by
-  prefetching some related models in the queryset.
+- The loading time of the "completed scans"-tab has been improved by removing
+  redundant logic from the view.
 
 ### Bugfixes
 

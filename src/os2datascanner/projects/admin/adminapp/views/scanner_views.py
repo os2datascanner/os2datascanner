@@ -14,6 +14,7 @@
 from json import dumps
 
 from django.db import transaction
+from django.db.models import OuterRef, Subquery
 from django.core.paginator import Paginator, EmptyPage
 from django.http import Http404
 from django.shortcuts import render
@@ -146,7 +147,7 @@ class StatusCompleted(StatusBase):
         """
         return super().get_queryset().filter(
                 ScanStatus._completed_Q, resolved=False).order_by(
-                '-scan_tag__time').prefetch_related('scanner', 'snapshots')
+                '-scan_tag__time').prefetch_related('scanner')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -157,21 +158,25 @@ class StatusCompleted(StatusBase):
         context['order_by'] = self.request.GET.get('order_by', 'sort_key')
         context['order'] = self.request.GET.get('order', 'ascending')
 
-        snapshots = {}
         total_scan_times = {}
 
-        for status in context['object_list']:
-            snapshot_data = []
-            for snapshot in status.snapshots.all():
-                seconds_since_start = (snapshot.time_stamp - status.start_time).total_seconds()
-                # Calculating a new fraction, due to early versions of
-                # snapshots not knowing the total number of objects.
-                fraction_scanned = snapshot.scanned_objects/status.total_objects
-                snapshot_data.append({"x": seconds_since_start, "y": fraction_scanned*100})
-            snapshots[status.pk] = snapshot_data
-            total_scan_times[status.pk] = snapshot_data[-1]["x"] if snapshot_data else None
+        # Subquery fetches the last snapshot for each status object
+        last_snapshot_subquery = ScanStatusSnapshot.objects.filter(
+            scan_status=OuterRef('pk')).order_by(
+            '-time_stamp').values('time_stamp')[:1]
 
-        context['snapshots'] = snapshots
+        # Annotate the Status queryset with the subquery to fetch the last snapshot
+        statuses = self.object_list.annotate(last_snapshot_time=Subquery(last_snapshot_subquery))
+
+        for status in statuses:
+            if status.last_snapshot_time:
+                seconds_since_start = (
+                    status.last_snapshot_time -
+                    status.start_time).total_seconds()
+                total_scan_times[status.pk] = seconds_since_start
+            else:
+                total_scan_times[status.pk] = None
+
         context['total_scan_times'] = total_scan_times
 
         return context
