@@ -34,6 +34,9 @@
 - Only notify of the number of new errors found during a scan in the subsequent
   email notification, if the USERERRORLOG-setting is toggled on.
 
+- The OS2mo organisational import function is now less easily discouraged
+  by unexpected errors.
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
