@@ -28,6 +28,9 @@
 - When the "Open" or "Copy" -buttons on the reportmodule are clicked, the last opened match
   will once again be highlighted. 
 
+- Delete button for MSGraph mail matches is now visible on matches 
+  whether HANDLE_DROPDOWN is enabled or not.
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
