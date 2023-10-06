@@ -50,8 +50,10 @@ class OutlookCategoryColour(Enum):
 
 
 class OutlookCategoryName(Enum):
-    Match = _("OS2datascanner Match")
-    FalsePositive = _("OS2datascanner False Positive")
+    # Don't translate these - it'll give you proxy objects which aren't serializable,
+    # and we need to be able to trust their values.
+    Match = "OS2datascanner Match"
+    FalsePositive = "OS2datascanner False Positive"
 
 
 def create_outlook_category_for_account(account: Account,
@@ -82,7 +84,7 @@ def create_outlook_category_for_account(account: Account,
         try:
             create_category_response = gc.create_outlook_category(owner,
                                                                   category_name.value,
-                                                                  category_colour.value,)
+                                                                  category_colour.value, )
             if create_category_response.ok:
                 logger.info(f"Successfully created Outlook Category for {account}! "
                             f"Category name: {category_name} & Colour {category_colour}")
@@ -97,14 +99,46 @@ def create_outlook_category_for_account(account: Account,
             raise PermissionDenied(create_category_failed_message)
 
 
-def categorize_emails(account: Account, category_name: OutlookCategoryName):
+def categorize_email_from_report(document_report: DocumentReport,
+                                 category_name: str,
+                                 gc: GraphCaller):
     """
-    Adds category to emails of account.
+    Adds category to a specific email retrieved from a DocumentReport.
     Requires Mail.ReadWrite
     """
-    # TODO: This uses PATCH to update the category on given mail - this will
-    # remove any existing label set on the email, such that only the one provided here is set.
-    # Is that OK? Otherwise, we'll have to fetch the email's existing categories first..
+
+    # Return early scenarios
+    check_msgraph_settings()
+
+    # Fetch what categories are already set on this email.
+    email_categories = get_msgraph_mail_categories_from_document_report(document_report)
+    # Append OS2datascanner category
+    email_categories.append(category_name)
+
+    owner = document_report.owner
+    message_handle = get_mail_message_handle_from_document_report(document_report)
+    msg_id = message_handle.relative_path if message_handle else None
+
+    try:
+        categorize_email_response = gc.categorize_mail(owner,
+                                                       msg_id,
+                                                       email_categories)
+        if categorize_email_response.ok:
+            logger.info(f"Successfully added category {category_name} "
+                        f"to email: {document_report}!")
+
+    except requests.HTTPError as ex:
+        # We don't want to raise anything here
+        # The most likely scenario is just that the mail doesn't exist anymore.
+        logger.warning(f"Couldn't categorize email! Got response: {ex.response}")
+
+
+def categorize_existing_emails_from_account(account: Account,
+                                            category_name: OutlookCategoryName):
+    """
+    Adds category to emails of account, based on existing DocumentReports
+    Requires Mail.ReadWrite
+    """
 
     def _make_token():
         return make_token(
@@ -127,11 +161,14 @@ def categorize_emails(account: Account, category_name: OutlookCategoryName):
         for document_report in document_reports:
             message_handle = get_mail_message_handle_from_document_report(document_report)
             msg_id = message_handle.relative_path if message_handle else None
-
             try:
+                existing_categories_response = gc.get(
+                    f"users/{owner}/messages/{msg_id}?$select=categories")
+                email_categories = existing_categories_response.get("categories", [])
+                email_categories.append(category_name.value)
                 categorize_email_response = gc.categorize_mail(owner,
                                                                msg_id,
-                                                               category_name.value,)
+                                                               email_categories)
                 if categorize_email_response.ok:
                     logger.info(f"Successfully added category {category_name} "
                                 f"to email for: {account}!")
@@ -243,3 +280,7 @@ def get_msgraph_mail_document_reports(account):
         # But sticking to this exception, makes handling it in the view easier.
         raise PermissionDenied(no_dr_message)
     return document_report
+
+
+def get_msgraph_mail_categories_from_document_report(document_report: DocumentReport) -> list:
+    return document_report.metadata.metadata.get("outlook-categories", [])

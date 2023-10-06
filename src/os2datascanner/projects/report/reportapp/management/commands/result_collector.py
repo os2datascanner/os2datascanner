@@ -25,12 +25,11 @@ from os2datascanner.utils import debug
 from os2datascanner.utils.log_levels import log_levels
 from os2datascanner.engine2.conversions.types import OutputType
 from os2datascanner.engine2.model.core import Handle, Source
+from os2datascanner.engine2.model.msgraph import MSGraphMailSource
 from os2datascanner.engine2.pipeline import messages
 from os2datascanner.engine2.pipeline.utilities.pika import PikaPipelineThread
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
-
 from os2datascanner.projects.report.organizations.models import Alias, AliasType, Organization
-
 from os2datascanner.utils.system_utilities import time_now
 from prometheus_client import Summary, start_http_server
 
@@ -45,7 +44,7 @@ SUMMARY = Summary("os2datascanner_result_collector_report",
 ResolutionChoices = DocumentReport.ResolutionChoices
 
 
-def result_message_received_raw(body):
+def result_message_received_raw(body, ppt):
     """Method for restructuring and storing result body.
 
     The agreed structure is as follows:
@@ -75,7 +74,7 @@ def result_message_received_raw(body):
         elif queue == "problem":
             handle_problem_message(tag, body)
         elif queue == "metadata":
-            handle_metadata_message(tag, body)
+            handle_metadata_message(tag, body, ppt)
 
     yield from []
 
@@ -93,7 +92,7 @@ def owner_from_metadata(message: messages.MetadataMessage) -> str:
     return owner
 
 
-def handle_metadata_message(scan_tag, result):
+def handle_metadata_message(scan_tag, result, ppt):
     # Evaluate the queryset that is updated later to lock it.
     message = messages.MetadataMessage.from_json_object(result)
     path = message.handle.crunch(hash=True)
@@ -119,7 +118,9 @@ def handle_metadata_message(scan_tag, result):
         lm = scan_tag.time or time_now()
 
     # Specific to Outlook matches - if they have a "False Positive" category set, resolve them.
-    if OutlookCategoryName.FalsePositive.value in message.metadata.get("outlook-categories", []):
+    outlook_false_positive = (OutlookCategoryName.FalsePositive.value in
+                              message.metadata.get("outlook-categories", []))
+    if outlook_false_positive:
         resolution_status = ResolutionChoices.FALSE_POSITIVE.value
 
     dr, _ = DocumentReport.objects.update_or_create(
@@ -137,6 +138,13 @@ def handle_metadata_message(scan_tag, result):
                 "organization": get_org_from_scantag(scan_tag),
                 "owner": owner,
             })
+
+    # We've encountered an Outlook match that isn't categorized False Positive.
+    if dr.source_type == MSGraphMailSource.type_label and not outlook_false_positive:
+        # Todo figure out user choice
+        ppt.enqueue_message(routing_key="os2ds_email_tags",
+                            body=(dr.pk, OutlookCategoryName.Match.value))
+
     create_aliases(dr)
     return dr
 
@@ -428,7 +436,7 @@ class ResultCollectorRunner(PikaPipelineThread):
                 body=body)
             if routing_key == "os2ds_results":
                 with transaction.atomic():
-                    yield from result_message_received_raw(body)
+                    yield from result_message_received_raw(body, self)
 
 
 class Command(BaseCommand):
@@ -453,4 +461,5 @@ class Command(BaseCommand):
 
         ResultCollectorRunner(
             read=["os2ds_results"],
+            write=["os2ds_email_tags"],
             prefetch_count=8).run_consumer()

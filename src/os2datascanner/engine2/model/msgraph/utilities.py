@@ -150,16 +150,16 @@ class MSGraphSource(Source):
                 return self.create_outlook_category(owner, category_name,
                                                     category_colour, _retry=True)
 
-        def categorize_mail_raw(self, owner, msg_id, category_name):
-            json_params = {"categories": [f"{category_name}"]}
+        def categorize_mail_raw(self, owner: str, msg_id: str, categories: list):
+            json_params = {"categories": categories}
             return WebRetrier().run(
                 self._session.patch,
                 f"https://graph.microsoft.com/v1.0/users/{owner}/messages/{msg_id}",
                 headers=self._make_headers(), json=json_params,
             )
 
-        def categorize_mail(self, owner, msg_id, category_name, _retry=False):
-            response = self.categorize_mail_raw(owner, msg_id, category_name)
+        def categorize_mail(self, owner: str, msg_id: str, categories: list, _retry=False):
+            response = self.categorize_mail_raw(owner, msg_id, categories)
             try:
                 response.raise_for_status()
                 return response
@@ -168,7 +168,7 @@ class MSGraphSource(Source):
                     raise ex
                 self._token = self._token_creator()
                 return self.categorize_mail(owner, msg_id,
-                                            category_name, _retry=True)
+                                            categories, _retry=True)
 
         def follow_next_link(self, next_page, _retry=False):
             response = WebRetrier().run(
