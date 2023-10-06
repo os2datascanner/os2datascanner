@@ -140,25 +140,6 @@
                 </ul>
               </div>
             </div>
-            {# personal is set True in UserReportView, as it must be this users results. #}
-            {% if personal and settings.MSGRAPH_ALLOW_DELETION and type == 'msgraph-mail-account' %}
-              <div class="delete-mail">
-                <button class="matches-handle button button--has-icon"
-                        id="{{ document_report.pk }}"
-                        name='delete-mail'
-                        title="{% trans "Deletes email from your mailbox" %}"
-                        hx-post="{% url 'delete-mail' document_report.pk|unlocalize %}"
-                        hx-push-url="false"
-                        hx-swap="none"
-                        hx-trigger="click"
-                        hx-indicator="closest tr"
-                        hx-confirm="{% blocktrans %}You are about to delete selected email from your mailbox. OS2datascanner cannot reverse this action. Are you sure?{% endblocktrans %}">
-                  <i class="material-icons">delete_forever</i>
-                  {% trans "Delete" %}
-                </button>
-              </div>
-            {% endif %}
-
           {% else %}
             {% if "/archive/" in request.path %}
               <button class="revert-handle button button--has-icon"
@@ -189,6 +170,24 @@
                 <i class="material-icons text-secondary" aria-hidden="true">archive</i> <span>{% trans "Handle" %}</span>
               </button>
             {% endif %}
+          {% endif %}
+          {# personal is set True in UserReportView, as it must be this users results. #}
+          {% if personal and settings.MSGRAPH_ALLOW_DELETION and type == 'msgraph-mail-account' and not "/archive/" in request.path %}
+            <div class="delete-mail">
+              <button class="matches-handle button button--has-icon"
+                      id="{{ document_report.pk }}"
+                      name='delete-mail'
+                      title="{% trans "Deletes email from your mailbox" %}"
+                      hx-post="{% url 'delete-mail' document_report.pk|unlocalize %}"
+                      hx-push-url="false"
+                      hx-swap="none"
+                      hx-trigger="click"
+                      hx-indicator="closest tr"
+                      hx-confirm="{% blocktrans %}You are about to delete selected email from your mailbox. OS2datascanner cannot reverse this action. Are you sure?{% endblocktrans %}">
+                <i class="material-icons">delete_forever</i>
+                {% trans "Delete" %}
+              </button>
+            </div>
           {% endif %}
           <button class="matches-expand button button-caret button--has-icon" title="{% trans "Show/hide matches" %}" type="button">
             <i class="material-icons" aria-hidden="true">expand_more</i>
