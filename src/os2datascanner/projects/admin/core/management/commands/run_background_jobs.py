@@ -178,12 +178,16 @@ class Command(BaseCommand):
                                 job.status = "Interrupted by environment"
                                 job.save()
                                 publish_job_state(job)
+                                logger.info(
+                                        f"job {job} interrupted by"
+                                        " environment")
                                 errors += 1
                             except Exception:
                                 job.exec_state = JobState.FAILED
                                 job.save()
                                 publish_job_state(job)
-                                logger.exception("ignoring unexpected error")
+                                logger.exception(
+                                        f"job {job} aborted by exception")
                                 errors += 1
                         except KeyboardInterrupt:
                             job.exec_state = JobState.CANCELLING
