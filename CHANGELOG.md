@@ -31,6 +31,9 @@
 - Delete button for MSGraph mail matches is now visible on matches 
   whether HANDLE_DROPDOWN is enabled or not.
 
+- Only notify of the number of new errors found during a scan in the subsequent
+  email notification, if the USERERRORLOG-setting is toggled on.
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
