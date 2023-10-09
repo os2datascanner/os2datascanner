@@ -81,11 +81,11 @@ class Command(BaseCommand):
 
         if aliases_with_no_user:
             print(f"Found {len(aliases_with_no_user)} aliases with no user:",
-                  ", ".join([d['pk'] for d in aliases_with_no_user]))
+                  ", ".join([str(d['pk']) for d in aliases_with_no_user]))
 
         if aliases_with_no_account:
             print(f"Found {len(aliases_with_no_account)} aliases with no account:",
-                  ", ".join([d['pk'] for d in aliases_with_no_account]))
+                  ", ".join([str(d['pk']) for d in aliases_with_no_account]))
 
     def diagnose_problems(self):
         print("\n\n>> Running diagnostics on problems ...")
