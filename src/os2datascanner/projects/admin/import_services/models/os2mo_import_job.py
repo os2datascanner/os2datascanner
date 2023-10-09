@@ -129,6 +129,37 @@ class OS2moImportJob(BackgroundJob):
     def job_label(self) -> str:
         return "OS2mo Import Job"
 
+    def _retry_post_query(
+            self,
+            session: requests.Session,
+            token: str,
+            os2mo_url_endpoint: str,
+            next_cursor: str) -> dict:
+        for attempt in retry:
+            with attempt:
+                resp = session.post(
+                        os2mo_url_endpoint,
+                        json={
+                            "query": self.QueryOrgUnitsManagersEmployees,
+                            "variables": {
+                                "cursor": next_cursor,
+                                "limit": settings.OS2MO_PAGE_SIZE,
+                                "email_type": (
+                                        settings.OS2MO_EMAIL_ADDRESS_TYPE)
+                             }
+                        },
+                        headers={
+                            "content-type": (
+                                    "application/json; charset=UTF-8"),
+                            "authorization": f"Bearer {token}"
+                        })
+                resp.raise_for_status()
+                return resp
+        else:
+            raise Exception(
+                    "OS2moImportJob._retry_post_query didn't fail, but didn't"
+                    " succeed (huh?)")
+
     def run(self):  # noqa CCR001
         message_buffer.clear()
 
@@ -146,24 +177,8 @@ class OS2moImportJob(BackgroundJob):
             try:
                 next_cursor = None
                 while True:
-                    page_response = retry(
-                            session.post,
-                            os2mo_url_endpoint,
-                            json={
-                                "query": self.QueryOrgUnitsManagersEmployees,
-                                "variables": {
-                                    "cursor": next_cursor,
-                                    "limit": settings.OS2MO_PAGE_SIZE,
-                                    "email_type": (
-                                            settings.OS2MO_EMAIL_ADDRESS_TYPE)
-                                 }
-                            },
-                            headers={
-                                "content-type": (
-                                        "application/json; charset=UTF-8"),
-                                "authorization": f"Bearer {token}"
-                            })
-                    page_response.raise_for_status()
+                    page_response = self._retry_post_query(
+                            session, token, os2mo_url_endpoint, next_cursor)
                     page_json = page_response.json()
                     message_buffer.append(page_json)
 

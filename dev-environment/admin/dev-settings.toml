@@ -40,7 +40,7 @@ MSGRAPH_CLIENT_SECRET = ""
 # [os2mo]
 OS2MO_TOKEN_URL = "http://keycloak:8080/auth/realms/mo/protocol/openid-connect/token"
 # Use OS2mo endpoint, but without graphql version. This is added in os2mo_import_job.py
-OS2MO_ENDPOINT_BASE = "http://mo/graphql/"
+OS2MO_ENDPOINT_BASE = "http://mo:5000/graphql/"
 OS2MO_CLIENT_ID = ""
 OS2MO_CLIENT_SECRET = ""
 # UUID of Mo-address type that holds employee emailaddress(can differ, this is from Kolding fixture)
