@@ -92,6 +92,14 @@ function SupportOptionChange(input) {
   } else {
     enableSupportOptions();
   }
+  const supportValueField = document.getElementById('id_support_value');
+  if (input.value === 'NO') {
+    supportValueField.setAttribute('placeholder', '');
+  } else if (input.value === 'WS') {
+    supportValueField.setAttribute('placeholder', 'https://www.website.org');
+  } else if (input.value === 'EM') {
+    supportValueField.setAttribute('placeholder', 'user@email.net');
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
