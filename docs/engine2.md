@@ -1,10 +1,10 @@
-# Extending OS2Datascanner
+# Extending OS2datascanner
 
 This document is a short guide to adding new sources of data to
-OS2Datascanner's scanner engine, `engine2`.
+OS2datascanner's scanner engine, `engine2`.
 
 > `engine2` is so called because it's the second major version of the
-> OS2Datascanner engine. The first, used from 2014 to 2020, was built on the
+> OS2datascanner engine. The first, used from 2014 to 2020, was built on the
 > *Scrapy* web crawling framework.
 >
 > Most of the advanced functionality of the scanner engine is used by the
@@ -345,7 +345,7 @@ def presentation(self):
 ```
 
 Because `engine2` objects can get quite complicated, the `Handle` API is also
-used by the user interface components of OS2Datascanner to compute names for
+used by the user interface components of OS2datascanner to compute names for
 things. This is the job of the `Handle.presentation` method: it should return
 something that the user recognises as a name.
 

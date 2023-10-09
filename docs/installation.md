@@ -1,6 +1,6 @@
 # Installation
 
-OS2Datascanner is composed of many services. Each service is packaged in Docker
+OS2datascanner is composed of many services. Each service is packaged in Docker
 and can be run with any container orchestration system, such as
 `docker-compose`. For general information on using Docker and `docker-compose`,
 please refer to [the official Docker documentation](https://docs.docker.com/).
@@ -8,7 +8,7 @@ please refer to [the official Docker documentation](https://docs.docker.com/).
 
 ## Docker services overview
 
-As mentioned in the [system overview](./index.md), the OS2Datascanner consists
+As mentioned in the [system overview](./index.md), the OS2datascanner consists
 of three components, or modules. These are each responsible for one or more
 services in the system:
 
