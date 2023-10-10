@@ -33,9 +33,11 @@ from os2datascanner.projects.report.organizations.models import Alias, AliasType
 from os2datascanner.utils.system_utilities import time_now
 from prometheus_client import Summary, start_http_server
 
+
 from ...models.documentreport import DocumentReport
 from ...utils import prepare_json_object
 from ...views.utilities.msgraph_utilities import OutlookCategoryName
+from ....organizations.models import AccountOutlookSetting
 
 logger = structlog.get_logger(__name__)
 SUMMARY = Summary("os2datascanner_result_collector_report",
@@ -92,7 +94,16 @@ def owner_from_metadata(message: messages.MetadataMessage) -> str:
     return owner
 
 
-def handle_metadata_message(scan_tag, result, ppt):
+def outlook_categorize_enabled(owner: str) -> bool:
+    """ Checks if categorize email is enabled for an account with an aliases with owner string
+     as value.
+    Returns True/False"""
+    return bool(AccountOutlookSetting.objects.filter(account__aliases___value=owner,
+                                                     categorize_email=True))
+
+
+# ppt defaults None for test purposes - we provide it through result_message_received_raw.
+def handle_metadata_message(scan_tag, result, ppt=None):
     # Evaluate the queryset that is updated later to lock it.
     message = messages.MetadataMessage.from_json_object(result)
     path = message.handle.crunch(hash=True)
@@ -141,9 +152,13 @@ def handle_metadata_message(scan_tag, result, ppt):
 
     # We've encountered an Outlook match that isn't categorized False Positive.
     if dr.source_type == MSGraphMailSource.type_label and not outlook_false_positive:
-        # Todo figure out user choice
-        ppt.enqueue_message(routing_key="os2ds_email_tags",
-                            body=(dr.pk, OutlookCategoryName.Match.value))
+        if outlook_categorize_enabled(owner):
+            message_body = (dr.pk, OutlookCategoryName.Match.value)
+            ppt.enqueue_message(routing_key="os2ds_email_tags",
+                                body=message_body)
+            logger.debug(f"Enqueued categorize email request containing body: {message_body}")
+        else:
+            logger.debug(f"Categorizing mail not enabled for {owner}")
 
     create_aliases(dr)
     return dr

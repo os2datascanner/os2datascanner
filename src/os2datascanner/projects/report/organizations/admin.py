@@ -3,6 +3,7 @@ from django.contrib import admin
 
 
 from .models.account import Account
+from .models.account_outlook_setting import AccountOutlookSetting
 from .models.aliases import Alias
 from .models.organization import Organization
 from .models.organizational_unit import OrganizationalUnit
@@ -35,6 +36,12 @@ class AliasAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
 class AccountAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = ('username', 'first_name', 'last_name', 'organization', 'manager', 'uuid')
     readonly_fields = ('username', 'first_name', 'last_name', 'organization', 'manager', 'uuid')
+
+
+@admin.register(AccountOutlookSetting)
+class AccountOutlookSettingAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
+    list_display = ['account', 'account_username', 'categorize_email',
+                    'match_colour', 'false_positive_colour']
 
 
 @admin.register(Organization)

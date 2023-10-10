@@ -132,21 +132,73 @@
     </tbody>
   </table>
 
-  <h2>{% trans "Login Information" %}</h2>
-  <table class="userprofile-table login-info">
+  <h2>{% trans "Outlook Settings" %}</h2>
+  <table class="userprofile-table outlook-settings">
     <tbody>
-      {% if not saml2_enabled and account == request.user.account %}
-        <tr>
-          <td>{% trans "Password" %}</td>
-          <td>
-            <a class="password-change" href="/accounts/password_change/">{% trans "Change" %}</a>
+      {% if settings.MSGRAPH_ALLOW_WRITE %}
+        <form id="settings-form"
+              hx-post=""
+              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+              hx-trigger="change from:input, change from:select "
+              hx-vals='{"outlook_setting": "true" }'>
+          {% csrf_token %}
+          <tr>
+            <td>{% trans "Categorize emails" %}</td>
+            <td class="ds-checkbox">
+              <input type="checkbox"
+                     name="categorize_check"
+                     id="categorize_check"
+                     value="checked"
+                     {% if account.outlook_settings.categorize_email %}checked{% endif %}>
+              <label for="categorize_check"
+                     title="{% trans "By checking this box, you allow OS2datascanner to categorize your emails." %}">
+              </label>
+            </td>
+          </tr>
+          <tr>
+            <td>{% trans "Match category colour" %}</td>
+            <td class="dropdown">
+              <select name="match_colour" {% for choice in colour_presets.fields.match_colour.choices %}
+                <option value="{{ choice.0 }}"
+                        {% if choice.0 == account.outlook_settings.match_colour %}selected{% endif %}>
+                  {{ choice.1 }}
+                </option>
+              {% endfor %}
+            </select>
           </td>
         </tr>
-      {% endif %}
-      <tr>
-        <td>{% trans "User since" %}</td>
-        <td>{{ user.date_joined }}</td>
+        <tr>
+          <td>{% trans "False positive category colour" %}</td>
+          <td class="dropdown">
+            <select name="false_positive_colour" {% for choice in colour_presets.fields.false_positive_colour.choices %}
+              <option value="{{ choice.0 }}"
+                      {% if choice.0 == account.outlook_settings.false_positive_colour %}selected{% endif %}>
+                {{ choice.1 }}
+              </option>
+            {% endfor %}
+          </select>
+        </td>
       </tr>
-    </tbody>
-  </table>
+    </form>
+  {% endif %}
+</tbody>
+</table>
+
+<h2>{% trans "Login Information" %}</h2>
+<table class="userprofile-table login-info">
+  <tbody>
+    {% if not saml2_enabled and account == request.user.account %}
+      <tr>
+        <td>{% trans "Password" %}</td>
+        <td>
+          <a class="password-change" href="/accounts/password_change/">{% trans "Change" %}</a>
+        </td>
+      </tr>
+    {% endif %}
+    <tr>
+      <td>{% trans "User since" %}</td>
+      <td>{{ user.date_joined }}</td>
+    </tr>
+  </tbody>
+</table>
 </div>

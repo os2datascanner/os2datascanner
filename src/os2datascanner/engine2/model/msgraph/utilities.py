@@ -170,6 +170,29 @@ class MSGraphSource(Source):
                 return self.categorize_mail(owner, msg_id,
                                             categories, _retry=True)
 
+        def update_category_colour_raw(self, owner: str, category_id: str, category_colour: str):
+            json_params = {"color": category_colour}
+            return WebRetrier().run(
+                self._session.patch,
+                f"https://graph.microsoft.com/v1.0/users/{owner}"
+                f"/outlook/masterCategories/{category_id}",
+                headers=self._make_headers(), json=json_params,
+            )
+
+        def update_category_colour(self, owner: str, category_id: str,
+                                   category_colour: str, _retry=False):
+
+            response = self.update_category_colour_raw(owner, category_id, category_colour)
+            try:
+                response.raise_for_status()
+                return response
+            except requests.exceptions.HTTPError as ex:
+                if ex.response.status_code != 401 or _retry:
+                    raise ex
+                self._token = self._token_creator()
+                return self.update_category_colour(owner, category_id,
+                                                   category_colour, _retry=True)
+
         def follow_next_link(self, next_page, _retry=False):
             response = WebRetrier().run(
                     self._session.get, next_page, headers=self._make_headers())

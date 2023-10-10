@@ -8,10 +8,11 @@ from django.core.exceptions import PermissionDenied
 
 from os2datascanner.engine2.model.msgraph import MSGraphMailMessageHandle
 from os2datascanner.engine2.model.msgraph.utilities import make_token, MSGraphSource
-from os2datascanner.projects.report.organizations.models import Account
+from os2datascanner.projects.report.organizations.models import Account, AccountOutlookSetting
 from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
 from os2datascanner.projects.report.reportapp.views.utilities.document_report_utilities \
     import is_owner, handle_report
+
 
 logger = structlog.get_logger()
 
@@ -19,37 +20,8 @@ logger = structlog.get_logger()
 GraphCaller = MSGraphSource.GraphCaller
 
 
-class OutlookCategoryColour(Enum):
-    # Available colour presets are defined here:
-    # https://learn.microsoft.com/en-us/graph/api/resources/outlookcategory?view=graph-rest-1.0#properties
-    Red = "Preset0"
-    Orange = "Preset1"
-    Brown = "Preset2"
-    Yellow = "Preset3"
-    Green = "Preset4"
-    Teal = "Preset5"
-    Olive = "Preset6"
-    Blue = "Preset7"
-    Purple = "Preset8"
-    Cranberry = "Preset9"
-    Steel = "Preset10"
-    DarkSteel = "Preset11"
-    Gray = "Preset12"
-    DarkGray = "Preset13"
-    Black = "Preset14"
-    DarkRed = "Preset15"
-    DarkOrange = "Preset16"
-    DarkBrown = "Preset17"
-    DarkYellow = "Preset18"
-    DarkGreen = "Preset19"
-    DarkTeal = "Preset20"
-    DarkOlive = "Preset21"
-    DarkBlue = "Preset22"
-    DarkPurple = "Preset23"
-    DarkCranberry = "Preset24"
-
-
 class OutlookCategoryName(Enum):
+    """ Enum used to set Outlook category names """
     # Don't translate these - it'll give you proxy objects which aren't serializable,
     # and we need to be able to trust their values.
     Match = "OS2datascanner Match"
@@ -58,7 +30,8 @@ class OutlookCategoryName(Enum):
 
 def create_outlook_category_for_account(account: Account,
                                         category_name: OutlookCategoryName,
-                                        category_colour: OutlookCategoryColour):
+                                        category_colour: AccountOutlookSetting.OutlookCategoryColour
+                                        ):
     """ Creates outlook category for given account
      Requires MailboxSettings.ReadWrite """
 
@@ -84,10 +57,12 @@ def create_outlook_category_for_account(account: Account,
         try:
             create_category_response = gc.create_outlook_category(owner,
                                                                   category_name.value,
-                                                                  category_colour.value, )
+                                                                  category_colour.value,
+                                                                  )
             if create_category_response.ok:
                 logger.info(f"Successfully created Outlook Category for {account}! "
                             f"Category name: {category_name} & Colour {category_colour}")
+                return create_category_response
 
         except requests.HTTPError as ex:
             create_category_failed_message = _("Couldn't create category! "
@@ -97,6 +72,52 @@ def create_outlook_category_for_account(account: Account,
             # PermissionDenied is a bit misleading here, as it may not represent what went wrong.
             # But sticking to this exception, makes handling it in the view easier.
             raise PermissionDenied(create_category_failed_message)
+
+
+def update_outlook_category_for_account(account: Account,
+                                        category_id: str,
+                                        category_colour: AccountOutlookSetting.OutlookCategoryColour
+                                        ):
+    """ Updates outlook category color for given account
+     Requires MailboxSettings.ReadWrite """
+
+    def _make_token():
+        return make_token(
+            settings.MSGRAPH_APP_ID,
+            tenant_id,
+            settings.MSGRAPH_CLIENT_SECRET)
+
+    # Return early scenarios
+    check_msgraph_settings()
+    document_report = get_msgraph_mail_document_reports(account).last()
+    tenant_id = get_tenant_id_from_document_report(document_report)
+
+    # Open a session and start doing stuff
+    with requests.Session() as session:
+        gc = GraphCaller(
+            _make_token,
+            session)
+
+        owner = account.username
+
+        try:
+            update_category_response = gc.update_category_colour(owner,
+                                                                 category_id,
+                                                                 category_colour.value,
+                                                                 )
+            if update_category_response.ok:
+                logger.info(f"Successfully updated Outlook Category for {account}! "
+                            f"Category id: {category_id} is now colour {category_colour}")
+                return update_category_response
+
+        except requests.HTTPError as ex:
+            update_category_failed_message = _("Couldn't update category! "
+                                               "Code: {status_code}").format(
+                status_code=ex.response.status_code)
+            logger.warning(f"Couldn't create category! Got response: {ex.response}")
+            # PermissionDenied is a bit misleading here, as it may not represent what went wrong.
+            # But sticking to this exception, makes handling it in the view easier.
+            raise PermissionDenied(update_category_failed_message)
 
 
 def categorize_email_from_report(document_report: DocumentReport,
@@ -241,7 +262,7 @@ def get_mail_message_handle_from_document_report(document_report: DocumentReport
 
 
 def check_msgraph_settings():
-    if not settings.MSGRAPH_ALLOW_DELETION:
+    if not settings.MSGRAPH_ALLOW_WRITE:
         allow_deletion_message = _("System configuration does not allow mail deletion.")
         logger.warning(allow_deletion_message)
         raise PermissionDenied(allow_deletion_message)

@@ -37,17 +37,20 @@ class EmailTaggerRunner(PikaPipelineThread):
                     document_report = DocumentReport.objects.get(pk=dr_pk)
                     mail_handle = get_mail_message_handle_from_document_report(document_report)
                     mail_source = mail_handle.source
+
                     # We censor these when going through our pipeline, hence we need to set them
                     # again from settings.
                     mail_source.handle.source._client_id = settings.MSGRAPH_APP_ID
                     mail_source.handle.source._client_secret = settings.MSGRAPH_CLIENT_SECRET
+
+                    # Use Source's source manager to reuse connection.
+                    gc = self.source_manager.open(mail_source)
+                    categorize_email_from_report(document_report,
+                                                 category_to_add,
+                                                 gc)
+
                 except DocumentReport.DoesNotExist:
                     logger.warning(f"Can't categorize email, document report not found: {dr_pk}")
-
-                gc = self.source_manager.open(mail_source)
-                categorize_email_from_report(document_report,
-                                             category_to_add,
-                                             gc)
 
                 yield from []
 
