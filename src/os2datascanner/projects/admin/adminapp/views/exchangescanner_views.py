@@ -191,11 +191,25 @@ class ExchangeScannerRun(ScannerRun):
 
 def validate_userlist_or_org_units(form):
     """Validates whether the form has either a userlist or organizational units.
+    Also checks that the formatting of the userlist is valid.
     NB : must be called after initialize form. """
     form.is_valid()
     if not form.cleaned_data['userlist'] and not form.cleaned_data['org_unit']:
         form.add_error('org_unit', _("No organizational units has been selected"))
         form.add_error('userlist', _("No userlist has been selected"))
+    if userlist := form.cleaned_data.get('userlist'):
+        users = (u.decode("utf-8").strip() for u in userlist if u.strip())
+        for user in users:
+            if "@" in user:
+                form.add_error(
+                    'userlist',
+                    _("The userlist should only include the usernames of the "
+                      "users, not the domain!"))
+            if any(c in user for c in (",", " ")):
+                form.add_error(
+                    'userlist',
+                    _("Usernames in the userlist should be separated by "
+                      "newlines, not commas or whitespace!"))
     return form
 
 

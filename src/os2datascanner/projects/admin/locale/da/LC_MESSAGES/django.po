@@ -1996,24 +1996,37 @@ msgstr "millisekund"
 msgid "milliseconds"
 msgstr "millisekunder"
 
-#: adminapp/views/exchangescanner_views.py:197
+#: adminapp/views/exchangescanner_views.py:198
 msgid "No organizational units has been selected"
 msgstr "Der er ikke valgt nogen organisatoriske enheder"
 
-#: adminapp/views/exchangescanner_views.py:198
+#: adminapp/views/exchangescanner_views.py:199
 msgid "No userlist has been selected"
 msgstr "Der er ikke valgt nogen brugerliste"
 
 #: adminapp/views/exchangescanner_views.py:206
+msgid ""
+"The userlist should only include the usernames of the users, not the domain!"
+msgstr "Brugerlisten skal kun indeholde brugernavne på brugerne, ikke domæne!"
+
+#: adminapp/views/exchangescanner_views.py:211
+msgid ""
+"Usernames in the userlist should be separated by newlines, not commas or "
+"whitespace!"
+msgstr ""
+"Brugernavnene i brugerlisten skal adskilles af linjeskift, ikke komma eller "
+"mellemrum!"
+
+#: adminapp/views/exchangescanner_views.py:220
 msgid "e.g. @example.com"
 msgstr "f.eks. @example.com"
 
-#: adminapp/views/exchangescanner_views.py:210
+#: adminapp/views/exchangescanner_views.py:224
 #: adminapp/views/filescanner_views.py:174
 msgid "Username"
 msgstr "Brugernavn"
 
-#: adminapp/views/exchangescanner_views.py:215
+#: adminapp/views/exchangescanner_views.py:229
 #: adminapp/views/filescanner_views.py:175
 msgid "Password"
 msgstr "Adgangskode"
