@@ -7,6 +7,7 @@ import structlog
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db.models import Q
 from mozilla_django_oidc import auth
 from django.utils.translation import gettext_lazy as _
 
@@ -250,6 +251,21 @@ def create_alias_and_match_relations(sub_alias: Alias) -> int:
     if reports:
         tm.objects.filter(documentreport_id__in=reports,
                           alias___alias_type=AliasType.REMEDIATOR).delete()
+    elif not reports and sub_alias.alias_type == AliasType.REMEDIATOR:
+        remediator_for = sub_alias.value
+
+        if remediator_for == "0":  # Remediator for all scannerjobs, becomes a string,
+            reports = DocumentReport.objects.filter(
+                (Q(alias_relation__isnull=True) |
+                 Q(alias_relation___alias_type=AliasType.REMEDIATOR.value))
+            )
+
+        else:  # Remediator for a specific scannerjob
+            reports = DocumentReport.objects.filter(
+                (Q(alias_relation__isnull=True) |
+                 Q(alias_relation___alias_type=AliasType.REMEDIATOR.value)) &
+                Q(scanner_job_pk=remediator_for)
+            )
 
     tm.objects.bulk_create([tm(documentreport_id=r.pk, alias_id=sub_alias.pk)
                             for r in reports], ignore_conflicts=True)
