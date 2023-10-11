@@ -13,8 +13,30 @@
 #
 import json
 import requests
-
+import structlog
 from django.conf import settings
+from os2datascanner.utils.oauth2 import mint_cc_token
+from os2datascanner.engine2.utilities.backoff import WebRetrier
+
+logger = structlog.get_logger(__name__)
+
+
+def refresh_token(fn):
+    """ Wrapper function, that on an HTTPError will try once to fetch a
+    new access token, and run the function again. If it fails, HTTPError will be raised.
+    It is required that 'token' is a keyword argument on the decorated function"""
+    def _wrapper(*args, token, **kwargs):
+        try:
+            response = fn(*args, token=token, **kwargs)
+            response.raise_for_status()
+            return response
+        except requests.exceptions.HTTPError as ex:
+            logger.info(f"HTTPError {ex} ... fetching new token")
+            token = request_access_token()
+            response = fn(*args, token=token, **kwargs)
+            response.raise_for_status()
+            return response
+    return _wrapper
 
 
 # TODO: consider extending this to take list of requests and list of args
@@ -66,18 +88,12 @@ def request_create_new_realm(realm, token):
     return requests.post(url, data=json.dumps(payload), headers=headers)
 
 
-# Simplified while using only one client for admin_module:
-# TODO: consider extracting token here? Requires universally valid error handling
 def request_access_token():
-    """TODO:"""
-    url = (settings.KEYCLOAK_BASE_URL +
-           '/auth/realms/master/protocol/openid-connect/token')
-    payload = {
-        'client_id': settings.KEYCLOAK_ADMIN_CLIENT,
-        'client_secret': settings.KEYCLOAK_ADMIN_SECRET,
-        'grant_type': 'client_credentials',
-    }
-    return requests.post(url, data=payload)
+    return mint_cc_token(
+        f"{settings.KEYCLOAK_BASE_URL}/auth/realms/master/protocol/openid-connect/token",
+        settings.KEYCLOAK_ADMIN_CLIENT, settings.KEYCLOAK_ADMIN_SECRET,
+        wrapper=WebRetrier().run
+    )
 
 
 def request_create_component(realm, token, payload):
@@ -144,7 +160,8 @@ def check_ldap_authentication(realm, token, connection_url,
     return requests.post(url, data=data, headers=headers, timeout=timeout)
 
 
-def sync_users(realm, provider_id, token, timeout=5):
+@refresh_token
+def sync_users(realm, provider_id, token=None, timeout=5):
     """Given a realm name and token, synchronises that realm's Keycloak users
     with the realm's identity provider."""
 
@@ -173,7 +190,8 @@ def get_user_count_in_realm(realm, token, timeout=5):
     return user_count
 
 
-def get_users(realm, token, timeout=5, max_users=500, start_with_user=0):
+@refresh_token
+def get_users(realm, timeout=5, max_users=500, start_with_user=0, token=None):
     """Given a realm name and token, returns a list of maximum 500 users at a time
     known to Keycloak under that realm, starting with user 0."""
 
@@ -186,12 +204,13 @@ def get_users(realm, token, timeout=5, max_users=500, start_with_user=0):
     return requests.get(url, headers=headers, timeout=timeout)
 
 
-def iter_users(realm, token, timeout=5, page_size=500):
+def iter_users(realm, token=None, timeout=5, page_size=500):
     """Yields all users known to Keycloak under the given realm, making as
     many API calls as necessary given the specified page size."""
     offset = 0
 
-    while (rq := get_users(realm, token, timeout, page_size, offset)):
+    while rq := get_users(realm, start_with_user=offset,
+                          token=token, timeout=timeout, max_users=page_size):
         rq.raise_for_status()
 
         users = rq.json()

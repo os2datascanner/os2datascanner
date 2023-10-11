@@ -62,13 +62,10 @@ def perform_import(
     if import_service.ldapconfig.import_into == "group":
         name_selector = keycloak_group_dn_selector
 
-    token_message = keycloak_services.request_access_token()
-    token_message.raise_for_status()
-    token = token_message.json()["access_token"]
-
+    token = keycloak_services.request_access_token()
     # Timeout set to 30 minutes
     sync_message = keycloak_services.sync_users(
-            realm.realm_id, realm.organization.pk, token, timeout=1800)
+            realm.realm_id, realm.organization.pk, token=token, timeout=1800)
     sync_message.raise_for_status()
 
     # TODO: In the future this kind of logic should be reimplemented using
@@ -77,7 +74,7 @@ def perform_import(
     # Timeout set to 30 minutes
     all_users = list(
             keycloak_services.iter_users(
-                    realm.realm_id, token, timeout=1800, page_size=1000))
+                    realm.realm_id, token=token, timeout=1800, page_size=1000))
 
     return perform_import_raw(org, all_users, name_selector, progress_callback)
 

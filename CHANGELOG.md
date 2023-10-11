@@ -40,6 +40,9 @@
 - The OS2mo organisational import function is now less easily discouraged
   by unexpected errors.
 
+- If a Keycloak access token runs out during user fetching, OS2datascanner will now fetch a new one
+and proceed.
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
