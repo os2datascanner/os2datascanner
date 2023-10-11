@@ -18,6 +18,9 @@
 - The loading time of the "completed scans"-tab has been improved by removing
   redundant logic from the view.
 
+- Running `diagnostics --only Rule` in the admin module now also displays the
+  scanners, which each rule is assigned to as an exclusion rule.
+
 ### Bugfixes
 
 - When clearing the search bar on the user error log page, the table is now

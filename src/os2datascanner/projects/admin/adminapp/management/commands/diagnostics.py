@@ -111,11 +111,19 @@ class Command(BaseCommand):
         for rule in rules:
             print(f"\n===={rule.name}====")
             print(f"Description:\n\"{rule.description}\"")
+
+            has_scanners = False
             if scanners := rule.scanners.all():
-                print("\nScanners:")
+                has_scanners = True
+                print("\nScanners (regular rules):")
                 [print(f"· {scanner.name} ({scanner.pk})") for scanner in scanners]
-            else:
+            if ex_scanners := rule.scanners_ex_rules.all():
+                has_scanners = True
+                print("\nScanner (exclusion rules):")
+                [print(f"· {scanner.name} ({scanner.pk})") for scanner in ex_scanners]
+            if not has_scanners:
                 print("\nNo connected scanners.")
+
             # We run this through a JSON-formatter to print it prettier.
             print("\nRule JSON:")
             print(json.dumps(rule._rule, indent=2))
