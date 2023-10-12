@@ -14,13 +14,14 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
+
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, Http404
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-
-from ..models.roles.role import Role
 from ...organizations.models import Account
+from ...organizations.models.aliases import AliasType
 
 
 class AccountView(LoginRequiredMixin, DetailView):
@@ -43,13 +44,9 @@ class AccountView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         user = self.object.user
-
-        roles = Role.get_user_roles_or_default(user)
-        user_roles = [role._meta.verbose_name for role in roles]
-
         context["user"] = user
-        context["user_roles"] = user_roles
-        context["aliases"] = self.object.aliases.all()
+        context["user_roles"] = [_("Remediator")] if self.object.is_remediator else None
+        context["aliases"] = self.object.aliases.exclude(_alias_type=AliasType.REMEDIATOR)
 
         return context
 

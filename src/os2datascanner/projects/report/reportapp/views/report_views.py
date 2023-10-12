@@ -41,15 +41,10 @@ from os2datascanner.engine2.rules.links_follow import LinksFollowRule
 from os2datascanner.engine2.rules.rule import Sensitivity
 from os2datascanner.engine2.rules.wordlists import OrderedWordlistRule
 from os2datascanner.engine2.rules.dict_lookup import EmailHeaderRule
-from os2datascanner.projects.report.reportapp.models.roles.role import Role
-
-from ..utils import user_is
 from .view_utils import handle_report, delete_email
 from ..models.documentreport import DocumentReport
-from ..models.roles.defaultrole import DefaultRole
-from ..models.roles.remediator import Remediator
 from ...organizations.models.account import Account
-
+from ...organizations.models.aliases import AliasType
 
 logger = structlog.get_logger()
 
@@ -99,8 +94,9 @@ class ReportView(LoginRequiredMixin, ListView):
             "resolution_time",
             "last_opened_time",
             "raw_matches",
-            "raw_problem",
-            "datasource_last_modified")
+            "datasource_last_modified",
+            "raw_problem"
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -245,8 +241,10 @@ class UserReportView(ReportView):
 
     def base_match_filter(self, reports):
         reports = super().base_match_filter(reports)
-        reports = DefaultRole(user=self.request.user).filter(reports)
-        reports = reports.filter(only_notify_superadmin=False)
+        # Find everything alias related, not withheld and not remediator related.
+        reports = reports.filter(
+            alias_relation__in=self.request.user.aliases.exclude(_alias_type=AliasType.REMEDIATOR),
+            only_notify_superadmin=False)
         return reports
 
 
@@ -255,15 +253,16 @@ class RemediatorView(ReportView):
 
     def base_match_filter(self, reports):
         reports = super().base_match_filter(reports)
-        reports = Remediator(user=self.request.user).filter(reports)
-        reports = reports.filter(only_notify_superadmin=False)
+        # Find everything remediator related and not withheld
+        reports = reports.filter(
+            alias_relation__in=self.request.user.aliases.filter(_alias_type=AliasType.REMEDIATOR),
+            only_notify_superadmin=False)
         return reports
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
         try:
-            roles = Role.get_user_roles_or_default(request.user)
-            if user_is(roles, Remediator) or request.user.is_superuser:
+            if request.user.account.is_remediator or request.user.is_superuser:
                 return response
         except Exception as e:
             logger.warning("Exception raised while trying to dispatch to user "

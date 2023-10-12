@@ -5,9 +5,6 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from os2datascanner.projects.report.reportapp.models.roles.remediator import (
-    Remediator,
-)
 from os2datascanner.projects.report.organizations.models import Organization, Account
 
 
@@ -39,8 +36,6 @@ class Command(BaseCommand):
         if created:
             user.set_password(password)
             user.save()
-            self.stdout.write("Making dev remediator")
-            Remediator.objects.create(user=user)
             self.stdout.write(self.style.SUCCESS("Superuser dev/dev created successfully!"))
         else:
             self.stdout.write("Superuser dev/dev already exists!")

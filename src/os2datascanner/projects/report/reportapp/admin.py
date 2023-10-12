@@ -3,8 +3,6 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models.roles.remediator import Remediator
-from .models.roles.defaultrole import DefaultRole
 from .models.documentreport import DocumentReport
 
 from os2datascanner.projects.report.organizations.models import Organization, Account
@@ -53,33 +51,6 @@ class DocumentReportAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super(DocumentReportAdmin, self).get_queryset(request).select_related(
             'organization').prefetch_related('alias_relation')
-
-
-# Solution for avoiding m2m relations to get cleared
-# Source(StackOverflow): https://bit.ly/31qwMk9
-# This takes all the DocumentReports that match the Alias and adds them on save.
-class AliasAdmin(admin.ModelAdmin):
-
-    raw_id_fields = ['match_relation']
-
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        if obj.match_relation:
-            reports = DocumentReport.objects.filter(
-                raw_metadata__metadata__contains={
-                    str(obj.key): str(obj)
-                })
-            form.cleaned_data['match_relation'] = reports
-
-
-@admin.register(DefaultRole)
-class DefaultRoleAdmin(admin.ModelAdmin):
-    list_display = ('user', )
-
-
-@admin.register(Remediator)
-class RemediatorAdmin(admin.ModelAdmin):
-    list_display = ('user', )
 
 
 class ProfileInline(admin.TabularInline):
