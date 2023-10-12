@@ -205,11 +205,13 @@ def validate_userlist_or_org_units(form):
                     'userlist',
                     _("The userlist should only include the usernames of the "
                       "users, not the domain!"))
+                break
             if any(c in user for c in (",", " ")):
                 form.add_error(
                     'userlist',
                     _("Usernames in the userlist should be separated by "
                       "newlines, not commas or whitespace!"))
+                break
     return form
 
 

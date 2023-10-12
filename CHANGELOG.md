@@ -9,6 +9,9 @@
 - Added some information about categorization in Outlook to the manual in the
   report module.
 
+- Added validation of the formatting of the uploaded userlist to the exchange-
+  scanner form, as well as a helpful tooltip in the interface.
+
 ### Bugfixes
 
 - The GmailScanner class no longer references a non-existant attribute.
