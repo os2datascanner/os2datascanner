@@ -1,4 +1,4 @@
-This is the source code for [OS2Datascanner](https://os2datascanner.magenta.dk). [Read
+This is the source code for [OS2datascanner](https://os2datascanner.magenta.dk). [Read
 the documentation online](https://os2datascanner.readthedocs.io/)
 
 

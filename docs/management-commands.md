@@ -1,6 +1,6 @@
 # Management Commands
 
-OS2Datascanner consists of multiple Django apps, and each Django app can
+OS2datascanner consists of multiple Django apps, and each Django app can
 register their own actions with manage.py.
 
 In our project, we have multiple such actions/commands registered.

@@ -21,6 +21,8 @@
 - Running `diagnostics --only Rule` in the admin module now also displays the
   scanners, which each rule is assigned to as an exclusion rule.
 
+- The rule engine and its capabilities are now documented in some detail.
+
 ### Bugfixes
 
 - When clearing the search bar on the user error log page, the table is now

@@ -1,4 +1,4 @@
-# OS2Datascanner
+# OS2datascanner
 
 Welcome to the **technical documentation** for the
 [OS2datascanner](https://os2datascanner.dk/) system.

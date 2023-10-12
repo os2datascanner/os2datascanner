@@ -3,16 +3,21 @@ site_url: https://os2datascanner.rtfd.io
 
 theme: readthedocs
 
+markdown_extensions:
+  - sane_lists
+
 nav:
   - Overview: index.md
   - Data sources: data-sources.md
   - Development environment: dev-environment.md
   - Management Commands: management-commands.md
-  - Engine/pipeline: architecture/pipeline.md
+  - The engine:
+    - Engine/pipeline: architecture/pipeline.md
+    - The model: engine2.md
+    - The rule engine: rules.md
   - Security Architecture: architecture/security.md
   - Frontend Architecture: architecture/frontend.md
   - Scan API: api.md
-  - Extending OS2Datascanner: engine2.md
   - Accessing the Microsoft Graph API with graphiti: graphiti.md
   - Deployment:
     - Installation: installation.md

@@ -320,7 +320,7 @@ In `dev-settings.toml` appropriate settings for the **KEYCLOAK_BASE_URL**, **KEY
 **KEYCLOAK_CLIENT_SECRET** are set.
 
 The purpose of the Keycloak instance is to use its User Federation support. When an LDAP configuration is set in
-OS2Datascanner, we create a "User Federation" in Keycloak which imports data from e.g. Active Directory. 
+OS2datascanner, we create a "User Federation" in Keycloak which imports data from e.g. Active Directory. 
 Finally, we import this data to Django.
 
 

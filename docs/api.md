@@ -1,6 +1,6 @@
 # Scan API
 
-This document is a short guide to making use of OS2Datascanner services from
+This document is a short guide to making use of OS2datascanner services from
 external systems.
 
 
@@ -16,10 +16,10 @@ equivalent to those sent to the report module by a normal pipeline scan.
 > specifications to a real pipeline instance and forwarding the results.
 
 The messages expected by the API server are documented using the OpenAPI
-specification language. This includes a subset of OS2Datascanner's `Rule`s
+specification language. This includes a subset of OS2datascanner's `Rule`s
 (including the logical rules) and `Source`s.
 
-> The API server supports *all* of OS2Datascanner's `Rule`s and `Source`s, not
+> The API server supports *all* of OS2datascanner's `Rule`s and `Source`s, not
 > just those present in the OpenAPI documentation. By default, however, only
 > the documented `Source`s are enabled. (This can be changed in the API
 > server's settings.)
@@ -41,7 +41,7 @@ a Base64-encoded representation of the file, accompanied by its media type.
 `/openapi.yaml`, for more information.)
 
 You can scan multiple files at once by first archiving them in a Zip file or
-tarball; OS2Datascanner recognises these as explorable containers and will scan
+tarball; OS2datascanner recognises these as explorable containers and will scan
 the files that they contain.
 
 
@@ -105,7 +105,7 @@ docker-compose logs --follow api_server
 
 ## The administration system API
 
-The OS2Datascanner administration system also has an API, available at the
+The OS2datascanner administration system also has an API, available at the
 `/api/` path. This API grants limited access to the scanners and rules that
 have been defined in the administration system.
 
