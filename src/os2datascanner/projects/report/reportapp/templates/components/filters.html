@@ -2,179 +2,183 @@
 {% load l10n %}
 {% load handle_extras %}
 
-<form id="filter_form"
-      name='filter_form'
-      hx-target=".content"
-      hx-select=".content"
-      hx-get="{{ request.path }}"
-      hx-swap="outerHTML"
-      hx-trigger="change"
-      hx-include="[id='dropdown_options']"
-      hx-indicator="#report-page-indicator">
-  <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}" />
-  <input type="hidden" name="order" id="order" value="{{ order }}" />
+<div class="content-header">
+  <form id="filter_form"
+        name='filter_form'
+        hx-target=".content"
+        hx-select=".content"
+        hx-get="{{ request.path }}"
+        hx-swap="outerHTML"
+        hx-trigger="change"
+        hx-include="[id='dropdown_options']"
+        hx-indicator="#report-page-indicator">
+    <input type="hidden" name="order_by" id="order_by" value="{{ order_by }}" />
+    <input type="hidden" name="order" id="order" value="{{ order }}" />
 
-  <h1>{{ source_type }}</h1>
-  <div class="match_filtering_wrapper">
-    <div>
-      <button type="button"
-              class="match_filtering_clear_button"
-              name="clear_scannerjob"
-              hx-trigger="click"
-              hx-get="{{ request.path }}"
-              hx-swap="outerHTML"
-              hx-target=".content"
-              hx-select=".content"
-              hx-include="[id='filter_form'], [id='dropdown_options']"
-              hx-params="not scannerjob"
-              hx-indicator="#report-page-indicator">{% trans "Clear" %}</button>
-      <label for="scannerjobs" class="match_filtering_label">{% trans "Scan" %}</label>
-    </div>
-    <div class="match_filtering dropdown">
-      <select name="scannerjob" id="scannerjobs" autocomplete="off">
-        <option value="all"
-                {% if scannerjobs|last == "all" %}selected="selected"{% endif %}>{% trans "All scannerjobs" %}</option>
-        {% for scan in scannerjobs|first %}
-          <option value="{{ scan.scanner_job_pk|unlocalize }}"
-                  {% if request.GET.scannerjob == scan.scanner_job_pk|stringformat:"i" %}selected="selected"{% endif %}>
-            {{ scan.scanner_job_name }} ({{ scan.filtered_total }})
-          </option>
-        {% endfor %}
-      </select>
-    </div>
-  </div>
-
-  <div class="match_filtering_wrapper">
-    <div>
-      <button type="button"
-              class="match_filtering_clear_button"
-              name="clear_sensitivities"
-              hx-trigger="click"
-              hx-get="{{ request.path }}"
-              hx-swap="outerHTML"
-              hx-target=".content"
-              hx-select=".content"
-              hx-include="[id='filter_form'], [id='dropdown_options']"
-              hx-params="not sensitivities"
-              hx-indicator="#report-page-indicator">{% trans "Clear" %}</button>
-      <label for="sensitivities" class="match_filtering_label">{% trans "Sensitivity" %}</label>
-    </div>
-    <div class="match_filtering dropdown">
-      <select name="sensitivities" id="sensitivities" autocomplete="off">
-        <option value="all"
-                {% if sensitivities|last == "all" %}selected="selected"{% endif %}>
-          {% trans "All sensitivities" %}
-        </option>
-        {% for sensitivity in sensitivities|first %}
-          <option value="{{ sensitivity.0.value|stringformat:"i" }}"
-                  {% if sensitivities|last == sensitivity.0.value|stringformat:"i" %}selected="selected"{% endif %}>
-            {{ sensitivity.0.presentation }}
-            ({{ sensitivity.1 }})
-          </option>
-        {% endfor %}
-      </select>
-    </div>
-  </div>
-
-  <div class="match_filtering_wrapper">
-    <div>
-      <button type="button"
-              class="match_filtering_clear_button"
-              name="clear_source_type"
-              hx-trigger="click"
-              hx-get="{{ request.path }}"
-              hx-swap="outerHTML"
-              hx-target=".content"
-              hx-select=".content"
-              hx-include="[id='filter_form'], [id='dropdown_options']"
-              hx-params="not source_type"
-              hx-indicator="#report-page-indicator">{% trans "Clear" %}</button>
-      <label for="source-types" class="match_filtering_label">{% trans "Source Type" %}</label>
-    </div>
-    <div class="match_filtering dropdown">
-      <select name="source_type" id="source_type" autocomplete="off">
-        <option value="all"
-                {% if source_types|last == "all" %}selected="selected"{% endif %}>
-          {% trans "All source types" %}
-        </option>
-        {% for source_type in source_types|first %}
-          <option value="{{ source_type.source_type }}"
-                  {% if request.GET.source_type == source_type.source_type %}selected="selected"{% endif %}>
-            {% find_scan_type source_type.source_type %}
-            ({{ source_type.total }})
-          </option>
-        {% endfor %}
-      </select>
-    </div>
-  </div>
-
-  {% if "/archive"  in request.path %}
+    <h1>{{ source_type }}</h1>
     <div class="match_filtering_wrapper">
       <div>
         <button type="button"
                 class="match_filtering_clear_button"
-                name="clear_resolution_status"
+                name="clear_scannerjob"
                 hx-trigger="click"
                 hx-get="{{ request.path }}"
                 hx-swap="outerHTML"
                 hx-target=".content"
                 hx-select=".content"
                 hx-include="[id='filter_form'], [id='dropdown_options']"
-                hx-params="not resolution_status"
+                hx-params="not scannerjob"
                 hx-indicator="#report-page-indicator">{% trans "Clear" %}</button>
-        <label for="resolution_status" class="match_filtering_label">{% trans "Resolution Status" %}</label>
+        <label for="scannerjobs" class="match_filtering_label">{% trans "Scan" %}</label>
       </div>
       <div class="match_filtering dropdown">
-        <select name="resolution_status" id="resolution_status" autocomplete="off">
+        <select name="scannerjob" id="scannerjobs" autocomplete="off">
           <option value="all"
-                  {% if resolution_status|last == "all" %}selected="selected"{% endif %}>
-            {% trans "All resolution statuses" %}
+                  {% if scannerjobs|last == "all" %}selected="selected"{% endif %}>
+            {% trans "All scannerjobs" %}
           </option>
-          {% for method in resolution_status|first %}
-            <option value="{{ method.resolution_status|stringformat:"i" }}"
-                    {% if resolution_status|last == method.resolution_status|stringformat:"i" %}selected="selected"{% endif %}>
-              {{ method.resolution_label }} ({{ method.total }})
+          {% for scan in scannerjobs|first %}
+            <option value="{{ scan.scanner_job_pk|unlocalize }}"
+                    {% if request.GET.scannerjob == scan.scanner_job_pk|stringformat:"i" %}selected="selected"{% endif %}>
+              {{ scan.scanner_job_name }} ({{ scan.filtered_total }})
             </option>
           {% endfor %}
         </select>
       </div>
     </div>
-  {% endif %}
 
-  <div class="match_filtering_wrapper datasource_last_modified-button">
-    <div>
-      <label for="datasource_last_modified" class="match_filtering_label">{% trans "Resource age" %}</label>
-    </div>
-    <div class="match_filtering">
-      <button type="button"
-              name="datasource_last_modified"
-              id="datasource_last_modified-button"
-              class="order-by sorting-options"
-              {% if order_by == 'datasource_last_modified' and order == 'ascending' %}disabled{% endif %}
-              value="ascending">{% trans "Oldest" %}</button>
-      <button type="button"
-              name="datasource_last_modified"
-              id="datasource_last_modified-button"
-              class="order-by sorting-options"
-              {% if order_by == 'datasource_last_modified' and order == 'descending' %}disabled{% endif %}
-              value="descending">{% trans "Newest" %}</button>
-    </div>
-  </div>
-
-  <div class="checkbox_wrapper">
-    <div class="checkbox-group">
-      <div class="ds-checkbox">
-        {% comment %}
-          We use the hidden input field below to track whether 30-days is enabled or not.
-          If we used the checkbox, unticking it would make it disappear from the form's GET action
-        {% endcomment %}
-        <input type="hidden" id="30-days" name="30-days" value="{{ 30_days }}">
-        <input type="checkbox"
-               id="30-days-toggle"
-               class="30-days-toggle"
-               {% if 30_days == "true" %}checked{% endif %}>
-        <label for="30-days-toggle">{% trans "Include results, that are less than 30 days old" %}</label>
+    <div class="match_filtering_wrapper">
+      <div>
+        <button type="button"
+                class="match_filtering_clear_button"
+                name="clear_sensitivities"
+                hx-trigger="click"
+                hx-get="{{ request.path }}"
+                hx-swap="outerHTML"
+                hx-target=".content"
+                hx-select=".content"
+                hx-include="[id='filter_form'], [id='dropdown_options']"
+                hx-params="not sensitivities"
+                hx-indicator="#report-page-indicator">{% trans "Clear" %}</button>
+        <label for="sensitivities" class="match_filtering_label">{% trans "Sensitivity" %}</label>
+      </div>
+      <div class="match_filtering dropdown">
+        <select name="sensitivities" id="sensitivities" autocomplete="off">
+          <option value="all"
+                  {% if sensitivities|last == "all" %}selected="selected"{% endif %}>
+            {% trans "All sensitivities" %}
+          </option>
+          {% for sensitivity in sensitivities|first %}
+            <option value="{{ sensitivity.0.value|stringformat:"i" }}"
+                    {% if sensitivities|last == sensitivity.0.value|stringformat:"i" %}selected="selected"{% endif %}>
+              {{ sensitivity.0.presentation }}
+              ({{ sensitivity.1 }})
+            </option>
+          {% endfor %}
+        </select>
       </div>
     </div>
-  </div>
-</form>
+
+    <div class="match_filtering_wrapper">
+      <div>
+        <button type="button"
+                class="match_filtering_clear_button"
+                name="clear_source_type"
+                hx-trigger="click"
+                hx-get="{{ request.path }}"
+                hx-swap="outerHTML"
+                hx-target=".content"
+                hx-select=".content"
+                hx-include="[id='filter_form'], [id='dropdown_options']"
+                hx-params="not source_type"
+                hx-indicator="#report-page-indicator">{% trans "Clear" %}</button>
+        <label for="source-types" class="match_filtering_label">{% trans "Source Type" %}</label>
+      </div>
+      <div class="match_filtering dropdown">
+        <select name="source_type" id="source_type" autocomplete="off">
+          <option value="all"
+                  {% if source_types|last == "all" %}selected="selected"{% endif %}>
+            {% trans "All source types" %}
+          </option>
+          {% for source_type in source_types|first %}
+            <option value="{{ source_type.source_type }}"
+                    {% if request.GET.source_type == source_type.source_type %}selected="selected"{% endif %}>
+              {% find_scan_type source_type.source_type %}
+              ({{ source_type.total }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    {% if "/archive"  in request.path %}
+      <div class="match_filtering_wrapper">
+        <div>
+          <button type="button"
+                  class="match_filtering_clear_button"
+                  name="clear_resolution_status"
+                  hx-trigger="click"
+                  hx-get="{{ request.path }}"
+                  hx-swap="outerHTML"
+                  hx-target=".content"
+                  hx-select=".content"
+                  hx-include="[id='filter_form'], [id='dropdown_options']"
+                  hx-params="not resolution_status"
+                  hx-indicator="#report-page-indicator">{% trans "Clear" %}</button>
+          <label for="resolution_status" class="match_filtering_label">{% trans "Resolution Status" %}</label>
+        </div>
+        <div class="match_filtering dropdown">
+          <select name="resolution_status" id="resolution_status" autocomplete="off">
+            <option value="all"
+                    {% if resolution_status|last == "all" %}selected="selected"{% endif %}>
+              {% trans "All resolution statuses" %}
+            </option>
+            {% for method in resolution_status|first %}
+              <option value="{{ method.resolution_status|stringformat:"i" }}"
+                      {% if resolution_status|last == method.resolution_status|stringformat:"i" %}selected="selected"{% endif %}>
+                {{ method.resolution_label }} ({{ method.total }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="match_filtering_wrapper datasource_last_modified-button">
+      <div>
+        <label for="datasource_last_modified" class="match_filtering_label">{% trans "Resource age" %}</label>
+      </div>
+      <div class="match_filtering">
+        <button type="button"
+                name="datasource_last_modified"
+                id="datasource_last_modified-button"
+                class="order-by sorting-options"
+                {% if order_by == 'datasource_last_modified' and order == 'ascending' %}disabled{% endif %}
+                value="ascending">{% trans "Oldest" %}</button>
+        <button type="button"
+                name="datasource_last_modified"
+                id="datasource_last_modified-button"
+                class="order-by sorting-options"
+                {% if order_by == 'datasource_last_modified' and order == 'descending' %}disabled{% endif %}
+                value="descending">{% trans "Newest" %}</button>
+      </div>
+    </div>
+
+    <div class="checkbox_wrapper">
+      <div class="checkbox-group">
+        <div class="ds-checkbox">
+          {% comment %}
+          We use the hidden input field below to track whether 30-days is enabled or not.
+          If we used the checkbox, unticking it would make it disappear from the form's GET action
+          {% endcomment %}
+          <input type="hidden" id="30-days" name="30-days" value="{{ 30_days }}">
+          <input type="checkbox"
+                 id="30-days-toggle"
+                 class="30-days-toggle"
+                 {% if 30_days == "true" %}checked{% endif %}>
+          <label for="30-days-toggle">{% trans "Include results, that are less than 30 days old" %}</label>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
