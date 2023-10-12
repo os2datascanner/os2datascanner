@@ -43,6 +43,9 @@
 - If a Keycloak access token runs out during user fetching, OS2datascanner will now fetch a new one
 and proceed.
 
+- The `diagnostics`-management command will no longer encounter a TypeError
+  when aliases without accounts or users are present in the database.
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
