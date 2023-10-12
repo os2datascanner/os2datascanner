@@ -15,7 +15,7 @@ class PassportRule(RegexRule):
     type_label = "passport MRZ"
 
     def __init__(self, **super_kwargs):
-        super.__init__(passport_regex, **super_kwargs)
+        super().__init__(passport_regex, **super_kwargs)
         self._passport_regex = passport_regex
 
     @property
@@ -69,9 +69,9 @@ def checksum(string: str, digit) -> bool:  # noqa: CCR001 too high cognitive com
     for i, char in enumerate(string):
         value = 0
         if char >= 'A' and char <= 'Z':
-            value = char - 'A' + 10
+            value = ord(char) - ord('A') + 10
         if char >= '0' and char <= '9':
-            value = char - '0'
+            value = int(char)
 
         if i % 3 == 0:
             factor = 7
@@ -81,4 +81,4 @@ def checksum(string: str, digit) -> bool:  # noqa: CCR001 too high cognitive com
             factor = 1
 
         sum += value * factor
-    return sum == int(digit)
+    return sum % 10 == int(digit)
