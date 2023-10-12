@@ -43,8 +43,8 @@ class OrganizationAdmin(admin.ModelAdmin):
         (
             _("Support button settings"),
             {
-                "fields": ('show_support_button', 'support_contact_style',
-                           'support_name', 'support_value', 'dpo_contact_style',
+                "fields": ('show_support_button', 'support_contact_method',
+                           'support_name', 'support_value', 'dpo_contact_method',
                            'dpo_name', 'dpo_value')
             }
         )

@@ -1,6 +1,6 @@
 function enableDPOOptions() {
-  const contactStyle = document.getElementById('id_dpo_contact_style');
-  if (contactStyle.value !== 'NO' && contactStyle.value !== 'UD') {
+  const contactMethod = document.getElementById('id_dpo_contact_method');
+  if (contactMethod.value !== 'NO' && contactMethod.value !== 'UD') {
     [
       'id_dpo_name',
       'id_dpo_value'
@@ -22,8 +22,8 @@ function disableDPOOptions() {
 }
 
 function enableSupportOptions() {
-  const contactStyle = document.getElementById('id_support_contact_style');
-  if (contactStyle.value !== 'NO') {
+  const contactMethod = document.getElementById('id_support_contact_method');
+  if (contactMethod.value !== 'NO') {
     [
       'id_support_name',
       'id_support_value'
@@ -46,10 +46,10 @@ function disableSupportOptions() {
 
 function hideSupportOption() {
   [
-    'id_support_contact_style',
+    'id_support_contact_method',
     'id_support_name',
     'id_support_value',
-    'id_dpo_contact_style',
+    'id_dpo_contact_method',
     'id_dpo_name',
     'id_dpo_value'
   ].forEach(id => {
@@ -60,8 +60,8 @@ function hideSupportOption() {
 
 function showSupportOption() {
   [
-    'id_support_contact_style',
-    'id_dpo_contact_style',
+    'id_support_contact_method',
+    'id_dpo_contact_method',
   ].forEach(id => {
     const field = document.getElementById(id);
     field.disabled = false;
@@ -109,15 +109,15 @@ document.addEventListener('DOMContentLoaded', () => {
     supportOptionChange(showSupportButtonCheck);
   });
 
-  const DPOStyleInput = document.getElementById('id_dpo_contact_style');
-  DPOOptionChange(DPOStyleInput);
-  DPOStyleInput.addEventListener('change', () => {
-    DPOOptionChange(DPOStyleInput);
+  const DPOMethodInput = document.getElementById('id_dpo_contact_method');
+  DPOOptionChange(DPOMethodInput);
+  DPOMethodInput.addEventListener('change', () => {
+    DPOOptionChange(DPOMethodInput);
   });
 
-  const SupportStyleInput = document.getElementById('id_support_contact_style');
-  SupportOptionChange(SupportStyleInput);
-  SupportStyleInput.addEventListener('change', () => {
-    SupportOptionChange(SupportStyleInput);
+  const SupportMethodInput = document.getElementById('id_support_contact_method');
+  SupportOptionChange(SupportMethodInput);
+  SupportMethodInput.addEventListener('change', () => {
+    SupportOptionChange(SupportMethodInput);
   });
 });

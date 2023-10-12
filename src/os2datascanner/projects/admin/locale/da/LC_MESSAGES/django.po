@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-04 14:59+0200\n"
+"POT-Creation-Date: 2023-10-12 10:17+0200\n"
 "PO-Revision-Date: 2021-08-07 09:10+0200\n"
 "Last-Translator: Magenta Aps\n"
 "Language-Team: 2. sal\n"
@@ -873,9 +873,9 @@ msgid ""
 "href=\"%(admin_login_url)serror_log/\">Click here to inspect the error logs</"
 "a>"
 msgstr ""
-"<strong>%(usererrorlogs)s</strong> fejl opstod under scannet.<br/>"
-"<a href=\"%(admin_login_url)serror_log/\">Klik her for at inspicere "
-"fejlbeskederne.</a>"
+"<strong>%(usererrorlogs)s</strong> fejl opstod under scannet.<br/><a href="
+"\"%(admin_login_url)serror_log/\">Klik her for at inspicere fejlbeskederne.</"
+"a>"
 
 #: adminapp/templates/mail/finished_scannerjob.html:49
 #, python-format
@@ -1812,8 +1812,8 @@ msgid "add organization"
 msgstr "tilføj organisation"
 
 #: adminapp/templates/partials/breadcrumb.html:81
-#: organizations/templates/organizations/org_update.html:5
-#: organizations/templates/organizations/org_update.html:24
+#: organizations/templates/organizations/org_update.html:6
+#: organizations/templates/organizations/org_update.html:25
 msgid "update organization"
 msgstr "opdatér organisation"
 
@@ -2025,11 +2025,11 @@ msgstr "Drevbogstav"
 msgid "Expression"
 msgstr "Udtryk"
 
-#: adminapp/views/scanner_views.py:63
+#: adminapp/views/scanner_views.py:64
 msgid "The page does not exist"
 msgstr "Siden findes ikke"
 
-#: adminapp/views/scanner_views.py:474
+#: adminapp/views/scanner_views.py:479
 msgid "Password must be updated, when changing username or url."
 msgstr "Adgangskode skal genindtastes, når der skiftes brugernavn eller url."
 
@@ -2095,12 +2095,12 @@ msgstr "vent %(metavar)s sekunder hvis der ikke var nogle jobs til afvikling"
 msgid "do not loop: run a single job and then exit"
 msgstr "kør ikke i løkke: kør et enkelt job og gå derefter ud"
 
-#: core/management/commands/run_background_jobs.py:211
+#: core/management/commands/run_background_jobs.py:215
 #, python-brace-format
 msgid "{0} job(s) completed."
 msgstr "{0} færdige job(s)."
 
-#: core/management/commands/run_background_jobs.py:212
+#: core/management/commands/run_background_jobs.py:216
 #, python-brace-format
 msgid "{0} job(s) failed."
 msgstr "{0} fejlede job(s)."
@@ -2809,7 +2809,7 @@ msgstr "Ingen organisatoriske enheder fundet ..."
 msgid "No organizational units."
 msgstr "Ingen organisatoriske enheder"
 
-#: organizations/tests/test_org_views.py:124
+#: organizations/tests/test_org_views.py:127
 #: organizations/views/org_views.py:63
 msgid "That name is already taken."
 msgstr "Navnet er allerede i brug."

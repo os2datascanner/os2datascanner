@@ -83,8 +83,8 @@ class UpdateOrganizationView(RestrictedUpdateView):
     success_url = reverse_lazy('organization-list')
     fields = ['name', 'contact_email', 'contact_phone',
               'leadertab_access', 'dpotab_access', 'show_support_button',
-              'support_contact_style', 'support_name', 'support_value',
-              'dpo_contact_style', 'dpo_name', 'dpo_value',
+              'support_contact_method', 'support_name', 'support_value',
+              'dpo_contact_method', 'dpo_name', 'dpo_value',
               'email_notification_schedule']
 
     def get_form(self, form_class=None):

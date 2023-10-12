@@ -103,11 +103,11 @@ class Organization(models.Model):
     # Support button settings
     show_support_button = models.BooleanField(
         default=False, verbose_name=_("show support button"))
-    support_contact_style = models.CharField(
+    support_contact_method = models.CharField(
         max_length=2,
         choices=SupportContactChoices.choices,
         default=SupportContactChoices.NONE,
-        verbose_name=_("support contact style"),
+        verbose_name=_("support contact method"),
         blank=True
     )
     support_name = models.CharField(
@@ -116,11 +116,11 @@ class Organization(models.Model):
     support_value = models.CharField(
         max_length=1000, default="",
         blank=True, verbose_name=_("support value"))
-    dpo_contact_style = models.CharField(
+    dpo_contact_method = models.CharField(
         max_length=2,
         choices=DPOContactChoices.choices,
         default=DPOContactChoices.NONE,
-        verbose_name=_("DPO contact style"),
+        verbose_name=_("DPO contact method"),
         blank=True
     )
     dpo_name = models.CharField(
@@ -134,11 +134,11 @@ class Organization(models.Model):
         errors = {}
 
         # Validate support contact value based on the type
-        if self.support_contact_style == SupportContactChoices.WEBSITE:
+        if self.support_contact_method == SupportContactChoices.WEBSITE:
             validator = URLValidator()
-        elif self.support_contact_style == SupportContactChoices.EMAIL:
+        elif self.support_contact_method == SupportContactChoices.EMAIL:
             validator = EmailValidator()
-        if self.support_contact_style in (
+        if self.support_contact_method in (
                 SupportContactChoices.EMAIL,
                 SupportContactChoices.WEBSITE):
             if not self.support_name:
@@ -148,7 +148,7 @@ class Organization(models.Model):
             except Exception as e:
                 errors['support_value'] = e
 
-        if self.dpo_contact_style == DPOContactChoices.SINGLE_DPO:
+        if self.dpo_contact_method == DPOContactChoices.SINGLE_DPO:
             if not self.dpo_name:
                 errors['dpo_name'] = _("Provide a name of the DPO.")
 
@@ -182,5 +182,5 @@ class OrganizationSerializer(BaseSerializer):
     class Meta:
         fields = ['pk', 'name', 'contact_email', 'contact_phone',
                   'email_notification_schedule', 'leadertab_access', 'dpotab_access',
-                  'show_support_button', 'support_contact_style', 'support_name',
-                  'support_value', 'dpo_contact_style', 'dpo_name', 'dpo_value']
+                  'show_support_button', 'support_contact_method', 'support_name',
+                  'support_value', 'dpo_contact_method', 'dpo_name', 'dpo_value']

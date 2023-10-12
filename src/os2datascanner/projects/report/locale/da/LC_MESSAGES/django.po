@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-02 11:28+0200\n"
+"POT-Creation-Date: 2023-10-12 10:17+0200\n"
 "Language: Danish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -364,7 +364,7 @@ msgstr "Inkludér resultater, der er under 30 dage gamle"
 #: reportapp/templates/components/handle-match.html:10
 #: reportapp/templates/components/handle-match.html:43
 #: reportapp/templates/components/hit.html:120
-#: reportapp/templates/components/hit.html:181
+#: reportapp/templates/components/hit.html:162
 msgid ""
 "OS2datascanner will not delete results from the system that was scanned. "
 "Marking a result as handled will only remove the result from OS2datascanner."
@@ -379,7 +379,7 @@ msgstr "Markér som håndterede"
 
 #: reportapp/templates/components/handle-match.html:18
 #: reportapp/templates/components/hit.html:125
-#: reportapp/templates/components/hit.html:189
+#: reportapp/templates/components/hit.html:170
 msgid ""
 "You are about to handle this result. This action does not change the file, "
 "that the result is about. Please do not handle a result before action has "
@@ -391,7 +391,7 @@ msgstr ""
 
 #: reportapp/templates/components/handle-match.html:25
 #: reportapp/templates/components/hit.html:131
-#: reportapp/templates/components/hit.html:176
+#: reportapp/templates/components/hit.html:157
 msgid "Revert"
 msgstr "Fortryd"
 
@@ -458,15 +458,15 @@ msgid "Copy link"
 msgstr "Kopiér link"
 
 #: reportapp/templates/components/hit.html:121
-#: reportapp/templates/components/hit.html:191
+#: reportapp/templates/components/hit.html:172
 msgid "Handle"
 msgstr "Håndtér"
 
-#: reportapp/templates/components/hit.html:151
+#: reportapp/templates/components/hit.html:182
 msgid "Deletes email from your mailbox"
 msgstr "Sletter email fra din mailboks"
 
-#: reportapp/templates/components/hit.html:157
+#: reportapp/templates/components/hit.html:188
 msgid ""
 "You are about to delete selected email from your mailbox. OS2datascanner "
 "cannot reverse this action. Are you sure?"
@@ -474,37 +474,37 @@ msgstr ""
 "Du er ved at slette valgte email fra din mailboks. Denne handling kan ikke "
 "fortrydes i OS2datascanner. Er du sikker?"
 
-#: reportapp/templates/components/hit.html:159
+#: reportapp/templates/components/hit.html:190
 msgid "Delete"
 msgstr "Slet"
 
-#: reportapp/templates/components/hit.html:195
+#: reportapp/templates/components/hit.html:194
 msgid "Show/hide matches"
 msgstr "Vis/skjul matches"
 
-#: reportapp/templates/components/hit.html:210
+#: reportapp/templates/components/hit.html:209
 msgid "Anonymized match"
 msgstr "Anonymiseret match"
 
-#: reportapp/templates/components/hit.html:211
+#: reportapp/templates/components/hit.html:210
 msgid "Context"
 msgstr "Kontekst"
 
-#: reportapp/templates/components/hit.html:212
+#: reportapp/templates/components/hit.html:211
 msgid "Probability"
 msgstr "Sandsynlighed"
 
-#: reportapp/templates/components/hit.html:230
+#: reportapp/templates/components/hit.html:229
 msgid "A temporary error occurred during the latest check of this match"
 msgstr "Der opstod en midlertidig fejl under sidste tjek af dette match"
 
-#: reportapp/templates/components/hit.html:232
+#: reportapp/templates/components/hit.html:231
 msgid ""
 "OS2datascanner will automatically check this match again as part of the next "
 "scan"
 msgstr "OS2datascanner genbesøger dette match automatisk under næste scan"
 
-#: reportapp/templates/components/hit.html:236
+#: reportapp/templates/components/hit.html:235
 msgid "Show/hide technical details of the error"
 msgstr "Vis/skjul tekniske detaljer om fejlen"
 
@@ -727,7 +727,7 @@ msgid "Contact Magenta"
 msgstr "Kontakt Magenta"
 
 #: reportapp/templates/components/service.html:17
-#: reportapp/templates/components/service.html:41
+#: reportapp/templates/components/service.html:42
 msgid ""
 "Do you have a question about some of your matches or which actions you "
 "should take to handle them? You can contact one of your DPOs by clicking "
@@ -746,18 +746,18 @@ msgstr "Kontakt DPO"
 msgid "Question about OS2datascanner"
 msgstr "Spørgsmål angående OS2datascanner"
 
-#: reportapp/templates/components/service.html:42
-#: reportapp/templates/components/service.html:50
-#: reportapp/templates/components/service.html:56
+#: reportapp/templates/components/service.html:43
+#: reportapp/templates/components/service.html:52
+#: reportapp/templates/components/service.html:59
 msgid "Contact"
 msgstr "Kontakt"
 
-#: reportapp/templates/components/service.html:47
+#: reportapp/templates/components/service.html:48
 msgid "Issue with OS2datascanner"
 msgstr "Problem med OS2datascanner."
 
-#: reportapp/templates/components/service.html:49
-#: reportapp/templates/components/service.html:55
+#: reportapp/templates/components/service.html:51
+#: reportapp/templates/components/service.html:58
 msgid ""
 "Are you experiencing issues with OS2datascanner, and have no luck resolving "
 "it by consulting the manual or FAQ? You can contact your IT department by "
@@ -767,16 +767,16 @@ msgstr ""
 "løse dem ved at læse håndbogen eller FAQ'en? Du kan kontakte din IT-afdeling "
 "ved at klikke her."
 
-#: reportapp/templates/components/service.html:62
+#: reportapp/templates/components/service.html:65
 msgid "Consult the manual to find instructions for using OS2datascanner."
 msgstr "Læs håndbogen for at finde instruktioner til brugen af OS2datascanner."
 
-#: reportapp/templates/components/service.html:62
-#: reportapp/templates/manual.html:15 reportapp/templates/manual.html:44
+#: reportapp/templates/components/service.html:65
+#: reportapp/templates/manual.html:15 reportapp/templates/manual.html:47
 msgid "Manual"
 msgstr "Håndbog"
 
-#: reportapp/templates/components/service.html:67
+#: reportapp/templates/components/service.html:70
 msgid ""
 "Consult the FAQ to read answers to the most frequently asked questions asked "
 "by other users."
@@ -784,7 +784,7 @@ msgstr ""
 "Læs FAQ'en for at se svar på de mest almindelige spørgsmål stillet af andre "
 "brugere."
 
-#: reportapp/templates/components/service.html:68
+#: reportapp/templates/components/service.html:71
 msgid "FAQ"
 msgstr "FAQ"
 
@@ -1060,6 +1060,7 @@ msgstr ""
 "indtastet er den rigtige, og tjekke din spam mappe."
 
 #: reportapp/templates/password_reset_email.html:4
+#, python-format
 msgid ""
 "\n"
 "  You're receiving this email because you requested a password reset for "
