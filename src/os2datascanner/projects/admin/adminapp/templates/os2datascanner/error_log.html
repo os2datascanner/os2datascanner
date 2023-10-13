@@ -56,12 +56,12 @@
         <input type="hidden" name="order" id="order" value="{{ order }}">
  
       </form>
-
+ 
       {% if object_list %}
         <div class="datatable-wrapper card error_content"
              role="region"
              tabindex="0"
-             aria-label="{% trans 'Error Log' %}">
+             aria-label="{% trans "Error Log" %}">
           <form id="table_checkboxes">
             <table class="datatable">
               <colgroup>
@@ -104,6 +104,11 @@
                         </svg>
                         <span>{% trans "Remove all" %}</span>
                       </button>
+                      <a class="button button--has-icon"
+                         title="{% trans "Export to CSV" %}"
+                         href='{% url "export-error-log" %}'>
+                        <span class="material-icons">file_download</span>
+                      {% trans "Export to CSV" %}</a>
                     </div>
                   </th>
                 </tr>

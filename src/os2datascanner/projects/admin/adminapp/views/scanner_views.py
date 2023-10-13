@@ -28,7 +28,8 @@ from os2datascanner.projects.admin.organizations.models import Organization
 
 from os2datascanner.projects.admin.utilities import UserWrapper
 from .views import RestrictedListView, RestrictedCreateView, \
-    RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
+    RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView, \
+    CSVExportMixin
 from ..models.authentication import Authentication
 from ..models.rules.rule import Rule
 from ..models.scannerjobs.scanner import Scanner, ScanStatus, ScanStatusSnapshot
@@ -259,6 +260,15 @@ class UserErrorLogView(RestrictedListView):
     def get_queryset(self):
         """Order errors by most recent scan."""
         qs = super().get_queryset().filter(is_removed=False)
+
+        qs = self.sort_queryset(qs)
+
+        # We often use the error_logs scan_status and scanner as well. Prefetch that!
+        qs = qs.prefetch_related("scan_status__scanner")
+
+        return qs
+
+    def sort_queryset(self, qs):
         allowed_sorting_properties = {'error_message', 'path', 'scan_status', 'pk'}
 
         if (sort_key := self.request.GET.get('order_by')) and (
@@ -279,9 +289,6 @@ class UserErrorLogView(RestrictedListView):
 
         if self.request.GET.get('show_seen', 'off') != 'on':
             qs = qs.filter(is_new=True)
-
-        # We often use the error_logs scan_status and scanner as well. Prefetch that!
-        qs = qs.prefetch_related("scan_status__scanner")
 
         return qs
 
@@ -335,6 +342,21 @@ class UserErrorLogView(RestrictedListView):
         context = self.get_context_data()
 
         return self.render_to_response(context)
+
+
+class UserErrorLogCSVView(CSVExportMixin, UserErrorLogView):
+    exported_fields = {
+        _("Scan time"): 'scan_status__scan_tag__time',
+        _("Path"): 'path',
+        _("Scanner job"): 'scan_status__scanner__name',
+        _("Error message"): 'error_message'
+    }
+    exported_filename = 'os2datascanner_usererrorlogs'
+
+    def sort_queryset(self, qs):
+        # Override the sorting method to make sure we get both seen and unseen
+        # UserErrorLog-objects.
+        return qs
 
 
 class ScannerList(RestrictedListView):

@@ -16,6 +16,8 @@
 
   - It is now possible to configure the name and contact information of the
     preferred support entity, both as an email address or a web address.
+    
+- UserErrorLog table from database can now be exported as a CSV-file.
 
 ### General improvements
 
