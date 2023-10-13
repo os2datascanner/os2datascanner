@@ -24,6 +24,8 @@ imagemagick
 cifs-utils
 libsmbclient-dev
 ghostscript
+fonts-droid-fallback
+fonts-noto
 
 # Report
 openssl

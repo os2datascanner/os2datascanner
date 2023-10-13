@@ -1,6 +1,8 @@
 """
 Contains utilities for compressing PDF files using GhostScript.
 """
+import shlex
+
 from tempfile import TemporaryDirectory
 
 from .....utils.system_utilities import run_custom
@@ -14,13 +16,13 @@ def gs_convert(path):
     with TemporaryDirectory() as outputdir:
         converted_path = "{0}/gs-temporary.pdf".format(outputdir)
         command = ["gs", "-q",
-                   *GS["_base_arguments"].split(),
+                   *shlex.split(GS["_base_arguments"]),
                    f"-dPDFSETTINGS={GS['pdf_profile']}",
                    "-sOutputFile={0}".format(converted_path)]
 
-        extra_args = GS["extra_args"]
+        extra_args = shlex.split(GS["extra_args"])
         if extra_args:
-            command.append(extra_args)
+            command.extend(extra_args)
 
         command.append(path)
 
