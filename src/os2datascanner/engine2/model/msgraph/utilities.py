@@ -193,6 +193,25 @@ class MSGraphSource(Source):
                 return self.update_category_colour(owner, category_id,
                                                    category_colour, _retry=True)
 
+        def delete_category_raw(self, owner: str, category_id: str):
+            return WebRetrier().run(
+                self._session.delete,
+                f"https://graph.microsoft.com/v1.0/users/{owner}/outlook/"
+                f"masterCategories/{category_id}",
+                headers=self._make_headers(),
+            )
+
+        def delete_category(self, owner: str, category_id: str, _retry=False):
+            response = self.delete_category_raw(owner, category_id)
+            try:
+                response.raise_for_status()
+                return response
+            except requests.exceptions.HTTPError as ex:
+                if ex.response.status_code != 401 or _retry:
+                    raise ex
+                self._token = self._token_creator()
+                return self.delete_category(owner, category_id, _retry=True)
+
         def follow_next_link(self, next_page, _retry=False):
             response = WebRetrier().run(
                     self._session.get, next_page, headers=self._make_headers())

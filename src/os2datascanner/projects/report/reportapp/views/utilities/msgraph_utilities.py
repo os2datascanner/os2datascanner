@@ -120,6 +120,46 @@ def update_outlook_category_for_account(account: Account,
             raise PermissionDenied(update_category_failed_message)
 
 
+def delete_outlook_category_for_account(account: Account, category_id: str,):
+    """ Updates outlook category color for given account
+     Requires MailboxSettings.ReadWrite """
+
+    def _make_token():
+        return make_token(
+            settings.MSGRAPH_APP_ID,
+            tenant_id,
+            settings.MSGRAPH_CLIENT_SECRET)
+
+    # Return early scenarios
+    check_msgraph_settings()
+    document_report = get_msgraph_mail_document_reports(account).last()
+    tenant_id = get_tenant_id_from_document_report(document_report)
+
+    # Open a session and start doing stuff
+    with requests.Session() as session:
+        gc = GraphCaller(
+            _make_token,
+            session)
+
+        owner = account.username
+
+        try:
+            delete_category_response = gc.delete_category(owner, category_id)
+            if delete_category_response.ok:
+                logger.info(f"Successfully deleted Outlook Category for {account}! "
+                            f"Category id: {category_id}")
+                return delete_category_response
+
+        except requests.HTTPError as ex:
+            delete_category_failed_message = _("Couldn't delete category! "
+                                               "Code: {status_code}").format(
+                status_code=ex.response.status_code)
+            logger.warning(f"Couldn't delete category! Got response: {ex.response}")
+            # PermissionDenied is a bit misleading here, as it may not represent what went wrong.
+            # But sticking to this exception, makes handling it in the view easier.
+            raise PermissionDenied(delete_category_failed_message)
+
+
 def categorize_email_from_report(document_report: DocumentReport,
                                  category_name: str,
                                  gc: GraphCaller):

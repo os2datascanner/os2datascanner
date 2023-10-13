@@ -23,7 +23,8 @@ from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .utilities.msgraph_utilities import (create_outlook_category_for_account,
-                                          OutlookCategoryName, update_outlook_category_for_account)
+                                          OutlookCategoryName, update_outlook_category_for_account,
+                                          delete_outlook_category_for_account)
 from ...organizations.models.aliases import AliasType
 from ...organizations.models import Account, AccountOutlookSetting
 
@@ -67,7 +68,7 @@ class AccountView(LoginRequiredMixin, DetailView):
 
         return context
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # noqa CCR001
         bool_field_status = request.POST.get("contact_check", False) == "checked"
         account = self.get_object()
         account.contact_person = bool_field_status
@@ -107,7 +108,7 @@ class AccountView(LoginRequiredMixin, DetailView):
                     false_p_resp = create_outlook_category_for_account(
                         account,
                         OutlookCategoryName.FalsePositive,
-                        AccountOutlookSetting. OutlookCategoryColour(false_positive_colour))
+                        AccountOutlookSetting.OutlookCategoryColour(false_positive_colour))
                     acc_ol_settings.false_positive_colour = false_positive_colour
                     acc_ol_settings.false_positive_category_uuid = false_p_resp.json().get("id")
                     acc_ol_settings.save()
@@ -123,5 +124,21 @@ class AccountView(LoginRequiredMixin, DetailView):
                     update_outlook_category_for_account(
                         account,
                         acc_ol_settings.false_positive_category_uuid,
-                        AccountOutlookSetting. OutlookCategoryColour(false_positive_colour))
+                        AccountOutlookSetting.OutlookCategoryColour(false_positive_colour))
+
+            # TODO: Not very well written; if we can't delete the first one, we won't even try
+            # the second. Same goes for logic above
+            # Unchecked, delete categories.
+            if not categorize_check and (acc_ol_settings.match_category_uuid
+                                         and acc_ol_settings.false_positive_category_uuid):
+                delete_outlook_category_for_account(account,
+                                                    acc_ol_settings.match_category_uuid
+                                                    )
+                acc_ol_settings.match_category_uuid = None
+                delete_outlook_category_for_account(account,
+                                                    acc_ol_settings.false_positive_category_uuid
+                                                    )
+                acc_ol_settings.false_positive_category_uuid = None
+                acc_ol_settings.save()
+
         return HttpResponse()
