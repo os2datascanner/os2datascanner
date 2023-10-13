@@ -61,7 +61,7 @@ class Organization(Core_Organization, Broadcasted):
     def save(self, *args, **kwargs):
         encoded_name = replace_nordics(self.name)
         self.slug = slugify(encoded_name, allow_unicode=True)
-        super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     @property
     def scanners_running(self) -> bool:

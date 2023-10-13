@@ -4,6 +4,19 @@
 
 "Folie à Tous"
 
+### New in this release
+
+- Configuration of the support button is now done from the organization
+  object, instead of as a environment variable.
+
+- It is now possible to configure the support button further:
+
+  - It is now possible to define the contact information of one singular DPO
+    in the organization.
+
+  - It is now possible to configure the name and contact information of the
+    preferred support entity, both as an email address or a web address.
+
 ### General improvements
 
 - Previously seen error messages in the user error log are now hidden by

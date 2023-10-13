@@ -1,12 +1,13 @@
 {% extends 'organizations/base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}
   {% trans "update organization"|capfirst %}
 {% endblock %}
 
 {% block content %}
-  {% include "partials/breadcrumb.html" with page="organization_update"  %}
+  {% include "partials/breadcrumb.html" with page="organization_update" %}
 
   <div class="aside">
     <h1>{{ object.name }}</h1>
@@ -23,7 +24,10 @@
     <div class="form__group last-btn">
       <button type="submit" class="button button--cta" name="save">{% trans "update organization"|capfirst %}</button>
     </div>
+    <script src="{% static "js/snackBars.js" %}"></script><script src="{% static "js/snackBars.js" %}"></script>
   </form>
+
+  <script src="{% static "js/organizationForm.js" %}"></script>
 
   <!--
         TODO: add boxes with user and unit counts here (dependent on feature flag)

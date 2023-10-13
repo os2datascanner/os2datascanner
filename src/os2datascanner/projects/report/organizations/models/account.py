@@ -275,7 +275,7 @@ class Account(Core_Account):
     @property
     def leadertab_access(self) -> bool:
         if (self.organization.leadertab_access == StatisticsPageConfigChoices.MANAGERS
-                and self.is_manager or self.user.is_superuser):
+                and (self.is_manager or self.user.is_superuser)):
             return True
         elif (self.organization.leadertab_access == StatisticsPageConfigChoices.SUPERUSERS
                 and self.user.is_superuser):
@@ -286,7 +286,7 @@ class Account(Core_Account):
     @property
     def dpotab_access(self) -> bool:
         if (self.organization.dpotab_access == StatisticsPageConfigChoices.DPOS
-                and self.is_dpo or self.user.is_superuser):
+                and (self.is_dpo or self.user.is_superuser)):
             return True
         elif (self.organization.dpotab_access == StatisticsPageConfigChoices.SUPERUSERS
                 and self.user.is_superuser):
