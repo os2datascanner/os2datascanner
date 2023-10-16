@@ -23,7 +23,7 @@ from collections import deque
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q, Count, DateField
+from django.db.models import Q, F, Count, Sum, DateField
 from django.db.models.functions import Coalesce, TruncMonth
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
@@ -101,6 +101,11 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = timezone.now()
+
+        # Inefficient
+        for account in Account.objects.all():
+            account.save()
+
         if (scannerjob := self.request.GET.get('scannerjob')) and scannerjob != 'all':
             self.matches = self.matches.filter(
                 scanner_job_pk=scannerjob)
@@ -129,6 +134,19 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         context['unhandled_matches_by_month'] = self.count_unhandled_matches_by_month(today)
 
         context['new_matches_by_month'] = self.count_new_matches_by_month(today)
+
+        context['match_status_by_org_unit'] = self.count_match_status_by_org_unit()
+
+        m_by_handled = self.count_matches_by_source_and_handled_status()
+        m_last_month = self.count_matches_by_source_since_last_month(today)
+
+        context['matches_by_source_and_handled_status'] = m_by_handled
+
+        context['matches_by_source_since_last_month'] = m_last_month
+
+        for src_type in ('mailscan', 'filescan', 'webscan', 'other'):
+            context[f'total_{src_type}_count'] = m_by_handled[src_type]['count'] - \
+                m_last_month[src_type]['count']
 
         context['scannerjobs'] = (self.scannerjob_filters,
                                   self.request.GET.get('scannerjob', 'all'))
@@ -275,6 +293,37 @@ class DPOStatisticsPageView(LoginRequiredMixin, TemplateView):
         labelled_values_by_month.rotate(-current_date.month)
 
         return list(labelled_values_by_month)
+
+    def count_match_status_by_org_unit(self):
+        stats = OrganizationalUnit.objects.all().annotate(
+            match_count=Sum(F("account__match_count"))).values("name", "match_count")
+        handled = OrganizationalUnit.objects.all().annotate(
+            handled_matches=Sum(F("account__handled_matches"))).values("name", "handled_matches")
+
+        array = []
+
+        for ou in stats:
+            for oou in handled:
+                if ou.get("name") == oou.get("name"):
+                    ou.update(oou)
+                    array.append([ou.get("name"), oou.get(
+                        "handled_matches"), ou.get("match_count")])
+
+        return array
+
+    def count_matches_by_source_and_handled_status(self):
+        current_matches = self.matches.filter(resolution_status__isnull=True)
+        _, source_type, *_ = self.make_data_structures(current_matches)
+
+        return source_type
+
+    def count_matches_by_source_since_last_month(self, current_date):
+        a_month_ago = current_date - timedelta(days=30)
+        recent_matches = self.matches.filter(created_timestamp__lte=a_month_ago)
+
+        _, source_type, *_ = self.make_data_structures(recent_matches)
+
+        return source_type
 
 
 class LeaderStatisticsPageView(LoginRequiredMixin, ListView):

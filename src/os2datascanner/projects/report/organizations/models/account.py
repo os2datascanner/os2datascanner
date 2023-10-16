@@ -148,6 +148,12 @@ class Account(Core_Account):
         null=True,
         blank=True,
         verbose_name=_("Number of withheld matches"))
+    handled_matches = models.IntegerField(
+        default=0,
+        null=True,
+        blank=True,
+        verbose_name=_("Number of handled matches")
+    )
     match_status = models.IntegerField(
         choices=StatusChoices.choices,
         default=1,
@@ -185,16 +191,24 @@ class Account(Core_Account):
                     "only_notify_superadmin").annotate(
             count=Count("only_notify_superadmin")).values(
             "only_notify_superadmin",
+            "resolution_status",
             "count")
 
         # TODO: Revisit logic below (and its tests, organizations/tests/test_accounts.py)
         self.match_count = 0
         self.withheld_matches = 0
+        self.handled_matches = 0
+
+        # reports contains as many dicts as there are (only_notify_superadmin,
+        # resolution_status) pairs, so we need to add them up instead of overwriting
+        # a single value
         for obj in reports:
             if obj.get("only_notify_superadmin"):
-                self.withheld_matches = obj.get("count")
+                self.withheld_matches += obj.get("count")
+            elif obj.get("resolution_status") is not None:
+                self.handled_matches += obj.get("count")
             else:
-                self.match_count = obj.get("count")
+                self.match_count += obj.get("count")
 
     def _calculate_status(self):
         """Calculate the status of the user. The user can have one of three

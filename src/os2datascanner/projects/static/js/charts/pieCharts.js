@@ -28,7 +28,19 @@ function makePieChart(labels, data, colors, chartElement) {
       events: ['mousemove', 'mouseout'],
       plugins: {
         datalabels: {
-          display: false,
+          font: {
+            size: 16,
+            weight: 'bold'
+          },
+          position: 'top',
+          align: 'center',
+          formatter: function (value, ctx) {
+            let dataArr = ctx.chart.data.datasets[0].data;
+            let sum = dataArr.reduce(function (total, frac) { return total + frac; });
+            var percentage = Math.round(value * 100 / sum) + "%";
+            return value !== 0 ? percentage : ' ';
+          },
+          color: '#fff',
         },
         legend: {
           display: false,

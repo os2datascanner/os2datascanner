@@ -35,9 +35,11 @@ function drawCharts() {
 
   const matchData = JSON.parse(document.getElementById('match_data').textContent);
 
-  var newMatchesByMonth = JSON.parse(document.getElementById('new_matches_by_month').textContent);
+  let matchStatusByOrgUnit = JSON.parse(document.getElementById('match_status_by_org_unit').textContent);
 
-  var unhandledMatchesByMonth = JSON.parse(document.getElementById('unhandled_matches_by_month').textContent);
+  let newMatchesByMonth = JSON.parse(document.getElementById('new_matches_by_month').textContent);
+
+  let unhandledMatchesByMonth = JSON.parse(document.getElementById('unhandled_matches_by_month').textContent);
 
   // Finds the total number matches in the array
   totalArrayValue = function (array, index) {
@@ -53,7 +55,10 @@ function drawCharts() {
   const totalMatches = matchData.handled + matchData.unhandled;
   var handledPercentage = totalHandledMatches / totalMatches * 100;
 
+  // Percentage of handled matches
   drawDoughnut(totalHandledMatches, totalMatches, handledPercentage);
+
+  // Distribution of data types and resolution status
   drawPie(
     sourceTypes,
     'datasources',
@@ -65,8 +70,13 @@ function drawCharts() {
     'resolution_status',
     ['#80ab82', '#a2e774', '#35bd57', '#1b512d', '#7e4672']
   );
-  drawLine(unhandledMatchesByMonth, 'unhandled_matches');
-  drawLine(newMatchesByMonth, 'new_matches_by_month');
+
+  // Department distribution
+  drawBar(matchStatusByOrgUnit, 'department_distribution', ["Handled matches", "Total matches"], true, true);
+
+  // New and unhandled matches by month
+  drawBar(newMatchesByMonth, 'new_matches_by_month');
+  drawBar(unhandledMatchesByMonth, 'unhandled_matches');
 }
 
 function setStatDropdownEvent() {
@@ -111,5 +121,4 @@ htmx.onLoad(function (content) {
     setDropdownEvent();
     drawCharts();
   }
-
 });
