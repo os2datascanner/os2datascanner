@@ -63,6 +63,8 @@ and proceed.
 - The `diagnostics`-management command will no longer encounter a TypeError
   when aliases without accounts or users are present in the database.
 
+- Adjusted left margin for content on smaller screens.
+
 ## 3.20.6, 2nd October 2023
 
 "Purple Orchid in my Windowsill"
