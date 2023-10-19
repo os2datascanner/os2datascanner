@@ -44,7 +44,7 @@
         href="#run-analysis-modal" {# This needs creation, backend not ready #}
         data-modal="modal:open"
         data-src="/webscanners/{{ selected_scanner.first.pk }}/askrun/"
-        class="button button--small button--grey"
+        class="button button--small button--grey button--run_analysis"
         title="{% trans 'Run analysis scan' %}">
         <svg class="icon">
           <use xlink:href="/static/svg/symbol-defs.svg#icon-play"></use>
@@ -88,7 +88,7 @@
       </div>
  
     {% else %}
-      <p>{% trans "Choose a scannerjob to start a new scan or view analysis" %}</p>
+      <p class="hint-text">{% trans "Choose a scannerjob to start a new scan or view analysis" %}</p>
     {% endif %}
   {% endif %}
 </div>

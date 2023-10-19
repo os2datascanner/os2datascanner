@@ -70,6 +70,24 @@ body {
   }
 }
 
+.content {
+  .stats_dropdown, 
+  .button--run_analysis,
+  .hint-text,
+  .last-btn,
+  .prose,
+  .aside,
+  .miniscan-container,
+  .scan-status-table {
+    margin-left: 1rem;
+    margin-right: 1rem;
+
+    @media (min-width: $break-lg) {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+}
 
 .aside {
   display: flex;
@@ -77,16 +95,17 @@ body {
   margin-bottom: 0.5rem;
 
   h1 {
-    width: 100%;
+    // width: 100%;
+    flex-grow: 2;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: normal;
   }
 
   .btn {
-    display: flex;
-    justify-content: flex-end;
-    width: 50%;
+    // display: flex;
+    // justify-content: flex-end;
+    // width: 50%;
   }
 }
 

@@ -15,52 +15,54 @@
   <main class="wrapper" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% include "partials/main.html" with active_tab="miniscan" %}
     <div class="content">
-      <h1>{% trans "OS2datascanner mini-scanner" %}</h1>
-      <p>
-        {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
-          {% blocktranslate trimmed %}
-          The mini-scanner lets you execute any OS2datascanner rule on a single
-          file, and returns the results directly to this page.
-          {% endblocktranslate %}
-          <br />
-          <br />
-          {% trans "Maximum allowed file size is: " %} {{ limit|filesizeformat }}
-        {% endwith %}
-      </p>
-      <form class="form"
-            role="form"
-            hx-post="{% url 'miniscan_run' %}"
-            hx-swap="innerHTML"
-            hx-target="div#response"
-            hx-encoding="multipart/form-data"
-            hx-indicator="div.spinner">
-        <h2>{% trans "File to scan" %}</h2>
-        {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
-          <input name="file"
-                 id="upload-file"
-                 type="file"
-                 class="upload"
-                 onchange="checkFileSize(this, '{{ limit }}' )" />
-
-          <div hidden id="file-upload-error-response">
-            {% trans "The selected file is too big!" %}
+      <div class="miniscan-container">
+        <h1>{% trans "OS2datascanner mini-scanner" %}</h1>
+        <p>
+          {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
+            {% blocktranslate trimmed %}
+            The mini-scanner lets you execute any OS2datascanner rule on a single
+            file, and returns the results directly to this page.
+            {% endblocktranslate %}
+            <br />
             <br />
             {% trans "Maximum allowed file size is: " %} {{ limit|filesizeformat }}
-            <br />
-            {% trans "Please, select another (smaller) file to scan." %}
-          </div>
+          {% endwith %}
+        </p>
+        <form class="form"
+              role="form"
+              hx-post="{% url 'miniscan_run' %}"
+              hx-swap="innerHTML"
+              hx-target="div#response"
+              hx-encoding="multipart/form-data"
+              hx-indicator="div.spinner">
+          <h2>{% trans "File to scan" %}</h2>
+          {% with limit=settings.MINISCAN_FILE_SIZE_LIMIT %}
+            <input name="file"
+                   id="upload-file"
+                   type="file"
+                   class="upload"
+                   onchange="checkFileSize(this, '{{ limit }}' )" />
 
-          <h2>{% trans "Rule to execute" %}</h2>
-        {% endwith %}
-        {% include "components/admin-widgets/rule-builder.html" with hidden=True %}
-        <button id="run-miniscan-btn"
-                class="button button--cta"
-                type="submit"
-                style="margin-top: 1em">{% trans "Run" %}</button>
+            <div hidden id="file-upload-error-response">
+              {% trans "The selected file is too big!" %}
+              <br />
+              {% trans "Maximum allowed file size is: " %} {{ limit|filesizeformat }}
+              <br />
+              {% trans "Please, select another (smaller) file to scan." %}
+            </div>
 
-        <h3>{% trans "Scan result" %}</h3>
-        <div id="response">{% trans "(none yet)" %}</div>
-      </form>
+            <h2>{% trans "Rule to execute" %}</h2>
+          {% endwith %}
+          {% include "components/admin-widgets/rule-builder.html" with hidden=True %}
+          <button id="run-miniscan-btn"
+                  class="button button--cta"
+                  type="submit"
+                  style="margin-top: 1em">{% trans "Run" %}</button>
+
+          <h3>{% trans "Scan result" %}</h3>
+          <div id="response">{% trans "(none yet)" %}</div>
+        </form>
+      </div>
       <div class="spinner" /></div>
   </main>
 {% endblock %}
