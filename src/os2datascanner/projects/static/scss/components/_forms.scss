@@ -101,7 +101,6 @@
   }
 
   select {
-    display: block;
     font-size: 1em;
     font-family: inherit;
     font-weight: normal;
@@ -134,8 +133,9 @@
     transition: var(--transition-default);
   }
 
-  input:disabled:hover,
-  select:disabled:hover {
+  input:disabled,
+  select:disabled {
+    background-color: var(--color-disabled-widget-bg);
     cursor: not-allowed;
   }
 
