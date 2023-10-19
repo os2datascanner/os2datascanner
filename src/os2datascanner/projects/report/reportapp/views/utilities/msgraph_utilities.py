@@ -8,10 +8,12 @@ from django.core.exceptions import PermissionDenied
 
 from os2datascanner.engine2.model.msgraph import MSGraphMailMessageHandle
 from os2datascanner.engine2.model.msgraph.utilities import make_token, MSGraphSource
-from os2datascanner.projects.report.organizations.models import Account, AccountOutlookSetting
+from os2datascanner.projects.report.organizations.models import (Account, AccountOutlookSetting,
+                                                                 Organization)
 from os2datascanner.projects.report.reportapp.models.documentreport import DocumentReport
 from os2datascanner.projects.report.reportapp.views.utilities.document_report_utilities \
     import is_owner, handle_report
+from os2datascanner.core_organizational_structure.models import MSGraphWritePermissionChoices
 
 
 logger = structlog.get_logger()
@@ -42,7 +44,9 @@ def create_outlook_category_for_account(account: Account,
             settings.MSGRAPH_CLIENT_SECRET)
 
     # Return early scenarios
-    check_msgraph_settings()
+    required_permissions = (MSGraphWritePermissionChoices.ALL,
+                            MSGraphWritePermissionChoices.CATEGORIZE)
+    check_msgraph_settings(required_permissions, account.organization)
     document_report = get_msgraph_mail_document_reports(account).last()
     tenant_id = get_tenant_id_from_document_report(document_report)
 
@@ -88,7 +92,9 @@ def update_outlook_category_for_account(account: Account,
             settings.MSGRAPH_CLIENT_SECRET)
 
     # Return early scenarios
-    check_msgraph_settings()
+    required_permissions = (MSGraphWritePermissionChoices.ALL,
+                            MSGraphWritePermissionChoices.CATEGORIZE)
+    check_msgraph_settings(required_permissions, account.organization)
     document_report = get_msgraph_mail_document_reports(account).last()
     tenant_id = get_tenant_id_from_document_report(document_report)
 
@@ -131,7 +137,9 @@ def delete_outlook_category_for_account(account: Account, category_id: str,):
             settings.MSGRAPH_CLIENT_SECRET)
 
     # Return early scenarios
-    check_msgraph_settings()
+    required_permissions = (MSGraphWritePermissionChoices.ALL,
+                            MSGraphWritePermissionChoices.CATEGORIZE)
+    check_msgraph_settings(required_permissions, account.organization)
     document_report = get_msgraph_mail_document_reports(account).last()
     tenant_id = get_tenant_id_from_document_report(document_report)
 
@@ -169,7 +177,9 @@ def categorize_email_from_report(document_report: DocumentReport,
     """
 
     # Return early scenarios
-    check_msgraph_settings()
+    required_permissions = (MSGraphWritePermissionChoices.ALL,
+                            MSGraphWritePermissionChoices.CATEGORIZE)
+    check_msgraph_settings(required_permissions, document_report.organization)
 
     # Fetch what categories are already set on this email.
     email_categories = get_msgraph_mail_categories_from_document_report(document_report)
@@ -208,7 +218,9 @@ def categorize_existing_emails_from_account(account: Account,
             settings.MSGRAPH_CLIENT_SECRET)
 
     # Return early scenarios
-    check_msgraph_settings()
+    required_permissions = (MSGraphWritePermissionChoices.ALL,
+                            MSGraphWritePermissionChoices.CATEGORIZE)
+    check_msgraph_settings(required_permissions, account.organization)
     document_reports = get_msgraph_mail_document_reports(account)
     tenant_id = get_tenant_id_from_document_report(document_reports.last())
 
@@ -251,7 +263,9 @@ def delete_email(document_report: DocumentReport, account: Account):
             settings.MSGRAPH_CLIENT_SECRET)
 
     # Return early scenarios
-    check_msgraph_settings()
+    required_permissions = (MSGraphWritePermissionChoices.ALL,
+                            MSGraphWritePermissionChoices.DELETE)
+    check_msgraph_settings(required_permissions, account.organization)
 
     owner = document_report.owner
     if not is_owner(owner, account):
@@ -301,7 +315,7 @@ def get_mail_message_handle_from_document_report(document_report: DocumentReport
     return message_handle
 
 
-def check_msgraph_settings():
+def check_msgraph_settings(required_permissions: tuple, org: Organization):
     if not settings.MSGRAPH_ALLOW_WRITE:
         allow_deletion_message = _("System configuration does not allow mail deletion.")
         logger.warning(allow_deletion_message)
@@ -311,6 +325,10 @@ def check_msgraph_settings():
                                          " Azure-application credentials. ")
         logger.warning(msgraph_app_settings_message)
         raise PermissionDenied(msgraph_app_settings_message)
+    if org.msgraph_write_permissions not in required_permissions:
+        org_permission_message = _("Your organization does not allow this operation.")
+        logger.warning(org_permission_message)
+        raise PermissionDenied(org_permission_message)
 
 
 def get_tenant_id_from_document_report(document_report: DocumentReport) -> str or PermissionDenied:

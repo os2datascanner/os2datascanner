@@ -31,7 +31,8 @@ class OrganizationAdmin(admin.ModelAdmin):
             None,
             {
                 "fields": ('name', 'slug', 'client', 'contact_email',
-                           'contact_phone', 'email_notification_schedule',)
+                           'contact_phone', 'email_notification_schedule',
+                           'msgraph_write_permissions')
             },
         ),
         (
@@ -49,8 +50,8 @@ class OrganizationAdmin(admin.ModelAdmin):
             }
         )
     ]
-    list_display = ('name', 'client', 'contact_email', 'contact_phone')
-    search_fields = ('name', 'client__name',)
+    list_display = ('name', 'client', 'contact_email', 'contact_phone', 'msgraph_write_permissions')
+    search_fields = ('name', 'client__name')
 
 
 @admin.register(Account)

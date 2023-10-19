@@ -239,6 +239,8 @@ class UserReportView(ReportView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["personal"] = True
+        context["has_delete_permission"] = (self.request.user.account.
+                                            organization.has_delete_permission())
         return context
 
     def base_match_filter(self, reports):

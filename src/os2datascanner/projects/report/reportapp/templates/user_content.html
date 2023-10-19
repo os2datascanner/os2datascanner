@@ -132,10 +132,10 @@
     </tbody>
   </table>
 
-  <h2>{% trans "Outlook Settings" %}</h2>
-  <table class="userprofile-table outlook-settings">
-    <tbody>
-      {% if settings.MSGRAPH_ALLOW_WRITE %}
+  {% if has_categorize_permission %}
+    <h2>{% trans "Outlook Settings" %}</h2>
+    <table class="userprofile-table outlook-settings">
+      <tbody>
         <form id="settings-form"
               hx-post=""
               hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
@@ -180,9 +180,9 @@
         </td>
       </tr>
     </form>
-  {% endif %}
-</tbody>
+  </tbody>
 </table>
+{% endif %}
 
 <h2>{% trans "Login Information" %}</h2>
 <table class="userprofile-table login-info">

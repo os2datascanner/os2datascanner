@@ -54,10 +54,11 @@ class AccountView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if settings.MSGRAPH_ALLOW_WRITE:
+        if settings.MSGRAPH_ALLOW_WRITE and self.object.organization.has_categorize_permission():
             acc_ol_settings, c = AccountOutlookSetting.objects.get_or_create(
                 account=self.object,
                 account_username=self.object.username)
+            context["has_categorize_permission"] = True
             context["categorize_enabled"] = acc_ol_settings.categorize_email
             context["colour_presets"] = AccountOutlookSettingForm()
 
